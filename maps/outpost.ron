@@ -1,0 +1,34 @@
+// Outpost Zero: the M0 test station. Four rooms around a central corridor,
+// one exterior airlock opening to space at the bottom of the corridor.
+(
+    name: "Outpost Zero",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Floor),
+        '#': (turf: Wall),
+        '+': (turf: Floor, fixture: Some(Door)),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'l': (turf: Floor, fixture: Some(Light)),
+    },
+    rows: [
+        "                          ",
+        "  ####################    ",
+        "  #a......#....#.....#    ",
+        "  #.......+....+..a..#    ",
+        "  #l......#....#.....#    ",
+        "  ####+####....#######    ",
+        "  #.......+....+....l#    ",
+        "  #..a....#....#.....#    ",
+        "  #.......#....#..a..#    ",
+        "  #########+##########    ",
+        "                          ",
+    ],
+    spawns: [
+        (11, 3),
+        (12, 3),
+        (13, 3),
+        (14, 3),
+        (12, 6),
+        (13, 6),
+    ],
+)
