@@ -7,6 +7,7 @@
         '.': (turf: Floor),
         '#': (turf: Wall),
         '+': (turf: Floor, fixture: Some(Door)),
+        's': (turf: Floor, fixture: Some(SecureDoor)),
         'a': (turf: Floor, fixture: Some(Apc)),
         'l': (turf: Floor, fixture: Some(Light)),
     },
@@ -14,7 +15,7 @@
         "                          ",
         "  ####################    ",
         "  #a......#....#.....#    ",
-        "  #.......+....+..a..#    ",
+        "  #.......+....s..a..#    ",
         "  #l......#....#.....#    ",
         "  ####+####....#######    ",
         "  #.......+....+....l#    ",
@@ -30,5 +31,12 @@
         (14, 3),
         (12, 6),
         (13, 6),
+    ],
+    // The engineering ID unlocks the secure east-top room, where the
+    // crowbar waits. The toolbox is just a toolbox. Robust, though.
+    items: [
+        (5, 7, "toolbox"),
+        (4, 3, "id_engineering"),
+        (18, 2, "crowbar"),
     ],
 )
