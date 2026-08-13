@@ -1,8 +1,12 @@
--- The first item to cross the content boundary. Robust.
+-- The first item to cross the content boundary. Robust — and, since
+-- the chillstation redirect, an actual container: it ships stocked
+-- with the engineering loop (open it from your hand to get at them).
 return {
     id = "toolbox",
     name = "mechanical toolbox",
     sprite = "toolbox",
+    storage = 7,
+    holds = { "welder", "crowbar", "wirecutters", "cable_coil" },
     on_attack = function(ctx, self, user, target)
         ctx.damage(target, { brute = 10 })
         ctx.sound("smash", ctx.pos(target))
