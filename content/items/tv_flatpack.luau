@@ -5,6 +5,7 @@ return {
     name = "television flatpack",
     sprite = "tv",
     deploys = "tv",
+    builds = { label = "Television", sprite = "tv", target = "floor", cost = 1, secs = 3.0 },
     on_use = function(ctx, self, user, x, y)
         if ctx.turf(x, y) ~= "floor" then
             return "pass"

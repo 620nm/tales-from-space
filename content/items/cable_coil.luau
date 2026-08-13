@@ -4,6 +4,7 @@ return {
     id = "cable_coil",
     name = "cable coil",
     sprite = "coil",
+    builds = { label = "Cable", sprite = "coil", target = "floor", cost = 1, secs = 1.0 },
     on_use = function(ctx, self, user, x, y)
         local mask = ctx.cable(x, y)
         if mask % 4 >= 2 then

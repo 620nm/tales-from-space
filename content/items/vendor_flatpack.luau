@@ -6,6 +6,7 @@ return {
     name = "vending machine flatpack",
     sprite = "vendor",
     deploys = "vendor",
+    builds = { label = "Vending machine", sprite = "vendor", target = "floor", cost = 1, secs = 3.0 },
     on_use = function(ctx, self, user, x, y)
         if ctx.turf(x, y) ~= "floor" then
             return "pass"

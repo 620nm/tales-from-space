@@ -6,6 +6,7 @@ return {
     name = "floor tiles",
     sprite = "floor_tile",
     stack = 30,
+    builds = { label = "Plating", sprite = "floor", target = "space", cost = 1, secs = 1.5 },
     on_use = function(ctx, self, user, x, y)
         if ctx.turf(x, y) ~= "space" then
             return "pass"

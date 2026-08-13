@@ -6,6 +6,9 @@ return {
     name = "metal sheets",
     sprite = "metal",
     stack = 30,
+    -- Build-menu row (display data; the numbers mirror the hook below
+    -- and the native validator, which stay the enforcement truth).
+    builds = { label = "Wall", sprite = "wall", target = "floor", cost = 2, secs = 2.0 },
     on_use = function(ctx, self, user, x, y)
         if ctx.turf(x, y) ~= "floor" then
             return "pass" -- not a build site; native click handling continues
