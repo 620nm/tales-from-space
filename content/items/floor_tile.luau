@@ -7,6 +7,7 @@ return {
     sprite = "floor_tile",
     stack = 30,
     builds = {
+        id = "flooring",
         label = "Flooring",
         sprite = "floor",
         target = { "space", "plating" },

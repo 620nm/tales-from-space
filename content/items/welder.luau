@@ -36,6 +36,15 @@ return {
             else
                 ctx.system_msg(user, "You stop cutting.")
             end
+        elseif ctx.frame(x, y) then
+            ctx.sound("weld", x, y)
+            ctx.system_msg(user, "You start cutting the frame apart.")
+            if ctx.do_after(user, 4.0) and ctx.frame(x, y) then
+                ctx.cut_frame(x, y)
+                ctx.system_msg(user, "The frame comes apart.")
+            else
+                ctx.system_msg(user, "You stop cutting.")
+            end
         else
             return "pass"
         end
