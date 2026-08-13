@@ -2,8 +2,8 @@
 return {
     id = "engineer",
     name = "Station Engineer",
-    slots = 2,
+    slots = 4,
     uniform = "uniform_eng",
     id_card = "id_engineering",
-    kit = { "welder", "wirecutters", "cable_coil" },
+    kit = { "welder", "wirecutters", "cable_coil", "metal", "floor_tile" },
 }
