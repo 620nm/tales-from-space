@@ -36,6 +36,7 @@
     // crowbar waits. The toolbox is just a toolbox. Robust, though.
     items: [
         (5, 7, "toolbox"),
+        (6, 7, "welder"),
         (4, 3, "id_engineering"),
         (18, 2, "crowbar"),
     ],
