@@ -49,6 +49,7 @@
         (7, 7, "crowbar"),
         (3, 7, "wirecutters"),
         (4, 3, "id_engineering"),
+        (5, 2, "beaker_libital"),
     ],
     cables: [
         (3, 2, 3),
