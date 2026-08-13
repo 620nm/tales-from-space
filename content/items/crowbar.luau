@@ -1,12 +1,19 @@
--- The classic: a powered airlock ignores the crowbar ("pass" hands the
--- click back to the native access-checked toggle), but dead motors can
--- be pried.
+-- The classic, both jobs: pry a floor tile off its plating (instant,
+-- tile refunded — the subfloor shows), and pry open a dead airlock
+-- ("pass" hands powered doors back to the native access-checked
+-- toggle).
 return {
     id = "crowbar",
     name = "crowbar",
     sprite = "crowbar",
     on_use = function(ctx, self, user, x, y)
         local door = ctx.door(x, y)
+        if door == nil and ctx.turf(x, y) == "floor" then
+            ctx.sound("crowbar", x, y)
+            ctx.pry_tile(x, y)
+            ctx.system_msg(user, "You pry up the floor tile.")
+            return
+        end
         if door == nil or door.open or door.powered then
             return "pass"
         end
