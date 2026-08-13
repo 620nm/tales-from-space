@@ -11,12 +11,10 @@ return {
             ctx.system_msg(user, "The machine is dark and silent.")
             return
         end
-        ctx.sound("vend", ctx.pos(self))
-        ctx.system_msg(user, "The machine whirrs and clunks...")
-        ctx.sleep(1.0)
-        local x, y = ctx.pos(user)
-        ctx.spawn_item("cola", x, y)
-        ctx.system_msg(user, "A can of Space Cola drops into the tray.")
+        -- M7 second half: clicking the machine opens its real TGUI
+        -- window (tg's untouched Vending interface); dispensing happens
+        -- through its act() buttons now.
+        ctx.open_ui(user, self)
     end,
     on_bump = function(ctx, self, user)
         ctx.system_msg(user, "The vending machine wobbles. Nothing falls out.")
