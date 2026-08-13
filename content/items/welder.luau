@@ -1,9 +1,21 @@
--- The engineer's answer to a hull breach. The "weld" tool tag is what
--- the Interact path checks; at M4-completion this becomes an on_interact
--- hook instead of a native tag.
+-- The engineer's answer to a hull breach — and the first customer of
+-- ctx.do_after: the engine revalidates every tick (alive, welder still
+-- in the active hand, still in reach); no state machine here, ever.
 return {
     id = "welder",
     name = "welding tool",
     sprite = "welder",
-    tool = "weld",
+    on_use = function(ctx, self, user, x, y)
+        if not ctx.is_breached(x, y) then
+            return "pass" -- not our business; native click handling continues
+        end
+        ctx.sound("weld", x, y)
+        ctx.system_msg(user, "You start welding the breach shut.")
+        if ctx.do_after(user, 4.0) and ctx.is_breached(x, y) then
+            ctx.seal_breach(x, y)
+            ctx.system_msg(user, "You weld the breach shut.")
+        else
+            ctx.system_msg(user, "Your weld is interrupted.")
+        end
+    end,
 }

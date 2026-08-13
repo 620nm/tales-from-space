@@ -10,6 +10,7 @@
         's': (turf: Floor, fixture: Some(SecureDoor)),
         'a': (turf: Floor, fixture: Some(Apc)),
         'l': (turf: Floor, fixture: Some(Light)),
+        'V': (turf: Floor, fixture: Some(Vendor)),
     },
     rows: [
         "                          ",
@@ -20,7 +21,7 @@
         "  ####+####....#######    ",
         "  #.......+....+....l#    ",
         "  #..a....#....#.....#    ",
-        "  #.......#....#..a..#    ",
+        "  #......V#....#..a..#    ",
         "  #########+##########    ",
         "                          ",
     ],
@@ -32,12 +33,13 @@
         (12, 6),
         (13, 6),
     ],
-    // The engineering ID unlocks the secure east-top room, where the
-    // crowbar waits. The toolbox is just a toolbox. Robust, though.
+    // The bottom-left room is the tool room: toolbox, welder, crowbar,
+    // and the vending machine. The engineering ID (top-left) unlocks the
+    // secure east-top room.
     items: [
         (5, 7, "toolbox"),
         (6, 7, "welder"),
+        (7, 7, "crowbar"),
         (4, 3, "id_engineering"),
-        (18, 2, "crowbar"),
     ],
 )
