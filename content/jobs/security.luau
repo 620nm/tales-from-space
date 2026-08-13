@@ -4,6 +4,7 @@ return {
     id = "security",
     name = "Security Officer",
     slots = 1,
+    uniform = "uniform_sec",
     id_card = "id_security",
     kit = { "toolbox" },
 }

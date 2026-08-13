@@ -5,4 +5,5 @@ return {
     sprite = "backpack",
     slot = "back",
     storage = 7,
+    worn_sprite = "worn_backpack",
 }
