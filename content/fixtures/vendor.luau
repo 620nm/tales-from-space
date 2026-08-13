@@ -7,6 +7,10 @@ return {
     name = "Robust Softdrinks vending machine",
     sprite = "vendor",
     on_interact = function(ctx, self, user)
+        if not ctx.is_powered(self) then
+            ctx.system_msg(user, "The machine is dark and silent.")
+            return
+        end
         ctx.sound("vend", ctx.pos(self))
         ctx.system_msg(user, "The machine whirrs and clunks...")
         ctx.sleep(1.0)
