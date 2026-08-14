@@ -3,6 +3,14 @@
 // plating and a branch circuit, materials on the floor, and
 // open space in every direction. The true demo: spawn friends,
 // finish the room, watch the vent bring it to one atmosphere.
+//
+// Where that atmosphere comes from: the air canister 'c' in the
+// Commons feeds the distribution run below (hidden under the deck, as
+// pipe always is — pry a floor tile to see it), the run reaches both
+// vents 'v', and each vent releases into its room until the room hits
+// one atmosphere. Nothing else on this station makes air, so the
+// canister is finite and a long breach costs it. Note that 'o' is a
+// power OUTLET, not a vent — it is electrical (docs/power.md).
 (
     name: "Chillstation 13",
     legend: {
@@ -16,6 +24,7 @@
         'V': (turf: Floor, fixture: Some(Vendor)),
         'm': (turf: Floor, fixture: Some(Smes)),
         'v': (turf: Floor, fixture: Some(Vent)),
+        'c': (turf: Floor, fixture: Some(Canister)),
         's': (turf: Space, fixture: Some(Solar)),
     },
     rows: [
@@ -25,11 +34,11 @@
         "                              ",
         "    #####################     ",
         "    #a.l...loV#avl......#     ",
-        "    #.........#.........#     ",
+        "    #...v.....#.........#     ",
         "    #.........#.........#     ",
         "    #.........+.........#     ",
         "    #.........#.....####      ",
-        "    #.........#.....#         ",
+        "    #.......c.#.....#         ",
         "    #m..l....v#.....#         ",
         "    ################          ",
         "                              ",
@@ -68,7 +77,19 @@
         (6, 5, 2), (7, 5, 2), (8, 5, 2), (9, 5, 2), (10, 5, 2), (11, 5, 2),
         (12, 5, 2), (13, 5, 2), (13, 6, 2), (13, 7, 2), (13, 8, 2), (13, 9, 2),
         (13, 10, 2), (13, 11, 2), (12, 11, 2), (11, 11, 2), (10, 11, 2),
-        (9, 11, 2), (8, 11, 2),
+        (9, 11, 2), (8, 11, 2), (8, 6, 2),
+    ],
+    // The distribution run, layer 3 (bit 4) — tg's distro loop. It
+    // starts at the canister (12, 10), crosses the Commons under the
+    // deck to that room's vent (13, 11), passes UNDER the bulkhead at
+    // (14, 10) — a mapper may, a player may not — and climbs the Annex
+    // to its vent (16, 5). One line, one canister, two rooms.
+    pipes: [
+        (6, 10, 4), (7, 10, 4), (8, 10, 4), (9, 10, 4), (10, 10, 4),
+        (11, 10, 4), (12, 10, 4), (13, 10, 4), (13, 11, 4),
+        (8, 9, 4), (8, 8, 4), (8, 7, 4), (8, 6, 4),
+        (14, 10, 4), (15, 10, 4), (16, 10, 4), (16, 9, 4), (16, 8, 4),
+        (16, 7, 4), (16, 6, 4), (16, 5, 4),
     ],
     labels: [
         (5, 5, "The Commons"),
