@@ -1,0 +1,206 @@
+-- Where the station's air comes from.
+--
+-- The chain is canister -> distribution run -> vent -> room, and it is
+-- the ONLY chain: nothing on a station makes air. A canister is 2000 L
+-- of premixed 21/79 at 45 atm (tg's canister.dm: `maximum_pressure`
+-- 90 atm x `filled` 0.5), it charges the run it stands on up to one
+-- atmosphere, and the vents on that run release into their rooms until
+-- the rooms read one atmosphere too. Every mole a room gains came out
+-- of the canister, so a canister that has been spent is spent, and a
+-- long breach is expensive in a way you can read off a gauge.
+--
+-- Layer masks in the maps below are tg's five piping layers; 4 is
+-- layer 3, the distribution run.
+
+-- Moles in a volume at a pressure, at room temperature -- the ideal gas
+-- law, so the spec can check the books rather than trust a direction.
+local function moles(kpa, volume_m3)
+    return kpa * 1000.0 * volume_m3 / (8.314 * 293.15)
+end
+
+local function heard(p, want)
+    for _, s in ipairs(t.sounds(p)) do
+        if s == want then
+            return true
+        end
+    end
+    return false
+end
+
+-- ---------------------------------------------------------------
+-- One sealed room, one vent, one canister, and the run between
+-- them. Breach it, weld it shut, and watch the room come back --
+-- out of the canister and nowhere else.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "air supply",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Plating),
+        '#': (turf: Wall),
+        'v': (turf: Plating, fixture: Some(Vent)),
+        'c': (turf: Plating, fixture: Some(Canister)),
+    },
+    rows: [
+        "#####",
+        "#...#",
+        "#v.c#",
+        "#...#",
+        "#####",
+    ],
+    spawns: [(2, 2)],
+    items: [(2, 2, "welder")],
+    pipes: [(1, 2, 4), (2, 2, 4), (3, 2, 4)],
+)]==], 7)
+
+local p = t.join()
+t.tick()
+
+-- The room is nine tiles of 1 m³; the run is three lengths of 70 L.
+local ROOM_M3 = 9.0
+local CAN_M3 = 2.0
+
+-- A full canister reads about 45 atm. That is the whole supply.
+local full = t.canister_pressure(3, 2)
+assert(full ~= nil, "the canister is where the map put it")
+assert(full > 4000.0, "a fresh canister is at 45 atm: " .. full)
+assert(t.pipe_pressure(2, 2) > 90.0, "and it has charged the run to one atmosphere")
+assert(t.room_pressure(2, 2) > 90.0, "so the room is breathable from the start")
+
+-- A room that is ALREADY at one atmosphere costs nothing. The release
+-- valve is a setpoint, not a tap left running.
+t.run_seconds(10)
+assert(
+    math.abs(t.canister_pressure(3, 2) - full) < 1.0,
+    "a settled station does not drain its canister: " .. t.canister_pressure(3, 2)
+)
+
+-- Take the welder off the deck FIRST: loose things do not survive a
+-- decompression, and a welder dragged into space is a welder lost.
+t.click(p, 2, 2)
+t.run_ticks(2)
+
+-- Open the hull. The room empties, and the vent fights the hole and
+-- loses -- which is correct, and which is what makes breaches cost
+-- something other than time.
+t.fault(2, 1, t.now() + 4)
+t.run_seconds(10)
+assert(t.is_breached(2, 1), "the fault opened the room")
+local emptied = t.room_pressure(2, 3)
+-- It does not reach hard vacuum: the vent is feeding it the whole
+-- time, and what the canister sends up the line goes straight out the
+-- hole. That standoff is exactly the cost of leaving a breach open.
+assert(emptied < 60.0, "the room emptied: " .. emptied)
+
+-- Weld it shut. Now it is a sealed vacuum with a live vent over a
+-- charged run.
+t.click(p, 2, 1)
+t.run_seconds(4.5)
+assert(not t.is_breached(2, 1), "welded shut")
+
+local room_before = t.room_pressure(2, 3)
+local can_before = t.canister_pressure(3, 2)
+t.run_seconds(60)
+local room_after = t.room_pressure(2, 3)
+local can_after = t.canister_pressure(3, 2)
+
+assert(room_after > 90.0, "the vent brought the room back up: " .. room_after)
+assert(can_after < can_before, "and the canister is what paid: " .. can_after)
+
+-- The books balance: what the room gained, the canister lost. (Not to
+-- the mole -- the run itself holds some of it, and the room is sampled
+-- at one tile -- but to the same order, which is the difference between
+-- plumbing and a magic trick.)
+local gained = moles(room_after - room_before, ROOM_M3)
+local spent = moles(can_before - can_after, CAN_M3)
+assert(gained > 100.0, "the room gained a real amount: " .. gained)
+assert(
+    spent > gained * 0.7 and spent < gained * 1.5,
+    "the room's gain came out of the canister: gained "
+        .. gained
+        .. " mol, canister spent "
+        .. spent
+        .. " mol"
+)
+
+-- And you can hear it. A canister that starts feeding hisses once.
+assert(heard(p, "hiss"), "the room heard the valve open")
+
+-- The gauge has moved off full, which is the point of a gauge.
+assert(can_after < full, "the reading dropped: " .. full .. " -> " .. can_after)
+
+-- ---------------------------------------------------------------
+-- Air is finite, and this is what that means.
+--
+-- A sealed room with a vent, and a scrap of deck hanging in open
+-- space at the other end of the same distribution run, carrying the
+-- station's only canister and a second vent. That vent releases into
+-- vacuum forever, so the canister empties into space -- nobody
+-- notices until somebody needs air.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "spent",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Plating),
+        '#': (turf: Wall),
+        'v': (turf: Plating, fixture: Some(Vent)),
+        'c': (turf: Plating, fixture: Some(Canister)),
+    },
+    rows: [
+        "#####                   ",
+        "#...#                   ",
+        "#v..#...............vc  ",
+        "#...#                   ",
+        "#####                   ",
+    ],
+    spawns: [(2, 2)],
+    items: [(2, 2, "welder")],
+    pipes: [
+        (1, 2, 4), (2, 2, 4), (3, 2, 4), (4, 2, 4), (5, 2, 4), (6, 2, 4),
+        (7, 2, 4), (8, 2, 4), (9, 2, 4), (10, 2, 4), (11, 2, 4), (12, 2, 4),
+        (13, 2, 4), (14, 2, 4), (15, 2, 4), (16, 2, 4), (17, 2, 4),
+        (18, 2, 4), (19, 2, 4), (20, 2, 4), (21, 2, 4),
+    ],
+)]==], 7)
+
+local q = t.join()
+t.tick()
+assert(t.canister_pressure(21, 2) > 4000.0, "the second canister starts full too")
+assert(t.room_pressure(2, 2) > 90.0, "and the crew room starts breathable")
+
+-- Tear the deck open under the strip. (The station is handed over
+-- SETTLED, so a hole has to actually happen for anything to move --
+-- a mapper cannot author a room mid-decompression.) From here the
+-- second vent is releasing into a vacuum that never fills, so the
+-- canister empties itself into space one lungful per pass.
+t.fault(10, 2, t.now() + 4)
+t.run_seconds(70)
+local left = t.canister_pressure(21, 2)
+assert(left < 100.0, "the canister blew itself empty: " .. left)
+assert(t.pipe_pressure(3, 2) < 10.0, "and the distribution run is dead with it")
+
+-- The crew room never noticed: it was already at one atmosphere, so
+-- its vent had no reason to run.
+assert(t.room_pressure(2, 2) > 80.0, "the sealed room is still fine")
+
+-- Until it isn't. Breach it, weld it shut, and give the vent every
+-- chance: it is a fan over a dead line, and a fan moves no air it was
+-- not handed.
+t.click(q, 2, 2)
+t.run_ticks(2)
+t.fault(2, 1, t.now() + 4)
+t.run_seconds(8)
+assert(t.is_breached(2, 1), "the crew room opened")
+t.click(q, 2, 1)
+t.run_seconds(4.5)
+assert(not t.is_breached(2, 1), "and was welded shut again")
+
+local sealed = t.room_pressure(2, 3)
+assert(sealed < 45.0, "sealed at a fraction of an atmosphere: " .. sealed)
+t.run_seconds(60)
+local later = t.room_pressure(2, 3)
+assert(
+    later < sealed + 5.0,
+    "an empty canister repressurises nothing: " .. sealed .. " -> " .. later
+)
