@@ -152,6 +152,16 @@
         ("vent_on", Dmi("obj/machines/atmospherics/unary_devices.dmi", "vent_out", 0)),
         ("vent_off", Dmi("obj/machines/atmospherics/unary_devices.dmi", "vent_off", 0)),
         ("vent_passive", Dmi("obj/machines/atmospherics/unary_devices.dmi", "passive_vent", 0)),
+        // The connector port: tg's `portables_connector`, a pipe fitting
+        // that lies in the deck and is the ONLY thing a portable atmos
+        // device may fasten to. The two states are two of tg's own
+        // pictures, and the difference between them is the whole rule:
+        // `connector_map-3` is the socket with its stub running down
+        // into the pipe, and `connector` is the same socket with the
+        // stub gone — a fitting lying loose on the deck, joined to
+        // nothing, hosting nothing.
+        ("connector_port", Dmi("obj/machines/atmospherics/unary_devices.dmi", "connector_map-3", 0)),
+        ("connector_port_loose", Dmi("obj/machines/atmospherics/unary_devices.dmi", "connector", 0)),
         // A gas canister: tg's art is greyscale and each gas type paints
         // it (greyscale_colors "#c6c0b5" is pre-mixed air). Baked with
         // that colour for now; it moves to per-object paint when the
@@ -175,6 +185,28 @@
                 ("add_shader", Add, false),
                 ("multi_shader", Multiply, false),
                 ("outline", Over, true),
+            ],
+            dir: 0,
+            paint: (255, 255, 255),
+        ), (198, 192, 181))),
+        // The same shell wearing tg's `can-connector` — the picture a
+        // canister only has while it is fastened to a port
+        // (canister.dm's update_overlays: `if(connected_port)`). It is
+        // a STATE SPRITE rather than an overlay because the canister's
+        // overlay slot is already spoken for by the gauge, which the
+        // sim rewrites every time the pressure band moves; the two
+        // would fight for the same component every tick. tg does not
+        // RESET_COLOR this one either, so it takes the gas's colour
+        // along with the rest of the shell, which is why it rides
+        // inside the blend.
+        ("canister_connected", Tinted(DmiBlend(
+            dmi: "obj/pipes_n_cables/canisters.dmi",
+            layers: [
+                ("base", Over, true),
+                ("add_shader", Add, false),
+                ("multi_shader", Multiply, false),
+                ("outline", Over, true),
+                ("can-connector", Over, false),
             ],
             dir: 0,
             paint: (255, 255, 255),
