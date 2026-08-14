@@ -1,6 +1,6 @@
 // Chillstation 13: an atmos + electrical playground. A finished
-// Commons (solar-fed, lit, vending), a half-built Annex waiting for
-// walls, plating, and a branch circuit, materials on the floor, and
+// Commons (solar-fed, lit, vending), an unfinished Annex waiting for
+// plating and a branch circuit, materials on the floor, and
 // open space in every direction. The true demo: spawn friends,
 // finish the room, watch the vent bring it to one atmosphere.
 (
@@ -28,9 +28,9 @@
         "    #.........#.........#     ",
         "    #.........#.........#     ",
         "    #.........+.........#     ",
-        "    #.........#.....          ",
-        "    #.........#.....          ",
-        "    #m..l....v#.....          ",
+        "    #.........#.....####      ",
+        "    #.........#.....#         ",
+        "    #m..l....v#.....#         ",
         "    ################          ",
         "                              ",
         "                              ",
