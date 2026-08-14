@@ -51,6 +51,8 @@ t.world([==[(
     spawns: [(2, 2)],
     items: [(2, 2, "welder")],
     pipes: [(1, 2, 4), (2, 2, 4), (3, 2, 4)],
+    // The socket under the canister. Without it the bottle is furniture.
+    structures: [(3, 2, "connector_port")],
 )]==], 7)
 
 local p = t.join()
@@ -162,6 +164,7 @@ t.world([==[(
         (13, 2, 4), (14, 2, 4), (15, 2, 4), (16, 2, 4), (17, 2, 4),
         (18, 2, 4), (19, 2, 4), (20, 2, 4), (21, 2, 4),
     ],
+    structures: [(21, 2, "connector_port")],
 )]==], 7)
 
 local q = t.join()
@@ -206,19 +209,23 @@ assert(
 )
 
 -- ---------------------------------------------------------------
--- A canister is PORTABLE, and the bolts are the plumbing.
+-- A canister is PORTABLE, and the PORT is the plumbing.
 --
 -- tg's portable atmos devices (portable/portable_atmospherics.dm)
--- start unanchored, wrench onto a connector port, and `Move()`
--- disconnects them. The connector is not a machine -- it is a pipe
--- fitting under the floor whose only trick is adding the device's air
--- to the pipeline -- so the run under the tile is the port here.
+-- start unanchored and fasten to a `portables_connector` -- a pipe
+-- fitting that must itself be wrenched onto a run before it will host
+-- anything. So there are two things here, not one: laying the socket
+-- is slow work with a progress bar, and putting a bottle on the socket
+-- takes no time at all (tg's `wrench_act` has no do_after in it).
+--
+-- A canister on a bare distribution main is standing on plumbing with
+-- no way into it. That is the whole correction: pipe is not a port.
 --
 -- The room below is sealed and already at one atmosphere, which makes
 -- the reading unambiguous: a canister that is feeding anything is
 -- feeding the RUN, because the room has no demand. The run's far end
--- is a vent over open space, so as long as the canister is bolted to
--- the run it is pouring its air into the void and the gauge falls.
+-- is a vent over open space, so as long as the canister is on a port
+-- it is pouring its air into the void and the gauge falls.
 -- ---------------------------------------------------------------
 t.world([==[(
     name: "portable",
@@ -244,6 +251,13 @@ t.world([==[(
         (1, 1, 4), (2, 1, 4), (2, 2, 4), (3, 2, 4), (4, 2, 4),
         (4, 1, 4), (5, 1, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4), (9, 1, 4),
     ],
+    // Three sockets on twelve lengths of pipe. (4, 1) is deliberately
+    // NOT one of them: it is charged main with nowhere to plug in.
+    structures: [
+        (1, 1, "connector_port"),
+        (2, 1, "connector_port"),
+        (5, 1, "connector_port"),
+    ],
 )]==], 7)
 
 local w = t.join()
@@ -251,28 +265,38 @@ t.tick()
 t.click(w, 1, 2) -- the wrench
 t.run_ticks(2)
 
--- Bolted down over the run: it is feeding the leak, and you can watch
--- it happen on the gauge.
+-- Fastened to the port it was mapped on: it is feeding the leak, and
+-- you can watch it happen on the gauge.
 local before = t.canister_pressure(2, 1)
 assert(before ~= nil, "the canister is where the map put it")
 t.run_seconds(10)
-local bolted = t.canister_pressure(2, 1)
-assert(bolted < before - 100.0,
-    "a bolted canister feeds the run: " .. before .. " -> " .. bolted)
+local fastened = t.canister_pressure(2, 1)
+assert(fastened < before - 100.0,
+    "a fastened canister feeds the run: " .. before .. " -> " .. fastened)
 
--- Two seconds of wrenching takes it off the bolts -- and off the loop.
-t.click(w, 2, 1)
+-- Laying plumbing is slow. The player is standing on a port of their
+-- own at (1, 1); a wrench takes two seconds to break it out of the
+-- run, which is the contrast the next step is about.
+t.click(w, 1, 1)
+t.run_ticks(1)
+assert(not t.ledger_has("StructureStep", "connector_port", "displaced"),
+    "one tick in, the port is still bolted down")
 t.run_seconds(2.5)
-assert(t.ledger_has("StructureStep", "canister", "displaced"),
-    "the wrench came off the bolts")
+assert(t.ledger_has("StructureStep", "connector_port", "displaced"),
+    "and two seconds in, it is up")
 
--- Read the gauge the moment the bolts are out: the seconds spent
--- wrenching are seconds it was still connected and still paying.
+-- Unfastening a canister takes NO time. One tick, one ratchet, off.
+t.click(w, 2, 1)
+t.run_ticks(1)
+assert(t.ledger_has("StructureStep", "canister", "displaced"),
+    "the canister comes off the port instantly")
+
+-- Read the gauge the moment it is off.
 local off = t.canister_pressure(2, 1)
 t.run_seconds(10)
 local loose = t.canister_pressure(2, 1)
 assert(math.abs(loose - off) < 1.0,
-    "unbolted, it feeds nothing: " .. off .. " -> " .. loose)
+    "off the port, it feeds nothing: " .. off .. " -> " .. loose)
 assert(t.pipe_pressure(2, 1) < 20.0,
     "and the run it left is emptying into space: " .. t.pipe_pressure(2, 1))
 
@@ -286,33 +310,54 @@ assert(t.canister_pressure(3, 1) ~= nil, "it is one tile east")
 assert(t.ledger_has("StructureStep", "canister", "pushed"),
     "and the shove is on the record")
 
--- No pipe, no port, no bolts. tg says "Nothing happens."; we say which
--- rule stopped it, because a dropped click is worse than a refusal.
+-- No pipe, no port, nothing to fasten to. tg says "Nothing happens.";
+-- we say which rule stopped it, because a dropped click is worse than
+-- a refusal.
+local function refused_with(line)
+    for _, m in ipairs(t.messages(w)) do
+        if m == line then
+            return true
+        end
+    end
+    return false
+end
+
 local _ = t.messages(w)
 t.click(w, 3, 1)
-t.run_seconds(2.5)
-local refused = false
-for _, m in ipairs(t.messages(w)) do
-    if m == "There is no pipe under the floor here." then
-        refused = true
-    end
-end
-assert(refused, "the refusal named the rule")
+t.run_ticks(2)
+assert(refused_with("There is nothing here to fasten it to."),
+    "the refusal named the rule on bare deck")
 assert(not t.ledger_has("StructureStep", "canister", "anchored"),
-    "nothing was bolted to bare deck")
+    "nothing was fastened to bare deck")
 
--- Shove it one further, onto the run again, and the wrench takes.
+-- And the correction itself: one tile further east is charged
+-- distribution main, and it is still not a port. The pipe is right
+-- there under the canister and the wrench does nothing.
 t.move(w, "east")
 t.run_ticks(3)
-assert(t.canister_pressure(4, 1) ~= nil, "it is over the run again")
-local moved = t.canister_pressure(4, 1)
+assert(t.canister_pressure(4, 1) ~= nil, "it is over the run now")
+assert(t.pipe_pressure(4, 1) ~= nil, "on live pipe, at that")
+local _ = t.messages(w)
 t.click(w, 4, 1)
-t.run_seconds(2.5)
+t.run_ticks(2)
+assert(refused_with("There is nothing here to fasten it to."),
+    "a bare run is not a socket")
+assert(not t.ledger_has("StructureStep", "canister", "anchored"),
+    "and nothing was fastened to it")
+
+-- Shove it one further, onto a real port, and the wrench takes --
+-- instantly, again.
+t.move(w, "east")
+t.run_ticks(3)
+assert(t.canister_pressure(5, 1) ~= nil, "it is on the second port")
+local moved = t.canister_pressure(5, 1)
+t.click(w, 5, 1)
+t.run_ticks(1)
 assert(t.ledger_has("StructureStep", "canister", "anchored"),
-    "bolted down on the run it was shoved onto")
+    "fastened to the port it was shoved onto")
 
 t.run_seconds(10)
-local rejoined = t.canister_pressure(4, 1)
+local rejoined = t.canister_pressure(5, 1)
 assert(rejoined < moved - 100.0,
     "and it is feeding the loop from its new tile: "
         .. moved .. " -> " .. rejoined)
