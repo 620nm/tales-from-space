@@ -11,6 +11,19 @@
 // one atmosphere. Nothing else on this station makes air, so the
 // canister is finite and a long breach costs it. Note that 'o' is a
 // power OUTLET, not a vent — it is electrical (docs/power.md).
+//
+// East of the Annex is the EVA vestibule: two airlocks 'E' with three
+// tiles of bare plating between them, so the way out to space is a
+// chamber you empty rather than a hole you open. Shape copied from
+// tgstation's MetaStation "Escape Pod One" (_maps/map_files/
+// MetaStation/MetaStation.dmm, (38,147)-(38,149)): an
+// /obj/machinery/door/airlock/external at each end, three
+// /turf/open/floor/plating between them, hull all the way round. The
+// doors are NOT cycle-linked — tg links them with
+// /obj/effect/mapping_helpers/airlock/cyclelink_helper and this engine
+// has no such mechanic — so closing one before opening the other is
+// crew discipline, not machinery. Close the inner door behind you and
+// the station keeps its air; leave both open and it does not.
 (
     name: "Chillstation 13",
     legend: {
@@ -27,6 +40,11 @@
         'c': (turf: Floor, fixture: Some(Canister)),
         '_': (turf: Plating),
         's': (turf: Space, fixture: Some(Solar)),
+        // An external airlock. Same door the engine spawns for '+',
+        // standing on bare plating instead of a finished tile, because
+        // that is where tg puts one: the vestibule deck is never
+        // tiled.
+        'E': (turf: Plating, fixture: Some(Door)),
     },
     rows: [
         "                              ",
@@ -34,11 +52,11 @@
         "                              ",
         "                              ",
         "    #####################     ",
-        "    #a.l...loV#avl......#     ",
-        "    #...v.....#.........#     ",
-        "    #.........#.........#     ",
-        "    #.........+.........#     ",
-        "    #.........#.....####      ",
+        "    #a.l...loV#avl......##    ",
+        "    #...v.....#.........#_#   ",
+        "    #.........#.........E_E   ",
+        "    #.........+.........#_#   ",
+        "    #.........#.....#### #    ",
         "    #.______c.#.....#         ",
         "    #m..l....v#.....#         ",
         "    ################          ",
@@ -68,6 +86,19 @@
         (17, 9, "glass"),
         (16, 8, "rglass"),
         (17, 8, "screwdriver"),
+        // Six sheets of reinforced glass, two to a pane, for the three
+        // grilles standing between the Annex and the airlock gallery.
+        // tg maps that gallery already glazed (its vestibules are ringed
+        // with /obj/effect/spawner/structure/window/reinforced); here the
+        // frames ship bare and the crew fits the panes, because a
+        // structure a map stands on the deck spawns in its FIRST state
+        // and "bolted" is a grille, not a window.
+        (21, 5, "rglass"),
+        (21, 5, "rglass"),
+        (21, 6, "rglass"),
+        (21, 6, "rglass"),
+        (21, 8, "rglass"),
+        (21, 8, "rglass"),
     ],
     // The socket the supply canister is fastened to. A canister feeds a
     // run through a connector port and through nothing else, so this
@@ -75,6 +106,20 @@
     // a wrench and the distribution loop has no source.
     structures: [
         (12, 10, "connector_port"),
+        // The airlock gallery: a grille wall across the Annex with one
+        // tile of gap at (22, 7), so the way to the inner airlock runs
+        // past a window rather than through open floor. Bare mesh until
+        // somebody fits the reinforced panes stacked beside it.
+        //
+        // Note what these grilles are NOT: a hull. A glazed grille is
+        // dense and see-through, and that is all — the matter graph
+        // links cells by TURF, so gas crosses a window tile freely.
+        // That is why this wall stands between two halves of one
+        // pressurised room, where a leak is unobservable, and why the
+        // vestibule's viewport onto space is walls instead of glass.
+        (22, 5, "grille"),
+        (22, 6, "grille"),
+        (22, 8, "grille"),
     ],
     cables: [
         (5, 16, 1), (6, 16, 1), (7, 16, 1), (8, 16, 1), (9, 16, 1), (10, 16, 1),
@@ -86,6 +131,19 @@
         (12, 5, 2), (13, 5, 2), (13, 6, 2), (13, 7, 2), (13, 8, 2), (13, 9, 2),
         (13, 10, 2), (13, 11, 2), (12, 11, 2), (11, 11, 2), (10, 11, 2),
         (9, 11, 2), (8, 11, 2), (8, 6, 2),
+        // The vestibule's own feeder spur, layer 1, from the Annex's APC
+        // tile along the top of the room and down to both airlocks. It
+        // is a FEEDER tap, not a branch: a door with live L1 under its
+        // own tile is powered whatever its area's APC is doing
+        // (docs/power.md, "direct feeder tap > nearest adjacent branch
+        // feed"). That is deliberate and it is tg's instinct too — the
+        // way off a station should not stop working because somebody
+        // flipped the breaker on the room next to it. The Annex's own
+        // lights and vent still wait for the branch circuit nobody has
+        // run yet.
+        (16, 5, 1), (17, 5, 1), (18, 5, 1), (19, 5, 1), (20, 5, 1),
+        (21, 5, 1), (22, 5, 1), (23, 5, 1), (23, 6, 1), (23, 7, 1),
+        (24, 7, 1), (25, 7, 1), (26, 7, 1),
     ],
     // The distribution run, layer 3 (bit 4) — tg's distro loop. It
     // starts at the canister (12, 10), crosses the Commons under the
