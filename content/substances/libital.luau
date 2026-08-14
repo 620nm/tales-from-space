@@ -1,5 +1,5 @@
 -- The brute-healing workhorse (tg's libital, in spirit — tg's unit
--- economy doesn't map to moles, so the numbers are ss13rs-calibrated:
+-- economy doesn't map to moles, so the numbers are lunatic-calibrated:
 -- one 0.15 mol beaker heals ~75 brute over ~100 s).
 return {
     id = "libital",
