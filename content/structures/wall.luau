@@ -2,10 +2,10 @@
 -- slicing_duration (walls.dm), copied deliberately: feel parity is the
 -- point, not an improvement.
 --
--- A sliced wall is its parts again -- plating underfoot, two sheets
--- loose, and the girder left standing. The girder half is not written
--- here because a turf product cannot also raise an entity; until that
--- gap closes the interpreter owes it.
+-- A sliced wall is its parts again: plating underfoot, the girder left
+-- standing, two sheets loose on the floor. `leaves` is the girder
+-- because a girder is a structure, not a stack -- refunding it as
+-- material would make it something you carry in a pocket.
 return {
     id = "wall",
     name = "wall",
@@ -17,6 +17,7 @@ return {
             secs = 10.0,
             fuel = 2.0,
             into = "turf:plating",
+            leaves = "girder",
             yields = { metal = 2 },
             start = "You start slicing the wall apart.",
             done = "The wall comes apart.",
