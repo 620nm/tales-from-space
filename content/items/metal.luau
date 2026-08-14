@@ -4,6 +4,32 @@
 -- the build menu, five sheets box up into a machine frame (8 s) that
 -- waits for a circuit board. The engine validates reach, occupancy,
 -- structures, and the stack; the seam ledgers every step.
+
+-- One build step, checked twice. ctx.can_construct IS the engine's own
+-- completion validator, so refusing before the work starts refuses for
+-- exactly the reason the seam would refuse at the end — no more four
+-- seconds of welding that quietly produce nothing. The second call
+-- catches the world moving under a job in progress: someone steps onto
+-- the tile, another builder finishes the same girder first.
+local function build(ctx, item, user, x, y, kind, secs, starting)
+    local why = ctx.can_construct(user, item, x, y, kind)
+    if why then
+        ctx.system_msg(user, why)
+        return
+    end
+    ctx.system_msg(user, starting)
+    if not ctx.do_after(user, secs) then
+        ctx.system_msg(user, "You stop building.")
+        return
+    end
+    why = ctx.can_construct(user, item, x, y, kind)
+    if why then
+        ctx.system_msg(user, why)
+        return
+    end
+    ctx.construct(item, x, y, kind)
+end
+
 return {
     id = "metal",
     name = "metal sheets",
@@ -35,26 +61,14 @@ return {
             return "pass" -- not a build site; native click handling continues
         end
         if choice == "frame" then
-            ctx.system_msg(user, "You start assembling a machine frame.")
-            if ctx.do_after(user, 8.0) then
-                ctx.construct(self, x, y, "frame")
-            else
-                ctx.system_msg(user, "You stop building.")
-            end
+            build(ctx, self, user, x, y, "frame", 8.0,
+                "You start assembling a machine frame.")
         elseif ctx.girder(x, y) then
-            ctx.system_msg(user, "You start plating the girder into a wall.")
-            if ctx.do_after(user, 4.0) and ctx.girder(x, y) then
-                ctx.construct(self, x, y, "wall")
-            else
-                ctx.system_msg(user, "You stop building.")
-            end
+            build(ctx, self, user, x, y, "wall", 4.0,
+                "You start plating the girder into a wall.")
         else
-            ctx.system_msg(user, "You start assembling a girder.")
-            if ctx.do_after(user, 4.0) and not ctx.girder(x, y) then
-                ctx.construct(self, x, y, "girder")
-            else
-                ctx.system_msg(user, "You stop building.")
-            end
+            build(ctx, self, user, x, y, "girder", 4.0,
+                "You start assembling a girder.")
         end
     end,
 }
