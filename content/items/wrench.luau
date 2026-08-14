@@ -29,6 +29,7 @@ return {
     name = "wrench",
     sprite = "wrench",
     inhand_sprite = { "held_wrench_l", "held_wrench_r" },
+    stowed_sprite = "belt_wrench",
     tool = "wrench",
     on_use = function(ctx, self, user, x, y)
         -- Asked before the pipe question, so a covered tile answers the

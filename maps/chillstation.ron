@@ -34,7 +34,6 @@
         'a': (turf: Floor, fixture: Some(Apc)),
         'l': (turf: Floor, fixture: Some(Light)),
         'o': (turf: Floor, fixture: Some(Outlet)),
-        'V': (turf: Floor, fixture: Some(Vendor)),
         'm': (turf: Floor, fixture: Some(Smes)),
         'v': (turf: Floor, fixture: Some(Vent)),
         'c': (turf: Floor, fixture: Some(Canister)),
@@ -52,7 +51,7 @@
         "                              ",
         "                              ",
         "    #####################     ",
-        "    #a.l...loV#avl......##    ",
+        "    #a.l...lo.#avl......##    ",
         "    #...v.....#.........#_#   ",
         "    #.........#.........E_E   ",
         "    #.........+.........#_#   ",
@@ -80,6 +79,7 @@
         (19, 10, "floor_tile"),
         (19, 11, "floor_tile"),
         (18, 9, "vendor_board"),
+        (19, 8, "tool_vendor_board"),
         (19, 9, "tv_board"),
         // Glazing stock: the Annex is where you learn windows.
         (16, 9, "rod"),
@@ -125,6 +125,14 @@
         (22, 5, "grille"),
         (22, 6, "grille"),
         (22, 8, "grille"),
+    ],
+    // The Commons' two vending machines, standing finished at
+    // roundstart. Both are corded, and the outlet at (12, 5) is the
+    // socket both are plugged into -- unplug the Commons and the
+    // shopping stops, which is the point of corded appliances.
+    machines: [
+        (13, 5, "vendor"),
+        (13, 6, "tool_vendor"),
     ],
     cables: [
         (5, 16, 1), (6, 16, 1), (7, 16, 1), (8, 16, 1), (9, 16, 1), (10, 16, 1),

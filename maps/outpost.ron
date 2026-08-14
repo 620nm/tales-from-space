@@ -14,7 +14,6 @@
         's': (turf: Floor, fixture: Some(SecureDoor)),
         'a': (turf: Floor, fixture: Some(Apc)),
         'l': (turf: Floor, fixture: Some(Light)),
-        'V': (turf: Floor, fixture: Some(Vendor)),
         'o': (turf: Floor, fixture: Some(Outlet)),
         'G': (turf: Floor, fixture: Some(Generator)),
         'M': (turf: Floor, fixture: Some(Smes)),
@@ -28,7 +27,7 @@
         "  ####+####....#######    ",
         "  #l.a....+....+....l#    ",
         "  #.......#....#G...M#    ",
-        "  #.....oV#.o.a#..a.o#    ",
+        "  #.....o.#.o.a#..a.o#    ",
         "  #########+##########    ",
         "                          ",
     ],
@@ -50,6 +49,10 @@
         (3, 7, "wirecutters"),
         (4, 3, "id_engineering"),
         (5, 2, "beaker_libital"),
+    ],
+    // The softdrinks machine, plugged into the outlet beside it.
+    machines: [
+        (9, 8, "vendor"),
     ],
     cables: [
         (3, 2, 3),

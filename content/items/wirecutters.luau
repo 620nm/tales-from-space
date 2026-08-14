@@ -14,6 +14,8 @@ return {
     name = "wirecutters",
     sprite = "wirecutters",
     inhand_sprite = { "held_wirecutters_l", "held_wirecutters_r" },
+    -- tg's belt sheet calls these "cutters", so the picture does too.
+    stowed_sprite = "belt_cutters",
     -- The equipment class targets dispatch on; no tank, nothing to burn.
     tool = "cutters",
     on_use = function(ctx, self, user, x, y)
