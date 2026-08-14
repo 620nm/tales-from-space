@@ -36,8 +36,8 @@ t.run_ticks(2)
 t.click(p, 2, 2)
 t.run_seconds(1.5)
 assert(t.ledger_has("StructureStep", "grille", "built"), "the grille stands")
-
--- Glass fills it. The grille is still there underneath: the step moves
+-- A built grille arrives fastened down, as tg's does; glazing an
+-- unfastened one is refused, which is why the state is named for it. The grille is still there underneath: the step moves
 -- it to a state, it does not replace the thing.
 --
 -- Note the drop: a click while holding a material BUILDS rather than
@@ -59,8 +59,35 @@ t.click(p, 1, 1)
 t.run_ticks(2)
 t.click(p, 2, 2)
 t.run_seconds(2.5)
-assert(t.ledger_has("StructureStep", "grille", "bare"), "the pane came out")
+assert(t.ledger_has("StructureStep", "grille", "bolted"), "the pane came out")
 assert(t.count_items("glass") > 0, "the sheets came back")
+
+-- An unfastened grille takes no glass: tg refuses with "needs to be
+-- fastened to the floor first", and so does this. The screwdriver
+-- toggle is what makes the state worth having -- and while it is
+-- loose, it is also a thing you can shove.
+t.drop(p)
+t.run_ticks(2)
+t.click(p, 1, 2) -- the screwdriver
+t.run_ticks(2)
+t.click(p, 2, 2) -- unfasten
+t.run_ticks(4)
+assert(t.ledger_has("StructureStep", "grille", "unbolted"), "it came loose")
+
+t.drop(p)
+t.run_ticks(2)
+t.click(p, 2, 2) -- the sheets the crowbar just handed back, on that tile
+t.run_ticks(2)
+local _ = t.messages(p)
+t.click(p, 2, 2)
+t.run_ticks(4)
+local gated = false
+for _, m in ipairs(t.messages(p)) do
+    if m == "The grille must be bolted first." then
+        gated = true
+    end
+end
+assert(gated, "glass refuses an unfastened grille, and says so")
 
 -- Scenario 2: reinforced glass is bolted in, and a crowbar alone will
 -- not shift it. That refusal is the whole reason to spend the sheets.

@@ -15,7 +15,13 @@ return {
     sprite = "grille",
     dense = true,
     opaque = false,
-    states = { "bare", "glazed", "reinforced", "loosened" },
+    -- States are adjectives because the engine composes refusals out of
+    -- them: "The grille must be bolted first." reads as English only if
+    -- the state is named like one.
+    states = { "bolted", "unbolted", "glazed", "reinforced", "loosened" },
+    -- An unfastened grille is not held to the deck, so it shoves like
+    -- any other loose thing -- the same marker the girder work added.
+    loose = { "unbolted" },
     state_sprites = {
         glazed = { "grille", "window" },
         -- Unscrewed but still in its frame: the pane looks the same
@@ -32,8 +38,32 @@ return {
         done = "The grille stands.",
     },
     transitions = {
+        -- tg gates glazing on the grille being fastened down
+        -- (grille.dm: "needs to be fastened to the floor first!"), and
+        -- a screwdriver toggles that at no delay.
         {
-            at = "bare",
+            at = "bolted",
+            tool = "screwdriver",
+            to = "unbolted",
+            done = "You unfasten the grille from the floor.",
+        },
+        {
+            at = "unbolted",
+            tool = "screwdriver",
+            to = "bolted",
+            done = "You fasten the grille to the floor.",
+        },
+        {
+            at = "unbolted",
+            tool = "cutters",
+            secs = 1.0,
+            yields = { rod = 2 },
+            gone = true,
+            start = "You start snipping the grille apart.",
+            done = "The grille comes apart.",
+        },
+        {
+            at = "bolted",
             with = { glass = 2 },
             secs = 2.0,
             to = "glazed",
@@ -41,17 +71,17 @@ return {
             done = "The window settles into its frame.",
         },
         {
-            at = "bare",
+            at = "bolted",
             with = { rglass = 2 },
             secs = 2.0,
             to = "reinforced",
             start = "You start fitting the reinforced pane.",
             done = "The reinforced window settles into its frame.",
         },
-        -- Only a bare grille comes apart: the glass goes first, or the
-        -- rods would come out from under a standing pane.
+        -- Only an empty grille comes apart: the glass goes first, or
+        -- the rods would come out from under a standing pane.
         {
-            at = "bare",
+            at = "bolted",
             tool = "cutters",
             secs = 1.0,
             yields = { rod = 2 },
@@ -64,7 +94,7 @@ return {
             tool = "crowbar",
             secs = 2.0,
             yields = { glass = 2 },
-            to = "bare",
+            to = "bolted",
             start = "You start prying the pane out.",
             done = "The pane comes free.",
         },
@@ -92,7 +122,7 @@ return {
             tool = "crowbar",
             secs = 4.0,
             yields = { rglass = 2 },
-            to = "bare",
+            to = "bolted",
             start = "You start prying the reinforced pane out.",
             done = "The reinforced pane comes free.",
         },
