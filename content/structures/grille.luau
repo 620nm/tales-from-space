@@ -41,6 +41,26 @@ return {
     -- An unfastened grille is not held to the deck, so it shoves like
     -- any other loose thing -- the same marker the girder work added.
     loose = { "unbolted" },
+    -- Glass stops air. tg says this in window.dm:405 (`can_atmos_pass`
+    -- returns false for a window that is anchored, dense and fulltile),
+    -- and it is why a station can have a viewport at all: without it a
+    -- window in a hull is a hole you happen to be able to see through.
+    --
+    -- Every glass-bearing state is listed, including the ones partway
+    -- through disassembly. That is deliberate and it is tg's answer
+    -- too: the pane is still standing in the frame until the step that
+    -- hands it back as sheets. Half a minute of unscrewing a hull
+    -- window is half a minute in which the room keeps its air -- and
+    -- then does not.
+    airtight = {
+        "glazed",
+        "unsealed",
+        "reinforced",
+        "heated",
+        "unscrewed",
+        "popped",
+        "cut",
+    },
     state_sprites = {
         glazed = { "grille", "window" },
         unsealed = { "grille", "window" },
