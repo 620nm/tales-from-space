@@ -66,3 +66,4 @@ t.drop(p)        -- drop the torch mid-count
 t.run_seconds(4.5)
 assert(t.is_breached(1, 1), "no welder, no seal")
 assert(t.ledger_has("DoAfterInterrupted"), "the guard caught the drop")
+
