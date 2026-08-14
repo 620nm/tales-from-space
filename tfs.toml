@@ -1,0 +1,16 @@
+# Tales from Space — mod manifest. Inert today: the engine does not yet
+# parse this file; it reserves the identity and layout for the mod loader
+# (docs/SCRIPTING.md §5.1 mod identity, §9 permissions). The id is
+# vendor/mod — the vendor is the authoring group, which shares its name
+# with the engine; the word "lunatic" otherwise names the engine only.
+
+[mod]
+id = "lunatic/tfs"
+name = "Tales from Space"
+version = "0.1.0"
+
+[paths]
+content = "content"
+maps = "maps"
+assets = "assets"
+tests = "tests"
