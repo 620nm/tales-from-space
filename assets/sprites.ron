@@ -17,6 +17,7 @@
         ("plating", Dmi("turf/floors.dmi", "plating", 0)),
         ("wall", Dmi("turf/walls/wall.dmi", "wall-0", 0)),
         ("girder", Dmi("obj/structures.dmi", "girder", 0)),
+        ("girder_displaced", Dmi("obj/structures.dmi", "displaced", 0)),
         ("frame", Dmi("obj/devices/stock_parts.dmi", "box_0", 0)),
         ("board", Dmi("obj/devices/circuitry_n_data.dmi", "mainboard", 0)),
         ("door", Dmi("obj/doors/airlocks/station/public.dmi", "closed", 0)),
