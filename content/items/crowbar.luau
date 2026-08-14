@@ -14,6 +14,8 @@ return {
     on_use = function(ctx, self, user, x, y)
         local door = ctx.door(x, y)
         if door == nil and ctx.turf(x, y) == "floor" then
+            -- The quick pop, not the heave: tg's pry_tile calls
+            -- play_tool_sound, which is `usesound` (crowbar.ogg).
             ctx.sound("crowbar", x, y)
             ctx.pry_tile(x, y)
             ctx.system_msg(user, "You pry up the floor tile.")
@@ -22,7 +24,9 @@ return {
         if door == nil or door.open or door.powered then
             return "pass"
         end
-        ctx.sound("crowbar", x, y)
+        -- The sustained heave: tg's `operating_sound`, played while
+        -- forcing something open (crowbar_prying.ogg).
+        ctx.sound("crowbar_pry", x, y)
         ctx.system_msg(user, "You jam the crowbar into the airlock and heave...")
         if ctx.do_after(user, 2.5) then
             local d = ctx.door(x, y)
