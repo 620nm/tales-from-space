@@ -5,6 +5,7 @@ return {
     id = "toolbox",
     name = "mechanical toolbox",
     sprite = "toolbox",
+    inhand_sprite = { "held_toolbox_l", "held_toolbox_r" },
     storage = 7,
     holds = { "welder", "crowbar", "wirecutters", "screwdriver", "wrench", "cable_coil" },
     on_attack = function(ctx, self, user, target)

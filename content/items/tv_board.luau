@@ -7,5 +7,6 @@ return {
     id = "tv_board",
     name = "machine board (television)",
     sprite = "board",
+    inhand_sprite = { "held_board_l", "held_board_r" },
     board = { machine = "tv" },
 }

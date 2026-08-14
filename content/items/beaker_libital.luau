@@ -4,6 +4,7 @@ return {
     id = "beaker_libital",
     name = "beaker (libital)",
     sprite = "beaker",
+    inhand_sprite = { "held_beaker_l", "held_beaker_r" },
     contents = { water = 0.20, libital = 0.15 },
     on_use = function(ctx, self, user, x, y)
         local px, py = ctx.pos(user)
