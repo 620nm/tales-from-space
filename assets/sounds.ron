@@ -13,4 +13,8 @@
     ("ratchet", "items/tools/ratchet.ogg"),
     ("drink", "items/drink.ogg"),
     ("hiss", "machines/hiss.ogg"),
+    // A tube going through: tg's break_light_tube plays glasshit.ogg,
+    // and the light replacer clicks (lightreplacer.dm:263).
+    ("glass_break", "effects/glass/glasshit.ogg"),
+    ("click", "machines/click.ogg"),
 ]

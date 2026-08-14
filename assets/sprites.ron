@@ -145,6 +145,36 @@
         ("light_off_n", Dmi("obj/lighting.dmi", "tube", 1)),
         ("light_off_e", Dmi("obj/lighting.dmi", "tube", 2)),
         ("light_off_w", Dmi("obj/lighting.dmi", "tube", 3)),
+        // The other three sockets tg draws (light.dm's update_icon_state
+        // switch): shattered glass, an empty fitting, a burned-out tube.
+        // None of them glow, so none of them wear the emissive overlay.
+        ("light_broken", Dmi("obj/lighting.dmi", "tube-broken", 0)),
+        ("light_broken_s", Dmi("obj/lighting.dmi", "tube-broken", 0)),
+        ("light_broken_n", Dmi("obj/lighting.dmi", "tube-broken", 1)),
+        ("light_broken_e", Dmi("obj/lighting.dmi", "tube-broken", 2)),
+        ("light_broken_w", Dmi("obj/lighting.dmi", "tube-broken", 3)),
+        ("light_empty", Dmi("obj/lighting.dmi", "tube-empty", 0)),
+        ("light_empty_s", Dmi("obj/lighting.dmi", "tube-empty", 0)),
+        ("light_empty_n", Dmi("obj/lighting.dmi", "tube-empty", 1)),
+        ("light_empty_e", Dmi("obj/lighting.dmi", "tube-empty", 2)),
+        ("light_empty_w", Dmi("obj/lighting.dmi", "tube-empty", 3)),
+        ("light_burned", Dmi("obj/lighting.dmi", "tube-burned", 0)),
+        ("light_burned_s", Dmi("obj/lighting.dmi", "tube-burned", 0)),
+        ("light_burned_n", Dmi("obj/lighting.dmi", "tube-burned", 1)),
+        ("light_burned_e", Dmi("obj/lighting.dmi", "tube-burned", 2)),
+        ("light_burned_w", Dmi("obj/lighting.dmi", "tube-burned", 3)),
+        // The loose glass a fitting takes, and the janitor's device
+        // that fits it for you (tg lighting.dmi "ltube"/"lbulb",
+        // service/janitor.dmi "lightreplacer").
+        ("light_tube", Dmi("obj/lighting.dmi", "ltube", 0)),
+        ("light_bulb", Dmi("obj/lighting.dmi", "lbulb", 0)),
+        ("light_replacer", Dmi("obj/service/janitor.dmi", "lightreplacer", 0)),
+        // A cardboard box wearing its contents label, tg's
+        // `illustration` overlay (service_boxes.dm:114).
+        ("box_lights", DmiLayers([
+            ("obj/storage/box.dmi", "box"),
+            ("obj/storage/box.dmi", "lightmixed"),
+        ], 0)),
         // Same shape as the screwdriver: coloured grips, steel jaws
         // (wirecutters.json). tg colours these COLOR_RED.
         ("wirecutters", DmiBlend(
