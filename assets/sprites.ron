@@ -20,10 +20,18 @@
         ("girder_displaced", Dmi("obj/structures.dmi", "displaced", 0)),
         ("frame", Dmi("obj/devices/stock_parts.dmi", "box_0", 0)),
         ("board", Dmi("obj/devices/circuitry_n_data.dmi", "mainboard", 0)),
+        // An airlock has four appearances, not two: the two rests and
+        // the two swings between them. tg's `update_icon_state` appends
+        // AIRLOCK_FRAME_OPENING/CLOSING while the door is operating
+        // (airlock.dm:556), and each swing is six frames of a tenth.
         ("door", Dmi("obj/doors/airlocks/station/public.dmi", "closed", 0)),
         ("door_open", Dmi("obj/doors/airlocks/station/public.dmi", "open", 0)),
+        ("door_opening", DmiAnim("obj/doors/airlocks/station/public.dmi", "opening", 0)),
+        ("door_closing", DmiAnim("obj/doors/airlocks/station/public.dmi", "closing", 0)),
         ("door_eng", Dmi("obj/doors/airlocks/station/engineering.dmi", "closed", 0)),
         ("door_eng_open", Dmi("obj/doors/airlocks/station/engineering.dmi", "open", 0)),
+        ("door_eng_opening", DmiAnim("obj/doors/airlocks/station/engineering.dmi", "opening", 0)),
+        ("door_eng_closing", DmiAnim("obj/doors/airlocks/station/engineering.dmi", "closing", 0)),
         ("apc", Dmi("obj/machines/wallmounts.dmi", "apc0", 0)),
         ("apc_s", Dmi("obj/machines/wallmounts.dmi", "apc0", 0)),
         ("apc_n", Dmi("obj/machines/wallmounts.dmi", "apc0", 0)),
@@ -149,7 +157,15 @@
         ("beaker", Dmi("obj/medical/chemical.dmi", "beaker", 0)),
         ("ghost", Dmi("mob/human/species/ghost.dmi", "ghost_base", 0)),
         ("solar", Dmi("obj/machines/solar.dmi", "solar_panel_glass", 0)),
-        ("vent_on", Dmi("obj/machines/atmospherics/unary_devices.dmi", "vent_out", 0)),
+        // The fan, by what it is actually doing. Blowing and siphoning
+        // are the two running loops (tg's `vent_[pump_direction ?
+        // "out" : "in"]`); the spin-up and spin-down are one-shots the
+        // machine plays on the power edges (vent_pump.dm's
+        // flick("vent_out-starting") / flick("vent_out-shutdown")).
+        ("vent_on", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "vent_out", 0)),
+        ("vent_siphon", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "vent_in", 0)),
+        ("vent_starting", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "vent_out-starting", 0)),
+        ("vent_shutdown", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "vent_out-shutdown", 0)),
         ("vent_off", Dmi("obj/machines/atmospherics/unary_devices.dmi", "vent_off", 0)),
         ("vent_passive", Dmi("obj/machines/atmospherics/unary_devices.dmi", "passive_vent", 0)),
         // The connector port: tg's `portables_connector`, a pipe fitting

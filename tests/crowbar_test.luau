@@ -31,8 +31,10 @@ t.tick()
 assert(t.door_at(3, 1).powered, "the shipped grid feeds this door")
 t.click(p, 3, 1)
 t.tick()
+assert(not t.door_at(3, 1).open, "the airlock is still swinging")
+t.run_ticks(12) -- the swing: tg's 0.6 seconds
 assert(t.door_at(3, 1).open, "powered doors ignore the crowbar")
-t.run_ticks(65) -- DOOR_AUTOCLOSE_TICKS + change
+t.run_ticks(90) -- the swing + DOOR_AUTOCLOSE_TICKS + change
 assert(not t.door_at(3, 1).open, "autoclosed")
 
 -- Kill the power: the same click starts a pry do_after instead.
