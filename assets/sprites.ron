@@ -90,6 +90,18 @@
         ("outlet_w", Dmi("obj/pipes_n_cables/structures.dmi", "term", 3)),
         ("generator", Dmi("obj/machines/engine/other.dmi", "portgen0_0", 0)),
         ("smes", Dmi("obj/machines/engine/other.dmi", "smes", 0)),
+        // SMES display lamps (tg smes.dm update_overlays): an output
+        // lamp, an input lamp, and a five-segment charge bar. All of
+        // them glow, so all of them are emissive.
+        ("smes_out0", Dmi("obj/machines/engine/other.dmi", "smes-op0", 0)),
+        ("smes_out1", Dmi("obj/machines/engine/other.dmi", "smes-op1", 0)),
+        ("smes_in0", Dmi("obj/machines/engine/other.dmi", "smes-oc0", 0)),
+        ("smes_in1", Dmi("obj/machines/engine/other.dmi", "smes-oc1", 0)),
+        ("smes_chg1", Dmi("obj/machines/engine/other.dmi", "smes-og1", 0)),
+        ("smes_chg2", Dmi("obj/machines/engine/other.dmi", "smes-og2", 0)),
+        ("smes_chg3", Dmi("obj/machines/engine/other.dmi", "smes-og3", 0)),
+        ("smes_chg4", Dmi("obj/machines/engine/other.dmi", "smes-og4", 0)),
+        ("smes_chg5", Dmi("obj/machines/engine/other.dmi", "smes-og5", 0)),
         ("light_on", DmiLayers([
             ("obj/lighting.dmi", "tube"),
             ("obj/lighting_overlay.dmi", "tube"),
@@ -462,6 +474,15 @@
         ("outlet_w", -25, 0),
     ],
     emissive: [
+        "smes_out0",
+        "smes_out1",
+        "smes_in0",
+        "smes_in1",
+        "smes_chg1",
+        "smes_chg2",
+        "smes_chg3",
+        "smes_chg4",
+        "smes_chg5",
         "canister_g0",
         "canister_g1",
         "canister_g2",
