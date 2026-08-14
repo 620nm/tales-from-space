@@ -40,6 +40,10 @@ assert(ui.payload.config.interface.name == "Vending",
     "tg's Vending window, got " .. tostring(ui.payload.config.interface.name))
 assert(ui.payload.data.product_records[1].ref == "cola",
     "cola heads the product list")
+assert(ui.payload.data.product_records[1].path == "atlas-cola-cola",
+    "the shelf points tg's spritesheet class at cola's atlas art")
+assert(ui.payload.data.stock["atlas-cola-cola"].amount == 99,
+    "stock uses the same unique icon path as the product row")
 
 -- act('vend') dispenses; the ledger names the player, not a script.
 assert(t.count_items("cola") == 0)

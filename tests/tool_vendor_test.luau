@@ -45,6 +45,8 @@ for _, rec in ipairs(ui.payload.data.product_records) do
 end
 assert(shelf.crowbar and shelf.crowbar.category == "Tools",
     "the crowbar is on the shelf under Tools")
+assert(shelf.cable_coil.path == "atlas-coil-cable_coil",
+    "item ids that differ from their sprite still select their atlas art")
 assert(shelf.toolbelt, "and so is the toolbelt")
 assert(shelf.cola == nil, "the tool vendor does not sell cola")
 
