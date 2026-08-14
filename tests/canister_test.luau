@@ -204,3 +204,115 @@ assert(
     later < sealed + 5.0,
     "an empty canister repressurises nothing: " .. sealed .. " -> " .. later
 )
+
+-- ---------------------------------------------------------------
+-- A canister is PORTABLE, and the bolts are the plumbing.
+--
+-- tg's portable atmos devices (portable/portable_atmospherics.dm)
+-- start unanchored, wrench onto a connector port, and `Move()`
+-- disconnects them. The connector is not a machine -- it is a pipe
+-- fitting under the floor whose only trick is adding the device's air
+-- to the pipeline -- so the run under the tile is the port here.
+--
+-- The room below is sealed and already at one atmosphere, which makes
+-- the reading unambiguous: a canister that is feeding anything is
+-- feeding the RUN, because the room has no demand. The run's far end
+-- is a vent over open space, so as long as the canister is bolted to
+-- the run it is pouring its air into the void and the gauge falls.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "portable",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Floor),
+        '#': (turf: Wall),
+        'v': (turf: Plating, fixture: Some(Vent)),
+        'c': (turf: Floor, fixture: Some(Canister)),
+    },
+    rows: [
+        "######### ",
+        "#.c.....#v",
+        "#.......# ",
+        "######### ",
+    ],
+    spawns: [(1, 1)],
+    items: [(1, 2, "wrench")],
+    // The run reaches the vent by going AROUND (3, 1): that tile is
+    // bare deck with nothing under it, so the canister can be stood
+    // somewhere unplumbed without the net being cut in two.
+    pipes: [
+        (1, 1, 4), (2, 1, 4), (2, 2, 4), (3, 2, 4), (4, 2, 4),
+        (4, 1, 4), (5, 1, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4), (9, 1, 4),
+    ],
+)]==], 7)
+
+local w = t.join()
+t.tick()
+t.click(w, 1, 2) -- the wrench
+t.run_ticks(2)
+
+-- Bolted down over the run: it is feeding the leak, and you can watch
+-- it happen on the gauge.
+local before = t.canister_pressure(2, 1)
+assert(before ~= nil, "the canister is where the map put it")
+t.run_seconds(10)
+local bolted = t.canister_pressure(2, 1)
+assert(bolted < before - 100.0,
+    "a bolted canister feeds the run: " .. before .. " -> " .. bolted)
+
+-- Two seconds of wrenching takes it off the bolts -- and off the loop.
+t.click(w, 2, 1)
+t.run_seconds(2.5)
+assert(t.ledger_has("StructureStep", "canister", "displaced"),
+    "the wrench came off the bolts")
+
+-- Read the gauge the moment the bolts are out: the seconds spent
+-- wrenching are seconds it was still connected and still paying.
+local off = t.canister_pressure(2, 1)
+t.run_seconds(10)
+local loose = t.canister_pressure(2, 1)
+assert(math.abs(loose - off) < 1.0,
+    "unbolted, it feeds nothing: " .. off .. " -> " .. loose)
+assert(t.pipe_pressure(2, 1) < 20.0,
+    "and the run it left is emptying into space: " .. t.pipe_pressure(2, 1))
+
+-- Loose means loose. Walk into it and it gives way (see
+-- movement.rs::shove -- tg would have you PULL it), and the tile it
+-- lands on has nothing under the floor.
+t.move(w, "east")
+t.run_ticks(3)
+assert(t.canister_pressure(2, 1) == nil, "it is not where it was")
+assert(t.canister_pressure(3, 1) ~= nil, "it is one tile east")
+assert(t.ledger_has("StructureStep", "canister", "pushed"),
+    "and the shove is on the record")
+
+-- No pipe, no port, no bolts. tg says "Nothing happens."; we say which
+-- rule stopped it, because a dropped click is worse than a refusal.
+local _ = t.messages(w)
+t.click(w, 3, 1)
+t.run_seconds(2.5)
+local refused = false
+for _, m in ipairs(t.messages(w)) do
+    if m == "There is no pipe under the floor here." then
+        refused = true
+    end
+end
+assert(refused, "the refusal named the rule")
+assert(not t.ledger_has("StructureStep", "canister", "anchored"),
+    "nothing was bolted to bare deck")
+
+-- Shove it one further, onto the run again, and the wrench takes.
+t.move(w, "east")
+t.run_ticks(3)
+assert(t.canister_pressure(4, 1) ~= nil, "it is over the run again")
+local moved = t.canister_pressure(4, 1)
+t.click(w, 4, 1)
+t.run_seconds(2.5)
+assert(t.ledger_has("StructureStep", "canister", "anchored"),
+    "bolted down on the run it was shoved onto")
+
+t.run_seconds(10)
+local rejoined = t.canister_pressure(4, 1)
+assert(rejoined < moved - 100.0,
+    "and it is feeding the loop from its new tile: "
+        .. moved .. " -> " .. rejoined)
