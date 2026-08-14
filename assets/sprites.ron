@@ -742,6 +742,16 @@
         ("outlet_e", 25, 0),
         ("outlet_w", -25, 0),
     ],
+    // tg's belt-content sheet is composed around the dropped belt,
+    // whose top is y=10. The worn belt starts at y=18, so the same
+    // details move down eight pixels only when they ride a mob.
+    worn_offsets: [
+        ("belt_screwdriver", 0, 8),
+        ("belt_wrench", 0, 8),
+        ("belt_crowbar", 0, 8),
+        ("belt_cutters", 0, 8),
+        ("belt_multitool", 0, 8),
+    ],
     emissive: [
         "smes_out0",
         "smes_out1",
