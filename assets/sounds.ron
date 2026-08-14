@@ -6,5 +6,6 @@
     ("airlock_open", "machines/airlock/airlockopen.ogg"),
     ("airlock_close", "machines/airlock/airlockclose.ogg"),
     ("wirecutter", "items/tools/wirecutter_cut.ogg"),
+    ("ratchet", "items/tools/ratchet.ogg"),
     ("drink", "items/drink.ogg"),
 ]
