@@ -23,17 +23,34 @@
 -- Two seconds each way, which is tg's atmospherics wrench (its
 -- `can_unwrench` path runs a do_after). The canister that fastens to
 -- this is instant; laying the plumbing is not.
+-- The stub is the whole of the port's connection to the run. Josh's
+-- rule: it joins the pipe network THROUGH its visible pipe stub, not
+-- through its four sides. tg says the same thing in one line -- a unary
+-- atmospherics component's `initialize_directions` IS its dir
+-- (components/unary_devices/unary_devices.dm:14) -- so a port aimed at
+-- bare deck feeds nothing, whatever is laid on its other three sides.
+-- Bolted down it points somewhere; unbolted it has no stub at all,
+-- which is why only `anchored` has facing pictures (tg's loose
+-- `connector` state is `dirs = 1`).
 return {
     id = "connector_port",
     name = "connector port",
-    sprite = "connector_port",
+    sprite = "connector_port_s",
     fitting = true,
+    stub = true,
+    facing_sprites = {
+        anchored = {
+            north = "connector_port_n",
+            south = "connector_port_s",
+            east = "connector_port_e",
+            west = "connector_port_w",
+        },
+    },
     -- Under the deck: you walk over a port, you do not walk around it.
     dense = false,
     states = { "anchored", "displaced" },
     loose = { "displaced" },
     state_sprites = {
-        anchored = "connector_port",
         displaced = "connector_port_loose",
     },
     transitions = {
