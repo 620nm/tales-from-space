@@ -1,7 +1,7 @@
--- Anchors and unanchors. Nothing in the shipped chain calls for it yet;
--- it exists because a toolbox without one is not a toolbox, and because
--- the first structure that wants anchoring should not also have to
--- invent the tool.
+-- Anchors and unanchors. A girder bolts to the deck under it (4 s,
+-- tg's rate) and comes loose the same way -- and a loose girder is one
+-- a crewmate can shove across the room, which is the whole reason the
+-- distinction is worth having.
 return {
     id = "wrench",
     name = "wrench",
