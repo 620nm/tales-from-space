@@ -4,4 +4,5 @@ return {
     id = "headset",
     name = "radio headset",
     sprite = "headset",
+    inhand_sprite = { "held_headset_l", "held_headset_r" },
 }

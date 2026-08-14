@@ -5,6 +5,7 @@ return {
     id = "cola",
     name = "can of Space Cola",
     sprite = "cola",
+    inhand_sprite = { "held_cola_l", "held_cola_r" },
     contents = { water = 0.30, sugar = 0.06 },
     on_use = function(ctx, self, user, x, y)
         local px, py = ctx.pos(user)

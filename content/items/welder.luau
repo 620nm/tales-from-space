@@ -8,6 +8,7 @@ return {
     id = "welder",
     name = "welding tool",
     sprite = "welder",
+    inhand_sprite = { "held_welder_l", "held_welder_r" },
     -- The whole of what a torch knows about itself: its equipment class
     -- and its tank. What a torch DOES lives on the things it is used on
     -- (docs/construction.md). tg's max_fuel is 20.

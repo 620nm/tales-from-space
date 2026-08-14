@@ -6,5 +6,6 @@ return {
     id = "wrench",
     name = "wrench",
     sprite = "wrench",
+    inhand_sprite = { "held_wrench_l", "held_wrench_r" },
     tool = "wrench",
 }

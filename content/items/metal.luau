@@ -7,5 +7,6 @@ return {
     id = "metal",
     name = "metal sheets",
     sprite = "metal",
+    inhand_sprite = { "held_metal_l", "held_metal_r" },
     stack = 30,
 }

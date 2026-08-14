@@ -6,5 +6,6 @@ return {
     id = "screwdriver",
     name = "screwdriver",
     sprite = "screwdriver",
+    inhand_sprite = { "held_screwdriver_l", "held_screwdriver_r" },
     tool = "screwdriver",
 }

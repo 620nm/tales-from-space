@@ -6,5 +6,6 @@ return {
     id = "floor_tile",
     name = "floor tiles",
     sprite = "floor_tile",
+    inhand_sprite = { "held_floor_tile_l", "held_floor_tile_r" },
     stack = 30,
 }

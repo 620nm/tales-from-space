@@ -12,6 +12,7 @@ return {
     id = "cable_coil",
     name = "cable coil",
     sprite = "coil",
+    inhand_sprite = { "held_coil_l", "held_coil_r" },
     stack = 30,
     on_use = function(ctx, self, user, x, y)
         if ctx.cable(x, y) % 4 >= 2 then
