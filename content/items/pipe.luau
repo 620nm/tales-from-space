@@ -1,4 +1,5 @@
--- A length of pipe, wrenched down under the deck.
+-- A length of pipe, wrenched down under the deck on whichever of the
+-- five piping layers you have it set to.
 --
 -- Like cable, this is not a structure transition: there is nothing
 -- standing on the tile that owns the answer, so it stays an on_use
@@ -7,11 +8,15 @@
 -- back. The engine refuses a finished floor; this hook says so first,
 -- because a refusal with no explanation reads as a bug.
 --
--- Layer masks are tg's five piping layers: 1, 2, 4, 8, 16 for layers
--- 1..5. Layer 3 (mask 4) is the distribution run every dispenser hands
+-- THE LAYERS. tg has five, PIPING_LAYER_MIN..MAX with
+-- PIPING_LAYER_DEFAULT = 3 (__DEFINES/atmospherics/atmos_piping.dm:78-80),
+-- and two pipes on different layers do not connect
+-- (atmosmachinery.dm:350). They are bare numbers in tg -- there are no
+-- named piping layers and no per-layer colours -- so they are bare
+-- numbers here. Layer 3 is the distribution run every dispenser hands
 -- you; the others exist so a second run can CROSS the first without
 -- joining it.
-local LAYER_DISTRO = 4
+local LAYERS = { 1, 2, 4, 8, 16 }
 
 return {
     id = "pipe",
@@ -19,6 +24,20 @@ return {
     sprite = "pipe",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
     stack = 25,
+    -- Five settings, minted on the third: PIPING_LAYER_DEFAULT.
+    modes = 5,
+    mode = 2,
+    -- tg cycles a pipe item's layer 1->2->3->4->5->1 on RIGHT-CLICK
+    -- (construction.dm:438-445), because attack_self is already spoken
+    -- for there (it rotates the fitting). We have no secondary-click
+    -- channel, so the cycle moves to the in-hand key -- same cycle,
+    -- same wrap, same balloon-alert-sized message.
+    on_use_self = function(ctx, self, user)
+        local dial = ctx.mode(self)
+        local next_index = (dial.index + 1) % dial.count
+        ctx.set_mode(self, next_index)
+        ctx.system_msg(user, "Pipe layer set to " .. (next_index + 1) .. ".")
+    end,
     on_use = function(ctx, self, user, x, y)
         -- Asked first, so every covered tile answers the same way and
         -- the reply is not a probe for what is already buried.
@@ -26,8 +45,9 @@ return {
             ctx.system_msg(user, "The floor is in the way. Pry the tile up first.")
             return
         end
-        if ctx.pipe(x, y) % 8 >= 4 then
-            return "pass" -- a distribution length already runs here
+        local mask = LAYERS[ctx.mode(self).index + 1]
+        if ctx.pipe(x, y) % (mask * 2) >= mask then
+            return "pass" -- a length already runs here on this layer
         end
         ctx.system_msg(user, "You start fitting a length of pipe...")
         if not ctx.do_after(user, 1.0) then
@@ -35,12 +55,14 @@ return {
             return
         end
         -- The same question again at the end: while you worked, another
-        -- engineer may have run the line through this very tile.
-        if ctx.pipe(x, y) % 8 >= 4 then
+        -- engineer may have run the line through this very tile -- and
+        -- you may have turned the dial yourself.
+        mask = LAYERS[ctx.mode(self).index + 1]
+        if ctx.pipe(x, y) % (mask * 2) >= mask then
             ctx.system_msg(user, "Someone already ran pipe through there.")
             return
         end
-        ctx.lay_pipe(x, y, LAYER_DISTRO)
+        ctx.lay_pipe(x, y, mask)
         ctx.sound("ratchet", x, y)
         ctx.system_msg(user, "You wrench the pipe into place.")
     end,
