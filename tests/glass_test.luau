@@ -1,8 +1,11 @@
--- Windows, as a player builds them: rods make a grille, glass fills
--- it, and reinforced glass fills it in a way that takes real work to
--- undo. Every step here is a click a person could make, from a tile
--- they could stand on -- REACH is 1, so the walk matters.
-local MAP = [==[(
+-- Windows, both directions. Putting glass in is quick; getting it out
+-- is not, and getting REINFORCED glass out is a five-tool job -- tg's
+-- asymmetry, kept on purpose. Every step here is a click a person
+-- could make, from a tile they could stand on.
+--
+-- The room is deliberately 3x3 with the builder in the middle, so all
+-- eight neighbours are within REACH and nobody has to walk.
+local ROOM = [==[(
     name: "glazing",
     legend: {
         ' ': (turf: Space),
@@ -10,87 +13,101 @@ local MAP = [==[(
         '#': (turf: Wall),
     },
     rows: [
-        "######",
-        "#....#",
-        "#....#",
-        "######",
+        "#####",
+        "#...#",
+        "#...#",
+        "#...#",
+        "#####",
     ],
-    spawns: [(1, 1)],
+    spawns: [(2, 2)],
     items: [
-        (3, 1, "rod"),
-        (3, 2, "glass"),
-        (1, 1, "crowbar"),
-        (1, 2, "screwdriver"),
+        (1, 1, "rod"),
+        (3, 1, "glass"),
+        (1, 3, "screwdriver"),
+        (3, 3, "crowbar"),
     ],
 )]==]
 
-t.world(MAP, 7)
+-- Empty the active hand, then take what is on that tile. A click while
+-- holding a material BUILDS and one while holding a tool USES, so the
+-- hand has to be empty first.
+local function take(p, x, y)
+    t.drop(p)
+    t.run_ticks(2)
+    t.click(p, x, y)
+    t.run_ticks(2)
+end
+
+local function said(p, want)
+    for _, m in ipairs(t.messages(p)) do
+        if m == want then
+            return true
+        end
+    end
+    return false
+end
+
+t.world(ROOM, 7)
 local p = t.join()
 t.tick()
-t.move(p, "east") -- (2, 1): everything below is within arm's reach
-t.run_ticks(6)
 
--- Two rods weave a grille on the tile below.
-t.click(p, 3, 1)
+-- Two rods weave a grille, fastened to the deck as tg's is.
+t.click(p, 1, 1)
 t.run_ticks(2)
-t.click(p, 2, 2)
+t.click(p, 2, 1)
 t.run_seconds(1.5)
 assert(t.ledger_has("StructureStep", "grille", "built"), "the grille stands")
--- A built grille arrives fastened down, as tg's does; glazing an
--- unfastened one is refused, which is why the state is named for it. The grille is still there underneath: the step moves
--- it to a state, it does not replace the thing.
---
--- Note the drop: a click while holding a material BUILDS rather than
--- picks up, because construction outranks pickup. You have to put the
--- rods down before you can pick anything else off the floor.
-t.drop(p)
-t.run_ticks(2)
-t.click(p, 3, 2)
-t.run_ticks(2)
-t.click(p, 2, 2)
+
+-- Two seconds to fit a pane.
+take(p, 3, 1)
+t.click(p, 2, 1)
 t.run_seconds(2.5)
 assert(t.ledger_has("StructureStep", "grille", "glazed"), "the pane went in")
 
--- A crowbar takes the pane back out and hands the sheets over, leaving
--- the grille standing.
-t.drop(p)
+-- Load both hands, so the pane can be worked without putting a tool
+-- down between rungs (a dropped tool lands underfoot, not back where
+-- it came from).
+take(p, 1, 3) -- screwdriver, active hand
+t.swap_hands(p)
 t.run_ticks(2)
-t.click(p, 1, 1)
+take(p, 3, 3) -- crowbar, other hand
 t.run_ticks(2)
-t.click(p, 2, 2)
-t.run_seconds(2.5)
-assert(t.ledger_has("StructureStep", "grille", "bolted"), "the pane came out")
-assert(t.count_items("glass") > 0, "the sheets came back")
 
--- An unfastened grille takes no glass: tg refuses with "needs to be
--- fastened to the floor first", and so does this. The screwdriver
--- toggle is what makes the state worth having -- and while it is
--- loose, it is also a thing you can shove.
-t.drop(p)
+-- Fourteen seconds to get it back out, and a crowbar alone will not do
+-- it: the pane is screwed to its frame first. The refusal names BOTH
+-- rungs a crowbar works on rather than whichever the file lists first.
+local _ = t.messages(p)
+t.click(p, 2, 1)
+t.run_ticks(4)
+assert(
+    said(p, "The grille must be unsealed or unscrewed first."),
+    "a crowbar on a sealed pane is told what it needs"
+)
+
+t.swap_hands(p) -- screwdriver
 t.run_ticks(2)
-t.click(p, 1, 2) -- the screwdriver
+t.click(p, 2, 1)
+t.run_seconds(4.5)
+assert(t.ledger_has("StructureStep", "grille", "unsealed"), "unscrewed")
+
+t.swap_hands(p) -- crowbar
 t.run_ticks(2)
-t.click(p, 2, 2) -- unfasten
+t.click(p, 2, 1)
+t.run_seconds(10.5)
+assert(t.ledger_has("StructureStep", "grille", "bolted"), "the pane came out")
+assert(t.count_items("glass") > 0, "and the sheets came back")
+
+-- An unfastened grille takes no glass, exactly as tg refuses it.
+t.swap_hands(p) -- screwdriver
+t.run_ticks(2)
+t.click(p, 2, 1)
 t.run_ticks(4)
 assert(t.ledger_has("StructureStep", "grille", "unbolted"), "it came loose")
 
-t.drop(p)
-t.run_ticks(2)
-t.click(p, 2, 2) -- the sheets the crowbar just handed back, on that tile
-t.run_ticks(2)
-local _ = t.messages(p)
-t.click(p, 2, 2)
-t.run_ticks(4)
-local gated = false
-for _, m in ipairs(t.messages(p)) do
-    if m == "The grille must be bolted first." then
-        gated = true
-    end
-end
-assert(gated, "glass refuses an unfastened grille, and says so")
-
--- Scenario 2: reinforced glass is bolted in, and a crowbar alone will
--- not shift it. That refusal is the whole reason to spend the sheets.
+-- ---------------------------------------------------------------
+-- Reinforced: five tools and thirty seconds, against two to fit it.
+-- Each tool is used exactly once, in order, so a plain drop suffices.
+-- ---------------------------------------------------------------
 t.world([==[(
     name: "reinforced",
     legend: {
@@ -99,70 +116,61 @@ t.world([==[(
         '#': (turf: Wall),
     },
     rows: [
-        "######",
-        "#....#",
-        "#....#",
-        "######",
+        "#####",
+        "#...#",
+        "#...#",
+        "#...#",
+        "#####",
     ],
-    spawns: [(1, 1)],
+    spawns: [(2, 2)],
     items: [
-        (3, 1, "rod"),
-        (3, 2, "rglass"),
-        (1, 1, "crowbar"),
-        (1, 2, "screwdriver"),
+        (1, 1, "rod"),
+        (3, 1, "rglass"),
+        (1, 2, "welder"),
+        (3, 2, "screwdriver"),
+        (1, 3, "crowbar"),
+        (2, 3, "wirecutters"),
+        (3, 3, "wrench"),
     ],
 )]==], 7)
 
 p = t.join()
 t.tick()
-t.move(p, "east")
-t.run_ticks(6)
-t.click(p, 3, 1)
+t.click(p, 1, 1)
 t.run_ticks(2)
-t.click(p, 2, 2)
+t.click(p, 2, 1)
 t.run_seconds(1.5)
-t.drop(p)
-t.run_ticks(2)
-t.click(p, 3, 2) -- the reinforced sheets
-t.run_ticks(2)
-t.click(p, 2, 2)
+
+take(p, 3, 1) -- reinforced sheets
+t.click(p, 2, 1)
 t.run_seconds(2.5)
 assert(t.ledger_has("StructureStep", "grille", "reinforced"), "bolted in")
 
--- The crowbar finds nothing to do: the bolts are still down, and it is
--- told which state it wants rather than failing in silence.
-t.drop(p)
-t.run_ticks(2)
-t.click(p, 1, 1)
-t.run_ticks(2)
-local _ = t.messages(p)
-t.click(p, 2, 2)
-t.run_ticks(4)
--- And it names EVERY state that would have worked, not the first one
--- the file happens to list: a crowbar takes a glazed pane out directly
--- and a reinforced one only once unscrewed, so it must say both or it
--- sends you to undo work you never did.
-local refused = false
-for _, m in ipairs(t.messages(p)) do
-    if m == "The grille must be glazed or loosened first." then
-        refused = true
-    end
-end
-assert(refused, "the crowbar says which states it could have worked in")
+-- Every rung, in order: welder 15 s, screwdriver 5 s, crowbar 4 s,
+-- cutters 2 s, wrench 4 s. Thirty seconds, against two to put it in --
+-- which is the entire reason to spend the extra sheet.
+take(p, 1, 2) -- welder: heat the security screws
+t.click(p, 2, 1)
+t.run_seconds(15.5)
+assert(t.ledger_has("StructureStep", "grille", "heated"), "screws glowing")
 
--- Unscrew, then pry: two tools, in order.
-t.drop(p) -- a crowbar in hand pries the floor instead of picking up
-t.run_ticks(2)
-t.click(p, 1, 2) -- the screwdriver
-t.run_ticks(2)
-t.click(p, 2, 2)
+take(p, 3, 2) -- screwdriver
+t.click(p, 2, 1)
+t.run_seconds(5.5)
+assert(t.ledger_has("StructureStep", "grille", "unscrewed"), "screws out")
+
+take(p, 1, 3) -- crowbar
+t.click(p, 2, 1)
 t.run_seconds(4.5)
-assert(t.ledger_has("StructureStep", "grille", "loosened"), "the bolts backed out")
+assert(t.ledger_has("StructureStep", "grille", "popped"), "panel popped")
 
-t.drop(p)
-t.run_ticks(2)
-t.click(p, 1, 1) -- back to the crowbar
-t.run_ticks(2)
-t.click(p, 2, 2)
+take(p, 2, 3) -- wirecutters
+t.click(p, 2, 1)
+t.run_seconds(2.5)
+assert(t.ledger_has("StructureStep", "grille", "cut"), "bars cut")
+
+take(p, 3, 3) -- wrench
+t.click(p, 2, 1)
 t.run_seconds(4.5)
 assert(t.count_items("rglass") > 0, "the reinforced sheets came back")
+assert(t.ledger_has("StructureStep", "grille", "bolted"), "an empty grille remains")
