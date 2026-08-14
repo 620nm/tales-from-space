@@ -18,6 +18,7 @@ return {
     name = "wrench",
     sprite = "wrench",
     inhand_sprite = { "held_wrench_l", "held_wrench_r" },
+    stowed_sprite = "belt_wrench",
     tool = "wrench",
     on_use = function(ctx, self, user, x, y)
         if ctx.pipe(x, y) == 0 then

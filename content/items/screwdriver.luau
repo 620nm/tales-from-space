@@ -7,5 +7,7 @@ return {
     name = "screwdriver",
     sprite = "screwdriver",
     inhand_sprite = { "held_screwdriver_l", "held_screwdriver_r" },
+    -- What it looks like riding a belt that shows its contents.
+    stowed_sprite = "belt_screwdriver",
     tool = "screwdriver",
 }
