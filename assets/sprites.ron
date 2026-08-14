@@ -292,6 +292,50 @@
         ("held_rods_r_n", Dmi("mob/inhands/items_righthand.dmi", "rods", 1)),
         ("held_rods_r_e", Dmi("mob/inhands/items_righthand.dmi", "rods", 2)),
         ("held_rods_r_w", Dmi("mob/inhands/items_righthand.dmi", "rods", 3)),
+        // Cable art, tg's naming kept verbatim: l<layer>-<dirs>
+        // with BYOND dir bits 1=N 2=S 4=E 8=W, sorted ascending, and
+        // "noconnection" for a stub joined to nothing. The client
+        // derives WHICH of these to draw from its own neighbour scan,
+        // so the wire only ever carries the topology.
+        //
+        // tg's art is white and tinted per cable; the colours are the
+        // vocabulary, not decoration -- red is the feeder you do not
+        // cut, yellow is the branch you do (tg's CABLE_HEX_COLOR_RED
+        // and _YELLOW). Baked in rather than tinted at draw time so
+        // the Canvas2D fallback, which can fill a rect but not tint a
+        // sprite, draws the same wire the WebGPU path does.
+        ("cable_l1_none", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-noconnection", 0), (255, 0, 0))),
+        ("cable_l2_none", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-noconnection", 0), (255, 255, 0))),
+        ("cable_l1_1", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-1", 0), (255, 0, 0))),
+        ("cable_l1_2", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-2", 0), (255, 0, 0))),
+        ("cable_l1_3", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-1-2", 0), (255, 0, 0))),
+        ("cable_l1_4", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-4", 0), (255, 0, 0))),
+        ("cable_l1_5", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-1-4", 0), (255, 0, 0))),
+        ("cable_l1_6", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-2-4", 0), (255, 0, 0))),
+        ("cable_l1_7", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-1-2-4", 0), (255, 0, 0))),
+        ("cable_l1_8", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-8", 0), (255, 0, 0))),
+        ("cable_l1_9", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-1-8", 0), (255, 0, 0))),
+        ("cable_l1_10", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-2-8", 0), (255, 0, 0))),
+        ("cable_l1_11", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-1-2-8", 0), (255, 0, 0))),
+        ("cable_l1_12", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-4-8", 0), (255, 0, 0))),
+        ("cable_l1_13", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-1-4-8", 0), (255, 0, 0))),
+        ("cable_l1_14", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-2-4-8", 0), (255, 0, 0))),
+        ("cable_l1_15", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-1-2-4-8", 0), (255, 0, 0))),
+        ("cable_l2_1", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1", 0), (255, 255, 0))),
+        ("cable_l2_2", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-2", 0), (255, 255, 0))),
+        ("cable_l2_3", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-2", 0), (255, 255, 0))),
+        ("cable_l2_4", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-4", 0), (255, 255, 0))),
+        ("cable_l2_5", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-4", 0), (255, 255, 0))),
+        ("cable_l2_6", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-2-4", 0), (255, 255, 0))),
+        ("cable_l2_7", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-2-4", 0), (255, 255, 0))),
+        ("cable_l2_8", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-8", 0), (255, 255, 0))),
+        ("cable_l2_9", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-8", 0), (255, 255, 0))),
+        ("cable_l2_10", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-2-8", 0), (255, 255, 0))),
+        ("cable_l2_11", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-2-8", 0), (255, 255, 0))),
+        ("cable_l2_12", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-4-8", 0), (255, 255, 0))),
+        ("cable_l2_13", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-4-8", 0), (255, 255, 0))),
+        ("cable_l2_14", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-2-4-8", 0), (255, 255, 0))),
+        ("cable_l2_15", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-2-4-8", 0), (255, 255, 0))),
     ],
     offsets: [
         ("apc_s", 0, 25),
