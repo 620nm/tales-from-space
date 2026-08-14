@@ -34,3 +34,48 @@ cargo run -p lunatic-server -- tfs/maps/outpost.ron --content tfs/content
   `on_mob_life`) and the `ctx` query/effect table.
 - `content/tuning.luau` overrides engine feel constants; the engine's
   compiled defaults are the values its tests pin.
+
+## Specs
+
+```sh
+cargo run -q -p lunatic-server -- test tfs             # every tests/*_test.luau
+cargo run -q -p lunatic-server -- test tfs vendor      # only files whose NAME contains "vendor"
+cargo run -q -p lunatic-server -- test tfs --json out.json    # CI result document
+cargo run -q -p lunatic-server -- test tfs --load-only # content lint, no Sim
+```
+
+The filter is a case-insensitive substring of the spec's FILE NAME, so
+`vendor`, `vend`, and `vendor_test.luau` all select the same file; the
+tail line reports how many specs were filtered out. A failure prints the
+assertion's own message with Luau's `file:line` stamp.
+
+Each spec runs in a fresh trusted VM against a fresh headless Sim and
+drives it through `t`, which is the same `SimCommand` seam the Rust
+harness uses — a spec asserts what a player could cause, never what a
+mod could sneak. There is no raw entity handle, no component access, and
+no direct spawn in `t`, and none should ever be added.
+
+| Group | Functions |
+| ----- | --------- |
+| World | `t.world(ron [, seed])`, `t.world_file(name [, seed])`, `t.join([job]) -> player` |
+| Seeds | `t.fault(x, y, tick)` (hull failure), `t.outage([tick])` (breaker trip) |
+| Clock | `t.now()`, `t.tick()`, `t.run_ticks(n)`, `t.run_seconds(s)` |
+| Verbs | `t.click(p, x, y)`, `t.move(p, dir)`, `t.say(p, text)`, `t.drop(p)`, `t.equip(p)`, `t.swap_hands(p)`, `t.ui_act(p, act [, payload])`, `t.ui_close(p)` |
+| Body | `t.pos(p) -> x, y`, `t.health(p) -> {brute, oxy, state}`, `t.set_health(p, fields)`, `t.blood_moles(p)`, `t.sprite(p)`, `t.hands(p) -> {[1], [2], active, held}`, `t.worn(p) -> {id, uniform, suit, back}` |
+| Tile | `t.turf(x, y)`, `t.is_breached(x, y)`, `t.items_at(x, y)`, `t.count_items(id)`, `t.door_at(x, y) -> {open, powered}` |
+| Atmos | `t.pipe(x, y)`, `t.pipe_pressure(x, y [, layer])`, `t.room_pressure(x, y)`, `t.canister_pressure(x, y)` |
+| Power | `t.cable_at(x, y)`, `t.apc_at(x, y) -> {charge, equipment, lighting, environment, alarmed, charging}`, `t.segment_at(x, y) -> {feeder, branch, apc_hops}`, `t.lit(x, y)` |
+| Observed | `t.messages(p)`, `t.sounds(p)`, `t.last_ui(p) -> state, pushes`, `t.ui(p)` (parsed), `t.vitals(p) -> {oxy, brute, pressure}` |
+| Ledger | `t.ledger_rows([event])`, `t.ledger_has(...needles)` |
+
+`t.ledger_rows` hands back rows in the shift JSONL's own shape — `tick`,
+`event` (snake_case), the event's own fields alongside it, `actor`
+(`{kind = "player" | "system" | "script", ...}`), and `pos`/`room` where
+the sim knew them. The optional argument filters by event name in either
+spelling (`"TurfChanged"` or `"turf_changed"`). `t.ledger_has` is the
+blunt grep against a Debug flatten, kept for one-line "did this happen
+at all" assertions.
+
+Reading is what `t` does; changing the world is what a player does. The
+power and plumbing surfaces are queries only — a spec that wants a
+severed feeder cuts it with wirecutters, in somebody's hands.
