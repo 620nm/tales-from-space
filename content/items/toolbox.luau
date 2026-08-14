@@ -6,7 +6,7 @@ return {
     name = "mechanical toolbox",
     sprite = "toolbox",
     storage = 7,
-    holds = { "welder", "crowbar", "wirecutters", "cable_coil" },
+    holds = { "welder", "crowbar", "wirecutters", "screwdriver", "wrench", "cable_coil" },
     on_attack = function(ctx, self, user, target)
         ctx.damage(target, { brute = 10 })
         ctx.sound("smash", ctx.pos(target))

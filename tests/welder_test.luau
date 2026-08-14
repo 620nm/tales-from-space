@@ -1,6 +1,7 @@
 -- The welder's deconstruction ladder, scenario 1: sealing a hull
--- breach is a guarded do_after, attributed to the script and the
--- player who held the torch. (Port of the Rust m5 seal test; the
+-- breach is a guarded do_after, attributed to the player who held the
+-- torch. Since the construction interpreter landed, the torch has no
+-- hook at all -- vacuum's own file says a welder closes it. (Port of the Rust m5 seal test; the
 -- repressurization tail stays native until t grows a pressure query.)
 t.world([==[(
     name: "weld",
@@ -30,10 +31,12 @@ assert(t.is_breached(1, 1), "the fault breached the corner")
 t.click(p, 1, 1) -- start the weld (a 4 s do_after)
 t.run_seconds(4.5)
 assert(not t.is_breached(1, 1), "welded shut")
-assert(t.ledger_has("DoAfterStarted", "items/welder.luau"),
-    "the do_after start is on the record")
-assert(t.ledger_has("TurfChanged", "Plating", "Script", "items/welder.luau"),
-    "the seal is attributed to the welder script")
+assert(t.ledger_has("DoAfterStarted", "space"),
+    "the work starting is on the record")
+assert(t.ledger_has("TurfChanged", "Plating", "Player"),
+    "the seal is attributed to the player who held the torch")
+assert(t.ledger_has("StructureStep", "space", "turf:Plating"),
+    "and the step names what the vacuum became")
 
 -- Scenario 2: dropping the welder mid-weld trips the guard.
 t.world([==[(
