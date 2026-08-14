@@ -179,3 +179,75 @@ assert(
 -- no other reason.
 assert(t.turf(11, 1) == "wall", "the rooms are sealed from each other")
 assert(t.turf(11, 3) == "wall")
+
+-- ---------------------------------------------------------------
+-- LAYERS. tg has five piping layers with 3 the default
+-- (__DEFINES/atmospherics/atmos_piping.dm:78-80), and two pipes on
+-- different layers do not connect (atmosmachinery.dm:350) -- which is
+-- the whole reason a station can run a distribution main and a waste
+-- line down the same corridor.
+--
+-- The proof is gas, not topology. A mapped run is handed over
+-- commissioned; a run a player builds during the shift starts empty.
+-- Lay a fresh length straight through a charged main on a DIFFERENT
+-- layer: if the two joined, the new one would come up pressurised.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "crossing",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Plating),
+        '#': (turf: Wall),
+    },
+    rows: [
+        "#####",
+        "#...#",
+        "#...#",
+        "#####",
+    ],
+    spawns: [(2, 2)],
+    items: [(2, 2, "pipe"), (1, 2, "wrench")],
+    pipes: [(1, 1, 4), (2, 1, 4), (3, 1, 4)],
+)]==], 7)
+
+local e = t.join()
+t.tick()
+assert(t.pipe_pressure(2, 1, DISTRO) > 90.0, "the mapped main is charged")
+
+-- Pick the pipe up and walk the dial round from 3 to 1, tg's
+-- 1->2->3->4->5->1 cycle (construction.dm:438-445).
+t.click(e, 2, 2)
+t.run_ticks(2)
+local _ = t.messages(e)
+t.use_self(e)
+t.run_ticks(2)
+assert(said(e, "Pipe layer set to 4."), "the dial steps up")
+t.use_self(e)
+t.run_ticks(2)
+assert(said(e, "Pipe layer set to 5."), "and up")
+t.use_self(e)
+t.run_ticks(2)
+assert(said(e, "Pipe layer set to 1."), "and wraps at the top")
+assert(t.ledger_has("ModeSet"), "which layer you chose is on the record")
+
+-- A length on layer 1, straight through the charged layer-3 main.
+t.click(e, 2, 1)
+t.run_seconds(1.5)
+assert(t.pipe(2, 1) == DISTRO + 1, "both layers are under the tile: " .. t.pipe(2, 1))
+assert(t.pipe_pressure(2, 1, DISTRO) > 90.0, "the main is still charged")
+assert(t.pipe_pressure(2, 1, 1) ~= nil, "and the new length is a real net")
+assert(
+    t.pipe_pressure(2, 1, 1) < 1.0,
+    "which is empty, because it never touched the main: " .. t.pipe_pressure(2, 1, 1)
+)
+
+-- One pull, one length: the wrench takes the topmost layer and leaves
+-- what is plumbed beneath it, so the refund is honest.
+t.drop(e)
+t.run_ticks(2)
+t.click(e, 1, 2) -- the wrench
+t.run_ticks(2)
+t.click(e, 2, 1)
+t.run_seconds(1.5)
+assert(t.pipe(2, 1) == 1, "the main came up and layer 1 stayed: " .. t.pipe(2, 1))
+assert(t.pipe(1, 1) == DISTRO, "and the rest of the main is untouched")

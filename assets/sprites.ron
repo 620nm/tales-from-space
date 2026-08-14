@@ -613,6 +613,28 @@
         ("cable_l2_13", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-4-8", 0), (255, 255, 0))),
         ("cable_l2_14", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-2-4-8", 0), (255, 255, 0))),
         ("cable_l2_15", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-2-4-8", 0), (255, 255, 0))),
+        // The third power line, blue. tg draws it from the `l4-` states
+        // (cable.dm:43-48 -- /obj/structure/cable/layer3 wears
+        // `icon_state = "l4-1-2-4-8-node"`), because the DMI's rows are
+        // pixel offsets and not layer numbers. The tint is
+        // CABLE_HEX_COLOR_BLUE = COLOR_STRONG_BLUE = #1919c8
+        // (__DEFINES/colors.dm:32,404).
+        ("cable_l3_none", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-noconnection", 0), (25, 25, 200))),
+        ("cable_l3_1", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-1", 0), (25, 25, 200))),
+        ("cable_l3_2", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-2", 0), (25, 25, 200))),
+        ("cable_l3_3", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-1-2", 0), (25, 25, 200))),
+        ("cable_l3_4", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-4", 0), (25, 25, 200))),
+        ("cable_l3_5", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-1-4", 0), (25, 25, 200))),
+        ("cable_l3_6", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-2-4", 0), (25, 25, 200))),
+        ("cable_l3_7", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-1-2-4", 0), (25, 25, 200))),
+        ("cable_l3_8", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-8", 0), (25, 25, 200))),
+        ("cable_l3_9", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-1-8", 0), (25, 25, 200))),
+        ("cable_l3_10", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-2-8", 0), (25, 25, 200))),
+        ("cable_l3_11", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-1-2-8", 0), (25, 25, 200))),
+        ("cable_l3_12", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-4-8", 0), (25, 25, 200))),
+        ("cable_l3_13", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-1-4-8", 0), (25, 25, 200))),
+        ("cable_l3_14", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-2-4-8", 0), (25, 25, 200))),
+        ("cable_l3_15", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-1-2-4-8", 0), (25, 25, 200))),
     ],
     offsets: [
         ("apc_s", 0, 25),
