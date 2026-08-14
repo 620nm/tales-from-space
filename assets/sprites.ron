@@ -208,7 +208,18 @@
         // into the pipe, and `connector` is the same socket with the
         // stub gone — a fitting lying loose on the deck, joined to
         // nothing, hosting nothing.
-        ("connector_port", Dmi("obj/machines/atmospherics/unary_devices.dmi", "connector_map-3", 0)),
+        //
+        // The stub POINTS, so there are four of it. tg draws the same
+        // state at four dirs (`connector_map-3` is `dirs = 4`) and a
+        // unary atmos component's `initialize_directions` IS its dir
+        // (unary_devices.dm:14) — the socket joins the run on that one
+        // side and no other. DMI dir order is south, north, east, west.
+        ("connector_port_s", Dmi("obj/machines/atmospherics/unary_devices.dmi", "connector_map-3", 0)),
+        ("connector_port_n", Dmi("obj/machines/atmospherics/unary_devices.dmi", "connector_map-3", 1)),
+        ("connector_port_e", Dmi("obj/machines/atmospherics/unary_devices.dmi", "connector_map-3", 2)),
+        ("connector_port_w", Dmi("obj/machines/atmospherics/unary_devices.dmi", "connector_map-3", 3)),
+        // Unbolted there is no stub at all, so there is nothing to
+        // point: tg's loose `connector` state is `dirs = 1`.
         ("connector_port_loose", Dmi("obj/machines/atmospherics/unary_devices.dmi", "connector", 0)),
         // A gas canister: tg's art is greyscale and each gas type paints
         // it (greyscale_colors "#c6c0b5" is pre-mixed air). Baked with

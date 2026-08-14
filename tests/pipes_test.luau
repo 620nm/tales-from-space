@@ -181,6 +181,7 @@ assert(t.turf(11, 1) == "wall", "the rooms are sealed from each other")
 assert(t.turf(11, 3) == "wall")
 
 -- ---------------------------------------------------------------
+-- ---------------------------------------------------------------
 -- LAYERS. tg has five piping layers with 3 the default
 -- (__DEFINES/atmospherics/atmos_piping.dm:78-80), and two pipes on
 -- different layers do not connect (atmosmachinery.dm:350) -- which is
@@ -251,3 +252,98 @@ t.click(e, 2, 1)
 t.run_seconds(1.5)
 assert(t.pipe(2, 1) == 1, "the main came up and layer 1 stayed: " .. t.pipe(2, 1))
 assert(t.pipe(1, 1) == DISTRO, "and the rest of the main is untouched")
+
+-- ---------------------------------------------------------------
+-- Josh's ruling: "two pipes can carry poison and oxygen and run
+-- parallel -- they must NOT intersect. This is precisely where pipes
+-- differ from wires, which basically always want to connect."
+--
+-- Two straight mains, adjacent columns, the SAME piping layer, each
+-- aimed north-south (`pipe_facing` dirs 3 = N|S). Pipe joins pipe only
+-- where BOTH lengths reach toward each other -- tg's
+-- connection_check -- so these two never meet. One of them has a
+-- passive vent over it; the other has nothing. Open the room to space
+-- and the vented main empties into the vacuum while its neighbour, one
+-- tile away on the same layer, stays exactly as charged as it started.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "parallel mains",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Plating),
+        '#': (turf: Wall),
+        'p': (turf: Plating, fixture: Some(PassiveVent)),
+    },
+    rows: [
+        "#######",
+        "#.....#",
+        "#..p..#",
+        "#.....#",
+        "#######",
+    ],
+    spawns: [(1, 1)],
+    pipes: [
+        (3, 1, 4), (3, 2, 4), (3, 3, 4),
+        (4, 1, 4), (4, 2, 4), (4, 3, 4),
+    ],
+    pipe_facing: [
+        (3, 1, 4, 3), (3, 2, 4, 3), (3, 3, 4, 3),
+        (4, 1, 4, 3), (4, 2, 4, 3), (4, 3, 4, 3),
+    ],
+)]==], 7)
+t.join()
+t.tick()
+
+assert(t.pipe_pressure(3, 2) > 90.0, "both mains are handed over charged")
+assert(t.pipe_pressure(4, 2) > 90.0)
+
+-- Open the room to space. The vented main drains through its hole.
+t.fault(1, 1, 6)
+t.run_seconds(6)
+assert(t.is_breached(1, 1), "the room is open to space")
+t.run_seconds(40)
+
+local vented = t.pipe_pressure(3, 2)
+local neighbour = t.pipe_pressure(4, 2)
+assert(vented < 25.0, "the vented main emptied: " .. vented)
+assert(
+    neighbour > 90.0,
+    "and its parallel neighbour, one tile away on the same layer, never "
+        .. "lost a mole: " .. neighbour
+)
+
+-- The control. The identical map with NO facings authored is the old
+-- rule: every length reaches every way, the two columns are one slab
+-- of pipe, and the vent drains both. That is the topology plain
+-- adjacency could not stop expressing, and the reason for the field.
+t.world([==[(
+    name: "parallel mains, unaimed",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Plating),
+        '#': (turf: Wall),
+        'p': (turf: Plating, fixture: Some(PassiveVent)),
+    },
+    rows: [
+        "#######",
+        "#.....#",
+        "#..p..#",
+        "#.....#",
+        "#######",
+    ],
+    spawns: [(1, 1)],
+    pipes: [
+        (3, 1, 4), (3, 2, 4), (3, 3, 4),
+        (4, 1, 4), (4, 2, 4), (4, 3, 4),
+    ],
+)]==], 7)
+t.join()
+t.tick()
+t.fault(1, 1, 6)
+t.run_seconds(6)
+t.run_seconds(40)
+assert(
+    t.pipe_pressure(4, 2) < 25.0,
+    "unaimed, the second column is the same net and drains too: "
+        .. t.pipe_pressure(4, 2)
+)
