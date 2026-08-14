@@ -123,6 +123,19 @@
         ("vent_on", Dmi("obj/machines/atmospherics/unary_devices.dmi", "vent_out", 0)),
         ("vent_off", Dmi("obj/machines/atmospherics/unary_devices.dmi", "vent_off", 0)),
         ("vent_passive", Dmi("obj/machines/atmospherics/unary_devices.dmi", "passive_vent", 0)),
+        // A gas canister: tg's art is greyscale and each gas type paints
+        // it (greyscale_colors "#c6c0b5" is pre-mixed air). Baked with
+        // that colour for now; it moves to per-object paint when the
+        // renderer can tint a sprite on both paths.
+        ("canister", Tinted(DmiLayers([
+            ("obj/pipes_n_cables/canisters.dmi", "base"),
+            ("obj/pipes_n_cables/canisters.dmi", "lights"),
+        ], 0), (198, 192, 181))),
+        // The pressure gauge, four lamps. Already coloured upstream.
+        ("canister_g0", Dmi("obj/pipes_n_cables/canisters.dmi", "can-0", 0)),
+        ("canister_g1", Dmi("obj/pipes_n_cables/canisters.dmi", "can-1", 0)),
+        ("canister_g2", Dmi("obj/pipes_n_cables/canisters.dmi", "can-2", 0)),
+        ("canister_g3", Dmi("obj/pipes_n_cables/canisters.dmi", "can-3", 0)),
         ("metal", Dmi("obj/stack_objects.dmi", "sheet-metal_3", 0)),
         ("floor_tile", Dmi("obj/tiles.dmi", "tile", 0)),
         ("tv", Dmi("obj/machines/computer.dmi", "detective_tv", 0)),
@@ -449,6 +462,10 @@
         ("outlet_w", -25, 0),
     ],
     emissive: [
+        "canister_g0",
+        "canister_g1",
+        "canister_g2",
+        "canister_g3",
         "apcov_chg0",
         "apcov_chg1",
         "apcov_chg2",

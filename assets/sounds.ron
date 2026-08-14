@@ -1,6 +1,10 @@
 [
     ("weld", "items/tools/welder.ogg"),
-    ("crowbar", "items/tools/crowbar_prying.ogg"),
+    // tg splits these: `usesound` is the quick pop a crowbar makes
+    // doing a job (pry_tile calls play_tool_sound), `operating_sound`
+    // is the sustained heave used while forcing something open.
+    ("crowbar", "items/tools/crowbar.ogg"),
+    ("crowbar_pry", "items/tools/crowbar_prying.ogg"),
     ("smash", "items/weapons/smash.ogg"),
     ("vend", "machines/machine_vend.ogg"),
     ("airlock_open", "machines/airlock/airlockopen.ogg"),
@@ -8,4 +12,5 @@
     ("wirecutter", "items/tools/wirecutter_cut.ogg"),
     ("ratchet", "items/tools/ratchet.ogg"),
     ("drink", "items/drink.ogg"),
+    ("hiss", "machines/hiss.ogg"),
 ]
