@@ -99,6 +99,11 @@
         (21, 6, "rglass"),
         (21, 8, "rglass"),
         (21, 8, "rglass"),
+        // Lighting stock, on the workshop side: a shattered tube is
+        // now something that happens, so something to fix it with is
+        // something the station needs.
+        (18, 8, "box_lights"),
+        (19, 8, "light_replacer"),
     ],
     // The socket the supply canister is fastened to. A canister feeds a
     // run through a connector port and through nothing else, so this
