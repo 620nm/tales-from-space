@@ -60,9 +60,9 @@ no direct spawn in `t`, and none should ever be added.
 | World | `t.world(ron [, seed])`, `t.world_file(name [, seed])`, `t.join([job]) -> player` |
 | Seeds | `t.fault(x, y, tick)` (hull failure), `t.outage([tick])` (breaker trip) |
 | Clock | `t.now()`, `t.tick()`, `t.run_ticks(n)`, `t.run_seconds(s)` |
-| Verbs | `t.click(p, x, y)`, `t.move(p, dir)`, `t.say(p, text)`, `t.drop(p)`, `t.equip(p)`, `t.swap_hands(p)`, `t.ui_act(p, act [, payload])`, `t.ui_close(p)` |
+| Verbs | `t.click(p, x, y [, target])` (target = the entity the client's hit-test named, from `t.target_at`; omitted = a click that landed on the ground), `t.move(p, dir)`, `t.say(p, text)`, `t.drop(p)`, `t.equip(p)`, `t.swap_hands(p)`, `t.ui_act(p, act [, payload])`, `t.ui_close(p)` |
 | Body | `t.pos(p) -> x, y`, `t.health(p) -> {brute, oxy, state}`, `t.set_health(p, fields)`, `t.blood_moles(p)`, `t.sprite(p)`, `t.hands(p) -> {[1], [2], active, held}`, `t.worn(p) -> {id, uniform, suit, back}` |
-| Tile | `t.turf(x, y)`, `t.is_breached(x, y)`, `t.items_at(x, y)`, `t.count_items(id)`, `t.door_at(x, y) -> {open, powered}` |
+| Tile | `t.turf(x, y)`, `t.is_breached(x, y)`, `t.items_at(x, y)`, `t.target_at(x, y, id)`, `t.count_items(id)`, `t.door_at(x, y) -> {open, powered}` |
 | Atmos | `t.pipe(x, y)`, `t.pipe_pressure(x, y [, layer])`, `t.room_pressure(x, y)`, `t.canister_pressure(x, y)` |
 | Power | `t.cable_at(x, y)`, `t.apc_at(x, y) -> {charge, equipment, lighting, environment, alarmed, charging}`, `t.segment_at(x, y) -> {feeder, branch, apc_hops}`, `t.lit(x, y)` |
 | Observed | `t.messages(p)`, `t.sounds(p)`, `t.last_ui(p) -> state, pushes`, `t.ui(p)` (parsed), `t.vitals(p) -> {oxy, brute, pressure}` |

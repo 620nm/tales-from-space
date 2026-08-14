@@ -34,8 +34,11 @@ t.tick()
 assert(t.hands(attacker).held == "toolbox", "picked it up")
 assert(t.vitals(victim) == nil, "nobody has been hurt yet")
 
+-- The fourth argument is the pixel-perfect claim a real client sends
+-- when the cursor is over a sprite: an attack is a click that NAMED
+-- the crewman, never a click that merely shares his tile.
 for _ = 1, 10 do
-    t.click(attacker, 2, 1)
+    t.click(attacker, 2, 1, victim_id)
     t.tick()
 end
 local h = t.health(victim)
@@ -45,7 +48,7 @@ local pushed = t.vitals(victim)
 assert(pushed and pushed.brute > 0, "damage pushes vitals immediately")
 
 for _ = 1, 10 do
-    t.click(attacker, 2, 1)
+    t.click(attacker, 2, 1, victim_id)
     t.tick()
 end
 assert(t.health(victim).state == "dead", "twenty hits is a body")
