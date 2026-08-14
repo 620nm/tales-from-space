@@ -62,6 +62,10 @@ end
 
 local function step_into_the_chamber(p)
     walk_east(p, 4) -- across the room, then bump the inner airlock open
+    -- A door SWINGS now (tg's airlock takes 0.6s to cycle): the bump
+    -- starts the motion, it does not finish it. Give the leaf its swing
+    -- before asking whether it is open.
+    t.run_ticks(15)
     assert(t.door_at(5, 2).open, "bumping the inner airlock opened it")
     walk_east(p, 2) -- through the doorway into the vestibule
     local x, y = t.pos(p)
@@ -93,7 +97,7 @@ assert(t.room_pressure(6, 2) > 90.0, "the sealed chamber kept its air")
 
 -- Now open the outer airlock, with the inner one shut.
 t.click(p, 7, 2)
-t.tick()
+t.run_ticks(15) -- the leaf swings; it is not open on the click tick
 assert(t.door_at(7, 2).open, "the outer airlock opened")
 -- Held open past its autoclose while the chamber empties. Three tiles
 -- of one atmosphere take a while to leave through one doorway, which
@@ -122,7 +126,7 @@ step_into_the_chamber(q)
 -- on top of that and the station is a straight line to vacuum.
 assert(t.door_at(5, 2).open, "the inner airlock is still open behind us")
 t.click(q, 7, 2)
-t.tick()
+t.run_ticks(15) -- again, the leaf needs its swing
 assert(t.door_at(7, 2).open, "and the outer one opens anyway")
 
 -- Trip the breaker so both stay where they are: dead motors hold

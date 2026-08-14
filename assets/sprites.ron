@@ -100,6 +100,8 @@
         )),
         ("wrench", Dmi("obj/tools.dmi", "wrench", 0)),
         ("vendor", Dmi("obj/machines/vending.dmi", "Cola_Machine", 0)),
+        // tg's YouTool, off the same vending sheet (vending/youtool.dm).
+        ("tool_vendor", Dmi("obj/machines/vending.dmi", "tool", 0)),
         ("cola", Dmi("obj/drinks/soda.dmi", "cola", 0)),
         ("outlet", Dmi("obj/pipes_n_cables/structures.dmi", "term", 0)),
         ("outlet_s", Dmi("obj/pipes_n_cables/structures.dmi", "term", 0)),
@@ -659,6 +661,43 @@
         ("cable_l2_13", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-4-8", 0), (255, 255, 0))),
         ("cable_l2_14", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-2-4-8", 0), (255, 255, 0))),
         ("cable_l2_15", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-2-4-8", 0), (255, 255, 0))),
+
+        // ---- the toolbelt and what shows on it ---------------------
+        // tg's /obj/item/storage/belt/utility: one icon_state,
+        // "utility", across the object sheet, the worn sheet and both
+        // inhand sheets.
+        ("toolbelt", Dmi("obj/clothing/belts.dmi", "utility", 0)),
+        ("worn_toolbelt_s", Dmi("mob/clothing/belt.dmi", "utility", 0)),
+        ("worn_toolbelt_n", Dmi("mob/clothing/belt.dmi", "utility", 1)),
+        ("worn_toolbelt_e", Dmi("mob/clothing/belt.dmi", "utility", 2)),
+        ("worn_toolbelt_w", Dmi("mob/clothing/belt.dmi", "utility", 3)),
+        ("held_toolbelt_l_s", Dmi("mob/inhands/equipment/belt_lefthand.dmi", "utility", 0)),
+        ("held_toolbelt_l_n", Dmi("mob/inhands/equipment/belt_lefthand.dmi", "utility", 1)),
+        ("held_toolbelt_l_e", Dmi("mob/inhands/equipment/belt_lefthand.dmi", "utility", 2)),
+        ("held_toolbelt_l_w", Dmi("mob/inhands/equipment/belt_lefthand.dmi", "utility", 3)),
+        ("held_toolbelt_r_s", Dmi("mob/inhands/equipment/belt_righthand.dmi", "utility", 0)),
+        ("held_toolbelt_r_n", Dmi("mob/inhands/equipment/belt_righthand.dmi", "utility", 1)),
+        ("held_toolbelt_r_e", Dmi("mob/inhands/equipment/belt_righthand.dmi", "utility", 2)),
+        ("held_toolbelt_r_w", Dmi("mob/inhands/equipment/belt_righthand.dmi", "utility", 3)),
+        // The content overlays themselves: tg's get_belt_overlay reads
+        // `inside_belt_icon_state || icon_state` out of this one sheet,
+        // which is why the welder and the cable coil have none — tg
+        // draws nothing for them either.
+        ("belt_screwdriver", Dmi("obj/clothing/belt_overlays.dmi", "screwdriver", 0)),
+        ("belt_wrench", Dmi("obj/clothing/belt_overlays.dmi", "wrench", 0)),
+        ("belt_crowbar", Dmi("obj/clothing/belt_overlays.dmi", "crowbar", 0)),
+        ("belt_cutters", Dmi("obj/clothing/belt_overlays.dmi", "cutters", 0)),
+        ("belt_multitool", Dmi("obj/clothing/belt_overlays.dmi", "multitool", 0)),
+        // The multitool the engineer's belt carries (tg belt.dm:125).
+        ("multitool", Dmi("obj/devices/tool.dmi", "multitool", 0)),
+        ("held_multitool_l_s", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "multitool", 0)),
+        ("held_multitool_l_n", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "multitool", 1)),
+        ("held_multitool_l_e", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "multitool", 2)),
+        ("held_multitool_l_w", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "multitool", 3)),
+        ("held_multitool_r_s", Dmi("mob/inhands/equipment/tools_righthand.dmi", "multitool", 0)),
+        ("held_multitool_r_n", Dmi("mob/inhands/equipment/tools_righthand.dmi", "multitool", 1)),
+        ("held_multitool_r_e", Dmi("mob/inhands/equipment/tools_righthand.dmi", "multitool", 2)),
+        ("held_multitool_r_w", Dmi("mob/inhands/equipment/tools_righthand.dmi", "multitool", 3)),
     ],
     offsets: [
         ("apc_s", 0, 25),

@@ -7,15 +7,15 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Floor),
         '#': (turf: Wall),
-        'V': (turf: Floor, fixture: Some(Vendor)),
     },
     rows: [
         "#####",
-        "#.V.#",
+        "#...#",
         "#...#",
         "#####",
     ],
     spawns: [(1, 1)],
+    machines: [(2, 1, "vendor")],
 )]==], 7)
 
 local p = t.join()
