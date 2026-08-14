@@ -6,6 +6,8 @@ return {
     id = "crowbar",
     name = "crowbar",
     sprite = "crowbar",
+    -- The equipment class targets dispatch on; no tank, nothing to burn.
+    tool = "crowbar",
     on_use = function(ctx, self, user, x, y)
         local door = ctx.door(x, y)
         if door == nil and ctx.turf(x, y) == "floor" then

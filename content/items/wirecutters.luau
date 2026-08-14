@@ -5,6 +5,8 @@ return {
     id = "wirecutters",
     name = "wirecutters",
     sprite = "wirecutters",
+    -- The equipment class targets dispatch on; no tank, nothing to burn.
+    tool = "cutters",
     on_use = function(ctx, self, user, x, y)
         if ctx.cable(x, y) == 0 then
             return "pass"
