@@ -18,12 +18,23 @@
 // tgstation's MetaStation "Escape Pod One" (_maps/map_files/
 // MetaStation/MetaStation.dmm, (38,147)-(38,149)): an
 // /obj/machinery/door/airlock/external at each end, three
-// /turf/open/floor/plating between them, hull all the way round. The
-// doors are NOT cycle-linked — tg links them with
-// /obj/effect/mapping_helpers/airlock/cyclelink_helper and this engine
-// has no such mechanic — so closing one before opening the other is
-// crew discipline, not machinery. Close the inner door behind you and
-// the station keeps its air; leave both open and it does not.
+// /turf/open/floor/plating between them, hull all the way round.
+//
+// The two doors are CYCLE-LINKED (`cycle_links` below, tg's
+// /obj/effect/mapping_helpers/airlock/cyclelink_helper): opening either
+// one shuts the other, so the chamber cannot be held open at both ends.
+// That is the difference between an airlock and a corridor with two
+// doors in it, and it is machinery rather than crew discipline — the
+// station is not vented by one impatient crewman.
+//
+// Windows: the Annex looks north through three panes of reinforced
+// glass in the hull, and east into the vestibule through two more. They
+// ship glazed (`structures` places a state by name), because tg maps
+// its window galleries assembled — an /obj/effect/spawner/structure/
+// window/reinforced, not bare rods for the crew to fit. A glazed pane
+// is a BARRIER: it holds a room's air exactly as a shut door does
+// (tg window.dm:405 `can_atmos_pass`). Prise one out of the hull and
+// the Annex is open to space, which is the point of putting one there.
 (
     name: "Chillstation 13",
     legend: {
@@ -51,11 +62,11 @@
         "                              ",
         "                              ",
         "                              ",
-        "    #####################     ",
+        "    ###############___###     ",
         "    #a.l...loV#avl......##    ",
-        "    #...v.....#.........#_#   ",
+        "    #...v.....#.........__#   ",
         "    #.........#.........E_E   ",
-        "    #.........+.........#_#   ",
+        "    #.........+.........__#   ",
         "    #.........#.....#### #    ",
         "    #.______c.#.....#         ",
         "    #m..l....v#.....#         ",
@@ -86,19 +97,13 @@
         (17, 9, "glass"),
         (16, 8, "rglass"),
         (17, 8, "screwdriver"),
-        // Six sheets of reinforced glass, two to a pane, for the three
-        // grilles standing between the Annex and the airlock gallery.
-        // tg maps that gallery already glazed (its vestibules are ringed
-        // with /obj/effect/spawner/structure/window/reinforced); here the
-        // frames ship bare and the crew fits the panes, because a
-        // structure a map stands on the deck spawns in its FIRST state
-        // and "bolted" is a grille, not a window.
-        (21, 5, "rglass"),
-        (21, 5, "rglass"),
+        // Two sheets of reinforced glass — one pane's worth, stacked by
+        // the gallery as the spare. The windows themselves ship glazed
+        // now; what a shift actually needs on hand is the glass to put
+        // one BACK, and the tools to take one out are already in the
+        // Annex pile above.
         (21, 6, "rglass"),
         (21, 6, "rglass"),
-        (21, 8, "rglass"),
-        (21, 8, "rglass"),
     ],
     // The socket the supply canister is fastened to. A canister feeds a
     // run through a connector port and through nothing else, so this
@@ -106,20 +111,43 @@
     // a wrench and the distribution loop has no source.
     structures: [
         (12, 10, "connector_port"),
-        // The airlock gallery: a grille wall across the Annex with one
+        // The airlock gallery: a glass wall across the Annex with one
         // tile of gap at (22, 7), so the way to the inner airlock runs
-        // past a window rather than through open floor. Bare mesh until
-        // somebody fits the reinforced panes stacked beside it.
+        // past a window rather than through open floor. Reinforced, and
+        // fitted — tg's vestibules are ringed with
+        // /obj/effect/spawner/structure/window/reinforced, which is a
+        // spawner precisely because a mapper places the assembled thing.
         //
-        // Note what these grilles are NOT: a hull. A glazed grille is
-        // dense and see-through, and that is all — the matter graph
-        // links cells by TURF, so gas crosses a window tile freely.
-        // That is why this wall stands between two halves of one
-        // pressurised room, where a leak is unobservable, and why the
-        // vestibule's viewport onto space is walls instead of glass.
-        (22, 5, "grille"),
-        (22, 6, "grille"),
-        (22, 8, "grille"),
+        // These three stand between two halves of ONE pressurised room,
+        // so what they buy is sightlines rather than atmosphere. The
+        // ones that hold air are below.
+        (22, 5, "grille", "reinforced"),
+        (22, 6, "grille", "reinforced"),
+        (22, 8, "grille", "reinforced"),
+        // The Annex's viewport: three panes let into the north hull, on
+        // bare plating with vacuum on the far side. This is the window
+        // that has to be airtight or it is not a window, and it is the
+        // whole reason `airtight` exists — before it, a hull pane was a
+        // hole you could see through, and the only honest thing a map
+        // could do was leave the hull solid.
+        (19, 4, "grille", "reinforced"),
+        (20, 4, "grille", "reinforced"),
+        (21, 4, "grille", "reinforced"),
+        // And two into the vestibule, so the Annex can see who is in
+        // the chamber and whether the outer door is open before it
+        // matters. Same glass, and the same consequence if it goes:
+        // these two are all that stand between the Annex and a chamber
+        // that is deliberately opened to space several times a shift.
+        (24, 6, "grille", "reinforced"),
+        (24, 8, "grille", "reinforced"),
+    ],
+    // The vestibule interlock: each airlock names the direction its
+    // partner lies in, and the link resolves only because BOTH of them
+    // do (tg airlock.dm:225 `cyclelinkairlock()`, whose scan rejects a
+    // door that does not point back). Opening either shuts the other.
+    cycle_links: [
+        (24, 7, East),
+        (26, 7, West),
     ],
     cables: [
         (5, 16, 1), (6, 16, 1), (7, 16, 1), (8, 16, 1), (9, 16, 1), (10, 16, 1),
