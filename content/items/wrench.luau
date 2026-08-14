@@ -13,6 +13,17 @@
 -- Structures claim a click before this hook ever runs, so a wrench on a
 -- girder still bolts the girder; this only sees tiles nothing else
 -- wanted.
+--
+-- And it only reaches plumbing the deck is not covering. A finished
+-- floor tile hides its subfloor outright: in tg an intact turf's
+-- levelupdate() sends COMSIG_OBJ_HIDE (code/game/turfs/turf.dm:503-506)
+-- and the pipe sits at UNDERFLOOR_HIDDEN (code/__DEFINES/turfs.dm:50-54;
+-- atmospherics registers for the signal in code/modules/atmospherics/
+-- machinery/atmosmachinery.dm:135-145, `var/hide = TRUE` on line 38), so
+-- the click never resolves against the pipe at all. Hence "pass" and NO
+-- message: a run you cannot see is a run the game must not mention, and
+-- "you can't reach the pipe" would be a probe for buried cable. Pry the
+-- tile up and the same click works.
 return {
     id = "wrench",
     name = "wrench",
@@ -20,6 +31,11 @@ return {
     inhand_sprite = { "held_wrench_l", "held_wrench_r" },
     tool = "wrench",
     on_use = function(ctx, self, user, x, y)
+        -- Asked before the pipe question, so a covered tile answers the
+        -- same whether or not anything runs under it.
+        if ctx.turf(x, y) ~= "plating" then
+            return "pass"
+        end
         if ctx.pipe(x, y) == 0 then
             return "pass"
         end

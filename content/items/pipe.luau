@@ -20,12 +20,14 @@ return {
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
     stack = 25,
     on_use = function(ctx, self, user, x, y)
-        if ctx.pipe(x, y) % 8 >= 4 then
-            return "pass" -- a distribution length already runs here
-        end
+        -- Asked first, so every covered tile answers the same way and
+        -- the reply is not a probe for what is already buried.
         if ctx.turf(x, y) ~= "plating" then
             ctx.system_msg(user, "The floor is in the way. Pry the tile up first.")
             return
+        end
+        if ctx.pipe(x, y) % 8 >= 4 then
+            return "pass" -- a distribution length already runs here
         end
         ctx.system_msg(user, "You start fitting a length of pipe...")
         if not ctx.do_after(user, 1.0) then
