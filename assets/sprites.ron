@@ -79,7 +79,17 @@
         ("welder", Dmi("obj/tools.dmi", "welder", 0)),
         ("id", Dmi("obj/card.dmi", "card_grey", 0)),
         ("crowbar", Dmi("obj/tools.dmi", "crowbar", 0)),
-        ("screwdriver", Dmi("obj/tools.dmi", "screwdriver", 0)),
+        // tg's screwdriver is a COLOURED handle plus a steel shaft that
+        // must stay steel (greyscale/json_configs/screwdriver.json). We
+        // baked only the handle mask, so the tool was a couple of tinted
+        // pixels. The colour is baked here rather than declared because
+        // one quad cannot carry two colours; COLOR_TOOL_RED is tg's.
+        ("screwdriver", DmiBlend(
+            dmi: "obj/tools.dmi",
+            layers: [("screwdriver", Over, true), ("screwdriver_screwybits", Over, false)],
+            dir: 0,
+            paint: (149, 23, 16),
+        )),
         ("wrench", Dmi("obj/tools.dmi", "wrench", 0)),
         ("vendor", Dmi("obj/machines/vending.dmi", "Cola_Machine", 0)),
         ("cola", Dmi("obj/drinks/soda.dmi", "cola", 0)),
@@ -127,7 +137,14 @@
         ("light_off_n", Dmi("obj/lighting.dmi", "tube", 1)),
         ("light_off_e", Dmi("obj/lighting.dmi", "tube", 2)),
         ("light_off_w", Dmi("obj/lighting.dmi", "tube", 3)),
-        ("wirecutters", Dmi("obj/tools.dmi", "cutters", 0)),
+        // Same shape as the screwdriver: coloured grips, steel jaws
+        // (wirecutters.json). tg colours these COLOR_RED.
+        ("wirecutters", DmiBlend(
+            dmi: "obj/tools.dmi",
+            layers: [("cutters", Over, true), ("cutters_cutty_thingy", Over, false)],
+            dir: 0,
+            paint: (255, 0, 0),
+        )),
         ("coil", Dmi("obj/stack_objects.dmi", "coil", 0)),
         ("beaker", Dmi("obj/medical/chemical.dmi", "beaker", 0)),
         ("ghost", Dmi("mob/human/species/ghost.dmi", "ghost_base", 0)),
@@ -139,11 +156,33 @@
         // it (greyscale_colors "#c6c0b5" is pre-mixed air). Baked with
         // that colour for now; it moves to per-object paint when the
         // renderer can tint a sprite on both paths.
-        ("canister", Tinted(DmiLayers([
-            ("obj/pipes_n_cables/canisters.dmi", "base"),
-            ("obj/pipes_n_cables/canisters.dmi", "lights"),
-        ], 0), (198, 192, 181))),
-        // The pressure gauge, four lamps. Already coloured upstream.
+        // tg's canister greyscale recipe, whole (canister_base.json +
+        // canister_post_effects.json): a white shell mask that takes the
+        // colour, two shader passes, and a coloured outline. Baking only
+        // `base` — which is 329 pixels of pure white — is why this drew
+        // as a flat blob with no edge.
+        //
+        // Left greyscale with a DECLARED colour rather than a baked one,
+        // so a canister can be painted by its gas the way tg paints
+        // them. The one cost: `add_shader` is a highlight tg adds AFTER
+        // colouring, and added to a white base it clamps away, leaving
+        // this ~7% darker than tg's. The shape, which is what was
+        // actually missing, is exact.
+        ("canister", Tinted(DmiBlend(
+            dmi: "obj/pipes_n_cables/canisters.dmi",
+            layers: [
+                ("base", Over, true),
+                ("add_shader", Add, false),
+                ("multi_shader", Multiply, false),
+                ("outline", Over, true),
+            ],
+            dir: 0,
+            paint: (255, 255, 255),
+        ), (198, 192, 181))),
+        // The indicator lamps are NOT coloured by the gas (tg's
+        // post_effects leaves them alone), so they ride as their own
+        // untinted overlay.
+        ("canister_lights", Dmi("obj/pipes_n_cables/canisters.dmi", "lights", 0)),
         ("canister_g0", Dmi("obj/pipes_n_cables/canisters.dmi", "can-0", 0)),
         ("canister_g1", Dmi("obj/pipes_n_cables/canisters.dmi", "can-1", 0)),
         ("canister_g2", Dmi("obj/pipes_n_cables/canisters.dmi", "can-2", 0)),
@@ -180,14 +219,54 @@
         ("held_welder_r_n", Dmi("mob/inhands/equipment/tools_righthand.dmi", "welder", 1)),
         ("held_welder_r_e", Dmi("mob/inhands/equipment/tools_righthand.dmi", "welder", 2)),
         ("held_welder_r_w", Dmi("mob/inhands/equipment/tools_righthand.dmi", "welder", 3)),
-        ("held_screwdriver_l_s", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "screwdriver", 0)),
-        ("held_screwdriver_l_n", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "screwdriver", 1)),
-        ("held_screwdriver_l_e", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "screwdriver", 2)),
-        ("held_screwdriver_l_w", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "screwdriver", 3)),
-        ("held_screwdriver_r_s", Dmi("mob/inhands/equipment/tools_righthand.dmi", "screwdriver", 0)),
-        ("held_screwdriver_r_n", Dmi("mob/inhands/equipment/tools_righthand.dmi", "screwdriver", 1)),
-        ("held_screwdriver_r_e", Dmi("mob/inhands/equipment/tools_righthand.dmi", "screwdriver", 2)),
-        ("held_screwdriver_r_w", Dmi("mob/inhands/equipment/tools_righthand.dmi", "screwdriver", 3)),
+        ("held_screwdriver_l_s", DmiBlend(
+            dmi: "mob/inhands/equipment/tools_lefthand.dmi",
+            layers: [("screwdriver", Over, true), ("screwdriver_head", Over, false)],
+            dir: 0,
+            paint: (149, 23, 16),
+        )),
+        ("held_screwdriver_l_n", DmiBlend(
+            dmi: "mob/inhands/equipment/tools_lefthand.dmi",
+            layers: [("screwdriver", Over, true), ("screwdriver_head", Over, false)],
+            dir: 1,
+            paint: (149, 23, 16),
+        )),
+        ("held_screwdriver_l_e", DmiBlend(
+            dmi: "mob/inhands/equipment/tools_lefthand.dmi",
+            layers: [("screwdriver", Over, true), ("screwdriver_head", Over, false)],
+            dir: 2,
+            paint: (149, 23, 16),
+        )),
+        ("held_screwdriver_l_w", DmiBlend(
+            dmi: "mob/inhands/equipment/tools_lefthand.dmi",
+            layers: [("screwdriver", Over, true), ("screwdriver_head", Over, false)],
+            dir: 3,
+            paint: (149, 23, 16),
+        )),
+        ("held_screwdriver_r_s", DmiBlend(
+            dmi: "mob/inhands/equipment/tools_righthand.dmi",
+            layers: [("screwdriver", Over, true), ("screwdriver_head", Over, false)],
+            dir: 0,
+            paint: (149, 23, 16),
+        )),
+        ("held_screwdriver_r_n", DmiBlend(
+            dmi: "mob/inhands/equipment/tools_righthand.dmi",
+            layers: [("screwdriver", Over, true), ("screwdriver_head", Over, false)],
+            dir: 1,
+            paint: (149, 23, 16),
+        )),
+        ("held_screwdriver_r_e", DmiBlend(
+            dmi: "mob/inhands/equipment/tools_righthand.dmi",
+            layers: [("screwdriver", Over, true), ("screwdriver_head", Over, false)],
+            dir: 2,
+            paint: (149, 23, 16),
+        )),
+        ("held_screwdriver_r_w", DmiBlend(
+            dmi: "mob/inhands/equipment/tools_righthand.dmi",
+            layers: [("screwdriver", Over, true), ("screwdriver_head", Over, false)],
+            dir: 3,
+            paint: (149, 23, 16),
+        )),
         ("held_wrench_l_s", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "wrench", 0)),
         ("held_wrench_l_n", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "wrench", 1)),
         ("held_wrench_l_e", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "wrench", 2)),
@@ -196,14 +275,54 @@
         ("held_wrench_r_n", Dmi("mob/inhands/equipment/tools_righthand.dmi", "wrench", 1)),
         ("held_wrench_r_e", Dmi("mob/inhands/equipment/tools_righthand.dmi", "wrench", 2)),
         ("held_wrench_r_w", Dmi("mob/inhands/equipment/tools_righthand.dmi", "wrench", 3)),
-        ("held_wirecutters_l_s", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "cutters", 0)),
-        ("held_wirecutters_l_n", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "cutters", 1)),
-        ("held_wirecutters_l_e", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "cutters", 2)),
-        ("held_wirecutters_l_w", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "cutters", 3)),
-        ("held_wirecutters_r_s", Dmi("mob/inhands/equipment/tools_righthand.dmi", "cutters", 0)),
-        ("held_wirecutters_r_n", Dmi("mob/inhands/equipment/tools_righthand.dmi", "cutters", 1)),
-        ("held_wirecutters_r_e", Dmi("mob/inhands/equipment/tools_righthand.dmi", "cutters", 2)),
-        ("held_wirecutters_r_w", Dmi("mob/inhands/equipment/tools_righthand.dmi", "cutters", 3)),
+        ("held_wirecutters_l_s", DmiBlend(
+            dmi: "mob/inhands/equipment/tools_lefthand.dmi",
+            layers: [("cutters", Over, true), ("cutters_cutty_thingy", Over, false)],
+            dir: 0,
+            paint: (255, 0, 0),
+        )),
+        ("held_wirecutters_l_n", DmiBlend(
+            dmi: "mob/inhands/equipment/tools_lefthand.dmi",
+            layers: [("cutters", Over, true), ("cutters_cutty_thingy", Over, false)],
+            dir: 1,
+            paint: (255, 0, 0),
+        )),
+        ("held_wirecutters_l_e", DmiBlend(
+            dmi: "mob/inhands/equipment/tools_lefthand.dmi",
+            layers: [("cutters", Over, true), ("cutters_cutty_thingy", Over, false)],
+            dir: 2,
+            paint: (255, 0, 0),
+        )),
+        ("held_wirecutters_l_w", DmiBlend(
+            dmi: "mob/inhands/equipment/tools_lefthand.dmi",
+            layers: [("cutters", Over, true), ("cutters_cutty_thingy", Over, false)],
+            dir: 3,
+            paint: (255, 0, 0),
+        )),
+        ("held_wirecutters_r_s", DmiBlend(
+            dmi: "mob/inhands/equipment/tools_righthand.dmi",
+            layers: [("cutters", Over, true), ("cutters_cutty_thingy", Over, false)],
+            dir: 0,
+            paint: (255, 0, 0),
+        )),
+        ("held_wirecutters_r_n", DmiBlend(
+            dmi: "mob/inhands/equipment/tools_righthand.dmi",
+            layers: [("cutters", Over, true), ("cutters_cutty_thingy", Over, false)],
+            dir: 1,
+            paint: (255, 0, 0),
+        )),
+        ("held_wirecutters_r_e", DmiBlend(
+            dmi: "mob/inhands/equipment/tools_righthand.dmi",
+            layers: [("cutters", Over, true), ("cutters_cutty_thingy", Over, false)],
+            dir: 2,
+            paint: (255, 0, 0),
+        )),
+        ("held_wirecutters_r_w", DmiBlend(
+            dmi: "mob/inhands/equipment/tools_righthand.dmi",
+            layers: [("cutters", Over, true), ("cutters_cutty_thingy", Over, false)],
+            dir: 3,
+            paint: (255, 0, 0),
+        )),
         ("held_coil_l_s", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "coil_yellow", 0)),
         ("held_coil_l_n", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "coil_yellow", 1)),
         ("held_coil_l_e", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "coil_yellow", 2)),
