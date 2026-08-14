@@ -137,6 +137,24 @@
         ("light_off_n", Dmi("obj/lighting.dmi", "tube", 1)),
         ("light_off_e", Dmi("obj/lighting.dmi", "tube", 2)),
         ("light_off_w", Dmi("obj/lighting.dmi", "tube", 3)),
+        // The other three sockets tg draws (light.dm's update_icon_state
+        // switch): shattered glass, an empty fitting, a burned-out tube.
+        // None of them glow, so none of them wear the emissive overlay.
+        ("light_broken", Dmi("obj/lighting.dmi", "tube-broken", 0)),
+        ("light_broken_s", Dmi("obj/lighting.dmi", "tube-broken", 0)),
+        ("light_broken_n", Dmi("obj/lighting.dmi", "tube-broken", 1)),
+        ("light_broken_e", Dmi("obj/lighting.dmi", "tube-broken", 2)),
+        ("light_broken_w", Dmi("obj/lighting.dmi", "tube-broken", 3)),
+        ("light_empty", Dmi("obj/lighting.dmi", "tube-empty", 0)),
+        ("light_empty_s", Dmi("obj/lighting.dmi", "tube-empty", 0)),
+        ("light_empty_n", Dmi("obj/lighting.dmi", "tube-empty", 1)),
+        ("light_empty_e", Dmi("obj/lighting.dmi", "tube-empty", 2)),
+        ("light_empty_w", Dmi("obj/lighting.dmi", "tube-empty", 3)),
+        ("light_burned", Dmi("obj/lighting.dmi", "tube-burned", 0)),
+        ("light_burned_s", Dmi("obj/lighting.dmi", "tube-burned", 0)),
+        ("light_burned_n", Dmi("obj/lighting.dmi", "tube-burned", 1)),
+        ("light_burned_e", Dmi("obj/lighting.dmi", "tube-burned", 2)),
+        ("light_burned_w", Dmi("obj/lighting.dmi", "tube-burned", 3)),
         // Same shape as the screwdriver: coloured grips, steel jaws
         // (wirecutters.json). tg colours these COLOR_RED.
         ("wirecutters", DmiBlend(
