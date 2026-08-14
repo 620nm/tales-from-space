@@ -53,6 +53,11 @@
         (19, 11, "floor_tile"),
         (18, 9, "vendor_board"),
         (19, 9, "tv_board"),
+        // Glazing stock: the Annex is where you learn windows.
+        (16, 9, "rod"),
+        (17, 9, "glass"),
+        (16, 8, "rglass"),
+        (17, 8, "screwdriver"),
     ],
     cables: [
         (5, 16, 1), (6, 16, 1), (7, 16, 1), (8, 16, 1), (9, 16, 1), (10, 16, 1),
