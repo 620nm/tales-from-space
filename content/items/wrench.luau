@@ -10,6 +10,14 @@
 -- which is why an engineer opens the shutoff before touching a charged
 -- line.
 --
+-- ONE PULL, ONE LENGTH -- the wirecutters' rule, for the same reason.
+-- tg unwrenches the single fitting you clicked, and stacks its five
+-- piping layers a thousandth of a draw layer apart so you can aim at
+-- one (atmos_piping.dm:80-81 and the comment above it). We have no
+-- cursor down there, so a pull takes the TOPMOST layer and leaves the
+-- runs beneath it plumbed. It also means the refund is honest: one
+-- length up, one length in your hand.
+--
 -- Structures claim a click before this hook ever runs, so a wrench on a
 -- girder still bolts the girder; this only sees tiles nothing else
 -- wanted.
@@ -24,6 +32,17 @@
 -- message: a run you cannot see is a run the game must not mention, and
 -- "you can't reach the pipe" would be a probe for buried cable. Pry the
 -- tile up and the same click works.
+local TOPMOST_FIRST = { 16, 8, 4, 2, 1 }
+
+local function top_layer(mask)
+    for _, bit in ipairs(TOPMOST_FIRST) do
+        if mask % (bit * 2) >= bit then
+            return bit
+        end
+    end
+    return nil
+end
+
 return {
     id = "wrench",
     name = "wrench",
@@ -37,19 +56,21 @@ return {
         if ctx.turf(x, y) ~= "plating" then
             return "pass"
         end
-        if ctx.pipe(x, y) == 0 then
+        if top_layer(ctx.pipe(x, y)) == nil then
             return "pass"
         end
         ctx.system_msg(user, "You start unwrenching the pipe...")
-        if ctx.do_after(user, 1.0) and ctx.pipe(x, y) ~= 0 then
-            ctx.sound("ratchet", x, y)
-            -- All five layers: you are pulling up what is under your
-            -- feet, not choosing which of two crossing runs to spare.
-            ctx.cut_pipe(x, y, 31)
-            ctx.spawn_item("pipe", x, y)
-            ctx.system_msg(user, "The pipe comes free.")
-        else
+        if not ctx.do_after(user, 1.0) then
             ctx.system_msg(user, "You stop unwrenching.")
+            return
         end
+        local layer = top_layer(ctx.pipe(x, y))
+        if layer == nil then
+            return
+        end
+        ctx.sound("ratchet", x, y)
+        ctx.cut_pipe(x, y, layer)
+        ctx.spawn_item("pipe", x, y)
+        ctx.system_msg(user, "The pipe comes free.")
     end,
 }
