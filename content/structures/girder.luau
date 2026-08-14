@@ -8,7 +8,13 @@ return {
     name = "girder",
     sprite = "girder",
     dense = true,
-    build = { on = { "floor", "plating" }, with = { metal = 2 }, secs = 4.0 },
+    build = {
+        on = { "floor", "plating" },
+        with = { metal = 2 },
+        secs = 4.0,
+        start = "You start assembling a girder.",
+        done = "The girder stands.",
+    },
     transitions = {
         -- A Wall is a turf, not a thing standing on one: the girder is
         -- consumed into the geometry, and the seam does the rest.

@@ -12,7 +12,13 @@ return {
     sprite = "frame",
     dense = true,
     states = { "empty", "wired", "boarded" },
-    build = { on = { "floor", "plating" }, with = { metal = 5 }, secs = 8.0 },
+    build = {
+        on = { "floor", "plating" },
+        with = { metal = 5 },
+        secs = 8.0,
+        start = "You start assembling a machine frame.",
+        done = "The frame is boxed up.",
+    },
     transitions = {
         {
             at = "empty",

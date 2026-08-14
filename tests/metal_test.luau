@@ -26,7 +26,7 @@ t.run_ticks(2)
 
 t.click(p, 2, 2) -- raise a girder on the neighbouring floor
 t.run_seconds(4.5)
-assert(t.ledger_has("GirderBuilt"), "the girder rose")
+assert(t.ledger_has("StructureStep", "girder", "built"), "the girder rose")
 
 t.click(p, 2, 2) -- plate the standing girder into a wall
 t.run_seconds(4.5)
