@@ -25,6 +25,7 @@
         'm': (turf: Floor, fixture: Some(Smes)),
         'v': (turf: Floor, fixture: Some(Vent)),
         'c': (turf: Floor, fixture: Some(Canister)),
+        '_': (turf: Plating),
         's': (turf: Space, fixture: Some(Solar)),
     },
     rows: [
@@ -38,7 +39,7 @@
         "    #.........#.........#     ",
         "    #.........+.........#     ",
         "    #.........#.....####      ",
-        "    #.......c.#.....#         ",
+        "    #.______c.#.....#         ",
         "    #m..l....v#.....#         ",
         "    ################          ",
         "                              ",
@@ -84,6 +85,28 @@
     // deck to that room's vent (13, 11), passes UNDER the bulkhead at
     // (14, 10) — a mapper may, a player may not — and climbs the Annex
     // to its vent (16, 5). One line, one canister, two rooms.
+    // The supply main, painted tg's supply blue (GLOB.pipe_paint_
+    // colors "blue"). Only visible where the deck is open.
+    pipe_paint: [
+        (6, 10, 4, "#0000FF"),
+        (7, 10, 4, "#0000FF"),
+        (8, 10, 4, "#0000FF"),
+        (9, 10, 4, "#0000FF"),
+        (10, 10, 4, "#0000FF"),
+        (11, 10, 4, "#0000FF"),
+        (12, 10, 4, "#0000FF"),
+        (13, 10, 4, "#0000FF"),
+        (13, 11, 4, "#0000FF"),
+        (8, 9, 4, "#0000FF"),
+        (8, 8, 4, "#0000FF"),
+        (8, 7, 4, "#0000FF"),
+        (8, 6, 4, "#0000FF"),
+        (14, 10, 4, "#0000FF"),
+        (15, 10, 4, "#0000FF"),
+        (16, 10, 4, "#0000FF"),
+        (16, 9, 4, "#0000FF"),
+        (16, 8, 4, "#0000FF"),
+    ],
     pipes: [
         (6, 10, 4), (7, 10, 4), (8, 10, 4), (9, 10, 4), (10, 10, 4),
         (11, 10, 4), (12, 10, 4), (13, 10, 4), (13, 11, 4),
