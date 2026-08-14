@@ -16,22 +16,32 @@ return {
     },
     on_use = function(ctx, self, user, x, y)
         local t = ctx.turf(x, y)
+        local kind, secs, starting
         if t == "space" then
-            ctx.system_msg(user, "You start laying plating.")
-            if ctx.do_after(user, 1.5) and ctx.turf(x, y) == "space" then
-                ctx.construct(self, x, y, "plating")
-            else
-                ctx.system_msg(user, "You stop building.")
-            end
+            kind, secs, starting = "plating", 1.5, "You start laying plating."
         elseif t == "plating" then
-            ctx.system_msg(user, "You start tiling the floor.")
-            if ctx.do_after(user, 0.5) and ctx.turf(x, y) == "plating" then
-                ctx.construct(self, x, y, "floor")
-            else
-                ctx.system_msg(user, "You stop building.")
-            end
+            kind, secs, starting = "floor", 0.5, "You start tiling the floor."
         else
             return "pass"
         end
+        -- Checked twice against the engine's own validator: once before
+        -- the work, so an impossible job never starts, and once at the
+        -- end, so a job the world invalidated mid-way says why.
+        local why = ctx.can_construct(user, self, x, y, kind)
+        if why then
+            ctx.system_msg(user, why)
+            return
+        end
+        ctx.system_msg(user, starting)
+        if not ctx.do_after(user, secs) then
+            ctx.system_msg(user, "You stop building.")
+            return
+        end
+        why = ctx.can_construct(user, self, x, y, kind)
+        if why then
+            ctx.system_msg(user, why)
+            return
+        end
+        ctx.construct(self, x, y, kind)
     end,
 }
