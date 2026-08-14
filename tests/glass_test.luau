@@ -75,13 +75,23 @@ t.run_ticks(2)
 
 -- Fourteen seconds to get it back out, and a crowbar alone will not do
 -- it: the pane is screwed to its frame first. The refusal names BOTH
--- rungs a crowbar works on rather than whichever the file lists first.
+-- rungs a crowbar works on rather than whichever the file lists first
+-- -- as two whole sentences, never one joined with "or"
+-- (docs/localization.md).
 local _ = t.messages(p)
 t.click(p, 2, 1)
 t.run_ticks(4)
+local unsealed, unscrewed = false, false
+for _, m in ipairs(t.messages(p)) do
+    if m == "The grille must be unsealed first." then
+        unsealed = true
+    elseif m == "The grille must be unscrewed first." then
+        unscrewed = true
+    end
+end
 assert(
-    said(p, "The grille must be unsealed or unscrewed first."),
-    "a crowbar on a sealed pane is told what it needs"
+    unsealed and unscrewed,
+    "a crowbar on a sealed pane is told both rungs it needs"
 )
 
 t.swap_hands(p) -- screwdriver
