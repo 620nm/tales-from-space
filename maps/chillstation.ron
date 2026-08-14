@@ -69,6 +69,13 @@
         (16, 8, "rglass"),
         (17, 8, "screwdriver"),
     ],
+    // The socket the supply canister is fastened to. A canister feeds a
+    // run through a connector port and through nothing else, so this
+    // one line is what makes the station breathe: pull the port up with
+    // a wrench and the distribution loop has no source.
+    structures: [
+        (12, 10, "connector_port"),
+    ],
     cables: [
         (5, 16, 1), (6, 16, 1), (7, 16, 1), (8, 16, 1), (9, 16, 1), (10, 16, 1),
         (11, 16, 1), (12, 16, 1), (5, 11, 1), (5, 12, 1), (5, 13, 1), (5, 14, 1),
