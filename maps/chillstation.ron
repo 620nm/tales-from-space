@@ -98,6 +98,11 @@
         "              #_____________# ",
         "              #_____________# ",
         "              #__________O__# ",
+        "              #######+####### ",
+        "              #_____________# ",
+        "              ###+###+###+### ",
+        "              ##___#___#___## ",
+        "              ##___#___#___## ",
         "              ############### ",
     ],
     spawns: [(7, 8), (8, 8), (9, 8), (10, 8)],
@@ -197,8 +202,13 @@
         // state IS the switch. tg maps `/on` subtypes for exactly
         // this reason -- a station whose air only starts moving once
         // somebody walks to Atmospherics is not a station.
+        // A filter ROW, tg's shape: one machine per gas, in series
+        // down the waste line, each dropping what it catches out of
+        // its side mouth. Oxygen first, then carbon dioxide; what
+        // survives both is the nitrogen the mixer blends back.
+        (20, 14, "gas_filter_n2", "running"),
         (22, 14, "gas_filter", "running"),
-        (24, 14, "gas_mixer", "running"),
+        (24, 14, "gas_mixer_airmix", "running"),
         (26, 14, "gas_pump", "running"),
         // Two gauges, either side of the machines that change the gas
         // -- which is the only place a gauge earns its bolt.
@@ -221,6 +231,27 @@
         (27, 15, "layer_adapter"),
         (18, 10, "layer_adapter"),
         (18, 18, "layer_adapter"),
+        // The fourth adapter, and the storage loop's own: it puts
+        // the layer-2 chamber draw onto the layer-3 line into the
+        // mixer's side intake. Same reason as the others -- the
+        // machines at each end are pinned to different layers, and
+        // an adapter is the only thing that joins them.
+        (26, 18, "layer_adapter"),
+        // The COLOUR adapter, joining the cyan process line to the
+        // green chamber feed. Paint is plumbing here -- two runs
+        // whose colours disagree are two networks -- so this is the
+        // one fitting that lets a department keep its lines
+        // legible and still have them be one body of gas.
+        (15, 15, "color_adapter"),
+        // ISOLATION. tg puts a hand valve wherever a technician
+        // needs to cut a leg out without stopping the station: one
+        // on the supply where it leaves the department, one on the
+        // scrubbers return coming in. The manual valve is the wheel
+        // you turn in the dark; the digital one answers its panel.
+        (17, 19, "manual_valve", "shut"),
+        (24, 20, "digital_valve", "shut"),
+        // Bottled oxygen off the first filter's side mouth.
+        (20, 17, "connector_port"),
         // The scrubber that makes it a LOOP rather than a supply: it
         // stands on the Commons' own branch circuit, on layer 2, and
         // takes the carbon dioxide the crew breathe out back to
@@ -229,7 +260,17 @@
         // And the injector, which is the other end of the same idea and
         // the one machine here with no notion of enough: it fills the
         // department's own deck straight off the process line.
-        (21, 18, "air_injector"),
+        // Each chamber's pair, the way tg pairs them: an injector
+        // pushing gas IN off the green feed, and a scrubber set to
+        // SIPHON drawing it back out onto the yellow draw. Both
+        // ship running -- a storage chamber nobody switched on is a
+        // sealed room full of gas with no way to reach it.
+        (16, 24, "air_injector", "injecting"),
+        (16, 25, "air_scrubber", "siphoning"),
+        (20, 24, "air_injector", "injecting"),
+        (20, 25, "air_scrubber", "siphoning"),
+        (24, 24, "air_injector", "injecting"),
+        (24, 25, "air_scrubber", "siphoning"),
     ],
     // The vestibule interlock: each airlock names the direction its
     // partner lies in, and the link resolves only because BOTH of them
@@ -327,6 +368,36 @@
         (25, 18, 2),
         (25, 19, 2),
         (25, 20, 2),
+        // Down to gas storage: every chamber's injector and siphon
+        // is a fan, and a chamber nobody has wired is a sealed room
+        // full of gas with no way to move it.
+        (19, 19, 2),
+        (19, 20, 2),
+        (19, 21, 2),
+        (19, 22, 2),
+        (19, 23, 2),
+        (19, 24, 2),
+        (19, 25, 2),
+        (16, 24, 2),
+        (17, 24, 2),
+        (18, 24, 2),
+        (20, 24, 2),
+        (21, 24, 2),
+        (22, 24, 2),
+        (23, 24, 2),
+        (24, 24, 2),
+        (25, 24, 2),
+        (26, 24, 2),
+        (16, 25, 2),
+        (17, 25, 2),
+        (18, 25, 2),
+        (20, 25, 2),
+        (21, 25, 2),
+        (22, 25, 2),
+        (23, 25, 2),
+        (24, 25, 2),
+        (25, 25, 2),
+        (26, 25, 2),
     ],
     // The distribution run, layer 3 (bit 4) — tg's distro loop. It
     // starts at the canister (12, 10), crosses the Commons under the
@@ -354,6 +425,65 @@
         (16, 10, 4, "#0000FF"),
         (16, 9, 4, "#0000FF"),
         (16, 8, 4, "#0000FF"),
+        // The PROCESS LINE wears air-mix cyan, which is what makes
+        // the colour adapter at (15, 15) a real fitting rather than
+        // a decoration: cyan and green are two liveries, and two
+        // liveries do not join without one.
+        (15, 14, 4, "#00FFFF"),
+        (16, 14, 4, "#00FFFF"),
+        (17, 14, 4, "#00FFFF"),
+        (18, 14, 4, "#00FFFF"),
+        (19, 14, 4, "#00FFFF"),
+        (21, 14, 4, "#00FFFF"),
+        (23, 14, 4, "#00FFFF"),
+        (25, 14, 4, "#00FFFF"),
+        (27, 14, 4, "#00FFFF"),
+        (16, 13, 4, "#00FFFF"),
+        (18, 13, 4, "#00FFFF"),
+        // The storage loop's two liveries, tg's own names for them
+        // (`GLOB.pipe_paint_colors`): green feeds the chambers,
+        // yellow draws from them. Same layer, adjacent runs, two
+        // bodies of gas -- paint doing outside the department what
+        // layers do across the station.
+        (15, 23, 4, "#00FF00"),
+        (16, 23, 4, "#00FF00"),
+        (17, 23, 4, "#00FF00"),
+        (18, 23, 4, "#00FF00"),
+        (19, 23, 4, "#00FF00"),
+        (20, 23, 4, "#00FF00"),
+        (21, 23, 4, "#00FF00"),
+        (22, 23, 4, "#00FF00"),
+        (23, 23, 4, "#00FF00"),
+        (15, 24, 4, "#00FF00"),
+        (19, 24, 4, "#00FF00"),
+        (23, 24, 4, "#00FF00"),
+        (15, 22, 4, "#00FF00"),
+        (15, 21, 4, "#00FF00"),
+        (15, 20, 4, "#00FF00"),
+        (15, 19, 4, "#00FF00"),
+        (15, 18, 4, "#00FF00"),
+        (15, 17, 4, "#00FF00"),
+        (15, 16, 4, "#00FF00"),
+        (16, 26, 2, "#FFFF00"),
+        (17, 26, 2, "#FFFF00"),
+        (18, 26, 2, "#FFFF00"),
+        (19, 26, 2, "#FFFF00"),
+        (20, 26, 2, "#FFFF00"),
+        (21, 26, 2, "#FFFF00"),
+        (22, 26, 2, "#FFFF00"),
+        (23, 26, 2, "#FFFF00"),
+        (24, 26, 2, "#FFFF00"),
+        (25, 26, 2, "#FFFF00"),
+        (26, 26, 2, "#FFFF00"),
+        (27, 26, 2, "#FFFF00"),
+        (27, 18, 2, "#FFFF00"),
+        (27, 19, 2, "#FFFF00"),
+        (27, 20, 2, "#FFFF00"),
+        (27, 21, 2, "#FFFF00"),
+        (27, 22, 2, "#FFFF00"),
+        (27, 23, 2, "#FFFF00"),
+        (27, 24, 2, "#FFFF00"),
+        (27, 25, 2, "#FFFF00"),
         // Atmospherics' two mains wear tg's own liveries
         // (pipes/mapping.dm:93-94): COLOR_BLUE for supply,
         // COLOR_RED for scrubbers. The process line stays
@@ -392,6 +522,37 @@
         (16, 18, 2, "#FF0000"),
         (17, 18, 2, "#FF0000"),
     ],
+    // GAS STORAGE, tg-style: sealed chambers holding a gas as ROOM
+    // AIR, not bottles on a shelf. The difference is the whole recovery
+    // story -- a canister can be unwrenched and wheeled away, a chamber
+    // cannot, so a station that has lost every bottle can still make
+    // air. Oxygen and nitrogen at fifty atmospheres, carbon dioxide at
+    // three (it is what the station is trying to get RID of, so its
+    // chamber is a receiving tank rather than a reserve).
+    //
+    // The keys are the matter registry's and are checked at boot: a key
+    // nothing answers to refuses the server rather than quietly holding
+    // ordinary air (main.rs, and MapFile::room_gas_errors).
+    room_gas: [
+        (16, 24, "o2", 5000.0),
+        (16, 25, "o2", 5000.0),
+        (17, 24, "o2", 5000.0),
+        (17, 25, "o2", 5000.0),
+        (18, 24, "o2", 5000.0),
+        (18, 25, "o2", 5000.0),
+        (20, 24, "n2", 5000.0),
+        (20, 25, "n2", 5000.0),
+        (21, 24, "n2", 5000.0),
+        (21, 25, "n2", 5000.0),
+        (22, 24, "n2", 5000.0),
+        (22, 25, "n2", 5000.0),
+        (24, 24, "co2", 300.0),
+        (24, 25, "co2", 300.0),
+        (25, 24, "co2", 300.0),
+        (25, 25, "co2", 300.0),
+        (26, 24, "co2", 300.0),
+        (26, 25, "co2", 300.0),
+    ],
     pipes: [
         (6, 10, 4), (7, 10, 4), (8, 10, 4), (9, 10, 4), (10, 10, 4),
         (11, 10, 4), (12, 10, 4), (13, 10, 4), (13, 11, 4),
@@ -410,7 +571,6 @@
         (17, 14, 4),
         (18, 14, 4),
         (19, 14, 4),
-        (20, 14, 4),
         (21, 14, 4),
         (23, 14, 4),
         (25, 14, 4),
@@ -421,7 +581,6 @@
         (22, 16, 4),
         (22, 17, 4),
         (24, 15, 4),
-        (24, 16, 4),
         (24, 17, 4),
         (19, 15, 4),
         (19, 16, 4),
@@ -429,6 +588,64 @@
         (19, 18, 4),
         (20, 18, 4),
         (17, 10, 4),
+        (20, 15, 4),
+        (20, 16, 4),
+        (20, 17, 4),
+        // THE STORAGE LOOP, layer 3 and separated from the process
+        // line by COLOUR rather than by layer -- which is what tg does
+        // inside a department, and what the paint rules were built for.
+        // FEED (green) carries what the filter row pulls out of the
+        // waste down to each chamber's injector; DRAW (yellow) brings it
+        // back up from each chamber's siphoning scrubber to the mixer.
+        // The two run parallel up the department and never join.
+        (15, 23, 4),
+        (16, 23, 4),
+        (17, 23, 4),
+        (18, 23, 4),
+        (19, 23, 4),
+        (20, 23, 4),
+        (21, 23, 4),
+        (22, 23, 4),
+        (23, 23, 4),
+        (15, 24, 4),
+        (19, 24, 4),
+        (23, 24, 4),
+        (15, 22, 4),
+        (15, 21, 4),
+        (15, 20, 4),
+        (15, 19, 4),
+        (15, 18, 4),
+        (15, 17, 4),
+        (15, 16, 4),
+        // DRAW is layer 2, because a scrubber is: every one of them
+        // on the station binds on tg's scrubbers layer, and a
+        // chamber's siphon is no exception. So the storage draw and
+        // the station's waste main are two layer-2 nets that never
+        // touch, told apart on sight by their paint.
+        (16, 26, 2),
+        (17, 26, 2),
+        (18, 26, 2),
+        (19, 26, 2),
+        (20, 26, 2),
+        (21, 26, 2),
+        (22, 26, 2),
+        (23, 26, 2),
+        (24, 26, 2),
+        (25, 26, 2),
+        (26, 26, 2),
+        (27, 26, 2),
+        (27, 18, 2),
+        (27, 19, 2),
+        (27, 20, 2),
+        (27, 21, 2),
+        (27, 22, 2),
+        (27, 23, 2),
+        (27, 24, 2),
+        (27, 25, 2),
+        // ...and the short layer-3 link that carries it into the
+        // mixer's side intake, through the adapter at (26, 18).
+        (25, 18, 4),
+        (24, 18, 4),
         // The SUPPLY main, layer 4 and blue: tg's own
         // convention, counted across every map file it ships
         // (`vent_pump/on/layer4`, 2091 instances against one on
