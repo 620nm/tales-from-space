@@ -221,4 +221,8 @@
     // coupling nub the fitting is held by. Baking the machine's was a
     // near miss that cost the item its nub.
     ("connector_port_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "connector", 0)),
+    ("connector_port_loose_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "connector", 0)),
+    ("connector_port_loose_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "connector", 1)),
+    ("connector_port_loose_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "connector", 2)),
+    ("connector_port_loose_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "connector", 3)),
 ]

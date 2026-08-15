@@ -15,21 +15,9 @@
 -- clears the tile -- and you can pick which of three stacked cables
 -- that is because BYOND separates them by a hundredth of a draw layer
 -- (cable.dm:22,37,47) and the click lands on the topmost one under the
--- cursor. Our cables are subfloor topology rather than entities, so
--- there is no cursor to aim at a layer with; what carries over is the
--- rule that a snip takes the TOPMOST line and leaves the ones beneath
--- it running. Clearing a three-line tile is three snips, which is what
--- it costs in tg too.
-local TOPMOST_FIRST = { 4, 2, 1 }
-
-local function top_line(mask)
-    for _, bit in ipairs(TOPMOST_FIRST) do
-        if mask % (bit * 2) >= bit then
-            return bit
-        end
-    end
-    return nil
-end
+-- cursor. The browser alpha-tests those same stacked sprites and the
+-- server passes the validated exact line here. Clearing a three-line
+-- tile is still three snips, but which one comes first is what you aim at.
 
 return {
     id = "wirecutters",
@@ -40,13 +28,17 @@ return {
     stowed_sprite = "belt_cutters",
     -- The equipment class targets dispatch on; no tank, nothing to burn.
     tool = "cutters",
-    on_use = function(ctx, self, user, x, y)
+    on_use = function(ctx, self, user, x, y, _, target)
         -- Asked before the cable question, so a covered tile answers
         -- the same whether or not anything runs under it.
         if ctx.turf(x, y) ~= "plating" then
             return "pass"
         end
-        if top_line(ctx.cable(x, y)) == nil then
+        if target == nil or target.kind ~= "cable" then
+            return "pass"
+        end
+        local line = target.layer
+        if ctx.cable(x, y) % (line * 2) < line then
             return "pass"
         end
         ctx.system_msg(user, "You start snipping through the cabling...")
@@ -56,8 +48,7 @@ return {
         end
         -- Asked again at the end, not remembered from the start: the
         -- line you were cutting may already be gone.
-        local line = top_line(ctx.cable(x, y))
-        if line == nil then
+        if ctx.cable(x, y) % (line * 2) < line then
             return
         end
         ctx.sound("wirecutter", x, y)

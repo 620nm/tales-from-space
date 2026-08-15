@@ -11,12 +11,9 @@
 -- line.
 --
 -- ONE PULL, ONE LENGTH -- the wirecutters' rule, for the same reason.
--- tg unwrenches the single fitting you clicked, and stacks its five
--- piping layers a thousandth of a draw layer apart so you can aim at
--- one (atmos_piping.dm:80-81 and the comment above it). We have no
--- cursor down there, so a pull takes the TOPMOST layer and leaves the
--- runs beneath it plumbed. It also means the refund is honest: one
--- length up, one length in your hand.
+-- The client alpha-tests the actual stacked pipe art and appends the
+-- selected layer to this hook. The server validates that exact length
+-- before dispatch and again when applying the cut.
 --
 -- Structures claim a click before this hook ever runs, so a wrench on a
 -- girder still bolts the girder; this only sees tiles nothing else
@@ -32,17 +29,6 @@
 -- message: a run you cannot see is a run the game must not mention, and
 -- "you can't reach the pipe" would be a probe for buried cable. Pry the
 -- tile up and the same click works.
-local TOPMOST_FIRST = { 16, 8, 4, 2, 1 }
-
-local function top_layer(mask)
-    for _, bit in ipairs(TOPMOST_FIRST) do
-        if mask % (bit * 2) >= bit then
-            return bit
-        end
-    end
-    return nil
-end
-
 return {
     id = "wrench",
     name = "wrench",
@@ -50,13 +36,17 @@ return {
     inhand_sprite = { "held_wrench_l", "held_wrench_r" },
     stowed_sprite = "belt_wrench",
     tool = "wrench",
-    on_use = function(ctx, self, user, x, y)
+    on_use = function(ctx, self, user, x, y, _, target)
         -- Asked before the pipe question, so a covered tile answers the
         -- same whether or not anything runs under it.
         if ctx.turf(x, y) ~= "plating" then
             return "pass"
         end
-        if top_layer(ctx.pipe(x, y)) == nil then
+        if target == nil or target.kind ~= "pipe" then
+            return "pass"
+        end
+        local layer = target.layer
+        if ctx.pipe(x, y) % (layer * 2) < layer then
             return "pass"
         end
         ctx.system_msg(user, "You start unwrenching the pipe...")
@@ -64,13 +54,11 @@ return {
             ctx.system_msg(user, "You stop unwrenching.")
             return
         end
-        local layer = top_layer(ctx.pipe(x, y))
-        if layer == nil then
+        if ctx.pipe(x, y) % (layer * 2) < layer then
             return
         end
         ctx.sound("ratchet", x, y)
         ctx.cut_pipe(x, y, layer)
-        ctx.spawn_item("pipe", x, y)
         ctx.system_msg(user, "The pipe comes free.")
     end,
 }
