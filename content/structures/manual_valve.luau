@@ -53,4 +53,39 @@ return {
         positions = { "shut", "open" },
         switch_secs = 1.0,
     },
+    -- Raised from a fitting and yielding one back, which is tg's
+    -- universal atmospherics construction rather than a quirk of this
+    -- machine: `/obj/item/pipe/wrench_act` deletes the fitting and
+    -- spawns the machine (construction.dm:268-312), and
+    -- `on_deconstruction` mints the machine's `construction_type` back
+    -- onto the tile (atmosmachinery.dm:511-520). Two seconds each way,
+    -- tg's own (`use_tool(..., 2 SECONDS)`, atmosmachinery.dm:456).
+    --
+    -- No `over = "pipe"`. A binary device is not a fitting laid ON a
+    -- run, it is a length OF one: tg looks for conflicting atmospherics
+    -- on the turf and at nothing else (construction.dm:276-296), so a
+    -- valve goes down on bare deck and the pipe is run up to it.
+    build = {
+        on = { "floor", "plating" },
+        from_item = "manual_valve_fitting",
+        tool = "wrench",
+        secs = 2.0,
+        start = "You start fastening the valve down.",
+        done = "The valve is bolted to the deck.",
+    },
+    transitions = {
+        {
+            -- No state guard, and that is tg: the valve is the one
+            -- machine in the family with no `can_unwrench` override
+            -- (the base var is a flat TRUE, valve.dm:11), so an open
+            -- one comes up if you insist on it. What follows is the
+            -- plumbing's business.
+            tool = "wrench",
+            secs = 2.0,
+            gone = true,
+            yields = { manual_valve_fitting = 1 },
+            start = "You start unfastening the valve.",
+            done = "The valve comes up off the deck.",
+        },
+    },
 }
