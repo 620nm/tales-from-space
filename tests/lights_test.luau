@@ -43,7 +43,7 @@ end
 assert(told_about_the_lamp(), "the burning lamp is disclosed to the viewer")
 
 -- One swing with something heavy.
-t.click(p, 1, 1)
+t.click(p, 1, 1, t.target_at(1, 1, "toolbox"))
 t.tick()
 assert(t.hands(p).held == "toolbox", "picked the toolbox up")
 t.click(p, 2, 1, light_target)
@@ -66,7 +66,7 @@ assert(changed[1].actor.kind == "script"
 
 -- The janitor's device, one click.
 t.swap_hands(p)
-t.click(p, 1, 2)
+t.click(p, 1, 2, t.target_at(1, 2, "light_replacer"))
 t.tick()
 assert(t.hands(p).held == "light_replacer", "picked the replacer up")
 t.click(p, 2, 1, light_target)
@@ -107,7 +107,7 @@ t.drop(p)
 t.swap_hands(p)
 t.drop(p)
 t.tick()
-t.click(p, 2, 2)
+t.click(p, 2, 2, t.target_at(2, 2, "box_lights"))
 t.tick()
 assert(t.hands(p).held == "box_lights", "picked the box up")
 t.take_held(p, 0)

@@ -69,7 +69,7 @@ end
 local function hold_open(p, x, y, rounds)
     for _ = 1, rounds do
         if not t.door_at(x, y).open then
-            t.click(p, x, y)
+            t.click(p, x, y, t.target_at(x, y))
         end
         t.run_ticks(10)
     end
@@ -111,7 +111,7 @@ assert(not t.door_at(5, 2).open, "the inner airlock shut behind us")
 assert(t.room_pressure(6, 2) > 90.0, "the sealed chamber kept its air")
 
 -- Now open the outer airlock, with the inner one shut.
-t.click(p, 7, 2)
+t.click(p, 7, 2, t.target_at(7, 2))
 t.run_ticks(15) -- the leaf swings; it is not open on the click tick
 assert(t.door_at(7, 2).open, "the outer airlock opened")
 -- Held open past its autoclose while the chamber empties. Three tiles
@@ -140,7 +140,7 @@ step_into_the_chamber(q)
 -- shut it, because nothing links these two doors. Open the outer one
 -- on top of that and the station is a straight line to vacuum.
 assert(t.door_at(5, 2).open, "the inner airlock is still open behind us")
-t.click(q, 7, 2)
+t.click(q, 7, 2, t.target_at(7, 2))
 t.run_ticks(15) -- again, the leaf needs its swing
 assert(t.door_at(7, 2).open, "and the outer one opens anyway")
 
@@ -180,7 +180,7 @@ assert(t.door_at(5, 2).open,
 
 -- Here is the whole feature. Opening the outer airlock CLOSES the inner
 -- one, without anybody deciding to be careful (airlock.dm:1357).
-t.click(r, 7, 2)
+t.click(r, 7, 2, t.target_at(7, 2))
 t.run_ticks(15) -- both leaves swing: this one open, its partner shut
 assert(t.door_at(7, 2).open, "the outer airlock opened")
 assert(not t.door_at(5, 2).open,
@@ -264,10 +264,10 @@ assert(sealed > 90.0,
 -- Take it out, the long way, with the tools tg asks for: four seconds
 -- of screwdriver to unseal the pane, ten of crowbar to lever it free.
 -- Every step is a click a player could make.
-t.click(w, 2, 4) -- pick up the screwdriver
+t.click(w, 2, 4, t.target_at(2, 4, "screwdriver")) -- pick up the screwdriver
 t.tick()
 assert(t.hands(w).held == "screwdriver", "screwdriver in hand")
-t.click(w, 2, 2)
+t.click(w, 2, 2, t.target_at(2, 2))
 t.run_ticks(100)
 assert(t.structure_at(2, 2).state == "unsealed",
     "the pane is loose in its frame")
@@ -277,10 +277,10 @@ assert(t.room_pressure(2, 3) > 90.0,
     "an unscrewed pane is still a pane: " .. t.room_pressure(2, 3))
 
 t.swap_hands(w) -- the screwdriver stays in the other hand
-t.click(w, 3, 4) -- and now the crowbar
+t.click(w, 3, 4, t.target_at(3, 4, "crowbar")) -- and now the crowbar
 t.tick()
 assert(t.hands(w).held == "crowbar", "crowbar in hand")
-t.click(w, 2, 2)
+t.click(w, 2, 2, t.target_at(2, 2))
 t.run_ticks(240)
 assert(t.structure_at(2, 2).state == "bolted",
     "the pane came free and left the bare grille standing")

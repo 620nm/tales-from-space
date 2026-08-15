@@ -27,10 +27,10 @@ t.world([==[(
 
 local p = t.join()
 t.tick()
-t.click(p, 2, 1) -- sheets in one hand
+t.click(p, 2, 1, t.target_at(2, 1, "metal")) -- sheets in one hand
 t.run_ticks(2)
 t.swap_hands(p)
-t.click(p, 2, 2) -- wrench in the other
+t.click(p, 2, 2, t.target_at(2, 2, "wrench")) -- wrench in the other
 t.run_ticks(2)
 
 -- A girder rises bolted down: no wrench step, exactly as tg builds one.
@@ -41,7 +41,7 @@ assert(t.ledger_has("StructureStep", "girder", "built"), "the girder rose")
 
 -- The wrench loosens it.
 t.swap_hands(p)
-t.click(p, 1, 2)
+t.click(p, 1, 2, t.target_at(1, 2))
 t.run_seconds(4.5)
 assert(t.ledger_has("StructureStep", "girder", "displaced"),
     "four seconds of wrenching took the bolts out")
@@ -50,7 +50,7 @@ assert(t.ledger_has("StructureStep", "girder", "displaced"),
 -- state the job wants; a silent no-op would read as a dropped click.
 t.swap_hands(p)
 local _ = t.messages(p)
-t.click(p, 1, 2)
+t.click(p, 1, 2, t.target_at(1, 2))
 t.run_ticks(2)
 local said = t.messages(p)
 local refused = false
@@ -75,13 +75,13 @@ assert(t.ledger_has("StructureStep", "girder", "pushed"),
 
 -- Bolt it back down where it ended up, and the wall finally closes.
 t.swap_hands(p)
-t.click(p, 1, 3)
+t.click(p, 1, 3, t.target_at(1, 3))
 t.run_seconds(4.5)
 assert(t.ledger_has("StructureStep", "girder", "anchored"),
     "the wrench turns both ways")
 
 t.swap_hands(p)
-t.click(p, 1, 3)
+t.click(p, 1, 3, t.target_at(1, 3))
 t.run_seconds(4.5)
 assert(t.turf(1, 3) == "wall", "the wall stands, got " .. tostring(t.turf(1, 3)))
 
@@ -111,10 +111,10 @@ t.world([==[(
 
 p = t.join()
 t.tick()
-t.click(p, 2, 1) -- sheets
+t.click(p, 2, 1, t.target_at(2, 1, "metal")) -- sheets
 t.run_ticks(2)
 t.swap_hands(p)
-t.click(p, 2, 2) -- wrench
+t.click(p, 2, 2, t.target_at(2, 2, "wrench")) -- wrench
 t.run_ticks(2)
 t.swap_hands(p)
 t.click(p, 1, 2) -- raise a girder to work on
@@ -122,7 +122,7 @@ t.run_seconds(4.5)
 assert(t.ledger_has("StructureStep", "girder", "built"), "the girder rose")
 
 t.swap_hands(p)
-t.click(p, 1, 2) -- start unbolting it
+t.click(p, 1, 2, t.target_at(1, 2)) -- start unbolting it
 t.run_ticks(5)
 for _ = 1, 3 do  -- and walk out of reach before the four seconds land
     t.move(p, "east")

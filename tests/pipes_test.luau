@@ -44,7 +44,7 @@ local p = t.join()
 t.tick()
 
 -- Pick up the coil of pipe and run three lengths west to east.
-t.click(p, 1, 1)
+t.click(p, 1, 1, t.target_at(1, 1, "pipe"))
 t.run_ticks(2)
 for _, x in ipairs({ 1, 2, 3 }) do
     t.click(p, x, 1)
@@ -73,7 +73,7 @@ assert(t.pipe_pressure(2, 1) < 1.0, "and it is empty until something fills it")
 -- Unwrench the middle: the run parts in two and gives back a length.
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 3, 3) -- wrench
+t.click(p, 3, 3, t.target_at(3, 3, "wrench")) -- wrench
 t.run_ticks(2)
 t.click(p, 2, 1)
 t.run_seconds(1.5)
@@ -130,13 +130,13 @@ assert(t.pipe_pressure(12, 2) == nil, "but stops short of the closet")
 -- Take the length of pipe FIRST and park it in the other hand. Loose
 -- things do not survive a decompression: what is not in your hands
 -- when the hull opens gets dragged wherever the air goes.
-t.click(q, 12, 3)
+t.click(q, 12, 3, t.target_at(12, 3, "pipe"))
 t.run_ticks(2)
 t.swap_hands(q)
 t.run_ticks(2)
 
 -- Open the closet to space. Nothing feeds it, so it empties.
-t.click(q, 12, 2) -- the welder, underfoot
+t.click(q, 12, 2, t.target_at(12, 2, "welder")) -- the welder, underfoot
 t.fault(12, 1, 6)
 t.run_seconds(6)
 assert(t.is_breached(12, 1), "the fault opened the closet")
@@ -217,7 +217,7 @@ assert(t.pipe_pressure(2, 1, DISTRO) > 90.0, "the mapped main is charged")
 
 -- Pick the pipe up and walk the dial round from 3 to 1, tg's
 -- 1->2->3->4->5->1 cycle (construction.dm:438-445).
-t.click(e, 2, 2)
+t.click(e, 2, 2, t.target_at(2, 2, "pipe"))
 t.run_ticks(2)
 local _ = t.messages(e)
 t.use_self(e)
@@ -246,7 +246,7 @@ assert(
 -- what is plumbed beneath it, so the refund is honest.
 t.drop(e)
 t.run_ticks(2)
-t.click(e, 1, 2) -- the wrench
+t.click(e, 1, 2, t.target_at(1, 2, "wrench")) -- the wrench
 t.run_ticks(2)
 t.click(e, 2, 1)
 t.run_seconds(1.5)

@@ -56,7 +56,7 @@ t.tick()
 -- A fresh coil lays the line the station is already wired with.
 -- tg's coil defaults to CABLE_LAYER_2 (cable.dm:513).
 -- ---------------------------------------------------------------
-t.click(p, 1, 1) -- pick the coil up
+t.click(p, 1, 1, t.target_at(1, 1, "cable_coil")) -- pick the coil up
 t.run_ticks(2)
 for _, x in ipairs({ 1, 2, 3 }) do
     t.click(p, x, 1)
@@ -119,7 +119,7 @@ assert(t.segment_at(2, 3).branch == nil, "and the yellow line never went there")
 -- ---------------------------------------------------------------
 t.swap_hands(p)
 t.run_ticks(2)
-t.click(p, 3, 3) -- the second coil
+t.click(p, 3, 3, t.target_at(3, 3, "cable_coil")) -- the second coil
 t.run_ticks(2)
 t.click(p, 3, 2)
 t.run_seconds(1.5)
@@ -141,7 +141,7 @@ assert(
 -- ---------------------------------------------------------------
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 1, 3) -- the cutters
+t.click(p, 1, 3, t.target_at(1, 3, "wirecutters")) -- the cutters
 t.run_ticks(2)
 t.click(p, 2, 1)
 t.run_seconds(1.5)

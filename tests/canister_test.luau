@@ -79,7 +79,7 @@ assert(
 
 -- Take the welder off the deck FIRST: loose things do not survive a
 -- decompression, and a welder dragged into space is a welder lost.
-t.click(p, 2, 2)
+t.click(p, 2, 2, t.target_at(2, 2, "welder"))
 t.run_ticks(2)
 
 -- Open the hull. The room empties, and the vent fights the hole and
@@ -190,7 +190,7 @@ assert(t.room_pressure(2, 2) > 80.0, "the sealed room is still fine")
 -- Until it isn't. Breach it, weld it shut, and give the vent every
 -- chance: it is a fan over a dead line, and a fan moves no air it was
 -- not handed.
-t.click(q, 2, 2)
+t.click(q, 2, 2, t.target_at(2, 2, "welder"))
 t.run_ticks(2)
 t.fault(2, 1, t.now() + 4)
 t.run_seconds(8)
@@ -262,7 +262,7 @@ t.world([==[(
 
 local w = t.join()
 t.tick()
-t.click(w, 1, 2) -- the wrench
+t.click(w, 1, 2, t.target_at(1, 2, "wrench")) -- the wrench
 t.run_ticks(2)
 
 -- Fastened to the port it was mapped on: it is feeding the leak, and
@@ -277,7 +277,7 @@ assert(fastened < before - 100.0,
 -- Laying plumbing is slow. The player is standing on a port of their
 -- own at (1, 1); a wrench takes two seconds to break it out of the
 -- run, which is the contrast the next step is about.
-t.click(w, 1, 1)
+t.click(w, 1, 1, t.target_at(1, 1))
 t.run_ticks(1)
 assert(not t.ledger_has("StructureStep", "connector_port", "displaced"),
     "one tick in, the port is still bolted down")
@@ -286,7 +286,7 @@ assert(t.ledger_has("StructureStep", "connector_port", "displaced"),
     "and two seconds in, it is up")
 
 -- Unfastening a canister takes NO time. One tick, one ratchet, off.
-t.click(w, 2, 1)
+t.click(w, 2, 1, t.target_at(2, 1))
 t.run_ticks(1)
 assert(t.ledger_has("StructureStep", "canister", "displaced"),
     "the canister comes off the port instantly")
@@ -323,7 +323,7 @@ local function refused_with(line)
 end
 
 local _ = t.messages(w)
-t.click(w, 3, 1)
+t.click(w, 3, 1, t.target_at(3, 1))
 t.run_ticks(2)
 assert(refused_with("There is nothing here to fasten it to."),
     "the refusal named the rule on bare deck")
@@ -338,7 +338,7 @@ t.run_ticks(3)
 assert(t.canister_pressure(4, 1) ~= nil, "it is over the run now")
 assert(t.pipe_pressure(4, 1) ~= nil, "on live pipe, at that")
 local _ = t.messages(w)
-t.click(w, 4, 1)
+t.click(w, 4, 1, t.target_at(4, 1))
 t.run_ticks(2)
 assert(refused_with("There is nothing here to fasten it to."),
     "a bare run is not a socket")
@@ -351,7 +351,7 @@ t.move(w, "east")
 t.run_ticks(3)
 assert(t.canister_pressure(5, 1) ~= nil, "it is on the second port")
 local moved = t.canister_pressure(5, 1)
-t.click(w, 5, 1)
+t.click(w, 5, 1, t.target_at(5, 1))
 t.run_ticks(1)
 assert(t.ledger_has("StructureStep", "canister", "anchored"),
     "fastened to the port it was shoved onto")
