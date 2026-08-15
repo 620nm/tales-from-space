@@ -68,6 +68,20 @@ return {
             ctx.system_msg(user, "The floor is in the way. Pry the tile up first.")
             return
         end
+        -- A MACHINE takes no paint. tg spells this out on the sharpest
+        -- case -- the colour adapter is `paintable = FALSE`
+        -- (color_adapter.dm:16), because a thing whose whole job is to
+        -- join every colour has no colour to be -- and here it holds for
+        -- the whole family: a device's ports bind to whatever run they
+        -- reach regardless of its paint (pipes/paint.rs), so there is
+        -- nothing on one for a stripe to do. Said out loud rather than
+        -- silently done, because a painter that changed nothing and
+        -- claimed otherwise is the worst of both.
+        local machine = ctx.machine(x, y)
+        if machine then
+            ctx.system_msg(user, "The " .. machine.name .. " takes no paint.")
+            return
+        end
         -- Whatever is laid here, on every layer at once: the painter has
         -- one dial and it is spent on the colour. (tg paints the pipe
         -- object you clicked, which carries its own layer; the effect
