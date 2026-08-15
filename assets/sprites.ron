@@ -221,6 +221,111 @@
         // Unbolted there is no stub at all, so there is nothing to
         // point: tg's loose `connector` state is `dirs = 1`.
         ("connector_port_loose", Dmi("obj/machines/atmospherics/unary_devices.dmi", "connector", 0)),
+        // The machines that stand IN a run rather than on it: tg's
+        // binary devices. Each picture is tg's own recipe, composited --
+        // one `pipe_intact` half-pipe per NODE direction, then the
+        // device body at its facing (components_base.dm:87-98). Drawn
+        // this way rather than wearing the `*_map-N` states because
+        // those exist for one position only (there is no
+        // `mvalve_on_map`), and a machine whose open picture came from a
+        // different recipe than its shut one would not read as the same
+        // object.
+        //
+        // A binary device reaches along ONE AXIS, so there are two
+        // pictures and not four: tg's `PIPING_CARDINAL_AUTONORMALIZE`
+        // folds south onto north and west onto east (valve.dm:14,25,
+        // `normalize_cardinal_directions`), and the art agrees --
+        // `mvalve_off-1` has no south or west cell at all. The four
+        // names below are what `facing_sprites` asks for; two pairs bake
+        // the same picture, which is the honest amount of art a thing
+        // with two ends has. `-1` is tg's overlay offset for piping
+        // layers 1, 3 and 5 (`set_overlay_offset`).
+        //
+        // DMI dirs: 0 south, 1 north, 2 east, 3 west.
+        ("valve_shut_n", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+            ("obj/machines/atmospherics/binary_devices.dmi", "mvalve_off-1", 1),
+        ])),
+        ("valve_shut_s", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+            ("obj/machines/atmospherics/binary_devices.dmi", "mvalve_off-1", 1),
+        ])),
+        ("valve_shut_e", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+            ("obj/machines/atmospherics/binary_devices.dmi", "mvalve_off-1", 2),
+        ])),
+        ("valve_shut_w", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+            ("obj/machines/atmospherics/binary_devices.dmi", "mvalve_off-1", 2),
+        ])),
+        ("valve_open_n", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+            ("obj/machines/atmospherics/binary_devices.dmi", "mvalve_on-1", 1),
+        ])),
+        ("valve_open_s", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+            ("obj/machines/atmospherics/binary_devices.dmi", "mvalve_on-1", 1),
+        ])),
+        ("valve_open_e", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+            ("obj/machines/atmospherics/binary_devices.dmi", "mvalve_on-1", 2),
+        ])),
+        ("valve_open_w", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+            ("obj/machines/atmospherics/binary_devices.dmi", "mvalve_on-1", 2),
+        ])),
+        // The gas pump, same recipe. tg's running body (`pump_on-1`) is
+        // a five-frame loop; its first frame is baked, so a running pump
+        // reads by its lit indicators rather than by moving -- the loop
+        // is a follow-up, not a correction.
+        ("pump_off_n", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pump_off-1", 1),
+        ])),
+        ("pump_off_s", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pump_off-1", 1),
+        ])),
+        ("pump_off_e", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pump_off-1", 2),
+        ])),
+        ("pump_off_w", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pump_off-1", 2),
+        ])),
+        ("pump_on_n", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pump_on-1", 1),
+        ])),
+        ("pump_on_s", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pump_on-1", 1),
+        ])),
+        ("pump_on_e", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pump_on-1", 2),
+        ])),
+        ("pump_on_w", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pump_on-1", 2),
+        ])),
         // A gas canister: tg's art is greyscale and each gas type paints
         // it (greyscale_colors "#c6c0b5" is pre-mixed air). Baked with
         // that colour for now; it moves to per-object paint when the
