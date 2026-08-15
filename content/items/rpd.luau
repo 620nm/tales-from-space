@@ -54,6 +54,8 @@ local RECIPES = {
     { label = "Temperature Gate", structure = "temperature_gate" },
     { label = "Temperature Pump", structure = "temperature_pump" },
     { label = "Heat Exchanger", structure = "heat_exchanger" },
+    { label = "Air Scrubber", structure = "air_scrubber" },
+    { label = "Air Injector", structure = "air_injector" },
 }
 
 -- tg's twelve paints, the same roster the pipe painter carries
