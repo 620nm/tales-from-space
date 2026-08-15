@@ -17,9 +17,9 @@
 -- (gas_filter_flipped_fitting). tg does the same thing --
 -- `/obj/item/pipe/trinary/flippable` carries a `flipped` var its
 -- `attack_self` turns over -- and the two are one item there only
--- because a click in hand can flip it. That click wants a rotate verb
--- this protocol has not grown, and until it does, two fittings is the
--- honest way to be able to build both machines.
+-- because a click in hand can flip it. Alt+click rotation turns the
+-- whole fitting but does not exchange its inlet and outlet, so the two
+-- recipes still represent the honest two layouts.
 return {
     id = "gas_filter_fitting",
     name = "gas filter fitting",

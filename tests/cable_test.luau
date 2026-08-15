@@ -136,14 +136,14 @@ assert(
 -- ---------------------------------------------------------------
 -- One snip, one cable. tg's wirecutters deconstruct the single cable
 -- you clicked (cable.dm:210-221) and leave the rest of the tile
--- running; with no cursor to aim under the deck, a snip takes the
--- topmost line. Clearing a shared tile costs one snip per line.
+-- running. The alpha-tested sprite names the exact line; clearing a
+-- shared tile costs one snip per line.
 -- ---------------------------------------------------------------
 t.drop(p)
 t.run_ticks(2)
 t.click(p, 1, 3, t.target_at(1, 3, "wirecutters")) -- the cutters
 t.run_ticks(2)
-t.click(p, 2, 1)
+t.click_subfloor(p, 2, 1, "cable", YELLOW)
 t.run_seconds(1.5)
 assert(
     t.cable_at(2, 1) == RED,
@@ -158,7 +158,7 @@ assert(
     "the yellow run is in two pieces now"
 )
 
-t.click(p, 2, 1)
+t.click_subfloor(p, 2, 1, "cable", RED)
 t.run_seconds(1.5)
 assert(t.cable_at(2, 1) == 0, "a second snip takes the line beneath")
 assert(BLUE == 4, "the third line is a real layer, mapped in the corner")

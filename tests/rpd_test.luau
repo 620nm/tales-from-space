@@ -107,11 +107,18 @@ assert(ui.name == "rapid pipe dispenser", "wearing the device's own name")
 
 local captions = {}
 local options = {}
+local manual_presentation = nil
+local green_swatch = nil
 for _, tog in ipairs(ui.toggles) do
     if tog.option == nil then
         captions[tog.field] = tog.label
     else
         options[tog.field] = (options[tog.field] or 0) + 1
+        if tog.field == RECIPE and tog.label == "Manual Valve" then
+            manual_presentation = tog
+        elseif tog.field == PAINT and tog.label == "green" then
+            green_swatch = tog.color
+        end
     end
 end
 assert(captions[MODE] == "Mode" and captions[RECIPE] == "Fitting", "every dial is labelled")
@@ -119,6 +126,12 @@ assert(captions[LAYER] == "Piping layer" and captions[PAINT] == "Paint", "all fo
 assert(options[LAYER] == 5, "five piping layers, tg's PIPING_LAYER_MIN..MAX")
 assert(options[PAINT] == 12, "and tg's twelve paints")
 assert(options[RECIPE] >= 12, "the whole shelf, one button each: " .. options[RECIPE])
+assert(
+    manual_presentation.icon == "manual_valve_loose"
+        and manual_presentation.group == "Binary Devices",
+    "recipes carry content-authored atlas icons and tg-style groups"
+)
+assert(green_swatch == "#00FF00", "paint choices carry their real swatch colour")
 
 -- Out of the crate it is set the way tg ships one: plain pipe, the
 -- distribution layer, green (RPD.dm:51,61).

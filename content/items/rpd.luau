@@ -19,9 +19,9 @@
 -- * tg's D-pad of connection restrictions for smart pipe (`p_init_dir`,
 --   RPD.dm:232-253). We have no smart pipe, so there is nothing to
 --   restrict.
--- * tg's rotation and flip (`p_dir`, `p_flipped`). A flipped trinary is
---   a second fitting here, and rotation wants a wire command the
---   protocol has not grown (docs/construction.md).
+-- * tg's in-window rotation (`p_dir`). Loose fittings rotate directly
+--   with Alt+left/Alt+right in this engine; flipped trinaries remain
+--   explicit recipes, so there is no second direction dial here.
 -- * tg's multi-layer build, which lays the same run on several layers
 --   at once. One layer, one length: the dial names it.
 -- * A layer or a colour on a DEVICE. Only the run under the deck
@@ -36,26 +36,26 @@
 -- one is pipe itself, which is not a structure at all but a length in
 -- the grid under the deck.
 local RECIPES = {
-    { label = "Pipe" },
-    { label = "Manual Valve", structure = "manual_valve" },
-    { label = "Digital Valve", structure = "digital_valve" },
-    { label = "Gas Pump", structure = "gas_pump" },
-    { label = "Volume Pump", structure = "volume_pump" },
-    { label = "Passive Gate", structure = "passive_gate" },
-    { label = "Pressure Valve", structure = "pressure_valve" },
-    { label = "Gas Filter", structure = "gas_filter" },
-    { label = "Gas Filter (flipped)", structure = "gas_filter_flipped" },
-    { label = "Gas Mixer", structure = "gas_mixer" },
-    { label = "Gas Mixer (flipped)", structure = "gas_mixer_flipped" },
-    { label = "Connector", structure = "connector_port" },
-    { label = "Meter", structure = "meter" },
-    { label = "Layer Adapter", structure = "layer_adapter" },
-    { label = "Color Adapter", structure = "color_adapter" },
-    { label = "Temperature Gate", structure = "temperature_gate" },
-    { label = "Temperature Pump", structure = "temperature_pump" },
-    { label = "Heat Exchanger", structure = "heat_exchanger" },
-    { label = "Air Scrubber", structure = "air_scrubber" },
-    { label = "Air Injector", structure = "air_injector" },
+    { label = "Pipe", icon = "pipe", group = "Pipes" },
+    { label = "Manual Valve", structure = "manual_valve", icon = "manual_valve_loose", group = "Binary Devices" },
+    { label = "Digital Valve", structure = "digital_valve", icon = "digital_valve_loose", group = "Binary Devices" },
+    { label = "Gas Pump", structure = "gas_pump", icon = "gas_pump_loose", group = "Binary Devices" },
+    { label = "Volume Pump", structure = "volume_pump", icon = "volume_pump_loose", group = "Binary Devices" },
+    { label = "Passive Gate", structure = "passive_gate", icon = "passive_gate_loose", group = "Binary Devices" },
+    { label = "Pressure Valve", structure = "pressure_valve", icon = "pressure_valve_loose", group = "Binary Devices" },
+    { label = "Gas Filter", structure = "gas_filter", icon = "filter_fitting", group = "Trinary Devices" },
+    { label = "Gas Filter (flipped)", structure = "gas_filter_flipped", icon = "filter_fitting", group = "Trinary Devices" },
+    { label = "Gas Mixer", structure = "gas_mixer", icon = "mixer_fitting", group = "Trinary Devices" },
+    { label = "Gas Mixer (flipped)", structure = "gas_mixer_flipped", icon = "mixer_fitting", group = "Trinary Devices" },
+    { label = "Connector", structure = "connector_port", icon = "connector_port_loose", group = "Fittings & Adapters" },
+    { label = "Meter", structure = "meter", icon = "pipe_meter", group = "Fittings & Adapters" },
+    { label = "Layer Adapter", structure = "layer_adapter", icon = "layer_adapter_loose", group = "Fittings & Adapters" },
+    { label = "Color Adapter", structure = "color_adapter", icon = "color_adapter_loose", group = "Fittings & Adapters" },
+    { label = "Temperature Gate", structure = "temperature_gate", icon = "temperature_gate_loose", group = "Thermal Devices" },
+    { label = "Temperature Pump", structure = "temperature_pump", icon = "temperature_pump_loose", group = "Thermal Devices" },
+    { label = "Heat Exchanger", structure = "heat_exchanger", icon = "heat_exchanger_loose", group = "Thermal Devices" },
+    { label = "Air Scrubber", structure = "air_scrubber", icon = "air_scrubber_loose", group = "Room Devices" },
+    { label = "Air Injector", structure = "air_injector", icon = "air_injector_loose", group = "Room Devices" },
 }
 
 -- tg's twelve paints, the same roster the pipe painter carries
@@ -163,6 +163,18 @@ return {
                 names[i] = r.label
             end
             return names
+        end)(), icons = (function()
+            local icons = {}
+            for i, r in ipairs(RECIPES) do
+                icons[i] = r.icon
+            end
+            return icons
+        end)(), groups = (function()
+            local groups = {}
+            for i, r in ipairs(RECIPES) do
+                groups[i] = r.group
+            end
+            return groups
         end)() },
         {
             key = "layer",
@@ -182,6 +194,13 @@ return {
                     names[i] = c.name
                 end
                 return names
+            end)(),
+            colors = (function()
+                local colors = {}
+                for i, c in ipairs(COLORS) do
+                    colors[i] = c.hex
+                end
+                return colors
             end)(),
             -- tg ships `paint_color = "green"` (RPD.dm:51).
             start = 1,
