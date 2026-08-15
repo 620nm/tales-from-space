@@ -83,6 +83,107 @@ assert(t.pipe(3, 1) == DISTRO)
 assert(t.count_items("pipe") > 0, "and it is a length you can lay again")
 assert(t.ledger_has("PipePulled"), "pulling a line is on the record too")
 
+-- A wrench used on the exact loose pipe atom fastens that item; it does not
+-- try to pick it up into the already occupied hand, nor choose some other
+-- thing lying on the tile. The pulled east-west layer crosses a north-south
+-- length on another piping layer, so this also pins both per-item state and
+-- the valid different-layer coexistence.
+t.world([==[(
+    name: "fasten exact loose pipe",
+    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    rows: [
+        "#####",
+        "#...#",
+        "#...#",
+        "#####",
+    ],
+    spawns: [(2, 2)],
+    items: [(2, 2, "wrench"), (2, 1, "screwdriver")],
+    pipes: [(1, 1, 2), (2, 1, 6), (3, 1, 2), (2, 2, 4)],
+    pipe_facing: [(1, 1, 2, 4), (2, 1, 2, 12), (3, 1, 2, 8),
+                  (2, 1, 4, 3), (2, 2, 4, 1)],
+)]==], 7)
+
+local f = t.join()
+t.tick()
+t.click(f, 2, 2, t.target_at(2, 2, "wrench"))
+t.run_ticks(2)
+t.click_subfloor(f, 2, 1, "pipe", 2)
+t.run_seconds(1.5)
+assert(t.pipe(2, 1) == 4, "only the named layer came out")
+assert(t.pipe_dirs(2, 1, 4) == 3, "the crossing layer kept its own facing")
+assert(t.count_items("pipe") == 1, "one exact loose length was returned")
+
+local loose = t.target_at(2, 1, "pipe")
+assert(loose ~= nil, "the returned length has a clickable identity")
+t.click(f, 2, 1, loose)
+t.run_seconds(1.5)
+assert(t.pipe(2, 1) == 6, "the loose layer was fastened beside the crossing")
+assert(t.pipe_dirs(2, 1, 2) == 12, "its east-west directional mask survived")
+assert(t.pipe_dirs(2, 1, 4) == 3, "the other layer was not rewritten")
+assert(t.count_items("pipe") == 0, "that exact one-piece item was consumed")
+assert(t.hands(f).held == "wrench", "the active wrench remains in hand")
+local lying = t.items_at(2, 1)
+assert(#lying == 1 and lying[1] == "screwdriver", "the unrelated loose item remains")
+assert(t.ledger_has("ItemConsumed", "pipe"), "the conversion is on the record")
+
+-- Two engineers may finish turning their wrenches on the same loose stack in
+-- the same simulation tick. Script continuations are collected before their
+-- effects land, so the success sound/message must be part of the atomic
+-- effect: one layer wins, one unit is spent, and only that winner reports it.
+t.world([==[(
+    name: "one winning pipe wrench",
+    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    rows: [
+        "#####",
+        "#...#",
+        "#...#",
+        "#####",
+    ],
+    spawns: [(2, 2), (2, 2)],
+    items: [(1, 2, "wrench"), (3, 2, "wrench"), (2, 1, "pipe")],
+)]==], 11)
+
+local a = t.join()
+local b = t.join()
+t.tick()
+t.click(a, 1, 2, t.target_at(1, 2, "wrench"))
+t.click(b, 3, 2, t.target_at(3, 2, "wrench"))
+t.run_ticks(2)
+local contested = t.target_at(2, 1, "pipe")
+assert(contested ~= nil, "both engineers aim at the same exact stack")
+local _ = t.messages(a)
+_ = t.messages(b)
+_ = t.sounds(a)
+_ = t.sounds(b)
+t.click(a, 2, 1, contested)
+t.click(b, 2, 1, contested)
+t.tick()
+_ = t.messages(a) -- discard both honest start messages
+_ = t.messages(b)
+t.run_seconds(1.5)
+
+local function count(list, want)
+    local n = 0
+    for _, value in ipairs(list) do
+        if value == want then
+            n = n + 1
+        end
+    end
+    return n
+end
+
+local successes = count(t.messages(a), "You fasten the pipe into place.")
+    + count(t.messages(b), "You fasten the pipe into place.")
+assert(successes == 1, "only the topology winner narrates success")
+assert(count(t.sounds(a), "ratchet") == 1, "the room hears one winning ratchet")
+assert(count(t.sounds(b), "ratchet") == 1, "every listener hears that same one ratchet")
+assert(t.pipe(2, 1) == DISTRO, "one distribution length landed")
+assert(#t.ledger_rows("PipeLaid") == 1, "one topology mutation was recorded")
+assert(#t.ledger_rows("ItemConsumed") == 1, "only one stack unit was spent")
+assert(t.hands(a).held == "wrench" and t.hands(b).held == "wrench",
+    "both active tools remain held")
+
 -- ---------------------------------------------------------------
 -- What the plumbing is FOR. A hall and a sealed closet with no door
 -- and no shared wall face -- the only thing crossing between them is

@@ -36,11 +36,65 @@ return {
     inhand_sprite = { "held_wrench_l", "held_wrench_r" },
     stowed_sprite = "belt_wrench",
     tool = "wrench",
+    -- A named loose pipe is the wrench's target, not a request to pick it
+    -- up. Anything else still returns "pass" and keeps the ordinary pickup
+    -- behavior (tg `/obj/item/pipe/wrench_act`, construction.dm:268-312).
+    acts_on_items = true,
     on_use = function(ctx, self, user, x, y, _, target)
         -- Asked before the pipe question, so a covered tile answers the
         -- same whether or not anything runs under it.
         if ctx.turf(x, y) ~= "plating" then
             return "pass"
+        end
+        if target ~= nil and target.kind == "item" then
+            local pipe = target.entity
+            if ctx.item_id(pipe) ~= "pipe" then
+                return "pass"
+            end
+            local px, py = ctx.pos(pipe)
+            if px ~= x or py ~= y then
+                return "pass"
+            end
+            local mode = ctx.mode(pipe)
+            if mode == nil then
+                return "pass"
+            end
+            local pipe_layer = 2 ^ mode.index
+            if ctx.pipe_occupancy(x, y) % (pipe_layer * 2) >= pipe_layer then
+                ctx.system_msg(user, "An atmospherics component already occupies that pipe layer.")
+                return
+            end
+            if ctx.pipe(x, y) % (pipe_layer * 2) >= pipe_layer then
+                return "pass"
+            end
+            ctx.system_msg(user, "You start fastening the pipe...")
+            if not ctx.do_after(user, 1.0) then
+                ctx.system_msg(user, "You stop fastening the pipe.")
+                return
+            end
+            -- Revalidate this exact atom, not whichever pipe is now first
+            -- on the tile. It may have been picked up or moved while the
+            -- wrench was turning, and its per-instance layer may have
+            -- changed too.
+            if ctx.item_id(pipe) ~= "pipe" then
+                return
+            end
+            px, py = ctx.pos(pipe)
+            if px ~= x or py ~= y then
+                return
+            end
+            mode = ctx.mode(pipe)
+            if mode == nil then
+                return
+            end
+            pipe_layer = 2 ^ mode.index
+            if ctx.pipe_occupancy(x, y) % (pipe_layer * 2) >= pipe_layer
+                or ctx.pipe(x, y) % (pipe_layer * 2) >= pipe_layer
+            then
+                return
+            end
+            ctx.fasten_pipe(pipe, x, y, "ratchet", "You fasten the pipe into place.")
+            return
         end
         if target == nil or target.kind ~= "pipe" then
             return "pass"
