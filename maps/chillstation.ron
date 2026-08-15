@@ -275,8 +275,11 @@
         // for (volume_pump.dm: it "never asks").
         (19, 17, "volume_pump", "running"),
         (17, 14, "digital_valve", "open"),
-        // Bottled oxygen off the first filter's side mouth.
-        (20, 17, "connector_port"),
+        // Bottled oxygen off the first filter's side mouth — on the
+        // mouth's own tile, because the run that used to carry it
+        // down to (20, 17) ran beside the return riser and shorted
+        // both of them.
+        (20, 15, "connector_port"),
         // The scrubber that makes it a LOOP rather than a supply: it
         // stands on the Commons' own branch circuit, on layer 2, and
         // takes the carbon dioxide the crew breathe out back to
@@ -619,14 +622,31 @@
         (24, 15, 4),
         (24, 16, 4),
         (24, 17, 4),
-        (19, 15, 4),
-        (19, 16, 4),
+        // THE RETURN RISER, and it is deliberately NOT a straight
+        // climb up column 19. The scrubbers main arrives at the
+        // adapter (18, 18), crosses the volume pump at (19, 17), and
+        // then steps WEST into column 18 to reach the process line at
+        // (18, 14).
+        //
+        // The step is the whole point. A pipe joins its orthogonal
+        // neighbours — there are no directional fittings here — so two
+        // runs side by side in adjacent columns are one run. Climbing
+        // column 19 put the riser alongside the filter's catch line in
+        // column 20 for three rows, and every one of those three was a
+        // bypass around the pump: inlet and outlet were the same net,
+        // holding the same moles, and the pump was scenery. Column 18
+        // touches nothing.
         (19, 18, 4),
-        (20, 18, 4),
+        (19, 16, 4),
+        (18, 16, 4),
+        (18, 15, 4),
         (17, 10, 4),
+        // The filter's catch: one tile, the socket, and no further.
+        // It cannot run down column 20 either — (20, 16) sits beside
+        // the pump's outlet at (19, 16), which welded the nitrogen the
+        // filter had just separated straight back onto the line
+        // feeding it. A dead end is what a bottle wants anyway.
         (20, 15, 4),
-        (20, 16, 4),
-        (20, 17, 4),
         // The CO2 chamber's own feed, in engineering orange, fed by
         // the filter that catches it and by nothing else. This is
         // the line that makes the loop a LOOP: what a scrubber takes
@@ -716,8 +736,8 @@
         // collects from the Commons and comes back down the same
         // shaft the supply climbs -- which is the entire reason
         // piping layers exist: these two share tiles at (19,14),
-        // (19,15), (19,16), (22,16), (24,16) and (15,14) and are
-        // six separate bodies of gas.
+        // (19,16), (22,16), (24,16) and (15,14) and are separate
+        // bodies of gas on every one of them.
         (13, 7, 2),
         (14, 7, 2),
         (15, 7, 2),
