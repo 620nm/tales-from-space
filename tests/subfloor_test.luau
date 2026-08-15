@@ -86,10 +86,11 @@ assert(t.count_items("pipe") == 1, "no length came up (only the mapped one)")
 -- The same click, one tile north where the deck is open, works. This is
 -- what makes the silence above a rule about the floor and not a broken
 -- hook.
-t.click(p, 2, 1)
+t.click_subfloor(p, 2, 1, "pipe", DISTRO)
 t.run_seconds(1.5)
 assert(t.pipe(2, 1) == 0, "open plating gives the length up")
 assert(#t.ledger_rows("PipePulled") == 1, "and that one IS on the record")
+assert(t.count_items("pipe") == 2, "the removed length returned as a one-piece item")
 
 -- ---------------------------------------------------------------
 -- The wirecutters. Same rule, sabotage side.
@@ -107,10 +108,11 @@ assert(t.cable_at(2, 2) == BRANCH, "the buried cable is untouched")
 assert(not said(p, "snipping"), "and the cutters never bit")
 assert(#t.ledger_rows("CableCut") == 0, "no cut to attribute")
 
-t.click(p, 2, 1)
+t.click_subfloor(p, 2, 1, "cable", BRANCH)
 t.run_seconds(1.5)
 assert(t.cable_at(2, 1) == 0, "open plating cuts fine")
 assert(#t.ledger_rows("CableCut") == 1, "and that cut is attributed")
+assert(t.count_items("cable_coil") == 2, "the cut line returned as a one-piece coil")
 
 -- ---------------------------------------------------------------
 -- Laying, both trades: refused over a tile, and it says why.
@@ -159,7 +161,7 @@ t.click(p, 3, 2, t.target_at(3, 2, "wrench")) -- the spare wrench, kept clear of
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "wrench in hand again")
 
-t.click(p, 2, 2)
+t.click_subfloor(p, 2, 2, "pipe", DISTRO)
 t.run_seconds(1.5)
 assert(t.pipe(2, 2) == 0, "the same click that did nothing now pulls the run")
 assert(#t.ledger_rows("PipePulled") == 2, "and the second pull is recorded")
