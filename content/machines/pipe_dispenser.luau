@@ -12,9 +12,11 @@
 -- All four of tg's categories are here. What else tg lists and this
 -- pack does not have yet: the bridge and multi-deck adapters under
 -- Pipes, the heat-exchange pipe/manifold family under Heat Exchange,
--- and the injector, scrubber, unary vent and passive vent under
--- Devices. Every one of them is one line here on the day it becomes a
--- thing — which is exactly what the gas analyzer cost the tool vendor.
+-- and the unary vent and passive vent under Devices (both of which
+-- exist on this station as native fixtures rather than as pipe
+-- devices). Every one of them is one line here on the day it becomes a
+-- thing — which is exactly what the gas analyzer cost the tool vendor,
+-- and exactly what the scrubber and the injector cost this shelf.
 --
 -- WHAT TG HAS THAT THIS SHELF CANNOT SAY: tg's window carries a piping
 -- layer, a paint colour and a per-recipe direction, because tg's
@@ -69,6 +71,11 @@ return {
         { item = "gas_mixer_flipped_fitting", name = "Gas Mixer (flipped)", category = "Devices", amount = 999 },
         { item = "connector_port_fitting", name = "Connector", category = "Devices", amount = 999 },
         { item = "pipe_meter", name = "Meter", category = "Devices", amount = 999 },
+        -- The two ends of the air loop: one takes a room's air away,
+        -- the other hands it back. Everything else on this shelf moves
+        -- gas between two PIPES.
+        { item = "air_scrubber_fitting", name = "Air Scrubber", category = "Devices", amount = 999 },
+        { item = "air_injector_fitting", name = "Air Injector", category = "Devices", amount = 999 },
 
         { item = "heat_exchanger_fitting", name = "Heat Exchanger", category = "Heat Exchange", amount = 999 },
     },
