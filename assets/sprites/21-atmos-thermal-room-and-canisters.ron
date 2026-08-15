@@ -5,228 +5,242 @@
 // this directory is baked, in FILE-NAME order and then entry order,
 // so the atlas layout is a function of the manifest and not of the
 // filesystem. Two files claiming one sprite name is a bake error.
-[
-    // ---- the thermal pair, and the two adapters ----------------------
-    //
-    // THE THERMAL PAIR share the binary sheet and the valve's rule:
-    // a BARE body at `-1`, tg's overlay offset for piping layers 1, 3
-    // and 5 (`set_overlay_offset`), with the pipe stubs underlaid per
-    // instance by `sim/atmos_machines/underlays.rs` from the mouths
-    // the machine actually found (components_base.dm:68-111 -- see
-    // 20-atmos-inline-devices.ron for why they are not baked in).
-    // Both fold south onto north and west onto east, which is all a
-    // machine with two ends and one axis of art has to say. DMI dirs
-    // throughout: 0 south, 1 north, 2 east, 3 west.
-    //
-    // tg's armed gate is a six-frame loop (`tgate_on-1`), baked as
-    // one: ten cells, and an armed gate now reads as armed from
-    // across the room rather than by squinting at its indicators.
-    //
-    // Its THIRD state is still not baked. `tgate_flow` is the moment
-    // gas is actually crossing (temperature_gate.dm:57-63), which is a
-    // per-tick FACT drawn over a state rather than a state of its own
-    // -- "armed" and "armed and flowing right now" would have to be
-    // one picture and one overlay, and the position machinery has no
-    // way to express a per-instance overlay yet. The same note stands
-    // on `pvalve_flow` and the volume pump's overclock light in
-    // 20-atmos-inline-devices.ron; all three want the same feature and
-    // none of them wants a fourth position. Meanwhile the panel
-    // answers "is anything crossing" with two port pressures.
-    ("tgate_off_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tgate_off-1", 1)),
-    ("tgate_off_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tgate_off-1", 2)),
-    ("tgate_on_ns", DmiAnim("obj/machines/atmospherics/binary_devices.dmi", "tgate_on-1", 1)),
-    ("tgate_on_ew", DmiAnim("obj/machines/atmospherics/binary_devices.dmi", "tgate_on-1", 2)),
-    ("tpump_off_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tpump_off-1", 1)),
-    ("tpump_off_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tpump_off-1", 2)),
-    ("tpump_on_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tpump_on-1", 1)),
-    ("tpump_on_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tpump_on-1", 2)),
-    // THE PLATE is the odd one, and its cells are REVERSED on
-    // purpose. tg points a unary device at its PIPE
-    // (unary_devices.dm:14, `initialize_directions = dir`), so its
-    // face looks the other way; this engine points a machine at what
-    // it DOES, so `facing` here is the face. A plate drawn facing
-    // north is therefore tg's `he1` pointed south, and so on round.
-    // `he1` rather than `he0` because a plate with no pipe behind it
-    // is one somebody has not finished plumbing, not a second kind
-    // of plate.
-    //
-    // A UNARY DEVICE HAS ONE MOUTH and it is BEHIND the face, so it
-    // takes one underlaid stub and it comes out of the reversal
-    // above: `port_dir(NODE_BACK)` is `facing.opposite()`, which is
-    // the way tg's `initialize_directions` points. These cells never
-    // carried a baked stub, so what changes here is that they gain
-    // one -- a plate, a scrubber or an injector now shows the tube
-    // running away behind it, and shows it capped where nobody has
-    // plumbed it yet.
-    ("he_plate_n", Dmi("obj/machines/atmospherics/unary_devices.dmi", "he1", 0)),
-    ("he_plate_s", Dmi("obj/machines/atmospherics/unary_devices.dmi", "he1", 1)),
-    ("he_plate_e", Dmi("obj/machines/atmospherics/unary_devices.dmi", "he1", 3)),
-    ("he_plate_w", Dmi("obj/machines/atmospherics/unary_devices.dmi", "he1", 2)),
-    // THE ADAPTERS are pipe rather than machinery -- tg files both
-    // under `/obj/machinery/atmospherics/pipe` -- and each is a CENTRE
-    // PIECE with nothing else in it. Both of tg's own `Initialize`s
-    // say so in one line: the colour adapter clears its icon_state
-    // outright and composes from `adapter_center`
-    // (color_adapter.dm:31-33,40-45), and the layer manifold replaces
-    // its mapping state with `manifoldlayer_center`
-    // (layermanifold.dm:22-26). The stubs are underlaid per instance,
-    // exactly as a component's are.
-    //
-    // THE LAYER ADAPTER USED TO WEAR ITS OWN INVENTORY ICON, and that
-    // was the loudest form of this whole defect: `manifoldlayer` is
-    // the picture tg puts in your HANDS -- all five layers drawn out
-    // to the tile edge at both ends, every connection it could ever
-    // make -- and it was baked in UNDER the centre band, so a bolted
-    // adapter advertised ten runs it had not found. What it wears now
-    // is the centre band alone, plus one `pipe_half_*` per end per
-    // layer that actually reached something (tg's
-    // `get_attached_image`, layermanifold.dm:59-82). An adapter
-    // bridging one layer looks like an adapter bridging one layer.
-    ("color_adapter_ns", Dmi("obj/pipes_n_cables/color_adapter.dmi", "adapter_center", 1)),
-    ("color_adapter_ew", Dmi("obj/pipes_n_cables/color_adapter.dmi", "adapter_center", 2)),
-    ("layer_adapter_ns", Dmi("obj/pipes_n_cables/manifold.dmi", "manifoldlayer_center", 1)),
-    ("layer_adapter_ew", Dmi("obj/pipes_n_cables/manifold.dmi", "manifoldlayer_center", 2)),
-    // And the five fittings they are raised from, off the same one
-    // sheet as every other `/obj/item/pipe`.
-    ("temperature_gate_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tgate", 0)),
-    ("temperature_pump_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tpump", 0)),
-    ("heat_exchanger_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "heunary", 0)),
-    ("layer_adapter_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "manifoldlayer", 0)),
-    ("color_adapter_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "adapter_center", 0)),
-    ("temperature_gate_loose_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tgate", 0)),
-    ("temperature_gate_loose_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tgate", 1)),
-    ("temperature_gate_loose_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tgate", 2)),
-    ("temperature_gate_loose_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tgate", 3)),
-    ("temperature_pump_loose_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tpump", 0)),
-    ("temperature_pump_loose_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tpump", 1)),
-    ("temperature_pump_loose_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tpump", 2)),
-    ("temperature_pump_loose_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tpump", 3)),
-    ("heat_exchanger_loose_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "heunary", 0)),
-    ("heat_exchanger_loose_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "heunary", 1)),
-    ("heat_exchanger_loose_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "heunary", 2)),
-    ("heat_exchanger_loose_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "heunary", 3)),
-    ("layer_adapter_loose_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "manifoldlayer", 0)),
-    ("layer_adapter_loose_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "manifoldlayer", 1)),
-    ("layer_adapter_loose_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "manifoldlayer", 2)),
-    ("layer_adapter_loose_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "manifoldlayer", 3)),
-    ("color_adapter_loose_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "adapter_center", 0)),
-    ("color_adapter_loose_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "adapter_center", 1)),
-    ("color_adapter_loose_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "adapter_center", 2)),
-    ("color_adapter_loose_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "adapter_center", 3)),
-    // ---- end of the thermal devices and adapters ---------------------
-    // ---- the two room devices ----------------------------------------
-    //
-    // The scrubber and the injector are UNARY, and their cells are
-    // REVERSED for the same reason the plate's are: tg points a
-    // unary device at its PIPE (unary_devices.dm:14) so its face
-    // looks the other way, and this engine points a machine at what
-    // it DOES. So the scrubber drawn facing north is tg's sprite
-    // pointed south.
-    //
-    // Three pictures for the scrubber, because it has three
-    // positions: dead, filtering, and emptying the room. tg draws
-    // the last one differently on purpose (`scrub_purge`,
-    // vent_scrubber.dm:142) and it is the one a passer-by most
-    // needs to recognise. `scrub_on` and `scrub_purge` are tg's own
-    // 24- and 8-frame loops; bake every frame and its DMI-authored
-    // delay so the running and emergency states move exactly as their
-    // source art does.
-    // `scrub_wide` is deliberately absent — widenet is deferred, and
-    // a picture for a mode that cannot be selected would be a lie.
-    ("scrubber_off_n", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_off", 0)),
-    ("scrubber_off_s", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_off", 1)),
-    ("scrubber_off_e", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_off", 3)),
-    ("scrubber_off_w", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_off", 2)),
-    ("scrubber_on_n", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "scrub_on", 0)),
-    ("scrubber_on_s", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "scrub_on", 1)),
-    ("scrubber_on_e", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "scrub_on", 3)),
-    ("scrubber_on_w", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "scrub_on", 2)),
-    ("scrubber_purge_n", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "scrub_purge", 0)),
-    ("scrubber_purge_s", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "scrub_purge", 1)),
-    ("scrubber_purge_e", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "scrub_purge", 3)),
-    ("scrubber_purge_w", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "scrub_purge", 2)),
-    // The injector has two, and no third: it only ever runs one way.
-    ("injector_off_n", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_off", 0)),
-    ("injector_off_s", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_off", 1)),
-    ("injector_off_e", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_off", 3)),
-    ("injector_off_w", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_off", 2)),
-    ("injector_on_n", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_on", 0)),
-    ("injector_on_s", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_on", 1)),
-    ("injector_on_e", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_on", 3)),
-    ("injector_on_w", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_on", 2)),
-    // And the two fittings, off the one sheet every /obj/item/pipe
-    // is drawn from.
-    ("air_scrubber_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "scrubber", 0)),
-    ("air_injector_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "injector", 0)),
-    ("air_scrubber_loose_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "scrubber", 0)),
-    ("air_scrubber_loose_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "scrubber", 1)),
-    ("air_scrubber_loose_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "scrubber", 2)),
-    ("air_scrubber_loose_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "scrubber", 3)),
-    ("air_injector_loose_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "injector", 0)),
-    ("air_injector_loose_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "injector", 1)),
-    ("air_injector_loose_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "injector", 2)),
-    ("air_injector_loose_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "injector", 3)),
-    // ---- end of the room devices -------------------------------------
-    // A gas canister: tg's art is greyscale and each gas type paints
-    // it (greyscale_colors "#c6c0b5" is pre-mixed air). Baked with
-    // that colour for now; it moves to per-object paint when the
-    // renderer can tint a sprite on both paths.
-    // tg's canister greyscale recipe, whole (canister_base.json +
-    // canister_post_effects.json): a white shell mask that takes the
-    // colour, two shader passes, and a coloured outline. Baking only
-    // `base` — which is 329 pixels of pure white — is why this drew
-    // as a flat blob with no edge.
-    //
-    // Left greyscale with a DECLARED colour rather than a baked one,
-    // so a canister can be painted by its gas the way tg paints
-    // them. The one cost: `add_shader` is a highlight tg adds AFTER
-    // colouring, and added to a white base it clamps away, leaving
-    // this ~7% darker than tg's. The shape, which is what was
-    // actually missing, is exact.
-    ("canister", Tinted(DmiBlend(
-        dmi: "obj/pipes_n_cables/canisters.dmi",
-        layers: [
-            ("base", Over, true),
-            ("add_shader", Add, false),
-            ("multi_shader", Multiply, false),
-            ("outline", Over, true),
-        ],
-        dir: 0,
-        paint: (255, 255, 255),
-    ), (198, 192, 181))),
-    // The same shell wearing tg's `can-connector` — the picture a
-    // canister only has while it is fastened to a port
-    // (canister.dm's update_overlays: `if(connected_port)`). It is
-    // a STATE SPRITE rather than an overlay because the canister's
-    // overlay slot is already spoken for by the gauge, which the
-    // sim rewrites every time the pressure band moves; the two
-    // would fight for the same component every tick. tg does not
-    // RESET_COLOR this one either, so it takes the gas's colour
-    // along with the rest of the shell, which is why it rides
-    // inside the blend.
-    ("canister_connected", Tinted(DmiBlend(
-        dmi: "obj/pipes_n_cables/canisters.dmi",
-        layers: [
-            ("base", Over, true),
-            ("add_shader", Add, false),
-            ("multi_shader", Multiply, false),
-            ("outline", Over, true),
-            ("can-connector", Over, false),
-        ],
-        dir: 0,
-        paint: (255, 255, 255),
-    ), (198, 192, 181))),
-    // The indicator lamps are NOT coloured by the gas (tg's
-    // post_effects leaves them alone), so they ride as their own
-    // untinted overlay.
-    ("canister_lights", Dmi("obj/pipes_n_cables/canisters.dmi", "lights", 0)),
-    ("canister_g0", Dmi("obj/pipes_n_cables/canisters.dmi", "can-0", 0)),
-    ("canister_g1", Dmi("obj/pipes_n_cables/canisters.dmi", "can-1", 0)),
-    ("canister_g2", Dmi("obj/pipes_n_cables/canisters.dmi", "can-2", 0)),
-    ("canister_g3", Dmi("obj/pipes_n_cables/canisters.dmi", "can-3", 0)),
-    ("metal", Dmi("obj/stack_objects.dmi", "sheet-metal_3", 0)),
-    ("floor_tile", Dmi("obj/tiles.dmi", "tile", 0)),
-    ("tv", Dmi("obj/machines/computer.dmi", "detective_tv", 0)),
-    ("white", White),
+(
+    // Sheet aliases are local to this family; @names below resolve here.
+    sheets: [
+        ("binary", "obj/machines/atmospherics/binary_devices.dmi"),
+        ("unary", "obj/machines/atmospherics/unary_devices.dmi"),
+        ("computer", "obj/machines/computer.dmi"),
+        ("canisters", "obj/pipes_n_cables/canisters.dmi"),
+        ("color_adapter", "obj/pipes_n_cables/color_adapter.dmi"),
+        ("manifold", "obj/pipes_n_cables/manifold.dmi"),
+        ("pipe_item", "obj/pipes_n_cables/pipe_item.dmi"),
+        ("stack_objects", "obj/stack_objects.dmi"),
+        ("tiles", "obj/tiles.dmi"),
+    ],
+    sprites: [
+        // ---- the thermal pair, and the two adapters ----------------------
+        //
+        // THE THERMAL PAIR share the binary sheet and the valve's rule:
+        // a BARE body at `-1`, tg's overlay offset for piping layers 1, 3
+        // and 5 (`set_overlay_offset`), with the pipe stubs underlaid per
+        // instance by `sim/atmos_machines/underlays.rs` from the mouths
+        // the machine actually found (components_base.dm:68-111 -- see
+        // 20-atmos-inline-devices.ron for why they are not baked in).
+        // Both fold south onto north and west onto east, which is all a
+        // machine with two ends and one axis of art has to say. DMI dirs
+        // throughout: 0 south, 1 north, 2 east, 3 west.
+        //
+        // tg's armed gate is a six-frame loop (`tgate_on-1`), baked as
+        // one: ten cells, and an armed gate now reads as armed from
+        // across the room rather than by squinting at its indicators.
+        //
+        // Its THIRD state is still not baked. `tgate_flow` is the moment
+        // gas is actually crossing (temperature_gate.dm:57-63), which is a
+        // per-tick FACT drawn over a state rather than a state of its own
+        // -- "armed" and "armed and flowing right now" would have to be
+        // one picture and one overlay, and the position machinery has no
+        // way to express a per-instance overlay yet. The same note stands
+        // on `pvalve_flow` and the volume pump's overclock light in
+        // 20-atmos-inline-devices.ron; all three want the same feature and
+        // none of them wants a fourth position. Meanwhile the panel
+        // answers "is anything crossing" with two port pressures.
+        ("tgate_off_ns", Dmi("@binary", "tgate_off-1", 1)),
+        ("tgate_off_ew", Dmi("@binary", "tgate_off-1", 2)),
+        ("tgate_on_ns", DmiAnim("@binary", "tgate_on-1", 1)),
+        ("tgate_on_ew", DmiAnim("@binary", "tgate_on-1", 2)),
+        ("tpump_off_ns", Dmi("@binary", "tpump_off-1", 1)),
+        ("tpump_off_ew", Dmi("@binary", "tpump_off-1", 2)),
+        ("tpump_on_ns", Dmi("@binary", "tpump_on-1", 1)),
+        ("tpump_on_ew", Dmi("@binary", "tpump_on-1", 2)),
+        // THE PLATE is the odd one, and its cells are REVERSED on
+        // purpose. tg points a unary device at its PIPE
+        // (unary_devices.dm:14, `initialize_directions = dir`), so its
+        // face looks the other way; this engine points a machine at what
+        // it DOES, so `facing` here is the face. A plate drawn facing
+        // north is therefore tg's `he1` pointed south, and so on round.
+        // `he1` rather than `he0` because a plate with no pipe behind it
+        // is one somebody has not finished plumbing, not a second kind
+        // of plate.
+        //
+        // A UNARY DEVICE HAS ONE MOUTH and it is BEHIND the face, so it
+        // takes one underlaid stub and it comes out of the reversal
+        // above: `port_dir(NODE_BACK)` is `facing.opposite()`, which is
+        // the way tg's `initialize_directions` points. These cells never
+        // carried a baked stub, so what changes here is that they gain
+        // one -- a plate, a scrubber or an injector now shows the tube
+        // running away behind it, and shows it capped where nobody has
+        // plumbed it yet.
+        ("he_plate_n", Dmi("@unary", "he1", 0)),
+        ("he_plate_s", Dmi("@unary", "he1", 1)),
+        ("he_plate_e", Dmi("@unary", "he1", 3)),
+        ("he_plate_w", Dmi("@unary", "he1", 2)),
+        // THE ADAPTERS are pipe rather than machinery -- tg files both
+        // under `/obj/machinery/atmospherics/pipe` -- and each is a CENTRE
+        // PIECE with nothing else in it. Both of tg's own `Initialize`s
+        // say so in one line: the colour adapter clears its icon_state
+        // outright and composes from `adapter_center`
+        // (color_adapter.dm:31-33,40-45), and the layer manifold replaces
+        // its mapping state with `manifoldlayer_center`
+        // (layermanifold.dm:22-26). The stubs are underlaid per instance,
+        // exactly as a component's are.
+        //
+        // THE LAYER ADAPTER USED TO WEAR ITS OWN INVENTORY ICON, and that
+        // was the loudest form of this whole defect: `manifoldlayer` is
+        // the picture tg puts in your HANDS -- all five layers drawn out
+        // to the tile edge at both ends, every connection it could ever
+        // make -- and it was baked in UNDER the centre band, so a bolted
+        // adapter advertised ten runs it had not found. What it wears now
+        // is the centre band alone, plus one `pipe_half_*` per end per
+        // layer that actually reached something (tg's
+        // `get_attached_image`, layermanifold.dm:59-82). An adapter
+        // bridging one layer looks like an adapter bridging one layer.
+        ("color_adapter_ns", Dmi("@color_adapter", "adapter_center", 1)),
+        ("color_adapter_ew", Dmi("@color_adapter", "adapter_center", 2)),
+        ("layer_adapter_ns", Dmi("@manifold", "manifoldlayer_center", 1)),
+        ("layer_adapter_ew", Dmi("@manifold", "manifoldlayer_center", 2)),
+        // And the five fittings they are raised from, off the same one
+        // sheet as every other `/obj/item/pipe`.
+        ("temperature_gate_loose", Dmi("@pipe_item", "tgate", 0)),
+        ("temperature_pump_loose", Dmi("@pipe_item", "tpump", 0)),
+        ("heat_exchanger_loose", Dmi("@pipe_item", "heunary", 0)),
+        ("layer_adapter_loose", Dmi("@pipe_item", "manifoldlayer", 0)),
+        ("color_adapter_loose", Dmi("@pipe_item", "adapter_center", 0)),
+        ("temperature_gate_loose_s", Dmi("@pipe_item", "tgate", 0)),
+        ("temperature_gate_loose_n", Dmi("@pipe_item", "tgate", 1)),
+        ("temperature_gate_loose_e", Dmi("@pipe_item", "tgate", 2)),
+        ("temperature_gate_loose_w", Dmi("@pipe_item", "tgate", 3)),
+        ("temperature_pump_loose_s", Dmi("@pipe_item", "tpump", 0)),
+        ("temperature_pump_loose_n", Dmi("@pipe_item", "tpump", 1)),
+        ("temperature_pump_loose_e", Dmi("@pipe_item", "tpump", 2)),
+        ("temperature_pump_loose_w", Dmi("@pipe_item", "tpump", 3)),
+        ("heat_exchanger_loose_s", Dmi("@pipe_item", "heunary", 0)),
+        ("heat_exchanger_loose_n", Dmi("@pipe_item", "heunary", 1)),
+        ("heat_exchanger_loose_e", Dmi("@pipe_item", "heunary", 2)),
+        ("heat_exchanger_loose_w", Dmi("@pipe_item", "heunary", 3)),
+        ("layer_adapter_loose_s", Dmi("@pipe_item", "manifoldlayer", 0)),
+        ("layer_adapter_loose_n", Dmi("@pipe_item", "manifoldlayer", 1)),
+        ("layer_adapter_loose_e", Dmi("@pipe_item", "manifoldlayer", 2)),
+        ("layer_adapter_loose_w", Dmi("@pipe_item", "manifoldlayer", 3)),
+        ("color_adapter_loose_s", Dmi("@pipe_item", "adapter_center", 0)),
+        ("color_adapter_loose_n", Dmi("@pipe_item", "adapter_center", 1)),
+        ("color_adapter_loose_e", Dmi("@pipe_item", "adapter_center", 2)),
+        ("color_adapter_loose_w", Dmi("@pipe_item", "adapter_center", 3)),
+        // ---- end of the thermal devices and adapters ---------------------
+        // ---- the two room devices ----------------------------------------
+        //
+        // The scrubber and the injector are UNARY, and their cells are
+        // REVERSED for the same reason the plate's are: tg points a
+        // unary device at its PIPE (unary_devices.dm:14) so its face
+        // looks the other way, and this engine points a machine at what
+        // it DOES. So the scrubber drawn facing north is tg's sprite
+        // pointed south.
+        //
+        // Three pictures for the scrubber, because it has three
+        // positions: dead, filtering, and emptying the room. tg draws
+        // the last one differently on purpose (`scrub_purge`,
+        // vent_scrubber.dm:142) and it is the one a passer-by most
+        // needs to recognise. `scrub_on` and `scrub_purge` are tg's own
+        // 24- and 8-frame loops; bake every frame and its DMI-authored
+        // delay so the running and emergency states move exactly as their
+        // source art does.
+        // `scrub_wide` is deliberately absent — widenet is deferred, and
+        // a picture for a mode that cannot be selected would be a lie.
+        ("scrubber_off_n", Dmi("@unary", "scrub_off", 0)),
+        ("scrubber_off_s", Dmi("@unary", "scrub_off", 1)),
+        ("scrubber_off_e", Dmi("@unary", "scrub_off", 3)),
+        ("scrubber_off_w", Dmi("@unary", "scrub_off", 2)),
+        ("scrubber_on_n", DmiAnim("@unary", "scrub_on", 0)),
+        ("scrubber_on_s", DmiAnim("@unary", "scrub_on", 1)),
+        ("scrubber_on_e", DmiAnim("@unary", "scrub_on", 3)),
+        ("scrubber_on_w", DmiAnim("@unary", "scrub_on", 2)),
+        ("scrubber_purge_n", DmiAnim("@unary", "scrub_purge", 0)),
+        ("scrubber_purge_s", DmiAnim("@unary", "scrub_purge", 1)),
+        ("scrubber_purge_e", DmiAnim("@unary", "scrub_purge", 3)),
+        ("scrubber_purge_w", DmiAnim("@unary", "scrub_purge", 2)),
+        // The injector has two, and no third: it only ever runs one way.
+        ("injector_off_n", Dmi("@unary", "inje_off", 0)),
+        ("injector_off_s", Dmi("@unary", "inje_off", 1)),
+        ("injector_off_e", Dmi("@unary", "inje_off", 3)),
+        ("injector_off_w", Dmi("@unary", "inje_off", 2)),
+        ("injector_on_n", Dmi("@unary", "inje_on", 0)),
+        ("injector_on_s", Dmi("@unary", "inje_on", 1)),
+        ("injector_on_e", Dmi("@unary", "inje_on", 3)),
+        ("injector_on_w", Dmi("@unary", "inje_on", 2)),
+        // And the two fittings, off the one sheet every /obj/item/pipe
+        // is drawn from.
+        ("air_scrubber_loose", Dmi("@pipe_item", "scrubber", 0)),
+        ("air_injector_loose", Dmi("@pipe_item", "injector", 0)),
+        ("air_scrubber_loose_s", Dmi("@pipe_item", "scrubber", 0)),
+        ("air_scrubber_loose_n", Dmi("@pipe_item", "scrubber", 1)),
+        ("air_scrubber_loose_e", Dmi("@pipe_item", "scrubber", 2)),
+        ("air_scrubber_loose_w", Dmi("@pipe_item", "scrubber", 3)),
+        ("air_injector_loose_s", Dmi("@pipe_item", "injector", 0)),
+        ("air_injector_loose_n", Dmi("@pipe_item", "injector", 1)),
+        ("air_injector_loose_e", Dmi("@pipe_item", "injector", 2)),
+        ("air_injector_loose_w", Dmi("@pipe_item", "injector", 3)),
+        // ---- end of the room devices -------------------------------------
+        // A gas canister: tg's art is greyscale and each gas type paints
+        // it (greyscale_colors "#c6c0b5" is pre-mixed air). Baked with
+        // that colour for now; it moves to per-object paint when the
+        // renderer can tint a sprite on both paths.
+        // tg's canister greyscale recipe, whole (canister_base.json +
+        // canister_post_effects.json): a white shell mask that takes the
+        // colour, two shader passes, and a coloured outline. Baking only
+        // `base` — which is 329 pixels of pure white — is why this drew
+        // as a flat blob with no edge.
+        //
+        // Left greyscale with a DECLARED colour rather than a baked one,
+        // so a canister can be painted by its gas the way tg paints
+        // them. The one cost: `add_shader` is a highlight tg adds AFTER
+        // colouring, and added to a white base it clamps away, leaving
+        // this ~7% darker than tg's. The shape, which is what was
+        // actually missing, is exact.
+        ("canister", Tinted(DmiBlend(
+            dmi: "@canisters",
+            layers: [
+                ("base", Over, true),
+                ("add_shader", Add, false),
+                ("multi_shader", Multiply, false),
+                ("outline", Over, true),
+            ],
+            dir: 0,
+            paint: (255, 255, 255),
+        ), (198, 192, 181))),
+        // The same shell wearing tg's `can-connector` — the picture a
+        // canister only has while it is fastened to a port
+        // (canister.dm's update_overlays: `if(connected_port)`). It is
+        // a STATE SPRITE rather than an overlay because the canister's
+        // overlay slot is already spoken for by the gauge, which the
+        // sim rewrites every time the pressure band moves; the two
+        // would fight for the same component every tick. tg does not
+        // RESET_COLOR this one either, so it takes the gas's colour
+        // along with the rest of the shell, which is why it rides
+        // inside the blend.
+        ("canister_connected", Tinted(DmiBlend(
+            dmi: "@canisters",
+            layers: [
+                ("base", Over, true),
+                ("add_shader", Add, false),
+                ("multi_shader", Multiply, false),
+                ("outline", Over, true),
+                ("can-connector", Over, false),
+            ],
+            dir: 0,
+            paint: (255, 255, 255),
+        ), (198, 192, 181))),
+        // The indicator lamps are NOT coloured by the gas (tg's
+        // post_effects leaves them alone), so they ride as their own
+        // untinted overlay.
+        ("canister_lights", Dmi("@canisters", "lights", 0)),
+        ("canister_g0", Dmi("@canisters", "can-0", 0)),
+        ("canister_g1", Dmi("@canisters", "can-1", 0)),
+        ("canister_g2", Dmi("@canisters", "can-2", 0)),
+        ("canister_g3", Dmi("@canisters", "can-3", 0)),
+        ("metal", Dmi("@stack_objects", "sheet-metal_3", 0)),
+        ("floor_tile", Dmi("@tiles", "tile", 0)),
+        ("tv", Dmi("@computer", "detective_tv", 0)),
+        ("white", White),
 
-]
+    ],
+)
