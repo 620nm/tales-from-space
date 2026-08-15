@@ -104,6 +104,10 @@ local function lay_run(ctx, self, user, x, y)
         return
     end
     local mask = layer_of(ctx, self)
+    if ctx.pipe_occupancy(x, y) % (mask * 2) >= mask then
+        ctx.system_msg(user, "An atmospherics component already occupies that pipe layer.")
+        return
+    end
     if ctx.pipe(x, y) % (mask * 2) >= mask then
         ctx.system_msg(user, "Someone already ran pipe through there.")
         return
@@ -116,6 +120,10 @@ local function lay_run(ctx, self, user, x, y)
     -- The same question at the end: while you worked, another engineer
     -- may have run the line through this very tile.
     mask = layer_of(ctx, self)
+    if ctx.pipe_occupancy(x, y) % (mask * 2) >= mask then
+        ctx.system_msg(user, "An atmospherics component already occupies that pipe layer.")
+        return
+    end
     if ctx.pipe(x, y) % (mask * 2) >= mask then
         ctx.system_msg(user, "Someone already ran pipe through there.")
         return

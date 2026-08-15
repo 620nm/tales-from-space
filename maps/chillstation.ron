@@ -86,14 +86,14 @@
         "    #...v.....#.........__#   ",
         "    #.........#.........E_E   ",
         "    #.........+.........__#   ",
-        "    #.........#.....#### #    ",
-        "    #.______c.#.....#         ",
+        "    #.......c.#.....#### #    ",
+        "    #.______..#.....#         ",
         "    #m..l....v#.....#         ",
         "    #############+########### ",
         "              #_C_CA_L___L__# ",
         "              #_____________# ",
         "              #_____________# ",
-        "      s s s s #_____________# ",
+        "      s s s s #_____C_______# ",
         "              #_________C___# ",
         "              #_____________# ",
         "              #_____________# ",
@@ -148,12 +148,12 @@
         (19, 20, "pipe_meter"),
         (20, 20, "wrench"),
     ],
-    // The socket the supply canister is fastened to. A canister feeds a
-    // run through a connector port and through nothing else, so this
-    // one line is what makes the station breathe: pull the port up with
-    // a wrench and the distribution loop has no source.
+    // The socket the supply canister is fastened to. It sits beside the
+    // through-main and mouths south into it: the connector is the
+    // component on its own tile, never raw pipe hidden under one. Pull
+    // the port up with a wrench and the distribution loop has no source.
     structures: [
-        (12, 10, "connector_port"),
+        (12, 9, "connector_port"),
         // The airlock gallery: a glass wall across the Annex with one
         // tile of gap at (22, 7), so the way to the inner airlock runs
         // past a window rather than through open floor. Reinforced, and
@@ -275,11 +275,11 @@
         // for (volume_pump.dm: it "never asks").
         (19, 17, "volume_pump", "running"),
         (17, 14, "digital_valve", "open"),
-        // Bottled oxygen off the first filter's side mouth — on the
-        // mouth's own tile, because the run that used to carry it
-        // down to (20, 17) ran beside the return riser and shorted
-        // both of them.
-        (20, 15, "connector_port"),
+        // Bottled nitrogen off the first filter's side mouth. The
+        // connector stands at (20,16) and mouths north into the catch
+        // pipe at (20,15); that keeps the component off the raw run and
+        // keeps its own tile's valid layer-4 crossing intact.
+        (20, 16, "connector_port"),
         // The scrubber that makes it a LOOP rather than a supply: it
         // stands on the Commons' own branch circuit, on layer 2, and
         // takes the carbon dioxide the crew breathe out back to
@@ -436,7 +436,7 @@
         (26, 25, 2),
     ],
     // The distribution run, layer 3 (bit 4) — tg's distro loop. It
-    // starts at the canister (12, 10), crosses the Commons under the
+    // starts beside the canister (12, 9), crosses the Commons under the
     // deck to that room's vent (13, 11), passes UNDER the bulkhead at
     // (14, 10) — a mapper may, a player may not — and climbs the Annex
     // to its vent (16, 5). One line, one canister, two rooms.
@@ -451,11 +451,11 @@
         (11, 10, 4, "#0000FF"),
         (12, 10, 4, "#0000FF"),
         (13, 10, 4, "#0000FF"),
-        (13, 11, 4, "#0000FF"),
+        // Vents are unary endpoints on (13,11) and (8,6): their
+        // stubs borrow the neighbouring run's paint.
         (8, 9, 4, "#0000FF"),
         (8, 8, 4, "#0000FF"),
         (8, 7, 4, "#0000FF"),
-        (8, 6, 4, "#0000FF"),
         (14, 10, 4, "#0000FF"),
         (15, 10, 4, "#0000FF"),
         (16, 10, 4, "#0000FF"),
@@ -473,8 +473,6 @@
         (23, 14, 4, "#00FFFF"),
         (25, 14, 4, "#00FFFF"),
         (27, 14, 4, "#00FFFF"),
-        (16, 13, 4, "#00FFFF"),
-        (18, 13, 4, "#00FFFF"),
         (22, 15, 4, "#FF9900"),
         (22, 16, 4, "#FF9900"),
         (22, 17, 4, "#FF9900"),
@@ -593,10 +591,10 @@
     ],
     pipes: [
         (6, 10, 4), (7, 10, 4), (8, 10, 4), (9, 10, 4), (10, 10, 4),
-        (11, 10, 4), (12, 10, 4), (13, 10, 4), (13, 11, 4),
-        (8, 9, 4), (8, 8, 4), (8, 7, 4), (8, 6, 4),
+        (11, 10, 4), (12, 10, 4), (13, 10, 4),
+        (8, 9, 4), (8, 8, 4), (8, 7, 4),
         (14, 10, 4), (15, 10, 4), (16, 10, 4), (16, 9, 4), (16, 8, 4),
-        (16, 7, 4), (16, 6, 4), (16, 5, 4),
+        (16, 7, 4), (16, 6, 4),
 
         // ---- Atmospherics ------------------------------------
         // The PROCESS LINE, layer 3: gas storage in the west,
@@ -612,16 +610,14 @@
         (23, 14, 4),
         (25, 14, 4),
         (27, 14, 4),
-        (16, 13, 4),
-        (18, 13, 4),
         // The mixer's side feed: its second mouth drops south to the
-        // bottle on the port at (24, 17). All three tiles, because
+        // bottle on the port at (24, 17). The connector replaces the
+        // last raw tile, so the two lengths end at its northward stub;
         // (24, 16) was missing and a run with a hole in it is two
         // runs — the mixer read 0 kPa on the side intake and blended
         // 79% of a line with 21% of nothing.
         (24, 15, 4),
         (24, 16, 4),
-        (24, 17, 4),
         // THE RETURN RISER, and it is deliberately NOT a straight
         // climb up column 19. The scrubbers main arrives at the
         // adapter (18, 18), crosses the volume pump at (19, 17), and
@@ -641,7 +637,8 @@
         (18, 16, 4),
         (18, 15, 4),
         (17, 10, 4),
-        // The filter's catch: one tile, the socket, and no further.
+        // The filter's catch: one raw tile, then the socket one tile
+        // south, and no further.
         // It cannot run down column 20 either — (20, 16) sits beside
         // the pump's outlet at (19, 16), which welded the nitrogen the
         // filter had just separated straight back onto the line

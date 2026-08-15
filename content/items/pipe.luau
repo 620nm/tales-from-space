@@ -46,6 +46,10 @@ return {
             return
         end
         local mask = LAYERS[ctx.mode(self).index + 1]
+        if ctx.pipe_occupancy(x, y) % (mask * 2) >= mask then
+            ctx.system_msg(user, "An atmospherics component already occupies that pipe layer.")
+            return
+        end
         if ctx.pipe(x, y) % (mask * 2) >= mask then
             return "pass" -- a length already runs here on this layer
         end
@@ -58,6 +62,10 @@ return {
         -- engineer may have run the line through this very tile -- and
         -- you may have turned the dial yourself.
         mask = LAYERS[ctx.mode(self).index + 1]
+        if ctx.pipe_occupancy(x, y) % (mask * 2) >= mask then
+            ctx.system_msg(user, "An atmospherics component already occupies that pipe layer.")
+            return
+        end
         if ctx.pipe(x, y) % (mask * 2) >= mask then
             ctx.system_msg(user, "Someone already ran pipe through there.")
             return

@@ -44,7 +44,6 @@ return {
         from_item = "gas_filter_flipped_fitting",
         tool = "wrench",
         secs = 2.0,
-        over = "pipe",
         start = "You start bolting the gas filter down.",
         done = "The gas filter is seated on the pipe.",
     },

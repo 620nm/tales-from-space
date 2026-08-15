@@ -249,7 +249,7 @@ t.world([==[(
         "########",
     ],
     spawns: [(4, 2)],
-    pipes: [(1, 1, 4), (2, 1, 4)],
+    pipes: [(2, 1, 4)],
     structures: [(1, 1, "connector_port"), (3, 1, "air_injector")],
 )]==], 7)
 

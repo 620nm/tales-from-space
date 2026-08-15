@@ -66,12 +66,11 @@ t.world([==[(
     items: [(1, 2, "pipe_painter")],
     pipes: [
         (2, 1, 4), (3, 1, 4), (4, 1, 4), (5, 1, 4),
-        (6, 1, 4), (7, 1, 4), (8, 1, 4),
+        (6, 1, 4), (7, 1, 4),
     ],
     pipe_paint: [
         (2, 1, 4, "#0000FF"), (3, 1, 4, "#0000FF"), (4, 1, 4, "#0000FF"),
         (5, 1, 4, "#0000FF"), (6, 1, 4, "#0000FF"), (7, 1, 4, "#0000FF"),
-        (8, 1, 4, "#0000FF"),
     ],
     structures: [(1, 1, "connector_port")],
 )]==], 7)
@@ -88,11 +87,11 @@ t.run_seconds(10)
 
 -- ---- one colour, one net ----
 --
--- Seven lengths in one blue line are ONE body of gas, so both ends read
+-- Six lengths in one blue line are ONE body of gas, so both ends read
 -- the same number to the last decimal: they are literally the same
 -- cell. That equality is what the rest of this spec breaks.
 local west = t.pipe_pressure(2, 1)
-local east = t.pipe_pressure(8, 1)
+local east = t.pipe_pressure(7, 1)
 assert(
     math.abs(west - east) < 0.01,
     "one painted run is one pipenet: " .. west .. " vs " .. east
@@ -138,7 +137,7 @@ assert(
     "you cannot paint a run you cannot see"
 )
 assert(not t.ledger_has("PipePainted"), "still no row")
-assert(t.pipe_pressure(2, 1) == t.pipe_pressure(8, 1), "and still one net")
+assert(t.pipe_pressure(2, 1) == t.pipe_pressure(7, 1), "and still one net")
 
 -- ---- **the headline**: a brush cuts the main ----
 t.click(p, 5, 1)
@@ -156,7 +155,7 @@ assert(rows[1].color == "#FF0000", "and which colour, so the record can say")
 -- exactly as it was — and the two ends of it are now two networks.
 t.run_seconds(10)
 local fed = t.pipe_pressure(2, 1)
-local starved = t.pipe_pressure(8, 1)
+local starved = t.pipe_pressure(7, 1)
 assert(fed > 90.0, "the bottle's half filled to its setpoint: " .. fed)
 assert(starved < 10.0, "and the vent's half emptied into space: " .. starved)
 
@@ -194,7 +193,7 @@ assert(said(p, "You paint the pipe blue."), "the stripe comes out")
 t.run_seconds(10)
 
 local rejoined_west = t.pipe_pressure(2, 1)
-local rejoined_east = t.pipe_pressure(8, 1)
+local rejoined_east = t.pipe_pressure(7, 1)
 assert(
     math.abs(rejoined_west - rejoined_east) < 0.01,
     "one line again: " .. rejoined_west .. " vs " .. rejoined_east

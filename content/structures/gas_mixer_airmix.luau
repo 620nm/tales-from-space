@@ -88,7 +88,6 @@ return {
         from_item = "gas_mixer_fitting",
         tool = "wrench",
         secs = 2.0,
-        over = "pipe",
         start = "You start bolting the gas mixer down.",
         done = "The gas mixer is seated on the pipe.",
     },
