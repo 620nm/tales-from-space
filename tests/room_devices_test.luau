@@ -36,8 +36,8 @@ local function walk(p, dir)
 end
 
 -- Moles of one gas in the run under a tile, or in the room over it.
-local function pipe_of(x, y, which)
-    local held = t.pipe_gas(x, y)
+local function pipe_of(x, y, which, layer)
+    local held = t.pipe_gas(x, y, layer)
     return held and held[which] or 0.0
 end
 
@@ -109,7 +109,9 @@ local SCRUB_MAP = [==[(
     spawns: [(5, 2)],
     // The waste main runs out under the west wall, so the room's air
     // has somewhere to go that is not the room.
-    pipes: [(0, 1, 4), (1, 1, 4)],
+    // Layer 2, because that is where a scrubber lives (tg's
+    // `vent_scrubber/on/layer2`, and see the structure's own file).
+    pipes: [(0, 1, 2), (1, 1, 2)],
     structures: [(2, 1, "air_scrubber")],
 )]==]
 
@@ -126,8 +128,8 @@ local WASTE_M3 = 2 * PIPE_M3 + PORT_M3
 
 local room_o2_0 = room_total("o2")
 local room_n2_0 = room_total("n2")
-local waste_o2_0 = pipe_of(1, 1, "o2")
-local waste_n2_0 = pipe_of(1, 1, "n2")
+local waste_o2_0 = pipe_of(1, 1, "o2", 2)
+local waste_n2_0 = pipe_of(1, 1, "n2", 2)
 assert(room_o2_0 > 0.0 and room_n2_0 > 0.0, "the room holds standard air, which is two gases")
 
 -- ---- switched on, set to carbon dioxide, in a room that has none ----
@@ -182,15 +184,15 @@ assert(
 )
 near(room_n2_1, room_n2_0, 0.05, "and kept every mole of its nitrogen")
 assert(
-    pipe_of(1, 1, "o2") > waste_o2_0 + 0.5,
-    "which turned up in the waste main: " .. waste_o2_0 .. " -> " .. pipe_of(1, 1, "o2")
+    pipe_of(1, 1, "o2", 2) > waste_o2_0 + 0.5,
+    "which turned up in the waste main: " .. waste_o2_0 .. " -> " .. pipe_of(1, 1, "o2", 2)
 )
-near(pipe_of(1, 1, "n2"), waste_n2_0, 0.05, "and no nitrogen followed it")
+near(pipe_of(1, 1, "n2", 2), waste_n2_0, 0.05, "and no nitrogen followed it")
 
 -- The books, across the room/net boundary. Nothing else in this map
 -- moves gas, so what left one side is on the other.
 near(
-    room_o2_1 + pipe_of(1, 1, "o2"),
+    room_o2_1 + pipe_of(1, 1, "o2", 2),
     room_o2_0 + waste_o2_0,
     0.05,
     "every mole of oxygen is accounted for"
@@ -215,7 +217,7 @@ assert(
     "siphoning takes the nitrogen too: " .. n2_before_siphon .. " -> " .. room_total("n2")
 )
 assert(
-    pipe_of(1, 1, "n2") > waste_n2_0 + 0.5,
+    pipe_of(1, 1, "n2", 2) > waste_n2_0 + 0.5,
     "and it is in the waste main, where the oxygen already was"
 )
 assert(WASTE_M3 > 0.0, "the waste main is a real net")
@@ -353,7 +355,9 @@ t.world([==[(
     ],
     spawns: [(5, 2)],
     cables: [(6, 2, 4)],
-    pipes: [(0, 1, 4), (1, 1, 4), (5, 1, 4), (6, 1, 4)],
+    // The scrubber's waste line is layer 2, the injector's supply is
+    // the default 3 -- which is exactly how the two are mapped.
+    pipes: [(0, 1, 2), (1, 1, 2), (5, 1, 4), (6, 1, 4)],
     structures: [(2, 1, "air_scrubber"), (4, 1, "air_injector")],
 )]==], 7)
 

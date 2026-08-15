@@ -65,6 +65,16 @@
         // that is where tg puts one: the vestibule deck is never
         // tiled.
         'E': (turf: Plating, fixture: Some(Door)),
+        // Atmospherics keeps its deck OPEN. Every other room on the
+        // station hides its plumbing under floor tiles, which is right
+        // -- pipe is subfloor and a corridor is not a diagram. A
+        // department whose whole job is the plumbing is the one place
+        // tg leaves the plating bare, so the six chars below are the
+        // Commons' fixtures again standing on '_' instead of '.'.
+        'C': (turf: Plating, fixture: Some(Canister)),
+        'L': (turf: Plating, fixture: Some(Light), light: Some("#F3FFFA")),
+        'A': (turf: Plating, fixture: Some(Apc)),
+        'O': (turf: Plating, fixture: Some(Outlet)),
     },
     rows: [
         "                              ",
@@ -79,14 +89,16 @@
         "    #.........#.....#### #    ",
         "    #.______c.#.....#         ",
         "    #m..l....v#.....#         ",
-        "    ################          ",
-        "                              ",
-        "                              ",
-        "                              ",
-        "      s s s s                 ",
-        "                              ",
-        "                              ",
-        "                              ",
+        "    #############+########### ",
+        "              #_C_CA_L___L__# ",
+        "              #_____________# ",
+        "              #_____________# ",
+        "      s s s s #_____________# ",
+        "              #_______C_C___# ",
+        "              #_____________# ",
+        "              #_____________# ",
+        "              #__________O__# ",
+        "              ############### ",
     ],
     spawns: [(7, 8), (8, 8), (9, 8), (10, 8)],
     items: [
@@ -119,6 +131,17 @@
         // something the station needs.
         (18, 8, "box_lights"),
         (19, 8, "light_replacer"),
+        // The atmospherics bench: the four things a technician actually
+        // carries. The RPD builds and removes plumbing anywhere, the
+        // analyser reads a room or a run, the painter is how a main
+        // gets its livery -- and paint here is plumbing, so it is also
+        // how a main gets cut by mistake -- and the spare meter is a
+        // gauge for wherever the next question is.
+        (16, 20, "rpd"),
+        (17, 20, "analyzer"),
+        (18, 20, "pipe_painter"),
+        (19, 20, "pipe_meter"),
+        (20, 20, "wrench"),
     ],
     // The socket the supply canister is fastened to. A canister feeds a
     // run through a connector port and through nothing else, so this
@@ -155,6 +178,58 @@
         // that is deliberately opened to space several times a shift.
         (24, 6, "grille", "reinforced"),
         (24, 8, "grille", "reinforced"),
+
+        // ---- Atmospherics ------------------------------------------
+        // GAS STORAGE. Two bottles on connector ports feed the process
+        // line; two more hang off the machines that need or make a
+        // second gas -- the mixer's other intake, and the bottle the
+        // filter fills with what it pulls out.
+        (16, 13, "connector_port"),
+        (18, 13, "connector_port"),
+        (22, 17, "connector_port"),
+        (24, 17, "connector_port"),
+        // THE PROCESS LINE, west to east. Everything the department
+        // does to gas happens along one row of deck: separate, blend,
+        // push. The filter's side mouth drops south into the bottle it
+        // fills; the mixer's takes from the one beside it.
+        // Commissioned, not shipped in a box: the map places each of
+        // these in a STATE, and for a machine that has positions the
+        // state IS the switch. tg maps `/on` subtypes for exactly
+        // this reason -- a station whose air only starts moving once
+        // somebody walks to Atmospherics is not a station.
+        (22, 14, "gas_filter", "running"),
+        (24, 14, "gas_mixer", "running"),
+        (26, 14, "gas_pump", "running"),
+        // Two gauges, either side of the machines that change the gas
+        // -- which is the only place a gauge earns its bolt.
+        (21, 14, "meter"),
+        (25, 14, "meter"),
+        // THE THREE LAYER ADAPTERS, and the reason the department can
+        // exist at all. The station's native vents can only see piping
+        // layer 3 (sim/vents.rs `LAYER_DEFAULT`), while tg's mains are
+        // layer 4 for supply and layer 2 for scrubbers. An adapter
+        // welds every layer it touches into ONE net, so:
+        //   (27,15) puts the pump's layer-3 outlet onto the layer-4
+        //           supply main;
+        //   (18,10) puts that main back onto the layer-3 run the
+        //           Commons and Annex vents are plumbed to;
+        //   (18,18) brings the layer-2 scrubbers main home into the
+        //           layer-3 process line, so scrubbed air is re-filtered
+        //           rather than dumped.
+        // Take any one of them out with a wrench and the loop parts in
+        // two, conserving every mole (tfs/tests/adapters_test.luau).
+        (27, 15, "layer_adapter"),
+        (18, 10, "layer_adapter"),
+        (18, 18, "layer_adapter"),
+        // The scrubber that makes it a LOOP rather than a supply: it
+        // stands on the Commons' own branch circuit, on layer 2, and
+        // takes the carbon dioxide the crew breathe out back to
+        // Atmospherics.
+        (13, 8, "air_scrubber", "scrubbing"),
+        // And the injector, which is the other end of the same idea and
+        // the one machine here with no notion of enough: it fills the
+        // department's own deck straight off the process line.
+        (21, 18, "air_injector"),
     ],
     // The vestibule interlock: each airlock names the direction its
     // partner lies in, and the link resolves only because BOTH of them
@@ -171,6 +246,11 @@
     machines: [
         (13, 5, "vendor"),
         (13, 6, "tool_vendor"),
+        // The pipe dispenser, corded to the outlet beside it. Every
+        // fitting the department is built out of comes off this shelf,
+        // which is why it stands in the department rather than in the
+        // Commons with the snacks.
+        (26, 20, "pipe_dispenser"),
     ],
     cables: [
         (5, 16, 1), (6, 16, 1), (7, 16, 1), (8, 16, 1), (9, 16, 1), (10, 16, 1),
@@ -195,6 +275,58 @@
         (16, 5, 1), (17, 5, 1), (18, 5, 1), (19, 5, 1), (20, 5, 1),
         (21, 5, 1), (22, 5, 1), (23, 5, 1), (23, 6, 1), (23, 7, 1),
         (24, 7, 1), (25, 7, 1), (26, 7, 1),
+        // Atmospherics' own feeder tap, dropped south out of the
+        // Annex's L1 run and through the bulkhead to the department's
+        // APC at (19, 13).
+        (19, 6, 1),
+        (19, 7, 1),
+        (19, 8, 1),
+        (19, 9, 1),
+        (19, 10, 1),
+        (19, 11, 1),
+        (19, 12, 1),
+        (19, 13, 1),
+        // And its branch circuit, L2, under everything in the
+        // department that draws: the filter, the mixer, the pump,
+        // the injector, both lights and the dispenser's outlet.
+        (15, 14, 2),
+        (16, 14, 2),
+        (17, 14, 2),
+        (18, 14, 2),
+        (19, 14, 2),
+        (20, 14, 2),
+        (21, 14, 2),
+        (22, 14, 2),
+        (23, 14, 2),
+        (24, 14, 2),
+        (25, 14, 2),
+        (26, 14, 2),
+        (27, 14, 2),
+        (19, 13, 2),
+        (19, 14, 2),
+        (19, 15, 2),
+        (19, 16, 2),
+        (19, 17, 2),
+        (19, 18, 2),
+        (15, 13, 2),
+        (16, 13, 2),
+        (17, 13, 2),
+        (18, 13, 2),
+        (19, 13, 2),
+        (20, 13, 2),
+        (21, 13, 2),
+        (22, 13, 2),
+        (23, 13, 2),
+        (24, 13, 2),
+        (25, 13, 2),
+        (26, 13, 2),
+        (27, 13, 2),
+        (20, 18, 2),
+        (21, 18, 2),
+        (25, 17, 2),
+        (25, 18, 2),
+        (25, 19, 2),
+        (25, 20, 2),
     ],
     // The distribution run, layer 3 (bit 4) — tg's distro loop. It
     // starts at the canister (12, 10), crosses the Commons under the
@@ -222,6 +354,43 @@
         (16, 10, 4, "#0000FF"),
         (16, 9, 4, "#0000FF"),
         (16, 8, 4, "#0000FF"),
+        // Atmospherics' two mains wear tg's own liveries
+        // (pipes/mapping.dm:93-94): COLOR_BLUE for supply,
+        // COLOR_RED for scrubbers. The process line stays
+        // unpainted -- omni joins everything, which is what a
+        // line that has to accept whatever storage hands it
+        // wants to be.
+        (19, 16, 8, "#0000FF"),
+        (20, 16, 8, "#0000FF"),
+        (21, 16, 8, "#0000FF"),
+        (22, 16, 8, "#0000FF"),
+        (23, 16, 8, "#0000FF"),
+        (24, 16, 8, "#0000FF"),
+        (25, 16, 8, "#0000FF"),
+        (26, 16, 8, "#0000FF"),
+        (27, 16, 8, "#0000FF"),
+        (19, 15, 8, "#0000FF"),
+        (19, 14, 8, "#0000FF"),
+        (19, 13, 8, "#0000FF"),
+        (19, 12, 8, "#0000FF"),
+        (19, 11, 8, "#0000FF"),
+        (19, 10, 8, "#0000FF"),
+        (13, 7, 2, "#FF0000"),
+        (14, 7, 2, "#FF0000"),
+        (15, 7, 2, "#FF0000"),
+        (15, 8, 2, "#FF0000"),
+        (15, 9, 2, "#FF0000"),
+        (15, 10, 2, "#FF0000"),
+        (15, 11, 2, "#FF0000"),
+        (15, 12, 2, "#FF0000"),
+        (15, 13, 2, "#FF0000"),
+        (15, 14, 2, "#FF0000"),
+        (15, 15, 2, "#FF0000"),
+        (15, 16, 2, "#FF0000"),
+        (15, 17, 2, "#FF0000"),
+        (15, 18, 2, "#FF0000"),
+        (16, 18, 2, "#FF0000"),
+        (17, 18, 2, "#FF0000"),
     ],
     pipes: [
         (6, 10, 4), (7, 10, 4), (8, 10, 4), (9, 10, 4), (10, 10, 4),
@@ -229,14 +398,95 @@
         (8, 9, 4), (8, 8, 4), (8, 7, 4), (8, 6, 4),
         (14, 10, 4), (15, 10, 4), (16, 10, 4), (16, 9, 4), (16, 8, 4),
         (16, 7, 4), (16, 6, 4), (16, 5, 4),
+
+        // ---- Atmospherics ------------------------------------
+        // The PROCESS LINE, layer 3: gas storage in the west,
+        // through the filter and the mixer, to the pump. This is
+        // the department's own working line and it is left
+        // unpainted, because it is not distro and not waste --
+        // it is where the mix is made.
+        (15, 14, 4),
+        (16, 14, 4),
+        (17, 14, 4),
+        (18, 14, 4),
+        (19, 14, 4),
+        (20, 14, 4),
+        (21, 14, 4),
+        (23, 14, 4),
+        (25, 14, 4),
+        (27, 14, 4),
+        (16, 13, 4),
+        (18, 13, 4),
+        (22, 15, 4),
+        (22, 16, 4),
+        (22, 17, 4),
+        (24, 15, 4),
+        (24, 16, 4),
+        (24, 17, 4),
+        (19, 15, 4),
+        (19, 16, 4),
+        (19, 17, 4),
+        (19, 18, 4),
+        (20, 18, 4),
+        (17, 10, 4),
+        // The SUPPLY main, layer 4 and blue: tg's own
+        // convention, counted across every map file it ships
+        // (`vent_pump/on/layer4`, 2091 instances against one on
+        // any other layer). It leaves the pump, runs west under
+        // the department and climbs the Annex shaft.
+        (19, 16, 8),
+        (20, 16, 8),
+        (21, 16, 8),
+        (22, 16, 8),
+        (23, 16, 8),
+        (24, 16, 8),
+        (25, 16, 8),
+        (26, 16, 8),
+        (27, 16, 8),
+        (19, 15, 8),
+        (19, 14, 8),
+        (19, 13, 8),
+        (19, 12, 8),
+        (19, 11, 8),
+        (19, 10, 8),
+        // The SCRUBBERS main, layer 2 and red (tg's
+        // `vent_scrubber/on/layer2`, 1860 against one). It
+        // collects from the Commons and comes back down the same
+        // shaft the supply climbs -- which is the entire reason
+        // piping layers exist: these two share tiles at (19,14),
+        // (19,15), (19,16), (22,16), (24,16) and (15,14) and are
+        // six separate bodies of gas.
+        (13, 7, 2),
+        (14, 7, 2),
+        (15, 7, 2),
+        (15, 8, 2),
+        (15, 9, 2),
+        (15, 10, 2),
+        (15, 11, 2),
+        (15, 12, 2),
+        (15, 13, 2),
+        (15, 14, 2),
+        (15, 15, 2),
+        (15, 16, 2),
+        (15, 17, 2),
+        (15, 18, 2),
+        (16, 18, 2),
+        (17, 18, 2),
     ],
     labels: [
         (5, 5, "The Commons"),
         (15, 5, "The Annex"),
+        (15, 13, "Atmospherics"),
     ],
     mounts: [
         (5, 5, North), (7, 5, North), (11, 5, North),
         (12, 5, North), (15, 5, North), (17, 5, North),
         (8, 11, South),
+        // Atmospherics: both lights and the APC hang off the north
+        // bulkhead, the outlet off the south one. A wall fixture
+        // names the wall it is bolted to, and the shipped-map test
+        // refuses one that does not.
+        (21, 13, North), (25, 13, North), (19, 13, North),
+        (25, 20, South),
     ],
 )

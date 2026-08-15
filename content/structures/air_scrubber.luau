@@ -66,6 +66,15 @@ return {
     },
     atmos = {
         device = "scrubber",
+        -- LAYER 2, which is where tg puts scrubbers and very nearly
+        -- only where: counted across every map file it ships,
+        -- `vent_scrubber/on/layer2` appears 1860 times and every other
+        -- layer once. Supply is layer 4 by the same count, and the two
+        -- conventions together are what let a supply main and a waste
+        -- main share a corridor without becoming one body of gas. A
+        -- scrubber on the default layer would join the distro it is
+        -- supposed to be the return half of.
+        layer = 2,
         -- Off, filtering, emptying. The third slot is what tg's
         -- `scrub_purge` is for.
         positions = { "off", "scrubbing", "siphoning" },
