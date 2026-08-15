@@ -212,7 +212,13 @@
     ("connector_port_n", Dmi("obj/machines/atmospherics/unary_devices.dmi", "connector_map-3", 1)),
     ("connector_port_e", Dmi("obj/machines/atmospherics/unary_devices.dmi", "connector_map-3", 2)),
     ("connector_port_w", Dmi("obj/machines/atmospherics/unary_devices.dmi", "connector_map-3", 3)),
-    // Unbolted there is no stub at all, so there is nothing to
-    // point: tg's loose `connector` state is `dirs = 1`.
-    ("connector_port_loose", Dmi("obj/machines/atmospherics/unary_devices.dmi", "connector", 0)),
+    // Unbolted it is an `/obj/item/pipe` like every other fitting, so
+    // it comes off pipe_item.dmi and not off the machine's own sheet
+    // (construction.dm:17,216 -- `pipe_state = "connector"`,
+    // portables_connector.dm:15). Both sheets carry a state called
+    // `connector` and they are NOT the same picture: the machine's is
+    // the bare socket, the item's is the socket with the little
+    // coupling nub the fitting is held by. Baking the machine's was a
+    // near miss that cost the item its nub.
+    ("connector_port_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "connector", 0)),
 ]

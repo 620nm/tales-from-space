@@ -8,13 +8,15 @@
 [
     // ---- the thermal pair, and the two adapters ----------------------
     //
-    // THE THERMAL PAIR share the binary sheet and the valve's recipe
-    // above: two lengths of `pipe_intact` under the body, and the
-    // body itself at `-1`, tg's overlay offset for piping layers 1,
-    // 3 and 5 (`set_overlay_offset`). Both fold south onto north and
-    // west onto east, which is all a machine with two ends and one
-    // axis of art has to say. DMI dirs throughout: 0 south, 1 north,
-    // 2 east, 3 west.
+    // THE THERMAL PAIR share the binary sheet and the valve's rule:
+    // a BARE body at `-1`, tg's overlay offset for piping layers 1, 3
+    // and 5 (`set_overlay_offset`), with the pipe stubs underlaid per
+    // instance by `sim/atmos_machines/underlays.rs` from the mouths
+    // the machine actually found (components_base.dm:68-111 -- see
+    // 20-atmos-inline-devices.ron for why they are not baked in).
+    // Both fold south onto north and west onto east, which is all a
+    // machine with two ends and one axis of art has to say. DMI dirs
+    // throughout: 0 south, 1 north, 2 east, 3 west.
     //
     // tg's armed gate is a six-frame loop (`tgate_on-1`) and it has
     // a THIRD state, `tgate_flow`, for the moment gas is actually
@@ -22,46 +24,14 @@
     // first frame reads by its lit body, and "is anything crossing
     // right now" is a question for the panel, which answers it with
     // two port pressures rather than by flickering.
-    ("tgate_off_ns", DmiCells([
-        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
-        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
-        ("obj/machines/atmospherics/binary_devices.dmi", "tgate_off-1", 1),
-    ])),
-    ("tgate_off_ew", DmiCells([
-        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
-        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
-        ("obj/machines/atmospherics/binary_devices.dmi", "tgate_off-1", 2),
-    ])),
-    ("tgate_on_ns", DmiCells([
-        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
-        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
-        ("obj/machines/atmospherics/binary_devices.dmi", "tgate_on-1", 1),
-    ])),
-    ("tgate_on_ew", DmiCells([
-        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
-        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
-        ("obj/machines/atmospherics/binary_devices.dmi", "tgate_on-1", 2),
-    ])),
-    ("tpump_off_ns", DmiCells([
-        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
-        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
-        ("obj/machines/atmospherics/binary_devices.dmi", "tpump_off-1", 1),
-    ])),
-    ("tpump_off_ew", DmiCells([
-        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
-        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
-        ("obj/machines/atmospherics/binary_devices.dmi", "tpump_off-1", 2),
-    ])),
-    ("tpump_on_ns", DmiCells([
-        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
-        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
-        ("obj/machines/atmospherics/binary_devices.dmi", "tpump_on-1", 1),
-    ])),
-    ("tpump_on_ew", DmiCells([
-        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
-        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
-        ("obj/machines/atmospherics/binary_devices.dmi", "tpump_on-1", 2),
-    ])),
+    ("tgate_off_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tgate_off-1", 1)),
+    ("tgate_off_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tgate_off-1", 2)),
+    ("tgate_on_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tgate_on-1", 1)),
+    ("tgate_on_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tgate_on-1", 2)),
+    ("tpump_off_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tpump_off-1", 1)),
+    ("tpump_off_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tpump_off-1", 2)),
+    ("tpump_on_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tpump_on-1", 1)),
+    ("tpump_on_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tpump_on-1", 2)),
     // THE PLATE is the odd one, and its cells are REVERSED on
     // purpose. tg points a unary device at its PIPE
     // (unary_devices.dm:14, `initialize_directions = dir`), so its
@@ -71,42 +41,43 @@
     // `he1` rather than `he0` because a plate with no pipe behind it
     // is one somebody has not finished plumbing, not a second kind
     // of plate.
+    //
+    // A UNARY DEVICE HAS ONE MOUTH and it is BEHIND the face, so it
+    // takes one underlaid stub and it comes out of the reversal
+    // above: `port_dir(NODE_BACK)` is `facing.opposite()`, which is
+    // the way tg's `initialize_directions` points. These cells never
+    // carried a baked stub, so what changes here is that they gain
+    // one -- a plate, a scrubber or an injector now shows the tube
+    // running away behind it, and shows it capped where nobody has
+    // plumbed it yet.
     ("he_plate_n", Dmi("obj/machines/atmospherics/unary_devices.dmi", "he1", 0)),
     ("he_plate_s", Dmi("obj/machines/atmospherics/unary_devices.dmi", "he1", 1)),
     ("he_plate_e", Dmi("obj/machines/atmospherics/unary_devices.dmi", "he1", 3)),
     ("he_plate_w", Dmi("obj/machines/atmospherics/unary_devices.dmi", "he1", 2)),
-    // THE ADAPTERS are pipe, and each comes off its own sheet.
+    // THE ADAPTERS are pipe rather than machinery -- tg files both
+    // under `/obj/machinery/atmospherics/pipe` -- and each is a CENTRE
+    // PIECE with nothing else in it. Both of tg's own `Initialize`s
+    // say so in one line: the colour adapter clears its icon_state
+    // outright and composes from `adapter_center`
+    // (color_adapter.dm:31-33,40-45), and the layer manifold replaces
+    // its mapping state with `manifoldlayer_center`
+    // (layermanifold.dm:22-26). The stubs are underlaid per instance,
+    // exactly as a component's are.
     //
-    // tg draws both as a centre piece plus one stub per connection
-    // it actually found, tinted per node: the colour adapter's
-    // `update_overlays` walks `nodes` and colours each stub with
-    // THAT run's paint (color_adapter.dm:46-58), and the layer
-    // manifold draws a stub per layer per end off a whole separate
-    // underlay sheet (layer_manifold_underlays.dmi). Both are
-    // per-instance compositions of a live network, which is not a
-    // thing a baked atlas cell can be. So each bakes as its centre
-    // plus a straight run through it -- what one looks like in the
-    // ordinary case of being plumbed at both ends -- and the
-    // per-node tinting waits on runtime sprite tinting with the
-    // rest of it.
-    ("color_adapter_ns", DmiCells([
-        ("obj/pipes_n_cables/color_adapter.dmi", "pipe", 1),
-        ("obj/pipes_n_cables/color_adapter.dmi", "pipe", 0),
-        ("obj/pipes_n_cables/color_adapter.dmi", "adapter_center", 1),
-    ])),
-    ("color_adapter_ew", DmiCells([
-        ("obj/pipes_n_cables/color_adapter.dmi", "pipe", 2),
-        ("obj/pipes_n_cables/color_adapter.dmi", "pipe", 3),
-        ("obj/pipes_n_cables/color_adapter.dmi", "adapter_center", 2),
-    ])),
-    ("layer_adapter_ns", DmiCells([
-        ("obj/pipes_n_cables/manifold.dmi", "manifoldlayer", 1),
-        ("obj/pipes_n_cables/manifold.dmi", "manifoldlayer_center", 1),
-    ])),
-    ("layer_adapter_ew", DmiCells([
-        ("obj/pipes_n_cables/manifold.dmi", "manifoldlayer", 2),
-        ("obj/pipes_n_cables/manifold.dmi", "manifoldlayer_center", 2),
-    ])),
+    // THE LAYER ADAPTER USED TO WEAR ITS OWN INVENTORY ICON, and that
+    // was the loudest form of this whole defect: `manifoldlayer` is
+    // the picture tg puts in your HANDS -- all five layers drawn out
+    // to the tile edge at both ends, every connection it could ever
+    // make -- and it was baked in UNDER the centre band, so a bolted
+    // adapter advertised ten runs it had not found. What it wears now
+    // is the centre band alone, plus one `pipe_half_*` per end per
+    // layer that actually reached something (tg's
+    // `get_attached_image`, layermanifold.dm:59-82). An adapter
+    // bridging one layer looks like an adapter bridging one layer.
+    ("color_adapter_ns", Dmi("obj/pipes_n_cables/color_adapter.dmi", "adapter_center", 1)),
+    ("color_adapter_ew", Dmi("obj/pipes_n_cables/color_adapter.dmi", "adapter_center", 2)),
+    ("layer_adapter_ns", Dmi("obj/pipes_n_cables/manifold.dmi", "manifoldlayer_center", 1)),
+    ("layer_adapter_ew", Dmi("obj/pipes_n_cables/manifold.dmi", "manifoldlayer_center", 2)),
     // And the five fittings they are raised from, off the same one
     // sheet as every other `/obj/item/pipe`.
     ("temperature_gate_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tgate", 0)),
