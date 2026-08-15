@@ -389,6 +389,14 @@
         (27, 13, 2),
         (20, 18, 2),
         (21, 18, 2),
+        // The spur down the east wall to the dispenser's outlet. It
+        // starts on the y=14 run rather than beside it: a segment that
+        // begins at (25, 17) is four cables that touch nothing, and an
+        // outlet on one is a socket wired to itself. The boot warning
+        // ("outlet's branch segment reaches no APC output") is what
+        // caught it, which is what that warning is for.
+        (25, 15, 2),
+        (25, 16, 2),
         (25, 17, 2),
         (25, 18, 2),
         (25, 19, 2),
@@ -603,7 +611,13 @@
         (27, 14, 4),
         (16, 13, 4),
         (18, 13, 4),
+        // The mixer's side feed: its second mouth drops south to the
+        // bottle on the port at (24, 17). All three tiles, because
+        // (24, 16) was missing and a run with a hole in it is two
+        // runs — the mixer read 0 kPa on the side intake and blended
+        // 79% of a line with 21% of nothing.
         (24, 15, 4),
+        (24, 16, 4),
         (24, 17, 4),
         (19, 15, 4),
         (19, 16, 4),
@@ -723,7 +737,11 @@
     labels: [
         (5, 5, "The Commons"),
         (15, 5, "The Annex"),
-        (15, 13, "Atmospherics"),
+        // On the APC, because that is what a label names: an APC's
+        // label IS the room's name (sim/mod.rs, "APC labels become
+        // room names"). (15, 13) is bare plating, so the department
+        // went unnamed and said so at boot.
+        (19, 13, "Atmospherics"),
     ],
     mounts: [
         (5, 5, North), (7, 5, North), (11, 5, North),
