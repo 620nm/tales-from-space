@@ -4,9 +4,10 @@
 --
 -- tg: /obj/machinery/vending/tool ("YouTool", vending/youtool.dm),
 -- whose stock this reproduces as far as the pack has prototypes for
--- it. tg also lists an analyzer, a t-scanner, flashlights, glowsticks
--- and earmuffs; those are not things yet, so they are not on the
--- shelf. Nothing native has to change when they are — one line here.
+-- it. tg also lists a t-scanner, flashlights, glowsticks and earmuffs;
+-- those are not things yet, so they are not on the shelf. Nothing
+-- native has to change when they are — one line here, which is exactly
+-- what the gas analyzer cost the day it became a thing.
 --
 -- It shares `script = "vendor"` with the softdrinks machine: opening
 -- a window on click and wobbling when bumped is the behaviour of a
@@ -26,6 +27,7 @@ return {
         { item = "welder", name = "Welding Tool", category = "Tools", amount = 3 },
         { item = "wirecutters", name = "Wirecutters", category = "Tools", amount = 5 },
         { item = "wrench", name = "Wrench", category = "Tools", amount = 5 },
+        { item = "analyzer", name = "Gas Analyzer", category = "Tools", amount = 5 },
         { item = "screwdriver", name = "Screwdriver", category = "Tools", amount = 5 },
         { item = "multitool", name = "Multitool", category = "Tools", amount = 4 },
         { item = "toolbelt", name = "Toolbelt", category = "Tools", amount = 2 },
