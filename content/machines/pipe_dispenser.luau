@@ -38,6 +38,7 @@ return {
     -- a gas pump.
     script = "pipe_dispenser",
     corded = true,
+    infinite_stock = true,
     -- tg's `wait = world.time + 1 SECONDS` (pipe_dispenser.dm:213).
     vend_secs = 1.0,
     -- tg's own `desc`, which is the whole personality of the thing.
@@ -48,9 +49,8 @@ return {
         Devices = "microchip",
         ["Heat Exchange"] = "fire",
     },
-    -- tg's dispenser has no stock at all — it conjures. The shelf count
-    -- is display only, so it says the largest number the schema takes
-    -- and means "as many as you like".
+    -- tg's dispenser has no stock at all — it conjures. `infinite_stock`
+    -- makes the shelf count display-only in every mode.
     vends = {
         { item = "pipe", name = "Pipe", category = "Pipes", amount = 999 },
         { item = "layer_adapter_fitting", name = "Layer Adapter", category = "Pipes", amount = 999 },

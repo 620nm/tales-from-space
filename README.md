@@ -11,7 +11,7 @@ engine's test fixtures no longer lean on it.
 
 | Directory        | Contents |
 | ---------------- | -------- |
-| `content/`       | The mod itself: `items/`, `jobs/`, `fixtures/`, `substances/`, `reactions/` (`.luau` files returning prototype tables, with optional behavior hooks), plus `tuning.luau` feel knobs. |
+| `content/`       | The mod itself: `items/`, `jobs/`, `gamemodes/`, `fixtures/`, `substances/`, `reactions/` (`.luau` files returning prototype tables, with optional behavior hooks), plus `tuning.luau` feel knobs. |
 | `maps/`          | Station maps as RON (`chillstation.ron` is the default; `outpost.ron` is the test/demo map). |
 | `assets/`        | Sprite and sound source manifests consumed by `cargo run -p xtask -- bake-atlas`. |
 | `tests/`         | Luau specs (`*_test.luau`) run by the engine's spec runner; `tests/maps/` holds purpose-built spec maps. |
@@ -22,6 +22,7 @@ From the workspace root:
 
 ```sh
 cargo run -p lunatic-server                 # defaults: tfs/maps/chillstation.ron, --content tfs/content
+cargo run -p lunatic-server -- --mode free_build
 cargo run -p lunatic-server -- tfs/maps/outpost.ron --content tfs/content
 ```
 
@@ -34,6 +35,8 @@ cargo run -p lunatic-server -- tfs/maps/outpost.ron --content tfs/content
   `on_mob_life`) and the `ctx` query/effect table.
 - `content/tuning.luau` overrides engine feel constants; the engine's
   compiled defaults are the values its tests pin.
+- `docs/gamemodes.md` defines the Space Station/Free Build split and the
+  `content/gamemodes/*.luau` policy schema.
 
 ## Specs
 
