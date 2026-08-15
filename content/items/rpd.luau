@@ -24,11 +24,11 @@
 --   explicit recipes, so there is no second direction dial here.
 -- * tg's multi-layer build, which lays the same run on several layers
 --   at once. One layer, one length: the dial names it.
--- * A layer or a colour on a DEVICE. Only the run under the deck
---   carries either today — a machine's layer is its entry's
---   (structures/meter.luau) and devices are omni (pipes/paint.rs) — so
---   these two dials govern pipe, and a valve comes down on the layer
---   its own file names.
+-- * A colour on a DEVICE. Only the run under the deck carries one today
+--   (pipes/paint.rs). A meter is the exception for layer: tg programs
+--   the loose meter from the RPD's selected layer before auto-wrenching
+--   it, and the optional fitting mode on `ctx.fit` does the same here.
+--   In-line devices still come down on the layer their own file names.
 
 -- The shelf, in tg's own order and words (`GLOB.atmos_pipe_recipes`,
 -- code/_globalvars/lists/pipe_recipes.dm), as far as this pack has
@@ -303,7 +303,11 @@ return {
         if not ctx.do_after(user, 0.4) then
             return
         end
-        ctx.fit(x, y, recipe.structure)
+        local fitting_mode = nil
+        if recipe.structure == "meter" then
+            fitting_mode = ctx.dial(self, "layer").index
+        end
+        ctx.fit(x, y, recipe.structure, fitting_mode)
         ctx.sound("ratchet", x, y)
     end,
 }
