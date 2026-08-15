@@ -38,25 +38,49 @@
 return {
     id = "manual_valve_l4",
     name = "manual valve (supply)",
-    sprite = "valve_shut_n",
+    sprite = "valve_shut_ns",
     dense = false,
     states = { "shut", "open" },
     -- A binary device reaches along one axis, so north and south are
     -- one picture and east and west are the other -- tg's
     -- `PIPING_CARDINAL_AUTONORMALIZE` (valve.dm:14), whose art does not
-    -- even ship a south cell.
+    -- even ship a south cell. Two names for two pictures.
     facing_sprites = {
         shut = {
-            north = "valve_shut_n",
-            south = "valve_shut_s",
-            east = "valve_shut_e",
-            west = "valve_shut_w",
+            north = "valve_shut_ns",
+            south = "valve_shut_ns",
+            east = "valve_shut_ew",
+            west = "valve_shut_ew",
         },
         open = {
-            north = "valve_open_n",
-            south = "valve_open_s",
-            east = "valve_open_e",
-            west = "valve_open_w",
+            north = "valve_open_ns",
+            south = "valve_open_ns",
+            east = "valve_open_ew",
+            west = "valve_open_ew",
+        },
+    },
+    -- The wheel turning, and the same 1.4s of art over the same 1.0s
+    -- timer manual_valve.luau explains at length. A valve on the supply
+    -- main is the same machine as one on the distribution main; the
+    -- only thing this file changes is which run it reaches.
+    moving_sprites = {
+        {
+            from = "shut",
+            to = "open",
+            secs = 1.4,
+            north = "valve_opening_ns",
+            south = "valve_opening_ns",
+            east = "valve_opening_ew",
+            west = "valve_opening_ew",
+        },
+        {
+            from = "open",
+            to = "shut",
+            secs = 1.4,
+            north = "valve_closing_ns",
+            south = "valve_closing_ns",
+            east = "valve_closing_ew",
+            west = "valve_closing_ew",
         },
     },
     atmos = {
