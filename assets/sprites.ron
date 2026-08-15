@@ -990,6 +990,13 @@
         // is a relabelled label gun off the bureaucracy sheet
         // (pipe_painter.dm:5-6), drawn exactly as tg draws it.
         ("pipe_painter", Dmi("obj/service/bureaucracy.dmi", "labeler1", 0)),
+        // The rapid pipe dispenser, off tg's tool sheet
+        // (`icon_state = "rpd"`, RPD.dm:26).
+        ("rpd", Dmi("obj/tools.dmi", "rpd", 0)),
+        // ...and the stationary one it is the handheld answer to: tg's
+        // `/obj/machinery/pipedispenser` wears the lathe sheet's
+        // `pipe_d` (pipe_dispenser.dm:7-8).
+        ("pipe_dispenser", Dmi("obj/machines/lathes.dmi", "pipe_d", 0)),
         // tg's analyzer idles through an eight-frame screen blink
         // (scanner.dmi, `delay = 10,1,1,1,1,1,1,1`). Baked as the still
         // it rests on: eight atlas cells for a device that spends the
