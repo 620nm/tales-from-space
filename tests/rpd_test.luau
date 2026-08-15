@@ -83,7 +83,12 @@ t.world([==[(
         "#########",
     ],
     spawns: [(1, 2)],
-    items: [(1, 2, "rpd"), (2, 1, "manual_valve_fitting")],
+    items: [
+        (1, 1, "wrench"),
+        (1, 2, "rpd"),
+        (2, 1, "manual_valve_fitting"),
+        (2, 1, "manual_valve_fitting"),
+    ],
 )]==], 7)
 
 local p = t.join()
@@ -139,6 +144,27 @@ assert(shows(p, MODE) == "Build", "build mode")
 assert(shows(p, RECIPE) == "Pipe", "plain pipe")
 assert(shows(p, LAYER) == "3", "PIPING_LAYER_DEFAULT")
 assert(shows(p, PAINT) == "green", "and tg's green")
+
+-- Exact item and ground are different clicks. tg enables BUILD and
+-- DESTROY together, with loose pipe breakdown first, so Build mode
+-- consumes the fitting the client named instead of dispensing over it.
+local _ = t.messages(p)
+t.click(p, 2, 1, t.target_at(2, 1, "manual_valve_fitting"))
+work(p)
+assert(t.count_items("manual_valve_fitting") == 1, "build mode consumed exactly one named fitting")
+assert(t.pipe(2, 1) == 0, "and does not reinterpret the item click as turf")
+assert(
+    said(p, "You break down the manual valve fitting."),
+    "the tg-ordered breakdown branch ran before construction"
+)
+
+-- The precedence is typed, not permission to erase arbitrary clutter.
+local _ = t.messages(p)
+t.click(p, 1, 1, t.target_at(1, 1, "wrench"))
+work(p)
+assert(t.count_items("wrench") == 1, "build mode protects an ordinary item")
+assert(t.pipe(1, 1) == 0, "an ordinary item click is not retargeted to turf")
+assert(said(p, "That loose item is not atmospherics construction."), "the refusal names the type")
 
 -- ---- pipe: the layer and the paint are real ----
 --
@@ -250,6 +276,14 @@ assert(t.count_items("manual_valve_fitting") == 0, "destroy mode ate it")
 assert(t.hands(p).held == "rpd", "and did not pocket it instead")
 assert(said(p, "You break down the manual valve fitting."), "saying which thing")
 assert(t.ledger_has("ItemConsumed", "manual_valve_fitting"), "on the record")
+
+-- tg's destroy branch is typed: it accepts loose atmos construction,
+-- not every ordinary item which happens to be named by the click.
+local _ = t.messages(p)
+t.click(p, 1, 1, t.target_at(1, 1, "wrench"))
+work(p)
+assert(t.count_items("wrench") == 1, "destroy mode does not eat an ordinary tool")
+assert(said(p, "There is nothing loose there to break down."), "the tool earns the narrow refusal")
 
 -- ---- copy mode: point it at a run and it takes the settings ----
 --
@@ -400,4 +434,79 @@ for _, case in ipairs({
     work(o)
     assert(t.structure_at(case.x, case.y) == nil, case.recipe .. " did not cover raw pipe")
     assert(said(o, "Something is already under the floor here."), "raw pipe blocks " .. case.recipe)
+end
+
+-- ---------------------------------------------------------------
+-- UNARY DEVICES. Connector, scrubber and injector each have one mouth
+-- aimed at an adjacent run. Their own tile is the machine centre: it
+-- neither needs nor permits a raw length on the same layer.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "rpd unary occupancy",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Plating),
+        '#': (turf: Wall),
+    },
+    rows: [
+        "#########",
+        "#.......#",
+        "#.......#",
+        "#.......#",
+        "#########",
+    ],
+    spawns: [(2, 2)],
+    items: [(2, 2, "rpd")],
+    // The positive connector reaches west from (2,1). The southern
+    // three entries are deliberately on each device's own layer.
+    pipes: [(1, 1, 4), (2, 3, 4), (1, 3, 4), (4, 3, 2), (6, 3, 4)],
+)]==], 7)
+
+local u = t.join()
+t.tick()
+t.click(u, 2, 2, t.target_at(2, 2, "rpd"))
+t.run_ticks(2)
+t.use_self(u)
+t.tick()
+
+set(u, RECIPE, pick(u, RECIPE, "Connector"))
+t.click(u, 2, 1)
+work(u)
+assert(t.structure_at(2, 1).id == "connector_port", "a connector builds beside its run")
+assert(t.pipe(2, 1) == 0, "the connector has no raw centre length")
+
+walk(u, "east")
+walk(u, "east") -- (4,2)
+set(u, RECIPE, pick(u, RECIPE, "Air Scrubber"))
+t.click(u, 4, 1)
+work(u)
+assert(t.structure_at(4, 1).id == "air_scrubber", "a scrubber needs no underlying raw pipe")
+assert(t.pipe(4, 1) == 0, "the scrubber is a unary component, not pipe-over-pipe")
+
+walk(u, "east")
+walk(u, "east") -- (6,2)
+set(u, RECIPE, pick(u, RECIPE, "Air Injector"))
+t.click(u, 6, 1)
+work(u)
+assert(t.structure_at(6, 1).id == "air_injector", "an injector needs no underlying raw pipe")
+assert(t.pipe(6, 1) == 0, "the injector centre is raw-pipe-free")
+
+-- The reverse direction is refused without consuming the run.
+for _, case in ipairs({
+    { x = 6, recipe = "Air Injector", layer = 4 },
+    { x = 4, recipe = "Air Scrubber", layer = 2, west = 2 },
+    { x = 2, recipe = "Connector", layer = 4, west = 2 },
+}) do
+    if case.west then
+        for _ = 1, case.west do
+            walk(u, "west")
+        end
+    end
+    set(u, RECIPE, pick(u, RECIPE, case.recipe))
+    local _ = t.messages(u)
+    t.click(u, case.x, 3)
+    work(u)
+    assert(t.structure_at(case.x, 3) == nil, case.recipe .. " did not cover its centre run")
+    assert(t.pipe(case.x, 3) == case.layer, case.recipe .. " left the raw run intact")
+    assert(said(u, "Something is already under the floor here."), case.recipe .. " names occupancy")
 end

@@ -36,27 +36,36 @@
 -- one is pipe itself, which is not a structure at all but a length in
 -- the grid under the deck.
 local RECIPES = {
-    { label = "Pipe", icon = "pipe", group = "Pipes" },
-    { label = "Manual Valve", structure = "manual_valve", icon = "manual_valve_loose", group = "Binary Devices" },
-    { label = "Digital Valve", structure = "digital_valve", icon = "digital_valve_loose", group = "Binary Devices" },
-    { label = "Gas Pump", structure = "gas_pump", icon = "gas_pump_loose", group = "Binary Devices" },
-    { label = "Volume Pump", structure = "volume_pump", icon = "volume_pump_loose", group = "Binary Devices" },
-    { label = "Passive Gate", structure = "passive_gate", icon = "passive_gate_loose", group = "Binary Devices" },
-    { label = "Pressure Valve", structure = "pressure_valve", icon = "pressure_valve_loose", group = "Binary Devices" },
-    { label = "Gas Filter", structure = "gas_filter", icon = "filter_fitting", group = "Trinary Devices" },
-    { label = "Gas Filter (flipped)", structure = "gas_filter_flipped", icon = "filter_fitting", group = "Trinary Devices" },
-    { label = "Gas Mixer", structure = "gas_mixer", icon = "mixer_fitting", group = "Trinary Devices" },
-    { label = "Gas Mixer (flipped)", structure = "gas_mixer_flipped", icon = "mixer_fitting", group = "Trinary Devices" },
-    { label = "Connector", structure = "connector_port", icon = "connector_port_loose", group = "Fittings & Adapters" },
-    { label = "Meter", structure = "meter", icon = "pipe_meter", group = "Fittings & Adapters" },
-    { label = "Layer Adapter", structure = "layer_adapter", icon = "layer_adapter_loose", group = "Fittings & Adapters" },
-    { label = "Color Adapter", structure = "color_adapter", icon = "color_adapter_loose", group = "Fittings & Adapters" },
-    { label = "Temperature Gate", structure = "temperature_gate", icon = "temperature_gate_loose", group = "Thermal Devices" },
-    { label = "Temperature Pump", structure = "temperature_pump", icon = "temperature_pump_loose", group = "Thermal Devices" },
-    { label = "Heat Exchanger", structure = "heat_exchanger", icon = "heat_exchanger_loose", group = "Thermal Devices" },
-    { label = "Air Scrubber", structure = "air_scrubber", icon = "air_scrubber_loose", group = "Room Devices" },
-    { label = "Air Injector", structure = "air_injector", icon = "air_injector_loose", group = "Room Devices" },
+    { label = "Pipe", item = "pipe", icon = "pipe", group = "Pipes" },
+    { label = "Manual Valve", item = "manual_valve_fitting", structure = "manual_valve", icon = "manual_valve_loose", group = "Binary Devices" },
+    { label = "Digital Valve", item = "digital_valve_fitting", structure = "digital_valve", icon = "digital_valve_loose", group = "Binary Devices" },
+    { label = "Gas Pump", item = "gas_pump_fitting", structure = "gas_pump", icon = "gas_pump_loose", group = "Binary Devices" },
+    { label = "Volume Pump", item = "volume_pump_fitting", structure = "volume_pump", icon = "volume_pump_loose", group = "Binary Devices" },
+    { label = "Passive Gate", item = "passive_gate_fitting", structure = "passive_gate", icon = "passive_gate_loose", group = "Binary Devices" },
+    { label = "Pressure Valve", item = "pressure_valve_fitting", structure = "pressure_valve", icon = "pressure_valve_loose", group = "Binary Devices" },
+    { label = "Gas Filter", item = "gas_filter_fitting", structure = "gas_filter", icon = "filter_fitting", group = "Trinary Devices" },
+    { label = "Gas Filter (flipped)", item = "gas_filter_flipped_fitting", structure = "gas_filter_flipped", icon = "filter_fitting", group = "Trinary Devices" },
+    { label = "Gas Mixer", item = "gas_mixer_fitting", structure = "gas_mixer", icon = "mixer_fitting", group = "Trinary Devices" },
+    { label = "Gas Mixer (flipped)", item = "gas_mixer_flipped_fitting", structure = "gas_mixer_flipped", icon = "mixer_fitting", group = "Trinary Devices" },
+    { label = "Connector", item = "connector_port_fitting", structure = "connector_port", icon = "connector_port_loose", group = "Fittings & Adapters" },
+    { label = "Meter", item = "pipe_meter", structure = "meter", icon = "pipe_meter", group = "Fittings & Adapters" },
+    { label = "Layer Adapter", item = "layer_adapter_fitting", structure = "layer_adapter", icon = "layer_adapter_loose", group = "Fittings & Adapters" },
+    { label = "Color Adapter", item = "color_adapter_fitting", structure = "color_adapter", icon = "color_adapter_loose", group = "Fittings & Adapters" },
+    { label = "Temperature Gate", item = "temperature_gate_fitting", structure = "temperature_gate", icon = "temperature_gate_loose", group = "Thermal Devices" },
+    { label = "Temperature Pump", item = "temperature_pump_fitting", structure = "temperature_pump", icon = "temperature_pump_loose", group = "Thermal Devices" },
+    { label = "Heat Exchanger", item = "heat_exchanger_fitting", structure = "heat_exchanger", icon = "heat_exchanger_loose", group = "Thermal Devices" },
+    { label = "Air Scrubber", item = "air_scrubber_fitting", structure = "air_scrubber", icon = "air_scrubber_loose", group = "Room Devices" },
+    { label = "Air Injector", item = "air_injector_fitting", structure = "air_injector", icon = "air_injector_loose", group = "Room Devices" },
 }
+
+-- tg's destroy mode accepts `/obj/item/pipe` and pipe meters, not an
+-- arbitrary wrench or sandwich which happened to be on the same turf.
+-- The RPD's own shelf is the authoritative roster of implemented pipe
+-- construction items, so it cannot drift from the build recipes.
+local BREAKDOWN = {}
+for _, recipe in ipairs(RECIPES) do
+    BREAKDOWN[recipe.item] = true
+end
 
 -- tg's twelve paints, the same roster the pipe painter carries
 -- (items/pipe_painter.luau, `GLOB.pipe_paint_colors`).
@@ -140,8 +149,8 @@ return {
     -- tg's own art off the tool sheet (`icon_state = "rpd"`, RPD.dm:26).
     sprite = "rpd",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
-    -- Destroy mode is aimed at the fitting lying on the deck, and a
-    -- click that names one would otherwise pocket it (interact.rs
+    -- Loose-pipe breakdown is aimed at the fitting lying on the deck,
+    -- and a click that names one would otherwise pocket it (interact.rs
     -- step 8). tg's `interact_with_atom` reaches the same atom.
     acts_on_items = true,
     dials = {
@@ -213,15 +222,25 @@ return {
     end,
     on_use = function(ctx, self, user, x, y, _choice, target)
         local mode = ctx.dial(self, "mode").index
+        local loose_item = nil
+        if target and target.kind == "item" then
+            loose_item = ctx.item_id(target.entity)
+        end
+        local can_break_down = loose_item and BREAKDOWN[loose_item]
 
-        if mode == DESTROY then
+        -- tg ships with BUILD_MODE and DESTROY_MODE enabled together,
+        -- and tests the exact loose pipe branch before do_pipe_build.
+        -- Our dial exposes the modes separately, but Build keeps that
+        -- ordering: clicking a pipe construction item breaks down that
+        -- named item instead of constructing another one over it.
+        if mode == DESTROY or (mode == BUILD and can_break_down) then
             -- Loose things only, and only the one the click named. tg
             -- deletes the `/obj/item/pipe` or `/obj/item/pipe_meter` it
             -- was aimed at and nothing else (RPD.dm:324-340) — an
             -- anchored machine is unwrenched, never dissolved, and the
             -- engine agrees by construction: a structure is not an item
             -- and `ctx.consume` has nothing to spend of one.
-            if not target or target.kind ~= "item" then
+            if not can_break_down then
                 ctx.system_msg(user, "There is nothing loose there to break down.")
                 return
             end
@@ -260,6 +279,14 @@ return {
                 end
             end
             ctx.system_msg(user, "There is no pipe under the floor here.")
+            return
+        end
+
+        -- A named ordinary item is not the turf beneath it. It neither
+        -- becomes a fitting nor disappears under the machine Build
+        -- would otherwise create.
+        if target and target.kind == "item" then
+            ctx.system_msg(user, "That loose item is not atmospherics construction.")
             return
         end
 

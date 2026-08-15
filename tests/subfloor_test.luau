@@ -165,3 +165,55 @@ t.click_subfloor(p, 2, 2, "pipe", DISTRO)
 t.run_seconds(1.5)
 assert(t.pipe(2, 2) == 0, "the same click that did nothing now pulls the run")
 assert(#t.ledger_rows("PipePulled") == 2, "and the second pull is recorded")
+
+-- ---------------------------------------------------------------
+-- Covering open plumbing. The exact pixel the client picked does not
+-- change the turf operation: floor tiles cover raw pipe and the
+-- component which replaced a length of it, without deleting either.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "cover subfloor",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Plating),
+        '#': (turf: Wall),
+    },
+    rows: [
+        "#####",
+        "#...#",
+        "#...#",
+        "#...#",
+        "#####",
+    ],
+    spawns: [(2, 2)],
+    items: [(2, 2, "floor_tile")],
+    pipes: [(1, 1, 4), (3, 2, 4)],
+    structures: [(2, 1, "manual_valve"), (3, 1, "connector_port")],
+)]==], 7)
+
+local c = t.join()
+t.tick()
+t.click(c, 2, 2, t.target_at(2, 2, "floor_tile"))
+t.run_ticks(2)
+assert(t.hands(c).held == "floor_tile", "the tile stack is in hand")
+
+-- A visible pipe has its own exact click channel. Material construction
+-- still belongs to the turf underneath that sprite.
+t.click_subfloor(c, 1, 1, "pipe", DISTRO)
+t.run_seconds(2)
+assert(t.turf(1, 1) == "floor", "a tile clicked on raw pipe covers the deck")
+assert(t.pipe(1, 1) == DISTRO, "covering does not consume the raw pipe")
+
+-- A binary machine is the length of pipe, and a unary connector is its
+-- own centre plus a directional stub. Both are equally coverable when
+-- the structure sprite itself was the exact target.
+t.click(c, 2, 1, t.target_at(2, 1, "manual_valve"))
+t.run_seconds(2)
+assert(t.turf(2, 1) == "floor", "a floor tile covers a pipe device")
+assert(t.structure_at(2, 1).id == "manual_valve", "the device remains under the tile")
+
+t.click(c, 3, 1, t.target_at(3, 1, "connector_port"))
+t.run_seconds(2)
+assert(t.turf(3, 1) == "floor", "a floor tile covers a connector")
+assert(t.structure_at(3, 1).id == "connector_port", "the connector remains under the tile")
+assert(t.pipe(3, 1) == 0, "the unary connector still replaces its centre length")
