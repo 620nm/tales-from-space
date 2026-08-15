@@ -634,6 +634,10 @@
         ("held_rods_r_e", Dmi("mob/inhands/items_righthand.dmi", "rods", 2)),
         ("held_rods_r_w", Dmi("mob/inhands/items_righthand.dmi", "rods", 3)),
         ("pipe", Dmi("obj/pipes_n_cables/pipe_item.dmi", "simple", 0)),
+        // The atmospherics technician's hand instruments. tg's painter
+        // is a relabelled label gun off the bureaucracy sheet
+        // (pipe_painter.dm:5-6), drawn exactly as tg draws it.
+        ("pipe_painter", Dmi("obj/service/bureaucracy.dmi", "labeler1", 0)),
         ("held_pipe_l_s", Dmi("mob/inhands/items_lefthand.dmi", "buildpipe", 0)),
         ("held_pipe_l_n", Dmi("mob/inhands/items_lefthand.dmi", "buildpipe", 1)),
         ("held_pipe_l_e", Dmi("mob/inhands/items_lefthand.dmi", "buildpipe", 2)),
