@@ -43,7 +43,17 @@
         '#': (turf: Wall),
         '+': (turf: Floor, fixture: Some(Door)),
         'a': (turf: Floor, fixture: Some(Apc)),
-        'l': (turf: Floor, fixture: Some(Light)),
+        // Standard ceiling tubes, in tg's default fluorescent white
+        // (LIGHT_COLOR_DEFAULT "#f3fffa", code/__DEFINES/colors.dm:254 —
+        // the colour /obj/machinery/light ships with, light.dm:24-28).
+        'l': (turf: Floor, fixture: Some(Light), light: Some("#F3FFFA")),
+        // The one warm fitting in the Commons: a tungsten bulb
+        // (LIGHT_COLOR_TUNGSTEN "#FFD6AA", colors.dm:312) somebody put
+        // in over the table and nobody has replaced. Four tiles from
+        // the tube at (7,5), so the deck between them is a gradient
+        // from cool to warm and back — the whole point of coloured
+        // light, standing on one floor.
+        'b': (turf: Floor, fixture: Some(Light), light: Some("#FFD6AA")),
         'o': (turf: Floor, fixture: Some(Outlet)),
         'm': (turf: Floor, fixture: Some(Smes)),
         'v': (turf: Floor, fixture: Some(Vent)),
@@ -62,7 +72,7 @@
         "                              ",
         "                              ",
         "    ###############___###     ",
-        "    #a.l...lo.#avl......##    ",
+        "    #a.l...bo.#avl......##    ",
         "    #...v.....#.........__#   ",
         "    #.........#.........E_E   ",
         "    #.........+.........__#   ",

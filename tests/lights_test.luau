@@ -6,13 +6,19 @@
 -- job by hand. What the engine owns is the consequence — a dead socket
 -- emits nothing, and a viewer is never even TOLD about a source that
 -- stopped burning.
+-- The corridor's own fitting is a warm tungsten bulb somebody left in
+-- it (tg LIGHT_COLOR_TUNGSTEN, code/__DEFINES/colors.dm:312) — so what
+-- the janitor's tube does to the colour of the room is visible here.
+local TUNGSTEN = "#FFD6AA"
+local TUBE = "#F3FFFA"
+
 t.world([==[(
     name: "corridor",
     legend: {
         ' ': (turf: Space),
         '.': (turf: Floor),
         '#': (turf: Wall),
-        'l': (turf: Floor, fixture: Some(Light)),
+        'l': (turf: Floor, fixture: Some(Light), light: Some("#FFD6AA")),
     },
     rows: [
         "#####",
@@ -32,15 +38,21 @@ local light = t.light_at(2, 1)
 assert(light ~= nil and light.status == "ok" and light.emits, "a fresh fitting burns")
 local light_target = light.target
 assert(light_target ~= nil, "the fixture exposes the id a sprite click names")
-local function told_about_the_lamp()
+assert(light.color == TUNGSTEN, "in the colour the map put in it, got " .. light.color)
+local function lamp_colour_on_the_wire()
     for _, src in ipairs(t.light_sources(p)) do
         if src[1] == 2 and src[2] == 1 then
-            return true
+            return src[4]
         end
     end
-    return false
+    return nil
+end
+local function told_about_the_lamp()
+    return lamp_colour_on_the_wire() ~= nil
 end
 assert(told_about_the_lamp(), "the burning lamp is disclosed to the viewer")
+assert(lamp_colour_on_the_wire() == TUNGSTEN,
+    "and disclosed in its own colour, so the client lights the corridor warm")
 
 -- One swing with something heavy.
 t.click(p, 1, 1, t.target_at(1, 1, "toolbox"))
@@ -75,6 +87,14 @@ assert(t.light_at(2, 1).status == "ok", "the replacer fitted a new tube")
 assert(t.light_at(2, 1).emits, "and the corridor is lit again")
 assert(told_about_the_lamp(), "the viewer is told about the source again")
 assert(#t.ledger_rows("ItemConsumed") == 1, "one charge spent, on the record")
+-- A tube is a tube: the warm fitting comes back fluorescent, and the
+-- viewer is told the corridor changed colour.
+assert(t.light_at(2, 1).color == TUBE,
+    "a fitted tube burns what a tube burns, got " .. t.light_at(2, 1).color)
+assert(lamp_colour_on_the_wire() == TUBE, "and the wire carries the new colour")
+local repaint = t.ledger_rows("LightChanged")
+assert(repaint[#repaint].color == TUBE,
+    "the record says what went into the socket, not just that something did")
 
 -- tg's replacer holds ten. Break and fix until it is dry.
 for _ = 1, 9 do
