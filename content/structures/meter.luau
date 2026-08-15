@@ -1,0 +1,89 @@
+-- The gas flow meter: a dial bolted onto a run.
+--
+-- tg's `/obj/machinery/meter` (code/modules/atmospherics/machinery/
+-- other/meter.dm). It is the one machine in atmospherics that does
+-- nothing at all to the gas: it holds none, moves none, and does not
+-- even take its tile out of the network the way a valve does. It reads,
+-- and it tells you two ways -- a needle you can see from across the
+-- room, and a sentence when you click it.
+--
+-- THE DIAL. tg draws twenty needle positions and sweeps them across
+-- four decades of pressure (meter.dm:82-94), with half the stops spent
+-- on the range a station actually runs at. `faces` below is that list,
+-- lowest reading first; the engine works out how far along the sweep a
+-- reading sits and picks the face that far along, so the count is a
+-- drawing decision rather than a number this file and the engine have
+-- to agree on. The needle is tinted by TEMPERATURE (meter.dm:96-115) --
+-- a red gauge across the room is the whole reason to bolt one on.
+--
+-- THE SENTENCE is tg's `status()` (meter.dm:123-131) word for word. The
+-- engine fills in three numbers, rounded to hundredths as tg rounds
+-- them; every other character of it is here, which is where the words a
+-- player reads belong (docs/localization.md §5).
+--
+-- It does NOT hide under the deck. tg puts a meter at
+-- `HIGH_PIPE_LAYER`, above the run it reads, because an instrument you
+-- have to pry the floor up to look at is not an instrument. So no
+-- `fitting = true`, and it stands on the tile like any other machine --
+-- walk-through, since like the rest of the atmospherics kit it inherits
+-- /obj's density of false.
+
+-- tg's twenty stops: one at the peg, six in each of the three scales,
+-- one off the top. Built rather than typed out, because twenty
+-- near-identical lines is a list nobody proofreads.
+local faces = { "meter_p0" }
+for scale = 1, 3 do
+    for stop = 1, 6 do
+        table.insert(faces, string.format("meter_p%d_%d", scale, stop))
+    end
+end
+table.insert(faces, "meter_p4")
+
+return {
+    id = "meter",
+    name = "gas flow meter",
+    -- The housing, which is never tinted: tg's greyscale config paints
+    -- only the needle (`color_ids: [1]` on the pressure layer).
+    sprite = "meter_base",
+    dense = false,
+    states = { "attached" },
+    build = {
+        on = { "floor", "plating" },
+        from_item = "pipe_meter",
+        tool = "wrench",
+        -- tg's `wrench_act` on the fitting is instant, which reads as a
+        -- dropped click here (and the schema will not take a zero on a
+        -- build). Two seconds, the atmospherics wrench everywhere else
+        -- in this pack.
+        secs = 2.0,
+        -- No run, no meter. tg's `reattach_to_layer` simply finds no
+        -- candidate and the gauge reads nothing forever; a refusal at
+        -- the door is the better version of that.
+        over = "pipe",
+        start = "You start fastening the meter to the pipe.",
+        done = "You fasten the meter to the pipe.",
+    },
+    transitions = {
+        {
+            at = "attached",
+            tool = "wrench",
+            -- tg's own: `wrench.use_tool(src, user, 40)` (meter.dm:139).
+            secs = 4.0,
+            gone = true,
+            yields = { pipe_meter = 1 },
+            start = "You begin to unfasten the meter...",
+            done = "You unfasten the meter.",
+        },
+    },
+    meter = {
+        -- The distribution run every dispenser hands you. tg ships a
+        -- meter per layer (`/obj/machinery/meter/layer2`); here that is
+        -- another entry with another number, and nothing else.
+        layer = 3,
+        faces = faces,
+        blank = "meter_off",
+        drops = "pipe_meter",
+        reads = "The pressure gauge reads {kpa} kPa; {k} K ({c}°C).",
+        blind = "The connect error light is blinking.",
+    },
+}
