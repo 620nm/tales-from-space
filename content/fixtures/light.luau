@@ -13,6 +13,13 @@
 -- ordinary item damages it and enough damage breaks the tube. We have
 -- no machine integrity yet, so one swing shatters it. The ledger names
 -- who swung.
+-- What a fresh tube burns. tg's own default fluorescent white
+-- (LIGHT_COLOR_DEFAULT "#f3fffa", code/__DEFINES/colors.dm:254; it is
+-- /obj/machinery/light's `bulb_colour`, light.dm:24-28). It lives here
+-- because the FITTING is what knows what went into it — the engine
+-- ships no colour but white, and a tube is a game word.
+local TUBE_COLOR = "#F3FFFA"
+
 return {
     id = "light",
 
@@ -56,7 +63,11 @@ return {
                 return
             end
             ctx.consume(target)
-            ctx.set_light(self, "ok")
+            -- The replacer carries tubes, so the fitting comes back
+            -- burning what a tube burns — a warm bulb fitting serviced
+            -- out of a janitor's device turns fluorescent, exactly as
+            -- it would if you did it in a real corridor.
+            ctx.set_light(self, "ok", TUBE_COLOR)
             ctx.sound("click", ctx.pos(self))
             ctx.system_msg(user, "You replace the light tube.")
             return
@@ -68,7 +79,7 @@ return {
                 return
             end
             ctx.consume(target)
-            ctx.set_light(self, "ok")
+            ctx.set_light(self, "ok", TUBE_COLOR)
             ctx.system_msg(user, "You fit the new tube.")
             return
         end
