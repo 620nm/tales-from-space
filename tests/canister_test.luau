@@ -277,7 +277,7 @@ assert(fastened < before - 100.0,
 -- Laying plumbing is slow. The player is standing on a port of their
 -- own at (1, 1); a wrench takes two seconds to break it out of the
 -- run, which is the contrast the next step is about.
-t.click(w, 1, 1, t.target_at(1, 1))
+t.click(w, 1, 1, t.target_at(1, 1, "connector_port"))
 t.run_ticks(1)
 assert(not t.ledger_has("StructureStep", "connector_port", "displaced"),
     "one tick in, the port is still bolted down")

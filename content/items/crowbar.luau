@@ -12,9 +12,16 @@ return {
     stowed_sprite = "belt_crowbar",
     -- The equipment class targets dispatch on; no tank, nothing to burn.
     tool = "crowbar",
-    on_use = function(ctx, self, user, x, y)
-        local door = ctx.door(x, y)
-        if door == nil and ctx.turf(x, y) == "floor" then
+    on_use = function(ctx, self, user, x, y, _choice, target)
+        -- The server appends the validated clicked atom after the
+        -- legacy choice slot. nil is turf; a door record means this
+        -- exact authoritative door was named, never rediscovered from
+        -- an otherwise target-less tile click.
+        local door = nil
+        if target ~= nil and target.kind == "door" then
+            door = ctx.door(x, y)
+        end
+        if target == nil and ctx.turf(x, y) == "floor" then
             -- The quick pop, not the heave: tg's pry_tile calls
             -- play_tool_sound, which is `usesound` (crowbar.ogg).
             ctx.sound("crowbar", x, y)
