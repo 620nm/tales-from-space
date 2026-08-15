@@ -70,8 +70,9 @@ return {
             ctx.system_msg(user, "Someone already ran pipe through there.")
             return
         end
-        ctx.lay_pipe(x, y, mask)
-        ctx.sound("ratchet", x, y)
-        ctx.system_msg(user, "You wrench the pipe into place.")
+        -- One exact item becomes one exact length. Native code derives the
+        -- layer again, preserves a pulled length's directional mask and
+        -- spends this stack only if the topology actually lands.
+        ctx.fasten_pipe(self, x, y, "ratchet", "You wrench the pipe into place.")
     end,
 }
