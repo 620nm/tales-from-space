@@ -217,3 +217,54 @@ t.run_seconds(2)
 assert(t.turf(3, 1) == "floor", "a floor tile covers a connector")
 assert(t.structure_at(3, 1).id == "connector_port", "the connector remains under the tile")
 assert(t.pipe(3, 1) == 0, "the unary connector still replaces its centre length")
+
+-- The above cases clicked the plumbing art itself. A canister stacked over
+-- its connector has transparent pixels around the bottle; those pixels name
+-- ground, not whichever structure happens to be topmost on the tile. The
+-- floor therefore slides over the port and under the still-fastened bottle.
+t.world([==[(
+    name: "tile under canister",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Plating),
+        'c': (turf: Plating, fixture: Some(Canister)),
+        '#': (turf: Wall),
+    },
+    rows: [
+        "#####",
+        "#.c.#",
+        "#...#",
+        "#####",
+    ],
+    spawns: [(2, 2)],
+    items: [(2, 2, "floor_tile")],
+    pipes: [(1, 1, 4)],
+    structures: [(2, 1, "connector_port")],
+)]==], 7)
+
+local d = t.join()
+t.tick()
+assert(t.target_at(2, 1, "connector_port") ~= nil, "a real port starts under the canister")
+assert(t.canister_pressure(2, 1) > 4000.0, "the canister starts fastened and full")
+assert(t.pipe_pressure(1, 1) > 90.0, "its port has charged the neighbouring run")
+t.click(d, 2, 2, t.target_at(2, 2, "floor_tile"))
+t.run_ticks(2)
+
+-- Naming the native canister is naming the bottle, not its connector and
+-- not the turf. It must not collapse into the ground operation below.
+local bottle = t.target_at(2, 1)
+assert(bottle ~= nil, "the visible canister has an exact wire identity")
+t.click(d, 2, 1, bottle)
+t.run_seconds(2)
+assert(t.turf(2, 1) == "plating", "an explicit canister click leaves the deck open")
+assert(t.canister_pressure(2, 1) ~= nil, "the named bottle and port remain intact")
+
+-- No target is the alpha-tested deck pixel, even though a canister and port
+-- share the logical tile.
+t.click(d, 2, 1)
+t.run_seconds(2)
+assert(t.turf(2, 1) == "floor", "a ground pixel tiles beneath the canister")
+assert(t.structure_at(2, 1).id == "canister", "the canister remains above the tile")
+assert(t.canister_pressure(2, 1) ~= nil, "it remains anchored to its socket")
+assert(t.pipe(2, 1) == 0, "the connector did not become a hidden raw length")
+assert(t.pipe_pressure(1, 1) > 90.0, "the port remains plumbed to its neighbouring run")
