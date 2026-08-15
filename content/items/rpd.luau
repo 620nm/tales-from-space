@@ -216,7 +216,7 @@ return {
         },
     },
     -- tg's `attack_self` is `ui_interact(user)` (RPD.dm:124-125): the
-    -- in-hand key is how you open the thing's window.
+    -- in-hand key or tg-style pickup double-click opens its window.
     on_use_self = function(ctx, self, user)
         ctx.open_ui(user, self)
     end,
