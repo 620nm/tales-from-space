@@ -77,6 +77,11 @@ return {
         -- gas_filter_n2.luau makes about the filter row.
         ratio = 0.79,
         on = true,
+        -- tg's airmix also opens its dial all the way
+        -- (`target_pressure = MAX_OUTPUT_PRESSURE`, mixer.dm:239): a
+        -- machine feeding a whole station's distro is not the place for
+        -- a modest setpoint.
+        target_kpa = 4500.0,
     },
     build = {
         on = { "floor", "plating" },
