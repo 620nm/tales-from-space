@@ -127,23 +127,24 @@
     // positions: dead, filtering, and emptying the room. tg draws
     // the last one differently on purpose (`scrub_purge`,
     // vent_scrubber.dm:142) and it is the one a passer-by most
-    // needs to recognise. `scrub_on` and `scrub_purge` are loops
-    // (24 and 8 frames); their first frames are baked, so a running
-    // scrubber reads by its lit grille rather than by moving.
+    // needs to recognise. `scrub_on` and `scrub_purge` are tg's own
+    // 24- and 8-frame loops; bake every frame and its DMI-authored
+    // delay so the running and emergency states move exactly as their
+    // source art does.
     // `scrub_wide` is deliberately absent — widenet is deferred, and
     // a picture for a mode that cannot be selected would be a lie.
     ("scrubber_off_n", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_off", 0)),
     ("scrubber_off_s", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_off", 1)),
     ("scrubber_off_e", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_off", 3)),
     ("scrubber_off_w", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_off", 2)),
-    ("scrubber_on_n", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_on", 0)),
-    ("scrubber_on_s", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_on", 1)),
-    ("scrubber_on_e", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_on", 3)),
-    ("scrubber_on_w", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_on", 2)),
-    ("scrubber_purge_n", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_purge", 0)),
-    ("scrubber_purge_s", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_purge", 1)),
-    ("scrubber_purge_e", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_purge", 3)),
-    ("scrubber_purge_w", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_purge", 2)),
+    ("scrubber_on_n", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "scrub_on", 0)),
+    ("scrubber_on_s", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "scrub_on", 1)),
+    ("scrubber_on_e", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "scrub_on", 3)),
+    ("scrubber_on_w", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "scrub_on", 2)),
+    ("scrubber_purge_n", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "scrub_purge", 0)),
+    ("scrubber_purge_s", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "scrub_purge", 1)),
+    ("scrubber_purge_e", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "scrub_purge", 3)),
+    ("scrubber_purge_w", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "scrub_purge", 2)),
     // The injector has two, and no third: it only ever runs one way.
     ("injector_off_n", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_off", 0)),
     ("injector_off_s", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_off", 1)),
