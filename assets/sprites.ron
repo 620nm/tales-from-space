@@ -787,6 +787,50 @@
         ("layer_adapter_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "manifoldlayer", 0)),
         ("color_adapter_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "adapter_center", 0)),
         // ---- end of the thermal devices and adapters ---------------------
+        // ---- the two room devices ----------------------------------------
+        //
+        // The scrubber and the injector are UNARY, and their cells are
+        // REVERSED for the same reason the plate's are: tg points a
+        // unary device at its PIPE (unary_devices.dm:14) so its face
+        // looks the other way, and this engine points a machine at what
+        // it DOES. So the scrubber drawn facing north is tg's sprite
+        // pointed south.
+        //
+        // Three pictures for the scrubber, because it has three
+        // positions: dead, filtering, and emptying the room. tg draws
+        // the last one differently on purpose (`scrub_purge`,
+        // vent_scrubber.dm:142) and it is the one a passer-by most
+        // needs to recognise. `scrub_on` and `scrub_purge` are loops
+        // (24 and 8 frames); their first frames are baked, so a running
+        // scrubber reads by its lit grille rather than by moving.
+        // `scrub_wide` is deliberately absent — widenet is deferred, and
+        // a picture for a mode that cannot be selected would be a lie.
+        ("scrubber_off_n", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_off", 0)),
+        ("scrubber_off_s", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_off", 1)),
+        ("scrubber_off_e", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_off", 3)),
+        ("scrubber_off_w", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_off", 2)),
+        ("scrubber_on_n", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_on", 0)),
+        ("scrubber_on_s", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_on", 1)),
+        ("scrubber_on_e", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_on", 3)),
+        ("scrubber_on_w", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_on", 2)),
+        ("scrubber_purge_n", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_purge", 0)),
+        ("scrubber_purge_s", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_purge", 1)),
+        ("scrubber_purge_e", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_purge", 3)),
+        ("scrubber_purge_w", Dmi("obj/machines/atmospherics/unary_devices.dmi", "scrub_purge", 2)),
+        // The injector has two, and no third: it only ever runs one way.
+        ("injector_off_n", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_off", 0)),
+        ("injector_off_s", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_off", 1)),
+        ("injector_off_e", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_off", 3)),
+        ("injector_off_w", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_off", 2)),
+        ("injector_on_n", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_on", 0)),
+        ("injector_on_s", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_on", 1)),
+        ("injector_on_e", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_on", 3)),
+        ("injector_on_w", Dmi("obj/machines/atmospherics/unary_devices.dmi", "inje_on", 2)),
+        // And the two fittings, off the one sheet every /obj/item/pipe
+        // is drawn from.
+        ("air_scrubber_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "scrubber", 0)),
+        ("air_injector_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "injector", 0)),
+        // ---- end of the room devices -------------------------------------
         // A gas canister: tg's art is greyscale and each gas type paints
         // it (greyscale_colors "#c6c0b5" is pre-mixed air). Baked with
         // that colour for now; it moves to per-object paint when the
