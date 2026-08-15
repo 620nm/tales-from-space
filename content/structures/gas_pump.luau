@@ -32,21 +32,34 @@
 return {
     id = "gas_pump",
     name = "gas pump",
-    sprite = "pump_off_n",
+    sprite = "pump_off_ns",
     dense = false,
     states = { "off", "running" },
+    -- A binary device reaches along one axis, so north and south are
+    -- one picture and east and west are the other -- tg's
+    -- `PIPING_CARDINAL_AUTONORMALIZE` (pump.dm's parent,
+    -- binary_devices.dm:9), whose art does not even ship a south cell.
+    -- Two names for two pictures, therefore, rather than four names for
+    -- the same two: `pump_on` is a five-frame loop and duplicating it
+    -- would cost ten atlas cells nobody would ever look at.
     facing_sprites = {
         off = {
-            north = "pump_off_n",
-            south = "pump_off_s",
-            east = "pump_off_e",
-            west = "pump_off_w",
+            north = "pump_off_ns",
+            south = "pump_off_ns",
+            east = "pump_off_ew",
+            west = "pump_off_ew",
         },
+        -- The running picture MOVES: tg's `pump_on-1` is five frames at
+        -- a twentieth of a second (binary_devices.dmi). Nothing here
+        -- says so -- a loop needs no anchor and no duration, because it
+        -- has no beginning anyone has to agree on, so the frame count
+        -- and the timing come out of the .dmi at bake time and the
+        -- client runs it off its own clock.
         running = {
-            north = "pump_on_n",
-            south = "pump_on_s",
-            east = "pump_on_e",
-            west = "pump_on_w",
+            north = "pump_on_ns",
+            south = "pump_on_ns",
+            east = "pump_on_ew",
+            west = "pump_on_ew",
         },
     },
     atmos = {

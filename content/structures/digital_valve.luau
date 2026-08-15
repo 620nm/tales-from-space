@@ -47,6 +47,41 @@ return {
             west = "dvalve_open_ew",
         },
     },
+    -- Seven frames, 1.4 seconds, over a valve that throws INSTANTLY.
+    --
+    -- That reads like a contradiction and is in fact tg's own shape.
+    -- `flick()` lays an animation over an object without touching what
+    -- the object is doing (valve.dm:24-29); the position is changed by
+    -- something else entirely. On the manual valve that something is a
+    -- one-second timer, and on this one -- because `switch_secs = 0`
+    -- above takes the wheel away, the deliberate divergence this file
+    -- is about -- it is the command itself. So the gas moves the moment
+    -- you throw it and the mechanism is still visibly closing for a
+    -- second and a bit afterwards, which is what a solenoid does.
+    --
+    -- Worth having precisely BECAUSE the valve is remote: a digital
+    -- valve is the one nobody is standing next to, so the picture is
+    -- the only way anyone in the room learns it just moved.
+    moving_sprites = {
+        {
+            from = "shut",
+            to = "open",
+            secs = 1.4,
+            north = "dvalve_opening_ns",
+            south = "dvalve_opening_ns",
+            east = "dvalve_opening_ew",
+            west = "dvalve_opening_ew",
+        },
+        {
+            from = "open",
+            to = "shut",
+            secs = 1.4,
+            north = "dvalve_closing_ns",
+            south = "dvalve_closing_ns",
+            east = "dvalve_closing_ew",
+            west = "dvalve_closing_ew",
+        },
+    },
     atmos = {
         device = "valve",
         positions = { "shut", "open" },

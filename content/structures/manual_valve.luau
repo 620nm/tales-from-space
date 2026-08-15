@@ -27,25 +27,59 @@
 return {
     id = "manual_valve",
     name = "manual valve",
-    sprite = "valve_shut_n",
+    sprite = "valve_shut_ns",
     dense = false,
     states = { "shut", "open" },
     -- A binary device reaches along one axis, so north and south are
     -- one picture and east and west are the other -- tg's
     -- `PIPING_CARDINAL_AUTONORMALIZE` (valve.dm:14), whose art does not
-    -- even ship a south cell.
+    -- even ship a south cell. Two names for two pictures.
     facing_sprites = {
         shut = {
-            north = "valve_shut_n",
-            south = "valve_shut_s",
-            east = "valve_shut_e",
-            west = "valve_shut_w",
+            north = "valve_shut_ns",
+            south = "valve_shut_ns",
+            east = "valve_shut_ew",
+            west = "valve_shut_ew",
         },
         open = {
-            north = "valve_open_n",
-            south = "valve_open_s",
-            east = "valve_open_e",
-            west = "valve_open_w",
+            north = "valve_open_ns",
+            south = "valve_open_ns",
+            east = "valve_open_ew",
+            west = "valve_open_ew",
+        },
+    },
+    -- The wheel actually turning, which is the whole point of a valve
+    -- being a commitment: you can see one being shut from down the
+    -- corridor, and you can see it start before you can see it finish.
+    --
+    -- tg flicks these the instant the click lands
+    -- (`update_icon_nopipes(TRUE)`, valve.dm:24-29, called from
+    -- valve.dm:67) and then flips the position on a separate one-second
+    -- timer. The art runs 1.4 seconds (five frames, `2,2,2,2,6`) and the
+    -- timer runs 1.0, and THEY ARE MEANT TO DISAGREE: `flick()` is
+    -- cosmetic and `addtimer(..., 1 SECONDS)` is the mechanism, so the
+    -- gas is through a tenth of a second before the wheel stops moving.
+    -- Reconciling the two numbers would be "improving" a tuned tg value,
+    -- which is exactly what feel-parity forbids. `secs` below is the
+    -- art's length; `switch_secs` is the machine's.
+    moving_sprites = {
+        {
+            from = "shut",
+            to = "open",
+            secs = 1.4,
+            north = "valve_opening_ns",
+            south = "valve_opening_ns",
+            east = "valve_opening_ew",
+            west = "valve_opening_ew",
+        },
+        {
+            from = "open",
+            to = "shut",
+            secs = 1.4,
+            north = "valve_closing_ns",
+            south = "valve_closing_ns",
+            east = "valve_closing_ew",
+            west = "valve_closing_ew",
         },
     },
     atmos = {

@@ -30,9 +30,11 @@
     // `PIPING_CARDINAL_AUTONORMALIZE` folds south onto north and west
     // onto east (valve.dm:14,25, `normalize_cardinal_directions`), and
     // the art agrees -- `mvalve_off-1` has no south or west cell at
-    // all. The four names below are what `facing_sprites` asks for;
-    // two pairs bake the same picture, which is the honest amount of
-    // art a thing with two ends has.
+    // all. So these name the AXIS, and `facing_sprites` points two
+    // directions at one name. They used to bake four names for two
+    // pictures, which cost two atlas cells apiece that nobody looked
+    // at; harmless while every body was a single still, and no longer
+    // harmless now that a running pump is five cells rather than one.
     //
     // `-1` is tg's overlay offset for piping layers 1, 3 and 5
     // (`set_overlay_offset`, binary_devices.dm:27-32); layers 2 and 4
@@ -40,26 +42,42 @@
     // yet, so a valve on the waste main wears the default-layer body
     // over stubs drawn at its own layer. The stubs are the half that
     // has to be right -- they are what meets the run.
-    ("valve_shut_n", Dmi("obj/machines/atmospherics/binary_devices.dmi", "mvalve_off-1", 1)),
-    ("valve_shut_s", Dmi("obj/machines/atmospherics/binary_devices.dmi", "mvalve_off-1", 1)),
-    ("valve_shut_e", Dmi("obj/machines/atmospherics/binary_devices.dmi", "mvalve_off-1", 2)),
-    ("valve_shut_w", Dmi("obj/machines/atmospherics/binary_devices.dmi", "mvalve_off-1", 2)),
-    ("valve_open_n", Dmi("obj/machines/atmospherics/binary_devices.dmi", "mvalve_on-1", 1)),
-    ("valve_open_s", Dmi("obj/machines/atmospherics/binary_devices.dmi", "mvalve_on-1", 1)),
-    ("valve_open_e", Dmi("obj/machines/atmospherics/binary_devices.dmi", "mvalve_on-1", 2)),
-    ("valve_open_w", Dmi("obj/machines/atmospherics/binary_devices.dmi", "mvalve_on-1", 2)),
-    // The gas pump. tg's running body (`pump_on-1`) is a five-frame
-    // loop; its first frame is baked, so a running pump reads by its
-    // lit indicators rather than by moving -- the loop is a follow-up,
-    // not a correction.
-    ("pump_off_n", Dmi("obj/machines/atmospherics/binary_devices.dmi", "pump_off-1", 1)),
-    ("pump_off_s", Dmi("obj/machines/atmospherics/binary_devices.dmi", "pump_off-1", 1)),
-    ("pump_off_e", Dmi("obj/machines/atmospherics/binary_devices.dmi", "pump_off-1", 2)),
-    ("pump_off_w", Dmi("obj/machines/atmospherics/binary_devices.dmi", "pump_off-1", 2)),
-    ("pump_on_n", Dmi("obj/machines/atmospherics/binary_devices.dmi", "pump_on-1", 1)),
-    ("pump_on_s", Dmi("obj/machines/atmospherics/binary_devices.dmi", "pump_on-1", 1)),
-    ("pump_on_e", Dmi("obj/machines/atmospherics/binary_devices.dmi", "pump_on-1", 2)),
-    ("pump_on_w", Dmi("obj/machines/atmospherics/binary_devices.dmi", "pump_on-1", 2)),
+    ("valve_shut_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "mvalve_off-1", 1)),
+    ("valve_shut_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "mvalve_off-1", 2)),
+    ("valve_open_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "mvalve_on-1", 1)),
+    ("valve_open_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "mvalve_on-1", 2)),
+    // The wheel actually turning. tg flicks these from
+    // `update_icon_nopipes(animation = TRUE)` (valve.dm:24-29), which
+    // is called from the turn at valve.dm:67 -- `[valve_type]valve_
+    // [on][!on]`, where `on` is the position BEFORE the toggle, so
+    // shut->open is `mvalve_01` and open->shut is `mvalve_10`.
+    //
+    // `DmiAnimOnce`, not `DmiAnim`, and the difference is load-bearing:
+    // these two states carry no `loop = 1`, because BYOND's `flick()`
+    // plays a state once whatever its loop flag says and an artist
+    // drawing a flicked animation has no reason to set it. Baked off
+    // the sheet's own flag they would loop, and a looping sprite reads
+    // the client's wall clock instead of the sim's anchor -- the turn
+    // would start at an arbitrary frame and never stop. The digital
+    // valve below DOES set the flag; same code flicks both, which is
+    // the clearest possible evidence the flag is not the authority.
+    //
+    // 1.4 seconds of art (five frames, `2,2,2,2,6`) against a valve
+    // that takes 1.0 second to turn. They disagree in tg too and are
+    // left disagreeing: `flick()` is cosmetic and the `addtimer(...,
+    // 1 SECONDS)` at valve.dm:70 is the mechanism.
+    ("valve_opening_ns", DmiAnimOnce("obj/machines/atmospherics/binary_devices.dmi", "mvalve_01-1", 1)),
+    ("valve_opening_ew", DmiAnimOnce("obj/machines/atmospherics/binary_devices.dmi", "mvalve_01-1", 2)),
+    ("valve_closing_ns", DmiAnimOnce("obj/machines/atmospherics/binary_devices.dmi", "mvalve_10-1", 1)),
+    ("valve_closing_ew", DmiAnimOnce("obj/machines/atmospherics/binary_devices.dmi", "mvalve_10-1", 2)),
+    // The gas pump, running: tg's `pump_on-1`, five frames at a
+    // twentieth of a second each. No anchor and no server state -- a
+    // loop has no beginning worth agreeing on, so every client runs it
+    // off its own clock and the wire never mentions it.
+    ("pump_off_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "pump_off-1", 1)),
+    ("pump_off_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "pump_off-1", 2)),
+    ("pump_on_ns", DmiAnim("obj/machines/atmospherics/binary_devices.dmi", "pump_on-1", 1)),
+    ("pump_on_ew", DmiAnim("obj/machines/atmospherics/binary_devices.dmi", "pump_on-1", 2)),
     // THE TRINARY MACHINES: tg's gas filter and gas mixer. FOUR
     // facings each, where a binary has two -- a binary reaches along
     // one axis and tg normalises south onto north, while a trinary
@@ -74,40 +92,46 @@
     //
     // `_f` is tg's flipped body (trinary_devices.dm:12-13): node1 and
     // node3 change places while the side port stays where it is, so
-    // only the body mirrors. tg's running bodies are four-frame loops;
-    // the first frame is baked, as the pump's is.
+    // only the body mirrors. The running bodies are four-frame loops
+    // (`2,2,2,2` -- a fifth of a second a frame, half the pump's
+    // rate), and they are the expensive entry in this file: four
+    // facings times four frames times two chiralities is sixty-four
+    // atlas cells across the filter and the mixer. Worth it, because
+    // these two are the machines an engineer stands and watches -- a
+    // filter row that is running looks like a filter row that is
+    // running, and a stalled one is now visibly stalled.
     ("filter_off_n", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "filter_off-0", 1)),
     ("filter_off_s", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "filter_off-0", 0)),
     ("filter_off_e", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "filter_off-0", 2)),
     ("filter_off_w", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "filter_off-0", 3)),
-    ("filter_on_n", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0", 1)),
-    ("filter_on_s", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0", 0)),
-    ("filter_on_e", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0", 2)),
-    ("filter_on_w", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0", 3)),
+    ("filter_on_n", DmiAnim("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0", 1)),
+    ("filter_on_s", DmiAnim("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0", 0)),
+    ("filter_on_e", DmiAnim("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0", 2)),
+    ("filter_on_w", DmiAnim("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0", 3)),
     ("filter_f_off_n", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "filter_off-0_f", 1)),
     ("filter_f_off_s", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "filter_off-0_f", 0)),
     ("filter_f_off_e", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "filter_off-0_f", 2)),
     ("filter_f_off_w", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "filter_off-0_f", 3)),
-    ("filter_f_on_n", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0_f", 1)),
-    ("filter_f_on_s", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0_f", 0)),
-    ("filter_f_on_e", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0_f", 2)),
-    ("filter_f_on_w", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0_f", 3)),
+    ("filter_f_on_n", DmiAnim("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0_f", 1)),
+    ("filter_f_on_s", DmiAnim("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0_f", 0)),
+    ("filter_f_on_e", DmiAnim("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0_f", 2)),
+    ("filter_f_on_w", DmiAnim("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0_f", 3)),
     ("mixer_off_n", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "mixer_off-0", 1)),
     ("mixer_off_s", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "mixer_off-0", 0)),
     ("mixer_off_e", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "mixer_off-0", 2)),
     ("mixer_off_w", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "mixer_off-0", 3)),
-    ("mixer_on_n", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0", 1)),
-    ("mixer_on_s", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0", 0)),
-    ("mixer_on_e", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0", 2)),
-    ("mixer_on_w", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0", 3)),
+    ("mixer_on_n", DmiAnim("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0", 1)),
+    ("mixer_on_s", DmiAnim("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0", 0)),
+    ("mixer_on_e", DmiAnim("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0", 2)),
+    ("mixer_on_w", DmiAnim("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0", 3)),
     ("mixer_f_off_n", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "mixer_off-0_f", 1)),
     ("mixer_f_off_s", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "mixer_off-0_f", 0)),
     ("mixer_f_off_e", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "mixer_off-0_f", 2)),
     ("mixer_f_off_w", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "mixer_off-0_f", 3)),
-    ("mixer_f_on_n", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0_f", 1)),
-    ("mixer_f_on_s", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0_f", 0)),
-    ("mixer_f_on_e", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0_f", 2)),
-    ("mixer_f_on_w", Dmi("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0_f", 3)),
+    ("mixer_f_on_n", DmiAnim("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0_f", 1)),
+    ("mixer_f_on_s", DmiAnim("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0_f", 0)),
+    ("mixer_f_on_e", DmiAnim("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0_f", 2)),
+    ("mixer_f_on_w", DmiAnim("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0_f", 3)),
     // The two fittings in hand. tg draws every /obj/item/pipe
     // from its machine's `pipe_state` in pipe_item.dmi
     // (construction.dm:212) -- and THAT art does show every
@@ -135,11 +159,11 @@
     // one name, which is the same art and half the atlas.
     ("volpump_off_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "volpump_off-1", 1)),
     ("volpump_off_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "volpump_off-1", 2)),
-    // tg's running body is a ten-frame loop; its first frame is
-    // baked, so a running pump reads by its lit indicators rather
-    // than by moving. The loop is a follow-up, not a correction.
-    ("volpump_on_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "volpump_on-1", 1)),
-    ("volpump_on_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "volpump_on-1", 2)),
+    // The volumetric pump's running body: ten frames at a twentieth
+    // each, the longest loop in the binary family and the reason it
+    // reads as a harder-working machine than the gas pump beside it.
+    ("volpump_on_ns", DmiAnim("obj/machines/atmospherics/binary_devices.dmi", "volpump_on-1", 1)),
+    ("volpump_on_ew", DmiAnim("obj/machines/atmospherics/binary_devices.dmi", "volpump_on-1", 2)),
     ("passgate_off_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "passgate_off-1", 1)),
     ("passgate_off_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "passgate_off-1", 2)),
     ("passgate_on_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "passgate_on-1", 1)),
@@ -161,6 +185,29 @@
     ("dvalve_shut_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "dvalve_off-1", 2)),
     ("dvalve_open_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "dvalve_on-1", 1)),
     ("dvalve_open_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "dvalve_on-1", 2)),
+    // Its turn: seven frames of `2`, 1.4 seconds, the same length as
+    // the manual valve's and a visibly smoother mechanism. Flicked by
+    // the same line (valve.dm:24-29) -- the digital valve overrides
+    // `update_icon_nopipes` only to add a no-power case and otherwise
+    // calls `..()`.
+    //
+    // `DmiAnimOnce` here too, even though these two DO carry
+    // `loop = 1` and would bake correctly either way. The source says
+    // what the sim does with the art rather than what the sheet
+    // happens to record, and a pair of valves baked two different ways
+    // for a difference that does not matter would be a puzzle for
+    // whoever reads this next.
+    //
+    // Not baked: `dvalve_nopower`. tg reaches it only through
+    // `!is_operational` (valve.dm:147-150), and the base valve is
+    // `use_power = NO_POWER_USE` (valve.dm:19), so NOPOWER is never
+    // set on one -- it is a BROKEN/MAINT picture. This engine has no
+    // broken state for atmospherics machinery, so the cell would have
+    // nothing to hang on. It becomes bakeable the day one exists.
+    ("dvalve_opening_ns", DmiAnimOnce("obj/machines/atmospherics/binary_devices.dmi", "dvalve_01-1", 1)),
+    ("dvalve_opening_ew", DmiAnimOnce("obj/machines/atmospherics/binary_devices.dmi", "dvalve_01-1", 2)),
+    ("dvalve_closing_ns", DmiAnimOnce("obj/machines/atmospherics/binary_devices.dmi", "dvalve_10-1", 1)),
+    ("dvalve_closing_ew", DmiAnimOnce("obj/machines/atmospherics/binary_devices.dmi", "dvalve_10-1", 2)),
     // The fittings these are raised from, and yield back. tg draws
     // every one of them off ONE sheet: `/obj/item/pipe` is
     // `pipe_item.dmi` and its icon_state is the machine's own
