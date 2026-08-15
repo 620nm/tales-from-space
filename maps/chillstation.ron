@@ -253,7 +253,28 @@
         // because a commissioned station's valves are: an isolation
         // point is a thing you CAN shut, not a thing that starts shut.
         (15, 19, "manual_valve", "open"),
-        (22, 19, "digital_valve", "open"),
+        // ...and one on each MAIN where it leaves the department, which
+        // is where tg puts them and what the wiki tells a technician to
+        // reach for first: a valve wherever you might need to part a
+        // line without stopping the station. Each is a per-layer preset,
+        // because a valve takes its layer from its entry and the mains
+        // are not on the default one.
+        (19, 11, "manual_valve_l4", "open"),
+        (15, 10, "manual_valve_l2", "open"),
+        // The waste-side pump, on the return riser: the scrubbers main
+        // arrives here having crossed the station on its own and needs
+        // pushing up into the process line. Distro has had a pump since
+        // the department existed; this is the other half of that room.
+        //
+        // A VOLUMETRIC one, and that is the whole point of the choice. A
+        // pressure pump works to a setpoint and stops -- put one here at
+        // one atmosphere, against a process line already at one
+        // atmosphere, and it has arrived before it started and the
+        // return never moves. A return line does not want a pressure, it
+        // wants a throughput, which is exactly what tg's volume pump is
+        // for (volume_pump.dm: it "never asks").
+        (19, 17, "volume_pump", "running"),
+        (17, 14, "digital_valve", "open"),
         // Bottled oxygen off the first filter's side mouth.
         (20, 17, "connector_port"),
         // The scrubber that makes it a LOOP rather than a supply: it
@@ -368,6 +389,14 @@
         (27, 13, 2),
         (20, 18, 2),
         (21, 18, 2),
+        // The spur down the east wall to the dispenser's outlet. It
+        // starts on the y=14 run rather than beside it: a segment that
+        // begins at (25, 17) is four cables that touch nothing, and an
+        // outlet on one is a socket wired to itself. The boot warning
+        // ("outlet's branch segment reaches no APC output") is what
+        // caught it, which is what that warning is for.
+        (25, 15, 2),
+        (25, 16, 2),
         (25, 17, 2),
         (25, 18, 2),
         (25, 19, 2),
@@ -382,8 +411,6 @@
         (19, 23, 2),
         (19, 24, 2),
         (19, 25, 2),
-        (22, 19, 2),
-        (22, 18, 2),
         (16, 24, 2),
         (17, 24, 2),
         (18, 24, 2),
@@ -437,7 +464,6 @@
         // liveries do not join without one.
         (15, 14, 4, "#00FFFF"),
         (16, 14, 4, "#00FFFF"),
-        (17, 14, 4, "#00FFFF"),
         (18, 14, 4, "#00FFFF"),
         (19, 14, 4, "#00FFFF"),
         (21, 14, 4, "#00FFFF"),
@@ -450,6 +476,7 @@
         (22, 16, 4, "#FF9900"),
         (22, 17, 4, "#FF9900"),
         (22, 18, 4, "#FF9900"),
+        (22, 19, 4, "#FF9900"),
         (22, 20, 4, "#FF9900"),
         (22, 21, 4, "#FF9900"),
         (22, 22, 4, "#FF9900"),
@@ -513,14 +540,12 @@
         (19, 14, 8, "#0000FF"),
         (19, 13, 8, "#0000FF"),
         (19, 12, 8, "#0000FF"),
-        (19, 11, 8, "#0000FF"),
         (19, 10, 8, "#0000FF"),
         (13, 7, 2, "#FF0000"),
         (14, 7, 2, "#FF0000"),
         (15, 7, 2, "#FF0000"),
         (15, 8, 2, "#FF0000"),
         (15, 9, 2, "#FF0000"),
-        (15, 10, 2, "#FF0000"),
         (15, 11, 2, "#FF0000"),
         (15, 12, 2, "#FF0000"),
         (15, 13, 2, "#FF0000"),
@@ -578,7 +603,6 @@
         // it is where the mix is made.
         (15, 14, 4),
         (16, 14, 4),
-        (17, 14, 4),
         (18, 14, 4),
         (19, 14, 4),
         (21, 14, 4),
@@ -587,11 +611,16 @@
         (27, 14, 4),
         (16, 13, 4),
         (18, 13, 4),
+        // The mixer's side feed: its second mouth drops south to the
+        // bottle on the port at (24, 17). All three tiles, because
+        // (24, 16) was missing and a run with a hole in it is two
+        // runs — the mixer read 0 kPa on the side intake and blended
+        // 79% of a line with 21% of nothing.
         (24, 15, 4),
+        (24, 16, 4),
         (24, 17, 4),
         (19, 15, 4),
         (19, 16, 4),
-        (19, 17, 4),
         (19, 18, 4),
         (20, 18, 4),
         (17, 10, 4),
@@ -607,6 +636,7 @@
         (22, 16, 4),
         (22, 17, 4),
         (22, 18, 4),
+        (22, 19, 4),
         (22, 20, 4),
         (22, 21, 4),
         (22, 22, 4),
@@ -680,7 +710,6 @@
         (19, 14, 8),
         (19, 13, 8),
         (19, 12, 8),
-        (19, 11, 8),
         (19, 10, 8),
         // The SCRUBBERS main, layer 2 and red (tg's
         // `vent_scrubber/on/layer2`, 1860 against one). It
@@ -694,7 +723,6 @@
         (15, 7, 2),
         (15, 8, 2),
         (15, 9, 2),
-        (15, 10, 2),
         (15, 11, 2),
         (15, 12, 2),
         (15, 13, 2),
@@ -709,7 +737,11 @@
     labels: [
         (5, 5, "The Commons"),
         (15, 5, "The Annex"),
-        (15, 13, "Atmospherics"),
+        // On the APC, because that is what a label names: an APC's
+        // label IS the room's name (sim/mod.rs, "APC labels become
+        // room names"). (15, 13) is bare plating, so the department
+        // went unnamed and said so at boot.
+        (19, 13, "Atmospherics"),
     ],
     mounts: [
         (5, 5, North), (7, 5, North), (11, 5, North),
