@@ -18,16 +18,24 @@
     // machine with two ends and one axis of art has to say. DMI dirs
     // throughout: 0 south, 1 north, 2 east, 3 west.
     //
-    // tg's armed gate is a six-frame loop (`tgate_on-1`) and it has
-    // a THIRD state, `tgate_flow`, for the moment gas is actually
-    // crossing (temperature_gate.dm:57-63). Neither is baked: the
-    // first frame reads by its lit body, and "is anything crossing
-    // right now" is a question for the panel, which answers it with
-    // two port pressures rather than by flickering.
+    // tg's armed gate is a six-frame loop (`tgate_on-1`), baked as
+    // one: ten cells, and an armed gate now reads as armed from
+    // across the room rather than by squinting at its indicators.
+    //
+    // Its THIRD state is still not baked. `tgate_flow` is the moment
+    // gas is actually crossing (temperature_gate.dm:57-63), which is a
+    // per-tick FACT drawn over a state rather than a state of its own
+    // -- "armed" and "armed and flowing right now" would have to be
+    // one picture and one overlay, and the position machinery has no
+    // way to express a per-instance overlay yet. The same note stands
+    // on `pvalve_flow` and the volume pump's overclock light in
+    // 20-atmos-inline-devices.ron; all three want the same feature and
+    // none of them wants a fourth position. Meanwhile the panel
+    // answers "is anything crossing" with two port pressures.
     ("tgate_off_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tgate_off-1", 1)),
     ("tgate_off_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tgate_off-1", 2)),
-    ("tgate_on_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tgate_on-1", 1)),
-    ("tgate_on_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tgate_on-1", 2)),
+    ("tgate_on_ns", DmiAnim("obj/machines/atmospherics/binary_devices.dmi", "tgate_on-1", 1)),
+    ("tgate_on_ew", DmiAnim("obj/machines/atmospherics/binary_devices.dmi", "tgate_on-1", 2)),
     ("tpump_off_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tpump_off-1", 1)),
     ("tpump_off_ew", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tpump_off-1", 2)),
     ("tpump_on_ns", Dmi("obj/machines/atmospherics/binary_devices.dmi", "tpump_on-1", 1)),
