@@ -5,224 +5,268 @@
 // this directory is baked, in FILE-NAME order and then entry order,
 // so the atlas layout is a function of the manifest and not of the
 // filesystem. Two files claiming one sprite name is a bake error.
-[
-    ("space", Dmi("turf/space.dmi", "space", 0)),
-    ("floor", Dmi("turf/floors.dmi", "floor", 0)),
-    ("plating", Dmi("turf/floors.dmi", "plating", 0)),
-    ("wall", Dmi("turf/walls/wall.dmi", "wall-0", 0)),
-    ("girder", Dmi("obj/structures.dmi", "girder", 0)),
-    ("girder_displaced", Dmi("obj/structures.dmi", "displaced", 0)),
-    ("frame", Dmi("obj/devices/stock_parts.dmi", "box_0", 0)),
-    ("board", Dmi("obj/devices/circuitry_n_data.dmi", "mainboard", 0)),
-    // An airlock has four appearances, not two: the two rests and
-    // the two swings between them. tg's `update_icon_state` appends
-    // AIRLOCK_FRAME_OPENING/CLOSING while the door is operating
-    // (airlock.dm:556), and each swing is six frames of a tenth.
-    ("door", Dmi("obj/doors/airlocks/station/public.dmi", "closed", 0)),
-    ("door_open", Dmi("obj/doors/airlocks/station/public.dmi", "open", 0)),
-    ("door_opening", DmiAnim("obj/doors/airlocks/station/public.dmi", "opening", 0)),
-    ("door_closing", DmiAnim("obj/doors/airlocks/station/public.dmi", "closing", 0)),
-    ("door_eng", Dmi("obj/doors/airlocks/station/engineering.dmi", "closed", 0)),
-    ("door_eng_open", Dmi("obj/doors/airlocks/station/engineering.dmi", "open", 0)),
-    ("door_eng_opening", DmiAnim("obj/doors/airlocks/station/engineering.dmi", "opening", 0)),
-    ("door_eng_closing", DmiAnim("obj/doors/airlocks/station/engineering.dmi", "closing", 0)),
-    ("apc", Dmi("obj/machines/wallmounts.dmi", "apc0", 0)),
-    ("apc_s", Dmi("obj/machines/wallmounts.dmi", "apc0", 0)),
-    ("apc_n", Dmi("obj/machines/wallmounts.dmi", "apc0", 0)),
-    ("apc_e", Dmi("obj/machines/wallmounts.dmi", "apc0", 0)),
-    ("apc_w", Dmi("obj/machines/wallmounts.dmi", "apc0", 0)),
-    ("apcov_chg0", Dmi("obj/machines/wallmounts.dmi", "apco3-0", 0)),
-    ("apcov_chg1", Dmi("obj/machines/wallmounts.dmi", "apco3-1", 0)),
-    ("apcov_chg2", Dmi("obj/machines/wallmounts.dmi", "apco3-2", 0)),
-    ("apcov_lock", Dmi("obj/machines/wallmounts.dmi", "apcox-0", 0)),
-    ("apcov_eq_on", Dmi("obj/machines/wallmounts.dmi", "apco0-3", 0)),
-    ("apcov_eq_off", Dmi("obj/machines/wallmounts.dmi", "apco0-1", 0)),
-    ("apcov_lt_on", Dmi("obj/machines/wallmounts.dmi", "apco1-3", 0)),
-    ("apcov_lt_off", Dmi("obj/machines/wallmounts.dmi", "apco1-1", 0)),
-    ("apcov_env_on", Dmi("obj/machines/wallmounts.dmi", "apco2-3", 0)),
-    ("apcov_env_off", Dmi("obj/machines/wallmounts.dmi", "apco2-1", 0)),
-    ("human_s", Body(0)),
-    ("human_n", Body(1)),
-    ("human_e", Body(2)),
-    ("human_w", Body(3)),
-    ("human_dead", BodyDead),
-    ("worn_backpack_s", Dmi("mob/clothing/back/backpack.dmi", "backpack", 0)),
-    ("worn_backpack_n", Dmi("mob/clothing/back/backpack.dmi", "backpack", 1)),
-    ("worn_backpack_e", Dmi("mob/clothing/back/backpack.dmi", "backpack", 2)),
-    ("worn_backpack_w", Dmi("mob/clothing/back/backpack.dmi", "backpack", 3)),
-    ("worn_uniform_grey_s", Dmi("mob/clothing/under/color.dmi", "grey_ancient", 0)),
-    ("worn_uniform_grey_n", Dmi("mob/clothing/under/color.dmi", "grey_ancient", 1)),
-    ("worn_uniform_grey_e", Dmi("mob/clothing/under/color.dmi", "grey_ancient", 2)),
-    ("worn_uniform_grey_w", Dmi("mob/clothing/under/color.dmi", "grey_ancient", 3)),
-    ("worn_uniform_eng_s", Dmi("mob/clothing/under/engineering.dmi", "engine", 0)),
-    ("worn_uniform_eng_n", Dmi("mob/clothing/under/engineering.dmi", "engine", 1)),
-    ("worn_uniform_eng_e", Dmi("mob/clothing/under/engineering.dmi", "engine", 2)),
-    ("worn_uniform_eng_w", Dmi("mob/clothing/under/engineering.dmi", "engine", 3)),
-    ("worn_uniform_med_s", Dmi("mob/clothing/under/medical.dmi", "medical", 0)),
-    ("worn_uniform_med_n", Dmi("mob/clothing/under/medical.dmi", "medical", 1)),
-    ("worn_uniform_med_e", Dmi("mob/clothing/under/medical.dmi", "medical", 2)),
-    ("worn_uniform_med_w", Dmi("mob/clothing/under/medical.dmi", "medical", 3)),
-    ("worn_uniform_sec_s", Dmi("mob/clothing/under/security.dmi", "security", 0)),
-    ("worn_uniform_sec_n", Dmi("mob/clothing/under/security.dmi", "security", 1)),
-    ("worn_uniform_sec_e", Dmi("mob/clothing/under/security.dmi", "security", 2)),
-    ("worn_uniform_sec_w", Dmi("mob/clothing/under/security.dmi", "security", 3)),
-    ("worn_uniform_cap_s", Dmi("mob/clothing/under/captain.dmi", "captain", 0)),
-    ("worn_uniform_cap_n", Dmi("mob/clothing/under/captain.dmi", "captain", 1)),
-    ("worn_uniform_cap_e", Dmi("mob/clothing/under/captain.dmi", "captain", 2)),
-    ("worn_uniform_cap_w", Dmi("mob/clothing/under/captain.dmi", "captain", 3)),
-    ("uniform_grey", Dmi("obj/clothing/under/color.dmi", "grey_ancient", 0)),
-    ("uniform_eng", Dmi("obj/clothing/under/engineering.dmi", "engine", 0)),
-    ("uniform_med", Dmi("obj/clothing/under/medical.dmi", "medical", 0)),
-    ("uniform_sec", Dmi("obj/clothing/under/security.dmi", "rsecurity", 0)),
-    ("uniform_cap", Dmi("obj/clothing/under/captain.dmi", "captain", 0)),
-    ("toolbox", Dmi("obj/storage/toolbox.dmi", "red", 0)),
-    ("backpack", Dmi("obj/storage/backpack.dmi", "backpack", 0)),
-    ("headset", Dmi("obj/clothing/headsets.dmi", "headset", 0)),
-    ("welder", Dmi("obj/tools.dmi", "welder", 0)),
-    ("id", Dmi("obj/card.dmi", "card_grey", 0)),
-    ("crowbar", Dmi("obj/tools.dmi", "crowbar", 0)),
-    // tg's screwdriver is a COLOURED handle plus a steel shaft that
-    // must stay steel (greyscale/json_configs/screwdriver.json). We
-    // baked only the handle mask, so the tool was a couple of tinted
-    // pixels. The colour is baked here rather than declared because
-    // one quad cannot carry two colours; COLOR_TOOL_RED is tg's.
-    ("screwdriver", DmiBlend(
-        dmi: "obj/tools.dmi",
-        layers: [("screwdriver", Over, true), ("screwdriver_screwybits", Over, false)],
-        dir: 0,
-        paint: (149, 23, 16),
-    )),
-    ("wrench", Dmi("obj/tools.dmi", "wrench", 0)),
-    ("vendor", Dmi("obj/machines/vending.dmi", "Cola_Machine", 0)),
-    // tg's YouTool, off the same vending sheet (vending/youtool.dm).
-    ("tool_vendor", Dmi("obj/machines/vending.dmi", "tool", 0)),
-    ("cola", Dmi("obj/drinks/soda.dmi", "cola", 0)),
-    ("outlet", Dmi("obj/pipes_n_cables/structures.dmi", "term", 0)),
-    ("outlet_s", Dmi("obj/pipes_n_cables/structures.dmi", "term", 0)),
-    ("outlet_n", Dmi("obj/pipes_n_cables/structures.dmi", "term", 1)),
-    ("outlet_e", Dmi("obj/pipes_n_cables/structures.dmi", "term", 2)),
-    ("outlet_w", Dmi("obj/pipes_n_cables/structures.dmi", "term", 3)),
-    ("generator", Dmi("obj/machines/engine/other.dmi", "portgen0_0", 0)),
-    ("smes", Dmi("obj/machines/engine/other.dmi", "smes", 0)),
-    // SMES display lamps (tg smes.dm update_overlays): an output
-    // lamp, an input lamp, and a five-segment charge bar. All of
-    // them glow, so all of them are emissive.
-    ("smes_out0", Dmi("obj/machines/engine/other.dmi", "smes-op0", 0)),
-    ("smes_out1", Dmi("obj/machines/engine/other.dmi", "smes-op1", 0)),
-    ("smes_in0", Dmi("obj/machines/engine/other.dmi", "smes-oc0", 0)),
-    ("smes_in1", Dmi("obj/machines/engine/other.dmi", "smes-oc1", 0)),
-    ("smes_chg1", Dmi("obj/machines/engine/other.dmi", "smes-og1", 0)),
-    ("smes_chg2", Dmi("obj/machines/engine/other.dmi", "smes-og2", 0)),
-    ("smes_chg3", Dmi("obj/machines/engine/other.dmi", "smes-og3", 0)),
-    ("smes_chg4", Dmi("obj/machines/engine/other.dmi", "smes-og4", 0)),
-    ("smes_chg5", Dmi("obj/machines/engine/other.dmi", "smes-og5", 0)),
-    ("light_on", DmiLayers([
-        ("obj/lighting.dmi", "tube"),
-        ("obj/lighting_overlay.dmi", "tube"),
-    ], 0)),
-    ("light_off", Dmi("obj/lighting.dmi", "tube", 0)),
-    ("light_on_s", DmiLayers([
-        ("obj/lighting.dmi", "tube"),
-        ("obj/lighting_overlay.dmi", "tube"),
-    ], 0)),
-    ("light_on_n", DmiLayers([
-        ("obj/lighting.dmi", "tube"),
-        ("obj/lighting_overlay.dmi", "tube"),
-    ], 1)),
-    ("light_on_e", DmiLayers([
-        ("obj/lighting.dmi", "tube"),
-        ("obj/lighting_overlay.dmi", "tube"),
-    ], 2)),
-    ("light_on_w", DmiLayers([
-        ("obj/lighting.dmi", "tube"),
-        ("obj/lighting_overlay.dmi", "tube"),
-    ], 3)),
-    ("light_off_s", Dmi("obj/lighting.dmi", "tube", 0)),
-    ("light_off_n", Dmi("obj/lighting.dmi", "tube", 1)),
-    ("light_off_e", Dmi("obj/lighting.dmi", "tube", 2)),
-    ("light_off_w", Dmi("obj/lighting.dmi", "tube", 3)),
-    // The other three sockets tg draws (light.dm's update_icon_state
-    // switch): shattered glass, an empty fitting, a burned-out tube.
-    // None of them glow, so none of them wear the emissive overlay.
-    ("light_broken", Dmi("obj/lighting.dmi", "tube-broken", 0)),
-    ("light_broken_s", Dmi("obj/lighting.dmi", "tube-broken", 0)),
-    ("light_broken_n", Dmi("obj/lighting.dmi", "tube-broken", 1)),
-    ("light_broken_e", Dmi("obj/lighting.dmi", "tube-broken", 2)),
-    ("light_broken_w", Dmi("obj/lighting.dmi", "tube-broken", 3)),
-    ("light_empty", Dmi("obj/lighting.dmi", "tube-empty", 0)),
-    ("light_empty_s", Dmi("obj/lighting.dmi", "tube-empty", 0)),
-    ("light_empty_n", Dmi("obj/lighting.dmi", "tube-empty", 1)),
-    ("light_empty_e", Dmi("obj/lighting.dmi", "tube-empty", 2)),
-    ("light_empty_w", Dmi("obj/lighting.dmi", "tube-empty", 3)),
-    ("light_burned", Dmi("obj/lighting.dmi", "tube-burned", 0)),
-    ("light_burned_s", Dmi("obj/lighting.dmi", "tube-burned", 0)),
-    ("light_burned_n", Dmi("obj/lighting.dmi", "tube-burned", 1)),
-    ("light_burned_e", Dmi("obj/lighting.dmi", "tube-burned", 2)),
-    ("light_burned_w", Dmi("obj/lighting.dmi", "tube-burned", 3)),
-    // The loose glass a fitting takes, and the janitor's device
-    // that fits it for you (tg lighting.dmi "ltube"/"lbulb",
-    // service/janitor.dmi "lightreplacer").
-    ("light_tube", Dmi("obj/lighting.dmi", "ltube", 0)),
-    ("light_bulb", Dmi("obj/lighting.dmi", "lbulb", 0)),
-    ("light_replacer", Dmi("obj/service/janitor.dmi", "lightreplacer", 0)),
-    // A cardboard box wearing its contents label, tg's
-    // `illustration` overlay (service_boxes.dm:114).
-    ("box_lights", DmiLayers([
-        ("obj/storage/box.dmi", "box"),
-        ("obj/storage/box.dmi", "lightmixed"),
-    ], 0)),
-    // Same shape as the screwdriver: coloured grips, steel jaws
-    // (wirecutters.json). tg colours these COLOR_RED.
-    ("wirecutters", DmiBlend(
-        dmi: "obj/tools.dmi",
-        layers: [("cutters", Over, true), ("cutters_cutty_thingy", Over, false)],
-        dir: 0,
-        paint: (255, 0, 0),
-    )),
-    ("coil", Dmi("obj/stack_objects.dmi", "coil", 0)),
-    ("beaker", Dmi("obj/medical/chemical.dmi", "beaker", 0)),
-    ("ghost", Dmi("mob/human/species/ghost.dmi", "ghost_base", 0)),
-    ("solar", Dmi("obj/machines/solar.dmi", "solar_panel_glass", 0)),
-    // The fan, by what it is actually doing. Blowing and siphoning
-    // are the two running loops (tg's `vent_[pump_direction ?
-    // "out" : "in"]`); the spin-up and spin-down are one-shots the
-    // machine plays on the power edges (vent_pump.dm's
-    // flick("vent_out-starting") / flick("vent_out-shutdown")).
-    ("vent_on", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "vent_out", 0)),
-    ("vent_siphon", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "vent_in", 0)),
-    ("vent_starting", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "vent_out-starting", 0)),
-    ("vent_shutdown", DmiAnim("obj/machines/atmospherics/unary_devices.dmi", "vent_out-shutdown", 0)),
-    ("vent_off", Dmi("obj/machines/atmospherics/unary_devices.dmi", "vent_off", 0)),
-    ("vent_passive", Dmi("obj/machines/atmospherics/unary_devices.dmi", "passive_vent", 0)),
-    // The connector port: tg's `portables_connector`, a pipe fitting
-    // that lies in the deck and is the ONLY thing a portable atmos
-    // device may fasten to. The two states are two of tg's own
-    // pictures, and the difference between them is the whole rule:
-    // `connector_map-3` is the socket with its stub running down
-    // into the pipe, and `connector` is the same socket with the
-    // stub gone — a fitting lying loose on the deck, joined to
-    // nothing, hosting nothing.
-    //
-    // The stub POINTS, so there are four of it. tg draws the same
-    // state at four dirs (`connector_map-3` is `dirs = 4`) and a
-    // unary atmos component's `initialize_directions` IS its dir
-    // (unary_devices.dm:14) — the socket joins the run on that one
-    // side and no other. DMI dir order is south, north, east, west.
-    ("connector_port_s", Dmi("obj/machines/atmospherics/unary_devices.dmi", "connector_map-3", 0)),
-    ("connector_port_n", Dmi("obj/machines/atmospherics/unary_devices.dmi", "connector_map-3", 1)),
-    ("connector_port_e", Dmi("obj/machines/atmospherics/unary_devices.dmi", "connector_map-3", 2)),
-    ("connector_port_w", Dmi("obj/machines/atmospherics/unary_devices.dmi", "connector_map-3", 3)),
-    // Unbolted it is an `/obj/item/pipe` like every other fitting, so
-    // it comes off pipe_item.dmi and not off the machine's own sheet
-    // (construction.dm:17,216 -- `pipe_state = "connector"`,
-    // portables_connector.dm:15). Both sheets carry a state called
-    // `connector` and they are NOT the same picture: the machine's is
-    // the bare socket, the item's is the socket with the little
-    // coupling nub the fitting is held by. Baking the machine's was a
-    // near miss that cost the item its nub.
-    ("connector_port_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "connector", 0)),
-    ("connector_port_loose_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "connector", 0)),
-    ("connector_port_loose_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "connector", 1)),
-    ("connector_port_loose_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "connector", 2)),
-    ("connector_port_loose_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "connector", 3)),
-]
+(
+    // Sheet aliases are local to this family; @names below resolve here.
+    sheets: [
+        ("worn_backpack", "mob/clothing/back/backpack.dmi"),
+        ("worn_captain", "mob/clothing/under/captain.dmi"),
+        ("worn_color", "mob/clothing/under/color.dmi"),
+        ("worn_engineering", "mob/clothing/under/engineering.dmi"),
+        ("worn_medical", "mob/clothing/under/medical.dmi"),
+        ("worn_security", "mob/clothing/under/security.dmi"),
+        ("ghost", "mob/human/species/ghost.dmi"),
+        ("card", "obj/card.dmi"),
+        ("headsets", "obj/clothing/headsets.dmi"),
+        ("uniform_captain", "obj/clothing/under/captain.dmi"),
+        ("uniform_color", "obj/clothing/under/color.dmi"),
+        ("uniform_engineering", "obj/clothing/under/engineering.dmi"),
+        ("uniform_medical", "obj/clothing/under/medical.dmi"),
+        ("uniform_security", "obj/clothing/under/security.dmi"),
+        ("circuitry", "obj/devices/circuitry_n_data.dmi"),
+        ("stock_parts", "obj/devices/stock_parts.dmi"),
+        ("airlock_engineering", "obj/doors/airlocks/station/engineering.dmi"),
+        ("airlock_public", "obj/doors/airlocks/station/public.dmi"),
+        ("soda", "obj/drinks/soda.dmi"),
+        ("lighting", "obj/lighting.dmi"),
+        ("lighting_overlay", "obj/lighting_overlay.dmi"),
+        ("atmos_unary", "obj/machines/atmospherics/unary_devices.dmi"),
+        ("engine_other", "obj/machines/engine/other.dmi"),
+        ("solar", "obj/machines/solar.dmi"),
+        ("vending", "obj/machines/vending.dmi"),
+        ("wallmounts", "obj/machines/wallmounts.dmi"),
+        ("chemical", "obj/medical/chemical.dmi"),
+        ("pipe_item", "obj/pipes_n_cables/pipe_item.dmi"),
+        ("pipe_structures", "obj/pipes_n_cables/structures.dmi"),
+        ("janitor", "obj/service/janitor.dmi"),
+        ("stack_objects", "obj/stack_objects.dmi"),
+        ("backpack", "obj/storage/backpack.dmi"),
+        ("box", "obj/storage/box.dmi"),
+        ("toolbox", "obj/storage/toolbox.dmi"),
+        ("structures", "obj/structures.dmi"),
+        ("tools", "obj/tools.dmi"),
+        ("floors", "turf/floors.dmi"),
+        ("space", "turf/space.dmi"),
+        ("walls", "turf/walls/wall.dmi"),
+    ],
+    sprites: [
+        ("space", Dmi("@space", "space", 0)),
+        ("floor", Dmi("@floors", "floor", 0)),
+        ("plating", Dmi("@floors", "plating", 0)),
+        ("wall", Dmi("@walls", "wall-0", 0)),
+        ("girder", Dmi("@structures", "girder", 0)),
+        ("girder_displaced", Dmi("@structures", "displaced", 0)),
+        ("frame", Dmi("@stock_parts", "box_0", 0)),
+        ("board", Dmi("@circuitry", "mainboard", 0)),
+        // An airlock has four appearances, not two: the two rests and
+        // the two swings between them. tg's `update_icon_state` appends
+        // AIRLOCK_FRAME_OPENING/CLOSING while the door is operating
+        // (airlock.dm:556), and each swing is six frames of a tenth.
+        ("door", Dmi("@airlock_public", "closed", 0)),
+        ("door_open", Dmi("@airlock_public", "open", 0)),
+        ("door_opening", DmiAnim("@airlock_public", "opening", 0)),
+        ("door_closing", DmiAnim("@airlock_public", "closing", 0)),
+        ("door_eng", Dmi("@airlock_engineering", "closed", 0)),
+        ("door_eng_open", Dmi("@airlock_engineering", "open", 0)),
+        ("door_eng_opening", DmiAnim("@airlock_engineering", "opening", 0)),
+        ("door_eng_closing", DmiAnim("@airlock_engineering", "closing", 0)),
+        ("apc", Dmi("@wallmounts", "apc0", 0)),
+        ("apc_s", Dmi("@wallmounts", "apc0", 0)),
+        ("apc_n", Dmi("@wallmounts", "apc0", 0)),
+        ("apc_e", Dmi("@wallmounts", "apc0", 0)),
+        ("apc_w", Dmi("@wallmounts", "apc0", 0)),
+        ("apcov_chg0", Dmi("@wallmounts", "apco3-0", 0)),
+        ("apcov_chg1", Dmi("@wallmounts", "apco3-1", 0)),
+        ("apcov_chg2", Dmi("@wallmounts", "apco3-2", 0)),
+        ("apcov_lock", Dmi("@wallmounts", "apcox-0", 0)),
+        ("apcov_eq_on", Dmi("@wallmounts", "apco0-3", 0)),
+        ("apcov_eq_off", Dmi("@wallmounts", "apco0-1", 0)),
+        ("apcov_lt_on", Dmi("@wallmounts", "apco1-3", 0)),
+        ("apcov_lt_off", Dmi("@wallmounts", "apco1-1", 0)),
+        ("apcov_env_on", Dmi("@wallmounts", "apco2-3", 0)),
+        ("apcov_env_off", Dmi("@wallmounts", "apco2-1", 0)),
+        ("human_s", Body(0)),
+        ("human_n", Body(1)),
+        ("human_e", Body(2)),
+        ("human_w", Body(3)),
+        ("human_dead", BodyDead),
+        ("worn_backpack_s", Dmi("@worn_backpack", "backpack", 0)),
+        ("worn_backpack_n", Dmi("@worn_backpack", "backpack", 1)),
+        ("worn_backpack_e", Dmi("@worn_backpack", "backpack", 2)),
+        ("worn_backpack_w", Dmi("@worn_backpack", "backpack", 3)),
+        ("worn_uniform_grey_s", Dmi("@worn_color", "grey_ancient", 0)),
+        ("worn_uniform_grey_n", Dmi("@worn_color", "grey_ancient", 1)),
+        ("worn_uniform_grey_e", Dmi("@worn_color", "grey_ancient", 2)),
+        ("worn_uniform_grey_w", Dmi("@worn_color", "grey_ancient", 3)),
+        ("worn_uniform_eng_s", Dmi("@worn_engineering", "engine", 0)),
+        ("worn_uniform_eng_n", Dmi("@worn_engineering", "engine", 1)),
+        ("worn_uniform_eng_e", Dmi("@worn_engineering", "engine", 2)),
+        ("worn_uniform_eng_w", Dmi("@worn_engineering", "engine", 3)),
+        ("worn_uniform_med_s", Dmi("@worn_medical", "medical", 0)),
+        ("worn_uniform_med_n", Dmi("@worn_medical", "medical", 1)),
+        ("worn_uniform_med_e", Dmi("@worn_medical", "medical", 2)),
+        ("worn_uniform_med_w", Dmi("@worn_medical", "medical", 3)),
+        ("worn_uniform_sec_s", Dmi("@worn_security", "security", 0)),
+        ("worn_uniform_sec_n", Dmi("@worn_security", "security", 1)),
+        ("worn_uniform_sec_e", Dmi("@worn_security", "security", 2)),
+        ("worn_uniform_sec_w", Dmi("@worn_security", "security", 3)),
+        ("worn_uniform_cap_s", Dmi("@worn_captain", "captain", 0)),
+        ("worn_uniform_cap_n", Dmi("@worn_captain", "captain", 1)),
+        ("worn_uniform_cap_e", Dmi("@worn_captain", "captain", 2)),
+        ("worn_uniform_cap_w", Dmi("@worn_captain", "captain", 3)),
+        ("uniform_grey", Dmi("@uniform_color", "grey_ancient", 0)),
+        ("uniform_eng", Dmi("@uniform_engineering", "engine", 0)),
+        ("uniform_med", Dmi("@uniform_medical", "medical", 0)),
+        ("uniform_sec", Dmi("@uniform_security", "rsecurity", 0)),
+        ("uniform_cap", Dmi("@uniform_captain", "captain", 0)),
+        ("toolbox", Dmi("@toolbox", "red", 0)),
+        ("backpack", Dmi("@backpack", "backpack", 0)),
+        ("headset", Dmi("@headsets", "headset", 0)),
+        ("welder", Dmi("@tools", "welder", 0)),
+        ("id", Dmi("@card", "card_grey", 0)),
+        ("crowbar", Dmi("@tools", "crowbar", 0)),
+        // tg's screwdriver is a COLOURED handle plus a steel shaft that
+        // must stay steel (greyscale/json_configs/screwdriver.json). We
+        // baked only the handle mask, so the tool was a couple of tinted
+        // pixels. The colour is baked here rather than declared because
+        // one quad cannot carry two colours; COLOR_TOOL_RED is tg's.
+        ("screwdriver", DmiBlend(
+            dmi: "@tools",
+            layers: [("screwdriver", Over, true), ("screwdriver_screwybits", Over, false)],
+            dir: 0,
+            paint: (149, 23, 16),
+        )),
+        ("wrench", Dmi("@tools", "wrench", 0)),
+        ("vendor", Dmi("@vending", "Cola_Machine", 0)),
+        // tg's YouTool, off the same vending sheet (vending/youtool.dm).
+        ("tool_vendor", Dmi("@vending", "tool", 0)),
+        ("cola", Dmi("@soda", "cola", 0)),
+        ("outlet", Dmi("@pipe_structures", "term", 0)),
+        ("outlet_s", Dmi("@pipe_structures", "term", 0)),
+        ("outlet_n", Dmi("@pipe_structures", "term", 1)),
+        ("outlet_e", Dmi("@pipe_structures", "term", 2)),
+        ("outlet_w", Dmi("@pipe_structures", "term", 3)),
+        ("generator", Dmi("@engine_other", "portgen0_0", 0)),
+        ("smes", Dmi("@engine_other", "smes", 0)),
+        // SMES display lamps (tg smes.dm update_overlays): an output
+        // lamp, an input lamp, and a five-segment charge bar. All of
+        // them glow, so all of them are emissive.
+        ("smes_out0", Dmi("@engine_other", "smes-op0", 0)),
+        ("smes_out1", Dmi("@engine_other", "smes-op1", 0)),
+        ("smes_in0", Dmi("@engine_other", "smes-oc0", 0)),
+        ("smes_in1", Dmi("@engine_other", "smes-oc1", 0)),
+        ("smes_chg1", Dmi("@engine_other", "smes-og1", 0)),
+        ("smes_chg2", Dmi("@engine_other", "smes-og2", 0)),
+        ("smes_chg3", Dmi("@engine_other", "smes-og3", 0)),
+        ("smes_chg4", Dmi("@engine_other", "smes-og4", 0)),
+        ("smes_chg5", Dmi("@engine_other", "smes-og5", 0)),
+        ("light_on", DmiLayers([
+            ("@lighting", "tube"),
+            ("@lighting_overlay", "tube"),
+        ], 0)),
+        ("light_off", Dmi("@lighting", "tube", 0)),
+        ("light_on_s", DmiLayers([
+            ("@lighting", "tube"),
+            ("@lighting_overlay", "tube"),
+        ], 0)),
+        ("light_on_n", DmiLayers([
+            ("@lighting", "tube"),
+            ("@lighting_overlay", "tube"),
+        ], 1)),
+        ("light_on_e", DmiLayers([
+            ("@lighting", "tube"),
+            ("@lighting_overlay", "tube"),
+        ], 2)),
+        ("light_on_w", DmiLayers([
+            ("@lighting", "tube"),
+            ("@lighting_overlay", "tube"),
+        ], 3)),
+        ("light_off_s", Dmi("@lighting", "tube", 0)),
+        ("light_off_n", Dmi("@lighting", "tube", 1)),
+        ("light_off_e", Dmi("@lighting", "tube", 2)),
+        ("light_off_w", Dmi("@lighting", "tube", 3)),
+        // The other three sockets tg draws (light.dm's update_icon_state
+        // switch): shattered glass, an empty fitting, a burned-out tube.
+        // None of them glow, so none of them wear the emissive overlay.
+        ("light_broken", Dmi("@lighting", "tube-broken", 0)),
+        ("light_broken_s", Dmi("@lighting", "tube-broken", 0)),
+        ("light_broken_n", Dmi("@lighting", "tube-broken", 1)),
+        ("light_broken_e", Dmi("@lighting", "tube-broken", 2)),
+        ("light_broken_w", Dmi("@lighting", "tube-broken", 3)),
+        ("light_empty", Dmi("@lighting", "tube-empty", 0)),
+        ("light_empty_s", Dmi("@lighting", "tube-empty", 0)),
+        ("light_empty_n", Dmi("@lighting", "tube-empty", 1)),
+        ("light_empty_e", Dmi("@lighting", "tube-empty", 2)),
+        ("light_empty_w", Dmi("@lighting", "tube-empty", 3)),
+        ("light_burned", Dmi("@lighting", "tube-burned", 0)),
+        ("light_burned_s", Dmi("@lighting", "tube-burned", 0)),
+        ("light_burned_n", Dmi("@lighting", "tube-burned", 1)),
+        ("light_burned_e", Dmi("@lighting", "tube-burned", 2)),
+        ("light_burned_w", Dmi("@lighting", "tube-burned", 3)),
+        // The loose glass a fitting takes, and the janitor's device
+        // that fits it for you (tg lighting.dmi "ltube"/"lbulb",
+        // service/janitor.dmi "lightreplacer").
+        ("light_tube", Dmi("@lighting", "ltube", 0)),
+        ("light_bulb", Dmi("@lighting", "lbulb", 0)),
+        ("light_replacer", Dmi("@janitor", "lightreplacer", 0)),
+        // A cardboard box wearing its contents label, tg's
+        // `illustration` overlay (service_boxes.dm:114).
+        ("box_lights", DmiLayers([
+            ("@box", "box"),
+            ("@box", "lightmixed"),
+        ], 0)),
+        // Same shape as the screwdriver: coloured grips, steel jaws
+        // (wirecutters.json). tg colours these COLOR_RED.
+        ("wirecutters", DmiBlend(
+            dmi: "@tools",
+            layers: [("cutters", Over, true), ("cutters_cutty_thingy", Over, false)],
+            dir: 0,
+            paint: (255, 0, 0),
+        )),
+        ("coil", Dmi("@stack_objects", "coil", 0)),
+        ("beaker", Dmi("@chemical", "beaker", 0)),
+        ("ghost", Dmi("@ghost", "ghost_base", 0)),
+        ("solar", Dmi("@solar", "solar_panel_glass", 0)),
+        // The fan, by what it is actually doing. Blowing and siphoning
+        // are the two running loops (tg's `vent_[pump_direction ?
+        // "out" : "in"]`); the spin-up and spin-down are one-shots the
+        // machine plays on the power edges (vent_pump.dm's
+        // flick("vent_out-starting") / flick("vent_out-shutdown")).
+        ("vent_on", DmiAnim("@atmos_unary", "vent_out", 0)),
+        ("vent_siphon", DmiAnim("@atmos_unary", "vent_in", 0)),
+        ("vent_starting", DmiAnim("@atmos_unary", "vent_out-starting", 0)),
+        ("vent_shutdown", DmiAnim("@atmos_unary", "vent_out-shutdown", 0)),
+        ("vent_off", Dmi("@atmos_unary", "vent_off", 0)),
+        ("vent_passive", Dmi("@atmos_unary", "passive_vent", 0)),
+        // The connector port: tg's `portables_connector`, a pipe fitting
+        // that lies in the deck and is the ONLY thing a portable atmos
+        // device may fasten to. The two states are two of tg's own
+        // pictures, and the difference between them is the whole rule:
+        // `connector_map-3` is the socket with its stub running down
+        // into the pipe, and `connector` is the same socket with the
+        // stub gone — a fitting lying loose on the deck, joined to
+        // nothing, hosting nothing.
+        //
+        // The stub POINTS, so there are four of it. tg draws the same
+        // state at four dirs (`connector_map-3` is `dirs = 4`) and a
+        // unary atmos component's `initialize_directions` IS its dir
+        // (unary_devices.dm:14) — the socket joins the run on that one
+        // side and no other. DMI dir order is south, north, east, west.
+        ("connector_port_s", Dmi("@atmos_unary", "connector_map-3", 0)),
+        ("connector_port_n", Dmi("@atmos_unary", "connector_map-3", 1)),
+        ("connector_port_e", Dmi("@atmos_unary", "connector_map-3", 2)),
+        ("connector_port_w", Dmi("@atmos_unary", "connector_map-3", 3)),
+        // Unbolted it is an `/obj/item/pipe` like every other fitting, so
+        // it comes off pipe_item.dmi and not off the machine's own sheet
+        // (construction.dm:17,216 -- `pipe_state = "connector"`,
+        // portables_connector.dm:15). Both sheets carry a state called
+        // `connector` and they are NOT the same picture: the machine's is
+        // the bare socket, the item's is the socket with the little
+        // coupling nub the fitting is held by. Baking the machine's was a
+        // near miss that cost the item its nub.
+        ("connector_port_loose", Dmi("@pipe_item", "connector", 0)),
+        ("connector_port_loose_s", Dmi("@pipe_item", "connector", 0)),
+        ("connector_port_loose_n", Dmi("@pipe_item", "connector", 1)),
+        ("connector_port_loose_e", Dmi("@pipe_item", "connector", 2)),
+        ("connector_port_loose_w", Dmi("@pipe_item", "connector", 3)),
+    ],
+)

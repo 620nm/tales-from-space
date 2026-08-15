@@ -1,66 +1,72 @@
 // The toolbelt and what shows on it, and the third power line.
 //
 // One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
-// this directory is baked, in FILE-NAME order and then entry order,
+// this directory is baked, in FILE-NAME order and then expansion order,
 // so the atlas layout is a function of the manifest and not of the
 // filesystem. Two files claiming one sprite name is a bake error.
-[
-    // ---- the toolbelt and what shows on it ---------------------
-    // tg's /obj/item/storage/belt/utility: one icon_state,
-    // "utility", across the object sheet, the worn sheet and both
-    // inhand sheets.
-    ("toolbelt", Dmi("obj/clothing/belts.dmi", "utility", 0)),
-    ("worn_toolbelt_s", Dmi("mob/clothing/belt.dmi", "utility", 0)),
-    ("worn_toolbelt_n", Dmi("mob/clothing/belt.dmi", "utility", 1)),
-    ("worn_toolbelt_e", Dmi("mob/clothing/belt.dmi", "utility", 2)),
-    ("worn_toolbelt_w", Dmi("mob/clothing/belt.dmi", "utility", 3)),
-    ("held_toolbelt_l_s", Dmi("mob/inhands/equipment/belt_lefthand.dmi", "utility", 0)),
-    ("held_toolbelt_l_n", Dmi("mob/inhands/equipment/belt_lefthand.dmi", "utility", 1)),
-    ("held_toolbelt_l_e", Dmi("mob/inhands/equipment/belt_lefthand.dmi", "utility", 2)),
-    ("held_toolbelt_l_w", Dmi("mob/inhands/equipment/belt_lefthand.dmi", "utility", 3)),
-    ("held_toolbelt_r_s", Dmi("mob/inhands/equipment/belt_righthand.dmi", "utility", 0)),
-    ("held_toolbelt_r_n", Dmi("mob/inhands/equipment/belt_righthand.dmi", "utility", 1)),
-    ("held_toolbelt_r_e", Dmi("mob/inhands/equipment/belt_righthand.dmi", "utility", 2)),
-    ("held_toolbelt_r_w", Dmi("mob/inhands/equipment/belt_righthand.dmi", "utility", 3)),
-    // The content overlays themselves: tg's get_belt_overlay reads
-    // `inside_belt_icon_state || icon_state` out of this one sheet,
-    // which is why the welder and the cable coil have none — tg
-    // draws nothing for them either.
-    ("belt_screwdriver", Dmi("obj/clothing/belt_overlays.dmi", "screwdriver", 0)),
-    ("belt_wrench", Dmi("obj/clothing/belt_overlays.dmi", "wrench", 0)),
-    ("belt_crowbar", Dmi("obj/clothing/belt_overlays.dmi", "crowbar", 0)),
-    ("belt_cutters", Dmi("obj/clothing/belt_overlays.dmi", "cutters", 0)),
-    ("belt_multitool", Dmi("obj/clothing/belt_overlays.dmi", "multitool", 0)),
-    // The multitool the engineer's belt carries (tg belt.dm:125).
-    ("multitool", Dmi("obj/devices/tool.dmi", "multitool", 0)),
-    ("held_multitool_l_s", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "multitool", 0)),
-    ("held_multitool_l_n", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "multitool", 1)),
-    ("held_multitool_l_e", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "multitool", 2)),
-    ("held_multitool_l_w", Dmi("mob/inhands/equipment/tools_lefthand.dmi", "multitool", 3)),
-    ("held_multitool_r_s", Dmi("mob/inhands/equipment/tools_righthand.dmi", "multitool", 0)),
-    ("held_multitool_r_n", Dmi("mob/inhands/equipment/tools_righthand.dmi", "multitool", 1)),
-    ("held_multitool_r_e", Dmi("mob/inhands/equipment/tools_righthand.dmi", "multitool", 2)),
-    ("held_multitool_r_w", Dmi("mob/inhands/equipment/tools_righthand.dmi", "multitool", 3)),
-    // The third power line, blue. tg draws it from the `l4-` states
-    // (cable.dm:43-48 -- /obj/structure/cable/layer3 wears
-    // `icon_state = "l4-1-2-4-8-node"`), because the DMI's rows are
-    // pixel offsets and not layer numbers. The tint is
-    // CABLE_HEX_COLOR_BLUE = COLOR_STRONG_BLUE = #1919c8
-    // (__DEFINES/colors.dm:32,404).
-    ("cable_l3_none", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-noconnection", 0), (25, 25, 200))),
-    ("cable_l3_1", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-1", 0), (25, 25, 200))),
-    ("cable_l3_2", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-2", 0), (25, 25, 200))),
-    ("cable_l3_3", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-1-2", 0), (25, 25, 200))),
-    ("cable_l3_4", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-4", 0), (25, 25, 200))),
-    ("cable_l3_5", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-1-4", 0), (25, 25, 200))),
-    ("cable_l3_6", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-2-4", 0), (25, 25, 200))),
-    ("cable_l3_7", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-1-2-4", 0), (25, 25, 200))),
-    ("cable_l3_8", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-8", 0), (25, 25, 200))),
-    ("cable_l3_9", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-1-8", 0), (25, 25, 200))),
-    ("cable_l3_10", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-2-8", 0), (25, 25, 200))),
-    ("cable_l3_11", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-1-2-8", 0), (25, 25, 200))),
-    ("cable_l3_12", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-4-8", 0), (25, 25, 200))),
-    ("cable_l3_13", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-1-4-8", 0), (25, 25, 200))),
-    ("cable_l3_14", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-2-4-8", 0), (25, 25, 200))),
-    ("cable_l3_15", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l4-1-2-4-8", 0), (25, 25, 200))),
-]
+(
+    sheets: [
+        ("worn_belt", "mob/clothing/belt.dmi"),
+        ("belt_l", "mob/inhands/equipment/belt_lefthand.dmi"),
+        ("belt_r", "mob/inhands/equipment/belt_righthand.dmi"),
+        ("tools_l", "mob/inhands/equipment/tools_lefthand.dmi"),
+        ("tools_r", "mob/inhands/equipment/tools_righthand.dmi"),
+        ("belt_overlays", "obj/clothing/belt_overlays.dmi"),
+        ("belts", "obj/clothing/belts.dmi"),
+        ("device_tool", "obj/devices/tool.dmi"),
+        ("cable", "obj/pipes_n_cables/layer_cable.dmi"),
+    ],
+    groups: [
+        // tg's /obj/item/storage/belt/utility: one icon_state,
+        // "utility", across the object sheet, the worn sheet and both
+        // inhand sheets. Hand bases stay literal; only the directions
+        // already completed by the client are generated.
+        (sheet: "belts", sprites: [Sprite("toolbelt", "utility", s)]),
+        (sheet: "worn_belt", sprites: [Directions("worn_toolbelt", "utility")]),
+        (sheet: "belt_l", sprites: [Directions("held_toolbelt_l", "utility")]),
+        (sheet: "belt_r", sprites: [Directions("held_toolbelt_r", "utility")]),
+
+        // The content overlays themselves: tg's get_belt_overlay reads
+        // `inside_belt_icon_state || icon_state` out of this one sheet,
+        // which is why the welder and the cable coil have none — tg
+        // draws nothing for them either.
+        (sheet: "belt_overlays", sprites: [
+            Sprite("belt_screwdriver", "screwdriver", s),
+            Sprite("belt_wrench", "wrench", s),
+            Sprite("belt_crowbar", "crowbar", s),
+            Sprite("belt_cutters", "cutters", s),
+            Sprite("belt_multitool", "multitool", s),
+        ]),
+
+        // The multitool the engineer's belt carries (tg belt.dm:125).
+        (sheet: "device_tool", sprites: [Sprite("multitool", "multitool", s)]),
+        (sheet: "tools_l", sprites: [Directions("held_multitool_l", "multitool")]),
+        (sheet: "tools_r", sprites: [Directions("held_multitool_r", "multitool")]),
+
+        // The third power line, blue. tg draws it from the `l4-` states
+        // (cable.dm:43-48 -- /obj/structure/cable/layer3 wears
+        // `icon_state = "l4-1-2-4-8-node"`), because the DMI's rows are
+        // pixel offsets and not layer numbers. The tint is
+        // CABLE_HEX_COLOR_BLUE = COLOR_STRONG_BLUE = #1919c8
+        // (__DEFINES/colors.dm:32,404). Names and frozen states remain
+        // literal: this is not a content-specific series generator.
+        (sheet: "cable", tint: Some((25, 25, 200)), sprites: [
+            Sprite("cable_l3_none", "l4-noconnection", s),
+            Sprite("cable_l3_1", "l4-1", s),
+            Sprite("cable_l3_2", "l4-2", s),
+            Sprite("cable_l3_3", "l4-1-2", s),
+            Sprite("cable_l3_4", "l4-4", s),
+            Sprite("cable_l3_5", "l4-1-4", s),
+            Sprite("cable_l3_6", "l4-2-4", s),
+            Sprite("cable_l3_7", "l4-1-2-4", s),
+            Sprite("cable_l3_8", "l4-8", s),
+            Sprite("cable_l3_9", "l4-1-8", s),
+            Sprite("cable_l3_10", "l4-2-8", s),
+            Sprite("cable_l3_11", "l4-1-2-8", s),
+            Sprite("cable_l3_12", "l4-4-8", s),
+            Sprite("cable_l3_13", "l4-1-4-8", s),
+            Sprite("cable_l3_14", "l4-2-4-8", s),
+            Sprite("cable_l3_15", "l4-1-2-4-8", s),
+        ]),
+    ],
+)

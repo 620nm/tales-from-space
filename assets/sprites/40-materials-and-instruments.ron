@@ -5,97 +5,116 @@
 // this directory is baked, in FILE-NAME order and then entry order,
 // so the atlas layout is a function of the manifest and not of the
 // filesystem. Two files claiming one sprite name is a bake error.
-[
-    // Glass, its reinforced form, and the rods a grille is woven
-    // from. The window states come from tg's SMOOTHED sheet at
-    // variant 0 -- the isolated pane, which is the one that reads
-    // correctly when nothing adjoins it. We do not smooth yet.
-    ("glass", Dmi("obj/stack_objects.dmi", "sheet-glass", 0)),
-    ("rglass", Dmi("obj/stack_objects.dmi", "sheet-rglass", 0)),
-    ("rods", Dmi("obj/stack_objects.dmi", "rods", 0)),
-    ("grille", Dmi("obj/structures.dmi", "grille", 0)),
-    ("window", Dmi("obj/smooth_structures/window.dmi", "window-0", 0)),
-    ("rwindow", Dmi("obj/smooth_structures/reinforced_window.dmi", "reinforced_window-0", 0)),
-    ("held_glass_l_s", Dmi("mob/inhands/items/sheets_lefthand.dmi", "sheet-glass", 0)),
-    ("held_glass_l_n", Dmi("mob/inhands/items/sheets_lefthand.dmi", "sheet-glass", 1)),
-    ("held_glass_l_e", Dmi("mob/inhands/items/sheets_lefthand.dmi", "sheet-glass", 2)),
-    ("held_glass_l_w", Dmi("mob/inhands/items/sheets_lefthand.dmi", "sheet-glass", 3)),
-    ("held_rglass_l_s", Dmi("mob/inhands/items/sheets_lefthand.dmi", "sheet-rglass", 0)),
-    ("held_rglass_l_n", Dmi("mob/inhands/items/sheets_lefthand.dmi", "sheet-rglass", 1)),
-    ("held_rglass_l_e", Dmi("mob/inhands/items/sheets_lefthand.dmi", "sheet-rglass", 2)),
-    ("held_rglass_l_w", Dmi("mob/inhands/items/sheets_lefthand.dmi", "sheet-rglass", 3)),
-    ("held_rods_l_s", Dmi("mob/inhands/items_lefthand.dmi", "rods", 0)),
-    ("held_rods_l_n", Dmi("mob/inhands/items_lefthand.dmi", "rods", 1)),
-    ("held_rods_l_e", Dmi("mob/inhands/items_lefthand.dmi", "rods", 2)),
-    ("held_rods_l_w", Dmi("mob/inhands/items_lefthand.dmi", "rods", 3)),
-    ("held_glass_r_s", Dmi("mob/inhands/items/sheets_righthand.dmi", "sheet-glass", 0)),
-    ("held_glass_r_n", Dmi("mob/inhands/items/sheets_righthand.dmi", "sheet-glass", 1)),
-    ("held_glass_r_e", Dmi("mob/inhands/items/sheets_righthand.dmi", "sheet-glass", 2)),
-    ("held_glass_r_w", Dmi("mob/inhands/items/sheets_righthand.dmi", "sheet-glass", 3)),
-    ("held_rglass_r_s", Dmi("mob/inhands/items/sheets_righthand.dmi", "sheet-rglass", 0)),
-    ("held_rglass_r_n", Dmi("mob/inhands/items/sheets_righthand.dmi", "sheet-rglass", 1)),
-    ("held_rglass_r_e", Dmi("mob/inhands/items/sheets_righthand.dmi", "sheet-rglass", 2)),
-    ("held_rglass_r_w", Dmi("mob/inhands/items/sheets_righthand.dmi", "sheet-rglass", 3)),
-    ("held_rods_r_s", Dmi("mob/inhands/items_righthand.dmi", "rods", 0)),
-    ("held_rods_r_n", Dmi("mob/inhands/items_righthand.dmi", "rods", 1)),
-    ("held_rods_r_e", Dmi("mob/inhands/items_righthand.dmi", "rods", 2)),
-    ("held_rods_r_w", Dmi("mob/inhands/items_righthand.dmi", "rods", 3)),
-    ("pipe", Dmi("obj/pipes_n_cables/pipe_item.dmi", "simple", 0)),
-    // The atmospherics technician's hand instruments. tg's painter
-    // is a relabelled label gun off the bureaucracy sheet
-    // (pipe_painter.dm:5-6), drawn exactly as tg draws it.
-    ("pipe_painter", Dmi("obj/service/bureaucracy.dmi", "labeler1", 0)),
-    // The rapid pipe dispenser, off tg's tool sheet
-    // (`icon_state = "rpd"`, RPD.dm:26).
-    ("rpd", Dmi("obj/tools.dmi", "rpd", 0)),
-    // ...and the stationary one it is the handheld answer to: tg's
-    // `/obj/machinery/pipedispenser` wears the lathe sheet's
-    // `pipe_d` (pipe_dispenser.dm:7-8).
-    ("pipe_dispenser", Dmi("obj/machines/lathes.dmi", "pipe_d", 0)),
-    // tg's analyzer idles through an eight-frame screen blink
-    // (scanner.dmi, `delay = 10,1,1,1,1,1,1,1`). Baked as the still
-    // it rests on: eight atlas cells for a device that spends the
-    // shift in a pocket is not a trade worth making.
-    ("analyzer", Dmi("obj/devices/scanner.dmi", "analyzer", 0)),
-    // The pipe meter, in the two halves tg's greyscale config
-    // composes it from (datums/greyscale/json_configs/meter.json):
-    // an untinted housing, and a needle the machine paints by
-    // temperature. Twenty needle positions is tg's own dial — the
-    // art is drawn for the pressures a station runs at, so the low
-    // scale gets half the stops.
-    ("pipe_meter", Dmi("obj/pipes_n_cables/pipe_item.dmi", "meter", 0)),
-    ("pipe_meter_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "meter", 0)),
-    ("pipe_meter_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "meter", 0)),
-    ("pipe_meter_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "meter", 0)),
-    ("pipe_meter_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "meter", 0)),
-    ("meter_base", Dmi("obj/pipes_n_cables/meter.dmi", "meter_base", 0)),
-    ("meter_off", Dmi("obj/pipes_n_cables/meter.dmi", "pressure_off", 0)),
-    ("meter_p0", Dmi("obj/pipes_n_cables/meter.dmi", "pressure0", 0)),
-    ("meter_p1_1", Dmi("obj/pipes_n_cables/meter.dmi", "pressure1_1", 0)),
-    ("meter_p1_2", Dmi("obj/pipes_n_cables/meter.dmi", "pressure1_2", 0)),
-    ("meter_p1_3", Dmi("obj/pipes_n_cables/meter.dmi", "pressure1_3", 0)),
-    ("meter_p1_4", Dmi("obj/pipes_n_cables/meter.dmi", "pressure1_4", 0)),
-    ("meter_p1_5", Dmi("obj/pipes_n_cables/meter.dmi", "pressure1_5", 0)),
-    ("meter_p1_6", Dmi("obj/pipes_n_cables/meter.dmi", "pressure1_6", 0)),
-    ("meter_p2_1", Dmi("obj/pipes_n_cables/meter.dmi", "pressure2_1", 0)),
-    ("meter_p2_2", Dmi("obj/pipes_n_cables/meter.dmi", "pressure2_2", 0)),
-    ("meter_p2_3", Dmi("obj/pipes_n_cables/meter.dmi", "pressure2_3", 0)),
-    ("meter_p2_4", Dmi("obj/pipes_n_cables/meter.dmi", "pressure2_4", 0)),
-    ("meter_p2_5", Dmi("obj/pipes_n_cables/meter.dmi", "pressure2_5", 0)),
-    ("meter_p2_6", Dmi("obj/pipes_n_cables/meter.dmi", "pressure2_6", 0)),
-    ("meter_p3_1", Dmi("obj/pipes_n_cables/meter.dmi", "pressure3_1", 0)),
-    ("meter_p3_2", Dmi("obj/pipes_n_cables/meter.dmi", "pressure3_2", 0)),
-    ("meter_p3_3", Dmi("obj/pipes_n_cables/meter.dmi", "pressure3_3", 0)),
-    ("meter_p3_4", Dmi("obj/pipes_n_cables/meter.dmi", "pressure3_4", 0)),
-    ("meter_p3_5", Dmi("obj/pipes_n_cables/meter.dmi", "pressure3_5", 0)),
-    ("meter_p3_6", Dmi("obj/pipes_n_cables/meter.dmi", "pressure3_6", 0)),
-    ("meter_p4", Dmi("obj/pipes_n_cables/meter.dmi", "pressure4", 0)),
-    ("held_pipe_l_s", Dmi("mob/inhands/items_lefthand.dmi", "buildpipe", 0)),
-    ("held_pipe_l_n", Dmi("mob/inhands/items_lefthand.dmi", "buildpipe", 1)),
-    ("held_pipe_l_e", Dmi("mob/inhands/items_lefthand.dmi", "buildpipe", 2)),
-    ("held_pipe_l_w", Dmi("mob/inhands/items_lefthand.dmi", "buildpipe", 3)),
-    ("held_pipe_r_s", Dmi("mob/inhands/items_righthand.dmi", "buildpipe", 0)),
-    ("held_pipe_r_n", Dmi("mob/inhands/items_righthand.dmi", "buildpipe", 1)),
-    ("held_pipe_r_e", Dmi("mob/inhands/items_righthand.dmi", "buildpipe", 2)),
-    ("held_pipe_r_w", Dmi("mob/inhands/items_righthand.dmi", "buildpipe", 3)),
-]
+(
+    // Sheet aliases are local to this family; @names below resolve here.
+    sheets: [
+        ("sheets_l", "mob/inhands/items/sheets_lefthand.dmi"),
+        ("sheets_r", "mob/inhands/items/sheets_righthand.dmi"),
+        ("items_l", "mob/inhands/items_lefthand.dmi"),
+        ("items_r", "mob/inhands/items_righthand.dmi"),
+        ("scanner", "obj/devices/scanner.dmi"),
+        ("lathes", "obj/machines/lathes.dmi"),
+        ("meter", "obj/pipes_n_cables/meter.dmi"),
+        ("pipe_item", "obj/pipes_n_cables/pipe_item.dmi"),
+        ("bureaucracy", "obj/service/bureaucracy.dmi"),
+        ("reinforced_window", "obj/smooth_structures/reinforced_window.dmi"),
+        ("window", "obj/smooth_structures/window.dmi"),
+        ("stack_objects", "obj/stack_objects.dmi"),
+        ("structures", "obj/structures.dmi"),
+        ("tools", "obj/tools.dmi"),
+    ],
+    sprites: [
+        // Glass, its reinforced form, and the rods a grille is woven
+        // from. The window states come from tg's SMOOTHED sheet at
+        // variant 0 -- the isolated pane, which is the one that reads
+        // correctly when nothing adjoins it. We do not smooth yet.
+        ("glass", Dmi("@stack_objects", "sheet-glass", 0)),
+        ("rglass", Dmi("@stack_objects", "sheet-rglass", 0)),
+        ("rods", Dmi("@stack_objects", "rods", 0)),
+        ("grille", Dmi("@structures", "grille", 0)),
+        ("window", Dmi("@window", "window-0", 0)),
+        ("rwindow", Dmi("@reinforced_window", "reinforced_window-0", 0)),
+        ("held_glass_l_s", Dmi("@sheets_l", "sheet-glass", 0)),
+        ("held_glass_l_n", Dmi("@sheets_l", "sheet-glass", 1)),
+        ("held_glass_l_e", Dmi("@sheets_l", "sheet-glass", 2)),
+        ("held_glass_l_w", Dmi("@sheets_l", "sheet-glass", 3)),
+        ("held_rglass_l_s", Dmi("@sheets_l", "sheet-rglass", 0)),
+        ("held_rglass_l_n", Dmi("@sheets_l", "sheet-rglass", 1)),
+        ("held_rglass_l_e", Dmi("@sheets_l", "sheet-rglass", 2)),
+        ("held_rglass_l_w", Dmi("@sheets_l", "sheet-rglass", 3)),
+        ("held_rods_l_s", Dmi("@items_l", "rods", 0)),
+        ("held_rods_l_n", Dmi("@items_l", "rods", 1)),
+        ("held_rods_l_e", Dmi("@items_l", "rods", 2)),
+        ("held_rods_l_w", Dmi("@items_l", "rods", 3)),
+        ("held_glass_r_s", Dmi("@sheets_r", "sheet-glass", 0)),
+        ("held_glass_r_n", Dmi("@sheets_r", "sheet-glass", 1)),
+        ("held_glass_r_e", Dmi("@sheets_r", "sheet-glass", 2)),
+        ("held_glass_r_w", Dmi("@sheets_r", "sheet-glass", 3)),
+        ("held_rglass_r_s", Dmi("@sheets_r", "sheet-rglass", 0)),
+        ("held_rglass_r_n", Dmi("@sheets_r", "sheet-rglass", 1)),
+        ("held_rglass_r_e", Dmi("@sheets_r", "sheet-rglass", 2)),
+        ("held_rglass_r_w", Dmi("@sheets_r", "sheet-rglass", 3)),
+        ("held_rods_r_s", Dmi("@items_r", "rods", 0)),
+        ("held_rods_r_n", Dmi("@items_r", "rods", 1)),
+        ("held_rods_r_e", Dmi("@items_r", "rods", 2)),
+        ("held_rods_r_w", Dmi("@items_r", "rods", 3)),
+        ("pipe", Dmi("@pipe_item", "simple", 0)),
+        // The atmospherics technician's hand instruments. tg's painter
+        // is a relabelled label gun off the bureaucracy sheet
+        // (pipe_painter.dm:5-6), drawn exactly as tg draws it.
+        ("pipe_painter", Dmi("@bureaucracy", "labeler1", 0)),
+        // The rapid pipe dispenser, off tg's tool sheet
+        // (`icon_state = "rpd"`, RPD.dm:26).
+        ("rpd", Dmi("@tools", "rpd", 0)),
+        // ...and the stationary one it is the handheld answer to: tg's
+        // `/obj/machinery/pipedispenser` wears the lathe sheet's
+        // `pipe_d` (pipe_dispenser.dm:7-8).
+        ("pipe_dispenser", Dmi("@lathes", "pipe_d", 0)),
+        // tg's analyzer idles through an eight-frame screen blink
+        // (scanner.dmi, `delay = 10,1,1,1,1,1,1,1`). Baked as the still
+        // it rests on: eight atlas cells for a device that spends the
+        // shift in a pocket is not a trade worth making.
+        ("analyzer", Dmi("@scanner", "analyzer", 0)),
+        // The pipe meter, in the two halves tg's greyscale config
+        // composes it from (datums/greyscale/json_configs/meter.json):
+        // an untinted housing, and a needle the machine paints by
+        // temperature. Twenty needle positions is tg's own dial — the
+        // art is drawn for the pressures a station runs at, so the low
+        // scale gets half the stops.
+        ("pipe_meter", Dmi("@pipe_item", "meter", 0)),
+        ("pipe_meter_s", Dmi("@pipe_item", "meter", 0)),
+        ("pipe_meter_n", Dmi("@pipe_item", "meter", 0)),
+        ("pipe_meter_e", Dmi("@pipe_item", "meter", 0)),
+        ("pipe_meter_w", Dmi("@pipe_item", "meter", 0)),
+        ("meter_base", Dmi("@meter", "meter_base", 0)),
+        ("meter_off", Dmi("@meter", "pressure_off", 0)),
+        ("meter_p0", Dmi("@meter", "pressure0", 0)),
+        ("meter_p1_1", Dmi("@meter", "pressure1_1", 0)),
+        ("meter_p1_2", Dmi("@meter", "pressure1_2", 0)),
+        ("meter_p1_3", Dmi("@meter", "pressure1_3", 0)),
+        ("meter_p1_4", Dmi("@meter", "pressure1_4", 0)),
+        ("meter_p1_5", Dmi("@meter", "pressure1_5", 0)),
+        ("meter_p1_6", Dmi("@meter", "pressure1_6", 0)),
+        ("meter_p2_1", Dmi("@meter", "pressure2_1", 0)),
+        ("meter_p2_2", Dmi("@meter", "pressure2_2", 0)),
+        ("meter_p2_3", Dmi("@meter", "pressure2_3", 0)),
+        ("meter_p2_4", Dmi("@meter", "pressure2_4", 0)),
+        ("meter_p2_5", Dmi("@meter", "pressure2_5", 0)),
+        ("meter_p2_6", Dmi("@meter", "pressure2_6", 0)),
+        ("meter_p3_1", Dmi("@meter", "pressure3_1", 0)),
+        ("meter_p3_2", Dmi("@meter", "pressure3_2", 0)),
+        ("meter_p3_3", Dmi("@meter", "pressure3_3", 0)),
+        ("meter_p3_4", Dmi("@meter", "pressure3_4", 0)),
+        ("meter_p3_5", Dmi("@meter", "pressure3_5", 0)),
+        ("meter_p3_6", Dmi("@meter", "pressure3_6", 0)),
+        ("meter_p4", Dmi("@meter", "pressure4", 0)),
+        ("held_pipe_l_s", Dmi("@items_l", "buildpipe", 0)),
+        ("held_pipe_l_n", Dmi("@items_l", "buildpipe", 1)),
+        ("held_pipe_l_e", Dmi("@items_l", "buildpipe", 2)),
+        ("held_pipe_l_w", Dmi("@items_l", "buildpipe", 3)),
+        ("held_pipe_r_s", Dmi("@items_r", "buildpipe", 0)),
+        ("held_pipe_r_n", Dmi("@items_r", "buildpipe", 1)),
+        ("held_pipe_r_e", Dmi("@items_r", "buildpipe", 2)),
+        ("held_pipe_r_w", Dmi("@items_r", "buildpipe", 3)),
+    ],
+)
