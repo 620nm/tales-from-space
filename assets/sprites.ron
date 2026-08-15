@@ -554,6 +554,130 @@
         // either.
         ("filter_fitting", Dmi("obj/pipes_n_cables/pipe_item.dmi", "filter", 0)),
         ("mixer_fitting", Dmi("obj/pipes_n_cables/pipe_item.dmi", "mixer", 0)),
+
+        // ---- the flow devices (feat/atmos-flow) --------------------------
+        //
+        // The rest of tg's binary roster: the volumetric pump, the
+        // passive gate, the pressure valve, and the manual valve's
+        // digital twin. Same recipe as the two above -- one
+        // `pipe_intact` half-pipe per NODE direction, then the device
+        // body at its facing (components_base.dm:87-98), `-1` being
+        // tg's overlay offset for piping layers 1, 3 and 5.
+        //
+        // TWO pictures each, not four. A binary device reaches along one
+        // AXIS (`PIPING_CARDINAL_AUTONORMALIZE`), so north and south are
+        // the same picture and east and west are the other; the valve
+        // and pump above bake four names for those two pictures, which
+        // is two atlas cells apiece nobody looks at. These name the
+        // AXIS instead and let `facing_sprites` point two directions at
+        // one name, which is the same art and half the atlas.
+        //
+        // DMI dirs: 0 south, 1 north, 2 east, 3 west.
+        ("volpump_off_ns", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+            ("obj/machines/atmospherics/binary_devices.dmi", "volpump_off-1", 1),
+        ])),
+        ("volpump_off_ew", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+            ("obj/machines/atmospherics/binary_devices.dmi", "volpump_off-1", 2),
+        ])),
+        // tg's running body is a ten-frame loop; its first frame is
+        // baked, so a running pump reads by its lit indicators rather
+        // than by moving. The loop is a follow-up, not a correction.
+        ("volpump_on_ns", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+            ("obj/machines/atmospherics/binary_devices.dmi", "volpump_on-1", 1),
+        ])),
+        ("volpump_on_ew", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+            ("obj/machines/atmospherics/binary_devices.dmi", "volpump_on-1", 2),
+        ])),
+        ("passgate_off_ns", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+            ("obj/machines/atmospherics/binary_devices.dmi", "passgate_off-1", 1),
+        ])),
+        ("passgate_off_ew", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+            ("obj/machines/atmospherics/binary_devices.dmi", "passgate_off-1", 2),
+        ])),
+        ("passgate_on_ns", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+            ("obj/machines/atmospherics/binary_devices.dmi", "passgate_on-1", 1),
+        ])),
+        ("passgate_on_ew", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+            ("obj/machines/atmospherics/binary_devices.dmi", "passgate_on-1", 2),
+        ])),
+        // The pressure valve ships a third picture, `pvalve_flow`, for
+        // the pass in which gas is actually crossing. Not baked: a
+        // machine's picture comes from its assembly STATE, and "armed"
+        // and "armed and flowing right now" are one state with a
+        // per-tick fact on top of it. That wants a per-instance overlay
+        // the position machinery does not express yet -- see the same
+        // note on the volume pump's overclock light.
+        ("pvalve_off_ns", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pvalve_off-1", 1),
+        ])),
+        ("pvalve_off_ew", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pvalve_off-1", 2),
+        ])),
+        ("pvalve_on_ns", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pvalve_on-1", 1),
+        ])),
+        ("pvalve_on_ew", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pvalve_on-1", 2),
+        ])),
+        // The digital valve: tg's own second valve_type, drawn from the
+        // `d`-prefixed half of the same sheet (valve.dm:78-83).
+        ("dvalve_shut_ns", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+            ("obj/machines/atmospherics/binary_devices.dmi", "dvalve_off-1", 1),
+        ])),
+        ("dvalve_shut_ew", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+            ("obj/machines/atmospherics/binary_devices.dmi", "dvalve_off-1", 2),
+        ])),
+        ("dvalve_open_ns", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+            ("obj/machines/atmospherics/binary_devices.dmi", "dvalve_on-1", 1),
+        ])),
+        ("dvalve_open_ew", DmiCells([
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+            ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+            ("obj/machines/atmospherics/binary_devices.dmi", "dvalve_on-1", 2),
+        ])),
+        // The fittings these are raised from, and yield back. tg draws
+        // every one of them off ONE sheet: `/obj/item/pipe` is
+        // `pipe_item.dmi` and its icon_state is the machine's own
+        // `pipe_state` (construction.dm:17,216) -- so a fitting in your
+        // hands is the machine with no run drawn under it, which is the
+        // honest picture of a thing joined to nothing.
+        ("manual_valve_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "mvalve", 0)),
+        ("digital_valve_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "dvalve", 0)),
+        ("gas_pump_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "pump", 0)),
+        ("volume_pump_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "volumepump", 0)),
+        ("passive_gate_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "passivegate", 0)),
+        ("pressure_valve_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "pvalve", 0)),
+        // ---- end of the flow devices -------------------------------------
         // A gas canister: tg's art is greyscale and each gas type paints
         // it (greyscale_colors "#c6c0b5" is pre-mixed air). Baked with
         // that colour for now; it moves to per-object paint when the
