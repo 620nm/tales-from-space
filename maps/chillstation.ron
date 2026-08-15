@@ -94,7 +94,7 @@
         "              #_____________# ",
         "              #_____________# ",
         "      s s s s #_____________# ",
-        "              #_______C_C___# ",
+        "              #_________C___# ",
         "              #_____________# ",
         "              #_____________# ",
         "              #__________O__# ",
@@ -191,7 +191,6 @@
         // filter fills with what it pulls out.
         (16, 13, "connector_port"),
         (18, 13, "connector_port"),
-        (22, 17, "connector_port"),
         (24, 17, "connector_port"),
         // THE PROCESS LINE, west to east. Everything the department
         // does to gas happens along one row of deck: separate, blend,
@@ -207,7 +206,7 @@
         // its side mouth. Oxygen first, then carbon dioxide; what
         // survives both is the nitrogen the mixer blends back.
         (20, 14, "gas_filter_n2", "running"),
-        (22, 14, "gas_filter", "running"),
+        (22, 14, "gas_filter_co2", "running"),
         (24, 14, "gas_mixer_airmix", "running"),
         (26, 14, "gas_pump", "running"),
         // Two gauges, either side of the machines that change the gas
@@ -245,11 +244,16 @@
         (15, 15, "color_adapter"),
         // ISOLATION. tg puts a hand valve wherever a technician
         // needs to cut a leg out without stopping the station: one
-        // on the supply where it leaves the department, one on the
-        // scrubbers return coming in. The manual valve is the wheel
-        // you turn in the dark; the digital one answers its panel.
-        (17, 19, "manual_valve", "shut"),
-        (24, 20, "digital_valve", "shut"),
+        // on the green feed that charges the oxygen and nitrogen
+        // chambers, one on the orange line the carbon dioxide filter
+        // sends its catch down. Either can be shut without stopping the
+        // station, which is the whole point of putting them there. The
+        // manual valve is the wheel you turn in the dark; the digital
+        // one answers its panel and needs the lights on. Both ship OPEN,
+        // because a commissioned station's valves are: an isolation
+        // point is a thing you CAN shut, not a thing that starts shut.
+        (15, 19, "manual_valve", "open"),
+        (22, 19, "digital_valve", "open"),
         // Bottled oxygen off the first filter's side mouth.
         (20, 17, "connector_port"),
         // The scrubber that makes it a LOOP rather than a supply: it
@@ -378,6 +382,8 @@
         (19, 23, 2),
         (19, 24, 2),
         (19, 25, 2),
+        (22, 19, 2),
+        (22, 18, 2),
         (16, 24, 2),
         (17, 24, 2),
         (18, 24, 2),
@@ -440,6 +446,16 @@
         (27, 14, 4, "#00FFFF"),
         (16, 13, 4, "#00FFFF"),
         (18, 13, 4, "#00FFFF"),
+        (22, 15, 4, "#FF9900"),
+        (22, 16, 4, "#FF9900"),
+        (22, 17, 4, "#FF9900"),
+        (22, 18, 4, "#FF9900"),
+        (22, 20, 4, "#FF9900"),
+        (22, 21, 4, "#FF9900"),
+        (22, 22, 4, "#FF9900"),
+        (23, 22, 4, "#FF9900"),
+        (23, 23, 4, "#FF9900"),
+        (23, 24, 4, "#FF9900"),
         // The storage loop's two liveries, tg's own names for them
         // (`GLOB.pipe_paint_colors`): green feeds the chambers,
         // yellow draws from them. Same layer, adjacent runs, two
@@ -450,17 +466,11 @@
         (17, 23, 4, "#00FF00"),
         (18, 23, 4, "#00FF00"),
         (19, 23, 4, "#00FF00"),
-        (20, 23, 4, "#00FF00"),
-        (21, 23, 4, "#00FF00"),
-        (22, 23, 4, "#00FF00"),
-        (23, 23, 4, "#00FF00"),
         (15, 24, 4, "#00FF00"),
         (19, 24, 4, "#00FF00"),
-        (23, 24, 4, "#00FF00"),
         (15, 22, 4, "#00FF00"),
         (15, 21, 4, "#00FF00"),
         (15, 20, 4, "#00FF00"),
-        (15, 19, 4, "#00FF00"),
         (15, 18, 4, "#00FF00"),
         (15, 17, 4, "#00FF00"),
         (15, 16, 4, "#00FF00"),
@@ -577,9 +587,6 @@
         (27, 14, 4),
         (16, 13, 4),
         (18, 13, 4),
-        (22, 15, 4),
-        (22, 16, 4),
-        (22, 17, 4),
         (24, 15, 4),
         (24, 17, 4),
         (19, 15, 4),
@@ -591,6 +598,21 @@
         (20, 15, 4),
         (20, 16, 4),
         (20, 17, 4),
+        // The CO2 chamber's own feed, in engineering orange, fed by
+        // the filter that catches it and by nothing else. This is
+        // the line that makes the loop a LOOP: what a scrubber takes
+        // out of a corridor ends up in the tank labelled for it,
+        // rather than in a bottle somebody has to carry.
+        (22, 15, 4),
+        (22, 16, 4),
+        (22, 17, 4),
+        (22, 18, 4),
+        (22, 20, 4),
+        (22, 21, 4),
+        (22, 22, 4),
+        (23, 22, 4),
+        (23, 23, 4),
+        (23, 24, 4),
         // THE STORAGE LOOP, layer 3 and separated from the process
         // line by COLOUR rather than by layer -- which is what tg does
         // inside a department, and what the paint rules were built for.
@@ -603,17 +625,11 @@
         (17, 23, 4),
         (18, 23, 4),
         (19, 23, 4),
-        (20, 23, 4),
-        (21, 23, 4),
-        (22, 23, 4),
-        (23, 23, 4),
         (15, 24, 4),
         (19, 24, 4),
-        (23, 24, 4),
         (15, 22, 4),
         (15, 21, 4),
         (15, 20, 4),
-        (15, 19, 4),
         (15, 18, 4),
         (15, 17, 4),
         (15, 16, 4),
