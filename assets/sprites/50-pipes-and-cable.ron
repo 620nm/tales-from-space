@@ -97,6 +97,106 @@
     ("pipe_l5_13", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "13_5", 0)),
     ("pipe_l5_14", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "14_5", 0)),
     ("pipe_l5_15", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "15_5", 0)),
+    // THE CONNECTION STUBS a machine standing in a run wears, and the
+    // reason its picture is no longer frozen at bake time.
+    //
+    // tg draws every atmospherics component BARE and then underlays
+    // one of these per mouth, per instance
+    // (`/obj/machinery/atmospherics/components/update_icon()`,
+    // components_base.dm:68-111): `intact_[node_dir]_[layer]` where
+    // that mouth actually found a neighbour, `exposed_[direction]_
+    // [layer]` where it reaches and found nothing. Which is why a tg
+    // filter meets the run on both sides of it and a tg pump with one
+    // end unplumbed shows a capped stub there -- neither of which a
+    // baked-in half-pipe can say, because a baked cell cannot know
+    // what is next door.
+    //
+    // Forty cells: two kinds x the four cardinals x tg's five piping
+    // layers. tg names them `<kind>_<dir bit>_<layer>` and the bits
+    // are BYOND's (1 N, 2 S, 4 E, 8 W); the names here put the family
+    // first and the layer before the direction, which is the order
+    // `pipe_l3_5` above already reads in. The layer is baked into the
+    // ART rather than applied as a shift: tg's sheet ships each stub
+    // pre-offset per layer, so `pipe_intact_l2_1` lines up with
+    // `pipe_l2_*` exactly and a stub meets the run it points at with
+    // no seam. Greyscale for the same reason the run is -- the engine
+    // paints each stub with the colour of the run it reaches, tg's
+    // `pipe_appearance.color = node.pipe_color`.
+    ("pipe_intact_l1_1", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_1_1", 0)),
+    ("pipe_intact_l1_2", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_2_1", 0)),
+    ("pipe_intact_l1_4", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_4_1", 0)),
+    ("pipe_intact_l1_8", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_8_1", 0)),
+    ("pipe_intact_l2_1", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_1_2", 0)),
+    ("pipe_intact_l2_2", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_2_2", 0)),
+    ("pipe_intact_l2_4", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_4_2", 0)),
+    ("pipe_intact_l2_8", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_8_2", 0)),
+    ("pipe_intact_l3_1", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_1_3", 0)),
+    ("pipe_intact_l3_2", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_2_3", 0)),
+    ("pipe_intact_l3_4", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_4_3", 0)),
+    ("pipe_intact_l3_8", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_8_3", 0)),
+    ("pipe_intact_l4_1", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_1_4", 0)),
+    ("pipe_intact_l4_2", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_2_4", 0)),
+    ("pipe_intact_l4_4", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_4_4", 0)),
+    ("pipe_intact_l4_8", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_8_4", 0)),
+    ("pipe_intact_l5_1", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_1_5", 0)),
+    ("pipe_intact_l5_2", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_2_5", 0)),
+    ("pipe_intact_l5_4", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_4_5", 0)),
+    ("pipe_intact_l5_8", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "intact_8_5", 0)),
+    ("pipe_exposed_l1_1", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_1_1", 0)),
+    ("pipe_exposed_l1_2", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_2_1", 0)),
+    ("pipe_exposed_l1_4", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_4_1", 0)),
+    ("pipe_exposed_l1_8", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_8_1", 0)),
+    ("pipe_exposed_l2_1", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_1_2", 0)),
+    ("pipe_exposed_l2_2", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_2_2", 0)),
+    ("pipe_exposed_l2_4", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_4_2", 0)),
+    ("pipe_exposed_l2_8", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_8_2", 0)),
+    ("pipe_exposed_l3_1", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_1_3", 0)),
+    ("pipe_exposed_l3_2", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_2_3", 0)),
+    ("pipe_exposed_l3_4", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_4_3", 0)),
+    ("pipe_exposed_l3_8", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_8_3", 0)),
+    ("pipe_exposed_l4_1", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_1_4", 0)),
+    ("pipe_exposed_l4_2", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_2_4", 0)),
+    ("pipe_exposed_l4_4", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_4_4", 0)),
+    ("pipe_exposed_l4_8", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_8_4", 0)),
+    ("pipe_exposed_l5_1", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_1_5", 0)),
+    ("pipe_exposed_l5_2", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_2_5", 0)),
+    ("pipe_exposed_l5_4", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_4_5", 0)),
+    ("pipe_exposed_l5_8", Dmi("obj/pipes_n_cables/pipe_underlays.dmi", "exposed_8_5", 0)),
+    // THE OTHER STUB, for the one machine that stands across all five
+    // layers at once. tg keeps a second sheet for it
+    // (`layer_manifold_underlays.dmi`, drawn by
+    // `get_attached_image`, layermanifold.dm:78-82) and the
+    // difference is where the tube STOPS: a component's stub runs to
+    // the machine's body, which tg has shifted off centre by its
+    // piping layer, while this one runs to the tile centre, because
+    // the body it meets is a band across the middle of the tile that
+    // was never shifted anywhere. So half a tile of pipe, exactly, on
+    // each of the five layers.
+    //
+    // Twenty cells and no `exposed_` among them: tg's sheet has none
+    // either. An end this thing did not find simply is not drawn, and
+    // that reads correctly -- a layer with no run on it is a layer
+    // this adapter is not bridging.
+    ("pipe_half_l1_1", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_1_1", 0)),
+    ("pipe_half_l1_2", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_2_1", 0)),
+    ("pipe_half_l1_4", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_4_1", 0)),
+    ("pipe_half_l1_8", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_8_1", 0)),
+    ("pipe_half_l2_1", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_1_2", 0)),
+    ("pipe_half_l2_2", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_2_2", 0)),
+    ("pipe_half_l2_4", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_4_2", 0)),
+    ("pipe_half_l2_8", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_8_2", 0)),
+    ("pipe_half_l3_1", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_1_3", 0)),
+    ("pipe_half_l3_2", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_2_3", 0)),
+    ("pipe_half_l3_4", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_4_3", 0)),
+    ("pipe_half_l3_8", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_8_3", 0)),
+    ("pipe_half_l4_1", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_1_4", 0)),
+    ("pipe_half_l4_2", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_2_4", 0)),
+    ("pipe_half_l4_4", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_4_4", 0)),
+    ("pipe_half_l4_8", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_8_4", 0)),
+    ("pipe_half_l5_1", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_1_5", 0)),
+    ("pipe_half_l5_2", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_2_5", 0)),
+    ("pipe_half_l5_4", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_4_5", 0)),
+    ("pipe_half_l5_8", Dmi("obj/pipes_n_cables/layer_manifold_underlays.dmi", "intact_8_5", 0)),
     // Cable art, tg's naming kept verbatim: l<layer>-<dirs>
     // with BYOND dir bits 1=N 2=S 4=E 8=W, sorted ascending, and
     // "noconnection" for a stub joined to nothing. The client

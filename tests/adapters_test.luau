@@ -116,6 +116,31 @@ assert(t.structure_at(3, 1).id == "layer_adapter", "the map stood one there")
 assert(t.pipe(2, 1) == L2 + L4, "the tile west of it carries both layers")
 assert(t.pipe(2, 2) == L4, "and the tile below carries only layer 4")
 
+-- ---- and it LOOKS like what it is joined to ----
+--
+-- tg draws an adapter as a bare centre band with one half-tile of pipe
+-- per end per layer it actually found (`get_attached_image`,
+-- layermanifold.dm:59-82). This one bridges two layers, so it shows
+-- four arms: layer 2 and layer 4, west and east. Not ten, and not the
+-- picture of ten -- `manifoldlayer`, the all-connections drawing, is
+-- what a fitting in your HANDS wears and the one thing a bolted
+-- adapter must never be mistaken for.
+local drawn = t.layers(p, t.target_at(3, 1, "layer_adapter"))
+local expect = {
+    "pipe_half_l2_8",
+    "pipe_half_l2_4",
+    "pipe_half_l4_8",
+    "pipe_half_l4_4",
+    "layer_adapter_ew",
+}
+assert(#drawn == #expect, "four arms and a centre band, and nothing else: " .. #drawn)
+for i, name in ipairs(expect) do
+    assert(
+        drawn[i] == name,
+        "layer " .. i .. " is " .. tostring(drawn[i]) .. ", wanted " .. name
+    )
+end
+
 -- Nine lengths and four mouths -- two layers x two ends of the machine,
 -- at a twentieth of a cubic metre apiece. Layers 1, 3 and 5 have no run
 -- to reach, so those six mouths bind to nothing and pay in nothing.
