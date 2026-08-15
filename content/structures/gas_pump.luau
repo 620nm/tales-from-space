@@ -17,9 +17,18 @@
 -- for lines that are meant to be running at roundstart, and here that
 -- is `on = true` on a second entry rather than a second sprite state.
 --
--- No power hookup yet. tg's pump draws idle power and refuses to run
--- unpowered; ours runs regardless, which is the one place this is not
--- yet tg. It lands with the rest of the binary roster.
+-- It draws power and stops without it, which is the `atmos` block's
+-- default for this mechanism (tg's `use_power = IDLE_POWER_USE` at
+-- `BASE_MACHINE_IDLE_CONSUMPTION * 0.25`, binary_devices.dm:5-6). So it
+-- is on the equipment channel of whatever APC feeds the branch under
+-- its tile, it goes dark when that channel sheds, and it picks the line
+-- back up when the power returns -- nobody has to re-throw the switch,
+-- because the switch never moved.
+--
+-- And it wears the settings panel every machine with a dial on it
+-- wears, which is why an empty hand on this OPENS something rather than
+-- switching it: tg's `interact()` on a pump is `ui_interact`
+-- (pump.dm:68), where the manual valve's starts the wheel turning.
 return {
     id = "gas_pump",
     name = "gas pump",
@@ -45,5 +54,29 @@ return {
         positions = { "off", "running" },
         target_kpa = 101.325,
         max_kpa = 4500.0,
+    },
+    build = {
+        on = { "floor", "plating" },
+        from_item = "gas_pump_fitting",
+        tool = "wrench",
+        secs = 2.0,
+        start = "You start fastening the pump down.",
+        done = "The pump is bolted to the deck.",
+    },
+    transitions = {
+        {
+            -- Only while it is OFF -- tg's `can_unwrench`: "You cannot
+            -- unwrench [src], turn it off first!" (pump.dm:103-107).
+            -- The guard is the state itself, so a wrench swung at a
+            -- running pump is answered with "The gas pump must be off
+            -- first." rather than with silence.
+            at = "off",
+            tool = "wrench",
+            secs = 2.0,
+            gone = true,
+            yields = { gas_pump_fitting = 1 },
+            start = "You start unfastening the pump.",
+            done = "The pump comes up off the deck.",
+        },
     },
 }
