@@ -290,8 +290,10 @@ t.run_seconds(20)
 near(t.pipe_pressure(7, 1), delivery, 0.5, "an off pump moves nothing")
 near(t.pipe_pressure(2, 1), supply, 0.5, "from either end")
 
--- Switch it on, hands empty. A pump has no wheel: tg flips it on the
--- click.
+-- Switch it on, hands empty. A pump has no wheel: tg's `interact()` on
+-- one opens its interface (pump.dm:68) where the valve's starts the
+-- wheel turning (valve.dm:63), and that is the whole difference
+-- between the two machines at the click.
 t.drop(r)
 t.run_ticks(2)
 for _ = 1, 3 do
@@ -300,9 +302,20 @@ for _ = 1, 3 do
 end
 local _ = t.messages(r)
 t.click(r, 5, 1, t.target_at(5, 1, "gas_pump"))
+t.tick()
+local panel = t.ui(r)
+assert(panel, "a pump answers an empty hand with a panel")
+assert(panel.kind == "flow", "the one every in-line machine shares")
+-- The words on the button are the machine's own states, out of
+-- tfs/content/structures/gas_pump.luau.
+assert(panel.toggles[1].on_text == "running", panel.toggles[1].on_text)
+assert(panel.toggles[1].off_text == "off")
+assert(panel.setpoints[1].field == "target", "and one dial, in kPa")
+assert(math.abs(panel.setpoints[1].value - 101.325) < 0.001)
+
+t.ui_act(r, "toggle", '{"field":"power"}')
 t.run_ticks(2)
-assert(t.structure_at(5, 1).state == "running", "a switch is not a wheel")
-assert(said(r, "The gas pump is running."), "and it says which way it went")
+assert(t.structure_at(5, 1).state == "running", "and the switch throws")
 assert(t.ledger_has("AtmosDeviceSet", "gas_pump"), "switching it is on the record")
 
 -- One atmos pass moves what is standing in the 200 L input port and no
@@ -380,6 +393,8 @@ for _ = 1, 2 do
     t.run_ticks(5)
 end
 t.click(s, 3, 1, t.target_at(3, 1, "gas_pump"))
+t.tick()
+t.ui_act(s, "toggle", '{"field":"power"}')
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "running", "switched on")
 t.run_seconds(60)
