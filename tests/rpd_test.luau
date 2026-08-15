@@ -1,0 +1,269 @@
+-- The rapid pipe dispenser: three questions, one window, and a fitting
+-- that goes down and fastens in one motion.
+--
+-- What this spec is really about is that the RPD is a faster hand and
+-- not a different rulebook. Everything it builds goes through the same
+-- construction pipeline a fitting and a wrench do, so the interesting
+-- assertions are the REFUSALS: the ones an engineer would meet with the
+-- fitting in their hands, met identically by a device that conjures it.
+
+local function said(p, line)
+    for _, m in ipairs(t.messages(p)) do
+        if m == line then
+            return true
+        end
+    end
+    return false
+end
+
+-- 0.4 s of tg's `atmos_build_speed` (RPD.dm:53), plus slack for the
+-- tick the effect lands on.
+local function work(p)
+    t.run_ticks(12)
+end
+
+-- One step, plus the move cooldown (lunatic_core::MOVE_COOLDOWN_TICKS
+-- is 4), so two calls in a row are two steps.
+local function walk(p, dir)
+    t.move(p, dir)
+    t.run_ticks(5)
+end
+
+-- Which dial is which row of buttons in the window: the panel names
+-- them positionally on the wire (`dial0`..), and the caption on each
+-- row is the dial's own label.
+local MODE, RECIPE, LAYER, PAINT = "dial0", "dial1", "dial2", "dial3"
+
+local function set(p, field, index)
+    t.ui_act(p, "toggle", '{"field":"' .. field .. '","option":"' .. index .. '"}')
+    t.tick()
+end
+
+-- What one dial's caption row currently reads, which is also what the
+-- device is set to.
+local function shows(p, field)
+    for _, tog in ipairs(t.ui(p).toggles) do
+        if tog.field == field and tog.option == nil then
+            return tog.on_text
+        end
+    end
+    return nil
+end
+
+-- ---------------------------------------------------------------
+-- A strip of open subfloor with a wall at each end. Everything an
+-- atmospherics technician does happens on bare plating, because pipe
+-- lives under the deck.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "rpd bench",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Plating),
+        'o': (turf: Floor),
+        '#': (turf: Wall),
+    },
+    rows: [
+        "#########",
+        "#.......#",
+        "#ooooooo#",
+        "#########",
+    ],
+    spawns: [(1, 2)],
+    items: [(1, 2, "rpd"), (2, 1, "manual_valve_fitting")],
+)]==], 7)
+
+local p = t.join()
+t.tick()
+
+t.click(p, 1, 2, t.target_at(1, 2, "rpd"))
+t.run_ticks(2)
+assert(t.hands(p).held == "rpd", "the RPD is in hand")
+
+-- ---- the window ----
+--
+-- tg's `attack_self` opens the interface (RPD.dm:124-125). Ours is the
+-- in-hand key, and the panel is the generic dial panel — which is the
+-- point: the engine has never heard of a piping layer.
+t.use_self(p)
+t.tick()
+local ui = t.ui(p)
+assert(ui, "the in-hand key opens the RPD's window")
+assert(ui.native == "settings" and ui.kind == "dials", "the generic dial panel")
+assert(ui.name == "rapid pipe dispenser", "wearing the device's own name")
+
+local captions = {}
+local options = {}
+for _, tog in ipairs(ui.toggles) do
+    if tog.option == nil then
+        captions[tog.field] = tog.label
+    else
+        options[tog.field] = (options[tog.field] or 0) + 1
+    end
+end
+assert(captions[MODE] == "Mode" and captions[RECIPE] == "Fitting", "every dial is labelled")
+assert(captions[LAYER] == "Piping layer" and captions[PAINT] == "Paint", "all four of them")
+assert(options[LAYER] == 5, "five piping layers, tg's PIPING_LAYER_MIN..MAX")
+assert(options[PAINT] == 12, "and tg's twelve paints")
+assert(options[RECIPE] >= 12, "the whole shelf, one button each: " .. options[RECIPE])
+
+-- Out of the crate it is set the way tg ships one: plain pipe, the
+-- distribution layer, green (RPD.dm:51,61).
+assert(shows(p, MODE) == "Build", "build mode")
+assert(shows(p, RECIPE) == "Pipe", "plain pipe")
+assert(shows(p, LAYER) == "3", "PIPING_LAYER_DEFAULT")
+assert(shows(p, PAINT) == "green", "and tg's green")
+
+-- ---- pipe: the layer and the paint are real ----
+--
+-- Layer 3 is bit 4, layer 2 is bit 2, layer 4 is bit 8 (the piping
+-- layers are a bitmask under the deck). Three runs crossing one tile
+-- without joining is the whole reason layers exist.
+walk(p, "north")
+assert(t.pipe(2, 1) == 0, "nothing laid yet")
+t.click(p, 2, 1)
+work(p)
+assert(t.pipe(2, 1) == 4, "one length on the distribution layer: " .. t.pipe(2, 1))
+
+set(p, LAYER, 1) -- layer 2
+set(p, PAINT, 3) -- red
+assert(shows(p, LAYER) == "2" and shows(p, PAINT) == "red", "the dials moved")
+t.click(p, 2, 1)
+work(p)
+assert(t.pipe(2, 1) == 6, "a second run crosses the first: " .. t.pipe(2, 1))
+
+set(p, LAYER, 3) -- layer 4
+set(p, PAINT, 2) -- blue
+t.click(p, 2, 1)
+work(p)
+assert(t.pipe(2, 1) == 14, "and a third: " .. t.pipe(2, 1))
+
+-- Each one came out the colour the dial was on, which is the record an
+-- investigator reads (paint is topology here, not decoration).
+local painted = t.ledger_rows("pipe_painted")
+assert(#painted == 3, "three lengths, three paint rows: " .. #painted)
+assert(painted[1].layers == 4 and painted[1].color == "#00FF00", "layer 3 green")
+assert(painted[2].layers == 2 and painted[2].color == "#FF0000", "layer 2 red")
+assert(painted[3].layers == 8 and painted[3].color == "#0000FF", "layer 4 blue")
+
+-- And the dial turns are on the record too, by name.
+assert(t.ledger_has("DialSet", "layer"), "which layer it was set to")
+assert(t.ledger_has("DialSet", "paint"), "and which paint")
+
+-- ---- a device: dispensed and connected in ONE action ----
+--
+-- tg's build mode with WRENCH_MODE set, which is its default: the
+-- fitting is spawned and immediately wrenched (RPD.dm:552-572). No
+-- second click, no wrench in the other hand.
+walk(p, "east") -- (2, 1), so the next tile along is in reach
+set(p, RECIPE, 1) -- Manual Valve
+assert(shows(p, RECIPE) == "Manual Valve", "the shelf is a list of buttons")
+assert(t.structure_at(3, 1) == nil, "bare deck")
+t.click(p, 3, 1)
+work(p)
+local valve = t.structure_at(3, 1)
+assert(valve and valve.id == "manual_valve", "the valve stands, in one action")
+assert(#t.items_at(3, 1) == 0, "and no fitting was left lying about")
+assert(t.ledger_has("StructureStep", "manual_valve", "built"), "on the record as a build")
+
+-- ---- the refusals are the framework's, word for word ----
+--
+-- A connector port is a fitting laid ON a run and nowhere else
+-- (`over = "pipe"`). The RPD is a faster hand, not a different rulebook,
+-- so it earns exactly the sentence a technician with the fitting and a
+-- wrench would earn — and, unlike tg, it does not leave the part on the
+-- deck when it is refused.
+walk(p, "east")
+walk(p, "east") -- (4, 1)
+set(p, RECIPE, 11) -- Connector
+local _ = t.messages(p)
+t.click(p, 5, 1) -- open deck, no run under it
+work(p)
+assert(t.structure_at(5, 1) == nil, "nothing was raised")
+assert(#t.items_at(5, 1) == 0, "and nothing was left behind either")
+assert(
+    said(p, "There is no pipe under the floor here."),
+    "the fitting framework's own refusal, unchanged"
+)
+
+-- One fitting per turf is the other one (tg's PIPING_ONE_PER_TURF).
+set(p, RECIPE, 1) -- Manual Valve
+t.click(p, 5, 1)
+work(p)
+assert(t.structure_at(5, 1).id == "manual_valve", "a valve goes down on bare deck")
+local _ = t.messages(p)
+t.click(p, 5, 1)
+work(p)
+assert(said(p, "Something is in the way."), "and a second one does not")
+
+-- ---- destroy mode eats loose things, and only loose things ----
+--
+-- tg's DESTROY_MODE deletes the `/obj/item/pipe` it was aimed at
+-- (RPD.dm:324-340). An anchored machine is unwrenched, never dissolved.
+set(p, MODE, 1)
+assert(shows(p, MODE) == "Destroy", "destroy mode")
+
+local _ = t.messages(p)
+t.click(p, 5, 1, t.target_at(5, 1, "manual_valve"))
+work(p)
+assert(t.structure_at(5, 1).id == "manual_valve", "a bolted-down valve is not loose")
+assert(said(p, "There is nothing loose there to break down."), "and it says so")
+
+-- The loose fitting the map put down, on the other hand, goes.
+walk(p, "west")
+walk(p, "west")
+walk(p, "west") -- back to (1, 1), beside it
+assert(t.count_items("manual_valve_fitting") == 1, "the loose fitting is still lying there")
+local _ = t.messages(p)
+t.click(p, 2, 1, t.target_at(2, 1, "manual_valve_fitting"))
+work(p)
+assert(t.count_items("manual_valve_fitting") == 0, "destroy mode ate it")
+assert(t.hands(p).held == "rpd", "and did not pocket it instead")
+assert(said(p, "You break down the manual valve fitting."), "saying which thing")
+assert(t.ledger_has("ItemConsumed", "manual_valve_fitting"), "on the record")
+
+-- ---- copy mode: point it at a run and it takes the settings ----
+--
+-- tg's right-click eyedropper (RPD.dm:481-491). Ours is a mode,
+-- because there is no secondary-click channel.
+set(p, LAYER, 4) -- layer 5, deliberately wrong
+set(p, PAINT, 0) -- omni, deliberately wrong
+set(p, MODE, 2)
+assert(shows(p, MODE) == "Copy", "copy mode")
+local _ = t.messages(p)
+t.click(p, 2, 1)
+-- A second, because a copy turns the dials without anyone pressing a
+-- button on the panel: the window catches up on its own refresh
+-- cadence (tg's SStgui `UI_STATUS_EVERY`), which is what makes a live
+-- panel live.
+t.run_seconds(1.5)
+-- The tile carries layers 2, 3 and 4; the lowest one laid answers, and
+-- that is the red one from earlier.
+assert(shows(p, LAYER) == "2", "it took the layer: " .. tostring(shows(p, LAYER)))
+assert(shows(p, PAINT) == "red", "and the paint: " .. tostring(shows(p, PAINT)))
+assert(said(p, "Layer 2, red."), "and told the technician what it read")
+
+-- NEGATIVE: nothing to copy is a reason, not a silence.
+local _ = t.messages(p)
+t.click(p, 1, 1) -- the technician's own tile, bare deck
+t.run_ticks(2)
+assert(said(p, "There is no pipe under the floor here."), "an empty tile earns a reason")
+
+-- ---- NEGATIVE: the client is hostile ----
+--
+-- The window a device is showing IS the whitelist. A position past the
+-- end of a roster, and a dial the device does not have, both turn
+-- nothing at all.
+set(p, PAINT, 99)
+assert(shows(p, PAINT) == "red", "no payload can dial past the end of the roster")
+t.ui_act(p, "toggle", '{"field":"dial7","option":"0"}')
+t.tick()
+assert(shows(p, PAINT) == "red", "nor invent a fifth dial")
+t.ui_act(p, "set", '{"field":"dial2","value":4}')
+t.tick()
+assert(shows(p, LAYER) == "2", "nor reach a dial through a verb the panel has no controls for")
+
+-- ...and closing the window disarms it, as for any machine.
+t.ui_close(p)
+set(p, MODE, 0)
+assert(t.ui(p) == nil or shows(p, MODE) == "Copy", "no window, no acts")
