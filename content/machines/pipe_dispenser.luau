@@ -9,14 +9,12 @@
 --
 -- THE SHELVES are tg's own recipe categories, in tg's own words
 -- (`GLOB.atmos_pipe_recipes`, code/_globalvars/lists/pipe_recipes.dm).
--- Three of tg's four are here; a category with nothing in it is not a
--- tab, it is an omission, so **Heat Exchange** is absent until the heat
--- exchanging family exists. What else tg lists and this pack does not
--- have yet: the layer, colour, bridge and multi-deck adapters under
--- Pipes, the temperature gate and temperature pump under Binary, and
--- the injector, scrubber, unary vent and passive vent under Devices.
--- Every one of them is one line here on the day it becomes a thing —
--- which is exactly what the gas analyzer cost the tool vendor.
+-- All four of tg's categories are here. What else tg lists and this
+-- pack does not have yet: the bridge and multi-deck adapters under
+-- Pipes, the heat-exchange pipe/manifold family under Heat Exchange,
+-- and the injector, scrubber, unary vent and passive vent under
+-- Devices. Every one of them is one line here on the day it becomes a
+-- thing — which is exactly what the gas analyzer cost the tool vendor.
 --
 -- WHAT TG HAS THAT THIS SHELF CANNOT SAY: tg's window carries a piping
 -- layer, a paint colour and a per-recipe direction, because tg's
@@ -46,12 +44,15 @@ return {
         Pipes = "grip-lines",
         Binary = "arrows-alt-h",
         Devices = "microchip",
+        ["Heat Exchange"] = "fire",
     },
     -- tg's dispenser has no stock at all — it conjures. The shelf count
     -- is display only, so it says the largest number the schema takes
     -- and means "as many as you like".
     vends = {
         { item = "pipe", name = "Pipe", category = "Pipes", amount = 999 },
+        { item = "layer_adapter_fitting", name = "Layer Adapter", category = "Pipes", amount = 999 },
+        { item = "color_adapter_fitting", name = "Color Adapter", category = "Pipes", amount = 999 },
 
         { item = "manual_valve_fitting", name = "Manual Valve", category = "Binary", amount = 999 },
         { item = "digital_valve_fitting", name = "Digital Valve", category = "Binary", amount = 999 },
@@ -59,6 +60,8 @@ return {
         { item = "volume_pump_fitting", name = "Volume Pump", category = "Binary", amount = 999 },
         { item = "passive_gate_fitting", name = "Passive Gate", category = "Binary", amount = 999 },
         { item = "pressure_valve_fitting", name = "Pressure Valve", category = "Binary", amount = 999 },
+        { item = "temperature_gate_fitting", name = "Temperature Gate", category = "Binary", amount = 999 },
+        { item = "temperature_pump_fitting", name = "Temperature Pump", category = "Binary", amount = 999 },
 
         { item = "gas_filter_fitting", name = "Gas Filter", category = "Devices", amount = 999 },
         { item = "gas_filter_flipped_fitting", name = "Gas Filter (flipped)", category = "Devices", amount = 999 },
@@ -66,5 +69,7 @@ return {
         { item = "gas_mixer_flipped_fitting", name = "Gas Mixer (flipped)", category = "Devices", amount = 999 },
         { item = "connector_port_fitting", name = "Connector", category = "Devices", amount = 999 },
         { item = "pipe_meter", name = "Meter", category = "Devices", amount = 999 },
+
+        { item = "heat_exchanger_fitting", name = "Heat Exchanger", category = "Heat Exchange", amount = 999 },
     },
 }

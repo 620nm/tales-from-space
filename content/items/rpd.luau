@@ -49,6 +49,11 @@ local RECIPES = {
     { label = "Gas Mixer (flipped)", structure = "gas_mixer_flipped" },
     { label = "Connector", structure = "connector_port" },
     { label = "Meter", structure = "meter" },
+    { label = "Layer Adapter", structure = "layer_adapter" },
+    { label = "Color Adapter", structure = "color_adapter" },
+    { label = "Temperature Gate", structure = "temperature_gate" },
+    { label = "Temperature Pump", structure = "temperature_pump" },
+    { label = "Heat Exchanger", structure = "heat_exchanger" },
 }
 
 -- tg's twelve paints, the same roster the pipe painter carries

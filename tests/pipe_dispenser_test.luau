@@ -55,12 +55,12 @@ assert(ui.payload.config.interface.name == "Vending", "the shared Vending window
 assert(ui.payload.config.title == "pipe dispenser", "wearing its own name")
 
 -- tg's recipe categories, by tg's own names
--- (code/_globalvars/lists/pipe_recipes.dm). Heat Exchange is absent
--- because nothing in it exists yet — an empty tab would be a lie about
--- what the station can build.
+-- (code/_globalvars/lists/pipe_recipes.dm). All four are stocked now
+-- that the plate heat exchanger exists — a tab exists exactly when
+-- something on it does.
 local cats = ui.payload.data.categories
 assert(cats.Pipes and cats.Binary and cats.Devices, "three of tg's four categories")
-assert(cats["Heat Exchange"] == nil, "and not the one with nothing in it")
+assert(cats["Heat Exchange"], "and the fourth, now that a plate lives on it")
 
 local shelf = {}
 for _, rec in ipairs(ui.payload.data.product_records) do
