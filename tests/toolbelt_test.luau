@@ -1,8 +1,7 @@
--- An engineer signs on wearing a stocked toolbelt AND a backpack, and
--- the belt shows what is on it: pull the wrench out and the wrench
--- leaves the picture, put it back and it returns. The layer assertions
--- read what the CLIENT was told, not what the world holds — a belt
--- that composes correctly and never reaches the wire is still a bug.
+-- An engineer signs on wearing a stocked toolbelt AND a backpack. The
+-- mob gets only tg's directional worn-belt art: the one-direction
+-- content overlays belong to the ordinary belt object, not its worn
+-- appearance. Inventory rows still track every stored tool.
 t.world([==[(
     name: "locker room",
     legend: {
@@ -50,32 +49,32 @@ local function drawn(name)
     return false
 end
 
--- The belt is worn, so the belt is drawn — and so is every tool on it
--- that tg gives a belt overlay. The welder and the coil have none in
--- tg's belt_overlays.dmi, so they have none here either.
+-- The worn sprite already depicts the utility belt. None of tg's
+-- one-direction obj/clothing/belt_overlays art may be pasted over the
+-- directional mob sprite.
 assert(drawn("worn_toolbelt"), "the worn belt reached the wire")
-assert(drawn("belt_wrench"), "the wrench shows on the belt")
-assert(drawn("belt_screwdriver"), "so does the screwdriver")
-assert(drawn("belt_crowbar"), "so does the crowbar")
-assert(drawn("belt_cutters"), "so do the cutters")
-assert(drawn("belt_multitool"), "so does the multitool")
+for _, sprite in ipairs({
+    "belt_wrench", "belt_screwdriver", "belt_crowbar",
+    "belt_cutters", "belt_multitool",
+}) do
+    assert(not drawn(sprite), sprite .. " is object art, not worn art")
+end
 
--- Pull the wrench (row 2) into a hand: the belt's picture loses it.
+-- Pull the wrench (row 2) into a hand: the inventory changes while the
+-- correct worn sprite remains stable.
 t.take_from(eng, "belt", 2)
 t.tick()
 assert(t.hands(eng).held == "wrench", "the wrench is in hand")
 assert(#t.stored(eng, "belt") == 6, "and off the belt")
-assert(not drawn("belt_wrench"), "the wrench left the belt's picture")
-assert(drawn("belt_screwdriver"), "the tools still on it are still drawn")
 assert(drawn("worn_toolbelt"), "and the belt itself did not vanish")
 
--- Put it back: the picture answers again. This is the whole feature —
--- what an engineer is carrying is legible across the room.
+-- Put it back: the inventory row answers again without adding object
+-- overlays to the mob.
 t.store(eng, "belt")
 t.tick()
 assert(t.hands(eng).held == nil, "the hand is empty again")
 assert(#t.stored(eng, "belt") == 7, "seven back on the belt")
-assert(drawn("belt_wrench"), "and the wrench is back in the picture")
+assert(not drawn("belt_wrench"), "object art still stays off the mob")
 
 -- NEGATIVE: a belt row is not a backpack row. Taking index 1 from the
 -- BACK slot must hand over the pack's first item, never the belt's —
@@ -94,15 +93,18 @@ assert(t.hands(eng).held == nil, "no such row, nothing taken")
 assert(#t.stored(eng, "belt") == 7, "and nothing left the belt")
 
 -- NEGATIVE: another crewman is told what the engineer WEARS (that is
--- public, as in tg) but the belt is not a broadcast of its own rows to
--- the wearer alone — the second player sees the same composed picture.
+-- public, as in tg), while its private rows are not represented by
+-- object overlays on either viewer's mob composition.
 local mate = t.join()
 t.tick()
 local seen = t.layers(mate, eng)
-local found = false
+local found_worn = false
 for _, layer in ipairs(seen) do
-    if layer == "belt_screwdriver" then
-        found = true
+    if layer == "worn_toolbelt" then
+        found_worn = true
+    end
+    if string.sub(layer, 1, 5) == "belt_" then
+        error("bystander received object-only belt overlay " .. layer)
     end
 end
-assert(found, "a bystander sees the tools on the belt too")
+assert(found_worn, "a bystander sees the directional worn belt")
