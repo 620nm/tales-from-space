@@ -1,0 +1,466 @@
+// The machines that stand IN a pipe run rather than on it: tg's binary
+// and trinary families, and the flow devices built on them.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then entry order,
+// so the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+[
+    // The machines that stand IN a run rather than on it: tg's
+    // binary devices. Each picture is tg's own recipe, composited --
+    // one `pipe_intact` half-pipe per NODE direction, then the
+    // device body at its facing (components_base.dm:87-98). Drawn
+    // this way rather than wearing the `*_map-N` states because
+    // those exist for one position only (there is no
+    // `mvalve_on_map`), and a machine whose open picture came from a
+    // different recipe than its shut one would not read as the same
+    // object.
+    //
+    // A binary device reaches along ONE AXIS, so there are two
+    // pictures and not four: tg's `PIPING_CARDINAL_AUTONORMALIZE`
+    // folds south onto north and west onto east (valve.dm:14,25,
+    // `normalize_cardinal_directions`), and the art agrees --
+    // `mvalve_off-1` has no south or west cell at all. The four
+    // names below are what `facing_sprites` asks for; two pairs bake
+    // the same picture, which is the honest amount of art a thing
+    // with two ends has. `-1` is tg's overlay offset for piping
+    // layers 1, 3 and 5 (`set_overlay_offset`).
+    //
+    // DMI dirs: 0 south, 1 north, 2 east, 3 west.
+    ("valve_shut_n", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+        ("obj/machines/atmospherics/binary_devices.dmi", "mvalve_off-1", 1),
+    ])),
+    ("valve_shut_s", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+        ("obj/machines/atmospherics/binary_devices.dmi", "mvalve_off-1", 1),
+    ])),
+    ("valve_shut_e", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+        ("obj/machines/atmospherics/binary_devices.dmi", "mvalve_off-1", 2),
+    ])),
+    ("valve_shut_w", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+        ("obj/machines/atmospherics/binary_devices.dmi", "mvalve_off-1", 2),
+    ])),
+    ("valve_open_n", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+        ("obj/machines/atmospherics/binary_devices.dmi", "mvalve_on-1", 1),
+    ])),
+    ("valve_open_s", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+        ("obj/machines/atmospherics/binary_devices.dmi", "mvalve_on-1", 1),
+    ])),
+    ("valve_open_e", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+        ("obj/machines/atmospherics/binary_devices.dmi", "mvalve_on-1", 2),
+    ])),
+    ("valve_open_w", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+        ("obj/machines/atmospherics/binary_devices.dmi", "mvalve_on-1", 2),
+    ])),
+    // The gas pump, same recipe. tg's running body (`pump_on-1`) is
+    // a five-frame loop; its first frame is baked, so a running pump
+    // reads by its lit indicators rather than by moving -- the loop
+    // is a follow-up, not a correction.
+    ("pump_off_n", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pump_off-1", 1),
+    ])),
+    ("pump_off_s", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pump_off-1", 1),
+    ])),
+    ("pump_off_e", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pump_off-1", 2),
+    ])),
+    ("pump_off_w", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pump_off-1", 2),
+    ])),
+    ("pump_on_n", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pump_on-1", 1),
+    ])),
+    ("pump_on_s", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pump_on-1", 1),
+    ])),
+    ("pump_on_e", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pump_on-1", 2),
+    ])),
+    ("pump_on_w", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pump_on-1", 2),
+    ])),
+    // The TRINARY machines: tg's gas filter and gas mixer. Same
+    // recipe as the binaries above -- a half-pipe per NODE
+    // direction, then the device body at its facing
+    // (components_base.dm:87-98) -- with two differences that come
+    // straight out of the trinary art.
+    //
+    // The half-pipe is this file's own `cap` state, not
+    // binary_devices.dmi's `pipe_intact`: tg composites
+    // `get_pipe_image(icon, "cap", direction, ...)` where `icon` is
+    // the machine's own (filter.dm:44-50, mixer.dm:50-58). And the
+    // body's overlay offset is `-0` rather than `-1`, because
+    // `set_overlay_offset` returns 0 for the default piping layer
+    // and only layers 1 and 5 get their own (trinary_devices.dm:53-60).
+    //
+    // FOUR facings each, where a binary has two. A binary reaches
+    // along one axis and tg normalises south onto north; a trinary
+    // reaches three ways and every rotation is a different picture.
+    // The three caps per sprite are its node dirs: behind the
+    // facing, the facing, and `turn(dir, -90)` -- the same geometry
+    // `pipes/devices.rs` binds by, so a machine's art and its
+    // plumbing cannot disagree.
+    //
+    // `_f` is tg's flipped body (trinary_devices.dm:12-13): node1
+    // and node3 change places while the side port stays where it
+    // is, so the CAPS are identical and only the body mirrors.
+    // tg's running bodies are four-frame loops; the first frame is
+    // baked, as the pump's is.
+    ("filter_off_n", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "filter_off-0", 1),
+    ])),
+    ("filter_off_s", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "filter_off-0", 0),
+    ])),
+    ("filter_off_e", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "filter_off-0", 2),
+    ])),
+    ("filter_off_w", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "filter_off-0", 3),
+    ])),
+    ("filter_on_n", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0", 1),
+    ])),
+    ("filter_on_s", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0", 0),
+    ])),
+    ("filter_on_e", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0", 2),
+    ])),
+    ("filter_on_w", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0", 3),
+    ])),
+    ("filter_f_off_n", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "filter_off-0_f", 1),
+    ])),
+    ("filter_f_off_s", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "filter_off-0_f", 0),
+    ])),
+    ("filter_f_off_e", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "filter_off-0_f", 2),
+    ])),
+    ("filter_f_off_w", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "filter_off-0_f", 3),
+    ])),
+    ("filter_f_on_n", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0_f", 1),
+    ])),
+    ("filter_f_on_s", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0_f", 0),
+    ])),
+    ("filter_f_on_e", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0_f", 2),
+    ])),
+    ("filter_f_on_w", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "filter_on-0_f", 3),
+    ])),
+    ("mixer_off_n", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "mixer_off-0", 1),
+    ])),
+    ("mixer_off_s", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "mixer_off-0", 0),
+    ])),
+    ("mixer_off_e", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "mixer_off-0", 2),
+    ])),
+    ("mixer_off_w", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "mixer_off-0", 3),
+    ])),
+    ("mixer_on_n", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0", 1),
+    ])),
+    ("mixer_on_s", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0", 0),
+    ])),
+    ("mixer_on_e", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0", 2),
+    ])),
+    ("mixer_on_w", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0", 3),
+    ])),
+    ("mixer_f_off_n", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "mixer_off-0_f", 1),
+    ])),
+    ("mixer_f_off_s", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "mixer_off-0_f", 0),
+    ])),
+    ("mixer_f_off_e", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "mixer_off-0_f", 2),
+    ])),
+    ("mixer_f_off_w", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "mixer_off-0_f", 3),
+    ])),
+    ("mixer_f_on_n", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0_f", 1),
+    ])),
+    ("mixer_f_on_s", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0_f", 0),
+    ])),
+    ("mixer_f_on_e", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 0),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0_f", 2),
+    ])),
+    ("mixer_f_on_w", DmiCells([
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 2),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 3),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "cap", 1),
+        ("obj/machines/atmospherics/trinary_devices.dmi", "mixer_on-0_f", 3),
+    ])),
+    // The two fittings in hand. tg draws every /obj/item/pipe
+    // from its machine's `pipe_state` in pipe_item.dmi
+    // (construction.dm:212) -- the device with no run joined to
+    // it, which is what one in your hands is. A flipped fitting
+    // wears the same picture: what differs is the machine it
+    // stands up as, and tg's item art does not distinguish them
+    // either.
+    ("filter_fitting", Dmi("obj/pipes_n_cables/pipe_item.dmi", "filter", 0)),
+    ("mixer_fitting", Dmi("obj/pipes_n_cables/pipe_item.dmi", "mixer", 0)),
+
+    // ---- the flow devices (feat/atmos-flow) --------------------------
+    //
+    // The rest of tg's binary roster: the volumetric pump, the
+    // passive gate, the pressure valve, and the manual valve's
+    // digital twin. Same recipe as the two above -- one
+    // `pipe_intact` half-pipe per NODE direction, then the device
+    // body at its facing (components_base.dm:87-98), `-1` being
+    // tg's overlay offset for piping layers 1, 3 and 5.
+    //
+    // TWO pictures each, not four. A binary device reaches along one
+    // AXIS (`PIPING_CARDINAL_AUTONORMALIZE`), so north and south are
+    // the same picture and east and west are the other; the valve
+    // and pump above bake four names for those two pictures, which
+    // is two atlas cells apiece nobody looks at. These name the
+    // AXIS instead and let `facing_sprites` point two directions at
+    // one name, which is the same art and half the atlas.
+    //
+    // DMI dirs: 0 south, 1 north, 2 east, 3 west.
+    ("volpump_off_ns", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+        ("obj/machines/atmospherics/binary_devices.dmi", "volpump_off-1", 1),
+    ])),
+    ("volpump_off_ew", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+        ("obj/machines/atmospherics/binary_devices.dmi", "volpump_off-1", 2),
+    ])),
+    // tg's running body is a ten-frame loop; its first frame is
+    // baked, so a running pump reads by its lit indicators rather
+    // than by moving. The loop is a follow-up, not a correction.
+    ("volpump_on_ns", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+        ("obj/machines/atmospherics/binary_devices.dmi", "volpump_on-1", 1),
+    ])),
+    ("volpump_on_ew", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+        ("obj/machines/atmospherics/binary_devices.dmi", "volpump_on-1", 2),
+    ])),
+    ("passgate_off_ns", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+        ("obj/machines/atmospherics/binary_devices.dmi", "passgate_off-1", 1),
+    ])),
+    ("passgate_off_ew", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+        ("obj/machines/atmospherics/binary_devices.dmi", "passgate_off-1", 2),
+    ])),
+    ("passgate_on_ns", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+        ("obj/machines/atmospherics/binary_devices.dmi", "passgate_on-1", 1),
+    ])),
+    ("passgate_on_ew", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+        ("obj/machines/atmospherics/binary_devices.dmi", "passgate_on-1", 2),
+    ])),
+    // The pressure valve ships a third picture, `pvalve_flow`, for
+    // the pass in which gas is actually crossing. Not baked: a
+    // machine's picture comes from its assembly STATE, and "armed"
+    // and "armed and flowing right now" are one state with a
+    // per-tick fact on top of it. That wants a per-instance overlay
+    // the position machinery does not express yet -- see the same
+    // note on the volume pump's overclock light.
+    ("pvalve_off_ns", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pvalve_off-1", 1),
+    ])),
+    ("pvalve_off_ew", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pvalve_off-1", 2),
+    ])),
+    ("pvalve_on_ns", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pvalve_on-1", 1),
+    ])),
+    ("pvalve_on_ew", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pvalve_on-1", 2),
+    ])),
+    // The digital valve: tg's own second valve_type, drawn from the
+    // `d`-prefixed half of the same sheet (valve.dm:78-83).
+    ("dvalve_shut_ns", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+        ("obj/machines/atmospherics/binary_devices.dmi", "dvalve_off-1", 1),
+    ])),
+    ("dvalve_shut_ew", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+        ("obj/machines/atmospherics/binary_devices.dmi", "dvalve_off-1", 2),
+    ])),
+    ("dvalve_open_ns", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 1),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 0),
+        ("obj/machines/atmospherics/binary_devices.dmi", "dvalve_on-1", 1),
+    ])),
+    ("dvalve_open_ew", DmiCells([
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 2),
+        ("obj/machines/atmospherics/binary_devices.dmi", "pipe_intact", 3),
+        ("obj/machines/atmospherics/binary_devices.dmi", "dvalve_on-1", 2),
+    ])),
+    // The fittings these are raised from, and yield back. tg draws
+    // every one of them off ONE sheet: `/obj/item/pipe` is
+    // `pipe_item.dmi` and its icon_state is the machine's own
+    // `pipe_state` (construction.dm:17,216) -- so a fitting in your
+    // hands is the machine with no run drawn under it, which is the
+    // honest picture of a thing joined to nothing.
+    ("manual_valve_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "mvalve", 0)),
+    ("digital_valve_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "dvalve", 0)),
+    ("gas_pump_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "pump", 0)),
+    ("volume_pump_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "volumepump", 0)),
+    ("passive_gate_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "passivegate", 0)),
+    ("pressure_valve_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "pvalve", 0)),
+    // ---- end of the flow devices -------------------------------------
+]
