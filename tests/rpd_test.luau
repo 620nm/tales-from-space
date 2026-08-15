@@ -262,6 +262,20 @@ t.click(p, 1, 1) -- the technician's own tile, bare deck
 t.run_ticks(2)
 assert(said(p, "There is no pipe under the floor here."), "an empty tile earns a reason")
 
+-- NEGATIVE, build mode: pipe is subfloor infrastructure. A run you
+-- have not opened the deck over is one you cannot fit, however fast
+-- your dispenser is.
+set(p, MODE, pick(p, MODE, "Build"))
+set(p, RECIPE, pick(p, RECIPE, "Pipe"))
+local _ = t.messages(p)
+t.click(p, 1, 2) -- finished floor, one tile south
+work(p)
+assert(t.pipe(1, 2) == 0, "nothing was laid under a tiled floor")
+assert(
+    said(p, "The floor is in the way. Pry the tile up first."),
+    "and the technician is told to pry it up"
+)
+
 -- ---- NEGATIVE: the client is hostile ----
 --
 -- The window a device is showing IS the whitelist. A position past the
@@ -276,7 +290,11 @@ t.ui_act(p, "set", '{"field":"dial2","value":4}')
 t.tick()
 assert(shows(p, LAYER) == "2", "nor reach a dial through a verb the panel has no controls for")
 
--- ...and closing the window disarms it, as for any machine.
+-- ...and closing the window disarms it, as for any machine. A press
+-- that landed would have pushed a fresh document reading "Destroy";
+-- what the client still has is the one from before it closed.
 t.ui_close(p)
-set(p, MODE, 0)
-assert(t.ui(p) == nil or shows(p, MODE) == "Copy", "no window, no acts")
+local before = shows(p, MODE)
+t.ui_act(p, "toggle", '{"field":"dial0","option":"1"}')
+t.tick()
+assert(shows(p, MODE) == before, "no window, no acts")
