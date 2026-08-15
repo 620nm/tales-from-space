@@ -50,6 +50,19 @@ local function shows(p, field)
     return nil
 end
 
+-- Which button on a dial's row wears that word. Looked up rather than
+-- counted on purpose: the fitting roster GROWS every time a new device
+-- lands, and a spec that hardcoded "recipe 11 is the connector" would
+-- break on somebody else's content file.
+local function pick(p, field, label)
+    for _, tog in ipairs(t.ui(p).toggles) do
+        if tog.field == field and tog.option ~= nil and tog.label == label then
+            return tog.option
+        end
+    end
+    error("no " .. field .. " button labelled " .. label)
+end
+
 -- ---------------------------------------------------------------
 -- A strip of open subfloor with a wall at each end. Everything an
 -- atmospherics technician does happens on bare plating, because pipe
@@ -125,15 +138,15 @@ t.click(p, 2, 1)
 work(p)
 assert(t.pipe(2, 1) == 4, "one length on the distribution layer: " .. t.pipe(2, 1))
 
-set(p, LAYER, 1) -- layer 2
-set(p, PAINT, 3) -- red
+set(p, LAYER, pick(p, LAYER, "2"))
+set(p, PAINT, pick(p, PAINT, "red"))
 assert(shows(p, LAYER) == "2" and shows(p, PAINT) == "red", "the dials moved")
 t.click(p, 2, 1)
 work(p)
 assert(t.pipe(2, 1) == 6, "a second run crosses the first: " .. t.pipe(2, 1))
 
-set(p, LAYER, 3) -- layer 4
-set(p, PAINT, 2) -- blue
+set(p, LAYER, pick(p, LAYER, "4"))
+set(p, PAINT, pick(p, PAINT, "blue"))
 t.click(p, 2, 1)
 work(p)
 assert(t.pipe(2, 1) == 14, "and a third: " .. t.pipe(2, 1))
@@ -156,7 +169,7 @@ assert(t.ledger_has("DialSet", "paint"), "and which paint")
 -- fitting is spawned and immediately wrenched (RPD.dm:552-572). No
 -- second click, no wrench in the other hand.
 walk(p, "east") -- (2, 1), so the next tile along is in reach
-set(p, RECIPE, 1) -- Manual Valve
+set(p, RECIPE, pick(p, RECIPE, "Manual Valve"))
 assert(shows(p, RECIPE) == "Manual Valve", "the shelf is a list of buttons")
 assert(t.structure_at(3, 1) == nil, "bare deck")
 t.click(p, 3, 1)
@@ -175,7 +188,7 @@ assert(t.ledger_has("StructureStep", "manual_valve", "built"), "on the record as
 -- deck when it is refused.
 walk(p, "east")
 walk(p, "east") -- (4, 1)
-set(p, RECIPE, 11) -- Connector
+set(p, RECIPE, pick(p, RECIPE, "Connector"))
 local _ = t.messages(p)
 t.click(p, 5, 1) -- open deck, no run under it
 work(p)
@@ -187,7 +200,7 @@ assert(
 )
 
 -- One fitting per turf is the other one (tg's PIPING_ONE_PER_TURF).
-set(p, RECIPE, 1) -- Manual Valve
+set(p, RECIPE, pick(p, RECIPE, "Manual Valve"))
 t.click(p, 5, 1)
 work(p)
 assert(t.structure_at(5, 1).id == "manual_valve", "a valve goes down on bare deck")
@@ -226,8 +239,8 @@ assert(t.ledger_has("ItemConsumed", "manual_valve_fitting"), "on the record")
 --
 -- tg's right-click eyedropper (RPD.dm:481-491). Ours is a mode,
 -- because there is no secondary-click channel.
-set(p, LAYER, 4) -- layer 5, deliberately wrong
-set(p, PAINT, 0) -- omni, deliberately wrong
+set(p, LAYER, pick(p, LAYER, "5")) -- deliberately wrong
+set(p, PAINT, pick(p, PAINT, "omni")) -- deliberately wrong
 set(p, MODE, 2)
 assert(shows(p, MODE) == "Copy", "copy mode")
 local _ = t.messages(p)
