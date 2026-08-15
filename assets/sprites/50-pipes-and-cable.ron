@@ -1,0 +1,145 @@
+// Subfloor infrastructure, and the only art in the pack derived from a
+// bitmask: tg's !pipes_bitmask.dmi and cable naming, kept verbatim.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then entry order,
+// so the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+[
+    // Atmospheric pipe, tg's !pipes_bitmask.dmi naming kept
+    // verbatim: "<field>_<piping layer>". The field is tg's
+    // CARDINAL_TO_FULLPIPES/_SHORTPIPES pair -- low nibble the
+    // directions the run actually joins, high nibble the short
+    // stub drawn where it does not, so a length with one
+    // connection reads as a pipe that ENDS rather than a piece of
+    // a longer one. Sixteen shapes cover every adjacency; five
+    // layers cross without meeting. The client derives WHICH from
+    // its own neighbour scan, so the wire carries only topology.
+    // Art is greyscale on purpose (tg tints per pipe); unpainted
+    // grey is what a pipe dispenser hands you.
+    ("pipe_l1_0", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "48_1", 0)),
+    ("pipe_l1_1", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "33_1", 0)),
+    ("pipe_l1_2", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "18_1", 0)),
+    ("pipe_l1_3", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "3_1", 0)),
+    ("pipe_l1_4", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "132_1", 0)),
+    ("pipe_l1_5", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "5_1", 0)),
+    ("pipe_l1_6", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "6_1", 0)),
+    ("pipe_l1_7", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "7_1", 0)),
+    ("pipe_l1_8", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "72_1", 0)),
+    ("pipe_l1_9", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "9_1", 0)),
+    ("pipe_l1_10", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "10_1", 0)),
+    ("pipe_l1_11", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "11_1", 0)),
+    ("pipe_l1_12", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "12_1", 0)),
+    ("pipe_l1_13", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "13_1", 0)),
+    ("pipe_l1_14", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "14_1", 0)),
+    ("pipe_l1_15", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "15_1", 0)),
+    ("pipe_l2_0", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "48_2", 0)),
+    ("pipe_l2_1", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "33_2", 0)),
+    ("pipe_l2_2", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "18_2", 0)),
+    ("pipe_l2_3", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "3_2", 0)),
+    ("pipe_l2_4", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "132_2", 0)),
+    ("pipe_l2_5", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "5_2", 0)),
+    ("pipe_l2_6", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "6_2", 0)),
+    ("pipe_l2_7", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "7_2", 0)),
+    ("pipe_l2_8", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "72_2", 0)),
+    ("pipe_l2_9", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "9_2", 0)),
+    ("pipe_l2_10", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "10_2", 0)),
+    ("pipe_l2_11", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "11_2", 0)),
+    ("pipe_l2_12", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "12_2", 0)),
+    ("pipe_l2_13", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "13_2", 0)),
+    ("pipe_l2_14", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "14_2", 0)),
+    ("pipe_l2_15", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "15_2", 0)),
+    ("pipe_l3_0", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "48_3", 0)),
+    ("pipe_l3_1", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "33_3", 0)),
+    ("pipe_l3_2", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "18_3", 0)),
+    ("pipe_l3_3", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "3_3", 0)),
+    ("pipe_l3_4", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "132_3", 0)),
+    ("pipe_l3_5", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "5_3", 0)),
+    ("pipe_l3_6", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "6_3", 0)),
+    ("pipe_l3_7", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "7_3", 0)),
+    ("pipe_l3_8", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "72_3", 0)),
+    ("pipe_l3_9", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "9_3", 0)),
+    ("pipe_l3_10", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "10_3", 0)),
+    ("pipe_l3_11", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "11_3", 0)),
+    ("pipe_l3_12", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "12_3", 0)),
+    ("pipe_l3_13", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "13_3", 0)),
+    ("pipe_l3_14", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "14_3", 0)),
+    ("pipe_l3_15", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "15_3", 0)),
+    ("pipe_l4_0", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "48_4", 0)),
+    ("pipe_l4_1", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "33_4", 0)),
+    ("pipe_l4_2", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "18_4", 0)),
+    ("pipe_l4_3", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "3_4", 0)),
+    ("pipe_l4_4", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "132_4", 0)),
+    ("pipe_l4_5", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "5_4", 0)),
+    ("pipe_l4_6", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "6_4", 0)),
+    ("pipe_l4_7", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "7_4", 0)),
+    ("pipe_l4_8", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "72_4", 0)),
+    ("pipe_l4_9", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "9_4", 0)),
+    ("pipe_l4_10", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "10_4", 0)),
+    ("pipe_l4_11", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "11_4", 0)),
+    ("pipe_l4_12", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "12_4", 0)),
+    ("pipe_l4_13", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "13_4", 0)),
+    ("pipe_l4_14", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "14_4", 0)),
+    ("pipe_l4_15", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "15_4", 0)),
+    ("pipe_l5_0", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "48_5", 0)),
+    ("pipe_l5_1", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "33_5", 0)),
+    ("pipe_l5_2", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "18_5", 0)),
+    ("pipe_l5_3", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "3_5", 0)),
+    ("pipe_l5_4", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "132_5", 0)),
+    ("pipe_l5_5", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "5_5", 0)),
+    ("pipe_l5_6", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "6_5", 0)),
+    ("pipe_l5_7", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "7_5", 0)),
+    ("pipe_l5_8", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "72_5", 0)),
+    ("pipe_l5_9", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "9_5", 0)),
+    ("pipe_l5_10", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "10_5", 0)),
+    ("pipe_l5_11", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "11_5", 0)),
+    ("pipe_l5_12", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "12_5", 0)),
+    ("pipe_l5_13", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "13_5", 0)),
+    ("pipe_l5_14", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "14_5", 0)),
+    ("pipe_l5_15", Dmi("obj/pipes_n_cables/!pipes_bitmask.dmi", "15_5", 0)),
+    // Cable art, tg's naming kept verbatim: l<layer>-<dirs>
+    // with BYOND dir bits 1=N 2=S 4=E 8=W, sorted ascending, and
+    // "noconnection" for a stub joined to nothing. The client
+    // derives WHICH of these to draw from its own neighbour scan,
+    // so the wire only ever carries the topology.
+    //
+    // tg's art is white and tinted per cable; the colours are the
+    // vocabulary, not decoration -- red is the feeder you do not
+    // cut, yellow is the branch you do (tg's CABLE_HEX_COLOR_RED
+    // and _YELLOW). Baked in rather than tinted at draw time so
+    // the Canvas2D fallback, which can fill a rect but not tint a
+    // sprite, draws the same wire the WebGPU path does.
+    ("cable_l1_none", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-noconnection", 0), (255, 0, 0))),
+    ("cable_l2_none", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-noconnection", 0), (255, 255, 0))),
+    ("cable_l1_1", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-1", 0), (255, 0, 0))),
+    ("cable_l1_2", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-2", 0), (255, 0, 0))),
+    ("cable_l1_3", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-1-2", 0), (255, 0, 0))),
+    ("cable_l1_4", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-4", 0), (255, 0, 0))),
+    ("cable_l1_5", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-1-4", 0), (255, 0, 0))),
+    ("cable_l1_6", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-2-4", 0), (255, 0, 0))),
+    ("cable_l1_7", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-1-2-4", 0), (255, 0, 0))),
+    ("cable_l1_8", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-8", 0), (255, 0, 0))),
+    ("cable_l1_9", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-1-8", 0), (255, 0, 0))),
+    ("cable_l1_10", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-2-8", 0), (255, 0, 0))),
+    ("cable_l1_11", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-1-2-8", 0), (255, 0, 0))),
+    ("cable_l1_12", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-4-8", 0), (255, 0, 0))),
+    ("cable_l1_13", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-1-4-8", 0), (255, 0, 0))),
+    ("cable_l1_14", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-2-4-8", 0), (255, 0, 0))),
+    ("cable_l1_15", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l1-1-2-4-8", 0), (255, 0, 0))),
+    ("cable_l2_1", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1", 0), (255, 255, 0))),
+    ("cable_l2_2", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-2", 0), (255, 255, 0))),
+    ("cable_l2_3", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-2", 0), (255, 255, 0))),
+    ("cable_l2_4", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-4", 0), (255, 255, 0))),
+    ("cable_l2_5", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-4", 0), (255, 255, 0))),
+    ("cable_l2_6", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-2-4", 0), (255, 255, 0))),
+    ("cable_l2_7", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-2-4", 0), (255, 255, 0))),
+    ("cable_l2_8", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-8", 0), (255, 255, 0))),
+    ("cable_l2_9", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-8", 0), (255, 255, 0))),
+    ("cable_l2_10", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-2-8", 0), (255, 255, 0))),
+    ("cable_l2_11", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-2-8", 0), (255, 255, 0))),
+    ("cable_l2_12", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-4-8", 0), (255, 255, 0))),
+    ("cable_l2_13", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-4-8", 0), (255, 255, 0))),
+    ("cable_l2_14", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-2-4-8", 0), (255, 255, 0))),
+    ("cable_l2_15", Tinted(Dmi("obj/pipes_n_cables/layer_cable.dmi", "l2-1-2-4-8", 0), (255, 255, 0))),
+
+]
