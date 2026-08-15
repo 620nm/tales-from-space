@@ -862,6 +862,44 @@
         ("held_rods_r_e", Dmi("mob/inhands/items_righthand.dmi", "rods", 2)),
         ("held_rods_r_w", Dmi("mob/inhands/items_righthand.dmi", "rods", 3)),
         ("pipe", Dmi("obj/pipes_n_cables/pipe_item.dmi", "simple", 0)),
+        // The atmospherics technician's hand instruments. tg's painter
+        // is a relabelled label gun off the bureaucracy sheet
+        // (pipe_painter.dm:5-6), drawn exactly as tg draws it.
+        ("pipe_painter", Dmi("obj/service/bureaucracy.dmi", "labeler1", 0)),
+        // tg's analyzer idles through an eight-frame screen blink
+        // (scanner.dmi, `delay = 10,1,1,1,1,1,1,1`). Baked as the still
+        // it rests on: eight atlas cells for a device that spends the
+        // shift in a pocket is not a trade worth making.
+        ("analyzer", Dmi("obj/devices/scanner.dmi", "analyzer", 0)),
+        // The pipe meter, in the two halves tg's greyscale config
+        // composes it from (datums/greyscale/json_configs/meter.json):
+        // an untinted housing, and a needle the machine paints by
+        // temperature. Twenty needle positions is tg's own dial — the
+        // art is drawn for the pressures a station runs at, so the low
+        // scale gets half the stops.
+        ("pipe_meter", Dmi("obj/pipes_n_cables/pipe_item.dmi", "meter", 0)),
+        ("meter_base", Dmi("obj/pipes_n_cables/meter.dmi", "meter_base", 0)),
+        ("meter_off", Dmi("obj/pipes_n_cables/meter.dmi", "pressure_off", 0)),
+        ("meter_p0", Dmi("obj/pipes_n_cables/meter.dmi", "pressure0", 0)),
+        ("meter_p1_1", Dmi("obj/pipes_n_cables/meter.dmi", "pressure1_1", 0)),
+        ("meter_p1_2", Dmi("obj/pipes_n_cables/meter.dmi", "pressure1_2", 0)),
+        ("meter_p1_3", Dmi("obj/pipes_n_cables/meter.dmi", "pressure1_3", 0)),
+        ("meter_p1_4", Dmi("obj/pipes_n_cables/meter.dmi", "pressure1_4", 0)),
+        ("meter_p1_5", Dmi("obj/pipes_n_cables/meter.dmi", "pressure1_5", 0)),
+        ("meter_p1_6", Dmi("obj/pipes_n_cables/meter.dmi", "pressure1_6", 0)),
+        ("meter_p2_1", Dmi("obj/pipes_n_cables/meter.dmi", "pressure2_1", 0)),
+        ("meter_p2_2", Dmi("obj/pipes_n_cables/meter.dmi", "pressure2_2", 0)),
+        ("meter_p2_3", Dmi("obj/pipes_n_cables/meter.dmi", "pressure2_3", 0)),
+        ("meter_p2_4", Dmi("obj/pipes_n_cables/meter.dmi", "pressure2_4", 0)),
+        ("meter_p2_5", Dmi("obj/pipes_n_cables/meter.dmi", "pressure2_5", 0)),
+        ("meter_p2_6", Dmi("obj/pipes_n_cables/meter.dmi", "pressure2_6", 0)),
+        ("meter_p3_1", Dmi("obj/pipes_n_cables/meter.dmi", "pressure3_1", 0)),
+        ("meter_p3_2", Dmi("obj/pipes_n_cables/meter.dmi", "pressure3_2", 0)),
+        ("meter_p3_3", Dmi("obj/pipes_n_cables/meter.dmi", "pressure3_3", 0)),
+        ("meter_p3_4", Dmi("obj/pipes_n_cables/meter.dmi", "pressure3_4", 0)),
+        ("meter_p3_5", Dmi("obj/pipes_n_cables/meter.dmi", "pressure3_5", 0)),
+        ("meter_p3_6", Dmi("obj/pipes_n_cables/meter.dmi", "pressure3_6", 0)),
+        ("meter_p4", Dmi("obj/pipes_n_cables/meter.dmi", "pressure4", 0)),
         ("held_pipe_l_s", Dmi("mob/inhands/items_lefthand.dmi", "buildpipe", 0)),
         ("held_pipe_l_n", Dmi("mob/inhands/items_lefthand.dmi", "buildpipe", 1)),
         ("held_pipe_l_e", Dmi("mob/inhands/items_lefthand.dmi", "buildpipe", 2)),
