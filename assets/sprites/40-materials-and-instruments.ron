@@ -64,6 +64,10 @@
     // art is drawn for the pressures a station runs at, so the low
     // scale gets half the stops.
     ("pipe_meter", Dmi("obj/pipes_n_cables/pipe_item.dmi", "meter", 0)),
+    ("pipe_meter_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "meter", 0)),
+    ("pipe_meter_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "meter", 0)),
+    ("pipe_meter_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "meter", 0)),
+    ("pipe_meter_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "meter", 0)),
     ("meter_base", Dmi("obj/pipes_n_cables/meter.dmi", "meter_base", 0)),
     ("meter_off", Dmi("obj/pipes_n_cables/meter.dmi", "pressure_off", 0)),
     ("meter_p0", Dmi("obj/pipes_n_cables/meter.dmi", "pressure0", 0)),

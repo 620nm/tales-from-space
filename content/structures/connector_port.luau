@@ -39,9 +39,9 @@
 -- A port raised from a fitting aims itself at the neighbouring run its
 -- stub reaches, which is also the run `over = "pipe"` validates. Its
 -- own tile is the component's centre and must not also carry a raw pipe
--- on the same layer. (tg lets you turn the fitting in hand first,
--- `/obj/item/pipe/attack_self`, construction.dm:256-257; that wants a
--- rotate command this protocol has not grown yet.)
+-- on the same layer. Turn the loose fitting with Alt+left/Alt+right
+-- before wrenching it down when automatic alignment is not the shape
+-- you want.
 return {
     id = "connector_port",
     name = "connector port",

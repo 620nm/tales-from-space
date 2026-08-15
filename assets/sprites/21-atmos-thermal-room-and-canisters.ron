@@ -93,6 +93,26 @@
     ("heat_exchanger_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "heunary", 0)),
     ("layer_adapter_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "manifoldlayer", 0)),
     ("color_adapter_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "adapter_center", 0)),
+    ("temperature_gate_loose_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tgate", 0)),
+    ("temperature_gate_loose_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tgate", 1)),
+    ("temperature_gate_loose_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tgate", 2)),
+    ("temperature_gate_loose_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tgate", 3)),
+    ("temperature_pump_loose_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tpump", 0)),
+    ("temperature_pump_loose_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tpump", 1)),
+    ("temperature_pump_loose_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tpump", 2)),
+    ("temperature_pump_loose_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "tpump", 3)),
+    ("heat_exchanger_loose_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "heunary", 0)),
+    ("heat_exchanger_loose_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "heunary", 1)),
+    ("heat_exchanger_loose_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "heunary", 2)),
+    ("heat_exchanger_loose_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "heunary", 3)),
+    ("layer_adapter_loose_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "manifoldlayer", 0)),
+    ("layer_adapter_loose_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "manifoldlayer", 1)),
+    ("layer_adapter_loose_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "manifoldlayer", 2)),
+    ("layer_adapter_loose_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "manifoldlayer", 3)),
+    ("color_adapter_loose_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "adapter_center", 0)),
+    ("color_adapter_loose_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "adapter_center", 1)),
+    ("color_adapter_loose_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "adapter_center", 2)),
+    ("color_adapter_loose_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "adapter_center", 3)),
     // ---- end of the thermal devices and adapters ---------------------
     // ---- the two room devices ----------------------------------------
     //
@@ -137,6 +157,14 @@
     // is drawn from.
     ("air_scrubber_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "scrubber", 0)),
     ("air_injector_loose", Dmi("obj/pipes_n_cables/pipe_item.dmi", "injector", 0)),
+    ("air_scrubber_loose_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "scrubber", 0)),
+    ("air_scrubber_loose_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "scrubber", 1)),
+    ("air_scrubber_loose_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "scrubber", 2)),
+    ("air_scrubber_loose_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "scrubber", 3)),
+    ("air_injector_loose_s", Dmi("obj/pipes_n_cables/pipe_item.dmi", "injector", 0)),
+    ("air_injector_loose_n", Dmi("obj/pipes_n_cables/pipe_item.dmi", "injector", 1)),
+    ("air_injector_loose_e", Dmi("obj/pipes_n_cables/pipe_item.dmi", "injector", 2)),
+    ("air_injector_loose_w", Dmi("obj/pipes_n_cables/pipe_item.dmi", "injector", 3)),
     // ---- end of the room devices -------------------------------------
     // A gas canister: tg's art is greyscale and each gas type paints
     // it (greyscale_colors "#c6c0b5" is pre-mixed air). Baked with

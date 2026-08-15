@@ -75,7 +75,7 @@ t.drop(p)
 t.run_ticks(2)
 t.click(p, 3, 3, t.target_at(3, 3, "wrench")) -- wrench
 t.run_ticks(2)
-t.click(p, 2, 1)
+t.click_subfloor(p, 2, 1, "pipe", DISTRO)
 t.run_seconds(1.5)
 assert(t.pipe(2, 1) == 0, "the middle length came up")
 assert(t.pipe(1, 1) == DISTRO, "the ends stayed")
@@ -243,13 +243,13 @@ assert(
     "which is empty, because it never touched the main: " .. t.pipe_pressure(2, 1, 1)
 )
 
--- One pull, one length: the wrench takes the topmost layer and leaves
--- what is plumbed beneath it, so the refund is honest.
+-- One pull, one length: the wrench takes the layer the alpha-tested
+-- sprite names and leaves what is plumbed beneath it.
 t.drop(e)
 t.run_ticks(2)
 t.click(e, 1, 2, t.target_at(1, 2, "wrench")) -- the wrench
 t.run_ticks(2)
-t.click(e, 2, 1)
+t.click_subfloor(e, 2, 1, "pipe", DISTRO)
 t.run_seconds(1.5)
 assert(t.pipe(2, 1) == 1, "the main came up and layer 1 stayed: " .. t.pipe(2, 1))
 assert(t.pipe(1, 1) == DISTRO, "and the rest of the main is untouched")
