@@ -39,7 +39,7 @@ t.world([==[(
 
 local p = t.join()
 t.tick()
-t.click(p, 1, 2) -- the crowbar is underfoot
+t.click(p, 1, 2, t.target_at(1, 2, "crowbar")) -- the crowbar is underfoot
 t.tick()
 t.sounds(p)      -- clear the pickup traffic
 t.messages(p)
@@ -80,7 +80,7 @@ assert(t.turf(5, 1) == "plating", "and the one under the light")
 walk("west", 3)
 t.drop(p)      -- put the crowbar down; the hand is for the tile
 t.tick()
-t.click(p, 2, 1) -- pick the pried tile back up
+t.click(p, 2, 1, t.target_at(2, 1, "floor_tile")) -- pick the pried tile back up
 t.tick()
 t.messages(p)
 t.click(p, 2, 1) -- and lay it
@@ -113,12 +113,12 @@ t.world([==[(
 
 p = t.join()
 t.run_ticks(30) -- let a power pass settle the dead motors
-t.click(p, 1, 1) -- the crowbar
+t.click(p, 1, 1, t.target_at(1, 1, "crowbar")) -- the crowbar
 t.tick()
 t.move(p, "east")
 t.run_ticks(6)
 t.sounds(p)
-t.click(p, 3, 1) -- heave the unpowered airlock open
+t.click(p, 3, 1, t.target_at(3, 1)) -- heave the unpowered airlock open
 t.run_seconds(3.0)
 local door_sounds = t.sounds(p)
 assert(has(door_sounds, "crowbar_pry"),

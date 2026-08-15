@@ -71,7 +71,7 @@ assert(t.cable_at(2, 2) == BRANCH, "and so does the cable")
 -- ---------------------------------------------------------------
 -- The wrench. Buried pipe under a tile is not wrenchable.
 -- ---------------------------------------------------------------
-t.click(p, 1, 1) -- pick up the wrench
+t.click(p, 1, 1, t.target_at(1, 1, "wrench")) -- pick up the wrench
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "wrench in hand")
 local _ = t.messages(p)
@@ -96,7 +96,7 @@ assert(#t.ledger_rows("PipePulled") == 1, "and that one IS on the record")
 -- ---------------------------------------------------------------
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 3, 1)
+t.click(p, 3, 1, t.target_at(3, 1, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
 _ = t.messages(p)
@@ -117,7 +117,7 @@ assert(#t.ledger_rows("CableCut") == 1, "and that cut is attributed")
 -- ---------------------------------------------------------------
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 1, 3) -- the coil
+t.click(p, 1, 3, t.target_at(1, 3, "cable_coil")) -- the coil
 t.run_ticks(2)
 _ = t.messages(p)
 t.click(p, 2, 3)
@@ -131,7 +131,7 @@ assert(
 
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 1, 2) -- the length of pipe
+t.click(p, 1, 2, t.target_at(1, 2, "pipe")) -- the length of pipe
 t.run_ticks(2)
 _ = t.messages(p)
 t.click(p, 2, 3)
@@ -147,7 +147,7 @@ assert(
 -- ---------------------------------------------------------------
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 3, 3) -- the crowbar
+t.click(p, 3, 3, t.target_at(3, 3, "crowbar")) -- the crowbar
 t.run_ticks(2)
 t.click(p, 2, 2)
 t.run_ticks(2)
@@ -155,7 +155,7 @@ assert(t.turf(2, 2) == "plating", "the tile came up")
 
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 3, 2) -- the spare wrench, kept clear of the pile at our feet
+t.click(p, 3, 2, t.target_at(3, 2, "wrench")) -- the spare wrench, kept clear of the pile at our feet
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "wrench in hand again")
 

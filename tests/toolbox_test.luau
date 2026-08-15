@@ -29,7 +29,7 @@ assert(#joins == 2, "two crewmen signed on")
 local attacker_id, victim_id = joins[1].actor.id, joins[2].actor.id
 assert(attacker_id ~= victim_id)
 
-t.click(attacker, 1, 1) -- the toolbox underfoot
+t.click(attacker, 1, 1, t.target_at(1, 1, "toolbox")) -- the toolbox underfoot
 t.tick()
 assert(t.hands(attacker).held == "toolbox", "picked it up")
 assert(t.vitals(victim) == nil, "nobody has been hurt yet")

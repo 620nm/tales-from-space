@@ -63,7 +63,7 @@ assert(t.turf(2, 1) == "plating", "and so does the next one")
 -- Two loose tiles, one in hand: put the crowbar down and gather them.
 t.drop(p)
 t.tick()
-t.click(p, 2, 1)
+t.click(p, 2, 1, t.target_at(2, 1, "floor_tile"))
 t.tick()
 assert(t.hands(p).held == "floor_tile", "one pried tile in hand")
 

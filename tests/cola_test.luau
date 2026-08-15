@@ -24,7 +24,7 @@ t.tick()
 -- A rough shift so far: some oxygen damage to heal.
 t.set_health(p, { oxy = 30 })
 
-t.click(p, 1, 1) -- pick up the can
+t.click(p, 1, 1, t.target_at(1, 1, "cola")) -- pick up the can
 t.tick()
 assert(t.blood_moles(p) == 0, "nothing in the blood yet")
 

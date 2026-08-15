@@ -21,7 +21,7 @@ t.world([==[(
 
 local p = t.join()
 t.tick()
-t.click(p, 2, 1) -- the crowbar
+t.click(p, 2, 1, t.target_at(2, 1, "crowbar")) -- the crowbar
 t.tick()
 assert(t.hands(p).held == "crowbar", "in hand")
 t.move(p, "east")
@@ -29,7 +29,7 @@ t.tick()
 
 -- Powered: the crowbar hook passes, the native toggle opens it.
 assert(t.door_at(3, 1).powered, "the shipped grid feeds this door")
-t.click(p, 3, 1)
+t.click(p, 3, 1, t.target_at(3, 1))
 t.tick()
 assert(not t.door_at(3, 1).open, "the airlock is still swinging")
 t.run_ticks(12) -- the swing: tg's 0.6 seconds
@@ -41,7 +41,7 @@ assert(not t.door_at(3, 1).open, "autoclosed")
 t.outage()
 t.tick()
 assert(not t.door_at(3, 1).powered, "the breaker tripped")
-t.click(p, 3, 1)
+t.click(p, 3, 1, t.target_at(3, 1))
 t.tick()
 assert(not t.door_at(3, 1).open, "prying takes time")
 t.run_ticks(60)

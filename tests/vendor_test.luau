@@ -33,6 +33,11 @@ assert(msgs:find("wobbles", 1, true), "on_bump fired: " .. msgs)
 -- carries is tg's Vending contract, asserted as a shape.
 t.click(p, 2, 1)
 t.tick()
+local missed = t.last_ui(p)
+assert(missed == nil, "a target-less transparent-pixel click is only ground")
+
+t.click(p, 2, 1, t.target_at(2, 1))
+t.tick()
 local raw, pushes = t.last_ui(p)
 assert(raw, "clicking the machine opens its window")
 local ui = t.ui(p)
