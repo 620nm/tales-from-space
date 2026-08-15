@@ -2,12 +2,15 @@
 -- engineer who has lost a crowbar should not have to walk to the
 -- Annex for another one.
 --
--- tg: /obj/machinery/vending/tool ("YouTool", vending/youtool.dm),
--- whose stock this reproduces as far as the pack has prototypes for
--- it. tg also lists a t-scanner, flashlights, glowsticks and earmuffs;
--- those are not things yet, so they are not on the shelf. Nothing
--- native has to change when they are — one line here, which is exactly
--- what the gas analyzer cost the day it became a thing.
+-- tg: /obj/machinery/vending/tool ("YouTool", vending/youtool.dm) is
+-- the ordinary-tool baseline. TfS folds the rest of its implemented
+-- repair kit into the same free shelf: tg puts light tubes in the Robco
+-- Tool Maker (vending/engineering.dm), light replacers in JaniDrobe
+-- (vending/wardrobes.dm), and keeps the RPD in engineering lockers
+-- (closets/secure/engineering.dm). One machine here makes every tool
+-- that exists in this smaller game recoverable. tg's t-scanner,
+-- flashlights, glowsticks and earmuffs remain absent because this pack
+-- has no prototypes for them.
 --
 -- It shares `script = "vendor"` with the softdrinks machine: opening
 -- a window on click and wobbling when bumped is the behaviour of a
@@ -30,6 +33,13 @@ return {
         { item = "analyzer", name = "Gas Analyzer", category = "Tools", amount = 5 },
         { item = "screwdriver", name = "Screwdriver", category = "Tools", amount = 5 },
         { item = "multitool", name = "Multitool", category = "Tools", amount = 4 },
+        { item = "rpd", name = "Rapid Pipe Dispenser", category = "Tools", amount = 2 },
+        { item = "pipe_painter", name = "Pipe Painter", category = "Tools", amount = 2 },
+        { item = "light_replacer", name = "Light Replacer", category = "Tools", amount = 2 },
+        { item = "light_bulb", name = "Light Bulb", category = "Tools", amount = 10 },
+        { item = "light_tube", name = "Light Tube", category = "Tools", amount = 10 },
         { item = "toolbelt", name = "Toolbelt", category = "Tools", amount = 2 },
+        { item = "toolbox", name = "Mechanical Toolbox", category = "Tools", amount = 2 },
+        { item = "box_lights", name = "Box of Replacement Lights", category = "Tools", amount = 2 },
     },
 }

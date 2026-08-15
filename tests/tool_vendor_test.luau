@@ -43,12 +43,63 @@ local shelf = {}
 for _, rec in ipairs(ui.payload.data.product_records) do
     shelf[rec.ref] = rec
 end
-assert(shelf.crowbar and shelf.crowbar.category == "Tools",
-    "the crowbar is on the shelf under Tools")
+-- This is the complete TfS tool roster, not only tg's base YouTool
+-- stock. Keep the explicit inventory here as the tripwire: every
+-- currently implemented tool has a named expectation, and removing
+-- one from the machine fails this spec.
+local tools = {
+    "cable_coil",
+    "crowbar",
+    "welder",
+    "wirecutters",
+    "wrench",
+    "analyzer",
+    "screwdriver",
+    "multitool",
+    "rpd",
+    "pipe_painter",
+    "light_replacer",
+    "light_bulb",
+    "light_tube",
+    "toolbelt",
+    "toolbox",
+    "box_lights",
+}
+for _, item in ipairs(tools) do
+    assert(shelf[item], item .. " is missing from the tool vendor")
+    assert(shelf[item].category == "Tools", item .. " is not under Tools")
+    assert(shelf[item].path ~= "atlas-missing-" .. item,
+        item .. " does not resolve to atlas art")
+    assert(ui.payload.data.stock[shelf[item].path].amount > 0,
+        item .. " has no displayed stock")
+end
+assert(#ui.payload.data.product_records == #tools,
+    "the tool shelf and its asserted roster drifted apart")
 assert(shelf.cable_coil.path == "atlas-coil-cable_coil",
     "item ids that differ from their sprite still select their atlas art")
-assert(shelf.toolbelt, "and so is the toolbelt")
 assert(shelf.cola == nil, "the tool vendor does not sell cola")
+
+-- The additions are not merely rows in a window: each row resolves to
+-- its real item prototype when vended. The light tube covers the long
+-- replacement fitting too, and the two boxes prove stocked containers
+-- survive the same route.
+local additions = {
+    "rpd",
+    "pipe_painter",
+    "light_replacer",
+    "light_bulb",
+    "light_tube",
+    "toolbox",
+    "box_lights",
+}
+for _, item in ipairs(additions) do
+    assert(t.count_items(item) == 0)
+    t.ui_act(p, "vend", '{"ref":"' .. item .. '"}')
+    t.tick()
+    assert(t.count_items(item) == 1, item .. " did not dispense")
+    assert(t.ledger_has("ItemSpawned", item, "Player"),
+        item .. " was not attributed to the buyer")
+end
 
 -- act('vend') names WHICH shelf; the item lands at the buyer's feet
 -- and the ledger names the buyer, not the script that opened the
