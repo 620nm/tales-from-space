@@ -244,9 +244,9 @@ t.world([==[(
     ],
     spawns: [(4, 2)],
     items: [(4, 2, "wrench")],
-    // Pipe under the machine as well, so "the run is whole again" is a
-    // thing this spec can actually see.
-    pipes: [(1, 1, 4), (2, 1, 4), (3, 1, 4), (4, 1, 4), (5, 1, 4)],
+    // The pump replaces the centre length; taking it up leaves a real
+    // gap until an engineer lays a replacement.
+    pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4)],
     structures: [(3, 1, "gas_pump")],
 )]==], 7)
 
@@ -285,10 +285,7 @@ t.run_ticks(1)
 assert(t.structure_at(3, 1) ~= nil, "one tick in, it is still bolted down")
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "and two seconds in, it is up")
-assert(
-    t.pipe_pressure(3, 1) ~= nil,
-    "and the run the machine was interrupting is whole again"
-)
+assert(t.pipe(3, 1) == 0, "and no hidden centre length reappeared")
 near(
     t.pipe_pressure(1, 1),
     t.pipe_pressure(5, 1),

@@ -47,7 +47,7 @@ end
 -- ---------------------------------------------------------------
 -- A SHUT VALVE IS A WALL.
 --
--- One distribution main, six lengths, with a valve standing on the
+-- One distribution main, with a valve replacing its centre length
 -- middle of it. The run does NOT pass through the machine: the length
 -- under it belongs to no net, and the two sides are two networks that
 -- happen to be in a straight line.
@@ -73,7 +73,7 @@ t.world([==[(
         "########",
     ],
     spawns: [(4, 3)],
-    pipes: [(1, 2, 4), (2, 2, 4), (3, 2, 4), (4, 2, 4), (5, 2, 4), (6, 2, 4)],
+    pipes: [(2, 2, 4), (4, 2, 4), (5, 2, 4), (6, 2, 4)],
     structures: [(3, 2, "manual_valve")],
 )]==], 7)
 
@@ -83,8 +83,9 @@ t.tick()
 assert(t.structure_at(3, 2).id == "manual_valve", "the map stood a valve on the main")
 assert(t.structure_at(3, 2).state == "shut", "and it opens the shift shut")
 
--- The map laid pipe under the machine, and the machine took the tile.
-assert(t.pipe(3, 2) == DISTRO, "there is pipe under the valve")
+-- Both atmos fixtures replace their centre lengths.
+assert(t.pipe(1, 2) == 0, "there is no hidden pipe under the vent")
+assert(t.pipe(3, 2) == 0, "there is no hidden pipe under the valve")
 assert(
     t.pipe_pressure(3, 2) == nil,
     "but no net claims it: a run does not pass through a machine"
@@ -95,7 +96,7 @@ assert(
 assert(t.pipe_pressure(2, 2) > 90.0, "the west main is handed over charged")
 assert(t.pipe_pressure(5, 2) > 90.0, "and so is the east one")
 
-local west_m3 = net_m3(2, 1) -- (1,2) (2,2) plus the valve's back port
+local west_m3 = net_m3(1, 2) -- (2,2), plus vent and valve ports
 local east_m3 = net_m3(3, 1) -- (4,2) (5,2) (6,2) plus its front port
 local held = moles(t.pipe_pressure(2, 2), west_m3) + moles(t.pipe_pressure(5, 2), east_m3)
 

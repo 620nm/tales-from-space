@@ -89,8 +89,8 @@ t.world([==[(
     spawns: [(1, 1)],
     items: [(1, 1, "wrench")],
     pipes: [
-        (1, 1, 4), (2, 1, 4), (3, 1, 4), (4, 1, 4), (5, 1, 4),
-        (6, 1, 4), (7, 1, 4), (8, 1, 4), (9, 1, 4), (10, 1, 4),
+        (2, 2, 4), (3, 2, 4), (4, 2, 4), (5, 2, 4),
+        (5, 1, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4), (9, 1, 4),
     ],
     structures: [(2, 1, "connector_port")],
 )]==], 7)
@@ -175,10 +175,10 @@ t.run_seconds(15)
 assert(t.pipe_pressure(5, 1) < 5.0, "the run the port left is spent")
 
 -- The books, taken with everything static. The room is 8x3 tiles of
--- 1 m³, the run is ten lengths of 70 L (tg's UNARY_PIPE_VOLUME * 2),
--- the bottle is tg's 2000 L.
+-- 1 m³, the run is nine lengths of 70 L plus the vent's 200 L mouth,
+-- and the bottle is tg's 2000 L. The connector itself is zero-volume.
 local ROOM_M3 = 24.0
-local RUN_M3 = 10 * 0.070
+local RUN_M3 = 9 * 0.070 + 0.200
 local CAN_M3 = 2.0
 
 local function books(can_x, can_y)
@@ -214,22 +214,24 @@ assert(t.canister_pressure(4, 1) ~= nil, "the bottle was shoved along ahead")
 -- Down two rows, where no run reaches. A port aimed at bare deck is a
 -- socket wired to nothing, and bolting one down there is the mistake
 -- the whole two-rung design exists to stop.
+walk(p, "west")
+walk(p, "west")
 walk(p, "south")
 walk(p, "south")
 t.drop(p)
 t.run_ticks(2)
-assert(lying_at(3, 3, "connector_port_fitting"), "dropped on bare deck")
+assert(lying_at(1, 3, "connector_port_fitting"), "dropped on bare deck")
 
 t.swap_hands(p)
 local _ = t.messages(p)
-t.click(p, 3, 3, t.target_at(3, 3, "connector_port_fitting"))
+t.click(p, 1, 3, t.target_at(1, 3, "connector_port_fitting"))
 t.run_seconds(2.5)
 assert(
     said(p, "There is no pipe under the floor here."),
     "the refusal named the rule that stopped it"
 )
-assert(t.structure_at(3, 3) == nil, "nothing was bolted to nothing")
-assert(lying_at(3, 3, "connector_port_fitting"), "and the fitting survived the attempt")
+assert(t.structure_at(1, 3) == nil, "nothing was bolted to nothing")
+assert(lying_at(1, 3, "connector_port_fitting"), "and the fitting survived the attempt")
 assert(
     not t.ledger_has("StructureStep", "connector_port", "built"),
     "a refused step writes no step row"
@@ -237,11 +239,13 @@ assert(
 
 -- ---- put it back together somewhere better ----
 t.swap_hands(p)
-t.click(p, 3, 3, t.target_at(3, 3, "connector_port_fitting"))
+t.click(p, 1, 3, t.target_at(1, 3, "connector_port_fitting"))
 t.run_ticks(2)
 assert(t.hands(p).held == "connector_port_fitting", "picked back up")
 walk(p, "north")
 walk(p, "north")
+walk(p, "east")
+walk(p, "east")
 t.drop(p)
 t.run_ticks(2)
 assert(lying_at(3, 1, "connector_port_fitting"), "dropped over the run")

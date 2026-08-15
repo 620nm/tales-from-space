@@ -36,9 +36,10 @@
 -- atmospherics component's `initialize_directions` IS its dir
 -- (components/unary_devices/unary_devices.dm:14) -- so a port aimed at
 -- bare deck feeds nothing, whatever is laid on its other three sides.
--- A port raised from a fitting aims itself at the run it is being
--- bolted onto, which is the same tile the `over = "pipe"` refusal just
--- checked. (tg lets you turn the fitting in hand first,
+-- A port raised from a fitting aims itself at the neighbouring run its
+-- stub reaches, which is also the run `over = "pipe"` validates. Its
+-- own tile is the component's centre and must not also carry a raw pipe
+-- on the same layer. (tg lets you turn the fitting in hand first,
 -- `/obj/item/pipe/attack_self`, construction.dm:256-257; that wants a
 -- rotate command this protocol has not grown yet.)
 return {
@@ -66,7 +67,8 @@ return {
         from_item = "connector_port_fitting",
         tool = "wrench",
         secs = 2.0,
-        -- A port is a fitting ON a run. No run, no port.
+        -- The port replaces its centre length but still needs a run for
+        -- its stub to reach. No neighbouring run, no connected port.
         over = "pipe",
         start = "You start bolting the connector port down.",
         done = "The connector port is seated on the pipe.",

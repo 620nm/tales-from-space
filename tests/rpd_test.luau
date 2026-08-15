@@ -207,7 +207,10 @@ assert(t.structure_at(5, 1).id == "manual_valve", "a valve goes down on bare dec
 local _ = t.messages(p)
 t.click(p, 5, 1)
 work(p)
-assert(said(p, "Something is in the way."), "and a second one does not")
+assert(
+    said(p, "Something is already under the floor here."),
+    "and a second component cannot claim the same pipe layer"
+)
 
 -- ---- destroy mode eats loose things, and only loose things ----
 --
@@ -298,3 +301,90 @@ local before = shows(p, MODE)
 t.ui_act(p, "toggle", '{"field":"dial0","option":"1"}')
 t.tick()
 assert(shows(p, MODE) == before, "no window, no acts")
+
+-- ---------------------------------------------------------------
+-- OCCUPANCY. An atmos component replaces raw pipe on its own layer.
+-- The RPD must refuse both directions, including the fitting-shaped
+-- connector that bypasses ordinary on-deck occupancy. Different layers
+-- remain valid crossings.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "rpd occupancy",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Plating),
+        '#': (turf: Wall),
+    },
+    rows: [
+        "#####",
+        "#...#",
+        "#...#",
+        "#...#",
+        "#####",
+    ],
+    spawns: [(2, 2)],
+    items: [(1, 2, "rpd"), (1, 1, "wrench")],
+    pipes: [(1, 2, 4), (2, 2, 4), (3, 2, 4), (1, 3, 4), (3, 3, 4)],
+    structures: [
+        (1, 1, "manual_valve"),
+        (2, 1, "connector_port"),
+        (3, 1, "manual_valve_l2"),
+    ],
+)]==], 7)
+
+local o = t.join()
+t.tick()
+t.click(o, 1, 2, t.target_at(1, 2, "rpd"))
+t.run_ticks(2)
+t.use_self(o)
+t.tick()
+
+-- Raw pipe cannot be laid under either component shape.
+for _, x in ipairs({ 1, 2 }) do
+    local _ = t.messages(o)
+    t.click(o, x, 1)
+    work(o)
+    assert(t.pipe(x, 1) == 0, "no hidden pipe appeared at " .. x)
+    assert(
+        said(o, "An atmospherics component already occupies that pipe layer."),
+        "the RPD names the occupied layer at " .. x
+    )
+end
+
+-- A layer-3 length may cross a layer-2 valve.
+t.click(o, 3, 1)
+work(o)
+assert(
+    t.pipe(3, 1) == 4,
+    "another-layer crossing remains legal: mask " .. tostring(t.pipe(3, 1))
+)
+
+-- Connector over valve, then valve over connector: neither fitting's
+-- special under-deck placement nor ordinary occupancy may erase the
+-- other component.
+set(o, RECIPE, pick(o, RECIPE, "Connector"))
+local _ = t.messages(o)
+t.click(o, 1, 1)
+work(o)
+assert(t.structure_at(1, 1).id == "manual_valve", "the valve survived")
+assert(said(o, "Something is already under the floor here."), "connector over valve refused")
+
+set(o, RECIPE, pick(o, RECIPE, "Manual Valve"))
+local _ = t.messages(o)
+t.click(o, 2, 1)
+work(o)
+assert(t.structure_at(2, 1).id == "connector_port", "the connector survived")
+assert(said(o, "Something is already under the floor here."), "valve over connector refused")
+
+-- Nor may a component be placed over an existing same-layer raw run.
+for _, case in ipairs({
+    { x = 1, y = 3, recipe = "Manual Valve" },
+    { x = 3, y = 3, recipe = "Connector" },
+}) do
+    set(o, RECIPE, pick(o, RECIPE, case.recipe))
+    local _ = t.messages(o)
+    t.click(o, case.x, case.y)
+    work(o)
+    assert(t.structure_at(case.x, case.y) == nil, case.recipe .. " did not cover raw pipe")
+    assert(said(o, "Something is already under the floor here."), "raw pipe blocks " .. case.recipe)
+end

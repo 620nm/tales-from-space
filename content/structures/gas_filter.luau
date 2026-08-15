@@ -64,14 +64,14 @@ return {
         max_rate_lps = 200.0,
     },
     -- The round trip, exactly as the connector port's is: a fitting
-    -- goes down on the run and a wrench stands the machine up
+    -- goes down and a wrench stands the machine up as the centre
+    -- section between the neighbouring runs
     -- (docs/construction.md, "The fitting round trip").
     build = {
         on = { "floor", "plating" },
         from_item = "gas_filter_fitting",
         tool = "wrench",
         secs = 2.0,
-        over = "pipe",
         start = "You start bolting the gas filter down.",
         done = "The gas filter is seated on the pipe.",
     },

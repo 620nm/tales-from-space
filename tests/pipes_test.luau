@@ -112,17 +112,17 @@ t.world([==[(
     spawns: [(12, 2)],
     items: [(12, 2, "welder"), (12, 3, "pipe")],
     pipes: [
-        (5, 2, 4), (6, 2, 4), (7, 2, 4), (8, 2, 4),
-        (9, 2, 4), (10, 2, 4), (11, 2, 4),
+        (6, 2, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4),
+        (9, 1, 4), (10, 1, 4), (11, 1, 4),
     ],
 )]==], 7)
 local q = t.join()
 t.tick()
 
 -- The mapped run is commissioned, unlike the one built above, and it
--- passes UNDER the wall between the two rooms. It stops one tile
--- short: the closet's vent has nothing to draw from yet.
-assert(t.pipe_pressure(8, 2) > 90.0, "a mapped line is handed over charged")
+-- runs toward the wall between the two rooms. It stops one tile short
+-- of that wall: the closet's vent has nothing to draw from yet.
+assert(t.pipe_pressure(8, 1) > 90.0, "a mapped line is handed over charged")
 assert(t.room_pressure(12, 1) > 90.0, "and both rooms start breathable")
 assert(t.turf(11, 2) == "wall", "the line runs under a wall")
 assert(t.pipe_pressure(12, 2) == nil, "but stops short of the closet")
@@ -153,14 +153,15 @@ assert(
     "and a sealed vacuum stays a vacuum while the line stops short"
 )
 
--- Finish the plumbing: one length under the vent, and the closet is
--- on the distribution line.
+-- Finish the plumbing: one length on the freshly repaired tile north
+-- of the vent, and the closet is on the distribution line through the
+-- vent's north mouth.
 t.swap_hands(q)
 t.run_ticks(2)
-t.click(q, 12, 2)
+t.click(q, 12, 1)
 t.run_seconds(1.5)
-assert(t.pipe(12, 2) == DISTRO, "the last length went down")
-assert(t.pipe_pressure(12, 2) ~= nil, "and the vent has a run to draw on")
+assert(t.pipe(12, 1) == DISTRO, "the last length went down")
+assert(t.pipe_pressure(12, 1) ~= nil, "and the vent has a run to draw on")
 
 t.run_seconds(60)
 local west_end = t.room_pressure(2, 1)
@@ -277,7 +278,7 @@ t.world([==[(
     rows: [
         "#######",
         "#.....#",
-        "#..p..#",
+        "#.p...#",
         "#.....#",
         "#######",
     ],
@@ -287,7 +288,7 @@ t.world([==[(
         (4, 1, 4), (4, 2, 4), (4, 3, 4),
     ],
     pipe_facing: [
-        (3, 1, 4, 3), (3, 2, 4, 3), (3, 3, 4, 3),
+        (3, 1, 4, 3), (3, 2, 4, 11), (3, 3, 4, 3),
         (4, 1, 4, 3), (4, 2, 4, 3), (4, 3, 4, 3),
     ],
 )]==], 7)
@@ -327,7 +328,7 @@ t.world([==[(
     rows: [
         "#######",
         "#.....#",
-        "#..p..#",
+        "#.p...#",
         "#.....#",
         "#######",
     ],
@@ -347,3 +348,47 @@ assert(
     "unaimed, the second column is the same net and drains too: "
         .. t.pipe_pressure(4, 2)
 )
+
+-- ---------------------------------------------------------------
+-- A loose length follows the same occupancy rule as the RPD. Native
+-- vents and content-authored machines own their centre on their layer;
+-- a component on another layer is still a valid crossing.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "hand-laid component occupancy",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Plating),
+        '#': (turf: Wall),
+        'v': (turf: Plating, fixture: Some(Vent)),
+    },
+    rows: [
+        "#####",
+        "#v..#",
+        "#...#",
+        "#####",
+    ],
+    spawns: [(2, 2)],
+    items: [(2, 2, "pipe")],
+    structures: [(2, 1, "manual_valve"), (3, 1, "manual_valve_l2")],
+)]==], 7)
+
+local h = t.join()
+t.tick()
+t.click(h, 2, 2, t.target_at(2, 2, "pipe"))
+t.run_ticks(2)
+
+for _, x in ipairs({ 1, 2 }) do
+    local _ = t.messages(h)
+    t.click(h, x, 1)
+    t.run_seconds(1.5)
+    assert(t.pipe(x, 1) == 0, "no raw pipe appeared under the component at " .. x)
+    assert(
+        said(h, "An atmospherics component already occupies that pipe layer."),
+        "the hand-laid length names the occupied layer at " .. x
+    )
+end
+
+t.click(h, 3, 1)
+t.run_seconds(1.5)
+assert(t.pipe(3, 1) == DISTRO, "layer 3 crosses a layer-2 component")

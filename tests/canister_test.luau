@@ -39,6 +39,7 @@ t.world([==[(
         '.': (turf: Plating),
         '#': (turf: Wall),
         'v': (turf: Plating, fixture: Some(Vent)),
+        'p': (turf: Plating, fixture: Some(PassiveVent)),
         'c': (turf: Plating, fixture: Some(Canister)),
     },
     rows: [
@@ -50,7 +51,7 @@ t.world([==[(
     ],
     spawns: [(2, 2)],
     items: [(2, 2, "welder")],
-    pipes: [(1, 2, 4), (2, 2, 4), (3, 2, 4)],
+    pipes: [(2, 2, 4)],
     // The socket under the canister. Without it the bottle is furniture.
     structures: [(3, 2, "connector_port")],
 )]==], 7)
@@ -58,7 +59,8 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
--- The room is nine tiles of 1 m³; the run is three lengths of 70 L.
+-- The room is nine tiles of 1 m³; one raw length joins the vent's
+-- 200 L mouth to the connector's zero-volume socket.
 local ROOM_M3 = 9.0
 local CAN_M3 = 2.0
 
@@ -147,29 +149,30 @@ t.world([==[(
         '.': (turf: Plating),
         '#': (turf: Wall),
         'v': (turf: Plating, fixture: Some(Vent)),
+        'p': (turf: Plating, fixture: Some(PassiveVent)),
         'c': (turf: Plating, fixture: Some(Canister)),
     },
     rows: [
         "#####                   ",
         "#...#                   ",
-        "#v..#...............vc  ",
+        "#v..#...............p.c ",
         "#...#                   ",
         "#####                   ",
     ],
     spawns: [(2, 2)],
     items: [(2, 2, "welder")],
     pipes: [
-        (1, 2, 4), (2, 2, 4), (3, 2, 4), (4, 2, 4), (5, 2, 4), (6, 2, 4),
+        (2, 2, 4), (3, 2, 4), (4, 2, 4), (5, 2, 4), (6, 2, 4),
         (7, 2, 4), (8, 2, 4), (9, 2, 4), (10, 2, 4), (11, 2, 4), (12, 2, 4),
         (13, 2, 4), (14, 2, 4), (15, 2, 4), (16, 2, 4), (17, 2, 4),
-        (18, 2, 4), (19, 2, 4), (20, 2, 4), (21, 2, 4),
+        (18, 2, 4), (21, 2, 4),
     ],
-    structures: [(21, 2, "connector_port")],
+    structures: [(22, 2, "connector_port")],
 )]==], 7)
 
 local q = t.join()
 t.tick()
-assert(t.canister_pressure(21, 2) > 4000.0, "the second canister starts full too")
+assert(t.canister_pressure(22, 2) > 4000.0, "the second canister starts full too")
 assert(t.room_pressure(2, 2) > 90.0, "and the crew room starts breathable")
 
 -- Tear the deck open under the strip. (The station is handed over
@@ -178,10 +181,10 @@ assert(t.room_pressure(2, 2) > 90.0, "and the crew room starts breathable")
 -- second vent is releasing into a vacuum that never fills, so the
 -- canister empties itself into space one lungful per pass.
 t.fault(10, 2, t.now() + 4)
-t.run_seconds(70)
-local left = t.canister_pressure(21, 2)
+t.run_seconds(300)
+local left = t.canister_pressure(22, 2)
 assert(left < 100.0, "the canister blew itself empty: " .. left)
-assert(t.pipe_pressure(3, 2) < 10.0, "and the distribution run is dead with it")
+assert(t.pipe_pressure(21, 2) < 10.0, "and the bottle's outlet run is dead with it")
 
 -- The crew room never noticed: it was already at one atmosphere, so
 -- its vent had no reason to run.
@@ -248,10 +251,11 @@ t.world([==[(
     // bare deck with nothing under it, so the canister can be stood
     // somewhere unplumbed without the net being cut in two.
     pipes: [
-        (1, 1, 4), (2, 1, 4), (2, 2, 4), (3, 2, 4), (4, 2, 4),
-        (4, 1, 4), (5, 1, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4), (9, 1, 4),
+        (1, 2, 4), (2, 2, 4), (3, 2, 4), (4, 2, 4),
+        (5, 2, 4), (6, 2, 4),
+        (4, 1, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4),
     ],
-    // Three sockets on twelve lengths of pipe. (4, 1) is deliberately
+    // Three sockets beside the run. (4, 1) is deliberately
     // NOT one of them: it is charged main with nowhere to plug in.
     structures: [
         (1, 1, "connector_port"),
@@ -299,8 +303,8 @@ t.run_seconds(10)
 local loose = t.canister_pressure(2, 1)
 assert(math.abs(loose - off) < 1.0,
     "off the port, it feeds nothing: " .. off .. " -> " .. loose)
-assert(t.pipe_pressure(2, 1) < 20.0,
-    "and the run it left is emptying into space: " .. t.pipe_pressure(2, 1))
+assert(t.pipe_pressure(2, 2) < 20.0,
+    "and the adjacent run it left is emptying into space: " .. t.pipe_pressure(2, 2))
 
 -- Loose means loose. Walk into it and it gives way (see
 -- movement.rs::shove -- tg would have you PULL it), and the tile it
