@@ -275,15 +275,17 @@ assert(fastened < before - 100.0,
     "a fastened canister feeds the run: " .. before .. " -> " .. fastened)
 
 -- Laying plumbing is slow. The player is standing on a port of their
--- own at (1, 1); a wrench takes two seconds to break it out of the
--- run, which is the contrast the next step is about.
+-- own at (1, 1); a wrench takes two seconds to break it out of the run
+-- and hand it back as a fitting, which is the contrast the next step is
+-- about. (The round trip itself is fittings_test.luau's business.)
 t.click(w, 1, 1, t.target_at(1, 1, "connector_port"))
 t.run_ticks(1)
-assert(not t.ledger_has("StructureStep", "connector_port", "displaced"),
+assert(not t.ledger_has("StructureStep", "connector_port", "gone"),
     "one tick in, the port is still bolted down")
 t.run_seconds(2.5)
-assert(t.ledger_has("StructureStep", "connector_port", "displaced"),
+assert(t.ledger_has("StructureStep", "connector_port", "gone"),
     "and two seconds in, it is up")
+assert(#t.items_at(1, 1) == 1, "and it is lying on the deck as a fitting")
 
 -- Unfastening a canister takes NO time. One tick, one ratchet, off.
 t.click(w, 2, 1, t.target_at(2, 1))
