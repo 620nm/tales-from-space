@@ -168,13 +168,21 @@ local function open_panel(p, id)
 end
 
 -- ---------------------------------------------------------------
--- OFF IS A POSITION, NOT A THROTTLE.
+-- OFF IS A POSITION, NOT A THROTTLE. AND DEAD IS NOT A POSITION AT ALL.
 --
--- The two trinaries in turn, on a live branch they keep for the whole
--- scenario: configured, switched on, caught working, and then switched
--- off at the panel with the mains still right there. Every mouth stops
--- in the same tick -- no coasting, no last pass, no trickle -- and each
--- one still had the job in front of it that it was doing.
+-- The two trinaries in turn: configured, switched on, caught working,
+-- and then stopped BOTH ways in the same shift. First at the panel,
+-- with the branch still live -- every mouth stops in the same tick, no
+-- coasting, no last pass, no trickle, and each one still had the job in
+-- front of it that it was doing. Then the branch itself is cut and the
+-- switch thrown back on: a dead trinary is equally inert.
+--
+-- The second half pins a real regression. filter.rs and mixer.rs once
+-- opened their pass on `d.on` alone, where the family doctrine is
+-- `working()` = on && fed (atmos_machines/mod.rs: "one question, asked
+-- in both places") -- so a switched-on filter kept sieving on a
+-- completely dead grid while its sprite, which always asked the right
+-- question, drew it stopped.
 -- ---------------------------------------------------------------
 local TRINARIES = {
     {
@@ -279,6 +287,40 @@ for _, job in ipairs(TRINARIES) do
     local switched = books({ IN, OUT, SIDE })
     t.run_seconds(30)
     frozen({ IN, OUT, SIDE }, switched, "a switched-off " .. job.id .. " moved nothing")
+
+    -- ...and now the other stop. Cut the one length of branch between
+    -- the APC and the machine, throw the switch back on, and ask the
+    -- books the same question: a switch thrown over a dead branch is a
+    -- promise, not a machine.
+    t.click(p, 5, 2, t.target_at(5, 2, "wirecutters"))
+    t.run_ticks(2)
+    assert(t.hands(p).held == "wirecutters", "cutters in hand")
+    t.click_subfloor(p, 4, 2, "cable", BRANCH)
+    t.run_seconds(1.5)
+    assert(t.cable_at(4, 2) == 0, "the branch is parted")
+    t.drop(p)
+    t.run_seconds(3)
+    assert(
+        t.segment_at(5, 1).apc_hops == nil,
+        "nothing on the machine's side of the cut reaches an APC"
+    )
+
+    open_panel(p, job.id)
+    t.ui_act(p, "toggle", '{"field":"power"}')
+    t.run_ticks(2)
+    assert(t.ui(p).toggles[1].on == true, "the switch is thrown all the same")
+    assert(
+        t.structure_at(5, 1).state == "off",
+        job.id .. " is drawn stopped -- the picture asks `working()`,"
+            .. " and the gas below must ask the same question"
+    )
+    t.ui_close(p)
+    t.tick()
+
+    job.unfinished()
+    local dead = books({ IN, OUT, SIDE })
+    t.run_seconds(30)
+    frozen({ IN, OUT, SIDE }, dead, "a dead " .. job.id .. " moved nothing either")
 end
 
 -- ---------------------------------------------------------------
