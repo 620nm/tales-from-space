@@ -163,3 +163,71 @@ assert(
     math.abs(t.pipe_pressure(2, 1) - charged) < 1.0,
     "and still at the pressure it was: " .. t.pipe_pressure(2, 1)
 )
+
+-- ---------------------------------------------------------------
+-- The needle answers the run AS IT STANDS THIS TICK.
+--
+-- A meter reads on the atmos cadence, but the plumbing under it
+-- changes whenever a player says so: laying a length onto a charged
+-- main gives the same moles more pipe to fill, and the pressure falls
+-- the moment the two are one network. The dial has to fall with it. A
+-- gauge that waits for the next pass is a gauge reporting a station
+-- that stopped existing half a second ago -- and this is a dial whose
+-- entire job is to be believed.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "extended main",
+    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    rows: [
+        "######",
+        "#....#",
+        "######",
+    ],
+    spawns: [(3, 1)],
+    items: [(3, 1, "pipe")],
+    pipes: [(1, 1, 4), (2, 1, 4)],
+    structures: [(1, 1, "meter")],
+)]==], 7)
+
+local m = t.join()
+t.tick()
+t.run_seconds(1.0)
+
+local gauge = t.target_at(1, 1, "meter")
+local function needle()
+    local drawn = t.layers(m, gauge)
+    return drawn[#drawn]
+end
+
+local commissioned = needle()
+assert(
+    commissioned ~= nil and string.sub(commissioned, 1, 7) == "meter_p",
+    "the mapped main reads on the dial: " .. tostring(commissioned)
+)
+
+-- Pick the length up and lay it on the end of the main.
+t.click(m, 3, 1, t.target_at(3, 1, "pipe"))
+t.run_ticks(2)
+t.click(m, 3, 1)
+
+-- Tick by tick, so that "the tick it happens" means something.
+local laid = false
+for _ = 1, 60 do
+    t.tick()
+    if t.pipe(3, 1) ~= 0 then
+        laid = true
+        break
+    end
+end
+assert(laid, "the length went down")
+local widened = needle()
+assert(
+    widened ~= commissioned,
+    "and the dial already reads the longer main: "
+        .. tostring(commissioned) .. " -> " .. tostring(widened)
+)
+
+-- Which is where it stays: nothing was waiting for an atmos pass to
+-- catch the picture up with the world.
+t.run_seconds(2.0)
+assert(needle() == widened, "the needle settled there and stayed: " .. tostring(needle()))
