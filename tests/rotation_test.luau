@@ -74,12 +74,11 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
-        'p': (turf: Plating, fixture: Some(PassiveVent)),
     },
     rows: [
         "#######",
         "#.....#",
-        "#p....#",
+        "#.....#",
         "#.....#",
         "#######",
     ],
@@ -89,6 +88,7 @@ t.world([==[(
     // chooses north first; an explicit east is the only reason this
     // valve may join the west/east pair instead.
     pipes: [(3, 1, 4), (2, 2, 4), (4, 2, 4), (3, 3, 4)],
+    structures: [(1, 2, "passive_vent")],
 )]==], 7)
 
 local q = t.join()
