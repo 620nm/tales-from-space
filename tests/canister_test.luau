@@ -392,7 +392,7 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Floor),
         '#': (turf: Wall),
-        'v': (turf: Plating, fixture: Some(Vent)),
+        'v': (turf: Plating),
         'c': (turf: Floor, fixture: Some(Canister)),
     },
     rows: [
@@ -410,11 +410,14 @@ t.world([==[(
         (2, 2, 4), (3, 2, 4), (4, 2, 4), (5, 2, 4), (6, 2, 4),
         (6, 1, 4), (7, 1, 4), (8, 1, 4),
     ],
-    // Two sockets, and the injector standing between them.
+    // Two sockets, the injector standing between them, and the vent
+    // (a structure since the constructible-vents cutover) hanging
+    // over open space at the end of the line.
     structures: [
         (2, 1, "connector_port"),
         (4, 1, "connector_port"),
         (3, 1, "air_injector"),
+        (9, 1, "vent"),
     ],
 )]==], 7)
 
