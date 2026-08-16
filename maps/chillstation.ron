@@ -75,6 +75,12 @@
         'L': (turf: Plating, fixture: Some(Light), light: Some("#F3FFFA")),
         'A': (turf: Plating, fixture: Some(Apc)),
         'O': (turf: Plating, fixture: Some(Outlet)),
+        // The tank annex's door. The same airlock '+' spawns, standing
+        // on bare plating rather than a finished tile -- which is what
+        // 'E' already says, but 'E' is the EVA vestibule's and a glyph
+        // is a word in a picture. An internal door and an airlock to
+        // vacuum should not read the same.
+        'D': (turf: Plating, fixture: Some(Door)),
     },
     rows: [
         "                              ",
@@ -94,15 +100,15 @@
         "              #_____________# ",
         "              #_____________# ",
         "      s s s s #_____C_______# ",
-        "              #_________C___# ",
-        "              #_____________# ",
-        "              #_____________# ",
-        "              #__________O__# ",
-        "              #######+####### ",
-        "              #_____________# ",
-        "              ###+###+###+### ",
-        "              ##___#___#___## ",
-        "              ##___#___#___## ",
+        "    ###_###_###_________C___# ",
+        "    #AL_____L_#_____________# ",
+        "    #_______________________# ",
+        "    #____________________O__# ",
+        "    #_________#######+####### ",
+        "    #_________D_____________# ",
+        "    #_________###+###+###+### ",
+        "    #_________##___#___#___## ",
+        "    ############___#___#___## ",
         "              ############### ",
     ],
     spawns: [(7, 8), (8, 8), (9, 8), (10, 8)],
@@ -285,6 +291,36 @@
         // takes the carbon dioxide the crew breathe out back to
         // Atmospherics.
         (13, 8, "air_scrubber", "scrubbing"),
+        // ---- The tank annex --------------------------------------
+        // Seven stationary reservoirs, one per gas this shift's
+        // chemistry defines, each filled by the PLACEMENT rather than
+        // by a prototype of its own -- tg ships twenty /tank/<gas>
+        // subtypes and this map ships none. 23 000 kPa is tg's
+        // `starting_pressure_percent = 0.5` of the 46 000 kPa rating
+        // (tank.dm:39, 43).
+        //
+        // Deliberately UNPLUMBED. A tank shares its contents with every
+        // net its four mouths reach, so a shared main through this row
+        // would settle all seven into one mixture within a pass and the
+        // store would be seven tanks of the same thing. The gaps
+        // between them and the whole of rows 20-21 and 23 are where an
+        // engineer runs pipe to whichever one they want today.
+        (5, 19, "stationary_tank", "anchored", ("o2", 23000.0)),
+        (7, 19, "stationary_tank", "anchored", ("n2", 23000.0)),
+        (9, 19, "stationary_tank", "anchored", ("co2", 23000.0)),
+        (11, 19, "stationary_tank", "anchored", ("plasma", 23000.0)),
+        (13, 19, "stationary_tank", "anchored", ("water_vapor", 23000.0)),
+        (6, 24, "stationary_tank", "anchored", ("tritium", 23000.0)),
+        (8, 24, "stationary_tank", "anchored", ("n2o", 23000.0)),
+        // Two panes in the annex's north hull, looking out over the
+        // solar array, and two in the wall it shares with the machine
+        // hall so the tank row can be read from the department. Glass
+        // stands in a HOLE in the wall and never on it, which is why
+        // the four tiles under these are plating.
+        (7, 17, "grille", "reinforced"),
+        (11, 17, "grille", "reinforced"),
+        (14, 19, "grille", "reinforced"),
+        (14, 20, "grille", "reinforced"),
         // And the injector, which is the other end of the same idea and
         // the one machine here with no notion of enough: it fills the
         // department's own deck straight off the process line.
@@ -404,6 +440,29 @@
         (25, 18, 2),
         (25, 19, 2),
         (25, 20, 2),
+        // The tank annex's feeder tap: two cables south off the solar
+        // array's L1 run at (5, 16), through the annex's north wall and
+        // onto its APC tile.
+        (5, 17, 1),
+        (5, 18, 1),
+        // ...and its branch circuit, starting on the APC's own tile so
+        // it is an output rather than four cables that touch nothing.
+        // Along the fixture row first (both lights), then down the east
+        // side to the free machine tile at (11, 22), so whatever gets
+        // stood there is already fed.
+        (5, 18, 2),
+        (6, 18, 2),
+        (7, 18, 2),
+        (8, 18, 2),
+        (9, 18, 2),
+        (10, 18, 2),
+        (11, 18, 2),
+        (12, 18, 2),
+        (12, 19, 2),
+        (12, 20, 2),
+        (12, 21, 2),
+        (12, 22, 2),
+        (11, 22, 2),
         // Down to gas storage: every chamber's injector and siphon
         // is a fan, and a chamber nobody has wired is a sealed room
         // full of gas with no way to move it.
@@ -750,6 +809,18 @@
         (15, 18, 2),
         (16, 18, 2),
         (17, 18, 2),
+        // The tank annex's bench run, layer 3, with a machine-sized
+        // gap at (11, 22) for whatever wants standing there. It is
+        // deliberately NOT joined to the department's green chamber
+        // feed one tile east: a debug bench wired into the live station
+        // is a debug bench that breaks the station. One length laid on
+        // the door tile at (14, 22) joins them the day somebody wants
+        // that. Unpainted for the same reason -- it belongs to no
+        // numbered main yet.
+        (13, 22, 4),
+        (12, 22, 4),
+        (10, 22, 4),
+        (9, 22, 4),
     ],
     labels: [
         (5, 5, "The Commons"),
@@ -759,6 +830,7 @@
         // room names"). (15, 13) is bare plating, so the department
         // went unnamed and said so at boot.
         (19, 13, "Atmospherics"),
+        (5, 18, "Tank Annex"),
     ],
     mounts: [
         (5, 5, North), (7, 5, North), (11, 5, North),
@@ -770,5 +842,8 @@
         // refuses one that does not.
         (21, 13, North), (25, 13, North), (19, 13, North),
         (25, 20, South),
+        // The tank annex: its APC on the west bulkhead, both lights
+        // on the north one.
+        (5, 18, West), (6, 18, North), (12, 18, North),
     ],
 )

@@ -1,0 +1,94 @@
+// The stationary pressure tank, and the frame it is welded out of.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then expansion order,
+// so the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+//
+// tg's tank is a SMOOTHED object: `smoothing_flags = SMOOTH_BITMASK`
+// with `smoothing_groups = SMOOTH_GROUP_GAS_TANK` (tank.dm:25-27), and
+// its sheet carries all 47 junction states a bank of tanks can stand
+// in. Nothing in this engine resolves a junction bitmask to a sprite
+// name, so only the ISOLATED state is baked — `canister-0`, the tank
+// with no neighbour on any side, which is what a single vessel with
+// walking room around it looks like in tg too. The other 46 are the
+// picture of a merged bank, and the merger that would justify them is
+// deferred with it (see `AtmosDevice::volume_l`).
+//
+// COLOUR. Both sheets are greyscale art: tg tints them through GAGS
+// (`greyscale_config = /datum/greyscale_config/stationary_canister`,
+// tank.dm:30-32), and both json configs are a single `icon_state`
+// layer at `color_ids: [1]` — one flat multiply and nothing else. The
+// colour is NOT a property of the gas inside; it is the PLATING
+// MATERIAL's, taken from `custom_materials` through `MATERIAL_GREYSCALE`
+// (tank.dm:17-18, atom_materials.dm:255-294). tg's default plating is
+// iron, `/datum/material/iron` `color = "#B6BEC2"` (basemats.dm:2-5),
+// which is the (182, 190, 194) below. `Tinted` keeps the pixels grey
+// and hands that colour to the renderer, so the day a tank remembers
+// what it was plated with, one object can paint itself without a
+// second bake.
+//
+// The knobs, the frame and the plated frame are baked RAW, because tg
+// draws them raw: neither greyscale config mentions `knob`, `frame` or
+// `plated_frame`, and `knob_overlays` is built straight off the .dmi
+// (tank.dm:77-80). tg's ten crack states are skipped entirely — they
+// belong to the `crackable` element, which is deferred, and they are
+// pre-coloured translucent green rather than greyscale anyway.
+(
+    sheets: [
+        ("tank", "obj/pipes_n_cables/stationary_canisters.dmi"),
+        ("tank_misc", "obj/pipes_n_cables/stationary_canisters_misc.dmi"),
+    ],
+    sprites: [
+        // The window in its side, both of tg's layers in one cell.
+        //
+        // tg stacks three things here: a flat `window-bg` backing on
+        // the shell (tank.dm:321), the gas visuals suspended over it
+        // and alpha-masked to it (tank.dm:372-374), and `window-fg` —
+        // the glass — over those (tank.dm:358-361). We have no per-gas
+        // visuals, so the middle layer is gone and the other two are
+        // one picture.
+        //
+        // They MUST be baked together. Each alone is what
+        // `no_sprite_is_a_bare_colour_mask` exists to catch: the
+        // backing is 87 pixels of pure white (it is a mask, literally),
+        // and the glass is 44 pixels 91% of one grey. Composited they
+        // are a lit pane with a highlight on it, which is what tg
+        // actually shows on an empty tank. `paint: (255, 255, 255)` is
+        // the identity multiply — the real colour is `Tinted`'s, handed
+        // to the renderer rather than baked in, so the tank's plating
+        // material can paint it later.
+        ("stationary_tank_window", Tinted(DmiBlend(
+            dmi: "@tank_misc",
+            layers: [
+                ("window-bg", Over, true),
+                ("window-fg", Over, true),
+            ],
+            dir: 0,
+            paint: (255, 255, 255),
+        ), (182, 190, 194))),
+    ],
+    groups: [
+        // The shell. tg's `post_init_icon_state = "canister-0"`
+        // (tank.dm:9) is the state a tank wears before smoothing runs,
+        // and here it is the only one it ever wears.
+        (sheet: "tank", tint: Some((182, 190, 194)), sprites: [
+            Sprite("stationary_tank", "canister-0", s),
+        ]),
+
+        // One knob per OPEN PORT, dir-rotated — tg's `knob_overlays`
+        // (tank.dm:77-80, 322-326). The only four-direction state in
+        // either sheet, and the only art in the tank that is a reading
+        // rather than decoration: a knob is where a pipe may be welded
+        // on, so a glance says which sides of a vessel are live.
+        //
+        // ...and the two frame stages, `frame` and `plated_frame`
+        // (tank.dm:561-562, 593-599), which are what stands on the deck
+        // between four sheets of metal and a sealed tank.
+        (sheet: "tank_misc", sprites: [
+            Directions("stationary_tank_knob", "knob"),
+            Sprite("stationary_tank_frame", "frame", s),
+            Sprite("stationary_tank_plated", "plated_frame", s),
+        ]),
+    ],
+)
