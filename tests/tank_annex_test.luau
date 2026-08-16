@@ -68,9 +68,13 @@ assert(t.room_pressure(9, 21) > 90.0,
 assert(t.turf(11, 22) == "plating", "bare plating, like the rest of the department")
 assert(t.door_at(14, 22), "and a door into the machine hall's corridor")
 
--- The free machine tile the annex was laid out around: no structure on
--- it, branch power under it, and a length of the bench run reaching it
--- from either side.
-assert(t.structure_at(11, 22) == nil, "(11, 22) is free for a machine")
+-- The machine tile the annex was laid out around, and the machine now
+-- standing on it: the temperature control unit, shipped running at its
+-- T20C default like the rest of the commissioned department, with
+-- branch power under it and the bench run stopping either side.
+local unit = t.structure_at(11, 22)
+assert(unit ~= nil and unit.id == "thermomachine",
+    "the temperature control unit stands on the machine tile")
+assert(unit.state == "running", "and ships running: " .. tostring(unit.state))
 assert(t.pipe(10, 22) ~= 0 and t.pipe(12, 22) ~= 0,
     "with the bench run stopping either side of it")
