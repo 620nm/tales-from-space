@@ -325,6 +325,14 @@
         (13, 19, "stationary_tank", "anchored", ("water_vapor", 23000.0)),
         (6, 24, "stationary_tank", "anchored", ("tritium", 23000.0)),
         (8, 24, "stationary_tank", "anchored", ("n2o", 23000.0)),
+        // The temperature control unit, on the machine tile the annex
+        // wired for it: L2 branch under its feet, the layer-3 bench run
+        // stopping either side. Its one mouth auto-binds the east stub;
+        // pipe from there to whichever tank is today's experiment and
+        // the thermostat conditions what the tank feeds it. Ships
+        // running at its T20C default like the rest of the commissioned
+        // department -- a conditioner with nothing to condition idles.
+        (11, 22, "thermomachine", "running"),
         // Two panes in the annex's north hull, looking out over the
         // solar array, and two in the wall it shares with the machine
         // hall so the tank row can be read from the department. Glass
