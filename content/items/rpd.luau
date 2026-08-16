@@ -56,6 +56,8 @@ local RECIPES = {
     { label = "Heat Exchanger", item = "heat_exchanger_fitting", structure = "heat_exchanger", icon = "heat_exchanger_loose", group = "Thermal Devices" },
     { label = "Air Scrubber", item = "air_scrubber_fitting", structure = "air_scrubber", icon = "air_scrubber_loose", group = "Room Devices" },
     { label = "Air Injector", item = "air_injector_fitting", structure = "air_injector", icon = "air_injector_loose", group = "Room Devices" },
+    { label = "Air Vent", item = "vent_fitting", structure = "vent", icon = "vent_loose", group = "Room Devices" },
+    { label = "Passive Vent", item = "passive_vent_fitting", structure = "passive_vent", icon = "passive_vent_loose", group = "Room Devices" },
 }
 
 -- tg's destroy mode accepts `/obj/item/pipe` and pipe meters, not an

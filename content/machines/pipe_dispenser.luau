@@ -11,12 +11,11 @@
 -- (`GLOB.atmos_pipe_recipes`, code/_globalvars/lists/pipe_recipes.dm).
 -- All four of tg's categories are here. What else tg lists and this
 -- pack does not have yet: the bridge and multi-deck adapters under
--- Pipes, the heat-exchange pipe/manifold family under Heat Exchange,
--- and the unary vent and passive vent under Devices (both of which
--- exist on this station as native fixtures rather than as pipe
--- devices). Every one of them is one line here on the day it becomes a
+-- Pipes, and the heat-exchange pipe/manifold family under Heat
+-- Exchange. Every one of them is one line here on the day it becomes a
 -- thing — which is exactly what the gas analyzer cost the tool vendor,
--- and exactly what the scrubber and the injector cost this shelf.
+-- and exactly what the scrubber, the injector and the two vents cost
+-- this shelf.
 --
 -- WHAT TG HAS THAT THIS SHELF CANNOT SAY: tg's window carries a piping
 -- layer, a paint colour and a per-recipe direction, because tg's
@@ -71,11 +70,18 @@ return {
         { item = "gas_mixer_flipped_fitting", name = "Gas Mixer (flipped)", category = "Devices", amount = 999 },
         { item = "connector_port_fitting", name = "Connector", category = "Devices", amount = 999 },
         { item = "pipe_meter", name = "Meter", category = "Devices", amount = 999 },
-        -- The two ends of the air loop: one takes a room's air away,
-        -- the other hands it back. Everything else on this shelf moves
+        -- The two ends of the air loop: some take a room's air away,
+        -- the rest hand it back. Everything else on this shelf moves
         -- gas between two PIPES.
+        --
+        -- The vent is the one an engineer reaches for most and the one
+        -- a station has most of: a scrubber and an injector are
+        -- department kit, and a vent is what every room with people in
+        -- it needs one of.
         { item = "air_scrubber_fitting", name = "Air Scrubber", category = "Devices", amount = 999 },
         { item = "air_injector_fitting", name = "Air Injector", category = "Devices", amount = 999 },
+        { item = "vent_fitting", name = "Air Vent", category = "Devices", amount = 999 },
+        { item = "passive_vent_fitting", name = "Passive Vent", category = "Devices", amount = 999 },
 
         { item = "heat_exchanger_fitting", name = "Heat Exchanger", category = "Heat Exchange", amount = 999 },
     },
