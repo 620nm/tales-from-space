@@ -60,7 +60,7 @@ no direct spawn in `t`, and none should ever be added.
 
 | Group | Functions |
 | ----- | --------- |
-| World | `t.world(ron [, seed])`, `t.world_file(name [, seed])`, `t.join([job]) -> player` |
+| World | `t.world(ron [, seed [, mode]])`, `t.world_file(name [, seed [, mode]])` (mode = a `content/gamemodes/` id; omitted = the pack default), `t.join([job]) -> player` (a mode that seats bodies on connection takes no job) |
 | Seeds | `t.fault(x, y, tick)` (hull failure), `t.outage([tick])` (breaker trip) |
 | Clock | `t.now()`, `t.tick()`, `t.run_ticks(n)`, `t.run_seconds(s)` |
 | Verbs | `t.click(p, x, y [, target])` (target = the entity the client's hit-test named, from `t.target_at`; omitted = a click that landed on the ground), `t.move(p, dir)`, `t.say(p, text)`, `t.drop(p)`, `t.equip(p)`, `t.swap_hands(p)`, `t.ui_act(p, act [, payload])`, `t.ui_close(p)` |
