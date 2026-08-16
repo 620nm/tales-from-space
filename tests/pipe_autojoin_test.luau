@@ -13,13 +13,13 @@
 -- join, `ServerMsg::PipeChanged` for every later change
 -- (crates/lunatic-core/src/protocol.rs). There is nothing on the tile
 -- for `t.layers` to name, which the negative below asserts. The server
--- never sends a shape at all: it sends the two numbers a shape is
--- derived from, and `WorldSnapshot::pipe_dirs` derives it on the far
--- side. So the honest server-side claim is about those two numbers, and
--- this file makes it by running the client's own derivation
--- (`joined_dirs`, protocol.rs) over what `t.pipe_dirs` and `t.pipe`
--- publish. The far half -- the pure function and its art -- is pinned
--- natively; the half a PLAYER moves is this one.
+-- never sends a shape at all: it sends the numbers a shape is derived
+-- from, and `WorldSnapshot::pipe_dirs` derives it on the far side. So
+-- the honest server-side claim is `t.pipe_joined` -- the harness
+-- running that same core derivation (`joined_dirs`, protocol.rs, paint
+-- and component ports included) over the live state the wire streams.
+-- The far half -- the pure function and its art -- is pinned natively;
+-- the half a PLAYER moves is this one.
 --
 -- Layer masks are tg's five piping layers; 4 is layer 3, the distro run.
 local DISTRO = 4
@@ -28,42 +28,16 @@ local LOW = 1
 -- BYOND's direction bits, which the art is named for.
 local N, S, E, W = 1, 2, 4, 8
 
--- Each cardinal: the offset, the bit pointing AT that neighbour, and
--- the bit the neighbour needs pointing back. tg's `connection_check`
--- asks for both at once, and asking separately is how one is forgotten.
-local SIDES = {
-    { 0, -1, N, S },
-    { 0, 1, S, N },
-    { 1, 0, E, W },
-    { -1, 0, W, E },
-}
-
-local function has(mask, bit)
-    return mask % (bit * 2) >= bit
-end
-
--- The shape the client will draw here: `joined_dirs` (protocol.rs), fed
--- from the wire's own two quantities. A bit comes back only when three
--- things hold at once -- the neighbour carries this layer (which
--- `t.pipe_dirs` folds in by answering nil where it does not), this
--- length reaches toward it, and it reaches back. The engine's version
--- carries two more terms, neither in play in any map below: PAINT,
--- which can refuse a join between two lengths that reach
--- (painter_test's business), and component PORTS, which stand in for a
--- length a machine replaced. Nothing here is painted or a machine.
+-- The shape the client will draw here: `t.pipe_joined`, the engine's
+-- own `joined_dirs` fed from live state. A bit comes back only when
+-- three things hold at once -- the neighbour carries this layer, this
+-- length reaches toward it, and it reaches back (tg's
+-- `connection_check`, both ends asked at once). Paint and component
+-- ports are in the derivation too; neither is in play on any map below
+-- (painter_test and device_looks_test own those), so every shape here
+-- is pure reach-and-reach-back.
 local function shape(x, y, layer)
-    local own = t.pipe_dirs(x, y, layer)
-    if own == nil then
-        return nil
-    end
-    local dirs = 0
-    for _, side in ipairs(SIDES) do
-        local theirs = t.pipe_dirs(x + side[1], y + side[2], layer)
-        if theirs ~= nil and has(own, side[3]) and has(theirs, side[4]) then
-            dirs = dirs + side[3]
-        end
-    end
-    return dirs
+    return t.pipe_joined(x, y, layer)
 end
 
 local function said(p, want)
