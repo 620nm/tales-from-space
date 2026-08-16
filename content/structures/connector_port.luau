@@ -36,12 +36,26 @@
 -- atmospherics component's `initialize_directions` IS its dir
 -- (components/unary_devices/unary_devices.dm:14) -- so a port aimed at
 -- bare deck feeds nothing, whatever is laid on its other three sides.
--- A port raised from a fitting aims itself at the neighbouring run its
--- stub reaches, which is also the run `over = "pipe"` validates. Its
--- own tile is the component's centre and must not also carry a raw pipe
--- on the same layer. Turn the loose fitting with Alt+left/Alt+right
+-- Its own tile is the component's centre and must not also carry a raw
+-- pipe on the same layer. Turn the loose fitting with Alt+left/Alt+right
 -- before wrenching it down when automatic alignment is not the shape
 -- you want.
+--
+-- NO `over = "pipe"` (Josh's ruling, 2026-08-16). A port may be bolted
+-- down anywhere the deck will take one, with no run anywhere near it.
+-- Which is how a station is actually built: you put the socket where
+-- the bottle has to stand and then run pipe out to it, and a refusal at
+-- the door made that ordering illegal for no gain. Nothing is lost by
+-- allowing it, because nothing is CACHED: an unplumbed port is a socket
+-- wired to nothing until a run reaches its stub, and the moment one
+-- does the engine notices by looking rather than by being told
+-- (`refresh_pipe_topology` re-derives every binding from the live grid,
+-- sim/atmos_machines/). A canister on an unplumbed port fills the room
+-- it stands in, exactly as one standing loose does (sim/vents.rs), so
+-- the mistake is visible on the gauge instead of being argued about at
+-- the wrench. A port raised with no run in reach aims north, the
+-- engine's deterministic fallback; turn the fitting first if you know
+-- which way the pipe is coming from.
 return {
     id = "connector_port",
     name = "connector port",
@@ -67,11 +81,11 @@ return {
         from_item = "connector_port_fitting",
         tool = "wrench",
         secs = 2.0,
-        -- The port replaces its centre length but still needs a run for
-        -- its stub to reach. No neighbouring run, no connected port.
-        over = "pipe",
+        -- No `over`. The deck is the whole requirement; see the note
+        -- above. What the port ends up JOINED to is a question the gas
+        -- loop asks the live grid, not one the wrench asks the builder.
         start = "You start bolting the connector port down.",
-        done = "The connector port is seated on the pipe.",
+        done = "The connector port is bolted to the deck.",
     },
     transitions = {
         {
@@ -86,7 +100,7 @@ return {
             gone = true,
             yields = { connector_port_fitting = 1 },
             start = "You start unbolting the connector port.",
-            done = "The connector port comes up off the pipe.",
+            done = "The connector port comes up off the deck.",
         },
     },
 }

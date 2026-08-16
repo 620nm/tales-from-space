@@ -218,27 +218,43 @@ assert(valve and valve.id == "manual_valve", "the valve stands, in one action")
 assert(#t.items_at(3, 1) == 0, "and no fitting was left lying about")
 assert(t.ledger_has("StructureStep", "manual_valve", "built"), "on the record as a build")
 
--- ---- the refusals are the framework's, word for word ----
+-- ---- and the rules it obeys are the framework's, word for word ----
 --
--- A connector port is a fitting laid ON a run and nowhere else
--- (`over = "pipe"`). The RPD is a faster hand, not a different rulebook,
--- so it earns exactly the sentence a technician with the fitting and a
--- wrench would earn — and, unlike tg, it does not leave the part on the
--- deck when it is refused.
+-- A connector port needs nothing under it (Josh's ruling, 2026-08-16):
+-- it bolts to bare deck, and whatever it ends up joined to is a
+-- question the gas loop asks the live grid every pass. The RPD is a
+-- faster hand and not a different rulebook, so a port goes down here
+-- exactly as one does for a technician holding the fitting and a
+-- wrench (tfs/tests/fittings_test.luau) — and there is no run within
+-- reach of this bench at all.
 walk(p, "east")
 walk(p, "east") -- (4, 1)
 set(p, RECIPE, pick(p, RECIPE, "Connector"))
 local _ = t.messages(p)
-t.click(p, 5, 1) -- open deck, no run under it
+t.click(p, 4, 1) -- the technician's own tile: a port goes UNDER the deck
 work(p)
-assert(t.structure_at(5, 1) == nil, "nothing was raised")
-assert(#t.items_at(5, 1) == 0, "and nothing was left behind either")
+local socket = t.structure_at(4, 1)
+assert(socket and socket.id == "connector_port", "a port stands on bare deck, in one action")
+assert(socket.state == "anchored", "bolted down, the only state a port has")
+assert(#t.items_at(4, 1) == 0, "and no fitting was left lying about")
+assert(t.pipe(4, 1) == 0, "with no run under it or beside it")
 assert(
-    said(p, "There is no pipe under the floor here."),
-    "the fitting framework's own refusal, unchanged"
+    not said(p, "There is no pipe under the floor here."),
+    "the old refusal is gone from the dispenser path too"
+)
+assert(t.ledger_has("StructureStep", "connector_port", "built"), "on the record as a build")
+
+-- One fitting per turf is a refusal that stayed (tg's
+-- PIPING_ONE_PER_TURF): a second port cannot claim this tile.
+local _ = t.messages(p)
+t.click(p, 4, 1)
+work(p)
+assert(
+    said(p, "Something is already under the floor here."),
+    "one socket per tile, whoever is dispensing it"
 )
 
--- One fitting per turf is the other one (tg's PIPING_ONE_PER_TURF).
+-- And the same rule one layer up for components.
 set(p, RECIPE, pick(p, RECIPE, "Manual Valve"))
 t.click(p, 5, 1)
 work(p)

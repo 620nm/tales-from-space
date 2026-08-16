@@ -50,6 +50,20 @@ local function walk(p, dir)
     t.run_ticks(5)
 end
 
+-- How many times the ledger has recorded a structure of this id being
+-- raised. COUNTED rather than asked as a yes/no, because this spec
+-- bolts a port down twice and the second time has to be tellable from
+-- the first.
+local function built(id)
+    local n = 0
+    for _, row in ipairs(t.ledger_rows("StructureStep")) do
+        if row.structure == id and row.to == "built" then
+            n = n + 1
+        end
+    end
+    return n
+end
+
 local function lying_at(x, y, id)
     for _, item in ipairs(t.items_at(x, y)) do
         if item == id then
@@ -209,11 +223,17 @@ walk(p, "east")
 assert(standing_on(p, 3, 1), "two tiles east")
 assert(t.canister_pressure(4, 1) ~= nil, "the bottle was shoved along ahead")
 
--- ---- a socket needs plumbing under it ----
+-- ---- a socket needs NO plumbing under it ----
 --
--- Down two rows, where no run reaches. A port aimed at bare deck is a
--- socket wired to nothing, and bolting one down there is the mistake
--- the whole two-rung design exists to stop.
+-- Josh's ruling (2026-08-16). The first cut refused this: a port aimed
+-- at bare deck is a socket wired to nothing, so the wrench said no.
+-- That got the ORDER wrong. A station is built socket-first -- you put
+-- the connector where the bottle has to stand and run pipe out to it
+-- afterwards -- and refusing that bought nothing, because nothing is
+-- cached: an unplumbed port simply feeds nothing until a run reaches
+-- its stub, and the moment one does the gas loop notices by looking.
+--
+-- So: down two rows, where no run reaches, and it goes down fine.
 walk(p, "west")
 walk(p, "west")
 walk(p, "south")
@@ -227,15 +247,30 @@ local _ = t.messages(p)
 t.click(p, 1, 3, t.target_at(1, 3, "connector_port_fitting"))
 t.run_seconds(2.5)
 assert(
-    said(p, "There is no pipe under the floor here."),
-    "the refusal named the rule that stopped it"
+    not said(p, "There is no pipe under the floor here."),
+    "the old refusal is gone from the wrench path"
 )
-assert(t.structure_at(1, 3) == nil, "nothing was bolted to nothing")
-assert(lying_at(1, 3, "connector_port_fitting"), "and the fitting survived the attempt")
+local dry = t.structure_at(1, 3)
+assert(dry ~= nil and dry.id == "connector_port", "a port stands on bare plating")
+assert(dry.state == "anchored", "in the only state a port has")
+-- The fitting remembers which way it pointed when it came up
+-- (rotation_test.luau owns that rule), and nothing here re-aims it:
+-- with no run in reach there is nothing to aim AT, and the port keeps
+-- the facing it was carrying.
 assert(
-    not t.ledger_has("StructureStep", "connector_port", "built"),
-    "a refused step writes no step row"
+    dry.sprite == "connector_port_s",
+    "aimed the way it was when it came up: " .. tostring(dry.sprite)
 )
+assert(built("connector_port") == 1, "and the raise is on the record")
+assert(not lying_at(1, 3, "connector_port_fitting"), "the fitting was spent into it")
+
+-- Take it straight back up: what the rest of this spec is about is
+-- carrying the socket to the run, and one bolted down here would be a
+-- second port nobody asked for.
+t.click(p, 1, 3, t.target_at(1, 3, "connector_port"))
+t.run_seconds(2.5)
+assert(t.structure_at(1, 3) == nil, "up again")
+assert(lying_at(1, 3, "connector_port_fitting"), "and back to being a fitting")
 
 -- ---- put it back together somewhere better ----
 t.swap_hands(p)
@@ -253,15 +288,9 @@ assert(lying_at(3, 1, "connector_port_fitting"), "dropped over the run")
 t.swap_hands(p)
 t.click(p, 3, 1, t.target_at(3, 1, "connector_port_fitting"))
 t.run_ticks(1)
-assert(
-    not t.ledger_has("StructureStep", "connector_port", "built"),
-    "one tick in, it is still a fitting"
-)
+assert(built("connector_port") == 1, "one tick in, it is still a fitting")
 t.run_seconds(2.5)
-assert(
-    t.ledger_has("StructureStep", "connector_port", "built"),
-    "and two seconds in, it is a port again"
-)
+assert(built("connector_port") == 2, "and two seconds in, it is a port again")
 local rebuilt = t.structure_at(3, 1)
 assert(rebuilt ~= nil and rebuilt.id == "connector_port", "a port stands here")
 assert(rebuilt.state == "anchored", "bolted down, the only state a port has")

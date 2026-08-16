@@ -370,3 +370,94 @@ local rejoined = t.canister_pressure(5, 1)
 assert(rejoined < moved - 100.0,
     "and it is feeding the loop from its new tile: "
         .. moved .. " -> " .. rejoined)
+
+-- ---------------------------------------------------------------
+-- A bottle is pushed ACROSS the atmospherics kit, not around it.
+--
+-- Josh's ruling (2026-08-16). An injector, a scrubber, a vent, a meter
+-- and a connector all lie flat in the deck plates: nothing about them
+-- is dense, and a crewman walks over one without breaking stride. So
+-- one cannot be what stops the bottle that crewman is pushing. The
+-- shove's landing rule is density plus "never onto a mob"
+-- (movement.rs::shove_blocked), which is the same test the walker
+-- himself passed one tile earlier.
+--
+-- The situation below is the one that was reported: two sockets with an
+-- injector standing between them, and a canister that has to get from
+-- the first to the second.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "across the kit",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Floor),
+        '#': (turf: Wall),
+        'v': (turf: Plating, fixture: Some(Vent)),
+        'c': (turf: Floor, fixture: Some(Canister)),
+    },
+    rows: [
+        "######### ",
+        "#.c.....#v",
+        "#.......# ",
+        "######### ",
+    ],
+    spawns: [(1, 1)],
+    items: [(1, 1, "wrench")],
+    // One run along the second row, out under the east wall to the
+    // vent hanging over open space -- so anything in the line goes
+    // straight off the station and the gauge is a proof.
+    pipes: [
+        (2, 2, 4), (3, 2, 4), (4, 2, 4), (5, 2, 4), (6, 2, 4),
+        (6, 1, 4), (7, 1, 4), (8, 1, 4),
+    ],
+    // Two sockets, and the injector standing between them.
+    structures: [
+        (2, 1, "connector_port"),
+        (4, 1, "connector_port"),
+        (3, 1, "air_injector"),
+    ],
+)]==], 7)
+
+local v = t.join()
+t.tick()
+t.click(v, 1, 1, t.target_at(1, 1, "wrench"))
+t.run_ticks(2)
+assert(t.hands(v).held == "wrench", "wrench in hand")
+
+assert(t.target_at(3, 1, "air_injector") ~= nil, "the injector stands between the two sockets")
+local supply = t.canister_pressure(2, 1)
+t.run_seconds(10)
+assert(t.canister_pressure(2, 1) < supply - 100.0,
+    "the bottle opens the shift plumbed into the first socket: " .. t.canister_pressure(2, 1))
+
+-- Off the socket, instantly, and now nothing holds it down.
+t.click(v, 2, 1, t.target_at(2, 1, "canister"))
+t.run_ticks(1)
+assert(t.ledger_has("StructureStep", "canister", "displaced"), "unfastened")
+
+-- THE SHOVE THAT WAS REFUSED. The injector's tile is a legal landing:
+-- it is not dense, and nobody is standing on it.
+t.move(v, "east")
+t.run_ticks(5)
+assert(t.canister_pressure(3, 1) ~= nil,
+    "the bottle went onto the injector's own tile")
+assert(t.canister_pressure(2, 1) == nil, "and left the one it was on")
+assert(t.target_at(3, 1, "air_injector") ~= nil,
+    "with the injector still there underneath it, untouched")
+
+-- And straight on across, onto the second socket.
+t.move(v, "east")
+t.run_ticks(5)
+assert(t.canister_pressure(4, 1) ~= nil, "one more shove puts it on the far socket")
+assert(#t.ledger_rows("structure_step") > 0, "and both shoves are on the record")
+
+t.click(v, 4, 1, t.target_at(4, 1, "canister"))
+t.run_ticks(1)
+assert(t.ledger_has("StructureStep", "canister", "anchored"),
+    "fastened to the socket on the far side")
+
+local landed = t.canister_pressure(4, 1)
+t.run_seconds(10)
+assert(t.canister_pressure(4, 1) < landed - 100.0,
+    "and feeding the run again from there: "
+        .. landed .. " -> " .. t.canister_pressure(4, 1))
