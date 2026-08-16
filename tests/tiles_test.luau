@@ -24,17 +24,17 @@ t.world([==[(
         '.': (turf: Floor),
         '#': (turf: Wall),
         'a': (turf: Floor, fixture: Some(Apc)),
-        'v': (turf: Floor, fixture: Some(Vent)),
         'l': (turf: Floor, fixture: Some(Light)),
     },
     rows: [
         "#######",
-        "#.a.vl#",
+        "#.a..l#",
         "#.....#",
         "#######",
     ],
     spawns: [(1, 2)],
     items: [(1, 2, "crowbar")],
+    structures: [(4, 1, "vent")],
 )]==], 7)
 
 local p = t.join()

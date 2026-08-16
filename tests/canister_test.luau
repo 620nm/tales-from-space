@@ -38,22 +38,21 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
-        'v': (turf: Plating, fixture: Some(Vent)),
-        'p': (turf: Plating, fixture: Some(PassiveVent)),
         'c': (turf: Plating, fixture: Some(Canister)),
     },
     rows: [
         "#####",
         "#...#",
-        "#v.c#",
+        "#..c#",
         "#...#",
         "#####",
     ],
     spawns: [(2, 2)],
     items: [(2, 2, "welder")],
     pipes: [(2, 2, 4)],
-    // The socket under the canister. Without it the bottle is furniture.
-    structures: [(3, 2, "connector_port")],
+    // The vent, and the socket under the canister. Without the socket
+    // the bottle is furniture.
+    structures: [(1, 2, "vent"), (3, 2, "connector_port")],
 )]==], 7)
 
 local p = t.join()
@@ -148,14 +147,12 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
-        'v': (turf: Plating, fixture: Some(Vent)),
-        'p': (turf: Plating, fixture: Some(PassiveVent)),
         'c': (turf: Plating, fixture: Some(Canister)),
     },
     rows: [
         "#####                   ",
         "#...#                   ",
-        "#v..#...............p.c ",
+        "#...#.................c ",
         "#...#                   ",
         "#####                   ",
     ],
@@ -167,7 +164,11 @@ t.world([==[(
         (13, 2, 4), (14, 2, 4), (15, 2, 4), (16, 2, 4), (17, 2, 4),
         (18, 2, 4), (21, 2, 4),
     ],
-    structures: [(22, 2, "connector_port")],
+    structures: [
+        (1, 2, "vent"),
+        (20, 2, "passive_vent"),
+        (22, 2, "connector_port"),
+    ],
 )]==], 7)
 
 local q = t.join()
@@ -236,12 +237,12 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Floor),
         '#': (turf: Wall),
-        'v': (turf: Plating, fixture: Some(Vent)),
+        '_': (turf: Plating),
         'c': (turf: Floor, fixture: Some(Canister)),
     },
     rows: [
         "######### ",
-        "#.c.....#v",
+        "#.c.....#_",
         "#.......# ",
         "######### ",
     ],
@@ -255,12 +256,14 @@ t.world([==[(
         (5, 2, 4), (6, 2, 4),
         (4, 1, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4),
     ],
-    // Three sockets beside the run. (4, 1) is deliberately
-    // NOT one of them: it is charged main with nowhere to plug in.
+    // Three sockets beside the run, plus the vent on the scrap of deck
+    // outside. (4, 1) is deliberately NOT a socket: it is charged main
+    // with nowhere to plug in.
     structures: [
         (1, 1, "connector_port"),
         (2, 1, "connector_port"),
         (5, 1, "connector_port"),
+        (9, 1, "vent"),
     ],
 )]==], 7)
 
