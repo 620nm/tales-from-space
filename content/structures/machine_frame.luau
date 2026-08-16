@@ -57,6 +57,19 @@ return {
             to = "boarded",
             done = "The board clicks into place.",
         },
+        -- ...and whatever that board asks for goes in after it, one
+        -- unit at a time (tg's `req_components`, machine_frame.dm). The
+        -- frame still learns nothing: which parts, and how many, is the
+        -- board's list, and the refusal reads it out when something is
+        -- missing or unwanted.
+        {
+            at = "boarded",
+            slot = "part",
+            done = "It clicks into the assembly.",
+        },
+        -- The crowbar takes the board AND everything fitted after it,
+        -- which is one assembly coming apart rather than two steps
+        -- (tg's `default_deconstruction_crowbar`).
         {
             at = "boarded",
             tool = "crowbar",
