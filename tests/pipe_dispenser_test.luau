@@ -71,6 +71,12 @@ assert(shelf.gas_pump_fitting.name == "Gas Pump", "listed by the MACHINE's name,
 assert(shelf.pipe_meter.category == "Devices", "the meter is a device")
 assert(shelf.gas_mixer_flipped_fitting, "both mirror images are on the shelf")
 assert(shelf.pipe.category == "Pipes", "and plain pipe leads")
+-- The two vents, which are the commonest thing an engineer comes here
+-- for: every room the crew stands in wants one, and both are ordinary
+-- fittings you carry away and bolt down.
+assert(shelf.vent_fitting.name == "Air Vent", "a vent is stocked like any other machine")
+assert(shelf.vent_fitting.category == "Devices", "on the shelf with the other room devices")
+assert(shelf.passive_vent_fitting.name == "Passive Vent", "and so is its unpowered twin")
 assert(shelf.cola == nil, "a pipe dispenser sells no softdrinks")
 
 -- ---- it dispenses onto its OWN tile, free ----
