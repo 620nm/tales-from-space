@@ -65,6 +65,15 @@ local tools = {
     "toolbox",
     "box_lights",
 }
+-- The second shelf: what a framed machine is built out of. tg's Robco
+-- Tool Maker stocks the stock parts (vending/engineering.dm:29-30); the
+-- BOARD is this pack's own addition, because circuit boards come off a
+-- departmental techfab in tg and there is no lathe of any kind here.
+local parts = {
+    "matter_bin",
+    "micro_laser",
+    "thermomachine_board",
+}
 for _, item in ipairs(tools) do
     assert(shelf[item], item .. " is missing from the tool vendor")
     assert(shelf[item].category == "Tools", item .. " is not under Tools")
@@ -73,7 +82,15 @@ for _, item in ipairs(tools) do
     assert(ui.payload.data.stock[shelf[item].path].amount > 0,
         item .. " has no displayed stock")
 end
-assert(#ui.payload.data.product_records == #tools,
+for _, item in ipairs(parts) do
+    assert(shelf[item], item .. " is missing from the tool vendor")
+    assert(shelf[item].category == "Parts", item .. " is not under Parts")
+    assert(shelf[item].path ~= "atlas-missing-" .. item,
+        item .. " does not resolve to atlas art")
+    assert(ui.payload.data.stock[shelf[item].path].amount > 0,
+        item .. " has no displayed stock")
+end
+assert(#ui.payload.data.product_records == #tools + #parts,
     "the tool shelf and its asserted roster drifted apart")
 assert(shelf.cable_coil.path == "atlas-coil-cable_coil",
     "item ids that differ from their sprite still select their atlas art")
@@ -91,6 +108,12 @@ local additions = {
     "light_tube",
     "toolbox",
     "box_lights",
+    -- The parts shelf goes through the very same route: a board and
+    -- the two components a temperature control unit is assembled from
+    -- (thermomachine_construction_test.luau walks what they build).
+    "matter_bin",
+    "micro_laser",
+    "thermomachine_board",
 }
 for _, item in ipairs(additions) do
     assert(t.count_items(item) == 0)

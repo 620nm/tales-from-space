@@ -23,7 +23,7 @@ return {
     script = "vendor",
     corded = true,
     ad = "Tools for tools.",
-    categories = { Tools = "screwdriver" },
+    categories = { Tools = "screwdriver", Parts = "matter_bin" },
     vends = {
         { item = "cable_coil", name = "Cable Coil", category = "Tools", amount = 10 },
         { item = "crowbar", name = "Crowbar", category = "Tools", amount = 5 },
@@ -41,5 +41,21 @@ return {
         { item = "toolbelt", name = "Toolbelt", category = "Tools", amount = 2 },
         { item = "toolbox", name = "Mechanical Toolbox", category = "Tools", amount = 2 },
         { item = "box_lights", name = "Box of Replacement Lights", category = "Tools", amount = 2 },
+        -- STOCK PARTS, on tg's own authority: the Robco Tool Maker
+        -- stocks `micro_laser = 5` and `matter_bin = 5`
+        -- (vending/engineering.dm:29-30), which is the same folding-in
+        -- this file already does for tubes and replacers.
+        { item = "matter_bin", name = "Matter Bin", category = "Parts", amount = 5 },
+        { item = "micro_laser", name = "Micro-Laser", category = "Parts", amount = 5 },
+        -- The board is NOT tg's: circuit boards come off a departmental
+        -- techfab, and this pack has no lathe of any kind. Until one
+        -- exists the shelf is where a machine board is obtainable at
+        -- all, which is the same argument that put the RPD here.
+        {
+            item = "thermomachine_board",
+            name = "Machine Board (Temperature Control Unit)",
+            category = "Parts",
+            amount = 2,
+        },
     },
 }
