@@ -63,18 +63,17 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
-        'p': (turf: Plating, fixture: Some(PassiveVent)),
     },
     rows: [
         "########",
         "#......#",
-        "#p.....#",
+        "#......#",
         "#......#",
         "########",
     ],
     spawns: [(4, 3)],
     pipes: [(2, 2, 4), (4, 2, 4), (5, 2, 4), (6, 2, 4)],
-    structures: [(3, 2, "manual_valve")],
+    structures: [(1, 2, "passive_vent"), (3, 2, "manual_valve")],
 )]==], 7)
 
 local p = t.join()

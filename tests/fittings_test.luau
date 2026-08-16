@@ -76,12 +76,12 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Floor),
         '#': (turf: Wall),
-        'v': (turf: Plating, fixture: Some(Vent)),
+        '_': (turf: Plating),
         'c': (turf: Floor, fixture: Some(Canister)),
     },
     rows: [
         "##########  ",
-        "#.c......#v ",
+        "#.c......#_ ",
         "#........#  ",
         "#........#  ",
         "##########  ",
@@ -92,7 +92,7 @@ t.world([==[(
         (2, 2, 4), (3, 2, 4), (4, 2, 4), (5, 2, 4),
         (5, 1, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4), (9, 1, 4),
     ],
-    structures: [(2, 1, "connector_port")],
+    structures: [(2, 1, "connector_port"), (10, 1, "vent")],
 )]==], 7)
 
 local p = t.join()

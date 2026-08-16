@@ -167,10 +167,17 @@
         ("injector_on_s", Dmi("@unary", "inje_on", 1)),
         ("injector_on_e", Dmi("@unary", "inje_on", 3)),
         ("injector_on_w", Dmi("@unary", "inje_on", 2)),
-        // And the two fittings, off the one sheet every /obj/item/pipe
-        // is drawn from.
+        // And the four fittings, off the one sheet every /obj/item/pipe
+        // is drawn from. tg's item picture IS the machine's own
+        // `pipe_state` (construction.dm:216), so the vent pump's
+        // `"uvent"` and the passive vent's `"pvent"` are the loose forms
+        // of the two machines the fixture glyphs used to spawn — a vent
+        // is something you carry and bolt down now, like everything else
+        // in the kit.
         ("air_scrubber_loose", Dmi("@pipe_item", "scrubber", 0)),
         ("air_injector_loose", Dmi("@pipe_item", "injector", 0)),
+        ("vent_loose", Dmi("@pipe_item", "uvent", 0)),
+        ("passive_vent_loose", Dmi("@pipe_item", "pvent", 0)),
         ("air_scrubber_loose_s", Dmi("@pipe_item", "scrubber", 0)),
         ("air_scrubber_loose_n", Dmi("@pipe_item", "scrubber", 1)),
         ("air_scrubber_loose_e", Dmi("@pipe_item", "scrubber", 2)),
@@ -179,6 +186,14 @@
         ("air_injector_loose_n", Dmi("@pipe_item", "injector", 1)),
         ("air_injector_loose_e", Dmi("@pipe_item", "injector", 2)),
         ("air_injector_loose_w", Dmi("@pipe_item", "injector", 3)),
+        ("vent_loose_s", Dmi("@pipe_item", "uvent", 0)),
+        ("vent_loose_n", Dmi("@pipe_item", "uvent", 1)),
+        ("vent_loose_e", Dmi("@pipe_item", "uvent", 2)),
+        ("vent_loose_w", Dmi("@pipe_item", "uvent", 3)),
+        ("passive_vent_loose_s", Dmi("@pipe_item", "pvent", 0)),
+        ("passive_vent_loose_n", Dmi("@pipe_item", "pvent", 1)),
+        ("passive_vent_loose_e", Dmi("@pipe_item", "pvent", 2)),
+        ("passive_vent_loose_w", Dmi("@pipe_item", "pvent", 3)),
         // ---- end of the room devices -------------------------------------
         // A gas canister: tg's art is greyscale and each gas type paints
         // it (greyscale_colors "#c6c0b5" is pre-mixed air). Baked with
