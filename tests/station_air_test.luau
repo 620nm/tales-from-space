@@ -11,6 +11,12 @@
 -- a process line through a filter row and an air mixer into the supply
 -- main, with the scrubbers main bringing used air back. Its shape is
 -- in docs/matter.md §19.5; what is here is whether it WORKS.
+--
+-- The station was redrawn around a central Commons (docs/matter.md
+-- §19.7). Atmospherics moved as one block, so every coordinate inside
+-- it is (x - 1, y + 9) of the one it replaced; the Commons, the vents
+-- and the walked route are new ground and are re-derived below with the
+-- same pinning discipline as before.
 
 local L2 = 2 -- scrubbers
 local L3 = 4 -- the department's process line
@@ -45,7 +51,7 @@ t.tick()
 -- department was built to make impossible, and it is invisible in any
 -- test that only looks at tick zero.
 -- ---------------------------------------------------------------
-local COMMONS = { 8, 8 }
+local COMMONS = { 19, 15 }
 local opening = t.room_pressure(COMMONS[1], COMMONS[2])
 assert(opening > 90.0 and opening < 115.0, "the Commons opens breathable: " .. opening)
 assert(room_of(COMMONS[1], COMMONS[2], "o2") > 0.0, "and there is oxygen in it")
@@ -71,19 +77,19 @@ assert(room_of(COMMONS[1], COMMONS[2], "o2") > 0.0, "still with oxygen in it")
 -- `t.foul_room` standing in for lungs the station does not have enough
 -- of to do this in a test's worth of ticks.
 -- ---------------------------------------------------------------
-local CO2_CHAMBER = { 25, 24 }
+local CO2_CHAMBER = { 24, 33 }
 local chamber_0 = room_of(CO2_CHAMBER[1], CO2_CHAMBER[2], "co2")
 assert(chamber_0 > 0.0, "the CO2 chamber opens holding carbon dioxide: " .. chamber_0)
 
 -- Foul the tile the scrubber stands on, which is how a real one would
 -- meet it: gas reaches a scrubber by spreading, not by being aimed.
-t.foul_room(13, 8, "co2", 4.0)
+t.foul_room(16, 17, "co2", 4.0)
 t.tick()
-local fouled = room_of(13, 8, "co2")
+local fouled = room_of(16, 17, "co2")
 assert(fouled > 3.0, "the Commons has carbon dioxide in it now: " .. fouled)
 
 t.run_seconds(240)
-local left = room_of(13, 8, "co2")
+local left = room_of(16, 17, "co2")
 assert(
     left < fouled * 0.5,
     "the scrubber took most of it back: " .. fouled .. " -> " .. left
@@ -107,11 +113,11 @@ assert(
 -- the chamber side stops, which is what "cut this leg out without
 -- stopping the station" means.
 -- ---------------------------------------------------------------
-local valve = t.structure_at(15, 19)
+local valve = t.structure_at(14, 28)
 assert(valve ~= nil and valve.id == "manual_valve", "the wheel is where the map put it")
 assert(valve.state == "open", "and it ships open: " .. tostring(valve.state))
-assert(t.pipe_pressure(15, 18, L3) ~= nil, "there is feed above it")
-assert(t.pipe_pressure(15, 20, L3) ~= nil, "and feed below it")
+assert(t.pipe_pressure(14, 27, L3) ~= nil, "there is feed above it")
+assert(t.pipe_pressure(14, 29, L3) ~= nil, "and feed below it")
 
 -- Walk an engineer to it. A manual valve has no panel by design (tg
 -- gives it none: "Intentionally no allow_silicon flag") -- the wheel is
@@ -122,36 +128,35 @@ local function walk(dir, times)
         t.run_ticks(5)
     end
 end
--- The route the demo screenshot walks, which is the only way in:
--- east through the Commons and the Annex, pin west against the shaft
--- wall so the count cannot drift, then south through the bulkhead door
--- at (17, 12) and down the feed to the wheel.
--- Pinned against two walls first, so the route cannot drift with
--- whatever the last scenario left the engineer standing on.
-walk("west", 10)  -- pins on the Commons' west wall, x = 5
-walk("north", 8)  -- and its north wall, y = 5
-walk("south", 3)
-walk("east", 12)
-walk("south", 2)
-walk("west", 5)   -- pins against the shaft's west wall at x = 15
-walk("east", 2)   -- ...so this lands on the door column, x = 17
-walk("south", 5)  -- one press opens the bulkhead door, the rest walk it
--- ...and inside the hall, pinned again rather than counted: west onto
--- the feed column, then south to the far wall, which puts the engineer
--- one tile past the wheel with their hand on it.
--- South FIRST: the storage canisters on the row below the door are
--- dense, so a west leg taken up there walks into one.
-walk("south", 10)
-walk("west", 15)
+-- The route a crewman actually takes, and the reason the hub layout is
+-- worth having: straight out of the Commons' south door, across the
+-- corridor, in through the department's own door -- three doors on one
+-- column, no detours. Every leg but one is PINNED against something
+-- solid, so the count cannot drift with whatever the last scenario left
+-- the engineer standing on.
+walk("west", 12)   -- pins on the Commons' west wall, x = 15
+walk("south", 6)   -- and its south wall, y = 18
+walk("east", 12)   -- and its east wall, x = 24
+walk("west", 5)    -- ...so this lands on the door column, x = 19
+-- ...and then south again, generously, because a leaf SWINGS: a press
+-- into a shut door starts the motion and the next press five ticks
+-- later still meets a moving door, so each of the two doors on this
+-- column costs an extra press. Counting them would be a spec that
+-- breaks when the swing is retuned; over-pressing and letting the
+-- department's own bottled nitrogen at (19, 25) stop the engineer dead
+-- is a spec that does not.
+walk("south", 16)   -- pins against the bottle, at (19, 24)
+walk("west", 8)     -- pins on the machine hall's west wall, x = 14
+walk("south", 10)   -- pins on the south hull, y = 29
 local px, py = t.pos(p)
-assert(px == 15 and py == 20, "standing at the wheel, at " .. px .. "," .. py)
+assert(px == 14 and py == 29, "standing at the wheel, at " .. px .. "," .. py)
 
-assert(t.structure_at(15, 19).state == "open", "still open on the way in")
-t.click(p, 15, 19, t.target_at(15, 19, "manual_valve"))
+assert(t.structure_at(14, 28).state == "open", "still open on the way in")
+t.click(p, 14, 28, t.target_at(14, 28, "manual_valve"))
 t.run_seconds(3)
 assert(
-    t.structure_at(15, 19).state == "shut",
-    "an empty hand shuts it: " .. tostring(t.structure_at(15, 19).state)
+    t.structure_at(14, 28).state == "shut",
+    "an empty hand shuts it: " .. tostring(t.structure_at(14, 28).state)
 )
 
 -- What isolation actually looks like, given time. Below the wheel the
@@ -160,11 +165,11 @@ assert(
 -- nothing; above it the department carries on. One wheel, two fates --
 -- which is the difference between cutting a leg out and stopping the
 -- station.
-local below_0 = t.pipe_pressure(15, 20, L3)
+local below_0 = t.pipe_pressure(14, 29, L3)
 assert(below_0 > 20.0, "the chamber feed was charged when it was shut: " .. below_0)
 t.run_seconds(180)
-local above_1 = t.pipe_pressure(15, 18, L3)
-local below_1 = t.pipe_pressure(15, 20, L3)
+local above_1 = t.pipe_pressure(14, 27, L3)
+local below_1 = t.pipe_pressure(14, 29, L3)
 assert(
     below_1 < 5.0,
     "the isolated side empties into the chambers and cannot refill: "
@@ -190,12 +195,14 @@ assert(
 local before_breach = t.room_pressure(COMMONS[1], COMMONS[2])
 assert(before_breach > 80.0, "the Commons is pressurised: " .. before_breach)
 
--- The Commons is the room with vents in it, so it is the room distro
--- can actually put air back into. Open its west wall to space, which is
--- what a breach IS here -- there is no breach STATE, only a floor that
--- became space (CLAUDE.md).
-for _, y in ipairs({ 7, 8, 9 }) do
-    t.set_turf(5, y, "space")
+-- The Commons is a room with vents in it, so it is a room distro can
+-- actually put air back into. Tear three tiles of its deck open, which
+-- is what a breach IS here -- there is no breach STATE, only a floor
+-- that became space (CLAUDE.md). The hub layout is why these are deck
+-- rather than hull: the Commons has no hull, which is the whole point
+-- of putting the crew in the middle of the station.
+for _, x in ipairs({ 22, 23, 24 }) do
+    t.set_turf(x, 16, "space")
 end
 t.run_seconds(90)
 -- Note what this number is NOT. Three tiles open to space and ninety
@@ -212,8 +219,8 @@ assert(
 )
 assert(breached > 5.0, "and the supply is still fighting it: " .. breached)
 
-for _, y in ipairs({ 7, 8, 9 }) do
-    t.set_turf(5, y, "floor")
+for _, x in ipairs({ 22, 23, 24 }) do
+    t.set_turf(x, 16, "floor")
 end
 t.run_seconds(600)
 local recovered = t.room_pressure(COMMONS[1], COMMONS[2])
