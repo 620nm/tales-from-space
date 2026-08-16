@@ -1,5 +1,9 @@
 -- Chillstation's tank annex: seven stationary reservoirs off the west
 -- side of Atmospherics, one per gas this shift's chemistry defines.
+-- (The whole department moved south-west when the station was redrawn
+-- around a central Commons; the annex came with it as one block, so
+-- every coordinate here is (x - 1, y + 9) of the one it replaced and
+-- nothing inside the room changed.)
 --
 -- The point of the room is that each tank holds ITS OWN gas, and the
 -- point of the map format change is that it says so per placement --
@@ -19,13 +23,13 @@ t.run_seconds(5)
 
 -- The store, as the map authored it: (x, y) -> the one gas in it.
 local store = {
-    { 5, 19, "o2" },
-    { 7, 19, "n2" },
-    { 9, 19, "co2" },
-    { 11, 19, "plasma" },
-    { 13, 19, "water_vapor" },
-    { 6, 24, "tritium" },
-    { 8, 24, "n2o" },
+    { 4, 28, "o2" },
+    { 6, 28, "n2" },
+    { 8, 28, "co2" },
+    { 10, 28, "plasma" },
+    { 12, 28, "water_vapor" },
+    { 5, 33, "tritium" },
+    { 7, 33, "n2o" },
 }
 
 for _, row in ipairs(store) do
@@ -63,18 +67,18 @@ end
 -- The room itself: sealed, breathable, named, and reachable from the
 -- department through its own door. A store nobody can walk into is a
 -- wall with tanks behind it.
-assert(t.room_pressure(9, 21) > 90.0,
-    "the annex holds its air: " .. t.room_pressure(9, 21) .. " kPa")
-assert(t.turf(11, 22) == "plating", "bare plating, like the rest of the department")
-assert(t.door_at(14, 22), "and a door into the machine hall's corridor")
+assert(t.room_pressure(8, 30) > 90.0,
+    "the annex holds its air: " .. t.room_pressure(8, 30) .. " kPa")
+assert(t.turf(10, 31) == "plating", "bare plating, like the rest of the station")
+assert(t.door_at(13, 31), "and a door into the machine hall's corridor")
 
 -- The machine tile the annex was laid out around, and the machine now
 -- standing on it: the temperature control unit, shipped running at its
 -- T20C default like the rest of the commissioned department, with
 -- branch power under it and the bench run stopping either side.
-local unit = t.structure_at(11, 22)
+local unit = t.structure_at(10, 31)
 assert(unit ~= nil and unit.id == "thermomachine",
     "the temperature control unit stands on the machine tile")
 assert(unit.state == "running", "and ships running: " .. tostring(unit.state))
-assert(t.pipe(10, 22) ~= 0 and t.pipe(12, 22) ~= 0,
+assert(t.pipe(9, 31) ~= 0 and t.pipe(11, 31) ~= 0,
     "with the bench run stopping either side of it")
