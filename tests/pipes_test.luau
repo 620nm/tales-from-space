@@ -201,21 +201,21 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
-        'p': (turf: Plating, fixture: Some(PassiveVent)),
     },
     rows: [
         "##############",
         "#..........#.#",
-        "#....p.....#p#",
+        "#..........#.#",
         "#..........#.#",
         "##############",
     ],
     spawns: [(12, 2)],
     items: [(12, 2, "welder"), (12, 3, "pipe")],
     pipes: [
-        (6, 2, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4),
-        (9, 1, 4), (10, 1, 4), (11, 1, 4),
+        (6, 2, 4), (6, 3, 4), (7, 3, 4), (8, 3, 4),
+        (9, 3, 4), (10, 3, 4), (11, 3, 4),
     ],
+    structures: [(5, 2, "passive_vent"), (12, 2, "passive_vent")],
 )]==], 7)
 local q = t.join()
 t.tick()
@@ -223,10 +223,10 @@ t.tick()
 -- The mapped run is commissioned, unlike the one built above, and it
 -- runs toward the wall between the two rooms. It stops one tile short
 -- of that wall: the closet's vent has nothing to draw from yet.
-assert(t.pipe_pressure(8, 1) > 90.0, "a mapped line is handed over charged")
+assert(t.pipe_pressure(8, 3) > 90.0, "a mapped line is handed over charged")
 assert(t.room_pressure(12, 1) > 90.0, "and both rooms start breathable")
-assert(t.turf(11, 2) == "wall", "the line runs under a wall")
-assert(t.pipe_pressure(12, 2) == nil, "but stops short of the closet")
+assert(t.turf(11, 3) == "wall", "the line runs under a wall")
+assert(t.pipe_pressure(12, 3) == nil, "but stops short of the closet")
 
 -- Take the length of pipe FIRST and park it in the other hand. Loose
 -- things do not survive a decompression: what is not in your hands
@@ -254,15 +254,22 @@ assert(
     "and a sealed vacuum stays a vacuum while the line stops short"
 )
 
--- Finish the plumbing: one length on the freshly repaired tile north
--- of the vent, and the closet is on the distribution line through the
--- vent's north mouth.
+-- Finish the plumbing: one length on the tile south of the vent, where
+-- the mapped main stops on the far side of the bulkhead, and the closet
+-- is on the distribution line through the vent's own mouth.
+--
+-- The walk back is not ceremony. The decompression dragged the engineer
+-- to the north end of the closet ("The rushing air drags you north!"),
+-- and reach is reach: a job interrupted by the hull opening is a job you
+-- have to walk back to.
 t.swap_hands(q)
 t.run_ticks(2)
-t.click(q, 12, 1)
+t.move(q, "south")
+t.run_ticks(5)
+t.click(q, 12, 3)
 t.run_seconds(1.5)
-assert(t.pipe(12, 1) == DISTRO, "the last length went down")
-assert(t.pipe_pressure(12, 1) ~= nil, "and the vent has a run to draw on")
+assert(t.pipe(12, 3) == DISTRO, "the last length went down")
+assert(t.pipe_pressure(12, 3) ~= nil, "and the vent has a run to draw on")
 
 t.run_seconds(60)
 local west_end = t.room_pressure(2, 1)
@@ -374,12 +381,11 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
-        'p': (turf: Plating, fixture: Some(PassiveVent)),
     },
     rows: [
         "#######",
         "#.....#",
-        "#.p...#",
+        "#.....#",
         "#.....#",
         "#######",
     ],
@@ -392,6 +398,7 @@ t.world([==[(
         (3, 1, 4, 3), (3, 2, 4, 11), (3, 3, 4, 3),
         (4, 1, 4, 3), (4, 2, 4, 3), (4, 3, 4, 3),
     ],
+    structures: [(2, 2, "passive_vent")],
 )]==], 7)
 t.join()
 t.tick()
@@ -424,12 +431,11 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
-        'p': (turf: Plating, fixture: Some(PassiveVent)),
     },
     rows: [
         "#######",
         "#.....#",
-        "#.p...#",
+        "#.....#",
         "#.....#",
         "#######",
     ],
@@ -438,6 +444,7 @@ t.world([==[(
         (3, 1, 4), (3, 2, 4), (3, 3, 4),
         (4, 1, 4), (4, 2, 4), (4, 3, 4),
     ],
+    structures: [(2, 2, "passive_vent")],
 )]==], 7)
 t.join()
 t.tick()
@@ -451,9 +458,9 @@ assert(
 )
 
 -- ---------------------------------------------------------------
--- A loose length follows the same occupancy rule as the RPD. Native
--- vents and content-authored machines own their centre on their layer;
--- a component on another layer is still a valid crossing.
+-- A loose length follows the same occupancy rule as the RPD. Every
+-- atmos component owns its centre on its own layer; a component on
+-- another layer is still a valid crossing.
 -- ---------------------------------------------------------------
 t.world([==[(
     name: "hand-laid component occupancy",
@@ -461,17 +468,20 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
-        'v': (turf: Plating, fixture: Some(Vent)),
     },
     rows: [
         "#####",
-        "#v..#",
+        "#...#",
         "#...#",
         "#####",
     ],
     spawns: [(2, 2)],
     items: [(2, 2, "pipe")],
-    structures: [(2, 1, "manual_valve"), (3, 1, "manual_valve_l2")],
+    structures: [
+        (1, 1, "vent"),
+        (2, 1, "manual_valve"),
+        (3, 1, "manual_valve_l2"),
+    ],
 )]==], 7)
 
 local h = t.join()

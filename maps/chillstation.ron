@@ -6,10 +6,10 @@
 //
 // Where that atmosphere comes from: the air canister 'c' in the
 // Commons feeds the distribution run below (hidden under the deck, as
-// pipe always is — pry a floor tile to see it), the run reaches both
-// vents 'v', and each vent releases into its room until the room hits
-// one atmosphere. Nothing else on this station makes air, so the
-// canister is finite and a long breach costs it. Note that 'o' is a
+// pipe always is — pry a floor tile to see it), the run reaches the
+// vents in `structures`, and each vent releases into its room until the
+// room hits one atmosphere. Nothing else on this station makes air, so
+// the canister is finite and a long breach costs it. Note that 'o' is a
 // power OUTLET, not a vent — it is electrical (docs/power.md).
 //
 // East of the Annex is the EVA vestibule: two airlocks 'E' with three
@@ -56,7 +56,6 @@
         'b': (turf: Floor, fixture: Some(Light), light: Some("#FFD6AA")),
         'o': (turf: Floor, fixture: Some(Outlet)),
         'm': (turf: Floor, fixture: Some(Smes)),
-        'v': (turf: Floor, fixture: Some(Vent)),
         'c': (turf: Floor, fixture: Some(Canister)),
         '_': (turf: Plating),
         's': (turf: Space, fixture: Some(Solar)),
@@ -82,13 +81,13 @@
         "                              ",
         "                              ",
         "    ###############___###     ",
-        "    #a.l...bo.#avl......##    ",
-        "    #...v.....#.........__#   ",
+        "    #a.l...bo.#a.l......##    ",
+        "    #.........#.........__#   ",
         "    #.........#.........E_E   ",
         "    #.........+.........__#   ",
         "    #.......c.#.....#### #    ",
         "    #.______..#.....#         ",
-        "    #m..l....v#.....#         ",
+        "    #m..l.....#.....#         ",
         "    #############+########### ",
         "              #_C_CA_L___L__# ",
         "              #_____________# ",
@@ -154,6 +153,19 @@
     // the port up with a wrench and the distribution loop has no source.
     structures: [
         (12, 9, "connector_port"),
+        // The three air vents, one per room the crew stands in: two in
+        // the Commons and one in the Annex, each on the end of a spur
+        // off the distribution main. They are ordinary machines placed
+        // like every other machine in the plumbing — a technician can
+        // unbolt one, carry it away, and wrench it down somewhere else,
+        // and the RPD will hand out more.
+        //
+        // The Annex's (16, 5) is the demo: its branch circuit is not
+        // wired yet, so the fan sits dead over a charged main until
+        // somebody runs cable to it.
+        (8, 6, "vent"),
+        (13, 11, "vent"),
+        (16, 5, "vent"),
         // The airlock gallery: a glass wall across the Annex with one
         // tile of gap at (22, 7), so the way to the inner airlock runs
         // past a window rather than through open floor. Reinforced, and
@@ -214,9 +226,10 @@
         (21, 14, "meter"),
         (25, 14, "meter"),
         // THE THREE LAYER ADAPTERS, and the reason the department can
-        // exist at all. The station's native vents can only see piping
-        // layer 3 (sim/vents.rs `LAYER_DEFAULT`), while tg's mains are
-        // layer 4 for supply and layer 2 for scrubbers. An adapter
+        // exist at all. The station's vents are on piping layer 3
+        // (structures/vent.luau, the distribution layer), while tg's
+        // mains are layer 4 for supply and layer 2 for scrubbers. An
+        // adapter
         // welds every layer it touches into ONE net, so:
         //   (27,15) puts the pump's layer-3 outlet onto the layer-4
         //           supply main;

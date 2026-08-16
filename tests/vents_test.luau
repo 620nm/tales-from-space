@@ -1,26 +1,24 @@
 -- The vents: the two machines that reach out of the plumbing and into
--- a ROOM, and the only two of them the engine keeps native.
+-- a ROOM, and between them the entire reason a distribution main is
+-- worth laying.
 --
--- room_devices_test.luau has the scrubber and the injector -- content
--- machines an engineer wrenches down out of a fitting. These two are
--- different in kind. They exist only as map glyphs (`Vent` and
--- `PassiveVent`), a mapper draws them and nobody builds them, and
--- between them they are the entire reason a distribution main is worth
--- laying. So they get a file about their ARITHMETIC rather than their
--- construction.
+-- room_devices_test.luau has the scrubber and the injector, and
+-- vent_construction_test.luau has these two being carried, bolted down
+-- and taken up again. This file is about their ARITHMETIC, which is
+-- what a station lives or dies by and what nothing else asserts.
 --
 -- A powered vent is a setpoint machine and that is the whole of it
--- (sim/vents.rs, tg's vent_pump with both bounds live): below 0.99 of
--- an atmosphere it releases into the room, above 1.08 it siphons the
--- room back into the run, and between those two lines it does nothing
--- at all. A passive vent is a HOLE -- no setpoint, no power, no
--- direction -- and it equalises the run and the room by molar density,
--- whichever way that runs (tg's `internal.equalize(external)`).
+-- (atmos_machines/vent.rs, tg's vent_pump with both bounds live):
+-- below 0.99 of an atmosphere it releases into the room, above 1.08 it
+-- siphons the room back into the run, and between those two lines it
+-- does nothing at all. A passive vent is a HOLE -- no setpoint, no
+-- power, no direction -- and it equalises the run and the room by molar
+-- density, whichever way that runs (tg's `internal.equalize(external)`).
 --
--- Neither is built and neither is switched, so nobody joins these
--- worlds: every scenario below is what the STATION does while the crew
--- is somewhere else, which is also what keeps the mole books exact --
--- a crewman standing in the room would be breathing on them.
+-- Neither is switched, so nobody joins these worlds: every scenario
+-- below is what the STATION does while the crew is somewhere else,
+-- which is also what keeps the mole books exact -- a crewman standing
+-- in the room would be breathing on them.
 
 local ONE_ATM = 101.325
 -- The two lines the powered vent lives between (vents.rs SUPPLY_BELOW
@@ -112,20 +110,19 @@ local SUPPLY_MAP = [==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
-        'v': (turf: Plating, fixture: Some(Vent)),
         'c': (turf: Plating, fixture: Some(Canister)),
         'g': (turf: Plating, fixture: Some(Generator)),
         'a': (turf: Plating, fixture: Some(Apc)),
     },
     rows: [
         "#########",
-        "#.v.c.ga#",
+        "#...c.ga#",
         "#########",
     ],
     spawns: [(5, 1)],
     // One length joining the vent's mouth to the canister's socket.
     pipes: [(3, 1, 4)],
-    structures: [(4, 1, "connector_port")],
+    structures: [(2, 1, "vent"), (4, 1, "connector_port")],
     // Feeder (L1) under the generator and the APC; branch (L2) from the
     // APC's own tile west along the corridor to the vent.
     cables: [
@@ -241,17 +238,17 @@ local RELIEF_MAP = [==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
-        'v': (turf: Plating, fixture: Some(Vent)),
         'g': (turf: Plating, fixture: Some(Generator)),
         'a': (turf: Plating, fixture: Some(Apc)),
     },
     rows: [
         "#########",
-        "#v...ga.#",
+        "#....ga.#",
         "#########",
     ],
     spawns: [(4, 1)],
     pipes: [(2, 1, 4), (3, 1, 4), (4, 1, 4)],
+    structures: [(1, 1, "vent")],
     cables: [
         (5, 1, 3), (6, 1, 3),
         (4, 1, 2), (3, 1, 2), (2, 1, 2), (1, 1, 2),
@@ -340,17 +337,16 @@ local PASSIVE_MAP = [==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
-        'p': (turf: Plating, fixture: Some(PassiveVent)),
         'c': (turf: Plating, fixture: Some(Canister)),
     },
     rows: [
         "#########",
-        "#.p..c..#",
+        "#....c..#",
         "#########",
     ],
     spawns: [(4, 1)],
     pipes: [(3, 1, 4), (4, 1, 4)],
-    structures: [(5, 1, "connector_port")],
+    structures: [(2, 1, "passive_vent"), (5, 1, "connector_port")],
 )]==]
 
 t.world(PASSIVE_MAP, 7)
