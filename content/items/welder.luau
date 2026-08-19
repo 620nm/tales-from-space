@@ -9,6 +9,9 @@ return {
     name = "welding tool",
     sprite = "welder",
     inhand_sprite = { "held_welder_l", "held_welder_r" },
+    -- tg weldingtool.dm:16-17.
+    pickup_sound = "welder_pickup",
+    drop_sound = "welder_drop",
     -- The whole of what a torch knows about itself: its equipment class
     -- and its tank. What a torch DOES lives on the things it is used on
     -- (docs/construction.md). tg's max_fuel is 20.

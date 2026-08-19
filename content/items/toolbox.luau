@@ -6,6 +6,10 @@ return {
     name = "mechanical toolbox",
     sprite = "toolbox",
     inhand_sprite = { "held_toolbox_l", "held_toolbox_r" },
+    -- A boxful of loose steel, and it sounds like it. tg
+    -- _toolbox.dm:19-21.
+    pickup_sound = "toolbox_pickup",
+    drop_sound = "toolbox_drop",
     storage = 7,
     holds = { "welder", "crowbar", "wirecutters", "screwdriver", "wrench", "cable_coil" },
     on_attack = function(ctx, self, user, target)
