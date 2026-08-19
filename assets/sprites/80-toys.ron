@@ -11,21 +11,56 @@
 // (code/game/objects/items/dice.dm:114-116). So a die that shows a
 // number is a composite, and the number is baked in.
 //
-// Which means the picture does NOT follow the roll. Nothing in this
-// engine can change an item's sprite from content — a prototype names
-// one picture and wears it — so the face here is the one the die
-// rests on forever, and the roll is a thing you READ rather than see.
-// It is the honest v0: a sprite that changed with the result would
-// need an effect that repaints an item, which is a mechanism of its
-// own and not one a toy should be the reason for.
+// Which is why every face is here. An item's picture now follows its
+// declared appearance state (`states`/`state_sprites` on the prototype,
+// turned by `ctx.set_state`), and a state resolves to ONE atlas cell —
+// so the composite tg builds at runtime out of a body and an overlay is
+// composited once, at bake time, into a cell per face. Twenty-six extra
+// cells buys the property that matters: the name a die can be put into
+// is a name that was baked, checked at load rather than discovered by a
+// player looking at an invisible object.
+//
+// `d6` and `d20` stay: they are the RESTING picture a prototype's
+// `sprite` field names, and the fallback a state without its own row
+// falls through to.
 (
     sheets: [
         ("dice", "obj/toys/dice.dmi"),
     ],
     sprites: [
-        // Six pips and twenty: the faces that read as "this is a die"
-        // at 32 pixels, and the two everybody wants to roll anyway.
+        // The resting faces: the ones that read as "this is a die" at
+        // 32 pixels, and the two everybody wants to roll anyway.
         ("d6", DmiLayers([("@dice", "d6"), ("@dice", "d6-6")], 0)),
         ("d20", DmiLayers([("@dice", "d20"), ("@dice", "d20-20")], 0)),
+
+        // Six sides.
+        ("d6_1", DmiLayers([("@dice", "d6"), ("@dice", "d6-1")], 0)),
+        ("d6_2", DmiLayers([("@dice", "d6"), ("@dice", "d6-2")], 0)),
+        ("d6_3", DmiLayers([("@dice", "d6"), ("@dice", "d6-3")], 0)),
+        ("d6_4", DmiLayers([("@dice", "d6"), ("@dice", "d6-4")], 0)),
+        ("d6_5", DmiLayers([("@dice", "d6"), ("@dice", "d6-5")], 0)),
+        ("d6_6", DmiLayers([("@dice", "d6"), ("@dice", "d6-6")], 0)),
+
+        // ...and twenty.
+        ("d20_1", DmiLayers([("@dice", "d20"), ("@dice", "d20-1")], 0)),
+        ("d20_2", DmiLayers([("@dice", "d20"), ("@dice", "d20-2")], 0)),
+        ("d20_3", DmiLayers([("@dice", "d20"), ("@dice", "d20-3")], 0)),
+        ("d20_4", DmiLayers([("@dice", "d20"), ("@dice", "d20-4")], 0)),
+        ("d20_5", DmiLayers([("@dice", "d20"), ("@dice", "d20-5")], 0)),
+        ("d20_6", DmiLayers([("@dice", "d20"), ("@dice", "d20-6")], 0)),
+        ("d20_7", DmiLayers([("@dice", "d20"), ("@dice", "d20-7")], 0)),
+        ("d20_8", DmiLayers([("@dice", "d20"), ("@dice", "d20-8")], 0)),
+        ("d20_9", DmiLayers([("@dice", "d20"), ("@dice", "d20-9")], 0)),
+        ("d20_10", DmiLayers([("@dice", "d20"), ("@dice", "d20-10")], 0)),
+        ("d20_11", DmiLayers([("@dice", "d20"), ("@dice", "d20-11")], 0)),
+        ("d20_12", DmiLayers([("@dice", "d20"), ("@dice", "d20-12")], 0)),
+        ("d20_13", DmiLayers([("@dice", "d20"), ("@dice", "d20-13")], 0)),
+        ("d20_14", DmiLayers([("@dice", "d20"), ("@dice", "d20-14")], 0)),
+        ("d20_15", DmiLayers([("@dice", "d20"), ("@dice", "d20-15")], 0)),
+        ("d20_16", DmiLayers([("@dice", "d20"), ("@dice", "d20-16")], 0)),
+        ("d20_17", DmiLayers([("@dice", "d20"), ("@dice", "d20-17")], 0)),
+        ("d20_18", DmiLayers([("@dice", "d20"), ("@dice", "d20-18")], 0)),
+        ("d20_19", DmiLayers([("@dice", "d20"), ("@dice", "d20-19")], 0)),
+        ("d20_20", DmiLayers([("@dice", "d20"), ("@dice", "d20-20")], 0)),
     ],
 )
