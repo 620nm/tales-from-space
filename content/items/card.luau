@@ -188,9 +188,17 @@ return {
         -- card knows which card it is; the deck knows how many it has
         -- and in what order; and neither has to carry the other's list.
         local order = ctx.var(deck, "order")
-        if order == nil then
-            -- Never dealt from, so it is still whole. tg refuses the
-            -- same way, at `card_limit` (cards.dm:76-77).
+        -- tg refuses an insert past `card_limit` and returns null rather
+        -- than growing the list (`insert`, cards.dm:76-77). Two cases
+        -- reach that here and both must be caught: a deck nobody has
+        -- dealt from is still whole (`nil`, meaning all fifty-four), and
+        -- a deck dealt from ONCE will otherwise take returns forever --
+        -- deal from one deck, feed the card to another, and the second
+        -- grows past a full deck. Which matters more than tidiness: the
+        -- order is a script var with a length cap, so an unbounded deck
+        -- eventually meets a refused write while `ctx.consume` below has
+        -- already eaten the card. Cards would quietly stop existing.
+        if order == nil or count(order) >= #FACES then
             ctx.system_msg(user, "The deck is already full.")
             return
         end
