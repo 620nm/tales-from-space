@@ -176,6 +176,13 @@
     spawns: [(18, 16), (19, 16), (20, 16), (21, 16)],
     items: [
         (17, 16, "toolbox"),
+        // ---- the Commons -----------------------------------------
+        // A shift is long, and this is the room everybody walks
+        // through. Two dice on the table: the only things on this map
+        // that do nothing useful, which is the whole of what they are
+        // for. Throw one and it rolls where it stops.
+        (16, 15, "d6"),
+        (17, 15, "d20"),
         // ---- the Workshop ----------------------------------------
         // Everything the first draft scattered across an unfinished
         // room, now in the room whose job it is: sheet, tile, rod,

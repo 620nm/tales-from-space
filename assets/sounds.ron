@@ -21,4 +21,7 @@
     // CLICK, ahead of the second of turning, so the room hears somebody
     // commit rather than hears the result (valve.dm:28).
     ("valve", "effects/valve_opening.ogg"),
+    // Dice tumbling. tg plays it from `diceroll` itself, so it sounds
+    // for a roll in the hand and a roll on landing alike (dice.dm:86).
+    ("dice_roll", "items/dice_roll.ogg"),
 ]
