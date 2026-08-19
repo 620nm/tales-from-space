@@ -24,6 +24,10 @@
     // Dice tumbling. tg plays it from `diceroll` itself, so it sounds
     // for a roll in the hand and a roll on landing alike (dice.dm:86).
     ("dice_roll", "items/dice_roll.ogg"),
+    // A plastic mode switch. tg's Captain's Aid plays a SCREWDRIVER
+    // for it -- `screwdriver2.ogg`, toys.dm:421 -- which is the joke:
+    // a toy whose only moving part sounds like a tool.
+    ("switch_click", "items/tools/screwdriver2.ogg"),
 
     // ---- handling: what a thing sounds like being picked up and put
     // down (`ItemProto::pickup_sound`/`drop_sound`, sim/handling.rs).

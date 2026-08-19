@@ -26,6 +26,7 @@
 (
     sheets: [
         ("dice", "obj/toys/dice.dmi"),
+        ("toy", "obj/toys/toy.dmi"),
     ],
     sprites: [
         // The resting faces: the ones that read as "this is a die" at
@@ -136,5 +137,16 @@
         // One cell, no faces: the bag is a bag whatever is inside it
         // (tg `/obj/item/storage/dice`, dice.dm:6-12).
         ("dice_bag", Dmi("@dice", "dicebag", 0)),
+
+        // ---- the Captain's Aid -----------------------------------
+        // Five cells, one per position of the only dial it has
+        // (tg toys.dm:404-410). Named for tg's own mode words so the
+        // prototype's `states` roster and this list read as one list.
+        ("captains_aid", Dmi("@toy", "captainsaid_off", 0)),
+        ("captains_aid_off", Dmi("@toy", "captainsaid_off", 0)),
+        ("captains_aid_port", Dmi("@toy", "captainsaid_port", 0)),
+        ("captains_aid_starboard", Dmi("@toy", "captainsaid_starboard", 0)),
+        ("captains_aid_fore", Dmi("@toy", "captainsaid_fore", 0)),
+        ("captains_aid_aft", Dmi("@toy", "captainsaid_aft", 0)),
     ],
 )
