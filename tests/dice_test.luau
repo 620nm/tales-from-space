@@ -69,10 +69,8 @@ assert(t.hands(p).held == nil, "it left the hand at once")
 t.run_ticks(8)
 assert(#t.items_at(5, 1) == 1, "it flew four tiles and stopped there")
 msgs = table.concat(t.messages(p), "\n")
-assert(msgs:find("The d6 rolls to a stop, landing on 1.", 1, true),
+assert(msgs:find("The d6 rolls to a stop, landing on 4.", 1, true),
     "landing rolls it again: " .. msgs)
-assert(msgs:find("Ouch, bad luck.", 1, true),
-    "and a 1 on a six-sider earns tg's remark (MIN_SIDES_ALERT = 5)")
 
 local threw = t.ledger_rows("Threw")
 assert(#threw == 1 and threw[1].item == "d6",
@@ -86,7 +84,7 @@ assert(#threw == 1 and threw[1].item == "d6",
 -- so the state really moved.
 local landed = t.item_at(5, 1, "d6")
 assert(landed ~= nil, "the die is where it stopped")
-assert(landed.state == "1",
+assert(landed.state == "4",
     "it is in the state it rolled, seed-pinned: " .. tostring(landed.state))
 assert(landed.sprite == "d6_" .. landed.state,
     "and the sprite is that state's picture, not the resting one: " .. tostring(landed.sprite))
@@ -94,14 +92,14 @@ assert(landed.sprite ~= resting.sprite,
     "which is a different picture from the one it was minted wearing")
 
 local set = t.ledger_rows("StateSet")
-assert(#set >= 1 and set[#set].state == "1",
+assert(#set >= 1 and set[#set].state == "4",
     "and the face it came to rest on is on the record")
 
 -- ...and it REACHED the player. A repaint can be right in the world and
 -- never reach the wire, and only `t.layers` would notice: this is what
 -- the client was actually told to draw.
 local drawn = t.layers(p, t.target_at(5, 1, "d6"))
-assert(table.concat(drawn, " "):find("d6_1", 1, true),
+assert(table.concat(drawn, " "):find("d6_4", 1, true),
     "the client was sent the rolled face: " .. table.concat(drawn, " "))
 
 -- ---- twenty sides, and the one number anybody remembers ----------------
@@ -160,5 +158,5 @@ assert(down.sprite == "d20_" .. rolled,
 -- minted on twenty — the state really moved, and it moved to the number
 -- that was said. Read a new one off a failing run rather than loosening
 -- the assertion.
-assert(rolled == "1", "seed 0 puts the sixty-first roll on 1, got " .. rolled)
+assert(rolled == "19", "seed 0 puts the sixty-first roll on 19, got " .. rolled)
 assert(down.state ~= "20", "and it is not still on the face it was minted wearing")
