@@ -62,5 +62,79 @@
         ("d20_18", DmiLayers([("@dice", "d20"), ("@dice", "d20-18")], 0)),
         ("d20_19", DmiLayers([("@dice", "d20"), ("@dice", "d20-19")], 0)),
         ("d20_20", DmiLayers([("@dice", "d20"), ("@dice", "d20-20")], 0)),
+
+        // ---- the rest of the set ---------------------------------
+        // tg's bag of dice is d4/d6/d8/d10/d12/d20 and one oddity
+        // (dice.dm:14-31); five more solids means five more rosters,
+        // and the rule is the one above -- a face a prototype can be
+        // put into is a face that was baked.
+        ("d4", DmiLayers([("@dice", "d4"), ("@dice", "d4-4")], 0)),
+        ("d8", DmiLayers([("@dice", "d8"), ("@dice", "d8-8")], 0)),
+        ("d10", DmiLayers([("@dice", "d10"), ("@dice", "d10-10")], 0)),
+        ("d12", DmiLayers([("@dice", "d12"), ("@dice", "d12-12")], 0)),
+        // The percentile die. tg draws it off its own ten cells and
+        // reads them out as 0, 10, 20 ... 90 (`manipulate_result`,
+        // dice.dm:225) -- the CELL is still 1..10, which is why the
+        // roster below is numbered the way every other die's is.
+        ("d00", DmiLayers([("@dice", "d00"), ("@dice", "d00-10")], 0)),
+
+        // Four sides.
+        ("d4_1", DmiLayers([("@dice", "d4"), ("@dice", "d4-1")], 0)),
+        ("d4_2", DmiLayers([("@dice", "d4"), ("@dice", "d4-2")], 0)),
+        ("d4_3", DmiLayers([("@dice", "d4"), ("@dice", "d4-3")], 0)),
+        ("d4_4", DmiLayers([("@dice", "d4"), ("@dice", "d4-4")], 0)),
+
+        // Eight.
+        ("d8_1", DmiLayers([("@dice", "d8"), ("@dice", "d8-1")], 0)),
+        ("d8_2", DmiLayers([("@dice", "d8"), ("@dice", "d8-2")], 0)),
+        ("d8_3", DmiLayers([("@dice", "d8"), ("@dice", "d8-3")], 0)),
+        ("d8_4", DmiLayers([("@dice", "d8"), ("@dice", "d8-4")], 0)),
+        ("d8_5", DmiLayers([("@dice", "d8"), ("@dice", "d8-5")], 0)),
+        ("d8_6", DmiLayers([("@dice", "d8"), ("@dice", "d8-6")], 0)),
+        ("d8_7", DmiLayers([("@dice", "d8"), ("@dice", "d8-7")], 0)),
+        ("d8_8", DmiLayers([("@dice", "d8"), ("@dice", "d8-8")], 0)),
+
+        // Ten.
+        ("d10_1", DmiLayers([("@dice", "d10"), ("@dice", "d10-1")], 0)),
+        ("d10_2", DmiLayers([("@dice", "d10"), ("@dice", "d10-2")], 0)),
+        ("d10_3", DmiLayers([("@dice", "d10"), ("@dice", "d10-3")], 0)),
+        ("d10_4", DmiLayers([("@dice", "d10"), ("@dice", "d10-4")], 0)),
+        ("d10_5", DmiLayers([("@dice", "d10"), ("@dice", "d10-5")], 0)),
+        ("d10_6", DmiLayers([("@dice", "d10"), ("@dice", "d10-6")], 0)),
+        ("d10_7", DmiLayers([("@dice", "d10"), ("@dice", "d10-7")], 0)),
+        ("d10_8", DmiLayers([("@dice", "d10"), ("@dice", "d10-8")], 0)),
+        ("d10_9", DmiLayers([("@dice", "d10"), ("@dice", "d10-9")], 0)),
+        ("d10_10", DmiLayers([("@dice", "d10"), ("@dice", "d10-10")], 0)),
+
+        // Twelve.
+        ("d12_1", DmiLayers([("@dice", "d12"), ("@dice", "d12-1")], 0)),
+        ("d12_2", DmiLayers([("@dice", "d12"), ("@dice", "d12-2")], 0)),
+        ("d12_3", DmiLayers([("@dice", "d12"), ("@dice", "d12-3")], 0)),
+        ("d12_4", DmiLayers([("@dice", "d12"), ("@dice", "d12-4")], 0)),
+        ("d12_5", DmiLayers([("@dice", "d12"), ("@dice", "d12-5")], 0)),
+        ("d12_6", DmiLayers([("@dice", "d12"), ("@dice", "d12-6")], 0)),
+        ("d12_7", DmiLayers([("@dice", "d12"), ("@dice", "d12-7")], 0)),
+        ("d12_8", DmiLayers([("@dice", "d12"), ("@dice", "d12-8")], 0)),
+        ("d12_9", DmiLayers([("@dice", "d12"), ("@dice", "d12-9")], 0)),
+        ("d12_10", DmiLayers([("@dice", "d12"), ("@dice", "d12-10")], 0)),
+        ("d12_11", DmiLayers([("@dice", "d12"), ("@dice", "d12-11")], 0)),
+        ("d12_12", DmiLayers([("@dice", "d12"), ("@dice", "d12-12")], 0)),
+
+        // ...and the percentile's ten cells.
+        ("d00_1", DmiLayers([("@dice", "d00"), ("@dice", "d00-1")], 0)),
+        ("d00_2", DmiLayers([("@dice", "d00"), ("@dice", "d00-2")], 0)),
+        ("d00_3", DmiLayers([("@dice", "d00"), ("@dice", "d00-3")], 0)),
+        ("d00_4", DmiLayers([("@dice", "d00"), ("@dice", "d00-4")], 0)),
+        ("d00_5", DmiLayers([("@dice", "d00"), ("@dice", "d00-5")], 0)),
+        ("d00_6", DmiLayers([("@dice", "d00"), ("@dice", "d00-6")], 0)),
+        ("d00_7", DmiLayers([("@dice", "d00"), ("@dice", "d00-7")], 0)),
+        ("d00_8", DmiLayers([("@dice", "d00"), ("@dice", "d00-8")], 0)),
+        ("d00_9", DmiLayers([("@dice", "d00"), ("@dice", "d00-9")], 0)),
+        ("d00_10", DmiLayers([("@dice", "d00"), ("@dice", "d00-10")], 0)),
+
+        // ---- what carries them -----------------------------------
+        // One cell, no faces: the bag is a bag whatever is inside it
+        // (tg `/obj/item/storage/dice`, dice.dm:6-12).
+        ("dice_bag", Dmi("@dice", "dicebag", 0)),
     ],
 )

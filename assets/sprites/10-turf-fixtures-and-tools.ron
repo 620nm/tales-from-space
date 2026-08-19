@@ -139,6 +139,9 @@
         ("vendor", Dmi("@vending", "Cola_Machine", 0)),
         // tg's YouTool, off the same vending sheet (vending/youtool.dm).
         ("tool_vendor", Dmi("@vending", "tool", 0)),
+        // ...and tg's Good Clean Fun, off the same sheet
+        // (vending/games.dm:5).
+        ("games_vendor", Dmi("@vending", "games", 0)),
         ("cola", Dmi("@soda", "cola", 0)),
         ("outlet", Dmi("@pipe_structures", "term", 0)),
         ("outlet_s", Dmi("@pipe_structures", "term", 0)),
