@@ -31,8 +31,9 @@ cargo run -p lunatic-server -- tfs/maps/outpost.ron --content tfs/content
 - `docs/SCRIPTING.md` is the ratified v1 content contract (anchors,
   handler kinds, transactions). It is the destination, not yet the runtime.
 - `docs/luau-api.md` documents the as-built v0 surface these files use
-  today: five hooks (`on_interact`, `on_use`, `on_bump`, `on_attack`,
-  `on_mob_life`) and the `ctx` query/effect table.
+  today: seven hooks (`on_interact`, `on_use`, `on_bump`, `on_attack`,
+  `on_mob_life`, `on_use_self`, `on_pull`) and the `ctx` query/effect
+  table.
 - `content/tuning.luau` overrides engine feel constants; the engine's
   compiled defaults are the values its tests pin.
 - `docs/gamemodes.md` defines the Space Station/Free Build split and the
@@ -63,7 +64,7 @@ no direct spawn in `t`, and none should ever be added.
 | World | `t.world(ron [, seed [, mode]])`, `t.world_file(name [, seed [, mode]])` (mode = a `content/gamemodes/` id; omitted = the pack default), `t.join([job]) -> player` (a mode that seats bodies on connection takes no job) |
 | Seeds | `t.fault(x, y, tick)` (hull failure), `t.outage([tick])` (breaker trip) |
 | Clock | `t.now()`, `t.tick()`, `t.run_ticks(n)`, `t.run_seconds(s)` |
-| Verbs | `t.click(p, x, y [, target])` (target = the entity the client's hit-test named, from `t.target_at`; omitted = a click that landed on the ground), `t.move(p, dir)`, `t.say(p, text)`, `t.drop(p)`, `t.equip(p)`, `t.swap_hands(p)`, `t.ui_act(p, act [, payload])`, `t.ui_close(p)` |
+| Verbs | `t.click(p, x, y [, target])` (target = the entity the client's hit-test named, from `t.target_at`; omitted = a click that landed on the ground), `t.move(p, dir)`, `t.say(p, text)`, `t.drop(p)`, `t.equip(p)`, `t.swap_hands(p)`, `t.rotate(p, x, y, target, clockwise)`, `t.pull(p, x, y, target)` (ctrl+click: take hold of a loose thing and drag it), `t.stop_pull(p)`, `t.ui_act(p, act [, payload])`, `t.ui_close(p)` |
 | Body | `t.pos(p) -> x, y`, `t.health(p) -> {brute, oxy, state}`, `t.set_health(p, fields)`, `t.blood_moles(p)`, `t.sprite(p)`, `t.hands(p) -> {[1], [2], active, held}`, `t.worn(p) -> {id, uniform, suit, back}` |
 | Tile | `t.turf(x, y)`, `t.is_breached(x, y)`, `t.items_at(x, y)`, `t.target_at(x, y, id)`, `t.count_items(id)`, `t.door_at(x, y) -> {open, powered}` |
 | Atmos | `t.pipe(x, y)`, `t.pipe_pressure(x, y [, layer])`, `t.room_pressure(x, y)`, `t.canister_pressure(x, y)` |
