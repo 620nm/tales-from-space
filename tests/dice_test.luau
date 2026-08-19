@@ -136,6 +136,14 @@ local said = t.messages(p)
 local rolled = said[#said]:match("It lands on (%d+)%.")
 assert(rolled ~= nil, "the roll said a number: " .. tostring(said[#said]))
 
+-- IN THE HAND, before it is put down. The panel showing what you are
+-- holding is a different path from the world delta -- a carried item
+-- has no tile to be repainted at -- and it used to read the PROTOTYPE,
+-- so a die rolled in the hand went on showing the face it was minted
+-- wearing until somebody dropped it.
+assert(t.hud(p)[1] == "d20_" .. rolled,
+    "the hand shows the face it just rolled: " .. tostring(t.hud(p)[1]))
+
 t.drop(p)
 t.tick()
 assert(t.hands(p).held == nil, "it left the hand")
