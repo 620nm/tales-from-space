@@ -9,5 +9,8 @@ return {
     inhand_sprite = { "held_screwdriver_l", "held_screwdriver_r" },
     -- What it looks like riding a belt that shows its contents.
     stowed_sprite = "belt_screwdriver",
+    -- tg screwdriver.dm:30-31.
+    pickup_sound = "screwdriver_pickup",
+    drop_sound = "screwdriver_drop",
     tool = "screwdriver",
 }

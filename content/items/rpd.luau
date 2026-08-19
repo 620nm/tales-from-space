@@ -151,6 +151,9 @@ return {
     -- tg's own art off the tool sheet (`icon_state = "rpd"`, RPD.dm:26).
     sprite = "rpd",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
+    -- tg RPD.dm:39-40.
+    pickup_sound = "rpd_pickup",
+    drop_sound = "rpd_drop",
     -- Loose-pipe breakdown is aimed at the fitting lying on the deck,
     -- and a click that names one would otherwise pocket it (interact.rs
     -- step 8). tg's `interact_with_atom` reaches the same atom.

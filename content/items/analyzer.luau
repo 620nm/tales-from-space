@@ -87,6 +87,9 @@ return {
     id = "analyzer",
     name = "gas analyzer",
     sprite = "analyzer",
+    -- tg gas_analyzer.dm:20-21.
+    pickup_sound = "analyzer_pickup",
+    drop_sound = "analyzer_drop",
     on_use = function(ctx, self, user, x, y, choice, target)
         -- The thing you pointed at, if it holds gas of its own. tg's
         -- `return_analyzable_air()`; here the only portable that has

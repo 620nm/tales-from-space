@@ -6,5 +6,8 @@ return {
     name = "glass sheets",
     sprite = "glass",
     inhand_sprite = { "held_glass_l", "held_glass_r" },
+    -- tg glass.dm:35-36.
+    pickup_sound = "glass_pickup",
+    drop_sound = "glass_drop",
     stack = 50,
 }
