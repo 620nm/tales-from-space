@@ -8,5 +8,8 @@ return {
     name = "metal sheets",
     sprite = "metal",
     inhand_sprite = { "held_metal_l", "held_metal_r" },
+    -- A stack sounds like the material it is. tg sheets.dm:18-19.
+    pickup_sound = "metal_pickup",
+    drop_sound = "metal_drop",
     stack = 30,
 }

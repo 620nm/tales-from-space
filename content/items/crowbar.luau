@@ -10,6 +10,10 @@ return {
     -- righthand icon files: one per hand slot, in slot order.
     inhand_sprite = { "held_crowbar_l", "held_crowbar_r" },
     stowed_sprite = "belt_crowbar",
+    -- Handling, not use: `crowbar`/`crowbar_pry` above are the noises it
+    -- makes DOING something. tg crowbar.dm:19-20.
+    pickup_sound = "crowbar_pickup",
+    drop_sound = "crowbar_drop",
     -- The equipment class targets dispatch on; no tank, nothing to burn.
     tool = "crowbar",
     on_use = function(ctx, self, user, x, y, _choice, target)

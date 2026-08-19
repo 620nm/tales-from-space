@@ -35,6 +35,9 @@ return {
     sprite = "wrench",
     inhand_sprite = { "held_wrench_l", "held_wrench_r" },
     stowed_sprite = "belt_wrench",
+    -- tg wrench.dm:20-21.
+    pickup_sound = "wrench_pickup",
+    drop_sound = "wrench_drop",
     tool = "wrench",
     -- A named loose pipe is the wrench's target, not a request to pick it
     -- up. Anything else still returns "pass" and keeps the ordinary pickup

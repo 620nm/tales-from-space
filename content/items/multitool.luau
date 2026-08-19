@@ -17,4 +17,7 @@ return {
     tool = "multitool",
     inhand_sprite = { "held_multitool_l", "held_multitool_r" },
     stowed_sprite = "belt_multitool",
+    -- tg multitool.dm:28-29.
+    pickup_sound = "multitool_pickup",
+    drop_sound = "multitool_drop",
 }

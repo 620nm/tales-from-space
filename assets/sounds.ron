@@ -24,4 +24,57 @@
     // Dice tumbling. tg plays it from `diceroll` itself, so it sounds
     // for a roll in the hand and a roll on landing alike (dice.dm:86).
     ("dice_roll", "items/dice_roll.ogg"),
+
+    // ---- handling: what a thing sounds like being picked up and put
+    // down (`ItemProto::pickup_sound`/`drop_sound`, sim/handling.rs).
+    //
+    // tg has no generic pair — `/obj/item` declares both vars empty
+    // (items.dm:88,90) and every noisy thing is a subtype that named a
+    // file — so this roster is one entry per FAMILY tg distinguishes,
+    // and an item outside those families is handled in silence on
+    // purpose. Where tg randomizes among numbered variants we take the
+    // first, which is what its own jumpsuit does (_under.dm:15-16).
+
+    // The engineering tools, each its own pair in tg.
+    ("crowbar_pickup", "items/handling/tools/crowbar_pickup.ogg"),
+    ("crowbar_drop", "items/handling/tools/crowbar_drop.ogg"),
+    ("wrench_pickup", "items/handling/tools/wrench_pickup.ogg"),
+    ("wrench_drop", "items/handling/tools/wrench_drop.ogg"),
+    ("screwdriver_pickup", "items/handling/tools/screwdriver_pickup.ogg"),
+    ("screwdriver_drop", "items/handling/tools/screwdriver_drop.ogg"),
+    ("welder_pickup", "items/handling/tools/weldingtool_pickup.ogg"),
+    ("welder_drop", "items/handling/tools/weldingtool_drop.ogg"),
+    ("wirecutter_pickup", "items/handling/tools/wirecutter_pickup.ogg"),
+    ("wirecutter_drop", "items/handling/tools/wirecutter_drop.ogg"),
+    ("multitool_pickup", "items/handling/tools/multitool_pickup.ogg"),
+    ("multitool_drop", "items/handling/tools/multitool_drop.ogg"),
+    // tg's RPD shares the RCD family's cabinet but keeps its own pair
+    // (RPD.dm:39-40).
+    ("rpd_pickup", "items/handling/tools/rpd_pickup.ogg"),
+    ("rpd_drop", "items/handling/tools/rpd_drop.ogg"),
+    // The loud one: a box of tools lands like a box of tools
+    // (_toolbox.dm:19-21).
+    ("toolbox_pickup", "items/handling/toolbox/toolbox_pickup.ogg"),
+    ("toolbox_drop", "items/handling/toolbox/toolbox_drop.ogg"),
+    ("toolbelt_pickup", "items/handling/toolbelt_pickup.ogg"),
+    ("toolbelt_drop", "items/handling/toolbelt_drop.ogg"),
+    ("backpack_pickup", "items/handling/backpack/backpack_pickup1.ogg"),
+    ("backpack_drop", "items/handling/backpack/backpack_drop1.ogg"),
+    ("analyzer_pickup", "items/handling/gas_analyzer/gas_analyzer_pickup.ogg"),
+    ("analyzer_drop", "items/handling/gas_analyzer/gas_analyzer_drop.ogg"),
+    // Plastic on plastic (cards_ids.dm:29-30).
+    ("id_card_pickup", "items/handling/id_card/id_card_pickup1.ogg"),
+    ("id_card_drop", "items/handling/id_card/id_card_drop1.ogg"),
+    // Anything worn and soft (_under.dm:15-16).
+    ("cloth_pickup", "items/handling/cloth/cloth_pickup1.ogg"),
+    ("cloth_drop", "items/handling/cloth/cloth_drop1.ogg"),
+    // Stacks sound like what they are made of (sheets.dm:18-19,
+    // glass.dm:35-36). A rod is picked up as a rod and dropped as metal,
+    // which is tg's own asymmetry — there is no iron_rod_drop file
+    // (rods.dm:42-43).
+    ("metal_pickup", "items/handling/materials/metal_pick_up.ogg"),
+    ("metal_drop", "items/handling/materials/metal_drop.ogg"),
+    ("glass_pickup", "items/handling/materials/glass_pick_up.ogg"),
+    ("glass_drop", "items/handling/materials/glass_drop.ogg"),
+    ("rod_pickup", "items/handling/materials/iron_rod_pick_up.ogg"),
 ]
