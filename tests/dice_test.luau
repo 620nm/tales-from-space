@@ -97,6 +97,13 @@ local set = t.ledger_rows("StateSet")
 assert(#set >= 1 and set[#set].state == "1",
     "and the face it came to rest on is on the record")
 
+-- ...and it REACHED the player. A repaint can be right in the world and
+-- never reach the wire, and only `t.layers` would notice: this is what
+-- the client was actually told to draw.
+local drawn = t.layers(p, t.target_at(5, 1, "d6"))
+assert(table.concat(drawn, " "):find("d6_1", 1, true),
+    "the client was sent the rolled face: " .. table.concat(drawn, " "))
+
 -- ---- twenty sides, and the one number anybody remembers ----------------
 t.click(p, 2, 1, t.target_at(2, 1, "d20"))
 t.tick()
