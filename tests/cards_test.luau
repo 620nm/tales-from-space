@@ -34,7 +34,7 @@ t.world([==[(
         "#####",
     ],
     spawns: [(1, 1)],
-    items: [(2, 1, "card_deck")],
+    items: [(2, 1, "card_deck"), (3, 1, "card_deck")],
 )]==], 0)
 
 local p = t.join()
@@ -199,6 +199,78 @@ for _, must in ipairs({
 }) do
     assert(seen[must], "a standard deck contains the " .. must)
 end
+
+-- ---- a deck will not swallow more than a deck -------------------------
+-- Found by RUNNING it, not by the assertions above: the return hook
+-- refused only a deck nobody had dealt from, so a deck dealt from ONCE
+-- took cards forever. Deal from one deck, feed the card to another, and
+-- the second grows past fifty-four -- and since the order is a script
+-- var with a length cap, an unbounded deck eventually meets a refused
+-- write with the card already consumed by `ctx.consume`. Cards would
+-- quietly stop existing.
+--
+-- tg refuses for the tidier reason and in the same place: `insert`
+-- returns null past `card_limit` rather than growing the list
+-- (cards.dm:76-77).
+--
+-- Fifty-four cards are lying at the player's feet by now and the first
+-- deck is empty, so the second deck on the table is the whole
+-- experiment.
+t.move(p, "east")
+t.run_ticks(5)
+local px, py = t.pos(p)
+assert(px == 2 and py == 1, "standing between the cards and the second deck")
+
+-- An untouched deck is whole, so it takes nothing at all.
+t.click(p, 1, 1, t.target_at(1, 1, "card"))
+t.tick()
+assert(t.hands(p).held == "card", "a card off the floor is in hand")
+t.click(p, 3, 1, t.target_at(3, 1, "card_deck"))
+t.tick()
+assert(t.hands(p).held == "card", "an untouched deck refuses a fifty-fifth card")
+local refused = table.concat(t.messages(p), "\n")
+assert(refused:find("The deck is already full.", 1, true), "and says so: " .. refused)
+
+-- Deal one out of it, so it is fifty-three and has room for exactly one
+-- back. The SECOND return is the one that must bounce.
+t.drop(p)
+t.tick()
+t.click(p, 3, 1, t.target_at(3, 1, "card_deck"))
+t.tick()
+assert(t.hands(p).held == "card_deck", "the second deck is in hand")
+t.click(p, 3, 2)
+t.tick()
+assert(t.item_at(3, 2, "card") ~= nil, "it dealt one, so it has room for one")
+t.drop(p)
+t.tick()
+
+-- Both the deck and that first card are underfoot now: a drop lands on
+-- the dropper's own tile, so putting the deck down moved it off (3, 1).
+t.click(p, 2, 1, t.target_at(2, 1, "card"))
+t.tick()
+assert(t.hands(p).held == "card", "the card put down a moment ago is in hand")
+t.click(p, 2, 1, t.target_at(2, 1, "card_deck"))
+t.tick()
+assert(t.hands(p).held == nil, "the one free slot took it")
+
+t.click(p, 3, 2, t.target_at(3, 2, "card"))
+t.tick()
+assert(t.hands(p).held == "card", "and one more card is in hand")
+t.click(p, 2, 1, t.target_at(2, 1, "card_deck"))
+t.tick()
+assert(t.hands(p).held == "card",
+    "a deck already holding fifty-four refuses the next one")
+refused = table.concat(t.messages(p), "\n")
+assert(refused:find("The deck is already full.", 1, true),
+    "rather than eating it: " .. refused)
+t.drop(p)
+t.tick()
+
+-- Back where the last section expects to find the player.
+t.move(p, "west")
+t.run_ticks(5)
+px, py = t.pos(p)
+assert(px == 1 and py == 1, "back beside the empty deck")
 
 -- ...and they came out SHUFFLED. Without this the file would pass on a
 -- deck that dealt tg's roster straight down in declaration order, which
