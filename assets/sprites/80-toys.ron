@@ -1,0 +1,31 @@
+// Toys: things the station carries because a shift is long.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then expansion order,
+// so the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+//
+// A die in tg is TWO cells: the blank body (`icon_state = "d6"`) and
+// the pips, added as an overlay named for the roll —
+// `update_overlays` appends `"[icon_state]-[result]"`
+// (code/game/objects/items/dice.dm:114-116). So a die that shows a
+// number is a composite, and the number is baked in.
+//
+// Which means the picture does NOT follow the roll. Nothing in this
+// engine can change an item's sprite from content — a prototype names
+// one picture and wears it — so the face here is the one the die
+// rests on forever, and the roll is a thing you READ rather than see.
+// It is the honest v0: a sprite that changed with the result would
+// need an effect that repaints an item, which is a mechanism of its
+// own and not one a toy should be the reason for.
+(
+    sheets: [
+        ("dice", "obj/toys/dice.dmi"),
+    ],
+    sprites: [
+        // Six pips and twenty: the faces that read as "this is a die"
+        // at 32 pixels, and the two everybody wants to roll anyway.
+        ("d6", DmiLayers([("@dice", "d6"), ("@dice", "d6-6")], 0)),
+        ("d20", DmiLayers([("@dice", "d20"), ("@dice", "d20-20")], 0)),
+    ],
+)
