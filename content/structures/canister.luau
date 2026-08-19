@@ -35,8 +35,15 @@ return {
     -- Fastened first, so a mapper who draws a canister on a port gets
     -- one that is feeding the run at roundstart.
     states = { "anchored", "displaced" },
-    -- Nothing holds a loose canister down, so a walker can shove it and
-    -- a decompression can drag it away -- with its air.
+    -- Nothing holds a loose canister down, so a walker can shove it, a
+    -- crewman can take hold of it and drag it, and a decompression can
+    -- take it away -- with its air, every time.
+    --
+    -- No `drag_slowdown`, deliberately: tg's
+    -- `/obj/machinery/portable_atmospherics` sets none, so wheeling a
+    -- bottle down the hall costs a tg crewman nothing and costs one
+    -- here nothing either. Closets and flatpacks are what that field is
+    -- for, and neither exists yet.
     loose = { "displaced" },
     -- tg's `can-connector`, which a canister wears for exactly as long
     -- as `connected_port` is set: you can tell across the room whether
