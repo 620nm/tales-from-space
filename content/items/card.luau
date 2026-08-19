@@ -157,6 +157,11 @@ return {
     -- that declines still falls through to the pickup, so a card
     -- clicked at anything else is picked up as usual.
     acts_on_items = true,
+    -- tg's single card sits five 32nds left of centre
+    -- (code/modules/cards/singlecard.dm:8) -- a permanent anchor for
+    -- the type rather than a jitter, so a card dealt onto a table keeps
+    -- reading as a card wherever the scatter puts it.
+    base_offset = { x = -5 },
     -- tg's `/obj/item/toy` gives cards no throwforce; a thrown one is
     -- litter. `throw_range`/`throw_speed` are tg's defaults, unstated.
     on_use_self = function(ctx, self, user)
