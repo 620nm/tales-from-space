@@ -63,7 +63,7 @@ no direct spawn in `t`, and none should ever be added.
 | World | `t.world(ron [, seed [, mode]])`, `t.world_file(name [, seed [, mode]])` (mode = a `content/gamemodes/` id; omitted = the pack default), `t.join([job]) -> player` (a mode that seats bodies on connection takes no job) |
 | Seeds | `t.fault(x, y, tick)` (hull failure), `t.outage([tick])` (breaker trip) |
 | Clock | `t.now()`, `t.tick()`, `t.run_ticks(n)`, `t.run_seconds(s)` |
-| Verbs | `t.click(p, x, y [, target])` (target = the entity the client's hit-test named, from `t.target_at`; omitted = a click that landed on the ground), `t.move(p, dir)`, `t.say(p, text)`, `t.drop(p)`, `t.equip(p)`, `t.swap_hands(p)`, `t.ui_act(p, act [, payload])`, `t.ui_close(p)` |
+| Verbs | `t.click(p, x, y [, target])` (target = the entity the client's hit-test named, from `t.target_at`; omitted = a click that landed on the ground), `t.throw(p, x, y [, target])` (the same click while throw mode is armed: the active hand's item flies at that tile), `t.move(p, dir)`, `t.say(p, text)`, `t.drop(p)`, `t.equip(p)`, `t.swap_hands(p)`, `t.use_self(p)`, `t.ui_act(p, act [, payload])`, `t.ui_close(p)` |
 | Body | `t.pos(p) -> x, y`, `t.health(p) -> {brute, oxy, state}`, `t.set_health(p, fields)`, `t.blood_moles(p)`, `t.sprite(p)`, `t.hands(p) -> {[1], [2], active, held}`, `t.worn(p) -> {id, uniform, suit, back}` |
 | Tile | `t.turf(x, y)`, `t.is_breached(x, y)`, `t.items_at(x, y)`, `t.target_at(x, y, id)`, `t.count_items(id)`, `t.door_at(x, y) -> {open, powered}` |
 | Atmos | `t.pipe(x, y)`, `t.pipe_pressure(x, y [, layer])`, `t.room_pressure(x, y)`, `t.canister_pressure(x, y)` |
