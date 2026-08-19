@@ -178,11 +178,12 @@
         (17, 16, "toolbox"),
         // ---- the Commons -----------------------------------------
         // A shift is long, and this is the room everybody walks
-        // through. Two dice on the table: the only things on this map
-        // that do nothing useful, which is the whole of what they are
-        // for. Throw one and it rolls where it stops.
-        (16, 15, "d6"),
-        (17, 15, "d20"),
+        // through. There used to be two loose dice on the floor here --
+        // the only things on this map that did nothing useful, which
+        // was the whole of what they were for. They are inside the Good
+        // Clean Fun now, in the bag tg keeps them in, along with a deck
+        // of cards and a toy that points at a wall. A die on the deck
+        // is one die; a machine that hands out dice is a rec room.
         // ---- the Workshop ----------------------------------------
         // Everything the first draft scattered across an unfinished
         // room, now in the room whose job it is: sheet, tile, rod,
@@ -199,6 +200,7 @@
         (8, 7, "floor_tile"),
         (9, 6, "vendor_board"),
         (10, 6, "tool_vendor_board"),
+        (11, 6, "games_vendor_board"),
         (9, 7, "tv_board"),
         (5, 8, "rod"),
         (6, 8, "glass"),
@@ -465,6 +467,11 @@
     machines: [
         (24, 13, "vendor"),
         (24, 15, "tool_vendor"),
+        // The third crate against the same wall, on the same outlet.
+        // tg puts Good Clean Fun in the dormitory or the library; this
+        // station has neither, and the Commons is the room a shift
+        // actually crosses.
+        (24, 16, "games_vendor"),
         // The pipe dispenser, corded to the outlet beside it. Every
         // fitting the department is built out of comes off this shelf,
         // which is why it stands in the department rather than in the
