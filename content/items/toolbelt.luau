@@ -12,6 +12,9 @@ return {
     name = "toolbelt",
     sprite = "toolbelt",
     inhand_sprite = { "held_toolbelt_l", "held_toolbelt_r" },
+    -- tg belt.dm:43-44.
+    pickup_sound = "toolbelt_pickup",
+    drop_sound = "toolbelt_drop",
     slot = "belt",
     worn_sprite = "worn_toolbelt",
     storage = 7,

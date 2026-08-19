@@ -12,5 +12,8 @@ return {
     name = "reinforced glass sheets",
     sprite = "rglass",
     inhand_sprite = { "held_rglass_l", "held_rglass_r" },
+    -- Rods in it or not, it is still a pane. tg glass.dm:112-113.
+    pickup_sound = "glass_pickup",
+    drop_sound = "glass_drop",
     stack = 50,
 }
