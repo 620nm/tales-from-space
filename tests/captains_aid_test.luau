@@ -66,9 +66,17 @@ for _, direction in ipairs(CYCLE) do
     assert(table.concat(t.sounds(p), " "):find("switch_click", 1, true),
         "and the switch clicks (tg plays a screwdriver at it, toys.dm:421)")
 
-    -- The picture is the half a player actually sees, and the half
-    -- that would silently drift. Read it off the deck, not out of the
-    -- message that was just asserted.
+    -- THE HAND, first: the panel showing what you are holding is where
+    -- a player looks while they are fiddling with the thing, and it is
+    -- a different code path from the world sprite. It read the
+    -- PROTOTYPE once, so an Aid cycled through all five positions sat
+    -- in the hand showing "off" the whole way round.
+    local hud = t.hud(p)
+    assert(hud[1] == "captains_aid_" .. direction,
+        "the hand panel shows the position it was turned to: " .. tostring(hud[1]))
+
+    -- ...and then the deck, which is the other half a player sees.
+    -- Read it off the floor, not out of the message just asserted.
     t.drop(p)
     t.tick()
     local down = t.item_at(1, 1, "captains_aid")

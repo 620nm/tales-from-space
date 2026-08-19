@@ -95,6 +95,13 @@ assert(t.hands(p).held == "card", "the card is in hand")
 
 t.use_self(p)
 t.tick()
+-- The hand FIRST: a card turned face up is readable to its holder
+-- immediately, and the panel is where they read it. This is a second
+-- code path from the world sprite below, and it used to show the
+-- prototype's picture -- a card back -- however the card was turned.
+assert(t.hud(p)[1] == "card_" .. secret,
+    "the hand shows the face that was turned up: " .. tostring(t.hud(p)[1]))
+
 t.drop(p)
 t.tick()
 local faceup = t.item_at(1, 1, "card")
@@ -114,6 +121,8 @@ t.click(p, 1, 1, t.target_at(1, 1, "card"))
 t.tick()
 t.use_self(p)
 t.tick()
+assert(t.hud(p)[1] == "card_back",
+    "and turning it back down shows a back again: " .. tostring(t.hud(p)[1]))
 t.drop(p)
 t.tick()
 local facedown = t.item_at(1, 1, "card")
