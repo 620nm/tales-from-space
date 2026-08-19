@@ -26,6 +26,7 @@
 (
     sheets: [
         ("dice", "obj/toys/dice.dmi"),
+        ("playing_cards", "obj/toys/playing_cards.dmi"),
         ("toy", "obj/toys/toy.dmi"),
     ],
     sprites: [
@@ -148,5 +149,86 @@
         ("captains_aid_starboard", Dmi("@toy", "captainsaid_starboard", 0)),
         ("captains_aid_fore", Dmi("@toy", "captainsaid_fore", 0)),
         ("captains_aid_aft", Dmi("@toy", "captainsaid_aft", 0)),
+
+        // ---- playing cards ---------------------------------------
+        // tg's `/obj/item/toy/cards/deck` and `/obj/item/toy/singlecard`
+        // off one sheet (code/modules/cards/). The DECK's picture is
+        // how thick it still is -- `update_icon_state` switches on the
+        // count at 27, 11 and 0 (deck.dm:171-181) -- so four cells, and
+        // the prototype's four states are named for tg's own words.
+        ("card_deck_full", Dmi("@playing_cards", "deck_nanotrasen_full", 0)),
+        ("card_deck_half", Dmi("@playing_cards", "deck_nanotrasen_half", 0)),
+        ("card_deck_low", Dmi("@playing_cards", "deck_nanotrasen_low", 0)),
+        ("card_deck_empty", Dmi("@playing_cards", "deck_nanotrasen_empty", 0)),
+
+        // The back, which every face-down card wears whatever it is --
+        // tg's `singlecard_down_[deckstyle]` (singlecard.dm:138-139).
+        // ONE cell shared by all fifty-four face-down states, which is
+        // the whole reason a card can be face down and still be a
+        // particular card: the state carries the identity, the picture
+        // carries only what a bystander is allowed to see.
+        ("card_back", Dmi("@playing_cards", "singlecard_down_nanotrasen", 0)),
+
+        // ...and the faces. tg builds these names by pasting the card's
+        // own name into the icon state -- `"sc_[cardname]_[deckstyle]"`
+        // (singlecard.dm:140-141) -- spaces and capitals and all, which
+        // is why the DMI states below read like English. The atlas name
+        // beside each is the same name in this pack's own spelling, and
+        // the card prototype derives it the same way, so a face that
+        // was not baked cannot be declared.
+        ("card_joker_clown", Dmi("@playing_cards", "sc_Joker Clown_nanotrasen", 0)),
+        ("card_joker_mime", Dmi("@playing_cards", "sc_Joker Mime_nanotrasen", 0)),
+        ("card_ace_of_hearts", Dmi("@playing_cards", "sc_Ace of Hearts_nanotrasen", 0)),
+        ("card_2_of_hearts", Dmi("@playing_cards", "sc_2 of Hearts_nanotrasen", 0)),
+        ("card_3_of_hearts", Dmi("@playing_cards", "sc_3 of Hearts_nanotrasen", 0)),
+        ("card_4_of_hearts", Dmi("@playing_cards", "sc_4 of Hearts_nanotrasen", 0)),
+        ("card_5_of_hearts", Dmi("@playing_cards", "sc_5 of Hearts_nanotrasen", 0)),
+        ("card_6_of_hearts", Dmi("@playing_cards", "sc_6 of Hearts_nanotrasen", 0)),
+        ("card_7_of_hearts", Dmi("@playing_cards", "sc_7 of Hearts_nanotrasen", 0)),
+        ("card_8_of_hearts", Dmi("@playing_cards", "sc_8 of Hearts_nanotrasen", 0)),
+        ("card_9_of_hearts", Dmi("@playing_cards", "sc_9 of Hearts_nanotrasen", 0)),
+        ("card_10_of_hearts", Dmi("@playing_cards", "sc_10 of Hearts_nanotrasen", 0)),
+        ("card_jack_of_hearts", Dmi("@playing_cards", "sc_Jack of Hearts_nanotrasen", 0)),
+        ("card_queen_of_hearts", Dmi("@playing_cards", "sc_Queen of Hearts_nanotrasen", 0)),
+        ("card_king_of_hearts", Dmi("@playing_cards", "sc_King of Hearts_nanotrasen", 0)),
+        ("card_ace_of_spades", Dmi("@playing_cards", "sc_Ace of Spades_nanotrasen", 0)),
+        ("card_2_of_spades", Dmi("@playing_cards", "sc_2 of Spades_nanotrasen", 0)),
+        ("card_3_of_spades", Dmi("@playing_cards", "sc_3 of Spades_nanotrasen", 0)),
+        ("card_4_of_spades", Dmi("@playing_cards", "sc_4 of Spades_nanotrasen", 0)),
+        ("card_5_of_spades", Dmi("@playing_cards", "sc_5 of Spades_nanotrasen", 0)),
+        ("card_6_of_spades", Dmi("@playing_cards", "sc_6 of Spades_nanotrasen", 0)),
+        ("card_7_of_spades", Dmi("@playing_cards", "sc_7 of Spades_nanotrasen", 0)),
+        ("card_8_of_spades", Dmi("@playing_cards", "sc_8 of Spades_nanotrasen", 0)),
+        ("card_9_of_spades", Dmi("@playing_cards", "sc_9 of Spades_nanotrasen", 0)),
+        ("card_10_of_spades", Dmi("@playing_cards", "sc_10 of Spades_nanotrasen", 0)),
+        ("card_jack_of_spades", Dmi("@playing_cards", "sc_Jack of Spades_nanotrasen", 0)),
+        ("card_queen_of_spades", Dmi("@playing_cards", "sc_Queen of Spades_nanotrasen", 0)),
+        ("card_king_of_spades", Dmi("@playing_cards", "sc_King of Spades_nanotrasen", 0)),
+        ("card_ace_of_clubs", Dmi("@playing_cards", "sc_Ace of Clubs_nanotrasen", 0)),
+        ("card_2_of_clubs", Dmi("@playing_cards", "sc_2 of Clubs_nanotrasen", 0)),
+        ("card_3_of_clubs", Dmi("@playing_cards", "sc_3 of Clubs_nanotrasen", 0)),
+        ("card_4_of_clubs", Dmi("@playing_cards", "sc_4 of Clubs_nanotrasen", 0)),
+        ("card_5_of_clubs", Dmi("@playing_cards", "sc_5 of Clubs_nanotrasen", 0)),
+        ("card_6_of_clubs", Dmi("@playing_cards", "sc_6 of Clubs_nanotrasen", 0)),
+        ("card_7_of_clubs", Dmi("@playing_cards", "sc_7 of Clubs_nanotrasen", 0)),
+        ("card_8_of_clubs", Dmi("@playing_cards", "sc_8 of Clubs_nanotrasen", 0)),
+        ("card_9_of_clubs", Dmi("@playing_cards", "sc_9 of Clubs_nanotrasen", 0)),
+        ("card_10_of_clubs", Dmi("@playing_cards", "sc_10 of Clubs_nanotrasen", 0)),
+        ("card_jack_of_clubs", Dmi("@playing_cards", "sc_Jack of Clubs_nanotrasen", 0)),
+        ("card_queen_of_clubs", Dmi("@playing_cards", "sc_Queen of Clubs_nanotrasen", 0)),
+        ("card_king_of_clubs", Dmi("@playing_cards", "sc_King of Clubs_nanotrasen", 0)),
+        ("card_ace_of_diamonds", Dmi("@playing_cards", "sc_Ace of Diamonds_nanotrasen", 0)),
+        ("card_2_of_diamonds", Dmi("@playing_cards", "sc_2 of Diamonds_nanotrasen", 0)),
+        ("card_3_of_diamonds", Dmi("@playing_cards", "sc_3 of Diamonds_nanotrasen", 0)),
+        ("card_4_of_diamonds", Dmi("@playing_cards", "sc_4 of Diamonds_nanotrasen", 0)),
+        ("card_5_of_diamonds", Dmi("@playing_cards", "sc_5 of Diamonds_nanotrasen", 0)),
+        ("card_6_of_diamonds", Dmi("@playing_cards", "sc_6 of Diamonds_nanotrasen", 0)),
+        ("card_7_of_diamonds", Dmi("@playing_cards", "sc_7 of Diamonds_nanotrasen", 0)),
+        ("card_8_of_diamonds", Dmi("@playing_cards", "sc_8 of Diamonds_nanotrasen", 0)),
+        ("card_9_of_diamonds", Dmi("@playing_cards", "sc_9 of Diamonds_nanotrasen", 0)),
+        ("card_10_of_diamonds", Dmi("@playing_cards", "sc_10 of Diamonds_nanotrasen", 0)),
+        ("card_jack_of_diamonds", Dmi("@playing_cards", "sc_Jack of Diamonds_nanotrasen", 0)),
+        ("card_queen_of_diamonds", Dmi("@playing_cards", "sc_Queen of Diamonds_nanotrasen", 0)),
+        ("card_king_of_diamonds", Dmi("@playing_cards", "sc_King of Diamonds_nanotrasen", 0)),
     ],
 )
