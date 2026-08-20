@@ -162,6 +162,18 @@ return {
     -- the type rather than a jitter, so a card dealt onto a table keeps
     -- reading as a card wherever the scatter puts it.
     base_offset = { x = -5 },
+    -- ...and every card lands in its own spot around that anchor.
+    -- Without this a hand dealt onto one tile is fifty-four cards
+    -- stacked on the same pixel, which reads as one card.
+    --
+    -- Six is the number tg uses for a thing arriving on the floor out
+    -- of somebody's hand (`dropItemToGround`,
+    -- code/modules/mob/inventory.dm:356-357), and a dealt card is that
+    -- even though the engine mints it rather than dropping it. NOT
+    -- tg's ±16 card scatter: that one is 52-card pickup, a deck thrown
+    -- at somebody, and it is meant to fling cards clear across the
+    -- tile.
+    scatter = 6,
     -- tg's `/obj/item/toy` gives cards no throwforce; a thrown one is
     -- litter. `throw_range`/`throw_speed` are tg's defaults, unstated.
     on_use_self = function(ctx, self, user)
