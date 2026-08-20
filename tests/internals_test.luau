@@ -5,7 +5,7 @@
 -- a body can stand. They differ only in what they are wearing and
 -- whether they opened a valve, and that is the whole spec:
 --
---   diver   suit + open tank   very nearly nothing happens
+--   diver   suit + open tank   nothing happens
 --   tanked  open tank only     breathes, and is crushed anyway
 --   bare    neither            suffocates AND is crushed
 --
@@ -17,14 +17,12 @@
 -- code/modules/mob/living/carbon/human/life.dm:52-73) and the reason
 -- the station stocks both.
 --
--- Why "very nearly" rather than "nothing": a tank of pure oxygen at the
--- default 16 kPa release delivers a breath whose oxygen partial pressure
--- is 16 kPa, and the suffocation threshold is also 16 kPa -- so the
--- comparison lands on its own boundary and the last bit of float
--- arithmetic decides it, one good breath in three at the moment. The
--- numbers below are therefore written as the DIFFERENCE between the
--- three bodies (two orders of magnitude, and the whole of it) rather
--- than as a zero that a rounding change could move.
+-- A note on the boundary: a tank of pure oxygen at the default 16 kPa
+-- release delivers a breath whose oxygen partial pressure is exactly
+-- the 16 kPa suffocation threshold -- tg's own calibration -- and the
+-- engine promises the boundary breathes (sim/breathing.rs, PP_SLACK).
+-- The diver rows below lean on that promise: suited and on internals,
+-- a breath of hard vacuum costs nothing, not "very nearly nothing".
 t.world([==[(
     name: "the thin cells",
     legend: {
@@ -163,8 +161,8 @@ assert(
         .. " suited against " .. oxy(tanked) .. " not"
 )
 assert(
-    oxy(diver) < opening.diver + 10.0,
-    "-- four breaths of hard vacuum for nearly free: "
+    oxy(diver) <= opening.diver,
+    "-- four breaths of hard vacuum for free: "
         .. opening.diver .. " -> " .. oxy(diver)
 )
 
@@ -180,9 +178,8 @@ assert(
 --
 -- Not a rule the tank enforces and not one the player has to remember:
 -- the sim re-asks "is this still in your hands or on your body" every
--- tick, and a bottle on the deck fails it. Dropping is the reachable
--- half of that sweep; taking the apparatus off is the other half, and
--- needs an unequip verb `t` does not have yet.
+-- tick, and a bottle on the deck fails it. Dropping is one half of
+-- that sweep; taking the apparatus off is the other, in SEVEN.
 -- ---------------------------------------------------------------
 t.drop(diver)
 t.run_ticks(2)
@@ -214,7 +211,7 @@ assert(
 local settled = oxy(diver)
 t.run_ticks(BREATH * 4)
 assert(
-    oxy(diver) < settled + 10.0,
+    oxy(diver) <= settled,
     "suit and bottle together are a shift outside: " .. settled .. " -> " .. oxy(diver)
 )
 assert(
@@ -222,3 +219,37 @@ assert(
     "and the big gauge falls as the small one did: " .. big .. " -> "
         .. tostring(t.vitals(diver).tank)
 )
+
+-- ---------------------------------------------------------------
+-- SEVEN: SO DOES TAKING THE APPARATUS OFF.
+--
+-- The other half of the sweep FIVE started: the valve needs a face it
+-- can feed, and a mask in a hand is not on a face. Same rule as tg's
+-- cutoff (code/modules/mob/living/carbon/inventory.dm:330-334), asked
+-- fresh every tick rather than remembered.
+-- ---------------------------------------------------------------
+assert(t.vitals(diver).tank ~= nil, "the big bottle is still open")
+t.unequip(diver, "mask")
+t.run_ticks(2)
+assert(t.worn(diver).mask == nil, "the apparatus is off")
+assert(t.vitals(diver).tank == nil, "and the valve shut the moment it was")
+
+-- ---------------------------------------------------------------
+-- EIGHT: AND BARE-FACED, THE VALVE REFUSES TO OPEN AT ALL.
+--
+-- The mask is in the off hand, which is exactly not enough: worn or it
+-- does not count. Put back on, the same gesture opens the same tank --
+-- the refusal is about the face, never about the bottle.
+-- ---------------------------------------------------------------
+t.use_self(diver)
+t.run_ticks(2)
+assert(t.vitals(diver).tank == nil, "no apparatus, no internals")
+
+t.swap_hands(diver)
+t.equip(diver)
+t.run_ticks(2)
+assert(t.worn(diver).mask == "breath_mask", "the apparatus is back on")
+t.swap_hands(diver)
+t.use_self(diver)
+t.run_ticks(2)
+assert(t.vitals(diver).tank ~= nil, "and the same gesture opens the same tank")
