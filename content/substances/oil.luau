@@ -20,4 +20,6 @@ return {
     molar_mass = 170.0,
     cv = 100.0,
     burn = { k = 1200, rate = 0.0003125 },
+    -- What it looks like through glass (tg: other_reagents.dm:1972).
+    color = "#2D2D2D",
 }

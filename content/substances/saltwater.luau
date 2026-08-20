@@ -12,4 +12,6 @@ return {
     name = "salt water",
     molar_mass = 30.0,
     cv = 80.0,
+    -- What it looks like through glass (tg: other_reagents.dm:268, alpha 9d dropped).
+    color = "#AAAAAA",
 }

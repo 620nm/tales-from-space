@@ -12,4 +12,6 @@ return {
     name = "salt",
     molar_mass = 58.44,
     cv = 50.5,
+    -- What it looks like through glass (tg: food_reagents.dm:511 (COLOR_WHITE)).
+    color = "#FFFFFF",
 }
