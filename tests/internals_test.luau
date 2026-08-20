@@ -1,0 +1,224 @@
+-- Internals: what a crewman does when the room stops being breathable.
+--
+-- Three bodies in three sealed cells, each holding a wisp of nitrogen
+-- and nothing else -- no oxygen to breathe and far under the pressure
+-- a body can stand. They differ only in what they are wearing and
+-- whether they opened a valve, and that is the whole spec:
+--
+--   diver   suit + open tank   very nearly nothing happens
+--   tanked  open tank only     breathes, and is crushed anyway
+--   bare    neither            suffocates AND is crushed
+--
+-- The middle row is the one worth writing a spec for. A tank feeds
+-- LUNGS; it does not pressurize skin, so oxygen out of a bottle in a
+-- vacuum buys you the three points of suffocation back and leaves the
+-- twenty points of vacuum exactly where they were. Only the suit moves
+-- that number, which is tg's division (`calculate_affecting_pressure`,
+-- code/modules/mob/living/carbon/human/life.dm:52-73) and the reason
+-- the station stocks both.
+--
+-- Why "very nearly" rather than "nothing": a tank of pure oxygen at the
+-- default 16 kPa release delivers a breath whose oxygen partial pressure
+-- is 16 kPa, and the suffocation threshold is also 16 kPa -- so the
+-- comparison lands on its own boundary and the last bit of float
+-- arithmetic decides it, one good breath in three at the moment. The
+-- numbers below are therefore written as the DIFFERENCE between the
+-- three bodies (two orders of magnitude, and the whole of it) rather
+-- than as a zero that a rounding change could move.
+t.world([==[(
+    name: "the thin cells",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Floor),
+        '#': (turf: Wall),
+    },
+    rows: [
+        "#########",
+        "#.#.#.#.#",
+        "#########",
+    ],
+    spawns: [(1, 1), (3, 1), (5, 1)],
+    items: [(1, 1, "eva_suit"), (1, 1, "oxygen_tank")],
+    room_gas: [(1, 1, "n2", 1.0), (3, 1, "n2", 1.0), (5, 1, "n2", 1.0)],
+)]==], 7)
+
+-- One breath cycle, tg's SSmobs × next_breath (8 s at 20 Hz).
+local BREATH = 160
+
+local function oxy(p)
+    return t.health(p).oxy
+end
+
+-- Where in the pack the pocket bottle ended up. Indexed rather than
+-- assumed, because a job's kit is a list its own file orders and a spec
+-- that hardcodes slot 1 breaks the day somebody reorders it.
+local function bottle_row(p)
+    for i, id in ipairs(t.stored(p, "back")) do
+        if id == "emergency_oxygen" then
+            return i
+        end
+    end
+    return nil
+end
+
+local function heard(p)
+    return " " .. table.concat(t.messages(p), " | ") .. " "
+end
+
+local diver = t.join("engineer")
+local tanked = t.join("engineer")
+local bare = t.join("engineer")
+t.run_ticks(2)
+
+-- ---------------------------------------------------------------
+-- ONE: EVERYBODY WAKES UP ABLE TO BREATHE.
+--
+-- Apparatus on the face and a bottle in the pack, on every outfit --
+-- tg's survival box (code/game/objects/items/storage/boxes/
+-- job_boxes.dm:4-45). The mask is WORN rather than packed, because a
+-- job that issues breathing gear in a bag issues it too late.
+-- ---------------------------------------------------------------
+for _, p in ipairs({ diver, tanked, bare }) do
+    assert(t.worn(p).mask == "breath_mask", "the shift starts with apparatus on")
+    assert(bottle_row(p) ~= nil, "and a pocket bottle in the pack")
+end
+
+-- ---------------------------------------------------------------
+-- TWO: THE DIVER GETS DRESSED.
+--
+-- The suit is on the deck where the map put it, and going outside
+-- starts with picking it up. Before the bottle rather than after,
+-- because a hand that is already holding something has nowhere to put
+-- a space suit -- which is a fact about hands, not about suits.
+-- ---------------------------------------------------------------
+t.click(diver, 1, 1, t.target_at(1, 1, "eva_suit"))
+t.run_ticks(2)
+assert(t.hands(diver).held == "eva_suit", "the suit is in hand")
+t.equip(diver)
+t.run_ticks(2)
+assert(t.worn(diver).suit == "eva_suit", "the suit is on")
+
+-- ---------------------------------------------------------------
+-- THREE: THE VALVE, AND THE GAUGE THAT COMES WITH IT.
+--
+-- Out of the pack, into a hand, and the activate-in-hand key. Nothing
+-- here reaches past what a player has: a bottle still in the bag
+-- cannot be breathed from (tg's `internal.loc != src`), which is why
+-- the first gesture is taking it out.
+-- ---------------------------------------------------------------
+local function open_bottle(p)
+    t.take_from(p, "back", bottle_row(p))
+    t.run_ticks(2)
+    assert(t.hands(p).held == "emergency_oxygen", "the bottle is in hand")
+    t.use_self(p)
+    t.run_ticks(2)
+end
+
+open_bottle(diver)
+local supply = t.vitals(diver)
+assert(supply ~= nil and supply.tank ~= nil, "the readout lights up on a tank")
+assert(
+    math.abs(supply.tank - 10 * 101.325) < 1.0,
+    "and reads what the file charged it to, ten atmospheres: " .. tostring(supply.tank)
+)
+-- The gauge line the tank prints for whoever worked the valve: tg's
+-- own sentence (code/game/objects/items/tanks/tanks.dm:159), on the
+-- gesture that reaches for the tank because the v0 hook surface has no
+-- examine.
+assert(heard(diver):find("The pressure gauge reads", 1, true), "the tank reads itself out")
+
+-- ---------------------------------------------------------------
+-- FOUR: THE THREE-WAY.
+--
+-- The second body opens a bottle and wears nothing; the third does
+-- neither. Then everybody stands still for five breaths.
+-- ---------------------------------------------------------------
+open_bottle(tanked)
+assert(t.vitals(tanked).tank ~= nil, "the second bottle is open too")
+
+local opening = { diver = oxy(diver), tanked = oxy(tanked), bare = oxy(bare) }
+local gauge_0 = t.vitals(diver).tank
+-- Four, not more: past this the unprotected pair start dropping, and a
+-- body that falls over is a body whose valve the sim shuts for it --
+-- which would be a different assertion wearing this one's clothes.
+t.run_ticks(BREATH * 4)
+
+assert(
+    oxy(bare) > opening.bare + 60.0,
+    "nothing at all is suffocation AND vacuum: " .. opening.bare .. " -> " .. oxy(bare)
+)
+assert(
+    oxy(tanked) > opening.tanked + 40.0,
+    "a tank alone does not hold the vacuum off the skin -- oxygen in the "
+        .. "lungs, and the same crushing: " .. opening.tanked .. " -> " .. oxy(tanked)
+)
+assert(
+    oxy(tanked) < oxy(bare) - 5.0,
+    "...though it is still strictly better than nothing, which is the "
+        .. "suffocating half it bought back: " .. oxy(tanked) .. " vs " .. oxy(bare)
+)
+assert(
+    oxy(diver) < oxy(tanked) / 5.0,
+    "and the suit is the whole of the difference: " .. oxy(diver)
+        .. " suited against " .. oxy(tanked) .. " not"
+)
+assert(
+    oxy(diver) < opening.diver + 10.0,
+    "-- four breaths of hard vacuum for nearly free: "
+        .. opening.diver .. " -> " .. oxy(diver)
+)
+
+-- ...and the bottle paid for those breaths.
+local gauge_1 = t.vitals(diver).tank
+assert(
+    gauge_1 < gauge_0,
+    "the gauge falls as it is breathed: " .. gauge_0 .. " -> " .. gauge_1
+)
+
+-- ---------------------------------------------------------------
+-- FIVE: LETTING GO SHUTS THE VALVE.
+--
+-- Not a rule the tank enforces and not one the player has to remember:
+-- the sim re-asks "is this still in your hands or on your body" every
+-- tick, and a bottle on the deck fails it. Dropping is the reachable
+-- half of that sweep; taking the apparatus off is the other half, and
+-- needs an unequip verb `t` does not have yet.
+-- ---------------------------------------------------------------
+t.drop(diver)
+t.run_ticks(2)
+assert(t.vitals(diver).tank == nil, "the readout goes dark within a tick of letting go")
+
+-- ---------------------------------------------------------------
+-- SIX: THE BIG BOTTLE.
+--
+-- The one the station keeps by the airlock rather than in a pocket:
+-- seventy litres at six atmospheres (tg tank_types.dm:26-38), which is
+-- the same valve and twenty-odd times the air. Picked up off the deck
+-- and opened exactly like the small one, because a tank is a tank.
+-- ---------------------------------------------------------------
+t.click(diver, 1, 1, t.target_at(1, 1, "oxygen_tank"))
+t.run_ticks(2)
+assert(t.hands(diver).held == "oxygen_tank", "the big bottle is in hand")
+t.use_self(diver)
+t.run_ticks(2)
+local big = t.vitals(diver).tank
+assert(big ~= nil, "and it opens like any other tank")
+assert(
+    math.abs(big - 6 * 101.325) < 1.0,
+    "reading the six atmospheres its file charged it to: " .. tostring(big)
+)
+
+-- The suit is still on and the valve is open again, so the last five
+-- breaths cost this body nothing either -- which is the pairing the EVA
+-- vestibule stocks, spelled out.
+local settled = oxy(diver)
+t.run_ticks(BREATH * 4)
+assert(
+    oxy(diver) < settled + 10.0,
+    "suit and bottle together are a shift outside: " .. settled .. " -> " .. oxy(diver)
+)
+assert(
+    t.vitals(diver).tank < big,
+    "and the big gauge falls as the small one did: " .. big .. " -> "
+        .. tostring(t.vitals(diver).tank)
+)
