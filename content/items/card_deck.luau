@@ -39,11 +39,18 @@
 --     put down. Putting the deck itself down is the drop verb, which
 --     is how everything else leaves a hand.
 --
--- A card comes BACK through the card's own hook, not through this file:
--- items/card.luau's `on_use` recognises a deck under the cursor and
--- writes `order` itself. That is the direction tg runs it too
--- (`deck/item_interaction`, deck.dm:192-202) and it keeps the roster of
--- faces in one file.
+-- A card comes back BOTH ways round, because tg does:
+--   * card in hand, deck under the cursor -- items/card.luau's
+--     `on_use` recognises the deck and writes `order` itself, which is
+--     tg's `deck/item_interaction` (deck.dm:192-202);
+--   * DECK in hand, card under the cursor -- this file's `on_use`
+--     below, which is tg's `singlecard/item_interaction`: an unwielded
+--     deck used on a card recycles the card rather than dealing onto
+--     it (singlecard.dm:150-158). There is no wielding here, so the
+--     deck always takes it back.
+-- The second direction is what makes the gesture work with the card in
+-- one hand and the deck in the other, whichever way round the player
+-- happens to be holding them (sim/offhand.rs).
 --
 -- NOT PORTED, each because it needs something that does not exist:
 -- card hands (an overlay stack on an item), the tarot/KOTAHI/Wiz-Off/
@@ -78,6 +85,16 @@ end
 -- what a shared-module seam would fix.
 local function slug(face)
     return (face:lower():gsub(" ", "_"))
+end
+
+-- The face a card's appearance state names. Every card state is
+-- `down_<slug>` or `up_<slug>` by construction (items/card.luau
+-- declares them), so this reads the second half and ignores which way
+-- up the card was lying: a card goes into a deck face down regardless
+-- (tg's `insert` forces it, deck.dm:183-190).
+local function face_of(state)
+    local _, key = state:match("^(%a+)_(.+)$")
+    return key
 end
 
 local function count(order)
@@ -127,6 +144,13 @@ return {
     id = "card_deck",
     name = "deck of cards",
     sprite = "card_deck_full",
+    -- A click that NAMES a card is the deck's business rather than a
+    -- pickup of the card -- tg's `interact_with_atom` half of the
+    -- chain, and the flag that lets `on_use` below see an item target
+    -- at all (docs/luau-api.md). Everything that is not a card still
+    -- falls through, so a deck in hand never became a thing that
+    -- swallows every click made while holding one.
+    acts_on_items = true,
     -- Four states, and they are a QUANTITY rather than a choice: the
     -- picture of a deck is how thick it still is. Every hook that
     -- changes the count repaints, and the card's return hook does too.
@@ -177,6 +201,46 @@ return {
         -- a click can mean (docs/luau-api.md), which is exactly tg's
         -- order. Putting the DECK itself down is the drop verb, as it
         -- is for everything else in a hand.
+        -- A click that named a CARD is tg's recycle, run from the
+        -- deck's side: an unwielded deck used on a card puts the card
+        -- back rather than dealing onto it
+        -- (`singlecard/item_interaction`, singlecard.dm:150-158). It
+        -- is the same act items/card.luau performs from the card's
+        -- side, and it exists so the gesture works whichever hand is
+        -- holding which -- a deck in the active hand and a card in the
+        -- other reaches this hook, and the reverse reaches that one.
+        if target ~= nil and target.kind == "item" then
+            local card = target.entity
+            if ctx.item_id(card) ~= "card" then
+                return "pass"
+            end
+            -- The same two refusals the card's own hook keeps, for the
+            -- same reason: tg's `insert` returns null past `card_limit`
+            -- rather than growing the list (cards.dm:76-77), a deck
+            -- nobody has dealt from is already whole (`nil` order), and
+            -- an unbounded order would eventually meet a refused write
+            -- with the card already eaten.
+            local order = ctx.var(self, "order")
+            if order == nil or count(order) >= #FACES then
+                ctx.system_msg(user, "The deck is already full.")
+                return
+            end
+            local key = face_of(ctx.state(card))
+            -- The end items/card.luau writes to, so a card put back
+            -- lands in the same place whichever way round the player
+            -- did it. Face down is implicit: the state a dealt card
+            -- wears never leaves this string, only its face does.
+            local restored = order == "" and key or (key .. "," .. order)
+            ctx.set_var(self, "order", restored)
+            ctx.set_state(self, thickness(count(restored)))
+            ctx.sound("card_flip", x, y)
+            ctx.system_msg(user, "You slide the card into the deck.")
+            -- `ctx.consume` does the hand slots, the despawn and the
+            -- ledger row, so the card cannot survive as a dead handle
+            -- in somebody's off hand.
+            ctx.consume(card)
+            return
+        end
         if target ~= nil and target.kind ~= "machine" then
             return "pass"
         end
