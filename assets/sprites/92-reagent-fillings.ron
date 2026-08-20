@@ -33,11 +33,11 @@
         // The vessels. The beaker is already baked with the tools in
         // 10-turf-fixtures-and-tools.ron; these are the three smaller
         // ones that share its fill mechanism.
-        // /obj/item/reagent_containers/dropper (dropper.dm:5).
+        // /obj/item/reagent_containers/dropper (dropper.dm:1,5).
         ("dropper", Dmi("@chemical", "dropper0", 0)),
-        // /obj/item/reagent_containers/cup/tube (_cup.dm:800).
+        // /obj/item/reagent_containers/cup/tube (_cup.dm:797,800).
         ("test_tube", Dmi("@chemical", "test_tube", 0)),
-        // /obj/item/reagent_containers/cup/bottle (bottle.dm:6).
+        // /obj/item/reagent_containers/cup/bottle (bottle.dm:3,6).
         ("bottle", Dmi("@chemical", "bottle", 0)),
 
         // The fills, one family per vessel shape.
