@@ -227,6 +227,18 @@
         )),
         ("coil", Dmi("@stack_objects", "coil", 0)),
         ("beaker", Dmi("@chemical", "beaker", 0)),
+        // The chem bench. tg's heater is one machine with two pictures,
+        // and which one it wears is whether there is a beaker in it
+        // (`base_icon_state = "mixer"` + `[beaker ? 1 : 0]b`,
+        // chem_heater.dm:5-7,83); the burner is a table-top flame with
+        // a lit loop of its own (chemistry/items.dm:151-155). The
+        // dispenser is baked here ahead of the machine that uses it so
+        // the roster work costs no second bake (chem_dispenser.dm:5-7).
+        ("chem_heater", Dmi("@chemical", "mixer0b", 0)),
+        ("chem_heater_loaded", Dmi("@chemical", "mixer1b", 0)),
+        ("burner", Dmi("@chemical", "burner", 0)),
+        ("burner_lit", DmiAnim("@chemical", "burner-on", 0)),
+        ("chem_dispenser", Dmi("@chemical", "dispenser", 0)),
         ("ghost", Dmi("@ghost", "ghost_base", 0)),
         ("solar", Dmi("@solar", "solar_panel_glass", 0)),
         // The fan, by what it is actually doing. Blowing and siphoning
