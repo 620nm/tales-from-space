@@ -30,6 +30,7 @@ assert(worn.uniform == "uniform_eng", "in an engineer's jumpsuit, got " .. tostr
 assert(worn.id == "id_engineering", "with the engineering ID clipped on")
 assert(worn.belt == "toolbelt", "and a toolbelt at the waist")
 assert(worn.back == "backpack", "over the standard-issue pack")
+assert(worn.mask == "breath_mask", "and apparatus on the face, as every outfit has")
 
 -- The belt arrives stocked from its own roster, exactly as it would at
 -- the job board: the sandbox spawn is not a second, thinner outfit.
@@ -37,8 +38,9 @@ local belt = t.stored(builder, "belt")
 assert(table.concat(belt, ",")
     == "screwdriver,wrench,welder,crowbar,wirecutters,multitool,cable_coil",
     "the whole tool suite: " .. table.concat(belt, ","))
-assert(table.concat(t.stored(builder, "back"), ",") == "metal,floor_tile,headset",
-    "and the building stock rides the pack")
+assert(table.concat(t.stored(builder, "back"), ",")
+    == "metal,floor_tile,emergency_oxygen,headset",
+    "and the survival bottle and the building stock ride the pack")
 
 -- Player-observable, because that is the point: the tools work from the
 -- moment you arrive. Pull the wrench and it is in hand this tick.

@@ -227,6 +227,22 @@
         (17, 29, "pipe_painter"),
         (18, 29, "pipe_meter"),
         (19, 29, "wrench"),
+        // ---- the west EVA vestibule ------------------------------
+        // The suit and the bottle, standing in the chamber they are
+        // for. Everybody wakes up with a breath mask and three litres
+        // of oxygen; this is the OTHER half of going outside -- seventy
+        // litres to breathe and a garment that keeps the vacuum off the
+        // skin, because a tank alone stops you suffocating and does
+        // nothing about the pressure.
+        //
+        // The pairing is tg's: the engineer's EVA outfit issues the
+        // space suit and the standard oxygen tank together
+        // (code/modules/jobs/job_types/station_engineer.dm:75-82).
+        // West rather than east because west is the side Engineering
+        // and the Workshop are on, and the crew who go outside come
+        // from those two rooms.
+        (4, 15, "eva_suit"),
+        (4, 15, "oxygen_tank"),
     ],
     structures: [
         // ---- the hull galleries ----------------------------------
