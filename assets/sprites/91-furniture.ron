@@ -1,0 +1,23 @@
+// Furniture whose picture is its own: the frame a table is built on.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in this
+// directory is baked, in FILE-NAME order and then expansion order, so
+// the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+//
+// It sits beside 90-smooth-structures.ron rather than in it because the
+// distinction that file is named for is the whole distinction: a table
+// wears one of forty-seven frames chosen by its neighbours, and a table
+// frame wears one picture chosen by nothing. tg draws it off the
+// general structures sheet for the same reason -- four legs standing on
+// their own are not part of a row (`/obj/structure/table_frame`,
+// code/game/objects/structures/table_frames.dm:12-17).
+(
+    // Sheet aliases are local to this family; @names below resolve here.
+    sheets: [
+        ("structures", "obj/structures.dmi"),
+    ],
+    sprites: [
+        ("table_frame", Dmi("@structures", "table_frame", 0)),
+    ],
+)
