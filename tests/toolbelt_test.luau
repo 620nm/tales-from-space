@@ -39,9 +39,10 @@ assert(table.concat(belt, ",")
     == "screwdriver,wrench,welder,crowbar,wirecutters,multitool,cable_coil",
     "the engineering tool suite, in order: " .. table.concat(belt, ","))
 
--- The bulky stock rides the pack instead, and the headset with it.
+-- The bulky stock rides the pack instead, the headset with it, and the
+-- pocket oxygen bottle every outfit carries in front of both.
 local pack = t.stored(eng, "back")
-assert(table.concat(pack, ",") == "metal,floor_tile,headset",
+assert(table.concat(pack, ",") == "metal,floor_tile,emergency_oxygen,headset",
     "the pack keeps what a belt cannot: " .. table.concat(pack, ","))
 
 local function index_of(layers, name)
