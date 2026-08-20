@@ -194,6 +194,16 @@
         (22, 17, "beaker"),
         (22, 17, "beaker"),
         (23, 16, "burner"),
+        // The small glass, on the two tiles beside them. A dropper for
+        // moving one unit at a time, two tubes to keep a batch in while
+        // the beaker is needed for the next one, and a bottle to put
+        // the finished thing away in. Every one of them shows its level
+        // through its own glass, which is the whole reason a bench of
+        // vessels reads at a glance instead of being clicked through.
+        (22, 16, "dropper"),
+        (22, 16, "bottle"),
+        (21, 17, "test_tube"),
+        (21, 17, "test_tube"),
         // ---- the Workshop ----------------------------------------
         // Everything the first draft scattered across an unfinished
         // room, now in the room whose job it is: sheet, tile, rod,

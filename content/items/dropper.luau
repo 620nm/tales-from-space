@@ -1,0 +1,85 @@
+-- The dropper: five units of anything, moved a unit at a time. The
+-- precision end of the bench, where the beaker is the bulk end.
+--
+-- Capacity is tg's `volume = 5` at the documented bridge of 1 u = 0.025
+-- mol (docs/reagents.md); the picture is tg's `dropper0`
+-- (dropper.dm:5,10).
+--
+-- ONE UNIT A SQUEEZE, which is the bottom of tg's own
+-- `possible_transfer_amounts = list(1, 2, 3, 4, 5)` (dropper.dm:9)
+-- rather than its default of 5. A dropper that emptied itself in one
+-- click would be a slower beaker; the reason the thing exists is that
+-- it can move less than a beaker can. tg spells the choice as a dial
+-- and this bench has no dial on a vessel yet, so the file takes the
+-- useful end of tg's list and the dial is deferred.
+--
+-- The three gestures are the beaker's, because they are the vessel's
+-- rather than the beaker's: your own tile is a swig, another vessel
+-- within reach is a pour, the deck is a spill. (Content files cannot
+-- `require` one another, so each one spells them out; see card.luau on
+-- the same tradeoff.)
+local U = 0.025
+
+return {
+    id = "dropper",
+    name = "dropper",
+    sprite = "dropper",
+    capacity_mol = 5 * U,
+    -- tg's dropper has no `fill_icon_thresholds` at all: it overrides
+    -- `update_overlays` to add the one `dropper` state whenever there
+    -- is anything in it (dropper.dm:87-93). Five units is too small a
+    -- bulb to draw a level in, so the ladder here is one rung.
+    fill_sprites = {
+        { 1, "dropper_fill" },
+    },
+    acts_on_items = true,
+    on_use = function(ctx, self, user, x, y, choice, clicked)
+        local function total(obj)
+            local c = ctx.contents(obj)
+            if c == nil then
+                return nil
+            end
+            local n = 0
+            for _, moles in pairs(c) do
+                n = n + moles
+            end
+            return n
+        end
+
+        if clicked ~= nil and clicked.entity ~= nil then
+            if total(clicked.entity) == nil then
+                return "pass"
+            end
+            if (total(self) or 0) < 0.001 then
+                ctx.system_msg(user, "The dropper is empty.")
+                return
+            end
+            ctx.pour(self, clicked.entity, 1 * U)
+            ctx.system_msg(user, "You squeeze a drop out of the dropper.")
+            return
+        end
+
+        local px, py = ctx.pos(user)
+        if x == px and y == py then
+            if (total(self) or 0) < 0.001 then
+                ctx.system_msg(user, "The dropper is empty.")
+                return
+            end
+            ctx.sound("drink", x, y)
+            ctx.drink(self, user, 1 * U)
+            ctx.system_msg(user, "You squeeze the dropper onto your tongue.")
+            return
+        end
+
+        local turf = ctx.turf(x, y)
+        if turf ~= "floor" and turf ~= "plating" then
+            return "pass"
+        end
+        if (total(self) or 0) < 0.001 then
+            ctx.system_msg(user, "The dropper is empty.")
+            return
+        end
+        ctx.spill(self, x, y)
+        ctx.system_msg(user, "You squeeze the dropper out onto the deck.")
+    end,
+}
