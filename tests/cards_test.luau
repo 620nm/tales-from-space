@@ -68,6 +68,14 @@ assert(first.sprite == "card_back",
 -- told "card_back" -- the identity lives in the appearance state, and
 -- the state is server-side. If this ever fails, every card game on the
 -- station is unplayable.
+-- Dealt cards do not stack on one pixel. Each is minted with its own
+-- offset around the type's anchor, so a hand dealt onto a tile reads
+-- as several cards rather than as one.
+assert(first.offset ~= nil, "a dealt card has a sub-tile position")
+assert(math.abs(first.offset.x + 5) <= 6 and math.abs(first.offset.y) <= 6,
+    "and it is scattered around the -5 anchor: "
+        .. first.offset.x .. "," .. first.offset.y)
+
 local drawn = table.concat(t.layers(p, t.target_at(1, 2, "card")), " ")
 assert(drawn:find("card_back", 1, true),
     "the client was sent the back: " .. drawn)
