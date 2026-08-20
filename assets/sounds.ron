@@ -86,4 +86,15 @@
     ("glass_pickup", "items/handling/materials/glass_pick_up.ogg"),
     ("glass_drop", "items/handling/materials/glass_drop.ogg"),
     ("rod_pickup", "items/handling/materials/iron_rod_pick_up.ogg"),
+    // A bottle of gas: /obj/item/tank names its own pair
+    // (code/game/objects/items/tanks/tanks.dm:26-27), so both tanks are
+    // heard rather than inheriting the silence a bare item ships with.
+    ("gas_tank_pickup", "items/handling/gas_tank/gas_tank_pick_up.ogg"),
+    ("gas_tank_drop", "items/handling/gas_tank/gas_tank_drop.ogg"),
+    // A space suit is handled as a helmet is, which is tg's own choice
+    // and not a mistake: /obj/item/clothing/suit/space takes the helmet
+    // pair rather than the cloth one its plain-suit parent uses
+    // (code/modules/clothing/spacesuits/_spacesuits.dm:33-34).
+    ("helmet_pickup", "items/handling/helmet/helmet_pickup1.ogg"),
+    ("helmet_drop", "items/handling/helmet/helmet_drop1.ogg"),
 ]
