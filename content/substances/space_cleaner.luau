@@ -1,0 +1,13 @@
+-- Space cleaner: ammonia and water, and the reason a janitor talks to
+-- a chemist. What it DOES to a dirty floor waits on decals; what it is
+-- is here, and it is two buttons and a beaker.
+--
+-- Fictional, so the numbers are the shelf's convention (docs/reagents.md,
+-- D2): a plausible mass for a detergent and the flat 100 J/mol/K.
+-- tg: /datum/reagent/space_cleaner (other_reagents.dm:1430).
+return {
+    id = "space_cleaner",
+    name = "space cleaner",
+    molar_mass = 110.0,
+    cv = 100.0,
+}
