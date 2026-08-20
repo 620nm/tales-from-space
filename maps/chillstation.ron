@@ -184,6 +184,16 @@
         // Clean Fun now, in the bag tg keeps them in, along with a deck
         // of cards and a toy that points at a wall. A die on the deck
         // is one die; a machine that hands out dice is a rec room.
+        // ---- the chem bench --------------------------------------
+        // Two beakers and a burner on the deck beside the dispenser and
+        // the reaction chamber. The beakers because chemistry is two
+        // vessels and a pour, and the burner because the chamber is
+        // bolted to a wall and a flame is not -- it is how you heat the
+        // thing you are carrying, and it arrives with fifteen units of
+        // spirit in it (items/burner.luau).
+        (22, 17, "beaker"),
+        (22, 17, "beaker"),
+        (23, 16, "burner"),
         // ---- the Workshop ----------------------------------------
         // Everything the first draft scattered across an unfinished
         // room, now in the room whose job it is: sheet, tile, rod,
@@ -501,6 +511,22 @@
         // station has neither, and the Commons is the room a shift
         // actually crosses.
         (24, 16, "games_vendor"),
+        // The chem bench, south of the vendors on the same wall and the
+        // same outlet -- four tiles of cord is well inside the six a
+        // corded appliance gets (docs/power.md). A dispenser and a
+        // reaction chamber standing together is the whole of what a
+        // chemist needs: press, pour, heat, watch.
+        //
+        // In the Commons rather than in a laboratory because this
+        // station has no laboratory, and because the room a shift
+        // actually crosses is where a bench gets used. The same argument
+        // that put Good Clean Fun here.
+        // The chamber stands BESIDE the dispenser rather than under it:
+        // the tile below is on the walking route between the Commons'
+        // south door and the east wall, and a bench is not worth making
+        // a corridor out of.
+        (24, 17, "chem_dispenser"),
+        (23, 17, "chem_heater"),
         // The pipe dispenser, corded to the outlet beside it. Every
         // fitting the department is built out of comes off this shelf,
         // which is why it stands in the department rather than in the
