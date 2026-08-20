@@ -264,6 +264,19 @@
         (11, 8, "vent"), (17, 8, "vent"), (7, 17, "vent"),
         (18, 17, "vent"), (22, 17, "vent"), (31, 14, "vent"),
         (6, 23, "vent"), (34, 23, "vent"),
+        // ---- the Commons' card table ------------------------------
+        // Two tables in the room's south-east corner, directly under
+        // the Good Clean Fun and clear of both rows a shift walks the
+        // Commons along. They are two rather than one because what a
+        // station built out of separate squares does when you put two
+        // down -- read as one surface -- ought to be visible in the
+        // room a shift actually crosses (tg's `SMOOTH_GROUP_TABLES`,
+        // tables_racks.dm:29-31). And because the machine that hands
+        // out a deck of cards now has somewhere to deal onto: a card
+        // put down on a table lands on the pixel it was pointed at,
+        // which is what makes a hand of cards a hand rather than a
+        // pile.
+        (23, 17, "table"), (24, 17, "table"),
         // The scrubber that makes the department a LOOP rather than a
         // supply: it stands on the Commons' own branch circuit, on
         // layer 2, and takes the carbon dioxide the crew breathe out
