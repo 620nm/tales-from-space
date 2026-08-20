@@ -1,0 +1,76 @@
+// Internals: the two bottles, the apparatus that reaches the lungs, and
+// the garment that keeps the vacuum off the skin.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then expansion order,
+// so the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+//
+// Where the WORN pictures come from is worth writing down, because two
+// of the four are not in their own type's file. tg resolves a worn
+// overlay in two steps: `RESOLVE_ICON_STATE` falls back from
+// `worn_icon_state` to `icon_state`
+// (code/modules/mob/living/carbon/human/human_update_icons.dm:1), and a
+// null `worn_icon` falls back to the SLOT's default sheet
+// (`get_default_icon_by_slot`,
+// code/modules/mob/living/carbon/carbon_update_icons.dm:550,559-565).
+// So the emergency bottle is drawn off `mob/clothing/belt.dmi` because
+// it is a belt item with `worn_icon = null` (tank_types.dm:173), and
+// the mask off `mob/clothing/mask.dmi` because its chain never sets one.
+// Both are followed here rather than guessed.
+(
+    sheets: [
+        ("canisters", "obj/canisters.dmi"),
+        ("masks", "obj/clothing/masks.dmi"),
+        ("spacesuit", "obj/clothing/suits/spacesuit.dmi"),
+        ("worn_back", "mob/clothing/back.dmi"),
+        ("worn_belt", "mob/clothing/belt.dmi"),
+        ("worn_mask", "mob/clothing/mask.dmi"),
+        ("worn_spacesuit", "mob/clothing/suits/spacesuit.dmi"),
+        ("tanks_l", "mob/inhands/equipment/tanks_lefthand.dmi"),
+        ("tanks_r", "mob/inhands/equipment/tanks_righthand.dmi"),
+        ("masks_l", "mob/inhands/clothing/masks_lefthand.dmi"),
+        ("masks_r", "mob/inhands/clothing/masks_righthand.dmi"),
+        ("suits_l", "mob/inhands/clothing/suits_lefthand.dmi"),
+        ("suits_r", "mob/inhands/clothing/suits_righthand.dmi"),
+    ],
+    groups: [
+        // The blue bottle: tg's /obj/item/tank/internals/oxygen
+        // (tank_types.dm:26-30), whose sheet, hand files and worn sheet
+        // all come from /obj/item/tank (tanks.dm:16,20-21,24).
+        (sheet: "canisters", sprites: [Sprite("oxygen_tank", "oxygen", s)]),
+        (sheet: "worn_back", sprites: [Directions("worn_oxygen_tank", "oxygen")]),
+        (sheet: "tanks_l", sprites: [Directions("held_oxygen_tank_l", "oxygen_tank")]),
+        (sheet: "tanks_r", sprites: [Directions("held_oxygen_tank_r", "oxygen_tank")]),
+
+        // The pocket bottle: /obj/item/tank/internals/emergency_oxygen
+        // (tank_types.dm:166-173). Same sheets, a different state, and
+        // the belt sheet for the worn picture (see the header).
+        (sheet: "canisters", sprites: [Sprite("emergency_oxygen", "emergency", s)]),
+        (sheet: "worn_belt", sprites: [Directions("worn_emergency_oxygen", "emergency")]),
+        (
+            sheet: "tanks_l",
+            sprites: [Directions("held_emergency_oxygen_l", "emergency_tank")],
+        ),
+        (
+            sheet: "tanks_r",
+            sprites: [Directions("held_emergency_oxygen_r", "emergency_tank")],
+        ),
+
+        // The apparatus: /obj/item/clothing/mask/breath
+        // (code/modules/clothing/masks/breath.dm:1-5), on the mask
+        // sheets its parent names (_masks.dm:3-5).
+        (sheet: "masks", sprites: [Sprite("breath_mask", "breath", s)]),
+        (sheet: "worn_mask", sprites: [Directions("worn_breath_mask", "breath")]),
+        (sheet: "masks_l", sprites: [Directions("held_breath_mask_l", "m_mask")]),
+        (sheet: "masks_r", sprites: [Directions("held_breath_mask_r", "m_mask")]),
+
+        // The garment: /obj/item/clothing/suit/space/eva
+        // (code/modules/clothing/spacesuits/softsuit.dm:30-33), whose
+        // sheets are the space-suit parent's (_spacesuits.dm:84-87).
+        (sheet: "spacesuit", sprites: [Sprite("eva_suit", "space", s)]),
+        (sheet: "worn_spacesuit", sprites: [Directions("worn_eva_suit", "space")]),
+        (sheet: "suits_l", sprites: [Directions("held_eva_suit_l", "s_suit")]),
+        (sheet: "suits_r", sprites: [Directions("held_eva_suit_r", "s_suit")]),
+    ],
+)
