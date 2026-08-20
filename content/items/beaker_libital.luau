@@ -9,6 +9,15 @@ return {
     sprite = "beaker",
     inhand_sprite = { "held_beaker_l", "held_beaker_r" },
     contents = { water = 0.20, libital = 0.15 },
+    -- The beaker fill ladder, exactly as beaker.luau's (_cup.dm:452).
+    fill_sprites = {
+        { 1, "beaker_fill_1" },
+        { 20, "beaker_fill_20" },
+        { 40, "beaker_fill_40" },
+        { 60, "beaker_fill_60" },
+        { 80, "beaker_fill_80" },
+        { 100, "beaker_fill_100" },
+    },
     acts_on_items = true,
     on_use = function(ctx, self, user, x, y, choice, clicked)
         local function total(obj)
