@@ -13,6 +13,19 @@ return {
     sprite = "beaker",
     inhand_sprite = { "held_beaker_l", "held_beaker_r" },
     capacity_mol = 50 * U,
+    -- What it shows through the glass. tg's beaker declares
+    -- `fill_icon_thresholds = list(0, 1, 20, 40, 60, 80, 100)`
+    -- (_cup.dm:452) against the fill sheet's `beaker1`..`beaker100`;
+    -- the 0 stop is dropped because nothing on that sheet answers to
+    -- it, and below 1% tg draws no fill either.
+    fill_sprites = {
+        { 1, "beaker_fill_1" },
+        { 20, "beaker_fill_20" },
+        { 40, "beaker_fill_40" },
+        { 60, "beaker_fill_60" },
+        { 80, "beaker_fill_80" },
+        { 100, "beaker_fill_100" },
+    },
     -- Clicking another loose vessel has to reach this hook rather than
     -- picking it up: pouring is a thing you do TO the thing you named.
     acts_on_items = true,
