@@ -33,7 +33,11 @@
 --     tg deals into a hand or at a mob; pointing at the table is
 --     better, and it is the only form this engine can express, since
 --     `ctx.give` does not exist yet (it is on the deferred list, and
---     this is a caller for it).
+--     this is a caller for it). Pointed AT A TABLE it is tg exactly --
+--     `deck_act` draws a card and lays it on the table
+--     (tables_racks.dm:375-384) -- so the deck deals rather than being
+--     put down. Putting the deck itself down is the drop verb, which
+--     is how everything else leaves a hand.
 --
 -- A card comes BACK through the card's own hook, not through this file:
 -- items/card.luau's `on_use` recognises a deck under the cursor and
@@ -159,10 +163,21 @@ return {
         ctx.system_msg(user, "You shuffle the deck.")
     end,
     on_use = function(ctx, self, user, x, y, choice, target)
-        -- A click that named something is not a deal. Falling through
-        -- rather than eating it keeps a deck from being a thing that
-        -- swallows every click made while holding one.
-        if target ~= nil then
+        -- A click that named a loose ITEM is not a deal: that is the
+        -- pickup, or a card being fed back in through items/card.luau.
+        -- Falling through rather than eating it keeps a deck from being
+        -- a thing that swallows every click made while holding one.
+        --
+        -- A click that named a STRUCTURE is a deal, and it is tg's:
+        -- clicking a table with a deck in hand draws the top card and
+        -- puts it on the table (`deck_act` -> `table_place_act`,
+        -- deck.dm via tables_racks.dm:375-384). It deals rather than
+        -- putting the deck down because a hook that answers a click
+        -- keeps it -- the engine's surface placement is the LAST thing
+        -- a click can mean (docs/luau-api.md), which is exactly tg's
+        -- order. Putting the DECK itself down is the drop verb, as it
+        -- is for everything else in a hand.
+        if target ~= nil and target.kind ~= "machine" then
             return "pass"
         end
         -- Somewhere a card can lie. The engine refuses a spawn onto
@@ -192,7 +207,23 @@ return {
         -- in). The card that lands is a particular card and nobody can
         -- see which -- the identity is the appearance state, the
         -- picture is the back.
-        ctx.spawn_item("card", x, y, "down_" .. top)
+        --
+        -- And WHERE it lands. A deal at something the player POINTED
+        -- AT is placed on the pixel they pointed at -- tg reads the
+        -- click's own `ICON_X`/`ICON_Y` for exactly this
+        -- (`table_place_act`, tables_racks.dm:393-398) -- and naming an
+        -- offset suppresses the type's mint-time scatter, so a hand
+        -- dealt across a table is where the dealer put it.
+        --
+        -- A deal at bare deck keeps the scatter, and that is deliberate
+        -- rather than an oversight: tg has no floor placement at all,
+        -- so cards on the deck are this pack's own flavour, and a
+        -- card that fell out of a hand should look like one.
+        if target ~= nil then
+            ctx.spawn_item("card", x, y, "down_" .. top, ctx.click_offset())
+        else
+            ctx.spawn_item("card", x, y, "down_" .. top)
+        end
         ctx.set_state(self, thickness(count(rest)))
         ctx.sound("card_flip", x, y)
         ctx.system_msg(user, "You deal a card.")

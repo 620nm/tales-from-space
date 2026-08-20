@@ -193,6 +193,13 @@ return {
         -- somebody's lunch, the floor, a crewman -- is not this hook's
         -- business, and returning without an effect lets the click fall
         -- through to whatever it would ordinarily have been.
+        --
+        -- A TABLE is the case that makes the decline load-bearing: the
+        -- engine puts a held thing down on a surface only after every
+        -- hook has declined (docs/luau-api.md, step 9), so a card
+        -- clicked at a table lands on the table at the pixel the player
+        -- pointed at, and it does so because this hook says "pass"
+        -- rather than because anything here knows what a table is.
         if target == nil or target.kind ~= "item" then
             return "pass"
         end
