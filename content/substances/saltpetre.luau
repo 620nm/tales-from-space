@@ -10,4 +10,6 @@ return {
     name = "saltpetre",
     molar_mass = 101.10,
     cv = 95.1,
+    -- What it looks like through glass (tg: other_reagents.dm:2540).
+    color = "#60A584",
 }

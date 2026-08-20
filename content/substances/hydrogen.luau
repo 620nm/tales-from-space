@@ -11,4 +11,6 @@ return {
     name = "hydrogen",
     molar_mass = 1.008,
     cv = 25.0,
+    -- What it looks like through glass (tg: other_reagents.dm:1031 (COLOR_GRAY)).
+    color = "#808080",
 }

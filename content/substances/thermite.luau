@@ -12,4 +12,6 @@ return {
     name = "thermite",
     molar_mass = 90.0,
     cv = 100.0,
+    -- What it looks like through glass (tg: pyrotechnic_reagents.dm:7).
+    color = "#550000",
 }

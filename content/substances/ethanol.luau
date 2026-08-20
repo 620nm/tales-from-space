@@ -15,6 +15,8 @@ return {
     --   / 2 s per tg tick x 0.5 s per pass    = 0.000625 mol per pass
     -- so a burner's 15 u tank burns for tg's own five minutes.
     burn = { k = 2193, rate = 0.000625 },
+    -- What it looks like through glass (tg: alcohol_reagents.dm:7).
+    color = "#404030",
     on_mob_life = function(ctx, mob, moles)
         if ctx.random(1, 6) == 1 then
             ctx.system_msg(mob, "You feel a little tipsy.")

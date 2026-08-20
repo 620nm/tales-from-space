@@ -12,4 +12,6 @@ return {
     name = "ash",
     molar_mass = 100.0,
     cv = 100.0,
+    -- What it looks like through glass (tg: other_reagents.dm:2303).
+    color = "#515151",
 }

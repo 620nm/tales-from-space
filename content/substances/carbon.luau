@@ -8,4 +8,6 @@ return {
     name = "carbon",
     molar_mass = 12.011,
     cv = 8.5,
+    -- What it looks like through glass (tg: other_reagents.dm:1074).
+    color = "#1C1300",
 }
