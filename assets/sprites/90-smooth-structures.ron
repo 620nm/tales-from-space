@@ -21,12 +21,32 @@
 (
     sheets: [
         ("table", "obj/smooth_structures/table.dmi"),
+        ("reinforced_table", "obj/smooth_structures/reinforced_table.dmi"),
+        ("wood_table", "obj/smooth_structures/wood_table.dmi"),
     ],
     groups: [
+        // Three families, and WHICH of them join each other is not said
+        // here: a sheet is art, and belonging is a word content invents
+        // (tfs/content/structures/*.luau). tg keeps its own three the
+        // same way -- one .dmi each, and one `smoothing_groups` line
+        // apiece deciding who is whose neighbour
+        // (tables_racks.dm:15-31,618-631,744-755).
         (
             sheet: "table",
             sprites: [
                 Junctions("table", "table"),
+            ],
+        ),
+        (
+            sheet: "reinforced_table",
+            sprites: [
+                Junctions("reinforced_table", "reinforced_table"),
+            ],
+        ),
+        (
+            sheet: "wood_table",
+            sprites: [
+                Junctions("wood_table", "wood_table"),
             ],
         ),
     ],
