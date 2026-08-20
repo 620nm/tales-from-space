@@ -1,0 +1,33 @@
+// Structures whose picture is chosen by what stands next to them.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in this
+// directory is baked, in FILE-NAME order and then expansion order, so
+// the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+//
+// tg draws a row of tables as forty-seven pre-baked frames rather than
+// as one picture with a border: an object counts the neighbours it
+// belongs with, packs the answer into a byte, and wears
+// `"[base_icon_state]-[junction]"` (`code/__HELPERS/icon_smoothing.dm:285`).
+// Only 47 of the 256 byte values can be reached, and a sheet carries
+// exactly those 47 frames — so `Junctions` bakes the whole family from
+// one row rather than making a content author spell out numbers that
+// mean nothing to a reader.
+//
+// The junction a thing is at is the SERVER's arithmetic
+// (`crates/lunatic-server/src/structures/smoothing.rs`), which also
+// refuses to load any entry whose family is missing a single frame. All
+// this file does is put the frames where that check can find them.
+(
+    sheets: [
+        ("table", "obj/smooth_structures/table.dmi"),
+    ],
+    groups: [
+        (
+            sheet: "table",
+            sprites: [
+                Junctions("table", "table"),
+            ],
+        ),
+    ],
+)
