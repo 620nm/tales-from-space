@@ -133,7 +133,7 @@
         "      s s s s s s s s s s               ",
         "                                        ",
         "   ####___########___########___#####   ",
-        "   #__l____l_#__l_____l__#__l____l__#   ",
+        "   #__l____l_#__l_o___l__#__l____l__#   ",
         "   #a________#a__________#a_________#   ",
         "   #_________#___________#__________#   ",
         "   #_________#___________#__________#   ",
@@ -184,26 +184,26 @@
         // Clean Fun now, in the bag tg keeps them in, along with a deck
         // of cards and a toy that points at a wall. A die on the deck
         // is one die; a machine that hands out dice is a rec room.
-        // ---- the chem bench --------------------------------------
-        // Two beakers and a burner on the deck beside the dispenser and
+        // ---- the chem bench (in the Bunks) ------------------------
+        // Two beakers and a burner on the deck under the dispenser and
         // the reaction chamber. The beakers because chemistry is two
         // vessels and a pour, and the burner because the chamber is
         // bolted to a wall and a flame is not -- it is how you heat the
         // thing you are carrying, and it arrives with fifteen units of
         // spirit in it (items/burner.luau).
-        (22, 17, "beaker"),
-        (22, 17, "beaker"),
-        (23, 16, "burner"),
-        // The small glass, on the two tiles beside them. A dropper for
+        (17, 5, "beaker"),
+        (17, 5, "beaker"),
+        (18, 5, "burner"),
+        // The small glass, on the tile beside them. A dropper for
         // moving one unit at a time, two tubes to keep a batch in while
         // the beaker is needed for the next one, and a bottle to put
         // the finished thing away in. Every one of them shows its level
         // through its own glass, which is the whole reason a bench of
         // vessels reads at a glance instead of being clicked through.
-        (22, 16, "dropper"),
-        (22, 16, "bottle"),
-        (21, 17, "test_tube"),
-        (21, 17, "test_tube"),
+        (19, 5, "dropper"),
+        (19, 5, "bottle"),
+        (20, 5, "test_tube"),
+        (20, 5, "test_tube"),
         // ---- the Workshop ----------------------------------------
         // Everything the first draft scattered across an unfinished
         // room, now in the room whose job it is: sheet, tile, rod,
@@ -521,22 +521,21 @@
         // station has neither, and the Commons is the room a shift
         // actually crosses.
         (24, 16, "games_vendor"),
-        // The chem bench, south of the vendors on the same wall and the
-        // same outlet -- four tiles of cord is well inside the six a
-        // corded appliance gets (docs/power.md). A dispenser and a
-        // reaction chamber standing together is the whole of what a
-        // chemist needs: press, pour, heat, watch.
+        // The chem bench, on the Bunks' north wall flanking the room's
+        // own socket at (18, 4) -- one tile of cord each, well inside
+        // the six a corded appliance gets (docs/power.md). A dispenser
+        // and a reaction chamber standing together is the whole of what
+        // a chemist needs: press, pour, heat, watch.
         //
-        // In the Commons rather than in a laboratory because this
-        // station has no laboratory, and because the room a shift
-        // actually crosses is where a bench gets used. The same argument
-        // that put Good Clean Fun here.
-        // The chamber stands BESIDE the dispenser rather than under it:
-        // the tile below is on the walking route between the Commons'
-        // south door and the east wall, and a bench is not worth making
-        // a corridor out of.
-        (24, 17, "chem_dispenser"),
-        (23, 17, "chem_heater"),
+        // In the Bunks rather than the Commons because the first draft
+        // put it on the card tables, and a rec room whose tables are
+        // occupied by glassware is not a rec room. The Bunks were the
+        // one wired, lit, ventilated room with nothing in them that is
+        // not reserved for growth (the Cargo Bay and Cargo Hall stay
+        // empty on purpose) -- so the empty room becomes the lab, one
+        // door off the Concourse.
+        (19, 4, "chem_dispenser"),
+        (17, 4, "chem_heater"),
         // The pipe dispenser, corded to the outlet beside it. Every
         // fitting the department is built out of comes off this shelf,
         // which is why it stands in the department rather than in the
@@ -618,7 +617,8 @@
         (5, 4, 2), (5, 9, 2), (6, 4, 2), (6, 9, 2), (7, 4, 2), (7, 9, 2),
         (8, 4, 2), (8, 9, 2), (9, 4, 2), (9, 9, 2), (10, 4, 2), (10, 9, 2),
         (11, 4, 2), (11, 8, 2), (11, 9, 2), (12, 4, 2),
-        // -- Bunks
+        // -- Bunks: the perimeter loop, the vent, and the chem bench's
+        //    socket at (18, 4) on the north run.
         (14, 4, 2), (14, 5, 2), (14, 6, 2), (14, 7, 2), (14, 8, 2), (14, 9, 2),
         (15, 4, 2), (15, 9, 2), (16, 4, 2), (16, 9, 2), (17, 4, 2), (17, 8, 2),
         (17, 9, 2), (18, 4, 2), (18, 9, 2), (19, 4, 2), (19, 9, 2), (20, 4, 2),
