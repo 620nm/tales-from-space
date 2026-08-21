@@ -50,7 +50,8 @@ return {
     -- Through glass, the colour its reagent wears
     -- (tg: other_reagents.dm:1090).
     color = "#FFFB89",
-    on_mob_life = function(ctx, mob, moles)
+    -- `on_mob_life(ctx, self, user, moles)` -- see nh3.luau.
+    on_mob_life = function(ctx, mob, _user, moles)
         ctx.damage(mob, { oxy = moles * 16000 })
         if ctx.random(1, 3) == 1 then
             ctx.system_msg(mob, "Your chest is on fire.")

@@ -59,7 +59,10 @@ return {
     -- Through glass it looks like what it is made from
     -- (tg: other_reagents.dm:1630, the same colour ammonia.luau wears).
     color = "#404030",
-    on_mob_life = function(ctx, mob, moles)
+    -- `on_mob_life(ctx, self, user, moles)`: the metabolism hook hands
+    -- the same mob twice, as the thing the hook is on and as the body
+    -- it is happening to, and the moles metabolized this tick last.
+    on_mob_life = function(ctx, mob, _user, moles)
         ctx.damage(mob, { oxy = moles * 12000 })
         if ctx.random(1, 4) == 1 then
             ctx.system_msg(mob, "Your eyes and throat burn.")
