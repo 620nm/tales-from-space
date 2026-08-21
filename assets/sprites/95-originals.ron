@@ -1,0 +1,20 @@
+// First-party art: sprites drawn for this game rather than ported from
+// tgstation. Paths are relative to `tfs/assets/originals/`, and the
+// extension picks the decoder — `.png` is one 32x32 still, `.aseprite`
+// is a tagged document whose TAGS are its states. Contract and the
+// authoring rules: `tfs/assets/originals/README.md`, docs/ASSETS.md §4.1.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then entry order,
+// so the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+(
+    sprites: [
+        // A bar of soap: the same drawing three ways, which is exactly
+        // what makes it a proof — one still from a plain PNG, one still
+        // from an Aseprite tag, and one animation from a tagged range.
+        ("soap_bar", Png("soap.png")),
+        ("soap_wet", Ase("soap.aseprite", "idle")),
+        ("soap_bubbles", AseAnim("soap.aseprite", "bubbles")),
+    ],
+)
