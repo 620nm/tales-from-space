@@ -58,6 +58,7 @@ t.world([==[(
         (3, 2, "beaker"),
         (1, 3, "beaker"),
         (3, 3, "beaker"),
+        (2, 3, "beaker"),
     ],
     machines: [(1, 1, "chem_dispenser"), (3, 1, "chem_heater")],
 )]==], 0)
@@ -74,6 +75,7 @@ local a = t.target_at(1, 2, "beaker")
 local slop = t.target_at(3, 2, "beaker")
 local c = t.target_at(1, 3, "beaker")
 local d = t.target_at(3, 3, "beaker")
+local e = t.target_at(2, 3, "beaker")
 
 -- Every gesture in this spec is one of five, so they get names.
 local function take(handle, x, y)
@@ -220,3 +222,42 @@ t.run_seconds(120)
 assert(t.holder_k(d) > 480.0, "the chamber crossed the threshold: " .. t.holder_k(d))
 near(amount(d, "ash"), 0.75, 1e-6, "every mole of oil became a mole of ash")
 near(amount(d, "oil"), 0.0, 1e-6, "and there is none of it left")
+
+-- ---------------------------------------------------------------
+-- FOUR: CHLORINE GAS, ALL THE WAY UP.
+--
+-- The three windows above are tg's own, ported number for number: ash
+-- and carbon dioxide have an overheat band because tg's recipes do.
+-- A DECOMPOSITION does not. Chlorine's gate at 420 K is a floor with
+-- nothing over it (reactions/chlorine_gas.luau), so the most obvious
+-- gesture on the bench -- turn the dial to its stop -- has to make MORE
+-- gas rather than none.
+--
+-- It used to make none. The bell was authored 420/435/500/520, and the
+-- engine reads a bell as exactly zero above `temp_max`, so a chemist at
+-- 1000 K got a hot beaker and nothing else.
+-- ---------------------------------------------------------------
+t.ui_act(p, "toggle", '{"field":"power"}')
+eject()
+t.drop(p)
+t.tick()
+
+take(e, 2, 3)
+dock(dispenser, 1, 1)
+panel(dispenser, 1, 1)
+press("chlorine")
+near(amount(e, "chlorine"), PRESS, 1e-9, "a press of chlorine")
+
+eject()
+dock(heater, 3, 1)
+panel(heater, 3, 1)
+t.ui_act(p, "set", '{"field":"temperature","value":1000}')
+t.ui_act(p, "toggle", '{"field":"power"}')
+t.run_seconds(90)
+
+-- THE ASSERTION: the beaker runs DRY. A bench held at 1000 K races
+-- through 420-520 in a few passes, so a rule that shut at 520 would
+-- convert a sliver on the way up and then sit there with most of the
+-- press still in the glass forever. Nothing is left.
+near(amount(e, "chlorine"), 0.0, 1e-6, "the dial at its stop ran the whole press off")
+near(room("cl2"), PRESS / 2.0, 1e-3, "two of the reagent for one of the molecule")
