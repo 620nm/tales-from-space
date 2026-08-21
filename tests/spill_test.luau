@@ -69,3 +69,30 @@ assert(rows[1].actor.kind == "script", "attributed to the file that asked")
 t.click(p, 2, 1)
 t.tick()
 assert(#t.ledger_rows("spilled") == 1, "the empty beaker spilled nothing")
+
+-- ---------------------------------------------------------------
+-- AND THEN IT DRIES.
+--
+-- A puddle is matter standing in a cell, so it does what matter in a
+-- cell does: the water in it evaporates into the room until the air
+-- above it is saturated (docs/matter.md section 5). Before Effort G a
+-- spill was permanent -- the phase step boiled above the boiling point
+-- and condensed everything below it, and 293 K is below it, so a
+-- puddle could only ever grow.
+--
+-- The libital beside it does not move, and that is the other half of
+-- the claim: an Inert reagent has no vapour pressure and no curve to
+-- transition on, so it stays on the deck. Water dries; the drug it was
+-- carrying is still there when it has.
+-- ---------------------------------------------------------------
+local function vapour(key)
+    local gases = t.room_gas(2, 1)
+    return (gases and gases[key]) or 0
+end
+
+assert(vapour("water") < 1e-9, "nothing has evaporated yet")
+t.run_seconds(120)
+local dried = vapour("water")
+assert(dried > 1e-4, "the puddle is drying into the room: " .. dried .. " mol")
+assert(dried < 0.20, "and it cannot dry past what was spilled: " .. dried .. " mol")
+assert(vapour("libital") < 1e-9, "the drug in it has nowhere to go")
