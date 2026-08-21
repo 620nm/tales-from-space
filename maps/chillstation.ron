@@ -133,7 +133,7 @@
         "      s s s s s s s s s s               ",
         "                                        ",
         "   ####___########___########___#####   ",
-        "   #__l____l_#__l_o___l__#__l____l__#   ",
+        "   #__l____l_#__l____ol__#__l____l__#   ",
         "   #a________#a__________#a_________#   ",
         "   #_________#___________#__________#   ",
         "   #_________#___________#__________#   ",
@@ -191,19 +191,19 @@
         // bolted to a wall and a flame is not -- it is how you heat the
         // thing you are carrying, and it arrives with fifteen units of
         // spirit in it (items/burner.luau).
-        (17, 5, "beaker"),
-        (17, 5, "beaker"),
-        (18, 5, "burner"),
+        (19, 5, "beaker"),
+        (19, 5, "beaker"),
+        (20, 5, "burner"),
         // The small glass, on the tile beside them. A dropper for
         // moving one unit at a time, two tubes to keep a batch in while
         // the beaker is needed for the next one, and a bottle to put
         // the finished thing away in. Every one of them shows its level
         // through its own glass, which is the whole reason a bench of
         // vessels reads at a glance instead of being clicked through.
-        (19, 5, "dropper"),
-        (19, 5, "bottle"),
-        (20, 5, "test_tube"),
-        (20, 5, "test_tube"),
+        (21, 5, "dropper"),
+        (21, 5, "bottle"),
+        (22, 5, "test_tube"),
+        (22, 5, "test_tube"),
         // ---- the Workshop ----------------------------------------
         // Everything the first draft scattered across an unfinished
         // room, now in the room whose job it is: sheet, tile, rod,
@@ -521,9 +521,11 @@
         // station has neither, and the Commons is the room a shift
         // actually crosses.
         (24, 16, "games_vendor"),
-        // The chem bench, on the Bunks' north wall flanking the room's
-        // own socket at (18, 4) -- one tile of cord each, well inside
-        // the six a corded appliance gets (docs/power.md). A dispenser
+        // The chem bench, on the Bunks' north wall beside the room's
+        // own socket at (21, 4) -- one and two tiles of cord, well inside
+        // the six a corded appliance gets (docs/power.md). The socket
+        // stands where the wall is: (18, 4) is under a hull window, and
+        // a fitting mounts on masonry or it does not mount. A dispenser
         // and a reaction chamber standing together is the whole of what
         // a chemist needs: press, pour, heat, watch.
         //
@@ -535,7 +537,7 @@
         // empty on purpose) -- so the empty room becomes the lab, one
         // door off the Concourse.
         (19, 4, "chem_dispenser"),
-        (17, 4, "chem_heater"),
+        (20, 4, "chem_heater"),
         // The pipe dispenser, corded to the outlet beside it. Every
         // fitting the department is built out of comes off this shelf,
         // which is why it stands in the department rather than in the
@@ -618,7 +620,7 @@
         (8, 4, 2), (8, 9, 2), (9, 4, 2), (9, 9, 2), (10, 4, 2), (10, 9, 2),
         (11, 4, 2), (11, 8, 2), (11, 9, 2), (12, 4, 2),
         // -- Bunks: the perimeter loop, the vent, and the chem bench's
-        //    socket at (18, 4) on the north run.
+        //    socket at (21, 4) on the north run.
         (14, 4, 2), (14, 5, 2), (14, 6, 2), (14, 7, 2), (14, 8, 2), (14, 9, 2),
         (15, 4, 2), (15, 9, 2), (16, 4, 2), (16, 9, 2), (17, 4, 2), (17, 8, 2),
         (17, 9, 2), (18, 4, 2), (18, 9, 2), (19, 4, 2), (19, 9, 2), (20, 4, 2),
@@ -943,7 +945,7 @@
         (4, 5, West), (14, 5, West), (26, 5, West), (18, 11, North),
         (15, 14, West), (4, 22, West), (28, 22, West), (18, 22, North),
         (4, 27, West), (6, 4, North), (11, 4, North), (6, 9, South),
-        (11, 9, South), (16, 4, North), (22, 4, North), (16, 9, South),
+        (11, 9, South), (16, 4, North), (21, 4, North), (22, 4, North), (16, 9, South),
         (22, 9, South), (28, 4, North), (33, 4, North), (28, 9, South),
         (33, 9, South), (6, 11, North), (10, 11, North), (14, 11, North),
         (21, 11, North), (25, 11, North), (29, 11, North), (33, 11, North),
