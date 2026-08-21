@@ -19,6 +19,10 @@ return {
     id = "test_tube",
     name = "test tube",
     sprite = "test_tube",
+    examine = {
+        flavor = "A narrow tube of glass. Where a finished batch waits "
+            .. "while the beaker gets on with the next one.",
+    },
     capacity_mol = 30 * U,
     -- tg's cup default `amount_per_transfer_from_this = 10` (_cup.dm:4),
     -- which is also the beaker's gesture: a pour is a pour whatever it

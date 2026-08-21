@@ -48,6 +48,10 @@ return {
     id = "chem_dispenser",
     name = "chem dispenser",
     sprite = "chem_dispenser",
+    examine = {
+        flavor = "A shelf of taps over a single dock. Every button on it "
+            .. "is somewhere a shift's chemistry could start.",
+    },
     dense = true,
     corded = true,
     chem = {
