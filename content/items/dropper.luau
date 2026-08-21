@@ -29,6 +29,8 @@ return {
             .. "beaker is too generous to measure.",
     },
     capacity_mol = 5 * U,
+    -- tg's dropper: `volume = 5` (reagent_containers/dropper.dm:10).
+    volume_ml = 5,
     -- tg's dropper has no `fill_icon_thresholds` at all: it overrides
     -- `update_overlays` to add the one `dropper` state whenever there
     -- is anything in it (dropper.dm:87-93). Five units is too small a

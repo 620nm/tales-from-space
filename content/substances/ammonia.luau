@@ -7,6 +7,12 @@
 -- it flash to gas the instant it was made. A bench chemical that
 -- vanished on contact with a room is not a chemical, it is a bug with a
 -- citation.
+--
+-- The sequel is `nh3.luau`, which IS the molecule, curve and all. This
+-- file keeps tg's fiction so the recipes standing on it keep working;
+-- roast a beaker of this past 700 K and reactions/ammonia_gas.luau turns
+-- it into the real thing, as gas, which then leaves the vessel and
+-- fills the room. Policy D3, docs/reagents.md.
 -- tg: /datum/reagent/ammonia (other_reagents.dm:1627).
 return {
     id = "ammonia",

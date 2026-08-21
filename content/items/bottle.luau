@@ -22,6 +22,9 @@ return {
             .. "mixing. What ends up on the shelf.",
     },
     capacity_mol = 50 * U,
+    -- tg's bottle: `volume = 50` (cups/bottle.dm:12), the cup base's
+    -- own figure. One unit is one millilitre.
+    volume_ml = 50,
     fill_sprites = {
         { 1, "bottle_fill_1" },
         { 20, "bottle_fill_20" },
