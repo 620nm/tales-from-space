@@ -83,7 +83,11 @@ ui = t.ui(p)
 assert(row(ui, "vessel").value == "beaker (libital)", "the panel names what is in it")
 assert(ui.toggles[1].on == false, "and it is switched off out of the crate")
 t.run_seconds(20)
-near(t.holder_k(beaker), T20C, 0.01, "a chamber nobody switched on moves nothing")
+-- A tenth of a kelvin of slack, not a hundredth: the beaker is open,
+-- and evaporation into its own headspace carries a little latent heat
+-- away with it (Effort G). It is a fraction of the deck coupling's
+-- half-kelvin deadband, which is why nothing pulls it back.
+near(t.holder_k(beaker), T20C, 0.1, "a chamber nobody switched on moves nothing")
 
 -- ---------------------------------------------------------------
 -- THE APPROACH, AND THE ARREST.
@@ -147,9 +151,14 @@ assert(row(t.ui(p), "vessel").value == "empty", "the panel agrees there is nothi
 
 -- ...and a vessel IN A HAND is a vessel you are insulating: the deck
 -- coupling is for things lying on the deck (sim/chemistry/heat.rs), so
--- carrying a hot beaker around costs it nothing.
+-- carrying a hot beaker around costs it nothing THE ROOM could take.
+-- What it does still lose is its own latent heat: an open beaker is
+-- evaporating, faster the warmer it is, and twenty seconds of that is
+-- a few hundredths of a kelvin (Effort G). A tenth of a kelvin of
+-- slack keeps the claim -- no deck coupling in a hand -- while telling
+-- the truth about the vapour.
 t.run_seconds(20)
-near(t.holder_k(beaker), warm, 0.01, "carried, it keeps every joule")
+near(t.holder_k(beaker), warm, 0.1, "carried, it keeps every joule the room could take")
 
 -- Put it down and the room gets to work on it. tg has no ambient
 -- coupling at all; this is the deliberate departure that makes a beaker

@@ -160,4 +160,9 @@ assert(salt_before > 0.0, "there is salt to dissolve")
 t.run_seconds(60)
 near(amount(b, "salt"), 0.0, 1e-6, "the salt went into solution")
 near(amount(b, "saltwater"), salt_before * 2.0, 1e-6, "two of brine for each of salt")
-near(amount(b, "water"), PRESS - salt_before, 1e-6, "and it cost a mole of water each")
+-- Slacker than the two above, because water is the one reagent here
+-- with a phase curve: an open beaker in a dry room loses a trace of it
+-- to the air every pass (Effort G's headspace), and over a minute that
+-- is a few thousandths of a mole. Salt and brine are Inert and cannot
+-- evaporate, so they stay pinned to 1e-6.
+near(amount(b, "water"), PRESS - salt_before, 5e-3, "and it cost a mole of water each")
