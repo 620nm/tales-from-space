@@ -24,6 +24,10 @@ return {
     id = "burner",
     name = "burner",
     sprite = "burner",
+    examine = {
+        flavor = "A small tank of spirit with a wick standing out of it. "
+            .. "Enough flame to warm one vessel, and no more.",
+    },
     -- Unlit first: the engine reads position 0 as cold and 1 as alight
     -- (the same off-first order an atmos device's positions keep), so a
     -- burner that runs dry unattended repaints itself without anything

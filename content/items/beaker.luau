@@ -11,6 +11,10 @@ return {
     id = "beaker",
     name = "beaker",
     sprite = "beaker",
+    examine = {
+        flavor = "Graduated glass with a lip on it. Whatever a bench is "
+            .. "doing, it is doing it in one of these.",
+    },
     inhand_sprite = { "held_beaker_l", "held_beaker_r" },
     capacity_mol = 50 * U,
     -- What it shows through the glass. tg's beaker declares

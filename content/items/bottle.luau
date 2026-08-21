@@ -17,6 +17,10 @@ return {
     id = "bottle",
     name = "bottle",
     sprite = "bottle",
+    examine = {
+        flavor = "Glass with a neck on it, made for carrying rather than "
+            .. "mixing. What ends up on the shelf.",
+    },
     capacity_mol = 50 * U,
     fill_sprites = {
         { 1, "bottle_fill_1" },

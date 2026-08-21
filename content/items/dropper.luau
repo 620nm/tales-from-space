@@ -24,6 +24,10 @@ return {
     id = "dropper",
     name = "dropper",
     sprite = "dropper",
+    examine = {
+        flavor = "A glass pipette under a rubber bulb. For the doses a "
+            .. "beaker is too generous to measure.",
+    },
     capacity_mol = 5 * U,
     -- tg's dropper has no `fill_icon_thresholds` at all: it overrides
     -- `update_overlays` to add the one `dropper` state whenever there

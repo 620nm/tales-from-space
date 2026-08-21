@@ -18,6 +18,10 @@ return {
     id = "chem_heater",
     name = "reaction chamber",
     sprite = "chem_heater",
+    examine = {
+        flavor = "A hotplate with a dial and a cradle for one vessel. It "
+            .. "holds a temperature steadier than any hand over a flame.",
+    },
     dense = true,
     corded = true,
     chem = {
