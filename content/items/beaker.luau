@@ -17,6 +17,14 @@ return {
     },
     inhand_sprite = { "held_beaker_l", "held_beaker_r" },
     capacity_mol = 50 * U,
+    -- ...and how big the GLASS is, which is a different question and
+    -- now a load-bearing one: the space above the liquid is what its
+    -- vapour saturates, and therefore how fast an open beaker of
+    -- anything volatile gives itself to the room. tg's cup base
+    -- declares `volume = 50` (reagent_containers/cups/_cup.dm:6), which
+    -- is the same 50 the capacity above is measured in units of -- one
+    -- unit is one millilitre, which is what makes the bridge readable.
+    volume_ml = 50,
     -- What it shows through the glass. tg's beaker declares
     -- `fill_icon_thresholds = list(0, 1, 20, 40, 60, 80, 100)`
     -- (_cup.dm:452) against the fill sheet's `beaker1`..`beaker100`;

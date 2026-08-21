@@ -17,4 +17,13 @@ return {
     -- (docs/construction.md). tg's max_fuel is 20.
     tool = "welder",
     fuel = { substance = "welding_fuel", capacity = 20.0 },
+    -- A CLOSED tank. tg's welder holds its fuel in a sealed reservoir
+    -- you refill from a tank rather than an open cup (welding_tool.dm's
+    -- `/obj/item/weldingtool` carries no OPENCONTAINER flag, and
+    -- refuelling goes through `refill_from`), and a welder that
+    -- breathed its contents into the room would be a welder that
+    -- emptied itself in a corridor. welding_fuel is Inert today, so
+    -- nothing would actually evaporate; the flag says what the object
+    -- IS rather than waiting for the day the fuel gets a curve.
+    sealed = true,
 }

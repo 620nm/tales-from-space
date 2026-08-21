@@ -42,6 +42,16 @@ return {
     -- (items.dm:164-172), through the documented bridge of 1 u = 0.025
     -- mol (docs/reagents.md).
     capacity_mol = 50 * U,
+    volume_ml = 50,
+    -- A LID, and the first thing in the tree to wear one. tg's burner
+    -- is a closed reservoir with a wick through the cap (items.dm:151-
+    -- 291 -- it has no OPENCONTAINER flag, unlike every cup), and now
+    -- that ethanol has a phase curve the flag has to be said out loud:
+    -- an open one at station temperature would breathe its spirit into
+    -- the room and stand empty in a couple of hours, having heated
+    -- nothing. Sealed vessels trade nothing with the air
+    -- (sim/chemistry/vent.rs).
+    sealed = true,
     contents = { ethanol = 15 * U },
     acts_on_items = true,
     on_use_self = function(ctx, self, user)

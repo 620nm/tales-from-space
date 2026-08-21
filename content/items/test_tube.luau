@@ -24,6 +24,10 @@ return {
             .. "while the beaker gets on with the next one.",
     },
     capacity_mol = 30 * U,
+    -- tg's test tube: `volume = 30` (cups/_cup.dm:805). Narrow enough
+    -- that a tube of something warm saturates its own headspace in one
+    -- pass and then sits there.
+    volume_ml = 30,
     -- tg's cup default `amount_per_transfer_from_this = 10` (_cup.dm:4),
     -- which is also the beaker's gesture: a pour is a pour whatever it
     -- comes out of.
