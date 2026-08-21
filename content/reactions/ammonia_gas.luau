@@ -20,12 +20,20 @@
 -- anything below about 660 K would mean that making laughing gas
 -- destroyed the ammonia on the way to making it.
 --
--- 700/720/900/920, then: fifty kelvin of clearance over the hottest
--- shipped ammonia work, and eighty under the heater's 1000 K stop, so
--- the gesture is a deliberate dial rather than an accident. This is a
--- DEPARTURE from the effort plan's 330/345/500/520, which assumed the
--- gate only had to clear the shared mixing plateau; it does not, and
--- the n2o path is what proves it.
+-- 700/720, then: fifty kelvin of clearance over the hottest shipped
+-- ammonia work, so the gesture is a deliberate dial rather than an
+-- accident. This is a DEPARTURE from the effort plan's 330/345, which
+-- assumed the gate only had to clear the shared mixing plateau; it does
+-- not, and the n2o path is what proves it.
+--
+-- NO UPPER CUTOFF -- hotter only means faster up to the plateau. An
+-- evaporation has a floor and no ceiling: past the gate, liquid ammonia
+-- leaves as gas at ANY higher temperature. The old 900/920 put a lid on
+-- it eighty kelvin under the heater's own 1000 K stop, and the engine
+-- reads a bell as ZERO above `temp_max`, so a bench dialled all the way
+-- up made nothing whatever. `opt_hi`/`temp_max` are parked at
+-- 5000/10000 because the loader wants `opt_hi < temp_max` and will not
+-- take an infinity; nothing on this station reaches either.
 --
 -- `energy = 0`: the change of substance costs nothing on its own, and
 -- the heat of vaporization is where it belongs, on the nh3 phase curve.
@@ -44,8 +52,8 @@ return {
         bell = {
             temp_min = 700.0,
             opt_lo = 720.0,
-            opt_hi = 900.0,
-            temp_max = 920.0,
+            opt_hi = 5000.0,
+            temp_max = 10000.0,
             exponent = 2.0,
             base_rate = 0.05,
         },

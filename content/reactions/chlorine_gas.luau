@@ -18,12 +18,26 @@
 -- batch of salt boiling off as chlorine gas, which is precisely the
 -- shipped-recipe damage policy D3 exists to prevent.
 --
--- 420/435/500/520, then: nearly forty kelvin of clearance over salt
--- making itself hot, and shut again before nitrous oxide's 525 K window
--- opens, so a vessel on its way to laughing gas never makes this by
--- accident. Much lower than ammonia's gate, and deliberately -- this is
--- the one the game wants a chemist to be able to reach, and the one
+-- 420/435, then: nearly forty kelvin of clearance over salt making
+-- itself hot. Much lower than ammonia's gate, and deliberately -- this
+-- is the one the game wants a chemist to be able to reach, and the one
 -- that hurts when they do.
+--
+-- NO UPPER CUTOFF -- hotter only means faster up to the plateau. This
+-- is a thermal decomposition, not a synthesis with an overheat band:
+-- once the gate is past, chlorine pairs off at ANY higher temperature,
+-- and a bench dialled to the heater's 1000 K stop must make MORE gas
+-- than one at 460 K, never none. It used to say 500/520, which is a
+-- bell the engine reads as ZERO above 520 K, so the most obvious
+-- gesture a chemist has -- turn it all the way up -- was the one that
+-- did nothing at all. `opt_hi`/`temp_max` are parked at 5000/10000
+-- because the loader wants `opt_hi < temp_max` and will not take an
+-- infinity; nothing on this station reaches either.
+--
+-- The old ceiling was justified as keeping a vessel on its way to
+-- nitrous oxide (525-600 K) from making chlorine gas by accident. It
+-- never had to: n2o is made out of AMMONIA, and a beaker holding
+-- ammonia holds no chlorine to lose.
 --
 -- `energy = 0` for ammonia_gas.luau's reason: the heat of vaporization
 -- lives on the cl2 phase curve, and charging it twice would be paying
@@ -43,8 +57,8 @@ return {
         bell = {
             temp_min = 420.0,
             opt_lo = 435.0,
-            opt_hi = 500.0,
-            temp_max = 520.0,
+            opt_hi = 5000.0,
+            temp_max = 10000.0,
             exponent = 2.0,
             base_rate = 0.05,
         },
