@@ -23,6 +23,21 @@ local function amount(handle, key)
     return contents[key] or 0
 end
 
+-- What the SEALED ROOM holds of a gas, over every tile of it. A vessel
+-- standing open breathes its gas phase out into the air
+-- (sim/chemistry/vent.rs), so a recipe whose product is a gas is
+-- counted in the room rather than in the beaker that made it.
+local function room(key)
+    local n = 0
+    for x = 1, 3 do
+        for y = 1, 3 do
+            local gases = t.room_gas(x, y)
+            n = n + ((gases and gases[key]) or 0)
+        end
+    end
+    return n
+end
+
 t.world([==[(
     name: "chem bench",
     legend: {
@@ -158,7 +173,7 @@ t.ui_act(p, "set", '{"field":"temperature","value":800}')
 t.ui_act(p, "toggle", '{"field":"power"}')
 t.run_seconds(90)
 assert(t.holder_k(c) > 777.0, "the chamber got there: " .. t.holder_k(c))
-near(amount(c, "co2"), 0.75, 1e-6, "and three moles of gas for one of carbon")
+near(room("co2"), 0.75, 1e-3, "and three moles of gas for one of carbon, breathed out into the room")
 near(amount(c, "o2"), 0.0, 1e-6, "the oxygen was the limit again")
 near(amount(c, "carbon"), PRESS - 0.25, 1e-6, "the rest of the carbon is still carbon")
 

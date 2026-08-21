@@ -27,6 +27,22 @@ local function amount(handle, key)
     return contents[key] or 0
 end
 
+-- What the SEALED ROOM holds of a gas, over every tile of it. An open
+-- vessel breathes its gas phase into the air (sim/chemistry/vent.rs),
+-- so a recipe whose product is a gas fills the room rather than the
+-- beaker -- and the room is where it has to be counted, because the
+-- air moves between tiles the moment it is there.
+local function room(key)
+    local n = 0
+    for x = 1, 3 do
+        for y = 1, 2 do
+            local gases = t.room_gas(x, y)
+            n = n + ((gases and gases[key]) or 0)
+        end
+    end
+    return n
+end
+
 t.world([==[(
     name: "chem bench",
     legend: {
@@ -126,7 +142,7 @@ near(amount(cold, "ammonia"), PRESS, 1e-6, "and every mole of ammonia is still a
 dial(550)
 t.run_seconds(120)
 near(t.holder_k(cold), 550.0, 25.0, "the chamber took it up to the window")
-near(amount(cold, "n2o"), 0.625, 1e-6, "five of gas for two of ammonia")
+near(room("n2o"), 0.625, 1e-3, "five of gas for two of ammonia, and gas leaves an open beaker")
 near(amount(cold, "o2"), 0.0, 1e-6, "the oxygen was the limit")
 near(amount(cold, "ammonia"), PRESS - 0.25, 1e-6, "and the ammonia is down by two extents")
 
@@ -172,5 +188,5 @@ dock(heater, 3, 1)
 panel(heater, 3, 1)
 dial(550)
 t.run_seconds(150)
-assert(amount(hot, "n2o") > 0.0, "coming down into the window works as well as up")
+assert(room("n2o") > 0.625, "coming down into the window works as well as up")
 near(amount(hot, "o2"), 0.0, 1e-6, "and it spends the oxygen it would not touch at 650")
