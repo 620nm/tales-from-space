@@ -58,8 +58,17 @@ return {
         device = "dispenser",
         -- tg's `amount = 30` (chem_dispenser.dm:18) through the
         -- documented unit bridge of 1 u = 0.025 mol: 0.75 mol, which is
-        -- three fifths of a beaker.
+        -- three fifths of a beaker. The dial's OPENING position: the
+        -- panel can turn it, and this is where it starts.
         dispense_mol = 0.75,
+        -- The dial itself. One tg unit at the bottom and one tg unit a
+        -- notch, because a whole unit is the smallest amount tg's own
+        -- interface can ask for; a beaker's 50 u at the top, because
+        -- the vessel is the honest ceiling on a single press and
+        -- anything past it would be trimmed at the brim anyway.
+        dispense_min = 0.025,
+        dispense_max = 1.25,
+        dispense_step = 0.025,
         dispenses = {
             { key = "hydrogen", name = "hydrogen" },
             { key = "carbon", name = "carbon" },
