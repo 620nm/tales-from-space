@@ -1,0 +1,13 @@
+// Whole pictures the shell shows at their authored size, never tiles.
+//
+// A name here is an engine asset key the client asks for by hand, not a
+// sprite the wire can name; the path is relative to the tgstation
+// checkout's root (unlike sounds.ron, which is relative to `sound/`)
+// because these come from wherever tg keeps them rather than from one
+// media directory. Every source is a single-cell `.dmi` and is decoded,
+// re-encoded as PNG and published by digest like everything else
+// (docs/ASSETS.md §6.1).
+[
+    // tg's title screen, behind the main menu.
+    ("menu_bg", "icons/runtime/default_title.dmi"),
+]
