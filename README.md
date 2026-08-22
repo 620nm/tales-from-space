@@ -11,7 +11,7 @@ engine's test fixtures no longer lean on it.
 
 | Directory        | Contents |
 | ---------------- | -------- |
-| `content/`       | The mod itself: `items/`, `jobs/`, `gamemodes/`, `fixtures/`, `substances/`, `reactions/` (`.luau` files returning prototype tables, with optional behavior hooks), plus `tuning.luau` feel knobs. |
+| `content/`       | The mod itself: `items/`, `jobs/`, `bodies/`, `gamemodes/`, `fixtures/`, `substances/`, `reactions/` (`.luau` files returning prototype tables, with optional behavior hooks), plus `tuning.luau` feel knobs. |
 | `maps/`          | Station maps as RON (`chillstation.ron` is the default; `outpost.ron` is the test/demo map). |
 | `assets/`        | Sprite, sound and whole-picture source manifests consumed by `cargo run -p xtask -- bake-atlas`. |
 | `tests/`         | Luau specs (`*_test.luau`) run by the engine's spec runner; `tests/maps/` holds purpose-built spec maps. |
@@ -31,9 +31,13 @@ cargo run -p lunatic-server -- tfs/maps/outpost.ron --content tfs/content
 - `docs/SCRIPTING.md` is the ratified v1 content contract (anchors,
   handler kinds, transactions). It is the destination, not yet the runtime.
 - `docs/LUAU-API.md` documents the as-built v0 surface these files use
-  today: seven hooks (`on_interact`, `on_use`, `on_bump`, `on_attack`,
-  `on_mob_life`, `on_use_self`, `on_pull`) and the `ctx` query/effect
-  table.
+  today: thirteen hooks (`on_interact`, `on_use`, `on_bump`,
+  `on_attack`, `on_mob_life`, `on_use_self`, `on_pull`,
+  `on_throw_land`, `on_rupture`, `on_life_state`, `on_threshold`,
+  `on_seated`, `on_unseated`) and the `ctx` query/effect table.
+- `docs/BIOLOGY.md` is what a body IS: `content/bodies/*.luau` plans,
+  the `part` and `organ` blocks on items, and the capacity formulas that
+  decide what a crewman can do.
 - `content/tuning.luau` overrides engine feel constants; the engine's
   compiled defaults are the values its tests pin.
 - `docs/GAMEMODES.md` defines the Space Station/Free Build split and the
@@ -84,7 +88,7 @@ no direct spawn in `t`, and none should ever be added.
 | Clock | `t.now()`, `t.tick()`, `t.run_ticks(n)`, `t.run_seconds(s)` |
 | Verbs | `t.click(p, x, y [, target])` (target = the entity the client's hit-test named, from `t.target_at`; omitted = a click that landed on the ground), `t.throw(p, x, y [, target])` (the same click while throw mode is armed: the active hand's item flies at that tile), `t.move(p, dir)`, `t.say(p, text)`, `t.drop(p)`, `t.equip(p)`, `t.unequip(p, slot)` (a worn slot off into a free hand), `t.swap_hands(p)`, `t.use_self(p)`, `t.use_on_other(p)` (the active hand's item used on the item in the other hand),  `t.rotate(p, x, y, target, clockwise)`, `t.pull(p, x, y, target)` (ctrl+click: take hold of a loose thing and drag it), `t.stop_pull(p)`, `t.ui_act(p, act [, payload])`, `t.ui_close(p)` |
 | Looking | `t.examine(p, x, y [, target])` (shift+click; omitted target = the ground, which examines the turf), `t.examine_held(p [, hand])`, `t.examine_worn(p, slot)`, `t.examine_stored(p, slot, index)` (1-based, as `t.take_from` counts), `t.examine_held_stored(p, index [, hand])` (0-based, as `t.take_held` counts) — each answers `{ title, sprite, lines, spans }`, or **nil** for every refusal there is (out of view, a forged claim, an empty slot, a spent throttle). `lines` are flat finished sentences; `spans[i]` is the same line uncollapsed into `{ text, color = "#RRGGBB" \| nil }` runs, so a spec can assert which words wear a substance's colour |
-| Body | `t.pos(p) -> x, y`, `t.health(p) -> {brute, oxy, tox, state}`, `t.set_health(p, fields)`, `t.blood_moles(p)`, `t.blood(p) -> {<key> = moles}` (what is in a bloodstream, phase-collapsed — `t.contents` for a body), `t.sprite(p)`, `t.hands(p) -> {[1], [2], active, held}`, `t.worn(p) -> {id, uniform, suit, belt, back, mask}`, `t.stored(p, slot)` (what a worn container holds, in storage order) |
+| Body | `t.pos(p) -> x, y`, `t.body(p) -> {plan, state, conscious, posture, health, oxy, tox, blood}`, `t.parts(p) -> {[zone] = {zone, label, brute, burn, max, efficiency, present, bleeding, tags, states, organs, socket_tags}}` (an empty socket answers `false`, never a raw handle), `t.capacity(p, id)` (nil for a capacity the plan lacks), `t.organ_damage(p, socket)` (nil for an empty socket), `t.health(p) -> {brute, burn, oxy, tox, health, state}` (`brute` is Σ part brute + body brute; `health` is what `crit_at` and `dead_at` are compared against), `t.set_health(p, fields)` (a PRECONDITION setter, never a verb: it routes through the damage seam, lands zone-less channels on the plan's `default_zone`, and always re-evaluates), `t.blood_moles(p)`, `t.blood(p) -> {<key> = moles}` (what is in a bloodstream, phase-collapsed — `t.contents` for a body), `t.sprite(p)`, `t.hands(p) -> {[1], [2], active, held}`, `t.worn(p) -> {id, uniform, suit, belt, back, mask}`, `t.stored(p, slot)` (what a worn container holds, in storage order) |
 | Tile | `t.turf(x, y)`, `t.is_breached(x, y)`, `t.items_at(x, y)`, `t.target_at(x, y, id)`, `t.count_items(id)`, `t.door_at(x, y) -> {open, powered}` |
 | Atmos | `t.pipe(x, y)`, `t.pipe_pressure(x, y [, layer])`, `t.pipe_temperature(x, y [, layer])`, `t.pipe_energy(x, y [, layer])`, `t.pipe_gas(x, y [, layer]) -> {<key> = moles}`, `t.room_pressure(x, y)`, `t.room_gas(x, y) -> {<key> = moles}`, `t.canister_pressure(x, y)`, `t.tank_pressure(x, y)`, `t.tank_gas(x, y) -> {<key> = moles}`, `t.deck(x, y) -> {capacity, temperature, energy}` (the solid mass a room stands on — J/K, K, J; every deck is finite, plating included), `t.wind(x, y) -> east, north` (what the air over a tile is doing, m/s on the map's axes; a wall answers 0, 0). Three PRECONDITION setters stand beside them, never assertions: `t.heat_pipe(x, y, joules [, layer])`, `t.foul_room(x, y, gas, moles)` and `t.charge_vessel(x, y, gas, kpa)` (gas into the canister or reservoir on a tile, to a pressure — the only way to reach the ratings a vessel fails at, since no pump on the station gets near them) |
 | Vessels | `t.vessel(handle) -> {pressure_kpa, temp_k, volume_l, headspace_l, sealed, moles, contents = {<key> = {solid, liquid, gas}}}` — the whole reading of anything with an inside (beaker, bloodstream, tank, canister, reservoir), nil for anything else, and the same answer content's `ctx.vessel` gets; a phase nothing is standing in is absent rather than zero. The single numbers beside it: `t.contents(handle) -> {<key> = moles}` (phase-collapsed), `t.holder_k(handle)`, `t.holder_kpa(handle)` |
