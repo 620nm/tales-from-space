@@ -4,7 +4,7 @@
 --
 -- Three reactants and no gate at all, which is the point: the engine's
 -- conservation clamp takes the extent as the MINIMUM of what every
--- reactant can supply (docs/matter.md, section 6), so a beaker holding
+-- reactant can supply (docs/MATTER.md, section 6), so a beaker holding
 -- any two of the three does nothing whatsoever and needs no rule
 -- saying so. The spec that watches the pairs stay inert is watching
 -- that clamp.

@@ -30,13 +30,13 @@ cargo run -p lunatic-server -- tfs/maps/outpost.ron --content tfs/content
 
 - `docs/SCRIPTING.md` is the ratified v1 content contract (anchors,
   handler kinds, transactions). It is the destination, not yet the runtime.
-- `docs/luau-api.md` documents the as-built v0 surface these files use
+- `docs/LUAU-API.md` documents the as-built v0 surface these files use
   today: seven hooks (`on_interact`, `on_use`, `on_bump`, `on_attack`,
   `on_mob_life`, `on_use_self`, `on_pull`) and the `ctx` query/effect
   table.
 - `content/tuning.luau` overrides engine feel constants; the engine's
   compiled defaults are the values its tests pin.
-- `docs/gamemodes.md` defines the Space Station/Free Build split and the
+- `docs/GAMEMODES.md` defines the Space Station/Free Build split and the
   `content/gamemodes/*.luau` policy schema.
 
 ## Specs

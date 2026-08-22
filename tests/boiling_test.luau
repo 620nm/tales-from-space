@@ -1,7 +1,7 @@
 -- Boil a beaker dry: what leaves the glass ends up in the room.
 --
 -- The chamber holds the vessel over water's boil, the phase step turns
--- the water to vapour inside the beaker (docs/reagents.md), and the
+-- the water to vapour inside the beaker (docs/CHEMISTRY.md), and the
 -- beaker is OPEN -- so the vapour goes where an open vessel's gas phase
 -- goes now, which is the air over the tile it is standing in
 -- (sim/chemistry/vent.rs). Before that pass existed the vapour stayed

@@ -204,7 +204,7 @@ near(
 
 -- Both acts are on the record, against the PLAYER, and the roster act
 -- says WHICH gas -- which is what the settings contract's `option`
--- carries (docs/tgui.md).
+-- carries (docs/TGUI.md).
 assert(t.ledger_has("MachineToggled", "power", "Player"), "switching it on is an attributed act")
 assert(t.ledger_has("MachineToggled", "filter", "o2", "Player"), "so is selecting a gas")
 

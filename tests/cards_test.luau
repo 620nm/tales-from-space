@@ -5,7 +5,7 @@
 -- that a deck is a DECK -- fifty-four distinct cards, dealt without
 -- repeats, in an order fixed by a shuffle nobody can see, out of a
 -- string the engine stores and cannot read (`ctx.set_var`/`ctx.var`,
--- docs/luau-api.md). Every earlier per-instance fact in this pack is a
+-- docs/LUAU-API.md). Every earlier per-instance fact in this pack is a
 -- number the prototype enumerated; this one is not, and the way to
 -- prove the difference is to deal the whole deck and count.
 --

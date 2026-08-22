@@ -5,7 +5,7 @@
 -- two of them, which is what makes it the gate the specs watch.
 --
 -- Fictional, so the numbers are the shelf's convention: a plausible
--- mass and the flat 100 J/mol/K (docs/reagents.md, D2).
+-- mass and the flat 100 J/mol/K (docs/CHEMISTRY.md, D2).
 -- tg: /datum/reagent/thermite (pyrotechnic_reagents.dm:2).
 return {
     id = "thermite",

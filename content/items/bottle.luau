@@ -3,7 +3,7 @@
 -- mix in and a bottle is what you put on a shelf afterwards.
 --
 -- Capacity is tg's `volume = 50` at the documented bridge of
--- 1 u = 0.025 mol (docs/reagents.md); the picture and the fill prefix
+-- 1 u = 0.025 mol (docs/CHEMISTRY.md); the picture and the fill prefix
 -- are both tg's `bottle` (bottle.dm:6-7; `volume = 50` at :12,
 -- `fill_icon_thresholds` at :13).
 --

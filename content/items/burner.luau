@@ -40,7 +40,7 @@ return {
     flame = true,
     -- tg's `max_volume = 50` and `add_reagent(ethanol, 15)` on spawn
     -- (items.dm:164-172), through the documented bridge of 1 u = 0.025
-    -- mol (docs/reagents.md).
+    -- mol (docs/CHEMISTRY.md).
     capacity_mol = 50 * U,
     volume_ml = 50,
     -- A LID, and the first thing in the tree to wear one. tg's burner

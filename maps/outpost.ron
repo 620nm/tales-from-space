@@ -1,6 +1,6 @@
 // Outpost Zero: the M0 test station. Four rooms around a central corridor,
 // one exterior airlock opening to space at the bottom of the corridor.
-// M6 wired it (docs/power.md): red feeder ring from the Engineering
+// M6 wired it (docs/POWER.md): red feeder ring from the Engineering
 // generator/SMES to every APC (running under four doors as direct
 // taps), yellow branch circuits from each APC to its room's lights,
 // outlets, and door feeds.

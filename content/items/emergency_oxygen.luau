@@ -17,8 +17,8 @@
 
 -- tg tanks.dm:159, and the whole of what a tank tells you: what the
 -- gauge on it reads, rounded the way tg rounds it. There is no examine
--- hook in the v0 surface (docs/luau-api.md lists seven, and examine is
--- not one), so the readout rides the gesture that already reaches for
+-- hook in the v0 surface (docs/LUAU-API.md §4 lists the eight, and
+-- examine is not one), so the readout rides the gesture that reaches for
 -- the tank -- which is honest either way round, because content is not
 -- told whether the valve it asked for actually opened.
 local function gauge(ctx, self, user)

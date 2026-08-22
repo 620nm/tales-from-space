@@ -1,6 +1,6 @@
 -- Steam, for its LOOK only. The twin of plasma.luau, and the same
 -- mechanism: a builtin's physics stay in the engine registry (I9,
--- docs/reagents.md) and its colour comes from here.
+-- docs/CHEMISTRY.md) and its colour comes from here.
 --
 -- `water_vapor` is the humidity gas a plasma fire makes -- distinct
 -- from the gas phase of `water`, which is what a boiled beaker gives

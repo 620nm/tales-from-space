@@ -1,4 +1,4 @@
--- Gameplay-feel constants, tunable to taste (docs/power.md). Missing
+-- Gameplay-feel constants, tunable to taste (docs/POWER.md). Missing
 -- fields fall back to the engine's hard-coded defaults — and the test
 -- suite pins THOSE defaults, so tuning here never breaks tests.
 return {

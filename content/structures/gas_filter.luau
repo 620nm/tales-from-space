@@ -66,7 +66,7 @@ return {
     -- The round trip, exactly as the connector port's is: a fitting
     -- goes down and a wrench stands the machine up as the centre
     -- section between the neighbouring runs
-    -- (docs/construction.md, "The fitting round trip").
+    -- (docs/CONSTRUCTION.md, "Fittings, portables, and the round trip").
     build = {
         on = { "floor", "plating" },
         from_item = "gas_filter_fitting",

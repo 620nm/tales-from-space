@@ -82,7 +82,7 @@ end
 --
 -- The negative first, and it is doing two jobs. One: nothing in this
 -- engine warms or cools a room on its own -- there is no wall to
--- conduct into (a wall is the ABSENCE of a cell, docs/matter.md §7),
+-- conduct into (a wall is the ABSENCE of a cell, docs/MATTER.md §7),
 -- no boundary cell to drain to on a fully walled map, and no reaction
 -- with anything to react. Six tiles of standard air left alone for two
 -- minutes read the same number, to the hundredth, that they opened at.

@@ -5,7 +5,7 @@
 -- but INERT: real salt melts at 1074 K, which no bench reaches and
 -- which would make a bell that already runs at room temperature answer
 -- a question nobody asked. Feel wins; recorded as a deliberate
--- departure in docs/reagents.md, D2.
+-- departure in docs/CHEMISTRY.md, D2.
 -- tg: /datum/reagent/consumable/salt (food_reagents.dm:508).
 return {
     id = "salt",

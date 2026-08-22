@@ -22,7 +22,7 @@
 -- dispenser hands you a fitting already set. Ours hands you the fitting
 -- and the RPD is where the settings live (items/rpd.luau). tg's own
 -- flip toggle is likewise absent — a flipped trinary is a second
--- fitting here (docs/construction.md, "the trinaries"), which is why
+-- fitting here (docs/CONSTRUCTION.md, "Fittings, portables, and the round trip"), which is why
 -- both mirror images are on the shelf.
 --
 -- The tab ORDER is alphabetical rather than tg's, because the engine

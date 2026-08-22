@@ -3,7 +3,7 @@
 -- chemist's bench looks like.
 --
 -- Capacity is tg's `volume = 30` at the documented bridge of
--- 1 u = 0.025 mol (docs/reagents.md). The picture is tg's `test_tube`
+-- 1 u = 0.025 mol (docs/CHEMISTRY.md). The picture is tg's `test_tube`
 -- and the fill ladder is its `fill_icon_state = "tube"`, which is why
 -- the two names differ: the glass comes off the chemistry sheet and
 -- the level off the fillings sheet (_cup.dm:797-806; `volume = 30`

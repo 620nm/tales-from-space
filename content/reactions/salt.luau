@@ -1,7 +1,7 @@
 -- Sodium chloride. tg: `/datum/chemical_reaction/sodiumchloride`,
 -- 2 salt from 1 sodium + 1 chlorine, thermic_constant 50
 -- (recipes/others.dm:44-48). The ratios are tg's units read as moles,
--- which is what the unit bridge buys (docs/reagents.md).
+-- which is what the unit bridge buys (docs/CHEMISTRY.md).
 --
 -- tg says nothing about temperature, so this gets the shared MIXING
 -- BELL: 100/280/900/1000, which is tg's default window with the
@@ -13,7 +13,7 @@
 --   50 x 2 x 75.3 = 7530 J per extent
 -- On a full 50 u beaker of 30 u water and 10 u each of the halves that
 -- is about +23 K, against tg's +20 K -- the worked check in
--- docs/reagents.md.
+-- docs/CHEMISTRY.md.
 return {
     id = "salt",
     reactants = { sodium = 1.0, chlorine = 1.0 },

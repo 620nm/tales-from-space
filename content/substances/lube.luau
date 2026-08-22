@@ -5,7 +5,7 @@
 -- one that proves the two rosters are the same roster.
 --
 -- Fictional, so the numbers are the shelf's convention: a plausible
--- silicone mass and the flat 100 J/mol/K (docs/reagents.md, D2).
+-- silicone mass and the flat 100 J/mol/K (docs/CHEMISTRY.md, D2).
 -- tg: /datum/reagent/lube (other_reagents.dm:547).
 return {
     id = "lube",

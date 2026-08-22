@@ -55,7 +55,7 @@
 --
 -- Prices are likewise absent everywhere in this pack: tg charges
 -- PAYCHECK_CREW for this machine's stock and the window's `price` and
--- `free` fields are shimmed (docs/tgui.md's reuse filter — adopt the
+-- `free` fields are shimmed (docs/TGUI.md's reuse filter — adopt the
 -- data contract, not the dead economy).
 return {
     id = "games_vendor",

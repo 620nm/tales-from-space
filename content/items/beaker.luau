@@ -1,6 +1,6 @@
 -- The bare beaker: empty off the shelf, and the vessel everything else
 -- on a chem bench is poured into. Capacity is the 50-unit beaker at the
--- documented bridge of 1 u = 0.025 mol (docs/reagents.md).
+-- documented bridge of 1 u = 0.025 mol (docs/CHEMISTRY.md).
 --
 -- Three gestures, all of them one click with it in your active hand:
 -- your own tile is a swig, another vessel within reach is a pour, and

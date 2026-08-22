@@ -4,7 +4,7 @@
 -- chemistry and pretending otherwise would rebalance every one of them
 -- -- and the physics is the ELEMENT's: one atom's molar mass, and a
 -- Dulong-Petit specific heat where nothing memorable is on record.
--- docs/reagents.md, D2.
+-- docs/CHEMISTRY.md, D2.
 -- tg: /datum/reagent/hydrogen (other_reagents.dm:1028).
 return {
     id = "hydrogen",

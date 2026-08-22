@@ -2,7 +2,7 @@
 
 Mechanics (layout, running, spec commands) live in `tfs/README.md`.
 Contracts: `docs/SCRIPTING.md` is the ratified v1 destination;
-`docs/luau-api.md` is the as-built v0 surface these files use today.
+`docs/LUAU-API.md` is the as-built v0 surface these files use today.
 
 - Content is the default home for game ideas: nouns (prototypes, rosters,
   constants, ids, maps, manifests) are data here; verbs at discrete event
@@ -21,6 +21,6 @@ Contracts: `docs/SCRIPTING.md` is the ratified v1 destination;
   (the Luau twin of Rust's raw-string trap).
 - `content/tuning.luau` overrides engine feel constants; the engine's
   compiled defaults are what its tests pin.
-- tg UI reuse filter (docs/tgui.md): adopt a tg window's data contract
+- tg UI reuse filter (docs/TGUI.md): adopt a tg window's data contract
   only where the window itself is good; dead-economy shim fields mean a
   small native window instead.

@@ -570,7 +570,7 @@ assert(
         .. room_before .. " -> " .. t.room_pressure(3, 1)
 )
 -- -- and the fitting lands at the BUILDER's feet rather than on the
--- machine's tile (docs/construction.md), which is why this counts the
+-- machine's tile (docs/CONSTRUCTION.md), which is why this counts the
 -- world rather than one tile.
 assert(
     t.count_items("temperature_pump_fitting") == 1,

@@ -1,7 +1,7 @@
 -- The door between the bench's ammonia and the real one: warm liquid
 -- ammonia past 700 K and it becomes `nh3`, as GAS.
 --
--- This is the whole of policy D3 in one file (docs/reagents.md). The
+-- This is the whole of policy D3 in one file (docs/CHEMISTRY.md). The
 -- reagent `ammonia` is a room-temperature liquid because tg's is and
 -- because nitrous oxide is made out of it; `nh3` is the molecule with
 -- a real phase curve, which boils at 239.8 K and therefore cannot sit

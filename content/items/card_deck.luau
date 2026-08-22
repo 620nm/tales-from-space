@@ -8,7 +8,7 @@
 -- inside a thing nobody can see, minted at roundstart on every table on
 -- the station, to model a fact that is one string.
 --
--- SO THE DECK IS A STRING. `ctx.set_var`/`ctx.var` (docs/luau-api.md,
+-- SO THE DECK IS A STRING. `ctx.set_var`/`ctx.var` (docs/LUAU-API.md,
 -- script vars) keep one key on this item: `order`, the faces still in
 -- it, top first, comma separated. The engine stores it, bounds it,
 -- drops it with the deck and ledgers every change, and cannot read a
@@ -28,7 +28,7 @@
 -- held item already owns, and they happen to fit better:
 --   * on_use_self -- shuffle. The in-hand key, whose whole definition
 --     is that "the only thing it can possibly act on is the item in
---     your own hand" (docs/luau-api.md). Squaring up a deck is that.
+--     your own hand" (docs/LUAU-API.md). Squaring up a deck is that.
 --   * on_use -- deal one card, face down, onto the tile you clicked.
 --     tg deals into a hand or at a mob; pointing at the table is
 --     better, and it is the only form this engine can express, since
@@ -147,7 +147,7 @@ return {
     -- A click that NAMES a card is the deck's business rather than a
     -- pickup of the card -- tg's `interact_with_atom` half of the
     -- chain, and the flag that lets `on_use` below see an item target
-    -- at all (docs/luau-api.md). Everything that is not a card still
+    -- at all (docs/LUAU-API.md). Everything that is not a card still
     -- falls through, so a deck in hand never became a thing that
     -- swallows every click made while holding one.
     acts_on_items = true,
@@ -198,7 +198,7 @@ return {
         -- deck.dm via tables_racks.dm:375-384). It deals rather than
         -- putting the deck down because a hook that answers a click
         -- keeps it -- the engine's surface placement is the LAST thing
-        -- a click can mean (docs/luau-api.md), which is exactly tg's
+        -- a click can mean (docs/LUAU-API.md), which is exactly tg's
         -- order. Putting the DECK itself down is the drop verb, as it
         -- is for everything else in a hand.
         -- A click that named a CARD is tg's recycle, run from the

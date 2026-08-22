@@ -18,7 +18,7 @@ return {
         -- One whole sentence per message, the name passed as an
         -- argument rather than glued on with `..`: a fragment joined in
         -- content is a fragment no catalog can decline
-        -- (docs/localization.md §5). ctx has no msg(key, args) yet, so
+        -- (docs/LOCALIZATION.md §5). ctx has no msg(key, args) yet, so
         -- the frame still lives here; when it does, these two calls
         -- become keys and the arguments are already the arguments.
         ctx.system_msg(user, string.format("You rob %s with the toolbox!", ctx.name(target)))
