@@ -11,7 +11,7 @@ engine's test fixtures no longer lean on it.
 
 | Directory        | Contents |
 | ---------------- | -------- |
-| `content/`       | The mod itself: `items/`, `jobs/`, `gamemodes/`, `fixtures/`, `substances/`, `reactions/` (`.luau` files returning prototype tables, with optional behavior hooks), plus `tuning.luau` feel knobs. |
+| `content/`       | The mod itself: `items/`, `jobs/`, `gamemodes/`, `fixtures/`, `substances/`, `reactions/`, `air/` (`.luau` files returning prototype tables, with optional behavior hooks), plus `tuning.luau` feel knobs. |
 | `maps/`          | Station maps as RON (`chillstation.ron` is the default; `outpost.ron` is the test/demo map). |
 | `assets/`        | Sprite, sound and whole-picture source manifests consumed by `cargo run -p xtask -- bake-atlas`. |
 | `tests/`         | Luau specs (`*_test.luau`) run by the engine's spec runner; `tests/maps/` holds purpose-built spec maps. |
@@ -36,6 +36,11 @@ cargo run -p lunatic-server -- tfs/maps/outpost.ron --content tfs/content
   table.
 - `content/tuning.luau` overrides engine feel constants; the engine's
   compiled defaults are the values its tests pin.
+- `content/air/*.luau` are the air recipes a mapper paints rooms with
+  (`{ id, name, gases = { {key, moles} }, temperature_k }`,
+  docs/ATMOS.md §11). Required content like every other roster; they are
+  DEFAULTS the map editor copies into a map, never state — the sim seeds
+  every tile from the map's own presets.
 - `docs/GAMEMODES.md` defines the Space Station/Free Build split and the
   `content/gamemodes/*.luau` policy schema.
 
