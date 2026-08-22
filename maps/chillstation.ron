@@ -446,10 +446,10 @@
         // keeps its own tile's valid layer-4 crossing intact.
         (19, 25, "connector_port"),
         // ---- the tank annex --------------------------------------
-        // Seven stationary reservoirs, one per gas this shift's
-        // chemistry defines, each filled by the PLACEMENT rather than by
-        // a prototype of its own -- tg ships twenty /tank/<gas> subtypes
-        // and this map ships none. 23 000 kPa is tg's
+        // Seven stationary reservoirs, one per substance this shift's
+        // atmospherics runs on, each filled by the PLACEMENT rather than
+        // by a prototype of its own -- tg ships twenty /tank/<gas>
+        // subtypes and this map ships none. 23 000 kPa is tg's
         // `starting_pressure_percent = 0.5` of the 46 000 kPa rating
         // (tank.dm:39, 43).
         //
@@ -463,7 +463,28 @@
         (6, 28, "stationary_tank", "anchored", ("n2", 23000.0)),
         (8, 28, "stationary_tank", "anchored", ("co2", 23000.0)),
         (10, 28, "stationary_tank", "anchored", ("plasma", 23000.0)),
-        (12, 28, "stationary_tank", "anchored", ("water_vapor", 23000.0)),
+        // The fifth is the WATER reservoir, and it is the odd one in the
+        // row because water is the one substance here with a liquid
+        // phase: there is no `water_vapor` to bottle, only water, which
+        // at annex temperature belongs in the bottom of the tank rather
+        // than hanging in it.
+        //
+        // A fill names a PRESSURE at T20C and the moles follow from
+        // PV = nRT, so the arithmetic runs backwards from how full the
+        // shell should be:
+        //   half of 2 500 L of liquid = 1 250 L = 1 250 kg,
+        //   1 250 000 g / 18.015 g/mol = 69 386 mol -- call it 69 000;
+        //   69 000 x 8.314 x 293.15 / 2.5 m^3 = 67.27e6 Pa.
+        // Hence 67 268 kPa, which is 69 000 mol, which is 1 243 L of
+        // water once it has condensed: a tank a bit under half full,
+        // with damp air over it.
+        //
+        // Plumb this one into a warm room and it RAINS -- the water
+        // leaves as vapour, crosses the dew point on the far side, and
+        // lands on the deck. That is the intended experiment, and it is
+        // why this tank stands at the east end of the row, on the side
+        // the corridor door is on.
+        (12, 28, "stationary_tank", "anchored", ("water", 67268.0)),
         (5, 33, "stationary_tank", "anchored", ("tritium", 23000.0)),
         (7, 33, "stationary_tank", "anchored", ("n2o", 23000.0)),
         // The temperature control unit, on the machine tile the annex
