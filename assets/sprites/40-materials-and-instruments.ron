@@ -31,6 +31,10 @@
         ("glass", Dmi("@stack_objects", "sheet-glass", 0)),
         ("rglass", Dmi("@stack_objects", "sheet-rglass", 0)),
         ("rods", Dmi("@stack_objects", "rods", 0)),
+        // Plasteel wears tg's own single-sheet state (sheet_types.dm:313)
+        // rather than metal's three-high pile, which is simply the
+        // icon_state each entry names for itself.
+        ("plasteel", Dmi("@stack_objects", "sheet-plasteel", 0)),
         ("grille", Dmi("@structures", "grille", 0)),
         ("window", Dmi("@window", "window-0", 0)),
         ("rwindow", Dmi("@reinforced_window", "reinforced_window-0", 0)),
