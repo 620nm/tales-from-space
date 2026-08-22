@@ -6,9 +6,22 @@ return {
     -- through walls; closed doors count as walls). Engine default: 6.
     cord_range = 6,
 
-    -- Net gas flow across a tile edge per atmos tick (moles) above
-    -- which decompression wind drags loose things and mobs downwind.
-    -- Engine default: 1.0 (a venting room gusts along its whole
-    -- length; ordinary door equalization stays still).
-    wind_threshold_mol = 1.0,
+    -- Dynamic pressure of the wind over a tile (Pa) above which loose
+    -- items slide one tile downwind, and above which a body is dragged
+    -- off its feet. q = 1/2 rho v^2 off that tile's own air, so a
+    -- vented room stops pushing on its own -- nothing switches the wind
+    -- off, it runs out. Drag sits UNDER slide: a body standing up in
+    -- the airstream is a sail, a toolbox on the deck is a brick. Engine
+    -- defaults: 0.002 and 0.0008 (a venting corridor takes both; a
+    -- crewman's own wake takes neither).
+    wind_slide_pa = 0.002,
+    wind_drag_pa = 0.0008,
+
+    -- How much air (m/s) a body pushes ahead of it per step it walks,
+    -- and the fraction of that a thrown thing pushes. This is what
+    -- makes a crowded room mix faster than an empty one. Engine
+    -- defaults: 0.02 and 0.01 -- calibrated so a walker's wake stays
+    -- under both thresholds above (docs/MATTER.md §13).
+    stir_mob_mps = 0.02,
+    stir_throw_scale = 0.01,
 }
