@@ -7,5 +7,6 @@ return {
     id = "volume_pump_fitting",
     name = "volumetric gas pump fitting",
     sprite = "volume_pump_loose",
+    category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
 }
