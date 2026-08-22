@@ -105,10 +105,10 @@ return {
             end
         end
         -- The run under an open deck. Buried pipe is pipe you cannot
-        -- see, and an instrument that reads through plating would be
-        -- reading by memory (the rule the painter and the pipe wrench
-        -- both keep).
-        if ctx.turf(x, y) == "plating" and ctx.pipe(x, y) ~= 0 then
+        -- see, and an instrument that read through a finished floor
+        -- would be reading by memory (the rule the painter and the pipe
+        -- wrench both keep).
+        if ctx.subfloor_exposed(x, y) and ctx.pipe(x, y) ~= 0 then
             local pipe = ctx.air_sample(x, y, "pipe")
             if pipe then
                 ctx.sound("click", x, y)

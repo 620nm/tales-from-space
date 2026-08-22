@@ -60,11 +60,11 @@ return {
         ctx.system_msg(user, "Pipe painter set to " .. COLORS[next_index + 1].name .. ".")
     end,
     on_use = function(ctx, self, user, x, y)
-        -- Pipe lives under the deck, so a run you have not opened the
-        -- floor over is a run you cannot see -- and painting by memory
-        -- is how a technician cuts the wrong main. Asked first, so
-        -- every covered tile answers the same way.
-        if ctx.turf(x, y) ~= "plating" then
+        -- Pipe lives under the deck, so a run under a covered one is a
+        -- run you cannot see -- and painting by memory is how a
+        -- technician cuts the wrong main. Asked first, so every covered
+        -- tile answers the same way.
+        if not ctx.subfloor_exposed(x, y) then
             ctx.system_msg(user, "The floor is in the way. Pry the tile up first.")
             return
         end

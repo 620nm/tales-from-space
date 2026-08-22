@@ -45,8 +45,9 @@ return {
     acts_on_items = true,
     on_use = function(ctx, self, user, x, y, _, target)
         -- Asked before the pipe question, so a covered tile answers the
-        -- same whether or not anything runs under it.
-        if ctx.turf(x, y) ~= "plating" then
+        -- same whether or not anything runs under it. The deck being
+        -- OPEN is the question, not the turf's name.
+        if not ctx.subfloor_exposed(x, y) then
             return "pass"
         end
         if target ~= nil and target.kind == "item" then
