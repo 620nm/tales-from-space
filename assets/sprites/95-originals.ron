@@ -16,5 +16,17 @@
         ("soap_bar", Png("soap.png")),
         ("soap_wet", Ase("soap.aseprite", "idle")),
         ("soap_bubbles", AseAnim("soap.aseprite", "bubbles")),
+
+        // The drifting mark the gas overlay wears when the air over a
+        // tile is moving (protocol v46). It is an EFFECT, not a thing:
+        // no content names it, the renderer looks it up once at boot
+        // beside `white`, and a bake without it simply draws no
+        // streaks. Deliberately soft and untinted white — it is
+        // multiplied by whatever colour the gas already is.
+        //
+        // The FILE sorts under `fx/`; the NAME cannot, because a
+        // logical name becomes a vending CSS class and the baker holds
+        // every one of them to `[A-Za-z0-9_-]`.
+        ("wind_streak", Png("fx/wind_streak.png")),
     ],
 )

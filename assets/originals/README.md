@@ -42,3 +42,11 @@ a bake that never happened.
   beside the tgstation-derived sprites. The `.aseprite` carries `idle`
   (the bar alone) and `bubbles` (three frames, bubbles drifting up).
   Written by hand, pixel by pixel, not converted from anything.
+- `fx/wind_streak.png` — one soft white horizontal streak on a clear
+  field, fading to nothing at both ends. The gas overlay lays it over a
+  tile whose air is moving, turned to point down the wind and sliding
+  along it; the fade at the ends is what hides the seam where the slide
+  wraps. Untinted white on purpose: it is multiplied by whatever colour
+  the gas under it already is. Effects sort under `fx/`; the logical
+  name it bakes to is flat (`wind_streak`), because a baked name also
+  becomes a vending CSS class.
