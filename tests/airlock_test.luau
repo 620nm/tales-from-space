@@ -63,18 +63,6 @@ local function walk_east(p, n)
     end
 end
 
--- A click TOGGLES an airlock, so "hold it open" means click it only
--- when it has shut itself. This is a crewman keeping their hand on the
--- door while the chamber empties, nothing more.
-local function hold_open(p, x, y, rounds)
-    for _ = 1, rounds do
-        if not t.door_at(x, y).open then
-            t.click(p, x, y, t.target_at(x, y))
-        end
-        t.run_ticks(10)
-    end
-end
-
 local function step_into_the_chamber(p)
     walk_east(p, 4) -- across the room, then bump the inner airlock open
     -- A door SWINGS now (tg's airlock takes 0.6s to cycle): the bump
@@ -117,7 +105,17 @@ assert(t.door_at(7, 2).open, "the outer airlock opened")
 -- Held open past its autoclose while the chamber empties. Three tiles
 -- of one atmosphere take a while to leave through one doorway, which
 -- is itself the reason a vestibule works.
-hold_open(p, 7, 2, 60)
+--
+-- Nobody holds a door open in hard vacuum by hand any more: a lungful
+-- of nothing is 20 oxy a breath and a body is out cold at 50
+-- (OXYLOSS_PASSOUT_THRESHOLD, docs/BIOLOGY.md §2), so a crewman
+-- clicking an airlock in a venting chamber blacks out before it is
+-- empty. Pull the breaker instead — dead motors hold the position they
+-- had, so the outer door stays open, the inner one stays shut, and the
+-- chamber finishes emptying with nobody's hand on it. The claim is
+-- unchanged: this end vents, that end does not.
+t.outage()
+t.run_ticks(2400)
 
 assert(t.room_pressure(6, 2) < 25.0,
     "the vestibule blew out to space: " .. t.room_pressure(6, 2))
@@ -187,10 +185,9 @@ assert(not t.door_at(5, 2).open,
     "AND THE INNER ONE SHUT ITSELF: opening one end of a cycle-linked "
         .. "airlock closes the other")
 
--- Now do exactly what vented the station in the control run: hold the
+-- Now do exactly what vented the station in the control run: leave the
 -- outer door open, with the breaker pulled so nothing can tidy up after
 -- us, and watch the chamber empty on its own.
-hold_open(r, 7, 2, 60)
 t.outage()
 t.run_ticks(2400)
 
