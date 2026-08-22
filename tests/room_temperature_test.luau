@@ -149,15 +149,21 @@ t.world([==[(
     legend: {
         '.': (turf: Floor),
         '#': (turf: Wall),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'g': (turf: Floor, fixture: Some(Generator)),
     },
     rows: [
         "#####",
         "#...#",
-        "#...#",
+        "#.ag#",
         "#####",
     ],
     spawns: [(2, 2)],
     items: [(2, 2, "analyzer")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3),
+    ],
 )]==], 7)
 
 t.set_environment({ sink_k = T20C, insolation = 0 })
@@ -230,17 +236,23 @@ t.world([==[(
     legend: {
         '.': (turf: Floor),
         '#': (turf: Wall),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'g': (turf: Floor, fixture: Some(Generator)),
     },
     rows: [
         "##########",
         "#..#######",
-        "#..#######",
+        "#ag#######",
         "##########",
     ],
     spawns: [(1, 2)],
     items: [(1, 2, "analyzer")],
     pipes: [(3, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4)],
     structures: [(2, 1, "air_injector")],
+    cables: [
+        (1, 1, 3), (2, 1, 3),
+        (1, 2, 3), (2, 2, 3),
+    ],
 )]==], 7)
 
 -- Inert sky again, and for the same reason: this block weighs an energy
@@ -433,13 +445,17 @@ t.world([==[(
     legend: {
         '.': (turf: Floor),
         '#': (turf: Wall),
+        'a': (turf: Floor, fixture: Some(Apc)),
     },
     rows: [
         "###",
-        "#.#",
+        "#a#",
         "###",
     ],
     spawns: [(1, 1)],
+    cables: [
+        (1, 1, 2),
+    ],
 )]==], 7)
 
 t.set_environment({ sink_k = 2.7, insolation = 0 })
@@ -496,16 +512,24 @@ t.world([==[(
     legend: {
         '.': (turf: Floor),
         '#': (turf: Wall),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'g': (turf: Floor, fixture: Some(Generator)),
     },
     rows: [
         "######",
         "#....#",
+        "#.a..#",
         "#....#",
-        "#....#",
-        "#....#",
+        "#...g#",
         "######",
     ],
     spawns: [(2, 2)],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3),
+        (1, 3, 3), (2, 3, 3), (3, 3, 3), (4, 3, 3),
+        (1, 4, 3), (2, 4, 3), (3, 4, 3), (4, 4, 3),
+    ],
 )]==], 7)
 
 t.set_environment({ sink_k = 2.7, insolation = 0 })
@@ -541,13 +565,17 @@ t.world([==[(
     legend: {
         '.': (turf: Floor),
         '#': (turf: Wall),
+        'a': (turf: Floor, fixture: Some(Apc)),
     },
     rows: [
         "###",
-        "#.#",
+        "#a#",
         "###",
     ],
     spawns: [(1, 1)],
+    cables: [
+        (1, 1, 2),
+    ],
 )]==], 7)
 
 t.set_environment({ sink_k = 2.7, insolation = 2700 })

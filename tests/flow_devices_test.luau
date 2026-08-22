@@ -51,11 +51,13 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
     rows: [
         "#############",
-        "#...........#",
-        "#...........#",
+        "#..........g#",
+        "#..a........#",
         "#############",
     ],
     spawns: [(3, 2)],
@@ -67,6 +69,10 @@ t.world([==[(
         (7, 2, 4), (8, 2, 4), (10, 2, 4), (11, 2, 4),
     ],
     structures: [(3, 1, "gas_pump"), (9, 2, "volume_pump")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3), (11, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3),
+    ],
 )]==], 7)
 
 local p = t.join()
@@ -151,17 +157,23 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
     rows: [
         "########",
         "#......#",
-        "#......#",
+        "#...a.g#",
         "########",
     ],
     spawns: [(4, 2)],
     items: [(4, 2, "multitool")],
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4)],
     structures: [(3, 1, "volume_pump")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    ],
 )]==], 7)
 
 local q = t.join()
@@ -238,17 +250,23 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
     rows: [
         "########",
         "#......#",
-        "#......#",
+        "#a....g#",
         "########",
     ],
     spawns: [(1, 2)],
     items: [(1, 2, "pipe")],
     pipes: [(4, 1, 4), (5, 1, 4), (6, 1, 4)],
     structures: [(3, 1, "passive_gate")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    ],
 )]==], 7)
 
 local g = t.join()
@@ -308,17 +326,23 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
+        'g': (turf: Plating, fixture: Some(Generator)),
+        'a': (turf: Plating, fixture: Some(Apc)),
     },
     rows: [
         "########",
-        "#......#",
-        "#......#",
+        "#.....g#",
+        "#.....a#",
         "########",
     ],
     spawns: [(6, 2)],
     items: [(6, 2, "pipe")],
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4)],
     structures: [(3, 1, "passive_gate")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    ],
 )]==], 7)
 
 local d = t.join()
@@ -408,17 +432,23 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
+        'g': (turf: Plating, fixture: Some(Generator)),
+        'a': (turf: Plating, fixture: Some(Apc)),
     },
     rows: [
         "########",
-        "#......#",
-        "#......#",
+        "#.....g#",
+        "#.....a#",
         "########",
     ],
     spawns: [(6, 2)],
     items: [(6, 2, "pipe")],
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4)],
     structures: [(3, 1, "pressure_valve")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    ],
 )]==], 7)
 
 local v = t.join()

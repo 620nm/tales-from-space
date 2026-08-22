@@ -36,16 +36,23 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Floor),
         '#': (turf: Wall),
+        'o': (turf: Floor, fixture: Some(Outlet)),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'g': (turf: Floor, fixture: Some(Generator)),
     },
     rows: [
-        "####",
-        "#..#",
-        "#..#",
-        "####",
+        "######",
+        "#..#g#",
+        "#oa###",
+        "######",
     ],
     spawns: [(1, 2), (2, 2)],
     items: [(1, 2, "beaker"), (1, 2, "oxygen_tank")],
     machines: [(1, 1, "chem_dispenser"), (2, 1, "chem_heater")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3),
+        (1, 2, 3), (2, 2, 3),
+    ],
 )]==], 0)
 
 local chemist = t.join("engineer")
