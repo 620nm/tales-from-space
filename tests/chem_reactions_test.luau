@@ -44,12 +44,15 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Floor),
         '#': (turf: Wall),
+        'o': (turf: Floor, fixture: Some(Outlet)),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'g': (turf: Floor, fixture: Some(Generator)),
     },
     rows: [
         "#####",
-        "#...#",
-        "#...#",
-        "#...#",
+        "#.g.#",
+        "#o..#",
+        "#a..#",
         "#####",
     ],
     spawns: [(2, 2)],
@@ -61,6 +64,11 @@ t.world([==[(
         (2, 3, "beaker"),
     ],
     machines: [(1, 1, "chem_dispenser"), (3, 1, "chem_heater")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3),
+        (1, 3, 3), (2, 3, 3), (3, 3, 3),
+    ],
 )]==], 0)
 
 local p = t.join()

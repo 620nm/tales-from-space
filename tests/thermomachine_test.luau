@@ -44,7 +44,7 @@ local ROWS = [==[
     rows: [
         "########",
         "#......#",
-        "#......#",
+        "#a....g#",
         "########",
     ],
     spawns: [(3, 2)],
@@ -59,7 +59,13 @@ t.world(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    ],
 ]==] .. ROWS .. ")",
     7
 )
@@ -164,10 +170,9 @@ near(t.pipe_temperature(1, 1), frozen, 0.5, "and the gas is left exactly where i
 -- A DEAD GRID IS THE SAME ANSWER, ASKED IN BOTH PLACES.
 --
 -- tg's `on && is_operational` picks the picture AND gates the work
--- (thermomachine.dm:122, 172-174). Same map plus one cable stub in the
--- corner touching nothing: a map with no cable at all boots the grid in
--- abstract mode (everything powered), so the stub is what makes the
--- station's wiring a real graph for this machine to be absent from.
+-- (thermomachine.dm:122, 172-174). The same room with nobody's cable
+-- under it: an unwired map is an unpowered map, which is the station
+-- this machine is absent from.
 -- ---------------------------------------------------------------
 t.world(
     [==[(
@@ -176,8 +181,9 @@ t.world(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
-    cables: [(6, 2, 4)],
 ]==] .. ROWS .. ")",
     7
 )

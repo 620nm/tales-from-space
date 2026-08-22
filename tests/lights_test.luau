@@ -19,15 +19,21 @@ t.world([==[(
         '.': (turf: Floor),
         '#': (turf: Wall),
         'l': (turf: Floor, fixture: Some(Light), light: Some("#FFD6AA")),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'g': (turf: Floor, fixture: Some(Generator)),
     },
     rows: [
         "#####",
-        "#.l.#",
-        "#...#",
+        "#al.#",
+        "#..g#",
         "#####",
     ],
     spawns: [(1, 1)],
     items: [(1, 1, "toolbox"), (1, 2, "light_replacer"), (2, 2, "box_lights")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3),
+    ],
 )]==], 7)
 
 local p = t.join()

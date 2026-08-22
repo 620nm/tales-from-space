@@ -92,9 +92,8 @@ end
 -- canister on a connector port in the middle of it, and a real wired
 -- grid: a generator, an APC, a feeder pair and a branch circuit running
 -- west under everything to the vent's own tile. That grid is not
--- decoration -- a map with no cable at all boots the powernet in
--- abstract mode where everything is powered forever, and this file
--- needs a station whose lights can actually go out.
+-- decoration -- cable is what powers a station, so a map without it is
+-- a map whose fan never turns.
 --
 -- Open the deck beside the vent, let the corridor blow down, put the
 -- deck back, and then watch the one number that matters: the tile the
