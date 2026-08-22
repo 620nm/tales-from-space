@@ -244,6 +244,30 @@
             dir: 0,
             paint: (255, 255, 255),
         ), (198, 192, 181))),
+        // ...and the same shell wearing tg's `broken`, which is what a
+        // canister that gave up under its own pressure looks like
+        // (canister.dm:361, `machine_stat & BROKEN`). Inside the blend
+        // for the reason `can-connector` is: tg adds it as a plain
+        // overlay with no RESET_COLOR, so it takes the gas's colour
+        // along with the rest of the shell, and the canister's own
+        // overlay slot is spoken for by the gauge.
+        //
+        // `broken_cutout` is deliberately not in the stack: it is the
+        // MASK tg's greyscale config subtracts to punch the hole
+        // through the shell, and blending it as a picture would paint
+        // the hole in rather than cut it out.
+        ("canister_broken", Tinted(DmiBlend(
+            dmi: "@canisters",
+            layers: [
+                ("base", Over, true),
+                ("add_shader", Add, false),
+                ("multi_shader", Multiply, false),
+                ("outline", Over, true),
+                ("broken", Over, false),
+            ],
+            dir: 0,
+            paint: (255, 255, 255),
+        ), (198, 192, 181))),
         // The indicator lamps are NOT coloured by the gas (tg's
         // post_effects leaves them alone), so they ride as their own
         // untinted overlay.
