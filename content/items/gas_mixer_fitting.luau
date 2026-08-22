@@ -9,5 +9,6 @@ return {
     id = "gas_mixer_fitting",
     name = "gas mixer fitting",
     sprite = "mixer_fitting",
+    category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
 }

@@ -39,6 +39,24 @@ cargo run -p lunatic-server -- tfs/maps/outpost.ron --content tfs/content
 - `docs/GAMEMODES.md` defines the Space Station/Free Build split and the
   `content/gamemodes/*.luau` policy schema.
 
+### Palette categories
+
+`category = "..."` on an item or structure table is the group a palette —
+the map editor's, today — files that entry under. It is free text and
+nothing checks it against a list, because a pack that groups its own things
+differently is not wrong.
+
+Leave it out and the server derives one from what the file already declares:
+an item with a `slot` is `wearables`, with `storage` it is `containers`,
+with `tool` it is `tools`, with `board` it is `boards`, and anything else is
+`misc`; a structure with `fitting` is `fittings`, one with `atmos` or
+`meter` is `atmospherics`, and the rest are `structures`. Machines are
+always `machines`. The derivation reads FIELDS and never ids — the engine
+must not learn to recognise one — so a file whose grouping the rule gets
+wrong says so itself. The loose pipe pieces do exactly that
+(`items/*_fitting.luau`), because "a thing you carry to the plumbing" is not
+something any field they set can say.
+
 ## Specs
 
 ```sh

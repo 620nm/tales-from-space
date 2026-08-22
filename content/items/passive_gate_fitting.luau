@@ -7,5 +7,6 @@ return {
     id = "passive_gate_fitting",
     name = "passive gate fitting",
     sprite = "passive_gate_loose",
+    category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
 }

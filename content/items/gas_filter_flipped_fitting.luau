@@ -11,5 +11,6 @@ return {
     id = "gas_filter_flipped_fitting",
     name = "flipped gas filter fitting",
     sprite = "filter_fitting",
+    category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
 }

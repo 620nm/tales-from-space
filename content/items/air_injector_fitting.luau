@@ -7,5 +7,6 @@ return {
     id = "air_injector_fitting",
     name = "air injector fitting",
     sprite = "air_injector_loose",
+    category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
 }

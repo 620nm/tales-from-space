@@ -7,5 +7,6 @@ return {
     id = "layer_adapter_fitting",
     name = "layer adapter fitting",
     sprite = "layer_adapter_loose",
+    category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
 }

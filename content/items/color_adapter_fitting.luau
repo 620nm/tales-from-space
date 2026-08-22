@@ -7,5 +7,6 @@ return {
     id = "color_adapter_fitting",
     name = "color adapter fitting",
     sprite = "color_adapter_loose",
+    category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
 }

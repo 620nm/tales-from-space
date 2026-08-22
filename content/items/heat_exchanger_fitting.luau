@@ -7,5 +7,6 @@ return {
     id = "heat_exchanger_fitting",
     name = "heat exchanger fitting",
     sprite = "heat_exchanger_loose",
+    category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
 }
