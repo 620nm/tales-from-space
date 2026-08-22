@@ -43,18 +43,22 @@
 -- is the deferred half, and the knobs below are drawn on all four
 -- sides so the picture does not lie about it.
 --
--- ALSO DEFERRED, all three of them tg's and none of them a debug
--- tank's problem (they are noted in the engine beside the fields that
--- would carry them, crates/lunatic-server/src/structures/atmos.rs):
+-- WHAT HAPPENS PAST THE RATING is no longer deferred: the `failure`
+-- block below is tg's own, and the engine's one failure pass reads it
+-- (sim/chemistry/failure.rs). What is still deferred is either side of
+-- it, both tg's and neither a debug tank's problem (they are noted in
+-- the engine beside the fields that would carry them,
+-- crates/lunatic-server/src/structures/atmos.rs):
 --   * the MERGER -- tg pools tanks standing next to each other into one
 --     mixture of their combined volume (tank.dm:270-306), and draws the
 --     47 smoothing states this file's sprite deliberately skips;
---   * the DAMAGE STACK -- over-pressure brute damage past the rating,
---     a gas_leaker below 90% integrity, crack overlays, and the
---     volatile_gas_storage explosion at 20% (tank.dm:96-98, 165-168);
 --   * MATERIAL-SCALED INTEGRITY -- tg rescales the pressure rating by
 --     the plating material's strength (`refresh_pressure_limit`,
 --     tank.dm:147-149). One material here, so one rating.
+-- The CRACK OVERLAYS go with them: tg draws ten of them off a second
+-- sheet (`/datum/element/crackable`, tank.dm:98) and this file's
+-- picture is one state, so a damaged tank here looks like a tank and
+-- reads as damaged when you look at it (sim/examine.rs).
 --
 -- NOT PRINTABLE, and that is tg parity rather than an omission: the
 -- tank appears in no RPD category, no pipe dispenser and no lathe --
@@ -93,6 +97,36 @@ return {
         -- (tank.dm:140) and the denominator of the contents gauge.
         volume_l = 2500.0,
         rated_kpa = 46000.0,
+    },
+    -- ...and what the sticker is worth when somebody ignores it. tg's
+    -- is one line: past `max_pressure`, `take_damage(0.1, BRUTE)`
+    -- every pass, forever (`process_atmos`, code/modules/atmospherics/
+    -- machinery/components/tank.dm:165-166) against 800 integrity
+    -- failing at a fifth of it (tank.dm:12-13). Said here as a limit
+    -- with a flat band, which is the same arithmetic:
+    -- `clamp(pressure / limit, 0.1, 0.1)` is 0.1 whatever the excess,
+    -- and no jitter, because tg rolls none for this one -- a bolted-in
+    -- vessel is a fitting, not a bottle off a line.
+    --
+    -- It is DELIBERATELY glacial: 6400 passes of overpressure before
+    -- it gives, which is tg's own "you have all shift to notice". At a
+    -- fifth left it starts LEAKING rather than emptying at once (tg
+    -- hangs a `gas_leaker` on it, tank.dm:96), and a leaking reservoir
+    -- shedding a quarter of 2500 litres per pass is a department-wide
+    -- problem in under a minute.
+    failure = {
+        integrity = 800,
+        break_at = 0.2,
+        limit_kpa = 46000,
+        damage_min = 0.1,
+        damage_max = 0.1,
+        on_break = "leak",
+        -- tg picks one of three structural pops on 40% of the passes
+        -- it is taking damage (tank.dm:47-52, 167-168); one clip, on
+        -- the edge instead, because a noise every pass for an hour is
+        -- not a warning, it is furniture.
+        sound = "spray",
+        message = "The pressure tank splits along a weld!",
     },
     transitions = {
         -- tg's `welder_act_secondary`: 4 seconds, and the vessel is
