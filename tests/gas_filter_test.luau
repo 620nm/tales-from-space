@@ -316,10 +316,11 @@ t.swap_hands(r)
 t.click(r, 3, 1, t.target_at(3, 1, "gas_filter"))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "the filter comes up off the pipe")
--- `yields` mint at the BUILDER's feet, not the target's tile: what came
--- off the line lands where the hands that took it off are standing.
+-- `yields` mint on the TARGET's tile (docs/CONSTRUCTION.md): what came
+-- off the line lands where the machine stood, not at the feet of
+-- whoever took it off.
 local lying = false
-for _, id in ipairs(t.items_at(3, 2)) do
+for _, id in ipairs(t.items_at(3, 1)) do
     if id == "gas_filter_fitting" then
         lying = true
     end
