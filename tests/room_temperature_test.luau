@@ -19,6 +19,14 @@
 -- is only as honest as the composition check, which is why the check is
 -- made explicitly and not assumed.
 --
+-- A room's book has a THIRD column, and it is the big one: the deck.
+-- `t.deck(x, y)` reads the solid mass a tile stands on -- its floor plus
+-- its share of the walls beside it -- which outweighs the air over it by
+-- two orders of magnitude and therefore decides where a warmed room
+-- settles (docs/MATTER.md §9). Air alone has not been the whole of a
+-- room since that landed, and a spec that counted only the air would
+-- read a warm floor as a leak.
+--
 -- The gradient itself is scaffolding: `t.foul_room` deposits at T20C by
 -- construction and `t.heat_pipe` is the only heat source a spec has
 -- until a burn chamber exists. Both are preconditions, never assertions.
@@ -55,8 +63,30 @@ local function room_moles(tiles)
     return sum
 end
 
+-- The deck under a set of tiles: what it holds, and what it would take
+-- to warm it a kelvin. A floor's is finite and readable; plating's is
+-- tg's INFINITY (floor/plating.dm:227) and would report `math.huge`,
+-- which is why every map in this file is laid in floor.
+local function deck_energy(tiles)
+    local sum = 0.0
+    for _, tile in ipairs(tiles) do
+        local deck = t.deck(tile[1], tile[2])
+        assert(deck, "every floor tile stands on something: " .. tile[1] .. "," .. tile[2])
+        sum = sum + deck.energy
+    end
+    return sum
+end
+
+local function deck_capacity(tiles)
+    local sum = 0.0
+    for _, tile in ipairs(tiles) do
+        sum = sum + t.deck(tile[1], tile[2]).capacity
+    end
+    return sum
+end
+
 -- The thermometer. Point the analyzer at the deck under your own boots
--- and read the temperature line off what it said. A tile of plating
+-- and read the temperature line off what it said. A tile of floor
 -- with no run buried in it is the AIR (analyzer.luau dispatches to the
 -- pipe first where there is one), which is what makes this a room
 -- reading rather than a pipe reading.
@@ -81,11 +111,13 @@ end
 -- A SEALED ROOM HOLDS ITS TEMPERATURE, AND FOULING IT DOES NOT HEAT IT.
 --
 -- The negative first, and it is doing two jobs. One: nothing in this
--- engine warms or cools a room on its own -- there is no wall to
--- conduct into (a wall is the ABSENCE of a cell, docs/MATTER.md §7),
--- no boundary cell to drain to on a fully walled map, and no reaction
--- with anything to react. Six tiles of standard air left alone for two
--- minutes read the same number, to the hundredth, that they opened at.
+-- engine warms or cools a room on its own. The deck under it is real
+-- and it is heavy, but it opens at the same room temperature the air
+-- does, and conduction with no gradient is nothing; there is no
+-- boundary cell to drain to on a fully walled map, and nothing to react
+-- with. Six tiles of standard air left alone for two minutes read the
+-- same number, to the hundredth, that they opened at -- and so does
+-- their deck.
 --
 -- Two: it pins what `t.foul_room` is. Ten moles of carbon dioxide
 -- arrive AT ROOM TEMPERATURE -- the scaffolding adds substance, never a
@@ -96,7 +128,7 @@ end
 t.world([==[(
     name: "sealed room",
     legend: {
-        '.': (turf: Plating),
+        '.': (turf: Floor),
         '#': (turf: Wall),
     },
     rows: [
@@ -126,11 +158,14 @@ local opening = analyzed(p, 2, 2)
 near(opening, T20C, 0.005, "a station opens at room temperature")
 local held_0 = room_moles(SEALED)
 local kpa_0 = t.room_pressure(2, 2)
+local deck_0 = deck_energy(SEALED)
+near(t.deck(2, 2).temperature, T20C, 1e-9, "the deck opens at room temperature too")
 
 t.run_seconds(120)
 local later = analyzed(p, 2, 2)
 assert(later == opening, "and two minutes of nothing changes nothing: " .. later)
 assert(room_moles(SEALED) == held_0, "not a mole moved out of the room either")
+assert(deck_energy(SEALED) == deck_0, "and not a joule moved into the deck")
 
 t.foul_room(2, 2, "co2", 10.0)
 t.run_seconds(20)
@@ -160,17 +195,19 @@ assert(
 --
 -- The claim is what the thermometer reads afterwards. Not the hot gas's
 -- temperature: the room did not become the pipe. Not the average of the
--- two temperatures either, which is the answer that FEELS right and is
--- wrong by a hundred and fifty kelvin here, because there are six times
--- more moles of cool air than hot. What comes out is the blend the
--- joules say: total energy over total moles over the heat capacity, and
--- the engine gets it right to the hundredth of a kelvin the analyzer
--- can print.
+-- two temperatures either, which is the answer that FEELS right. Not
+-- even the blend of the two bodies of GAS, which is the answer that was
+-- right before the deck existed and is now wrong by seventy kelvin.
+-- What comes out is the blend the whole book says -- air plus deck --
+-- and the deck is a hundred and seventy times the air, so a glowing
+-- run emptied into a small room moves the thermometer by less than a
+-- degree. That is the shape of a station: a lot of steel and not much
+-- air, and it is the steel that decides.
 -- ---------------------------------------------------------------
 t.world([==[(
     name: "hot injection",
     legend: {
-        '.': (turf: Plating),
+        '.': (turf: Floor),
         '#': (turf: Wall),
     },
     rows: [
@@ -216,11 +253,22 @@ near(
     "the run and the room are the SAME admixture, so one capacity serves both"
 )
 
+-- ---- the third column ----
+local c_air_0 = n_room_0 * cv
+local c_deck = deck_capacity(ROOM)
+local deck_e0 = deck_energy(ROOM)
+assert(
+    c_deck > c_air_0 * 100.0,
+    "the deck outweighs the air it holds up by two orders of magnitude: "
+        .. c_deck .. " vs " .. c_air_0
+)
+
 -- ---- the gradient ----
 t.heat_pipe(5, 1, 300000.0)
 t.tick()
 local hot_k = t.pipe_temperature(5, 1)
-local energy_0 = t.pipe_energy(5, 1) + n_room_0 * cv * T20C
+local pipe_e0 = t.pipe_energy(5, 1)
+local energy_0 = pipe_e0 + n_room_0 * cv * T20C + deck_e0
 assert(hot_k > 800.0, "the run is glowing: " .. hot_k)
 near(pipe_total(5, 1), n_pipe_0, 1e-9, "and heating it moved no moles at all")
 assert(
@@ -251,31 +299,60 @@ assert(
 )
 near(room_moles(ROOM), n_room_0 + n_pipe_0, 1e-6, "every mole of it is in the room")
 
+-- And then let it stand. Conduction into the deck stops at half a
+-- kelvin of disagreement (tg's MINIMUM_TEMPERATURE_DELTA_TO_CONSIDER,
+-- atmos_core.dm:110), so "settled" here means air and deck within that
+-- of each other, which takes a couple of minutes at floor conductivity.
+t.run_seconds(180)
+
 -- ---- what the thermometer says ----
 t.swap_hands(q)
 local px, py = t.pos(q)
 local blended = analyzed(q, px, py)
 local n_room_1 = room_moles(ROOM)
-local predicted = energy_0 / (n_room_1 * cv)
+local air_1 = n_room_1 * cv * blended
+local deck_1 = deck_energy(ROOM)
 
+assert(
+    t.pipe_energy(5, 1) < pipe_e0 * 1e-6,
+    "the run kept nothing back: " .. t.pipe_energy(5, 1)
+)
+near(
+    air_1 + deck_1,
+    energy_0,
+    400.0,
+    "THE BLEND IS THE ENERGY BOOK, and the book has three columns: what "
+        .. "the run gave up is in the air and the deck between them, and "
+        .. "no joule was minted on the way in"
+)
 near(
     blended,
-    predicted,
-    0.05,
-    "THE BLEND IS THE ENERGY BOOK: total joules over total moles over "
-        .. "the heat capacity, and no joule was minted on the way in"
+    energy_0 / (n_room_1 * cv + c_deck),
+    0.6,
+    "and the thermometer reads the whole book, not the air's half of it"
 )
-assert(blended > T20C + 50.0, "the room did get hot: " .. T20C .. " -> " .. blended)
+-- Where it went. The air's share is what it took to WARM the air --
+-- not the joules the injected moles walked in with, which were never
+-- the room's to gain.
+assert(
+    deck_1 - deck_e0 > n_room_1 * cv * (blended - T20C) * 50.0,
+    "the deck took nearly all of it: " .. (deck_1 - deck_e0) .. " J into the steel"
+)
+
+-- What the air ALONE would have said, which is the answer this file
+-- used to assert and the reason the deck is worth having: a room is not
+-- a bottle of gas, it is a bottle of gas bolted to a tonne of hull.
+local air_only = (pipe_e0 + n_room_0 * cv * T20C) / (n_room_1 * cv)
+assert(air_only > T20C + 50.0, "gas alone would have been scalding: " .. air_only)
+assert(
+    blended < T20C + 5.0,
+    "and the room is barely warm instead: " .. T20C .. " -> " .. blended
+)
+assert(blended > T20C, "warmer, though -- the joules did arrive: " .. blended)
 assert(
     blended < hot_k - 400.0,
-    "but nothing like as hot as what arrived -- it is not the pipe's "
+    "and nothing like as hot as what arrived -- it is not the pipe's "
         .. "temperature: " .. hot_k .. " vs " .. blended
-)
-assert(
-    math.abs(blended - (T20C + hot_k) / 2.0) > 150.0,
-    "and it is NOT the average of the two temperatures, which is the "
-        .. "wrong answer by a wide margin here: " .. (T20C + hot_k) / 2.0
-        .. " vs " .. blended
 )
 
 -- The last cross-check, between the two readouts a room actually has:
