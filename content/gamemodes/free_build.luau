@@ -3,6 +3,10 @@
 return {
     id = "free_build",
     name = "Free Build",
+    -- A map posted for a playtest boots into this one: a mapper wants
+    -- to walk the station they just drew with the tools to poke at it,
+    -- not to queue at a job board for a shift they are not playing.
+    playtest = true,
     rules = {
         bodies = "connection",
         respawn = "critical",
