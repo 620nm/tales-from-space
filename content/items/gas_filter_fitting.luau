@@ -24,6 +24,7 @@ return {
     id = "gas_filter_fitting",
     name = "gas filter fitting",
     sprite = "filter_fitting",
+    category = "fittings",
     -- tg's `inhand_icon_state = "buildpipe"` for the whole
     -- /obj/item/pipe family (construction.dm:19).
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },

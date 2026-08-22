@@ -7,5 +7,6 @@ return {
     id = "passive_vent_fitting",
     name = "passive vent fitting",
     sprite = "passive_vent_loose",
+    category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
 }
