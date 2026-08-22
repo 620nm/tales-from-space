@@ -155,8 +155,9 @@ return {
     pickup_sound = "rpd_pickup",
     drop_sound = "rpd_drop",
     -- Loose-pipe breakdown is aimed at the fitting lying on the deck,
-    -- and a click that names one would otherwise pocket it (interact.rs
-    -- step 8). tg's `interact_with_atom` reaches the same atom.
+    -- and a click that names one would otherwise pocket it
+    -- (interact/click.rs step 8). tg's `interact_with_atom` reaches the
+    -- same atom.
     acts_on_items = true,
     dials = {
         {
