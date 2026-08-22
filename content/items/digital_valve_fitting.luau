@@ -9,5 +9,6 @@ return {
     id = "digital_valve_fitting",
     name = "digital valve fitting",
     sprite = "digital_valve_loose",
+    category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
 }

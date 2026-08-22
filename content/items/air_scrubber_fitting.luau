@@ -7,5 +7,6 @@ return {
     id = "air_scrubber_fitting",
     name = "air scrubber fitting",
     sprite = "air_scrubber_loose",
+    category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
 }

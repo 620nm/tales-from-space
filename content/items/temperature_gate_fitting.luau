@@ -7,5 +7,6 @@ return {
     id = "temperature_gate_fitting",
     name = "temperature gate fitting",
     sprite = "temperature_gate_loose",
+    category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
 }

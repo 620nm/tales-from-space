@@ -15,6 +15,7 @@ return {
     id = "manual_valve_fitting",
     name = "manual valve fitting",
     sprite = "manual_valve_loose",
+    category = "fittings",
     -- tg's `inhand_icon_state = "buildpipe"` for the whole
     -- /obj/item/pipe family (construction.dm:20) -- one length of pipe
     -- over the shoulder, whichever fitting it is going to become.

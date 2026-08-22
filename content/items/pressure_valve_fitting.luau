@@ -7,5 +7,6 @@ return {
     id = "pressure_valve_fitting",
     name = "pressure valve fitting",
     sprite = "pressure_valve_loose",
+    category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
 }
