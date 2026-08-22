@@ -1,0 +1,48 @@
+// What a body is made of, once it comes apart: the six limbs a human
+// plan names and the nine organs that sit in them (docs/BIOLOGY.md §1).
+// Each is an ITEM, so each needs a picture on the deck.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then entry order,
+// so the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+(
+    // Sheet aliases are local to this family; @names below resolve here.
+    sheets: [
+        ("bodyparts", "mob/human/bodyparts_greyscale.dmi"),
+        ("organs", "obj/medical/organs/organs.dmi"),
+    ],
+    sprites: [
+        // The limbs come off tg's GREYSCALE sheet, which is the sheet
+        // the whole-body picture is composited from
+        // (`body_dmi` in tfs/assets/sprites.ron). Greyscale art wants a
+        // colour, and `Tinted` gives it the same default skin the
+        // composite multiplies by rather than baking one in — so the
+        // day a plan carries its own skin tone (docs/COLOR.md), the
+        // pixels are already grey and ready for it.
+        ("part_head", Tinted(Dmi("@bodyparts", "human_head_m", 0), (232, 200, 168))),
+        ("part_chest", Tinted(Dmi("@bodyparts", "human_chest_m", 0), (232, 200, 168))),
+        ("part_l_arm", Tinted(Dmi("@bodyparts", "human_l_arm", 0), (232, 200, 168))),
+        ("part_r_arm", Tinted(Dmi("@bodyparts", "human_r_arm", 0), (232, 200, 168))),
+        ("part_l_leg", Tinted(Dmi("@bodyparts", "human_l_leg", 0), (232, 200, 168))),
+        ("part_r_leg", Tinted(Dmi("@bodyparts", "human_r_leg", 0), (232, 200, 168))),
+
+        // The organs, off tg's one organ sheet
+        // (`icon = 'icons/obj/medical/organs/organs.dmi'`,
+        // code/modules/surgery/organs/_organ.dm:3). Each state is the
+        // one its own type names.
+        ("organ_brain", Dmi("@organs", "brain", 0)),
+        ("organ_eyes", Dmi("@organs", "eyes", 0)),
+        ("organ_ears", Dmi("@organs", "ears", 0)),
+        ("organ_tongue", Dmi("@organs", "tongue", 0)),
+        // tg's heart has a beating and a stopped picture and defaults to
+        // the beating one (`icon_state = "heart-on"`, _heart.dm:4). The
+        // beat itself is NOT ported (docs/BIOLOGY.md §11.2), so only
+        // the one picture is baked.
+        ("organ_heart", Dmi("@organs", "heart-on", 0)),
+        ("organ_lungs", Dmi("@organs", "lungs", 0)),
+        ("organ_liver", Dmi("@organs", "liver", 0)),
+        ("organ_stomach", Dmi("@organs", "stomach", 0)),
+        ("organ_appendix", Dmi("@organs", "appendix", 0)),
+    ],
+)
