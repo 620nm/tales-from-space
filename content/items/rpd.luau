@@ -105,12 +105,12 @@ local function paint_of(ctx, self)
     return COLORS[ctx.dial(self, "paint").index + 1]
 end
 
--- Pipe is subfloor infrastructure: you lay it on open plating and put
--- the deck back over it. The engine refuses a finished floor silently,
--- so this says why first — a refusal with no explanation reads as a
--- dropped click.
+-- Pipe is subfloor infrastructure: you lay it where the deck is open
+-- and put the floor back over it. The engine refuses a covered deck
+-- silently, so this says why first — a refusal with no explanation
+-- reads as a dropped click.
 local function lay_run(ctx, self, user, x, y)
-    if ctx.turf(x, y) ~= "plating" then
+    if not ctx.subfloor_exposed(x, y) then
         ctx.system_msg(user, "The floor is in the way. Pry the tile up first.")
         return
     end
@@ -263,7 +263,7 @@ return {
             -- them off the DEVICE; we read them off the run, which is
             -- the only thing that carries either — and a run you have
             -- not opened the deck over is one you cannot see.
-            if ctx.turf(x, y) ~= "plating" then
+            if not ctx.subfloor_exposed(x, y) then
                 ctx.system_msg(user, "The floor is in the way. Pry the tile up first.")
                 return
             end
