@@ -17,7 +17,7 @@ return {
     burn = { k = 1725, rate = 0.00125 },
     -- What it looks like through glass (tg: other_reagents.dm:1373).
     color = "#660000",
-    on_mob_life = function(ctx, mob, moles)
+    on_mob_life = function(ctx, mob, _user, _moles)
         ctx.damage(mob, { brute = 1.0 })
         if ctx.random(1, 8) == 1 then
             ctx.system_msg(mob, "Your throat burns.")
