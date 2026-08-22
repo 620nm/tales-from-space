@@ -43,15 +43,40 @@ for _ = 1, 10 do
 end
 local h = t.health(victim)
 assert(math.abs(h.brute - 100) < 0.01, "10 hits x 10 brute: " .. h.brute)
-assert(h.state == "crit", "crit at 100 total damage")
+-- What a hundred brute COSTS depends on where it landed. A blow that
+-- named no zone rolls (docs/BIOLOGY.md §3.2), and each part weighs its
+-- own damage into the body's health -- the chest at 1, a limb at 0.75
+-- (LIMB_BODY_DAMAGE_COEFFICIENT, bodyparts.dm:23-26). So the pools say
+-- a hundred and the health says somewhere between 0 and 25.
+assert(h.health <= 25.0 and h.health >= 0.0,
+    "a hundred brute weighted by where it landed: " .. h.health)
 local pushed = t.vitals(victim)
 assert(pushed and pushed.brute > 0, "damage pushes vitals immediately")
 
-for _ = 1, 10 do
+-- Every swing lands on SOME part, and the record says which.
+local zoned = 0
+for _, row in ipairs(t.ledger_rows("Damaged")) do
+    if row.zone then
+        zoned = zoned + 1
+    end
+end
+assert(zoned == 10, "every blow named the part it landed on: " .. zoned)
+
+-- Keep swinging. Crit arrives when the weighted damage reaches
+-- max_health and death when it reaches dead_at, however the rolls fell.
+local swings = 0
+while t.health(victim).state == "alive" and swings < 40 do
     t.click(attacker, 2, 1, victim_id)
     t.tick()
+    swings = swings + 1
 end
-assert(t.health(victim).state == "dead", "twenty hits is a body")
+assert(t.health(victim).state == "crit", "the weighted damage reached crit_at")
+while t.health(victim).state ~= "dead" and swings < 120 do
+    t.click(attacker, 2, 1, victim_id)
+    t.tick()
+    swings = swings + 1
+end
+assert(t.health(victim).state == "dead", "and then dead_at")
 assert(t.sprite(victim) == "human_dead", "and the body lies down")
 
 -- Every swing is on the record, attributed to the FILE that decided
@@ -67,7 +92,8 @@ for _, row in ipairs(t.ledger_rows("Damaged")) do
         hits += 1
     end
 end
-assert(hits == 20, "every hit is a Script-attributed ledger row, got " .. hits)
+assert(hits == 10 + swings,
+    "every hit is a Script-attributed ledger row, got " .. hits)
 assert(#t.ledger_rows("Died") == 1, "the death is on the record")
 
 -- Both parties heard the thud and read the message.
