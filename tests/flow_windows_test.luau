@@ -61,10 +61,12 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
     rows: [
         "#############",
-        "#...........#",
+        "#.....a....g#",
         "#...........#",
         "#############",
     ],
@@ -78,6 +80,10 @@ t.world([==[(
         (7, 2, 4), (8, 2, 4), (10, 2, 4), (11, 2, 4),
     ],
     structures: [(3, 1, "manual_valve"), (9, 2, "digital_valve")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3), (11, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3),
+    ],
 )]==], 7)
 
 local p = t.join()
@@ -152,10 +158,8 @@ near(t.pipe_pressure(7, 2), level, 2.0, "and read what the volumes say they shou
 --
 -- tg's binary base draws idle power (binary_devices.dm:5-6) and every
 -- powered device in the family opens `process_atmos` with `if(!on ||
--- !is_operational) return`. This station has a scrap of cable in one
--- corner and nothing else -- no APC, no feeder -- so the branch under
--- the pump is dead, and the pump is a length of pipe with a switch on
--- it.
+-- !is_operational) return`. Nobody ran cable into this room, so the
+-- pump is a length of pipe with a switch on it.
 --
 -- (The other half of this, an APC shedding its equipment channel
 -- mid-job and the pump picking the line back up when the power returns,
@@ -177,10 +181,6 @@ t.world([==[(
     spawns: [(4, 2)],
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4)],
     structures: [(3, 1, "gas_pump")],
-    // One stub in the corner, touching nothing. A map with no cable at
-    // all boots the grid in abstract mode (everything powered), so this
-    // is what makes the station's wiring a real graph to be absent from.
-    cables: [(6, 2, 4)],
 )]==], 7)
 
 local d = t.join()
@@ -235,11 +235,13 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
     rows: [
         "########",
         "#......#",
-        "#......#",
+        "#...a.g#",
         "########",
     ],
     spawns: [(4, 2)],
@@ -248,6 +250,10 @@ t.world([==[(
     // gap until an engineer lays a replacement.
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4)],
     structures: [(3, 1, "gas_pump")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    ],
 )]==], 7)
 
 local w = t.join()

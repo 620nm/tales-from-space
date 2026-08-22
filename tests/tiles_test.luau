@@ -104,10 +104,8 @@ t.world([==[(
     ],
     spawns: [(1, 1)],
     items: [(1, 1, "crowbar")],
-    // One length of dead feeder: laying any cable opts the map into the
-    // real grid, and with no generator behind it the airlock's motors
-    // never wake. (An unwired map runs the abstract grid, where
-    // everything is powered and the crowbar hook passes.)
+    // One length of feeder with no generator behind it, which is a
+    // station with the lights off: the airlock's motors never wake.
     cables: [(1, 1, 1)],
 )]==], 7)
 

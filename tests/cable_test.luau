@@ -43,9 +43,7 @@ t.world([==[(
         (1, 3, "wirecutters"),
     ],
     // One mapped stub in the corner, on the blue line and touching
-    // nothing this spec lays. A map with no cable at all boots the grid
-    // in abstract mode (everything powered, no segments flooded), so
-    // this is what makes the wiring a real graph to ask questions of.
+    // nothing this spec lays: the length a fresh coil is asked to join.
     cables: [(3, 3, 4)],
 )]==], 7)
 

@@ -39,12 +39,14 @@ t.world([==[(
         '.': (turf: Plating),
         '#': (turf: Wall),
         'c': (turf: Plating, fixture: Some(Canister)),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
     rows: [
         "#####",
         "#...#",
-        "#..c#",
-        "#...#",
+        "#.ac#",
+        "#..g#",
         "#####",
     ],
     spawns: [(2, 2)],
@@ -53,6 +55,11 @@ t.world([==[(
     // The vent, and the socket under the canister. Without the socket
     // the bottle is furniture.
     structures: [(1, 2, "vent"), (3, 2, "connector_port")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3),
+        (1, 3, 3), (2, 3, 3), (3, 3, 3),
+    ],
 )]==], 7)
 
 local p = t.join()
@@ -148,12 +155,14 @@ t.world([==[(
         '.': (turf: Plating),
         '#': (turf: Wall),
         'c': (turf: Plating, fixture: Some(Canister)),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
     rows: [
         "#####                   ",
         "#...#                   ",
-        "#...#.................c ",
-        "#...#                   ",
+        "#.a.#..............a..c ",
+        "#..g#                   ",
         "#####                   ",
     ],
     spawns: [(2, 2)],
@@ -168,6 +177,11 @@ t.world([==[(
         (1, 2, "vent"),
         (20, 2, "passive_vent"),
         (22, 2, "connector_port"),
+    ],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3), (12, 2, 3), (13, 2, 3), (14, 2, 3), (15, 2, 3), (16, 2, 3), (17, 2, 3), (18, 2, 3), (19, 2, 3), (20, 2, 3), (21, 2, 3), (22, 2, 3),
+        (1, 3, 3), (2, 3, 3), (3, 3, 3),
     ],
 )]==], 7)
 
@@ -239,11 +253,13 @@ t.world([==[(
         '#': (turf: Wall),
         '_': (turf: Plating),
         'c': (turf: Floor, fixture: Some(Canister)),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'g': (turf: Floor, fixture: Some(Generator)),
     },
     rows: [
         "######### ",
         "#.c.....#_",
-        "#.......# ",
+        "#a.....g# ",
         "######### ",
     ],
     spawns: [(1, 1)],
@@ -264,6 +280,10 @@ t.world([==[(
         (2, 1, "connector_port"),
         (5, 1, "connector_port"),
         (9, 1, "vent"),
+    ],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3),
     ],
 )]==], 7)
 
@@ -419,11 +439,13 @@ t.world([==[(
         '#': (turf: Wall),
         'v': (turf: Plating),
         'c': (turf: Floor, fixture: Some(Canister)),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'g': (turf: Floor, fixture: Some(Generator)),
     },
     rows: [
         "######### ",
-        "#.c.....#v",
-        "#.......# ",
+        "#ac.....#v",
+        "#......g# ",
         "######### ",
     ],
     spawns: [(1, 1)],
@@ -443,6 +465,10 @@ t.world([==[(
         (4, 1, "connector_port"),
         (3, 1, "air_injector"),
         (9, 1, "vent"),
+    ],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3),
     ],
 )]==], 7)
 

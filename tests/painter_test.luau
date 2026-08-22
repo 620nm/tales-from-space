@@ -54,11 +54,13 @@ t.world([==[(
         'F': (turf: Floor),
         '#': (turf: Wall),
         'c': (turf: Plating, fixture: Some(Canister)),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
     rows: [
         "########  ",
         "#c....F#. ",
-        "#ooooo.#  ",
+        "#aoooog#  ",
         "########  ",
     ],
     spawns: [(1, 2)],
@@ -72,6 +74,10 @@ t.world([==[(
         (5, 1, 4, "#0000FF"), (6, 1, 4, "#0000FF"), (7, 1, 4, "#0000FF"),
     ],
     structures: [(1, 1, "connector_port"), (8, 1, "vent")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    ],
 )]==], 7)
 
 local p = t.join()

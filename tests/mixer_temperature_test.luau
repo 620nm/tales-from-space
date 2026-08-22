@@ -60,11 +60,13 @@ local JUNCTION = [==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
     rows: [
         "##############",
         "#............#",
-        "#............#",
+        "#........a..g#",
         "##############",
     ],
     spawns: [(9, 2)],
@@ -75,6 +77,10 @@ local JUNCTION = [==[(
         (9, 2, 4),
     ],
     structures: [(9, 1, "gas_mixer")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3), (11, 1, 3), (12, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3), (12, 2, 3),
+    ],
 )]==]
 
 -- Enough joules to put the side stub several hundred kelvin over the
