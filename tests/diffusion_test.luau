@@ -4,7 +4,7 @@
 --
 -- Everything else in the atmospherics suite is about the KIT. This is
 -- the substrate under all of it: a room is one cell per TILE
--- (docs/matter.md §7), gas crosses between two of them only where there
+-- (docs/MATTER.md §7), gas crosses between two of them only where there
 -- is a link to cross (tg's `atmos_adjacent_turfs`,
 -- `LINDA_system.dm:96-99`), and a wall is not a rule about gas -- it is
 -- the absence of a cell to be linked to. A closed door and a glazed

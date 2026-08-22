@@ -28,7 +28,7 @@ return {
         ctx.open_ui(user, self)
     end,
     -- The item is the thing swung; `self` is the machine. The target is
-    -- the expert about what a swing means to it (docs/construction.md),
+    -- the expert about what a swing means to it (docs/CONSTRUCTION.md),
     -- and this machine's answer is "I'll take that back".
     on_attack = function(ctx, self, user, item)
         local id = ctx.item_id(item)

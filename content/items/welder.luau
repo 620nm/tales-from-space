@@ -14,7 +14,7 @@ return {
     drop_sound = "welder_drop",
     -- The whole of what a torch knows about itself: its equipment class
     -- and its tank. What a torch DOES lives on the things it is used on
-    -- (docs/construction.md). tg's max_fuel is 20.
+    -- (docs/CONSTRUCTION.md). tg's max_fuel is 20.
     tool = "welder",
     fuel = { substance = "welding_fuel", capacity = 20.0 },
     -- A CLOSED tank. tg's welder holds its fuel in a sealed reservoir

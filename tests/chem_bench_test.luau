@@ -5,7 +5,7 @@
 -- Nothing here is set up. Every mole in this spec came out of the
 -- dispenser through a button a crewman pressed, and every reaction ran
 -- because the substances were in the same vessel at the same
--- temperature. That is the whole claim of docs/reagents.md: there is no
+-- temperature. That is the whole claim of docs/CHEMISTRY.md: there is no
 -- chemistry system, there is the one matter system reached from more
 -- places.
 --
@@ -95,7 +95,7 @@ near(amount(a, "chlorine"), BRIM - PRESS, 1e-9, "and chlorine to the brim")
 near(t.holder_k(a), NOZZLE_K, 0.01, "both at the nozzle's 300 K")
 
 -- The exotherm, closed form. `energy` on a rule is real joules per
--- extent (docs/reagents.md, "the energy rule"): tg's thermic_constant
+-- extent (docs/CHEMISTRY.md, "the energy rule"): tg's thermic_constant
 -- 50 times two moles of product times water's 75.3 J/mol/K = 7530.
 -- The rule runs 0.05 of an extent per two-second holder step and the
 -- heat capacity climbs as salt replaces its halves, so the climb slows

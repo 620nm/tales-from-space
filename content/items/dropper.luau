@@ -2,7 +2,7 @@
 -- precision end of the bench, where the beaker is the bulk end.
 --
 -- Capacity is tg's `volume = 5` at the documented bridge of 1 u = 0.025
--- mol (docs/reagents.md); the picture is tg's `dropper0`
+-- mol (docs/CHEMISTRY.md); the picture is tg's `dropper0`
 -- (dropper.dm:5,10).
 --
 -- ONE UNIT A SQUEEZE, which is the bottom of tg's own

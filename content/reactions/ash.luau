@@ -4,7 +4,7 @@
 -- The first recipe on this shelf that a cold beaker cannot run, and
 -- therefore the first one that needs the reaction chamber. The bell is
 -- the documented MAPPING of tg's three temperatures rather than the
--- shared mixing bell (docs/reagents.md):
+-- shared mixing bell (docs/CHEMISTRY.md):
 --   temp_min = required_temp            = 480
 --   opt_lo   = optimal_temp   (default) = 500   (recipes.dm:34)
 --   opt_hi   = overheat_temp  (default) = 900   (recipes.dm:36)

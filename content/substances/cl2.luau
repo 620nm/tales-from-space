@@ -2,7 +2,7 @@
 -- atom the bench calls `chlorine`.
 --
 -- The same split nh3.luau explains, and for the same reason (policy D3,
--- docs/reagents.md): tg's chlorine reagent is one atom because its salt
+-- docs/CHEMISTRY.md): tg's chlorine reagent is one atom because its salt
 -- recipe is 1:1 with sodium, and salt is a shipped recipe that runs at
 -- room temperature. Give that file a curve and every batch of salt
 -- becomes a race against its own reactant evaporating. So the reagent

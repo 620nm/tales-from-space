@@ -7,7 +7,7 @@
 -- breath.dm:1-9), whose whole contribution is MASKINTERNALS: the flag
 -- that says a supply line may reach the lungs through this. Here that
 -- flag is `breath_mask`, and the engine refuses it on anything that is
--- not worn on the face (docs/luau-api.md, Internals).
+-- not worn on the face (docs/LUAU-API.md, Internals).
 --
 -- Silent on purpose: /obj/item/clothing sets no pickup_sound or
 -- drop_sound and neither does _masks.dm, so a mask is picked up

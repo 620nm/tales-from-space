@@ -3,7 +3,7 @@
 -- for.
 --
 -- Fictional, so the numbers are convention rather than measurement
--- (docs/reagents.md, D2): a plausible hydrocarbon mass and the shelf's
+-- (docs/CHEMISTRY.md, D2): a plausible hydrocarbon mass and the shelf's
 -- flat 100 J/mol/K. Nothing here is claiming to be a real substance.
 --
 -- It burns, because tg's does: `burning_temperature = 1200` ("Oil is

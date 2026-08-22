@@ -4,7 +4,7 @@
 -- visibility threshold live in the engine's matter registry because
 -- atmos needs them long before content does. The registry skips a
 -- content substance whose key it already knows (invariant I9,
--- docs/reagents.md), so this file registers no physics and could not
+-- docs/CHEMISTRY.md), so this file registers no physics and could not
 -- override any if it tried. What it contributes is the METADATA half,
 -- which the registry does not own -- and a colour is exactly that: not
 -- a property of matter, a decision about how to draw it.

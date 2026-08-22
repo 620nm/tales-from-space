@@ -90,7 +90,7 @@ assert(math.abs(floored.offset.x + 5) <= 6 and math.abs(floored.offset.y) <= 6,
 -- ---- one card, in a hand, onto the table -----------------------------
 -- The other road to the same pixel. The card's `on_use` declines every
 -- target that is not a deck, so the click falls through to the engine's
--- surface step (docs/luau-api.md, step 9) and the card is put down
+-- surface step (docs/LUAU-API.md, step 9) and the card is put down
 -- exactly as any other held thing would be.
 t.drop(p)
 t.run_ticks(2)

@@ -3,7 +3,7 @@
 -- 480 K, which is what the reaction chamber is FOR.
 --
 -- Fictional, so the numbers are the shelf's convention: a round mass
--- and 100 J/mol/K (docs/reagents.md, D2). Ash is not a compound, it is
+-- and 100 J/mol/K (docs/CHEMISTRY.md, D2). Ash is not a compound, it is
 -- a leftover, and pretending to know its molar mass would be worse than
 -- admitting the number is a placeholder.
 -- tg: /datum/reagent/ash (other_reagents.dm:2300).

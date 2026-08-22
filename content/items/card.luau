@@ -31,8 +31,8 @@
 --   * Card HANDS (`/obj/item/toy/cards/cardhand`, cardhand.dm) -- two
 --     cards clicked together become a fanned overlay stack. That needs
 --     an overlay STACK on an item, which is a structures-only feature
---     today (docs/luau-api.md, the deferred list under appearance
---     states). Deliberately absent rather than faked.
+--     today (docs/LUAU-API.md §13, Gaps). Deliberately absent rather
+--     than faked.
 --   * Marked cards, blank cards written on with a pen, x-ray vision,
 --     and the tarot/KOTAHI/Wiz-Off decks -- each needs a system this
 --     pack has not got, or four hundred more baked cells.
@@ -40,7 +40,7 @@
 -- The two verbs are the two seams a held item has, and they map onto
 -- tg's two better than tg's own bindings do:
 --   * on_use_self -- turn it over. "The only thing it can possibly act
---     on is the item in your own hand" (docs/luau-api.md), which is
+--     on is the item in your own hand" (docs/LUAU-API.md), which is
 --     exactly what flipping a card is. tg binds this to `attack_self`
 --     too (singlecard.dm:222-228).
 --   * on_use with the deck named -- put it back. tg's recycle: clicking
@@ -153,7 +153,7 @@ return {
     states = states,
     state_sprites = state_sprites,
     -- A click that names the deck is this card's business rather than a
-    -- pickup of whatever is under the cursor (docs/luau-api.md). A hook
+    -- pickup of whatever is under the cursor (docs/LUAU-API.md). A hook
     -- that declines still falls through to the pickup, so a card
     -- clicked at anything else is picked up as usual.
     acts_on_items = true,
@@ -196,7 +196,7 @@ return {
         --
         -- A TABLE is the case that makes the decline load-bearing: the
         -- engine puts a held thing down on a surface only after every
-        -- hook has declined (docs/luau-api.md, step 9), so a card
+        -- hook has declined (docs/LUAU-API.md, step 9), so a card
         -- clicked at a table lands on the table at the pixel the player
         -- pointed at, and it does so because this hook says "pass"
         -- rather than because anything here knows what a table is.

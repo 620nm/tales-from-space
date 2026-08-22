@@ -3,7 +3,7 @@
 -- (recipes/others.dm:432-439).
 --
 -- The nitrogen is the BUILTIN gas, taken as a liquid: a bare key on a
--- reaction side means liquid (docs/matter.md, section 6), and a
+-- reaction side means liquid (docs/MATTER.md, section 6), and a
 -- GasOnly substance carries its specific heat across all three phases
 -- with no curve to transition on, so a liquid entry is legal and
 -- inert. That is tg parity as well as convenience -- tg's nitrogen

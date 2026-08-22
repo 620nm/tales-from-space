@@ -4,7 +4,7 @@
 -- Metadata for a BUILTIN, exactly as water.luau is -- the physics are
 -- the matter registry's and this file cannot touch them. tg carries
 -- oxygen as a reagent as well as a gas, which is why the shelf can
--- dispense it at all (docs/reagents.md, Effort C).
+-- dispense it at all (docs/CHEMISTRY.md).
 -- tg: /datum/reagent/oxygen, `color = COLOR_GRAY` (other_reagents.dm:
 -- 983).
 return {

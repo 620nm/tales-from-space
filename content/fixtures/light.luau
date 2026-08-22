@@ -2,7 +2,7 @@
 -- all things only IT could know: what is in its socket, what a tube or
 -- a replacer does to that socket, and what happens when somebody swings
 -- something at the glass. No tool carries a list of the fixtures it can
--- fix (docs/construction.md — the tool is equipment, the target is the
+-- fix (docs/CONSTRUCTION.md — the tool is equipment, the target is the
 -- expert); tg dispatches the same way, through
 -- `/obj/machinery/light/item_interaction` (light.dm:386).
 --

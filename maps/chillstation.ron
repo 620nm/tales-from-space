@@ -523,7 +523,7 @@
         (24, 16, "games_vendor"),
         // The chem bench, on the Bunks' north wall beside the room's
         // own socket at (21, 4) -- one and two tiles of cord, well inside
-        // the six a corded appliance gets (docs/power.md). The socket
+        // the six a corded appliance gets (docs/POWER.md). The socket
         // stands where the wall is: (18, 4) is under a hull window, and
         // a fitting mounts on masonry or it does not mount. A dispenser
         // and a reaction chamber standing together is the whole of what
@@ -555,7 +555,7 @@
         //
         // It also runs UNDER every airlock on the station. A door with
         // live L1 under its own tile is powered whatever its area's APC
-        // is doing (docs/power.md, "direct feeder tap > nearest
+        // is doing (docs/POWER.md, "direct feeder tap > nearest
         // adjacent branch feed"), and that is tg's instinct too -- the
         // way through a bulkhead should not stop working because
         // somebody flipped the breaker on the room next to it.

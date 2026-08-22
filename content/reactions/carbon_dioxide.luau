@@ -10,7 +10,7 @@
 -- carbon dioxide into the room and the room already knows what to do
 -- with it.
 --
--- Bell by the documented mapping (docs/reagents.md). tg's required
+-- Bell by the documented mapping (docs/CHEMISTRY.md). tg's required
 -- temperature is ABOVE its default optimal, so the rule's second clause
 -- applies -- opt_lo = temp_min + 5 -- and the plateau starts as soon as
 -- the window opens:

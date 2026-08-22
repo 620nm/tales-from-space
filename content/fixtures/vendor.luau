@@ -1,4 +1,4 @@
--- The scripted vending machine from docs/luau-api.md's shipped-content
+-- The scripted vending machine from docs/LUAU-API.md's shipped-content
 -- list: ctx.sleep demonstrates a plain suspension (no revalidation),
 -- ctx.spawn_item a script-created entity with Script-actor provenance
 -- in the shift ledger.

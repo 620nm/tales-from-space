@@ -12,7 +12,7 @@
 // out of it by percentage, colouring the whole layer with the mixture's
 // blended colour (`update_overlays`, reagent_containers.dm:287-307).
 // Everything on this sheet is therefore authored GREYSCALE and drawn as
-// a tinted overlay -- the same bargain docs/color.md describes for
+// a tinted overlay -- the same bargain docs/COLOR.md describes for
 // cable and pipe paint, and the reason a hundred reagents need six
 // pictures rather than six hundred.
 //

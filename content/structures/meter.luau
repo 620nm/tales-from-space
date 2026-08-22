@@ -19,7 +19,7 @@
 -- THE SENTENCE is tg's `status()` (meter.dm:123-131) word for word. The
 -- engine fills in three numbers, rounded to hundredths as tg rounds
 -- them; every other character of it is here, which is where the words a
--- player reads belong (docs/localization.md §5).
+-- player reads belong (docs/LOCALIZATION.md §5).
 --
 -- It does NOT hide under the deck. tg puts a meter at
 -- `HIGH_PIPE_LAYER`, above the run it reads, because an instrument you

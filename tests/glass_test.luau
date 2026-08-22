@@ -77,7 +77,7 @@ t.run_ticks(2)
 -- it: the pane is screwed to its frame first. The refusal names BOTH
 -- rungs a crowbar works on rather than whichever the file lists first
 -- -- as two whole sentences, never one joined with "or"
--- (docs/localization.md).
+-- (docs/LOCALIZATION.md).
 local _ = t.messages(p)
 t.click(p, 2, 1, t.target_at(2, 1))
 t.run_ticks(4)

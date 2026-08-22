@@ -5,7 +5,7 @@
 -- one here too. Mass and specific heat are a BRINE's rather than either
 -- ingredient's -- close to water, a shade heavier, a shade harder to
 -- warm -- and Inert, because a solution has no single boiling point to
--- give it. Convention rather than measurement (docs/reagents.md, D2).
+-- give it. Convention rather than measurement (docs/CHEMISTRY.md, D2).
 -- tg: /datum/reagent/water/salt (other_reagents.dm:265).
 return {
     id = "saltwater",

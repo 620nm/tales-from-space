@@ -35,7 +35,7 @@
 -- `n2` are the builtin roster's, the same substances a canister holds
 -- and a crewman breathes, dispensed as a liquid the way tg's reagent
 -- oxygen is a reagent. One matter registry, reached from one more
--- place (docs/reagents.md).
+-- place (docs/CHEMISTRY.md).
 --
 -- WHAT TG'S WINDOW HAS THAT THIS ONE CANNOT SAY: a power-cell gauge (a
 -- corded appliance here draws flat off the mains, and tg's per-unit

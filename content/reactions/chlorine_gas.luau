@@ -2,7 +2,7 @@
 -- and it pairs off into `cl2`, as GAS.
 --
 -- The twin of reactions/ammonia_gas.luau, and the same policy (D3,
--- docs/reagents.md). tg's chlorine reagent is a single atom because its
+-- docs/CHEMISTRY.md). tg's chlorine reagent is a single atom because its
 -- salt recipe is 1:1 with sodium; the real thing is diatomic and boils
 -- at 239.1 K. Two of the reagent for one of the molecule, which is the
 -- stoichiometry the names already imply.

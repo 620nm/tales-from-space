@@ -1,7 +1,7 @@
 -- Ammonia GAS -- NH3 as the molecule actually is, rather than the
 -- bench fiction next door in ammonia.luau.
 --
--- There are two of these on purpose (policy D3, docs/reagents.md). The
+-- There are two of these on purpose (policy D3, docs/CHEMISTRY.md). The
 -- reagent called `ammonia` is a liquid because tg's is, and because
 -- shipped recipes stand on it: nitrous oxide consumes liquid ammonia at
 -- 525-600 K, and a curve on that file would flash every beaker of it

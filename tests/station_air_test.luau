@@ -10,13 +10,11 @@
 -- The department it is asking about: three sealed gas chambers feeding
 -- a process line through a filter row and an air mixer into the supply
 -- main, with the scrubbers main bringing used air back. Its shape is
--- in docs/matter.md §19.5; what is here is whether it WORKS.
+-- in docs/ATMOS.md §13; what is here is whether it WORKS.
 --
--- The station was redrawn around a central Commons (docs/matter.md
--- §19.7). Atmospherics moved as one block, so every coordinate inside
--- it is (x - 1, y + 9) of the one it replaced; the Commons, the vents
--- and the walked route are new ground and are re-derived below with the
--- same pinning discipline as before.
+-- The station is drawn around a central Commons with Atmospherics as
+-- one block in the south-west; the Commons, the vents and the walked
+-- route are pinned below by coordinate, not by assumption.
 
 local L2 = 2 -- scrubbers
 local L3 = 4 -- the department's process line

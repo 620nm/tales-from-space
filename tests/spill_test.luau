@@ -75,7 +75,7 @@ assert(#t.ledger_rows("spilled") == 1, "the empty beaker spilled nothing")
 --
 -- A puddle is matter standing in a cell, so it does what matter in a
 -- cell does: the water in it evaporates into the room until the air
--- above it is saturated (docs/matter.md section 5). Before Effort G a
+-- above it is saturated (docs/MATTER.md section 5). Before Effort G a
 -- spill was permanent -- the phase step boiled above the boiling point
 -- and condensed everything below it, and 293 K is below it, so a
 -- puddle could only ever grow.
