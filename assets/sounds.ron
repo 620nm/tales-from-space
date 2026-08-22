@@ -13,6 +13,11 @@
     ("ratchet", "items/tools/ratchet.ogg"),
     ("drink", "items/drink.ogg"),
     ("hiss", "machines/hiss.ogg"),
+    // Gas arriving where it should not be: tg plays this for a tank
+    // springing a leak (tanks.dm:386) and for a canister splitting
+    // open (canister.dm:488), which are the same noise for the same
+    // reason.
+    ("spray", "effects/spray.ogg"),
     // A tube going through: tg's break_light_tube plays glasshit.ogg,
     // and the light replacer clicks (lightreplacer.dm:263).
     ("glass_break", "effects/glass/glasshit.ogg"),
