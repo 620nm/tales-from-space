@@ -2,10 +2,12 @@
 -- naming this file and the player holding the cutters. Layer masks:
 -- 1 = feeder (red), 2 = branch (yellow), 4 = reserved (blue).
 --
--- Cabling under an intact floor tile is out of reach, exactly as the
--- pipe under it is: tg's levelupdate() drops everything in a covered
--- turf to UNDERFLOOR_HIDDEN (code/game/turfs/turf.dm:503-506,
--- code/__DEFINES/turfs.dm:50-54), so the cutters never see it. The
+-- Cabling under a covered deck is out of reach, exactly as the pipe
+-- under it is: tg's levelupdate() drops everything in a covered turf to
+-- UNDERFLOOR_HIDDEN (code/game/turfs/turf.dm:503-506,
+-- code/__DEFINES/turfs.dm:50-54), so the cutters never see it. Whether
+-- a deck is open is the tile's own answer and not its turf's name -- a
+-- map may leave a panel open in a finished floor (docs/MAPPING.md). The
 -- refusal is a silent "pass" rather than a message, because telling a
 -- saboteur "there is cable down there" is the whole thing the covering
 -- floor is meant to prevent.
@@ -34,7 +36,7 @@ return {
     on_use = function(ctx, self, user, x, y, _, target)
         -- Asked before the cable question, so a covered tile answers
         -- the same whether or not anything runs under it.
-        if ctx.turf(x, y) ~= "plating" then
+        if not ctx.subfloor_exposed(x, y) then
             return "pass"
         end
         if target == nil or target.kind ~= "cable" then
