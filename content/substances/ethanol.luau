@@ -31,7 +31,7 @@ return {
     burn = { k = 2193, rate = 0.000625 },
     -- What it looks like through glass (tg: alcohol_reagents.dm:7).
     color = "#404030",
-    on_mob_life = function(ctx, mob, moles)
+    on_mob_life = function(ctx, mob, _user, _moles)
         if ctx.random(1, 6) == 1 then
             ctx.system_msg(mob, "You feel a little tipsy.")
         end

@@ -9,7 +9,7 @@ return {
     metabolism_rate = 0.003,
     -- What it looks like through glass (tg: cat2_medicine_reagents.dm:105).
     color = "#ECEC8D",
-    on_mob_life = function(ctx, mob, moles)
+    on_mob_life = function(ctx, mob, _user, _moles)
         ctx.heal(mob, { brute = 1.5 })
         if ctx.random(1, 10) == 1 then
             ctx.system_msg(mob, "Your bruises ache less.")
