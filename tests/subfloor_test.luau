@@ -268,3 +268,51 @@ assert(t.structure_at(2, 1).id == "canister", "the canister remains above the ti
 assert(t.canister_pressure(2, 1) ~= nil, "it remains anchored to its socket")
 assert(t.pipe(2, 1) == 0, "the connector did not become a hidden raw length")
 assert(t.pipe_pressure(1, 1) > 90.0, "the port remains plumbed to its neighbouring run")
+
+-- ---------------------------------------------------------------
+-- The open deck is a fact about the TILE, not about the letter its
+-- turf is spelled with. A map may leave a panel open in a finished
+-- floor and box the wiring in under bare plating (docs/MAPPING.md),
+-- and every rule above follows the panel rather than the turf.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "authored decks",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Plating),
+        'o': (turf: Floor, subfloor: Some(Exposed)),
+        'c': (turf: Plating, subfloor: Some(Concealed)),
+        '#': (turf: Wall),
+    },
+    rows: [
+        "#####",
+        "#.oc#",
+        "#...#",
+        "#####",
+    ],
+    spawns: [(2, 2)],
+    items: [(2, 2, "wirecutters")],
+    cables: [(2, 1, 2), (3, 1, 2)],
+)]==], 7)
+
+local e = t.join()
+t.tick()
+assert(t.turf(2, 1) == "floor", "the panel is a finished floor")
+assert(t.subfloor_exposed(2, 1), "and its deck is open anyway")
+assert(t.turf(3, 1) == "plating", "its neighbour is bare plating")
+assert(not t.subfloor_exposed(3, 1), "with its wiring boxed in")
+
+t.click(e, 2, 2, t.target_at(2, 2, "wirecutters"))
+t.run_ticks(2)
+assert(t.hands(e).held == "wirecutters", "cutters in hand")
+_ = t.messages(e)
+
+t.click_subfloor(e, 3, 1, "cable", BRANCH)
+t.run_seconds(1.5)
+assert(t.cable_at(3, 1) == BRANCH, "boxed-in plating keeps its run")
+assert(not said(e, "snipping"), "and the cutters never bit")
+
+t.click_subfloor(e, 2, 1, "cable", BRANCH)
+t.run_seconds(1.5)
+assert(t.cable_at(2, 1) == 0, "the open panel gives its run up")
+assert(t.turf(2, 1) == "floor", "without becoming a different deck")

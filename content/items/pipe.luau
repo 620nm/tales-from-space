@@ -40,8 +40,9 @@ return {
     end,
     on_use = function(ctx, self, user, x, y)
         -- Asked first, so every covered tile answers the same way and
-        -- the reply is not a probe for what is already buried.
-        if ctx.turf(x, y) ~= "plating" then
+        -- the reply is not a probe for what is already buried. Open
+        -- deck, not "plating": the map decides per tile.
+        if not ctx.subfloor_exposed(x, y) then
             ctx.system_msg(user, "The floor is in the way. Pry the tile up first.")
             return
         end
