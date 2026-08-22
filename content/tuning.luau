@@ -12,10 +12,10 @@ return {
     -- vented room stops pushing on its own -- nothing switches the wind
     -- off, it runs out. Drag sits UNDER slide: a body standing up in
     -- the airstream is a sail, a toolbox on the deck is a brick. Engine
-    -- defaults: 0.002 and 0.0008 (a venting corridor takes both; a
-    -- crewman's own wake takes neither).
-    wind_slide_pa = 0.002,
-    wind_drag_pa = 0.0008,
+    -- defaults: 0.008 and 0.004 (a venting corridor takes both; a
+    -- swinging door and a crewman's own wake take neither).
+    wind_slide_pa = 0.008,
+    wind_drag_pa = 0.004,
 
     -- How much air (m/s) a body pushes ahead of it per step it walks,
     -- and the fraction of that a thrown thing pushes. This is what

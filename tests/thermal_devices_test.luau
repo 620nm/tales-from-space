@@ -569,20 +569,20 @@ assert(
     "the ports vented into the room when the machine left the run: "
         .. room_before .. " -> " .. t.room_pressure(3, 1)
 )
--- -- and the fitting lands at the BUILDER's feet rather than on the
--- machine's tile (docs/CONSTRUCTION.md), which is why this counts the
--- world rather than one tile.
+-- -- and the fitting lands on the MACHINE's tile
+-- (docs/CONSTRUCTION.md), where the air it just let go of is moving,
+-- which is why this counts the world rather than one tile.
 assert(
     t.count_items("temperature_pump_fitting") == 1,
     "and exactly one fitting came back into the world"
 )
 local at_hand = false
-for _, item in ipairs(t.items_at(3, 2)) do
+for _, item in ipairs(t.items_at(3, 1)) do
     if item == "temperature_pump_fitting" then
         at_hand = true
     end
 end
-assert(at_hand, "lying at the feet of whoever took it off")
+assert(at_hand, "lying on the tile the machine came off")
 
 -- ---- you do not raise a machine on the tile you are standing on ----
 walk(s, "east")
