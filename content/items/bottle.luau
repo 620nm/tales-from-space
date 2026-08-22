@@ -25,6 +25,14 @@ return {
     -- tg's bottle: `volume = 50` (cups/bottle.dm:12), the cup base's
     -- own figure. One unit is one millilitre.
     volume_ml = 50,
+    -- A neck has a stopper in it. What a shelf keeps is corked, so what
+    -- is in it stays in it: a bottle does not breathe with the room the
+    -- way an open beaker does, and what ferments inside one builds a
+    -- pressure of its own (docs/CHEMISTRY.md 9). Pouring, drinking and
+    -- spilling are all you pulling the cork, and none of them asks
+    -- about the lid -- the seal is what the bottle does while nobody is
+    -- handling it.
+    sealed = true,
     fill_sprites = {
         { 1, "bottle_fill_1" },
         { 20, "bottle_fill_20" },
