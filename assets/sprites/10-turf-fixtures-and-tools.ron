@@ -46,6 +46,8 @@
         ("tools", "obj/tools.dmi"),
         ("floors", "turf/floors.dmi"),
         ("space", "turf/space.dmi"),
+        ("reinforced_states", "turf/walls/reinforced_states.dmi"),
+        ("reinforced_walls", "turf/walls/reinforced_wall.dmi"),
         ("walls", "turf/walls/wall.dmi"),
     ],
     sprites: [
@@ -53,8 +55,28 @@
         ("floor", Dmi("@floors", "floor", 0)),
         ("plating", Dmi("@floors", "plating", 0)),
         ("wall", Dmi("@walls", "wall-0", 0)),
+        // The engine room's deck and the hull it is walled with. The
+        // reinforced wall takes its junction-0 frame exactly as the
+        // plain wall above does -- we do not smooth turfs yet, and 0 is
+        // the isolated picture that reads right on its own.
+        ("reinforced_floor", Dmi("@floors", "engine", 0)),
+        ("reinforced_wall", Dmi("@reinforced_walls", "reinforced_wall-0", 0)),
+        // tg's six deconstruction pictures for an opened r_wall, in
+        // `d_state` order (reinf_walls.dm:21-24, `base_decon_state`).
+        ("reinforced_wall_1", Dmi("@reinforced_states", "r_wall-1", 0)),
+        ("reinforced_wall_2", Dmi("@reinforced_states", "r_wall-2", 0)),
+        ("reinforced_wall_3", Dmi("@reinforced_states", "r_wall-3", 0)),
+        ("reinforced_wall_4", Dmi("@reinforced_states", "r_wall-4", 0)),
+        ("reinforced_wall_5", Dmi("@reinforced_states", "r_wall-5", 0)),
+        ("reinforced_wall_6", Dmi("@reinforced_states", "r_wall-6", 0)),
         ("girder", Dmi("@structures", "girder", 0)),
         ("girder_displaced", Dmi("@structures", "displaced", 0)),
+        // The unsmoothed reinforced girder, from the same legacy sheet
+        // its plain and displaced siblings above come from. tg's own
+        // reinforced girder wears the smoothed family
+        // (smooth_structures/reinforced_girder.dmi, girders.dm:181-183);
+        // this is that object's picture at rest.
+        ("girder_reinforced", Dmi("@structures", "reinforced", 0)),
         ("frame", Dmi("@stock_parts", "box_0", 0)),
         ("board", Dmi("@circuitry", "mainboard", 0)),
         // An airlock has four appearances, not two: the two rests and
