@@ -13,12 +13,13 @@
 -- state of the same name, so `sprite == "d6_" .. state` is the assertion
 -- that the repaint and the bookkeeping have not drifted apart.
 --
--- SEED-PINNED. `t.world(..., 0)` fixes the shift RNG, so every roll
--- below is a fact rather than a range: the d6 lands on 6 in the hand
--- and on 1 where it stops, which is also (deliberately) the value that
--- earns tg's "Ouch, bad luck." remark. A change to how many numbers
--- the engine draws before these will move them, and the fix is to read
--- the new ones off a failing run rather than to loosen the assertion.
+-- SEED-PINNED. `t.world(..., 2)` fixes the shift RNG, so every roll
+-- below is a fact rather than a range: the d6 lands on 2 in the hand
+-- and on 5 where it stops, and neither is the six it was minted on,
+-- which is what makes the picture assertions below mean anything. A
+-- change to how many numbers the engine draws before these will move
+-- them, and the fix is to read the new ones off a failing run -- and
+-- to keep the landing off six -- rather than to loosen the assertion.
 t.world([==[(
     name: "rec room",
     legend: {
@@ -33,7 +34,7 @@ t.world([==[(
     ],
     spawns: [(1, 1)],
     items: [(2, 1, "d6"), (2, 1, "d20")],
-)]==], 0)
+)]==], 2)
 
 local p = t.join()
 t.tick()
@@ -56,7 +57,7 @@ assert(t.hands(p).held == "d6", "the die is in hand")
 t.use_self(p)
 t.tick()
 local msgs = table.concat(t.messages(p), "\n")
-assert(msgs:find("You roll the d6. It lands on 6.", 1, true),
+assert(msgs:find("You roll the d6. It lands on 2.", 1, true),
     "a roll in the hand reads out, seed-pinned: " .. msgs)
 assert(table.concat(t.sounds(p), " "):find("dice_roll", 1, true),
     "and it is heard tumbling (tg plays the sound from diceroll itself)")
@@ -69,7 +70,7 @@ assert(t.hands(p).held == nil, "it left the hand at once")
 t.run_ticks(8)
 assert(#t.items_at(5, 1) == 1, "it flew four tiles and stopped there")
 msgs = table.concat(t.messages(p), "\n")
-assert(msgs:find("The d6 rolls to a stop, landing on 4.", 1, true),
+assert(msgs:find("The d6 rolls to a stop, landing on 5.", 1, true),
     "landing rolls it again: " .. msgs)
 
 local threw = t.ledger_rows("Threw")
@@ -84,7 +85,7 @@ assert(#threw == 1 and threw[1].item == "d6",
 -- so the state really moved.
 local landed = t.item_at(5, 1, "d6")
 assert(landed ~= nil, "the die is where it stopped")
-assert(landed.state == "4",
+assert(landed.state == "5",
     "it is in the state it rolled, seed-pinned: " .. tostring(landed.state))
 assert(landed.sprite == "d6_" .. landed.state,
     "and the sprite is that state's picture, not the resting one: " .. tostring(landed.sprite))
@@ -92,14 +93,14 @@ assert(landed.sprite ~= resting.sprite,
     "which is a different picture from the one it was minted wearing")
 
 local set = t.ledger_rows("StateSet")
-assert(#set >= 1 and set[#set].state == "4",
+assert(#set >= 1 and set[#set].state == "5",
     "and the face it came to rest on is on the record")
 
 -- ...and it REACHED the player. A repaint can be right in the world and
 -- never reach the wire, and only `t.layers` would notice: this is what
 -- the client was actually told to draw.
 local drawn = t.layers(p, t.target_at(5, 1, "d6"))
-assert(table.concat(drawn, " "):find("d6_4", 1, true),
+assert(table.concat(drawn, " "):find("d6_5", 1, true),
     "the client was sent the rolled face: " .. table.concat(drawn, " "))
 
 -- ---- twenty sides, and the one number anybody remembers ----------------
@@ -107,9 +108,9 @@ t.click(p, 2, 1, t.target_at(2, 1, "d20"))
 t.tick()
 assert(t.hands(p).held == "d20", "the good one is in hand")
 
--- Seed 0 puts the natural twenty on the 35th roll of this die and the
--- first natural one on the 47th, so sixty covers both with room for
--- the RNG to shift a little. tg comments on a 20 and on a 1 and on
+-- Sixty rolls of a d20 contain a natural twenty and a natural one with
+-- room to spare, so this survives the RNG shifting a little -- which it
+-- does whenever the engine draws a number earlier in the shift. tg comments on a 20 and on a 1 and on
 -- nothing else (dice.dm:90-93); this is both of them.
 local nat20, unlucky = false, false
 for _ = 1, 60 do
@@ -154,9 +155,9 @@ assert(down.state == rolled,
 assert(down.sprite == "d20_" .. rolled,
     "and the picture is that face's cell: " .. tostring(down.sprite))
 -- Seed-pinned like every other number in this file: the sixty-first roll
--- of this die is a 1, so the face on the floor is one and the die was
--- minted on twenty — the state really moved, and it moved to the number
--- that was said. Read a new one off a failing run rather than loosening
--- the assertion.
-assert(rolled == "19", "seed 0 puts the sixty-first roll on 19, got " .. rolled)
+-- of this die is a 15, so the face on the floor is fifteen and the die
+-- was minted on twenty — the state really moved, and it moved to the
+-- number that was said. Read a new one off a failing run rather than
+-- loosening the assertion.
+assert(rolled == "15", "seed 2 puts the sixty-first roll on 15, got " .. rolled)
 assert(down.state ~= "20", "and it is not still on the face it was minted wearing")

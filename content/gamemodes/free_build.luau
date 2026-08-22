@@ -14,5 +14,14 @@ return {
         -- slot is taken and the crew manifest is unchanged. Somebody
         -- who spawns to build should already be holding the tools.
         outfit = "engineer",
+        -- One sky and no dice: a sandbox that came out sunward some
+        -- days and not others would make every temperature reading in
+        -- it a question about the weather.
+        environment = {
+            sink_k = 2.7,
+            rolls = {
+                { id = "dead_space", name = "dead space", weight = 1, insolation = 0 },
+            },
+        },
     },
 }
