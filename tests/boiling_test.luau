@@ -97,10 +97,34 @@ t.ui_act(p, "toggle", '{"field":"power"}')
 -- the vapour rather than guessing the tick it appears on: the crossing
 -- is a gas for as long as the room stays hot enough to hold it.
 local saw_vapour = false
+local saw_two_phases = false
 for _ = 1, 400 do
     t.run_ticks(5)
     if room_gas("water") > 0.0 then
         saw_vapour = true
+    end
+    -- INSIDE THE GLASS, on the way out. `t.vessel` splits the water by
+    -- phase, so a sample taken while the chamber is over the boil
+    -- catches the beaker holding both at once: liquid still standing in
+    -- the bottom and vapour in the headspace over it. That is the step
+    -- the room's gain is made of -- water does not teleport from a
+    -- beaker to a room, it boils into the space above itself and the
+    -- open vessel breathes that space out (sim/chemistry/vent.rs).
+    --
+    -- Small when you catch it, and the cadence says why: the vent runs
+    -- every atmos pass and takes the WHOLE headspace, so what a sample
+    -- between passes finds is one pass's worth rather than a beaker
+    -- full of steam. What is asserted is that the gas phase exists in
+    -- there at all while the liquid one still does.
+    local inside = t.vessel(beaker)
+    local water = inside.contents.water
+    if
+        water ~= nil
+        and (water.gas or 0) > 0
+        and (water.liquid or 0) > 0
+        and inside.temp_k > 373.0
+    then
+        saw_two_phases = true
     end
     if amount(beaker, "water") <= PRESS * 0.05 then
         break
@@ -108,6 +132,7 @@ for _ = 1, 400 do
 end
 
 assert(saw_vapour, "the water crossed into the room as a gas")
+assert(saw_two_phases, "and it was gas in the glass before it was gas in the room")
 -- Nearly dry rather than exactly dry, and the arithmetic says why: the
 -- phase step moves a share of what is left each time, so the last drops
 -- go asymptotically. A twentieth of a press left after a hundred
