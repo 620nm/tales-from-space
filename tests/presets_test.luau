@@ -64,11 +64,13 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
     rows: [
         "##########",
         "#.#......#",
-        "###......#",
+        "###..a..g#",
         "##########",
         "#####.####",
         "##########",
@@ -86,6 +88,12 @@ t.world([==[(
         (1, 1, "passive_vent"),
         (5, 4, "passive_vent"),
         (5, 1, "gas_mixer_airmix"),
+    ],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3),
+        (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3),
+        (5, 3, 3),
+        (5, 4, 3),
     ],
 )]==], 7)
 
@@ -171,17 +179,23 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
     rows: [
         "#########",
         "#.#.....#",
-        "###.....#",
+        "###.a..g#",
         "#########",
     ],
     spawns: [(4, 2)],
     room_gas: [(1, 1, "co2", 100.0)],
     pipes: [(2, 1, 4), (3, 1, 4), (5, 1, 4), (6, 1, 4), (4, 2, 4)],
     structures: [(1, 1, "passive_vent"), (4, 1, "gas_filter_co2")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3),
+        (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3),
+    ],
 )]==], 7)
 
 local q = t.join()

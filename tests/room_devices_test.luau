@@ -99,11 +99,13 @@ local SCRUB_MAP = [==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
     rows: [
         "########",
         "#......#",
-        "#......#",
+        "#....ag#",
         "########",
     ],
     spawns: [(5, 2)],
@@ -113,6 +115,10 @@ local SCRUB_MAP = [==[(
     // `vent_scrubber/on/layer2`, and see the structure's own file).
     pipes: [(0, 1, 2), (1, 1, 2)],
     structures: [(2, 1, "air_scrubber")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    ],
 )]==]
 
 t.world(SCRUB_MAP, 7)
@@ -241,16 +247,22 @@ t.world([==[(
         '.': (turf: Plating),
         '#': (turf: Wall),
         'c': (turf: Plating, fixture: Some(Canister)),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
     rows: [
         "########",
         "#c.....#",
-        "#......#",
+        "#...a.g#",
         "########",
     ],
     spawns: [(4, 2)],
     pipes: [(2, 1, 4)],
     structures: [(1, 1, "connector_port"), (3, 1, "air_injector")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    ],
 )]==], 7)
 
 local q = t.join()
@@ -335,10 +347,8 @@ assert(
 -- ---------------------------------------------------------------
 -- NEITHER OF THEM WORKS ON A DEAD GRID.
 --
--- Both are fans, and tg bills both as such. One cable stub in the
--- corner touching nothing is what makes the station's wiring a real
--- graph for these two to be absent from (a map with no cable at all
--- boots the grid in abstract mode, where everything is powered).
+-- Both are fans, and tg bills both as such. Nobody ran cable into this
+-- room, which is all it takes for the two of them to have no mains.
 -- ---------------------------------------------------------------
 t.world([==[(
     name: "dark room",
@@ -354,7 +364,6 @@ t.world([==[(
         "########",
     ],
     spawns: [(5, 2)],
-    cables: [(6, 2, 4)],
     // The scrubber's waste line is layer 2, the injector's supply is
     // the default 3 -- which is exactly how the two are mapped.
     pipes: [(0, 1, 2), (1, 1, 2), (5, 1, 4), (6, 1, 4)],
@@ -407,11 +416,13 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
     rows: [
         "########",
         "#......#",
-        "#......#",
+        "#a....g#",
         "########",
     ],
     spawns: [(1, 2)],
@@ -421,6 +432,10 @@ t.world([==[(
         (4, 2, "air_injector_fitting"),
     ],
     pipes: [(1, 1, 4), (2, 1, 4)],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    ],
 )]==], 7)
 
 local s = t.join()

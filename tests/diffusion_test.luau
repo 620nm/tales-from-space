@@ -70,15 +70,22 @@ t.world([==[(
     legend: {
         '.': (turf: Floor),
         '#': (turf: Wall),
+        'g': (turf: Floor, fixture: Some(Generator)),
+        'a': (turf: Floor, fixture: Some(Apc)),
     },
     rows: [
         "########",
         "#..#...#",
-        "#......#",
-        "#..#...#",
+        "#.....g#",
+        "#..#..a#",
         "########",
     ],
     spawns: [(6, 3)],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+        (1, 3, 3), (2, 3, 3), (4, 3, 3), (5, 3, 3), (6, 3, 3),
+    ],
 )]==], 7)
 
 -- An INERT SKY, and every map in this file gets one. A hull radiating
@@ -165,14 +172,20 @@ t.world([==[(
     legend: {
         '.': (turf: Floor),
         '#': (turf: Wall),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'g': (turf: Floor, fixture: Some(Generator)),
     },
     rows: [
         "#######",
-        "#..#..#",
-        "#..#..#",
+        "#a.#a.#",
+        "#.g#.g#",
         "#######",
     ],
     spawns: [(1, 1)],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (4, 1, 3), (5, 1, 3),
+        (1, 2, 3), (2, 2, 3), (4, 2, 3), (5, 2, 3),
+    ],
 )]==], 7)
 
 t.set_environment({ sink_k = 293.15, insolation = 0 }) -- inert sky, as above
@@ -246,13 +259,18 @@ t.world([==[(
         '.': (turf: Floor),
         '#': (turf: Wall),
         'D': (turf: Floor, fixture: Some(Door)),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'g': (turf: Floor, fixture: Some(Generator)),
     },
     rows: [
         "#######",
-        "#..D..#",
+        "#.aD.g#",
         "#######",
     ],
     spawns: [(2, 1)],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
+    ],
 )]==], 7)
 
 t.set_environment({ sink_k = 293.15, insolation = 0 }) -- inert sky, as above

@@ -58,11 +58,13 @@ local BENCH = [==[(
     legend: {
         '.': (turf: Plating),
         '#': (turf: Wall),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
     rows: [
         "##########",
         "#........#",
-        "#........#",
+        "#..a....g#",
         "##########",
     ],
     spawns: [(3, 2)],
@@ -71,6 +73,10 @@ local BENCH = [==[(
         (1, 1, "stationary_tank", "anchored", ("%s", 400.0)),
         (3, 1, "manual_valve"),
         (6, 1, "thermomachine"),
+    ],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3),
     ],
 )]==]
 
@@ -244,17 +250,23 @@ t.world([==[(
     legend: {
         '.': (turf: Plating),
         '#': (turf: Wall),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
     },
     rows: [
         "########",
         "#......#",
-        "#......#",
+        "#..a..g#",
         "########",
     ],
     spawns: [(3, 2)],
     items: [(3, 2, "wrench")],
     pipes: [(2, 1, 4)],
     structures: [(3, 1, "thermomachine")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    ],
 )]==], 7)
 
 local d = t.join()

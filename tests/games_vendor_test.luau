@@ -19,15 +19,22 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Floor),
         '#': (turf: Wall),
+        'o': (turf: Floor, fixture: Some(Outlet)),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'g': (turf: Floor, fixture: Some(Generator)),
     },
     rows: [
         "#####",
-        "#...#",
-        "#...#",
+        "#o..#",
+        "#a.g#",
         "#####",
     ],
     spawns: [(1, 1)],
     machines: [(2, 1, "games_vendor")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3),
+    ],
 )]==], 0)
 
 local p = t.join()

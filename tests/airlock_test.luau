@@ -35,15 +35,22 @@ local VESTIBULE = [==[(
         '#': (turf: Wall),
         '_': (turf: Plating),
         'E': (turf: Plating, fixture: Some(Door)),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'g': (turf: Floor, fixture: Some(Generator)),
     },
     rows: [
         "######## ",
-        "#....#_# ",
+        "#...a#_# ",
         "#....E_E ",
-        "#....#_# ",
+        "#...g#_# ",
         "######## ",
     ],
     spawns: [(1, 2), (2, 2)],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (6, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3),
+        (1, 3, 3), (2, 3, 3), (3, 3, 3), (4, 3, 3), (6, 3, 3),
+    ],
 )]==]
 
 -- The same chamber, interlocked. Each airlock names the direction its
@@ -220,13 +227,15 @@ local VIEWPORT = [==[(
         '.': (turf: Floor),
         '#': (turf: Wall),
         '_': (turf: Plating),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'g': (turf: Floor, fixture: Some(Generator)),
     },
     rows: [
         "     ",
         "     ",
         "##_##",
-        "#...#",
-        "#...#",
+        "#..g#",
+        "#.a.#",
         "#####",
     ],
     spawns: [(2, 3), (1, 3)],
@@ -235,6 +244,11 @@ local VIEWPORT = [==[(
         (3, 4, "crowbar"),
     ],
     structures: [(2, 2, "grille", "glazed")],
+    cables: [
+        (2, 2, 3),
+        (1, 3, 3), (2, 3, 3), (3, 3, 3),
+        (1, 4, 3), (2, 4, 3), (3, 4, 3),
+    ],
 )]==]
 
 t.world(VIEWPORT, 7)
