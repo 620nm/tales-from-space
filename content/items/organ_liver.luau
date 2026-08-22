@@ -4,13 +4,13 @@
 -- what every capacity reading its tag sees.
 --
 -- Pools and decay are STANDARD_ORGAN_THRESHOLD 100 / HEALING 50e-5 /
--- DECAY 111e-5 per second (code/modules/mob/dead/new_player/DNA.dm:137-140)
+-- DECAY 111e-5 per second (code/__DEFINES/DNA.dm:137-140)
 -- with the thresholds low 10 / high 45
 -- (code/modules/surgery/organs/_organ.dm:32-33), unless this file says
 -- otherwise below.
 --
 -- STANDARD_ORGAN_DECAY, no per-organ multiplier
--- (code/modules/surgery/organs/internal/liver/_liver.dm:8).
+-- (code/modules/surgery/organs/internal/liver/_liver.dm:16).
 return {
     id = "organ_liver",
     name = "liver",

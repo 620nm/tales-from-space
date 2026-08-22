@@ -4,7 +4,7 @@
 -- what every capacity reading its tag sees.
 --
 -- Pools and decay are STANDARD_ORGAN_THRESHOLD 100 / HEALING 50e-5 /
--- DECAY 111e-5 per second (code/modules/mob/dead/new_player/DNA.dm:137-140)
+-- DECAY 111e-5 per second (code/__DEFINES/DNA.dm:137-140)
 -- with the thresholds low 10 / high 45
 -- (code/modules/surgery/organs/_organ.dm:32-33), unless this file says
 -- otherwise below.
@@ -21,7 +21,10 @@ return {
         max_health = 100,
         low = 10,
         high = 45,
-        heal_per_s = 0.0005,
+        -- tg's tongue sets no healing_factor, so it inherits 0
+        -- (_organ.dm:30) like the brain: a tongue does not knit itself
+        -- back together.
+        heal_per_s = 0,
         decay_per_s = 0,
         tags = { "tongue" },
     },
