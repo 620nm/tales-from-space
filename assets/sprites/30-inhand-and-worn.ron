@@ -72,6 +72,8 @@
         (sheet: "id_r", sprites: [Directions("held_id_r", "card-id")]),
         (sheet: "sheets_l", sprites: [Directions("held_metal_l", "sheet-metal")]),
         (sheet: "sheets_r", sprites: [Directions("held_metal_r", "sheet-metal")]),
+        (sheet: "sheets_l", sprites: [Directions("held_plasteel_l", "sheet-plasteel")]),
+        (sheet: "sheets_r", sprites: [Directions("held_plasteel_r", "sheet-plasteel")]),
         (sheet: "tiles_l", sprites: [Directions("held_floor_tile_l", "tile")]),
         (sheet: "tiles_r", sprites: [Directions("held_floor_tile_r", "tile")]),
         (sheet: "items_l", sprites: [Directions("held_headset_l", "headset")]),

@@ -40,6 +40,23 @@ return {
             start = "You start plating the girder into a wall.",
             done = "The wall stands.",
         },
+        -- One sheet of plasteel makes it the reinforced frame instead,
+        -- five seconds (tg girders.dm:59-61, `try_construction_step(...,
+        -- 5 SECONDS, req_state = GIRDER_NORMAL, amount = 1)` followed by
+        -- `replace_girder`). Bolted down only, for the same reason the
+        -- wall step is: tg asks GIRDER_NORMAL, and a frame that slides
+        -- when you lean on it takes no reinforcement either. tg swaps
+        -- one object for another, so this row does too -- the girder
+        -- goes and the reinforced one is what stands there.
+        {
+            at = "anchored",
+            with = { plasteel = 1 },
+            secs = 5.0,
+            gone = true,
+            leaves = "reinforced_girder",
+            start = "You start reinforcing the girder.",
+            done = "The plasteel struts into the frame.",
+        },
         {
             at = "anchored",
             tool = "wrench",
