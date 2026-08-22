@@ -7,6 +7,10 @@ return {
     rules = {
         bodies = "persistent",
         respawn = "never",
+        -- What every crew body spawned under this mode wears
+        -- (docs/BIOLOGY.md §1). A job may name its own instead;
+        -- without either there would be nothing to spawn.
+        body = "human",
         infinite_vending = false,
         round_logic = true,
         -- Where the station is parked this shift, rolled once at boot.
