@@ -82,7 +82,7 @@ t.tick()
 assert(t.hands(p).held == "dice_bag", "the bag is in hand")
 -- A container minted by a vending machine goes through the same one
 -- spawner a map placement does, so `holds` is stocked exactly the same
--- way (sim/life.rs). Seven dice, or the machine handed out a prop.
+-- way (sim/mint.rs). Seven dice, or the machine handed out a prop.
 local ROSTER = { "d4", "d6", "d8", "d10", "d12", "d20", "d00" }
 for i = 1, #ROSTER do
     t.take_held(p, 0)
