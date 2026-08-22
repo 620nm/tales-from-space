@@ -81,6 +81,17 @@ t.world([==[(
     spawns: [(6, 3)],
 )]==], 7)
 
+-- An INERT SKY, and every map in this file gets one. A hull radiating
+-- against a sink at its own temperature emits exactly what it absorbs,
+-- so nothing here cools -- by physics, not by a bypass flag. It matters
+-- because the tiles of a room do not cool at the SAME rate: a corner is
+-- bolted to two walls' worth of steel and a middle tile stands on its
+-- own deck alone, so a cooling room grows a temperature map, and gas
+-- drifts towards the cold. That is real (room_temperature_test.luau
+-- weighs it), and it is not what this file is about: what is asserted
+-- below is where gas goes when nothing is pushing it anywhere.
+t.set_environment({ sink_k = 293.15, insolation = 0 })
+
 t.join()
 t.tick()
 
@@ -164,6 +175,8 @@ t.world([==[(
     spawns: [(1, 1)],
 )]==], 7)
 
+t.set_environment({ sink_k = 293.15, insolation = 0 }) -- inert sky, as above
+
 t.join()
 t.tick()
 
@@ -241,6 +254,8 @@ t.world([==[(
     ],
     spawns: [(2, 1)],
 )]==], 7)
+
+t.set_environment({ sink_k = 293.15, insolation = 0 }) -- inert sky, as above
 
 local p = t.join()
 t.tick()

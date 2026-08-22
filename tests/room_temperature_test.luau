@@ -30,10 +30,24 @@
 -- The gradient itself is scaffolding: `t.foul_room` deposits at T20C by
 -- construction and `t.heat_pipe` is the only heat source a spec has
 -- until a burn chamber exists. Both are preconditions, never assertions.
+--
+-- AND THERE IS A FOURTH COLUMN, outside the room entirely: the sky. A
+-- deck is a slab with a face over it and a face under it, and both look
+-- at space, so every tile of every room radiates whether or not anybody
+-- opened a door (docs/MATTER.md §9 step 5d). Where the station is
+-- parked -- how cold the sink is and whether a star is shining on it --
+-- is rolled once per shift off the game mode (docs/GAMEMODES.md), which
+-- is why the blocks below that want a room to sit still say so with
+-- `t.set_environment`: a sink at the station's own temperature radiates
+-- back exactly what the hull emits, so the sky goes quiet by PHYSICS
+-- rather than by a bypass flag. The two blocks at the end take the flag
+-- off and weigh what the sky does.
 
 local T20C = 293.15
 local R_GAS = 8.314
 local TILE_L = 1000.0
+-- Stefan-Boltzmann, W/(m^2 K^4). Not a tg number: tg has no radiation.
+local SIGMA = 5.670374419e-8
 
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
@@ -64,9 +78,10 @@ local function room_moles(tiles)
 end
 
 -- The deck under a set of tiles: what it holds, and what it would take
--- to warm it a kelvin. A floor's is finite and readable; plating's is
--- tg's INFINITY (floor/plating.dm:227) and would report `math.huge`,
--- which is why every map in this file is laid in floor.
+-- to warm it a kelvin. Every deck is finite and readable, plating
+-- included -- it is the hull plate, massed as the slab it is
+-- (docs/MATTER.md §12) -- but the maps in this file are laid in floor
+-- so that one deck capacity serves every tile in the arithmetic.
 local function deck_energy(tiles)
     local sum = 0.0
     for _, tile in ipairs(tiles) do
@@ -110,14 +125,18 @@ end
 -- ---------------------------------------------------------------
 -- A SEALED ROOM HOLDS ITS TEMPERATURE, AND FOULING IT DOES NOT HEAT IT.
 --
--- The negative first, and it is doing two jobs. One: nothing in this
--- engine warms or cools a room on its own. The deck under it is real
--- and it is heavy, but it opens at the same room temperature the air
--- does, and conduction with no gradient is nothing; there is no
+-- The negative first, and it is doing two jobs. One: nothing INSIDE
+-- this engine warms or cools a room on its own. The deck under it is
+-- real and it is heavy, but it opens at the same room temperature the
+-- air does, and conduction with no gradient is nothing; there is no
 -- boundary cell to drain to on a fully walled map, and nothing to react
--- with. Six tiles of standard air left alone for two minutes read the
--- same number, to the hundredth, that they opened at -- and so does
--- their deck.
+-- with. The one thing outside is the sky, and it is silenced the only
+-- honest way there is: `t.set_environment` parks this station under a
+-- sink at its own temperature, so the hull absorbs exactly what it
+-- radiates and the net is zero by Stefan-Boltzmann rather than by a
+-- switch. Six tiles of standard air left alone for two minutes then
+-- read the same number, to the hundredth, that they opened at -- and so
+-- does their deck.
 --
 -- Two: it pins what `t.foul_room` is. Ten moles of carbon dioxide
 -- arrive AT ROOM TEMPERATURE -- the scaffolding adds substance, never a
@@ -140,6 +159,8 @@ t.world([==[(
     spawns: [(2, 2)],
     items: [(2, 2, "analyzer")],
 )]==], 7)
+
+t.set_environment({ sink_k = T20C, insolation = 0 })
 
 local p = t.join()
 t.tick()
@@ -222,6 +243,12 @@ t.world([==[(
     structures: [(2, 1, "air_injector")],
 )]==], 7)
 
+-- Inert sky again, and for the same reason: this block weighs an energy
+-- book to four hundred joules over three and a half minutes, and a hull
+-- radiating into real space would take a hundred times that out of it.
+-- What the sky does is weighed at the end of the file, on its own.
+t.set_environment({ sink_k = T20C, insolation = 0 })
+
 local q = t.join()
 t.tick()
 local ROOM = { { 1, 1 }, { 2, 1 }, { 1, 2 }, { 2, 2 } }
@@ -269,6 +296,13 @@ t.tick()
 local hot_k = t.pipe_temperature(5, 1)
 local pipe_e0 = t.pipe_energy(5, 1)
 local energy_0 = pipe_e0 + n_room_0 * cv * T20C + deck_e0
+-- The book's fourth column: what leaves through the hull. The sky here
+-- is at the station's OPENING temperature, so it is inert until the
+-- injector warms the room past it -- and from that moment a warmed deck
+-- radiates, a few kilojoules of it over the minutes below. That is
+-- physics rather than a leak, and `t.space_radiated` is where it is
+-- booked, so the book closes on four columns instead of three.
+local radiated_0 = t.space_radiated()
 assert(hot_k > 800.0, "the run is glowing: " .. hot_k)
 near(pipe_total(5, 1), n_pipe_0, 1e-9, "and heating it moved no moles at all")
 assert(
@@ -317,13 +351,15 @@ assert(
     t.pipe_energy(5, 1) < pipe_e0 * 1e-6,
     "the run kept nothing back: " .. t.pipe_energy(5, 1)
 )
+local radiated_1 = t.space_radiated() - radiated_0
+assert(radiated_1 > 0.0, "the warmed hull did radiate: " .. radiated_1)
 near(
-    air_1 + deck_1,
+    air_1 + deck_1 + radiated_1,
     energy_0,
     400.0,
-    "THE BLEND IS THE ENERGY BOOK, and the book has three columns: what "
-        .. "the run gave up is in the air and the deck between them, and "
-        .. "no joule was minted on the way in"
+    "THE BLEND IS THE ENERGY BOOK, and the book has four columns: what "
+        .. "the run gave up is in the air, the deck and the sky between "
+        .. "them, and no joule was minted on the way in"
 )
 near(
     blended,
@@ -365,4 +401,173 @@ near(
     total(px, py) * R_GAS * blended / TILE_L,
     0.05,
     "and the gauge on the wall agrees with the thermometer in your hand"
+)
+
+-- ---------------------------------------------------------------
+-- IN DEAD SPACE, A ROOM COOLS -- AND IT COOLS BY STEFAN-BOLTZMANN.
+--
+-- One tile, walled on all four sides, and nothing in it but air and the
+-- steel it stands on. The sky is the real one this time: the microwave
+-- background at 2.7 K and no star, which is what a mode that says
+-- nothing about where the station is parked gets.
+--
+-- The claim is the CLOSED FORM. A body of heat capacity C radiating
+-- over an area A into a sink cold enough to ignore cools as
+-- dT/dt = -sigma*A*T^4/C, which integrates to
+-- 1/T1^3 - 1/T0^3 = 3*sigma*A*t/C, so where it is after ten minutes is
+-- arithmetic and not a guess. Both halves of that are readable: C is
+-- `t.deck(x, y).capacity`, and A is emissivity times area -- 0.5 for
+-- painted steel (content/tuning.luau) over two slab faces per solid,
+-- because a deck has a face over it and a face under it, plus the same
+-- again for each of the four walls, every one of which leans on this
+-- tile alone and hands it the lot.
+--
+-- Why the answer is only good to 0.05 K: the air over the deck is a
+-- second body, and it hands its own joules down as the deck cools. It
+-- is a three-hundredth of the deck's capacity here, so it can slow the
+-- fall by about a hundredth of a kelvin and no more. Anything larger
+-- than that is the engine, not the air.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "one cold tile",
+    legend: {
+        '.': (turf: Floor),
+        '#': (turf: Wall),
+    },
+    rows: [
+        "###",
+        "#.#",
+        "###",
+    ],
+    spawns: [(1, 1)],
+)]==], 7)
+
+t.set_environment({ sink_k = 2.7, insolation = 0 })
+t.tick()
+
+local cell_c = t.deck(1, 1).capacity
+near(
+    cell_c,
+    20000.0 + 4.0 * 62500.0,
+    1e-6,
+    "the deck is its own 20 000 J/K plus four walls that lean on nothing else"
+)
+near(t.deck(1, 1).temperature, T20C, 1e-9, "and it opens at room temperature")
+local radiated_0 = t.space_radiated()
+
+-- 0.5 emissivity, two slab faces, one square metre a tile: the deck's
+-- own share, plus one whole wall's share for each of the four.
+local EPS = 0.5
+local cell_a = EPS * 2.0 + 4.0 * (EPS * 2.0)
+near(cell_a, 5.0, 1e-12, "five square metres of grey body faces the sky")
+
+t.run_seconds(600)
+
+local closed = (1.0 / T20C ^ 3 + 3.0 * SIGMA * cell_a * 600.0 / cell_c) ^ (-1.0 / 3.0)
+assert(T20C - closed >= 4.0, "ten minutes in dead space is worth real kelvin: " .. closed)
+near(
+    t.deck(1, 1).temperature,
+    closed,
+    0.05,
+    "AND THE DECK IS WHERE THE FOURTH-POWER LAW PUTS IT"
+)
+assert(
+    t.space_radiated() - radiated_0 >= 1.0,
+    "with the joules booked as having left the world: " .. t.space_radiated()
+)
+
+-- ---------------------------------------------------------------
+-- ...AND THE MIDDLE OF A ROOM COOLS FASTER THAN ITS CORNERS.
+--
+-- The same law, read as geometry. A wall is one object with one heat
+-- capacity and two faces, shared among the open tiles that lean on it
+-- (docs/MATTER.md §12), so a corner tile is bolted to two walls' worth
+-- of steel while a tile in the middle of the floor stands on its own
+-- deck alone. Both radiate; the corner carries seven times the capacity
+-- and only three times the area, so it falls at less than half the rate.
+--
+-- This is why a cooling room is not one number, and why every other
+-- block in this file parks the station under an inert sky before
+-- weighing anything: a room bleeding into space grows a temperature map
+-- across its own floor, and gas drifts towards the cold end of it.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "cold room",
+    legend: {
+        '.': (turf: Floor),
+        '#': (turf: Wall),
+    },
+    rows: [
+        "######",
+        "#....#",
+        "#....#",
+        "#....#",
+        "#....#",
+        "######",
+    ],
+    spawns: [(2, 2)],
+)]==], 7)
+
+t.set_environment({ sink_k = 2.7, insolation = 0 })
+t.tick()
+
+near(t.deck(1, 1).capacity, 20000.0 + 2.0 * 62500.0, 1e-6, "a corner leans on two walls")
+near(t.deck(2, 2).capacity, 20000.0, 1e-6, "and the middle of the floor on none")
+
+t.run_seconds(600)
+local corner_k = t.deck(1, 1).temperature
+local middle_k = t.deck(2, 2).temperature
+assert(T20C - corner_k >= 1.0, "the corner cooled: " .. corner_k)
+assert(
+    corner_k - middle_k >= 2.0,
+    "and the middle of the room cooled further, standing on less steel: "
+        .. middle_k .. " vs " .. corner_k
+)
+
+-- ---------------------------------------------------------------
+-- UNDER A STAR, THE SAME DECK WARMS.
+--
+-- Insolation is the other half of step 5d and it uses the same eA: a
+-- grey body absorbs exactly the fraction it emits (Kirchhoff), and the
+-- sun reaches one face of a slab that radiates from two, which is the
+-- halving in `P_in = S*eA/2`. At 2700 W/m^2 -- a close solar orbit, the
+-- rarest roll on the station's roster -- that beats what a
+-- room-temperature hull radiates several times over, so the deck climbs
+-- instead of falling, and the net register runs NEGATIVE: sunlight is
+-- energy arriving from outside the world's own books.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "one hot tile",
+    legend: {
+        '.': (turf: Floor),
+        '#': (turf: Wall),
+    },
+    rows: [
+        "###",
+        "#.#",
+        "###",
+    ],
+    spawns: [(1, 1)],
+)]==], 7)
+
+t.set_environment({ sink_k = 2.7, insolation = 2700 })
+t.tick()
+near(t.deck(1, 1).temperature, T20C, 1e-9, "the same deck, opening at the same place")
+
+t.run_seconds(600)
+local warmed = t.deck(1, 1).temperature
+assert(warmed - T20C >= 5.0, "ten minutes sunward warms the deck: " .. warmed)
+assert(
+    t.space_radiated() <= 0.0,
+    "and the net radiated register runs backwards under a star: " .. t.space_radiated()
+)
+
+-- The station knows where it is parked, and says so in the same shape
+-- content reads it in (`ctx.environment`).
+local sky = t.environment()
+assert(sky.sink_k == 2.7, "the sink is the one that was set: " .. sky.sink_k)
+assert(sky.insolation == 2700, "and so is the sunlight: " .. sky.insolation)
+assert(
+    sky.id == "custom",
+    "a hand-set sky stops being the roster's roll and says so: " .. sky.id
 )

@@ -132,6 +132,13 @@ local SUPPLY_MAP = [==[(
 )]==]
 
 t.world(SUPPLY_MAP, 7)
+-- An INERT SKY, and every bench in this file gets one. A hull radiating
+-- against a sink at its own temperature emits exactly what it absorbs,
+-- so nothing here cools -- by physics, not by a bypass flag. Without it
+-- a bench watched for three minutes is also watching the station bleed
+-- heat into space, and a corridor that cooled two kelvin reads a
+-- kilopascal light on a gauge that was meant to be measuring the vent.
+t.set_environment({ sink_k = 293.15, insolation = 0 })
 t.tick()
 
 local apc = t.apc_at(7, 1)
@@ -256,6 +263,7 @@ local RELIEF_MAP = [==[(
 )]==]
 
 t.world(RELIEF_MAP, 7)
+t.set_environment({ sink_k = 293.15, insolation = 0 }) -- inert sky, as above
 t.tick()
 
 local ROOM = row(1, 7, 1)
@@ -350,6 +358,7 @@ local PASSIVE_MAP = [==[(
 )]==]
 
 t.world(PASSIVE_MAP, 7)
+t.set_environment({ sink_k = 293.15, insolation = 0 }) -- inert sky, as above
 t.tick()
 
 local BAY = row(1, 7, 1)
