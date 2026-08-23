@@ -94,7 +94,7 @@ assert(math.abs(number(ui, "volume") - 70.0) < 0.001,
     "and tg's TANK_STANDARD_VOLUME, in litres: " .. tostring(number(ui, "volume")))
 assert(readout(ui, "supply") == nil, "an ordinary bottle is not inexhaustible")
 assert(ui.gauge == nil, "and nothing wrote a rating on the side of it")
-assert(readout(ui, "valve").value == "connected", "the key opened the valve too")
+assert(readout(ui, "internals").value == "connected", "the key opened the valve too")
 
 -- ---------------------------------------------------------------
 -- THE ONE KNOB. tg's release pressure, tg's bounds, and the clamp is
