@@ -1,0 +1,22 @@
+// The surgeon's kit, off tg's one surgery-tool sheet
+// (icons/obj/medical/surgery_tools.dmi, code/modules/surgery/surgery_tools.dm).
+// Each state is the one its own type names; bone gel and the suture stack
+// share the sheet (stacks/medical.dm:756).
+(
+    sheets: [
+        ("surgery_tools", "obj/medical/surgery_tools.dmi"),
+        ("stack_medical", "obj/medical/stack_medical.dmi"),
+    ],
+    sprites: [
+        ("scalpel", Dmi("@surgery_tools", "scalpel", 0)),
+        ("hemostat", Dmi("@surgery_tools", "hemostat", 0)),
+        ("retractor", Dmi("@surgery_tools", "retractor", 0)),
+        ("cautery", Dmi("@surgery_tools", "cautery", 0)),
+        ("circular_saw", Dmi("@surgery_tools", "saw", 0)),
+        ("surgical_drill", Dmi("@surgery_tools", "drill", 0)),
+        ("bone_gel", Dmi("@surgery_tools", "bone-gel", 0)),
+        // The suture stack lives on the medical-stack sheet, not the
+        // tool sheet (stacks/medical.dm:4 vs :756).
+        ("suture", Dmi("@stack_medical", "suture", 0)),
+    ],
+)
