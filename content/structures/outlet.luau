@@ -9,6 +9,12 @@ return {
     name = "power outlet",
     sprite = "outlet",
     fixture = "Outlet",
+    appearance = {
+        mounted = {
+            north = "outlet_n", south = "outlet_s",
+            east = "outlet_e", west = "outlet_w",
+        },
+    },
     category = "power",
     examine = {
         flavor = "A socket at knee height. Whatever is plugged in draws "

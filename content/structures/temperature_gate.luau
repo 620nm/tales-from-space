@@ -57,6 +57,7 @@ return {
     },
     atmos = {
         device = "temperature_gate",
+        alternate_tool = "multitool",
         positions = { "shut", "armed" },
         -- tg's `target_temperature = T0C` and `max_temperature = 4500`
         -- (temperature_gate.dm:10,14). The floor is TCMB and the engine

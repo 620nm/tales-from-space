@@ -52,6 +52,7 @@ return {
     },
     atmos = {
         device = "volume_pump",
+        alternate_tool = "multitool",
         positions = { "off", "running" },
         rate_lps = 200.0,
         max_rate_lps = 200.0,

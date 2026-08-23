@@ -16,6 +16,24 @@ return {
     name = "APC",
     sprite = "apc",
     fixture = "Apc",
+    appearance = {
+        mounted = {
+            north = "apc_n", south = "apc_s",
+            east = "apc_e", west = "apc_w",
+        },
+        states = {
+            lock = "apcov_lock",
+            charge_idle = "apcov_chg0",
+            charge_active = "apcov_chg1",
+            charge_full = "apcov_chg2",
+            equipment_on = "apcov_eq_on",
+            equipment_off = "apcov_eq_off",
+            lighting_on = "apcov_lt_on",
+            lighting_off = "apcov_lt_off",
+            environment_on = "apcov_env_on",
+            environment_off = "apcov_env_off",
+        },
+    },
     category = "power",
     examine = {
         flavor = "A wall box with a row of indicator lamps. It takes the "
