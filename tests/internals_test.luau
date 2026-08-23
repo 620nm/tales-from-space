@@ -119,11 +119,14 @@ assert(
     math.abs(supply.tank - 10 * 101.325) < 1.0,
     "and reads what the file charged it to, ten atmospheres: " .. tostring(supply.tank)
 )
--- The gauge line the tank prints for whoever worked the valve: tg's
--- own sentence (code/game/objects/items/tanks/tanks.dm:159), on the
--- gesture that reaches for the tank because the v0 hook surface has no
--- examine.
-assert(heard(diver):find("The pressure gauge reads", 1, true), "the tank reads itself out")
+-- The panel the tank opens for whoever worked the valve -- tg's own
+-- window (`ui_interact`, tanks.dm:234-259), on the gesture that
+-- reaches for the tank, which is what a bottle has instead of an
+-- examine sheet. Its own spec is tank_window_test.luau; here it is
+-- only asked to be THERE, because opening the valve and looking at
+-- the bottle are one gesture.
+local panel = t.ui(diver)
+assert(panel and panel.kind == "held_tank", "the tank reads itself out")
 
 -- ---------------------------------------------------------------
 -- FOUR: THE THREE-WAY.
