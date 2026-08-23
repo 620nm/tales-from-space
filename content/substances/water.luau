@@ -34,4 +34,9 @@ return {
     name = "water",
     color = "#AAAAAA",
     visible = { tint = "#E6EDF7" },
+    -- Where this sits in a tool that offers every substance there is
+    -- (docs/MAPPING.md, the recipe panel). Authored as vapour: a humid
+    -- room, which condenses out on the first atmos pass exactly as it
+    -- should.
+    relevance = 50,
 }
