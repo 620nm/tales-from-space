@@ -44,6 +44,10 @@
 -- `volatile`: the first time this fires in a given holder in a shift is
 -- a ledger row. A fire that burns for two hundred ticks is one event,
 -- and the record wants the moment it started.
+--
+-- Atmos resin is the persistent emergency-kit state: while the tile's
+-- column is at least 0.1 this rule cannot fire, so an existing fire
+-- crosses the native ExtinguishedAt edge and a new one cannot start.
 return {
     id = "plasma_fire",
     priority = "fire",
@@ -51,6 +55,7 @@ return {
         { min = { "plasma:gas", 0.01 } },
         { min = { "o2:gas", 0.01 } },
         { ratio_below = { "o2", "plasma", "gas", 96.0 } },
+        { column_below = { "atmos_resin", 0.1 } },
     },
     temp_window = { lo = 373.15, hi = math.huge },
     reactants = { ["plasma:gas"] = 1.0, ["o2:gas"] = 1.4 },

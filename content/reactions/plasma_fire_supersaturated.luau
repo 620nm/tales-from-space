@@ -31,6 +31,7 @@ return {
         { min = { "plasma:gas", 0.01 } },
         { min = { "o2:gas", 0.01 } },
         { ratio_at_least = { "o2", "plasma", "gas", 96.0 } },
+        { column_below = { "atmos_resin", 0.1 } },
     },
     temp_window = { lo = 373.15, hi = math.huge },
     reactants = { ["plasma:gas"] = 1.0, ["o2:gas"] = 1.4 },
