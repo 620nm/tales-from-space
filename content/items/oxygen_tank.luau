@@ -17,17 +17,6 @@
 -- lungs exactly as one in a hand does, so a suited crewman keeps both
 -- hands for the job.
 
--- tg tanks.dm:159. See emergency_oxygen.luau for why the readout rides
--- the valve gesture rather than an examine hook.
-local function gauge(ctx, self, user)
-    local kpa = ctx.tank_kpa(self)
-    if not kpa then
-        return
-    end
-    local hundredths = math.floor(kpa * 100 + 0.5) / 100
-    ctx.system_msg(user, "The pressure gauge reads " .. tostring(hundredths) .. " kPa.")
-end
-
 return {
     id = "oxygen_tank",
     name = "oxygen tank",
@@ -89,8 +78,10 @@ return {
     on_rupture = function(ctx, self, user, x, y)
         ctx.sound("spray", x, y)
     end,
+    -- The valve and the panel on one key -- see
+    -- emergency_oxygen.luau for why they share a gesture.
     on_use_self = function(ctx, self, user)
         ctx.toggle_internals(user, self)
-        gauge(ctx, self, user)
+        ctx.open_ui(user, self)
     end,
 }
