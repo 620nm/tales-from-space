@@ -91,77 +91,41 @@
         '_': (turf: Plating),
         // Finished tiling, and the Commons' alone (see the header).
         '.': (turf: Floor),
-        // An internal airlock, standing on bare plating like every
-        // threshold on the station.
-        '+': (turf: Plating, fixture: Some(Door)),
-        // An EXTERNAL airlock -- the leaves of the two EVA vestibules.
-        // Same door '+' spawns; a glyph is a word in a picture, and a
-        // door to vacuum should not read the same as a door to a
-        // corridor.
-        'E': (turf: Plating, fixture: Some(Door)),
-        // The station's fixtures, on plating. Lowercase is the deck the
-        // station is actually made of; the uppercase pair below is the
-        // Commons' finished floor and nothing else.
-        'a': (turf: Plating, fixture: Some(Apc)),
-        // Standard ceiling tubes, in tg's default fluorescent white
-        // (LIGHT_COLOR_DEFAULT "#f3fffa", code/__DEFINES/colors.dm:254 --
-        // the colour /obj/machinery/light ships with, light.dm:24-28).
-        'l': (turf: Plating, fixture: Some(Light), light: Some("#F3FFFA")),
-        'o': (turf: Plating, fixture: Some(Outlet)),
-        'c': (turf: Plating, fixture: Some(Canister)),
-        // The power plant: a superconducting bank and a backup set, both
-        // in Engineering, both standing on the feeder they charge.
-        'm': (turf: Plating, fixture: Some(Smes)),
-        'g': (turf: Plating, fixture: Some(Generator)),
-        // Photovoltaics, standing in vacuum north of the hull where the
-        // sun is. Quiet, modest watts, no moving parts.
-        's': (turf: Space, fixture: Some(Solar)),
-        // ---- the Commons, and only the Commons -------------------
-        'A': (turf: Floor, fixture: Some(Apc)),
-        'L': (turf: Floor, fixture: Some(Light), light: Some("#F3FFFA")),
-        // The one warm fitting on the station: a tungsten bulb
-        // (LIGHT_COLOR_TUNGSTEN "#FFD6AA", colors.dm:312) somebody put in
-        // over the middle of the room and nobody has replaced. Four tiles
-        // from the tube at (16, 13), so the deck between them is a
-        // gradient from cool to warm and back -- the whole point of
-        // coloured light, standing on one floor.
-        'B': (turf: Floor, fixture: Some(Light), light: Some("#FFD6AA")),
-        'O': (turf: Floor, fixture: Some(Outlet)),
     },
     rows: [
         "                                        ",
-        "      s s s s s s s s s s               ",
+        "                                        ",
         "                                        ",
         "   ####___########___########___#####   ",
-        "   #__l____l_#__l____ol__#__l____l__#   ",
-        "   #a________#a__________#a_________#   ",
         "   #_________#___________#__________#   ",
         "   #_________#___________#__________#   ",
         "   #_________#___________#__________#   ",
-        "   #__l____l_#__l_____l__#__l____l__#   ",
-        "   #####+##########+##########+######   ",
-        "   #__l___l___l___a__l___l___l___l__#   ",
-        "   #####_##########+###########_#####   ",
-        "   ###_l____l_#.L...B..L.#_l____l_###   ",
-        "   #__________#A........O#__________#   ",
-        "   E_E________+..........+________E_E   ",
+        "   #_________#___________#__________#   ",
+        "   #_________#___________#__________#   ",
+        "   #_________#___________#__________#   ",
+        "   #####_##########_##########_######   ",
+        "   #________________________________#   ",
+        "   #####_##########_###########_#####   ",
+        "   ###________#..........#________###   ",
         "   #__________#..........#__________#   ",
-        "   ###__cccc__#..........#________###   ",
-        "   ###_l____l_#.L......L.#_l____l_###   ",
-        "   #####_##########+###########_#####   ",
-        "   #_l____l____l__l_____l___l___l___#   ",
-        "   #####+##########+###########+#####   ",
-        "   #a_m___g__#_c_ca_l___l__#a_______#   ",
-        "   __________#_____________#l______l#   ",
+        "   ____________..........____________   ",
+        "   #__________#..........#__________#   ",
+        "   ###________#..........#________###   ",
+        "   ###________#..........#________###   ",
+        "   #####_##########_###########_#####   ",
+        "   #________________________________#   ",
+        "   #####_##########_###########_#####   ",
+        "   #_________#_____________#________#   ",
+        "   __________#_____________#________#   ",
         "   __________#_____________#_________   ",
-        "   __l_____l_#_____c_______#_________   ",
-        "   ###_###_###_________c___#_________   ",
-        "   #al_____l_#_____________#l_______#   ",
-        "   #_______________________#_______l#   ",
-        "   #____________________o__##########   ",
-        "   #_________#######+#######            ",
-        "   #_________+_____________#            ",
-        "   #_________###+###+###+###            ",
+        "   __________#_____________#_________   ",
+        "   ###_###_###_____________#_________   ",
+        "   #_________#_____________#________#   ",
+        "   #_______________________#________#   ",
+        "   #_______________________##########   ",
+        "   #_________#######_#######            ",
+        "   #_______________________#            ",
+        "   #_________###_###_###_###            ",
         "   #_________##___#___#___##            ",
         "   ############___#___#___##            ",
         "             ###############            ",
@@ -169,10 +133,6 @@
         "                                        ",
         "                                        ",
     ],
-    // In the middle of the Commons, which is the whole argument of this
-    // draft: a crewman wakes up at the centre of the station with a
-    // department in every direction, rather than in the corner of the
-    // only finished room.
     spawns: [(18, 16), (19, 16), (20, 16), (21, 16)],
     items: [
         (17, 16, "toolbox"),
@@ -459,10 +419,10 @@
         // store would be seven tanks of the same thing. The gaps between
         // them and the whole of rows 29-30 and 32 are where an engineer
         // runs pipe to whichever one they want today.
-        (4, 28, "stationary_tank", "anchored", ("o2", 23000.0)),
-        (6, 28, "stationary_tank", "anchored", ("n2", 23000.0)),
-        (8, 28, "stationary_tank", "anchored", ("co2", 23000.0)),
-        (10, 28, "stationary_tank", "anchored", ("plasma", 23000.0)),
+        (4, 28, "stationary_tank", "anchored", { "air": "o2_23000kpa" }),
+        (6, 28, "stationary_tank", "anchored", { "air": "n2_23000kpa" }),
+        (8, 28, "stationary_tank", "anchored", { "air": "co2_23000kpa" }),
+        (10, 28, "stationary_tank", "anchored", { "air": "plasma_23000kpa" }),
         // The fifth is the WATER reservoir, and it is the odd one in the
         // row because water is the one substance here with a liquid
         // phase: there is no `water_vapor` to bottle, only water, which
@@ -484,9 +444,9 @@
         // lands on the deck. That is the intended experiment, and it is
         // why this tank stands at the east end of the row, on the side
         // the corridor door is on.
-        (12, 28, "stationary_tank", "anchored", ("water", 67268.0)),
-        (5, 33, "stationary_tank", "anchored", ("tritium", 23000.0)),
-        (7, 33, "stationary_tank", "anchored", ("n2o", 23000.0)),
+        (12, 28, "stationary_tank", "anchored", { "air": "water_67268kpa" }),
+        (5, 33, "stationary_tank", "anchored", { "air": "tritium_23000kpa" }),
+        (7, 33, "stationary_tank", "anchored", { "air": "n2o_23000kpa" }),
         // The temperature control unit, on the machine tile the annex
         // wired for it: L2 branch under its feet, the layer-3 bench run
         // stopping either side. Its one mouth auto-binds the east stub;
@@ -519,6 +479,104 @@
         (19, 34, "air_scrubber", "siphoning"),
         (23, 33, "air_injector", "injecting"),
         (23, 34, "air_scrubber", "siphoning"),
+        // ---- EVERY THRESHOLD ON THE STATION ----------------------
+        // Nineteen airlocks, placed by id like everything else that
+        // stands on the deck. What used to be two glyphs ('+' inside,
+        // 'E' at the vestibules) is one entry with properties: the six
+        // leaves of the two EVA chambers are the four at (3, 15),
+        // (5, 15), (34, 15) and (36, 15), and they read the same as
+        // every other door because they ARE the same door -- a public
+        // airlock with nothing said about it.
+        //
+        // Which livery one wears, whether somebody put a window in it
+        // and who may walk through are per placement now
+        // (structures/airlock.luau), so the station can paint
+        // Engineering's doors without a second prototype existing.
+        (8, 10, "airlock"), (19, 10, "airlock"), (30, 10, "airlock"),
+        (19, 12, "airlock"), (3, 15, "airlock"), (5, 15, "airlock"),
+        (14, 15, "airlock"), (25, 15, "airlock"), (34, 15, "airlock"),
+        (36, 15, "airlock"), (19, 19, "airlock"), (8, 21, "airlock"),
+        (19, 21, "airlock"), (31, 21, "airlock"), (20, 30, "airlock"),
+        (13, 31, "airlock"), (16, 32, "airlock"), (20, 32, "airlock"),
+        (24, 32, "airlock"),
+        // ---- THE LIGHTS ------------------------------------------
+        // Forty-nine fittings, one per bay of every room and corridor
+        // on the station, each carrying the colour of the tube in it.
+        // Standard ceiling tubes are tg's default fluorescent white
+        // (LIGHT_COLOR_DEFAULT "#f3fffa", code/__DEFINES/colors.dm:254
+        // -- the colour /obj/machinery/light ships with,
+        // light.dm:24-28).
+        //
+        // The one warm fitting on the station is (20, 13): a tungsten
+        // bulb (LIGHT_COLOR_TUNGSTEN "#FFD6AA", colors.dm:312) somebody
+        // put in over the middle of the Commons and nobody has
+        // replaced. Four tiles from the tube at (16, 13), so the deck
+        // between them is a gradient from cool to warm and back --
+        // the whole point of coloured light, standing on one floor.
+        (6, 4, "light", { "color": "#F3FFFA" }), (11, 4, "light", { "color": "#F3FFFA" }),
+        (16, 4, "light", { "color": "#F3FFFA" }), (22, 4, "light", { "color": "#F3FFFA" }),
+        (28, 4, "light", { "color": "#F3FFFA" }), (33, 4, "light", { "color": "#F3FFFA" }),
+        (6, 9, "light", { "color": "#F3FFFA" }), (11, 9, "light", { "color": "#F3FFFA" }),
+        (16, 9, "light", { "color": "#F3FFFA" }), (22, 9, "light", { "color": "#F3FFFA" }),
+        (28, 9, "light", { "color": "#F3FFFA" }), (33, 9, "light", { "color": "#F3FFFA" }),
+        (6, 11, "light", { "color": "#F3FFFA" }), (10, 11, "light", { "color": "#F3FFFA" }),
+        (14, 11, "light", { "color": "#F3FFFA" }), (21, 11, "light", { "color": "#F3FFFA" }),
+        (25, 11, "light", { "color": "#F3FFFA" }), (29, 11, "light", { "color": "#F3FFFA" }),
+        (33, 11, "light", { "color": "#F3FFFA" }), (7, 13, "light", { "color": "#F3FFFA" }),
+        (12, 13, "light", { "color": "#F3FFFA" }), (16, 13, "light", { "color": "#F3FFFA" }),
+        (20, 13, "light", { "color": "#FFD6AA" }), (23, 13, "light", { "color": "#F3FFFA" }),
+        (27, 13, "light", { "color": "#F3FFFA" }), (32, 13, "light", { "color": "#F3FFFA" }),
+        (7, 18, "light", { "color": "#F3FFFA" }), (12, 18, "light", { "color": "#F3FFFA" }),
+        (16, 18, "light", { "color": "#F3FFFA" }), (23, 18, "light", { "color": "#F3FFFA" }),
+        (27, 18, "light", { "color": "#F3FFFA" }), (32, 18, "light", { "color": "#F3FFFA" }),
+        (5, 20, "light", { "color": "#F3FFFA" }), (10, 20, "light", { "color": "#F3FFFA" }),
+        (15, 20, "light", { "color": "#F3FFFA" }), (18, 20, "light", { "color": "#F3FFFA" }),
+        (24, 20, "light", { "color": "#F3FFFA" }), (28, 20, "light", { "color": "#F3FFFA" }),
+        (32, 20, "light", { "color": "#F3FFFA" }), (20, 22, "light", { "color": "#F3FFFA" }),
+        (24, 22, "light", { "color": "#F3FFFA" }), (28, 23, "light", { "color": "#F3FFFA" }),
+        (35, 23, "light", { "color": "#F3FFFA" }), (5, 25, "light", { "color": "#F3FFFA" }),
+        (11, 25, "light", { "color": "#F3FFFA" }), (5, 27, "light", { "color": "#F3FFFA" }),
+        (11, 27, "light", { "color": "#F3FFFA" }), (28, 27, "light", { "color": "#F3FFFA" }),
+        (35, 28, "light", { "color": "#F3FFFA" }),
+        // ---- THE NINE APCs ---------------------------------------
+        // One per room the station lights, each on the wall it is
+        // mounted to (`mounts` below) and each labelled with the room
+        // it serves (`labels` below) -- an APC's label IS the room's
+        // name (docs/POWER.md, "rooms are names").
+        (4, 5, "apc"), (14, 5, "apc"), (26, 5, "apc"),
+        (18, 11, "apc"), (15, 14, "apc"), (4, 22, "apc"),
+        (18, 22, "apc"), (28, 22, "apc"), (4, 27, "apc"),
+        // ---- THE SOCKETS -----------------------------------------
+        // Three, and deliberately few: a socket is what a corded
+        // appliance plugs into, and the station has three places
+        // anybody would put one down.
+        (21, 4, "outlet"), (24, 14, "outlet"), (24, 29, "outlet"),
+        // ---- THE POWER PLANT -------------------------------------
+        // Ten photovoltaic panels north of the hull where the sun is:
+        // quiet, modest watts, no moving parts, and happy in vacuum.
+        (6, 1, "solar"), (8, 1, "solar"), (10, 1, "solar"), (12, 1, "solar"),
+        (14, 1, "solar"), (16, 1, "solar"), (18, 1, "solar"), (20, 1, "solar"),
+        (22, 1, "solar"), (24, 1, "solar"),
+        // ...and Engineering's own pair, standing on the circuit they
+        // charge. The bank is BIDIRECTIONAL on layer 2 -- it draws
+        // from the backbone when there is surplus and feeds it back
+        // when there is not, which is what makes it a buffer rather
+        // than a load (docs/POWER.md).
+        (6, 22, "smes", { "l2": "bidirectional" }),
+        (10, 22, "generator"),
+        // ---- THE SUPPLY BOTTLES ----------------------------------
+        // Eight canisters, each standing on a connector port and each
+        // arriving CHARGED and OPEN: `air` names the recipe they hold
+        // (`canister_air`, tg's own 21/79 at 45 atmospheres) and `open`
+        // is the valve. A bottle that said neither would open the shift
+        // empty with the valve shut, which is what an empty bottle
+        // looks like -- so the fact that this station's distribution
+        // main is pressurised at roundstart is a sentence somebody
+        // wrote here rather than a thing the engine did.
+        (8, 17, "canister", { "air": "canister_air", "open": true }), (9, 17, "canister", { "air": "canister_air", "open": true }),
+        (10, 17, "canister", { "air": "canister_air", "open": true }), (11, 17, "canister", { "air": "canister_air", "open": true }),
+        (15, 22, "canister", { "air": "canister_air", "open": true }), (17, 22, "canister", { "air": "canister_air", "open": true }),
+        (19, 25, "canister", { "air": "canister_air", "open": true }), (23, 26, "canister", { "air": "canister_air", "open": true }),
     ],
     // The two vestibule interlocks: each airlock names the direction its
     // partner lies in, and the link resolves only because BOTH of them
@@ -945,9 +1003,25 @@
     // key nothing answers to refuses the server rather than quietly
     // holding ordinary air (main.rs, and MapFile::air_errors).
     air_presets: {
+        // What every supply bottle on the station opens the shift
+        // holding: tg's own canister charge, 21/79 at 45 atmospheres
+        // (content/air/canister_air.luau, which declares the same
+        // recipe as the pack's default so a mapper can copy it).
+        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
         "co2_300kpa": (gases: [("co2", 123.0895930990394)], temperature_k: 293.15),
+        // The tank annex's seven stores. One recipe per store, named
+        // after the pressure a 2 500 L shell of it reads at 20 C -- so
+        // a second tank of the same thing names the same recipe rather
+        // than repeating the arithmetic.
+        "co2_23000kpa": (gases: [("co2", 9436.868804259688)], temperature_k: 293.15),
+        "n2_23000kpa": (gases: [("n2", 9436.868804259688)], temperature_k: 293.15),
         "n2_5000kpa": (gases: [("n2", 2051.493218317323)], temperature_k: 293.15),
+        "n2o_23000kpa": (gases: [("n2o", 9436.868804259688)], temperature_k: 293.15),
+        "o2_23000kpa": (gases: [("o2", 9436.868804259688)], temperature_k: 293.15),
         "o2_5000kpa": (gases: [("o2", 2051.493218317323)], temperature_k: 293.15),
+        "plasma_23000kpa": (gases: [("plasma", 9436.868804259688)], temperature_k: 293.15),
+        "tritium_23000kpa": (gases: [("tritium", 9436.868804259688)], temperature_k: 293.15),
+        "water_67268kpa": (gases: [("water", 27599.96916195394)], temperature_k: 293.15),
     },
     air: [
         (15, 33, "o2_5000kpa"),
