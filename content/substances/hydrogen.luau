@@ -13,4 +13,8 @@ return {
     cv = 25.0,
     -- What it looks like through glass (tg: other_reagents.dm:1031 (COLOR_GRAY)).
     color = "#808080",
+    -- Where this sits in a tool that offers every substance there is
+    -- (docs/MAPPING.md, the recipe panel). Reachable as room air, and
+    -- rarely what a room is commissioned holding.
+    relevance = 30,
 }
