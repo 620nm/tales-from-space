@@ -28,7 +28,7 @@ local function amount(handle, key)
 end
 
 -- What the SEALED ROOM holds of a gas, over every tile of it. An open
--- vessel breathes its gas phase into the air (sim/chemistry/vent.rs),
+-- vessel breathes its gas phase into the air (sim/holder/vent.rs),
 -- so a recipe whose product is a gas fills the room rather than the
 -- beaker -- and the room is where it has to be counted, because the
 -- air moves between tiles the moment it is there.

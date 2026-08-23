@@ -9,7 +9,7 @@
 -- here there is one burner and you fill it with what you like.
 --
 -- Two gestures, and they are both clicks, which is why they are here
--- and the burning between them is not (sim/chemistry/flame.rs):
+-- and the burning between them is not (sim/holder/fuel_burn.rs):
 --   * on_use_self -- strike it, or snuff it. tg wants an igniter of
 --     1000 K or hotter to light one (items.dm:274-278); nothing in this
 --     pack has a temperature of its own to be measured, so the toggle
@@ -50,7 +50,7 @@ return {
     -- an open one at station temperature would breathe its spirit into
     -- the room and stand empty in a couple of hours, having heated
     -- nothing. Sealed vessels trade nothing with the air
-    -- (sim/chemistry/vent.rs).
+    -- (sim/holder/vent.rs).
     sealed = true,
     contents = { ethanol = 15 * U },
     acts_on_items = true,

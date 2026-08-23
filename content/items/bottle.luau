@@ -65,7 +65,8 @@ return {
             end
             -- tg's cup default `amount_per_transfer_from_this = 10`
             -- (_cup.dm:4), which is also the beaker's gesture.
-            ctx.pour(self, clicked.entity, 10 * U)
+            ctx.pour(self, clicked.entity, 10 * U,
+                "The bottle is empty.", "The other vessel is full to the brim.")
             ctx.system_msg(user, "You pour from the bottle.")
             return
         end
@@ -90,7 +91,8 @@ return {
             ctx.system_msg(user, "The bottle is empty.")
             return
         end
-        ctx.spill(self, x, y)
+        ctx.spill(self, x, y,
+            "The bottle is empty.", "You can't reach that from here.")
         ctx.system_msg(user, "You tip the bottle out onto the deck.")
     end,
 }

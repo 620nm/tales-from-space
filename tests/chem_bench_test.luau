@@ -11,7 +11,7 @@
 --
 -- THE EXOTHERM IS WATCHED IN THE DOCK, and deliberately. A beaker
 -- standing on the deck trades heat with the room every atmos pass
--- (sim/chemistry/heat.rs, Effort B's deck coupling), so the closed form
+-- (sim/holder/heat.rs, Effort B's deck coupling), so the closed form
 -- below is only closed for a vessel nobody is letting cool. In a
 -- machine it is exact; in your hand it would be exact too; on the floor
 -- it is a race with the room. That is a feature, and it is why the

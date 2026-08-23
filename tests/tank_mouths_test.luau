@@ -109,13 +109,13 @@ end
 t.run_ticks(10)
 
 local density = total(t.tank_gas(4, 4)) / TANK_M3
-local vessel_kpa = t.tank_pressure(4, 4)
+local holder_kpa = t.tank_pressure(4, 4)
 local pooled = total(t.tank_gas(4, 4))
 for _, run in ipairs(runs) do
     local x, y, volume, side = run[1], run[2], run[3], run[4]
     near(total(t.pipe_gas(x, y)) / volume, density, density * 1e-9,
         side .. " sits at the vessel's own density")
-    near(t.pipe_pressure(x, y), vessel_kpa, vessel_kpa * 1e-9,
+    near(t.pipe_pressure(x, y), holder_kpa, holder_kpa * 1e-9,
         side .. " is at the vessel's own pressure")
     pooled = pooled + total(t.pipe_gas(x, y))
 end

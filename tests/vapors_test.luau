@@ -5,7 +5,7 @@
 -- Press a button on a dispenser; put the beaker in a heater; dial it;
 -- switch it on. Nothing else. What happens after that is physics: the
 -- reaction gate opens at 420 K, the liquid pairs off into gas, the gas
--- leaves the open beaker for the room (sim/chemistry/vent.rs), the room
+-- leaves the open beaker for the room (sim/holder/vent.rs), the room
 -- carries it to the tile a crewman is standing on, and their next
 -- breath keeps nine tenths of it (sim/breathing.rs, `absorb_breath`).
 --

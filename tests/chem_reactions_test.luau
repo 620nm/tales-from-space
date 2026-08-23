@@ -25,7 +25,7 @@ end
 
 -- What the SEALED ROOM holds of a gas, over every tile of it. A vessel
 -- standing open breathes its gas phase out into the air
--- (sim/chemistry/vent.rs), so a recipe whose product is a gas is
+-- (sim/holder/vent.rs), so a recipe whose product is a gas is
 -- counted in the room rather than in the beaker that made it.
 local function room(key)
     local n = 0

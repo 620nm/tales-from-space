@@ -9,7 +9,7 @@
 -- What is deliberately NOT asserted is the joule book. The heater is a
 -- virtual heat bath: its energy comes off the mains, so the beaker
 -- gains joules that came from nowhere in the matter world's terms
--- (sim/chemistry/heat.rs states the doctrine, and the temperature
+-- (sim/holder/heat.rs states the doctrine, and the temperature
 -- control unit's file states it at length). What IS assertable is the
 -- shape of the approach and the arrest at the dial, from both sides.
 local T20C = 293.15
@@ -63,7 +63,7 @@ t.click(p, 2, 1, heater)
 t.tick()
 local ui = t.ui(p)
 assert(ui, "an empty hand opens the panel")
-assert(ui.kind == "chem_heater", "which is this machine's own")
+assert(ui.kind == "thermostat_over_dock", "which is this machine's own")
 assert(row(ui, "vessel").value == "empty", "and it says there is nothing in it")
 near(ui.setpoints[1].value, 300.0, 1e-9, "the dial opens at tg's 300 K")
 t.ui_close(p)
@@ -156,7 +156,7 @@ assert(t.ledger_has("Undocked", "beaker"), "and the eject is on the record too")
 assert(row(t.ui(p), "vessel").value == "empty", "the panel agrees there is nothing in it")
 
 -- ...and a vessel IN A HAND is a vessel you are insulating: the deck
--- coupling is for things lying on the deck (sim/chemistry/heat.rs), so
+-- coupling is for things lying on the deck (sim/holder/heat.rs), so
 -- carrying a hot beaker around costs it nothing THE ROOM could take.
 -- What it does still lose is its own latent heat: an open beaker is
 -- evaporating, faster the warmer it is, and twenty seconds of that is

@@ -40,7 +40,7 @@ return {
     -- the ending is violent rather than merely final
     -- (TANK_FRAGMENT_PRESSURE, :64) -- which the ledger records and
     -- nothing else acts on yet, the blast being unported
-    -- (sim/chemistry/failure.rs).
+    -- (sim/holder/pressure_failure.rs).
     --
     -- 200 integrity is `/obj/item`'s own (code/game/objects/items.dm:71)
     -- and half of it is where a tank gives (`integrity_failure = 0.5`,

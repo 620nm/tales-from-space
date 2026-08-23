@@ -83,7 +83,7 @@ t.click(p, 2, 1, machine)
 t.tick()
 local ui = t.ui(p)
 assert(ui, "an empty hand opens the panel")
-assert(ui.kind == "chem_dispenser", "which is this machine's own")
+assert(ui.kind == "mint_into_dock", "which is this machine's own")
 assert(row(ui, "vessel").value == "empty", "and it says there is nothing in it")
 
 -- The measure is a DIAL, not a reading: a chemist who wants half a
@@ -146,11 +146,11 @@ near(total(beaker), BRIM, 1e-9, "the second press stopped at the brim")
 
 -- Full to the brim, a press does nothing at all -- and a refusal is not
 -- a mint of zero, so it leaves no row behind.
-local before = #t.ledger_rows("dispensed")
+local before = #t.ledger_rows("minted")
 t.ui_act(p, "toggle", '{"field":"dispense","option":"water"}')
 t.run_ticks(2)
 near(total(beaker), BRIM, 1e-9, "nothing more fits")
-assert(#t.ledger_rows("dispensed") == before, "and nothing was written down")
+assert(#t.ledger_rows("minted") == before, "and nothing was written down")
 
 -- ---------------------------------------------------------------
 -- THE AUDIT.
@@ -159,7 +159,7 @@ assert(#t.ledger_rows("dispensed") == before, "and nothing was written down")
 -- is the whole reason a machine that can conjure matter has to be on
 -- the record at all.
 -- ---------------------------------------------------------------
-local rows = t.ledger_rows("dispensed")
+local rows = t.ledger_rows("minted")
 assert(#rows == 2, "two presses landed: " .. #rows)
 local minted = 0
 for _, r in ipairs(rows) do
@@ -182,10 +182,10 @@ assert(row(t.ui(p), "vessel").value == "empty", "the panel agrees the slot is cl
 -- A press with nothing in the slot mints nothing, anywhere: a
 -- dispenser that puddled on the floor instead would be a second
 -- deposit path nobody asked for.
-before = #t.ledger_rows("dispensed")
+before = #t.ledger_rows("minted")
 t.ui_act(p, "toggle", '{"field":"dispense","option":"water"}')
 t.run_ticks(2)
-assert(#t.ledger_rows("dispensed") == before, "an empty dock dispenses nothing")
+assert(#t.ledger_rows("minted") == before, "an empty dock dispenses nothing")
 
 -- ...and neither does a button this machine does not have. The shelf is
 -- fourteen substances; the registry knows dozens.
@@ -216,10 +216,10 @@ t.run_ticks(2)
 near(total(beaker), 0, 1e-9, "and one press empties it")
 assert(t.hands(p).held == nil, "the vessel stays in the machine")
 
-local flushed = t.ledger_rows("Flushed")
+local flushed = t.ledger_rows("Annihilated")
 assert(#flushed == 1, "one press is one row: " .. #flushed)
 near(flushed[1].moles, held, 1e-9, "carrying every mole that was destroyed")
-assert(flushed[1].item == "beaker", "and naming the vessel: " .. flushed[1].item)
+assert(flushed[1].owner == "beaker", "and naming the vessel: " .. flushed[1].owner)
 assert(flushed[1].actor.kind == "player", "a window act is the crewman acting")
 
 -- Pressing it again is a refusal in silence: there is nothing to
@@ -227,7 +227,7 @@ assert(flushed[1].actor.kind == "player", "a window act is the crewman acting")
 -- anything.
 t.ui_act(p, "toggle", '{"field":"empty"}')
 t.run_ticks(2)
-assert(#t.ledger_rows("Flushed") == 1, "an empty vessel flushes nothing")
+assert(#t.ledger_rows("Annihilated") == 1, "an empty vessel flushes nothing")
 
 -- ---------------------------------------------------------------
 -- THE DIAL: THE NEXT PRESS IS THE ONE YOU ASKED FOR.
@@ -243,7 +243,7 @@ near(t.holder_k(beaker), NOZZLE_K, 0.01, "still off the same nozzle")
 -- A smaller press is still a full row, so the audit holds at any
 -- setting: what the beaker holds is the sum of what was minted into it.
 local minted = 0
-for _, r in ipairs(t.ledger_rows("dispensed")) do
+for _, r in ipairs(t.ledger_rows("minted")) do
     if r.substance == "water" then
         minted = minted + r.moles
     end

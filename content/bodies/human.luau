@@ -68,6 +68,10 @@ return {
         regen_per_s = 0.25,      -- BLOOD_REGEN_FACTOR, mobs.dm:28
         oxy_per_missing = 0.01,  -- blood.dm:253-262
     },
+    bloodstream = {
+        volume_m3 = 0.005,      -- five litres, the holder chemistry runs in
+        temperature_k = 310.15, -- normal human body temperature
+    },
 
     -- The capacity graph. `awake_below`, `min_capable` and the `lerp1`
     -- weights are NOT PORTED: RimWorld's shape with Tales from Space's

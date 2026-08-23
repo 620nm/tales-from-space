@@ -4,7 +4,7 @@
 -- the water to vapour inside the beaker (docs/CHEMISTRY.md), and the
 -- beaker is OPEN -- so the vapour goes where an open vessel's gas phase
 -- goes now, which is the air over the tile it is standing in
--- (sim/chemistry/vent.rs). Before that pass existed the vapour stayed
+-- (sim/holder/vent.rs). Before that pass existed the vapour stayed
 -- in the glass forever, counting against the fill and seen by nobody.
 --
 -- Nothing here is staged: the water came out of a button and the only
@@ -116,7 +116,7 @@ for _ = 1, 400 do
     -- the bottom and vapour in the headspace over it. That is the step
     -- the room's gain is made of -- water does not teleport from a
     -- beaker to a room, it boils into the space above itself and the
-    -- open vessel breathes that space out (sim/chemistry/vent.rs).
+    -- open vessel breathes that space out (sim/holder/vent.rs).
     --
     -- Small when you catch it, and the cadence says why: the vent runs
     -- every atmos pass and takes the WHOLE headspace, so what a sample
