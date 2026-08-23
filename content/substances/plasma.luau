@@ -24,4 +24,8 @@
 return {
     id = "plasma",
     visible = { tint = "#BF59F2" },
+    -- Where this sits in a tool that offers every substance there is
+    -- (docs/MAPPING.md, the recipe panel). The gas a station is built
+    -- around holding away from itself.
+    relevance = 70,
 }
