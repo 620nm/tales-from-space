@@ -48,7 +48,7 @@ t.world([==[(
         '.': (turf: Plating),
         'o': (turf: Floor),
         '#': (turf: Wall),
-        'c': (turf: Plating, fixture: Some(Canister)),
+        'c': (turf: Plating),
     },
     rows: [
         "#######",
@@ -59,7 +59,13 @@ t.world([==[(
     spawns: [(1, 2)],
     items: [(1, 2, "analyzer"), (2, 2, "pipe")],
     pipes: [(2, 1, 4), (3, 1, 4)],
-    structures: [(1, 1, "connector_port")],
+    air_presets: {
+        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    },
+    structures: [
+        (1, 1, "connector_port"),
+        (1, 1, "canister", { "air": "canister_air", "open": true }),
+    ],
 )]==], 7)
 
 local p = t.join()

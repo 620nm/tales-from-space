@@ -246,7 +246,7 @@ t.world([==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
-        'c': (turf: Plating, fixture: Some(Canister)),
+        'c': (turf: Plating),
         'a': (turf: Plating, fixture: Some(Apc)),
         'g': (turf: Plating, fixture: Some(Generator)),
     },
@@ -258,7 +258,13 @@ t.world([==[(
     ],
     spawns: [(4, 2)],
     pipes: [(2, 1, 4)],
-    structures: [(1, 1, "connector_port"), (3, 1, "air_injector")],
+    air_presets: {
+        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    },
+    structures: [
+        (1, 1, "connector_port"), (3, 1, "air_injector"),
+        (1, 1, "canister", { "air": "canister_air", "open": true }),
+    ],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
