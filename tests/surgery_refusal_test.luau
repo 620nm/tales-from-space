@@ -63,7 +63,14 @@ assert(t.parts(patient).chest.states.skin_cut ~= true, "a refusal is not a swing
 hold("scalpel")
 t.click(surgeon, PX, PY, pid)
 t.run_ticks(20) -- the incise do_after is 80 ticks; interrupt it early
-assert(#t.ledger_rows("DoAfterStarted") > 0, "the incision parked")
+local parked = #t.ledger_rows("DoAfterStarted")
+assert(parked > 0, "the incision parked")
+-- One operation in flight per surgeon (tg DOAFTER_SOURCE_SURGERY): a
+-- second click while parked is refused, and no second do_after starts.
+t.click(surgeon, PX, PY, pid)
+t.run_ticks(2)
+assert(#t.ledger_rows("DoAfterStarted") == parked, "one in flight: the second click parked nothing")
+assert(said(surgeon, "already operating"), "and the surgeon is told they are busy")
 t.rest(patient, false) -- they sit up
 t.run_ticks(3)
 assert(#t.ledger_rows("DoAfterInterrupted") > 0, "the patient stood: interrupted")
