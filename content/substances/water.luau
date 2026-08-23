@@ -1,18 +1,32 @@
--- Water, for its LOOK only.
+-- Water: the one substance on the station that is solid, liquid and gas
+-- all in the same file.
 --
--- Water is a BUILTIN substance: its mass, its three specific heats and
--- its melting and boiling points live in the engine's matter registry
--- because atmos needs them long before a beaker does. The registry
--- skips a content substance whose key it already knows (invariant I9,
--- docs/CHEMISTRY.md), so this file registers no physics and could not
--- override any if it tried -- what it contributes is the METADATA half,
--- which the registry does not own.
+-- It is the only member of the ported roster with a FULL phase curve,
+-- and that is the whole of what makes it interesting. Everything else
+-- here is `gas_only` — tg models no condensation for any of its atmos
+-- gases — so water is where the engine's melting, boiling, condensing
+-- and freezing actually run.
 --
--- Today that is two fields: what water looks like through glass, and
--- what it looks like hanging in a room. The alternative was a colour
--- table under `crates/`, which would put a substance name and a hex
--- value in engine code; a substance file that names only what it looks
--- like keeps the vocabulary where vocabulary lives.
+-- Physics:
+--   * molar mass 18.015 g/mol.
+--   * cv per phase, three numbers rather than one: ice 38, liquid 75.3,
+--     steam 40 J/(mol·K). The gas figure is tg's own `water_vapor`
+--     specific heat (gas_types.dm), which is what lets a fire's
+--     humidity warm at exactly tg's rate; the other two are water's.
+--   * melts at 273.15 K, boils at 373.15 K, latent heats 6 010 and
+--     40 660 J/mol. The engine derives the phase reference offsets from
+--     these four numbers so a transition is energy-neutral and
+--     temperature is continuous across it (docs/MATTER.md §4).
+--   * densities 0.917 (ice) and 1.0 (liquid) g/mL, which is what makes
+--     a puddle displace air in a sealed vessel.
+--
+-- **tg's seventh gas, `water_vapor`, is not here: it IS this file's gas
+-- row.** tg needs a separate id because its gas mixtures and its
+-- reagents are two unrelated systems that cannot name the same
+-- substance; here one substance carries all three phases, so a twin
+-- would be a second name for one molecule — two ids to filter for, two
+-- rows on an analyser, and a fire whose humidity could never rain out
+-- because the thing it made had no liquid phase.
 --
 -- tg: /datum/reagent/water, `color = "#AAAAAA77"` (other_reagents.dm:
 -- 117). The trailing 77 is BYOND's alpha byte and is DROPPED: colour
@@ -21,19 +35,21 @@
 -- grey tg does and simply does not thin it.
 --
 -- `visible.tint` is STEAM: the colour water wears in its gas phase,
--- which is what a boiled beaker gives off and what a plasma fire makes
--- (tg's `water_vapor` is that gas phase and nothing else, so the engine
--- roster carries no twin for it). Almost white with the faintest blue
--- in it (0.90/0.93/0.97 in the old renderer, unchanged): fog reads as a
--- thinning of the room rather than a colour laid over it, which is the
--- only way a hazard overlay can sit on top of a corridor without hiding
--- what is in it. The threshold that decides WHEN it is drawn is the
--- registry's (docs/CHEMISTRY.md); this is only the colour.
+-- which is what a boiled beaker gives off and what a plasma fire makes.
+-- Almost white with the faintest blue in it (0.90/0.93/0.97 in the old
+-- renderer): fog reads as a thinning of the room rather than a colour
+-- laid over it, which is the only way a hazard overlay can sit on top
+-- of a corridor without hiding what is in it. Renderers ask per phase,
+-- so a puddle is never mistaken for a cloud.
 return {
     id = "water",
     name = "water",
+    molar_mass = 18.015,
+    cv = { solid = 38.0, liquid = 75.3, gas = 40.0 },
+    phase = { melt = 273.15, boil = 373.15, l_fus = 6010.0, l_vap = 40660.0 },
+    density = { solid = 0.917, liquid = 1.0 },
     color = "#AAAAAA",
-    visible = { tint = "#E6EDF7" },
+    visible = { moles = 0.25, factor = 20, tint = "#E6EDF7" },
     -- Where this sits in a tool that offers every substance there is
     -- (docs/MAPPING.md, the recipe panel). Authored as vapour: a humid
     -- room, which condenses out on the first atmos pass exactly as it
