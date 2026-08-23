@@ -99,7 +99,7 @@ assert(t.door_at(13, 31), "and a door into the machine hall's corridor")
 -- The machine tile the annex was laid out around, and the machine now
 -- standing on it: the temperature control unit, shipped running at its
 -- T20C default like the rest of the commissioned department, with
--- branch power under it and the bench run stopping either side.
+-- room circuit power under it and the bench run stopping either side.
 local unit = t.structure_at(10, 31)
 assert(unit ~= nil and unit.id == "thermomachine",
     "the temperature control unit stands on the machine tile")

@@ -34,9 +34,10 @@
 // is meant to sit down in.
 //
 // EVERYTHING IS FED. Ten photovoltaic panels north of the hull and a
-// generator and an SMES bank in Engineering charge one layer-1 feeder
-// that reaches all nine APCs; each APC opens a layer-2 branch that runs
-// under every light, every fan and every socket it owns. The first draft
+// generator and an SMES bank in Engineering carry one L2 backbone that
+// reaches all nine APCs; each APC takes from it on its L2 input port
+// and opens an L1 room circuit that runs under every light, every fan
+// and every socket it owns (docs/POWER.md, "Layers and ports"). The first draft
 // shipped two boot warnings on purpose (an unwired room was the
 // construction playground); this one ships NONE, and the playground is
 // now the empty blocked-out rooms and the space around the hull.
@@ -110,7 +111,7 @@
         'o': (turf: Plating, fixture: Some(Outlet)),
         'c': (turf: Plating, fixture: Some(Canister)),
         // The power plant: a superconducting bank and a backup set, both
-        // in Engineering, both standing on the feeder they charge.
+        // in Engineering, both standing on the backbone they carry.
         'm': (turf: Plating, fixture: Some(Smes)),
         'g': (turf: Plating, fixture: Some(Generator)),
         // Photovoltaics, standing in vacuum north of the hull where the
@@ -314,9 +315,9 @@
         // pile.
         (23, 17, "table"), (24, 17, "table"),
         // The scrubber that makes the department a LOOP rather than a
-        // supply: it stands on the Commons' own branch circuit, on
-        // layer 2, and takes the carbon dioxide the crew breathe out
-        // back to Atmospherics.
+        // supply: it stands on the Commons' own room circuit, on L1,
+        // and takes the carbon dioxide the crew breathe out back to
+        // Atmospherics.
         (16, 17, "air_scrubber", "scrubbing"),
         // THE BOTTLE RACK. Four sockets in the west hall, each beside
         // the through-main and mouthing south into it: the connector is
@@ -488,7 +489,7 @@
         (5, 33, "stationary_tank", "anchored", ("tritium", 23000.0)),
         (7, 33, "stationary_tank", "anchored", ("n2o", 23000.0)),
         // The temperature control unit, on the machine tile the annex
-        // wired for it: L2 branch under its feet, the layer-3 bench run
+        // wired for it: the L1 room circuit under its feet, the bench run
         // stopping either side. Its one mouth auto-binds the east stub;
         // pipe from there to whichever tank is today's experiment and
         // the thermostat conditions what the tank feeds it. Ships
@@ -566,19 +567,20 @@
         (25, 29, "pipe_dispenser"),
     ],
     cables: [
-        // ==== THE FEEDER (layer 1) ================================
+        // ==== THE BACKBONE (L2, yellow) ===========================
         // One circuit, one segment, ten panels and two banks on it, and
-        // every APC on the station tapping it. It runs the solar row in
+        // every APC on the station tapping it through an L2 input
+        // port. It runs the solar row in
         // vacuum, drops through the hull in the wall between the
         // Workshop and the Bunks, follows both legs of the Concourse
         // ring and both hull faces, and ends in Engineering under the
         // generator and the SMES.
         //
         // It also runs UNDER every airlock on the station. A door with
-        // live L1 under its own tile is powered whatever its area's APC
-        // is doing (docs/POWER.md, "direct feeder tap > nearest
-        // adjacent branch feed"), and that is tg's instinct too -- the
-        // way through a bulkhead should not stop working because
+        // any live wire under its own tile is powered whatever the APC
+        // beside it is doing (docs/POWER.md, "Doors": the direct tap
+        // preempts the transfer switch), and that is tg's instinct too
+        // -- the way through a bulkhead should not stop working because
         // somebody flipped the breaker on the room next to it.
         (6, 1, 2), (7, 1, 2), (8, 1, 2), (9, 1, 2), (10, 1, 2), (11, 1, 2),
         (12, 1, 2), (13, 1, 2), (14, 1, 2), (15, 1, 2), (16, 1, 2), (17, 1, 2),
@@ -628,13 +630,13 @@
         (4, 26, 2), (4, 27, 2),
         // ...and the Cargo Hall's.
         (28, 21, 2), (28, 22, 2),
-        // ==== THE BRANCHES (layer 2) ==============================
+        // ==== THE ROOM CIRCUITS (L1, red) =========================
         // One per APC, each starting ON its APC's own tile -- a segment
         // that merely begins BESIDE the controller is cable that touches
         // nothing, and a fitting on one is wired to itself. (The boot
-        // warning "outlet's branch segment reaches no APC output" is
-        // what caught that in the first draft, which is what that
-        // warning is for.)
+        // warning "fixture's cable reaches no bridge output and no
+        // source" is what caught that in the first draft, which is what
+        // that warning is for.)
         // -- Workshop
         (4, 4, 1), (4, 5, 1), (4, 6, 1), (4, 7, 1), (4, 8, 1), (4, 9, 1),
         (5, 4, 1), (5, 9, 1), (6, 4, 1), (6, 9, 1), (7, 4, 1), (7, 9, 1),
