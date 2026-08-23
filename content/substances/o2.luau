@@ -3,7 +3,7 @@
 -- This file used to carry oxygen's LOOK only, because its physics lived
 -- in a Rust table the engine shipped with. That table is gone: there is
 -- no built-in roster any more, and a pack that names no oxygen has none
--- (docs/CHEMISTRY.md §8). What the engine keeps is the arithmetic — the
+-- (docs/CHEMISTRY.md §2). What the engine keeps is the arithmetic — the
 -- ideal gas law, the reaction step, the breath thresholds — and every
 -- number those arithmetics are ABOUT is here.
 --
