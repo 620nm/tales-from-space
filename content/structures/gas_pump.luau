@@ -20,7 +20,7 @@
 -- It draws power and stops without it, which is the `atmos` block's
 -- default for this mechanism (tg's `use_power = IDLE_POWER_USE` at
 -- `BASE_MACHINE_IDLE_CONSUMPTION * 0.25`, binary_devices.dm:5-6). So it
--- is on the equipment channel of whatever APC feeds the branch under
+-- is on the equipment channel of whatever bridge feeds the wire under
 -- its tile, it goes dark when that channel sheds, and it picks the line
 -- back up when the power returns -- nobody has to re-throw the switch,
 -- because the switch never moved.

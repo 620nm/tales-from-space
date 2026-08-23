@@ -38,6 +38,12 @@ return {
         "popped",
         "cut",
     },
+    -- The three a station is actually built out of: bare mesh, a
+    -- window, and a reinforced window. Every other state above is a
+    -- rung of a disassembly ladder -- half-unscrewed, popped, cut --
+    -- and nobody commissions a corridor with one in it, so the palette
+    -- offers these and stays readable (docs/MAPPING.md).
+    palette_states = { "bolted", "glazed", "reinforced" },
     -- An unfastened grille is not held to the deck, so it shoves like
     -- any other loose thing -- the same marker the girder work added.
     loose = { "unbolted" },

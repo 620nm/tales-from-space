@@ -1,6 +1,7 @@
 -- Sabotage, attributable: cutting a cable is a Script-actor ledger row
 -- naming this file and the player holding the cutters. Layer masks:
--- 1 = feeder (red), 2 = branch (yellow), 4 = reserved (blue).
+-- 1 = red, 2 = yellow, 4 = blue. What each line CARRIES is the
+-- station's business, not the cutters' (docs/POWER.md).
 --
 -- Cabling under a covered deck is out of reach, exactly as the pipe
 -- under it is: tg's levelupdate() drops everything in a covered turf to

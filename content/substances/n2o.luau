@@ -6,4 +6,8 @@ return {
     id = "n2o",
     name = "nitrous oxide",
     color = "#808080",
+    -- Where this sits in a tool that offers every substance there is
+    -- (docs/MAPPING.md, the recipe panel). A chamber a mapper fills on
+    -- purpose.
+    relevance = 60,
 }

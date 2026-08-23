@@ -11,4 +11,8 @@ return {
     id = "o2",
     name = "oxygen",
     color = "#808080",
+    -- Where this sits in a tool that offers every substance there is
+    -- (docs/MAPPING.md, the recipe panel). The air a station is
+    -- commissioned full of, so it leads.
+    relevance = 100,
 }
