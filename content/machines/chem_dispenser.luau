@@ -32,7 +32,7 @@
 -- substance file -- the same deal the pipe dispenser's shelf offers.
 --
 -- OXYGEN AND NITROGEN ARE THE STATION'S OWN GASES. The keys `o2` and
--- `n2` are the builtin roster's, the same substances a canister holds
+-- `n2` are the pack's own gases, the same substances a canister holds
 -- and a crewman breathes, dispensed as a liquid the way tg's reagent
 -- oxygen is a reagent. One matter registry, reached from one more
 -- place (docs/CHEMISTRY.md).

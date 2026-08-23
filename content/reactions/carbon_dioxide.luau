@@ -3,7 +3,8 @@
 -- isn't especially reactive"), no thermic_constant
 -- (recipes/others.dm:142-146).
 --
--- The product goes into the BUILTIN gas, in the gas phase -- `co2:gas`
+-- The product goes into the SAME carbon dioxide the air is made of,
+-- in the gas phase -- `co2:gas`
 -- rather than a bare key -- because that is what it is. This is the
 -- unification dividend said out loud: a beaker of it holds the same
 -- substance an atmos cell does, so a spill or a boiled beaker puts real
