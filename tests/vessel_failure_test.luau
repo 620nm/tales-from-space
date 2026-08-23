@@ -65,7 +65,7 @@ assert(t.ui(p).toggles[1].on == false, "the valve is shut")
 assert(t.charge_vessel(2, 2, "n2", 30000000.0), "a canister takes a charge")
 t.run_seconds(4)
 
-assert(#t.ledger_rows("vessel_ruptured") > 0, "the record says a vessel went")
+assert(#t.ledger_rows("pressure_ruptured") > 0, "the record says a vessel went")
 assert(t.canister_pressure(2, 2) < 1.0,
     "and the canister is empty: " .. t.canister_pressure(2, 2))
 assert(t.room_pressure(1, 2) > room_start,
@@ -108,7 +108,7 @@ t.run_seconds(2)
 -- which is the negative that makes the rest mean anything.
 assert(t.charge_vessel(2, 2, "n2", 40000.0), "a reservoir takes a charge")
 t.run_seconds(5)
-assert(#t.ledger_rows("vessel_damaged") == 0,
+assert(#t.ledger_rows("pressure_damaged") == 0,
     "a tank inside its rating is doing nothing at all")
 local look_sound = t.examine(q, 2, 2, t.target_at(2, 2))
 assert(not table.concat(look_sound.lines, " | "):find("strain"),
@@ -120,7 +120,7 @@ assert(t.tank_pressure(2, 2) > 46000.0,
     "past tg's max_pressure: " .. t.tank_pressure(2, 2))
 t.run_seconds(5)
 
-local damage = t.ledger_rows("vessel_damaged")
+local damage = t.ledger_rows("pressure_damaged")
 assert(#damage > 0, "the record shows it taking damage")
 assert(damage[1].amount ~= nil and math.abs(damage[1].amount - 0.1) < 1e-4,
     "at tg's flat 0.1 a pass: " .. tostring(damage[1].amount))

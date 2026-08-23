@@ -20,7 +20,7 @@ return {
     -- It can carry an open flame (tg's `welding = TRUE` while struck).
     -- Two appearance states, unlit first, both drawing the base picture
     -- (no lit sprite is baked): the flame is a fact the surgery close and
-    -- `expose_heat` read off `Flame`, and the state only mirrors it.
+    -- `expose_heat` read off `FuelBurn`, and the state only mirrors it.
     flame = true,
     states = { "unlit", "lit" },
     -- Strike it on, or snuff it (tg's `attack_self`, weldingtool.dm). A

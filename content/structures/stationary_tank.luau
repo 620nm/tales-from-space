@@ -45,7 +45,7 @@
 --
 -- WHAT HAPPENS PAST THE RATING is no longer deferred: the `failure`
 -- block below is tg's own, and the engine's one failure pass reads it
--- (sim/chemistry/failure.rs). What is still deferred is either side of
+-- (sim/holder/pressure_failure.rs). What is still deferred is either side of
 -- it, both tg's and neither a debug tank's problem (they are noted in
 -- the engine beside the fields that would carry them,
 -- crates/lunatic-server/src/structures/atmos.rs):

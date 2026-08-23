@@ -25,7 +25,7 @@ return {
     dense = true,
     corded = true,
     chem = {
-        device = "heater",
+        device = "thermostat",
         -- tg's `target_temperature = 300` (chem_heater.dm:14): a shade
         -- over room temperature, so a chamber switched on with nobody
         -- watching does nearly nothing.

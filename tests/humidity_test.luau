@@ -107,7 +107,7 @@ eject()
 --
 -- 400 K, well past water's 373.15, so the boil branch runs flat out and
 -- the gas leaves the open vessel for the room every pass
--- (sim/chemistry/vent.rs).
+-- (sim/holder/vent.rs).
 -- ---------------------------------------------------------------
 dock(heater, 2, 1)
 panel(heater, 2, 1)

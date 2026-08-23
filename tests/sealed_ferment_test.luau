@@ -3,7 +3,7 @@
 -- Sugar in water ferments at room temperature (reactions/fermentation.
 -- luau), and two of the three moles it makes are CO2 in the gas phase.
 -- In an open beaker that gas is gone by the next atmos pass -- an open
--- vessel trades its whole headspace with the room (sim/chemistry/
+-- vessel trades its whole headspace with the room (sim/holder/
 -- vent.rs) -- so nothing ever builds up in one. A bottle is corked
 -- (items/bottle.luau, `sealed`), and a corked vessel is the only one on
 -- this station that can hold a pressure of its own: what ferments in it

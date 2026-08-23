@@ -55,7 +55,9 @@ return {
     dense = true,
     corded = true,
     chem = {
-        device = "dispenser",
+        device = "mint",
+        mint_temperature_k = 300,
+        mint_phase = "liquid",
         -- tg's `amount = 30` (chem_dispenser.dm:18) through the
         -- documented unit bridge of 1 u = 0.025 mol: 0.75 mol, which is
         -- three fifths of a beaker. The dial's OPENING position: the

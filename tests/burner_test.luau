@@ -66,7 +66,7 @@ assert(msgs:find("isn't lit", 1, true), "and it says so: " .. msgs)
 t.use_self(p)
 t.tick()
 assert(t.hands(p).held == "burner", "still in hand")
-assert(t.ledger_has("FlameSet"), "striking a light is on the record")
+assert(t.ledger_has("FuelBurnSet"), "striking a light is on the record")
 
 -- ---------------------------------------------------------------
 -- ONE CLICK IS ONE EXPOSURE, AND IT IS TG'S ARITHMETIC EXACTLY.

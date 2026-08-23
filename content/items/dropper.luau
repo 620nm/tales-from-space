@@ -60,7 +60,8 @@ return {
                 ctx.system_msg(user, "The dropper is empty.")
                 return
             end
-            ctx.pour(self, clicked.entity, 1 * U)
+            ctx.pour(self, clicked.entity, 1 * U,
+                "The dropper is empty.", "The other vessel is full to the brim.")
             ctx.system_msg(user, "You squeeze a drop out of the dropper.")
             return
         end
@@ -85,7 +86,8 @@ return {
             ctx.system_msg(user, "The dropper is empty.")
             return
         end
-        ctx.spill(self, x, y)
+        ctx.spill(self, x, y,
+            "The dropper is empty.", "You can't reach that from here.")
         ctx.system_msg(user, "You squeeze the dropper out onto the deck.")
     end,
 }
