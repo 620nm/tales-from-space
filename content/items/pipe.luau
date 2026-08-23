@@ -24,6 +24,12 @@ return {
     sprite = "pipe",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
     stack = 25,
+    -- This IS the station's piping: what a run under the deck is made
+    -- of, what a wrench may fasten into one, and what pulling one hands
+    -- back. The native fasten verb used to recognise this length by its
+    -- id; it reads this instead, so a pack with two kinds of pipe gets
+    -- both and a pack with none gets a refusal.
+    subfloor = "pipe",
     -- Five settings, minted on the third: PIPING_LAYER_DEFAULT.
     modes = 5,
     mode = 2,
