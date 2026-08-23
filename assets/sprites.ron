@@ -1,16 +1,21 @@
 (
-    body_dmi: "mob/human/bodyparts_greyscale.dmi",
-    body_parts: [
-        "human_chest_m",
-        "human_r_leg",
-        "human_l_leg",
-        "human_r_arm",
-        "human_l_arm",
-        "human_r_hand",
-        "human_l_hand",
-        "human_head_m",
-    ],
-    skin: (232, 200, 168),
+    // The paper doll `Body`/`BodyDead` recipes composite. Optional at
+    // the schema: a game whose sprites are all sheets and stills omits
+    // the block entirely and bakes without one.
+    body: Some((
+        dmi: "mob/human/bodyparts_greyscale.dmi",
+        parts: [
+            "human_chest_m",
+            "human_r_leg",
+            "human_l_leg",
+            "human_r_arm",
+            "human_l_arm",
+            "human_r_hand",
+            "human_l_hand",
+            "human_head_m",
+        ],
+        skin: (232, 200, 168),
+    )),
     // The sprite roster lives in `tfs/assets/sprites/`, one file per
     // family, because this one crossed the thousand-line ceiling that is
     // a project rule rather than a guideline. Every .ron in that
