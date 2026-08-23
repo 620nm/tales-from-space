@@ -15,21 +15,6 @@
 -- default, and tg's own file sets it from the same define rather than
 -- from a number.
 
--- tg tanks.dm:159, and the whole of what a tank tells you: what the
--- gauge on it reads, rounded the way tg rounds it. There is no examine
--- hook in the v0 surface (docs/LUAU-API.md §4 lists the eight, and
--- examine is not one), so the readout rides the gesture that reaches for
--- the tank -- which is honest either way round, because content is not
--- told whether the valve it asked for actually opened.
-local function gauge(ctx, self, user)
-    local kpa = ctx.tank_kpa(self)
-    if not kpa then
-        return
-    end
-    local hundredths = math.floor(kpa * 100 + 0.5) / 100
-    ctx.system_msg(user, "The pressure gauge reads " .. tostring(hundredths) .. " kPa.")
-end
-
 return {
     id = "emergency_oxygen",
     name = "emergency oxygen tank",
@@ -89,12 +74,17 @@ return {
     on_rupture = function(ctx, self, user, x, y)
         ctx.sound("spray", x, y)
     end,
-    -- The activate-in-hand key, which is where tg puts the valve too
-    -- (`toggle_internals` off the tank's own click). Whether it opens
-    -- is the engine's to decide: apparatus on the face, tank on the
-    -- body, body alive. Closing is never refused.
+    -- The activate-in-hand key, which is where tg puts the valve
+    -- (`toggle_internals` off the tank's own action button) -- and
+    -- then the panel tg opens from the other one
+    -- (`attack_self_secondary` -> `ui_interact`, tanks.dm:431-433),
+    -- because "handle your bottle" is one gesture here and the panel
+    -- is the gauge: what is in it, what it reads, and the release
+    -- valve a breath is drawn at. Whether the valve OPENS is the
+    -- engine's to decide: apparatus on the face, tank on the body,
+    -- body alive. Closing is never refused, and neither is looking.
     on_use_self = function(ctx, self, user)
         ctx.toggle_internals(user, self)
-        gauge(ctx, self, user)
+        ctx.open_ui(user, self)
     end,
 }
