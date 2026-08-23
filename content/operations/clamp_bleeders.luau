@@ -4,7 +4,7 @@ return {
     id = "clamp_bleeders", name = "clamp the bleeders",
     requires = { "skin_open", "vessels_unclamped" },
     sets = { "vessels_clamped" }, clears = { "vessels_unclamped" },
-    heal = { brute = 20 }, -- if the bone was sawed; else nothing to mend
+    heal = { brute = 20 }, heal_if = "bone_sawed", -- mends 20 of the saw's damage, only if sawed
     time = 2.4,
     implements = {
         { tool = "hemostat", mult = 1 },
