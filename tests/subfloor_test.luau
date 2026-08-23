@@ -18,7 +18,7 @@
 -- gives nothing away.
 
 local DISTRO = 4 -- piping layer 3
-local BRANCH = 2 -- cable layer 2
+local ROOM = 1 -- cable layer 1, the room circuit
 
 local function said(p, want)
     for _, m in ipairs(t.messages(p)) do
@@ -58,7 +58,7 @@ t.world([==[(
         (3, 2, "wrench"),
     ],
     pipes: [(2, 1, 4), (2, 2, 4)],
-    cables: [(2, 1, 2), (2, 2, 2)],
+    cables: [(2, 1, 1), (2, 2, 1)],
 )]==], 7)
 
 local p = t.join()
@@ -66,7 +66,7 @@ t.tick()
 assert(t.turf(2, 1) == "plating", "one tile is open")
 assert(t.turf(2, 2) == "floor", "and its neighbour is tiled over")
 assert(t.pipe(2, 2) == DISTRO, "the run passes under the tiled one")
-assert(t.cable_at(2, 2) == BRANCH, "and so does the cable")
+assert(t.cable_at(2, 2) == ROOM, "and so does the cable")
 
 -- ---------------------------------------------------------------
 -- The wrench. Buried pipe under a tile is not wrenchable.
@@ -104,11 +104,11 @@ _ = t.messages(p)
 
 t.click(p, 2, 2)
 t.run_seconds(1.5)
-assert(t.cable_at(2, 2) == BRANCH, "the buried cable is untouched")
+assert(t.cable_at(2, 2) == ROOM, "the buried cable is untouched")
 assert(not said(p, "snipping"), "and the cutters never bit")
 assert(#t.ledger_rows("CableCut") == 0, "no cut to attribute")
 
-t.click_subfloor(p, 2, 1, "cable", BRANCH)
+t.click_subfloor(p, 2, 1, "cable", ROOM)
 t.run_seconds(1.5)
 assert(t.cable_at(2, 1) == 0, "open plating cuts fine")
 assert(#t.ledger_rows("CableCut") == 1, "and that cut is attributed")
@@ -292,7 +292,7 @@ t.world([==[(
     ],
     spawns: [(2, 2)],
     items: [(2, 2, "wirecutters")],
-    cables: [(2, 1, 2), (3, 1, 2)],
+    cables: [(2, 1, 1), (3, 1, 1)],
 )]==], 7)
 
 local e = t.join()
@@ -307,12 +307,12 @@ t.run_ticks(2)
 assert(t.hands(e).held == "wirecutters", "cutters in hand")
 _ = t.messages(e)
 
-t.click_subfloor(e, 3, 1, "cable", BRANCH)
+t.click_subfloor(e, 3, 1, "cable", ROOM)
 t.run_seconds(1.5)
-assert(t.cable_at(3, 1) == BRANCH, "boxed-in plating keeps its run")
+assert(t.cable_at(3, 1) == ROOM, "boxed-in plating keeps its run")
 assert(not said(e, "snipping"), "and the cutters never bit")
 
-t.click_subfloor(e, 2, 1, "cable", BRANCH)
+t.click_subfloor(e, 2, 1, "cable", ROOM)
 t.run_seconds(1.5)
 assert(t.cable_at(2, 1) == 0, "the open panel gives its run up")
 assert(t.turf(2, 1) == "floor", "without becoming a different deck")
