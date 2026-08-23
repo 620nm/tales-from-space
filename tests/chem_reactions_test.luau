@@ -161,7 +161,8 @@ near(amount(slop, "thermite"), 0.0, 1e-12, "a pair is inert wherever it is stand
 --
 -- tg: 1 carbon + 2 oxygen -> 3 CO2, `required_temp = 777` because
 -- "pure carbon isn't especially reactive" (recipes/others.dm:142-146).
--- The product goes into the BUILTIN gas, in the gas phase -- the same
+-- The product goes into the pack's own carbon dioxide, in the gas
+-- phase -- the same
 -- substance an atmos cell carries, which is the whole unification.
 -- ---------------------------------------------------------------
 eject()
