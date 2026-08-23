@@ -16,5 +16,9 @@ return {
     -- and issuing everybody a new first item would move every other
     -- one out from under them.
     mask = "breath_mask",
-    kit = { "metal", "floor_tile", "emergency_oxygen" },
+    -- What the kit arrives in, worn on the back. The engine used to
+    -- mint a pack by name and slip a headset in beside the kit; both
+    -- are the station's business, so both are spelled here.
+    kit_container = "backpack",
+    kit = { "metal", "floor_tile", "emergency_oxygen", "headset" },
 }

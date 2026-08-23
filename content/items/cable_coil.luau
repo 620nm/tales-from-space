@@ -35,6 +35,11 @@ return {
     sprite = "coil",
     inhand_sprite = { "held_coil_l", "held_coil_r" },
     stack = 30,
+    -- This IS the station's cable: what a run under the deck is made
+    -- of, and therefore what cutting one hands back. One field, both
+    -- directions -- the engine floods the powernet and never learns
+    -- that the thing you lay it with is called a coil.
+    subfloor = "cable",
     -- Three settings, minted on the second: tg's coil defaults to
     -- CABLE_LAYER_2 (cable.dm:513), which is the line the shipped
     -- station runs its backbone on.

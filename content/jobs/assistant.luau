@@ -10,5 +10,9 @@ return {
     -- job_boxes.dm:4-45), and a station where only some of the crew can
     -- breathe through a breach has a job that is a death sentence.
     mask = "breath_mask",
-    kit = { "emergency_oxygen" },
+    -- What the kit arrives in, worn on the back. The engine used to
+    -- mint a pack by name and slip a headset in beside the kit; both
+    -- are the station's business, so both are spelled here.
+    kit_container = "backpack",
+    kit = { "emergency_oxygen", "headset" },
 }
