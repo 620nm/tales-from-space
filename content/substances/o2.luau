@@ -11,6 +11,11 @@ return {
     id = "o2",
     name = "oxygen",
     color = "#808080",
+    -- What lungs are looking for. The threshold a breath is held to is
+    -- the engine's (tg's `safe_oxygen_min`, 16 kPa of partial
+    -- pressure); which gas clears it is this line, and this line is the
+    -- only place on the station that says the crew breathes oxygen.
+    breath = { breathable = true },
     -- Where this sits in a tool that offers every substance there is
     -- (docs/MAPPING.md, the recipe panel). The air a station is
     -- commissioned full of, so it leads.

@@ -9,6 +9,10 @@ return {
     id = "co2",
     name = "carbon dioxide",
     color = "#B0B0B0",
+    -- What a sealed room fills up with while you are busy. Over the
+    -- engine's line it costs TIME before it costs anything else (tg's
+    -- `safe_co2_max` and its twelve-second clock).
+    breath = { waste = true },
     -- Where this sits in a tool that offers every substance there is
     -- (docs/MAPPING.md, the recipe panel). What a room full of people
     -- fills up with, and what a mapper drawing a stale chamber reaches
