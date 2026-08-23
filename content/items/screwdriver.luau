@@ -13,4 +13,5 @@ return {
     pickup_sound = "screwdriver_pickup",
     drop_sound = "screwdriver_drop",
     tool = "screwdriver",
+    sharp = "pointy", -- tg SHARP_POINTY
 }
