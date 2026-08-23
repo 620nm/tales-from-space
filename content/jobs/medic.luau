@@ -11,5 +11,9 @@ return {
     mask = "breath_mask",
     -- A roll of surgical tools rides at the waist (docs/SURGERY.md §6).
     belt = "surgical_kit",
-    kit = { "beaker_libital", "emergency_oxygen" },
+    -- What the kit arrives in, worn on the back. The engine used to
+    -- mint a pack by name and slip a headset in beside the kit; both
+    -- are the station's business, so both are spelled here.
+    kit_container = "backpack",
+    kit = { "beaker_libital", "emergency_oxygen", "headset" },
 }
