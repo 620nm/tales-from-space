@@ -5,6 +5,14 @@
 -- Three gestures, all of them one click with it in your active hand:
 -- your own tile is a swig, another vessel within reach is a pour, and
 -- the deck beside you is a spill.
+--
+-- All three are THE SAME CALL with a different far end (docs/LUAU-API.md
+-- section 8.2): `ctx.matter_transfer(from, to, amount, phases)`, where
+-- `to` is a body's blood, another vessel, or the room over a tile
+-- (`ctx.cell`). What differs between a pour and a spill is which owner
+-- is named and how much, and nothing else -- the trim against what is
+-- there and what fits, the reach check, the proportional draw and the
+-- row are all the engine's.
 local U = 0.025
 
 return {
@@ -63,7 +71,7 @@ return {
                 ctx.system_msg(user, "The beaker is empty.")
                 return
             end
-            ctx.pour(self, clicked.entity, 0.25)
+            ctx.matter_transfer(self, clicked.entity, 0.25, "liquid")
             ctx.system_msg(user, "You pour from the beaker.")
             return
         end
@@ -76,7 +84,7 @@ return {
                 return
             end
             ctx.sound("drink", x, y)
-            ctx.drink(self, user, 0.05)
+            ctx.matter_transfer(self, user, 0.05, "liquid")
             ctx.system_msg(user, "You drink from the beaker.")
             return
         end
@@ -90,7 +98,7 @@ return {
             ctx.system_msg(user, "The beaker is empty.")
             return
         end
-        ctx.spill(self, x, y)
+        ctx.matter_transfer(self, ctx.cell(x, y), "all", "liquid")
         ctx.system_msg(user, "You tip the beaker out onto the deck.")
     end,
 }

@@ -40,7 +40,7 @@ return {
                 ctx.system_msg(user, "The beaker is empty.")
                 return
             end
-            ctx.pour(self, clicked.entity, 0.25)
+            ctx.matter_transfer(self, clicked.entity, 0.25, "liquid")
             ctx.system_msg(user, "You pour from the beaker.")
             return
         end
@@ -52,7 +52,7 @@ return {
                 return
             end
             ctx.sound("drink", x, y)
-            ctx.drink(self, user, 0.05)
+            ctx.matter_transfer(self, user, 0.05, "liquid")
             ctx.system_msg(user, "You drink from the beaker. It tastes like a hospital.")
             return
         end
@@ -65,7 +65,7 @@ return {
             ctx.system_msg(user, "The beaker is empty.")
             return
         end
-        ctx.spill(self, x, y)
+        ctx.matter_transfer(self, ctx.cell(x, y), "all", "liquid")
         ctx.system_msg(user, "You tip the beaker out onto the deck.")
     end,
 }
