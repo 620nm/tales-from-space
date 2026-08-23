@@ -9,5 +9,7 @@ return {
     -- and issuing everybody a new first item would move every other
     -- one out from under them.
     mask = "breath_mask",
+    -- A roll of surgical tools rides at the waist (docs/SURGERY.md §6).
+    belt = "surgical_kit",
     kit = { "beaker_libital", "emergency_oxygen" },
 }

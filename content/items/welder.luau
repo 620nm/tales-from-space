@@ -17,6 +17,24 @@ return {
     -- (docs/CONSTRUCTION.md). tg's max_fuel is 20.
     tool = "welder",
     fuel = { substance = "welding_fuel", capacity = 20.0 },
+    -- It can carry an open flame (tg's `welding = TRUE` while struck).
+    -- Two appearance states, unlit first, both drawing the base picture
+    -- (no lit sprite is baked): the flame is a fact the surgery close and
+    -- `expose_heat` read off `Flame`, and the state only mirrors it.
+    flame = true,
+    states = { "unlit", "lit" },
+    -- Strike it on, or snuff it (tg's `attack_self`, weldingtool.dm). A
+    -- lit welder is "hot" for surgery's close operation (docs/SURGERY.md
+    -- §6.2), which is what lets the improvised floor rescue seal a wound.
+    on_use_self = function(ctx, self, user)
+        if ctx.state(self) == "lit" then
+            ctx.set_flame(self, false)
+            ctx.system_msg(user, "You extinguish the welder.")
+        else
+            ctx.set_flame(self, true)
+            ctx.system_msg(user, "You flip the welder on; the flame hisses to life.")
+        end
+    end,
     -- A CLOSED tank. tg's welder holds its fuel in a sealed reservoir
     -- you refill from a tank rather than an open cup (welding_tool.dm's
     -- `/obj/item/weldingtool` carries no OPENCONTAINER flag, and
