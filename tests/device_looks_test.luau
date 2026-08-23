@@ -213,8 +213,8 @@ end
 -- ---------------------------------------------------------------
 -- THE PICTURE IS CHOSEN BY THE MAINS, NOT BY THE SWITCH.
 --
--- A generator on a feeder line, an APC bridging it to a branch, and a
--- scrubber standing on the branch three tiles along. One snip between
+-- A generator on the backbone, an APC bridging it to a room circuit, and a
+-- scrubber standing on the room circuit three tiles along. One snip between
 -- them and the machine is on a dead circuit: it goes dark on the deck
 -- while its own switch is still thrown, which is what an engineer
 -- walking into an unpowered room should see.
@@ -241,8 +241,8 @@ t.world([==[(
     spawns: [(4, 1)],
     items: [(4, 1, "wirecutters"), (5, 1, "cable_coil")],
     cables: [
-        (1, 1, 1), (1, 2, 1),
-        (1, 2, 2), (2, 2, 2), (3, 2, 2), (4, 2, 2),
+        (1, 1, 2), (1, 2, 2),
+        (1, 2, 1), (2, 2, 1), (3, 2, 1), (4, 2, 1),
     ],
     pipes: [(5, 2, 2), (6, 2, 2)],
     structures: [(4, 2, "air_scrubber")],
@@ -268,9 +268,9 @@ t.tick()
 -- ---- one snip, three tiles away ----
 t.click(e, 4, 1, t.target_at(4, 1, "wirecutters"))
 t.run_ticks(2)
-t.click_subfloor(e, 3, 2, "cable", 2)
+t.click_subfloor(e, 3, 2, "cable", 1)
 t.run_seconds(1.5)
-assert(t.cable_at(3, 2) == 0, "the branch is parted")
+assert(t.cable_at(3, 2) == 0, "the room circuit is parted")
 assert(t.ledger_has("CableCut"), "and cutting it is attributable")
 
 -- The grid is swept on tg's SSmachines cadence (every 40th tick), so
@@ -296,10 +296,16 @@ t.drop(e)
 t.run_ticks(2)
 t.click(e, 5, 1, t.target_at(5, 1, "cable_coil"))
 t.run_ticks(2)
+-- A fresh coil arrives on yellow (tg's CABLE_LAYER_2 default), and this
+-- department runs on red, so dial it twice: yellow -> blue -> red.
+t.use_self(e)
+t.run_ticks(2)
+t.use_self(e)
+t.run_ticks(2)
 t.click(e, 3, 2)
 t.run_seconds(1.5)
-assert(t.cable_at(3, 2) == 2, "a fresh coil lays the branch line back")
-assert(t.segment_at(4, 2).apc_hops == 3, "and the machine is back on the APC")
+assert(t.cable_at(3, 2) == 1, "the coil lays the red line back")
+assert(t.segment_at(4, 2).feed == 1, "and the machine is back on the panel")
 
 t.run_seconds(2.5)
 local revived = t.structure_at(4, 2)

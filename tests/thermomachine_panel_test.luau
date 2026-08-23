@@ -69,8 +69,8 @@ t.world([==[(
     pipes: [(3, 1, 4), (4, 1, 4)],
     structures: [(5, 1, "thermomachine")],
     cables: [
-        (1, 2, 1), (2, 2, 3),
-        (3, 2, 2), (4, 2, 2), (4, 1, 2), (5, 1, 2),
+        (1, 2, 2), (2, 2, 3),
+        (3, 2, 1), (4, 2, 1), (4, 1, 1), (5, 1, 1),
     ],
 )]==], 7)
 
@@ -80,8 +80,8 @@ t.run_seconds(3) -- the electrical pass is 0.5 Hz; let one land
 
 assert(t.structure_at(5, 1).id == "thermomachine", "a unit stands on the bench")
 assert(t.structure_at(5, 1).state == "off", "switched off out of the crate")
-assert(t.apc_at(2, 2).equipment == true, "with the bench's APC feeding its branch")
-assert(t.segment_at(5, 1).apc_hops ~= nil, "which reaches the machine's own tile")
+assert(t.apc_at(2, 2).equipment == true, "with the bench's APC feeding its circuit")
+assert(t.segment_at(5, 1).feed == 1, "which reaches the machine's own tile")
 
 t.click(p, 5, 1, t.target_at(5, 1, "thermomachine"))
 t.tick()
@@ -143,7 +143,8 @@ t.run_seconds(3)
 
 assert(t.ledger_has("PowerOutage"), "the fault is on the record")
 assert(t.apc_at(2, 2).equipment == false, "the APC has nothing to hand the equipment channel")
-assert(t.segment_at(5, 1).apc_hops ~= nil, "the cable under the machine is still cable")
+assert(t.segment_at(5, 1).l1 ~= nil, "the cable under the machine is still cable")
+assert(t.segment_at(5, 1).feed == nil, "but nothing on it is carrying")
 assert(
     t.structure_at(5, 1).state == "off",
     "and the unit is drawn stopped, which is `on && is_operational` picking the picture"

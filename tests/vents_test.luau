@@ -90,7 +90,7 @@ end
 --
 -- The compartment below is a sealed corridor with a vent at one end, a
 -- canister on a connector port in the middle of it, and a real wired
--- grid: a generator, an APC, a feeder pair and a branch circuit running
+-- grid: a generator, an APC, a backbone pair and a room circuit running
 -- west under everything to the vent's own tile. That grid is not
 -- decoration -- cable is what powers a station, so a map without it is
 -- a map whose fan never turns.
@@ -122,11 +122,11 @@ local SUPPLY_MAP = [==[(
     // One length joining the vent's mouth to the canister's socket.
     pipes: [(3, 1, 4)],
     structures: [(2, 1, "vent"), (4, 1, "connector_port")],
-    // Feeder (L1) under the generator and the APC; branch (L2) from the
+    // Backbone (L2) under the generator and the APC; room circuit (L1) from the
     // APC's own tile west along the corridor to the vent.
     cables: [
         (6, 1, 3), (7, 1, 3),
-        (5, 1, 2), (4, 1, 2), (3, 1, 2), (2, 1, 2),
+        (5, 1, 1), (4, 1, 1), (3, 1, 1), (2, 1, 1),
     ],
 )]==]
 
@@ -257,7 +257,7 @@ local RELIEF_MAP = [==[(
     structures: [(1, 1, "vent")],
     cables: [
         (5, 1, 3), (6, 1, 3),
-        (4, 1, 2), (3, 1, 2), (2, 1, 2), (1, 1, 2),
+        (4, 1, 1), (3, 1, 1), (2, 1, 1), (1, 1, 1),
     ],
 )]==]
 

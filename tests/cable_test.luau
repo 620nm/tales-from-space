@@ -98,17 +98,17 @@ t.run_seconds(1.5)
 t.click(p, 2, 3)
 t.run_seconds(1.5)
 local crossing = t.segment_at(2, 1)
-assert(crossing.branch ~= nil, "the yellow run reaches the crossing")
-assert(crossing.feeder ~= nil, "so does the red one")
+assert(crossing.l2 ~= nil, "the yellow run reaches the crossing")
+assert(crossing.l1 ~= nil, "so does the red one")
 assert(
-    crossing.branch ~= crossing.feeder,
-    "but they are two circuits, not one: " .. crossing.branch
+    crossing.l2 ~= crossing.l1,
+    "but they are two circuits, not one: " .. crossing.l2
 )
 assert(
-    t.segment_at(2, 3).feeder == crossing.feeder,
+    t.segment_at(2, 3).l1 == crossing.l1,
     "the red run is continuous down the column"
 )
-assert(t.segment_at(2, 3).branch == nil, "and the yellow line never went there")
+assert(t.segment_at(2, 3).l2 == nil, "and the yellow line never went there")
 
 -- ---------------------------------------------------------------
 -- The dial is PER COIL. Park the red-set coil in the other hand and
@@ -152,7 +152,7 @@ assert(t.ledger_has("CableCut"), "sabotage is attributable")
 -- Cutting the yellow line at the crossing really did sever that
 -- circuit: the two halves are no longer one segment.
 assert(
-    t.segment_at(1, 1).branch ~= t.segment_at(3, 1).branch,
+    t.segment_at(1, 1).l2 ~= t.segment_at(3, 1).l2,
     "the yellow run is in two pieces now"
 )
 
