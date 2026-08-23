@@ -9,4 +9,9 @@ return {
     id = "co2",
     name = "carbon dioxide",
     color = "#B0B0B0",
+    -- Where this sits in a tool that offers every substance there is
+    -- (docs/MAPPING.md, the recipe panel). What a room full of people
+    -- fills up with, and what a mapper drawing a stale chamber reaches
+    -- for.
+    relevance = 80,
 }

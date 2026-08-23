@@ -68,4 +68,8 @@ return {
             ctx.system_msg(mob, "Your eyes and throat burn.")
         end
     end,
+    -- Where this sits in a tool that offers every substance there is
+    -- (docs/MAPPING.md, the recipe panel). Reachable as room air, and
+    -- rarely what a room is commissioned holding.
+    relevance = 20,
 }
