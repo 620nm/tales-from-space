@@ -109,7 +109,7 @@ local SUPPLY_MAP = [==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
-        'c': (turf: Plating, fixture: Some(Canister)),
+        'c': (turf: Plating),
         'g': (turf: Plating, fixture: Some(Generator)),
         'a': (turf: Plating, fixture: Some(Apc)),
     },
@@ -121,7 +121,13 @@ local SUPPLY_MAP = [==[(
     spawns: [(5, 1)],
     // One length joining the vent's mouth to the canister's socket.
     pipes: [(3, 1, 4)],
-    structures: [(2, 1, "vent"), (4, 1, "connector_port")],
+    air_presets: {
+        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    },
+    structures: [
+        (2, 1, "vent"), (4, 1, "connector_port"),
+        (4, 1, "canister", { "air": "canister_air", "open": true }),
+    ],
     // Backbone (L2) under the generator and the APC; room circuit (L1) from the
     // APC's own tile west along the corridor to the vent.
     cables: [
@@ -344,7 +350,7 @@ local PASSIVE_MAP = [==[(
         ' ': (turf: Space),
         '.': (turf: Plating),
         '#': (turf: Wall),
-        'c': (turf: Plating, fixture: Some(Canister)),
+        'c': (turf: Plating),
     },
     rows: [
         "#########",
@@ -353,7 +359,13 @@ local PASSIVE_MAP = [==[(
     ],
     spawns: [(4, 1)],
     pipes: [(3, 1, 4), (4, 1, 4)],
-    structures: [(2, 1, "passive_vent"), (5, 1, "connector_port")],
+    air_presets: {
+        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    },
+    structures: [
+        (2, 1, "passive_vent"), (5, 1, "connector_port"),
+        (5, 1, "canister", { "air": "canister_air", "open": true }),
+    ],
 )]==]
 
 t.world(PASSIVE_MAP, 7)
