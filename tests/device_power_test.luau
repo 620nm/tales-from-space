@@ -100,14 +100,14 @@ local function walk(p, dir)
 end
 
 -- One bench, three machines. A wired department in miniature: a
--- generator and an APC in the west corner, a feeder pair under them,
--- and a branch circuit running east and then up under the machine's own
+-- generator and an APC in the west corner, a backbone pair under them,
+-- and a room circuit circuit running east and then up under the machine's own
 -- tile -- which is where every powered atmospherics device takes its
 -- supply from (tg's AREA_USAGE_EQUIP; sim/powerops.rs hands it off the
--- branch under the tile, exactly as it does to a vent).
+-- room circuit under the tile, exactly as it does to a vent).
 --
 -- (4, 2) is the whole point of the shape: bare plating, no pipe, no
--- structure, and the ONLY length of branch between the APC and the
+-- structure, and the ONLY length of room circuit between the APC and the
 -- machine. An engineer standing on the machine's own service tile is in
 -- reach of both it and that length, which is what lets one scenario
 -- throw a switch and cut a circuit without walking anywhere.
@@ -172,9 +172,9 @@ end
 --
 -- The two trinaries in turn: configured, switched on, caught working,
 -- and then stopped BOTH ways in the same shift. First at the panel,
--- with the branch still live -- every mouth stops in the same tick, no
+-- with the room circuit still live -- every mouth stops in the same tick, no
 -- coasting, no last pass, no trickle, and each one still had the job in
--- front of it that it was doing. Then the branch itself is cut and the
+-- front of it that it was doing. Then the room circuit itself is cut and the
 -- switch thrown back on: a dead trinary is equally inert.
 --
 -- The second half pins a real regression. filter.rs and mixer.rs once
@@ -288,9 +288,9 @@ for _, job in ipairs(TRINARIES) do
     t.run_seconds(30)
     frozen({ IN, OUT, SIDE }, switched, "a switched-off " .. job.id .. " moved nothing")
 
-    -- ...and now the other stop. Cut the one length of branch between
+    -- ...and now the other stop. Cut the one length of circuit between
     -- the APC and the machine, throw the switch back on, and ask the
-    -- books the same question: a switch thrown over a dead branch is a
+    -- books the same question: a switch thrown over a dead circuit is a
     -- promise, not a machine.
     t.click(p, 5, 2, t.target_at(5, 2, "wirecutters"))
     t.run_ticks(2)
@@ -374,9 +374,9 @@ has_work("the diluted delivery main is a real job, over the friction floor")
 t.swap_hands(p)
 t.run_ticks(2)
 
--- ---- ONE: configured, switched on, and on a dead branch ----
+-- ---- ONE: configured, switched on, and on a dead room circuit ----
 --
--- The circuit is cut with wirecutters on the one length of branch
+-- The circuit is cut with wirecutters on the one length of room circuit
 -- between the APC and the machine -- a thing a player does rather than
 -- a thing the harness does, because `t` exposes the power grid to READ
 -- and leaves the mutation to a tool in somebody's hands (spec/api/

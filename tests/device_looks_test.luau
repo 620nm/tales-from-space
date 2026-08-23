@@ -213,8 +213,8 @@ end
 -- ---------------------------------------------------------------
 -- THE PICTURE IS CHOSEN BY THE MAINS, NOT BY THE SWITCH.
 --
--- A generator on a feeder line, an APC bridging it to a branch, and a
--- scrubber standing on the branch three tiles along. One snip between
+-- A generator on the backbone, an APC bridging it to a room circuit, and a
+-- scrubber standing on the room circuit three tiles along. One snip between
 -- them and the machine is on a dead circuit: it goes dark on the deck
 -- while its own switch is still thrown, which is what an engineer
 -- walking into an unpowered room should see.

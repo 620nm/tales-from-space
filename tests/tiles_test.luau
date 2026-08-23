@@ -104,7 +104,7 @@ t.world([==[(
     ],
     spawns: [(1, 1)],
     items: [(1, 1, "crowbar")],
-    // One length of feeder with no generator behind it, which is a
+    // One length of backbone with no generator behind it, which is a
     // station with the lights off: the airlock's motors never wake.
     cables: [(1, 1, 2)],
 )]==], 7)

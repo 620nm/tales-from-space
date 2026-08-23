@@ -36,8 +36,8 @@ return {
     inhand_sprite = { "held_coil_l", "held_coil_r" },
     stack = 30,
     -- Three settings, minted on the second: tg's coil defaults to
-    -- CABLE_LAYER_2 (cable.dm:513), which is what the station's own
-    -- branch wiring runs on.
+    -- CABLE_LAYER_2 (cable.dm:513), which is the line the shipped
+    -- station runs its backbone on.
     modes = 3,
     mode = 1,
     -- tg's "Use it in hand to change the layer you are placing on"
