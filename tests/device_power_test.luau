@@ -23,7 +23,7 @@
 -- records the work the machine still had in front of it at the moment
 -- it was stopped.
 
-local BRANCH = 2 -- tg's yellow power line, which is the one an APC feeds
+local ROOM = 1 -- the red line the bench's panel outputs onto
 local DISTRO = 4 -- piping layer 3, where a distribution main lives
 
 local function near(a, b, slack, what)
@@ -131,8 +131,8 @@ local BENCH = [==[(
     pipes: [%s],
     structures: [(5, 1, "%s")],
     cables: [
-        (1, 2, 1), (2, 2, 3),
-        (3, 2, 2), (4, 2, 2), (4, 1, 2), (5, 1, 2),
+        (1, 2, 2), (2, 2, 3),
+        (3, 2, 1), (4, 2, 1), (4, 1, 1), (5, 1, 1),
     ],
 )]==]
 
@@ -154,8 +154,8 @@ local function bench(id, pipes, off)
 
     assert(t.structure_at(5, 1).id == id, "the map stood a " .. id .. " there")
     assert(t.structure_at(5, 1).state == off, id .. " ships switched off")
-    assert(t.apc_at(2, 2).equipment == true, "and the bench's APC is feeding its branch")
-    assert(t.segment_at(5, 1).apc_hops ~= nil, "which reaches the machine's own tile")
+    assert(t.apc_at(2, 2).equipment == true, "and the bench's APC is feeding its circuit")
+    assert(t.segment_at(5, 1).feed == ROOM, "which reaches the machine's own tile")
     return p
 end
 
@@ -295,13 +295,13 @@ for _, job in ipairs(TRINARIES) do
     t.click(p, 5, 2, t.target_at(5, 2, "wirecutters"))
     t.run_ticks(2)
     assert(t.hands(p).held == "wirecutters", "cutters in hand")
-    t.click_subfloor(p, 4, 2, "cable", BRANCH)
+    t.click_subfloor(p, 4, 2, "cable", ROOM)
     t.run_seconds(1.5)
-    assert(t.cable_at(4, 2) == 0, "the branch is parted")
+    assert(t.cable_at(4, 2) == 0, "the room circuit is parted")
     t.drop(p)
     t.run_seconds(3)
     assert(
-        t.segment_at(5, 1).apc_hops == nil,
+        t.segment_at(5, 1).feed == nil,
         "nothing on the machine's side of the cut reaches an APC"
     )
 
@@ -384,14 +384,14 @@ t.run_ticks(2)
 t.click(p, 5, 2, t.target_at(5, 2, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
-t.click_subfloor(p, 4, 2, "cable", BRANCH)
+t.click_subfloor(p, 4, 2, "cable", ROOM)
 t.run_seconds(1.5)
-assert(t.cable_at(4, 2) == 0, "the branch is parted")
+assert(t.cable_at(4, 2) == 0, "the room circuit is parted")
 assert(t.ledger_has("CableCut"), "and cutting a department's feed is attributable")
 t.drop(p)
 t.run_seconds(3)
 assert(
-    t.segment_at(5, 1).apc_hops == nil,
+    t.segment_at(5, 1).feed == nil,
     "nothing on this side of the cut reaches an APC any more"
 )
 
@@ -429,15 +429,21 @@ local was = { out_kpa = t.pipe_pressure(OUT[1], OUT[2]), in_kpa = t.pipe_pressur
 t.click(p, 6, 2, t.target_at(6, 2, "cable_coil"))
 t.run_ticks(2)
 assert(t.hands(p).held == "cable_coil", "a fresh coil in hand")
+-- A fresh coil arrives on yellow (tg's CABLE_LAYER_2 default) and this
+-- bench runs on red, so dial it twice: yellow -> blue -> red.
+t.use_self(p)
+t.run_ticks(2)
+t.use_self(p)
+t.run_ticks(2)
 t.click(p, 4, 2)
 t.run_seconds(1.5)
 assert(
-    t.cable_at(4, 2) == BRANCH,
-    "and a fresh coil lays the yellow line, which is the one an APC feeds"
+    t.cable_at(4, 2) == ROOM,
+    "and the coil lays the red line, which is the one this APC feeds"
 )
 t.drop(p)
 t.run_seconds(3)
-assert(t.segment_at(5, 1).apc_hops ~= nil, "the machine is back on an APC")
+assert(t.segment_at(5, 1).feed == ROOM, "the machine is back on an APC")
 assert(
     t.structure_at(5, 1).state == "armed",
     "and it armed ITSELF: " .. t.structure_at(5, 1).state
