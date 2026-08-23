@@ -28,8 +28,16 @@ return {
     id = "canister",
     name = "gas canister",
     sprite = "canister",
-    -- Claims the map glyph: 'c' still spawns the engine's canister, and
-    -- this file dresses it (docs: structures/parse.rs "Fixture entries").
+    -- Claims the canister MECHANISM: the gas, the release arithmetic
+    -- and the gauge are per-pass engine work, so the engine keeps a
+    -- component for them and this file says which entry gets one
+    -- (docs/CONSTRUCTION.md, "the structure half"). Everything a player
+    -- sees or decides is below.
+    --
+    -- It arrives EMPTY with the valve shut. What is in a bottle is a
+    -- fact about the station, so a map says it per placement --
+    -- `{ "air": "canister_air", "open": true }` -- rather than tg's
+    -- twenty pre-charged subtypes.
     fixture = "Canister",
     dense = true,
     -- Fastened first, so a mapper who draws a canister on a port gets

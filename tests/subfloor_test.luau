@@ -227,7 +227,7 @@ t.world([==[(
     legend: {
         ' ': (turf: Space),
         '.': (turf: Plating),
-        'c': (turf: Plating, fixture: Some(Canister)),
+        'c': (turf: Plating),
         '#': (turf: Wall),
     },
     rows: [
@@ -239,7 +239,13 @@ t.world([==[(
     spawns: [(2, 2)],
     items: [(2, 2, "floor_tile")],
     pipes: [(1, 1, 4)],
-    structures: [(2, 1, "connector_port")],
+    air_presets: {
+        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    },
+    structures: [
+        (2, 1, "connector_port"),
+        (2, 1, "canister", { "air": "canister_air", "open": true }),
+    ],
 )]==], 7)
 
 local d = t.join()

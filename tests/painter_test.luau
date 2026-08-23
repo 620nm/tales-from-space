@@ -53,7 +53,7 @@ t.world([==[(
         'o': (turf: Floor),
         'F': (turf: Floor),
         '#': (turf: Wall),
-        'c': (turf: Plating, fixture: Some(Canister)),
+        'c': (turf: Plating),
         'a': (turf: Floor, fixture: Some(Apc)),
         'g': (turf: Plating, fixture: Some(Generator)),
     },
@@ -73,7 +73,13 @@ t.world([==[(
         (2, 1, 4, "#0000FF"), (3, 1, 4, "#0000FF"), (4, 1, 4, "#0000FF"),
         (5, 1, 4, "#0000FF"), (6, 1, 4, "#0000FF"), (7, 1, 4, "#0000FF"),
     ],
-    structures: [(1, 1, "connector_port"), (8, 1, "vent")],
+    air_presets: {
+        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    },
+    structures: [
+        (1, 1, "connector_port"), (8, 1, "vent"),
+        (1, 1, "canister", { "air": "canister_air", "open": true }),
+    ],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),

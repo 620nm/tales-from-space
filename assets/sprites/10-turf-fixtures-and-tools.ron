@@ -26,6 +26,7 @@
         ("stock_parts", "obj/devices/stock_parts.dmi"),
         ("airlock_engineering", "obj/doors/airlocks/station/engineering.dmi"),
         ("airlock_public", "obj/doors/airlocks/station/public.dmi"),
+        ("airlock_overlays", "obj/doors/airlocks/station/overlays.dmi"),
         ("soda", "obj/drinks/soda.dmi"),
         ("lighting", "obj/lighting.dmi"),
         ("lighting_overlay", "obj/lighting_overlay.dmi"),
@@ -79,18 +80,85 @@
         ("girder_reinforced", Dmi("@structures", "reinforced", 0)),
         ("frame", Dmi("@stock_parts", "box_0", 0)),
         ("board", Dmi("@circuitry", "mainboard", 0)),
-        // An airlock has four appearances, not two: the two rests and
-        // the two swings between them. tg's `update_icon_state` appends
-        // AIRLOCK_FRAME_OPENING/CLOSING while the door is operating
-        // (airlock.dm:556), and each swing is six frames of a tenth.
-        ("door", Dmi("@airlock_public", "closed", 0)),
-        ("door_open", Dmi("@airlock_public", "open", 0)),
-        ("door_opening", DmiAnim("@airlock_public", "opening", 0)),
-        ("door_closing", DmiAnim("@airlock_public", "closing", 0)),
-        ("door_eng", Dmi("@airlock_engineering", "closed", 0)),
-        ("door_eng_open", Dmi("@airlock_engineering", "open", 0)),
-        ("door_eng_opening", DmiAnim("@airlock_engineering", "opening", 0)),
-        ("door_eng_closing", DmiAnim("@airlock_engineering", "closing", 0)),
+        // AN AIRLOCK IS TWO LAYERS, and that is why it used to look
+        // see-through. tg draws the FRAME (`closed`/`open`/`opening`/
+        // `closing`) and then lays a FILL over it in the same breath:
+        // `fill_[frame_state]` off the door's own sheet for a solid
+        // leaf, or `glass_[frame_state]` off station/overlays.dmi for a
+        // glazed one (`update_overlays`,
+        // code/game/machinery/doors/airlock.dm:592-597, and
+        // `airlock_material = "glass"` at :169). Baking only the frame
+        // gives a door-shaped hole with the corridor behind it.
+        //
+        // Four appearances per livery, not two: the two rests and the
+        // two swings between them (tg's `update_icon_state` appends
+        // AIRLOCK_FRAME_OPENING/CLOSING at :556). Each swing is six
+        // frames of a tenth, and BOTH layers animate through it — hence
+        // `DmiAnimLayers`, which composites frame by frame.
+        ("door", DmiLayers([
+            ("@airlock_public", "closed"),
+            ("@airlock_public", "fill_closed"),
+        ], 0)),
+        ("door_open", DmiLayers([
+            ("@airlock_public", "open"),
+            ("@airlock_public", "fill_open"),
+        ], 0)),
+        ("door_opening", DmiAnimLayers([
+            ("@airlock_public", "opening"),
+            ("@airlock_public", "fill_opening"),
+        ], 0)),
+        ("door_closing", DmiAnimLayers([
+            ("@airlock_public", "closing"),
+            ("@airlock_public", "fill_closing"),
+        ], 0)),
+        ("door_glass", DmiLayers([
+            ("@airlock_public", "closed"),
+            ("@airlock_overlays", "glass_closed"),
+        ], 0)),
+        ("door_glass_open", DmiLayers([
+            ("@airlock_public", "open"),
+            ("@airlock_overlays", "glass_open"),
+        ], 0)),
+        ("door_glass_opening", DmiAnimLayers([
+            ("@airlock_public", "opening"),
+            ("@airlock_overlays", "glass_opening"),
+        ], 0)),
+        ("door_glass_closing", DmiAnimLayers([
+            ("@airlock_public", "closing"),
+            ("@airlock_overlays", "glass_closing"),
+        ], 0)),
+        ("door_eng", DmiLayers([
+            ("@airlock_engineering", "closed"),
+            ("@airlock_engineering", "fill_closed"),
+        ], 0)),
+        ("door_eng_open", DmiLayers([
+            ("@airlock_engineering", "open"),
+            ("@airlock_engineering", "fill_open"),
+        ], 0)),
+        ("door_eng_opening", DmiAnimLayers([
+            ("@airlock_engineering", "opening"),
+            ("@airlock_engineering", "fill_opening"),
+        ], 0)),
+        ("door_eng_closing", DmiAnimLayers([
+            ("@airlock_engineering", "closing"),
+            ("@airlock_engineering", "fill_closing"),
+        ], 0)),
+        ("door_eng_glass", DmiLayers([
+            ("@airlock_engineering", "closed"),
+            ("@airlock_overlays", "glass_closed"),
+        ], 0)),
+        ("door_eng_glass_open", DmiLayers([
+            ("@airlock_engineering", "open"),
+            ("@airlock_overlays", "glass_open"),
+        ], 0)),
+        ("door_eng_glass_opening", DmiAnimLayers([
+            ("@airlock_engineering", "opening"),
+            ("@airlock_overlays", "glass_opening"),
+        ], 0)),
+        ("door_eng_glass_closing", DmiAnimLayers([
+            ("@airlock_engineering", "closing"),
+            ("@airlock_overlays", "glass_closing"),
+        ], 0)),
         ("apc", Dmi("@wallmounts", "apc0", 0)),
         ("apc_s", Dmi("@wallmounts", "apc0", 0)),
         ("apc_n", Dmi("@wallmounts", "apc0", 0)),
