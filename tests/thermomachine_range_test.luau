@@ -3,7 +3,7 @@
 --
 -- thermomachine_test.luau proves the machine: it heats, it cools, it
 -- arrests on the setpoint instead of running past it, and a switch or a
--- dead branch stops it dead -- every one of those scenarios dialled to a
+-- dead room circuit stops it dead -- every one of those scenarios dialled to a
 -- comfortable number in the middle of the range. This file is about the
 -- ENDS of that range and about changing one's mind, which are the two
 -- things a cold room is actually built by.

@@ -23,7 +23,7 @@
 -- records the work the machine still had in front of it at the moment
 -- it was stopped.
 
-local BRANCH = 2 -- tg's yellow power line, which is the one an APC feeds
+local ROOM = 1 -- the red line the bench's panel outputs onto
 local DISTRO = 4 -- piping layer 3, where a distribution main lives
 
 local function near(a, b, slack, what)
@@ -100,14 +100,14 @@ local function walk(p, dir)
 end
 
 -- One bench, three machines. A wired department in miniature: a
--- generator and an APC in the west corner, a feeder pair under them,
--- and a branch circuit running east and then up under the machine's own
+-- generator and an APC in the west corner, a backbone pair under them,
+-- and a room circuit circuit running east and then up under the machine's own
 -- tile -- which is where every powered atmospherics device takes its
 -- supply from (tg's AREA_USAGE_EQUIP; sim/powerops.rs hands it off the
--- branch under the tile, exactly as it does to a vent).
+-- room circuit under the tile, exactly as it does to a vent).
 --
 -- (4, 2) is the whole point of the shape: bare plating, no pipe, no
--- structure, and the ONLY length of branch between the APC and the
+-- structure, and the ONLY length of room circuit between the APC and the
 -- machine. An engineer standing on the machine's own service tile is in
 -- reach of both it and that length, which is what lets one scenario
 -- throw a switch and cut a circuit without walking anywhere.
@@ -131,8 +131,8 @@ local BENCH = [==[(
     pipes: [%s],
     structures: [(5, 1, "%s")],
     cables: [
-        (1, 2, 1), (2, 2, 3),
-        (3, 2, 2), (4, 2, 2), (4, 1, 2), (5, 1, 2),
+        (1, 2, 2), (2, 2, 3),
+        (3, 2, 1), (4, 2, 1), (4, 1, 1), (5, 1, 1),
     ],
 )]==]
 
@@ -154,8 +154,8 @@ local function bench(id, pipes, off)
 
     assert(t.structure_at(5, 1).id == id, "the map stood a " .. id .. " there")
     assert(t.structure_at(5, 1).state == off, id .. " ships switched off")
-    assert(t.apc_at(2, 2).equipment == true, "and the bench's APC is feeding its branch")
-    assert(t.segment_at(5, 1).apc_hops ~= nil, "which reaches the machine's own tile")
+    assert(t.apc_at(2, 2).equipment == true, "and the bench's APC is feeding its circuit")
+    assert(t.segment_at(5, 1).feed == ROOM, "which reaches the machine's own tile")
     return p
 end
 
@@ -172,9 +172,9 @@ end
 --
 -- The two trinaries in turn: configured, switched on, caught working,
 -- and then stopped BOTH ways in the same shift. First at the panel,
--- with the branch still live -- every mouth stops in the same tick, no
+-- with the room circuit still live -- every mouth stops in the same tick, no
 -- coasting, no last pass, no trickle, and each one still had the job in
--- front of it that it was doing. Then the branch itself is cut and the
+-- front of it that it was doing. Then the room circuit itself is cut and the
 -- switch thrown back on: a dead trinary is equally inert.
 --
 -- The second half pins a real regression. filter.rs and mixer.rs once
@@ -288,20 +288,20 @@ for _, job in ipairs(TRINARIES) do
     t.run_seconds(30)
     frozen({ IN, OUT, SIDE }, switched, "a switched-off " .. job.id .. " moved nothing")
 
-    -- ...and now the other stop. Cut the one length of branch between
+    -- ...and now the other stop. Cut the one length of circuit between
     -- the APC and the machine, throw the switch back on, and ask the
-    -- books the same question: a switch thrown over a dead branch is a
+    -- books the same question: a switch thrown over a dead circuit is a
     -- promise, not a machine.
     t.click(p, 5, 2, t.target_at(5, 2, "wirecutters"))
     t.run_ticks(2)
     assert(t.hands(p).held == "wirecutters", "cutters in hand")
-    t.click_subfloor(p, 4, 2, "cable", BRANCH)
+    t.click_subfloor(p, 4, 2, "cable", ROOM)
     t.run_seconds(1.5)
-    assert(t.cable_at(4, 2) == 0, "the branch is parted")
+    assert(t.cable_at(4, 2) == 0, "the room circuit is parted")
     t.drop(p)
     t.run_seconds(3)
     assert(
-        t.segment_at(5, 1).apc_hops == nil,
+        t.segment_at(5, 1).feed == nil,
         "nothing on the machine's side of the cut reaches an APC"
     )
 
@@ -374,9 +374,9 @@ has_work("the diluted delivery main is a real job, over the friction floor")
 t.swap_hands(p)
 t.run_ticks(2)
 
--- ---- ONE: configured, switched on, and on a dead branch ----
+-- ---- ONE: configured, switched on, and on a dead room circuit ----
 --
--- The circuit is cut with wirecutters on the one length of branch
+-- The circuit is cut with wirecutters on the one length of room circuit
 -- between the APC and the machine -- a thing a player does rather than
 -- a thing the harness does, because `t` exposes the power grid to READ
 -- and leaves the mutation to a tool in somebody's hands (spec/api/
@@ -384,14 +384,14 @@ t.run_ticks(2)
 t.click(p, 5, 2, t.target_at(5, 2, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
-t.click_subfloor(p, 4, 2, "cable", BRANCH)
+t.click_subfloor(p, 4, 2, "cable", ROOM)
 t.run_seconds(1.5)
-assert(t.cable_at(4, 2) == 0, "the branch is parted")
+assert(t.cable_at(4, 2) == 0, "the room circuit is parted")
 assert(t.ledger_has("CableCut"), "and cutting a department's feed is attributable")
 t.drop(p)
 t.run_seconds(3)
 assert(
-    t.segment_at(5, 1).apc_hops == nil,
+    t.segment_at(5, 1).feed == nil,
     "nothing on this side of the cut reaches an APC any more"
 )
 
@@ -429,15 +429,21 @@ local was = { out_kpa = t.pipe_pressure(OUT[1], OUT[2]), in_kpa = t.pipe_pressur
 t.click(p, 6, 2, t.target_at(6, 2, "cable_coil"))
 t.run_ticks(2)
 assert(t.hands(p).held == "cable_coil", "a fresh coil in hand")
+-- A fresh coil arrives on yellow (tg's CABLE_LAYER_2 default) and this
+-- bench runs on red, so dial it twice: yellow -> blue -> red.
+t.use_self(p)
+t.run_ticks(2)
+t.use_self(p)
+t.run_ticks(2)
 t.click(p, 4, 2)
 t.run_seconds(1.5)
 assert(
-    t.cable_at(4, 2) == BRANCH,
-    "and a fresh coil lays the yellow line, which is the one an APC feeds"
+    t.cable_at(4, 2) == ROOM,
+    "and the coil lays the red line, which is the one this APC feeds"
 )
 t.drop(p)
 t.run_seconds(3)
-assert(t.segment_at(5, 1).apc_hops ~= nil, "the machine is back on an APC")
+assert(t.segment_at(5, 1).feed == ROOM, "the machine is back on an APC")
 assert(
     t.structure_at(5, 1).state == "armed",
     "and it armed ITSELF: " .. t.structure_at(5, 1).state
