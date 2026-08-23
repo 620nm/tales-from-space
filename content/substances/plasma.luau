@@ -24,6 +24,11 @@
 return {
     id = "plasma",
     visible = { tint = "#BF59F2" },
+    -- Poison to breathe: past the engine's line every breath costs TOX
+    -- in proportion to how thick it is, with no clock (tg's
+    -- `safe_plasma_max`). The gas a station is built around holding
+    -- away from itself, said once, here.
+    breath = { toxic = true },
     -- Where this sits in a tool that offers every substance there is
     -- (docs/MAPPING.md, the recipe panel). The gas a station is built
     -- around holding away from itself.
