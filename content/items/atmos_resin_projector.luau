@@ -49,7 +49,7 @@ if sim ~= nil then
             return true
         end
 
-        sim.matter_set_column(cell, "atmos_resin", 1.0)
+        sim.matter.set_column({ owner = cell, column = "atmos_resin", value = 1.0 })
         self:consume()
         sim.sound.play({ asset = "lunatic/tfs:sound/spray", at = ev.at })
         sim.message.send({ recipient = user, message = "You coat the deck in fire-smothering resin." })
