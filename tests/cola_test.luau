@@ -62,9 +62,17 @@ assert(t.blood_moles(p) < swig, "metabolism removed moles from the blood")
 -- cut of the same sugar, which is why the trips total less than the
 -- swig was worth.
 local full = 0.004 * 125.0 -- metabolism_rate x the per-mole heal
+local function pool_amount(row, id)
+    for _, entry in ipairs(row.pools or {}) do
+        if entry[1] == id then
+            return entry[2]
+        end
+    end
+    return 0
+end
 local trips = {}
 for _, row in ipairs(t.ledger_rows("Healed")) do
-    trips[#trips + 1] = row.oxy or 0
+    trips[#trips + 1] = pool_amount(row, "oxy")
 end
 assert(#trips >= 2, "the swig was burned over several trips: " .. #trips)
 local healed = 0
