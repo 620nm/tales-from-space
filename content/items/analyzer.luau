@@ -50,15 +50,15 @@ local function sentence_case(s)
 end
 
 local function report(ctx, user, of, sample)
-    ctx.system_msg(user, "Results of analysis of " .. of .. ".")
+    sim.message.send({ recipient = user, message = "Results of analysis of " .. of .. "." })
     if sample.moles <= 0 then
         -- tg prints the volume even for an empty mixture, deliberately
         -- ("don't want to change the order volume appears in").
-        ctx.system_msg(user, sentence_case(of) .. " is empty!")
-        ctx.system_msg(user, "Volume: " .. r2(sample.volume_l) .. " L")
+        sim.message.send({ recipient = user, message = sentence_case(of) .. " is empty!" })
+        sim.message.send({ recipient = user, message = "Volume: " .. r2(sample.volume_l) .. " L" })
         return
     end
-    ctx.system_msg(user, "Moles: " .. r2(sample.moles) .. " mol")
+    sim.message.send({ recipient = user, message = "Moles: " .. r2(sample.moles) .. " mol" })
     -- Sorted, because a keyed table has no order and a readout that
     -- shuffles its own lines between two identical scans is a readout
     -- nobody trusts.
@@ -70,59 +70,63 @@ local function report(ctx, user, of, sample)
     for _, id in ipairs(ids) do
         local moles = sample.gas[id]
         local share = moles / sample.moles * 100
-        ctx.system_msg(
-            user,
-            (NAMES[id] or id) .. ": " .. r2(moles) .. " mol (" .. r2(share) .. " %)"
-        )
+        sim.message.send({ recipient = user, message = (NAMES[id] or id) .. ": " .. r2(moles) .. " mol (" .. r2(share) .. " %)" })
     end
-    ctx.system_msg(
-        user,
-        "Temperature: " .. r2(sample.temp_k - T0C) .. " °C (" .. r2(sample.temp_k) .. " K)"
-    )
-    ctx.system_msg(user, "Volume: " .. r2(sample.volume_l) .. " L")
-    ctx.system_msg(user, "Pressure: " .. r2(sample.pressure_kpa) .. " kPa")
+    sim.message.send({ recipient = user, message = "Temperature: " .. r2(sample.temp_k - T0C) .. " °C (" .. r2(sample.temp_k) .. " K)" })
+    sim.message.send({ recipient = user, message = "Volume: " .. r2(sample.volume_l) .. " L" })
+    sim.message.send({ recipient = user, message = "Pressure: " .. r2(sample.pressure_kpa) .. " kPa" })
 end
 
-return {
+local content = {
     id = "analyzer",
     name = "gas analyzer",
     sprite = "analyzer",
     -- tg gas_analyzer.dm:20-21.
     pickup_sound = "analyzer_pickup",
     drop_sound = "analyzer_drop",
-    on_use = function(ctx, self, user, x, y, choice, target)
+}
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
+        local clicked, target = ev.claim, ev.claim
+        local _x, _y, _choice = x, y, choice
         -- The thing you pointed at, if it holds gas of its own. tg's
         -- `return_analyzable_air()`; here the only portable that has
         -- one is the canister, and a machine that is not one (a vent,
         -- a pump) falls through to the run it stands on -- which is the
         -- same answer tg gives for those.
         if target and target.kind == "machine" then
-            local can = ctx.air_sample(x, y, "canister")
+            local can = sim.air_sample(x, y, "canister")
             if can then
-                ctx.sound("click", x, y)
+                sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })
                 report(ctx, user, "the gas canister", can)
-                return
+                return true
             end
         end
         -- The run under an open deck. Buried pipe is pipe you cannot
         -- see, and an instrument that read through a finished floor
         -- would be reading by memory (the rule the painter and the pipe
         -- wrench both keep).
-        if ctx.subfloor_exposed(x, y) and ctx.pipe(x, y) ~= 0 then
-            local pipe = ctx.air_sample(x, y, "pipe")
+        if sim.subfloor_exposed(x, y) and sim.pipe(x, y) ~= 0 then
+            local pipe = sim.air_sample(x, y, "pipe")
             if pipe then
-                ctx.sound("click", x, y)
+                sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })
                 report(ctx, user, "the pipe", pipe)
-                return
+                return true
             end
         end
         -- ...and the air, which is what a turf click means.
-        local room = ctx.air_sample(x, y, "room")
+        local room = sim.air_sample(x, y, "room")
         if not room then
-            ctx.system_msg(user, "The analyzer has nothing to read here.")
-            return
+            sim.message.send({ recipient = user, message = "The analyzer has nothing to read here." })
+            return true
         end
-        ctx.sound("click", x, y)
+        sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })
         report(ctx, user, "the air", room)
-    end,
-}
+        return true
+    end)
+end
+
+return content

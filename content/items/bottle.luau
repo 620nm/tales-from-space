@@ -13,7 +13,7 @@
 -- spells them out; see card.luau on the same tradeoff.)
 local U = 0.025
 
-return {
+local content = {
     id = "bottle",
     name = "bottle",
     sprite = "bottle",
@@ -42,57 +42,70 @@ return {
         { 100, "bottle_fill_100" },
     },
     acts_on_items = true,
-    on_use = function(ctx, self, user, x, y, choice, clicked)
+}
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
+        local clicked, target = ev.claim, ev.claim
+        local _x, _y, _choice = x, y, choice
         local function total(obj)
-            local c = ctx.contents(obj)
+            local read = sim.matter_read(obj)
+            local c = read and read.contents
             if c == nil then
                 return nil
             end
             local n = 0
-            for _, moles in pairs(c) do
-                n = n + moles
+            for _, phases in pairs(c) do
+                for _, moles in pairs(phases) do
+                    n = n + moles
+                end
             end
             return n
         end
 
         if clicked ~= nil and clicked.entity ~= nil then
             if total(clicked.entity) == nil then
-                return "pass"
+                return { replaced = false }
             end
             if (total(self) or 0) < 0.001 then
-                ctx.system_msg(user, "The bottle is empty.")
-                return
+                sim.message.send({ recipient = user, message = "The bottle is empty." })
+                return true
             end
             -- tg's cup default `amount_per_transfer_from_this = 10`
             -- (_cup.dm:4), which is also the beaker's gesture.
-            ctx.pour(self, clicked.entity, 10 * U,
+            sim.pour(self, clicked.entity, 10 * U,
                 "The bottle is empty.", "The other vessel is full to the brim.")
-            ctx.system_msg(user, "You pour from the bottle.")
-            return
+            sim.message.send({ recipient = user, message = "You pour from the bottle." })
+            return true
         end
 
-        local px, py = ctx.pos(user)
+        local px, py = user.tile.x, user.tile.y
         if x == px and y == py then
             if (total(self) or 0) < 0.001 then
-                ctx.system_msg(user, "The bottle is empty.")
-                return
+                sim.message.send({ recipient = user, message = "The bottle is empty." })
+                return true
             end
-            ctx.sound("drink", x, y)
-            ctx.drink(self, user, 2 * U)
-            ctx.system_msg(user, "You drink from the bottle.")
-            return
+            sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = ev.at })
+            sim.drink(self, user, 2 * U)
+            sim.message.send({ recipient = user, message = "You drink from the bottle." })
+            return true
         end
 
-        local turf = ctx.turf(x, y)
+        local turf = sim.turf(x, y)
         if turf ~= "floor" and turf ~= "plating" then
-            return "pass"
+            return { replaced = false }
         end
         if (total(self) or 0) < 0.001 then
-            ctx.system_msg(user, "The bottle is empty.")
-            return
+            sim.message.send({ recipient = user, message = "The bottle is empty." })
+            return true
         end
-        ctx.spill(self, x, y,
+        sim.spill(self, x, y,
             "The bottle is empty.", "You can't reach that from here.")
-        ctx.system_msg(user, "You tip the bottle out onto the deck.")
-    end,
-}
+        sim.message.send({ recipient = user, message = "You tip the bottle out onto the deck." })
+        return true
+    end)
+end
+
+return content

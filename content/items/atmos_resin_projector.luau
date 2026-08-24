@@ -9,7 +9,7 @@
 -- stop, so the engine only owns the named scalar, its decay, and the
 -- reaction arithmetic. The `ExtinguishedAt` consequence stays a native
 -- ledger edge and is not a hook.
-return {
+local content = {
     id = "atmos_resin_projector",
     name = "atmos resin projector",
     -- Reuse the rapid pipe dispenser silhouette until the next asset
@@ -18,32 +18,43 @@ return {
     sprite = "rpd",
     category = "tools",
     uses = 5,
-    on_use = function(ctx, self, user, x, y, _choice, clicked)
+}
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
+        local clicked, target = ev.claim, ev.claim
+        local _x, _y, _choice = x, y, choice
         if clicked ~= nil and clicked.entity ~= nil then
-            return "pass"
+            return { replaced = false }
         end
-        local turf = ctx.turf(x, y)
+        local turf = sim.turf(x, y)
         if turf ~= "floor" and turf ~= "plating" and turf ~= "reinforced_floor" then
-            return "pass"
+            return { replaced = false }
         end
-        if (ctx.uses(self) or 0) <= 0 then
-            ctx.system_msg(user, "The resin projector is empty.")
-            return
+        if (self.uses or 0) <= 0 then
+            sim.message.send({ recipient = user, message = "The resin projector is empty." })
+            return true
         end
 
-        local cell = ctx.cell(x, y)
-        local resin = ctx.column(cell, "atmos_resin")
+        local cell = ev.at.matter
+        local reading = sim.matter_read(cell)
+        local resin = reading and reading.columns.atmos_resin or nil
         if resin == nil then
-            return "pass"
+            return { replaced = false }
         end
         if resin >= 1.0 then
-            ctx.system_msg(user, "The deck is already sealed under fresh resin.")
-            return
+            sim.message.send({ recipient = user, message = "The deck is already sealed under fresh resin." })
+            return true
         end
 
-        ctx.matter_set_column(cell, "atmos_resin", 1.0)
-        ctx.consume(self)
-        ctx.sound("spray", x, y)
-        ctx.system_msg(user, "You coat the deck in fire-smothering resin.")
-    end,
-}
+        sim.matter_set_column(cell, "atmos_resin", 1.0)
+        self:consume()
+        sim.sound.play({ asset = "lunatic/tfs:sound/spray", at = ev.at })
+        sim.message.send({ recipient = user, message = "You coat the deck in fire-smothering resin." })
+        return true
+    end)
+end
+
+return content

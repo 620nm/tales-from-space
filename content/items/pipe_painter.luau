@@ -34,7 +34,7 @@ local COLORS = {
     { name = "violet", hex = "#6927C5" },
 }
 
-return {
+local content = {
     id = "pipe_painter",
     name = "pipe painter",
     -- tg's own art: the label gun off the bureaucracy sheet
@@ -53,20 +53,29 @@ return {
     -- have no list prompt, so the dial cycles instead -- the same
     -- mechanism the length of pipe uses for its piping layer, and the
     -- same in-hand key.
-    on_use_self = function(ctx, self, user)
-        local dial = ctx.mode(self)
+}
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
+        local self, user = ev.subject, ev.actor
+        local dial = sim.mode(self)
         local next_index = (dial.index + 1) % dial.count
-        ctx.set_mode(self, next_index)
-        ctx.system_msg(user, "Pipe painter set to " .. COLORS[next_index + 1].name .. ".")
-    end,
-    on_use = function(ctx, self, user, x, y)
+        sim.set_mode(self, next_index)
+        sim.message.send({ recipient = user, message = "Pipe painter set to " .. COLORS[next_index + 1].name .. "." })
+        return true
+    end)
+    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
+        local clicked, target = ev.claim, ev.claim
+        local _x, _y, _choice = x, y, choice
         -- Pipe lives under the deck, so a run under a covered one is a
         -- run you cannot see -- and painting by memory is how a
         -- technician cuts the wrong main. Asked first, so every covered
         -- tile answers the same way.
-        if not ctx.subfloor_exposed(x, y) then
-            ctx.system_msg(user, "The floor is in the way. Pry the tile up first.")
-            return
+        if not sim.subfloor_exposed(x, y) then
+            sim.message.send({ recipient = user, message = "The floor is in the way. Pry the tile up first." })
+            return true
         end
         -- A MACHINE takes no paint. tg spells this out on the sharpest
         -- case -- the colour adapter is `paintable = FALSE`
@@ -77,24 +86,27 @@ return {
         -- nothing on one for a stripe to do. Said out loud rather than
         -- silently done, because a painter that changed nothing and
         -- claimed otherwise is the worst of both.
-        local machine = ctx.machine(x, y)
+        local machine = sim.machine(x, y)
         if machine then
-            ctx.system_msg(user, "The " .. machine.name .. " takes no paint.")
-            return
+            sim.message.send({ recipient = user, message = "The " .. machine.name .. " takes no paint." })
+            return true
         end
         -- Whatever is laid here, on every layer at once: the painter has
         -- one dial and it is spent on the colour. (tg paints the pipe
         -- object you clicked, which carries its own layer; the effect
         -- takes a layer mask, so a painter that grows a layer dial later
         -- needs no engine change.)
-        local layers = ctx.pipe(x, y)
+        local layers = sim.pipe(x, y)
         if layers == 0 then
-            ctx.system_msg(user, "There is no pipe under the floor here.")
-            return
+            sim.message.send({ recipient = user, message = "There is no pipe under the floor here." })
+            return true
         end
-        local paint = COLORS[ctx.mode(self).index + 1]
-        ctx.paint_pipe(x, y, layers, paint.hex)
-        ctx.sound("click", x, y)
-        ctx.system_msg(user, "You paint the pipe " .. paint.name .. ".")
-    end,
-}
+        local paint = COLORS[sim.mode(self).index + 1]
+        sim.paint_pipe(x, y, layers, paint.hex)
+        sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })
+        sim.message.send({ recipient = user, message = "You paint the pipe " .. paint.name .. "." })
+        return true
+    end)
+end
+
+return content

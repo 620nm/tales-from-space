@@ -22,7 +22,7 @@
 -- server passes the validated exact line here. Clearing a three-line
 -- tile is still three snips, but which one comes first is what you aim at.
 
-return {
+local content = {
     id = "wirecutters",
     name = "wirecutters",
     sprite = "wirecutters",
@@ -34,31 +34,43 @@ return {
     drop_sound = "wirecutter_drop",
     -- The equipment class targets dispatch on; no tank, nothing to burn.
     tool = "cutters",
-    on_use = function(ctx, self, user, x, y, _, target)
+}
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
+        local clicked, target = ev.claim, ev.claim
+        local _x, _y, _choice = x, y, choice
         -- Asked before the cable question, so a covered tile answers
         -- the same whether or not anything runs under it.
-        if not ctx.subfloor_exposed(x, y) then
-            return "pass"
+        if not sim.subfloor_exposed(x, y) then
+            return { replaced = false }
         end
         if target == nil or target.kind ~= "cable" then
-            return "pass"
+            return { replaced = false }
         end
         local line = target.layer
-        if ctx.cable(x, y) % (line * 2) < line then
-            return "pass"
+        if sim.cable(x, y) % (line * 2) < line then
+            return { replaced = false }
         end
-        ctx.system_msg(user, "You start snipping through the cabling...")
-        if not ctx.do_after(user, 1.0) then
-            ctx.system_msg(user, "You stop cutting.")
-            return
-        end
-        -- Asked again at the end, not remembered from the start: the
-        -- line you were cutting may already be gone.
-        if ctx.cable(x, y) % (line * 2) < line then
-            return
-        end
-        ctx.sound("wirecutter", x, y)
-        ctx.cut_cable(x, y, line)
-        ctx.system_msg(user, "The cable parts with a snap.")
-    end,
-}
+        sim.message.send({ recipient = user, message = "You start snipping through the cabling..." })
+        sim.spawn_task(user, function()
+            if sim.do_after(user, sim.ticks(1.0), {}) == "interrupted" then
+                sim.message.send({ recipient = user, message = "You stop cutting." })
+                return true
+            end
+            -- Asked again at the end, not remembered from the start: the
+            -- line you were cutting may already be gone.
+            if sim.cable(x, y) % (line * 2) < line then
+                return true
+            end
+            sim.sound.play({ asset = "lunatic/tfs:sound/wirecutter", at = ev.at })
+            sim.cut_cable(x, y, line)
+            sim.message.send({ recipient = user, message = "The cable parts with a snap." })
+        end)
+        return true
+    end)
+end
+
+return content

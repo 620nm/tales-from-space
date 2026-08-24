@@ -1,28 +1,40 @@
 -- Dispensed by the vending machine; drinkable since M7. Clicking your
 -- own tile with the can in hand takes a swig — the contents transfer
 -- into your bloodstream mole by mole, and metabolism does the rest.
-return {
+local content = {
     id = "cola",
     name = "can of Space Cola",
     sprite = "cola",
     inhand_sprite = { "held_cola_l", "held_cola_r" },
     contents = { water = 0.30, sugar = 0.06 },
-    on_use = function(ctx, self, user, x, y)
-        local px, py = ctx.pos(user)
+}
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
+        local clicked, target = ev.claim, ev.claim
+        local _x, _y, _choice = x, y, choice
+        local px, py = user.tile.x, user.tile.y
         if x ~= px or y ~= py then
-            return "pass" -- only a click on your own tile drinks
+            return { replaced = false } -- only a click on your own tile drinks
         end
-        local c = ctx.contents(self)
+        local c = sim.matter_read(self).contents
         local total = 0
-        for _, n in pairs(c) do
-            total = total + n
+        for _, phases in pairs(c) do
+            for _, n in pairs(phases) do
+                total = total + n
+            end
         end
         if total < 0.001 then
-            ctx.system_msg(user, "The can is empty.")
-            return
+            sim.message.send({ recipient = user, message = "The can is empty." })
+            return true
         end
-        ctx.sound("drink", x, y)
-        ctx.drink(self, user, 0.05)
-        ctx.system_msg(user, "You take a swig of Space Cola.")
-    end,
-}
+        sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = ev.at })
+        sim.drink(self, user, 0.05)
+        sim.message.send({ recipient = user, message = "You take a swig of Space Cola." })
+        return true
+    end)
+end
+
+return content

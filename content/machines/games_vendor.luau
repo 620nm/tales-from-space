@@ -38,7 +38,7 @@
 --     persistence), the dyespray and the razor (hair), the piano-synth
 --     headphones (instruments), and the hourglass -- which is the near
 --     miss, being one timer and seven pictures, and would work today on
---     `ctx.sleep` plus appearance states. It is left out because its
+--     `sim.sleep` plus appearance states. It is left out because its
 --     whole output is a countdown overlay floating over the object,
 --     which is a rendering feature this engine does not have, and an
 --     hourglass you cannot read is furniture.
