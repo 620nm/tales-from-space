@@ -171,7 +171,7 @@ local pump = t.structure_at(3, 1)
 assert(pump.id == "gas_pump", "the map stood a pump on the main")
 assert(pump.state == "off", "and tg's pump ships off")
 assert(
-    pump.sprite == "pump_off_ew",
+    pump.sprite == "pump_off_e",
     "dark: " .. tostring(pump.sprite)
 )
 
@@ -187,7 +187,7 @@ t.run_ticks(2)
 local running = t.structure_at(3, 1)
 assert(running.state == "running", "the switch throws")
 assert(
-    running.sprite == "pump_on_ew",
+    running.sprite == "pump_on_e",
     "and the pump wears its running body: " .. tostring(running.sprite)
 )
 
@@ -195,6 +195,6 @@ assert(
 -- frames are the client's clock, not the sim's.
 t.run_seconds(20)
 assert(
-    t.structure_at(3, 1).sprite == "pump_on_ew",
+    t.structure_at(3, 1).sprite == "pump_on_e",
     "a loop needs no anchor and never changes its name"
 )
