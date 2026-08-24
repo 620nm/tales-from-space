@@ -391,7 +391,7 @@ t.world([==[(
     structures: [
         (1, 1, "manual_valve"),
         (2, 1, "connector_port"),
-        (3, 1, "manual_valve_l2"),
+        (3, 1, "manual_valve", { "layer": 2 }),
     ],
 )]==], 7)
 
@@ -474,7 +474,7 @@ t.world([==[(
     spawns: [(2, 2)],
     items: [(2, 2, "rpd")],
     // The positive connector reaches west from (2,1). The southern
-    // three entries are deliberately on each device's own layer.
+    // three entries are the layer each refusal below dials up to.
     pipes: [(1, 1, 4), (2, 3, 4), (1, 3, 4), (4, 3, 2), (6, 3, 4)],
 )]==], 7)
 
@@ -507,17 +507,22 @@ work(u)
 assert(t.structure_at(6, 1).id == "air_injector", "an injector needs no underlying raw pipe")
 assert(t.pipe(6, 1) == 0, "the injector centre is raw-pipe-free")
 
--- The reverse direction is refused without consuming the run.
+-- The reverse direction is refused without consuming the run. `dial`
+-- is the main each device is asked for, because the dial travels with
+-- the part now (`set_piping_layer` off the RPD, RPD.dm:569) -- the
+-- socket is the one that ignores it, since a stub binds on the run
+-- every dispenser hands out.
 for _, case in ipairs({
-    { x = 6, recipe = "Air Injector", layer = 4 },
-    { x = 4, recipe = "Air Scrubber", layer = 2, west = 2 },
-    { x = 2, recipe = "Connector", layer = 4, west = 2 },
+    { x = 6, recipe = "Air Injector", layer = 4, dial = "3" },
+    { x = 4, recipe = "Air Scrubber", layer = 2, dial = "2", west = 2 },
+    { x = 2, recipe = "Connector", layer = 4, dial = "3", west = 2 },
 }) do
     if case.west then
         for _ = 1, case.west do
             walk(u, "west")
         end
     end
+    set(u, LAYER, pick(u, LAYER, case.dial))
     set(u, RECIPE, pick(u, RECIPE, case.recipe))
     local _ = t.messages(u)
     t.click(u, case.x, 3)
@@ -526,3 +531,21 @@ for _, case in ipairs({
     assert(t.pipe(case.x, 3) == case.layer, case.recipe .. " left the raw run intact")
     assert(said(u, "Something is already under the floor here."), case.recipe .. " names occupancy")
 end
+
+-- ...and the same dial reaches EVERY fitting on the shelf rather than
+-- only the gauge. tg programs the pipe item it is about to wrench down
+-- and every `/obj/item/pipe` carries a `piping_layer`, so a wheel
+-- dialled to the waste main stands on the waste main -- and the
+-- distribution run under it is somebody else's plumbing, exactly as the
+-- refusal above says it is not when the two agree.
+set(u, LAYER, pick(u, LAYER, "2"))
+set(u, RECIPE, pick(u, RECIPE, "Manual Valve"))
+local _ = t.messages(u)
+t.click(u, 2, 3)
+work(u)
+local crossing = t.structure_at(2, 3)
+assert(
+    crossing ~= nil and crossing.id == "manual_valve",
+    "a wheel dialled to layer 2 stands over a layer-3 run"
+)
+assert(t.pipe(2, 3) == 4, "and the run it crosses is untouched: " .. tostring(t.pipe(2, 3)))

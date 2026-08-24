@@ -332,9 +332,9 @@
         //   (13, 20) the scrubbers main's own wheel, on the other side
         //            of the corridor and on layer 2, so the waste side
         //            can be cut without touching supply.
-        (20, 20, "manual_valve_l4", "open"),
+        (20, 20, "manual_valve", "open", { "layer": 4 }),
         (22, 20, "layer_adapter"),
-        (13, 20, "manual_valve_l2", "open"),
+        (13, 20, "manual_valve", "open", { "layer": 2 }),
 
         // ---- Atmospherics ----------------------------------------
         // Everything from here down came out of the first draft
