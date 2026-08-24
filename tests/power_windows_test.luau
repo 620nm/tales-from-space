@@ -102,6 +102,22 @@ end
 assert(readout(apc, "alarm").value == "clear", "and calls no alarm")
 assert(#apc.setpoints == 0, "an APC has no dial: the ladder is the pass's")
 
+-- The master breaker is the one switch over the three channels that the
+-- ladder does not own -- so it IS a control, unlike the channels
+-- themselves, and it takes the room with it.
+assert(toggle(apc, "breaker").on, "the main breaker ships closed")
+assert(toggle(apc, "breaker").section == "channels", "beside the lamps it gates")
+t.ui_act(p, "toggle", '{"field":"breaker"}')
+t.run_seconds(3)
+assert(not t.apc_at(1, 2).operating, "the breaker opened")
+assert(not toggle(t.ui(p), "breaker").on, "and the panel says so")
+assert(not t.apc_at(1, 2).lighting, "a panel that is not operating feeds nothing")
+assert(not t.lit(6, 2), "so its room is dark on a full cell")
+assert(t.ledger_has("MachineToggled"), "throwing it is on the record")
+t.ui_act(p, "toggle", '{"field":"breaker"}')
+t.run_seconds(3)
+assert(t.apc_at(1, 2).operating and t.lit(6, 2), "and closing it brings the room back")
+
 assert(toggle(apc, "l1", "output").on, "L1 feeds the room")
 assert(toggle(apc, "l1", "output").section == "port L1", "under its own heading")
 assert(toggle(apc, "l2", "input").on, "L2 is where it takes from")
