@@ -105,27 +105,42 @@ assert(matching(air, "Oxygen: ", " mol (21 %)"), "one fifth oxygen")
 
 -- ---- the runs ----
 --
--- A click cannot land on one pipe out of five, so a click on open
--- plating reads EVERYTHING under and over it, each mixture named: the
--- air, then every buried run by its layer. Two layers are laid here so
--- the ambiguity the labels exist for is actually on the tile.
+-- A click on the exact pixels of one run reads THAT run and no other
+-- (the pipe wrench's own pixel hit-test, carried to the hook as the
+-- subfloor target). Two layers are laid on this tile so the precision
+-- is proved against a real ambiguity: each answers alone, by name.
 local _ = t.messages(p)
-t.click(p, 2, 1)
+t.click_subfloor(p, 2, 1, "pipe", 4)
 t.run_ticks(2)
 local pipe = t.messages(p)
-assert(has(pipe, "Results of analysis of the air."), "the turf is read first")
-assert(has(pipe, "Results of analysis of the layer 3 pipe."), "the run, by name")
+assert(has(pipe, "Results of analysis of the layer 3 pipe."), "the run touched, by name")
+assert(not has(pipe, "Results of analysis of the air."), "and nothing that was not touched")
+assert(not has(pipe, "Results of analysis of the layer 1 pipe."), "not even its neighbour")
 assert(
     has(pipe, "Pressure: " .. r2(t.pipe_pressure(2, 1)) .. " kPa"),
     "and the number an engineer would read off a meter there"
 )
 -- Two lengths of tg's UNARY_PIPE_VOLUME * 2, which is 70 L each.
 assert(has(pipe, "Volume: 140 L"), "two lengths of pipe, and not the room")
--- The second layer answers separately, and answers for itself: one
--- lone length holding the boot air it was commissioned with, 70 L --
--- not the canister-fed pressure the run beside it carries.
-assert(has(pipe, "Results of analysis of the layer 1 pipe."), "the other run, by name")
-assert(has(pipe, "Volume: 70 L"), "one length, not the run beside it")
+
+-- The other layer, touched instead: its own body of gas -- one lone
+-- length holding boot air, 70 L, not the canister-fed run beside it.
+local _ = t.messages(p)
+t.click_subfloor(p, 2, 1, "pipe", 1)
+t.run_ticks(2)
+local other = t.messages(p)
+assert(has(other, "Results of analysis of the layer 1 pipe."), "the other run, by name")
+assert(not has(other, "Results of analysis of the layer 3 pipe."), "and only it")
+assert(has(other, "Volume: 70 L"), "one length, not the run beside it")
+
+-- A click that touches NO run -- bare deck between the pipes -- falls
+-- through to the turf, pipes or no pipes under it.
+local _ = t.messages(p)
+t.click(p, 2, 1)
+t.run_ticks(2)
+local ground = t.messages(p)
+assert(has(ground, "Results of analysis of the air."), "a miss means the air")
+assert(not has(ground, "Results of analysis of the layer 3 pipe."), "and never a run nobody touched")
 
 -- ---- the bottle ----
 --
@@ -162,13 +177,13 @@ assert(t.pipe(5, 2) == 4, "a fresh length on the distribution layer")
 
 t.swap_hands(p)
 local _ = t.messages(p)
-t.click(p, 5, 2)
+t.click_subfloor(p, 5, 2, "pipe", 4)
 t.run_ticks(2)
 local fresh = t.messages(p)
 assert(has(fresh, "Results of analysis of the layer 3 pipe."), "it is a pipe, named by layer")
 assert(has(fresh, "The layer 3 pipe is empty!"), "and nobody has filled it")
 assert(has(fresh, "Volume: 70 L"), "one length, and the volume still prints")
-assert(has(fresh, "Results of analysis of the air."), "the turf still answers beside it")
+assert(not has(fresh, "Results of analysis of the air."), "the run was touched, so only the run")
 
 -- ---- and it is an instrument, not a tool ----
 --
