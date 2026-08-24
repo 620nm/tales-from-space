@@ -68,8 +68,9 @@ assert(x == 2 and y == 1, "the player walked west")
 assert(t.target_at(3, 1, "canister") == canister, "the bottle followed into the vacated tile")
 assert(t.target_at(4, 1, "canister") == nil, "and is off the socket tile")
 
--- Letting go has its own key, because ctrl+clicking what you already
--- hold is deliberately a no-op (living.dm:408-410).
+-- Letting go has its own key. Ctrl+clicking the bottle again does the
+-- same thing: the grab click is a toggle here, where tg's is a no-op
+-- (living.dm:408-410).
 t.stop_pull(p)
 t.tick()
 assert(#t.ledger_rows("PullEnded") == 1, "and putting it down is on the record too")
