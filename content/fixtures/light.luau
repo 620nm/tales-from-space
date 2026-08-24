@@ -88,7 +88,10 @@ if sim ~= nil then
                 sim.message.send({ recipient = user, message = "There is already a tube in the fitting." })
                 return true
             end
-            sim.entity.despawn({ entity = target })
+            -- Spent, not destroyed: a tube that went into a fitting is
+            -- work and reads `ItemConsumed`, where `sim.entity.despawn`
+            -- would file it as loss.
+            target:consume()
             sim.set_light(self, "ok", TUBE_COLOR)
             sim.message.send({ recipient = user, message = "You fit the new tube." })
             return true

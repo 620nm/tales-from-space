@@ -50,7 +50,7 @@ if sim ~= nil then
             return true
         end
         local x, y = self.tile.x, self.tile.y
-        sim.entity.despawn({ entity = item })
+        item:consume()
         sim.sound.play({ asset = "lunatic/tfs:sound/vend", at = ev.at })
         sim.message.send({ recipient = user, message = "You put the " .. item.name .. " back into the dispenser." })
         return true
