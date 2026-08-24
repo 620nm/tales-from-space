@@ -136,19 +136,64 @@ assert(drawn[1] == "meter_base", "the housing")
 assert(drawn[2] == "meter_p1_3", "and the needle at one atmosphere: " .. tostring(drawn[2]))
 assert(#drawn == 2, "and nothing else")
 
--- ---- and it answers when you look at it ----
+-- ---- and it answers a look, from anywhere you can see it ----
 --
 -- tg's `status()` (meter.dm:123-131), word for word -- except that
 -- every word is in the content file and only the numbers are the
--- engine's. An empty hand, because a wrench means something else here.
-t.swap_hands(p)
+-- engine's. tg appends it to `examine()` (meter.dm:123-135), which is
+-- a VIEW-range gesture: the whole point of bolting a dial to a run is
+-- reading it without walking over. Two tiles east is past arm's length
+-- and well inside the room.
+local reading = "The pressure gauge reads "
+    .. r2(t.pipe_pressure(2, 1))
+    .. " kPa; 293.15 K (20°C)."
+
+walk(p, "east")
+walk(p, "east")
+assert(t.pos(p) == 4, "standing off down the deck: " .. t.pos(p))
+local look = t.examine(p, 2, 1, t.target_at(2, 1, "meter"))
+assert(look ~= nil, "a gauge in view answers a look")
+local read_at_range = false
+for _, line in ipairs(look.lines) do
+    if line == reading then
+        read_at_range = true
+    end
+end
+assert(read_at_range, "the look carries the reading: " .. table.concat(look.lines, " | "))
+
+-- ...and a click on it from there reaches nothing at all, because a
+-- look is done with the eyes and a hand is still a hand.
 local _ = t.messages(p)
 t.click(p, 2, 1, t.target_at(2, 1, "meter"))
 t.run_ticks(2)
+assert(t.ui(p) == nil, "no panel opens from across the room")
+
+-- ---- and it opens a panel when you reach it ----
+--
+-- tg pushes the same sentence into chat on `interact()`
+-- (meter.dm:152-156). Here the numbers are live -- they move while you
+-- stand there watching them -- so they go on the surface this game
+-- repushes for that, which is a settings panel. An empty hand, because
+-- a wrench means something else here.
+walk(p, "west")
+walk(p, "west")
+t.swap_hands(p)
+t.click(p, 2, 1, t.target_at(2, 1, "meter"))
+t.run_ticks(2)
+local panel = t.ui(p)
+assert(panel ~= nil, "an attached gauge answers an empty hand with a panel")
+assert(panel.kind == "meter", "its own window: " .. tostring(panel.kind))
+assert(#panel.toggles == 0 and #panel.setpoints == 0, "and nothing on it to turn")
+
+local shown = {}
+for _, r in ipairs(panel.readouts) do
+    shown[r.label] = r.value
+end
 assert(
-    said(p, "The pressure gauge reads " .. r2(t.pipe_pressure(2, 1)) .. " kPa; 293.15 K (20°C)."),
-    "the gauge reads what the line is actually at"
+    shown.pressure == string.format("%.1f kPa", t.pipe_pressure(2, 1)),
+    "the panel reads the run: " .. tostring(shown.pressure)
 )
+assert(shown.temperature == "293.2 K", "and how warm it is: " .. tostring(shown.temperature))
 
 -- ---- take it off again ----
 --
