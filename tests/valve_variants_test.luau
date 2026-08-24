@@ -5,14 +5,15 @@
 -- one answers a panel where the manual one answers a hand. Neither asks
 -- the two questions a ROSTER raises:
 --
---   * a preset that exists only to name a piping layer has to be deaf
---     to every other one. tg hangs `/layer2` and `/layer4` subtypes off
---     half its atmospherics roster because a mapper needs the same
---     device on whichever main runs past, and a station's mains are
---     stacked ON THE SAME TILES -- distro, scrubbers and supply cross
---     each other everywhere. A wheel that fused the wrong pair would
---     dump the waste main into the air people breathe, and it would
---     look exactly like a working valve from above.
+--   * a wheel a MAP moved onto another main has to be deaf to every
+--     other one. A station's mains are stacked ON THE SAME TILES --
+--     distro, scrubbers and supply cross each other everywhere -- so a
+--     wheel that fused the wrong pair would dump the waste main into
+--     the air people breathe, and it would look exactly like a working
+--     valve from above. tg says which main by setting `piping_layer` on
+--     the instance (`HELPER_PIPING_LAYER`, pipes/mapping.dm); this pack
+--     used to say it by shipping the same file three times over, once
+--     per layer, which is a roster that grows with the alphabet.
 --   * and the digital valve has never been shown to BE a valve. Its
 --     panel is specced; its topology is not. tg's two valves are the
 --     same subtype differing in one flag (valve.dm:13 vs 86), so the
@@ -75,16 +76,19 @@ local CROSSING = [==[(
     // refused at boot ("conflicting atmospherics", sim/mod.rs), so
     // this mask is the only legal way to draw a crossing.
     pipes: [(1, 1, 14), (2, 1, 14), (3, 1, %d), (4, 1, 14), (5, 1, 14)],
-    structures: [(3, 1, "%s")],
+    structures: [(3, 1, "manual_valve", { "layer": %d })],
 )]==]
 
--- One pinned valve, proved against the two layers it is not on.
-local function pinned(id, mine, others, heat)
-    t.world(CROSSING:format(14 - mine, id), 7)
+-- One placed valve, proved against the two layers it is not on.
+-- `layer` is the number a mapper writes; `mine` is the bit it stands
+-- for, which is what the pipe masks are spelled in.
+local function pinned(layer, mine, others, heat)
+    t.world(CROSSING:format(14 - mine, layer), 7)
     local p = t.join()
     t.tick()
 
-    assert(t.structure_at(3, 1).id == id, "the map stood " .. id .. " on the line")
+    local id = "manual_valve"
+    assert(t.structure_at(3, 1).id == id, "the map stood one wheel on the line")
     assert(t.structure_at(3, 1).state == "shut", "shut, like every valve")
     assert(t.pipe(3, 1) == 14 - mine, "the crossing mains keep a length under it: " .. t.pipe(3, 1))
     assert(t.pipe_pressure(3, 1, mine) == nil, "and no net of its own layer claims its tile")
@@ -138,10 +142,10 @@ local function pinned(id, mine, others, heat)
     end
 end
 
--- The scrubbers main, and the supply main. Same file, same wheel, one
--- line of the atmos block different.
-pinned("manual_valve_l2", 2, { 4, 8 }, 40000.0)
-pinned("manual_valve_l4", 8, { 2, 4 }, 40000.0)
+-- The scrubbers main, and the supply main. One content file, one
+-- prototype, and one number on the placement.
+pinned(2, 2, { 4, 8 }, 40000.0)
+pinned(4, 8, { 2, 4 }, 40000.0)
 
 -- ---------------------------------------------------------------
 -- THE DIGITAL VALVE IS A VALVE.
