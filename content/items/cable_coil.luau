@@ -6,7 +6,7 @@
 -- structure transition, and transitions spend stacks.
 --
 -- Laying cable is NOT a structure transition -- there is nothing on the
--- tile that owns the answer -- so it stays an on_use hook, which the
+-- tile that owns the answer -- so it stays an interaction.use hook, which the
 -- interpreter falls through to when no table names this item.
 --
 -- Cable goes UNDER the deck, so the tile has to be open -- the same rule
@@ -29,7 +29,7 @@ local LINES = {
     { mask = 4, name = "the blue power line" },
 }
 
-return {
+local content = {
     id = "cable_coil",
     name = "cable coil",
     sprite = "coil",
@@ -49,39 +49,53 @@ return {
     -- (cable.dm:529). tg pops a radial menu there (cable.dm:589); we
     -- have no radial widget, so this cycles and says where it landed,
     -- which is the same information in one keypress instead of two.
-    on_use_self = function(ctx, self, user)
-        local dial = ctx.mode(self)
+}
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
+        local self, user = ev.subject, ev.actor
+        local dial = sim.mode(self)
         local next_index = (dial.index + 1) % dial.count
-        ctx.set_mode(self, next_index)
-        ctx.system_msg(user, "You set the coil to " .. LINES[next_index + 1].name .. ".")
-    end,
-    on_use = function(ctx, self, user, x, y)
+        sim.set_mode(self, next_index)
+        sim.message.send({ recipient = user, message = "You set the coil to " .. LINES[next_index + 1].name .. "." })
+        return true
+    end)
+    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
+        local clicked, target = ev.claim, ev.claim
+        local _x, _y, _choice = x, y, choice
         -- Asked first, so every covered tile answers the same way and
         -- the reply is not a probe for what is already buried. Open
         -- deck, not "plating": the map decides per tile.
-        if not ctx.subfloor_exposed(x, y) then
-            ctx.system_msg(user, "The floor is in the way. Pry the tile up first.")
-            return
+        if not sim.subfloor_exposed(x, y) then
+            sim.message.send({ recipient = user, message = "The floor is in the way. Pry the tile up first." })
+            return true
         end
-        local line = LINES[ctx.mode(self).index + 1]
-        if ctx.cable(x, y) % (line.mask * 2) >= line.mask then
-            return "pass" -- this line already runs here
+        local line = LINES[sim.mode(self).index + 1]
+        if sim.cable(x, y) % (line.mask * 2) >= line.mask then
+            return { replaced = false } -- this line already runs here
         end
-        ctx.system_msg(user, "You start laying cable...")
-        if not ctx.do_after(user, 1.0) then
-            ctx.system_msg(user, "You stop laying cable.")
-            return
-        end
-        -- The same question again at the end: while you worked, another
-        -- engineer may have cabled this very tile. The dial is asked
-        -- again too -- a do_after is a whole second, and nothing stops
-        -- you turning it mid-job.
-        line = LINES[ctx.mode(self).index + 1]
-        if ctx.cable(x, y) % (line.mask * 2) >= line.mask then
-            ctx.system_msg(user, "Someone already ran " .. line.name .. " through there.")
-            return
-        end
-        ctx.lay_cable(x, y, line.mask)
-        ctx.system_msg(user, "You lay cable on " .. line.name .. ".")
-    end,
-}
+        sim.message.send({ recipient = user, message = "You start laying cable..." })
+        sim.spawn_task(user, function()
+            if sim.do_after(user, sim.ticks(1.0), {}) == "interrupted" then
+                sim.message.send({ recipient = user, message = "You stop laying cable." })
+                return true
+            end
+            -- The same question again at the end: while you worked, another
+            -- engineer may have cabled this very tile. The dial is asked
+            -- again too -- a do_after is a whole second, and nothing stops
+            -- you turning it mid-job.
+            line = LINES[sim.mode(self).index + 1]
+            if sim.cable(x, y) % (line.mask * 2) >= line.mask then
+                sim.message.send({ recipient = user, message = "Someone already ran " .. line.name .. " through there." })
+                return true
+            end
+            sim.lay_cable(x, y, line.mask)
+            sim.message.send({ recipient = user, message = "You lay cable on " .. line.name .. "." })
+        end)
+        return true
+    end)
+end
+
+return content

@@ -1,6 +1,6 @@
 -- One transfer, three far ends: a beaker poured into another vessel,
 -- drunk from, and tipped onto the deck are the SAME call in the file
--- that does them (`ctx.matter_transfer`, docs/LUAU-API.md section 8.2),
+-- that does them (`sim.matter_transfer`, docs/LUAU-API.md section 8.2),
 -- differing only in which owner is named.
 --
 -- What makes this worth a spec rather than a comment is the second
@@ -12,7 +12,7 @@
 -- admin reading a shift back cannot tell that content was rewritten.
 --
 -- The third gesture is the one that had no general form before: the far
--- end of a transfer is the ROOM over a tile (`ctx.cell(x, y)`), which
+-- end of a transfer is the ROOM over a tile (`sim.cell(x, y)`), which
 -- is a body of matter like any other. What lands there is ordinary
 -- matter from the instant it exists — so the last leg of this spec
 -- waits, and watches the puddle dry into the air above it.
@@ -85,7 +85,7 @@ assert(#drank == 1, ("one swig on the record, got %d"):format(#drank))
 close(drank[1].moles, 0.05, "and the row names the mouthful")
 
 -- ---- owner: the room over a tile --------------------------------------
--- The far end nothing but a spill could name before. `ctx.cell(x, y)` is
+-- The far end nothing but a spill could name before. `sim.cell(x, y)` is
 -- a body of matter like any other, so "tip it out" is the one transfer
 -- with a tile on the end of it.
 local function vapour(key)

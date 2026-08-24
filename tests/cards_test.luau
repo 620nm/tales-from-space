@@ -4,7 +4,7 @@
 -- The claim under test is not "clicking a deck produces a card". It is
 -- that a deck is a DECK -- fifty-four distinct cards, dealt without
 -- repeats, in an order fixed by a shuffle nobody can see, out of a
--- string the engine stores and cannot read (`ctx.set_var`/`ctx.var`,
+-- string the engine stores and cannot read (`sim.set_var`/`sim.var`,
 -- docs/LUAU-API.md). Every earlier per-instance fact in this pack is a
 -- number the prototype enumerated; this one is not, and the way to
 -- prove the difference is to deal the whole deck and count.
@@ -52,7 +52,7 @@ assert(t.hands(p).held == "card_deck", "the deck is in hand")
 
 -- ---- one card, face down, and nobody can see which --------------------
 -- Dealing is a click on a TILE with the deck in hand (this pack's
--- `on_use`), which is tg's deal pointed at the table instead of at a
+-- `interaction.use`), which is tg's deal pointed at the table instead of at a
 -- hand -- see items/card_deck.luau for why the bindings differ.
 t.click(p, 1, 2)
 t.tick()
@@ -91,7 +91,7 @@ assert(table.concat(t.sounds(p), " "):find("card_flip", 1, true), "and is heard"
 -- cannot summarise a string it cannot read.
 local wrote = t.ledger_rows("VarSet")
 assert(#wrote >= 1, "writing the deck's order is a ledger row")
-assert(wrote[#wrote].key == "order",
+assert(wrote[#wrote].key == "lunatic/tfs:order",
     "naming the key: " .. tostring(wrote[#wrote].key))
 
 -- ---- turning it over --------------------------------------------------
@@ -123,7 +123,7 @@ local shown = table.concat(t.layers(p, t.target_at(1, 1, "card")), " ")
 assert(shown:find("card_" .. secret, 1, true),
     "and NOW the room can see it: " .. shown)
 
--- ...and back over again, which is what needed `ctx.state`: a thing
+-- ...and back over again, which is what needed `sim.state`: a thing
 -- that toggles has to ask what it is currently showing.
 t.click(p, 1, 1, t.target_at(1, 1, "card"))
 t.tick()
@@ -139,7 +139,7 @@ assert(facedown.sprite == "card_back", "back to the back")
 
 -- ---- put it back ------------------------------------------------------
 -- tg's recycle: clicking a deck while holding a card returns the card
--- to the bottom (deck.dm:192-202). Here that is the CARD's `on_use`
+-- to the bottom (deck.dm:192-202). Here that is the CARD's `interaction.use`
 -- with `acts_on_items`, so a click naming the deck is the card's
 -- business rather than a pickup. The deck is underfoot, where it was
 -- dropped.
@@ -223,7 +223,7 @@ end
 -- took cards forever. Deal from one deck, feed the card to another, and
 -- the second grows past fifty-four -- and since the order is a script
 -- var with a length cap, an unbounded deck eventually meets a refused
--- write with the card already consumed by `ctx.consume`. Cards would
+-- write with the card already consumed by `sim.consume`. Cards would
 -- quietly stop existing.
 --
 -- tg refuses for the tidier reason and in the same place: `insert`

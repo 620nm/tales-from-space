@@ -8,7 +8,7 @@
 --
 -- Numbers carry their tgstation cite. Anything without one is marked
 -- NOT PORTED and is a Tales from Space choice.
-return {
+local content = {
     id = "human",
     name = "human",
     -- The whole-body pictures. Per-part layers wait on the wire
@@ -165,13 +165,20 @@ return {
     -- The three sentences the engine used to say for itself. They are
     -- content now, and a species whose members do not black out simply
     -- does not write the line.
-    on_life_state = function(ctx, body, _user, state)
-        if state == "crit" then
-            ctx.system_msg(body, "You black out...")
-        elseif state == "dead" then
-            ctx.system_msg(body, "You have died.")
-        else
-            ctx.system_msg(body, "You come to.")
-        end
-    end,
 }
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("body.life_state.done", { kind = "react", route = "state" }, function(ev)
+        local body, _user, state = ev.body, ev.body, ev.current
+        if state == "crit" then
+            sim.message.send({ recipient = body, message = "You black out..." })
+        elseif state == "dead" then
+            sim.message.send({ recipient = body, message = "You have died." })
+        else
+            sim.message.send({ recipient = body, message = "You come to." })
+        end
+    end)
+end
+
+return content

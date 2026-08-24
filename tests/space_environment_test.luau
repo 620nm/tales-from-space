@@ -11,7 +11,7 @@
 -- off the shipped roster, the same seed lands in the same place, and a
 -- mode with one entry on its roster gets that entry every time.
 --
--- `t.environment()` is the same table `ctx.environment()` hands content,
+-- `t.environment()` is the same table `sim.environment()` hands content,
 -- so a mod asking where it is gets exactly what is checked here.
 
 local TCMB = 2.7

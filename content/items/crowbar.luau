@@ -2,7 +2,7 @@
 -- tile refunded — the subfloor shows), and pry open a dead airlock
 -- ("pass" hands powered doors back to the native access-checked
 -- toggle).
-return {
+local content = {
     id = "crowbar",
     name = "crowbar",
     sprite = "crowbar",
@@ -16,38 +16,50 @@ return {
     drop_sound = "crowbar_drop",
     -- The equipment class targets dispatch on; no tank, nothing to burn.
     tool = "crowbar",
-    on_use = function(ctx, self, user, x, y, _choice, target)
+}
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
+        local clicked, target = ev.claim, ev.claim
+        local _x, _y, _choice = x, y, choice
         -- The server appends the validated clicked atom after the
         -- legacy choice slot. nil is turf; a door record means this
         -- exact authoritative door was named, never rediscovered from
         -- an otherwise target-less tile click.
         local door = nil
         if target ~= nil and target.kind == "door" then
-            door = ctx.door(x, y)
+            door = sim.door(x, y)
         end
-        if target == nil and ctx.turf(x, y) == "floor" then
+        if target == nil and sim.turf(x, y) == "floor" then
             -- The quick pop, not the heave: tg's pry_tile calls
             -- play_tool_sound, which is `usesound` (crowbar.ogg).
-            ctx.sound("crowbar", x, y)
-            ctx.pry_tile(x, y)
-            ctx.system_msg(user, "You pry up the floor tile.")
-            return
+            sim.sound.play({ asset = "lunatic/tfs:sound/crowbar", at = ev.at })
+            sim.pry_tile(x, y)
+            sim.message.send({ recipient = user, message = "You pry up the floor tile." })
+            return true
         end
         if door == nil or door.open or door.powered then
-            return "pass"
+            return { replaced = false }
         end
         -- The sustained heave: tg's `operating_sound`, played while
         -- forcing something open (crowbar_prying.ogg).
-        ctx.sound("crowbar_pry", x, y)
-        ctx.system_msg(user, "You jam the crowbar into the airlock and heave...")
-        if ctx.do_after(user, 2.5) then
-            local d = ctx.door(x, y)
-            if d ~= nil and not d.open and not d.powered then
-                ctx.pry_door(x, y)
-                ctx.system_msg(user, "The door gives way.")
+        sim.sound.play({ asset = "lunatic/tfs:sound/crowbar_pry", at = ev.at })
+        sim.message.send({ recipient = user, message = "You jam the crowbar into the airlock and heave..." })
+        sim.spawn_task(user, function()
+            if sim.do_after(user, sim.ticks(2.5), {}) == "ok" then
+                local d = sim.door(x, y)
+                if d ~= nil and not d.open and not d.powered then
+                    sim.pry_door(x, y)
+                    sim.message.send({ recipient = user, message = "The door gives way." })
+                end
+            else
+                sim.message.send({ recipient = user, message = "You lose your grip on the crowbar." })
             end
-        else
-            ctx.system_msg(user, "You lose your grip on the crowbar.")
-        end
-    end,
-}
+        end)
+        return true
+    end)
+end
+
+return content

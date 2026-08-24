@@ -3,15 +3,15 @@
 --
 -- The assertion worth making is not "clicking it changes something" --
 -- it is that TWO pieces of per-instance state, the engine's anonymous
--- dial (`modes`/`ctx.set_mode`) and the appearance state
--- (`states`/`ctx.set_state`), stay in step over a full cycle and past
+-- dial (`modes`/`sim.set_mode`) and the appearance state
+-- (`states`/`sim.set_state`), stay in step over a full cycle and past
 -- the wrap. They are separate mechanisms; a hook that advanced one and
 -- not the other would leave a toy that is set to "aft" and drawn
 -- pointing "fore", and only reading the SPRITE off the deck catches it.
 --
 -- tg does the same thing in one line by writing `icon_state` out of its
 -- mode list (toys.dm:427), and does its own bounds check in the hook
--- (toys.dm:422-426). Here the clamp is native -- `ctx.set_mode` refuses
+-- (toys.dm:422-426). Here the clamp is native -- `sim.set_mode` refuses
 -- a position the prototype never declared -- so the last leg of this
 -- spec is the interesting one: after the fifth click the dial is back
 -- at off, having wrapped rather than run off the end.
