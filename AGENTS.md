@@ -1,8 +1,9 @@
 # Tales from Space — content rules
 
 Mechanics (layout, running, spec commands) live in `tfs/README.md`.
-Contracts: `docs/SCRIPTING.md` is the v1 design and
-`docs/LUAU-API.md` is the as-built surface these files use today.
+Contracts: `docs/SCRIPTING.md` is the v1 design, `docs/LUAU-API.md` the
+surface these files CALL, `docs/CONTENT-SCHEMA.md` the fields they
+DECLARE.
 
 - Content is the default home for game ideas: nouns (prototypes, rosters,
   constants, ids, maps, manifests) are data here; verbs at discrete event
