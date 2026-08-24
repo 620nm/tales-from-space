@@ -3,7 +3,8 @@
 // It is wired the way the shipped station is (docs/POWER.md): a yellow
 // L2 backbone ring from the Engineering generator/SMES to every APC
 // (running under four doors as direct taps), and a red L1 room circuit
-// out of each APC to its room's lights, outlets and door feeds.
+// out of each APC to its room's outlets and door feeds -- and every
+// light fitting is a cord into the nearest of those outlets.
 (
     name: "Outpost Zero",
     legend: {
@@ -47,11 +48,13 @@
         (16, 2, "outlet"),
         (17, 2, "light"),
         (18, 2, "apc"),
+        (12, 2, "outlet"),
         (10, 3, "airlock"),
         (15, 3, "airlock", { "access": "engineering" }),
         (3, 4, "light"),
         (6, 5, "airlock"),
         (3, 6, "light"),
+        (4, 6, "outlet"),
         (5, 6, "apc"),
         (10, 6, "airlock"),
         (15, 6, "airlock"),
@@ -71,6 +74,7 @@
     cables: [
         (3, 2, 3),
         (4, 2, 1),
+        (12, 2, 1),
         (13, 2, 1),
         (16, 2, 1),
         (17, 2, 1),
@@ -138,12 +142,14 @@
     mounts: [
         (3, 2, North),
         (4, 2, North),
+        (12, 2, North),
         (13, 2, North),
         (16, 2, North),
         (17, 2, North),
         (18, 2, North),
         (3, 4, South),
         (3, 6, North),
+        (4, 6, North),
         (5, 6, North),
         (20, 6, North),
         (8, 8, South),
