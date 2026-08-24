@@ -58,7 +58,7 @@ t.world([==[(
     ],
     spawns: [(1, 2)],
     items: [(1, 2, "analyzer"), (2, 2, "pipe")],
-    pipes: [(2, 1, 4), (3, 1, 4)],
+    pipes: [(2, 1, 5), (3, 1, 4)],
     air_presets: {
         "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
     },
@@ -103,22 +103,29 @@ assert(
 assert(matching(air, "Nitrogen: ", " mol (79 %)"), "four fifths nitrogen")
 assert(matching(air, "Oxygen: ", " mol (21 %)"), "one fifth oxygen")
 
--- ---- the run ----
+-- ---- the runs ----
 --
--- Pipe is under the deck, so what a click on open plating means is the
--- pipe buried in it -- and the volume is the giveaway that this is a
--- different body of gas from the room a foot above it.
+-- A click cannot land on one pipe out of five, so a click on open
+-- plating reads EVERYTHING under and over it, each mixture named: the
+-- air, then every buried run by its layer. Two layers are laid here so
+-- the ambiguity the labels exist for is actually on the tile.
 local _ = t.messages(p)
 t.click(p, 2, 1)
 t.run_ticks(2)
 local pipe = t.messages(p)
-assert(has(pipe, "Results of analysis of the pipe."), "the run, not the room")
+assert(has(pipe, "Results of analysis of the air."), "the turf is read first")
+assert(has(pipe, "Results of analysis of the layer 3 pipe."), "the run, by name")
 assert(
     has(pipe, "Pressure: " .. r2(t.pipe_pressure(2, 1)) .. " kPa"),
     "and the number an engineer would read off a meter there"
 )
 -- Two lengths of tg's UNARY_PIPE_VOLUME * 2, which is 70 L each.
 assert(has(pipe, "Volume: 140 L"), "two lengths of pipe, and not the room")
+-- The second layer answers separately, and answers for itself: one
+-- lone length holding the boot air it was commissioned with, 70 L --
+-- not the canister-fed pressure the run beside it carries.
+assert(has(pipe, "Results of analysis of the layer 1 pipe."), "the other run, by name")
+assert(has(pipe, "Volume: 70 L"), "one length, not the run beside it")
 
 -- ---- the bottle ----
 --
@@ -158,10 +165,10 @@ local _ = t.messages(p)
 t.click(p, 5, 2)
 t.run_ticks(2)
 local fresh = t.messages(p)
-assert(has(fresh, "Results of analysis of the pipe."), "it is a pipe")
-assert(has(fresh, "The pipe is empty!"), "and nobody has filled it")
+assert(has(fresh, "Results of analysis of the layer 3 pipe."), "it is a pipe, named by layer")
+assert(has(fresh, "The layer 3 pipe is empty!"), "and nobody has filled it")
 assert(has(fresh, "Volume: 70 L"), "one length, and the volume still prints")
-assert(not matching(fresh, "Moles: ", " mol"), "nothing else does")
+assert(has(fresh, "Results of analysis of the air."), "the turf still answers beside it")
 
 -- ---- and it is an instrument, not a tool ----
 --
