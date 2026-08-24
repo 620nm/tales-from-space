@@ -75,8 +75,12 @@ if sim ~= nil then
             end
             -- tg's cup default `amount_per_transfer_from_this = 10`
             -- (_cup.dm:4), which is also the beaker's gesture.
-            sim.pour(self, clicked.entity, 10 * U,
-                "The bottle is empty.", "The other vessel is full to the brim.")
+            sim.matter.transfer({
+                from = self,
+                to = clicked.entity,
+                amount = 10 * U,
+                phases = { "liquid" },
+            })
             sim.message.send({ recipient = user, message = "You pour from the bottle." })
             return true
         end
@@ -88,7 +92,12 @@ if sim ~= nil then
                 return true
             end
             sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = ev.at })
-            sim.drink(self, user, 2 * U)
+            sim.matter.transfer({
+                from = self,
+                to = user,
+                amount = 2 * U,
+                phases = { "liquid" },
+            })
             sim.message.send({ recipient = user, message = "You drink from the bottle." })
             return true
         end
@@ -101,8 +110,12 @@ if sim ~= nil then
             sim.message.send({ recipient = user, message = "The bottle is empty." })
             return true
         end
-        sim.spill(self, x, y,
-            "The bottle is empty.", "You can't reach that from here.")
+        sim.matter.transfer({
+            from = self,
+            to = ev.at.matter,
+            amount = "all",
+            phases = { "liquid" },
+        })
         sim.message.send({ recipient = user, message = "You tip the bottle out onto the deck." })
         return true
     end)
