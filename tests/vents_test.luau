@@ -119,14 +119,19 @@ local SUPPLY_MAP = [==[(
         "#########",
     ],
     spawns: [(5, 1)],
-    // One length joining the vent's mouth to the canister's socket.
-    pipes: [(3, 1, 4)],
+    // The pump regulates the vent's feed at one atmosphere off the
+    // bottle's forty -- tg's own station shape, because a fastened
+    // bottle IS its line and a vent on a forty-atmosphere main would
+    // out-blow the very breach this file is about.
+    pipes: [],
     air_presets: {
         "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
     },
     structures: [
-        (2, 1, "vent"), (4, 1, "connector_port"),
-        (4, 1, "canister", { "air": "canister_air", "open": true }),
+        (2, 1, "vent"),
+        (3, 1, "gas_pump", "running", { "dir": "west" }),
+        (4, 1, "connector_port", { "dir": "west" }),
+        (4, 1, "canister", { "air": "canister_air" }),
     ],
     // Backbone (L2) under the generator and the APC; room circuit (L1) from the
     // APC's own tile west along the corridor to the vent.
@@ -150,8 +155,7 @@ local apc = t.apc_at(7, 1)
 assert(apc ~= nil, "the map wired an APC")
 assert(apc.equipment == true, "and the generator behind it is feeding the equipment channel")
 assert(t.canister_pressure(4, 1) > 4000.0, "a fresh canister is at 45 atm")
-assert(t.pipe_pressure(3, 1) > 90.0, "which has charged the run to one atmosphere")
-assert(t.room_pressure(2, 1) > 90.0, "and the corridor opens breathable")
+assert(t.room_pressure(2, 1) > 90.0, "and the corridor opens breathable off the regulated feed")
 
 -- Tear the deck open beside the vent. There is no breach STATE anywhere
 -- (CLAUDE.md): a hull breach is a floor that became space, so that is
@@ -373,18 +377,33 @@ t.set_environment({ sink_k = 293.15, insolation = 0 }) -- inert sky, as above
 t.tick()
 
 local BAY = row(1, 7, 1)
+-- No regulator anywhere, on purpose -- and that now has the meaning tg
+-- gives it: a passive vent is a hole, the fastened bottle IS the line,
+-- so the bay runs to the system's own uniform density, far past
+-- breathable. An unpowered bay off a fat bottle is a pressure chamber;
+-- a breathable one needs the powered vent's setpoint, which is the
+-- other half of this file.
 assert(t.pipe_pressure(3, 1) > 90.0, "the bottle charged the run through its socket")
-assert(t.room_pressure(2, 1) > 90.0, "and the bay opens breathable")
+t.run_seconds(20)
+local settled_bay = t.room_pressure(2, 1)
+assert(settled_bay > 300.0, "the bay runs far past an atmosphere: " .. settled_bay)
 
 -- Open the deck beside the vent. There is no valve anywhere in this
 -- world: the bay empties into space and the run empties into the bay
 -- after it, so the bottle is left pouring itself out through a hole in
 -- the floor -- which is what an open vent costs you, and why tg gives
 -- the powered one a shut-off and this one none.
+-- Ten seconds of hole, not thirty: the bottle is ONE body with its
+-- line now, so a breach drinks the whole reserve at line speed rather
+-- than at a valve's metered trickle -- leave it open half a minute and
+-- there is nothing left to refill the bay WITH.
 local before_hole = t.canister_pressure(5, 1)
 assert(t.set_turf(1, 1, "space"), "the deck opens")
-t.run_seconds(30)
-assert(t.room_pressure(2, 1) < 40.0, "the bay blew down: " .. t.room_pressure(2, 1))
+t.run_seconds(10)
+assert(
+    t.room_pressure(2, 1) < settled_bay * 0.5,
+    "the bay blew down: " .. settled_bay .. " -> " .. t.room_pressure(2, 1)
+)
 assert(
     t.canister_pressure(5, 1) < before_hole - 50.0,
     "and the bottle paid for every second of it: "
@@ -393,39 +412,48 @@ assert(
 assert(t.set_turf(1, 1, "plating"), "and is sealed again")
 t.tick()
 
--- ---- run -> bay: the line refills a sealed compartment ----
+-- ---- sealed again: the whole system comes level ----
+--
+-- Nothing is powered and nothing regulates, so the one thing this
+-- world can do once the hole is shut is come to ONE density across
+-- bay, run and bottle -- `internal.equalize` writ across every holder
+-- there is. Direction is whatever the breach left uneven; the claims
+-- are that it levels, and that not a mole moves in or out of a sealed
+-- world while it does.
 local bay_0 = room_moles(BAY)
 local net_0 = pipe_moles(3, 1)
 local can_0 = moles(t.canister_pressure(5, 1), CAN_M3)
 t.run_seconds(120)
 local bay_1 = room_moles(BAY)
 local net_1 = pipe_moles(3, 1)
+local can_1 = moles(t.canister_pressure(5, 1), CAN_M3)
 
-assert(
-    bay_1 > bay_0 + 100.0,
-    "the line put the bay back with no power anywhere on the map: "
-        .. bay_0 .. " -> " .. bay_1 .. " mol"
-)
 near(
     t.pipe_pressure(3, 1),
     t.room_pressure(2, 1),
     1.0,
-    "and the two came level -- at one temperature, equal pressure IS"
+    "run and bay came level -- at one temperature, equal pressure IS"
         .. " equal density, which is the whole of `internal.equalize`"
 )
--- The books, across three holders this time: the bottle is the only
--- source in the world, so what the bay and the run gained it lost.
-local gained = (bay_1 - bay_0) + (net_1 - net_0)
-local spent = can_0 - moles(t.canister_pressure(5, 1), CAN_M3)
-assert(gained > 100.0, "a real amount of gas moved: " .. gained .. " mol")
-near(spent, gained, gained * 0.02, "and every mole of it came out of the bottle")
+near(
+    t.canister_pressure(5, 1),
+    t.room_pressure(2, 1),
+    5.0,
+    "and the bottle came level with both: it is one body with its line"
+)
+near(
+    bay_1 + net_1 + can_1,
+    bay_0 + net_0 + can_0,
+    0.001,
+    "and a sealed world neither made nor lost a mole while it settled"
+)
 
 -- ---- bay -> run: the same hole, the other way ----
 --
--- Now the bay is the fuller side. The bottle has all but stopped -- a
--- run above its release pressure is a run a canister leaves alone --
--- and the three books are closed, so the sum of them is exact rather
--- than approximate.
+-- Foul the bay and it is the fuller side, so the flow reverses -- into
+-- the run, and on into the bottle, which takes its share like the
+-- volume it is (there is no release valve in this coupling to leave it
+-- out). The three books are closed, so the sum is exact.
 local base_bay = room_moles(BAY)
 local base_net = pipe_moles(3, 1)
 local base_can = t.canister_pressure(5, 1)
@@ -445,12 +473,10 @@ assert(
     room_moles(BAY) < base_bay + 210.0 - 5.0,
     "and the bay is lighter than what was put in it: " .. room_moles(BAY) .. " mol"
 )
-near(
-    t.canister_pressure(5, 1),
-    base_can,
-    0.5,
-    "the bottle all but sat this one out, its own line being over its"
-        .. " release pressure the whole time"
+assert(
+    t.canister_pressure(5, 1) > base_can + 0.5,
+    "the bottle took its share of what was pushed back: "
+        .. base_can .. " -> " .. t.canister_pressure(5, 1) .. " kPa"
 )
 near(
     room_moles(BAY) + pipe_moles(3, 1) + moles(t.canister_pressure(5, 1), CAN_M3),

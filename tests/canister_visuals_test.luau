@@ -59,12 +59,12 @@ t.world([==[(
         '#': (turf: Wall),
     },
     rows: [
-        "##########",
-        "#..#..#..#",
-        "##########",
+        "#############",
+        "#..#..#..#..#",
+        "#############",
     ],
     spawns: [(1, 1)],
-    pipes: [(8, 1, 4)],
+    pipes: [(8, 1, 4), (11, 1, 4)],
     air_presets: {
         "pumped_down": (temperature_k: 293.15),
         "hot_cl2": (gases: [("cl2", 50.0)], temperature_k: 1000.0),
@@ -74,16 +74,22 @@ t.world([==[(
         (1, 1, "pumped_down"), (2, 1, "pumped_down"),
         (4, 1, "pumped_down"), (5, 1, "pumped_down"),
         (7, 1, "pumped_down"), (8, 1, "pumped_down"),
+        (10, 1, "pumped_down"), (11, 1, "pumped_down"),
     ],
     structures: [
         (1, 1, "canister", { "air": "hot_cl2", "open": true }),
         (4, 1, "canister", { "air": "by_the_wrong_name", "open": true }),
         (7, 1, "connector_port"),
-        // Wound up past the main's commissioned atmosphere, because a
-        // canister only pushes UP TO its setpoint: a bottle set to one
-        // atmosphere on a main already at one has nothing to do, which
-        // is the machine working and not what this bay is about.
-        (7, 1, "canister", { "air": "hot_cl2", "open": true, "release_kpa": 400.0 }),
+        // Valve SHUT, because the wrench is the coupling: a fastened
+        // bottle equalises with its run with no valve in the story
+        // (tg's connector reconciliation), and OPENING the valve on a
+        // ported bottle vents the DECK -- tg's own trap, pinned below.
+        (7, 1, "canister", { "air": "hot_cl2" }),
+        (10, 1, "connector_port"),
+        // The TRAP, as mapped: fastened AND open. The wrench couples it
+        // to the run; the valve gasses the deck. Both at once, which is
+        // exactly what tg's two independent couplings mean.
+        (10, 1, "canister", { "air": "hot_cl2", "open": true }),
     ],
 )]==], 7)
 
@@ -121,9 +127,10 @@ assert(
 
 -- ---- the bottle on a port ----
 --
--- Correct plumbing, and the confounder worth pinning: what comes out
--- of this one goes into the RUN. A deck that stays clean here is the
--- machine working.
+-- Correct plumbing, and the confounder worth pinning: a fastened
+-- bottle is part of the RUN -- its charge equalises into the main with
+-- the valve never touched. A deck that stays clean here is the machine
+-- working; the valve's own trap gets its pin at the end of the file.
 assert(in_pipe(8, 1, "cl2") > 0.0, "the port carried it into the main")
 assert(
     held(7, 1, "cl2") < VISIBLE_MOL and held(8, 1, "cl2") < VISIBLE_MOL,
@@ -133,4 +140,18 @@ assert(
 assert(
     t.room_pressure(7, 1) < 1.0,
     "the bay stayed pumped down: " .. t.room_pressure(7, 1) .. " kPa"
+)
+
+-- ---- the trap ----
+--
+-- Opening the valve on a PORTED bottle vents the deck: the valve
+-- reaches the room whether or not the wrench has coupled the bottle to
+-- a run (tg canister.dm:549, `holding?.return_air() ||
+-- location.return_air()` -- a connected port never appears there).
+-- tg's engineers leave a ported valve shut, and now ours have the same
+-- reason to.
+assert(in_pipe(11, 1, "cl2") > 0.0, "the wrench coupled it to the run")
+assert(
+    held(10, 1, "cl2") > 0.0,
+    "and the open valve gassed the deck it stands on"
 )

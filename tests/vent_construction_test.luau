@@ -102,13 +102,18 @@ t.world([==[(
     ],
     spawns: [(3, 2)],
     items: [(3, 2, "rpd")],
-    pipes: [(4, 1, 4), (5, 1, 4)],
+    // One length short of the socket: the gas pump at (5,1) regulates
+    // the main at one atmosphere off the bottle's forty -- tg's own
+    // shape, since a fastened bottle IS its line and a vent on a
+    // forty-atmosphere main would out-blow the breach below.
+    pipes: [(4, 1, 4)],
     air_presets: {
         "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
     },
     structures: [
-        (6, 1, "connector_port"),
-        (6, 1, "canister", { "air": "canister_air", "open": true }),
+        (5, 1, "gas_pump", "running", { "dir": "west" }),
+        (6, 1, "connector_port", { "dir": "west" }),
+        (6, 1, "canister", { "air": "canister_air" }),
     ],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
