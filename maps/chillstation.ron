@@ -36,8 +36,8 @@
 // EVERYTHING IS FED. Ten photovoltaic panels north of the hull and a
 // generator and an SMES bank in Engineering carry one L2 backbone that
 // reaches all nine APCs; each APC takes from it on its L2 input port
-// and opens an L1 room circuit that runs under every light, every fan
-// and every socket it owns (docs/POWER.md, "Layers and ports"). The first draft
+// and opens an L1 room circuit that runs under every socket, every fan
+// and every door feed it owns (docs/POWER.md, "Layers and ports"). The first draft
 // shipped two boot warnings on purpose (an unwired room was the
 // construction playground); this one ships NONE, and the playground is
 // now the empty blocked-out rooms and the space around the hull.
@@ -558,10 +558,24 @@
         (18, 11, "apc"), (15, 14, "apc"), (4, 22, "apc"),
         (18, 22, "apc"), (28, 22, "apc"), (4, 27, "apc"),
         // ---- THE SOCKETS -----------------------------------------
-        // Three, and deliberately few: a socket is what a corded
-        // appliance plugs into, and the station has three places
-        // anybody would put one down.
+        // A socket is what everything on a cord plugs into, and on this
+        // station that is the light fittings as much as the appliances
+        // (docs/POWER.md, "Outlets and cords") -- so every bay with a
+        // tube in it has one within cord reach, and a room with no
+        // socket is a room with no light.
+        //
+        // The three the crew think of as sockets, where somebody would
+        // actually put an appliance down:
         (21, 4, "outlet"), (24, 14, "outlet"), (24, 29, "outlet"),
+        // ...and one per bay for the fittings overhead.
+        (12, 4, "outlet"), (32, 4, "outlet"),
+        (10, 9, "outlet"), (21, 9, "outlet"), (32, 9, "outlet"),
+        (20, 11, "outlet"), (31, 11, "outlet"),
+        (10, 13, "outlet"),
+        (9, 18, "outlet"), (17, 18, "outlet"), (30, 18, "outlet"),
+        (21, 20, "outlet"),
+        (26, 22, "outlet"), (28, 26, "outlet"),
+        (9, 27, "outlet"), (35, 27, "outlet"),
         // ---- THE POWER PLANT -------------------------------------
         // Ten photovoltaic panels north of the hull where the sun is:
         // quiet, modest watts, no moving parts, and happy in vacuum.
@@ -1087,5 +1101,9 @@
         (5, 25, South), (11, 25, South), (28, 23, West), (28, 27, West),
         (35, 23, East), (35, 28, East), (20, 22, North), (24, 22, North),
         (5, 27, North), (11, 27, North), (24, 14, East), (24, 29, South),
+        (12, 4, North), (32, 4, North), (10, 9, South), (21, 9, South),
+        (32, 9, South), (20, 11, North), (31, 11, North), (10, 13, North),
+        (9, 18, South), (17, 18, South), (30, 18, South), (21, 20, North),
+        (26, 22, North), (28, 26, West), (9, 27, North), (35, 27, East),
     ],
 )

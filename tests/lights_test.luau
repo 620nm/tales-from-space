@@ -20,11 +20,12 @@ t.world([==[(
         '#': (turf: Wall),
         'l': (turf: Floor, fixture: Some(Light), light: Some("#FFD6AA")),
         'a': (turf: Floor, fixture: Some(Apc)),
+        'o': (turf: Floor, fixture: Some(Outlet)),
         'g': (turf: Floor, fixture: Some(Generator)),
     },
     rows: [
         "#####",
-        "#al.#",
+        "#alo#",
         "#..g#",
         "#####",
     ],
