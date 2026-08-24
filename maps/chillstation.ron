@@ -343,6 +343,14 @@
         // machines that need or make a second gas -- the mixer's other
         // intake, and the bottle the filter fills with what it pulls
         // out.
+        // The chamber feed's bottles are STORAGE, not regulators: a
+        // fastened bottle is one body with its line (tg's connector
+        // coupling), and the chamber injectors have no ceiling -- so
+        // the pair's header is bounded by two pumps holding the feed
+        // at one atmosphere, which is the regulator job tg gives a
+        // pump and never a bottle.
+        (14, 25, "gas_pump", "running", { "dir": "south" }),
+        (18, 23, "gas_pump", "running", { "dir": "east", "target_kpa": 4500.0 }),
         (15, 22, "connector_port"),
         (17, 22, "connector_port"),
         (23, 26, "connector_port"),
@@ -410,7 +418,13 @@
         // return never moves. A return line does not want a pressure, it
         // wants a throughput, which is exactly what tg's volume pump is
         // for (volume_pump.dm: it "never asks").
-        (18, 26, "volume_pump", "running"),
+        // A PRESSURE pump, deliberately: the waste lift runs the main down
+        // to nothing, and a volumetric pump refuses an input that thin
+        // (tg volume_pump.dm's input_starting_pressure < 0.01 cutoff) --
+        // so the last trickle of a scrubber's catch parked in the main
+        // forever. A gas pump moves moles toward its setpoint no matter
+        // how thin the source, which is what a waste lift is for.
+        (18, 26, "gas_pump", "running", { "dir": "north", "target_kpa": 4500.0 }),
         // Bottled nitrogen off the first filter's side mouth. The
         // connector stands at (19,25) and mouths north into the catch
         // pipe at (19,24); that keeps the component off the raw run and
@@ -484,12 +498,17 @@
         // SIPHON drawing it back out onto the yellow draw. Both ship
         // running -- a storage chamber nobody switched on is a sealed
         // room full of gas with no way to reach it.
-        (15, 33, "air_injector", "injecting"),
-        (15, 34, "air_scrubber", "siphoning"),
-        (19, 33, "air_injector", "injecting"),
-        (19, 34, "air_scrubber", "siphoning"),
-        (23, 33, "air_injector", "injecting"),
-        (23, 34, "air_scrubber", "siphoning"),
+        // Aimed by hand, every one: each injector's feed drops down
+        // the wall column WEST of it and its siphon partner stands
+        // SOUTH -- two joinable mouths, and an automatic fit that
+        // guessed the partner got a machine that moved nothing. The
+        // placement dir is the map saying which one it meant.
+        (15, 33, "air_injector", "injecting", { "dir": "east" }),
+        (15, 34, "air_scrubber", "siphoning", { "dir": "north" }),
+        (19, 33, "air_injector", "injecting", { "dir": "east" }),
+        (19, 34, "air_scrubber", "siphoning", { "dir": "north" }),
+        (23, 33, "air_injector", "injecting", { "dir": "east" }),
+        (23, 34, "air_scrubber", "siphoning", { "dir": "north" }),
         // ---- EVERY THRESHOLD ON THE STATION ----------------------
         // Nineteen airlocks, placed by id like everything else that
         // stands on the deck. What used to be two glyphs ('+' inside,
@@ -780,6 +799,7 @@
         // -- Atmospherics: under the filter, the mixer, the pump, the
         //    injectors, both lights and the dispenser's outlet.
         (14, 23, 1), (15, 23, 1), (16, 23, 1), (17, 23, 1), (18, 23, 1), (19, 23, 1),
+        (14, 24, 1), (14, 25, 1),
         (20, 23, 1), (21, 23, 1), (22, 23, 1), (23, 23, 1), (24, 23, 1), (25, 23, 1),
         (26, 23, 1), (18, 22, 1), (18, 24, 1), (18, 25, 1), (18, 26, 1),
         (18, 27, 1), (14, 22, 1), (15, 22, 1), (16, 22, 1), (17, 22, 1),
@@ -851,7 +871,7 @@
         // department's own working line and it is left unpainted,
         // because it is not distro and not waste -- it is where the mix
         // is made.
-        (14, 23, 4), (15, 23, 4), (17, 23, 4), (18, 23, 4), (20, 23, 4),
+        (14, 23, 4), (15, 23, 4), (17, 23, 4), (20, 23, 4),
         (22, 23, 4), (24, 23, 4), (26, 23, 4),
         // The mixer's side feed: its second mouth drops south to the
         // bottle on the port at (23, 26). The connector replaces the last
@@ -894,7 +914,7 @@
         // run parallel up the department and never join.
         (14, 32, 4), (15, 32, 4), (16, 32, 4), (17, 32, 4), (18, 32, 4),
         (14, 33, 4), (18, 33, 4), (14, 31, 4), (14, 30, 4), (14, 29, 4),
-        (14, 27, 4), (14, 26, 4), (14, 25, 4),
+        (14, 27, 4), (14, 26, 4),
         // DRAW is layer 2, because a scrubber is: every one of them on
         // the station binds on tg's scrubbers layer, and a chamber's
         // siphon is no exception. So the storage draw and the station's

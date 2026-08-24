@@ -23,7 +23,10 @@ for _, row in ipairs({
     { 21, 23, "gas_filter_co2", "running" },
     { 23, 23, "gas_mixer_airmix", "running" },
     { 25, 23, "gas_pump", "running" },
-    { 18, 26, "volume_pump", "running" },
+    { 18, 26, "gas_pump", "running" }, -- the waste lift: a pressure pump,
+    -- because a volumetric one refuses the drained main's trickle
+    { 14, 25, "gas_pump", "running" }, -- the wheel feed's regulator
+    { 18, 23, "gas_pump", "running" }, -- the process inlet's regulator
     { 16, 17, "air_scrubber", "scrubbing" },
     { 15, 33, "air_injector", "injecting" },
     { 15, 34, "air_scrubber", "siphoning" },
