@@ -5,13 +5,19 @@
 -- not a closed wire enum: code/_onclick/hud/human.dm:80-129.  The slot
 -- flags those declarations reference are in code/__DEFINES/inventory.dm:27-92.
 return {
+    -- `breathes` and `seals` are the two capabilities a native
+    -- mechanism may look for. tg splits the same facts across slot
+    -- flags: MASKINTERNALS is what a supply line reaches lungs through
+    -- (code/__DEFINES/obj_flags.dm:84) and STOPSPRESSUREDAMAGE is what
+    -- keeps a vacuum off skin (:80). Here they are properties of the
+    -- PLACE, so the engine never has to know a face from a torso.
     equipment = {
         { id = "id",      label = "ID" },
         { id = "uniform", label = "Uniform" },
-        { id = "suit",    label = "Suit" },
+        { id = "suit",    label = "Suit", seals = true },
         { id = "belt",    label = "Belt" },
         { id = "back",    label = "Back", quick_store = true },
-        { id = "mask",    label = "Mask" },
+        { id = "mask",    label = "Mask", breathes = true },
     },
 
     -- TfS names the derived capacities; `port` only opts one into a
