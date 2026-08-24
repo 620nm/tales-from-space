@@ -30,6 +30,7 @@ return {
     id = "volume_pump",
     name = "volumetric gas pump",
     sprite = "volpump_off_n",
+    ui = { modules = { "flow" } },
     dense = false,
     states = { "off", "running" },
     -- A binary device reaches along one AXIS, so north and south share a

@@ -25,12 +25,12 @@
 -- fitting here (docs/CONSTRUCTION.md, "Fittings, portables, and the round trip"), which is why
 -- both mirror images are on the shelf.
 --
--- The tab ORDER is alphabetical rather than tg's, because the engine
--- sorts `categories` so the window is stable between rounds.
+-- The group order below is the window's stable order between rounds.
 return {
     id = "pipe_dispenser",
     name = "pipe dispenser",
     sprite = "pipe_dispenser",
+    ui = { modules = { "shelf" }, opens_on_click = false },
     dense = true,
     -- Its own file, not the vendor's: a dispenser also takes fittings
     -- BACK, and a softdrinks machine must never learn how to swallow
@@ -42,12 +42,7 @@ return {
     vend_secs = 1.0,
     -- tg's own `desc`, which is the whole personality of the thing.
     ad = "Dispenses countless types of pipes. Very useful if you need pipes.",
-    categories = {
-        Pipes = "grip-lines",
-        Binary = "arrows-alt-h",
-        Devices = "microchip",
-        ["Heat Exchange"] = "fire",
-    },
+    categories = { "Pipes", "Binary", "Devices", "Heat Exchange" },
     -- tg's dispenser has no stock at all — it conjures. `infinite_stock`
     -- makes the shelf count display-only in every mode.
     vends = {

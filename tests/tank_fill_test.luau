@@ -149,7 +149,8 @@ near(
 t.click(p, 2, 1, t.target_at(2, 1))
 t.tick()
 local half = t.ui(p)
-assert(half and half.kind == "tank", "the vessel opens its contents window")
+assert(half and half.document == "modules" and half.presentation == "modules",
+    "the vessel opens its contents document")
 
 -- The gauge is a PERCENTAGE of the sticker, not of anything else. Half
 -- the rating, on the nose: tg's own `starting_pressure_percent = 0.5`.
@@ -192,7 +193,8 @@ end
 t.click(p, 10, 1, t.target_at(10, 1))
 t.tick()
 local over = t.ui(p)
-assert(over and over.kind == "tank", "the over-filled vessel opens its window too")
+assert(over and over.document == "modules" and over.presentation == "modules",
+    "the over-filled vessel opens its document too")
 assert(t.tank_pressure(10, 1) > RATED_KPA * 1.3, "it is a third past its rating")
 near(over.gauge, 100.0, 1e-9, "and the gauge pins at full: " .. over.gauge)
 assert(row(over, "pressure").tone == "off",
@@ -275,7 +277,8 @@ end
 t.click(q, 3, 1, t.target_at(3, 1))
 t.tick()
 local empty = t.ui(q)
-assert(empty and empty.kind == "tank", "an empty vessel opens a window like any other")
+assert(empty and empty.document == "modules" and empty.presentation == "modules",
+    "an empty vessel opens a document like any other")
 near(empty.gauge, 0.0, 1e-12, "the gauge is at rest: " .. empty.gauge)
 assert(row(empty, "contents") and row(empty, "contents").value == "empty",
     "and the panel says the word")

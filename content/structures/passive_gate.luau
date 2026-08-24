@@ -25,6 +25,7 @@ return {
     id = "passive_gate",
     name = "passive gate",
     sprite = "passgate_off_n",
+    ui = { modules = { "flow" } },
     dense = false,
     states = { "shut", "open" },
     facing_sprites = {

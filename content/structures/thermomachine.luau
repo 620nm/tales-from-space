@@ -44,6 +44,7 @@ return {
     id = "thermomachine",
     name = "temperature control unit",
     sprite = "thermo_off",
+    ui = { modules = { "thermal" } },
     dense = true,
     -- Two positions, and the words are the ones the panel's switch
     -- wears and the ones a refusal says out loud.

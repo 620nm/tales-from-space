@@ -45,6 +45,7 @@ return {
     -- The housing, which is never tinted: tg's greyscale config paints
     -- only the needle (`color_ids: [1]` on the pressure layer).
     sprite = "meter_base",
+    ui = { modules = { "meter" } },
     dense = false,
     states = { "attached" },
     build = {

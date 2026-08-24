@@ -15,6 +15,7 @@ return {
     id = "apc",
     name = "APC",
     sprite = "apc",
+    ui = { modules = { "battery", "channels", "ports" } },
     fixture = "Apc",
     appearance = {
         mounted = {

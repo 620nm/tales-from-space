@@ -18,7 +18,7 @@
 -- that decision to be remotely available, and losing the guarantee is
 -- the price.
 --
--- Here that is two fields. `panel = true` gives it the settings window
+-- Here the `ui` declaration gives it the settings window
 -- the whole in-line roster shares -- the equivalent surface, since
 -- silicons do not exist yet -- and `switch_secs = 0` takes the wheel
 -- away: a digital valve throws on the command, where a manual one
@@ -31,6 +31,7 @@ return {
     id = "digital_valve",
     name = "digital valve",
     sprite = "dvalve_shut_ns",
+    ui = { modules = { "flow" } },
     dense = false,
     states = { "shut", "open" },
     facing_sprites = {
@@ -85,7 +86,6 @@ return {
     atmos = {
         device = "valve",
         positions = { "shut", "open" },
-        panel = true,
         switch_secs = 0.0,
     },
     build = {

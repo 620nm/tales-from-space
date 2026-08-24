@@ -126,7 +126,8 @@ assert(
 -- only asked to be THERE, because opening the valve and looking at
 -- the bottle are one gesture.
 local panel = t.ui(diver)
-assert(panel and panel.kind == "held_tank", "the tank reads itself out")
+assert(panel and panel.document == "modules" and panel.presentation == "modules",
+    "the tank reads itself out")
 
 -- ---------------------------------------------------------------
 -- FOUR: THE THREE-WAY.

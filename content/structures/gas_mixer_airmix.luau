@@ -45,6 +45,7 @@ return {
     id = "gas_mixer_airmix",
     name = "air mixer",
     sprite = "mixer_off_n",
+    ui = { modules = { "mixer" } },
     dense = false,
     states = { "off", "running" },
     facing_sprites = {

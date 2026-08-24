@@ -16,6 +16,7 @@ return {
     id = "gas_filter_flipped",
     name = "gas filter",
     sprite = "filter_f_off_n",
+    ui = { modules = { "filter" } },
     dense = false,
     states = { "off", "running" },
     facing_sprites = {

@@ -24,6 +24,7 @@ return {
     id = "gas_filter_n2",
     name = "nitrogen filter",
     sprite = "filter_on_n",
+    ui = { modules = { "filter" } },
     dense = false,
     states = { "off", "running" },
     facing_sprites = {
