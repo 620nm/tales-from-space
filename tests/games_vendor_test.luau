@@ -137,7 +137,7 @@ assert(card.sprite == "card_back", "showing its back: " .. tostring(card.sprite)
 -- The deck's shuffle is written on the record the moment it is dealt
 -- from, which is the only trace a string in `ScriptVars` leaves.
 local wrote = t.ledger_rows("VarSet")
-assert(#wrote >= 1 and wrote[#wrote].key == "order",
+assert(#wrote >= 1 and wrote[#wrote].key == "lunatic/tfs:order",
     "the vended deck kept its own order")
 
 -- ---- the Captain's Aid, which the machine is stingy with --------------
@@ -185,7 +185,7 @@ assert(t.count_items("d6") == 0 and t.count_items("d20") == 0,
 
 -- Walk to it and open it. The window opening at all IS the power
 -- assertion: the fixture script refuses with "dark and silent" when
--- `ctx.is_powered` says no, and that refusal would leave `t.ui` nil.
+-- `sim.is_powered` says no, and that refusal would leave `t.ui` nil.
 --
 -- The first joiner spawns at (18, 16), five tiles west of the machine
 -- along the Commons' open row, so the walk is deterministic rather

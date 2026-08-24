@@ -12,36 +12,49 @@
 -- happens to be shaped like a shelf, and the only reason to use it over
 -- the floor is that the floor gets crowded.
 --
--- WHAT COUNTS as one of its own is not a list in this file: `ctx.stocks`
+-- WHAT COUNTS as one of its own is not a list in this file: `sim.stocks`
 -- asks the machine's own shelf. So the day the heat exchanger joins the
 -- roster it is recyclable too, with no edit here — and a softdrinks
 -- machine, which does not run this script, still cannot swallow a pump.
-return {
+local content = {
     id = "pipe_dispenser",
     name = "pipe dispenser",
     sprite = "pipe_dispenser",
-    on_interact = function(ctx, self, user)
-        if not ctx.is_powered(self) then
-            ctx.system_msg(user, "The dispenser is dark and silent.")
-            return
-        end
-        ctx.open_ui(user, self)
-    end,
     -- The item is the thing swung; `self` is the machine. The target is
     -- the expert about what a swing means to it (docs/CONSTRUCTION.md),
     -- and this machine's answer is "I'll take that back".
-    on_attack = function(ctx, self, user, item)
-        local id = ctx.item_id(item)
-        if not id or not ctx.stocks(self, id) then
-            return "pass" -- not ours; let the click mean whatever else it means
-        end
-        if not ctx.is_powered(self) then
-            ctx.system_msg(user, "The dispenser is dark and silent.")
-            return
-        end
-        local x, y = ctx.pos(self)
-        ctx.consume(item)
-        ctx.sound("vend", x, y)
-        ctx.system_msg(user, "You put the " .. ctx.name(item) .. " back into the dispenser.")
-    end,
 }
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "interact" }, function(ev)
+        local self, user, x, y = ev.subject, ev.actor, ev.at.x, ev.at.y
+        if not sim.is_powered(self) then
+            sim.message.send({ recipient = user, message = "The dispenser is dark and silent." })
+            return true
+        end
+        ui.open({ viewer = user, owner = self })
+        return true
+    end)
+    script_definition:handle("attack.swing", { kind = "replace", route = "attack" }, function(ev)
+        local self, user = ev.implement, ev.actor
+        local target, victim, item = ev.target, ev.target, ev.target
+        local info = { surgery_refusal = ev.refusal }
+        local _self, _victim = self, victim
+        local id = item.prototype
+        if not id or not sim.stocks(self, id) then
+            return { replaced = false } -- not ours; let the click mean whatever else it means
+        end
+        if not sim.is_powered(self) then
+            sim.message.send({ recipient = user, message = "The dispenser is dark and silent." })
+            return true
+        end
+        local x, y = self.tile.x, self.tile.y
+        sim.entity.despawn({ entity = item })
+        sim.sound.play({ asset = "lunatic/tfs:sound/vend", at = ev.at })
+        sim.message.send({ recipient = user, message = "You put the " .. item.name .. " back into the dispenser." })
+        return true
+    end)
+end
+
+return content

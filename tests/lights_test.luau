@@ -80,7 +80,7 @@ local changed = t.ledger_rows("LightChanged")
 assert(#changed == 1, "one socket change so far, got " .. #changed)
 assert(changed[1].from == "ok" and changed[1].to == "broken", "from ok to broken")
 assert(changed[1].actor.kind == "script"
-    and changed[1].actor.file == "fixtures/light.luau",
+    and changed[1].actor.file == "lunatic/tfs",
     "the fixture's own file decided it")
 
 -- The janitor's device, one click.

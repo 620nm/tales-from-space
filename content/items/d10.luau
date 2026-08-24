@@ -18,7 +18,7 @@ local function comment(result)
     return ""
 end
 
-return {
+local content = {
     id = "d10",
     name = "d10",
     sprite = "d10",
@@ -37,19 +37,25 @@ return {
         ["9"] = "d10_9",
         ["10"] = "d10_10",
     },
-    on_use_self = function(ctx, self, user)
-        local result = ctx.random(1, SIDES)
-        ctx.sound("dice_roll", ctx.pos(user))
-        ctx.set_state(self, tostring(result))
-        ctx.system_msg(user, "You roll the d10. It lands on " .. result .. "." .. comment(result))
-    end,
-    on_throw_land = function(ctx, self, user, x, y)
-        local result = ctx.random(1, SIDES)
-        ctx.sound("dice_roll", x, y)
-        ctx.set_state(self, tostring(result))
-        ctx.system_msg(
-            user,
-            "The d10 rolls to a stop, landing on " .. result .. "." .. comment(result)
-        )
-    end,
 }
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
+        local self, user = ev.subject, ev.actor
+        local result = math.random(1, SIDES)
+        sim.sound.play({ asset = "lunatic/tfs:sound/dice_roll", at = user.tile })
+        sim.appearance.set_state({ entity = self, state = tostring(result) })
+        sim.message.send({ recipient = user, message = "You roll the d10. It lands on " .. result .. "." .. comment(result) })
+        return true
+    end)
+    script_definition:handle("throw.land.done", { kind = "react", route = "land" }, function(ev)
+        local self, user, x, y = ev.entity, ev.thrower, ev.at.x, ev.at.y
+        local result = math.random(1, SIDES)
+        sim.sound.play({ asset = "lunatic/tfs:sound/dice_roll", at = ev.at })
+        sim.appearance.set_state({ entity = self, state = tostring(result) })
+        sim.message.send({ recipient = user, message = "The d10 rolls to a stop, landing on " .. result .. "." .. comment(result) })
+    end)
+end
+
+return content

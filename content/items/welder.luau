@@ -4,7 +4,7 @@
 -- does to a girder, and vacuum knows a torch closes it. Every one of
 -- those answers lives with the thing that owns it, in
 -- tfs/content/structures/.
-return {
+local content = {
     id = "welder",
     name = "welding tool",
     sprite = "welder",
@@ -26,15 +26,6 @@ return {
     -- Strike it on, or snuff it (tg's `attack_self`, weldingtool.dm). A
     -- lit welder is "hot" for surgery's close operation (docs/SURGERY.md
     -- §6.2), which is what lets the improvised floor rescue seal a wound.
-    on_use_self = function(ctx, self, user)
-        if ctx.state(self) == "lit" then
-            ctx.set_flame(self, false)
-            ctx.system_msg(user, "You extinguish the welder.")
-        else
-            ctx.set_flame(self, true)
-            ctx.system_msg(user, "You flip the welder on; the flame hisses to life.")
-        end
-    end,
     -- A CLOSED tank. tg's welder holds its fuel in a sealed reservoir
     -- you refill from a tank rather than an open cup (welding_tool.dm's
     -- `/obj/item/weldingtool` carries no OPENCONTAINER flag, and
@@ -45,3 +36,20 @@ return {
     -- IS rather than waiting for the day the fuel gets a curve.
     sealed = true,
 }
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
+        local self, user = ev.subject, ev.actor
+        if self.state == "lit" then
+            sim.set_flame(self, false)
+            sim.message.send({ recipient = user, message = "You extinguish the welder." })
+        else
+            sim.set_flame(self, true)
+            sim.message.send({ recipient = user, message = "You flip the welder on; the flame hisses to life." })
+        end
+        return true
+    end)
+end
+
+return content

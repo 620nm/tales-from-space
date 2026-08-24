@@ -17,7 +17,7 @@
 -- rest of that ruling.
 --
 -- THE DIAL IS THE ENGINE'S, NOT THIS FILE'S. `modes = 5` mints an
--- anonymous five-position selector per instance and `ctx.set_mode`
+-- anonymous five-position selector per instance and `sim.set_mode`
 -- turns it; a number the prototype never declared is refused natively,
 -- so the wrap below cannot walk off the end even if this hook is
 -- wrong. tg keeps the same state in `current_mode` and does its own
@@ -30,7 +30,7 @@
 -- files read side by side.
 local DIRECTIONS = { "off", "port", "starboard", "fore", "aft" }
 
-return {
+local content = {
     id = "captains_aid",
     name = "Captain's Aid",
     -- The resting picture is the off one, which is also the state a
@@ -54,20 +54,28 @@ return {
         ["fore"] = "captains_aid_fore",
         ["aft"] = "captains_aid_aft",
     },
-    on_use_self = function(ctx, self, user)
-        local dial = ctx.mode(self)
+}
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
+        local self, user = ev.subject, ev.actor
+        local dial = sim.mode(self)
         -- `dial.count` is what the ENGINE minted from `modes`, not
         -- `#DIRECTIONS`: reading the count back means the wrap is
         -- computed against the dial that actually exists.
         local next_index = (dial.index + 1) % dial.count
-        ctx.set_mode(self, next_index)
+        sim.set_mode(self, next_index)
         local direction = DIRECTIONS[next_index + 1]
-        ctx.set_state(self, direction)
-        ctx.sound("switch_click", ctx.pos(user))
+        sim.appearance.set_state({ entity = self, state = direction })
+        sim.sound.play({ asset = "lunatic/tfs:sound/switch_click", at = user.tile })
         if direction == "off" then
-            ctx.system_msg(user, "You switch the Captain's Aid off.")
+            sim.message.send({ recipient = user, message = "You switch the Captain's Aid off." })
         else
-            ctx.system_msg(user, "The Captain's Aid points " .. direction .. ".")
+            sim.message.send({ recipient = user, message = "The Captain's Aid points " .. direction .. "." })
         end
-    end,
-}
+        return true
+    end)
+end
+
+return content
