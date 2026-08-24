@@ -263,7 +263,7 @@ if sim ~= nil then
                 sim.message.send({ recipient = user, message = "There is nothing loose there to break down." })
                 return true
             end
-            sim.entity.despawn({ entity = target.entity })
+            target.entity:consume()
             sim.sound.play({ asset = "lunatic/tfs:sound/smash", at = ev.at })
             sim.message.send({ recipient = user, message = "You break down the " .. target.entity.name .. "." })
             return true
