@@ -18,13 +18,25 @@ return {
     playable = true,
 
     max_health = 100,          -- MAX_LIVING_HEALTH, code/__DEFINES/mobs.dm:236
-    crit_at = 0,               -- HEALTH_THRESHOLD_CRIT, code/__DEFINES/combat.dm:88
-    hardcrit_at = -30,         -- HEALTH_THRESHOLD_FULLCRIT, combat.dm:89
-    dead_at = -100,            -- HEALTH_THRESHOLD_DEAD, combat.dm:90
+    life = {
+        initial = "alive",
+        terminal = "dead",
+        rules = {
+            -- HEALTH_THRESHOLD_DEAD / MAX_LIVING_HEALTH = -1.
+            -- code/__DEFINES/combat.dm:90; code/__DEFINES/mobs.dm:236.
+            { state = "dead", property = "health", at_most = -1 },
+            -- HEALTH_THRESHOLD_CRIT / MAX_LIVING_HEALTH = 0.
+            -- code/__DEFINES/combat.dm:88; code/__DEFINES/mobs.dm:236.
+            { state = "crit", property = "health", at_most = 0 },
+        },
+        -- HEALTH_THRESHOLD_FULLCRIT / MAX_LIVING_HEALTH = -0.3.
+        -- code/__DEFINES/combat.dm:89; code/__DEFINES/mobs.dm:236.
+        unconscious = { property = "health", at_most = -0.3 },
+    },
     hands = 2,                 -- default_num_hands, living_defines.dm:120
     default_zone = "chest",
     knockdown = true,
-    damage_coeff = { brute = 1, burn = 1, oxy = 1, tox = 1 },   -- damage_coeff, basic.dm:51
+    pool_coeff = { brute = 1, burn = 1, oxy = 1, tox = 1 },   -- pool_coeff, basic.dm:51
 
     -- Hit weights are tg's `ran_zone` table: head and chest 1, each
     -- limb 4 (code/__HELPERS/mobs.dm:36-41). Losing the head or the
@@ -60,17 +72,6 @@ return {
         brain = "organ_brain", eyes = "organ_eyes", ears = "organ_ears",
         tongue = "organ_tongue", heart = "organ_heart", lungs = "organ_lungs",
         liver = "organ_liver", stomach = "organ_stomach", appendix = "organ_appendix",
-    },
-
-    blood = {
-        normal = 560,            -- BLOOD_VOLUME_NORMAL, mobs.dm:20
-        dead_below = 112,        -- BLOOD_VOLUME_SURVIVE, mobs.dm:25
-        regen_per_s = 0.25,      -- BLOOD_REGEN_FACTOR, mobs.dm:28
-        oxy_per_missing = 0.01,  -- blood.dm:253-262
-    },
-    bloodstream = {
-        volume_m3 = 0.005,      -- five litres, the holder chemistry runs in
-        temperature_k = 310.15, -- normal human body temperature
     },
 
     -- The capacity graph. `awake_below`, `min_capable` and the `lerp1`
@@ -124,14 +125,14 @@ return {
         -- as it lasts (code/modules/mob/living/carbon/human/life.dm:292-295).
         blood = { role = "blood", awake_only = false,
             formula = { "tag", "heart", absent = 1 },
-            when_zero = { oxy_per_s = 4, brute_per_s = 1, unconscious = true } },
+            when_zero = { pools = { oxy = 4, brute = 1 }, unconscious = true } },
 
         -- ...and liverlessness: tox 0.6/s (carbon/life.dm:746). NOT
         -- CARRIED from tg: the companion 0.5/s random organ damage
         -- (carbon/life.dm:746-747).
         metabolism = { role = "metabolism", awake_only = false,
             formula = { "tag", "liver", absent = 1 },
-            when_zero = { tox_per_s = 0.6 } },
+            when_zero = { pools = { tox = 0.6 } } },
     },
 
     -- The surgical states this species has (docs/SURGERY.md §6.1).

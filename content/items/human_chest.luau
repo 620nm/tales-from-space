@@ -23,7 +23,24 @@ return {
         -- an arm right up to the moment it comes off. A cybernetic one
         -- would name a falling curve here instead.
         efficiency = {{0, 1}, {1, 1}},
-        brute_mod = 1,
-        burn_mod = 1,
+        pool_mod = { brute = 1, burn = 1 },
+        -- Circulation belongs to the part that physically hosts it. tg's
+        -- carbon bloodstream is carried with the torso organs and losing
+        -- bodyparts routes through their owner
+        -- (code/modules/surgery/bodyparts/_bodyparts.dm:947-969).
+        blood = {
+            normal = 560,            -- BLOOD_VOLUME_NORMAL, code/__DEFINES/mobs.dm:20
+            dead_below = 112,        -- BLOOD_VOLUME_SURVIVE, code/__DEFINES/mobs.dm:25
+            regen_per_s = 0.25,      -- BLOOD_REGEN_FACTOR, code/__DEFINES/mobs.dm:28
+            oxy_per_missing = 0.01,  -- code/modules/mob/living/blood.dm:256-262
+        },
+        bloodstream = {
+            -- BLOOD_VOLUME_NORMAL is 560 cL, i.e. 5.6 L / 0.0056 m³
+            -- (code/__DEFINES/mobs.dm:20).
+            volume_m3 = 0.0056,
+            -- BODYTEMP_NORMAL (code/__DEFINES/atmospherics/
+            -- atmos_mob_interaction.dm:53).
+            temperature_k = 310.15,
+        },
     },
 }

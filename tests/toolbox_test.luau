@@ -81,9 +81,17 @@ assert(t.sprite(victim) == "human_dead", "and the body lies down")
 
 -- Every swing is on the record, attributed to the FILE that decided
 -- the damage and the player whose click triggered it.
+local function pool_amount(row, id)
+    for _, entry in ipairs(row.pools or {}) do
+        if entry[1] == id then
+            return entry[2]
+        end
+    end
+    return 0
+end
 local hits = 0
 for _, row in ipairs(t.ledger_rows("Damaged")) do
-    if math.abs(row.brute - 10) < 0.01
+    if math.abs(pool_amount(row, "brute") - 10) < 0.01
         and row.target == victim_id
         and row.actor.kind == "script"
         and row.actor.file == "items/toolbox.luau"
