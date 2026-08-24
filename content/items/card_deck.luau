@@ -296,7 +296,13 @@ if sim ~= nil then
         sim.entity.spawn({
             definition = "card",
             at = ev.at,
-            initial = { state = "down_" .. top },
+            initial = {
+                state = "down_" .. top,
+                -- Nil at bare deck: the click carried no pixel worth
+                -- honouring there, and an absent offset is the ordinary
+                -- scattered mint.
+                offset = target ~= nil and ev.click_offset or nil,
+            },
         })
         sim.appearance.set_state({ entity = self, state = thickness(count(rest)) })
         sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = ev.at })
