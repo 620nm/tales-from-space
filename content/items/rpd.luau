@@ -25,10 +25,12 @@
 -- * tg's multi-layer build, which lays the same run on several layers
 --   at once. One layer, one length: the dial names it.
 -- * A colour on a DEVICE. Only the run under the deck carries one today
---   (pipes/paint.rs). A meter is the exception for layer: tg programs
---   the loose meter from the RPD's selected layer before auto-wrenching
---   it, and the optional fitting mode on `ctx.fit` does the same here.
---   In-line devices still come down on the layer their own file names.
+--   (pipes/paint.rs). The LAYER dial, by contrast, reaches everything
+--   this shelf dispenses: tg programs the fitting it is about to wrench
+--   down (RPD.dm:569) and every `/obj/item/pipe` carries a
+--   `piping_layer`, so the optional fitting mode on `ctx.fit` carries
+--   the dial's position onto the part. Only the socket and the layer
+--   adapter are deaf to it, and both for reasons the engine owns.
 
 -- The shelf, in tg's own order and words (`GLOB.atmos_pipe_recipes`,
 -- code/_globalvars/lists/pipe_recipes.dm), as far as this pack has
@@ -47,9 +49,9 @@ local RECIPES = {
     { label = "Gas Filter (flipped)", item = "gas_filter_flipped_fitting", structure = "gas_filter_flipped", icon = "filter_fitting", group = "Trinary Devices" },
     { label = "Gas Mixer", item = "gas_mixer_fitting", structure = "gas_mixer", icon = "mixer_fitting", group = "Trinary Devices" },
     { label = "Gas Mixer (flipped)", item = "gas_mixer_flipped_fitting", structure = "gas_mixer_flipped", icon = "mixer_fitting", group = "Trinary Devices" },
-    { label = "Connector", item = "connector_port_fitting", structure = "connector_port", icon = "connector_port_loose", group = "Fittings & Adapters" },
+    { label = "Connector", item = "connector_port_fitting", structure = "connector_port", icon = "connector_port_loose", group = "Fittings & Adapters", fixed_layer = true },
     { label = "Meter", item = "pipe_meter", structure = "meter", icon = "pipe_meter", group = "Fittings & Adapters" },
-    { label = "Layer Adapter", item = "layer_adapter_fitting", structure = "layer_adapter", icon = "layer_adapter_loose", group = "Fittings & Adapters" },
+    { label = "Layer Adapter", item = "layer_adapter_fitting", structure = "layer_adapter", icon = "layer_adapter_loose", group = "Fittings & Adapters", fixed_layer = true },
     { label = "Color Adapter", item = "color_adapter_fitting", structure = "color_adapter", icon = "color_adapter_loose", group = "Fittings & Adapters" },
     { label = "Temperature Gate", item = "temperature_gate_fitting", structure = "temperature_gate", icon = "temperature_gate_loose", group = "Thermal Devices" },
     { label = "Temperature Pump", item = "temperature_pump_fitting", structure = "temperature_pump", icon = "temperature_pump_loose", group = "Thermal Devices" },
@@ -309,8 +311,20 @@ return {
         if not ctx.do_after(user, 0.4) then
             return
         end
+        -- The layer dial travels with the part. tg programs the fitting
+        -- it is about to wrench down (`set_piping_layer` from the RPD's
+        -- own `p_layer`, RPD.dm:569) and every `/obj/item/pipe` carries
+        -- one, so this is not a special case for the gauge: it is what
+        -- the dial has always been for.
+        --
+        -- The two exceptions are exceptions in the ENGINE: a socket
+        -- binds on the run every dispenser hands out, and a layer
+        -- adapter stands across all five at once and has no layer of
+        -- its own (tg's PIPING_DEFAULT_LAYER_ONLY). Their fittings wear
+        -- no dial, so asking for one would be a refusal rather than a
+        -- setting.
         local fitting_mode = nil
-        if recipe.structure == "meter" then
+        if not recipe.fixed_layer then
             fitting_mode = ctx.dial(self, "layer").index
         end
         ctx.fit(x, y, recipe.structure, fitting_mode)
