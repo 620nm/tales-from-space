@@ -35,8 +35,13 @@ return {
             oxy_per_missing = 0.01,  -- code/modules/mob/living/blood.dm:256-262
         },
         bloodstream = {
-            -- BLOOD_VOLUME_NORMAL is 560 cL, i.e. 5.6 L / 0.0056 m³
-            -- (code/__DEFINES/mobs.dm:20).
+            -- The dissolved-matter holder is the same body of blood the
+            -- `blood` block counts, so it holds the same amount rather
+            -- than a round number beside it: BLOOD_VOLUME_NORMAL 560,
+            -- read as centilitres, is 5.6 L = 0.0056 m³
+            -- (#define BLOOD_VOLUME_NORMAL 560,
+            -- code/__DEFINES/mobs.dm:20). The 0.005 it replaces was an
+            -- uncited five litres.
             volume_m3 = 0.0056,
             -- BODYTEMP_NORMAL (code/__DEFINES/atmospherics/
             -- atmos_mob_interaction.dm:53).
