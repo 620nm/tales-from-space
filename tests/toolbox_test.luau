@@ -102,7 +102,16 @@ for _, row in ipairs(t.ledger_rows("Damaged")) do
 end
 assert(hits == 10 + swings,
     "every hit is a Script-attributed ledger row, got " .. hits)
-assert(#t.ledger_rows("Died") == 1, "the death is on the record")
+-- One life-state row, and it is the one that ends the shift for this
+-- body: the engine names no state, so the spec reads the flag the
+-- entered state carries.
+local ended = 0
+for _, row in ipairs(t.ledger_rows("LifeStateChanged")) do
+    if row.terminal then
+        ended += 1
+    end
+end
+assert(ended == 1, "the death is on the record")
 
 -- Both parties heard the thud and read the message.
 local swung = table.concat(t.messages(attacker), "\n")
