@@ -480,7 +480,7 @@ t.world([==[(
     structures: [
         (1, 1, "vent"),
         (2, 1, "manual_valve"),
-        (3, 1, "manual_valve_l2"),
+        (3, 1, "manual_valve", { "layer": 2 }),
     ],
 )]==], 7)
 
