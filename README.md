@@ -11,7 +11,7 @@ engine's test fixtures no longer lean on it.
 
 | Directory        | Contents |
 | ---------------- | -------- |
-| `content/`       | The mod itself: `items/`, `jobs/`, `bodies/`, `gamemodes/`, `fixtures/`, `substances/`, `reactions/`, `air/` (`.luau` files returning prototype tables, with optional behavior hooks), plus `tuning.luau` feel knobs. |
+| `content/`       | The mod itself: `capabilities.luau`, pack rosters (`items/`, `jobs/`, `bodies/`, `gamemodes/`, `fixtures/`, `substances/`, `reactions/`, `air/`), and `tuning.luau` feel knobs. |
 | `maps/`          | Station maps as RON (`chillstation.ron` is the default; `outpost.ron` is the test/demo map). |
 | `assets/`        | Sprite, sound and whole-picture source manifests plus the tracked `tg-revision` consumed and verified by `cargo run -p xtask -- bake-atlas`. |
 | `tests/`         | Luau specs (`*_test.luau`) run by the engine's spec runner; `tests/maps/` holds purpose-built spec maps. |
@@ -40,6 +40,9 @@ cargo run -p lunatic-server -- tfs/maps/outpost.ron --content tfs/content
   decide what a crewman can do.
 - `content/tuning.luau` overrides engine feel constants; the engine's
   compiled defaults are the values its tests pin.
+- `content/capabilities.luau` opts into optional client grammars. TfS
+  explicitly enables `interactions.body`; body-plan definitions alone do not
+  expose hands, jobs, vitals or respawn to a player.
 - `content/air/*.luau` are the air recipes a mapper paints rooms with
   (`{ id, name, gases = { {key, moles} }, temperature_k }`,
   docs/ATMOS.md §11). Required content like every other roster; they are
