@@ -278,7 +278,17 @@
         // supply: it stands on the Commons' own room circuit, on L1,
         // and takes the carbon dioxide the crew breathe out back to
         // Atmospherics.
-        (16, 17, "air_scrubber", "scrubbing"),
+        //
+        // It says its posture out loud because it is NOT the posture a
+        // placed scrubber gets. A grille dropped on a deck today is a
+        // return grille -- whole air, gently, down to a floor just
+        // under the vent's release line -- which is what a hull that
+        // radiates wants once there is a heating loop to feed. This one
+        // is the department's CO2 recovery leg and predates that: it is
+        // pointed at the one gas, dial wide open, taking it to the last
+        // mole, and the chamber at the far end of the filter row is
+        // where that gas ends up.
+        (16, 17, "air_scrubber", "scrubbing", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 }),
         // THE BOTTLE RACK. Four sockets in the west hall, each beside
         // the through-main and mouthing south into it: the connector is
         // the component on its own tile, never raw pipe hidden under

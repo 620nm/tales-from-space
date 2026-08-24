@@ -18,11 +18,29 @@
 -- exhale -- and leaves the breathable air alone. A scrubber in this
 -- mode can run in an occupied room forever, and is meant to.
 --
--- SIPHONING takes EVERYTHING, at the same rate, until the room is
--- vacuum. That is the emergency setting: a plasma flood, a fire, a
--- chamber you want empty before you open it. It is also how you murder
--- a room, which is why the two look different on the deck and why
--- turning one round earns a ledger row.
+-- SIPHONING takes EVERYTHING, at the same rate, with nothing under it,
+-- until the room is vacuum. That is the emergency setting: a plasma
+-- flood, a fire, a chamber you want empty before you open it. It is
+-- also how you murder a room, which is why the two look different on
+-- the deck and why turning one round earns a ledger row.
+--
+-- THE FLOOR, WHICH IS NOT tg's. Scrubbing stops at a pressure: the
+-- machine draws what its roster selects until that selection is down to
+-- `target_kpa` and then does nothing more. tg has no such dial, and
+-- does not need one -- a tg hull does not lose heat, so its air loop
+-- only ever carries gases away. This one RADIATES, and a room left
+-- alone goes from shirtsleeves to freezing in about fifty minutes, so
+-- the loop that keeps a station habitable is a HEATING loop and this
+-- machine is its return grille. The floor is what makes the failure
+-- mode of a return grille "the room got cold" rather than "the room got
+-- emptied".
+--
+-- Zero is tg exactly, and zero is what this file ships: a scrubber an
+-- engineer builds out of a fitting is the machine tg documents, set to
+-- carbon dioxide and taking it to the last mole. A station's return
+-- grilles are a MAPPER's placement and carry their own posture --
+-- whole air, gently, down to a floor just under the vent's release
+-- line (docs/ATMOS.md §8).
 --
 -- WHAT STOPS IT. Fifty atmospheres in its own waste line and the fan
 -- gives up (tg's `ATMOS_PUMP_MAX_PRESSURE`). A scrubber is not a
@@ -86,6 +104,12 @@ return {
         -- (vent_scrubber.dm:24): what the crew breathe out, and the
         -- only thing a scrubber needs to be set to on an ordinary day.
         filter = { "co2" },
+        -- The FLOOR, in kPa: the pressure the selection above is taken
+        -- down to and no further. Zero is tg, which stops at nothing
+        -- and takes the last mole of carbon dioxide out of the room --
+        -- see the note at the top for why the dial exists at all and
+        -- who turns it up.
+        target_kpa = 0.0,
     },
     build = {
         on = { "floor", "plating" },
