@@ -363,9 +363,13 @@ assert(
         .. " -> "
         .. after
 )
--- The line itself stays near empty: a vent blowing into vacuum takes
--- whatever arrives, so what the gauge loses is a standoff between the
--- release valve and the hole, not a reservoir filling up. That is what
--- makes a breach expensive.
-assert(t.pipe_pressure(5, 1) < 30.0, "the run is a standoff, not a reservoir")
+-- Bottle and run are ONE body of gas while fastened (tg's connector
+-- reconciliation), so the run reads the bottle's own falling gauge --
+-- and both of them are paying the hole together. That is what makes a
+-- breach expensive.
+assert(
+    math.abs(t.pipe_pressure(5, 1) - after) < after * 0.2 + 10.0,
+    "the run reads the bottle it is coupled to: "
+        .. t.pipe_pressure(5, 1) .. " vs " .. after
+)
 assert(t.room_pressure(4, 2) > 90.0, "and the sealed room never noticed any of it")

@@ -253,8 +253,13 @@ assert(WASTE_M3 > 0.0, "the waste main is a real net")
 -- So the assertion is not "the room fills" — a vent does that — it is
 -- that the room goes PAST one atmosphere and keeps climbing.
 --
--- The supply main is a canister on a connector port, because an
--- injector is only as good as what is behind it.
+-- The supply main is a canister on a connector port with a gas pump
+-- regulating the feed at one atmosphere -- tg's own station shape,
+-- because a fastened bottle IS its line (the wrench couples them into
+-- one body of gas), and forty atmospheres straight into an injector
+-- makes a hurricane no engineer can stand at. The pump holds the feed
+-- at its setpoint off the fat reserve, which is precisely the job tg
+-- gives it.
 -- ---------------------------------------------------------------
 t.world([==[(
     name: "injected room",
@@ -273,13 +278,14 @@ t.world([==[(
         "########",
     ],
     spawns: [(4, 2)],
-    pipes: [(2, 1, 4)],
     air_presets: {
         "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
     },
     structures: [
-        (1, 1, "connector_port"), (3, 1, "air_injector"),
-        (1, 1, "canister", { "air": "canister_air", "open": true }),
+        (1, 1, "connector_port", { "dir": "east" }),
+        (1, 1, "canister", { "air": "canister_air" }),
+        (2, 1, "gas_pump", "running", { "dir": "east" }),
+        (3, 1, "air_injector"),
     ],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
@@ -322,8 +328,11 @@ t.ui_act(q, "toggle", '{"field":"power"}')
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "injecting", "it is running")
 
+-- Sixty seconds, where thirty used to do: the regulated feed tops out
+-- at the pump's own 120 L/s, where the old bottle-setpoint line was
+-- re-pegged to one atmosphere every pass regardless of draw.
 local air_0 = room_air()
-t.run_seconds(30)
+t.run_seconds(60)
 local air_1 = room_air()
 assert(
     air_1 > ROOM_AT_ONE_ATM * 1.05,

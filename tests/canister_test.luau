@@ -83,12 +83,26 @@ assert(full > 4000.0, "a fresh canister is at 45 atm: " .. full)
 assert(t.pipe_pressure(2, 2) > 90.0, "and it has charged the run to one atmosphere")
 assert(t.room_pressure(2, 2) > 90.0, "so the room is breathable from the start")
 
--- A room that is ALREADY at one atmosphere costs nothing. The release
--- valve is a setpoint, not a tap left running.
+-- The bottle IS the network while it is fastened (tg's connector
+-- reconciliation, portables_connector.dm:48-52): it equalises with the
+-- run once and then a settled station stops moving gas. The regulator
+-- is the VENT and its one-atmosphere setpoint -- the line behind it is
+-- simply the reserve, standing at whatever the bottle brought.
 t.run_seconds(10)
+local settled = t.canister_pressure(3, 2)
 assert(
-    math.abs(t.canister_pressure(3, 2) - full) < 1.0,
-    "a settled station does not drain its canister: " .. t.canister_pressure(3, 2)
+    math.abs(settled - t.pipe_pressure(2, 2)) < 5.0,
+    "bottle and run are one body of gas: " .. settled .. " / " .. t.pipe_pressure(2, 2)
+)
+assert(settled > 3500.0, "and the reserve still reads as a reserve: " .. settled)
+t.run_seconds(5)
+assert(
+    math.abs(t.canister_pressure(3, 2) - settled) < 1.0,
+    "a settled station does not keep draining its canister: " .. t.canister_pressure(3, 2)
+)
+assert(
+    math.abs(t.room_pressure(2, 2) - 101.325) < 3.0,
+    "the vent holds the room at its own line, not the bottle's: " .. t.room_pressure(2, 2)
 )
 
 -- Take the welder off the deck FIRST: loose things do not survive a
@@ -104,9 +118,12 @@ t.run_seconds(10)
 assert(t.is_breached(2, 1), "the fault opened the room")
 local emptied = t.room_pressure(2, 3)
 -- It does not reach hard vacuum: the vent is feeding it the whole
--- time, and what the canister sends up the line goes straight out the
--- hole. That standoff is exactly the cost of leaving a breach open.
-assert(emptied < 60.0, "the room emptied: " .. emptied)
+-- time, off a line the bottle equalised to forty atmospheres, and what
+-- the line sends into the room goes straight out the hole. The
+-- standoff sits well below breathable and well above vacuum, and it is
+-- exactly the cost of leaving a breach open.
+assert(emptied < 80.0, "the room emptied: " .. emptied)
+assert(emptied > 20.0, "into a standoff, not a vacuum: " .. emptied)
 
 -- Weld it shut. Now it is a sealed vacuum with a live vent over a
 -- charged run.
@@ -358,9 +375,11 @@ assert(t.ledger_has("StructureStep", "canister", "displaced"),
     "the canister comes off the port instantly")
 lit(bottle, "and in the very tick it comes off, it still reads")
 
--- Read the gauge the moment it is off.
+-- Read the gauge the moment it is off. The run it left holds a full
+-- forty-atmosphere charge now (the bottle equalised with it while
+-- fastened), so give the hole longer to swallow it.
 local off = t.canister_pressure(2, 1)
-t.run_seconds(10)
+t.run_seconds(30)
 local loose = t.canister_pressure(2, 1)
 assert(math.abs(loose - off) < 1.0,
     "off the port, it feeds nothing: " .. off .. " -> " .. loose)
