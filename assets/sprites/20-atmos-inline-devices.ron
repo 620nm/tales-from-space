@@ -81,10 +81,21 @@
         // twentieth of a second each. No anchor and no server state -- a
         // loop has no beginning worth agreeing on, so every client runs it
         // off its own clock and the wire never mentions it.
-        ("pump_off_ns", Dmi("@binary", "pump_off-1", 1)),
-        ("pump_off_ew", Dmi("@binary", "pump_off-1", 2)),
-        ("pump_on_ns", DmiAnim("@binary", "pump_on-1", 1)),
-        ("pump_on_ew", DmiAnim("@binary", "pump_on-1", 2)),
+        // FOUR facings, not two: a pump has a FRONT, and tg's art says
+        // so -- `pump_off-1` carries four dirs and the south and west
+        // frames are the rotations that show which way it blows. Only
+        // the valves and the adapters carry
+        // `PIPING_CARDINAL_AUTONORMALIZE`; folding a pump's south onto
+        // its north made a west-facing machine wear the east picture
+        // and read as wrenched the wrong way round.
+        ("pump_off_n", Dmi("@binary", "pump_off-1", 1)),
+        ("pump_off_s", Dmi("@binary", "pump_off-1", 0)),
+        ("pump_off_e", Dmi("@binary", "pump_off-1", 2)),
+        ("pump_off_w", Dmi("@binary", "pump_off-1", 3)),
+        ("pump_on_n", DmiAnim("@binary", "pump_on-1", 1)),
+        ("pump_on_s", DmiAnim("@binary", "pump_on-1", 0)),
+        ("pump_on_e", DmiAnim("@binary", "pump_on-1", 2)),
+        ("pump_on_w", DmiAnim("@binary", "pump_on-1", 3)),
         // THE TRINARY MACHINES: tg's gas filter and gas mixer. FOUR
         // facings each, where a binary has two -- a binary reaches along
         // one axis and tg normalises south onto north, while a trinary
@@ -165,24 +176,31 @@
         // passive gate, the pressure valve, and the manual valve's
         // digital twin.
         //
-        // TWO pictures each, not four. A binary device reaches along one
-        // AXIS (`PIPING_CARDINAL_AUTONORMALIZE`), so north and south are
-        // the same picture and east and west are the other; the valve
-        // and pump above bake four names for those two pictures, which
-        // is two atlas cells apiece nobody looks at. These name the
-        // AXIS instead and let `facing_sprites` point two directions at
-        // one name, which is the same art and half the atlas.
-        ("volpump_off_ns", Dmi("@binary", "volpump_off-1", 1)),
-        ("volpump_off_ew", Dmi("@binary", "volpump_off-1", 2)),
+        // FOUR pictures each for the machines with a FRONT (the pump
+        // note above): tg autonormalises only its valves and adapters
+        // (valve.dm:14), and the .dmi's four dirs on every pump, gate
+        // and pressure valve are four genuinely different frames. The
+        // manual and digital valves below keep their two -- theirs is
+        // the axis machine the fold is FOR.
+        ("volpump_off_n", Dmi("@binary", "volpump_off-1", 1)),
+        ("volpump_off_s", Dmi("@binary", "volpump_off-1", 0)),
+        ("volpump_off_e", Dmi("@binary", "volpump_off-1", 2)),
+        ("volpump_off_w", Dmi("@binary", "volpump_off-1", 3)),
         // The volumetric pump's running body: ten frames at a twentieth
         // each, the longest loop in the binary family and the reason it
         // reads as a harder-working machine than the gas pump beside it.
-        ("volpump_on_ns", DmiAnim("@binary", "volpump_on-1", 1)),
-        ("volpump_on_ew", DmiAnim("@binary", "volpump_on-1", 2)),
-        ("passgate_off_ns", Dmi("@binary", "passgate_off-1", 1)),
-        ("passgate_off_ew", Dmi("@binary", "passgate_off-1", 2)),
-        ("passgate_on_ns", Dmi("@binary", "passgate_on-1", 1)),
-        ("passgate_on_ew", Dmi("@binary", "passgate_on-1", 2)),
+        ("volpump_on_n", DmiAnim("@binary", "volpump_on-1", 1)),
+        ("volpump_on_s", DmiAnim("@binary", "volpump_on-1", 0)),
+        ("volpump_on_e", DmiAnim("@binary", "volpump_on-1", 2)),
+        ("volpump_on_w", DmiAnim("@binary", "volpump_on-1", 3)),
+        ("passgate_off_n", Dmi("@binary", "passgate_off-1", 1)),
+        ("passgate_off_s", Dmi("@binary", "passgate_off-1", 0)),
+        ("passgate_off_e", Dmi("@binary", "passgate_off-1", 2)),
+        ("passgate_off_w", Dmi("@binary", "passgate_off-1", 3)),
+        ("passgate_on_n", Dmi("@binary", "passgate_on-1", 1)),
+        ("passgate_on_s", Dmi("@binary", "passgate_on-1", 0)),
+        ("passgate_on_e", Dmi("@binary", "passgate_on-1", 2)),
+        ("passgate_on_w", Dmi("@binary", "passgate_on-1", 3)),
         // The pressure valve ships a third picture, `pvalve_flow`, for
         // the pass in which gas is actually crossing. Not baked: a
         // machine's picture comes from its assembly STATE, and "armed"
@@ -190,10 +208,14 @@
         // per-tick fact on top of it. That wants a per-instance overlay
         // the position machinery does not express yet -- see the same
         // note on the volume pump's overclock light.
-        ("pvalve_off_ns", Dmi("@binary", "pvalve_off-1", 1)),
-        ("pvalve_off_ew", Dmi("@binary", "pvalve_off-1", 2)),
-        ("pvalve_on_ns", Dmi("@binary", "pvalve_on-1", 1)),
-        ("pvalve_on_ew", Dmi("@binary", "pvalve_on-1", 2)),
+        ("pvalve_off_n", Dmi("@binary", "pvalve_off-1", 1)),
+        ("pvalve_off_s", Dmi("@binary", "pvalve_off-1", 0)),
+        ("pvalve_off_e", Dmi("@binary", "pvalve_off-1", 2)),
+        ("pvalve_off_w", Dmi("@binary", "pvalve_off-1", 3)),
+        ("pvalve_on_n", Dmi("@binary", "pvalve_on-1", 1)),
+        ("pvalve_on_s", Dmi("@binary", "pvalve_on-1", 0)),
+        ("pvalve_on_e", Dmi("@binary", "pvalve_on-1", 2)),
+        ("pvalve_on_w", Dmi("@binary", "pvalve_on-1", 3)),
         // The digital valve: tg's own second valve_type, drawn from the
         // `d`-prefixed half of the same sheet (valve.dm:78-83).
         ("dvalve_shut_ns", Dmi("@binary", "dvalve_off-1", 1)),

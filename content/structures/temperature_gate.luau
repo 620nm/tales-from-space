@@ -35,7 +35,7 @@
 return {
     id = "temperature_gate",
     name = "temperature gate",
-    sprite = "tgate_off_ns",
+    sprite = "tgate_off_n",
     dense = false,
     -- "armed" rather than "open", the same word the pressure valve
     -- wears and for the same reason: the gate is watching. Whether
@@ -43,16 +43,16 @@ return {
     states = { "shut", "armed" },
     facing_sprites = {
         shut = {
-            north = "tgate_off_ns",
-            south = "tgate_off_ns",
-            east = "tgate_off_ew",
-            west = "tgate_off_ew",
+            north = "tgate_off_n",
+            south = "tgate_off_s",
+            east = "tgate_off_e",
+            west = "tgate_off_w",
         },
         armed = {
-            north = "tgate_on_ns",
-            south = "tgate_on_ns",
-            east = "tgate_on_ew",
-            west = "tgate_on_ew",
+            north = "tgate_on_n",
+            south = "tgate_on_s",
+            east = "tgate_on_e",
+            west = "tgate_on_w",
         },
     },
     atmos = {

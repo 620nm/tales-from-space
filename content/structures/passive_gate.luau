@@ -24,21 +24,21 @@
 return {
     id = "passive_gate",
     name = "passive gate",
-    sprite = "passgate_off_ns",
+    sprite = "passgate_off_n",
     dense = false,
     states = { "shut", "open" },
     facing_sprites = {
         shut = {
-            north = "passgate_off_ns",
-            south = "passgate_off_ns",
-            east = "passgate_off_ew",
-            west = "passgate_off_ew",
+            north = "passgate_off_n",
+            south = "passgate_off_s",
+            east = "passgate_off_e",
+            west = "passgate_off_w",
         },
         open = {
-            north = "passgate_on_ns",
-            south = "passgate_on_ns",
-            east = "passgate_on_ew",
-            west = "passgate_on_ew",
+            north = "passgate_on_n",
+            south = "passgate_on_s",
+            east = "passgate_on_e",
+            west = "passgate_on_w",
         },
     },
     atmos = {

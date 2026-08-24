@@ -45,14 +45,28 @@
         // 20-atmos-inline-devices.ron; all three want the same feature and
         // none of them wants a fourth position. Meanwhile the panel
         // answers "is anything crossing" with two port pressures.
-        ("tgate_off_ns", Dmi("@binary", "tgate_off-1", 1)),
-        ("tgate_off_ew", Dmi("@binary", "tgate_off-1", 2)),
-        ("tgate_on_ns", DmiAnim("@binary", "tgate_on-1", 1)),
-        ("tgate_on_ew", DmiAnim("@binary", "tgate_on-1", 2)),
-        ("tpump_off_ns", Dmi("@binary", "tpump_off-1", 1)),
-        ("tpump_off_ew", Dmi("@binary", "tpump_off-1", 2)),
-        ("tpump_on_ns", Dmi("@binary", "tpump_on-1", 1)),
-        ("tpump_on_ew", Dmi("@binary", "tpump_on-1", 2)),
+        // Four dirs, not two: the gate has a front like the pumps do
+        // (only valves and adapters autonormalise; the note in
+        // 20-atmos-inline-devices.ron).
+        ("tgate_off_n", Dmi("@binary", "tgate_off-1", 1)),
+        ("tgate_off_s", Dmi("@binary", "tgate_off-1", 0)),
+        ("tgate_off_e", Dmi("@binary", "tgate_off-1", 2)),
+        ("tgate_off_w", Dmi("@binary", "tgate_off-1", 3)),
+        ("tgate_on_n", DmiAnim("@binary", "tgate_on-1", 1)),
+        ("tgate_on_s", DmiAnim("@binary", "tgate_on-1", 0)),
+        ("tgate_on_e", DmiAnim("@binary", "tgate_on-1", 2)),
+        ("tgate_on_w", DmiAnim("@binary", "tgate_on-1", 3)),
+        // Four dirs, not two: a temperature pump has a front (the note
+        // in 20-atmos-inline-devices.ron -- only valves and adapters
+        // autonormalise).
+        ("tpump_off_n", Dmi("@binary", "tpump_off-1", 1)),
+        ("tpump_off_s", Dmi("@binary", "tpump_off-1", 0)),
+        ("tpump_off_e", Dmi("@binary", "tpump_off-1", 2)),
+        ("tpump_off_w", Dmi("@binary", "tpump_off-1", 3)),
+        ("tpump_on_n", Dmi("@binary", "tpump_on-1", 1)),
+        ("tpump_on_s", Dmi("@binary", "tpump_on-1", 0)),
+        ("tpump_on_e", Dmi("@binary", "tpump_on-1", 2)),
+        ("tpump_on_w", Dmi("@binary", "tpump_on-1", 3)),
         // THE PLATE is the odd one, and its cells are REVERSED on
         // purpose. tg points a unary device at its PIPE
         // (unary_devices.dm:14, `initialize_directions = dir`), so its
