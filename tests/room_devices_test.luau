@@ -114,7 +114,12 @@ local SCRUB_MAP = [==[(
     // Layer 2, because that is where a scrubber lives (tg's
     // `vent_scrubber/on/layer2`, and see the structure's own file).
     pipes: [(0, 1, 2), (1, 1, 2)],
-    structures: [(2, 1, "air_scrubber")],
+    // Spelled out, because a placement that says nothing is a RETURN
+    // GRILLE -- whole air, gently, down to a floor -- and this file is
+    // about the other machine: tg's scrubber, pointed at one gas with
+    // the dial wide open and nothing under it. scrubber_floor_test.luau
+    // is the grille's.
+    structures: [(2, 1, "air_scrubber", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 })],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
@@ -149,16 +154,27 @@ local panel = t.ui(p)
 assert(panel, "a scrubber wears a panel of its own")
 assert(panel.setpoints[1].field == "rate", "with a rate on it")
 near(panel.setpoints[1].value, 200.0, 0.001, "tg's volume_rate")
+-- And a second dial, which tg has no equivalent of: the pressure the
+-- machine works down to and stops at. Zero is tg exactly, and zero is
+-- what this one was placed with.
+assert(panel.setpoints[2].field == "floor", "and a floor under it")
+assert(panel.setpoints[2].unit == "kPa", "which is a pressure, not a rate")
+near(panel.setpoints[2].value, 0.0, 0.001, "set to tg's nothing")
 
 local roster = {}
 local direction = nil
+local shape = nil
 for _, sw in ipairs(panel.toggles) do
     if sw.field == "filter" then
         roster[sw.option] = sw.on
     elseif sw.field == "direction" then
         direction = sw
+    elseif sw.field == "roster" then
+        shape = sw
     end
 end
+assert(shape ~= nil, "the roster has a SHAPE switch above its buttons")
+assert(shape.on == false, "and this one sieves rather than taking the lot")
 assert(roster.co2 == true, "tg ships it set to carbon dioxide")
 assert(roster.o2 == false, "and to nothing else")
 assert(roster.n2 == false)
