@@ -13,7 +13,7 @@ engine's test fixtures no longer lean on it.
 | ---------------- | -------- |
 | `content/`       | The mod itself: `items/`, `jobs/`, `bodies/`, `gamemodes/`, `fixtures/`, `substances/`, `reactions/`, `air/` (`.luau` files returning prototype tables, with optional behavior hooks), plus `tuning.luau` feel knobs. |
 | `maps/`          | Station maps as RON (`chillstation.ron` is the default; `outpost.ron` is the test/demo map). |
-| `assets/`        | Sprite, sound and whole-picture source manifests consumed by `cargo run -p xtask -- bake-atlas`. |
+| `assets/`        | Sprite, sound and whole-picture source manifests plus the tracked `tg-revision` consumed and verified by `cargo run -p xtask -- bake-atlas`. |
 | `tests/`         | Luau specs (`*_test.luau`) run by the engine's spec runner; `tests/maps/` holds purpose-built spec maps. |
 
 ## Running
