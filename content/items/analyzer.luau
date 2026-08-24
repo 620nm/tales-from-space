@@ -104,25 +104,42 @@ return {
                 return
             end
         end
-        -- The run under an open deck. Buried pipe is pipe you cannot
-        -- see, and an instrument that read through a finished floor
-        -- would be reading by memory (the rule the painter and the pipe
-        -- wrench both keep).
-        if ctx.subfloor_exposed(x, y) and ctx.pipe(x, y) ~= 0 then
-            local pipe = ctx.air_sample(x, y, "pipe")
-            if pipe then
-                ctx.sound("click", x, y)
-                report(ctx, user, "the pipe", pipe)
-                return
+        -- A turf click reads the turf (tg gas_analyzer.dm:159-162) --
+        -- AND every run buried under it, each named by its layer. A
+        -- click cannot land on one pipe out of five the way tg's
+        -- pixel-true clicks can, so the instrument answers the way
+        -- tg's does for a machine with several mixtures inside it
+        -- (atmos_scan loops the airs): all of them, labelled, in a
+        -- fixed order. Nothing is chosen for you and nothing is
+        -- hidden.
+        local read = false
+        local room = ctx.air_sample(x, y, "room")
+        if room then
+            ctx.sound("click", x, y)
+            report(ctx, user, "the air", room)
+            read = true
+        end
+        -- Buried pipe is pipe you cannot see, and an instrument that
+        -- read through a finished floor would be reading by memory
+        -- (the rule the painter and the pipe wrench both keep).
+        if ctx.subfloor_exposed(x, y) then
+            local mask = ctx.pipe(x, y)
+            for layer = 1, 5 do
+                local bit = 2 ^ (layer - 1)
+                if bit32.band(mask, bit) ~= 0 then
+                    local pipe = ctx.air_sample(x, y, "pipe", bit)
+                    if pipe then
+                        if not read then
+                            ctx.sound("click", x, y)
+                        end
+                        report(ctx, user, "the layer " .. layer .. " pipe", pipe)
+                        read = true
+                    end
+                end
             end
         end
-        -- ...and the air, which is what a turf click means.
-        local room = ctx.air_sample(x, y, "room")
-        if not room then
+        if not read then
             ctx.system_msg(user, "The analyzer has nothing to read here.")
-            return
         end
-        ctx.sound("click", x, y)
-        report(ctx, user, "the air", room)
     end,
 }
