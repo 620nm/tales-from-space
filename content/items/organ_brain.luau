@@ -15,7 +15,7 @@
 -- all (_organ.dm:30 leaves `healing_factor` at 0), and half the
 -- standard decay because "a fast decay rate would be unfun
 -- gameplay-wise" (brain_item.dm:16).
-return {
+local content = {
     id = "organ_brain",
     name = "brain",
     sprite = "organ_brain",
@@ -36,11 +36,18 @@ return {
         vital = true,
         mind_seat = true,
     },
-    on_threshold = function(ctx, organ, body, edge)
-        if edge == "low" then
-            ctx.system_msg(body, "Your head swims.")
-        elseif edge == "high" then
-            ctx.system_msg(body, "You cannot hold a thought.")
-        end
-    end,
 }
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("body.threshold.done", { kind = "react", route = "threshold" }, function(ev)
+        local organ, body, edge = ev.part, ev.body, ev.edge
+        if edge == "low" then
+            sim.message.send({ recipient = body, message = "Your head swims." })
+        elseif edge == "high" then
+            sim.message.send({ recipient = body, message = "You cannot hold a thought." })
+        end
+    end)
+end
+
+return content

@@ -153,7 +153,7 @@ assert(said(p, "You put the manual valve fitting back into the dispenser."),
     "and said so, in the fitting's own name")
 -- On the record, and the record names both halves: the machine's own
 -- file did it, at the request of the crewman standing there.
-assert(t.ledger_has("ItemConsumed", "manual_valve_fitting", "pipe_dispenser"),
+assert(t.ledger_has("ItemConsumed", "manual_valve_fitting", "lunatic/tfs"),
     "a thing that stopped existing is on the record")
 local eaten = t.ledger_rows("item_consumed")
 assert(#eaten == 1 and eaten[1].actor.kind == "script", "one row, attributed to the machine")

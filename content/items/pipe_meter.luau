@@ -17,7 +17,7 @@
 -- exact and server-validated.
 local LAYERS = { 1, 2, 4, 8, 16 }
 
-return {
+local content = {
     id = "pipe_meter",
     name = "meter",
     -- tg's `icon_state = "meter"` off the fittings sheet: the gauge
@@ -29,17 +29,26 @@ return {
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
     modes = 5,
     mode = 2,
-    on_use = function(ctx, self, user, _x, _y, _choice, target)
+}
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
+        local clicked, target = ev.claim, ev.claim
+        local _x, _y, _choice = x, y, choice
         if target == nil or target.kind ~= "pipe" then
-            return "pass"
+            return { replaced = false }
         end
         for index, layer in ipairs(LAYERS) do
             if target.layer == layer then
-                ctx.set_mode(self, index - 1)
-                ctx.system_msg(user, "Meter layer set to " .. index .. ". Drop it before fastening.")
-                return
+                sim.set_mode(self, index - 1)
+                sim.message.send({ recipient = user, message = "Meter layer set to " .. index .. ". Drop it before fastening." })
+                return true
             end
         end
-        return "pass"
-    end,
-}
+        return { replaced = false }
+    end)
+end
+
+return content
