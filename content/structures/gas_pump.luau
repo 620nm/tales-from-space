@@ -32,7 +32,7 @@
 return {
     id = "gas_pump",
     name = "gas pump",
-    sprite = "pump_off_ns",
+    sprite = "pump_off_n",
     dense = false,
     states = { "off", "running" },
     -- A binary device reaches along one axis, so north and south are
@@ -44,10 +44,10 @@ return {
     -- would cost ten atlas cells nobody would ever look at.
     facing_sprites = {
         off = {
-            north = "pump_off_ns",
-            south = "pump_off_ns",
-            east = "pump_off_ew",
-            west = "pump_off_ew",
+            north = "pump_off_n",
+            south = "pump_off_s",
+            east = "pump_off_e",
+            west = "pump_off_w",
         },
         -- The running picture MOVES: tg's `pump_on-1` is five frames at
         -- a twentieth of a second (binary_devices.dmi). Nothing here
@@ -56,10 +56,10 @@ return {
         -- and the timing come out of the .dmi at bake time and the
         -- client runs it off its own clock.
         running = {
-            north = "pump_on_ns",
-            south = "pump_on_ns",
-            east = "pump_on_ew",
-            west = "pump_on_ew",
+            north = "pump_on_n",
+            south = "pump_on_s",
+            east = "pump_on_e",
+            west = "pump_on_w",
         },
     },
     atmos = {

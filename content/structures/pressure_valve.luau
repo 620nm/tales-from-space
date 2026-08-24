@@ -27,7 +27,7 @@
 return {
     id = "pressure_valve",
     name = "pressure valve",
-    sprite = "pvalve_off_ns",
+    sprite = "pvalve_off_n",
     dense = false,
     -- "armed" rather than "open", because that is what the position
     -- means: the valve is watching, and whether anything is crossing is
@@ -35,16 +35,16 @@ return {
     states = { "shut", "armed" },
     facing_sprites = {
         shut = {
-            north = "pvalve_off_ns",
-            south = "pvalve_off_ns",
-            east = "pvalve_off_ew",
-            west = "pvalve_off_ew",
+            north = "pvalve_off_n",
+            south = "pvalve_off_s",
+            east = "pvalve_off_e",
+            west = "pvalve_off_w",
         },
         armed = {
-            north = "pvalve_on_ns",
-            south = "pvalve_on_ns",
-            east = "pvalve_on_ew",
-            west = "pvalve_on_ew",
+            north = "pvalve_on_n",
+            south = "pvalve_on_s",
+            east = "pvalve_on_e",
+            west = "pvalve_on_w",
         },
     },
     atmos = {

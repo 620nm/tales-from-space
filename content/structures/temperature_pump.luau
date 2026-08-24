@@ -29,21 +29,21 @@
 return {
     id = "temperature_pump",
     name = "temperature pump",
-    sprite = "tpump_off_ns",
+    sprite = "tpump_off_n",
     dense = false,
     states = { "off", "running" },
     facing_sprites = {
         off = {
-            north = "tpump_off_ns",
-            south = "tpump_off_ns",
-            east = "tpump_off_ew",
-            west = "tpump_off_ew",
+            north = "tpump_off_n",
+            south = "tpump_off_s",
+            east = "tpump_off_e",
+            west = "tpump_off_w",
         },
         running = {
-            north = "tpump_on_ns",
-            south = "tpump_on_ns",
-            east = "tpump_on_ew",
-            west = "tpump_on_ew",
+            north = "tpump_on_n",
+            south = "tpump_on_s",
+            east = "tpump_on_e",
+            west = "tpump_on_w",
         },
     },
     atmos = {

@@ -146,7 +146,7 @@ t.run_seconds(2.5)
 local raised = t.structure_at(2, 2)
 assert(raised ~= nil and raised.id == "volume_pump", "the pump was fastened")
 assert(
-    raised.sprite == "volpump_off_ns",
-    "the chosen north-south axis survived, with the run lying east-west: "
+    raised.sprite == "volpump_off_n",
+    "the chosen facing survived, with the run lying east-west: "
         .. tostring(raised.sprite)
 )

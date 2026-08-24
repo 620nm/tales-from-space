@@ -29,7 +29,7 @@
 return {
     id = "volume_pump",
     name = "volumetric gas pump",
-    sprite = "volpump_off_ns",
+    sprite = "volpump_off_n",
     dense = false,
     states = { "off", "running" },
     -- A binary device reaches along one AXIS, so north and south share a
@@ -38,16 +38,16 @@ return {
     -- south cell.
     facing_sprites = {
         off = {
-            north = "volpump_off_ns",
-            south = "volpump_off_ns",
-            east = "volpump_off_ew",
-            west = "volpump_off_ew",
+            north = "volpump_off_n",
+            south = "volpump_off_s",
+            east = "volpump_off_e",
+            west = "volpump_off_w",
         },
         running = {
-            north = "volpump_on_ns",
-            south = "volpump_on_ns",
-            east = "volpump_on_ew",
-            west = "volpump_on_ew",
+            north = "volpump_on_n",
+            south = "volpump_on_s",
+            east = "volpump_on_e",
+            west = "volpump_on_w",
         },
     },
     atmos = {
