@@ -152,6 +152,7 @@ return {
     name = "rapid pipe dispenser",
     -- tg's own art off the tool sheet (`icon_state = "rpd"`, RPD.dm:26).
     sprite = "rpd",
+    ui = { modules = { "dials" } },
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
     -- tg RPD.dm:39-40.
     pickup_sound = "rpd_pickup",

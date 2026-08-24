@@ -28,6 +28,7 @@ return {
     id = "canister",
     name = "gas canister",
     sprite = "canister",
+    ui = { modules = { "canister" } },
     -- Claims the canister MECHANISM: the gas, the release arithmetic
     -- and the gauge are per-pass engine work, so the engine keeps a
     -- component for them and this file says which entry gets one

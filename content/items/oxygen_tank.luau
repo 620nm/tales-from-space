@@ -21,6 +21,7 @@ return {
     id = "oxygen_tank",
     name = "oxygen tank",
     sprite = "oxygen_tank",
+    ui = { modules = { "held_tank" } },
     inhand_sprite = { "held_oxygen_tank_l", "held_oxygen_tank_r" },
     -- tg tanks.dm:26-27.
     pickup_sound = "gas_tank_pickup",

@@ -33,6 +33,7 @@ return {
     id = "gas_pump",
     name = "gas pump",
     sprite = "pump_off_n",
+    ui = { modules = { "flow" } },
     dense = false,
     states = { "off", "running" },
     -- A binary device reaches along one axis, so north and south are

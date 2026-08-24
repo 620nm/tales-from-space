@@ -24,6 +24,6 @@ Contracts: `docs/SCRIPTING.md` is the ratified v1 destination;
   (the Luau twin of Rust's raw-string trap).
 - `content/tuning.luau` overrides engine feel constants; the engine's
   compiled defaults are what its tests pin.
-- tg UI reuse filter (docs/TGUI.md): adopt a tg window's data contract
-  only where the window itself is good; dead-economy shim fields mean a
-  small native window instead.
+- Interface declarations are ordered native mechanism modules
+  (`docs/TGUI.md`), never a game-named engine window or a script-authored
+  state blob.

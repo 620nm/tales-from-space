@@ -38,6 +38,7 @@ return {
     id = "gas_filter",
     name = "gas filter",
     sprite = "filter_off_n",
+    ui = { modules = { "filter" } },
     dense = false,
     states = { "off", "running" },
     -- Four pictures per position, where a binary device has two: a

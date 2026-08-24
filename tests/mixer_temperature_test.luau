@@ -127,7 +127,8 @@ local energy0 = t.pipe_energy(BACK_X, BACK_Y)
 
 t.click(p, 9, 1, t.target_at(9, 1, "gas_mixer"))
 t.tick()
-assert(t.ui(p).kind == "gas_mixer", "the mixer's own window")
+assert(t.ui(p).document == "modules" and t.ui(p).presentation == "modules",
+    "the mixer's declared document")
 near(t.ui(p).setpoints[2].value, 50.0, 0.001, "half and half out of the box")
 t.ui_act(p, "set", '{"field":"pressure","value":200}')
 t.ui_act(p, "toggle", '{"field":"power"}')

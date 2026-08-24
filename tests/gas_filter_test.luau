@@ -131,8 +131,8 @@ t.click(p, 3, 1, t.target_at(3, 1, "gas_filter"))
 t.tick()
 local ui = t.ui(p)
 assert(ui, "clicking a gas filter opens its window")
-assert(ui.native == "settings", "the generic settings panel")
-assert(ui.kind == "gas_filter")
+assert(ui.document == "modules" and ui.presentation == "modules",
+    "the generic module document")
 
 assert(ui.toggles[1].field == "power", "the first switch is the power")
 assert(ui.toggles[1].on == false)

@@ -187,7 +187,8 @@ t.click(p, 2, 1, t.target_at(2, 1, "meter"))
 t.run_ticks(2)
 local panel = t.ui(p)
 assert(panel ~= nil, "an attached gauge answers an empty hand with a panel")
-assert(panel.kind == "meter", "its own window: " .. tostring(panel.kind))
+assert(panel.document == "modules" and panel.presentation == "modules",
+    "its declared module document")
 assert(#panel.toggles == 0 and #panel.setpoints == 0, "and nothing on it to turn")
 
 local shown = {}

@@ -11,9 +11,8 @@ return {
             ctx.system_msg(user, "The machine is dark and silent.")
             return
         end
-        -- M7 second half: clicking the machine opens its real TGUI
-        -- window (tg's untouched Vending interface); dispensing happens
-        -- through its act() buttons now.
+        -- Clicking the machine opens its content-declared clean-room
+        -- shelf; dispensing happens through its exact action envelopes.
         ctx.open_ui(user, self)
     end,
     on_bump = function(ctx, self, user)
