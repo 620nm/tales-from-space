@@ -5,7 +5,7 @@
 -- (code/game/objects/items/dice.dm:68-75), which is exactly the pair
 -- of hooks the prototypes carry. The second one is the point of the
 -- whole exercise: a thrown die comes to rest by itself, and the engine
--- fires `on_throw_land` where it stopped.
+-- fires `throw.land.done` where it stopped.
 --
 -- And the PICTURE follows, which is what `t.item_at` is here to prove:
 -- tg's rolled die wears the overlay `"[icon_state]-[result]"`
@@ -14,8 +14,8 @@
 -- that the repaint and the bookkeeping have not drifted apart.
 --
 -- SEED-PINNED. `t.world(..., 2)` fixes the shift RNG, so every roll
--- below is a fact rather than a range: the d6 lands on 2 in the hand
--- and on 5 where it stops, and neither is the six it was minted on,
+-- below is a fact rather than a range: the d6 lands on 1 in the hand
+-- and on 2 where it stops, and neither is the six it was minted on,
 -- which is what makes the picture assertions below mean anything. A
 -- change to how many numbers the engine draws before these will move
 -- them, and the fix is to read the new ones off a failing run -- and
@@ -57,7 +57,7 @@ assert(t.hands(p).held == "d6", "the die is in hand")
 t.use_self(p)
 t.tick()
 local msgs = table.concat(t.messages(p), "\n")
-assert(msgs:find("You roll the d6. It lands on 2.", 1, true),
+assert(msgs:find("You roll the d6. It lands on 1.", 1, true),
     "a roll in the hand reads out, seed-pinned: " .. msgs)
 assert(table.concat(t.sounds(p), " "):find("dice_roll", 1, true),
     "and it is heard tumbling (tg plays the sound from diceroll itself)")
@@ -70,7 +70,7 @@ assert(t.hands(p).held == nil, "it left the hand at once")
 t.run_ticks(8)
 assert(#t.items_at(5, 1) == 1, "it flew four tiles and stopped there")
 msgs = table.concat(t.messages(p), "\n")
-assert(msgs:find("The d6 rolls to a stop, landing on 5.", 1, true),
+assert(msgs:find("The d6 rolls to a stop, landing on 2.", 1, true),
     "landing rolls it again: " .. msgs)
 
 local threw = t.ledger_rows("Threw")
@@ -85,7 +85,7 @@ assert(#threw == 1 and threw[1].item == "d6",
 -- so the state really moved.
 local landed = t.item_at(5, 1, "d6")
 assert(landed ~= nil, "the die is where it stopped")
-assert(landed.state == "5",
+assert(landed.state == "2",
     "it is in the state it rolled, seed-pinned: " .. tostring(landed.state))
 assert(landed.sprite == "d6_" .. landed.state,
     "and the sprite is that state's picture, not the resting one: " .. tostring(landed.sprite))
@@ -93,14 +93,14 @@ assert(landed.sprite ~= resting.sprite,
     "which is a different picture from the one it was minted wearing")
 
 local set = t.ledger_rows("StateSet")
-assert(#set >= 1 and set[#set].state == "5",
+assert(#set >= 1 and set[#set].state == "2",
     "and the face it came to rest on is on the record")
 
 -- ...and it REACHED the player. A repaint can be right in the world and
 -- never reach the wire, and only `t.layers` would notice: this is what
 -- the client was actually told to draw.
 local drawn = t.layers(p, t.target_at(5, 1, "d6"))
-assert(table.concat(drawn, " "):find("d6_5", 1, true),
+assert(table.concat(drawn, " "):find("d6_2", 1, true),
     "the client was sent the rolled face: " .. table.concat(drawn, " "))
 
 -- ---- twenty sides, and the one number anybody remembers ----------------
@@ -155,9 +155,9 @@ assert(down.state == rolled,
 assert(down.sprite == "d20_" .. rolled,
     "and the picture is that face's cell: " .. tostring(down.sprite))
 -- Seed-pinned like every other number in this file: the sixty-first roll
--- of this die is a 15, so the face on the floor is fifteen and the die
+-- of this die is an 8, so the face on the floor is eight and the die
 -- was minted on twenty — the state really moved, and it moved to the
 -- number that was said. Read a new one off a failing run rather than
 -- loosening the assertion.
-assert(rolled == "15", "seed 2 puts the sixty-first roll on 15, got " .. rolled)
+assert(rolled == "8", "seed 2 puts the sixty-first roll on 8, got " .. rolled)
 assert(down.state ~= "20", "and it is not still on the face it was minted wearing")

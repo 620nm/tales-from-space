@@ -30,6 +30,7 @@ return {
     id = "temperature_pump",
     name = "temperature pump",
     sprite = "tpump_off_n",
+    ui = { modules = { "flow" } },
     dense = false,
     states = { "off", "running" },
     facing_sprites = {

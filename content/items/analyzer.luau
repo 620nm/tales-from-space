@@ -49,59 +49,66 @@ local function sentence_case(s)
     return string.upper(string.sub(s, 1, 1)) .. string.sub(s, 2)
 end
 
-local function report(ctx, user, of, sample)
-    ctx.system_msg(user, "Results of analysis of " .. of .. ".")
-    if sample.moles <= 0 then
+local function report(user, of, sample)
+    sim.message.send({ recipient = user, message = "Results of analysis of " .. of .. "." })
+    local gas = {}
+    local gas_moles = 0
+    for id, phases in pairs(sample.contents) do
+        if phases.gas ~= nil and phases.gas > 0 then
+            gas[id] = phases.gas
+            gas_moles = gas_moles + phases.gas
+        end
+    end
+    if gas_moles <= 0 then
         -- tg prints the volume even for an empty mixture, deliberately
         -- ("don't want to change the order volume appears in").
-        ctx.system_msg(user, sentence_case(of) .. " is empty!")
-        ctx.system_msg(user, "Volume: " .. r2(sample.volume_l) .. " L")
+        sim.message.send({ recipient = user, message = sentence_case(of) .. " is empty!" })
+        sim.message.send({ recipient = user, message = "Volume: " .. r2(sample.volume_l) .. " L" })
         return
     end
-    ctx.system_msg(user, "Moles: " .. r2(sample.moles) .. " mol")
+    sim.message.send({ recipient = user, message = "Moles: " .. r2(gas_moles) .. " mol" })
     -- Sorted, because a keyed table has no order and a readout that
     -- shuffles its own lines between two identical scans is a readout
     -- nobody trusts.
     local ids = {}
-    for id in pairs(sample.gas) do
+    for id in pairs(gas) do
         table.insert(ids, id)
     end
     table.sort(ids)
     for _, id in ipairs(ids) do
-        local moles = sample.gas[id]
-        local share = moles / sample.moles * 100
-        ctx.system_msg(
-            user,
-            (NAMES[id] or id) .. ": " .. r2(moles) .. " mol (" .. r2(share) .. " %)"
-        )
+        local moles = gas[id]
+        local share = moles / gas_moles * 100
+        sim.message.send({ recipient = user, message = (NAMES[id] or id) .. ": " .. r2(moles) .. " mol (" .. r2(share) .. " %)" })
     end
-    ctx.system_msg(
-        user,
-        "Temperature: " .. r2(sample.temp_k - T0C) .. " °C (" .. r2(sample.temp_k) .. " K)"
-    )
-    ctx.system_msg(user, "Volume: " .. r2(sample.volume_l) .. " L")
-    ctx.system_msg(user, "Pressure: " .. r2(sample.pressure_kpa) .. " kPa")
+    sim.message.send({ recipient = user, message = "Temperature: " .. r2(sample.temp_k - T0C) .. " °C (" .. r2(sample.temp_k) .. " K)" })
+    sim.message.send({ recipient = user, message = "Volume: " .. r2(sample.volume_l) .. " L" })
+    sim.message.send({ recipient = user, message = "Pressure: " .. r2(sample.pressure_kpa) .. " kPa" })
 end
 
-return {
+local content = {
     id = "analyzer",
     name = "gas analyzer",
     sprite = "analyzer",
     -- tg gas_analyzer.dm:20-21.
     pickup_sound = "analyzer_pickup",
     drop_sound = "analyzer_drop",
-    on_use = function(ctx, self, user, x, y, choice, target)
+}
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+        local user, target = ev.actor, ev.claim
         -- The thing you pointed at, if it holds gas of its own. tg's
         -- `return_analyzable_air()`; here the only portable that has
         -- one is the canister, and a machine that is not one (a vent,
         -- a pump) falls through to the run it stands on -- which is the
         -- same answer tg gives for those.
         if target and target.kind == "machine" then
-            local can = ctx.air_sample(x, y, "canister")
+            local can = sim.matter_read(target.entity)
             if can then
-                ctx.sound("click", x, y)
-                report(ctx, user, "the gas canister", can)
-                return
+                sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })
+                report(user, "the gas canister", can)
+                return true
             end
         end
         -- The run you actually TOUCHED. The pixel hit-test names the
@@ -111,27 +118,30 @@ return {
         -- pixels of one pipe out of five reads that one and no other,
         -- named by its layer.
         if target and target.kind == "pipe" then
-            local pipe = ctx.air_sample(x, y, "pipe", target.layer)
+            local layer = 1
+            while 2 ^ (layer - 1) < target.layer do
+                layer += 1
+            end
+            local pipe = sim.matter_read(ev.at:network(target.layer))
             if pipe then
-                local layer = 1
-                while 2 ^ (layer - 1) < target.layer do
-                    layer += 1
-                end
-                ctx.sound("click", x, y)
-                report(ctx, user, "the layer " .. layer .. " pipe", pipe)
-                return
+                sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })
+                report(user, "the layer " .. layer .. " pipe", pipe)
+                return true
             end
         end
         -- ...and any click that touched no container -- bare deck,
         -- the gap between runs, a cable (which holds no gas) -- reads
         -- the air, which is what a turf click means (tg
         -- gas_analyzer.dm:159-162).
-        local room = ctx.air_sample(x, y, "room")
+        local room = sim.matter_read(ev.at.matter)
         if not room then
-            ctx.system_msg(user, "The analyzer has nothing to read here.")
-            return
+            sim.message.send({ recipient = user, message = "The analyzer has nothing to read here." })
+            return true
         end
-        ctx.sound("click", x, y)
-        report(ctx, user, "the air", room)
-    end,
-}
+        sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })
+        report(user, "the air", room)
+        return true
+    end)
+end
+
+return content

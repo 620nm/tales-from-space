@@ -21,7 +21,6 @@ return {
         -- an arm right up to the moment it comes off. A cybernetic one
         -- would name a falling curve here instead.
         efficiency = {{0, 1}, {1, 1}},
-        brute_mod = 1,
-        burn_mod = 1,
+        pool_mod = { brute = 1, burn = 1 },
     },
 }

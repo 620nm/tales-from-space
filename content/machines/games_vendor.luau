@@ -38,39 +38,37 @@
 --     persistence), the dyespray and the razor (hair), the piano-synth
 --     headphones (instruments), and the hourglass -- which is the near
 --     miss, being one timer and seven pictures, and would work today on
---     `ctx.sleep` plus appearance states. It is left out because its
+--     `sim.sleep` plus appearance states. It is left out because its
 --     whole output is a countdown overlay floating over the object,
 --     which is a rendering feature this engine does not have, and an
 --     hourglass you cannot read is furniture.
 --
--- NO CONTRABAND AND NO PREMIUM SHELF, and that is an engine fact
--- rather than a choice: the Vending window's `hidden_records`,
--- `coin_records` and `extended_inventory` are stubbed empty
--- (sim/ui/vending.rs), because there is no currency and no way to hack
--- a machine open. tg hides the fudge die behind the first and a
--- skateboard behind the second (games.dm:104-121). Putting either on
+-- NO CONTRABAND AND NO PREMIUM SHELF: content declares only the stock
+-- the current game can honestly expose, because there is no currency
+-- and no way to hack a machine open. tg hides the fudge die behind the
+-- contraband shelf and a skateboard behind the premium shelf
+-- (games.dm:104-121). Putting either on
 -- the open shelf would be shipping the reward without the lock, so
 -- neither is here — the fudge die in particular is a one-file port
 -- waiting on a contraband tier, not on anything about dice.
 --
 -- Prices are likewise absent everywhere in this pack: tg charges
--- PAYCHECK_CREW for this machine's stock and the window's `price` and
--- `free` fields are shimmed (docs/TGUI.md's reuse filter — adopt the
--- data contract, not the dead economy).
+-- PAYCHECK_CREW for this machine's stock, but this game declares no
+-- economy. The clean-room shelf exposes only live stock (docs/TGUI.md).
 return {
     id = "games_vendor",
     name = "Good Clean Fun",
     sprite = "games_vendor",
+    ui = { modules = { "shelf" }, opens_on_click = false },
     dense = true,
     script = "vendor",
     corded = true,
     -- tg's `product_ads`, first of the eight it rotates
     -- (games.dm:4). One line because the window shows one.
     ad = "Roll for initiative!",
-    -- tg's own category names and its own Font Awesome icons
-    -- (games.dm:7-99). The engine sorts these, so the tab order here is
-    -- alphabetical rather than tg's.
-    categories = { Cards = "diamond", Toys = "hat-wizard", Other = "star" },
+    -- tg's category names (games.dm:7-99), in the order this content
+    -- wants the clean-room document to show them.
+    categories = { "Cards", "Toys", "Other" },
     vends = {
         -- tg stocks five of the standard deck (games.dm:11).
         { item = "card_deck", name = "Deck of Cards", category = "Cards", amount = 5 },

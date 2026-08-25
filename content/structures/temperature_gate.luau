@@ -36,6 +36,7 @@ return {
     id = "temperature_gate",
     name = "temperature gate",
     sprite = "tgate_off_n",
+    ui = { modules = { "flow" } },
     dense = false,
     -- "armed" rather than "open", the same word the pressure valve
     -- wears and for the same reason: the gate is watching. Whether

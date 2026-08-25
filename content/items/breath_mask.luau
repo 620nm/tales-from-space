@@ -6,8 +6,9 @@
 -- tg: /obj/item/clothing/mask/breath (code/modules/clothing/masks/
 -- breath.dm:1-9), whose whole contribution is MASKINTERNALS: the flag
 -- that says a supply line may reach the lungs through this. Here that
--- flag is `breath_mask`, and the engine refuses it on anything that is
--- not worn on the face (docs/LUAU-API.md, Internals).
+-- flag is `breath_mask`, and the engine refuses it on any slot this
+-- pack has not declared `breathes = true` -- which is the mask slot in
+-- content/part_tree.luau (docs/BIOLOGY.md §1).
 --
 -- Silent on purpose: /obj/item/clothing sets no pickup_sound or
 -- drop_sound and neither does _masks.dm, so a mask is picked up

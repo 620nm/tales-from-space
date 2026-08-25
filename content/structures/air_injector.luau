@@ -32,6 +32,7 @@ return {
     id = "air_injector",
     name = "air injector",
     sprite = "injector_off_n",
+    ui = { modules = { "flow" } },
     dense = false,
     states = { "off", "injecting" },
     facing_sprites = {

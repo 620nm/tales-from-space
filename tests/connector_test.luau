@@ -125,7 +125,7 @@ assert(t.ledger_has("StructureStep", "connector_port", "built"), "and the raise 
 -- ---- the dispenser path, which is the same path ----
 --
 -- tg hands the RPD itself to the fitting's `wrench_act` (RPD.dm:572),
--- and lunatic funnels `ctx.fit` through the one `refusal` a pair of
+-- and lunatic funnels `sim.fit` through the one `refusal` a pair of
 -- hands goes through. So the two either both allow this or both refuse
 -- it; there is no second rulebook to keep in step.
 t.swap_hands(p)

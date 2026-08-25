@@ -83,7 +83,7 @@ t.click(p, 2, 1, machine)
 t.tick()
 local ui = t.ui(p)
 assert(ui, "an empty hand opens the panel")
-assert(ui.kind == "mint_into_dock", "which is this machine's own")
+assert(ui.document == "modules", "which is a clean-room module document")
 assert(row(ui, "vessel").value == "empty", "and it says there is nothing in it")
 
 -- The measure is a DIAL, not a reading: a chemist who wants half a

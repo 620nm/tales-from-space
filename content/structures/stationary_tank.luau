@@ -68,6 +68,7 @@ return {
     id = "stationary_tank",
     name = "pressure tank",
     sprite = "stationary_tank",
+    ui = { modules = { "tank" } },
     dense = true,
     -- One state. A sealed vessel is not an assembly -- cutting it open
     -- does not put it back in a state, it ends it and leaves the frame

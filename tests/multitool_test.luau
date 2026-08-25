@@ -1,6 +1,6 @@
 -- What a wire is doing, before you cut it.
 --
--- `ctx.segment_live(x, y)` is the read half of the power boundary: the
+-- `sim.segment_live(x, y)` is the read half of the power boundary: the
 -- liveness the last electrical pass settled on, per channel, for the
 -- cable under a tile. It is the same answer every consumer binds
 -- against (power/grid.rs), so a probe and a light fixture cannot

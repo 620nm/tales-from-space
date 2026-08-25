@@ -19,11 +19,12 @@ return {
     id = "tool_vendor",
     name = "YouTool vending machine",
     sprite = "tool_vendor",
+    ui = { modules = { "shelf" }, opens_on_click = false },
     dense = true,
     script = "vendor",
     corded = true,
     ad = "Tools for tools.",
-    categories = { Tools = "screwdriver", Parts = "matter_bin" },
+    categories = { "Tools", "Parts" },
     vends = {
         { item = "cable_coil", name = "Cable Coil", category = "Tools", amount = 10 },
         { item = "crowbar", name = "Crowbar", category = "Tools", amount = 5 },

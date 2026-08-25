@@ -10,7 +10,7 @@
 -- multitool step simply is not interested.
 --
 -- tg: /obj/item/multitool (multitool.dm:14).
-return {
+local content = {
     id = "multitool",
     name = "multitool",
     sprite = "multitool",
@@ -22,7 +22,7 @@ return {
     drop_sound = "multitool_drop",
     -- The first half of the sentence at the top of this file: hold it
     -- against an open deck and it says what the cable under there is
-    -- carrying, per channel (`ctx.segment_live`). A READ and nothing
+    -- carrying, per channel (`sim.segment_live`). A READ and nothing
     -- else -- what a machine draws, what a breaker is set to and what a
     -- bank has left are the grid's business and a window's, not a
     -- probe's (docs/POWER.md).
@@ -31,19 +31,26 @@ return {
     -- this tool already does is shadowed: a click that NAMES something
     -- is that thing's business (the gas pump's limiters, a machine's
     -- window), a finished floor hides its wiring, and a bare tile with
-    -- no cable in it is not a wire at all. `on_use` is late in the click
+    -- no cable in it is not a wire at all. `interaction.use` is late in the click
     -- order but not last (docs/LUAU-API.md §9), so declining is what
     -- keeps the rungs below it reachable.
-    on_use = function(ctx, self, user, x, y, choice, clicked)
+}
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
+        local clicked, target = ev.claim, ev.claim
+        local _x, _y, _choice = x, y, choice
         if clicked ~= nil and clicked.entity ~= nil then
-            return "pass"
+            return { replaced = false }
         end
-        if not ctx.subfloor_exposed(x, y) then
-            return "pass"
+        if not sim.subfloor_exposed(x, y) then
+            return { replaced = false }
         end
-        local live = ctx.segment_live(x, y)
+        local live = sim.segment_live(x, y)
         if live == nil then
-            return "pass"
+            return { replaced = false }
         end
         local carrying = {}
         if live.equipment then
@@ -53,12 +60,12 @@ return {
             carrying[#carrying + 1] = "lighting"
         end
         if #carrying == 0 then
-            ctx.system_msg(user, "The cable here is dead.")
+            sim.message.send({ recipient = user, message = "The cable here is dead." })
         else
-            ctx.system_msg(
-                user,
-                "The cable here is carrying " .. table.concat(carrying, " and ") .. "."
-            )
+            sim.message.send({ recipient = user, message = "The cable here is carrying " .. table.concat(carrying, " and ") .. "." })
         end
-    end,
-}
+        return true
+    end)
+end
+
+return content

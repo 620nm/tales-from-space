@@ -1,5 +1,5 @@
 -- What is inside a thing, asked once for everything that has an
--- inside. `t.vessel` is content's `ctx.vessel`: one reading -- pressure,
+-- inside. `t.vessel` is content's `sim.vessel`: one reading -- pressure,
 -- temperature, volume, headspace, whether it is closed, how much is in
 -- it and in which phase -- off a bottle of oxygen, a beaker of water
 -- and a canister alike, because all three are one body of matter in a

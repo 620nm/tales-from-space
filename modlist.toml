@@ -1,0 +1,13 @@
+# Host-owned round modlist. Manifests request privileges; this file is the
+# operator's explicit grant for the default Tales from Space deployment.
+mods = ["content"]
+
+[[approvals]]
+mod_id = "lunatic/tfs"
+permissions = [
+    "replace_handlers",
+    "prototype_handlers",
+    "global_handlers",
+    "notify_private",
+    "notify_all",
+]

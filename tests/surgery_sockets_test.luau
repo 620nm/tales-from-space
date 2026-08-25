@@ -54,7 +54,8 @@ step("shard", 5.4, function() return has(t.parts(patient).head.states, "organs_c
 hold("hemostat")
 t.click(surgeon, PX, PY, pid); t.run_ticks(2)
 local win = t.ui(surgeon)
-assert(win and win.kind == "surgery", "several head organs to reach: the window opened")
+assert(win and win.document == "modules" and win.presentation == "choices",
+    "several head organs to reach: the choice document opened")
 local labels = {}
 for _, tg in ipairs(win.toggles) do labels[#labels + 1] = tg.label end
 local blob = table.concat(labels, " || ")

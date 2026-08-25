@@ -14,7 +14,7 @@
 --
 -- Both directions matter, and both are tg's:
 --   * card in hand, deck in the other -- `deck/item_interaction`
---     (deck.dm:192-202), which is items/card.luau's `on_use`;
+--     (deck.dm:192-202), which is items/card.luau's `interaction.use`;
 --   * deck in hand, card in the other -- `singlecard/item_interaction`
 --     (singlecard.dm:150-158), which is items/card_deck.luau's.
 -- A player should never have to work out which of the two they are
@@ -70,7 +70,7 @@ assert(hands.held == "card", "the card is in the active hand: " .. tostring(hand
 assert(idle(hands) == "card_deck", "and the deck is in the other one")
 
 -- ---- card onto deck ---------------------------------------------------
--- items/card.luau's `on_use`, unmodified, reached through the new
+-- items/card.luau's `interaction.use`, unmodified, reached through the new
 -- channel: it asks for `target.kind == "item"` and a deck at
 -- `target.entity`, and gets both.
 t.use_on_other(p)

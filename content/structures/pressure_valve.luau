@@ -28,6 +28,7 @@ return {
     id = "pressure_valve",
     name = "pressure valve",
     sprite = "pvalve_off_n",
+    ui = { modules = { "flow" } },
     dense = false,
     -- "armed" rather than "open", because that is what the position
     -- means: the valve is watching, and whether anything is crossing is
