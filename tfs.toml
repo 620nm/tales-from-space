@@ -18,6 +18,8 @@ native_edges = [
     "entity.pull",
     "throw.land",
     "matter.rupture",
+    "matter.ignition",
+    "matter.extinguished",
     "body.life_state",
     "body.threshold",
     "part.seat",
@@ -36,3 +38,4 @@ tests = "tests"
 [permissions]
 replace_handlers = true
 prototype_handlers = true
+global_handlers = true
