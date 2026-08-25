@@ -21,4 +21,6 @@ return {
     -- (docs/MAPPING.md, the recipe panel). The other four fifths of
     -- ordinary air.
     relevance = 90,
+    -- The other four fifths of ordinary air.
+    group = "atmospheric",
 }
