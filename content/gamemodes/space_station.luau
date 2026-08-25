@@ -81,10 +81,14 @@ if sim ~= nil then
         -- handler or random stream runs while this dependency is checked.
         sim.require("item", round.steal_target)
     end
-    -- The assignment is the round's authoritative secret: server-only
-    -- replication until the pack itself reveals it (docs/SCRIPTING.md
-    -- §8.1). Declaring it is what makes the write legal at all.
-    sim.define("script_var", "lunatic/tfs:round_assignment", { replicate = "server" })
+    -- The assignment is the round's authoritative secret: never
+    -- replicated, and never readable by a second mod either. Declaring
+    -- it is what makes the write legal at all; `private = true` is what
+    -- keeps it the round's (docs/LUAU-API.md §8.1).
+    sim.define("script_var", "lunatic/tfs:round_assignment", {
+        replicate = "server",
+        private = true,
+    })
     sim.define("message", "lunatic/tfs:round_briefing", {
         template = round.briefing,
         placeholders = { "objective" },
@@ -176,7 +180,7 @@ if sim ~= nil then
         -- tg's end report reveals the antagonist and objective to the round:
         -- code/modules/antagonists/traitor/datum_traitor.dm:248-298
         sim.message.notify({
-            audience = "all",
+            audience = "lunatic/tfs:round",
             sender = round.announcer,
             channel = round.channel,
             message = summary,
