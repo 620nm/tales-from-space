@@ -66,6 +66,21 @@ if sim ~= nil then
             if total(clicked.entity) == nil then
                 return { replaced = false } -- not something that holds anything
             end
+            -- ...unless it is a FIXTURE standing full of gas, which is
+            -- a charge and not a pour (items/bottle.luau). A beaker
+            -- cannot take one: a mouth with no stopper in it lets the
+            -- charge back out on the next exchange, so this is refused
+            -- in the same words the dispenser uses over an open glass
+            -- (docs/CHEMISTRY.md 11). `kind` is the engine's word for
+            -- what was pointed at -- an `item` is carried, a `machine`
+            -- is bolted down -- and never a name for any one of them.
+            if clicked.kind == "machine" then
+                sim.message.send({
+                    recipient = user,
+                    message = "That would only escape: seal a vessel first.",
+                })
+                return true
+            end
             if (total(self) or 0) < 0.001 then
                 sim.message.send({ recipient = user, message = "The beaker is empty." })
                 return true
