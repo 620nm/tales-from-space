@@ -59,6 +59,17 @@ if sim ~= nil then
             if total(clicked.entity) == nil then
                 return { replaced = false }
             end
+            -- A fixture standing full of gas is a charge and not a
+            -- pour, and an open tube cannot take one -- the same
+            -- refusal, in the same words, as the beaker beside it
+            -- (items/beaker.luau, items/bottle.luau).
+            if clicked.kind == "machine" then
+                sim.message.send({
+                    recipient = user,
+                    message = "That would only escape: seal a vessel first.",
+                })
+                return true
+            end
             if (total(self) or 0) < 0.001 then
                 sim.message.send({ recipient = user, message = "The tube is empty." })
                 return true
