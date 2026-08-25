@@ -42,7 +42,7 @@ replace_handlers = true
 prototype_handlers = true
 global_handlers = true
 notify_private = true
-notify_all = true
+notify_audience = true
 
 [notifications]
 sender = "Charter Command"
