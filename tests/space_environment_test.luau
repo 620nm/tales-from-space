@@ -2,7 +2,7 @@
 --
 -- The engine owns the arithmetic -- a hull radiates sigma*(T^4 - Tsink^4)
 -- out and absorbs S/2 in, over whatever area its decks present to the
--- sky (docs/MATTER.md §9 step 5d). It owns none of the numbers. Which
+-- sky (docs/MATTER-WORLD.md §3 step 5d). It owns none of the numbers. Which
 -- skies a round may be parked under, how likely each one is and what it
 -- is called are all in the game mode file, and a shift rolls one of
 -- them off the seeded world RNG at boot (docs/GAMEMODES.md).

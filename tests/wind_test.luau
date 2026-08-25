@@ -2,7 +2,7 @@
 -- a hole in the hull, and it dies on its own when the hole stops
 -- pulling. `t.wind(x, y)` reads the sim's velocity field in m/s on the
 -- map's axes (+east, +north), which is the same field the gas overlay
--- draws a streak from (docs/MATTER.md §12).
+-- draws a streak from (docs/MATTER-WORLD.md §5).
 --
 -- Nothing here scripts the settling. There is no breach state to clear
 -- and no timer that switches the wind off: the corridor vents, the
