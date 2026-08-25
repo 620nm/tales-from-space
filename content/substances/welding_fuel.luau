@@ -8,6 +8,7 @@ local content = {
     name = "welding fuel",
     molar_mass = 26.04,
     cv = 44.0,
+    phase = { unmodeled = "liquid" },
     metabolism_rate = 0.004,
     -- What it does over a flame. tg: `burning_temperature = 1725`
     -- ("more refined than oil") and `burning_volume = 0.2`
