@@ -107,7 +107,8 @@ t.use_self(p)
 t.tick()
 local ui = t.ui(p)
 assert(ui, "the in-hand key opens the RPD's window")
-assert(ui.native == "settings" and ui.kind == "dials", "the generic dial panel")
+assert(ui.document == "modules" and ui.presentation == "visual_choices",
+    "the generic visual-choice document")
 assert(ui.name == "rapid pipe dispenser", "wearing the device's own name")
 
 local captions = {}
@@ -356,12 +357,12 @@ t.ui_act(p, "set", '{"field":"dial2","value":4}')
 t.tick()
 assert(shows(p, LAYER) == "2", "nor reach a dial through a verb the panel has no controls for")
 
--- ...and closing the window disarms it, as for any machine. A press
--- that landed would have pushed a fresh document reading "Destroy";
--- what the client still has is the one from before it closed.
-t.ui_close(p)
 local before = shows(p, MODE)
+t.ui_close(p)
 t.ui_act(p, "toggle", '{"field":"dial0","option":"1"}')
+t.tick()
+-- Reopen to observe the device; the closed subtree itself is gone.
+t.use_self(p)
 t.tick()
 assert(shows(p, MODE) == before, "no window, no acts")
 

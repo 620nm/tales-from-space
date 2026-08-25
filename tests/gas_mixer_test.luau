@@ -121,7 +121,7 @@ t.click(p, 9, 1, t.target_at(9, 1, "gas_mixer"))
 t.tick()
 local ui = t.ui(p)
 assert(ui, "clicking a gas mixer opens its window")
-assert(ui.native == "settings" and ui.kind == "gas_mixer")
+assert(ui.document == "modules" and ui.presentation == "modules")
 assert(ui.toggles[1].field == "power" and ui.toggles[1].on == false)
 assert(#ui.toggles == 1, "a mixer has one switch and no roster")
 

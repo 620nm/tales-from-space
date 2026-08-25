@@ -20,7 +20,7 @@
 -- the same tradeoff.)
 local U = 0.025
 
-return {
+local content = {
     id = "dropper",
     name = "dropper",
     sprite = "dropper",
@@ -39,55 +39,81 @@ return {
         { 1, "dropper_fill" },
     },
     acts_on_items = true,
-    on_use = function(ctx, self, user, x, y, choice, clicked)
+}
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
+        local clicked, target = ev.claim, ev.claim
+        local _x, _y, _choice = x, y, choice
         local function total(obj)
-            local c = ctx.contents(obj)
+            local read = sim.matter_read(obj)
+            local c = read and read.contents
             if c == nil then
                 return nil
             end
             local n = 0
-            for _, moles in pairs(c) do
-                n = n + moles
+            for _, phases in pairs(c) do
+                for _, moles in pairs(phases) do
+                    n = n + moles
+                end
             end
             return n
         end
 
         if clicked ~= nil and clicked.entity ~= nil then
             if total(clicked.entity) == nil then
-                return "pass"
+                return { replaced = false }
             end
             if (total(self) or 0) < 0.001 then
-                ctx.system_msg(user, "The dropper is empty.")
-                return
+                sim.message.send({ recipient = user, message = "The dropper is empty." })
+                return true
             end
-            ctx.pour(self, clicked.entity, 1 * U,
-                "The dropper is empty.", "The other vessel is full to the brim.")
-            ctx.system_msg(user, "You squeeze a drop out of the dropper.")
-            return
+            sim.matter.transfer({
+                from = self,
+                to = clicked.entity,
+                amount = 1 * U,
+                phases = { "liquid" },
+            })
+            sim.message.send({ recipient = user, message = "You squeeze a drop out of the dropper." })
+            return true
         end
 
-        local px, py = ctx.pos(user)
+        local px, py = user.tile.x, user.tile.y
         if x == px and y == py then
             if (total(self) or 0) < 0.001 then
-                ctx.system_msg(user, "The dropper is empty.")
-                return
+                sim.message.send({ recipient = user, message = "The dropper is empty." })
+                return true
             end
-            ctx.sound("drink", x, y)
-            ctx.drink(self, user, 1 * U)
-            ctx.system_msg(user, "You squeeze the dropper onto your tongue.")
-            return
+            sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = ev.at })
+            sim.matter.transfer({
+                from = self,
+                to = user,
+                amount = 1 * U,
+                phases = { "liquid" },
+            })
+            sim.message.send({ recipient = user, message = "You squeeze the dropper onto your tongue." })
+            return true
         end
 
-        local turf = ctx.turf(x, y)
+        local turf = sim.turf(x, y)
         if turf ~= "floor" and turf ~= "plating" then
-            return "pass"
+            return { replaced = false }
         end
         if (total(self) or 0) < 0.001 then
-            ctx.system_msg(user, "The dropper is empty.")
-            return
+            sim.message.send({ recipient = user, message = "The dropper is empty." })
+            return true
         end
-        ctx.spill(self, x, y,
-            "The dropper is empty.", "You can't reach that from here.")
-        ctx.system_msg(user, "You squeeze the dropper out onto the deck.")
-    end,
-}
+        sim.matter.transfer({
+            from = self,
+            to = ev.at.matter,
+            amount = "all",
+            phases = { "liquid" },
+        })
+        sim.message.send({ recipient = user, message = "You squeeze the dropper out onto the deck." })
+        return true
+    end)
+end
+
+return content

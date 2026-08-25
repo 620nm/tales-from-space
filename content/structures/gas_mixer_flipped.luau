@@ -15,6 +15,7 @@ return {
     id = "gas_mixer_flipped",
     name = "gas mixer",
     sprite = "mixer_f_off_n",
+    ui = { modules = { "mixer" } },
     dense = false,
     states = { "off", "running" },
     facing_sprites = {

@@ -13,7 +13,7 @@
 --     (it used to decline every named click, which would have put the
 --     deck on the table instead of a card);
 --   * the card it mints is placed rather than scattered, which is
---     `ctx.spawn_item`'s trailing offset pair suppressing the
+--     `sim.spawn_item`'s trailing offset pair suppressing the
 --     prototype's own mint-time jitter;
 --   * a card ALREADY in a hand goes down through the engine's surface
 --     placement instead, because the card's own hook declines
@@ -88,7 +88,7 @@ assert(math.abs(floored.offset.x + 5) <= 6 and math.abs(floored.offset.y) <= 6,
         .. floored.offset.x .. "," .. floored.offset.y)
 
 -- ---- one card, in a hand, onto the table -----------------------------
--- The other road to the same pixel. The card's `on_use` declines every
+-- The other road to the same pixel. The card's `interaction.use` declines every
 -- target that is not a deck, so the click falls through to the engine's
 -- surface step (docs/LUAU-API.md, step 9) and the card is put down
 -- exactly as any other held thing would be.

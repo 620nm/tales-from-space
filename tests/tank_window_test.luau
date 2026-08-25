@@ -75,8 +75,8 @@ t.use_self(p)
 t.run_ticks(2)
 local ui = t.ui(p)
 assert(ui, "the in-hand key opens the panel")
-assert(ui.native == "settings", "the shared panel: " .. tostring(ui.native))
-assert(ui.kind == "held_tank", "kind: " .. tostring(ui.kind))
+assert(ui.document == "modules" and ui.presentation == "modules",
+    "the shared module document")
 assert(#ui.toggles == 0, "the valve is a KEY, not a button on the panel")
 
 -- ---------------------------------------------------------------
@@ -136,5 +136,6 @@ t.run_ticks(30)
 assert(t.worn(p).back == "oxygen_tank", "the bottle is on the back now")
 assert(t.hands(p)[1] == nil and t.hands(p)[2] == nil, "and out of both hands")
 local worn = t.ui(p)
-assert(worn and worn.kind == "held_tank", "its panel is still up")
+assert(worn and worn.document == "modules" and worn.presentation == "modules",
+    "its document is still up")
 assert(readout(worn, "oxygen"), "and still reading the bottle")

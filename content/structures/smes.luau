@@ -15,6 +15,7 @@ return {
     id = "smes",
     name = "power storage unit",
     sprite = "smes",
+    ui = { modules = { "battery", "throttles", "ports" } },
     fixture = "Smes",
     category = "power",
     dense = true,

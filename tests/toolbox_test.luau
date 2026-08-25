@@ -81,9 +81,17 @@ assert(t.sprite(victim) == "human_dead", "and the body lies down")
 
 -- Every swing is on the record, attributed to the FILE that decided
 -- the damage and the player whose click triggered it.
+local function pool_amount(row, id)
+    for _, entry in ipairs(row.pools or {}) do
+        if entry[1] == id then
+            return entry[2]
+        end
+    end
+    return 0
+end
 local hits = 0
 for _, row in ipairs(t.ledger_rows("Damaged")) do
-    if math.abs(row.brute - 10) < 0.01
+    if math.abs(pool_amount(row, "brute") - 10) < 0.01
         and row.target == victim_id
         and row.actor.kind == "script"
         and row.actor.file == "items/toolbox.luau"
@@ -94,7 +102,16 @@ for _, row in ipairs(t.ledger_rows("Damaged")) do
 end
 assert(hits == 10 + swings,
     "every hit is a Script-attributed ledger row, got " .. hits)
-assert(#t.ledger_rows("Died") == 1, "the death is on the record")
+-- One life-state row, and it is the one that ends the shift for this
+-- body: the engine names no state, so the spec reads the flag the
+-- entered state carries.
+local ended = 0
+for _, row in ipairs(t.ledger_rows("LifeStateChanged")) do
+    if row.terminal then
+        ended += 1
+    end
+end
+assert(ended == 1, "the death is on the record")
 
 -- Both parties heard the thud and read the message.
 local swung = table.concat(t.messages(attacker), "\n")

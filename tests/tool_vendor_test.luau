@@ -35,20 +35,19 @@ t.tick()
 local x, y = t.pos(p)
 assert(x == 1 and y == 1, "tool vendors are solid too")
 assert(table.concat(t.messages(p), "\n"):find("wobbles", 1, true),
-    "the shared on_bump fired")
+    "the shared move.bump fired")
 
--- Its window is tg's Vending interface, stocked from ITS OWN list.
+-- Its clean-room shelf document is stocked from ITS OWN list.
 t.click(p, 2, 1, t.target_at(2, 1))
 t.tick()
 local ui = t.ui(p)
 assert(ui, "clicking the tool vendor opens its window")
-assert(ui.payload.config.interface.name == "Vending", "tg's Vending window")
-assert(ui.payload.config.title == "YouTool vending machine",
-    "the window wears the machine's own name: " .. tostring(ui.payload.config.title))
-assert(ui.payload.data.ad == "Tools for tools.", "and its own ad copy")
+assert(ui.document == "modules" and ui.presentation == "shelf",
+    "the generic shelf document")
+assert(ui.notice == "Tools for tools.", "and its own ad copy")
 local shelf = {}
-for _, rec in ipairs(ui.payload.data.product_records) do
-    shelf[rec.ref] = rec
+for _, rec in ipairs(ui.products) do
+    shelf[rec.payload.product] = rec
 end
 -- This is the complete TfS tool roster, not only tg's base YouTool
 -- stock. Keep the explicit inventory here as the tripwire: every
@@ -84,22 +83,20 @@ local parts = {
 for _, item in ipairs(tools) do
     assert(shelf[item], item .. " is missing from the tool vendor")
     assert(shelf[item].category == "Tools", item .. " is not under Tools")
-    assert(shelf[item].path ~= "atlas-missing-" .. item,
+    assert(shelf[item].sprite ~= "missing",
         item .. " does not resolve to atlas art")
-    assert(ui.payload.data.stock[shelf[item].path].amount > 0,
-        item .. " has no displayed stock")
+    assert(shelf[item].stock > 0, item .. " has no displayed stock")
 end
 for _, item in ipairs(parts) do
     assert(shelf[item], item .. " is missing from the tool vendor")
     assert(shelf[item].category == "Parts", item .. " is not under Parts")
-    assert(shelf[item].path ~= "atlas-missing-" .. item,
+    assert(shelf[item].sprite ~= "missing",
         item .. " does not resolve to atlas art")
-    assert(ui.payload.data.stock[shelf[item].path].amount > 0,
-        item .. " has no displayed stock")
+    assert(shelf[item].stock > 0, item .. " has no displayed stock")
 end
-assert(#ui.payload.data.product_records == #tools + #parts,
+assert(#ui.products == #tools + #parts,
     "the tool shelf and its asserted roster drifted apart")
-assert(shelf.cable_coil.path == "atlas-coil-cable_coil",
+assert(shelf.cable_coil.sprite == "coil",
     "item ids that differ from their sprite still select their atlas art")
 assert(shelf.cola == nil, "the tool vendor does not sell cola")
 
@@ -124,7 +121,7 @@ local additions = {
 }
 for _, item in ipairs(additions) do
     assert(t.count_items(item) == 0)
-    t.ui_act(p, "vend", '{"ref":"' .. item .. '"}')
+    t.ui_act(p, "vend", '{"product":"' .. item .. '"}')
     t.tick()
     assert(t.count_items(item) == 1, item .. " did not dispense")
     assert(t.ledger_has("ItemSpawned", item, "Player"),
@@ -135,7 +132,7 @@ end
 -- and the ledger names the buyer, not the script that opened the
 -- window.
 assert(t.count_items("wrench") == 0)
-t.ui_act(p, "vend", '{"ref":"wrench"}')
+t.ui_act(p, "vend", '{"product":"wrench"}')
 t.tick()
 assert(t.count_items("wrench") == 1, "the named product dispensed")
 assert(t.count_items("crowbar") == 0, "and only that one")
@@ -143,19 +140,19 @@ assert(table.concat(t.sounds(p), "\n"):find("vend", 1, true), "the vend clunk pl
 assert(t.ledger_has("ItemSpawned", "wrench", "Player"),
     "a UI act is a direct player action")
 
--- NEGATIVE: the client is hostile. A ref this machine does not stock
+-- NEGATIVE: the client is hostile. A product this machine does not stock
 -- mints nothing at all — not the first product, not a fallback, and
 -- certainly not an arbitrary prototype named by the payload.
-t.ui_act(p, "vend", '{"ref":"cola"}')
+t.ui_act(p, "vend", '{"product":"cola"}')
 t.tick()
 assert(t.count_items("cola") == 0, "a machine cannot be talked into stock it lacks")
-t.ui_act(p, "vend", '{"ref":"id_engineering"}')
+t.ui_act(p, "vend", '{"product":"id_engineering"}')
 t.tick()
 assert(t.count_items("id_engineering") == 0, "nor into minting an ID card")
 
 -- NEGATIVE: closing the window disarms acts, as for any machine.
 t.ui_close(p)
-t.ui_act(p, "vend", '{"ref":"wrench"}')
+t.ui_act(p, "vend", '{"product":"wrench"}')
 t.tick()
 assert(t.count_items("wrench") == 1, "no window, no vending")
 
@@ -163,8 +160,8 @@ assert(t.count_items("wrench") == 1, "no window, no vending")
 t.click(p, 2, 2, t.target_at(2, 2))
 t.tick()
 local cola_ui = t.ui(p)
-assert(cola_ui.payload.data.product_records[1].ref == "cola",
+assert(cola_ui.products[1].payload.product == "cola",
     "the softdrinks machine still sells softdrinks")
-t.ui_act(p, "vend", '{"ref":"cola"}')
+t.ui_act(p, "vend", '{"product":"cola"}')
 t.tick()
 assert(t.count_items("cola") == 1, "and dispenses them")

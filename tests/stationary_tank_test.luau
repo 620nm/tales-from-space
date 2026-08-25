@@ -76,8 +76,8 @@ t.click(p, 3, 2, t.target_at(3, 2))
 t.tick()
 local ui = t.ui(p)
 assert(ui, "clicking the tank opens its window")
-assert(ui.native == "settings", "the generic settings panel: " .. tostring(ui.native))
-assert(ui.kind == "tank", "kind: " .. tostring(ui.kind))
+assert(ui.document == "modules" and ui.presentation == "modules",
+    "the generic module document")
 assert(#ui.toggles == 0, "a tank has no switch")
 assert(#ui.setpoints == 0, "and no dial -- its ports are its valves")
 assert(ui.gauge and ui.gauge > 0.0 and ui.gauge < 100.0,

@@ -56,8 +56,8 @@ t.click(p, 2, 2, t.target_at(2, 2))
 t.tick()
 local ui = t.ui(p)
 assert(ui, "clicking a canister opens its window")
-assert(ui.native == "settings", "the generic settings panel: " .. tostring(ui.native))
-assert(ui.kind == "canister")
+assert(ui.document == "modules" and ui.presentation == "modules",
+    "the generic module document")
 
 local valve = ui.toggles[1]
 assert(valve.field == "valve", "the one switch is the release valve")

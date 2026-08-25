@@ -8,7 +8,7 @@
 -- inside a thing nobody can see, minted at roundstart on every table on
 -- the station, to model a fact that is one string.
 --
--- SO THE DECK IS A STRING. `ctx.set_var`/`ctx.var` (docs/LUAU-API.md,
+-- SO THE DECK IS A STRING. `sim.set_var`/`sim.var` (docs/LUAU-API.md,
 -- script vars) keep one key on this item: `order`, the faces still in
 -- it, top first, comma separated. The engine stores it, bounds it,
 -- drops it with the deck and ledgers every change, and cannot read a
@@ -18,7 +18,7 @@
 -- The order is generated on the FIRST deal rather than at spawn,
 -- because there is no on_spawn hook and because it is the honest
 -- moment: an unopened deck is in no particular order until somebody
--- opens it. `ctx.random` draws from the shift-seeded RNG, so two
+-- opens it. `sim.random` draws from the shift-seeded RNG, so two
 -- servers replaying the same shift deal the same cards.
 --
 -- THE TWO VERBS ARE NOT TG'S BINDINGS, and the divergence is on
@@ -26,13 +26,13 @@
 -- while the deck is WIELDED in two hands (deck.dm:146-169); this engine
 -- has neither alt-click nor wielding. What it has is the two seams a
 -- held item already owns, and they happen to fit better:
---   * on_use_self -- shuffle. The in-hand key, whose whole definition
+--   * interaction.use@self -- shuffle. The in-hand key, whose whole definition
 --     is that "the only thing it can possibly act on is the item in
 --     your own hand" (docs/LUAU-API.md). Squaring up a deck is that.
---   * on_use -- deal one card, face down, onto the tile you clicked.
+--   * interaction.use -- deal one card, face down, onto the tile you clicked.
 --     tg deals into a hand or at a mob; pointing at the table is
 --     better, and it is the only form this engine can express, since
---     `ctx.give` does not exist yet (it is on the deferred list, and
+--     `sim.give` does not exist yet (it is on the deferred list, and
 --     this is a caller for it). Pointed AT A TABLE it is tg exactly --
 --     `deck_act` draws a card and lays it on the table
 --     (tables_racks.dm:375-384) -- so the deck deals rather than being
@@ -41,9 +41,9 @@
 --
 -- A card comes back BOTH ways round, because tg does:
 --   * card in hand, deck under the cursor -- items/card.luau's
---     `on_use` recognises the deck and writes `order` itself, which is
+--     `interaction.use` recognises the deck and writes `order` itself, which is
 --     tg's `deck/item_interaction` (deck.dm:192-202);
---   * DECK in hand, card under the cursor -- this file's `on_use`
+--   * DECK in hand, card under the cursor -- this file's `interaction.use`
 --     below, which is tg's `singlecard/item_interaction`: an unwielded
 --     deck used on a card recycles the card rather than dealing onto
 --     it (singlecard.dm:150-158). There is no wielding here, so the
@@ -127,26 +127,26 @@ local function shuffled(ctx)
         order[i] = slug(face)
     end
     for i = #order, 2, -1 do
-        local j = ctx.random(1, i)
+        local j = math.random(1, i)
         order[i], order[j] = order[j], order[i]
     end
     return table.concat(order, ",")
 end
 
 -- The deck's order, generating it if this is the first time anybody has
--- touched it. `nil` from ctx.var means "nothing has been written here",
+-- touched it. `nil` from sim.var means "nothing has been written here",
 -- which for a deck means "still in the box".
 local function order_of(ctx, self)
-    return ctx.var(self, "order") or shuffled(ctx)
+    return self.vars["order"] or shuffled(ctx)
 end
 
-return {
+local content = {
     id = "card_deck",
     name = "deck of cards",
     sprite = "card_deck_full",
     -- A click that NAMES a card is the deck's business rather than a
     -- pickup of the card -- tg's `interact_with_atom` half of the
-    -- chain, and the flag that lets `on_use` below see an item target
+    -- chain, and the flag that lets `interaction.use` below see an item target
     -- at all (docs/LUAU-API.md). Everything that is not a card still
     -- falls through, so a deck in hand never became a thing that
     -- swallows every click made while holding one.
@@ -162,14 +162,20 @@ return {
         ["low"] = "card_deck_low",
         ["empty"] = "card_deck_empty",
     },
-    on_use_self = function(ctx, self, user)
+}
+
+if sim ~= nil then
+    sim.define("script_var", "lunatic/tfs:order", { replicate = "server" })
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
+        local self, user = ev.subject, ev.actor
         -- Shuffling an EMPTY deck is not magic and must not look like
         -- it: the cards are on the table, and gathering them is the
         -- players' job (each one clicked back in through card.luau).
         local order = order_of(ctx, self)
         if order == "" then
-            ctx.system_msg(user, "There is nothing left in the deck to shuffle.")
-            return
+            sim.message.send({ recipient = user, message = "There is nothing left in the deck to shuffle." })
+            return true
         end
         -- Reshuffling what is LEFT, not restoring what was dealt. The
         -- roster is only the source of a fresh deck; a deck that has
@@ -179,14 +185,18 @@ return {
             held[#held + 1] = face
         end
         for i = #held, 2, -1 do
-            local j = ctx.random(1, i)
+            local j = math.random(1, i)
             held[i], held[j] = held[j], held[i]
         end
-        ctx.set_var(self, "order", table.concat(held, ","))
-        ctx.sound("card_shuffle", ctx.pos(user))
-        ctx.system_msg(user, "You shuffle the deck.")
-    end,
-    on_use = function(ctx, self, user, x, y, choice, target)
+        self.vars["order"] = table.concat(held, ",")
+        sim.sound.play({ asset = "lunatic/tfs:sound/card_shuffle", at = user.tile })
+        sim.message.send({ recipient = user, message = "You shuffle the deck." })
+        return true
+    end)
+    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
+        local clicked, target = ev.claim, ev.claim
+        local _x, _y, _choice = x, y, choice
         -- A click that named a loose ITEM is not a deal: that is the
         -- pickup, or a card being fed back in through items/card.luau.
         -- Falling through rather than eating it keeps a deck from being
@@ -211,8 +221,8 @@ return {
         -- other reaches this hook, and the reverse reaches that one.
         if target ~= nil and target.kind == "item" then
             local card = target.entity
-            if ctx.item_id(card) ~= "card" then
-                return "pass"
+            if card.prototype ~= "card" then
+                return { replaced = false }
             end
             -- The same two refusals the card's own hook keeps, for the
             -- same reason: tg's `insert` returns null past `card_limit`
@@ -220,52 +230,52 @@ return {
             -- nobody has dealt from is already whole (`nil` order), and
             -- an unbounded order would eventually meet a refused write
             -- with the card already eaten.
-            local order = ctx.var(self, "order")
+            local order = self.vars["order"]
             if order == nil or count(order) >= #FACES then
-                ctx.system_msg(user, "The deck is already full.")
-                return
+                sim.message.send({ recipient = user, message = "The deck is already full." })
+                return true
             end
-            local key = face_of(ctx.state(card))
+            local key = face_of(card.state)
             -- The end items/card.luau writes to, so a card put back
             -- lands in the same place whichever way round the player
             -- did it. Face down is implicit: the state a dealt card
             -- wears never leaves this string, only its face does.
             local restored = order == "" and key or (key .. "," .. order)
-            ctx.set_var(self, "order", restored)
-            ctx.set_state(self, thickness(count(restored)))
-            ctx.sound("card_flip", x, y)
-            ctx.system_msg(user, "You slide the card into the deck.")
-            -- `ctx.consume` does the hand slots, the despawn and the
+            self.vars["order"] = restored
+            sim.appearance.set_state({ entity = self, state = thickness(count(restored)) })
+            sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = ev.at })
+            sim.message.send({ recipient = user, message = "You slide the card into the deck." })
+            -- `sim.entity.despawn` does the hand slots, removal and the
             -- ledger row, so the card cannot survive as a dead handle
             -- in somebody's off hand.
-            ctx.consume(card)
-            return
+            sim.entity.despawn({ entity = card })
+            return true
         end
         if target ~= nil and target.kind ~= "machine" then
-            return "pass"
+            return { replaced = false }
         end
         -- Somewhere a card can lie. The engine refuses a spawn onto
         -- anything else and refuses it SILENTLY, so this hook asks
         -- first: a deal that decremented the deck and produced no card
         -- would be a deck that eats itself against a wall. Same
         -- check-twice discipline as construction, one seam smaller.
-        local turf = ctx.turf(x, y)
+        local turf = sim.turf(x, y)
         if turf ~= "floor" and turf ~= "plating" then
-            ctx.system_msg(user, "There is nowhere there to put a card.")
-            return
+            sim.message.send({ recipient = user, message = "There is nowhere there to put a card." })
+            return true
         end
 
         local order = order_of(ctx, self)
         if order == "" then
-            ctx.system_msg(user, "The deck is empty.")
-            return
+            sim.message.send({ recipient = user, message = "The deck is empty." })
+            return true
         end
         -- The top card is the first entry, and the rest of the string
         -- is the rest of the deck. One read, one write, no round trip:
-        -- `ctx.var` is a query and `ctx.set_var` is an effect, so a
+        -- `sim.var` is a query and `sim.set_var` is an effect, so a
         -- hook that wrote and then read would get the old value back.
         local top, rest = order:match("^([^,]+),?(.*)$")
-        ctx.set_var(self, "order", rest)
+        self.vars["order"] = rest
         -- Face DOWN, which is how tg deals unless the dealer says
         -- otherwise (deck.dm:146-161, and `insert` forces it on the way
         -- in). The card that lands is a particular card and nobody can
@@ -283,13 +293,22 @@ return {
         -- rather than an oversight: tg has no floor placement at all,
         -- so cards on the deck are this pack's own flavour, and a
         -- card that fell out of a hand should look like one.
-        if target ~= nil then
-            ctx.spawn_item("card", x, y, "down_" .. top, ctx.click_offset())
-        else
-            ctx.spawn_item("card", x, y, "down_" .. top)
-        end
-        ctx.set_state(self, thickness(count(rest)))
-        ctx.sound("card_flip", x, y)
-        ctx.system_msg(user, "You deal a card.")
-    end,
-}
+        sim.entity.spawn({
+            definition = "card",
+            at = ev.at,
+            initial = {
+                state = "down_" .. top,
+                -- Nil at bare deck: the click carried no pixel worth
+                -- honouring there, and an absent offset is the ordinary
+                -- scattered mint.
+                offset = target ~= nil and ev.click_offset or nil,
+            },
+        })
+        sim.appearance.set_state({ entity = self, state = thickness(count(rest)) })
+        sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = ev.at })
+        sim.message.send({ recipient = user, message = "You deal a card." })
+        return true
+    end)
+end
+
+return content

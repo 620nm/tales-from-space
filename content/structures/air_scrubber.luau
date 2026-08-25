@@ -56,6 +56,7 @@ return {
     id = "air_scrubber",
     name = "air scrubber",
     sprite = "scrubber_off_n",
+    ui = { modules = { "scrubber" } },
     dense = false,
     -- THREE positions, which is one more than most machines have. A
     -- scrubber running the wrong way is not a scrubber that is merely

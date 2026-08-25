@@ -10,7 +10,8 @@
 -- spacesuits/softsuit.dm:30-33), and the STOPSPRESSUREDAMAGE its
 -- /obj/item/clothing/suit/space parent carries
 -- (_spacesuits.dm:80-101) -- here the `pressure_proof` flag, which the
--- engine refuses on anything not worn as a suit.
+-- engine refuses on any slot this pack has not declared `seals = true`
+-- -- which is the suit slot in content/part_tree.luau.
 --
 -- What is deliberately NOT here: tg's slowdown, cold protection,
 -- armour and helmet requirement. There is no prototype field for any of

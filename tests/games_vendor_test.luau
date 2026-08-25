@@ -44,12 +44,13 @@ t.tick()
 t.click(p, 2, 1, t.target_at(2, 1))
 t.tick()
 local ui = t.ui(p)
-assert(ui.payload.config.interface.name == "Vending", "tg's Vending window")
-assert(ui.payload.data.ad == "Roll for initiative!",
-    "tg's own slogan across the top: " .. tostring(ui.payload.data.ad))
+assert(ui.document == "modules" and ui.presentation == "shelf",
+    "the clean-room shelf document")
+assert(ui.notice == "Roll for initiative!",
+    "the content-authored slogan across the top: " .. tostring(ui.notice))
 
 -- Every declared product is on the window, in its declared category,
--- with an atlas path the client can actually resolve and the stock the
+-- with an atlas sprite the client can actually resolve and the stock the
 -- file says. A shelf row whose art did not resolve would draw a blank
 -- button, which is the failure this checks.
 local WANT = {
@@ -58,24 +59,24 @@ local WANT = {
     dice_bag = { name = "Bag of Dice", category = "Other", amount = 10 },
 }
 local found = 0
-for _, row in ipairs(ui.payload.data.product_records) do
-    local want = WANT[row.ref]
-    assert(want ~= nil, "the shelf stocks nothing undeclared: " .. tostring(row.ref))
-    assert(row.name == want.name, row.ref .. " is called " .. want.name)
-    assert(row.category == want.category, row.ref .. " is on the " .. want.category .. " shelf")
-    assert(ui.payload.data.stock[row.path].amount == want.amount,
-        row.ref .. " stocks " .. want.amount .. ", got "
-            .. tostring(ui.payload.data.stock[row.path].amount))
+for _, row in ipairs(ui.products) do
+    local product = row.payload.product
+    local want = WANT[product]
+    assert(want ~= nil, "the shelf stocks nothing undeclared: " .. tostring(product))
+    assert(row.label == want.name, product .. " is called " .. want.name)
+    assert(row.category == want.category, product .. " is on the " .. want.category .. " shelf")
+    assert(row.sprite ~= "missing", product .. " resolves to atlas art")
+    assert(row.stock == want.amount,
+        product .. " stocks " .. want.amount .. ", got " .. tostring(row.stock))
     found += 1
 end
 assert(found == 3, "three products, got " .. found)
--- tg's own category icons (games.dm:9, 25, 89).
-assert(ui.payload.data.categories.Cards.icon == "diamond", "Cards is a diamond")
-assert(ui.payload.data.categories.Toys.icon == "hat-wizard", "Toys is a wizard hat")
-assert(ui.payload.data.categories.Other.icon == "star", "Other is a star")
+assert(ui.products[1].category == "Cards" and ui.products[2].category == "Toys"
+        and ui.products[3].category == "Other",
+    "content owns the shelf-group order")
 
 -- ---- a bag of dice, and the dice really in it -------------------------
-t.ui_act(p, "vend", '{"ref":"dice_bag"}')
+t.ui_act(p, "vend", '{"product":"dice_bag"}')
 t.tick()
 assert(t.count_items("dice_bag") == 1, "a bag came out")
 -- The vend drops at the MACHINE's feet, never the buyer's, so a machine
@@ -119,7 +120,7 @@ t.tick()
 -- ---- a deck, and a card off it ----------------------------------------
 t.click(p, 2, 1, t.target_at(2, 1))
 t.tick()
-t.ui_act(p, "vend", '{"ref":"card_deck"}')
+t.ui_act(p, "vend", '{"product":"card_deck"}')
 t.tick()
 assert(t.count_items("card_deck") == 1, "a deck came out")
 t.ui_close(p)
@@ -137,7 +138,7 @@ assert(card.sprite == "card_back", "showing its back: " .. tostring(card.sprite)
 -- The deck's shuffle is written on the record the moment it is dealt
 -- from, which is the only trace a string in `ScriptVars` leaves.
 local wrote = t.ledger_rows("VarSet")
-assert(#wrote >= 1 and wrote[#wrote].key == "order",
+assert(#wrote >= 1 and wrote[#wrote].key == "lunatic/tfs:order",
     "the vended deck kept its own order")
 
 -- ---- the Captain's Aid, which the machine is stingy with --------------
@@ -145,12 +146,12 @@ t.drop(p)
 t.tick()
 t.click(p, 2, 1, t.target_at(2, 1))
 t.tick()
-t.ui_act(p, "vend", '{"ref":"captains_aid"}')
+t.ui_act(p, "vend", '{"product":"captains_aid"}')
 t.tick()
 assert(t.count_items("captains_aid") == 1, "the one Aid came out")
 -- tg stocks exactly one (games.dm:26), and a finite shelf must actually
 -- run out -- otherwise `amount` is decoration.
-t.ui_act(p, "vend", '{"ref":"captains_aid"}')
+t.ui_act(p, "vend", '{"product":"captains_aid"}')
 t.tick()
 assert(t.count_items("captains_aid") == 1,
     "and the shelf is empty: a second buy mints nothing")
@@ -162,7 +163,7 @@ assert(t.count_items("captains_aid") == 1,
 -- the shelf list is the only thing that decides.
 for _, ref in ipairs({ "cola", "d20", "card", "id_captain", "toolbox" }) do
     local before = t.count_items(ref)
-    t.ui_act(p, "vend", '{"ref":"' .. ref .. '"}')
+    t.ui_act(p, "vend", '{"product":"' .. ref .. '"}')
     t.tick()
     assert(t.count_items(ref) == before,
         "Good Clean Fun does not deal in " .. ref)
@@ -185,7 +186,7 @@ assert(t.count_items("d6") == 0 and t.count_items("d20") == 0,
 
 -- Walk to it and open it. The window opening at all IS the power
 -- assertion: the fixture script refuses with "dark and silent" when
--- `ctx.is_powered` says no, and that refusal would leave `t.ui` nil.
+-- `sim.is_powered` says no, and that refusal would leave `t.ui` nil.
 --
 -- The first joiner spawns at (18, 16), five tiles west of the machine
 -- along the Commons' open row, so the walk is deterministic rather
@@ -209,6 +210,7 @@ t.tick()
 local shelf = t.ui(crew)
 assert(shelf ~= nil, "the machine has power and opens: "
     .. table.concat(t.messages(crew), " "))
-assert(shelf.payload.config.interface.name == "Vending", "tg's Vending window")
-assert(shelf.payload.data.ad == "Roll for initiative!",
+assert(shelf.document == "modules" and shelf.presentation == "shelf",
+    "the shelf document")
+assert(shelf.notice == "Roll for initiative!",
     "and it is the right machine, not one of its two neighbours")

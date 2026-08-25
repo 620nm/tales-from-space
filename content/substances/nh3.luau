@@ -43,7 +43,7 @@
 -- MAX_SCRIPT_HIT caps any single hook at 40, so a genuinely thick
 -- cloud is lethal in about ten breaths and cannot run away faster than
 -- that however badly somebody misjudges a reaction.
-return {
+local content = {
     id = "nh3",
     name = "ammonia gas",
     molar_mass = 17.03,
@@ -59,17 +59,24 @@ return {
     -- Through glass it looks like what it is made from
     -- (tg: other_reagents.dm:1630, the same colour ammonia.luau wears).
     color = "#404030",
-    -- `on_mob_life(ctx, self, user, moles)`: the metabolism hook hands
+    -- `mob.life(ctx, self, user, moles)`: the metabolism hook hands
     -- the same mob twice, as the thing the hook is on and as the body
     -- it is happening to, and the moles metabolized this tick last.
-    on_mob_life = function(ctx, mob, _user, moles)
-        ctx.damage(mob, { oxy = moles * 12000 })
-        if ctx.random(1, 4) == 1 then
-            ctx.system_msg(mob, "Your eyes and throat burn.")
-        end
-    end,
     -- Where this sits in a tool that offers every substance there is
     -- (docs/MAPPING.md, the recipe panel). Reachable as room air, and
     -- rarely what a room is commissioned holding.
     relevance = 20,
 }
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
+        local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount
+        sim.damage.apply({ target = mob, amounts = { oxy = moles * 12000 } })
+        if math.random(1, 4) == 1 then
+            sim.message.send({ recipient = mob, message = "Your eyes and throat burn." })
+        end
+    end)
+end
+
+return content

@@ -58,32 +58,32 @@ t.click(p, 2, 1, t.target_at(2, 1))
 t.tick()
 local ui = t.ui(p)
 assert(ui, "clicking the dispenser opens its window")
-assert(ui.payload.config.interface.name == "Vending", "the shared Vending window")
-assert(ui.payload.config.title == "pipe dispenser", "wearing its own name")
+assert(ui.document == "modules" and ui.presentation == "shelf",
+    "the shared shelf document")
 
 -- tg's recipe categories, by tg's own names
 -- (code/_globalvars/lists/pipe_recipes.dm). All four are stocked now
 -- that the plate heat exchanger exists — a tab exists exactly when
 -- something on it does.
-local cats = ui.payload.data.categories
+local shelf = {}
+local cats = {}
+for _, rec in ipairs(ui.products) do
+    shelf[rec.payload.product] = rec
+    cats[rec.category] = true
+end
 assert(cats.Pipes and cats.Binary and cats.Devices, "three of tg's four categories")
 assert(cats["Heat Exchange"], "and the fourth, now that a plate lives on it")
-
-local shelf = {}
-for _, rec in ipairs(ui.payload.data.product_records) do
-    shelf[rec.ref] = rec
-end
 assert(shelf.gas_pump_fitting.category == "Binary", "a pump is binary")
-assert(shelf.gas_pump_fitting.name == "Gas Pump", "listed by the MACHINE's name, as tg lists it")
+assert(shelf.gas_pump_fitting.label == "Gas Pump", "listed by the MACHINE's name, as tg lists it")
 assert(shelf.pipe_meter.category == "Devices", "the meter is a device")
 assert(shelf.gas_mixer_flipped_fitting, "both mirror images are on the shelf")
 assert(shelf.pipe.category == "Pipes", "and plain pipe leads")
 -- The two vents, which are the commonest thing an engineer comes here
 -- for: every room the crew stands in wants one, and both are ordinary
 -- fittings you carry away and bolt down.
-assert(shelf.vent_fitting.name == "Air Vent", "a vent is stocked like any other machine")
+assert(shelf.vent_fitting.label == "Air Vent", "a vent is stocked like any other machine")
 assert(shelf.vent_fitting.category == "Devices", "on the shelf with the other room devices")
-assert(shelf.passive_vent_fitting.name == "Passive Vent", "and so is its unpowered twin")
+assert(shelf.passive_vent_fitting.label == "Passive Vent", "and so is its unpowered twin")
 assert(shelf.cola == nil, "a pipe dispenser sells no softdrinks")
 
 -- ---- it dispenses onto its OWN tile, free ----
@@ -91,7 +91,7 @@ assert(shelf.cola == nil, "a pipe dispenser sells no softdrinks")
 -- tg's `new /obj/item/pipe(loc)` (pipe_dispenser.dm:209): out of the
 -- machine, onto the machine. The buyer bends down for it.
 assert(t.count_items("gas_pump_fitting") == 0)
-t.ui_act(p, "vend", '{"ref":"gas_pump_fitting"}')
+t.ui_act(p, "vend", '{"product":"gas_pump_fitting"}')
 t.tick()
 assert(t.count_items("gas_pump_fitting") == 1, "the named fitting dispensed")
 assert(on_tile(2, 1, "gas_pump_fitting"), "onto the dispenser's tile, not the buyer's")
@@ -104,14 +104,14 @@ assert(t.ledger_has("ItemSpawned", "gas_pump_fitting", "Player"),
 -- presses in the same breath are one fitting; the second press is not
 -- queued, it is dropped, so the button is worth exactly as much to a
 -- script as to a finger.
-t.ui_act(p, "vend", '{"ref":"gas_pump_fitting"}')
-t.ui_act(p, "vend", '{"ref":"manual_valve_fitting"}')
+t.ui_act(p, "vend", '{"product":"gas_pump_fitting"}')
+t.ui_act(p, "vend", '{"product":"manual_valve_fitting"}')
 t.tick()
 assert(t.count_items("gas_pump_fitting") == 1, "the second press inside the second is dropped")
 assert(t.count_items("manual_valve_fitting") == 0, "and so is a press for something else")
 
 t.run_seconds(1)
-t.ui_act(p, "vend", '{"ref":"manual_valve_fitting"}')
+t.ui_act(p, "vend", '{"product":"manual_valve_fitting"}')
 t.tick()
 assert(t.count_items("manual_valve_fitting") == 1, "a second later it hands out again")
 
@@ -119,7 +119,7 @@ assert(t.count_items("manual_valve_fitting") == 1, "a second later it hands out 
 -- mints nothing — not a fallback, and certainly not an arbitrary
 -- prototype named by the payload.
 t.run_seconds(1)
-t.ui_act(p, "vend", '{"ref":"id_captain"}')
+t.ui_act(p, "vend", '{"product":"id_captain"}')
 t.tick()
 assert(t.count_items("id_captain") == 0, "no dispenser can be talked into minting an ID card")
 

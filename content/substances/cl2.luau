@@ -34,7 +34,7 @@
 --
 -- MAX_SCRIPT_HIT caps any one hook at 40, so a thick cloud kills in
 -- about ten breaths and no faster.
-return {
+local content = {
     id = "cl2",
     name = "chlorine gas",
     molar_mass = 70.90,
@@ -50,15 +50,22 @@ return {
     -- Through glass, the colour its reagent wears
     -- (tg: other_reagents.dm:1090).
     color = "#FFFB89",
-    -- `on_mob_life(ctx, self, user, moles)` -- see nh3.luau.
-    on_mob_life = function(ctx, mob, _user, moles)
-        ctx.damage(mob, { oxy = moles * 16000 })
-        if ctx.random(1, 3) == 1 then
-            ctx.system_msg(mob, "Your chest is on fire.")
-        end
-    end,
+    -- `mob.life(ctx, self, user, moles)` -- see nh3.luau.
     -- Where this sits in a tool that offers every substance there is
     -- (docs/MAPPING.md, the recipe panel). Reachable as room air, and
     -- rarely what a room is commissioned holding.
     relevance = 10,
 }
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
+        local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount
+        sim.damage.apply({ target = mob, amounts = { oxy = moles * 16000 } })
+        if math.random(1, 3) == 1 then
+            sim.message.send({ recipient = mob, message = "Your chest is on fire." })
+        end
+    end)
+end
+
+return content

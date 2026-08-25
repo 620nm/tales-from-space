@@ -324,7 +324,8 @@ t.click(r, 5, 1, t.target_at(5, 1, "gas_pump"))
 t.tick()
 local panel = t.ui(r)
 assert(panel, "a pump answers an empty hand with a panel")
-assert(panel.kind == "flow", "the one every in-line machine shares")
+assert(panel.document == "modules" and panel.presentation == "modules",
+    "the module document every in-line machine shares")
 -- The words on the button are the machine's own states, out of
 -- tfs/content/structures/gas_pump.luau.
 assert(panel.toggles[1].on_text == "running", panel.toggles[1].on_text)

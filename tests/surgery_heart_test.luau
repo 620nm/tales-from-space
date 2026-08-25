@@ -63,7 +63,8 @@ hold("hemostat")
 t.click(surgeon, PX, PY, pid)
 t.run_ticks(2)
 local win = t.ui(surgeon)
-assert(win ~= nil and win.kind == "surgery", "several organs to reach: the choice window opened")
+assert(win ~= nil and win.document == "modules" and win.presentation == "choices",
+    "several organs to reach: the choice document opened")
 local pick
 for _, toggle in ipairs(win.toggles) do
     if toggle.label:find("heart", 1, true) then pick = toggle.option end

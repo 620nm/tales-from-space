@@ -72,7 +72,8 @@ left_holds("hemostat")
 t.click(left, PX, PY, pid)
 t.run_ticks(2)
 local win = t.ui(left)
-assert(win and win.kind == "surgery", "the head's organs open the choice window")
+assert(win and win.document == "modules" and win.presentation == "choices",
+    "the head's organs open a choice document")
 local pick
 for _, tg in ipairs(win.toggles) do
     if tg.label:find("eyes", 1, true) then pick = tg.option end

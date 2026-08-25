@@ -24,6 +24,7 @@ return {
     id = "gas_filter_co2",
     name = "carbon dioxide filter",
     sprite = "filter_on_n",
+    ui = { modules = { "filter" } },
     dense = false,
     states = { "off", "running" },
     facing_sprites = {
