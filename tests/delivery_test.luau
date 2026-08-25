@@ -176,8 +176,8 @@ local gained = (t.blood(patient).libital or 0) - blood_before
 near(gained, 0.15 * (STROKE / SHIPS), 5e-3, "the libital arrived in the blood")
 assert(gained > 0, "and it is the patient who has it")
 -- ---------------------------------------------------------------
--- THE PACKAGER. Two pours make half a mole in one beaker; one click
--- against the extruder turns it into five pills.
+-- THE PACKAGER. Two pours make half a mole in one beaker; the beaker
+-- goes into the machine and one button turns it into five pills.
 -- ---------------------------------------------------------------
 t.drop(medic)
 t.tick()
@@ -200,14 +200,33 @@ assert(t.pos(medic) == 3, "the medic is at the extruder")
 assert(t.hands(medic).held == "beaker", "with half a mole in hand")
 
 near(condensed(empty), 0.5, 1e-3, "half a mole, less what stands in the headspace")
+-- A vessel in hand clicked onto a machine with a slot goes IN, and the
+-- next click on the empty-handed machine opens its window -- the same
+-- two gestures the dispenser and the reaction chamber take
+-- (chem_trunk_test.luau).
 t.click(medic, 2, 1, packager)
 t.run_ticks(2)
-assert(said(medic, "You hold it against the extruder."), "the print is ordered")
+assert(t.hands(medic).held == nil, "the beaker went into the machine")
+t.click(medic, 2, 1, packager)
+t.run_ticks(2)
+t.ui_act(medic, "toggle", '{"field":"action","option":"package"}')
+t.run_ticks(2)
+assert(said(medic, "The extruder starts printing."), "the print is ordered")
 t.run_ticks(90) -- five pills at tg's 0.75 s each, plus slack
 assert(said(medic, "The extruder clicks and stops."), "and it finishes")
 
 assert(t.count_items("pill") == PILLS, "five pills, no more and no less")
 near(condensed(empty), 0, 1e-9, "and the beaker gave up every drop of it")
+
+-- The eject button the dock module draws hands the vessel back, and the
+-- same press over an empty dock is refused with a sentence: a machine
+-- that did nothing and said nothing reads as a broken machine.
+t.ui_act(medic, "toggle", '{"field":"eject"}')
+t.run_ticks(2)
+assert(t.hands(medic).held == "beaker", "the eject button hands the beaker back")
+t.ui_act(medic, "toggle", '{"field":"action","option":"package"}')
+t.run_ticks(2)
+assert(said(medic, "There is nothing in the hopper."), "and a press over an empty dock says so")
 
 -- Each pill is a fifth of the beaker to within micromoles, and the five
 -- of them are the beaker. It is micromoles rather than nothing because
