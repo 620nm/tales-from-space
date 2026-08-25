@@ -5,9 +5,10 @@
 -- reaches, so a press of one over an open glass is a press into the
 -- room (docs/BENCH.md 4). What is left is the canister, and the
 -- gesture that reaches it is a corked vessel held against the valve
--- (items/bottle.luau) -- a `sim.matter.transfer` with `phases =
--- { "gas" }` and the ends pointed the other way, which is all a charge
--- ever was.
+-- (items/bottle.luau) -- `sim.matter.fill`, which is that transfer with
+-- the phases fixed at gas and a row of its own, because "who took this
+-- out of the loop" is a question `poured` cannot answer
+-- (docs/LUAU-API.md 8.2).
 --
 -- Two recipes stand behind this and cannot be reached without it:
 -- carbon dioxide wants fifty kilopascals of oxygen over solid carbon,
