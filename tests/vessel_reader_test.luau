@@ -83,10 +83,13 @@ assert(beaker.headspace_l < beaker.volume_l,
         beaker.headspace_l, beaker.volume_l))
 assert(beaker.headspace_l > 0, "but never all of it -- a full glass still has a top")
 
--- This one authors no `volume_ml`, so its shell is what is in it plus
--- the minimum headspace and nothing invented (docs/CHEMISTRY.md 9).
-near(beaker.headspace_l / beaker.volume_l, 0.05 / 1.05, 1e-9,
-    "an unmeasured vessel is its contents plus five per cent")
+-- The shell is the fifty millilitres the prototype authors and the
+-- headspace is what the liquid leaves: 0.20 mol of water is 3.60 mL and
+-- 0.15 mol of libital is 27.0 mL, so 19.4 of the 50 are still air. The
+-- glass does not grow to fit what is poured into it (docs/MATTER.md 5).
+near(beaker.volume_l, 0.05, 1e-9, "fifty millilitres of glass, as authored")
+near(beaker.headspace_l, 0.05 - 0.0306, 1e-4,
+    "and the headspace is the shell less what is standing in it")
 
 -- The empty beaker on the end of the bench is the other half of that
 -- contract: fifty millilitres of authored glass, every drop of it free.

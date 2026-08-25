@@ -1,6 +1,8 @@
 -- Pouring: a beaker tipped into another vessel moves exactly what it
--- says, in the proportions it was holding, and stops at the brim of the
--- thing being filled — the remainder stays where it was.
+-- says, in the proportions it was holding, and stops where the GLASS
+-- runs out — the remainder stays where it was. Capacity is geometry
+-- (docs/MATTER.md 5), so "the brim" is millilitres of shell against
+-- millilitres of liquid and never a count of moles.
 t.world([==[(
     name: "chem bench",
     legend: {
@@ -44,8 +46,26 @@ local function close(got, want, what)
     assert(math.abs(got - want) < 1e-9, ("%s: wanted %g, got %g"):format(what, want, got))
 end
 
+local function near(got, want, tol, what)
+    assert(math.abs(got - want) < tol, ("%s: wanted %g, got %g"):format(what, want, got))
+end
+
+-- The brim is a VOLUME (docs/MATTER.md 5). Water is 18.015 mL to the
+-- mole and libital 180, a beaker is fifty millilitres of glass, and
+-- what a beaker_libital ships with -- 0.20 water and 0.15 libital --
+-- is 30.60 of those fifty. Everything the trims below come to is those
+-- four numbers and nothing else.
+local WATER_ML, LIBITAL_ML, GLASS_ML = 18.015, 180.0, 50.0
+local function litres_of(water, libital)
+    return water * WATER_ML + libital * LIBITAL_ML
+end
+-- The share of a 0.25 mol parcel of that mix which fits in what a full
+-- beaker_libital leaves free.
+local FIT = 0.25
+    * ((GLASS_ML - litres_of(0.20, 0.15)) / litres_of(0.25 * 4 / 7, 0.25 * 3 / 7))
+
 -- An empty beaker off the shelf is still a vessel: it holds nothing and
--- has room for a great deal (capacity_mol on the prototype).
+-- has fifty millilitres of room (volume_ml on the prototype).
 close(total(c), 0, "the bare beaker ships empty")
 
 -- Pick the first beaker up and pour it into the empty one.
@@ -72,11 +92,14 @@ t.click(p, 3, 1, c) -- pick the poured-into beaker back up
 t.tick()
 t.click(p, 2, 1, b)
 t.tick()
-close(total(b), 0.60, "0.35 + a 0.25 pour")
-close(total(c), 0, "and the source is empty")
+-- b was already thirty of its fifty millilitres full, so the gesture
+-- trims: what goes in is the share of the parcel the free volume has
+-- room for, and the rest stays in the hand that poured it.
+near(total(b), 0.35 + FIT, 1e-4, "0.35 plus what the glass had room for")
+near(total(c), 0.25 - FIT, 1e-4, "and the source kept what would not fit")
 
--- Now pour a full beaker into it: only 0.10 mol will fit, and the rest
--- stays in the hand that poured it.
+-- b is brim-full now: fifty millilitres of liquid in fifty millilitres
+-- of glass. Pouring a whole beaker into it moves nothing at all.
 t.drop(p)
 t.tick()
 t.move(p, "east")
@@ -87,17 +110,17 @@ close(total(e), 0.35, "the third beaker is untouched so far")
 
 t.click(p, 2, 1, b)
 t.tick()
-close(total(b), 0.70, "the target trimmed at its brim")
-close(total(e), 0.25, "and the source kept the remainder")
+near(total(b), 0.35 + FIT, 1e-4, "full is full")
+close(total(e), 0.35, "and nothing left the source")
 
--- Full is full: the gesture is refused and nothing moves.
+-- ...and it stays that way however many times you tip it.
 t.click(p, 2, 1, b)
 t.tick()
-close(total(b), 0.70, "still exactly full")
-close(total(e), 0.25, "nothing left the source")
--- Three transfers happened and three are on the record; the refusal is
--- not a transfer and writes no row.
+near(total(b), 0.35 + FIT, 1e-4, "still exactly full")
+close(total(e), 0.35, "nothing left the source")
+-- Two transfers happened and two are on the record; a refusal is not a
+-- transfer and writes no row.
 local rows = t.ledger_rows("poured")
-assert(#rows == 3, ("three pours are on the record, got %d"):format(#rows))
+assert(#rows == 2, ("two pours are on the record, got %d"):format(#rows))
 close(rows[1].moles, 0.25, "the first row names what moved")
-close(rows[3].moles, 0.10, "and the last names the trimmed amount")
+near(rows[2].moles, FIT, 1e-4, "and the second names the trimmed amount")

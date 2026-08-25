@@ -75,6 +75,15 @@ local function press(key)
     t.run_ticks(2)
 end
 
+-- Turn the dial before a press: capacity is geometry now
+-- (docs/MATTER.md 5), so a 50 mL beaker takes far more of these than
+-- the recipe wants, and the amount that goes in is the chemist's to
+-- choose rather than the glass's to impose.
+local function dial_to(moles)
+    t.ui_act(p, "set", '{"field":"amount","value":' .. moles .. '}')
+    t.run_ticks(2)
+end
+
 local function open()
     t.click(p, 2, 2, machine)
     t.tick()
@@ -97,8 +106,10 @@ assert(t.hands(p).held == nil, "the beaker is in the machine")
 open()
 press("sodium")
 near(amount(a, "sodium"), PRESS, 1e-9, "one press of sodium")
+dial_to(BRIM - PRESS)
 press("chlorine")
-near(amount(a, "chlorine"), BRIM - PRESS, 1e-9, "and chlorine to the brim")
+near(amount(a, "chlorine"), BRIM - PRESS, 1e-9, "and half a press of chlorine")
+dial_to(PRESS)
 near(t.holder_k(a), NOZZLE_K, 0.01, "both at the nozzle's 300 K")
 
 -- The exotherm, closed form. `energy` on a rule is real joules per

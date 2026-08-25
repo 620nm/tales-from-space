@@ -60,8 +60,14 @@ close(total(bottle), 0, "the bottle ships empty")
 close(total(tube), 0, "the tube ships empty")
 
 -- A beaker tipped into the dropper. The gesture says 10 u and the
--- dropper has room for 5, so it trims at the brim (tg's `trans_to`,
--- holder.dm:472/480) and the rest stays in the hand that poured it.
+-- dropper is five millilitres of glass, so it trims at the brim (tg's
+-- `trans_to`, holder.dm:472/480) and what will not fit runs down the
+-- outside onto the deck.
+--
+-- The brim is a VOLUME (docs/MATTER.md 5). A mole of the beaker's mix
+-- is four sevenths water at 18.015 mL and three sevenths libital at
+-- 180 mL -- 87.43 mL to the mole -- so five millilitres is 0.05718 of
+-- one.
 t.click(p, 2, 1, beaker)
 t.tick()
 close(total(beaker), 0.35, "the libital beaker ships full")
@@ -70,8 +76,10 @@ t.move(p, "east")
 t.tick()
 t.click(p, 3, 1, dropper)
 t.tick()
-close(total(dropper), 5 * U, "the dropper fills to its brim and no further")
-close(total(beaker), 0.35 - 5 * U, "and the beaker is down by exactly that")
+-- Five millilitres of glass over 87.43 mL to the mole of that mix.
+local FIT = 5e-6 / ((4 / 7) * 18.015e-6 + (3 / 7) * 180e-6)
+close(total(dropper), FIT, "the dropper fills to its brim and no further")
+close(total(beaker), 0.35 - FIT, "and the beaker is down by exactly that")
 
 -- Now the squeeze: ONE unit out of the dropper, the bottom of tg's
 -- `possible_transfer_amounts` (dropper.dm:9) and a tenth of what the
@@ -85,7 +93,7 @@ t.tick()
 t.click(p, 4, 1, bottle)
 t.tick()
 close(total(bottle), 1 * U, "one unit a squeeze")
-close(total(dropper), 4 * U, "and the dropper is down exactly one")
+close(total(dropper), FIT - 1 * U, "and the dropper is down exactly one")
 
 -- Proportional, like every other transfer here: what arrives is what
 -- left, in the ratio it was standing in.

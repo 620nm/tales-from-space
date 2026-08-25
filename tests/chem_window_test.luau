@@ -97,6 +97,15 @@ local function press(key)
     t.run_ticks(2)
 end
 
+-- Turn the dial before a press: capacity is geometry now
+-- (docs/MATTER.md 5), so a 50 mL beaker takes far more of these than
+-- the recipe wants, and the amount that goes in is the chemist's to
+-- choose rather than the glass's to impose.
+local function dial_to(moles)
+    t.ui_act(p, "set", '{"field":"amount","value":' .. moles .. '}')
+    t.run_ticks(2)
+end
+
 local function eject()
     t.ui_act(p, "toggle", '{"field":"eject"}')
     t.run_ticks(2)
@@ -115,7 +124,9 @@ local function brew_ammonia(beaker)
     dock(dispenser, 1, 1)
     panel(dispenser, 1, 1)
     press("hydrogen")
+    dial_to(0.5)
     press("n2")
+    dial_to(PRESS)
     t.run_seconds(30)
     near(amount(beaker, "ammonia"), PRESS, 1e-6, "three of hydrogen made three of ammonia")
     near(amount(beaker, "n2"), 0.25, 1e-6, "and a quarter of the nitrogen is spare")
@@ -126,8 +137,10 @@ end
 -- ---------------------------------------------------------------
 take(cold, 1, 2)
 brew_ammonia(cold)
+dial_to(0.25)
 press("o2")
-near(amount(cold, "o2"), 0.25, 1e-9, "and oxygen to the brim: all three reactants present")
+dial_to(PRESS)
+near(amount(cold, "o2"), 0.25, 1e-9, "and a quarter-press of oxygen: all three reactants present")
 
 eject()
 dock(heater, 3, 1)
@@ -179,7 +192,9 @@ assert(t.holder_k(hot) > 640.0, "the chamber overshot the window on purpose: " .
 eject()
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
+dial_to(0.25)
 press("o2")
+dial_to(PRESS)
 near(amount(hot, "o2"), 0.25, 1e-9, "the third reactant arrives late and cold")
 assert(t.holder_k(hot) > 600.0, "and the mixture is still over the window: " .. t.holder_k(hot))
 

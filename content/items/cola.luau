@@ -7,6 +7,10 @@ local content = {
     sprite = "cola",
     inhand_sprite = { "held_cola_l", "held_cola_r" },
     contents = { water = 0.30, sugar = 0.06 },
+    -- tg's soda can (soda.dm:21). The can is the shell and the shell is
+    -- the whole of what it holds, so what is poured in is bounded by
+    -- how much room the syrup and the water leave.
+    volume_ml = 30,
 }
 
 if sim ~= nil then
