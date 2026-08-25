@@ -12,6 +12,13 @@ DECLARE.
   An idea that seems to need per-tick native execution becomes a native
   system with data-driven knobs — never a faster handler.
 - Game fiction never says "lunatic"; engine words stay out of content.
+- Shared code lives in `content/lib/`. There is no `require`: a `lib/`
+  file returns a table and the loader publishes it as a global named for
+  the file (`lib/vessel.luau` -> `vessel`), before every roster and
+  readable both at prototype time and inside a handler. Nothing in
+  `lib/` may call `sim.define` — shared code publishes tables, rosters
+  declare things. A gesture spelled out in two roster files belongs
+  there instead; that duplication is what it exists to prevent.
 - Specs (`tests/*_test.luau`) assert what a PLAYER could cause, through
   `t` — the same SimCommand seam the Rust harness uses. No raw entity
   handles, no component access, no direct spawn, and none should ever be
