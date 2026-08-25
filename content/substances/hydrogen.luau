@@ -37,4 +37,8 @@ return {
     -- (docs/MAPPING.md, the recipe panel). Reachable as room air, and
     -- rarely what a room is commissioned holding.
     relevance = 30,
+    -- tg's `dangerous = TRUE` (gas_types.dm:233) -- a gas at every station
+    -- temperature, so the flag decides between the two gas groups and it
+    -- says poison.
+    group = "poison",
 }

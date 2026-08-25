@@ -34,4 +34,6 @@ return {
     -- (docs/MAPPING.md, the recipe panel). The air a station is
     -- commissioned full of, so it leads.
     relevance = 100,
+    -- The gas a crew breathes: the first thing a scrubber panel should offer.
+    group = "atmospheric",
 }

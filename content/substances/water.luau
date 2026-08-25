@@ -55,4 +55,7 @@ return {
     -- room, which condenses out on the first atmos pass exactly as it
     -- should.
     relevance = 50,
+    -- Liquid in a beaker and vapour over a burner: gas whenever a room is
+    -- hot or thin enough, and nothing a station scrubs on principle.
+    group = "volatile",
 }

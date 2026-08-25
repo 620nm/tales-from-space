@@ -28,6 +28,12 @@
 -- here -- and two places to spell "carbon dioxide" is one place too
 -- many. A substance with no authored name answers with its id, which
 -- is the registry's own default.
+--
+-- WHAT ORDER the lines come out in comes off the reading too:
+-- `group_order` is this pack's own substance grouping
+-- (content/substance_groups.luau), the same ranking a scrubber panel
+-- lists its buttons in. The instrument does not get an opinion about
+-- which gas matters; the station already has one.
 
 -- tg's `round(n, 0.01)`, and tg's printing of the result: nearest
 -- hundredth, trailing zeros dropped.
@@ -49,11 +55,18 @@ local function report(user, of, sample)
     sim.message.send({ recipient = user, message = "Results of analysis of " .. of .. "." })
     local gas = {}
     local names = {}
+    local order = {}
     local gas_moles = 0
     for id, entry in pairs(sample.contents) do
         if entry.gas ~= nil and entry.gas > 0 then
             gas[id] = entry.gas
             names[id] = entry.name
+            -- Which block this substance is listed under, off the same
+            -- pack roster the scrubber and filter panels read
+            -- (content/substance_groups.luau). A substance no group
+            -- claimed sorts after every one that has, which is where
+            -- those panels put it too.
+            order[id] = entry.group_order or math.huge
             gas_moles = gas_moles + entry.gas
         end
     end
@@ -67,12 +80,20 @@ local function report(user, of, sample)
     sim.message.send({ recipient = user, message = "Moles: " .. r2(gas_moles) .. " mol" })
     -- Sorted, because a keyed table has no order and a readout that
     -- shuffles its own lines between two identical scans is a readout
-    -- nobody trusts.
+    -- nobody trusts. The order is the station's own: the substance
+    -- groups this pack declared first, the id inside each block. A
+    -- printout that listed the air in a different order from every
+    -- panel would be one more thing to hold in your head.
     local ids = {}
     for id in pairs(gas) do
         table.insert(ids, id)
     end
-    table.sort(ids)
+    table.sort(ids, function(a, b)
+        if order[a] ~= order[b] then
+            return order[a] < order[b]
+        end
+        return a < b
+    end)
     for _, id in ipairs(ids) do
         local moles = gas[id]
         local share = moles / gas_moles * 100

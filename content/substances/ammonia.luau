@@ -68,6 +68,9 @@ local content = {
     -- (docs/MAPPING.md, the recipe panel). Reachable as room air, and
     -- rarely what a room is commissioned holding.
     relevance = 20,
+    -- A caustic cloud with a metabolism hook that burns eyes and throat;
+    -- tg has no gas datum for it, so its own reagent decides.
+    group = "poison",
 }
 
 if sim ~= nil then
