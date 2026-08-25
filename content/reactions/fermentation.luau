@@ -7,13 +7,17 @@ return {
     id = "fermentation",
     reactants = { sugar = 1.0, water = 0.2 },
     products = { ethanol = 2.0, ["co2:gas"] = 2.0 },
-    bell = {
-        temp_min = 285.0,
-        opt_lo = 293.0,
-        opt_hi = 303.0,
-        temp_max = 315.0,
-        exponent = 2.0,
-        base_rate = 0.002,
+    rate = {
+        bell = {
+            temp_min = 285.0,
+            opt_lo = 293.0,
+            opt_hi = 303.0,
+            temp_max = 315.0,
+            exponent = 2.0,
+            -- Rescaled for the activity law: 0.002 / 8
+            -- (docs/CHEMISTRY.md §5).
+            base_rate = 0.00025,
+        },
     },
     energy = 2000.0,
 }

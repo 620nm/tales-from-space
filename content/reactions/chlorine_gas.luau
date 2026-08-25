@@ -60,7 +60,8 @@ return {
             opt_hi = 5000.0,
             temp_max = 10000.0,
             exponent = 2.0,
-            base_rate = 0.05,
+            -- Rescaled for the activity law: 0.05 / 8 (docs/CHEMISTRY.md §5).
+            base_rate = 0.00625,
         },
     },
 }

@@ -154,15 +154,28 @@ near(amount(slop, "iron"), 0.25 * (0.5 / BRIM), 1e-9, "and some iron with it")
 
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
-dial_to(0.25)
+-- A twentieth of a press, and the amount is GEOMETRY talking. Thermite
+-- is 90 g/mol and the recipe makes three of it for one of each leg, so
+-- an extent swells the contents by 0.187 L — and the glass holds
+-- 0.05 L, most of it already full of the two metals. The engine caps a
+-- reaction by the free shell volume and grows no vessel to take the
+-- rest (docs/MATTER.md 5), so a quarter of a press of oxygen would
+-- stop a fifth of the way in with nowhere to put the product. This is
+-- what the beaker can actually hold.
+dial_to(0.05)
 press("o2")
 dial_to(PRESS)
-near(amount(a, "o2"), 0.25, 1e-9, "the station's own oxygen, a quarter of a press")
+near(amount(a, "o2"), 0.05, 1e-9, "the station's own oxygen, a twentieth of a press")
 
-t.run_seconds(60)
-near(amount(a, "thermite"), 0.75, 1e-6, "and now it goes: three out for one of each in")
-near(amount(a, "aluminium"), 0.6 - 0.25, 1e-6, "the aluminium that was in excess remains")
-near(amount(a, "iron"), 0.4 - 0.25, 1e-6, "and so does the iron")
+-- Three minutes rather than one. A rate that reads concentration
+-- (docs/CHEMISTRY.md 5) is a DECAY: each pass takes a fixed fraction of
+-- what is left, so the first nine tenths arrive in seconds and the last
+-- sliver goes exponentially. The assertion is the same one it always
+-- was — the recipe RAN OUT — and the clock is what a decay needs.
+t.run_seconds(180)
+near(amount(a, "thermite"), 0.15, 1e-6, "and now it goes: three out for one of each in")
+near(amount(a, "aluminium"), 0.6 - 0.05, 1e-6, "the aluminium that was in excess remains")
+near(amount(a, "iron"), 0.4 - 0.05, 1e-6, "and so does the iron")
 near(amount(a, "o2"), 0.0, 1e-6, "the oxygen was the limit, and it is spent")
 -- ...and the beaker that got the pour still has two of the three, still
 -- sitting there. The gate is about what is in the VESSEL, not about
@@ -234,11 +247,17 @@ eject()
 take(slop, 3, 2)
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
-dial_to(0.25)
+-- Geometry again, and harder than the thermite: oil is 170 g/mol and
+-- three come out for one of each leg, so an extent swells the glass by
+-- half a litre. A twentieth of a press is what a 50 mL beaker has room
+-- to make (docs/MATTER.md 5).
+dial_to(0.05)
 press("hydrogen")
 dial_to(PRESS)
-t.run_seconds(60)
-near(amount(d, "oil"), 0.75, 1e-6, "three of oil for one of each")
+-- Three minutes: the rate reads concentration, so the tail is a decay
+-- rather than a march (docs/CHEMISTRY.md 5).
+t.run_seconds(180)
+near(amount(d, "oil"), 0.15, 1e-6, "three of oil for one of each")
 near(amount(d, "ash"), 0.0, 1e-12, "and no ash at all, because the beaker is cold")
 
 eject()
@@ -246,9 +265,9 @@ dock(heater, 3, 1)
 panel(heater, 3, 1)
 t.ui_act(p, "set", '{"field":"temperature","value":500}')
 t.ui_act(p, "toggle", '{"field":"power"}')
-t.run_seconds(120)
+t.run_seconds(180)
 assert(t.holder_k(d) > 480.0, "the chamber crossed the threshold: " .. t.holder_k(d))
-near(amount(d, "ash"), 0.75, 1e-6, "every mole of oil became a mole of ash")
+near(amount(d, "ash"), 0.15, 1e-6, "every mole of oil became a mole of ash")
 near(amount(d, "oil"), 0.0, 1e-6, "and there is none of it left")
 
 -- ---------------------------------------------------------------

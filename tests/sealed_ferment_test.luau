@@ -30,19 +30,25 @@
 -- Every vessel on the station takes one chemistry step every
 -- METABOLISM_EVERY = 40 ticks at 20 Hz, so a step is 2 s (sim/life.rs).
 -- Fermentation's bell is flat between 293 and 303 K and the nozzle
--- pours at 300 K, so the rate is its full `base_rate` and each step is
+-- pours at 300 K, so the bell factor is 1 and the rate is `base_rate`
+-- times the ACTIVITY of the scarcest reactant (docs/CHEMISTRY.md 5).
 --
---     extent  = 0.002              (base_rate x bell factor 1.0)
---     co2     = 2.0 x 0.002        = 0.004 mol of gas per step
---     sugar   = 1.0 x 0.002        = 0.002 mol per step
+-- The brew displaces what its densities say it does: water
+-- 0.225 mol x 18.015 g/mol at 1 g/mL = 4.05 mL, sugar 0.025 mol x
+-- 342.3 g/mol at the unauthored default 1 g/mL = 8.56 mL. So the
+-- SOLUTION is 12.61 mL, the sugar in it is 0.025 / 0.01261 L = 1.982 M
+-- against water's 17.8 M, and the first step is
 --
--- so the sugar buys 0.025 / 1.0 / 0.002 = 12.5 steps, and the whole
--- brew is worth 2 x 0.025 = 0.05 mol of CO2 over about 25 seconds.
+--     extent  = 0.00025 x 1.982      = 4.956e-4
+--     co2     = 2.0 x extent         = 9.912e-4 mol of gas
+--     sugar   = 1.0 x extent         = 4.956e-4 mol spent
 --
--- The bottle is 50 mL of glass (`volume_ml`) and the brew displaces
--- what its densities say it does: water 0.225 mol x 18.015 g/mol at
--- 1 g/mL = 4.05 mL, sugar 0.025 mol x 342.3 g/mol at the unauthored
--- default 1 g/mL = 8.56 mL. That leaves a headspace of
+-- Every step after it is a shade smaller, because the sugar it reads is
+-- a shade thinner: a rate that reads concentration is a DECAY and not a
+-- march, and the brew tails off rather than stopping dead. Ten steps
+-- make 9.42 mmol of CO2, not ten equal helpings of the first.
+--
+-- The bottle is 50 mL of glass (`volume_ml`), leaving a headspace of
 --
 --     50 - 4.05 - 8.56 = 37.4 mL = 3.74e-5 m^3
 --
@@ -50,16 +56,16 @@
 --
 --     n = pV/RT = 150000 x 3.74e-5 / (8.314 x 300) = 0.00225 mol
 --
--- which is less than the 0.004 mol ONE step makes. So the bottle is
--- over `STRAINING_KPA` after the very first step of fermentation, at
--- roughly 0.004 x 8.314 x 300 / 3.78e-5 = 264 kPa, and climbs by about
--- that much again every two seconds until the sugar runs out.
+-- which is three steps' worth. So the bottle crosses `STRAINING_KPA`
+-- on step three and never comes back under it.
 local U = 0.025
 local WATER = 9 * U
 local SUGAR = 1 * U
-local STEP_CO2 = 0.004
+local FIRST_CO2 = 0.0009912 -- 2 x 0.00025 x 1.982 M
+local TEN_STEPS_CO2 = 0.0094188 -- the decay's sum, not 10 x the first
 local STRAIN = 150.0 -- lunatic_core::STRAINING_KPA
-local STEPS = 10 -- watched steps, inside the sugar's 12.5
+local STRAIN_STEP = 3 -- where 0.00225 mol of headspace is bought
+local STEPS = 10 -- watched steps, with sugar to spare
 
 local function near(got, want, slack, what)
     assert(got ~= nil, what .. ": nothing was answered")
@@ -197,37 +203,54 @@ assert(
 
 -- Ten steps of two seconds, watched one at a time: the gas is made
 -- inside the glass and has nowhere to go.
-local last_co2, last_kpa = 0, 0
+local last_co2, last_kpa, last_made = 0, 0, math.huge
 for step = 1, STEPS do
     t.run_seconds(2)
     local reading = t.vessel(bottle)
     local co2 = co2_in(bottle)
-    near(co2, step * STEP_CO2, 1e-9, ("step %d makes its 0.004 mol"):format(step))
+    local made = co2 - last_co2
+    if step == 1 then
+        near(co2, FIRST_CO2, 1e-6, "the first step is base_rate times 1.982 M")
+    end
     assert(
         co2 > last_co2,
         ("the CO2 grows every step: %g then %g"):format(last_co2, co2)
+    )
+    -- THE decay: every step makes less than the one before it, because
+    -- the sugar it reads is thinner. Under the old law that read a bare
+    -- mole count these ten helpings were identical.
+    assert(
+        made < last_made,
+        ("each step makes less than the last: %g then %g"):format(last_made, made)
     )
     assert(
         reading.pressure_kpa > last_kpa,
         ("and so does the gauge: %g then %g"):format(last_kpa, reading.pressure_kpa)
     )
     near(room_co2(), 0, 1e-12, ("nothing reached the room on step %d"):format(step))
-    last_co2, last_kpa = co2, reading.pressure_kpa
-    -- One step's gas is already past the warning, by the arithmetic at
-    -- the top of this file -- so the sentence is there from the first
-    -- sample onward and never goes away while the sugar lasts.
-    assert(
-        reading.pressure_kpa > STRAIN,
-        ("over the strain by step %d: %g kPa"):format(step, reading.pressure_kpa)
-    )
-    assert(
-        says(t.examine(p, 3, 1, bottle), "It strains against its lid."),
-        ("and the bottle says so on step %d"):format(step)
-    )
+    last_co2, last_kpa, last_made = co2, reading.pressure_kpa, made
+    -- Three steps buy the 0.00225 mol the warning costs, by the
+    -- arithmetic at the top of this file. Before that the bottle is
+    -- merely pressurised; from there on the sentence is there and never
+    -- goes away while the sugar lasts.
+    local straining = says(t.examine(p, 3, 1, bottle), "It strains against its lid.")
+    if step < STRAIN_STEP then
+        assert(
+            reading.pressure_kpa < STRAIN,
+            ("under the strain on step %d: %g kPa"):format(step, reading.pressure_kpa)
+        )
+        assert(not straining, ("and the bottle is quiet on step %d"):format(step))
+    else
+        assert(
+            reading.pressure_kpa > STRAIN,
+            ("over the strain by step %d: %g kPa"):format(step, reading.pressure_kpa)
+        )
+        assert(straining, ("and the bottle says so on step %d"):format(step))
+    end
 end
 
-near(last_co2, STEPS * STEP_CO2, 1e-9, "ten steps of fermentation, all of it kept")
-assert(last_kpa > 2000.0, "a bottle under real pressure: " .. last_kpa)
+near(last_co2, TEN_STEPS_CO2, 1e-6, "ten steps of fermentation, all of it kept")
+assert(last_kpa > 600.0, "a bottle under real pressure: " .. last_kpa)
 -- The brew is a brew, not just a gas source: what the sugar became is
 -- in there too, two of ethanol for every one of it. Counted over BOTH
 -- phases, because ethanol has a real vapour curve (substances/
@@ -259,12 +282,9 @@ near(room_co2(), 0, 1e-12, "the room is still clean when it starts")
 
 for step = 1, STEPS do
     t.run_seconds(2)
-    near(
-        room_co2(),
-        step * STEP_CO2,
-        1e-9,
-        ("the room took step %d's whole 0.004 mol"):format(step)
-    )
+    if step == 1 then
+        near(room_co2(), FIRST_CO2, 1e-6, "the room took the first step's whole 0.99 mmol")
+    end
     near(co2_in(twin), 0, 1e-9, "and the glass kept none of it")
     local reading = t.vessel(twin)
     assert(
@@ -277,12 +297,17 @@ assert(
     not says(t.examine(p, 3, 2, twin), "strains"),
     "so it has nothing to say about a lid it does not have"
 )
-near(room_co2(), STEPS * STEP_CO2, 1e-9, "ten steps of it, all of it breathed out")
+-- The same ten helpings the bottle made, to within the whisker of
+-- vapour an open glass loses that a corked one keeps.
+near(room_co2(), TEN_STEPS_CO2, 1e-5, "ten steps of it, all of it breathed out")
 -- And the lid held throughout. The bottle went on fermenting while the
--- beaker did -- its unit of sugar is worth 12.5 steps and only ten were
--- watched -- so it is now holding the whole 2 x 0.025 mol its brew was
--- worth, and not one mole of that is in the air of this room.
-near(co2_in(bottle), 2 * SUGAR, 1e-9, "the bottle kept everything its sugar made")
+-- beaker did, and a decay tails off rather than stopping dead, so its
+-- unit of sugar is still not spent after twenty steps -- but every mole
+-- it has made is still inside it, short of the 0.05 mol ceiling its
+-- sugar is worth and well past what ten steps alone would buy.
+local kept = co2_in(bottle)
+assert(kept < 2 * SUGAR, "still short of what its sugar could make: " .. kept)
+assert(kept > TEN_STEPS_CO2, "and it never stopped while the beaker ran: " .. kept)
 assert(
     co2_in(bottle) > room_co2(),
     "and it is still holding more than the room ever gathered"
