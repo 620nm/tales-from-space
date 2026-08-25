@@ -1,32 +1,30 @@
 -- What the chem packager DOES, as opposed to what it IS
 -- (machines/chem_packager.luau).
 --
--- One operation: hold a vessel against the extruder and it prints five
--- pills onto its own tray, each carrying a fifth of what was in the
--- vessel. tg's ChemMaster splits its buffer the same way --
+-- One operation: dock a vessel, press `package`, and the machine prints
+-- five pills onto its own tray, each carrying a fifth of what was in
+-- the vessel. tg's ChemMaster splits its buffer the same way --
 -- `volume_in_each = min(round(reagents.total_volume / item_count), ...)`
 -- computed once and then N containers filled on a timer
 -- (chem_master.dm:514,552-580, `printing_speed = 0.75 SECONDS`).
 --
--- THE GESTURE IS THE WHOLE INTERFACE, and that is a departure worth
--- stating. tg asks for the count in a window; a window act never
--- reaches content (docs/TGUI.md, "Action boundary" -- the module roster
--- is the engine's and closed), so a scripted machine cannot own a
--- button. What is left is the click, and the click is enough: the
--- vessel you are holding is the buffer, five is the count, and standing
--- still for the print is the confirmation. Five is this file's choice
--- rather than tg's, because tg has no default at all -- `itemCount` is
--- typed and only its CEILING is a constant (`MAX_CONTAINER_PRINT_AMOUNT
--- 50`, chem_master.dm:1). Five is one full beaker's worth of doses at
--- the pack's own numbers and it divides evenly.
+-- THE BUTTON IS THE INTERFACE. `ui.actions` on the machine's file
+-- declares it and `interaction.act` delivers the press (docs/TGUI.md,
+-- "Content declaration"), so the count is the only thing tg asks for
+-- that this machine still does not: five is this file's choice rather
+-- than tg's, because tg has no default at all -- `itemCount` is typed
+-- and only its CEILING is a constant (`MAX_CONTAINER_PRINT_AMOUNT 50`,
+-- chem_master.dm:1). Five is one full beaker's worth of doses at the
+-- pack's own numbers and it divides evenly. A typed count wants a
+-- setpoint whose ends are native state, which is a machine knob and not
+-- a button.
 --
--- AND WHY IT IS A CLICK RATHER THAN A DOCK. The chem dispenser and the
--- reaction chamber take a vessel into a `HolderSlot` because both of
--- them work over TIME and want the vessel still there when the chemist
--- has wandered off. Packaging begins and ends inside one gesture, so
--- the beaker never leaves the hand -- which also means the engine's
--- do_after guard, which already watches that hand, is the whole of the
--- interruption rule.
+-- WHY THE VESSEL GOES IN. The dispenser and the reaction chamber take
+-- one into a `HolderSlot` because both work over TIME; this one takes
+-- it for the plainer reason tg does -- a print is four seconds long and
+-- the machine, not the chemist's arm, is what holds the source steady.
+-- The dock is also what makes the pour reachable: a vessel standing in
+-- a machine is in reach of whoever can reach the machine (sim/owner.rs).
 --
 -- HOW A PILL GETS ITS DOSE. `sim.entity.spawn` is an EFFECT: it is
 -- buffered and applied when the segment commits, so there is no handle
@@ -73,14 +71,14 @@ if sim ~= nil then
         return nil
     end
 
-    script_definition:handle("attack.swing", { kind = "replace", route = "attack" }, function(ev)
-        local self, user = ev.implement, ev.actor
-        local target, victim, item = ev.target, ev.target, ev.target
-        local info = { surgery_refusal = ev.refusal }
-        local _target, _victim, _info = target, victim, info
-        local vessel = item
-        if vessel == nil then
+    script_definition:handle("interaction.act", { kind = "replace", route = "act" }, function(ev)
+        if ev.action ~= "package" then
             return { replaced = false }
+        end
+        local self, user, vessel = ev.subject, ev.actor, ev.docked
+        if vessel == nil then
+            sim.message.send({ recipient = user, message = "There is nothing in the hopper." })
+            return true
         end
         local held = condensed(vessel)
         if held == nil then
@@ -97,7 +95,7 @@ if sim ~= nil then
         -- tg computes the per-container dose ONCE, off the buffer as it
         -- stood when the print was ordered (chem_master.dm:514).
         local share = held / PILLS
-        sim.message.send({ recipient = user, message = "You hold it against the extruder." })
+        sim.message.send({ recipient = user, message = "The extruder starts printing." })
         sim.spawn_task(user, function()
             for _ = 1, PILLS do
                 sim.entity.spawn({ definition = "pill", at = self.tile })
