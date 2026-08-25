@@ -11,7 +11,7 @@ engine's test fixtures no longer lean on it.
 
 | Directory        | Contents |
 | ---------------- | -------- |
-| `content/`       | The mod itself: `main.luau` (the pack entrypoint), `capabilities.luau`, `part_tree.luau`, pack rosters (`items/`, `jobs/`, `bodies/`, `gamemodes/`, `fixtures/`, `substances/`, `reactions/`, `air/`) whose `.luau` files return prototype data and register behavior through explicit `Definition:handle` calls, plus `tuning.luau` feel knobs. |
+| `content/`       | The mod itself: `main.luau` (the pack entrypoint), `capabilities.luau`, `part_tree.luau`, `lib/` (shared tables the rosters read), pack rosters (`items/`, `jobs/`, `bodies/`, `gamemodes/`, `fixtures/`, `substances/`, `reactions/`, `air/`) whose `.luau` files return prototype data and register behavior through explicit `Definition:handle` calls, plus `tuning.luau` feel knobs. |
 | `maps/`          | Station maps as RON (`chillstation.ron` is the default; `outpost.ron` is the test/demo map). |
 | `assets/`        | Sprite, sound and whole-picture source manifests plus the tracked `tg-revision` consumed and verified by `cargo run -p xtask -- bake-atlas`. |
 | `tests/`         | Luau specs (`*_test.luau`) run by the engine's spec runner; `tests/maps/` holds purpose-built spec maps. |
@@ -47,6 +47,17 @@ cargo run -p lunatic-server -- tfs/maps/outpost.ron --content tfs/content
   every tile from the map's own presets.
 - `docs/GAMEMODES.md` defines the Space Station/Free Build split and the
   `content/gamemodes/*.luau` policy schema.
+- `content/lib/*.luau` is the pack's SHARED CODE. There is no `require`
+  (docs/SCRIPTING.md §1.6): a `lib/` file returns a table and the loader
+  publishes it as a global named for the file, so `lib/vessel.luau`
+  becomes `vessel` and every roster file may read it — at prototype time
+  as well as inside a handler. `lib/` loads after the entrypoints and
+  before every roster, lexically within itself, so one shared file may
+  read another. Nothing in `lib/` may call `sim.define`: shared code
+  publishes tables, rosters declare things, and the loader refuses the
+  other way round. Two callers today — `lib/vessel.luau` is the pour,
+  swig, spill and gas-charge gestures every vessel wears, and
+  `lib/cards.luau` is the deck a card and a deck of cards both read.
 
 ### Palette categories
 
