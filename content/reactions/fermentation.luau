@@ -5,7 +5,7 @@
 -- boiled one won't. Stoichiometry is glucose's, scaled to be watchable.
 return {
     id = "fermentation",
-    reactants = { sugar = 1.0, water = 0.2 },
+    reactants = { ["sugar:solid"] = 1.0, water = 0.2 },
     products = { ethanol = 2.0, ["co2:gas"] = 2.0 },
     bell = {
         temp_min = 285.0,

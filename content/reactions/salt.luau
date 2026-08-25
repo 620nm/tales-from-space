@@ -16,8 +16,8 @@
 -- docs/CHEMISTRY.md.
 return {
     id = "salt",
-    reactants = { sodium = 1.0, chlorine = 1.0 },
-    products = { salt = 2.0 },
+    reactants = { ["sodium:solid"] = 1.0, chlorine = 1.0 },
+    products = { ["salt:solid"] = 2.0 },
     energy = 7530.0,
     rate = {
         bell = {
