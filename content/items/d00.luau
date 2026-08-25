@@ -42,7 +42,7 @@ local function reading(face)
     return (face - 1) * 10
 end
 
-return {
+local content = {
     id = "d00",
     name = "d00",
     sprite = "d00",
@@ -63,22 +63,25 @@ return {
         ["9"] = "d00_9",
         ["10"] = "d00_10",
     },
-    on_use_self = function(ctx, self, user)
-        local face = ctx.random(1, SIDES)
-        ctx.sound("dice_roll", ctx.pos(user))
-        ctx.set_state(self, tostring(face))
-        ctx.system_msg(
-            user,
-            "You roll the d00. It lands on " .. reading(face) .. "." .. comment(face)
-        )
-    end,
-    on_throw_land = function(ctx, self, user, x, y)
-        local face = ctx.random(1, SIDES)
-        ctx.sound("dice_roll", x, y)
-        ctx.set_state(self, tostring(face))
-        ctx.system_msg(
-            user,
-            "The d00 rolls to a stop, landing on " .. reading(face) .. "." .. comment(face)
-        )
-    end,
 }
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
+        local self, user = ev.subject, ev.actor
+        local face = math.random(1, SIDES)
+        sim.sound.play({ asset = "lunatic/tfs:sound/dice_roll", at = user.tile })
+        sim.appearance.set_state({ entity = self, state = tostring(face) })
+        sim.message.send({ recipient = user, message = "You roll the d00. It lands on " .. reading(face) .. "." .. comment(face) })
+        return true
+    end)
+    script_definition:handle("throw.land.done", { kind = "react", route = "land" }, function(ev)
+        local self, user, x, y = ev.entity, ev.thrower, ev.at.x, ev.at.y
+        local face = math.random(1, SIDES)
+        sim.sound.play({ asset = "lunatic/tfs:sound/dice_roll", at = ev.at })
+        sim.appearance.set_state({ entity = self, state = tostring(face) })
+        sim.message.send({ recipient = user, message = "The d00 rolls to a stop, landing on " .. reading(face) .. "." .. comment(face) })
+    end)
+end
+
+return content

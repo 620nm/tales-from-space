@@ -3,7 +3,7 @@
 -- costs mols of it like everything else costs something.
 -- Numbers are acetylene's (C2H2), the gas tg's welders nominally carry;
 -- it sits in the tank as a liquid the way a beaker's contents do.
-return {
+local content = {
     id = "welding_fuel",
     name = "welding fuel",
     molar_mass = 26.04,
@@ -17,10 +17,17 @@ return {
     burn = { k = 1725, rate = 0.00125 },
     -- What it looks like through glass (tg: other_reagents.dm:1373).
     color = "#660000",
-    on_mob_life = function(ctx, mob, _user, _moles)
-        ctx.damage(mob, { brute = 1.0 })
-        if ctx.random(1, 8) == 1 then
-            ctx.system_msg(mob, "Your throat burns.")
-        end
-    end,
 }
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
+        local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount
+        sim.damage.apply({ target = mob, amounts = { brute = 1.0 } })
+        if math.random(1, 8) == 1 then
+            sim.message.send({ recipient = mob, message = "Your throat burns." })
+        end
+    end)
+end
+
+return content

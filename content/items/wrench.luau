@@ -29,7 +29,7 @@
 -- message: a run you cannot see is a run the game must not mention, and
 -- "you can't reach the pipe" would be a probe for buried cable. Pry the
 -- tile up and the same click works.
-return {
+local content = {
     id = "wrench",
     name = "wrench",
     sprite = "wrench",
@@ -43,80 +43,94 @@ return {
     -- up. Anything else still returns "pass" and keeps the ordinary pickup
     -- behavior (tg `/obj/item/pipe/wrench_act`, construction.dm:268-312).
     acts_on_items = true,
-    on_use = function(ctx, self, user, x, y, _, target)
+}
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
+        local clicked, target = ev.claim, ev.claim
+        local _x, _y, _choice = x, y, choice
         -- Asked before the pipe question, so a covered tile answers the
         -- same whether or not anything runs under it. The deck being
         -- OPEN is the question, not the turf's name.
-        if not ctx.subfloor_exposed(x, y) then
-            return "pass"
+        if not sim.subfloor_exposed(x, y) then
+            return { replaced = false }
         end
         if target ~= nil and target.kind == "item" then
             local pipe = target.entity
-            if ctx.item_id(pipe) ~= "pipe" then
-                return "pass"
+            if pipe.prototype ~= "pipe" then
+                return { replaced = false }
             end
-            local px, py = ctx.pos(pipe)
+            local px, py = pipe.tile.x, pipe.tile.y
             if px ~= x or py ~= y then
-                return "pass"
+                return { replaced = false }
             end
-            local mode = ctx.mode(pipe)
+            local mode = sim.mode(pipe)
             if mode == nil then
-                return "pass"
+                return { replaced = false }
             end
             local pipe_layer = 2 ^ mode.index
-            if ctx.pipe_occupancy(x, y) % (pipe_layer * 2) >= pipe_layer then
-                ctx.system_msg(user, "An atmospherics component already occupies that pipe layer.")
-                return
+            if sim.pipe_occupancy(x, y) % (pipe_layer * 2) >= pipe_layer then
+                sim.message.send({ recipient = user, message = "An atmospherics component already occupies that pipe layer." })
+                return true
             end
-            if ctx.pipe(x, y) % (pipe_layer * 2) >= pipe_layer then
-                return "pass"
+            if sim.pipe(x, y) % (pipe_layer * 2) >= pipe_layer then
+                return { replaced = false }
             end
-            ctx.system_msg(user, "You start fastening the pipe...")
-            if not ctx.do_after(user, 1.0) then
-                ctx.system_msg(user, "You stop fastening the pipe.")
-                return
-            end
-            -- Revalidate this exact atom, not whichever pipe is now first
-            -- on the tile. It may have been picked up or moved while the
-            -- wrench was turning, and its per-instance layer may have
-            -- changed too.
-            if ctx.item_id(pipe) ~= "pipe" then
-                return
-            end
-            px, py = ctx.pos(pipe)
-            if px ~= x or py ~= y then
-                return
-            end
-            mode = ctx.mode(pipe)
-            if mode == nil then
-                return
-            end
-            pipe_layer = 2 ^ mode.index
-            if ctx.pipe_occupancy(x, y) % (pipe_layer * 2) >= pipe_layer
-                or ctx.pipe(x, y) % (pipe_layer * 2) >= pipe_layer
-            then
-                return
-            end
-            ctx.fasten_pipe(pipe, x, y, "ratchet", "You fasten the pipe into place.")
-            return
+            sim.message.send({ recipient = user, message = "You start fastening the pipe..." })
+            sim.spawn_task(user, function()
+                if sim.do_after(user, sim.ticks(1.0), {}) == "interrupted" then
+                    sim.message.send({ recipient = user, message = "You stop fastening the pipe." })
+                    return true
+                end
+                -- Revalidate this exact atom, not whichever pipe is now first
+                -- on the tile. It may have been picked up or moved while the
+                -- wrench was turning, and its per-instance layer may have
+                -- changed too.
+                if pipe.prototype ~= "pipe" then
+                    return true
+                end
+                px, py = pipe.tile.x, pipe.tile.y
+                if px ~= x or py ~= y then
+                    return true
+                end
+                mode = sim.mode(pipe)
+                if mode == nil then
+                    return true
+                end
+                pipe_layer = 2 ^ mode.index
+                if sim.pipe_occupancy(x, y) % (pipe_layer * 2) >= pipe_layer
+                    or sim.pipe(x, y) % (pipe_layer * 2) >= pipe_layer
+                then
+                    return true
+                end
+                sim.fasten_pipe(pipe, x, y, "ratchet", "You fasten the pipe into place.")
+            end)
+            return true
         end
         if target == nil or target.kind ~= "pipe" then
-            return "pass"
+            return { replaced = false }
         end
         local layer = target.layer
-        if ctx.pipe(x, y) % (layer * 2) < layer then
-            return "pass"
+        if sim.pipe(x, y) % (layer * 2) < layer then
+            return { replaced = false }
         end
-        ctx.system_msg(user, "You start unwrenching the pipe...")
-        if not ctx.do_after(user, 1.0) then
-            ctx.system_msg(user, "You stop unwrenching.")
-            return
-        end
-        if ctx.pipe(x, y) % (layer * 2) < layer then
-            return
-        end
-        ctx.sound("ratchet", x, y)
-        ctx.cut_pipe(x, y, layer)
-        ctx.system_msg(user, "The pipe comes free.")
-    end,
-}
+        sim.message.send({ recipient = user, message = "You start unwrenching the pipe..." })
+        sim.spawn_task(user, function()
+            if sim.do_after(user, sim.ticks(1.0), {}) == "interrupted" then
+                sim.message.send({ recipient = user, message = "You stop unwrenching." })
+                return true
+            end
+            if sim.pipe(x, y) % (layer * 2) < layer then
+                return true
+            end
+            sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = ev.at })
+            sim.cut_pipe(x, y, layer)
+            sim.message.send({ recipient = user, message = "The pipe comes free." })
+        end)
+        return true
+    end)
+end
+
+return content

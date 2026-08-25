@@ -15,7 +15,7 @@
 -- default, and tg's own file sets it from the same define rather than
 -- from a number.
 
-return {
+local content = {
     id = "emergency_oxygen",
     name = "emergency oxygen tank",
     sprite = "emergency_oxygen",
@@ -71,10 +71,7 @@ return {
     -- tank's worth of gas arriving where a tank used to be. What the
     -- failure DID -- the gas in the room, the tank gone, the rows on
     -- the record -- is the engine's and is already done by the time
-    -- this runs (docs/LUAU-API.md, `on_rupture`).
-    on_rupture = function(ctx, self, user, x, y)
-        ctx.sound("spray", x, y)
-    end,
+    -- this runs (docs/LUAU-API.md, `matter.rupture.done`).
     -- The activate-in-hand key, which is where tg puts the valve
     -- (`toggle_internals` off the tank's own action button) -- and
     -- then the panel tg opens from the other one
@@ -84,8 +81,20 @@ return {
     -- valve a breath is drawn at. Whether the valve OPENS is the
     -- engine's to decide: apparatus on the face, tank on the body,
     -- body alive. Closing is never refused, and neither is looking.
-    on_use_self = function(ctx, self, user)
-        ctx.toggle_internals(user, self)
-        ctx.open_ui(user, self)
-    end,
 }
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("matter.rupture.done", { kind = "react", route = "rupture" }, function(ev)
+        local self, user, x, y = ev.owner, ev.actor, ev.at.x, ev.at.y
+        sim.sound.play({ asset = "lunatic/tfs:sound/spray", at = ev.at })
+    end)
+    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
+        local self, user = ev.subject, ev.actor
+        sim.toggle_internals(user, self)
+        ui.open({ viewer = user, owner = self })
+        return true
+    end)
+end
+
+return content

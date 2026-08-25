@@ -35,7 +35,7 @@ t.tick()
 local x, y = t.pos(p)
 assert(x == 1 and y == 1, "tool vendors are solid too")
 assert(table.concat(t.messages(p), "\n"):find("wobbles", 1, true),
-    "the shared on_bump fired")
+    "the shared move.bump fired")
 
 -- Its clean-room shelf document is stocked from ITS OWN list.
 t.click(p, 2, 1, t.target_at(2, 1))

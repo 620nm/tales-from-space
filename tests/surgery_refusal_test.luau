@@ -1,7 +1,7 @@
 -- The refusal codes and the two-party guard (docs/SURGERY.md §6.3). A
 -- surgical tool with nothing to do is refused rather than swung, and the
 -- reason — not_lying / obstructed / nothing_to_do — reaches the tool's
--- own `on_attack`, which speaks it. And a parked operation ends the
+-- own `attack.swing`, which speaks it. And a parked operation ends the
 -- instant either party moves out from under it.
 
 local ARENA = [==[(

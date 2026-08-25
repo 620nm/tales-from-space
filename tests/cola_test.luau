@@ -33,7 +33,7 @@ t.tick()
 local swig = t.blood_moles(p)
 assert(math.abs(swig - 0.05) < 1e-9, ("one 0.05 mol gulp, got %g"):format(swig))
 
--- Metabolism burns the sugar; sugar's on_mob_life heals oxy.
+-- Metabolism burns the sugar; sugar's mob.life heals oxy.
 local sugar = t.blood(p).sugar
 assert(sugar ~= nil and sugar > 0, "the swig carried sugar into the blood")
 
@@ -45,7 +45,7 @@ assert(t.blood_moles(p) < swig, "metabolism removed moles from the blood")
 
 -- THE HOOK IS HANDED A NUMBER.
 --
--- `on_mob_life(ctx, self, user, moles)` takes four arguments and the
+-- `mob.life(ctx, self, user, moles)` takes four arguments and the
 -- fourth is the moles this metabolism trip burned. A hook that names
 -- three parameters binds the BODY to `moles`; arithmetic on a handle
 -- throws, and a hook that throws loses its whole effect buffer -- so

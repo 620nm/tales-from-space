@@ -28,13 +28,13 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
--- Dense: you can't walk through it, and bumping fires on_bump.
+-- Dense: you can't walk through it, and bumping fires move.bump.
 t.move(p, "east")
 t.tick()
 local x, y = t.pos(p)
 assert(x == 1 and y == 1, "vending machines are solid")
 local msgs = table.concat(t.messages(p), "\n")
-assert(msgs:find("wobbles", 1, true), "on_bump fired: " .. msgs)
+assert(msgs:find("wobbles", 1, true), "move.bump fired: " .. msgs)
 
 -- Click it: the machine's content-authored clean-room shelf opens.
 t.click(p, 2, 1)

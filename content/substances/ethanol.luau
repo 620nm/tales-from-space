@@ -12,7 +12,7 @@
 -- open in a warm room slowly goes down. A burner does not, because a
 -- burner has a lid on it (items/burner.luau, `sealed`) -- without one
 -- a standing burner would evaporate its own fuel in a couple of hours.
-return {
+local content = {
     id = "ethanol",
     name = "ethanol",
     molar_mass = 46.07,
@@ -31,9 +31,16 @@ return {
     burn = { k = 2193, rate = 0.000625 },
     -- What it looks like through glass (tg: alcohol_reagents.dm:7).
     color = "#404030",
-    on_mob_life = function(ctx, mob, _user, _moles)
-        if ctx.random(1, 6) == 1 then
-            ctx.system_msg(mob, "You feel a little tipsy.")
-        end
-    end,
 }
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
+        local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount
+        if math.random(1, 6) == 1 then
+            sim.message.send({ recipient = mob, message = "You feel a little tipsy." })
+        end
+    end)
+end
+
+return content
