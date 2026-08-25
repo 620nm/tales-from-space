@@ -9,7 +9,7 @@
 -- mixing bell: once the ash exists, this runs cold.
 return {
     id = "lye",
-    reactants = { ash = 1.0, water = 1.0, carbon = 1.0 },
+    reactants = { ["ash:solid"] = 1.0, water = 1.0, ["carbon:solid"] = 1.0 },
     products = { lye = 2.0 },
     energy = 0.0,
     rate = {

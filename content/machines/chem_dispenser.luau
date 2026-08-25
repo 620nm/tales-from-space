@@ -1,4 +1,4 @@
--- The chem dispenser: fourteen buttons and a slot for one beaker.
+-- The chem dispenser: fifteen buttons and a slot for one beaker.
 -- tg's `/obj/machinery/chem_dispenser` (chem_dispenser.dm).
 --
 -- No script, for the same reason the reaction chamber has none: a
@@ -11,7 +11,7 @@
 -- THE SHELF is tg's own base list (`default_dispensable_reagents`,
 -- chem_dispenser.dm:54-80), trimmed to what this pack has substances
 -- for. Every one of the twelve recipes in `content/reactions/` is
--- reachable from these fourteen buttons plus the reaction chamber:
+-- reachable from these fifteen buttons plus the reaction chamber:
 --
 --   salt          sodium + chlorine
 --   salt water    water + salt
@@ -33,9 +33,21 @@
 --
 -- OXYGEN AND NITROGEN ARE THE STATION'S OWN GASES. The keys `o2` and
 -- `n2` are the pack's own gases, the same substances a canister holds
--- and a crewman breathes, dispensed as a liquid the way tg's reagent
--- oxygen is a reagent. One matter registry, reached from one more
--- place (docs/CHEMISTRY.md).
+-- and a crewman breathes. One matter registry, reached from one more
+-- place (docs/CHEMISTRY.md) -- which is also why their buttons only
+-- work over a vessel with a lid on it: a source deposits what the
+-- substance IS at the nozzle, and a gas over an open beaker would be
+-- gone before the chemist looked up. Pressing one over an open glass
+-- is refused with a sentence.
+--
+-- C1: the permanent gases leave this shelf and come back to chemistry
+-- from a canister through a connector port; `cl2` below folds into a
+-- single `chlorine` when the reagent twin and the molecule become one
+-- id.
+--
+-- CHLORINE IS THE ONE GAS WORTH A BUTTON. Pressed into a sealed
+-- bottle it condenses under its own vapour pressure and the bottle
+-- holds liquid chlorine, which is a reactant a bench can actually use.
 --
 -- WHAT TG'S WINDOW HAS THAT THIS ONE CANNOT SAY: a power-cell gauge (a
 -- corded appliance here draws flat off the mains, and tg's per-unit
@@ -57,8 +69,13 @@ return {
     corded = true,
     chem = {
         device = "mint",
+        -- The nozzle's temperature, and the whole of what this machine
+        -- gets to say about what comes out of it: what PHASE a press
+        -- lands in is the substance's own at this temperature, off the
+        -- registry (docs/CONTENT-SCHEMA.md, `chem`). Carbon arrives as
+        -- a powder, water as water, and a gas has to be pressed into
+        -- something with a lid on it or the machine refuses.
         mint_temperature_k = 300,
-        mint_phase = "liquid",
         -- tg's `amount = 30` (chem_dispenser.dm:18) through the
         -- documented unit bridge of 1 u = 0.025 mol: 0.75 mol, which is
         -- three fifths of a beaker. The dial's OPENING position: the
@@ -76,6 +93,7 @@ return {
             { key = "hydrogen", name = "hydrogen" },
             { key = "carbon", name = "carbon" },
             { key = "chlorine", name = "chlorine" },
+            { key = "cl2", name = "chlorine gas" },
             { key = "sodium", name = "sodium" },
             { key = "potassium", name = "potassium" },
             { key = "silicon", name = "silicon" },

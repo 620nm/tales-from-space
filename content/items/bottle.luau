@@ -78,7 +78,7 @@ if sim ~= nil then
                 from = self,
                 to = clicked.entity,
                 amount = 10 * U,
-                phases = { "liquid" },
+                phases = { "liquid", "solid" },
             })
             sim.message.send({ recipient = user, message = "You pour from the bottle." })
             return true
@@ -95,7 +95,7 @@ if sim ~= nil then
                 from = self,
                 to = user,
                 amount = 2 * U,
-                phases = { "liquid" },
+                phases = { "liquid", "solid" },
             })
             sim.message.send({ recipient = user, message = "You drink from the bottle." })
             return true
@@ -113,7 +113,7 @@ if sim ~= nil then
             from = self,
             to = ev.at.matter,
             amount = "all",
-            phases = { "liquid" },
+            phases = { "liquid", "solid" },
         })
         sim.message.send({ recipient = user, message = "You tip the bottle out onto the deck." })
         return true

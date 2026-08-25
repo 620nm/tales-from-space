@@ -7,7 +7,7 @@
 -- anybody feels.
 return {
     id = "saltwater",
-    reactants = { water = 1.0, salt = 1.0 },
+    reactants = { water = 1.0, ["salt:solid"] = 1.0 },
     products = { saltwater = 2.0 },
     energy = 0.0,
     rate = {
