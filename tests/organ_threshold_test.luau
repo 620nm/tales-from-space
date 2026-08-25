@@ -36,7 +36,7 @@ assert(t.organ_damage(p, "brain") == 0, "a crewman arrives with a whole brain")
 assert(t.organ_damage(p, "eyes") == 0, "and whole eyes")
 
 t.set_health(p, { brute = 400 })
-assert(t.body(p).state == "dead", "four hundred brute is a body")
+assert(not t.body(p).animate, "four hundred brute is a body")
 
 -- Past the brain's low edge (45) and nothing else: the eyes are still
 -- short of their high edge (30) at this point, and the brain of its

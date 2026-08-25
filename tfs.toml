@@ -20,7 +20,6 @@ native_edges = [
     "matter.rupture",
     "matter.ignition",
     "matter.extinguished",
-    "body.life_state",
     "body.threshold",
     "part.seat",
     "part.unseat",

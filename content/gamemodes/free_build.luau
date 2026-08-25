@@ -9,7 +9,7 @@ return {
     playtest = true,
     rules = {
         bodies = "connection",
-        respawn = "critical",
+        respawn = "uncontrollable",
         -- What every crew body spawned under this mode wears
         -- (docs/BIOLOGY.md §1). A job may name its own instead;
         -- without either there would be nothing to spawn.

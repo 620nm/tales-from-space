@@ -71,15 +71,6 @@ return {
         { id = "oxy",   label = "Oxygen loss", storage = "owner", port = "oxygen_loss" },
         { id = "tox",   label = "Toxin load", storage = "owner", port = "toxin_load" },
     },
-    -- TfS owns ids and player-facing words; phases are the native gates
-    -- used by respawn/security. tg derives its equivalent bands in
-    -- code/modules/mob/living/carbon/carbon.dm:675-692.
-    life_states = {
-        { id = "alive", label = "Alive" },
-        { id = "crit",  label = "Critical", critical = true },
-        { id = "dead",  label = "Dead", terminal = true },
-    },
-
     -- get_random_valid_zone uses 80% for aimed/default melee, +10 while
     -- lying, and 65% for thrown hits (code/_onclick/item_attack.dm:321-326;
     -- code/modules/mob/living/living_defense.dm:263-264).

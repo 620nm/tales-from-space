@@ -171,7 +171,7 @@ end
 t.run_ticks(BREATH)
 assert(t.blood(chemist) ~= nil, "a body has a bloodstream to read")
 assert(t.health(chemist).oxy > 10, "it is hurting them: " .. t.health(chemist).oxy)
-assert(t.health(chemist).state ~= "dead", "but they are still on their feet")
+assert(t.health(chemist).animate, "but they are still on their feet")
 
 assert((t.blood(diver).cl2 or 0) == 0, "the valve kept it out of the diver")
 assert(t.health(diver).oxy == 0, "who is entirely fine: " .. t.health(diver).oxy)
