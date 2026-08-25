@@ -9,5 +9,5 @@ permissions = [
     "prototype_handlers",
     "global_handlers",
     "notify_private",
-    "notify_all",
+    "notify_audience",
 ]
