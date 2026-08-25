@@ -23,4 +23,6 @@ return {
     -- (docs/MAPPING.md, the recipe panel). A chamber a mapper fills on
     -- purpose.
     relevance = 60,
+    -- tg's `dangerous = TRUE` (gas_types.dm:149).
+    group = "poison",
 }

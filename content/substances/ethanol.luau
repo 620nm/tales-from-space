@@ -31,6 +31,9 @@ local content = {
     burn = { k = 2193, rate = 0.000625 },
     -- What it looks like through glass (tg: alcohol_reagents.dm:7).
     color = "#404030",
+    -- Boils at 351.5 K, evaporates below it, and is never what a station
+    -- scrubs the air of.
+    group = "volatile",
 }
 
 if sim ~= nil then
