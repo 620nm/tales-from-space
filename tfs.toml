@@ -25,6 +25,8 @@ native_edges = [
     "procedure.start",
     "procedure.operate",
     "lifecycle.mob",
+    "lifecycle.round_start",
+    "lifecycle.round_end",
 ]
 
 [paths]
@@ -36,3 +38,9 @@ tests = "tests"
 [permissions]
 replace_handlers = true
 prototype_handlers = true
+notify_private = true
+notify_all = true
+
+[notifications]
+sender = "Charter Command"
+channel = "Common"
