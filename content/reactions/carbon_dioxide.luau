@@ -19,7 +19,7 @@
 --   temp_max = opt_hi + max(opt_lo - temp_min, 20) = 920
 return {
     id = "carbon_dioxide",
-    reactants = { carbon = 1.0, o2 = 2.0 },
+    reactants = { ["carbon:solid"] = 1.0, o2 = 2.0 },
     products = { ["co2:gas"] = 3.0 },
     energy = 0.0,
     rate = {

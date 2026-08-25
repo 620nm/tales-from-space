@@ -9,8 +9,8 @@
 -- Shared mixing bell, no energy.
 return {
     id = "saltpetre",
-    reactants = { potassium = 1.0, n2 = 1.0, o2 = 3.0 },
-    products = { saltpetre = 3.0 },
+    reactants = { ["potassium:solid"] = 1.0, n2 = 1.0, o2 = 3.0 },
+    products = { ["saltpetre:solid"] = 3.0 },
     energy = 0.0,
     rate = {
         bell = {

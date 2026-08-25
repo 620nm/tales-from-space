@@ -13,7 +13,7 @@
 return {
     id = "ash",
     reactants = { oil = 1.0 },
-    products = { ash = 1.0 },
+    products = { ["ash:solid"] = 1.0 },
     energy = 0.0,
     rate = {
         bell = {

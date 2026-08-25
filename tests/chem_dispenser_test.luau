@@ -25,6 +25,15 @@ local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
+local function said(p, line)
+    for _, m in ipairs(t.messages(p)) do
+        if m == line then
+            return true
+        end
+    end
+    return false
+end
+
 local function row(ui, label)
     for _, r in ipairs(ui.readouts) do
         if r.label == label then
@@ -68,7 +77,7 @@ t.world([==[(
         "#####",
     ],
     spawns: [(1, 1)],
-    items: [(1, 1, "beaker")],
+    items: [(1, 1, "beaker"), (1, 1, "bottle")],
     machines: [(2, 1, "chem_dispenser")],
     cables: [
         (1, 1, 1), (2, 1, 1), (3, 1, 1),
@@ -219,7 +228,7 @@ t.run_ticks(2)
 assert(#t.ledger_rows("minted") == before, "an empty dock dispenses nothing")
 
 -- ...and neither does a button this machine does not have. The shelf is
--- fourteen substances; the registry knows dozens.
+-- fifteen substances; the registry knows dozens.
 t.click(p, 2, 1, machine)
 t.tick()
 assert(t.hands(p).held == nil, "the beaker goes back in")
@@ -308,3 +317,88 @@ for _, r in ipairs(knobs) do
     end
 end
 assert(turns == 3, "three turns of the dial are three rows: " .. turns)
+
+-- ---------------------------------------------------------------
+-- THE NOZZLE CHOOSES NO PHASE.
+--
+-- A dispenser used to declare one phase for its whole shelf and mint
+-- everything as that, which made liquid oxygen out of a button. It
+-- declares only a TEMPERATURE now: what lands is what the substance IS
+-- at 300 K and one atmosphere, off the registry (docs/MATTER.md).
+--
+-- Water is the easy half -- 300 K is well under its boiling point, so a
+-- press of water is water in the glass.
+-- ---------------------------------------------------------------
+local reading = t.vessel(beaker)
+assert(reading ~= nil, "the beaker reads")
+near(reading.contents.water.liquid, 0.25, 1e-3, "a press of water is a liquid")
+assert((reading.contents.water.gas or 0) < 1e-3, "with only its own vapour over it")
+near(reading.temp_k, NOZZLE_K, 0.3, "at the nozzle's temperature")
+
+-- ...and chlorine is the other half. At 300 K it is a GAS, and a gas
+-- over an open beaker is a press with nothing to show for it: what
+-- landed would leave through the same mouth before the chemist looked
+-- up. The machine refuses, says why, and writes no row -- nothing was
+-- minted, so there is nothing to account for.
+local _ = t.messages(p)
+before = #t.ledger_rows("minted")
+t.ui_act(p, "toggle", '{"field":"dispense","option":"cl2"}')
+t.run_ticks(2)
+near(total(beaker) - 0.25, 0, 1e-3, "an open glass takes none of it")
+assert(#t.ledger_rows("minted") == before, "and nothing is on the record")
+assert(
+    said(p, "That would only escape: seal a vessel first."),
+    "the machine says why rather than doing nothing in silence"
+)
+
+-- ---------------------------------------------------------------
+-- ...AND THE SAME PRESS INTO A BOTTLE IS THE USEFUL GESTURE.
+--
+-- A lid is the whole difference. Chlorine minted into a sealed vessel
+-- has nowhere to escape to, so what was refused over a beaker lands
+-- here and stays: a quarter of a mole in fifty millilitres, pressing
+-- on the cork.
+--
+-- What it does NEXT is the sweep's, not the nozzle's. Chlorine's
+-- saturation line puts it at about eight atmospheres at 300 K
+-- (substances/cl2.luau), so a bottle at a hundred and twenty is far
+-- over its own vapour pressure and the liquid row belongs there --
+-- but today's saturation relax gives up above the ONE-ATMOSPHERE
+-- boiling point rather than reading the pressure the liquid actually
+-- bears (docs/MATTER.md, D5). The bottle is where a chemist gets
+-- liquid chlorine the moment that branch reads the vessel.
+-- ---------------------------------------------------------------
+t.ui_act(p, "toggle", '{"field":"eject"}')
+t.run_ticks(2)
+t.drop(p)
+t.tick()
+
+local bottle = t.target_at(1, 1, "bottle")
+assert(bottle ~= nil, "a bottle is standing on the bench")
+t.click(p, 1, 1, bottle)
+t.tick()
+assert(t.hands(p).held == "bottle", "the bottle is in hand")
+t.click(p, 2, 1, machine)
+t.tick()
+assert(t.hands(p).held == nil, "and it goes into the dock")
+t.click(p, 2, 1, machine)
+t.tick()
+t.ui_act(p, "set", '{"field":"amount","value":0.25}')
+t.run_ticks(2)
+t.ui_act(p, "toggle", '{"field":"dispense","option":"cl2"}')
+t.run_ticks(2)
+
+local bottled = t.vessel(bottle)
+assert(bottled.sealed, "a bottle has a stopper in it")
+assert(bottled.contents.cl2 ~= nil, "and this time the press landed")
+near(bottled.moles, 0.25, 1e-6, "the whole press went in this time")
+assert(
+    (bottled.contents.cl2.gas or 0) > 0,
+    "as the gas chlorine is at the nozzle's 300 K"
+)
+near(bottled.temp_k, NOZZLE_K, 0.5, "still at the nozzle's temperature")
+-- 0.25 mol over 50 mL at 300 K by PV = nRT, which is what a vessel
+-- with a lid on it does with a gas: it holds it (docs/MATTER.md 5).
+near(bottled.pressure_kpa, 0.25 * 8.314 * 300.0 / 50e-6 / 1000.0, 1.0,
+    "and the gauge reads what that implies")
+assert(t.ledger_has("Minted", "bottle"), "and the mint is on the record")

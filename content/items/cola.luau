@@ -39,7 +39,7 @@ if sim ~= nil then
             from = self,
             to = user,
             amount = 0.05,
-            phases = { "liquid" },
+            phases = { "liquid", "solid" },
         })
         sim.message.send({ recipient = user, message = "You take a swig of Space Cola." })
         return true

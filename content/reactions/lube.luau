@@ -10,7 +10,7 @@
 -- makes at room temperature.
 return {
     id = "lube",
-    reactants = { water = 1.0, silicon = 1.0, o2 = 1.0 },
+    reactants = { water = 1.0, ["silicon:solid"] = 1.0, o2 = 1.0 },
     products = { lube = 4.0 },
     energy = 15060.0,
     rate = {

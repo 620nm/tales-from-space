@@ -53,7 +53,7 @@ if sim ~= nil then
                 sim.message.send({ recipient = user, message = "The beaker is empty." })
                 return true
             end
-            sim.matter.transfer({ from = self, to = clicked.entity, amount = 0.25, phases = { "liquid" } })
+            sim.matter.transfer({ from = self, to = clicked.entity, amount = 0.25, phases = { "liquid", "solid" } })
             sim.message.send({ recipient = user, message = "You pour from the beaker." })
             return true
         end
@@ -65,7 +65,7 @@ if sim ~= nil then
                 return true
             end
             sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = ev.at })
-            sim.matter.transfer({ from = self, to = user, amount = 0.05, phases = { "liquid" } })
+            sim.matter.transfer({ from = self, to = user, amount = 0.05, phases = { "liquid", "solid" } })
             sim.message.send({ recipient = user, message = "You drink from the beaker. It tastes like a hospital." })
             return true
         end
@@ -78,7 +78,7 @@ if sim ~= nil then
             sim.message.send({ recipient = user, message = "The beaker is empty." })
             return true
         end
-        sim.matter.transfer({ from = self, to = ev.at.matter, amount = "all", phases = { "liquid" } })
+        sim.matter.transfer({ from = self, to = ev.at.matter, amount = "all", phases = { "liquid", "solid" } })
         sim.message.send({ recipient = user, message = "You tip the beaker out onto the deck." })
         return true
     end)

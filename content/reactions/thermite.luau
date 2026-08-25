@@ -12,8 +12,8 @@
 -- Shared mixing bell, no energy.
 return {
     id = "thermite",
-    reactants = { aluminium = 1.0, iron = 1.0, o2 = 1.0 },
-    products = { thermite = 3.0 },
+    reactants = { ["aluminium:solid"] = 1.0, ["iron:solid"] = 1.0, o2 = 1.0 },
+    products = { ["thermite:solid"] = 3.0 },
     energy = 0.0,
     rate = {
         bell = {
