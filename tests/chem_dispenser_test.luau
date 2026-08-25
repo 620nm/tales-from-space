@@ -359,15 +359,33 @@ assert(
 -- here and stays: a quarter of a mole in fifty millilitres, pressing
 -- on the cork.
 --
--- What it does NEXT is the sweep's, not the nozzle's. Chlorine's
--- saturation line puts it at about eight atmospheres at 300 K
--- (substances/cl2.luau), so a bottle at a hundred and twenty is far
--- over its own vapour pressure and the liquid row belongs there --
--- but today's saturation relax gives up above the ONE-ATMOSPHERE
--- boiling point rather than reading the pressure the liquid actually
--- bears (docs/MATTER.md, D5). The bottle is where a chemist gets
--- liquid chlorine the moment that branch reads the vessel.
+-- What it does NEXT is the sweep's, not the nozzle's, and it is the
+-- most violent thing on this bench. A quarter mole of gas in 50 mL is
+-- a hundred and twenty atmospheres; chlorine's saturation line puts
+-- it at eight (substances/cl2.luau), so most of that press has to
+-- become liquid. Condensing is ADIABATIC -- `change_phase` moves
+-- moles and leaves `energy_j` alone, and the b offsets hand the latent
+-- heat to whatever is in the vessel (docs/MATTER.md 5). What is in the
+-- vessel is a quarter mole of chlorine, 8.5 J/K of it, against 20.4 kJ
+-- for every mole that condenses. The bottle does not stay at the
+-- nozzle's 300 K: it climbs a hundred and sixty kelvin, and it stops
+-- climbing exactly where the line catches up with the pressure it has
+-- built.
 -- ---------------------------------------------------------------
+-- Chlorine's own numbers, off substances/cl2.luau, so the assertions
+-- below say the physics rather than a number somebody measured once.
+local CL2_L_VAP = 20410.0
+local CL2_BOIL_K = 239.1
+local CL2_CV = 33.9
+
+-- The Clausius-Clapeyron line of record: one atmosphere at the
+-- 239.1 K boiling point, k = -L_vap/R (docs/MATTER.md 5, Appendix A of
+-- the milestone spec). About 8 atm at 300 K, and Appendix B's
+-- reference is 6.6 atm at 293 K.
+local function cl2_line_kpa(temp_k)
+    return 101.325 * math.exp((-CL2_L_VAP / 8.314) * (1.0 / temp_k - 1.0 / CL2_BOIL_K))
+end
+
 t.ui_act(p, "toggle", '{"field":"eject"}')
 t.run_ticks(2)
 t.drop(p)
@@ -386,19 +404,75 @@ t.tick()
 t.ui_act(p, "set", '{"field":"amount","value":0.25}')
 t.run_ticks(2)
 t.ui_act(p, "toggle", '{"field":"dispense","option":"cl2"}')
-t.run_ticks(2)
+-- The press lands in one pass; the sweep takes a few more to walk the
+-- superheat down onto the line, and a docked vessel is insulated from
+-- the deck (sim/holder/heat.rs) so nothing else is touching it.
+t.run_seconds(20)
 
 local bottled = t.vessel(bottle)
 assert(bottled.sealed, "a bottle has a stopper in it")
 assert(bottled.contents.cl2 ~= nil, "and this time the press landed")
 near(bottled.moles, 0.25, 1e-6, "the whole press went in this time")
-assert(
-    (bottled.contents.cl2.gas or 0) > 0,
-    "as the gas chlorine is at the nozzle's 300 K"
+local condensed = bottled.contents.cl2.liquid or 0
+assert(condensed > 0, "and most of it is standing in the bottle as LIQUID chlorine")
+assert((bottled.contents.cl2.gas or 0) > 0, "with the rest of it over the top")
+
+-- The closed form, and the reason a chemist should be careful with
+-- that button: every mole that condenses hands 20.4 kJ to a mixture
+-- whose whole heat capacity is 0.25 x 33.9 = 8.5 J/K.
+near(
+    bottled.temp_k,
+    NOZZLE_K + condensed * CL2_L_VAP / (0.25 * CL2_CV),
+    1.0,
+    "the latent heat of what condensed is where the temperature went"
 )
-near(bottled.temp_k, NOZZLE_K, 0.5, "still at the nozzle's temperature")
--- 0.25 mol over 50 mL at 300 K by PV = nRT, which is what a vessel
--- with a lid on it does with a gas: it holds it (docs/MATTER.md 5).
-near(bottled.pressure_kpa, 0.25 * 8.314 * 300.0 / 50e-6 / 1000.0, 1.0,
-    "and the gauge reads what that implies")
+assert(bottled.temp_k > NOZZLE_K + 150.0, "which is a long way over the nozzle: " .. bottled.temp_k)
+-- ...and it stopped there because that is where the line is. The gauge
+-- and the temperature are one statement, not two.
+near(
+    bottled.pressure_kpa,
+    cl2_line_kpa(bottled.temp_k),
+    20.0,
+    "the gauge is that temperature's own vapour pressure"
+)
 assert(t.ledger_has("Minted", "bottle"), "and the mint is on the record")
+
+-- ---------------------------------------------------------------
+-- ...AND THEN THE DECK TAKES IT BACK.
+--
+-- A vessel standing loose on the floor exchanges heat with the tile it
+-- is on, both ways (sim/holder/heat.rs, deliberately tg-divergent).
+-- So the bottle a chemist puts down is a bottle that cools, and every
+-- kelvin it loses walks the gauge back down the same line: five
+-- minutes on the deck and 150 atmospheres has become 8, which is the
+-- vapour pressure of liquid chlorine at room temperature and the
+-- number the shelf is really offering.
+-- ---------------------------------------------------------------
+t.ui_act(p, "toggle", '{"field":"eject"}')
+t.run_ticks(2)
+t.drop(p)
+t.tick()
+t.run_seconds(300)
+
+local cooled = t.vessel(bottle)
+near(cooled.moles, 0.25, 1e-6, "a stopper means nothing left while it cooled")
+near(
+    cooled.temp_k,
+    t.room_temperature(1, 1),
+    1.5,
+    "the bottle has come back to the deck's own temperature"
+)
+near(
+    cooled.pressure_kpa,
+    cl2_line_kpa(cooled.temp_k),
+    5.0,
+    "and the gauge came down the line with it"
+)
+assert(
+    cooled.pressure_kpa < 1000.0,
+    "about eight atmospheres, not a hundred and fifty: " .. cooled.pressure_kpa
+)
+assert(
+    (cooled.contents.cl2.liquid or 0) > 0.9 * 0.25,
+    "and nine tenths of the press is liquid chlorine on the shelf"
+)

@@ -25,9 +25,18 @@
 -- back to chemistry from a canister into a sealed vessel, and the N2O
 -- recipe is rewritten around that share.
 local PRESS = 0.75
--- One press of each of oil's three reactants, which is a quarter of an
--- extent and three quarters of a mole of oil.
-local LEG = 0.25
+-- A twentieth of a press of each of oil's three reactants, and the
+-- amount is GEOMETRY talking (docs/CHEMISTRY.md 5, D16). Oil is
+-- 170 g/mol on the shelf's default 1 g/mL and three come out for one
+-- of each leg, so a whole extent swells the contents by 471 mL
+-- against the 39 the legs occupied: a 50 mL beaker has room for about
+-- a tenth of an extent, and the engine caps a reaction by the free
+-- shell volume rather than growing the glass. A twentieth of a press
+-- of each fits with two thirds to spare.
+local LEG = 0.05
+-- ...and three of oil come out of it, which is what the ash window is
+-- then asked about.
+local MADE = 3.0 * LEG
 
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
@@ -143,7 +152,7 @@ local function brew_oil(beaker)
     press("hydrogen")
     dial_to(PRESS)
     t.run_seconds(30)
-    near(amount(beaker, "oil"), PRESS, 1e-6, "one of each made three of oil")
+    near(amount(beaker, "oil"), MADE, 1e-6, "one of each made three of oil")
     near(amount(beaker, "carbon"), 0.0, 1e-6, "and nothing is left over")
 end
 
@@ -161,7 +170,7 @@ t.ui_act(p, "toggle", '{"field":"power"}')
 t.run_seconds(120)
 near(t.holder_k(cold), 400.0, 1.0, "the chamber holds it at 400 K")
 near(amount(cold, "ash"), 0.0, 1e-12, "eighty kelvin short is short")
-near(amount(cold, "oil"), PRESS, 1e-6, "and every mole of oil is still oil")
+near(amount(cold, "oil"), MADE, 1e-6, "and every mole of oil is still oil")
 
 -- ---------------------------------------------------------------
 -- TWO: INSIDE IT, IT GOES.
@@ -173,7 +182,7 @@ near(amount(cold, "oil"), PRESS, 1e-6, "and every mole of oil is still oil")
 dial(700)
 t.run_seconds(120)
 near(t.holder_k(cold), 700.0, 25.0, "the chamber took it up into the window")
-near(amount(cold, "ash"), PRESS, 1e-6, "every mole of oil became a mole of ash")
+near(amount(cold, "ash"), MADE, 1e-6, "every mole of oil became a mole of ash")
 near(amount(cold, "oil"), 0.0, 1e-6, "and there is none of it left")
 
 t.ui_act(p, "toggle", '{"field":"power"}')
@@ -185,18 +194,27 @@ t.tick()
 -- THREE: ABOVE IT, NOTHING AGAIN.
 --
 -- The second beaker is brought to 960 K holding only two of oil's
--- three, and the hydrogen is pressed in hot. A tenth of a leg at the
--- nozzle's 300 K barely moves a mixture of that heat capacity, so the
--- oil is MADE at over 950 K -- forty kelvin over the ash window's
--- ceiling, and the rule stays shut.
+-- three, and the hydrogen is pressed in hot. THE BALLAST IS THE
+-- STAGING: the two legs go in at a full press each rather than a
+-- twentieth, because the third leg arrives at the nozzle's 300 K and
+-- something has to shrug it off. A notch of hydrogen against 0.75 mol
+-- of welding fuel and carbon is ten kelvin; against a twentieth of a
+-- press each it would be a hundred and thirty, and the beaker would
+-- fall back through the window it is supposed to be over. The
+-- hydrogen is still the limiting leg, so the recipe makes three
+-- notches of oil and the excess ballast is only there for its heat
+-- capacity.
 -- ---------------------------------------------------------------
+-- The dial's smallest step, off machines/chem_dispenser.luau: one tg
+-- unit at 1 u = 0.025 mol. A tenth of a leg is under the notch, so
+-- this is the smallest press a chemist can actually make.
+local NOTCH = 0.025
 take(hot, 3, 2)
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
-dial_to(LEG)
+dial_to(PRESS)
 press("welding_fuel")
 press("carbon")
-dial_to(PRESS)
 
 eject()
 dock(heater, 3, 1)
@@ -209,23 +227,33 @@ assert(t.holder_k(hot) > 940.0, "the chamber overshot the window on purpose: " .
 eject()
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
-dial_to(LEG / 10.0)
+dial_to(NOTCH)
 press("hydrogen")
 dial_to(PRESS)
 assert(t.holder_k(hot) > 920.0, "and the mixture is still over the window: " .. t.holder_k(hot))
 
-t.run_seconds(120)
-assert(amount(hot, "oil") > 0.0, "the oil was made up there: " .. amount(hot, "oil"))
+-- Five minutes, because the oil rule is running at a QUARTER of its
+-- plateau up here -- 950 K is most of the way down the far shoulder of
+-- 100/280/900/1000 (reactions/oil.luau) -- and a rate that reads
+-- concentration is a decay besides (docs/CHEMISTRY.md 5). The last
+-- thousandth of a batch takes as long again as the first nine tenths,
+-- which is why the slack below is a thousandth rather than 1e-6.
+t.run_seconds(320)
+near(amount(hot, "oil"), 3.0 * NOTCH, 1e-3, "the notch of hydrogen is what the recipe got")
 near(amount(hot, "ash"), 0.0, 1e-12, "over the window is as shut as under it")
 
 -- ...and the proof that it was the TEMPERATURE and not the mixture:
 -- put the same beaker back on the dial at 700 and it converts, coming
--- down into the window from above.
-local made = amount(hot, "oil")
+-- down into the window from above -- and the last of the hydrogen
+-- with it, so the ash is the whole three notches the notch of
+-- hydrogen was ever going to buy. Four minutes rather than two and a
+-- half: the oil here is three notches in forty millilitres of ballast
+-- rather than a neat batch, and a decay in a dilute solution has the
+-- longer tail.
 eject()
 dock(heater, 3, 1)
 panel(heater, 3, 1)
 dial(700)
-t.run_seconds(150)
-near(amount(hot, "ash"), made, 1e-6, "coming down into the window works as well as up")
+t.run_seconds(240)
+near(amount(hot, "ash"), 3.0 * NOTCH, 1e-6, "coming down into the window works as well as up")
 near(amount(hot, "oil"), 0.0, 1e-6, "and it spends the oil it would not touch at 960")
