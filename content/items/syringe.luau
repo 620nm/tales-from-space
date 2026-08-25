@@ -83,19 +83,15 @@ local STROKE = 5 * U
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
-    -- Both questions below come off the one reading every body of
-    -- matter answers (docs/LUAU-API.md 7): how much is in it, and how
-    -- much room is left. `headspace_l` is the shell minus what the
-    -- condensed phases actually take up, so "full" is a VOLUME fact and
-    -- never a count of moles -- capacity is geometry (D2).
-    local function moles_in(obj)
-        local read = sim.matter_read(obj)
-        return read and read.moles
-    end
-    local function free_l(obj)
-        local read = sim.matter_read(obj)
-        return read and read.headspace_l
-    end
+    -- Both questions come off the one reading every body of matter
+    -- answers (docs/LUAU-API.md 7): how much is in it, and how much room
+    -- is left. `headspace_l` is the shell minus what the condensed
+    -- phases actually take up, so "full" is a VOLUME fact and never a
+    -- count of moles -- capacity is geometry (D2). Word for word what
+    -- every other vessel asks, so they are asked in one place
+    -- (`lib/vessel.luau`); the syringe's GESTURE stays its own, because
+    -- a stroke with a direction is not a pour.
+    local moles_in, free_l = vessel.moles, vessel.headspace_l
 
     -- The one transfer, pointed whichever way the dial says. Answers
     -- false with the refusal already spoken.

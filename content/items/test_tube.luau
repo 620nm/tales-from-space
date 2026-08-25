@@ -9,12 +9,10 @@
 -- the level off the fillings sheet (_cup.dm:797-806; `volume = 30`
 -- at :805).
 --
--- The three gestures are the vessel's rather than the beaker's: your
--- own tile is a swig, another vessel within reach is a pour, the deck
--- is a spill. (Content files cannot `require` one another, so each one
--- spells them out; see card.luau on the same tradeoff.)
-local U = 0.025
-
+-- The gestures are the vessel's rather than this file's
+-- (`lib/vessel.luau`): your own tile is a swig, another vessel within
+-- reach is a pour, the deck is a spill, and an open tube held to a gas
+-- line is refused.
 local content = {
     id = "test_tube",
     name = "test tube",
@@ -27,9 +25,6 @@ local content = {
     -- that a tube of something warm saturates its own headspace in one
     -- pass and then sits there.
     volume_ml = 30,
-    -- tg's cup default `amount_per_transfer_from_this = 10` (_cup.dm:4),
-    -- which is also the beaker's gesture: a pour is a pour whatever it
-    -- comes out of.
     fill_sprites = {
         { 1, "tube_fill_1" },
         { 20, "tube_fill_20" },
@@ -42,82 +37,20 @@ local content = {
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
-        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
-        local clicked, target = ev.claim, ev.claim
-        local _x, _y, _choice = x, y, choice
-        -- What is in it, in moles: the reading's own total, which is
-        -- the same sum over the same mixture (sim/owner.rs, `reading`).
-        -- `nil` for a thing with no inside at all.
-        local function total(obj)
-            local read = sim.matter_read(obj)
-            return read and read.moles
-        end
-
-        if clicked ~= nil and clicked.entity ~= nil then
-            if total(clicked.entity) == nil then
-                return { replaced = false }
-            end
-            -- A fixture standing full of gas is a charge and not a
-            -- pour, and an open tube cannot take one -- the same
-            -- refusal, in the same words, as the beaker beside it
-            -- (items/beaker.luau, items/bottle.luau).
-            if clicked.kind == "machine" then
-                sim.message.send({
-                    recipient = user,
-                    message = "That would only escape: seal a vessel first.",
-                })
-                return true
-            end
-            if (total(self) or 0) < 0.001 then
-                sim.message.send({ recipient = user, message = "The tube is empty." })
-                return true
-            end
-            sim.matter.transfer({
-                from = self,
-                to = clicked.entity,
-                amount = 10 * U,
-                phases = { "liquid", "solid" },
-            })
-            sim.message.send({ recipient = user, message = "You pour from the tube." })
-            return true
-        end
-
-        local px, py = user.tile.x, user.tile.y
-        if x == px and y == py then
-            if (total(self) or 0) < 0.001 then
-                sim.message.send({ recipient = user, message = "The tube is empty." })
-                return true
-            end
-            sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = ev.at })
-            sim.matter.transfer({
-                from = self,
-                to = user,
-                amount = 2 * U,
-                phases = { "liquid", "solid" },
-            })
-            sim.message.send({ recipient = user, message = "You drink from the tube." })
-            return true
-        end
-
-        local turf = sim.turf(x, y)
-        if turf ~= "floor" and turf ~= "plating" then
-            return { replaced = false }
-        end
-        if (total(self) or 0) < 0.001 then
-            sim.message.send({ recipient = user, message = "The tube is empty." })
-            return true
-        end
-        sim.matter.transfer({
-            from = self,
-            to = ev.at.matter,
-            amount = "all",
-            phases = { "liquid", "solid" },
-        })
-        sim.message.send({ recipient = user, message = "You tip the tube out onto the deck." })
-        return true
-    end)
+    vessel.attach({
+        id = content.id,
+        -- What the sentences call it. Short of the prototype's own name
+        -- on purpose: "you pour from the test tube" is not how anybody
+        -- at a bench says it.
+        noun = "tube",
+        phases = { "liquid", "solid" },
+        -- tg's cup default `amount_per_transfer_from_this = 10`
+        -- (_cup.dm:4), which is also the beaker's gesture: a pour is a
+        -- pour whatever it comes out of.
+        pour = { units = 10 },
+        sip = { units = 2 },
+        spill = true,
+    })
 end
 
 return content

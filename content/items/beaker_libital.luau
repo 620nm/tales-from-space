@@ -1,8 +1,8 @@
 -- First aid in a glass: libital solution. A beaker like any other, so
--- it wears the same three gestures as the empty one — your own tile is
--- a swig, another vessel within reach is a pour, the deck is a spill.
--- (Content files cannot `require` one another, so the gesture is spelled
--- out here as well; see card.luau on the same tradeoff.)
+-- it wears the same gestures as the empty one, out of the same
+-- `lib/vessel.luau` -- your own tile is a swig, another vessel within
+-- reach is a pour, the deck is a spill, and a gas line is refused. All
+-- this file says is that the swig tastes of the infirmary.
 local content = {
     id = "beaker_libital",
     name = "beaker (libital)",
@@ -25,56 +25,14 @@ local content = {
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
-        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
-        local clicked, target = ev.claim, ev.claim
-        local _x, _y, _choice = x, y, choice
-        -- What is in it, in moles: the reading's own total, which is
-        -- the same sum over the same mixture (sim/owner.rs, `reading`).
-        -- `nil` for a thing with no inside at all.
-        local function total(obj)
-            local read = sim.matter_read(obj)
-            return read and read.moles
-        end
-
-        if clicked ~= nil and clicked.entity ~= nil then
-            if total(clicked.entity) == nil then
-                return { replaced = false }
-            end
-            if (total(self) or 0) < 0.001 then
-                sim.message.send({ recipient = user, message = "The beaker is empty." })
-                return true
-            end
-            sim.matter.transfer({ from = self, to = clicked.entity, amount = 0.25, phases = { "liquid", "solid" } })
-            sim.message.send({ recipient = user, message = "You pour from the beaker." })
-            return true
-        end
-
-        local px, py = user.tile.x, user.tile.y
-        if x == px and y == py then
-            if (total(self) or 0) < 0.001 then
-                sim.message.send({ recipient = user, message = "The beaker is empty." })
-                return true
-            end
-            sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = ev.at })
-            sim.matter.transfer({ from = self, to = user, amount = 0.05, phases = { "liquid", "solid" } })
-            sim.message.send({ recipient = user, message = "You drink from the beaker. It tastes like a hospital." })
-            return true
-        end
-
-        local turf = sim.turf(x, y)
-        if turf ~= "floor" and turf ~= "plating" then
-            return { replaced = false }
-        end
-        if (total(self) or 0) < 0.001 then
-            sim.message.send({ recipient = user, message = "The beaker is empty." })
-            return true
-        end
-        sim.matter.transfer({ from = self, to = ev.at.matter, amount = "all", phases = { "liquid", "solid" } })
-        sim.message.send({ recipient = user, message = "You tip the beaker out onto the deck." })
-        return true
-    end)
+    vessel.attach({
+        id = content.id,
+        noun = "beaker",
+        phases = { "liquid", "solid" },
+        pour = { units = 10 },
+        sip = { units = 2, taste = "It tastes like a hospital." },
+        spill = true,
+    })
 end
 
 return content

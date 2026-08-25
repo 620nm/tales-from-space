@@ -8,13 +8,13 @@
 --
 -- HERE THE PAIR IS THE STATE. A card's appearance state is
 -- `down_<face>` or `up_<face>`, so the two facts tg keeps in two vars
--- are one declared name -- and the roster below is a hundred and eight
--- of them, every one of which resolves to a cell that was baked. The
--- face-down half all resolve to the SAME cell, `card_back`, and that
--- is the whole trick: the state carries the card's identity, the
--- picture carries only what a bystander is allowed to see. A card lying
--- face down on the table IS the eight of clubs, and the wire says so to
--- nobody.
+-- are one declared name -- and the roster in `lib/cards.luau` is a
+-- hundred and eight of them, every one of which resolves to a cell that
+-- was baked. The face-down half all resolve to the SAME cell,
+-- `card_back`, and that is the whole trick: the state carries the card's
+-- identity, the picture carries only what a bystander is allowed to
+-- see. A card lying face down on the table IS the eight of clubs, and
+-- the wire says so to nobody.
 --
 -- Which also means this file needs no script var at all. The deck keeps
 -- one (items/card_deck.luau) because a shuffle is not a name; a card is
@@ -48,97 +48,10 @@
 --     (deck.dm:183-202). `acts_on_items` is what lets a click that
 --     NAMES the deck be this card's business rather than a pickup.
 
--- tg's own generator, in tg's own order: two jokers, then Hearts,
--- Spades, Clubs, Diamonds, each Ace, 2..10, Jack, Queen, King
--- (`initialize_cards`, deck.dm:44-53). Fifty-four.
---
--- Character for character the same block as items/card_deck.luau's,
--- and written that way on purpose: content files here cannot `require`
--- one another, so the roster exists twice, and two copies that are
--- textually identical are two copies a diff will catch drifting. The
--- deck needs it to shuffle; this file needs it to name the faces.
-local FACES = {}
-FACES[1] = "Joker Clown"
-FACES[2] = "Joker Mime"
-for _, suit in ipairs({ "Hearts", "Spades", "Clubs", "Diamonds" }) do
-    FACES[#FACES + 1] = "Ace of " .. suit
-    for pip = 2, 10 do
-        FACES[#FACES + 1] = pip .. " of " .. suit
-    end
-    for _, court in ipairs({ "Jack", "Queen", "King" }) do
-        FACES[#FACES + 1] = court .. " of " .. suit
-    end
-end
-
--- The atlas spelling of a face, and the second half of every state
--- name. tg pastes the card's own name into the icon state, capitals
--- and spaces and all; this pack's names are lower case with
--- underscores, so the transformation happens once, here, and the
--- sprite manifest was generated to match.
-local function slug(face)
-    return (face:lower():gsub(" ", "_"))
-end
-
-local states, state_sprites = {}, {}
-for _, face in ipairs(FACES) do
-    local key = slug(face)
-    -- Face down first, so a card whose state was somehow never set
-    -- lands on a back rather than on a face -- the safe half of the
-    -- pair, since `state` below picks the mint explicitly anyway.
-    states[#states + 1] = "down_" .. key
-    states[#states + 1] = "up_" .. key
-    state_sprites["down_" .. key] = "card_back"
-    state_sprites["up_" .. key] = "card_" .. key
-end
-
--- The face a state names, and which way up it is. Every state is one
--- of the two prefixes by construction, so a nil here would mean the
--- engine handed back a state this file never declared -- which it
--- cannot.
-local function read(state)
-    local up, key = state:match("^(%a+)_(.+)$")
-    return up == "up", key
-end
-
--- The English name of a slug, for the sentence. Built from the roster
--- rather than by un-slugging, so the two can never disagree.
-local NAMES = {}
-for _, face in ipairs(FACES) do
-    NAMES[slug(face)] = face
-end
-
--- How many cards a comma-separated order holds. Empty is nought; every
--- other string is its commas plus one.
-local function count(order)
-    if order == "" then
-        return 0
-    end
-    return select(2, order:gsub(",", "")) + 1
-end
-
--- How thick a deck of `n` looks. tg switches on the same three
--- thresholds in `update_icon_state` (deck.dm:171-181).
---
--- A SECOND COPY of items/card_deck.luau's own `picture`, and the
--- duplication is deliberate rather than overlooked: content files here
--- cannot `require` one another, and the alternative -- letting a deck
--- keep a stale picture until the next time somebody deals from it --
--- is a lie on the table rather than a repetition in a file. If a
--- shared-module seam ever lands, these two are its first caller.
---
--- It answers a CELL rather than a state name: a deck's look is a
--- replicated script var its own prototype hangs `sprite` on, so what
--- goes into the var is the picture every viewer draws.
-local function picture(n)
-    if n >= 27 then
-        return "card_deck_full"
-    elseif n >= 11 then
-        return "card_deck_half"
-    elseif n >= 1 then
-        return "card_deck_low"
-    end
-    return "card_deck_empty"
-end
+-- The roster, the spelling, the state pair, the English names and the
+-- deck's thickness all come out of `lib/cards.luau`, which the deck
+-- reads too: one copy of each, and no comment apologising for a second
+-- one (docs/SCRIPTING.md 1.6).
 
 local content = {
     id = "card",
@@ -154,8 +67,8 @@ local content = {
     -- Face DOWN, though: tg's `flipped` defaults false, and a card that
     -- arrived face up would be a card that had already been read.
     state = "down_ace_of_spades",
-    states = states,
-    state_sprites = state_sprites,
+    states = cards.states,
+    state_sprites = cards.state_sprites,
     -- A click that names the deck is this card's business rather than a
     -- pickup of whatever is under the cursor (docs/LUAU-API.md). A hook
     -- that declines still falls through to the pickup, so a card
@@ -186,7 +99,7 @@ if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self, user = ev.subject, ev.actor
-        local face_up, key = read(self.state)
+        local face_up, key = cards.read(self.state)
         if face_up then
             sim.appearance.set_state({ entity = self, state = "down_" .. key })
             sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = user.tile })
@@ -194,7 +107,7 @@ if sim ~= nil then
         else
             sim.appearance.set_state({ entity = self, state = "up_" .. key })
             sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = user.tile })
-            sim.message.send({ recipient = user, message = "You turn the card over. It is the " .. NAMES[key] .. "." })
+            sim.message.send({ recipient = user, message = "You turn the card over. It is the " .. cards.NAMES[key] .. "." })
         end
         return true
     end)
@@ -235,11 +148,11 @@ if sim ~= nil then
         -- order is a script var with a length cap, so an unbounded deck
         -- eventually meets a refused write while `sim.consume` below has
         -- already eaten the card. Cards would quietly stop existing.
-        if order == nil or count(order) >= #FACES then
+        if order == nil or cards.count(order) >= #cards.FACES then
             sim.message.send({ recipient = user, message = "The deck is already full." })
             return true
         end
-        local _, key = read(self.state)
+        local _, key = cards.read(self.state)
         -- On the BOTTOM, which is tg's own `insert` -- it appends, and
         -- a returned card is the last one you will see again
         -- (cards.dm:74-111). Face down is tg's too: the deck forces it
@@ -248,7 +161,7 @@ if sim ~= nil then
         -- deck.
         local restored = order == "" and key or (key .. "," .. order)
         deck.vars["order"] = restored
-        deck.vars["picture"] = picture(count(restored))
+        deck.vars["picture"] = cards.picture(cards.count(restored))
         sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = ev.at })
         sim.message.send({ recipient = user, message = "You slide the card into the deck." })
         -- The card itself is gone: it is in the deck now, and the deck

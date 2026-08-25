@@ -58,78 +58,18 @@
 -- card shoe, 52-card pickup on a throw (fifty-four spawns on one tile),
 -- and the mood/memory events a finished game leaves behind.
 
--- tg's own generator, in tg's own order: two jokers, then Hearts,
--- Spades, Clubs, Diamonds, each Ace, 2..10, Jack, Queen, King
--- (`initialize_cards`, deck.dm:44-53). Fifty-four.
---
--- Character for character the same block as items/card.luau's, and
--- written that way on purpose: content files here cannot `require` one
--- another, so the roster exists twice, and two copies that are
--- textually identical are two copies a diff will catch drifting.
-local FACES = {}
-FACES[1] = "Joker Clown"
-FACES[2] = "Joker Mime"
-for _, suit in ipairs({ "Hearts", "Spades", "Clubs", "Diamonds" }) do
-    FACES[#FACES + 1] = "Ace of " .. suit
-    for pip = 2, 10 do
-        FACES[#FACES + 1] = pip .. " of " .. suit
-    end
-    for _, court in ipairs({ "Jack", "Queen", "King" }) do
-        FACES[#FACES + 1] = court .. " of " .. suit
-    end
-end
-
--- The atlas and state spelling of a face. Identical to the one in
--- items/card.luau, and identical to how tfs/assets/sprites/80-toys.ron
--- was generated: three copies of one rule, which is two too many and is
--- what a shared-module seam would fix.
-local function slug(face)
-    return (face:lower():gsub(" ", "_"))
-end
-
--- The face a card's appearance state names. Every card state is
--- `down_<slug>` or `up_<slug>` by construction (items/card.luau
--- declares them), so this reads the second half and ignores which way
--- up the card was lying: a card goes into a deck face down regardless
--- (tg's `insert` forces it, deck.dm:183-190).
-local function face_of(state)
-    local _, key = state:match("^(%a+)_(.+)$")
-    return key
-end
-
-local function count(order)
-    if order == "" then
-        return 0
-    end
-    return select(2, order:gsub(",", "")) + 1
-end
-
--- How thick the deck looks. tg switches on these exact three thresholds
--- (`update_icon_state`, deck.dm:171-181). items/card.luau carries the
--- same function for the same reason and says so.
---
--- It answers a PICTURE rather than a state name, because the deck's
--- look is not an engine state any more: it is a replicated script var
--- the prototype below hangs `sprite` on, and what the var carries is
--- the cell every viewer draws.
-local function picture(n)
-    if n >= 27 then
-        return "card_deck_full"
-    elseif n >= 11 then
-        return "card_deck_half"
-    elseif n >= 1 then
-        return "card_deck_low"
-    end
-    return "card_deck_empty"
-end
+-- The roster of faces, their atlas spelling, how a comma-separated
+-- order is counted and how thick a deck of that many looks all come out
+-- of `lib/cards.luau` -- one copy, read by this file and by
+-- items/card.luau (docs/SCRIPTING.md 1.6).
 
 -- A fresh deck, shuffled. Fisher-Yates over the roster, drawing from
 -- the shift RNG so the shuffle is a fact about the round rather than
 -- about the machine that ran it.
 local function shuffled(ctx)
     local order = {}
-    for i, face in ipairs(FACES) do
-        order[i] = slug(face)
+    for i, face in ipairs(cards.FACES) do
+        order[i] = cards.slug(face)
     end
     for i = #order, 2, -1 do
         local j = math.random(1, i)
@@ -246,18 +186,18 @@ if sim ~= nil then
             -- an unbounded order would eventually meet a refused write
             -- with the card already eaten.
             local order = self.vars["order"]
-            if order == nil or count(order) >= #FACES then
+            if order == nil or cards.count(order) >= #cards.FACES then
                 sim.message.send({ recipient = user, message = "The deck is already full." })
                 return true
             end
-            local key = face_of(card.state)
+            local _, key = cards.read(card.state)
             -- The end items/card.luau writes to, so a card put back
             -- lands in the same place whichever way round the player
             -- did it. Face down is implicit: the state a dealt card
             -- wears never leaves this string, only its face does.
             local restored = order == "" and key or (key .. "," .. order)
             self.vars["order"] = restored
-            self.vars["picture"] = picture(count(restored))
+            self.vars["picture"] = cards.picture(cards.count(restored))
             sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = ev.at })
             sim.message.send({ recipient = user, message = "You slide the card into the deck." })
             -- `sim.entity.despawn` does the hand slots, removal and the
@@ -319,7 +259,7 @@ if sim ~= nil then
                 offset = target ~= nil and ev.click_offset or nil,
             },
         })
-        self.vars["picture"] = picture(count(rest))
+        self.vars["picture"] = cards.picture(cards.count(rest))
         sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = ev.at })
         sim.message.send({ recipient = user, message = "You deal a card." })
         return true
