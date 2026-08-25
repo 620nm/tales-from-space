@@ -4,27 +4,27 @@
 -- code/modules/reagents/chemistry/machinery/chem_master.dm:3-8).
 --
 -- What this file is, is the noun: what it is called, what it looks
--- like, that it is solid and that it runs off the mains. What it DOES
--- is fixtures/chem_packager.luau, which is where the departure from
--- tg's machine is written down at length.
+-- like, that it is solid, that it runs off the mains, that it holds a
+-- vessel, and what its one button says. What it DOES is
+-- fixtures/chem_packager.luau, which is where the departure from tg's
+-- machine is written down at length.
 --
--- NO DOCK, deliberately. The two machines beside it on the bench take a
--- vessel INTO a `HolderSlot` and work on it there, because both of them
--- work over time -- a thermostat drives towards a setpoint and a shelf
--- mints into whatever is under the nozzle -- and a slot is what lets
--- them keep working while the chemist walks away. Packaging is one
--- gesture with a beginning and an end, so the beaker stays in the hand
--- that brought it: you hold it against the extruder and it prints.
+-- A DOCK AND A BUTTON, like the two machines beside it on the bench.
+-- tg's ChemMaster takes the beaker in (`beaker.forceMove(src)`,
+-- chem_master.dm) and prints from the machine rather than from your
+-- hand, and so does this: `chem.device = "slot"` is a dock with no
+-- instrument over it, and `ui.actions` is the one operation the machine
+-- offers. The window draws what is standing in it, the eject button
+-- that hands it back, and `package`.
 --
--- WHAT TG'S WINDOW HAS THAT THIS ONE CANNOT SAY: tg's ChemMaster is
+-- WHAT TG'S WINDOW HAS THAT THIS ONE DOES NOT: tg's ChemMaster is
 -- mostly a separator -- a buffer, a per-reagent transfer, a container
 -- picker over pills, patches, bottles and condiment packs, a printed
 -- name, and a pill-coating duration (chem_master.dm:283,473,507-539).
--- Every one of those is a window act, and a window act never reaches
--- content (docs/TGUI.md, "Action boundary"): the module roster is the
--- engine's and closed. So this machine has exactly one operation and no
--- window at all, and the parts of tg's panel that are choices wait for
--- the day a packager module exists to carry them.
+-- Each of those is another button and another number, and the number
+-- half needs a setpoint whose ends are native state; this machine has
+-- the one operation and takes the whole vessel, which is the shape the
+-- pack wants and not a limit it ran into.
 return {
     id = "chem_packager",
     name = "chem packager",
@@ -35,6 +35,15 @@ return {
     },
     dense = true,
     corded = true,
+    chem = {
+        device = "slot",
+    },
+    ui = {
+        modules = { "dock", "actions" },
+        actions = {
+            { key = "package", label = "package" },
+        },
+    },
     -- Its own file: a packager is not a vending machine and must never
     -- learn to be one.
     script = "chem_packager",
