@@ -86,7 +86,10 @@ if sim ~= nil then
             sim.message.send({ recipient = user, message = "The dropper is empty." })
             return true
         end
-        sim.matter.spill({ from = self, at = ev.at })
+        -- No `at`: a spill names the tile the gesture is HAPPENING on
+        -- when the call leaves it out, which for a click is the deck
+        -- you pointed at (docs/LUAU-API.md 8.2).
+        sim.matter.spill({ from = self })
         sim.message.send({ recipient = user, message = "You squeeze the dropper out onto the deck." })
         return true
     end)
