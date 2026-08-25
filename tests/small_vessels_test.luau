@@ -62,7 +62,9 @@ close(total(tube), 0, "the tube ships empty")
 -- A beaker tipped into the dropper. The gesture says 10 u and the
 -- dropper is five millilitres of glass, so it trims at the brim (tg's
 -- `trans_to`, holder.dm:472/480) and what will not fit runs down the
--- outside onto the deck.
+-- outside onto the deck — a POUR's overflow policy, which is the whole
+-- of the difference between `sim.matter.pour` and the generic
+-- `sim.matter.transfer`.
 --
 -- The brim is a VOLUME (docs/MATTER.md 5). A mole of the beaker's mix
 -- is four sevenths water at 18.015 mL and three sevenths libital at
@@ -79,7 +81,17 @@ t.tick()
 -- Five millilitres of glass over 87.43 mL to the mole of that mix.
 local FIT = 5e-6 / ((4 / 7) * 18.015e-6 + (3 / 7) * 180e-6)
 close(total(dropper), FIT, "the dropper fills to its brim and no further")
-close(total(beaker), 0.35 - FIT, "and the beaker is down by exactly that")
+-- The beaker gave up the WHOLE gesture: what the dropper could not
+-- take ran down the outside of it onto the deck, which is what makes
+-- `sim.matter.pour` a different word from `sim.matter.transfer`
+-- (docs/LUAU-API.md 8.2).
+close(total(beaker), 0.35 - 10 * U, "and the beaker gave up the whole gesture")
+local over = t.ledger_rows("spilled")
+assert(#over == 1, ("one overflow on the record, got %d"):format(#over))
+assert(
+    math.abs(over[1].moles - (10 * U - FIT)) < 1e-6,
+    ("the row names what would not fit, got %g"):format(over[1].moles)
+)
 
 -- Now the squeeze: ONE unit out of the dropper, the bottom of tg's
 -- `possible_transfer_amounts` (dropper.dm:9) and a tenth of what the

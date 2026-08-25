@@ -61,12 +61,7 @@ if sim ~= nil then
                 sim.message.send({ recipient = user, message = "The dropper is empty." })
                 return true
             end
-            sim.matter.transfer({
-                from = self,
-                to = clicked.entity,
-                amount = 1 * U,
-                phases = { "liquid" },
-            })
+            sim.matter.pour({ from = self, to = clicked.entity, amount = 1 * U })
             sim.message.send({ recipient = user, message = "You squeeze a drop out of the dropper." })
             return true
         end
@@ -78,12 +73,7 @@ if sim ~= nil then
                 return true
             end
             sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = ev.at })
-            sim.matter.transfer({
-                from = self,
-                to = user,
-                amount = 1 * U,
-                phases = { "liquid" },
-            })
+            sim.matter.drink({ from = self, who = user, amount = 1 * U })
             sim.message.send({ recipient = user, message = "You squeeze the dropper onto your tongue." })
             return true
         end
@@ -96,12 +86,7 @@ if sim ~= nil then
             sim.message.send({ recipient = user, message = "The dropper is empty." })
             return true
         end
-        sim.matter.transfer({
-            from = self,
-            to = ev.at.matter,
-            amount = "all",
-            phases = { "liquid" },
-        })
+        sim.matter.spill({ from = self, at = ev.at })
         sim.message.send({ recipient = user, message = "You squeeze the dropper out onto the deck." })
         return true
     end)

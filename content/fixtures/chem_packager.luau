@@ -115,12 +115,7 @@ if sim ~= nil then
                 if blank == nil then
                     return true
                 end
-                sim.matter.transfer({
-                    from = vessel,
-                    to = blank,
-                    amount = share,
-                    phases = { "liquid", "solid" },
-                })
+                sim.matter.pour({ from = vessel, to = blank, amount = share })
             end
             sim.sound.play({ asset = "lunatic/tfs:sound/vend", at = self.tile })
             sim.message.send({ recipient = user, message = "The extruder clicks and stops." })

@@ -59,12 +59,7 @@ if sim ~= nil then
             sim.message.send({ recipient = user, message = "The pill is a blank." })
             return true
         end
-        sim.matter.transfer({
-            from = self,
-            to = user,
-            amount = "all",
-            phases = { "solid", "liquid", "gas" },
-        })
+        sim.matter.drink({ from = self, who = user })
         self:consume()
         sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = ev.at })
         sim.message.send({ recipient = user, message = "You swallow the pill." })
