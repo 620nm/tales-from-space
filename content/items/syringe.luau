@@ -8,7 +8,7 @@
 -- phases })` with `from` naming what you pointed at for a DRAW and
 -- `to` naming it for an INJECT. What you pointed at may be a vessel or
 -- a crewman, because a bloodstream is a vessel like any other
--- (docs/CHEMISTRY.md 9) -- so there is no second code path for blood
+-- (docs/BENCH.md 2) -- so there is no second code path for blood
 -- here, and the row on the record is the ordinary `poured`/`drank` the
 -- owner at the far end decides.
 --

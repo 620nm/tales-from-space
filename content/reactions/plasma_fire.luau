@@ -17,7 +17,7 @@
 --   * OXYGEN_BURN_RATIO_BASE — 1 plasma to 1.4 oxygen. tg's full-burn
 --     branch refines the ratio with temperature; this is the base value
 --     and the single-tier burn, and the refinement is a noted gap
---     (docs/MATTER.md §6).
+--     (docs/REACTIONS.md §7).
 --   * FIRE_PLASMA_ENERGY_RELEASED = 3e6 J per mole burnt.
 --
 -- `hi = math.huge` is deliberate and RATIFIED: plasma fire has a floor

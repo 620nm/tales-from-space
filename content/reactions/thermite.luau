@@ -16,7 +16,7 @@
 --
 -- Two reactants and no gate at all, which is still the point: the
 -- engine's conservation clamp takes the extent as the MINIMUM of what
--- every reactant can supply (docs/MATTER.md, section 6), so a beaker
+-- every reactant can supply (docs/REACTIONS.md, section 5), so a beaker
 -- holding one of the two does nothing whatsoever and needs no rule
 -- saying so. The spec that watches a lone leg stay inert is watching
 -- that clamp.
