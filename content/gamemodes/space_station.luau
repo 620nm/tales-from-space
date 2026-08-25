@@ -161,7 +161,11 @@ if sim ~= nil then
         local success = false
         if assigned ~= nil then
             local objective = assigned.vars.round_assignment
-            success = assigned.alive
+            -- Whether the traitor's body is still running, which is a
+            -- fact `content/bodies/human.luau` set when its numbers
+            -- crossed the line that file calls dead: the engine reaches
+            -- no verdict about a body and neither does this.
+            success = assigned.animate
             if objective.kind == "hold" then
                 -- Objective ownership and end evaluation remain Mind-scoped:
                 -- code/modules/antagonists/_common/antag_datum.dm:6-24

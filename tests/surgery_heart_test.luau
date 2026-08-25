@@ -78,7 +78,7 @@ t.ui_act(surgeon, "toggle", string.format('{"field":"operation","option":"%s"}',
 t.run_ticks(23) -- the 1 s removal
 assert(t.organ_damage(patient, "heart") == nil, "the heart socket is empty")
 assert(not t.body(patient).conscious, "arrest: the heart is out and the patient is under")
-assert(t.body(patient).state ~= "dead", "but not yet dead -- the clock has only just started")
+assert(t.body(patient).animate, "but not yet dead -- the clock has only just started")
 assert(t.count_items("organ_heart") >= 2, "the old heart is on the deck beside the donor")
 
 -- Seat the donor heart. The socket fills, the blood capacity returns, and
@@ -91,7 +91,8 @@ t.run_ticks(23) -- the 1 s insertion
 assert(t.organ_damage(patient, "heart") ~= nil, "a heart is seated in the socket")
 assert(t.organ_damage(patient, "heart") < 40, "and it is in good order")
 assert(t.body(patient).conscious, "the heart beats again and the patient comes to")
-assert(t.body(patient).state == "alive", "alive, off the arrest clock")
+assert(t.body(patient).animate and t.body(patient).controllable,
+    "alive, off the arrest clock")
 
 -- Close up. The bone states and the incision clear, and 40 of the saw's
 -- 50 brute is mended on the way out.
