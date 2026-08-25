@@ -84,20 +84,22 @@ local total = vessel.moles
 -- purpose: the engine is growing a verb per gesture over the generic
 -- `sim.matter.transfer`, and when it lands each of these becomes that
 -- verb without a roster file noticing.
-local function do_pour(self, target, amount, phases)
-    sim.matter.transfer({ from = self, to = target, amount = amount, phases = phases })
+local function do_pour(self, target, amount, _phases)
+    -- A pour's overflow is the deck under the far vessel (docs/LUAU-API.md 8.2).
+    sim.matter.pour({ from = self, to = target, amount = amount })
 end
 
-local function do_sip(self, drinker, amount, phases)
-    sim.matter.transfer({ from = self, to = drinker, amount = amount, phases = phases })
+local function do_sip(self, drinker, amount, _phases)
+    sim.matter.drink({ from = self, who = drinker, amount = amount })
 end
 
-local function do_spill(self, at, phases)
-    sim.matter.transfer({ from = self, to = at.matter, amount = "all", phases = phases })
+local function do_spill(self, _at, _phases)
+    -- No `at`: a spill names the tile the gesture is happening on.
+    sim.matter.spill({ from = self })
 end
 
 local function do_charge(self, source, amount)
-    sim.matter.transfer({ from = source, to = self, amount = amount, phases = { "gas" } })
+    sim.matter.fill({ from = source, to = self, amount = amount })
 end
 
 -- CHARGING OFF THE LINE, which is a pour with the ends swapped and a

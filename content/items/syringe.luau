@@ -3,14 +3,18 @@
 -- `/obj/item/reagent_containers/syringe`
 -- (code/modules/reagents/reagent_containers/syringes.dm:1-24,49-144).
 --
--- Two gestures, and they are the same call with the ends swapped
--- (docs/LUAU-API.md 8.2): `sim.matter.transfer({ from, to, amount,
--- phases })` with `from` naming what you pointed at for a DRAW and
--- `to` naming it for an INJECT. What you pointed at may be a vessel or
--- a crewman, because a bloodstream is a vessel like any other
--- (docs/BENCH.md 2) -- so there is no second code path for blood
--- here, and the row on the record is the ordinary `poured`/`drank` the
--- owner at the far end decides.
+-- Two gestures, and they are the same transfer with the ends swapped
+-- (docs/LUAU-API.md 8.2). What you pointed at may be a vessel or a
+-- crewman, because a bloodstream is a vessel like any other
+-- (docs/BENCH.md 2), so there is no second code path for blood -- but
+-- there ARE two WORDS, because pushing a dose through a needle into
+-- somebody is not the same thing to have done as filling a beaker. The
+-- inject direction is `sim.matter.inject` into a body and
+-- `sim.matter.pour` into a vessel; the row on the record says which,
+-- and an admin reading a shift back can tell them apart. Drawing is
+-- the generic `sim.matter.transfer` in both directions: a syringe
+-- SUCKS, which is not one of the five gestures and is not pretending
+-- to be.
 --
 -- WHICH WAY ROUND is a per-instance dial rather than a second mouse
 -- button. tg splits the directions across primary and secondary click
@@ -57,6 +61,11 @@ local content = {
     -- nothing condenses into it; what is drawn stays drawn until it is
     -- pushed somewhere.
     sealed = true,
+    -- A needle is a sharp thing, and `sim.matter.inject` will not push
+    -- a dose through anything that is not one (docs/LUAU-API.md 8.2).
+    -- It carries no force, so no operation whose implement filter asks
+    -- for one admits it (docs/SURGERY.md 6.2).
+    sharp = "pointy",
     modes = 2,
     mode = DRAW,
     -- What the barrel shows. tg draws the fill from the shared fill
@@ -93,9 +102,11 @@ if sim ~= nil then
     -- a stroke with a direction is not a pour.
     local moles_in, free_l = vessel.moles, vessel.headspace_l
 
-    -- The one transfer, pointed whichever way the dial says. Answers
-    -- false with the refusal already spoken.
-    local function stroke(self, user, other, mode)
+    -- The one transfer, pointed whichever way the dial says, and said
+    -- with the word the far end deserves: `into_body` is true when what
+    -- was pointed at is a crewman. Answers false with the refusal
+    -- already spoken.
+    local function stroke(self, user, other, mode, into_body)
         if mode == DRAW then
             if (free_l(self) or 0) <= 1e-9 then
                 sim.message.send({ recipient = user, message = "The syringe is full." })
@@ -122,12 +133,13 @@ if sim ~= nil then
             sim.message.send({ recipient = user, message = "There is no room in that." })
             return false
         end
-        sim.matter.transfer({
-            from = self,
-            to = other,
-            amount = STROKE,
-            phases = { "liquid", "solid" },
-        })
+        if into_body then
+            -- Through the needle, which is this syringe: `by` is what
+            -- the engine checks for a declared sharpness.
+            sim.matter.inject({ from = self, into = other, by = self, amount = STROKE })
+        else
+            sim.matter.pour({ from = self, to = other, amount = STROKE })
+        end
         return true
     end
 
@@ -159,7 +171,7 @@ if sim ~= nil then
             return { replaced = false } -- not something that holds anything
         end
         local mode = sim.mode(self).index
-        if not stroke(self, user, clicked.entity, mode) then
+        if not stroke(self, user, clicked.entity, mode, false) then
             return true
         end
         if mode == DRAW then
@@ -187,7 +199,7 @@ if sim ~= nil then
         -- Yourself is immediate, which is the whole of tg's condition
         -- (`if(living_target != user)`, syringes.dm:77,122).
         if victim == user then
-            if stroke(self, user, victim, mode) then
+            if stroke(self, user, victim, mode, true) then
                 if mode == DRAW then
                     sim.message.send({ recipient = user, message = "You draw a sample from yourself." })
                 else
@@ -229,7 +241,7 @@ if sim ~= nil then
                 sim.message.send({ recipient = user, message = "They are out of reach." })
                 return true
             end
-            if not stroke(self, user, victim, mode) then
+            if not stroke(self, user, victim, mode, true) then
                 return true
             end
             if mode == DRAW then

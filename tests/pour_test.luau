@@ -1,8 +1,16 @@
 -- Pouring: a beaker tipped into another vessel moves exactly what it
 -- says, in the proportions it was holding, and stops where the GLASS
--- runs out — the remainder stays where it was. Capacity is geometry
--- (docs/MATTER.md 5), so "the brim" is millilitres of shell against
--- millilitres of liquid and never a count of moles.
+-- runs out. Capacity is geometry (docs/MATTER.md 5), so "the brim" is
+-- millilitres of shell against millilitres of liquid and never a count
+-- of moles.
+--
+-- What happens to the share that would not fit is the POUR's, and it is
+-- the reason `sim.matter.pour` is a word of its own rather than an
+-- argument to `sim.matter.transfer` (docs/LUAU-API.md 8.2): tipping a
+-- jug into a full glass runs down the outside of it. The source gives
+-- up the whole gesture and the deck under the far vessel takes the
+-- rest, as its own `spilled` row. A generic transfer would have kept
+-- it; a pour is not a generic transfer.
 t.world([==[(
     name: "chem bench",
     legend: {
@@ -94,12 +102,21 @@ t.click(p, 2, 1, b)
 t.tick()
 -- b was already thirty of its fifty millilitres full, so the gesture
 -- trims: what goes in is the share of the parcel the free volume has
--- room for, and the rest stays in the hand that poured it.
+-- room for...
 near(total(b), 0.35 + FIT, 1e-4, "0.35 plus what the glass had room for")
-near(total(c), 0.25 - FIT, 1e-4, "and the source kept what would not fit")
+-- ...and the rest goes down the outside. The source is EMPTY: it gave
+-- up the whole 0.25 it was asked for, and the deck under b holds the
+-- difference on its own row.
+close(total(c), 0, "the source gave up the whole gesture")
+local over = t.ledger_rows("spilled")
+assert(#over == 1, ("one overflow on the record, got %d"):format(#over))
+near(over[1].moles, 0.25 - FIT, 1e-6, "the row names what would not fit")
+assert(over[1].at[1] == 2 and over[1].at[2] == 1, "on the tile the far beaker stands on")
 
 -- b is brim-full now: fifty millilitres of liquid in fifty millilitres
--- of glass. Pouring a whole beaker into it moves nothing at all.
+-- of glass. Pouring a whole beaker into it moves nothing at all — and
+-- nothing overflows either, because a pour that fits NOTHING is a
+-- refusal rather than a spill: everything drawn goes straight back.
 t.drop(p)
 t.tick()
 t.move(p, "east")
@@ -118,9 +135,12 @@ t.click(p, 2, 1, b)
 t.tick()
 near(total(b), 0.35 + FIT, 1e-4, "still exactly full")
 close(total(e), 0.35, "nothing left the source")
--- Two transfers happened and two are on the record; a refusal is not a
+-- Two pours happened and two are on the record; a refusal is not a
 -- transfer and writes no row.
 local rows = t.ledger_rows("poured")
 assert(#rows == 2, ("two pours are on the record, got %d"):format(#rows))
 close(rows[1].moles, 0.25, "the first row names what moved")
 near(rows[2].moles, FIT, 1e-4, "and the second names the trimmed amount")
+-- And the overflow is still the ONE row it always was: the two refused
+-- pours above spilled nothing, because nothing was drawn.
+assert(#t.ledger_rows("spilled") == 1, "a refused pour overflows nothing")
