@@ -107,6 +107,15 @@ local function press(key)
     t.run_ticks(2)
 end
 
+-- Turn the dial before a press: capacity is geometry now
+-- (docs/MATTER.md 5), so a 50 mL beaker takes far more of these than
+-- the recipe wants, and the amount that goes in is the chemist's to
+-- choose rather than the glass's to impose.
+local function dial_to(moles)
+    t.ui_act(p, "set", '{"field":"amount","value":' .. moles .. '}')
+    t.run_ticks(2)
+end
+
 local ejects = 0
 local function eject()
     ejects += 1
@@ -127,9 +136,11 @@ take(a, 1, 2)
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
 press("aluminium")
+dial_to(BRIM - PRESS)
 press("iron")
+dial_to(PRESS)
 near(amount(a, "aluminium"), PRESS, 1e-9, "a press of aluminium")
-near(amount(a, "iron"), BRIM - PRESS, 1e-9, "and iron to the brim")
+near(amount(a, "iron"), BRIM - PRESS, 1e-9, "and half a press of iron")
 
 t.run_seconds(60)
 near(amount(a, "thermite"), 0.0, 1e-12, "two thirds of a recipe is not a recipe")
@@ -143,8 +154,10 @@ near(amount(slop, "iron"), 0.25 * (0.5 / BRIM), 1e-9, "and some iron with it")
 
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
+dial_to(0.25)
 press("o2")
-near(amount(a, "o2"), 0.25, 1e-9, "the station's own oxygen, to the brim again")
+dial_to(PRESS)
+near(amount(a, "o2"), 0.25, 1e-9, "the station's own oxygen, a quarter of a press")
 
 t.run_seconds(60)
 near(amount(a, "thermite"), 0.75, 1e-6, "and now it goes: three out for one of each in")
@@ -173,7 +186,9 @@ take(c, 1, 3)
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
 press("carbon")
+dial_to(0.5)
 press("o2")
+dial_to(PRESS)
 t.run_seconds(60)
 near(amount(c, "co2"), 0.0, 1e-12, "a cold beaker of carbon and oxygen is a cold beaker")
 
@@ -209,7 +224,9 @@ take(d, 3, 3)
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
 press("welding_fuel")
+dial_to(BRIM - PRESS)
 press("carbon")
+dial_to(PRESS)
 t.run_seconds(30)
 near(amount(d, "oil"), 0.0, 1e-12, "fuel and carbon without hydrogen is fuel and carbon")
 
@@ -217,7 +234,9 @@ eject()
 take(slop, 3, 2)
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
+dial_to(0.25)
 press("hydrogen")
+dial_to(PRESS)
 t.run_seconds(60)
 near(amount(d, "oil"), 0.75, 1e-6, "three of oil for one of each")
 near(amount(d, "ash"), 0.0, 1e-12, "and no ash at all, because the beaker is cold")

@@ -2,10 +2,10 @@
 -- and a different shape of thing to carry it in -- a beaker is what you
 -- mix in and a bottle is what you put on a shelf afterwards.
 --
--- Capacity is tg's `volume = 50` at the documented bridge of
--- 1 u = 0.025 mol (docs/CHEMISTRY.md); the picture and the fill prefix
--- are both tg's `bottle` (bottle.dm:6-7; `volume = 50` at :12,
--- `fill_icon_thresholds` at :13).
+-- The shell is tg's `volume = 50`, and the shell is the whole of what
+-- it holds; the picture and the fill prefix are both tg's `bottle`
+-- (bottle.dm:6-7; `volume = 50` at :12, `fill_icon_thresholds` at
+-- :13).
 --
 -- The three gestures are the vessel's rather than the beaker's: your
 -- own tile is a swig, another vessel within reach is a pour, the deck
@@ -21,7 +21,6 @@ local content = {
         flavor = "Glass with a neck on it, made for carrying rather than "
             .. "mixing. What ends up on the shelf.",
     },
-    capacity_mol = 50 * U,
     -- tg's bottle: `volume = 50` (cups/bottle.dm:12), the cup base's
     -- own figure. One unit is one millilitre.
     volume_ml = 50,

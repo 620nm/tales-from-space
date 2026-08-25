@@ -1,6 +1,6 @@
 -- The bare beaker: empty off the shelf, and the vessel everything else
--- on a chem bench is poured into. Capacity is the 50-unit beaker at the
--- documented bridge of 1 u = 0.025 mol (docs/CHEMISTRY.md).
+-- on a chem bench is poured into. Fifty millilitres of glass, which is
+-- the whole of what it holds.
 --
 -- Three gestures, all of them one click with it in your active hand:
 -- your own tile is a swig, another vessel within reach is a pour, and
@@ -13,8 +13,6 @@
 -- is named and how much, and nothing else -- the trim against what is
 -- there and what fits, the reach check, the proportional draw and the
 -- row are all the engine's.
-local U = 0.025
-
 local content = {
     id = "beaker",
     name = "beaker",
@@ -24,14 +22,12 @@ local content = {
             .. "doing, it is doing it in one of these.",
     },
     inhand_sprite = { "held_beaker_l", "held_beaker_r" },
-    capacity_mol = 50 * U,
-    -- ...and how big the GLASS is, which is a different question and
-    -- now a load-bearing one: the space above the liquid is what its
-    -- vapour saturates, and therefore how fast an open beaker of
-    -- anything volatile gives itself to the room. tg's cup base
-    -- declares `volume = 50` (reagent_containers/cups/_cup.dm:6), which
-    -- is the same 50 the capacity above is measured in units of -- one
-    -- unit is one millilitre, which is what makes the bridge readable.
+    -- How big the GLASS is, which is the whole of how much it holds:
+    -- what fits is what the liquid takes up, and the space left above
+    -- it is what a vapour saturates -- and therefore how fast an open
+    -- beaker of anything volatile gives itself to the room. tg's cup
+    -- base declares `volume = 50` (reagent_containers/cups/_cup.dm:6);
+    -- one of tg's units is one millilitre.
     volume_ml = 50,
     -- What it shows through the glass. tg's beaker declares
     -- `fill_icon_thresholds = list(0, 1, 20, 40, 60, 80, 100)`

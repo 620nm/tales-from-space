@@ -164,7 +164,11 @@ local function brew_into(x, y, vessel)
     assert(t.hands(p).held == "beaker", "and it comes back out")
     t.click(p, x, y, vessel)
     t.tick()
-    near(t.vessel(mixer).moles, 0, 1e-9, "one gesture is the whole 10 u")
+    -- ...all of it but the whisker of vapour standing over the liquid:
+    -- a pour moves the LIQUID phase, and the mixing beaker is open, so
+    -- what its own surface has evaporated into its headspace stays
+    -- behind (docs/MATTER.md 5).
+    near(t.vessel(mixer).moles, 0, 1e-4, "one gesture is the whole 10 u")
 end
 
 -- ---------------------------------------------------------------
@@ -176,8 +180,11 @@ brew_into(3, 1, bottle)
 
 local started = t.vessel(bottle)
 assert(started.sealed, "a bottle has a stopper in it")
-near(started.moles, WATER + SUGAR, 1e-9, "a quarter of a mole of brew went in")
-near(started.contents.water.liquid, WATER, 1e-9, "nine units of water")
+-- A tenth of a millimole of slack, for the vapour the mixing beaker
+-- kept: a pour moves the liquid, and an open glass always has a little
+-- of itself standing over it as gas.
+near(started.moles, WATER + SUGAR, 2e-4, "a quarter of a mole of brew went in")
+near(started.contents.water.liquid, WATER, 2e-4, "nine units of water")
 near(started.contents.sugar.liquid, SUGAR, 1e-9, "and one of sugar")
 near(started.temp_k, 300.0, 0.5, "at the nozzle's temperature, on the bell's plateau")
 near(started.volume_l, 0.05, 1e-9, "fifty millilitres of glass")
@@ -246,7 +253,7 @@ brew_into(3, 2, twin)
 
 local twin_start = t.vessel(twin)
 assert(not twin_start.sealed, "a beaker has no lid to strain against")
-near(twin_start.moles, WATER + SUGAR, 1e-9, "the same quarter of a mole")
+near(twin_start.moles, WATER + SUGAR, 2e-4, "the same quarter of a mole")
 near(twin_start.contents.sugar.liquid, SUGAR, 1e-9, "and the same unit of sugar")
 near(room_co2(), 0, 1e-12, "the room is still clean when it starts")
 

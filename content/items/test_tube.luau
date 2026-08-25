@@ -2,8 +2,8 @@
 -- the beaker is needed for the next one. A rack of these is what a
 -- chemist's bench looks like.
 --
--- Capacity is tg's `volume = 30` at the documented bridge of
--- 1 u = 0.025 mol (docs/CHEMISTRY.md). The picture is tg's `test_tube`
+-- The shell is tg's `volume = 30`, and the shell is the whole of what
+-- it holds. The picture is tg's `test_tube`
 -- and the fill ladder is its `fill_icon_state = "tube"`, which is why
 -- the two names differ: the glass comes off the chemistry sheet and
 -- the level off the fillings sheet (_cup.dm:797-806; `volume = 30`
@@ -23,7 +23,6 @@ local content = {
         flavor = "A narrow tube of glass. Where a finished batch waits "
             .. "while the beaker gets on with the next one.",
     },
-    capacity_mol = 30 * U,
     -- tg's test tube: `volume = 30` (cups/_cup.dm:805). Narrow enough
     -- that a tube of something warm saturates its own headspace in one
     -- pass and then sits there.

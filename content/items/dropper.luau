@@ -1,9 +1,8 @@
 -- The dropper: five units of anything, moved a unit at a time. The
 -- precision end of the bench, where the beaker is the bulk end.
 --
--- Capacity is tg's `volume = 5` at the documented bridge of 1 u = 0.025
--- mol (docs/CHEMISTRY.md); the picture is tg's `dropper0`
--- (dropper.dm:5,10).
+-- The shell is tg's `volume = 5`, and the shell is the whole of what it
+-- holds; the picture is tg's `dropper0` (dropper.dm:5,10).
 --
 -- ONE UNIT A SQUEEZE, which is the bottom of tg's own
 -- `possible_transfer_amounts = list(1, 2, 3, 4, 5)` (dropper.dm:9)
@@ -28,7 +27,6 @@ local content = {
         flavor = "A glass pipette under a rubber bulb. For the doses a "
             .. "beaker is too generous to measure.",
     },
-    capacity_mol = 5 * U,
     -- tg's dropper: `volume = 5` (reagent_containers/dropper.dm:10).
     volume_ml = 5,
     -- tg's dropper has no `fill_icon_thresholds` at all: it overrides

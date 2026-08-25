@@ -38,10 +38,10 @@ local content = {
         lit = "burner_lit",
     },
     flame = true,
-    -- tg's `max_volume = 50` and `add_reagent(ethanol, 15)` on spawn
-    -- (items.dm:164-172), through the documented bridge of 1 u = 0.025
-    -- mol (docs/CHEMISTRY.md).
-    capacity_mol = 50 * U,
+    -- tg's `max_volume = 50` (items.dm:164-172): the reservoir, and
+    -- the whole of what it holds. What it ships with is the 15 units
+    -- of spirit below, through the documented dose bridge of
+    -- 1 u = 0.025 mol (docs/CHEMISTRY.md).
     volume_ml = 50,
     -- A LID, and the first thing in the tree to wear one. tg's burner
     -- is a closed reservoir with a wick through the cap (items.dm:151-

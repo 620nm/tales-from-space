@@ -99,7 +99,11 @@ t.ui_act(p, "toggle", '{"field":"dispense","option":"water"}')
 t.run_ticks(2)
 local filled = water_in(beaker)
 assert(filled > 1.0, "filled to the brim: " .. filled .. " mol")
-assert(damp() < 1e-9, "and the closet is bone dry to start with")
+-- All but dry: a beaker of water is evaporating into its own headspace
+-- from the moment it is filled, and an open glass trades that headspace
+-- with the room (sim/holder/vent.rs). Micromoles, against the moles the
+-- boil below puts up.
+assert(damp() < 1e-3, "and the closet is all but bone dry to start with")
 eject()
 
 -- ---------------------------------------------------------------

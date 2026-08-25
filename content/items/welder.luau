@@ -17,6 +17,12 @@ local content = {
     -- (docs/CONSTRUCTION.md). tg's max_fuel is 20.
     tool = "welder",
     fuel = { substance = "welding_fuel", capacity = 20.0 },
+    -- The reservoir, sized to the charge above: tg's torch carries 20
+    -- units (weldingtool.dm:39), and 20 mol of acetylene at 1 g/mL is
+    -- 521 mL, so 550 mL is that tank with a working headspace. A
+    -- welder is the one vessel here whose contents are authored in
+    -- moles rather than dispensed by the millilitre.
+    volume_ml = 550,
     -- It can carry an open flame (tg's `welding = TRUE` while struck).
     -- Two appearance states, unlit first, both drawing the base picture
     -- (no lit sprite is baked): the flame is a fact the surgery close and

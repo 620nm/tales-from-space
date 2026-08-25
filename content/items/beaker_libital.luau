@@ -9,6 +9,9 @@ local content = {
     sprite = "beaker",
     inhand_sprite = { "held_beaker_l", "held_beaker_r" },
     contents = { water = 0.20, libital = 0.15 },
+    -- A beaker like any other: tg's 50 mL (_cup.dm:6), the same shell
+    -- beaker.luau declares.
+    volume_ml = 50,
     -- The beaker fill ladder, exactly as beaker.luau's (_cup.dm:452).
     fill_sprites = {
         { 1, "beaker_fill_1" },
