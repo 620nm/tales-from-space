@@ -25,6 +25,8 @@
         ("items_r", "mob/inhands/items_righthand.dmi"),
         ("drinks_l", "mob/inhands/items/drinks_lefthand.dmi"),
         ("drinks_r", "mob/inhands/items/drinks_righthand.dmi"),
+        ("medical_l", "mob/inhands/equipment/medical_lefthand.dmi"),
+        ("medical_r", "mob/inhands/equipment/medical_righthand.dmi"),
         ("devices_l", "mob/inhands/items/devices_lefthand.dmi"),
         ("devices_r", "mob/inhands/items/devices_righthand.dmi"),
     ],
@@ -82,6 +84,15 @@
         (sheet: "items_r", sprites: [Directions("held_beaker_r", "beaker")]),
         (sheet: "drinks_l", sprites: [Directions("held_cola_l", "cola")]),
         (sheet: "drinks_r", sprites: [Directions("held_cola_r", "cola")]),
+        // The two halves of a dose in somebody's fist. Both wear tg's
+        // own inhand states off the medical equipment sheets
+        // (`inhand_icon_state = "syringe_0"`, syringes.dm:9;
+        // `"pill"`, pill.dm:8) -- the syringe's is the empty barrel,
+        // because tg reskins it per fill and nothing here does.
+        (sheet: "medical_l", sprites: [Directions("held_syringe_l", "syringe_0")]),
+        (sheet: "medical_r", sprites: [Directions("held_syringe_r", "syringe_0")]),
+        (sheet: "medical_l", sprites: [Directions("held_pill_l", "pill")]),
+        (sheet: "medical_r", sprites: [Directions("held_pill_r", "pill")]),
         (sheet: "devices_l", sprites: [Directions("held_board_l", "electronic")]),
         (sheet: "devices_r", sprites: [Directions("held_board_r", "electronic")]),
     ],

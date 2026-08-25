@@ -28,6 +28,7 @@
     sheets: [
         ("chemical", "obj/medical/chemical.dmi"),
         ("fillings", "obj/medical/reagent_fillings.dmi"),
+        ("syringe", "obj/medical/syringe.dmi"),
     ],
     sprites: [
         // The vessels. The beaker is already baked with the tools in
@@ -39,6 +40,18 @@
         ("test_tube", Dmi("@chemical", "test_tube", 0)),
         // /obj/item/reagent_containers/cup/bottle (bottle.dm:3,6).
         ("bottle", Dmi("@chemical", "bottle", 0)),
+        // The two things a dose ends up in. The syringe's world picture
+        // is its EMPTY barrel: tg redraws `syringe_[rounded_vol]` per
+        // fill (syringes.dm:8,160-163) and this engine draws the level
+        // as a tinted overlay off the fill sheet instead, so the barrel
+        // underneath never changes.
+        ("syringe", Dmi("@syringe", "syringe_0", 0)),
+        // /obj/item/reagent_containers/applicator/pill (pill.dm:1-5).
+        // tg rolls one of twenty-two tablet pictures at mint time; the
+        // base `pill` state is the one it falls back to, and one pill
+        // looking like every other pill is the honest picture of a
+        // machine that only knows one shape.
+        ("pill", Dmi("@chemical", "pill", 0)),
 
         // The fills, one family per vessel shape.
         ("beaker_fill_1", Dmi("@fillings", "beaker1", 0)),
@@ -65,5 +78,15 @@
         // (dropper.dm:87-93). Five units is too small a bulb to draw a
         // level in.
         ("dropper_fill", Dmi("@fillings", "dropper", 0)),
+        // The syringe's ladder is tg's absolute stops (`syringe1`,
+        // `syringe5`, `syringe10`, `syringe15` at 1, 5, 10 and 15 of
+        // its fifteen units, syringes.dm:172-176) rather than
+        // percentages; items/syringe.luau converts them.
+        ("syringe_fill_1", Dmi("@fillings", "syringe1", 0)),
+        ("syringe_fill_5", Dmi("@fillings", "syringe5", 0)),
+        ("syringe_fill_10", Dmi("@fillings", "syringe10", 0)),
+        ("syringe_fill_15", Dmi("@fillings", "syringe15", 0)),
+        // The pill takes the dropper's deal: one picture, no ladder.
+        ("pill_fill", Dmi("@fillings", "pill", 0)),
     ],
 )
