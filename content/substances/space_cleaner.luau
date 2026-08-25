@@ -10,6 +10,7 @@ return {
     name = "space cleaner",
     molar_mass = 110.0,
     cv = 100.0,
+    phase = { unmodeled = "liquid" },
     -- What it looks like through glass (tg: other_reagents.dm:1433).
     color = "#A5F0EE",
 }

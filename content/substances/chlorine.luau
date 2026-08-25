@@ -14,6 +14,7 @@ return {
     name = "chlorine",
     molar_mass = 35.45,
     cv = 25.0,
+    phase = { unmodeled = "liquid" },
     -- What it looks like through glass (tg: other_reagents.dm:1090).
     color = "#FFFB89",
 }

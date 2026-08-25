@@ -12,6 +12,7 @@ return {
     name = "lube",
     molar_mass = 120.0,
     cv = 100.0,
+    phase = { unmodeled = "liquid" },
     -- What it looks like through glass (tg: other_reagents.dm:550).
     color = "#009CA8",
 }

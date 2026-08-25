@@ -6,6 +6,7 @@ return {
     name = "aluminium",
     molar_mass = 26.98,
     cv = 24.2,
+    phase = { unmodeled = "solid" },
     -- What it looks like through glass (tg: other_reagents.dm:1355).
     color = "#A8A8A8",
 }

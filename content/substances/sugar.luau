@@ -6,6 +6,7 @@ local content = {
     name = "sugar",
     molar_mass = 342.3,
     cv = 120.0,
+    phase = { unmodeled = "solid" },
     metabolism_rate = 0.004,
     -- What it looks like through glass (tg: food_reagents.dm:313 (COLOR_WHITE)).
     color = "#FFFFFF",
