@@ -79,7 +79,7 @@ assert(has(t.messages(fallback), "SUCCESS"), "fallback evaluates from Mind conti
 t.world(MAP, 41)
 local dead = t.join()
 t.set_health(dead, { oxy = 500 })
-assert(t.body(dead).state == "dead", "the candidate precondition is dead")
+assert(t.body(dead).animate == false, "the candidate precondition is dead")
 t.round_end_in(700)
 t.run_ticks(700)
 local quiet = t.messages(dead)

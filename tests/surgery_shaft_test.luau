@@ -130,7 +130,7 @@ assert(t.parts(patient).chest.brute == 0 and t.parts(patient).chest.burn == 0,
 local left = t.body(patient).blood
 assert(left < 560 and left > 460,
     "bled but survivable (started 560): " .. left)
-assert(t.body(patient).state ~= "dead", "and still alive")
+assert(t.body(patient).animate, "and still alive")
 
 -- The whole ordeal is the sum of the attempts the seed took; report it.
 print(string.format(

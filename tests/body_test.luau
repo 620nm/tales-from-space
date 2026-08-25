@@ -33,7 +33,8 @@ t.tick()
 
 local body = t.body(p)
 assert(body.plan == "human", "the shift's crew are humans: " .. body.plan)
-assert(body.state == "alive" and body.conscious, "and alive and awake")
+assert(body.controllable and body.animate and body.conscious,
+    "and steerable, running and awake")
 assert(body.posture == "standing", "and on their feet")
 assert(math.abs(body.health - 100) < 0.01,
     "MAX_LIVING_HEALTH, mobs.dm:236: " .. body.health)
@@ -111,7 +112,7 @@ for zone, part in pairs(t.parts(q)) do
         zone .. " holds no more than its own ceiling: "
             .. (part.brute + part.burn) .. " of " .. part.max)
 end
-assert(t.body(q).state == "dead", "and four hundred brute is a body")
+assert(not t.body(q).animate, "and four hundred brute is a body")
 
 -- ---------------------------------------------------------------
 -- Oxygen knocks a crewman out long before it kills them: tg's
@@ -124,12 +125,14 @@ t.tick()
 
 t.set_health(r, { oxy = 40 })
 assert(t.body(r).conscious, "forty is survivable and you stay awake")
-assert(t.body(r).state == "alive")
+assert(t.body(r).animate and t.body(r).controllable)
 
 t.set_health(r, { oxy = 60 })
 assert(not t.body(r).conscious, "past fifty you are out cold")
-assert(t.body(r).state == "alive",
-    "but NOT in crit — a faint is not a crit (§3.4): " .. t.body(r).state)
+assert(t.body(r).animate and t.body(r).controllable,
+    "but NO declared line was crossed — a faint is not a crit (§3.4), and \
+     the pack was never asked about this one")
+assert(#t.body(r).thresholds == 0, "nothing is latched")
 assert(t.body(r).posture == "lying", "and you are on the deck")
 assert(math.abs(t.capacity(r, "sight")) < 0.01,
     "an unconscious body sees nothing (awake_only)")
