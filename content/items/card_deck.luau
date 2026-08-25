@@ -107,15 +107,20 @@ end
 -- How thick the deck looks. tg switches on these exact three thresholds
 -- (`update_icon_state`, deck.dm:171-181). items/card.luau carries the
 -- same function for the same reason and says so.
-local function thickness(n)
+--
+-- It answers a PICTURE rather than a state name, because the deck's
+-- look is not an engine state any more: it is a replicated script var
+-- the prototype below hangs `sprite` on, and what the var carries is
+-- the cell every viewer draws.
+local function picture(n)
     if n >= 27 then
-        return "full"
+        return "card_deck_full"
     elseif n >= 11 then
-        return "half"
+        return "card_deck_half"
     elseif n >= 1 then
-        return "low"
+        return "card_deck_low"
     end
-    return "empty"
+    return "card_deck_empty"
 end
 
 -- A fresh deck, shuffled. Fisher-Yates over the roster, drawing from
@@ -143,7 +148,22 @@ end
 local content = {
     id = "card_deck",
     name = "deck of cards",
-    sprite = "card_deck_full",
+    -- THE PICTURE FOLLOWS THE STRING, not a roster the engine keeps.
+    --
+    -- How thick a deck looks is a function of `order` -- a fifty-four
+    -- entry shuffle the engine stores and cannot read -- so the four
+    -- thicknesses were never four states the engine had any business
+    -- minting, indexing and reporting. They are one more thing this
+    -- file knows and the engine does not, which is what a script var
+    -- is for. `base` is the picture a viewer draws until it is told
+    -- otherwise (an unopened deck is whole), `var` names the key, and
+    -- `states` is every cell the key may name so the bake can check
+    -- each one exists. docs/CONTENT-SCHEMA.md §1.3.
+    sprite = {
+        base = "card_deck_full",
+        var = "lunatic/tfs:picture",
+        states = { "card_deck_full", "card_deck_half", "card_deck_low", "card_deck_empty" },
+    },
     -- A click that NAMES a card is the deck's business rather than a
     -- pickup of the card -- tg's `interact_with_atom` half of the
     -- chain, and the flag that lets `interaction.use` below see an item target
@@ -151,21 +171,16 @@ local content = {
     -- falls through, so a deck in hand never became a thing that
     -- swallows every click made while holding one.
     acts_on_items = true,
-    -- Four states, and they are a QUANTITY rather than a choice: the
-    -- picture of a deck is how thick it still is. Every hook that
-    -- changes the count repaints, and the card's return hook does too.
-    states = { "full", "half", "low", "empty" },
-    state = "full",
-    state_sprites = {
-        ["full"] = "card_deck_full",
-        ["half"] = "card_deck_half",
-        ["low"] = "card_deck_low",
-        ["empty"] = "card_deck_empty",
-    },
 }
 
 if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:order", { replicate = "server" })
+    -- The one key that is NOT the mod's private business: a picture is
+    -- for whoever is looking at it, so it replicates to every session
+    -- that can see the thing and to nobody else. The engine still reads
+    -- nothing out of it -- it checks the string against the roster
+    -- above and hands it to the viewers.
+    sim.define("script_var", "lunatic/tfs:picture", { replicate = "all" })
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self, user = ev.subject, ev.actor
@@ -242,7 +257,7 @@ if sim ~= nil then
             -- wears never leaves this string, only its face does.
             local restored = order == "" and key or (key .. "," .. order)
             self.vars["order"] = restored
-            sim.appearance.set_state({ entity = self, state = thickness(count(restored)) })
+            self.vars["picture"] = picture(count(restored))
             sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = ev.at })
             sim.message.send({ recipient = user, message = "You slide the card into the deck." })
             -- `sim.entity.despawn` does the hand slots, removal and the
@@ -304,7 +319,7 @@ if sim ~= nil then
                 offset = target ~= nil and ev.click_offset or nil,
             },
         })
-        sim.appearance.set_state({ entity = self, state = thickness(count(rest)) })
+        self.vars["picture"] = picture(count(rest))
         sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = ev.at })
         sim.message.send({ recipient = user, message = "You deal a card." })
         return true

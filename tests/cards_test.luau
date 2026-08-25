@@ -43,8 +43,24 @@ t.tick()
 -- ---- out of the box, full -------------------------------------------
 local boxed = t.item_at(2, 1, "card_deck")
 assert(boxed ~= nil, "the deck is on the table")
-assert(boxed.state == "full", "an untouched deck is full: " .. tostring(boxed.state))
-assert(boxed.sprite == "card_deck_full", "and looks it: " .. tostring(boxed.sprite))
+-- THE DECK'S LOOK IS A REPLICATED SCRIPT VAR, not an engine state, so
+-- what a spec can assert on this side of the wire is the row a viewer
+-- would be handed: the key the prototype declared, the roster it may
+-- name, and what replication is projecting for this deck right now.
+-- The swap itself happens in the client's own atlas
+-- (`Ent::repaint_from_var`), which is why `sprite` below stays the base
+-- the entity stream carries.
+assert(boxed.var == "lunatic/tfs:picture",
+    "the deck hangs its picture on the mod's own key: " .. tostring(boxed.var))
+local DECLARED = {}
+for _, cell in ipairs(boxed.var_states) do
+    DECLARED[cell] = true
+end
+assert(#boxed.var_states == 4, "four thicknesses are declared, got " .. #boxed.var_states)
+assert(boxed.var_state == nil,
+    "an unopened deck has had nothing written: " .. tostring(boxed.var_state))
+assert(boxed.sprite == "card_deck_full",
+    "so every viewer draws the base the wire sent: " .. tostring(boxed.sprite))
 
 t.click(p, 2, 1, t.target_at(2, 1, "card_deck"))
 t.tick()
@@ -90,9 +106,17 @@ assert(table.concat(t.sounds(p), " "):find("card_flip", 1, true), "and is heard"
 -- The deck's own bookkeeping is on the record, because the engine
 -- cannot summarise a string it cannot read.
 local wrote = t.ledger_rows("VarSet")
-assert(#wrote >= 1, "writing the deck's order is a ledger row")
-assert(wrote[#wrote].key == "lunatic/tfs:order",
-    "naming the key: " .. tostring(wrote[#wrote].key))
+assert(#wrote >= 2, "the order and the picture beside it are two ledger rows")
+assert(wrote[#wrote - 1].key == "lunatic/tfs:order",
+    "naming the key: " .. tostring(wrote[#wrote - 1].key))
+-- The picture is a script var too, so it is on the record exactly like
+-- the order is -- and it is a REPLICATED one, which is the whole
+-- difference: the row above stays on the server, this one is handed to
+-- everyone who can see the deck.
+assert(wrote[#wrote].key == "lunatic/tfs:picture",
+    "and the repaint rides the same ledger: " .. tostring(wrote[#wrote].key))
+assert(wrote[#wrote].value == "card_deck_full",
+    "fifty-three left still looks full: " .. tostring(wrote[#wrote].value))
 
 -- ---- turning it over --------------------------------------------------
 t.drop(p)
@@ -152,8 +176,9 @@ assert(t.hands(p).held == nil, "the card left the hand")
 assert(t.item_at(1, 1, "card") == nil and t.item_at(1, 2, "card") == nil,
     "and is not lying anywhere: it is in the deck")
 local back = t.item_at(1, 1, "card_deck")
-assert(back.state == "full", "a deck with all fifty-four back in it is full again")
-assert(back.sprite == "card_deck_full", "and looks it: " .. tostring(back.sprite))
+assert(back.var_state == "card_deck_full",
+    "a deck with all fifty-four back in it is drawn full again: " .. tostring(back.var_state))
+assert(DECLARED[back.var_state], "and it is one of the pictures the prototype declared")
 
 -- ---- deal the whole thing ---------------------------------------------
 -- The assertion this whole file exists for. Fifty-four deals produce
@@ -165,11 +190,37 @@ t.click(p, 1, 1, t.target_at(1, 1, "card_deck"))
 t.tick()
 assert(t.hands(p).held == "card_deck", "the deck is in hand again")
 
+-- tg's own thresholds, counted from the other end: 54 minus the deal
+-- is what is left, and 26 left is "half" while 10 left is "low"
+-- (deck.dm:171-181). Reading them mid-run is the point of this file's
+-- other half -- a picture that only ever changed on the last card
+-- would pass a check at each end and be wrong the whole way through.
+local FLIPS = { [28] = "card_deck_half", [44] = "card_deck_low" }
 for deal = 1, 54 do
     t.click(p, 2, 2)
     t.tick()
     assert(#t.items_at(2, 2) == deal,
         "deal " .. deal .. " put a card on the pile, got " .. #t.items_at(2, 2))
+    local wanted = FLIPS[deal]
+    if wanted ~= nil then
+        -- Read it off the floor, where a viewer would see it: the var
+        -- has to be projected for the deck as it stands in the world,
+        -- not merely stored on it.
+        t.drop(p)
+        t.tick()
+        local mid = t.item_at(1, 1, "card_deck")
+        assert(mid ~= nil, "the deck is at the dealer's feet")
+        assert(mid.var_state == wanted,
+            "after " .. deal .. " deals the row names " .. wanted .. ": "
+                .. tostring(mid.var_state))
+        assert(DECLARED[mid.var_state],
+            "and it is a picture the prototype declared: " .. tostring(mid.var_state))
+        assert(mid.sprite == "card_deck_full",
+            "while the base the server sent never moved: " .. tostring(mid.sprite))
+        t.click(p, 1, 1, t.target_at(1, 1, "card_deck"))
+        t.tick()
+        assert(t.hands(p).held == "card_deck", "the deck is back in hand")
+    end
 end
 
 -- Empty, and it says so in the picture as well as in the string --
@@ -178,8 +229,9 @@ t.drop(p)
 t.tick()
 local emptied = t.item_at(1, 1, "card_deck")
 assert(emptied ~= nil, "the deck is at the dealer's feet")
-assert(emptied.state == "empty", "and it is empty: " .. tostring(emptied.state))
-assert(emptied.sprite == "card_deck_empty", "and looks it")
+assert(emptied.var_state == "card_deck_empty",
+    "and it is drawn empty: " .. tostring(emptied.var_state))
+assert(DECLARED[emptied.var_state], "which is a picture the prototype declared")
 
 -- ---- and every one of them is a different card ------------------------
 -- Read the way a player would: pick each card up off the pile, turn it

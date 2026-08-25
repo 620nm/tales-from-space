@@ -138,8 +138,10 @@ assert(card.sprite == "card_back", "showing its back: " .. tostring(card.sprite)
 -- The deck's shuffle is written on the record the moment it is dealt
 -- from, which is the only trace a string in `ScriptVars` leaves.
 local wrote = t.ledger_rows("VarSet")
-assert(#wrote >= 1 and wrote[#wrote].key == "lunatic/tfs:order",
+assert(#wrote >= 2 and wrote[#wrote - 1].key == "lunatic/tfs:order",
     "the vended deck kept its own order")
+assert(wrote[#wrote].key == "lunatic/tfs:picture",
+    "and repainted itself beside it: " .. tostring(wrote[#wrote].key))
 
 -- ---- the Captain's Aid, which the machine is stingy with --------------
 t.drop(p)
