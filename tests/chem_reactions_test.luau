@@ -5,11 +5,18 @@
 -- different reason. Thermite refuses because a reactant is MISSING --
 -- and nothing in its file says so, because the engine's conservation
 -- clamp takes the extent as the minimum of what every reactant can
--- supply and a missing one supplies nothing. Carbon dioxide and ash
--- refuse because the beaker is COLD, which is the reaction chamber's
--- whole reason to exist.
+-- supply and a missing one supplies nothing. Ash refuses because the
+-- beaker is COLD, which is the reaction chamber's whole reason to
+-- exist. Chlorine refuses at neither end, and that is its point.
 --
 -- Everything is pressed out of the dispenser and poured with the hands.
+--
+-- C1: thermite's third leg is oxygen and carbon dioxide is made of it,
+-- and oxygen is a permanent gas -- a source deposits it as gas, and a
+-- gas pressed over an open beaker is refused rather than obeyed (D19).
+-- The completion half of the thermite case and the carbon dioxide case
+-- come back when those recipes take an oxidiser they can hold: thermite
+-- from iron oxide, carbon dioxide from a gas share in a sealed vessel.
 local PRESS = 0.75
 local BRIM = 1.25
 
@@ -152,73 +159,14 @@ take(slop, 3, 2)
 near(amount(slop, "aluminium"), 0.25 * (PRESS / BRIM), 1e-9, "some aluminium poured off")
 near(amount(slop, "iron"), 0.25 * (0.5 / BRIM), 1e-9, "and some iron with it")
 
-dock(dispenser, 1, 1)
-panel(dispenser, 1, 1)
--- A twentieth of a press, and the amount is GEOMETRY talking. Thermite
--- is 90 g/mol and the recipe makes three of it for one of each leg, so
--- an extent swells the contents by 0.187 L — and the glass holds
--- 0.05 L, most of it already full of the two metals. The engine caps a
--- reaction by the free shell volume and grows no vessel to take the
--- rest (docs/MATTER.md 5), so a quarter of a press of oxygen would
--- stop a fifth of the way in with nowhere to put the product. This is
--- what the beaker can actually hold.
-dial_to(0.05)
-press("o2")
-dial_to(PRESS)
-near(amount(a, "o2"), 0.05, 1e-9, "the station's own oxygen, a twentieth of a press")
-
--- Three minutes rather than one. A rate that reads concentration
--- (docs/CHEMISTRY.md 5) is a DECAY: each pass takes a fixed fraction of
--- what is left, so the first nine tenths arrive in seconds and the last
--- sliver goes exponentially. The assertion is the same one it always
--- was — the recipe RAN OUT — and the clock is what a decay needs.
-t.run_seconds(180)
-near(amount(a, "thermite"), 0.15, 1e-6, "and now it goes: three out for one of each in")
-near(amount(a, "aluminium"), 0.6 - 0.05, 1e-6, "the aluminium that was in excess remains")
-near(amount(a, "iron"), 0.4 - 0.05, 1e-6, "and so does the iron")
-near(amount(a, "o2"), 0.0, 1e-6, "the oxygen was the limit, and it is spent")
--- ...and the beaker that got the pour still has two of the three, still
--- sitting there. The gate is about what is in the VESSEL, not about
--- what the shift has been doing.
+-- ...and time does not help. A pair sits there for as long as you like:
+-- what is missing is a reactant, and no amount of standing about is one.
+t.run_seconds(120)
+near(amount(a, "thermite"), 0.0, 1e-12, "still two thirds of a recipe, still nothing")
+-- ...and so does the beaker that got the pour. The gate is about what
+-- is in the VESSEL, not about what the shift has been doing.
 near(amount(slop, "thermite"), 0.0, 1e-12, "a pair is inert wherever it is standing")
 
--- ---------------------------------------------------------------
--- TWO: CARBON DIOXIDE NEEDS 777 K.
---
--- tg: 1 carbon + 2 oxygen -> 3 CO2, `required_temp = 777` because
--- "pure carbon isn't especially reactive" (recipes/others.dm:142-146).
--- The product goes into the pack's own carbon dioxide, in the gas
--- phase -- the same
--- substance an atmos cell carries, which is the whole unification.
--- ---------------------------------------------------------------
-eject()
-t.drop(p)
-t.tick()
-
-take(c, 1, 3)
-dock(dispenser, 1, 1)
-panel(dispenser, 1, 1)
-press("carbon")
-dial_to(0.5)
-press("o2")
-dial_to(PRESS)
-t.run_seconds(60)
-near(amount(c, "co2"), 0.0, 1e-12, "a cold beaker of carbon and oxygen is a cold beaker")
-
-eject()
-dock(heater, 3, 1)
-panel(heater, 3, 1)
-t.ui_act(p, "set", '{"field":"temperature","value":800}')
-t.ui_act(p, "toggle", '{"field":"power"}')
-t.run_seconds(90)
-assert(t.holder_k(c) > 777.0, "the chamber got there: " .. t.holder_k(c))
-near(room("co2"), 0.75, 1e-3, "and three moles of gas for one of carbon, breathed out into the room")
-near(amount(c, "o2"), 0.0, 1e-6, "the oxygen was the limit again")
-near(amount(c, "carbon"), PRESS - 0.25, 1e-6, "the rest of the carbon is still carbon")
-
--- Take the heat away and it stops where it is: the window is a gate on
--- the RATE, so a rule outside it does not run slowly, it does not run.
-t.ui_act(p, "toggle", '{"field":"power"}')
 eject()
 t.drop(p)
 t.tick()
@@ -247,17 +195,11 @@ eject()
 take(slop, 3, 2)
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
--- Geometry again, and harder than the thermite: oil is 170 g/mol and
--- three come out for one of each leg, so an extent swells the glass by
--- half a litre. A twentieth of a press is what a 50 mL beaker has room
--- to make (docs/MATTER.md 5).
-dial_to(0.05)
+dial_to(0.25)
 press("hydrogen")
 dial_to(PRESS)
--- Three minutes: the rate reads concentration, so the tail is a decay
--- rather than a march (docs/CHEMISTRY.md 5).
-t.run_seconds(180)
-near(amount(d, "oil"), 0.15, 1e-6, "three of oil for one of each")
+t.run_seconds(60)
+near(amount(d, "oil"), 0.75, 1e-6, "three of oil for one of each")
 near(amount(d, "ash"), 0.0, 1e-12, "and no ash at all, because the beaker is cold")
 
 eject()
@@ -265,9 +207,9 @@ dock(heater, 3, 1)
 panel(heater, 3, 1)
 t.ui_act(p, "set", '{"field":"temperature","value":500}')
 t.ui_act(p, "toggle", '{"field":"power"}')
-t.run_seconds(180)
+t.run_seconds(120)
 assert(t.holder_k(d) > 480.0, "the chamber crossed the threshold: " .. t.holder_k(d))
-near(amount(d, "ash"), 0.15, 1e-6, "every mole of oil became a mole of ash")
+near(amount(d, "ash"), 0.75, 1e-6, "every mole of oil became a mole of ash")
 near(amount(d, "oil"), 0.0, 1e-6, "and there is none of it left")
 
 -- ---------------------------------------------------------------

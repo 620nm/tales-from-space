@@ -11,7 +11,7 @@
 -- reaction chamber exists for: oil to ash to lye.
 return {
     id = "oil",
-    reactants = { welding_fuel = 1.0, carbon = 1.0, hydrogen = 1.0 },
+    reactants = { welding_fuel = 1.0, ["carbon:solid"] = 1.0, hydrogen = 1.0 },
     products = { oil = 3.0 },
     energy = 0.0,
     rate = {

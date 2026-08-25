@@ -1,21 +1,33 @@
--- Nitrous oxide: fifty kelvin wide, and the reason the reaction
--- chamber has a dial rather than a switch.
+-- A window has a CEILING as well as a floor, and that is the reason the
+-- reaction chamber has a dial rather than a switch.
 --
--- tg gives this recipe the tightest window in the base game --
--- required 525, optimal 550, overheat 575, and a temperature exponent
--- of 0.2 so the edges are nearly as good as the middle
--- (recipes/others.dm:149-160). Ported through the documented bell
--- mapping it is 525 / 550 / 575 / 600, which means a chamber dialled to
--- 500 does nothing at all and a chamber dialled past 600 stops.
+-- Ash is the rule with both ends on this shelf: tg's `required_temp` of
+-- 480 through the documented bell mapping is 480 / 500 / 900 / 920
+-- (reactions/ash.luau), so a chamber dialled to 400 does nothing at
+-- all, one dialled to 700 runs it dry, and one dialled past 920 stops
+-- again. Three answers from one knob, and the third is the one a
+-- chemist never guesses.
 --
--- BOTH REFUSALS ARE HARD TO STAGE, and the staging is the interesting
--- part. A heater ramps, so a beaker holding all three reactants cannot
--- get from room temperature to 650 K without crossing the window on the
--- way. The second beaker therefore gets the third reactant LAST,
--- pressed in while the vessel is already too hot -- which is a thing a
--- chemist can actually do, and the only honest way to ask "what happens
--- at 650 K" of a rule that would otherwise have fired at 560.
+-- THE SECOND REFUSAL IS HARD TO STAGE, and the staging is the
+-- interesting part. A heater ramps, so a beaker of oil cannot get from
+-- room temperature to 960 K without crossing the window on the way up
+-- and turning into ash in the middle of it. The second beaker
+-- therefore gets the LAST of oil's three reactants pressed in while the
+-- vessel is already too hot: the oil is made ABOVE the ash window's
+-- ceiling and stays oil, which is a thing a chemist can actually do,
+-- and the only honest way to ask "what happens at 960 K" of a rule that
+-- would otherwise have fired at 500.
+--
+-- C1: this spec used to stage the same three answers on nitrous oxide,
+-- whose recipe wants a mole of nitrogen and two of oxygen. Those are
+-- permanent gases: a source deposits them as gas, and a gas pressed
+-- over an open beaker is refused rather than obeyed (D19). They come
+-- back to chemistry from a canister into a sealed vessel, and the N2O
+-- recipe is rewritten around that share.
 local PRESS = 0.75
+-- One press of each of oil's three reactants, which is a quarter of an
+-- extent and three quarters of a mole of oil.
+local LEG = 0.25
 
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
@@ -117,54 +129,52 @@ local function dial(kelvin)
     t.run_ticks(2)
 end
 
--- Ammonia first, in both beakers: three of hydrogen to one of nitrogen
--- (recipes/others.dm:432-439), which the shelf makes in one vessel with
--- two presses and no help at all.
-local function brew_ammonia(beaker)
+-- Oil first: one of welding fuel, one of carbon and one of hydrogen
+-- for three of oil (recipes/others.dm:578-581), which the shelf makes
+-- in one cold vessel with three presses and no help at all. The carbon
+-- arrives as a POWDER, because that is what carbon is at the nozzle's
+-- 300 K and a source names no phase (D11).
+local function brew_oil(beaker)
     dock(dispenser, 1, 1)
     panel(dispenser, 1, 1)
+    dial_to(LEG)
+    press("welding_fuel")
+    press("carbon")
     press("hydrogen")
-    dial_to(0.5)
-    press("n2")
     dial_to(PRESS)
     t.run_seconds(30)
-    near(amount(beaker, "ammonia"), PRESS, 1e-6, "three of hydrogen made three of ammonia")
-    near(amount(beaker, "n2"), 0.25, 1e-6, "and a quarter of the nitrogen is spare")
+    near(amount(beaker, "oil"), PRESS, 1e-6, "one of each made three of oil")
+    near(amount(beaker, "carbon"), 0.0, 1e-6, "and nothing is left over")
 end
 
 -- ---------------------------------------------------------------
 -- ONE: BELOW THE WINDOW, NOTHING.
 -- ---------------------------------------------------------------
 take(cold, 1, 2)
-brew_ammonia(cold)
-dial_to(0.25)
-press("o2")
-dial_to(PRESS)
-near(amount(cold, "o2"), 0.25, 1e-9, "and a quarter-press of oxygen: all three reactants present")
+brew_oil(cold)
 
 eject()
 dock(heater, 3, 1)
 panel(heater, 3, 1)
-dial(500)
+dial(400)
 t.ui_act(p, "toggle", '{"field":"power"}')
 t.run_seconds(120)
-near(t.holder_k(cold), 500.0, 1.0, "the chamber holds it at 500 K")
-near(amount(cold, "n2o"), 0.0, 1e-12, "twenty-five kelvin short is short")
-near(amount(cold, "ammonia"), PRESS, 1e-6, "and every mole of ammonia is still ammonia")
+near(t.holder_k(cold), 400.0, 1.0, "the chamber holds it at 400 K")
+near(amount(cold, "ash"), 0.0, 1e-12, "eighty kelvin short is short")
+near(amount(cold, "oil"), PRESS, 1e-6, "and every mole of oil is still oil")
 
 -- ---------------------------------------------------------------
 -- TWO: INSIDE IT, IT GOES.
 --
--- Fifty kelvin up the dial and the same beaker converts. tg's ratio is
--- 2 ammonia + 1 nitrogen + 2 oxygen -> 5 N2O, so the quarter mole of
--- oxygen is the limit and an eighth of an extent is all there is.
+-- Three hundred kelvin up the dial and the same beaker runs dry: one
+-- of ash for one of oil (recipes/others.dm:589-593), and the ash is a
+-- POWDER standing in the glass rather than a second liquid.
 -- ---------------------------------------------------------------
-dial(550)
+dial(700)
 t.run_seconds(120)
-near(t.holder_k(cold), 550.0, 25.0, "the chamber took it up to the window")
-near(room("n2o"), 0.625, 1e-3, "five of gas for two of ammonia, and gas leaves an open beaker")
-near(amount(cold, "o2"), 0.0, 1e-6, "the oxygen was the limit")
-near(amount(cold, "ammonia"), PRESS - 0.25, 1e-6, "and the ammonia is down by two extents")
+near(t.holder_k(cold), 700.0, 25.0, "the chamber took it up into the window")
+near(amount(cold, "ash"), PRESS, 1e-6, "every mole of oil became a mole of ash")
+near(amount(cold, "oil"), 0.0, 1e-6, "and there is none of it left")
 
 t.ui_act(p, "toggle", '{"field":"power"}')
 eject()
@@ -174,41 +184,48 @@ t.tick()
 -- ---------------------------------------------------------------
 -- THREE: ABOVE IT, NOTHING AGAIN.
 --
--- The second beaker is brought to 650 K holding only two of the three,
--- and the oxygen is pressed in hot. Adding a quarter mole at the
--- nozzle's 300 K pulls the mixture down to about 625 -- still well over
--- the window's 600, and the rule stays shut.
+-- The second beaker is brought to 960 K holding only two of oil's
+-- three, and the hydrogen is pressed in hot. A tenth of a leg at the
+-- nozzle's 300 K barely moves a mixture of that heat capacity, so the
+-- oil is MADE at over 950 K -- forty kelvin over the ash window's
+-- ceiling, and the rule stays shut.
 -- ---------------------------------------------------------------
 take(hot, 3, 2)
-brew_ammonia(hot)
+dock(dispenser, 1, 1)
+panel(dispenser, 1, 1)
+dial_to(LEG)
+press("welding_fuel")
+press("carbon")
+dial_to(PRESS)
+
 eject()
 dock(heater, 3, 1)
 panel(heater, 3, 1)
-dial(650)
+dial(960)
 t.ui_act(p, "toggle", '{"field":"power"}')
 t.run_seconds(150)
-assert(t.holder_k(hot) > 640.0, "the chamber overshot the window on purpose: " .. t.holder_k(hot))
+assert(t.holder_k(hot) > 940.0, "the chamber overshot the window on purpose: " .. t.holder_k(hot))
 
 eject()
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
-dial_to(0.25)
-press("o2")
+dial_to(LEG / 10.0)
+press("hydrogen")
 dial_to(PRESS)
-near(amount(hot, "o2"), 0.25, 1e-9, "the third reactant arrives late and cold")
-assert(t.holder_k(hot) > 600.0, "and the mixture is still over the window: " .. t.holder_k(hot))
+assert(t.holder_k(hot) > 920.0, "and the mixture is still over the window: " .. t.holder_k(hot))
 
 t.run_seconds(120)
-near(amount(hot, "n2o"), 0.0, 1e-12, "over the window is as shut as under it")
-near(amount(hot, "o2"), 0.25, 1e-6, "nothing was spent")
+assert(amount(hot, "oil") > 0.0, "the oil was made up there: " .. amount(hot, "oil"))
+near(amount(hot, "ash"), 0.0, 1e-12, "over the window is as shut as under it")
 
 -- ...and the proof that it was the TEMPERATURE and not the mixture:
--- put the same beaker back on the dial at 550 and it converts, coming
+-- put the same beaker back on the dial at 700 and it converts, coming
 -- down into the window from above.
+local made = amount(hot, "oil")
 eject()
 dock(heater, 3, 1)
 panel(heater, 3, 1)
-dial(550)
+dial(700)
 t.run_seconds(150)
-assert(room("n2o") > 0.625, "coming down into the window works as well as up")
-near(amount(hot, "o2"), 0.0, 1e-6, "and it spends the oxygen it would not touch at 650")
+near(amount(hot, "ash"), made, 1e-6, "coming down into the window works as well as up")
+near(amount(hot, "oil"), 0.0, 1e-6, "and it spends the oil it would not touch at 960")

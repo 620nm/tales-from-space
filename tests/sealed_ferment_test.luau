@@ -191,7 +191,7 @@ assert(started.sealed, "a bottle has a stopper in it")
 -- of itself standing over it as gas.
 near(started.moles, WATER + SUGAR, 2e-4, "a quarter of a mole of brew went in")
 near(started.contents.water.liquid, WATER, 2e-4, "nine units of water")
-near(started.contents.sugar.liquid, SUGAR, 1e-9, "and one of sugar")
+near(started.contents.sugar.solid, SUGAR, 1e-9, "and one of sugar")
 near(started.temp_k, 300.0, 0.5, "at the nozzle's temperature, on the bell's plateau")
 near(started.volume_l, 0.05, 1e-9, "fifty millilitres of glass")
 near(started.headspace_l, 0.05 - 0.00405 - 0.00856, 1e-4, "and 37 mL of room over it")
@@ -277,7 +277,7 @@ brew_into(3, 2, twin)
 local twin_start = t.vessel(twin)
 assert(not twin_start.sealed, "a beaker has no lid to strain against")
 near(twin_start.moles, WATER + SUGAR, 2e-4, "the same quarter of a mole")
-near(twin_start.contents.sugar.liquid, SUGAR, 1e-9, "and the same unit of sugar")
+near(twin_start.contents.sugar.solid, SUGAR, 1e-9, "and the same unit of sugar")
 near(room_co2(), 0, 1e-12, "the room is still clean when it starts")
 
 for step = 1, STEPS do
