@@ -134,11 +134,10 @@ if sim ~= nil then
             * 1000.0
             * (mine.headspace_l / 1000.0)
             / (R_J_PER_MOL_K * line.temp_k)
-        sim.matter.transfer({
+        sim.matter.fill({
             from = source,
             to = self,
             amount = math.min(want, STROKE_MOL),
-            phases = { "gas" },
         })
         sim.sound.play({ asset = "lunatic/tfs:sound/spray", at = at })
         sim.message.send({
@@ -175,12 +174,7 @@ if sim ~= nil then
             end
             -- tg's cup default `amount_per_transfer_from_this = 10`
             -- (_cup.dm:4), which is also the beaker's gesture.
-            sim.matter.transfer({
-                from = self,
-                to = clicked.entity,
-                amount = 10 * U,
-                phases = { "liquid", "solid" },
-            })
+            sim.matter.pour({ from = self, to = clicked.entity, amount = 10 * U })
             sim.message.send({ recipient = user, message = "You pour from the bottle." })
             return true
         end
@@ -192,12 +186,7 @@ if sim ~= nil then
                 return true
             end
             sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = ev.at })
-            sim.matter.transfer({
-                from = self,
-                to = user,
-                amount = 2 * U,
-                phases = { "liquid", "solid" },
-            })
+            sim.matter.drink({ from = self, who = user, amount = 2 * U })
             sim.message.send({ recipient = user, message = "You drink from the bottle." })
             return true
         end
@@ -210,12 +199,7 @@ if sim ~= nil then
             sim.message.send({ recipient = user, message = "The bottle is empty." })
             return true
         end
-        sim.matter.transfer({
-            from = self,
-            to = ev.at.matter,
-            amount = "all",
-            phases = { "liquid", "solid" },
-        })
+        sim.matter.spill({ from = self, at = ev.at })
         sim.message.send({ recipient = user, message = "You tip the bottle out onto the deck." })
         return true
     end)

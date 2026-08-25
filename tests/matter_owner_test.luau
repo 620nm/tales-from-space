@@ -1,15 +1,16 @@
 -- One transfer, three far ends: a beaker poured into another vessel,
--- drunk from, and tipped onto the deck are the SAME call in the file
--- that does them (`sim.matter_transfer`, docs/LUAU-API.md section 8.2),
--- differing only in which owner is named.
+-- drunk from, and tipped onto the deck are one primitive underneath
+-- (`Sim::move_matter`, sim/owner/ops.rs), differing only in which owner
+-- is named.
 --
 -- What makes this worth a spec rather than a comment is the second
--- claim underneath it: collapsing the three spellings changed nothing a
--- player or an admin can see. The amounts are the amounts they were,
--- the refusals are the refusals they were, and the rows the shift
--- ledger gets are still `poured`, `drank` and `spilled` — because the
--- row follows WHAT MOVED WHERE rather than which binding asked, so an
--- admin reading a shift back cannot tell that content was rewritten.
+-- claim underneath it: the three gestures are three WORDS above that
+-- primitive (`sim.matter.pour`, `.drink`, `.spill` —
+-- docs/LUAU-API.md 8.2), and each word carries its own overflow policy,
+-- its own extra reach and its own row. So the shift ledger still gets
+-- `poured`, `drank` and `spilled`, and it gets them because the file
+-- said which gesture it was making rather than because the engine
+-- guessed from the pair of owners.
 --
 -- The third gesture is the one that had no general form before: the far
 -- end of a transfer is the ROOM over a tile (`sim.cell(x, y)`), which

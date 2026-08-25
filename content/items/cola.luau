@@ -41,12 +41,7 @@ if sim ~= nil then
             return true
         end
         sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = ev.at })
-        sim.matter.transfer({
-            from = self,
-            to = user,
-            amount = 0.05,
-            phases = { "liquid", "solid" },
-        })
+        sim.matter.drink({ from = self, who = user, amount = 0.05 })
         sim.message.send({ recipient = user, message = "You take a swig of Space Cola." })
         return true
     end)
