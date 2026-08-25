@@ -180,7 +180,7 @@ if sim ~= nil then
     -- that can see the thing and to nobody else. The engine still reads
     -- nothing out of it -- it checks the string against the roster
     -- above and hands it to the viewers.
-    sim.define("script_var", "lunatic/tfs:picture", { replicate = "all" })
+    sim.define("script_var", "lunatic/tfs:picture", { replicate = "sight" })
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self, user = ev.subject, ev.actor
