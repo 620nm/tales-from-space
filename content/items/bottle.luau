@@ -17,7 +17,7 @@
 -- That is where the permanent gases enter chemistry at all -- oxygen,
 -- nitrogen, hydrogen and fluorine left the dispenser shelf when the
 -- twins were folded, because a press of one over an open glass is a
--- press into the room (docs/CHEMISTRY.md 11) -- and it is what makes
+-- press into the room (docs/BENCH.md 4) -- and it is what makes
 -- the gas-share recipes reachable: carbon dioxide wants fifty
 -- kilopascals of oxygen over its carbon, nitrous oxide a hundred over
 -- its ammonia, and no beaker on the bench can carry either.
@@ -57,7 +57,7 @@ local content = {
     -- A neck has a stopper in it. What a shelf keeps is corked, so what
     -- is in it stays in it: a bottle does not breathe with the room the
     -- way an open beaker does, and what ferments inside one builds a
-    -- pressure of its own (docs/CHEMISTRY.md 9). Pouring, drinking and
+    -- pressure of its own (docs/BENCH.md 2). Pouring, drinking and
     -- spilling are all you pulling the cork, and none of them asks
     -- about the lid -- the seal is what the bottle does while nobody is
     -- handling it.
@@ -109,7 +109,7 @@ if sim ~= nil then
         -- An open mouth is refused in the dispenser's own words: what
         -- landed would leave through it on the next exchange, and the
         -- honest answer is to say so rather than to bill a mole nothing
-        -- can account for a tick later (docs/CHEMISTRY.md 11).
+        -- can account for a tick later (docs/BENCH.md 4).
         if not mine.sealed then
             sim.message.send({
                 recipient = user,

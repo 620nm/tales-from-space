@@ -71,7 +71,7 @@ if sim ~= nil then
             -- cannot take one: a mouth with no stopper in it lets the
             -- charge back out on the next exchange, so this is refused
             -- in the same words the dispenser uses over an open glass
-            -- (docs/CHEMISTRY.md 11). `kind` is the engine's word for
+            -- (docs/BENCH.md 4). `kind` is the engine's word for
             -- what was pointed at -- an `item` is carried, a `machine`
             -- is bolted down -- and never a name for any one of them.
             if clicked.kind == "machine" then
