@@ -17,8 +17,17 @@
 -- it is a race with the room. That is a feature, and it is why the
 -- number is asserted where it is.
 local NOZZLE_K = 300.0
-local PRESS = 0.75
-local BRIM = 1.25
+-- Half the batch the bench used to run, and GEOMETRY is why. tg's salt
+-- recipe makes two moles of a 58 g/mol solid out of one mole each of a
+-- 23 and a 35 — mass the ratios do not conserve, because a ported
+-- ratio is tg's units read as moles (docs/CHEMISTRY.md 4) — so an
+-- extent swells the contents by 58 mL. A reaction is capped by the
+-- free shell volume and no vessel is ever grown to take the rest
+-- (docs/MATTER.md 5), so a full press of each would fill 50 mL of
+-- glass half way through the recipe and stop. These are the numbers
+-- that fit, in the same 3:2 proportion.
+local PRESS = 0.375
+local BRIM = 0.625
 
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
@@ -104,6 +113,9 @@ t.tick()
 assert(t.hands(p).held == nil, "the beaker is in the machine")
 
 open()
+-- The dial comes up at the machine's own default; this bench works in
+-- smaller amounts than that (see the geometry note at the top).
+dial_to(PRESS)
 press("sodium")
 near(amount(a, "sodium"), PRESS, 1e-9, "one press of sodium")
 dial_to(BRIM - PRESS)
@@ -115,22 +127,35 @@ near(t.holder_k(a), NOZZLE_K, 0.01, "both at the nozzle's 300 K")
 -- The exotherm, closed form. `energy` on a rule is real joules per
 -- extent (docs/CHEMISTRY.md, "the energy rule"): tg's thermic_constant
 -- 50 times two moles of product times water's 75.3 J/mol/K = 7530.
--- The rule runs 0.05 of an extent per two-second holder step and the
--- heat capacity climbs as salt replaces its halves, so the climb slows
--- as it goes and lands where the arithmetic says it does:
 --
---   start   0.75 sodium (28.2) + 0.5 chlorine (25.0) = 33.65 J/K
---   step    -0.05 Na, -0.05 Cl, +0.10 salt (50.5)    = +2.39 J/K
---   dT      sum over ten steps of 376.5 / (33.65 + 2.39k)
+-- One step of the rule leaves the beaker at T + extent*Q/C_after, and
+-- the capacity climbs by 47.8 J/K per extent as salt (50.5) replaces
+-- its halves (28.2 + 25.0). Summed over a run that ends at X = 0.25 of
+-- extent, that is the integral
 --
--- which is +82.3 K, and there is nothing else in the beaker for it to
--- be.
-t.run_seconds(60)
-near(amount(a, "salt"), 1.0, 1e-6, "half a mole of chlorine made a mole of salt")
+--   dT = (Q / 47.8) * ln(1 + 47.8 * X / C_start),  C_start = 16.825
+--      = 157.5 * ln(1.7103) = 84.5 K
+--
+-- The rate reads concentration now (docs/CHEMISTRY.md 5), so the steps
+-- are large at the start and vanish at the end; a right-endpoint sum
+-- of a falling integrand undershoots it, so 84.5 K is a CEILING the
+-- run approaches from below and the beaker lands at 79.6. Both are
+-- asserted: the bound is the arithmetic, the number is the engine's.
+-- What is PINNED is the convention — a rule's `energy` is joules per
+-- extent, not a temperature delta and not a per-mole figure, either of
+-- which would miss by a factor of tens.
+-- Five minutes, because the last thousandth of a decay is slower than
+-- the first nine tenths; the claim is still that it RAN OUT.
+t.run_seconds(300)
+near(amount(a, "salt"), 0.5, 1e-6, "a quarter mole of chlorine made half a mole of salt")
 near(amount(a, "chlorine"), 0.0, 1e-6, "and spent itself doing it")
-near(amount(a, "sodium"), 0.25, 1e-6, "the sodium that had no partner is still there")
-near(total(a), BRIM, 1e-6, "one and a quarter moles in, one and a quarter out")
-near(t.holder_k(a), NOZZLE_K + 82.26, 0.02, "the exotherm is the energy rule, in kelvin")
+near(amount(a, "sodium"), 0.125, 1e-6, "the sodium that had no partner is still there")
+near(total(a), BRIM, 1e-6, "five eighths of a mole in, five eighths out")
+assert(
+    t.holder_k(a) < NOZZLE_K + 84.5,
+    "the continuum limit is a CEILING: " .. t.holder_k(a)
+)
+near(t.holder_k(a), NOZZLE_K + 79.59, 0.05, "the exotherm is the energy rule, in kelvin")
 
 -- ...and then it stops, because there is nothing left to react.
 local settled = t.holder_k(a)
@@ -153,8 +178,12 @@ assert(t.hands(p).held == "beaker", "it comes back out")
 t.click(p, 3, 2, b)
 t.tick()
 near(total(b), 0.25, 1e-9, "one gesture pours a quarter of a mole")
-near(amount(b, "salt"), 0.25 * (1.0 / BRIM), 1e-9, "salt went in proportion")
-near(amount(b, "sodium"), 0.25 * (0.25 / BRIM), 1e-9, "and so did the leftover sodium")
+-- 1e-6 rather than 1e-9: a rate that reads concentration approaches
+-- the end of a recipe exponentially, so what poured is a proportion of
+-- a batch that is 0.5 salt to within a millionth, not to within a
+-- billionth (docs/CHEMISTRY.md 5).
+near(amount(b, "salt"), 0.25 * (0.5 / BRIM), 1e-6, "salt went in proportion")
+near(amount(b, "sodium"), 0.25 * (0.125 / BRIM), 1e-6, "and so did the leftover sodium")
 near(t.holder_k(b), settled, 0.01, "the heat travelled with the matter")
 
 -- ---------------------------------------------------------------
