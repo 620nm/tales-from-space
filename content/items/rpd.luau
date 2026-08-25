@@ -28,7 +28,7 @@
 --   (pipes/paint.rs). The LAYER dial, by contrast, reaches everything
 --   this shelf dispenses: tg programs the fitting it is about to wrench
 --   down (RPD.dm:569) and every `/obj/item/pipe` carries a
---   `piping_layer`, so the optional fitting mode on `ctx.fit` carries
+--   `piping_layer`, so the optional fitting mode on `sim.fit` carries
 --   the dial's position onto the part. Only the socket and the layer
 --   adapter are deaf to it, and both for reasons the engine owns.
 
@@ -95,59 +95,61 @@ local LAYERS = { 1, 2, 4, 8, 16 }
 
 local BUILD, DESTROY, COPY = 0, 1, 2
 
-local function recipe_of(ctx, self)
-    return RECIPES[ctx.dial(self, "recipe").index + 1]
+local function recipe_of(self)
+    return RECIPES[sim.dial(self, "recipe").index + 1]
 end
 
-local function layer_of(ctx, self)
-    return LAYERS[ctx.dial(self, "layer").index + 1]
+local function layer_of(self)
+    return LAYERS[sim.dial(self, "layer").index + 1]
 end
 
-local function paint_of(ctx, self)
-    return COLORS[ctx.dial(self, "paint").index + 1]
+local function paint_of(self)
+    return COLORS[sim.dial(self, "paint").index + 1]
 end
 
 -- Pipe is subfloor infrastructure: you lay it where the deck is open
 -- and put the floor back over it. The engine refuses a covered deck
 -- silently, so this says why first — a refusal with no explanation
 -- reads as a dropped click.
-local function lay_run(ctx, self, user, x, y)
-    if not ctx.subfloor_exposed(x, y) then
-        ctx.system_msg(user, "The floor is in the way. Pry the tile up first.")
+local function lay_run(self, user, x, y, at)
+    if not sim.subfloor_exposed(x, y) then
+        sim.message.send({ recipient = user, message = "The floor is in the way. Pry the tile up first." })
         return
     end
-    local mask = layer_of(ctx, self)
-    if ctx.pipe_occupancy(x, y) % (mask * 2) >= mask then
-        ctx.system_msg(user, "An atmospherics component already occupies that pipe layer.")
+    local mask = layer_of(self)
+    if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
+        sim.message.send({ recipient = user, message = "An atmospherics component already occupies that pipe layer." })
         return
     end
-    if ctx.pipe(x, y) % (mask * 2) >= mask then
-        ctx.system_msg(user, "Someone already ran pipe through there.")
+    if sim.pipe(x, y) % (mask * 2) >= mask then
+        sim.message.send({ recipient = user, message = "Someone already ran pipe through there." })
         return
     end
     -- tg's `atmos_build_speed` (RPD.dm:53). Half of what the same
     -- length costs by hand, which is the whole reason to carry one.
-    if not ctx.do_after(user, 0.4) then
-        return
-    end
-    -- The same question at the end: while you worked, another engineer
-    -- may have run the line through this very tile.
-    mask = layer_of(ctx, self)
-    if ctx.pipe_occupancy(x, y) % (mask * 2) >= mask then
-        ctx.system_msg(user, "An atmospherics component already occupies that pipe layer.")
-        return
-    end
-    if ctx.pipe(x, y) % (mask * 2) >= mask then
-        ctx.system_msg(user, "Someone already ran pipe through there.")
-        return
-    end
-    local paint = paint_of(ctx, self)
-    ctx.lay_pipe(x, y, mask)
-    ctx.paint_pipe(x, y, mask, paint.hex)
-    ctx.sound("ratchet", x, y)
+    sim.spawn_task(user, function()
+        if sim.do_after(user, sim.ticks(0.4), {}) == "interrupted" then
+            return
+        end
+        -- The same question at the end: while you worked, another engineer
+        -- may have run the line through this very tile.
+        mask = layer_of(self)
+        if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
+            sim.message.send({ recipient = user, message = "An atmospherics component already occupies that pipe layer." })
+            return
+        end
+        if sim.pipe(x, y) % (mask * 2) >= mask then
+            sim.message.send({ recipient = user, message = "Someone already ran pipe through there." })
+            return
+        end
+        local paint = paint_of(self)
+        sim.lay_pipe(x, y, mask)
+        sim.paint_pipe(x, y, mask, paint.hex)
+        sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = at })
+    end)
 end
 
-return {
+local content = {
     id = "rpd",
     name = "rapid pipe dispenser",
     -- tg's own art off the tool sheet (`icon_state = "rpd"`, RPD.dm:26).
@@ -226,14 +228,23 @@ return {
     },
     -- tg's `attack_self` is `ui_interact(user)` (RPD.dm:124-125): the
     -- in-hand key or tg-style pickup double-click opens its window.
-    on_use_self = function(ctx, self, user)
-        ctx.open_ui(user, self)
-    end,
-    on_use = function(ctx, self, user, x, y, _choice, target)
-        local mode = ctx.dial(self, "mode").index
+}
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
+        local self, user = ev.subject, ev.actor
+        ui.open({ viewer = user, owner = self })
+        return true
+    end)
+    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
+        local clicked, target = ev.claim, ev.claim
+        local _x, _y, _choice = x, y, choice
+        local mode = sim.dial(self, "mode").index
         local loose_item = nil
         if target and target.kind == "item" then
-            loose_item = ctx.item_id(target.entity)
+            loose_item = target.entity.prototype
         end
         local can_break_down = loose_item and BREAKDOWN[loose_item]
 
@@ -248,15 +259,15 @@ return {
             -- was aimed at and nothing else (RPD.dm:324-340) — an
             -- anchored machine is unwrenched, never dissolved, and the
             -- engine agrees by construction: a structure is not an item
-            -- and `ctx.consume` has nothing to spend of one.
+            -- and `sim.consume` has nothing to spend of one.
             if not can_break_down then
-                ctx.system_msg(user, "There is nothing loose there to break down.")
-                return
+                sim.message.send({ recipient = user, message = "There is nothing loose there to break down." })
+                return true
             end
-            ctx.consume(target.entity)
-            ctx.sound("smash", x, y)
-            ctx.system_msg(user, "You break down the " .. ctx.name(target.entity) .. ".")
-            return
+            target.entity:consume()
+            sim.sound.play({ asset = "lunatic/tfs:sound/smash", at = ev.at })
+            sim.message.send({ recipient = user, message = "You break down the " .. target.entity.name .. "." })
+            return true
         end
 
         if mode == COPY then
@@ -266,69 +277,75 @@ return {
             -- them off the DEVICE; we read them off the run, which is
             -- the only thing that carries either — and a run you have
             -- not opened the deck over is one you cannot see.
-            if not ctx.subfloor_exposed(x, y) then
-                ctx.system_msg(user, "The floor is in the way. Pry the tile up first.")
-                return
+            if not sim.subfloor_exposed(x, y) then
+                sim.message.send({ recipient = user, message = "The floor is in the way. Pry the tile up first." })
+                return true
             end
             for index, mask in ipairs(LAYERS) do
-                local hex = ctx.pipe_paint(x, y, mask)
+                local hex = sim.pipe_paint(x, y, mask)
                 if hex then
-                    ctx.set_dial(self, "layer", index - 1)
+                    sim.set_dial(self, "layer", index - 1)
                     for c, color in ipairs(COLORS) do
                         if color.hex == hex then
-                            ctx.set_dial(self, "paint", c - 1)
-                            ctx.system_msg(user, "Layer " .. index .. ", " .. color.name .. ".")
-                            return
+                            sim.set_dial(self, "paint", c - 1)
+                            sim.message.send({ recipient = user, message = "Layer " .. index .. ", " .. color.name .. "." })
+                            return true
                         end
                     end
                     -- A colour off the roster: the layer is still worth
                     -- taking, and saying so beats silence.
-                    ctx.system_msg(user, "Layer " .. index .. ", and a paint this thing has no name for.")
-                    return
+                    sim.message.send({ recipient = user, message = "Layer " .. index .. ", and a paint this thing has no name for." })
+                    return true
                 end
             end
-            ctx.system_msg(user, "There is no pipe under the floor here.")
-            return
+            sim.message.send({ recipient = user, message = "There is no pipe under the floor here." })
+            return true
         end
 
         -- A named ordinary item is not the turf beneath it. It neither
         -- becomes a fitting nor disappears under the machine Build
         -- would otherwise create.
         if target and target.kind == "item" then
-            ctx.system_msg(user, "That loose item is not atmospherics construction.")
-            return
+            sim.message.send({ recipient = user, message = "That loose item is not atmospherics construction." })
+            return true
         end
 
-        local recipe = recipe_of(ctx, self)
+        local recipe = recipe_of(self)
         if not recipe.structure then
-            lay_run(ctx, self, user, x, y)
-            return
+            lay_run(self, user, x, y, ev.at)
+            return true
         end
         -- Dispense and connect, tg's two defaults in one motion. Every
         -- refusal a pair of hands would meet is the engine's to give
         -- (reach, the tile rules, one fitting per turf, "there is no
         -- pipe under the floor here"), so there is nothing to re-check
         -- here — and nothing content could weaken if it tried.
-        if not ctx.do_after(user, 0.4) then
-            return
-        end
-        -- The layer dial travels with the part. tg programs the fitting
-        -- it is about to wrench down (`set_piping_layer` from the RPD's
-        -- own `p_layer`, RPD.dm:569) and every `/obj/item/pipe` carries
-        -- one, so this is not a special case for the gauge: it is what
-        -- the dial has always been for.
-        --
-        -- The two exceptions are exceptions in the ENGINE: a socket
-        -- binds on the run every dispenser hands out, and a layer
-        -- adapter stands across all five at once and has no layer of
-        -- its own (tg's PIPING_DEFAULT_LAYER_ONLY). Their fittings wear
-        -- no dial, so asking for one would be a refusal rather than a
-        -- setting.
-        local fitting_mode = nil
-        if not recipe.fixed_layer then
-            fitting_mode = ctx.dial(self, "layer").index
-        end
-        ctx.fit(x, y, recipe.structure, fitting_mode)
-        ctx.sound("ratchet", x, y)
-    end,
-}
+        sim.spawn_task(user, function()
+            if sim.do_after(user, sim.ticks(0.4), {}) == "interrupted" then
+                return
+            end
+            -- The layer dial travels with the part. tg programs the
+            -- fitting it is about to wrench down (`set_piping_layer`
+            -- from the RPD's own `p_layer`, RPD.dm:569) and every
+            -- `/obj/item/pipe` carries one, so this is not a special
+            -- case for the gauge: it is what the dial has always been
+            -- for.
+            --
+            -- The two exceptions are exceptions in the ENGINE: a socket
+            -- binds on the run every dispenser hands out, and a layer
+            -- adapter stands across all five at once and has no layer
+            -- of its own (tg's PIPING_DEFAULT_LAYER_ONLY). Their
+            -- fittings wear no dial, so asking for one would be a
+            -- refusal rather than a setting.
+            local fitting_mode = nil
+            if not recipe.fixed_layer then
+                fitting_mode = sim.dial(self, "layer").index
+            end
+            sim.fit(x, y, recipe.structure, fitting_mode)
+            sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = ev.at })
+        end)
+        return true
+    end)
+end
+
+return content

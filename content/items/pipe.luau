@@ -2,7 +2,7 @@
 -- five piping layers you have it set to.
 --
 -- Like cable, this is not a structure transition: there is nothing
--- standing on the tile that owns the answer, so it stays an on_use
+-- standing on the tile that owns the answer, so it stays an interaction.use
 -- hook. Also like cable, it needs the subfloor OPEN -- pipe lives under
 -- the plating, so you pry the tile up, run the line, and put the floor
 -- back. The engine refuses a finished floor; this hook says so first,
@@ -18,7 +18,7 @@
 -- joining it.
 local LAYERS = { 1, 2, 4, 8, 16 }
 
-return {
+local content = {
     id = "pipe",
     name = "pipe",
     sprite = "pipe",
@@ -38,48 +38,62 @@ return {
     -- for there (it rotates the fitting). We have no secondary-click
     -- channel, so the cycle moves to the in-hand key -- same cycle,
     -- same wrap, same balloon-alert-sized message.
-    on_use_self = function(ctx, self, user)
-        local dial = ctx.mode(self)
+}
+
+if sim ~= nil then
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
+        local self, user = ev.subject, ev.actor
+        local dial = sim.mode(self)
         local next_index = (dial.index + 1) % dial.count
-        ctx.set_mode(self, next_index)
-        ctx.system_msg(user, "Pipe layer set to " .. (next_index + 1) .. ".")
-    end,
-    on_use = function(ctx, self, user, x, y)
+        sim.set_mode(self, next_index)
+        sim.message.send({ recipient = user, message = "Pipe layer set to " .. (next_index + 1) .. "." })
+        return true
+    end)
+    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
+        local clicked, target = ev.claim, ev.claim
+        local _x, _y, _choice = x, y, choice
         -- Asked first, so every covered tile answers the same way and
         -- the reply is not a probe for what is already buried. Open
         -- deck, not "plating": the map decides per tile.
-        if not ctx.subfloor_exposed(x, y) then
-            ctx.system_msg(user, "The floor is in the way. Pry the tile up first.")
-            return
+        if not sim.subfloor_exposed(x, y) then
+            sim.message.send({ recipient = user, message = "The floor is in the way. Pry the tile up first." })
+            return true
         end
-        local mask = LAYERS[ctx.mode(self).index + 1]
-        if ctx.pipe_occupancy(x, y) % (mask * 2) >= mask then
-            ctx.system_msg(user, "An atmospherics component already occupies that pipe layer.")
-            return
+        local mask = LAYERS[sim.mode(self).index + 1]
+        if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
+            sim.message.send({ recipient = user, message = "An atmospherics component already occupies that pipe layer." })
+            return true
         end
-        if ctx.pipe(x, y) % (mask * 2) >= mask then
-            return "pass" -- a length already runs here on this layer
+        if sim.pipe(x, y) % (mask * 2) >= mask then
+            return { replaced = false } -- a length already runs here on this layer
         end
-        ctx.system_msg(user, "You start fitting a length of pipe...")
-        if not ctx.do_after(user, 1.0) then
-            ctx.system_msg(user, "You stop fitting the pipe.")
-            return
-        end
-        -- The same question again at the end: while you worked, another
-        -- engineer may have run the line through this very tile -- and
-        -- you may have turned the dial yourself.
-        mask = LAYERS[ctx.mode(self).index + 1]
-        if ctx.pipe_occupancy(x, y) % (mask * 2) >= mask then
-            ctx.system_msg(user, "An atmospherics component already occupies that pipe layer.")
-            return
-        end
-        if ctx.pipe(x, y) % (mask * 2) >= mask then
-            ctx.system_msg(user, "Someone already ran pipe through there.")
-            return
-        end
-        -- One exact item becomes one exact length. Native code derives the
-        -- layer again, preserves a pulled length's directional mask and
-        -- spends this stack only if the topology actually lands.
-        ctx.fasten_pipe(self, x, y, "ratchet", "You wrench the pipe into place.")
-    end,
-}
+        sim.message.send({ recipient = user, message = "You start fitting a length of pipe..." })
+        sim.spawn_task(user, function()
+            if sim.do_after(user, sim.ticks(1.0), {}) == "interrupted" then
+                sim.message.send({ recipient = user, message = "You stop fitting the pipe." })
+                return true
+            end
+            -- The same question again at the end: while you worked, another
+            -- engineer may have run the line through this very tile -- and
+            -- you may have turned the dial yourself.
+            mask = LAYERS[sim.mode(self).index + 1]
+            if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
+                sim.message.send({ recipient = user, message = "An atmospherics component already occupies that pipe layer." })
+                return true
+            end
+            if sim.pipe(x, y) % (mask * 2) >= mask then
+                sim.message.send({ recipient = user, message = "Someone already ran pipe through there." })
+                return true
+            end
+            -- One exact item becomes one exact length. Native code derives the
+            -- layer again, preserves a pulled length's directional mask and
+            -- spends this stack only if the topology actually lands.
+            sim.fasten_pipe(self, x, y, "ratchet", "You wrench the pipe into place.")
+        end)
+        return true
+    end)
+end
+
+return content

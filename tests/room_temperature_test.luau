@@ -591,7 +591,7 @@ assert(
 )
 
 -- The station knows where it is parked, and says so in the same shape
--- content reads it in (`ctx.environment`).
+-- content reads it in (`sim.environment`).
 local sky = t.environment()
 assert(sky.sink_k == 2.7, "the sink is the one that was set: " .. sky.sink_k)
 assert(sky.insolation == 2700, "and so is the sunlight: " .. sky.insolation)
