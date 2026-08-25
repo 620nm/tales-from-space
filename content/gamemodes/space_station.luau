@@ -154,9 +154,10 @@ if sim ~= nil then
             end
         end
         local summary = sim.msg("lunatic/tfs:round_quiet", {})
+        local success = false
         if assigned ~= nil then
             local objective = assigned.vars.round_assignment
-            local success = assigned.alive
+            success = assigned.alive
             if objective.kind == "hold" then
                 -- Objective ownership and end evaluation remain Mind-scoped:
                 -- code/modules/antagonists/_common/antag_datum.dm:6-24
@@ -180,6 +181,17 @@ if sim ~= nil then
             channel = round.channel,
             message = summary,
         })
+        -- The shift's outcome as data, for the ledger row native
+        -- finalization writes. Nothing reads it back into the round.
+        if assigned == nil then
+            return { outcome = "quiet" }
+        end
+        return {
+            outcome = "revealed",
+            name = assigned.name,
+            objective = assigned.vars.round_assignment.kind,
+            verdict = success and round.success or round.failure,
+        }
     end)
 end
 
