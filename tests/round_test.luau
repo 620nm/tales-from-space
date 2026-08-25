@@ -52,6 +52,22 @@ t.tick()
 assert(has(t.messages(left), "SUCCESS"), "the final reveal reaches the left session")
 assert(has(t.messages(right), "SUCCESS"), "the final reveal reaches the right session")
 
+-- A traitor whose body the pack stopped fails the objective, and the
+-- reveal still fires. `Mind.animate` is the fact
+-- `content/bodies/human.luau` set answering the `dead` line it declared,
+-- so the round outcome rides the pack's own verdict end to end.
+t.world(MAP, 41)
+local a = t.join()
+local b = t.join()
+t.run_ticks(610)
+local traitor = has(t.messages(a), "You are the traitor") and a or b
+t.set_health(traitor, { brute = 400 })
+assert(not t.body(traitor).animate, "the traitor is dead in the pack's terms")
+t.round_end_in(1)
+t.tick()
+assert(has(t.messages(a), "FAILURE") and has(t.messages(b), "FAILURE"),
+    "the reveal still fires, and it reports the objective failed")
+
 -- The same round seed and stable Mind creation order reproduce the draw.
 t.world(MAP, 41)
 local replay_left = t.join()
