@@ -37,7 +37,7 @@ local content = {
     -- `/obj/item/weldingtool` carries no OPENCONTAINER flag, and
     -- refuelling goes through `refill_from`), and a welder that
     -- breathed its contents into the room would be a welder that
-    -- emptied itself in a corridor. welding_fuel is Inert today, so
+    -- emptied itself in a corridor. welding_fuel is unmodeled today, so
     -- nothing would actually evaporate; the flag says what the object
     -- IS rather than waiting for the day the fuel gets a curve.
     sealed = true,

@@ -120,7 +120,10 @@ for _, toggle in ipairs(ui.toggles) do
     end
 end
 assert(buttons.sodium ~= nil, "sodium is on the shelf")
-assert(buttons.o2 ~= nil, "and so is the station's own oxygen")
+assert(buttons.chlorine ~= nil, "and so is chlorine, which needs a lid")
+assert(buttons.o2 == nil, "the permanent gases are not: they come off canisters (D19)")
+assert(buttons.n2 == nil, "neither of them")
+assert(buttons.hydrogen == nil, "nor hydrogen")
 assert(buttons.sodium.on == false, "a dispense button never latches")
 assert(
     buttons.sodium.on_text == buttons.sodium.off_text,
@@ -228,7 +231,7 @@ t.run_ticks(2)
 assert(#t.ledger_rows("minted") == before, "an empty dock dispenses nothing")
 
 -- ...and neither does a button this machine does not have. The shelf is
--- fifteen substances; the registry knows dozens.
+-- sixteen substances; the registry knows dozens.
 t.click(p, 2, 1, machine)
 t.tick()
 assert(t.hands(p).held == nil, "the beaker goes back in")
@@ -342,7 +345,7 @@ near(reading.temp_k, NOZZLE_K, 0.3, "at the nozzle's temperature")
 -- minted, so there is nothing to account for.
 local _ = t.messages(p)
 before = #t.ledger_rows("minted")
-t.ui_act(p, "toggle", '{"field":"dispense","option":"cl2"}')
+t.ui_act(p, "toggle", '{"field":"dispense","option":"chlorine"}')
 t.run_ticks(2)
 near(total(beaker) - 0.25, 0, 1e-3, "an open glass takes none of it")
 assert(#t.ledger_rows("minted") == before, "and nothing is on the record")
@@ -362,7 +365,7 @@ assert(
 -- What it does NEXT is the sweep's, not the nozzle's, and it is the
 -- most violent thing on this bench. A quarter mole of gas in 50 mL is
 -- a hundred and twenty atmospheres; chlorine's saturation line puts
--- it at eight (substances/cl2.luau), so most of that press has to
+-- it at eight (substances/chlorine.luau), so most of that press has to
 -- become liquid. Condensing is ADIABATIC -- `change_phase` moves
 -- moles and leaves `energy_j` alone, and the b offsets hand the latent
 -- heat to whatever is in the vessel (docs/MATTER.md 5). What is in the
@@ -372,18 +375,18 @@ assert(
 -- climbing exactly where the line catches up with the pressure it has
 -- built.
 -- ---------------------------------------------------------------
--- Chlorine's own numbers, off substances/cl2.luau, so the assertions
+-- Chlorine's own numbers, off substances/chlorine.luau, so the assertions
 -- below say the physics rather than a number somebody measured once.
-local CL2_L_VAP = 20410.0
-local CL2_BOIL_K = 239.1
-local CL2_CV = 33.9
+local CHLORINE_L_VAP = 20410.0
+local CHLORINE_BOIL_K = 239.1
+local CHLORINE_CV = 33.9
 
 -- The Clausius-Clapeyron line of record: one atmosphere at the
 -- 239.1 K boiling point, k = -L_vap/R (docs/MATTER.md 5, Appendix A of
 -- the milestone spec). About 8 atm at 300 K, and Appendix B's
 -- reference is 6.6 atm at 293 K.
-local function cl2_line_kpa(temp_k)
-    return 101.325 * math.exp((-CL2_L_VAP / 8.314) * (1.0 / temp_k - 1.0 / CL2_BOIL_K))
+local function chlorine_line_kpa(temp_k)
+    return 101.325 * math.exp((-CHLORINE_L_VAP / 8.314) * (1.0 / temp_k - 1.0 / CHLORINE_BOIL_K))
 end
 
 t.ui_act(p, "toggle", '{"field":"eject"}')
@@ -403,7 +406,7 @@ t.click(p, 2, 1, machine)
 t.tick()
 t.ui_act(p, "set", '{"field":"amount","value":0.25}')
 t.run_ticks(2)
-t.ui_act(p, "toggle", '{"field":"dispense","option":"cl2"}')
+t.ui_act(p, "toggle", '{"field":"dispense","option":"chlorine"}')
 -- The press lands in one pass; the sweep takes a few more to walk the
 -- superheat down onto the line, and a docked vessel is insulated from
 -- the deck (sim/holder/heat.rs) so nothing else is touching it.
@@ -411,18 +414,18 @@ t.run_seconds(20)
 
 local bottled = t.vessel(bottle)
 assert(bottled.sealed, "a bottle has a stopper in it")
-assert(bottled.contents.cl2 ~= nil, "and this time the press landed")
+assert(bottled.contents.chlorine ~= nil, "and this time the press landed")
 near(bottled.moles, 0.25, 1e-6, "the whole press went in this time")
-local condensed = bottled.contents.cl2.liquid or 0
+local condensed = bottled.contents.chlorine.liquid or 0
 assert(condensed > 0, "and most of it is standing in the bottle as LIQUID chlorine")
-assert((bottled.contents.cl2.gas or 0) > 0, "with the rest of it over the top")
+assert((bottled.contents.chlorine.gas or 0) > 0, "with the rest of it over the top")
 
 -- The closed form, and the reason a chemist should be careful with
 -- that button: every mole that condenses hands 20.4 kJ to a mixture
 -- whose whole heat capacity is 0.25 x 33.9 = 8.5 J/K.
 near(
     bottled.temp_k,
-    NOZZLE_K + condensed * CL2_L_VAP / (0.25 * CL2_CV),
+    NOZZLE_K + condensed * CHLORINE_L_VAP / (0.25 * CHLORINE_CV),
     1.0,
     "the latent heat of what condensed is where the temperature went"
 )
@@ -431,7 +434,7 @@ assert(bottled.temp_k > NOZZLE_K + 150.0, "which is a long way over the nozzle: 
 -- and the temperature are one statement, not two.
 near(
     bottled.pressure_kpa,
-    cl2_line_kpa(bottled.temp_k),
+    chlorine_line_kpa(bottled.temp_k),
     20.0,
     "the gauge is that temperature's own vapour pressure"
 )
@@ -464,7 +467,7 @@ near(
 )
 near(
     cooled.pressure_kpa,
-    cl2_line_kpa(cooled.temp_k),
+    chlorine_line_kpa(cooled.temp_k),
     5.0,
     "and the gauge came down the line with it"
 )
@@ -473,6 +476,6 @@ assert(
     "about eight atmospheres, not a hundred and fifty: " .. cooled.pressure_kpa
 )
 assert(
-    (cooled.contents.cl2.liquid or 0) > 0.9 * 0.25,
+    (cooled.contents.chlorine.liquid or 0) > 0.9 * 0.25,
     "and nine tenths of the press is liquid chlorine on the shelf"
 )

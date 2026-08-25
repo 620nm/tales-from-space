@@ -140,9 +140,13 @@ assert(ui.setpoints[1].field == "rate", "the one knob is the transfer rate")
 near(ui.setpoints[1].value, 200.0, 0.001, "at tg's MAX_TRANSFER_RATE")
 near(ui.setpoints[1].max, 200.0, 0.001, "which is also the top of the dial")
 
--- The roster: a field carrying a LIST, one toggle per gas the matter
--- registry defines, each naming its own option. Nothing selected out of
--- the box, which is tg's empty `filter_type`.
+-- The roster: a field carrying a LIST, one toggle per substance the
+-- matter registry gives a GAS PHASE to, each naming its own option.
+-- Nothing selected out of the box, which is tg's empty `filter_type`.
+-- Water and chlorine are on it because both stand in a pipe as gas
+-- whenever the run is hot or thin enough; only a reagent with no
+-- modelled gas phase at all is left off, because its button could
+-- never divert anything.
 local roster = {}
 for _, sw in ipairs(ui.toggles) do
     if sw.field == "filter" then
@@ -152,7 +156,8 @@ end
 assert(roster.o2 == false, "oxygen is offered, and starts unselected")
 assert(roster.n2 == false, "so is nitrogen")
 assert(roster.plasma == false, "and every other gas the registry knows")
-assert(roster.water == nil, "water is not a gas, so it has no button")
+assert(roster.water == false, "water has a gas phase, so it has a button")
+assert(roster.salt == nil, "and salt has none, so it does not")
 
 -- ---------------------------------------------------------------
 -- Switch it on and set it to divert oxygen. Two clicks, both through

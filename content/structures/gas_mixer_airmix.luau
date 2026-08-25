@@ -65,9 +65,10 @@ return {
     atmos = {
         device = "mixer",
         positions = { "off", "running" },
-        -- tg's ONE_ATMOSPHERE default and its MAX_OUTPUT_PRESSURE
-        -- ceiling (mixer.dm:13, 42-45).
-        target_kpa = 101.325,
+        -- tg's MAX_OUTPUT_PRESSURE ceiling (mixer.dm:42-45). The dial
+        -- itself is set at the bottom of this block, where the reason
+        -- for the number is; tg's ONE_ATMOSPHERE default belongs to the
+        -- plain mixer a player builds, not to this one.
         max_kpa = 4500.0,
         -- tg's `N2STANDARD`: 79% out of the back intake, 21% out of
         -- the side, which is the atmosphere the station breathes and

@@ -7,6 +7,8 @@ local content = {
     molar_mass = 342.3,
     cv = 120.0,
     phase = { unmodeled = "solid" },
+    -- Real sucrose, 1.59 g/mL.
+    density = { solid = 1.59 },
     metabolism_rate = 0.004,
     -- What it looks like through glass (tg: food_reagents.dm:313 (COLOR_WHITE)).
     color = "#FFFFFF",

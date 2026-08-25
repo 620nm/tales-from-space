@@ -12,31 +12,31 @@
 -- interesting part. A heater ramps, so a beaker of oil cannot get from
 -- room temperature to 960 K without crossing the window on the way up
 -- and turning into ash in the middle of it. The second beaker
--- therefore gets the LAST of oil's three reactants pressed in while the
+-- therefore gets the LAST of oil's two reactants pressed in while the
 -- vessel is already too hot: the oil is made ABOVE the ash window's
 -- ceiling and stays oil, which is a thing a chemist can actually do,
 -- and the only honest way to ask "what happens at 960 K" of a rule that
 -- would otherwise have fired at 500.
 --
--- C1: this spec used to stage the same three answers on nitrous oxide,
--- whose recipe wants a mole of nitrogen and two of oxygen. Those are
+-- This spec used to stage the same three answers on nitrous oxide,
+-- whose recipe wanted a mole of nitrogen and two of oxygen. Those are
 -- permanent gases: a source deposits them as gas, and a gas pressed
 -- over an open beaker is refused rather than obeyed (D19). They come
 -- back to chemistry from a canister into a sealed vessel, and the N2O
--- recipe is rewritten around that share.
+-- recipe is written around that share.
 local PRESS = 0.75
--- A twentieth of a press of each of oil's three reactants, and the
+-- A twentieth of a press of each of oil's two reactants, and the
 -- amount is GEOMETRY talking (docs/CHEMISTRY.md 5, D16). Oil is
--- 170 g/mol on the shelf's default 1 g/mL and three come out for one
--- of each leg, so a whole extent swells the contents by 471 mL
--- against the 39 the legs occupied: a 50 mL beaker has room for about
--- a tenth of an extent, and the engine caps a reaction by the free
--- shell volume rather than growing the glass. A twentieth of a press
--- of each fits with two thirds to spare.
+-- 170 g/mol at 0.9 g/mL and TWO come out for one of each leg, so a
+-- whole extent swells the contents by 347 mL against the 31 the legs
+-- occupied: a 50 mL beaker has room for about a seventh of an extent,
+-- and the engine caps a reaction by the free shell volume rather than
+-- growing the glass. A twentieth of a press of each fits with two
+-- thirds to spare.
 local LEG = 0.05
--- ...and three of oil come out of it, which is what the ash window is
+-- ...and two of oil come out of it, which is what the ash window is
 -- then asked about.
-local MADE = 3.0 * LEG
+local MADE = 2.0 * LEG
 
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
@@ -138,21 +138,21 @@ local function dial(kelvin)
     t.run_ticks(2)
 end
 
--- Oil first: one of welding fuel, one of carbon and one of hydrogen
--- for three of oil (recipes/others.dm:578-581), which the shelf makes
--- in one cold vessel with three presses and no help at all. The carbon
--- arrives as a POWDER, because that is what carbon is at the nozzle's
--- 300 K and a source names no phase (D11).
+-- Oil first: one of welding fuel and one of carbon for two of oil
+-- (recipes/others.dm:579-582 without its hydrogen leg -- hydrogen is
+-- H2 here and no source hands a permanent gas to an open beaker), which
+-- the shelf makes in one cold vessel with two presses and no help at
+-- all. The carbon arrives as a POWDER, because that is what carbon is
+-- at the nozzle's 300 K and a source names no phase (D11).
 local function brew_oil(beaker)
     dock(dispenser, 1, 1)
     panel(dispenser, 1, 1)
     dial_to(LEG)
     press("welding_fuel")
     press("carbon")
-    press("hydrogen")
     dial_to(PRESS)
     t.run_seconds(30)
-    near(amount(beaker, "oil"), MADE, 1e-6, "one of each made three of oil")
+    near(amount(beaker, "oil"), MADE, 1e-6, "one of each made two of oil")
     near(amount(beaker, "carbon"), 0.0, 1e-6, "and nothing is left over")
 end
 
@@ -193,17 +193,16 @@ t.tick()
 -- ---------------------------------------------------------------
 -- THREE: ABOVE IT, NOTHING AGAIN.
 --
--- The second beaker is brought to 960 K holding only two of oil's
--- three, and the hydrogen is pressed in hot. THE BALLAST IS THE
--- STAGING: the two legs go in at a full press each rather than a
--- twentieth, because the third leg arrives at the nozzle's 300 K and
--- something has to shrug it off. A notch of hydrogen against 0.75 mol
--- of welding fuel and carbon is ten kelvin; against a twentieth of a
--- press each it would be a hundred and thirty, and the beaker would
--- fall back through the window it is supposed to be over. The
--- hydrogen is still the limiting leg, so the recipe makes three
--- notches of oil and the excess ballast is only there for its heat
--- capacity.
+-- The second beaker is brought to 960 K holding only one of oil's
+-- two, and the carbon is pressed in hot. THE BALLAST IS THE STAGING:
+-- the welding fuel goes in at a full press rather than a twentieth,
+-- because the second leg arrives at the nozzle's 300 K and something
+-- has to shrug it off. A notch of carbon against 0.75 mol of welding
+-- fuel is four kelvin; against a twentieth of a press it would be
+-- eighty, and the beaker would fall back through the window it is
+-- supposed to be over. The carbon is still the limiting leg, so the
+-- recipe makes two notches of oil and the excess ballast is only there
+-- for its heat capacity.
 -- ---------------------------------------------------------------
 -- The dial's smallest step, off machines/chem_dispenser.luau: one tg
 -- unit at 1 u = 0.025 mol. A tenth of a leg is under the notch, so
@@ -214,7 +213,6 @@ dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
 dial_to(PRESS)
 press("welding_fuel")
-press("carbon")
 
 eject()
 dock(heater, 3, 1)
@@ -228,7 +226,7 @@ eject()
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
 dial_to(NOTCH)
-press("hydrogen")
+press("carbon")
 dial_to(PRESS)
 assert(t.holder_k(hot) > 920.0, "and the mixture is still over the window: " .. t.holder_k(hot))
 
@@ -239,15 +237,15 @@ assert(t.holder_k(hot) > 920.0, "and the mixture is still over the window: " .. 
 -- thousandth of a batch takes as long again as the first nine tenths,
 -- which is why the slack below is a thousandth rather than 1e-6.
 t.run_seconds(320)
-near(amount(hot, "oil"), 3.0 * NOTCH, 1e-3, "the notch of hydrogen is what the recipe got")
+near(amount(hot, "oil"), 2.0 * NOTCH, 1e-3, "the notch of carbon is what the recipe got")
 near(amount(hot, "ash"), 0.0, 1e-12, "over the window is as shut as under it")
 
 -- ...and the proof that it was the TEMPERATURE and not the mixture:
 -- put the same beaker back on the dial at 700 and it converts, coming
--- down into the window from above -- and the last of the hydrogen
--- with it, so the ash is the whole three notches the notch of
--- hydrogen was ever going to buy. Four minutes rather than two and a
--- half: the oil here is three notches in forty millilitres of ballast
+-- down into the window from above -- and the last of the carbon
+-- with it, so the ash is the whole two notches the notch of carbon
+-- was ever going to buy. Four minutes rather than two and a
+-- half: the oil here is two notches in twenty millilitres of ballast
 -- rather than a neat batch, and a decay in a dilute solution has the
 -- longer tail.
 eject()
@@ -255,5 +253,5 @@ dock(heater, 3, 1)
 panel(heater, 3, 1)
 dial(700)
 t.run_seconds(240)
-near(amount(hot, "ash"), 3.0 * NOTCH, 1e-6, "coming down into the window works as well as up")
+near(amount(hot, "ash"), 2.0 * NOTCH, 1e-6, "coming down into the window works as well as up")
 near(amount(hot, "oil"), 0.0, 1e-6, "and it spends the oil it would not touch at 960")

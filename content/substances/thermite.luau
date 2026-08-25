@@ -13,6 +13,9 @@ return {
     molar_mass = 90.0,
     cv = 100.0,
     phase = { unmodeled = "solid" },
+    -- 4.0 g/mL: between aluminium (2.70) and iron oxide (5.24), which
+    -- is what it is a mixture of. A stated convention (D2).
+    density = { solid = 4.0 },
     -- What it looks like through glass (tg: pyrotechnic_reagents.dm:7).
     color = "#550000",
 }

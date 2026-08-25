@@ -1,33 +1,40 @@
--- The bench, end to end: press two buttons, watch salt appear and the
--- beaker get hot, pour half of it into another beaker, add water and
--- watch the salt dissolve.
+-- The bench, end to end: press two buttons into a BOTTLE, watch salt
+-- appear, pour it into a beaker, add water and watch brine be exactly
+-- what brine is -- salt in water, in one glass, with no third name.
 --
 -- Nothing here is set up. Every mole in this spec came out of the
 -- dispenser through a button a crewman pressed, and every reaction ran
 -- because the substances were in the same vessel at the same
--- temperature. That is the whole claim of docs/CHEMISTRY.md: there is no
--- chemistry system, there is the one matter system reached from more
--- places.
+-- temperature. That is the whole claim of docs/CHEMISTRY.md: there is
+-- no chemistry system, there is the one matter system reached from
+-- more places.
 --
--- THE EXOTHERM IS WATCHED IN THE DOCK, and deliberately. A beaker
--- standing on the deck trades heat with the room every atmos pass
--- (sim/holder/heat.rs, Effort B's deck coupling), so the closed form
--- below is only closed for a vessel nobody is letting cool. In a
--- machine it is exact; in your hand it would be exact too; on the floor
--- it is a race with the room. That is a feature, and it is why the
--- number is asserted where it is.
+-- WHY A BOTTLE AND NOT A BEAKER, which is the lesson this spec now
+-- teaches first. Salt is 2 Na + Cl2 -> 2 NaCl, and there is one id per
+-- molecule: `chlorine` IS Cl2, which boils at 239 K and is therefore a
+-- gas at every temperature this station has. A gas pressed over an
+-- open beaker is refused, because what landed would leave through the
+-- same mouth before the chemist looked up (D19). Pressed into a vessel
+-- with a stopper in it, the identical press lands and condenses under
+-- its own vapour pressure -- and LIQUID chlorine is the reactant the
+-- recipe names.
+--
+-- So the order of gestures is the physics: chlorine into the bottle,
+-- the bottle onto the deck to let the condensation heat out, and only
+-- then the sodium. Pressing them the other way round works too and is
+-- less instructive, because the exotherm and the latent heat arrive
+-- together and nothing can be read off either.
 local NOZZLE_K = 300.0
--- Half the batch the bench used to run, and GEOMETRY is why. tg's salt
--- recipe makes two moles of a 58 g/mol solid out of one mole each of a
--- 23 and a 35 — mass the ratios do not conserve, because a ported
--- ratio is tg's units read as moles (docs/CHEMISTRY.md 4) — so an
--- extent swells the contents by 58 mL. A reaction is capped by the
--- free shell volume and no vessel is ever grown to take the rest
--- (docs/MATTER.md 5), so a full press of each would fill 50 mL of
--- glass half way through the recipe and stop. These are the numbers
--- that fit, in the same 3:2 proportion.
-local PRESS = 0.375
-local BRIM = 0.625
+-- What fits, and what the recipe wants. Chlorine is the limit at 0.1
+-- mol -- half a press -- and the sodium goes in at two and a half
+-- times that so there is some left at the end for the clamp to be
+-- visible in. Geometry is not the constraint here for once: two moles
+-- of salt at 2.17 g/mL are 54 mL against the 96 that two moles of
+-- sodium and one of liquid chlorine occupied, so an extent SHRINKS
+-- the contents -- and only a swelling reaction is ever capped by the
+-- free shell volume (docs/MATTER.md 5, D16).
+local CHLORINE = 0.1
+local SODIUM = 0.25
 
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
@@ -64,7 +71,7 @@ t.world([==[(
         "#####",
     ],
     spawns: [(2, 1)],
-    items: [(1, 2, "beaker"), (3, 2, "beaker")],
+    items: [(1, 2, "bottle"), (3, 2, "beaker")],
     machines: [(2, 2, "chem_dispenser")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
@@ -76,7 +83,7 @@ local p = t.join()
 t.tick()
 
 local machine = t.target_at(2, 2)
-local a = t.target_at(1, 2, "beaker")
+local jar = t.target_at(1, 2, "bottle")
 local b = t.target_at(3, 2, "beaker")
 
 local function press(key)
@@ -85,7 +92,7 @@ local function press(key)
 end
 
 -- Turn the dial before a press: capacity is geometry now
--- (docs/MATTER.md 5), so a 50 mL beaker takes far more of these than
+-- (docs/MATTER.md 5), so a 50 mL vessel takes far more of these than
 -- the recipe wants, and the amount that goes in is the chemist's to
 -- choose rather than the glass's to impose.
 local function dial_to(moles)
@@ -98,100 +105,164 @@ local function open()
     t.tick()
 end
 
+local function eject()
+    t.ui_act(p, "toggle", '{"field":"eject"}')
+    t.run_ticks(2)
+end
+
+-- The crewman stands on (2, 1) and everything they put down lands
+-- there, so picking a vessel back up off the deck is a click on their
+-- own feet.
+local function pick_up(handle)
+    t.click(p, 2, 1, handle)
+    t.tick()
+end
+
 -- ---------------------------------------------------------------
--- ONE: TWO BUTTONS AND A BEAKER.
+-- ONE: HALF A PRESS OF CHLORINE, INTO SOMETHING WITH A LID.
 --
--- Sodium fills it three fifths of the way; chlorine trims against what
--- is left. tg's salt recipe is 1 sodium + 1 chlorine -> 2 salt
--- (others.dm:44-48), so the chlorine is the limit and a quarter of a
--- mole of sodium is still there at the end.
+-- The press lands as gas -- 0.1 mol in fifty millilitres is fifty
+-- atmospheres -- and the bottle's own sweep condenses it back down to
+-- the eight its saturation line allows at this temperature. Condensing
+-- is ADIABATIC (`change_phase` moves moles and leaves `energy_j`
+-- alone), so the 20.4 kJ/mol of latent heat lands in a mixture whose
+-- whole capacity is a few joules per kelvin and the bottle gets HOT.
 -- ---------------------------------------------------------------
-t.click(p, 1, 2, a)
+t.click(p, 1, 2, jar)
 t.tick()
+assert(t.hands(p).held == "bottle", "the bottle is in hand")
 t.click(p, 2, 2, machine)
 t.tick()
-assert(t.hands(p).held == nil, "the beaker is in the machine")
+assert(t.hands(p).held == nil, "and it goes into the dock")
 
 open()
--- The dial comes up at the machine's own default; this bench works in
--- smaller amounts than that (see the geometry note at the top).
-dial_to(PRESS)
-press("sodium")
-near(amount(a, "sodium"), PRESS, 1e-9, "one press of sodium")
-dial_to(BRIM - PRESS)
+dial_to(CHLORINE)
 press("chlorine")
-near(amount(a, "chlorine"), BRIM - PRESS, 1e-9, "and half a press of chlorine")
-dial_to(PRESS)
-near(t.holder_k(a), NOZZLE_K, 0.01, "both at the nozzle's 300 K")
+t.run_seconds(20)
+near(amount(jar, "chlorine"), CHLORINE, 1e-9, "the whole press landed, because there is a lid")
+local charged = t.vessel(jar)
+assert((charged.contents.chlorine.liquid or 0) > 0.0, "most of it standing as liquid")
+assert(charged.temp_k > NOZZLE_K + 80.0,
+    "and the latent heat is where the temperature went: " .. charged.temp_k)
 
--- The exotherm, closed form. `energy` on a rule is real joules per
--- extent (docs/CHEMISTRY.md, "the energy rule"): tg's thermic_constant
--- 50 times two moles of product times water's 75.3 J/mol/K = 7530.
+-- ...so put it on the deck and let the room have it back. A container
+-- LYING ON THE FLOOR trades heat with its tile every atmos pass
+-- (sim/holder/heat.rs); a docked or carried one does not, which is
+-- exactly why the next step needs this one.
+eject()
+t.drop(p)
+t.run_seconds(600)
+local cooled = t.vessel(jar)
+near(cooled.temp_k, 303.0, 5.0, "the deck took the heat back: " .. cooled.temp_k)
+assert((cooled.contents.chlorine.liquid or 0) > 0.8 * CHLORINE,
+    "and most of it is liquid now: " .. tostring(cooled.contents.chlorine.liquid))
+-- The gauge and the temperature are ONE statement: 892 kPa is
+-- chlorine's own vapour pressure at 303 K, off the Clausius-Clapeyron
+-- line anchored at its 239.1 K boiling point (docs/MATTER.md 5).
+near(cooled.pressure_kpa,
+    101.325 * math.exp((-20410.0 / 8.314) * (1.0 / cooled.temp_k - 1.0 / 239.1)),
+    60.0, "and the gauge is that temperature's own vapour pressure")
+
+-- ---------------------------------------------------------------
+-- TWO: AND THEN THE SODIUM -- AND THE RUN STOPS WHERE THE LIQUID DOES.
 --
--- One step of the rule leaves the beaker at T + extent*Q/C_after, and
--- the capacity climbs by 47.8 J/K per extent as salt (50.5) replaces
--- its halves (28.2 + 25.0). Summed over a run that ends at X = 0.25 of
--- extent, that is the integral
+-- Two of sodium for one of chlorine (reactions/salt.luau, tg's
+-- others.dm:46-50 read as molecules), so the chlorine is the clamp and
+-- the spare sodium is there to be visible at the end.
 --
---   dT = (Q / 47.8) * ln(1 + 47.8 * X / C_start),  C_start = 16.825
---      = 157.5 * ln(1.7103) = 84.5 K
+-- WHAT ACTUALLY ENDS THE RUN is the better lesson, and it is one no
+-- reagent economy could have taught. The recipe names
+-- `chlorine:liquid`. The reaction is exothermic -- 7530 J per extent,
+-- against a mixture whose whole heat capacity is about ten joules per
+-- kelvin -- so the bottle warms itself as it works, and a warmer bottle
+-- holds more of its chlorine as VAPOUR. The run therefore does not
+-- stop when the chlorine is gone; it stops when the LIQUID is gone,
+-- with a saturated headspace of chlorine still in the bottle that no
+-- rule naming the liquid can reach. A tenth of a mole goes in and
+-- about a sixth of it is still there at the end, standing over the
+-- salt as gas at exactly its own vapour pressure.
 --
--- The rate reads concentration now (docs/CHEMISTRY.md 5), so the steps
--- are large at the start and vanish at the end; a right-endpoint sum
--- of a falling integrand undershoots it, so 84.5 K is a CEILING the
--- run approaches from below and the beaker lands at 79.6. Both are
--- asserted: the bound is the arithmetic, the number is the engine's.
--- What is PINNED is the convention — a rule's `energy` is joules per
--- extent, not a temperature delta and not a per-mole figure, either of
--- which would miss by a factor of tens.
+-- The bottle stays on the DECK for this, so the heat has somewhere to
+-- go -- and the deck is not a heat sink either: this room has a
+-- generator in it, so what the exotherm gives up does not come back.
+-- ---------------------------------------------------------------
+pick_up(jar)
+t.click(p, 2, 2, machine)
+t.tick()
+open()
+dial_to(SODIUM)
+press("sodium")
+eject()
+t.drop(p)
+t.tick()
+near(amount(jar, "sodium"), SODIUM, 1e-9, "a press of sodium")
+
 -- Five minutes, because the last thousandth of a decay is slower than
--- the first nine tenths; the claim is still that it RAN OUT.
+-- the first nine tenths (docs/CHEMISTRY.md 5); the claim is that it
+-- reached its own END, not that it converted everything.
 t.run_seconds(300)
-near(amount(a, "salt"), 0.5, 1e-6, "a quarter mole of chlorine made half a mole of salt")
-near(amount(a, "chlorine"), 0.0, 1e-6, "and spent itself doing it")
-near(amount(a, "sodium"), 0.125, 1e-6, "the sodium that had no partner is still there")
-near(total(a), BRIM, 1e-6, "five eighths of a mole in, five eighths out")
-assert(
-    t.holder_k(a) < NOZZLE_K + 84.5,
-    "the continuum limit is a CEILING: " .. t.holder_k(a)
-)
-near(t.holder_k(a), NOZZLE_K + 79.59, 0.05, "the exotherm is the energy rule, in kelvin")
+local spent = CHLORINE - amount(jar, "chlorine")
+local done = t.vessel(jar)
 
--- ...and then it stops, because there is nothing left to react.
-local settled = t.holder_k(a)
+-- The stoichiometry, exact and whatever the residue turns out to be:
+-- two of salt for every one of chlorine that was actually spent.
+near(amount(jar, "salt"), 2.0 * spent, 1e-9, "two of salt for one of chlorine")
+near(amount(jar, "sodium"), SODIUM - 2.0 * spent, 1e-9, "two of sodium go with it")
+assert(spent > 0.8 * CHLORINE, "most of the press was spent: " .. spent)
+-- Moles are not conserved and never were: 2 Na + Cl2 -> 2 NaCl is
+-- three in for two out, so every extent takes one mole out of the
+-- bottle. Mass is what conserves, and the ledger is what audits.
+near(total(jar), SODIUM + CHLORINE - spent, 1e-9,
+    "three moles in make two out, exactly and no more")
+
+-- ...and what is LEFT is the whole explanation: not a mole of it is
+-- liquid any more, so there is nothing for the rule to read.
+assert(done.contents.chlorine.liquid == nil,
+    "the run ended because the liquid did, not because the chlorine did")
+assert((done.contents.chlorine.gas or 0) > 0.0, "there is chlorine in the bottle still")
+assert(done.temp_k > 300.0, "which is standing over a bottle the exotherm warmed: " .. done.temp_k)
+-- The gauge and the temperature are ONE statement again: a saturated
+-- headspace reads its own vapour pressure and nothing else.
+near(done.pressure_kpa,
+    101.325 * math.exp((-20410.0 / 8.314) * (1.0 / done.temp_k - 1.0 / 239.1)),
+    60.0, "and the gauge is that temperature's own vapour pressure")
+
+-- ...and then it stays there, because nothing in the bottle can move.
+local settled = amount(jar, "salt")
 t.run_seconds(30)
-near(t.holder_k(a), settled, 1e-6, "a finished reaction releases nothing more")
+near(amount(jar, "salt"), settled, 1e-9, "a stalled reaction makes nothing more")
 
 -- ---------------------------------------------------------------
--- TWO: A POUR MOVES THE HEAT WITH THE MATTER.
+-- THREE: A POUR MOVES THE HEAT WITH THE MATTER.
 --
--- A fifth of the beaker into the empty one. The mix that arrives is
--- the mix that left, in the same ratio (tg's `trans_to`), and both
--- vessels read the same temperature afterwards -- which is what
--- "moles and their energy travel together" means when you can measure
--- it.
+-- The bottle's gesture is tg's cup default of 10 u
+-- (items/bottle.luau), which is more than it is holding, so the whole
+-- of the condensed phases goes across. The mix that arrives is the mix
+-- that left, and both vessels read the same temperature afterwards --
+-- which is what "moles and their energy travel together" means when
+-- you can measure it.
 -- ---------------------------------------------------------------
-t.ui_act(p, "toggle", '{"field":"eject"}')
-t.run_ticks(2)
-assert(t.hands(p).held == "beaker", "it comes back out")
-
+pick_up(jar)
+local warmth = t.holder_k(jar)
 t.click(p, 3, 2, b)
 t.tick()
-near(total(b), 0.25, 1e-9, "one gesture pours a quarter of a mole")
--- 1e-6 rather than 1e-9: a rate that reads concentration approaches
--- the end of a recipe exponentially, so what poured is a proportion of
--- a batch that is 0.5 salt to within a millionth, not to within a
--- billionth (docs/CHEMISTRY.md 5).
-near(amount(b, "salt"), 0.25 * (0.5 / BRIM), 1e-6, "salt went in proportion")
-near(amount(b, "sodium"), 0.25 * (0.125 / BRIM), 1e-6, "and so did the leftover sodium")
-near(t.holder_k(b), settled, 0.01, "the heat travelled with the matter")
+near(amount(b, "salt"), settled, 1e-9, "the salt went across")
+near(amount(b, "sodium"), SODIUM - settled, 1e-9, "and so did the leftover sodium")
+near(t.holder_k(b), warmth, 1.0, "the heat travelled with the matter")
 
 -- ---------------------------------------------------------------
--- THREE: AND SALT IN WATER IS SALT WATER.
+-- FOUR: AND SALT IN WATER IS SALT IN WATER.
 --
--- tg carries brine as its own reagent (others.dm:909-912), so the
--- second recipe on this bench needs no heat and no equipment at all --
--- just the water button and the beaker that already has salt in it.
+-- tg carries brine as its own reagent -- `/datum/reagent/water/salt`,
+-- made by a recipe that turns one of water and one of salt into two of
+-- it (others.dm:909-912) -- and that recipe is gone, along with the
+-- substance it made. One id per molecule: dissolving is not a
+-- reaction, a solution is not a compound, and there is nothing here for
+-- a third id to name. What a chemist gets is a glass holding both, in
+-- the amounts they put in, which is what brine IS.
+--
+-- The assertion is the negative one, and it is the D1 dividend said
+-- out loud: press water onto salt and NOTHING converts.
 -- ---------------------------------------------------------------
 t.drop(p)
 t.tick()
@@ -200,16 +271,23 @@ t.tick()
 t.click(p, 2, 2, machine)
 t.tick()
 open()
+dial_to(0.75)
 press("water")
+eject()
+t.drop(p)
+t.tick()
 
 local salt_before = amount(b, "salt")
 assert(salt_before > 0.0, "there is salt to dissolve")
 t.run_seconds(60)
-near(amount(b, "salt"), 0.0, 1e-6, "the salt went into solution")
-near(amount(b, "saltwater"), salt_before * 2.0, 1e-6, "two of brine for each of salt")
--- Slacker than the two above, because water is the one reagent here
+near(amount(b, "salt"), salt_before, 1e-9, "the salt is still salt")
+-- Slacker than the salt, because water is the one thing in the glass
 -- with a phase curve: an open beaker in a dry room loses a trace of it
--- to the air every pass (Effort G's headspace), and over a minute that
--- is a few thousandths of a mole. Salt and brine are Inert and cannot
--- evaporate, so they stay pinned to 1e-6.
-near(amount(b, "water"), PRESS - salt_before, 5e-3, "and it cost a mole of water each")
+-- to the air every pass, and over a minute that is a few thousandths
+-- of a mole.
+near(amount(b, "water"), 0.75, 5e-3, "and the water is still water")
+local kinds = 0
+for _ in pairs(t.contents(b)) do
+    kinds = kinds + 1
+end
+assert(kinds == 3, "salt, the spare sodium and water -- and no fourth id for the brine: " .. kinds)

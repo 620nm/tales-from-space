@@ -62,8 +62,8 @@ return {
             secs = 2.0,
             gone = true,
             yields = { gas_filter_fitting = 1 },
-            start = "You start unbolting the nitrogen filter.",
-            done = "The nitrogen filter comes up off the pipe.",
+            start = "You start unbolting the carbon dioxide filter.",
+            done = "The carbon dioxide filter comes up off the pipe.",
         },
     },
 }
