@@ -4,4 +4,4 @@ mods = ["content"]
 
 [[approvals]]
 mod_id = "lunatic/tfs"
-permissions = ["replace_handlers", "prototype_handlers"]
+permissions = ["replace_handlers", "prototype_handlers", "global_handlers"]
