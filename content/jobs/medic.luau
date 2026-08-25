@@ -15,8 +15,14 @@ return {
         { slot = "id", item = "id_medical" },
         { slot = "mask", item = "breath_mask" },
         { slot = "belt", item = "surgical_kit" },
+        -- The syringe rides at the END for the same reason the bottle
+        -- does: a pack row is a row a player clicks, and issuing
+        -- everybody a new first item would move every other one out
+        -- from under them. tg's medical kit carries one too
+        -- (`/obj/item/storage/backpack/duffelbag/med`, and the syringe
+        -- is what makes the libital beaker a DOSE rather than a drink).
         { slot = "back", item = "backpack", contents = {
-            "beaker_libital", "emergency_oxygen", "headset",
+            "beaker_libital", "emergency_oxygen", "headset", "syringe",
         } },
     },
 }

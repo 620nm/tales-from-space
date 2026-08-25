@@ -329,6 +329,11 @@
         ("burner", Dmi("@chemical", "burner", 0)),
         ("burner_lit", DmiAnim("@chemical", "burner-on", 0)),
         ("chem_dispenser", Dmi("@chemical", "dispenser", 0)),
+        // The extruder that ends the bench: tg's ChemMaster wears
+        // `chemmaster` off the same sheet (chem_master.dm:6-8). Its
+        // busy and broken overlays are not baked, because this machine
+        // has no window to be busy in front of.
+        ("chem_packager", Dmi("@chemical", "chemmaster", 0)),
         ("ghost", Dmi("@ghost", "ghost_base", 0)),
         ("solar", Dmi("@solar", "solar_panel_glass", 0)),
         // The fan, by what it is actually doing. Blowing and siphoning
