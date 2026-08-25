@@ -12,13 +12,9 @@
 -- and this bench has no dial on a vessel yet, so the file takes the
 -- useful end of tg's list and the dial is deferred.
 --
--- The three gestures are the beaker's, because they are the vessel's
--- rather than the beaker's: your own tile is a swig, another vessel
--- within reach is a pour, the deck is a spill. (Content files cannot
--- `require` one another, so each one spells them out; see card.luau on
--- the same tradeoff.)
-local U = 0.025
-
+-- The gestures are the vessel's rather than this file's
+-- (`lib/vessel.luau`); only the doses and the sentences are a
+-- dropper's. Liquid only: a pipette does not pick up a crystal.
 local content = {
     id = "dropper",
     name = "dropper",
@@ -40,71 +36,14 @@ local content = {
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
-        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
-        local clicked, target = ev.claim, ev.claim
-        local _x, _y, _choice = x, y, choice
-        -- What is in it, in moles: the reading's own total, which is
-        -- the same sum over the same mixture (sim/owner.rs, `reading`).
-        -- `nil` for a thing with no inside at all.
-        local function total(obj)
-            local read = sim.matter_read(obj)
-            return read and read.moles
-        end
-
-        if clicked ~= nil and clicked.entity ~= nil then
-            if total(clicked.entity) == nil then
-                return { replaced = false }
-            end
-            if (total(self) or 0) < 0.001 then
-                sim.message.send({ recipient = user, message = "The dropper is empty." })
-                return true
-            end
-            sim.matter.transfer({
-                from = self,
-                to = clicked.entity,
-                amount = 1 * U,
-                phases = { "liquid" },
-            })
-            sim.message.send({ recipient = user, message = "You squeeze a drop out of the dropper." })
-            return true
-        end
-
-        local px, py = user.tile.x, user.tile.y
-        if x == px and y == py then
-            if (total(self) or 0) < 0.001 then
-                sim.message.send({ recipient = user, message = "The dropper is empty." })
-                return true
-            end
-            sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = ev.at })
-            sim.matter.transfer({
-                from = self,
-                to = user,
-                amount = 1 * U,
-                phases = { "liquid" },
-            })
-            sim.message.send({ recipient = user, message = "You squeeze the dropper onto your tongue." })
-            return true
-        end
-
-        local turf = sim.turf(x, y)
-        if turf ~= "floor" and turf ~= "plating" then
-            return { replaced = false }
-        end
-        if (total(self) or 0) < 0.001 then
-            sim.message.send({ recipient = user, message = "The dropper is empty." })
-            return true
-        end
-        sim.matter.transfer({
-            from = self,
-            to = ev.at.matter,
-            amount = "all",
-            phases = { "liquid" },
-        })
-        sim.message.send({ recipient = user, message = "You squeeze the dropper out onto the deck." })
-        return true
-    end)
+    vessel.attach({
+        id = content.id,
+        noun = "dropper",
+        phases = { "liquid" },
+        pour = { units = 1, message = "You squeeze a drop out of the dropper." },
+        sip = { units = 1, message = "You squeeze the dropper onto your tongue." },
+        spill = { message = "You squeeze the dropper out onto the deck." },
+    })
 end
 
 return content

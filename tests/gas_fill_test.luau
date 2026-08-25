@@ -64,7 +64,10 @@ t.world([==[(
         "#####",
     ],
     spawns: [(2, 1)],
-    items: [(1, 1, "bottle"), (3, 1, "beaker")],
+    items: [
+        (1, 1, "bottle"),
+        (3, 1, "beaker"), (3, 1, "beaker_libital"), (3, 1, "dropper"),
+    ],
     structures: [
         (2, 2, "canister"),
     ],
@@ -125,6 +128,29 @@ t.run_ticks(2)
 near(gas(glass, "o2"), 0.0, 1e-12, "an open beaker takes none of it")
 assert(said(p, "That would only escape: seal a vessel first."),
     "and it is refused in the dispenser's own words")
+
+-- ...AND EVERY OTHER OPEN VESSEL, which is why the refusal is one
+-- implementation. It used to be pasted into whichever file thought of
+-- it: the beaker and the tube had it, the libital beaker and the
+-- dropper never did, and a dropper held to a canister silently drank a
+-- mole of oxygen it could not keep. A vessel's gestures come out of
+-- lib/vessel.luau now, so this is the same sentence for all of them by
+-- construction rather than by proofreading.
+for _, open in ipairs({ "beaker_libital", "dropper" }) do
+    t.drop(p)
+    t.tick()
+    local glassware = t.target_at(3, 1, open)
+    assert(glassware ~= nil, open .. " is on the deck")
+    t.click(p, 3, 1, glassware)
+    t.tick()
+    assert(t.hands(p).held == open, open .. " is in hand")
+    _ = t.messages(p)
+    t.click(p, 2, 2, can)
+    t.run_ticks(2)
+    near(gas(glassware, "o2"), 0.0, 1e-12, "an open " .. open .. " takes none of it")
+    assert(said(p, "That would only escape: seal a vessel first."),
+        open .. " is refused in the same words")
+end
 
 -- ---------------------------------------------------------------
 -- TWO: WHAT IT IS FOR -- THE TWO GAS-SHARE RECIPES.

@@ -1,6 +1,11 @@
 -- Dispensed by the vending machine; drinkable since M7. Clicking your
 -- own tile with the can in hand takes a swig — the contents transfer
 -- into your bloodstream mole by mole, and metabolism does the rest.
+--
+-- The ONE gesture, out of `lib/vessel.luau` like every other vessel's.
+-- A can is not glassware: there is no pouring out of one and no tipping
+-- it onto the deck, so it declares neither and a click at anything but
+-- your own feet falls through to whatever it would otherwise have been.
 local content = {
     id = "cola",
     name = "can of Space Cola",
@@ -23,33 +28,12 @@ local content = {
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
-        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
-        local clicked, target = ev.claim, ev.claim
-        local _x, _y, _choice = x, y, choice
-        local px, py = user.tile.x, user.tile.y
-        if x ~= px or y ~= py then
-            return { replaced = false } -- only a click on your own tile drinks
-        end
-        -- The reading's own total, rather than a hand sum over its
-        -- phase rows: same number, and it stays right when a row grows
-        -- a field that is not a mole count.
-        local total = sim.matter_read(self).moles
-        if total < 0.001 then
-            sim.message.send({ recipient = user, message = "The can is empty." })
-            return true
-        end
-        sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = ev.at })
-        sim.matter.transfer({
-            from = self,
-            to = user,
-            amount = 0.05,
-            phases = { "liquid", "solid" },
-        })
-        sim.message.send({ recipient = user, message = "You take a swig of Space Cola." })
-        return true
-    end)
+    vessel.attach({
+        id = content.id,
+        noun = "can",
+        phases = { "liquid", "solid" },
+        sip = { units = 2, message = "You take a swig of Space Cola." },
+    })
 end
 
 return content
