@@ -11,6 +11,7 @@ return {
     name = "hydrogen",
     molar_mass = 1.008,
     cv = 25.0,
+    phase = { unmodeled = "liquid" },
     -- What it looks like through glass (tg: other_reagents.dm:1031 (COLOR_GRAY)).
     color = "#808080",
     -- Where this sits in a tool that offers every substance there is
