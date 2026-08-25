@@ -8,12 +8,12 @@
 -- KNOWN GAP, and it is this file's to flag rather than to fix: tg's
 -- roll is a `visible_message` — the die announces itself to everyone
 -- who can see it, and a thrown one announces itself with nobody's hand
--- on it at all (dice.dm:103-109). The engine's only text effect is
--- `sim.system_msg`, which speaks to ONE player, so a roll here is
--- private to whoever caused it. A visible-message effect belongs beside
--- the speech/hearing seam (one rule for who hears what, already
--- implemented once for `say`), not bolted on for a toy — so the toy
--- ships with the narrower message and this note.
+-- on it at all (dice.dm:103-109). This file still speaks with
+-- `sim.message.send`, which reaches ONE player, so a roll here is
+-- private to whoever caused it. `sim.message.broadcast` is the room
+-- form and the mechanism the announcement wants; switching to it is a
+-- content change with a sentence to write for the bystanders, not a
+-- missing engine seam.
 --
 -- What is no longer a gap: the picture follows the roll. Twenty faces
 -- are twenty declared appearance states, and both hooks put the die
