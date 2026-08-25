@@ -34,37 +34,46 @@
 -- times the ACTIVITY of the scarcest reactant (docs/CHEMISTRY.md 5).
 --
 -- The brew displaces what its densities say it does: water
--- 0.225 mol x 18.015 g/mol at 1 g/mL = 4.05 mL, sugar 0.025 mol x
--- 342.3 g/mol at the unauthored default 1 g/mL = 8.56 mL. So the
--- SOLUTION is 12.61 mL, the sugar in it is 0.025 / 0.01261 L = 1.982 M
--- against water's 17.8 M, and the first step is
+-- 0.225 mol x 18.015 g/mol at 1.0 g/mL = 4.053 mL, sugar 0.025 mol x
+-- 342.3 g/mol at sucrose's 1.59 g/mL = 5.382 mL. So the SOLUTION is
+-- 9.435 mL, the sugar in it is 0.025 / 0.009435 L = 2.650 M against
+-- water's 23.85 M, and the first step is
 --
---     extent  = 0.00025 x 1.982      = 4.956e-4
---     co2     = 2.0 x extent         = 9.912e-4 mol of gas
---     sugar   = 1.0 x extent         = 4.956e-4 mol spent
+--     extent  = 0.00025 x 2.650      = 6.624e-4
+--     co2     = 2.0 x extent         = 1.3248e-3 mol of gas
+--     sugar   = 1.0 x extent         = 6.624e-4 mol spent
 --
 -- Every step after it is a shade smaller, because the sugar it reads is
 -- a shade thinner: a rate that reads concentration is a DECAY and not a
 -- march, and the brew tails off rather than stopping dead. Ten steps
--- make 9.42 mmol of CO2, not ten equal helpings of the first.
+-- make 12.11 mmol of CO2, not ten equal helpings of the first -- a
+-- shade over the 12.106 that arithmetic on the fills alone gives,
+-- because water has a curve and a little of it stands in the headspace
+-- as vapour, which makes the solution it left a little thinner and the
+-- sugar in it a little stronger.
 --
 -- The bottle is 50 mL of glass (`volume_ml`), leaving a headspace of
 --
---     50 - 4.05 - 8.56 = 37.4 mL = 3.74e-5 m^3
+--     50 - 4.053 - 5.382 = 40.56 mL = 4.056e-5 m^3
 --
 -- and the ideal gas law over it says how much gas a warning costs:
 --
---     n = pV/RT = 150000 x 3.74e-5 / (8.314 x 300) = 0.00225 mol
+--     n = pV/RT = 150000 x 4.056e-5 / (8.314 x 300) = 0.00244 mol
 --
--- which is three steps' worth. So the bottle crosses `STRAINING_KPA`
--- on step three and never comes back under it.
+-- which is two steps' worth. So the bottle crosses `STRAINING_KPA` on
+-- step two and never comes back under it.
+--
+-- CO2 has a phase diagram of its own now, and this bottle never
+-- reaches it: carbon dioxide condenses at 6.3 MPa at 300 K, which is
+-- forty times what a straining bottle is at. What is made here is gas
+-- and stays gas.
 local U = 0.025
 local WATER = 9 * U
 local SUGAR = 1 * U
-local FIRST_CO2 = 0.0009912 -- 2 x 0.00025 x 1.982 M
-local TEN_STEPS_CO2 = 0.0094188 -- the decay's sum, not 10 x the first
+local FIRST_CO2 = 0.0013248 -- 2 x 0.00025 x 2.650 M
+local TEN_STEPS_CO2 = 0.0121108 -- the decay's sum, not 10 x the first
 local STRAIN = 150.0 -- lunatic_core::STRAINING_KPA
-local STRAIN_STEP = 3 -- where 0.00225 mol of headspace is bought
+local STRAIN_STEP = 2 -- where 0.00244 mol of headspace is bought
 local STEPS = 10 -- watched steps, with sugar to spare
 
 local function near(got, want, slack, what)
@@ -194,7 +203,7 @@ near(started.contents.water.liquid, WATER, 2e-4, "nine units of water")
 near(started.contents.sugar.solid, SUGAR, 1e-9, "and one of sugar")
 near(started.temp_k, 300.0, 0.5, "at the nozzle's temperature, on the bell's plateau")
 near(started.volume_l, 0.05, 1e-9, "fifty millilitres of glass")
-near(started.headspace_l, 0.05 - 0.00405 - 0.00856, 1e-4, "and 37 mL of room over it")
+near(started.headspace_l, 0.05 - 0.004053 - 0.005382, 1e-4, "and 40.6 mL of room over it")
 near(started.pressure_kpa, 0, 1e-9, "nothing pressing on the cork yet")
 assert(
     not says(t.examine(p, 3, 1, bottle), "strains"),
@@ -210,7 +219,7 @@ for step = 1, STEPS do
     local co2 = co2_in(bottle)
     local made = co2 - last_co2
     if step == 1 then
-        near(co2, FIRST_CO2, 1e-6, "the first step is base_rate times 1.982 M")
+        near(co2, FIRST_CO2, 1e-6, "the first step is base_rate times 2.650 M")
     end
     assert(
         co2 > last_co2,
@@ -283,7 +292,7 @@ near(room_co2(), 0, 1e-12, "the room is still clean when it starts")
 for step = 1, STEPS do
     t.run_seconds(2)
     if step == 1 then
-        near(room_co2(), FIRST_CO2, 1e-6, "the room took the first step's whole 0.99 mmol")
+        near(room_co2(), FIRST_CO2, 1e-6, "the room took the first step's whole 1.32 mmol")
     end
     near(co2_in(twin), 0, 1e-9, "and the glass kept none of it")
     local reading = t.vessel(twin)

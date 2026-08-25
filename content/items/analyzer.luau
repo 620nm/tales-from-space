@@ -18,20 +18,16 @@
 -- 21.60; `r2` below is that. (tg also prints heat capacity and thermal
 -- energy. Those are matter-engine internals rather than instrument
 -- readings, and the boundary does not hand them out.)
-
--- What each substance is called on a readout. tg keeps these in
--- GAS_META[META_GAS_NAME]; here they are content, because the engine
--- speaks in the matter registry's ids and has no business knowing that
--- "o2" is spoken aloud as "Oxygen". Anything unnamed prints its id,
--- which is how a station that adds a gas gets a usable readout on the
--- first shift rather than a blank one.
-local NAMES = {
-    o2 = "Oxygen",
-    n2 = "Nitrogen",
-    co2 = "Carbon Dioxide",
-    plasma = "Plasma",
-    water = "Water Vapor",
-}
+--
+-- WHAT EACH SUBSTANCE is called on a readout comes off the READING.
+-- tg keeps these in GAS_META[META_GAS_NAME]; the same fact lives here
+-- on each substance file's own `name`, and `sim.matter_read` hands it
+-- back beside the moles (docs/LUAU-API.md 7). There used to be a table
+-- in this file instead, which meant a station that added a gas got a
+-- readout printing a raw id until somebody remembered to come back
+-- here -- and two places to spell "carbon dioxide" is one place too
+-- many. A substance with no authored name answers with its id, which
+-- is the registry's own default.
 
 -- tg's `round(n, 0.01)`, and tg's printing of the result: nearest
 -- hundredth, trailing zeros dropped.
@@ -52,11 +48,13 @@ end
 local function report(user, of, sample)
     sim.message.send({ recipient = user, message = "Results of analysis of " .. of .. "." })
     local gas = {}
+    local names = {}
     local gas_moles = 0
-    for id, phases in pairs(sample.contents) do
-        if phases.gas ~= nil and phases.gas > 0 then
-            gas[id] = phases.gas
-            gas_moles = gas_moles + phases.gas
+    for id, entry in pairs(sample.contents) do
+        if entry.gas ~= nil and entry.gas > 0 then
+            gas[id] = entry.gas
+            names[id] = entry.name
+            gas_moles = gas_moles + entry.gas
         end
     end
     if gas_moles <= 0 then
@@ -78,7 +76,13 @@ local function report(user, of, sample)
     for _, id in ipairs(ids) do
         local moles = gas[id]
         local share = moles / gas_moles * 100
-        sim.message.send({ recipient = user, message = (NAMES[id] or id) .. ": " .. r2(moles) .. " mol (" .. r2(share) .. " %)" })
+        -- tg prints its gas names in Title Case; a substance file
+        -- writes an ordinary noun, so the readout capitalises rather
+        -- than asking every author to shout.
+        sim.message.send({
+            recipient = user,
+            message = sentence_case(names[id] or id) .. ": " .. r2(moles) .. " mol (" .. r2(share) .. " %)",
+        })
     end
     sim.message.send({ recipient = user, message = "Temperature: " .. r2(sample.temp_k - T0C) .. " °C (" .. r2(sample.temp_k) .. " K)" })
     sim.message.send({ recipient = user, message = "Volume: " .. r2(sample.volume_l) .. " L" })

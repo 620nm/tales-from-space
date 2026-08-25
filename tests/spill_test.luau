@@ -81,7 +81,7 @@ assert(#t.ledger_rows("spilled") == 1, "the empty beaker spilled nothing")
 -- puddle could only ever grow.
 --
 -- The libital beside it does not move, and that is the other half of
--- the claim: an Inert reagent has no vapour pressure and no curve to
+-- the claim: an unmodeled reagent has no vapour pressure and no curve to
 -- transition on, so it stays on the deck. Water dries; the drug it was
 -- carrying is still there when it has.
 -- ---------------------------------------------------------------

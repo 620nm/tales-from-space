@@ -9,6 +9,8 @@ return {
     molar_mass = 55.85,
     cv = 25.1,
     phase = { unmodeled = "solid" },
+    -- Real iron, 7.87 g/mL.
+    density = { solid = 7.87 },
     -- What it looks like through glass (tg: other_reagents.dm:1207).
     color = "#606060",
 }

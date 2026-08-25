@@ -1,4 +1,4 @@
--- The chem dispenser: fifteen buttons and a slot for one beaker.
+-- The chem dispenser: sixteen buttons and a slot for one vessel.
 -- tg's `/obj/machinery/chem_dispenser` (chem_dispenser.dm).
 --
 -- No script, for the same reason the reaction chamber has none: a
@@ -8,46 +8,59 @@
 -- called, what it looks like, how big a press is, and above all THE
 -- SHELF, which is a list of nouns and therefore ours.
 --
--- THE SHELF is tg's own base list (`default_dispensable_reagents`,
--- chem_dispenser.dm:54-80), trimmed to what this pack has substances
--- for. Every one of the twelve recipes in `content/reactions/` is
--- reachable from these fifteen buttons plus the reaction chamber:
+-- THE SHELF is tg's own (`default_dispensable_reagents`,
+-- chem_dispenser.dm:54-79, and `default_upgrade_reagents` at :81-88),
+-- trimmed to what this pack has substances for and to what a source
+-- can honestly hand over. Every recipe in `content/reactions/` is
+-- reachable from these buttons plus a bottle and the reaction chamber:
 --
---   salt          sodium + chlorine
---   salt water    water + salt
---   ammonia       hydrogen + nitrogen
---   cleaner       ammonia + water
---   lube          water + silicon + oxygen
---   oil           welding fuel + carbon + hydrogen
+--   salt          sodium + chlorine, under a lid
+--   cleaner       ammonia + water, under a lid
+--   lube          water + silicon
+--   oil           welding fuel + carbon
 --   ash           oil, at 480 K
 --   lye           ash + water + carbon
---   saltpetre     potassium + nitrogen + oxygen
---   CO2           carbon + oxygen, at 777 K
---   N2O           ammonia + nitrogen + oxygen, at 525-575 K
---   thermite      aluminium + iron + oxygen
+--   thermite      aluminium + iron oxide
+--   ammonia       nitrogen + hydrogen, off canisters, in a bottle
+--   CO2           carbon + an oxygen share, at 777 K, in a bottle
+--   N2O           ammonia + an oxygen share, at 525-575 K, in a bottle
 --
--- What tg lists and this shelf does not: bromine, copper, fluorine,
--- iodine, lithium, mercury, phosphorus, radium, stable plasma, sulfur
--- and sulphuric acid. Each is one line here on the day it becomes a
--- substance file -- the same deal the pipe dispenser's shelf offers.
+-- THE PERMANENT GASES ARE NOT ON IT. Oxygen, nitrogen, hydrogen and
+-- fluorine rest as gas at every temperature this nozzle reaches, and a
+-- gas pressed over an open vessel is refused because what landed would
+-- leave through the same mouth on the next exchange (D19). Rather than
+-- ship buttons that only work over a bottle, they come to chemistry
+-- the way they come to everything else on this station: off a
+-- canister, through a connector port. tg lists all four; this is the
+-- departure, and it is the one D19 names.
 --
--- OXYGEN AND NITROGEN ARE THE STATION'S OWN GASES. The keys `o2` and
--- `n2` are the pack's own gases, the same substances a canister holds
--- and a crewman breathes. One matter registry, reached from one more
--- place (docs/CHEMISTRY.md) -- which is also why their buttons only
--- work over a vessel with a lid on it: a source deposits what the
--- substance IS at the nozzle, and a gas over an open beaker would be
--- gone before the chemist looked up. Pressing one over an open glass
--- is refused with a sentence.
+-- CHLORINE AND AMMONIA STAY, and they are why that rule is about the
+-- PHASE rather than about the button. Both are gases at the nozzle's
+-- 300 K, so both are refused over an open beaker -- but both CONDENSE:
+-- pressed into a sealed bottle they reach their own vapour pressure
+-- (about 8 atm for chlorine, 8.6 for ammonia) and the rest of the
+-- press stands there as liquid, which is a reactant a bench can
+-- actually use. Ammonia is tg's own upgrade-tier button
+-- (chem_dispenser.dm:83).
 --
--- C1: the permanent gases leave this shelf and come back to chemistry
--- from a canister through a connector port; `cl2` below folds into a
--- single `chlorine` when the reagent twin and the molecule become one
--- id.
+-- ASH AND SALTPETRE are tg's upgrade tier too (chem_dispenser.dm:84
+-- and :87), promoted to the base shelf here because this pack has no
+-- upgrade parts: a machine that ships with a locked half is a machine
+-- shipping mis-configured. Saltpetre has no recipe left at all -- tg's
+-- is four fifths permanent gas -- so the button is the only way to it.
 --
--- CHLORINE IS THE ONE GAS WORTH A BUTTON. Pressed into a sealed
--- bottle it condenses under its own vapour pressure and the bottle
--- holds liquid chlorine, which is a reactant a bench can actually use.
+-- SALT AND IRON OXIDE are on no tg shelf and are this pack's own
+-- departure, taken for pacing (D1). Salt is the bench's first product
+-- and everything downstream of it would otherwise wait on a bottle of
+-- liquid chlorine; iron oxide is thermite's oxidiser, which replaced
+-- tg's loose oxygen leg (reactions/thermite.luau) and has to come from
+-- somewhere.
+--
+-- What tg lists and this shelf still does not: bromine, copper,
+-- iodine, lithium, mercury, phosphorus, radium, stable plasma, sulfur,
+-- sulphuric acid, acetone and diethylamine. Each is one line here on
+-- the day it becomes a substance file -- the same deal the pipe
+-- dispenser's shelf offers.
 --
 -- WHAT TG'S WINDOW HAS THAT THIS ONE CANNOT SAY: a power-cell gauge (a
 -- corded appliance here draws flat off the mains, and tg's per-unit
@@ -90,21 +103,27 @@ return {
         dispense_max = 1.25,
         dispense_step = 0.025,
         dispenses = {
-            { key = "hydrogen", name = "hydrogen" },
+            -- tg's base shelf (chem_dispenser.dm:54-79), minus the
+            -- permanent gases.
             { key = "carbon", name = "carbon" },
             { key = "chlorine", name = "chlorine" },
-            { key = "cl2", name = "chlorine gas" },
             { key = "sodium", name = "sodium" },
             { key = "potassium", name = "potassium" },
             { key = "silicon", name = "silicon" },
             { key = "aluminium", name = "aluminium" },
             { key = "iron", name = "iron" },
-            { key = "o2", name = "oxygen" },
-            { key = "n2", name = "nitrogen" },
             { key = "water", name = "water" },
             { key = "ethanol", name = "ethanol" },
             { key = "sugar", name = "sugar" },
             { key = "welding_fuel", name = "welding fuel" },
+            -- tg's upgrade tier (chem_dispenser.dm:81-88), on the base
+            -- shelf here because this pack has no upgrade parts.
+            { key = "ammonia", name = "ammonia" },
+            { key = "ash", name = "ash" },
+            { key = "saltpetre", name = "saltpetre" },
+            -- On no tg shelf: this pack's own two, for pacing (D1).
+            { key = "salt", name = "salt" },
+            { key = "iron_oxide", name = "iron oxide" },
         },
     },
 }

@@ -10,6 +10,9 @@ return {
     molar_mass = 39.10,
     cv = 29.6,
     phase = { unmodeled = "solid" },
+    -- Real potassium, 0.86 g/mL -- lighter than water, which is what
+    -- the demonstration everybody remembers depends on.
+    density = { solid = 0.86 },
     -- What it looks like through glass (tg: other_reagents.dm:1040).
     color = "#A0A0A0",
 }

@@ -7,10 +7,19 @@ local content = {
     sprite = "cola",
     inhand_sprite = { "held_cola_l", "held_cola_r" },
     contents = { water = 0.30, sugar = 0.06 },
-    -- tg's soda can (soda.dm:21). The can is the shell and the shell is
-    -- the whole of what it holds, so what is poured in is bounded by
-    -- how much room the syrup and the water leave.
-    volume_ml = 30,
+    -- tg's soda can holds 30 u (soda.dm:21), which is the DRINK; the
+    -- can is a 330 mL can, which is the shell. Those were the same
+    -- number here until capacity became geometry, and reading a dose
+    -- as a shell left a can with a millilitre of headspace over its own
+    -- syrup. The shell is the whole of what it holds, and 30 u of cola
+    -- rattles around in one the way a real can does.
+    volume_ml = 330,
+    -- A can is shut. It does not trade its headspace with the room, it
+    -- can strain against its own lid, and what ferments inside one has
+    -- nowhere to go -- which is the whole of why a forgotten cola is
+    -- interesting (docs/CHEMISTRY.md 9). Opening one for good is
+    -- `sim.unseal`, and nothing here does it yet.
+    sealed = true,
 }
 
 if sim ~= nil then
@@ -23,13 +32,10 @@ if sim ~= nil then
         if x ~= px or y ~= py then
             return { replaced = false } -- only a click on your own tile drinks
         end
-        local c = sim.matter_read(self).contents
-        local total = 0
-        for _, phases in pairs(c) do
-            for _, n in pairs(phases) do
-                total = total + n
-            end
-        end
+        -- The reading's own total, rather than a hand sum over its
+        -- phase rows: same number, and it stays right when a row grows
+        -- a field that is not a mole count.
+        local total = sim.matter_read(self).moles
         if total < 0.001 then
             sim.message.send({ recipient = user, message = "The can is empty." })
             return true

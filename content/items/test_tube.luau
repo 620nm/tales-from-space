@@ -47,19 +47,12 @@ if sim ~= nil then
         local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
         local clicked, target = ev.claim, ev.claim
         local _x, _y, _choice = x, y, choice
+        -- What is in it, in moles: the reading's own total, which is
+        -- the same sum over the same mixture (sim/owner.rs, `reading`).
+        -- `nil` for a thing with no inside at all.
         local function total(obj)
             local read = sim.matter_read(obj)
-            local c = read and read.contents
-            if c == nil then
-                return nil
-            end
-            local n = 0
-            for _, phases in pairs(c) do
-                for _, moles in pairs(phases) do
-                    n = n + moles
-                end
-            end
-            return n
+            return read and read.moles
         end
 
         if clicked ~= nil and clicked.entity ~= nil then

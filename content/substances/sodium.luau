@@ -8,6 +8,8 @@ return {
     molar_mass = 22.99,
     cv = 28.2,
     phase = { unmodeled = "solid" },
+    -- Real sodium, 0.97 g/mL.
+    density = { solid = 0.97 },
     -- What it looks like through glass (tg: other_reagents.dm:1135 (COLOR_GRAY)).
     color = "#808080",
 }

@@ -13,6 +13,8 @@ return {
     molar_mass = 120.0,
     cv = 100.0,
     phase = { unmodeled = "liquid" },
+    -- 0.97 g/mL, silicone oil. Convention, not measurement (D2).
+    density = { liquid = 0.97 },
     -- What it looks like through glass (tg: other_reagents.dm:550).
     color = "#009CA8",
 }

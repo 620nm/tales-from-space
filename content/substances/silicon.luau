@@ -8,6 +8,8 @@ return {
     molar_mass = 28.09,
     cv = 19.8,
     phase = { unmodeled = "solid" },
+    -- Real silicon, 2.33 g/mL.
+    density = { solid = 2.33 },
     -- What it looks like through glass (tg: other_reagents.dm:1363).
     color = "#A8A8A8",
 }

@@ -12,14 +12,31 @@
 -- climb and the one this pack refuses. So the assertion that matters
 -- is the boring one: seven vessels, seven contents, no cross-talk.
 --
--- Six of them gauge in kPa. The seventh holds WATER, which is the one
--- substance in the roster with a liquid phase, so a pressure is the
--- wrong reading for it: at annex temperature most of that fill belongs
--- in the bottom of the tank, and the gauge falls to the dew point the
--- first time the vessel takes a phase step. `t.tank_gas` sums a
--- substance over every phase it is in, so the moles it reports are the
--- same before and after that -- which is why the water tank is specced
--- in moles and never in kPa.
+-- Five of them gauge at the charge the map wrote. Two do not, and both
+-- for the same reason: they hold something with a phase diagram on it,
+-- and 23 000 kPa is a pressure no real gas stands at without giving
+-- some of itself up.
+--
+-- WATER is the plainest case. At annex temperature most of that fill
+-- belongs in the bottom of the tank, and the gauge falls to the dew
+-- point the first time the vessel takes a phase step. `t.tank_gas`
+-- sums a substance over every phase it is in, so the moles it reports
+-- are the same before and after -- which is why the water tank is
+-- specced in moles and never in kPa.
+--
+-- CARBON DIOXIDE is the interesting one, and it is new: co2 carries a
+-- real triple point and a real critical temperature now (216.55 K at
+-- 517 kPa; 304.1 K), so a bottle charged to 23 MPa at room temperature
+-- is a bottle well over its own saturation line -- CO2 liquefies at
+-- 6.3 MPa at 300 K. Part of the charge condenses, the latent heat it
+-- gives up has nowhere to go (a stationary tank is not deck-coupled,
+-- so the sweep is adiabatic), and the mixture warms until it reaches
+-- the CRITICAL temperature, where there is no longer any distinction
+-- to condense across and the sweep stops. That is where this tank
+-- sits: 304.1 K, a few hundred litres of liquid under 23.5 MPa of
+-- supercritical gas. It is what a real 2 500 L bottle of CO2 does, and
+-- it is the one reading in this room that is not the number the mapper
+-- typed.
 --
 -- They are deliberately unplumbed. A tank shares with every net its
 -- four mouths reach, so a main run through the row would settle all
@@ -35,12 +52,15 @@ t.run_seconds(5)
 local store = {
     { 4, 28, "o2" },
     { 6, 28, "n2" },
-    { 8, 28, "co2" },
+    { 8, 28, "co2", nil, "condenses" },
     { 10, 28, "plasma" },
     { 12, 28, "water", 69000.0 },
     { 5, 33, "tritium" },
     { 7, 33, "n2o" },
 }
+
+-- CO2's own critical temperature, out of substances/co2.luau.
+local CO2_CRITICAL_K = 304.1
 
 for _, row in ipairs(store) do
     local x, y = row[1], row[2]
@@ -54,11 +74,35 @@ for _, row in ipairs(store) do
     -- seconds of atmos has had nowhere to move a mole to. Skipped for
     -- the water tank, whose gauge is a phase reading rather than a
     -- charge (see the header).
-    if row[4] == nil then
+    if row[4] == nil and row[5] == nil then
         local kpa = t.tank_pressure(x, y)
         assert(math.abs(kpa - 23000.0) < 50.0,
             where .. " opens at half its rating: " .. kpa)
     end
+end
+
+-- The carbon dioxide tank, by the reading a phase diagram leaves. The
+-- charge is the mapper's; where it SETTLED is physics, and the two
+-- halves of the answer are one statement: there is liquid in the
+-- bottom, and the mixture is exactly at the temperature above which
+-- there could not be.
+do
+    local co2 = t.vessel(t.target_at(8, 28, "stationary_tank"))
+    assert(co2 ~= nil, "the carbon dioxide tank reads")
+    local entry = co2.contents.co2
+    assert(entry ~= nil, "and it is carbon dioxide")
+    assert((entry.liquid or 0) > 0.0,
+        "part of a 23 MPa charge condensed: " .. tostring(entry.liquid))
+    assert((entry.gas or 0) > (entry.liquid or 0),
+        "most of it is still gas over the top")
+    assert(math.abs(co2.temp_k - CO2_CRITICAL_K) < 0.5,
+        "and the latent heat drove it to the critical temperature, where "
+            .. "condensing stops: " .. co2.temp_k)
+    assert(co2.pressure_kpa > 23000.0,
+        "the gauge reads over the charge, not under it: " .. co2.pressure_kpa)
+    assert(co2.headspace_l < co2.volume_l,
+        "because the liquid took room out of the shell: "
+            .. co2.headspace_l .. " of " .. co2.volume_l .. " L")
 end
 
 -- ...and each holds a DIFFERENT substance, which is the assertion the
