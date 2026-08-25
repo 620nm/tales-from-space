@@ -6,7 +6,7 @@
 -- Everything here rides the ONE transfer (docs/LUAU-API.md 8.2). What
 -- makes a syringe a syringe rather than a beaker is which way round the
 -- ends are and how much moves; what makes a bloodstream a legal end is
--- that a body is a vessel like any other (docs/CHEMISTRY.md 9). So the
+-- that a body is a vessel like any other (docs/BENCH.md 2). So the
 -- assertions are all the same shape: this much left there, that much
 -- arrived here, and nothing was invented on the way.
 --
@@ -212,7 +212,7 @@ near(condensed(empty), 0, 1e-9, "and the beaker gave up every drop of it")
 -- Each pill is a fifth of the beaker to within micromoles, and the five
 -- of them are the beaker. It is micromoles rather than nothing because
 -- the source is an OPEN vessel and the print takes four seconds: it
--- breathes with the room throughout (docs/CHEMISTRY.md 9), so tg's own
+-- breathes with the room throughout (docs/BENCH.md 2), so tg's own
 -- arithmetic -- a per-container dose computed ONCE off the buffer as it
 -- stood when the print was ordered (chem_master.dm:514) -- comes up a
 -- few micromoles short by the last pill. The shortfall is in the room,

@@ -3,7 +3,7 @@
 -- Oxygen, nitrogen, hydrogen and fluorine left the dispenser shelf when
 -- the twins were folded: they rest as gas at every temperature a nozzle
 -- reaches, so a press of one over an open glass is a press into the
--- room (docs/CHEMISTRY.md 11). What is left is the canister, and the
+-- room (docs/BENCH.md 4). What is left is the canister, and the
 -- gesture that reaches it is a corked vessel held against the valve
 -- (items/bottle.luau) -- a `sim.matter.transfer` with `phases =
 -- { "gas" }` and the ends pointed the other way, which is all a charge

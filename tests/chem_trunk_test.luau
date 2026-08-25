@@ -351,7 +351,7 @@ local hurt = t.health(p).brute
 
 -- One tick per 0.003 mol, and the last partial mouthful still fires the
 -- hook -- the metabolism takes `min(present, rate)` and calls it
--- (docs/CHEMISTRY.md 8).
+-- (docs/BENCH.md 1).
 local ticks = math.ceil(dose / 0.003)
 t.run_seconds(60)
 near(t.blood(p).libital or 0, 0.0, 1e-9, "the dose is spent")

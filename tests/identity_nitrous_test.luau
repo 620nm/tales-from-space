@@ -95,7 +95,7 @@ assert(dispenser ~= nil and heater ~= nil and supply ~= nil and jar ~= nil, "the
 
 -- Twenty atmospheres of oxygen on the line: a quarter of what a supply
 -- bottle ships holding, and the only place the recipe's gas share can
--- come from (docs/CHEMISTRY.md 11).
+-- come from (docs/BENCH.md 4).
 assert(t.charge_vessel(2, 1, "o2", 2000.0), "the line is charged")
 t.run_seconds(2)
 

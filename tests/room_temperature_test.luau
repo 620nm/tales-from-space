@@ -23,7 +23,7 @@
 -- `t.deck(x, y)` reads the solid mass a tile stands on -- its floor plus
 -- its share of the walls beside it -- which outweighs the air over it by
 -- two orders of magnitude and therefore decides where a warmed room
--- settles (docs/MATTER.md §9). Air alone has not been the whole of a
+-- settles (docs/MATTER-WORLD.md §3). Air alone has not been the whole of a
 -- room since that landed, and a spec that counted only the air would
 -- read a warm floor as a leak.
 --
@@ -34,7 +34,7 @@
 -- AND THERE IS A FOURTH COLUMN, outside the room entirely: the sky. A
 -- deck is a slab with a face over it and a face under it, and both look
 -- at space, so every tile of every room radiates whether or not anybody
--- opened a door (docs/MATTER.md §9 step 5d). Where the station is
+-- opened a door (docs/MATTER-WORLD.md §3 step 5d). Where the station is
 -- parked -- how cold the sink is and whether a star is shining on it --
 -- is rolled once per shift off the game mode (docs/GAMEMODES.md), which
 -- is why the blocks below that want a room to sit still say so with
@@ -80,7 +80,7 @@ end
 -- The deck under a set of tiles: what it holds, and what it would take
 -- to warm it a kelvin. Every deck is finite and readable, plating
 -- included -- it is the hull plate, massed as the slab it is
--- (docs/MATTER.md §12) -- but the maps in this file are laid in floor
+-- (docs/MATTER-WORLD.md §5) -- but the maps in this file are laid in floor
 -- so that one deck capacity serves every tile in the arithmetic.
 local function deck_energy(tiles)
     local sum = 0.0
@@ -497,7 +497,7 @@ assert(
 --
 -- The same law, read as geometry. A wall is one object with one heat
 -- capacity and two faces, shared among the open tiles that lean on it
--- (docs/MATTER.md §12), so a corner tile is bolted to two walls' worth
+-- (docs/MATTER-WORLD.md §5), so a corner tile is bolted to two walls' worth
 -- of steel while a tile in the middle of the floor stands on its own
 -- deck alone. Both radiate; the corner carries seven times the capacity
 -- and only three times the area, so it falls at less than half the rate.
