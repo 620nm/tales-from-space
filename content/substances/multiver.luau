@@ -5,7 +5,7 @@
 --
 -- WHERE THE NUMBERS COME FROM. tg's Life tick is two seconds and so is
 -- this engine's metabolism (`METABOLISM_EVERY = 40`,
--- docs/CHEMISTRY.md 12), so a tg per-tick figure ports straight across
+-- docs/BENCH.md 5), so a tg per-tick figure ports straight across
 -- once its two scaling factors are resolved:
 --
 --   metabolization_ratio = REM x metabolized_volume        (mob_life.dm:106)

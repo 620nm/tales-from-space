@@ -3,7 +3,7 @@
 -- rests as a gas at every temperature a nozzle reaches, so every press
 -- over an open beaker would be refused and every press into a sealed
 -- one would be a worse way of doing what a connector port already does
--- (D19, docs/CHEMISTRY.md 11). It comes to chemistry off a canister,
+-- (D19, docs/BENCH.md 4). It comes to chemistry off a canister,
 -- the way oxygen, nitrogen and hydrogen do.
 --
 -- `gas_only` rather than `unmodeled`: fluorine condenses at 85 K, which

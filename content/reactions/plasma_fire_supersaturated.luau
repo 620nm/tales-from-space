@@ -6,7 +6,7 @@
 -- the same 1 : 1.4 consumption, the same 3e6 J per mole. Two files
 -- rather than one with a branch inside it, because the engine's gates
 -- are how a rule says which room it is for, and two mutually exclusive
--- ratio gates are exactly two rules (docs/MATTER.md §6).
+-- ratio gates are exactly two rules (docs/REACTIONS.md §7).
 --
 -- What differs:
 --

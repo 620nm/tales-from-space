@@ -17,7 +17,7 @@ local content = {
     -- A can is shut. It does not trade its headspace with the room, it
     -- can strain against its own lid, and what ferments inside one has
     -- nowhere to go -- which is the whole of why a forgotten cola is
-    -- interesting (docs/CHEMISTRY.md 9). Opening one for good is
+    -- interesting (docs/BENCH.md 2). Opening one for good is
     -- `sim.unseal`, and nothing here does it yet.
     sealed = true,
 }

@@ -7,7 +7,7 @@
 -- `metabolization_ratio = 0.5` and `seconds_per_tick = 2`, so a tg
 -- line of the form `X x ratio x spt` is X per two-second tick, and
 -- this engine's metabolism runs on the same two seconds
--- (docs/CHEMISTRY.md 12).
+-- (docs/BENCH.md 5).
 --
 -- tg's line is
 --   adjust_fire_loss(-2 x ratio x spt)

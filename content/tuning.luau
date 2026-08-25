@@ -21,7 +21,7 @@ return {
     -- and the fraction of that a thrown thing pushes. This is what
     -- makes a crowded room mix faster than an empty one. Engine
     -- defaults: 0.02 and 0.01 -- calibrated so a walker's wake stays
-    -- under both thresholds above (docs/MATTER.md §13).
+    -- under both thresholds above (docs/MATTER-WORLD.md §6).
     stir_mob_mps = 0.02,
     stir_throw_scale = 0.01,
 
