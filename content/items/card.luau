@@ -119,21 +119,25 @@ end
 -- How thick a deck of `n` looks. tg switches on the same three
 -- thresholds in `update_icon_state` (deck.dm:171-181).
 --
--- A SECOND COPY of items/card_deck.luau's own `thickness`, and the
+-- A SECOND COPY of items/card_deck.luau's own `picture`, and the
 -- duplication is deliberate rather than overlooked: content files here
 -- cannot `require` one another, and the alternative -- letting a deck
 -- keep a stale picture until the next time somebody deals from it --
 -- is a lie on the table rather than a repetition in a file. If a
 -- shared-module seam ever lands, these two are its first caller.
-local function thickness(n)
+--
+-- It answers a CELL rather than a state name: a deck's look is a
+-- replicated script var its own prototype hangs `sprite` on, so what
+-- goes into the var is the picture every viewer draws.
+local function picture(n)
     if n >= 27 then
-        return "full"
+        return "card_deck_full"
     elseif n >= 11 then
-        return "half"
+        return "card_deck_half"
     elseif n >= 1 then
-        return "low"
+        return "card_deck_low"
     end
-    return "empty"
+    return "card_deck_empty"
 end
 
 local content = {
@@ -244,7 +248,7 @@ if sim ~= nil then
         -- deck.
         local restored = order == "" and key or (key .. "," .. order)
         deck.vars["order"] = restored
-        sim.appearance.set_state({ entity = deck, state = thickness(count(restored)) })
+        deck.vars["picture"] = picture(count(restored))
         sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = ev.at })
         sim.message.send({ recipient = user, message = "You slide the card into the deck." })
         -- The card itself is gone: it is in the deck now, and the deck
