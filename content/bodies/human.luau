@@ -18,20 +18,23 @@ local content = {
     playable = true,
 
     max_health = 100,          -- MAX_LIVING_HEALTH, code/__DEFINES/mobs.dm:236
-    life = {
-        initial = "alive",
-        terminal = "dead",
-        rules = {
-            -- HEALTH_THRESHOLD_DEAD / MAX_LIVING_HEALTH = -1.
-            -- code/__DEFINES/combat.dm:90; code/__DEFINES/mobs.dm:236.
-            { state = "dead", property = "health", at_most = -1 },
-            -- HEALTH_THRESHOLD_CRIT / MAX_LIVING_HEALTH = 0.
-            -- code/__DEFINES/combat.dm:88; code/__DEFINES/mobs.dm:236.
-            { state = "crit", property = "health", at_most = 0 },
-        },
-        -- HEALTH_THRESHOLD_FULLCRIT / MAX_LIVING_HEALTH = -0.3.
-        -- code/__DEFINES/combat.dm:89; code/__DEFINES/mobs.dm:236.
-        unconscious = { property = "health", at_most = -0.3 },
+
+    -- The lines a crewman's numbers can be on either side of. The engine
+    -- latches which side and says so on `body.threshold.done`; the hook
+    -- at the bottom of this file decides what any of it means, because
+    -- "crit" and "dead" are Tales from Space's words and not the
+    -- engine's (docs/BIOLOGY.md §3.4).
+    thresholds = {
+        -- HEALTH_THRESHOLD_CRIT / MAX_LIVING_HEALTH = 0.
+        -- code/__DEFINES/combat.dm:88; code/__DEFINES/mobs.dm:236.
+        { id = "crit", property = "health", at_most = 0 },
+        -- HEALTH_THRESHOLD_DEAD / MAX_LIVING_HEALTH = -1.
+        -- code/__DEFINES/combat.dm:90; code/__DEFINES/mobs.dm:236.
+        { id = "dead", property = "health", at_most = -1 },
+        -- The native end-conditions as one reading: a `lethal` capacity
+        -- at zero, a `vital` part or organ gone or failed, blood past
+        -- `dead_below`. Losing the head is dying of it.
+        { id = "undone", port = "viability", at_most = 0 },
     },
     hands = 2,                 -- default_num_hands, living_defines.dm:120
     default_zone = "chest",
@@ -95,7 +98,17 @@ local content = {
                                    -- blackouts through this band
                                    -- (blood.dm:242-244); TfS holds the
                                    -- body under instead.
-                                   { "step", "blood", 0.4, below = 0 } } },
+                                   { "step", "blood", 0.4, below = 0 },
+                                   -- HEALTH_THRESHOLD_FULLCRIT /
+                                   -- MAX_LIVING_HEALTH = -0.3
+                                   -- (combat.dm:89; mobs.dm:236): tg's
+                                   -- HARD_CRIT, which is out cold rather
+                                   -- than merely in crit. It is a term of
+                                   -- this formula and not a threshold
+                                   -- because being under is a fact the
+                                   -- capacities decide, not a verdict
+                                   -- anybody reaches.
+                                   { "step", "health", -0.3, below = 0 } } },
 
         moving = { role = "moving", min_capable = 0.15,
             formula = { "product", { "tag", "leg", absent = 1 },
@@ -117,8 +130,20 @@ local content = {
                                    { "tag", "lung", absent = 1 },
                                    { "cap", "consciousness" } } },
 
+        -- Lungs, and the depth past which a crewman stops using them.
+        -- tg raises `losebreath` for exactly two reasons — lungs that
+        -- have failed, and HARD_CRIT (carbon/life.dm:83-90) — and both
+        -- are this one number now: the breathing pass misses a breath
+        -- when this role reads 0, so the engine applies the fact and
+        -- this file decides it.
+        --
+        -- NOT PORTED: tg's `losebreath += 0.25` in SOFT crit (:89-90).
+        -- A quarter of a missed breath is a per-tick roll, and the
+        -- boundary that made this a role reading is the same one that
+        -- says a per-tick decision is not a hook's to make.
         breathing = { role = "breathing", awake_only = false,
-            formula = { "tag", "lung", absent = 1 } },
+            formula = { "product", { "tag", "lung", absent = 1 },
+                                   { "step", "health", -0.3, below = 0 } } },
 
         -- Cardiac arrest, as data: oxy 4/s and brute 1/s spread over
         -- whatever parts are left, and the body held under for as long
@@ -168,15 +193,38 @@ local content = {
     -- does not write the line.
 }
 
+-- What the lines MEAN. This is the whole of being alive in Tales from
+-- Space, and it is five lines because the engine holds exactly two
+-- facts about a body: whether its session may steer it, and whether its
+-- own processes still run (docs/BIOLOGY.md §3.4).
+--
+-- Settled from the SET of crossed thresholds and not from the one edge
+-- that woke the hook: a crewman healed back over the `dead` line with
+-- their heart still out has cleared one and not the other, and reading
+-- the set is what keeps them on the deck.
+local STOP = { dead = true, undone = true }
+local HOLD = { crit = true }
+
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    script_definition:handle("body.life_state.done", { kind = "react", route = "state" }, function(ev)
-        local body, _user, state = ev.body, ev.body, ev.current
-        if state == "crit" then
-            sim.message.send({ recipient = body, message = "You black out..." })
-        elseif state == "dead" then
+    script_definition:handle("body.threshold.done", { kind = "react", route = "threshold" }, function(ev)
+        local body = ev.body
+        local stop, hold = false, false
+        for _, id in ipairs(sim.body(body).thresholds) do
+            if STOP[id] then stop = true end
+            if HOLD[id] then hold = true end
+        end
+        sim.set_body_facts(body, {
+            animate = not stop,
+            controllable = not (stop or hold),
+            label = stop and "Dead" or (hold and "Critical" or ""),
+        })
+        -- ...and then the crewman is told, once per crossing.
+        if ev.edge == "dead" or ev.edge == "undone" then
             sim.message.send({ recipient = body, message = "You have died." })
-        else
+        elseif ev.edge == "crit" then
+            sim.message.send({ recipient = body, message = "You black out..." })
+        elseif not stop and not hold then
             sim.message.send({ recipient = body, message = "You come to." })
         end
     end)

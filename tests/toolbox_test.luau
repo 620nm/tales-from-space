@@ -62,21 +62,22 @@ for _, row in ipairs(t.ledger_rows("Damaged")) do
 end
 assert(zoned == 10, "every blow named the part it landed on: " .. zoned)
 
--- Keep swinging. Crit arrives when the weighted damage reaches
--- max_health and death when it reaches dead_at, however the rolls fell.
+-- Keep swinging. The crewman stops being steerable when the weighted
+-- damage crosses the plan's `crit` line and stops entirely at `dead`,
+-- however the rolls fell.
 local swings = 0
-while t.health(victim).state == "alive" and swings < 40 do
+while t.health(victim).controllable and swings < 40 do
     t.click(attacker, 2, 1, victim_id)
     t.tick()
     swings = swings + 1
 end
-assert(t.health(victim).state == "crit", "the weighted damage reached crit_at")
-while t.health(victim).state ~= "dead" and swings < 120 do
+assert(not t.health(victim).controllable, "the weighted damage crossed `crit`")
+while t.health(victim).animate and swings < 120 do
     t.click(attacker, 2, 1, victim_id)
     t.tick()
     swings = swings + 1
 end
-assert(t.health(victim).state == "dead", "and then dead_at")
+assert(not t.health(victim).animate, "and then `dead`")
 assert(t.sprite(victim) == "human_dead", "and the body lies down")
 
 -- Every swing is on the record, attributed to the FILE that decided
@@ -102,12 +103,12 @@ for _, row in ipairs(t.ledger_rows("Damaged")) do
 end
 assert(hits == 10 + swings,
     "every hit is a Script-attributed ledger row, got " .. hits)
--- One life-state row, and it is the one that ends the shift for this
--- body: the engine names no state, so the spec reads the flag the
--- entered state carries.
+-- One crossing of the line this pack calls `dead`, and it is on the
+-- record naming the line and the pool: the engine names neither, so the
+-- spec reads the ids `content/bodies/human.luau` declared.
 local ended = 0
-for _, row in ipairs(t.ledger_rows("LifeStateChanged")) do
-    if row.terminal then
+for _, row in ipairs(t.ledger_rows("PoolThresholdCrossed")) do
+    if row.threshold == "dead" and row.direction == "crossed" then
         ended += 1
     end
 end
