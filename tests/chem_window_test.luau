@@ -193,16 +193,26 @@ t.tick()
 -- ---------------------------------------------------------------
 -- THREE: ABOVE IT, NOTHING AGAIN.
 --
--- The second beaker is brought to 960 K holding only one of oil's
--- two, and the carbon is pressed in hot. THE BALLAST IS THE STAGING:
--- the welding fuel goes in at a full press rather than a twentieth,
--- because the second leg arrives at the nozzle's 300 K and something
--- has to shrug it off. A notch of carbon against 0.75 mol of welding
--- fuel is four kelvin; against a twentieth of a press it would be
--- eighty, and the beaker would fall back through the window it is
--- supposed to be over. The carbon is still the limiting leg, so the
--- recipe makes two notches of oil and the excess ballast is only there
--- for its heat capacity.
+-- The second beaker is brought to 960 K holding one of oil's two and a
+-- lump of ballast, and the welding fuel is pressed in hot. THE BALLAST
+-- IS THE STAGING: the second leg arrives at the nozzle's 300 K and
+-- something has to shrug it off. A notch of fuel against a full press
+-- of iron and a full press of carbon is twenty kelvin; against the
+-- carbon notch alone it would be hundreds, and the beaker would fall
+-- back through the window it is supposed to be over.
+--
+-- WHICH LEG GOES IN LAST IS NOT ARBITRARY. Welding fuel is the second
+-- leg here, and carbon is the ballast, because oil and welding fuel
+-- standing together in one vessel are ACETONE
+-- (reactions/acetone.luau, tg's others.dm:477 without its oxygen leg).
+-- Fuel in excess would eat the oil this spec is about as fast as it
+-- was made, and would still be there at 700 K to eat it again instead
+-- of letting it become ash. Fuel as the LIMITING leg is spent by the
+-- time the run ends, so what stands in the beaker at 960 K is oil, a
+-- share of acetone, and nothing that can touch either.
+--
+-- The iron is there for its 25 J/(mol*K) and nothing else: no rule in
+-- this pack's roster names it, so it is heat capacity with no opinions.
 -- ---------------------------------------------------------------
 -- The dial's smallest step, off machines/chem_dispenser.luau: one tg
 -- unit at 1 u = 0.025 mol. A tenth of a leg is under the notch, so
@@ -212,7 +222,8 @@ take(hot, 3, 2)
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
 dial_to(PRESS)
-press("welding_fuel")
+press("iron")
+press("carbon")
 
 eject()
 dock(heater, 3, 1)
@@ -226,32 +237,30 @@ eject()
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
 dial_to(NOTCH)
-press("carbon")
+press("welding_fuel")
 dial_to(PRESS)
 assert(t.holder_k(hot) > 920.0, "and the mixture is still over the window: " .. t.holder_k(hot))
 
 -- Five minutes, because the oil rule is running at a QUARTER of its
 -- plateau up here -- 950 K is most of the way down the far shoulder of
 -- 100/280/900/1000 (reactions/oil.luau) -- and a rate that reads
--- concentration is a decay besides (docs/CHEMISTRY.md 5). The last
--- thousandth of a batch takes as long again as the first nine tenths,
--- which is why the slack below is a thousandth rather than 1e-6.
+-- concentration is a decay besides (docs/CHEMISTRY.md 5).
 t.run_seconds(320)
-near(amount(hot, "oil"), 2.0 * NOTCH, 1e-3, "the notch of carbon is what the recipe got")
+local made = amount(hot, "oil")
+assert(made > 0.0, "the oil rule ran up here: " .. made .. " mol")
+near(amount(hot, "welding_fuel"), 0.0, 1e-4, "and it spent the notch of fuel doing it")
 near(amount(hot, "ash"), 0.0, 1e-12, "over the window is as shut as under it")
 
 -- ...and the proof that it was the TEMPERATURE and not the mixture:
--- put the same beaker back on the dial at 700 and it converts, coming
--- down into the window from above -- and the last of the carbon
--- with it, so the ash is the whole two notches the notch of carbon
--- was ever going to buy. Four minutes rather than two and a
--- half: the oil here is two notches in twenty millilitres of ballast
--- rather than a neat batch, and a decay in a dilute solution has the
--- longer tail.
+-- put the same beaker back on the dial at 700 and every mole of the oil
+-- standing in it converts, coming down into the window from above.
+-- Four minutes rather than two and a half: the oil here is a couple of
+-- notches in a beaker of ballast rather than a neat batch, and a decay
+-- in a dilute solution has the longer tail.
 eject()
 dock(heater, 3, 1)
 panel(heater, 3, 1)
 dial(700)
 t.run_seconds(240)
-near(amount(hot, "ash"), 2.0 * NOTCH, 1e-6, "coming down into the window works as well as up")
-near(amount(hot, "oil"), 0.0, 1e-6, "and it spends the oil it would not touch at 960")
+near(amount(hot, "ash"), made, 1e-3, "coming down into the window works as well as up")
+near(amount(hot, "oil"), 0.0, 1e-3, "and it spends the oil it would not touch at 960")

@@ -7,6 +7,14 @@ local content = {
     molar_mass = 180.0,
     cv = 90.0,
     phase = { unmodeled = "liquid" },
+    -- No `density`, which is the shelf's 1.0 g/mL convention (D2,
+    -- docs/CHEMISTRY.md) rather than an oversight: 180 g/mol at one
+    -- gram a millilitre is 180 mL to the mole, which is where a real
+    -- organic of this weight sits. It is load-bearing rather than
+    -- decorative now that a recipe MAKES this -- geometry caps a
+    -- reaction by the free shell volume (D16, docs/MATTER.md 5) and
+    -- three of these come out of every extent, so a fifty-millilitre
+    -- bottle makes about a tenth of one.
     metabolism_rate = 0.003,
     -- What it looks like through glass (tg: cat2_medicine_reagents.dm:105).
     color = "#ECEC8D",

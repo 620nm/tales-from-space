@@ -1,4 +1,4 @@
--- The chem dispenser: sixteen buttons and a slot for one vessel.
+-- The chem dispenser: twenty-three buttons and a slot for one vessel.
 -- tg's `/obj/machinery/chem_dispenser` (chem_dispenser.dm).
 --
 -- No script, for the same reason the reaction chamber has none: a
@@ -21,9 +21,20 @@
 --   ash           oil, at 480 K
 --   lye           ash + water + carbon
 --   thermite      aluminium + iron oxide
+--   acetone       oil + welding fuel
 --   ammonia       nitrogen + hydrogen, off canisters, in a bottle
 --   CO2           carbon + an oxygen share, at 777 K, in a bottle
 --   N2O           ammonia + an oxygen share, at 525-575 K, in a bottle
+--   diethylamine  ammonia + ethanol, under a lid
+--   phenol        water + chlorine + oil, under a lid
+--
+-- ...and the medicine trunk that stands on top of them:
+--
+--   salglu        water + salt + sugar
+--   multiver      ash + salt, at 400 K
+--   libital       phenol + saltpetre, at 700 K
+--   aiuri         ammonia + sulphuric acid, under a lid, kept warm
+--   epinephrine   phenol + acetone + diethylamine + chlorine
 --
 -- THE PERMANENT GASES ARE NOT ON IT. Oxygen, nitrogen, hydrogen and
 -- fluorine rest as gas at every temperature this nozzle reaches, and a
@@ -56,11 +67,23 @@
 -- tg's loose oxygen leg (reactions/thermite.luau) and has to come from
 -- somewhere.
 --
--- What tg lists and this shelf still does not: bromine, copper,
--- iodine, lithium, mercury, phosphorus, radium, stable plasma, sulfur,
--- sulphuric acid, acetone and diethylamine. Each is one line here on
--- the day it becomes a substance file -- the same deal the pipe
--- dispenser's shelf offers.
+-- MOST OF THE REST OF TG'S BASE SHELF is here now: bromine, copper,
+-- lithium, mercury, phosphorus, sulfur and sulphuric acid, each one
+-- line, the same deal the pipe dispenser's shelf offers. Only the acid
+-- is a leg of anything yet (aiuri); the other six are on the shelf
+-- because the shelf is tg's and a button that waits for its recipe
+-- costs nothing.
+--
+-- WHAT TG LISTS AND THIS SHELF STILL DOES NOT: iodine and radium have
+-- substance files and no buttons, because a tap that pours a
+-- radioactive metal into an open beaker is not a thing a chemistry
+-- bench should offer and nothing here names iodine -- both come in a
+-- bottle. Stable plasma is tg's twin of the atmos gas and there is one
+-- id per molecule here (D3), so it does not exist. Acetone,
+-- diethylamine and oil are on tg's UPGRADE tier and stay off this
+-- shelf on purpose, unlike ammonia, ash and saltpetre above: all three
+-- have recipes, and a bench where the first medicine is two presses
+-- and a stir is a bench with nothing to learn in it.
 --
 -- WHAT TG'S WINDOW HAS THAT THIS ONE CANNOT SAY: a power-cell gauge (a
 -- corded appliance here draws flat off the mains, and tg's per-unit
@@ -116,6 +139,18 @@ return {
             { key = "ethanol", name = "ethanol" },
             { key = "sugar", name = "sugar" },
             { key = "welding_fuel", name = "welding fuel" },
+            -- The rest of tg's base shelf, the day this pack got
+            -- substance files for them (chem_dispenser.dm:54-79). None
+            -- of them is a leg of anything here yet except the acid,
+            -- which is half of aiuri; the other six are the buttons a
+            -- recipe will find already fitted.
+            { key = "bromine", name = "bromine" },
+            { key = "copper", name = "copper" },
+            { key = "lithium", name = "lithium" },
+            { key = "mercury", name = "mercury" },
+            { key = "phosphorus", name = "phosphorus" },
+            { key = "sulfur", name = "sulfur" },
+            { key = "sulfuric_acid", name = "sulphuric acid" },
             -- tg's upgrade tier (chem_dispenser.dm:81-88), on the base
             -- shelf here because this pack has no upgrade parts.
             { key = "ammonia", name = "ammonia" },
