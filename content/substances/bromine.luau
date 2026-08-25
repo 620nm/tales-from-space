@@ -31,4 +31,7 @@ return {
     density = { liquid = 3.10, solid = 3.4 },
     -- What it looks like through glass (tg: other_reagents.dm:2249).
     color = "#D35415",
+    -- Boils at 332 K and fumes well below it -- a bench hazard rather
+    -- than an atmospheric one.
+    group = "volatile",
 }

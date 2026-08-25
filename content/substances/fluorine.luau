@@ -26,4 +26,7 @@ return {
     color = "#808080",
     -- A thing the station is built to keep away from itself.
     dangerous = true,
+    -- This file's own `dangerous`: a thing the station is built to keep
+    -- away from itself.
+    group = "poison",
 }

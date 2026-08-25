@@ -28,4 +28,6 @@ return {
     -- (docs/MAPPING.md, the recipe panel). Under the air a station is
     -- made of, over every reagent that only ever lives in a beaker.
     relevance = 40,
+    -- tg's `dangerous = TRUE` (gas_types.dm:175).
+    group = "poison",
 }

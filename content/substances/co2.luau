@@ -49,4 +49,9 @@ return {
     -- fills up with, and what a mapper drawing a stale chamber reaches
     -- for.
     relevance = 80,
+    -- What a room full of people fills up with -- ordinary air on the way
+    -- out, and grouped with the air rather than with the poisons even
+    -- though tg flags it `dangerous` (gas_types.dm:98): a scrubber is
+    -- pointed at it every shift.
+    group = "atmospheric",
 }
