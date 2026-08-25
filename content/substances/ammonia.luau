@@ -19,6 +19,7 @@ return {
     name = "ammonia",
     molar_mass = 17.03,
     cv = 80.8,
+    phase = { unmodeled = "liquid" },
     -- What it looks like through glass (tg: other_reagents.dm:1630).
     color = "#404030",
 }

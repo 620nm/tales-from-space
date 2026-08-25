@@ -6,6 +6,7 @@ local content = {
     name = "libital",
     molar_mass = 180.0,
     cv = 90.0,
+    phase = { unmodeled = "liquid" },
     metabolism_rate = 0.003,
     -- What it looks like through glass (tg: cat2_medicine_reagents.dm:105).
     color = "#ECEC8D",

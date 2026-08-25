@@ -7,6 +7,7 @@ return {
     name = "sodium",
     molar_mass = 22.99,
     cv = 28.2,
+    phase = { unmodeled = "solid" },
     -- What it looks like through glass (tg: other_reagents.dm:1135 (COLOR_GRAY)).
     color = "#808080",
 }

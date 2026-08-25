@@ -13,6 +13,7 @@ return {
     name = "lye",
     molar_mass = 40.00,
     cv = 59.5,
+    phase = { unmodeled = "liquid" },
     -- What it looks like through glass (tg: other_reagents.dm:2555).
     color = "#FFFFD6",
 }
