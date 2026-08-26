@@ -367,9 +367,9 @@
         // the waste line, each dropping what it catches out of its side
         // mouth. Oxygen first, then carbon dioxide; what survives both
         // is the nitrogen the mixer blends back.
-        (19, 23, "gas_filter_n2", "running"),
-        (21, 23, "gas_filter_co2", "running"),
-        (23, 23, "gas_mixer_airmix", "running"),
+        (19, 23, "gas_filter.n2", "running"),
+        (21, 23, "gas_filter.co2", "running"),
+        (23, 23, "gas_mixer.airmix", "running"),
         (25, 23, "gas_pump", "running"),
         // Two gauges, either side of the machines that change the gas --
         // which is the only place a gauge earns its bolt.

@@ -46,7 +46,10 @@ local BACK_X, BACK_Y = 4, 1
 local SIDE_X, SIDE_Y = 9, 2
 local OUT_X, OUT_Y = 11, 1
 
-t.world([==[(
+-- The junction every assertion below runs in, named because the
+-- variant section at the foot of the file stands the same three-way
+-- with a preconfigured machine in it.
+local THREE_WAY = [==[(
     name: "gas mixer",
     legend: {
         ' ': (turf: Space),
@@ -73,7 +76,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3), (11, 1, 3), (12, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3), (12, 2, 3),
     ],
-)]==], 7)
+)]==]
+
+t.world(THREE_WAY, 7)
 
 local p = t.join()
 t.tick()
@@ -304,7 +309,7 @@ t.world([==[(
         (10, 1, 4), (11, 1, 4), (12, 1, 4),
         (9, 2, 4),
     ],
-    structures: [(9, 1, "gas_mixer_flipped")],
+    structures: [(9, 1, "gas_mixer.flipped")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3), (11, 1, 3), (12, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3), (12, 2, 3),
@@ -313,12 +318,12 @@ t.world([==[(
 
 local q = t.join()
 t.tick()
-assert(t.structure_at(9, 1).id == "gas_mixer_flipped", "the mirrored machine")
+assert(t.structure_at(9, 1).id == "gas_mixer.flipped", "the mirrored machine")
 
 local west0 = moles(BACK_X, BACK_Y)
 local east0 = moles(OUT_X, OUT_Y)
 local stub0 = moles(SIDE_X, SIDE_Y)
-t.click(q, 9, 1, t.target_at(9, 1, "gas_mixer_flipped"))
+t.click(q, 9, 1, t.target_at(9, 1, "gas_mixer.flipped"))
 t.tick()
 t.ui_act(q, "set", '{"field":"pressure","value":300}')
 t.ui_act(q, "toggle", '{"field":"power"}')
@@ -333,3 +338,32 @@ assert(
     "the EAST main is an intake now, and it paid: " .. east0 .. " -> " .. moles(OUT_X, OUT_Y)
 )
 assert(moles(SIDE_X, SIDE_Y) < stub0 - 0.5, "and the side stub is still an intake")
+
+-- ---------------------------------------------------------------
+-- THE AIR MIXER: A VARIANT, ARRIVING SET.
+--
+-- tg's `/mixer/airmix` is the base machine with `node1_concentration =
+-- 0.79` and `target_pressure = MAX_OUTPUT_PRESSURE` (mixer.dm), because
+-- a department's air mixer is not a machine anyone tunes -- it is set to
+-- 79/21 and left alone for the life of the station. Here it is three
+-- lines of gas_mixer.luau's own `variants` table
+-- (docs/CONTENT-SCHEMA.md §1.1a), and all three are properties a map
+-- could have written on a bare mixer instead.
+--
+-- The panel is what proves it: a mapper who opens this machine sees the
+-- dials already where the station needs them.
+-- ---------------------------------------------------------------
+t.world(THREE_WAY:gsub('%(9, 1, "gas_mixer"%)', '(9, 1, "gas_mixer.airmix")'), 7)
+
+local a = t.join()
+t.tick()
+assert(t.structure_at(9, 1).id == "gas_mixer.airmix", "the air mixer is a real id")
+assert(t.structure_at(9, 1).state == "running", "and it opens the shift running")
+
+t.click(a, 9, 1, t.target_at(9, 1, "gas_mixer.airmix"))
+t.tick()
+local air = t.ui(a)
+assert(air.toggles[1].field == "power" and air.toggles[1].on, "its switch is thrown")
+near(air.setpoints[1].value, 4500.0, 0.001, "its dial is at MAX_OUTPUT_PRESSURE")
+near(air.setpoints[2].value, 79.0, 0.001, "and its blend is tg's N2STANDARD")
+t.ui_close(a)
