@@ -346,7 +346,7 @@ assert(lying, "and what came up is a fitting lying on the deck")
 -- runs from the moment the map hands it over, and it diverts nitrogen
 -- without anybody touching it.
 -- ---------------------------------------------------------------
-t.world(JUNCTION:format("gas_filter_n2"), 7)
+t.world(JUNCTION:format("gas_filter.n2"), 7)
 
 local s = t.join()
 t.tick()
@@ -356,7 +356,7 @@ local pre_main_n2 = gas(OUT_X, OUT_Y, "n2")
 
 -- The file's `filter = { "n2" }` reached the machine's roster, not just
 -- its behaviour: the panel shows nitrogen already selected.
-t.click(s, 3, 1, t.target_at(3, 1, "gas_filter_n2"))
+t.click(s, 3, 1, t.target_at(3, 1, "gas_filter.n2"))
 t.tick()
 for _, sw in ipairs(t.ui(s).toggles) do
     if sw.field == "filter" then
@@ -376,3 +376,47 @@ assert(
 near(gas(SIDE_X, SIDE_Y, "o2"), pre_side_o2, 1e-9, "and only nitrogen")
 near(gas(OUT_X, OUT_Y, "n2"), pre_main_n2, 1e-9, "none of which reached the pass-through")
 assert(t.pipe_pressure(IN_X, IN_Y) < 5.0, "and the input emptied into the pair")
+
+-- ---------------------------------------------------------------
+-- ...AND THE PRESET IS ONLY A SHORTHAND.
+--
+-- `gas_filter.n2` is a VARIANT of gas_filter.luau, which means the two
+-- lines it carries -- `on` and `filter` -- are the same two properties
+-- any placement may write on a bare machine (docs/CONTENT-SCHEMA.md
+-- §1.1a). If that were not true the variant would be a second
+-- prototype wearing a dotted name, and a mapper who wanted argon
+-- instead would be back to asking for a new file.
+--
+-- So: the plain machine, told the same two things by the map, is the
+-- preset.
+-- ---------------------------------------------------------------
+local BY_HAND = JUNCTION:gsub(
+    '%(3, 1, "%%s"%)',
+    '(3, 1, "gas_filter", { "on": true, "filter": "n2" })'
+)
+t.world(BY_HAND, 7)
+
+local h = t.join()
+t.tick()
+local hand = t.structure_at(3, 1)
+assert(hand.id == "gas_filter", "a bare filter, with the map's own words on it")
+assert(hand.state == "running", "which is running, because the placement said so")
+local hand_side_o2 = gas(SIDE_X, SIDE_Y, "o2")
+local hand_main_n2 = gas(OUT_X, OUT_Y, "n2")
+t.click(h, 3, 1, t.target_at(3, 1, "gas_filter"))
+t.tick()
+for _, sw in ipairs(t.ui(h).toggles) do
+    if sw.field == "filter" then
+        assert(
+            sw.on == (sw.option == "n2"),
+            "with nitrogen selected and nothing else, not " .. tostring(sw.option)
+        )
+    end
+end
+t.ui_close(h)
+t.run_seconds(30)
+assert(
+    gas(SIDE_X, SIDE_Y, "n2") > hand_main_n2 * 0.5,
+    "and it separates exactly as the preset did"
+)
+near(gas(SIDE_X, SIDE_Y, "o2"), hand_side_o2, 1e-9, "and only nitrogen")

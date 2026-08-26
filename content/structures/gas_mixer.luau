@@ -84,4 +84,65 @@ return {
             done = "The gas mixer comes up off the pipe.",
         },
     },
+    variants = {
+        -- tg's `/mixer/airmix`: the machine a department's air comes
+        -- out of, set to `N2STANDARD` and left alone for the life of
+        -- the station -- 79% out of the back intake, 21% out of the
+        -- side, dial open all the way (`target_pressure =
+        -- MAX_OUTPUT_PRESSURE`, mixer.dm:239). A mixer that had to be
+        -- dialled in by hand before a station could breathe would be a
+        -- machine shipping mis-configured.
+        --
+        -- All three are placement properties, so a mapper can say the
+        -- same thing on a bare `gas_mixer` and this variant is only
+        -- the shorthand. No `build`: it is laid, not raised.
+        airmix = {
+            name = "air mixer",
+            props = { on = true, ratio = 0.79, target_kpa = 4500.0 },
+        },
+        -- The mirror image, as the filter has: node1 and node3 change
+        -- places and node2 stays (mixer.dm:212-214). It matters more
+        -- here than on a filter, because a mixer's two intakes carry
+        -- DIFFERENT gases -- flipping is how the nitrogen line feeds
+        -- the back port when it comes at the junction from the other
+        -- side, without re-routing the run.
+        flipped = {
+            name = "gas mixer",
+            sprite = "mixer_f_off_n",
+            props = { flipped = true },
+            facing_sprites = {
+                off = {
+                    north = "mixer_f_off_n",
+                    south = "mixer_f_off_s",
+                    east = "mixer_f_off_e",
+                    west = "mixer_f_off_w",
+                },
+                running = {
+                    north = "mixer_f_on_n",
+                    south = "mixer_f_on_s",
+                    east = "mixer_f_on_e",
+                    west = "mixer_f_on_w",
+                },
+            },
+            build = {
+                on = { "floor", "plating" },
+                from_item = "gas_mixer_flipped_fitting",
+                tool = "wrench",
+                secs = 2.0,
+                start = "You start bolting the gas mixer down.",
+                done = "The gas mixer is seated on the pipe.",
+            },
+            transitions = {
+                {
+                    at = "off",
+                    tool = "wrench",
+                    secs = 2.0,
+                    gone = true,
+                    yields = { gas_mixer_flipped_fitting = 1 },
+                    start = "You start unbolting the gas mixer.",
+                    done = "The gas mixer comes up off the pipe.",
+                },
+            },
+        },
+    },
 }
