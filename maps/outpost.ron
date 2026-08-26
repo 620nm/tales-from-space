@@ -50,7 +50,7 @@
         (18, 2, "apc"),
         (12, 2, "outlet"),
         (10, 3, "airlock"),
-        (15, 3, "airlock", { "access": "engineering" }),
+        (15, 3, "airlock.engineering"),
         (3, 4, "light"),
         (6, 5, "airlock"),
         (3, 6, "light"),

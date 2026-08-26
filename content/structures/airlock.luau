@@ -72,4 +72,20 @@ return {
         flavor = "A powered leaf on a track. It opens for anyone it "
             .. "recognises and shuts itself behind them.",
     },
+    -- The two doors a mapper reaches for often enough to name. Both are
+    -- the same three properties any placement may already write, said
+    -- once: this is the subtype ladder collapsed rather than rebuilt,
+    -- and a placement may still say otherwise -- `(x, y,
+    -- "airlock.engineering_glass", { "glass": false })` is an
+    -- engineering door somebody left solid.
+    variants = {
+        engineering = {
+            name = "engineering airlock",
+            props = { paint = "engineering", access = "engineering" },
+        },
+        engineering_glass = {
+            name = "engineering airlock",
+            props = { paint = "engineering", access = "engineering", glass = true },
+        },
+    },
 }
