@@ -30,9 +30,29 @@
 --   max = T20C + 140*lasers                  = 573.15 K
 --   heat capacity = 5000 * (bins - 1)^2      = 5000 J/K
 -- with two tier-1 micro-lasers and two tier-1 matter bins, which is
--- what this pack's board asks for and all it can ask for -- there are
--- no part TIERS here. So the arithmetic's answers are written down as
--- the three numbers below, each with the sum that produced it.
+-- what the board asks for and what a unit nobody upgraded holds. Those
+-- three answers are the `atmos` numbers below, each with the sum that
+-- produced it, and `parts.scale` is the rest of tg's arithmetic: the
+-- file's number is what neutral parts give, and better ones move it.
+--
+--   `min_k`        -15 K per point of laser efficiency over neutral
+--                  (tg's own `calculated_laser_rating * 15`,
+--                  thermomachine.dm:95), floored at TCMB because tg
+--                  floors it there too.
+--   `max_k`        +140 K per point (tg's `base_heating`,
+--                  thermomachine.dm:34 and :96). No ceiling: tg has
+--                  none either.
+--   `heat_j_per_k` multiplied by the mean bin efficiency.
+--
+-- THE HEAT CAPACITY IS THE ONE DEPARTURE. tg's is QUADRATIC in the sum
+-- of the bin tiers -- four tier fours are 245 kJ/K, forty-nine times
+-- the plain machine -- and a quadratic is not one of the three laws a
+-- `scale` row may name (docs/CONTENT-SCHEMA.md §1.10b). Multiplying is
+-- the honest linear reading: the best bins give 15 kJ/K, three times
+-- the plain machine, which is the same ORDER as every other upgrade on
+-- this station instead of a machine that changes category. A fourth law
+-- would be an expression language at load time, and that is the trade
+-- the three laws exist to refuse.
 --
 -- COLOUR. tg tints the whole machine by its setpoint through GAGS
 -- (thermomachine.dm:98-117: violet, blue, cyan, lime, yellow, orange,
@@ -44,7 +64,7 @@ return {
     id = "thermomachine",
     name = "temperature control unit",
     sprite = "thermo_off",
-    ui = { modules = { "thermal" } },
+    ui = { modules = { "thermal", "parts" } },
     dense = true,
     -- Two positions, and the words are the ones the panel's switch
     -- wears and the ones a refusal says out loud.
@@ -69,6 +89,43 @@ return {
         -- upgrade path buys in tg and what this number would carry here.
         heat_j_per_k = 5000.0,
     },
+    -- tg's board (machine_circuitboards.dm:411-415): two bins, two
+    -- lasers. The sockets live HERE rather than on the board, because
+    -- what a machine is made of belongs to the machine and the board's
+    -- list is derived from it (docs/CONTENT-SCHEMA.md §1.10b).
+    parts = {
+        slots = { "bin", "bin", "laser", "laser" },
+        scale = {
+            heat_j_per_k = { by = "bin", law = "multiply" },
+            -- TCMB at the bottom (tg's `max(..., TCMB)`), and the
+            -- file's own number at the top: a better laser only ever
+            -- reaches colder, so the ceiling is never the binding end.
+            min_k = {
+                by = "laser",
+                law = "add",
+                per_efficiency = -15,
+                clamp = { 2.7, 73.15 },
+            },
+            max_k = { by = "laser", law = "add", per_efficiency = 140 },
+        },
+    },
+    variants = {
+        -- The unit an engineer would have built if a lathe existed to
+        -- print tg's `/fullupgrade` board. A map places it; every key
+        -- below is one a placement could have written by hand
+        -- (docs/MAP-PROPERTIES.md). Reaches 13.15 K at the cold end and
+        -- 1133.15 K at the hot one, against the plain unit's 73.15 and
+        -- 573.15.
+        fullupgrade = {
+            name = "temperature control unit (upgraded)",
+            props = {
+                bin_1 = "4",
+                bin_2 = "4",
+                laser_1 = "4",
+                laser_2 = "4",
+            },
+        },
+    },
     transitions = {
         {
             -- tg refuses the screwdriver on a running unit ("turn
@@ -89,6 +146,16 @@ return {
             -- the five coils that wiring cost come back in the pile
             -- too: six reels here is the board's one plus the frame's
             -- five, and the books balance exactly as tg's do.
+            --
+            -- WHAT COMES BACK IS THE PLAIN RUNG, whatever went in. A
+            -- `yields` list is content written once and cannot know
+            -- which tiers THIS unit was assembled from, so an upgraded
+            -- unit prised apart loses the upgrade. tg hands the actual
+            -- `component_parts` back (_machinery.dm:934-948); matching
+            -- that wants a yield the sim fills in from the roster
+            -- rather than a list a file spells, which is an engine
+            -- change and the one thing about sockets this file cannot
+            -- yet say.
             yields = {
                 thermomachine_board = 1,
                 matter_bin = 2,

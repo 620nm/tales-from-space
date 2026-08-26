@@ -45,16 +45,41 @@ return {
         -- STOCK PARTS, on tg's own authority: the Robco Tool Maker
         -- stocks `micro_laser = 5` and `matter_bin = 5`
         -- (vending/engineering.dm:29-30), which is the same folding-in
-        -- this file already does for tubes and replacers.
+        -- this file already does for tubes and replacers. The other
+        -- three kinds are the same fold again: tg prints every stock
+        -- part at a lathe, and until one exists the shelf is where a
+        -- machine's insides come from.
+        --
+        -- THE PLAIN RUNG ONLY. Each of these is tier one of four
+        -- (lib/stock_parts.luau); a better one is something you FIND,
+        -- because a shelf that sells the top of the ladder for nothing
+        -- is a ladder with no rungs.
         { item = "matter_bin", name = "Matter Bin", category = "Parts", amount = 5 },
         { item = "micro_laser", name = "Micro-Laser", category = "Parts", amount = 5 },
-        -- The board is NOT tg's: circuit boards come off a departmental
-        -- techfab, and this pack has no lathe of any kind. Until one
-        -- exists the shelf is where a machine board is obtainable at
-        -- all, which is the same argument that put the RPD here.
+        { item = "capacitor", name = "Capacitor", category = "Parts", amount = 5 },
+        { item = "servo", name = "Micro-Servo", category = "Parts", amount = 5 },
+        { item = "scanning_module", name = "Scanning Module", category = "Parts", amount = 5 },
+        -- The boards are NOT tg's: circuit boards come off a
+        -- departmental techfab, and this pack has no lathe of any kind.
+        -- Until one exists the shelf is where a machine board is
+        -- obtainable at all, which is the same argument that put the RPD
+        -- here. The two medical boards sit on an engineering machine for
+        -- want of a medical one, and move the day there is one.
         {
             item = "thermomachine_board",
             name = "Machine Board (Temperature Control Unit)",
+            category = "Parts",
+            amount = 2,
+        },
+        {
+            item = "chem_heater_board",
+            name = "Machine Board (Reaction Chamber)",
+            category = "Parts",
+            amount = 2,
+        },
+        {
+            item = "chem_dispenser_board",
+            name = "Machine Board (Chem Dispenser)",
             category = "Parts",
             amount = 2,
         },
