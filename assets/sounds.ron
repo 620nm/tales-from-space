@@ -22,6 +22,10 @@
     // and the light replacer clicks (lightreplacer.dm:263).
     ("glass_break", "effects/glass/glasshit.ogg"),
     ("click", "machines/click.ogg"),
+    // The exchanger swapping a socket. tg plays it from the RPED
+    // itself, once per pass over a machine rather than once per
+    // part (part_replacer.dm:30).
+    ("part_swap", "items/tools/rped.ogg"),
     // An atmospherics valve wheel starting to turn. tg plays it on the
     // CLICK, ahead of the second of turning, so the room hears somebody
     // commit rather than hears the result (valve.dm:28).

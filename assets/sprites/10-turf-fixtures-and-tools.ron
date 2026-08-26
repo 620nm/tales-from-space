@@ -42,6 +42,7 @@
         ("stack_objects", "obj/stack_objects.dmi"),
         ("backpack", "obj/storage/backpack.dmi"),
         ("box", "obj/storage/box.dmi"),
+        ("storage", "obj/storage/storage.dmi"),
         ("toolbox", "obj/storage/toolbox.dmi"),
         ("structures", "obj/structures.dmi"),
         ("tools", "obj/tools.dmi"),
@@ -80,6 +81,9 @@
         ("girder_reinforced", Dmi("@structures", "reinforced", 0)),
         ("frame", Dmi("@stock_parts", "box_0", 0)),
         ("board", Dmi("@circuitry", "mainboard", 0)),
+        // The bag a maintenance tech walks a machine's sockets with
+        // (tg's RPED, code/modules/research/part_replacer.dm:5).
+        ("part_replacer", Dmi("@storage", "RPED", 0)),
         // AN AIRLOCK IS TWO LAYERS, and that is why it used to look
         // see-through. tg draws the FRAME (`closed`/`open`/`opening`/
         // `closing`) and then lays a FILL over it in the same breath:
