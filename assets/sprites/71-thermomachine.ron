@@ -37,7 +37,6 @@
 (
     sheets: [
         ("thermomachine", "obj/machines/atmospherics/thermomachine.dmi"),
-        ("stock_parts", "obj/devices/stock_parts.dmi"),
     ],
     sprites: [
         // The two positions. tg's `update_icon_state`
@@ -62,10 +61,9 @@
             dir: 0,
             paint: (0, 255, 0),
         )),
-        // The stock parts, off tg's device sheet
-        // (research/stock_parts.dm:49-58 names both states). Tier one
-        // of four in tg, and the only tier here.
-        ("matter_bin", Dmi("@stock_parts", "matter_bin", 0)),
-        ("micro_laser", Dmi("@stock_parts", "micro_laser", 0)),
+        // The stock parts this unit is built out of moved to
+        // 72-stock-parts.ron the day they grew tiers: they are a family
+        // of their own, and half of them are nothing to do with a
+        // thermomachine.
     ],
 )
