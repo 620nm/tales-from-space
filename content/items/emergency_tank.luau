@@ -1,32 +1,46 @@
--- The bottle every crewman wakes up with: three litres at ten
--- atmospheres, which is about twenty breaths and not one more. It is
--- not equipment, it is the reason a hull breach is a bad afternoon
--- rather than a death.
+-- The pocket bottle: three litres, small enough to live in a bag, and
+-- the reason a hull breach is a bad afternoon rather than a death. THE
+-- SHELL IS THE PROTOTYPE and the gas is a variant of it: an empty
+-- three-litre bottle is a real thing to hand somebody, and what the
+-- station packs is `emergency_tank.oxygen` -- ten atmospheres of it,
+-- about twenty breaths and not one more.
 --
 -- tg: /obj/item/tank/internals/emergency_oxygen (code/game/objects/
--- items/tanks/tank_types.dm:166-183) -- 3 L (:179), filled with oxygen
--- at 10*ONE_ATMOSPHERE (:183), distributing at
+-- items/tanks/tank_types.dm:166-183) -- 3 L (:179), distributing at
 -- TANK_DEFAULT_RELEASE_PRESSURE (:178), small enough for a pocket
--- (:176) and carried on the belt (:175). Weight class and slot fit are
--- not things a prototype can say here yet, so this one rides the kit
--- like any other packed item; the numbers that DO exist are tg's.
+-- (:176) and carried on the belt (:175). tg splits the same way this
+-- file does: the shell fills with oxygen in `populate_gas` (:182-183)
+-- and `/empty` overrides that with nothing (:186-187). Weight class
+-- and slot fit are not things a prototype can say here yet, so this
+-- one rides the kit like any other packed item; the numbers that DO
+-- exist are tg's.
+--
+-- The bigger pocket bottles -- tg's `engi` at 6 L (:189-197) and
+-- `double` at 12 L (:202-208) -- are NOT variants of this one: a
+-- variant charges the tank the base declared and never resizes it
+-- (docs/CONTENT-SCHEMA.md 1.1a), so each of those is its own shell the
+-- day the station stocks one. Neither is a nitrogen pocket bottle: tg
+-- has none at this size, its plasmaman belt tank being a 6 L shell of
+-- plasma (:143-159).
 --
 -- The valve is left unstated because 16 kPa is already the engine's
 -- default, and tg's own file sets it from the same define rather than
 -- from a number.
 
 local content = {
-    id = "emergency_oxygen",
-    name = "emergency oxygen tank",
-    sprite = "emergency_oxygen",
+    id = "emergency_tank",
+    name = "emergency tank",
+    sprite = "emergency_tank",
     ui = { modules = { "held_tank" } },
-    inhand_sprite = { "held_emergency_oxygen_l", "held_emergency_oxygen_r" },
+    inhand_sprite = { "held_emergency_tank_l", "held_emergency_tank_r" },
     -- tg tanks.dm:26-27.
     pickup_sound = "gas_tank_pickup",
     drop_sound = "gas_tank_drop",
+    -- The shell, and nothing in it. `fill` is optional exactly so an
+    -- empty bottle is representable, and an empty one is what a spent
+    -- bottle and a fresh shell both are.
     gas_tank = {
         volume_l = 3,
-        fill = { { substance = "o2", kpa = 10 * 101.325 } },
     },
     -- WHAT IT DOES WHEN SOMEBODY OVERFILLS IT. tg's handheld tank
     -- ladder, verbatim: nothing at all below 30 atm, brute damage
@@ -81,6 +95,25 @@ local content = {
     -- valve a breath is drawn at. Whether the valve OPENS is the
     -- engine's to decide: apparatus on the face, tank on the body,
     -- body alive. Closing is never refused, and neither is looking.
+    --
+    -- What the station actually issues (docs/CONTENT-SCHEMA.md 1.1a).
+    -- A charge is a line of data, not a second file, and the hooks
+    -- below are bound to this shell and govern every variant of it.
+    variants = {
+        -- tg's own: oxygen at 10*ONE_ATMOSPHERE in three litres
+        -- (tank_types.dm:182-183).
+        oxygen = {
+            name = "emergency oxygen tank",
+            gas_tank = {
+                fill = { { substance = "o2", kpa = 10 * 101.325 } },
+            },
+            -- tg's desc, verbatim (tank_types.dm:168).
+            examine = {
+                flavor = "Used for emergencies. Contains very little oxygen, "
+                    .. "so try to conserve it until you actually need it.",
+            },
+        },
+    },
 }
 
 if sim ~= nil then

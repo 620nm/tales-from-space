@@ -46,15 +46,15 @@
         // The pocket bottle: /obj/item/tank/internals/emergency_oxygen
         // (tank_types.dm:166-173). Same sheets, a different state, and
         // the belt sheet for the worn picture (see the header).
-        (sheet: "canisters", sprites: [Sprite("emergency_oxygen", "emergency", s)]),
-        (sheet: "worn_belt", sprites: [Directions("worn_emergency_oxygen", "emergency")]),
+        (sheet: "canisters", sprites: [Sprite("emergency_tank", "emergency", s)]),
+        (sheet: "worn_belt", sprites: [Directions("worn_emergency_tank", "emergency")]),
         (
             sheet: "tanks_l",
-            sprites: [Directions("held_emergency_oxygen_l", "emergency_tank")],
+            sprites: [Directions("held_emergency_tank_l", "emergency_tank")],
         ),
         (
             sheet: "tanks_r",
-            sprites: [Directions("held_emergency_oxygen_r", "emergency_tank")],
+            sprites: [Directions("held_emergency_tank_r", "emergency_tank")],
         ),
 
         // The apparatus: /obj/item/clothing/mask/breath

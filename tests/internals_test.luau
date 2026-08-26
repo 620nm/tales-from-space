@@ -52,7 +52,7 @@ end
 -- that hardcodes slot 1 breaks the day somebody reorders it.
 local function bottle_row(p)
     for i, id in ipairs(t.stored(p, "back")) do
-        if id == "emergency_oxygen" then
+        if id == "emergency_tank.oxygen" then
             return i
         end
     end
@@ -107,7 +107,7 @@ assert(t.worn(diver).suit == "eva_suit", "the suit is on")
 local function open_bottle(p)
     t.take_from(p, "back", bottle_row(p))
     t.run_ticks(2)
-    assert(t.hands(p).held == "emergency_oxygen", "the bottle is in hand")
+    assert(t.hands(p).held == "emergency_tank.oxygen", "the bottle is in hand")
     t.use_self(p)
     t.run_ticks(2)
 end

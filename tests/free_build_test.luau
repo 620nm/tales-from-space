@@ -39,7 +39,7 @@ assert(table.concat(belt, ",")
     == "screwdriver,wrench,welder,crowbar,wirecutters,multitool,cable_coil",
     "the whole tool suite: " .. table.concat(belt, ","))
 assert(table.concat(t.stored(builder, "back"), ",")
-    == "metal,floor_tile,emergency_oxygen,headset",
+    == "metal,floor_tile,emergency_tank.oxygen,headset",
     "and the survival bottle and the building stock ride the pack")
 
 -- Player-observable, because that is the point: the tools work from the
