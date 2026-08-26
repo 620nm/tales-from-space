@@ -42,7 +42,7 @@ t.world([==[(
         "######",
     ],
     spawns: [(1, 1)],
-    items: [(1, 1, "bottle_iodine")],
+    items: [(1, 1, "bottle.iodine")],
 )]==], 0)
 
 t.set_environment({ sink_k = 293.15, insolation = 0.0 })
@@ -50,7 +50,7 @@ t.set_environment({ sink_k = 293.15, insolation = 0.0 })
 local p = t.join()
 t.tick()
 
-local bottle = t.target_at(1, 1, "bottle_iodine")
+local bottle = t.target_at(1, 1, "bottle.iodine")
 
 local function phases(handle)
     local reading = t.vessel(handle)

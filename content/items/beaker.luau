@@ -43,6 +43,16 @@ local content = {
     -- Clicking another loose vessel has to reach the hook rather than
     -- picking it up: pouring is a thing you do TO the thing you named.
     acts_on_items = true,
+    -- What the infirmary keeps on the shelf, as a variant of the glass
+    -- rather than a copy of this file (docs/CONTENT-SCHEMA.md 1.1a):
+    -- `beaker.libital` is a beaker in every way but what is in it, so
+    -- it wears the same gestures out of the same `lib/vessel.luau`.
+    variants = {
+        libital = {
+            name = "beaker (libital)",
+            contents = { water = 0.20, libital = 0.15 },
+        },
+    },
 }
 
 if sim ~= nil then

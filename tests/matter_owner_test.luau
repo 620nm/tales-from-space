@@ -32,7 +32,7 @@ t.world([==[(
     ],
     spawns: [(2, 1)],
     items: [
-        (1, 1, "beaker_libital"),
+        (1, 1, "beaker.libital"),
         (3, 1, "beaker"),
     ],
 )]==], 0)
@@ -40,7 +40,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local full = t.target_at(1, 1, "beaker_libital")
+local full = t.target_at(1, 1, "beaker.libital")
 local empty = t.target_at(3, 1, "beaker")
 
 local function total(handle)

@@ -22,7 +22,7 @@ return {
         -- (`/obj/item/storage/backpack/duffelbag/med`, and the syringe
         -- is what makes the libital beaker a DOSE rather than a drink).
         { slot = "back", item = "backpack", contents = {
-            "beaker_libital", "emergency_oxygen", "headset", "syringe",
+            "beaker.libital", "emergency_oxygen", "headset", "syringe",
         } },
     },
 }

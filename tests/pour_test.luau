@@ -25,20 +25,20 @@ t.world([==[(
     ],
     spawns: [(2, 1)],
     items: [
-        (1, 1, "beaker_libital"),
-        (2, 1, "beaker_libital"),
+        (1, 1, "beaker.libital"),
+        (2, 1, "beaker.libital"),
         (3, 1, "beaker"),
-        (4, 1, "beaker_libital"),
+        (4, 1, "beaker.libital"),
     ],
 )]==], 0)
 
 local p = t.join()
 t.tick()
 
-local a = t.target_at(1, 1, "beaker_libital")
-local b = t.target_at(2, 1, "beaker_libital")
+local a = t.target_at(1, 1, "beaker.libital")
+local b = t.target_at(2, 1, "beaker.libital")
 local c = t.target_at(3, 1, "beaker")
-local e = t.target_at(4, 1, "beaker_libital")
+local e = t.target_at(4, 1, "beaker.libital")
 
 local function total(handle)
     local contents = t.contents(handle)
@@ -60,7 +60,7 @@ end
 
 -- The brim is a VOLUME (docs/MATTER.md 5). Water is 18.015 mL to the
 -- mole and libital 180, a beaker is fifty millilitres of glass, and
--- what a beaker_libital ships with -- 0.20 water and 0.15 libital --
+-- what a beaker.libital ships with -- 0.20 water and 0.15 libital --
 -- is 30.60 of those fifty. Everything the trims below come to is those
 -- four numbers and nothing else.
 local WATER_ML, LIBITAL_ML, GLASS_ML = 18.015, 180.0, 50.0
@@ -68,7 +68,7 @@ local function litres_of(water, libital)
     return water * WATER_ML + libital * LIBITAL_ML
 end
 -- The share of a 0.25 mol parcel of that mix which fits in what a full
--- beaker_libital leaves free.
+-- beaker.libital leaves free.
 local FIT = 0.25
     * ((GLASS_ML - litres_of(0.20, 0.15)) / litres_of(0.25 * 4 / 7, 0.25 * 3 / 7))
 

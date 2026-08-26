@@ -31,7 +31,7 @@ t.world([==[(
     spawns: [(1, 1)],
     items: [
         (1, 1, "burner"),
-        (2, 1, "beaker_libital"),
+        (2, 1, "beaker.libital"),
     ],
 )]==], 0)
 
@@ -39,7 +39,7 @@ local p = t.join()
 t.tick()
 
 local burner = t.target_at(1, 1, "burner")
-local beaker = t.target_at(2, 1, "beaker_libital")
+local beaker = t.target_at(2, 1, "beaker.libital")
 
 -- It ships with tg's 15 units of spirit in it, through the documented
 -- bridge: 15 x 0.025 = 0.375 mol (items.dm:164-172).

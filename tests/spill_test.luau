@@ -14,13 +14,13 @@ t.world([==[(
         "#####",
     ],
     spawns: [(1, 1)],
-    items: [(1, 1, "beaker_libital")],
+    items: [(1, 1, "beaker.libital")],
 )]==], 0)
 
 local p = t.join()
 t.tick()
 
-local beaker = t.target_at(1, 1, "beaker_libital")
+local beaker = t.target_at(1, 1, "beaker.libital")
 local function total(handle)
     local contents = t.contents(handle)
     assert(contents ~= nil, "that is a vessel")

@@ -28,11 +28,11 @@ t.world([==[(
     ],
     spawns: [(1, 1), (5, 1)],
     items: [
-        (1, 1, "beaker_libital"),
+        (1, 1, "beaker.libital"),
         (2, 1, "beaker"),
         (3, 1, "bottle"),
         (4, 1, "syringe"),
-        (4, 1, "beaker_libital"),
+        (4, 1, "beaker.libital"),
     ],
     structures: [(3, 2, "canister")],
 )]==], 0)
@@ -41,11 +41,11 @@ local medic = t.join()
 local patient = t.join()
 t.run_ticks(3)
 
-local full = t.target_at(1, 1, "beaker_libital")
+local full = t.target_at(1, 1, "beaker.libital")
 local empty = t.target_at(2, 1, "beaker")
 local jar = t.target_at(3, 1, "bottle")
 local syringe = t.target_at(4, 1, "syringe")
-local dose = t.target_at(4, 1, "beaker_libital")
+local dose = t.target_at(4, 1, "beaker.libital")
 local pid = t.body_id(patient)
 
 local function take(p, x, y, id)
