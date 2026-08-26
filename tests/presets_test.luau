@@ -87,7 +87,7 @@ t.world([==[(
     structures: [
         (1, 1, "passive_vent"),
         (5, 4, "passive_vent"),
-        (5, 1, "gas_mixer_airmix"),
+        (5, 1, "gas_mixer.airmix"),
     ],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3),
@@ -105,7 +105,7 @@ t.tick()
 local early = t.pipe_pressure(7, 1)
 
 local m = t.structure_at(5, 1)
-assert(m ~= nil and m.id == "gas_mixer_airmix", "the air mixer is where the map put it")
+assert(m ~= nil and m.id == "gas_mixer.airmix", "the air mixer is where the map put it")
 assert(m.state == "running", "and unlike a plain mixer it opens the shift RUNNING")
 
 -- The chambers are what the map said, which is what makes the mix
@@ -127,7 +127,7 @@ assert(back_pure > 0.97, "the back intake carries nitrogen: " .. back_pure)
 assert(side_pure > 0.97, "and the side intake oxygen: " .. side_pure)
 
 -- ---- the panel, read and not touched ----
-t.click(p, 5, 1, t.target_at(5, 1, "gas_mixer_airmix"))
+t.click(p, 5, 1, t.target_at(5, 1, "gas_mixer.airmix"))
 t.tick()
 local ui = t.ui(p)
 assert(ui and ui.document == "modules" and ui.presentation == "modules",
@@ -192,7 +192,7 @@ t.world([==[(
     spawns: [(4, 2)],
     room_gas: [(1, 1, "co2", 100.0)],
     pipes: [(2, 1, 4), (3, 1, 4), (5, 1, 4), (6, 1, 4), (4, 2, 4)],
-    structures: [(1, 1, "passive_vent"), (4, 1, "gas_filter_co2")],
+    structures: [(1, 1, "passive_vent"), (4, 1, "gas_filter.co2")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3),
         (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3),
@@ -203,7 +203,7 @@ local q = t.join()
 t.tick()
 
 local f = t.structure_at(4, 1)
-assert(f ~= nil and f.id == "gas_filter_co2", "the preset filter is on the line")
+assert(f ~= nil and f.id == "gas_filter.co2", "the preset filter is on the line")
 assert(f.state == "running", "and it opens the shift running")
 
 -- The two output nets as the map handed them over: ordinary air, and
@@ -233,7 +233,7 @@ end
 local books_co2, books_o2, books_n2 = books("co2"), books("o2"), books("n2")
 
 -- ---- the panel, read and not touched ----
-t.click(q, 4, 1, t.target_at(4, 1, "gas_filter_co2"))
+t.click(q, 4, 1, t.target_at(4, 1, "gas_filter.co2"))
 t.tick()
 local panel = t.ui(q)
 assert(panel and panel.document == "modules" and panel.presentation == "modules",

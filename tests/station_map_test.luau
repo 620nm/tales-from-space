@@ -20,8 +20,8 @@ t.run_seconds(10)
 
 -- Atmospherics is commissioned rather than merely drawn.
 for _, row in ipairs({
-    { 21, 23, "gas_filter_co2", "running" },
-    { 23, 23, "gas_mixer_airmix", "running" },
+    { 21, 23, "gas_filter.co2", "running" },
+    { 23, 23, "gas_mixer.airmix", "running" },
     { 25, 23, "gas_pump", "running" },
     { 18, 26, "gas_pump", "running" }, -- the waste lift: a pressure pump,
     -- because a volumetric one refuses the drained main's trickle

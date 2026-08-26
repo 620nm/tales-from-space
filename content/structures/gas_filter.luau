@@ -93,4 +93,77 @@ return {
             done = "The gas filter comes up off the pipe.",
         },
     },
+    -- The preconfigurations. tg ships eighteen `/filter/atmos/<gas>`
+    -- subtypes, each the base machine with `on = TRUE` and one gas in
+    -- `filter_type` (filter.dm:224-229), because a waste loop is a
+    -- CHAIN of filters and a mapper laying one should not have to open
+    -- eighteen panels. Here each is a line: `props` is the placement
+    -- bag any map could already write by hand, said once
+    -- (docs/MAPPING.md, docs/CONTENT-SCHEMA.md §1.1a).
+    --
+    -- None of them declares a `build`: a preset is something a MAP
+    -- lays, not something a player raises, and tg agrees — every preset
+    -- filter shares the base's `construction_type`, so the fitting in
+    -- your hands only ever knows how to become a plain gas filter.
+    variants = {
+        co2 = {
+            name = "carbon dioxide filter",
+            sprite = "filter_on_n",
+            props = { on = true, filter = "co2" },
+        },
+        n2 = {
+            name = "nitrogen filter",
+            sprite = "filter_on_n",
+            props = { on = true, filter = "n2" },
+        },
+        -- The mirrored machine, which is NOT a turned one: tg's
+        -- `get_node_connects` swaps node1 and node3 and leaves node2
+        -- where it is (trinary_devices.dm:43-51), so the flow reverses
+        -- along the axis while the side port keeps its wall — the
+        -- filtered outlet ends up on the other hand of the stream. A
+        -- pipe run bending the other way needs it.
+        --
+        -- It is the one variant with a `build` of its own, because it
+        -- is the one a player raises: its own fitting goes down and the
+        -- same fitting comes back up, which is why its `transitions`
+        -- are restated too.
+        flipped = {
+            name = "gas filter",
+            sprite = "filter_f_off_n",
+            props = { flipped = true },
+            facing_sprites = {
+                off = {
+                    north = "filter_f_off_n",
+                    south = "filter_f_off_s",
+                    east = "filter_f_off_e",
+                    west = "filter_f_off_w",
+                },
+                running = {
+                    north = "filter_f_on_n",
+                    south = "filter_f_on_s",
+                    east = "filter_f_on_e",
+                    west = "filter_f_on_w",
+                },
+            },
+            build = {
+                on = { "floor", "plating" },
+                from_item = "gas_filter_flipped_fitting",
+                tool = "wrench",
+                secs = 2.0,
+                start = "You start bolting the gas filter down.",
+                done = "The gas filter is seated on the pipe.",
+            },
+            transitions = {
+                {
+                    at = "off",
+                    tool = "wrench",
+                    secs = 2.0,
+                    gone = true,
+                    yields = { gas_filter_flipped_fitting = 1 },
+                    start = "You start unbolting the gas filter.",
+                    done = "The gas filter comes up off the pipe.",
+                },
+            },
+        },
+    },
 }
