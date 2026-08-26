@@ -3,8 +3,8 @@
 -- `airlock.engineering_glass` is not a second airlock: it is the one
 -- airlock file with three properties defaulted -- the livery, the access
 -- claim, and the window -- every one of which a map could already have
--- written on the placement itself (docs/MAPPING.md, the property sheet).
--- So the spec asks the two questions that make a variant worth having:
+-- written on the placement itself (docs/MAP-PROPERTIES.md, the property
+-- sheet). So the spec asks the two questions that make a variant worth having:
 -- does it arrive already dressed, and does a placement still win?
 --
 -- Both are read off the LEAF's picture, which is the whole story in one

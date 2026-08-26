@@ -18,7 +18,7 @@ return {
     phase = "gas_only",
     color = "#808080",
     -- Where this sits in a tool that offers every substance there is
-    -- (docs/MAPPING.md, the recipe panel). The other four fifths of
+    -- (docs/MAP-PROPERTIES.md, the recipe panel). The other four fifths of
     -- ordinary air.
     relevance = 90,
     -- The other four fifths of ordinary air.

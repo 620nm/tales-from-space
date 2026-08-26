@@ -34,7 +34,7 @@ return {
     -- list of which gases frighten anybody.
     dangerous = true,
     -- Where this sits in a tool that offers every substance there is
-    -- (docs/MAPPING.md, the recipe panel).
+    -- (docs/MAP-PROPERTIES.md, the recipe panel).
     relevance = 70,
     -- tg's `dangerous = TRUE` (gas_types.dm:111).
     group = "poison",

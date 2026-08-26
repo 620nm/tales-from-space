@@ -31,7 +31,7 @@ return {
     -- only place on the station that says the crew breathes oxygen.
     breath = { breathable = true },
     -- Where this sits in a tool that offers every substance there is
-    -- (docs/MAPPING.md, the recipe panel). The air a station is
+    -- (docs/MAP-PROPERTIES.md, the recipe panel). The air a station is
     -- commissioned full of, so it leads.
     relevance = 100,
     -- The gas a crew breathes: the first thing a scrubber panel should offer.

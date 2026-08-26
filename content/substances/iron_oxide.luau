@@ -29,7 +29,7 @@ return {
     -- (other_reagents.dm:1207); this is the oxide beside it.
     color = "#8B4513",
     -- Where this sits in a tool that offers every substance there is
-    -- (docs/MAPPING.md, the recipe panel): a bench reagent, not
+    -- (docs/MAP-PROPERTIES.md, the recipe panel): a bench reagent, not
     -- something a room is commissioned full of.
     relevance = 0,
 }
