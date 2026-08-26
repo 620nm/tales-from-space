@@ -77,7 +77,7 @@ local content = {
     -- the record -- is the engine's and is already done by the time
     -- this runs (docs/LUAU-API.md, `matter.rupture.done`).
     -- The valve and the panel on one key -- see
-    -- emergency_oxygen.luau for why they share a gesture.
+    -- emergency_tank.luau for why they share a gesture.
 }
 
 if sim ~= nil then
