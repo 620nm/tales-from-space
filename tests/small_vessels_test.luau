@@ -22,7 +22,7 @@ t.world([==[(
     ],
     spawns: [(1, 1)],
     items: [
-        (2, 1, "beaker_libital"),
+        (2, 1, "beaker.libital"),
         (3, 1, "dropper"),
         (4, 1, "bottle"),
         (5, 1, "test_tube"),
@@ -34,7 +34,7 @@ local U = 0.025
 local p = t.join()
 t.tick()
 
-local beaker = t.target_at(2, 1, "beaker_libital")
+local beaker = t.target_at(2, 1, "beaker.libital")
 local dropper = t.target_at(3, 1, "dropper")
 local bottle = t.target_at(4, 1, "bottle")
 local tube = t.target_at(5, 1, "test_tube")

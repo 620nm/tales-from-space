@@ -17,8 +17,9 @@
 -- micromoles of vapour stay clear and a spilt crystal's plume shows.
 --
 -- Not on the dispenser shelf (docs/CHEMISTRY.md 7): it arrives in a
--- bottle (items/bottle_iodine.luau). Off tg's `dangerous` roster, so
--- it draws no alarm; it does not cross into blood (no `inhale`).
+-- bottle (`bottle.iodine`, a variant in items/bottle.luau). Off tg's
+-- `dangerous` roster, so it draws no alarm; it does not cross into
+-- blood (no `inhale`).
 return {
     id = "iodine",
     name = "iodine",

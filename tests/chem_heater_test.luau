@@ -43,7 +43,7 @@ t.world([==[(
         "#######",
     ],
     spawns: [(1, 1)],
-    items: [(1, 1, "beaker_libital")],
+    items: [(1, 1, "beaker.libital")],
     machines: [(2, 1, "chem_heater")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
@@ -69,10 +69,10 @@ assert(row(ui, "vessel").value == "empty", "and it says there is nothing in it")
 near(ui.setpoints[1].value, 300.0, 1e-9, "the dial opens at tg's 300 K")
 t.ui_close(p)
 
-local beaker = t.target_at(1, 1, "beaker_libital")
+local beaker = t.target_at(1, 1, "beaker.libital")
 t.click(p, 1, 1, beaker)
 t.tick()
-assert(t.hands(p).held == "beaker_libital", "the beaker is in hand")
+assert(t.hands(p).held == "beaker.libital", "the beaker is in hand")
 near(t.holder_k(beaker), T20C, 0.01, "at room temperature, as everything ships")
 
 t.click(p, 2, 1, heater)
@@ -162,7 +162,7 @@ near(t.holder_k(beaker), 310.0, 0.5, "arriving from above, and arresting there")
 local warm = t.holder_k(beaker)
 t.ui_act(p, "toggle", '{"field":"eject"}')
 t.run_ticks(2)
-assert(t.hands(p).held == "beaker_libital", "the eject button hands it back")
+assert(t.hands(p).held == "beaker.libital", "the eject button hands it back")
 near(t.holder_k(beaker), warm, 0.5, "still carrying the heat it was given")
 assert(t.ledger_has("Undocked", "beaker"), "and the eject is on the record too")
 assert(row(t.ui(p), "vessel").value == "empty", "the panel agrees there is nothing in it")

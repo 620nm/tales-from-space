@@ -67,7 +67,7 @@ t.world([==[(
     spawns: [(2, 1)],
     items: [
         (1, 1, "bottle"),
-        (3, 1, "beaker"), (3, 1, "beaker_libital"), (3, 1, "dropper"),
+        (3, 1, "beaker"), (3, 1, "beaker.libital"), (3, 1, "dropper"),
     ],
     structures: [
         (2, 2, "canister"),
@@ -137,7 +137,7 @@ assert(said(p, "That would only escape: seal a vessel first."),
 -- mole of oxygen it could not keep. A vessel's gestures come out of
 -- lib/vessel.luau now, so this is the same sentence for all of them by
 -- construction rather than by proofreading.
-for _, open in ipairs({ "beaker_libital", "dropper" }) do
+for _, open in ipairs({ "beaker.libital", "dropper" }) do
     t.drop(p)
     t.tick()
     local glassware = t.target_at(3, 1, open)

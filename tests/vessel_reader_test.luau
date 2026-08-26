@@ -32,7 +32,7 @@ t.world([==[(
     spawns: [(1, 1)],
     items: [
         (2, 1, "oxygen_tank"),
-        (3, 1, "beaker_libital"),
+        (3, 1, "beaker.libital"),
         (4, 1, "crowbar"),
         (5, 1, "beaker"),
     ],
@@ -71,7 +71,7 @@ assert(tank.contents.o2.solid == nil, "and none of it is ice")
 -- The beaker beside it: the same reading of a thing with a wet
 -- bottom and an open top.
 -- ---------------------------------------------------------------
-local beaker = t.vessel(t.target_at(3, 1, "beaker_libital"))
+local beaker = t.vessel(t.target_at(3, 1, "beaker.libital"))
 assert(beaker ~= nil, "a beaker has an inside too")
 assert(not beaker.sealed, "an open glass breathes, and says so")
 assert(beaker.contents.water ~= nil, "there is water in it")
@@ -102,11 +102,11 @@ assert(empty.pressure_kpa == 0, "and nothing pressing on anything")
 
 -- The collapsed reading is still there and still agrees: `t.contents`
 -- is the same water, summed over its phases.
-local collapsed = t.contents(t.target_at(3, 1, "beaker_libital"))
+local collapsed = t.contents(t.target_at(3, 1, "beaker.libital"))
 near(collapsed.water,
     beaker.contents.water.liquid + (beaker.contents.water.gas or 0.0),
     1e-12, "one substance, two ways of counting it")
-near(t.holder_kpa(t.target_at(3, 1, "beaker_libital")), beaker.pressure_kpa,
+near(t.holder_kpa(t.target_at(3, 1, "beaker.libital")), beaker.pressure_kpa,
     1e-12, "and one pressure, two ways of asking")
 
 -- ---------------------------------------------------------------

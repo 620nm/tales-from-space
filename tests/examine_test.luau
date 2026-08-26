@@ -39,7 +39,7 @@ t.world([==[(
         "##########",
     ],
     spawns: [(1, 1)],
-    items: [(2, 1, "burner"), (3, 1, "beaker_libital"), (4, 1, "beaker"), (6, 1, "bottle")],
+    items: [(2, 1, "burner"), (3, 1, "beaker.libital"), (4, 1, "beaker"), (6, 1, "bottle")],
     machines: [(3, 0, "chem_dispenser")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
@@ -51,7 +51,7 @@ local p = t.join()
 t.tick()
 
 local burner = t.target_at(2, 1, "burner")
-local mixed = t.target_at(3, 1, "beaker_libital")
+local mixed = t.target_at(3, 1, "beaker.libital")
 local taps = t.target_at(3, 0)
 local beaker = t.target_at(4, 1, "beaker")
 local locked_away = t.target_at(6, 1, "bottle")

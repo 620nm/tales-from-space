@@ -85,7 +85,7 @@ t.world([==[(
         (1, 2, "beaker"),
         (3, 2, "bottle"),
         (3, 3, "beaker"),
-        (2, 3, "beaker_libital"),
+        (2, 3, "beaker.libital"),
     ],
     machines: [(1, 1, "chem_dispenser"), (3, 1, "chem_heater")],
     cables: [
@@ -103,7 +103,7 @@ local heater = t.target_at(3, 1)
 local a = t.target_at(1, 2, "beaker")
 local jar = t.target_at(3, 2, "bottle")
 local b = t.target_at(3, 3, "beaker")
-local med = t.target_at(2, 3, "beaker_libital")
+local med = t.target_at(2, 3, "beaker.libital")
 
 -- The crewman stands in the middle of the bench, so both machines and
 -- all four vessels are within arm's reach and this spec is never about

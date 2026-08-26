@@ -15,7 +15,7 @@
 -- sevenths libital, and each number is that ratio times the stroke.
 
 local STROKE = 0.125 -- tg's 5 u at 1 u = 0.025 mol (syringes.dm:11)
-local SHIPS = 0.35 -- what a beaker_libital arrives holding
+local SHIPS = 0.35 -- what a beaker.libital arrives holding
 local PILLS = 5 -- what the packager prints in one gesture
 
 t.world([==[(
@@ -36,10 +36,10 @@ t.world([==[(
     spawns: [(3, 1), (7, 1)],
     items: [
         (3, 1, "syringe"),
-        (3, 1, "beaker_libital"),
+        (3, 1, "beaker.libital"),
         (4, 1, "beaker"),
-        (5, 1, "beaker_libital"),
-        (6, 1, "beaker_libital"),
+        (5, 1, "beaker.libital"),
+        (6, 1, "beaker.libital"),
     ],
     machines: [(2, 1, "chem_packager")],
     cables: [
@@ -55,10 +55,10 @@ t.run_ticks(3)
 
 local packager = t.target_at(2, 1)
 local syringe = t.target_at(3, 1, "syringe")
-local source = t.target_at(3, 1, "beaker_libital")
+local source = t.target_at(3, 1, "beaker.libital")
 local empty = t.target_at(4, 1, "beaker")
-local first = t.target_at(5, 1, "beaker_libital")
-local second = t.target_at(6, 1, "beaker_libital")
+local first = t.target_at(5, 1, "beaker.libital")
+local second = t.target_at(6, 1, "beaker.libital")
 local pid = t.body_id(patient)
 assert(packager ~= nil and syringe ~= nil, "the bench is laid out")
 
