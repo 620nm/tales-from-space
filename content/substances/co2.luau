@@ -45,7 +45,7 @@ return {
     -- `safe_co2_max` and its twelve-second clock).
     breath = { waste = true },
     -- Where this sits in a tool that offers every substance there is
-    -- (docs/MAPPING.md, the recipe panel). What a room full of people
+    -- (docs/MAP-PROPERTIES.md, the recipe panel). What a room full of people
     -- fills up with, and what a mapper drawing a stale chamber reaches
     -- for.
     relevance = 80,

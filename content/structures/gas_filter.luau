@@ -99,7 +99,7 @@ return {
     -- CHAIN of filters and a mapper laying one should not have to open
     -- eighteen panels. Here each is a line: `props` is the placement
     -- bag any map could already write by hand, said once
-    -- (docs/MAPPING.md, docs/CONTENT-SCHEMA.md §1.1a).
+    -- (docs/MAP-PROPERTIES.md, docs/CONTENT-SCHEMA.md §1.1a).
     --
     -- None of them declares a `build`: a preset is something a MAP
     -- lays, not something a player raises, and tg agrees — every preset

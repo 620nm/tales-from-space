@@ -4,7 +4,7 @@
 -- stocked and the bench already holding something, and saying so used
 -- to mean a whole prototype per fill. It is a `matter_presets` block
 -- now: the map declares named charges and a placement names one
--- (docs/MAPPING.md, "The property sheet"). The glass is one noun; what
+-- (docs/MAP-PROPERTIES.md, "The property sheet"). The glass is one noun; what
 -- somebody left in it is a fact about the station.
 --
 -- Three sentences, all read through `t.vessel`, which is what a pair of

@@ -51,7 +51,7 @@ return {
     color = "#AAAAAA",
     visible = { moles = 0.25, factor = 20, tint = "#E6EDF7" },
     -- Where this sits in a tool that offers every substance there is
-    -- (docs/MAPPING.md, the recipe panel). Authored as vapour: a humid
+    -- (docs/MAP-PROPERTIES.md, the recipe panel). Authored as vapour: a humid
     -- room, which condenses out on the first atmos pass exactly as it
     -- should.
     relevance = 50,
