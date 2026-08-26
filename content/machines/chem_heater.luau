@@ -1,12 +1,14 @@
 -- The reaction chamber: a hotplate with a thermostat and a slot for
 -- one beaker. tg's `/obj/machinery/chem_heater` (chem_heater.dm).
 --
--- No script at all. Everything this machine does is mechanism — a
+-- Almost no script. Everything this machine DOES is mechanism — a
 -- vessel goes in, a dial says how hot, the element works towards it —
 -- and mechanism is the engine's (AGENTS.md's boundary test). What is
 -- content is the whole of this file: what it is called, what it looks
 -- like with and without something in it, where its dial opens and how
--- hard it drives.
+-- hard it drives. The one verb it owns is what its socket is WORTH,
+-- which is a judgement rather than an arithmetic, and that lives in
+-- `fixtures/chem_heater.luau`.
 --
 -- THE COEFFICIENT IS THE LASER. tg's `RefreshParts` sets
 -- `heater_coefficient = 0.1` and multiplies it by the tier of the one
@@ -26,6 +28,10 @@ return {
     id = "chem_heater",
     name = "reaction chamber",
     sprite = "chem_heater",
+    -- What the SOCKET is worth is the one thing about this chamber that
+    -- is not mechanism, so it is the one thing this file hands to a
+    -- script (fixtures/chem_heater.luau).
+    script = "chem_heater",
     ui = { modules = { "thermostat_dock", "parts" } },
     examine = {
         flavor = "A hotplate with a dial and a cradle for one vessel. It "
@@ -55,6 +61,22 @@ return {
         slots = { "laser" },
         scale = {
             coeff = { by = "laser", law = "multiply", clamp = { 0.05, 0.4 } },
+        },
+        -- OURS, not tg's: tg's chamber does not care what room it is
+        -- standing in. A hotplate holding a beaker to a dial is a
+        -- thermostat working against its surroundings, and a chamber
+        -- in a burning maintenance shaft should be worse at it than
+        -- one on the bench. A fifth of a percent per kelvin is gentle
+        -- on purpose -- forty kelvin off the mark is worth about a
+        -- tenth of the machine -- and the floor is what stops a fire
+        -- from turning a chamber into an ornament.
+        --
+        -- The rung at which a laser stops caring is the script's
+        -- (fixtures/chem_heater.luau), because "a better part carries
+        -- its own shielding" is a judgement about parts and not a
+        -- number the physics needs.
+        environment = {
+            temperature = { ideal_k = 293.15, loss_per_k = 0.002, floor = 0.2 },
         },
     },
     variants = {

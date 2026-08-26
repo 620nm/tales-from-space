@@ -62,6 +62,14 @@ if sim ~= nil then
                 sim.component.swap({ subject = claim.entity, slot = index, part = bag[best] })
             end
         end
+        -- And then ask the machine what it is worth, whether or not a
+        -- socket changed: tg calls `RefreshParts()` at the end of
+        -- `exchange_parts` unconditionally (`_machinery.dm:1172`). The
+        -- engine already re-asks after every swap, so this is the
+        -- GESTURE's re-ask -- the one prompt in the pack that says
+        -- "look at yourself again" to a machine nobody took apart, and
+        -- the only caller `sim.component.refresh` has here.
+        sim.component.refresh({ subject = claim.entity })
         if fitted == 0 then
             sim.message.send({
                 recipient = ev.actor,
