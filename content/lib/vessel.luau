@@ -250,6 +250,20 @@ function vessel.attach(spec)
         return true
     end)
 
+    -- A thrown open vessel tips itself out wherever it comes to rest.
+    -- The native verb moves all and only condensed phases, conserves
+    -- energy with them, validates the standable landing tile, and writes
+    -- the attributed `Spilled` row. Every landing is an impact for this
+    -- purpose; sealing is the content-visible way to prevent it.
+    if spec.spill ~= nil then
+        definition:handle("throw.land.done", { kind = "react", route = "land" }, function(ev)
+            local reading = sim.matter_read(ev.entity)
+            if reading ~= nil and not reading.sealed then
+                sim.matter.spill({ from = ev.entity, at = ev.at })
+            end
+        end)
+    end
+
     return definition
 end
 
