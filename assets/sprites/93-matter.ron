@@ -1,0 +1,42 @@
+// Generic floor matter imported from tgstation at the revision pinned in
+// `tfs/assets/tg-revision`. These are neutral or near-neutral masks so
+// the authoritative substance tint can multiply them at runtime.
+(
+    sheets: [
+        ("blood", "effects/blood.dmi"),
+        ("debris", "obj/debris.dmi"),
+        ("dirt", "effects/dirt_misc.dmi"),
+        ("effects", "effects/effects.dmi"),
+    ],
+    sprites: [
+        // `icons/effects/blood.dmi`, floor1..floor3 and floor5..floor6:
+        // broad pool/splash art. Stable tile hashing chooses among them.
+        // floor4 and floor7 are single-colour masks, so the atlas's
+        // accidental-greyscale guard deliberately excludes them.
+        ("matter_liquid_1", Dmi("@blood", "floor1", 0)),
+        ("matter_liquid_2", Dmi("@blood", "floor2", 0)),
+        ("matter_liquid_3", Dmi("@blood", "floor3", 0)),
+        ("matter_liquid_5", Dmi("@blood", "floor5", 0)),
+        ("matter_liquid_6", Dmi("@blood", "floor6", 0)),
+
+        // `icons/obj/debris.dmi`: fine, granular, crystalline, and
+        // coarse solid silhouettes.
+        ("matter_powder", Dmi("@debris", "concrete_dust", 0)),
+        ("matter_granular_small", Dmi("@debris", "ash", 0)),
+        ("matter_granular_large", Dmi("@debris", "big_ash", 0)),
+        ("matter_crystalline_1", Dmi("@debris", "tiny", 0)),
+        ("matter_crystalline_2", Dmi("@debris", "tiny", 1)),
+        ("matter_crystalline_3", Dmi("@debris", "tiny", 2)),
+        ("matter_crystalline_4", Dmi("@debris", "tiny", 3)),
+        ("matter_crystalline_large", Dmi("@debris", "shards", 0)),
+        ("matter_chunks", Dmi("@debris", "rubble", 0)),
+
+        // `icons/effects/effects.dmi`, reusable amorphous blobs.
+        ("matter_amorphous_small", Dmi("@effects", "molten", 0)),
+        ("matter_amorphous_large", Dmi("@effects", "big_molten", 0)),
+
+        // `icons/effects/dirt_misc.dmi`, a short-lived dust puff for
+        // `sim.visual.spawn`; not a persistent matter profile.
+        ("matter_dust", Dmi("@dirt", "dust", 0)),
+    ],
+)
