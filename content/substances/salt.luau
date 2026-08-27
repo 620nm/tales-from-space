@@ -19,6 +19,7 @@ return {
     -- shell volume (docs/MATTER.md 5), so what the product actually
     -- weighs decides how much salt a beaker can make.
     density = { solid = 2.17 },
+    appearance = { solid = "crystalline" },
     -- What it looks like through glass (tg: food_reagents.dm:511 (COLOR_WHITE)).
     color = "#FFFFFF",
 }
