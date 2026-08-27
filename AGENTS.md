@@ -1,9 +1,10 @@
 # Tales from Space — content rules
 
-Mechanics (layout, running, spec commands) live in `tfs/README.md`.
-Contracts: `docs/SCRIPTING.md` is the v1 design, `docs/LUAU-API.md` the
+Mechanics (layout, running, spec commands) live in `README.md`. The
+engine is the sibling checkout `../lunatic`; its `docs/` are the
+contracts: `docs/SCRIPTING.md` is the v1 design, `docs/LUAU-API.md` the
 surface these files CALL, `docs/CONTENT-SCHEMA.md` the fields they
-DECLARE.
+DECLARE. Run the engine with `LUNATIC_PACK` pointing here.
 
 - Content is the default home for game ideas: nouns (prototypes, rosters,
   constants, ids, maps, manifests) are data here; verbs at discrete event
@@ -25,7 +26,7 @@ DECLARE.
   added. Seed 0, `Tuning::default()` pinned, ticks-not-time, drain after
   step. Budget output (load ms, spec ms) is advisory wall clock; the
   hard budget is the host's fuel, counted per invocation and per mod
-  per tick (`crates/lunatic-server/src/fuel.rs`).
+  per tick (lunatic's `crates/lunatic-server/src/fuel.rs`).
 - Map RON inside Luau specs goes in `[==[ ... ]==]` long strings, not
   `[[ ... ]]` — rows like `"####"` can end a plain long string early
   (the Luau twin of Rust's raw-string trap).

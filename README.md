@@ -18,12 +18,18 @@ engine's test fixtures no longer lean on it.
 
 ## Running
 
-From the workspace root:
+This repository is content only; the engine is
+[lunatic](https://github.com/620nm/lunatic), checked out beside it.
+Every command below runs from that checkout with `LUNATIC_PACK`
+naming this one (the engine ships no content and never looks anywhere
+it was not told):
 
 ```sh
-cargo run -p lunatic-server                 # defaults: tfs/maps/chillstation.ron, --content tfs/content
+export LUNATIC_PACK=../tales-from-space
+cargo run -p lunatic-server                 # defaults: the map mod.toml names, <pack>/content
 cargo run -p lunatic-server -- --mode free_build
-cargo run -p lunatic-server -- tfs/maps/outpost.ron --content tfs/content
+cargo run -p lunatic-server -- "$LUNATIC_PACK/maps/outpost.ron"
+cargo run -p xtask -- bake-atlas            # reads <pack>/assets, needs ../tgstation
 ```
 
 ## Authoring
@@ -80,10 +86,10 @@ something any field they set can say.
 ## Specs
 
 ```sh
-cargo run -q -p lunatic-server -- test tfs             # every tests/*_test.luau
-cargo run -q -p lunatic-server -- test tfs vendor      # only files whose NAME contains "vendor"
-cargo run -q -p lunatic-server -- test tfs --json out.json    # CI result document
-cargo run -q -p lunatic-server -- test tfs --load-only # content lint, no Sim
+cargo run -q -p lunatic-server -- test "$LUNATIC_PACK"             # every tests/*_test.luau
+cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" vendor      # only files whose NAME contains "vendor"
+cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" --json out.json    # CI result document
+cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" --load-only # content lint, no Sim
 ```
 
 The filter is a case-insensitive substring of the spec's FILE NAME, so
