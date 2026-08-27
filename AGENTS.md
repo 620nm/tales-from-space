@@ -23,7 +23,9 @@ DECLARE.
   `t` — the same SimCommand seam the Rust harness uses. No raw entity
   handles, no component access, no direct spawn, and none should ever be
   added. Seed 0, `Tuning::default()` pinned, ticks-not-time, drain after
-  step. Budget output is advisory until fuel metering (segment K1).
+  step. Budget output (load ms, spec ms) is advisory wall clock; the
+  hard budget is the host's fuel, counted per invocation and per mod
+  per tick (`crates/lunatic-server/src/fuel.rs`).
 - Map RON inside Luau specs goes in `[==[ ... ]==]` long strings, not
   `[[ ... ]]` — rows like `"####"` can end a plain long string early
   (the Luau twin of Rust's raw-string trap).
