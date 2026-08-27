@@ -147,19 +147,20 @@ return {
             -- too: six reels here is the board's one plus the frame's
             -- five, and the books balance exactly as tg's do.
             --
-            -- WHAT COMES BACK IS THE PLAIN RUNG, whatever went in. A
-            -- `yields` list is content written once and cannot know
-            -- which tiers THIS unit was assembled from, so an upgraded
-            -- unit prised apart loses the upgrade. tg hands the actual
-            -- `component_parts` back (_machinery.dm:934-948); matching
-            -- that wants a yield the sim fills in from the roster
-            -- rather than a list a file spells, which is an engine
-            -- change and the one thing about sockets this file cannot
-            -- yet say.
+            -- THE SOCKETS SAY WHAT COMES OUT, so the two bins and the
+            -- two lasers are NOT written here. A `yields` list is
+            -- content written once and cannot know which tiers THIS
+            -- unit was assembled from; the roster in front of it can,
+            -- and the engine mints it alongside these rows whenever a
+            -- step takes the unit out of the world
+            -- (docs/CONTENT-SCHEMA.md §1.10b). So an upgraded unit
+            -- prised apart hands back the tier fours that are in it,
+            -- which is tg's `component_parts` exactly. Naming a
+            -- component here is a load error for the same reason a
+            -- board may not spell its product's sockets: one question,
+            -- one answer.
             yields = {
                 thermomachine_board = 1,
-                matter_bin = 2,
-                micro_laser = 2,
                 cable_coil = 6,
                 glass = 1,
             },
