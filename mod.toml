@@ -36,6 +36,8 @@ native_edges = [
 [paths]
 content = "content"
 maps = "maps"
+# The station a host boots when its command line names no map.
+map = "maps/chillstation.ron"
 assets = "assets"
 tests = "tests"
 
