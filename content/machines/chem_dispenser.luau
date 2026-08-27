@@ -55,10 +55,15 @@
 -- (chem_dispenser.dm:83).
 --
 -- ASH AND SALTPETRE are tg's upgrade tier too (chem_dispenser.dm:84
--- and :87), promoted to the base shelf here because this pack has no
--- upgrade parts: a machine that ships with a locked half is a machine
--- shipping mis-configured. Saltpetre has no recipe left at all -- tg's
--- is four fifths permanent gas -- so the button is the only way to it.
+-- and :87), promoted to the base shelf here. tg gates that half of the
+-- shelf behind a servo above tier three (chem_dispenser.dm:467-471),
+-- and this machine now HAS a servo socket -- but a shelf is a ROSTER,
+-- and `parts.scale` moves numbers rather than rosters, so a per-tier
+-- shelf is not something this machine can say. It is not a thing worth
+-- inventing a mechanism for either: a machine that ships with a locked
+-- half is a machine shipping mis-configured, and this one ships whole.
+-- Saltpetre has no recipe left at all -- tg's is four fifths permanent
+-- gas -- so the button is the only way to it.
 --
 -- SALT AND IRON OXIDE are on no tg shelf and are this pack's own
 -- departure, taken for pacing (D1). Salt is the bench's first product
@@ -96,13 +101,31 @@ return {
     id = "chem_dispenser",
     name = "chem dispenser",
     sprite = "chem_dispenser",
-    ui = { modules = { "mint_dock" } },
+    ui = { modules = { "mint_dock", "parts" } },
     examine = {
         flavor = "A shelf of taps over a single dock. Every button on it "
             .. "is somewhere a shift's chemistry could start.",
     },
     dense = true,
     corded = true,
+    -- AND BACK APART. tg gives every machine the same two rungs
+    -- generically: a screwdriver opens the maintenance panel
+    -- (`default_deconstruction_screwdriver`, _machinery.dm:1049) and a
+    -- crowbar takes it apart behind the open panel
+    -- (`default_deconstruction_crowbar`, :912). Both are instant there,
+    -- so neither names a `secs` here.
+    --
+    -- What is left standing is the assembly it was screwed together
+    -- from, in the state that holds a board and its parts -- so the
+    -- board and everything in the sockets come back out of the frame's
+    -- own crowbar, at the tiers that are actually fitted
+    -- (docs/CONSTRUCTION.md, "machine teardown").
+    teardown = {
+        open = "screwdriver",
+        remove = "crowbar",
+        into = "machine_frame",
+        state = "boarded",
+    },
     chem = {
         device = "mint",
         -- The nozzle's temperature, and the whole of what this machine
@@ -159,6 +182,57 @@ return {
             -- On no tg shelf: this pack's own two, for pacing (D1).
             { key = "salt", name = "salt" },
             { key = "iron_oxide", name = "iron oxide" },
+        },
+    },
+    -- WHAT THIS MACHINE IS MADE OF, off tg's board verbatim: two matter
+    -- bins, a capacitor and a servo (machine_circuitboards.dm:756-760).
+    -- The cell tg also asks for has no twin here and the board's file
+    -- says why (items/chem_dispenser_board.luau).
+    --
+    -- WHAT TG SCALES AND THIS MACHINE CANNOT. tg's `RefreshParts`
+    -- (chem_dispenser.dm:455-474) moves three things, and two of them
+    -- are about a power economy this pack does not have: the capacitor
+    -- multiplies `recharge_amount` and the bins take a quarter of a
+    -- kilowatt off `power_cost` each, both of which are the cell's
+    -- numbers. The third is the servo's shelf gate, which is a roster
+    -- rather than a knob (see ASH AND SALTPETRE above).
+    --
+    -- SO THE SOCKETS ARE MAPPED ONTO WHAT EXISTS: the dial. Bins are
+    -- capacity in tg wherever they are read, so here they are the
+    -- ceiling on a single press -- a machine with better bins can fill
+    -- a bigger vessel in one go. The servo is precision, so here it is
+    -- the NOTCH -- a better servo divides the step and lets a chemist
+    -- ask for a third of a unit. That is this pack's own reading of
+    -- tg's parts rather than tg's own arithmetic, and it is the
+    -- departure: the capacitor is a build requirement with nothing to
+    -- move until a cell exists, which is why it has no `scale` row.
+    parts = {
+        slots = { "bin", "bin", "capacitor", "servo" },
+        scale = {
+            -- Never under the beaker brim the file ships with (bins only
+            -- ever improve it), never past four beakers in one press.
+            mint_max = { by = "bin", law = "multiply", clamp = { 1.25, 5.0 } },
+            -- tg's smallest press is one unit (0.025 mol) at the top of
+            -- the clamp; a fifth of one at the bottom, so no ladder can
+            -- turn the dial into a slider.
+            mint_step = { by = "servo", law = "divide", clamp = { 0.005, 0.025 } },
+        },
+    },
+    variants = {
+        -- tg's `/fullupgrade` board, which stocks its frame with tier
+        -- fours (machine_circuitboards.dm:765-773). tg asks for two of
+        -- each; this machine has the socket count its plain board has,
+        -- so the variant fills the sockets it HAS rather than growing
+        -- new ones. No lathe prints the board here, so an upgraded
+        -- dispenser is a thing a map places.
+        fullupgrade = {
+            name = "chem dispenser (upgraded)",
+            props = {
+                bin_1 = "4",
+                bin_2 = "4",
+                capacitor_1 = "4",
+                servo_1 = "4",
+            },
         },
     },
 }

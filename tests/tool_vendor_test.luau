@@ -73,12 +73,21 @@ local tools = {
 }
 -- The second shelf: what a framed machine is built out of. tg's Robco
 -- Tool Maker stocks the stock parts (vending/engineering.dm:29-30); the
--- BOARD is this pack's own addition, because circuit boards come off a
+-- BOARDS are this pack's own addition, because circuit boards come off a
 -- departmental techfab in tg and there is no lathe of any kind here.
+--
+-- Every part here is the PLAIN rung of its ladder (lib/stock_parts.luau
+-- argues the ladder). A better one is something you find, so the shelf
+-- sells tier one and no variant of it appears in this roster.
 local parts = {
     "matter_bin",
     "micro_laser",
+    "capacitor",
+    "servo",
+    "scanning_module",
     "thermomachine_board",
+    "chem_heater_board",
+    "chem_dispenser_board",
 }
 for _, item in ipairs(tools) do
     assert(shelf[item], item .. " is missing from the tool vendor")
@@ -112,12 +121,18 @@ local additions = {
     "light_tube",
     "toolbox",
     "box_lights",
-    -- The parts shelf goes through the very same route: a board and
-    -- the two components a temperature control unit is assembled from
-    -- (thermomachine_construction_test.luau walks what they build).
+    -- The parts shelf goes through the very same route: the boards and
+    -- the stock parts a framed machine is assembled from
+    -- (thermomachine_construction_test.luau walks what they build, and
+    -- parts_test.luau walks what a better rung is worth).
     "matter_bin",
     "micro_laser",
+    "capacitor",
+    "servo",
+    "scanning_module",
     "thermomachine_board",
+    "chem_heater_board",
+    "chem_dispenser_board",
 }
 for _, item in ipairs(additions) do
     assert(t.count_items(item) == 0)

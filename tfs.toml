@@ -29,6 +29,8 @@ native_edges = [
     "lifecycle.mob",
     "lifecycle.round_start",
     "lifecycle.round_end",
+    "parts.refresh",
+    "component.command",
 ]
 
 [paths]

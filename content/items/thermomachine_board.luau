@@ -10,9 +10,14 @@
 --         /obj/item/stack/cable_coil = 1,
 --         /obj/item/stack/sheet/glass = 1)
 --
--- The bins are the machine's heat capacity and the lasers are its
--- range, which is why those two counts are the ones that matter: the
--- thermomachine's whole spec sheet is computed from them
+-- ONLY THE STACK MATERIALS ARE WRITTEN HERE. The two bins and the two
+-- lasers are the PRODUCT's sockets -- `parts.slots` on
+-- structures/thermomachine.luau -- and a board's component list is
+-- derived from what it builds (docs/CONTENT-SCHEMA.md §1.10b). Spelling
+-- them again would be a second answer to "what is a temperature control
+-- unit made of", and the loader refuses one that disagrees. The frame
+-- still asks for all four, in any tier, and the bins are the machine's
+-- heat capacity while the lasers are its range
 -- (thermomachine.dm:85-96, quoted in structures/thermomachine.luau).
 --
 -- It names a STRUCTURE rather than a machine, which is the difference
@@ -27,8 +32,6 @@ return {
     board = {
         structure = "thermomachine",
         parts = {
-            matter_bin = 2,
-            micro_laser = 2,
             cable_coil = 1,
             glass = 1,
         },

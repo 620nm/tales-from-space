@@ -11,6 +11,7 @@ local sounds = {
     "dice_roll",
     "drink",
     "glass_break",
+    "part_swap",
     "ratchet",
     "smash",
     "spray",

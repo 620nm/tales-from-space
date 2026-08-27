@@ -1,0 +1,44 @@
+// The stock parts, five kinds and four rungs each, off tg's device
+// sheet. Every state name here is tg's own `icon_state`, so a row can
+// be read straight against research/stock_parts.dm:28-184 — the file
+// that names all twenty in tier order.
+//
+// The pack ships one item per kind with three tier VARIANTS
+// (content/items/micro_laser.luau and its four siblings), and a variant
+// overrides `sprite`, so each rung wants its own atlas entry.
+(
+    sheets: [
+        ("stock_parts", "obj/devices/stock_parts.dmi"),
+    ],
+    sprites: [
+        // Capacitors (stock_parts.dm:30-34, 63-69, 105-111, 146-152).
+        ("capacitor", Dmi("@stock_parts", "capacitor", 0)),
+        ("adv_capacitor", Dmi("@stock_parts", "adv_capacitor", 0)),
+        ("super_capacitor", Dmi("@stock_parts", "super_capacitor", 0)),
+        ("quadratic_capacitor", Dmi("@stock_parts", "quadratic_capacitor", 0)),
+
+        // Scanning modules (stock_parts.dm:36-40, 71-76, 113-118, 154-160).
+        ("scan_module", Dmi("@stock_parts", "scan_module", 0)),
+        ("adv_scan_module", Dmi("@stock_parts", "adv_scan_module", 0)),
+        ("super_scan_module", Dmi("@stock_parts", "super_scan_module", 0)),
+        ("triphasic_scan_module", Dmi("@stock_parts", "triphasic_scan_module", 0)),
+
+        // Servos (stock_parts.dm:42-47, 78-84, 120-126, 162-169).
+        ("micro_servo", Dmi("@stock_parts", "micro_servo", 0)),
+        ("nano_servo", Dmi("@stock_parts", "nano_servo", 0)),
+        ("pico_servo", Dmi("@stock_parts", "pico_servo", 0)),
+        ("femto_servo", Dmi("@stock_parts", "femto_servo", 0)),
+
+        // Micro-lasers (stock_parts.dm:49-52, 86-92, 128-134, 171-177).
+        ("micro_laser", Dmi("@stock_parts", "micro_laser", 0)),
+        ("high_micro_laser", Dmi("@stock_parts", "high_micro_laser", 0)),
+        ("ultra_high_micro_laser", Dmi("@stock_parts", "ultra_high_micro_laser", 0)),
+        ("quadultra_micro_laser", Dmi("@stock_parts", "quadultra_micro_laser", 0)),
+
+        // Matter bins (stock_parts.dm:55-58, 94-99, 136-141, 179-184).
+        ("matter_bin", Dmi("@stock_parts", "matter_bin", 0)),
+        ("advanced_matter_bin", Dmi("@stock_parts", "advanced_matter_bin", 0)),
+        ("super_matter_bin", Dmi("@stock_parts", "super_matter_bin", 0)),
+        ("bluespace_matter_bin", Dmi("@stock_parts", "bluespace_matter_bin", 0)),
+    ],
+)

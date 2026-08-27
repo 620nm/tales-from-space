@@ -125,16 +125,25 @@ assert(t.count_items("thermomachine_board") == 0, "and is installed rather than 
 -- lists anything (machine_frame.dm). Here the refusal reads the list
 -- out, one line at a time, because an engineer only ever has to fetch
 -- one thing at a time.
+--
+-- WHAT THE LIST IS, in order: the SOCKETS the product declares
+-- (structures/thermomachine.luau's `parts.slots`), then the stack
+-- materials the board itself names. Both halves are held in a fixed
+-- order, so which line comes first is deterministic rather than
+-- whichever the engine happened to walk, and the sockets come first
+-- because they are what the thing being built is made OF.
+--
+-- A socket names the LOWEST rung that fills it: any tier of matter bin
+-- does, and the plain one is the one there is a crate of
+-- (items/matter_bin.luau ships four).
 -- ---------------------------------------------------------------
 take("screwdriver")
 local _ = t.messages(p)
 t.click(p, 3, 1, t.target_at(3, 1, "machine_frame"))
 t.run_seconds(4.5)
 local heard = table.concat(t.messages(p), " | ")
--- The board's list is held in a fixed order, so which line comes first
--- is deterministic rather than whichever the engine happened to walk.
 assert(
-    heard:find("It still needs 1 x cable coil.", 1, true),
+    heard:find("It still needs 2 x matter bin.", 1, true),
     "the screwdriver says what the board is short of, got: " .. heard
 )
 assert(t.structure_at(3, 1).id == "machine_frame", "and nothing was assembled")
@@ -148,9 +157,31 @@ t.click(p, 3, 1, t.target_at(3, 1, "machine_frame"))
 t.run_ticks(2)
 assert(said(p, "The machine frame has no use for that."), "the assembly is not a rubbish bin")
 
--- ...and now the four things it does want. A stack gives up ONE unit
--- (tg's `req_components` counts sheets, not reels), so the coil and
--- the pane keep standing in the hand.
+-- ...and now the four sockets. A loose part is spent whole.
+put_down()
+for _, part in ipairs({ "matter_bin", "matter_bin", "micro_laser", "micro_laser" }) do
+    take(part)
+    t.click(p, 3, 1, t.target_at(3, 1, "machine_frame"))
+    t.run_ticks(2)
+    assert(t.hands(p).held == nil, "a loose part is spent whole")
+end
+
+-- Four down, and the refusal has moved on to the next thing rather than
+-- repeating itself: the list is read out one line at a time, and the
+-- sockets being full is what lets the board's own rows be heard.
+take("screwdriver")
+local _ = t.messages(p)
+t.click(p, 3, 1, t.target_at(3, 1, "machine_frame"))
+t.run_seconds(4.5)
+heard = table.concat(t.messages(p), " | ")
+assert(
+    heard:find("It still needs 1 x cable coil.", 1, true),
+    "the refusal names what is missing NOW, got: " .. heard
+)
+
+-- A stack gives up ONE unit (tg's `req_components` counts sheets rather
+-- than whole coils), so the cable and the pane keep standing in the
+-- hand.
 put_down()
 for _, part in ipairs({ "cable_coil", "glass" }) do
     take(part)
@@ -158,26 +189,6 @@ for _, part in ipairs({ "cable_coil", "glass" }) do
     t.run_ticks(2)
     assert(t.hands(p).held == part, "a stack gives up a unit and stays in the hand")
     put_down()
-end
-
--- Two down, and the refusal has moved on to the next thing rather than
--- repeating itself: the list is read out one line at a time.
-take("screwdriver")
-local _ = t.messages(p)
-t.click(p, 3, 1, t.target_at(3, 1, "machine_frame"))
-t.run_seconds(4.5)
-heard = table.concat(t.messages(p), " | ")
-assert(
-    heard:find("It still needs 2 x matter bin.", 1, true),
-    "the refusal names what is missing NOW, got: " .. heard
-)
-
-put_down()
-for _, part in ipairs({ "matter_bin", "matter_bin", "micro_laser", "micro_laser" }) do
-    take(part)
-    t.click(p, 3, 1, t.target_at(3, 1, "machine_frame"))
-    t.run_ticks(2)
-    assert(t.hands(p).held == nil, "a loose part is spent whole")
 end
 
 -- ---------------------------------------------------------------
