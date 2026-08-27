@@ -52,6 +52,10 @@ local content = {
             name = "beaker (libital)",
             contents = { water = 0.20, libital = 0.15 },
         },
+        salt = {
+            name = "beaker (salt)",
+            contents = { salt = 0.80 },
+        },
     },
 }
 
