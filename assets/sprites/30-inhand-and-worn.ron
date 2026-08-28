@@ -70,6 +70,10 @@
         (sheet: "toolbox_r", sprites: [Directions("held_toolbox_r", "toolbox_red")]),
         (sheet: "backpack_l", sprites: [Directions("held_backpack_l", "backpack")]),
         (sheet: "backpack_r", sprites: [Directions("held_backpack_r", "backpack")]),
+        // tg backpack.dm:182-186 names the carried chemistry state
+        // `chempack`; left and right remain separate source sheets.
+        (sheet: "backpack_l", sprites: [Directions("held_chemistry_backpack_l", "chempack")]),
+        (sheet: "backpack_r", sprites: [Directions("held_chemistry_backpack_r", "chempack")]),
         (sheet: "id_l", sprites: [Directions("held_id_l", "card-id")]),
         (sheet: "id_r", sprites: [Directions("held_id_r", "card-id")]),
         (sheet: "sheets_l", sprites: [Directions("held_metal_l", "sheet-metal")]),
