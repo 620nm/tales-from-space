@@ -8,7 +8,7 @@
 //
 //        solar array (in space, north of the hull)
 //   +-------------------------------------------------+
-//   |  Workshop   |     Bunks      |    Cargo Bay     |  y 4..9
+//   |  Workshop   | Chemistry Lab  |    Cargo Bay     |  y 4..9
 //   +-------------------------------------------------+
 //   |             T H E   C O N C O U R S E           |  y 11
 //   +------+------------------------------+-----------+
@@ -145,7 +145,7 @@
         // Clean Fun now, in the bag tg keeps them in, along with a deck
         // of cards and a toy that points at a wall. A die on the deck
         // is one die; a machine that hands out dice is a rec room.
-        // ---- the chem bench (in the Bunks) ------------------------
+        // ---- the Chemistry Lab -----------------------------------
         // Two beakers and a burner on the deck under the dispenser and
         // the reaction chamber. The beakers because chemistry is two
         // vessels and a pour, and the burner because the chamber is
@@ -183,6 +183,8 @@
         (10, 6, "tool_vendor_board"),
         (11, 6, "games_vendor_board"),
         (9, 7, "tv_board"),
+        (11, 7, "nanomed_plus_board"),
+        (12, 7, "chemdrobe_board"),
         (5, 8, "rod"),
         (6, 8, "glass"),
         (7, 8, "rglass"),
@@ -226,6 +228,10 @@
         (4, 15, "oxygen_tank"),
     ],
     structures: [
+        // The Workshop's tool locker. Which tools happen to be inside
+        // is rolled from structures/locker.luau at roundstart; the map
+        // places one variant and carries no duplicate loot vocabulary.
+        (11, 5, "locker.tools"),
         // ---- the hull galleries ----------------------------------
         // Nine panes across the north rank, looking out at the solar
         // array; three west out of Engineering; three east out of the
@@ -632,10 +638,10 @@
         (34, 15, East),
         (36, 15, West),
     ],
-    // The Commons' two vending machines, standing finished at roundstart
-    // against the east wall, and the socket both are plugged into --
-    // unplug the Commons and the shopping stops, which is the point of
-    // corded appliances.
+    // The station's vending machines stand finished at roundstart on
+    // their departments' powered walls, with a socket in cord range --
+    // unplug the room and shopping stops, which is the point of corded
+    // appliances.
     machines: [
         (24, 13, "vendor"),
         (24, 15, "tool_vendor"),
@@ -644,7 +650,7 @@
         // station has neither, and the Commons is the room a shift
         // actually crosses.
         (24, 16, "games_vendor"),
-        // The chem bench, on the Bunks' north wall beside the room's
+        // The chem bench, on the Chemistry Lab's north wall beside the room's
         // own socket at (21, 4) -- one and two tiles of cord, well inside
         // the six a corded appliance gets (docs/POWER.md). The socket
         // stands where the wall is: (18, 4) is under a hull window, and
@@ -652,15 +658,20 @@
         // and a reaction chamber standing together is the whole of what
         // a chemist needs: press, pour, heat, watch.
         //
-        // In the Bunks rather than the Commons because the first draft
+        // In this lab rather than the Commons because the first draft
         // put it on the card tables, and a rec room whose tables are
-        // occupied by glassware is not a rec room. The Bunks were the
-        // one wired, lit, ventilated room with nothing in them that is
+        // occupied by glassware is not a rec room. This was the one
+        // wired, lit, ventilated room with nothing in it that is
         // not reserved for growth (the Cargo Bay and Cargo Hall stay
         // empty on purpose) -- so the empty room becomes the lab, one
         // door off the Concourse.
         (19, 4, "chem_dispenser"),
         (20, 4, "chem_heater"),
+        // Medical equipment and chemistry clothing stand beside the
+        // bench, matching tg's medbay-storage and chemistry placement.
+        // Both are within three tiles of the lab socket at (21, 4).
+        (23, 4, "nanomed_plus"),
+        (24, 4, "chemdrobe"),
         // The pipe dispenser, corded to the outlet beside it. Every
         // fitting the department is built out of comes off this shelf,
         // which is why it stands in the department rather than in the
@@ -673,7 +684,7 @@
         // every APC on the station tapping it through an L2 input
         // port. It runs the solar row in
         // vacuum, drops through the hull in the wall between the
-        // Workshop and the Bunks, follows both legs of the Concourse
+        // Workshop and the Chemistry Lab, follows both legs of the Concourse
         // ring and both hull faces, and ends in Engineering under the
         // generator and the SMES.
         //
@@ -743,8 +754,8 @@
         (5, 4, 1), (5, 9, 1), (6, 4, 1), (6, 9, 1), (7, 4, 1), (7, 9, 1),
         (8, 4, 1), (8, 9, 1), (9, 4, 1), (9, 9, 1), (10, 4, 1), (10, 9, 1),
         (11, 4, 1), (11, 8, 1), (11, 9, 1), (12, 4, 1),
-        // -- Bunks: the perimeter loop, the vent, and the chem bench's
-        //    socket at (21, 4) on the north run.
+        // -- Chemistry Lab: the perimeter loop, vent, and bench socket
+        //    at (21, 4) on the north run.
         (14, 4, 1), (14, 5, 1), (14, 6, 1), (14, 7, 1), (14, 8, 1), (14, 9, 1),
         (15, 4, 1), (15, 9, 1), (16, 4, 1), (16, 9, 1), (17, 4, 1), (17, 8, 1),
         (17, 9, 1), (18, 4, 1), (18, 9, 1), (19, 4, 1), (19, 9, 1), (20, 4, 1),
@@ -849,7 +860,7 @@
         (24, 20, 4), (25, 20, 4), (26, 20, 4), (27, 20, 4), (28, 20, 4),
         (29, 20, 4), (30, 20, 4), (31, 20, 4), (32, 20, 4), (33, 20, 4),
         (34, 20, 4),
-        // The spurs: up into the Workshop and the Bunks through the
+        // The spurs: up into the Workshop and the Chemistry Lab through the
         // rank's own wall, east into the hall, south into Engineering
         // and the Cargo Hall. Each ends one tile short of its fan, which
         // is where a unary machine wants its run.
@@ -1093,7 +1104,7 @@
     // the room's name (sim/mod.rs, "APC labels become room names").
     labels: [
         (4, 5, "Workshop"),
-        (14, 5, "Bunks"),
+        (14, 5, "Chemistry Lab"),
         (26, 5, "Cargo Bay"),
         (18, 11, "The Concourse"),
         (15, 14, "The Commons"),

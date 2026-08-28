@@ -4,8 +4,8 @@ Tales from Space (TfS) is the game: every item, job, substance, reaction,
 map, and behavior handler that turns the lunatic engine into something worth
 logging into. It is authored as a Luau mod with id `lunatic/tfs`
 (docs/SCRIPTING.md §5.1 — vendor/mod; the vendor is the authoring group).
-This directory is structured to become a standalone repository once the
-engine's test fixtures no longer lean on it.
+This standalone repository is loaded by the sibling lunatic engine through
+`LUNATIC_PACK`; the engine ships no game content of its own.
 
 ## Layout
 

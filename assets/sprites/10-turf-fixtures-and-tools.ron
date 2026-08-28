@@ -44,6 +44,7 @@
         ("box", "obj/storage/box.dmi"),
         ("storage", "obj/storage/storage.dmi"),
         ("toolbox", "obj/storage/toolbox.dmi"),
+        ("closet", "obj/storage/closet.dmi"),
         ("structures", "obj/structures.dmi"),
         ("tools", "obj/tools.dmi"),
         ("floors", "turf/floors.dmi"),
@@ -187,6 +188,10 @@
         ("worn_backpack_n", Dmi("@worn_backpack", "backpack", 1)),
         ("worn_backpack_e", Dmi("@worn_backpack", "backpack", 2)),
         ("worn_backpack_w", Dmi("@worn_backpack", "backpack", 3)),
+        ("worn_chemistry_backpack_s", Dmi("@worn_backpack", "backpack-chemistry", 0)),
+        ("worn_chemistry_backpack_n", Dmi("@worn_backpack", "backpack-chemistry", 1)),
+        ("worn_chemistry_backpack_e", Dmi("@worn_backpack", "backpack-chemistry", 2)),
+        ("worn_chemistry_backpack_w", Dmi("@worn_backpack", "backpack-chemistry", 3)),
         ("worn_uniform_grey_s", Dmi("@worn_color", "grey_ancient", 0)),
         ("worn_uniform_grey_n", Dmi("@worn_color", "grey_ancient", 1)),
         ("worn_uniform_grey_e", Dmi("@worn_color", "grey_ancient", 2)),
@@ -199,6 +204,10 @@
         ("worn_uniform_med_n", Dmi("@worn_medical", "medical", 1)),
         ("worn_uniform_med_e", Dmi("@worn_medical", "medical", 2)),
         ("worn_uniform_med_w", Dmi("@worn_medical", "medical", 3)),
+        ("worn_uniform_chemist_s", Dmi("@worn_medical", "chemistry", 0)),
+        ("worn_uniform_chemist_n", Dmi("@worn_medical", "chemistry", 1)),
+        ("worn_uniform_chemist_e", Dmi("@worn_medical", "chemistry", 2)),
+        ("worn_uniform_chemist_w", Dmi("@worn_medical", "chemistry", 3)),
         ("worn_uniform_sec_s", Dmi("@worn_security", "security", 0)),
         ("worn_uniform_sec_n", Dmi("@worn_security", "security", 1)),
         ("worn_uniform_sec_e", Dmi("@worn_security", "security", 2)),
@@ -210,10 +219,31 @@
         ("uniform_grey", Dmi("@uniform_color", "grey_ancient", 0)),
         ("uniform_eng", Dmi("@uniform_engineering", "engine", 0)),
         ("uniform_med", Dmi("@uniform_medical", "medical", 0)),
+        ("uniform_chemist", Dmi("@uniform_medical", "chemistry", 0)),
         ("uniform_sec", Dmi("@uniform_security", "rsecurity", 0)),
         ("uniform_cap", Dmi("@uniform_captain", "captain", 0)),
         ("toolbox", Dmi("@toolbox", "red", 0)),
+        // tg closets draw a cabinet body plus a door/open overlay
+        // (`closets.dm:876-900`), so each state is baked from both
+        // authored DMI layers rather than approximated with one cell.
+        ("locker", DmiWindow([
+            ("@closet", "generic"),
+            ("@closet", "generic_door"),
+        ], 0, 0, 16)),
+        ("locker_open", DmiWindow([
+            ("@closet", "generic"),
+            ("@closet", "generic_open"),
+        ], 0, 0, 16)),
+        ("locker_tools", DmiWindow([
+            ("@closet", "eng"),
+            ("@closet", "eng_tool_door"),
+        ], 0, 0, 16)),
+        ("locker_tools_open", DmiWindow([
+            ("@closet", "eng"),
+            ("@closet", "eng_open"),
+        ], 0, 0, 16)),
         ("backpack", Dmi("@backpack", "backpack", 0)),
+        ("chemistry_backpack", Dmi("@backpack", "backpack-chemistry", 0)),
         ("headset", Dmi("@headsets", "headset", 0)),
         ("welder", Dmi("@tools", "welder", 0)),
         ("id", Dmi("@card", "card_grey", 0)),
@@ -236,6 +266,10 @@
         // ...and tg's Good Clean Fun, off the same sheet
         // (vending/games.dm:5).
         ("games_vendor", Dmi("@vending", "games", 0)),
+        // tg's medbay and chemistry wardrobe machines
+        // (vending/medical.dm:4; vending/wardrobes.dm:603).
+        ("nanomed_plus", Dmi("@vending", "med", 0)),
+        ("chemdrobe", Dmi("@vending", "chemdrobe", 0)),
         ("cola", Dmi("@soda", "cola", 0)),
         ("outlet", Dmi("@pipe_structures", "term", 0)),
         ("outlet_s", Dmi("@pipe_structures", "term", 0)),
@@ -321,6 +355,7 @@
         )),
         ("coil", Dmi("@stack_objects", "coil", 0)),
         ("beaker", Dmi("@chemical", "beaker", 0)),
+        ("chemistry_bag", Dmi("@chemical", "bag", 0)),
         // The chem bench. tg's heater is one machine with two pictures,
         // and which one it wears is whether there is a beaker in it
         // (`base_icon_state = "mixer"` + `[beaker ? 1 : 0]b`,
