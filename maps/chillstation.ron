@@ -226,6 +226,10 @@
         (4, 15, "oxygen_tank"),
     ],
     structures: [
+        // The Workshop's tool locker. Which tools happen to be inside
+        // is rolled from structures/locker.luau at roundstart; the map
+        // places one variant and carries no duplicate loot vocabulary.
+        (11, 5, "locker.tools"),
         // ---- the hull galleries ----------------------------------
         // Nine panes across the north rank, looking out at the solar
         // array; three west out of Engineering; three east out of the

@@ -44,6 +44,7 @@
         ("box", "obj/storage/box.dmi"),
         ("storage", "obj/storage/storage.dmi"),
         ("toolbox", "obj/storage/toolbox.dmi"),
+        ("closet", "obj/storage/closet.dmi"),
         ("structures", "obj/structures.dmi"),
         ("tools", "obj/tools.dmi"),
         ("floors", "turf/floors.dmi"),
@@ -213,6 +214,25 @@
         ("uniform_sec", Dmi("@uniform_security", "rsecurity", 0)),
         ("uniform_cap", Dmi("@uniform_captain", "captain", 0)),
         ("toolbox", Dmi("@toolbox", "red", 0)),
+        // tg closets draw a cabinet body plus a door/open overlay
+        // (`closets.dm:876-900`), so each state is baked from both
+        // authored DMI layers rather than approximated with one cell.
+        ("locker", DmiWindow([
+            ("@closet", "generic"),
+            ("@closet", "generic_door"),
+        ], 0, 0, 16)),
+        ("locker_open", DmiWindow([
+            ("@closet", "generic"),
+            ("@closet", "generic_open"),
+        ], 0, 0, 16)),
+        ("locker_tools", DmiWindow([
+            ("@closet", "eng"),
+            ("@closet", "eng_tool_door"),
+        ], 0, 0, 16)),
+        ("locker_tools_open", DmiWindow([
+            ("@closet", "eng"),
+            ("@closet", "eng_open"),
+        ], 0, 0, 16)),
         ("backpack", Dmi("@backpack", "backpack", 0)),
         ("headset", Dmi("@headsets", "headset", 0)),
         ("welder", Dmi("@tools", "welder", 0)),
