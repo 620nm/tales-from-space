@@ -59,27 +59,14 @@ return {
         { item = "capacitor", name = "Capacitor", category = "Parts", amount = 5 },
         { item = "servo", name = "Micro-Servo", category = "Parts", amount = 5 },
         { item = "scanning_module", name = "Scanning Module", category = "Parts", amount = 5 },
-        -- The boards are NOT tg's: circuit boards come off a
+        -- The board is NOT tg's vendor stock: circuit boards come off a
         -- departmental techfab, and this pack has no lathe of any kind.
-        -- Until one exists the shelf is where a machine board is
-        -- obtainable at all, which is the same argument that put the RPD
-        -- here. The two medical boards sit on an engineering machine for
-        -- want of a medical one, and move the day there is one.
+        -- Until one exists the shelf is where this atmos board remains
+        -- obtainable. The chemistry boards belong to NanoMed Plus
+        -- (machines/nanomed_plus.luau), not an engineering machine.
         {
             item = "thermomachine_board",
             name = "Machine Board (Temperature Control Unit)",
-            category = "Parts",
-            amount = 2,
-        },
-        {
-            item = "chem_heater_board",
-            name = "Machine Board (Reaction Chamber)",
-            category = "Parts",
-            amount = 2,
-        },
-        {
-            item = "chem_dispenser_board",
-            name = "Machine Board (Chem Dispenser)",
             category = "Parts",
             amount = 2,
         },
