@@ -2,7 +2,7 @@
 --
 -- An APC and a power storage unit are the same window with different
 -- words: a store, whatever knobs the machine has of its own, and a
--- block per cable colour that actually runs under it. Neither is a
+-- block per cable layer that actually runs under it. Neither is a
 -- document of its own any more -- both are the settings panel every
 -- machine with rows on it shares (docs/TGUI.md), assembled from
 -- modules -- so this spec asks both of them the same questions and
@@ -39,10 +39,8 @@ t.world([==[(
     ],
     spawns: [(2, 2)],
     cables: [
-        (1, 1, 2, 0, 2), (1, 1, 2, 0, 4), (2, 1, 2, 4, 8), (3, 1, 2, 4, 8),
-        (4, 1, 2, 0, 8), (1, 2, 2, 0, 1),
-        (1, 2, 1, 0, 4), (2, 2, 1, 4, 8), (3, 2, 1, 4, 8), (4, 2, 1, 4, 8),
-        (5, 2, 1, 0, 4), (5, 2, 1, 0, 8), (6, 2, 1, 0, 8),
+        (1, 1, 2), (2, 1, 2), (3, 1, 2), (4, 1, 2), (1, 2, 2),
+        (1, 2, 1), (2, 2, 1), (3, 2, 1), (4, 2, 1), (5, 2, 1), (6, 2, 1),
     ],
     labels: [(1, 2, "Engineering")],
 )]==], 7)

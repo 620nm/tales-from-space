@@ -18,7 +18,7 @@
 -- gives nothing away.
 
 local DISTRO = 4 -- piping layer 3
-local ROOM = 1 -- the red line, the room circuit
+local ROOM = 1 -- cable layer 1, the room circuit
 
 local function said(p, want)
     for _, m in ipairs(t.messages(p)) do
@@ -58,7 +58,7 @@ t.world([==[(
         (3, 2, "wrench"),
     ],
     pipes: [(2, 1, 4), (2, 2, 4)],
-    cables: [(2, 1, 1, 0, 2), (2, 2, 1, 0, 1)],
+    cables: [(2, 1, 1), (2, 2, 1)],
 )]==], 7)
 
 local p = t.join()
@@ -108,7 +108,7 @@ assert(t.cable_at(2, 2) == ROOM, "the buried cable is untouched")
 assert(not said(p, "snipping"), "and the cutters never bit")
 assert(#t.ledger_rows("CableCut") == 0, "no cut to attribute")
 
-t.click_subfloor(p, 2, 1, "cable", ROOM, 0, 2)
+t.click_subfloor(p, 2, 1, "cable", ROOM)
 t.run_seconds(1.5)
 assert(t.cable_at(2, 1) == 0, "open plating cuts fine")
 assert(#t.ledger_rows("CableCut") == 1, "and that cut is attributed")
@@ -298,7 +298,7 @@ t.world([==[(
     ],
     spawns: [(2, 2)],
     items: [(2, 2, "wirecutters")],
-    cables: [(2, 1, 1, 0, 4), (3, 1, 1, 0, 8)],
+    cables: [(2, 1, 1), (3, 1, 1)],
 )]==], 7)
 
 local e = t.join()
@@ -313,12 +313,12 @@ t.run_ticks(2)
 assert(t.hands(e).held == "wirecutters", "cutters in hand")
 _ = t.messages(e)
 
-t.click_subfloor(e, 3, 1, "cable", ROOM, 0, 8)
+t.click_subfloor(e, 3, 1, "cable", ROOM)
 t.run_seconds(1.5)
 assert(t.cable_at(3, 1) == ROOM, "boxed-in plating keeps its run")
 assert(not said(e, "snipping"), "and the cutters never bit")
 
-t.click_subfloor(e, 2, 1, "cable", ROOM, 0, 4)
+t.click_subfloor(e, 2, 1, "cable", ROOM)
 t.run_seconds(1.5)
 assert(t.cable_at(2, 1) == 0, "the open panel gives its run up")
 assert(t.turf(2, 1) == "floor", "without becoming a different deck")

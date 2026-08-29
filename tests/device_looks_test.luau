@@ -67,15 +67,8 @@ t.world([==[(
     pipes: [(0, 1, 2), (1, 1, 2)],
     structures: [(2, 1, "air_scrubber")],
     cables: [
-        (1, 1, 1, 2, 4), (1, 1, 2, 2, 4), (2, 1, 1, 0, 2), (2, 1, 1, 0, 4),
-        (2, 1, 1, 0, 8), (2, 1, 2, 0, 2), (2, 1, 2, 0, 4), (2, 1, 2, 0, 8),
-        (3, 1, 1, 0, 2), (3, 1, 1, 0, 4), (3, 1, 1, 0, 8), (3, 1, 2, 0, 2),
-        (3, 1, 2, 0, 4), (3, 1, 2, 0, 8), (4, 1, 1, 2, 8), (4, 1, 2, 2, 8),
-        (1, 2, 1, 1, 4), (1, 2, 2, 1, 4), (2, 2, 1, 0, 1), (2, 2, 1, 0, 4),
-        (2, 2, 1, 0, 8), (2, 2, 2, 0, 1), (2, 2, 2, 0, 4), (2, 2, 2, 0, 8),
-        (3, 2, 1, 0, 1), (3, 2, 1, 0, 4), (3, 2, 1, 0, 8), (3, 2, 2, 0, 1),
-        (3, 2, 2, 0, 4), (3, 2, 2, 0, 8), (4, 2, 1, 0, 1), (4, 2, 1, 0, 8),
-        (4, 2, 2, 0, 1), (4, 2, 2, 0, 8),
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3),
     ],
 )]==], 7)
 
@@ -182,21 +175,8 @@ local JUNCTION = [==[(
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4), (3, 2, 4)],
     structures: [(3, 1, "%s")],
     cables: [
-        (1, 1, 1, 2, 4), (1, 1, 2, 2, 4), (2, 1, 1, 0, 2), (2, 1, 1, 0, 4),
-        (2, 1, 1, 0, 8), (2, 1, 2, 0, 2), (2, 1, 2, 0, 4), (2, 1, 2, 0, 8),
-        (3, 1, 1, 0, 2), (3, 1, 1, 0, 4), (3, 1, 1, 0, 8), (3, 1, 2, 0, 2),
-        (3, 1, 2, 0, 4), (3, 1, 2, 0, 8), (4, 1, 1, 0, 2), (4, 1, 1, 0, 4),
-        (4, 1, 1, 0, 8), (4, 1, 2, 0, 2), (4, 1, 2, 0, 4), (4, 1, 2, 0, 8),
-        (5, 1, 1, 0, 2), (5, 1, 1, 0, 4), (5, 1, 1, 0, 8), (5, 1, 2, 0, 2),
-        (5, 1, 2, 0, 4), (5, 1, 2, 0, 8), (6, 1, 1, 2, 8), (6, 1, 2, 2, 8),
-        (1, 2, 1, 1, 4), (1, 2, 2, 1, 4), (2, 2, 1, 0, 1), (2, 2, 1, 0, 4),
-        (2, 2, 1, 0, 8), (2, 2, 2, 0, 1), (2, 2, 2, 0, 4), (2, 2, 2, 0, 8),
-        (3, 2, 1, 0, 1), (3, 2, 1, 0, 4), (3, 2, 1, 0, 8), (3, 2, 2, 0, 1),
-        (3, 2, 2, 0, 4), (3, 2, 2, 0, 8), (4, 2, 1, 0, 1), (4, 2, 1, 0, 4),
-        (4, 2, 1, 0, 8), (4, 2, 2, 0, 1), (4, 2, 2, 0, 4), (4, 2, 2, 0, 8),
-        (5, 2, 1, 0, 1), (5, 2, 1, 0, 4), (5, 2, 1, 0, 8), (5, 2, 2, 0, 1),
-        (5, 2, 2, 0, 4), (5, 2, 2, 0, 8), (6, 2, 1, 0, 1), (6, 2, 1, 0, 8),
-        (6, 2, 2, 0, 1), (6, 2, 2, 0, 8),
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
     ],
 )]==]
 
@@ -261,8 +241,8 @@ t.world([==[(
     spawns: [(4, 1)],
     items: [(4, 1, "wirecutters"), (5, 1, "cable_coil")],
     cables: [
-        (1, 1, 2, 0, 2), (1, 2, 2, 0, 1),
-        (1, 2, 1, 0, 4), (2, 2, 1, 4, 8), (3, 2, 1, 4, 8), (4, 2, 1, 0, 8),
+        (1, 1, 2), (1, 2, 2),
+        (1, 2, 1), (2, 2, 1), (3, 2, 1), (4, 2, 1),
     ],
     pipes: [(5, 2, 2), (6, 2, 2)],
     structures: [(4, 2, "air_scrubber")],
@@ -285,18 +265,12 @@ assert(t.structure_at(4, 2).sprite == "scrubber_on_w", "and it runs")
 t.ui_close(e)
 t.tick()
 
--- ---- one snip, under the machine's own feet ----
---
--- What feeds a machine is the KNOT under it, never the cable near it: a
--- length running edge to edge crosses a tile and offers its middle to
--- nobody (docs/POWER.md). Lift the knot and the run beside it is still
--- whole, and the machine still starves.
+-- ---- one snip, three tiles away ----
 t.click(e, 4, 1, t.target_at(4, 1, "wirecutters"))
 t.run_ticks(2)
-t.click_subfloor(e, 4, 2, "cable", 1, 0, 8)
+t.click_subfloor(e, 3, 2, "cable", 1)
 t.run_seconds(1.5)
-assert(t.cable_at(4, 2) == 0, "the knot under the machine is gone")
-assert(t.cable_at(3, 2) == 1, "while the length beside it is untouched")
+assert(t.cable_at(3, 2) == 0, "the room circuit is parted")
 assert(t.ledger_has("CableCut"), "and cutting it is attributable")
 
 -- The grid is swept on tg's SSmachines cadence (every 40th tick), so
@@ -328,16 +302,9 @@ t.use_self(e)
 t.run_ticks(2)
 t.use_self(e)
 t.run_ticks(2)
--- Walk round to the west of the machine and tie the knot back down:
--- `place_turf` runs a piece back towards whoever laid it, so a click
--- from the tile beside it is a knot reaching west into the run.
-t.move(e, "west")
-t.run_seconds(0.5)
-t.move(e, "south")
-t.run_seconds(0.5)
-t.click(e, 4, 2)
+t.click(e, 3, 2)
 t.run_seconds(1.5)
-assert(t.cable_at(4, 2) == 1, "the coil ties the knot back down")
+assert(t.cable_at(3, 2) == 1, "the coil lays the red line back")
 assert(t.segment_at(4, 2).feed == 1, "and the machine is back on the panel")
 
 t.run_seconds(2.5)
