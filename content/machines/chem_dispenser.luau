@@ -187,7 +187,7 @@ return {
     -- WHAT THIS MACHINE IS MADE OF, off tg's board verbatim: two matter
     -- bins, a capacitor and a servo (machine_circuitboards.dm:756-760).
     -- The cell tg also asks for has no twin here and the board's file
-    -- says why (items/chem_dispenser_board.luau).
+    -- says why (items/machine_board.luau, `chem_dispenser`).
     --
     -- WHAT TG SCALES AND THIS MACHINE CANNOT. tg's `RefreshParts`
     -- (chem_dispenser.dm:455-474) moves three things, and two of them

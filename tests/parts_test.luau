@@ -68,7 +68,7 @@ t.world([==[(
         (8, 2, "beaker.libital"),
         (8, 2, "metal"),
         (8, 2, "cable_coil"),
-        (8, 2, "chem_heater_board"),
+        (8, 2, "machine_board.chem_heater"),
         (8, 2, "glass"),
         (8, 2, "micro_laser.tier3"),
         (8, 2, "screwdriver"),
@@ -130,7 +130,7 @@ t.run_seconds(2.5)
 assert(t.structure_at(8, 1).state == "wired", "five lengths of cable wire it")
 
 put_down()
-take(8, 2, "chem_heater_board")
+take(8, 2, "machine_board.chem_heater")
 t.click(p, 8, 1, t.target_at(8, 1, "machine_frame"))
 t.run_ticks(2)
 assert(t.structure_at(8, 1).state == "boarded", "the board clicks into place")

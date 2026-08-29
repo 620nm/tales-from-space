@@ -9,30 +9,10 @@
 -- colour across a distribution main CUTS it, and the line still looks
 -- whole. Paint carefully.
 --
--- THE ROSTER. tg's twelve, in tg's own order and with tg's own hex
--- values (`GLOB.pipe_paint_colors`,
--- code/_globalvars/lists/piping_colors_lists.dm:2-15, resolving through
--- code/__DEFINES/colors.dm). The engine never sees a colour NAME -- it
--- takes `#RRGGBB` and compares values -- so this list is the whole
--- vocabulary, and a station that wants a thirteenth paint adds a line
--- here and nothing anywhere else.
-local COLORS = {
-    -- Omni grey is both a paint you can pick and the one every other
-    -- paint joins (ATMOS_COLOR_OMNI). Painting a run omni is how you
-    -- strip it back to joining everything, which is why it leads.
-    { name = "omni", hex = "#EEEEEE" },
-    { name = "green", hex = "#00FF00" },
-    { name = "blue", hex = "#0000FF" },
-    { name = "red", hex = "#FF0000" },
-    { name = "orange", hex = "#FFA62B" },
-    { name = "cyan", hex = "#00FFFF" },
-    { name = "dark", hex = "#454545" },
-    { name = "yellow", hex = "#FFFF00" },
-    { name = "brown", hex = "#BA9F6D" },
-    { name = "pink", hex = "#FF3CC8" },
-    { name = "purple", hex = "#800080" },
-    { name = "violet", hex = "#6927C5" },
-}
+-- The shared roster is also the RPD's dial and the map editor's
+-- variants (`lib/pipe_paints.luau`). Keeping one list means adding the
+-- TfS white paint cannot leave one of those three selectors behind.
+local COLORS = pipe_paints.colors
 
 local content = {
     id = "pipe_painter",
@@ -40,14 +20,14 @@ local content = {
     -- tg's own art: the label gun off the bureaucracy sheet
     -- (`icon_state = "labeler1"`, pipe_painter.dm:6).
     sprite = "pipe_painter",
-    -- Twelve settings, and it opens on the first one. tg ships
+    -- One setting per shared paint, and it opens on the first one. tg ships
     -- `paint_color = "grey"` (pipe_painter.dm:8), which is not a key in
     -- its own roster -- the entry is called "omni" -- so a painter out
     -- of the crate there paints `null` until somebody sets it. That is
     -- a typo, not a design, and what it was reaching for is the grey
     -- one: omni. So this opens on omni, which is also the setting that
     -- cannot accidentally divide a station.
-    modes = 12,
+    modes = #COLORS,
     mode = 0,
     -- tg picks the colour from a `tgui_input_list` on attack_self. We
     -- have no list prompt, so the dial cycles instead -- the same

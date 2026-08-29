@@ -74,8 +74,9 @@ differently is not wrong.
 
 Leave it out and the server derives one from what the file already declares:
 an item with a `slot` is `wearables`, with `storage` it is `containers`,
-with `tool` it is `tools`, with `board` it is `boards`, and anything else is
-`misc`; a structure with `fitting` is `fittings`, one with `atmos` or
+with `tool` it is `tools`, with `component` or `board` it is `machine
+components`, and anything else is `misc`; a structure with `fitting` is
+`fittings`, one with `atmos` or
 `meter` is `atmospherics`, and the rest are `structures`. Machines are
 always `machines`. The derivation reads FIELDS and never ids — the engine
 must not learn to recognise one — so a file whose grouping the rule gets

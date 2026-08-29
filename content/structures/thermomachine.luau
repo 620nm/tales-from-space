@@ -160,7 +160,7 @@ return {
             -- board may not spell its product's sockets: one question,
             -- one answer.
             yields = {
-                thermomachine_board = 1,
+                ["machine_board.thermomachine"] = 1,
                 cable_coil = 6,
                 glass = 1,
             },

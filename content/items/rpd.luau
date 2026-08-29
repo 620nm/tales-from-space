@@ -71,22 +71,8 @@ for _, recipe in ipairs(RECIPES) do
     BREAKDOWN[recipe.item] = true
 end
 
--- tg's twelve paints, the same roster the pipe painter carries
--- (items/pipe_painter.luau, `GLOB.pipe_paint_colors`).
-local COLORS = {
-    { name = "omni", hex = "#EEEEEE" },
-    { name = "green", hex = "#00FF00" },
-    { name = "blue", hex = "#0000FF" },
-    { name = "red", hex = "#FF0000" },
-    { name = "orange", hex = "#FFA62B" },
-    { name = "cyan", hex = "#00FFFF" },
-    { name = "dark", hex = "#454545" },
-    { name = "yellow", hex = "#FFFF00" },
-    { name = "brown", hex = "#BA9F6D" },
-    { name = "pink", hex = "#FF3CC8" },
-    { name = "purple", hex = "#800080" },
-    { name = "violet", hex = "#6927C5" },
-}
+-- The painter and the map editor read the same content-owned roster.
+local COLORS = pipe_paints.colors
 
 -- The five piping layers as bitmasks, the same list the length of pipe
 -- carries (items/pipe.luau; PIPING_LAYER_MIN..MAX,

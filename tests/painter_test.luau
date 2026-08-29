@@ -192,11 +192,12 @@ t.use_self(p) -- yellow -> brown
 t.use_self(p) -- brown -> pink
 t.use_self(p) -- pink -> purple
 t.use_self(p) -- purple -> violet
-t.use_self(p) -- violet -> omni (the roster wraps)
+t.use_self(p) -- violet -> white
+t.use_self(p) -- white -> omni (the roster wraps)
 t.use_self(p) -- omni -> green
 t.use_self(p) -- green -> blue
 t.run_ticks(2)
-assert(said(p, "Pipe painter set to blue."), "the roster wraps, twelve long")
+assert(said(p, "Pipe painter set to blue."), "the roster wraps, thirteen long")
 
 t.click(p, 5, 1)
 t.run_ticks(2)
