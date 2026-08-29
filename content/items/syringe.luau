@@ -21,7 +21,7 @@
 -- (`interact_with_atom` injects at syringes.dm:49,
 -- `interact_with_atom_secondary` draws at :109); this engine hands
 -- content ONE click, so the direction is `modes = 2` -- the same
--- anonymous dial the cable coil picks its layer with -- flipped by
+-- anonymous dial the cable coil picks its colour with -- flipped by
 -- activating the syringe in hand, and said out loud when it flips. It
 -- is not on the examine pane because there is no examine hook to put
 -- it there (docs/WIKI.md 3.1); the sentence when you turn it is the
