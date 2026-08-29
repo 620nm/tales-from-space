@@ -85,7 +85,7 @@ local parts = {
     "capacitor",
     "servo",
     "scanning_module",
-    "thermomachine_board",
+    "machine_board.thermomachine",
 }
 for _, item in ipairs(tools) do
     assert(shelf[item], item .. " is missing from the tool vendor")
@@ -128,7 +128,7 @@ local additions = {
     "capacitor",
     "servo",
     "scanning_module",
-    "thermomachine_board",
+    "machine_board.thermomachine",
 }
 for _, item in ipairs(additions) do
     assert(t.count_items(item) == 0)

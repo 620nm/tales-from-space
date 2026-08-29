@@ -48,7 +48,7 @@ t.world([==[(
     items: [
         (3, 2, "metal"),
         (3, 2, "cable_coil"),
-        (3, 2, "thermomachine_board"),
+        (3, 2, "machine_board.thermomachine"),
         (3, 2, "matter_bin"),
         (3, 2, "matter_bin"),
         (3, 2, "micro_laser"),
@@ -112,11 +112,11 @@ t.run_seconds(2.5)
 assert(t.structure_at(3, 1).state == "wired", "five lengths of cable wire it")
 
 put_down()
-take("thermomachine_board")
+take("machine_board.thermomachine")
 t.click(p, 3, 1, t.target_at(3, 1, "machine_frame"))
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "boarded", "the board clicks into place")
-assert(t.count_items("thermomachine_board") == 0, "and is installed rather than dropped")
+assert(t.count_items("machine_board.thermomachine") == 0, "and is installed rather than dropped")
 
 -- ---------------------------------------------------------------
 -- THE PARTS, AND THE REFUSALS THAT NAME THEM.
@@ -232,7 +232,7 @@ t.run_seconds(4.5)
 local left = t.structure_at(3, 1)
 assert(left ~= nil and left.id == "machine_frame", "a frame is what is left standing")
 for item, count in pairs({
-    thermomachine_board = 1,
+    ["machine_board.thermomachine"] = 1,
     matter_bin = 2,
     micro_laser = 2,
 }) do

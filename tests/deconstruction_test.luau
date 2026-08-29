@@ -51,7 +51,7 @@ t.world([==[(
     items: [
         (2, 2, "metal"),
         (2, 2, "cable_coil"),
-        (2, 2, "chem_heater_board"),
+        (2, 2, "machine_board.chem_heater"),
         (2, 2, "glass"),
         (2, 2, "micro_laser.tier3"),
         (2, 2, "screwdriver"),
@@ -99,7 +99,7 @@ t.run_seconds(2.5)
 assert(t.structure_at(2, 1).state == "wired", "five lengths of cable wire it")
 
 put_down()
-take("chem_heater_board")
+take("machine_board.chem_heater")
 t.click(p, 2, 1, t.target_at(2, 1, "machine_frame"))
 t.run_ticks(2)
 assert(t.structure_at(2, 1).state == "boarded", "the board clicks into place")
@@ -167,7 +167,7 @@ assert(count(left, "glass") == 1, "with the pane the board asked for")
 -- The board goes to the free hand rather than the deck, exactly as it
 -- has always done when an assembly is pried open.
 local hands = t.hands(p)
-assert(hands[1] == "chem_heater_board" or hands[2] == "chem_heater_board",
+assert(hands[1] == "machine_board.chem_heater" or hands[2] == "machine_board.chem_heater",
     "and the board is back in a hand: " .. tostring(hands[1]) .. ", " .. tostring(hands[2]))
 
 -- ---------------------------------------------------------------
@@ -191,5 +191,5 @@ assert(count(apart, "matter_bin.tier4") == 2,
 assert(count(apart, "micro_laser.tier4") == 2, "and both lasers")
 assert(count(apart, "matter_bin") == 0 and count(apart, "micro_laser") == 0,
     "with no plain rung anywhere in the pile")
-assert(count(apart, "thermomachine_board") == 1, "the board its file still spells")
+assert(count(apart, "machine_board.thermomachine") == 1, "the board its file still spells")
 assert(count(apart, "glass") == 1, "and the pane")

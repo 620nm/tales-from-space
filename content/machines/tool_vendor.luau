@@ -65,7 +65,7 @@ return {
         -- obtainable. The chemistry boards belong to NanoMed Plus
         -- (machines/nanomed_plus.luau), not an engineering machine.
         {
-            item = "thermomachine_board",
+            item = "machine_board.thermomachine",
             name = "Machine Board (Temperature Control Unit)",
             category = "Parts",
             amount = 2,

@@ -69,7 +69,7 @@ assert(t.segment_at(6, 1).lighting_feed == 1,
 assert(t.segment_at(6, 1).l2 ~= nil, "though the backbone runs under it as well")
 
 -- ---------------------------------------------------------------
--- THE PANEL, PORT BY PORT. Three ports, three modes, and the watts
+-- THE PANEL, PORT BY PORT. Three ports, four possible modes, and the watts
 -- each one carried on the last pass.
 -- ---------------------------------------------------------------
 local ports = t.ports_at(4, 1)

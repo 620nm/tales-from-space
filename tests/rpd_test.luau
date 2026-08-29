@@ -130,7 +130,7 @@ end
 assert(captions[MODE] == "Mode" and captions[RECIPE] == "Fitting", "every dial is labelled")
 assert(captions[LAYER] == "Piping layer" and captions[PAINT] == "Paint", "all four of them")
 assert(options[LAYER] == 5, "five piping layers, tg's PIPING_LAYER_MIN..MAX")
-assert(options[PAINT] == 12, "and tg's twelve paints")
+assert(options[PAINT] == 13, "tg's twelve paints plus TfS white")
 assert(options[RECIPE] >= 12, "the whole shelf, one button each: " .. options[RECIPE])
 assert(
     manual_presentation.icon == "manual_valve_loose"

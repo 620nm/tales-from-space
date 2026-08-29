@@ -51,13 +51,13 @@ return {
         { item = "burner", name = "Burner", category = "Chemistry", amount = 2 },
 
         {
-            item = "chem_heater_board",
+            item = "machine_board.chem_heater",
             name = "Machine Board (Reaction Chamber)",
             category = "Parts",
             amount = 2,
         },
         {
-            item = "chem_dispenser_board",
+            item = "machine_board.chem_dispenser",
             name = "Machine Board (Chem Dispenser)",
             category = "Parts",
             amount = 2,

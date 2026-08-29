@@ -47,8 +47,8 @@ local NANOMED = {
     { "bottle", "Bottle", "Chemistry", 5 },
     { "test_tube", "Test Tube", "Chemistry", 6 },
     { "burner", "Burner", "Chemistry", 2 },
-    { "chem_heater_board", "Machine Board (Reaction Chamber)", "Parts", 2 },
-    { "chem_dispenser_board", "Machine Board (Chem Dispenser)", "Parts", 2 },
+    { "machine_board.chem_heater", "Machine Board (Reaction Chamber)", "Parts", 2 },
+    { "machine_board.chem_dispenser", "Machine Board (Chem Dispenser)", "Parts", 2 },
 }
 
 t.click(p, 2, 1, t.target_at(2, 1))
@@ -154,5 +154,5 @@ t.join()
 t.run_ticks(20)
 assert(t.target_at(23, 4) ~= nil, "NanoMed stands in the lab")
 assert(t.target_at(24, 4) ~= nil, "ChemDrobe stands in the lab")
-assert(t.item_at(11, 7, "nanomed_plus_board") ~= nil, "NanoMed has a spare board")
-assert(t.item_at(12, 7, "chemdrobe_board") ~= nil, "ChemDrobe has a spare board")
+assert(t.item_at(11, 7, "machine_board.nanomed_plus") ~= nil, "NanoMed has a spare board")
+assert(t.item_at(12, 7, "machine_board.chemdrobe") ~= nil, "ChemDrobe has a spare board")
