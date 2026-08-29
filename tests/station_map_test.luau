@@ -27,9 +27,21 @@ for _, row in ipairs({
     -- because a volumetric one refuses the drained main's trickle
     { 14, 25, "gas_pump", "running" }, -- the wheel feed's regulator
     { 18, 23, "gas_pump", "running" }, -- the process inlet's regulator
-    { 16, 17, "air_scrubber", "scrubbing" },
+    -- Switched on and drawn OFF, and both are true. This one is the
+    -- department's CO2 recovery leg (maps/chillstation.ron): a roster of
+    -- one gas, in a room that at roundstart holds none of it. A machine
+    -- is drawn by what the last atmos pass saw it do rather than by its
+    -- switch (docs/ATMOS.md SS8), so it lights up the moment somebody
+    -- breathes in that room and not a pass before.
+    { 16, 17, "air_scrubber", "off" },
     { 15, 33, "air_injector", "injecting" },
-    { 15, 34, "air_scrubber", "siphoning" },
+    -- The map ships this one turned round -- it is a vestibule's pump
+    -- down -- and at roundstart the chamber is still at station
+    -- pressure, so it is drawn as the ordinary scrubber it is currently
+    -- being. The third picture is a warning about a room going EMPTY,
+    -- and it arrives when the chamber does (docs/ATMOS.md SS8;
+    -- device_looks_test.luau owns the crossing).
+    { 15, 34, "air_scrubber", "scrubbing" },
     { 14, 28, "manual_valve", "open" },
     { 26, 24, "layer_adapter", "anchored" },
     { 22, 20, "layer_adapter", "anchored" },
