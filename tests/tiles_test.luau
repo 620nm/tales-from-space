@@ -106,7 +106,7 @@ t.world([==[(
     items: [(1, 1, "crowbar")],
     // One length of backbone with no generator behind it, which is a
     // station with the lights off: the airlock's motors never wake.
-    cables: [(1, 1, 2)],
+    cables: [(1, 1, 2, 0, 1)],
 )]==], 7)
 
 p = t.join()

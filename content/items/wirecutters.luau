@@ -1,5 +1,5 @@
 -- Sabotage, attributable: cutting a cable is a Script-actor ledger row
--- naming this file and the player holding the cutters. Layer masks:
+-- naming this file and the player holding the cutters. Colour masks:
 -- 1 = red, 2 = yellow, 4 = blue. What each line CARRIES is the
 -- station's business, not the cutters' (docs/POWER.md).
 --
@@ -13,14 +13,15 @@
 -- saboteur "there is cable down there" is the whole thing the covering
 -- floor is meant to prevent.
 --
--- ONE SNIP, ONE CABLE. tg's wirecutter_act deconstructs the single
--- /obj/structure/cable you clicked (cable.dm:210-221) -- it never
--- clears the tile -- and you can pick which of three stacked cables
--- that is because BYOND separates them by a hundredth of a draw layer
--- (cable.dm:22,37,47) and the click lands on the topmost one under the
--- cursor. The browser alpha-tests those same stacked sprites and the
--- server passes the validated exact line here. Clearing a three-line
--- tile is still three snips, but which one comes first is what you aim at.
+-- ONE SNIP, ONE PIECE. tg's wirecutter_act deconstructs the single
+-- /obj/structure/cable you clicked (cable.dm:210-221) -- it never clears
+-- the tile -- and a tile holds as many pieces as an electrician has laid
+-- on it: a knot per colour, lengths crossing over each other, diagonals.
+-- Which one you get is which one you aimed at: the browser alpha-tests
+-- the drawn pieces and the server hands the validated `(colour, d1, d2)`
+-- down here, so a knot can be lifted out from under a run that merely
+-- crosses the tile and the run stays whole. Clearing a busy junction is
+-- one snip per piece.
 
 local content = {
     id = "wirecutters",
@@ -47,11 +48,22 @@ if sim ~= nil then
         if not sim.subfloor_exposed(x, y) then
             return { replaced = false }
         end
-        if target == nil or target.kind ~= "cable" then
+        if target == nil or target.kind ~= "cable" or target.d2 == nil then
             return { replaced = false }
         end
-        local line = target.layer
-        if sim.cable(x, y) % (line * 2) < line then
+        local colour, d1, d2 = target.layer, target.d1, target.d2
+        -- Is that exact piece still down there? A colour on the tile is
+        -- not the question -- a knot may be gone while a length of the
+        -- same colour crosses over it.
+        local function still_there()
+            for _, piece in ipairs(sim.cable_segments(x, y)) do
+                if piece.colour == colour and piece.d1 == d1 and piece.d2 == d2 then
+                    return true
+                end
+            end
+            return false
+        end
+        if not still_there() then
             return { replaced = false }
         end
         sim.message.send({ recipient = user, message = "You start snipping through the cabling..." })
@@ -61,12 +73,12 @@ if sim ~= nil then
                 return true
             end
             -- Asked again at the end, not remembered from the start: the
-            -- line you were cutting may already be gone.
-            if sim.cable(x, y) % (line * 2) < line then
+            -- piece you were cutting may already be gone.
+            if not still_there() then
                 return true
             end
             sim.sound.play({ asset = "lunatic/tfs:sound/wirecutter", at = ev.at })
-            sim.cut_cable(x, y, line)
+            sim.cut_cable(x, y, colour, d1, d2)
             sim.message.send({ recipient = user, message = "The cable parts with a snap." })
         end)
         return true
