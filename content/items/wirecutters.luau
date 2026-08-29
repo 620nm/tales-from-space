@@ -66,7 +66,10 @@ if sim ~= nil then
                 return true
             end
             sim.sound.play({ asset = "lunatic/tfs:sound/wirecutter", at = ev.at })
-            sim.cut_cable(x, y, line)
+            -- D: the piece the click landed on. Until `target.d1`/`d2`
+            -- carry it, a snip names the stub and the cut takes the
+            -- colour off the tile (docs/POWER.md).
+            sim.cut_cable(x, y, line, 0, 1)
             sim.message.send({ recipient = user, message = "The cable parts with a snap." })
         end)
         return true

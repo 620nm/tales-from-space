@@ -91,7 +91,10 @@ if sim ~= nil then
                 sim.message.send({ recipient = user, message = "Someone already ran " .. line.name .. " through there." })
                 return true
             end
-            sim.lay_cable(x, y, line.mask)
+            -- D: tg's `place_turf` picks the piece from where the
+            -- clicker stands. Until that port lands, a click lays the
+            -- stub knot (docs/POWER.md).
+            sim.lay_cable(x, y, line.mask, 0, 1)
             sim.message.send({ recipient = user, message = "You lay cable on " .. line.name .. "." })
         end)
         return true
