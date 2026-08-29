@@ -117,11 +117,13 @@ t.run_ticks(2)
 -- ---- switched on: the everyday picture ----
 --
 -- The dials first, so the machine has a job that cannot finish while
--- this section runs: wide open, with no floor under it. A placed
--- scrubber ships at a floor of 100 kPa, which a room at one atmosphere
--- reaches in a few passes -- and a machine that has ARRIVED is drawn
--- idle now, which is the next scenario rather than this one.
+-- this section runs: whole air, with no floor under it. A scrubber
+-- ships at a floor of 100 kPa and set to carbon dioxide, which a room of
+-- clean air at one atmosphere satisfies at once -- and a machine that
+-- has ARRIVED is drawn idle now, which is the next scenario rather than
+-- this one.
 t.ui_act(p, "set", '{"field":"floor","value":0}')
+t.ui_act(p, "toggle", '{"field":"roster"}')
 t.ui_act(p, "toggle", '{"field":"power"}')
 t.run_seconds(1)
 local running = t.structure_at(2, 1)
@@ -435,11 +437,13 @@ assert(t.structure_at(4, 2).sprite == "scrubber_off_w", "aimed by its own plumbi
 t.click(e, 4, 2, t.target_at(4, 2, "air_scrubber"))
 t.tick()
 assert(readout(e, "supply") == "fed", "the mains are behind it")
--- The floor down to nothing, so this scrubber never runs out of work
--- while the section runs. What is under test here is the SUPPLY, and a
--- machine that has reached its floor is drawn idle for a reason of its
--- own -- which would make the last assertion in the file ambiguous.
+-- Whole air with the floor down to nothing, so this scrubber never
+-- runs out of work while the section runs. What is under test here is
+-- the SUPPLY, and a machine that has reached its floor is drawn idle
+-- for a reason of its own -- which would make the last assertion in
+-- the file ambiguous.
 t.ui_act(e, "set", '{"field":"floor","value":0}')
+t.ui_act(e, "toggle", '{"field":"roster"}')
 t.ui_act(e, "toggle", '{"field":"power"}')
 t.run_seconds(1)
 assert(t.structure_at(4, 2).sprite == "scrubber_on_w", "and it runs")
