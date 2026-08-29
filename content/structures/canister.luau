@@ -28,6 +28,19 @@ return {
     id = "canister",
     name = "gas canister",
     sprite = "canister",
+    -- The shell is GREYSCALE art with a colour multiplied over it, the
+    -- way tg draws every canister (`greyscale_config`, canister.dm) --
+    -- so one baked picture is every canister on the station and a
+    -- placement may say which one it is. This is tg's own
+    -- `greyscale_colors` for a premixed-air bottle, "#c6c0b5", which is
+    -- also what the atlas bakes the cell's default at
+    -- (assets/sprites/21-atmos-thermal-room-and-canisters.ron): a
+    -- canister nobody has painted looks exactly as it always did.
+    --
+    -- A MAP may name another per placement (`color` in the property
+    -- sheet), which is how a rack of bottles reads as oxygen, nitrogen
+    -- and plasma at a glance instead of as three identical drums.
+    color = "#C6C0B5",
     ui = { modules = { "canister" } },
     -- Claims the canister MECHANISM: the gas, the release arithmetic
     -- and the gauge are per-pass engine work, so the engine keeps a
