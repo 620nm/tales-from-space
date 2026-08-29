@@ -131,8 +131,8 @@ local BENCH = [==[(
     pipes: [%s],
     structures: [(5, 1, "%s")],
     cables: [
-        (1, 2, 2, 0, 4), (2, 2, 1, 0, 4), (2, 2, 2, 0, 8),
-        (3, 2, 1, 4, 8), (4, 2, 1, 1, 8), (4, 1, 1, 2, 4), (5, 1, 1, 0, 8),
+        (1, 2, 2), (2, 2, 3),
+        (3, 2, 1), (4, 2, 1), (4, 1, 1), (5, 1, 1),
     ],
 )]==]
 
@@ -295,7 +295,7 @@ for _, job in ipairs(TRINARIES) do
     t.click(p, 5, 2, t.target_at(5, 2, "wirecutters"))
     t.run_ticks(2)
     assert(t.hands(p).held == "wirecutters", "cutters in hand")
-    t.click_subfloor(p, 4, 2, "cable", ROOM, 1, 8)
+    t.click_subfloor(p, 4, 2, "cable", ROOM)
     t.run_seconds(1.5)
     assert(t.cable_at(4, 2) == 0, "the room circuit is parted")
     t.drop(p)
@@ -384,7 +384,7 @@ t.run_ticks(2)
 t.click(p, 5, 2, t.target_at(5, 2, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
-t.click_subfloor(p, 4, 2, "cable", ROOM, 1, 8)
+t.click_subfloor(p, 4, 2, "cable", ROOM)
 t.run_seconds(1.5)
 assert(t.cable_at(4, 2) == 0, "the room circuit is parted")
 assert(t.ledger_has("CableCut"), "and cutting a department's feed is attributable")
@@ -420,7 +420,7 @@ has_work("and the job is still sitting there untouched")
 
 -- ---- TWO: the power comes back, and nobody tells it twice ----
 --
--- The parted length back down, and that is all: the panel is not
+-- One length of cable back down, and that is all: the panel is not
 -- reopened, the switch is not thrown again, and the 500 K setting is
 -- never re-entered. What the machine was told while it was dead is what
 -- it does the moment it wakes.
@@ -435,16 +435,6 @@ t.use_self(p)
 t.run_ticks(2)
 t.use_self(p)
 t.run_ticks(2)
--- Two knots rebuild what one length used to be: the parted tile needs an
--- end reaching west at the APC's side and an end reaching north at the
--- machine's own stub, and a pair of knots meeting at the tile's centre
--- is exactly that (docs/POWER.md). On your own tile `place_turf` runs
--- the piece the way you FACE; from a neighbouring tile it runs back at
--- you.
-walk(p, "west")
-t.click(p, 4, 2)
-t.run_seconds(1.5)
-walk(p, "north")
 t.click(p, 4, 2)
 t.run_seconds(1.5)
 assert(
@@ -452,8 +442,6 @@ assert(
     "and the coil lays the red line, which is the one this APC feeds"
 )
 t.drop(p)
-walk(p, "south")
-walk(p, "east")
 t.run_seconds(3)
 assert(t.segment_at(5, 1).feed == ROOM, "the machine is back on an APC")
 assert(
