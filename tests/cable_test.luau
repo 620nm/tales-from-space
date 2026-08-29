@@ -44,7 +44,7 @@ t.world([==[(
     ],
     // One mapped stub in the corner, on the blue line and touching
     // nothing this spec lays: the length a fresh coil is asked to join.
-    cables: [(3, 3, 4)],
+    cables: [(3, 3, 4, 0, 1)],
 )]==], 7)
 
 local p = t.join()
