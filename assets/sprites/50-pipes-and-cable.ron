@@ -1,5 +1,7 @@
-// Subfloor infrastructure, and the only art in the pack derived from a
-// bitmask: tg's !pipes_bitmask.dmi and cable naming, kept verbatim.
+// Subfloor infrastructure, in tg's own names: !pipes_bitmask.dmi's
+// states, which are the frozen output of the smart-pipe icon algorithm
+// and the only bitmask art in the pack, and the cable pieces, which are
+// tg's `d1-d2` states. Both kept verbatim.
 //
 // One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
 // this directory is baked, in FILE-NAME order and then entry order,
@@ -9,7 +11,7 @@
     // Sheet aliases are local to this family; @names below resolve here.
     sheets: [
         ("pipes_bitmask", "obj/pipes_n_cables/!pipes_bitmask.dmi"),
-        ("cable", "obj/pipes_n_cables/layer_cable.dmi"),
+        ("cable", "obj/pipes_n_cables/pipe_cleaner.dmi"),
         ("manifold_underlays", "obj/pipes_n_cables/layer_manifold_underlays.dmi"),
         ("pipe_underlays", "obj/pipes_n_cables/pipe_underlays.dmi"),
     ],
@@ -205,50 +207,115 @@
         ("pipe_half_l5_2", Dmi("@manifold_underlays", "intact_2_5", 0)),
         ("pipe_half_l5_4", Dmi("@manifold_underlays", "intact_4_5", 0)),
         ("pipe_half_l5_8", Dmi("@manifold_underlays", "intact_8_5", 0)),
-        // Cable art, tg's naming kept verbatim: l<layer>-<dirs>
-        // with BYOND dir bits 1=N 2=S 4=E 8=W, sorted ascending, and
-        // "noconnection" for a stub joined to nothing. The client
-        // derives WHICH of these to draw from its own neighbour scan,
-        // so the wire only ever carries the topology.
+    ],
+    groups: [
+        // Cable, one PIECE per entry. A piece is `d1-d2` over BYOND's
+        // dir bits -- 1=N 2=S 4=E 8=W and the four diagonals 5=NE 6=SE
+        // 9=NW 10=SW -- so `0-4` is a knot from the tile's centre out
+        // to the east edge and `4-8` runs east clean through to west;
+        // by design d1 is the smaller. tg spells the icon exactly that
+        // way (`code/modules/power/pipecleaners.dm:123`, and the
+        // original `code/modules/power/cable.dm:139` at 65e9888fa60^,
+        // both `icon_state = "[d1]-[d2]"`), which makes the family
+        // finite and small: eight knots plus the twenty-eight ordered
+        // pairs out of that eight-letter alphabet, thirty-six states.
+        // Nothing here is derived from a neighbour scan, because a
+        // piece IS its shape -- unlike the pipe above it.
         //
-        // tg's art is white and tinted per cable; the colours are the
-        // vocabulary, not decoration -- red is the feeder you do not
-        // cut, yellow is the branch you do (tg's CABLE_HEX_COLOR_RED
-        // and _YELLOW). Baked in rather than tinted at draw time so
-        // the Canvas2D fallback, which can fill a rect but not tint a
-        // sprite, draws the same wire the WebGPU path does.
-        ("cable_l1_none", Tinted(Dmi("@cable", "l1-noconnection", 0), (255, 0, 0))),
-        ("cable_l2_none", Tinted(Dmi("@cable", "l2-noconnection", 0), (255, 255, 0))),
-        ("cable_l1_1", Tinted(Dmi("@cable", "l1-1", 0), (255, 0, 0))),
-        ("cable_l1_2", Tinted(Dmi("@cable", "l1-2", 0), (255, 0, 0))),
-        ("cable_l1_3", Tinted(Dmi("@cable", "l1-1-2", 0), (255, 0, 0))),
-        ("cable_l1_4", Tinted(Dmi("@cable", "l1-4", 0), (255, 0, 0))),
-        ("cable_l1_5", Tinted(Dmi("@cable", "l1-1-4", 0), (255, 0, 0))),
-        ("cable_l1_6", Tinted(Dmi("@cable", "l1-2-4", 0), (255, 0, 0))),
-        ("cable_l1_7", Tinted(Dmi("@cable", "l1-1-2-4", 0), (255, 0, 0))),
-        ("cable_l1_8", Tinted(Dmi("@cable", "l1-8", 0), (255, 0, 0))),
-        ("cable_l1_9", Tinted(Dmi("@cable", "l1-1-8", 0), (255, 0, 0))),
-        ("cable_l1_10", Tinted(Dmi("@cable", "l1-2-8", 0), (255, 0, 0))),
-        ("cable_l1_11", Tinted(Dmi("@cable", "l1-1-2-8", 0), (255, 0, 0))),
-        ("cable_l1_12", Tinted(Dmi("@cable", "l1-4-8", 0), (255, 0, 0))),
-        ("cable_l1_13", Tinted(Dmi("@cable", "l1-1-4-8", 0), (255, 0, 0))),
-        ("cable_l1_14", Tinted(Dmi("@cable", "l1-2-4-8", 0), (255, 0, 0))),
-        ("cable_l1_15", Tinted(Dmi("@cable", "l1-1-2-4-8", 0), (255, 0, 0))),
-        ("cable_l2_1", Tinted(Dmi("@cable", "l2-1", 0), (255, 255, 0))),
-        ("cable_l2_2", Tinted(Dmi("@cable", "l2-2", 0), (255, 255, 0))),
-        ("cable_l2_3", Tinted(Dmi("@cable", "l2-1-2", 0), (255, 255, 0))),
-        ("cable_l2_4", Tinted(Dmi("@cable", "l2-4", 0), (255, 255, 0))),
-        ("cable_l2_5", Tinted(Dmi("@cable", "l2-1-4", 0), (255, 255, 0))),
-        ("cable_l2_6", Tinted(Dmi("@cable", "l2-2-4", 0), (255, 255, 0))),
-        ("cable_l2_7", Tinted(Dmi("@cable", "l2-1-2-4", 0), (255, 255, 0))),
-        ("cable_l2_8", Tinted(Dmi("@cable", "l2-8", 0), (255, 255, 0))),
-        ("cable_l2_9", Tinted(Dmi("@cable", "l2-1-8", 0), (255, 255, 0))),
-        ("cable_l2_10", Tinted(Dmi("@cable", "l2-2-8", 0), (255, 255, 0))),
-        ("cable_l2_11", Tinted(Dmi("@cable", "l2-1-2-8", 0), (255, 255, 0))),
-        ("cable_l2_12", Tinted(Dmi("@cable", "l2-4-8", 0), (255, 255, 0))),
-        ("cable_l2_13", Tinted(Dmi("@cable", "l2-1-4-8", 0), (255, 255, 0))),
-        ("cable_l2_14", Tinted(Dmi("@cable", "l2-2-4-8", 0), (255, 255, 0))),
-        ("cable_l2_15", Tinted(Dmi("@cable", "l2-1-2-4-8", 0), (255, 255, 0))),
-
+        // The art is `pipe_cleaner.dmi`, tg's ORIGINAL cable sheet,
+        // still drawn and still maintained for arts and crafts
+        // (pipecleaners.dm:1, "This is the old cable code"). The smart
+        // cable's `layer_cable.dmi` is an adjacency mask sheet with no
+        // diagonals in it at all and cannot spell a piece.
+        //
+        // White art, coloured here, because the colour IS the network:
+        // red is the feeder you do not cut, yellow the branch you do
+        // (tg's CABLE_HEX_COLOR_RED and _YELLOW, #FF0000 and #FFFF00 --
+        // `code/__DEFINES/colors.dm:409,413` over :48,71). The third
+        // line, blue, is declared in 60-belt-and-power.ron beside the
+        // belt that carries the coil. Baked greyscale and tinted at
+        // draw time so the Canvas2D fallback, which can fill a rect but
+        // not tint a sprite, draws the same wire the WebGPU path does.
+        //
+        // Names stay literal, like the pipe block above: this is a
+        // frozen tg state list, not a series a generator may
+        // reconstruct (docs/ASSETS.md, "The pipe/cable/stub families
+        // stay literal").
+        (sheet: "cable", tint: Some((255, 0, 0)), sprites: [
+            Sprite("cable_l1_0-1", "0-1", s),
+            Sprite("cable_l1_0-2", "0-2", s),
+            Sprite("cable_l1_0-4", "0-4", s),
+            Sprite("cable_l1_0-5", "0-5", s),
+            Sprite("cable_l1_0-6", "0-6", s),
+            Sprite("cable_l1_0-8", "0-8", s),
+            Sprite("cable_l1_0-9", "0-9", s),
+            Sprite("cable_l1_0-10", "0-10", s),
+            Sprite("cable_l1_1-2", "1-2", s),
+            Sprite("cable_l1_1-4", "1-4", s),
+            Sprite("cable_l1_1-5", "1-5", s),
+            Sprite("cable_l1_1-6", "1-6", s),
+            Sprite("cable_l1_1-8", "1-8", s),
+            Sprite("cable_l1_1-9", "1-9", s),
+            Sprite("cable_l1_1-10", "1-10", s),
+            Sprite("cable_l1_2-4", "2-4", s),
+            Sprite("cable_l1_2-5", "2-5", s),
+            Sprite("cable_l1_2-6", "2-6", s),
+            Sprite("cable_l1_2-8", "2-8", s),
+            Sprite("cable_l1_2-9", "2-9", s),
+            Sprite("cable_l1_2-10", "2-10", s),
+            Sprite("cable_l1_4-5", "4-5", s),
+            Sprite("cable_l1_4-6", "4-6", s),
+            Sprite("cable_l1_4-8", "4-8", s),
+            Sprite("cable_l1_4-9", "4-9", s),
+            Sprite("cable_l1_4-10", "4-10", s),
+            Sprite("cable_l1_5-6", "5-6", s),
+            Sprite("cable_l1_5-8", "5-8", s),
+            Sprite("cable_l1_5-9", "5-9", s),
+            Sprite("cable_l1_5-10", "5-10", s),
+            Sprite("cable_l1_6-8", "6-8", s),
+            Sprite("cable_l1_6-9", "6-9", s),
+            Sprite("cable_l1_6-10", "6-10", s),
+            Sprite("cable_l1_8-9", "8-9", s),
+            Sprite("cable_l1_8-10", "8-10", s),
+            Sprite("cable_l1_9-10", "9-10", s),
+        ]),
+        (sheet: "cable", tint: Some((255, 255, 0)), sprites: [
+            Sprite("cable_l2_0-1", "0-1", s),
+            Sprite("cable_l2_0-2", "0-2", s),
+            Sprite("cable_l2_0-4", "0-4", s),
+            Sprite("cable_l2_0-5", "0-5", s),
+            Sprite("cable_l2_0-6", "0-6", s),
+            Sprite("cable_l2_0-8", "0-8", s),
+            Sprite("cable_l2_0-9", "0-9", s),
+            Sprite("cable_l2_0-10", "0-10", s),
+            Sprite("cable_l2_1-2", "1-2", s),
+            Sprite("cable_l2_1-4", "1-4", s),
+            Sprite("cable_l2_1-5", "1-5", s),
+            Sprite("cable_l2_1-6", "1-6", s),
+            Sprite("cable_l2_1-8", "1-8", s),
+            Sprite("cable_l2_1-9", "1-9", s),
+            Sprite("cable_l2_1-10", "1-10", s),
+            Sprite("cable_l2_2-4", "2-4", s),
+            Sprite("cable_l2_2-5", "2-5", s),
+            Sprite("cable_l2_2-6", "2-6", s),
+            Sprite("cable_l2_2-8", "2-8", s),
+            Sprite("cable_l2_2-9", "2-9", s),
+            Sprite("cable_l2_2-10", "2-10", s),
+            Sprite("cable_l2_4-5", "4-5", s),
+            Sprite("cable_l2_4-6", "4-6", s),
+            Sprite("cable_l2_4-8", "4-8", s),
+            Sprite("cable_l2_4-9", "4-9", s),
+            Sprite("cable_l2_4-10", "4-10", s),
+            Sprite("cable_l2_5-6", "5-6", s),
+            Sprite("cable_l2_5-8", "5-8", s),
+            Sprite("cable_l2_5-9", "5-9", s),
+            Sprite("cable_l2_5-10", "5-10", s),
+            Sprite("cable_l2_6-8", "6-8", s),
+            Sprite("cable_l2_6-9", "6-9", s),
+            Sprite("cable_l2_6-10", "6-10", s),
+            Sprite("cable_l2_8-9", "8-9", s),
+            Sprite("cable_l2_8-10", "8-10", s),
+            Sprite("cable_l2_9-10", "9-10", s),
+        ]),
     ],
 )
