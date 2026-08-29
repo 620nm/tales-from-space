@@ -21,11 +21,19 @@
 -- in a canister somebody filled. A vent with no run under it does
 -- nothing at all, which is tg's `if(!nodes[1]) set_on(FALSE)`.
 --
--- NO DIALS. tg's vent pump has bounds you can set, but nobody sets them
--- at the machine -- they are driven from an area's air alarm, and there
--- is no air alarm here yet. A settings window on this thing would be a
--- control surface invented rather than ported, so it has none, and the
--- defaults above are the whole of its configuration.
+-- THE DIALS, AND WHERE THEY ARE. tg's vent pump has four things worth
+-- setting -- a direction, a `pressure_checks` selector and two bounds
+-- (vent_pump.dm:24-30) -- and nobody sets any of them at the machine:
+-- they are written by an area's AIR ALARM. There is no air alarm here,
+-- so a vent with no panel is a machine nobody can set at all, and this
+-- one has three numbers a station's air is tuned by. The panel is that
+-- console, on the machine, until there is a wall to hang one on
+-- (docs/ATMOS.md section 8).
+--
+-- What it does NOT offer is tg's `NO_BOUND`. A vent with no ceiling on
+-- what it pushes is an injector, and the injector is the machine on the
+-- other end of the loop (air_injector.luau). The dead band is what this
+-- machine IS; a switch that removed it would be a different one.
 --
 -- Powered, and firmly (tg's `use_power = IDLE_POWER_USE`,
 -- vent_pump.dm:9). When the breaker goes a vent is a grille: no
@@ -36,6 +44,11 @@ return {
     id = "vent",
     name = "air vent",
     sprite = "vent_off",
+    -- The panel above: a switch and the three pressures. Same module
+    -- shape the scrubber declares, and the two share every row they
+    -- have in common (the switch, the room, the mains, the line behind
+    -- them) rather than keeping two copies of it.
+    ui = { modules = { "vent" } },
     dense = false,
     -- THREE positions, like the scrubber's and for the same reason: a
     -- fan running the wrong way is not a fan that is merely on. tg
@@ -117,6 +130,29 @@ return {
         -- that stops one is the breaker.
         on = true,
         positions = { "off", "blowing", "siphoning" },
+        -- THE THREE PRESSURES, and the whole of what a vent is.
+        --
+        -- `target_kpa` is the line both directions work TO: tg's
+        -- `external_pressure_bound`, which is `ONE_ATMOSPHERE` out of
+        -- the crate (vent_pump.dm:28) and is one atmosphere here.
+        target_kpa = 101.325,
+        -- ...and the two lines of the DEAD BAND, which are where each
+        -- direction starts. These are NOT tg's and cannot be: tg's vent
+        -- runs one way at a time, told which by an alarm, so it has no
+        -- band at all. Ours runs both ways off one switch, and a
+        -- machine that both fills and empties toward a single number
+        -- would hunt around it forever.
+        --
+        -- 0.99 and 1.08 of an atmosphere, written out. The low one is
+        -- the number the whole station's air loop is tuned against: a
+        -- mapper's return grille stops at 100 kPa, just under it, so
+        -- every room sits permanently a little below the line this
+        -- machine works to and neither machine ever idles
+        -- (docs/ATMOS.md section 8). The high one is a long way off,
+        -- because a room drifting up a little is not worth spending a
+        -- fan on -- what it catches is a room somebody is FILLING.
+        release_below_kpa = 100.31175,
+        siphon_above_kpa = 109.431,
     },
     build = {
         on = { "floor", "plating" },

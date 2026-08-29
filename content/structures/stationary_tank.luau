@@ -68,6 +68,15 @@ return {
     id = "stationary_tank",
     name = "pressure tank",
     sprite = "stationary_tank",
+    -- The shell is greyscale art plus a multiply, exactly as tg draws
+    -- it (`greyscale_config = /datum/greyscale_config/
+    -- stationary_canister`, tank.dm:30-32). tg's colour is the PLATING
+    -- MATERIAL's rather than the gas's -- iron, `#B6BEC2`
+    -- (basemats.dm:2-5) -- and that is what the atlas bakes the cell's
+    -- default at, so a tank nobody has painted looks as it always did.
+    -- The window and the knobs keep their own baked colour: GAGS
+    -- colours the icon, not the overlays over it.
+    color = "#B6BEC2",
     ui = { modules = { "tank" } },
     dense = true,
     -- One state. A sealed vessel is not an assembly -- cutting it open
