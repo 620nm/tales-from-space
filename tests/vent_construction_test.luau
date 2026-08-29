@@ -112,7 +112,7 @@ t.world([==[(
     },
     structures: [
         (5, 1, "gas_pump", "running", { "dir": "west" }),
-        (6, 1, "connector_port", { "dir": "west" }),
+        (6, 1, "connector_port", { "pipe": "west" }),
         (6, 1, "canister", { "air": "canister_air" }),
     ],
     cables: [

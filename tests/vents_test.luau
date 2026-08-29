@@ -130,7 +130,7 @@ local SUPPLY_MAP = [==[(
     structures: [
         (2, 1, "vent"),
         (3, 1, "gas_pump", "running", { "dir": "west" }),
-        (4, 1, "connector_port", { "dir": "west" }),
+        (4, 1, "connector_port", { "pipe": "west" }),
         (4, 1, "canister", { "air": "canister_air" }),
     ],
     // Backbone (L2) under the generator and the APC; room circuit (L1) from the

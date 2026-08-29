@@ -51,7 +51,7 @@ t.world([==[(
     pipes: [(1, 2, 4), (2, 2, 4)],
     structures: [
         (3, 2, "volume_pump"),
-        (4, 2, "connector_port", { "dir": "west" }),
+        (4, 2, "connector_port", { "pipe": "west" }),
     ],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
