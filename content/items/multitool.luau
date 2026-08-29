@@ -27,6 +27,12 @@ local content = {
     -- bank has left are the grid's business and a window's, not a
     -- probe's (docs/POWER.md).
     --
+    -- It reads the KNOTS, because a knot is the only thing anything
+    -- clips onto: a length running edge to edge crosses the tile and
+    -- offers its middle to nobody. So the probe has three answers rather
+    -- than two -- carrying, dead, and nothing here to clip onto -- and
+    -- the third is the one an engineer over a dark socket needs.
+    --
     -- It declines every click it has nothing to say about, so nothing
     -- this tool already does is shadowed: a click that NAMES something
     -- is that thing's business (the gas pump's limiters, a machine's
@@ -50,7 +56,18 @@ if sim ~= nil then
         end
         local live = sim.segment_live(x, y)
         if live == nil then
-            return { replaced = false }
+            -- No knot on any colour. Bare deck is not a wire at all and
+            -- the click falls through; a run that merely crosses the
+            -- tile is a wire, and saying so is the whole point of the
+            -- distinction (docs/POWER.md).
+            if sim.cable(x, y) == 0 then
+                return { replaced = false }
+            end
+            sim.message.send({
+                recipient = user,
+                message = "The cable here runs straight past -- there is no knot to clip onto.",
+            })
+            return true
         end
         local carrying = {}
         if live.equipment then

@@ -2,7 +2,7 @@
 --
 -- An APC and a power storage unit are the same window with different
 -- words: a store, whatever knobs the machine has of its own, and a
--- block per cable layer that actually runs under it. Neither is a
+-- block per cable colour that actually runs under it. Neither is a
 -- document of its own any more -- both are the settings panel every
 -- machine with rows on it shares (docs/TGUI.md), assembled from
 -- modules -- so this spec asks both of them the same questions and

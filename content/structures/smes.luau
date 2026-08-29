@@ -1,7 +1,7 @@
 -- The superconducting bank: what a station charges when it has surplus
 -- and drains when it does not.
 --
--- A map may tell one what each cable layer is for, which is how a bank
+-- A map may tell one what each cable colour is for, which is how a bank
 -- standing on the backbone still FEEDS it rather than only drinking
 -- from it:
 --

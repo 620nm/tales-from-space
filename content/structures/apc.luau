@@ -7,7 +7,7 @@
 -- on a graph. What lives here is what a player sees and can be told: a
 -- name, a picture, and the fact that it hangs on a wall.
 --
--- A map may tell one which way each cable layer runs, and label it with
+-- A map may tell one which way each cable colour runs, and label it with
 -- the room it serves:
 --
 --   (12, 5, "apc", { "l2": "input" }), labels: [(12, 5, "The Commons")]

@@ -1,9 +1,9 @@
 -- Three lines, and a panel with a port on each of them.
 --
--- The engine holds no opinion about what a cable layer is for: a bridge
--- carries one PORT per layer, each of them an input, an output or both,
+-- The engine holds no opinion about what a cable colour is for: a bridge
+-- carries one PORT per colour, each of them an input, an output or both,
 -- and what a station's wiring MEANS is the sum of the ports its map
--- placed (docs/POWER.md, "Layers and ports"). This bench says all three
+-- placed (docs/POWER.md, "Bridges and their ports"). This bench says all three
 -- sentences at once -- a backbone the panel takes from, a room circuit
 -- it feeds, and a spare main it also feeds -- and then asks the panel
 -- what each of its ports carried.
@@ -98,7 +98,7 @@ assert(t.ports_at(1, 1) == nil, "a generator is not a bridge")
 t.click(p, 6, 2, t.target_at(6, 2, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
-t.click_subfloor(p, 6, 1, "cable", 1)
+t.click_subfloor(p, 6, 1, "cable", 1, 0, 8)
 t.run_seconds(1.5)
 assert(t.cable_at(6, 1) == 2, "the red line parted, the yellow one under it did not")
 t.run_seconds(3)
