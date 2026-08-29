@@ -133,7 +133,12 @@ near(t.ui(p).setpoints[2].value, 50.0, 0.001, "half and half out of the box")
 t.ui_act(p, "set", '{"field":"pressure","value":200}')
 t.ui_act(p, "toggle", '{"field":"power"}')
 t.run_seconds(30)
-assert(t.structure_at(9, 1).state == "running", "and it ran")
+-- Thirty seconds later the outlet is at the 200 kPa it was dialled to,
+-- so the machine has ARRIVED -- and a trinary is drawn by what the last
+-- pass saw it do rather than by its switch, so an arrived mixer is drawn
+-- idle (docs/ATMOS.md SS6; device_looks_test.luau owns the picture
+-- rule). That it RAN is the three assertions below, which count moles.
+assert(t.structure_at(9, 1).state == "off", "it arrived and stopped")
 
 local gave_back = back0 - moles(BACK_X, BACK_Y)
 local gave_side = side0 - moles(SIDE_X, SIDE_Y)
