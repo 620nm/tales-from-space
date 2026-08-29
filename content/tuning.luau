@@ -25,6 +25,16 @@ return {
     stir_mob_mps = 0.02,
     stir_throw_scale = 0.01,
 
+    -- The pressure (kPa) this station calls SAFE to stand in. It is a
+    -- number about legibility rather than about the body: a machine
+    -- emptying the tile it is bolted to wears its warning picture only
+    -- once that air has fallen below this, so an air scrubber turned
+    -- round in a full room looks like the ordinary machine it is being
+    -- used as, and a corridor going red means a corridor actually
+    -- emptying. Raise it and the station cries wolf; drop it and the
+    -- warning arrives too late to walk out on. Engine default: 85.
+    safe_pressure_kpa = 85.0,
+
     -- How grey each turf class is: the fraction of a black body's
     -- photons its hull face emits into the sky -- and, by Kirchhoff,
     -- absorbs out of the sunlight. 0 is a perfect mirror, 1 a perfect
