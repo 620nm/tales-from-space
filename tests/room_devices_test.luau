@@ -226,11 +226,16 @@ near(
 -- standing in a room being emptied is fatal and should look it.
 t.ui_act(p, "toggle", '{"field":"direction"}')
 t.run_ticks(2)
-assert(t.structure_at(2, 1).state == "siphoning", "the machine is drawn differently")
 assert(
     t.ledger_has("MachineToggled", "direction", "Player"),
     "and turning a scrubber round is an attributed act"
 )
+-- The PICTURE is a different question and it has not changed yet: the
+-- third position is a warning about a room going empty, not about a
+-- switch, so it waits for the air at the grille to fall under
+-- `safe_pressure_kpa` (docs/ATMOS.md SS8; device_looks_test.luau owns
+-- the crossing). This room is still full.
+assert(t.structure_at(2, 1).state == "scrubbing", "which the corridor is not told about yet")
 
 local n2_before_siphon = room_total("n2")
 t.run_seconds(30)
@@ -243,6 +248,13 @@ assert(
     "and it is in the waste main, where the oxygen already was"
 )
 assert(WASTE_M3 > 0.0, "the waste main is a real net")
+-- ...and by now it HAS emptied the tile it stands on, so the machine is
+-- finally drawn as the dangerous thing it has been all along.
+assert(
+    t.structure_at(2, 1).state == "siphoning",
+    "and once the air at the grille is gone the machine is drawn"
+        .. " differently: " .. tostring(t.structure_at(2, 1).state)
+)
 
 -- ---------------------------------------------------------------
 -- AN INJECTOR HAS NO NOTION OF ENOUGH.

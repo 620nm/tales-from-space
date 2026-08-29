@@ -14,6 +14,20 @@
 -- (sim/atmos_machines/mod.rs) -- which is why the last scenario here
 -- takes a machine's picture away without touching its switch.
 --
+-- And then a second question the engine asks for three of these
+-- machines: NOT "is it switched on" but "did the last atmos pass see it
+-- do anything". A mixer with a dry intake, a filter with both outlets
+-- full and a scrubber whose waste main nobody plumbed are all switched
+-- on, fed, and moving nothing -- and all three used to wear a running
+-- body, one of them a four-frame loop. Every "it went dark without
+-- anybody touching the switch" below is that rule, and every one of
+-- them checks the panel afterwards to prove the switch really did not
+-- move (docs/ATMOS.md SS6, SS8).
+--
+-- Timing note: the pass that judges a machine runs at the atmos cadence
+-- rather than every tick, so a picture derived from WORK is asserted
+-- after a full second and never after two ticks.
+--
 -- Every sprite name below comes from a TfS content file
 -- (`structures/air_scrubber.luau`, `gas_filter.luau`, `gas_mixer.luau`)
 -- and the engine has never heard of any of them.
@@ -101,8 +115,15 @@ t.ui_act(p, "toggle", '{"field":"direction"}')
 t.run_ticks(2)
 
 -- ---- switched on: the everyday picture ----
+--
+-- The dials first, so the machine has a job that cannot finish while
+-- this section runs: wide open, with no floor under it. A placed
+-- scrubber ships at a floor of 100 kPa, which a room at one atmosphere
+-- reaches in a few passes -- and a machine that has ARRIVED is drawn
+-- idle now, which is the next scenario rather than this one.
+t.ui_act(p, "set", '{"field":"floor","value":0}')
 t.ui_act(p, "toggle", '{"field":"power"}')
-t.run_ticks(2)
+t.run_seconds(1)
 local running = t.structure_at(2, 1)
 assert(running.state == "scrubbing", "the fan is turning")
 assert(running.sprite == "scrubber_on_e", "wearing its working body: " .. running.sprite)
@@ -122,11 +143,46 @@ assert(#drawn == 2, "a stub under a body, and nothing else: " .. #drawn)
 assert(drawn[1] == "pipe_intact_l2_8", "the mouth it bound, beneath it: " .. drawn[1])
 assert(drawn[2] == "scrubber_on_e", "then the machine: " .. tostring(drawn[2]))
 
--- ---- turned round: the third picture ----
+-- ---- turned round in a room that is still fine ----
+--
+-- The switch says siphon and the picture does NOT, and that is the
+-- contract: the third position is a WARNING, and a warning that fires
+-- over a room at one atmosphere is a warning nobody reads twice. A
+-- scrubber turned round in a full room is being used as a fast bulk
+-- return, and it looks like what it is being used as.
+--
+-- The pressure that decides is the machine's OWN TILE -- the air it is
+-- actually taking, and the air anybody standing beside it is breathing,
+-- which a wide-open fan draws down well below the rest of the room.
+assert(t.room_pressure(2, 1) > 85.0, "the air at the grille is comfortable to start with")
 t.ui_act(p, "toggle", '{"field":"direction"}')
-t.run_ticks(2)
+t.run_seconds(1)
+local emptying = t.structure_at(2, 1)
+assert(toggle(p, "direction").on == true, "the panel says siphon")
+assert(
+    emptying.sprite == "scrubber_on_e",
+    "and the corridor is told nothing it does not need to know yet: "
+        .. tostring(emptying.sprite)
+)
+
+-- ---- and then the room goes ----
+--
+-- Nobody touches a control from here. `safe_pressure_kpa` is content's
+-- own number (content/tuning.luau, engine default 85) and the specs run
+-- against the engine's, so this is the machine crossing a line rather
+-- than anybody moving one.
+local guard = 0
+while t.structure_at(2, 1).state ~= "siphoning" and guard < 240 do
+    t.run_seconds(1)
+    guard = guard + 1
+end
 local purging = t.structure_at(2, 1)
-assert(purging.state == "siphoning", "it is emptying the room now")
+assert(purging.state == "siphoning", "NOW it is an emergency")
+assert(
+    t.room_pressure(2, 1) < 85.0,
+    "and it waited for the air at the grille to go under the line: "
+        .. t.room_pressure(2, 1) .. " kPa"
+)
 assert(
     purging.sprite == "scrubber_purge_e",
     "and says so in art of its own, which is the whole reason the third"
@@ -139,9 +195,56 @@ assert(
 
 -- ...and back, because a warning you cannot clear is not a warning.
 t.ui_act(p, "toggle", '{"field":"direction"}')
-t.run_ticks(2)
+t.run_seconds(1)
 local calm = t.structure_at(2, 1).sprite
 assert(calm == "scrubber_on_e", "turned back, an ordinary scrubber again: " .. calm)
+
+-- ---------------------------------------------------------------
+-- A FAN BOLTED OVER NOTHING IS DRAWN OFF.
+--
+-- The same machine, the same switch, and no waste main under its mouth
+-- at all. It is switched on and the mains are behind it, and it can
+-- move exactly nothing -- so the deck says so, and the panel is where
+-- you go to find out that the switch is still thrown. tg would draw
+-- this one running.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "a scrubber joined to nothing",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Plating),
+        '#': (turf: Wall),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
+    },
+    rows: [
+        "######",
+        "#....#",
+        "#..ag#",
+        "######",
+    ],
+    spawns: [(3, 2)],
+    structures: [(2, 1, "air_scrubber")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3),
+    ],
+)]==], 7)
+
+local lone = t.join()
+t.tick()
+local unplumbed = t.target_at(2, 1, "air_scrubber")
+t.click(lone, 2, 1, unplumbed)
+t.tick()
+assert(readout(lone, "supply") == "fed", "the mains are behind it")
+t.ui_act(lone, "toggle", '{"field":"power"}')
+t.run_seconds(1)
+assert(toggle(lone, "power").on == true, "the switch is thrown")
+local nothing = t.structure_at(2, 1)
+assert(
+    nothing.state == "off",
+    "and a fan with nowhere to put the air is drawn off: " .. tostring(nothing.state)
+)
 
 -- ---------------------------------------------------------------
 -- THE TRINARIES CHANGE PICTURE AT THEIR PANEL.
@@ -180,6 +283,19 @@ local JUNCTION = [==[(
     ],
 )]==]
 
+-- The dial each of the two needs before it has a job at all. A filter
+-- passes its input port every pass whatever the pressures are, so it
+-- needs nothing; a mixer stops dead at its setpoint, and every mapped
+-- run on this bench opens at one atmosphere, which is exactly where its
+-- dial ships. Opening that dial is the difference between "it has
+-- arrived" and "it is working", and both are drawn.
+local ARM = {
+    gas_filter = function() end,
+    gas_mixer = function(q)
+        t.ui_act(q, "set", '{"field":"pressure","value":4500}')
+    end,
+}
+
 for _, machine in ipairs({ "gas_filter", "gas_mixer" }) do
     local short = string.sub(machine, 5, -1) -- "filter" / "mixer", content's own art prefix
     t.world(JUNCTION:format(machine), 7)
@@ -194,21 +310,81 @@ for _, machine in ipairs({ "gas_filter", "gas_mixer" }) do
     t.click(q, 3, 1, t.target_at(3, 1, machine))
     t.tick()
     assert(t.ui(q), machine .. " answers an empty hand with a window")
+    ARM[machine](q)
     t.ui_act(q, "toggle", '{"field":"power"}')
-    t.run_ticks(2)
+    t.run_seconds(1)
 
     local hot = t.structure_at(3, 1)
     assert(hot.state == "running", machine .. " is running")
     assert(hot.sprite == short .. "_on_e",
         machine .. " swapped picture, not facing: " .. hot.sprite)
+    -- The running bodies of both trinaries are four-frame loops
+    -- (assets/sprites/20-atmos-inline-devices.ron). A loop is the
+    -- client's own clock and costs the wire nothing, so the NAME is the
+    -- whole of what the sim has to get right -- and it must not drift
+    -- while the machine keeps working.
+    t.run_seconds(3)
+    assert(t.structure_at(3, 1).sprite == short .. "_on_e",
+        machine .. " keeps one name while it keeps working")
 
     -- ...and off again. A one-way picture change would pass every
     -- assertion above.
     t.ui_act(q, "toggle", '{"field":"power"}')
-    t.run_ticks(2)
+    t.run_seconds(1)
     local back = t.structure_at(3, 1).sprite
     assert(back == short .. "_off_e", machine .. " goes dark again: " .. back)
 end
+
+-- ---------------------------------------------------------------
+-- A MIXER SHORT OF AN INTAKE IS DRAWN OFF.
+--
+-- The same T with the SOUTH STUB REMOVED, so the machine's third mouth
+-- opens onto bare deck. A mixer set to 50/50 reads both intakes and a
+-- short side drags the other down with it (docs/ATMOS.md SS6), so this
+-- one can never blend a mole -- and it is the failure an engineer is
+-- meant to spot from the corridor, since the machine downstream of it
+-- is a department's air supply.
+--
+-- Nothing about the panel changes: the switch is thrown throughout.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "one intake short",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Plating),
+        '#': (turf: Wall),
+        'a': (turf: Plating, fixture: Some(Apc)),
+        'g': (turf: Plating, fixture: Some(Generator)),
+    },
+    rows: [
+        "########",
+        "#......#",
+        "#..a..g#",
+        "########",
+    ],
+    spawns: [(3, 2)],
+    pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4)],
+    structures: [(3, 1, "gas_mixer")],
+    cables: [
+        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
+        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    ],
+)]==], 7)
+
+local m = t.join()
+t.tick()
+t.click(m, 3, 1, t.target_at(3, 1, "gas_mixer"))
+t.tick()
+t.ui_act(m, "set", '{"field":"pressure","value":4500}')
+t.ui_act(m, "toggle", '{"field":"power"}')
+t.run_seconds(1)
+local starved = t.structure_at(3, 1)
+assert(toggle(m, "power").on == true, "the switch is thrown and stays thrown")
+assert(
+    starved.state == "off",
+    "a mixer that cannot reach one of its two supplies is drawn off: "
+        .. tostring(starved.state)
+)
 
 -- ---------------------------------------------------------------
 -- THE PICTURE IS CHOSEN BY THE MAINS, NOT BY THE SWITCH.
@@ -259,8 +435,13 @@ assert(t.structure_at(4, 2).sprite == "scrubber_off_w", "aimed by its own plumbi
 t.click(e, 4, 2, t.target_at(4, 2, "air_scrubber"))
 t.tick()
 assert(readout(e, "supply") == "fed", "the mains are behind it")
+-- The floor down to nothing, so this scrubber never runs out of work
+-- while the section runs. What is under test here is the SUPPLY, and a
+-- machine that has reached its floor is drawn idle for a reason of its
+-- own -- which would make the last assertion in the file ambiguous.
+t.ui_act(e, "set", '{"field":"floor","value":0}')
 t.ui_act(e, "toggle", '{"field":"power"}')
-t.run_ticks(2)
+t.run_seconds(1)
 assert(t.structure_at(4, 2).sprite == "scrubber_on_w", "and it runs")
 t.ui_close(e)
 t.tick()
