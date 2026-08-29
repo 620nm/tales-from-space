@@ -28,9 +28,9 @@ local ONE_ATM = 101.325
 local SUPPLIES_UNDER = ONE_ATM * 0.99
 local R, T20C = 8.314, 293.15
 
--- What a scrubber a MAPPER puts down is set to, which is not what the
--- content file gives one an engineer BUILDS (structures/props.rs).
-local PLACED_RATE = 25.0
+-- What a scrubber is set to out of the crate, placed or built
+-- (structures/props.rs, structures/air_scrubber.luau).
+local PLACED_RATE = 5.0
 local PLACED_FLOOR = 100.0
 
 local function near(a, b, slack, what)
@@ -164,7 +164,7 @@ for _, sw in ipairs(panel.toggles) do
         shape = sw
     end
 end
-assert(shape ~= nil and shape.on == true, "and it takes the whole mixture")
+assert(shape ~= nil and shape.on == false, "sieving its named gas, whole air only over the floor")
 
 -- Overfill the room, so there is something to come down FROM and the
 -- floor is a place it stops rather than a place it started.
@@ -175,7 +175,9 @@ t.tick()
 local fouled = room_kpa()
 assert(fouled > 120.0, "the room is well over its floor: " .. fouled .. " kPa")
 
-t.run_seconds(240)
+-- Twelve minutes: five litres a second is a gentle grille, and twelve
+-- cubic metres of overfill come down at that pace rather than in one.
+t.run_seconds(720)
 local settled = room_kpa()
 near(settled, PLACED_FLOOR, 2.0, "the room came down to the floor and stopped")
 assert(
@@ -290,7 +292,7 @@ assert(
 local PURGE = string.gsub(
     DEAD_SUPPLY,
     '%(2, 1, "air_scrubber", "scrubbing"%)',
-    '(2, 1, "air_scrubber", "siphoning")'
+    '(2, 1, "air_scrubber", "siphoning", { "rate_lps": 200.0 })'
 )
 t.world(PURGE, 7)
 t.set_environment({ sink_k = 293.15, insolation = 0 })
@@ -314,17 +316,15 @@ assert(
 )
 
 -- ---------------------------------------------------------------
--- A NAMED ROSTER STOPS AT THE FLOOR TOO, AND THE FLOOR IS THAT
--- SELECTION'S OWN PARTIAL PRESSURE.
+-- A NAMED ROSTER TAKES ITS GASES TO THE LAST MOLE, AND WHOLE AIR
+-- BACK ONLY OVER THE FLOOR.
 --
--- The stop rule is one rule, read against whatever the roster selects.
--- On the whole-air roster that is the room's pressure; on a named one
--- it is Dalton's sum over the gases named, and the breathable air the
--- machine is NOT selecting is no part of the question. So a scrubber
--- pointed at carbon dioxide with a floor of ten kilopascals takes the
--- room's carbon dioxide down to ten kilopascals of carbon dioxide, in
--- a room sitting at a whole atmosphere, and leaves the atmosphere
--- alone.
+-- The stop rule is one rule and the floor is one number, the room's.
+-- A scrubber pointed at carbon dioxide with a floor of 100 kPa takes
+-- every mole of carbon dioxide out of a room sitting at a whole
+-- atmosphere and more, and returns whole air besides until the room
+-- is down to 100 kPa -- and then leaves the atmosphere alone, still
+-- taking the carbon dioxide the crew breathe into it.
 -- ---------------------------------------------------------------
 local NAMED = [==[(
     name: "named roster, floor over zero",
@@ -343,11 +343,11 @@ local NAMED = [==[(
     ],
     spawns: [(5, 2)],
     pipes: [(0, 1, 2), (1, 1, 2)],
-    // Sieving rather than returning, dial wide open, and a floor over
-    // zero -- which is the one combination neither other file has.
+    // Sieving, dial wide open so the section is short, and the floor
+    // the machine ships with.
     structures: [
         (2, 1, "air_scrubber", "scrubbing",
-            { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 10.0 }),
+            { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 100.0 }),
     ],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
@@ -369,19 +369,28 @@ assert(co2_0 > 20.0, "well over the floor to start with: " .. co2_0 .. " kPa of 
 
 t.run_seconds(240)
 local co2_1 = room_kpa("co2")
-near(co2_1, 10.0, 1.0, "the carbon dioxide came down to the floor and stopped")
 assert(
-    room_kpa() > 90.0,
-    "in a room still holding an atmosphere, because the floor is read"
-        .. " against the SELECTION and not against the room: "
-        .. room_kpa() .. " kPa"
+    co2_1 < co2_0 * 0.05,
+    "the carbon dioxide is all but gone, floor or no floor: " .. co2_0 .. " -> " .. co2_1 .. " kPa"
 )
-near(
-    room_moles("o2") + room_moles("n2"),
-    air_0,
-    0.5,
-    "and not a mole of the breathable air was touched"
+-- Whole air stops at the floor; the carbon dioxide does not, and on a
+-- bench with no vent nothing puts back what it took -- so the room
+-- ends a little UNDER the floor, by about the carbon dioxide that was
+-- still in it when whole air stopped. With a supply vent behind it,
+-- that gap is what the vent fills.
+local came_down = room_kpa()
+assert(came_down <= PLACED_FLOOR + 2.0, "the room came down to the floor: " .. came_down)
+assert(
+    came_down > 90.0,
+    "in a room still holding an atmosphere, because the floor is a"
+        .. " floor: " .. came_down .. " kPa"
+)
+assert(
+    room_moles("o2") + room_moles("n2") < air_0,
+    "and the breathable air the fouling pushed over the floor went down"
+        .. " the waste main with it"
 )
 
 t.run_seconds(240)
-near(room_kpa("co2"), co2_1, 0.5, "four more minutes and it has not moved")
+assert(room_kpa("co2") <= co2_1, "four more minutes and it has only come down")
+near(room_kpa(), came_down, 1.0, "and the room has not moved")

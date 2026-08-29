@@ -26,7 +26,7 @@
 local ONE_ATM = 101.325
 -- The pack's own defaults (structures/vent.luau), which are the numbers
 -- the whole station's air loop is tuned against.
-local FEEDS_UNDER = 100.31175
+local FEEDS_UNDER = 101.325
 local EMPTIES_OVER = 109.431
 
 local function near(a, b, slack, what)
@@ -108,9 +108,8 @@ local BENCH = [==[(
     structures: [
         (2, 1, "vent"),
         // Charged well past a room's worth, because this bench asks the
-        // vent to hold a corridor ABOVE one atmosphere and a fan is not
-        // a compressor: it will not pull its own supply line below the
-        // room it is feeding (atmos_machines/vent.rs).
+        // vent to hold a corridor ABOVE one atmosphere and a vent only
+        // hands over what its run holds (atmos_machines/vent.rs).
         (3, 1, "gas_pump", "running", { "dir": "west", "target_kpa": 900.0 }),
         (4, 1, "connector_port", { "dir": "west" }),
         (4, 1, "canister", { "air": "canister_air" }),

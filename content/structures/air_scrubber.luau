@@ -24,9 +24,9 @@
 -- also how you murder a room, which is why the two look different on
 -- the deck and why turning one round earns a ledger row.
 --
--- THE FLOOR, WHICH IS NOT tg's. Scrubbing stops at a pressure: the
--- machine draws what its roster selects until that selection is down to
--- `target_kpa` and then does nothing more. tg has no such dial, and
+-- THE FLOOR, WHICH IS NOT tg's. Scrubbing takes what the roster names
+-- to the last mole, and takes whole air back as well while the room is
+-- over `target_kpa`, stopping there. tg has no such dial, and
 -- does not need one -- a tg hull does not lose heat, so its air loop
 -- only ever carries gases away. This one RADIATES, and a room left
 -- alone goes from shirtsleeves to freezing in about fifty minutes, so
@@ -35,12 +35,10 @@
 -- mode of a return grille "the room got cold" rather than "the room got
 -- emptied".
 --
--- Zero is tg exactly, and zero is what this file ships: a scrubber an
--- engineer builds out of a fitting is the machine tg documents, set to
--- carbon dioxide and taking it to the last mole. A station's return
--- grilles are a MAPPER's placement and carry their own posture --
--- whole air, gently, down to a floor just under the vent's release
--- line (docs/ATMOS.md §8).
+-- What this file ships is what a placed one is: carbon dioxide always,
+-- five litres a second, and whole air back down to a floor just under
+-- the vent's release line (docs/ATMOS.md §8). Zero on the floor is tg
+-- exactly -- a machine that only ever carries its named gases away.
 --
 -- WHAT STOPS IT. Fifty atmospheres in its own waste line and the fan
 -- gives up (tg's `ATMOS_PUMP_MAX_PRESSURE`). A scrubber is not a
@@ -97,20 +95,27 @@ return {
         -- Off, filtering, emptying. The third slot is what tg's
         -- `scrub_purge` is for.
         positions = { "off", "scrubbing", "siphoning" },
-        -- tg's `volume_rate = 200` (vent_scrubber.dm:26), litres per
-        -- second of the room's own air worked per pass.
-        rate_lps = 200.0,
+        -- Five litres a second out of the crate, against tg's
+        -- `volume_rate = 200` (vent_scrubber.dm:26), which is the dial's
+        -- CEILING here. A grille at 200 empties a small room's excess in
+        -- one pass and outruns the main that feeds it; at five it keeps
+        -- pace with a supply vent and a whole department's grilles do
+        -- not drain one distribution main between them. The panel goes
+        -- to 200 for a technician who wants tg's machine.
+        rate_lps = 5.0,
         max_rate_lps = 200.0,
         -- tg's `filter_types = list(/datum/gas/carbon_dioxide)`
         -- (vent_scrubber.dm:24): what the crew breathe out, and the
         -- only thing a scrubber needs to be set to on an ordinary day.
         filter = { "co2" },
-        -- The FLOOR, in kPa: the pressure the selection above is taken
-        -- down to and no further. Zero is tg, which stops at nothing
-        -- and takes the last mole of carbon dioxide out of the room --
-        -- see the note at the top for why the dial exists at all and
-        -- who turns it up.
-        target_kpa = 0.0,
+        -- The FLOOR, in kPa. The gases named above come out to the
+        -- last mole regardless; the floor is where the machine stops
+        -- taking WHOLE air back as well. 100 kPa: just under the supply
+        -- vent's release line of one atmosphere, so the room sits in
+        -- the band between them and the loop circulates -- see the
+        -- note at the top. Zero is tg's scrubber, which never returns
+        -- whole air at all.
+        target_kpa = 100.0,
     },
     build = {
         on = { "floor", "plating" },

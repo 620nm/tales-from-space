@@ -143,15 +143,16 @@ return {
         -- machine that both fills and empties toward a single number
         -- would hunt around it forever.
         --
-        -- 0.99 and 1.08 of an atmosphere, written out. The low one is
-        -- the number the whole station's air loop is tuned against: a
-        -- mapper's return grille stops at 100 kPa, just under it, so
-        -- every room sits permanently a little below the line this
-        -- machine works to and neither machine ever idles
-        -- (docs/ATMOS.md section 8). The high one is a long way off,
-        -- because a room drifting up a little is not worth spending a
-        -- fan on -- what it catches is a room somebody is FILLING.
-        release_below_kpa = 100.31175,
+        -- The low line IS the setpoint: the vent feeds until the room
+        -- reaches an atmosphere, which is tg's releasing vent exactly.
+        -- It is the number the whole station's air loop is tuned
+        -- against: a scrubber's floor is 100 kPa, just under it, so
+        -- every room sits in the band between the two and neither
+        -- machine ever idles (docs/ATMOS.md section 8). The high one,
+        -- 1.08 of an atmosphere, is a long way off, because a room
+        -- drifting up a little is not worth spending a fan on -- what
+        -- it catches is a room somebody is FILLING.
+        release_below_kpa = 101.325,
         siphon_above_kpa = 109.431,
     },
     build = {
