@@ -11,7 +11,10 @@
 -- (atmos_machines/vent.rs, tg's vent_pump with both bounds live):
 -- below 0.99 of an atmosphere it releases into the room, above 1.08 it
 -- siphons the room back into the run, and between those two lines it
--- does nothing at all. A passive vent is a HOLE -- no setpoint, no
+-- does nothing at all. Those three numbers are the MACHINE's, off
+-- structures/vent.luau -- vent_panel_test.luau is where they get moved
+-- and where the sim is made to prove it reads them; this file is what
+-- the pack's own defaults do. A passive vent is a HOLE -- no setpoint, no
 -- power, no direction -- and it equalises the run and the room by molar
 -- density, whichever way that runs (tg's `internal.equalize(external)`).
 --
@@ -21,8 +24,8 @@
 -- in the room would be breathing on them.
 
 local ONE_ATM = 101.325
--- The two lines the powered vent lives between (vents.rs SUPPLY_BELOW
--- and SCRUB_ABOVE), in kPa.
+-- The two lines the powered vent lives between, in kPa: the pack's own
+-- `release_below_kpa` and `siphon_above_kpa` (structures/vent.luau).
 local SUPPLIES_UNDER = ONE_ATM * 0.99
 local SIPHONS_OVER = ONE_ATM * 1.08
 
