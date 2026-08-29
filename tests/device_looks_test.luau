@@ -285,12 +285,18 @@ assert(t.structure_at(4, 2).sprite == "scrubber_on_w", "and it runs")
 t.ui_close(e)
 t.tick()
 
--- ---- one snip, three tiles away ----
+-- ---- one snip, under the machine's own feet ----
+--
+-- What feeds a machine is the KNOT under it, never the cable near it: a
+-- length running edge to edge crosses a tile and offers its middle to
+-- nobody (docs/POWER.md). Lift the knot and the run beside it is still
+-- whole, and the machine still starves.
 t.click(e, 4, 1, t.target_at(4, 1, "wirecutters"))
 t.run_ticks(2)
-t.click_subfloor(e, 3, 2, "cable", 1)
+t.click_subfloor(e, 4, 2, "cable", 1, 0, 8)
 t.run_seconds(1.5)
-assert(t.cable_at(3, 2) == 0, "the room circuit is parted")
+assert(t.cable_at(4, 2) == 0, "the knot under the machine is gone")
+assert(t.cable_at(3, 2) == 1, "while the length beside it is untouched")
 assert(t.ledger_has("CableCut"), "and cutting it is attributable")
 
 -- The grid is swept on tg's SSmachines cadence (every 40th tick), so
@@ -322,9 +328,16 @@ t.use_self(e)
 t.run_ticks(2)
 t.use_self(e)
 t.run_ticks(2)
-t.click(e, 3, 2)
+-- Walk round to the west of the machine and tie the knot back down:
+-- `place_turf` runs a piece back towards whoever laid it, so a click
+-- from the tile beside it is a knot reaching west into the run.
+t.move(e, "west")
+t.run_seconds(0.5)
+t.move(e, "south")
+t.run_seconds(0.5)
+t.click(e, 4, 2)
 t.run_seconds(1.5)
-assert(t.cable_at(3, 2) == 1, "the coil lays the red line back")
+assert(t.cable_at(4, 2) == 1, "the coil ties the knot back down")
 assert(t.segment_at(4, 2).feed == 1, "and the machine is back on the panel")
 
 t.run_seconds(2.5)
