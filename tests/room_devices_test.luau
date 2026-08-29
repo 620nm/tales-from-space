@@ -282,7 +282,7 @@ t.world([==[(
         "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
     },
     structures: [
-        (1, 1, "connector_port", { "dir": "east" }),
+        (1, 1, "connector_port", { "pipe": "east" }),
         (1, 1, "canister", { "air": "canister_air" }),
         (2, 1, "gas_pump", "running", { "dir": "east" }),
         (3, 1, "air_injector"),

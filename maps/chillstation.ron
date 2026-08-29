@@ -505,16 +505,18 @@
         // running -- a storage chamber nobody switched on is a sealed
         // room full of gas with no way to reach it.
         // Aimed by hand, every one: each injector's feed drops down
-        // the wall column WEST of it and its siphon partner stands
-        // SOUTH -- two joinable mouths, and an automatic fit that
-        // guessed the partner got a machine that moved nothing. The
-        // placement dir is the map saying which one it meant.
-        (15, 33, "air_injector", "injecting", { "dir": "east" }),
-        (15, 34, "air_scrubber", "siphoning", { "dir": "north" }),
-        (19, 33, "air_injector", "injecting", { "dir": "east" }),
-        (19, 34, "air_scrubber", "siphoning", { "dir": "north" }),
-        (23, 33, "air_injector", "injecting", { "dir": "east" }),
-        (23, 34, "air_scrubber", "siphoning", { "dir": "north" }),
+        // the wall column WEST of it and its siphon partner draws off
+        // the run SOUTH of it -- two joinable mouths apiece, and an
+        // automatic fit that guessed the other one got a machine that
+        // moved nothing. A room device has one mouth, so it is aimed by
+        // where that mouth reaches ("pipe") rather than by the picture:
+        // an injector whose feed is west says west.
+        (15, 33, "air_injector", "injecting", { "pipe": "west" }),
+        (15, 34, "air_scrubber", "siphoning", { "pipe": "south" }),
+        (19, 33, "air_injector", "injecting", { "pipe": "west" }),
+        (19, 34, "air_scrubber", "siphoning", { "pipe": "south" }),
+        (23, 33, "air_injector", "injecting", { "pipe": "west" }),
+        (23, 34, "air_scrubber", "siphoning", { "pipe": "south" }),
         // ---- EVERY THRESHOLD ON THE STATION ----------------------
         // Nineteen airlocks, placed by id like everything else that
         // stands on the deck. What used to be two glyphs ('+' inside,
