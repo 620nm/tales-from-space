@@ -1,0 +1,29 @@
+// The morgue drawer and its tray, off tg's general structures sheet
+// (icons/obj/structures.dmi, code/game/objects/structures/morgue.dm).
+//
+// Six states, and which one is drawn is the drawer mechanism's answer
+// rather than a picture per prototype: `morgue1` is the shut, empty
+// face the file names as its base, `morgue0` is the open one, and the
+// other three are what `update_icon_state` swaps to for what is inside
+// (morgue.dm:384-403). Only two of those three ship — `morgue4` is the
+// revivable light, which needs ghosts and a defibrillator, and
+// `morgue3` is "things but nobody". `morguet` is the tray
+// (morgue.dm:608-621, which reads the same sheet).
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in this
+// directory is baked, in FILE-NAME order and then entry order, so the
+// atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+(
+    sheets: [
+        ("structures", "obj/structures.dmi"),
+    ],
+    sprites: [
+        ("morgue0", Dmi("@structures", "morgue0", 0)),
+        ("morgue1", Dmi("@structures", "morgue1", 0)),
+        ("morgue2", Dmi("@structures", "morgue2", 0)),
+        ("morgue3", Dmi("@structures", "morgue3", 0)),
+        ("morgue4", Dmi("@structures", "morgue4", 0)),
+        ("morguet", Dmi("@structures", "morguet", 0)),
+    ],
+)
