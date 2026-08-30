@@ -11,10 +11,15 @@
 local content = {
     id = "human",
     name = "human",
-    -- The whole-body pictures. Per-part layers wait on the wire
-    -- segment; these are what a crewman looks like today.
+    -- The ONE identifying picture: what an examine icon draws, out of
+    -- any world context. The world view is a coloured layer stack the
+    -- `looks` block at the bottom of this table composes
+    -- (docs/LOOKS.md §2), which is a different question with a
+    -- different answer.
+    --
+    -- No `sprite_dead`: lying down is posture on the wire now, turned
+    -- client-side, so there is no second whole-body picture to swap to.
     sprite = "human",
-    sprite_dead = "human_dead",
     playable = true,
 
     max_health = 100,          -- MAX_LIVING_HEALTH, code/__DEFINES/mobs.dm:236
@@ -191,6 +196,221 @@ local content = {
     -- The three sentences the engine used to say for itself. They are
     -- content now, and a species whose members do not black out simply
     -- does not write the line.
+
+    -- What a crewman LOOKS like: the layers a body is drawn out of and
+    -- the rosters a spawn rolls over (docs/LOOKS.md). The engine picks
+    -- rows and multiplies colours; every word below is this file's.
+    --
+    -- Ordering is load-bearing in two places, and nowhere else.
+    -- `layers` below is the DRAW order, bottom-up — deliberately its
+    -- own list, because the `parts` list above is the ZONE order (the
+    -- hit-weight walk, the doll, the surgical index) and an artist's
+    -- stacking has no business moving a mapper's anatomy. And the
+    -- FIRST row of every roster
+    -- is what a plain body wears, so each one leads with tg's own
+    -- default: `caucasian1`, `Bald`, `Shaved`, `MALE` (human_defines.dm
+    -- :20-57; species_features/basic.dm:54-197). The roll itself is
+    -- uniform, so the rest of the order means nothing — tg sorts
+    -- GLOB.skin_tones alphabetically at runtime for exactly that
+    -- reason (mobs.dm:119).
+    looks = {
+        -- One greyscale cell per part slot, multiplied by the skin
+        -- tone. A table is DIMORPHIC: tg builds the chest and the head
+        -- as `"human_[body_zone]_[m|f]"` and the limbs without a
+        -- suffix (_bodyparts.dm:1308-1310), so those two name a cell
+        -- per physique and the limbs name one. An arm's cell has its
+        -- hand composited in (assets/sprites/47-human-looks.ron).
+        parts = {
+            chest = { m = "body_chest_m", f = "body_chest_f" },
+            head  = { m = "body_head_m",  f = "body_head_f" },
+            l_arm = "body_l_arm",
+            r_arm = "body_r_arm",
+            l_leg = "body_l_leg",
+            r_leg = "body_r_leg",
+        },
+        -- Bottom-up. The chest leads: it is the trunk everything else
+        -- hangs off, exactly as tg's chest is the bodypart the others
+        -- attach to (_bodyparts.dm).
+        layers = { "chest", "head", "l_arm", "r_arm", "l_leg", "r_leg" },
+
+        -- Eyes, beard and hair ride the head: lose it and all three go
+        -- with it (head_hair_and_lips.dm:47-175).
+        face = "head",
+
+        -- `pick(MALE, FEMALE)` (create_mob.dm:29-30). The word is the
+        -- key `parts` and the rosters below are dimorphic BY, and
+        -- nothing else.
+        physiques = { "m", "f" },
+
+        -- GLOB.skin_tones (mobs.dm:119-136) with skintone2hex's own
+        -- values (surgery/bodyparts/helpers.dm:288-326). The two
+        -- non-human tones that proc also answers, `orange` and
+        -- `green`, are not in GLOB.skin_tones and are not here.
+        skin_tones = {
+            { id = "caucasian1", color = "#ffe0d1" },
+            { id = "albino", color = "#fff4e6" },
+            { id = "caucasian2", color = "#fcccb3" },
+            { id = "caucasian3", color = "#e8b59b" },
+            { id = "latino", color = "#d9ae96" },
+            { id = "mediterranean", color = "#c79b8b" },
+            { id = "asian1", color = "#ffdeb3" },
+            { id = "asian2", color = "#e3ba84" },
+            { id = "arab", color = "#c4915e" },
+            { id = "indian", color = "#b87840" },
+            { id = "mixed1", color = "#a57a66" },
+            { id = "mixed2", color = "#87563d" },
+            { id = "mixed3", color = "#725547" },
+            { id = "mixed4", color = "#866e63" },
+            { id = "african1", color = "#754523" },
+            { id = "african2", color = "#471c18" },
+        },
+
+        -- `random_hair_color()`: the 36 natural swatches, verbatim and
+        -- in source order (mobs.dm:57-69). The roll gives the beard
+        -- the same one (create_mob.dm:37-39), which the engine does.
+        hair_colors = {
+            "#111111", "#362925", "#3B3831", "#41250C", "#412922", "#544C49",
+            "#583322", "#593029", "#703b30", "#714721", "#744729", "#74482a",
+            "#7b746e", "#855832", "#863019", "#8c4734", "#9F550E", "#A29A96",
+            "#A4381C", "#B17B41", "#C0BAB7", "#EFE5E4", "#F7F3F1", "#FFF2D6",
+            "#a15537", "#a17e61", "#b38b67", "#ba673c", "#c89f73", "#d9b380",
+            "#dbc9b8", "#e1621d", "#e17d17", "#e1af93", "#f1cc8f", "#fbe7a1",
+        },
+
+        -- `random_eye_color()` (mobs.dm:38-55): weighted buckets. The
+        -- grey bucket is one weight of 20 spread over seven shades, so
+        -- it is seven rows of a seventh of it — the same distribution
+        -- written the way a table can hold it.
+        --
+        -- NOT PORTED: the `albino` bucket (weight 1 of 92), which is a
+        -- colour tg GENERATES per roll from four hundred combinations
+        -- (mobs.dm:53). A fixed table cannot hold a generator, and one
+        -- representative hex would be a different number.
+        eye_colors = {
+            { color = "#663300", weight = 20 },   -- COLOR_BROWNER_BROWN, colors.dm:161
+            { color = "#554422", weight = 20 },   -- hazel
+            { color = "#666666", weight = 20 / 7 },
+            { color = "#777777", weight = 20 / 7 },
+            { color = "#888888", weight = 20 / 7 },
+            { color = "#999999", weight = 20 / 7 },
+            { color = "#aaaaaa", weight = 20 / 7 },
+            { color = "#bbbbbb", weight = 20 / 7 },
+            { color = "#cccccc", weight = 20 / 7 },
+            { color = "#3366cc", weight = 15 },   -- blue
+            { color = "#006600", weight = 15 },   -- green
+            { color = "#ffcc00", weight = 1 },    -- amber
+        },
+
+        -- Two eye cells, so two eye colours are drawable
+        -- (icons/mob/human/human_eyes.dmi, `_eyes.dm:305-377`). A roll
+        -- gives both the same colour; anything that sets them apart
+        -- has somewhere to put the difference.
+        eyes = { "eye_l", "eye_r" },
+
+        -- `bald` plus 42 styles: tgstation's first 48 hairstyles in
+        -- `hair.dm`, minus five. Three of those set
+        -- `natural_spawn = FALSE` and are outside the roll tg's own
+        -- randomiser makes (hair.dm:123, :137, :183); the other two,
+        -- `Boddicker` and `Buzzcut`, bake north frames that are one
+        -- flat grey the atlas lint refuses
+        -- (assets/sprites/47-human-looks.ron).
+        --
+        -- So this is the HEAD of the file, not a filter of it.
+        -- `natural_spawn` DEFAULTS to true
+        -- (_sprite_accessory.dm:47-49) and only fourteen entries in
+        -- the whole file opt out, which leaves the styles below this
+        -- stretch just as eligible: they are one line each here and
+        -- one in the sprite roster, whenever somebody wants them.
+        --
+        -- None names a physique, because no hair datum overrides the
+        -- base `gender = NEUTER` — every style is in both of tg's
+        -- lists. `bald` leads and draws nothing (hair.dm:152-154).
+        hair = {
+            { id = "bald" },
+            { id = "afro", sprite = "hair_afro" },
+            { id = "afro2", sprite = "hair_afro2" },
+            { id = "afro_over_eyes", sprite = "hair_afro_over_eyes" },
+            { id = "afro_three_quarters", sprite = "hair_afro_three_quarters" },
+            { id = "allthefuzz", sprite = "hair_allthefuzz" },
+            { id = "ahoge", sprite = "hair_ahoge" },
+            { id = "anime_protagonist", sprite = "hair_anime_protagonist" },
+            { id = "balding", sprite = "hair_balding" },
+            { id = "bedhead", sprite = "hair_bedhead" },
+            { id = "bedhead2", sprite = "hair_bedhead2" },
+            { id = "bedhead3", sprite = "hair_bedhead3" },
+            { id = "bedhead4", sprite = "hair_bedhead4" },
+            { id = "long_bedhead", sprite = "hair_long_bedhead" },
+            { id = "shorter_long_bedhead", sprite = "hair_shorter_long_bedhead" },
+            { id = "beehive", sprite = "hair_beehive" },
+            { id = "beehive2", sprite = "hair_beehive2" },
+            { id = "bob", sprite = "hair_bob" },
+            { id = "bob2", sprite = "hair_bob2" },
+            { id = "bob3", sprite = "hair_bob3" },
+            { id = "bob4", sprite = "hair_bob4" },
+            { id = "bobcurl", sprite = "hair_bobcurl" },
+            { id = "bowlcut", sprite = "hair_bowlcut" },
+            { id = "bowlcut2", sprite = "hair_bowlcut2" },
+            { id = "bowlcut_over_eyes", sprite = "hair_bowlcut_over_eyes" },
+            { id = "braid_floorlength", sprite = "hair_braid_floorlength" },
+            { id = "braided", sprite = "hair_braided" },
+            { id = "braid_front", sprite = "hair_braid_front" },
+            { id = "braid_high", sprite = "hair_braid_high" },
+            { id = "braid_low", sprite = "hair_braid_low" },
+            { id = "braid_short", sprite = "hair_braid_short" },
+            { id = "braid_tail", sprite = "hair_braid_tail" },
+            { id = "bun", sprite = "hair_bun" },
+            { id = "bun2", sprite = "hair_bun2" },
+            { id = "bun3", sprite = "hair_bun3" },
+            { id = "bun_large", sprite = "hair_bun_large" },
+            { id = "manbun", sprite = "hair_manbun" },
+            { id = "bun_tight", sprite = "hair_bun_tight" },
+            { id = "business", sprite = "hair_business" },
+            { id = "business2", sprite = "hair_business2" },
+            { id = "business3", sprite = "hair_business3" },
+            { id = "business4", sprite = "hair_business4" },
+            { id = "chinbob", sprite = "hair_chinbob" },
+        },
+
+        -- ...and `shaved`, which draws nothing (facial_hair.dm:158-161),
+        -- plus tgstation's first 24 beards in `facial_hair.dm` minus
+        -- the two that set `natural_spawn = FALSE` (facial_hair.dm:15,
+        -- :60). Thirteen of its 38 remain, one line each.
+        --
+        -- These DO name a physique: tg's base facial datum is
+        -- `gender = MALE` (facial_hair.dm:1-4), so only `Shaved` —
+        -- which overrides it to NEUTER (:158-161) — can be rolled onto
+        -- a body that is not `m`.
+        facial_hair = {
+            { id = "shaved" },
+            { id = "abe", sprite = "facial_abe", gender = "m" },
+            { id = "chinstrap", sprite = "facial_chinstrap", gender = "m" },
+            { id = "dwarf", sprite = "facial_dwarf", gender = "m" },
+            { id = "fullbeard", sprite = "facial_fullbeard", gender = "m" },
+            { id = "cropped_fullbeard", sprite = "facial_cropped_fullbeard", gender = "m" },
+            { id = "goatee", sprite = "facial_goatee", gender = "m" },
+            { id = "hipster", sprite = "facial_hipster", gender = "m" },
+            { id = "jensen", sprite = "facial_jensen", gender = "m" },
+            { id = "neckbeard", sprite = "facial_neckbeard", gender = "m" },
+            { id = "very_long", sprite = "facial_very_long", gender = "m" },
+            { id = "muttonmus", sprite = "facial_muttonmus", gender = "m" },
+            { id = "chinless", sprite = "facial_chinless", gender = "m" },
+            { id = "moonshiner", sprite = "facial_moonshiner", gender = "m" },
+            { id = "long", sprite = "facial_long", gender = "m" },
+            { id = "volaju", sprite = "facial_volaju", gender = "m" },
+            { id = "three_oclock", sprite = "facial_three_oclock", gender = "m" },
+            { id = "five_oclock", sprite = "facial_five_oclock", gender = "m" },
+            { id = "five_oclock_moustache", sprite = "facial_five_oclock_moustache", gender = "m" },
+            { id = "seven_oclock", sprite = "facial_seven_oclock", gender = "m" },
+            { id = "seven_oclock_moustache", sprite = "facial_seven_oclock_moustache", gender = "m" },
+            { id = "moustache", sprite = "facial_moustache", gender = "m" },
+            { id = "pencilstache", sprite = "facial_pencilstache", gender = "m" },
+        },
+
+        -- NOT SHIPPED: `underwear`, `undershirt` and `socks`. The
+        -- schema carries them (docs/LOOKS.md) and tg draws them always
+        -- (human_update_icons.dm:668-700); nothing in this pack has
+        -- the art yet, so a crewman is bare under the jumpsuit.
+    },
 }
 
 -- What the lines MEAN. This is the whole of being alive in Tales from

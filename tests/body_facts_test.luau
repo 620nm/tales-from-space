@@ -74,7 +74,7 @@ local gone = t.body(q)
 assert(not gone.animate, "past `dead` the body's own processes stop")
 assert(not gone.controllable, "and its session is not steering it")
 assert(gone.label == "Dead", "in the pack's words")
-assert(t.sprite(q) == "human_dead", "and it wears the plan's other picture")
+assert(gone.posture == "lying", "and it is on the deck")
 said = table.concat(t.messages(q), "\n")
 assert(said:find("You have died", 1, true), "and it says so: " .. said)
 
