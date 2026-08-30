@@ -2,10 +2,15 @@
 // (icons/obj/medical/surgery_tools.dmi, code/modules/surgery/surgery_tools.dm).
 // Each state is the one its own type names; bone gel and the suture stack
 // share the sheet (stacks/medical.dm:756).
+//
+// The operating computer is here too, because it is part of the same
+// kit even though its picture comes off the console sheet.
 (
+    // Sheet aliases are local to this family; @names below resolve here.
     sheets: [
         ("surgery_tools", "obj/medical/surgery_tools.dmi"),
         ("stack_medical", "obj/medical/stack_medical.dmi"),
+        ("computer", "obj/machines/computer.dmi"),
     ],
     sprites: [
         ("scalpel", Dmi("@surgery_tools", "scalpel", 0)),
@@ -18,5 +23,22 @@
         // The suture stack lives on the medical-stack sheet, not the
         // tool sheet (stacks/medical.dm:4 vs :756).
         ("suture", Dmi("@stack_medical", "suture", 0)),
+
+        // The operating computer, composited the way tg draws every
+        // console: the frame's own `icon_state`, the keyboard over it,
+        // and the screen over that
+        // (code/game/machinery/computer/_computer.dm:67-85). The three
+        // states are this machine's
+        // (code/game/machinery/computer/operating_computer.dm:7-9).
+        // Baked as one cell rather than drawn as a stack because none
+        // of the three ever moves independently here: there is no
+        // unpowered face and no broken face in this game yet, and a
+        // one-state machine wearing three overlays is three atlas
+        // lookups for one picture.
+        ("operating_computer", DmiLayers([
+            ("@computer", "computer"),
+            ("@computer", "med_key"),
+            ("@computer", "crew"),
+        ], 0)),
     ],
 )
