@@ -101,6 +101,11 @@
         ("water_bottle_small_fill_75", Dmi("@fillings", "smallbottle75", 0)),
         ("water_bottle_small_fill_80", Dmi("@fillings", "smallbottle80", 0)),
         ("water_bottle_small_fill_90", Dmi("@fillings", "smallbottle90", 0)),
+        // The large bottle's ladder starts at 0 (drinks.dm:240) and the
+        // sheet has `largebottle0` for it; the small bottle's is a tg
+        // typo, `smallbottle-10`, so under 10 % it draws nothing there
+        // either and has no 0 stop here.
+        ("water_bottle_large_fill_0", Dmi("@fillings", "largebottle0", 0)),
         ("water_bottle_large_fill_10", Dmi("@fillings", "largebottle10", 0)),
         ("water_bottle_large_fill_25", Dmi("@fillings", "largebottle25", 0)),
         ("water_bottle_large_fill_50", Dmi("@fillings", "largebottle50", 0)),

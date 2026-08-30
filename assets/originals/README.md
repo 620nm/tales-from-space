@@ -71,6 +71,26 @@ a bake that never happened.
   the gas under it already is. Effects sort under `fx/`; the logical
   name it bakes to is flat (`wind_streak`), because a baked name also
   becomes a vending CSS class.
-- `turf/open_floor.aseprite` — a transparent steel maintenance grid with
-  one forward `open_floor` tag. The client lays it over plating and visible
-  subfloor runs, so the clear cells are functional rather than decorative.
+- `turf/open_floor.aseprite` — a steel maintenance grate on a clear
+  field: a two-pixel frame with plated corners, six one-pixel bars each
+  way, and every cell between them open. One visible layer, `grate`, and
+  one forward `open_floor` tag on its single frame. The client lays it
+  over plating and the subfloor runs a player has uncovered, so the open
+  cells are functional rather than decorative: what lies beneath shows
+  through them, and the lattice is registered so the tile's centre band
+  (rows and columns 14 through 17, where a straight cable or pipe run is
+  drawn) is one clear cell rather than a bar.
+
+  **Derived from a first-party concept picture** — a 1254-pixel render
+  that is not integer-pitch pixel art — by a throwaway Python script,
+  not in the tree for the same reason as the bench PNGs. The script maps
+  each destination row and column onto the concept's measured frame,
+  bar, and hole intervals, takes a pixel as opaque when the concept
+  covers at least half of its cell, colours it from the lit pixels of
+  that cell (the concept's dark outline has no room on a one-pixel bar),
+  and quantises the result to an eight-colour palette of cool steel
+  greys, `(72,74,79)` to `(132,135,140)`, so it reads as pixel art beside
+  the tgstation-derived sprites. The concept's lattice is seven bars by
+  six with a bar through its vertical midline; the script drops that
+  centre bar and squares the count to six by six, which is what keeps
+  the centre open.
