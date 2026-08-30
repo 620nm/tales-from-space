@@ -17,6 +17,10 @@
         ("soap_wet", Ase("soap.aseprite", "idle")),
         ("soap_bubbles", AseAnim("soap.aseprite", "bubbles")),
 
+        // A transparent maintenance grid drawn over the ordinary plating
+        // foundation and the cable/pipe runs beneath it.
+        ("open_floor", Ase("turf/open_floor.aseprite", "open_floor")),
+
         // The drifting mark the gas overlay wears when the air over a
         // tile is moving (protocol v46). It is an EFFECT, not a thing:
         // no content names it, the renderer looks it up once at boot
