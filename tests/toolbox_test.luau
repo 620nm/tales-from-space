@@ -78,7 +78,7 @@ while t.health(victim).animate and swings < 120 do
     swings = swings + 1
 end
 assert(not t.health(victim).animate, "and then `dead`")
-assert(t.sprite(victim) == "human_dead", "and the body lies down")
+assert(t.body(victim).posture == "lying", "and the body lies down")
 
 -- Every swing is on the record, attributed to the FILE that decided
 -- the damage and the player whose click triggered it.
