@@ -11,22 +11,21 @@
 -- takes away; between them a station's atmosphere is a loop instead of
 -- a bottle slowly emptying.
 --
--- TWO DIRECTIONS, AND THEY ARE NEARLY TWO MACHINES.
+-- ONE POSTURE, TWO DIALS. The gases the roster NAMES come out to the
+-- last mole, always -- carbon dioxide out of the crate, which is what
+-- the crew exhale. The WHOLE-AIR setting is the bulk draw, and the
+-- floor is where it stops: whole air over a floor is the return
+-- grille, whole air with the floor at zero is the siphon, emptied to
+-- vacuum. There is no separate direction switch any more -- tg needed
+-- one because its scrubber could not otherwise spell "take
+-- everything", and these two dials already do. The emergency still
+-- reads from the corridor, but as a JUDGMENT: the purge picture goes
+-- up when a pass sees whole air leaving a room below the safe line,
+-- never on a switch's word.
 --
--- SCRUBBING is the everyday one: it takes only the gases its roster
--- names -- carbon dioxide out of the crate, which is what the crew
--- exhale -- and leaves the breathable air alone. A scrubber in this
--- mode can run in an occupied room forever, and is meant to.
---
--- SIPHONING takes EVERYTHING, at the same rate, with nothing under it,
--- until the room is vacuum. That is the emergency setting: a plasma
--- flood, a fire, a chamber you want empty before you open it. It is
--- also how you murder a room, which is why the two look different on
--- the deck and why turning one round earns a ledger row.
---
--- THE FLOOR, WHICH IS NOT tg's. Scrubbing takes what the roster names
--- to the last mole, and takes whole air back as well while the room is
--- over `target_kpa`, stopping there. tg has no such dial, and
+-- THE FLOOR, WHICH IS NOT tg's. The named gases come out regardless;
+-- whole air comes back as well while the room is over `target_kpa`,
+-- stopping there. tg has no such dial, and
 -- does not need one -- a tg hull does not lose heat, so its air loop
 -- only ever carries gases away. This one RADIATES, and a room left
 -- alone goes from shirtsleeves to freezing in about fifty minutes, so
@@ -56,10 +55,12 @@ return {
     sprite = "scrubber_off_n",
     ui = { modules = { "scrubber" } },
     dense = false,
-    -- THREE positions, which is one more than most machines have. A
-    -- scrubber running the wrong way is not a scrubber that is merely
-    -- on, and someone walking past a room being emptied should be able
-    -- to tell at a glance.
+    -- THREE positions, which is one more than most machines have. The
+    -- third picture is the JUDGED emergency: a pass that sees whole
+    -- air leaving a room below the safe line paints it, so someone
+    -- walking past a room actually being emptied can tell at a
+    -- glance. A map may still stand one down in "siphoning" -- that
+    -- state is shorthand for whole air with no floor.
     states = { "off", "scrubbing", "siphoning" },
     facing_sprites = {
         off = {
@@ -92,8 +93,9 @@ return {
         -- scrubber on the default layer would join the distro it is
         -- supposed to be the return half of.
         layer = 2,
-        -- Off, filtering, emptying. The third slot is what tg's
-        -- `scrub_purge` is for.
+        -- Off, running, and the judged emergency. The third slot is
+        -- what tg's `scrub_purge` is for -- and naming it on a
+        -- placement means "whole air, no floor" from the first tick.
         positions = { "off", "scrubbing", "siphoning" },
         -- Five litres a second out of the crate, against tg's
         -- `volume_rate = 200` (vent_scrubber.dm:26), which is the dial's
@@ -116,6 +118,11 @@ return {
         -- note at the top. Zero is tg's scrubber, which never returns
         -- whole air at all.
         target_kpa = 100.0,
+        -- The SERVICE FACTOR ships at 1 -- one grille, its own tile,
+        -- tg's machine. The panel offers 4 (the cardinals too) and 8
+        -- (the whole ring, tg's widenet), each billed at that many
+        -- times the idle draw.
+        service = 1,
     },
     build = {
         on = { "floor", "plating" },

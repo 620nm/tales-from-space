@@ -98,20 +98,21 @@ t.click(p, 2, 1, t.target_at(2, 1, "air_scrubber"))
 t.tick()
 assert(t.ui(p), "a scrubber wears a panel")
 
--- ---- the direction dial does nothing to a machine that is off ----
+-- ---- the emergency dials do nothing to a machine that is off ----
 --
 -- The sharpest thing `position()` says: it asks `working()` FIRST, so a
--- scrubber turned round while switched off has no running direction to
--- show and stays exactly as dark as it was. Setting a machine up before
--- you start it must not paint a siphon warning on an occupied room.
-t.ui_act(p, "toggle", '{"field":"direction"}')
+-- scrubber set up to empty the room while switched off has no running
+-- posture to show and stays exactly as dark as it was. Setting a
+-- machine up before you start it must not paint a purge warning on an
+-- occupied room.
+t.ui_act(p, "toggle", '{"field":"roster"}')
 t.run_ticks(2)
 local armed = t.structure_at(2, 1)
-assert(toggle(p, "direction").on == true, "the dial moved")
+assert(toggle(p, "roster").on == true, "the dial moved")
 assert(armed.state == "off", "and the machine did not: " .. tostring(armed.state))
 assert(armed.sprite == "scrubber_off_e", "nor its picture: " .. tostring(armed.sprite))
 
-t.ui_act(p, "toggle", '{"field":"direction"}')
+t.ui_act(p, "toggle", '{"field":"roster"}')
 t.run_ticks(2)
 
 -- ---- switched on: the everyday picture ----
@@ -145,22 +146,21 @@ assert(#drawn == 2, "a stub under a body, and nothing else: " .. #drawn)
 assert(drawn[1] == "pipe_intact_l2_8", "the mouth it bound, beneath it: " .. drawn[1])
 assert(drawn[2] == "scrubber_on_e", "then the machine: " .. tostring(drawn[2]))
 
--- ---- turned round in a room that is still fine ----
+-- ---- the emergency posture over a room that is still fine ----
 --
--- The switch says siphon and the picture does NOT, and that is the
--- contract: the third position is a WARNING, and a warning that fires
--- over a room at one atmosphere is a warning nobody reads twice. A
--- scrubber turned round in a full room is being used as a fast bulk
--- return, and it looks like what it is being used as.
+-- The panel says whole air with no floor -- the pair that empties a
+-- room -- and the picture does NOT, and that is the contract: the
+-- third position is a WARNING, and a warning that fires over a room at
+-- one atmosphere is a warning nobody reads twice. A scrubber drawing
+-- whole air out of a full room is being used as a fast bulk return,
+-- and it looks like what it is being used as.
 --
 -- The pressure that decides is the machine's OWN TILE -- the air it is
 -- actually taking, and the air anybody standing beside it is breathing,
 -- which a wide-open fan draws down well below the rest of the room.
 assert(t.room_pressure(2, 1) > 85.0, "the air at the grille is comfortable to start with")
-t.ui_act(p, "toggle", '{"field":"direction"}')
-t.run_seconds(1)
 local emptying = t.structure_at(2, 1)
-assert(toggle(p, "direction").on == true, "the panel says siphon")
+assert(toggle(p, "roster").on == true, "the panel says whole air")
 assert(
     emptying.sprite == "scrubber_on_e",
     "and the corridor is told nothing it does not need to know yet: "
@@ -195,11 +195,16 @@ assert(
     "a siphoning scrubber must never look like a scrubbing one"
 )
 
--- ...and back, because a warning you cannot clear is not a warning.
-t.ui_act(p, "toggle", '{"field":"direction"}')
+-- ...and back, because a warning you cannot clear is not a warning:
+-- narrow the roster to its named gases and the bulk draw -- the thing
+-- the warning was about -- stops with it.
+t.ui_act(p, "toggle", '{"field":"roster"}')
 t.run_seconds(1)
-local calm = t.structure_at(2, 1).sprite
-assert(calm == "scrubber_on_e", "turned back, an ordinary scrubber again: " .. calm)
+local calm = t.structure_at(2, 1)
+assert(
+    calm.state ~= "siphoning" and calm.sprite ~= "scrubber_purge_e",
+    "narrowed back, the warning clears: " .. tostring(calm.sprite)
+)
 
 -- ---------------------------------------------------------------
 -- A FAN BOLTED OVER NOTHING IS DRAWN OFF.
