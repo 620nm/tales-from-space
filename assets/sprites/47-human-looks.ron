@@ -1,0 +1,136 @@
+// What a crewman is DRAWN out of: the greyscale bodyparts, the eyes,
+// and every hairstyle and beard `content/bodies/human.luau` rosters
+// (docs/LOOKS.md). Each cell is baked UNTINTED — the colour is the
+// body's own, multiplied in at draw time out of its rolled look, which
+// is the whole reason tg ships this art greyscale.
+//
+// One family of `assets/sprites.ron`'s roster. Every .ron in this
+// directory is baked, in FILE-NAME order and then expansion order, so
+// the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+(
+    sheets: [
+        ("bodyparts", "mob/human/bodyparts_greyscale.dmi"),
+        ("face", "mob/human/human_face.dmi"),
+        ("eyes", "mob/human/human_eyes.dmi"),
+    ],
+    sprites: [
+        // An arm and its hand are ONE picture here, because the body
+        // plan has no hand slot to hang the second on: tg carries
+        // `human_l_hand` as a bodypart of its own (bodyparts_greyscale
+        // .dmi), TfS carries the hand as part of the arm, so the two
+        // cells are composited at bake instead. Four directions each,
+        // spelled out because a layered recipe has no `Directions`
+        // form.
+        ("body_l_arm_s", DmiLayers([("@bodyparts", "human_l_arm"), ("@bodyparts", "human_l_hand")], 0)),
+        ("body_l_arm_n", DmiLayers([("@bodyparts", "human_l_arm"), ("@bodyparts", "human_l_hand")], 1)),
+        ("body_l_arm_e", DmiLayers([("@bodyparts", "human_l_arm"), ("@bodyparts", "human_l_hand")], 2)),
+        ("body_l_arm_w", DmiLayers([("@bodyparts", "human_l_arm"), ("@bodyparts", "human_l_hand")], 3)),
+        ("body_r_arm_s", DmiLayers([("@bodyparts", "human_r_arm"), ("@bodyparts", "human_r_hand")], 0)),
+        ("body_r_arm_n", DmiLayers([("@bodyparts", "human_r_arm"), ("@bodyparts", "human_r_hand")], 1)),
+        ("body_r_arm_e", DmiLayers([("@bodyparts", "human_r_arm"), ("@bodyparts", "human_r_hand")], 2)),
+        ("body_r_arm_w", DmiLayers([("@bodyparts", "human_r_arm"), ("@bodyparts", "human_r_hand")], 3)),
+    ],
+    groups: [
+        // The dimorphic pair tg builds as `"[limb_id]_[body_zone]_
+        // [limb_gender]"` (code/modules/surgery/bodyparts/
+        // _bodyparts.dm:1308-1310); the engine never composes that
+        // name, so both halves are written out.
+        (sheet: "bodyparts", sprites: [
+            Directions("body_chest_m", "human_chest_m"),
+            Directions("body_chest_f", "human_chest_f"),
+            Directions("body_head_m", "human_head_m"),
+            Directions("body_head_f", "human_head_f"),
+            Directions("body_l_leg", "human_l_leg"),
+            Directions("body_r_leg", "human_r_leg"),
+        ]),
+
+        // Two eyes, two cells, two colours (`_eyes.dm:305-377`).
+        (sheet: "eyes", sprites: [
+            Directions("eye_l", "eyes_l"),
+            Directions("eye_r", "eyes_r"),
+        ]),
+
+        // The hair: 42 of tgstation's 221 styles, every one of them
+        // `natural_spawn` and unlocked, which is the set
+        // `randomize_human_normie` is allowed to roll
+        // (code/datums/sprite_accessories/hair.dm; create_mob.dm:41).
+        // `Boddicker` and `Buzzcut` qualify there and are left out
+        // here: the back of each is forty-one pixels of one flat grey,
+        // which the atlas lint reads as an unbaked greyscale config and
+        // is right to (`no_sprite_is_a_bare_colour_mask`).
+        // `Bald` needs no cell — tg gives it a null `icon_state`
+        // (hair.dm:152-154) — so it is a roster row and nothing here.
+        (sheet: "face", sprites: [
+            Directions("hair_afro", "hair_afro"),
+            Directions("hair_afro2", "hair_afro2"),
+            Directions("hair_afro_over_eyes", "hair_afro_over_eyes"),
+            Directions("hair_afro_three_quarters", "hair_afro_three_quarters"),
+            Directions("hair_allthefuzz", "hair_allthefuzz"),
+            Directions("hair_ahoge", "hair_antenna"),
+            Directions("hair_anime_protagonist", "hair_anime_protag"),
+            Directions("hair_balding", "hair_e"),
+            Directions("hair_bedhead", "hair_bedhead"),
+            Directions("hair_bedhead2", "hair_bedheadv2"),
+            Directions("hair_bedhead3", "hair_bedheadv3"),
+            Directions("hair_bedhead4", "hair_bedheadv4"),
+            Directions("hair_long_bedhead", "hair_long_bedhead"),
+            Directions("hair_shorter_long_bedhead", "hair_verybadlycut"),
+            Directions("hair_beehive", "hair_beehive"),
+            Directions("hair_beehive2", "hair_beehivev2"),
+            Directions("hair_bob", "hair_bob"),
+            Directions("hair_bob2", "hair_bob2"),
+            Directions("hair_bob3", "hair_bobcut"),
+            Directions("hair_bob4", "hair_bob4"),
+            Directions("hair_bobcurl", "hair_bobcurl"),
+            Directions("hair_bowlcut", "hair_bowlcut"),
+            Directions("hair_bowlcut2", "hair_bowlcut2"),
+            Directions("hair_bowlcut_over_eyes", "hair_bowlcut_over_eyes"),
+            Directions("hair_braid_floorlength", "hair_braid"),
+            Directions("hair_braided", "hair_braided"),
+            Directions("hair_braid_front", "hair_braidfront"),
+            Directions("hair_braid_high", "hair_braid2"),
+            Directions("hair_braid_low", "hair_hbraid"),
+            Directions("hair_braid_short", "hair_shortbraid"),
+            Directions("hair_braid_tail", "hair_braidtail"),
+            Directions("hair_bun", "hair_bun"),
+            Directions("hair_bun2", "hair_bunhead2"),
+            Directions("hair_bun3", "hair_bun3"),
+            Directions("hair_bun_large", "hair_largebun"),
+            Directions("hair_manbun", "hair_manbun"),
+            Directions("hair_bun_tight", "hair_tightbun"),
+            Directions("hair_business", "hair_business"),
+            Directions("hair_business2", "hair_business2"),
+            Directions("hair_business3", "hair_business3"),
+            Directions("hair_business4", "hair_business4"),
+            Directions("hair_chinbob", "hair_chinbob"),
+        ]),
+
+        // ...and 22 beards off the same sheet (facial_hair.dm).
+        // `Shaved` is the null one (facial_hair.dm:158-161).
+        (sheet: "face", sprites: [
+            Directions("facial_abe", "facial_abe"),
+            Directions("facial_chinstrap", "facial_chin"),
+            Directions("facial_dwarf", "facial_dwarf"),
+            Directions("facial_fullbeard", "facial_fullbeard"),
+            Directions("facial_cropped_fullbeard", "facial_croppedfullbeard"),
+            Directions("facial_goatee", "facial_gt"),
+            Directions("facial_hipster", "facial_hip"),
+            Directions("facial_jensen", "facial_jensen"),
+            Directions("facial_neckbeard", "facial_neckbeard"),
+            Directions("facial_very_long", "facial_wise"),
+            Directions("facial_muttonmus", "facial_muttonmus"),
+            Directions("facial_chinless", "facial_chinlessbeard"),
+            Directions("facial_moonshiner", "facial_moonshiner"),
+            Directions("facial_long", "facial_longbeard"),
+            Directions("facial_volaju", "facial_volaju"),
+            Directions("facial_three_oclock", "facial_3oclock"),
+            Directions("facial_five_oclock", "facial_fiveoclock"),
+            Directions("facial_five_oclock_moustache", "facial_5oclockmoustache"),
+            Directions("facial_seven_oclock", "facial_7oclock"),
+            Directions("facial_seven_oclock_moustache", "facial_7oclockmoustache"),
+            Directions("facial_moustache", "facial_moustache"),
+            Directions("facial_pencilstache", "facial_pencilstache"),
+        ]),
+    ],
+)
