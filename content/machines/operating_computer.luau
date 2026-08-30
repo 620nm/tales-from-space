@@ -8,7 +8,7 @@
 -- cell (assets/sprites/46-surgery-tools.ron).
 --
 -- tg's console finds ONE operating table over `alldirs` at range 1 and
--- watches that table's patient (:96-101). The engine's `surgery` module
+-- watches that table's patient (:96-101). The engine's `procedures` module
 -- reads the four tiles the machine faces and every body standing on one
 -- of them, which needs no table to exist and means a triage line on the
 -- deck reads as well as a theatre does. What it draws is native state
@@ -28,5 +28,5 @@ return {
     corded = true,
     -- One module and one gesture: walk up to it and it opens. There is
     -- nothing else this machine does, and no hand it wants.
-    ui = { modules = { "surgery" }, opens_on_click = true },
+    ui = { modules = { "procedures" }, opens_on_click = true },
 }

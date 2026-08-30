@@ -140,6 +140,11 @@ assert(mend ~= nil, "...or closed again")
 assert(mend.value == "cautery", "with a cautery: " .. tostring(mend.value))
 -- Not this one: clamping wants the skin RETRACTED, and it is only cut.
 assert(row(ui, "clamp the bleeders") == nil, "the state does not admit it yet")
+-- And not this one either, for a different reason: cauterising your own
+-- wound is `self_only`, and this chest belongs to somebody else. A
+-- catalog that offered it would be offering a click the click chain then
+-- refuses (content/operations/close_incision_self.luau).
+assert(row(ui, "cauterise your own wound") == nil, "a self-only step is nobody else's")
 
 -- ---- the aim ----------------------------------------------------------
 -- One button per part slot of the SURGEON's own plan, and pressing one
