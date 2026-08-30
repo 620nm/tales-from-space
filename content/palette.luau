@@ -8,4 +8,9 @@ end
 return {
     pipe_paints = paints,
     pipe_defaults = pipe_paints.defaults,
+    -- Pictures a mapper may lay over a turf, above the runs under it.
+    -- Editor-only: no shipped map places one yet.
+    turf_overlays = {
+        { id = "open_floor", name = "open grid floor", sprite = "open_floor", on = "plating" },
+    },
 }
