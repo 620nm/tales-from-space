@@ -674,6 +674,15 @@
         // Both are within three tiles of the lab socket at (21, 4).
         (23, 4, "nanomed_plus"),
         (24, 4, "chemdrobe"),
+        // The operating computer, one tile south of the medical shelf
+        // and three of the lab's own socket at (21, 4). tg stands one
+        // beside an operating table; this station has no table, and the
+        // machine does not need one -- it reads the four tiles it
+        // faces, so a patient laid on the deck at (22, 5), (24, 5) or
+        // (23, 6) is a patient it can see. It stands in the open rather
+        // than on the wall rank for exactly that reason: a console with
+        // its back to a room has three tiles somebody can lie on.
+        (23, 5, "operating_computer"),
         // The pipe dispenser, corded to the outlet beside it. Every
         // fitting the department is built out of comes off this shelf,
         // which is why it stands in the department rather than in the
