@@ -87,12 +87,44 @@ t.click(p, 6, 1)
 t.tick()
 assert(#t.sounds(p) == 0, "an empty sprayer emits no launch sound")
 assert(#t.ledger_rows("MatterSprayed") == 0, "an empty sprayer launches nothing")
+-- A ranged claim costs its click window whether or not anything came
+-- of it (CLICK_CD_RANGE * 2, sixteen ticks): let it pass before the
+-- next one.
+t.run_ticks(16)
 t.move(p, "east")
 t.tick()
+
+-- A capped bottle is not a source. tg refills a sprayer only from
+-- something drainable (spray.dm:52), and nothing is drawn through a
+-- lid: the sprayer stays empty and the bottle keeps its water.
 local reservoir = t.target_at(4, 1, "water_bottle_large")
+assert(t.vessel(reservoir).sealed, "the large bottle starts capped")
 t.click(p, 4, 1, reservoir)
 t.tick()
+assert(next(t.contents(spray)) == nil, "a sealed source refills nothing")
+near(t.contents(reservoir).water, 2.5, "and loses nothing")
+assert(#t.ledger_rows("MatterMoved") == 0, "no transfer is on the record")
+
+-- Uncap it the way a player does -- put the sprayer down, open the
+-- bottle in hand, set it down beside the sprayer, step back and pick
+-- the sprayer up again -- and refill from arm's length.
+t.drop(p)
+t.tick()
+t.click(p, 4, 1, reservoir)
+t.tick()
+t.use_self(p)
+t.tick()
+assert(not t.vessel(reservoir).sealed, "self-use uncaps the reservoir")
+t.drop(p)
+t.tick()
+t.move(p, "west")
+t.tick()
+t.click(p, 3, 1, spray)
+t.tick()
+t.click(p, 3, 1, reservoir)
+t.tick()
 near(t.contents(spray).water, 1.25, "an adjacent refill takes 50 u")
+near(t.contents(reservoir).water, 1.25, "out of the open bottle")
 assert(#t.sounds(p) == 0, "refilling emits no launch sound")
 
 local before = t.matter_totals()
@@ -105,8 +137,11 @@ t.click(p, 6, 1)
 t.tick()
 assert(#t.sounds(p) == 0, "a cooldown refusal emits no launch sound")
 assert(#t.ledger_rows("MatterSprayed") == 1, "cooldown refuses a second launch")
-t.run_ticks(20)
+-- Read the draw before the parcel has travelled: an open sprayer also
+-- breathes with the room once an atmos pass, and that trade is not
+-- what this line is about.
 near(t.contents(spray).water, 1.125, "one spray draws a 5 u parcel")
+t.run_ticks(20)
 assert(#t.ledger_rows("MatterSprayed") == 1, "one launch is on the ledger")
 local after = t.matter_totals()
 near(after.moles, before.moles, "spray travel conserves matter")
