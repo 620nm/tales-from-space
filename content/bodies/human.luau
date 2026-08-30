@@ -11,10 +11,15 @@
 local content = {
     id = "human",
     name = "human",
-    -- No `sprite`/`sprite_dead`: a crewman is drawn out of PARTS, and
-    -- the `looks` block at the bottom of this table is the whole of
-    -- what one looks like (docs/LOOKS.md). Lying is posture on the
-    -- wire, so there is no second whole-body picture to swap to.
+    -- The ONE identifying picture: what an examine icon draws, out of
+    -- any world context. The world view is a coloured layer stack the
+    -- `looks` block at the bottom of this table composes
+    -- (docs/LOOKS.md §2), which is a different question with a
+    -- different answer.
+    --
+    -- No `sprite_dead`: lying down is posture on the wire now, turned
+    -- client-side, so there is no second whole-body picture to swap to.
+    sprite = "human",
     playable = true,
 
     max_health = 100,          -- MAX_LIVING_HEALTH, code/__DEFINES/mobs.dm:236
@@ -45,13 +50,9 @@ local content = {
     -- limb 4 (code/__HELPERS/mobs.dm:36-41). Losing the head or the
     -- chest is death — the brain leaves with the head
     -- (organ_movement.dm:210-213).
-    -- Declaration order is also the order a drawn body is BUILT in,
-    -- bottom-up (docs/LOOKS.md), which is why the chest leads: it is
-    -- the trunk everything else hangs off, exactly as tg's chest is the
-    -- bodypart the others attach to (_bodyparts.dm).
     parts = {
-        { id = "chest", label = "chest",     doll = { 0.30, 0.20, 0.40, 0.35 }, default = "human_chest", hit_weight = 1, vital = true },
         { id = "head",  label = "head",      doll = { 0.38, 0.00, 0.24, 0.20 }, default = "human_head",  hit_weight = 1, vital = true },
+        { id = "chest", label = "chest",     doll = { 0.30, 0.20, 0.40, 0.35 }, default = "human_chest", hit_weight = 1, vital = true },
         { id = "l_arm", label = "left arm",  doll = { 0.10, 0.20, 0.20, 0.40 }, default = "human_l_arm", hit_weight = 4, hand = 1 },
         { id = "r_arm", label = "right arm", doll = { 0.70, 0.20, 0.20, 0.40 }, default = "human_r_arm", hit_weight = 4, hand = 2 },
         { id = "l_leg", label = "left leg",  doll = { 0.30, 0.55, 0.20, 0.45 }, default = "human_l_leg", hit_weight = 4 },
@@ -200,9 +201,12 @@ local content = {
     -- the rosters a spawn rolls over (docs/LOOKS.md). The engine picks
     -- rows and multiplies colours; every word below is this file's.
     --
-    -- Ordering is load-bearing in two places, and nowhere else. The
-    -- plan's own `parts` list above is the DRAW order, bottom-up, so
-    -- the chest leads it. And the FIRST row of every roster
+    -- Ordering is load-bearing in two places, and nowhere else.
+    -- `layers` below is the DRAW order, bottom-up — deliberately its
+    -- own list, because the `parts` list above is the ZONE order (the
+    -- hit-weight walk, the doll, the surgical index) and an artist's
+    -- stacking has no business moving a mapper's anatomy. And the
+    -- FIRST row of every roster
     -- is what a plain body wears, so each one leads with tg's own
     -- default: `caucasian1`, `Bald`, `Shaved`, `MALE` (human_defines.dm
     -- :20-57; species_features/basic.dm:54-197). The roll itself is
@@ -224,6 +228,11 @@ local content = {
             l_leg = "body_l_leg",
             r_leg = "body_r_leg",
         },
+        -- Bottom-up. The chest leads: it is the trunk everything else
+        -- hangs off, exactly as tg's chest is the bodypart the others
+        -- attach to (_bodyparts.dm).
+        layers = { "chest", "head", "l_arm", "r_arm", "l_leg", "r_leg" },
+
         -- Eyes, beard and hair ride the head: lose it and all three go
         -- with it (head_hair_and_lips.dm:47-175).
         face = "head",
@@ -298,13 +307,19 @@ local content = {
         -- has somewhere to put the difference.
         eyes = { "eye_l", "eye_r" },
 
-        -- 42 of tgstation's 221 hairstyles: the ones the random
-        -- roll may reach, which is `natural_spawn` and not `locked`
-        -- (_sprite_accessory.dm:38-49; create_mob.dm:41). None of them
-        -- names a physique, because no hair datum overrides the base
-        -- `gender = NEUTER` — every style is in both of tg's lists.
-        -- `bald` leads and draws nothing (hair.dm:152-154).
-        -- `Boddicker` and `Buzzcut` qualify in tg and are left out: the
+        -- 42 of tgstation's 222 hairstyles: the first alphabetically in
+        -- `hair.dm`, and nothing more principled than that. Every one
+        -- is roll-eligible in tg — `natural_spawn` DEFAULTS to true
+        -- (_sprite_accessory.dm:47-49) and only fourteen of the 222
+        -- opt out — so this is a subset of ~208, not a filter of them.
+        -- The rest are one line each in
+        -- `assets/sprites/47-human-looks.ron` and one here, whenever
+        -- somebody wants them.
+        --
+        -- None names a physique, because no hair datum overrides the
+        -- base `gender = NEUTER` — every style is in both of tg's
+        -- lists. `bald` leads and draws nothing (hair.dm:152-154). Two
+        -- of the first 44, `Boddicker` and `Buzzcut`, are left out: the
         -- back of each is one flat grey the atlas lint refuses
         -- (assets/sprites/47-human-looks.ron).
         hair = {
@@ -353,10 +368,14 @@ local content = {
             { id = "chinbob", sprite = "hair_chinbob" },
         },
 
-        -- ...and 22 beards. These DO name a physique: tg's base facial
-        -- datum is `gender = MALE` (facial_hair.dm:1-4), so only
-        -- `Shaved` — which overrides it to NEUTER (:158-161) — can be
-        -- rolled onto a body that is not `m`.
+        -- ...and 22 of tgstation's 38 beards, the first alphabetically
+        -- in `facial_hair.dm` and roll-eligible there for the same
+        -- reason the hair is; the other sixteen are one line each.
+        --
+        -- These DO name a physique: tg's base facial datum is
+        -- `gender = MALE` (facial_hair.dm:1-4), so only `Shaved` —
+        -- which overrides it to NEUTER (:158-161) — can be rolled onto
+        -- a body that is not `m`.
         facial_hair = {
             { id = "shaved" },
             { id = "abe", sprite = "facial_abe", gender = "m" },

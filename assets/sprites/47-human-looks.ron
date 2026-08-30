@@ -51,16 +51,20 @@
             Directions("eye_r", "eyes_r"),
         ]),
 
-        // The hair: 42 of tgstation's 221 styles, every one of them
-        // `natural_spawn` and unlocked, which is the set
-        // `randomize_human_normie` is allowed to roll
-        // (code/datums/sprite_accessories/hair.dm; create_mob.dm:41).
-        // `Boddicker` and `Buzzcut` qualify there and are left out
-        // here: the back of each is forty-one pixels of one flat grey,
-        // which the atlas lint reads as an unbaked greyscale config and
-        // is right to (`no_sprite_is_a_bare_colour_mask`).
-        // `Bald` needs no cell — tg gives it a null `icon_state`
-        // (hair.dm:152-154) — so it is a roster row and nothing here.
+        // The hair: 42 of tgstation's 222 styles, the first
+        // alphabetically in `hair.dm`. Every one is roll-eligible in tg
+        // — `natural_spawn` DEFAULTS to true
+        // (code/datums/sprite_accessories/_sprite_accessory.dm:47-49),
+        // and only fourteen of the 222 opt out — so this is a subset of
+        // roughly 208 rather than a filter of them, and the rest are
+        // one line each here and one in `content/bodies/human.luau`.
+        //
+        // Two of the first 44, `Boddicker` and `Buzzcut`, are left out:
+        // the back of each is forty-one pixels of one flat grey, which
+        // the atlas lint reads as an unbaked greyscale config and is
+        // right to (`no_sprite_is_a_bare_colour_mask`). `Bald` needs no
+        // cell — tg gives it a null `icon_state` (hair.dm:152-154) — so
+        // it is a roster row and nothing here.
         (sheet: "face", sprites: [
             Directions("hair_afro", "hair_afro"),
             Directions("hair_afro2", "hair_afro2"),
@@ -106,8 +110,10 @@
             Directions("hair_chinbob", "hair_chinbob"),
         ]),
 
-        // ...and 22 beards off the same sheet (facial_hair.dm).
-        // `Shaved` is the null one (facial_hair.dm:158-161).
+        // ...and 22 of tgstation's 38 beards off the same sheet, the
+        // first alphabetically in `facial_hair.dm` and roll-eligible
+        // there for the same reason the hair is. `Shaved` is the null
+        // one (facial_hair.dm:158-161).
         (sheet: "face", sprites: [
             Directions("facial_abe", "facial_abe"),
             Directions("facial_chinstrap", "facial_chin"),
