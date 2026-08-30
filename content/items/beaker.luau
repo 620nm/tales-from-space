@@ -56,6 +56,20 @@ local content = {
             name = "beaker (salt)",
             contents = { salt = 0.80 },
         },
+        -- The two the steam generator is about: one it will take and
+        -- one it will not. Plain water is the thing a station has most
+        -- of; ethanol is a volatile that is emphatically not water
+        -- (it boils at 351.5 K, so it CAN cross a mouth and is
+        -- therefore a real negative rather than a substance that could
+        -- never have left the glass anyway).
+        water = {
+            name = "beaker (water)",
+            contents = { water = 0.60 },
+        },
+        ethanol = {
+            name = "beaker (ethanol)",
+            contents = { ethanol = 0.60 },
+        },
     },
 }
 

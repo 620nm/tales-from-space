@@ -32,6 +32,22 @@ return {
                 parts = { glass = 1 },
             },
         },
+        evaporator = {
+            name = "machine board (evaporator)",
+            -- Baystation12, not tgstation, which has no such machine:
+            -- code/game/objects/items/weapons/circuitboards/machinery/
+            -- chemistry.dm:21-25 asks for a micro-laser, a capacitor and
+            -- a matter bin. All three are product sockets on the
+            -- structure itself, so only the stack materials are here.
+            -- This target is a structure because it occupies a pipe run.
+            board = {
+                structure = "evaporator",
+                parts = {
+                    cable_coil = 1,
+                    glass = 1,
+                },
+            },
+        },
         chemdrobe = {
             name = "machine board (ChemDrobe)",
             board = { machine = "chemdrobe" },
@@ -43,6 +59,20 @@ return {
         nanomed_plus = {
             name = "machine board (NanoMed Plus)",
             board = { machine = "nanomed_plus" },
+        },
+        steam_generator = {
+            name = "machine board (steam generator)",
+            -- Baystation12's water-only board, which is the
+            -- evaporator's with a different `build_path` and nothing
+            -- else (code/game/objects/items/weapons/circuitboards/
+            -- machinery/chemistry.dm:30-32).
+            board = {
+                structure = "steam_generator",
+                parts = {
+                    cable_coil = 1,
+                    glass = 1,
+                },
+            },
         },
         thermomachine = {
             name = "machine board (temperature control unit)",
