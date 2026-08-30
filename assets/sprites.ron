@@ -2,6 +2,12 @@
     // The paper doll `Body`/`BodyDead` recipes composite. Optional at
     // the schema: a game whose sprites are all sheets and stills omits
     // the block entirely and bakes without one.
+    //
+    // No plan in this pack draws itself out of it any more — a crewman
+    // is a coloured layer stack now (`content/bodies/human.luau`'s
+    // `looks`, docs/LOOKS.md) — but the composite stays: it is one
+    // whole-body picture for any plan that wants one, and the engine's
+    // own test fixtures name it.
     body: Some((
         dmi: "mob/human/bodyparts_greyscale.dmi",
         parts: [
