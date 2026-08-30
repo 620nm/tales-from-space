@@ -23,18 +23,27 @@
 return {
     id = "morgue",
     name = "morgue",
-    sprite = "morgue1",
+    sprite = "morgue1_s",
     dense = true,
     opaque = false,
     states = { "closed", "open" },
-    state_sprites = { open = "morgue0" },
+    state_sprites = { open = "morgue0_s" },
+    -- The sheet's every state has four faces; the drawer wears the one
+    -- its placement aimed, and the tray rolls out that way.
+    facing_sprites = {
+        closed = { north = "morgue1_n", south = "morgue1_s", east = "morgue1_e", west = "morgue1_w" },
+        open = { north = "morgue0_n", south = "morgue0_s", east = "morgue0_e", west = "morgue0_w" },
+    },
     drawer = {
         closed = "closed",
         open = "open",
         tray = "morgue_tray",
-        open_sound = "morgue_roll",
-        close_sound = "morgue_roll",
-        lights = { items = "morgue3", bodies = "morgue2" },
+        open_sound = "morgue_clank",
+        close_sound = "morgue_clank",
+        lights = {
+            items = { north = "morgue3_n", south = "morgue3_s", east = "morgue3_e", west = "morgue3_w" },
+            bodies = { north = "morgue2_n", south = "morgue2_s", east = "morgue2_e", west = "morgue2_w" },
+        },
     },
     examine = {
         flavor = "A refrigerated drawer with a slab that rolls out of "
