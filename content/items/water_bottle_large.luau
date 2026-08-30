@@ -3,6 +3,7 @@ local content = {
     volume_ml = 100, sealed = true, resealable = true, acts_on_items = true,
     contents = { water = 2.5 },
     fill_sprites = {
+        { 0, "water_bottle_large_fill_0" },
         { 10, "water_bottle_large_fill_10" }, { 25, "water_bottle_large_fill_25" },
         { 50, "water_bottle_large_fill_50" }, { 75, "water_bottle_large_fill_75" },
         { 80, "water_bottle_large_fill_80" }, { 90, "water_bottle_large_fill_90" },
