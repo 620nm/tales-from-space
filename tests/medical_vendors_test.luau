@@ -122,6 +122,19 @@ local CHEMDROBE = {
     { "chemistry_backpack", "Chemistry Backpack", "Storage", 2 },
     { "chemistry_bag", "Chemistry Bag", "Storage", 2 },
     { "headset", "Headset", "Communications", 2 },
+    { "syringe", "Syringe", "Chemistry", 12 },
+    { "dropper", "Dropper", "Chemistry", 3 },
+    { "beaker", "Beaker", "Chemistry", 5 },
+    { "bottle", "Bottle", "Chemistry", 5 },
+    { "test_tube", "Test Tube", "Chemistry", 6 },
+    { "beaker_large", "Large Beaker", "Chemistry", 5 },
+    { "beaker_plastic", "X-Large Beaker", "Chemistry", 5 },
+    { "beaker_metamaterial", "Metamaterial Beaker", "Chemistry", 5 },
+    { "beaker_cryostasis", "Cryostasis Beaker", "Chemistry", 5 },
+    { "beaker_bluespace", "Bluespace Beaker", "Chemistry", 5 },
+    { "water_bottle", "Bottle of Water", "Chemistry", 5 },
+    { "water_bottle_large", "Large Bottle of Water", "Chemistry", 5 },
+    { "spray_bottle", "Spray Bottle", "Chemistry", 5 },
 }
 assert(ui and ui.notice == "Our clothes are 0.5% more resistant to acid spills! Get yours now!",
     "ChemDrobe opens with tg's ad")
@@ -140,11 +153,11 @@ for i, want in ipairs(CHEMDROBE) do
     assert(t.count_items(item) == before + 1, item .. " dispensed")
 end
 
-local syringes = t.count_items("syringe")
-t.ui_act(p, "vend", '{"product":"syringe"}')
+local pills = t.count_items("pill")
+t.ui_act(p, "vend", '{"product":"pill"}')
 t.tick()
-assert(t.count_items("syringe") == syringes,
-    "ChemDrobe cannot be talked into NanoMed stock")
+assert(t.count_items("pill") == pills,
+    "ChemDrobe cannot be talked into excluded medicine stock")
 
 -- The shipped station carries both machines in the Chemistry Lab and
 -- their construction boards in the Workshop. The focused room above
