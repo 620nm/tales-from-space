@@ -63,7 +63,11 @@ return {
     -- threshold hook decides what crossing it means.
     variants = {
         cadaver = {
-            name = "morgue drawer",
+            -- Same name as the plain entry: tg calls every one of them
+            -- a morgue (morgue.dm:226-237), and a drawer that announced
+            -- what was in it before you opened it would be a different
+            -- object.
+            name = "morgue",
             drawer = {
                 stock = {
                     { body = "human", damage = { brute = 200 }, outfit = "cadaver" },
