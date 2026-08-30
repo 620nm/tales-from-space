@@ -133,7 +133,9 @@ local CHEMDROBE = {
     { "beaker_cryostasis", "Cryostasis Beaker", "Chemistry", 5 },
     { "beaker_bluespace", "Bluespace Beaker", "Chemistry", 5 },
     { "water_bottle", "Bottle of Water", "Chemistry", 5 },
+    { "water_bottle.empty", "Empty Water Bottle", "Chemistry", 5 },
     { "water_bottle_large", "Large Bottle of Water", "Chemistry", 5 },
+    { "water_bottle_large.empty", "Empty Large Water Bottle", "Chemistry", 5 },
     { "spray_bottle", "Spray Bottle", "Chemistry", 5 },
 }
 assert(ui and ui.notice == "Our clothes are 0.5% more resistant to acid spills! Get yours now!",
