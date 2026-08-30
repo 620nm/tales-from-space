@@ -52,7 +52,11 @@ t.world(bench("west"), 7)
 t.tick()
 
 assert(t.structure_at(2, 1).id == "air_scrubber", "the map stood one there")
-assert(t.structure_at(2, 1).state == "siphoning", "and it ships running")
+-- The mapped third state means the emptying POSTURE (whole air, no
+-- floor); the purge art itself is judged off the air, so a machine
+-- over a still-comfortable room opens wearing the ordinary running
+-- body (docs/ATMOS.md, the purge picture).
+assert(t.structure_at(2, 1).state == "scrubbing", "and it ships running")
 
 local opening = t.room_pressure(4, 1)
 assert(opening > 90.0, "the room opens at about an atmosphere: " .. opening)

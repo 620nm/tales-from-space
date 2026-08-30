@@ -280,14 +280,16 @@ assert(
 )
 
 -- ---------------------------------------------------------------
--- THE SIPHON IGNORES THE FLOOR, WHICH IS WHY IT IS STILL THE
--- EMERGENCY.
+-- THE EMERGENCY IS THE SAME TWO DIALS: WHOLE AIR, NO FLOOR.
 --
--- The floor is a property of the SCRUBBING position. Turn the same
--- machine round and it empties the room, because that is the job:
--- a plasma flood, a fire, a chamber you want empty before you open it.
--- A siphon that stopped at a hundred kilopascals would be a siphon
--- that cannot do the one thing it is for.
+-- There is no direction switch. A map that stands a scrubber down in
+-- its "siphoning" state gets that pair spelled for it -- everything,
+-- to vacuum -- because a siphon that stopped at a hundred
+-- kilopascals would be a siphon that cannot do the one thing it is
+-- for. And the purge picture is a JUDGMENT, not the state name: the
+-- deck paints it only once whole air is leaving a room below the
+-- safe line, so a passer-by is warned about a fact, never about a
+-- setting.
 -- ---------------------------------------------------------------
 local PURGE = string.gsub(
     DEAD_SUPPLY,
@@ -298,20 +300,35 @@ t.world(PURGE, 7)
 t.set_environment({ sink_k = 293.15, insolation = 0 })
 t.tick()
 
-local purging = t.structure_at(2, 1)
-assert(purging.state == "siphoning", "turned round from the moment it is bolted down")
-assert(
-    string.find(purging.sprite, "purge") ~= nil,
-    "and drawn as the thing it is, from the corridor: " .. purging.sprite
-)
-
 local before_purge = room_kpa()
 assert(before_purge > 90.0, "the room opens breathable: " .. before_purge)
+assert(
+    t.structure_at(2, 1).state ~= "siphoning",
+    "over comfortable air the warning is not yet earned"
+)
+
+-- Let it work. The picture flips when the air crosses the safe line,
+-- while nobody touches a control.
+local warned = false
+for _ = 1, 120 do
+    t.run_seconds(5)
+    local shape = t.structure_at(2, 1)
+    if shape.state == "siphoning" then
+        assert(
+            string.find(shape.sprite, "purge") ~= nil,
+            "the judged emergency wears the purge art: " .. shape.sprite
+        )
+        warned = true
+        break
+    end
+end
+assert(warned, "a room being emptied earns the warning on the deck")
+
 t.run_seconds(600)
 local purged = room_kpa()
 assert(
     purged < 20.0,
-    "a siphon takes a room past a floor it does not have: "
+    "whole air with no floor takes the room toward vacuum: "
         .. before_purge .. " -> " .. purged .. " kPa"
 )
 

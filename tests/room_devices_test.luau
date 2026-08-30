@@ -162,13 +162,13 @@ assert(panel.setpoints[2].unit == "kPa", "which is a pressure, not a rate")
 near(panel.setpoints[2].value, 0.0, 0.001, "set to tg's nothing")
 
 local roster = {}
-local direction = nil
+local service = {}
 local shape = nil
 for _, sw in ipairs(panel.toggles) do
     if sw.field == "filter" then
         roster[sw.option] = sw.on
-    elseif sw.field == "direction" then
-        direction = sw
+    elseif sw.field == "service" then
+        service[sw.option] = sw.on
     elseif sw.field == "roster" then
         shape = sw
     end
@@ -178,11 +178,12 @@ assert(shape.on == false, "and this one sieves rather than taking the lot")
 assert(roster.co2 == true, "tg ships it set to carbon dioxide")
 assert(roster.o2 == false, "and to nothing else")
 assert(roster.n2 == false)
-assert(direction ~= nil, "and it has a DIRECTION, which no other device has")
-assert(direction.on == false, "opening on the safe one")
+-- There is no direction switch: whole air with no floor IS the siphon,
+-- and the two dials above already spell it. What no other device has
+-- is the SERVICE FACTOR -- how far the draw reaches, priced in power.
 assert(
-    string.find(direction.off_text, "scrub") ~= nil,
-    "named by what it does, not by being 'off': " .. direction.off_text
+    service["1"] == true and service["4"] == false and service["8"] == false,
+    "one tile of reach out of the box"
 )
 
 t.ui_act(p, "toggle", '{"field":"power"}')
@@ -220,15 +221,16 @@ near(
     "every mole of oxygen is accounted for"
 )
 
--- ---- turned round, it takes everything ----
+-- ---- set to whole air with no floor, it takes everything ----
 --
--- tg's siphon direction, and the picture changes with it because
--- standing in a room being emptied is fatal and should look it.
-t.ui_act(p, "toggle", '{"field":"direction"}')
+-- tg's siphon, spelled in the dials the machine already has: the
+-- placement shipped with the floor at zero, so the roster switch alone
+-- is the whole emergency.
+t.ui_act(p, "toggle", '{"field":"roster"}')
 t.run_ticks(2)
 assert(
-    t.ledger_has("MachineToggled", "direction", "Player"),
-    "and turning a scrubber round is an attributed act"
+    t.ledger_has("MachineToggled", "roster", "Player"),
+    "and setting a scrubber to take everything is an attributed act"
 )
 -- The PICTURE is a different question and it has not changed yet: the
 -- third position is a warning about a room going empty, not about a
