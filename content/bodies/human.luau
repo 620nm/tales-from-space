@@ -307,21 +307,24 @@ local content = {
         -- has somewhere to put the difference.
         eyes = { "eye_l", "eye_r" },
 
-        -- 42 of tgstation's 222 hairstyles: the first alphabetically in
-        -- `hair.dm`, and nothing more principled than that. Every one
-        -- is roll-eligible in tg — `natural_spawn` DEFAULTS to true
-        -- (_sprite_accessory.dm:47-49) and only fourteen of the 222
-        -- opt out — so this is a subset of ~208, not a filter of them.
-        -- The rest are one line each in
-        -- `assets/sprites/47-human-looks.ron` and one here, whenever
-        -- somebody wants them.
+        -- `bald` plus 42 styles: tgstation's first 48 hairstyles in
+        -- `hair.dm`, minus five. Three of those set
+        -- `natural_spawn = FALSE` and are outside the roll tg's own
+        -- randomiser makes (hair.dm:123, :137, :183); the other two,
+        -- `Boddicker` and `Buzzcut`, bake north frames that are one
+        -- flat grey the atlas lint refuses
+        -- (assets/sprites/47-human-looks.ron).
+        --
+        -- So this is the HEAD of the file, not a filter of it.
+        -- `natural_spawn` DEFAULTS to true
+        -- (_sprite_accessory.dm:47-49) and only fourteen entries in
+        -- the whole file opt out, which leaves the styles below this
+        -- stretch just as eligible: they are one line each here and
+        -- one in the sprite roster, whenever somebody wants them.
         --
         -- None names a physique, because no hair datum overrides the
         -- base `gender = NEUTER` — every style is in both of tg's
-        -- lists. `bald` leads and draws nothing (hair.dm:152-154). Two
-        -- of the first 44, `Boddicker` and `Buzzcut`, are left out: the
-        -- back of each is one flat grey the atlas lint refuses
-        -- (assets/sprites/47-human-looks.ron).
+        -- lists. `bald` leads and draws nothing (hair.dm:152-154).
         hair = {
             { id = "bald" },
             { id = "afro", sprite = "hair_afro" },
@@ -368,9 +371,10 @@ local content = {
             { id = "chinbob", sprite = "hair_chinbob" },
         },
 
-        -- ...and 22 of tgstation's 38 beards, the first alphabetically
-        -- in `facial_hair.dm` and roll-eligible there for the same
-        -- reason the hair is; the other sixteen are one line each.
+        -- ...and `shaved`, which draws nothing (facial_hair.dm:158-161),
+        -- plus tgstation's first 24 beards in `facial_hair.dm` minus
+        -- the two that set `natural_spawn = FALSE` (facial_hair.dm:15,
+        -- :60). Thirteen of its 38 remain, one line each.
         --
         -- These DO name a physique: tg's base facial datum is
         -- `gender = MALE` (facial_hair.dm:1-4), so only `Shaved` —
