@@ -50,3 +50,6 @@ a bake that never happened.
   the gas under it already is. Effects sort under `fx/`; the logical
   name it bakes to is flat (`wind_streak`), because a baked name also
   becomes a vending CSS class.
+- `turf/open_floor.aseprite` — a transparent steel maintenance grid with
+  one forward `open_floor` tag. The client lays it over plating and visible
+  subfloor runs, so the clear cells are functional rather than decorative.
