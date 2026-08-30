@@ -40,4 +40,35 @@ return {
         flavor = "A refrigerated drawer with a slab that rolls out of "
             .. "it. Used to keep bodies in until someone fetches them.",
     },
+    -- The drawer that is already occupied when the shift starts.
+    --
+    -- tg bakes no corpse into a morgue type: an area helper walks the
+    -- morgue at roundstart and fills three of the closed trays it finds
+    -- (`/obj/effect/mapping_helpers/dead_body_placer`,
+    -- code/modules/mapping/mapping_helpers.dm:920-969), each body a
+    -- `create_lost_crew(revivable = FALSE)` in a tagged body bag. Tales
+    -- from Space says it as a VARIANT a mapper places instead — one
+    -- prototype id on the map, the way `locker.tools` is — so nothing
+    -- in the engine has to learn what an area is. The bodycount, the
+    -- body bag and the revivable flag are NOT PORTED.
+    --
+    -- The 200 is NOT PORTED either, and cannot be: tg's whole injury
+    -- model here is `new_body.death()`, which takes no number at all
+    -- (code/modules/lost_crew/lost_crew_manager.dm:24-26). 200 brute is
+    -- what puts a human's health FRACTION on -1 — 200 damage against
+    -- `max_health` 100, and the chest's own `max` is exactly 200
+    -- (content/items/human_chest.luau) — which is the `dead` line
+    -- content/bodies/human.luau draws (docs/BIOLOGY.md §3.4). The
+    -- engine never learns the word: it applies the number, the plan's
+    -- threshold hook decides what crossing it means.
+    variants = {
+        cadaver = {
+            name = "morgue drawer",
+            drawer = {
+                stock = {
+                    { body = "human", damage = { brute = 200 }, outfit = "cadaver" },
+                },
+            },
+        },
+    },
 }

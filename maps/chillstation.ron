@@ -242,8 +242,13 @@
         // point (morgue.dm:234, the only varedit its mappers make).
         // Standing them in a rank with one lane in front of the whole
         // row is tg's mapping too.
+        //
+        // The middle one is the `cadaver` variant: it opens the shift
+        // already occupied. tg fills three trays per morgue area from a
+        // roundstart helper (mapping_helpers.dm:920-969); one drawer in
+        // three on a station this size is the same idea at this scale.
         (14, 6, "morgue", { "dir": "east" }),
-        (14, 7, "morgue", { "dir": "east" }),
+        (14, 7, "morgue.cadaver", { "dir": "east" }),
         (14, 8, "morgue", { "dir": "east" }),
         // ---- the hull galleries ----------------------------------
         // Nine panes across the north rank, looking out at the solar
