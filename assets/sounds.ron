@@ -13,15 +13,14 @@
     // (code/game/objects/structures/crates_lockers/closets.dm:58-59).
     ("locker_open", "machines/closet/closet_open.ogg"),
     ("locker_close", "machines/closet/closet_close.ogg"),
-    // A morgue tray on its runners, both directions. tg layers TWO
-    // clips over each other for each — `items/deconstruct.ogg` at
-    // volume 50 and `effects/roll.ogg` at 5 (morgue.dm:140-141,
-    // 155-156) — and this roster is one file per name, so the roll is
-    // the one kept: it is the noise the object is named for, and the
-    // deconstruct thud under it is NOT PORTED. One name rather than an
-    // open and a close pair because tg plays the same two clips for
-    // both, in the other order.
-    ("morgue_roll", "effects/roll.ogg"),
+    // A morgue drawer opening and closing. tg layers TWO clips for
+    // each — `items/deconstruct.ogg` at volume 50 and `effects/roll.ogg`
+    // at 5 (morgue.dm:140-141, 155-156) — and this roster is one file
+    // per name, so the loud one is the one kept: the steel clank of the
+    // slab seating, which is what a player hears; the quiet roll under
+    // it is NOT PORTED. One name for both directions, as tg plays the
+    // same pair each way.
+    ("morgue_clank", "items/deconstruct.ogg"),
     ("wirecutter", "items/tools/wirecutter_cut.ogg"),
     ("ratchet", "items/tools/ratchet.ogg"),
     ("drink", "items/drink.ogg"),

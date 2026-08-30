@@ -45,7 +45,7 @@ assert(px == 3 and py == 1, "the patient stands where the tray will be")
 local drawer = t.target_at(2, 1, "morgue")
 assert(drawer ~= nil, "one targetable drawer")
 local shut = t.structure_at(2, 1)
-assert(shut.state == "closed" and shut.sprite == "morgue1",
+assert(shut.state == "closed" and shut.sprite == "morgue1_e",
     "it starts shut, wearing the empty face")
 assert(#shut.overlays == 0, "an empty drawer wears no lamp")
 assert(t.structure_at(3, 1) == nil, "a shut drawer's tray is nowhere")
@@ -61,11 +61,11 @@ _ = t.sounds(attendant)
 t.click(attendant, 2, 1, drawer)
 t.tick()
 local open = t.structure_at(2, 1)
-assert(open.state == "open" and open.sprite == "morgue0",
+assert(open.state == "open" and open.sprite == "morgue0_e",
     "opening selects the authored state and art")
-assert(has(t.sounds(attendant), "morgue_roll"), "the tray is heard rolling")
+assert(has(t.sounds(attendant), "morgue_clank"), "the tray is heard rolling")
 local tray = t.structure_at(3, 1)
-assert(tray ~= nil and tray.id == "morgue_tray" and tray.sprite == "morguet",
+assert(tray ~= nil and tray.id == "morgue_tray" and tray.sprite == "morguet_e",
     "the slab lands on the tile the drawer faces")
 px, py = t.pos(patient)
 assert(px == 3 and py == 1, "the tray arrives under whoever is standing there")
@@ -76,12 +76,12 @@ _ = t.sounds(attendant)
 t.click(attendant, 2, 1, drawer)
 t.tick()
 assert(t.structure_at(2, 1).state == "closed", "it shuts again")
-assert(has(t.sounds(attendant), "morgue_roll"), "and is heard doing it")
+assert(has(t.sounds(attendant), "morgue_clank"), "and is heard doing it")
 assert(t.structure_at(3, 1) == nil, "the tray goes back in with everything on it")
 assert(#t.items_at(3, 1) == 0, "the dropped thing is concealed")
 assert(t.target_at(3, 1) == nil, "and there is nothing left on that tile to click")
 assert(t.body_id(patient) ~= nil, "the body still exists; it simply has no tile")
-assert(t.structure_at(2, 1).overlays[1] == "morgue2",
+assert(t.structure_at(2, 1).overlays[1] == "morgue2_e",
     "a drawer with somebody in it wears the body lamp")
 
 -- tg's relaymove: a conscious body inside pushing any direction slides
@@ -108,7 +108,7 @@ assert(px == 4 and py == 1, "and cannot step back onto it: an open tray is dense
 t.click(attendant, 2, 1, drawer)
 t.tick()
 assert(#t.items_at(3, 1) == 0, "the dropped thing is inside")
-assert(t.structure_at(2, 1).overlays[1] == "morgue3",
+assert(t.structure_at(2, 1).overlays[1] == "morgue3_e",
     "things but nobody is the other lamp")
 
 assert(#t.ledger_rows("drawer_opened") == 2, "both opens are attributed")

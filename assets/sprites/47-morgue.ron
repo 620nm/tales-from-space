@@ -19,11 +19,34 @@
         ("structures", "obj/structures.dmi"),
     ],
     sprites: [
-        ("morgue0", Dmi("@structures", "morgue0", 0)),
-        ("morgue1", Dmi("@structures", "morgue1", 0)),
-        ("morgue2", Dmi("@structures", "morgue2", 0)),
-        ("morgue3", Dmi("@structures", "morgue3", 0)),
-        ("morgue4", Dmi("@structures", "morgue4", 0)),
-        ("morguet", Dmi("@structures", "morguet", 0)),
+        // Every state on the sheet is four-directional (dirs = 4): a
+        // drawer is placed facing the aisle its tray rolls into, and
+        // the picture turns with it. Cell suffixes follow the sheet's
+        // own order, south, north, east, west (the atmos devices'
+        // convention in 20-atmos-inline-devices.ron).
+        ("morgue0_s", Dmi("@structures", "morgue0", 0)),
+        ("morgue0_n", Dmi("@structures", "morgue0", 1)),
+        ("morgue0_e", Dmi("@structures", "morgue0", 2)),
+        ("morgue0_w", Dmi("@structures", "morgue0", 3)),
+        ("morgue1_s", Dmi("@structures", "morgue1", 0)),
+        ("morgue1_n", Dmi("@structures", "morgue1", 1)),
+        ("morgue1_e", Dmi("@structures", "morgue1", 2)),
+        ("morgue1_w", Dmi("@structures", "morgue1", 3)),
+        ("morgue2_s", Dmi("@structures", "morgue2", 0)),
+        ("morgue2_n", Dmi("@structures", "morgue2", 1)),
+        ("morgue2_e", Dmi("@structures", "morgue2", 2)),
+        ("morgue2_w", Dmi("@structures", "morgue2", 3)),
+        ("morgue3_s", Dmi("@structures", "morgue3", 0)),
+        ("morgue3_n", Dmi("@structures", "morgue3", 1)),
+        ("morgue3_e", Dmi("@structures", "morgue3", 2)),
+        ("morgue3_w", Dmi("@structures", "morgue3", 3)),
+        ("morgue4_s", Dmi("@structures", "morgue4", 0)),
+        ("morgue4_n", Dmi("@structures", "morgue4", 1)),
+        ("morgue4_e", Dmi("@structures", "morgue4", 2)),
+        ("morgue4_w", Dmi("@structures", "morgue4", 3)),
+        ("morguet_s", Dmi("@structures", "morguet", 0)),
+        ("morguet_n", Dmi("@structures", "morguet", 1)),
+        ("morguet_e", Dmi("@structures", "morguet", 2)),
+        ("morguet_w", Dmi("@structures", "morguet", 3)),
     ],
 )

@@ -32,7 +32,7 @@ t.tick()
 -- nobody in the room can see what is in it.
 assert(t.structure_at(3, 1) == nil, "a shut drawer's tray is nowhere")
 assert(#t.bodies_at(3, 1) == 0, "and neither is what it is holding")
-assert(t.structure_at(2, 1).overlays[1] == "morgue2",
+assert(t.structure_at(2, 1).overlays[1] == "morgue2_e",
     "the occupied lamp is lit from the moment the map stands it up")
 
 local occupied = t.target_at(2, 1, "morgue.cadaver")
@@ -60,7 +60,7 @@ t.click(attendant, 2, 1, occupied)
 t.tick()
 assert(t.structure_at(3, 1) == nil, "the slab goes back in")
 assert(#t.bodies_at(3, 1) == 0, "with the body on it")
-assert(t.structure_at(2, 1).overlays[1] == "morgue2",
+assert(t.structure_at(2, 1).overlays[1] == "morgue2_e",
     "and the lamp says so again")
 
 -- The plain entry beside it declares no stock at all.
