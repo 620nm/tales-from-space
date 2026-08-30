@@ -51,6 +51,9 @@ assert(corpse.posture == "lying", "and it is lying on the slab")
 assert(corpse.health <= -100, "200 brute is past the plan's dead line")
 
 assert(corpse.name ~= "", "and it has a name, which is all it kept")
+assert(corpse.worn.uniform == "uniform_grey",
+    "wearing the jumpsuit the outfit row named")
+assert(corpse.worn.id == nil, "and no ID: an unidentified body is the point")
 
 -- It goes back in when the drawer shuts, like anything else on a slab.
 t.click(attendant, 2, 1, occupied)
@@ -100,8 +103,6 @@ local function rolled_name(seed)
 end
 
 assert(rolled_name(0) == rolled_name(0), "a seed replays its drawer exactly")
--- ...and the roll reads the shift RNG at all. Both seeds are fixed, so
--- this is a fact about the build rather than a coin flip.
 -- ...and the roll reads the shift RNG at all. Both seeds are fixed, so
 -- this is a fact about the build and not a coin flip. They are 0 and 9
 -- rather than 0 and 1 because the shift RNG is seeded straight into a
