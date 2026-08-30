@@ -28,5 +28,22 @@
         // logical name becomes a vending CSS class and the baker holds
         // every one of them to `[A-Za-z0-9_-]`.
         ("wind_streak", Png("fx/wind_streak.png")),
+
+        // The two line-dock machines, four pictures each: a dock is
+        // painted by what is standing in it AND by whether it is
+        // running, and the engine picks one of the four in one place
+        // (`chem.sprite_loaded` / `sprite_running` /
+        // `sprite_running_loaded`, ../lunatic/docs/CONTENT-SCHEMA.md).
+        // Stills, so a running machine is a lit lamp and a hot element
+        // rather than a loop; the animated version is an Aseprite
+        // follow-up and needs nothing here but a changed row.
+        ("evaporator", Png("bench/evaporator_off.png")),
+        ("evaporator_loaded", Png("bench/evaporator_off_loaded.png")),
+        ("evaporator_on", Png("bench/evaporator_on.png")),
+        ("evaporator_on_loaded", Png("bench/evaporator_on_loaded.png")),
+        ("steam_generator", Png("bench/steam_generator_off.png")),
+        ("steam_generator_loaded", Png("bench/steam_generator_off_loaded.png")),
+        ("steam_generator_on", Png("bench/steam_generator_on.png")),
+        ("steam_generator_on_loaded", Png("bench/steam_generator_on_loaded.png")),
     ],
 )

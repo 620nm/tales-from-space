@@ -42,6 +42,27 @@ a bake that never happened.
   beside the tgstation-derived sprites. The `.aseprite` carries `idle`
   (the bar alone) and `bubbles` (three frames, bubbles drifting up).
   Written by hand, pixel by pixel, not converted from anything.
+- `bench/evaporator_{off,off_loaded,on,on_loaded}.png`,
+  `bench/steam_generator_{off,off_loaded,on,on_loaded}.png` — the two
+  line-dock machines, four stills each: a squat boxed chassis with a
+  vessel slot on its left and a control face on its right, the beaker
+  silhouette that appears in the slot when one is docked, the element
+  glowing and the lamp lit when it is running, and — on the steam
+  machine, which also wears a vent grille along its top — wisps rising
+  off it while it works. Four names rather than one interpolated icon
+  state because the atlas has none: the engine picks between them from
+  `(loaded, running)` in one place, so a slot and a picture cannot
+  disagree.
+
+  **Generated rather than drawn by hand**, by a throwaway Python script
+  that writes the PNGs a pixel at a time (this box has no Pillow and no
+  ImageMagick); the script is not in the tree, because the artefact is
+  the art. First-party all the same — nothing here is traced from or
+  converted out of another game's sprites. They are STILLS on purpose:
+  the running loop wants an `.aseprite` with a tag on it, which is an
+  authoring tool an agent cannot drive, and swapping one in later is a
+  changed row in `../sprites/95-originals.ron` and nothing else.
+
 - `fx/wind_streak.png` — one soft white horizontal streak on a clear
   field, fading to nothing at both ends. The gas overlay lays it over a
   tile whose air is moving, turned to point down the wind and sliding
