@@ -12,8 +12,7 @@
 -- of those same roles. Hats, gloves and shoes have no equipment slots;
 -- a lab coat cannot use TfS's pressure-sealing suit slot; and the pH
 -- booklet has no pH interface to document. They remain absent rather
--- than becoming decorative or mechanically dishonest rows. The hidden
--- spray at lines 622-624 likewise waits for a contraband stock tier.
+-- than becoming decorative or mechanically dishonest rows.
 return {
     id = "chemdrobe",
     name = "ChemDrobe",
@@ -56,7 +55,9 @@ return {
         { item = "beaker_cryostasis", name = "Cryostasis Beaker", category = "Chemistry", amount = 5 },
         { item = "beaker_bluespace", name = "Bluespace Beaker", category = "Chemistry", amount = 5 },
         { item = "water_bottle", name = "Bottle of Water", category = "Chemistry", amount = 5 },
+        { item = "water_bottle.empty", name = "Empty Water Bottle", category = "Chemistry", amount = 5 },
         { item = "water_bottle_large", name = "Large Bottle of Water", category = "Chemistry", amount = 5 },
+        { item = "water_bottle_large.empty", name = "Empty Large Water Bottle", category = "Chemistry", amount = 5 },
         { item = "spray_bottle", name = "Spray Bottle", category = "Chemistry", amount = 5 },
     },
 }
