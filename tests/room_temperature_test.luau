@@ -43,6 +43,15 @@
 -- rather than by a bypass flag. The two blocks at the end take the flag
 -- off and weigh what the sky does.
 
+-- NOBODY IN HERE IS BREATHING. A crewman with lungs is a chemical
+-- plant standing in the room: his lungs are a driven vessel that holds
+-- several litres of the air inside itself and turns what it takes in
+-- into something else (docs/BIOLOGY.md, `sim/holder/bellows.rs`). That
+-- is a source and a sink, and the books below are the ATMOSPHERICS
+-- engine's -- so the crew are switched off as scaffolding, the same
+-- standing `t.set_health` has.
+t.set_breathing(false)
+
 local T20C = 293.15
 local R_GAS = 8.314
 local TILE_L = 1000.0

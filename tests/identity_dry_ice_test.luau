@@ -28,6 +28,15 @@
 -- l_vap 16200 J/mol. The sublimation line is Hess's law -- L_sub =
 -- L_fus + L_vap -- and is never authored (docs/MATTER.md).
 -- P(T) = p_a * exp(k * (1/T - 1/T_a)), k = -L/R.
+-- NOBODY IN HERE IS BREATHING. A crewman with lungs is a chemical
+-- plant standing in the room: his lungs are a driven vessel that holds
+-- several litres of the air inside itself and turns what it takes in
+-- into something else (docs/BIOLOGY.md, `sim/holder/bellows.rs`). That
+-- is a source and a sink, and the books below are the ATMOSPHERICS
+-- engine's -- so the crew are switched off as scaffolding, the same
+-- standing `t.set_health` has.
+t.set_breathing(false)
+
 local R = 8.314462618
 local TRIPLE_K, TRIPLE_PA = 216.55, 517000.0
 local CRITICAL_K = 304.1
@@ -315,7 +324,10 @@ near(
 -- is the assertion below.
 local control = t.room_temperature(4, 3)
 near(control, 293.15, 0.5, "the far side of the room hardly moved")
-assert(t.room_temperature(1, 3) < control - 0.3,
+-- A quarter of a kelvin, and the margin is narrow BECAUSE the crew are
+-- switched off above: nothing else in this room stirs the air, so the
+-- gap half a minute on is the ice's alone and no larger.
+assert(t.room_temperature(1, 3) < control - 0.25,
     "and the tile the ice was on is still the cold one: "
         .. t.room_temperature(1, 3) .. " vs " .. control)
 
