@@ -87,4 +87,31 @@ t.run_ticks(2)
 assert(not said(crewman, "covered"), "nothing is in the way any more")
 assert(#t.ledger_rows("DoAfterStarted") > parked, "the incision parked")
 
-print("strip: drag opens the wardrobe, the garment hits the deck, surgery follows")
+-- ---- and back the other way ------------------------------------------
+-- tg's strip menu fills an empty slot as readily as it empties a full
+-- one, at the garment's `equip_delay_other` (strippable.dm:242).  The
+-- scalpel goes down first, which ends the incision we just parked --
+-- that is the two-party guard doing its job and not this spec's
+-- subject.
+t.drop(crewman)
+t.run_ticks(2)
+t.click(crewman, CX, CY, t.target_at(CX, CY, "uniform_grey"))
+t.run_ticks(2)
+assert(t.hands(crewman).held == "uniform_grey", "the jumpsuit is back in hand")
+
+t.drag(crewman, CX, CY, cid, AX, AY, aid)
+t.run_ticks(2)
+local refill = row(t.ui(crewman), "uniform")
+assert(refill ~= nil and refill.field == "dress", "the empty slot offers to be filled")
+
+local dressed = #t.ledger_rows("Dressed")
+t.ui_act(crewman, "toggle", '{"field":"dress","option":"uniform"}')
+t.run_ticks(2)
+assert(t.worn(cadaver).uniform == nil, "still in hand while the do_after runs")
+t.run_ticks(85)
+assert(t.worn(cadaver).uniform ~= nil, "and worn again at the end of it")
+assert(t.hands(crewman).held == nil, "out of the hand that carried it")
+assert(#t.ledger_rows("Dressed") > dressed, "the record names who dressed whom")
+assert(said(cadaver, "puts"), "and the wearer is told it happened to them")
+
+print("strip: drag opens the wardrobe, the garment hits the deck, surgery follows; and dressing puts it back")
