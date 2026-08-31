@@ -172,3 +172,79 @@ t.move(crew, "east")
 t.run_ticks(3)
 local cx, cy = t.pos(crew)
 assert(cx == 1 and cy == 1, "a refused drawer is still an obstacle")
+
+-- ---- dragging somebody onto the slab --------------------------------
+-- tg lets you stuff a body into a cadaver drawer: the tray's own
+-- `mouse_drop_receive` force-moves an unbuckled mob onto the tray's
+-- tile (code/game/objects/structures/morgue.dm:582-594). Here the
+-- engine's drag seam has an arm for the tray, and it is the same timed
+-- lay every other surface gets -- two seconds, tg's own number for
+-- putting somebody somewhere (bin.dm:225).
+--
+-- The slab is DENSE, which is the interesting part: an open tray is an
+-- obstacle you cannot walk onto (the assertion further up says so), and
+-- the thing you are being laid ONTO is the one thing that never blocks
+-- the drop.
+t.world([==[(
+    name: "cadaver chamber aisle",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Floor),
+        '#': (turf: Wall),
+        'G': (turf: Floor, fixture: Some(Generator)),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'o': (turf: Floor, fixture: Some(Outlet)),
+    },
+    rows: [
+        "#######",
+        "#.....#",
+        "#.....#",
+        "#Gao..#",
+        "#######",
+    ],
+    spawns: [(3, 2), (4, 1)],
+    structures: [(2, 1, "cadaver_chamber", { "dir": "east" })],
+    cables: [(1, 3, 2), (2, 3, 3), (3, 3, 1)],
+)]==], 7)
+
+local LAY_TICKS = 2 * 20 + 2
+
+local orderly = t.join()
+local corpse = t.join()
+t.tick()
+assert(t.pos(orderly) == 3, "the orderly stands in the aisle")
+local cx, cy = t.pos(corpse)
+assert(cx == 4 and cy == 1, "and the body beside the slab's tile")
+
+local bay = t.target_at(2, 1, "cadaver_chamber")
+t.click(orderly, 2, 1, bay)
+t.tick()
+local slab = t.target_at(3, 1, "cadaver_drawer")
+assert(slab ~= nil, "the slab is out on the deck")
+
+-- Nothing lands in the tick the drag arrives.
+t.drag(orderly, 4, 1, t.body_id(corpse), 3, 1, slab)
+t.run_ticks(2)
+cx, cy = t.pos(corpse)
+assert(cx == 4 and cy == 1, "two ticks in, the body has not moved")
+
+t.run_ticks(LAY_TICKS)
+cx, cy = t.pos(corpse)
+assert(cx == 3 and cy == 1, "the body is on the slab: " .. cx .. "," .. cy)
+assert(t.body(corpse).posture == "lying", "lying on it")
+
+-- ...and that is already everything the close needs. A body on the
+-- tray's tile is what `close_drawer` gathers; the drag added no second
+-- mechanism.
+t.click(orderly, 2, 1, bay)
+t.tick()
+assert(t.structure_at(2, 1).state == "closed", "the drawer shuts on them")
+assert(t.structure_at(3, 1) == nil, "the slab went back in")
+assert(t.target_at(3, 1) == nil,
+    "a stowed body has no tile at all: there is nothing left to click")
+assert(t.body_id(corpse) ~= nil, "the body still exists")
+assert(t.structure_at(2, 1).overlays[1] == "morgue4_e",
+    "and the drawer wears the lamp for somebody still going")
+
+print("cadaver chamber: obstacle, slab, concealment, lamps, the push out, "
+    .. "and a body dragged onto the slab")
