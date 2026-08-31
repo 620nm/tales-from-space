@@ -481,10 +481,36 @@ if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("body.threshold.done", { kind = "react", route = "threshold" }, function(ev)
         local body = ev.body
-        local stop, hold = false, false
+        local stop, hold, dead = false, false, false
         for _, id in ipairs(sim.body(body).thresholds) do
             if STOP[id] then stop = true end
             if HOLD[id] then hold = true end
+            if id == "dead" then dead = true end
+        end
+        -- DYING STOPS THE HEART, and that is the whole latch.
+        --
+        -- Without it, death is a line the numbers are on one side of,
+        -- so tending a corpse's bruises walks it back over and stands
+        -- it up -- no operation, no defibrillator, no decision. With
+        -- it, crossing the line drives the heart to `max_health`, where
+        -- it is FAILING and never heals on its own (_organ.dm:296-299);
+        -- `vital` on content/items/organ_heart.luau turns that into
+        -- `undone`, and `undone` is in STOP above. The parts may then be
+        -- healed to full and this body stays exactly as dead as it was.
+        --
+        -- `sim.fail_organ` and not `sim.damage_organ`: the amount a
+        -- hook may claim in one event is capped, and "the heart has
+        -- stopped" is not an amount (docs/LUAU-API.md §8.1). A body
+        -- with no heart in it is already dead of the missing organ, so
+        -- the selector finding nothing is the right no-op.
+        --
+        -- Only on the DOWNWARD crossing, and only while the line is
+        -- still crossed: clearing `dead` must not re-stop a heart
+        -- somebody has just restarted. Re-entry is harmless anyway --
+        -- a failed organ is already at its maximum, so a second pass
+        -- moves nothing and fires no further edge.
+        if ev.edge == "dead" and dead then
+            sim.fail_organ(body, { tag = "heart" })
         end
         sim.set_body_facts(body, {
             animate = not stop,

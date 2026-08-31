@@ -71,14 +71,30 @@ for _, toggle in ipairs(win.toggles) do
 end
 assert(pick, "the window lists the heart among the organs to remove")
 
--- Take the heart out. The socket empties, it lands on the patient's tile,
--- and cardiac arrest begins at once: the blood capacity is 0, and its
--- `when_zero` holds the body under (docs/BIOLOGY.md §8).
+-- Take the heart out, and the patient dies on the table -- because in
+-- this pack the heart IS the boolean life state
+-- (content/items/organ_heart.luau: `vital = true`), and the engine's
+-- `viability` port reads 0 for a vital organ that is missing exactly as
+-- it does for one that has failed.
+--
+-- A DIVERGENCE from tg worth naming: tg gives a heartless patient a
+-- cardiac-arrest grace period to work in, and this does not. The
+-- surgeon has no clock -- they have a dead patient who comes back when
+-- the new heart seats, which is the next thing this spec does. The two
+-- are the same procedure with the tension moved: nothing decays while
+-- `animate` is false, so an interrupted swap leaves a corpse that keeps
+-- indefinitely rather than one that spoils.
 t.ui_act(surgeon, "toggle", string.format('{"field":"operation","option":"%s"}', pick))
 t.run_ticks(23) -- the 1 s removal
 assert(t.organ_damage(patient, "heart") == nil, "the heart socket is empty")
-assert(not t.body(patient).conscious, "arrest: the heart is out and the patient is under")
-assert(t.body(patient).animate, "but not yet dead -- the clock has only just started")
+assert(not t.body(patient).conscious, "the heart is out and the patient is under")
+assert(not t.body(patient).animate, "and dead of the missing heart, not of any wound")
+-- The wound did NOT stop the heart there is no heart to stop: the latch
+-- fires on the `dead` HEALTH line (content/bodies/human.luau), and this
+-- patient's health never moved. So the donor heart will take.
+local past = {}
+for _, id in ipairs(t.body(patient).thresholds) do past[id] = true end
+assert(past.undone and not past.dead, "dead of viability alone")
 assert(t.count_items("organ_heart") >= 2, "the old heart is on the deck beside the donor")
 
 -- Seat the donor heart. The socket fills, the blood capacity returns, and
@@ -92,7 +108,7 @@ assert(t.organ_damage(patient, "heart") ~= nil, "a heart is seated in the socket
 assert(t.organ_damage(patient, "heart") < 40, "and it is in good order")
 assert(t.body(patient).conscious, "the heart beats again and the patient comes to")
 assert(t.body(patient).animate and t.body(patient).controllable,
-    "alive, off the arrest clock")
+    "ALIVE AGAIN: a living heart in the socket clears the viability line")
 
 -- Close up. The bone states and the incision clear, and 40 of the saw's
 -- 50 brute is mended on the way out.
@@ -102,4 +118,4 @@ step("cautery", 2.4, function()
 end, "closed")
 assert(t.body(patient).bleed_rate == 0, "and no longer bleeding")
 
-print("heart: swapped on the table with 0 failures; arrest survived")
+print("heart: swapped on the table with 0 failures; dead between hearts, alive after")
