@@ -54,11 +54,21 @@ local content = {
     -- Hit weights are tg's own walk over the parts a body actually
     -- has: 1 for the chest and the head, 4 for everything else
     -- (`get_random_valid_zone`, code/modules/mob/mob_helpers.dm:66-72,
-    -- the same numbers as the `ran_zone` fallback table at :39). The
-    -- pelvis is "everything else" and takes 4. Losing the head or the
-    -- chest is death — the brain leaves with the head
-    -- (organ_movement.dm:210-213); the pelvis carries no socket and no
-    -- capacity, so losing it is survivable.
+    -- the same numbers as the `ran_zone` fallback table at :39).
+    --
+    -- The pelvis's 4 is an EXTENSION of that rule, not a copy of a
+    -- number. tg's walk enumerates real bodyparts and tg has no groin
+    -- bodypart at all — the precise zone folds into the chest
+    -- (`check_zone`, mob_helpers.dm:10-28) — so there is nothing to
+    -- port. Reading the rule literally puts the pelvis in "everything
+    -- else", and the consequence is real: the total weight goes 18 → 22,
+    -- which dilutes every OFF-AIM share (an unaimed blow finds the chest
+    -- 1/22 of the time where it used to find it 1/18). Aimed blows are
+    -- unaffected — those are the 80/90% in `content/part_tree.luau`.
+    --
+    -- Losing the head or the chest is death — the brain leaves with the
+    -- head (organ_movement.dm:210-213); the pelvis carries no socket and
+    -- no capacity, so losing it is survivable.
     --
     -- `doll` is the target selector's region for the part, `{x, y, w, h}`
     -- in the unit square with the origin top left, and it is tg's own
