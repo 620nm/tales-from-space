@@ -103,7 +103,10 @@ a bake that never happened.
   rather than tracing over them. The source sheets are CC-BY-SA 3.0.
 
   Each file names one sheet under tg's `icons/obj/pipes_n_cables/`, and
-  four of the five convert whole:
+  four of the five convert whole. `cargo run` resolves `-p xtask` from
+  the engine checkout, and the bare output names land in the working
+  directory — so run these from `pipes_n_cables/` here, adding
+  `--manifest-path <engine>/Cargo.toml` to each:
 
   ```sh
   cargo run -p xtask -- convert-dmi <tg>/icons/obj/pipes_n_cables/\!pipes_bitmask.dmi           pipes_bitmask.aseprite
