@@ -1,4 +1,4 @@
-// What a body is made of, once it comes apart: the six limbs a human
+// What a body is made of, once it comes apart: the seven parts a human
 // plan names and the nine organs that sit in them (docs/BIOLOGY.md §1).
 // Each is an ITEM, so each needs a picture on the deck.
 //
@@ -26,6 +26,14 @@
         ("part_r_arm", Tinted(Dmi("@bodyparts", "human_r_arm", 0), (232, 200, 168))),
         ("part_l_leg", Tinted(Dmi("@bodyparts", "human_l_leg", 0), (232, 200, 168))),
         ("part_r_leg", Tinted(Dmi("@bodyparts", "human_r_leg", 0), (232, 200, 168))),
+        // No groin cell exists on the sheet: tg has no groin BODYPART
+        // (`check_zone` folds the precise zone into the chest,
+        // code/modules/mob/mob_helpers.dm:10-28) and `human_chest_m`
+        // already draws the torso down to the legs. A severed pelvis
+        // therefore borrows the torso's picture under its own name,
+        // so the day someone draws one this line changes and nothing
+        // else does.
+        ("part_pelvis", Tinted(Dmi("@bodyparts", "human_chest_m", 0), (232, 200, 168))),
 
         // The organs, off tg's one organ sheet
         // (`icon = 'icons/obj/medical/organs/organs.dmi'`,

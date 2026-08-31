@@ -86,7 +86,13 @@ for _, id in ipairs(gone.thresholds) do
     latched[id] = true
 end
 assert(latched.crit and latched.dead, "four hundred brute crosses both lines")
-assert(not latched.undone, "and none of the viability conditions")
+-- ...and a third, one step removed: crossing `dead` stops the heart
+-- (content/bodies/human.luau), the heart is `vital`, and a failing vital
+-- organ is exactly what the engine's `viability` port reads. That is the
+-- LATCH -- healing these four hundred brute away clears `crit` and
+-- `dead` and leaves `undone` standing, which is why a tended corpse
+-- stays a corpse (tests/heart_life_test.luau).
+assert(latched.undone, "and the stopped heart crosses the viability line too")
 
 -- ---------------------------------------------------------------
 -- A faint is not a crossing. Out cold at oxy 60 — past tg's

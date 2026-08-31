@@ -6,7 +6,7 @@ return {
     name = "chemist's jumpsuit",
     sprite = "uniform_chemist",
     slot = "uniform",
-    covers = { "chest", "l_arm", "r_arm", "l_leg", "r_leg" },
+    covers = { "chest", "pelvis", "l_arm", "r_arm", "l_leg", "r_leg" },
     worn_sprite = "worn_uniform_chemist",
     pickup_sound = "cloth_pickup",
     drop_sound = "cloth_drop",

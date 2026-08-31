@@ -11,6 +11,7 @@
         ("surgery_tools", "obj/medical/surgery_tools.dmi"),
         ("stack_medical", "obj/medical/stack_medical.dmi"),
         ("computer", "obj/machines/computer.dmi"),
+        ("defib", "obj/medical/defib.dmi"),
     ],
     sprites: [
         ("scalpel", Dmi("@surgery_tools", "scalpel", 0)),
@@ -23,6 +24,15 @@
         // The suture stack lives on the medical-stack sheet, not the
         // tool sheet (stacks/medical.dm:4 vs :756).
         ("suture", Dmi("@stack_medical", "suture", 0)),
+
+        // The defibrillator, off its own sheet
+        // (`icon = 'icons/obj/medical/defib.dmi'`, `icon_state =
+        // "defibunit"`, code/game/objects/items/tools/medical/
+        // defib.dm:10). The unit and nothing else: the paddles, the
+        // charge meter and the powered overlay are all part of the
+        // apparatus content/items/defib.luau deliberately does not
+        // model.
+        ("defib", Dmi("@defib", "defibunit", 0)),
 
         // The operating computer, composited the way tg draws every
         // console: the frame's own `icon_state`, the keyboard over it,
