@@ -6,24 +6,27 @@
 -- click; the looping and the 5 + 0.07*loss curve are simplified to a flat
 -- 5 (both deviations in docs/SURGERY.md §6.7).
 --
--- AND A THIRD DEVIATION, which is this file's most consequential:
--- nothing here stops it being used on a CORPSE, and five brute off a
--- body sitting on its own dead line puts it back over the line and
--- animate again. tg cannot do that, and blocks it twice -- `stat`
--- latches to DEAD until a defib or a revival surgery clears it, and
--- this very operation scales its healing to a fifth on a corpse
--- (`dead_multiplier = 0.2`, operation_healing.dm:190). Neither is
--- ported: TfS death is a recomputed threshold (content/bodies/
--- human.luau's `body.threshold.done` hook) and this file declares no
--- multiplier. A `dead_only`-style opt-out in the other direction does
--- not exist, deliberately -- tg has no operation that requires a
--- living patient either.
+-- AND A THIRD DEVIATION, which is this file's most consequential and is
+-- now deliberate: nothing here stops it being used on a CORPSE, and it
+-- heals a corpse's parts at full strength.
 --
--- The behaviour is PINNED, not blessed: tests/corpse_revival_pin_test
--- .luau asserts it by name and fails the moment it changes, so the
--- ruling (latch death, port the 0.2, or accept this as the pack's
--- revival mechanism) is a decision somebody makes rather than one
--- somebody discovers.
+-- tg scales this operation's healing to a fifth on a dead patient
+-- (`dead_multiplier = 0.2`, operation_healing.dm:190), because in tg
+-- healing damage is how a corpse comes back and the multiplier is the
+-- brake. Here it is not: life is the HEART
+-- (content/items/organ_heart.luau), and dying stops it
+-- (content/bodies/human.luau). Mending a corpse's bruises mends a
+-- corpse's bruises. It clears the plan's `dead` line and leaves the
+-- stopped heart exactly where death put it, so the body stays dead
+-- until a new heart is seated or a defibrillator restarts the old one
+-- (content/items/defib.luau).
+--
+-- So the multiplier has nothing to brake, and porting it would only
+-- make treating a body slower for no rule. Treating the parts is the
+-- FIRST half of a revival either way, because a heart restarted under
+-- a body still past the dead line revives it into a corpse
+-- (tests/cadaver_revival_test.luau).
+
 return {
     id = "tend_wounds", name = "tend the wounds",
     blocked = { "skin_cut", "skin_open" },

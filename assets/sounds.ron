@@ -126,4 +126,13 @@
     // (code/modules/clothing/spacesuits/_spacesuits.dm:33-34).
     ("helmet_pickup", "items/handling/helmet/helmet_pickup1.ogg"),
     ("helmet_drop", "items/handling/helmet/helmet_drop1.ogg"),
+    // The defibrillator's three outcomes, off tg's own clips
+    // (code/game/objects/items/tools/medical/defib.dm:543, :631, :539).
+    // Three and not seven: `defib_ready`, `defib_charge` and the two
+    // safety toggles belong to the paddle apparatus
+    // content/items/defib.luau does not model. Volumes are NOT PORTED --
+    // this roster carries no per-clip gain.
+    ("defib_zap", "machines/defib/defib_zap.ogg"),
+    ("defib_success", "machines/defib/defib_success.ogg"),
+    ("defib_failed", "machines/defib/defib_failed.ogg"),
 ]

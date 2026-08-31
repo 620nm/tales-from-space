@@ -8,6 +8,10 @@ local sounds = {
     "click",
     "crowbar",
     "crowbar_pry",
+    -- The defibrillator's three outcomes (content/items/defib.luau).
+    "defib_failed",
+    "defib_success",
+    "defib_zap",
     "dice_roll",
     "drink",
     "glass_break",
