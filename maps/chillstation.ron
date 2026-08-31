@@ -621,6 +621,15 @@
         (21, 20, "outlet"),
         (26, 22, "outlet"), (28, 26, "outlet"),
         (9, 27, "outlet"), (35, 27, "outlet"),
+        // ...and one for the rank of cadaver chambers at (14, 6..8),
+        // which are corded appliances and not just furniture. It sits
+        // on the lab's own L1 loop at the south-west corner, two to
+        // four cells of cord from each chamber -- the pair already in
+        // this room, at (21, 4) and (21, 9), are nine and ten cells
+        // away, which is past `cord_range` (docs/POWER.md, "Outlets
+        // and cords"). A dark rank of chambers is what a mapper gets
+        // for forgetting this, which is the point of the rule.
+        (15, 9, "outlet"),
         // ---- THE POWER PLANT -------------------------------------
         // Ten photovoltaic panels north of the hull where the sun is:
         // quiet, modest watts, no moving parts, and happy in vacuum.
@@ -1165,5 +1174,6 @@
         (32, 9, South), (20, 11, North), (31, 11, North), (10, 13, North),
         (9, 18, South), (17, 18, South), (30, 18, South), (21, 20, North),
         (26, 22, North), (28, 26, West), (9, 27, North), (35, 27, East),
+        (15, 9, South),
     ],
 )

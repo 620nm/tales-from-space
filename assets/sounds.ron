@@ -21,6 +21,14 @@
     // it is NOT PORTED. One name for both directions, as tg plays the
     // same pair each way.
     ("morgue_clank", "items/deconstruct.ogg"),
+    // ...and the noise a cadaver chamber makes while whoever is inside
+    // has not stopped. tg plays this from the morgue's own beeper at
+    // volume 50, once a minute, while the state is MORGUE_HAS_REVIVABLE
+    // (morgue.dm:242, 274-276). It is a firearm's dry-fire alarm doing
+    // second duty, which is tg's own choice of clip rather than an
+    // approximation: it is the sharpest short beep in the tree. The
+    // volume is NOT PORTED — this roster carries no per-clip gain.
+    ("cadaver_alert", "items/weapons/gun/general/empty_alarm.ogg"),
     ("wirecutter", "items/tools/wirecutter_cut.ogg"),
     ("ratchet", "items/tools/ratchet.ogg"),
     ("drink", "items/drink.ogg"),
