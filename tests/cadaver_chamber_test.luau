@@ -7,21 +7,32 @@
 -- The concealment assertions are the security half: `t.items_at` and
 -- `t.target_at` are what any second crewman in the room could see, and
 -- a stowed thing has no tile at all, so there is nothing to filter.
+--
+-- The bay is wired, because a cadaver chamber is a corded appliance and
+-- its lamps read power: on an unwired bench every one of them is dark.
+-- The plant, the controller and the socket sit in the row behind the
+-- rank, two cells of cord away (docs/POWER.md, "Outlets and cords").
+-- `cadaver_power_test.luau` is the one that pulls the plug.
 t.world([==[(
     name: "cadaver chamber bench",
     legend: {
         ' ': (turf: Space),
         '.': (turf: Floor),
         '#': (turf: Wall),
+        'G': (turf: Floor, fixture: Some(Generator)),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'o': (turf: Floor, fixture: Some(Outlet)),
     },
     rows: [
         "#######",
         "#.....#",
+        "#Gao..#",
         "#######",
     ],
     spawns: [(1, 1), (3, 1)],
     items: [(3, 1, "headset")],
     structures: [(2, 1, "cadaver_chamber", { "dir": "east" })],
+    cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
 )]==], 7)
 
 local function has(rows, wanted)
@@ -81,8 +92,13 @@ assert(t.structure_at(3, 1) == nil, "the tray goes back in with everything on it
 assert(#t.items_at(3, 1) == 0, "the dropped thing is concealed")
 assert(t.target_at(3, 1) == nil, "and there is nothing left on that tile to click")
 assert(t.body_id(patient) ~= nil, "the body still exists; it simply has no tile")
-assert(t.structure_at(2, 1).overlays[1] == "morgue2_e",
-    "a drawer with somebody in it wears the body lamp")
+-- The patient is a player who lay down on the slab and is very much
+-- still going, so this is the `morgue4` lamp rather than the `morgue2`
+-- one: tg lights it for an occupant a defibrillator could bring back
+-- (morgue.dm:303-321, :384-403), and "has not stopped" is what that
+-- reads as here. `cadaver_test.luau` is where a corpse lights the other.
+assert(t.structure_at(2, 1).overlays[1] == "morgue4_e",
+    "a drawer with somebody alive in it wears the living lamp")
 
 -- tg's relaymove: a conscious body inside pushing any direction slides
 -- it back out (morgue.dm:75-83).
@@ -117,21 +133,31 @@ assert(t.ledger_has("DrawerClosed", "cadaver chamber"), "the row names the thing
 
 -- A drawer with nowhere to put its tray refuses, says so, and is still
 -- an obstacle afterwards.
+--
+-- Wired for the same reason the bench above is: this one is about the
+-- refusal, not about power, and an unfed chamber here would be a true
+-- `corded fixture has no outlet within cord range` warning drowning out
+-- the one bench that means to trip it.
 t.world([==[(
     name: "walled cadaver chamber bench",
     legend: {
         ' ': (turf: Space),
         '.': (turf: Floor),
         '#': (turf: Wall),
+        'G': (turf: Floor, fixture: Some(Generator)),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'o': (turf: Floor, fixture: Some(Outlet)),
     },
     rows: [
-        "####",
-        "#..#",
-        "####",
+        "#####",
+        "#..##",
+        "#Gao#",
+        "#####",
     ],
     spawns: [(1, 1)],
     items: [],
     structures: [(2, 1, "cadaver_chamber", { "dir": "east" })],
+    cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
 )]==], 7)
 
 local crew = t.join()
