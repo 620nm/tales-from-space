@@ -99,5 +99,21 @@ a bake that never happened.
   wall-outlet sheets, converted from tgstation's matching `.dmi` files
   by `cargo run -p xtask -- convert-dmi`. Tags are `{state}-s` (and
   `-n`/`-e`/`-w` on the outlet). The pixels are tg's; the format is
-  this engine's. Re-convert from the pinned tg revision rather than
-  tracing over them. The source sheets are CC-BY-SA 3.0.
+  this engine's. Re-convert from the revision `../tg-revision` pins
+  rather than tracing over them. The source sheets are CC-BY-SA 3.0.
+
+  Each file names one sheet under tg's `icons/obj/pipes_n_cables/`, and
+  four of the five convert whole:
+
+  ```sh
+  cargo run -p xtask -- convert-dmi <tg>/icons/obj/pipes_n_cables/\!pipes_bitmask.dmi           pipes_bitmask.aseprite
+  cargo run -p xtask -- convert-dmi <tg>/icons/obj/pipes_n_cables/layer_cable.dmi               layer_cable.aseprite
+  cargo run -p xtask -- convert-dmi <tg>/icons/obj/pipes_n_cables/layer_manifold_underlays.dmi  layer_manifold_underlays.aseprite
+  cargo run -p xtask -- convert-dmi <tg>/icons/obj/pipes_n_cables/pipe_underlays.dmi            pipe_underlays.aseprite
+  cargo run -p xtask -- convert-dmi <tg>/icons/obj/pipes_n_cables/structures.dmi                outlet.aseprite term
+  ```
+
+  `outlet.aseprite` is the filtered one: `structures.dmi` carries the
+  whole family of pipe structures, and the trailing `term` argument
+  takes that state alone, so the file holds the wall outlet and nothing
+  else. Converting the sheet whole would vendor art no roster names.
