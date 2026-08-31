@@ -1,6 +1,6 @@
 -- The human body plan (docs/BIOLOGY.md §1–§2, §4).
 --
--- Everything a crewman IS: six slots a blow can land on, nine sockets
+-- Everything a crewman IS: seven slots a blow can land on, nine sockets
 -- organs fit in, five and a half litres of blood, and the eleven
 -- capacities that decide what any of that lets them do. The engine
 -- names none of it — it knows roles, body scalars and the formula
@@ -51,10 +51,24 @@ local content = {
     knockdown = true,
     pool_coeff = { brute = 1, burn = 1, oxy = 1, tox = 1 },   -- pool_coeff, basic.dm:51
 
-    -- Hit weights are tg's `ran_zone` table: head and chest 1, each
-    -- limb 4 (code/__HELPERS/mobs.dm:36-41). Losing the head or the
-    -- chest is death — the brain leaves with the head
-    -- (organ_movement.dm:210-213).
+    -- Hit weights are tg's own walk over the parts a body actually
+    -- has: 1 for the chest and the head, 4 for everything else
+    -- (`get_random_valid_zone`, code/modules/mob/mob_helpers.dm:66-72,
+    -- the same numbers as the `ran_zone` fallback table at :39).
+    --
+    -- The pelvis's 4 is an EXTENSION of that rule, not a copy of a
+    -- number. tg's walk enumerates real bodyparts and tg has no groin
+    -- bodypart at all — the precise zone folds into the chest
+    -- (`check_zone`, mob_helpers.dm:10-28) — so there is nothing to
+    -- port. Reading the rule literally puts the pelvis in "everything
+    -- else", and the consequence is real: the total weight goes 18 → 22,
+    -- which dilutes every OFF-AIM share (an unaimed blow finds the chest
+    -- 1/22 of the time where it used to find it 1/18). Aimed blows are
+    -- unaffected — those are the 80/90% in `content/part_tree.luau`.
+    --
+    -- Losing the head or the chest is death — the brain leaves with the
+    -- head (organ_movement.dm:210-213); the pelvis carries no socket and
+    -- no capacity, so losing it is survivable.
     --
     -- `doll` is the target selector's region for the part, `{x, y, w, h}`
     -- in the unit square with the origin top left, and it is tg's own
@@ -66,22 +80,26 @@ local content = {
     -- The rectangles therefore line up with `target_doll` below, which
     -- is the picture tg's switch was drawn against.
     --
-    -- ONE DIVERGENCE: tg's band at icon_y 10..13, icon_x 12..20 is the
-    -- groin, and this body has no groin part. Rather than leave a dead
-    -- strip through the middle of the torso, the chest takes it — so
-    -- the chest reads icon_y 10..22 where tg reads 14..22.
+    -- The bands are tg's exactly, the groin included: icon_y 10..13,
+    -- icon_x 12..20 is the pelvis and the chest reads 14..22, as tg
+    -- does. (An earlier plan with no pelvis gave that strip to the
+    -- chest rather than leave a dead band through the torso; there is
+    -- a part under it now, so the divergence is gone.)
     --
     -- `target_slot` is which numbered target key aims here, laid out as
     -- the numpad over a body facing you: 8 the head, 4/5/6 the arms and
     -- the chest, 1/3 the legs (code/datums/keybinding/mob.dm:161-229).
-    -- 2, 7 and 9 are tg's groin, eyes and mouth and stay unbound,
-    -- because this body has no such parts and a key that aims at
-    -- nothing is better than a key that aims somewhere surprising.
+    -- 2 is tg's groin, bound here to the pelvis
+    -- (`target_body_groin`, :217-222). 7 and 9 are tg's eyes and mouth
+    -- and stay unbound, because this body has no such parts and a key
+    -- that aims at nothing is better than a key that aims somewhere
+    -- surprising.
     -- Several parts may share a slot; the key then cycles them, which is
     -- how tg's 8 walks head -> eyes -> mouth and how it would here.
     parts = {
         { id = "head",  label = "head",      doll = { 0.34375, 0.06250, 0.28125, 0.25000 }, doll_sprite = "target_head",  target_slot = 8, default = "human_head",  hit_weight = 1, vital = true },
-        { id = "chest", label = "chest",     doll = { 0.34375, 0.31250, 0.28125, 0.40625 }, doll_sprite = "target_chest", target_slot = 5, default = "human_chest", hit_weight = 1, vital = true },
+        { id = "chest", label = "chest",     doll = { 0.34375, 0.31250, 0.28125, 0.28125 }, doll_sprite = "target_chest", target_slot = 5, default = "human_chest", hit_weight = 1, vital = true },
+        { id = "pelvis", label = "pelvis",   doll = { 0.34375, 0.59375, 0.28125, 0.12500 }, doll_sprite = "target_pelvis", target_slot = 2, default = "human_pelvis", hit_weight = 4 },
         { id = "l_arm", label = "left arm",  doll = { 0.62500, 0.31250, 0.12500, 0.40625 }, doll_sprite = "target_l_arm", target_slot = 6, default = "human_l_arm", hit_weight = 4, hand = 1 },
         { id = "r_arm", label = "right arm", doll = { 0.21875, 0.31250, 0.12500, 0.40625 }, doll_sprite = "target_r_arm", target_slot = 4, default = "human_r_arm", hit_weight = 4, hand = 2 },
         { id = "l_leg", label = "left leg",  doll = { 0.50000, 0.71875, 0.18750, 0.28125 }, doll_sprite = "target_l_leg", target_slot = 3, default = "human_l_leg", hit_weight = 4 },
@@ -249,6 +267,11 @@ local content = {
         -- suffix (_bodyparts.dm:1308-1310), so those two name a cell
         -- per physique and the limbs name one. An arm's cell has its
         -- hand composited in (assets/sprites/47-human-looks.ron).
+        -- NO PELVIS ROW, deliberately: tg's chest cell is the whole
+        -- torso down to the legs, groin included, and there is no
+        -- second cell to stack over it. A part slot `looks.parts` says
+        -- nothing about simply is not drawn, which is the right answer
+        -- for a part that is already in the picture.
         parts = {
             chest = { m = "body_chest_m", f = "body_chest_f" },
             head  = { m = "body_head_m",  f = "body_head_f" },
@@ -458,10 +481,36 @@ if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("body.threshold.done", { kind = "react", route = "threshold" }, function(ev)
         local body = ev.body
-        local stop, hold = false, false
+        local stop, hold, dead = false, false, false
         for _, id in ipairs(sim.body(body).thresholds) do
             if STOP[id] then stop = true end
             if HOLD[id] then hold = true end
+            if id == "dead" then dead = true end
+        end
+        -- DYING STOPS THE HEART, and that is the whole latch.
+        --
+        -- Without it, death is a line the numbers are on one side of,
+        -- so tending a corpse's bruises walks it back over and stands
+        -- it up -- no operation, no defibrillator, no decision. With
+        -- it, crossing the line drives the heart to `max_health`, where
+        -- it is FAILING and never heals on its own (_organ.dm:296-299);
+        -- `vital` on content/items/organ_heart.luau turns that into
+        -- `undone`, and `undone` is in STOP above. The parts may then be
+        -- healed to full and this body stays exactly as dead as it was.
+        --
+        -- `sim.fail_organ` and not `sim.damage_organ`: the amount a
+        -- hook may claim in one event is capped, and "the heart has
+        -- stopped" is not an amount (docs/LUAU-API.md §8.1). A body
+        -- with no heart in it is already dead of the missing organ, so
+        -- the selector finding nothing is the right no-op.
+        --
+        -- Only on the DOWNWARD crossing, and only while the line is
+        -- still crossed: clearing `dead` must not re-stop a heart
+        -- somebody has just restarted. Re-entry is harmless anyway --
+        -- a failed organ is already at its maximum, so a second pass
+        -- moves nothing and fires no further edge.
+        if ev.edge == "dead" and dead then
+            sim.fail_organ(body, { tag = "heart" })
         end
         sim.set_body_facts(body, {
             animate = not stop,

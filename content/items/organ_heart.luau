@@ -13,9 +13,30 @@
 -- (code/modules/surgery/organs/internal/heart/_heart.dm:11): a heart
 -- out of a chest is on a clock.
 --
--- NOT PORTED: tg's beating/stopped heart and its 12-second stop
--- timer (_heart.dm:50-74). Circulation resumes the tick a heart is
--- seated; there is no separate restart to remember.
+-- `vital = true` is what makes this organ the body's LIFE. The engine's
+-- `viability` port reads 0 the moment a vital organ is missing or
+-- FAILING (docs/BIOLOGY.md §5.41), the plan's `undone` threshold reads
+-- that port, and the plan's own hook turns `undone` into `animate =
+-- false`. So "the heart has stopped" and "this body is dead" are one
+-- fact with one storage location, and nothing else has to be latched.
+--
+-- Which is how tg's beating/stopped heart arrives after all. It is NOT
+-- ported as tg spells it -- a second boolean plus a 12-second timer
+-- (_heart.dm:50-74) -- because this organ already has a state that
+-- means "not working": ORGAN_FAILING, damage at `max_health`
+-- (_organ.dm:283-305). A stopped heart IS a failing heart here.
+-- Crossing the plan's `dead` line drives it there
+-- (content/bodies/human.luau), and it comes back only the two ways tg
+-- allows: a new heart in the socket, or a defibrillator
+-- (content/items/defib.luau).
+--
+-- Consequences worth knowing, both deliberate:
+--   * Healing a corpse's PARTS to full does not revive it. The dead
+--     line clears; the heart is still failing.
+--   * A heart heals itself while its body runs and decays while it does
+--     not, so a heart torn out of a chest is on a clock -- but a
+--     failing one never heals on its own (_organ.dm:296-299), which is
+--     exactly the latch this needs.
 return {
     id = "organ_heart",
     name = "heart",
@@ -28,5 +49,6 @@ return {
         heal_per_s = 0.0005,
         decay_per_s = 0.0027750,
         tags = { "heart" },
+        vital = true,
     },
 }

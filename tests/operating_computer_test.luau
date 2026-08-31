@@ -117,15 +117,28 @@ local blocks = body_sections(ui)
 assert(#blocks == 2, "two patients, one block each: got " .. #blocks)
 
 -- ---- what the open part is holding ------------------------------------
--- One `chest` row on the whole panel: the other patient's chest is shut,
--- and a part with nothing wrong with it is not a row.
-assert(rows_named(ui, "chest") == 1, "only the opened chest is listed")
-local chest = row(ui, "chest")
-assert(has(chest.value, "skin_cut"), "and it names the state: " .. chest.value)
-assert(has(chest.value, "vessels_unclamped"), "both of them: " .. chest.value)
-assert(has(chest.value, "/s"), "with what it is bleeding: " .. chest.value)
+-- TWO `chest` rows, one per patient, and for two different reasons: one
+-- chest is open, and the other is what the surgeon is AIMED at, which
+-- the panel draws whether or not anything is holding it (the plan's
+-- `default_zone` is the chest and nobody has pressed a target key).
+-- Without that second rule the console has nothing to say about a body
+-- nobody has cut yet, which is no use to a surgeon deciding where to
+-- start (tests/surgery_cadaver_test.luau).
+assert(rows_named(ui, "chest") == 2, "the open chest and the aimed one")
+local opened, untouched = nil, nil
+for _, r in ipairs(ui.readouts) do
+    if r.label == "chest" then
+        if has(r.value, "skin_cut") then opened = r else untouched = r end
+    end
+end
+assert(opened ~= nil, "one chest names the states it is holding")
+assert(has(opened.value, "vessels_unclamped"), "both of them: " .. opened.value)
+assert(has(opened.value, "/s"), "with what it is bleeding: " .. opened.value)
+assert(untouched ~= nil and untouched.value == "\u{2014}",
+    "and the other is holding nothing: " .. tostring(untouched and untouched.value))
 assert(row(ui, "blood") ~= nil, "and how much blood is left to lose")
--- Nothing is wrong with the head, so the head is not on the panel.
+-- Nothing is wrong with the head and nobody is aiming at it, so the head
+-- is not on the panel.
 assert(row(ui, "head") == nil, "a part with nothing wrong with it is not a row")
 
 -- ---- and what it admits next ------------------------------------------

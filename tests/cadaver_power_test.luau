@@ -129,22 +129,30 @@ assert(not has(t.sounds(attendant), "cadaver_alert"),
 -- (morgue.dm:249-291). The chamber declares `preserves = 0.0` instead,
 -- so the modelled thing is the preservation and not the temperature --
 -- but tg's open/shut half is kept exactly.
-local held = t.organ_damage(patient, "heart")
-assert(held ~= nil, "the corpse still has its heart in it")
+-- Measured on the BRAIN and not the heart, and the reason is the whole
+-- point of the chamber: dying stops the heart by driving it to
+-- `max_health` (content/bodies/human.luau), so a corpse's heart has no
+-- room left to decay and reads the same at any age. The brain is the
+-- organ still on a clock, and it is the one the clock is FOR -- a
+-- defibrillator refuses a brain that has decayed to failure
+-- (content/items/defib.luau), so what this chamber preserves is
+-- literally the window in which its occupant can still be brought back.
+local held = t.organ_damage(patient, "brain")
+assert(held ~= nil, "the corpse still has its brain in it")
 t.run_seconds(600)
-assert(t.organ_damage(patient, "heart") == held,
+assert(t.organ_damage(patient, "brain") == held,
     "nothing shut in a live chamber goes off at all")
 
 -- Roll the slab out and the same corpse is in the room again.
 t.click(attendant, 2, 1, chamber)
 t.tick()
 t.run_seconds(600)
-local out = t.organ_damage(patient, "heart")
+local out = t.organ_damage(patient, "brain")
 assert(out > held, "a corpse on an open slab goes off like any other")
 
 -- ...and shutting it stops it again, where it stopped.
 t.click(attendant, 2, 1, chamber)
 t.tick()
 t.run_seconds(600)
-assert(t.organ_damage(patient, "heart") == out,
+assert(t.organ_damage(patient, "brain") == out,
     "and shutting it holds the corpse exactly where it was")
