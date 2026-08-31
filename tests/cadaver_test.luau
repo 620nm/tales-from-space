@@ -1,5 +1,6 @@
 -- The drawer that is already occupied: what a crewman finds when they
--- pull on `morgue.cadaver`, and what a plain `morgue` never has in it.
+-- pull on `cadaver_chamber.cadaver`, and what a plain
+-- `cadaver_chamber` never has in it.
 --
 -- The whole point of this variant is that the engine decides nothing
 -- about it. The row says a plan, a number and a kit; `content/bodies/
@@ -20,8 +21,8 @@ t.world([==[(
     spawns: [(1, 1)],
     items: [],
     structures: [
-        (2, 1, "morgue.cadaver", { "dir": "east" }),
-        (2, 2, "morgue", { "dir": "east" }),
+        (2, 1, "cadaver_chamber.cadaver", { "dir": "east" }),
+        (2, 2, "cadaver_chamber", { "dir": "east" }),
     ],
 )]==], 0)
 
@@ -35,7 +36,7 @@ assert(#t.bodies_at(3, 1) == 0, "and neither is what it is holding")
 assert(t.structure_at(2, 1).overlays[1] == "morgue2_e",
     "the occupied lamp is lit from the moment the map stands it up")
 
-local occupied = t.target_at(2, 1, "morgue.cadaver")
+local occupied = t.target_at(2, 1, "cadaver_chamber.cadaver")
 assert(occupied ~= nil, "the variant is a real prototype a click can name")
 t.click(attendant, 2, 1, occupied)
 t.tick()
@@ -64,7 +65,7 @@ assert(t.structure_at(2, 1).overlays[1] == "morgue2_e",
     "and the lamp says so again")
 
 -- The plain entry beside it declares no stock at all.
-local plain = t.target_at(2, 2, "morgue")
+local plain = t.target_at(2, 2, "cadaver_chamber")
 assert(t.structure_at(2, 2).overlays[1] == nil, "an empty drawer wears no lamp")
 t.click(attendant, 2, 2, plain)
 t.tick()
@@ -90,11 +91,11 @@ local function rolled_name(seed)
         ],
         spawns: [(1, 1)],
         items: [],
-        structures: [(2, 1, "morgue.cadaver", { "dir": "east" })],
+        structures: [(2, 1, "cadaver_chamber.cadaver", { "dir": "east" })],
     )]==], seed)
     local crew = t.join()
     t.tick()
-    local drawer = t.target_at(2, 1, "morgue.cadaver")
+    local drawer = t.target_at(2, 1, "cadaver_chamber.cadaver")
     t.click(crew, 2, 1, drawer)
     t.tick()
     local rows = t.ledger_rows("body_spawned")
