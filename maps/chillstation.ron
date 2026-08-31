@@ -232,8 +232,8 @@
         // is rolled from structures/locker.luau at roundstart; the map
         // places one variant and carries no duplicate loot vocabulary.
         (11, 5, "locker.tools"),
-        // ---- the morgue rank --------------------------------------
-        // Three drawers on the Chemistry Lab's west wall, opposite the
+        // ---- the cadaver chamber rank --------------------------------------
+        // Three chambers on the Chemistry Lab's west wall, opposite the
         // medical vendors already standing on its north one. This
         // station has no ward, so the room that holds the bench and the
         // medicine is where the dead wait. All three face EAST into the
@@ -247,9 +247,9 @@
         // already occupied. tg fills three trays per morgue area from a
         // roundstart helper (mapping_helpers.dm:920-969); one drawer in
         // three on a station this size is the same idea at this scale.
-        (14, 6, "morgue", { "dir": "east" }),
-        (14, 7, "morgue.cadaver", { "dir": "east" }),
-        (14, 8, "morgue", { "dir": "east" }),
+        (14, 6, "cadaver_chamber", { "dir": "east" }),
+        (14, 7, "cadaver_chamber.cadaver", { "dir": "east" }),
+        (14, 8, "cadaver_chamber", { "dir": "east" }),
         // ---- the hull galleries ----------------------------------
         // Nine panes across the north rank, looking out at the solar
         // array; three west out of Engineering; three east out of the

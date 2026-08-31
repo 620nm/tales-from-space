@@ -1,4 +1,4 @@
--- A morgue drawer as a crewman meets it: an obstacle while shut, a
+-- A cadaver chamber as a crewman meets it: an obstacle while shut, a
 -- slab that rolls out onto the aisle, a body and a dropped thing that
 -- stop existing for everybody else the moment it shuts, the lamp that
 -- says which of those is inside, and the push from within that opens
@@ -8,7 +8,7 @@
 -- `t.target_at` are what any second crewman in the room could see, and
 -- a stowed thing has no tile at all, so there is nothing to filter.
 t.world([==[(
-    name: "morgue bench",
+    name: "cadaver chamber bench",
     legend: {
         ' ': (turf: Space),
         '.': (turf: Floor),
@@ -21,7 +21,7 @@ t.world([==[(
     ],
     spawns: [(1, 1), (3, 1)],
     items: [(3, 1, "headset")],
-    structures: [(2, 1, "morgue", { "dir": "east" })],
+    structures: [(2, 1, "cadaver_chamber", { "dir": "east" })],
 )]==], 7)
 
 local function has(rows, wanted)
@@ -42,7 +42,7 @@ assert(ax == 1 and ay == 1, "the attendant stands beside the drawer")
 local px, py = t.pos(patient)
 assert(px == 3 and py == 1, "the patient stands where the tray will be")
 
-local drawer = t.target_at(2, 1, "morgue")
+local drawer = t.target_at(2, 1, "cadaver_chamber")
 assert(drawer ~= nil, "one targetable drawer")
 local shut = t.structure_at(2, 1)
 assert(shut.state == "closed" and shut.sprite == "morgue1_e",
@@ -65,7 +65,7 @@ assert(open.state == "open" and open.sprite == "morgue0_e",
     "opening selects the authored state and art")
 assert(has(t.sounds(attendant), "morgue_clank"), "the tray is heard rolling")
 local tray = t.structure_at(3, 1)
-assert(tray ~= nil and tray.id == "morgue_tray" and tray.sprite == "morguet_e",
+assert(tray ~= nil and tray.id == "cadaver_drawer" and tray.sprite == "morguet_e",
     "the slab lands on the tile the drawer faces")
 px, py = t.pos(patient)
 assert(px == 3 and py == 1, "the tray arrives under whoever is standing there")
@@ -113,12 +113,12 @@ assert(t.structure_at(2, 1).overlays[1] == "morgue3_e",
 
 assert(#t.ledger_rows("drawer_opened") == 2, "both opens are attributed")
 assert(#t.ledger_rows("drawer_closed") == 2, "both closes are attributed")
-assert(t.ledger_has("DrawerClosed", "morgue"), "the row names the thing")
+assert(t.ledger_has("DrawerClosed", "cadaver chamber"), "the row names the thing")
 
 -- A drawer with nowhere to put its tray refuses, says so, and is still
 -- an obstacle afterwards.
 t.world([==[(
-    name: "walled morgue bench",
+    name: "walled cadaver chamber bench",
     legend: {
         ' ': (turf: Space),
         '.': (turf: Floor),
@@ -131,12 +131,12 @@ t.world([==[(
     ],
     spawns: [(1, 1)],
     items: [],
-    structures: [(2, 1, "morgue", { "dir": "east" })],
+    structures: [(2, 1, "cadaver_chamber", { "dir": "east" })],
 )]==], 7)
 
 local crew = t.join()
 t.tick()
-local walled = t.target_at(2, 1, "morgue")
+local walled = t.target_at(2, 1, "cadaver_chamber")
 _ = t.messages(crew)
 t.click(crew, 2, 1, walled)
 t.tick()

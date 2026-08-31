@@ -1,6 +1,7 @@
--- A morgue drawer: the thing medbay keeps the dead in until somebody
--- fetches them. The engine owns the mechanism — a dense cabinet that
--- slides a dense tray onto the tile it faces, stows bodies and items
+-- A cadaver chamber (tg's morgue): the thing medbay keeps the dead
+-- in until somebody fetches them. The engine owns the mechanism — a
+-- dense cabinet that slides a dense tray onto the tile it faces,
+-- stows bodies and items
 -- with no position at all, and picks one of three lamps for what is
 -- inside. This file is every noun, picture, sound and light that goes
 -- with it.
@@ -21,8 +22,8 @@
 -- (`container_resist_act`, :112-129 — only the crematorium locks), and
 -- the crematorium itself.
 return {
-    id = "morgue",
-    name = "morgue",
+    id = "cadaver_chamber",
+    name = "cadaver chamber",
     sprite = "morgue1_s",
     dense = true,
     opaque = false,
@@ -37,7 +38,7 @@ return {
     drawer = {
         closed = "closed",
         open = "open",
-        tray = "morgue_tray",
+        tray = "cadaver_drawer",
         open_sound = "morgue_clank",
         close_sound = "morgue_clank",
         lights = {
@@ -73,10 +74,10 @@ return {
     variants = {
         cadaver = {
             -- Same name as the plain entry: tg calls every one of them
-            -- a morgue (morgue.dm:226-237), and a drawer that announced
+            -- a morgue (morgue.dm:226-237), and a chamber that announced
             -- what was in it before you opened it would be a different
             -- object.
-            name = "morgue",
+            name = "cadaver chamber",
             drawer = {
                 stock = {
                     { body = "human", damage = { brute = 200 }, outfit = "cadaver" },
