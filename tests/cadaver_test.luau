@@ -85,6 +85,11 @@ assert(t.ledger_has("BodySpawned", "human"), "the spawn is on the record")
 assert(#t.ledger_rows("body_spawned") == 1, "exactly one body was stood up")
 
 -- Determinism: the same seed rolls the same crewman, twice.
+--
+-- Wired like the bench above — this one is about the ROLL and not about
+-- power, and four unfed chambers here would be four true
+-- `corded fixture has no outlet within cord range` warnings drowning
+-- out the one bench that means to trip it.
 local function rolled_name(seed)
     t.world([==[(
         name: "cadaver bench",
@@ -92,15 +97,20 @@ local function rolled_name(seed)
             ' ': (turf: Space),
             '.': (turf: Floor),
             '#': (turf: Wall),
+            'G': (turf: Floor, fixture: Some(Generator)),
+            'a': (turf: Floor, fixture: Some(Apc)),
+            'o': (turf: Floor, fixture: Some(Outlet)),
         },
         rows: [
             "#####",
             "#...#",
+            "#Gao#",
             "#####",
         ],
         spawns: [(1, 1)],
         items: [],
         structures: [(2, 1, "cadaver_chamber.cadaver", { "dir": "east" })],
+        cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
     )]==], seed)
     local crew = t.join()
     t.tick()
