@@ -1,9 +1,10 @@
-# Originals — art drawn for this game
+# Originals — art the baker reads from this tree
 
-Everything here is first-party: sprites made for Tales from Space rather
-than ported from tgstation. A sprite roster in `../sprites/` names these
-files by a path **relative to this directory** — forward slashes, and
-never `..`, which the baker refuses.
+A sprite roster in `../sprites/` names these files by a path **relative
+to this directory** — forward slashes, and never `..`, which the baker
+refuses. Two kinds of file live here: drawings made for this game, and
+tgstation sheets converted into the same Aseprite format so they can be
+edited without a `.dmi`.
 
 ## What the baker accepts
 
@@ -94,3 +95,9 @@ a bake that never happened.
   six with a bar through its vertical midline; the script drops that
   centre bar and squares the count to six by six, which is what keeps
   the centre open.
+- `pipes_n_cables/*.aseprite` — the pipe bitmask, cable, stub and
+  wall-outlet sheets, converted from tgstation's matching `.dmi` files
+  by `cargo run -p xtask -- convert-dmi`. Tags are `{state}-s` (and
+  `-n`/`-e`/`-w` on the outlet). The pixels are tg's; the format is
+  this engine's. Re-convert from the pinned tg revision rather than
+  tracing over them. The source sheets are CC-BY-SA 3.0.

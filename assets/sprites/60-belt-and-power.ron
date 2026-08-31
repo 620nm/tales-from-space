@@ -14,7 +14,7 @@
         ("belt_overlays", "obj/clothing/belt_overlays.dmi"),
         ("belts", "obj/clothing/belts.dmi"),
         ("device_tool", "obj/devices/tool.dmi"),
-        ("cable", "obj/pipes_n_cables/layer_cable.dmi"),
+        ("cable", "pipes_n_cables/layer_cable.aseprite"),
     ],
     groups: [
         // tg's /obj/item/storage/belt/utility: one icon_state,
@@ -45,11 +45,13 @@
 
         // The third power line, blue. tg draws it from the `l4-` states
         // (cable.dm:43-48 -- /obj/structure/cable/layer3 wears
-        // `icon_state = "l4-1-2-4-8-node"`), because the DMI's rows are
+        // `icon_state = "l4-1-2-4-8-node"`), because the sheet's rows are
         // pixel offsets and not layer numbers. The tint is
         // CABLE_HEX_COLOR_BLUE = COLOR_STRONG_BLUE = #1919c8
         // (__DEFINES/colors.dm:32,404). Names and frozen states remain
         // literal: this is not a content-specific series generator.
+        // The converted sheet is 1-dir; convert-dmi still tags south as
+        // `-s`, which is what Sprite(..., s) on an Aseprite sheet looks up.
         (sheet: "cable", tint: Some((25, 25, 200)), sprites: [
             Sprite("cable_l3_none", "l4-noconnection", s),
             Sprite("cable_l3_1", "l4-1", s),
