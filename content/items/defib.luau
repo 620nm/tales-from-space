@@ -8,6 +8,16 @@
 -- two ways out of that: a new heart in the socket, which is surgery, and
 -- this, which is not.
 --
+-- ONE REFUSAL IS DELIBERATELY INVERTED. tg refuses to shock a failing
+-- heart (`DEFIB_FAIL_FAILING_HEART`, carbon.dm:812-822): there, a
+-- failing heart is an organ too ruined to restart and the answer is
+-- surgery. Here failing IS stopped -- it is the state death puts the
+-- heart in -- so a failing heart is the only thing this shock has any
+-- business fixing, and refusing it would mean refusing every patient.
+-- The refusal tg spends on the heart is spent on the BRAIN instead
+-- (`DEFIB_FAIL_FAILING_BRAIN`, :825-835), which is the organ still on a
+-- decay clock and therefore the one that can be too far gone.
+--
 -- WHAT IS NOT PORTED, deliberately: tg's defibrillator is a back-worn
 -- unit with detachable paddles you wield in both hands, a cell, a charge
 -- meter, a safety, a cooldown and a combat mode (defib.dm:14-45,
@@ -97,7 +107,13 @@ if sim ~= nil then
             -- 3 s to place the paddles and 2 s of held charge, which is
             -- tg's five seconds end to end (defib.dm:564-568) minus the
             -- pause that exists so bystanders can step clear of the arc.
-            if sim.do_after(user, sim.ticks(5), {}) ~= "ok" then
+            -- The patient is the wait's SECOND party: a body effect is
+            -- applied without a reach test, so without naming them here
+            -- a medic could charge over a patient, have them dragged
+            -- three rooms off or stowed in a drawer, and still land the
+            -- shock. `options.subject` ends the wait the moment they
+            -- stop being in front of the medic (docs/LUAU-API.md §6).
+            if sim.do_after(user, sim.ticks(5), { subject = patient }) ~= "ok" then
                 sim.sound.play({ asset = "lunatic/tfs:sound/defib_failed", at = user.tile })
                 sim.message.send({ recipient = user, message = "The paddles slip." })
                 return

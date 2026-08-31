@@ -51,12 +51,11 @@ t.world(ARENA, 0)
 local surgeon = t.join()
 t.run_ticks(3)
 
-local function row(panel, label)
-    for _, r in ipairs(panel.readouts or {}) do
+-- The wearables panel is a row model of its own (docs/TGUI.md): one
+-- `labels` row per declared equipment slot, named by the slot's LABEL.
+local function slot_row(panel, label)
+    for _, r in ipairs(panel.labels or {}) do
         if r.label == label then return r end
-    end
-    for _, r in ipairs(panel.toggles or {}) do
-        if r.option == label then return r end
     end
     return nil
 end
@@ -84,8 +83,10 @@ assert(found[1].parts.chest.organs.heart, "with its heart still in its chest")
 
 -- ---- onto the table, and out of the jumpsuit --------------------------
 local optable = t.target_at(3, 2, "optable")
+-- Laying a body out TAKES TIME now (`lay_body_secs`,
+-- content/tuning.luau), so this waits the do_after out.
 t.drag(surgeon, 5, 1, cid, 3, 2, optable)
-t.run_ticks(2)
+t.run_ticks(2 * 20 + 2)
 local function corpse()
     return t.bodies_at(3, 2)[1]
 end
@@ -93,7 +94,7 @@ assert(corpse() ~= nil and corpse().posture == "lying", "laid out on the table")
 
 t.drag(surgeon, 3, 2, cid, 4, 1, t.body_id(surgeon))
 t.run_ticks(2)
-assert(row(t.ui(surgeon), "uniform") ~= nil, "the wardrobe opened")
+assert(slot_row(t.ui(surgeon), "Uniform") ~= nil, "the wardrobe opened")
 t.ui_act(surgeon, "toggle", '{"field":"strip","option":"uniform"}')
 t.run_ticks(90)
 assert(corpse().worn.uniform == nil, "the jumpsuit is off")
