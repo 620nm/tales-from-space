@@ -32,4 +32,16 @@ return {
     slot = "suit",
     worn_sprite = "worn_eva_suit",
     pressure_proof = true,
+    -- Worn over the top of everything, so the jumpsuit underneath is
+    -- out of reach until the suit comes off: tg's HIDEJUMPSUIT, on the
+    -- same /obj/item/clothing/suit/space parent
+    -- (_spacesuits.dm:100). A concealed slot is neither listed with
+    -- its contents nor strippable (docs/TGUI.md, the wearables
+    -- document). tg hides gloves and shoes on the same line; this pack
+    -- declares neither slot, so the uniform is the whole of it.
+    conceals = { "uniform" },
+    -- Eight seconds to get somebody else out of one, verbatim from tg
+    -- (_spacesuits.dm:105). Twice the engine default, which is what
+    -- makes a suited body expensive to loot.
+    strip_secs = 8,
 }
