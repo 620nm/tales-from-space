@@ -20,12 +20,16 @@
 -- (operation_healing.dm:190). Neither is ported, because neither has
 -- anything to do once life is an organ rather than a sum of damage.
 
+-- The chamber is here for one assertion at the very bottom -- a patient
+-- shut in a drawer mid-charge -- and it is unpowered on purpose: what
+-- this spec needs is a drawer that opens and shuts, not a lamp.
 local ARENA = [==[(
     name: "theatre",
     legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
-    rows: [ "#####", "#...#", "#####" ],
-    spawns: [(1, 1), (2, 1)],
+    rows: [ "######", "#....#", "#....#", "######" ],
+    spawns: [(1, 1), (2, 1), (3, 1)],
     items: [ (1, 1, "hemostat"), (1, 1, "defib") ],
+    structures: [(2, 2, "cadaver_chamber", { "dir": "north" })],
 )]==]
 
 local function said(who, needle)
@@ -38,6 +42,7 @@ end
 t.world(ARENA, 0)
 local medic = t.join()
 local patient = t.join()
+local attendant = t.join()   -- somebody with a free hand for the drawer
 t.run_ticks(3)
 local pid = t.body_id(patient)
 
@@ -119,5 +124,60 @@ t.click(medic, 2, 1, pid)
 t.run_ticks(3)
 assert(said(medic, "too far gone"), "there is nothing to shock back")
 assert(t.body(patient).animate == false, "and they stay dead")
+
+-- =====================================================================
+-- The charge is a TWO-PARTY wait. A body effect is applied without a
+-- reach test, so without `options.subject` on the do_after
+-- (content/items/defib.luau) a medic could start the charge, have the
+-- patient dragged into the next room or shut in a drawer, and still
+-- land the shock at the end of it.
+-- =====================================================================
+t.set_organ_damage(patient, "brain", 0)
+t.run_ticks(2)
+assert(t.body(patient).animate == false, "a fresh corpse to work on")
+_ = t.messages(medic)
+
+-- ---- the medic walks off mid-charge ----------------------------------
+-- The USER half, which the ordinary single-party guard already watched.
+-- Here for the contrast with the half below it: a corpse cannot walk
+-- away by itself, so the patient half needs a guard of its own or it has
+-- no way of ending at all.
+t.click(medic, 2, 1, pid)
+t.run_ticks(3)
+assert(said(medic, "charge the defibrillator"), "the charge started")
+for _ = 1, 3 do
+    t.move(medic, "east")
+    t.run_ticks(10)
+end
+assert(t.pos(medic) == 4, "two tiles clear of the patient: " .. t.pos(medic))
+t.run_ticks(120)
+assert(not said(medic, "heart restarts"), "a medic who walked off shocked nobody")
+assert(t.body(patient).animate == false, "still dead")
+for _ = 1, 3 do
+    t.move(medic, "west")
+    t.run_ticks(10)
+end
+assert(t.pos(medic) == 1, "back beside the patient")
+
+-- ---- the patient is taken away mid-charge ----------------------------
+-- A body with no tile is a body that is NOWHERE, and the guard ends the
+-- wait on the same clause that catches one carried off. The drawer's
+-- slab comes out onto the patient's own tile, so shutting it takes them
+-- with it (`sim/drawers.rs`: bodies are not dense and are exactly what a
+-- close is for).
+local chamber = t.target_at(2, 2, "cadaver_chamber")
+t.click(attendant, 2, 2, chamber)
+t.run_ticks(2)
+assert(t.structure_at(2, 1) ~= nil, "the slab is out, under the patient")
+_ = t.messages(medic)
+t.click(medic, 2, 1, pid)
+t.run_ticks(3)
+assert(said(medic, "charge the defibrillator"), "the charge started again")
+t.click(attendant, 2, 2, chamber)
+t.run_ticks(2)
+assert(t.structure_at(2, 1) == nil, "the slab went back in")
+t.run_ticks(140)
+assert(not said(medic, "heart restarts"), "a stowed patient is not shocked")
+assert(t.body(patient).animate == false, "still dead in the drawer")
 
 print("heart life: dying stops the heart, healing does not restart it, a defibrillator does")

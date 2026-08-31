@@ -49,12 +49,19 @@ t.run_ticks(3)
 local function said(who, needle)
     return (" " .. table.concat(t.messages(who), " || ") .. " "):find(needle, 1, true) ~= nil
 end
+-- The wearables panel is a row model of its own (docs/TGUI.md): one
+-- `labels` row per declared equipment slot, named by the slot's LABEL.
+local function slot_row(panel, label)
+    for _, r in ipairs(panel.labels or {}) do
+        if r.label == label then return r end
+    end
+    return nil
+end
+
+-- ...and the operating computer is the ordinary readout model.
 local function row(panel, label)
     for _, r in ipairs(panel.readouts or {}) do
         if r.label == label then return r end
-    end
-    for _, r in ipairs(panel.toggles or {}) do
-        if r.option == label then return r end
     end
     return nil
 end
@@ -87,8 +94,10 @@ end
 
 -- ---- onto the table ---------------------------------------------------
 local optable = t.target_at(3, 2, "optable")
+-- Laying a body out TAKES TIME now (`lay_body_secs`,
+-- content/tuning.luau), so this waits the do_after out.
 t.drag(surgeon, 5, 1, cid, 3, 2, optable)
-t.run_ticks(2)
+t.run_ticks(2 * 20 + 2)
 assert(on_table() ~= nil, "the cadaver is on the table")
 assert(on_table().posture == "lying", "laid out on it")
 
@@ -102,7 +111,8 @@ t.drag(surgeon, 3, 2, cid, 4, 1, t.body_id(surgeon))
 t.run_ticks(2)
 local wardrobe = t.ui(surgeon)
 assert(wardrobe ~= nil, "the drag opened its wearables")
-assert(row(wardrobe, "uniform") ~= nil, "it is wearing the jumpsuit")
+local worn_row = slot_row(wardrobe, "Uniform")
+assert(worn_row ~= nil and worn_row.field == "strip", "it is wearing the jumpsuit")
 t.ui_act(surgeon, "toggle", '{"field":"strip","option":"uniform"}')
 t.run_ticks(90)
 assert(on_table().worn.uniform == nil, "the jumpsuit is off")
