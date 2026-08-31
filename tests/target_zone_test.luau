@@ -82,3 +82,72 @@ parts = t.parts(patient)
 assert(has(parts.l_arm.states, "skin_open"),
     "the aim stayed on the arm: a refused claim moves nothing, not even to the default")
 assert(not has(parts.chest.states, "skin_cut"), "the default zone was never fallen back to")
+
+-- =====================================================================
+-- COMBAT. A swung toolbox aims where the doll points
+-- (`content/items/toolbox.luau` passes `sim.zone(user)` as `aim`), and
+-- an aim is a TRY: the pack declares 80%, +10 against a body that is
+-- down (`content/part_tree.luau`), and the rest of the time the blow
+-- lands wherever the hit weights send it. So this section is
+-- seed-pinned — the assertion is that the aimed zone is where the
+-- damage concentrates, which is only a statement about a fixed roll.
+-- =====================================================================
+local BRAWL = [==[(
+    name: "brawl",
+    legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
+    rows: [ "#####", "#...#", "#####" ],
+    spawns: [(1, 1), (2, 1)],
+    items: [ (1, 1, "toolbox") ],
+)]==]
+
+t.world(BRAWL, 7)
+local attacker = t.join()
+local victim = t.join()
+t.run_ticks(3)
+local vid = t.body_id(victim)
+
+t.click(attacker, 1, 1, t.target_at(1, 1, "toolbox"))
+t.run_ticks(2)
+
+local function brute(zone) return t.parts(victim)[zone].brute or 0 end
+local function swing()
+    t.click(attacker, 2, 1, vid)
+    t.run_ticks(4)
+end
+
+-- Aimed at the head, most of ten swings land on the head. The count is
+-- what the seed above produces; it is above the 5 a hit-weight-only
+-- roll would give the head (weight 1 of 15), which is the whole point.
+assert(t.set_zone(attacker, "head"), "the plan declares a head")
+for _ = 1, 10 do swing() end
+local head, elsewhere = brute("head"), 0
+for _, zone in ipairs({ "chest", "l_arm", "r_arm", "l_leg", "r_leg" }) do
+    elsewhere = elsewhere + brute(zone)
+end
+assert(head + elsewhere == 100, "ten swings of 10 brute all landed somewhere: " .. head + elsewhere)
+assert(head >= 70, "the aimed zone took the bulk of it, not a hit-weight share: " .. head)
+
+-- Move the aim and the damage moves with it. A shorter volley here:
+-- an arm caps at 50 brute (`content/items/human_l_arm.luau`, tg's
+-- LIMB_MAX_HP_DEFAULT) where the head takes 200, and damage past a
+-- part's ceiling is discarded — so ten more swings would measure the
+-- clamp rather than the aim. Four, and the assertion is on the SHARE
+-- each zone gained, which is what "the aim moved" actually means.
+local ZONES = { "head", "chest", "l_arm", "r_arm", "l_leg", "r_leg" }
+local before = {}
+for _, zone in ipairs(ZONES) do before[zone] = brute(zone) end
+
+assert(t.set_zone(attacker, "l_arm"), "the plan declares a left arm")
+for _ = 1, 4 do swing() end
+
+local gained, worst, worst_zone = {}, -1, nil
+for _, zone in ipairs(ZONES) do
+    gained[zone] = brute(zone) - before[zone]
+    if zone ~= "l_arm" and gained[zone] > worst then
+        worst, worst_zone = gained[zone], zone
+    end
+end
+assert(gained.l_arm >= 30,
+    "the second volley followed the aim to the arm: " .. gained.l_arm)
+assert(gained.l_arm > worst,
+    "and the arm took more than any other zone (" .. worst_zone .. " took " .. worst .. ")")
