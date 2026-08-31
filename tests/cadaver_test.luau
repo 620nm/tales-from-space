@@ -5,17 +5,25 @@
 -- The whole point of this variant is that the engine decides nothing
 -- about it. The row says a plan, a number and a kit; `content/bodies/
 -- human.luau` decides that the number is death and says the word.
+--
+-- Wired, because a chamber's lamp reads its own power: the plant, the
+-- controller and the socket sit behind the rank, within cord reach of
+-- both drawers (docs/POWER.md, "Outlets and cords").
 t.world([==[(
     name: "cadaver bench",
     legend: {
         ' ': (turf: Space),
         '.': (turf: Floor),
         '#': (turf: Wall),
+        'G': (turf: Floor, fixture: Some(Generator)),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'o': (turf: Floor, fixture: Some(Outlet)),
     },
     rows: [
         "#######",
         "#.....#",
         "#.....#",
+        "#Gao..#",
         "#######",
     ],
     spawns: [(1, 1)],
@@ -24,6 +32,7 @@ t.world([==[(
         (2, 1, "cadaver_chamber.cadaver", { "dir": "east" }),
         (2, 2, "cadaver_chamber", { "dir": "east" }),
     ],
+    cables: [(1, 3, 2), (2, 3, 3), (3, 3, 1)],
 )]==], 0)
 
 local attendant = t.join()
