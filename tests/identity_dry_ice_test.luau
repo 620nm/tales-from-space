@@ -113,6 +113,22 @@ local function tile_co2(x, y)
     return (gases and gases.co2) or 0.0
 end
 
+-- Every mole of carbon in the room's air, plus whatever the settling
+-- sweep booked off a tile that went quiet holding a trace of it
+-- (lunatic docs/MATTER-WORLD.md §3 step 8). Sublimated gas does not
+-- stay over the ice that made it -- it crosses a link as soon as the
+-- raw imbalance is worth chasing -- so what a spill weighs is the
+-- ROOM's carbon and never one tile's.
+local function room_co2()
+    local n = t.nullified().co2 or 0.0
+    for x = 1, 5 do
+        for y = 1, 3 do
+            n = n + tile_co2(x, y)
+        end
+    end
+    return n
+end
+
 -- Dock the bottle, dial the chamber, and let it get there. The
 -- thermostat works both ways -- it closes a fixed share of the gap to
 -- the setpoint every pass, from whichever side it is on
@@ -260,16 +276,45 @@ undock()
 -- ---------------------------------------------------------------
 local ice = solid(jar)
 local deck_k = t.room_temperature(1, 3)
+local carbon_0 = room_co2()
 t.click(p, 1, 3)
 t.run_ticks(4)
-near(tile_co2(1, 3), 0.0, 1e-9, "the moment it lands it is not gas yet -- it is ICE on the deck")
+-- Four ticks in, what is on the deck is still ICE. Sublimation has
+-- begun -- the tile's own vapour is carried off as soon as the raw
+-- imbalance across a link is worth chasing (lunatic
+-- docs/MATTER-WORLD.md §3 step 4), so the jar starts losing mass at
+-- once instead of stalling under its own gas -- but a few per cent of
+-- it has gone, not the whole, which is the claim: a jar of dry ice put
+-- down is a solid on the floor and not a puff.
+assert(
+    tile_co2(1, 3) < ice * 0.15,
+    "the moment it lands it is still ICE on the deck: "
+        .. tile_co2(1, 3) .. " gas of " .. ice .. " mol"
+)
 assert(t.room_temperature(1, 3) < deck_k - 0.5,
     "and it is already cooling the tile: " .. deck_k .. " -> " .. t.room_temperature(1, 3))
 
 t.run_seconds(30)
-near(tile_co2(1, 3), ice, 1e-3, "half a minute later it is all gas: " .. tile_co2(1, 3) .. " mol")
+-- Weighed over the room. The ice's whole mass is gas half a minute
+-- later, and by then it has spread off the tile it sublimated on --
+-- which is why the tile itself is no longer the place to read it.
+near(
+    room_co2() - carbon_0,
+    ice,
+    1e-3,
+    "half a minute later it is all gas: " .. (room_co2() - carbon_0) .. " mol"
+)
+-- The far side barely moved: a fifth of a kelvin, against the whole
+-- room's worth of deck it is standing on. It moves at all because the
+-- cold gas the ice made now SPREADS -- the share carries it as soon as
+-- the raw imbalance across a link is worth chasing (lunatic
+-- docs/MATTER-WORLD.md §3 step 4) -- and cold air arriving is the only
+-- thing that could have cooled it, since the sky is inert and nothing
+-- else in the room is running. The claim was never that the far tile is
+-- untouched; it is that the GAP between the two tiles is the ice, which
+-- is the assertion below.
 local control = t.room_temperature(4, 3)
-near(control, 293.15, 0.01, "the far side of the room never moved")
+near(control, 293.15, 0.5, "the far side of the room hardly moved")
 assert(t.room_temperature(1, 3) < control - 0.3,
     "and the tile the ice was on is still the cold one: "
         .. t.room_temperature(1, 3) .. " vs " .. control)

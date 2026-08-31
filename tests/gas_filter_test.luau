@@ -200,14 +200,26 @@ assert(
     t.pipe_pressure(IN_X, IN_Y) < 5.0,
     "the input main is drained: " .. t.pipe_pressure(IN_X, IN_Y)
 )
+-- `t.nullified` is part of "somewhere". A run the filter has separated
+-- is left with a few micromoles of the gas it no longer carries, under
+-- the floor the engine still chases, and the settling sweep books those
+-- off the line (lunatic docs/MATTER-WORLD.md §3 step 8). Booked, not
+-- lost: the claim is that every mole is accounted for, not that none of
+-- them ever left a pipe.
 near(
-    gas(IN_X, IN_Y, "o2") + gas(SIDE_X, SIDE_Y, "o2") + gas(OUT_X, OUT_Y, "o2"),
+    gas(IN_X, IN_Y, "o2")
+        + gas(SIDE_X, SIDE_Y, "o2")
+        + gas(OUT_X, OUT_Y, "o2")
+        + (t.nullified().o2 or 0.0),
     books_o2,
     1e-6,
     "every mole of oxygen is still somewhere"
 )
 near(
-    gas(IN_X, IN_Y, "n2") + gas(SIDE_X, SIDE_Y, "n2") + gas(OUT_X, OUT_Y, "n2"),
+    gas(IN_X, IN_Y, "n2")
+        + gas(SIDE_X, SIDE_Y, "n2")
+        + gas(OUT_X, OUT_Y, "n2")
+        + (t.nullified().n2 or 0.0),
     books_n2,
     1e-6,
     "and so is every mole of nitrogen"

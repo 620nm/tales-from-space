@@ -308,7 +308,16 @@ assert(
 )
 -- The same ten helpings the bottle made, to within the whisker of
 -- vapour an open glass loses that a corked one keeps.
-near(room_co2(), TEN_STEPS_CO2, 1e-5, "ten steps of it, all of it breathed out")
+-- Plus the sweep's register: carbon that reached the room arrives thin,
+-- spread over six tiles, and a room that goes quiet has whatever is left
+-- under the floor booked off it (lunatic docs/MATTER-WORLD.md §3 step 8).
+-- It left the bottle either way, which is the claim.
+near(
+    room_co2() + (t.nullified().co2 or 0.0),
+    TEN_STEPS_CO2,
+    1e-5,
+    "ten steps of it, all of it breathed out"
+)
 -- And the lid held throughout. The bottle went on fermenting while the
 -- beaker did, and a decay tails off rather than stopping dead, so its
 -- unit of sugar is still not spent after twenty steps -- but every mole

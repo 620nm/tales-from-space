@@ -343,7 +343,17 @@ assert(
     pipe_total(5, 1) < n_pipe_0 * 1e-6,
     "the run is spent -- an injector has no notion of enough: " .. pipe_total(5, 1)
 )
-near(room_moles(ROOM), n_room_0 + n_pipe_0, 1e-6, "every mole of it is in the room")
+-- Plus the settling sweep's register: an injector that has emptied a run
+-- into a room leaves the last micromoles of it spread under the floor
+-- the share chases, and the sweep books those off the deck (lunatic
+-- docs/MATTER-WORLD.md §3 step 8). Still accounted for, which is the
+-- claim being made.
+near(
+    room_moles(ROOM) + t.nullified_moles(),
+    n_room_0 + n_pipe_0,
+    1e-6,
+    "every mole of it is in the room"
+)
 
 -- And then let it stand. Conduction into the deck stops at half a
 -- kelvin of disagreement (tg's MINIMUM_TEMPERATURE_DELTA_TO_CONSIDER,
