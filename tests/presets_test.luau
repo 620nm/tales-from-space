@@ -224,11 +224,18 @@ assert(in_o2 > 0.5 and in_n2 > 1.0, "over the air already in it: " .. in_o2 .. "
 
 -- Both output nets are sealed runs, so the whole ledger is the input
 -- net, the two outputs, and the chamber that feeds them.
+-- Everywhere a mole of one gas can be: the three runs, the chamber over
+-- them, and the settling sweep's register. The register belongs in a
+-- conservation sum because that is what it is FOR -- a separated run
+-- keeps a few micromoles of the gas it no longer carries, under the
+-- floor the share still chases, and the sweep books them off the line
+-- rather than dropping them (lunatic docs/MATTER-WORLD.md §3 step 8).
 local function books(which)
     return gas(3, 1, which)
         + gas(4, 2, which)
         + gas(5, 1, which)
         + ((t.room_gas(1, 1) or {})[which] or 0.0)
+        + (t.nullified()[which] or 0.0)
 end
 local books_co2, books_o2, books_n2 = books("co2"), books("o2"), books("n2")
 

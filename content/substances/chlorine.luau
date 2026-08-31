@@ -56,9 +56,14 @@ local content = {
     density = { liquid = 1.468 },
     inhale = 0.9,
     metabolism_rate = 0.02,
-    -- The yellow-green everybody recognizes, over tg's own visibility
-    -- threshold: a quarter mole before it shows at all, full opacity at
-    -- twenty times that.
+    -- The yellow-green everybody recognizes, and it shows SOONER than
+    -- tg's gases do: 0.15 mol against tg's MOLES_GAS_VISIBLE of 0.25,
+    -- because a chlorine leak the crew cannot see until it is at a
+    -- quarter mole is a leak they find by breathing it. Full opacity at
+    -- twenty times the threshold, which is tg's ramp. Well clear of the
+    -- floor the engine refuses under — the quantity a room that has
+    -- gone quiet may have swept off it (lunatic docs/MATTER-WORLD.md §3
+    -- step 8).
     visible = { moles = 0.15, factor = 20, tint = "#C4D64A" },
     -- Through glass, the colour its reagent wears
     -- (tg: other_reagents.dm:1090).
