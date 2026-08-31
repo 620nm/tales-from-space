@@ -1,4 +1,4 @@
--- One of the six limbs a human plan names (docs/BIOLOGY.md §1.1).
+-- One of the seven parts a human plan names (docs/BIOLOGY.md §1.1).
 -- A part is an ITEM, so it is held, dropped, stored, thrown and
 -- examined by every path an item has, and a dismembered limb is simply
 -- this thing leaving its slot.

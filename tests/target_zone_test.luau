@@ -84,6 +84,57 @@ assert(has(parts.l_arm.states, "skin_open"),
 assert(not has(parts.chest.states, "skin_cut"), "the default zone was never fallen back to")
 
 -- =====================================================================
+-- THE NUMBERED KEYS. A browser never sends a key: it reads the doll
+-- roster the server pushed, finds the row sitting on the number that
+-- was pressed, and claims that row's id
+-- (`crates/lunatic-client/src/doll.rs::zone_for_slot`, which is unit
+-- tested there against ids that mean nothing). `t.doll` is that same
+-- roster, so this section presses Numpad 2 the way a browser does.
+--
+-- 2 is tg's groin key (`target_body_groin`,
+-- code/datums/keybinding/mob.dm:217-222) and this plan hangs its pelvis
+-- there.
+-- =====================================================================
+local function zone_for_slot(who, slot)
+    for _, row in ipairs(t.doll(who)) do
+        if row.slot == slot then return row.id end
+    end
+    return nil
+end
+
+assert(zone_for_slot(surgeon, 2) == "pelvis", "Numpad 2 aims at the pelvis")
+assert(zone_for_slot(surgeon, 5) == "chest", "and 5 is still the chest")
+assert(zone_for_slot(surgeon, 7) == nil, "7 is tg's eyes and this plan has none")
+
+-- The doll rectangle the pelvis owns is tg's own groin band -- icon_y
+-- 10..13, icon_x 12..20 (get_zone_at, screen_objects.dm:764-800) -- and
+-- a click in the middle of it is what a mouse does with that number.
+for _, row in ipairs(t.doll(surgeon)) do
+    if row.id == "pelvis" then
+        assert(math.abs(row.rect[2] - 19 / 32) < 1e-6,
+            "the band starts where tg's does: " .. row.rect[2])
+        assert(math.abs(row.rect[4] - 4 / 32) < 1e-6,
+            "and is four pixels deep: " .. row.rect[4])
+    end
+end
+
+-- ...and the key is an AIM, so the next cut lands there. The jumpsuit
+-- came off at the top of this file, which is what makes the pelvis
+-- reachable at all (tg jumpsuits are body_parts_covered CHEST|GROIN|
+-- LEGS|ARMS, clothing/under/_under.dm:8).
+assert(t.set_zone(surgeon, zone_for_slot(surgeon, 2)), "the plan declares a pelvis")
+t.drop(surgeon)
+t.tick()
+t.click(surgeon, 1, 1, t.target_at(1, 1, "scalpel"))
+t.run_ticks(2)
+t.click(surgeon, PX, PY, pid)
+t.run_ticks(math.ceil(1.6 * 20) + 3)
+
+parts = t.parts(patient)
+assert(has(parts.pelvis.states, "skin_cut"), "the pelvis was cut: that is where the aim was")
+assert(not has(parts.chest.states, "skin_cut"), "and the chest above it was not")
+
+-- =====================================================================
 -- COMBAT. A swung toolbox aims where the doll points
 -- (`content/items/toolbox.luau` passes `sim.zone(user)` as `aim`), and
 -- an aim is a TRY: the pack declares 80%, +10 against a body that is
@@ -121,7 +172,7 @@ end
 assert(t.set_zone(attacker, "head"), "the plan declares a head")
 for _ = 1, 10 do swing() end
 local head, elsewhere = brute("head"), 0
-for _, zone in ipairs({ "chest", "l_arm", "r_arm", "l_leg", "r_leg" }) do
+for _, zone in ipairs({ "chest", "pelvis", "l_arm", "r_arm", "l_leg", "r_leg" }) do
     elsewhere = elsewhere + brute(zone)
 end
 assert(head + elsewhere == 100, "ten swings of 10 brute all landed somewhere: " .. head + elsewhere)
@@ -133,7 +184,7 @@ assert(head >= 70, "the aimed zone took the bulk of it, not a hit-weight share: 
 -- part's ceiling is discarded — so ten more swings would measure the
 -- clamp rather than the aim. Four, and the assertion is on the SHARE
 -- each zone gained, which is what "the aim moved" actually means.
-local ZONES = { "head", "chest", "l_arm", "r_arm", "l_leg", "r_leg" }
+local ZONES = { "head", "chest", "pelvis", "l_arm", "r_arm", "l_leg", "r_leg" }
 local before = {}
 for _, zone in ipairs(ZONES) do before[zone] = brute(zone) end
 

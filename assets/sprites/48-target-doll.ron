@@ -12,8 +12,11 @@
 // client draws the highlight as its own layer over the figure.
 //
 // Only the parts `content/bodies/human.luau` declares are here.
-// screen_gen.dmi also carries `eyes`, `mouth` and `groin` — tg's precise
-// zones — and a plan that grows those parts adds the states then.
+// screen_gen.dmi also carries `eyes` and `mouth` — tg's two remaining
+// precise zones — and a plan that grows those parts adds the states
+// then. `groin` is baked: the plan has a pelvis, and tg's state name
+// for the band it lights up is the zone string `groin` even though the
+// part this pack hangs there is called the pelvis.
 //
 // One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
 // this directory is baked, in FILE-NAME order and then entry order.
@@ -31,5 +34,6 @@
         ("target_r_arm", Dmi("@hud_gen", "r_arm", 0)),
         ("target_l_leg", Dmi("@hud_gen", "l_leg", 0)),
         ("target_r_leg", Dmi("@hud_gen", "r_leg", 0)),
+        ("target_pelvis", Dmi("@hud_gen", "groin", 0)),
     ],
 )
