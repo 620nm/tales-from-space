@@ -133,21 +133,31 @@ assert(t.ledger_has("DrawerClosed", "cadaver chamber"), "the row names the thing
 
 -- A drawer with nowhere to put its tray refuses, says so, and is still
 -- an obstacle afterwards.
+--
+-- Wired for the same reason the bench above is: this one is about the
+-- refusal, not about power, and an unfed chamber here would be a true
+-- `corded fixture has no outlet within cord range` warning drowning out
+-- the one bench that means to trip it.
 t.world([==[(
     name: "walled cadaver chamber bench",
     legend: {
         ' ': (turf: Space),
         '.': (turf: Floor),
         '#': (turf: Wall),
+        'G': (turf: Floor, fixture: Some(Generator)),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'o': (turf: Floor, fixture: Some(Outlet)),
     },
     rows: [
-        "####",
-        "#..#",
-        "####",
+        "#####",
+        "#..##",
+        "#Gao#",
+        "#####",
     ],
     spawns: [(1, 1)],
     items: [],
     structures: [(2, 1, "cadaver_chamber", { "dir": "east" })],
+    cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
 )]==], 7)
 
 local crew = t.join()
