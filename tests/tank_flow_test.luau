@@ -11,6 +11,15 @@
 -- out by VOLUME, so a settled vessel-and-run is one body at one molar
 -- density, at nRT/V over the whole of it.
 
+-- NOBODY IN HERE IS BREATHING. A crewman with lungs is a chemical
+-- plant standing in the room: his lungs are a driven vessel that holds
+-- several litres of the air inside itself and turns what it takes in
+-- into something else (docs/BIOLOGY.md, `sim/holder/bellows.rs`). That
+-- is a source and a sink, and the books below are the ATMOSPHERICS
+-- engine's -- so the crew are switched off as scaffolding, the same
+-- standing `t.set_health` has.
+t.set_breathing(false)
+
 local R = 8.314
 local T20C = 293.15
 local TANK_M3 = 2.5

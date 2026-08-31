@@ -31,6 +31,15 @@
 -- -- the element under it works four times as often, at the atmos
 -- cadence, so a sample taken between sweeps catches a bottle that has
 -- been warmed but not yet relaxed.
+-- NOBODY IN HERE IS BREATHING. A crewman with lungs is a chemical
+-- plant standing in the room: his lungs are a driven vessel that holds
+-- several litres of the air inside itself and turns what it takes in
+-- into something else (docs/BIOLOGY.md, `sim/holder/bellows.rs`). That
+-- is a source and a sink, and the books below are the ATMOSPHERICS
+-- engine's -- so the crew are switched off as scaffolding, the same
+-- standing `t.set_health` has.
+t.set_breathing(false)
+
 local SWEEP = 40
 
 -- Clausius-Clapeyron for water, off the substance file's own numbers
