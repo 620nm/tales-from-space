@@ -1,4 +1,5 @@
-// Furniture whose picture is its own: the frame a table is built on.
+// Furniture whose picture is its own: the frame a table is built on,
+// and the operating table.
 //
 // One family of `tfs/assets/sprites.ron`'s roster. Every .ron in this
 // directory is baked, in FILE-NAME order and then expansion order, so
@@ -16,8 +17,20 @@
     // Sheet aliases are local to this family; @names below resolve here.
     sheets: [
         ("structures", "obj/structures.dmi"),
+        ("surgery_table", "obj/medical/surgery_table.dmi"),
     ],
     sprites: [
         ("table_frame", Dmi("@structures", "table_frame", 0)),
+        // The operating table, off its own sheet rather than the table
+        // family's, because tg gives it `smoothing_flags = NONE` and a
+        // private icon precisely so it never joins a row
+        // (`/obj/structure/table/optable`,
+        // code/game/objects/structures/tables_racks.dm:898-903).
+        //
+        // NOT PORTED: the `surgery_table_linked` and
+        // `surgery_table_unlinked` states on the same sheet. They say
+        // whether an operating computer has claimed this table, which
+        // needs the patient-presence tracking this game does not keep.
+        ("optable", Dmi("@surgery_table", "surgery_table", 0)),
     ],
 )

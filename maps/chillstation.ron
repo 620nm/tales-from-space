@@ -250,6 +250,14 @@
         (14, 6, "cadaver_chamber", { "dir": "east" }),
         (14, 7, "cadaver_chamber.cadaver", { "dir": "east" }),
         (14, 8, "cadaver_chamber", { "dir": "east" }),
+        // The operating table, east of the operating computer at
+        // (23, 5) and so inside the four tiles that console reads. It
+        // is the only surface in the station worth cutting somebody
+        // open on -- everywhere else is deck or an ordinary table --
+        // and it stands in the open on purpose: a surgeon works from
+        // the tile beside it, and a body is dragged onto it from any
+        // of the three.
+        (24, 5, "optable"),
         // ---- the hull galleries ----------------------------------
         // Nine panes across the north rank, looking out at the solar
         // array; three west out of Engineering; three east out of the
@@ -703,12 +711,11 @@
         (24, 4, "chemdrobe"),
         // The operating computer, one tile south of the medical shelf
         // and three of the lab's own socket at (21, 4). tg stands one
-        // beside an operating table; this station has no table, and the
-        // machine does not need one -- it reads the four tiles it
-        // faces, so a patient laid on the deck at (22, 5), (24, 5) or
-        // (23, 6) is a patient it can see. It stands in the open rather
-        // than on the wall rank for exactly that reason: a console with
-        // its back to a room has three tiles somebody can lie on.
+        // beside an operating table and so does this: the table is at
+        // (24, 5), one of the four tiles this console reads. It stands
+        // in the open rather than on the wall rank so the other three
+        // stay usable -- a patient laid on the deck at (22, 5) or
+        // (23, 6) is a patient it can see too.
         (23, 5, "operating_computer"),
         // The pipe dispenser, corded to the outlet beside it. Every
         // fitting the department is built out of comes off this shelf,
