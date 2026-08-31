@@ -241,6 +241,23 @@ local function pipe(key)
     return (held and held[key]) or 0.0
 end
 
+-- ...and the third place a mole of this can be: INSIDE SOMEBODY. Lungs
+-- are a driven vessel (docs/BIOLOGY.md, `sim/holder/bellows.rs`) --
+-- several litres of the room, held, and cycled a stroke at a time --
+-- so a crewman standing in a chamber that is being scrubbed is
+-- carrying a share of what left the air. The books below weigh him,
+-- because "not lost" has to mean not lost anywhere.
+local function lungs(key)
+    local n = 0.0
+    for _, who in ipairs({ reader, diver }) do
+        local seated = t.sockets(who).lungs.seated
+        local held = seated and t.vessel(seated)
+        local rows = held and held.contents[key]
+        n = n + ((rows and rows.gas) or 0.0)
+    end
+    return n
+end
+
 -- SURFACE 1 -- THE CANISTER. The gauge and the itemised contents are
 -- the same reading a beaker gives, because a canister IS a beaker with
 -- a thicker wall (docs/CHEMISTRY.md 1).
@@ -362,6 +379,7 @@ assert(sleepy_on == false, "and starts unselected")
 -- is what a real station answers with a plant at the far end.
 local before_room = room("n2o")
 local before_pipe = pipe("n2o")
+local before_lungs = lungs("n2o")
 t.ui_act(diver, "toggle", '{"field":"filter","option":"n2o"}')
 t.run_ticks(2)
 t.ui_act(diver, "toggle", '{"field":"power"}')
@@ -369,9 +387,10 @@ t.run_seconds(120)
 
 local moved = before_room - room("n2o")
 assert(moved > 0.5, "the scrubber cleared it out of the air: " .. moved .. " mol")
-near(pipe("n2o") - before_pipe, moved, 1e-6,
-    "and every mole of it is in the waste main, not lost: "
-        .. (pipe("n2o") - before_pipe) .. " vs " .. moved)
+local landed = (pipe("n2o") - before_pipe) + (lungs("n2o") - before_lungs)
+near(landed, moved, 1e-6,
+    "and every mole of it is in the waste main or in a pair of lungs, "
+        .. "not lost: " .. landed .. " vs " .. moved)
 
 -- ---------------------------------------------------------------
 -- THREE: ONE ID, SAID ONCE.
