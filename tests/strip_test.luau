@@ -36,14 +36,21 @@ local function has(list, id)
     for _, v in ipairs(list) do if v == id then return true end end
     return false
 end
+-- One panel row, by the slot LABEL on its left -- which is the only
+-- half of a row that never changes.  Every declared slot is a row, in
+-- the order content/part_tree.luau declares them, so this never has to
+-- ask what the slot currently holds to find it.
 local function row(panel, label)
-    for _, r in ipairs(panel.readouts or {}) do
+    for _, r in ipairs(panel.labels or {}) do
         if r.label == label then return r end
     end
-    for _, r in ipairs(panel.toggles or {}) do
-        if r.option == label then return r end
-    end
     return nil
+end
+
+local function row_labels(panel)
+    local out = {}
+    for _, r in ipairs(panel.labels or {}) do table.insert(out, r.label) end
+    return table.concat(out, ",")
 end
 
 -- ---- the drag opens the wardrobe --------------------------------------
@@ -53,11 +60,15 @@ t.run_ticks(2)
 local panel = t.ui(crewman)
 assert(panel ~= nil, "dragging a body onto yourself opens its wearables")
 assert(panel.presentation == "choices", "a slot grid is a list of choices")
-local uniform = row(panel, "uniform")
+local order = row_labels(panel)
+local uniform = row(panel, "Uniform")
 assert(uniform ~= nil and uniform.field == "strip", "the filled slot has a strip button")
+assert(uniform.text == "grey jumpsuit", "and the button IS the garment")
 -- An empty slot the crewman is not holding anything for is a row that
 -- says so, and carries no button at all.
-assert(row(panel, "Suit") ~= nil, "the empty suit slot is still named")
+local suit = row(panel, "Suit")
+assert(suit ~= nil and suit.row == "word" and suit.text == "empty",
+    "the empty suit slot is still named, and says it is bare")
 
 -- ---- the strip: parked, then landed -----------------------------------
 t.ui_act(crewman, "toggle", '{"field":"strip","option":"uniform"}')
@@ -101,8 +112,13 @@ assert(t.hands(crewman).held == "uniform_grey", "the jumpsuit is back in hand")
 
 t.drag(crewman, CX, CY, cid, AX, AY, aid)
 t.run_ticks(2)
-local refill = row(t.ui(crewman), "uniform")
+local after = t.ui(crewman)
+assert(row_labels(after) == order,
+    "the rows did not move when the jumpsuit came off: " .. row_labels(after) .. " vs " .. order)
+local refill = row(after, "Uniform")
 assert(refill ~= nil and refill.field == "dress", "the empty slot offers to be filled")
+assert(refill.text == "put on grey jumpsuit",
+    "and a dress button can never be misread as a strip one: " .. tostring(refill.text))
 
 local dressed = #t.ledger_rows("Dressed")
 t.ui_act(crewman, "toggle", '{"field":"dress","option":"uniform"}')
