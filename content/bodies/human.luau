@@ -43,6 +43,11 @@ local content = {
     },
     hands = 2,                 -- default_num_hands, living_defines.dm:120
     default_zone = "chest",
+    -- The selector's own figure, off tg's default HUD style
+    -- (icons/hud/screen_midnight.dmi, `ui_style`); the per-part
+    -- `doll_sprite` highlights above are the overlay states tg draws
+    -- over it (screen_objects.dm:817-821).
+    doll_sprite = "target_doll",
     knockdown = true,
     pool_coeff = { brute = 1, burn = 1, oxy = 1, tox = 1 },   -- pool_coeff, basic.dm:51
 
@@ -50,13 +55,37 @@ local content = {
     -- limb 4 (code/__HELPERS/mobs.dm:36-41). Losing the head or the
     -- chest is death — the brain leaves with the head
     -- (organ_movement.dm:210-213).
+    --
+    -- `doll` is the target selector's region for the part, `{x, y, w, h}`
+    -- in the unit square with the origin top left, and it is tg's own
+    -- pixel switch converted: `get_zone_at`
+    -- (code/_onclick/hud/screen_objects/screen_objects.dm:764-800) reads
+    -- a 32x32 icon in BYOND's bottom-up coordinates, so an icon_y range
+    -- a..b becomes y = (32 - b) / 32 with h = (b - a + 1) / 32, and an
+    -- icon_x range c..d becomes x = (c - 1) / 32 with w = (d - c + 1)/32.
+    -- The rectangles therefore line up with `target_doll` below, which
+    -- is the picture tg's switch was drawn against.
+    --
+    -- ONE DIVERGENCE: tg's band at icon_y 10..13, icon_x 12..20 is the
+    -- groin, and this body has no groin part. Rather than leave a dead
+    -- strip through the middle of the torso, the chest takes it — so
+    -- the chest reads icon_y 10..22 where tg reads 14..22.
+    --
+    -- `target_slot` is which numbered target key aims here, laid out as
+    -- the numpad over a body facing you: 8 the head, 4/5/6 the arms and
+    -- the chest, 1/3 the legs (code/datums/keybinding/mob.dm:161-229).
+    -- 2, 7 and 9 are tg's groin, eyes and mouth and stay unbound,
+    -- because this body has no such parts and a key that aims at
+    -- nothing is better than a key that aims somewhere surprising.
+    -- Several parts may share a slot; the key then cycles them, which is
+    -- how tg's 8 walks head -> eyes -> mouth and how it would here.
     parts = {
-        { id = "head",  label = "head",      doll = { 0.38, 0.00, 0.24, 0.20 }, default = "human_head",  hit_weight = 1, vital = true },
-        { id = "chest", label = "chest",     doll = { 0.30, 0.20, 0.40, 0.35 }, default = "human_chest", hit_weight = 1, vital = true },
-        { id = "l_arm", label = "left arm",  doll = { 0.10, 0.20, 0.20, 0.40 }, default = "human_l_arm", hit_weight = 4, hand = 1 },
-        { id = "r_arm", label = "right arm", doll = { 0.70, 0.20, 0.20, 0.40 }, default = "human_r_arm", hit_weight = 4, hand = 2 },
-        { id = "l_leg", label = "left leg",  doll = { 0.30, 0.55, 0.20, 0.45 }, default = "human_l_leg", hit_weight = 4 },
-        { id = "r_leg", label = "right leg", doll = { 0.50, 0.55, 0.20, 0.45 }, default = "human_r_leg", hit_weight = 4 },
+        { id = "head",  label = "head",      doll = { 0.34375, 0.06250, 0.28125, 0.25000 }, doll_sprite = "target_head",  target_slot = 8, default = "human_head",  hit_weight = 1, vital = true },
+        { id = "chest", label = "chest",     doll = { 0.34375, 0.31250, 0.28125, 0.40625 }, doll_sprite = "target_chest", target_slot = 5, default = "human_chest", hit_weight = 1, vital = true },
+        { id = "l_arm", label = "left arm",  doll = { 0.62500, 0.31250, 0.12500, 0.40625 }, doll_sprite = "target_l_arm", target_slot = 6, default = "human_l_arm", hit_weight = 4, hand = 1 },
+        { id = "r_arm", label = "right arm", doll = { 0.21875, 0.31250, 0.12500, 0.40625 }, doll_sprite = "target_r_arm", target_slot = 4, default = "human_r_arm", hit_weight = 4, hand = 2 },
+        { id = "l_leg", label = "left leg",  doll = { 0.50000, 0.71875, 0.18750, 0.28125 }, doll_sprite = "target_l_leg", target_slot = 3, default = "human_l_leg", hit_weight = 4 },
+        { id = "r_leg", label = "right leg", doll = { 0.28125, 0.71875, 0.18750, 0.28125 }, doll_sprite = "target_r_leg", target_slot = 1, default = "human_r_leg", hit_weight = 4 },
     },
 
     -- The socket carries the zone and the tags; the organ carries its

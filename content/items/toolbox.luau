@@ -21,7 +21,15 @@ if sim ~= nil then
         local target, victim, item = ev.target, ev.target, ev.target
         local info = { surgery_refusal = ev.refusal }
         local _self, _victim = self, victim
-        sim.damage.apply({ target = target, amounts = { brute = 10 } })
+        -- Where the swinger is pointing on the doll (tg's
+        -- `zone_selected`). `aim`, not `part`: a swung toolbox TRIES
+        -- for the part and mostly gets it, at the `aim` odds
+        -- `content/part_tree.luau` declares — 80%, +10 while the target
+        -- is down — and otherwise lands wherever the hit weights say.
+        -- That is tg's `get_random_valid_zone`
+        -- (code/_onclick/item_attack.dm:321-326), and it is what keeps
+        -- a hammer from being a scalpel.
+        sim.damage.apply({ target = target, amounts = { brute = 10 }, aim = sim.zone(user) })
         sim.sound.play({ asset = "lunatic/tfs:sound/smash", at = target.tile })
         -- One whole sentence per message, the name passed as an
         -- argument rather than glued on with `..`: a fragment joined in

@@ -1,0 +1,35 @@
+// The target selector: the figure a player clicks to choose which part
+// of a body their next act reaches, and one highlight per part.
+//
+// tg builds this out of two sheets. The figure is `zone_sel` off the
+// HUD style the mob is wearing — the default style is
+// `icons/hud/screen_midnight.dmi` (`ui_style`, code/_onclick/hud/
+// human.dm:19) — and every highlight is a state on screen_gen.dmi named
+// exactly the zone it lights up, drawn over the figure at alpha 128
+// (`/obj/effect/overlay/zone_sel`, `zone_sel/update_overlays`,
+// code/_onclick/hud/screen_objects/screen_objects.dm:751-821). The
+// alpha is NOT PORTED: this roster is one opaque cell per name, and the
+// client draws the highlight as its own layer over the figure.
+//
+// Only the parts `content/bodies/human.luau` declares are here.
+// screen_gen.dmi also carries `eyes`, `mouth` and `groin` — tg's precise
+// zones — and a plan that grows those parts adds the states then.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then entry order.
+(
+    // Sheet aliases are local to this family; @names below resolve here.
+    sheets: [
+        ("hud_style", "hud/screen_midnight.dmi"),
+        ("hud_gen", "hud/screen_gen.dmi"),
+    ],
+    sprites: [
+        ("target_doll", Dmi("@hud_style", "zone_sel", 0)),
+        ("target_head", Dmi("@hud_gen", "head", 0)),
+        ("target_chest", Dmi("@hud_gen", "chest", 0)),
+        ("target_l_arm", Dmi("@hud_gen", "l_arm", 0)),
+        ("target_r_arm", Dmi("@hud_gen", "r_arm", 0)),
+        ("target_l_leg", Dmi("@hud_gen", "l_leg", 0)),
+        ("target_r_leg", Dmi("@hud_gen", "r_leg", 0)),
+    ],
+)
