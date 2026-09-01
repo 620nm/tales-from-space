@@ -1,0 +1,71 @@
+GIMP Palette
+Name: Tales from Space
+Columns: 8
+# Station palette measured from the tgstation icons survey
+# (1,471-sheet census, 2026-08-30). Ramps hold hue constant;
+# saturation rises as value drops; darkest step doubles as the
+# outline. Avoid pure #000000 on solids. Signal colours are the
+# only full-saturation paint and take no outline.
+# 1 · Navy-tinted machine steel — lathes/nuke/pods family, H 228-232, the modern structure ramp
+ 21  24  36	navy steel 1 (outline) #151824
+ 33  35  48	navy steel 2 #212330
+ 55  58  75	navy steel 3 #373a4b
+ 71  74  91	navy steel 4 #474a5b
+ 96  99 117	navy steel 5 #606375
+112 115 135	navy steel 6 #707387
+148 151 171	navy steel 7 #9497ab
+197 199 212	navy steel 8 #c5c7d4
+213 215 224	navy steel 9 (highlight) #d5d7e0
+# 2 · Neutral steel — the airlock six-step plus paper whites; the older hard steel
+ 29  29  29	neutral steel 1 (outline) #1d1d1d
+ 85  85  85	neutral steel 2 #555555
+146 146 146	neutral steel 3 #929292
+170 170 170	neutral steel 4 #aaaaaa
+196 196 196	neutral steel 5 #c4c4c4
+210 210 210	neutral steel 6 (highlight) #d2d2d2
+238 238 238	near white #eeeeee
+255 255 255	white #ffffff
+# 3 · Signal / LED colours — emissive, V 90-100, painted as glows with no outline
+ 80 255  49	bolt green #50ff31
+100 255 100	status green (soft) #64ff64
+255 214  14	caution yellow #ffd60e
+255 255  51	lamp yellow #ffff33
+255  68  27	error / denied red #ff441b
+  0 204 255	screen cyan #00ccff
+140 214 253	screen cyan (light) #8cd6fd
+128 255 255	screen glow #80ffff
+# 4 · Alert red — painted (non-emissive) red on solid objects
+183  43  47	alert red (light) #b72b2f
+168  46  50	alert red #a82e32
+121  32  36	alert red (dark) #792024
+ 85  16  16	alert red (shadow) #551010
+# 5 · Department accents — measured from the airlock stripes (dark / mid / light)
+ 35  53  73	command dark #233549
+ 51  78 109	command #334e6d
+ 67 118 157	command light #43769d
+106  27  27	security dark #6a1b1b
+159  40  40	security #9f2828
+190  65  48	security light #be4130
+210 116  40	hazard orange #d27428
+107  86  25	engineering dark #6b5619
+162 130  38	engineering #a28226
+193 155  45	engineering light #c19b2d
+ 70 144 133	atmospherics teal #469085
+ 56 116 153	medical dark #387499
+ 89 149 186	medical #5995ba
+124 184 221	medical light #7cb8dd
+102   0 204	science dark #6600cc
+102  51 204	science #6633cc
+102 102 204	science light #6666cc
+ 95  53  11	cargo shadow #5f350b
+ 99  74  33	cargo dark #634a21
+150 112  50	cargo #967032
+179 134  60	cargo light #b3863c
+ 88 114  62	service dark #58723e
+131 163  93	service #83a35d
+144 186  88	service light #90ba58
+# 6 · Warm organics — wood-door ramp plus warm highlight, H 18-34
+ 58  35  20	wood outline #3a2314
+112  83  59	wood #70533b
+128  95  68	wood light #805f44
+145  94  72	leather / hull warm #915e48
