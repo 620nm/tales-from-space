@@ -735,7 +735,7 @@
         // it (docs/DEVICES.md SS5), so the one rack on the station that
         // is listening to every segment stands in the department that
         // owns the network rather than in a corridor.
-        (7, 27, "network_router"),
+        (7, 27, "network_router", { "access": "engineering" }),
     ],
     cables: [
         // ==== THE BACKBONE (L2, yellow) ===========================
