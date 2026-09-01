@@ -24,7 +24,7 @@ return {
     script = "vendor",
     corded = true,
     ad = "Tools for tools.",
-    categories = { "Tools", "Parts" },
+    categories = { "Tools", "Parts", "Media" },
     vends = {
         { item = "cable_coil", name = "Cable Coil", category = "Tools", amount = 10 },
         { item = "crowbar", name = "Crowbar", category = "Tools", amount = 5 },
@@ -91,5 +91,25 @@ return {
             category = "Parts",
             amount = 2,
         },
+        {
+            item = "machine_board.programming_terminal",
+            name = "Machine Board (Programming Terminal)",
+            category = "Parts",
+            amount = 2,
+        },
+        -- BLANK MEDIA, which is the same fold this file already does
+        -- for light tubes and stock parts: nothing in tg vends a floppy
+        -- disk, because tg prints its disks at a techfab and this pack
+        -- has no lathe of any kind. Until one exists the shelf is where
+        -- a blank comes from, and a terminal with nothing to put in it
+        -- is a terminal with 64 KiB of memory and no way to leave the
+        -- room with what you wrote.
+        --
+        -- Its own category rather than a third row under Tools: a disk
+        -- is neither a tool nor something a frame is built out of, and
+        -- the derivation that would have guessed for it
+        -- (README.md, "Palette categories") reads FIELDS, which is
+        -- exactly the fact that a store is not a `tool` block.
+        { item = "floppy_disk", name = "Floppy Disk", category = "Media", amount = 8 },
     },
 }
