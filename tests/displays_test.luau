@@ -1,8 +1,9 @@
 -- The two Commons displays at their player seam: both arrive on their
 -- wall brackets, the status board starts blank, its two bounded fields
 -- become uppercase ScriptVars, bad text changes nothing, and Clear
--- returns it to the blank state. Clock digit composition and its native
--- one-second refresh cadence are engine tests; no per-tick Luau runs here.
+-- returns it to the blank state. Clock digit composition, status line
+-- layout, and the native one-second refresh cadence are engine tests;
+-- no per-tick Luau runs here.
 
 t.world([==[(
     name: "display bench",
