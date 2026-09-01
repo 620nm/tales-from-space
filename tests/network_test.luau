@@ -14,6 +14,15 @@
 -- router hearing its whole tree -- is the engine's and is tested there
 -- (docs/DEVICES.md §5). It is deliberately not re-asserted here.
 
+local function said(p, line)
+    for _, m in ipairs(t.messages(p)) do
+        if m == line then
+            return true
+        end
+    end
+    return false
+end
+
 local function readout(ui, label)
     for _, r in ipairs(ui.readouts) do
         if r.label == label then
@@ -167,6 +176,7 @@ t.run_ticks(40)
 -- names a claim for it: a lock with no key, which still has to be
 -- worked by somebody standing at it (docs/DEVICES.md §8).
 -- ---------------------------------------------------------------
+local _ = t.messages(p)
 t.click(p, 6, 1, t.target_at(6, 1))
 t.tick()
 panel = t.ui(p)
@@ -174,6 +184,16 @@ assert(panel ~= nil, "the router wears the same panel")
 local router = readout(panel, "address")
 assert(router ~= nil and #router == 17 and router ~= point, "with an address of its own")
 assert(#rows(panel, "link_join") == 0, "and offers nothing while it is shut")
+
+-- ...and neither does the pack's own sentence about it. A shut lock
+-- protects the ROSTER, so the line a crewman gets reports the lock and
+-- stops rather than counting members past it -- content walking around
+-- the engine's rule would be worse than no line at all
+-- (content/lib/network.luau, docs/DEVICES.md §8).
+assert(
+    said(p, "The router is locked. Somebody with the right card could open it."),
+    "a shut box says it is shut, got: " .. table.concat(t.messages(p), " | ")
+)
 
 t.ui_act(p, "toggle", '{"field":"link_lock"}')
 t.tick()
@@ -210,6 +230,20 @@ assert(joins[1].role == "hub", "and what the thing that joined is")
 -- re-accepted: nobody walks past a rival's device with a stronger
 -- transmitter and takes it (docs/DEVICES.md §3).
 assert(#rows(panel, "link_join") == 0, "and it is on nobody's list any more")
+
+-- The sentence again, now that there is something to count -- and it
+-- counts in ACCESS POINTS, because a root carries hubs and never
+-- devices. The two callers of `lib/network.luau` differ in exactly that
+-- one word (content/fixtures/network_router.luau).
+t.ui_close(p)
+t.tick()
+local _ = t.messages(p)
+t.click(p, 6, 1, t.target_at(6, 1))
+t.tick()
+assert(
+    said(p, "The router is on the air, carrying one access point."),
+    "the router counts what a root holds, got: " .. table.concat(t.messages(p), " | ")
+)
 
 -- ---------------------------------------------------------------
 -- 5. AND CUT. A release is deliberate and says so.
