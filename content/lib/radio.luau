@@ -168,8 +168,15 @@ function radio.deliver(ev)
     -- device-network tree it stands in. `count` is what stretches a
     -- tree's reach; `gates` are the towers keyed to THIS line's
     -- channel, the only ones that carry it.
+    --
+    -- The tree fingerprint is `link_tree`'s FIRST member: the list
+    -- ascends by address (docs/LUAU-API.md §7), so the lowest-address
+    -- node names the tree for every tower on it. Handles compare by
+    -- the entity they wrap; they are matched with `==` down a list
+    -- rather than used as table keys, because userdata keys hash by
+    -- reference. An empty tree is an unbound tower: a network of one.
     local groups = {}
-    for index, tower in ipairs(sim.query.all("transceiver")) do
+    for _, tower in ipairs(sim.query.all("transceiver")) do
         if sim.is_powered(tower) then
             local words = keyed_words(tower)
             if words ~= nil then
@@ -179,33 +186,32 @@ function radio.deliver(ev)
                         carries = true
                     end
                 end
-                -- A tower joined to nothing stands in a tree of its
-                -- own. Joined, the tree's members ascend by address
-                -- (docs/LUAU-API.md §7, `sim.query.link_tree`), so the
-                -- first member's address names the tree for every
-                -- tower on it.
-                local key = "alone:" .. index
-                local members = sim.query.link_tree(tower)
-                if #members > 0 then
-                    local first = sim.link_state(members[1])
-                    if first ~= nil then
-                        key = "tree:" .. first.mac
+                local fingerprint = sim.query.link_tree(tower)[1]
+                local group = nil
+                if fingerprint ~= nil then
+                    for _, known in ipairs(groups) do
+                        if known.fingerprint ~= nil and known.fingerprint == fingerprint then
+                            group = known
+                            break
+                        end
                     end
                 end
-                local group = groups[key] or { count = 0, gates = {} }
+                if group == nil then
+                    group = { fingerprint = fingerprint, count = 0, gates = {} }
+                    table.insert(groups, group)
+                end
                 group.count += 1
                 if carries then
                     local tile = tower.tile
                     table.insert(group.gates, { x = tile.x, y = tile.y })
                 end
-                groups[key] = group
             end
         end
     end
 
     -- A tree carries the line if the speaker reaches ANY of its
     -- channel towers; then every channel tower on it rebroadcasts.
-    for _, group in pairs(groups) do
+    for _, group in ipairs(groups) do
         local reach = radio.radius_for(group.count)
         local uplinked = false
         for _, gate in ipairs(group.gates) do
