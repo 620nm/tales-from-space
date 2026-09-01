@@ -1,0 +1,40 @@
+// The two public wall displays: one face for each bracket direction and
+// the digital clock's four-digit alphabet. The status display's text is
+// baked from tg's TinyUnicode.ttf by `assets/sprites.ron` rather than
+// copied out of the sheet one character at a time.
+//
+// The clock composes its base, separator and digits exactly as tg's
+// `update_time` does (`code/game/machinery/digital_clock.dm:108-153`).
+// The status display imports only the frame. Alert pictures and AI
+// faces are deliberately absent: this display has only tg's blank and
+// message commands (`code/game/machinery/status_display.dm:797-874`).
+(
+    sheets: [
+        ("digital_clock", "obj/digital_clock.dmi"),
+        ("status_display", "obj/machines/status_display.dmi"),
+    ],
+    sprites: [
+        ("digital_clock", Dmi("@digital_clock", "digital_clock_base", 0)),
+        ("digital_clock_n", Dmi("@digital_clock", "digital_clock_base", 0)),
+        ("digital_clock_s", Dmi("@digital_clock", "digital_clock_base", 0)),
+        ("digital_clock_e", Dmi("@digital_clock", "digital_clock_base", 0)),
+        ("digital_clock_w", Dmi("@digital_clock", "digital_clock_base", 0)),
+        ("digital_clock_separator", Dmi("@digital_clock", "+separator", 0)),
+        ("digital_clock_0", Dmi("@digital_clock", "+0", 0)),
+        ("digital_clock_1", Dmi("@digital_clock", "+1", 0)),
+        ("digital_clock_2", Dmi("@digital_clock", "+2", 0)),
+        ("digital_clock_3", Dmi("@digital_clock", "+3", 0)),
+        ("digital_clock_4", Dmi("@digital_clock", "+4", 0)),
+        ("digital_clock_5", Dmi("@digital_clock", "+5", 0)),
+        ("digital_clock_6", Dmi("@digital_clock", "+6", 0)),
+        ("digital_clock_7", Dmi("@digital_clock", "+7", 0)),
+        ("digital_clock_8", Dmi("@digital_clock", "+8", 0)),
+        ("digital_clock_9", Dmi("@digital_clock", "+9", 0)),
+
+        ("status_display", Dmi("@status_display", "frame", 0)),
+        ("status_display_n", Dmi("@status_display", "frame", 0)),
+        ("status_display_s", Dmi("@status_display", "frame", 0)),
+        ("status_display_e", Dmi("@status_display", "frame", 0)),
+        ("status_display_w", Dmi("@status_display", "frame", 0)),
+    ],
+)
