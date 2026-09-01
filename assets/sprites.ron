@@ -146,6 +146,22 @@
         ("status_display_w", -32, 0),
     ],
     emissive: [
+        // tg couples the time overlays to its blue-light appearance
+        // (`code/game/machinery/digital_clock.dm:87-105`). Here these
+        // cells only join the generic emissive compositor so the blue
+        // face remains visible through darkness; this declares no
+        // power behavior or native light radius.
+        "digital_clock_separator",
+        "digital_clock_0",
+        "digital_clock_1",
+        "digital_clock_2",
+        "digital_clock_3",
+        "digital_clock_4",
+        "digital_clock_5",
+        "digital_clock_6",
+        "digital_clock_7",
+        "digital_clock_8",
+        "digital_clock_9",
         "smes_out0",
         "smes_out1",
         "smes_in0",
