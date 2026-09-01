@@ -62,11 +62,11 @@ assert(status.vars["lunatic/tfs:display_line1"] == "SHIFT #3: GO! @ 00:30",
 assert(status.vars["lunatic/tfs:display_line2"] == nil,
     "programming one line leaves the other blank")
 
-t.ui_act(p, "action", '{"action":"line2","value":"bring your id"}')
+t.ui_act(p, "action", '{"action":"line2","value":"- eta -"}')
 t.tick()
 status = t.structure_at(3, 1)
-assert(status.vars["lunatic/tfs:display_line2"] == "BRING YOUR ID",
-    "the second input programs the lower line")
+assert(status.vars["lunatic/tfs:display_line2"] == "- ETA -",
+    "the lower line preserves the delimiters used for short-header emphasis")
 
 local forty = "0123456789012345678901234567890123456789"
 t.ui_act(p, "action", '{"action":"line1","value":"' .. forty .. '"}')
@@ -80,10 +80,11 @@ t.tick()
 assert(t.structure_at(3, 1).vars["lunatic/tfs:display_line1"] == forty,
     "the native input boundary refuses a forty-first character")
 
--- `reject_bad_text` is the tg command-console boundary used for status
--- messages (`code/game/machinery/computer/communications.dm:386-392`):
--- slashes, backslashes, angle brackets, controls, non-ASCII text, and
--- all-whitespace strings cannot reach the bitmap face.
+-- The grammar starts with tg's command-console `reject_bad_text`
+-- boundary (`code/game/machinery/computer/communications.dm:386-392`):
+-- slashes, backslashes, angle brackets, non-ASCII text, and all-whitespace
+-- strings cannot reach the bitmap face. These controls are single-line,
+-- so they intentionally reject tab/newline and every other control too.
 local bad_inputs = {
     [==[{"action":"line1","value":"NO/ENTRY"}]==],
     [==[{"action":"line1","value":"NO\\ENTRY"}]==],
