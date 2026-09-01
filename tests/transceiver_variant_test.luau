@@ -103,3 +103,21 @@ assert(part_row(panel, "encryption key (Wrench)") ~= nil,
     "the parts roster shows the override")
 assert(part_row(panel, "encryption key (Lifeline)") == nil,
     "and no Lifeline key was seated beside it")
+t.ui_close(p)
+t.tick()
+
+-- ---------------------------------------------------------------
+-- 3. THE LIGHTS GO OUT, and the sentence says so: a dead cord is the
+--    first thing status_line checks (lib/radio.luau), before any talk
+--    of keys -- the same fact that natively drops the machine back to
+--    its dark base picture (docs/CONTENT-SCHEMA.md par.1.3).
+-- ---------------------------------------------------------------
+t.outage()
+t.run_ticks(60)
+local _ = t.messages(p)
+t.click(p, 9, 1, t.target_at(9, 1))
+t.tick()
+assert(
+    said(p, "The transceiver is dark. Check what is feeding it."),
+    "a tower on a dead cord says so, got: " .. table.concat(t.messages(p), " | ")
+)
