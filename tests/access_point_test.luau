@@ -30,6 +30,17 @@ local function said(p, line)
     return false
 end
 
+-- `t.messages` DRAINS, so a block asking two questions of one moment
+-- captures the traffic once and asks both of the list.
+local function among(lines, needle)
+    for _, m in ipairs(lines) do
+        if m:find(needle, 1, true) then
+            return true
+        end
+    end
+    return false
+end
+
 local function readout(ui, label)
     for _, r in ipairs(ui.readouts) do
         if r.label == label then
@@ -214,7 +225,22 @@ t.ui_close(p)
 t.tick()
 take("crowbar")
 local coil_before = t.count_items("cable_coil")
+
+-- A TOOL CLICK IS NOT A QUESTION. The crowbar's own step completes the
+-- box's `interaction.use` on its way past, so the hook runs for this
+-- click too -- and declines, because `implement` names what the hand
+-- was holding. An engineer taking a fixture off the wall is not asking
+-- it how it is (content/fixtures/access_point.luau).
+local _ = t.messages(p)
 work("access_point", 4.5)
+local during = t.messages(p)
+local said_during = table.concat(during, " | ")
+assert(among(during, "You start prying the access point apart."),
+    "the crowbar step ran: " .. said_during)
+assert(not among(during, "is on the air"),
+    "and the box said nothing about itself: " .. said_during)
+assert(not among(during, "is locked"),
+    "in either direction: " .. said_during)
 local left = t.structure_at(4, 1)
 assert(left ~= nil and left.id == "wall_frame", "a frame is what is left on the wall")
 assert(left.state == "empty", "standing in its first state, as anything a step leaves does")
