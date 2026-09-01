@@ -131,15 +131,18 @@ assert(
 
 -- ---- the needle reaches the wire ----
 --
--- The housing is the base sprite and the needle is an overlay above it,
--- which is how tg's greyscale config composes one. A distribution main
--- at one atmosphere sits at tg's fourth stop of twenty (meter.dm:82-94)
--- -- the low scale gets half the dial, because that is the range a
--- station actually runs at.
+-- The housing is the base sprite, the needle is an overlay above it and
+-- the lit button panel an overlay above that, which is how tg's
+-- greyscale config composes one (three layers, `meter.json`). A
+-- distribution main at one atmosphere sits at tg's fourth stop of
+-- twenty (meter.dm:82-94) -- the low scale gets half the dial, because
+-- that is the range a station actually runs at, and every stop of that
+-- scale wears tg's `buttons1`.
 local drawn = t.layers(p, t.target_at(2, 1, "meter"))
 assert(drawn[1] == "meter_base", "the housing")
 assert(drawn[2] == "meter_p1_3", "and the needle at one atmosphere: " .. tostring(drawn[2]))
-assert(#drawn == 2, "and nothing else")
+assert(drawn[3] == "meter_l1", "and the lamp for that band: " .. tostring(drawn[3]))
+assert(#drawn == 3, "and nothing else")
 
 -- ---- and it answers a look, from anywhere you can see it ----
 --
@@ -251,15 +254,30 @@ t.tick()
 t.run_seconds(1.0)
 
 local gauge = t.target_at(1, 1, "meter")
+-- Housing, needle, lamp: the needle is the MIDDLE layer, never the last
+-- one, because tg draws its button panel over the top of the dial.
 local function needle()
     local drawn = t.layers(m, gauge)
-    return drawn[#drawn]
+    return drawn[2]
+end
+local function lamp()
+    local drawn = t.layers(m, gauge)
+    return drawn[3]
+end
+-- The lamp tg pairs with a needle face: `pressureN_M` -> `buttonsN`
+-- (datums/greyscale/json_configs/meter.json).
+local function band_of(face)
+    return "meter_l" .. string.sub(face, 8, 8)
 end
 
 local commissioned = needle()
 assert(
     commissioned ~= nil and string.sub(commissioned, 1, 7) == "meter_p",
     "the mapped main reads on the dial: " .. tostring(commissioned)
+)
+assert(
+    lamp() == band_of(commissioned),
+    "and the lamp is the one for its band: " .. tostring(lamp())
 )
 
 -- Pick the length up and lay it on the end of the main.
@@ -284,7 +302,13 @@ assert(
         .. tostring(commissioned) .. " -> " .. tostring(widened)
 )
 
+assert(
+    lamp() == band_of(widened),
+    "and the lamp moved with it: " .. tostring(lamp())
+)
+
 -- Which is where it stays: nothing was waiting for an atmos pass to
 -- catch the picture up with the world.
 t.run_seconds(2.0)
 assert(needle() == widened, "the needle settled there and stayed: " .. tostring(needle()))
+assert(lamp() == band_of(widened), "and so did its lamp: " .. tostring(lamp()))
