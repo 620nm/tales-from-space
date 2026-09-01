@@ -40,17 +40,19 @@ end
 -- How far a handheld radio carries on its own: the local circle every
 -- transmission gets whatever the towers are doing.
 radio.LOCAL_RADIUS = 7
--- One powered, keyed tower's reach: a 21-tile diameter.
+-- One powered tower's reach: a 21-tile diameter.
 radio.TRANSCEIVER_RADIUS = 10.5
--- Each further tower on the same device-network tree stretches every
--- tower on it by a fifth: a NETWORK of towers is worth more than the
--- sum of its poles.
+-- Each further POWERED tower on the same device-network tree stretches
+-- every tower on it by a fifth. THE HARDWARE IS THE AMPLIFIER: a
+-- blank-keyed tower still buffs the tree it stands in, an unpowered
+-- one contributes nothing, and keys decide only which channels a tower
+-- CARRIES, never how far its tree reaches.
 radio.NETWORK_MULT = 1.2
 -- Inside this fraction of a circle the words arrive whole; between it
 -- and the rim they drop out character by character.
 radio.CLEAR_FRACTION = 0.75
 
--- What one tower on a tree of `n` towers reaches.
+-- What one tower on a tree of `n` powered towers reaches.
 function radio.radius_for(n)
     return radio.TRANSCEIVER_RADIUS * radio.NETWORK_MULT ^ (n - 1)
 end
@@ -101,13 +103,15 @@ end
 -- The line as a listener at fraction `f` reads it: whole inside the
 -- clear band, and losing characters to "~" toward the rim. Spaces are
 -- never garbled, so a sentence keeps its shape however little of it
--- survives.
-function radio.garble(text, f)
+-- survives. The seed comes in from outside so `deliver` pays djb2 once
+-- per transmission rather than once per listener -- the host meters
+-- fuel per invocation, and an exhausted handler forfeits its whole
+-- answer.
+local function garble_seeded(seed, text, f)
     if f <= radio.CLEAR_FRACTION then
         return text
     end
     local g = (f - radio.CLEAR_FRACTION) / (1 - radio.CLEAR_FRACTION)
-    local seed = djb2(text)
     local out = {}
     for i = 1, #text do
         local c = string.sub(text, i, i)
@@ -117,6 +121,10 @@ function radio.garble(text, f)
         out[i] = c
     end
     return table.concat(out)
+end
+
+function radio.garble(text, f)
+    return garble_seeded(djb2(text), text, f)
 end
 
 -- Every channel word a tower's encryption sockets carry, in socket
@@ -167,10 +175,10 @@ function radio.deliver(ev)
     -- The local circle first: a handheld reaches this far on its own.
     local sources = { { x = ev.at.x, y = ev.at.y, radius = radio.LOCAL_RADIUS } }
 
-    -- Every powered tower holding any channel key, grouped by the
-    -- device-network tree it stands in. `count` is what stretches a
-    -- tree's reach; `gates` are the towers keyed to THIS line's
-    -- channel, the only ones that carry it.
+    -- Every POWERED tower, grouped by the device-network tree it
+    -- stands in. `count` is the hardware that stretches a tree's
+    -- reach -- keyed or blank alike -- while `gates` are the towers
+    -- keyed to THIS line's channel, the only ones that carry it.
     --
     -- The tree fingerprint is `link_tree`'s FIRST member: the list
     -- ascends by address (docs/LUAU-API.md §7), so the lowest-address
@@ -181,33 +189,30 @@ function radio.deliver(ev)
     local groups = {}
     for _, tower in ipairs(sim.query.all("transceiver")) do
         if sim.is_powered(tower) then
-            local words = keyed_words(tower)
-            if words ~= nil then
-                local carries = false
-                for _, word in ipairs(words) do
-                    if word == ev.channel then
-                        carries = true
+            local fingerprint = sim.query.link_tree(tower)[1]
+            local group = nil
+            if fingerprint ~= nil then
+                for _, known in ipairs(groups) do
+                    if known.fingerprint ~= nil and known.fingerprint == fingerprint then
+                        group = known
+                        break
                     end
                 end
-                local fingerprint = sim.query.link_tree(tower)[1]
-                local group = nil
-                if fingerprint ~= nil then
-                    for _, known in ipairs(groups) do
-                        if known.fingerprint ~= nil and known.fingerprint == fingerprint then
-                            group = known
-                            break
-                        end
-                    end
+            end
+            if group == nil then
+                group = { fingerprint = fingerprint, count = 0, gates = {} }
+                table.insert(groups, group)
+            end
+            group.count += 1
+            local carries = false
+            for _, word in ipairs(keyed_words(tower) or {}) do
+                if word == ev.channel then
+                    carries = true
                 end
-                if group == nil then
-                    group = { fingerprint = fingerprint, count = 0, gates = {} }
-                    table.insert(groups, group)
-                end
-                group.count += 1
-                if carries then
-                    local tile = tower.tile
-                    table.insert(group.gates, { x = tile.x, y = tile.y })
-                end
+            end
+            if carries then
+                local tile = tower.tile
+                table.insert(group.gates, { x = tile.x, y = tile.y })
             end
         end
     end
@@ -231,15 +236,39 @@ function radio.deliver(ev)
         end
     end
 
+    -- One djb2 per transmission, one garble per DISTINCT fraction --
+    -- listeners cluster on few of them -- so a crowd costs rows, not
+    -- hashes (the fuel argument on `garble_seeded`).
+    local seed = djb2(ev.text)
+    local garbled = {}
     local answered = {}
     for index, row in ipairs(ev.listeners) do
-        local tile = row.who.tile
-        local f = radio.fraction(sources, tile.x, tile.y)
+        -- A LIVING listener may have no tile at all: a body stowed in
+        -- a drawer keeps its radio and loses its coordinates
+        -- (t.bodies_at's "no tile" case). A signal model has one
+        -- honest answer for someone standing nowhere -- not heard --
+        -- and the read is guarded per row, so an odd carrier costs
+        -- that one row and never the transmission.
+        local ok, tile = pcall(function()
+            return row.who.tile
+        end)
+        local f = math.huge
+        if ok and tile ~= nil then
+            f = radio.fraction(sources, tile.x, tile.y)
+        end
+        local text = ev.text
+        if f <= 1 then
+            text = garbled[f]
+            if text == nil then
+                text = garble_seeded(seed, ev.text, f)
+                garbled[f] = text
+            end
+        end
         answered[index] = {
             who = row.who,
             item = row.item,
             heard = f <= 1,
-            text = if f <= 1 then radio.garble(ev.text, f) else ev.text,
+            text = text,
         }
     end
     return { listeners = answered }
