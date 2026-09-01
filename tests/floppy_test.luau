@@ -197,6 +197,11 @@ ui = t.ui(p)
 assert(ui.open.body == NOTE, "and the first hand's work is still there")
 
 -- ---- name it ----------------------------------------------------------
+-- The rename would land in the same breath as the save above, and an
+-- accepted text act inside the pacing window is dropped on purpose
+-- (docs/TGUI.md: refusals speak, successes wait). A person renaming a
+-- file they just saved has this half-second without noticing it.
+t.run_ticks(10)
 t.ui_act(p, "text", '{"field":"file_rename","option":"' .. disk_file
     .. '","text":"tank_room"}')
 t.tick()
