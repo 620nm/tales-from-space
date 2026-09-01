@@ -18,6 +18,11 @@ t.world_file("chillstation.ron", 7)
 local p = t.join()
 t.run_seconds(10)
 
+-- The Commons north wall carries the two public displays where the
+-- waking crew can see them.
+standing(21, 13, "digital_clock")
+standing(22, 13, "status_display")
+
 -- Atmospherics is commissioned rather than merely drawn.
 for _, row in ipairs({
     { 21, 23, "gas_filter.co2", "running" },

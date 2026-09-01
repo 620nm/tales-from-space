@@ -618,6 +618,12 @@
         // one entry stands up a rack of nodes keyed to different claims
         // (docs/DEVICES.md SS8).
         (8, 27, "access_point", { "access": "engineering" }),
+        // ---- THE COMMONS DISPLAYS ---------------------------------
+        // The shift clock and the board beside it share the north wall,
+        // between the room's two light fittings, where everybody waking
+        // in the Commons can see the time and whatever the board says.
+        (21, 13, "digital_clock"),
+        (22, 13, "status_display"),
         // ---- THE SOCKETS -----------------------------------------
         // A socket is what everything on a cord plugs into, and on this
         // station that is the light fittings as much as the appliances
@@ -1196,6 +1202,6 @@
         (32, 9, South), (20, 11, North), (31, 11, North), (10, 13, North),
         (9, 18, South), (17, 18, South), (30, 18, South), (21, 20, North),
         (26, 22, North), (28, 26, West), (9, 27, North), (35, 27, East),
-        (15, 9, South),
+        (15, 9, South), (21, 13, North), (22, 13, North),
     ],
 )
