@@ -50,13 +50,15 @@ return {
     },
 
     -- The private HUD is a pack-owned list too. Pools/properties are generic
-    -- indexed reads; the two ports are actual native pressure mechanisms.
+    -- indexed reads; the ports are native atmosphere telemetry mechanisms.
     readouts = {
         { id = "brute", label = "Brute", pool = "brute" },
         { id = "burn", label = "Burn", pool = "burn" },
         { id = "oxy", label = "Oxygen loss", pool = "oxy" },
         { id = "tox", label = "Toxin load", pool = "tox" },
         { id = "pressure", label = "Pressure", port = "ambient_pressure" },
+        { id = "temperature", label = "Temperature", suffix = "C",
+            port = "ambient_temperature_c" },
         { id = "tank", label = "Tank", port = "supply_pressure" },
     },
 
