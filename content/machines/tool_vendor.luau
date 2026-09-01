@@ -59,14 +59,35 @@ return {
         { item = "capacitor", name = "Capacitor", category = "Parts", amount = 5 },
         { item = "servo", name = "Micro-Servo", category = "Parts", amount = 5 },
         { item = "scanning_module", name = "Scanning Module", category = "Parts", amount = 5 },
-        -- The board is NOT tg's vendor stock: circuit boards come off a
-        -- departmental techfab, and this pack has no lathe of any kind.
-        -- Until one exists the shelf is where this atmos board remains
-        -- obtainable. The chemistry boards belong to NanoMed Plus
-        -- (machines/nanomed_plus.luau), not an engineering machine.
+        -- The network card is the same fold again, and the sixth kind
+        -- of stock part: nothing in tg prints one, because nothing in
+        -- tg is a device network. It sits on an open shelf rather than
+        -- behind a claim because an address is an identifier and never
+        -- a credential (docs/DEVICES.md §1) -- there is nothing here to
+        -- gate. What a card buys is a place on a network that somebody
+        -- standing at a locked panel still has to let you join.
+        { item = "network_card", name = "Network Card", category = "Parts", amount = 5 },
+        -- The boards are NOT tg's vendor stock: circuit boards come off
+        -- a departmental techfab, and this pack has no lathe of any
+        -- kind. Until one exists the shelf is where the engineering
+        -- boards remain obtainable. The chemistry boards belong to
+        -- NanoMed Plus (machines/nanomed_plus.luau), not an engineering
+        -- machine.
         {
             item = "machine_board.thermomachine",
             name = "Machine Board (Temperature Control Unit)",
+            category = "Parts",
+            amount = 2,
+        },
+        {
+            item = "machine_board.access_point",
+            name = "Machine Board (Access Point)",
+            category = "Parts",
+            amount = 2,
+        },
+        {
+            item = "machine_board.network_router",
+            name = "Machine Board (Network Router)",
             category = "Parts",
             amount = 2,
         },
