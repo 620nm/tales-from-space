@@ -96,6 +96,20 @@ return {
                 parts = { cable_coil = 1 },
             },
         },
+        transceiver = {
+            name = "machine board (transceiver)",
+            -- tg's bus mainframe board asks for two servos, a length
+            -- of cable and a subspace filter
+            -- (machine_circuitboards.dm:106-114). The servos and the
+            -- filter model nothing here, per the router row's argument
+            -- above; the cable is tg's and stays. The network and
+            -- encryption sockets are the product's own and are derived
+            -- (machines/transceiver.luau).
+            board = {
+                machine = "transceiver",
+                parts = { cable_coil = 1 },
+            },
+        },
         steam_generator = {
             name = "machine board (steam generator)",
             -- Baystation12's water-only board, which is the

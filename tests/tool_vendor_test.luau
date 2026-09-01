@@ -94,6 +94,17 @@ local parts = {
     "machine_board.thermomachine",
     "machine_board.access_point",
     "machine_board.network_router",
+    "machine_board.transceiver",
+    -- The encryption keys ride the same no-lathe argument as the
+    -- boards: a shipped world must be able to key a tower it built,
+    -- and a channel word is fiction, not a credential
+    -- (machines/tool_vendor.luau).
+    "encryption_key",
+    "encryption_key.common",
+    "encryption_key.engineering",
+    "encryption_key.medical",
+    "encryption_key.security",
+    "encryption_key.command",
 }
 for _, item in ipairs(tools) do
     assert(shelf[item], item .. " is missing from the tool vendor")

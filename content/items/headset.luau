@@ -6,10 +6,24 @@
 -- listener sees the line bracketed with. The engine knows neither the
 -- word "headset" nor the word "Common" -- it asks what you are carrying
 -- and stamps the line with whatever the item answered.
-return {
+local content = {
     id = "headset",
     name = "radio headset",
     sprite = "headset",
     inhand_sprite = { "held_headset_l", "held_headset_r" },
-    radio = "Common",
+    radio = radio.channels.common,
 }
+
+if sim ~= nil then
+    -- Without this handler a headset line lands station-wide (the
+    -- engine default, docs/CONTENT-SCHEMA.md §1.7b). With it, Common is
+    -- a signal like every other channel: a few rooms on its own, the
+    -- station only where a powered, Common-keyed transceiver carries it
+    -- (lib/radio.luau, machines/transceiver.luau).
+    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("speech.radio", { kind = "transform", route = "item" }, function(ev)
+        return radio.deliver(ev)
+    end)
+end
+
+return content

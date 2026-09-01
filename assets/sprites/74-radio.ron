@@ -1,0 +1,39 @@
+// The radio: the transceiver tower that throws a carried channel across
+// the station, and the encryption keys that decide which channel that is.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then entry order,
+// so the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+(
+    sheets: [
+        ("telecomms", "obj/machines/telecomms.dmi"),
+        ("cypherkeys", "map_icons/items/encryptionkey.dmi"),
+    ],
+    sprites: [
+        // ---- the transceiver ----
+        // tg's telecommunications bus mainframe, "a mighty piece of
+        // hardware used to send massive amounts of data quickly"
+        // (code/game/machinery/telecomms/machines/bus.dm:11-14). The
+        // running state blinks, so it is the animated cell; the dark
+        // one is the still the engine falls back to while the cord is
+        // dead (docs/CONTENT-SCHEMA.md §1.3, the power gate).
+        ("transceiver_on", DmiAnim("@telecomms", "bus", 0)),
+        ("transceiver_off", Dmi("@telecomms", "bus_off", 0)),
+
+        // ---- the encryption keys ----
+        // tg draws its encryption keys pre-coloured on the map-icon
+        // sheet, one state per key type, named by the type path. The
+        // blank key is the bare cell; the department issues are the
+        // headset_* states whose stripes tg's crew already read as
+        // engineering, medical, security and command. The Common issue
+        // borrows the service stripe -- a neutral colour no department
+        // here claims.
+        ("encryption_key", Dmi("@cypherkeys", "/obj/item/encryptionkey", 0)),
+        ("encryption_key_eng", Dmi("@cypherkeys", "/obj/item/encryptionkey/headset_eng", 0)),
+        ("encryption_key_med", Dmi("@cypherkeys", "/obj/item/encryptionkey/headset_med", 0)),
+        ("encryption_key_sec", Dmi("@cypherkeys", "/obj/item/encryptionkey/headset_sec", 0)),
+        ("encryption_key_com", Dmi("@cypherkeys", "/obj/item/encryptionkey/headset_com", 0)),
+        ("encryption_key_common", Dmi("@cypherkeys", "/obj/item/encryptionkey/headset_service", 0)),
+    ],
+)

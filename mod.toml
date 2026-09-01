@@ -31,6 +31,7 @@ native_edges = [
     "lifecycle.round_end",
     "parts.refresh",
     "component.command",
+    "speech.radio",
 ]
 
 [paths]
