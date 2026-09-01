@@ -77,9 +77,13 @@
             content: Text((
                 font: "status",
                 color: (34, 204, 255),
+                // tg maptext uses +y up
+                // (`code/game/machinery/status_display.dm:7-10`), while
+                // atlas display coordinates use +y down. Negating tg's
+                // -4/-11 keeps the second row below the first.
                 lines: [
-                    (var: "lunatic/tfs:display_line1", x: 1, y: -4, width: 22),
-                    (var: "lunatic/tfs:display_line2", x: 1, y: -11, width: 22),
+                    (var: "lunatic/tfs:display_line1", x: 1, y: 4, width: 22),
+                    (var: "lunatic/tfs:display_line2", x: 1, y: 11, width: 22),
                 ],
                 marquee: Some((
                     pixels_per_second: 25,
