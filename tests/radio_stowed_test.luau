@@ -25,8 +25,8 @@ end
 
 -- The bay: a drawer facing east onto the aisle, its patient's spawn on
 -- the tray tile, and two more listeners staked out on the corridor.
--- Distances from the speaker at (1,1): near (6,1) = 5, f = 0.714,
--- whole; far (11,1) = 10, outside LOCAL_RADIUS -- no tower here.
+-- Distances from the speaker at (1,1): near (8,1) = 7, f = 0.7,
+-- whole; far (12,1) = 11, outside LOCAL_RADIUS -- no tower here.
 t.world([==[(
     name: "stowed listener",
     legend: {
@@ -38,17 +38,17 @@ t.world([==[(
         'o': (turf: Floor, fixture: Some(Outlet)),
     },
     rows: [
-        "#############",
-        "#...........#",
-        "#Gao........#",
-        "#############",
+        "##############",
+        "#............#",
+        "#Gao.........#",
+        "##############",
     ],
-    spawns: [(1, 1), (3, 1), (6, 1), (11, 1)],
+    spawns: [(1, 1), (3, 1), (8, 1), (12, 1)],
     items: [
         (1, 1, "encryption_key.medical"),
         (3, 1, "encryption_key.medical"),
-        (6, 1, "encryption_key.medical"),
-        (11, 1, "encryption_key.medical"),
+        (8, 1, "encryption_key.medical"),
+        (12, 1, "encryption_key.medical"),
     ],
     structures: [(2, 1, "cadaver_chamber", { "dir": "east" })],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],

@@ -2,7 +2,7 @@
 -- the HARDWARE is the amplifier.
 --
 -- Reach is per TREE (lib/radio.luau): every POWERED tower on one
--- device network stretches every other, radius_for(n) = 10.5 *
+-- device network stretches every other, radius_for(n) = 30 *
 -- 1.2^(n-1), keys notwithstanding -- a blank-keyed tower still buffs
 -- the tree, an unpowered one contributes nothing, and keys decide only
 -- which channels a tower carries. The join is ordinary panel work on
@@ -10,8 +10,8 @@
 -- panel's own contract), which makes radio coverage something a crew
 -- BUILDS, cuts, and sabotages at the breaker.
 --
--- The listener stands 12 tiles from the keyed tower: outside every
--- lone 10.5 circle, inside the pair's 12.6. The garbled literal is
+-- The listener stands 36 tiles from the keyed tower: outside every
+-- lone 30-tile circle, exactly on the pair's 36-tile rim. The garbled literal is
 -- deterministic (radio_coverage_test.luau explains the hash, and why a
 -- literal pins change rather than correctness).
 
@@ -40,9 +40,9 @@ end
 -- bare plating so the blank tower's own cable spur can be snipped.
 -- Distances (Euclidean, lib/radio.luau):
 --   speaker (6,2) -> keyed T (5,2)   =  1     always uplinked
---   keyed T (5,2) -> listener (17,2) = 12     10.5 < 12 <= 12.6
---   blank T (10,2) -> listener       =  7     but blank: never a gate
---   speaker -> listener              = 11     outside LOCAL_RADIUS
+--   keyed T (5,2) -> listener (41,2) = 36     30 < 36 == 30 * 1.2
+--   blank T (10,2) -> listener       = 31     but blank: never a gate
+--   speaker -> listener              = 35     outside LOCAL_RADIUS
 -- Power: the keyed tower cords to the outlet at (3,2); the blank one
 -- is seven tiles from it -- past cord range -- and hangs off its own
 -- outlet at (9,2), fed through the l1 run, so one snip at (7,2) kills
@@ -58,16 +58,16 @@ t.world([==[(
         'o': (turf: Plating, fixture: Some(Outlet)),
     },
     rows: [
-        "####################",
-        "#..................#",
-        "#Gao.....o.........#",
-        "####################",
+        "###########################################",
+        "#.........................................#",
+        "#Gao.....o................................#",
+        "###########################################",
     ],
-    spawns: [(6, 2), (17, 2)],
+    spawns: [(6, 2), (41, 2)],
     items: [
         (6, 2, "encryption_key.medical"),
         (6, 2, "wirecutters"),
-        (17, 2, "encryption_key.medical"),
+        (41, 2, "encryption_key.medical"),
     ],
     machines: [
         (5, 2, "transceiver.medical"),
@@ -124,10 +124,10 @@ end
 
 -- ---------------------------------------------------------------
 -- 1. SIDE BY SIDE IS NOT A NETWORK. Each tower is a tree of one,
---    reach 10.5, and the listener stands at 12.
+--    reach 30, and the listener stands at 36.
 -- ---------------------------------------------------------------
 assert(#say_and_read("the tower chain is up, check your bands") == 0,
-    "two lone towers reach 10.5 tiles, and the listener stands at 12")
+    "two lone towers reach 30 tiles, and the listener stands at 36")
 
 -- ---------------------------------------------------------------
 -- 2. THE JOIN. The access point's panel offers both unjoined towers
@@ -176,13 +176,13 @@ pocket(speaker)
 
 -- ---------------------------------------------------------------
 -- 3. ONE TREE, LONGER ARMS -- OFF A BLANK AMPLIFIER. n counts POWERED
---    towers, so the keyless one stretches the keyed one to 12.6, and
---    the listener at 12 hears the deterministic static of f = 12/12.6.
+--    towers, so the keyless one stretches the keyed one to 36, and
+--    the listener at 36 is heard exactly on f = 1.
 -- ---------------------------------------------------------------
 local heard = say_and_read("the tower chain is up, check your bands")
 local rim_ok = false
 for _, m in ipairs(heard) do
-    if m == "~~e ~~~e~ ~h~~~ i~ ~p, ~~e~~ ~o~~ b~~~~" then
+    if m == "~~~ ~~~~~ ~~~~~ ~~ ~~~ ~~~~~ ~~~~ ~~~~~" then
         rim_ok = true
     end
 end
@@ -191,7 +191,7 @@ assert(rim_ok, "a blank tower on the tree still amplifies: " .. table.concat(hea
 -- ---------------------------------------------------------------
 -- 4. RELEASE ONE TOWER and the arms shorten: membership is what
 --    counts, and a cut edge is a deliberate panel act on the record.
---    Whichever row goes, a tree of one tower reaches nobody at 12.
+--    Whichever row goes, a tree of one tower reaches nobody at 36.
 -- ---------------------------------------------------------------
 to_panel()
 t.click(speaker, 8, 1, t.target_at(8, 1, "access_point"))
@@ -240,4 +240,4 @@ assert(t.ledger_has("CableCut"), "sabotage is attributable")
 t.run_ticks(60)
 
 assert(#say_and_read("say again, the band went short") == 0,
-    "an unpowered tower amplifies nothing, and the reach falls back to 10.5")
+    "an unpowered tower amplifies nothing, and the reach falls back to 30")

@@ -768,7 +768,7 @@
         // rank beside the vendor corner -- two tiles of cord from the
         // outlet at (24, 14) -- so the channel the whole crew's
         // headsets ship on keeps working at range from the first tick
-        // of the shift. Without it, Common is a seven-tile bubble.
+        // of the shift. Without it, Common is a ten-tile bubble.
         (22, 13, "transceiver.common"),
         // The programming terminal, at the blind east end of the same
         // rack room -- three cells of cord from the socket at (9, 27),
