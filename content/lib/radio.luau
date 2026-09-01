@@ -85,13 +85,16 @@ end
 -- same words at the same fraction garble the same way every time, on
 -- every server, which is what lets a spec assert the exact string a
 -- listener at the rim reads (tests/radio_coverage_test.luau).
+--
+-- Multiply-add-shift only: the content VM ships no bit32 library, and
+-- every intermediate here stays under 2^38, exact in Luau doubles.
+-- The floor-divisions are the right-shifts of an ordinary avalanche;
+-- the quality bar is "spread a seed over 4096 buckets", nothing more.
 local function mix32(n)
     local h = n % 4294967296
-    h = bit32.bxor(h, bit32.rshift(h, 13))
-    h = (h * 33 + 421) % 4294967296
-    h = bit32.bxor(h, bit32.rshift(h, 7))
-    h = (h * 33 + 421) % 4294967296
-    h = bit32.bxor(h, bit32.rshift(h, 17))
+    h = (h * 33 + 421 + math.floor(h / 8192)) % 4294967296
+    h = (h * 33 + 421 + math.floor(h / 128)) % 4294967296
+    h = (h * 33 + 421 + math.floor(h / 131072)) % 4294967296
     return h
 end
 
