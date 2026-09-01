@@ -1,0 +1,75 @@
+// The device network: the card, the generic wall frame every bracket
+// starts as, the access point that hangs in it, and the router that
+// tops a station's tree.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then entry order,
+// so the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+//
+// The four `_n`/`_s`/`_e`/`_w` copies of a wall picture are the same
+// cell four times: what makes a bracket face its wall is the OFFSET
+// each name is baked with (`assets/sprites.ron`), which is tg's
+// `pixel_shift` on `/obj/item/wallframe`
+// (code/game/objects/items/wall_mounted.dm:63-72).
+(
+    sheets: [
+        ("wallmounts", "obj/machines/wallmounts.dmi"),
+        ("telecomms", "obj/machines/telecomms.dmi"),
+        ("circuitry", "obj/devices/circuitry_n_data.dmi"),
+    ],
+    sprites: [
+        // The interface card. A wired network card off tg's circuitry
+        // sheet -- a cell tg draws and no tg machine claims, which is
+        // exactly what a pack inventing its own device network wants.
+        ("network_card", Dmi("@circuitry", "net_wired", 0)),
+
+        // ---- the generic wall frame, three states x four faces ----
+        // tg builds its APC out of this same ladder and paints each
+        // rung off `icons/obj/machines/wallmounts.dmi`
+        // (code/modules/power/apc/apc_appearance.dm):
+        //
+        //   :30  "apcmaint"  -- the box open with nothing in it
+        //   :38  "apcewires" -- its wiring exposed
+        //   :28  "apc1"      -- `basestate`, boarded and still open
+        //
+        // The frame here is generic where tg's is an APC hull, so the
+        // pictures are borrowed rather than ported: this is the wall
+        // box every mount in this pack starts as.
+        ("wall_frame", Dmi("@wallmounts", "apcmaint", 0)),
+        ("wall_frame_n", Dmi("@wallmounts", "apcmaint", 0)),
+        ("wall_frame_s", Dmi("@wallmounts", "apcmaint", 0)),
+        ("wall_frame_e", Dmi("@wallmounts", "apcmaint", 0)),
+        ("wall_frame_w", Dmi("@wallmounts", "apcmaint", 0)),
+
+        ("wall_frame_wired", Dmi("@wallmounts", "apcewires", 0)),
+        ("wall_frame_wired_n", Dmi("@wallmounts", "apcewires", 0)),
+        ("wall_frame_wired_s", Dmi("@wallmounts", "apcewires", 0)),
+        ("wall_frame_wired_e", Dmi("@wallmounts", "apcewires", 0)),
+        ("wall_frame_wired_w", Dmi("@wallmounts", "apcewires", 0)),
+
+        ("wall_frame_boarded", Dmi("@wallmounts", "apc1", 0)),
+        ("wall_frame_boarded_n", Dmi("@wallmounts", "apc1", 0)),
+        ("wall_frame_boarded_s", Dmi("@wallmounts", "apc1", 0)),
+        ("wall_frame_boarded_e", Dmi("@wallmounts", "apc1", 0)),
+        ("wall_frame_boarded_w", Dmi("@wallmounts", "apc1", 0)),
+
+        // ---- the access point ----
+        // tg's wall-mounted access console, a small panel with a lamp
+        // on it (code/game/machinery/embedded_controller/
+        // access_controller.dm:109-111, `icon_state =
+        // "access_control_standby"`). tg wires it to airlocks; here it
+        // is the box a segment of the device network hangs off.
+        ("access_point", Dmi("@wallmounts", "access_control_standby", 0)),
+        ("access_point_n", Dmi("@wallmounts", "access_control_standby", 0)),
+        ("access_point_s", Dmi("@wallmounts", "access_control_standby", 0)),
+        ("access_point_e", Dmi("@wallmounts", "access_control_standby", 0)),
+        ("access_point_w", Dmi("@wallmounts", "access_control_standby", 0)),
+
+        // ---- the router ----
+        // tg's telecommunications relay, the rack that carries traffic
+        // between places nothing else reaches
+        // (code/game/machinery/telecomms/machines/relay.dm:9-11).
+        ("network_router", Dmi("@telecomms", "relay", 0)),
+    ],
+)

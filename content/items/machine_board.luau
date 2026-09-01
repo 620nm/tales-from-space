@@ -14,6 +14,28 @@ return {
     inhand_sprite = { "held_board_l", "held_board_r" },
     category = "machine components",
     variants = {
+        access_point = {
+            name = "machine board (access point)",
+            -- A STRUCTURE board, for the same reason the thermomachine's
+            -- is one: what it builds has states, a transition table and
+            -- -- here -- a wall to hang on, which is what a structure
+            -- entry describes and a finished machine cannot.
+            --
+            -- tg has no board for its wall boxes at all: an APC's
+            -- electronics are their own kind of item
+            -- (`/obj/item/electronics/apc`, apc_tool_act.dm:19-21) and
+            -- the access console has no circuit. One board grammar for
+            -- every assembly in this pack is worth more than tg's second
+            -- kind of insert, so the wall frame reads a board exactly as
+            -- the machine frame does.
+            --
+            -- Its network socket is the product's and is derived; the
+            -- one length of cable is the stack material no socket holds.
+            board = {
+                structure = "access_point",
+                parts = { cable_coil = 1 },
+            },
+        },
         chem_dispenser = {
             name = "machine board (chem dispenser)",
             -- tg machine_circuitboards.dm:752-762. The two matter bins,
@@ -59,6 +81,20 @@ return {
         nanomed_plus = {
             name = "machine board (NanoMed Plus)",
             board = { machine = "nanomed_plus" },
+        },
+        network_router = {
+            name = "machine board (network router)",
+            -- tg's relay board asks for two servos, two lengths of cable
+            -- and two subspace filters
+            -- (machine_circuitboards.dm:160-168). The servos and the
+            -- filters go: this pack models neither netspeed nor
+            -- subspace, and a socket that scales nothing is a socket a
+            -- player fills for no reason. The cable is tg's and stays,
+            -- halved to the one unit every other board here asks for.
+            board = {
+                machine = "network_router",
+                parts = { cable_coil = 1 },
+            },
         },
         steam_generator = {
             name = "machine board (steam generator)",
