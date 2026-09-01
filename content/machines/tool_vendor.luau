@@ -91,5 +91,23 @@ return {
             category = "Parts",
             amount = 2,
         },
+        {
+            item = "machine_board.transceiver",
+            name = "Machine Board (Transceiver)",
+            category = "Parts",
+            amount = 2,
+        },
+        -- The encryption keys, blank and all five words, on the same
+        -- no-lathe argument as the boards above them: a shipped world
+        -- must be able to key a tower it built, and a channel word is
+        -- fiction rather than a credential -- what the word is worth
+        -- is decided by who carries radios on it, not by who may buy
+        -- the key (the network card's own argument, one shelf up).
+        { item = "encryption_key", name = "Encryption Key (blank)", category = "Parts", amount = 5 },
+        { item = "encryption_key.common", name = "Encryption Key (Common)", category = "Parts", amount = 3 },
+        { item = "encryption_key.engineering", name = "Encryption Key (Wrench)", category = "Parts", amount = 2 },
+        { item = "encryption_key.medical", name = "Encryption Key (Lifeline)", category = "Parts", amount = 2 },
+        { item = "encryption_key.security", name = "Encryption Key (Watchline)", category = "Parts", amount = 2 },
+        { item = "encryption_key.command", name = "Encryption Key (Charter)", category = "Parts", amount = 2 },
     },
 }

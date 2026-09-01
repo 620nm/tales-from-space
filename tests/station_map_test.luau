@@ -96,3 +96,30 @@ for _, at in ipairs({ { 29, 3 }, { 30, 3 }, { 31, 3 }, { 3, 23 }, { 36, 25 } }) 
 end
 assert(t.turf(30, 2) == "space", "the north gallery looks into vacuum")
 assert(t.room_pressure(30, 6) > 90.0, "the cargo bay holds air through its panes")
+
+-- The Common transceiver is commissioned, not merely drawn: it stands
+-- on the Commons' north rank at (22, 13), its cord reaches the outlet
+-- at (24, 14), and its variant key is seated -- all three asserted in
+-- one sentence, because the status line refuses each failure in its
+-- own words (lib/radio.luau: dark, keyless, or on the air). The walk
+-- is the spawn room's own floor; the empty-hand click is the fixture's
+-- gate (fixtures/transceiver.luau). Without this tower the crew's
+-- shipped Common headsets reach seven tiles and no further.
+for _, dir in ipairs({ "east", "east", "east", "east", "north", "north" }) do
+    t.move(p, dir)
+    t.run_ticks(6)
+end
+local px, py = t.pos(p)
+assert(px == 22 and py == 14, "standing under the Common tower: " .. px .. "," .. py)
+local _ = t.messages(p)
+t.click(p, 22, 13, t.target_at(22, 13))
+t.tick()
+local heard = t.messages(p)
+local on_air = false
+for _, m in ipairs(heard) do
+    if m == "The transceiver is on the air, carrying Common." then
+        on_air = true
+    end
+end
+assert(on_air,
+    "the Commons tower ships powered and keyed: " .. table.concat(heard, " | "))

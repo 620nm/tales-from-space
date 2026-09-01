@@ -61,6 +61,10 @@ return {
     -- shared tables exist; radio.channels is the roster of record and
     -- these must agree with it.
     variants = {
+        common = {
+            name = "radio transceiver (Common)",
+            props = { encryption_1 = "encryption_key.common" },
+        },
         engineering = {
             name = "radio transceiver (Wrench)",
             props = { encryption_1 = "encryption_key.engineering" },
