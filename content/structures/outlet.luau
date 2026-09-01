@@ -9,6 +9,7 @@ return {
     name = "power outlet",
     sprite = "outlet",
     fixture = "Outlet",
+    mount = true,
     appearance = {
         mounted = {
             north = "outlet_n", south = "outlet_s",

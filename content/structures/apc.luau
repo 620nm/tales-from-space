@@ -17,6 +17,7 @@ return {
     sprite = "apc",
     ui = { modules = { "battery", "channels", "ports" } },
     fixture = "Apc",
+    mount = true,
     appearance = {
         mounted = {
             north = "apc_n", south = "apc_s",
