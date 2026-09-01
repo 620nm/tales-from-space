@@ -22,10 +22,16 @@ if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
     script_definition:handle("interaction.use.done", { kind = "react", route = "interact" }, function(ev)
-        -- An empty hand only. Something arriving at the rack in
-        -- somebody's hand is a card, a screwdriver or a mistake, and
-        -- each of those already has an answer.
-        if ev.target ~= nil or ev.outcome ~= "completed" then
+        -- A use that actually resolved. `outcome` is the only thing
+        -- this occurrence carries that can be asked a question: the
+        -- click dispatcher raises `interaction.use` on the thing that
+        -- was clicked with no held item on the record at all, so a
+        -- crewman prying the box apart and a crewman touching it
+        -- bare-handed arrive here indistinguishable, and the box
+        -- narrates for both. That is a wart rather than a hazard --
+        -- the line is true either way -- and gating it wants a fact
+        -- the surface does not publish.
+        if ev.outcome ~= "completed" then
             return
         end
         local said = network.line(ev.subject, NOUN, MEMBER)
