@@ -22,6 +22,66 @@
         ],
         skin: (232, 200, 168),
     )),
+    // tg renders status-display maptext in 12pt TinyUnicode
+    // (`code/game/machinery/status_display.dm:3-11`). At 96dpi that is
+    // 16px. The glyph roster is exactly printable ASCII after tg's
+    // `reject_bad_text` exclusions and uppercase conversion
+    // (`code/__HELPERS/text.dm:81-106`); a space advances the pen
+    // without drawing a cell.
+    fonts: [
+        (
+            id: "status",
+            source: Tg("interface/fonts/TinyUnicode.ttf"),
+            px: 16,
+            glyphs: " !\"#$%&'()*+,-.0123456789:;=?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`{|}~",
+        ),
+    ],
+    // Display composition is atlas data rather than a game-named
+    // renderer. The clock advances at tg's one-second processing
+    // cadence (`code/controllers/subsystem/processing/digital_clock.dm:1-5`),
+    // which is 20 ticks at this engine's frozen tick rate. The status
+    // display keeps tg's two 22px rows and 25px/s marquee
+    // (`code/game/machinery/status_display.dm:3-10,321-347`).
+    displays: [
+        (
+            sprites: [
+                "digital_clock_s", "digital_clock_n",
+                "digital_clock_e", "digital_clock_w",
+            ],
+            content: Clock((
+                period_ticks: 20,
+                digits: [
+                    "digital_clock_0", "digital_clock_1", "digital_clock_2",
+                    "digital_clock_3", "digital_clock_4", "digital_clock_5",
+                    "digital_clock_6", "digital_clock_7", "digital_clock_8",
+                    "digital_clock_9",
+                ],
+                separator: "digital_clock_separator",
+                cells: [
+                    (part: HourTens, x: -14, y: 0),
+                    (part: HourOnes, x: -10, y: 0),
+                    (part: Separator, x: 0, y: 0),
+                    (part: MinuteTens, x: -4, y: 0),
+                    (part: MinuteOnes, x: 0, y: 0),
+                ],
+            )),
+        ),
+        (
+            sprites: [
+                "status_display_s", "status_display_n",
+                "status_display_e", "status_display_w",
+            ],
+            content: Text((
+                font: "status",
+                color: (34, 204, 255),
+                lines: [
+                    (var: "lunatic/tfs:display_line1", x: 1, y: -4, width: 22),
+                    (var: "lunatic/tfs:display_line2", x: 1, y: -11, width: 22),
+                ],
+                marquee: Some((pixels_per_second: 25, padding: 2)),
+            )),
+        ),
+    ],
     // The sprite roster lives in `tfs/assets/sprites/`, one file per
     // family, because this one crossed the thousand-line ceiling that is
     // a project rule rather than a guideline. Every .ron in that
@@ -56,6 +116,19 @@
         ("access_point_n", 0, -25),
         ("access_point_e", 25, 0),
         ("access_point_w", -25, 0),
+        // tg's directional wall helpers shift these toward their wall
+        // by the numbers declared beside each type: 28 pixels for the
+        // clock (`code/game/machinery/digital_clock.dm:155`) and a full
+        // tile for the status display
+        // (`code/game/machinery/status_display.dm:399`).
+        ("digital_clock_s", 0, 28),
+        ("digital_clock_n", 0, -28),
+        ("digital_clock_e", 28, 0),
+        ("digital_clock_w", -28, 0),
+        ("status_display_s", 0, 32),
+        ("status_display_n", 0, -32),
+        ("status_display_e", 32, 0),
+        ("status_display_w", -32, 0),
     ],
     emissive: [
         "smes_out0",
