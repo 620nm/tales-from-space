@@ -5,10 +5,18 @@
 -- makes it a SIGNAL: LOCAL_RADIUS on its own, TRANSCEIVER_RADIUS
 -- through a powered tower keyed to the channel, words dropping out
 -- past CLEAR_FRACTION of either circle. Every number asserted here is
--- that file's; the garbled string is a LITERAL because the static is
--- deterministic by design -- djb2 of the line, no RNG -- so the same
--- words at the same fraction read the same on every server
+-- that file's. The garbled strings are LITERALS: the static is
+-- deterministic by design (djb2 of the line, no RNG), so the same
+-- words at the same fraction read the same on every server. A literal
+-- pins CHANGE, not correctness -- edit the hash and these strings
+-- move, and re-deriving them from the new hash is the intended fix
 -- (docs/LUAU-API.md §4 is the anchor's contract).
+
+-- The one boundary this file cannot stake out: f == CLEAR_FRACTION
+-- exactly. 0.75 of any of this pack's radii (5.25, 7.875, 9.45 tiles)
+-- is never the Euclidean distance between two integer tiles, so the
+-- clear rim is pinned from just inside instead. f == 1 IS reachable
+-- (7 tiles of a 7-tile circle) and is staked below.
 
 local function said(p, line)
     for _, m in ipairs(t.messages(p)) do
@@ -130,7 +138,10 @@ assert(#t.messages(l_out) == 0, "and past it stays past it")
 --    Lifeline whatever its power is doing -- but the local circle
 --    still works, because a handheld never needed the tower at all.
 --    Distances: speaker (2,1) -> near (5,1) = 3, f = 0.43, whole;
---    speaker -> far (14,1) = 12, outside LOCAL_RADIUS entirely.
+--    -> (8,1) = 6, f = 0.857, the outer-quarter static;
+--    -> (9,1) = 7, f = 1 EXACTLY, heard as pure tildes (<= is the
+--    contract: the rim itself is inside);
+--    -> far (14,1) = 12, outside LOCAL_RADIUS entirely.
 -- ---------------------------------------------------------------
 t.world([==[(
     name: "wrong key",
@@ -148,10 +159,12 @@ t.world([==[(
         "#Gao.....o.............#",
         "########################",
     ],
-    spawns: [(2, 1), (5, 1), (14, 1)],
+    spawns: [(2, 1), (5, 1), (8, 1), (9, 1), (14, 1)],
     items: [
         (2, 1, "encryption_key.medical"),
         (5, 1, "encryption_key.medical"),
+        (8, 1, "encryption_key.medical"),
+        (9, 1, "encryption_key.medical"),
         (14, 1, "encryption_key.medical"),
     ],
     machines: [
@@ -165,18 +178,30 @@ t.world([==[(
 
 speaker = t.join()
 local l_near = t.join()
+local l_quarter = t.join()
+local l_edge = t.join()
 local l_far = t.join()
 t.run_ticks(20)
 pocket(speaker)
 pocket(l_near)
+pocket(l_quarter)
+pocket(l_edge)
 pocket(l_far)
 
 local _ = t.messages(speaker)
 local _ = t.messages(l_near)
+local _ = t.messages(l_quarter)
+local _ = t.messages(l_edge)
 local _ = t.messages(l_far)
 t.say(speaker, ";lifeline check")
 t.run_ticks(2)
 assert(said(l_near, "lifeline check"),
     "inside the local circle a handheld needs no tower")
+assert(said(l_quarter, "lif~line che~~"),
+    "the outer quarter of the local circle garbles too: "
+        .. table.concat(t.messages(l_quarter), " | "))
+assert(said(l_edge, "~~~~~~~~ ~~~~~"),
+    "f == 1 exactly is HEARD -- the rim is inside -- as pure static: "
+        .. table.concat(t.messages(l_edge), " | "))
 assert(#t.messages(l_far) == 0,
     "past it, a tower keyed to another word carries nothing")
