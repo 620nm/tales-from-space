@@ -16,6 +16,7 @@ return {
     name = "light fixture",
     sprite = "light_on",
     fixture = "Light",
+    mount = true,
     appearance = {
         states = {
             on = { sprite = "light_on", mounted = {
