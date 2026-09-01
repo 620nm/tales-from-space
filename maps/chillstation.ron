@@ -226,6 +226,14 @@
         // from those two rooms.
         (4, 15, "eva_suit"),
         (4, 15, "oxygen_tank"),
+        // ---- the rack room --------------------------------------
+        // Two blank disks on the deck between the router and the
+        // terminal, which is where somebody who had been using them
+        // would have put them down. The vendor sells more
+        // (machines/tool_vendor.luau); these are the two that mean a
+        // shift can start writing without walking to the Commons first.
+        (10, 27, "floppy_disk"),
+        (11, 27, "floppy_disk"),
     ],
     structures: [
         // The Workshop's tool locker. Which tools happen to be inside
@@ -762,6 +770,16 @@
         // headsets ship on keeps working at range from the first tick
         // of the shift. Without it, Common is a seven-tile bubble.
         (22, 13, "transceiver.common"),
+        // The programming terminal, at the blind east end of the same
+        // rack room -- three cells of cord from the socket at (9, 27),
+        // and past the two doorways at (6, 26) and (10, 26) rather than
+        // standing under either of them, because a dense machine in a
+        // doorway is a wall somebody has to walk around forever.
+        //
+        // It is in Engineering because Engineering is where the network
+        // is, and a disk somebody wrote at a terminal in a corridor
+        // would have nowhere to be carried TO.
+        (12, 27, "programming_terminal"),
     ],
     cables: [
         // ==== THE BACKBONE (L2, yellow) ===========================

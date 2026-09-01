@@ -105,6 +105,15 @@ local parts = {
     "encryption_key.medical",
     "encryption_key.security",
     "encryption_key.command",
+    "machine_board.programming_terminal",
+}
+-- The third shelf, and the only row here that is neither a tool nor
+-- something a frame is built out of: blank media. A disk is how work
+-- typed at a programming terminal LEAVES the room it was typed in
+-- (content/items/floppy_disk.luau), and nothing else on this station
+-- sells one.
+local media = {
+    "floppy_disk",
 }
 for _, item in ipairs(tools) do
     assert(shelf[item], item .. " is missing from the tool vendor")
@@ -120,7 +129,14 @@ for _, item in ipairs(parts) do
         item .. " does not resolve to atlas art")
     assert(shelf[item].stock > 0, item .. " has no displayed stock")
 end
-assert(#ui.products == #tools + #parts,
+for _, item in ipairs(media) do
+    assert(shelf[item], item .. " is missing from the tool vendor")
+    assert(shelf[item].category == "Media", item .. " is not under Media")
+    assert(shelf[item].sprite ~= "missing",
+        item .. " does not resolve to atlas art")
+    assert(shelf[item].stock > 0, item .. " has no displayed stock")
+end
+assert(#ui.products == #tools + #parts + #media,
     "the tool shelf and its asserted roster drifted apart")
 assert(shelf.cable_coil.sprite == "coil",
     "item ids that differ from their sprite still select their atlas art")
