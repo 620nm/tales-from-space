@@ -189,9 +189,11 @@ assert(#rows(panel, "link_join") == 0, "and offers nothing while it is shut")
 -- protects the ROSTER, so the line a crewman gets reports the lock and
 -- stops rather than counting members past it -- content walking around
 -- the engine's rule would be worse than no line at all
--- (content/lib/network.luau, docs/DEVICES.md §8).
+-- (content/lib/network.luau, docs/DEVICES.md §8). It says nothing about
+-- what would OPEN it either: this one was screwed together and has no
+-- key at all, and the read cannot tell that from a keyed box.
 assert(
-    said(p, "The router is locked. Somebody with the right card could open it."),
+    said(p, "The router is locked."),
     "a shut box says it is shut, got: " .. table.concat(t.messages(p), " | ")
 )
 

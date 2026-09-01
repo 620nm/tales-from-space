@@ -39,8 +39,14 @@ function network.line(node, noun, member)
     if state == nil then
         return nil
     end
+    -- WHAT OPENS IT IS NOT SOMETHING THIS CAN KNOW. A lock's key is the
+    -- placement's own `access` word, so one box wants a claim and the
+    -- one beside it -- screwed together by hand, keyed by nothing --
+    -- opens for whoever is standing at it (docs/DEVICES.md §8). The
+    -- surface answers `locked` either way and offers no way to tell,
+    -- so the line says the one thing that is true of both.
     if state.locked then
-        return "The " .. noun .. " is locked. Somebody with the right card could open it."
+        return "The " .. noun .. " is locked."
     end
     if state.suspended then
         return "The " .. noun .. " is not carrying anything. Check what is feeding it."
