@@ -37,6 +37,25 @@
         ("outlet_n", 0, -25),
         ("outlet_e", 25, 0),
         ("outlet_w", -25, 0),
+        // The wall frame and what it becomes, overhanging the wall they
+        // are bolted to exactly as the APC above does — the same box on
+        // the same sheet, so the same shift (assets/sprites/73-network.ron).
+        ("wall_frame_s", 0, 25),
+        ("wall_frame_n", 0, -25),
+        ("wall_frame_e", 25, 0),
+        ("wall_frame_w", -25, 0),
+        ("wall_frame_wired_s", 0, 25),
+        ("wall_frame_wired_n", 0, -25),
+        ("wall_frame_wired_e", 25, 0),
+        ("wall_frame_wired_w", -25, 0),
+        ("wall_frame_boarded_s", 0, 25),
+        ("wall_frame_boarded_n", 0, -25),
+        ("wall_frame_boarded_e", 25, 0),
+        ("wall_frame_boarded_w", -25, 0),
+        ("access_point_s", 0, 25),
+        ("access_point_n", 0, -25),
+        ("access_point_e", 25, 0),
+        ("access_point_w", -25, 0),
     ],
     emissive: [
         "smes_out0",

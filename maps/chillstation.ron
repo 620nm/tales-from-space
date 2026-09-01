@@ -610,6 +610,14 @@
         (4, 5, "apc"), (14, 5, "apc"), (26, 5, "apc"),
         (18, 11, "apc"), (15, 14, "apc"), (4, 22, "apc"),
         (18, 22, "apc"), (28, 22, "apc"), (4, 27, "apc"),
+        // ---- THE ONE ACCESS POINT THE STATION SHIPS --------------
+        // Engineering's own, on the wall of the tank rank one cell of
+        // cord from the socket at (9, 27). Its lock is keyed to the
+        // department, and that is a fact about this PLACEMENT rather
+        // than about the entry -- the same row an airlock carries, so
+        // one entry stands up a rack of nodes keyed to different claims
+        // (docs/DEVICES.md SS8).
+        (8, 27, "access_point", { "access": "engineering" }),
         // ---- THE SOCKETS -----------------------------------------
         // A socket is what everything on a cord plugs into, and on this
         // station that is the light fittings as much as the appliances
@@ -722,6 +730,12 @@
         // which is why it stands in the department rather than in the
         // Commons with the snacks.
         (25, 29, "pipe_dispenser"),
+        // The network router, on Engineering's own socket at (9, 27) --
+        // two cells of cord. A root tops a tree and hears the whole of
+        // it (docs/DEVICES.md SS5), so the one rack on the station that
+        // is listening to every segment stands in the department that
+        // owns the network rather than in a corridor.
+        (7, 27, "network_router", { "access": "engineering" }),
     ],
     cables: [
         // ==== THE BACKBONE (L2, yellow) ===========================
@@ -1176,6 +1190,7 @@
         (23, 13, North), (16, 18, South), (23, 18, South), (20, 13, North),
         (5, 25, South), (11, 25, South), (28, 23, West), (28, 27, West),
         (35, 23, East), (35, 28, East), (20, 22, North), (24, 22, North),
+        (8, 27, North),
         (5, 27, North), (11, 27, North), (24, 14, East), (24, 29, South),
         (12, 4, North), (32, 4, North), (10, 9, South), (21, 9, South),
         (32, 9, South), (20, 11, North), (31, 11, North), (10, 13, North),
