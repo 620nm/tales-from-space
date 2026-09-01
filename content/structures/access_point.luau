@@ -53,10 +53,12 @@ return {
             .. "carrying, it carries quietly.",
     },
     transitions = {
-        -- The crowbar, and the whole assembly with it. The frame stands
-        -- back up in its FIRST state -- bare metal -- so the five coils
-        -- the wiring cost come back in this pile, exactly as the
-        -- temperature control unit's do
+        -- The crowbar, and the whole assembly with it. A `leaves`
+        -- structure always stands up in its FIRST state, which for a
+        -- wall frame is bare metal -- so the five lengths that wiring
+        -- cost come back in this pile too. SIX here is the board's own
+        -- one plus the frame's five, and the books balance exactly as
+        -- the temperature control unit's do
         -- (structures/thermomachine.luau).
         --
         -- THE SOCKET SAYS WHAT COMES OUT, so the network card is NOT
@@ -73,7 +75,7 @@ return {
             leaves = "wall_frame",
             yields = {
                 ["machine_board.access_point"] = 1,
-                cable_coil = 5,
+                cable_coil = 6,
             },
             start = "You start prying the access point apart.",
             done = "The access point comes apart, leaving its frame on the wall.",
