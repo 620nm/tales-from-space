@@ -21,6 +21,15 @@
 -- plant, a controller and a socket along the back wall of every world
 -- in this file, two tiles from where the box hangs.
 
+local function said(p, line)
+    for _, m in ipairs(t.messages(p)) do
+        if m == line then
+            return true
+        end
+    end
+    return false
+end
+
 local function readout(ui, label)
     for _, r in ipairs(ui.readouts) do
         if r.label == label then
@@ -179,6 +188,22 @@ assert(#t.ledger_rows("link_locked") == 1, "and the lock is on the record either
 -- this box is alone in the room.
 assert(#rows(panel, "link_drop") == 0, "nothing has joined it")
 assert(#rows(panel, "link_join") == 0, "and there is nothing in range to join")
+
+-- The pack's own sentence about the box, which is the one thing about
+-- an access point that is not native panel work
+-- (content/fixtures/access_point.luau, content/lib/network.luau). The
+-- window opens AND the line is heard: the hook rides the completion, so
+-- it adds a sentence rather than eating the panel.
+t.ui_close(p)
+t.tick()
+local _ = t.messages(p)
+t.click(p, 4, 1, t.target_at(4, 1, "access_point"))
+t.tick()
+assert(t.ui(p) ~= nil, "the window still opens under the hook")
+assert(
+    said(p, "The access point is on the air with nothing joined to it."),
+    "and it says so in words somebody could repeat, got: " .. table.concat(t.messages(p), " | ")
+)
 
 -- ---------------------------------------------------------------
 -- 3. AND BACK APART. The crowbar takes the whole assembly off,
