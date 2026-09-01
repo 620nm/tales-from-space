@@ -1,10 +1,47 @@
 # Tales from Space — content rules
 
+This repository is the standalone Luau content pack for Tales from Space.
+Read `README.md` before editing: it owns the repository layout, authoring
+references, run commands, and spec-runner surface. Keep this file focused on
+agent decisions rather than duplicating those details.
+
+## Where to work
+
+- The two fixed-name entrypoints are both optional and load in order:
+  `content/audiences.luau` declares named delivery rosters, then
+  `content/main.luau` makes every other top-level declaration. Files such as
+  `capabilities.luau`, `part_tree.luau`, `palette.luau`, and `tuning.luau`
+  establish pack-wide policy; roster directories under `content/` declare the
+  game's prototypes and handlers.
+- `content/lib/` contains shared Luau tables; see the rules below before adding
+  or moving code there.
+- `maps/` contains shipped RON maps. `tests/` contains player-facing Luau
+  specs, including any inline RON fixtures they need.
+- `assets/*.ron` are source manifests. `assets/tg-revision` pins the read-only
+  `tgstation` source used by atlas baking; generated atlas output does not
+  belong in this repository. Treat that checkout as reference only: never
+  reconstruct its behavior from memory, and cite findings as `file:line`.
+- `mod.toml` is the pack-owned identity, API version, native-edge, path, and
+  requested-permission manifest. `modlist.toml` is the host-owned default mod
+  list and approval grant. Do not confuse a request with an approval or
+  broaden either merely to make content convenient.
+
+## Engine boundary and validation
+
 Mechanics (layout, running, spec commands) live in `README.md`. The
 engine is the sibling checkout `../lunatic`; its `docs/` are the
 contracts: `docs/SCRIPTING.md` is the v1 design, `docs/LUAU-API.md` the
 surface these files CALL, `docs/CONTENT-SCHEMA.md` the fields they
 DECLARE. Run the engine with `LUNATIC_PACK` pointing here.
+
+Run engine commands from the engine checkout and set `LUNATIC_PACK` to this
+pack's absolute path. A worktree under this repository's `.worktrees/` is not
+a sibling of the engine, so do not derive the engine path with `..` there.
+Use the narrowest filename-filtered spec while iterating, then the full pack
+suite before completion; exact commands and filter semantics are in
+`README.md`.
+
+## Content design rules
 
 - Content is the default home for game ideas: nouns (prototypes, rosters,
   constants, ids, maps, manifests) are data here; verbs at discrete event
