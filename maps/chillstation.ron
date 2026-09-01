@@ -742,6 +742,26 @@
         // is listening to every segment stands in the department that
         // owns the network rather than in a corridor.
         (7, 27, "network_router", { "access": "engineering" }),
+        // The station's two radio transceivers, each with its
+        // department's key already seated (the variant's own
+        // `encryption_1`) and its other sockets on the plain rungs.
+        // Engineering's stands beside the router on the department's
+        // own socket at (9, 27) -- the tower and the rack that would
+        // network it in the same closet, though joining them is panel
+        // work somebody still has to do. Medical's stands on the
+        // Chemistry Lab's north rank, four tiles of cord from the
+        // lab's socket at (21, 4), where the crew who most need to be
+        // reachable at a distance actually work. Security and command
+        // ship as variants only; a shift that wants those words on
+        // the air builds for them.
+        (6, 27, "transceiver.engineering"),
+        (17, 4, "transceiver.medical"),
+        // The Common tower stands in the Commons itself, on the north
+        // rank beside the vendor corner -- two tiles of cord from the
+        // outlet at (24, 14) -- so the channel the whole crew's
+        // headsets ship on keeps working at range from the first tick
+        // of the shift. Without it, Common is a seven-tile bubble.
+        (22, 13, "transceiver.common"),
     ],
     cables: [
         // ==== THE BACKBONE (L2, yellow) ===========================
