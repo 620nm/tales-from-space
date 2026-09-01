@@ -1,0 +1,57 @@
+GIMP Palette
+Name: Tales from Space - ChatGPT Contemporary
+Columns: 8
+# Starter palette derived from tgstation at c16575c992d8f9adf666d7031f3f1ffc0193648a.
+# The history-filtered census covers current DMI files added or changed since
+# 2023-09-01. This is an authoring aid, not a claim that tg has one fixed palette.
+# Keep each material on one short ramp. Use identity colours for signs, trim,
+# and uniforms; use machine tints for GAGS-style overlays. LEDs may be emissive
+# and unoutlined. Avoid pure RGB red: it is common in masks and debug art.
+# 1 - Contemporary structural steel: tram (2023), shuttle platforms (2025)
+ 30  30  40	structure 1 (outline) #1e1e28
+ 53  56  65	structure 2 #353841
+ 71  72  81	structure 3 #474851
+ 86  90  99	structure 4 #565a63
+119 123 131	structure 5 #777b83
+162 169 177	structure 6 #a2a9b1
+198 205 211	structure 7 #c6cdd3
+225 231 234	structure 8 (highlight) #e1e7ea
+# 2 - Deep machine steel: lathes and the 2026 law rack
+ 21  24  36	machine 1 (outline) #151824
+ 33  35  48	machine 2 #212330
+ 55  58  75	machine 3 #373a4b
+ 71  74  91	machine 4 #474a5b
+ 96  99 117	machine 5 #606375
+112 115 135	machine 6 #707387
+148 151 171	machine 7 #9497ab
+197 199 212	machine 8 #c5c7d4
+213 215 224	machine 9 (highlight) #d5d7e0
+# 3 - Department identity: current COLOR_* definitions used by IDs, HUD, and UI
+ 27 103 165	command identity #1b67a5
+203   0   0	security identity #cb0000
+255 166  43	engineering identity #ffa62b
+ 91 151 188	medical identity #5b97bc
+201 109 191	science identity #c96dbf
+177 134  68	cargo identity #b18644
+ 88 200   0	service identity #58c800
+ 70 144 133	atmospherics secondary #469085
+# 4 - Department machine tints: current CIRCUIT_COLOR_* GAGS colours
+ 27  69 148	command machine #1b4594
+154  21  30	security machine #9a151e
+248 215   0	engineering machine #f8d700
+  0 204 255	medical machine / screen cyan #00ccff
+188  74 155	science machine #bc4a9b
+196 119  73	cargo machine #c47749
+146 220 186	service machine #92dcba
+# 5 - Display HSV wheel: current COLOR_DISPLAY_* semantic colours
+190  52  85	display red #be3455
+255 153   0	display orange #ff9900
+255 247  67	display yellow #fff743
+ 60 240  70	display green #3cf046
+ 34 255 204	display cyan #22ffcc
+ 34 204 255	display blue #22ccff
+ 93  93 252	display purple #5d5dfc
+# 6 - Established physical indicators from the airlock overlay family
+ 80 255  49	indicator open / bolt #50ff31
+255 214  14	indicator caution #ffd60e
+255  68  27	indicator denied / error #ff441b
