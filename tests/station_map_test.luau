@@ -109,7 +109,8 @@ assert(t.room_pressure(30, 6) > 90.0, "the cargo bay holds air through its panes
 -- own words (lib/radio.luau: dark, keyless, or on the air). The walk
 -- is the spawn room's own floor; the empty-hand click is the fixture's
 -- gate (fixtures/transceiver.luau). Without this tower the crew's
--- shipped Common headsets reach seven tiles and no further.
+-- shipped Common headsets make a ten-tile bubble
+-- (radio_coverage_test.luau owns that exact boundary).
 for _, dir in ipairs({ "east", "east", "east", "east", "north", "north" }) do
     t.move(p, dir)
     t.run_ticks(6)

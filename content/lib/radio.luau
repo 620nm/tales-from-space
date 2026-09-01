@@ -39,9 +39,9 @@ end
 
 -- How far a handheld radio carries on its own: the local circle every
 -- transmission gets whatever the towers are doing.
-radio.LOCAL_RADIUS = 7
--- One powered tower's reach: a 21-tile diameter.
-radio.TRANSCEIVER_RADIUS = 10.5
+radio.LOCAL_RADIUS = 10
+-- One powered tower's reach: a 60-tile diameter.
+radio.TRANSCEIVER_RADIUS = 30
 -- Each further POWERED tower on the same device-network tree stretches
 -- every tower on it by a fifth. THE HARDWARE IS THE AMPLIFIER: a
 -- blank-keyed tower still buffs the tree it stands in, an unpowered
