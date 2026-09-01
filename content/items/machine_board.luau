@@ -82,6 +82,19 @@ return {
             name = "machine board (NanoMed Plus)",
             board = { machine = "nanomed_plus" },
         },
+        programming_terminal = {
+            name = "machine board (programming terminal)",
+            -- tg builds consoles on a frame of their own rather than a
+            -- machine frame, and that frame is finished with two glass
+            -- panels for the screen
+            -- (code/game/machinery/computer/buildandrepair.dm:18,92).
+            -- This pack has one frame grammar, so the glass rides the
+            -- board as every other stack material here does.
+            board = {
+                machine = "programming_terminal",
+                parts = { glass = 2 },
+            },
+        },
         network_router = {
             name = "machine board (network router)",
             -- tg's relay board asks for two servos, two lengths of cable

@@ -1,0 +1,53 @@
+// Files: the disk you carry and the console you carry it to.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then entry order,
+// so the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+//
+// The disk's HAND picture is not here: tg's own floppy declares
+// `inhand_icon_state = "card-id"` against the idcard hand sheets
+// (code/game/objects/items/floppy_disk.dm:46-48), which is the cell
+// `held_id_l`/`held_id_r` already bake for this pack's id cards
+// (assets/sprites/30-inhand-and-worn.ron). One cell, two items, and
+// both of them are a flat rectangle held between finger and thumb.
+(
+    // Sheet aliases are local to this family; @names below resolve here.
+    sheets: [
+        ("floppy", "obj/devices/floppy_disks.dmi"),
+        ("computer", "obj/machines/computer.dmi"),
+    ],
+    sprites: [
+        // The black sleeve, which is what `/obj/item/disk` itself wears
+        // (code/game/objects/items/floppy_disk.dm:41-45,
+        // `icon_state = "datadisk3"`). tg's other twelve `datadisk*`
+        // cells are colour skins and its `o_*` cells are sticker
+        // overlays a player writes on; neither is a thing this pack
+        // models, so the plain disk is one cell.
+        ("floppy_disk", Dmi("@floppy", "datadisk3", 0)),
+
+        // The terminal, composited the way tg draws every console: the
+        // frame's own `icon_state`, the keyboard over it, and the
+        // screen over that
+        // (code/game/machinery/computer/_computer.dm:67-85).
+        //
+        // The two named states are tg's R&D console
+        // (code/modules/research/rdconsole.dm:22-24), which is the one
+        // machine in that game with floppy disks in the front of it
+        // (`t_disk` and `d_disk`, rdconsole.dm:28-31) -- so the picture
+        // is borrowed from the console that already means "the machine
+        // you put a disk in", and none of tg's research is.
+        //
+        // Baked as one cell rather than drawn as a stack, for the same
+        // reason the operating computer is
+        // (assets/sprites/46-surgery-tools.ron): there is no unpowered
+        // face and no broken face in this game yet, and a one-state
+        // machine wearing two overlays is three atlas lookups for one
+        // picture.
+        ("programming_terminal", DmiLayers([
+            ("@computer", "computer"),
+            ("@computer", "rd_key"),
+            ("@computer", "rdcomp"),
+        ], 0)),
+    ],
+)
