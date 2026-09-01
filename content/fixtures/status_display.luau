@@ -3,8 +3,9 @@
 -- two lines it means, their uppercase presentation, and blanking both.
 -- tg's communications console runs both lines through `reject_bad_text`
 -- (`code/game/machinery/computer/communications.dm:386-392`), whose
--- printable-ASCII and four-character exclusions are defined at
--- `code/__HELPERS/text.dm:81-106`.
+-- four-character exclusions are defined at
+-- `code/__HELPERS/text.dm:81-106`. These direct fields are stricter:
+-- tabs and newlines are refused too, because each control is one line.
 local content = {
     id = "status_display",
 }
