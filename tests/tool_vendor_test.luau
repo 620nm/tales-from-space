@@ -85,7 +85,15 @@ local parts = {
     "capacitor",
     "servo",
     "scanning_module",
+    -- The sixth kind of stock part, and the one with no tg ancestor at
+    -- all: a network card is what gives a box an ADDRESS
+    -- (docs/DEVICES.md SS5a). It is on an open shelf because an address
+    -- is an identifier and never a credential -- there is nothing here
+    -- to gate.
+    "network_card",
     "machine_board.thermomachine",
+    "machine_board.access_point",
+    "machine_board.network_router",
 }
 for _, item in ipairs(tools) do
     assert(shelf[item], item .. " is missing from the tool vendor")
