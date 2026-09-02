@@ -1,6 +1,20 @@
 -- Development construction playground: a connection owns one disposable
--- body and supplies never run out. Station round logic stays out of it.
-return {
+-- body and supplies never run out.
+--
+-- The shift is the same hour the station gets. A sandbox whose map never
+-- refreshed would be a sandbox nobody could reset, and a mode whose
+-- rules were an exception to the pack's would be a second answer to when
+-- a round ends (`content/lib/shift.luau`).
+local shift_rules = {
+    shift_minutes = 60,
+    grace_seconds = 30,
+    -- Seconds of shift REMAINING at each warning.
+    warnings = { 600, 300, 60 },
+    announcer = "Charter Command",
+    channel = "Common",
+}
+
+local content = {
     id = "free_build",
     name = "Free Build",
     -- A map posted for a playtest boots into this one: a mapper wants
@@ -15,7 +29,7 @@ return {
         -- without either there would be nothing to spawn.
         body = "human",
         infinite_vending = true,
-        round_logic = false,
+        shift = shift_rules,
         -- Nobody picks a job here, so the sandbox body is issued the
         -- Station Engineer's standard kit — jumpsuit, ID, stocked
         -- toolbelt, metal and tiles. It is the gear, not the job: no
@@ -33,3 +47,23 @@ return {
         },
     },
 }
+
+-- The mode loader reads this file in a bare VM with no `sim` and no
+-- shared library (`gamemodes/space_station.luau` says the same).
+if sim ~= nil then
+    shift.validate(content.id, shift_rules)
+
+    local behavior = sim.define("behavior", "lunatic/tfs:free_build_shift", {
+        prototype = content.id,
+    })
+
+    behavior:handle("clock.second", { kind = "react" }, function(ev)
+        shift.on_second(shift_rules, ev)
+    end)
+
+    behavior:handle("round.end", { kind = "react" }, function()
+        shift.on_end(shift_rules)
+    end)
+end
+
+return content
