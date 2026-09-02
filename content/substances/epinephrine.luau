@@ -42,6 +42,10 @@ local content = {
     metabolism_rate = 0.00125,
     -- What it looks like through glass (tg: medicine_reagents.dm:1017).
     color = "#D2FFFA",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for epinephrine: a cardiac drug, harmful misdosed.
+    hazard = { health = 2, fire = 1, instability = 0 },
 }
 
 if sim ~= nil then

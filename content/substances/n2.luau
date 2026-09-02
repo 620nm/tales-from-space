@@ -23,4 +23,9 @@ return {
     relevance = 90,
     -- The other four fifths of ordinary air.
     group = "atmospheric",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for nitrogen.
+    -- Breathable air is 79% nitrogen, so only a richer room is an asphyxiant.
+    hazard = { health = 0, fire = 0, instability = 0, special = "asphyxiant", above = 0.85 },
 }

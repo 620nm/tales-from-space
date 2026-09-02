@@ -19,4 +19,8 @@ return {
     density = { solid = 2.07 },
     -- What it looks like through glass (tg: other_reagents.dm:1065).
     color = "#BF8C00",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for sulfur.
+    hazard = { health = 2, fire = 1, instability = 0 },
 }

@@ -29,4 +29,8 @@ return {
     density = { liquid = 0.784 },
     -- What it looks like through glass (tg: other_reagents.dm:2318).
     color = "#AF14B7",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for acetone: a solvent that flashes at -20 C.
+    hazard = { health = 1, fire = 3, instability = 0 },
 }

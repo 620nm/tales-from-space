@@ -22,4 +22,8 @@ return {
     density = { solid = 8.96 },
     -- What it looks like through glass (tg: other_reagents.dm:999).
     color = "#6E3B08",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- Bulk metal rates nothing on any scale.
+    hazard = { health = 0, fire = 0, instability = 0 },
 }

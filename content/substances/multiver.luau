@@ -48,6 +48,10 @@ local content = {
     -- default (reagents.dm:32, COLOR_BLACK) -- which is also what its
     -- mix message says it looks like: a fine black powder.
     color = "#000000",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- A dosed medicine: harmful in quantity, inert otherwise.
+    hazard = { health = 1, fire = 0, instability = 0 },
 }
 
 if sim ~= nil then

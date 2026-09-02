@@ -41,4 +41,9 @@ return {
     -- temperature, so the flag decides between the two gas groups and it
     -- says poison.
     group = "poison",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for hydrogen.
+    -- Half a room of it has displaced the air; below that the 4 says it.
+    hazard = { health = 0, fire = 4, instability = 0, special = "asphyxiant", above = 0.5 },
 }

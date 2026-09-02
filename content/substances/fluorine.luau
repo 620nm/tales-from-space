@@ -29,4 +29,8 @@ return {
     -- This file's own `dangerous`: a thing the station is built to keep
     -- away from itself.
     group = "poison",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for fluorine, OX included.
+    hazard = { health = 4, fire = 0, instability = 1, special = "oxidizer" },
 }

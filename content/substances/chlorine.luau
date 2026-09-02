@@ -77,6 +77,10 @@ local content = {
     -- A caustic cloud with a metabolism hook that sets a chest on fire;
     -- tg has no gas datum for it, so its own reagent decides.
     group = "poison",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for chlorine, OX included.
+    hazard = { health = 4, fire = 0, instability = 0, special = "oxidizer" },
 }
 
 if sim ~= nil then

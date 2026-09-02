@@ -18,4 +18,8 @@ return {
     density = { solid = 4.0 },
     -- What it looks like through glass (tg: pyrotechnic_reagents.dm:7).
     color = "#550000",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- Fictional mixture: hard to light and violent once lit.
+    hazard = { health = 1, fire = 1, instability = 3 },
 }
