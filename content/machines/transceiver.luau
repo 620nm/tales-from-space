@@ -8,9 +8,9 @@
 -- them (lib/radio.luau). The two encryption sockets are where its
 -- channels come from: a tower carries exactly the words the keys in it
 -- are cut with, and a tower full of blank keys carries nothing
--- (items/encryption_key.luau). WHO HEARS A LINE is not this file's
--- business at all -- the policy rides the transmitting item's
--- `speech.radio` and reads these towers back through `sim.query.all`.
+-- (items/encryption_key.luau). WHO HEARS A LINE is decided over the
+-- four relay stages this declaration signs it up for
+-- (fixtures/transceiver.luau, lib/radio_relay.luau).
 --
 -- tg's nearest thing is the telecomms bus mainframe
 -- (code/game/machinery/telecomms/machines/bus.dm:9-16), ported in
@@ -31,6 +31,10 @@ return {
         states = { "transceiver_on" },
     },
     ui = { modules = { "link", "parts" } },
+    -- What signs this rack up for the four relay stages: every powered,
+    -- unsuspended one of these is walked once per `;` line
+    -- (docs/content-schema/radio.md).
+    radio = { relay = true },
     dense = true,
     corded = true,
     examine = {

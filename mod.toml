@@ -32,6 +32,7 @@ native_edges = [
     "parts.refresh",
     "component.command",
     "speech.radio",
+    "speech.relay",
 ]
 
 [paths]

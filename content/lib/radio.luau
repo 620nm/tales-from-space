@@ -1,15 +1,14 @@
 -- WHO A RADIO REACHES, in one place.
 --
--- The engine's half of a `;` line is delivery to every living carrier
--- of the channel, station-wide (docs/CONTENT-SCHEMA.md §1.7b). This
--- pack's opinion is that a voice is a signal: a handheld radio reaches
--- a few rooms on its own, and reaches the station only through a
--- powered transceiver tower keyed to the same channel
--- (machines/transceiver.luau). That opinion is a `speech.radio`
--- transform (docs/LUAU-API.md §4) registered on every radio-declaring
--- item this pack ships -- the headset and the encryption key -- and the
--- policy would otherwise be spelled once per item file, which is what
--- this directory exists to prevent (AGENTS.md).
+-- The engine's half of a `;` line is a plan naming every living radio
+-- carrier and the relays that settled the words (`speech.radio`,
+-- docs/luau-api/speech-radio.md). This pack's opinion is that a voice
+-- is a signal: a handheld reaches a few rooms on its own, and reaches
+-- the station only through the towers the relay stages left speaking
+-- (lib/radio_relay.luau). That opinion is a `speech.radio` transform
+-- registered on every radio-declaring item this pack ships -- the
+-- headset and the encryption key -- and would otherwise be spelled once
+-- per item file, which is what this directory exists to prevent.
 --
 -- EVERY NUMBER IS HERE and nowhere else, so retuning the radio is one
 -- edit. Distances are Euclidean over tile coordinates; a signal fades
@@ -57,19 +56,28 @@ function radio.radius_for(n)
     return radio.TRANSCEIVER_RADIUS * radio.NETWORK_MULT ^ (n - 1)
 end
 
--- The best (smallest) distance-over-radius fraction any source circle
--- gives a listener standing at (x, y). Above 1 the listener is outside
--- every circle there is.
-function radio.fraction(sources, x, y)
-    local best = math.huge
-    for _, source in ipairs(sources) do
-        local dx, dy = x - source.x, y - source.y
-        local f = math.sqrt(dx * dx + dy * dy) / source.radius
-        if f < best then
-            best = f
+-- The circle that reaches (x, y) best and the fraction of its radius
+-- the listener stands at. Above 1 the listener is outside every circle
+-- offered. Ties keep the EARLIER circle, which is why `deliver` lists
+-- the handheld's own first and then `ev.sources` in the engine's
+-- ascending-address order (docs/luau-api/speech-radio.md).
+local function nearest(circles, x, y)
+    local best, best_f = nil, math.huge
+    for _, circle in ipairs(circles) do
+        local dx, dy = x - circle.x, y - circle.y
+        local f = math.sqrt(dx * dx + dy * dy) / circle.radius
+        if f < best_f then
+            best, best_f = circle, f
         end
     end
-    return best
+    return best, best_f
+end
+
+-- The best (smallest) distance-over-radius fraction any circle gives a
+-- listener standing at (x, y).
+function radio.fraction(circles, x, y)
+    local _, f = nearest(circles, x, y)
+    return f
 end
 
 -- djb2 over the spoken line: the per-transmission seed the static is
@@ -104,9 +112,8 @@ end
 -- clear band, and losing characters to "~" toward the rim. Spaces are
 -- never garbled, so a sentence keeps its shape however little of it
 -- survives. The seed comes in from outside so `deliver` pays djb2 once
--- per transmission rather than once per listener -- the host meters
--- fuel per invocation, and an exhausted handler forfeits its whole
--- answer.
+-- per CIRCLE rather than once per listener -- the host meters fuel per
+-- invocation, and an exhausted handler forfeits its whole answer.
 local function garble_seeded(seed, text, f)
     if f <= radio.CLEAR_FRACTION then
         return text
@@ -168,79 +175,41 @@ end
 
 -- The `speech.radio` policy itself, shared by every transmitting item
 -- (items/headset.luau, items/encryption_key.luau). The offered rows are
--- rebuilt whole -- each answered row carries BOTH `heard` and `text`,
--- the anchor's own contract (docs/LUAU-API.md §4: a row missing either
--- discards or mutes) -- and nothing is ever added to them.
+-- rebuilt whole -- each answered row carries `heard`, `text` AND
+-- `channel`, the anchor's own contract (a row missing one discards or
+-- mutes, docs/luau-api/speech-radio.md) -- and nothing is ever added.
+--
+-- WHICH TOWERS ARE SPEAKING is settled before this runs: `ev.sources`
+-- is one row per relay that survived `radio.send`, carrying its tree's
+-- words and its `peers` count (lib/radio_relay.luau). All that is left
+-- here is geometry.
 function radio.deliver(ev)
-    -- The local circle first: a handheld reaches this far on its own.
-    local sources = { { x = ev.at.x, y = ev.at.y, radius = radio.LOCAL_RADIUS } }
-
-    -- Every POWERED tower, grouped by the device-network tree it
-    -- stands in. `count` is the hardware that stretches a tree's
-    -- reach -- keyed or blank alike -- while `gates` are the towers
-    -- keyed to THIS line's channel, the only ones that carry it.
+    -- One circle per signal in the air, filed under the word it is
+    -- spoken in: the handheld's own first -- it reaches this far
+    -- whatever the towers are doing -- then every source, the tree's
+    -- hardware count deciding its reach.
     --
-    -- The tree fingerprint is `link_tree`'s FIRST member: the list
-    -- ascends by address (docs/LUAU-API.md §7), so the lowest-address
-    -- node names the tree for every tower on it. Handles compare by
-    -- the entity they wrap; they are matched with `==` down a list
-    -- rather than used as table keys, because userdata keys hash by
-    -- reference. An empty tree is an unbound tower: a network of one.
-    local groups = {}
-    for _, tower in ipairs(sim.query.all("transceiver")) do
-        if sim.is_powered(tower) then
-            local fingerprint = sim.query.link_tree(tower)[1]
-            local group = nil
-            if fingerprint ~= nil then
-                for _, known in ipairs(groups) do
-                    if known.fingerprint ~= nil and known.fingerprint == fingerprint then
-                        group = known
-                        break
-                    end
-                end
-            end
-            if group == nil then
-                group = { fingerprint = fingerprint, count = 0, gates = {} }
-                table.insert(groups, group)
-            end
-            group.count += 1
-            local carries = false
-            for _, word in ipairs(keyed_words(tower) or {}) do
-                if word == ev.channel then
-                    carries = true
-                end
-            end
-            if carries then
-                local tile = tower.tile
-                table.insert(group.gates, { x = tile.x, y = tile.y })
-            end
+    -- A listener only ever hears a circle whose word is the one their
+    -- own radio is tuned to, which is what makes a rewritten channel a
+    -- REBROADCAST rather than a leak: the towers move the line onto
+    -- another band and the crew still on the old one keep their own.
+    local bands = {}
+    local function circle(channel, x, y, radius, text)
+        local band = bands[channel]
+        if band == nil then
+            band = {}
+            bands[channel] = band
         end
+        band[#band + 1] = { x = x, y = y, radius = radius, text = text, spoken = {} }
+    end
+    circle(ev.channel, ev.at.x, ev.at.y, radio.LOCAL_RADIUS, ev.text)
+    for _, source in ipairs(ev.sources) do
+        circle(source.channel, source.at.x, source.at.y, radio.radius_for(source.peers), source.text)
     end
 
-    -- A tree carries the line if the speaker reaches ANY of its
-    -- channel towers; then every channel tower on it rebroadcasts.
-    for _, group in ipairs(groups) do
-        local reach = radio.radius_for(group.count)
-        local uplinked = false
-        for _, gate in ipairs(group.gates) do
-            local dx, dy = ev.at.x - gate.x, ev.at.y - gate.y
-            if math.sqrt(dx * dx + dy * dy) <= reach then
-                uplinked = true
-                break
-            end
-        end
-        if uplinked then
-            for _, gate in ipairs(group.gates) do
-                table.insert(sources, { x = gate.x, y = gate.y, radius = reach })
-            end
-        end
-    end
-
-    -- One djb2 per transmission, one garble per DISTINCT fraction --
+    -- One djb2 per CIRCLE and one garble per distinct fraction of it --
     -- listeners cluster on few of them -- so a crowd costs rows, not
     -- hashes (the fuel argument on `garble_seeded`).
-    local seed = djb2(ev.text)
-    local garbled = {}
     local answered = {}
     for index, row in ipairs(ev.listeners) do
         -- A LIVING listener may have no tile at all: a body stowed in
@@ -252,23 +221,26 @@ function radio.deliver(ev)
         local ok, tile = pcall(function()
             return row.who.tile
         end)
-        local f = math.huge
-        if ok and tile ~= nil then
-            f = radio.fraction(sources, tile.x, tile.y)
-        end
-        local text = ev.text
-        if f <= 1 then
-            text = garbled[f]
-            if text == nil then
-                text = garble_seeded(seed, ev.text, f)
-                garbled[f] = text
+        local band = bands[row.channel]
+        local heard, text = false, ev.text
+        if ok and tile ~= nil and band ~= nil then
+            local reach, f = nearest(band, tile.x, tile.y)
+            if f <= 1 then
+                heard = true
+                text = reach.spoken[f]
+                if text == nil then
+                    reach.seed = reach.seed or djb2(reach.text)
+                    text = garble_seeded(reach.seed, reach.text, f)
+                    reach.spoken[f] = text
+                end
             end
         end
         answered[index] = {
             who = row.who,
             item = row.item,
-            heard = f <= 1,
+            heard = heard,
             text = text,
+            channel = row.channel,
         }
     end
     return { listeners = answered }
