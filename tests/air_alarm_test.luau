@@ -261,6 +261,34 @@ for _, row in ipairs(rows(panel, "link_join")) do
 end
 assert(#candidates == 3, "the vent, the pump and the scrubber, and nothing else: " .. #candidates)
 
+-- ...AND ASKING ANYWAY GETS NOTHING, which is the half a roster alone
+-- does not prove. A forged press names a row this panel never drew, and
+-- the seam rebuilds the window and matches field and option against it
+-- before any gesture exists (`settings_act`, sim/ui/settings.rs) -- so
+-- the press is not a refused join, it is not a join at all. That is why
+-- the assertion below is an absence of BOTH: no edge, and no
+-- `link_denied` row either, because nothing ever reached the forest to
+-- be refused.
+--
+-- The refusal itself is the engine's and is tested there, where a
+-- caller can reach past the panel: `devicenet_accept` answers
+-- `ClassForbidden` and writes the one `class_forbidden` row
+-- (crates/lunatic-server/src/sim/tests/devicenet/classes.rs,
+-- `a_hub_that_names_classes_refuses_the_rest`). A pack spec asserts
+-- what a player could cause, and a player cannot cause that one.
+local before = #t.ledger_rows("link_denied")
+t.ui_act(p, "toggle", string.format('{"field":"link_join","option":"%s"}', point))
+t.tick()
+t.ui_act(p, "toggle", string.format('{"field":"link_join","option":"%s"}', relay))
+t.tick()
+panel = t.ui(p)
+assert(#rows(panel, "link_drop") == 0, "neither box is on the alarm")
+for _, row in ipairs(rows(panel, "link_join")) do
+    assert(row.option ~= point and row.option ~= relay, "and neither is on offer after the press")
+end
+assert(#t.ledger_rows("link_denied") == before,
+    "a press no row owns is not a gesture, so there was nothing to refuse")
+
 -- ---------------------------------------------------------------
 -- 4. THE JOIN, AND THE ROOM APPEARS ON THE CONSOLE.
 --

@@ -17,9 +17,15 @@
 -- SEVEN TILES, and the number is this pack's own rather than a port,
 -- because the thing being replaced is an area. It is the smallest
 -- Chebyshev radius that covers the largest compartment on the shipped
--- map -- Atmospherics, thirteen tiles across (maps/chillstation.ron) --
--- from any wall the box can hang on, and short enough that it stops in
--- the corridor rather than reaching through into the next department.
+-- map whole -- Atmospherics, thirteen by seven
+-- (maps/chillstation.ron) -- and it covers it from the LONG north or
+-- south wall near the midpoint, not from either short end, where the
+-- far corner stands twelve tiles off. That is a constraint on the
+-- mapper rather than a rounding error, and it says the true thing: a
+-- room much wider than fifteen tiles wants two alarms, the way tg
+-- would have wanted two areas. Seven is also short enough to stop in
+-- the corridor rather than reach through into the next department.
+--
 -- The access point's five is a different claim and stays five: a comms
 -- box covers the room it is in and the doorway out, where an alarm has
 -- to reach a whole room's plant.
@@ -37,6 +43,29 @@
 -- published into the item sandbox and not into the structure
 -- registry's, so a structure reading a shared table reads nil at
 -- prototype time (crates/lunatic-server/src/structures/registry.rs).
+--
+-- WHAT DOES NOT WEAR IT, and why, since three machines in the kit have
+-- a window and are still not on any alarm:
+--
+--   * the MANUAL VALVE has no window at all and is meant not to. It is
+--     the one component nobody operates from a chair -- somebody walks
+--     to it and puts a hand on the wheel -- and the digital valve
+--     beside it exists precisely to be the remote one
+--     (structures/manual_valve.luau, structures/digital_valve.luau).
+--   * the CANISTER has a window, and it is a bottle on wheels: it is
+--     unanchored until a wrench fastens it to a port, and a crewman
+--     rolls it out of the room mid-shift. A radius join would bind a
+--     moving target and suspend itself the moment it left, and tg's
+--     alarm never drove a portable device either
+--     (structures/canister.luau).
+--   * the STATIONARY TANK has a window with nothing in it to turn. It
+--     is a holder table -- what is inside and what it is rated to --
+--     and its valves are its ports, worked with a wrench and a pipe
+--     (sim/ui/settings/tank.rs). Proxying it would put a page of
+--     readouts on the console and hand a crewman nothing to press.
+--
+-- The meters and the passive vent are the same argument as the tank:
+-- gauges, and a hole in a wall.
 --
 -- WHERE ITS ADDRESS COMES FROM, and what its lock is keyed to, are the
 -- access point's answers exactly (structures/access_point.luau): a card
