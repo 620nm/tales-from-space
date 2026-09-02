@@ -183,16 +183,16 @@ t.world([==[(
     ],
     spawns: [(4, 1), (4, 2)],
     items: [(4, 1, "analyzer"), (4, 2, "oxygen_tank")],
-    air_presets: {
+    blends: {
         // chillstation.ron:1065's own recipe, to the digit: a tank of
         // it at 23 MPa, spread over a canister's two cubic metres.
-        "n2o_23000kpa": (gases: [("n2o", 9436.868804259688)], temperature_k: 293.15),
+        "n2o_23000kpa": (rows: [("n2o", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
         // ...and the chamber a mapper fills on purpose
         // (substances/n2o.luau). One atmosphere of it and nothing
         // else: 101.325 kPa over a cubic metre at T20C is 41.57 mol.
-        "sleeping_chamber": (gases: [("n2o", 41.57)], temperature_k: 293.15),
+        "sleeping_chamber": (rows: [("n2o", 41.57)], temperature_k: 293.15, amount: per_tile),
     },
-    air: [
+    painted: [
         (1, 1, "sleeping_chamber"), (2, 1, "sleeping_chamber"), (3, 1, "sleeping_chamber"),
         (4, 1, "sleeping_chamber"), (5, 1, "sleeping_chamber"),
         (1, 2, "sleeping_chamber"), (2, 2, "sleeping_chamber"), (3, 2, "sleeping_chamber"),
@@ -202,7 +202,7 @@ t.world([==[(
     // has somewhere to go that is not the room.
     pipes: [(6, 1, 2), (6, 2, 2)],
     structures: [
-        (5, 1, "canister", { "air": "n2o_23000kpa" }),
+        (5, 1, "canister", { "blend": "n2o_23000kpa" }),
         (5, 2, "air_scrubber", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 }),
     ],
     cables: [

@@ -65,28 +65,28 @@ t.world([==[(
     ],
     spawns: [(1, 1)],
     pipes: [(5, 1, 4), (8, 1, 4)],
-    air_presets: {
-        "pumped_down": (temperature_k: 293.15),
-        "hot_chlorine": (gases: [("chlorine", 50.0)], temperature_k: 1000.0),
+    blends: {
+        "pumped_down": (temperature_k: 293.15, amount: per_tile),
+        "hot_chlorine": (rows: [("chlorine", 50.0)], temperature_k: 1000.0, amount: per_tile),
     },
-    air: [
+    painted: [
         (1, 1, "pumped_down"), (2, 1, "pumped_down"),
         (4, 1, "pumped_down"), (5, 1, "pumped_down"),
         (7, 1, "pumped_down"), (8, 1, "pumped_down"),
     ],
     structures: [
-        (1, 1, "canister", { "air": "hot_chlorine", "open": true }),
+        (1, 1, "canister", { "blend": "hot_chlorine", "open": true }),
         (4, 1, "connector_port"),
         // Valve SHUT, because the wrench is the coupling: a fastened
         // bottle equalises with its run with no valve in the story
         // (tg's connector reconciliation), and OPENING the valve on a
         // ported bottle vents the DECK -- tg's own trap, pinned below.
-        (4, 1, "canister", { "air": "hot_chlorine" }),
+        (4, 1, "canister", { "blend": "hot_chlorine" }),
         (7, 1, "connector_port"),
         // The TRAP, as mapped: fastened AND open. The wrench couples it
         // to the run; the valve gasses the deck. Both at once, which is
         // exactly what tg's two independent couplings mean.
-        (7, 1, "canister", { "air": "hot_chlorine", "open": true }),
+        (7, 1, "canister", { "blend": "hot_chlorine", "open": true }),
     ],
 )]==], 7)
 

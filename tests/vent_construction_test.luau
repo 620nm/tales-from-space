@@ -107,13 +107,13 @@ t.world([==[(
     // shape, since a fastened bottle IS its line and a vent on a
     // forty-atmosphere main would out-blow the breach below.
     pipes: [(4, 1, 4)],
-    air_presets: {
-        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    blends: {
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
         (5, 1, "gas_pump", "running", { "dir": "west" }),
         (6, 1, "connector_port", { "pipe": "west" }),
-        (6, 1, "canister", { "air": "canister_air" }),
+        (6, 1, "canister", { "blend": "canister_air" }),
     ],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
