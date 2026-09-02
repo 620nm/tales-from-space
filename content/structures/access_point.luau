@@ -45,7 +45,7 @@ return {
             east = "access_point_e", west = "access_point_w",
         },
     },
-    category = "power",
+    -- No `category`: the group derives from the `link` block below.
     parts = { slots = { "network" } },
     link = { role = "hub", radius = 5, socket = "network", locked = true },
     examine = {
