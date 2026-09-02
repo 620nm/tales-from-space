@@ -17,11 +17,11 @@ t.world([==[(
         '#': (turf: Wall),
         'c': (turf: Plating),
     },
-    air_presets: {
-        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    blends: {
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
-        (5, 2, "canister", { "air": "canister_air", "open": true }),
+        (5, 2, "canister", { "blend": "canister_air", "open": true }),
     ],
     rows: [
         "#######",

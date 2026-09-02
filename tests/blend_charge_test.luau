@@ -2,10 +2,10 @@
 --
 -- A station is allowed to open the shift with the infirmary shelf
 -- stocked and the bench already holding something, and saying so used
--- to mean a whole prototype per fill. It is a `matter_presets` block
--- now: the map declares named charges and a placement names one
--- (docs/MAP-PROPERTIES.md, "The property sheet"). The glass is one noun; what
--- somebody left in it is a fact about the station.
+-- to mean a whole prototype per fill. It is a `blends` block now: the map
+-- declares named Matter Blends and a placement names one
+-- (docs/map-properties/blends.md). The glass is one noun; what somebody left
+-- in it is a fact about the station.
 --
 -- Three sentences, all read through `t.vessel`, which is what a pair of
 -- eyes and a gauge could tell:
@@ -20,8 +20,8 @@ t.world([==[(
         '.': (turf: Floor),
         '#': (turf: Wall),
     },
-    matter_presets: {
-        "rinse": (rows: [("water", 0.20)], temperature_k: 293.15),
+    blends: {
+        "rinse": (rows: [("water", 0.20)], temperature_k: 293.15, amount: total),
     },
     rows: [
         "######",
@@ -30,8 +30,8 @@ t.world([==[(
     ],
     spawns: [(1, 1)],
     items: [
-        (2, 1, "beaker", { "matter": "rinse" }),
-        (3, 1, "beaker.libital", { "matter": "rinse" }),
+        (2, 1, "beaker", { "blend": "rinse" }),
+        (3, 1, "beaker.libital", { "blend": "rinse" }),
         (4, 1, "beaker.libital"),
     ],
 )]==], 0)

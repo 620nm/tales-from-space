@@ -1,7 +1,7 @@
 -- Nothing at all: a chamber somebody pumped down, a sealed void, a
 -- room the shift is meant to start empty.
 --
--- No gas list, because a recipe for nothing is nothing -- the engine
+-- No row list, because a blend for nothing is nothing -- the engine
 -- deposits what it is told and is told nothing, which leaves an empty
 -- INTERIOR cell the neighbours flow into. That is the difference
 -- between this and space, which is a boundary they flow into forever
@@ -14,10 +14,11 @@
 -- (code/__DEFINES/atmospherics/atmos_mapping_helpers.dm:14).
 --
 -- The id is the one the engine migrates an old zero-pressure map entry
--- onto (lunatic_core::map::air), so a map written before presets
--- existed lands on this file rather than on a recipe nobody named.
+-- onto (lunatic_core::map::blend), so a map written before blends
+-- existed lands on this file rather than on one nobody named.
 return {
     id = "vacuum",
     name = "Vacuum",
     temperature_k = 2.7,
+    amount = "per_tile",
 }

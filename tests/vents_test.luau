@@ -127,14 +127,14 @@ local SUPPLY_MAP = [==[(
     // bottle IS its line and a vent on a forty-atmosphere main would
     // out-blow the very breach this file is about.
     pipes: [],
-    air_presets: {
-        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    blends: {
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
         (2, 1, "vent"),
         (3, 1, "gas_pump", "running", { "dir": "west" }),
         (4, 1, "connector_port", { "pipe": "west" }),
-        (4, 1, "canister", { "air": "canister_air" }),
+        (4, 1, "canister", { "blend": "canister_air" }),
     ],
     // Backbone (L2) under the generator and the APC; room circuit (L1) from the
     // APC's own tile west along the corridor to the vent.
@@ -366,12 +366,12 @@ local PASSIVE_MAP = [==[(
     ],
     spawns: [(4, 1)],
     pipes: [(3, 1, 4), (4, 1, 4)],
-    air_presets: {
-        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    blends: {
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
         (2, 1, "passive_vent"), (5, 1, "connector_port"),
-        (5, 1, "canister", { "air": "canister_air", "open": true }),
+        (5, 1, "canister", { "blend": "canister_air", "open": true }),
     ],
 )]==]
 
