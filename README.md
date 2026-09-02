@@ -63,9 +63,12 @@ cargo run -p xtask -- bake-atlas            # reads $LUNATIC_PACK/assets and $LU
   before every roster, lexically within itself, so one shared file may
   read another. Nothing in `lib/` may call `sim.define`: shared code
   publishes tables, rosters declare things, and the loader refuses the
-  other way round. Two callers today — `lib/vessel.luau` is the pour,
-  swig, spill and gas-charge gestures every vessel wears, and
-  `lib/cards.luau` is the deck a card and a deck of cards both read.
+  other way round. `lib/vessel.luau` is the pour, swig, spill and
+  gas-charge gestures every vessel wears; `lib/cards.luau` is the deck a
+  card and a deck of cards both read; `lib/radio.luau` owns every radio
+  number and who finally hears a `;` line, and `lib/radio_relay.luau`
+  owns what a tower, a wall box and a router each do to one crossing
+  them (`docs/luau-api/radio-relay.md`).
 
 ### Palette categories
 
