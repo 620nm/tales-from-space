@@ -40,7 +40,7 @@ local content = {
         sprite = "he_pipe",
         color = "#404040",
         layers = LAYERS,
-        conducts = { coefficient = 0.1, min_delta_k = 20 },
+        conducts = { coefficient = 0.1, min_delta_k = 1 },
     },
     -- The engine's dial is the piping layer, 1..5, and this fits three
     -- of them; the cycle below walks those three. Minted on layer 3,
