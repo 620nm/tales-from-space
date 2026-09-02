@@ -247,7 +247,24 @@ t.run_seconds(1.5)
 assert(t.cable_at(48, 2) == 0, "the spur is parted")
 assert(t.ledger_has("CableCut"), "sabotage is attributable")
 t.run_ticks(60)
-walk(listener, "east", 2)
+
+-- The tower's own sentence, from an empty hand, is what tells the two
+-- failures apart: a dark tower says so, and this one does not. It is
+-- lit, it is keyed, and the network clause is the only thing it has
+-- lost -- so whatever silences it below is suspension and not the
+-- breaker (lib/radio.luau's status_line).
+walk(listener, "west", 2)
+t.drop(listener)
+t.run_ticks(2)
+local _ = t.messages(listener)
+t.click(listener, 45, 1, t.target_at(45, 1))
+t.tick()
+assert(said(listener, "The transceiver is on the air, carrying Lifeline."),
+    "the far tower is lit and keyed and no longer relayed: "
+        .. table.concat(t.messages(listener), " | "))
+t.ui_close(listener)
+t.tick()
+walk(listener, "east", 4)
 listener_to_mark()
 
 assert(#say_and_read("say again, the far end went quiet") == 0,

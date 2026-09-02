@@ -13,7 +13,7 @@ if sim ~= nil then
     -- Which face the tower shows while powered. The prototype's sprite
     -- table names this var and bounds its values; the engine draws the
     -- dark base by itself whenever the cord dies, so this is only ever
-    -- "keyed" or nothing (docs/CONTENT-SCHEMA.md §1.3).
+    -- "keyed" or nothing (docs/content-schema/appearance.md).
     sim.define("script_var", "lunatic/tfs:transceiver_look", { replicate = "sight" })
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
@@ -37,11 +37,19 @@ if sim ~= nil then
         ev.subject.vars["transceiver_look"] = if keyed then "transceiver_on" else nil
     end)
 
-    -- The three stages a tower stands on. Each is a transform because
-    -- each writes something back -- `reads`, the words, `cancelled` --
+    -- All four stages. Each is a transform because each writes
+    -- something back -- `reads`, a reader, the words, `cancelled` --
     -- and a station is where the decision is made, never where state is
     -- recorded (docs/luau-api/radio-relay.md).
+    --
+    -- `radio.read` is here because a tower joined to nothing IS its own
+    -- tree's top, and the tree of one it stands in has to answer the
+    -- same question a wall box would: with no key for the word, it
+    -- reads nothing and carries nothing. Without it the engine's
+    -- fail-open default hands a blank tower the words of every line
+    -- spoken beside it.
     script_definition:handle("radio.receive", { kind = "transform", route = "receive" }, radio_relay.receive)
+    script_definition:handle("radio.read", { kind = "transform", route = "read" }, radio_relay.read)
     script_definition:handle("radio.carry", { kind = "transform", route = "carry" }, radio_relay.carry)
     script_definition:handle("radio.send", { kind = "transform", route = "send" }, radio_relay.send)
 end

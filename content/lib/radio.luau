@@ -59,8 +59,8 @@ end
 -- The circle that reaches (x, y) best and the fraction of its radius
 -- the listener stands at. Above 1 the listener is outside every circle
 -- offered. Ties keep the EARLIER circle, which is why `deliver` lists
--- the handheld's own first and then `ev.sources` in the engine's
--- ascending-address order (docs/luau-api/speech-radio.md).
+-- the handheld's own first and the relays after it, in the order
+-- `ev.sources` arrives (docs/luau-api/speech-radio.md).
 local function nearest(circles, x, y)
     local best, best_f = nil, math.huge
     for _, circle in ipairs(circles) do
@@ -71,13 +71,6 @@ local function nearest(circles, x, y)
         end
     end
     return best, best_f
-end
-
--- The best (smallest) distance-over-radius fraction any circle gives a
--- listener standing at (x, y).
-function radio.fraction(circles, x, y)
-    local _, f = nearest(circles, x, y)
-    return f
 end
 
 -- djb2 over the spoken line: the per-transmission seed the static is
@@ -136,7 +129,7 @@ end
 
 -- Every channel word a tower's encryption sockets carry, in socket
 -- order, or nil against a machine with none. Reads the settled roster
--- (`Handle.components`, docs/LUAU-API.md §7), so a swapped key counts
+-- (`Handle.components`, docs/luau-api/queries.md), so a swapped key counts
 -- from the tick the swap settled.
 local function keyed_words(machine)
     local words = nil
@@ -181,8 +174,9 @@ end
 --
 -- WHICH TOWERS ARE SPEAKING is settled before this runs: `ev.sources`
 -- is one row per relay that survived `radio.send`, carrying its tree's
--- words and its `peers` count (lib/radio_relay.luau). All that is left
--- here is geometry.
+-- words and its `peers` count (lib/radio_relay.luau). The rows arrive
+-- tree by tree, ascending address within a tree. All that is left here
+-- is geometry.
 function radio.deliver(ev)
     -- One circle per signal in the air, filed under the word it is
     -- spoken in: the handheld's own first -- it reaches this far
@@ -221,8 +215,10 @@ function radio.deliver(ev)
         local ok, tile = pcall(function()
             return row.who.tile
         end)
+        -- An unheard row still has to answer with a string, so it keeps
+        -- the one it was offered: the row is muted, not rewritten.
         local band = bands[row.channel]
-        local heard, text = false, ev.text
+        local heard, text = false, row.text
         if ok and tile ~= nil and band ~= nil then
             local reach, f = nearest(band, tile.x, tile.y)
             if f <= 1 then
