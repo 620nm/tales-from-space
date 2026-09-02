@@ -510,6 +510,16 @@
         // why this tank stands at the east end of the row, on the side
         // the corridor door is on.
         (12, 28, "stationary_tank", "anchored", { "blend": "water_67268kpa" }),
+        // The annex placard, bolted to the west wall beside the row it
+        // is about. It names the plasma store's OWN blend, so what it
+        // draws is that store's rating rather than the room's -- a sign
+        // says what went into the chamber, once, at commissioning
+        // (docs/construction/signs.md).
+        (4, 29, "hazard_diamond", { "blend": "plasma_23000kpa" }),
+        // ...and one in the commons with nothing named on it, which is
+        // a blank placard: no digits and no symbol, because a sign
+        // nobody has filled in has nothing to say.
+        (15, 16, "hazard_diamond"),
         (5, 33, "stationary_tank", "anchored", { "blend": "tritium_23000kpa" }),
         (7, 33, "stationary_tank", "anchored", { "blend": "n2o_23000kpa" }),
         // The temperature control unit, on the machine tile the annex
@@ -1242,5 +1252,7 @@
         (9, 18, South), (17, 18, South), (30, 18, South), (21, 20, North),
         (26, 22, North), (28, 26, West), (9, 27, North), (35, 27, East),
         (15, 9, South), (21, 13, North), (22, 13, North),
+        // The two hazard placards, each naming the wall it is bolted to.
+        (4, 29, West), (15, 16, West),
     ],
 )
