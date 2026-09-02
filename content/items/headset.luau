@@ -16,7 +16,7 @@ local content = {
 
 if sim ~= nil then
     -- Without this handler a headset line lands station-wide (the
-    -- engine default, docs/CONTENT-SCHEMA.md §1.7b). With it, Common is
+    -- engine default, docs/content-schema/radio.md). With it, Common is
     -- a signal like every other channel: a few rooms on its own, the
     -- station only where a powered, Common-keyed transceiver carries it
     -- (lib/radio.luau, machines/transceiver.luau).
