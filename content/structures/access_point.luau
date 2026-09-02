@@ -38,11 +38,30 @@ return {
     -- fixtures/access_point.luau.
     script = "access_point",
     ui = { modules = { "link", "parts" } },
-    -- One state, so one set of four faces answers for the whole entry.
+    -- WHAT IT LOOKS LIKE IS WHAT IT IS DOING, and tg has the art for
+    -- it: this console drops to `[base_icon_state]_off` on NOPOWER and
+    -- otherwise draws standby (access_controller.dm:226-228). The two
+    -- states this engine derives take those two pictures -- and an
+    -- EMPTY SOCKET lands on the dark one, which is the true thing to
+    -- say about a box with no address at all.
+    --
+    -- Every row carries its own four faces, so no entry-wide
+    -- `appearance.mounted` is needed and the picture can change without
+    -- losing the wall it hangs on (docs/content-schema/appearance.md).
     appearance = {
-        mounted = {
-            north = "access_point_n", south = "access_point_s",
-            east = "access_point_e", west = "access_point_w",
+        device = {
+            online = { sprite = "access_point", mounted = {
+                north = "access_point_n", south = "access_point_s",
+                east = "access_point_e", west = "access_point_w",
+            } },
+            offline = { sprite = "access_point_off", mounted = {
+                north = "access_point_off_n", south = "access_point_off_s",
+                east = "access_point_off_e", west = "access_point_off_w",
+            } },
+            unpowered = { sprite = "access_point_off", mounted = {
+                north = "access_point_off_n", south = "access_point_off_s",
+                east = "access_point_off_e", west = "access_point_off_w",
+            } },
         },
     },
     -- No `category`: the group derives from the `link` block below.

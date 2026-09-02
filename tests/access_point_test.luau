@@ -158,7 +158,12 @@ take("screwdriver")
 work("wall_frame", 4.5)
 local box = t.structure_at(4, 1)
 assert(box ~= nil and box.id == "access_point", "the assembly becomes what its board named")
-assert(box.sprite == "access_point_n", "still bolted to the wall it was framed against")
+-- The DARK north face: still bolted to the wall it was framed against,
+-- and drawn off because a box built on a bench with no grid under it
+-- has a dead cord (`appearance.device`,
+-- docs/content-schema/appearance.md). The wall is in the suffix, the
+-- power is in the stem, and both are being asserted here.
+assert(box.sprite == "access_point_off_n", "bolted to its wall and drawn dead")
 assert(t.structure_at(4, 0) == nil, "and still nothing standing on the wall")
 assert(
     t.ledger_has("StructureStep", "wall_frame", "finished"),

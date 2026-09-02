@@ -107,7 +107,7 @@ end
 -- pump off a canister, a scrubber on a waste main, and along the same
 -- wall the two boxes that are NOT atmospherics -- an access point and
 -- a transceiver, both live, both unjoined, both well inside the
--- alarm's seven tiles. They are the class test, and they are here
+-- alarm's reach. They are the class test, and they are here
 -- rather than in a second bench because "in range and refused anyway"
 -- is the only thing worth asserting about them.
 -- ---------------------------------------------------------------
@@ -233,7 +233,7 @@ assert(#scoped(panel) == 0, "not one row on it belongs to something else")
 -- ---------------------------------------------------------------
 -- 3. THE CLAIM OPENS IT, AND WHAT IT OFFERS IS ATMOSPHERICS ONLY.
 --
--- Three machines stand inside seven tiles with a setting worth turning
+-- Three machines stand inside the alarm's reach with a setting worth turning
 -- -- the vent, the pump feeding it and the scrubber -- and so do two
 -- network boxes. `accepts = { "atmos" }` is the whole difference: a
 -- refused class is not a refused PRESS, it is never offered, so a
@@ -369,3 +369,35 @@ assert(not rows(panel, "link_lock")[1].on, "the alarm is shut again")
 assert(proxied(panel, "air vent") == nil, "and the room is off the console")
 assert(dial(panel, key) == nil, "with no dial left to turn")
 assert(readout(panel, "address") == alarm, "the address stays: it was never the secret")
+
+-- ---------------------------------------------------------------
+-- 8. AND THE BOX SAYS ALL OF THIS FROM ACROSS THE ROOM.
+--
+-- tg draws this panel shut with a teal lamp over it and draws NO lamp
+-- at all while it is unpowered, broken or shorted
+-- (_air_alarm.dm:554-556, :522-525). The engine derives two states off
+-- the cord and the forest and they land on exactly those two pictures,
+-- so a crewman walking past reads "this room's console is dead" without
+-- opening anything (`appearance.device`,
+-- docs/content-schema/appearance.md).
+--
+-- The face is a MOUNT face throughout: the box is hung north and stays
+-- hung north through every swap, which is the half a flat picture would
+-- silently break.
+-- ---------------------------------------------------------------
+t.ui_close(p)
+t.tick()
+assert(t.structure_at(6, 1).sprite == "air_alarm_lit_n",
+    "fed and on the air, so the lamp is on: " .. tostring(t.structure_at(6, 1).sprite))
+assert(t.structure_at(9, 1).sprite == "access_point_n",
+    "and the comms box beside it draws standby: " .. tostring(t.structure_at(9, 1).sprite))
+
+-- Pull the breaker. Both boxes hang on cords off the one socket in the
+-- middle of the room, so both go dark together -- and they go dark by
+-- two different pictures, because each names its own art.
+t.outage()
+t.run_ticks(80)
+assert(t.structure_at(6, 1).sprite == "air_alarm_n",
+    "a dead cord is tg's no-lamp face: " .. tostring(t.structure_at(6, 1).sprite))
+assert(t.structure_at(9, 1).sprite == "access_point_off_n",
+    "and the comms box wears its own: " .. tostring(t.structure_at(9, 1).sprite))
