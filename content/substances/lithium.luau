@@ -22,4 +22,8 @@ return {
     -- What it looks like through glass (tg: other_reagents.dm:1159,
     -- COLOR_GRAY).
     color = "#808080",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for lithium metal, W included.
+    hazard = { health = 3, fire = 2, instability = 2, special = "water_reactive" },
 }

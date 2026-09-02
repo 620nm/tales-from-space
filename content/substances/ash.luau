@@ -18,4 +18,8 @@ return {
     density = { solid = 2.2 },
     -- What it looks like through glass (tg: other_reagents.dm:2303).
     color = "#515151",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- Spent carbon: it has already burnt.
+    hazard = { health = 0, fire = 0, instability = 0 },
 }

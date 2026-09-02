@@ -30,4 +30,8 @@ return {
     relevance = 40,
     -- tg's `dangerous = TRUE` (gas_types.dm:175).
     group = "poison",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- Fictional: hydrogen's fire numbers, and it is the isotope that decays.
+    hazard = { health = 2, fire = 4, instability = 1, special = "radioactive" },
 }

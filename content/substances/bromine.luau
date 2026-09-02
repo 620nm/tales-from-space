@@ -34,4 +34,8 @@ return {
     -- Boils at 332 K and fumes well below it -- a bench hazard rather
     -- than an atmospheric one.
     group = "volatile",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for bromine, OX included.
+    hazard = { health = 4, fire = 0, instability = 0, special = "oxidizer" },
 }

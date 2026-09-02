@@ -25,4 +25,8 @@ return {
     burn = { k = 1200, rate = 0.0003125 },
     -- What it looks like through glass (tg: other_reagents.dm:1972).
     color = "#2D2D2D",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for a heavy fuel oil.
+    hazard = { health = 1, fire = 2, instability = 0 },
 }

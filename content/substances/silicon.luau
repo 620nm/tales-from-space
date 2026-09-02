@@ -12,4 +12,8 @@ return {
     density = { solid = 2.33 },
     -- What it looks like through glass (tg: other_reagents.dm:1363).
     color = "#A8A8A8",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for silicon powder.
+    hazard = { health = 1, fire = 1, instability = 0 },
 }

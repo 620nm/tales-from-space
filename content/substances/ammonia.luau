@@ -71,6 +71,10 @@ local content = {
     -- A caustic cloud with a metabolism hook that burns eyes and throat;
     -- tg has no gas datum for it, so its own reagent decides.
     group = "poison",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for anhydrous ammonia.
+    hazard = { health = 3, fire = 1, instability = 0 },
 }
 
 if sim ~= nil then

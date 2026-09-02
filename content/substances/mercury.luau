@@ -21,4 +21,8 @@ return {
     -- What it looks like through glass (tg: other_reagents.dm:1048,
     -- COLOR_WEBSAFE_DARK_GRAY).
     color = "#484848",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for mercury; the vapour is the poison.
+    hazard = { health = 3, fire = 0, instability = 0, special = "skull" },
 }

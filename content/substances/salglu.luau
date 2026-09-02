@@ -43,6 +43,10 @@ local content = {
     metabolism_rate = 0.0025,
     -- What it looks like through glass (tg: medicine_reagents.dm:309).
     color = "#DCDCDC",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- Saline and sugar: it is what a drip bag holds.
+    hazard = { health = 0, fire = 0, instability = 0 },
 }
 
 if sim ~= nil then

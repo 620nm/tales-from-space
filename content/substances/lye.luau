@@ -19,4 +19,8 @@ return {
     density = { liquid = 1.5 },
     -- What it looks like through glass (tg: other_reagents.dm:2555).
     color = "#FFFFD6",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for sodium hydroxide; dissolving it boils the water.
+    hazard = { health = 3, fire = 0, instability = 1, special = "water_reactive" },
 }

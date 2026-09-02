@@ -19,4 +19,8 @@ return {
     density = { solid = 2.34 },
     -- What it looks like through glass (tg: other_reagents.dm:1144).
     color = "#832828",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for RED phosphorus, which is what this file is.
+    hazard = { health = 2, fire = 1, instability = 1 },
 }
