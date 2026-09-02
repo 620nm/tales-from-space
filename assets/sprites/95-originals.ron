@@ -50,4 +50,53 @@
         ("steam_generator_on", Png("bench/steam_generator_on.png")),
         ("steam_generator_on_loaded", Png("bench/steam_generator_on_loaded.png")),
     ],
+    sheets: [
+        ("hazard_placard", "signs/nfpa-704.ase"),
+    ],
+    groups: [
+        // The hazard placard, drawn as one document whose LAYERS are the
+        // stack a consumer builds at runtime: the diamond, a digit in
+        // each of three quadrants, and one optional symbol in the
+        // fourth. Nothing here is an animation — the frames are the
+        // ALTERNATIVES — so every sprite is one layer's cel on one
+        // frame, and arrives with the rest of the placard transparent.
+        //
+        // A logical name becomes a vending CSS class, so the parts are
+        // spelled with underscores rather than the dots prose would use.
+        (
+            sheet: "hazard_placard",
+            sprites: [
+                Layer("nfpa_704_placard", "placard", 1),
+                LayerFrames("health", [
+                    "nfpa_704_health_0",
+                    "nfpa_704_health_1",
+                    "nfpa_704_health_2",
+                    "nfpa_704_health_3",
+                    "nfpa_704_health_4",
+                ]),
+                LayerFrames("fire", [
+                    "nfpa_704_fire_0",
+                    "nfpa_704_fire_1",
+                    "nfpa_704_fire_2",
+                    "nfpa_704_fire_3",
+                    "nfpa_704_fire_4",
+                ]),
+                LayerFrames("reactivity", [
+                    "nfpa_704_reactivity_0",
+                    "nfpa_704_reactivity_1",
+                    "nfpa_704_reactivity_2",
+                    "nfpa_704_reactivity_3",
+                    "nfpa_704_reactivity_4",
+                ]),
+                LayerFrames("special", [
+                    "nfpa_704_special_skull",
+                    "nfpa_704_special_radioactive",
+                    "nfpa_704_special_biohazard",
+                    "nfpa_704_special_water_reactive",
+                    "nfpa_704_special_asphyxiant",
+                    "nfpa_704_special_oxidizer",
+                ]),
+            ],
+        ),
+    ],
 )
