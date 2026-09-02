@@ -14,6 +14,12 @@
 -- TfS white paint cannot leave one of those three selectors behind.
 local COLORS = pipe_paints.colors
 
+-- The kinds of length that carry a colour of their own and so take no
+-- stripe, the way the colour adapter takes none: tg fixes
+-- heat-exchanging pipe at `#404040` in `Initialize`
+-- (heat_exchange/he_pipes.dm:15).
+local FIXED_COLOUR = { he_pipe = true }
+
 local content = {
     id = "pipe_painter",
     name = "pipe painter",
@@ -81,8 +87,27 @@ if sim ~= nil then
             sim.message.send({ recipient = user, message = "There is no pipe under the floor here." })
             return true
         end
+        -- Nor does a length with a colour of its own -- heat-exchanging
+        -- pipe is fixed at tg's `#404040` outright (he_pipes.dm:15), and
+        -- the engine refuses the stripe. Asked here for the machine's
+        -- reason above: the wrong reply is worse than none.
+        local fixed = 0
+        local mask = 1
+        for _ = 1, 5 do
+            if layers % (mask * 2) >= mask then
+                local kind = sim.pipe_kind(x, y, mask)
+                if kind ~= nil and FIXED_COLOUR[kind] then
+                    fixed = fixed + mask
+                end
+            end
+            mask = mask * 2
+        end
+        if fixed == layers then
+            sim.message.send({ recipient = user, message = "That pipe has a colour of its own." })
+            return true
+        end
         local paint = COLORS[sim.mode(self).index + 1]
-        sim.paint_pipe(x, y, layers, paint.hex)
+        sim.paint_pipe(x, y, layers - fixed, paint.hex)
         sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })
         sim.message.send({ recipient = user, message = "You paint the pipe " .. paint.name .. "." })
         return true

@@ -1,0 +1,147 @@
+// Heat-exchanging pipe: the run, the junction that meets ordinary pipe,
+// and the two loose fittings. tg keeps three sheets for the family
+// (`he-simple.dmi`, `he-manifold.dmi`, `he-junction.dmi`) and composes a
+// manifold from a base, a centre and one stub per joined end
+// (`heat_exchange/manifold.dm:29-38`). This engine derives a length's
+// SHAPE from its neighbours instead, so the sixteen adjacencies are
+// composed here, at bake time, and the client learns nothing new: a
+// shape is `<family>_l<layer>_<dirs>` exactly as ordinary pipe is.
+//
+// The stubs tg underlays are pixel-identical to what its base already
+// draws (they exist so each end can take its NEIGHBOUR's colour, which
+// is a thing only tg's per-object paint needs), so they are not composed
+// here. The CENTRE is not: it is one shared cell that tg places with
+// `PIPING_LAYER_DOUBLE_SHIFT`, five pixels per layer off the middle one,
+// which is what the placed layers below spell.
+//
+// Only piping layers 2, 3 and 4 have art upstream, and the item says so
+// (`content/items/he_pipe.luau`, `pipe.layers`).
+(
+    sheets: [
+        ("he_simple", "obj/pipes_n_cables/he-simple.dmi"),
+        ("he_manifold", "obj/pipes_n_cables/he-manifold.dmi"),
+        ("he_junction", "obj/pipes_n_cables/he-junction.dmi"),
+        ("pipe_item", "obj/pipes_n_cables/pipe_item.dmi"),
+    ],
+    sprites: [
+        // Piping layer 2. tg ships the run and the arms pre-shifted per
+        // layer; only the centre is a shared cell, placed by its consumer.
+        ("he_pipe_l2_0", Dmi("@he_simple", "pipe00-2", 0)),
+        ("he_pipe_l2_1", Dmi("@he_simple", "pipe10-2", 0)),
+        ("he_pipe_l2_2", Dmi("@he_simple", "pipe01-2", 0)),
+        ("he_pipe_l2_3", Dmi("@he_simple", "pipe11-2", 0)),
+        ("he_pipe_l2_4", Dmi("@he_simple", "pipe10-2", 2)),
+        ("he_pipe_l2_5", Dmi("@he_simple", "pipe11-2", 6)),
+        ("he_pipe_l2_6", Dmi("@he_simple", "pipe11-2", 4)),
+        ("he_pipe_l2_7", DmiCellsAt([
+            ("@he_manifold", "manifold-2", 3, 0, 0),
+            ("@he_manifold", "manifold_center", 3, -5, 5),
+        ])),
+        ("he_pipe_l2_8", Dmi("@he_simple", "pipe01-2", 2)),
+        ("he_pipe_l2_9", Dmi("@he_simple", "pipe11-2", 7)),
+        ("he_pipe_l2_10", Dmi("@he_simple", "pipe11-2", 5)),
+        ("he_pipe_l2_11", DmiCellsAt([
+            ("@he_manifold", "manifold-2", 2, 0, 0),
+            ("@he_manifold", "manifold_center", 2, -5, 5),
+        ])),
+        ("he_pipe_l2_12", Dmi("@he_simple", "pipe11-2", 2)),
+        ("he_pipe_l2_13", DmiCellsAt([
+            ("@he_manifold", "manifold-2", 0, 0, 0),
+            ("@he_manifold", "manifold_center", 0, -5, 5),
+        ])),
+        ("he_pipe_l2_14", DmiCellsAt([
+            ("@he_manifold", "manifold-2", 1, 0, 0),
+            ("@he_manifold", "manifold_center", 1, -5, 5),
+        ])),
+        ("he_pipe_l2_15", DmiCellsAt([
+            ("@he_manifold", "manifold4w-2", 0, 0, 0),
+            ("@he_manifold", "manifold4w_center", 0, -5, 5),
+        ])),
+
+        // Piping layer 3. tg ships the run and the arms pre-shifted per
+        // layer; only the centre is a shared cell, placed by its consumer.
+        ("he_pipe_l3_0", Dmi("@he_simple", "pipe00-3", 0)),
+        ("he_pipe_l3_1", Dmi("@he_simple", "pipe10-3", 0)),
+        ("he_pipe_l3_2", Dmi("@he_simple", "pipe01-3", 0)),
+        ("he_pipe_l3_3", Dmi("@he_simple", "pipe11-3", 0)),
+        ("he_pipe_l3_4", Dmi("@he_simple", "pipe10-3", 2)),
+        ("he_pipe_l3_5", Dmi("@he_simple", "pipe11-3", 6)),
+        ("he_pipe_l3_6", Dmi("@he_simple", "pipe11-3", 4)),
+        ("he_pipe_l3_7", DmiCellsAt([
+            ("@he_manifold", "manifold-3", 3, 0, 0),
+            ("@he_manifold", "manifold_center", 3, 0, 0),
+        ])),
+        ("he_pipe_l3_8", Dmi("@he_simple", "pipe01-3", 2)),
+        ("he_pipe_l3_9", Dmi("@he_simple", "pipe11-3", 7)),
+        ("he_pipe_l3_10", Dmi("@he_simple", "pipe11-3", 5)),
+        ("he_pipe_l3_11", DmiCellsAt([
+            ("@he_manifold", "manifold-3", 2, 0, 0),
+            ("@he_manifold", "manifold_center", 2, 0, 0),
+        ])),
+        ("he_pipe_l3_12", Dmi("@he_simple", "pipe11-3", 2)),
+        ("he_pipe_l3_13", DmiCellsAt([
+            ("@he_manifold", "manifold-3", 0, 0, 0),
+            ("@he_manifold", "manifold_center", 0, 0, 0),
+        ])),
+        ("he_pipe_l3_14", DmiCellsAt([
+            ("@he_manifold", "manifold-3", 1, 0, 0),
+            ("@he_manifold", "manifold_center", 1, 0, 0),
+        ])),
+        ("he_pipe_l3_15", DmiCellsAt([
+            ("@he_manifold", "manifold4w-3", 0, 0, 0),
+            ("@he_manifold", "manifold4w_center", 0, 0, 0),
+        ])),
+
+        // Piping layer 4. tg ships the run and the arms pre-shifted per
+        // layer; only the centre is a shared cell, placed by its consumer.
+        ("he_pipe_l4_0", Dmi("@he_simple", "pipe00-4", 0)),
+        ("he_pipe_l4_1", Dmi("@he_simple", "pipe10-4", 0)),
+        ("he_pipe_l4_2", Dmi("@he_simple", "pipe01-4", 0)),
+        ("he_pipe_l4_3", Dmi("@he_simple", "pipe11-4", 0)),
+        ("he_pipe_l4_4", Dmi("@he_simple", "pipe10-4", 2)),
+        ("he_pipe_l4_5", Dmi("@he_simple", "pipe11-4", 6)),
+        ("he_pipe_l4_6", Dmi("@he_simple", "pipe11-4", 4)),
+        ("he_pipe_l4_7", DmiCellsAt([
+            ("@he_manifold", "manifold-4", 3, 0, 0),
+            ("@he_manifold", "manifold_center", 3, 5, -5),
+        ])),
+        ("he_pipe_l4_8", Dmi("@he_simple", "pipe01-4", 2)),
+        ("he_pipe_l4_9", Dmi("@he_simple", "pipe11-4", 7)),
+        ("he_pipe_l4_10", Dmi("@he_simple", "pipe11-4", 5)),
+        ("he_pipe_l4_11", DmiCellsAt([
+            ("@he_manifold", "manifold-4", 2, 0, 0),
+            ("@he_manifold", "manifold_center", 2, 5, -5),
+        ])),
+        ("he_pipe_l4_12", Dmi("@he_simple", "pipe11-4", 2)),
+        ("he_pipe_l4_13", DmiCellsAt([
+            ("@he_manifold", "manifold-4", 0, 0, 0),
+            ("@he_manifold", "manifold_center", 0, 5, -5),
+        ])),
+        ("he_pipe_l4_14", DmiCellsAt([
+            ("@he_manifold", "manifold-4", 1, 0, 0),
+            ("@he_manifold", "manifold_center", 1, 5, -5),
+        ])),
+        ("he_pipe_l4_15", DmiCellsAt([
+            ("@he_manifold", "manifold4w-4", 0, 0, 0),
+            ("@he_manifold", "manifold4w_center", 0, 5, -5),
+        ])),
+        // The junction, which is a length of pipe with an attribute: one
+        // end takes ordinary pipe and the other takes this family
+        // (`heat_exchange/junction.dm:30-33`). Drawn from tg's own sheet
+        // on the middle layer, as the colour adapter is -- the engine
+        // normalises a fused binary's facing onto one axis, so a
+        // junction has two pictures and not four.
+        ("he_junction_ns", Dmi("@he_junction", "pipe11-3", 1)),
+        ("he_junction_ew", Dmi("@he_junction", "pipe11-3", 2)),
+
+        // The two loose fittings, off tg's item sheet by the machine's
+        // own `pipe_state` (`construction.dm:17,216`): "he" for a length
+        // and "junction" for the seam.
+        ("he_pipe", Dmi("@pipe_item", "he", 0)),
+        ("he_junction_loose", Dmi("@pipe_item", "junction", 0)),
+        ("he_junction_loose_s", Dmi("@pipe_item", "junction", 0)),
+        ("he_junction_loose_n", Dmi("@pipe_item", "junction", 1)),
+        ("he_junction_loose_e", Dmi("@pipe_item", "junction", 2)),
+        ("he_junction_loose_w", Dmi("@pipe_item", "junction", 3)),
+    ],
+)
