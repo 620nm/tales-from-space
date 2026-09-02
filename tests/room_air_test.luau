@@ -55,11 +55,11 @@ local MAP = [==[
         "#######",
     ],
     spawns: [(5, 1)],
-    air_presets: {
-        "walk_in": (gases: [("o2", ]==] .. cold * 0.21 .. [==[), ("n2", ]==] .. cold * 0.79 .. [==[)], temperature_k: ]==] .. COLD_K .. [==[),
-        "pumped_down": (temperature_k: 2.7),
+    blends: {
+        "walk_in": (rows: [("o2", ]==] .. cold * 0.21 .. [==[), ("n2", ]==] .. cold * 0.79 .. [==[)], temperature_k: ]==] .. COLD_K .. [==[, amount: per_tile),
+        "pumped_down": (temperature_k: 2.7, amount: per_tile),
     },
-    air: [(1, 1, "walk_in"), (2, 1, "walk_in"), (3, 1, "pumped_down")],
+    painted: [(1, 1, "walk_in"), (2, 1, "walk_in"), (3, 1, "pumped_down")],
 )
 ]==]
 

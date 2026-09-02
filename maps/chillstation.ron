@@ -484,10 +484,10 @@
         // store would be seven tanks of the same thing. The gaps between
         // them and the whole of rows 29-30 and 32 are where an engineer
         // runs pipe to whichever one they want today.
-        (4, 28, "stationary_tank", "anchored", { "air": "o2_23000kpa" }),
-        (6, 28, "stationary_tank", "anchored", { "air": "n2_23000kpa" }),
-        (8, 28, "stationary_tank", "anchored", { "air": "co2_23000kpa" }),
-        (10, 28, "stationary_tank", "anchored", { "air": "plasma_23000kpa" }),
+        (4, 28, "stationary_tank", "anchored", { "blend": "o2_23000kpa" }),
+        (6, 28, "stationary_tank", "anchored", { "blend": "n2_23000kpa" }),
+        (8, 28, "stationary_tank", "anchored", { "blend": "co2_23000kpa" }),
+        (10, 28, "stationary_tank", "anchored", { "blend": "plasma_23000kpa" }),
         // The fifth is the WATER reservoir, and it is the odd one in the
         // row because water is the one substance here with a liquid
         // phase: there is no `water_vapor` to bottle, only water, which
@@ -509,9 +509,9 @@
         // lands on the deck. That is the intended experiment, and it is
         // why this tank stands at the east end of the row, on the side
         // the corridor door is on.
-        (12, 28, "stationary_tank", "anchored", { "air": "water_67268kpa" }),
-        (5, 33, "stationary_tank", "anchored", { "air": "tritium_23000kpa" }),
-        (7, 33, "stationary_tank", "anchored", { "air": "n2o_23000kpa" }),
+        (12, 28, "stationary_tank", "anchored", { "blend": "water_67268kpa" }),
+        (5, 33, "stationary_tank", "anchored", { "blend": "tritium_23000kpa" }),
+        (7, 33, "stationary_tank", "anchored", { "blend": "n2o_23000kpa" }),
         // The temperature control unit, on the machine tile the annex
         // wired for it: the L1 room circuit under its feet, the bench run
         // stopping either side. Its one mouth auto-binds the east stub;
@@ -682,10 +682,10 @@
         // looks like -- so the fact that this station's distribution
         // main is pressurised at roundstart is a sentence somebody
         // wrote here rather than a thing the engine did.
-        (8, 17, "canister", { "air": "canister_air", "open": true }), (9, 17, "canister", { "air": "canister_air", "open": true }),
-        (10, 17, "canister", { "air": "canister_air", "open": true }), (11, 17, "canister", { "air": "canister_air", "open": true }),
-        (15, 22, "canister", { "air": "canister_air", "open": true }), (17, 22, "canister", { "air": "canister_air", "open": true }),
-        (19, 25, "canister", { "air": "canister_air", "open": true }), (23, 26, "canister", { "air": "canister_air", "open": true }),
+        (8, 17, "canister", { "blend": "canister_air", "open": true }), (9, 17, "canister", { "blend": "canister_air", "open": true }),
+        (10, 17, "canister", { "blend": "canister_air", "open": true }), (11, 17, "canister", { "blend": "canister_air", "open": true }),
+        (15, 22, "canister", { "blend": "canister_air", "open": true }), (17, 22, "canister", { "blend": "canister_air", "open": true }),
+        (19, 25, "canister", { "blend": "canister_air", "open": true }), (23, 26, "canister", { "blend": "canister_air", "open": true }),
     ],
     // The two vestibule interlocks: each airlock names the direction its
     // partner lies in, and the link resolves only because BOTH of them
@@ -1159,31 +1159,32 @@
     // cell holds -- these three are pV/RT at 20 C, which is the reading
     // the ids are named after (docs/ATMOS.md 11).
     //
-    // The gas keys are the matter registry's and are checked at boot: a
-    // key nothing answers to refuses the server rather than quietly
-    // holding ordinary air (main.rs, and MapFile::air_errors).
-    air_presets: {
+    // The substance keys are the matter registry's and are checked at boot: a
+    // key nothing answers to refuses the server rather than quietly holding
+    // ordinary air (main.rs, and MapFile::blend_errors). `water` names its
+    // phase, because water rests LIQUID at 20 C and this store is a gas.
+    blends: {
         // What every supply bottle on the station opens the shift
         // holding: tg's own canister charge, 21/79 at 45 atmospheres
-        // (content/air/canister_air.luau, which declares the same
-        // recipe as the pack's default so a mapper can copy it).
-        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
-        "co2_300kpa": (gases: [("co2", 123.0895930990394)], temperature_k: 293.15),
-        // The tank annex's seven stores. One recipe per store, named
+        // (content/blends/canister_air.luau, which declares the same
+        // blend as the pack's default so a mapper can copy it).
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
+        "co2_300kpa": (rows: [("co2", 123.0895930990394)], temperature_k: 293.15, amount: per_tile),
+        // The tank annex's seven stores. One blend per store, named
         // after the pressure a 2 500 L shell of it reads at 20 C -- so
-        // a second tank of the same thing names the same recipe rather
+        // a second tank of the same thing names the same blend rather
         // than repeating the arithmetic.
-        "co2_23000kpa": (gases: [("co2", 9436.868804259688)], temperature_k: 293.15),
-        "n2_23000kpa": (gases: [("n2", 9436.868804259688)], temperature_k: 293.15),
-        "n2_5000kpa": (gases: [("n2", 2051.493218317323)], temperature_k: 293.15),
-        "n2o_23000kpa": (gases: [("n2o", 9436.868804259688)], temperature_k: 293.15),
-        "o2_23000kpa": (gases: [("o2", 9436.868804259688)], temperature_k: 293.15),
-        "o2_5000kpa": (gases: [("o2", 2051.493218317323)], temperature_k: 293.15),
-        "plasma_23000kpa": (gases: [("plasma", 9436.868804259688)], temperature_k: 293.15),
-        "tritium_23000kpa": (gases: [("tritium", 9436.868804259688)], temperature_k: 293.15),
-        "water_67268kpa": (gases: [("water", 27599.96916195394)], temperature_k: 293.15),
+        "co2_23000kpa": (rows: [("co2", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
+        "n2_23000kpa": (rows: [("n2", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
+        "n2_5000kpa": (rows: [("n2", 2051.493218317323)], temperature_k: 293.15, amount: per_tile),
+        "n2o_23000kpa": (rows: [("n2o", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
+        "o2_23000kpa": (rows: [("o2", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
+        "o2_5000kpa": (rows: [("o2", 2051.493218317323)], temperature_k: 293.15, amount: per_tile),
+        "plasma_23000kpa": (rows: [("plasma", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
+        "tritium_23000kpa": (rows: [("tritium", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
+        "water_67268kpa": (rows: [("water:gas", 27599.96916195394)], temperature_k: 293.15, amount: per_tile),
     },
-    air: [
+    painted: [
         (15, 33, "o2_5000kpa"),
         (16, 33, "o2_5000kpa"),
         (17, 33, "o2_5000kpa"),

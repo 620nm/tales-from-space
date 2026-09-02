@@ -16,13 +16,14 @@ t.world([==[(
     ],
     spawns: [(1, 1)],
     items: [(1, 1, "atmos_resin_projector")],
-    air_presets: {
+    blends: {
         "burning_mix": (
-            gases: [("plasma", 10.0), ("o2", 14.0)],
+            rows: [("plasma", 10.0), ("o2", 14.0)],
             temperature_k: 700.0,
+            amount: per_tile,
         ),
     },
-    air: [(1, 1, "burning_mix")],
+    painted: [(1, 1, "burning_mix")],
 )]==], 0)
 
 local p = t.join()

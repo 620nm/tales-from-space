@@ -48,7 +48,8 @@ cargo run -p xtask -- bake-atlas            # reads $LUNATIC_PACK/assets and $LU
 - `content/capabilities.luau` opts into optional client grammars. TfS
   explicitly enables `interactions.body`; body-plan definitions alone do not
   expose hands, jobs, vitals or respawn to a player.
-- `content/air/*.luau` are the air recipes a mapper paints rooms with
+- `content/blends/*.luau` are the Matter Blends a mapper paints rooms and
+  fills holders with
   (`{ id, name, gases = { {key, moles} }, temperature_k }`,
   docs/ATMOS.md §11). Required content like every other roster; they are
   DEFAULTS the map editor copies into a map, never state — the sim seeds

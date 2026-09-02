@@ -59,12 +59,12 @@ t.world([==[(
     spawns: [(1, 2)],
     items: [(1, 2, "analyzer"), (2, 2, "pipe")],
     pipes: [(2, 1, 5), (3, 1, 4)],
-    air_presets: {
-        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    blends: {
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
         (1, 1, "connector_port"),
-        (1, 1, "canister", { "air": "canister_air", "open": true }),
+        (1, 1, "canister", { "blend": "canister_air", "open": true }),
     ],
 )]==], 7)
 
