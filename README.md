@@ -50,10 +50,10 @@ cargo run -p xtask -- bake-atlas            # reads $LUNATIC_PACK/assets and $LU
   expose hands, jobs, vitals or respawn to a player.
 - `content/blends/*.luau` are the Matter Blends a mapper paints rooms and
   fills holders with
-  (`{ id, name, gases = { {key, moles} }, temperature_k }`,
-  docs/ATMOS.md §11). Required content like every other roster; they are
-  DEFAULTS the map editor copies into a map, never state — the sim seeds
-  every tile from the map's own presets.
+  (`{ id, name, rows = { {key, moles} }, temperature_k, amount }`,
+  docs/content-schema/blends.md). Required content like every other roster;
+  they are DEFAULTS the map editor copies into a map, never state — the sim
+  seeds every tile and every holder from the map's own blends.
 - `docs/GAMEMODES.md` defines the Space Station/Free Build split and the
   `content/gamemodes/*.luau` policy schema.
 - A shift runs one hour of sim time under either mode. The engine knows
