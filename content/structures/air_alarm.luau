@@ -95,7 +95,7 @@ return {
     -- WHAT IT LOOKS LIKE IS WHAT IT IS DOING. tg draws this box shut
     -- (`alarmp`) with a teal lamp laid over it, and draws NO lamp at
     -- all while it is unpowered, broken or shorted
-    -- (_air_alarm.dm:554-556, :522-525). The two states this engine can
+    -- (_air_alarm.dm:557, :526-527). The two states this engine can
     -- derive land on exactly those two pictures: a live box on a live
     -- segment shows the lamp, a dead cord or a box off the air shows
     -- the same panel dark. `offline` and `unpowered` are the same cell

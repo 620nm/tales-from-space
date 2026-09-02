@@ -39,11 +39,11 @@ return {
     script = "access_point",
     ui = { modules = { "link", "parts" } },
     -- WHAT IT LOOKS LIKE IS WHAT IT IS DOING, and tg has the art for
-    -- it: this console drops to `[base_icon_state]_off` on NOPOWER and
-    -- otherwise draws standby (access_controller.dm:226-228). The two
-    -- states this engine derives take those two pictures -- and an
-    -- EMPTY SOCKET lands on the dark one, which is the true thing to
-    -- say about a box with no address at all.
+    -- it: this console drops to `[base_icon_state]_off` on NOPOWER
+    -- (access_controller.dm:224-227) and otherwise draws standby
+    -- (:228). The two states this engine derives take those two
+    -- pictures -- and an EMPTY SOCKET lands on the dark one, which is
+    -- the true thing to say about a box with no address at all.
     --
     -- Every row carries its own four faces, so no entry-wide
     -- `appearance.mounted` is needed and the picture can change without
