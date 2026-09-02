@@ -47,6 +47,14 @@ if sim ~= nil then
         end
         sim.message.send({ recipient = ev.actor, message = said })
     end)
+
+    -- The two stages a hub stands on, the router's exactly
+    -- (fixtures/network_router.luau): the key check for a tree this box
+    -- happens to top, and the hop that changes nothing. A box under a
+    -- router is never asked to read -- the top is -- and still holds
+    -- the words on their way up (lib/radio_relay.luau).
+    script_definition:handle("radio.read", { kind = "transform", route = "read" }, radio_relay.read)
+    script_definition:handle("radio.carry", { kind = "transform", route = "carry" }, radio_relay.carry)
 end
 
 return content

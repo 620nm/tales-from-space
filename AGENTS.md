@@ -56,7 +56,18 @@ suite before completion; exact commands and filter semantics are in
   readable both at prototype time and inside a handler. Nothing in
   `lib/` may call `sim.define` — shared code publishes tables, rosters
   declare things. A gesture spelled out in two roster files belongs
-  there instead; that duplication is what it exists to prevent.
+  there instead; that duplication is what it exists to prevent. Because
+  a `lib/` file may not `sim.define`, a shared answer is a FUNCTION
+  there and the `Definition:handle` naming it lives in the roster file
+  — `lib/radio_relay.luau` against `fixtures/transceiver.luau`,
+  `fixtures/access_point.luau` and `fixtures/network_router.luau`.
+- Radio policy is `lib/radio.luau` (every number, and who finally hears
+  a `;` line) and `lib/radio_relay.luau` (what a tower, a wall box and a
+  router each do to one crossing them). Nothing else decides who hears:
+  a second path would be a second answer. The four relay stages are one
+  published native edge, so `mod.toml` must keep `speech.relay` in
+  `native_edges` or every registration fails at load
+  (`docs/luau-api/radio-relay.md`).
 - Specs (`tests/*_test.luau`) assert what a PLAYER could cause, through
   `t` — the same SimCommand seam the Rust harness uses. No raw entity
   handles, no component access, no direct spawn, and none should ever be

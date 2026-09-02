@@ -1,9 +1,10 @@
--- The transceiver's two behaviors, and deliberately no third
--- (machines/transceiver.luau): a sentence for whoever touches it, and
--- a lamp that follows its keys. Delivery itself is the transmitting
--- item's `speech.radio` and never a hook on the tower
--- (lib/radio.luau) -- a second path to "who hears" would be a second
--- answer to it.
+-- The transceiver's behaviors (machines/transceiver.luau): a sentence
+-- for whoever touches it, a lamp that follows its keys, and its three
+-- stages of the relay walk. WHO FINALLY HEARS is still the transmitting
+-- item's `speech.radio` and never a hook here (lib/radio.luau) -- a
+-- second path to "who hears" would be a second answer to it. These
+-- stages settle which towers are speaking at all, and the answers
+-- themselves live in lib/radio_relay.luau.
 local content = {
     id = "transceiver",
 }
@@ -35,6 +36,14 @@ if sim ~= nil then
         local keyed = radio.keyed_words(ev.subject) ~= nil
         ev.subject.vars["transceiver_look"] = if keyed then "transceiver_on" else nil
     end)
+
+    -- The three stages a tower stands on. Each is a transform because
+    -- each writes something back -- `reads`, the words, `cancelled` --
+    -- and a station is where the decision is made, never where state is
+    -- recorded (docs/luau-api/radio-relay.md).
+    script_definition:handle("radio.receive", { kind = "transform", route = "receive" }, radio_relay.receive)
+    script_definition:handle("radio.carry", { kind = "transform", route = "carry" }, radio_relay.carry)
+    script_definition:handle("radio.send", { kind = "transform", route = "send" }, radio_relay.send)
 end
 
 return content
