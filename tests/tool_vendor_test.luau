@@ -93,6 +93,10 @@ local parts = {
     "network_card",
     "machine_board.thermomachine",
     "machine_board.access_point",
+    -- The air alarm hangs in the same wall frame the access point does
+    -- and is built out of the same ladder, so its board is on the same
+    -- shelf (machines/tool_vendor.luau).
+    "machine_board.air_alarm",
     "machine_board.network_router",
     "machine_board.transceiver",
     -- The encryption keys ride the same no-lathe argument as the

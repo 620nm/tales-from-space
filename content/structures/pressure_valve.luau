@@ -29,6 +29,18 @@ return {
     name = "pressure valve",
     sprite = "pvalve_off_n",
     ui = { modules = { "flow" } },
+    -- ON THE ROOM'S NETWORK. An endpoint carries its own address and
+    -- joins one hub, which is how an air alarm comes to draw this
+    -- machine's settings instead of a crewman kneeling at it. The class
+    -- word is what stops the alarm adopting the comms box next to it,
+    -- and it is spelled out rather than shared because `lib/` is not
+    -- published into the structure registry's sandbox
+    -- (structures/air_alarm.luau, docs/content-schema/link.md).
+    link = {
+        network_interface = true,
+        role = "endpoint",
+        class = "atmos",
+    },
     dense = false,
     -- "armed" rather than "open", because that is what the position
     -- means: the valve is watching, and whether anything is crossing is

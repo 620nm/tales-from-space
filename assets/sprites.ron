@@ -131,6 +131,14 @@
         ("access_point_n", 0, -25),
         ("access_point_e", 25, 0),
         ("access_point_w", -25, 0),
+        // The air alarm hangs in the same bracket and shifts by its own
+        // number: tg's wall frame for it declares `pixel_shift = 27`
+        // (code/modules/atmospherics/machinery/air_alarm/
+        // air_alarm_interact.dm:190-196).
+        ("air_alarm_s", 0, 27),
+        ("air_alarm_n", 0, -27),
+        ("air_alarm_e", 27, 0),
+        ("air_alarm_w", -27, 0),
         // tg's directional wall helpers shift these toward their wall
         // by the numbers declared beside each type: 28 pixels for the
         // clock (`code/game/machinery/digital_clock.dm:155`) and a full

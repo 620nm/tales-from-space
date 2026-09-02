@@ -85,6 +85,15 @@ return {
             category = "Parts",
             amount = 2,
         },
+        -- tg stocks its air alarm electronics on the engineering vendor
+        -- too, ten deep (code/modules/vending/engivend.dm:17). Two here,
+        -- which is what every board on this shelf comes in.
+        {
+            item = "machine_board.air_alarm",
+            name = "Machine Board (Air Alarm)",
+            category = "Parts",
+            amount = 2,
+        },
         {
             item = "machine_board.network_router",
             name = "Machine Board (Network Router)",
