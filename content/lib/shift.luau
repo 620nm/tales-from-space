@@ -29,7 +29,11 @@ local OVER = "lunatic/tfs:shift_over"
 
 local MINUTE = 60
 local MAX_MINUTES = 1440
-local MAX_GRACE = 300
+-- The engine's own ceiling on a round-end grace, refused here rather
+-- than clamped there: a mode that asked for more would be shortened
+-- without being told (`crates/lunatic-server/src/script/effect.rs`,
+-- `MAX_ROUND_END_GRACE_SECS`).
+local MAX_GRACE = 120
 
 local function fail(mode, detail)
     error("gamemodes/" .. mode .. " rules.shift: " .. detail)
