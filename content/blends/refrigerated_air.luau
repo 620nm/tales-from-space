@@ -22,9 +22,10 @@ local n = ONE_ATMOSPHERE_PA * TILE_VOLUME_M3 / (R * T)
 return {
     id = "refrigerated_air",
     name = "Refrigerated air",
-    gases = {
+    rows = {
         { "o2", n * 0.21 },
         { "n2", n * 0.79 },
     },
     temperature_k = T,
+    amount = "per_tile",
 }

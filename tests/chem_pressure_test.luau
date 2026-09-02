@@ -52,15 +52,15 @@ t.world([==[(
         "########",
     ],
     spawns: [(1, 1)],
-    air_presets: {
-        "haber": (gases: [("n2", 40.0), ("hydrogen", 120.0)], temperature_k: 700.0),
-        "cold_haber": (gases: [("n2", 40.0), ("hydrogen", 120.0)], temperature_k: 293.15),
-        "thin_haber": (gases: [("n2", 40.0), ("hydrogen", 20.0)], temperature_k: 700.0),
+    blends: {
+        "haber": (rows: [("n2", 40.0), ("hydrogen", 120.0)], temperature_k: 700.0, amount: per_tile),
+        "cold_haber": (rows: [("n2", 40.0), ("hydrogen", 120.0)], temperature_k: 293.15, amount: per_tile),
+        "thin_haber": (rows: [("n2", 40.0), ("hydrogen", 20.0)], temperature_k: 700.0, amount: per_tile),
     },
     structures: [
-        (1, 1, "canister", { "air": "haber" }),
-        (3, 1, "canister", { "air": "cold_haber" }),
-        (5, 1, "canister", { "air": "thin_haber" }),
+        (1, 1, "canister", { "blend": "haber" }),
+        (3, 1, "canister", { "blend": "cold_haber" }),
+        (5, 1, "canister", { "blend": "thin_haber" }),
     ],
 )]==], 7)
 

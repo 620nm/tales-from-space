@@ -50,7 +50,7 @@ return {
     --
     -- It arrives EMPTY with the valve shut. What is in a bottle is a
     -- fact about the station, so a map says it per placement --
-    -- `{ "air": "canister_air", "open": true }` -- rather than tg's
+    -- `{ "blend": "canister_air", "open": true }` -- rather than tg's
     -- twenty pre-charged subtypes.
     fixture = "Canister",
     dense = true,

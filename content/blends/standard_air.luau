@@ -5,7 +5,7 @@
 -- no air of its own — before this marker it deposited a hardcoded 21/79
 -- into every unpainted floor tile, which was one more recipe under
 -- `crates/` that a mod could not change (docs/ATMOS.md §11). Now the
--- pack says which of its presets an unpainted tile opens with, and a
+-- pack says which of its blends an unpainted tile opens with, and a
 -- pack that says nothing opens its rooms empty.
 --
 -- This file also exists so a mapper can PAINT that same air back onto a
@@ -30,9 +30,10 @@ return {
     id = "standard_air",
     name = "Standard air",
     default = true,
-    gases = {
+    rows = {
         { "o2", n * 0.21 },
         { "n2", n * 0.79 },
     },
     temperature_k = T,
+    amount = "per_tile",
 }

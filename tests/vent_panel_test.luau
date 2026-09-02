@@ -102,8 +102,8 @@ local BENCH = [==[(
     // A crewman stands ON the pump, which is where an engineer working
     // this end of the run stands: nothing in the plumbing is dense.
     spawns: [(3, 1)],
-    air_presets: {
-        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    blends: {
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
         (2, 1, "vent"),
@@ -112,7 +112,7 @@ local BENCH = [==[(
         // hands over what its run holds (atmos_machines/vent.rs).
         (3, 1, "gas_pump", "running", { "dir": "west", "target_kpa": 900.0 }),
         (4, 1, "connector_port", { "dir": "west" }),
-        (4, 1, "canister", { "air": "canister_air" }),
+        (4, 1, "canister", { "blend": "canister_air" }),
     ],
     // Backbone (L2) under the generator and the APC; room circuit (L1)
     // from the APC's tile west along the corridor to the vent.

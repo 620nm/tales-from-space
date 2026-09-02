@@ -58,17 +58,17 @@ t.world([==[(
     spawns: [(1, 2)],
     items: [(1, 2, "wrench"), (2, 1, "pipe_meter"), (3, 2, "pipe_meter")],
     pipes: [(2, 1, 4), (3, 1, 4)],
-    air_presets: {
+    blends: {
         // Standard air, deliberately: a recipe is moles PER TILE and the
         // shell is 2 m3, so this fills the bottle to exactly one
         // atmosphere -- and the bottle and the run are one body of gas
         // while fastened, so the needle stop this spec pins is the
         // one-atmosphere stop.
-        "canister_air": (gases: [("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15),
+        "canister_air": (rows: [("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
         (1, 1, "connector_port"),
-        (1, 1, "canister", { "air": "canister_air", "open": true }),
+        (1, 1, "canister", { "blend": "canister_air", "open": true }),
     ],
 )]==], 7)
 
