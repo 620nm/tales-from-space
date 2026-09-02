@@ -79,10 +79,11 @@
         // it rests on: eight atlas cells for a device that spends the
         // shift in a pocket is not a trade worth making.
         ("analyzer", Dmi("@scanner", "analyzer", 0)),
-        // The pipe meter, in the two halves tg's greyscale config
+        // The pipe meter, in the three layers tg's greyscale config
         // composes it from (datums/greyscale/json_configs/meter.json):
-        // an untinted housing, and a needle the machine paints by
-        // temperature. Twenty needle positions is tg's own dial — the
+        // an untinted housing, a needle the machine paints by
+        // temperature, and a lit button panel that is untinted
+        // again. Twenty needle positions is tg's own dial — the
         // art is drawn for the pressures a station runs at, so the low
         // scale gets half the stops.
         ("pipe_meter", Dmi("@pipe_item", "meter", 0)),
@@ -112,6 +113,18 @@
         ("meter_p3_5", Dmi("@meter", "pressure3_5", 0)),
         ("meter_p3_6", Dmi("@meter", "pressure3_6", 0)),
         ("meter_p4", Dmi("@meter", "pressure4", 0)),
+        // The button lamps, one per pressure BAND rather than per stop:
+        // tg's config pairs every `pressureN_M` with `buttonsN`
+        // (meter.json). Two of them move — the peg blinks ten frames at
+        // a tick each and the off-the-scale one four at two ticks
+        // (meter.dmi's own delays) — and, like the pump, they are loops
+        // with no beginning worth agreeing on, so no anchor and no
+        // server state. The middle three are stills.
+        ("meter_l0", DmiAnim("@meter", "buttons0", 0)),
+        ("meter_l1", Dmi("@meter", "buttons1", 0)),
+        ("meter_l2", Dmi("@meter", "buttons2", 0)),
+        ("meter_l3", Dmi("@meter", "buttons3", 0)),
+        ("meter_l4", DmiAnim("@meter", "buttons4", 0)),
         ("held_pipe_l_s", Dmi("@items_l", "buildpipe", 0)),
         ("held_pipe_l_n", Dmi("@items_l", "buildpipe", 1)),
         ("held_pipe_l_e", Dmi("@items_l", "buildpipe", 2)),
