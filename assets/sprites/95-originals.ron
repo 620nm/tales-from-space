@@ -63,39 +63,49 @@
         //
         // A logical name becomes a vending CSS class, so the parts are
         // spelled with underscores rather than the dots prose would use.
+        //
+        // It HANGS, so every picture is wrapped in `Faces`: that mints
+        // the flat name plus four copies shifted 25px toward their wall,
+        // this pack's standard bracket overhang -- the one the APC, the
+        // outlet and the wall frame are baked with
+        // (`tfs/assets/sprites.ron`, tg's `pixel_shift` on
+        // `/obj/item/wallframe`,
+        // code/game/objects/items/wall_mounted.dm:63-72). Every layer of
+        // the stack carries it, so the digits stay in their quadrants on
+        // every wall (../lunatic/docs/construction/signs.md).
         (
             sheet: "hazard_placard",
             sprites: [
-                Layer("nfpa_704_placard", "placard", 1),
-                LayerFrames("health", [
+                Faces(25, Layer("nfpa_704_placard", "placard", 1)),
+                Faces(25, LayerFrames("health", [
                     "nfpa_704_health_0",
                     "nfpa_704_health_1",
                     "nfpa_704_health_2",
                     "nfpa_704_health_3",
                     "nfpa_704_health_4",
-                ]),
-                LayerFrames("fire", [
+                ])),
+                Faces(25, LayerFrames("fire", [
                     "nfpa_704_fire_0",
                     "nfpa_704_fire_1",
                     "nfpa_704_fire_2",
                     "nfpa_704_fire_3",
                     "nfpa_704_fire_4",
-                ]),
-                LayerFrames("reactivity", [
+                ])),
+                Faces(25, LayerFrames("reactivity", [
                     "nfpa_704_reactivity_0",
                     "nfpa_704_reactivity_1",
                     "nfpa_704_reactivity_2",
                     "nfpa_704_reactivity_3",
                     "nfpa_704_reactivity_4",
-                ]),
-                LayerFrames("special", [
+                ])),
+                Faces(25, LayerFrames("special", [
                     "nfpa_704_special_skull",
                     "nfpa_704_special_radioactive",
                     "nfpa_704_special_biohazard",
                     "nfpa_704_special_water_reactive",
                     "nfpa_704_special_asphyxiant",
                     "nfpa_704_special_oxidizer",
-                ]),
+                ])),
             ],
         ),
     ],

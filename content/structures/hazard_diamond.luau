@@ -21,12 +21,17 @@ return {
     sprite = "nfpa_704_placard",
     -- No `mount` line: the sign block below is what makes it one
     -- (docs/construction/signs.md). The four wall faces are still ours
-    -- to draw, because every other mount rule still applies.
+    -- to draw, because every other mount rule still applies -- and each
+    -- is an OFFSET picture, baked overhanging the wall it names
+    -- (assets/sprites/95-originals.ron). The derived digit and symbol
+    -- layers below keep their flat stems: the engine appends the face
+    -- suffix to every layer it draws, so one name per picture is the
+    -- whole of it.
     category = "decals/signs",
     appearance = {
         mounted = {
-            north = "nfpa_704_placard", south = "nfpa_704_placard",
-            east = "nfpa_704_placard", west = "nfpa_704_placard",
+            north = "nfpa_704_placard_n", south = "nfpa_704_placard_s",
+            east = "nfpa_704_placard_e", west = "nfpa_704_placard_w",
         },
     },
     build = {
