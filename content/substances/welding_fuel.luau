@@ -20,8 +20,8 @@ local content = {
     color = "#660000",
     -- What a placard says about this substance alone
     -- (docs/chemistry/substances.md, `hazard`).
-    -- NFPA 704 for acetylene, whose numbers this file carries.
-    hazard = { health = 1, fire = 4, instability = 3 },
+    -- NFPA 704 for acetylene, whose numbers this file carries: 0-4-3.
+    hazard = { health = 0, fire = 4, instability = 3 },
 }
 
 if sim ~= nil then

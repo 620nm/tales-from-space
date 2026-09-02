@@ -15,5 +15,5 @@ return {
     -- What a placard says about this substance alone
     -- (docs/chemistry/substances.md, `hazard`).
     -- NFPA 704 for sodium metal, W included.
-    hazard = { health = 3, fire = 2, instability = 2, special = "water_reactive" },
+    hazard = { health = 3, fire = 3, instability = 2, special = "water_reactive" },
 }

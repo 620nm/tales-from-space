@@ -65,3 +65,10 @@ assert(burning.specials[1] == "skull", "plasma, being thickest, leads the symbol
 -- burns. This is the deliberate opposite of the two air gases.
 local trace = t.hazard({ plasma = 0.1, o2 = 21.0, n2 = 79.0 })
 assert(trace.fire >= 3, "any plasma at all is a fire rating")
+
+-- Hydrogen carries no threshold for the same reason: a tenth of a room
+-- of it is already explosive, so a fire rating that waited for half the
+-- room would be silent through the whole dangerous part.
+local leaking = t.hazard({ hydrogen = 10.0, o2 = 19.0, n2 = 71.0 })
+assert(leaking.fire == 4, "a tenth of a room of hydrogen rates fire 4")
+assert(#leaking.specials == 0, "and wears no symbol")
