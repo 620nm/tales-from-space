@@ -54,4 +54,9 @@ return {
     -- though tg flags it `dangerous` (gas_types.dm:98): a scrubber is
     -- pointed at it every shift.
     group = "atmospheric",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for carbon dioxide.
+    -- 5% is where CO2 stops being exhaled air and starts being the room.
+    hazard = { health = 2, fire = 0, instability = 0, special = "asphyxiant", above = 0.05 },
 }

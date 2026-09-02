@@ -25,4 +25,10 @@ return {
     relevance = 60,
     -- tg's `dangerous = TRUE` (gas_types.dm:149).
     group = "poison",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for nitrous oxide, OX included. Both the health rating
+    -- and the symbol wait for a twentieth of the room: below that this
+    -- is a dose somebody was given rather than an atmosphere.
+    hazard = { health = 2, fire = 0, instability = 0, special = "oxidizer", above = 0.05 },
 }

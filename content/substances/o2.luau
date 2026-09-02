@@ -36,4 +36,9 @@ return {
     relevance = 100,
     -- The gas a crew breathes: the first thing a scrubber panel should offer.
     group = "atmospheric",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for oxygen, OX included.
+    -- Breathable air is 21%; richer than 23.5% is an oxygen-enriched room.
+    hazard = { health = 0, fire = 0, instability = 0, special = "oxidizer", above = 0.235 },
 }

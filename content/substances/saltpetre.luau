@@ -23,4 +23,8 @@ return {
     density = { solid = 2.11 },
     -- What it looks like through glass (tg: other_reagents.dm:2540).
     color = "#60A584",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for potassium nitrate, OX included.
+    hazard = { health = 1, fire = 0, instability = 0, special = "oxidizer" },
 }

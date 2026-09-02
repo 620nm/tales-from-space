@@ -15,4 +15,8 @@ return {
     density = { liquid = 1.0 },
     -- What it looks like through glass (tg: other_reagents.dm:1433).
     color = "#A5F0EE",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- An ammonia detergent: harmful, and nothing catches.
+    hazard = { health = 2, fire = 0, instability = 0 },
 }

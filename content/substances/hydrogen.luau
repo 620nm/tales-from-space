@@ -41,4 +41,11 @@ return {
     -- temperature, so the flag decides between the two gas groups and it
     -- says poison.
     group = "poison",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for hydrogen. No threshold and no symbol: a tenth of a
+    -- room of this is already explosive, so the 4 has to say so at any
+    -- fraction, and an asphyxiant symbol would only be true past the
+    -- point where the fire rating had stopped mattering.
+    hazard = { health = 0, fire = 4, instability = 0 },
 }

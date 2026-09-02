@@ -32,4 +32,8 @@ return {
     -- (docs/MAP-PROPERTIES.md, the recipe panel): a bench reagent, not
     -- something a room is commissioned full of.
     relevance = 0,
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- Rust has finished reacting.
+    hazard = { health = 0, fire = 0, instability = 0 },
 }

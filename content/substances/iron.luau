@@ -13,4 +13,8 @@ return {
     density = { solid = 7.87 },
     -- What it looks like through glass (tg: other_reagents.dm:1207).
     color = "#606060",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for iron powder.
+    hazard = { health = 0, fire = 1, instability = 0 },
 }

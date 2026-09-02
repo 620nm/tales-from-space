@@ -38,4 +38,9 @@ return {
     relevance = 70,
     -- tg's `dangerous = TRUE` (gas_types.dm:111).
     group = "poison",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- Fictional: what the station is built to keep away from itself.
+    -- Poison to breathe (`breath.toxic`) and the fuel of every fire here.
+    hazard = { health = 4, fire = 4, instability = 1, special = "skull" },
 }

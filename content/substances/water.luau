@@ -58,4 +58,8 @@ return {
     -- Liquid in a beaker and vapour over a burner: gas whenever a room is
     -- hot or thin enough, and nothing a station scrubs on principle.
     group = "volatile",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for water.
+    hazard = { health = 0, fire = 0, instability = 0 },
 }

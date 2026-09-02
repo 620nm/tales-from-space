@@ -11,4 +11,8 @@ return {
     density = { solid = 2.70 },
     -- What it looks like through glass (tg: other_reagents.dm:1355).
     color = "#A8A8A8",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for aluminium powder: the dust burns, the bar does not.
+    hazard = { health = 0, fire = 1, instability = 1 },
 }

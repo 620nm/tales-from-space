@@ -18,6 +18,10 @@ local content = {
     metabolism_rate = 0.003,
     -- What it looks like through glass (tg: cat2_medicine_reagents.dm:105).
     color = "#ECEC8D",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- A dosed medicine: harmful in quantity, inert otherwise.
+    hazard = { health = 1, fire = 0, instability = 0 },
 }
 
 if sim ~= nil then
