@@ -31,6 +31,7 @@ return {
     group = "poison",
     -- What a placard says about this substance alone
     -- (docs/chemistry/substances.md, `hazard`).
-    -- NFPA 704 for fluorine, OX included.
-    hazard = { health = 4, fire = 0, instability = 1, special = "oxidizer" },
+    -- NFPA 704 for fluorine: 4-0-3. It is both OX and W and a rating
+    -- carries one word, so it wears the oxidiser it is famous for.
+    hazard = { health = 4, fire = 0, instability = 3, special = "oxidizer" },
 }

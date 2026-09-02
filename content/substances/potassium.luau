@@ -18,5 +18,5 @@ return {
     -- What a placard says about this substance alone
     -- (docs/chemistry/substances.md, `hazard`).
     -- NFPA 704 for potassium metal, W included.
-    hazard = { health = 3, fire = 1, instability = 2, special = "water_reactive" },
+    hazard = { health = 3, fire = 3, instability = 2, special = "water_reactive" },
 }

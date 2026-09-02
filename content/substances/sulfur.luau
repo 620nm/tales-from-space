@@ -22,5 +22,5 @@ return {
     -- What a placard says about this substance alone
     -- (docs/chemistry/substances.md, `hazard`).
     -- NFPA 704 for sulfur.
-    hazard = { health = 2, fire = 1, instability = 0 },
+    hazard = { health = 1, fire = 1, instability = 0 },
 }
