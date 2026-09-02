@@ -19,7 +19,10 @@ return {
     id = "hazard_diamond",
     name = "hazard diamond",
     sprite = "nfpa_704_placard",
-    mount = true,
+    -- No `mount` line: the sign block below is what makes it one
+    -- (docs/construction/signs.md). The four wall faces are still ours
+    -- to draw, because every other mount rule still applies.
+    category = "decals/signs",
     appearance = {
         mounted = {
             north = "nfpa_704_placard", south = "nfpa_704_placard",
