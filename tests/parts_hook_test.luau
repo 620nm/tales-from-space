@@ -105,10 +105,10 @@ t.world([==[(
         (10, 1, "chem_heater", { "laser_1": "3" }),
     ],
     items: [(3, 2, "part_replacer")],
-    air_presets: {
-        "sweltering": (gases: [("o2", 7.756), ("n2", 29.175)], temperature_k: 330.0),
+    blends: {
+        "sweltering": (rows: [("o2", 7.756), ("n2", 29.175)], temperature_k: 330.0, amount: per_tile),
     },
-    air: [
+    painted: [
         (7, 1, "sweltering"), (8, 1, "sweltering"), (9, 1, "sweltering"),
         (10, 1, "sweltering"), (11, 1, "sweltering"),
         (7, 2, "sweltering"), (8, 2, "sweltering"), (9, 2, "sweltering"),

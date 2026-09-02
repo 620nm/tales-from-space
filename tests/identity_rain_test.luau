@@ -42,16 +42,17 @@ t.world([==[(
         "####",
     ],
     spawns: [(1, 1)],
-    air_presets: {
+    blends: {
         // fire_watch_test.luau's own mixture: fuelled, oxidised, and
         // already over the ignition window, so the chamber catches on
         // its own within a pass or two. Nothing in this file lights it.
         "burning_mix": (
-            gases: [("plasma", 10.0), ("o2", 14.0)],
+            rows: [("plasma", 10.0), ("o2", 14.0)],
             temperature_k: 700.0,
+            amount: per_tile,
         ),
     },
-    air: [(1, 1, "burning_mix"), (2, 1, "burning_mix"), (1, 2, "burning_mix"), (2, 2, "burning_mix")],
+    painted: [(1, 1, "burning_mix"), (2, 1, "burning_mix"), (1, 2, "burning_mix"), (2, 2, "burning_mix")],
 )]==], 0)
 
 -- A sky at absolute zero with no star in it: the hull radiates and
