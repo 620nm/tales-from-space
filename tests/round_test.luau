@@ -1,8 +1,9 @@
--- Round policy is a station behavior: native publishes lifecycle anchors and
--- validates generic Mind reads, while this pack owns selection, objectives,
--- private briefing, and the final audience.
+-- The hour belongs to the pack. Native publishes one second of sim time
+-- at a time and replaces the world only after content has asked; the
+-- warnings, the closing line and the length of a shift are all
+-- `content/lib/shift.luau` reading the numbers a mode declared.
 local MAP = [==[(
-    name: "round cell",
+    name: "shift cell",
     legend: {
         ' ': (turf: Space),
         '.': (turf: Floor),
@@ -11,93 +12,123 @@ local MAP = [==[(
     rows: [
         "######",
         "#....#",
+        "#....#",
         "######",
     ],
     spawns: [(1, 1), (4, 1)],
-    items: [(2, 1, "id_engineering")],
 )]==]
 
-local function has(messages, text)
-    return table.concat(messages, "\n"):find(text, 1, true) ~= nil
+local function count(messages, needle)
+    local n = 0
+    for _, line in ipairs(messages) do
+        if line:find(needle, 1, true) ~= nil then
+            n += 1
+        end
+    end
+    return n
 end
 
--- One deterministic draw, one private briefing, then an explicit all-session
--- reveal after the chosen Mind completes the configured hold objective.
-t.world(MAP, 41)
-local left = t.join()
-local right = t.join()
-t.run_ticks(610)
-local left_messages = t.messages(left)
-local right_messages = t.messages(right)
-local left_chosen = has(left_messages, "You are the traitor")
-local right_chosen = has(right_messages, "You are the traitor")
-assert(left_chosen ~= right_chosen, "exactly one candidate receives the secret briefing")
-
-local chosen = left_chosen and left or right
-if chosen == left then
-    t.move(chosen, "east")
-    t.run_ticks(5)
-else
-    t.move(chosen, "west")
-    t.run_ticks(5)
-    t.move(chosen, "west")
-    t.run_ticks(5)
+-- Every line the station said this window, for both sessions at once: a
+-- fact about the shift is a fact for whoever is still watching it, so
+-- the dead spectator is held to the same expectation as the crewman
+-- with a pulse (content/audiences.luau).
+local function heard(sessions, needle)
+    local seen = nil
+    for _, p in ipairs(sessions) do
+        local n = count(t.messages(p), needle)
+        if seen ~= nil and n ~= seen then
+            error("sessions disagreed about " .. needle .. ": " .. seen .. " and " .. n)
+        end
+        seen = n
+    end
+    return seen
 end
-t.click(chosen, 2, 1, t.target_at(2, 1, "id_engineering"))
-t.tick()
-assert(t.hands(chosen).held == "id_engineering", "the selected Mind's body holds the target")
 
-t.round_end_in(1)
-t.tick()
-assert(has(t.messages(left), "SUCCESS"), "the final reveal reaches the left session")
-assert(has(t.messages(right), "SUCCESS"), "the final reveal reaches the right session")
+-- 60 minutes, warnings at 10, 5 and 1 remaining
+-- (content/gamemodes/space_station.luau).
+t.world(MAP, 0)
+local crew = t.join("engineer")
+local ghost = t.join("assistant")
+t.set_health(ghost, { oxy = 500 })
+assert(t.body(ghost).animate == false, "the spectator is dead in the pack's terms")
+local watching = { crew, ghost }
+heard(watching, "The shift")
 
--- A traitor whose body the pack stopped fails the objective, and the
--- reveal still fires. `Mind.animate` is the fact
--- `content/bodies/human.luau` set answering the `dead` line it declared,
--- so the round outcome rides the pack's own verdict end to end.
-t.world(MAP, 41)
-local a = t.join()
-local b = t.join()
-t.run_ticks(610)
-local traitor = has(t.messages(a), "You are the traitor") and a or b
-t.set_health(traitor, { brute = 400 })
-assert(not t.body(traitor).animate, "the traitor is dead in the pack's terms")
-t.round_end_in(1)
-t.tick()
-assert(has(t.messages(a), "FAILURE") and has(t.messages(b), "FAILURE"),
-    "the reveal still fires, and it reports the objective failed")
+t.run_seconds(2999)
+assert(heard(watching, "The shift") == 0, "nothing is announced before the first mark")
 
--- The same round seed and stable Mind creation order reproduce the draw.
-t.world(MAP, 41)
-local replay_left = t.join()
-local replay_right = t.join()
-t.run_ticks(610)
-assert(
-    has(t.messages(replay_left), "You are the traitor") == left_chosen,
-    "the candidate draw is deterministic per round seed"
-)
+t.run_seconds(1)
+assert(heard(watching, "The shift ends in 10 minutes.") == 1, "ten minutes out, at 3000 s")
 
--- The declared target may be absent from this world. The pack then chooses
--- its explicit survive fallback without asking native code for policy.
-local NO_TARGET = MAP:gsub('    items: %[%(%d+, %d+, "id_engineering"%)%],\n', "")
-t.world(NO_TARGET, 52)
-local fallback = t.join()
-t.run_ticks(610)
-assert(has(t.messages(fallback), "Survive to the end"), "absent target selects fallback")
-t.round_end_in(1)
-t.tick()
-assert(has(t.messages(fallback), "SUCCESS"), "fallback evaluates from Mind continuity")
+t.run_seconds(299)
+assert(heard(watching, "The shift") == 0, "and nothing between the marks")
 
--- A connected but dead Mind is not an eligible candidate. The task retries
--- without drawing or spending a second policy path, and finalization uses the
--- pack's quiet ending.
-t.world(MAP, 41)
-local dead = t.join()
+t.run_seconds(1)
+assert(heard(watching, "The shift ends in 5 minutes.") == 1, "five minutes out, at 3300 s")
+
+t.run_seconds(239)
+assert(heard(watching, "The shift") == 0, "still nothing between the marks")
+
+-- Not "in 1 minutes": the last mark is its own sentence
+-- (docs/LOCALIZATION.md §5).
+t.run_seconds(1)
+assert(heard(watching, "The shift ends in one minute.") == 1, "one minute out, at 3540 s")
+
+t.run_seconds(59)
+assert(heard(watching, "The shift") == 0, "the last minute passes quietly")
+
+-- The world keeps ticking through the grace the mode declared, and the
+-- clock keeps publishing through it, so what matters is that the ending
+-- is said ONCE rather than once a second.
+t.run_seconds(1)
+local ending = t.messages(crew)
+local ghost_ending = t.messages(ghost)
+t.run_seconds(5)
+for _, line in ipairs(t.messages(crew)) do
+    table.insert(ending, line)
+end
+for _, line in ipairs(t.messages(ghost)) do
+    table.insert(ghost_ending, line)
+end
+assert(count(ending, "The shift is over.") == 1, "the end of the shift is announced once, at 3600 s")
+assert(count(ghost_ending, "The shift is over.") == 1, "and the dead spectator hears that too")
+assert(count(ending, "The shift ends") == 0, "no warning rides along with the ending")
+
+-- One request, granted, for the grace the mode asked for. A second of
+-- grace asking again would move no deadline, and the pack does not ask.
+local requests = t.ledger_rows("RoundEndRequested")
+assert(#requests == 1, "the shift is ended exactly once")
+assert(requests[1].applied == true, "and that request is the one that ended it")
+assert(requests[1].grace_ticks == 600, "30 s of grace, in ticks")
+
+-- A crewman the pack calls dead may leave the body behind. The corpse
+-- stays aboard; the session goes back to the board as somebody new and
+-- takes whatever job is still open.
+t.world(MAP, 0)
+local dead = t.join("assistant")
 t.set_health(dead, { oxy = 500 })
-assert(t.body(dead).animate == false, "the candidate precondition is dead")
-t.round_end_in(700)
-t.run_ticks(700)
-local quiet = t.messages(dead)
-assert(not has(quiet, "You are the traitor"), "an ineligible Mind receives no secret")
-assert(has(quiet, "reports no threats aboard"), "no candidates produces the quiet reveal")
+assert(t.body(dead).animate == false, "the precondition is a body nobody can steer")
+t.respawn(dead, "engineer")
+assert(t.body(dead).animate, "the session steers a living body again")
+assert(t.worn(dead).id == "id_engineering", "wearing the kit of the job it just picked")
+assert(#t.ledger_rows("ReturnedToLobby") == 1, "one abandonment, attributed")
+assert(#t.ledger_rows("Respawned") == 0, "a persistent mode never swaps one body for the next")
+
+-- ...and a living one may not. The offer is the mode's `respawn` policy,
+-- and the claim is revalidated where it lands rather than trusted.
+local alive = t.join("medic")
+local body = t.body_id(alive)
+t.respawn(alive)
+assert(t.body_id(alive) == body, "a living crewman cannot walk out of their body")
+assert(#t.ledger_rows("ReturnedToLobby") == 1, "and leaves no second row behind")
+
+-- The sandbox runs the same hour on the same library. Its point is the
+-- map coming back fresh, and a mode whose shift was an exception would
+-- be a second answer to when a round ends.
+t.world(MAP, 0, "free_build")
+local builder = t.join()
+t.run_seconds(3601)
+assert(
+    count(t.messages(builder), "The shift is over.") == 1,
+    "Free Build ends on the clock every other mode keeps"
+)
