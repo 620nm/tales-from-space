@@ -12,7 +12,10 @@
 -- colour adapter's trick applied to the other half of a length's
 -- identity, and it is the same engine primitive doing it.
 --
--- EACH END TAKES ONE KIND, and `joins` is where that is said. tg spells
+-- EACH END TAKES ONE KIND, and `joins` is where that is said. The
+-- engine calls the mechanism a KIND ADAPTER, because that is what it
+-- does: the colour adapter joins two paint jobs, this joins two kinds,
+-- and heat exchange is what THIS station happens to use it for. tg spells
 -- it as an override on `is_connectable` (junction.dm:30-33): the end at
 -- `REVERSE_DIR(dir)` is type-checked as ORDINARY pipe -- "we want a
 -- normal pipe instead" -- and the end at `dir` as this family. The
@@ -53,7 +56,10 @@ return {
         },
     },
     atmos = {
-        device = "he_junction",
+        -- The engine's word for the mechanism, not for this fitting: an
+        -- adapter whose two ends admit different KINDS, sibling of the
+        -- one whose ends admit different colours.
+        device = "kind_adapter",
         -- Back mouth, then front. Back is behind the facing, which is
         -- tg's `REVERSE_DIR(dir)`: ordinary pipe. Front is the facing:
         -- heat-exchanging pipe.
