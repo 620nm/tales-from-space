@@ -54,12 +54,12 @@ t.world([==[(
     pipes: [(2, 2, 4)],
     // The vent, and the socket under the canister. Without the socket
     // the bottle is furniture.
-    air_presets: {
-        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    blends: {
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
         (1, 2, "vent"), (3, 2, "connector_port"),
-        (3, 2, "canister", { "air": "canister_air", "open": true }),
+        (3, 2, "canister", { "blend": "canister_air", "open": true }),
     ],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
@@ -196,14 +196,14 @@ t.world([==[(
         (13, 2, 4), (14, 2, 4), (15, 2, 4), (16, 2, 4), (17, 2, 4),
         (18, 2, 4), (21, 2, 4),
     ],
-    air_presets: {
-        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    blends: {
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
         (1, 2, "vent"),
         (20, 2, "passive_vent"),
         (22, 2, "connector_port"),
-        (22, 2, "canister", { "air": "canister_air", "open": true }),
+        (22, 2, "canister", { "blend": "canister_air", "open": true }),
     ],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
@@ -302,15 +302,15 @@ t.world([==[(
     // Three sockets beside the run, plus the vent on the scrap of deck
     // outside. (4, 1) is deliberately NOT a socket: it is charged main
     // with nowhere to plug in.
-    air_presets: {
-        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    blends: {
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
         (1, 1, "connector_port"),
         (2, 1, "connector_port"),
         (5, 1, "connector_port"),
         (9, 1, "vent"),
-        (2, 1, "canister", { "air": "canister_air", "open": true }),
+        (2, 1, "canister", { "blend": "canister_air", "open": true }),
     ],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3),
@@ -493,15 +493,15 @@ t.world([==[(
     // Two sockets, the injector standing between them, and the vent
     // (a structure since the constructible-vents cutover) hanging
     // over open space at the end of the line.
-    air_presets: {
-        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    blends: {
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
         (2, 1, "connector_port"),
         (4, 1, "connector_port"),
         (3, 1, "air_injector"),
         (9, 1, "vent"),
-        (2, 1, "canister", { "air": "canister_air", "open": true }),
+        (2, 1, "canister", { "blend": "canister_air", "open": true }),
     ],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3),

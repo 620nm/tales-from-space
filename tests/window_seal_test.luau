@@ -81,11 +81,11 @@ t.world([==[(
         (3, 2, "meter"),
     ],
     pipes: [ (3, 1, 4), (3, 2, 4), (3, 3, 4) ],
-    air_presets: {
-        "hot_chlorine": (gases: [("chlorine", 250.0)], temperature_k: 1000.0),
-        "standard_air": (gases: [("o2", 8.73), ("n2", 32.84)], temperature_k: 293.15),
+    blends: {
+        "hot_chlorine": (rows: [("chlorine", 250.0)], temperature_k: 1000.0, amount: per_tile),
+        "standard_air": (rows: [("o2", 8.73), ("n2", 32.84)], temperature_k: 293.15, amount: per_tile),
     },
-    air: [
+    painted: [
         (1, 1, "hot_chlorine"), (2, 1, "hot_chlorine"), (3, 1, "hot_chlorine"),
         (1, 2, "hot_chlorine"), (2, 2, "hot_chlorine"), (3, 2, "hot_chlorine"),
         (1, 3, "hot_chlorine"), (2, 3, "hot_chlorine"), (3, 3, "hot_chlorine"),
@@ -115,11 +115,11 @@ t.world([==[(
         (4, 3, "grille", "reinforced"),
     ],
     pipes: [ (3, 1, 4), (3, 2, 4), (3, 3, 4) ],
-    air_presets: {
-        "hot_chlorine": (gases: [("chlorine", 250.0)], temperature_k: 1000.0),
-        "standard_air": (gases: [("o2", 8.73), ("n2", 32.84)], temperature_k: 293.15),
+    blends: {
+        "hot_chlorine": (rows: [("chlorine", 250.0)], temperature_k: 1000.0, amount: per_tile),
+        "standard_air": (rows: [("o2", 8.73), ("n2", 32.84)], temperature_k: 293.15, amount: per_tile),
     },
-    air: [
+    painted: [
         (1, 1, "hot_chlorine"), (2, 1, "hot_chlorine"), (3, 1, "hot_chlorine"),
         (1, 2, "hot_chlorine"), (2, 2, "hot_chlorine"), (3, 2, "hot_chlorine"),
         (1, 3, "hot_chlorine"), (2, 3, "hot_chlorine"), (3, 3, "hot_chlorine"),

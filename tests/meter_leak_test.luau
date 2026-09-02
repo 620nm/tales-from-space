@@ -77,14 +77,14 @@ t.world([==[(
         (2, 1, 4), (3, 1, 4), (4, 1, 4), (5, 1, 4),
         (2, 3, 4), (3, 3, 4), (4, 3, 4), (5, 3, 4),
     ],
-    air_presets: {
-        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    blends: {
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
         (1, 1, "connector_port"),
-        (1, 1, "canister", { "air": "canister_air", "open": true }),
+        (1, 1, "canister", { "blend": "canister_air", "open": true }),
         (1, 3, "connector_port"),
-        (1, 3, "canister", { "air": "canister_air", "open": true }),
+        (1, 3, "canister", { "blend": "canister_air", "open": true }),
     ],
 )]==], 7)
 

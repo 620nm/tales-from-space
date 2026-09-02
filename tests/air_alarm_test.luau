@@ -133,8 +133,8 @@ t.world([==[(
         "################",
     ],
     spawns: [(7, 2)],
-    air_presets: {
-        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    blends: {
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     items: [(7, 2, "id_engineering")],
     // The waste main runs out under the west wall, so the scrubber has
@@ -144,7 +144,7 @@ t.world([==[(
         (2, 1, "vent"),
         (3, 1, "gas_pump", "running", { "dir": "west", "target_kpa": 900.0 }),
         (4, 1, "connector_port", { "dir": "west" }),
-        (4, 1, "canister", { "air": "canister_air" }),
+        (4, 1, "canister", { "blend": "canister_air" }),
         (2, 2, "air_scrubber"),
         // The card is spelled out rather than left to the socket's
         // default, because this box is nothing at all without one and a

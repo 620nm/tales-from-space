@@ -232,14 +232,14 @@ local LIVE_SUPPLY = [==[(
     // the layer convention is for: the waste main on L2 under the
     // grille, the supply on L4 between the bottle and the vent.
     pipes: [(0, 1, 2), (1, 1, 2), (4, 1, 8)],
-    air_presets: {
-        "canister_air": (gases: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15),
+    blends: {
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
         (2, 1, "air_scrubber", "scrubbing"),
         (5, 1, "vent"),
         (3, 1, "connector_port"),
-        (3, 1, "canister", { "air": "canister_air", "open": true }),
+        (3, 1, "canister", { "blend": "canister_air", "open": true }),
     ],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
