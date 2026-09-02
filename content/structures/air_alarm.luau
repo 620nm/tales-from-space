@@ -14,17 +14,24 @@
 -- machine paired to one goes read-only at its own casing, which is the
 -- same fact tg states by giving a vent no window of its own at all.
 --
--- SEVEN TILES, and the number is this pack's own rather than a port,
--- because the thing being replaced is an area. It is the smallest
--- Chebyshev radius that covers the largest compartment on the shipped
--- map whole -- Atmospherics, thirteen by seven
--- (maps/chillstation.ron) -- and it covers it from the LONG north or
--- south wall near the midpoint, not from either short end, where the
--- far corner stands twelve tiles off. That is a constraint on the
--- mapper rather than a rounding error, and it says the true thing: a
--- room much wider than fifteen tiles wants two alarms, the way tg
--- would have wanted two areas. Seven is also short enough to stop in
--- the corridor rather than reach through into the next department.
+-- SEVENTEEN TILES, and the number is this pack's own rather than a
+-- port, because the thing being replaced is an area. A Chebyshev
+-- seventeen is a thirty-five by thirty-five square, and the shipped
+-- map's hull is thirty-three by thirty-three -- x 4..36 by y 3..35 of a
+-- forty by thirty-nine grid (maps/chillstation.ron) -- so an alarm
+-- bolted anywhere near the middle of the station reaches every tile on
+-- it, and one near an outer wall still reaches most of the far side.
+--
+-- That is deliberate, and it changes what the radius IS. At seven it
+-- was a room measurement: the smallest circle that covered the largest
+-- compartment (Atmospherics, thirteen by seven) from its long wall, and
+-- an alarm could not adopt the plant next door. At seventeen it is a
+-- ceiling and nothing more, and WHICH machines an alarm holds is
+-- decided by the two things below it -- `accepts = { "atmos" }`, which
+-- refuses everything that is not plumbing, and the join gesture itself,
+-- which an engineer makes one machine at a time. A room's alarm is the
+-- one somebody joined its vents to, not the one that happens to be
+-- within reach of them.
 --
 -- The access point's five is a different claim and stays five: a comms
 -- box covers the room it is in and the doorway out, where an alarm has
@@ -85,19 +92,43 @@ return {
     -- per machine joined to it, drawn from that machine's own module.
     -- `parts` is the socket the card sits in.
     ui = { modules = { "link", "reach", "parts" } },
-    -- One state, so one set of four faces answers for the whole entry,
-    -- as the access point's does.
+    -- WHAT IT LOOKS LIKE IS WHAT IT IS DOING. tg draws this box shut
+    -- (`alarmp`) with a teal lamp laid over it, and draws NO lamp at
+    -- all while it is unpowered, broken or shorted
+    -- (_air_alarm.dm:557, :526-527). The two states this engine can
+    -- derive land on exactly those two pictures: a live box on a live
+    -- segment shows the lamp, a dead cord or a box off the air shows
+    -- the same panel dark. `offline` and `unpowered` are the same cell
+    -- on purpose -- tg draws one picture for "not working" and so does
+    -- this. The yellow and red faces are baked and named by nothing
+    -- yet; they want a threshold pass over the room's mix
+    -- (assets/sprites/73-network.ron).
+    --
+    -- No entry-wide `appearance.mounted`: every row here carries its
+    -- own four faces, which is what a mount needs and what lets the
+    -- picture change without losing the wall it hangs on
+    -- (docs/content-schema/appearance.md).
     appearance = {
-        mounted = {
-            north = "air_alarm_n", south = "air_alarm_s",
-            east = "air_alarm_e", west = "air_alarm_w",
+        device = {
+            online = { sprite = "air_alarm_lit", mounted = {
+                north = "air_alarm_lit_n", south = "air_alarm_lit_s",
+                east = "air_alarm_lit_e", west = "air_alarm_lit_w",
+            } },
+            offline = { sprite = "air_alarm", mounted = {
+                north = "air_alarm_n", south = "air_alarm_s",
+                east = "air_alarm_e", west = "air_alarm_w",
+            } },
+            unpowered = { sprite = "air_alarm", mounted = {
+                north = "air_alarm_n", south = "air_alarm_s",
+                east = "air_alarm_e", west = "air_alarm_w",
+            } },
         },
     },
     category = "atmospherics",
     parts = { slots = { "network" } },
     link = {
         role = "hub",
-        radius = 7,
+        radius = 17,
         socket = "network",
         locked = true,
         accepts = { "atmos" },
