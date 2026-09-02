@@ -178,6 +178,18 @@ t.tick()
 
 assert(t.structure_at(3, 1).id == "he_junction", "the map stood a junction there")
 
+-- AND IT TURNED ITSELF ROUND TO FACE THE RIGHT WAY. The map spells no
+-- direction, so the junction seats itself -- and geometry alone cannot
+-- answer here, because a two-ended fitting on an east-west main reaches
+-- the same two tiles pointing either way. What decides is which KIND
+-- each end takes: the end at `dir` takes heat-exchange pipe
+-- (junction.dm:30-33), that run is west, so it points west and wears
+-- the picture of a junction pointing west.
+assert(
+    t.structure_at(3, 1).sprite == "he_junction_w",
+    "it faces its heat-exchange side: " .. tostring(t.structure_at(3, 1).sprite)
+)
+
 local junction_kpa = t.pipe_pressure(1, 1)
 local FUSED_M3 = 5 * PIPE_M3 + 2 * ADAPTER_PORT_M3
 local joined = net_moles(1, 1, DISTRO)
@@ -201,6 +213,54 @@ local plain_side = net_moles(6, 1, DISTRO)
 near(he_side, moles(junction_kpa, 2 * PIPE_M3), 0.05, "two lengths of exchange, alone")
 near(plain_side, moles(junction_kpa, 3 * PIPE_M3), 0.05, "three of ordinary, on theirs")
 assert(plain_side > he_side + 0.5, "and they are two bodies of gas again")
+
+-- ---------------------------------------------------------------
+-- THE HEAT-EXCHANGE END TAKES NOTHING ELSE.
+--
+-- The same junction with ORDINARY pipe on both sides. tg type-checks
+-- that end (junction.dm:30-33, `he_type_check` TRUE), so it binds
+-- nothing at all rather than quietly taking the main -- and a junction
+-- with only one end bound welds nothing. Two mains touching a junction
+-- are still two mains, and the mole counts say so.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "junction on plain pipe",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Plating),
+        '#': (turf: Wall),
+    },
+    rows: [
+        "########",
+        "#......#",
+        "########",
+    ],
+    spawns: [(6, 1)],
+    pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4)],
+    structures: [(3, 1, "he_junction")],
+)]==], 7)
+
+t.join()
+t.tick()
+
+assert(t.structure_at(3, 1).id == "he_junction", "a junction between two plain mains")
+local plain_kpa = t.pipe_pressure(1, 1)
+local west = net_moles(1, 1, DISTRO)
+local east = net_moles(6, 1, DISTRO)
+-- Whichever way it seated itself, exactly one end could bind: the one
+-- that takes ordinary pipe. So one main is two lengths plus a mouth and
+-- the other is three lengths plus a mouth, or the reverse -- and they
+-- are never the same number, which is the whole assertion.
+near(
+    west + east,
+    moles(plain_kpa, 5 * PIPE_M3 + ADAPTER_PORT_M3),
+    0.05,
+    "five lengths and ONE mouth, not two: the other end bound nothing"
+)
+assert(
+    math.abs(west - east) > 0.5,
+    "and the two mains are not one body of gas: " .. west .. " vs " .. east
+)
 
 -- ---------------------------------------------------------------
 -- A HOT RUN WARMS THE ROOM OVER IT, AND ORDINARY PIPE DOES NOT.
