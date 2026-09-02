@@ -1,5 +1,6 @@
 // The device network: the card, the generic wall frame every bracket
-// starts as, the access point that hangs in it, and the router that
+// starts as, the access point that hangs in it, the air alarm that
+// hangs in the same bracket over a room's plumbing, and the router that
 // tops a station's tree.
 //
 // One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
@@ -65,6 +66,21 @@
         ("access_point_s", Dmi("@wallmounts", "access_control_standby", 0)),
         ("access_point_e", Dmi("@wallmounts", "access_control_standby", 0)),
         ("access_point_w", Dmi("@wallmounts", "access_control_standby", 0)),
+
+        // ---- the air alarm ----
+        // tg's own box, off the same sheet: `icon_state = "alarmp"`
+        // (code/modules/atmospherics/machinery/air_alarm/
+        // _air_alarm.dm:6-7), which is the panel shut and the machine
+        // built. tg lays the lamp on top as a separate `alarm0`,
+        // `alarm2` or `alarm1` overlay picked by the danger level
+        // (`update_overlays`, _air_alarm.dm:556-569). This pack models
+        // no alert levels -- the alarm is a proxy console and nothing
+        // else -- so there is one picture and no overlay to choose.
+        ("air_alarm", Dmi("@wallmounts", "alarmp", 0)),
+        ("air_alarm_n", Dmi("@wallmounts", "alarmp", 0)),
+        ("air_alarm_s", Dmi("@wallmounts", "alarmp", 0)),
+        ("air_alarm_e", Dmi("@wallmounts", "alarmp", 0)),
+        ("air_alarm_w", Dmi("@wallmounts", "alarmp", 0)),
 
         // ---- the router ----
         // tg's telecommunications relay, the rack that carries traffic

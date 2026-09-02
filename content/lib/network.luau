@@ -25,6 +25,16 @@
 -- than having no line at all.
 local network = {}
 
+-- THE CLASS WORD IS NOT HERE, and cannot be. `link.class` and
+-- `link.accepts` are the pack's own words for what KIND of device a
+-- node is (docs/content-schema/link.md), and one word shared by
+-- fourteen files is exactly what this directory is for -- except that
+-- `lib/` is published into the ITEM sandbox and not into the structure
+-- registry's (`crates/lunatic-server/src/structures/registry.rs`), so a
+-- structure reading `network.class` reads nil at prototype time. It is
+-- therefore spelled out in each file, and `structures/air_alarm.luau`
+-- is where the argument for the word lives.
+
 -- One sentence about `node`, called what the file calling this calls
 -- it. `noun` is the pack's word for the box itself ("access point");
 -- `member` is its word for one of the things it holds, because a hub

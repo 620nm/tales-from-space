@@ -49,6 +49,18 @@ return {
     -- have in common (the switch, the room, the mains, the line behind
     -- them) rather than keeping two copies of it.
     ui = { modules = { "vent" } },
+    -- ON THE ROOM'S NETWORK. An endpoint carries its own address and
+    -- joins one hub, which is how an air alarm comes to draw this
+    -- machine's settings instead of a crewman kneeling at it. The class
+    -- word is what stops the alarm adopting the comms box next to it,
+    -- and it is spelled out rather than shared because `lib/` is not
+    -- published into the structure registry's sandbox
+    -- (structures/air_alarm.luau, docs/content-schema/link.md).
+    link = {
+        network_interface = true,
+        role = "endpoint",
+        class = "atmos",
+    },
     dense = false,
     -- THREE positions, like the scrubber's and for the same reason: a
     -- fan running the wrong way is not a fan that is merely on. tg

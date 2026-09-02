@@ -65,6 +65,18 @@ return {
     name = "temperature control unit",
     sprite = "thermo_off",
     ui = { modules = { "thermal", "parts" } },
+    -- ON THE ROOM'S NETWORK. An endpoint carries its own address and
+    -- joins one hub, which is how an air alarm comes to draw this
+    -- machine's settings instead of a crewman kneeling at it. The class
+    -- word is what stops the alarm adopting the comms box next to it,
+    -- and it is spelled out rather than shared because `lib/` is not
+    -- published into the structure registry's sandbox
+    -- (structures/air_alarm.luau, docs/content-schema/link.md).
+    link = {
+        network_interface = true,
+        role = "endpoint",
+        class = "atmos",
+    },
     dense = true,
     -- Two positions, and the words are the ones the panel's switch
     -- wears and the ones a refusal says out loud.

@@ -29,5 +29,5 @@ return {
             .. "one is stamped with an address, and no two are stamped alike.",
     },
     component = { kind = "network", tier = 1, efficiency = stock_parts.efficiency[1] },
-    link = { interface = true },
+    link = { network_interface = true },
 }

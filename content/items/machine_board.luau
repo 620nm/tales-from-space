@@ -36,6 +36,29 @@ return {
                 parts = { cable_coil = 1 },
             },
         },
+        air_alarm = {
+            name = "machine board (air alarm)",
+            -- A STRUCTURE board, the access point's argument exactly:
+            -- what it builds hangs on a wall and has a transition
+            -- table, which is what a structure entry describes.
+            --
+            -- tg DOES have an insert for this one -- `/obj/item/
+            -- electronics/airalarm` (code/modules/atmospherics/
+            -- machinery/air_alarm/air_alarm_interact.dm:186-188) -- but
+            -- it is an "electronics" item rather than a circuit board,
+            -- tg's second kind of insert. One board grammar for every
+            -- assembly here is worth more than carrying both, so it is
+            -- a board like everything else the wall frame reads.
+            --
+            -- tg hands three lengths of cable back off a finished alarm
+            -- (`on_deconstruction`, air_alarm_interact.dm:94-101). One
+            -- here, which is the number every board in this file asks
+            -- for; the other five in the pile are the wall frame's.
+            board = {
+                structure = "air_alarm",
+                parts = { cable_coil = 1 },
+            },
+        },
         chem_dispenser = {
             name = "machine board (chem dispenser)",
             -- tg machine_circuitboards.dm:752-762. The two matter bins,
