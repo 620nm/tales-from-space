@@ -68,7 +68,7 @@
         // the flat name plus four copies shifted 25px toward their wall,
         // this pack's standard bracket overhang -- the one the APC, the
         // outlet and the wall frame are baked with
-        // (`tfs/assets/sprites.ron`, tg's `pixel_shift` on
+        // (`assets/sprites.ron`, tg's `pixel_shift` on
         // `/obj/item/wallframe`,
         // code/game/objects/items/wall_mounted.dm:63-72). Every layer of
         // the stack carries it, so the digits stay in their quadrants on
