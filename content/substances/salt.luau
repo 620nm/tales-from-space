@@ -22,4 +22,8 @@ return {
     appearance = { solid = "crystalline" },
     -- What it looks like through glass (tg: food_reagents.dm:511 (COLOR_WHITE)).
     color = "#FFFFFF",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for sodium chloride.
+    hazard = { health = 1, fire = 0, instability = 0 },
 }

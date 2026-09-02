@@ -35,6 +35,10 @@ local content = {
     -- What it looks like through glass
     -- (tg: cat2_medicine_reagents.dm:193).
     color = "#8C93FF",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- A dosed medicine: irritant in the bottle, nothing more.
+    hazard = { health = 1, fire = 0, instability = 0 },
 }
 
 if sim ~= nil then

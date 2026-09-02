@@ -28,4 +28,8 @@ return {
     density = { liquid = 1.83 },
     -- What it looks like through glass (tg: toxin_reagents.dm:1258).
     color = "#00FF32",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for sulfuric acid, W included: it boils what you dilute it with.
+    hazard = { health = 3, fire = 0, instability = 2, special = "water_reactive" },
 }

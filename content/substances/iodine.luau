@@ -32,4 +32,8 @@ return {
     color = "#BC8A00",
     relevance = 5,
     group = "volatile",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for iodine.
+    hazard = { health = 3, fire = 0, instability = 0 },
 }

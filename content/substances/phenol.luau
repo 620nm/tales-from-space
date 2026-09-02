@@ -29,4 +29,8 @@ return {
     density = { liquid = 1.07 },
     -- What it looks like through glass (tg: other_reagents.dm:2294).
     color = "#E7EA91",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for phenol.
+    hazard = { health = 4, fire = 2, instability = 0 },
 }

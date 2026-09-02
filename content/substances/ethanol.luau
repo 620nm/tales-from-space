@@ -34,6 +34,10 @@ local content = {
     -- Boils at 351.5 K, evaporates below it, and is never what a station
     -- scrubs the air of.
     group = "volatile",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for ethanol.
+    hazard = { health = 2, fire = 3, instability = 0 },
 }
 
 if sim ~= nil then

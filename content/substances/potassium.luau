@@ -15,4 +15,8 @@ return {
     density = { solid = 0.86 },
     -- What it looks like through glass (tg: other_reagents.dm:1040).
     color = "#A0A0A0",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for potassium metal, W included.
+    hazard = { health = 3, fire = 3, instability = 2, special = "water_reactive" },
 }

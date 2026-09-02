@@ -23,4 +23,8 @@ return {
     color = "#00CC00",
     -- A thing the station is built to keep away from itself.
     dangerous = true,
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for radium: the metal nobody should be holding.
+    hazard = { health = 4, fire = 0, instability = 1, special = "radioactive" },
 }

@@ -26,4 +26,8 @@ return {
     density = { liquid = 0.706 },
     -- What it looks like through glass (tg: other_reagents.dm:1648).
     color = "#604030",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for diethylamine.
+    hazard = { health = 3, fire = 3, instability = 0 },
 }

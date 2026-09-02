@@ -17,4 +17,8 @@ return {
     density = { liquid = 0.97 },
     -- What it looks like through glass (tg: other_reagents.dm:550).
     color = "#009CA8",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- A silicone: it will burn if you insist.
+    hazard = { health = 0, fire = 1, instability = 0 },
 }

@@ -18,6 +18,10 @@ local content = {
     burn = { k = 1725, rate = 0.00125 },
     -- What it looks like through glass (tg: other_reagents.dm:1373).
     color = "#660000",
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for acetylene, whose numbers this file carries: 0-4-3.
+    hazard = { health = 0, fire = 4, instability = 3 },
 }
 
 if sim ~= nil then

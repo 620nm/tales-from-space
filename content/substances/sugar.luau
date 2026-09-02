@@ -22,6 +22,10 @@ local content = {
     -- always been; the dregs at the bottom of a can are worth
     -- proportionally less, which is the honest shape and the one the
     -- comment above always claimed.
+    -- What a placard says about this substance alone
+    -- (docs/chemistry/substances.md, `hazard`).
+    -- NFPA 704 for sucrose: the dust burns.
+    hazard = { health = 0, fire = 1, instability = 0 },
 }
 
 if sim ~= nil then
