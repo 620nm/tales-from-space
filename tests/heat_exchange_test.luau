@@ -290,7 +290,7 @@ t.run_seconds(60)
 local parked_pipe = t.pipe_temperature(1, 1, DISTRO)
 local parked_room = t.room_temperature(2, 1)
 assert(
-    parked_pipe - parked_room <= BAND,
+    math.abs(parked_pipe - parked_room) <= BAND,
     "the two close to within the band: " .. parked_pipe .. " vs " .. parked_room
 )
 
