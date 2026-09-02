@@ -56,6 +56,16 @@ local RECIPES = {
     { label = "Temperature Gate", item = "temperature_gate_fitting", structure = "temperature_gate", icon = "temperature_gate_loose", group = "Thermal Devices" },
     { label = "Temperature Pump", item = "temperature_pump_fitting", structure = "temperature_pump", icon = "temperature_pump_loose", group = "Thermal Devices" },
     { label = "Heat Exchanger", item = "heat_exchanger_fitting", structure = "heat_exchanger", icon = "heat_exchanger_loose", group = "Thermal Devices" },
+    -- tg's "Heat Exchange" category, in tg's own words
+    -- (`GLOB.atmos_pipe_recipes`, _globalvars/lists/pipe_recipes.dm:29-34).
+    -- tg lists "Pipe", "Manifold" and "4-Way Manifold" separately because
+    -- each is a different OBJECT there; here a length's shape is derived
+    -- from what it joins, so all three are one entry and a manifold is
+    -- what you get by running a fourth length into a tee. The plate tg
+    -- lists last is already on the shelf above, with the rest of the
+    -- thermal kit.
+    { label = "Pipe", item = "he_pipe", icon = "he_pipe", group = "Heat Exchange", paints = false },
+    { label = "Junction", item = "he_junction_fitting", structure = "he_junction", icon = "he_junction_loose", group = "Heat Exchange" },
     { label = "Air Scrubber", item = "air_scrubber_fitting", structure = "air_scrubber", icon = "air_scrubber_loose", group = "Room Devices" },
     { label = "Air Injector", item = "air_injector_fitting", structure = "air_injector", icon = "air_injector_loose", group = "Room Devices" },
     { label = "Air Vent", item = "vent_fitting", structure = "vent", icon = "vent_loose", group = "Room Devices" },
@@ -97,7 +107,7 @@ end
 -- and put the floor back over it. The engine refuses a covered deck
 -- silently, so this says why first — a refusal with no explanation
 -- reads as a dropped click.
-local function lay_run(self, user, x, y, at)
+local function lay_run(self, recipe, user, x, y, at)
     if not sim.subfloor_exposed(x, y) then
         sim.message.send({ recipient = user, message = "The floor is in the way. Pry the tile up first." })
         return
@@ -128,9 +138,13 @@ local function lay_run(self, user, x, y, at)
             sim.message.send({ recipient = user, message = "Someone already ran pipe through there." })
             return
         end
-        local paint = paint_of(self)
-        sim.lay_pipe(x, y, mask)
-        sim.paint_pipe(x, y, mask, paint.hex)
+        -- WHICH kind of length, as the item it comes on. A kind with a
+        -- colour of its own takes no paint at all (the engine refuses
+        -- it), so the paint dial simply does not reach that row.
+        sim.lay_pipe(x, y, mask, recipe.item)
+        if recipe.paints ~= false then
+            sim.paint_pipe(x, y, mask, paint_of(self).hex)
+        end
         sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = at })
     end)
 end
@@ -298,7 +312,7 @@ if sim ~= nil then
 
         local recipe = recipe_of(self)
         if not recipe.structure then
-            lay_run(self, user, x, y, ev.at)
+            lay_run(self, recipe, user, x, y, ev.at)
             return true
         end
         -- Dispense and connect, tg's two defaults in one motion. Every

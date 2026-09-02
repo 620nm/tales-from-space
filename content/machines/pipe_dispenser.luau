@@ -11,8 +11,7 @@
 -- (`GLOB.atmos_pipe_recipes`, code/_globalvars/lists/pipe_recipes.dm).
 -- All four of tg's categories are here. What else tg lists and this
 -- pack does not have yet: the bridge and multi-deck adapters under
--- Pipes, and the heat-exchange pipe/manifold family under Heat
--- Exchange. Every one of them is one line here on the day it becomes a
+-- Pipes. Every one of them is one line here on the day it becomes a
 -- thing — which is exactly what the gas analyzer cost the tool vendor,
 -- and exactly what the scrubber, the injector and the two vents cost
 -- this shelf.
@@ -78,6 +77,13 @@ return {
         { item = "vent_fitting", name = "Air Vent", category = "Devices", amount = 999 },
         { item = "passive_vent_fitting", name = "Passive Vent", category = "Devices", amount = 999 },
 
+        -- tg's own Heat Exchange shelf (`GLOB.atmos_pipe_recipes`,
+        -- _globalvars/lists/pipe_recipes.dm:29-34). tg stocks "Pipe",
+        -- "Manifold" and "4-Way Manifold" as three objects; a length's
+        -- shape is derived from what it joins here, so all three are the
+        -- one entry and a manifold is what a fourth length makes.
+        { item = "he_pipe", name = "Pipe", category = "Heat Exchange", amount = 999 },
+        { item = "he_junction_fitting", name = "Junction", category = "Heat Exchange", amount = 999 },
         { item = "heat_exchanger_fitting", name = "Heat Exchanger", category = "Heat Exchange", amount = 999 },
     },
 }
