@@ -13,10 +13,10 @@
 --   * it takes no paint, because tg fixes its colour outright
 --     (he_pipes.dm:15), the same rule the colour adapter keeps.
 --
--- ENERGY IS WHAT IS ASSERTED, not temperature. A run that warmed a room
--- by exactly the right number of degrees while minting the joules would
--- read perfectly on a thermometer, so the conduction scenario weighs
--- `t.pipe_energy` against `t.room_energy` and the deck under it.
+-- WHAT A PLAYER CAUSES IS WHAT IS ASSERTED. That the joules a run pays
+-- are exactly the joules the room takes, and that the audit closes over
+-- a run venting into space, are engine mechanism and are pinned in Rust
+-- (`crates/lunatic-server/src/sim/tests/conduction.rs`).
 --
 -- HOW "ONE NET OR TWO" IS ASSERTED: by MOLE COUNT, never by pressure.
 -- Every run opens the shift at the same density and the conserving
@@ -37,6 +37,9 @@ local PIPE_M3 = 0.070
 -- primitive and the same volume.
 local ADAPTER_PORT_M3 = 0.035
 local T20C = 293.15
+-- tg's TCMB (atmos_core.dm:27): the floor under every temperature, and
+-- what space is.
+local TCMB = 2.7
 
 local function moles(kpa, m3)
     return kpa * 1000.0 * m3 / (8.314 * T20C)
@@ -207,8 +210,9 @@ assert(plain_side > he_side + 0.5, "and they are two bodies of gas again")
 -- on layer 2. Heat goes into BOTH -- `t.heat_pipe` is a precondition
 -- setter, not the mechanism -- and only one of them gives any of it up.
 --
--- The book is weighed on energy across the whole room: the air, the
--- deck it stands on (docs/matter-world/thermal.md, 5b) and the run.
+-- Read on both thermometers and on the run's own energy, because a
+-- length that cooled without anything warming would read the same on
+-- one of them.
 -- ---------------------------------------------------------------
 local L2 = 2
 t.world([==[(
@@ -246,7 +250,7 @@ assert(hot_he > T20C + 50.0, "the exchange run is hot: " .. hot_he)
 near(hot_plain, hot_he, 1.0, "and the ordinary run is exactly as hot")
 
 local room_0 = t.room_temperature(2, 1)
-local books_0 = t.room_energy(2, 1) + t.deck(2, 1).energy + t.pipe_energy(1, 1, DISTRO)
+local pipe_0 = t.pipe_energy(1, 1, DISTRO)
 
 t.run_seconds(30)
 
@@ -259,11 +263,16 @@ assert(
     "and the room felt it: " .. room_0 .. " -> " .. t.room_temperature(2, 1)
 )
 
--- The conserved quantity, across the boundary the heat crossed.
-local books_1 = t.room_energy(2, 1) + t.deck(2, 1).energy + t.pipe_energy(1, 1, DISTRO)
+-- What LEFT the run is the reading a spec can hold honestly: the deck
+-- under a sealed room radiates to the sky on its own clock
+-- (../lunatic/docs/matter-world/thermal.md, 5d), so the room's own book
+-- is not closed over this transfer alone. That the joules the run pays
+-- are exactly the joules the room takes is pinned in Rust, against the
+-- matter world's audit (`sim/tests/conduction.rs`).
 assert(
-    math.abs(books_1 - books_0) < math.abs(books_0) * 0.02,
-    "and no joule was minted or lost: " .. books_0 .. " J -> " .. books_1 .. " J"
+    t.pipe_energy(1, 1, DISTRO) < pipe_0,
+    "the run is poorer by what it gave: " .. pipe_0 .. " J -> "
+        .. t.pipe_energy(1, 1, DISTRO) .. " J"
 )
 
 -- ---- the deadband ----
@@ -272,18 +281,102 @@ assert(
 -- `minimum_temperature_difference` (he_pipes.dm:38). Left alone, the
 -- run and the room close to within that band and then stop, rather than
 -- crawling to equality forever.
+local shed_fast = hot_he - settled_he
+t.run_seconds(60)
 local parked_pipe = t.pipe_temperature(1, 1, DISTRO)
 local parked_room = t.room_temperature(2, 1)
+assert(
+    math.abs(parked_pipe - parked_room) <= 20.0,
+    "the two close to within the band: " .. parked_pipe .. " vs " .. parked_room
+)
+
+-- And there they stay. The deck under a sealed room goes on radiating
+-- to the sky, so the air keeps drifting down and the gap reopens by
+-- fractions -- but the run tracks it at a crawl instead of chasing the
+-- air to equality, which is the whole of what a deadband buys.
 t.run_seconds(120)
+local drift = math.abs(t.pipe_temperature(1, 1, DISTRO) - parked_pipe)
 assert(
-    math.abs(t.pipe_temperature(1, 1, DISTRO) - t.room_temperature(2, 1)) > 0.0,
-    "the two never have to meet"
+    drift < shed_fast / 10.0,
+    "the run has all but stopped: " .. drift .. " K in 120 s against "
+        .. shed_fast .. " K in the first 30"
 )
 assert(
-    t.pipe_temperature(1, 1, DISTRO) <= parked_pipe + 0.5,
-    "the run only ever cooled: " .. parked_pipe .. " -> " .. t.pipe_temperature(1, 1, DISTRO)
+    math.abs(t.pipe_temperature(1, 1, DISTRO) - t.room_temperature(2, 1)) > 10.0,
+    "and the two never meet"
 )
-local _ = parked_room
+
+-- ---------------------------------------------------------------
+-- AN EXTERIOR LOOP DUMPS ITS HEAT INTO SPACE.
+--
+-- The reason this pipe exists. tg's space is an open turf whose air is
+-- the immutable space mixture, so a length laid where the deck is open
+-- conducts against TCMB and never warms it back (`_open.dm:495-499`,
+-- `immutable_mixtures.dm:45-49`, and the empty `TakeTemperature`
+-- override at `space.dm:88`). A mapper may run pipe out there; a player
+-- may not.
+--
+-- Two identical hot runs, one inside and one outside, and only one of
+-- them has anywhere to put its heat.
+-- ---------------------------------------------------------------
+t.world([==[(
+    name: "radiator",
+    legend: {
+        ' ': (turf: Space),
+        '.': (turf: Plating),
+        '#': (turf: Wall),
+    },
+    rows: [
+        "#####",
+        "#...#",
+        "#####",
+        "     ",
+    ],
+    spawns: [(1, 1)],
+    pipes: [(1, 1, 4), (2, 1, 4), (1, 3, 4), (2, 3, 4)],
+    pipe_kind: [
+        (1, 1, 4, "he_pipe"), (2, 1, 4, "he_pipe"),
+        (1, 3, 4, "he_pipe"), (2, 3, 4, "he_pipe"),
+    ],
+)]==], 7)
+
+local v = t.join()
+t.tick()
+
+assert(t.pipe(1, 3) == DISTRO, "a length runs out over the hull")
+t.heat_pipe(1, 1, 12000.0, DISTRO)
+t.heat_pipe(1, 3, 12000.0, DISTRO)
+t.tick()
+
+local inside_0 = t.pipe_temperature(1, 1, DISTRO)
+local outside_0 = t.pipe_temperature(1, 3, DISTRO)
+near(outside_0, inside_0, 1.0, "both runs start equally hot")
+assert(outside_0 > T20C + 50.0, "and hot enough to clear the band")
+
+t.run_seconds(30)
+
+local inside_1 = t.pipe_temperature(1, 1, DISTRO)
+local outside_1 = t.pipe_temperature(1, 3, DISTRO)
+assert(outside_1 < outside_0 - 20.0, "the exposed run sheds: " .. outside_1)
+assert(
+    outside_1 < inside_1 - 5.0,
+    "and sheds faster than the one indoors, which can only warm the air"
+        .. " it is under: " .. outside_1 .. " vs " .. inside_1
+)
+-- Space is a SINK, not a partner: it never warms, so an exposed run
+-- does not meet the void half way -- it goes all the way down to the
+-- band above TCMB and parks there. Nothing inside the hull can take a
+-- run below the air it is under, which is the difference.
+assert(
+    outside_1 < T20C,
+    "past room temperature already: " .. outside_1
+)
+t.run_seconds(240)
+local floored = t.pipe_temperature(1, 3, DISTRO)
+assert(floored < TCMB + 20.0, "it comes to rest just above TCMB: " .. floored)
+assert(floored >= TCMB, "and never below it")
+t.run_seconds(240)
+near(t.pipe_temperature(1, 3, DISTRO), floored, 0.001, "and stays there")
 
 -- ---------------------------------------------------------------
 -- THE SHELF AND THE DISPENSER OFFER IT.
