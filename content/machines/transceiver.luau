@@ -8,9 +8,10 @@
 -- them (lib/radio.luau). The two encryption sockets are where its
 -- channels come from: a tower carries exactly the words the keys in it
 -- are cut with, and a tower full of blank keys carries nothing
--- (items/encryption_key.luau). WHO HEARS A LINE is not this file's
--- business at all -- the policy rides the transmitting item's
--- `speech.radio` and reads these towers back through `sim.query.all`.
+-- (items/encryption_key.luau). WHICH TOWERS SPEAK a line is decided
+-- over the four relay stages this declaration signs it up for
+-- (fixtures/transceiver.luau, lib/radio_relay.luau); WHO HEARS one is
+-- `speech.radio`'s alone (lib/radio.luau).
 --
 -- tg's nearest thing is the telecomms bus mainframe
 -- (code/game/machinery/telecomms/machines/bus.dm:9-16), ported in
@@ -23,7 +24,7 @@ return {
     script = "transceiver",
     -- The running picture is a script var the fixture writes off the
     -- settled sockets; the engine draws `base` by itself whenever the
-    -- cord is dead (docs/CONTENT-SCHEMA.md §1.3, the power gate), so
+    -- cord is dead (docs/content-schema/appearance.md, the power gate), so
     -- "on" here means keyed, and dark means dark.
     sprite = {
         base = "transceiver_off",
@@ -31,6 +32,10 @@ return {
         states = { "transceiver_on" },
     },
     ui = { modules = { "link", "parts" } },
+    -- What signs this rack up for the four relay stages: every powered,
+    -- unsuspended one of these is walked once per `;` line
+    -- (docs/content-schema/radio.md).
+    radio = { relay = true },
     dense = true,
     corded = true,
     examine = {
@@ -55,7 +60,7 @@ return {
     },
     -- The department issues: the same tower with its first key already
     -- cut. Placement beats variant beats prototype, so a map may still
-    -- reseat the socket (docs/CONTENT-SCHEMA.md §1.1a). The words are
+    -- reseat the socket (docs/content-schema/variants.md). The words are
     -- spelled out rather than read off `lib/radio.luau` because machine
     -- files are evaluated in the bare data environment, before the
     -- shared tables exist; radio.channels is the roster of record and

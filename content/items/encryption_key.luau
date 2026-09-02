@@ -7,7 +7,7 @@
 -- (code/game/objects/items/devices/radio/encryption_keys.dm). Here the
 -- socket it fills is the tower's rather than the headset's, and the
 -- `radio` half is the same field the headset itself declares
--- (docs/CONTENT-SCHEMA.md §1.7b): declaring a channel is what makes a
+-- (docs/content-schema/radio.md): declaring a channel is what makes a
 -- thing a radio at all, so a department key in a pocket talks and
 -- hears on its word exactly as a headset does. That is intended -- the
 -- key IS the radio; the tower is just the biggest thing you can plug
@@ -34,7 +34,7 @@ local content = {
     -- the channel. Never `component`: overriding a tier or an
     -- efficiency claims a rung of the ladder, and a key ladder with a
     -- rung per department would let a swap "upgrade" Lifeline into
-    -- Wrench (docs/CONTENT-SCHEMA.md §1.1a).
+    -- Wrench (docs/content-schema/variants.md).
     variants = {
         engineering = {
             name = "encryption key (" .. radio.channels.engineering .. ")",
@@ -69,7 +69,7 @@ if sim ~= nil then
     -- pack's signal policy rather than station-wide: `speech.radio` is
     -- scoped to the transmitting item's prototype, variants inherit
     -- the base's handler, and the policy itself lives in `lib/radio.luau`
-    -- beside every number it reads (docs/LUAU-API.md §4).
+    -- beside every number it reads (docs/luau-api/speech-radio.md).
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("speech.radio", { kind = "transform", route = "item" }, function(ev)
         return radio.deliver(ev)

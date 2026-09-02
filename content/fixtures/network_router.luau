@@ -37,6 +37,15 @@ if sim ~= nil then
         end
         sim.message.send({ recipient = ev.actor, message = said })
     end)
+
+    -- The two stages a top stands on. `radio.read` is the tree's key
+    -- check -- the router is asked which tower reads a line no tower
+    -- could make out, and it names the first one keyed to the word --
+    -- and `radio.carry` is the hop that changes nothing, registered so
+    -- that the words pass through this rack at all
+    -- (lib/radio_relay.luau, docs/luau-api/radio-relay.md).
+    script_definition:handle("radio.read", { kind = "transform", route = "read" }, radio_relay.read)
+    script_definition:handle("radio.carry", { kind = "transform", route = "carry" }, radio_relay.carry)
 end
 
 return content
