@@ -26,9 +26,10 @@ local content = {
         respawn = "inanimate",
         body = "human",
         infinite_vending = false,
-        -- Plain pack data. The native mode loader checks only that
-        -- lifecycle modes carry bounded data; this file and
-        -- `lib/shift.luau` are its sole interpreters.
+        -- Plain pack data. The native mode loader reads six named keys
+        -- out of `rules` -- bodies, respawn, infinite_vending, outfit,
+        -- body, environment -- and never inspects another, so this file
+        -- and `lib/shift.luau` are the only readers this block has.
         shift = shift_rules,
         environment = {
             sink_k = 2.7,
