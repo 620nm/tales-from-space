@@ -375,7 +375,7 @@ assert(readout(panel, "address") == alarm, "the address stays: it was never the 
 --
 -- tg draws this panel shut with a teal lamp over it and draws NO lamp
 -- at all while it is unpowered, broken or shorted
--- (_air_alarm.dm:554-556, :522-525). The engine derives two states off
+-- (_air_alarm.dm:557, :526-527). The engine derives two states off
 -- the cord and the forest and they land on exactly those two pictures,
 -- so a crewman walking past reads "this room's console is dead" without
 -- opening anything (`appearance.device`,

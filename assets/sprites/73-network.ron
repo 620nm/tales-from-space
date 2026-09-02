@@ -68,9 +68,10 @@
         ("access_point_w", Dmi("@wallmounts", "access_control_standby", 0)),
         // Its DARK face, which tg has and this pack had not imported:
         // `update_icon_state` drops to `[base_icon_state]_off` on
-        // NOPOWER and otherwise draws standby (access_controller.dm:
-        // 226-228). The same two words the air alarm's faces answer to
-        // -- a dead cord and a box off the air both draw dark.
+        // NOPOWER (access_controller.dm:224-227) and otherwise draws
+        // standby (:228). The same two words the air alarm's faces
+        // answer to -- a dead cord and a box off the air both draw
+        // dark.
         ("access_point_off", Dmi("@wallmounts", "access_control_off", 0)),
         ("access_point_off_n", Dmi("@wallmounts", "access_control_off", 0)),
         ("access_point_off_s", Dmi("@wallmounts", "access_control_off", 0)),
@@ -88,10 +89,10 @@
         // _air_alarm.dm:6-7), which is the panel shut and the machine
         // built. tg lays the lamp on top as a separate `alarm0`,
         // `alarm2` or `alarm1` overlay picked by the danger level
-        // (`update_overlays`, _air_alarm.dm:556-569) and draws NO lamp
+        // (`update_overlays`, _air_alarm.dm:554-569) and draws NO lamp
         // at all while the box is open, unpowered, broken or shorted
-        // (_air_alarm.dm:554-556, beside the matching `set_light(0)` at
-        // :522-525).
+        // (_air_alarm.dm:557, beside the matching `set_light(0)` at
+        // :526-527).
         //
         // The dark face is that no-lamp case exactly, and this entry
         // wears it for both of the states this engine can derive that
@@ -110,7 +111,7 @@
         // whole face is one cell, because a device state selects a base
         // picture and the roster carries one name per state. The
         // emissive twin tg pairs with the overlay
-        // (`emissive_appearance`, _air_alarm.dm:568) is NOT imported:
+        // (`emissive_appearance`, _air_alarm.dm:569) is NOT imported:
         // on a composed cell it would glow the whole panel rather than
         // the screen, which is a brighter box than tg draws.
         ("air_alarm_lit", DmiLayers([("@wallmounts", "alarmp"), ("@wallmounts", "alarm0")], 0)),
@@ -120,7 +121,7 @@
         ("air_alarm_lit_w", DmiLayers([("@wallmounts", "alarmp"), ("@wallmounts", "alarm0")], 0)),
 
         // The two ALARMED faces, baked and named by no entry yet. tg
-        // picks between them on `danger_level` (_air_alarm.dm:559-565):
+        // picks between them on `danger_level` (_air_alarm.dm:560-566):
         // `alarm2` yellow for a warning, `alarm1` red for a hazard.
         // Nothing here decides that yet -- it wants a threshold pass
         // over the room's mix -- so the art is imported and waits for
