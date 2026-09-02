@@ -500,10 +500,13 @@ t.run_seconds(600)
 
 local closed = (1.0 / T20C ^ 3 + 3.0 * SIGMA * cell_a * 600.0 / cell_c) ^ (-1.0 / 3.0)
 assert(T20C - closed >= 4.0, "ten minutes in dead space is worth real kelvin: " .. closed)
+-- A deck's hull account settles on its FLOOR VISIT, every 16 atmos ticks
+-- (8 s), so a reading taken between two visits lags by up to a stride of
+-- radiation -- about 0.06 K on this deck (docs/matter-world/thermal.md).
 near(
     t.deck(1, 1).temperature,
     closed,
-    0.05,
+    0.15,
     "AND THE DECK IS WHERE THE FOURTH-POWER LAW PUTS IT"
 )
 assert(
