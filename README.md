@@ -55,6 +55,11 @@ cargo run -p xtask -- bake-atlas            # reads $LUNATIC_PACK/assets and $LU
   every tile from the map's own presets.
 - `docs/GAMEMODES.md` defines the Space Station/Free Build split and the
   `content/gamemodes/*.luau` policy schema.
+- A shift runs one hour of sim time under either mode. The engine knows
+  no round length: it publishes `clock.second` and ends the round only
+  when content calls `sim.round.finish`. Each mode declares the numbers
+  in `rules.shift` and `content/lib/shift.luau` is what reads them, so
+  retuning the shift is one edit per mode and no new answer.
 - `content/lib/*.luau` is the pack's SHARED CODE. There is no `require`
   (docs/SCRIPTING.md §1.6): a `lib/` file returns a table and the loader
   publishes it as a global named for the file, so `lib/vessel.luau`
@@ -68,7 +73,8 @@ cargo run -p xtask -- bake-atlas            # reads $LUNATIC_PACK/assets and $LU
   card and a deck of cards both read; `lib/radio.luau` owns every radio
   number and who finally hears a `;` line, and `lib/radio_relay.luau`
   owns what a tower, a wall box and a router each do to one crossing
-  them (`docs/luau-api/radio-relay.md`).
+  them (`docs/luau-api/radio-relay.md`); `lib/shift.luau` owns when a
+  shift warns the crew and when it asks to end.
 
 ### Palette categories
 
@@ -111,7 +117,7 @@ no direct spawn in `t`, and none should ever be added.
 
 | Group | Functions |
 | ----- | --------- |
-| World | `t.world(ron [, seed [, mode]])`, `t.world_file(name [, seed [, mode]])` (mode = a `content/gamemodes/` id; omitted = the pack default), `t.join([job]) -> player` (a mode that seats bodies on connection takes no job) |
+| World | `t.world(ron [, seed [, mode]])`, `t.world_file(name [, seed [, mode]])` (mode = a `content/gamemodes/` id; omitted = the pack default), `t.join([job]) -> player` (a mode that seats bodies on connection takes no job), `t.respawn(p [, job])` (take the mode's offer to leave this body: where the mode lobbies the session lands back at the board on a fresh Mind and `job` picks the next role, and where bodies are connection-scoped there is no board, so naming a job is an error) |
 | Seeds | `t.fault(x, y, tick)` (hull failure), `t.outage([tick])` (breaker trip) |
 | Clock | `t.now()`, `t.tick()`, `t.run_ticks(n)`, `t.run_seconds(s)` |
 | Verbs | `t.click(p, x, y [, target])` (target = the entity the client's hit-test named, from `t.target_at`; omitted = a click that landed on the ground), `t.throw(p, x, y [, target])` (the same click while throw mode is armed: the active hand's item flies at that tile), `t.move(p, dir)`, `t.say(p, text)`, `t.drop(p)`, `t.equip(p)`, `t.unequip(p, slot)` (a worn slot off into a free hand), `t.swap_hands(p)`, `t.use_self(p)`, `t.use_on_other(p)` (the active hand's item used on the item in the other hand),  `t.rotate(p, x, y, target, clockwise)`, `t.pull(p, x, y, target)` (ctrl+click: take hold of a loose thing and drag it), `t.stop_pull(p)`, `t.ui_act(p, act [, payload])`, `t.ui_close(p)` |

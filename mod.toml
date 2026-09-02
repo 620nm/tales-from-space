@@ -27,7 +27,7 @@ native_edges = [
     "procedure.start",
     "procedure.operate",
     "lifecycle.mob",
-    "lifecycle.round_start",
+    "lifecycle.clock",
     "lifecycle.round_end",
     "parts.refresh",
     "component.command",
@@ -47,7 +47,6 @@ tests = "tests"
 replace_handlers = true
 prototype_handlers = true
 global_handlers = true
-notify_private = true
 notify_audience = true
 
 [notifications]
