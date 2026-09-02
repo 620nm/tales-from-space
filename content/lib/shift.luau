@@ -10,14 +10,14 @@
 -- handlers to `clock.second` and `round.end`. Everything else -- what
 -- counts as a legal declaration, which second a warning goes out on,
 -- and which sentence it is -- is below.
+--
+-- NOTHING HERE MAY RAISE. A handler that throws is disabled for the
+-- rest of the shift, so one runtime error before the last second would
+-- be a round that never ends. The arithmetic is over numbers
+-- `validate` already accepted, and no call below reads round-scoped
+-- state -- which stops being legal the moment `round.end` returns.
 
 local shift = {}
-
--- The round-scoped flag that says this shift is already over
--- (`content/main.luau` declares it). `round.end` sets it, and it is
--- what keeps a grace second from asking for a second ending or
--- repeating the closing line.
-local ENDED = "shift_ended"
 
 -- Everyone still watching the station, ghosts included
 -- (content/audiences.luau).
@@ -62,6 +62,17 @@ function shift.validate(mode, rules)
     if type(rules.warnings) ~= "table" then
         fail(mode, "warnings must be a list of seconds-remaining marks")
     end
+    -- `on_second` walks the marks with `ipairs`, which stops at the
+    -- first hole and never sees a named key. Counting `pairs` against
+    -- the length is what makes a mark that would silently never fire a
+    -- load failure instead.
+    local entries = 0
+    for _ in pairs(rules.warnings) do
+        entries += 1
+    end
+    if entries ~= #rules.warnings then
+        fail(mode, "warnings must be a dense list, with no gaps and no named keys")
+    end
     local total = rules.shift_minutes * MINUTE
     local seen = {}
     for _, mark in ipairs(rules.warnings) do
@@ -92,14 +103,14 @@ function shift.announce(rules, message)
     })
 end
 
--- One second of sim time. The clock keeps running through the grace
--- interval, which is why the flag is read first.
+-- One second of sim time. The clock keeps publishing through the
+-- finalization grace, so this runs on seconds past the end of the
+-- shift too: `remaining` goes negative there, matches no mark, and the
+-- second passes without a word. Asking to finish on EXACTLY one second
+-- is what keeps those seconds from asking again.
 function shift.on_second(rules, ev)
-    if sim.var("round", ENDED) then
-        return
-    end
     local remaining = rules.shift_minutes * MINUTE - ev.elapsed_seconds
-    if remaining <= 0 then
+    if remaining == 0 then
         sim.round.finish({ grace_seconds = rules.grace_seconds })
         return
     end
@@ -118,9 +129,10 @@ end
 
 -- The round entered finalization. The world still ticks through the
 -- grace, so this is the last line the crew hears rather than the last
--- thing that happens.
+-- thing that happens. It is also the last moment round-scoped state is
+-- legal, which is why the shift keeps none: the engine marks the round
+-- over as soon as this returns.
 function shift.on_end(rules)
-    sim.script_var.set({ scope = "round", key = ENDED, value = true })
     shift.announce(rules, sim.msg(OVER, {}))
 end
 

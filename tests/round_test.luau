@@ -101,6 +101,13 @@ assert(#requests == 1, "the shift is ended exactly once")
 assert(requests[1].applied == true, "and that request is the one that ended it")
 assert(requests[1].grace_ticks == 600, "30 s of grace, in ticks")
 
+-- The handler ran an hour and a grace without throwing. This is the
+-- assertion that keeps the ones above honest: a handler that raises is
+-- disabled for the rest of the shift, so "announced once" and "ended
+-- once" are also what a CRASHED handler looks like.
+assert(#t.ledger_rows("ScriptError") == 0, "the shift handler never threw")
+assert(#t.ledger_rows("ScriptVarRefused") == 0, "and never wrote past the end of the round")
+
 -- A crewman the pack calls dead may leave the body behind. The corpse
 -- stays aboard; the session goes back to the board as somebody new and
 -- takes whatever job is still open.
@@ -132,3 +139,5 @@ assert(
     count(t.messages(builder), "The shift is over.") == 1,
     "Free Build ends on the clock every other mode keeps"
 )
+assert(#t.ledger_rows("ScriptError") == 0, "and gets there without throwing")
+assert(#t.ledger_rows("ScriptVarRefused") == 0, "or writing past the end of the round")
