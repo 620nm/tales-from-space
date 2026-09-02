@@ -5,12 +5,11 @@
 -- (heat_exchange/simple.dm, he_pipes.dm). Ordinary pipe is a sealed
 -- tube that trades nothing with the deck it is buried under. This is the
 -- opposite piece of kit: thin-walled, matte grey, and every pass it
--- conducts with the air of the tile above it at tg's window
--- coefficient -- 0.1, `WINDOW_HEAT_TRANSFER_COEFFICIENT`
--- (__DEFINES/atmospherics/atmos_core.dm:122) -- once the two differ by
--- more than 20 K (`minimum_temperature_difference`, he_pipes.dm:2).
--- That deadband is why a run at room temperature does nothing at all,
--- and why a freezer loop laid through a hot room bleeds it dry.
+-- conducts with the air of the tile above it, once the two differ by
+-- more than the deadband. Both numbers live in `lib/thermal.luau`,
+-- which says where each came from and what moving it does. The
+-- deadband is why a run already at the room's temperature does nothing
+-- at all, and why a freezer loop laid through a hot room bleeds it dry.
 --
 -- IT JOINS ONLY ITSELF (tg's `HE_type_check`, he_pipes.dm:18-21). A
 -- heat-exchange run and a distribution main can touch end to end on one
@@ -40,7 +39,10 @@ local content = {
         sprite = "he_pipe",
         color = "#404040",
         layers = LAYERS,
-        conducts = { coefficient = 0.1, min_delta_k = 1 },
+        conducts = {
+            coefficient = thermal.he_coefficient,
+            min_delta_k = thermal.he_deadband_k,
+        },
     },
     -- The engine's dial is the piping layer, 1..5, and this fits three
     -- of them; the cycle below walks those three. Minted on layer 3,
