@@ -131,6 +131,12 @@
         ("access_point_n", 0, -25),
         ("access_point_e", 25, 0),
         ("access_point_w", -25, 0),
+        // Its dark face hangs off the same bracket, so it shifts by the
+        // same number: one box, one overhang, whatever it is doing.
+        ("access_point_off_s", 0, 25),
+        ("access_point_off_n", 0, -25),
+        ("access_point_off_e", 25, 0),
+        ("access_point_off_w", -25, 0),
         // The air alarm hangs in the same bracket and shifts by its own
         // number: tg's wall frame for it declares `pixel_shift = 27`
         // (code/modules/atmospherics/machinery/air_alarm/
@@ -139,6 +145,21 @@
         ("air_alarm_n", 0, -27),
         ("air_alarm_e", 27, 0),
         ("air_alarm_w", -27, 0),
+        // Every other face of the same box, on the same shift: the lit
+        // screen and the two alarmed ones it will wear when a threshold
+        // pass exists to choose them (assets/sprites/73-network.ron).
+        ("air_alarm_lit_s", 0, 27),
+        ("air_alarm_lit_n", 0, -27),
+        ("air_alarm_lit_e", 27, 0),
+        ("air_alarm_lit_w", -27, 0),
+        ("air_alarm_warning_s", 0, 27),
+        ("air_alarm_warning_n", 0, -27),
+        ("air_alarm_warning_e", 27, 0),
+        ("air_alarm_warning_w", -27, 0),
+        ("air_alarm_hazard_s", 0, 27),
+        ("air_alarm_hazard_n", 0, -27),
+        ("air_alarm_hazard_e", 27, 0),
+        ("air_alarm_hazard_w", -27, 0),
         // tg's directional wall helpers shift these toward their wall
         // by the numbers declared beside each type: 28 pixels for the
         // clock (`code/game/machinery/digital_clock.dm:155`) and a full
