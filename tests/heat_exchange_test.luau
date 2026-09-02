@@ -1,9 +1,9 @@
 -- Heat-exchanging pipe: the run that is SUPPOSED to leak heat.
 --
 -- Every other length on the station is a sealed tube. This one trades
--- with the air of the tile above it every pass, at tg's window
--- coefficient (0.1, `WINDOW_HEAT_TRANSFER_COEFFICIENT`) behind a 20 K
--- deadband (`minimum_temperature_difference`, he_pipes.dm:2). Two facts
+-- with the air of the tile above it every pass, at the coefficient and
+-- behind the deadband its kind declares -- both `content/lib/thermal.luau`,
+-- and read back here through `t.pipe_law`. Two facts
 -- make it a piece of kit rather than a leak:
 --
 --   * it joins only itself (tg's `HE_type_check`, he_pipes.dm:18-21),
@@ -239,8 +239,8 @@ near(t.pipe_temperature(1, 1, DISTRO), T20C, 0.5, "the exchange run opens at roo
 near(t.pipe_temperature(1, 1, L2), T20C, 0.5, "and so does the ordinary one over it")
 near(t.room_temperature(2, 1), T20C, 0.5, "as does the air")
 
--- Enough to matter, and well clear of the 20 K deadband, but nowhere
--- near the 673 K where superconduction would join in.
+-- Enough to matter, and far outside any deadband a kind could sensibly
+-- declare, but nowhere near the 673 K where superconduction joins in.
 t.heat_pipe(1, 1, 12000.0, DISTRO)
 t.heat_pipe(1, 1, 12000.0, L2)
 t.tick()
@@ -277,16 +277,20 @@ assert(
 
 -- ---- the deadband ----
 --
--- tg conducts only once the two sides differ by more than
--- `minimum_temperature_difference` (he_pipes.dm:38). Left alone, the
--- run and the room close to within that band and then stop, rather than
--- crawling to equality forever.
+-- Conduction stops once the two sides are within the band the KIND
+-- declares (`min_delta_k`, ../lunatic/docs/atmos/thermal.md). The band
+-- is the pack's own tuning and belongs to `content/lib/thermal.luau`,
+-- so this asks the engine what was declared rather than spelling a
+-- number that the tuning would then have to keep in step.
+local BAND = t.pipe_law("he_pipe").min_delta_k
+assert(BAND ~= nil and BAND > 0.0, "the exchange pipe declares a band: " .. tostring(BAND))
+
 local shed_fast = hot_he - settled_he
 t.run_seconds(60)
 local parked_pipe = t.pipe_temperature(1, 1, DISTRO)
 local parked_room = t.room_temperature(2, 1)
 assert(
-    math.abs(parked_pipe - parked_room) <= 20.0,
+    parked_pipe - parked_room <= BAND,
     "the two close to within the band: " .. parked_pipe .. " vs " .. parked_room
 )
 
@@ -301,9 +305,15 @@ assert(
     "the run has all but stopped: " .. drift .. " K in 120 s against "
         .. shed_fast .. " K in the first 30"
 )
+
+-- The run came down to the band's edge and stopped THERE: it is still
+-- the warmer of the two, by most of a band, however narrow the band is.
+-- A run that crossed its room would be a deadband that had stopped
+-- holding, which is the failure this catches whatever the number is.
+local gap = t.pipe_temperature(1, 1, DISTRO) - t.room_temperature(2, 1)
 assert(
-    math.abs(t.pipe_temperature(1, 1, DISTRO) - t.room_temperature(2, 1)) > 10.0,
-    "and the two never meet"
+    gap >= BAND / 2.0,
+    "and the two never meet: " .. gap .. " K still between them, band " .. BAND
 )
 
 -- ---------------------------------------------------------------
