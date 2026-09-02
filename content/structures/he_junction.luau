@@ -12,6 +12,25 @@
 -- colour adapter's trick applied to the other half of a length's
 -- identity, and it is the same engine primitive doing it.
 --
+-- EACH END TAKES ONE KIND, and `joins` is where that is said. The
+-- engine calls the mechanism a KIND ADAPTER, because that is what it
+-- does: the colour adapter joins two paint jobs, this joins two kinds,
+-- and heat exchange is what THIS station happens to use it for. tg spells
+-- it as an override on `is_connectable` (junction.dm:30-33): the end at
+-- `REVERSE_DIR(dir)` is type-checked as ORDINARY pipe -- "we want a
+-- normal pipe instead" -- and the end at `dir` as this family. The
+-- engine numbers the same two mouths back then front, back being the
+-- one behind the facing, so the list below reads plain first and
+-- heat-exchange second. `"pipe"` is the engine's own word for the
+-- unauthored length every map is made of; the second is this pack's own
+-- kind, named by the item that lays it.
+--
+-- SO IT HAS FOUR FACINGS where the colour adapter has two axes. Turn a
+-- colour adapter around and it does exactly what it did; turn this
+-- around and the two runs it was welding come apart, because the end
+-- that takes heat-exchange pipe is now pointing at the main. tg aims it
+-- and never normalises it, and neither does this.
+--
 -- IT CONDUCTS NOTHING. tg gives it `WALL_HEAT_TRANSFER_COEFFICIENT`,
 -- which is 0.0 (__DEFINES/atmospherics/atmos_core.dm:119), behind a
 -- 300 K deadband -- a heat-exchange fitting that is deliberately inert,
@@ -19,32 +38,32 @@
 -- than a length, and a device holds gas without trading heat with the
 -- deck at all, which lands in the same place.
 --
--- ONE DEVIATION, and it is the engine's: a device mouth takes any run
--- it reaches (../lunatic/docs/ATMOS.md, "Devices are omni"), so this
--- accepts either kind at either end where tg refuses ordinary pipe on
--- its heat-exchange side. Turning it around therefore changes nothing,
--- which is why it normalises its facing onto one axis and wears two
--- pictures rather than four.
---
 -- Seventy litres, one length of ordinary pipe: tg gives a pipe
 -- `UNARY_PIPE_VOLUME * device_type` and this has two ends
 -- (pipes.dm:27-28).
 return {
     id = "he_junction",
     name = "junction",
-    sprite = "he_junction_ns",
+    sprite = "he_junction_s",
     dense = false,
     states = { "anchored" },
     facing_sprites = {
         anchored = {
-            north = "he_junction_ns",
-            south = "he_junction_ns",
-            east = "he_junction_ew",
-            west = "he_junction_ew",
+            north = "he_junction_n",
+            south = "he_junction_s",
+            east = "he_junction_e",
+            west = "he_junction_w",
         },
     },
     atmos = {
-        device = "color_adapter",
+        -- The engine's word for the mechanism, not for this fitting: an
+        -- adapter whose two ends admit different KINDS, sibling of the
+        -- one whose ends admit different colours.
+        device = "kind_adapter",
+        -- Back mouth, then front. Back is behind the facing, which is
+        -- tg's `REVERSE_DIR(dir)`: ordinary pipe. Front is the facing:
+        -- heat-exchanging pipe.
+        joins = { "pipe", "he_pipe" },
     },
     build = {
         on = { "floor", "plating" },

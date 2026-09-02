@@ -128,11 +128,19 @@
         // The junction, which is a length of pipe with an attribute: one
         // end takes ordinary pipe and the other takes this family
         // (`heat_exchange/junction.dm:30-33`). Drawn from tg's own sheet
-        // on the middle layer, as the colour adapter is -- the engine
-        // normalises a fused binary's facing onto one axis, so a
-        // junction has two pictures and not four.
-        ("he_junction_ns", Dmi("@he_junction", "pipe11-3", 1)),
-        ("he_junction_ew", Dmi("@he_junction", "pipe11-3", 2)),
+        // on the middle layer, as the colour adapter is.
+        //
+        // FOUR pictures, not two. tg's junction is aimed rather than
+        // normalised onto an axis: its `dir` is the end that takes THIS
+        // family and `REVERSE_DIR(dir)` the end that takes ordinary pipe
+        // (junction.dm:27-33), so turning one around swaps which run
+        // each end binds. `pipe11-3` is the state with both ends joined,
+        // and its four frames are BYOND's dir order -- south, north,
+        // east, west -- the same order the loose fitting below is cut in.
+        ("he_junction_s", Dmi("@he_junction", "pipe11-3", 0)),
+        ("he_junction_n", Dmi("@he_junction", "pipe11-3", 1)),
+        ("he_junction_e", Dmi("@he_junction", "pipe11-3", 2)),
+        ("he_junction_w", Dmi("@he_junction", "pipe11-3", 3)),
 
         // The two loose fittings, off tg's item sheet by the machine's
         // own `pipe_state` (`construction.dm:17,216`): "he" for a length
