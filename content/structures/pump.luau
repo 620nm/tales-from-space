@@ -1,4 +1,4 @@
--- A gas pump: the machine a distribution loop is actually built out of.
+-- A pump: the machine a distribution loop is actually built out of.
 --
 -- tg's `/obj/machinery/atmospherics/components/binary/pump`
 -- (components/binary_devices/pump.dm), whose whole description is "a
@@ -30,8 +30,8 @@
 -- switching it: tg's `interact()` on a pump is `ui_interact`
 -- (pump.dm:68), where the manual valve's starts the wheel turning.
 return {
-    id = "gas_pump",
-    name = "gas pump",
+    id = "pump",
+    name = "pump",
     sprite = "pump_off_n",
     ui = { modules = { "flow" } },
     -- ON THE ROOM'S NETWORK. An endpoint carries its own address and
@@ -83,7 +83,7 @@ return {
     },
     build = {
         on = { "floor", "plating" },
-        from_item = "gas_pump_fitting",
+        from_item = "pump_fitting",
         tool = "wrench",
         secs = 2.0,
         start = "You start fastening the pump down.",
@@ -94,13 +94,13 @@ return {
             -- Only while it is OFF -- tg's `can_unwrench`: "You cannot
             -- unwrench [src], turn it off first!" (pump.dm:103-107).
             -- The guard is the state itself, so a wrench swung at a
-            -- running pump is answered with "The gas pump must be off
+            -- running pump is answered with "The pump must be off
             -- first." rather than with silence.
             at = "off",
             tool = "wrench",
             secs = 2.0,
             gone = true,
-            yields = { gas_pump_fitting = 1 },
+            yields = { pump_fitting = 1 },
             start = "You start unfastening the pump.",
             done = "The pump comes up off the deck.",
         },

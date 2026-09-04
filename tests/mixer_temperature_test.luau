@@ -1,6 +1,6 @@
--- What temperature comes out of a gas mixer.
+-- What temperature comes out of a mixer.
 --
--- gas_mixer_test.luau weighs the machine in MOLES: who paid, how much,
+-- mixer_test.luau weighs the machine in MOLES: who paid, how much,
 -- and what happens when a supply line runs dry. It never asks how HOT
 -- the mix is, and that is the question a real atmospherics loop is
 -- built around -- the nitrogen a station breathes comes off a cold
@@ -29,7 +29,7 @@
 -- the predictions below are, and `t.pipe_energy` audits the same
 -- arithmetic in joules underneath.
 --
--- One junction serves the file, the same one gas_mixer_test.luau uses:
+-- One junction serves the file, the same one mixer_test.luau uses:
 -- a long back main, a one-length stub dropping south as the side
 -- intake, and a short outlet main east.
 
@@ -76,7 +76,7 @@ local JUNCTION = [==[(
         (10, 1, 4), (11, 1, 4), (12, 1, 4),
         (9, 2, 4),
     ],
-    structures: [(9, 1, "gas_mixer")],
+    structures: [(9, 1, "mixer")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3), (11, 1, 3), (12, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3), (12, 2, 3),
@@ -103,7 +103,7 @@ t.world(JUNCTION, 7)
 
 local p = t.join()
 t.tick()
-assert(t.structure_at(9, 1).id == "gas_mixer", "the mixer is where the map put it")
+assert(t.structure_at(9, 1).id == "mixer", "the mixer is where the map put it")
 
 near(t.pipe_temperature(BACK_X, BACK_Y), 293.15, 0.5, "every mapped run opens at room temperature")
 near(t.pipe_temperature(SIDE_X, SIDE_Y), 293.15, 0.5, "the side stub too")
@@ -125,7 +125,7 @@ local energy0 = t.pipe_energy(BACK_X, BACK_Y)
     + t.pipe_energy(SIDE_X, SIDE_Y)
     + t.pipe_energy(OUT_X, OUT_Y)
 
-t.click(p, 9, 1, t.target_at(9, 1, "gas_mixer"))
+t.click(p, 9, 1, t.target_at(9, 1, "mixer"))
 t.tick()
 assert(t.ui(p).document == "modules" and t.ui(p).presentation == "modules",
     "the mixer's declared document")
@@ -207,7 +207,7 @@ energy0 = t.pipe_energy(BACK_X, BACK_Y)
     + t.pipe_energy(SIDE_X, SIDE_Y)
     + t.pipe_energy(OUT_X, OUT_Y)
 
-t.click(q, 9, 1, t.target_at(9, 1, "gas_mixer"))
+t.click(q, 9, 1, t.target_at(9, 1, "mixer"))
 t.tick()
 t.ui_act(q, "set", '{"field":"ratio","value":80}')
 t.ui_act(q, "set", '{"field":"pressure","value":200}')

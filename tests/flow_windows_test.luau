@@ -181,14 +181,14 @@ t.world([==[(
     ],
     spawns: [(4, 2)],
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4)],
-    structures: [(3, 1, "gas_pump")],
+    structures: [(3, 1, "pump")],
 )]==], 7)
 
 local d = t.join()
 t.tick()
 t.run_seconds(3)
 
-t.click(d, 3, 1, t.target_at(3, 1, "gas_pump"))
+t.click(d, 3, 1, t.target_at(3, 1, "pump"))
 t.tick()
 local supply = nil
 for _, r in ipairs(t.ui(d).readouts) do
@@ -250,7 +250,7 @@ t.world([==[(
     // The pump replaces the centre length; taking it up leaves a real
     // gap until an engineer lays a replacement.
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4)],
-    structures: [(3, 1, "gas_pump")],
+    structures: [(3, 1, "pump")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
@@ -262,7 +262,7 @@ t.tick()
 assert(t.pipe_pressure(3, 1) == nil, "no net claims the tile the machine is on")
 
 -- Switch it on through its panel, then pick the wrench up.
-t.click(w, 3, 1, t.target_at(3, 1, "gas_pump"))
+t.click(w, 3, 1, t.target_at(3, 1, "pump"))
 t.tick()
 t.ui_act(w, "toggle", '{"field":"power"}')
 t.run_ticks(2)
@@ -273,13 +273,13 @@ t.run_ticks(2)
 assert(t.hands(w).held == "wrench", "wrench in hand")
 
 local _ = t.messages(w)
-t.click(w, 3, 1, t.target_at(3, 1, "gas_pump"))
+t.click(w, 3, 1, t.target_at(3, 1, "pump"))
 t.run_seconds(2.5)
 assert(
-    said(w, "The gas pump must be off first."),
+    said(w, "The pump must be off first."),
     "the refusal names the state the job wants"
 )
-assert(t.structure_at(3, 1).id == "gas_pump", "and the pump is still bolted down")
+assert(t.structure_at(3, 1).id == "pump", "and the pump is still bolted down")
 
 -- The panel is still open and still in reach, so the switch is right
 -- there -- which is the whole point of it being a windowed machine.
@@ -287,7 +287,7 @@ t.ui_act(w, "toggle", '{"field":"power"}')
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "off", "switched off")
 
-t.click(w, 3, 1, t.target_at(3, 1, "gas_pump"))
+t.click(w, 3, 1, t.target_at(3, 1, "pump"))
 t.run_ticks(1)
 assert(t.structure_at(3, 1) ~= nil, "one tick in, it is still bolted down")
 t.run_seconds(2.5)
@@ -308,7 +308,7 @@ near(
 local fx, fy = nil, nil
 for dx = -1, 1 do
     for dy = -1, 1 do
-        if lying_at(3 + dx, 1 + dy, "gas_pump_fitting") then
+        if lying_at(3 + dx, 1 + dy, "pump_fitting") then
             fx, fy = 3 + dx, 1 + dy
         end
     end
@@ -319,21 +319,21 @@ assert(fx, "the machine came up as a fitting")
 -- and step off before wrenching: a machine needs the deck clear, where
 -- a fitting hides under it.
 t.swap_hands(w)
-t.click(w, fx, fy, t.target_at(fx, fy, "gas_pump_fitting"))
+t.click(w, fx, fy, t.target_at(fx, fy, "pump_fitting"))
 t.run_ticks(2)
-assert(t.hands(w).held == "gas_pump_fitting", "the fitting is in hand")
+assert(t.hands(w).held == "pump_fitting", "the fitting is in hand")
 walk(w, "north")
 walk(w, "west")
 t.drop(w)
 t.run_ticks(2)
-assert(lying_at(3, 1, "gas_pump_fitting"), "dropped back over the run")
+assert(lying_at(3, 1, "pump_fitting"), "dropped back over the run")
 walk(w, "south")
 
 t.swap_hands(w)
-t.click(w, 3, 1, t.target_at(3, 1, "gas_pump_fitting"))
+t.click(w, 3, 1, t.target_at(3, 1, "pump_fitting"))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) ~= nil, "the machine is standing again")
-assert(t.structure_at(3, 1).id == "gas_pump", "and it is the same machine")
+assert(t.structure_at(3, 1).id == "pump", "and it is the same machine")
 assert(t.structure_at(3, 1).state == "off", "a machine you just bolted down is off")
 t.run_seconds(1)
 assert(

@@ -1,4 +1,4 @@
--- The gas mixer: the filter run backwards.
+-- The mixer: the filter run backwards.
 --
 -- Two intakes -- the back port and the side one -- drawn from at a set
 -- ratio and merged into one outlet, until that outlet reads the target
@@ -50,7 +50,7 @@ local OUT_X, OUT_Y = 11, 1
 -- variant section at the foot of the file stands the same three-way
 -- with a preconfigured machine in it.
 local THREE_WAY = [==[(
-    name: "gas mixer",
+    name: "mixer",
     legend: {
         ' ': (turf: Space),
         '.': (turf: Plating),
@@ -71,7 +71,7 @@ local THREE_WAY = [==[(
         (10, 1, 4), (11, 1, 4), (12, 1, 4),
         (9, 2, 4),
     ],
-    structures: [(9, 1, "gas_mixer")],
+    structures: [(9, 1, "mixer")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3), (11, 1, 3), (12, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3), (12, 2, 3),
@@ -84,7 +84,7 @@ local p = t.join()
 t.tick()
 
 local m = t.structure_at(9, 1)
-assert(m ~= nil and m.id == "gas_mixer", "the mixer is where the map put it")
+assert(m ~= nil and m.id == "mixer", "the mixer is where the map put it")
 assert(m.state == "off", "and it ships off")
 assert(t.pipe_pressure(9, 1) == nil, "the run does not pass through it")
 
@@ -122,10 +122,10 @@ near(moles(OUT_X, OUT_Y) / moles(SIDE_X, SIDE_Y), OUT_M3 / SIDE_M3, 0.02, "an of
 -- ---------------------------------------------------------------
 -- The panel.
 -- ---------------------------------------------------------------
-t.click(p, 9, 1, t.target_at(9, 1, "gas_mixer"))
+t.click(p, 9, 1, t.target_at(9, 1, "mixer"))
 t.tick()
 local ui = t.ui(p)
-assert(ui, "clicking a gas mixer opens its window")
+assert(ui, "clicking a mixer opens its window")
 assert(ui.document == "modules" and ui.presentation == "modules")
 assert(ui.toggles[1].field == "power" and ui.toggles[1].on == false)
 assert(#ui.toggles == 1, "a mixer has one switch and no roster")
@@ -272,7 +272,7 @@ local before = t.ui(p).setpoints[1].value
 t.ui_act(p, "set", '{"field":"rate","value":50}')
 t.ui_act(p, "toggle", '{"field":"filter","option":"o2"}')
 t.tick()
-assert(t.ui(p).setpoints[1].value == before, "a gas filter's knobs are not a mixer's")
+assert(t.ui(p).setpoints[1].value == before, "a filter's knobs are not a mixer's")
 assert(t.ui(p).toggles[1].on == true, "and it has no roster to toggle")
 
 assert(t.ledger_has("MachineSetpoint", "ratio", "Player"), "re-splitting the mix is recorded")
@@ -309,7 +309,7 @@ t.world([==[(
         (10, 1, 4), (11, 1, 4), (12, 1, 4),
         (9, 2, 4),
     ],
-    structures: [(9, 1, "gas_mixer.flipped")],
+    structures: [(9, 1, "mixer.flipped")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3), (11, 1, 3), (12, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3), (12, 2, 3),
@@ -318,12 +318,12 @@ t.world([==[(
 
 local q = t.join()
 t.tick()
-assert(t.structure_at(9, 1).id == "gas_mixer.flipped", "the mirrored machine")
+assert(t.structure_at(9, 1).id == "mixer.flipped", "the mirrored machine")
 
 local west0 = moles(BACK_X, BACK_Y)
 local east0 = moles(OUT_X, OUT_Y)
 local stub0 = moles(SIDE_X, SIDE_Y)
-t.click(q, 9, 1, t.target_at(9, 1, "gas_mixer.flipped"))
+t.click(q, 9, 1, t.target_at(9, 1, "mixer.flipped"))
 t.tick()
 t.ui_act(q, "set", '{"field":"pressure","value":300}')
 t.ui_act(q, "toggle", '{"field":"power"}')
@@ -346,21 +346,21 @@ assert(moles(SIDE_X, SIDE_Y) < stub0 - 0.5, "and the side stub is still an intak
 -- 0.79` and `target_pressure = MAX_OUTPUT_PRESSURE` (mixer.dm), because
 -- a department's air mixer is not a machine anyone tunes -- it is set to
 -- 79/21 and left alone for the life of the station. Here it is three
--- lines of gas_mixer.luau's own `variants` table
+-- lines of mixer.luau's own `variants` table
 -- (docs/CONTENT-SCHEMA.md §1.1a), and all three are properties a map
 -- could have written on a bare mixer instead.
 --
 -- The panel is what proves it: a mapper who opens this machine sees the
 -- dials already where the station needs them.
 -- ---------------------------------------------------------------
-t.world(THREE_WAY:gsub('%(9, 1, "gas_mixer"%)', '(9, 1, "gas_mixer.airmix")'), 7)
+t.world(THREE_WAY:gsub('%(9, 1, "mixer"%)', '(9, 1, "mixer.airmix")'), 7)
 
 local a = t.join()
 t.tick()
-assert(t.structure_at(9, 1).id == "gas_mixer.airmix", "the air mixer is a real id")
+assert(t.structure_at(9, 1).id == "mixer.airmix", "the air mixer is a real id")
 assert(t.structure_at(9, 1).state == "running", "and it opens the shift running")
 
-t.click(a, 9, 1, t.target_at(9, 1, "gas_mixer.airmix"))
+t.click(a, 9, 1, t.target_at(9, 1, "mixer.airmix"))
 t.tick()
 local air = t.ui(a)
 assert(air.toggles[1].field == "power" and air.toggles[1].on, "its switch is thrown")

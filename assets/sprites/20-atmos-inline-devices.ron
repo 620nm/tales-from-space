@@ -77,7 +77,7 @@
         ("valve_opening_ew", DmiAnimOnce("@binary", "mvalve_01-1", 2)),
         ("valve_closing_ns", DmiAnimOnce("@binary", "mvalve_10-1", 1)),
         ("valve_closing_ew", DmiAnimOnce("@binary", "mvalve_10-1", 2)),
-        // The gas pump, running: tg's `pump_on-1`, five frames at a
+        // The pump, running: tg's `pump_on-1`, five frames at a
         // twentieth of a second each. No anchor and no server state -- a
         // loop has no beginning worth agreeing on, so every client runs it
         // off its own clock and the wire never mentions it.
@@ -96,7 +96,7 @@
         ("pump_on_s", DmiAnim("@binary", "pump_on-1", 0)),
         ("pump_on_e", DmiAnim("@binary", "pump_on-1", 2)),
         ("pump_on_w", DmiAnim("@binary", "pump_on-1", 3)),
-        // THE TRINARY MACHINES: tg's gas filter and gas mixer. FOUR
+        // THE TRINARY MACHINES: tg's filter and mixer. FOUR
         // facings each, where a binary has two -- a binary reaches along
         // one axis and tg normalises south onto north, while a trinary
         // reaches three ways and every rotation is a different picture.
@@ -188,7 +188,7 @@
         ("volpump_off_w", Dmi("@binary", "volpump_off-1", 3)),
         // The volumetric pump's running body: ten frames at a twentieth
         // each, the longest loop in the binary family and the reason it
-        // reads as a harder-working machine than the gas pump beside it.
+        // reads as a harder-working machine than the pump beside it.
         ("volpump_on_n", DmiAnim("@binary", "volpump_on-1", 1)),
         ("volpump_on_s", DmiAnim("@binary", "volpump_on-1", 0)),
         ("volpump_on_e", DmiAnim("@binary", "volpump_on-1", 2)),
@@ -254,7 +254,7 @@
         // nothing yet.
         ("manual_valve_loose", Dmi("@pipe_item", "mvalve", 0)),
         ("digital_valve_loose", Dmi("@pipe_item", "dvalve", 0)),
-        ("gas_pump_loose", Dmi("@pipe_item", "pump", 0)),
+        ("pump_loose", Dmi("@pipe_item", "pump", 0)),
         ("volume_pump_loose", Dmi("@pipe_item", "volumepump", 0)),
         ("passive_gate_loose", Dmi("@pipe_item", "passivegate", 0)),
         ("pressure_valve_loose", Dmi("@pipe_item", "pvalve", 0)),
@@ -266,10 +266,10 @@
         ("digital_valve_loose_n", Dmi("@pipe_item", "dvalve", 1)),
         ("digital_valve_loose_e", Dmi("@pipe_item", "dvalve", 2)),
         ("digital_valve_loose_w", Dmi("@pipe_item", "dvalve", 3)),
-        ("gas_pump_loose_s", Dmi("@pipe_item", "pump", 0)),
-        ("gas_pump_loose_n", Dmi("@pipe_item", "pump", 1)),
-        ("gas_pump_loose_e", Dmi("@pipe_item", "pump", 2)),
-        ("gas_pump_loose_w", Dmi("@pipe_item", "pump", 3)),
+        ("pump_loose_s", Dmi("@pipe_item", "pump", 0)),
+        ("pump_loose_n", Dmi("@pipe_item", "pump", 1)),
+        ("pump_loose_e", Dmi("@pipe_item", "pump", 2)),
+        ("pump_loose_w", Dmi("@pipe_item", "pump", 3)),
         ("volume_pump_loose_s", Dmi("@pipe_item", "volumepump", 0)),
         ("volume_pump_loose_n", Dmi("@pipe_item", "volumepump", 1)),
         ("volume_pump_loose_e", Dmi("@pipe_item", "volumepump", 2)),

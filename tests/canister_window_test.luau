@@ -155,7 +155,7 @@ t.tick()
 assert(math.abs(t.ui(p).setpoints[1].value - 2533.125) < 0.001,
     "nor past CAN_MAX_RELEASE_PRESSURE: " .. t.ui(p).setpoints[1].value)
 
--- A knob belonging to a machine this is not (the gas pump's rate),
+-- A knob belonging to a machine this is not (the pump's rate),
 -- and a verb nothing has.
 local before = t.ui(p).setpoints[1].value
 t.ui_act(p, "set", '{"field":"rate","value":50}')

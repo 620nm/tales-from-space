@@ -4,10 +4,10 @@
 -- A scrubber offers a button per gas and a filter offers the same list
 -- again. Unordered, that is a wall of words a technician has to read
 -- end to end to find carbon dioxide. These four headings are how the
--- station thinks about its own air: the three gases a room is supposed
--- to hold, the ones a room is supposed to be rid of, the ones that are
--- only gas because something is hot or thin, and everything else on the
--- shelf.
+-- station thinks about its own air: what a room is supposed to hold,
+-- what a room is supposed to be rid of, what is only a gas because
+-- something is hot or thin -- water is filed there and rests liquid --
+-- and everything else on the shelf.
 --
 -- Order here IS display order, and a substance names exactly one group
 -- (`group = "..."` in its own file), so the blocks never overlap. The
@@ -18,8 +18,8 @@
 -- honest but says nothing; with it, a reagent nobody has thought about
 -- yet still lands somewhere a player can find it.
 return {
-    { key = "atmospheric", label = "Atmospheric gases" },
+    { key = "atmospheric", label = "Station atmosphere" },
     { key = "poison", label = "Atmospheric poisons" },
-    { key = "volatile", label = "Gases at room temperature" },
+    { key = "volatile", label = "Volatiles" },
     { key = "other", label = "Other", rest = true },
 }

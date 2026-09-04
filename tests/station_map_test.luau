@@ -25,13 +25,13 @@ standing(22, 13, "status_display")
 
 -- Atmospherics is commissioned rather than merely drawn.
 for _, row in ipairs({
-    { 21, 23, "gas_filter.co2", "running" },
-    { 23, 23, "gas_mixer.airmix", "running" },
-    { 25, 23, "gas_pump", "running" },
-    { 18, 26, "gas_pump", "running" }, -- the waste lift: a pressure pump,
+    { 21, 23, "filter.co2", "running" },
+    { 23, 23, "mixer.airmix", "running" },
+    { 25, 23, "pump", "running" },
+    { 18, 26, "pump", "running" }, -- the waste lift: a pressure pump,
     -- because a volumetric one refuses the drained main's trickle
-    { 14, 25, "gas_pump", "running" }, -- the wheel feed's regulator
-    { 18, 23, "gas_pump", "running" }, -- the process inlet's regulator
+    { 14, 25, "pump", "running" }, -- the wheel feed's regulator
+    { 18, 23, "pump", "running" }, -- the process inlet's regulator
     -- Switched on and drawn OFF, and both are true. This one is the
     -- department's CO2 recovery leg (maps/chillstation.ron): a roster of
     -- one gas, in a room that at roundstart holds none of it. A machine

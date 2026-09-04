@@ -1,12 +1,17 @@
 // Generic floor matter imported from tgstation at the revision pinned in
 // `tfs/assets/tg-revision`. These are neutral or near-neutral masks so
 // the authoritative substance tint can multiply them at runtime.
+//
+// The two river tiles at the bottom are the exception: they carry tg's
+// own blue, and the substance that draws them says `tint = "#FFFFFF"`
+// so the multiply leaves them alone (content/substances/water.luau).
 (
     sheets: [
         ("blood", "effects/blood.dmi"),
         ("debris", "obj/debris.dmi"),
         ("dirt", "effects/dirt_misc.dmi"),
         ("effects", "effects/effects.dmi"),
+        ("floors", "turf/floors.dmi"),
     ],
     sprites: [
         // `icons/effects/blood.dmi`, floor1..floor3 and floor5..floor6:
@@ -38,5 +43,21 @@
         // `icons/effects/dirt_misc.dmi`, a short-lived dust puff for
         // `sim.visual.spawn`; not a persistent matter profile.
         ("matter_dust", Dmi("@dirt", "dust", 0)),
+
+        // `icons/turf/floors.dmi`, tg's two river tiles: eight frames
+        // at delays 1,2,3,2,1,2,3,2 with rewind, so the surface moves
+        // and reverses instead of looping with a seam. They are the
+        // upper tiers of a deep liquid pool, a square metre of standing
+        // water rather than a splash on the deck.
+        //
+        // ART ONLY. tg's water turf carries a slowdown, an immersion
+        // overlay and a swimming element (`/turf/open/water`,
+        // code/game/turfs/open/water.dm:9, :19 with :74, and :97 on the
+        // deep subtype); NONE of it is ported. This is a picture of
+        // water, and a puddle here does not wet, slow or drown anybody.
+        // The deep art is tg's own deep state (water.dm:94), used for
+        // depth and not for what tg does with depth.
+        ("matter_water", DmiAnim("@floors", "riverwater_motion", 0)),
+        ("matter_deep_water", DmiAnim("@floors", "deep_riverwater_motion", 0)),
     ],
 )

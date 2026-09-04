@@ -25,6 +25,36 @@
         "  #########.##########    ",
         "                          ",
     ],
+    // The flooded alcove, and the only water on this station. A tile is
+    // one cubic metre, so these `total` doses ARE the tile's contents:
+    // 55.51 mol of water is a litre of it and 2775.5 mol is fifty, over
+    // a square metre of deck -- a millimetre of wet and five centimetres
+    // of standing water, which is the difference between a spill and
+    // something you would step around.
+    //
+    // The two air rows ride along because a painted tile holds what the
+    // blend says and NOTHING else: water on its own would open this
+    // alcove airless, and a compartment that flooded is not a
+    // compartment that decompressed. They are ordinary 21/79 at 20 C,
+    // the same arithmetic content/blends/standard_air.luau spells out.
+    //
+    // Nothing here moves. A liquid on a tile does not level, drain or
+    // slow anybody down -- it is a picture of a puddle with real moles
+    // in it, and the engine says so at its own
+    // `#TODO(destructive-matter)` sites.
+    blends: {
+        "water_1l": (rows: [("water", 55.51), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
+        "water_50l": (rows: [("water", 2775.5), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
+    },
+    // The dead end south of the Central Corridor, where the exterior
+    // airlock is: deepest at the door and thinning back into the alcove.
+    painted: [
+        (11, 8, "water_50l"),
+        (12, 8, "water_50l"),
+        (13, 8, "water_1l"),
+        (11, 7, "water_1l"),
+        (12, 7, "water_1l"),
+    ],
     spawns: [
         (11, 3),
         (12, 3),

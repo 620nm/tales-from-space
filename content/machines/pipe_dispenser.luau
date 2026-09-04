@@ -12,7 +12,7 @@
 -- All four of tg's categories are here. What else tg lists and this
 -- pack does not have yet: the bridge and multi-deck adapters under
 -- Pipes. Every one of them is one line here on the day it becomes a
--- thing — which is exactly what the gas analyzer cost the tool vendor,
+-- thing — which is exactly what the analyzer cost the tool vendor,
 -- and exactly what the scrubber, the injector and the two vents cost
 -- this shelf.
 --
@@ -33,7 +33,7 @@ return {
     dense = true,
     -- Its own file, not the vendor's: a dispenser also takes fittings
     -- BACK, and a softdrinks machine must never learn how to swallow
-    -- a gas pump.
+    -- a pump.
     script = "pipe_dispenser",
     corded = true,
     infinite_stock = true,
@@ -51,17 +51,17 @@ return {
 
         { item = "manual_valve_fitting", name = "Manual Valve", category = "Binary", amount = 999 },
         { item = "digital_valve_fitting", name = "Digital Valve", category = "Binary", amount = 999 },
-        { item = "gas_pump_fitting", name = "Gas Pump", category = "Binary", amount = 999 },
+        { item = "pump_fitting", name = "Pump", category = "Binary", amount = 999 },
         { item = "volume_pump_fitting", name = "Volume Pump", category = "Binary", amount = 999 },
         { item = "passive_gate_fitting", name = "Passive Gate", category = "Binary", amount = 999 },
         { item = "pressure_valve_fitting", name = "Pressure Valve", category = "Binary", amount = 999 },
         { item = "temperature_gate_fitting", name = "Temperature Gate", category = "Binary", amount = 999 },
         { item = "temperature_pump_fitting", name = "Temperature Pump", category = "Binary", amount = 999 },
 
-        { item = "gas_filter_fitting", name = "Gas Filter", category = "Devices", amount = 999 },
-        { item = "gas_filter_flipped_fitting", name = "Gas Filter (flipped)", category = "Devices", amount = 999 },
-        { item = "gas_mixer_fitting", name = "Gas Mixer", category = "Devices", amount = 999 },
-        { item = "gas_mixer_flipped_fitting", name = "Gas Mixer (flipped)", category = "Devices", amount = 999 },
+        { item = "filter_fitting", name = "Filter", category = "Devices", amount = 999 },
+        { item = "filter_flipped_fitting", name = "Filter (flipped)", category = "Devices", amount = 999 },
+        { item = "mixer_fitting", name = "Mixer", category = "Devices", amount = 999 },
+        { item = "mixer_flipped_fitting", name = "Mixer (flipped)", category = "Devices", amount = 999 },
         { item = "connector_port_fitting", name = "Connector", category = "Devices", amount = 999 },
         { item = "pipe_meter", name = "Meter", category = "Devices", amount = 999 },
         -- The two ends of the air loop: some take a room's air away,

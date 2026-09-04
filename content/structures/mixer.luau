@@ -1,4 +1,4 @@
--- A gas mixer: the filter run backwards, and the reason the
+-- A mixer: the filter run backwards, and the reason the
 -- distribution loop carries air rather than two gases in two pipes.
 --
 -- tg's `/obj/machinery/atmospherics/components/trinary/mixer`
@@ -27,14 +27,14 @@
 -- The one number in this file that is not a setting: the mixer's OUTLET
 -- is 300 L where every other mouth in the kit is 200 (tg widens it in
 -- `Initialize`, mixer.dm:22-24). It is not written here because it is
--- not a choice -- it is what a gas mixer IS, and the engine gives the
+-- not a choice -- it is what a mixer IS, and the engine gives the
 -- mechanism its own geometry.
 --
 -- Off out of the box; an empty hand opens the panel, which is where it
 -- gets switched on. No power hookup yet, as with the rest of the kit.
 return {
-    id = "gas_mixer",
-    name = "gas mixer",
+    id = "mixer",
+    name = "mixer",
     sprite = "mixer_off_n",
     ui = { modules = { "mixer" } },
     -- ON THE ROOM'S NETWORK. An endpoint carries its own address and
@@ -76,11 +76,11 @@ return {
     },
     build = {
         on = { "floor", "plating" },
-        from_item = "gas_mixer_fitting",
+        from_item = "mixer_fitting",
         tool = "wrench",
         secs = 2.0,
-        start = "You start bolting the gas mixer down.",
-        done = "The gas mixer is seated on the pipe.",
+        start = "You start bolting the mixer down.",
+        done = "The mixer is seated on the pipe.",
     },
     transitions = {
         {
@@ -91,9 +91,9 @@ return {
             tool = "wrench",
             secs = 2.0,
             gone = true,
-            yields = { gas_mixer_fitting = 1 },
-            start = "You start unbolting the gas mixer.",
-            done = "The gas mixer comes up off the pipe.",
+            yields = { mixer_fitting = 1 },
+            start = "You start unbolting the mixer.",
+            done = "The mixer comes up off the pipe.",
         },
     },
     variants = {
@@ -106,7 +106,7 @@ return {
         -- machine shipping mis-configured.
         --
         -- All three are placement properties, so a mapper can say the
-        -- same thing on a bare `gas_mixer` and this variant is only
+        -- same thing on a bare `mixer` and this variant is only
         -- the shorthand. No `build`: it is laid, not raised.
         airmix = {
             name = "air mixer",
@@ -119,7 +119,7 @@ return {
         -- the back port when it comes at the junction from the other
         -- side, without re-routing the run.
         flipped = {
-            name = "gas mixer",
+            name = "mixer",
             sprite = "mixer_f_off_n",
             props = { flipped = true },
             facing_sprites = {
@@ -138,11 +138,11 @@ return {
             },
             build = {
                 on = { "floor", "plating" },
-                from_item = "gas_mixer_flipped_fitting",
+                from_item = "mixer_flipped_fitting",
                 tool = "wrench",
                 secs = 2.0,
-                start = "You start bolting the gas mixer down.",
-                done = "The gas mixer is seated on the pipe.",
+                start = "You start bolting the mixer down.",
+                done = "The mixer is seated on the pipe.",
             },
             transitions = {
                 {
@@ -150,9 +150,9 @@ return {
                     tool = "wrench",
                     secs = 2.0,
                     gone = true,
-                    yields = { gas_mixer_flipped_fitting = 1 },
-                    start = "You start unbolting the gas mixer.",
-                    done = "The gas mixer comes up off the pipe.",
+                    yields = { mixer_flipped_fitting = 1 },
+                    start = "You start unbolting the mixer.",
+                    done = "The mixer comes up off the pipe.",
                 },
             },
         },
