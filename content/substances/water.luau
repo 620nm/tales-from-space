@@ -49,6 +49,17 @@ return {
     phase = { melt = 273.15, boil = 373.15, l_fus = 6010.0, l_vap = 40660.0 },
     density = { solid = 0.917, liquid = 1.0 },
     color = "#AAAAAA",
+    -- What water LOOKS LIKE on a deck (docs/chemistry/substances.md).
+    -- A splash uses the shared blobs; a litre and fifty litres are tg's
+    -- own river tiles, which move (assets/sprites/93-matter.ron).
+    -- `tint = "#FFFFFF"` overrides the multiply for the liquid layer
+    -- only: those tiles are already blue, and multiplying water's grey
+    -- through them would grey out the one picture that came coloured.
+    -- Ice keeps the shared crystalline silhouette and the grey.
+    appearance = {
+        liquid = { profile = "flowing", tint = "#FFFFFF" },
+        solid = "crystalline",
+    },
     visible = { moles = 0.25, factor = 20, tint = "#E6EDF7" },
     -- Where this sits in a tool that offers every substance there is
     -- (docs/MAP-PROPERTIES.md, the recipe panel). Authored as vapour: a humid
