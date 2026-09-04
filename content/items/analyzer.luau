@@ -13,7 +13,10 @@
 --
 -- The output is tg's `atmos_scan` (gas_analyzer.dm:185-230), line for
 -- line: total moles, then each gas with its share, then temperature in
--- both scales, the volume, and the pressure. tg rounds everything to
+-- both scales, the volume, and the pressure. Two blocks tg has no
+-- equivalent for sit between the gas rows and the temperature -- what
+-- is LYING there and what is FROZEN there, in millilitres -- because
+-- one reading here answers for all three states. tg rounds everything to
 -- 0.01 and prints what is left, so 21.6 stays 21.6 rather than becoming
 -- 21.60; `r2` below is that. (tg also prints heat capacity and thermal
 -- energy. Those are matter-engine internals rather than instrument
@@ -51,15 +54,18 @@ local function sentence_case(s)
     return string.upper(string.sub(s, 1, 1)) .. string.sub(s, 2)
 end
 
-local function report(user, of, sample)
-    sim.message.send({ recipient = user, message = "Results of analysis of " .. of .. "." })
-    local gas = {}
-    local names = {}
-    local order = {}
-    local gas_moles = 0
+-- WHAT IS STANDING IN THIS PHASE, and how much room it takes. `gas` is
+-- a number of moles and `liquid_ml`/`solid_ml` are millilitres, which
+-- is what a puddle and a lump are worth reading in and the unit every
+-- vessel in the pack is authored in (docs/luau-api/matter.md). A phase
+-- nothing is standing in is absent from the reading rather than zero,
+-- so an absence here is an absence there.
+local function collect(sample, phase)
+    local rows, names, order, total = {}, {}, {}, 0
     for id, entry in pairs(sample.contents) do
-        if entry.gas ~= nil and entry.gas > 0 then
-            gas[id] = entry.gas
+        local amount = entry[phase]
+        if amount ~= nil and amount > 0 then
+            rows[id] = amount
             names[id] = entry.name
             -- Which block this substance is listed under, off the same
             -- pack roster the scrubber and filter panels read
@@ -67,25 +73,21 @@ local function report(user, of, sample)
             -- claimed sorts after every one that has, which is where
             -- those panels put it too.
             order[id] = entry.group_order or math.huge
-            gas_moles = gas_moles + entry.gas
+            total = total + amount
         end
     end
-    if gas_moles <= 0 then
-        -- tg prints the volume even for an empty mixture, deliberately
-        -- ("don't want to change the order volume appears in").
-        sim.message.send({ recipient = user, message = sentence_case(of) .. " is empty!" })
-        sim.message.send({ recipient = user, message = "Volume: " .. r2(sample.volume_l) .. " L" })
-        return
-    end
-    sim.message.send({ recipient = user, message = "Moles: " .. r2(gas_moles) .. " mol" })
-    -- Sorted, because a keyed table has no order and a readout that
-    -- shuffles its own lines between two identical scans is a readout
-    -- nobody trusts. The order is the station's own: the substance
-    -- groups this pack declared first, the id inside each block. A
-    -- printout that listed the air in a different order from every
-    -- panel would be one more thing to hold in your head.
+    return rows, names, order, total
+end
+
+-- One substance per line, amount and share. Sorted, because a keyed
+-- table has no order and a readout that shuffles its own lines between
+-- two identical scans is a readout nobody trusts. The order is the
+-- station's own: the substance groups this pack declared first, the id
+-- inside each block. A printout that listed the air in a different
+-- order from every panel would be one more thing to hold in your head.
+local function print_rows(user, rows, names, order, total, unit)
     local ids = {}
-    for id in pairs(gas) do
+    for id in pairs(rows) do
         table.insert(ids, id)
     end
     table.sort(ids, function(a, b)
@@ -95,15 +97,50 @@ local function report(user, of, sample)
         return a < b
     end)
     for _, id in ipairs(ids) do
-        local moles = gas[id]
-        local share = moles / gas_moles * 100
+        local amount = rows[id]
+        local share = amount / total * 100
         -- tg prints its gas names in Title Case; a substance file
         -- writes an ordinary noun, so the readout capitalises rather
         -- than asking every author to shout.
         sim.message.send({
             recipient = user,
-            message = sentence_case(names[id] or id) .. ": " .. r2(moles) .. " mol (" .. r2(share) .. " %)",
+            message = sentence_case(names[id] or id) .. ": " .. r2(amount) .. " " .. unit .. " (" .. r2(share) .. " %)",
         })
+    end
+end
+
+local function report(user, of, sample)
+    sim.message.send({ recipient = user, message = "Results of analysis of " .. of .. "." })
+    local gas, gas_names, gas_order, gas_moles = collect(sample, "gas")
+    local liquid, liquid_names, liquid_order, liquid_ml = collect(sample, "liquid_ml")
+    local solid, solid_names, solid_order, solid_ml = collect(sample, "solid_ml")
+    -- EMPTY MEANS EMPTY, which is not the same question as "no gas". A
+    -- tile that vented to space and kept its puddle is a tile with
+    -- something on it, and an instrument that called it empty was
+    -- reading the phase it happened to be built for.
+    if gas_moles <= 0 and liquid_ml <= 0 and solid_ml <= 0 then
+        -- tg prints the volume even for an empty mixture, deliberately
+        -- ("don't want to change the order volume appears in").
+        sim.message.send({ recipient = user, message = sentence_case(of) .. " is empty!" })
+        sim.message.send({ recipient = user, message = "Volume: " .. r2(sample.volume_l) .. " L" })
+        return
+    end
+    if gas_moles > 0 then
+        sim.message.send({ recipient = user, message = "Moles: " .. r2(gas_moles) .. " mol" })
+        print_rows(user, gas, gas_names, gas_order, gas_moles, "mol")
+    end
+    -- The condensed blocks, under the gas and above the temperature:
+    -- tg has neither, because tg's reagents and tg's gases are two
+    -- unrelated systems and only one of them owns an analyzer. Here
+    -- one reading answers for all three states, so the instrument that
+    -- prints one prints them all.
+    if liquid_ml > 0 then
+        sim.message.send({ recipient = user, message = "Liquid: " .. r2(liquid_ml) .. " mL" })
+        print_rows(user, liquid, liquid_names, liquid_order, liquid_ml, "mL")
+    end
+    if solid_ml > 0 then
+        sim.message.send({ recipient = user, message = "Solid: " .. r2(solid_ml) .. " mL" })
+        print_rows(user, solid, solid_names, solid_order, solid_ml, "mL")
     end
     sim.message.send({ recipient = user, message = "Temperature: " .. r2(sample.temp_k - T0C) .. " °C (" .. r2(sample.temp_k) .. " K)" })
     sim.message.send({ recipient = user, message = "Volume: " .. r2(sample.volume_l) .. " L" })
