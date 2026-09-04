@@ -157,7 +157,7 @@ t.world([==[(
     ],
     spawns: [(3, 2)],
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4)],
-    structures: [(3, 1, "gas_pump")],
+    structures: [(3, 1, "pump")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3),
@@ -168,7 +168,7 @@ local q = t.join()
 t.tick()
 
 local pump = t.structure_at(3, 1)
-assert(pump.id == "gas_pump", "the map stood a pump on the main")
+assert(pump.id == "pump", "the map stood a pump on the main")
 assert(pump.state == "off", "and tg's pump ships off")
 assert(
     pump.sprite == "pump_off_e",
@@ -178,7 +178,7 @@ assert(
 -- The pump wears a panel rather than a wheel, so a hand on it opens the
 -- window instead of switching it (tg's `interact()` on a pump is
 -- `ui_interact`, pump.dm:68) and the switch is thrown there.
-t.click(q, 3, 1, t.target_at(3, 1, "gas_pump"))
+t.click(q, 3, 1, t.target_at(3, 1, "pump"))
 t.tick()
 assert(t.ui(q), "a pump answers an empty hand with a panel")
 t.ui_act(q, "toggle", '{"field":"power"}')

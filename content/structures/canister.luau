@@ -1,4 +1,4 @@
--- A gas canister is PORTABLE, and that is the whole of what this file
+-- A canister is PORTABLE, and that is the whole of what this file
 -- says (tg's portable/canister.dm: `/obj/machinery/portable_atmospherics`
 -- starts unanchored, and a wrench fastens it to a connector port).
 --
@@ -26,7 +26,7 @@
 -- shoving a live one somewhere it should not be is a decision.
 return {
     id = "canister",
-    name = "gas canister",
+    name = "canister",
     sprite = "canister",
     -- The shell is GREYSCALE art with a colour multiplied over it, the
     -- way tg draws every canister (`greyscale_config`, canister.dm) --

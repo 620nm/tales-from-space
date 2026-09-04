@@ -1,4 +1,4 @@
--- A gas filter: the fork in the pipe that every waste loop is built
+-- A filter: the fork in the pipe that every waste loop is built
 -- out of.
 --
 -- tg's `/obj/machinery/atmospherics/components/trinary/filter`
@@ -35,8 +35,8 @@
 -- idle power and stops when the area does. It lands with the rest of
 -- the kit.
 return {
-    id = "gas_filter",
-    name = "gas filter",
+    id = "filter",
+    name = "filter",
     sprite = "filter_off_n",
     ui = { modules = { "filter" } },
     -- ON THE ROOM'S NETWORK. An endpoint carries its own address and
@@ -82,11 +82,11 @@ return {
     -- (docs/CONSTRUCTION.md, "Fittings, portables, and the round trip").
     build = {
         on = { "floor", "plating" },
-        from_item = "gas_filter_fitting",
+        from_item = "filter_fitting",
         tool = "wrench",
         secs = 2.0,
-        start = "You start bolting the gas filter down.",
-        done = "The gas filter is seated on the pipe.",
+        start = "You start bolting the filter down.",
+        done = "The filter is seated on the pipe.",
     },
     transitions = {
         {
@@ -94,15 +94,15 @@ return {
             -- running filter outright ("turn off!", filter.dm:176-180),
             -- and here that is not a special case in the engine: the
             -- row simply belongs to the "off" state, so a running one
-            -- has no wrench row and is told "The gas filter must be off
+            -- has no wrench row and is told "The filter must be off
             -- first."
             at = "off",
             tool = "wrench",
             secs = 2.0,
             gone = true,
-            yields = { gas_filter_fitting = 1 },
-            start = "You start unbolting the gas filter.",
-            done = "The gas filter comes up off the pipe.",
+            yields = { filter_fitting = 1 },
+            start = "You start unbolting the filter.",
+            done = "The filter comes up off the pipe.",
         },
     },
     -- The preconfigurations. tg ships eighteen `/filter/atmos/<gas>`
@@ -116,7 +116,7 @@ return {
     -- None of them declares a `build`: a preset is something a MAP
     -- lays, not something a player raises, and tg agrees — every preset
     -- filter shares the base's `construction_type`, so the fitting in
-    -- your hands only ever knows how to become a plain gas filter.
+    -- your hands only ever knows how to become a plain filter.
     variants = {
         co2 = {
             name = "carbon dioxide filter",
@@ -140,7 +140,7 @@ return {
         -- same fitting comes back up, which is why its `transitions`
         -- are restated too.
         flipped = {
-            name = "gas filter",
+            name = "filter",
             sprite = "filter_f_off_n",
             props = { flipped = true },
             facing_sprites = {
@@ -159,11 +159,11 @@ return {
             },
             build = {
                 on = { "floor", "plating" },
-                from_item = "gas_filter_flipped_fitting",
+                from_item = "filter_flipped_fitting",
                 tool = "wrench",
                 secs = 2.0,
-                start = "You start bolting the gas filter down.",
-                done = "The gas filter is seated on the pipe.",
+                start = "You start bolting the filter down.",
+                done = "The filter is seated on the pipe.",
             },
             transitions = {
                 {
@@ -171,9 +171,9 @@ return {
                     tool = "wrench",
                     secs = 2.0,
                     gone = true,
-                    yields = { gas_filter_flipped_fitting = 1 },
-                    start = "You start unbolting the gas filter.",
-                    done = "The gas filter comes up off the pipe.",
+                    yields = { filter_flipped_fitting = 1 },
+                    start = "You start unbolting the filter.",
+                    done = "The filter comes up off the pipe.",
                 },
             },
         },

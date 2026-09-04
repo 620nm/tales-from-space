@@ -31,7 +31,7 @@ return {
         { item = "welder", name = "Welding Tool", category = "Tools", amount = 3 },
         { item = "wirecutters", name = "Wirecutters", category = "Tools", amount = 5 },
         { item = "wrench", name = "Wrench", category = "Tools", amount = 5 },
-        { item = "analyzer", name = "Gas Analyzer", category = "Tools", amount = 5 },
+        { item = "analyzer", name = "Analyzer", category = "Tools", amount = 5 },
         { item = "screwdriver", name = "Screwdriver", category = "Tools", amount = 5 },
         { item = "multitool", name = "Multitool", category = "Tools", amount = 4 },
         { item = "rpd", name = "Rapid Pipe Dispenser", category = "Tools", amount = 2 },

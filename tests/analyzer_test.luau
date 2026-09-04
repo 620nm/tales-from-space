@@ -1,4 +1,4 @@
--- The gas analyzer, and the three things worth pointing it at.
+-- The analyzer, and the three things worth pointing it at.
 --
 -- tg's `atmos_scan` (code/game/objects/items/devices/scanners/
 -- gas_analyzer.dm:185-230) prints one line per fact about whatever atom
@@ -150,7 +150,7 @@ local _ = t.messages(p)
 t.click(p, 1, 1, t.target_at(1, 1, "canister"))
 t.run_ticks(2)
 local can = t.messages(p)
-assert(has(can, "Results of analysis of the gas canister."), "the bottle answers for itself")
+assert(has(can, "Results of analysis of the canister."), "the bottle answers for itself")
 assert(
     has(can, "Pressure: " .. r2(t.canister_pressure(1, 1)) .. " kPa"),
     "at the pressure its own gauge lamps are a coarse picture of"

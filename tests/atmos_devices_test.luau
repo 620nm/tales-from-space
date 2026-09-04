@@ -253,7 +253,7 @@ assert(
 -- the difference the pump then works against.
 -- ---------------------------------------------------------------
 t.world([==[(
-    name: "gas pump",
+    name: "pump",
     legend: {
         ' ': (turf: Space),
         '.': (turf: Plating),
@@ -270,7 +270,7 @@ t.world([==[(
     spawns: [(6, 2)],
     items: [(6, 2, "pipe")],
     pipes: [(1, 1, 4), (2, 1, 4), (3, 1, 4), (4, 1, 4), (6, 1, 4)],
-    structures: [(5, 1, "gas_pump")],
+    structures: [(5, 1, "pump")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3),
@@ -279,7 +279,7 @@ t.world([==[(
 
 local r = t.join()
 t.tick()
-assert(t.structure_at(5, 1).id == "gas_pump", "the pump is where the map put it")
+assert(t.structure_at(5, 1).id == "pump", "the pump is where the map put it")
 assert(t.structure_at(5, 1).state == "off", "and tg's pump ships off")
 
 -- Lengthen the output main: the same air, more room to be in, and so
@@ -320,14 +320,14 @@ for _ = 1, 3 do
     t.run_ticks(5)
 end
 local _ = t.messages(r)
-t.click(r, 5, 1, t.target_at(5, 1, "gas_pump"))
+t.click(r, 5, 1, t.target_at(5, 1, "pump"))
 t.tick()
 local panel = t.ui(r)
 assert(panel, "a pump answers an empty hand with a panel")
 assert(panel.document == "modules" and panel.presentation == "modules",
     "the module document every in-line machine shares")
 -- The words on the button are the machine's own states, out of
--- tfs/content/structures/gas_pump.luau.
+-- tfs/content/structures/pump.luau.
 assert(panel.toggles[1].on_text == "running", panel.toggles[1].on_text)
 assert(panel.toggles[1].off_text == "off")
 assert(panel.setpoints[1].field == "target", "and one dial, in kPa")
@@ -336,7 +336,7 @@ assert(math.abs(panel.setpoints[1].value - 101.325) < 0.001)
 t.ui_act(r, "toggle", '{"field":"power"}')
 t.run_ticks(2)
 assert(t.structure_at(5, 1).state == "running", "and the switch throws")
-assert(t.ledger_has("AtmosDeviceSet", "gas_pump"), "switching it is on the record")
+assert(t.ledger_has("AtmosDeviceSet", "pump"), "switching it is on the record")
 
 -- One atmos pass moves what is standing in the 200 L input port and no
 -- more (tg drains `airs[1]` and stops). So it starts, and it is
@@ -392,7 +392,7 @@ t.world([==[(
     spawns: [(1, 2)],
     items: [(1, 2, "pipe")],
     pipes: [(2, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4)],
-    structures: [(3, 1, "gas_pump")],
+    structures: [(3, 1, "pump")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
@@ -418,7 +418,7 @@ for _ = 1, 2 do
     t.move(s, "east")
     t.run_ticks(5)
 end
-t.click(s, 3, 1, t.target_at(3, 1, "gas_pump"))
+t.click(s, 3, 1, t.target_at(3, 1, "pump"))
 t.tick()
 t.ui_act(s, "toggle", '{"field":"power"}')
 t.run_ticks(2)

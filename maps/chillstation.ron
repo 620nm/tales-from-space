@@ -389,8 +389,8 @@
         // the pair's header is bounded by two pumps holding the feed
         // at one atmosphere, which is the regulator job tg gives a
         // pump and never a bottle.
-        (14, 25, "gas_pump", "running", { "dir": "south" }),
-        (18, 23, "gas_pump", "running", { "dir": "east", "target_kpa": 4500.0 }),
+        (14, 25, "pump", "running", { "dir": "south" }),
+        (18, 23, "pump", "running", { "dir": "east", "target_kpa": 4500.0 }),
         (15, 22, "connector_port"),
         (17, 22, "connector_port"),
         (23, 26, "connector_port"),
@@ -407,10 +407,10 @@
         // the waste line, each dropping what it catches out of its side
         // mouth. Oxygen first, then carbon dioxide; what survives both
         // is the nitrogen the mixer blends back.
-        (19, 23, "gas_filter.n2", "running"),
-        (21, 23, "gas_filter.co2", "running"),
-        (23, 23, "gas_mixer.airmix", "running"),
-        (25, 23, "gas_pump", "running"),
+        (19, 23, "filter.n2", "running"),
+        (21, 23, "filter.co2", "running"),
+        (23, 23, "mixer.airmix", "running"),
+        (25, 23, "pump", "running"),
         // Two gauges, either side of the machines that change the gas --
         // which is the only place a gauge earns its bolt.
         (20, 23, "meter"),
@@ -462,9 +462,9 @@
         // to nothing, and a volumetric pump refuses an input that thin
         // (tg volume_pump.dm's input_starting_pressure < 0.01 cutoff) --
         // so the last trickle of a scrubber's catch parked in the main
-        // forever. A gas pump moves moles toward its setpoint no matter
+        // forever. A pump moves moles toward its setpoint no matter
         // how thin the source, which is what a waste lift is for.
-        (18, 26, "gas_pump", "running", { "dir": "north", "target_kpa": 4500.0 }),
+        (18, 26, "pump", "running", { "dir": "north", "target_kpa": 4500.0 }),
         // Bottled nitrogen off the first filter's side mouth. The
         // connector stands at (19,25) and mouths north into the catch
         // pipe at (19,24); that keeps the component off the raw run and

@@ -1,4 +1,4 @@
--- The gas analyzer: tg's `/obj/item/analyzer`
+-- The analyzer: tg's `/obj/item/analyzer`
 -- (code/game/objects/items/devices/scanners/gas_analyzer.dm), and the
 -- one thing in an atmospherics technician's pocket that is pure
 -- observation. It changes nothing. Point it at something and it tells
@@ -112,7 +112,7 @@ end
 
 local content = {
     id = "analyzer",
-    name = "gas analyzer",
+    name = "analyzer",
     sprite = "analyzer",
     -- tg gas_analyzer.dm:20-21.
     pickup_sound = "analyzer_pickup",
@@ -132,7 +132,7 @@ if sim ~= nil then
             local can = sim.matter_read(target.entity)
             if can then
                 sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })
-                report(user, "the gas canister", can)
+                report(user, "the canister", can)
                 return true
             end
         end
