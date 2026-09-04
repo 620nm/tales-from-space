@@ -154,6 +154,10 @@
         // spirit in it (items/burner.luau).
         (19, 5, "beaker"),
         (19, 5, "beaker"),
+        // And a third with a lump of ice in it, out of the freezer and
+        // sitting in a 20 C lab: matter changing state with nobody
+        // touching it, on the bench where somebody would notice.
+        (19, 5, "beaker", { "blend": "ice_block" }),
         (20, 5, "burner"),
         // The small glass, on the tile beside them. A dropper for
         // moving one unit at a time, two tubes to keep a batch in while
@@ -389,8 +393,8 @@
         // the pair's header is bounded by two pumps holding the feed
         // at one atmosphere, which is the regulator job tg gives a
         // pump and never a bottle.
-        (14, 25, "gas_pump", "running", { "dir": "south" }),
-        (18, 23, "gas_pump", "running", { "dir": "east", "target_kpa": 4500.0 }),
+        (14, 25, "pump", "running", { "dir": "south" }),
+        (18, 23, "pump", "running", { "dir": "east", "target_kpa": 4500.0 }),
         (15, 22, "connector_port"),
         (17, 22, "connector_port"),
         (23, 26, "connector_port"),
@@ -407,10 +411,10 @@
         // the waste line, each dropping what it catches out of its side
         // mouth. Oxygen first, then carbon dioxide; what survives both
         // is the nitrogen the mixer blends back.
-        (19, 23, "gas_filter.n2", "running"),
-        (21, 23, "gas_filter.co2", "running"),
-        (23, 23, "gas_mixer.airmix", "running"),
-        (25, 23, "gas_pump", "running"),
+        (19, 23, "filter.n2", "running"),
+        (21, 23, "filter.co2", "running"),
+        (23, 23, "mixer.airmix", "running"),
+        (25, 23, "pump", "running"),
         // Two gauges, either side of the machines that change the gas --
         // which is the only place a gauge earns its bolt.
         (20, 23, "meter"),
@@ -462,9 +466,9 @@
         // to nothing, and a volumetric pump refuses an input that thin
         // (tg volume_pump.dm's input_starting_pressure < 0.01 cutoff) --
         // so the last trickle of a scrubber's catch parked in the main
-        // forever. A gas pump moves moles toward its setpoint no matter
+        // forever. A pump moves moles toward its setpoint no matter
         // how thin the source, which is what a waste lift is for.
-        (18, 26, "gas_pump", "running", { "dir": "north", "target_kpa": 4500.0 }),
+        (18, 26, "pump", "running", { "dir": "north", "target_kpa": 4500.0 }),
         // Bottled nitrogen off the first filter's side mouth. The
         // connector stands at (19,25) and mouths north into the catch
         // pipe at (19,24); that keeps the component off the raw run and
@@ -696,6 +700,13 @@
         (10, 17, "canister", { "blend": "canister_air", "open": true }), (11, 17, "canister", { "blend": "canister_air", "open": true }),
         (15, 22, "canister", { "blend": "canister_air", "open": true }), (17, 22, "canister", { "blend": "canister_air", "open": true }),
         (19, 25, "canister", { "blend": "canister_air", "open": true }), (23, 26, "canister", { "blend": "canister_air", "open": true }),
+        // The odd one out, on the free tile between two air bottles: the
+        // same shell with ten litres of WATER in it and the valve shut.
+        // A canister is a shell and a valve; the charge decides what it
+        // is a bottle of. Shut because a valve that let a liquid out
+        // would be a mechanism nobody has built yet -- opening it vents
+        // the headspace and leaves the slug standing.
+        (16, 22, "canister", { "blend": "water_10l" }),
     ],
     // The two vestibule interlocks: each airlock names the direction its
     // partner lies in, and the link resolves only because BOTH of them
@@ -1193,8 +1204,29 @@
         "plasma_23000kpa": (rows: [("plasma", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
         "tritium_23000kpa": (rows: [("tritium", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
         "water_67268kpa": (rows: [("water:gas", 27599.96916195394)], temperature_k: 293.15, amount: per_tile),
+        // The two stores that are not gas at all, mirrored from
+        // content/blends/ where their arithmetic is spelled out. Both are
+        // `total`, because a dose is a dose whatever shell it went into:
+        // ten litres of water in a supply bottle, and two moles of ice in
+        // a fifty-millilitre beaker. Neither row needs a `:gas` suffix and
+        // the ice names its phase anyway, so warming the file never turns
+        // the lump into a puddle by accident.
+        "water_10l": (rows: [("water", 555.0929780738273)], temperature_k: 293.15, amount: total),
+        "ice_block": (rows: [("water:solid", 2.0)], temperature_k: 263.15, amount: total),
+        // And the one that is painted on tiles rather than poured into a
+        // shell, so it is a DENSITY: standard air plus half a mole of
+        // water vapour per tile (content/blends/humid_air.luau).
+        "humid_air": (rows: [("o2", 8.730437114532117), ("n2", 32.84307295466844), ("water:gas", 0.5)], temperature_k: 293.15, amount: per_tile),
     },
     painted: [
+        // The air over the chem bench, where a burner has been going
+        // under somebody's glassware: ordinary station air with half a
+        // mole of water in it per tile (content/blends/humid_air.luau).
+        // Enough to see -- water's own file makes vapour visible at a
+        // quarter mole -- and under the density it would rain out at,
+        // so the room stays foggy instead of condensing on tick one.
+        (19, 5, "humid_air"),
+        (20, 5, "humid_air"),
         (15, 33, "o2_5000kpa"),
         (16, 33, "o2_5000kpa"),
         (17, 33, "o2_5000kpa"),

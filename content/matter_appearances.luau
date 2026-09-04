@@ -22,6 +22,36 @@ return {
                 },
             },
         },
+        -- WATER, and anything else that pools by the litre. The shared
+        -- `liquid` profile above tops out at a fifty-millilitre splash,
+        -- which is a beaker emptied on the deck; this one keeps going.
+        --
+        -- The ladder is depth over a square metre, because that is what
+        -- a tile is: one litre is a millimetre of wet, and fifty is five
+        -- centimetres -- over the boot line, which is where a puddle
+        -- stops being something you walk through without noticing. The
+        -- two upper tiers are tg's river tiles, which move.
+        --
+        -- `full_volume_ml = 1000` is where the wash reaches full alpha,
+        -- so a litre already reads as a covered tile and everything
+        -- above it is depth rather than opacity.
+        {
+            key = "flowing",
+            phase = "liquid",
+            full_volume_ml = 1000,
+            alpha = { min = 0.15, max = 1.0 },
+            tiers = {
+                {
+                    at_ml = 1,
+                    sprites = {
+                        "matter_liquid_1", "matter_liquid_2", "matter_liquid_3",
+                        "matter_liquid_5", "matter_liquid_6",
+                    },
+                },
+                { at_ml = 1000, sprites = { "matter_water" } },
+                { at_ml = 50000, sprites = { "matter_deep_water" } },
+            },
+        },
         {
             key = "powder",
             phase = "solid",

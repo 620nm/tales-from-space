@@ -1,4 +1,4 @@
--- A gas pump, in your hands.
+-- A pump, in your hands.
 --
 -- tg's `/obj/item/pipe/directional` pointed at `.../binary/pump`
 -- (pump.dm:19, `construction_type`). The commonest thing an engineer
@@ -6,9 +6,9 @@
 -- pump, and every one of them starts as one of these lying on a floor
 -- tile waiting for a wrench.
 return {
-    id = "gas_pump_fitting",
-    name = "gas pump fitting",
-    sprite = "gas_pump_loose",
+    id = "pump_fitting",
+    name = "pump fitting",
+    sprite = "pump_loose",
     category = "fittings",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
     -- The main this one will stand on, 1..=5, and it is the ENGINE's

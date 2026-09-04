@@ -155,7 +155,7 @@ local _ = t.messages(p)
 t.click(p, 2, 1, t.target_at(2, 1, "connector_port"))
 t.run_ticks(2)
 assert(
-    said(p, "Detach the gas canister from the connector port first."),
+    said(p, "Detach the canister from the connector port first."),
     "the refusal named the device in the way"
 )
 assert(

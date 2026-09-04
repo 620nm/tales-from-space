@@ -1,4 +1,4 @@
--- The gas flow meter: a dial bolted onto a run.
+-- The flow meter: a dial bolted onto a run.
 --
 -- tg's `/obj/machinery/meter` (code/modules/atmospherics/machinery/
 -- other/meter.dm). It is the one machine in atmospherics that does
@@ -50,7 +50,7 @@ table.insert(lamps, "meter_l4")
 
 return {
     id = "meter",
-    name = "gas flow meter",
+    name = "flow meter",
     -- The housing, which is never tinted: tg's greyscale config paints
     -- only the needle (`color_ids: [1]` on the pressure layer).
     sprite = "meter_base",

@@ -39,7 +39,7 @@ local content = {
     -- The shell, and nothing in it. `fill` is optional exactly so an
     -- empty bottle is representable, and an empty one is what a spent
     -- bottle and a fresh shell both are.
-    gas_tank = {
+    tank = {
         volume_l = 3,
     },
     -- WHAT IT DOES WHEN SOMEBODY OVERFILLS IT. tg's handheld tank
@@ -104,7 +104,7 @@ local content = {
         -- (tank_types.dm:182-183).
         oxygen = {
             name = "emergency oxygen tank",
-            gas_tank = {
+            tank = {
                 fill = { { substance = "o2", kpa = 10 * 101.325 } },
             },
             -- tg's desc, verbatim (tank_types.dm:168).

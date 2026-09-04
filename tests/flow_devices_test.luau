@@ -34,7 +34,7 @@ end
 -- beside a pressure pump, give both the same two mains at the same
 -- pressure, switch both on, and watch them disagree completely.
 --
--- The gas pump is already finished before it starts. Its setpoint is
+-- The pump is already finished before it starts. Its setpoint is
 -- one atmosphere and its output main is at one atmosphere, so the
 -- delta is zero and a machine that works to a pressure has nothing to
 -- do (pump.dm's `pump_gas_to`).
@@ -68,7 +68,7 @@ t.world([==[(
         (1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4),
         (7, 2, 4), (8, 2, 4), (10, 2, 4), (11, 2, 4),
     ],
-    structures: [(3, 1, "gas_pump"), (9, 2, "volume_pump")],
+    structures: [(3, 1, "pump"), (9, 2, "volume_pump")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3), (11, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3),
@@ -92,7 +92,7 @@ assert(volume_out > 90.0)
 local books = moles(volume_in, IN_M3) + moles(volume_out, OUT_M3)
 
 -- Both on, through the panel every machine with a dial on it wears.
-t.click(p, 3, 1, t.target_at(3, 1, "gas_pump"))
+t.click(p, 3, 1, t.target_at(3, 1, "pump"))
 t.tick()
 t.ui_act(p, "toggle", '{"field":"power"}')
 t.run_ticks(2)

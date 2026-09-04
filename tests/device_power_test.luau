@@ -1,7 +1,7 @@
 -- Off is off, and dead is dead -- on the three machines you cannot
 -- tell either one about by looking at the gas.
 --
--- flow_windows_test.luau proves an unpowered gas pump is a length of
+-- flow_windows_test.luau proves an unpowered pump is a length of
 -- pipe, room_devices_test.luau proves it of the scrubber and the
 -- injector, thermal_devices_test.luau of the temperature pump. Those
 -- four are the easy cases: a pump either moves gas or it does not, and
@@ -9,7 +9,7 @@
 --
 -- These are the ones where "it has stopped" is a harder sentence. A gas
 -- filter that has stopped still has gas on all three of its mouths. A
--- gas mixer that has stopped still has a charged outlet. A temperature
+-- mixer that has stopped still has a charged outlet. A temperature
 -- gate that has stopped is indistinguishable from a temperature gate
 -- that has decided, correctly, to pass nothing. So every assertion
 -- below is on the MOLE BOOKS of every port at once -- nothing moved,
@@ -186,7 +186,7 @@ end
 -- ---------------------------------------------------------------
 local TRINARIES = {
     {
-        id = "gas_filter",
+        id = "filter",
         -- Set to divert oxygen, at a tenth of the dial. The gas is what
         -- makes "it did nothing" a sentence about the SIDE port rather
         -- than about a pressure; the rate is what keeps the input main
@@ -219,7 +219,7 @@ local TRINARIES = {
         end,
     },
     {
-        id = "gas_mixer",
+        id = "mixer",
         -- An outlet setpoint well above the atmosphere the outlet main
         -- already holds, and above what the two intakes can reach in the
         -- time given: a mixer AT its target has finished, and finished

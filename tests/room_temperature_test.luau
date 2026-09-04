@@ -6,7 +6,7 @@
 -- one -- which is why the thermal machines can be weighed directly
 -- (thermal_devices_test.luau). A ROOM hands out `t.room_pressure` and
 -- `t.room_gas`, and NEITHER is temperature. The one thermometer a
--- crewman can put on the air is the gas analyzer, which prints the
+-- crewman can put on the air is the analyzer, which prints the
 -- temperature in both scales rounded to a hundredth (tg's `atmos_scan`,
 -- gas_analyzer.dm:185-230). That line, parsed, is the instrument this
 -- file is built on, and 0.01 K is the finest claim it can make.

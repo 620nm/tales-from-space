@@ -1,8 +1,8 @@
--- A volumetric gas pump: the machine you move a TANKFUL with.
+-- A volumetric pump: the machine you move a TANKFUL with.
 --
 -- tg's `/obj/machinery/atmospherics/components/binary/volume_pump`
 -- (components/binary_devices/volume_pump.dm), whose whole description
--- is "a pump that moves gas by volume". The gas pump beside it works to
+-- is "a pump that moves gas by volume". The pump beside it works to
 -- a pressure and stops when it gets there; this one has no notion of
 -- arriving. It moves `rate_lps` litres a second and keeps moving them,
 -- which is what you want when the job is "empty that canister into this
@@ -28,7 +28,7 @@
 -- over it, like the pipe either side.
 return {
     id = "volume_pump",
-    name = "volumetric gas pump",
+    name = "volumetric pump",
     sprite = "volpump_off_n",
     ui = { modules = { "flow" } },
     -- ON THE ROOM'S NETWORK. An endpoint carries its own address and
@@ -84,7 +84,7 @@ return {
             -- Only while it is OFF. tg's `can_unwrench`: "You cannot
             -- unwrench [src], turn it off first!" (volume_pump.dm:156-160)
             -- -- said here by the state guard, which answers a wrench
-            -- swung at a running one with "The volumetric gas pump must
+            -- swung at a running one with "The volumetric pump must
             -- be off first."
             at = "off",
             tool = "wrench",

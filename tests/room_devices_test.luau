@@ -8,8 +8,8 @@
 --
 -- WHAT A PRESSURE CANNOT SAY, again. A scrubber set to filter takes one
 -- gas out of a room and leaves the rest, so its correctness is a
--- question about WHICH gas — exactly as the gas filter's was
--- (gas_filter_test.luau). Every scrubbing assertion below is therefore
+-- question about WHICH gas — exactly as the filter's was
+-- (filter_test.luau). Every scrubbing assertion below is therefore
 -- in moles, read off `t.room_gas` and `t.pipe_gas` the way an analyser
 -- reads them, and the books are balanced across the room/net boundary
 -- rather than trusted to a direction.
@@ -276,7 +276,7 @@ assert(
 -- So the assertion is not "the room fills" — a vent does that — it is
 -- that the room goes PAST one atmosphere and keeps climbing.
 --
--- The supply main is a canister on a connector port with a gas pump
+-- The supply main is a canister on a connector port with a pump
 -- regulating the feed at one atmosphere -- tg's own station shape,
 -- because a fastened bottle IS its line (the wrench couples them into
 -- one body of gas), and forty atmospheres straight into an injector
@@ -307,7 +307,7 @@ t.world([==[(
     structures: [
         (1, 1, "connector_port", { "pipe": "east" }),
         (1, 1, "canister", { "blend": "canister_air" }),
-        (2, 1, "gas_pump", "running", { "dir": "east" }),
+        (2, 1, "pump", "running", { "dir": "east" }),
         (3, 1, "air_injector"),
     ],
     cables: [

@@ -115,7 +115,7 @@ end
 -- thing hold gas at a pressure", never "is that the one I had in mind".
 --
 -- THE DEPARTURE FROM TG, stated: tg's canister has no gesture like
--- this. It takes a GAS TANK into a holding slot and meters into it
+-- this. It takes a PORTABLE TANK into a holding slot and meters into it
 -- through the release valve (`/obj/machinery/portable_atmospherics` and
 -- its window, portable/canister.dm), and tg's chemistry never touches a
 -- canister at all because tg's oxygen is a dispenser button. One id per

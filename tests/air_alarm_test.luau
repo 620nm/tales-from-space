@@ -142,7 +142,7 @@ t.world([==[(
     pipes: [(0, 2, 2), (1, 2, 2)],
     structures: [
         (2, 1, "vent"),
-        (3, 1, "gas_pump", "running", { "dir": "west", "target_kpa": 900.0 }),
+        (3, 1, "pump", "running", { "dir": "west", "target_kpa": 900.0 }),
         (4, 1, "connector_port", { "dir": "west" }),
         (4, 1, "canister", { "blend": "canister_air" }),
         (2, 2, "air_scrubber"),
@@ -307,7 +307,7 @@ local vent_section, vent = proxied(panel, "air vent")
 assert(vent_section ~= nil, "the vent is drawn under its own heading")
 assert(#vent == 17, "the heading carries its address: " .. vent_section)
 assert(proxied(panel, "air scrubber") ~= nil, "and the scrubber under its")
-assert(proxied(panel, "gas pump") ~= nil, "and the pump under its")
+assert(proxied(panel, "pump") ~= nil, "and the pump under its")
 assert(proxied(panel, "radio transceiver") == nil, "the transceiver is in nobody's reach")
 
 -- ---------------------------------------------------------------
