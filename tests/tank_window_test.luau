@@ -4,10 +4,10 @@
 -- What is inside a vessel is one typed block (docs/tgui/matter-block.md)
 -- -- a row per substance, in the state it is in, over the shell and the
 -- warmth -- so a diver reading his tank and an engineer reading a
--- canister are reading the same instrument. What this one adds is tg's own control: the release
--- valve a breath is drawn at (`ui_act`'s "pressure",
--- code/game/objects/items/tanks/tanks.dm:261-281), clamped into tg's
--- 0..3 atmospheres.
+-- canister are reading the same instrument. What this one adds is tg's
+-- own control: the release valve a breath is drawn at (`ui_act`'s
+-- "pressure", code/game/objects/items/tanks/tanks.dm:261-281), clamped
+-- into tg's 0..3 atmospheres.
 --
 -- The gesture is the activate-in-hand key, which also works the valve:
 -- tg splits the two across an action button and a right-click, and we
