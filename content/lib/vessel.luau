@@ -223,12 +223,18 @@ end
 --   spill   { message? } or true -- absent: no tipping it out
 --   soak    { message?, dry?, full? } -- the deck the OTHER way round:
 --           take the liquid on that tile up into this vessel instead of
---           tipping this vessel onto it. Mutually exclusive with
---           `spill`, because a thing cannot both put down and pick up.
+--           tipping this vessel onto it. Declaring it beside `spill` is
+--           a LOAD ERROR by the name of the prototype, because the deck
+--           is one branch and a thing cannot both put down and pick up:
+--           a file that asked for both would silently get this one.
 --
 -- Every message defaults to the vessel's own noun in the sentence every
 -- other vessel uses; a file names one only where it says something else.
 function vessel.attach(spec)
+    if spec.spill ~= nil and spec.soak ~= nil then
+        error("vessel.attach: " .. tostring(spec.id)
+            .. " declares both spill and soak -- a vessel tips the deck out or takes it up, never both")
+    end
     local definition = sim.define("behavior", "lunatic/tfs:" .. spec.id, { prototype = spec.id })
     local phases = spec.phases
     local pour_line = spec.pour and (spec.pour.message or ("You pour from the " .. spec.noun .. "."))
@@ -283,6 +289,7 @@ function vessel.attach(spec)
 
         -- 4. The deck beside you, in whichever direction this vessel
         -- goes: a mop takes the puddle up, everything else tips out.
+        -- Never both -- `attach` refused that at declaration time.
         if spec.spill == nil and spec.soak == nil then
             return { replaced = false }
         end
