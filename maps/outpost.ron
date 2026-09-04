@@ -20,8 +20,8 @@
         "  #.......#....#.....#    ",
         "  ####.####....#######    ",
         "  #..................#    ",
-        "  #.......#....#.....#    ",
-        "  #.......#....#.....#    ",
+        "  #.......#.#..#.....#    ",
+        "  #.......#..#.#.....#    ",
         "  #########.##########    ",
         "                          ",
     ],
@@ -38,22 +38,30 @@
     // compartment that decompressed. They are ordinary 21/79 at 20 C,
     // the same arithmetic content/blends/standard_air.luau spells out.
     //
-    // Nothing here moves. A liquid on a tile does not level, drain or
-    // slow anybody down -- it is a picture of a puddle with real moles
-    // in it, and the engine says so at its own
-    // `#TODO(destructive-matter)` sites.
+    // WHAT HOLDS IT UP is the sill, and that is why the deep pair is a
+    // compartment rather than two tiles in the open. Five centimetres of
+    // standing water is far above the film a liquid stops thinning at,
+    // so the moment a puddle can level the pair would run out across the
+    // alcove and be a centimetre of wet nobody would look at twice. Two
+    // shut leaves are what keep it: the glazed sill north of it and the
+    // exterior airlock south of it. Open either and the fifty litres
+    // goes -- into the alcove, or into space -- which is the point of
+    // putting a door on a flood.
+    //
+    // The litre tiles outside need no sill. A litre over a square metre
+    // is a millimetre deep, under the film water holds itself at, so
+    // they are not going anywhere either way.
     blends: {
         "water_1l": (rows: [("water", 55.51), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
         "water_50l": (rows: [("water", 2775.5), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
     },
-    // The dead end south of the Central Corridor, where the exterior
-    // airlock is: deepest at the door and thinning back into the alcove.
+    // The vestibule at the exterior airlock, and the litre that got out
+    // of it before somebody shut the sill.
     painted: [
         (11, 8, "water_50l"),
         (12, 8, "water_50l"),
-        (13, 8, "water_1l"),
-        (11, 7, "water_1l"),
-        (12, 7, "water_1l"),
+        (13, 7, "water_1l"),
+        (14, 8, "water_1l"),
     ],
     spawns: [
         (11, 3),
@@ -89,6 +97,12 @@
         (10, 6, "airlock"),
         (15, 6, "airlock"),
         (20, 6, "light"),
+        // The sill: the one leaf between the corridor and the
+        // flooded vestibule, glazed so the water is something you
+        // can see before you are standing in it. The backbone
+        // already ran under this tile on its way to the exterior
+        // door, which is the other thing holding the water in.
+        (11, 7, "airlock", { "glass": true }),
         (16, 7, "generator"),
         (20, 7, "smes", { "l2": "bidirectional" }),
         (8, 8, "outlet"),
