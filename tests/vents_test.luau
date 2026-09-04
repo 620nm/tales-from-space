@@ -132,7 +132,7 @@ local SUPPLY_MAP = [==[(
     },
     structures: [
         (2, 1, "vent"),
-        (3, 1, "gas_pump", "running", { "dir": "west" }),
+        (3, 1, "pump", "running", { "dir": "west" }),
         (4, 1, "connector_port", { "pipe": "west" }),
         (4, 1, "canister", { "blend": "canister_air" }),
     ],

@@ -2,7 +2,7 @@
 -- interlock if you would rather it did that.
 --
 -- It has a tool class now, and one machine in the game answers to it:
--- a multitool on a volumetric gas pump throws its pressure limiters
+-- a multitool on a volumetric pump throws its pressure limiters
 -- (tg's `multitool_act`, volume_pump.dm:162-170), after which the pump
 -- will push past what the kit is rated for and leak a tenth of
 -- everything it moves into the room. Nothing else in the construction
@@ -29,7 +29,7 @@ local content = {
     --
     -- It declines every click it has nothing to say about, so nothing
     -- this tool already does is shadowed: a click that NAMES something
-    -- is that thing's business (the gas pump's limiters, a machine's
+    -- is that thing's business (the pump's limiters, a machine's
     -- window), a finished floor hides its wiring, and a bare tile with
     -- no cable in it is not a wire at all. `interaction.use` is late in the click
     -- order but not last (docs/LUAU-API.md §9), so declining is what

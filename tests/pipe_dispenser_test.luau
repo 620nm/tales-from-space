@@ -73,10 +73,10 @@ for _, rec in ipairs(ui.products) do
 end
 assert(cats.Pipes and cats.Binary and cats.Devices, "three of tg's four categories")
 assert(cats["Heat Exchange"], "and the fourth, now that a plate lives on it")
-assert(shelf.gas_pump_fitting.category == "Binary", "a pump is binary")
-assert(shelf.gas_pump_fitting.label == "Gas Pump", "listed by the MACHINE's name, as tg lists it")
+assert(shelf.pump_fitting.category == "Binary", "a pump is binary")
+assert(shelf.pump_fitting.label == "Pump", "listed by the MACHINE's name")
 assert(shelf.pipe_meter.category == "Devices", "the meter is a device")
-assert(shelf.gas_mixer_flipped_fitting, "both mirror images are on the shelf")
+assert(shelf.mixer_flipped_fitting, "both mirror images are on the shelf")
 assert(shelf.pipe.category == "Pipes", "and plain pipe leads")
 -- The two vents, which are the commonest thing an engineer comes here
 -- for: every room the crew stands in wants one, and both are ordinary
@@ -90,12 +90,12 @@ assert(shelf.cola == nil, "a pipe dispenser sells no softdrinks")
 --
 -- tg's `new /obj/item/pipe(loc)` (pipe_dispenser.dm:209): out of the
 -- machine, onto the machine. The buyer bends down for it.
-assert(t.count_items("gas_pump_fitting") == 0)
-t.ui_act(p, "vend", '{"product":"gas_pump_fitting"}')
+assert(t.count_items("pump_fitting") == 0)
+t.ui_act(p, "vend", '{"product":"pump_fitting"}')
 t.tick()
-assert(t.count_items("gas_pump_fitting") == 1, "the named fitting dispensed")
-assert(on_tile(2, 1, "gas_pump_fitting"), "onto the dispenser's tile, not the buyer's")
-assert(t.ledger_has("ItemSpawned", "gas_pump_fitting", "Player"),
+assert(t.count_items("pump_fitting") == 1, "the named fitting dispensed")
+assert(on_tile(2, 1, "pump_fitting"), "onto the dispenser's tile, not the buyer's")
+assert(t.ledger_has("ItemSpawned", "pump_fitting", "Player"),
     "a UI act is a direct player action")
 
 -- ---- and then it waits ----
@@ -104,10 +104,10 @@ assert(t.ledger_has("ItemSpawned", "gas_pump_fitting", "Player"),
 -- presses in the same breath are one fitting; the second press is not
 -- queued, it is dropped, so the button is worth exactly as much to a
 -- script as to a finger.
-t.ui_act(p, "vend", '{"product":"gas_pump_fitting"}')
+t.ui_act(p, "vend", '{"product":"pump_fitting"}')
 t.ui_act(p, "vend", '{"product":"manual_valve_fitting"}')
 t.tick()
-assert(t.count_items("gas_pump_fitting") == 1, "the second press inside the second is dropped")
+assert(t.count_items("pump_fitting") == 1, "the second press inside the second is dropped")
 assert(t.count_items("manual_valve_fitting") == 0, "and so is a press for something else")
 
 t.run_seconds(1)
@@ -136,18 +136,18 @@ assert(t.count_items("id_captain") == 0, "no dispenser can be talked into mintin
 t.ui_close(p)
 t.click(p, 2, 1, t.target_at(2, 1, "manual_valve_fitting"))
 t.run_ticks(2)
-t.click(p, 2, 1, t.target_at(2, 1, "gas_pump_fitting"))
+t.click(p, 2, 1, t.target_at(2, 1, "pump_fitting"))
 t.run_ticks(2)
 local hands = t.hands(p)
 assert(hands.held == "manual_valve_fitting", "the valve fitting is in the working hand")
-assert(hands[2] == "gas_pump_fitting", "and the pump fitting in the other")
+assert(hands[2] == "pump_fitting", "and the pump fitting in the other")
 assert(#t.items_at(2, 1) == 0, "the dispenser's tile is clear again")
 
 local _ = t.messages(p)
 t.click(p, 2, 1, t.target_at(2, 1))
 t.run_ticks(2)
 assert(t.hands(p).held == nil, "the dispenser swallowed what was in the working hand")
-assert(t.hands(p)[2] == "gas_pump_fitting", "and left the other hand alone")
+assert(t.hands(p)[2] == "pump_fitting", "and left the other hand alone")
 assert(#t.items_at(2, 1) == 0, "nothing was refunded onto the deck")
 assert(said(p, "You put the manual valve fitting back into the dispenser."),
     "and said so, in the fitting's own name")

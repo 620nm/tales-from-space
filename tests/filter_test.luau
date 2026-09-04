@@ -1,4 +1,4 @@
--- The gas filter: the first machine with THREE mouths, and the first
+-- The filter: the first machine with THREE mouths, and the first
 -- one that cares which gas it is moving.
 --
 -- Everything the atmospherics kit has done so far moves gas as a bulk:
@@ -48,7 +48,7 @@ local SIDE_X, SIDE_Y = 3, 2
 local OUT_X, OUT_Y = 4, 1
 
 local JUNCTION = [==[(
-    name: "gas filter",
+    name: "filter",
     legend: {
         ' ': (turf: Space),
         '.': (turf: Plating),
@@ -83,13 +83,13 @@ local JUNCTION = [==[(
 -- file -- nothing in a correct filter can ever add a mole of it, so it
 -- must still be exactly what the map handed over.
 -- ---------------------------------------------------------------
-t.world(JUNCTION:format("gas_filter"), 7)
+t.world(JUNCTION:format("filter"), 7)
 
 local p = t.join()
 t.tick()
 
 local m = t.structure_at(3, 1)
-assert(m ~= nil and m.id == "gas_filter", "the filter is where the map put it")
+assert(m ~= nil and m.id == "filter", "the filter is where the map put it")
 assert(m.state == "off", "and tg's filter ships off")
 
 -- The run does not pass through the machine: its own length is nobody's
@@ -127,10 +127,10 @@ near(gas(SIDE_X, SIDE_Y, "o2"), side_o2, 1e-9, "out of either mouth")
 -- clicking one is `ui_interact` (filter.dm:123-127) -- so an empty hand
 -- opens the window rather than working the machine.
 -- ---------------------------------------------------------------
-t.click(p, 3, 1, t.target_at(3, 1, "gas_filter"))
+t.click(p, 3, 1, t.target_at(3, 1, "filter"))
 t.tick()
 local ui = t.ui(p)
-assert(ui, "clicking a gas filter opens its window")
+assert(ui, "clicking a filter opens its window")
 assert(ui.document == "modules" and ui.presentation == "modules",
     "the generic module document")
 
@@ -271,14 +271,14 @@ near(t.ui(p).setpoints[1].value, 0.0, 0.001, "nor below nothing at all")
 -- with a rate limit, not a wall -- and the side port stays exactly
 -- where it was.
 -- ---------------------------------------------------------------
-t.world(JUNCTION:format("gas_filter"), 7)
+t.world(JUNCTION:format("filter"), 7)
 
 local q = t.join()
 t.tick()
 local was_side_o2, was_side_n2 = gas(SIDE_X, SIDE_Y, "o2"), gas(SIDE_X, SIDE_Y, "n2")
 local was_main = gas(OUT_X, OUT_Y, "o2") + gas(OUT_X, OUT_Y, "n2")
 
-t.click(q, 3, 1, t.target_at(3, 1, "gas_filter"))
+t.click(q, 3, 1, t.target_at(3, 1, "filter"))
 t.tick()
 t.ui_act(q, "toggle", '{"field":"power"}')
 t.run_seconds(30)
@@ -300,13 +300,13 @@ assert(t.pipe_pressure(IN_X, IN_Y) < 5.0, "the input still emptied: nothing was 
 -- running one has no wrench row at all and is told which state it
 -- wants.
 -- ---------------------------------------------------------------
-t.world(JUNCTION:format("gas_filter"), 7)
+t.world(JUNCTION:format("filter"), 7)
 
 local r = t.join()
 t.tick()
 
 -- Switch it on first, so the refusal has something to refuse.
-t.click(r, 3, 1, t.target_at(3, 1, "gas_filter"))
+t.click(r, 3, 1, t.target_at(3, 1, "filter"))
 t.tick()
 t.ui_act(r, "toggle", '{"field":"power"}')
 t.run_ticks(2)
@@ -318,17 +318,17 @@ t.run_ticks(2)
 assert(t.hands(r).held == "wrench", "wrench in hand")
 
 local _ = t.messages(r)
-t.click(r, 3, 1, t.target_at(3, 1, "gas_filter"))
+t.click(r, 3, 1, t.target_at(3, 1, "filter"))
 t.run_seconds(2.5)
 assert(
-    said(r, "The gas filter must be off first."),
+    said(r, "The filter must be off first."),
     "a running filter is not something you unbolt"
 )
 assert(t.structure_at(3, 1) ~= nil, "and it is still on the line")
 
 -- Switch it off with the other hand, and the same click works.
 t.swap_hands(r)
-t.click(r, 3, 1, t.target_at(3, 1, "gas_filter"))
+t.click(r, 3, 1, t.target_at(3, 1, "filter"))
 t.tick()
 t.ui_act(r, "toggle", '{"field":"power"}')
 t.run_ticks(2)
@@ -336,7 +336,7 @@ assert(t.structure_at(3, 1).state == "off", "off")
 t.ui_close(r)
 t.swap_hands(r)
 
-t.click(r, 3, 1, t.target_at(3, 1, "gas_filter"))
+t.click(r, 3, 1, t.target_at(3, 1, "filter"))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "the filter comes up off the pipe")
 -- `yields` mint on the TARGET's tile (docs/CONSTRUCTION.md): what came
@@ -344,7 +344,7 @@ assert(t.structure_at(3, 1) == nil, "the filter comes up off the pipe")
 -- whoever took it off.
 local lying = false
 for _, id in ipairs(t.items_at(3, 1)) do
-    if id == "gas_filter_fitting" then
+    if id == "filter_fitting" then
         lying = true
     end
 end
@@ -358,7 +358,7 @@ assert(lying, "and what came up is a fitting lying on the deck")
 -- runs from the moment the map hands it over, and it diverts nitrogen
 -- without anybody touching it.
 -- ---------------------------------------------------------------
-t.world(JUNCTION:format("gas_filter.n2"), 7)
+t.world(JUNCTION:format("filter.n2"), 7)
 
 local s = t.join()
 t.tick()
@@ -368,7 +368,7 @@ local pre_main_n2 = gas(OUT_X, OUT_Y, "n2")
 
 -- The file's `filter = { "n2" }` reached the machine's roster, not just
 -- its behaviour: the panel shows nitrogen already selected.
-t.click(s, 3, 1, t.target_at(3, 1, "gas_filter.n2"))
+t.click(s, 3, 1, t.target_at(3, 1, "filter.n2"))
 t.tick()
 for _, sw in ipairs(t.ui(s).toggles) do
     if sw.field == "filter" then
@@ -392,7 +392,7 @@ assert(t.pipe_pressure(IN_X, IN_Y) < 5.0, "and the input emptied into the pair")
 -- ---------------------------------------------------------------
 -- ...AND THE PRESET IS ONLY A SHORTHAND.
 --
--- `gas_filter.n2` is a VARIANT of gas_filter.luau, which means the two
+-- `filter.n2` is a VARIANT of filter.luau, which means the two
 -- lines it carries -- `on` and `filter` -- are the same two properties
 -- any placement may write on a bare machine (docs/CONTENT-SCHEMA.md
 -- §1.1a). If that were not true the variant would be a second
@@ -404,18 +404,18 @@ assert(t.pipe_pressure(IN_X, IN_Y) < 5.0, "and the input emptied into the pair")
 -- ---------------------------------------------------------------
 local BY_HAND = JUNCTION:gsub(
     '%(3, 1, "%%s"%)',
-    '(3, 1, "gas_filter", { "on": true, "filter": "n2" })'
+    '(3, 1, "filter", { "on": true, "filter": "n2" })'
 )
 t.world(BY_HAND, 7)
 
 local h = t.join()
 t.tick()
 local hand = t.structure_at(3, 1)
-assert(hand.id == "gas_filter", "a bare filter, with the map's own words on it")
+assert(hand.id == "filter", "a bare filter, with the map's own words on it")
 assert(hand.state == "running", "which is running, because the placement said so")
 local hand_side_o2 = gas(SIDE_X, SIDE_Y, "o2")
 local hand_main_n2 = gas(OUT_X, OUT_Y, "n2")
-t.click(h, 3, 1, t.target_at(3, 1, "gas_filter"))
+t.click(h, 3, 1, t.target_at(3, 1, "filter"))
 t.tick()
 for _, sw in ipairs(t.ui(h).toggles) do
     if sw.field == "filter" then

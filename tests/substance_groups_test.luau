@@ -8,7 +8,7 @@
 -- the engine contributes the ordering and nothing else, so the only
 -- place these headings can be checked is here.
 --
--- The gas filter carries the same roster for the same reason and is
+-- The filter carries the same roster for the same reason and is
 -- asserted alongside, because two machines listing the same gases in
 -- two different orders is exactly the bug the shared ordering exists to
 -- make unspeakable.
@@ -86,7 +86,7 @@ for index, id in ipairs(AIR) do
             .. tostring(rows[index].id)
     )
     assert(
-        rows[index].section == "Atmospheric gases",
+        rows[index].section == "Station atmosphere",
         id .. " belongs under the air heading, not " .. tostring(rows[index].section)
     )
 end
@@ -109,7 +109,7 @@ assert(
 -- declared them. The client draws a heading where its first row appears
 -- (docs/TGUI.md), so a block that came out in two pieces would be drawn
 -- as two headings with the same words.
-local DECLARED = { "Atmospheric gases", "Atmospheric poisons", "Gases at room temperature" }
+local DECLARED = { "Station atmosphere", "Atmospheric poisons", "Volatiles" }
 local function block_order(list)
     local seen = {}
     local order = {}
@@ -134,7 +134,7 @@ for index, heading in ipairs(DECLARED) do
     )
 end
 
--- The gas filter is the same list, said again. It is a different
+-- The filter is the same list, said again. It is a different
 -- machine with a different field and a different pair of words on each
 -- button, and its gases must still come out in exactly this sequence.
 local FILTER_MAP = [==[(
@@ -154,7 +154,7 @@ local FILTER_MAP = [==[(
     ],
     spawns: [(5, 2)],
     pipes: [(1, 1, 1), (5, 1, 1), (3, 2, 1)],
-    structures: [(3, 1, "gas_filter")],
+    structures: [(3, 1, "filter")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
@@ -168,11 +168,11 @@ for _ = 1, 2 do
     t.move(q, "west")
     t.run_ticks(5)
 end
-t.click(q, 3, 1, t.target_at(3, 1, "gas_filter"))
+t.click(q, 3, 1, t.target_at(3, 1, "filter"))
 t.tick()
 
 local filter_panel = t.ui(q)
-assert(filter_panel, "a gas filter wears a panel of its own")
+assert(filter_panel, "a filter wears a panel of its own")
 local filter_rows = gas_rows(filter_panel)
 assert(#filter_rows == #rows, "the two machines offer the same roster")
 for index, row in ipairs(filter_rows) do

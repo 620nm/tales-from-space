@@ -1,4 +1,4 @@
--- The gas flow meter: a dial bolted onto a run.
+-- The flow meter: a dial bolted onto a run.
 --
 -- tg's `/obj/machinery/meter` (code/modules/atmospherics/machinery/
 -- other/meter.dm) is the one machine in atmospherics that does nothing

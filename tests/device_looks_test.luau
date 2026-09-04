@@ -29,7 +29,7 @@
 -- after a full second and never after two ticks.
 --
 -- Every sprite name below comes from a TfS content file
--- (`structures/air_scrubber.luau`, `gas_filter.luau`, `gas_mixer.luau`)
+-- (`structures/air_scrubber.luau`, `filter.luau`, `mixer.luau`)
 -- and the engine has never heard of any of them.
 
 local function readout(p, label)
@@ -297,14 +297,13 @@ local JUNCTION = [==[(
 -- dial ships. Opening that dial is the difference between "it has
 -- arrived" and "it is working", and both are drawn.
 local ARM = {
-    gas_filter = function() end,
-    gas_mixer = function(q)
+    filter = function() end,
+    mixer = function(q)
         t.ui_act(q, "set", '{"field":"pressure","value":4500}')
     end,
 }
 
-for _, machine in ipairs({ "gas_filter", "gas_mixer" }) do
-    local short = string.sub(machine, 5, -1) -- "filter" / "mixer", content's own art prefix
+for _, machine in ipairs({ "filter", "mixer" }) do
     t.world(JUNCTION:format(machine), 7)
     local q = t.join()
     t.tick()
@@ -312,7 +311,7 @@ for _, machine in ipairs({ "gas_filter", "gas_mixer" }) do
     local cold = t.structure_at(3, 1)
     assert(cold.id == machine, machine .. " is where the map put it")
     assert(cold.state == "off", machine .. " ships off")
-    assert(cold.sprite == short .. "_off_e", machine .. " is dark, aimed east: " .. cold.sprite)
+    assert(cold.sprite == machine .. "_off_e", machine .. " is dark, aimed east: " .. cold.sprite)
 
     t.click(q, 3, 1, t.target_at(3, 1, machine))
     t.tick()
@@ -323,7 +322,7 @@ for _, machine in ipairs({ "gas_filter", "gas_mixer" }) do
 
     local hot = t.structure_at(3, 1)
     assert(hot.state == "running", machine .. " is running")
-    assert(hot.sprite == short .. "_on_e",
+    assert(hot.sprite == machine .. "_on_e",
         machine .. " swapped picture, not facing: " .. hot.sprite)
     -- The running bodies of both trinaries are four-frame loops
     -- (assets/sprites/20-atmos-inline-devices.ron). A loop is the
@@ -331,7 +330,7 @@ for _, machine in ipairs({ "gas_filter", "gas_mixer" }) do
     -- whole of what the sim has to get right -- and it must not drift
     -- while the machine keeps working.
     t.run_seconds(3)
-    assert(t.structure_at(3, 1).sprite == short .. "_on_e",
+    assert(t.structure_at(3, 1).sprite == machine .. "_on_e",
         machine .. " keeps one name while it keeps working")
 
     -- ...and off again. A one-way picture change would pass every
@@ -339,7 +338,7 @@ for _, machine in ipairs({ "gas_filter", "gas_mixer" }) do
     t.ui_act(q, "toggle", '{"field":"power"}')
     t.run_seconds(1)
     local back = t.structure_at(3, 1).sprite
-    assert(back == short .. "_off_e", machine .. " goes dark again: " .. back)
+    assert(back == machine .. "_off_e", machine .. " goes dark again: " .. back)
 end
 
 -- ---------------------------------------------------------------
@@ -371,7 +370,7 @@ t.world([==[(
     ],
     spawns: [(3, 2)],
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4)],
-    structures: [(3, 1, "gas_mixer")],
+    structures: [(3, 1, "mixer")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
@@ -380,7 +379,7 @@ t.world([==[(
 
 local m = t.join()
 t.tick()
-t.click(m, 3, 1, t.target_at(3, 1, "gas_mixer"))
+t.click(m, 3, 1, t.target_at(3, 1, "mixer"))
 t.tick()
 t.ui_act(m, "set", '{"field":"pressure","value":4500}')
 t.ui_act(m, "toggle", '{"field":"power"}')

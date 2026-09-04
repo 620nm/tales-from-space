@@ -209,7 +209,7 @@
         ("passive_vent_loose_e", Dmi("@pipe_item", "pvent", 2)),
         ("passive_vent_loose_w", Dmi("@pipe_item", "pvent", 3)),
         // ---- end of the room devices -------------------------------------
-        // A gas canister: tg's art is greyscale and each gas type paints
+        // A canister: tg's art is greyscale and each gas type paints
         // it (greyscale_colors "#c6c0b5" is pre-mixed air). Baked with
         // that colour for now; it moves to per-object paint when the
         // renderer can tint a sprite on both paths.
