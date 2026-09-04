@@ -40,6 +40,10 @@ local U = 0.025
 -- would notice.
 local DREGS_MOL = 0.001
 
+-- And above this it is full: a millilitre of room left is under what any
+-- gesture could put in it and under what the fill layer would draw.
+local HEADSPACE_L = 0.001
+
 -- The gas constant, for the one sum a vessel does for itself: how many
 -- moles it takes to stand a headspace up at the pressure the line is
 -- holding (PV = nRT).
@@ -175,6 +179,37 @@ local function dregs(spec, self, user)
     return true
 end
 
+-- TAKING A PUDDLE UP, which is the tile's own matter drawn into a
+-- vessel: the room over a tile is a body of matter like any other
+-- (docs/luau-api/matter.md, `ev.at.matter`), so a mop is the transfer
+-- with the ends swapped and only the liquid phase named. What fits is
+-- the engine's -- the head takes what it takes and the rest stays on the
+-- deck -- so the two refusals here are the two states a stroke can find:
+-- a vessel with no room in it, and a deck with nothing on it.
+local function soak(spec, self, user, at, soak_line, dry_line, full_line)
+    if (vessel.headspace_l(self) or 0) <= HEADSPACE_L then
+        sim.message.send({ recipient = user, message = full_line })
+        return true
+    end
+    -- What is STANDING there, asked before anything is moved: an effect
+    -- lands at the end of the transaction, so a gesture that measured
+    -- itself by re-reading its own vessel would measure nothing at all.
+    local deck = sim.matter_read(at.matter)
+    local standing = 0
+    if deck ~= nil then
+        for _, entry in pairs(deck.contents) do
+            standing = standing + (entry.liquid or 0)
+        end
+    end
+    if standing < DREGS_MOL then
+        sim.message.send({ recipient = user, message = dry_line })
+        return true
+    end
+    sim.matter.transfer({ from = at.matter, to = self, amount = "all", phases = { "liquid" } })
+    sim.message.send({ recipient = user, message = soak_line })
+    return true
+end
+
 -- Attaches the gestures to one prototype and declares the behaviour that
 -- carries them. `spec`:
 --
@@ -182,9 +217,14 @@ end
 --   noun    what the sentences call it ("beaker", "tube", "can")
 --   phases  which phases a gesture moves; a dropper draws no solids
 --   pour    { units, message? }  -- absent: clicks at things are not
---           this vessel's business, and neither is a charge
+--           this vessel's business, and neither is a charge; `units =
+--           "all"` is a vessel that empties itself in one gesture
 --   sip     { units, message?, taste? }
 --   spill   { message? } or true -- absent: no tipping it out
+--   soak    { message?, dry?, full? } -- the deck the OTHER way round:
+--           take the liquid on that tile up into this vessel instead of
+--           tipping this vessel onto it. Mutually exclusive with
+--           `spill`, because a thing cannot both put down and pick up.
 --
 -- Every message defaults to the vessel's own noun in the sentence every
 -- other vessel uses; a file names one only where it says something else.
@@ -192,6 +232,9 @@ function vessel.attach(spec)
     local definition = sim.define("behavior", "lunatic/tfs:" .. spec.id, { prototype = spec.id })
     local phases = spec.phases
     local pour_line = spec.pour and (spec.pour.message or ("You pour from the " .. spec.noun .. "."))
+    -- A dose in tg's units, or the lot: a mop wrung into a bucket has no
+    -- measured stroke, it has a head that comes out.
+    local pour_amount = spec.pour and (spec.pour.units == "all" and "all" or spec.pour.units * U)
     local sip_line = spec.sip and (spec.sip.message or ("You drink from the " .. spec.noun .. "."))
     if spec.sip and spec.sip.taste then
         sip_line = sip_line .. " " .. spec.sip.taste
@@ -200,6 +243,10 @@ function vessel.attach(spec)
     if type(spec.spill) == "table" and spec.spill.message ~= nil then
         spill_line = spec.spill.message
     end
+    local soak_line = spec.soak and (spec.soak.message
+        or ("You take what is on the deck up into the " .. spec.noun .. "."))
+    local dry_line = spec.soak and (spec.soak.dry or "There is nothing on the deck here.")
+    local full_line = spec.soak and (spec.soak.full or ("The " .. spec.noun .. " will hold no more."))
 
     definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local self, user, at = ev.subject, ev.actor, ev.at
@@ -218,7 +265,7 @@ function vessel.attach(spec)
             if dregs(spec, self, user) then
                 return true
             end
-            do_pour(self, clicked.entity, spec.pour.units * U, phases)
+            do_pour(self, clicked.entity, pour_amount, phases)
             sim.message.send({ recipient = user, message = pour_line })
             return true
         end
@@ -234,13 +281,17 @@ function vessel.attach(spec)
             return true
         end
 
-        -- 4. The deck beside you: tip it out.
-        if spec.spill == nil then
+        -- 4. The deck beside you, in whichever direction this vessel
+        -- goes: a mop takes the puddle up, everything else tips out.
+        if spec.spill == nil and spec.soak == nil then
             return { replaced = false }
         end
         local turf = sim.turf(at.x, at.y)
         if turf ~= "floor" and turf ~= "plating" then
             return { replaced = false }
+        end
+        if spec.soak ~= nil then
+            return soak(spec, self, user, at, soak_line, dry_line, full_line)
         end
         if dregs(spec, self, user) then
             return true
