@@ -1213,8 +1213,20 @@
         // the lump into a puddle by accident.
         "water_10l": (rows: [("water", 555.0929780738273)], temperature_k: 293.15, amount: total),
         "ice_block": (rows: [("water:solid", 2.0)], temperature_k: 263.15, amount: total),
+        // And the one that is painted on tiles rather than poured into a
+        // shell, so it is a DENSITY: standard air plus half a mole of
+        // water vapour per tile (content/blends/humid_air.luau).
+        "humid_air": (rows: [("o2", 8.730437114532117), ("n2", 32.84307295466844), ("water:gas", 0.5)], temperature_k: 293.15, amount: per_tile),
     },
     painted: [
+        // The air over the chem bench, where a burner has been going
+        // under somebody's glassware: ordinary station air with half a
+        // mole of water in it per tile (content/blends/humid_air.luau).
+        // Enough to see -- water's own file makes vapour visible at a
+        // quarter mole -- and under the density it would rain out at,
+        // so the room stays foggy instead of condensing on tick one.
+        (19, 5, "humid_air"),
+        (20, 5, "humid_air"),
         (15, 33, "o2_5000kpa"),
         (16, 33, "o2_5000kpa"),
         (17, 33, "o2_5000kpa"),
