@@ -48,6 +48,20 @@ return {
     cv = { solid = 38.0, liquid = 75.3, gas = 40.0 },
     phase = { melt = 273.15, boil = 373.15, l_fus = 6010.0, l_vap = 40660.0 },
     density = { solid = 0.917, liquid = 1.0 },
+    -- How it flows (docs/chemistry/substances.md, `flow`): gravity
+    -- spreads a puddle, viscosity sets how fast, and surface tension
+    -- against the angle it stands at decides how thin the film can get
+    -- before it stops. Water is thin and beads: it runs across a deck in
+    -- seconds and leaves about three millimetres on every tile it
+    -- crossed, which is why a spill here is a chore rather than a stain.
+    flow = {
+        -- mPa*s at 20 C (CRC Handbook 97th ed. / NIST WebBook).
+        viscosity = 1.002,
+        -- mN/m at 20 C (CRC Handbook 97th ed. / NIST WebBook).
+        surface_tension = 72.8,
+        -- Degrees on a painted deck: a content judgment, not a measurement.
+        contact_angle = 75,
+    },
     color = "#AAAAAA",
     -- What water LOOKS LIKE on a deck (docs/chemistry/substances.md).
     -- A splash uses the shared blobs; a litre and fifty litres are tg's
