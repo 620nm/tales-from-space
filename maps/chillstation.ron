@@ -202,6 +202,9 @@
         // something to fix it with is something the station needs.
         (10, 7, "box_lights"),
         (10, 8, "light_replacer"),
+        // And the janitor's other tool, in the same corner: a station
+        // that can spill a beaker needs something to answer one with.
+        (10, 8, "mop"),
         // ---- the atmospherics bench ------------------------------
         // The four things a technician actually carries. The RPD builds
         // and removes plumbing anywhere, the analyser reads a room or a
