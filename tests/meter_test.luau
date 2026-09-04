@@ -194,15 +194,27 @@ assert(panel.document == "modules" and panel.presentation == "modules",
     "its declared module document")
 assert(#panel.toggles == 0 and #panel.setpoints == 0, "and nothing on it to turn")
 
-local shown = {}
-for _, r in ipairs(panel.readouts) do
-    shown[r.label] = r.value
+-- What is in the run, itemised: one block under the LINE heading —
+-- the composition tg's chat line cannot give (docs/tgui/matter-block.md).
+local line = panel.matter and panel.matter[1]
+assert(line and line.section == "line", "the panel draws the run it is reading")
+local gas = nil
+for _, st in ipairs(line.states or {}) do
+    if st.phase == "gas" then
+        gas = st
+    end
 end
-assert(
-    shown.pressure == string.format("%.1f kPa", t.pipe_pressure(2, 1)),
-    "the panel reads the run: " .. tostring(shown.pressure)
-)
-assert(shown.temperature == "293.2 K", "and how warm it is: " .. tostring(shown.temperature))
+assert(gas, "a charged run holds a gas")
+assert(math.abs(gas.measure - t.pipe_pressure(2, 1)) < 1e-9,
+    "the panel reads the run: " .. tostring(gas.measure))
+assert(math.abs(line.temperature_k - 293.15) < 0.05,
+    "and how warm it is: " .. tostring(line.temperature_k))
+local seen = {}
+for _, row in ipairs(gas.rows) do
+    seen[row.key] = row.moles
+end
+assert(seen.o2 and seen.n2, "and what the pressure is made OF: o2 and n2")
+assert(line.sealed == nil, "a run has no lid to report")
 
 -- ---- take it off again ----
 --
