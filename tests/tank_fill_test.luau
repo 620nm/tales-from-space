@@ -57,6 +57,59 @@ local function number_in(text)
     return tonumber(string.match(text, "[%d%.]+"))
 end
 
+-- The contents block: what the vessel is HOLDING, by state, in the
+-- units each state is read in (docs/tgui/matter-block.md).
+local function block(panel, section)
+    for _, b in ipairs(panel.matter or {}) do
+        if b.section == section then
+            return b
+        end
+    end
+    return nil
+end
+
+local function state(b, phase)
+    for _, st in ipairs(b and b.states or {}) do
+        if st.phase == phase then
+            return st
+        end
+    end
+    return nil
+end
+
+local function named(st, name)
+    for _, r in ipairs(st and st.rows or {}) do
+        if r.name == name then
+            return r
+        end
+    end
+    return nil
+end
+
+-- The same, across every state: what is in the vessel regardless of
+-- which of the three it is standing in.
+local function named_any(b, name)
+    for _, st in ipairs(b and b.states or {}) do
+        local found = named(st, name)
+        if found then
+            return found
+        end
+    end
+    return nil
+end
+
+local function total_of(b, key)
+    local sum = 0.0
+    for _, st in ipairs(b and b.states or {}) do
+        for _, r in ipairs(st.rows or {}) do
+            if r.key == key then
+                sum = sum + r.moles
+            end
+        end
+    end
+    return sum
+end
+
 -- ---------------------------------------------------------------
 -- Five vessels, five authored fills, and nothing plumbed into any of
 -- them: a tank shares with every net its mouths reach, so a store with
@@ -162,21 +215,22 @@ near(
 )
 near(half.gauge, 50.0, 1e-9, "which for this vessel is half the sticker")
 
--- One row per gas present, NAMED -- the swirling colour, written down.
-local gas_row = row(half, "oxygen")
-assert(gas_row, "a row for the gas that is in there, by its own name")
-near(number_in(gas_row.value), t.tank_gas(2, 1).o2, 0.0501,
-    "carrying the moles the vessel holds, to the tenth it is printed at")
-assert(row(half, "nitrogen") == nil, "and no row for a gas that is not")
-assert(row(half, "contents") == nil, "nor the empty line, for a vessel that is not")
+-- One row per substance present, NAMED -- the swirling colour, written
+-- down -- inside the state it is actually in.
+local half_gas = state(block(half, "contents"), "gas")
+assert(half_gas, "a charged vessel holds a gas")
+local gas_row = named(half_gas, "oxygen")
+assert(gas_row, "a row for the substance that is in there, by its own name")
+near(gas_row.moles, t.tank_gas(2, 1).o2, 1e-6,
+    "carrying the moles the vessel holds")
+assert(named(half_gas, "nitrogen") == nil, "and no row for one that is not")
 
-near(number_in(row(half, "pressure").value), 23000.0, 0.5, "the pressure row")
--- The row is printed to a tenth of a kelvin, so half a tenth is the
--- whole of the disagreement a correct reading is allowed.
-near(number_in(row(half, "temperature").value), T20C, 0.0501,
+near(half_gas.measure, 23000.0, 0.5, "the state's own reading is the pressure")
+near(block(half, "contents").temperature_k, T20C, 1e-6,
     "and the temperature it was filled at -- a pressure alone is not an amount of gas")
-assert(row(half, "volume").value == "2500 L — rated 46000 kPa",
-    "the size of the thing and its sticker: " .. row(half, "volume").value)
+near(block(half, "contents").volume_l, 2500.0, 1e-9, "the size of the thing")
+assert(row(half, "rating").value == "46000 kPa",
+    "and its sticker, which the block cannot say: " .. row(half, "rating").value)
 assert(#half.toggles == 0 and #half.setpoints == 0, "no controls, because there are none")
 
 -- ---------------------------------------------------------------
@@ -197,12 +251,18 @@ assert(over and over.document == "modules" and over.presentation == "modules",
     "the over-filled vessel opens its document too")
 assert(t.tank_pressure(10, 1) > RATED_KPA * 1.3, "it is a third past its rating")
 near(over.gauge, 100.0, 1e-9, "and the gauge pins at full: " .. over.gauge)
-assert(row(over, "pressure").tone == "off",
-    "with the pressure row flagged: " .. tostring(row(over, "pressure").tone))
-local co2_row = row(over, "carbon dioxide")
-assert(co2_row, "the row names the gas as a reader would say it, not by its key")
-assert(row(over, "co2") == nil, "the key is not a label")
-near(number_in(co2_row.value), filled_moles(60000.0), 0.0501, "and it is the fill, weighed")
+assert(row(over, "rating").tone == "off",
+    "with the sticker flagged: " .. tostring(row(over, "rating").tone))
+local over_block = block(over, "contents")
+local co2_row = named_any(over_block, "carbon dioxide")
+assert(co2_row, "the row names the substance as a reader would say it, not by its key")
+assert(co2_row.key == "co2", "the key travels beside the name, never instead of it")
+assert(named_any(over_block, "co2") == nil, "the key is not a label")
+-- Summed across the states: six hundred atmospheres is past carbon
+-- dioxide's own line, so some of the fill is lying in the bottom of it
+-- and the BOOK is what the fill authored.
+near(total_of(over_block, "co2"), filled_moles(60000.0), 1e-6,
+    "and it is the fill, weighed")
 
 -- ---------------------------------------------------------------
 -- Every shape a placement can take, in one world, because the shapes
@@ -280,15 +340,17 @@ local empty = t.ui(q)
 assert(empty and empty.document == "modules" and empty.presentation == "modules",
     "an empty vessel opens a document like any other")
 near(empty.gauge, 0.0, 1e-12, "the gauge is at rest: " .. empty.gauge)
-assert(row(empty, "contents") and row(empty, "contents").value == "empty",
-    "and the panel says the word")
-assert(row(empty, "oxygen") == nil and row(empty, "nitrogen") == nil,
-    "with no gas row at all, phantom or otherwise")
-near(number_in(row(empty, "pressure").value), 0.0, 0.5, "nothing to read")
+local nothing = block(empty, "contents")
+assert(nothing, "an empty vessel still has a block")
+assert(nothing.states == nil or #nothing.states == 0,
+    "and it says empty ONCE, with no state at all, phantom or otherwise")
+assert(state(nothing, "gas") == nil, "nothing to read")
 -- Nothing in it has no temperature, so the mixture answers with the
 -- floor the matter world clamps to (TCMB, invariant I2) rather than
 -- with a room-temperature fiction. An empty vessel is cold.
-near(number_in(row(empty, "temperature").value), 2.7, 0.05,
+near(nothing.temperature_k, 2.7, 0.05,
     "and it reads the cosmic background rather than a comfortable lie")
-assert(row(empty, "volume").value == "2500 L — rated 46000 kPa",
-    "while the sticker says what it always said")
+near(nothing.volume_l, 2500.0, 1e-9, "while it is the size it always was")
+near(nothing.headspace_l, 2500.0, 1e-9, "all of it headspace")
+assert(row(empty, "rating").value == "46000 kPa",
+    "and the sticker says what it always said")

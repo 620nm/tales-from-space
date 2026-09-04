@@ -49,9 +49,33 @@ local function setpoint(ui, field)
     return nil
 end
 
-local function number(ui, label)
-    local row = readout(ui, label)
-    return row and tonumber(string.match(row.value, "[%d%.]+")) or nil
+-- The contents block: what the vessel is HOLDING, by state, in the
+-- units each state is read in (docs/tgui/matter-block.md).
+local function block(ui, section)
+    for _, b in ipairs(ui.matter or {}) do
+        if b.section == section then
+            return b
+        end
+    end
+    return nil
+end
+
+local function state(b, phase)
+    for _, s in ipairs(b and b.states or {}) do
+        if s.phase == phase then
+            return s
+        end
+    end
+    return nil
+end
+
+local function named(st, name)
+    for _, r in ipairs(st and st.rows or {}) do
+        if r.name == name then
+            return r
+        end
+    end
+    return nil
 end
 
 -- ---------------------------------------------------------------
@@ -80,20 +104,24 @@ assert(ui.document == "modules" and ui.presentation == "modules",
 assert(#ui.toggles == 0, "the valve is a KEY, not a button on the panel")
 
 -- ---------------------------------------------------------------
--- WHAT IS IN IT. The shared vessel module: a row per gas present, and
--- the three numbers every vessel has.
+-- WHAT IS IN IT. The shared contents block: a row per substance
+-- present, in the state it is in, and the numbers every vessel has.
 -- ---------------------------------------------------------------
-assert(readout(ui, "oxygen"), "one row PER GAS PRESENT, named by the gas")
-assert(readout(ui, "oxygen").section == "contents", "under the module's heading")
-assert(readout(ui, "nitrogen") == nil, "and no row for a gas that is not in there")
-local kpa = number(ui, "pressure")
-assert(math.abs(kpa - 6 * 101.325) < 5.0,
-    "charged to the six atmospheres its file says: " .. tostring(kpa))
-assert(number(ui, "temperature") > 200.0, "a temperature")
-assert(math.abs(number(ui, "volume") - 70.0) < 0.001,
-    "and tg's TANK_STANDARD_VOLUME, in litres: " .. tostring(number(ui, "volume")))
+local contents = block(ui, "contents")
+assert(contents, "the vessel's block, under the module's heading")
+local gas = state(contents, "gas")
+assert(gas, "a bottle of oxygen holds a gas")
+assert(named(gas, "oxygen"), "one row PER SUBSTANCE PRESENT, named by the substance")
+assert(named(gas, "nitrogen") == nil, "and no row for one that is not in there")
+assert(math.abs(gas.measure - 6 * 101.325) < 5.0,
+    "charged to the six atmospheres its file says: " .. tostring(gas.measure))
+assert(contents.temperature_k > 200.0, "a temperature")
+assert(math.abs(contents.volume_l - 70.0) < 0.001,
+    "and tg's TANK_STANDARD_VOLUME, in litres: " .. tostring(contents.volume_l))
+assert(contents.sealed == true, "a bottle has a lid")
 assert(readout(ui, "supply") == nil, "an ordinary bottle is not inexhaustible")
-assert(ui.gauge == nil, "and nothing wrote a rating on the side of it")
+assert(readout(ui, "rating") == nil, "and nothing wrote a rating on the side of it")
+assert(ui.gauge == nil, "so there is no needle to draw against one")
 assert(readout(ui, "internals").value == "connected", "the key opened the valve too")
 
 -- ---------------------------------------------------------------
@@ -138,4 +166,5 @@ assert(t.hands(p)[1] == nil and t.hands(p)[2] == nil, "and out of both hands")
 local worn = t.ui(p)
 assert(worn and worn.document == "modules" and worn.presentation == "modules",
     "its document is still up")
-assert(readout(worn, "oxygen"), "and still reading the bottle")
+assert(named(state(block(worn, "contents"), "gas"), "oxygen"),
+    "and still reading the bottle")
