@@ -48,10 +48,12 @@ local function pressure_of(moles, volume_m3, kelvin)
     return moles * R * kelvin / volume_m3 / 1000.0
 end
 
-local function window_row(p, label)
-    for _, r in ipairs(t.ui(p).readouts) do
-        if r.label == label then
-            return tonumber(string.match(r.value, "[%d%.]+"))
+-- The warmth off the open window's contents block, which is where a
+-- vessel's own numbers live now (docs/tgui/matter-block.md).
+local function window_k(p)
+    for _, b in ipairs(t.ui(p).matter or {}) do
+        if b.section == "contents" then
+            return b.temperature_k
         end
     end
     return nil
@@ -127,7 +129,7 @@ local cv = t.pipe_energy(3, 1) / (run_n * rest_k)
 
 t.click(p, 2, 1, t.target_at(2, 1))
 t.tick()
-near(window_row(p, "temperature"), rest_k, 0.0501,
+near(window_k(p), rest_k, 1e-6,
     "the vessel's window agrees with an analyser held against the run")
 
 local INJECTED = 10000000.0
@@ -142,7 +144,7 @@ near(energy_1, energy_0 + INJECTED, (energy_0 + INJECTED) * 1e-9,
 near(hot_k, (energy_0 + INJECTED) / ((vessel_n + run_n) * cv), 1e-6,
     "and the temperature is that book divided through both holders")
 assert(hot_k > rest_k + 40.0, "warmer for it: " .. rest_k .. " -> " .. hot_k .. " K")
-near(window_row(p, "temperature"), hot_k, 0.0501,
+near(window_k(p), hot_k, 1e-6,
     "and the vessel came with it -- one body of gas, one temperature")
 
 -- MASS did not move: the split is by volume and both holders were already

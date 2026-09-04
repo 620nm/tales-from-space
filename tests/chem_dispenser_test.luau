@@ -43,6 +43,26 @@ local function row(ui, label)
     return nil
 end
 
+-- The contents block: what the docked vessel is HOLDING, by state
+-- (docs/tgui/matter-block.md).
+local function block(ui, section)
+    for _, b in ipairs(ui.matter or {}) do
+        if b.section == section then
+            return b
+        end
+    end
+    return nil
+end
+
+local function state(b, phase)
+    for _, st in ipairs(b and b.states or {}) do
+        if st.phase == phase then
+            return st
+        end
+    end
+    return nil
+end
+
 local function dial(ui, field)
     for _, s in ipairs(ui.setpoints) do
         if s.field == field then
@@ -154,10 +174,12 @@ near(t.contents(beaker).water, PRESS, 1e-9, "one press is tg's 30 u")
 -- evaporate into thirty-six millilitres of empty glass and carry a
 -- little latent heat with it.
 near(t.holder_k(beaker), NOZZLE_K, 0.1, "arriving at the nozzle's own temperature")
--- The panel counts the GLASS, in millilitres: 0.75 mol of water is
--- 13.5 mL of a fifty millilitre beaker (docs/MATTER.md 5). Capacity is
--- geometry, so the row a crewman reads is the level in the vessel.
-assert(row(t.ui(p), "contents").value == "13.5 / 50 mL", "and the panel says so")
+-- The panel counts the GLASS, in litres: 0.75 mol of water is 13.5 mL
+-- of a fifty millilitre beaker (docs/MATTER.md 5). Capacity is
+-- geometry, so what a crewman reads is the level against the shell.
+local glass = block(t.ui(p), "contents")
+near(state(glass, "liquid").measure, 0.0135, 1e-4, "the level in the vessel")
+near(glass.volume_l, 0.05, 1e-9, "against the size of the glass")
 
 -- ---------------------------------------------------------------
 -- ...AND A PRESS INTO A NEARLY-FULL BEAKER IS TRIMMED, NOT REFUSED.

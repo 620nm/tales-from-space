@@ -47,9 +47,38 @@ local function readout(panel, label)
     return nil
 end
 
-local function moles(panel, label)
-    local row = readout(panel, label)
-    return row and tonumber(string.match(row, "[%d%.]+")) or 0.0
+-- The contents block: what the vessel is HOLDING, by state
+-- (docs/tgui/matter-block.md).
+local function block(panel, section)
+    for _, b in ipairs(panel.matter or {}) do
+        if b.section == section then
+            return b
+        end
+    end
+    return nil
+end
+
+local function state(b, phase)
+    for _, st in ipairs(b and b.states or {}) do
+        if st.phase == phase then
+            return st
+        end
+    end
+    return nil
+end
+
+local function named(st, name)
+    for _, r in ipairs(st and st.rows or {}) do
+        if r.name == name then
+            return r
+        end
+    end
+    return nil
+end
+
+local function moles(panel, name)
+    local row = named(state(block(panel, "contents"), "gas"), name)
+    return row and row.moles or 0.0
 end
 
 -- ---------------------------------------------------------------
@@ -83,11 +112,15 @@ assert(#ui.setpoints == 0, "and no dial -- its ports are its valves")
 assert(ui.gauge and ui.gauge > 0.0 and ui.gauge < 100.0,
     "the gauge reads against the 46 000 kPa sticker: " .. tostring(ui.gauge))
 
-assert(readout(ui, "oxygen"), "one row PER GAS PRESENT, named by the gas")
-assert(readout(ui, "nitrogen") == nil, "and no row for a gas that is not in there")
-assert(readout(ui, "pressure"), "a pressure row")
-assert(readout(ui, "temperature"), "a temperature row")
-assert(readout(ui, "volume"), "and the vessel's own size and rating")
+local contents = block(ui, "contents")
+assert(contents, "the vessel's contents block")
+local gas = state(contents, "gas")
+assert(named(gas, "oxygen"), "one row PER SUBSTANCE PRESENT, named by the substance")
+assert(named(gas, "nitrogen") == nil, "and no row for one that is not in there")
+assert(gas.measure > 0.0, "the state's own reading is a pressure")
+assert(contents.temperature_k > 0.0, "a temperature")
+assert(contents.volume_l > 0.0, "and the vessel's own size")
+assert(readout(ui, "rating") == "46000 kPa", "with the sticker beside it")
 
 local tank_o2 = moles(ui, "oxygen")
 assert(tank_o2 > 20000.0, "a full 2500 L vessel is tens of thousands of moles: " .. tank_o2)
