@@ -28,7 +28,7 @@ local content = {
     drop_sound = "gas_tank_drop",
     slot = "back",
     worn_sprite = "worn_oxygen_tank",
-    gas_tank = {
+    tank = {
         volume_l = 70,
         fill = { { substance = "o2", kpa = 6 * 101.325 } },
     },
