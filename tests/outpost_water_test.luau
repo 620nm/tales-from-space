@@ -22,7 +22,7 @@ local p = t.join()
 t.tick()
 
 local DEEP = { 11, 8 }
-local SHALLOW = { 13, 8 }
+local SHALLOW = { 13, 7 }
 local DRY = { 14, 7 }
 
 local function look_at(xy)
@@ -34,11 +34,12 @@ end
 -- ---------------------------------------------------------------
 -- Fifty litres at the door, and a litre three tiles back. The line
 -- names the phase, because a puddle and a lump of ice on the same
--- deck are two different things to step in.
+-- deck are two different things to step in -- and it leads with the
+-- volume, because a depth is what a crewman is deciding about.
 -- ---------------------------------------------------------------
-assert(look_at(DEEP) == "A puddle: 2775.50 mol of liquid water.",
+assert(look_at(DEEP) == "A puddle: 50.00 L · 2775.50 mol of liquid water.",
     "the deep end reads as fifty litres: " .. look_at(DEEP))
-assert(look_at(SHALLOW) == "A puddle: 55.51 mol of liquid water.",
+assert(look_at(SHALLOW) == "A puddle: 1.00 L · 55.51 mol of liquid water.",
     "and the shallow end as one: " .. look_at(SHALLOW))
 
 -- ---------------------------------------------------------------
@@ -65,10 +66,14 @@ assert(deep_kpa > dry_kpa + 1.0,
 -- rather than pretending it is closed -- so half a minute into the
 -- shift the pool is where somebody left it, minus the mole or so
 -- that went into the air over it, and the dry tile is still dry.
+--
+-- What holds it once it CAN move is the sill: the deep pair is a
+-- compartment with a glazed leaf on one side and the exterior airlock
+-- on the other, and both are shut (maps/outpost.ron).
 -- ---------------------------------------------------------------
 t.run_ticks(600)
 local still = look_at(DEEP)
-local mol = tonumber(string.match(still, "A puddle: ([%d%.]+) mol of liquid water%."))
-assert(mol ~= nil, "the pool is still a pool: " .. still)
-assert(mol > 2775.5 * 0.99, "and still fifty litres of one: " .. still)
+local litres = tonumber(string.match(still, "A puddle: ([%d%.]+) L"))
+assert(litres ~= nil, "the pool is still a pool: " .. still)
+assert(litres > 50.0 * 0.99, "and still fifty litres of one: " .. still)
 assert(look_at(DRY) == "", "and it never reached the tile beside it")

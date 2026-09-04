@@ -339,6 +339,9 @@
         ("light_tube", Dmi("@lighting", "ltube", 0)),
         ("light_bulb", Dmi("@lighting", "lbulb", 0)),
         ("light_replacer", Dmi("@janitor", "lightreplacer", 0)),
+        // The janitor's other one, and the only thing that takes a
+        // puddle back off a deck (tg service/janitor.dmi "mop").
+        ("mop", Dmi("@janitor", "mop", 0)),
         // A cardboard box wearing its contents label, tg's
         // `illustration` overlay (service_boxes.dm:114).
         ("box_lights", DmiLayers([
