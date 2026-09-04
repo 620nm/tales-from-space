@@ -1,10 +1,10 @@
 -- The bottle on your back has a window, and it is the same window the
 -- canister and the bolted-in reservoir wear.
 --
--- What is inside a vessel is one module (sim/ui/modules/vessel.rs) --
--- a row per gas, a pressure, a temperature, a size -- so a diver
--- reading his tank and an engineer reading a canister are reading the
--- same instrument. What this one adds is tg's own control: the release
+-- What is inside a vessel is one typed block (docs/tgui/matter-block.md)
+-- -- a row per substance, in the state it is in, over the shell and the
+-- warmth -- so a diver reading his tank and an engineer reading a
+-- canister are reading the same instrument. What this one adds is tg's own control: the release
 -- valve a breath is drawn at (`ui_act`'s "pressure",
 -- code/game/objects/items/tanks/tanks.dm:261-281), clamped into tg's
 -- 0..3 atmospheres.
