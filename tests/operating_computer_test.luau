@@ -136,7 +136,14 @@ assert(has(opened.value, "vessels_unclamped"), "both of them: " .. opened.value)
 assert(has(opened.value, "/s"), "with what it is bleeding: " .. opened.value)
 assert(untouched ~= nil and untouched.value == "\u{2014}",
     "and the other is holding nothing: " .. tostring(untouched and untouched.value))
-assert(row(ui, "blood") ~= nil, "and how much blood is left to lose")
+local blood = row(ui, "blood")
+assert(blood ~= nil, "and how much blood is left to lose")
+-- IN LITRES, and bleeding in millilitres a second. tg counts blood in
+-- bare units -- a number with no unit on it, which is only a scale if
+-- you already know it -- and a surgeon deciding whether to clamp is
+-- deciding about a volume.
+assert(blood.value:match("^%d+%.%d%d L") ~= nil,
+    "the blood row is in litres: " .. blood.value)
 -- Nothing is wrong with the head and nobody is aiming at it, so the head
 -- is not on the panel.
 assert(row(ui, "head") == nil, "a part with nothing wrong with it is not a row")
