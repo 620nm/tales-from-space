@@ -154,6 +154,10 @@
         // spirit in it (items/burner.luau).
         (19, 5, "beaker"),
         (19, 5, "beaker"),
+        // And a third with a lump of ice in it, out of the freezer and
+        // sitting in a 20 C lab: matter changing state with nobody
+        // touching it, on the bench where somebody would notice.
+        (19, 5, "beaker", { "blend": "ice_block" }),
         (20, 5, "burner"),
         // The small glass, on the tile beside them. A dropper for
         // moving one unit at a time, two tubes to keep a batch in while
@@ -696,6 +700,13 @@
         (10, 17, "canister", { "blend": "canister_air", "open": true }), (11, 17, "canister", { "blend": "canister_air", "open": true }),
         (15, 22, "canister", { "blend": "canister_air", "open": true }), (17, 22, "canister", { "blend": "canister_air", "open": true }),
         (19, 25, "canister", { "blend": "canister_air", "open": true }), (23, 26, "canister", { "blend": "canister_air", "open": true }),
+        // The odd one out, on the free tile between two air bottles: the
+        // same shell with ten litres of WATER in it and the valve shut.
+        // A canister is a shell and a valve; the charge decides what it
+        // is a bottle of. Shut because a valve that let a liquid out
+        // would be a mechanism nobody has built yet -- opening it vents
+        // the headspace and leaves the slug standing.
+        (16, 22, "canister", { "blend": "water_10l" }),
     ],
     // The two vestibule interlocks: each airlock names the direction its
     // partner lies in, and the link resolves only because BOTH of them
@@ -1193,6 +1204,15 @@
         "plasma_23000kpa": (rows: [("plasma", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
         "tritium_23000kpa": (rows: [("tritium", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
         "water_67268kpa": (rows: [("water:gas", 27599.96916195394)], temperature_k: 293.15, amount: per_tile),
+        // The two stores that are not gas at all, mirrored from
+        // content/blends/ where their arithmetic is spelled out. Both are
+        // `total`, because a dose is a dose whatever shell it went into:
+        // ten litres of water in a supply bottle, and two moles of ice in
+        // a fifty-millilitre beaker. Neither row needs a `:gas` suffix and
+        // the ice names its phase anyway, so warming the file never turns
+        // the lump into a puddle by accident.
+        "water_10l": (rows: [("water", 555.0929780738273)], temperature_k: 293.15, amount: total),
+        "ice_block": (rows: [("water:solid", 2.0)], temperature_k: 263.15, amount: total),
     },
     painted: [
         (15, 33, "o2_5000kpa"),
