@@ -61,7 +61,15 @@ t.world([==[(
     pipes: [(2, 1, 5), (3, 1, 4)],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
+        // A litre of oil on the deck between the two runs, with the
+        // room's own air riding along so the tile is wet rather than
+        // airless: 170 g/mol over 0.9 g/mL is 188.89 mL a mole, so
+        // 5.294 mol is the litre. Oil rather than water because this
+        // room is sealed and shared -- a volatile would fog every tile
+        // in it and every share below would be a share of the fog.
+        "oil_1l": (rows: [("oil", 5.294117647058823), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
     },
+    painted: [(2, 1, "oil_1l")],
     structures: [
         (1, 1, "connector_port"),
         (1, 1, "canister", { "blend": "canister_air", "open": true }),
@@ -141,6 +149,27 @@ t.run_ticks(2)
 local ground = t.messages(p)
 assert(has(ground, "Results of analysis of the air."), "a miss means the air")
 assert(not has(ground, "Results of analysis of the layer 3 pipe."), "and never a run nobody touched")
+
+-- ---- and what is lying on it ----
+--
+-- tg's analyzer knows gas and nothing else: tg's reagents and tg's gas
+-- mixtures are unrelated systems and a puddle belongs to neither. One
+-- reading here answers for all three states, so the click that reads
+-- the air over a tile reads what is standing on it too, in the
+-- millilitres a vessel is authored in. Cross-checked against the same
+-- reading the spec API takes, like every other number here.
+local ml = t.room_liquid(2, 1).oil * 1000
+assert(has(ground, "Liquid: " .. r2(ml) .. " mL"), "a litre of oil on the deck: " .. r2(ml))
+assert(
+    has(ground, "Oil: " .. r2(ml) .. " mL (100 %)"),
+    "and it is the whole of what is standing there"
+)
+
+-- The dry deck the other side of the room says nothing about any of
+-- it, which is the negative that makes the two lines above a fact
+-- about that tile rather than a fixed footer.
+assert(matching(air, "Liquid: ", " mL") == nil, "a dry tile prints no puddle")
+assert(matching(air, "Oil: ", " %)") == nil, "and names nothing that is not on it")
 
 -- ---- the bottle ----
 --

@@ -26,6 +26,19 @@ return {
     phase = { unmodeled = "liquid" },
     -- Real concentrated acid, 1.83 g/mL.
     density = { liquid = 1.83 },
+    -- How it flows (docs/chemistry/substances.md, `flow`). Concentrated
+    -- acid is SYRUP: two dozen times water's viscosity, so it takes the
+    -- same spill two dozen times as long to level out. The numbers are
+    -- the 96-98 % band and approximate; there is no one viscosity for a
+    -- liquid whose strength is a range.
+    flow = {
+        -- mPa*s at 20 C (CRC Handbook 97th ed. / NIST WebBook).
+        viscosity = 24.0,
+        -- mN/m at 20 C (CRC Handbook 97th ed. / NIST WebBook).
+        surface_tension = 55.0,
+        -- Degrees on a painted deck: a content judgment, not a measurement.
+        contact_angle = 60,
+    },
     -- What it looks like through glass (tg: toxin_reagents.dm:1258).
     color = "#00FF32",
     -- What a placard says about this substance alone

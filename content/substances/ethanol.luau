@@ -19,6 +19,18 @@ local content = {
     cv = { solid = 112.0, liquid = 112.0, gas = 65.4 },
     phase = { melt = 159.0, boil = 351.5, l_fus = 4900, l_vap = 38560 },
     density = { liquid = 0.789 },
+    -- How it flows (docs/chemistry/substances.md, `flow`). Spirit WETS:
+    -- weak surface tension and an angle that lies almost flat leave a
+    -- film ten times thinner than water's, so a spilled bottle reaches
+    -- ten times as many tiles -- and evaporates off all of them.
+    flow = {
+        -- mPa*s at 20 C (CRC Handbook 97th ed. / NIST WebBook).
+        viscosity = 1.074,
+        -- mN/m at 20 C (CRC Handbook 97th ed. / NIST WebBook).
+        surface_tension = 22.1,
+        -- Degrees on a painted deck: a content judgment, not a measurement.
+        contact_angle = 10,
+    },
     metabolism_rate = 0.002,
     -- What it does over a flame. tg: `burning_temperature = 2193`
     -- ("ethanol burns at 1970C (at its peak)") and `burning_volume =
