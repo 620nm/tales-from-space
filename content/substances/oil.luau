@@ -22,6 +22,20 @@ return {
     phase = { unmodeled = "liquid" },
     -- 0.9 g/mL, a light oil. Convention, not measurement (D2).
     density = { liquid = 0.9 },
+    -- How it flows (docs/chemistry/substances.md, `flow`). Fictional
+    -- like the rest of it, so these are convention rather than
+    -- measurement (D2): a light machine oil, eighty times as thick as
+    -- water and wetting nearly as well as spirit. A slick creeps for a
+    -- minute where a puddle levels in seconds, and lies thin when it
+    -- stops.
+    flow = {
+        -- mPa*s, the reading a light machine oil would give at 20 C.
+        viscosity = 80.0,
+        -- mN/m, a hydrocarbon's; well under water's.
+        surface_tension = 32.0,
+        -- Degrees on a painted deck: a content judgment, not a measurement.
+        contact_angle = 20,
+    },
     burn = { k = 1200, rate = 0.0003125 },
     -- What it looks like through glass (tg: other_reagents.dm:1972).
     color = "#2D2D2D",
