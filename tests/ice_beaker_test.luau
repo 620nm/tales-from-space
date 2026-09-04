@@ -82,7 +82,22 @@ assert(thawing.temp_k > cold.temp_k, "because the room warmed it")
 
 -- ---------------------------------------------------------------
 -- One substance, two states, one amount. Melting is a phase moving,
--- not matter appearing: what came off the lump is in the puddle.
+-- not matter appearing -- but the glass is OPEN, so a little of it
+-- leaves as vapour and the books only balance if the room is on
+-- them. A settling sweep takes the last thousandths off tiles that
+-- were left holding less than the engine has an opinion about, and
+-- `t.nullified` is where those go: gas that fell under the floor,
+-- told apart from gas that went out through a grille.
 -- ---------------------------------------------------------------
 local in_glass = (w.solid or 0.0) + (w.liquid or 0.0) + (w.gas or 0.0)
-near(in_glass, LUMP_MOL, 1e-3, "the water in the glass is the water that was in it")
+assert(in_glass < LUMP_MOL, "the open glass exhaled a little of it")
+
+local in_room = 0.0
+for x = 1, 3 do
+    in_room = in_room + (t.room_gas(x, 1).water or 0.0)
+end
+assert(in_room > 0.0, "and the room over the bench is where it went: " .. in_room)
+
+local swept = t.nullified().water or 0.0
+near(in_glass + in_room + swept, LUMP_MOL, 1e-6,
+    "glass plus room plus sweep is the lump that was set down")
