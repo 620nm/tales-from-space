@@ -12,11 +12,14 @@
 --     liquid, and the shell is still the 2 000 L it always was
 --   * the liquid takes room away from the gas: headspace is the shell
 --     less the slug
---   * a shut bottle of water reads NO pressure. There is no gas in it,
---     and a gauge over a slug of water is a gauge over nothing
---   * open the valve and what appears over the slug is VAPOUR, a couple
---     of kPa of it. The water in the bottle is conserved to the mole:
---     the valve moves what fills its container, and a liquid is not
+--   * a SHUT bottle of water comes to sit at its own vapour pressure.
+--     The headspace saturates whether the valve is open or not, so a
+--     couple of kPa of steam stands over the slug and the slug pays
+--     the latent heat for it -- the bottle is a degree or two colder
+--     than the room it was filled in
+--   * throw the valve and nothing changes but which side of it the
+--     vapour is on. The water in the bottle is conserved to the mole:
+--     a valve moves what fills its container, and a liquid is not
 --     that (the engine marks the gap itself)
 
 t.world([==[(
@@ -71,17 +74,36 @@ near(shut.headspace_l, SHELL_L - SLUG_L, 0.1,
     "the slug takes its ten litres out of the headspace")
 
 -- ---------------------------------------------------------------
--- A shut bottle of water reads nothing. Pressure is what a gas does
--- to its container and there is no gas in here, so the gauge is
--- honest at zero rather than reporting the water as if it were.
+-- Leave it standing SHUT. The headspace does not stay empty: the
+-- bottle settles on its own cadence whether or not the valve is
+-- open, and what a slug of water at room temperature puts over
+-- itself is a couple of kPa of steam. The gauge reads that and not
+-- the water, which is the honest thing for a gauge to read.
+--
+-- The slug pays for it in latent heat, so the bottle ends up a
+-- couple of degrees under the room it was filled in.
 -- ---------------------------------------------------------------
-near(shut.pressure_kpa, 0.0, 1e-9, "a slug of water pushes on nothing")
-near(t.canister_pressure(2, 1), 0.0, 1e-9, "and the bottle's own gauge agrees")
+t.run_ticks(200)
+
+local settled = t.vessel(can)
+local s = settled.contents.water
+assert(s ~= nil, "the water is still in there")
+assert(s.gas ~= nil and s.gas > 0.0,
+    "a shut bottle of water stands over its own vapour")
+assert(settled.pressure_kpa >= 1.0 and settled.pressure_kpa <= 10.0,
+    "vapour pressure, not a pressure: " .. settled.pressure_kpa)
+near(t.canister_pressure(2, 1), settled.pressure_kpa, 1e-6,
+    "the gauge on the bottle and the reading in the panel are one number")
+assert(settled.temp_k < 293.15,
+    "boiling off the vapour cost the slug its heat: " .. settled.temp_k)
+near((s.liquid or 0.0) + (s.gas or 0.0) + (s.solid or 0.0), CHARGE_MOL, 1e-6,
+    "and nothing was made or lost getting there")
 
 -- ---------------------------------------------------------------
--- Open the valve. The headspace comes to sit over the water, which
--- means VAPOUR: a couple of kPa of it at room temperature, well
--- under the ten a technician would call a pressure.
+-- Now throw the valve. The bottle is loose on the deck, so the
+-- valve is pointed at the room, and the room is at an atmosphere
+-- over a bottle at two kPa -- but even with somewhere to go, the
+-- only thing on that side of the valve is the vapour.
 -- ---------------------------------------------------------------
 t.click(p, 2, 1, can)
 t.tick()
@@ -92,15 +114,6 @@ assert(ui.toggles[1].field == "valve" and ui.toggles[1].on == false,
 t.ui_act(p, "toggle", '{"field":"valve"}')
 t.run_ticks(200)
 
-local open = t.vessel(can)
-local w = open.contents.water
-assert(w ~= nil, "the water is still in there")
-assert(w.gas ~= nil and w.gas > 0.0, "and some of it is standing over itself as vapour")
-assert(open.pressure_kpa >= 1.0 and open.pressure_kpa <= 10.0,
-    "vapour over water at room temperature, not a pressure: " .. open.pressure_kpa)
-near(t.canister_pressure(2, 1), open.pressure_kpa, 1e-6,
-    "the gauge on the bottle and the reading in the panel are one number")
-
 -- ---------------------------------------------------------------
 -- And NOTHING LEFT. Every mole the map put in this bottle is still
 -- in it: some of it moved phase, none of it moved through the
@@ -108,6 +121,9 @@ near(t.canister_pressure(2, 1), open.pressure_kpa, 1e-6,
 -- the bottom of the bottle is not that -- which is exactly the gap
 -- the engine marks for itself rather than pretending it is closed.
 -- ---------------------------------------------------------------
+local open = t.vessel(can)
+local w = open.contents.water
+assert(w ~= nil, "the water did not leave through the valve")
 near((w.liquid or 0.0) + (w.gas or 0.0) + (w.solid or 0.0), CHARGE_MOL, 1e-6,
     "the water in the bottle is conserved to the mole")
 assert(w.liquid > CHARGE_MOL * 0.99,
