@@ -91,10 +91,13 @@ assert(look.lines[1]:find("Graduated glass") ~= nil, "the file's prose leads: " 
 assert(has(look, "It is empty."), "and an empty beaker says so: " .. dump(look))
 
 -- ...and the burner, which is holding its own fuel and is not lit.
+-- A condensed row leads with the VOLUME and keeps the moles behind
+-- it: what a crewman is deciding about is how much is in there, and
+-- millilitres are the unit the vessel was authored in.
 local lamp = t.examine(p, 2, 1, burner)
 assert(lamp ~= nil, "the burner answers")
 assert(
-    has(lamp, "0.38 mol of liquid ethanol."),
+    has(lamp, "21.9 mL · 0.38 mol of liquid ethanol."),
     "what is in it, by name and state: " .. dump(lamp)
 )
 assert(not has(lamp, "It is lit."), "and it is not burning yet: " .. dump(lamp))
@@ -152,8 +155,8 @@ assert(dispenser.lines[1]:find("shelf of taps") ~= nil, "with its file's prose: 
 -- ---------------------------------------------------------------
 local mix = t.examine(p, 3, 1, mixed)
 assert(mix ~= nil, "the mixed beaker answers")
-assert(has(mix, "0.20 mol of liquid water."), "water, and it is liquid: " .. dump(mix))
-assert(has(mix, "0.15 mol of liquid libital."), "so is the libital: " .. dump(mix))
+assert(has(mix, "3.6 mL · 0.20 mol of liquid water."), "water, and it is liquid: " .. dump(mix))
+assert(has(mix, "27.0 mL · 0.15 mol of liquid libital."), "so is the libital: " .. dump(mix))
 
 -- Most first, the way the chem panel's rows are ordered: whatever this
 -- mostly is leads.
@@ -167,10 +170,10 @@ for _, l in ipairs(mix.lines) do
         end
     end
 end
-assert(first == "0.20 mol of liquid water.", "the larger share leads: " .. dump(mix))
-assert(second == "0.15 mol of liquid libital.", "and the smaller follows: " .. dump(mix))
+assert(first == "3.6 mL · 0.20 mol of liquid water.", "the larger share leads: " .. dump(mix))
+assert(second == "27.0 mL · 0.15 mol of liquid libital.", "and the smaller follows: " .. dump(mix))
 
-local word, color = tinted(mix, "0.20 mol of liquid water.")
+local word, color = tinted(mix, "3.6 mL · 0.20 mol of liquid water.")
 assert(word == "water", "the SUBSTANCE is what carries the colour, not the amount")
 assert(color == "#AAAAAA", "and it is water's own colour: " .. tostring(color))
 
