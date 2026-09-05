@@ -9,9 +9,12 @@ if sim ~= nil then
     d:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local next_mode = (sim.mode(ev.subject).index + 1) % 2
         sim.set_mode(ev.subject, next_mode)
-        sim.message.send({ recipient = ev.actor,
-            message = next_mode == STREAM and "You set the nozzle to stream."
-                or "You set the nozzle to spray." })
+        sim.message.send({
+            recipient = ev.actor,
+            message = sim.msg(next_mode == STREAM
+                and "lunatic/tfs:items.spray_bottle.stream"
+                or "lunatic/tfs:items.spray_bottle.spray", {}),
+        })
         return true
     end)
     d:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)

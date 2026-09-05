@@ -136,7 +136,7 @@ return {
         -- the edge instead, because a noise every pass for an hour is
         -- not a warning, it is furniture.
         sound = "spray",
-        message = "The pressure tank splits along a weld!",
+        message = "lunatic/tfs:structures.stationary_tank.split",
     },
     transitions = {
         -- tg's `welder_act_secondary`: 4 seconds, and the vessel is

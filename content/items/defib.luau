@@ -55,11 +55,11 @@ local function refusal(patient)
         return nil -- not a body at all; the swing is somebody else's business
     end
     if body.animate then
-        return "They do not need it: their heart is beating."      -- tg refuses the living
+        return sim.msg("lunatic/tfs:items.defib.beating", {})      -- tg refuses the living
     end
     for _, id in ipairs(body.thresholds) do
         if id == "dead" then
-            return "Their injuries are too severe to shock through. Treat them first."
+            return sim.msg("lunatic/tfs:items.defib.too_severe", {})
         end
     end
     local heart, brain = nil, nil
@@ -68,10 +68,10 @@ local function refusal(patient)
         brain = brain or (part.organs and part.organs.brain or nil)
     end
     if not heart then
-        return "There is no heart in there to restart."             -- DEFIB_FAIL_NO_HEART
+        return sim.msg("lunatic/tfs:items.defib.no_heart", {})             -- DEFIB_FAIL_NO_HEART
     end
     if not brain then
-        return "There is nobody left in there to bring back."       -- DEFIB_FAIL_NO_BRAIN
+        return sim.msg("lunatic/tfs:items.defib.no_brain", {})       -- DEFIB_FAIL_NO_BRAIN
     end
     -- DEFIB_FAIL_FAILING_BRAIN (carbon.dm:830-831), and the reason the
     -- cadaver chamber matters: a brain in a corpse DECAYS
@@ -80,7 +80,7 @@ local function refusal(patient)
     -- therefore a real clock a mapper set, and a preserved cadaver has
     -- no clock at all.
     if sim.organ(brain).failing then
-        return "Their brain is too far gone. There is nothing to shock back."
+        return sim.msg("lunatic/tfs:items.defib.brain_gone", {})
     end
     return nil
 end

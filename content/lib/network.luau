@@ -56,19 +56,23 @@ function network.line(node, noun, member)
     -- surface answers `locked` either way and offers no way to tell,
     -- so the line says the one thing that is true of both.
     if state.locked then
-        return "The " .. noun .. " is locked."
+        return sim.msg("lunatic/tfs:lib.network.locked", { noun = noun })
     end
     if state.suspended then
-        return "The " .. noun .. " is not carrying anything. Check what is feeding it."
+        return sim.msg("lunatic/tfs:lib.network.suspended", { noun = noun })
     end
     local held = state.members or 0
     if held == 0 then
-        return "The " .. noun .. " is on the air with nothing joined to it."
+        return sim.msg("lunatic/tfs:lib.network.bare", { noun = noun })
     end
     if held == 1 then
-        return "The " .. noun .. " is on the air, carrying one " .. member .. "."
+        return sim.msg("lunatic/tfs:lib.network.one", { noun = noun, member = member })
     end
-    return "The " .. noun .. " is on the air, carrying " .. held .. " " .. member .. "s."
+    return sim.msg("lunatic/tfs:lib.network.many", {
+        noun = noun,
+        member = member,
+        held = held,
+    })
 end
 
 return network

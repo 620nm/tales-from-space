@@ -42,7 +42,20 @@ keep every `{placeholder}` the English uses, and give it
 read. A key you leave out reads in English; nothing else has to change.
 `locale/fr.json` is a worked partial example.
 
-## The lint
+## The gate
+
+`mod.toml` declares `[localization] require_keys = true`, so the promise
+above is the engine's to keep: it scans the whole content tree at load
+and refuses the round at `file:line` for a `message = "…"` sentence —
+prototype `failure` lines the script loader never evaluates included —
+and `sim.message.send`, `broadcast` and `notify` refuse a bare string at
+the send, which is where a sentence assembled at runtime out of pieces
+turns up. A line a helper RETURNS is under the same rule: return the
+`sim.msg` and let the caller send it.
+
+What the engine does not see is content it draws itself — a transition's
+`start`/`done`, a body's looks, an examine line. Those are still spelled
+in `content/`, and keying them is work this rule has not reached.
 
 `node tools/keyed-messages.mjs` moves any `message = "…"` a send carries
 into the catalog and rewrites the call; a sentence the catalog already

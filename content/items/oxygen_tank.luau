@@ -69,7 +69,7 @@ local content = {
         -- 'sound/effects/spray.ogg', 10, TRUE, -3)`, tanks.dm:386) and
         -- says exactly this (`"[src] springs a leak!"`, tanks.dm:385).
         sound = "spray",
-        message = "The tank springs a leak!",
+        message = "lunatic/tfs:lib.vessel.tank_leak",
     },
     -- And what the object itself has to say about going: the hiss of a
     -- tank's worth of gas arriving where a tank used to be. What the

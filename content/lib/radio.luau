@@ -152,18 +152,21 @@ radio.keyed_words = keyed_words
 -- words (fixtures/access_point.luau, lib/network.luau).
 function radio.status_line(machine)
     if not sim.is_powered(machine) then
-        return "The transceiver is dark. Check what is feeding it."
+        return sim.msg("lunatic/tfs:lib.radio.dark", {})
     end
     local words = keyed_words(machine)
     if words == nil then
-        return "There is no channel keyed into it. Until there is, it carries nothing."
+        return sim.msg("lunatic/tfs:lib.radio.unkeyed", {})
     end
-    local line = "The transceiver is on the air, carrying " .. table.concat(words, " and ")
+    -- The channels are content's own words and travel as ONE argument:
+    -- which sentence frames them is the catalog's to say, and the two
+    -- outcomes are two keys rather than a tail glued on (docs/WORDS.md).
+    local channels = table.concat(words, " and ")
     local state = sim.link_state(machine)
     if state ~= nil and state.parent ~= nil and not state.suspended then
-        return line .. ", relayed through its network."
+        return sim.msg("lunatic/tfs:lib.radio.relayed", { channels = channels })
     end
-    return line .. "."
+    return sim.msg("lunatic/tfs:lib.radio.carrying", { channels = channels })
 end
 
 -- The `speech.radio` policy itself, shared by every transmitting item

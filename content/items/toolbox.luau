@@ -33,12 +33,15 @@ if sim ~= nil then
         sim.sound.play({ asset = "lunatic/tfs:sound/smash", at = target.tile })
         -- One whole sentence per message, the name passed as an
         -- argument rather than glued on with `..`: a fragment joined in
-        -- content is a fragment no catalog can decline
-        -- (docs/LOCALIZATION.md §5). ctx has no msg(key, args) yet, so
-        -- the frame still lives here; when it does, these two calls
-        -- become keys and the arguments are already the arguments.
-        sim.message.send({ recipient = user, message = string.format("You rob %s with the toolbox!", target.name) })
-        sim.message.send({ recipient = target, message = string.format("%s robs you with a toolbox!", user.name) })
+        -- content is a fragment no catalog can decline (docs/WORDS.md).
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.toolbox.rob", { name = target.name }),
+        })
+        sim.message.send({
+            recipient = target,
+            message = sim.msg("lunatic/tfs:items.toolbox.robbed", { name = user.name }),
+        })
         return true
     end)
 end
