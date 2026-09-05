@@ -146,11 +146,14 @@ export default defineStyles([
   }),
   rule("chipval", { color: ink, fontSize: 11, fontWeight: 700 }),
 
-  // The target figure: one atlas cell, aimed at by its own rectangles.
+  // The target figure: one atlas cell at twice its size, so a hand and a
+  // foot are separable at a glance. The renderer scales a cell to the
+  // size its element declares (docs/pack-ui/styles.md), and the aiming
+  // rectangles are percentages of this box, so they follow it.
   rule("doll", {
     position: "relative",
-    width: 32,
-    height: 32,
+    width: 64,
+    height: 64,
     flexShrink: 0,
     backgroundColor: "#04050ab8",
     border: edge(line),
@@ -160,8 +163,9 @@ export default defineStyles([
     position: "absolute",
     left: 0,
     top: 0,
-    width: 32,
-    height: 32,
+    width: 64,
+    height: 64,
+    imageRendering: "pixelated",
     pointerEvents: "none",
   }),
   rule("dollhit", {
