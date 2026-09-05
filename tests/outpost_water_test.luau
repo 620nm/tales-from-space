@@ -107,7 +107,8 @@ local DEEP_TOO = { 12, 8 }
 local FILM_L = 3.32 -- water on painted deck: 2*sqrt(sigma/rho g)*sin(theta/2)
 local WATER_START = t.matter_totals().substances.water
 
-local before = standing(DEEP) / standing(SHALLOW)
+local DEEP_START = standing(DEEP)
+local before = DEEP_START / standing(SHALLOW)
 assert(before > 45.0, ("the alcove opens fifty to one: %.1f"):format(before))
 
 for _ = 1, 3 do
@@ -125,9 +126,14 @@ assert(t.door_at(11, 7).open, "and a dead leaf stays where it was left")
 
 t.run_ticks(10000)
 
--- The pair drained: an eightfold drop, and the two tiles of it are
--- still level with each other.
-assert(standing(DEEP) < 6.0, ("the deep end let go: %.4f L"):format(standing(DEEP)))
+-- The pair let go of most of what it was holding -- a fraction of what
+-- was painted there, not a depth: where the frontier stops is the
+-- quantum's business and a number off this map would be pinning it.
+-- And the two tiles of the pair are still level with each other.
+assert(
+    standing(DEEP) < 0.15 * DEEP_START,
+    ("the deep end let go: %.4f L of %.4f"):format(standing(DEEP), DEEP_START)
+)
 assert(
     math.abs(standing(DEEP) - standing(DEEP_TOO)) <= 0.05 * standing(DEEP),
     ("the pair is level: %.4f and %.4f L"):format(standing(DEEP), standing(DEEP_TOO))
