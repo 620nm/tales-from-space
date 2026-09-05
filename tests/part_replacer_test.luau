@@ -40,6 +40,13 @@ local function row(ui, label)
     return nil
 end
 
+-- A socket row's two numbers ride one label id, as ARGUMENTS the pack
+-- frames into a sentence (sim/ui/settings/parts.rs).
+local function worth(value)
+    assert(value.id == "parts.tier", "the numbers ride a label id: " .. tostring(word(value)))
+    return tonumber(value.args.tier), tonumber(value.args.efficiency)
+end
+
 -- The chamber's one part row, read off a panel opened with a BARE hand
 -- -- a click with something in it is that thing being used.
 local function socket(p, x, y)
@@ -127,7 +134,9 @@ assert(t.hands(p).held == nil, "and clicking the chamber with it puts it in")
 
 local before = socket(p, 2, 1)
 assert(before.label.text == "micro-laser", "nobody has upgraded it: " .. word(before.label))
-assert(before.value.text == "tier 1 · 1.00", "the plain rung, worth the plain part: " .. word(before.value))
+local tier, eff = worth(before.value)
+assert(tier == 1 and math.abs(eff - 1.0) < 1e-9,
+    "the plain rung, worth the plain part: " .. tier .. " " .. eff)
 
 t.click(p, 2, 1, heater)
 t.tick()
@@ -180,8 +189,9 @@ t.swap_hands(p)
 local after = socket(p, 2, 1)
 assert(after.label.text == "ultra-high-power micro-laser",
     "and the panel names what is in there now: " .. word(after.label))
-assert(after.value.text == "tier 3 · 2.00",
-    "against its rung and what it is worth: " .. word(after.value))
+local after_tier, after_eff = worth(after.value)
+assert(after_tier == 3 and math.abs(after_eff - 2.0) < 1e-9,
+    "against its rung and what it is worth: " .. after_tier .. " " .. after_eff)
 
 -- ---------------------------------------------------------------
 -- FOUR: AND A SECOND CLICK IS NOTHING AT ALL.
@@ -198,7 +208,8 @@ assert(#t.ledger_rows("part_swapped") == 1, "still one swap on the record")
 assert(table.concat(t.messages(p), " | "):find("any better", 1, true) ~= nil,
     "and the refusal is the tool's own line")
 t.swap_hands(p)
-assert(socket(p, 2, 1).value.text == "tier 3 · 2.00", "the socket is where it was")
+local still_tier, still_eff = worth(socket(p, 2, 1).value)
+assert(still_tier == 3 and math.abs(still_eff - 2.0) < 1e-9, "the socket is where it was")
 
 -- ---------------------------------------------------------------
 -- FIVE: THE BEAKER AGREES WITH THE PANEL.
