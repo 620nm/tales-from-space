@@ -17,6 +17,12 @@ import { toggleRows } from "./documents-choices";
 import { column, entry, press, row, some, text } from "./view";
 import * as S from "./strings";
 
+// A value longer than the row's cap is refused outright by
+// `Sim::ui_act`, and no node in the vocabulary carries a length limit,
+// so an over-long entry is cut here rather than pressed into silence.
+const capped = (value: string, max: number | undefined): string =>
+  max === undefined ? value : [...value].slice(0, Math.max(0, max)).join("");
+
 const TONES: Tone[] = ["on", "off", "idle"];
 const toneOf = (tone: string | null | undefined): Tone | undefined =>
   TONES.find((known) => known === tone);
@@ -62,7 +68,7 @@ function labelRow(
           (e) =>
             documentAction(doc, "action", {
               action: entryRow.action,
-              value: e.value ?? "",
+              value: capped(e.value ?? "", entryRow.max_length),
             }),
           { submit: box, variant: "primary", disabled: !active },
         ),
