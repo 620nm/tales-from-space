@@ -104,6 +104,26 @@ assert(
         :format(t.matter_totals().substances.water, POURED)
 )
 
+-- Accounted for WHERE. The books balance because the drain's register
+-- is inside them, and there are three registers a mole can leave the
+-- deck into: what went out through a hull breach (`vented`), what the
+-- settling sweep took off a tile the engine had a rounding opinion
+-- about (`t.nullified`), and what a grating swallowed (`t.drained`).
+-- A pass that booked this flood into either of the others would balance
+-- exactly as well, so the spec names the one it means.
+--
+-- 6.683 L over the film, at 55.51 mol/L, is 371 mol.
+local EXPECTED_DRAINED = (10.0 - FILM_L) * 55.51
+local swallowed = t.drained().water or 0
+assert(
+    math.abs(swallowed - EXPECTED_DRAINED) < 0.01 * EXPECTED_DRAINED,
+    ("the grating swallowed it: %.4f mol against %.4f"):format(swallowed, EXPECTED_DRAINED)
+)
+assert(
+    (t.nullified().water or 0) < 1e-9,
+    ("and no sweep took any of it: %.9f mol"):format(t.nullified().water or 0)
+)
+
 -- ---------------------------------------------------------------
 -- IT DOES NOT REACH PAST ITS OWN TILE.
 --
