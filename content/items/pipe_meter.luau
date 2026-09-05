@@ -43,7 +43,10 @@ if sim ~= nil then
         for index, layer in ipairs(LAYERS) do
             if target.layer == layer then
                 sim.set_mode(self, index - 1)
-                sim.message.send({ recipient = user, message = "Meter layer set to " .. index .. ". Drop it before fastening." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.pipe_meter.layer", { layer = index }),
+                })
                 return true
             end
         end

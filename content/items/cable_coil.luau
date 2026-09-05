@@ -60,7 +60,9 @@ if sim ~= nil then
         sim.set_mode(self, next_index)
         sim.message.send({
             recipient = user,
-            message = "You set the coil to " .. LINES[next_index + 1].name .. ".",
+            message = sim.msg("lunatic/tfs:items.cable_coil.set", {
+                line = LINES[next_index + 1].name,
+            }),
         })
         return true
     end)
@@ -102,14 +104,18 @@ if sim ~= nil then
             if sim.cable(x, y) % (line.mask * 2) >= line.mask then
                 sim.message.send({
                     recipient = user,
-                    message = "Someone already ran " .. line.name .. " through there.",
+                    message = sim.msg("lunatic/tfs:items.cable_coil.taken", {
+                        line = line.name,
+                    }),
                 })
                 return true
             end
             sim.lay_cable(x, y, line.mask)
             sim.message.send({
                 recipient = user,
-                message = "You lay cable on " .. line.name .. ".",
+                message = sim.msg("lunatic/tfs:items.cable_coil.laid", {
+                    line = line.name,
+                }),
             })
         end)
         return true

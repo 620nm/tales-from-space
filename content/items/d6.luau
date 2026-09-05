@@ -37,9 +37,12 @@ local SIDES = 6
 -- rolls a 1 too often for the remark to stay funny, so it says nothing.
 local MIN_SIDES_ALERT = 5
 
-local function comment(result)
+-- Which of this die's lines a face reads under. A bad roll is a
+-- DIFFERENT sentence rather than a clause glued onto one, so the whole
+-- line is authored per outcome (docs/LOCALIZATION.md 5).
+local function variant(result)
     if SIDES > MIN_SIDES_ALERT and result == 1 then
-        return " Ouch, bad luck."
+        return "_bad"
     end
     return ""
 end
@@ -77,7 +80,12 @@ if sim ~= nil then
         -- tg says this to the roller and a fuller sentence to the room
         -- (dice.dm:102-107). We have no visible-message effect yet, so
         -- only the hand that rolled hears it; see the note in d20.luau.
-        sim.message.send({ recipient = user, message = "You roll the d6. It lands on " .. result .. "." .. comment(result) })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.d6.roll" .. variant(result), {
+                face = result,
+            }),
+        })
         return true
     end)
     script_definition:handle("throw.land.done", { kind = "react", route = "land" }, function(ev)
@@ -85,7 +93,12 @@ if sim ~= nil then
         local result = math.random(1, SIDES)
         sim.sound.play({ asset = "lunatic/tfs:sound/dice_roll", at = ev.at })
         sim.appearance.set_state({ entity = self, state = tostring(result) })
-        sim.message.send({ recipient = user, message = "The d6 rolls to a stop, landing on " .. result .. "." .. comment(result) })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.d6.land" .. variant(result), {
+                face = result,
+            }),
+        })
     end)
 end
 

@@ -52,14 +52,19 @@ if sim ~= nil then
         if live == nil then
             return { replaced = false }
         end
-        local carrying = {}
-        if live.equipment then
-            carrying[#carrying + 1] = "equipment"
+        -- One authored line per state of the pair: "equipment and
+        -- lighting" is two words and a conjunction, and joining those
+        -- three is the composition rule's third clause
+        -- (docs/LOCALIZATION.md 5).
+        local carrying = nil
+        if live.equipment and live.lighting then
+            carrying = "carrying_both"
+        elseif live.equipment then
+            carrying = "carrying_equipment"
+        elseif live.lighting then
+            carrying = "carrying_lighting"
         end
-        if live.lighting then
-            carrying[#carrying + 1] = "lighting"
-        end
-        if #carrying == 0 then
+        if carrying == nil then
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:items.multitool.the_cable_here_is_dead", {}),
@@ -67,7 +72,7 @@ if sim ~= nil then
         else
             sim.message.send({
                 recipient = user,
-                message = "The cable here is carrying " .. table.concat(carrying, " and ") .. ".",
+                message = sim.msg("lunatic/tfs:items.multitool." .. carrying, {}),
             })
         end
         return true

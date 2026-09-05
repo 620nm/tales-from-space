@@ -67,7 +67,10 @@ if sim ~= nil then
             end
         end
         sim.set_mode(self, next_layer - 1)
-        sim.message.send({ recipient = user, message = "Pipe layer set to " .. next_layer .. "." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.he_pipe.layer", { layer = next_layer }),
+        })
         return true
     end)
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)

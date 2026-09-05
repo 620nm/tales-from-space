@@ -295,12 +295,16 @@ if sim ~= nil then
             if mode == DRAW then
                 sim.message.send({
                     recipient = user,
-                    message = "You take a sample from " .. victim.name .. ".",
+                    message = sim.msg("lunatic/tfs:items.syringe.sampled", {
+                        victim = victim.name,
+                    }),
                 })
             else
                 sim.message.send({
                     recipient = user,
-                    message = "You inject " .. victim.name .. ".",
+                    message = sim.msg("lunatic/tfs:items.syringe.injected", {
+                        victim = victim.name,
+                    }),
                 })
             end
             sim.message.send({

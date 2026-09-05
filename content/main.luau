@@ -61,16 +61,10 @@ sim.handle("matter.extinguished.done", { kind = "react" }, tally("fires_out"))
 --
 -- Each line is one finished sentence with its values passed in, never a
 -- fragment another site frames (docs/LOCALIZATION.md §5). The last
--- minute gets its own line rather than a plural carrying a one.
-sim.define("message", "lunatic/tfs:shift_warning", {
-    template = "The shift ends in {minutes} minutes.",
-    placeholders = { "minutes" },
-})
-sim.define("message", "lunatic/tfs:shift_final_minute", {
-    template = "The shift ends in one minute.",
-    placeholders = {},
-})
-sim.define("message", "lunatic/tfs:shift_over", {
-    template = "The shift is over. Stand by for relief.",
-    placeholders = {},
-})
+-- minute gets its own line rather than a plural carrying a one. What
+-- each one SAYS is in `locale/<tag>.json` beside every other word this
+-- pack has; declared here because the shift's keys are the pack's own
+-- vocabulary whether or not a language renders them.
+sim.define("message", "lunatic/tfs:shift_warning", { placeholders = { "minutes" } })
+sim.define("message", "lunatic/tfs:shift_final_minute", { placeholders = {} })
+sim.define("message", "lunatic/tfs:shift_over", { placeholders = {} })

@@ -112,7 +112,9 @@ if sim ~= nil then
             sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = user.tile })
             sim.message.send({
                 recipient = user,
-                message = "You turn the card over. It is the " .. cards.NAMES[key] .. ".",
+                message = sim.msg("lunatic/tfs:items.card.turned", {
+                    card = cards.NAMES[key],
+                }),
             })
         end
         return true

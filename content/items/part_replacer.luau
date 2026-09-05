@@ -79,7 +79,9 @@ if sim ~= nil then
             sim.sound.play({ asset = "lunatic/tfs:sound/part_swap", at = ev.at })
             sim.message.send({
                 recipient = ev.actor,
-                message = "You swap out " .. fitted .. " of its parts.",
+                message = sim.msg("lunatic/tfs:items.part_replacer.swapped", {
+                    count = fitted,
+                }),
             })
         end
         return true
