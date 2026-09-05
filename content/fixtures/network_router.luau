@@ -33,7 +33,7 @@ if sim ~= nil then
         end
         local said = network.line(ev.subject, NOUN, MEMBER)
         if said == nil then
-            said = "There is no card in it. Until there is, it tops nothing."
+            said = sim.msg("lunatic/tfs:fixtures.network_router.no_card", {})
         end
         sim.message.send({ recipient = ev.actor, message = said })
     end)

@@ -53,6 +53,12 @@ prototype_handlers = true
 global_handlers = true
 notify_audience = true
 
+# This pack spells no sentence: every player-visible line it sends names
+# a catalog key, prototype `failure` lines included, and the engine
+# refuses the round over a literal (docs/WORDS.md).
+[localization]
+require_keys = true
+
 [notifications]
 sender = "Charter Command"
 channel = "Common"

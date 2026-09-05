@@ -43,7 +43,7 @@ if sim ~= nil then
         local said = network.line(ev.subject, NOUN, MEMBER)
         if said == nil then
             -- No address at all, which for a socketed box is one thing.
-            said = "There is no card in it. Until there is, it is on no network."
+            said = sim.msg("lunatic/tfs:lib.network.no_card", {})
         end
         sim.message.send({ recipient = ev.actor, message = said })
     end)

@@ -118,7 +118,7 @@ return {
         -- tg's own noise for it (`playsound(src.loc,
         -- 'sound/effects/spray.ogg', 10, TRUE, -3)`, canister.dm:488).
         sound = "spray",
-        message = "The canister splits open!",
+        message = "lunatic/tfs:structures.canister.split",
     },
     transitions = {
         {
