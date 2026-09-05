@@ -9,8 +9,18 @@ import { crewPanels } from "./lobby";
 import { chatPanel } from "./chat";
 import { inspectionPanels } from "./inspect";
 import { worldOverlays } from "./world-overlays";
-import { inventory, shortcut } from "./inventory";
+import { inventory, shortcut, TRAY_WIDE } from "./inventory";
+import { bodyTarget } from "./doll";
+import { storageRegion } from "./inventory-storage";
 import { documents } from "./documents";
+
+// The bottom-right stack, from the station's edge upwards: the tray, the
+// target figure, and an open container beside the figure. Each is its own
+// HUD region, so opening a bag moves nothing else. The tray's own height
+// is the head row, one row of squares and the verbs — 158px at its
+// tallest, with a held container's Open row and a wrapped verb row.
+const TRAY_TOP = 164;
+const DOLL_WIDE = 80;
 
 const ui: GuestUi = {
   render(raw) {
@@ -22,6 +32,21 @@ const ui: GuestUi = {
     children.push(...crewPanels(view));
     const tray = inventory(view);
     if (tray) children.push(tray);
+    const target = bodyTarget(view, {
+      style: { position: "absolute", right: 14, bottom: TRAY_TOP },
+    });
+    if (target) children.push(target);
+    const stored = storageRegion(view, {
+      style: {
+        position: "absolute",
+        right: 14 + DOLL_WIDE,
+        bottom: TRAY_TOP,
+        width: TRAY_WIDE - DOLL_WIDE,
+        maxHeight: "40%",
+        overflowY: "auto",
+      },
+    });
+    if (stored) children.push(stored);
     children.push(...chatPanel(view));
     const docs = documents(view);
     if (docs.length)
