@@ -1,230 +1,162 @@
-import { documentAction } from "./document-action";
-import type { Json } from "@lunatic/ui";
+// One pane per open document. The discriminator picks the body — build,
+// script, or the generic module document — and a module document's
+// `presentation` picks the SHAPE it is drawn in, never a renderer and
+// never an act (docs/tgui/documents.md).
+import type { Json, UiNode } from "@lunatic/ui";
+import { Pane, Section, Table, TitleBar } from "@lunatic/ui";
 import type { GameplayView } from "./model";
 import type {
+  BuildState,
   DocumentIdentity,
   DocumentState,
-  BuildState,
-  ScriptState,
   ModuleState,
+  Presentation,
+  ScriptState,
 } from "./document-model";
-import { button, column, icon, input, node, pane, row, text } from "./view";
-import type { UiNode } from "@lunatic/ui";
-import { files, retainOpenFileBuffers } from "./files";
+import { documentAction } from "./document-action";
+import { moduleBody } from "./documents-modules";
+import { shelfRows } from "./documents-shelf";
+import { filePanes, retainOpenFileBuffers } from "./files";
+import { bind, entry, icon, press, row, some, text } from "./view";
+import * as S from "./strings";
+
+const WIDTH: Record<Presentation, number> = {
+  modules: 420,
+  choices: 460,
+  visual_choices: 520,
+  shelf: 460,
+  panes: 640,
+};
 
 export function documents(view: GameplayView): UiNode[] {
-  const openDocuments = Object.values(view.documents ?? {});
-  retainOpenFileBuffers(openDocuments);
-  return openDocuments.map((doc) => {
+  const open = Object.values(view.documents ?? {});
+  retainOpenFileBuffers(open);
+  return open.map((doc) => {
     const id = `doc/${doc.id}/${doc.generation}`;
     // A provider that sent no state, or one that is not a record, still
-    // gets its frame and its close button rather than taking the
+    // gets its frame and its close press rather than taking the
     // interface down.
     const state: Partial<DocumentState> = doc.state ?? {};
     const active = state.status === undefined || state.status >= 2;
-    const children: UiNode[] = [
-      row(`${id}/title`, [
-        text(`${id}/name`, doc.title),
-        button(`${id}/close`, "✕", {
-          kind: "close",
-          document: doc.id,
-          generation: doc.generation,
-        }),
-      ]),
-    ];
+    const head = TitleBar(`${id}/title`, doc.title, {
+      closeEvent: bind(`${id}/close`, {
+        kind: "close",
+        document: doc.id,
+        generation: doc.generation,
+      }),
+    });
+    let body: UiNode[];
+    let width = WIDTH.modules;
     if (state.document === "build") {
-      children.push(...buildRows(id, doc, state, view.state?.armed));
+      body = buildRows(id, doc, state, view.state?.armed);
     } else if (state.document === "script") {
-      children.push(...scriptRows(id, doc, state, active));
+      body = scriptRows(id, doc, state, active);
     } else {
       // Anything a provider does not name is read as a module document,
       // which is what every field below is optional for.
-      children.push(
-        ...moduleRows(id, doc, state as Partial<ModuleState>, active),
-      );
+      const module = state as Partial<ModuleState>;
+      width = WIDTH[module.presentation ?? "modules"] ?? WIDTH.modules;
+      body = [
+        ...moduleBody(id, doc, module, active),
+        ...(module.products?.length
+          ? shelfRows(id, doc, module.products, active)
+          : []),
+        ...(module.stores ? filePanes(id, doc, module, active) : []),
+      ];
     }
-    return pane(id, children, { maxHeight: 440 });
+    return Pane(id, [head, ...body], {
+      style: { width, maxWidth: "100%", maxHeight: 540 },
+    });
   });
 }
 
-function dataRows(id: string, value: Json, depth = 0): UiNode[] {
-  if (depth > 4 || value == null) return [];
-  if (typeof value !== "object") return [text(id, value)];
-  return Object.entries(value)
-    .slice(0, 32)
-    .flatMap(([key, entry], index) => {
-      const child = `${id}/${index}`;
-      if (entry && typeof entry === "object")
-        return [
-          column(child, [
-            text(`${child}/label`, key),
-            ...dataRows(`${child}/value`, entry, depth + 1),
-          ]),
-        ];
-      return [
-        row(child, [
-          text(`${child}/label`, key),
-          text(`${child}/value`, entry),
-        ]),
-      ];
-    });
-}
-
+/** The construction roster: what a recipe costs, and which one is armed. */
 function buildRows(
   id: string,
   doc: DocumentIdentity,
   state: Partial<BuildState>,
   armed: number | undefined,
 ): UiNode[] {
-  const children: UiNode[] = [];
-
-  children.push(
-    ...(state.recipes ?? []).map((recipe, index: number) =>
-      row(`${id}/recipe/${index}`, [
-        icon(`${id}/recipe/${index}/icon`, recipe.sprite),
-        button(
-          `${id}/recipe/${index}/arm`,
-          `${armed === index ? "● " : ""}${recipe.label} · have ${recipe.have} · costs ${recipe.cost} · ${recipe.secs}s`,
-          {
-            kind: "arm",
-            document: doc.id,
-            generation: doc.generation,
-            index,
-          },
-          recipe.have < recipe.cost,
-        ),
-      ]),
-    ),
-  );
-
-  return children;
+  const rows = (state.recipes ?? []).map((recipe, index) => {
+    const key = `${id}/recipe/${index}`;
+    return [
+      icon(`${key}/icon`, recipe.sprite) ?? text(`${key}/icon`, ""),
+      text(`${key}/name`, recipe.label, ["pname"]),
+      text(
+        `${key}/cost`,
+        S.recipeCost(recipe.have ?? 0, recipe.cost ?? 0, recipe.secs ?? 0),
+        ["stock"],
+      ),
+      press(
+        `${key}/arm`,
+        armed === index ? S.ARMED : S.ARM,
+        { kind: "arm", document: doc.id, generation: doc.generation, index },
+        {
+          variant: armed === index ? "selected" : "primary",
+          disabled: (recipe.have ?? 0) < (recipe.cost ?? 0),
+        },
+      ),
+    ];
+  });
+  return rows.length
+    ? [Table(`${id}/recipes`, [32, "1fr", "auto", "auto"], rows)]
+    : [];
 }
 
+/** A script view model: its data as readings, its offers as presses. */
 function scriptRows(
   id: string,
   doc: DocumentIdentity,
   state: Partial<ScriptState>,
   active: boolean,
 ): UiNode[] {
-  const children: UiNode[] = [];
-
-  children.push(...dataRows(`${id}/data`, state.data ?? null));
-  children.push(
-    ...(state.actions ?? []).map((action, index: number) =>
-      action.input
-        ? row(`${id}/action/${index}`, [
-            text(`${id}/action/${index}/label`, action.id),
-            input(`${id}/action/${index}/value`, "", (value) =>
-              documentAction(doc, action.id, { value }),
-            ),
-          ])
-        : button(
-            `${id}/action/${index}`,
-            action.id,
-            documentAction(doc, action.id, {}),
-            !active,
+  return [
+    ...(state.data == null ? [] : dataRows(`${id}/data`, state.data)),
+    ...(state.actions ?? []).map((action, index) => {
+      const key = `${id}/action/${index}`;
+      if (!action.input)
+        return press(key, action.id, documentAction(doc, action.id, {}), {
+          disabled: !active,
+        });
+      const box = `${key}/value`;
+      return row(
+        key,
+        [
+          text(`${key}/label`, action.id, ["grow", "list-label"]),
+          entry(box, "", () => undefined, { submitOnly: true }),
+          press(
+            `${key}/send`,
+            S.SET,
+            (e) => documentAction(doc, action.id, { value: e.value ?? "" }),
+            { submit: box, variant: "primary", disabled: !active },
           ),
-    ),
-  );
-
-  return children;
+        ],
+        { cls: ["list-row"] },
+      );
+    }),
+  ];
 }
 
-function moduleRows(
-  id: string,
-  doc: DocumentIdentity,
-  state: Partial<ModuleState>,
-  active: boolean,
-): UiNode[] {
-  const children: UiNode[] = [];
-
-  if (state.notice) children.push(text(`${id}/notice`, state.notice));
-  if (state.gauge !== null && state.gauge !== undefined)
-    children.push(
-      node("progress", `${id}/gauge`, { value: String(state.gauge) }),
-    );
-  children.push(
-    ...(state.readouts ?? []).map((reading, index: number) =>
-      row(`${id}/reading/${index}`, [
-        text(
-          `${id}/reading/${index}/label`,
-          `${reading.section ? `${reading.section} · ` : ""}${reading.label}`,
-        ),
-        text(`${id}/reading/${index}/value`, reading.value),
-      ]),
-    ),
-  );
-  children.push(
-    ...(state.toggles ?? []).map((toggle, index: number) =>
-      button(
-        `${id}/toggle/${index}`,
-        `${toggle.label}: ${toggle.on ? toggle.on_text : toggle.off_text}`,
-        documentAction(doc, "toggle", {
-          field: toggle.field,
-          ...(toggle.option == null ? {} : { option: toggle.option }),
-        }),
-        !active,
-      ),
-    ),
-  );
-  children.push(
-    ...(state.labels ?? []).map((label, index: number) => {
-      const key = `${id}/label/${index}`;
-      const labelNode = text(`${key}/title`, label.label);
-      if (label.row === "press")
-        return row(key, [
-          labelNode,
-          button(
-            `${key}/button`,
-            label.text,
-            documentAction(doc, "toggle", {
-              field: label.field,
-              ...(label.option == null ? {} : { option: label.option }),
-            }),
-            !active || !label.enabled,
+function dataRows(id: string, value: Json, depth = 0): UiNode[] {
+  if (depth > 4 || value == null) return [];
+  if (typeof value !== "object") return [text(id, value, ["list-value"])];
+  return Object.entries(value)
+    .slice(0, 32)
+    .flatMap(([key, held], index) => {
+      const child = `${id}/${index}`;
+      if (held && typeof held === "object")
+        return [
+          Section(child, key, dataRows(`${child}/value`, held, depth + 1)),
+        ];
+      return [
+        row(
+          child,
+          some(
+            text(`${child}/label`, key, ["grow", "list-label"]),
+            text(`${child}/value`, held, ["list-value"]),
           ),
-        ]);
-      if (label.row === "input")
-        return row(key, [
-          labelNode,
-          input(`${key}/value`, "", (value) =>
-            documentAction(doc, "action", { action: label.action, value }),
-          ),
-        ]);
-      return row(key, [labelNode, text(`${key}/word`, label.text)]);
-    }),
-  );
-  children.push(
-    ...(state.setpoints ?? []).map((set, index: number) =>
-      row(`${id}/set/${index}`, [
-        text(`${id}/set/${index}/label`, `${set.label} (${set.unit})`),
-        input(`${id}/set/${index}/value`, String(set.value), (value) => {
-          const number = Number(value);
-          return Number.isFinite(number)
-            ? documentAction(doc, "set", {
-                field: set.field,
-                value: Math.max(set.min, Math.min(set.max, number)),
-              })
-            : undefined;
-        }),
-      ]),
-    ),
-  );
-  children.push(
-    ...(state.products ?? []).map((product, index: number) =>
-      row(`${id}/product/${index}`, [
-        icon(`${id}/product/${index}/icon`, product.sprite),
-        button(
-          `${id}/product/${index}/vend`,
-          `${product.category ? `${product.category} · ` : ""}${product.label} (${product.stock})`,
-          documentAction(doc, product.act, product.payload),
-          !active || product.stock <= 0,
+          { cls: ["list-row"] },
         ),
-      ]),
-    ),
-  );
-  if (state.matter) children.push(...dataRows(`${id}/matter`, state.matter));
-  if (state.stores) children.push(...files(id, doc, state));
-
-  return children;
+      ];
+    });
 }

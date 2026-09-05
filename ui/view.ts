@@ -1,110 +1,136 @@
-import type { UiNode, Json, UiEvent } from "@lunatic/ui";
+// Node plumbing: the id-to-command table every press is registered in,
+// and the thin wrappers the screens build with. Presentation belongs to
+// the kit and `theme.ts`; nothing here spells a colour or a size.
+import type {
+  Json,
+  StyleProps,
+  StyleValue,
+  UiEvent,
+  UiNode,
+} from "@lunatic/ui";
+import { Button, type ButtonOpts } from "@lunatic/ui";
+import { labelText } from "./labels";
+
 export type Command = Record<string, Json>;
-const actions = new Map<
-  string,
-  Command | ((event: UiEvent) => Command | undefined)
->();
+export type Handler = Command | ((event: UiEvent) => Command | undefined);
+export interface Box {
+  cls?: string[];
+  style?: StyleProps;
+}
+
+const actions = new Map<string, Handler>();
+
 export function begin(): void {
   actions.clear();
 }
-export function node(
-  type: UiNode["type"],
-  id: string,
-  extra: Partial<UiNode> = {},
-): UiNode {
-  return { type, id, ...extra };
+
+/** Register what a logical event id means, and answer with that id. */
+export function bind(id: string, action: Handler): string {
+  actions.set(id, action);
+  return id;
 }
-// One node carries at most 4096 UTF-16 units; over that the host
-// quarantines this package, so every label it writes is cut here.
-const TEXT_LIMIT = 4096;
-function label(value: unknown): string {
-  return String(value ?? "").slice(0, TEXT_LIMIT);
+
+export function event(e: UiEvent): { action?: Json } {
+  const action = actions.get(e.id);
+  if (typeof action === "function")
+    return { action: action(e) as Json | undefined };
+  return { action };
 }
-export function text(id: string, value: unknown): UiNode {
-  return node("text", id, { text: label(value) });
-}
-export function column(
-  id: string,
-  children: UiNode[],
-  style: UiNode["style"] = {},
-): UiNode {
-  return node("column", id, { children, style: { gap: 5, ...style } });
-}
-export function row(
+
+function box(
+  type: "panel" | "row" | "column",
   id: string,
   children: UiNode[],
-  style: UiNode["style"] = {},
+  opts: Box,
 ): UiNode {
-  return node("row", id, {
-    children,
-    style: { gap: 5, alignItems: "center", flexWrap: "wrap", ...style },
-  });
+  return {
+    id,
+    type,
+    ...(opts.cls?.length ? { class: opts.cls } : {}),
+    ...(opts.style ? { style: opts.style as Record<string, StyleValue> } : {}),
+    ...(children.length ? { children } : {}),
+  };
 }
-export function pane(
-  id: string,
-  children: UiNode[],
-  style: UiNode["style"] = {},
-): UiNode {
-  return node("panel", id, {
-    children,
-    style: {
-      gap: 6,
-      padding: 10,
-      borderRadius: 4,
-      backgroundColor: "#111",
-      pointerEvents: "auto",
-      overflow: "auto",
-      ...style,
-    },
-  });
+
+export const panel = (id: string, children: UiNode[], opts: Box = {}): UiNode =>
+  box("panel", id, children, opts);
+export const column = (id: string, children: UiNode[], opts: Box = {}): UiNode =>
+  box("column", id, children, opts);
+export const row = (id: string, children: UiNode[], opts: Box = {}): UiNode =>
+  box("row", id, children, opts);
+
+export function text(id: string, value: unknown, cls?: string[]): UiNode {
+  return {
+    id,
+    type: "text",
+    text: labelText(value as Json),
+    ...(cls?.length ? { class: cls } : {}),
+  };
 }
-export function button(
+
+/** A press, bound to what it means. The caller's id lands on the button. */
+export function press(
   id: string,
   caption: unknown,
-  action: Command | ((event: UiEvent) => Command | undefined),
-  disabled = false,
+  action: Handler,
+  opts: Omit<ButtonOpts, "event"> = {},
 ): UiNode {
-  actions.set(id, action);
-  return node("button", id, { text: label(caption), event: id, disabled });
-}
-export function input(
-  id: string,
-  value: string,
-  callback: (value: string) => Command | undefined,
-  multiline = false,
-): UiNode {
-  actions.set(id, (event) => callback(event.value ?? ""));
-  return node(multiline ? "textarea" : "input", id, {
-    value,
-    event: id,
-    ...(id === "chat"
-      ? { submitOnly: true, clearOnSubmit: true, blurOnSubmit: true }
-      : {}),
+  return Button(id, labelText(caption as Json), {
+    ...opts,
+    event: bind(id, action),
   });
 }
+
+export interface FieldOpts extends Box {
+  multiline?: boolean;
+  submitOnly?: boolean;
+  clearOnSubmit?: boolean;
+  blurOnSubmit?: boolean;
+  revision?: number;
+}
+
+export function entry(
+  id: string,
+  value: string,
+  callback: (value: string, e: UiEvent) => Command | undefined,
+  opts: FieldOpts = {},
+): UiNode {
+  bind(id, (e) => callback(e.value ?? "", e));
+  return {
+    id,
+    type: opts.multiline ? "textarea" : "input",
+    value,
+    event: id,
+    class: [opts.multiline ? "area" : "entry", ...(opts.cls ?? [])],
+    ...(opts.style ? { style: opts.style as Record<string, StyleValue> } : {}),
+    ...(opts.submitOnly ? { submitOnly: true } : {}),
+    ...(opts.clearOnSubmit ? { clearOnSubmit: true } : {}),
+    ...(opts.blurOnSubmit ? { blurOnSubmit: true } : {}),
+    ...(opts.revision === undefined ? {} : { revision: opts.revision }),
+  };
+}
+
 export function icon(
   id: string,
   sprite: string | null | undefined,
   label = "",
-): UiNode {
+  cls: string[] = [],
+): UiNode | null {
   return sprite
-    ? node("image", id, {
-        asset: sprite,
-        text: label,
-        style: { width: 32, height: 32 },
-      })
-    : text(id, "");
-}
-export function event(event: UiEvent): { action?: Json } {
-  const action = actions.get(event.id);
-  if (typeof action === "function")
-    return { action: action(event) as Json | undefined };
-  return { action: action };
-}
-export function inspect(target: Json): Command {
-  return { kind: "examine", target };
+    ? { id, type: "image", asset: sprite, text: label, class: ["icon", ...cls] }
+    : null;
 }
 
-export function item(button: UiNode, token: string): UiNode {
-  return { ...button, item: token };
-}
+export const inspect = (target: Json): Command => ({
+  kind: "examine",
+  target,
+});
+
+/** Hang a drag token off a press the native inventory validates. */
+export const withItem = (node: UiNode, token: string): UiNode => ({
+  ...node,
+  item: token,
+});
+
+export const some = (...nodes: (UiNode | null | false)[]): UiNode[] =>
+  nodes.filter((node): node is UiNode => !!node);

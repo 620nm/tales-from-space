@@ -1,12 +1,17 @@
+// The files presentation: store readings full width, then the listing
+// and the editor side by side. Submitted text is retained here until a
+// server revision acknowledges it (docs/pack-ui/sdk.md).
+import type { UiNode } from "@lunatic/ui";
+import { LabeledList, Notice } from "@lunatic/ui";
 import type {
   DocumentIdentity,
   ModuleState,
   OpenFile,
   PanelDocument,
 } from "./document-model";
-import type { UiNode } from "@lunatic/ui";
-import { button, column, input, row, text } from "./view";
 import { documentAction } from "./document-action";
+import { column, entry, panel, press, row, some, text } from "./view";
+import * as S from "./strings";
 
 interface Buffer {
   key: number;
@@ -18,138 +23,212 @@ interface Buffer {
 const buffers = new Map<string, Buffer>();
 let nextEditor = 0;
 
-export function files(
+export function filePanes(
   id: string,
   doc: DocumentIdentity,
   state: Partial<ModuleState>,
+  active: boolean,
 ): UiNode[] {
-  const children: UiNode[] = [];
-  children.push(
-    ...(state.stores ?? []).map((store, index: number) =>
-      text(
-        `${id}/store/${index}`,
-        `${store.label}: ${store.used}/${store.capacity} bytes · ${store.count}/${store.count_cap} files`,
-      ),
-    ),
-  );
-  if (state.media_slot === "loaded")
-    children.push(
-      button(
-        `${id}/eject`,
-        "Eject media",
-        documentAction(doc, "toggle", { field: "media_eject" }),
+  const stores = state.stores ?? [];
+  const out: UiNode[] = [];
+  if (stores.length)
+    out.push(
+      LabeledList(
+        `${id}/stores`,
+        stores.map((store) => ({
+          label: store.label,
+          value: S.storeUse(
+            store.used ?? 0,
+            store.capacity ?? 0,
+            store.count ?? 0,
+            store.count_cap ?? 0,
+          ),
+        })),
       ),
     );
-  for (const [index, file] of (state.files ?? []).entries()) {
-    const option = `${file.store}:${file.uid}`;
-    children.push(
-      row(`${id}/file/${index}`, [
-        button(
-          `${id}/file/${index}/open`,
-          `${file.name}.${file.ext} (${file.size} bytes)`,
-          documentAction(doc, "toggle", { field: "file_open", option }),
-        ),
-        ...((state.stores ?? []).length > 1
-          ? [
-              button(
-                `${id}/file/${index}/copy`,
-                "Copy",
-                documentAction(doc, "toggle", { field: "file_copy", option }),
-              ),
-            ]
-          : []),
-        button(
-          `${id}/file/${index}/delete`,
-          "Delete",
-          documentAction(doc, "toggle", { field: "file_delete", option }),
-        ),
+  if (state.media_slot === "loaded")
+    out.push(
+      row(
+        `${id}/media`,
+        [
+          text(`${id}/media/label`, S.MEDIA, ["grow", "list-label"]),
+          press(
+            `${id}/eject`,
+            S.EJECT,
+            documentAction(doc, "toggle", { field: "media_eject" }),
+            { disabled: !active },
+          ),
+        ],
+        { cls: ["list-row"] },
+      ),
+    );
+  else if (state.media_slot === "empty")
+    out.push(
+      LabeledList(`${id}/media`, [
+        { label: S.MEDIA, value: S.MEDIA_EMPTY, tone: "idle" },
       ]),
     );
-  }
-  children.push(
-    row(
-      `${id}/create`,
-      (state.create ?? []).map((ext: string, index: number) =>
-        button(
-          `${id}/create/${index}`,
-          `New .${ext}`,
-          documentAction(doc, "toggle", { field: "file_create", option: ext }),
-        ),
-      ),
+  out.push(
+    panel(
+      `${id}/panes`,
+      [listPane(id, doc, state, active), editorPane(id, doc, state, active)],
+      {
+        cls: ["panes"],
+        style: {
+          display: "grid",
+          gridTemplateColumns: [{ min: 150, max: 210 }, "1fr"],
+        },
+      },
     ),
   );
-  const open = state.open;
-  if (open) {
-    const option = `${open.store}:${open.uid}`;
-    const key = `${id}/${option}`;
-    const current = editorBuffer(key, open);
-    const bodyId = `${id}/editor/body/${current.key}`;
-    const conflict = current.revision !== open.revision;
-    children.push(
-      column(`${id}/editor`, [
-        text(
-          `${id}/editor/title`,
-          `${open.name}.${open.ext}${current.dirty ? " · modified" : ""}`,
-        ),
-        ...(conflict
-          ? [
-              text(
-                `${id}/editor/conflict`,
-                "This file changed while you were editing. Revert to load the current version.",
-              ),
-            ]
-          : []),
-        row(`${id}/editor/rename`, [
+  return out;
+}
+
+/** The listing: one press per entry, then what a new one may be. */
+function listPane(
+  id: string,
+  doc: DocumentIdentity,
+  state: Partial<ModuleState>,
+  active: boolean,
+): UiNode {
+  const many = (state.stores ?? []).length > 1;
+  const rows = (state.files ?? []).map((file, index) => {
+    const key = `${id}/file/${index}`;
+    const option = `${file.store}:${file.uid}`;
+    return row(
+      key,
+      some(
+        press(
+          `${key}/open`,
+          S.fileName(file.name, file.ext),
+          documentAction(doc, "toggle", { field: "file_open", option }),
           {
-            ...input(`${id}/editor/name`, open.name, () => undefined),
-            submitOnly: true,
+            cls: file.open ? ["fname", "fopen"] : ["fname"],
+            variant: file.open ? "selected" : "ghost",
+            disabled: !active,
           },
-          {
-            ...button(`${id}/editor/rename-button`, "Rename", (event) =>
+        ),
+        text(`${key}/size`, S.bytes(file.size ?? 0), ["fsize"]),
+        many
+          ? press(
+              `${key}/copy`,
+              S.COPY,
+              documentAction(doc, "toggle", { field: "file_copy", option }),
+              { variant: "ghost", disabled: !active },
+            )
+          : null,
+        press(
+          `${key}/delete`,
+          S.DELETE,
+          documentAction(doc, "toggle", { field: "file_delete", option }),
+          { variant: "ghost", disabled: !active },
+        ),
+      ),
+      { cls: ["filerow"] },
+    );
+  });
+  const create = (state.create ?? []).map((ext, index) =>
+    press(
+      `${id}/create/${index}`,
+      S.newFile(ext),
+      documentAction(doc, "toggle", { field: "file_create", option: ext }),
+      { disabled: !active },
+    ),
+  );
+  return column(
+    `${id}/list`,
+    [
+      ...rows,
+      ...(create.length
+        ? [row(`${id}/create`, create, { style: { gap: 4, flexWrap: "wrap" } })]
+        : []),
+    ],
+    { cls: ["card"] },
+  );
+}
+
+/** The whole-body editor for whichever entry is open. */
+function editorPane(
+  id: string,
+  doc: DocumentIdentity,
+  state: Partial<ModuleState>,
+  active: boolean,
+): UiNode {
+  const open = state.open;
+  if (!open)
+    return column(`${id}/editor`, [text(`${id}/editor/none`, S.NO_FILE_OPEN, ["hint"])], {
+      cls: ["card"],
+    });
+  const option = `${open.store}:${open.uid}`;
+  const current = editorBuffer(`${id}/${option}`, open);
+  const bodyId = `${id}/editor/body/${current.key}`;
+  const conflict = current.revision !== open.revision;
+  return column(
+    `${id}/editor`,
+    some(
+      text(
+        `${id}/editor/title`,
+        `${S.fileName(open.name, open.ext)}${current.dirty ? ` · ${S.MODIFIED}` : ""}`,
+        ["mstate"],
+      ),
+      conflict
+        ? Notice(`${id}/editor/conflict`, S.CONFLICT, { tone: "off" })
+        : null,
+      row(
+        `${id}/editor/rename`,
+        [
+          entry(`${id}/editor/name`, open.name, () => undefined, {
+            submitOnly: true,
+          }),
+          press(
+            `${id}/editor/rename-button`,
+            S.RENAME,
+            (e) =>
               documentAction(doc, "text", {
                 field: "file_rename",
                 option,
-                text: event.value ?? open.name,
+                text: e.value ?? open.name,
               }),
-            ),
-            submit: `${id}/editor/name`,
-          },
-        ]),
-        {
-          ...input(bodyId, current.text, () => undefined, true),
-          submitOnly: true,
-          revision: current.revision,
-        },
-        row(`${id}/editor/buttons`, [
-          {
-            ...button(
-              `${id}/editor/save`,
-              "Save",
-              (event) => {
-                current.text = event.value ?? current.text;
-                current.revision = event.revision ?? current.revision;
-                current.dirty = true;
-                current.pending = current.text;
-                return documentAction(doc, "text", {
-                  field: "file_save",
-                  option,
-                  text: current.text,
-                  revision: current.revision,
-                });
-              },
-              conflict,
-            ),
-            submit: bodyId,
-          },
-          button(`${id}/editor/revert`, "Revert", () => {
-            buffers.delete(key);
+            { submit: `${id}/editor/name`, disabled: !active },
+          ),
+        ],
+        { style: { gap: 4, alignItems: "center" } },
+      ),
+      entry(bodyId, current.text, () => undefined, {
+        multiline: true,
+        submitOnly: true,
+        revision: current.revision,
+      }),
+      row(
+        `${id}/editor/buttons`,
+        [
+          press(
+            `${id}/editor/save`,
+            S.SAVE,
+            (e) => {
+              current.text = e.value ?? current.text;
+              current.revision = e.revision ?? current.revision;
+              current.dirty = true;
+              current.pending = current.text;
+              return documentAction(doc, "text", {
+                field: "file_save",
+                option,
+                text: current.text,
+                revision: current.revision,
+              });
+            },
+            { submit: bodyId, variant: "primary", disabled: conflict },
+          ),
+          press(`${id}/editor/revert`, S.REVERT, () => {
+            buffers.delete(`${id}/${option}`);
             return undefined;
           }),
-        ]),
-      ]),
-    );
-  }
-  return children;
+        ],
+        { style: { gap: 4 } },
+      ),
+    ),
+    { cls: ["card"] },
+  );
 }
 
 // Keep submitted edits until a matching server revision acknowledges the save.
