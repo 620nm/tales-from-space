@@ -3,9 +3,17 @@ import type { PanelDocument } from "./document-model";
 
 // Consumed projections: lunatic crates/lunatic-client/src/ui/mod.rs and
 // crates/lunatic-core/src/protocol/{messages,types}.rs; docs/PACK-UI.md.
+// Compile-time shapes, never runtime validators: every reader here
+// treats a field as absent rather than trusting it.
+export interface ItemFill {
+  sprite: string;
+  color: string;
+  percent?: number;
+}
 export interface ItemView {
   name: string;
   sprite: string;
+  fill?: ItemFill | null;
 }
 export interface EquipmentSlot {
   id: string;
@@ -25,9 +33,13 @@ export interface InventoryState {
 export interface TargetZone {
   id: string;
   label: string;
+  /** `[x, y, w, h]` in the unit square of the figure. */
+  rect?: [number, number, number, number] | null;
   sprite?: string | null;
+  slot?: number | null;
 }
 export interface LogLine {
+  kind?: string | null;
   channel?: string | null;
   name?: string;
   text: string;
@@ -55,13 +67,13 @@ export interface GameplayView {
     target?: { zone: number };
     throwing?: boolean;
     identity?: { you: number | null; name: string };
-    vitals?: { values: { slot: number; value: number }[] };
-    readouts?: { slots: { label: string; suffix: string }[] };
+    vitals?: { values: { slot: number; value?: number }[] };
+    readouts?: { slots: { label: string; suffix?: string }[] };
     armed?: number;
     examine?: {
       sprite?: string | null;
       title: string;
-      lines: { spans: { text: string }[] }[];
+      lines: { spans: { text: string; color?: string | null }[] }[];
     };
     context?: { sprite?: string | null; name: string; target: Json }[];
     progress?: { job: number; sequence: number; ms: number }[];
