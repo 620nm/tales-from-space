@@ -17,7 +17,8 @@ This standalone repository is loaded by the lunatic engine through
 | `maps/`          | Station maps as RON (`chillstation.ron` is the default; `outpost.ron` is the test/demo map). |
 | `assets/`        | Sprite, sound and whole-picture source manifests plus the tracked `tg-revision` consumed and verified by `cargo run -p xtask -- bake-atlas`. |
 | `tests/`         | Luau specs (`*_test.luau`) run by the engine's spec runner, with focused RON fixtures embedded inline where needed. |
-| `locale/`        | One flat catalog per language, `<tag>.json`, holding every word this pack writes: its interface, its key bindings, a rendering for every settings-module label id, its own message keys, and its wording for the engine keys it overrides. |
+| `locale/`        | One flat catalog per language, `<tag>.json`, holding every word this pack writes: its interface, its key bindings, a rendering for every settings-module label id, its own message keys, and its wording for the engine keys it overrides (`docs/WORDS.md`). |
+| `docs/`          | This pack's own contracts: `WORDS.md`, the catalog grammar. Every other `docs/…` path cited here is the ENGINE's, in the lunatic checkout. |
 | `tools/`         | `keyed-messages.mjs`, which moves a `message = "…"` literal into the catalog and, with `--check`, fails when one comes back. |
 
 ## Running
@@ -58,6 +59,7 @@ supplies the component kit and default theme these screens are built from
 | `strings.ts` | the catalog key behind every word this package writes; no word of its own |
 | `labels.ts` | `labelText`, which renders a server `Label` — an id through the catalog, a quoted word as itself |
 | `view.ts` | node helpers and the id-to-command table every press is registered in |
+| `document-action.ts` | the one builder every panel's act goes out through |
 | `lobby.ts`, `chat.ts`, `inspect.ts` | the crew board and condition card, comms, examine and the tile menu |
 | `inventory.ts`, `inventory-storage.ts`, `doll.ts` | the tray, an opened container, and the body-target figure |
 | `documents.ts` | one pane per document; the discriminator picks the body, `presentation` the shape |
@@ -77,37 +79,6 @@ engine's `web/node_modules` at a config whose `paths` map `@lunatic/ui` to
 `moduleResolution: "bundler"`, `jsx: "react-jsx"`, `jsxImportSource:
 "@lunatic/pack-ui"` and `lib: ["ES2022", "DOM"]` — the same settings
 `web/tsconfig.sdk.json` checks the engine's own fixture package with.
-
-## Words
-
-No player-visible sentence is spelled in this repository's code. `ui/*.ts`
-holds catalog KEYS and `content/**/*.luau` emits them; the words live in
-`locale/<tag>.json`, one flat `{key: template}` object per language whose
-stem is its normalized tag (`docs/localization/catalogs.md`).
-
-A key is `lunatic/tfs:<area>.<name>` — `ui.tray.drop` for the interface,
-`ui.binding.<id>` for a key binding's label, `module.<label id>` for a word
-the server names on a settings panel (`docs/tgui/labels.md`), and
-`<dir>.<file>.<slug>` for a line some Luau file sends. A pack may also
-render an `engine.*` key the engine already emits, which is how this
-station words a refusal the engine states plainly; it may not invent one.
-
-Adding a line: write it in `locale/en.json` and emit
-`sim.msg("lunatic/tfs:<key>", { … })`, whose argument names must be exactly
-the `{placeholders}` the template asks for. One key is one FINISHED
-sentence — never a clause another site frames, a fragment joined with `..`,
-or a list glued together (`docs/LOCALIZATION.md` §5). A per-outcome variant
-is a key of its own, which is why a die has `roll` and `roll_bad`.
-
-Adding a language: copy the keys you want out of `locale/en.json` into
-`locale/<tag>.json`, keep every `{placeholder}` the English uses, and give
-it `lunatic/tfs:locale.name` — its own name, in itself, for the picker to
-read. A key you leave out reads in English; nothing else has to change.
-`locale/fr.json` is a worked partial example.
-
-`node tools/keyed-messages.mjs` moves any `message = "…"` a send carries
-into the catalog and rewrites the call; `--check` writes nothing and fails
-on the first one that comes back. Run the check before committing content.
 
 Editor declarations in `editor/manifest.json` configure the native document engine; see
 `docs/mapping/manifest.md`. Neither UI guests nor server gameplay scripts access
