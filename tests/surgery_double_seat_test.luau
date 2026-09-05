@@ -40,6 +40,17 @@ local pid = t.body_id(patient)
 t.set_zone(left, "head")
 t.set_zone(right, "head")
 
+-- What a candidate button says. An operation ON AN ORGAN is the
+-- `procedure.on_organ` id carrying the two words as arguments; a plain
+-- one is content's own word (docs/tgui/labels.md).
+local function face(label)
+    if type(label) ~= "table" then return tostring(label) end
+    if label.args and label.args.organ then
+        return tostring(label.args.operation) .. " " .. tostring(label.args.organ)
+    end
+    return tostring(label.text or label.id)
+end
+
 local function left_holds(id)
     if t.hands(left).held then t.drop(left); t.tick() end
     t.click(left, 1, 1, t.target_at(1, 1, id))
@@ -76,7 +87,7 @@ assert(win and win.document == "modules" and win.presentation == "choices",
     "the head's organs open a choice document")
 local pick
 for _, tg in ipairs(win.toggles) do
-    if tg.label:find("eyes", 1, true) then pick = tg.option end
+    if face(tg.label):find("eyes", 1, true) then pick = tg.option end
 end
 assert(pick, "the eyes are among the organs to remove")
 t.ui_act(left, "toggle", string.format('{"field":"operation","option":"%s"}', pick))

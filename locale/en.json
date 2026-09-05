@@ -268,6 +268,8 @@
   "lunatic/tfs:module.tank.release_pressure": "release pressure",
   "lunatic/tfs:module.parts.parts": "parts",
   "lunatic/tfs:module.parts.tier": "tier {tier} · {efficiency}",
+  "lunatic/tfs:module.procedure.operate.act": "operate",
+  "lunatic/tfs:module.procedure.on_organ": "{operation} ({organ})",
   "lunatic/tfs:module.procedure.target": "target",
   "lunatic/tfs:module.procedure.status": "status",
   "lunatic/tfs:module.procedure.blood": "blood",

@@ -74,6 +74,8 @@
   "lunatic/tfs:module.canister.valve.shut": "fermée",
   "lunatic/tfs:module.canister.release": "détendeur",
   "lunatic/tfs:module.parts.parts": "pièces",
+  "lunatic/tfs:module.procedure.operate.act": "opérer",
+  "lunatic/tfs:module.procedure.on_organ": "{operation} ({organ})",
   "lunatic/tfs:module.parts.tier": "rang {tier} · {efficiency}",
   "engine.door.refused": "Accès refusé.",
   "engine.door.unpowered": "Les moteurs du sas sont morts.",
