@@ -32,26 +32,9 @@ export function inspectionPanels(view: GameplayView): UiNode[] {
             ),
             { cls: ["titlebar"] },
           ),
-          column(
-            "examine-lines",
-            (look.lines ?? []).map((line, index) =>
-              row(
-                `examine-line/${index}`,
-                (line?.spans ?? []).map((span, place) => {
-                  const paint = span?.color ? color(span.color) : undefined;
-                  return {
-                    id: `examine-line/${index}/${place}`,
-                    type: "text" as const,
-                    text: span?.text ?? "",
-                    class: ["said"],
-                    ...(paint ? { style: { color: paint } } : {}),
-                  };
-                }),
-                { cls: ["line"], style: { gap: 0 } },
-              ),
-            ),
-            { style: { gap: 3 } },
-          ),
+          column("examine-lines", examineLines(look.lines ?? []), {
+            style: { gap: 3 },
+          }),
         ],
         {
           style: {
@@ -114,4 +97,27 @@ export function inspectionPanels(view: GameplayView): UiNode[] {
       ),
     );
   return out;
+}
+
+/** One row per line, one text run per span, each in the colour sent. */
+function examineLines(
+  lines: { spans: { text: string; color?: string | null }[] }[],
+): UiNode[] {
+  if (!lines.length) return [text("examine-empty", S.NOTHING_MORE, ["hint"])];
+  return lines.map((line, index) =>
+    row(
+      `examine-line/${index}`,
+      (line?.spans ?? []).map((span, place) => {
+        const paint = span?.color ? color(span.color) : undefined;
+        return {
+          id: `examine-line/${index}/${place}`,
+          type: "text" as const,
+          text: span?.text ?? "",
+          class: ["said"],
+          ...(paint ? { style: { color: paint } } : {}),
+        };
+      }),
+      { cls: ["line"], style: { gap: 0 } },
+    ),
+  );
 }

@@ -68,6 +68,18 @@ export default defineStyles([
   rule("list-value", { fontSize: 11, fontWeight: 700 }),
   rule("notice", { color: info, fontStyle: "normal", fontSize: 11 }),
   rule("choice-grid", { gap: 4 }),
+  // One line, clipped: an item's whole name will not fit a 40px square,
+  // and a wrapped one climbs over the sprite it belongs to.
+  rule("slot-label", {
+    maxHeight: 10,
+    lineHeight: 1.1,
+    fontSize: 8,
+    paddingLeft: 1,
+    paddingRight: 1,
+    backgroundColor: "#04050ad9",
+    borderRadius: 2,
+    overflow: "hidden",
+  }),
   rule("cell", { justifyContent: "center", paddingTop: 2, paddingBottom: 2 }),
 
   // The root: a transparent sheet the station shows through.

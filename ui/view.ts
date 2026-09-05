@@ -59,12 +59,18 @@ export const column = (id: string, children: UiNode[], opts: Box = {}): UiNode =
 export const row = (id: string, children: UiNode[], opts: Box = {}): UiNode =>
   box("row", id, children, opts);
 
-export function text(id: string, value: unknown, cls?: string[]): UiNode {
+export function text(
+  id: string,
+  value: unknown,
+  cls?: string[],
+  style?: StyleProps,
+): UiNode {
   return {
     id,
     type: "text",
     text: labelText(value as Json),
     ...(cls?.length ? { class: cls } : {}),
+    ...(style ? { style: style as Record<string, StyleValue> } : {}),
   };
 }
 

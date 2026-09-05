@@ -25,7 +25,7 @@ function storedSlot(
   const id = `stored/${index}/take`;
   return Slot(id, {
     sprite: item.sprite,
-    label: item.name,
+    label: S.short(item.name),
     ...(item.fill ? { fill: item.fill } : {}),
     item:
       slot === undefined
