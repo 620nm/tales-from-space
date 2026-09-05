@@ -33,6 +33,13 @@ local TANK_M3 = 2.5
 -- holographic sticker, and the denominator of its gauge.
 local RATED_KPA = 46000.0
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 -- The ideal gas law at the vessel's own size and filling temperature --
 -- the engine's `fill_vessel` line, written out again on this side of
 -- the boundary so the two have to agree rather than share a helper.
@@ -46,7 +53,7 @@ end
 
 local function row(panel, label)
     for _, r in ipairs(panel.readouts) do
-        if r.label == label then
+        if word(r.label) == label then
             return r
         end
     end
@@ -61,7 +68,7 @@ end
 -- units each state is read in (docs/tgui/matter-block.md).
 local function block(panel, section)
     for _, b in ipairs(panel.matter or {}) do
-        if b.section == section then
+        if word(b.section) == section then
             return b
         end
     end
@@ -217,7 +224,7 @@ near(half.gauge, 50.0, 1e-9, "which for this vessel is half the sticker")
 
 -- One row per substance present, NAMED -- the swirling colour, written
 -- down -- inside the state it is actually in.
-local half_gas = state(block(half, "contents"), "gas")
+local half_gas = state(block(half, "holder.contents"), "gas")
 assert(half_gas, "a charged vessel holds a gas")
 local gas_row = named(half_gas, "oxygen")
 assert(gas_row, "a row for the substance that is in there, by its own name")
@@ -226,11 +233,12 @@ near(gas_row.moles, t.tank_gas(2, 1).o2, 1e-6,
 assert(named(half_gas, "nitrogen") == nil, "and no row for one that is not")
 
 near(half_gas.measure, 23000.0, 0.5, "the state's own reading is the pressure")
-near(block(half, "contents").temperature_k, T20C, 1e-6,
+near(block(half, "holder.contents").temperature_k, T20C, 1e-6,
     "and the temperature it was filled at -- a pressure alone is not an amount of gas")
-near(block(half, "contents").volume_l, 2500.0, 1e-9, "the size of the thing")
-assert(row(half, "rating").value == "46000 kPa",
-    "and its sticker, which the block cannot say: " .. row(half, "rating").value)
+near(block(half, "holder.contents").volume_l, 2500.0, 1e-9, "the size of the thing")
+assert(row(half, "holder.rating").value.text == "46000 kPa",
+    "and its sticker, which the block cannot say: "
+        .. tostring(word(row(half, "holder.rating").value)))
 assert(#half.toggles == 0 and #half.setpoints == 0, "no controls, because there are none")
 
 -- ---------------------------------------------------------------
@@ -251,9 +259,9 @@ assert(over and over.document == "modules" and over.presentation == "modules",
     "the over-filled vessel opens its document too")
 assert(t.tank_pressure(10, 1) > RATED_KPA * 1.3, "it is a third past its rating")
 near(over.gauge, 100.0, 1e-9, "and the gauge pins at full: " .. over.gauge)
-assert(row(over, "rating").tone == "off",
-    "with the sticker flagged: " .. tostring(row(over, "rating").tone))
-local over_block = block(over, "contents")
+assert(row(over, "holder.rating").tone == "off",
+    "with the sticker flagged: " .. tostring(row(over, "holder.rating").tone))
+local over_block = block(over, "holder.contents")
 local co2_row = named_any(over_block, "carbon dioxide")
 assert(co2_row, "the row names the substance as a reader would say it, not by its key")
 assert(co2_row.key == "co2", "the key travels beside the name, never instead of it")
@@ -340,7 +348,7 @@ local empty = t.ui(q)
 assert(empty and empty.document == "modules" and empty.presentation == "modules",
     "an empty vessel opens a document like any other")
 near(empty.gauge, 0.0, 1e-12, "the gauge is at rest: " .. empty.gauge)
-local nothing = block(empty, "contents")
+local nothing = block(empty, "holder.contents")
 assert(nothing, "an empty vessel still has a block")
 assert(nothing.states == nil or #nothing.states == 0,
     "and it says empty ONCE, with no state at all, phantom or otherwise")
@@ -352,5 +360,5 @@ near(nothing.temperature_k, 2.7, 0.05,
     "and it reads the cosmic background rather than a comfortable lie")
 near(nothing.volume_l, 2500.0, 1e-9, "while it is the size it always was")
 near(nothing.headspace_l, 2500.0, 1e-9, "all of it headspace")
-assert(row(empty, "rating").value == "46000 kPa",
+assert(row(empty, "holder.rating").value.text == "46000 kPa",
     "and the sticker says what it always said")

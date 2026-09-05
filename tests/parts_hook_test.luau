@@ -35,10 +35,17 @@ local function expected_factor(room_k)
     return math.max(FLOOR, 1.0 - LOSS_PER_K * math.abs(room_k - IDEAL_K))
 end
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function rows_in(ui, section)
     local out = {}
     for _, r in ipairs(ui.readouts) do
-        if r.section == section then
+        if word(r.section) == section then
             table.insert(out, r)
         end
     end
@@ -50,15 +57,15 @@ end
 local function socket(p, x, y)
     t.click(p, x, y, t.target_at(x, y))
     t.tick()
-    local rows = rows_in(t.ui(p), "parts")
+    local rows = rows_in(t.ui(p), "parts.parts")
     assert(#rows == 1, "a chamber has one socket: got " .. #rows)
     t.ui_close(p)
     return rows[1]
 end
 
 local function worth(row)
-    local tier, eff = row.value:match("^tier (%d+) · ([%d%.]+)$")
-    assert(tier ~= nil, "the row reads as a rung and a worth: " .. row.value)
+    local tier, eff = word(row.value):match("^tier (%d+) · ([%d%.]+)$")
+    assert(tier ~= nil, "the row reads as a rung and a worth: " .. word(row.value))
     return tonumber(tier), tonumber(eff)
 end
 
@@ -70,7 +77,7 @@ local function elements(machine)
     local out = {}
     for _, row in ipairs(t.ledger_rows("VarSet")) do
         if row.key == "lunatic/tfs:element" and row.entity == machine then
-            table.insert(out, row.value)
+            table.insert(out, word(row.value))
         end
     end
     return out
@@ -160,17 +167,17 @@ local cold_k = t.room_temperature(2, 1)
 assert(math.abs(cold_k - T20C) < 0.5, "the west bench is at twenty degrees: " .. cold_k)
 
 local row = socket(west, 2, 1)
-assert(row.label == "micro-laser", "the plain part, by its own name: " .. row.label)
+assert(row.label.text == "micro-laser", "the plain part, by its own name: " .. word(row.label))
 local tier, eff = worth(row)
 assert(tier == 1 and math.abs(eff - 1.0) < 1e-9,
-    "worth exactly what its file says: " .. row.value)
+    "worth exactly what its file says: " .. word(row.value))
 assert(row.tone == "idle", "a neutral part reads neutral: " .. tostring(row.tone))
 
 row = socket(west, 4, 1)
-assert(row.label == "ultra-high-power micro-laser", "the better part: " .. row.label)
+assert(row.label.text == "ultra-high-power micro-laser", "the better part: " .. word(row.label))
 tier, eff = worth(row)
 assert(tier == 3 and math.abs(eff - 2.0) < 1e-9,
-    "and the ladder's own 2.00 (lib/stock_parts.luau): " .. row.value)
+    "and the ladder's own 2.00 (lib/stock_parts.luau): " .. word(row.value))
 
 -- ---------------------------------------------------------------
 -- THREE: IN A HOT ROOM THE PLAIN CHAMBER IS WORSE, BY THE ROOM.
@@ -186,7 +193,7 @@ assert(hot_k > T20C + 30.0, "the east bench opened sweltering: " .. hot_k)
 row = socket(east, 8, 1)
 tier, eff = worth(row)
 assert(tier == 1, "the same plain part as the west bench")
-assert(eff < 1.0, "and it is worth less here: " .. row.value)
+assert(eff < 1.0, "and it is worth less here: " .. word(row.value))
 assert(row.tone == "off", "which the panel says in its own three tones")
 -- Slack of a hundredth, because the deck has been drinking the room's
 -- heat since the first pass and the panel is a rounded printout: a
@@ -206,7 +213,7 @@ assert(math.abs(eff - expected_factor(hot_k)) < 0.01,
 row = socket(east, 10, 1)
 tier, eff = worth(row)
 assert(tier == 3 and math.abs(eff - 2.0) < 1e-9,
-    "a shielded chamber does not care what the corridor is doing: " .. row.value)
+    "a shielded chamber does not care what the corridor is doing: " .. word(row.value))
 
 -- ---------------------------------------------------------------
 -- FIVE: ASKING AGAIN IS ASKING ONCE.
@@ -269,4 +276,4 @@ t.run_ticks(2)
 row = socket(west, 2, 1)
 tier, eff = worth(row)
 assert(tier == 1 and math.abs(eff - 1.0) < 1e-9,
-    "and the panel reads exactly what it read the first time: " .. row.value)
+    "and the panel reads exactly what it read the first time: " .. word(row.value))

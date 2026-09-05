@@ -30,10 +30,17 @@ local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function readout(ui, label)
     for _, r in ipairs(ui.readouts) do
-        if r.label == label then
-            return r.value
+        if word(r.label) == label then
+            return word(r.value)
         end
     end
     return nil
@@ -45,7 +52,7 @@ end
 -- on those two the sprite is the whole tell, which is why the state
 -- assertion beside every one of these is the load-bearing one.
 local function panel_says(p, want, what)
-    local row = readout(t.ui(p), "supply")
+    local row = readout(t.ui(p), "flow.supply")
     if row ~= nil then
         assert(row == want, what .. ": " .. row)
     end
@@ -399,7 +406,7 @@ assert(
 -- machine is not a broken one, and its panel is fed by nothing but the
 -- click that opened it.
 open_panel(p, GATE)
-panel_says(p, "dead", "the gate's panel says the mains are not behind it")
+panel_says(p, "flow.supply.dead", "the gate's panel says the mains are not behind it")
 t.ui_act(p, "set", '{"field":"temperature","value":500}')
 t.ui_act(p, "toggle", '{"field":"power"}')
 t.run_ticks(2)
@@ -469,7 +476,7 @@ near(
 -- length onto the delivery main. A gate that was merely slow would take
 -- this one too, a few seconds later.
 open_panel(p, GATE)
-panel_says(p, "fed", "the mains are behind it again")
+panel_says(p, "flow.supply.fed", "the mains are behind it again")
 t.ui_act(p, "toggle", '{"field":"power"}')
 t.run_ticks(2)
 assert(t.structure_at(5, 1).state == "shut", "the gate is shut")

@@ -29,6 +29,13 @@ local CX, CY = 2, 1 -- the body being worked on
 local cid = t.body_id(cadaver)
 local aid = t.body_id(crewman)
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function said(who, needle)
     return (" " .. table.concat(t.messages(who), " || ") .. " "):find(needle, 1, true) ~= nil
 end
@@ -42,14 +49,14 @@ end
 -- ask what the slot currently holds to find it.
 local function row(panel, label)
     for _, r in ipairs(panel.labels or {}) do
-        if r.label == label then return r end
+        if word(r.label) == label then return r end
     end
     return nil
 end
 
 local function row_labels(panel)
     local out = {}
-    for _, r in ipairs(panel.labels or {}) do table.insert(out, r.label) end
+    for _, r in ipairs(panel.labels or {}) do table.insert(out, word(r.label)) end
     return table.concat(out, ",")
 end
 
@@ -63,11 +70,11 @@ assert(panel.presentation == "choices", "a slot grid is a list of choices")
 local order = row_labels(panel)
 local uniform = row(panel, "Uniform")
 assert(uniform ~= nil and uniform.field == "strip", "the filled slot has a strip button")
-assert(uniform.text == "grey jumpsuit", "and the button IS the garment")
+assert(word(uniform.text) == "grey jumpsuit", "and the button IS the garment")
 -- An empty slot the crewman is not holding anything for is a row that
 -- says so, and carries no button at all.
 local suit = row(panel, "Suit")
-assert(suit ~= nil and suit.row == "word" and suit.text == "empty",
+assert(suit ~= nil and suit.row == "word" and word(suit.text) == "wearables.empty",
     "the empty suit slot is still named, and says it is bare")
 
 -- ---- the strip: parked, then landed -----------------------------------
@@ -117,8 +124,8 @@ assert(row_labels(after) == order,
     "the rows did not move when the jumpsuit came off: " .. row_labels(after) .. " vs " .. order)
 local refill = row(after, "Uniform")
 assert(refill ~= nil and refill.field == "dress", "the empty slot offers to be filled")
-assert(refill.text == "put on grey jumpsuit",
-    "and a dress button can never be misread as a strip one: " .. tostring(refill.text))
+assert(refill.text.id == "wearables.put_on" and refill.text.args.item == "grey jumpsuit",
+    "and a dress button can never be misread as a strip one: " .. tostring(word(refill.text)))
 
 local dressed = #t.ledger_rows("Dressed")
 t.ui_act(crewman, "toggle", '{"field":"dress","option":"uniform"}')

@@ -37,6 +37,13 @@ local T20C = 293.15
 local C_BATH = 5000.0
 local TARGET = 150.0
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
@@ -292,8 +299,8 @@ near(t.pipe_energy(2, 1), 0.0, 1e-9, "with no joules in it either")
 t.click(d, 3, 1, t.target_at(3, 1, "thermomachine"))
 t.tick()
 -- The thermometer is this window's first row (sim/ui/settings/thermo.rs).
-local mouth = t.ui(d).readouts[1].value
-assert(mouth ~= "no pipe", "the unit's mouth found the new length: " .. mouth)
+local mouth = word(t.ui(d).readouts[1].value)
+assert(mouth ~= "thermo.pipe.none", "the unit's mouth found the new length: " .. mouth)
 t.ui_act(d, "set", '{"field":"temperature","value":500}')
 t.ui_act(d, "toggle", '{"field":"power"}')
 t.run_seconds(60)

@@ -14,6 +14,13 @@
 -- router hearing its whole tree -- is the engine's and is tested there
 -- (docs/DEVICES.md §5). It is deliberately not re-asserted here.
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function said(p, line)
     for _, m in ipairs(t.messages(p)) do
         if m == line then
@@ -25,8 +32,8 @@ end
 
 local function readout(ui, label)
     for _, r in ipairs(ui.readouts) do
-        if r.label == label then
-            return r.value
+        if word(r.label) == label then
+            return word(r.value)
         end
     end
     return nil
@@ -114,14 +121,14 @@ t.click(p, 4, 1, t.target_at(4, 1, "access_point"))
 t.tick()
 local panel = t.ui(p)
 assert(panel ~= nil, "the access point wears a panel")
-local point = readout(panel, "address")
+local point = readout(panel, "link.address")
 assert(point ~= nil and #point == 17, "with an address in it: " .. tostring(point))
 -- ON THE AIR ALREADY, with nothing above it. A hub with a device
 -- joined to it IS a network: there is no `unrooted` suspension and
 -- there never will be, because needing a router above it would make
 -- the smallest useful thing in the system impossible to build
 -- (docs/DEVICES.md §4).
-assert(readout(panel, "state") == "online", "a hub tops its own tree, got: " .. tostring(readout(panel, "state")))
+assert(readout(panel, "link.state") == "link.state.online", "a hub tops its own tree, got: " .. tostring(readout(panel, "link.state")))
 assert(#rows(panel, "link_join") == 0 and #rows(panel, "link_drop") == 0,
     "and a shut panel offers neither a roster nor a candidate")
 t.ui_close(p)
@@ -181,7 +188,7 @@ t.click(p, 6, 1, t.target_at(6, 1))
 t.tick()
 panel = t.ui(p)
 assert(panel ~= nil, "the router wears the same panel")
-local router = readout(panel, "address")
+local router = readout(panel, "link.address")
 assert(router ~= nil and #router == 17 and router ~= point, "with an address of its own")
 assert(#rows(panel, "link_join") == 0, "and offers nothing while it is shut")
 
@@ -209,7 +216,7 @@ assert(rows(panel, "link_lock")[1].on, "it opens for whoever is standing at it")
 -- router.
 local offer = row_for(panel, "link_join", point)
 assert(offer ~= nil, "the access point is on offer: " .. #rows(panel, "link_join") .. " candidates")
-assert(offer.label:find("hub", 1, true), "named by what it is: " .. offer.label)
+assert(offer.label.id == "link.candidate.hub", "named by what it is: " .. word(offer.label))
 
 -- ---------------------------------------------------------------
 -- 4. THE JOIN. One press, one edge, one row on the record -- and the
@@ -220,7 +227,8 @@ t.tick()
 panel = t.ui(p)
 local held = row_for(panel, "link_drop", point)
 assert(held ~= nil, "the panel now holds it")
-assert(held.label:find("online", 1, true), "saying what it is doing: " .. held.label)
+assert(held.label.args.state == "link.state.online",
+    "saying what it is doing: " .. tostring(held.label.args.state))
 
 local joins = t.ledger_rows("link_accepted")
 assert(#joins == 1, "one edge, one row")
@@ -279,7 +287,7 @@ t.ui_act(p, "toggle", '{"field":"link_lock"}')
 t.tick()
 panel = t.ui(p)
 assert(rows(panel, "link_lock")[1].on, "the claim does")
-assert(readout(panel, "state") == "online", "and it is on the air under the router now")
+assert(readout(panel, "link.state") == "link.state.online", "and it is on the air under the router now")
 
 -- ---------------------------------------------------------------
 -- 7. THE LIGHTS GO OUT. Suspension is derived every pass, right behind
@@ -292,15 +300,15 @@ t.ui_close(p)
 t.tick()
 t.click(p, 6, 1, t.target_at(6, 1))
 t.tick()
-assert(row_for(t.ui(p), "link_drop", point).label:find("online", 1, true),
+assert(row_for(t.ui(p), "link_drop", point).label.args.state == "link.state.online",
     "on the air while the breaker is in")
 
 t.outage()
 t.run_ticks(60)
 panel = t.ui(p)
 assert(panel ~= nil, "the panel keeps reporting")
-assert(readout(panel, "state") == "unpowered", "the router itself has stopped carrying traffic")
+assert(readout(panel, "link.state") == "link.state.unpowered", "the router itself has stopped carrying traffic")
 local dark = row_for(panel, "link_drop", point)
 assert(dark ~= nil, "the edge survives the outage: a bond is not a signal")
-assert(dark.label:find("unpowered", 1, true),
-    "and the roster says why it went quiet: " .. dark.label)
+assert(dark.label.args.state == "link.state.unpowered",
+    "and the roster says why it went quiet: " .. tostring(dark.label.args.state))

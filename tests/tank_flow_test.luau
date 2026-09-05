@@ -30,6 +30,13 @@ local TANK_M3 = 2.5
 local PIPE_M3 = 0.070
 local PORT_M3 = 0.200
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
@@ -52,7 +59,7 @@ end
 -- vessel's own numbers live now (docs/tgui/matter-block.md).
 local function window_k(p)
     for _, b in ipairs(t.ui(p).matter or {}) do
-        if b.section == "contents" then
+        if word(b.section) == "holder.contents" then
             return b.temperature_k
         end
     end

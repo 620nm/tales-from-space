@@ -56,7 +56,7 @@ t.tick()
 local ui = t.ui(p)
 assert(ui and ui.document == "modules" and ui.presentation == "shelf",
     "NanoMed opens the shared shelf document")
-assert(ui.notice == "Go save some lives!", "NanoMed carries its own ad copy")
+assert(ui.notice.text == "Go save some lives!", "NanoMed carries its own ad copy")
 assert(#ui.products == #NANOMED, "NanoMed's complete shelf is asserted")
 
 for i, want in ipairs(NANOMED) do
@@ -138,7 +138,7 @@ local CHEMDROBE = {
     { "water_bottle_large.empty", "Empty Large Water Bottle", "Chemistry", 5 },
     { "spray_bottle", "Spray Bottle", "Chemistry", 5 },
 }
-assert(ui and ui.notice == "Our clothes are 0.5% more resistant to acid spills! Get yours now!",
+assert(ui and ui.notice.text == "Our clothes are 0.5% more resistant to acid spills! Get yours now!",
     "ChemDrobe opens with tg's ad")
 assert(#ui.products == #CHEMDROBE, "ChemDrobe's implemented wardrobe is exact")
 for i, want in ipairs(CHEMDROBE) do

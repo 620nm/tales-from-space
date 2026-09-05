@@ -21,6 +21,13 @@ local BRIM = 50e-6 / 18.015e-6
 -- unit at the bottom and a notch, a beaker's brim at the top.
 local NOTCH = 0.025
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
@@ -36,7 +43,7 @@ end
 
 local function row(ui, label)
     for _, r in ipairs(ui.readouts) do
-        if r.label == label then
+        if word(r.label) == label then
             return r
         end
     end
@@ -47,7 +54,7 @@ end
 -- (docs/tgui/matter-block.md).
 local function block(ui, section)
     for _, b in ipairs(ui.matter or {}) do
-        if b.section == section then
+        if word(b.section) == section then
             return b
         end
     end
@@ -119,7 +126,7 @@ t.tick()
 local ui = t.ui(p)
 assert(ui, "an empty hand opens the panel")
 assert(ui.document == "modules", "which is a clean-room module document")
-assert(row(ui, "vessel").value == "empty", "and it says there is nothing in it")
+assert(row(ui, "dock.vessel").value.id == "dock.vessel.empty", "and it says there is nothing in it")
 
 -- The measure is a DIAL, not a reading: a chemist who wants half a
 -- beaker turns it down rather than pressing and pouring back.
@@ -146,7 +153,7 @@ assert(buttons.n2 == nil, "neither of them")
 assert(buttons.hydrogen == nil, "nor hydrogen")
 assert(buttons.sodium.on == false, "a dispense button never latches")
 assert(
-    buttons.sodium.on_text == buttons.sodium.off_text,
+    word(buttons.sodium.on_text) == word(buttons.sodium.off_text),
     "it says the same thing in both positions, because it has only one"
 )
 t.ui_close(p)
@@ -177,7 +184,7 @@ near(t.holder_k(beaker), NOZZLE_K, 0.1, "arriving at the nozzle's own temperatur
 -- The panel counts the GLASS, in litres: 0.75 mol of water is 13.5 mL
 -- of a fifty millilitre beaker (docs/MATTER.md 5). Capacity is
 -- geometry, so what a crewman reads is the level against the shell.
-local glass = block(t.ui(p), "contents")
+local glass = block(t.ui(p), "dock.contents")
 near(state(glass, "liquid").measure, 0.0135, 1e-4, "the level in the vessel")
 near(glass.volume_l, 0.05, 1e-9, "against the size of the glass")
 
@@ -242,7 +249,7 @@ t.run_ticks(2)
 assert(t.hands(p).held == "beaker", "the eject button hands it back")
 near(total(beaker), BRIM, 1e-5, "still holding what it was given")
 assert(t.ledger_has("Undocked", "beaker"), "and the eject is on the record too")
-assert(row(t.ui(p), "vessel").value == "empty", "the panel agrees the slot is clear")
+assert(row(t.ui(p), "dock.vessel").value.id == "dock.vessel.empty", "the panel agrees the slot is clear")
 
 -- A press with nothing in the slot mints nothing, anywhere: a
 -- dispenser that puddled on the floor instead would be a second

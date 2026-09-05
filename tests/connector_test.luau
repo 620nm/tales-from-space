@@ -21,6 +21,13 @@
 -- consequence the two of them share -- what an UNPLUMBED socket does,
 -- and what happens to it when the plumbing finally arrives.
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function said(p, line)
     for _, m in ipairs(t.messages(p)) do
         if m == line then
@@ -41,7 +48,7 @@ end
 -- lands.
 local function pick(p, field, label)
     for _, tog in ipairs(t.ui(p).toggles) do
-        if tog.field == field and tog.option ~= nil and tog.label == label then
+        if tog.field == field and tog.option ~= nil and word(tog.label) == label then
             return tog.option
         end
     end

@@ -32,10 +32,17 @@
 -- (`structures/air_scrubber.luau`, `filter.luau`, `mixer.luau`)
 -- and the engine has never heard of any of them.
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function readout(p, label)
     for _, r in ipairs(t.ui(p).readouts) do
-        if r.label == label then
-            return r.value
+        if word(r.label) == label then
+            return word(r.value)
         end
     end
     return nil
@@ -243,7 +250,7 @@ t.tick()
 local unplumbed = t.target_at(2, 1, "air_scrubber")
 t.click(lone, 2, 1, unplumbed)
 t.tick()
-assert(readout(lone, "supply") == "fed", "the mains are behind it")
+assert(readout(lone, "room.supply") == "room.supply.fed", "the mains are behind it")
 t.ui_act(lone, "toggle", '{"field":"power"}')
 t.run_seconds(1)
 assert(toggle(lone, "power").on == true, "the switch is thrown")
@@ -440,7 +447,7 @@ assert(t.structure_at(4, 2).sprite == "scrubber_off_w", "aimed by its own plumbi
 
 t.click(e, 4, 2, t.target_at(4, 2, "air_scrubber"))
 t.tick()
-assert(readout(e, "supply") == "fed", "the mains are behind it")
+assert(readout(e, "room.supply") == "room.supply.fed", "the mains are behind it")
 -- Whole air with the floor down to nothing, so this scrubber never
 -- runs out of work while the section runs. What is under test here is
 -- the SUPPLY, and a machine that has reached its floor is drawn idle
@@ -476,7 +483,7 @@ assert(dark.sprite == "scrubber_off_w",
 t.click(e, 4, 2, t.target_at(4, 2, "air_scrubber"))
 t.tick()
 assert(toggle(e, "power").on == true, "the switch is still thrown")
-assert(readout(e, "supply") == "dead", "and the panel names what is actually wrong")
+assert(readout(e, "room.supply") == "room.supply.dead", "and the panel names what is actually wrong")
 t.ui_close(e)
 t.tick()
 

@@ -13,10 +13,18 @@
 -- a machine id from the tool's side. What the spec asserts is the four
 -- things a crewman could see: the panel, the bag, the shift record,
 -- and the beaker.
+
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function rows_in(ui, section)
     local out = {}
     for _, r in ipairs(ui.readouts) do
-        if r.section == section then
+        if word(r.section) == section then
             table.insert(out, r)
         end
     end
@@ -25,7 +33,7 @@ end
 
 local function row(ui, label)
     for _, r in ipairs(ui.readouts) do
-        if r.label == label then
+        if word(r.label) == label then
             return r
         end
     end
@@ -37,7 +45,7 @@ end
 local function socket(p, x, y)
     t.click(p, x, y, t.target_at(x, y))
     t.tick()
-    local rows = rows_in(t.ui(p), "parts")
+    local rows = rows_in(t.ui(p), "parts.parts")
     assert(#rows == 1, "one socket, one row: got " .. #rows)
     t.ui_close(p)
     return rows[1]
@@ -118,12 +126,12 @@ t.run_ticks(2)
 assert(t.hands(p).held == nil, "and clicking the chamber with it puts it in")
 
 local before = socket(p, 2, 1)
-assert(before.label == "micro-laser", "nobody has upgraded it: " .. before.label)
-assert(before.value == "tier 1 · 1.00", "the plain rung, worth the plain part: " .. before.value)
+assert(before.label.text == "micro-laser", "nobody has upgraded it: " .. word(before.label))
+assert(before.value.text == "tier 1 · 1.00", "the plain rung, worth the plain part: " .. word(before.value))
 
 t.click(p, 2, 1, heater)
 t.tick()
-assert(row(t.ui(p), "vessel").value == "beaker (libital)", "with the beaker docked")
+assert(row(t.ui(p), "dock.vessel").value.text == "beaker (libital)", "with the beaker docked")
 t.ui_act(p, "set", '{"field":"temperature","value":350}')
 t.ui_act(p, "toggle", '{"field":"power"}')
 t.run_ticks(2)
@@ -170,10 +178,10 @@ assert(t.examine_held_stored(p, 0).title == "micro-laser",
 
 t.swap_hands(p)
 local after = socket(p, 2, 1)
-assert(after.label == "ultra-high-power micro-laser",
-    "and the panel names what is in there now: " .. after.label)
-assert(after.value == "tier 3 · 2.00",
-    "against its rung and what it is worth: " .. after.value)
+assert(after.label.text == "ultra-high-power micro-laser",
+    "and the panel names what is in there now: " .. word(after.label))
+assert(after.value.text == "tier 3 · 2.00",
+    "against its rung and what it is worth: " .. word(after.value))
 
 -- ---------------------------------------------------------------
 -- FOUR: AND A SECOND CLICK IS NOTHING AT ALL.
@@ -190,7 +198,7 @@ assert(#t.ledger_rows("part_swapped") == 1, "still one swap on the record")
 assert(table.concat(t.messages(p), " | "):find("any better", 1, true) ~= nil,
     "and the refusal is the tool's own line")
 t.swap_hands(p)
-assert(socket(p, 2, 1).value == "tier 3 · 2.00", "the socket is where it was")
+assert(socket(p, 2, 1).value.text == "tier 3 · 2.00", "the socket is where it was")
 
 -- ---------------------------------------------------------------
 -- FIVE: THE BEAKER AGREES WITH THE PANEL.

@@ -15,6 +15,13 @@ local function said(p, line)
     return false
 end
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function walk(p, dir)
     t.move(p, dir)
     t.run_ticks(5)
@@ -136,9 +143,9 @@ local panel = t.ui(p)
 assert(panel, "a digital valve answers an empty hand with a panel")
 assert(panel.document == "modules" and panel.presentation == "modules",
     "the document the whole roster shares")
-assert(panel.toggles[1].on_text == "open", panel.toggles[1].on_text)
-assert(panel.toggles[1].off_text == "shut")
-assert(panel.toggles[1].label == "valve", "and it is a valve, not a pump")
+assert(panel.toggles[1].on_text.text == "open", panel.toggles[1].on_text.text)
+assert(panel.toggles[1].off_text.text == "shut")
+assert(panel.toggles[1].label.id == "flow.switch.valve", "and it is a valve, not a pump")
 
 t.ui_act(p, "toggle", '{"field":"power"}')
 t.run_ticks(2)
@@ -192,11 +199,11 @@ t.click(d, 3, 1, t.target_at(3, 1, "pump"))
 t.tick()
 local supply = nil
 for _, r in ipairs(t.ui(d).readouts) do
-    if r.label == "supply" then
-        supply = r.value
+    if word(r.label) == "flow.supply" then
+        supply = word(r.value)
     end
 end
-assert(supply == "dead", "the panel says the mains are not behind it: " .. tostring(supply))
+assert(supply == "flow.supply.dead", "the panel says the mains are not behind it: " .. tostring(supply))
 
 -- Wind the setpoint up so a working pump would have plenty to do, and
 -- throw the switch.

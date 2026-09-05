@@ -12,13 +12,21 @@
 -- `steam_generator_test.luau` is the sieved twin. What is here is the
 -- unsieved machine, the ledger row a dock writes, and what a crewman
 -- gets back when they take their beaker out again.
+
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
 local function row(ui, label)
     for _, r in ipairs(ui.readouts) do
-        if r.label == label then
+        if word(r.label) == label then
             return r
         end
     end
@@ -88,7 +96,7 @@ assert(charged > 0.5, "with what it shipped with: " .. charged)
 t.click(p, 4, 1, machine)
 t.tick()
 local ui = t.ui(p)
-assert(row(ui, "vessel").value == "beaker (ethanol)", "the panel names what is in it")
+assert(row(ui, "dock.vessel").value.text == "beaker (ethanol)", "the panel names what is in it")
 near(ui.setpoints[1].value, 373.15, 1e-9, "and its dial opens at water's boil")
 
 t.ui_act(p, "toggle", '{"field":"power"}')
@@ -117,7 +125,7 @@ t.run_ticks(2)
 assert(t.hands(p).held == "beaker.ethanol", "the eject button hands it back")
 assert(t.ledger_has("Undocked", "beaker"), "and the undock is on the record too")
 near(held_in(booze, "ethanol"), left, 1e-6, "carrying exactly what was left in it")
-assert(row(t.ui(p), "vessel").value == "empty", "the panel agrees the slot is bare")
+assert(row(t.ui(p), "dock.vessel").value.id == "dock.vessel.empty", "the panel agrees the slot is bare")
 
 -- ...and an empty dock has no reservoir behind its mouth, so the line
 -- keeps what it was given and nothing else arrives.

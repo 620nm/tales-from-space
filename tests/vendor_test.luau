@@ -49,7 +49,7 @@ assert(raw, "clicking the machine opens its window")
 local ui = t.ui(p)
 assert(ui.document == "modules" and ui.presentation == "shelf",
     "the clean-room shelf document")
-assert(ui.notice == "Robust! Refreshing! Occasionally fermented!",
+assert(ui.notice.text == "Robust! Refreshing! Occasionally fermented!",
     "the shelf wears the content-authored notice")
 assert(ui.products[1].payload.product == "cola",
     "cola heads the product list")

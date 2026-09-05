@@ -45,6 +45,13 @@ local function moles(kpa, m3)
     return kpa * 1000.0 * m3 / (8.314 * T20C)
 end
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
@@ -514,7 +521,7 @@ t.tick()
 local offered = {}
 for _, tog in ipairs(t.ui(e).toggles) do
     if tog.field == RECIPE and tog.option ~= nil and tog.group == "Heat Exchange" then
-        offered[tog.label] = tog.icon
+        offered[word(tog.label)] = tog.icon
     end
 end
 assert(offered["Pipe"] == "he_pipe", "the shelf offers a length, with its own picture")

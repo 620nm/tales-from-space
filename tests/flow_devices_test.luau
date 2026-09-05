@@ -23,6 +23,13 @@ local function moles(kpa, m3)
     return kpa * 1000.0 * m3 / (8.314 * 293.15)
 end
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
@@ -207,11 +214,11 @@ t.click(q, 3, 1, t.target_at(3, 1, "volume_pump"))
 t.tick()
 local limits = nil
 for _, r in ipairs(t.ui(q).readouts) do
-    if r.label == "limiters" then
-        limits = r.value
+    if word(r.label) == "flow.limiters" then
+        limits = word(r.value)
     end
 end
-assert(limits == "DEFEATED", "and the panel says so: " .. tostring(limits))
+assert(limits == "flow.limiters.defeated", "and the panel says so: " .. tostring(limits))
 t.ui_act(q, "toggle", '{"field":"power"}')
 t.run_seconds(60)
 
@@ -478,7 +485,8 @@ assert(
 t.click(v, 3, 1, t.target_at(3, 1, "pressure_valve"))
 t.tick()
 local relief_panel = t.ui(v)
-assert(relief_panel.setpoints[1].label == "trip pressure", relief_panel.setpoints[1].label)
+assert(relief_panel.setpoints[1].label.id == "flow.trip_pressure",
+    tostring(word(relief_panel.setpoints[1].label)))
 near(relief_panel.setpoints[1].max, 10132.5, 0.001, "tg's ONE_ATMOSPHERE * 100")
 
 -- Arm it, trip pressure well above the supply. Nothing crosses, because

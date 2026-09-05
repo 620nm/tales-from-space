@@ -58,11 +58,18 @@ assert(panel, "a scrubber wears a panel of its own")
 
 -- Only the roster's buttons: the power, direction and roster switches
 -- are three controls of their own and carry no heading.
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function gas_rows(window)
     local rows = {}
     for _, sw in ipairs(window.toggles) do
         if sw.field == "filter" then
-            rows[#rows + 1] = { id = sw.option, section = sw.section }
+            rows[#rows + 1] = { id = sw.option, section = word(sw.section) }
         end
     end
     return rows

@@ -27,13 +27,20 @@
 
 local T20C = 293.15
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
 local function row(ui, label)
     for _, r in ipairs(ui.readouts) do
-        if r.label == label then
+        if word(r.label) == label then
             return r
         end
     end
@@ -96,15 +103,15 @@ assert(t.ui(p), "the unit answers an empty hand with its panel")
 -- ---------------------------------------------------------------
 near(t.ui(p).setpoints[1].value, T20C, 0.01, "the thermostat opens at tg's T20C")
 near(t.pipe_temperature(3, 1), T20C, 0.5, "and the run opens there too")
-assert(row(t.ui(p), "pipe").tone == "idle", "so the panel says the gas is on the dial")
-assert(row(t.ui(p), "supply").value == "fed", "and that the mains are behind it")
+assert(row(t.ui(p), "thermo.pipe").tone == "idle", "so the panel says the gas is on the dial")
+assert(row(t.ui(p), "thermo.supply").value.id == "thermo.supply.fed", "and that the mains are behind it")
 
 -- Dial well above the gas and the tone flips before a single joule
 -- moves: this is the setpoint's side of the comparison changing, not
 -- the machine's.
 t.ui_act(p, "set", '{"field":"temperature","value":500}')
 t.tick()
-assert(row(t.ui(p), "pipe").tone == "off", "the gas is under the dial, and the panel says so")
+assert(row(t.ui(p), "thermo.pipe").tone == "off", "the gas is under the dial, and the panel says so")
 near(t.pipe_temperature(3, 1), T20C, 0.5, "with nothing switched on and nothing moved")
 
 t.ui_act(p, "toggle", '{"field":"power"}')
@@ -115,13 +122,13 @@ pass()
 local climbed = t.pipe_temperature(3, 1)
 assert(climbed > T20C + 100.0, "and one pass takes this short run most of the way: " .. climbed)
 assert(climbed < 500.0 - 5.0, "though not all of it -- the job is not finished: " .. climbed)
-assert(row(t.ui(p), "pipe").tone == "off", "so the gas is still under the dial")
+assert(row(t.ui(p), "thermo.pipe").tone == "off", "so the gas is still under the dial")
 
 -- ...and now the dial goes UNDER the gas, which is the third tone and
 -- the one that only a machine that heats AND cools can ever show.
 t.ui_act(p, "set", '{"field":"temperature","value":300}')
 t.tick()
-assert(row(t.ui(p), "pipe").tone == "on", "the gas is over the dial now, and only the dial moved")
+assert(row(t.ui(p), "thermo.pipe").tone == "on", "the gas is over the dial now, and only the dial moved")
 near(t.ui(p).gauge, (300.0 - 73.15) / 500.0 * 100.0, 1e-9, "with the needle at the new setting's place")
 
 -- ---------------------------------------------------------------
@@ -150,7 +157,7 @@ assert(
     "and the unit is drawn stopped, which is `on && is_operational` picking the picture"
 )
 assert(t.ui(p).toggles[1].on == true, "while the switch is exactly where the engineer left it")
-assert(row(t.ui(p), "supply").value == "dead", "the panel says which of the two it is")
+assert(row(t.ui(p), "thermo.supply").value.id == "thermo.supply.dead", "the panel says which of the two it is")
 near(t.ui(p).setpoints[1].value, 300.0, 1e-9, "and the thermostat kept its setting through the fault")
 
 -- The gas is left standing precisely where the last fed pass put it.
@@ -174,7 +181,7 @@ t.ui_act(p, "set", '{"field":"temperature","value":73.15}')
 t.run_ticks(2)
 near(t.ui(p).setpoints[1].value, 73.15, 1e-9, "the dial goes to the stop while the grid is dark")
 near(t.ui(p).gauge, 0.0, 1e-9, "and the needle with it")
-assert(row(t.ui(p), "pipe").tone == "on", "the tone still reads the two numbers it is given")
+assert(row(t.ui(p), "thermo.pipe").tone == "on", "the tone still reads the two numbers it is given")
 t.run_seconds(30)
 near(t.pipe_temperature(3, 1), caught_k, 1e-9, "and not one joule followed the order")
 

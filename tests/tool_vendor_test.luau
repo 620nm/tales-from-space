@@ -44,7 +44,7 @@ local ui = t.ui(p)
 assert(ui, "clicking the tool vendor opens its window")
 assert(ui.document == "modules" and ui.presentation == "shelf",
     "the generic shelf document")
-assert(ui.notice == "Tools for tools.", "and its own ad copy")
+assert(ui.notice.text == "Tools for tools.", "and its own ad copy")
 local shelf = {}
 for _, rec in ipairs(ui.products) do
     shelf[rec.payload.product] = rec

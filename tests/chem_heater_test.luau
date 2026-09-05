@@ -14,13 +14,20 @@
 -- shape of the approach and the arrest at the dial, from both sides.
 local T20C = 293.15
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
 local function row(ui, label)
     for _, r in ipairs(ui.readouts) do
-        if r.label == label then
+        if word(r.label) == label then
             return r
         end
     end
@@ -65,7 +72,7 @@ local ui = t.ui(p)
 assert(ui, "an empty hand opens the panel")
 assert(ui.document == "modules" and ui.presentation == "modules",
     "which is assembled from this machine's modules")
-assert(row(ui, "vessel").value == "empty", "and it says there is nothing in it")
+assert(row(ui, "dock.vessel").value.id == "dock.vessel.empty", "and it says there is nothing in it")
 near(ui.setpoints[1].value, 300.0, 1e-9, "the dial opens at tg's 300 K")
 t.ui_close(p)
 
@@ -87,7 +94,7 @@ assert(t.ledger_has("Docked", "beaker"), "the dock is on the record")
 t.click(p, 2, 1, heater)
 t.tick()
 ui = t.ui(p)
-assert(row(ui, "vessel").value == "beaker (libital)", "the panel names what is in it")
+assert(row(ui, "dock.vessel").value.text == "beaker (libital)", "the panel names what is in it")
 assert(ui.toggles[1].on == false, "and it is switched off out of the crate")
 t.run_seconds(20)
 -- A third of a kelvin of slack, not a hundredth: the beaker is open,
@@ -133,7 +140,7 @@ near(t.holder_k(beaker), held, 0.05, "and then it sits there")
 -- ...and the element never gets to stop. The balance is a kelvin and
 -- a bit under the dial, which is outside the panel's own deadband, so
 -- the window keeps saying the machine is working -- which it is.
-assert(row(t.ui(p), "temperature").tone == "off", "the panel says it is still climbing")
+assert(row(t.ui(p), "dock.temperature").tone == "off", "the panel says it is still climbing")
 
 -- ---------------------------------------------------------------
 -- ...AND THE SAME MACHINE COMING BACK DOWN.
@@ -144,7 +151,7 @@ assert(row(t.ui(p), "temperature").tone == "off", "the panel says it is still cl
 -- ---------------------------------------------------------------
 t.ui_act(p, "set", '{"field":"temperature","value":310}')
 t.run_ticks(2)
-assert(row(t.ui(p), "temperature").tone == "on", "the vessel is over the dial now")
+assert(row(t.ui(p), "dock.temperature").tone == "on", "the vessel is over the dial now")
 last = t.holder_k(beaker)
 for _ = 1, 12 do
     t.run_seconds(1)
@@ -165,7 +172,7 @@ t.run_ticks(2)
 assert(t.hands(p).held == "beaker.libital", "the eject button hands it back")
 near(t.holder_k(beaker), warm, 0.5, "still carrying the heat it was given")
 assert(t.ledger_has("Undocked", "beaker"), "and the eject is on the record too")
-assert(row(t.ui(p), "vessel").value == "empty", "the panel agrees there is nothing in it")
+assert(row(t.ui(p), "dock.vessel").value.id == "dock.vessel.empty", "the panel agrees there is nothing in it")
 
 -- ...and a vessel IN A HAND is a vessel you are insulating: the deck
 -- coupling is for things lying on the deck (sim/holder/heat.rs), so

@@ -7,6 +7,13 @@
 -- assertions are the REFUSALS: the ones an engineer would meet with the
 -- fitting in their hands, met identically by a device that conjures it.
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function said(p, line)
     for _, m in ipairs(t.messages(p)) do
         if m == line then
@@ -44,7 +51,7 @@ end
 local function shows(p, field)
     for _, tog in ipairs(t.ui(p).toggles) do
         if tog.field == field and tog.option == nil then
-            return tog.on_text
+            return word(tog.on_text)
         end
     end
     return nil
@@ -56,7 +63,7 @@ end
 -- break on somebody else's content file.
 local function pick(p, field, label)
     for _, tog in ipairs(t.ui(p).toggles) do
-        if tog.field == field and tog.option ~= nil and tog.label == label then
+        if tog.field == field and tog.option ~= nil and word(tog.label) == label then
             return tog.option
         end
     end
@@ -117,12 +124,12 @@ local manual_presentation = nil
 local green_swatch = nil
 for _, tog in ipairs(ui.toggles) do
     if tog.option == nil then
-        captions[tog.field] = tog.label
+        captions[tog.field] = word(tog.label)
     else
         options[tog.field] = (options[tog.field] or 0) + 1
-        if tog.field == RECIPE and tog.label == "Manual Valve" then
+        if tog.field == RECIPE and word(tog.label) == "Manual Valve" then
             manual_presentation = tog
-        elseif tog.field == PAINT and tog.label == "green" then
+        elseif tog.field == PAINT and word(tog.label) == "green" then
             green_swatch = tog.color
         end
     end

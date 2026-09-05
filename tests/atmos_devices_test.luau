@@ -328,8 +328,8 @@ assert(panel.document == "modules" and panel.presentation == "modules",
     "the module document every in-line machine shares")
 -- The words on the button are the machine's own states, out of
 -- tfs/content/structures/pump.luau.
-assert(panel.toggles[1].on_text == "running", panel.toggles[1].on_text)
-assert(panel.toggles[1].off_text == "off")
+assert(panel.toggles[1].on_text.text == "running", panel.toggles[1].on_text.text)
+assert(panel.toggles[1].off_text.text == "off")
 assert(panel.setpoints[1].field == "target", "and one dial, in kPa")
 assert(math.abs(panel.setpoints[1].value - 101.325) < 0.001)
 

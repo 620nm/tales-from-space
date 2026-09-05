@@ -27,6 +27,13 @@ local T0C = 273.15
 local PIPE_M3 = 0.070
 local PORT_M3 = 0.200
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function net_m3(lengths, ports)
     return lengths * PIPE_M3 + ports * PORT_M3
 end
@@ -50,8 +57,8 @@ end
 
 local function readout(ui, label)
     for _, r in ipairs(ui.readouts) do
-        if r.label == label then
-            return r.value
+        if word(r.label) == label then
+            return word(r.value)
         end
     end
     return nil
@@ -157,7 +164,7 @@ near(panel.setpoints[1].value, T0C, 0.01, "tg's T0C out of the crate")
 near(panel.setpoints[1].max, 4500.0, 0.01, "tg's max_temperature")
 assert(panel.setpoints[1].min < 3.0, "and its floor is TCMB, not zero")
 assert(
-    readout(panel, "sensor") == "normal - passes colder",
+    readout(panel, "flow.sensor") == "flow.sensor.normal",
     "the panel says which way round it reads, which tg hides on examine"
 )
 
@@ -210,7 +217,7 @@ t.run_ticks(2)
 t.click(p, 3, 1, t.target_at(3, 1, "temperature_gate"))
 t.tick()
 assert(
-    readout(t.ui(p), "sensor") == "REVERSED - passes hotter",
+    readout(t.ui(p), "flow.sensor") == "flow.sensor.reversed",
     "and the panel says the sensor is reversed"
 )
 
@@ -394,7 +401,8 @@ local dead_cold = t.pipe_temperature(5, 1)
 
 t.click(d, 3, 1, t.target_at(3, 1, "temperature_pump"))
 t.tick()
-assert(readout(t.ui(d), "supply") == "dead", "the panel says the mains are not behind it")
+assert(readout(t.ui(d), "flow.supply") == "flow.supply.dead",
+    "the panel says the mains are not behind it")
 t.ui_act(d, "set", '{"field":"share","value":100}')
 t.ui_act(d, "toggle", '{"field":"power"}')
 t.run_seconds(60)

@@ -36,9 +36,16 @@ local ARENA = [==[(
 
 local CX, CY = 3, 3
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function row(ui, label)
     for _, r in ipairs(ui.readouts) do
-        if r.label == label then
+        if word(r.label) == label then
             return r
         end
     end
@@ -48,7 +55,7 @@ end
 local function rows_named(ui, label)
     local n = 0
     for _, r in ipairs(ui.readouts) do
-        if r.label == label then
+        if word(r.label) == label then
             n = n + 1
         end
     end
@@ -60,9 +67,10 @@ end
 local function body_sections(ui)
     local seen, order = {}, {}
     local function note(r)
-        if r.section and r.section ~= "target" and not seen[r.section] then
-            seen[r.section] = true
-            order[#order + 1] = r.section
+        local at = word(r.section)
+        if at and at ~= "procedure.target" and not seen[at] then
+            seen[at] = true
+            order[#order + 1] = at
         end
     end
     for _, r in ipairs(ui.readouts) do note(r) end
@@ -127,23 +135,27 @@ assert(#blocks == 2, "two patients, one block each: got " .. #blocks)
 assert(rows_named(ui, "chest") == 2, "the open chest and the aimed one")
 local opened, untouched = nil, nil
 for _, r in ipairs(ui.readouts) do
-    if r.label == "chest" then
-        if has(r.value, "skin_cut") then opened = r else untouched = r end
+    if word(r.label) == "chest" then
+        if has(word(r.value), "skin_cut") then opened = r else untouched = r end
     end
 end
 assert(opened ~= nil, "one chest names the states it is holding")
-assert(has(opened.value, "vessels_unclamped"), "both of them: " .. opened.value)
-assert(has(opened.value, "/s"), "with what it is bleeding: " .. opened.value)
-assert(untouched ~= nil and untouched.value == "\u{2014}",
-    "and the other is holding nothing: " .. tostring(untouched and untouched.value))
-local blood = row(ui, "blood")
+assert(has(word(opened.value), "vessels_unclamped"), "both of them: " .. word(opened.value))
+assert(has(word(opened.value), "/s"), "with what it is bleeding: " .. word(opened.value))
+assert(untouched ~= nil and word(untouched.value) == "\u{2014}",
+    "and the other is holding nothing: " .. tostring(untouched and word(untouched.value)))
+local blood = row(ui, "procedure.blood")
 assert(blood ~= nil, "and how much blood is left to lose")
 -- IN LITRES, and bleeding in millilitres a second. tg counts blood in
 -- bare units -- a number with no unit on it, which is only a scale if
 -- you already know it -- and a surgeon deciding whether to clamp is
 -- deciding about a volume.
-assert(blood.value:match("^%d+%.%d%d L") ~= nil,
-    "the blood row is in litres: " .. blood.value)
+-- One row, two facts: `procedure.blood.bleeding` carries the volume and
+-- the rate as arguments, and a body that is not losing any carries the
+-- volume alone.
+local volume = blood.value.args and blood.value.args.volume or blood.value.text
+assert(volume:match("^%d+%.%d%d L") ~= nil,
+    "the blood row is in litres: " .. tostring(volume))
 -- Nothing is wrong with the head and nobody is aiming at it, so the head
 -- is not on the panel.
 assert(row(ui, "head") == nil, "a part with nothing wrong with it is not a row")
@@ -154,10 +166,10 @@ assert(row(ui, "head") == nil, "a part with nothing wrong with it is not a row")
 -- word for the first implement its file declares.
 local retract = row(ui, "retract the skin")
 assert(retract ~= nil, "an incision may be held open")
-assert(retract.value == "retractor", "with a retractor: " .. tostring(retract.value))
+assert(word(retract.value) == "retractor", "with a retractor: " .. tostring(word(retract.value)))
 local mend = row(ui, "mend the incision")
 assert(mend ~= nil, "...or closed again")
-assert(mend.value == "cautery", "with a cautery: " .. tostring(mend.value))
+assert(word(mend.value) == "cautery", "with a cautery: " .. tostring(word(mend.value)))
 -- Not this one: clamping wants the skin RETRACTED, and it is only cut.
 assert(row(ui, "clamp the bleeders") == nil, "the state does not admit it yet")
 -- And not this one either, for a different reason: cauterising your own
@@ -176,7 +188,7 @@ for _, toggle in ipairs(ui.toggles) do
     end
 end
 assert(aimed ~= nil, "the panel offers the head as a target")
-assert(aimed.label == "head", "labelled out of the plan: " .. tostring(aimed.label))
+assert(word(aimed.label) == "head", "labelled out of the plan: " .. tostring(word(aimed.label)))
 
 t.ui_act(surgeon, "toggle", '{"field":"zone","option":"head"}')
 t.run_ticks(2)

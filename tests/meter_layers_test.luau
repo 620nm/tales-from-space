@@ -6,6 +6,13 @@
 
 local L2, L4 = 2, 8
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function said(p, line)
     for _, message in ipairs(t.messages(p)) do
         if message == line then
@@ -134,7 +141,7 @@ t.tick()
 local RECIPE, LAYER = "dial1", "dial2"
 local function pick(field, label)
     for _, toggle in ipairs(t.ui(r).toggles) do
-        if toggle.field == field and toggle.option ~= nil and toggle.label == label then
+        if toggle.field == field and toggle.option ~= nil and word(toggle.label) == label then
             return toggle.option
         end
     end

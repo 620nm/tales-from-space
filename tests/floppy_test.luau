@@ -120,14 +120,14 @@ t.tick()
 local ui = t.ui(p)
 assert(ui, "a bare-handed click opens the terminal's window")
 assert(ui.presentation == "panes", "the files module is the panes one")
-assert(ui.media_slot == "loaded", "and it knows there is a disk in it")
+assert(ui.media_slot.id == "files.media.loaded", "and it knows there is a disk in it")
 
 assert(#ui.stores == 2, "two stores in reach: " .. #ui.stores)
-assert(ui.stores[1].key == "host" and ui.stores[1].label == "programming terminal",
+assert(ui.stores[1].key == "host" and ui.stores[1].label.text == "programming terminal",
     "the host store comes first, under the machine's own name")
 assert(ui.stores[1].capacity == HOST_BYTES and ui.stores[1].count_cap == HOST_FILES,
     "the terminal is scratch space: " .. ui.stores[1].capacity)
-assert(ui.stores[2].key == "media" and ui.stores[2].label == "floppy disk",
+assert(ui.stores[2].key == "media" and ui.stores[2].label.text == "floppy disk",
     "the medium is the second store, under its own name")
 -- The two numbers this pack's fiction is actually about: a
 -- double-density 3.5" floppy and FAT12's root directory.
@@ -253,7 +253,7 @@ assert(#t.ledger_rows("file_copied") == 2, "both crossings are attributed")
 t.ui_act(p, "toggle", '{"field":"media_eject"}')
 t.tick()
 ui = t.ui(p)
-assert(ui.media_slot == "empty", "the slot is empty")
+assert(ui.media_slot.id == "files.media.empty", "the slot is empty")
 assert(#ui.stores == 1, "and the disk's store left with it")
 assert(not has(listing(ui), "media:tank_room.doc"),
     "so the note is somewhere in a pocket, which is the whole point of a disk")

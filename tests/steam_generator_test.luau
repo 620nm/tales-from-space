@@ -11,13 +11,21 @@
 -- Everything below is a click or a window act, and every reading is
 -- `t.pipe_gas` / `t.room_gas` in MOLES. A pressure cannot say WHICH gas
 -- it is, and this whole machine is a claim about which one crosses.
+
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
 local function row(ui, label)
     for _, r in ipairs(ui.readouts) do
-        if r.label == label then
+        if word(r.label) == label then
             return r
         end
     end
@@ -90,8 +98,8 @@ t.click(p, 4, 1, machine)
 t.tick()
 local ui = t.ui(p)
 assert(ui, "an empty hand opens the panel")
-assert(row(ui, "vessel").value == "empty", "it says there is nothing in it")
-assert(row(ui, "line") ~= nil, "and it reads the run behind the machine")
+assert(row(ui, "dock.vessel").value.id == "dock.vessel.empty", "it says there is nothing in it")
+assert(row(ui, "line_dock.line") ~= nil, "and it reads the run behind the machine")
 near(ui.setpoints[1].value, 313.15, 1e-9, "the dial opens at Bay's T0C+40")
 t.ui_close(p)
 
@@ -113,7 +121,7 @@ near(pipe_of(3, 1, "water"), 0.0, 1e-9, "the run opens dry")
 
 t.click(p, 4, 1, machine)
 t.tick()
-assert(row(t.ui(p), "vessel").value == "beaker (water)", "the panel names what is in it")
+assert(row(t.ui(p), "dock.vessel").value.text == "beaker (water)", "the panel names what is in it")
 assert(t.ui(p).toggles[1].on == false, "and nothing ships switched on")
 
 -- Dialled over water's boiling point, because the dial it opens at is
