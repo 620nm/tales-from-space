@@ -18,12 +18,12 @@ if sim ~= nil then
         if why == "not_lying" then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:items.retractor.they_need_to_be_lying", {}),
+                message = sim.msg("lunatic/tfs:lib.surgery.not_lying_down", {}),
             })
         elseif why == "obstructed" then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:items.retractor.the_operation_site_is_covered", {}),
+                message = sim.msg("lunatic/tfs:lib.surgery.site_covered", {}),
             })
         else
             sim.message.send({

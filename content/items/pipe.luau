@@ -49,7 +49,7 @@ if sim ~= nil then
         sim.set_mode(self, next_index)
         sim.message.send({
             recipient = user,
-            message = sim.msg("lunatic/tfs:items.pipe.layer", {
+            message = sim.msg("lunatic/tfs:lib.pipe.layer_set", {
                 layer = next_index + 1,
             }),
         })
@@ -65,7 +65,7 @@ if sim ~= nil then
         if not sim.subfloor_exposed(x, y) then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:items.pipe.the_floor_is_in_the", {}),
+                message = sim.msg("lunatic/tfs:lib.subfloor.covered", {}),
             })
             return true
         end
@@ -73,7 +73,7 @@ if sim ~= nil then
         if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:items.pipe.an_atmospherics_component_already_occupies", {}),
+                message = sim.msg("lunatic/tfs:lib.pipe.layer_taken", {}),
             })
             return true
         end
@@ -88,7 +88,7 @@ if sim ~= nil then
             if sim.do_after(user, sim.ticks(1.0), {}) == "interrupted" then
                 sim.message.send({
                     recipient = user,
-                    message = sim.msg("lunatic/tfs:items.pipe.you_stop_fitting_the_pipe", {}),
+                    message = sim.msg("lunatic/tfs:lib.pipe.fitting_stopped", {}),
                 })
                 return true
             end
@@ -99,14 +99,14 @@ if sim ~= nil then
             if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
                 sim.message.send({
                     recipient = user,
-                    message = sim.msg("lunatic/tfs:items.pipe.an_atmospherics_component_already_occupies_2", {}),
+                    message = sim.msg("lunatic/tfs:lib.pipe.layer_taken", {}),
                 })
                 return true
             end
             if sim.pipe(x, y) % (mask * 2) >= mask then
                 sim.message.send({
                     recipient = user,
-                    message = sim.msg("lunatic/tfs:items.pipe.someone_already_ran_pipe_through", {}),
+                    message = sim.msg("lunatic/tfs:lib.pipe.occupied", {}),
                 })
                 return true
             end

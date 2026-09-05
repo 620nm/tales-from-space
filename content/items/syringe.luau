@@ -166,12 +166,12 @@ if sim ~= nil then
         if next_index == DRAW then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:items.syringe.you_set_the_syringe_to", {}),
+                message = sim.msg("lunatic/tfs:items.syringe.set_to_draw", {}),
             })
         else
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:items.syringe.you_set_the_syringe_to_2", {}),
+                message = sim.msg("lunatic/tfs:items.syringe.set_to_inject", {}),
             })
         end
         return true
@@ -244,7 +244,7 @@ if sim ~= nil then
             if (free_l(self) or 0) <= 1e-9 then
                 sim.message.send({
                     recipient = user,
-                    message = sim.msg("lunatic/tfs:items.syringe.the_syringe_is_full_2", {}),
+                    message = sim.msg("lunatic/tfs:items.syringe.the_syringe_is_full", {}),
                 })
                 return true
             end
@@ -256,7 +256,7 @@ if sim ~= nil then
             if (moles_in(self) or 0) < 1e-9 then
                 sim.message.send({
                     recipient = user,
-                    message = sim.msg("lunatic/tfs:items.syringe.the_syringe_is_empty_2", {}),
+                    message = sim.msg("lunatic/tfs:items.syringe.the_syringe_is_empty", {}),
                 })
                 return true
             end

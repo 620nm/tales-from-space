@@ -51,7 +51,7 @@ if sim ~= nil then
         if not sim.is_powered(self) then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:fixtures.pipe_dispenser.the_dispenser_is_dark_and_2", {}),
+                message = sim.msg("lunatic/tfs:fixtures.pipe_dispenser.the_dispenser_is_dark_and", {}),
             })
             return true
         end

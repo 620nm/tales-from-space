@@ -74,7 +74,7 @@ if sim ~= nil then
             if sim.pipe_occupancy(x, y) % (pipe_layer * 2) >= pipe_layer then
                 sim.message.send({
                     recipient = user,
-                    message = sim.msg("lunatic/tfs:items.wrench.an_atmospherics_component_already_occupies", {}),
+                    message = sim.msg("lunatic/tfs:lib.pipe.layer_taken", {}),
                 })
                 return true
             end

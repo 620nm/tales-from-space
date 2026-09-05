@@ -67,7 +67,7 @@ if sim ~= nil then
         if not sim.subfloor_exposed(x, y) then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:items.pipe_painter.the_floor_is_in_the", {}),
+                message = sim.msg("lunatic/tfs:lib.subfloor.covered", {}),
             })
             return true
         end
@@ -99,7 +99,7 @@ if sim ~= nil then
         if layers == 0 then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:items.pipe_painter.there_is_no_pipe_under", {}),
+                message = sim.msg("lunatic/tfs:lib.pipe.none_here", {}),
             })
             return true
         end

@@ -76,7 +76,7 @@ if sim ~= nil then
         if not sim.subfloor_exposed(x, y) then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:items.cable_coil.the_floor_is_in_the", {}),
+                message = sim.msg("lunatic/tfs:lib.subfloor.covered", {}),
             })
             return true
         end
