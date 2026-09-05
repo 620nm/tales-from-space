@@ -79,7 +79,7 @@ export function matterBlock(id: string, block: MatterBlock): UiNode {
       ? []
       : [
           {
-            label: S.SEALED,
+            label: S.SEAL,
             value: block.sealed ? S.SEALED : S.OPEN_SHELL,
             tone: (block.sealed ? "on" : "idle") as "on" | "idle",
           },

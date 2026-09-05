@@ -40,6 +40,7 @@ export const TARGET = "Target";
 // Looking.
 export const TILE_TITLE = "On this tile";
 export const EXAMINE_TITLE = "Examine";
+export const NOTHING_MORE = "Nothing else to note.";
 
 // Documents.
 export const NO_FILE_OPEN = "No file open";
@@ -60,6 +61,7 @@ export const HAVE = "have";
 export const COST = "cost";
 export const ARM = "Arm";
 export const ARMED = "Armed";
+export const SEAL = "Seal";
 export const SEALED = "sealed";
 export const OPEN_SHELL = "open";
 export const SHELL = "Shell";
@@ -70,6 +72,10 @@ export const LOWER = "−";
 export const RAISE = "+";
 
 export const hand = (index: number): string => `Hand ${index + 1}`;
+// A 40px square holds one short word. A wrapped name climbs over the
+// sprite it belongs to, so the tray cuts rather than wraps.
+export const short = (text: string, limit = 10): string =>
+  text.length > limit ? `${text.slice(0, limit - 1)}…` : text;
 export const newFile = (ext: string): string => `New .${ext}`;
 export const fileName = (name: string, ext: string): string => `${name}.${ext}`;
 export const bytes = (size: number): string => `${size} B`;

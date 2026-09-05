@@ -130,7 +130,7 @@ function setpointRow(
             },
             { cls: ["num"] },
           ),
-          point.unit ? text(`${id}/unit`, point.unit, ["chipkey"]) : null,
+          point.unit ? text(`${id}/unit`, point.unit, ["hint"]) : null,
           press(`${id}/up`, S.RAISE, move(point.value + step), {
             disabled: !active,
           }),

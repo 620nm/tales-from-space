@@ -19,7 +19,9 @@ export function inventory(view: GameplayView): UiNode | null {
       row(
         "tray-head",
         some(
-          text("identity", view.state.identity?.name ?? "", ["chipval", "grow"]),
+          text("identity", view.state.identity?.name ?? "", ["chipval", "grow"], {
+            minWidth: 92,
+          }),
           vitals(view),
         ),
         { style: { alignItems: "center", gap: 8 } },
@@ -51,7 +53,7 @@ function handsGroup(current: InventoryState): UiNode {
     const id = `hand/${index}/pick`;
     return Slot(id, {
       ...(item?.sprite ? { sprite: item.sprite } : {}),
-      label: item?.name ?? S.hand(index),
+      label: S.short(item?.name ?? S.hand(index)),
       active: current.active === index,
       empty: !item,
       ...(item?.fill ? { fill: item.fill } : {}),
@@ -99,7 +101,7 @@ function wornGroup(view: GameplayView, current: InventoryState): UiNode | null {
     const id = `equipment/${slot.id}/pick`;
     return Slot(id, {
       ...(worn?.item?.sprite ? { sprite: worn.item.sprite } : {}),
-      label: worn?.item?.name ?? slot.label,
+      label: S.short(worn?.item?.name ?? slot.label),
       empty: !worn?.item,
       ...(worn?.item?.fill ? { fill: worn.item.fill } : {}),
       item: `equipment/${slot.id}`,
