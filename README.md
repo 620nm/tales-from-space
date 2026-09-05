@@ -45,15 +45,38 @@ Gameplay presentation and controls belong to `ui/`, including jobs, lobby,
 respawn, chat, HUD, build and device/file panels. The trusted host interprets the
 package through the restricted UI SDK; it supplies no browser globals or
 per-frame script hook. Native providers supply readouts and validate intents.
-The engine's `docs/PACK-UI.md` documents this contract. The `ui/main.tsx`
-entrypoint composes crew/chat/inspection panels (`panels.ts`), inventory controls
-(`inventory.ts`), world overlays (`world-overlays.ts`), and document rows
-(`documents.ts`). File editing and submitted-draft lifetime live in `files.ts`;
-`view.ts` owns node helpers and event dispatch. `model.ts` and
-`document-model.ts` describe the provider fields these surfaces consume; their
-source references point to the engine serializers. These are compile-time
-projections, not runtime validators. Editor declarations in
-`editor/manifest.json` configure the native document engine; see
+The engine's `docs/PACK-UI.md` documents this contract, and `@lunatic/ui`
+supplies the component kit and default theme these screens are built from
+(`docs/pack-ui/components.md`).
+
+| File | Owns |
+| ---- | ---- |
+| `main.tsx` | the root sheet: what is pinned to which edge, and event dispatch |
+| `theme.ts` | the stylesheet, named by `manifest.json` and evaluated at build time |
+| `strings.ts` | every English word this package writes, and the English behind a server label id |
+| `labels.ts` | `labelText`, which reads a server field whether it is a string or a `Label` |
+| `view.ts` | node helpers and the id-to-command table every press is registered in |
+| `lobby.ts`, `chat.ts`, `inspect.ts` | the crew board and condition card, comms, examine and the tile menu |
+| `inventory.ts`, `inventory-storage.ts`, `doll.ts` | the tray, an opened container, and the body-target figure |
+| `documents.ts` | one pane per document; the discriminator picks the body, `presentation` the shape |
+| `documents-modules.ts` | readouts, switches, label rows and setpoints, grouped by section |
+| `documents-choices.ts`, `documents-shelf.ts` | dials as choice grids, and the pictured shelf |
+| `files.ts`, `matter-block.ts` | the two-pane file manager, and one body of matter drawn |
+| `world-overlays.ts` | anchored speech and progress over the station |
+| `model.ts`, `document-model.ts` | the provider fields these surfaces consume |
+
+The two model files point at the engine serializers; they are compile-time
+projections, not runtime validators.
+
+`ui/` has no build step of its own. To typecheck it, point `tsc` from the
+engine's `web/node_modules` at a config whose `paths` map `@lunatic/ui` to
+`<engine>/web/sdk/index.ts` and `@lunatic/pack-ui/jsx-runtime` to
+`<engine>/web/sdk/jsx-runtime.ts`, with `strict`, `noUncheckedIndexedAccess`,
+`moduleResolution: "bundler"`, `jsx: "react-jsx"`, `jsxImportSource:
+"@lunatic/pack-ui"` and `lib: ["ES2022", "DOM"]` — the same settings
+`web/tsconfig.sdk.json` checks the engine's own fixture package with.
+
+Editor declarations in `editor/manifest.json` configure the native document engine; see
 `docs/mapping/manifest.md`. Neither UI guests nor server gameplay scripts access
 editor drafts. The trusted client connects through an independently operated
 gateway; running a game server alone does not host its executable bootstrap.
