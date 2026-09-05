@@ -31,12 +31,12 @@ export function crewPanels(view: GameplayView): UiNode[] {
       ),
     );
   const body = state.bodyStatus;
-  if (body && (!body.state.controllable || !body.state.animate))
+  if (body && (!body.state?.controllable || !body.state?.animate))
     children.push(
       pane(
         "body-state",
         [
-          text("body-label", body.state.label),
+          text("body-label", body.state?.label),
           ...(body.can_respawn
             ? [button("respawn", "Respawn", { kind: "respawn" })]
             : []),
@@ -54,7 +54,7 @@ export function chatPanel(view: GameplayView): UiNode[] {
     .map((line, index: number) =>
       text(
         `log/${index}`,
-        `${line.channel ? `[${line.channel}] ` : ""}${line.name ? `${line.name}: ` : ""}${line.text}`,
+        `${line?.channel ? `[${line.channel}] ` : ""}${line?.name ? `${line.name}: ` : ""}${line?.text ?? ""}`,
       ),
     );
   children.push(
@@ -84,7 +84,7 @@ export function chatPanel(view: GameplayView): UiNode[] {
 
 export function inspectionPanels(view: GameplayView): UiNode[] {
   const children: UiNode[] = [];
-  const state = view.state;
+  const state = view.state ?? {};
   if (state.examine)
     children.push(
       pane(
@@ -92,16 +92,16 @@ export function inspectionPanels(view: GameplayView): UiNode[] {
         [
           row("examine-title", [
             icon("examine-icon", state.examine.sprite),
-            text("examine-heading", state.examine.title),
+            text("examine-heading", state.examine.title ?? ""),
             button("examine-close", "Close", {
               kind: "dismiss",
               panel: "examine",
             }),
           ]),
-          ...state.examine.lines.map((line, index: number) =>
+          ...(state.examine.lines ?? []).map((line, index: number) =>
             text(
               `examine-line/${index}`,
-              line.spans.map((span) => span.text).join(""),
+              (line?.spans ?? []).map((span) => span?.text ?? "").join(""),
             ),
           ),
         ],
@@ -124,12 +124,12 @@ export function inspectionPanels(view: GameplayView): UiNode[] {
             kind: "dismiss",
             panel: "context",
           }),
-          ...state.context.map((target, index: number) =>
+          ...(state.context ?? []).map((target, index: number) =>
             row(`context/${index}`, [
-              icon(`context/${index}/icon`, target.sprite),
-              button(`context/${index}/use`, target.name, {
+              icon(`context/${index}/icon`, target?.sprite),
+              button(`context/${index}/use`, target?.name, {
                 kind: "context",
-                target: target.target,
+                target: target?.target ?? null,
               }),
             ]),
           ),

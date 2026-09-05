@@ -14,8 +14,14 @@ export function node(
 ): UiNode {
   return { type, id, ...extra };
 }
+// One node carries at most 4096 UTF-16 units; over that the host
+// quarantines this package, so every label it writes is cut here.
+const TEXT_LIMIT = 4096;
+function label(value: unknown): string {
+  return String(value ?? "").slice(0, TEXT_LIMIT);
+}
 export function text(id: string, value: unknown): UiNode {
-  return node("text", id, { text: String(value ?? "") });
+  return node("text", id, { text: label(value) });
 }
 export function column(
   id: string,
@@ -54,12 +60,12 @@ export function pane(
 }
 export function button(
   id: string,
-  label: string,
+  caption: unknown,
   action: Command | ((event: UiEvent) => Command | undefined),
   disabled = false,
 ): UiNode {
   actions.set(id, action);
-  return node("button", id, { text: label, event: id, disabled });
+  return node("button", id, { text: label(caption), event: id, disabled });
 }
 export function input(
   id: string,
