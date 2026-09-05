@@ -7,7 +7,11 @@ export interface DocumentIdentity {
   generation: number;
   title: string;
 }
-export type PanelDocument = DocumentIdentity & { state: DocumentState };
+// A provider writes `state`; every reader here treats it as absent or
+// incomplete rather than trusting the shape below.
+export type PanelDocument = DocumentIdentity & {
+  state?: Partial<DocumentState>;
+};
 export type DocumentState = BuildState | ScriptState | ModuleState;
 export interface BuildState {
   document: "build";

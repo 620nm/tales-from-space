@@ -3,6 +3,7 @@ import type { Json } from "@lunatic/ui";
 import type { GameplayView } from "./model";
 import type {
   DocumentIdentity,
+  DocumentState,
   BuildState,
   ScriptState,
   ModuleState,
@@ -16,7 +17,10 @@ export function documents(view: GameplayView): UiNode[] {
   retainOpenFileBuffers(openDocuments);
   return openDocuments.map((doc) => {
     const id = `doc/${doc.id}/${doc.generation}`;
-    const state = doc.state;
+    // A provider that sent no state, or one that is not a record, still
+    // gets its frame and its close button rather than taking the
+    // interface down.
+    const state: Partial<DocumentState> = doc.state ?? {};
     const active = state.status === undefined || state.status >= 2;
     const children: UiNode[] = [
       row(`${id}/title`, [
@@ -29,11 +33,15 @@ export function documents(view: GameplayView): UiNode[] {
       ]),
     ];
     if (state.document === "build") {
-      children.push(...buildRows(id, doc, state, view.state.armed));
+      children.push(...buildRows(id, doc, state, view.state?.armed));
     } else if (state.document === "script") {
       children.push(...scriptRows(id, doc, state, active));
     } else {
-      children.push(...moduleRows(id, doc, state, active));
+      // Anything a provider does not name is read as a module document,
+      // which is what every field below is optional for.
+      children.push(
+        ...moduleRows(id, doc, state as Partial<ModuleState>, active),
+      );
     }
     return pane(id, children, { maxHeight: 440 });
   });
@@ -65,13 +73,13 @@ function dataRows(id: string, value: Json, depth = 0): UiNode[] {
 function buildRows(
   id: string,
   doc: DocumentIdentity,
-  state: BuildState,
+  state: Partial<BuildState>,
   armed: number | undefined,
 ): UiNode[] {
   const children: UiNode[] = [];
 
   children.push(
-    ...state.recipes.map((recipe, index: number) =>
+    ...(state.recipes ?? []).map((recipe, index: number) =>
       row(`${id}/recipe/${index}`, [
         icon(`${id}/recipe/${index}/icon`, recipe.sprite),
         button(
@@ -95,14 +103,14 @@ function buildRows(
 function scriptRows(
   id: string,
   doc: DocumentIdentity,
-  state: ScriptState,
+  state: Partial<ScriptState>,
   active: boolean,
 ): UiNode[] {
   const children: UiNode[] = [];
 
-  children.push(...dataRows(`${id}/data`, state.data));
+  children.push(...dataRows(`${id}/data`, state.data ?? null));
   children.push(
-    ...state.actions.map((action, index: number) =>
+    ...(state.actions ?? []).map((action, index: number) =>
       action.input
         ? row(`${id}/action/${index}`, [
             text(`${id}/action/${index}/label`, action.id),
@@ -125,7 +133,7 @@ function scriptRows(
 function moduleRows(
   id: string,
   doc: DocumentIdentity,
-  state: ModuleState,
+  state: Partial<ModuleState>,
   active: boolean,
 ): UiNode[] {
   const children: UiNode[] = [];

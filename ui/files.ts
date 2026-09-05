@@ -21,7 +21,7 @@ let nextEditor = 0;
 export function files(
   id: string,
   doc: DocumentIdentity,
-  state: ModuleState,
+  state: Partial<ModuleState>,
 ): UiNode[] {
   const children: UiNode[] = [];
   children.push(
@@ -183,10 +183,11 @@ function editorBuffer(key: string, open: OpenFile): Buffer {
 export function retainOpenFileBuffers(documents: PanelDocument[]): void {
   const openKeys = new Set<string>();
   for (const doc of documents) {
-    if (doc.state.document === "build" || doc.state.document === "script")
-      continue;
-    const open = doc.state.open;
-    if (doc.state.stores && open) {
+    // Only a store document holds a buffer; anything else — including a
+    // document with no state at all — simply has none to retain.
+    const state = (doc.state ?? {}) as Partial<ModuleState>;
+    const open = state.open;
+    if (state.stores && open) {
       openKeys.add(`doc/${doc.id}/${doc.generation}/${open.store}:${open.uid}`);
     }
   }
