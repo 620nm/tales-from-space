@@ -49,10 +49,8 @@ return {
         -- rather than in a run, so it names no layer, no facing and no
         -- switch (../lunatic/docs/content-schema/structures.md, `sink`).
         device = "sink",
-        -- Litres a second, off the tile it stands on. `rate_lps` is the
-        -- block's one spelling for a rate; `rate_l_per_s` is refused by
-        -- name so a near miss cannot leave a drain quietly running at
-        -- its default.
+        -- Litres a second, off the tile it stands on: the atmos
+        -- block's own spelling for a rate.
         rate_lps = 0.5,
     },
 }
