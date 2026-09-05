@@ -32,7 +32,6 @@
   "lunatic/tfs:ui.look.nothing_more": "Nothing else to note.",
   "lunatic/tfs:ui.files.none_open": "No file open",
   "lunatic/tfs:ui.files.media": "Media",
-  "lunatic/tfs:ui.files.media_empty": "empty",
   "lunatic/tfs:ui.files.eject": "Eject",
   "lunatic/tfs:ui.files.copy": "Copy",
   "lunatic/tfs:ui.files.delete": "Delete",

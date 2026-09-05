@@ -104,7 +104,7 @@ export interface ModuleState {
   products?: Product[];
   matter?: MatterBlock[];
   stores?: StoreRow[];
-  media_slot?: string | null;
+  media_slot?: Label | null;
   files?: FileRow[];
   create?: string[];
   open?: OpenFile | null;

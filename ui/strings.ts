@@ -44,7 +44,6 @@ export const NOTHING_MORE = tfs("ui.look.nothing_more");
 // Documents.
 export const NO_FILE_OPEN = tfs("ui.files.none_open");
 export const MEDIA = tfs("ui.files.media");
-export const MEDIA_EMPTY = tfs("ui.files.media_empty");
 export const EJECT = tfs("ui.files.eject");
 export const COPY = tfs("ui.files.copy");
 export const DELETE = tfs("ui.files.delete");
