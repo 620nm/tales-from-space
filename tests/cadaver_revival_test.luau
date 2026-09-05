@@ -60,6 +60,15 @@ end
 
 -- The wearables panel is a row model of its own (docs/TGUI.md): one
 -- `labels` row per declared equipment slot, named by the slot's LABEL.
+-- A candidate button's face: an operation ON AN ORGAN carries the two
+-- words as arguments of `procedure.on_organ` (docs/tgui/labels.md).
+local function face(label)
+    if type(label) == "table" and label.args and label.args.organ then
+        return tostring(label.args.operation) .. " " .. tostring(label.args.organ)
+    end
+    return tostring(word(label))
+end
+
 local function slot_row(panel, label)
     for _, r in ipairs(panel.labels or {}) do
         if word(r.label) == label then return r end
@@ -156,7 +165,7 @@ assert(win ~= nil and win.presentation == "choices", "several organs to reach")
 local pick
 for _, toggle in ipairs(win.toggles) do
     if toggle.option:find("remove_organ", 1, true) == 1
-        and word(toggle.label):find("heart", 1, true) then
+        and face(toggle.label):find("heart", 1, true) then
         pick = toggle.option
     end
 end

@@ -165,6 +165,17 @@ t.run_ticks(2)
 local PX, PY = 2, 1
 local pid = t.body_id(patient)
 
+-- What a candidate button says. An operation ON AN ORGAN is the
+-- `procedure.on_organ` id carrying the two words as arguments; a plain
+-- one is content's own word (docs/tgui/labels.md).
+local function face(label)
+    if type(label) ~= "table" then return tostring(label) end
+    if label.args and label.args.organ then
+        return tostring(label.args.operation) .. " " .. tostring(label.args.organ)
+    end
+    return tostring(label.text or label.id)
+end
+
 local function hold(id)
     if t.hands(surgeon).held ~= nil then t.drop(surgeon); t.tick() end
     t.click(surgeon, 1, 1, t.target_at(1, 1, id))
@@ -191,7 +202,7 @@ t.run_ticks(2)
 local win = t.ui(surgeon)
 local pick
 for _, toggle in ipairs(win.toggles) do
-    if toggle.label:find("lungs", 1, true) then pick = toggle.option end
+    if face(toggle.label):find("lungs", 1, true) then pick = toggle.option end
 end
 assert(pick, "the window offers the lungs")
 t.ui_act(surgeon, "toggle", string.format('{"field":"operation","option":"%s"}', pick))
