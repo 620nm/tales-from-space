@@ -15,6 +15,7 @@
         ("color_adapter", "obj/pipes_n_cables/color_adapter.dmi"),
         ("manifold", "obj/pipes_n_cables/manifold.dmi"),
         ("pipe_item", "obj/pipes_n_cables/pipe_item.dmi"),
+        ("plumbers", "obj/pipes_n_cables/hydrochem/plumbers.dmi"),
         ("stack_objects", "obj/stack_objects.dmi"),
         ("tiles", "obj/tiles.dmi"),
     ],
@@ -293,6 +294,15 @@
         ("metal", Dmi("@stack_objects", "sheet-metal_3", 0)),
         ("floor_tile", Dmi("@tiles", "tile", 0)),
         ("tv", Dmi("@computer", "detective_tv", 0)),
+        // The drain grate. tg has no floor drain -- its water spills are
+        // decals on a timer -- so the picture is borrowed from the one
+        // machine in that tree that does the same JOB: the chemical
+        // disposer, "Breaks down chemicals and annihilates them"
+        // (code/modules/plumbing/plumbers/destroyer.dm:4-8), which is a
+        // grated steel box standing on the deck. Its rate is NOT
+        // borrowed with it -- a hole in the deck is not a chemical
+        // annihilator -- and content/structures/floor_drain.luau says so.
+        ("floor_drain", Dmi("@plumbers", "disposal", 0)),
         ("white", White),
 
     ],
