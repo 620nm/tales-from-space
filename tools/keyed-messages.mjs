@@ -13,8 +13,7 @@
 // A line whose message is CONCATENATED is reported, never rewritten:
 // joining fragments is the thing the rule forbids, so each of those is
 // hand-authored as one complete template with placeholders.
-import { readFileSync, writeFileSync } from "node:fs";
-import { readdirSync, statSync } from "node:fs";
+import { readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -118,12 +117,12 @@ for (const path of sources(join(ROOT, "content"))) {
   const taken = new Map();
   let changed = false;
   const out = src.replace(LITERAL, (whole, text, tail, at) => {
+    if (!SENT.test(src.slice(0, at))) return whole;
     const line = src.slice(0, at).split("\n").length;
     if (tail.trimStart().startsWith("..")) {
       joined.push(`${relative(ROOT, path)}:${line}`);
       return whole;
     }
-    if (!SENT.test(src.slice(0, at))) return whole;
     if (CHECK) {
       joined.push(`${relative(ROOT, path)}:${line}`);
       return whole;
