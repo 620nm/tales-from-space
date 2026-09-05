@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "pack": "lunatic/tfs",
+  "revision": "1",
+  "default_mode": "space_station",
+  "modes": {
+    "space_station": {
+      "label": "Space Station",
+      "tools": ["select", "paint", "fill", "erase", "clone", "spawn", "link"],
+      "lenses": ["surface", "subfloor", "blend", "networking"]
+    },
+    "free_build": {
+      "label": "Free Build",
+      "tools": ["select", "paint", "fill", "erase", "clone", "spawn", "link"],
+      "lenses": ["surface", "subfloor", "blend", "networking"]
+    }
+  }
+}

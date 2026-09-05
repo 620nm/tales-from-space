@@ -2,7 +2,7 @@
 
 Tales from Space (TfS) is the game: every item, job, substance, reaction,
 map, and behavior handler that turns the lunatic engine into something worth
-logging into. It is authored as a Luau mod with id `lunatic/tfs`
+logging into. Its server behavior is authored as a Luau mod with id `lunatic/tfs`
 (docs/SCRIPTING.md §5.1 — vendor/mod; the vendor is the authoring group).
 This standalone repository is loaded by the lunatic engine through
 `LUNATIC_PACK`; the engine ships no game content of its own.
@@ -12,6 +12,8 @@ This standalone repository is loaded by the lunatic engine through
 | Directory        | Contents |
 | ---------------- | -------- |
 | `content/`       | The mod itself: the two optional fixed-name entrypoints (`audiences.luau` for delivery rosters, then `main.luau` for other top-level declarations), `capabilities.luau`, `part_tree.luau`, `lib/` (shared tables the rosters read), pack rosters (`items/`, `jobs/`, `bodies/`, `gamemodes/`, `fixtures/`, `substances/`, `reactions/`, `air/`) whose `.luau` files return prototype data and register behavior through explicit `Definition:handle` calls, plus `tuning.luau` feel knobs. |
+| `ui/`           | Restricted TypeScript/TSX gameplay presentation and semantic bindings, delivered separately from client wasm. |
+| `editor/`       | Versioned pack/mode editor palettes, schemas, declarative previews and composed native tools. |
 | `maps/`          | Station maps as RON (`chillstation.ron` is the default; `outpost.ron` is the test/demo map). |
 | `assets/`        | Sprite, sound and whole-picture source manifests plus the tracked `tg-revision` consumed and verified by `cargo run -p xtask -- bake-atlas`. |
 | `tests/`         | Luau specs (`*_test.luau`) run by the engine's spec runner, with focused RON fixtures embedded inline where needed. |
@@ -28,13 +30,26 @@ anywhere it was not told):
 ```sh
 export LUNATIC_PACK=/absolute/path/to/tales-from-space
 export LUNATIC_TG=/absolute/path/to/tgstation
-cargo run -p lunatic-server                 # defaults: the map mod.toml names, <pack>/content
-cargo run -p lunatic-server -- --mode free_build
-cargo run -p lunatic-server -- "$LUNATIC_PACK/maps/outpost.ron"
 cargo run -p xtask -- bake-atlas            # reads $LUNATIC_PACK/assets and $LUNATIC_TG
+cargo run -p xtask -- build-ui              # compiles the optional pack frontend
 ```
 
+Follow the engine's `docs/UI-PRIVACY.md` local setup to stage the snapshot and
+start the authenticated game server and browser gateway. Open the gateway on
+port 8081. The server defaults to the map in `mod.toml`; its launch command can
+add `--mode free_build` or use `"$LUNATIC_PACK/maps/outpost.ron"` as the map.
+
 ## Authoring
+
+Gameplay presentation and controls belong to `ui/`, including jobs, lobby,
+respawn, chat, HUD, build and device/file panels. The trusted host interprets the
+package through the restricted UI SDK; it supplies no browser globals or
+per-frame script hook. Native providers supply readouts and validate intents.
+The engine's `docs/PACK-UI.md` documents this contract. Editor declarations in
+`editor/manifest.json` configure the native document engine; see
+`docs/mapping/manifest.md`. Neither UI guests nor server gameplay scripts access
+editor drafts. The trusted client connects through an independently operated
+gateway; running a game server alone does not host its executable bootstrap.
 
 - `docs/SCRIPTING.md` is the v1 content design: anchors, handler kinds,
   transactions, events, tasks, and scoped state.
