@@ -286,7 +286,9 @@ if sim ~= nil then
             sim.sound.play({ asset = "lunatic/tfs:sound/smash", at = ev.at })
             sim.message.send({
                 recipient = user,
-                message = "You break down the " .. target.entity.name .. ".",
+                message = sim.msg("lunatic/tfs:items.rpd.broke_down", {
+                    thing = target.entity.name,
+                }),
             })
             return true
         end
@@ -314,7 +316,10 @@ if sim ~= nil then
                             sim.set_dial(self, "paint", c - 1)
                             sim.message.send({
                                 recipient = user,
-                                message = "Layer " .. index .. ", " .. color.name .. ".",
+                                message = sim.msg("lunatic/tfs:items.rpd.copied", {
+                                    layer = index,
+                                    color = color.name,
+                                }),
                             })
                             return true
                         end
@@ -323,7 +328,9 @@ if sim ~= nil then
                     -- taking, and saying so beats silence.
                     sim.message.send({
                         recipient = user,
-                        message = "Layer " .. index .. ", and a paint this thing has no name for.",
+                        message = sim.msg("lunatic/tfs:items.rpd.copied_unnamed", {
+                            layer = index,
+                        }),
                     })
                     return true
                 end

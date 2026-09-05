@@ -77,7 +77,10 @@ if sim ~= nil then
         else
             sim.message.send({
                 recipient = user,
-                message = "The Captain's Aid points " .. direction .. ".",
+                message = sim.msg(
+                    "lunatic/tfs:items.captains_aid.points_" .. direction,
+                    {}
+                ),
             })
         end
         return true

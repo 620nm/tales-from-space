@@ -95,8 +95,9 @@ if sim ~= nil then
         sim.sound.play({ asset = "lunatic/tfs:sound/vend", at = ev.at })
         sim.message.send({
             recipient = user,
-            message = "The machine takes the " .. returned
-                .. " and drops a cold bottle of water at your feet.",
+            message = sim.msg("lunatic/tfs:fixtures.vendor.traded", {
+                item = returned,
+            }),
         })
         return true
     end)

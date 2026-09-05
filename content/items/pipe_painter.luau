@@ -50,7 +50,9 @@ if sim ~= nil then
         sim.set_mode(self, next_index)
         sim.message.send({
             recipient = user,
-            message = "Pipe painter set to " .. COLORS[next_index + 1].name .. ".",
+            message = sim.msg("lunatic/tfs:items.pipe_painter.set", {
+                color = COLORS[next_index + 1].name,
+            }),
         })
         return true
     end)
@@ -82,7 +84,9 @@ if sim ~= nil then
         if machine then
             sim.message.send({
                 recipient = user,
-                message = "The " .. machine.name .. " takes no paint.",
+                message = sim.msg("lunatic/tfs:items.pipe_painter.no_paint", {
+                    machine = machine.name,
+                }),
             })
             return true
         end
@@ -124,7 +128,10 @@ if sim ~= nil then
         local paint = COLORS[sim.mode(self).index + 1]
         sim.paint_pipe(x, y, layers - fixed, paint.hex)
         sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })
-        sim.message.send({ recipient = user, message = "You paint the pipe " .. paint.name .. "." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.pipe_painter.painted", { color = paint.name }),
+        })
         return true
     end)
 end

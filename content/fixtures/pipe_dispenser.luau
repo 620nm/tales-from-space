@@ -60,7 +60,9 @@ if sim ~= nil then
         sim.sound.play({ asset = "lunatic/tfs:sound/vend", at = ev.at })
         sim.message.send({
             recipient = user,
-            message = "You put the " .. item.name .. " back into the dispenser.",
+            message = sim.msg("lunatic/tfs:fixtures.pipe_dispenser.put_back", {
+                item = item.name,
+            }),
         })
         return true
     end)

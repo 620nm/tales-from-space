@@ -30,9 +30,12 @@ local SIDES = 10
 -- tg's `#define MIN_SIDES_ALERT 5` (dice.dm:1-3). Ten is over it.
 local MIN_SIDES_ALERT = 5
 
-local function comment(face)
+-- Which of this die's lines a face reads under. A bad roll is a
+-- DIFFERENT sentence rather than a clause glued onto one, so the whole
+-- line is authored per outcome (docs/LOCALIZATION.md 5).
+local function variant(face)
     if SIDES > MIN_SIDES_ALERT and face == 1 then
-        return " Ouch, bad luck."
+        return "_bad"
     end
     return ""
 end
@@ -72,7 +75,12 @@ if sim ~= nil then
         local face = math.random(1, SIDES)
         sim.sound.play({ asset = "lunatic/tfs:sound/dice_roll", at = user.tile })
         sim.appearance.set_state({ entity = self, state = tostring(face) })
-        sim.message.send({ recipient = user, message = "You roll the d00. It lands on " .. reading(face) .. "." .. comment(face) })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.d00.roll" .. variant(face), {
+                face = reading(face),
+            }),
+        })
         return true
     end)
     script_definition:handle("throw.land.done", { kind = "react", route = "land" }, function(ev)
@@ -80,7 +88,12 @@ if sim ~= nil then
         local face = math.random(1, SIDES)
         sim.sound.play({ asset = "lunatic/tfs:sound/dice_roll", at = ev.at })
         sim.appearance.set_state({ entity = self, state = tostring(face) })
-        sim.message.send({ recipient = user, message = "The d00 rolls to a stop, landing on " .. reading(face) .. "." .. comment(face) })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.d00.land" .. variant(face), {
+                face = reading(face),
+            }),
+        })
     end)
 end
 

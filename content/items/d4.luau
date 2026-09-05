@@ -40,7 +40,10 @@ if sim ~= nil then
         local result = math.random(1, SIDES)
         sim.sound.play({ asset = "lunatic/tfs:sound/dice_roll", at = user.tile })
         sim.appearance.set_state({ entity = self, state = tostring(result) })
-        sim.message.send({ recipient = user, message = "You roll the d4. It lands on " .. result .. "." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.d4.roll", { face = result }),
+        })
         return true
     end)
     script_definition:handle("throw.land.done", { kind = "react", route = "land" }, function(ev)
@@ -48,7 +51,10 @@ if sim ~= nil then
         local result = math.random(1, SIDES)
         sim.sound.play({ asset = "lunatic/tfs:sound/dice_roll", at = ev.at })
         sim.appearance.set_state({ entity = self, state = tostring(result) })
-        sim.message.send({ recipient = user, message = "The d4 rolls to a stop, landing on " .. result .. "." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.d4.land", { face = result }),
+        })
     end)
 end
 

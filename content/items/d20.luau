@@ -25,14 +25,17 @@
 local SIDES = 20
 local MIN_SIDES_ALERT = 5
 
-local function comment(result)
-    -- Order matters and is tg's: the natural twenty is assigned second
-    -- and would win the tie if a die ever had both (dice.dm:90-93).
+-- Which of this die's lines a face reads under. A bad roll and a
+-- natural twenty are DIFFERENT sentences rather than clauses glued onto
+-- one (docs/LOCALIZATION.md 5). Order matters and is tg's: the natural
+-- twenty is assigned second and would win the tie if a die ever had
+-- both (dice.dm:90-93).
+local function variant(result)
     if SIDES > MIN_SIDES_ALERT and result == 1 then
-        return " Ouch, bad luck."
+        return "_bad"
     end
     if SIDES == 20 and result == 20 then
-        return " NAT 20!"
+        return "_nat"
     end
     return ""
 end
@@ -79,7 +82,12 @@ if sim ~= nil then
         local result = math.random(1, SIDES)
         sim.sound.play({ asset = "lunatic/tfs:sound/dice_roll", at = user.tile })
         sim.appearance.set_state({ entity = self, state = tostring(result) })
-        sim.message.send({ recipient = user, message = "You roll the d20. It lands on " .. result .. "." .. comment(result) })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.d20.roll" .. variant(result), {
+                face = result,
+            }),
+        })
         return true
     end)
     script_definition:handle("throw.land.done", { kind = "react", route = "land" }, function(ev)
@@ -87,7 +95,12 @@ if sim ~= nil then
         local result = math.random(1, SIDES)
         sim.sound.play({ asset = "lunatic/tfs:sound/dice_roll", at = ev.at })
         sim.appearance.set_state({ entity = self, state = tostring(result) })
-        sim.message.send({ recipient = user, message = "The d20 rolls to a stop, landing on " .. result .. "." .. comment(result) })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.d20.land" .. variant(result), {
+                face = result,
+            }),
+        })
     end)
 end
 

@@ -49,7 +49,9 @@ if sim ~= nil then
         sim.set_mode(self, next_index)
         sim.message.send({
             recipient = user,
-            message = "Pipe layer set to " .. (next_index + 1) .. ".",
+            message = sim.msg("lunatic/tfs:items.pipe.layer", {
+                layer = next_index + 1,
+            }),
         })
         return true
     end)

@@ -104,13 +104,21 @@ local function print_rows(user, rows, names, order, total, unit)
         -- than asking every author to shout.
         sim.message.send({
             recipient = user,
-            message = sentence_case(names[id] or id) .. ": " .. r2(amount) .. " " .. unit .. " (" .. r2(share) .. " %)",
+            message = sim.msg("lunatic/tfs:items.analyzer.row", {
+                substance = sentence_case(names[id] or id),
+                amount = r2(amount),
+                unit = unit,
+                share = r2(share),
+            }),
         })
     end
 end
 
 local function report(user, of, sample)
-    sim.message.send({ recipient = user, message = "Results of analysis of " .. of .. "." })
+    sim.message.send({
+        recipient = user,
+        message = sim.msg("lunatic/tfs:items.analyzer.results", { of = of }),
+    })
     local gas, gas_names, gas_order, gas_moles = collect(sample, "gas")
     local liquid, liquid_names, liquid_order, liquid_ml = collect(sample, "liquid_ml")
     local solid, solid_names, solid_order, solid_ml = collect(sample, "solid_ml")
@@ -121,12 +129,23 @@ local function report(user, of, sample)
     if gas_moles <= 0 and liquid_ml <= 0 and solid_ml <= 0 then
         -- tg prints the volume even for an empty mixture, deliberately
         -- ("don't want to change the order volume appears in").
-        sim.message.send({ recipient = user, message = sentence_case(of) .. " is empty!" })
-        sim.message.send({ recipient = user, message = "Volume: " .. r2(sample.volume_l) .. " L" })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.analyzer.empty", { of = sentence_case(of) }),
+        })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.analyzer.volume", {
+                volume = r2(sample.volume_l),
+            }),
+        })
         return
     end
     if gas_moles > 0 then
-        sim.message.send({ recipient = user, message = "Moles: " .. r2(gas_moles) .. " mol" })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.analyzer.moles", { moles = r2(gas_moles) }),
+        })
         print_rows(user, gas, gas_names, gas_order, gas_moles, "mol")
     end
     -- The condensed blocks, under the gas and above the temperature:
@@ -135,21 +154,41 @@ local function report(user, of, sample)
     -- one reading answers for all three states, so the instrument that
     -- prints one prints them all.
     if liquid_ml > 0 then
-        sim.message.send({ recipient = user, message = "Liquid: " .. r2(liquid_ml) .. " mL" })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.analyzer.liquid", {
+                millilitres = r2(liquid_ml),
+            }),
+        })
         print_rows(user, liquid, liquid_names, liquid_order, liquid_ml, "mL")
     end
     if solid_ml > 0 then
-        sim.message.send({ recipient = user, message = "Solid: " .. r2(solid_ml) .. " mL" })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.analyzer.solid", {
+                millilitres = r2(solid_ml),
+            }),
+        })
         print_rows(user, solid, solid_names, solid_order, solid_ml, "mL")
     end
     sim.message.send({
         recipient = user,
-        message = "Temperature: " .. r2(sample.temp_k - T0C) .. " °C (" .. r2(sample.temp_k) .. " K)",
+        message = sim.msg("lunatic/tfs:items.analyzer.temperature", {
+            celsius = r2(sample.temp_k - T0C),
+            kelvin = r2(sample.temp_k),
+        }),
     })
-    sim.message.send({ recipient = user, message = "Volume: " .. r2(sample.volume_l) .. " L" })
     sim.message.send({
         recipient = user,
-        message = "Pressure: " .. r2(sample.pressure_kpa) .. " kPa",
+        message = sim.msg("lunatic/tfs:items.analyzer.volume", {
+            volume = r2(sample.volume_l),
+        }),
+    })
+    sim.message.send({
+        recipient = user,
+        message = sim.msg("lunatic/tfs:items.analyzer.pressure", {
+            pressure = r2(sample.pressure_kpa),
+        }),
     })
 end
 
