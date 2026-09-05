@@ -32,7 +32,7 @@ if sim ~= nil then
         id = content.id,
         noun = "can",
         phases = { "liquid", "solid" },
-        sip = { units = 2, message = "You take a swig of Space Cola." },
+        sip = { units = 2, message = "lunatic/tfs:items.cola.you_take_a_swig_of" },
     })
 end
 

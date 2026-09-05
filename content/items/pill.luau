@@ -56,13 +56,19 @@ if sim ~= nil then
         end
         local read = sim.matter_read(self)
         if read == nil or read.moles < 1e-9 then
-            sim.message.send({ recipient = user, message = "The pill is a blank." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.pill.the_pill_is_a_blank", {}),
+            })
             return true
         end
         sim.matter.drink({ from = self, who = user })
         self:consume()
         sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = ev.at })
-        sim.message.send({ recipient = user, message = "You swallow the pill." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.pill.you_swallow_the_pill", {}),
+        })
         return true
     end)
 end

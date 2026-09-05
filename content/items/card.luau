@@ -103,11 +103,17 @@ if sim ~= nil then
         if face_up then
             sim.appearance.set_state({ entity = self, state = "down_" .. key })
             sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = user.tile })
-            sim.message.send({ recipient = user, message = "You turn the card face down." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.card.you_turn_the_card_face", {}),
+            })
         else
             sim.appearance.set_state({ entity = self, state = "up_" .. key })
             sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = user.tile })
-            sim.message.send({ recipient = user, message = "You turn the card over. It is the " .. cards.NAMES[key] .. "." })
+            sim.message.send({
+                recipient = user,
+                message = "You turn the card over. It is the " .. cards.NAMES[key] .. ".",
+            })
         end
         return true
     end)
@@ -149,7 +155,10 @@ if sim ~= nil then
         -- eventually meets a refused write while `sim.consume` below has
         -- already eaten the card. Cards would quietly stop existing.
         if order == nil or cards.count(order) >= #cards.FACES then
-            sim.message.send({ recipient = user, message = "The deck is already full." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.card.the_deck_is_already_full", {}),
+            })
             return true
         end
         local _, key = cards.read(self.state)
@@ -163,7 +172,10 @@ if sim ~= nil then
         deck.vars["order"] = restored
         deck.vars["picture"] = cards.picture(cards.count(restored))
         sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = ev.at })
-        sim.message.send({ recipient = user, message = "You slide the card into the deck." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.card.you_slide_the_card_into", {}),
+        })
         -- The card itself is gone: it is in the deck now, and the deck
         -- is a string. `sim.entity.despawn` does the hand slots and removal
         -- and the ledger row, so this hook can never leave a hand

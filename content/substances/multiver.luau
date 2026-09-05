@@ -64,7 +64,10 @@ if sim ~= nil then
         sim.healing.apply({ target = mob, amounts = { tox = 0.5 } })
         sim.damage_organ(mob, "lungs", 0.5)
         if math.random(1, 10) == 1 then
-            sim.message.send({ recipient = mob, message = "Your chest feels tight." })
+            sim.message.send({
+                recipient = mob,
+                message = sim.msg("lunatic/tfs:substances.multiver.your_chest_feels_tight", {}),
+            })
         end
     end)
 end

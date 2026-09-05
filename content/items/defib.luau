@@ -98,7 +98,10 @@ if sim ~= nil then
             sim.message.send({ recipient = user, message = why })
             return true
         end
-        sim.message.send({ recipient = user, message = "You charge the defibrillator..." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.defib.you_charge_the_defibrillator", {}),
+        })
         -- `ev` belongs to the occurrence that spawned this task and does
         -- not survive into it (docs/SCRIPTING.md §6: each resume segment
         -- is a separate transaction), so every tile below comes off the
@@ -115,7 +118,10 @@ if sim ~= nil then
             -- stop being in front of the medic (docs/LUAU-API.md §6).
             if sim.do_after(user, sim.ticks(5), { subject = patient }) ~= "ok" then
                 sim.sound.play({ asset = "lunatic/tfs:sound/defib_failed", at = user.tile })
-                sim.message.send({ recipient = user, message = "The paddles slip." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.defib.the_paddles_slip", {}),
+                })
                 return
             end
             -- Everything is revalidated: five seconds is long enough for
@@ -139,7 +145,10 @@ if sim ~= nil then
                 end
             end
             sim.sound.play({ asset = "lunatic/tfs:sound/defib_success", at = user.tile })
-            sim.message.send({ recipient = user, message = "The patient's heart restarts." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.defib.the_patient_s_heart_restarts", {}),
+            })
         end)
         return true
     end)

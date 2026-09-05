@@ -57,7 +57,10 @@ if sim ~= nil then
     script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
         local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount
         if math.random(1, 6) == 1 then
-            sim.message.send({ recipient = mob, message = "You feel a little tipsy." })
+            sim.message.send({
+                recipient = mob,
+                message = sim.msg("lunatic/tfs:substances.ethanol.you_feel_a_little_tipsy", {}),
+            })
         end
     end)
 end

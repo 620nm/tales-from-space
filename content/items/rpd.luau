@@ -109,16 +109,25 @@ end
 -- reads as a dropped click.
 local function lay_run(self, recipe, user, x, y, at)
     if not sim.subfloor_exposed(x, y) then
-        sim.message.send({ recipient = user, message = "The floor is in the way. Pry the tile up first." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.rpd.the_floor_is_in_the", {}),
+        })
         return
     end
     local mask = layer_of(self)
     if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
-        sim.message.send({ recipient = user, message = "An atmospherics component already occupies that pipe layer." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.rpd.an_atmospherics_component_already_occupies", {}),
+        })
         return
     end
     if sim.pipe(x, y) % (mask * 2) >= mask then
-        sim.message.send({ recipient = user, message = "Someone already ran pipe through there." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.rpd.someone_already_ran_pipe_through", {}),
+        })
         return
     end
     -- tg's `atmos_build_speed` (RPD.dm:53). Half of what the same
@@ -131,11 +140,17 @@ local function lay_run(self, recipe, user, x, y, at)
         -- may have run the line through this very tile.
         mask = layer_of(self)
         if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
-            sim.message.send({ recipient = user, message = "An atmospherics component already occupies that pipe layer." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.rpd.an_atmospherics_component_already_occupies_2", {}),
+            })
             return
         end
         if sim.pipe(x, y) % (mask * 2) >= mask then
-            sim.message.send({ recipient = user, message = "Someone already ran pipe through there." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.rpd.someone_already_ran_pipe_through_2", {}),
+            })
             return
         end
         -- WHICH kind of length, as the item it comes on. A kind with a
@@ -261,12 +276,18 @@ if sim ~= nil then
             -- engine agrees by construction: a structure is not an item
             -- and `sim.consume` has nothing to spend of one.
             if not can_break_down then
-                sim.message.send({ recipient = user, message = "There is nothing loose there to break down." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.rpd.there_is_nothing_loose_there", {}),
+                })
                 return true
             end
             target.entity:consume()
             sim.sound.play({ asset = "lunatic/tfs:sound/smash", at = ev.at })
-            sim.message.send({ recipient = user, message = "You break down the " .. target.entity.name .. "." })
+            sim.message.send({
+                recipient = user,
+                message = "You break down the " .. target.entity.name .. ".",
+            })
             return true
         end
 
@@ -278,7 +299,10 @@ if sim ~= nil then
             -- the only thing that carries either — and a run you have
             -- not opened the deck over is one you cannot see.
             if not sim.subfloor_exposed(x, y) then
-                sim.message.send({ recipient = user, message = "The floor is in the way. Pry the tile up first." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.rpd.the_floor_is_in_the_2", {}),
+                })
                 return true
             end
             for index, mask in ipairs(LAYERS) do
@@ -288,17 +312,26 @@ if sim ~= nil then
                     for c, color in ipairs(COLORS) do
                         if color.hex == hex then
                             sim.set_dial(self, "paint", c - 1)
-                            sim.message.send({ recipient = user, message = "Layer " .. index .. ", " .. color.name .. "." })
+                            sim.message.send({
+                                recipient = user,
+                                message = "Layer " .. index .. ", " .. color.name .. ".",
+                            })
                             return true
                         end
                     end
                     -- A colour off the roster: the layer is still worth
                     -- taking, and saying so beats silence.
-                    sim.message.send({ recipient = user, message = "Layer " .. index .. ", and a paint this thing has no name for." })
+                    sim.message.send({
+                        recipient = user,
+                        message = "Layer " .. index .. ", and a paint this thing has no name for.",
+                    })
                     return true
                 end
             end
-            sim.message.send({ recipient = user, message = "There is no pipe under the floor here." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.rpd.there_is_no_pipe_under", {}),
+            })
             return true
         end
 
@@ -306,7 +339,10 @@ if sim ~= nil then
         -- becomes a fitting nor disappears under the machine Build
         -- would otherwise create.
         if target and target.kind == "item" then
-            sim.message.send({ recipient = user, message = "That loose item is not atmospherics construction." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.rpd.that_loose_item_is_not", {}),
+            })
             return true
         end
 

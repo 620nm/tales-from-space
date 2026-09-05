@@ -70,9 +70,15 @@ if sim ~= nil then
         sim.appearance.set_state({ entity = self, state = direction })
         sim.sound.play({ asset = "lunatic/tfs:sound/switch_click", at = user.tile })
         if direction == "off" then
-            sim.message.send({ recipient = user, message = "You switch the Captain's Aid off." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.captains_aid.you_switch_the_captain_s", {}),
+            })
         else
-            sim.message.send({ recipient = user, message = "The Captain's Aid points " .. direction .. "." })
+            sim.message.send({
+                recipient = user,
+                message = "The Captain's Aid points " .. direction .. ".",
+            })
         end
         return true
     end)

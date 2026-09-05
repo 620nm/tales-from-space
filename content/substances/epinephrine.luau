@@ -66,7 +66,10 @@ if sim ~= nil then
         end
         sim.healing.apply({ target = mob, amounts = { brute = 0.5, burn = 0.5, oxy = 0.5, tox = 0.5 } })
         if math.random(1, 10) == 1 then
-            sim.message.send({ recipient = mob, message = "Your heart hammers." })
+            sim.message.send({
+                recipient = mob,
+                message = sim.msg("lunatic/tfs:substances.epinephrine.your_heart_hammers", {}),
+            })
         end
     end)
 end

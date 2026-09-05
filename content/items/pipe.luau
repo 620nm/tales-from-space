@@ -47,7 +47,10 @@ if sim ~= nil then
         local dial = sim.mode(self)
         local next_index = (dial.index + 1) % dial.count
         sim.set_mode(self, next_index)
-        sim.message.send({ recipient = user, message = "Pipe layer set to " .. (next_index + 1) .. "." })
+        sim.message.send({
+            recipient = user,
+            message = "Pipe layer set to " .. (next_index + 1) .. ".",
+        })
         return true
     end)
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
@@ -58,21 +61,33 @@ if sim ~= nil then
         -- the reply is not a probe for what is already buried. Open
         -- deck, not "plating": the map decides per tile.
         if not sim.subfloor_exposed(x, y) then
-            sim.message.send({ recipient = user, message = "The floor is in the way. Pry the tile up first." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.pipe.the_floor_is_in_the", {}),
+            })
             return true
         end
         local mask = LAYERS[sim.mode(self).index + 1]
         if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
-            sim.message.send({ recipient = user, message = "An atmospherics component already occupies that pipe layer." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.pipe.an_atmospherics_component_already_occupies", {}),
+            })
             return true
         end
         if sim.pipe(x, y) % (mask * 2) >= mask then
             return { replaced = false } -- a length already runs here on this layer
         end
-        sim.message.send({ recipient = user, message = "You start fitting a length of pipe..." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.pipe.you_start_fitting_a_length", {}),
+        })
         sim.spawn_task(user, function()
             if sim.do_after(user, sim.ticks(1.0), {}) == "interrupted" then
-                sim.message.send({ recipient = user, message = "You stop fitting the pipe." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.pipe.you_stop_fitting_the_pipe", {}),
+                })
                 return true
             end
             -- The same question again at the end: while you worked, another
@@ -80,11 +95,17 @@ if sim ~= nil then
             -- you may have turned the dial yourself.
             mask = LAYERS[sim.mode(self).index + 1]
             if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
-                sim.message.send({ recipient = user, message = "An atmospherics component already occupies that pipe layer." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.pipe.an_atmospherics_component_already_occupies_2", {}),
+                })
                 return true
             end
             if sim.pipe(x, y) % (mask * 2) >= mask then
-                sim.message.send({ recipient = user, message = "Someone already ran pipe through there." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.pipe.someone_already_ran_pipe_through", {}),
+                })
                 return true
             end
             -- One exact item becomes one exact length. Native code derives the

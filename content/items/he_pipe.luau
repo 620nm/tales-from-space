@@ -75,32 +75,50 @@ if sim ~= nil then
         local clicked, target = ev.claim, ev.claim
         local _x, _y, _choice = x, y, choice
         if not sim.subfloor_exposed(x, y) then
-            sim.message.send({ recipient = user, message = "The floor is in the way. Pry the tile up first." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.he_pipe.the_floor_is_in_the", {}),
+            })
             return true
         end
         local layer = sim.mode(self).index + 1
         local mask = 2 ^ (layer - 1)
         if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
-            sim.message.send({ recipient = user, message = "An atmospherics component already occupies that pipe layer." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.he_pipe.an_atmospherics_component_already_occupies", {}),
+            })
             return true
         end
         if sim.pipe(x, y) % (mask * 2) >= mask then
             return { replaced = false } -- a length already runs here on this layer
         end
-        sim.message.send({ recipient = user, message = "You start fitting a length of heat-exchanging pipe..." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.he_pipe.you_start_fitting_a_length", {}),
+        })
         sim.spawn_task(user, function()
             if sim.do_after(user, sim.ticks(1.0), {}) == "interrupted" then
-                sim.message.send({ recipient = user, message = "You stop fitting the pipe." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.he_pipe.you_stop_fitting_the_pipe", {}),
+                })
                 return true
             end
             layer = sim.mode(self).index + 1
             mask = 2 ^ (layer - 1)
             if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
-                sim.message.send({ recipient = user, message = "An atmospherics component already occupies that pipe layer." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.he_pipe.an_atmospherics_component_already_occupies_2", {}),
+                })
                 return true
             end
             if sim.pipe(x, y) % (mask * 2) >= mask then
-                sim.message.send({ recipient = user, message = "Someone already ran pipe through there." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.he_pipe.someone_already_ran_pipe_through", {}),
+                })
                 return true
             end
             -- The native verb reads the KIND off this very item, the same

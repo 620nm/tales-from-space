@@ -37,7 +37,10 @@ if sim ~= nil then
             -- play_tool_sound, which is `usesound` (crowbar.ogg).
             sim.sound.play({ asset = "lunatic/tfs:sound/crowbar", at = ev.at })
             sim.pry_tile(x, y)
-            sim.message.send({ recipient = user, message = "You pry up the floor tile." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.crowbar.you_pry_up_the_floor", {}),
+            })
             return true
         end
         if door == nil or door.open or door.powered then
@@ -46,16 +49,25 @@ if sim ~= nil then
         -- The sustained heave: tg's `operating_sound`, played while
         -- forcing something open (crowbar_prying.ogg).
         sim.sound.play({ asset = "lunatic/tfs:sound/crowbar_pry", at = ev.at })
-        sim.message.send({ recipient = user, message = "You jam the crowbar into the airlock and heave..." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.crowbar.you_jam_the_crowbar_into", {}),
+        })
         sim.spawn_task(user, function()
             if sim.do_after(user, sim.ticks(2.5), {}) == "ok" then
                 local d = sim.door(x, y)
                 if d ~= nil and not d.open and not d.powered then
                     sim.pry_door(x, y)
-                    sim.message.send({ recipient = user, message = "The door gives way." })
+                    sim.message.send({
+                        recipient = user,
+                        message = sim.msg("lunatic/tfs:items.crowbar.the_door_gives_way", {}),
+                    })
                 end
             else
-                sim.message.send({ recipient = user, message = "You lose your grip on the crowbar." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.crowbar.you_lose_your_grip_on", {}),
+                })
             end
         end)
         return true

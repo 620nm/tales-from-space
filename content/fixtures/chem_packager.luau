@@ -77,7 +77,10 @@ if sim ~= nil then
         end
         local self, user, vessel = ev.subject, ev.actor, ev.docked
         if vessel == nil then
-            sim.message.send({ recipient = user, message = "There is nothing in the hopper." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.chem_packager.there_is_nothing_in_the", {}),
+            })
             return true
         end
         local held = condensed(vessel)
@@ -85,28 +88,43 @@ if sim ~= nil then
             return { replaced = false } -- not something that holds anything
         end
         if not sim.is_powered(self) then
-            sim.message.send({ recipient = user, message = "The packager is dark and silent." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.chem_packager.the_packager_is_dark_and", {}),
+            })
             return true
         end
         if held < 1e-9 then
-            sim.message.send({ recipient = user, message = "There is nothing in it to package." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.chem_packager.there_is_nothing_in_it", {}),
+            })
             return true
         end
         -- tg computes the per-container dose ONCE, off the buffer as it
         -- stood when the print was ordered (chem_master.dm:514).
         local share = held / PILLS
-        sim.message.send({ recipient = user, message = "The extruder starts printing." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:fixtures.chem_packager.the_extruder_starts_printing", {}),
+        })
         sim.spawn_task(user, function()
             for _ = 1, PILLS do
                 sim.entity.spawn({ definition = "pill", at = self.tile })
                 -- tg's `printing_speed = 0.75 SECONDS`
                 -- (chem_master.dm:32).
                 if sim.do_after(user, sim.ticks(0.75), {}) == "interrupted" then
-                    sim.message.send({ recipient = user, message = "The extruder stops." })
+                    sim.message.send({
+                        recipient = user,
+                        message = sim.msg("lunatic/tfs:fixtures.chem_packager.the_extruder_stops", {}),
+                    })
                     return true
                 end
                 if not sim.is_powered(self) then
-                    sim.message.send({ recipient = user, message = "The packager goes dark." })
+                    sim.message.send({
+                        recipient = user,
+                        message = sim.msg("lunatic/tfs:fixtures.chem_packager.the_packager_goes_dark", {}),
+                    })
                     return true
                 end
                 local blank = blank_at(self.tile)
@@ -116,7 +134,10 @@ if sim ~= nil then
                 sim.matter.pour({ from = vessel, to = blank, amount = share })
             end
             sim.sound.play({ asset = "lunatic/tfs:sound/vend", at = self.tile })
-            sim.message.send({ recipient = user, message = "The extruder clicks and stops." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.chem_packager.the_extruder_clicks_and_stops", {}),
+            })
             return true
         end)
         return true

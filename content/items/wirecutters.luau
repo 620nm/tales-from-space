@@ -54,10 +54,16 @@ if sim ~= nil then
         if sim.cable(x, y) % (line * 2) < line then
             return { replaced = false }
         end
-        sim.message.send({ recipient = user, message = "You start snipping through the cabling..." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.wirecutters.you_start_snipping_through_the", {}),
+        })
         sim.spawn_task(user, function()
             if sim.do_after(user, sim.ticks(1.0), {}) == "interrupted" then
-                sim.message.send({ recipient = user, message = "You stop cutting." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.wirecutters.you_stop_cutting", {}),
+                })
                 return true
             end
             -- Asked again at the end, not remembered from the start: the
@@ -67,7 +73,10 @@ if sim ~= nil then
             end
             sim.sound.play({ asset = "lunatic/tfs:sound/wirecutter", at = ev.at })
             sim.cut_cable(x, y, line)
-            sim.message.send({ recipient = user, message = "The cable parts with a snap." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.wirecutters.the_cable_parts_with_a", {}),
+            })
         end)
         return true
     end)

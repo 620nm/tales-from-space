@@ -18,11 +18,20 @@ if sim ~= nil then
         if not info or not info.surgery_refusal then return { replaced = false } end
         local why = info.surgery_refusal
         if why == "not_lying" then
-            sim.message.send({ recipient = user, message = "They need to be lying down for that." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.scalpel.they_need_to_be_lying", {}),
+            })
         elseif why == "obstructed" then
-            sim.message.send({ recipient = user, message = "The operation site is covered." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.scalpel.the_operation_site_is_covered", {}),
+            })
         else
-            sim.message.send({ recipient = user, message = "There is nothing to do there with the scalpel." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.scalpel.there_is_nothing_to_do", {}),
+            })
         end
         return true
     end)
