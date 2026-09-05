@@ -710,6 +710,25 @@
         // would be a mechanism nobody has built yet -- opening it vents
         // the headspace and leaves the slug standing.
         (16, 22, "canister", { "blend": "water_10l" }),
+        // ---- the two floor drains --------------------------------
+        // Half a litre a second off the deck each
+        // (content/structures/floor_drain.luau), and the station has two
+        // because it has exactly two places where litres end up on the
+        // floor rather than in a shell.
+        //
+        // One under the water reservoir at (12, 28). That tank is the
+        // one store here with a liquid phase, and the comment above it
+        // says what happens when somebody plumbs it into a warm room: it
+        // rains, on this deck. The grating is where the rain lands.
+        //
+        // One in front of the chem bench, a tile south of the burner at
+        // (20, 5). A chemist tips glassware; the beakers on that bench
+        // are already full at roundstart. Neither drain is plumbed to
+        // anything, because a drain is not: what goes down it leaves the
+        // world through the engine's `drained` register rather than
+        // arriving somewhere else.
+        (12, 29, "floor_drain"),
+        (20, 6, "floor_drain"),
     ],
     // The two vestibule interlocks: each airlock names the direction its
     // partner lies in, and the link resolves only because BOTH of them
