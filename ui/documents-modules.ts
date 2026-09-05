@@ -21,9 +21,6 @@ const TONES: Tone[] = ["on", "off", "idle"];
 const toneOf = (tone: string | null | undefined): Tone | undefined =>
   TONES.find((known) => known === tone);
 
-const clamp = (value: number, min: number, max: number): number =>
-  Math.max(min, Math.min(max, value));
-
 /** A label on the left and one thing on the right, in the order sent. */
 function labelRow(
   id: string,
@@ -82,8 +79,9 @@ function labelRow(
 
 /**
  * A dial with its range under it. Nothing here does the arithmetic the
- * server owns: a step press sends the absolute number it wants and the
- * server clamps it against the bounds it published.
+ * server owns: a step press sends the STEP it wants and the end stops
+ * send `min`/`max`, and `Setpoint::resolve` decides what that comes to
+ * (docs/tgui/action-boundary.md).
  */
 function setpointRow(
   id: string,
@@ -95,10 +93,9 @@ function setpointRow(
   const step = point.step && point.step > 0 ? point.step : 1;
   const spell = (value: number): string => value.toFixed(places);
   const move = (to: number) =>
-    documentAction(doc, "set", {
-      field: point.field,
-      value: clamp(to, point.min, point.max),
-    });
+    documentAction(doc, "set", { field: point.field, value: to });
+  const stepBy = (by: number) =>
+    documentAction(doc, "set", { field: point.field, adjust: by });
   const box = `${id}/value`;
   return column(
     id,
@@ -118,7 +115,7 @@ function setpointRow(
       row(
         `${id}/controls`,
         some(
-          press(`${id}/down`, S.LOWER, move(point.value - step), {
+          press(`${id}/down`, S.LOWER, stepBy(-step), {
             disabled: !active,
           }),
           entry(
@@ -131,7 +128,7 @@ function setpointRow(
             { cls: ["num"] },
           ),
           point.unit ? text(`${id}/unit`, point.unit, ["hint"]) : null,
-          press(`${id}/up`, S.RAISE, move(point.value + step), {
+          press(`${id}/up`, S.RAISE, stepBy(step), {
             disabled: !active,
           }),
         ),
@@ -162,7 +159,7 @@ export function moduleBody(
   for (const toggle of toggles) see(labelText(toggle.section));
   for (const entryRow of labels) see(labelText(entryRow.section));
   for (const point of setpoints) see(labelText(point.section));
-  for (const block of blocks) see(block.section ?? "");
+  for (const block of blocks) see(labelText(block.section));
 
   const out: UiNode[] = [];
   if (state.notice)
@@ -195,7 +192,7 @@ export function moduleBody(
       if (labelText(point.section) === section)
         children.push(setpointRow(`${id}/set/${index}`, doc, point, active));
     for (const [index, block] of blocks.entries())
-      if ((block.section ?? "") === section)
+      if (labelText(block.section) === section)
         children.push(matterBlock(`${id}/matter/${index}`, block));
     if (!children.length) continue;
     out.push(
