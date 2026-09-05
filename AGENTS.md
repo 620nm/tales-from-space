@@ -84,8 +84,9 @@ suite before completion; exact commands and filter semantics are in
   `content/**/*.luau` name a catalog key; `locale/<tag>.json` says it.
   One key is one finished sentence with its facts as `{placeholders}`,
   never a fragment joined with `..` — a per-outcome variant is its own
-  key. `node tools/keyed-messages.mjs --check` fails on a literal that
-  came back, and README's "Words" is the grammar and how to add a
+  key, and a sentence two files both say is `lib.<area>.<name>`, hoisted
+  once. `node tools/keyed-messages.mjs --check` fails on a literal that
+  came back, and `docs/WORDS.md` is the grammar and how to add a
   language.
 - `ui/` owns every gameplay surface and binding in restricted TypeScript/TSX.
   Use the pack UI SDK; no real DOM, browser APIs, networking, guest clocks or
