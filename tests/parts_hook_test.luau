@@ -53,7 +53,8 @@ local function rows_in(ui, section)
 end
 
 -- The one part row a chamber has: `{ label, value, tone }`, the value
--- being "tier N · E.EE" (sim/ui/settings/parts.rs).
+-- being the `parts.tier` label id and its two numbers
+-- (sim/ui/settings/parts.rs).
 local function socket(p, x, y)
     t.click(p, x, y, t.target_at(x, y))
     t.tick()
@@ -64,9 +65,9 @@ local function socket(p, x, y)
 end
 
 local function worth(row)
-    local tier, eff = word(row.value):match("^tier (%d+) · ([%d%.]+)$")
-    assert(tier ~= nil, "the row reads as a rung and a worth: " .. word(row.value))
-    return tonumber(tier), tonumber(eff)
+    assert(row.value.id == "parts.tier",
+        "the row reads as a rung and a worth: " .. tostring(word(row.value)))
+    return tonumber(row.value.args.tier), tonumber(row.value.args.efficiency)
 end
 
 -- Every "element" a chamber's script has written since the shift began,

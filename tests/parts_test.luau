@@ -22,6 +22,13 @@ local function word(label)
     return label.id or label.text
 end
 
+-- A socket row's two numbers ride one label id, as ARGUMENTS the pack
+-- frames into a sentence (sim/ui/settings/parts.rs).
+local function worth(value)
+    assert(value.id == "parts.tier", "the numbers ride a label id: " .. tostring(word(value)))
+    return tonumber(value.args.tier), tonumber(value.args.efficiency)
+end
+
 local function rows_in(ui, section)
     local out = {}
     for _, r in ipairs(ui.readouts) do
@@ -189,8 +196,9 @@ local parts = rows_in(ui, "parts.parts")
 assert(#parts == 1, "one socket, one row: got " .. #parts)
 assert(parts[1].label.text == "ultra-high-power micro-laser",
     "the row is the part's own name: " .. word(parts[1].label))
-assert(parts[1].value.text == "tier 3 · 2.00",
-    "against its rung and what it is worth: " .. word(parts[1].value))
+local built_tier, built_eff = worth(parts[1].value)
+assert(built_tier == 3 and math.abs(built_eff - 2.0) < 1e-9,
+    "against its rung and what it is worth: " .. built_tier .. " " .. built_eff)
 assert(row(ui, "dock.vessel").value.text == "beaker (libital)",
     "a machine out of a frame docks like any other: " .. tostring(word(row(ui, "dock.vessel").value)))
 assert(row(ui, "dock.supply").value.id == "dock.supply.fed",
@@ -211,7 +219,9 @@ t.tick()
 parts = rows_in(t.ui(p), "parts.parts")
 assert(#parts == 1 and parts[1].label.text == "quad-ultra micro-laser",
     "a placement that named tier four got tier four")
-assert(parts[1].value.text == "tier 4 · 3.00", "worth three plain lasers: " .. word(parts[1].value))
+local four_tier, four_eff = worth(parts[1].value)
+assert(four_tier == 4 and math.abs(four_eff - 3.0) < 1e-9,
+    "worth three plain lasers: " .. four_tier .. " " .. four_eff)
 t.ui_act(p, "set", '{"field":"temperature","value":400}')
 t.ui_act(p, "toggle", '{"field":"power"}')
 t.run_ticks(2)
@@ -229,7 +239,9 @@ t.tick()
 parts = rows_in(t.ui(p), "parts.parts")
 assert(#parts == 1 and parts[1].label.text == "micro-laser",
     "silence in a placement is the plain rung")
-assert(parts[1].value.text == "tier 1 · 1.00", "and the neutral part: " .. word(parts[1].value))
+local plain_tier, plain_eff = worth(parts[1].value)
+assert(plain_tier == 1 and math.abs(plain_eff - 1.0) < 1e-9,
+    "and the neutral part: " .. plain_tier .. " " .. plain_eff)
 assert(row(t.ui(p), "dock.vessel").value.text == "beaker (libital)", "with a beaker in it")
 t.ui_act(p, "set", '{"field":"temperature","value":400}')
 t.ui_act(p, "toggle", '{"field":"power"}')
@@ -290,5 +302,7 @@ assert(upgraded.max > dial.max + 500.0,
 local four = rows_in(ui, "parts.parts")
 assert(#four == 4, "still four sockets")
 for _, r in ipairs(four) do
-    assert(r.value.text == "tier 4 · 3.00", "every one of them is a tier four: " .. word(r.value))
+    local r_tier, r_eff = worth(r.value)
+    assert(r_tier == 4 and math.abs(r_eff - 3.0) < 1e-9,
+        "every one of them is a tier four: " .. r_tier .. " " .. r_eff)
 end
