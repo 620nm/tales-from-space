@@ -74,5 +74,22 @@
   "lunatic/tfs:module.canister.valve.shut": "fermée",
   "lunatic/tfs:module.canister.release": "détendeur",
   "engine.door.refused": "Accès refusé.",
-  "engine.door.unpowered": "Les moteurs du sas sont morts."
+  "engine.door.unpowered": "Les moteurs du sas sont morts.",
+  "lunatic/tfs:module.vent.supply_line": "conduite d'arrivée",
+  "lunatic/tfs:module.vent.hold_at": "maintenir à",
+  "lunatic/tfs:module.vent.feed_under": "alimenter sous",
+  "lunatic/tfs:module.vent.empty_over": "évacuer au-dessus",
+  "lunatic/tfs:module.room.power": "marche",
+  "lunatic/tfs:module.room.room": "salle",
+  "lunatic/tfs:module.room.room.sealed": "scellée",
+  "lunatic/tfs:module.room.supply": "alimentation",
+  "lunatic/tfs:module.room.supply.fed": "alimentée",
+  "lunatic/tfs:module.room.supply.dead": "morte",
+  "lunatic/tfs:module.room.line.none": "aucune conduite",
+  "lunatic/tfs:module.room.line.full": "PLEINE",
+  "lunatic/tfs:module.room.line.at_full": "{pressure} — PLEINE",
+  "lunatic/tfs:module.room.line.ok": "correcte",
+  "lunatic/tfs:module.port.none": "aucune conduite",
+  "lunatic/tfs:module.port.at_full": "{pressure} — pleine",
+  "engine.radio.none": "Vous n'avez pas de radio ; vous le dites à voix haute."
 }
