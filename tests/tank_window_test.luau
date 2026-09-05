@@ -31,9 +31,16 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function readout(ui, label)
     for _, r in ipairs(ui.readouts) do
-        if r.label == label then
+        if word(r.label) == label then
             return r
         end
     end
@@ -53,7 +60,7 @@ end
 -- units each state is read in (docs/tgui/matter-block.md).
 local function block(ui, section)
     for _, b in ipairs(ui.matter or {}) do
-        if b.section == section then
+        if word(b.section) == section then
             return b
         end
     end
@@ -107,7 +114,7 @@ assert(#ui.toggles == 0, "the valve is a KEY, not a button on the panel")
 -- WHAT IS IN IT. The shared contents block: a row per substance
 -- present, in the state it is in, and the numbers every vessel has.
 -- ---------------------------------------------------------------
-local contents = block(ui, "contents")
+local contents = block(ui, "holder.contents")
 assert(contents, "the vessel's block, under the module's heading")
 local gas = state(contents, "gas")
 assert(gas, "a bottle of oxygen holds a gas")
@@ -119,10 +126,10 @@ assert(contents.temperature_k > 200.0, "a temperature")
 assert(math.abs(contents.volume_l - 70.0) < 0.001,
     "and tg's TANK_STANDARD_VOLUME, in litres: " .. tostring(contents.volume_l))
 assert(contents.sealed == true, "a bottle has a lid")
-assert(readout(ui, "supply") == nil, "an ordinary bottle is not inexhaustible")
-assert(readout(ui, "rating") == nil, "and nothing wrote a rating on the side of it")
+assert(readout(ui, "holder.supply") == nil, "an ordinary bottle is not inexhaustible")
+assert(readout(ui, "holder.rating") == nil, "and nothing wrote a rating on the side of it")
 assert(ui.gauge == nil, "so there is no needle to draw against one")
-assert(readout(ui, "internals").value == "connected", "the key opened the valve too")
+assert(readout(ui, "tank.internals").value.id == "tank.internals.connected", "the key opened the valve too")
 
 -- ---------------------------------------------------------------
 -- THE ONE KNOB. tg's release pressure, tg's bounds, and the clamp is
@@ -166,5 +173,5 @@ assert(t.hands(p)[1] == nil and t.hands(p)[2] == nil, "and out of both hands")
 local worn = t.ui(p)
 assert(worn and worn.document == "modules" and worn.presentation == "modules",
     "its document is still up")
-assert(named(state(block(worn, "contents"), "gas"), "oxygen"),
+assert(named(state(block(worn, "holder.contents"), "gas"), "oxygen"),
     "and still reading the bottle")

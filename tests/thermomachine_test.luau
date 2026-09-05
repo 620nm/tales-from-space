@@ -20,14 +20,21 @@
 
 local T20C = 293.15
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
 local function readout(ui, label)
     for _, r in ipairs(ui.readouts) do
-        if r.label == label then
-            return r.value
+        if word(r.label) == label then
+            return word(r.value)
         end
     end
     return nil
@@ -95,7 +102,7 @@ assert(panel.setpoints[1].unit == "K")
 near(panel.setpoints[1].value, T20C, 0.01, "tg's T20C out of the crate")
 near(panel.setpoints[1].min, 73.15, 0.01, "two tier-1 lasers at the cold end")
 near(panel.setpoints[1].max, 573.15, 0.01, "and at the hot end")
-near(t.pipe_pressure(1, 1), tonumber(readout(panel, "pressure"):match("[%d%.]+")), 0.2,
+near(t.pipe_pressure(1, 1), tonumber(readout(panel, "thermo.pressure"):match("[%d%.]+")), 0.2,
     "the panel reads the run it is actually plumbed into")
 
 -- ---- the dial cannot be asked for more than the parts can give ----
@@ -141,7 +148,7 @@ assert(t.pipe_pressure(1, 1) > 101.0, "and the hotter gas pushes harder: " .. t.
 t.click(p, 3, 1, t.target_at(3, 1, "thermomachine"))
 t.tick()
 near(
-    tonumber(t.ui(p).readouts[1].value:match("[%d%.]+")),
+    tonumber(word(t.ui(p).readouts[1].value):match("[%d%.]+")),
     t.pipe_temperature(1, 1),
     0.5,
     "the thermometer on the panel is the run's own"
@@ -195,7 +202,8 @@ local dead_0 = t.pipe_temperature(1, 1)
 
 t.click(d, 3, 1, t.target_at(3, 1, "thermomachine"))
 t.tick()
-assert(readout(t.ui(d), "supply") == "dead", "the panel says the mains are not behind it")
+assert(readout(t.ui(d), "thermo.supply") == "thermo.supply.dead",
+    "the panel says the mains are not behind it")
 t.ui_act(d, "set", '{"field":"temperature","value":500}')
 t.ui_act(d, "toggle", '{"field":"power"}')
 t.run_seconds(30)

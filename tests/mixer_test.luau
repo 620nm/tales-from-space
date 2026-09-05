@@ -25,6 +25,13 @@ local PORT_M3 = 0.200
 -- the one port in the whole kit that is not 200.
 local OUTLET_M3 = 0.300
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
@@ -141,11 +148,12 @@ near(ui.setpoints[2].value, 50.0, 0.001, "half and half out of the box")
 -- subtract to read their own machine.
 local mix = nil
 for _, r in ipairs(ui.readouts) do
-    if r.label == "mix" then
+    if word(r.label) == "mixer.mix" then
         mix = r.value
     end
 end
-assert(mix == "50% back / 50% side", "the panel says both shares: " .. tostring(mix))
+assert(mix.id == "mixer.mix.split" and mix.args.back == "50%" and mix.args.side == "50%",
+    "the panel says both shares: " .. tostring(mix.args and mix.args.back))
 
 -- ---------------------------------------------------------------
 -- FIFTY-FIFTY: THE TWO INTAKES PAY EQUALLY, AND IT STOPS AT TARGET.
@@ -187,11 +195,12 @@ t.ui_act(p, "set", '{"field":"pressure","value":200}')
 t.tick()
 local said_mix = nil
 for _, r in ipairs(t.ui(p).readouts) do
-    if r.label == "mix" then
+    if word(r.label) == "mixer.mix" then
         said_mix = r.value
     end
 end
-assert(said_mix == "80% back / 20% side", "the other share follows: " .. tostring(said_mix))
+assert(said_mix.args.back == "80%" and said_mix.args.side == "20%",
+    "the other share follows: " .. tostring(said_mix.args and said_mix.args.back))
 
 t.run_seconds(20)
 gave_back = back0 - moles(BACK_X, BACK_Y)

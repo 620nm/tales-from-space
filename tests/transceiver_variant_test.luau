@@ -6,6 +6,13 @@
 -- row takes a tier word or the full item id of a part of that
 -- socket's kind).
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function said(p, line)
     for _, m in ipairs(t.messages(p)) do
         if m == line then
@@ -17,7 +24,7 @@ end
 
 local function part_row(ui, label)
     for _, r in ipairs(ui.readouts) do
-        if r.section == "parts" and r.label == label then
+        if word(r.section) == "parts.parts" and word(r.label) == label then
             return r
         end
     end

@@ -46,8 +46,8 @@ t.tick()
 local ui = t.ui(p)
 assert(ui.document == "modules" and ui.presentation == "shelf",
     "the clean-room shelf document")
-assert(ui.notice == "Roll for initiative!",
-    "the content-authored slogan across the top: " .. tostring(ui.notice))
+assert(ui.notice.text == "Roll for initiative!",
+    "the content-authored slogan across the top: " .. tostring(ui.notice.text))
 
 -- Every declared product is on the window, in its declared category,
 -- with an atlas sprite the client can actually resolve and the stock the
@@ -214,5 +214,5 @@ assert(shelf ~= nil, "the machine has power and opens: "
     .. table.concat(t.messages(crew), " "))
 assert(shelf.document == "modules" and shelf.presentation == "shelf",
     "the shelf document")
-assert(shelf.notice == "Roll for initiative!",
+assert(shelf.notice.text == "Roll for initiative!",
     "and it is the right machine, not one of its two neighbours")

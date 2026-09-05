@@ -15,10 +15,17 @@
 -- third, because both ends of its dial are its lasers
 -- (thermomachine.dm:94-96) and a window states them outright.
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function rows_in(ui, section)
     local out = {}
     for _, r in ipairs(ui.readouts) do
-        if r.section == section then
+        if word(r.section) == section then
             table.insert(out, r)
         end
     end
@@ -27,7 +34,7 @@ end
 
 local function row(ui, label)
     for _, r in ipairs(ui.readouts) do
-        if r.label == label then
+        if word(r.label) == label then
             return r
         end
     end
@@ -178,16 +185,16 @@ t.run_seconds(2)
 t.click(p, 8, 1, built)
 t.tick()
 local ui = t.ui(p)
-local parts = rows_in(ui, "parts")
+local parts = rows_in(ui, "parts.parts")
 assert(#parts == 1, "one socket, one row: got " .. #parts)
-assert(parts[1].label == "ultra-high-power micro-laser",
-    "the row is the part's own name: " .. parts[1].label)
-assert(parts[1].value == "tier 3 · 2.00",
-    "against its rung and what it is worth: " .. parts[1].value)
-assert(row(ui, "vessel").value == "beaker (libital)",
-    "a machine out of a frame docks like any other: " .. tostring(row(ui, "vessel").value))
-assert(row(ui, "supply").value == "fed",
-    "and the frame it came out of was wired: " .. tostring(row(ui, "supply").value))
+assert(parts[1].label.text == "ultra-high-power micro-laser",
+    "the row is the part's own name: " .. word(parts[1].label))
+assert(parts[1].value.text == "tier 3 · 2.00",
+    "against its rung and what it is worth: " .. word(parts[1].value))
+assert(row(ui, "dock.vessel").value.text == "beaker (libital)",
+    "a machine out of a frame docks like any other: " .. tostring(word(row(ui, "dock.vessel").value)))
+assert(row(ui, "dock.supply").value.id == "dock.supply.fed",
+    "and the frame it came out of was wired: " .. tostring(word(row(ui, "dock.supply").value)))
 t.ui_act(p, "set", '{"field":"temperature","value":400}')
 t.ui_act(p, "toggle", '{"field":"power"}')
 t.run_ticks(2)
@@ -201,10 +208,10 @@ t.click(p, 3, 1, t.target_at(3, 1))
 t.run_ticks(2)
 t.click(p, 3, 1, t.target_at(3, 1))
 t.tick()
-parts = rows_in(t.ui(p), "parts")
-assert(#parts == 1 and parts[1].label == "quad-ultra micro-laser",
+parts = rows_in(t.ui(p), "parts.parts")
+assert(#parts == 1 and parts[1].label.text == "quad-ultra micro-laser",
     "a placement that named tier four got tier four")
-assert(parts[1].value == "tier 4 · 3.00", "worth three plain lasers: " .. parts[1].value)
+assert(parts[1].value.text == "tier 4 · 3.00", "worth three plain lasers: " .. word(parts[1].value))
 t.ui_act(p, "set", '{"field":"temperature","value":400}')
 t.ui_act(p, "toggle", '{"field":"power"}')
 t.run_ticks(2)
@@ -219,11 +226,11 @@ t.click(p, 2, 1, t.target_at(2, 1))
 t.run_ticks(2)
 t.click(p, 2, 1, t.target_at(2, 1))
 t.tick()
-parts = rows_in(t.ui(p), "parts")
-assert(#parts == 1 and parts[1].label == "micro-laser",
+parts = rows_in(t.ui(p), "parts.parts")
+assert(#parts == 1 and parts[1].label.text == "micro-laser",
     "silence in a placement is the plain rung")
-assert(parts[1].value == "tier 1 · 1.00", "and the neutral part: " .. parts[1].value)
-assert(row(t.ui(p), "vessel").value == "beaker (libital)", "with a beaker in it")
+assert(parts[1].value.text == "tier 1 · 1.00", "and the neutral part: " .. word(parts[1].value))
+assert(row(t.ui(p), "dock.vessel").value.text == "beaker (libital)", "with a beaker in it")
 t.ui_act(p, "set", '{"field":"temperature","value":400}')
 t.ui_act(p, "toggle", '{"field":"power"}')
 t.run_ticks(2)
@@ -268,7 +275,7 @@ assert(math.abs(dial.min - 73.15) < 1e-6,
     "two plain lasers are tg's own cold end: " .. dial.min)
 assert(math.abs(dial.max - 573.15) < 1e-6,
     "and tg's own hot end: " .. dial.max)
-assert(#rows_in(ui, "parts") == 4, "four sockets: two bins and two lasers")
+assert(#rows_in(ui, "parts.parts") == 4, "four sockets: two bins and two lasers")
 t.ui_close(p)
 
 walk("east", 1)
@@ -280,8 +287,8 @@ assert(upgraded.min < dial.min - 50.0,
     "the upgraded unit reaches far colder: " .. upgraded.min .. " vs " .. dial.min)
 assert(upgraded.max > dial.max + 500.0,
     "and far hotter: " .. upgraded.max .. " vs " .. dial.max)
-local four = rows_in(ui, "parts")
+local four = rows_in(ui, "parts.parts")
 assert(#four == 4, "still four sockets")
 for _, r in ipairs(four) do
-    assert(r.value == "tier 4 · 3.00", "every one of them is a tier four: " .. r.value)
+    assert(r.value.text == "tier 4 · 3.00", "every one of them is a tier four: " .. word(r.value))
 end

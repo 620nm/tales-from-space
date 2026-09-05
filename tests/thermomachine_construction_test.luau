@@ -20,10 +20,17 @@ local function said(p, line)
     return false
 end
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function readout(ui, label)
     for _, r in ipairs(ui.readouts) do
-        if r.label == label then
-            return r.value
+        if word(r.label) == label then
+            return word(r.value)
         end
     end
     return nil
@@ -213,7 +220,8 @@ t.tick()
 local panel = t.ui(p)
 assert(panel, "a temperature control unit wears a panel")
 assert(panel.setpoints[1].field == "temperature", "with a thermostat on it")
-assert(readout(panel, "pipe") ~= "no pipe", "and its mouth found the run: " .. tostring(readout(panel, "pipe")))
+assert(readout(panel, "thermo.pipe") ~= "thermo.pipe.none",
+    "and its mouth found the run: " .. tostring(readout(panel, "thermo.pipe")))
 t.ui_close(p)
 t.tick()
 

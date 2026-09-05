@@ -57,6 +57,13 @@ local LUMP_MOL = 2.0
 local FROZEN_K = 263.15
 local MELT_K = 273.15
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function near(got, want, tol, what)
     assert(got ~= nil, what .. ": nothing was answered")
     assert(math.abs(got - want) <= tol,
@@ -129,7 +136,7 @@ local MOLAR_MASS_G = 18.015
 
 local function block(ui, section)
     for _, b in ipairs(ui.matter or {}) do
-        if b.section == section then
+        if word(b.section) == section then
             return b
         end
     end
@@ -172,7 +179,7 @@ assert(t.hands(p).held == nil, "clicking the dock with it puts it IN")
 t.click(p, 5, 1, dispenser)
 t.tick()
 
-local contents = block(t.ui(p), "contents")
+local contents = block(t.ui(p), "dock.contents")
 assert(contents ~= nil, "the panel draws what the docked glass is holding")
 
 local lump = phase_of(contents, "solid")

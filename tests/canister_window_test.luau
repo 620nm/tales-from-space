@@ -73,13 +73,20 @@ assert(math.abs(reg.max - 2533.125) < 0.001, "max: " .. reg.max)
 
 -- The bottle is not plumbed into anything, and the panel says so
 -- rather than leaving it to be inferred from a sprite.
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local port = nil
 for _, r in ipairs(ui.readouts) do
-    if r.label == "port" then
-        port = r.value
+    if word(r.label) == "canister.port" then
+        port = word(r.value)
     end
 end
-assert(port == "loose", "an unfastened canister reads loose: " .. tostring(port))
+assert(port == "canister.port.loose", "an unfastened canister reads loose: " .. tostring(port))
 
 -- ---------------------------------------------------------------
 -- The knob. A room already at the setpoint costs nothing; dial the

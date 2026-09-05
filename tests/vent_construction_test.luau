@@ -21,6 +21,13 @@ local SUPPLIES_UNDER = ONE_ATM * 0.99
 -- tg's five piping layers as a bitmask; 4 is layer 3, the distro run.
 local DISTRO = 4
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function said(p, line)
     for _, m in ipairs(t.messages(p)) do
         if m == line then
@@ -49,7 +56,7 @@ local RECIPE = "dial1"
 
 local function pick(p, label)
     for _, tog in ipairs(t.ui(p).toggles) do
-        if tog.field == RECIPE and tog.option ~= nil and tog.label == label then
+        if tog.field == RECIPE and tog.option ~= nil and word(tog.label) == label then
             return tog.option
         end
     end

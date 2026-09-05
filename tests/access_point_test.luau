@@ -21,6 +21,13 @@
 -- plant, a controller and a socket along the back wall of every world
 -- in this file, two tiles from where the box hangs.
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function said(p, line)
     for _, m in ipairs(t.messages(p)) do
         if m == line then
@@ -43,8 +50,8 @@ end
 
 local function readout(ui, label)
     for _, r in ipairs(ui.readouts) do
-        if r.label == label then
-            return r.value
+        if word(r.label) == label then
+            return word(r.value)
         end
     end
     return nil
@@ -187,7 +194,7 @@ t.click(p, 4, 1, t.target_at(4, 1, "access_point"))
 t.tick()
 local panel = t.ui(p)
 assert(panel ~= nil, "an access point wears a panel")
-assert(#readout(panel, "address") == 17, "with the address a shift log will name")
+assert(#readout(panel, "link.address") == 17, "with the address a shift log will name")
 local lock = rows(panel, "link_lock")
 assert(#lock == 1 and not lock[1].on, "a lock row, shut, because a fresh boot finds them all shut")
 assert(#rows(panel, "link_join") == 0, "and a shut panel offers nothing to join")

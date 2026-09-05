@@ -51,11 +51,18 @@ t.world(ARENA, 0)
 local surgeon = t.join()
 t.run_ticks(3)
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 -- The wearables panel is a row model of its own (docs/TGUI.md): one
 -- `labels` row per declared equipment slot, named by the slot's LABEL.
 local function slot_row(panel, label)
     for _, r in ipairs(panel.labels or {}) do
-        if r.label == label then return r end
+        if word(r.label) == label then return r end
     end
     return nil
 end
@@ -149,7 +156,7 @@ assert(win ~= nil and win.presentation == "choices", "several organs to reach")
 local pick
 for _, toggle in ipairs(win.toggles) do
     if toggle.option:find("remove_organ", 1, true) == 1
-        and toggle.label:find("heart", 1, true) then
+        and word(toggle.label):find("heart", 1, true) then
         pick = toggle.option
     end
 end

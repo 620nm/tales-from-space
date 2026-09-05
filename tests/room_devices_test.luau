@@ -26,6 +26,13 @@ t.set_breathing(false)
 local PIPE_M3 = 0.070
 local PORT_M3 = 0.200
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
@@ -336,11 +343,11 @@ near(inj.setpoints[1].max, 200.0, 0.001, "up to MAX_TRANSFER_RATE")
 -- reading "no pipe" forever on a port it does not have.
 local labels = {}
 for _, r in ipairs(inj.readouts) do
-    labels[r.label] = r.value
+    labels[word(r.label)] = r.value
 end
-assert(labels["pipe"] ~= nil, "one port readout, not two")
-assert(labels["output"] == nil, "there is no second mouth to report")
-assert(labels["room"] ~= nil, "and the other end is a ROOM, so it reads one")
+assert(labels["flow.pipe"] ~= nil, "one port readout, not two")
+assert(labels["flow.output"] == nil, "there is no second mouth to report")
+assert(labels["flow.room"] ~= nil, "and the other end is a ROOM, so it reads one")
 
 -- ---- gently first, so the switch can be tested at all ----
 --
@@ -429,8 +436,10 @@ t.tick()
 t.run_seconds(3)
 
 for _, job in ipairs({
-    { x = 2, id = "air_scrubber", walk = { "west", "west", "west" } },
-    { x = 4, id = "air_injector", walk = { "east", "east" } },
+    -- A scrubber wears the room module's supply row; an injector is a
+    -- flow device and wears its own (docs/tgui/labels.md).
+    { x = 2, id = "air_scrubber", supply = "room.supply", walk = { "west", "west", "west" } },
+    { x = 4, id = "air_injector", supply = "flow.supply", walk = { "east", "east" } },
 }) do
     for _, dir in ipairs(job.walk) do
         walk(d, dir)
@@ -440,11 +449,11 @@ for _, job in ipairs({
     local ui = t.ui(d)
     local supply = nil
     for _, r in ipairs(ui.readouts) do
-        if r.label == "supply" then
-            supply = r.value
+        if word(r.label) == job.supply then
+            supply = word(r.value)
         end
     end
-    assert(supply == "dead", job.id .. " says the mains are not behind it")
+    assert(supply == job.supply .. ".dead", job.id .. " says the mains are not behind it")
     t.ui_act(d, "toggle", '{"field":"power"}')
     t.run_ticks(2)
     assert(

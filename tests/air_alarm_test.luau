@@ -24,14 +24,21 @@
 local ONE_ATM = 101.325
 local TUNED = 150.0
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. tostring(a) .. " vs " .. tostring(b))
 end
 
 local function readout(ui, label)
     for _, r in ipairs(ui.readouts or {}) do
-        if r.label == label then
-            return r.value
+        if word(r.label) == label then
+            return word(r.value)
         end
     end
     return nil
@@ -57,19 +64,28 @@ local function dial(ui, field)
 end
 
 -- Every section heading the document draws, in the order the rows
--- carry them. The `link` module's two are static words ("members",
--- "joinable"); the `reach` module's are one per proxied machine, named
--- for the machine and its address, which is how a reader tells two
--- vents in one room apart.
+-- carry them. The `link` module's two are ids ("link.members",
+-- "link.joinable"); the `reach` module's name one proxied machine
+-- each -- the machine and its address, which is how a reader tells two
+-- vents in one room apart -- either alone or as the `block` argument
+-- of a composed `proxy.section` heading (docs/tgui/labels.md).
 local function sections(ui)
     local seen, out = {}, {}
     local lists = { ui.readouts or {}, ui.toggles or {}, ui.setpoints or {}, ui.labels or {} }
     for _, list in ipairs(lists) do
         for _, row in ipairs(list) do
             local label = row.section
-            if label ~= nil and not seen[label] then
-                seen[label] = true
-                out[#out + 1] = label
+            local name = nil
+            if type(label) == "table" then
+                if label.id == "proxy.section" then
+                    name = label.args.block
+                else
+                    name = word(label)
+                end
+            end
+            if name ~= nil and not seen[name] then
+                seen[name] = true
+                out[#out + 1] = name
             end
         end
     end
@@ -205,11 +221,11 @@ end
 --    address to anybody standing at them -- an identifier and never a
 --    credential (docs/devices/addresses.md).
 -- ---------------------------------------------------------------
-local point = readout(open(9, 1, "access_point"), "address")
+local point = readout(open(9, 1, "access_point"), "link.address")
 assert(point ~= nil and #point == 17, "the access point has an address: " .. tostring(point))
 -- A machine rather than a structure, so the hit-test names the tile and
 -- not an id (tests/network_test.luau's router).
-local relay = readout(open(11, 1, nil), "address")
+local relay = readout(open(11, 1, nil), "link.address")
 assert(relay ~= nil and #relay == 17, "and so does the transceiver: " .. tostring(relay))
 assert(relay ~= point, "two boxes, two addresses")
 
@@ -223,9 +239,9 @@ assert(relay ~= point, "two boxes, two addresses")
 -- been given one.
 -- ---------------------------------------------------------------
 local panel = open(6, 1, "air_alarm")
-local alarm = readout(panel, "address")
+local alarm = readout(panel, "link.address")
 assert(alarm ~= nil and #alarm == 17, "the alarm's own address is on it: " .. tostring(alarm))
-assert(readout(panel, "state") == "online", "a hub tops its own tree")
+assert(readout(panel, "link.state") == "link.state.online", "a hub tops its own tree")
 assert(not rows(panel, "link_lock")[1].on, "and a fresh boot finds every lock shut")
 assert(proxied(panel, "air vent") == nil, "and no machine is drawn under it")
 assert(#scoped(panel) == 0, "not one row on it belongs to something else")
@@ -350,8 +366,8 @@ local casing = open(2, 1, "vent")
 assert(#(casing.setpoints or {}) == 0, "a paired vent offers no dial at its casing")
 assert(#(casing.toggles or {}) == 0, "and no switch either")
 assert(casing.notice ~= nil, "it says why instead")
-assert(casing.notice:find(alarm, 1, true) ~= nil,
-    "and names the box that has it: " .. tostring(casing.notice))
+assert(casing.notice.id == "proxy.controlled_from" and casing.notice.args.address == alarm,
+    "and names the box that has it: " .. tostring(casing.notice.args and casing.notice.args.address))
 
 -- ---------------------------------------------------------------
 -- 7. LOCK IT AGAIN AND THE ROOM GOES AWAY WITH THE ROSTER.
@@ -368,7 +384,7 @@ panel = t.ui(p)
 assert(not rows(panel, "link_lock")[1].on, "the alarm is shut again")
 assert(proxied(panel, "air vent") == nil, "and the room is off the console")
 assert(dial(panel, key) == nil, "with no dial left to turn")
-assert(readout(panel, "address") == alarm, "the address stays: it was never the secret")
+assert(readout(panel, "link.address") == alarm, "the address stays: it was never the secret")
 
 -- ---------------------------------------------------------------
 -- 8. AND THE BOX SAYS ALL OF THIS FROM ACROSS THE ROOM.

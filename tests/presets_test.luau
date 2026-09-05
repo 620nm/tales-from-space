@@ -23,6 +23,13 @@
 -- its own air mixer. The pipe under the chamber wall is the whole
 -- trick: a run is subfloor and does not care what turf stands over it.
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
@@ -137,11 +144,12 @@ near(ui.setpoints[1].value, 4500.0, 0.001, "its dial wound to MAX_OUTPUT_PRESSUR
 near(ui.setpoints[2].value, 79.0, 0.001, "and the split at tg's N2STANDARD")
 local mix = nil
 for _, r in ipairs(ui.readouts) do
-    if r.label == "mix" then
+    if word(r.label) == "mixer.mix" then
         mix = r.value
     end
 end
-assert(mix == "79% back / 21% side", "which the panel says in both halves: " .. tostring(mix))
+assert(mix.id == "mixer.mix.split" and mix.args.back == "79%" and mix.args.side == "21%",
+    "which the panel says in both halves: " .. tostring(mix.args and mix.args.back))
 t.ui_close(p)
 
 -- ---- and what it made ----

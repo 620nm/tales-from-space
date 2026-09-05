@@ -27,14 +27,21 @@ local CEILING = 573.15
 local T20C = 293.15
 local SPAN = CEILING - FLOOR
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
 local function readout(ui, label)
     for _, r in ipairs(ui.readouts) do
-        if r.label == label then
-            return r.value
+        if word(r.label) == label then
+            return word(r.value)
         end
     end
     return nil
@@ -188,7 +195,7 @@ end
 near(moles(1, 1), charged, charged * 1e-9, "still not one mole in or out")
 near(t.pipe_pressure(1, 1) / opening_kpa, CEILING / T20C, 1e-6, "and the pressure climbed in that ratio too")
 near(
-    tonumber(readout(t.ui(p), "pipe"):match("[%d%.]+")),
+    tonumber(readout(t.ui(p), "thermo.pipe"):match("[%d%.]+")),
     t.pipe_temperature(1, 1),
     0.1,
     "with the panel's thermometer reading the run it is plumbed into"
@@ -263,7 +270,7 @@ end
 local caught = t.pipe_temperature(5, 1)
 assert(caught > T20C + 40.0, "ten passes in, the line is well up: " .. caught)
 assert(caught < CEILING - 20.0, "and still well short of the target it was given: " .. caught)
-assert(readout(t.ui(e), "pipe"):find("K", 1, true), "the panel is reading the line all the way up")
+assert(readout(t.ui(e), "thermo.pipe"):find("K", 1, true), "the panel is reading the line all the way up")
 
 -- The dial goes UNDER the gas. tg's pass takes `target - T_port` fresh
 -- every time and has no memory of which way it was working last, so

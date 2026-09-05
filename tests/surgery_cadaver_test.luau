@@ -46,6 +46,13 @@ t.world(ARENA, 0)
 local surgeon = t.join()
 t.run_ticks(3)
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function said(who, needle)
     return (" " .. table.concat(t.messages(who), " || ") .. " "):find(needle, 1, true) ~= nil
 end
@@ -53,7 +60,7 @@ end
 -- `labels` row per declared equipment slot, named by the slot's LABEL.
 local function slot_row(panel, label)
     for _, r in ipairs(panel.labels or {}) do
-        if r.label == label then return r end
+        if word(r.label) == label then return r end
     end
     return nil
 end
@@ -61,7 +68,7 @@ end
 -- ...and the operating computer is the ordinary readout model.
 local function row(panel, label)
     for _, r in ipairs(panel.readouts or {}) do
-        if r.label == label then return r end
+        if word(r.label) == label then return r end
     end
     return nil
 end
@@ -136,10 +143,10 @@ local console = t.ui(surgeon)
 assert(console ~= nil, "the console opened a window")
 local aimed = row(console, "chest")
 assert(aimed ~= nil, "the part the next click lands on is on the panel")
-assert(aimed.value == "\u{2014}", "with nothing holding it yet: " .. tostring(aimed.value))
+assert(word(aimed.value) == "\u{2014}", "with nothing holding it yet: " .. tostring(word(aimed.value)))
 local first = row(console, "make an incision")
 assert(first ~= nil, "and the console says how to begin")
-assert(first.value == "scalpel", "naming the tool: " .. tostring(first.value))
+assert(word(first.value) == "scalpel", "naming the tool: " .. tostring(word(first.value)))
 -- A part nothing is wrong with and nobody is aiming at is still not a
 -- row: the panel is a readout, not a catalogue of everything possible.
 assert(row(console, "left leg") == nil, "an unaimed, untouched part is not a row")

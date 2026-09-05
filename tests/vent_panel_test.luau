@@ -29,14 +29,21 @@ local ONE_ATM = 101.325
 local FEEDS_UNDER = 101.325
 local EMPTIES_OVER = 109.431
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function near(a, b, slack, what)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
 local function readout(p, label)
     for _, r in ipairs(t.ui(p).readouts) do
-        if r.label == label then
-            return r.value
+        if word(r.label) == label then
+            return word(r.value)
         end
     end
     return nil
@@ -157,9 +164,9 @@ assert(toggle(p, "power").on == true, "a vent opens the shift running")
 
 -- The three readouts a room device wears, which are the scrubber's
 -- exactly -- one helper, not two copies (sim/ui/settings/room_device.rs).
-assert(readout(p, "supply") == "fed", "the mains are behind it")
-assert(readout(p, "room") ~= nil, "the room it faces is on the panel")
-assert(readout(p, "supply line") ~= nil, "and so is the run it draws from")
+assert(readout(p, "room.supply") == "room.supply.fed", "the mains are behind it")
+assert(readout(p, "room.room") ~= nil, "the room it faces is on the panel")
+assert(readout(p, "vent.supply_line") ~= nil, "and so is the run it draws from")
 
 -- ---------------------------------------------------------------
 -- THE THREE DIALS ARE A BAND, AND THE PANEL WILL NOT LET IT CROSS.

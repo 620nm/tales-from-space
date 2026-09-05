@@ -197,7 +197,7 @@ assert(#panel.toggles == 0 and #panel.setpoints == 0, "and nothing on it to turn
 -- What is in the run, itemised: one block under the LINE heading —
 -- the composition tg's chat line cannot give (docs/tgui/matter-block.md).
 local line = panel.matter and panel.matter[1]
-assert(line and line.section == "line", "the panel draws the run it is reading")
+assert(line and line.section.id == "meter.line", "the panel draws the run it is reading")
 local gas = nil
 for _, st in ipairs(line.states or {}) do
     if st.phase == "gas" then

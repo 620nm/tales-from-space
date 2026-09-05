@@ -19,10 +19,17 @@
 -- owns the plumbing fit that shares its name. What is here is only the
 -- reach: one pump inside it, one pump past it, and the same map.
 
+-- A document's words are labels: `{id=…}` for one the engine names,
+-- `{text=…}` for one content wrote (docs/tgui/labels.md).
+local function word(label)
+    if type(label) ~= "table" then return label end
+    return label.id or label.text
+end
+
 local function readout(p, label)
     for _, r in ipairs(t.ui(p).readouts) do
-        if r.label == label then
-            return r.value
+        if word(r.label) == label then
+            return word(r.value)
         end
     end
     return nil
@@ -89,7 +96,7 @@ assert(t.structure_at(6, 2).id == "volume_pump", "the map stood one there")
 -- ---------------------------------------------------------------
 t.click(p, 6, 2, t.target_at(6, 2, "volume_pump"))
 t.tick()
-assert(readout(p, "supply") == "fed", "the socket across the room is behind it")
+assert(readout(p, "flow.supply") == "flow.supply.fed", "the socket across the room is behind it")
 t.ui_close(p)
 t.tick()
 
