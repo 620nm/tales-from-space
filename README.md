@@ -45,7 +45,14 @@ Gameplay presentation and controls belong to `ui/`, including jobs, lobby,
 respawn, chat, HUD, build and device/file panels. The trusted host interprets the
 package through the restricted UI SDK; it supplies no browser globals or
 per-frame script hook. Native providers supply readouts and validate intents.
-The engine's `docs/PACK-UI.md` documents this contract. Editor declarations in
+The engine's `docs/PACK-UI.md` documents this contract. The `ui/main.tsx`
+entrypoint composes crew/chat/inspection panels (`panels.ts`), inventory controls
+(`inventory.ts`), world overlays (`world-overlays.ts`), and document rows
+(`documents.ts`). File editing and submitted-draft lifetime live in `files.ts`;
+`view.ts` owns node helpers and event dispatch. `model.ts` and
+`document-model.ts` describe the provider fields these surfaces consume; their
+source references point to the engine serializers. These are compile-time
+projections, not runtime validators. Editor declarations in
 `editor/manifest.json` configure the native document engine; see
 `docs/mapping/manifest.md`. Neither UI guests nor server gameplay scripts access
 editor drafts. The trusted client connects through an independently operated
