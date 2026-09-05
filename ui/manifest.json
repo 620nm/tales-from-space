@@ -3,145 +3,145 @@
   "bindings": [
     {
       "id": "north",
-      "label": "North",
+      "label": "lunatic/tfs:ui.binding.north",
       "key": "KeyW",
       "control": "move.north"
     },
     {
       "id": "south",
-      "label": "South",
+      "label": "lunatic/tfs:ui.binding.south",
       "key": "KeyS",
       "control": "move.south"
     },
     {
       "id": "west",
-      "label": "West",
+      "label": "lunatic/tfs:ui.binding.west",
       "key": "KeyA",
       "control": "move.west"
     },
     {
       "id": "east",
-      "label": "East",
+      "label": "lunatic/tfs:ui.binding.east",
       "key": "KeyD",
       "control": "move.east"
     },
     {
       "id": "north-arrow",
-      "label": "North (arrow)",
+      "label": "lunatic/tfs:ui.binding.north_arrow",
       "key": "ArrowUp",
       "control": "move.north"
     },
     {
       "id": "south-arrow",
-      "label": "South (arrow)",
+      "label": "lunatic/tfs:ui.binding.south_arrow",
       "key": "ArrowDown",
       "control": "move.south"
     },
     {
       "id": "west-arrow",
-      "label": "West (arrow)",
+      "label": "lunatic/tfs:ui.binding.west_arrow",
       "key": "ArrowLeft",
       "control": "move.west"
     },
     {
       "id": "east-arrow",
-      "label": "East (arrow)",
+      "label": "lunatic/tfs:ui.binding.east_arrow",
       "key": "ArrowRight",
       "control": "move.east"
     },
     {
       "id": "focus/chat",
-      "label": "Talk",
+      "label": "lunatic/tfs:ui.binding.focus_chat",
       "key": "Enter"
     },
     {
       "id": "drop",
-      "label": "Drop",
+      "label": "lunatic/tfs:ui.binding.drop",
       "key": "KeyQ"
     },
     {
       "id": "swap",
-      "label": "Swap hands",
+      "label": "lunatic/tfs:ui.binding.swap",
       "key": "KeyX"
     },
     {
       "id": "use_self",
-      "label": "Use held item",
+      "label": "lunatic/tfs:ui.binding.use_self",
       "key": "KeyZ"
     },
     {
       "id": "use_other",
-      "label": "Use on other hand",
+      "label": "lunatic/tfs:ui.binding.use_other",
       "key": "ShiftKeyZ"
     },
     {
       "id": "stop_pull",
-      "label": "Stop pulling",
+      "label": "lunatic/tfs:ui.binding.stop_pull",
       "key": "KeyH"
     },
     {
       "id": "throw_mode",
-      "label": "Throw mode",
+      "label": "lunatic/tfs:ui.binding.throw_mode",
       "key": "KeyR"
     },
     {
       "id": "equip",
-      "label": "Equip",
+      "label": "lunatic/tfs:ui.binding.equip",
       "key": "KeyE"
     },
     {
       "id": "quick_store",
-      "label": "Store",
+      "label": "lunatic/tfs:ui.binding.quick_store",
       "key": "KeyB"
     },
     {
       "id": "open_build",
-      "label": "Build",
+      "label": "lunatic/tfs:ui.binding.open_build",
       "key": "KeyC"
     },
     {
       "id": "target/1",
-      "label": "Target slot 1",
+      "label": "lunatic/tfs:ui.binding.target_1",
       "key": "Numpad1"
     },
     {
       "id": "target/2",
-      "label": "Target slot 2",
+      "label": "lunatic/tfs:ui.binding.target_2",
       "key": "Numpad2"
     },
     {
       "id": "target/3",
-      "label": "Target slot 3",
+      "label": "lunatic/tfs:ui.binding.target_3",
       "key": "Numpad3"
     },
     {
       "id": "target/4",
-      "label": "Target slot 4",
+      "label": "lunatic/tfs:ui.binding.target_4",
       "key": "Numpad4"
     },
     {
       "id": "target/5",
-      "label": "Target slot 5",
+      "label": "lunatic/tfs:ui.binding.target_5",
       "key": "Numpad5"
     },
     {
       "id": "target/6",
-      "label": "Target slot 6",
+      "label": "lunatic/tfs:ui.binding.target_6",
       "key": "Numpad6"
     },
     {
       "id": "target/7",
-      "label": "Target slot 7",
+      "label": "lunatic/tfs:ui.binding.target_7",
       "key": "Numpad7"
     },
     {
       "id": "target/8",
-      "label": "Target slot 8",
+      "label": "lunatic/tfs:ui.binding.target_8",
       "key": "Numpad8"
     },
     {
       "id": "target/9",
-      "label": "Target slot 9",
+      "label": "lunatic/tfs:ui.binding.target_9",
       "key": "Numpad9"
     }
   ]
