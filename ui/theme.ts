@@ -19,11 +19,16 @@ const good = "#7fd18c";
 const paneBack = "#0e101af2";
 const inner = "#141828cc";
 const innerLine = "#262c42";
+const slotHint = "#9aa3c05c";
 
 const edge = (color: string, width = 1) =>
   ({ width, style: "solid", color }) as const;
+const dashed = (color: string) => ({ width: 1, style: "dashed", color }) as const;
 const none = { width: 0, style: "none", color: "transparent" } as const;
 const drop = [{ x: 0, y: 6, blur: 18, spread: 0, color: "#00000073" }];
+const ring = (color: string, spread: number) => [{ x: 0, y: 0, blur: 0, spread, color }];
+// An empty shadow list renders `none`: how a later rule cancels an earlier.
+const flat: ReturnType<typeof ring> = [];
 
 export default defineStyles([
   ...theme,
@@ -68,6 +73,14 @@ export default defineStyles([
   rule("list-value", { fontSize: 11, fontWeight: 700 }),
   rule("notice", { color: info, fontStyle: "normal", fontSize: 11 }),
   rule("choice-grid", { gap: 4 }),
+  // A slot is a bare square, not a card: tg draws an inventory box as a
+  // screen icon over a transparent HUD, backed by an icon state rather
+  // than by chrome (code/_onclick/hud/inventory_slot.dm:20-30). The two
+  // states that SAY something are restated after it, or they lose to it.
+  rule("slot", { backgroundColor: "transparent", border: none, borderRadius: 4, boxShadow: flat }),
+  rule("slot-active", { border: edge(accent), boxShadow: ring(accent, 1) }),
+  rule("slot-empty", { border: dashed(slotHint), opacity: 1 }),
+  rule("slot-hit", { borderRadius: 4 }),
   // One line, clipped: an item's whole name will not fit a 40px square,
   // and a wrapped one climbs over the sprite it belongs to.
   rule("slot-label", {
@@ -98,6 +111,19 @@ export default defineStyles([
     pointerEvents: "none",
   }),
   rule("dock", { gap: 10 }),
+  // A HUD region: a group pinned to an edge with no box of its own. tg's
+  // hand cluster, zone selector and open storage are three such groups,
+  // each placed on its own (code/__DEFINES/hud.dm:37, :238). It follows
+  // `pane`, so a Pane wearing it keeps the type and loses the frame.
+  rule("hudgroup", {
+    padding: 0,
+    gap: 6,
+    backgroundColor: "transparent",
+    border: none,
+    borderRadius: 0,
+    boxShadow: flat,
+    pointerEvents: "auto",
+  }),
   rule("card", {
     gap: 5,
     padding: 8,
