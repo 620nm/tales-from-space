@@ -1,10 +1,13 @@
 // The body-target figure: the plan's own art, the highlight over
 // whichever part this session is aimed at, and one press per declared
 // rectangle. The rectangles are the roster's, in the unit square, so
-// the pack never spells a body part in this file.
+// the pack never spells a body part in this file. It is a HUD region of
+// its own, beside the hand cluster rather than inside it, as tg places
+// the zone selector (ui_zonesel, code/__DEFINES/hud.dm:238; added at
+// code/_onclick/hud/human.dm:19); `main.tsx` says where.
 import type { UiNode } from "@lunatic/ui";
 import type { GameplayView, TargetZone } from "./model";
-import { bind, column, icon, panel, press, row, some, text } from "./view";
+import { bind, column, icon, panel, press, row, some, text, type Box } from "./view";
 import * as S from "./strings";
 
 const pct = (value: number): string =>
@@ -30,9 +33,10 @@ function hit(id: string, zone: TargetZone, selected: boolean): UiNode | null {
 }
 
 /** The figure, or a plain block of presses for a plan that ships no art. */
-export function bodyTarget(view: GameplayView): UiNode | null {
+export function bodyTarget(view: GameplayView, place: Box = {}): UiNode | null {
   const zones = view.state.targets?.zones ?? [];
-  if (!zones.length) return null;
+  if (!view.body || !zones.length) return null;
+  const cls = ["hudgroup", ...(place.cls ?? [])];
   const at = view.state.target?.zone ?? -1;
   const aimed = zones[at];
   const base = view.state.targets?.base;
@@ -53,7 +57,7 @@ export function bodyTarget(view: GameplayView): UiNode | null {
           { style: { gap: 4, flexWrap: "wrap" } },
         ),
       ],
-      { cls: ["trayset"] },
+      { cls, style: { gap: 4, ...place.style } },
     );
   return column(
     "doll-block",
@@ -72,6 +76,6 @@ export function bodyTarget(view: GameplayView): UiNode | null {
       ),
       label,
     ],
-    { cls: ["trayset"], style: { alignItems: "center", gap: 3 } },
+    { cls, style: { alignItems: "center", gap: 3, ...place.style } },
   );
 }
