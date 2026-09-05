@@ -24,7 +24,10 @@ if sim ~= nil then
     script_definition:handle("interaction.use", { kind = "replace", route = "interact" }, function(ev)
         local self, user = ev.subject, ev.actor
         if not sim.is_powered(self) then
-            sim.message.send({ recipient = user, message = "The machine is dark and silent." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.vendor.the_machine_is_dark_and", {}),
+            })
             return true
         end
         -- Clicking the machine opens its content-declared clean-room
@@ -62,7 +65,10 @@ if sim ~= nil then
             return { replaced = false } -- not ours; the click means whatever else it means
         end
         if not sim.is_powered(self) then
-            sim.message.send({ recipient = user, message = "The machine is dark and silent." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.vendor.the_machine_is_dark_and_2", {}),
+            })
             return true
         end
         -- An EMPTY one. A machine that swallowed a full bottle would be a
@@ -70,7 +76,10 @@ if sim ~= nil then
         -- find that out the hard way.
         local read = sim.matter_read(item)
         if read ~= nil and read.moles > EMPTY_MOL then
-            sim.message.send({ recipient = user, message = "The machine only takes empties." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.vendor.the_machine_only_takes_empties", {}),
+            })
             return true
         end
         local returned = item.name
@@ -93,7 +102,10 @@ if sim ~= nil then
     end)
     script_definition:handle("move.bump", { kind = "replace", route = "bump" }, function(ev)
         local self, user = ev.target, ev.mover
-        sim.message.send({ recipient = user, message = "The vending machine wobbles. Nothing falls out." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:fixtures.vendor.the_vending_machine_wobbles_nothing", {}),
+        })
         return true
     end)
 end

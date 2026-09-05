@@ -519,11 +519,20 @@ if sim ~= nil then
         })
         -- ...and then the crewman is told, once per crossing.
         if ev.edge == "dead" or ev.edge == "undone" then
-            sim.message.send({ recipient = body, message = "You have died." })
+            sim.message.send({
+                recipient = body,
+                message = sim.msg("lunatic/tfs:bodies.human.you_have_died", {}),
+            })
         elseif ev.edge == "crit" then
-            sim.message.send({ recipient = body, message = "You black out..." })
+            sim.message.send({
+                recipient = body,
+                message = sim.msg("lunatic/tfs:bodies.human.you_black_out", {}),
+            })
         elseif not stop and not hold then
-            sim.message.send({ recipient = body, message = "You come to." })
+            sim.message.send({
+                recipient = body,
+                message = sim.msg("lunatic/tfs:bodies.human.you_come_to", {}),
+            })
         end
     end)
 end

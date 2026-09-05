@@ -60,9 +60,15 @@ if sim ~= nil then
             carrying[#carrying + 1] = "lighting"
         end
         if #carrying == 0 then
-            sim.message.send({ recipient = user, message = "The cable here is dead." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.multitool.the_cable_here_is_dead", {}),
+            })
         else
-            sim.message.send({ recipient = user, message = "The cable here is carrying " .. table.concat(carrying, " and ") .. "." })
+            sim.message.send({
+                recipient = user,
+                message = "The cable here is carrying " .. table.concat(carrying, " and ") .. ".",
+            })
         end
         return true
     end)

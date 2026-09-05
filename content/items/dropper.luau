@@ -40,9 +40,9 @@ if sim ~= nil then
         id = content.id,
         noun = "dropper",
         phases = { "liquid" },
-        pour = { units = 1, message = "You squeeze a drop out of the dropper." },
-        sip = { units = 1, message = "You squeeze the dropper onto your tongue." },
-        spill = { message = "You squeeze the dropper out onto the deck." },
+        pour = { units = 1, message = "lunatic/tfs:items.dropper.you_squeeze_a_drop_out" },
+        sip = { units = 1, message = "lunatic/tfs:items.dropper.you_squeeze_the_dropper_onto" },
+        spill = { message = "lunatic/tfs:items.dropper.you_squeeze_the_dropper_out" },
     })
 end
 

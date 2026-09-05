@@ -34,7 +34,10 @@ if sim ~= nil then
             return { replaced = false }
         end
         if (self.uses or 0) <= 0 then
-            sim.message.send({ recipient = user, message = "The resin projector is empty." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.atmos_resin_projector.the_resin_projector_is_empty", {}),
+            })
             return true
         end
 
@@ -45,14 +48,20 @@ if sim ~= nil then
             return { replaced = false }
         end
         if resin >= 1.0 then
-            sim.message.send({ recipient = user, message = "The deck is already sealed under fresh resin." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.atmos_resin_projector.the_deck_is_already_sealed", {}),
+            })
             return true
         end
 
         sim.matter.set_column({ owner = cell, column = "atmos_resin", value = 1.0 })
         self:consume()
         sim.sound.play({ asset = "lunatic/tfs:sound/spray", at = ev.at })
-        sim.message.send({ recipient = user, message = "You coat the deck in fire-smothering resin." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.atmos_resin_projector.you_coat_the_deck_in", {}),
+        })
         return true
     end)
 end

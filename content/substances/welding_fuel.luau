@@ -30,7 +30,10 @@ if sim ~= nil then
         local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount
         sim.damage.apply({ target = mob, amounts = { brute = 1.0 } })
         if math.random(1, 8) == 1 then
-            sim.message.send({ recipient = mob, message = "Your throat burns." })
+            sim.message.send({
+                recipient = mob,
+                message = sim.msg("lunatic/tfs:substances.welding_fuel.your_throat_burns", {}),
+            })
         end
     end)
 end

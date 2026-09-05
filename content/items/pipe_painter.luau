@@ -48,7 +48,10 @@ if sim ~= nil then
         local dial = sim.mode(self)
         local next_index = (dial.index + 1) % dial.count
         sim.set_mode(self, next_index)
-        sim.message.send({ recipient = user, message = "Pipe painter set to " .. COLORS[next_index + 1].name .. "." })
+        sim.message.send({
+            recipient = user,
+            message = "Pipe painter set to " .. COLORS[next_index + 1].name .. ".",
+        })
         return true
     end)
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
@@ -60,7 +63,10 @@ if sim ~= nil then
         -- technician cuts the wrong main. Asked first, so every covered
         -- tile answers the same way.
         if not sim.subfloor_exposed(x, y) then
-            sim.message.send({ recipient = user, message = "The floor is in the way. Pry the tile up first." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.pipe_painter.the_floor_is_in_the", {}),
+            })
             return true
         end
         -- A MACHINE takes no paint. tg spells this out on the sharpest
@@ -74,7 +80,10 @@ if sim ~= nil then
         -- claimed otherwise is the worst of both.
         local machine = sim.machine(x, y)
         if machine then
-            sim.message.send({ recipient = user, message = "The " .. machine.name .. " takes no paint." })
+            sim.message.send({
+                recipient = user,
+                message = "The " .. machine.name .. " takes no paint.",
+            })
             return true
         end
         -- Whatever is laid here, on every layer at once: the painter has
@@ -84,7 +93,10 @@ if sim ~= nil then
         -- needs no engine change.)
         local layers = sim.pipe(x, y)
         if layers == 0 then
-            sim.message.send({ recipient = user, message = "There is no pipe under the floor here." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.pipe_painter.there_is_no_pipe_under", {}),
+            })
             return true
         end
         -- Nor does a length with a colour of its own -- heat-exchanging
@@ -103,7 +115,10 @@ if sim ~= nil then
             mask = mask * 2
         end
         if fixed == layers then
-            sim.message.send({ recipient = user, message = "That pipe has a colour of its own." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.pipe_painter.that_pipe_has_a_colour", {}),
+            })
             return true
         end
         local paint = COLORS[sim.mode(self).index + 1]

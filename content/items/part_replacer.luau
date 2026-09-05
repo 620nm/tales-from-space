@@ -73,7 +73,7 @@ if sim ~= nil then
         if fitted == 0 then
             sim.message.send({
                 recipient = ev.actor,
-                message = "Nothing in the exchanger is any better than what is already in there.",
+                message = sim.msg("lunatic/tfs:items.part_replacer.nothing_in_the_exchanger_is", {}),
             })
         else
             sim.sound.play({ asset = "lunatic/tfs:sound/part_swap", at = ev.at })

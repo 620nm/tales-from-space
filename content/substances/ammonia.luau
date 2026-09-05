@@ -86,7 +86,10 @@ if sim ~= nil then
         local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount
         sim.damage.apply({ target = mob, amounts = { oxy = moles * 12000 } })
         if math.random(1, 4) == 1 then
-            sim.message.send({ recipient = mob, message = "Your eyes and throat burn." })
+            sim.message.send({
+                recipient = mob,
+                message = sim.msg("lunatic/tfs:substances.ammonia.your_eyes_and_throat_burn", {}),
+            })
         end
     end)
 end

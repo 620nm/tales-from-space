@@ -129,7 +129,10 @@ if sim ~= nil then
         -- players' job (each one clicked back in through card.luau).
         local order = order_of(ctx, self)
         if order == "" then
-            sim.message.send({ recipient = user, message = "There is nothing left in the deck to shuffle." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.card_deck.there_is_nothing_left_in", {}),
+            })
             return true
         end
         -- Reshuffling what is LEFT, not restoring what was dealt. The
@@ -145,7 +148,10 @@ if sim ~= nil then
         end
         self.vars["order"] = table.concat(held, ",")
         sim.sound.play({ asset = "lunatic/tfs:sound/card_shuffle", at = user.tile })
-        sim.message.send({ recipient = user, message = "You shuffle the deck." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.card_deck.you_shuffle_the_deck", {}),
+        })
         return true
     end)
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
@@ -187,7 +193,10 @@ if sim ~= nil then
             -- with the card already eaten.
             local order = self.vars["order"]
             if order == nil or cards.count(order) >= #cards.FACES then
-                sim.message.send({ recipient = user, message = "The deck is already full." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.card_deck.the_deck_is_already_full", {}),
+                })
                 return true
             end
             local _, key = cards.read(card.state)
@@ -199,7 +208,10 @@ if sim ~= nil then
             self.vars["order"] = restored
             self.vars["picture"] = cards.picture(cards.count(restored))
             sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = ev.at })
-            sim.message.send({ recipient = user, message = "You slide the card into the deck." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.card_deck.you_slide_the_card_into", {}),
+            })
             -- `sim.entity.despawn` does the hand slots, removal and the
             -- ledger row, so the card cannot survive as a dead handle
             -- in somebody's off hand.
@@ -216,13 +228,19 @@ if sim ~= nil then
         -- check-twice discipline as construction, one seam smaller.
         local turf = sim.turf(x, y)
         if turf ~= "floor" and turf ~= "plating" then
-            sim.message.send({ recipient = user, message = "There is nowhere there to put a card." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.card_deck.there_is_nowhere_there_to", {}),
+            })
             return true
         end
 
         local order = order_of(ctx, self)
         if order == "" then
-            sim.message.send({ recipient = user, message = "The deck is empty." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.card_deck.the_deck_is_empty", {}),
+            })
             return true
         end
         -- The top card is the first entry, and the rest of the string
@@ -261,7 +279,10 @@ if sim ~= nil then
         })
         self.vars["picture"] = cards.picture(cards.count(rest))
         sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = ev.at })
-        sim.message.send({ recipient = user, message = "You deal a card." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.card_deck.you_deal_a_card", {}),
+        })
         return true
     end)
 end

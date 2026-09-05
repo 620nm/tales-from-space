@@ -51,7 +51,10 @@ if sim ~= nil then
         sim.healing.apply({ target = mob, amounts = { burn = 2.0 } })
         sim.damage_organ(mob, "eyes", 0.25)
         if math.random(1, 10) == 1 then
-            sim.message.send({ recipient = mob, message = "Your burns cool, and the light hurts." })
+            sim.message.send({
+                recipient = mob,
+                message = sim.msg("lunatic/tfs:substances.aiuri.your_burns_cool_and_the", {}),
+            })
         end
     end)
 end

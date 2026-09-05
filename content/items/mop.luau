@@ -45,11 +45,11 @@ if sim ~= nil then
         -- A mop takes up liquid and leaves the salt on the deck.
         phases = { "liquid" },
         -- A wring is not a measured pour: the head comes out.
-        pour = { units = "all", message = "You wring the mop out." },
+        pour = { units = "all", message = "lunatic/tfs:items.mop.you_wring_the_mop_out" },
         soak = {
-            message = "You run the mop over the deck.",
-            dry = "The deck here is dry.",
-            full = "The mop is soaked through.",
+            message = "lunatic/tfs:items.mop.you_run_the_mop_over",
+            dry = "lunatic/tfs:items.mop.the_deck_here_is_dry",
+            full = "lunatic/tfs:items.mop.the_mop_is_soaked_through",
         },
     })
 end

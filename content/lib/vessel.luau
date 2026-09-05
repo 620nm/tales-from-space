@@ -61,6 +61,33 @@ local STROKE_MOL = 2.0
 -- crewman reads.
 local LEVEL_KPA = 1.0
 
+-- The sentences every vessel shares, each taking the vessel's own noun
+-- as its argument (`locale/en.json`). A file that says something else
+-- names a key of its own, which is a finished sentence and takes
+-- nothing (docs/LOCALIZATION.md 5).
+local UNSEALED = "lunatic/tfs:lib.vessel.unsealed"
+local LEVELLED = "lunatic/tfs:lib.vessel.levelled"
+local CHARGED = "lunatic/tfs:lib.vessel.charged"
+local DREGS = "lunatic/tfs:lib.vessel.dregs"
+local POUR = "lunatic/tfs:lib.vessel.pour"
+local SIP = "lunatic/tfs:lib.vessel.sip"
+local SPILL = "lunatic/tfs:lib.vessel.spill"
+local SOAK = "lunatic/tfs:lib.vessel.soak"
+local SOAK_DRY = "lunatic/tfs:lib.vessel.soak_dry"
+local SOAK_FULL = "lunatic/tfs:lib.vessel.soak_full"
+
+-- One line to say, as the key and the arguments its template asks for.
+local function line(named, shared, noun)
+    if named ~= nil then
+        return { key = named, args = {} }
+    end
+    return { key = shared, args = { noun = noun } }
+end
+
+local function said(spoken)
+    return sim.msg(spoken.key, spoken.args)
+end
+
 -- THE TWO READINGS every gesture asks for, off the one reading any body
 -- of matter answers (docs/LUAU-API.md 7). Published as well as used
 -- here, because a vessel with a gesture of its own -- the syringe --
@@ -142,7 +169,7 @@ local function charge(spec, self, user, source, at)
     if not mine.sealed then
         sim.message.send({
             recipient = user,
-            message = "That would only escape: seal a vessel first.",
+            message = sim.msg(UNSEALED, {}),
         })
         return true
     end
@@ -155,7 +182,7 @@ local function charge(spec, self, user, source, at)
     if head_kpa <= LEVEL_KPA then
         sim.message.send({
             recipient = user,
-            message = "The " .. spec.noun .. " is already at the line's pressure.",
+            message = sim.msg(LEVELLED, { noun = spec.noun }),
         })
         return true
     end
@@ -164,7 +191,7 @@ local function charge(spec, self, user, source, at)
     sim.sound.play({ asset = "lunatic/tfs:sound/spray", at = at })
     sim.message.send({
         recipient = user,
-        message = "You hold the " .. spec.noun .. " to the valve until it stops hissing.",
+        message = sim.msg(CHARGED, { noun = spec.noun }),
     })
     return true
 end
@@ -175,7 +202,7 @@ local function dregs(spec, self, user)
     if (total(self) or 0) >= DREGS_MOL then
         return false
     end
-    sim.message.send({ recipient = user, message = "The " .. spec.noun .. " is empty." })
+    sim.message.send({ recipient = user, message = sim.msg(DREGS, { noun = spec.noun }) })
     return true
 end
 
@@ -188,7 +215,7 @@ end
 -- a vessel with no room in it, and a deck with nothing on it.
 local function soak(spec, self, user, at, soak_line, dry_line, full_line)
     if (vessel.headspace_l(self) or 0) <= HEADSPACE_L then
-        sim.message.send({ recipient = user, message = full_line })
+        sim.message.send({ recipient = user, message = said(full_line) })
         return true
     end
     -- What is STANDING there, asked before anything is moved: an effect
@@ -202,11 +229,11 @@ local function soak(spec, self, user, at, soak_line, dry_line, full_line)
         end
     end
     if standing < DREGS_MOL then
-        sim.message.send({ recipient = user, message = dry_line })
+        sim.message.send({ recipient = user, message = said(dry_line) })
         return true
     end
     sim.matter.transfer({ from = at.matter, to = self, amount = "all", phases = { "liquid" } })
-    sim.message.send({ recipient = user, message = soak_line })
+    sim.message.send({ recipient = user, message = said(soak_line) })
     return true
 end
 
@@ -219,7 +246,7 @@ end
 --   pour    { units, message? }  -- absent: clicks at things are not
 --           this vessel's business, and neither is a charge; `units =
 --           "all"` is a vessel that empties itself in one gesture
---   sip     { units, message?, taste? }
+--   sip     { units, message? }
 --   spill   { message? } or true -- absent: no tipping it out
 --   soak    { message?, dry?, full? } -- the deck the OTHER way round:
 --           take the liquid on that tile up into this vessel instead of
@@ -228,8 +255,9 @@ end
 --           is one branch and a thing cannot both put down and pick up:
 --           a file that asked for both would silently get this one.
 --
--- Every message defaults to the vessel's own noun in the sentence every
--- other vessel uses; a file names one only where it says something else.
+-- Every `message` is a catalog KEY, and every default is the shared
+-- sentence that takes this vessel's noun as its argument; a file names
+-- one only where it says something else.
 function vessel.attach(spec)
     if spec.spill ~= nil and spec.soak ~= nil then
         error("vessel.attach: " .. tostring(spec.id)
@@ -237,22 +265,16 @@ function vessel.attach(spec)
     end
     local definition = sim.define("behavior", "lunatic/tfs:" .. spec.id, { prototype = spec.id })
     local phases = spec.phases
-    local pour_line = spec.pour and (spec.pour.message or ("You pour from the " .. spec.noun .. "."))
+    local pour_line = spec.pour and line(spec.pour.message, POUR, spec.noun)
     -- A dose in tg's units, or the lot: a mop wrung into a bucket has no
     -- measured stroke, it has a head that comes out.
     local pour_amount = spec.pour and (spec.pour.units == "all" and "all" or spec.pour.units * U)
-    local sip_line = spec.sip and (spec.sip.message or ("You drink from the " .. spec.noun .. "."))
-    if spec.sip and spec.sip.taste then
-        sip_line = sip_line .. " " .. spec.sip.taste
-    end
-    local spill_line = "You tip the " .. spec.noun .. " out onto the deck."
-    if type(spec.spill) == "table" and spec.spill.message ~= nil then
-        spill_line = spec.spill.message
-    end
-    local soak_line = spec.soak and (spec.soak.message
-        or ("You take what is on the deck up into the " .. spec.noun .. "."))
-    local dry_line = spec.soak and (spec.soak.dry or "There is nothing on the deck here.")
-    local full_line = spec.soak and (spec.soak.full or ("The " .. spec.noun .. " will hold no more."))
+    local sip_line = spec.sip and line(spec.sip.message, SIP, spec.noun)
+    local named = type(spec.spill) == "table" and spec.spill.message or nil
+    local spill_line = line(named, SPILL, spec.noun)
+    local soak_line = spec.soak and line(spec.soak.message, SOAK, spec.noun)
+    local dry_line = spec.soak and line(spec.soak.dry, SOAK_DRY, spec.noun)
+    local full_line = spec.soak and line(spec.soak.full, SOAK_FULL, spec.noun)
 
     definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local self, user, at = ev.subject, ev.actor, ev.at
@@ -272,7 +294,7 @@ function vessel.attach(spec)
                 return true
             end
             do_pour(self, clicked.entity, pour_amount, phases)
-            sim.message.send({ recipient = user, message = pour_line })
+            sim.message.send({ recipient = user, message = said(pour_line) })
             return true
         end
 
@@ -283,7 +305,7 @@ function vessel.attach(spec)
             end
             sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = at })
             do_sip(self, user, spec.sip.units * U, phases)
-            sim.message.send({ recipient = user, message = sip_line })
+            sim.message.send({ recipient = user, message = said(sip_line) })
             return true
         end
 
@@ -304,7 +326,7 @@ function vessel.attach(spec)
             return true
         end
         do_spill(self, at, phases)
-        sim.message.send({ recipient = user, message = spill_line })
+        sim.message.send({ recipient = user, message = said(spill_line) })
         return true
     end)
 

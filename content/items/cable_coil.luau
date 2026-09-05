@@ -58,7 +58,10 @@ if sim ~= nil then
         local dial = sim.mode(self)
         local next_index = (dial.index + 1) % dial.count
         sim.set_mode(self, next_index)
-        sim.message.send({ recipient = user, message = "You set the coil to " .. LINES[next_index + 1].name .. "." })
+        sim.message.send({
+            recipient = user,
+            message = "You set the coil to " .. LINES[next_index + 1].name .. ".",
+        })
         return true
     end)
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
@@ -69,17 +72,26 @@ if sim ~= nil then
         -- the reply is not a probe for what is already buried. Open
         -- deck, not "plating": the map decides per tile.
         if not sim.subfloor_exposed(x, y) then
-            sim.message.send({ recipient = user, message = "The floor is in the way. Pry the tile up first." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.cable_coil.the_floor_is_in_the", {}),
+            })
             return true
         end
         local line = LINES[sim.mode(self).index + 1]
         if sim.cable(x, y) % (line.mask * 2) >= line.mask then
             return { replaced = false } -- this line already runs here
         end
-        sim.message.send({ recipient = user, message = "You start laying cable..." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.cable_coil.you_start_laying_cable", {}),
+        })
         sim.spawn_task(user, function()
             if sim.do_after(user, sim.ticks(1.0), {}) == "interrupted" then
-                sim.message.send({ recipient = user, message = "You stop laying cable." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.cable_coil.you_stop_laying_cable", {}),
+                })
                 return true
             end
             -- The same question again at the end: while you worked, another
@@ -88,11 +100,17 @@ if sim ~= nil then
             -- you turning it mid-job.
             line = LINES[sim.mode(self).index + 1]
             if sim.cable(x, y) % (line.mask * 2) >= line.mask then
-                sim.message.send({ recipient = user, message = "Someone already ran " .. line.name .. " through there." })
+                sim.message.send({
+                    recipient = user,
+                    message = "Someone already ran " .. line.name .. " through there.",
+                })
                 return true
             end
             sim.lay_cable(x, y, line.mask)
-            sim.message.send({ recipient = user, message = "You lay cable on " .. line.name .. "." })
+            sim.message.send({
+                recipient = user,
+                message = "You lay cable on " .. line.name .. ".",
+            })
         end)
         return true
     end)

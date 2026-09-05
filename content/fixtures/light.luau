@@ -38,15 +38,30 @@ if sim ~= nil then
             return true
         end
         if l.status == "broken" then
-            sim.message.send({ recipient = user, message = "The tube is shattered in its socket." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.light.the_tube_is_shattered_in", {}),
+            })
         elseif l.status == "empty" then
-            sim.message.send({ recipient = user, message = "The fitting is empty." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.light.the_fitting_is_empty", {}),
+            })
         elseif l.status == "burned" then
-            sim.message.send({ recipient = user, message = "The tube is burned out." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.light.the_tube_is_burned_out", {}),
+            })
         elseif l.lit then
-            sim.message.send({ recipient = user, message = "The light is on." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.light.the_light_is_on", {}),
+            })
         else
-            sim.message.send({ recipient = user, message = "The light is dark. Its breaker must be out." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.light.the_light_is_dark_its", {}),
+            })
         end
         return true
     end)
@@ -63,13 +78,19 @@ if sim ~= nil then
 
         if id == "light_replacer" then
             if l.status == "ok" then
-                sim.message.send({ recipient = user, message = "There is already a good tube in the fitting." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:fixtures.light.there_is_already_a_good", {}),
+                })
                 return true
             end
             -- tg's Use(): no charges, no work, and it says so
             -- (lightreplacer.dm:259).
             if (target.uses or 0) <= 0 then
-                sim.message.send({ recipient = user, message = "The replacer is empty." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:fixtures.light.the_replacer_is_empty", {}),
+                })
                 return true
             end
             target:consume()
@@ -79,13 +100,19 @@ if sim ~= nil then
             -- it would if you did it in a real corridor.
             sim.set_light(self, "ok", TUBE_COLOR)
             sim.sound.play({ asset = "lunatic/tfs:sound/click", at = self.tile })
-            sim.message.send({ recipient = user, message = "You replace the light tube." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.light.you_replace_the_light_tube", {}),
+            })
             return true
         end
 
         if id == "light_tube" then
             if l.status == "ok" then
-                sim.message.send({ recipient = user, message = "There is already a tube in the fitting." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:fixtures.light.there_is_already_a_tube", {}),
+                })
                 return true
             end
             -- Spent, not destroyed: a tube that went into a fitting is
@@ -93,26 +120,38 @@ if sim ~= nil then
             -- would file it as loss.
             target:consume()
             sim.set_light(self, "ok", TUBE_COLOR)
-            sim.message.send({ recipient = user, message = "You fit the new tube." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.light.you_fit_the_new_tube", {}),
+            })
             return true
         end
 
         if id == "light_bulb" then
             -- tg light.dm:396, verbatim in spirit: the fitting takes
             -- what the fitting takes.
-            sim.message.send({ recipient = user, message = "This type of light requires a tube!" })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.light.this_type_of_light_requires", {}),
+            })
             return true
         end
 
         -- Anything else is a blow. tg refuses to re-break glass that is
         -- already gone (break_light_tube, light.dm:689).
         if l.status == "broken" or l.status == "empty" then
-            sim.message.send({ recipient = user, message = "There is nothing left in there to break." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.light.there_is_nothing_left_in", {}),
+            })
             return true
         end
         sim.set_light(self, "broken")
         sim.sound.play({ asset = "lunatic/tfs:sound/glass_break", at = self.tile })
-        sim.message.send({ recipient = user, message = "You smash the light tube." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:fixtures.light.you_smash_the_light_tube", {}),
+        })
         return true
     end)
 end

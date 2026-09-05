@@ -34,7 +34,10 @@ if sim ~= nil then
         local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount
         sim.healing.apply({ target = mob, amounts = { oxy = moles * 125.0 } })
         if math.random(1, 12) == 1 then
-            sim.message.send({ recipient = mob, message = "The sugar perks you up a little." })
+            sim.message.send({
+                recipient = mob,
+                message = sim.msg("lunatic/tfs:substances.sugar.the_sugar_perks_you_up", {}),
+            })
         end
     end)
 end

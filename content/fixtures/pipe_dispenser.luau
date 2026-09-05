@@ -30,7 +30,10 @@ if sim ~= nil then
     script_definition:handle("interaction.use", { kind = "replace", route = "interact" }, function(ev)
         local self, user, x, y = ev.subject, ev.actor, ev.at.x, ev.at.y
         if not sim.is_powered(self) then
-            sim.message.send({ recipient = user, message = "The dispenser is dark and silent." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.pipe_dispenser.the_dispenser_is_dark_and", {}),
+            })
             return true
         end
         ui.open({ viewer = user, owner = self })
@@ -46,13 +49,19 @@ if sim ~= nil then
             return { replaced = false } -- not ours; let the click mean whatever else it means
         end
         if not sim.is_powered(self) then
-            sim.message.send({ recipient = user, message = "The dispenser is dark and silent." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:fixtures.pipe_dispenser.the_dispenser_is_dark_and_2", {}),
+            })
             return true
         end
         local x, y = self.tile.x, self.tile.y
         item:consume()
         sim.sound.play({ asset = "lunatic/tfs:sound/vend", at = ev.at })
-        sim.message.send({ recipient = user, message = "You put the " .. item.name .. " back into the dispenser." })
+        sim.message.send({
+            recipient = user,
+            message = "You put the " .. item.name .. " back into the dispenser.",
+        })
         return true
     end)
 end

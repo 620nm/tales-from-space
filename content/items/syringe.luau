@@ -109,11 +109,17 @@ if sim ~= nil then
     local function stroke(self, user, other, mode, into_body)
         if mode == DRAW then
             if (free_l(self) or 0) <= 1e-9 then
-                sim.message.send({ recipient = user, message = "The syringe is full." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.syringe.the_syringe_is_full", {}),
+                })
                 return false
             end
             if (moles_in(other) or 0) < 1e-9 then
-                sim.message.send({ recipient = user, message = "There is nothing there to draw." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.syringe.there_is_nothing_there_to", {}),
+                })
                 return false
             end
             sim.matter.transfer({
@@ -126,11 +132,17 @@ if sim ~= nil then
         end
         assert(mode == INJECT, "the dial has two positions")
         if (moles_in(self) or 0) < 1e-9 then
-            sim.message.send({ recipient = user, message = "The syringe is empty." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.syringe.the_syringe_is_empty", {}),
+            })
             return false
         end
         if (free_l(other) or 0) <= 1e-9 then
-            sim.message.send({ recipient = user, message = "There is no room in that." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.syringe.there_is_no_room_in", {}),
+            })
             return false
         end
         if into_body then
@@ -152,9 +164,15 @@ if sim ~= nil then
         local next_index = (dial.index + 1) % dial.count
         sim.set_mode(self, next_index)
         if next_index == DRAW then
-            sim.message.send({ recipient = user, message = "You set the syringe to draw." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.syringe.you_set_the_syringe_to", {}),
+            })
         else
-            sim.message.send({ recipient = user, message = "You set the syringe to inject." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.syringe.you_set_the_syringe_to_2", {}),
+            })
         end
         return true
     end)
@@ -175,9 +193,15 @@ if sim ~= nil then
             return true
         end
         if mode == DRAW then
-            sim.message.send({ recipient = user, message = "You fill the syringe." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.syringe.you_fill_the_syringe", {}),
+            })
         else
-            sim.message.send({ recipient = user, message = "You empty the syringe into it." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.syringe.you_empty_the_syringe_into", {}),
+            })
         end
         return true
     end)
@@ -201,9 +225,15 @@ if sim ~= nil then
         if victim == user then
             if stroke(self, user, victim, mode, true) then
                 if mode == DRAW then
-                    sim.message.send({ recipient = user, message = "You draw a sample from yourself." })
+                    sim.message.send({
+                        recipient = user,
+                        message = sim.msg("lunatic/tfs:items.syringe.you_draw_a_sample_from", {}),
+                    })
                 else
-                    sim.message.send({ recipient = user, message = "You inject yourself." })
+                    sim.message.send({
+                        recipient = user,
+                        message = sim.msg("lunatic/tfs:items.syringe.you_inject_yourself", {}),
+                    })
                 end
             end
             return true
@@ -212,21 +242,36 @@ if sim ~= nil then
         -- the job at all, then hold still for three seconds.
         if mode == DRAW then
             if (free_l(self) or 0) <= 1e-9 then
-                sim.message.send({ recipient = user, message = "The syringe is full." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.syringe.the_syringe_is_full_2", {}),
+                })
                 return true
             end
-            sim.message.send({ recipient = user, message = "You start taking a sample..." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.syringe.you_start_taking_a_sample", {}),
+            })
         else
             if (moles_in(self) or 0) < 1e-9 then
-                sim.message.send({ recipient = user, message = "The syringe is empty." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.syringe.the_syringe_is_empty_2", {}),
+                })
                 return true
             end
-            sim.message.send({ recipient = user, message = "You line the needle up..." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.syringe.you_line_the_needle_up", {}),
+            })
         end
         sim.spawn_task(user, function()
             -- tg's `CHEM_INTERACT_DELAY(3 SECONDS)` (syringes.dm:78).
             if sim.do_after(user, sim.ticks(3.0), {}) == "interrupted" then
-                sim.message.send({ recipient = user, message = "The needle comes away." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.syringe.the_needle_comes_away", {}),
+                })
                 return true
             end
             -- The guard watched the TILE this started on; the patient
@@ -238,18 +283,30 @@ if sim ~= nil then
             local ux, uy = user.tile.x, user.tile.y
             local vx, vy = victim.tile.x, victim.tile.y
             if math.abs(ux - vx) > 1 or math.abs(uy - vy) > 1 then
-                sim.message.send({ recipient = user, message = "They are out of reach." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.syringe.they_are_out_of_reach", {}),
+                })
                 return true
             end
             if not stroke(self, user, victim, mode, true) then
                 return true
             end
             if mode == DRAW then
-                sim.message.send({ recipient = user, message = "You take a sample from " .. victim.name .. "." })
+                sim.message.send({
+                    recipient = user,
+                    message = "You take a sample from " .. victim.name .. ".",
+                })
             else
-                sim.message.send({ recipient = user, message = "You inject " .. victim.name .. "." })
+                sim.message.send({
+                    recipient = user,
+                    message = "You inject " .. victim.name .. ".",
+                })
             end
-            sim.message.send({ recipient = victim, message = "You feel a needle go in." })
+            sim.message.send({
+                recipient = victim,
+                message = sim.msg("lunatic/tfs:items.syringe.you_feel_a_needle_go", {}),
+            })
             return true
         end)
         return true

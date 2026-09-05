@@ -43,9 +43,15 @@ if sim ~= nil then
     script_definition:handle("body.threshold.done", { kind = "react", route = "threshold" }, function(ev)
         local organ, body, edge = ev.part, ev.body, ev.edge
         if edge == "low" then
-            sim.message.send({ recipient = body, message = "Your head swims." })
+            sim.message.send({
+                recipient = body,
+                message = sim.msg("lunatic/tfs:items.organ_brain.your_head_swims", {}),
+            })
         elseif edge == "high" then
-            sim.message.send({ recipient = body, message = "You cannot hold a thought." })
+            sim.message.send({
+                recipient = body,
+                message = sim.msg("lunatic/tfs:items.organ_brain.you_cannot_hold_a_thought", {}),
+            })
         end
     end)
 end

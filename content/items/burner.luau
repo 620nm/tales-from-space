@@ -63,11 +63,17 @@ if sim ~= nil then
         local lit = self.state == "lit"
         if lit then
             sim.set_flame(self, false)
-            sim.message.send({ recipient = user, message = "You snuff the burner out." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.burner.you_snuff_the_burner_out", {}),
+            })
             return true
         end
         sim.set_flame(self, true)
-        sim.message.send({ recipient = user, message = "You light the burner." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.burner.you_light_the_burner", {}),
+        })
         return true
     end)
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
@@ -81,11 +87,17 @@ if sim ~= nil then
             return { replaced = false } -- not something that holds anything
         end
         if self.state ~= "lit" then
-            sim.message.send({ recipient = user, message = "The burner isn't lit." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.burner.the_burner_isn_t_lit", {}),
+            })
             return true
         end
         sim.expose_heat(self, clicked.entity)
-        sim.message.send({ recipient = user, message = "You warm it over the burner." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.burner.you_warm_it_over_the", {}),
+        })
         return true
     end)
 end

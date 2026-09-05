@@ -142,9 +142,15 @@ local function report(user, of, sample)
         sim.message.send({ recipient = user, message = "Solid: " .. r2(solid_ml) .. " mL" })
         print_rows(user, solid, solid_names, solid_order, solid_ml, "mL")
     end
-    sim.message.send({ recipient = user, message = "Temperature: " .. r2(sample.temp_k - T0C) .. " °C (" .. r2(sample.temp_k) .. " K)" })
+    sim.message.send({
+        recipient = user,
+        message = "Temperature: " .. r2(sample.temp_k - T0C) .. " °C (" .. r2(sample.temp_k) .. " K)",
+    })
     sim.message.send({ recipient = user, message = "Volume: " .. r2(sample.volume_l) .. " L" })
-    sim.message.send({ recipient = user, message = "Pressure: " .. r2(sample.pressure_kpa) .. " kPa" })
+    sim.message.send({
+        recipient = user,
+        message = "Pressure: " .. r2(sample.pressure_kpa) .. " kPa",
+    })
 end
 
 local content = {
@@ -197,7 +203,10 @@ if sim ~= nil then
         -- gas_analyzer.dm:159-162).
         local room = sim.matter_read(ev.at.matter)
         if not room then
-            sim.message.send({ recipient = user, message = "The analyzer has nothing to read here." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.analyzer.the_analyzer_has_nothing_to", {}),
+            })
             return true
         end
         sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })

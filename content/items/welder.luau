@@ -49,10 +49,16 @@ if sim ~= nil then
         local self, user = ev.subject, ev.actor
         if self.state == "lit" then
             sim.set_flame(self, false)
-            sim.message.send({ recipient = user, message = "You extinguish the welder." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.welder.you_extinguish_the_welder", {}),
+            })
         else
             sim.set_flame(self, true)
-            sim.message.send({ recipient = user, message = "You flip the welder on; the flame hisses to life." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.welder.you_flip_the_welder_on", {}),
+            })
         end
         return true
     end)

@@ -72,16 +72,25 @@ if sim ~= nil then
             end
             local pipe_layer = 2 ^ mode.index
             if sim.pipe_occupancy(x, y) % (pipe_layer * 2) >= pipe_layer then
-                sim.message.send({ recipient = user, message = "An atmospherics component already occupies that pipe layer." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.wrench.an_atmospherics_component_already_occupies", {}),
+                })
                 return true
             end
             if sim.pipe(x, y) % (pipe_layer * 2) >= pipe_layer then
                 return { replaced = false }
             end
-            sim.message.send({ recipient = user, message = "You start fastening the pipe..." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.wrench.you_start_fastening_the_pipe", {}),
+            })
             sim.spawn_task(user, function()
                 if sim.do_after(user, sim.ticks(1.0), {}) == "interrupted" then
-                    sim.message.send({ recipient = user, message = "You stop fastening the pipe." })
+                    sim.message.send({
+                        recipient = user,
+                        message = sim.msg("lunatic/tfs:items.wrench.you_stop_fastening_the_pipe", {}),
+                    })
                     return true
                 end
                 -- Revalidate this exact atom, not whichever pipe is now first
@@ -116,10 +125,16 @@ if sim ~= nil then
         if sim.pipe(x, y) % (layer * 2) < layer then
             return { replaced = false }
         end
-        sim.message.send({ recipient = user, message = "You start unwrenching the pipe..." })
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.wrench.you_start_unwrenching_the_pipe", {}),
+        })
         sim.spawn_task(user, function()
             if sim.do_after(user, sim.ticks(1.0), {}) == "interrupted" then
-                sim.message.send({ recipient = user, message = "You stop unwrenching." })
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.wrench.you_stop_unwrenching", {}),
+                })
                 return true
             end
             if sim.pipe(x, y) % (layer * 2) < layer then
@@ -127,7 +142,10 @@ if sim ~= nil then
             end
             sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = ev.at })
             sim.cut_pipe(x, y, layer)
-            sim.message.send({ recipient = user, message = "The pipe comes free." })
+            sim.message.send({
+                recipient = user,
+                message = sim.msg("lunatic/tfs:items.wrench.the_pipe_comes_free", {}),
+            })
         end)
         return true
     end)

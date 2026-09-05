@@ -30,7 +30,10 @@ if sim ~= nil then
         local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount
         sim.healing.apply({ target = mob, amounts = { brute = 1.5 } })
         if math.random(1, 10) == 1 then
-            sim.message.send({ recipient = mob, message = "Your bruises ache less." })
+            sim.message.send({
+                recipient = mob,
+                message = sim.msg("lunatic/tfs:substances.libital.your_bruises_ache_less", {}),
+            })
         end
     end)
 end
