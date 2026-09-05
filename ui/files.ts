@@ -10,6 +10,7 @@ import type {
   PanelDocument,
 } from "./document-model";
 import { documentAction } from "./document-action";
+import { labelText } from "./labels";
 import { column, entry, panel, press, row, some, text } from "./view";
 import * as S from "./strings";
 
@@ -36,7 +37,7 @@ export function filePanes(
       LabeledList(
         `${id}/stores`,
         stores.map((store) => ({
-          label: store.label,
+          label: labelText(store.label),
           value: S.storeUse(
             store.used ?? 0,
             store.capacity ?? 0,

@@ -135,7 +135,7 @@ export interface MatterBlock {
 }
 export interface StoreRow {
   key?: string;
-  label: string;
+  label: Label;
   used: number;
   capacity: number;
   count: number;
