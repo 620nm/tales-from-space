@@ -41,3 +41,13 @@ export function labelText(label: Label | undefined | Json): string {
     ).slice(0, TEXT_LIMIT);
   return typeof row.text === "string" ? row.text.slice(0, TEXT_LIMIT) : "";
 }
+
+/** The catalog id a `Label` NAMES, for a reader that branches on which
+ *  word the server sent rather than drawing it. Undefined for a quoted
+ *  word, which names nothing (docs/tgui/labels.md). */
+export function labelId(label: Label | undefined | Json): string | undefined {
+  if (label === null || typeof label !== "object" || Array.isArray(label))
+    return undefined;
+  const id = (label as { id?: unknown }).id;
+  return typeof id === "string" ? id : undefined;
+}

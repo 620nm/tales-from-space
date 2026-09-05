@@ -10,7 +10,7 @@ import type {
   PanelDocument,
 } from "./document-model";
 import { documentAction } from "./document-action";
-import { labelText } from "./labels";
+import { labelId, labelText } from "./labels";
 import { column, entry, panel, press, row, some, text } from "./view";
 import * as S from "./strings";
 
@@ -47,7 +47,10 @@ export function filePanes(
         })),
       ),
     );
-  if (state.media_slot === "loaded")
+  // The slot arrives as a `Label` naming which state it is in, never as
+  // a bare word (docs/tgui/labels.md).
+  const slot = labelId(state.media_slot);
+  if (slot === "files.media.loaded")
     out.push(
       row(
         `${id}/media`,
@@ -63,10 +66,10 @@ export function filePanes(
         { cls: ["list-row"] },
       ),
     );
-  else if (state.media_slot === "empty")
+  else if (slot === "files.media.empty")
     out.push(
       LabeledList(`${id}/media`, [
-        { label: S.MEDIA, value: S.MEDIA_EMPTY, tone: "idle" },
+        { label: S.MEDIA, value: labelText(state.media_slot), tone: "idle" },
       ]),
     );
   out.push(
