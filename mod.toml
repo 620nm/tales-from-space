@@ -43,6 +43,10 @@ map = "maps/chillstation.ron"
 assets = "assets"
 tests = "tests"
 
+[ui]
+entry = "ui/main.tsx"
+bundle = "ui/bundle.json"
+
 [permissions]
 replace_handlers = true
 prototype_handlers = true

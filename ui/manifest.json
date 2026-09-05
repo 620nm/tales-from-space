@@ -1,0 +1,147 @@
+{
+  "bindings": [
+    {
+      "id": "north",
+      "label": "North",
+      "key": "KeyW",
+      "control": "move.north"
+    },
+    {
+      "id": "south",
+      "label": "South",
+      "key": "KeyS",
+      "control": "move.south"
+    },
+    {
+      "id": "west",
+      "label": "West",
+      "key": "KeyA",
+      "control": "move.west"
+    },
+    {
+      "id": "east",
+      "label": "East",
+      "key": "KeyD",
+      "control": "move.east"
+    },
+    {
+      "id": "north-arrow",
+      "label": "North (arrow)",
+      "key": "ArrowUp",
+      "control": "move.north"
+    },
+    {
+      "id": "south-arrow",
+      "label": "South (arrow)",
+      "key": "ArrowDown",
+      "control": "move.south"
+    },
+    {
+      "id": "west-arrow",
+      "label": "West (arrow)",
+      "key": "ArrowLeft",
+      "control": "move.west"
+    },
+    {
+      "id": "east-arrow",
+      "label": "East (arrow)",
+      "key": "ArrowRight",
+      "control": "move.east"
+    },
+    {
+      "id": "focus/chat",
+      "label": "Talk",
+      "key": "Enter"
+    },
+    {
+      "id": "drop",
+      "label": "Drop",
+      "key": "KeyQ"
+    },
+    {
+      "id": "swap",
+      "label": "Swap hands",
+      "key": "KeyX"
+    },
+    {
+      "id": "use_self",
+      "label": "Use held item",
+      "key": "KeyZ"
+    },
+    {
+      "id": "use_other",
+      "label": "Use on other hand",
+      "key": "ShiftKeyZ"
+    },
+    {
+      "id": "stop_pull",
+      "label": "Stop pulling",
+      "key": "KeyH"
+    },
+    {
+      "id": "throw_mode",
+      "label": "Throw mode",
+      "key": "KeyR"
+    },
+    {
+      "id": "equip",
+      "label": "Equip",
+      "key": "KeyE"
+    },
+    {
+      "id": "quick_store",
+      "label": "Store",
+      "key": "KeyB"
+    },
+    {
+      "id": "open_build",
+      "label": "Build",
+      "key": "KeyC"
+    },
+    {
+      "id": "target/1",
+      "label": "Target slot 1",
+      "key": "Numpad1"
+    },
+    {
+      "id": "target/2",
+      "label": "Target slot 2",
+      "key": "Numpad2"
+    },
+    {
+      "id": "target/3",
+      "label": "Target slot 3",
+      "key": "Numpad3"
+    },
+    {
+      "id": "target/4",
+      "label": "Target slot 4",
+      "key": "Numpad4"
+    },
+    {
+      "id": "target/5",
+      "label": "Target slot 5",
+      "key": "Numpad5"
+    },
+    {
+      "id": "target/6",
+      "label": "Target slot 6",
+      "key": "Numpad6"
+    },
+    {
+      "id": "target/7",
+      "label": "Target slot 7",
+      "key": "Numpad7"
+    },
+    {
+      "id": "target/8",
+      "label": "Target slot 8",
+      "key": "Numpad8"
+    },
+    {
+      "id": "target/9",
+      "label": "Target slot 9",
+      "key": "Numpad9"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Tales from Space — content rules
 
-This repository is the standalone Luau content pack for Tales from Space.
+This repository is the standalone game content pack for Tales from Space.
 Read `README.md` before editing: it owns the repository layout, authoring
 references, run commands, and spec-runner surface. Keep this file focused on
 agent decisions rather than duplicating those details.
@@ -80,6 +80,11 @@ suite before completion; exact commands and filter semantics are in
   (the Luau twin of Rust's raw-string trap).
 - `content/tuning.luau` overrides engine feel constants; the engine's
   compiled defaults are what its tests pin.
-- Interface declarations are ordered native mechanism modules
-  (`docs/TGUI.md`), never a game-named engine window or a script-authored
-  state blob.
+- `ui/` owns every gameplay surface and binding in restricted TypeScript/TSX.
+  Use the pack UI SDK; no real DOM, browser APIs, networking, guest clocks or
+  per-frame script hooks. Native providers expose readouts and validated actions;
+  they do not prescribe gameplay panels. Server Luau view models update from
+  events and subscriptions.
+- `editor/manifest.json` declares pack/mode palettes, property schemas, previews
+  and bounded compositions of native edit operations. The trusted editor owns
+  documents and undo; UI guests never receive editor drafts.
