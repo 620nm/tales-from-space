@@ -111,7 +111,7 @@ local function lay_run(self, recipe, user, x, y, at)
     if not sim.subfloor_exposed(x, y) then
         sim.message.send({
             recipient = user,
-            message = sim.msg("lunatic/tfs:items.rpd.the_floor_is_in_the", {}),
+            message = sim.msg("lunatic/tfs:lib.subfloor.covered", {}),
         })
         return
     end
@@ -119,14 +119,14 @@ local function lay_run(self, recipe, user, x, y, at)
     if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
         sim.message.send({
             recipient = user,
-            message = sim.msg("lunatic/tfs:items.rpd.an_atmospherics_component_already_occupies", {}),
+            message = sim.msg("lunatic/tfs:lib.pipe.layer_taken", {}),
         })
         return
     end
     if sim.pipe(x, y) % (mask * 2) >= mask then
         sim.message.send({
             recipient = user,
-            message = sim.msg("lunatic/tfs:items.rpd.someone_already_ran_pipe_through", {}),
+            message = sim.msg("lunatic/tfs:lib.pipe.occupied", {}),
         })
         return
     end
@@ -142,14 +142,14 @@ local function lay_run(self, recipe, user, x, y, at)
         if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:items.rpd.an_atmospherics_component_already_occupies_2", {}),
+                message = sim.msg("lunatic/tfs:lib.pipe.layer_taken", {}),
             })
             return
         end
         if sim.pipe(x, y) % (mask * 2) >= mask then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:items.rpd.someone_already_ran_pipe_through_2", {}),
+                message = sim.msg("lunatic/tfs:lib.pipe.occupied", {}),
             })
             return
         end
@@ -303,7 +303,7 @@ if sim ~= nil then
             if not sim.subfloor_exposed(x, y) then
                 sim.message.send({
                     recipient = user,
-                    message = sim.msg("lunatic/tfs:items.rpd.the_floor_is_in_the_2", {}),
+                    message = sim.msg("lunatic/tfs:lib.subfloor.covered", {}),
                 })
                 return true
             end
@@ -337,7 +337,7 @@ if sim ~= nil then
             end
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:items.rpd.there_is_no_pipe_under", {}),
+                message = sim.msg("lunatic/tfs:lib.pipe.none_here", {}),
             })
             return true
         end

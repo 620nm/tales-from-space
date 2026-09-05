@@ -159,7 +159,7 @@ if sim ~= nil then
         if order == nil or cards.count(order) >= #cards.FACES then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:items.card.the_deck_is_already_full", {}),
+                message = sim.msg("lunatic/tfs:lib.cards.deck_full", {}),
             })
             return true
         end
@@ -176,7 +176,7 @@ if sim ~= nil then
         sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = ev.at })
         sim.message.send({
             recipient = user,
-            message = sim.msg("lunatic/tfs:items.card.you_slide_the_card_into", {}),
+            message = sim.msg("lunatic/tfs:lib.cards.slid_in", {}),
         })
         -- The card itself is gone: it is in the deck now, and the deck
         -- is a string. `sim.entity.despawn` does the hand slots and removal

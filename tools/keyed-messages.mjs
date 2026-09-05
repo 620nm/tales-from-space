@@ -5,8 +5,11 @@
 // translator can reach (docs/LOCALIZATION.md). This rewrites each one to
 // `sim.msg("lunatic/tfs:<dir>.<file>.<slug>", {})` and writes the English
 // it took into `locale/en.json`. Idempotent: a converted file has no
-// literal left to take. `--check` writes nothing and fails on the first
-// literal it finds, which is the lint a commit runs.
+// literal left to take. A sentence the catalog already holds is pointed
+// at THAT key rather than minted a second time, so two files saying the
+// same thing end up on one key and a rerun cannot re-mint what was
+// hoisted by hand (`docs/WORDS.md`). `--check` writes nothing and fails
+// on the first literal it finds, which is the lint a commit runs.
 //
 //   node tools/keyed-messages.mjs [--check]
 //
@@ -109,10 +112,27 @@ function wrap(src) {
 }
 
 const catalog = JSON.parse(readFileSync(join(ROOT, "locale/en.json"), "utf8"));
+const files = sources(join(ROOT, "content"));
+
+// Every key a rewrite may hand back: one a send already minted, and the
+// `lib.` sentences hoisted by hand where two files say one thing. A
+// `module.` or `ui.` key that happens to read the same is a PANEL's
+// word, not this sentence, and is never reused.
+const scopes = new Set(files.map(scope));
+const shared = (key) => {
+  if (!key.startsWith(`${MOD}:`)) return false;
+  const area = key.slice(MOD.length + 1);
+  return area.startsWith("lib.") || [...scopes].some((s) => area.startsWith(`${s}.`));
+};
+const minted = new Map();
+for (const [key, text] of Object.entries(catalog))
+  if (shared(key) && !minted.has(text)) minted.set(text, key);
+
 const joined = [];
 let rewritten = 0;
+let reused = 0;
 
-for (const path of sources(join(ROOT, "content"))) {
+for (const path of files) {
   const src = readFileSync(path, "utf8");
   const taken = new Map();
   let changed = false;
@@ -127,13 +147,20 @@ for (const path of sources(join(ROOT, "content"))) {
       joined.push(`${relative(ROOT, path)}:${line}`);
       return whole;
     }
+    const english = text.replace(/\\"/g, '"');
+    changed = true;
+    rewritten += 1;
+    const already = minted.get(english);
+    if (already) {
+      reused += 1;
+      return `message = sim.msg("${already}", {})${tail}`;
+    }
     const stem = slug(text);
     const count = (taken.get(stem) ?? 0) + 1;
     taken.set(stem, count);
     const key = `${MOD}:${scope(path)}.${stem}${count > 1 ? `_${count}` : ""}`;
-    catalog[key] = text.replace(/\\"/g, '"');
-    changed = true;
-    rewritten += 1;
+    catalog[key] = english;
+    minted.set(english, key);
     return `message = sim.msg("${key}", {})${tail}`;
   });
   if (changed) writeFileSync(path, wrap(out));
@@ -152,6 +179,8 @@ if (CHECK) {
     join(ROOT, "locale/en.json"),
     `${JSON.stringify(catalog, null, 2)}\n`,
   );
-  console.log(`${rewritten} keyed, ${joined.length} concatenated by hand:`);
+  console.log(
+    `${rewritten} keyed (${reused} onto a key that already said it), ${joined.length} concatenated by hand:`,
+  );
   for (const where of joined) console.log(`  ${where}`);
 }
