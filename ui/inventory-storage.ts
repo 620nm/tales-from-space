@@ -71,7 +71,7 @@ export function storagePanel(
       row(
         "storage-controls",
         some(
-          text("storage-title", `${S.STORAGE} · ${label}`, ["caption", "grow"]),
+          text("storage-title", S.storageTitle(label), ["caption", "grow"]),
           press("storage-store", S.STORE_HELD, {
             kind: "store",
             dest: slot === undefined ? "OtherHand" : { Equipment: slot },

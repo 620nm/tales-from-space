@@ -42,8 +42,7 @@ export function kelvin(value: number): string {
 }
 const measure = (phase: string, value: number): string =>
   phase === "gas" ? kpa(value) : litres(value);
-const weighed = (grams: number): string =>
-  grams > 0 ? `${mass(grams)} · ` : "";
+const weighed = (grams: number): string => (grams > 0 ? mass(grams) : "");
 
 /** The substance's own colour, or nothing where the pack declared none. */
 function dot(id: string, hex: string | null | undefined): UiNode | null {
@@ -56,17 +55,19 @@ function dot(id: string, hex: string | null | undefined): UiNode | null {
 function stateHeading(state: MatterStateBlock): string {
   const reading = measure(state.phase, state.measure ?? 0);
   if (state.phase === "gas")
-    return `Gas · ${reading} · ${moles(state.moles ?? 0)}`;
-  if (state.phase === "liquid") return `Liquid · ${reading}`;
-  return `Solid · ${weighed(state.mass_g ?? 0)}${reading}`;
+    return S.gasHeading(reading, moles(state.moles ?? 0));
+  if (state.phase === "liquid") return S.liquidHeading(reading);
+  return S.solidHeading(weighed(state.mass_g ?? 0), reading);
 }
 
 function rowLine(phase: string, entry: MatterRow): string {
   const reading = measure(phase, entry.measure ?? 0);
   const amount = moles(entry.moles ?? 0);
-  return phase === "solid"
-    ? `${weighed(entry.mass_g ?? 0)}${reading} · ${amount}`
-    : `${reading} · ${amount}`;
+  return S.matterRow(
+    phase === "solid" ? weighed(entry.mass_g ?? 0) : "",
+    reading,
+    amount,
+  );
 }
 
 /** The block itself: the shell's readings, then a heading per state. */

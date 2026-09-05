@@ -168,7 +168,7 @@ function editorPane(
     some(
       text(
         `${id}/editor/title`,
-        `${S.fileName(open.name, open.ext)}${current.dirty ? ` · ${S.MODIFIED}` : ""}`,
+        S.fileTitle(open.name, open.ext, current.dirty),
         ["mstate"],
       ),
       conflict
