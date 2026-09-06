@@ -324,7 +324,7 @@
   "lunatic/tfs:fixtures.light.you_smash_the_light_tube": "You smash the light tube.",
   "lunatic/tfs:fixtures.pipe_dispenser.the_dispenser_is_dark_and": "The dispenser is dark and silent.",
   "lunatic/tfs:fixtures.tv.reruns_of_space_cops_again": "Reruns of Space Cops. Again.",
-  "lunatic/tfs:fixtures.tv.the_screen_is_dark_it": "The screen is dark. It needs a powered outlet nearby.",
+  "lunatic/tfs:fixtures.tv.the_screen_is_dark_it": "The screen is dark. It needs a live utility outlet port nearby.",
   "lunatic/tfs:fixtures.vendor.the_machine_is_dark_and": "The machine is dark and silent.",
   "lunatic/tfs:fixtures.vendor.the_machine_only_takes_empties": "The machine only takes empties.",
   "lunatic/tfs:fixtures.vendor.the_vending_machine_wobbles_nothing": "The vending machine wobbles. Nothing falls out.",

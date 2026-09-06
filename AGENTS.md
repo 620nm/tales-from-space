@@ -52,8 +52,11 @@ suite before completion; exact commands and filter semantics are in
 - Game fiction never says "lunatic"; engine words stay out of content.
 - Shared code lives in `content/lib/`. There is no `require`: a `lib/`
   file returns a table and the loader publishes it as a global named for
-  the file (`lib/vessel.luau` -> `vessel`), before every roster and
-  readable both at prototype time and inside a handler. Nothing in
+  the file (`lib/vessel.luau` -> `vessel`), before every roster. It is
+  readable inside every handler, and at prototype time in the ITEM
+  sandbox only: the structure registry has its own, so a file under
+  `structures/` reads nil there and spells the word out
+  (`structures/light.luau`, `lib/network.luau`). Nothing in
   `lib/` may call `sim.define` — shared code publishes tables, rosters
   declare things. A gesture spelled out in two roster files belongs
   there instead; that duplication is what it exists to prevent. Because
