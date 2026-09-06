@@ -139,6 +139,17 @@ if sim ~= nil then
     -- holding a state this box thinks it has already corrected. The
     -- repair is to forget that it said anything and say all of it
     -- again on the next nudge.
+    --
+    -- NOTHING HERE CAN REACH THE RATE CEILING TODAY, and the
+    -- arithmetic is worth writing down rather than trusting: the
+    -- fixtures are sampled once an atmos pass, a pass is every ten
+    -- ticks and the ceiling's window is twenty, so this box is asked
+    -- to look at most twice a second. Two looks times the two bands
+    -- below is four emissions, which is exactly the allowance and
+    -- never over it. The guard is here for the other ways an
+    -- emission fails -- a card pulled between the handler and the
+    -- apply, a box that went off the air in the same tick -- and for
+    -- the day a third band is added or the cadence moves.
     script_definition:handle("link.emit.done", { kind = "react" }, function(ev)
         if ev.outcome ~= "failed" then
             return
