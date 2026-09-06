@@ -72,8 +72,10 @@ t.run_ticks(20)
 local _ = t.messages(p)
 t.click(p, 6, 1, t.target_at(6, 1))
 t.tick()
+-- RELAYED, because the APC feeding this tower is a hub and every
+-- device it powers is hardwired under it (docs/devices/joining.md).
 assert(
-    said(p, "The transceiver is on the air, carrying Lifeline."),
+    said(p, "The transceiver is on the air, carrying Lifeline, relayed through its network."),
     "the variant boots keyed, got: " .. table.concat(t.messages(p), " | ")
 )
 local panel = t.ui(p)
@@ -102,7 +104,7 @@ local _ = t.messages(p)
 t.click(p, 9, 1, t.target_at(9, 1))
 t.tick()
 assert(
-    said(p, "The transceiver is on the air, carrying Wrench."),
+    said(p, "The transceiver is on the air, carrying Wrench, relayed through its network."),
     "the placement's socket row wins, got: " .. table.concat(t.messages(p), " | ")
 )
 panel = t.ui(p)

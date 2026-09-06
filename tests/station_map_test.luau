@@ -123,7 +123,9 @@ t.tick()
 local heard = t.messages(p)
 local on_air = false
 for _, m in ipairs(heard) do
-    if m == "The transceiver is on the air, carrying Common." then
+    -- Relayed: the Commons APC is a hub and every device it powers
+    -- is hardwired under it (../lunatic/docs/devices/joining.md).
+    if m == "The transceiver is on the air, carrying Common, relayed through its network." then
         on_air = true
     end
 end

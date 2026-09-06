@@ -56,14 +56,6 @@ if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:hazard_levels", { replicate = "server" })
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
-    -- NOT YET REACHING IT, and the reason is the engine's rather than
-    -- this file's: a routed delivery addresses the INTERFACE, and this
-    -- box takes its address from a card in a socket
-    -- (`devicenet_emit` routes through `devicenet_entity`, where
-    -- `devicenet_host` is the machine). So `link.message.done` arrives
-    -- at the card and a handler scoped to this prototype never runs.
-    -- Written as it should be, and left that way.
-    --
     -- WHO IT BELIEVES: `child` and `sibling`. A child is a fan joined
     -- to this alarm by hand, which is the pairing the whole box exists
     -- for. A sibling is a fan still hanging off the panel that feeds

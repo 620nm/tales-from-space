@@ -54,12 +54,13 @@ t.world([==[(
         '.': (turf: Plating),
         '#': (turf: Wall),
         'G': (turf: Plating, fixture: Some(Generator)),
+        'a': (turf: Plating, fixture: Some(Apc)),
         'o': (turf: Plating, fixture: Some(Outlet)),
     },
     rows: [
         "###########################################",
         "#.........................................#",
-        "#G.o.....o................................#",
+        "#Gao.....o................................#",
         "###########################################",
     ],
     spawns: [(6, 2), (41, 2)],
@@ -75,7 +76,7 @@ t.world([==[(
     structures: [(8, 1, "access_point")],
     mounts: [(8, 1, North)],
     cables: [
-        (1, 2, 1), (2, 2, 1), (3, 2, 1), (4, 2, 1), (5, 2, 1),
+        (1, 2, 2), (2, 2, 3), (3, 2, 1), (4, 2, 1), (5, 2, 1),
         (6, 2, 1), (7, 2, 1), (8, 2, 1), (9, 2, 1),
     ],
 )]==], 0)
@@ -122,11 +123,15 @@ local function say_and_read(line)
 end
 
 -- ---------------------------------------------------------------
--- 1. SIDE BY SIDE IS NOT A NETWORK. Each tower is a tree of one,
---    reach 30, and the listener stands at 36.
+-- 1. SIDE BY SIDE IS ALREADY A NETWORK, and that is the fact this
+--    file opens on now. The APC feeding both towers is a hub, and
+--    every device it powers is hardwired under it
+--    (../lunatic/docs/devices/joining.md) -- so two towers on one
+--    room's circuit are one tree before anybody joins anything, and
+--    the listener at 36 is inside the arms that buys.
 -- ---------------------------------------------------------------
-assert(#say_and_read("the tower chain is up, check your bands") == 0,
-    "two lone towers reach 30 tiles, and the listener stands at 36")
+assert(#say_and_read("the tower chain is up, check your bands") > 0,
+    "two towers on one panel are one tree, and 36 is inside its reach")
 
 -- ---------------------------------------------------------------
 -- 2. THE JOIN. The access point's panel offers both unjoined towers
@@ -151,7 +156,16 @@ for _ = 1, 2 do
     t.ui_act(speaker, "toggle", string.format('{"field":"link_join","option":"%s"}', offer.option))
     t.tick()
 end
-assert(#t.ledger_rows("link_accepted") == 2, "two joins on the record")
+-- Two joins on the record, counting the ones somebody MADE: the
+-- electrical pass files its own sews on the same row type, flagged
+-- `hardwired` (../lunatic/docs/devices/joining.md).
+local made = 0
+for _, row in ipairs(t.ledger_rows("link_accepted")) do
+    if not row.hardwired then
+        made = made + 1
+    end
+end
+assert(made == 2, "two joins on the record: " .. made)
 t.ui_close(speaker)
 t.tick()
 to_mark()
@@ -188,9 +202,13 @@ end
 assert(rim_ok, "a blank tower on the tree still amplifies: " .. table.concat(heard, " | "))
 
 -- ---------------------------------------------------------------
--- 4. RELEASE ONE TOWER and the arms shorten: membership is what
---    counts, and a cut edge is a deliberate panel act on the record.
---    Whichever row goes, a tree of one tower reaches nobody at 36.
+-- 4. RELEASE ONE TOWER and nothing shortens, which is the fact worth
+--    pinning now. The panel feeding this room is a hub and the access
+--    point hangs off it too, so a tower released from the box falls
+--    straight back onto the same tree it was already on
+--    (../lunatic/docs/devices/joining.md). What a release moves is
+--    WHOSE roster a tower sits on, not how far the room reaches; the
+--    cut is still a deliberate panel act and still on the record.
 -- ---------------------------------------------------------------
 to_panel()
 t.click(speaker, 8, 1, t.target_at(8, 1, "access_point"))
@@ -199,15 +217,24 @@ local held = rows(t.ui(speaker), "link_drop")
 assert(#held == 2, "the panel holds both towers")
 t.ui_act(speaker, "toggle", string.format('{"field":"link_drop","option":"%s"}', held[2].option))
 t.tick()
-assert(#t.ledger_rows("link_released") == 1, "the cut is on the record")
+-- The cut somebody ASKED for. A released device falls straight back
+-- to the panel feeding it, and that re-sewing files its own rows with
+-- a `why` (../lunatic/docs/devices/joining.md).
+local cuts = 0
+for _, row in ipairs(t.ledger_rows("link_released")) do
+    if row.why == nil then
+        cuts = cuts + 1
+    end
+end
+assert(cuts == 1, "the cut is on the record: " .. cuts)
 t.ui_close(speaker)
 t.tick()
 to_mark()
 
-assert(#say_and_read("still with me on the long band") == 0,
-    "released, the reach falls back and the rim goes quiet")
+assert(#say_and_read("still with me on the long band") == 1,
+    "released onto the panel's own tree, the rim still hears")
 
--- Rejoin whichever tower came off, so the pair is whole again.
+-- Rejoin whichever tower came off, so the roster is whole again.
 to_panel()
 t.click(speaker, 8, 1, t.target_at(8, 1, "access_point"))
 t.tick()

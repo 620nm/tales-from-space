@@ -18,17 +18,20 @@
 --     Those are the two lamp words tests/uop_test.luau cannot reach,
 --     and this is where they live.
 --
---   * THE FITTINGS follow the lamps. The one on the flagged layer is
---     still burning; the one on the layer the panel let go is dark,
---     with nothing touched but the wire under it.
+--   * THE FITTINGS follow the lamps, and then some. The one on the
+--     layer the panel let go is dark, with nothing touched but the
+--     wire under it. The one on the flagged layer is still burning
+--     AND is dimmer: the panel puts a `low_power` flag on its own
+--     network as it crosses, and every fitting it feeds is a
+--     hardwired child of it and hears the flag as coming from its
+--     parent (content/fixtures/apc.luau, content/fixtures/light.luau).
+--     A room on batteries dims without anybody wiring a light to a
+--     panel.
 --
--- The panel ALSO puts a `low_power` flag on its own network as it
--- crosses, and every fitting it feeds turns itself down for it
--- (content/fixtures/apc.luau, content/fixtures/light.luau). That half
--- is deliberately not asserted here: `sim.set_light` is a reach-scoped
--- verb, and an effect issued by a device-network listener has no actor
--- standing anywhere, so the engine drops it. The flag arrives and the
--- fitting records it; only the picture is missing.
+-- The flag carries no colour, deliberately: a station on its cells is
+-- not an emergency anybody needs colour-coding, it is a station with
+-- the lights turned down, which is what a building running off
+-- batteries looks like.
 
 -- The bench: a generator on the yellow backbone into a panel flagged
 -- for L1, a red room circuit and a blue spare main running east out of
@@ -123,13 +126,16 @@ assert(not blue.powered, "so the far port is dead")
 
 -- ---------------------------------------------------------------
 -- 3. THE ROOM GOES DOWN, NOT OUT. The fitting on the flagged layer is
---    still burning; the one on the unflagged layer is dark. That is
---    the whole point of flagging a layer: a blackout leaves a room a
---    person can walk out of.
+--    still burning and is dimmer, and the one on the unflagged layer
+--    is dark. That is the whole point of flagging a layer: a blackout
+--    leaves a room a person can walk out of. The dimming is content:
+--    a flag from the panel, read by the fitting, looked up in the
+--    pack's own table.
 -- ---------------------------------------------------------------
 near = t.light_at(5, 2)
 far = t.light_at(10, 2)
 assert(near.lit and near.emits, "the fitting on the reserve is still burning")
+assert(math.abs(near.power - 0.5) < 1e-6, "turned down: " .. near.power)
 assert(near.color == TUBE, "still the colour of its own tube: " .. near.color)
 assert(math.abs(near.range - 6.0) < 1e-6, "reach is untouched: a dim room is not a smaller one")
 assert(not far.emits, "the fitting on the dark layer throws nothing")
@@ -155,5 +161,6 @@ assert(both.l1 == "nominal", "the room circuit is off the mains again: " .. both
 assert(both.l3 == "nominal", "and so is the spare main: " .. both.l3)
 
 near = t.light_at(5, 2)
+assert(math.abs(near.power - 1.0) < 1e-6, "the fitting is back up: " .. near.power)
 assert(near.color == TUBE, "the fitting kept the tube it always had")
 assert(t.light_at(10, 2).emits, "and the dark one is burning again")
