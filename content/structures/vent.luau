@@ -42,6 +42,10 @@
 -- station with if you would rather not have it.
 return {
     id = "vent",
+    -- The one thing this machine says that is not mechanism: it
+    -- repeats onto the network what the engine just decided about the
+    -- air on its own tile (fixtures/vent.luau).
+    script = "vent",
     name = "air vent",
     sprite = "vent_off",
     -- The panel above: a switch and the three pressures. Same module

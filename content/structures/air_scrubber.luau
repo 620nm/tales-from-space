@@ -51,6 +51,10 @@
 -- whole kit exists for survivable by accident.
 return {
     id = "air_scrubber",
+    -- The one thing this machine says that is not mechanism: it
+    -- repeats onto the network what the engine just decided about the
+    -- air on its own tile (fixtures/air_scrubber.luau).
+    script = "air_scrubber",
     name = "air scrubber",
     sprite = "scrubber_off_n",
     ui = { modules = { "scrubber" } },
