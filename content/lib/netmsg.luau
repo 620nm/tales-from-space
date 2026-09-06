@@ -96,9 +96,29 @@ function netmsg.is_light_flag(payload)
     return netmsg.flags[payload.flag] ~= nil
 end
 
--- The worst flag standing, or nil for none. `flags` is a set of names
--- -- `{ deadly = true }` -- because the only thing a fitting remembers
--- is WHICH conditions it was told about, never what they look like.
+-- Is this row of the stack standing? A flag is held BY somebody, so
+-- the row under a name is the set of addresses currently holding it
+-- and the flag stands while anybody is in it. `true` is the older
+-- spelling for "held, by nobody in particular" and still counts, which
+-- is what lets a caller that has no emitter to name use the same
+-- table.
+--
+-- WHY IT IS A SET AND NOT A BOOL: two alarms under one panel both
+-- report the room, and one of them fixing its own patch of air must
+-- not take the other's word off a light. Keying by emitter also bounds
+-- what a hostile sibling can do to exactly its own row.
+local function standing(held)
+    if held == true then
+        return true
+    end
+    return type(held) == "table" and next(held) ~= nil
+end
+netmsg.standing = standing
+
+-- The worst flag standing, or nil for none. `flags` is a map of name
+-- to the row of holders above, because the only thing a fitting
+-- remembers is WHICH conditions it was told about and by whom, never
+-- what they look like.
 --
 -- Ties break on the name so that two flags of equal importance always
 -- pick the same one; `pairs` over a table has no order to rely on, and
@@ -109,8 +129,8 @@ function netmsg.winner(flags)
         return nil
     end
     local best, best_name = nil, nil
-    for name, on in pairs(flags) do
-        local spec = on and netmsg.flags[name] or nil
+    for name, held in pairs(flags) do
+        local spec = standing(held) and netmsg.flags[name] or nil
         if spec ~= nil then
             if best == nil
                 or spec.importance > best.importance
