@@ -19,11 +19,27 @@ const good = "#7fd18c";
 const paneBack = "#0e101af2";
 const inner = "#141828cc";
 const innerLine = "#262c42";
+const slotHint = "#c3cbe4a8";
+const slotShade = "#080a1259";
 
 const edge = (color: string, width = 1) =>
   ({ width, style: "solid", color }) as const;
+const dashed = (color: string) => ({ width: 1, style: "dashed", color }) as const;
 const none = { width: 0, style: "none", color: "transparent" } as const;
 const drop = [{ x: 0, y: 6, blur: 18, spread: 0, color: "#00000073" }];
+const ring = (color: string, spread: number) => [{ x: 0, y: 0, blur: 0, spread, color }];
+// An empty shadow list renders `none`: how a later rule cancels an earlier.
+const flat: ReturnType<typeof ring> = [];
+// The 1px black outline BYOND draws with `-dm-text-outline`, and the only
+// thing that holds a bare HUD word together over a lit floor.
+const outline = [
+  { x: -1, y: 0, blur: 0, color: "#000000" },
+  { x: 1, y: 0, blur: 0, color: "#000000" },
+  { x: 0, y: -1, blur: 0, color: "#000000" },
+  { x: 0, y: 1, blur: 0, color: "#000000" },
+];
+// A press inside a click-through group has to claim the pointer back.
+const press = { pointerEvents: "auto" } as const;
 
 export default defineStyles([
   ...theme,
@@ -68,6 +84,21 @@ export default defineStyles([
   rule("list-value", { fontSize: 11, fontWeight: 700 }),
   rule("notice", { color: info, fontStyle: "normal", fontSize: 11 }),
   rule("choice-grid", { gap: 4 }),
+  // A slot is a bare square, not a card: tg draws an inventory box as a
+  // screen icon over a transparent HUD, backed by an icon state rather
+  // than by chrome (code/_onclick/hud/inventory_slot.dm:20-30). The two
+  // states that SAY something are restated after it, or they lose to it.
+  rule("slot", { backgroundColor: "transparent", border: none, borderRadius: 4, boxShadow: flat }),
+  rule("slot-active", { border: edge(accent), boxShadow: ring(accent, 1) }),
+  // Two-tone, because a bare square has to be findable on a lit floor as
+  // well as in a dark corridor: a light dash over a dark pane, which is
+  // what tg's `template` icon state is a drawn version of.
+  rule("slot-empty", {
+    border: dashed(slotHint),
+    backgroundColor: slotShade,
+    opacity: 1,
+  }),
+  rule("slot-hit", { borderRadius: 4, ...press }),
   // One line, clipped: an item's whole name will not fit a 40px square,
   // and a wrapped one climbs over the sprite it belongs to.
   rule("slot-label", {
@@ -98,6 +129,24 @@ export default defineStyles([
     pointerEvents: "none",
   }),
   rule("dock", { gap: 10 }),
+  // A HUD region: a group pinned to an edge with no box of its own. tg's
+  // hand cluster, zone selector and open storage are three such groups,
+  // each placed on its own (code/__DEFINES/hud.dm:37, :238). It follows
+  // `pane`, so a Pane wearing it keeps the type and loses the frame.
+  rule("hudgroup", {
+    padding: 0,
+    gap: 6,
+    backgroundColor: "transparent",
+    border: none,
+    borderRadius: 0,
+    boxShadow: flat,
+    pointerEvents: "none",
+  }),
+  // pointer-events inherits, so a group the station shows through hands
+  // every press inside it to the floor unless the press says otherwise.
+  // These are the nodes that ARE the press; the kit declares none of them.
+  rule("btn", press),
+  rule("choice-hit", press),
   rule("card", {
     gap: 5,
     padding: 8,
@@ -116,12 +165,16 @@ export default defineStyles([
     imageRendering: "pixelated",
     pointerEvents: "none",
   }),
+  // Captions and readings float bare over the station now, so both wear
+  // the outline. Inside a pane it is a black edge on a black face and
+  // costs nothing.
   rule("caption", {
-    color: faint,
+    color: dim,
     fontSize: 9,
     fontWeight: 700,
     textTransform: "uppercase",
     letterSpacing: 0.6,
+    textShadow: outline,
   }),
 
   // The tray: hands and worn slots over the station's bottom edge.
@@ -144,7 +197,12 @@ export default defineStyles([
     textTransform: "uppercase",
     letterSpacing: 0.4,
   }),
-  rule("chipval", { color: ink, fontSize: 11, fontWeight: 700 }),
+  rule("chipval", {
+    color: bright,
+    fontSize: 11,
+    fontWeight: 700,
+    textShadow: outline,
+  }),
 
   // The target figure: one atlas cell at twice its size, so a hand and a
   // foot are separable at a glance. The renderer scales a cell to the
@@ -175,6 +233,7 @@ export default defineStyles([
     border: none,
     borderRadius: 2,
     cursor: "pointer",
+    ...press,
   }),
   rule("dollhit", { backgroundColor: "#ff6eb440" }, "hover"),
   rule("dollon", { backgroundColor: "#ff6eb42e", border: edge(accent) }),
@@ -192,6 +251,7 @@ export default defineStyles([
     paddingBottom: 3,
     paddingLeft: 5,
     paddingRight: 5,
+    ...press,
   }),
   rule("entry", { border: edge("#6f7aa8") }, "focus"),
   rule("num", { flexGrow: 0, width: 88, textAlign: "right" }),
@@ -210,6 +270,7 @@ export default defineStyles([
     paddingLeft: 6,
     paddingRight: 6,
     userSelect: "text",
+    ...press,
   }),
 
   // Comms.
@@ -219,6 +280,44 @@ export default defineStyles([
   rule("who", { color: "#c6d0f0", fontWeight: 700, flexShrink: 0 }),
   rule("said", { color: ink, flexGrow: 1, minWidth: 0, whiteSpace: "pre-wrap" }),
   rule("sys", { color: dim, fontStyle: "italic" }),
+
+  // Words over a head: tgstation's runechat, which is lettering and not
+  // a box. The look is `interface/skin.dmf:79` — Grand9K Pixel, a 1px
+  // black outline, line-height 1 — scaled from BYOND's 32px tile to the
+  // ~48 CSS px one this camera draws at its default zoom, so 6pt (8px)
+  // becomes 12 and tg's CHAT_MESSAGE_WIDTH of 112 (3.5 tiles) becomes
+  // 168. The outline is what `-dm-text-outline: 1px black` means once
+  // spelled as shadows; both it and the font inherit to the runs.
+  rule("rune", {
+    // Fixed, like tg's CHAT_MESSAGE_WIDTH: an anchored box with auto
+    // width shrink-wraps against the viewport edge into a word tower.
+    width: 168,
+    gap: 3,
+    paddingLeft: 2,
+    paddingRight: 2,
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    fontFamily: "pixel",
+    fontSize: 12,
+    lineHeight: 1,
+    backgroundColor: "transparent",
+    border: none,
+    boxShadow: flat,
+    userSelect: "none",
+    textShadow: [
+      { x: -1, y: 0, blur: 0, color: "#000000" },
+      { x: 1, y: 0, blur: 0, color: "#000000" },
+      { x: 0, y: -1, blur: 0, color: "#000000" },
+      { x: 0, y: 1, blur: 0, color: "#000000" },
+    ],
+  }),
+  // The words themselves wear the speaker's hue, written inline; the run
+  // only has to be allowed to wrap inside the cap above.
+  rule("rune-said", { minWidth: 0, whiteSpace: "pre-wrap" }),
+  // A radio line keeps its prefix, in the colour the log gives channels.
+  rule("rune-chan", { color: info, flexShrink: 0 }),
 
   // The job board.
   rule("job", {
