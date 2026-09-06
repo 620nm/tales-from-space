@@ -1,10 +1,13 @@
 // What an opened container holds. Which one is open is this package's
 // own state — no server round trip decides whether a bag is showing —
-// and every gesture out of it is a native inventory claim.
+// and every gesture out of it is a native inventory claim. It is a HUD
+// region of its own, above the hands rather than at the item, as tg
+// places storage (HUD_GROUP_STORAGE, code/__DEFINES/hud.dm:37;
+// screen_start_x/y, code/datums/storage/storage.dm:117-120).
 import type { UiNode } from "@lunatic/ui";
 import { Slot } from "@lunatic/ui";
 import type { GameplayView, InventoryState, ItemView } from "./model";
-import { bind, column, inspect, press, row, some, text } from "./view";
+import { bind, column, inspect, press, row, some, text, type Box } from "./view";
 import * as S from "./strings";
 
 let opened: { slot?: string; hand?: number } | undefined;
@@ -45,10 +48,21 @@ function storedSlot(
   });
 }
 
+/** The open container where a body has one open, placed by the caller. */
+export function storageRegion(
+  view: GameplayView,
+  place: Box = {},
+): UiNode | null {
+  const current = view.state.inventory;
+  if (!view.body || !current) return null;
+  return storagePanel(view, current, place);
+}
+
 /** The open container, or nothing where what was open has gone. */
-export function storagePanel(
+function storagePanel(
   view: GameplayView,
   current: InventoryState,
+  place: Box,
 ): UiNode | null {
   if (!opened) return null;
   const slot = opened.slot;
@@ -97,6 +111,9 @@ export function storagePanel(
         { style: { gap: 4, flexWrap: "wrap" } },
       ),
     ],
-    { cls: ["card"] },
+    {
+      cls: ["hudgroup", ...(place.cls ?? [])],
+      ...(place.style ? { style: place.style } : {}),
+    },
   );
 }

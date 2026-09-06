@@ -4,13 +4,42 @@
 import type { GuestUi, UiNode } from "@lunatic/ui";
 import { Pane } from "@lunatic/ui";
 import type { GameplayView } from "./model";
-import { begin, column, event } from "./view";
+import { begin, column, event, some } from "./view";
 import { crewPanels } from "./lobby";
 import { chatPanel } from "./chat";
 import { inspectionPanels } from "./inspect";
 import { worldOverlays } from "./world-overlays";
-import { inventory, shortcut } from "./inventory";
+import { inventory, shortcut, TRAY_WIDE } from "./inventory";
+import { bodyTarget } from "./doll";
+import { storageRegion } from "./inventory-storage";
 import { documents } from "./documents";
+
+/**
+ * The bottom-right stack: an open container over the target figure over
+ * the tray, anchored by its bottom-right corner and in flow above it.
+ * Nothing here is placed against a guessed height, so a seventh vitals
+ * chip or a verb row wrapped by a longer language pushes the rest of the
+ * stack up the screen instead of landing underneath it.
+ */
+function trayStack(view: GameplayView): UiNode | null {
+  const groups = some(
+    storageRegion(view, { style: { maxWidth: TRAY_WIDE } }),
+    bodyTarget(view),
+    inventory(view),
+  );
+  if (!groups.length) return null;
+  return column("hud-tray", groups, {
+    cls: ["hudgroup"],
+    style: {
+      position: "absolute",
+      right: 14,
+      bottom: 12,
+      maxWidth: "100%",
+      alignItems: "end",
+      gap: 8,
+    },
+  });
+}
 
 const ui: GuestUi = {
   render(raw) {
@@ -20,8 +49,8 @@ const ui: GuestUi = {
     // The board and the condition card are the only nodes in flow, so
     // the root's own centring puts them where a modal belongs.
     children.push(...crewPanels(view));
-    const tray = inventory(view);
-    if (tray) children.push(tray);
+    const stack = trayStack(view);
+    if (stack) children.push(stack);
     children.push(...chatPanel(view));
     const docs = documents(view);
     if (docs.length)

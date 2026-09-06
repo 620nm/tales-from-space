@@ -81,6 +81,8 @@ export interface GameplayView {
       id: number;
       sequence: number;
       channel?: string | null;
+      /** Who was heard: what the lettering's colour is hashed from. */
+      name?: string | null;
       text: string;
     }[];
   };
