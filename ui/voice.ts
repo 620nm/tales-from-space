@@ -56,6 +56,7 @@ export function voiceColor(name: string): string {
     [mid, lo, hi],
     [hi, lo, mid],
   ];
-  const [r, g, b] = wheel[sector];
+  // `sector` is clamped to 0..5 above, so the index cannot miss.
+  const [r, g, b] = wheel[sector]!;
   return `#${hex(r)}${hex(g)}${hex(b)}`;
 }
