@@ -95,5 +95,10 @@
   "lunatic/tfs:module.room.line.ok": "correcte",
   "lunatic/tfs:module.port.none": "aucune conduite",
   "lunatic/tfs:module.port.at_full": "{pressure} — pleine",
-  "engine.radio.none": "Vous n'avez pas de radio ; vous le dites à voix haute."
+  "engine.radio.none": "Vous n'avez pas de radio ; vous le dites à voix haute.",
+  "lunatic/tfs:ui.desktop.power_on": "Allumer",
+  "lunatic/tfs:ui.desktop.power_off": "Éteindre",
+  "lunatic/tfs:ui.desktop.eject_id": "Éjecter la carte d'identité",
+  "lunatic/tfs:ui.desktop.eject_cartridge": "Éjecter la cartouche",
+  "lunatic/tfs:ui.desktop.close_lid": "Fermer le capot"
 }

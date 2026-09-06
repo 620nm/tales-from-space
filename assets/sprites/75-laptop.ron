@@ -1,0 +1,12 @@
+// tg code/modules/modular_computers/computers/item/laptop.dm:5-8.
+(
+    sheets: [
+        ("laptop", "obj/devices/modular_laptop.dmi"),
+    ],
+    sprites: [
+        ("laptop_closed", Dmi("@laptop", "laptop-closed", 0)),
+        ("laptop_off", Dmi("@laptop", "laptop-off", 0)),
+        // The laptop sheet itself carries its menu overlay (laptop.dm:9).
+        ("laptop_on", DmiLayers([("@laptop", "laptop"), ("@laptop", "menu")], 0)),
+    ],
+)

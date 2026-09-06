@@ -11,6 +11,7 @@ export interface ItemFill {
   percent?: number;
 }
 export interface ItemView {
+  gestures?: number;
   name: string;
   sprite: string;
   fill?: ItemFill | null;
