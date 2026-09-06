@@ -1,0 +1,117 @@
+// The gravitational generator: one machine standing on nine tiles.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then expansion order,
+// so the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+//
+// NINE CELLS, NOT ONE PICTURE. tg authors this machine as fifty-four
+// separate 32x32 states rather than one oversized cell, so nothing here
+// is `Slice`d: the art already arrives cut. Each state is
+// `[status]_[sprite_number]` (`code/modules/power/gravitygenerator.dm:53`),
+// and the number is the position tg's `setup_parts()` hands each part.
+// It counts DOWN from 9 x-fastest over a 3x3 block whose bottom-middle
+// tile is the machine's own — bottom row 9, 8, 7 left to right, middle
+// 6, 5, 4, top 3, 2, 1 (`:179-198`) — so `on_8` is the tile a mapper
+// clicks and `main` wears it (`:118, 122`). Cells 1-3, the top row, are
+// walk-under: tg drops their density and lifts them to the wall object
+// layer (`:191-193`).
+//
+// SIX STATUSES. `on` and `off` are what a working generator wears
+// (`get_status()`, `:56`, and `main/off`, `:155-159`); `fix0`-`fix3` are
+// the four rungs of the repair ladder a broken one climbs, named for
+// what it wants next — screwdriver, welder, plasteel, wrench
+// (`GRAV_NEEDS_*`, `:13-16`).
+//
+// FOUR ANIMATIONS, ALL ON THE CENTRE. tg hangs a charge overlay on the
+// middle part alone, stepping through them as the charge counter climbs
+// — nothing under 21, then `startup`, `idle`, `activating`, and
+// `activated` at full (`:395-405`); a generator that boots up already
+// on wears `activated` from the start (`:167`). They are baked now,
+// ahead of the charge ramp that will choose between them, so landing it
+// needs no second bake. Every frame in the sheet delays 1 tick.
+(
+    sheets: [
+        ("gravgen", "obj/machines/gravity_generator.dmi"),
+    ],
+    groups: [
+        (sheet: "gravgen", sprites: [
+            // Running.
+            Sprite("gravgen_on_1", "on_1", s),
+            Sprite("gravgen_on_2", "on_2", s),
+            Sprite("gravgen_on_3", "on_3", s),
+            Sprite("gravgen_on_4", "on_4", s),
+            Sprite("gravgen_on_5", "on_5", s),
+            Sprite("gravgen_on_6", "on_6", s),
+            Sprite("gravgen_on_7", "on_7", s),
+            Sprite("gravgen_on_8", "on_8", s),
+            Sprite("gravgen_on_9", "on_9", s),
+
+            // Shut down.
+            Sprite("gravgen_off_1", "off_1", s),
+            Sprite("gravgen_off_2", "off_2", s),
+            Sprite("gravgen_off_3", "off_3", s),
+            Sprite("gravgen_off_4", "off_4", s),
+            Sprite("gravgen_off_5", "off_5", s),
+            Sprite("gravgen_off_6", "off_6", s),
+            Sprite("gravgen_off_7", "off_7", s),
+            Sprite("gravgen_off_8", "off_8", s),
+            Sprite("gravgen_off_9", "off_9", s),
+
+            // Broken, wanting a screwdriver.
+            Sprite("gravgen_fix0_1", "fix0_1", s),
+            Sprite("gravgen_fix0_2", "fix0_2", s),
+            Sprite("gravgen_fix0_3", "fix0_3", s),
+            Sprite("gravgen_fix0_4", "fix0_4", s),
+            Sprite("gravgen_fix0_5", "fix0_5", s),
+            Sprite("gravgen_fix0_6", "fix0_6", s),
+            Sprite("gravgen_fix0_7", "fix0_7", s),
+            Sprite("gravgen_fix0_8", "fix0_8", s),
+            Sprite("gravgen_fix0_9", "fix0_9", s),
+
+            // Opened up, wanting a welder.
+            Sprite("gravgen_fix1_1", "fix1_1", s),
+            Sprite("gravgen_fix1_2", "fix1_2", s),
+            Sprite("gravgen_fix1_3", "fix1_3", s),
+            Sprite("gravgen_fix1_4", "fix1_4", s),
+            Sprite("gravgen_fix1_5", "fix1_5", s),
+            Sprite("gravgen_fix1_6", "fix1_6", s),
+            Sprite("gravgen_fix1_7", "fix1_7", s),
+            Sprite("gravgen_fix1_8", "fix1_8", s),
+            Sprite("gravgen_fix1_9", "fix1_9", s),
+
+            // Welded, wanting plasteel.
+            Sprite("gravgen_fix2_1", "fix2_1", s),
+            Sprite("gravgen_fix2_2", "fix2_2", s),
+            Sprite("gravgen_fix2_3", "fix2_3", s),
+            Sprite("gravgen_fix2_4", "fix2_4", s),
+            Sprite("gravgen_fix2_5", "fix2_5", s),
+            Sprite("gravgen_fix2_6", "fix2_6", s),
+            Sprite("gravgen_fix2_7", "fix2_7", s),
+            Sprite("gravgen_fix2_8", "fix2_8", s),
+            Sprite("gravgen_fix2_9", "fix2_9", s),
+
+            // Plated, wanting a wrench.
+            Sprite("gravgen_fix3_1", "fix3_1", s),
+            Sprite("gravgen_fix3_2", "fix3_2", s),
+            Sprite("gravgen_fix3_3", "fix3_3", s),
+            Sprite("gravgen_fix3_4", "fix3_4", s),
+            Sprite("gravgen_fix3_5", "fix3_5", s),
+            Sprite("gravgen_fix3_6", "fix3_6", s),
+            Sprite("gravgen_fix3_7", "fix3_7", s),
+            Sprite("gravgen_fix3_8", "fix3_8", s),
+            Sprite("gravgen_fix3_9", "fix3_9", s),
+
+            // The charge overlays, in the order the counter reaches
+            // them. `Anim` and not `AnimOnce`: each is what the centre
+            // WEARS for as long as the charge sits in its band, so it
+            // loops until the next band takes over — the whole point of
+            // the ladder is that a glance at the middle tile says how
+            // far along the ramp is (`gravitygenerator.dm:395-408`).
+            Anim("gravgen_startup", "startup", s),
+            Anim("gravgen_idle", "idle", s),
+            Anim("gravgen_activating", "activating", s),
+            Anim("gravgen_activated", "activated", s),
+        ]),
+    ],
+)
