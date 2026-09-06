@@ -690,6 +690,16 @@
         // than a load (docs/POWER.md).
         (6, 22, "smes", { "l2": "bidirectional" }),
         (10, 22, "generator"),
+        // The gravitational generator, standing in the middle of
+        // Engineering under the SMES and the generator it sits between.
+        // The tile named is the BOTTOM-MIDDLE one, tg's part 8 -- the
+        // machine claims the 3x3 block above it, (7..9, 23..25)
+        // (gravitygenerator.dm:179-198). Nothing else stands in that
+        // block; the L1 room circuit runs under it, which is where
+        // cable belongs. It arrives RUNNING, as tg's plain `main` does
+        // (`:118`); `main/off` is the variant a mapper picks to open
+        // the shift weightless, and this station is not that station.
+        (8, 25, "gravity_generator", "on"),
         // ---- THE SUPPLY BOTTLES ----------------------------------
         // Eight canisters, each standing on a connector port and each
         // arriving CHARGED and OPEN: `air` names the recipe they hold
