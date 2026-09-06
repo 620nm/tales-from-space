@@ -246,6 +246,42 @@ export default defineStyles([
   rule("said", { color: ink, flexGrow: 1, minWidth: 0, whiteSpace: "pre-wrap" }),
   rule("sys", { color: dim, fontStyle: "italic" }),
 
+  // Words over a head: tgstation's runechat, which is lettering and not
+  // a box. The look is `interface/skin.dmf:79` — Grand9K Pixel, a 1px
+  // black outline, line-height 1 — scaled from BYOND's 32px tile to the
+  // ~48 CSS px one this camera draws at its default zoom, so 6pt (8px)
+  // becomes 12 and tg's CHAT_MESSAGE_WIDTH of 112 (3.5 tiles) becomes
+  // 168. The outline is what `-dm-text-outline: 1px black` means once
+  // spelled as shadows; both it and the font inherit to the runs.
+  rule("rune", {
+    maxWidth: 168,
+    gap: 3,
+    paddingLeft: 2,
+    paddingRight: 2,
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    fontFamily: "pixel",
+    fontSize: 12,
+    lineHeight: 1,
+    backgroundColor: "transparent",
+    border: none,
+    boxShadow: flat,
+    userSelect: "none",
+    textShadow: [
+      { x: -1, y: 0, blur: 0, color: "#000000" },
+      { x: 1, y: 0, blur: 0, color: "#000000" },
+      { x: 0, y: -1, blur: 0, color: "#000000" },
+      { x: 0, y: 1, blur: 0, color: "#000000" },
+    ],
+  }),
+  // The words themselves wear the speaker's hue, written inline; the run
+  // only has to be allowed to wrap inside the cap above.
+  rule("rune-said", { minWidth: 0, whiteSpace: "pre-wrap" }),
+  // A radio line keeps its prefix, in the colour the log gives channels.
+  rule("rune-chan", { color: info, flexShrink: 0 }),
+
   // The job board.
   rule("job", {
     position: "relative",
