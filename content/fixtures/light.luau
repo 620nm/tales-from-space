@@ -37,25 +37,37 @@ local content = {
 -- the worst of them (lib/netmsg.luau), and what it goes back to when
 -- the last one clears is the colour of the tube somebody screwed in.
 --
--- So a fitting remembers exactly two things and neither is a picture:
--- `base`, the tube's own colour, and `flags`, the set of names
--- currently standing. Colours and brightnesses are looked up fresh
--- every time, which is what makes a retune in `lib/netmsg.luau` reach
--- every fitting already burning one -- and what stops a light that has
--- been red since before somebody's edit from staying a shade nothing
--- names any more.
-
-local function relight(self, base, flags)
+-- So a fitting remembers three things and none of them is a picture:
+-- `base` and `base_power`, which are the tube it has in it, and
+-- `flags`, one row per condition holding the set of ADDRESSES that
+-- raised it. Colours and brightnesses are looked up fresh every time,
+-- which is what makes a retune in `lib/netmsg.luau` reach every
+-- fitting already burning one -- and what stops a light that has been
+-- red since before somebody's edit from staying a shade nothing names
+-- any more.
+--
+-- THE ROWS ARE KEYED BY EMITTER because a room can have two alarms on
+-- it, and one of them finding its own patch of air breathable must not
+-- take the other's word off the ceiling. It also bounds what a hostile
+-- sibling can do to exactly the row it holds.
+--
+-- `base_power` is captured rather than assumed: a fitting's own power
+-- is what its prototype declares, a mapper may one day vary it, and a
+-- flag clearing back to a literal 1.0 would quietly re-tune every
+-- fitting that was not 1.0 to begin with.
+local function relight(self, base, flags, base_power)
     local v = self.vars["light_flags"] or {}
     base = base or v.base
+    base_power = base_power or v.base_power
     flags = flags or v.flags or {}
-    if base == nil then
+    if base == nil or base_power == nil then
         -- The first flag on a fitting nobody has flagged yet: what it
         -- is burning NOW is the tube, because nothing has replaced it.
         local l = sim.light(self)
-        base = l and l.color
+        base = base or (l and l.color)
+        base_power = base_power or (l and l.power)
     end
-    self.vars["light_flags"] = { base = base, flags = flags }
+    self.vars["light_flags"] = { base = base, base_power = base_power, flags = flags }
     -- `status` is deliberately absent from the set: what is in the
     -- socket is the fitting's own business and a flag has no opinion
     -- about it. A shattered tube under a standing flag stays shattered
@@ -63,7 +75,7 @@ local function relight(self, base, flags)
     local worst = netmsg.winner(flags)
     sim.set_light(self, {
         color = worst and worst.color or base,
-        power = worst and worst.power or 1.0,
+        power = worst and worst.power or base_power,
     })
 end
 
@@ -96,16 +108,20 @@ if sim ~= nil then
         local self = ev.self
         local v = self.vars["light_flags"] or {}
         local flags = v.flags or {}
+        local name = ev.payload.flag
+        local held = flags[name] or {}
         local on = ev.payload.op == "set"
-        if (flags[ev.payload.flag] == true) == on then
-            -- A repeat of what is already standing. It relights
+        if (held[ev.from] == true) == on then
+            -- A repeat of what this sender already said. It relights
             -- nothing and writes nothing.
             return
         end
-        -- `nil` rather than `false` for a cleared flag: the stack is a
-        -- set of names, and a name not in it needs no row saying so.
-        flags[ev.payload.flag] = on or nil
-        relight(self, v.base, flags)
+        -- `nil` rather than `false` throughout: a row is the set of
+        -- addresses holding a flag, and an address that let go needs no
+        -- entry saying so -- nor does a row nobody is holding.
+        held[ev.from] = on or nil
+        flags[name] = if next(held) ~= nil then held else nil
+        relight(self, v.base, flags, v.base_power)
     end)
 
     script_definition:handle("interaction.use", { kind = "replace", route = "interact" }, function(ev)
