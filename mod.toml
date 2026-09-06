@@ -36,6 +36,7 @@ native_edges = [
     "link.message",
     "atmos.hazard",
     "flow.backup",
+    "link.command",
 ]
 
 [paths]

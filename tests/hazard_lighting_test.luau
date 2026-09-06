@@ -216,7 +216,7 @@ t.world([==[(
         "####################",
     ],
     spawns: [(9, 2)],
-    items: [(9, 2, "wirecutters"), (2, 2, "toolbox"), (2, 2, "light_tube")],
+    items: [(9, 2, "wirecutters"), (2, 2, "toolbox"), (2, 2, "light_tube"), (2, 2, "wrench")],
     structures: [
         (3, 1, "air_alarm", { "access": "engineering", "network_1": "network_card" }),
         (4, 1, "vent"),
@@ -305,11 +305,11 @@ assert(lamp.color == UNBREATHABLE,
 assert(math.abs(lamp.power - 1.2) < 1e-6, "at the flag's own power: " .. lamp.power)
 
 -- ---------------------------------------------------------------
--- 8. A WORSE WORD OUTRANKS A STANDING ONE. Plasma in the east room:
+-- 8. A WORSE WORD OUTRANKS A STANDING ONE. Plasma in the west room:
 --    the live alarm raises death over a blue nobody can withdraw,
 --    and the fitting burns the worse of the two.
 -- ---------------------------------------------------------------
-assert(t.foul_room(15, 1, "plasma", 30.0), "plasma into the east room")
+assert(t.foul_room(3, 1, "plasma", 30.0), "plasma into the west room")
 t.run_seconds(6)
 t.run_ticks(60)
 
@@ -354,3 +354,57 @@ assert(lamp.emits, "and the room is lit again")
 assert(lamp.color == DEADLY,
     "burning the flag that never went away, not the tube's own white: " .. lamp.color)
 assert(math.abs(lamp.power - 1.5) < 1e-6, "at the flag's power: " .. lamp.power)
+
+-- ---------------------------------------------------------------
+-- 10. A FAN THAT LEAVES TAKES ITS WORD WITH IT. Unbolt the fan
+--     standing in the plasma: it is off the network, so the next time
+--     anything nudges the alarm the room it answers for no longer
+--     contains a fixture reporting death, and the red goes with it.
+--     An alarm that had FILED that word instead of reading it would
+--     still be holding a report from a machine in somebody's hands.
+--
+--     The nudge is the OTHER room crossing a band, which is the point
+--     worth pinning: nothing about the fan that left has to happen
+--     again for the room to come right.
+--
+--     What is left is the blue on the row the unpowered alarm holds,
+--     which nothing in this world can withdraw -- so the fitting
+--     lands there rather than on white, exactly as in 7.
+-- ---------------------------------------------------------------
+t.click(q, 2, 2, t.target_at(2, 2, "wrench"))
+t.run_ticks(2)
+assert(t.hands(q).held == "wrench", "a wrench in hand")
+for _ = 1, 6 do
+    if t.pos(q) == 4 then
+        break
+    end
+    t.move(q, "east")
+    t.run_ticks(5)
+end
+assert(t.pos(q) == 4, "beside the fan in the plasma")
+t.click(q, 4, 1, t.target_at(4, 1, "vent"))
+t.run_seconds(6)
+assert(t.structure_at(4, 1) == nil, "the fan is off the deck")
+t.run_seconds(3)
+t.run_ticks(60)
+
+assert(t.set_turf(13, 2, "space"), "and the far room opens to space")
+t.run_seconds(20)
+t.run_ticks(60)
+
+lamp = t.light_at(1, 2)
+assert(lamp.color == UNBREATHABLE,
+    "the red went with the fan that reported it: " .. lamp.color)
+assert(math.abs(lamp.power - 1.2) < 1e-6, "and the blue nobody can withdraw stands")
+-- ---------------------------------------------------------------
+-- AND NOT ONE HANDLER RAISED. Everything above is a chain of react
+-- handlers reading each other's effects, and a raise in one of them
+-- discards its occurrence silently -- the light would simply not
+-- change, which is also what a bug in the arithmetic looks like. So
+-- the file ends by saying the difference out loud.
+-- ---------------------------------------------------------------
+local raised = {}
+for _, row in ipairs(t.ledger_rows("script_error")) do
+    raised[#raised + 1] = tostring(row.file) .. ": " .. tostring(row.why)
+end
+assert(#raised == 0, "no handler raised: " .. table.concat(raised, " | "))
