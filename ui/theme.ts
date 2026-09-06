@@ -19,7 +19,8 @@ const good = "#7fd18c";
 const paneBack = "#0e101af2";
 const inner = "#141828cc";
 const innerLine = "#262c42";
-const slotHint = "#9aa3c05c";
+const slotHint = "#c3cbe4a8";
+const slotShade = "#080a1259";
 
 const edge = (color: string, width = 1) =>
   ({ width, style: "solid", color }) as const;
@@ -29,6 +30,16 @@ const drop = [{ x: 0, y: 6, blur: 18, spread: 0, color: "#00000073" }];
 const ring = (color: string, spread: number) => [{ x: 0, y: 0, blur: 0, spread, color }];
 // An empty shadow list renders `none`: how a later rule cancels an earlier.
 const flat: ReturnType<typeof ring> = [];
+// The 1px black outline BYOND draws with `-dm-text-outline`, and the only
+// thing that holds a bare HUD word together over a lit floor.
+const outline = [
+  { x: -1, y: 0, blur: 0, color: "#000000" },
+  { x: 1, y: 0, blur: 0, color: "#000000" },
+  { x: 0, y: -1, blur: 0, color: "#000000" },
+  { x: 0, y: 1, blur: 0, color: "#000000" },
+];
+// A press inside a click-through group has to claim the pointer back.
+const press = { pointerEvents: "auto" } as const;
 
 export default defineStyles([
   ...theme,
@@ -79,8 +90,15 @@ export default defineStyles([
   // states that SAY something are restated after it, or they lose to it.
   rule("slot", { backgroundColor: "transparent", border: none, borderRadius: 4, boxShadow: flat }),
   rule("slot-active", { border: edge(accent), boxShadow: ring(accent, 1) }),
-  rule("slot-empty", { border: dashed(slotHint), opacity: 1 }),
-  rule("slot-hit", { borderRadius: 4 }),
+  // Two-tone, because a bare square has to be findable on a lit floor as
+  // well as in a dark corridor: a light dash over a dark pane, which is
+  // what tg's `template` icon state is a drawn version of.
+  rule("slot-empty", {
+    border: dashed(slotHint),
+    backgroundColor: slotShade,
+    opacity: 1,
+  }),
+  rule("slot-hit", { borderRadius: 4, ...press }),
   // One line, clipped: an item's whole name will not fit a 40px square,
   // and a wrapped one climbs over the sprite it belongs to.
   rule("slot-label", {
@@ -122,8 +140,13 @@ export default defineStyles([
     border: none,
     borderRadius: 0,
     boxShadow: flat,
-    pointerEvents: "auto",
+    pointerEvents: "none",
   }),
+  // pointer-events inherits, so a group the station shows through hands
+  // every press inside it to the floor unless the press says otherwise.
+  // These are the nodes that ARE the press; the kit declares none of them.
+  rule("btn", press),
+  rule("choice-hit", press),
   rule("card", {
     gap: 5,
     padding: 8,
@@ -142,12 +165,16 @@ export default defineStyles([
     imageRendering: "pixelated",
     pointerEvents: "none",
   }),
+  // Captions and readings float bare over the station now, so both wear
+  // the outline. Inside a pane it is a black edge on a black face and
+  // costs nothing.
   rule("caption", {
-    color: faint,
+    color: dim,
     fontSize: 9,
     fontWeight: 700,
     textTransform: "uppercase",
     letterSpacing: 0.6,
+    textShadow: outline,
   }),
 
   // The tray: hands and worn slots over the station's bottom edge.
@@ -170,7 +197,12 @@ export default defineStyles([
     textTransform: "uppercase",
     letterSpacing: 0.4,
   }),
-  rule("chipval", { color: ink, fontSize: 11, fontWeight: 700 }),
+  rule("chipval", {
+    color: bright,
+    fontSize: 11,
+    fontWeight: 700,
+    textShadow: outline,
+  }),
 
   // The target figure: one atlas cell at twice its size, so a hand and a
   // foot are separable at a glance. The renderer scales a cell to the
@@ -201,6 +233,7 @@ export default defineStyles([
     border: none,
     borderRadius: 2,
     cursor: "pointer",
+    ...press,
   }),
   rule("dollhit", { backgroundColor: "#ff6eb440" }, "hover"),
   rule("dollon", { backgroundColor: "#ff6eb42e", border: edge(accent) }),
@@ -218,6 +251,7 @@ export default defineStyles([
     paddingBottom: 3,
     paddingLeft: 5,
     paddingRight: 5,
+    ...press,
   }),
   rule("entry", { border: edge("#6f7aa8") }, "focus"),
   rule("num", { flexGrow: 0, width: 88, textAlign: "right" }),
@@ -236,6 +270,7 @@ export default defineStyles([
     paddingLeft: 6,
     paddingRight: 6,
     userSelect: "text",
+    ...press,
   }),
 
   // Comms.
