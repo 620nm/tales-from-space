@@ -44,6 +44,44 @@ return {
     -- (code/modules/recycling/disposal/bin.dm:225).
     lay_body_secs = 2.0,
 
+    -- The two bands a vent or a scrubber sorts the air on its own tile
+    -- into, once an atmos pass, and reports over the network when it
+    -- crosses one (docs/atmos/hazard-sensing.md). DEADLY is air nobody
+    -- survives working in; UNBREATHABLE is air nobody should be asked
+    -- to. Everything else is `none`, and staying in a band says
+    -- nothing -- a room that is still on fire is not news twice.
+    --
+    -- The temperatures are round Celsius rather than a port: 100 and
+    -- -30 for the outer pair, 50 and -20 for the inner. tg's own limits
+    -- are about a body that is already cooking; an instrument on a wall
+    -- is supposed to say so before that. `health_at_least` is the 0..=4
+    -- rating the tile's own mix earns on the same scale a hazard
+    -- placard is drawn from (docs/matter/hazard.md), and 3 is where a
+    -- room full of something reads as lethal rather than merely foul.
+    --
+    -- The two pressures are the room the LUNGS need: 85 kPa is the same
+    -- number `safe_pressure_kpa` above is, and 16 kPa is the partial
+    -- pressure of everything a substance file flagged breathable. The
+    -- engine spells no gas here, which is why raising the floor is a
+    -- decision about the station rather than about oxygen.
+    --
+    -- Engine defaults: exactly these. Both are moved together or not at
+    -- all -- a band whose floor is not under its ceiling is ignored
+    -- outright and the engine's pair stands.
+    hazard = {
+        deadly = {
+            temp_above_k = 373.15,
+            temp_below_k = 243.15,
+            health_at_least = 3,
+        },
+        unbreathable = {
+            temp_above_k = 323.15,
+            temp_below_k = 253.15,
+            pressure_below_kpa = 85.0,
+            breathable_below_kpa = 16.0,
+        },
+    },
+
     -- How grey each turf class is: the fraction of a black body's
     -- photons its hull face emits into the sky -- and, by Kirchhoff,
     -- absorbs out of the sunlight. 0 is a perfect mirror, 1 a perfect

@@ -33,6 +33,9 @@ native_edges = [
     "component.command",
     "speech.radio",
     "speech.relay",
+    "link.message",
+    "atmos.hazard",
+    "flow.backup",
 ]
 
 [paths]
