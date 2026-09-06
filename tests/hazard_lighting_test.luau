@@ -90,6 +90,8 @@ local UNBREATHABLE = "#3060FF"
 --    lethal one before they take their helmet off.
 -- ---------------------------------------------------------------
 assert(t.room_pressure(3, 2) > 90.0, "the room is at pressure: " .. t.room_pressure(3, 2))
+assert(t.hazard_level(4, 1) == "unbreathable",
+    "the fan has sorted its own tile: " .. tostring(t.hazard_level(4, 1)))
 local lamp = t.light_at(1, 2)
 assert(lamp ~= nil and lamp.lit, "the fitting is burning")
 assert(lamp.color == UNBREATHABLE, "and it has gone blue: " .. lamp.color)
@@ -178,6 +180,8 @@ assert(t.foul_room(3, 2, "plasma", 30.0), "plasma into the room")
 t.run_seconds(6)
 t.run_ticks(60)
 
+assert(t.hazard_level(4, 1) == "deadly",
+    "the fan calls it lethal: " .. tostring(t.hazard_level(4, 1)))
 lamp = t.light_at(1, 2)
 assert(lamp.color == DEADLY, "the room is red: " .. lamp.color)
 assert(math.abs(lamp.power - 1.5) < 1e-6, "and harder still: " .. lamp.power)
@@ -382,15 +386,21 @@ for _ = 1, 6 do
     t.run_ticks(5)
 end
 assert(t.pos(q) == 4, "beside the fan in the plasma")
+assert(t.hazard_level(4, 1) == "deadly", "the fan is still calling it lethal")
 t.click(q, 4, 1, t.target_at(4, 1, "vent"))
 t.run_seconds(6)
 assert(t.structure_at(4, 1) == nil, "the fan is off the deck")
+assert(t.hazard_level(4, 1) == nil, "and nothing on that tile senses anything")
 t.run_seconds(3)
 t.run_ticks(60)
 
+-- The far room crossing a band is the whole nudge. Nothing about the
+-- fan that left happens again.
 assert(t.set_turf(13, 2, "space"), "and the far room opens to space")
 t.run_seconds(20)
 t.run_ticks(60)
+assert(t.hazard_level(15, 1) == "unbreathable",
+    "the far fan crosses: " .. tostring(t.hazard_level(15, 1)))
 
 lamp = t.light_at(1, 2)
 assert(lamp.color == UNBREATHABLE,
