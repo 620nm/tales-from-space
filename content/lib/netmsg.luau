@@ -143,22 +143,6 @@ function netmsg.winner(flags)
     return best, best_name
 end
 
--- What a roster of hazard levels amounts to, as the two flags a light
--- understands. `levels` is address -> level; one room on fire is
--- enough to raise the flag for the whole roster, because the roster is
--- a room's worth of machines and a light cannot be red in one corner.
-function netmsg.hazard_flags(levels)
-    local out = { deadly = false, unbreathable = false }
-    for _, level in pairs(levels) do
-        if level == "deadly" then
-            out.deadly = true
-        elseif level == "unbreathable" then
-            out.unbreathable = true
-        end
-    end
-    return out
-end
-
 -- The whole of what a vent and a scrubber do with the band the engine
 -- just sorted their tile into: repeat it, and let the room's alarm
 -- decide what it means. Written once here rather than twice there,

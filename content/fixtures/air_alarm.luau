@@ -17,11 +17,29 @@
 -- half that is a judgement. The engine sorts the air on each powered
 -- fan's own tile into three words and hands the fan a band crossing
 -- (docs/atmos/hazard-sensing.md); the fan repeats it onto the network
--- (fixtures/vent.luau); this box keeps the tally and turns it into
--- light. That division is deliberate: a fan reports the tile it stands
--- on and has no idea whether the ROOM is in trouble, an alarm holds a
--- roster and does, and a fitting burns whatever it is told to. Nobody
+-- (fixtures/vent.luau); this box turns the room into light. That
+-- division is deliberate: a fan reports the tile it stands on and has
+-- no idea whether the ROOM is in trouble, an alarm can see the whole
+-- room and does, and a fitting burns whatever it is told to. Nobody
 -- along that chain knows more than their own job.
+--
+-- IT REMEMBERS NOTHING ABOUT THE AIR, and that is the load-bearing
+-- decision. A delivery is a NUDGE, not a fact to file: what the box
+-- does with one is go and read every fixture it can reach
+-- (`sim.query.link_reach`, which is exactly its children, its parent
+-- and its siblings) and ask each what band it last sorted its own
+-- tile into (`sim.hazard_level`). A remembered roster keyed by
+-- address would be a second copy of the truth, and every way of
+-- losing a fan -- unbolted, unpowered, joined to somebody else's
+-- console -- would leave its last word standing in here forever with
+-- nothing able to withdraw it. Reading instead means a fan that is
+-- gone is simply not in the answer.
+--
+-- The only thing it does keep is the pair of bools it last PUT ON THE
+-- WIRE, so that a room holding steady says nothing. `dirty` beside
+-- them is the one repair: an emission the network refused never
+-- reached anybody, so the next nudge must say the whole standing
+-- state again rather than a difference against a message nobody got.
 --
 -- IT IS NOT A RADIO RELAY, and that is the deliberate difference from
 -- the other two boxes on this network. A tower, a wall box and a router
@@ -47,13 +65,28 @@ local MEMBER = "machine"
 -- for one delivery reproducible.
 local BANDS = { "deadly", "unbreathable" }
 
+-- What the room amounts to, read fresh off everything within one hop
+-- of this box. Anything that does not sense the air answers nil and
+-- is skipped, which is most of what a panel feeds -- a fitting, a
+-- port, another alarm.
+local function derive(self)
+    local out = { deadly = false, unbreathable = false }
+    for _, node in ipairs(sim.query.link_reach(self)) do
+        local level = sim.hazard_level(node)
+        if level == "deadly" then
+            out.deadly = true
+        elseif level == "unbreathable" then
+            out.unbreathable = true
+        end
+    end
+    return out
+end
+
 if sim ~= nil then
-    -- The roster: address -> the worst word that address last
-    -- reported, with `none` spelled as the absence of a key. A hub
-    -- holds at most a room's worth of fans, so this is a handful of
-    -- short strings against the 4096 bytes a ScriptVar gets
-    -- (docs/luau-api/script-vars.md).
-    sim.define("script_var", "lunatic/tfs:hazard_levels", { replicate = "server" })
+    -- Two bools and a repair bit: what this box last put on the wire.
+    -- Bounded by construction rather than by a roster's length, which
+    -- is the other reason not to keep one (docs/luau-api/script-vars.md).
+    sim.define("script_var", "lunatic/tfs:alarm_flags", { replicate = "server" })
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
     -- WHO IT BELIEVES: `child` and `sibling`. A child is a fan joined
@@ -80,30 +113,39 @@ if sim ~= nil then
         if type(payload) ~= "table" or payload.kind ~= netmsg.ATMOS_HAZARD then
             return
         end
-        -- The engine's own three words, checked because this arrived
-        -- over a network rather than out of the engine's hand.
-        local level = payload.level
-        if level ~= "none" and level ~= "deadly" and level ~= "unbreathable" then
-            return
-        end
-        local held = if level == "none" then nil else level
+        -- The WORD in the payload is deliberately not read. It says
+        -- what one tile did, and this box answers for a room -- so the
+        -- message is taken as "something moved, go and look" and the
+        -- looking is done below, where a sender cannot lie about
+        -- anybody but itself.
         local self = ev.self
-        local levels = self.vars["hazard_levels"] or {}
-        if levels[ev.from] == held then
-            return
-        end
-        local before = netmsg.hazard_flags(levels)
-        levels[ev.from] = held
-        self.vars["hazard_levels"] = levels
-        local after = netmsg.hazard_flags(levels)
+        local last = self.vars["alarm_flags"] or {}
+        local now = derive(self)
+        local again = last.dirty == true
         for _, band in ipairs(BANDS) do
-            if before[band] ~= after[band] then
+            if again or (last[band] == true) ~= now[band] then
                 sim.link.emit({
                     subject = self,
-                    payload = netmsg.light_flag(if after[band] then "set" else "clear", band),
+                    payload = netmsg.light_flag(if now[band] then "set" else "clear", band),
                 })
             end
         end
+        self.vars["alarm_flags"] = { deadly = now.deadly, unbreathable = now.unbreathable }
+    end)
+
+    -- AN EMISSION NOBODY GOT is the one case a difference cannot be
+    -- taken against: the traffic ceilings truncate rather than queue
+    -- (docs/DEVICES.md), so a refused emission leaves the fittings
+    -- holding a state this box thinks it has already corrected. The
+    -- repair is to forget that it said anything and say all of it
+    -- again on the next nudge.
+    script_definition:handle("link.emit.done", { kind = "react" }, function(ev)
+        if ev.outcome ~= "failed" then
+            return
+        end
+        local v = ev.self.vars["alarm_flags"] or {}
+        v.dirty = true
+        ev.self.vars["alarm_flags"] = v
     end)
 
     script_definition:handle("interaction.use.done", { kind = "react", route = "interact" }, function(ev)
