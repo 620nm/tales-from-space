@@ -144,7 +144,7 @@ assert(
         and manual_presentation.group == "Binary Devices",
     "recipes carry content-authored atlas icons and tg-style groups"
 )
-assert(green_swatch == "#00FF00", "paint choices carry their real swatch colour")
+assert(green_swatch == "#50BE5F", "paint choices carry their real swatch colour")
 
 -- Out of the crate it is set the way tg ships one: plain pipe, the
 -- distribution layer, green (RPD.dm:51,61).
@@ -202,9 +202,9 @@ assert(t.pipe(2, 1) == 14, "and a third: " .. t.pipe(2, 1))
 -- investigator reads (paint is topology here, not decoration).
 local painted = t.ledger_rows("pipe_painted")
 assert(#painted == 3, "three lengths, three paint rows: " .. #painted)
-assert(painted[1].layers == 4 and painted[1].color == "#00FF00", "layer 3 green")
-assert(painted[2].layers == 2 and painted[2].color == "#FF0000", "layer 2 red")
-assert(painted[3].layers == 8 and painted[3].color == "#0000FF", "layer 4 blue")
+assert(painted[1].layers == 4 and painted[1].color == "#50BE5F", "layer 3 green")
+assert(painted[2].layers == 2 and painted[2].color == "#F04137", "layer 2 red")
+assert(painted[3].layers == 8 and painted[3].color == "#5491E8", "layer 4 blue")
 
 -- And the dial turns are on the record too, by name.
 assert(t.ledger_has("DialSet", "layer"), "which layer it was set to")
