@@ -8,11 +8,11 @@
 -- it feeds, and a spare main it also feeds -- and then asks the panel
 -- what each of its ports carried.
 --
--- The other half is the preference list every consumer shares, 1 -> 3
--- -> 2: a SOCKET wired to its room circuit AND the backbone prefers the
--- room circuit and falls through by itself when an electrician parts
--- it, which is the whole point of wiring a fixture to two lines -- and
--- the lamp on that socket's cord never notices.
+-- The other half is the preference list every consumer shares, 2 -> 1
+-- -> 3: a SOCKET wired to its room circuit AND the backbone prefers the
+-- backbone and falls through to the room circuit by itself when an
+-- electrician parts it, which is the whole point of wiring a fixture to
+-- two lines -- and the lamp on that socket's cord never notices.
 
 local function near(got, want, tol, why)
     assert(math.abs(got - want) <= tol, why .. ": " .. got .. " vs " .. want)
@@ -64,9 +64,9 @@ assert(t.segment_at(2, 2).lighting_feed == 4, "off the line it is standing on")
 assert(t.segment_at(2, 2).l1 == nil, "with no red under it at all")
 
 assert(t.lit(5, 2), "the east lamp is burning too")
-assert(t.segment_at(6, 1).lighting_feed == 1,
-    "its socket is on the room circuit, which comes first")
-assert(t.segment_at(6, 1).l2 ~= nil, "though the backbone runs under it as well")
+assert(t.segment_at(6, 1).lighting_feed == 2,
+    "its socket is on the backbone, which comes first")
+assert(t.segment_at(6, 1).l1 ~= nil, "though the room circuit runs under it as well")
 
 -- ---------------------------------------------------------------
 -- THE PANEL, PORT BY PORT. Three ports, four possible modes, and the watts
@@ -80,31 +80,32 @@ assert(ports.l1.mode == "output", "L1 feeds the room: " .. ports.l1.mode)
 assert(ports.l2.mode == "input", "L2 is where it takes from: " .. ports.l2.mode)
 assert(ports.l3.mode == "output", "L3 feeds the spare main: " .. ports.l3.mode)
 
--- Two lamps, one socket on each output port, and the input port
--- carrying both: a fitting bills the branch under the socket it
--- reached, never the tile it hangs over.
-near(ports.l1.out_w, 20.0, 0.001, "the room circuit carries its lamp")
-near(ports.l3.out_w, 20.0, 0.001, "so does the spare main")
-near(ports.l2.in_w, 40.0, 0.001, "and the input port carries the pair")
+-- Two lamps, and only one of them on the panel's books: the east
+-- socket is wired to the backbone as well, so it prefers that and
+-- bypasses the panel entirely. A fitting bills the branch under the
+-- socket it reached, never the tile it hangs over.
+near(ports.l1.out_w, 0.0, 1e-9, "the room circuit carries nobody yet")
+near(ports.l3.out_w, 20.0, 0.001, "the spare main carries its lamp")
+near(ports.l2.in_w, 20.0, 0.001, "and the input port carries that one alone")
 near(ports.l1.in_w, 0.0, 1e-9, "an output port draws nothing in")
 assert(t.ports_at(1, 1) == nil, "a generator is not a bridge")
 
 -- ---------------------------------------------------------------
--- THE FALL-THROUGH. Part the room circuit under the east socket and it
--- picks up the backbone by itself, one pass later. Nobody re-wires
+-- THE FALL-THROUGH. Part the backbone under the east socket and it
+-- picks up the room circuit by itself, one pass later. Nobody re-wires
 -- anything; the preference list is the whole mechanism.
 -- ---------------------------------------------------------------
 t.click(p, 6, 2, t.target_at(6, 2, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
-t.click_subfloor(p, 6, 1, "cable", 1)
+t.click_subfloor(p, 6, 1, "cable", 2)
 t.run_seconds(1.5)
-assert(t.cable_at(6, 1) == 2, "the red line parted, the yellow one under it did not")
+assert(t.cable_at(6, 1) == 1, "the yellow line parted, the red one under it did not")
 t.run_seconds(3)
 
 assert(t.lit(5, 2), "the lamp never went out")
-assert(t.segment_at(6, 1).lighting_feed == 2, "its socket is on the backbone now")
-near(t.ports_at(4, 1).l1.out_w, 0.0, 1e-9, "and the panel's room circuit is idle")
+assert(t.segment_at(6, 1).lighting_feed == 1, "its socket is on the room circuit now")
+near(t.ports_at(4, 1).l1.out_w, 20.0, 0.001, "and the panel's room circuit carries it")
 
 -- ---------------------------------------------------------------
 -- THE STATION BREAKER. An outage is every port at zero and every pool
@@ -122,6 +123,6 @@ for _, line in ipairs({ "l1", "l2", "l3" }) do
     near(dead[line].out_w, 0.0, 1e-9, line .. " feeds nothing")
 end
 assert(not t.lit(1, 2), "the lamp off the spare main is out")
-assert(not t.lit(5, 2), "and so is the one off the backbone")
+assert(not t.lit(5, 2), "and so is the one off the room circuit")
 assert(t.segment_at(2, 2).live == false, "no line anywhere is carrying")
 assert(t.cable_at(2, 2) == 4, "the cable is all still there, of course")
