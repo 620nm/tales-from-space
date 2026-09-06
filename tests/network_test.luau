@@ -230,16 +230,29 @@ assert(held ~= nil, "the panel now holds it")
 assert(held.label.args.state == "link.state.online",
     "saying what it is doing: " .. tostring(held.label.args.state))
 
-local joins = t.ledger_rows("link_accepted")
-assert(#joins == 1, "one edge, one row")
+-- One edge, one row -- counting the edges somebody MADE. The
+-- electrical pass sews its own under every device a panel feeds and
+-- files them on the same row type, flagged `hardwired`, so a spec
+-- about a gesture reads past them (../lunatic/docs/devices/joining.md).
+local joins = {}
+for _, row in ipairs(t.ledger_rows("link_accepted")) do
+    if not row.hardwired then
+        joins[#joins + 1] = row
+    end
+end
+assert(#joins == 1, "one edge, one row: " .. #joins)
 assert(joins[1].parent == router and joins[1].child == point, "naming both ends")
 assert(joins[1].role == "hub", "and what the thing that joined is")
 
--- THE ANTI-HIJACK RULE. What is joinable is exactly what is UNJOINED,
--- so a bound node never appears on anybody's list again and cannot be
--- re-accepted: nobody walks past a rival's device with a stronger
--- transmitter and takes it (docs/DEVICES.md §3).
-assert(#rows(panel, "link_join") == 0, "and it is on nobody's list any more")
+-- THE ANTI-HIJACK RULE. A node somebody JOINED never appears on
+-- anybody's list again and cannot be re-accepted: nobody walks past a
+-- rival's device with a stronger transmitter and takes it
+-- (docs/DEVICES.md). What the electrical pass sewed is the exception
+-- and is meant to be -- a device is on its panel's network because it
+-- is plugged in, and an engineer moving it to a console is the whole
+-- gesture (../lunatic/docs/devices/joining.md) -- so the roster is
+-- read for the one address that must be gone rather than counted.
+assert(row_for(panel, "link_join", point) == nil, "and it is on nobody's list any more")
 
 -- The sentence again, now that there is something to count -- and it
 -- counts in ACCESS POINTS, because a root carries hubs and never
@@ -263,7 +276,17 @@ t.tick()
 panel = t.ui(p)
 assert(row_for(panel, "link_drop", point) == nil, "the edge is cut")
 assert(row_for(panel, "link_join", point) ~= nil, "and it is offerable again")
-assert(#t.ledger_rows("link_released") == 1, "with the cut on the record")
+-- The cut on the record, counting the ones somebody ASKED for: a
+-- release hands the device back to the panel feeding it, and that
+-- re-sewing files its own rows with a `why`
+-- (../lunatic/docs/devices/joining.md).
+local cuts = 0
+for _, row in ipairs(t.ledger_rows("link_released")) do
+    if row.why == nil then
+        cuts = cuts + 1
+    end
+end
+assert(cuts == 1, "with the cut on the record: " .. cuts)
 
 t.ui_act(p, "toggle", string.format('{"field":"link_join","option":"%s"}', point))
 t.tick()

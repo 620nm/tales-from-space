@@ -162,8 +162,14 @@ function radio.status_line(machine)
     -- which sentence frames them is the catalog's to say, and the two
     -- outcomes are two keys rather than a tail glued on (docs/WORDS.md).
     local channels = table.concat(words, " and ")
+    -- RELAYED means somebody JOINED this tower to a network, not that
+    -- it is plugged in. Every powered box on the station wears an edge
+    -- to the panel feeding it, made by the electrical pass and not by
+    -- anybody's hand (../lunatic/docs/devices/joining.md), and a panel
+    -- carries no speech -- so a hardwired parent is a tower standing on
+    -- its own, however many edges the wire drew for it.
     local state = sim.link_state(machine)
-    if state ~= nil and state.parent ~= nil and not state.suspended then
+    if state ~= nil and state.parent ~= nil and not state.suspended and not state.hardwired then
         return sim.msg("lunatic/tfs:lib.radio.relayed", { channels = channels })
     end
     return sim.msg("lunatic/tfs:lib.radio.carrying", { channels = channels })
