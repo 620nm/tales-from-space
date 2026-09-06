@@ -39,7 +39,9 @@ export function voiceColor(name: string): string {
   const s = (bs >> 2) * ((SAT_MAX - SAT_MIN) / 63) + SAT_MIN;
   const l = (bl >> 2) * ((LUM_MAX - LUM_MIN) / 63) + LUM_MIN;
   const c = (1 - Math.abs(2 * l - 1)) * s;
-  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  // BYOND's `%` truncates both operands, so tg's `(h / 60) % 2` is 0 in
+  // even sectors and 1 in odd ones: six flat pastels, not a wheel.
+  const x = c * (1 - Math.abs((Math.trunc(h / 60) % 2) - 1));
   const m = l - c * 0.5;
   // tg's `round(h / 60)` floors, so its hue of exactly 360 falls off the
   // end of the switch and answers null. Folding that sixth sector back

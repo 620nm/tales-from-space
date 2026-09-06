@@ -289,7 +289,9 @@ export default defineStyles([
   // 168. The outline is what `-dm-text-outline: 1px black` means once
   // spelled as shadows; both it and the font inherit to the runs.
   rule("rune", {
-    maxWidth: 168,
+    // Fixed, like tg's CHAT_MESSAGE_WIDTH: an anchored box with auto
+    // width shrink-wraps against the viewport edge into a word tower.
+    width: 168,
     gap: 3,
     paddingLeft: 2,
     paddingRight: 2,
