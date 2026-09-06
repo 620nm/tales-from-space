@@ -2,7 +2,9 @@
 
 The laptop starts closed and switched off. Creation assigns one wallpaper
 from `wallpaper_bliss` and `wallpaper_moonlake`; that selection stays with
-the item through handoffs, lid changes and power cycles.
+the item through handoffs, lid changes and power cycles. Wallpapers fill the
+16:9 screen with hard pixel scaling. An open, powered laptop uses an animated
+green screen sprite in the world and inventory.
 
 Self-use or right-click opens the lid, switches on and shows a
 16:9 desktop. An already open laptop uses the same gesture to switch on
