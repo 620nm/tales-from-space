@@ -24,5 +24,10 @@ Style references: the pack's Air Vent and Air Scrubber source states
 `icons/obj/machines/atmospherics/unary_devices.dmi`, referenced by
 `assets/sprites/21-atmos-thermal-room-and-canisters.ron`.
 
-This asset is not registered in the sprite manifest. UOP gameplay and network
-behavior are not implemented.
+Registered in `assets/sprites/95-originals.ron` as sixteen `AseLayer` rows: the
+`housing` on frame 1 under the logical name `utility_outlet_port`, and each LED
+layer's frames 1–5 as `uop_wire_{1,2,3}_{disconnected,inactive,starved,
+emergency,nominal}`. Frame 6 is the artist's mixed example and is deliberately
+not baked — the mixing happens by stacking three lamp overlays, which is what
+the engine does per layer. The prototype wearing them is
+`content/structures/utility_outlet_port.luau`.

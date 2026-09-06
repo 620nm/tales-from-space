@@ -174,7 +174,7 @@ end
 -- ---- and it is plugged in on the real station -------------------------
 -- The map half, which no purpose-built bench can prove: Good Clean Fun
 -- stands in the Commons at (24, 16), on the same wall and the same
--- outlet as the softdrinks machine and the YouTool -- and a corded
+-- port as the softdrinks machine and the YouTool -- and a corded
 -- appliance out of cord range is a dark box that says so instead of
 -- opening (content/fixtures/vendor.luau). Unplug the Commons and the
 -- shopping stops, which is the point of corded appliances; this is the

@@ -51,9 +51,9 @@ local function addr(row)
     return row.store .. ":" .. string.format("%d", row.uid)
 end
 
--- A wired closet: generator, panel, socket, and the terminal standing
--- on the socket's cord. The terminal is `corded`, so the map owes it an
--- outlet it can path to (docs/POWER.md, "Outlets and cords") -- a spec
+-- A wired closet: generator, panel, port, and the terminal standing
+-- on the port's cord. The terminal is `corded`, so the map owes it a
+-- port it can path to (docs/POWER.md, "Outlets and cords") -- a spec
 -- that skipped the wiring would be asserting against a boot warning.
 t.world([==[(
     name: "terminal closet",

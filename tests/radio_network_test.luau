@@ -43,9 +43,9 @@ end
 --   keyed T (5,2) -> listener (41,2) = 36     30 < 36 == 30 * 1.2
 --   blank T (10,2) -> listener       = 31     but blank: never a gate
 --   speaker -> listener              = 35     outside LOCAL_RADIUS
--- Power: the keyed tower cords to the outlet at (3,2); the blank one
+-- Power: the keyed tower cords to the port at (3,2); the blank one
 -- is seven tiles from it -- past cord range -- and hangs off its own
--- outlet at (9,2), fed through the l1 run, so one snip at (7,2) kills
+-- port at (9,2), fed through the l1 run, so one snip at (7,2) kills
 -- the blank tower and nothing else.
 t.world([==[(
     name: "tower chain",
@@ -226,7 +226,7 @@ assert(#say_and_read("the tower chain is up, check your bands") == 1,
 -- 5. UNPOWER THE BLANK TOWER and the arms shorten the same way: a
 --    dead amplifier is no amplifier, though the tree still holds it.
 --    One snip on its own cable spur -- the keyed tower cords to the
---    other outlet and stays up.
+--    other port and stays up.
 -- ---------------------------------------------------------------
 t.swap_hands(speaker)
 t.tick()

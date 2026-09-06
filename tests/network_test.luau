@@ -58,7 +58,7 @@ local function row_for(ui, field, option)
     return nil
 end
 
--- The bench: a plant, a controller and a socket along the back wall, an
+-- The bench: a plant, a controller and a port along the back wall, an
 -- access point already bolted up by whoever built the place, and a crate
 -- of parts for the router that is going next to it.
 t.world([==[(
@@ -291,7 +291,7 @@ assert(readout(panel, "link.state") == "link.state.online", "and it is on the ai
 
 -- ---------------------------------------------------------------
 -- 7. THE LIGHTS GO OUT. Suspension is derived every pass, right behind
---    the power pass, so the branch whose outlet just died is off the
+--    the power pass, so the branch whose port just died is off the
 --    air by the tick that killed it -- and the panel says which state
 --    it is in rather than simply going blank.
 -- ---------------------------------------------------------------
