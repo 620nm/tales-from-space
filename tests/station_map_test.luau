@@ -103,7 +103,7 @@ assert(t.turf(30, 2) == "space", "the north gallery looks into vacuum")
 assert(t.room_pressure(30, 6) > 90.0, "the cargo bay holds air through its panes")
 
 -- The Common transceiver is commissioned, not merely drawn: it stands
--- on the Commons' north rank at (22, 13), its cord reaches the outlet
+-- on the Commons' north rank at (22, 13), its cord reaches the port
 -- at (24, 14), and its variant key is seated -- all three asserted in
 -- one sentence, because the status line refuses each failure in its
 -- own words (lib/radio.luau: dark, keyless, or on the air). The walk

@@ -18,7 +18,7 @@
 --
 -- THE BENCH IS WIRED, and has to be: an access point is a corded
 -- appliance, and no panel on a dead cord takes a press. So there is a
--- plant, a controller and a socket along the back wall of every world
+-- plant, a controller and a port along the back wall of every world
 -- in this file, two tiles from where the box hangs.
 
 -- A document's words are labels: `{id=…}` for one the engine names,

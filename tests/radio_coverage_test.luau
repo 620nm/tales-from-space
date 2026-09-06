@@ -24,7 +24,7 @@ local function said(p, line)
     return false
 end
 
--- The corridor: a tower beside its powered outlet, a speaker beside
+-- The corridor: a tower beside its powered port, a speaker beside
 -- it, and four listeners staked out at
 -- the fractions that matter. Distances (lib/radio.luau's Euclidean):
 --   speaker (1,1) -> tower (2,1)   =  1    uplinked

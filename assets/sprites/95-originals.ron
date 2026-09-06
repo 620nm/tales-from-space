@@ -49,6 +49,41 @@
         ("steam_generator_loaded", Png("bench/steam_generator_off_loaded.png")),
         ("steam_generator_on", Png("bench/steam_generator_on.png")),
         ("steam_generator_on_loaded", Png("bench/steam_generator_on_loaded.png")),
+
+        // The utility outlet port: a housing and three lamps, one per
+        // cable layer under the deck. The FRAMES are the alternatives
+        // rather than an animation, so every row is one layer's cel on
+        // one frame and each lamp is picked independently -- which is
+        // the whole point, since a port on a live L2 and a dead L1 has
+        // to show both at once
+        // (assets/originals/pipes_n_cables/utility_outlet_port.md,
+        // ../lunatic/docs/content-schema/fixture-states.md).
+        //
+        // Frames 1..5 are the engine's five words in its own order:
+        // disconnected, inactive, starved, emergency, nominal. Frame 6
+        // is the artist's mixed example and is deliberately not baked
+        // -- nothing selects it, because the mixing is done by stacking
+        // three of these.
+        //
+        // NO OFFSETS. It stands on the floor rather than hanging on a
+        // wall, so it takes none of the 25px bracket overhang the APC
+        // and the wall frame carry (`assets/sprites.ron`).
+        ("utility_outlet_port", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "housing", 1)),
+        ("uop_wire_1_disconnected", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_1", 1)),
+        ("uop_wire_1_inactive", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_1", 2)),
+        ("uop_wire_1_starved", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_1", 3)),
+        ("uop_wire_1_emergency", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_1", 4)),
+        ("uop_wire_1_nominal", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_1", 5)),
+        ("uop_wire_2_disconnected", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_2", 1)),
+        ("uop_wire_2_inactive", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_2", 2)),
+        ("uop_wire_2_starved", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_2", 3)),
+        ("uop_wire_2_emergency", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_2", 4)),
+        ("uop_wire_2_nominal", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_2", 5)),
+        ("uop_wire_3_disconnected", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_3", 1)),
+        ("uop_wire_3_inactive", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_3", 2)),
+        ("uop_wire_3_starved", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_3", 3)),
+        ("uop_wire_3_emergency", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_3", 4)),
+        ("uop_wire_3_nominal", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_3", 5)),
     ],
     sheets: [
         ("hazard_placard", "signs/nfpa-704.ase"),
@@ -66,8 +101,8 @@
         //
         // It HANGS, so every picture is wrapped in `Faces`: that mints
         // the flat name plus four copies shifted 25px toward their wall,
-        // this pack's standard bracket overhang -- the one the APC, the
-        // outlet and the wall frame are baked with
+        // this pack's standard bracket overhang -- the one the APC and
+        // the wall frame are baked with
         // (`assets/sprites.ron`, tg's `pixel_shift` on
         // `/obj/item/wallframe`,
         // code/game/objects/items/wall_mounted.dm:63-72). Every layer of
