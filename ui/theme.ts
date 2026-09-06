@@ -43,6 +43,15 @@ const press = { pointerEvents: "auto" } as const;
 
 export default defineStyles([
   ...theme,
+  rule("desktop-screen", {
+    display: "block", position: "relative", width: "100%", height: 0,
+    paddingTop: "56.25%", backgroundColor: "#000000", overflow: "hidden",
+  }),
+  rule("desktop-wallpaper", {
+    position: "absolute", left: 0, top: 0, width: "100%", height: "100%",
+    imageRendering: "pixelated",
+  }),
+  rule("desktop-controls", { gap: 6, flexWrap: "wrap" }),
   // The frame every floating surface wears.
   rule("pane", {
     fontFamily: "sans",

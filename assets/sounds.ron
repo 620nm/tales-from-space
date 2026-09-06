@@ -1,4 +1,20 @@
 [
+    // Copied verbatim from tg sound/machines/computer/ with attribution.txt.
+    ("computer_start", "originals/computer/computer_start.ogg"),
+    ("computer_end", "originals/computer/computer_end.ogg"),
+    ("computer_mid1", "originals/computer/computer_mid1.ogg"),
+    ("computer_mid2", "originals/computer/computer_mid2.ogg"),
+    ("paper_insert", "originals/computer/paper_insert.ogg"),
+    // tg computer.dm:313 (ID), :562 and :1032 (cartridge).
+    ("card_slide", "machines/card_slide.ogg"),
+    ("terminal_insert_disc", "machines/terminal/terminal_insert_disc.ogg"),
+    ("keyboard_clicks_1", "originals/computer/keyboard_clicks_1.ogg"),
+    ("keyboard_clicks_2", "originals/computer/keyboard_clicks_2.ogg"),
+    ("keyboard_clicks_3", "originals/computer/keyboard_clicks_3.ogg"),
+    ("keyboard_clicks_4", "originals/computer/keyboard_clicks_4.ogg"),
+    ("keyboard_clicks_5", "originals/computer/keyboard_clicks_5.ogg"),
+    ("keyboard_clicks_6", "originals/computer/keyboard_clicks_6.ogg"),
+    ("keyboard_clicks_7", "originals/computer/keyboard_clicks_7.ogg"),
     ("weld", "items/tools/welder.ogg"),
     // tg splits these: `usesound` is the quick pop a crowbar makes
     // doing a job (pry_tile calls play_tool_sound), `operating_sound`

@@ -44,6 +44,9 @@ add `--mode free_build` or use `"$LUNATIC_PACK/maps/outpost.ron"` as the map.
 
 ## Authoring
 
+The portable computer's controls and desktop are documented in
+[`docs/LAPTOP.md`](docs/LAPTOP.md).
+
 Gameplay presentation and controls belong to `ui/`, including jobs, lobby,
 respawn, chat, HUD, build and device/file panels. The trusted host interprets the
 package through the restricted UI SDK; it supplies no browser globals or
@@ -63,6 +66,7 @@ supplies the component kit and default theme these screens are built from
 | `lobby.ts`, `chat.ts`, `inspect.ts` | the crew board and condition card, comms, examine and the tile menu |
 | `inventory.ts`, `inventory-storage.ts`, `doll.ts` | the tray, an opened container, and the body-target figure |
 | `documents.ts` | one pane per document; the discriminator picks the body, `presentation` the shape |
+| `documents-desktop.ts` | the laptop's 16:9 desktop, wallpaper and power/lid/card/cartridge controls |
 | `documents-modules.ts` | readouts, switches, label rows and setpoints, grouped by section |
 | `documents-choices.ts`, `documents-shelf.ts` | dials as choice grids, and the pictured shelf |
 | `files.ts`, `matter-block.ts` | the two-pane file manager, and one body of matter drawn |
@@ -172,6 +176,7 @@ no direct spawn in `t`, and none should ever be added.
 
 | Group | Functions |
 | ----- | --------- |
+| Item gestures | `t.use_item(p, entity_id, gesture)` (`"secondary"`, `"alt"`, or `"ctrl_shift"`; the item must declare that gesture and be reachable or in the player's hands) |
 | World | `t.world(ron [, seed [, mode]])`, `t.world_file(name [, seed [, mode]])` (mode = a `content/gamemodes/` id; omitted = the pack default), `t.join([job]) -> player` (a mode that seats bodies on connection takes no job), `t.respawn(p [, job])` (take the mode's offer to leave this body: where the mode lobbies the session lands back at the board on a fresh Mind and `job` picks the next role, and where bodies are connection-scoped there is no board, so naming a job is an error) |
 | Seeds | `t.fault(x, y, tick)` (hull failure), `t.outage([tick])` (breaker trip) |
 | Clock | `t.now()`, `t.tick()`, `t.run_ticks(n)`, `t.run_seconds(s)` |

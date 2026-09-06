@@ -53,11 +53,19 @@ function handsGroup(current: InventoryState): UiNode {
       empty: !item,
       ...(item?.fill ? { fill: item.fill } : {}),
       item: `held/${index}`,
-      event: bind(id, (e) =>
-        e.type === "context"
+      event: bind(id, (e) => {
+        const mask = item?.gestures ?? 0;
+        const gesture = e.type === "context" && !e.alt && !e.ctrl && !e.shift
+          ? ((mask & 1) ? "secondary" : undefined)
+          : e.type === "activate" && e.ctrl && e.shift && !e.alt
+            ? ((mask & 4) ? "ctrl_shift" : undefined)
+            : e.type === "activate" && e.alt && !e.ctrl && !e.shift
+              ? ((mask & 2) ? "alt" : undefined) : undefined;
+        if (gesture && !e.meta) return { kind: "use_item", target: { Held: { hand: index } }, gesture };
+        return e.type === "context"
           ? inspect({ Held: { hand: index } })
-          : { kind: "hand", index },
-      ),
+          : { kind: "hand", index };
+      }),
     });
   });
   const openers = hands.flatMap((_item, index) =>

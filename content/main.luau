@@ -3,6 +3,20 @@
 -- Keeping the mapping in content means Rust validates ownership without
 -- learning any Tales from Space vocabulary.
 local sounds = {
+    "computer_start",
+    "computer_end",
+    "computer_mid1",
+    "computer_mid2",
+    "keyboard_clicks_1",
+    "keyboard_clicks_2",
+    "keyboard_clicks_3",
+    "keyboard_clicks_4",
+    "keyboard_clicks_5",
+    "keyboard_clicks_6",
+    "keyboard_clicks_7",
+    "paper_insert",
+    "card_slide",
+    "terminal_insert_disc",
     "card_flip",
     "card_shuffle",
     "click",

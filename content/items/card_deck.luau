@@ -15,17 +15,15 @@
 -- word of it. That is the whole of what a shuffle needs, and this file
 -- is the caller that named the mechanism.
 --
--- The order is generated on the FIRST deal rather than at spawn,
--- because there is no on_spawn hook and because it is the honest
--- moment: an unopened deck is in no particular order until somebody
--- opens it. `sim.random` draws from the shift-seeded RNG, so two
+-- The order is generated on the FIRST deal: an unopened deck is in
+-- no particular order until somebody opens it. `math.random` draws
+-- from the shift-seeded RNG, so two
 -- servers replaying the same shift deal the same cards.
 --
 -- THE TWO VERBS ARE NOT TG'S BINDINGS, and the divergence is on
 -- purpose. tg draws on a bare-handed click and shuffles on alt-click
--- while the deck is WIELDED in two hands (deck.dm:146-169); this engine
--- has neither alt-click nor wielding. What it has is the two seams a
--- held item already owns, and they happen to fit better:
+-- while the deck is WIELDED in two hands (deck.dm:146-169). This deck
+-- uses the ordinary self-use and held-use seams:
 --   * interaction.use@self -- shuffle. The in-hand key, whose whole definition
 --     is that "the only thing it can possibly act on is the item in
 --     your own hand" (docs/LUAU-API.md). Squaring up a deck is that.

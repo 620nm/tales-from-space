@@ -514,5 +514,10 @@
   "lunatic/tfs:items.d00.land_bad": "The d00 rolls to a stop, landing on {face}. Ouch, bad luck.",
   "lunatic/tfs:shift_warning": "The shift ends in {minutes} minutes.",
   "lunatic/tfs:shift_final_minute": "The shift ends in one minute.",
-  "lunatic/tfs:shift_over": "The shift is over. Stand by for relief."
+  "lunatic/tfs:shift_over": "The shift is over. Stand by for relief.",
+  "lunatic/tfs:ui.desktop.power_on": "Power on",
+  "lunatic/tfs:ui.desktop.power_off": "Power off",
+  "lunatic/tfs:ui.desktop.eject_id": "Eject ID card",
+  "lunatic/tfs:ui.desktop.eject_cartridge": "Eject cartridge",
+  "lunatic/tfs:ui.desktop.close_lid": "Close lid"
 }

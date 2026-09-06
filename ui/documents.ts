@@ -16,6 +16,7 @@ import type {
 import { documentAction } from "./document-action";
 import { moduleBody } from "./documents-modules";
 import { shelfRows } from "./documents-shelf";
+import { desktopPane, isDesktop } from "./documents-desktop";
 import { filePanes, retainOpenFileBuffers } from "./files";
 import { bind, entry, icon, press, row, some, text } from "./view";
 import * as S from "./strings";
@@ -50,6 +51,7 @@ export function documents(view: GameplayView): UiNode[] {
     if (state.document === "build") {
       body = buildRows(id, doc, state, view.state?.armed);
     } else if (state.document === "script") {
+      if (isDesktop(state.data)) return desktopPane(id, doc, state, head, active);
       body = scriptRows(id, doc, state, active);
     } else {
       // Anything a provider does not name is read as a module document,
