@@ -44,15 +44,7 @@ local content = {
 -- every fitting already burning one -- and what stops a light that has
 -- been red since before somebody's edit from staying a shade nothing
 -- names any more.
---
--- NOT YET VISIBLE, and the reason is worth writing down rather than
--- working around: `sim.set_light` is a reach-scoped verb
--- (docs/luau-api/verbs.md), and an effect issued by a device-network
--- listener has no actor standing anywhere, so the engine drops the
--- call without a word. The flag arrives and the stack below records
--- it; the picture does not follow. The fix is the engine's -- the same
--- exemption `sim.link.emit` already carries for a sensor talking with
--- nobody there -- and nothing here is bent around it.
+
 local function relight(self, base, flags)
     local v = self.vars["light_flags"] or {}
     base = base or v.base

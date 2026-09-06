@@ -23,10 +23,9 @@
 -- this bench parts one line at a time and watches the choice walk down
 -- the list without anybody rewiring anything.
 --
--- `starved` and `emergency` are the two words not asserted here. Both
--- need a panel running down its own cell -- one for a layer its map
--- flagged worth the reserve and one for a layer it did not -- and that
--- is the whole subject of tests/apc_backup_test.luau.
+-- `emergency` is the one word not asserted here: it needs a panel
+-- running down its own cell with the layer flagged worth the reserve,
+-- which is the whole subject of tests/apc_backup_test.luau.
 
 -- The bench. A generator on the yellow backbone runs east to a panel,
 -- which opens a red room circuit and a blue spare main and runs both
@@ -144,7 +143,43 @@ assert(all.l3 == "nominal", "the spare main is still carrying")
 assert(all.feed == 4, "so the port ends up on blue: " .. tostring(all.feed))
 
 -- ---------------------------------------------------------------
--- 5. THE PANEL BEHIND IT. A port names the panel feeding the layer it
+-- 5. STARVED IS NOT INACTIVE. Throw the panel's main breaker and the
+--    circuits it opens stop carrying -- but the panel is still a
+--    declared source sitting on them, so the lamps say the run is
+--    starved rather than that there is nothing to feed it. That is
+--    the difference between "find a cable" and "find the panel", and
+--    it is the whole reason a port wears five words instead of two.
+-- ---------------------------------------------------------------
+t.drop(p) -- an empty hand, or the click is a tool going into the panel
+t.run_ticks(2)
+t.move(p, "west")
+t.run_ticks(5)
+t.move(p, "west")
+t.run_ticks(5)
+t.click(p, 4, 1, t.target_at(4, 1))
+t.tick()
+assert(t.ui(p) ~= nil, "the panel opens")
+t.ui_act(p, "toggle", '{"field":"breaker"}')
+t.run_seconds(3)
+assert(not t.apc_at(4, 1).operating, "the breaker is open")
+
+local starved = t.outlet_at(5, 2)
+assert(starved.l1 == "starved", "the run is fed by a panel that stopped: " .. starved.l1)
+assert(not starved.powered, "so the port is dead")
+assert(starved.feed == nil, "with nothing live to bind to")
+
+all = t.outlet_at(7, 1)
+assert(all.l3 == "starved", "the spare main is starved for the same reason: " .. all.l3)
+assert(all.l2 == "inactive", "where the parted backbone still has no source at all")
+
+-- Close it again and the room comes back exactly as it was.
+t.ui_act(p, "toggle", '{"field":"breaker"}')
+t.run_seconds(3)
+assert(t.outlet_at(5, 2).l1 == "nominal", "the spur is carrying again")
+assert(t.outlet_at(7, 1).feed == 4, "and the port is back on blue")
+
+-- ---------------------------------------------------------------
+-- 6. THE PANEL BEHIND IT. A port names the panel feeding the layer it
 --    bound to, which is the other half of what an electrician came to
 --    read: a lamp says the run is dead, and the feeder says whose
 --    breaker to go and look at. A port on a run no panel supplies

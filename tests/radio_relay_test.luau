@@ -57,12 +57,13 @@ local BENCH = [==[(
         '.': (turf: Plating),
         '#': (turf: Wall),
         'G': (turf: Plating, fixture: Some(Generator)),
+        'a': (turf: Plating, fixture: Some(Apc)),
         'o': (turf: Plating, fixture: Some(Outlet)),
     },
     rows: [
         "####################################################",
         "#..................................................#",
-        "#G.o....o...............................G.o......o.#",
+        "#Gao....o...............................Gao......o.#",
         "####################################################",
     ],
     spawns: [(5, 2), (50, 2)],
@@ -79,9 +80,9 @@ local BENCH = [==[(
     structures: [(6, 1, "access_point"), (49, 1, "access_point")],
     mounts: [(6, 1, North), (49, 1, North)],
     cables: [
-        (1, 2, 1), (2, 2, 1), (3, 2, 1), (4, 2, 1), (5, 2, 1),
+        (1, 2, 2), (2, 2, 3), (3, 2, 1), (4, 2, 1), (5, 2, 1),
         (6, 2, 1), (7, 2, 1), (8, 2, 1),
-        (40, 2, 1), (41, 2, 1), (42, 2, 1), (43, 2, 1), (44, 2, 1),
+        (40, 2, 2), (41, 2, 3), (42, 2, 1), (43, 2, 1), (44, 2, 1),
         (45, 2, 1), (46, 2, 1), (47, 2, 1), (48, 2, 1), (49, 2, 1),
     ],
 )]==]
@@ -167,13 +168,20 @@ local function two_roots(near)
     pocket(speaker)
     pocket(listener)
 
+    -- TWO CANDIDATES, not one: the tower, and the APC feeding the
+    -- island. A panel that carries a card is a hub in its own right
+    -- and every device it powers is hardwired under it
+    -- (../lunatic/docs/devices/joining.md), so it stands on the wall
+    -- box's list like anything else in range.
     speaker_to_boxes()
-    assert(join_all(speaker, 6, 1, "access_point") == 1,
-        "the near box offers its tower and nothing else")
+    assert(join_all(speaker, 6, 1, "access_point") == 2,
+        "the near box offers its tower and the panel feeding the island")
     speaker_to_mark()
     listener_to_box()
+    -- The far box offers its tower alone: the island's panel is eight
+    -- tiles off, outside a wall box's five.
     assert(join_all(listener, 49, 1, "access_point") == 1,
-        "so does the far one")
+        "the far one offers its tower alone")
     listener_to_mark()
 end
 
@@ -182,8 +190,12 @@ end
 local function bridge()
     speaker_to_boxes()
     walk(speaker, "east", 3)
-    assert(join_all(speaker, 9, 1) == 2,
-        "a root takes hubs, and there are two of them")
+    -- FOUR hubs, not two: both wall boxes, and both islands' panels.
+    -- A panel that carries a card is a hub in its own right
+    -- (../lunatic/docs/devices/joining.md), and a root reaches
+    -- station-wide, so distance hides neither of them from it.
+    assert(join_all(speaker, 9, 1) == 4,
+        "a root takes hubs, and there are four of them")
     walk(speaker, "west", 3)
     speaker_to_mark()
 end
