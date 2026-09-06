@@ -70,8 +70,8 @@ t.world([==[(
         (6, 1, 4), (7, 1, 4),
     ],
     pipe_paint: [
-        (2, 1, 4, "#0000FF"), (3, 1, 4, "#0000FF"), (4, 1, 4, "#0000FF"),
-        (5, 1, 4, "#0000FF"), (6, 1, 4, "#0000FF"), (7, 1, 4, "#0000FF"),
+        (2, 1, 4, "#5491E8"), (3, 1, 4, "#5491E8"), (4, 1, 4, "#5491E8"),
+        (5, 1, 4, "#5491E8"), (6, 1, 4, "#5491E8"), (7, 1, 4, "#5491E8"),
     ],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
@@ -160,7 +160,7 @@ local rows = t.ledger_rows("pipe_painted")
 assert(#rows == 1, "one act, one row: " .. #rows)
 assert(rows[1].at[1] == 5 and rows[1].at[2] == 1, "which tile")
 assert(rows[1].layers == 4, "which piping layer")
-assert(rows[1].color == "#FF0000", "and which colour, so the record can say")
+assert(rows[1].color == "#F04137", "and which colour, so the record can say")
 
 -- The line is intact. Nothing was cut, nothing was welded, the deck is
 -- exactly as it was — and the two ends of it are now two networks.
