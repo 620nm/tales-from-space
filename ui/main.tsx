@@ -4,7 +4,7 @@
 import type { GuestUi, UiNode } from "@lunatic/ui";
 import { Pane } from "@lunatic/ui";
 import type { GameplayView } from "./model";
-import { begin, column, event } from "./view";
+import { begin, column, event, some } from "./view";
 import { crewPanels } from "./lobby";
 import { chatPanel } from "./chat";
 import { inspectionPanels } from "./inspect";
@@ -14,13 +14,32 @@ import { bodyTarget } from "./doll";
 import { storageRegion } from "./inventory-storage";
 import { documents } from "./documents";
 
-// The bottom-right stack, from the station's edge upwards: the tray, the
-// target figure, and an open container beside the figure. Each is its own
-// HUD region, so opening a bag moves nothing else. The tray's own height
-// is the head row, one row of squares and the verbs — 158px at its
-// tallest, with a held container's Open row and a wrapped verb row.
-const TRAY_TOP = 164;
-const DOLL_WIDE = 80;
+/**
+ * The bottom-right stack: an open container over the target figure over
+ * the tray, anchored by its bottom-right corner and in flow above it.
+ * Nothing here is placed against a guessed height, so a seventh vitals
+ * chip or a verb row wrapped by a longer language pushes the rest of the
+ * stack up the screen instead of landing underneath it.
+ */
+function trayStack(view: GameplayView): UiNode | null {
+  const groups = some(
+    storageRegion(view, { style: { maxWidth: TRAY_WIDE } }),
+    bodyTarget(view),
+    inventory(view),
+  );
+  if (!groups.length) return null;
+  return column("hud-tray", groups, {
+    cls: ["hudgroup"],
+    style: {
+      position: "absolute",
+      right: 14,
+      bottom: 12,
+      maxWidth: "100%",
+      alignItems: "end",
+      gap: 8,
+    },
+  });
+}
 
 const ui: GuestUi = {
   render(raw) {
@@ -30,23 +49,8 @@ const ui: GuestUi = {
     // The board and the condition card are the only nodes in flow, so
     // the root's own centring puts them where a modal belongs.
     children.push(...crewPanels(view));
-    const tray = inventory(view);
-    if (tray) children.push(tray);
-    const target = bodyTarget(view, {
-      style: { position: "absolute", right: 14, bottom: TRAY_TOP },
-    });
-    if (target) children.push(target);
-    const stored = storageRegion(view, {
-      style: {
-        position: "absolute",
-        right: 14 + DOLL_WIDE,
-        bottom: TRAY_TOP,
-        width: TRAY_WIDE - DOLL_WIDE,
-        maxHeight: "40%",
-        overflowY: "auto",
-      },
-    });
-    if (stored) children.push(stored);
+    const stack = trayStack(view);
+    if (stack) children.push(stack);
     children.push(...chatPanel(view));
     const docs = documents(view);
     if (docs.length)

@@ -1,8 +1,8 @@
-// The tray: the hands, the worn roster and the verbs, over the station's
-// bottom-right corner. Every square is one slot; every press is a native
+// The tray: the hands, the worn roster and the verbs, at the foot of the
+// bottom-right stack. Every square is one slot; every press is a native
 // inventory claim the server revalidates. The target figure and an open
-// container are HUD regions of their own, placed by `main.tsx`, so
-// neither reflows this one.
+// container are HUD regions of their own, stacked over this one by
+// `main.tsx`, so neither reflows it and its own height is free to grow.
 import type { UiNode } from "@lunatic/ui";
 import { Pane, Slot } from "@lunatic/ui";
 import type { GameplayView, InventoryState } from "./model";
@@ -10,7 +10,7 @@ import { openStorage } from "./inventory-storage";
 import { bind, column, inspect, press, row, some, text, type Command } from "./view";
 import * as S from "./strings";
 
-/** How wide the tray is, which the regions above it line up against. */
+/** How wide the tray is, which the groups stacked over it wrap against. */
 export const TRAY_WIDE = 470;
 
 export function inventory(view: GameplayView): UiNode | null {
@@ -37,14 +37,7 @@ export function inventory(view: GameplayView): UiNode | null {
     ),
     {
       cls: ["hudgroup"],
-      style: {
-        position: "absolute",
-        right: 14,
-        bottom: 12,
-        width: TRAY_WIDE,
-        maxWidth: "100%",
-        maxHeight: "72%",
-      },
+      style: { width: TRAY_WIDE, maxWidth: "100%" },
     },
   );
 }
