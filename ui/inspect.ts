@@ -49,8 +49,15 @@ export function inspectionPanels(view: GameplayView): UiNode[] {
     );
   }
   if (state.context)
-    out.push(
-      Pane(
+    out.push({
+      // The menu opens where the right-click landed. `@context` is the
+      // host's own point for that click: the package names it and is
+      // never told a coordinate, and the host puts the menu's top-left
+      // there, keeps its presses live and clamps it into the slot. The
+      // point stands only while this projection does, so the close press
+      // still ends the menu (docs/pack-ui/sdk.md, "Spatial overlays").
+      anchor: "@context",
+      ...Pane(
         "context",
         [
           row(
@@ -85,17 +92,9 @@ export function inspectionPanels(view: GameplayView): UiNode[] {
             ),
           ),
         ],
-        {
-          style: {
-            position: "absolute",
-            left: 372,
-            top: 14,
-            width: 300,
-            maxHeight: "60%",
-          },
-        },
+        { style: { width: 300, maxHeight: "60%" } },
       ),
-    );
+    });
   return out;
 }
 
