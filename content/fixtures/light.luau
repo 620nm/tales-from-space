@@ -98,7 +98,7 @@ if sim ~= nil then
             -- burning what a tube burns — a warm bulb fitting serviced
             -- out of a janitor's device turns fluorescent, exactly as
             -- it would if you did it in a real corridor.
-            sim.set_light(self, "ok", TUBE_COLOR)
+            sim.set_light(self, { status = "ok", color = TUBE_COLOR })
             sim.sound.play({ asset = "lunatic/tfs:sound/click", at = self.tile })
             sim.message.send({
                 recipient = user,
@@ -119,7 +119,7 @@ if sim ~= nil then
             -- work and reads `ItemConsumed`, where `sim.entity.despawn`
             -- would file it as loss.
             target:consume()
-            sim.set_light(self, "ok", TUBE_COLOR)
+            sim.set_light(self, { status = "ok", color = TUBE_COLOR })
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:fixtures.light.you_fit_the_new_tube", {}),
@@ -146,7 +146,7 @@ if sim ~= nil then
             })
             return true
         end
-        sim.set_light(self, "broken")
+        sim.set_light(self, { status = "broken" })
         sim.sound.play({ asset = "lunatic/tfs:sound/glass_break", at = self.tile })
         sim.message.send({
             recipient = user,
