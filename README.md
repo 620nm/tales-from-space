@@ -126,7 +126,10 @@ gateway; running a game server alone does not host its executable bootstrap.
   them (`docs/luau-api/radio-relay.md`); `lib/shift.luau` owns when a
   shift warns the crew and when it asks to end; `lib/thermal.luau` owns
   how hard a run of pipe pulls on the room over it, which a spec reads
-  back through `t.pipe_law` rather than spelling twice.
+  back through `t.pipe_law` rather than spelling twice;
+  `lib/netmsg.luau` owns every word one device says to another over the
+  station's own network — the two payload kinds a station sends, and
+  what each named light flag does to a tube.
 
 ### Palette categories
 
