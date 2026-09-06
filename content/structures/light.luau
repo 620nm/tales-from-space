@@ -17,6 +17,40 @@ return {
     sprite = "light_on",
     fixture = "Light",
     mount = true,
+    -- WHAT THE TUBE THROWS. tg's two numbers for the same fitting are
+    -- `brightness` 8 and `bulb_power` 1 (light.dm:24-26), and the
+    -- second is copied verbatim. The first is not: the falloff these
+    -- tiles are lit by is this engine's own, and 6 is the radius every
+    -- pool on the shipped station was tuned against -- so taking tg's
+    -- 8 would move the light in every room for no reason anybody asked
+    -- for. Six here, and tg's curve nowhere.
+    --
+    -- They are also what a lit fitting COSTS, and that product is tg's
+    -- own (docs/power/pass.md). A flag that dims a tube therefore
+    -- makes it cheaper as well as darker, which is most of the point
+    -- of a station running off its cells.
+    light = { range = 6, power = 1.0 },
+    -- ON THE ROOM'S NETWORK, and never by anybody's hand. A fitting is
+    -- a device with nothing to set and no panel to open: what it is
+    -- FOR on a network is HEARING -- the room's alarm saying the air
+    -- has gone, the panel saying the mains have. So it is an endpoint,
+    -- and `hardwired_only` says the only edge it will ever wear is the
+    -- one the electrical pass makes to the panel feeding it
+    -- (docs/content-schema/link.md). No engineer joins a light to
+    -- anything, no hub offers one as a candidate, and a tube is on a
+    -- room's network because it is screwed into that room's ceiling.
+    --
+    -- The class word is spelled out here rather than shared for the
+    -- vent's reason: `lib/` is not published into the structure
+    -- registry's sandbox, so a structure reading a shared table reads
+    -- nil at prototype time (structures/vent.luau,
+    -- structures/air_alarm.luau).
+    link = {
+        network_interface = true,
+        role = "endpoint",
+        class = "light",
+        hardwired_only = true,
+    },
     appearance = {
         states = {
             on = { sprite = "light_on", mounted = {

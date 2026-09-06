@@ -29,8 +29,93 @@ local content = {
     -- that item.
 }
 
+-- THE FLAG STACK, and why it is a stack rather than a colour.
+--
+-- A fitting is told about CONDITIONS, one at a time and by name -- the
+-- air is deadly, the air cannot be breathed, the panel is down to its
+-- cell -- and any number of them can stand at once. What it burns is
+-- the worst of them (lib/netmsg.luau), and what it goes back to when
+-- the last one clears is the colour of the tube somebody screwed in.
+--
+-- So a fitting remembers exactly two things and neither is a picture:
+-- `base`, the tube's own colour, and `flags`, the set of names
+-- currently standing. Colours and brightnesses are looked up fresh
+-- every time, which is what makes a retune in `lib/netmsg.luau` reach
+-- every fitting already burning one -- and what stops a light that has
+-- been red since before somebody's edit from staying a shade nothing
+-- names any more.
+--
+-- NOT YET VISIBLE, and the reason is worth writing down rather than
+-- working around: `sim.set_light` is a reach-scoped verb
+-- (docs/luau-api/verbs.md), and an effect issued by a device-network
+-- listener has no actor standing anywhere, so the engine drops the
+-- call without a word. The flag arrives and the stack below records
+-- it; the picture does not follow. The fix is the engine's -- the same
+-- exemption `sim.link.emit` already carries for a sensor talking with
+-- nobody there -- and nothing here is bent around it.
+local function relight(self, base, flags)
+    local v = self.vars["light_flags"] or {}
+    base = base or v.base
+    flags = flags or v.flags or {}
+    if base == nil then
+        -- The first flag on a fitting nobody has flagged yet: what it
+        -- is burning NOW is the tube, because nothing has replaced it.
+        local l = sim.light(self)
+        base = l and l.color
+    end
+    self.vars["light_flags"] = { base = base, flags = flags }
+    -- `status` is deliberately absent from the set: what is in the
+    -- socket is the fitting's own business and a flag has no opinion
+    -- about it. A shattered tube under a standing flag stays shattered
+    -- and stays dark.
+    local worst = netmsg.winner(flags)
+    sim.set_light(self, {
+        color = worst and worst.color or base,
+        power = worst and worst.power or 1.0,
+    })
+end
+
 if sim ~= nil then
+    -- The stack, on the fitting itself. `server` rather than `sight`:
+    -- nothing draws it, the colour it comes to is already on the wire
+    -- as light, and the shift record is where somebody asking why
+    -- Medical was red goes looking.
+    sim.define("script_var", "lunatic/tfs:light_flags", { replicate = "server" })
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+
+    -- WHAT A FITTING LISTENS TO: `parent` and `sibling`, and nothing
+    -- else. That is the panel feeding it and everything else that
+    -- panel feeds, which is precisely the room. A `child` would be
+    -- something joined to a light and nothing can be; a `grandchild`
+    -- or a `sibling_child` is another room's plant reaching across a
+    -- router, and one room's air alarm has no business dimming another
+    -- room's corridor (docs/luau-api/devices.md).
+    --
+    -- The payload is checked before it is believed. It arrived over a
+    -- network, which is exactly where a table turns up claiming to be
+    -- something it is not.
+    script_definition:handle("link.message.done", { kind = "react" }, function(ev)
+        if ev.relation ~= "parent" and ev.relation ~= "sibling" then
+            return
+        end
+        if not netmsg.is_light_flag(ev.payload) then
+            return
+        end
+        local self = ev.self
+        local v = self.vars["light_flags"] or {}
+        local flags = v.flags or {}
+        local on = ev.payload.op == "set"
+        if (flags[ev.payload.flag] == true) == on then
+            -- A repeat of what is already standing. It relights
+            -- nothing and writes nothing.
+            return
+        end
+        -- `nil` rather than `false` for a cleared flag: the stack is a
+        -- set of names, and a name not in it needs no row saying so.
+        flags[ev.payload.flag] = on or nil
+        relight(self, v.base, flags)
+    end)
+
     script_definition:handle("interaction.use", { kind = "replace", route = "interact" }, function(ev)
         local self, user, x, y = ev.subject, ev.actor, ev.at.x, ev.at.y
         local l = sim.light(self)
@@ -99,6 +184,10 @@ if sim ~= nil then
             -- out of a janitor's device turns fluorescent, exactly as
             -- it would if you did it in a real corridor.
             sim.set_light(self, { status = "ok", color = TUBE_COLOR })
+            -- The new tube is the new base, and a fitting refitted
+            -- under a standing flag comes back burning that flag
+            -- rather than fluorescent white for a pass.
+            relight(self, TUBE_COLOR)
             sim.sound.play({ asset = "lunatic/tfs:sound/click", at = self.tile })
             sim.message.send({
                 recipient = user,
@@ -120,6 +209,7 @@ if sim ~= nil then
             -- would file it as loss.
             target:consume()
             sim.set_light(self, { status = "ok", color = TUBE_COLOR })
+            relight(self, TUBE_COLOR)
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:fixtures.light.you_fit_the_new_tube", {}),
