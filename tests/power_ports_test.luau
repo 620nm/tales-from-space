@@ -84,9 +84,12 @@ assert(ports.l3.mode == "output", "L3 feeds the spare main: " .. ports.l3.mode)
 -- socket is wired to the backbone as well, so it prefers that and
 -- bypasses the panel entirely. A fitting bills the branch under the
 -- socket it reached, never the tile it hangs over.
+-- A lit fitting bills range x power x the rate (tg light.dm:307): a
+-- stock tube at 6 and 1.0 draws 120 W.
+local TUBE_W = 120.0
 near(ports.l1.out_w, 0.0, 1e-9, "the room circuit carries nobody yet")
-near(ports.l3.out_w, 20.0, 0.001, "the spare main carries its lamp")
-near(ports.l2.in_w, 20.0, 0.001, "and the input port carries that one alone")
+near(ports.l3.out_w, TUBE_W, 0.001, "the spare main carries its lamp")
+near(ports.l2.in_w, TUBE_W, 0.001, "and the input port carries that one alone")
 near(ports.l1.in_w, 0.0, 1e-9, "an output port draws nothing in")
 assert(t.ports_at(1, 1) == nil, "a generator is not a bridge")
 
@@ -105,7 +108,7 @@ t.run_seconds(3)
 
 assert(t.lit(5, 2), "the lamp never went out")
 assert(t.segment_at(6, 1).lighting_feed == 1, "its socket is on the room circuit now")
-near(t.ports_at(4, 1).l1.out_w, 20.0, 0.001, "and the panel's room circuit carries it")
+near(t.ports_at(4, 1).l1.out_w, TUBE_W, 0.001, "and the panel's room circuit carries it")
 
 -- ---------------------------------------------------------------
 -- THE STATION BREAKER. An outage is every port at zero and every pool
