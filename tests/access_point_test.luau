@@ -207,10 +207,14 @@ assert(rows(panel, "link_lock")[1].on, "a lock with no key opens for whoever is 
 assert(#t.ledger_rows("link_locked") == 1, "and the lock is on the record either way")
 
 -- An unlocked panel is an operable panel: the roster and the
--- candidates are drawn now, and there is nothing on either yet because
--- this box is alone in the room.
+-- candidates are drawn now. Nothing has joined this box, and the one
+-- thing in range to join is the PANEL feeding the bench -- which is a
+-- hub in its own right the moment it carries a card, and which nobody
+-- has joined to anything either.
 assert(#rows(panel, "link_drop") == 0, "nothing has joined it")
-assert(#rows(panel, "link_join") == 0, "and there is nothing in range to join")
+local candidates = rows(panel, "link_join")
+assert(#candidates == 1, "the room's own panel, and nothing else: " .. #candidates)
+assert(candidates[1].label.id == "link.candidate.hub", "offered as the hub it is")
 
 -- The pack's own sentence about the box, which is the one thing about
 -- an access point that is not native panel work
