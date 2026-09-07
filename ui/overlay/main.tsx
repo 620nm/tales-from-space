@@ -41,10 +41,13 @@ function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>): UiNode {
         {
           id: "hover/preview",
           type: "image",
-          // A slot's item comes with a sprite and no composed look.
+          // A slot's item comes with a sprite and no composed look, so
+          // it is drawn the way every other icon is: one named asset.
           ...(hover.appearance
             ? { appearance: hover.appearance }
-            : { sprite: hover.sprite ?? "" }),
+            : hover.sprite
+              ? { asset: hover.sprite }
+              : {}),
           class: ["hover-preview"],
         },
         text("hover/name", hover.name, ["hover-title"]),
