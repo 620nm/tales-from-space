@@ -559,5 +559,12 @@
   "lunatic/tfs:ui.desktop.power_off": "Power off",
   "lunatic/tfs:ui.desktop.eject_id": "Eject ID card",
   "lunatic/tfs:ui.desktop.eject_cartridge": "Eject cartridge",
-  "lunatic/tfs:ui.desktop.close_lid": "Close lid"
+  "lunatic/tfs:ui.desktop.close_lid": "Close lid",
+  "lunatic/tfs:ui.tray.mark_swap": "⇄",
+  "lunatic/tfs:ui.tray.mark_drop": "↓",
+  "lunatic/tfs:ui.tray.mark_throw": "↗",
+  "lunatic/tfs:ui.tray.mark_worn": "▦",
+  "lunatic/tfs:ui.tray.mark_status": "●",
+  "lunatic/tfs:ui.tray.items": "Items",
+  "lunatic/tfs:ui.tray.storage_fill": "{count} / {cap}"
 }

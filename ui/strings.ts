@@ -131,3 +131,15 @@ export const matterRow = (
   mass
     ? tfs("ui.matter.row_weighed", { mass, reading, amount })
     : tfs("ui.matter.row", { reading, amount });
+
+// The HUD's glyphs. A mark is as catalog-owned as a word: a script that
+// reads right to left may want another arrow (`ui.chrome.close_mark` is
+// the same rule).
+export const MARK_SWAP = tfs("ui.tray.mark_swap");
+export const MARK_DROP = tfs("ui.tray.mark_drop");
+export const MARK_THROW = tfs("ui.tray.mark_throw");
+export const MARK_WORN = tfs("ui.tray.mark_worn");
+export const MARK_STATUS = tfs("ui.tray.mark_status");
+export const ITEMS = tfs("ui.tray.items");
+export const storageFill = (count: number, cap: number): string =>
+  tfs("ui.tray.storage_fill", { count, cap });
