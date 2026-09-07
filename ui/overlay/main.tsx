@@ -13,9 +13,12 @@ import * as S from "../strings";
 
 /** What the cursor is over, with the verbs it answers to. */
 function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>): UiNode {
-  // Primary is always offered: a thing with no declared verbs is still
-  // something a hand can be put on.
-  const rows = hover.hints.some((hint) => hint.gesture === "primary")
+  // Out in the world primary is always offered: a thing with no declared
+  // verbs is still something a hand can be put on. A thing already in a
+  // slot is not — the server drops that row, and a bare click there is
+  // the hand itself, not a reach for the item.
+  const slot = !hover.appearance;
+  const rows = slot || hover.hints.some((hint) => hint.gesture === "primary")
     ? [...hover.hints]
     : [{ gesture: "primary", label: S.tfs("ui.look.interact") }, ...hover.hints];
   // Examine is Shift+LMB and takes the place its own rank names, between
