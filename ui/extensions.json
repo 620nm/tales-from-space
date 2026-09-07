@@ -1,0 +1,7 @@
+[
+  {
+    "slot": "overlay",
+    "entry": "ui/overlay/main.tsx",
+    "bundle": "ui/overlay.json"
+  }
+]
