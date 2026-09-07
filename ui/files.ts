@@ -306,17 +306,34 @@ function editorPane(
         ],
         { style: { gap: 4, alignItems: "center" } },
       ),
-      entry(bodyId, current.text, () => undefined, {
-        multiline: true,
-        submitOnly: true,
-        revision: current.revision,
-        ...(editor
-          ? {
-              disabled: editor.read_only,
-              ...(SOURCE_EXTS.has(open.ext) ? { language: "luau" as const } : {}),
-            }
-          : {}),
-      }),
+      // Typing checks as it goes: a debounced change ships the whole
+      // draft, and the engine's markers answer on the next push.
+      entry(
+        bodyId,
+        current.text,
+        (value, e) => {
+          current.text = value;
+          current.revision = e.revision ?? current.revision;
+          current.dirty = true;
+          return documentAction(doc, "text", {
+            field: "file_change",
+            option,
+            text: value,
+            revision: current.revision,
+          });
+        },
+        {
+          multiline: true,
+          debounceMs: 400,
+          revision: current.revision,
+          ...(editor
+            ? {
+                disabled: editor.read_only,
+                ...(SOURCE_EXTS.has(open.ext) ? { language: "luau" as const } : {}),
+              }
+            : {}),
+        },
+      ),
       editor
         ? row(
             `${id}/editor/status`,
@@ -361,7 +378,10 @@ function editorPane(
           ),
           press(`${id}/editor/revert`, S.REVERT, () => {
             buffers.delete(`${id}/${option}`);
-            return undefined;
+            return documentAction(doc, "toggle", {
+              field: "file_revert",
+              option,
+            });
           }),
         ],
         { style: { gap: 4 } },
