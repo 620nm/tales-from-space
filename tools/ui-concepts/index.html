@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tales from Space — interface studies</title>
+  <style>{{STYLES}}</style>
+</head>
+<body>
+  <header class="gallery">
+    <div class="gallery-brand"><span class="brand-mark">T / S</span><div><strong>TALES FROM SPACE</strong><small>INTERFACE STUDIES / 01—03</small></div></div>
+    <nav aria-label="Interface concept">
+      <button data-layout="classic"><b>A</b> Classic side rail <i>Recommended</i></button>
+      <button data-layout="console"><b>B</b> Bottom console</button>
+      <button data-layout="overlay"><b>C</b> Compact overlay</button>
+    </nav>
+    <div class="gallery-tools"><button id="device-toggle" aria-pressed="false">Device window</button><details><summary>About</summary><div class="about">Local design prototype. Controls change mocked state only. Raw DOM is trusted mock tooling; production UI still runs in the restricted guest interpreter. No connection to a game server.</div></details></div>
+  </header>
+  <div class="study-caption"><span id="study-number">01 / CLASSIC SIDE RAIL</span><p id="study-description"></p><span class="local-tag">INTERACTIVE LOCAL STUDY</span></div>
+  <main id="stage" class="classic">
+    <section class="world" aria-label="Station playfield">
+      <canvas id="world" aria-label="Mock station scene"></canvas>
+      <div class="world-location"><span class="signal-dot"></span> ENGINEERING <span>DECK 01 / MAINTENANCE</span></div>
+      <div class="world-clock">SHIFT <strong>00:18:42</strong></div>
+      <div class="world-caption">Elias Voss <span>Station engineer</span></div>
+      <div class="map-note">W A S D <span>MOVE</span> · E <span>USE</span> · TAB <span>SWAP HANDS</span></div>
+    </section>
+    <aside class="info panel">
+      <div class="section-heading"><span>STATION / CREW</span><span class="signal-dot"></span></div>
+      <div class="info-tabs" role="tablist" aria-label="Information"><button class="selected" data-info="status" role="tab" aria-selected="true">Status</button><button data-info="objectives" role="tab" aria-selected="false">Objectives</button><button data-info="inspect" role="tab" aria-selected="false">Inspect</button></div>
+      <div id="info-content"></div>
+    </aside>
+    <section class="chat panel" aria-label="Communications">
+      <div class="section-heading"><span>COMMUNICATIONS <em>145.9</em></span><button id="history-toggle" aria-expanded="false">Expand history ↗</button></div>
+      <div class="chat-channels" aria-label="Filter messages"><button class="selected" data-channel="all" aria-pressed="true">All</button><button data-channel="local" aria-pressed="false">Local</button><button data-channel="radio" aria-pressed="false">Radio</button><button data-channel="system" aria-pressed="false">System</button><span class="live-mark">● LIVE</span></div>
+      <div id="chat-log" role="log" aria-live="polite"></div>
+      <form id="chat-form"><label for="chat-input">SAY ›</label><input id="chat-input" maxlength="240" placeholder="Message nearby crew…" autocomplete="off"><button type="submit" aria-label="Send local message">↵</button></form>
+      <div class="chat-help">Enter to send <span>; radio &nbsp; :e engineering</span></div>
+    </section>
+    <section class="equipment panel" aria-label="Equipment">
+      <div class="section-heading"><span>EQUIPMENT</span><span class="muted">ELIAS VOSS</span></div>
+      <div class="equipment-body"><div id="paperdoll" aria-label="Equipped character"></div><div id="equipment-slots" class="equipment-slots"></div></div>
+    </section>
+    <section class="hands panel" aria-label="Hands and quick slots">
+      <div class="section-heading"><span>HANDS</span><span id="hand-readout">RIGHT ACTIVE</span></div>
+      <div class="hand-row"><button class="hand" data-hand="left"><span class="hand-key">1</span><span class="hand-item" data-sprite="crowbar"></span><span>LEFT HAND</span><small>Crowbar</small></button><button id="swap-hands" aria-label="Swap active hand">⇄<small>TAB</small></button><button class="hand active" data-hand="right"><span class="hand-key">2</span><span class="hand-item" data-sprite="wrench"></span><span>RIGHT HAND</span><small>Wrench</small></button><div class="quick-slots"><button class="action-button" data-action="Drop">Q <small>DROP</small></button><button class="action-button" data-action="Throw">R <small>THROW</small></button><button class="action-button" data-action="Use">E <small>USE</small></button><button class="action-button" data-action="Resist">B <small>RESIST</small></button></div></div>
+      <div class="hand-status"><span class="signal-dot"></span><span id="action-status">Ready to interact</span><span>WALK</span></div>
+    </section>
+    <section class="target panel" aria-label="Target and intent">
+      <div class="section-heading"><span>TARGET / INTENT</span><span class="muted">CHEST</span></div>
+      <div class="target-body"><div id="target-doll" aria-label="Chest selected"></div><div><button id="intent-toggle" class="intent" aria-pressed="false">HELP <span>H</span></button><div class="vitals"><span>O₂ <b>OK</b></span><span>TEMP <b>310 K</b></span><span>HEALTH <b>100%</b></span></div></div></div>
+    </section>
+    <aside id="inventory" class="inventory panel" aria-label="Open container"><div class="section-heading"><span id="inventory-title">BACKPACK</span><span id="inventory-count">3 / 7</span><button id="inventory-close" aria-label="Close container">×</button></div><div id="inventory-items"></div><div class="inventory-caption"><span class="signal-dot"></span> <span id="inventory-origin">Equipped · back slot</span><span>CLICK SLOT TO CLOSE</span></div></aside>
+    <section id="device" class="device panel" hidden aria-label="Portable computer"><div class="section-heading"><span>▦ PORTABLE COMPUTER / LOCAL TERMINAL</span><button id="device-close" aria-label="Close device window">×</button></div><div class="device-body"><div class="device-label">ENGINEERING NETWORK <span>CONNECTED</span></div><h2>Atmospheric monitor</h2><div class="device-readings"><div>PRESSURE<strong>101.3 <small>kPa</small></strong></div><div>TEMPERATURE<strong>293.2 <small>K</small></strong></div></div><div class="device-track"><span></span></div><p>Local atmosphere within nominal range.</p><div class="device-footer">TERMINAL 04 <span>READ ONLY</span></div></div></section>
+  </main>
+  <footer class="gallery-footer"><span id="layout-benefit"></span><span>MOCK SCENE / SHARED SCALE · CLICK A BAG, SWITCH HANDS, TYPE A MESSAGE</span></footer>
+  <script>{{ATLAS}}</script>
+  <script>{{SCENE}}</script>
+  <script>{{CONCEPTS}}</script>
+</body>
+</html>
