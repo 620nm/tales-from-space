@@ -16,8 +16,8 @@ import type {
 import { documentAction } from "./document-action";
 import { moduleBody } from "./documents-modules";
 import { shelfRows } from "./documents-shelf";
-import { desktopPane, isDesktop } from "./documents-desktop";
-import { filePanes, retainOpenFileBuffers } from "./files";
+import { computerPane, desktopPane, isDesktop } from "./documents-desktop";
+import { filePanes, guard, retainOpenFileBuffers } from "./files";
 import { bind, column, entry, icon, press, row, some, text } from "./view";
 import * as S from "./strings";
 import { actionSurface } from "./actions";
@@ -43,11 +43,11 @@ export function documents(view: GameplayView): UiNode[] {
     // The close lives in the host's title bar, named by the window
     // descriptor below. No node draws it, so only the meaning is
     // registered: the host's press arrives under this id.
-    bind(`${id}/close`, {
+    bind(`${id}/close`, guard(id, {
       kind: "close",
       document: doc.id,
       generation: doc.generation,
-    });
+    }));
     let body: UiNode[];
     let width = WIDTH.modules;
     if (state.document === "build") {
@@ -59,6 +59,9 @@ export function documents(view: GameplayView): UiNode[] {
       // Anything a provider does not name is read as a module document,
       // which is what every field below is optional for.
       const module = state as Partial<ModuleState>;
+      if (module.script && isDesktop(module.script.data))
+        return desktopPane(id, doc, module.script, active, module);
+      if (module.stores) return computerPane(id, filePanes(id, doc, module, active));
       width = WIDTH[module.presentation ?? "modules"] ?? WIDTH.modules;
       body = [
         ...moduleBody(id, doc, module, active),
@@ -76,7 +79,8 @@ export function documents(view: GameplayView): UiNode[] {
     });
   }).map((node, index) => {
     const doc = open[index]!;
-    return { ...node, window: {
+    return { ...node, ...((doc.state as Partial<ModuleState>)?.open ? { primarySave: `doc/${doc.id}/${doc.generation}/editor/save` } : {}), window: {
+      ...(node.class?.includes("computer-screen") ? { contentAspectRatio: 16 / 9, minWidth: 740, maximizable: true, titleAsset: doc.owner_sprite ?? (doc.state as Partial<ModuleState>)?.owner_sprite } : {}),
       key: `document/${doc.id}/${doc.generation}`, title: doc.title, source: "status",
       close: `doc/${doc.id}/${doc.generation}/close`,
       document: doc.id, generation: doc.generation, width: Number(node.style?.width) || 520 } };

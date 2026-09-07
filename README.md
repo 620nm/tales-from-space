@@ -66,12 +66,14 @@ supplies the component kit and default theme these screens are built from
 | `lobby.ts`, `chat.ts`, `inspect.ts` | the crew board and condition card, comms, examine and the tile menu |
 | `inventory.ts`, `inventory-storage.ts`, `doll.ts` | the tray, an opened container, and the body-target figure |
 | `documents.ts` | one pane per document; the discriminator picks the body, `presentation` the shape |
-| `documents-desktop.ts` | the laptop's 16:9 desktop, wallpaper and power/lid/card/cartridge controls |
+| `documents-desktop.ts` | the shared 16:9 computer screen, laptop wallpaper and physical controls |
 | `documents-modules.ts` | readouts, switches, label rows and setpoints, grouped by section |
 | `documents-choices.ts`, `documents-shelf.ts` | dials as choice grids, and the pictured shelf |
-| `files.ts`, `matter-block.ts` | the two-pane file manager, and one body of matter drawn |
+| `files.ts`, `files-drive.ts`, `files-editor.ts`, `files-buffer.ts`, `files-reader.ts` | the shared computer frameset, drives, editing controller and bounded readers |
 | `world-overlays.ts` | anchored speech and progress over the station |
 | `model.ts`, `document-model.ts` | the provider fields these surfaces consume |
+
+`matter-block.ts` renders one body of matter.
 
 The two model files point at the engine serializers; they are compile-time
 projections, not runtime validators.

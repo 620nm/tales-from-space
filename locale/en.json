@@ -60,6 +60,12 @@
   "lunatic/tfs:ui.tray.target": "Target",
   "lunatic/tfs:ui.look.tile": "On this tile",
   "lunatic/tfs:ui.look.nothing_more": "Nothing else to note.",
+  "lunatic/tfs:ui.files.reader.access": "Access material · ordinary text; no authority granted",
+  "lunatic/tfs:ui.files.reader.truncated": "Preview shortened. Open the text editor to read the complete file.",
+  "lunatic/tfs:ui.files.reader.atmo": "Atmosphere record",
+  "lunatic/tfs:ui.files.reader.temperature": "Temperature: {value} K",
+  "lunatic/tfs:ui.files.reader.pressure": "Pressure: {value} kPa",
+  "lunatic/tfs:ui.files.reader.gas": "{id}: {moles} mol",
   "lunatic/tfs:ui.files.none_open": "No file open",
   "lunatic/tfs:ui.files.media": "Media",
   "lunatic/tfs:ui.files.eject": "Eject",
@@ -577,5 +583,12 @@
   "lunatic/tfs:ui.tray.mark_status": "●",
   "lunatic/tfs:ui.tray.items": "Items",
   "lunatic/tfs:ui.tray.storage_fill": "{count} / {cap}",
-  "lunatic/tfs:ui.tray.no_reading": "—"
+  "lunatic/tfs:ui.tray.no_reading": "—",
+  "lunatic/tfs:ui.workspace.drive_a": "A:",
+  "lunatic/tfs:ui.workspace.drive_b": "B:",
+  "lunatic/tfs:ui.workspace.destination_name": "Destination name",
+  "lunatic/tfs:ui.workspace.eject": "⏏ Eject disk",
+  "lunatic/tfs:ui.files.dirty_guard": "Save changes before continuing?",
+  "lunatic/tfs:ui.files.discard": "Discard",
+  "lunatic/tfs:ui.files.cancel": "Cancel"
 }

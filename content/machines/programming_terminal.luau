@@ -38,7 +38,7 @@ return {
             .. "flap over it. Somebody has written a filename on the "
             .. "flap in grease pencil and then crossed it out.",
     },
-    ui = { modules = { "files" }, opens_on_click = true },
+    ui = { modules = { "files", "editor" }, opens_on_click = true },
     dense = true,
     corded = true,
     -- Everything the pack declares. A terminal that could not read a

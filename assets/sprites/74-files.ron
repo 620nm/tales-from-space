@@ -18,6 +18,10 @@
         ("computer", "obj/machines/computer.dmi"),
     ],
     sprites: [
+        ("file_disl", Png("art/computer/files/file-disl.png")),
+        ("file_md", Png("art/computer/files/file-md.png")),
+        ("file_atmo", Png("art/computer/files/file-atmo.png")),
+        ("file_pem", Png("art/computer/files/file-pem.png")),
         // The black sleeve, which is what `/obj/item/disk` itself wears
         // (code/game/objects/items/floppy_disk.dm:41-45,
         // `icon_state = "datadisk3"`). tg's other twelve `datadisk*`

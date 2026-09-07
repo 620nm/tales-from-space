@@ -116,5 +116,12 @@
   "lunatic/tfs:ui.comms.stamp": "{minutes}:{seconds}",
   "lunatic/tfs:ui.look.read_full": "Lire l'examen complet",
   "lunatic/tfs:ui.look.read_less": "Réduire",
-  "lunatic/tfs:ui.look.history_row": "▸ Historique d'examen · {count}"
+  "lunatic/tfs:ui.look.history_row": "▸ Historique d'examen · {count}",
+  "lunatic/tfs:ui.workspace.drive_a": "A:",
+  "lunatic/tfs:ui.workspace.drive_b": "B:",
+  "lunatic/tfs:ui.workspace.destination_name": "Nom de destination",
+  "lunatic/tfs:ui.workspace.eject": "⏏ Éjecter le disque",
+  "lunatic/tfs:ui.files.dirty_guard": "Enregistrer les modifications avant de continuer ?",
+  "lunatic/tfs:ui.files.discard": "Abandonner",
+  "lunatic/tfs:ui.files.cancel": "Annuler"
 }
