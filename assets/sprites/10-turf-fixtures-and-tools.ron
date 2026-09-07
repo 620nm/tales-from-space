@@ -54,6 +54,8 @@
     ],
     sprites: [
         ("space", Dmi("@space", "space", 0)),
+        // tg code/game/turfs/open/snow.dm:4-7.
+        ("ground", Dmi("turf/snow.dmi", "snow", 0)),
         ("floor", Dmi("@floors", "floor", 0)),
         ("plating", Dmi("@floors", "plating", 0)),
         ("wall", Dmi("@walls", "wall-0", 0)),

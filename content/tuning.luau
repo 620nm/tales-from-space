@@ -98,6 +98,7 @@ return {
     --
     -- Engine defaults: 0.5 / 0.5 / 0.03 / 0.5 / 0.03.
     emissivity = {
+        ground = 0.5,
         floor = 0.5,
         plating = 0.5,
         reinforced_floor = 0.03,
