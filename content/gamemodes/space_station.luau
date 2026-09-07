@@ -32,11 +32,11 @@ local content = {
         -- and `lib/shift.luau` are the only readers this block has.
         shift = shift_rules,
         environment = {
-            sink_k = 2.7,
             rolls = {
-                { id = "dead_space", name = "dead space", weight = 4, insolation = 0 },
-                { id = "orbit", name = "orbit", weight = 3, insolation = 1361 },
-                { id = "sunward", name = "close solar orbit", weight = 1, insolation = 2700 },
+                { id = "cold_outdoors", required_tags = { "terrestrial" }, weight = 1 },
+                { id = "dead_space", excluded_tags = { "terrestrial" }, weight = 4 },
+                { id = "orbit", excluded_tags = { "terrestrial" }, weight = 3 },
+                { id = "sunward", excluded_tags = { "terrestrial" }, weight = 1 },
             },
         },
     },

@@ -7,8 +7,9 @@
 // and every light fitting is a cord into the nearest of those ports.
 (
     name: "Outpost Zero",
+    tags: ["space"],
     legend: {
-        ' ': (turf: Space),
+        ' ': (turf: Environment, outdoors: true),
         '#': (turf: Wall),
         '.': (turf: Floor),
     },
