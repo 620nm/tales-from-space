@@ -3,6 +3,7 @@
 // vocabulary are this pack's (docs/pack-ui/components.md); a later rule
 // for the same class wins, so every override below appends.
 import { defineStyles, rule, theme } from "@lunatic/ui";
+import { hudRules } from "./theme-hud";
 
 const ink = "#d8def0";
 const bright = "#e8ecfa";
@@ -390,4 +391,5 @@ export default defineStyles([
   rule("inspect-toast", { minWidth: 0, width: 320, padding: 8, backgroundColor: "#152127df", border: edge("#66887c77"), borderRadius: 3 }),
   rule("hand-slot", { width: 60, height: 61 }),
   rule("worn-toggle", { padding: 0, minWidth: 0, fontFamily: "mono", fontSize: 7, color: "#a4c4df", backgroundColor: "#20394ee8", border: edge("#5280ac"), borderRadius: 0 }),
+  ...hudRules,
 ]);
