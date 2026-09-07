@@ -84,7 +84,7 @@ export const surfaceRules: UiStyleRule[] = [
     flexGrow: 1, minWidth: 0, fontSize: 12, fontWeight: 700,
     whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
   }),
-  rule("inspect-body", { gap: 3, maxHeight: 66, overflow: "hidden" }),
+  rule("inspect-body", { gap: 3, maxHeight: 60, overflow: "hidden" }),
   rule("inspect-full", {
     alignSelf: "start", marginTop: 6,
     fontFamily: "mono", fontSize: 10,
@@ -145,7 +145,7 @@ export const surfaceRules: UiStyleRule[] = [
     borderBottom: edge("#63807770"), borderRadius: 0,
     paddingLeft: 2, paddingRight: 2,
   }),
-  rule("composer-entry", { borderBottom: edge("#8ac1ab"), color: "#ffffff" }, "focus"),
+  rule("composer-entry", { border: none, borderBottom: edge("#8ac1ab"), color: "#ffffff" }, "focus"),
 
   // The host's own window grip and action-bar controls; the title and
   // body rules live in theme-hud-doc.ts. The renderer names these
@@ -165,25 +165,12 @@ export const surfaceRules: UiStyleRule[] = [
     backgroundColor: field, border: edge(line), borderRadius: 2,
   }),
 
-  // HUD parts the tray and the action rail wear. The HUD branch appends
-  // its own rules after these, so anything it restates wins.
+  // The frame every inventory cell wears; the cells themselves are
+  // theme-hud.ts's.
   rule("slot-frame", {
     position: "absolute", left: 0, top: 0, width: "100%", height: "100%",
     imageRendering: "pixelated", pointerEvents: "none",
   }),
-  rule("hand-slot", { width: 60, height: 61 }),
-  rule("hand-controls", { fontFamily: "mono", fontSize: 8 }),
-  rule("worn-toggle", {
-    padding: 0, minWidth: 0, fontFamily: "mono", fontSize: 7,
-    color: dim, backgroundColor: "#1b282ce8", border: edge(faceLine), borderRadius: 2,
-  }),
-  rule("action-button", {
-    display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
-    padding: 4, minWidth: 44, fontFamily: "mono", fontSize: 8,
-    backgroundColor: face, border: edge(faceLine), borderRadius: 2,
-  }),
-  rule("action-button", { border: edge(amberLine) }, "hover"),
-  rule("action-label", { fontSize: 8, maxWidth: 72, overflow: "hidden" }),
   rule("desktop-screen", {
     display: "block", position: "relative", width: "100%", height: 0,
     paddingTop: "56%", backgroundColor: "#000000", overflow: "hidden",

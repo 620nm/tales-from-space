@@ -158,7 +158,7 @@ function readings(view: GameplayView): Reading[] {
     return [{
       key: `vital/${index}`,
       label: slot.label,
-      value: `${Number.isFinite(value) ? Math.round(value as number) : "—"}${slot.suffix ?? ""}`,
+      value: `${Number.isFinite(value) ? Math.round(value as number) : S.NO_READING}${slot.suffix ?? ""}`,
     }];
   });
 }

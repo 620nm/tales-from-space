@@ -42,6 +42,7 @@ export const STORAGE = tfs("ui.tray.storage");
 export const STORE_HELD = tfs("ui.tray.store_held");
 export const TAKE_OFF = tfs("ui.tray.take_off");
 export const TARGET = tfs("ui.tray.target");
+export const NO_READING = tfs("ui.tray.no_reading");
 
 // Looking.
 export const TILE_TITLE = tfs("ui.look.tile");

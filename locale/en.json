@@ -576,5 +576,6 @@
   "lunatic/tfs:ui.tray.mark_worn": "▦",
   "lunatic/tfs:ui.tray.mark_status": "●",
   "lunatic/tfs:ui.tray.items": "Items",
-  "lunatic/tfs:ui.tray.storage_fill": "{count} / {cap}"
+  "lunatic/tfs:ui.tray.storage_fill": "{count} / {cap}",
+  "lunatic/tfs:ui.tray.no_reading": "—"
 }

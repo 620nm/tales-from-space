@@ -50,8 +50,9 @@ function logLine(line: LogLine | undefined, index: number): UiNode {
 }
 
 export function chatPanel(view: GameplayView): UiNode[] {
-  const heard = (view.log ?? []).filter((line) => belongs(line, tab));
-  const lines = heard.slice(-(historyOpen ? 200 : 40)).map(logLine);
+  // Rows keep their place in the whole log, so a new line re-keys nothing.
+  const heard = (view.log ?? []).map((line, index) => [line, index] as const).filter(([line]) => belongs(line, tab));
+  const lines = heard.slice(-(historyOpen ? 200 : 40)).map(([line, index]) => logLine(line, index));
   return [
     Pane(
       "chat-pane",
