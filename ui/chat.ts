@@ -1,52 +1,104 @@
-// What the crew heard, and the one box a crewman answers with.
+// What the crew heard, and the one box a crewman answers with. The well
+// is a darkened corner of the station rather than a framed panel: tabs
+// across the top, the say line at the foot, nothing in between but words.
 import type { UiNode } from "@lunatic/ui";
 import { Pane } from "@lunatic/ui";
-import type { GameplayView } from "./model";
-import { column, entry, row, some, text } from "./view";
+import type { GameplayView, LogLine } from "./model";
+import { column, entry, press, row, some, text } from "./view";
 import * as S from "./strings";
 
+type Tab = "all" | "local" | "radio" | "system";
+// Which words are showing, and how far the well is opened. Both are the
+// viewer's own choice about a surface, so they live here and never
+// travel: the server is not told which tab a crewman is reading.
+let tab: Tab = "all";
+let historyOpen = false;
+
+const TABS: [Tab, string][] = [
+  ["all", S.CHAT_ALL],
+  ["local", S.CHAT_LOCAL],
+  ["radio", S.CHAT_RADIO],
+  ["system", S.CHAT_SYSTEM],
+];
+
+/** A line is on a radio if it names a channel, spoken if it names only a
+ *  speaker, and the station's own voice when it names neither. */
+function belongs(line: LogLine | undefined, which: Tab): boolean {
+  if (which === "all") return true;
+  if (line?.channel) return which === "radio";
+  if (line?.name) return which === "local";
+  return which === "system";
+}
+
+function logLine(line: LogLine | undefined, index: number): UiNode {
+  const key = `log/${index}`;
+  const system = !line?.name && !line?.channel;
+  return row(
+    key,
+    some(
+      typeof line?.second === "number"
+        ? text(`${key}/at`, S.stamp(line.second), ["stamp"])
+        : null,
+      line?.channel ? text(`${key}/chan`, S.channel(line.channel), ["chan"]) : null,
+      line?.name
+        ? text(`${key}/who`, S.speaker(line.name), line.channel ? ["who", "who-radio"] : ["who"])
+        : null,
+      text(`${key}/text`, line?.text ?? "", system ? ["said", "sys"] : ["said"]),
+    ),
+    { cls: ["line"] },
+  );
+}
+
 export function chatPanel(view: GameplayView): UiNode[] {
-  const lines = (view.log ?? []).slice(-40).map((line, index) => {
-    const key = `log/${index}`;
-    const system = !line?.name && !line?.channel;
-    return row(
-      key,
-      some(
-        line?.channel ? text(`${key}/chan`, S.channel(line.channel), ["chan"]) : null,
-        line?.name ? text(`${key}/who`, S.speaker(line.name), ["who"]) : null,
-        text(`${key}/text`, line?.text ?? "", system ? ["said", "sys"] : ["said"]),
-      ),
-      { cls: ["line"] },
-    );
-  });
+  // Rows keep their place in the whole log, so a new line re-keys nothing.
+  const heard = (view.log ?? []).map((line, index) => [line, index] as const).filter(([line]) => belongs(line, tab));
+  const lines = heard.slice(-(historyOpen ? 200 : 40)).map(([line, index]) => logLine(line, index));
   return [
     Pane(
       "chat-pane",
       some(
-        text("chat-title", S.CHAT_TITLE, ["caption"]),
+        row("chat-tabs", [
+          ...TABS.map(([which, label]) =>
+            press(`chat-tab/${which}`, label, () => { tab = which; return undefined; }, {
+              variant: "ghost",
+              cls: which === tab ? ["chat-tab", "chat-tab-on"] : ["chat-tab"],
+            }),
+          ),
+          press("chat-history", S.CHAT_HISTORY, () => { historyOpen = !historyOpen; return undefined; }, {
+            variant: "ghost",
+            cls: historyOpen ? ["chat-tab", "chat-tab-on"] : ["chat-tab"],
+            style: { marginLeft: "auto" },
+          }),
+        ], { cls: ["chat-tabs"] }),
         column("log", lines.length ? lines : [text("log-empty", S.CHAT_EMPTY, ["hint"])], {
-          cls: ["log"], style: { minHeight: 0, maxHeight: 280, flexGrow: 1 },
+          cls: ["chat-log"],
         }),
         view.body
-          ? entry(
-              "chat",
-              "",
-              (value) => (value.trim() ? { kind: "say", text: value } : undefined),
-              { submitOnly: true, clearOnSubmit: true, blurOnSubmit: true,
-                style: { height: 24, minHeight: 24, flexGrow: 0, flexShrink: 0 } },
-            )
+          ? row("composer", [
+              text("composer-label", S.CHAT_SAY, ["composer-label"]),
+              entry(
+                "chat",
+                "",
+                (value) => (value.trim() ? { kind: "say", text: value } : undefined),
+                { submitOnly: true, clearOnSubmit: true, blurOnSubmit: true,
+                  cls: ["composer-entry"],
+                  style: { height: 22, minHeight: 22, flexGrow: 1, flexShrink: 1 } },
+              ),
+            ], { cls: ["composer"] })
           : null,
       ),
       {
-        cls: ["floating-chat"],
+        cls: historyOpen ? ["floating-chat", "chat-open"] : ["floating-chat"],
         style: {
           position: "absolute",
-          left: 14,
-          bottom: 12,
-          width: 500,
-          height: 340,
-          maxWidth: "33%",
-          maxHeight: "48%",
+          left: 18,
+          bottom: 18,
+          width: "32%",
+          height: historyOpen ? "58%" : "28%",
+          minWidth: 240,
+          minHeight: 205,
+          maxWidth: "50%",
+          maxHeight: historyOpen ? 620 : 340,
         },
       },
     ),

@@ -19,6 +19,12 @@ export const BODY_TITLE = tfs("ui.lobby.condition");
 // Comms.
 export const CHAT_TITLE = tfs("ui.comms.title");
 export const CHAT_EMPTY = tfs("ui.comms.empty");
+export const CHAT_ALL = tfs("ui.comms.tab_all");
+export const CHAT_LOCAL = tfs("ui.comms.tab_local");
+export const CHAT_RADIO = tfs("ui.comms.tab_radio");
+export const CHAT_SYSTEM = tfs("ui.comms.tab_system");
+export const CHAT_HISTORY = tfs("ui.comms.history");
+export const CHAT_SAY = tfs("ui.comms.say");
 
 // The tray.
 export const HANDS = tfs("ui.tray.hands");
@@ -36,6 +42,7 @@ export const STORAGE = tfs("ui.tray.storage");
 export const STORE_HELD = tfs("ui.tray.store_held");
 export const TAKE_OFF = tfs("ui.tray.take_off");
 export const TARGET = tfs("ui.tray.target");
+export const NO_READING = tfs("ui.tray.no_reading");
 
 // Looking.
 export const TILE_TITLE = tfs("ui.look.tile");
@@ -112,6 +119,15 @@ export const channel = (name: string): string =>
   tfs("ui.comms.channel", { name });
 export const speaker = (name: string): string =>
   tfs("ui.comms.speaker", { name });
+// A clock face, not a number: the catalog owns the separator, and the
+// pad is done here because there is no `Intl` in the guest.
+export const stamp = (second: number): string =>
+  tfs("ui.comms.stamp", {
+    minutes: `${Math.floor(second / 60)}`.padStart(2, "0"),
+    seconds: `${Math.floor(second % 60)}`.padStart(2, "0"),
+  });
+export const inspectHistory = (count: number): string =>
+  tfs("ui.look.history_row", { count });
 
 // The contents block's phase headings and rows: one authored template
 // each, never a word joined to a reading (docs/LOCALIZATION.md §5).
@@ -131,3 +147,15 @@ export const matterRow = (
   mass
     ? tfs("ui.matter.row_weighed", { mass, reading, amount })
     : tfs("ui.matter.row", { reading, amount });
+
+// The HUD's glyphs. A mark is as catalog-owned as a word: a script that
+// reads right to left may want another arrow (`ui.chrome.close_mark` is
+// the same rule).
+export const MARK_SWAP = tfs("ui.tray.mark_swap");
+export const MARK_DROP = tfs("ui.tray.mark_drop");
+export const MARK_THROW = tfs("ui.tray.mark_throw");
+export const MARK_WORN = tfs("ui.tray.mark_worn");
+export const MARK_STATUS = tfs("ui.tray.mark_status");
+export const ITEMS = tfs("ui.tray.items");
+export const storageFill = (count: number, cap: number): string =>
+  tfs("ui.tray.storage_fill", { count, cap });
