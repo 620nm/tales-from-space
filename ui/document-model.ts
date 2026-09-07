@@ -157,4 +157,19 @@ export interface OpenFile {
   body: string;
   revision: number;
   cap?: number;
+  editor?: EditorState | null;
+}
+/** The editing surface of an open source/text entry (engine `editor`
+ *  module); absent means the plain body view of today. */
+export interface EditorState {
+  body: string;
+  read_only: boolean;
+  byte_budget: number;
+  markers: EditorMarker[];
+  revision: number;
+  bound: boolean;
+}
+export interface EditorMarker {
+  line?: number;
+  message: string;
 }

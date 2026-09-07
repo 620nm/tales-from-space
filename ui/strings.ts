@@ -51,6 +51,7 @@ export const RENAME = tfs("ui.files.rename");
 export const SAVE = tfs("ui.files.save");
 export const REVERT = tfs("ui.files.revert");
 export const CONFLICT = tfs("ui.files.conflict");
+export const MARKERS_CLEAR = tfs("ui.files.markers_clear");
 export const STOCK = tfs("ui.shelf.stock");
 export const VEND = tfs("ui.shelf.vend");
 export const ARM = tfs("ui.shelf.arm");
@@ -79,6 +80,12 @@ export const fileName = (name: string, ext: string): string =>
 export const fileTitle = (name: string, ext: string, dirty: boolean): string =>
   tfs(dirty ? "ui.files.name_modified" : "ui.files.name", { name, ext });
 export const bytes = (size: number): string => tfs("ui.files.bytes", { size });
+export const marker = (line: number | undefined, message: string): string =>
+  line === undefined
+    ? tfs("ui.files.marker", { message })
+    : tfs("ui.files.marker_at", { line, message });
+export const byteBudget = (budget: number): string =>
+  tfs("ui.files.byte_budget", { budget });
 export const storeUse = (
   used: number,
   capacity: number,
