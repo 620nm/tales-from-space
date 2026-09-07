@@ -81,9 +81,9 @@ try {
   await call("Page.enable");
   await call("Runtime.enable");
   await call("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false });
-  for (const layout of ["classic", "console", "overlay"]) {
+  for (const role of ["crew", "cyborg", "ai"]) {
     const url = pathToFileURL(resolve(options.get("--input")));
-    url.searchParams.set("layout", layout);
+    url.searchParams.set("role", role);
     const loaded = new Promise(resolveLoad => {
       const listener = event => {
         if (JSON.parse(event.data).method !== "Page.loadEventFired") return;
@@ -105,8 +105,8 @@ try {
     });
     if (ready.exceptionDetails) throw new Error(`Concept failed: ${ready.exceptionDetails.exception?.description ?? ready.exceptionDetails.text}; ${errors.join("; ")}`);
     const shot = await call("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
-    await writeFile(join(directory, `${layout}.png`), Buffer.from(shot.data, "base64"), { flag: "wx" });
-    console.log(`Captured ${layout}: ${width}×${height}`);
+    await writeFile(join(directory, `${role}.png`), Buffer.from(shot.data, "base64"), { flag: "wx" });
+    console.log(`Captured ${role}: ${width}×${height}`);
   }
   if (errors.length) throw new Error(`Browser exceptions: ${errors.join("; ")}`);
 } finally {

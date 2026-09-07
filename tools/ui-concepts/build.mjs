@@ -33,10 +33,12 @@ const hashes = [...atlasDelivery.matchAll(/sha256:\s*"([a-f0-9]{64})"/g)].map(ma
 const expectedPages = Math.ceil(atlas.cells / (atlas.columns * atlas.rows_per_page));
 if (hashes.length !== expectedPages || !atlas.sprites.floor) throw new Error("Atlas metadata is incomplete.");
 atlas.pages = await Promise.all(hashes.map(async hash => `data:image/png;base64,${(await readFile(join(assets, "obj", `${hash}.png`))).toString("base64")}`));
-const inputs = await Promise.all(["index.html", "concepts.css", "scene.js", "concepts.js"].map(name => readFile(join(here, name), "utf8")));
-const [template, styles, scene, concepts] = inputs;
-const replacements = { STYLES: styles, ATLAS: `window.conceptAtlas = ${JSON.stringify(atlas).replaceAll("<", "\\u003c")};`, SCENE: scene, CONCEPTS: concepts };
-const html = template.replace(/\{\{(STYLES|ATLAS|SCENE|CONCEPTS)\}\}/g, (_, key) => replacements[key]);
+const names = ["index.html", "concepts.css", "surfaces.css", "actions.css", "scene.js", "surfaces.js", "actions.js", "concepts.js"];
+const [template, styles, surfaceStyles, actionStyles, scene, surfaces, actions, concepts] = await Promise.all(names.map(name => readFile(join(here, name), "utf8")));
+const replacements = { STYLES: [styles, surfaceStyles, actionStyles].join("\n"),
+  ATLAS: `window.conceptAtlas = ${JSON.stringify(atlas).replaceAll("<", "\\u003c")};`,
+  SCENE: scene, SURFACES: surfaces, ACTIONS: actions, CONCEPTS: concepts };
+const html = template.replace(/\{\{(STYLES|ATLAS|SCENE|SURFACES|ACTIONS|CONCEPTS)\}\}/g, (_, key) => replacements[key]);
 const output = resolve(options.get("--output"));
 await mkdir(dirname(output), { recursive: true });
 await writeFile(output, html, { flag: "wx" });
