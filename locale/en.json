@@ -569,5 +569,12 @@
   "lunatic/tfs:ui.comms.stamp": "{minutes}:{seconds}",
   "lunatic/tfs:ui.look.read_full": "Read full inspection",
   "lunatic/tfs:ui.look.read_less": "Show less",
-  "lunatic/tfs:ui.look.history_row": "▸ Inspect history · {count}"
+  "lunatic/tfs:ui.look.history_row": "▸ Inspect history · {count}",
+  "lunatic/tfs:ui.tray.mark_swap": "⇄",
+  "lunatic/tfs:ui.tray.mark_drop": "↓",
+  "lunatic/tfs:ui.tray.mark_throw": "↗",
+  "lunatic/tfs:ui.tray.mark_worn": "▦",
+  "lunatic/tfs:ui.tray.mark_status": "●",
+  "lunatic/tfs:ui.tray.items": "Items",
+  "lunatic/tfs:ui.tray.storage_fill": "{count} / {cap}"
 }

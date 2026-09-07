@@ -17,6 +17,8 @@ export const face = "#2c383d";
 export const faceLine = "#4b5657";
 export const field = "#101b1f";
 export const rule_line = "#2b3a3e";
+export const titleFace = "#25373b";
+export const titleLine = "#54716b";
 
 export const edge = (color: string, width = 1) =>
   ({ width, style: "solid", color }) as const;
