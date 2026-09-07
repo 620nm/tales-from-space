@@ -6,6 +6,6 @@
 [
     // tg's title screen, behind the main menu.
     ("menu_bg", "icons/runtime/default_title.dmi"),
-    ("wallpaper_bliss", "wallpaper_bliss.aseprite"),
-    ("wallpaper_moonlake", "wallpaper_moonlake.aseprite"),
+    ("wallpaper_bliss", "art/computer/wallpaper/wallpaper_bliss.aseprite"),
+    ("wallpaper_moonlake", "art/computer/wallpaper/wallpaper_moonlake.aseprite"),
 ]
