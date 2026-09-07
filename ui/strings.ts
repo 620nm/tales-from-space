@@ -122,7 +122,7 @@ export const speaker = (name: string): string =>
 // pad is done here because there is no `Intl` in the guest.
 export const stamp = (second: number): string =>
   tfs("ui.comms.stamp", {
-    minutes: Math.floor(second / 60),
+    minutes: `${Math.floor(second / 60)}`.padStart(2, "0"),
     seconds: `${Math.floor(second % 60)}`.padStart(2, "0"),
   });
 export const inspectHistory = (count: number): string =>

@@ -129,8 +129,10 @@ export default defineStyles([
   // hand cluster, zone selector and open storage are three such groups,
   // each placed on its own (code/__DEFINES/hud.dm:37, :238). It follows
   // `pane`, so a Pane wearing it keeps the type and loses the frame.
+  // maxWidth in pixels: the shell clamps a panel to 100% of its parent,
+  // and the HUD anchor is a zero-width box, so a percentage collapses it.
   rule("hudgroup", {
-    padding: 0, gap: 6, backgroundColor: "transparent",
+    padding: 0, gap: 6, maxWidth: 4096, backgroundColor: "transparent",
     border: none, borderRadius: 0, boxShadow: flat, pointerEvents: "none",
   }),
   // pointer-events inherits, so a group the station shows through hands
@@ -169,8 +171,9 @@ export default defineStyles([
   // foot are separable at a glance. The renderer scales a cell to the
   // size its element declares (docs/pack-ui/styles.md), and the aiming
   // rectangles are percentages of this box, so they follow it.
+  rule("doll-block", { minWidth: 64, flexShrink: 0 }),
   rule("doll", {
-    position: "relative", width: 64, height: 64, flexShrink: 0,
+    position: "relative", width: 64, height: 64, maxWidth: 64, flexShrink: 0,
     backgroundColor: "#0a1216b8", border: edge(line), borderRadius: 2,
   }),
   rule("dollart", {

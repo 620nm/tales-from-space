@@ -44,7 +44,7 @@ const ui: GuestUi = {
         inventory(view), wornGroup(view), wornGroup(view, true),
         row("target-block", some(bodyTarget(view), targetMeta(view)), {
           cls: ["hudgroup"],
-          style: { position: "absolute", left: 126, bottom: 40, gap: 7, alignItems: "center" },
+          style: { position: "absolute", left: 126, bottom: 40, width: 220, gap: 7, alignItems: "center" },
         }),
         ...actionGroups(view),
       ), { cls: ["hudgroup"], style: { position: "absolute", left: "55%", bottom: 0, width: 0, height: 0 } }),

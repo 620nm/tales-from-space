@@ -150,7 +150,7 @@ export const surfaceRules: UiStyleRule[] = [
   // The host's own window parts, and the action bar's controls. The
   // renderer names these classes; a pack only says what they look like.
   rule("window-title", {
-    alignItems: "center", gap: 8, minHeight: 34,
+    alignItems: "center", gap: 8, minHeight: 24,
     paddingTop: 5, paddingBottom: 5, paddingLeft: 9, paddingRight: 9,
     color: "#d5e3d9", backgroundColor: "#2f4347", borderBottom: edge("#54716b"),
     fontFamily: "mono", fontSize: 11, textTransform: "uppercase", letterSpacing: 1,
@@ -159,7 +159,7 @@ export const surfaceRules: UiStyleRule[] = [
   rule("window-grip", { backgroundColor: "transparent" }),
   rule("actions-bar", { alignItems: "end", gap: 4 }),
   rule("actions-control", {
-    width: 34, height: 34, minWidth: 34, padding: 0,
+    width: "auto", height: 34, minWidth: 34, paddingTop: 0, paddingBottom: 0, paddingLeft: 8, paddingRight: 8,
     alignItems: "center", justifyContent: "center",
     fontFamily: "mono", fontSize: 11, color: ink,
     backgroundColor: face, border: edge(faceLine), borderRadius: 2,

@@ -31,14 +31,16 @@ export const docRules = [
     borderRadius: 5,
     overflow: "hidden",
   }),
+  // The host owns the title bar and draws no close control, so the pack's
+  // sits as a bare row under it rather than as a second bar.
   rule("doc-head", {
-    height: 34,
+    height: 28,
     alignItems: "center",
     justifyContent: "end",
     paddingLeft: 9,
-    paddingRight: 9,
-    backgroundColor: titleFace,
-    borderBottom: edge("#3d564d"),
+    paddingRight: 6,
+    backgroundColor: "transparent",
+    borderBottom: none,
   }),
   rule("doc-close", {
     width: 26,
@@ -53,7 +55,7 @@ export const docRules = [
     borderRadius: 3,
   }),
   rule("doc-close", { backgroundColor: "#385458" }, "hover"),
-  rule("doc-body", { padding: 16, gap: 6 }),
+  rule("doc-body", { padding: 16, paddingTop: 0, gap: 6 }),
 
   // A module readout: eyebrow, heading, stat blocks, then its rows.
   rule("mod-eyebrow", {
@@ -134,7 +136,7 @@ export const docRules = [
   rule("action-strip", {
     position: "absolute",
     left: 0,
-    bottom: 228,
+    bottom: 290,
     width: 0,
     alignItems: "end",
     justifyContent: "center",
@@ -148,8 +150,10 @@ export const docRules = [
     gap: 4,
     alignItems: "end",
   }),
+  rule("action-buttons", { maxWidth: 4096, whiteSpace: "nowrap", flexDirection: "row-reverse", alignItems: "end", gap: 4 }),
   rule("group-label", {
     position: "absolute",
+    whiteSpace: "nowrap",
     left: 1,
     top: 0,
     fontFamily: "mono",

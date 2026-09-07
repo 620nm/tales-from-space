@@ -105,7 +105,7 @@ export function wornGroup(view: GameplayView, carry = false): UiNode | null {
     const id = `equipment/${slot.id}/pick`;
     const square = hudSlot(id, {
       ...(worn?.item?.sprite ? { sprite: worn.item.sprite } : {}),
-      label: S.short(worn?.item?.name ?? slot.label),
+      label: S.short(slot.label),
       empty: !worn?.item,
       ...(worn?.item?.fill ? { fill: worn.item.fill } : {}),
       item: `equipment/${slot.id}`,
@@ -165,7 +165,7 @@ function readings(view: GameplayView): Reading[] {
 
 /**
  * What stands beside the target figure: a slot held empty for the intent
- * pill this HUD has yet to grow, and the body's own readouts as one line.
+ * pill this HUD has yet to grow, and the body's own readouts, one per row.
  */
 export function targetMeta(view: GameplayView): UiNode | null {
   if (!view.body) return null;
@@ -173,13 +173,11 @@ export function targetMeta(view: GameplayView): UiNode | null {
   return column("target-meta", some(
     panel("target-reserve", [], { cls: ["target-reserve"] }),
     lines.length
-      ? row("target-status", [
-          text("target-status/dot", S.MARK_STATUS, ["status-dot"]),
-          ...lines.flatMap((line) => [
-            text(`${line.key}/key`, line.label, ["status-key"]),
-            text(`${line.key}/value`, line.value),
-          ]),
-        ], { cls: ["target-status"] })
+      ? column("target-status", lines.map((line, index) => row(line.key, some(
+          index === 0 ? text("target-status/dot", S.MARK_STATUS, ["status-dot"]) : null,
+          text(`${line.key}/key`, line.label, ["status-key"]),
+          text(`${line.key}/value`, line.value),
+        ), { cls: ["status-row"] })), { cls: ["target-status"] })
       : null,
   ), { cls: ["hudgroup", "target-meta"] });
 }
