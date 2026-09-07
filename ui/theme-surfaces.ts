@@ -1,7 +1,7 @@
-// The floating surfaces: the hover card the cursor drags around, the
-// inspection toasts down the left edge, the chat well, and the host's own
-// window and action-bar parts. Appended after the base system in
-// `theme.ts`, so each of these wins for the classes it names.
+// The HUD's floating surfaces: the inspection toasts down the left
+// edge, the chat well, and the host's own window and action-bar parts.
+// Appended after the shared chrome in `theme.ts`, so each of these wins
+// for the classes it names. The hover card lives in `theme-overlay.ts`.
 import type { UiStyleRule } from "@lunatic/ui";
 import { rule } from "@lunatic/ui";
 import {
@@ -12,56 +12,6 @@ import {
 const sunk = [{ x: 0, y: 1, blur: 2, color: "#000000" }];
 
 export const surfaceRules: UiStyleRule[] = [
-  // The hover card. Mono, translucent, click-through: it is a reading of
-  // what is under the cursor, never a thing to press.
-  rule("hover-card", {
-    minWidth: 0, maxWidth: 260, gap: 5,
-    paddingTop: 9, paddingBottom: 9, paddingLeft: 10, paddingRight: 10,
-    backgroundColor: "#142125ed", border: edge("#718278"), borderRadius: 3,
-    boxShadow: shade, overflow: "hidden",
-    fontFamily: "mono", fontSize: 11, lineHeight: 1.35,
-    color: "#dce7d8", textShadow: sunk, userSelect: "none",
-    pointerEvents: "none",
-  }),
-  rule("hover-head", { alignItems: "center", gap: 6, minWidth: 0, marginBottom: 2 }),
-  rule("hover-preview", {
-    width: 32, height: 32, flexShrink: 0,
-    imageRendering: "pixelated", pointerEvents: "none",
-  }),
-  rule("hover-title", {
-    minWidth: 0, fontSize: 12, fontWeight: 700,
-    whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
-  }),
-  // Two tracks, so the left cell of every hint starts exactly where the
-  // header's icon starts: same padding, no margin, one column width.
-  rule("hover-row", {
-    display: "grid", gridTemplateColumns: [58, "1fr"],
-    alignItems: "center", gap: 8, whiteSpace: "nowrap",
-  }),
-  rule("hover-keys", {
-    display: "flex", alignItems: "center", justifyContent: "start",
-    gap: 4, minHeight: 20,
-  }),
-  rule("hover-key", {
-    fontFamily: "mono", fontSize: 9, lineHeight: 1.4,
-    paddingTop: 1, paddingBottom: 1, paddingLeft: 4, paddingRight: 4,
-    color: "#c4d5c9", backgroundColor: "#2b3b35",
-    border: edge("#62786c"), borderBottom: edge("#62786c", 2), borderRadius: 2,
-  }),
-  rule("hover-description", {
-    minWidth: 0, fontSize: 11, color: "#c6d6cf",
-    overflow: "hidden", textOverflow: "ellipsis",
-  }),
-  // A mouse in fourteen by twenty pixels: a bordered body and the two
-  // buttons, of which the gesture's own is lit.
-  rule("mouse-glyph", {
-    position: "relative", width: 14, height: 20, flexShrink: 0,
-    border: edge("#9bb3a5"), borderRadius: 4,
-    backgroundColor: "#25382f", pointerEvents: "none",
-  }),
-  rule("mouse-key", { position: "absolute", top: 2, width: 4, height: 6, backgroundColor: "#51695c" }),
-  rule("mouse-key-on", { backgroundColor: "#e0cc91" }),
-
   // An inspection toast: a fixed-width card with a lit left edge, a
   // clamped body, and a press that opens the rest of it.
   rule("inspect-toast", {

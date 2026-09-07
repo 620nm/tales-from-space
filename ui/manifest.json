@@ -1,5 +1,14 @@
 {
   "styles": "theme.ts",
+  "slots": {
+    "overlay": {
+      "left": 0,
+      "top": 0,
+      "width": 100,
+      "height": 100,
+      "keys": ["state.hover", "state.context"]
+    }
+  },
   "bindings": [
     {
       "id": "north",

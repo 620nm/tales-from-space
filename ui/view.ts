@@ -74,17 +74,22 @@ export function text(
   };
 }
 
-/** A press, bound to what it means. The caller's id lands on the button. */
+/** A press, bound to what it means. The caller's id lands on the button.
+ *  `label` is the name a press is READ by where its caption is a glyph
+ *  or empty; it belongs to the button itself, so it is not offered
+ *  beside `icon`, which wraps the press in a row of its own. */
 export function press(
   id: string,
   caption: unknown,
   action: Handler,
-  opts: Omit<ButtonOpts, "event"> = {},
+  opts: Omit<ButtonOpts, "event"> & { label?: string } = {},
 ): UiNode {
-  return Button(id, labelText(caption as Json), {
-    ...opts,
+  const { label, ...rest } = opts;
+  const node = Button(id, labelText(caption as Json), {
+    ...rest,
     event: bind(id, action),
   });
+  return label && node.type === "button" ? { ...node, label } : node;
 }
 
 export interface FieldOpts extends Box {
