@@ -7,7 +7,7 @@
 .hover-gesture>span:first-child{color:#a0b8b5}
 .hover-gesture>span:last-child{overflow:hidden;text-overflow:ellipsis}
 .hover-gesture.unavailable>span:last-child{color:#9aaca8}
-.hover-keys{display:flex;justify-content:flex-end;align-items:center;gap:4px;min-height:20px}
+.hover-keys{display:flex;justify-content:flex-start;align-items:center;gap:4px;min-height:20px}
 .hover-keys kbd{padding:1px 4px;border:1px solid #62786c;border-bottom-width:2px;background:#2b3b35;color:#c4d5c9;font:9px/13px monospace;border-radius:2px}
 .hover-mouse{position:relative;display:inline-block;flex:none;width:14px;height:20px;border:1px solid #9bb3a5;border-radius:6px 6px 4px 4px;background:#25382f}
 .hover-mouse:before,.hover-mouse:after{content:'';position:absolute;top:2px;width:4px;height:6px;background:#51695c}
