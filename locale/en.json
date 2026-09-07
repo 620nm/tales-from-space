@@ -559,5 +559,15 @@
   "lunatic/tfs:ui.desktop.power_off": "Power off",
   "lunatic/tfs:ui.desktop.eject_id": "Eject ID card",
   "lunatic/tfs:ui.desktop.eject_cartridge": "Eject cartridge",
-  "lunatic/tfs:ui.desktop.close_lid": "Close lid"
+  "lunatic/tfs:ui.desktop.close_lid": "Close lid",
+  "lunatic/tfs:ui.comms.tab_all": "All",
+  "lunatic/tfs:ui.comms.tab_local": "Local",
+  "lunatic/tfs:ui.comms.tab_radio": "Radio",
+  "lunatic/tfs:ui.comms.tab_system": "System",
+  "lunatic/tfs:ui.comms.history": "History ↗",
+  "lunatic/tfs:ui.comms.say": "SAY ›",
+  "lunatic/tfs:ui.comms.stamp": "{minutes}:{seconds}",
+  "lunatic/tfs:ui.look.read_full": "Read full inspection",
+  "lunatic/tfs:ui.look.read_less": "Show less",
+  "lunatic/tfs:ui.look.history_row": "▸ Inspect history · {count}"
 }
