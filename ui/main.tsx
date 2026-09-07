@@ -12,6 +12,7 @@ import { worldOverlays } from "./world-overlays";
 import { inventory, shortcut, targetMeta, wornGroup } from "./inventory";
 import { bodyTarget } from "./doll";
 import { storageRegion } from "./inventory-storage";
+import { pollContinuation } from "./files";
 import { documents } from "./documents";
 import { actionGroups } from "./actions";
 
@@ -32,6 +33,10 @@ function statusLine(view: GameplayView): UiNode {
 }
 
 const ui: GuestUi = {
+  onView(raw) {
+    const view = raw as unknown as GameplayView;
+    return { action: pollContinuation(Object.values(view.documents ?? {})) };
+  },
   render(raw) {
     const view = raw as unknown as GameplayView;
     begin();

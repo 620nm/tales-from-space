@@ -196,3 +196,5 @@ verified asset registry, package limits and server action checks. Proposed
 host behaviors do not expose browser JavaScript, URLs, geometry, credentials
 or draft text to game operators. See engine `docs/PACK-UI.md` and
 `docs/pack-ui/runtime.md`.
+
+[Terminal frameset study and baselines](terminal/README.md).

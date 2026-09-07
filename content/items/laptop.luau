@@ -27,6 +27,8 @@ local content = {
     },
     acts_on_items = true,
     drive = {},
+    files = { capacity = 65536, files = 16 },
+    ui = { modules = { "files", "editor" } },
     card_slot = { equipment = "id" },
 }
 
@@ -57,7 +59,7 @@ if sim ~= nil then
 
     local function refresh(self, powered)
         local view, actions = document(self, powered)
-        ui.update_all({ owner = self, view = view, actions = actions })
+        ui.update_all({ owner = self, view = view, actions = actions, include_native = powered })
     end
 
     local function close(self)
@@ -74,7 +76,7 @@ if sim ~= nil then
         sim.appearance.set_state({ entity = self, state = "on" })
         refresh(self, true)
         local view, actions = document(self, true)
-        ui.open({ viewer = user, owner = self, view = view, actions = actions })
+        ui.open({ viewer = user, owner = self, view = view, actions = actions, include_native = true })
     end
 
     behavior:handle("entity.initialize.done", { kind = "react" }, function(ev)

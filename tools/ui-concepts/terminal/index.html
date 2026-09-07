@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tales from Space — terminal frameset concept</title>
+  <link rel="stylesheet" href="shell.css">
+  <link rel="stylesheet" href="views.css">
+</head>
+<body>
+  <header class="gallery">
+    <div class="gallery-brand"><span>T / S</span><strong>Terminal frameset</strong><small>concept / 01</small></div>
+    <nav aria-label="Concept examples">
+      <button id="demo-source">DiSL source</button>
+      <button id="demo-document">Markdown document</button>
+      <button id="demo-record">Survey record</button>
+    </nav>
+    <div class="gallery-tools">
+      <span class="mock-label">LOCAL MOCK · NO SERVER</span>
+      <button id="demo-disk">Eject floppy</button>
+      <button id="demo-focus" aria-pressed="false">Plain backdrop</button>
+      <button id="demo-reset">Reset</button>
+    </div>
+  </header>
+  <main id="stage">
+    <iframe id="world" src="world.html" title="Illustrative station backdrop" tabindex="-1" aria-hidden="true" inert></iframe>
+    <div class="world-shade"></div>
+    <button id="terminal-restore" class="restore" hidden><img class="terminal-sprite" src="sprites/computer.png" width="32" height="32" alt=""> Open terminal</button>
+    <section id="terminal" role="region" aria-label="Programming terminal" style="left:calc(50% - 560px);top:86px;width:1120px;height:650px">
+      <header id="terminal-title" tabindex="0">
+        <span class="terminal-title-name"><img class="terminal-sprite" src="sprites/computer.png" width="32" height="32" alt=""> NT / WORKSTATION <small>FILE CONSOLE</small></span>
+        <div class="window-controls"><button id="terminal-maximize" aria-label="Maximize terminal" title="Maximize / restore">□</button><button id="terminal-close" aria-label="Close terminal" title="Close terminal">×</button></div>
+      </header>
+      <div id="computer-status">
+        <div class="machine-identity"><div><strong id="machine-name">Engineering workstation</strong><small id="machine-address">ENG / TERMINAL 04 <span>•</span> FILE SERVICES</small></div></div>
+        <div class="machine-readings"><span><i class="led"></i>POWER ONLINE</span><span>LOCAL BUS <b>04</b></span><span>MEMORY <b>64 KiB</b></span><span id="disk-status">MEDIA INSERTED</span></div>
+      </div>
+      <div id="frames" style="--drive-a-width:184px;--drive-b-width:184px">
+        <aside id="drive-a" aria-label="A drive local storage"></aside>
+        <div id="split-a" class="splitter" tabindex="0" role="separator" aria-label="Resize local drive frame" aria-orientation="vertical"></div>
+        <section id="file-view" aria-label="Selected file"></section>
+        <div id="split-b" class="splitter" tabindex="0" role="separator" aria-label="Resize floppy frame" aria-orientation="vertical"></div>
+        <aside id="drive-b" aria-label="B drive removable floppy"></aside>
+      </div>
+      <footer class="terminal-footer"><span id="terminal-status" role="status" aria-live="polite">Ready.</span><span class="footer-hint">A: local · B: removable <span>│</span> <kbd>Ctrl</kbd> + <kbd>S</kbd> save</span></footer>
+      <div class="resize-handle" data-resize="n"></div><div class="resize-handle" data-resize="ne"></div>
+      <div class="resize-handle" data-resize="e"></div><div class="resize-handle" data-resize="se"></div>
+      <div class="resize-handle" data-resize="s"></div><div class="resize-handle" data-resize="sw"></div>
+      <div class="resize-handle" data-resize="w"></div><div class="resize-handle" data-resize="nw"></div>
+    </section>
+    <div id="dialog-backdrop" hidden>
+      <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+        <h2 id="dialog-title">Unsaved changes</h2>
+        <div id="dialog-body"></div>
+        <div id="dialog-actions"></div>
+      </section>
+    </div>
+    <div class="concept-note">INTERACTIVE STUDY <span>Drag the title bar. Resize the frames. Open files from either drive.</span></div>
+  </main>
+  <script src="model.js"></script>
+  <script src="views.js"></script>
+  <script src="interactions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

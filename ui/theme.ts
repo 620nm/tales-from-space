@@ -7,6 +7,7 @@
 // `theme-surfaces.ts`, the overlay package's sheet in `overlay/styles.ts`.
 import type { UiStyleRule } from "@lunatic/ui";
 import { defineStyles, rule } from "@lunatic/ui";
+import { workspaceRules } from "./theme-workspace";
 import { baseRules } from "./theme-base";
 import { surfaceRules } from "./theme-surfaces";
 import { hudRules } from "./theme-hud";
@@ -161,4 +162,5 @@ export default defineStyles([
 
   ...surfaceRules,
   ...hudRules,
+  ...workspaceRules,
 ] as UiStyleRule[]);

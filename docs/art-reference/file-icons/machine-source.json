@@ -1,0 +1,16 @@
+{
+  "sprite": "programming_terminal",
+  "atlas": "/home/josh/Source/lunatic/web/assets/atlas.ron",
+  "page": 0,
+  "cell": 1816,
+  "x": 1118,
+  "y": 1262,
+  "sha256": "443546642fd428ec3ee06370455ca370d0dcbdaf194fe8a9f94275424d4197e2",
+  "packManifest": "/home/josh/Source/tales-from-space/assets/sprites/74-files.ron",
+  "states": [
+    "computer",
+    "rd_key",
+    "rdcomp"
+  ],
+  "tg": "icons/obj/machines/computer.dmi"
+}
