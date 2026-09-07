@@ -151,6 +151,7 @@ export function moduleBody(
   doc: DocumentIdentity,
   state: Partial<ModuleState>,
   active: boolean,
+  heading = true,
 ): UiNode[] {
   const readouts = state.readouts ?? [];
   const toggles = state.toggles ?? [];
@@ -170,10 +171,10 @@ export function moduleBody(
   // The demo's hierarchy: the document names itself small, the machine
   // names itself large, and its leading readings are the block a reader
   // takes in from across the room.
-  const out: UiNode[] = [
+  const out: UiNode[] = heading ? [
     row(`${id}/eyebrow`, [text(`${id}/eyebrow/title`, doc.title)], { cls: ["mod-eyebrow"] }),
-  ];
-  if (state.name) out.push(text(`${id}/heading`, state.name, ["mod-head"]));
+  ] : [];
+  if (heading && state.name) out.push(text(`${id}/heading`, state.name, ["mod-head"]));
   if (state.gauge !== null && state.gauge !== undefined)
     out.push(Gauge(`${id}/gauge`, state.gauge));
   for (const [place, section] of order.entries()) {

@@ -19,7 +19,26 @@ power and slot changes together. Closed laptops reject stale desktop acts.
 Apply an ID card or floppy disk to insert it; an occupied slot swaps its
 previous item into the inserting hand. The desktop ejects either slot.
 Ctrl+Shift-click ejects the floppy. Cards retain their identity and disks
-retain their files; the desktop exposes no file browser or applications.
+retain their files. The powered desktop shares the programming terminal's
+file workspace: A: is the laptop's 64 KiB, 16-file store, and an inserted
+floppy appears as B:. Native providers validate every file operation.
+Switching off revokes file disclosure and actions without losing saved files.
+
+The screen below the trusted title bar stays 16:9. Its wallpaper lies beneath
+translucent information, drive and reader frames. Drive panes resize locally;
+removing B: expands the center reader. The title bar shows the actual owner
+sprite and provides maximize/restore and reader-local dismissal.
+
+New offers Markdown (`.md`), Luau source (`.disl`), atmosphere records (`.atmo`)
+and access material (`.pem`). Source uses the trusted editor and native
+diagnostics. Markdown is bounded, inert content. Valid ATMO JSON has a pack
+reader; malformed or empty records stay editable. PEM files are ordinary
+text: writing one grants no credentials or authentication authority.
+
+Save/Discard/Cancel protects unsaved work when changing files or dismissing
+the workspace. Save waits for a matching accepted revision before continuing.
+Disk ejection guards only dirty work on B:. Revoked providers, lost media and
+closed documents cancel pending continuations.
 
 An open, powered laptop used on an exact networked device plays one of the
 seven keyboard recordings, chosen uniformly. Closed or switched-off laptops

@@ -14,9 +14,18 @@ local ARENA = [==[(
 
 local function desktop(player)
     local state = t.ui(player)
-    assert(state and state.document == "script", "a script desktop is open")
-    assert(state.data.kind == "desktop", "the document is the laptop desktop")
-    return state.data
+    assert(state, "a desktop is open")
+    local data = if state.script then state.script.data else state.data
+    assert(data.kind == "desktop", "the document is the laptop desktop")
+    if data.powered then
+        assert(state.script and state.stores, "powered desktop composes native files")
+        assert(state.stores[1].capacity == 65536 and state.stores[1].count_cap == 16,
+            "the laptop carries the terminal's local-store capacity")
+    else
+        assert(state.document == "script" and state.stores == nil,
+            "power off revokes native storage disclosure")
+    end
+    return data
 end
 
 local function sound_count(player, needle)
@@ -52,16 +61,38 @@ t.run_ticks(2)
 assert(desktop(q).wallpaper == wallpaper, "both readers see the item's wallpaper")
 assert(sound_count(p, "computer_start") == 0, "a second reader does not reboot")
 
+t.ui_close(p)
+t.run_ticks(2)
+assert(t.ui(p) == nil and desktop(q).powered, "title-bar close dismisses only its reader")
+t.use_item(p, laptop, "secondary")
+t.run_ticks(2)
+assert(desktop(p).wallpaper == wallpaper, "reader dismissal preserves the wallpaper and open lid")
+
+local host_binding = t.ui(p).stores[1].binding
+t.ui_act(p, "text", '{"field":"file_create","option":"host:md:' .. host_binding
+    .. '","text":"shift_note"}')
+t.run_ticks(2)
+local saved_file = t.ui(p).open
+assert(saved_file and saved_file.name == "shift_note", "laptop creates a named local file atomically")
+local saved_address = "host:" .. tostring(saved_file.uid) .. ":" .. saved_file.binding
+
 t.ui_act(p, "power")
 t.run_ticks(2)
 assert(not desktop(p).powered and not desktop(q).powered,
     "power off refreshes every current reader")
 assert(sound_count(p, "computer_end") == 1, "shutdown sounds once")
 assert(desktop(p).wallpaper == wallpaper, "shutdown retains wallpaper")
+t.ui_act(p, "text", '{"field":"file_save","option":"' .. saved_address
+    .. '","text":"refused while off","revision":0}')
+t.run_ticks(2)
+assert(#t.ledger_rows("file_saved") == 0, "power off refuses stale native file actions")
 
 t.ui_act(q, "power")
 t.run_ticks(2)
 assert(desktop(p).powered and desktop(q).powered, "another reader can switch it on")
+assert(#t.ui(p).files == 1 and t.ui(p).files[1].name == "shift_note",
+    "saved local files survive a power cycle")
+assert(t.ui(p).stores[1].binding ~= host_binding, "power cycling invalidates old store bindings")
 t.sounds(p)
 t.ui_act(p, "close")
 t.ui_act(q, "power")

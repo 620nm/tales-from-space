@@ -8,6 +8,7 @@ export interface DocumentIdentity {
   id: number;
   generation: number;
   title: string;
+  owner_sprite?: string;
 }
 // A provider writes `state`; every reader here treats it as absent or
 // incomplete rather than trusting the shape below.
@@ -91,9 +92,12 @@ export interface Product {
   payload: Json;
 }
 export interface ModuleState {
+  save_ack?: { request: string; binding: string; uid: number; revision: number };
   document: "modules";
   status?: number;
   presentation?: Presentation;
+  script?: Pick<ScriptState, "data" | "actions">;
+  owner_sprite?: string;
   name?: string;
   notice?: Label;
   gauge?: number | null;
@@ -140,6 +144,7 @@ export interface MatterBlock {
   states?: MatterStateBlock[];
 }
 export interface StoreRow {
+  binding: string;
   key?: string;
   label: Label;
   used: number;
@@ -148,6 +153,7 @@ export interface StoreRow {
   count_cap: number;
 }
 export interface FileRow {
+  binding: string;
   store: string;
   uid: number;
   name: string;
@@ -156,6 +162,7 @@ export interface FileRow {
   open?: boolean;
 }
 export interface OpenFile {
+  binding: string;
   store: string;
   uid: number;
   name: string;
