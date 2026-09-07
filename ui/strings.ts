@@ -74,7 +74,13 @@ export const short = (text: string, limit = 10): string =>
   text.length > limit ? `${text.slice(0, limit - 1)}…` : text;
 export const storageTitle = (label: string): string =>
   tfs("ui.tray.storage_of", { label });
-export const newFile = (ext: string): string => tfs("ui.files.new", { ext });
+export const newFileOn = (ext: string, store: string): string =>
+  tfs("ui.files.new_on", { ext, store });
+export const UNLOAD = tfs("ui.files.unload");
+export const socketLoad = (file: string): string =>
+  tfs("ui.files.socket_load", { file });
+export const socketStats = (runs: number, faults: number): string =>
+  tfs("ui.files.socket_stats", { runs, faults });
 export const fileName = (name: string, ext: string): string =>
   tfs("ui.files.name", { name, ext });
 export const fileTitle = (name: string, ext: string, dirty: boolean): string =>

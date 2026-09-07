@@ -136,14 +136,18 @@ assert(ui.stores[2].count_cap == DISK_FILES, "112 entries: " .. ui.stores[2].cou
 assert(#ui.files == 0, "both stores start bare")
 
 -- The create control is exactly the roster's creatable subset, in
--- declared order (content/filetypes.luau).
-assert(#ui.create == 2 and ui.create[1] == "doc" and ui.create[2] == "disl",
-    "the pack's two words reach the drop-down: " .. table.concat(ui.create, ","))
+-- declared order (content/filetypes.luau), PER WRITABLE SIDE: a create
+-- names where it lands (`<side>:<ext>`), never inferred
+-- (docs/files/scriptable-machine.md §2).
+assert(#ui.create.host == 2 and ui.create.host[1] == "doc" and ui.create.host[2] == "disl",
+    "the pack's two words reach the host side: " .. table.concat(ui.create.host, ","))
+assert(#ui.create.media == 2 and ui.create.media[1] == "doc" and ui.create.media[2] == "disl",
+    "and the disk side: " .. table.concat(ui.create.media, ","))
 
 -- ---- make one ---------------------------------------------------------
 -- Create lands on the MEDIUM, because a crewman who put a disk in came
--- to write to the disk.
-t.ui_act(p, "toggle", '{"field":"file_create","option":"doc"}')
+-- to write to the disk -- and now SAYS so, in the option itself.
+t.ui_act(p, "toggle", '{"field":"file_create","option":"media:doc"}')
 t.tick()
 ui = t.ui(p)
 assert(ui.open, "the new file is what the panel is showing")
