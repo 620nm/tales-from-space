@@ -37,4 +37,6 @@ return {
     -- between finger and thumb is a flat rectangle either way.
     inhand_sprite = { "held_id_l", "held_id_r" },
     files = { capacity = 737280, files = 112 },
+    -- What a machine with a drive calls this while a hand holds it.
+    hint_tags = { "floppy" },
 }

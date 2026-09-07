@@ -13,9 +13,19 @@ local content = {
     state_sprites = {
         closed = "laptop_closed", off = "laptop_off", on = "laptop_on",
     },
-    gestures = { "secondary", "alt", "ctrl_shift" },
+    gestures = {
+        "secondary", "alt_primary", "shift_ctrl_primary", "shift_ctrl_secondary",
+    },
+    -- What is in the two slots, so an eject row is offered only when
+    -- there is something to eject.
+    hint_flags = { "media", "card" },
     interaction_labels = {
-        primary = { label = "lunatic/tfs:ui.affordance.take" },
+        -- A hand holding something the laptop takes is there to put it
+        -- in, not to pick the laptop up.
+        primary = { label = "lunatic/tfs:ui.affordance.take", held = {
+            floppy = "lunatic/tfs:ui.affordance.insert_disk",
+            card = "lunatic/tfs:ui.affordance.insert_id",
+        } },
         -- One press, one step: the lid, then the power button, then the
         -- screen. Each state says which step this gesture is now.
         self = { label = "lunatic/tfs:ui.affordance.power_off", states = {
@@ -26,10 +36,17 @@ local content = {
             closed = "lunatic/tfs:ui.affordance.open_lid",
             off = "lunatic/tfs:ui.affordance.power_on",
         } },
-        alt = { label = "lunatic/tfs:ui.affordance.view_interface", states = {
+        alt_primary = { label = "lunatic/tfs:ui.affordance.view_interface", states = {
             closed = "lunatic/tfs:ui.affordance.lid_closed",
         } },
-        ctrl_shift = { label = "lunatic/tfs:ui.affordance.eject_cartridge" },
+        shift_ctrl_primary = {
+            label = "lunatic/tfs:ui.affordance.eject_cartridge",
+            only_when = { "media" },
+        },
+        shift_ctrl_secondary = {
+            label = "lunatic/tfs:ui.affordance.eject_id",
+            only_when = { "card" },
+        },
     },
     acts_on_items = true,
     drive = {},
@@ -100,11 +117,15 @@ if sim ~= nil then
 
     behavior:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self = ev.subject
-        if ev.gesture == "alt" then
+        if ev.gesture == "alt_primary" then
             if self.state ~= "closed" then view_interface(self, ev.actor) end
-        elseif ev.gesture == "ctrl_shift" then
+        elseif ev.gesture == "shift_ctrl_primary" then
             if self:item_slot("media") ~= nil then
                 sim.item_slot.eject({ subject = self, slot = "media" })
+            end
+        elseif ev.gesture == "shift_ctrl_secondary" then
+            if self:item_slot("card") ~= nil then
+                sim.item_slot.eject({ subject = self, slot = "card" })
             end
         elseif self.state == "closed" then
             raise(self)
@@ -129,6 +150,13 @@ if sim ~= nil then
     behavior:handle("item_slot.changed.done", { kind = "react" }, function(ev)
         if ev.outcome ~= "completed" then return end
         sound(if ev.slot == "card" then "terminal_insert_disc" else "card_slide", ev.at)
+        -- The eject rows are offered off what is in the slots, so the
+        -- flags follow every insertion and every ejection.
+        sim.hints.set_flag({
+            entity = ev.subject,
+            flag = if ev.slot == "card" then "card" else "media",
+            on = ev.subject:item_slot(ev.slot) ~= nil,
+        })
         if ev.subject.state ~= "closed" then
             refresh(ev.subject, ev.subject.vars.laptop_powered == true)
         end

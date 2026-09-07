@@ -42,7 +42,7 @@ end
 assert(not desktop_open(), "the first self-use only raises the lid")
 t.use_self(p)
 t.run_ticks(2)
-t.use_item(p, laptop, "alt")
+t.use_item(p, laptop, "alt_primary")
 t.run_ticks(2)
 assert(t.ui(p) and t.ui(p).data and t.ui(p).data.powered,
     "lid, power and screen are three separate steps on the held laptop")

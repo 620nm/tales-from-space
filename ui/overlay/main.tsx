@@ -8,17 +8,22 @@ import { Pane } from "@lunatic/ui";
 import type { GameplayView } from "../model";
 import { begin, event, icon, press, row, some, text } from "../view";
 import { hintText } from "../labels";
-import { gesture, modifierCount } from "../gesture";
+import { gesture, modifierCount, order } from "../gesture";
 import * as S from "../strings";
 
 /** What the cursor is over, with the verbs it answers to. */
 function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>): UiNode {
   // Primary is always offered: a thing with no declared verbs is still
   // something a hand can be put on.
-  const hints = hover.hints.some((hint) => hint.gesture === "primary")
-    ? hover.hints
+  const rows = hover.hints.some((hint) => hint.gesture === "primary")
+    ? [...hover.hints]
     : [{ gesture: "primary", label: S.tfs("ui.look.interact") }, ...hover.hints];
-  const rows = [...hints, { gesture: "examine", label: S.tfs("ui.look.examine") }];
+  // Examine is Shift+LMB and takes the place its own rank names, between
+  // the bare group and the shift group. The rows arrive ranked, so this
+  // is one insertion and never a sort.
+  const examine = { gesture: "shift_primary", label: S.tfs("ui.look.examine") };
+  const at = rows.findIndex((hint) => order(hint.gesture) > order(examine.gesture));
+  rows.splice(at < 0 ? rows.length : at, 0, examine);
   // One rail for the card, sized off its widest row: a two-key gesture
   // needs 84px for its pills and mouse, everything else fits 58. Every
   // row takes that one width, so widening never staggers the rail.
@@ -30,7 +35,15 @@ function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>): UiNode {
   return {
     ...Pane("hover", [
       row("hover/title", [
-        { id: "hover/preview", type: "image", appearance: hover.appearance, class: ["hover-preview"] },
+        {
+          id: "hover/preview",
+          type: "image",
+          // A slot's item comes with a sprite and no composed look.
+          ...(hover.appearance
+            ? { appearance: hover.appearance }
+            : { sprite: hover.sprite ?? "" }),
+          class: ["hover-preview"],
+        },
         text("hover/name", hover.name, ["hover-title"]),
       ], { cls: ["hover-head"] }),
       ...rows.map((hint, index) => row(`hover/hint/${index}`, [
