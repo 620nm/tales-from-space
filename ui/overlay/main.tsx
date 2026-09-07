@@ -8,7 +8,7 @@ import { Pane } from "@lunatic/ui";
 import type { GameplayView } from "../model";
 import { begin, event, icon, press, row, some, text } from "../view";
 import { hintText } from "../labels";
-import { gesture } from "../gesture";
+import { gesture, modifierCount } from "../gesture";
 import * as S from "../strings";
 
 /** What the cursor is over, with the verbs it answers to. */
@@ -18,6 +18,12 @@ function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>): UiNode {
   const hints = hover.hints.some((hint) => hint.gesture === "primary")
     ? hover.hints
     : [{ gesture: "primary", label: S.tfs("ui.look.interact") }, ...hover.hints];
+  const rows = [...hints, { gesture: "examine", label: S.tfs("ui.look.examine") }];
+  // One rail for the card, sized off its widest row: a two-key gesture
+  // needs 84px for its pills and mouse, everything else fits 58. Every
+  // row takes that one width, so widening never staggers the rail.
+  const wide = rows.some((hint) => modifierCount(hint.gesture) > 1);
+  const rail = { gridTemplateColumns: [wide ? 84 : 58, "1fr"] };
   // The header's image and every hint's key cell are both the first
   // child of a full-width row inside one padding, so their left edges
   // are the same edge: the card reads as one column, not two.
@@ -27,11 +33,10 @@ function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>): UiNode {
         { id: "hover/preview", type: "image", appearance: hover.appearance, class: ["hover-preview"] },
         text("hover/name", hover.name, ["hover-title"]),
       ], { cls: ["hover-head"] }),
-      ...[...hints, { gesture: "examine", label: S.tfs("ui.look.examine") }]
-        .map((hint, index) => row(`hover/hint/${index}`, [
-          gesture(`hover/key/${index}`, hint.gesture),
-          text(`hover/label/${index}`, hintText(hint.label), ["hover-description"]),
-        ], { cls: ["hover-row"] })),
+      ...rows.map((hint, index) => row(`hover/hint/${index}`, [
+        gesture(`hover/key/${index}`, hint.gesture, wide),
+        text(`hover/label/${index}`, hintText(hint.label), ["hover-description"]),
+      ], { cls: ["hover-row"], style: rail })),
     ], { cls: ["hover-card"] }),
     anchor: "@cursor",
   };
