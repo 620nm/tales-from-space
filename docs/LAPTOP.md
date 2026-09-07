@@ -32,9 +32,13 @@ controls. All current readers see power and slot changes together.
 ## Slots
 
 Apply an ID card or floppy disk to insert it; an occupied slot swaps its
-previous item into the inserting hand. The desktop ejects either slot.
-Ctrl+Shift-click ejects the floppy. Cards retain their identity and disks
-retain their files; the desktop exposes no file browser or applications.
+previous item into the inserting hand. A hand holding either one reads the
+laptop's own row as Insert disk or Insert ID card rather than Take, which
+is what that click does. The desktop ejects either slot. Shift+Ctrl-click
+ejects the floppy and Shift+Ctrl right-click the card; each row is offered
+only while that slot holds something, which the laptop keeps as its `media`
+and `card` hint flags. Cards retain their identity and disks retain their
+files; the desktop exposes no file browser or applications.
 
 An open, powered laptop used on an exact networked device plays one of the
 seven keyboard recordings, chosen uniformly. Closed or switched-off laptops
