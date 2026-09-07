@@ -29,8 +29,11 @@ export function desktopPane(
   const data = state.data as Json & DesktopData;
   const wallpaper = data.wallpaper === "wallpaper_moonlake"
     ? "wallpaper_moonlake" : "wallpaper_bliss";
-  const action = (name: string, label: string): UiNode => press(
-    `${id}/${name}`, tfs(label), documentAction(doc, name, {}),
+  // What a press SENDS and the node it IS are separate names: the head
+  // row already holds `${id}/close`, and two nodes under one id take the
+  // whole interface down, so the lid press is a node of its own.
+  const action = (name: string, label: string, node = name): UiNode => press(
+    `${id}/${node}`, tfs(label), documentAction(doc, name, {}),
     { disabled: !active || !state.actions?.some((offered) => offered.id === name) },
   );
   return Pane(id, [
@@ -46,7 +49,7 @@ export function desktopPane(
       action("power", data.powered ? "ui.desktop.power_off" : "ui.desktop.power_on"),
       ...(data.card ? [action("eject_id", "ui.desktop.eject_id")] : []),
       ...(data.cartridge ? [action("eject_cartridge", "ui.desktop.eject_cartridge")] : []),
-      action("close", "ui.desktop.close_lid"),
+      action("close", "ui.desktop.close_lid", "lid"),
     ], { cls: ["desktop-controls"] }),
   ], { cls: ["desktop"], style: { width: 662, maxWidth: "100%" } });
 }
