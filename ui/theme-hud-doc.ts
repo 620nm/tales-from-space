@@ -8,10 +8,13 @@ export const docRules = [
   // Host window parts: the title strip the pack may paint, and a body
   // whose padding belongs to the document drawn inside it.
   rule("window-title", {
-    minHeight: 34,
+    minHeight: 24,
     alignItems: "center",
+    paddingTop: 5,
+    paddingBottom: 5,
     paddingLeft: 9,
     paddingRight: 9,
+    textTransform: "uppercase",
     backgroundColor: titleFace,
     borderBottom: edge(titleLine),
     fontFamily: "mono",
