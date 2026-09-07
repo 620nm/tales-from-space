@@ -13,13 +13,13 @@
         // A bar of soap: the same drawing three ways, which is exactly
         // what makes it a proof — one still from a plain PNG, one still
         // from an Aseprite tag, and one animation from a tagged range.
-        ("soap_bar", Png("soap.png")),
-        ("soap_wet", Ase("soap.aseprite", "idle")),
-        ("soap_bubbles", AseAnim("soap.aseprite", "bubbles")),
+        ("soap_bar", Png("art/items/debug/soap.png")),
+        ("soap_wet", Ase("art/items/debug/soap.aseprite", "idle")),
+        ("soap_bubbles", AseAnim("art/items/debug/soap.aseprite", "bubbles")),
 
         // A transparent maintenance grid drawn over the ordinary plating
         // foundation and the cable/pipe runs beneath it.
-        ("open_floor", Ase("turf/open_floor.aseprite", "open_floor")),
+        ("open_floor", Ase("art/turf/open_floor.aseprite", "open_floor")),
 
         // The drifting mark the gas overlay wears when the air over a
         // tile is moving (protocol v46). It is an EFFECT, not a thing:
@@ -31,7 +31,7 @@
         // The FILE sorts under `fx/`; the NAME cannot, because a
         // logical name becomes a vending CSS class and the baker holds
         // every one of them to `[A-Za-z0-9_-]`.
-        ("wind_streak", Png("fx/wind_streak.png")),
+        ("wind_streak", Png("art/fx/wind_streak.png")),
 
         // The two line-dock machines, four pictures each: a dock is
         // painted by what is standing in it AND by whether it is
@@ -41,14 +41,14 @@
         // Stills, so a running machine is a lit lamp and a hot element
         // rather than a loop; the animated version is an Aseprite
         // follow-up and needs nothing here but a changed row.
-        ("evaporator", Png("bench/evaporator_off.png")),
-        ("evaporator_loaded", Png("bench/evaporator_off_loaded.png")),
-        ("evaporator_on", Png("bench/evaporator_on.png")),
-        ("evaporator_on_loaded", Png("bench/evaporator_on_loaded.png")),
-        ("steam_generator", Png("bench/steam_generator_off.png")),
-        ("steam_generator_loaded", Png("bench/steam_generator_off_loaded.png")),
-        ("steam_generator_on", Png("bench/steam_generator_on.png")),
-        ("steam_generator_on_loaded", Png("bench/steam_generator_on_loaded.png")),
+        ("evaporator", Png("art/bench/evaporator_off.png")),
+        ("evaporator_loaded", Png("art/bench/evaporator_off_loaded.png")),
+        ("evaporator_on", Png("art/bench/evaporator_on.png")),
+        ("evaporator_on_loaded", Png("art/bench/evaporator_on_loaded.png")),
+        ("steam_generator", Png("art/bench/steam_generator_off.png")),
+        ("steam_generator_loaded", Png("art/bench/steam_generator_off_loaded.png")),
+        ("steam_generator_on", Png("art/bench/steam_generator_on.png")),
+        ("steam_generator_on_loaded", Png("art/bench/steam_generator_on_loaded.png")),
 
         // The utility outlet port: a housing and three lamps, one per
         // cable layer under the deck. The FRAMES are the alternatives
@@ -56,7 +56,7 @@
         // one frame and each lamp is picked independently -- which is
         // the whole point, since a port on a live L2 and a dead L1 has
         // to show both at once
-        // (assets/originals/pipes_n_cables/utility_outlet_port.md,
+        // (assets/originals/art/subfloor/electrical/utility_outlet_port.md,
         // ../lunatic/docs/content-schema/fixture-states.md).
         //
         // Frames 1..5 are the engine's five words in its own order:
@@ -68,25 +68,25 @@
         // NO OFFSETS. It stands on the floor rather than hanging on a
         // wall, so it takes none of the 25px bracket overhang the APC
         // and the wall frame carry (`assets/sprites.ron`).
-        ("utility_outlet_port", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "housing", 1)),
-        ("uop_wire_1_disconnected", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_1", 1)),
-        ("uop_wire_1_inactive", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_1", 2)),
-        ("uop_wire_1_starved", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_1", 3)),
-        ("uop_wire_1_emergency", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_1", 4)),
-        ("uop_wire_1_nominal", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_1", 5)),
-        ("uop_wire_2_disconnected", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_2", 1)),
-        ("uop_wire_2_inactive", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_2", 2)),
-        ("uop_wire_2_starved", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_2", 3)),
-        ("uop_wire_2_emergency", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_2", 4)),
-        ("uop_wire_2_nominal", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_2", 5)),
-        ("uop_wire_3_disconnected", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_3", 1)),
-        ("uop_wire_3_inactive", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_3", 2)),
-        ("uop_wire_3_starved", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_3", 3)),
-        ("uop_wire_3_emergency", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_3", 4)),
-        ("uop_wire_3_nominal", AseLayer("pipes_n_cables/utility_outlet_port.aseprite", "wire_3", 5)),
+        ("utility_outlet_port", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "housing", 1)),
+        ("uop_wire_1_disconnected", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_1", 1)),
+        ("uop_wire_1_inactive", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_1", 2)),
+        ("uop_wire_1_starved", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_1", 3)),
+        ("uop_wire_1_emergency", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_1", 4)),
+        ("uop_wire_1_nominal", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_1", 5)),
+        ("uop_wire_2_disconnected", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_2", 1)),
+        ("uop_wire_2_inactive", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_2", 2)),
+        ("uop_wire_2_starved", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_2", 3)),
+        ("uop_wire_2_emergency", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_2", 4)),
+        ("uop_wire_2_nominal", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_2", 5)),
+        ("uop_wire_3_disconnected", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_3", 1)),
+        ("uop_wire_3_inactive", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_3", 2)),
+        ("uop_wire_3_starved", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_3", 3)),
+        ("uop_wire_3_emergency", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_3", 4)),
+        ("uop_wire_3_nominal", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_3", 5)),
     ],
     sheets: [
-        ("hazard_placard", "signs/nfpa-704.ase"),
+        ("hazard_placard", "art/signs/nfpa-704.ase"),
     ],
     groups: [
         // The hazard placard, drawn as one document whose LAYERS are the

@@ -14,7 +14,7 @@
         ("belt_overlays", "obj/clothing/belt_overlays.dmi"),
         ("belts", "obj/clothing/belts.dmi"),
         ("device_tool", "obj/devices/tool.dmi"),
-        ("cable", "pipes_n_cables/layer_cable.aseprite"),
+        ("cable", "art/subfloor/electrical/layer_cable.aseprite"),
     ],
     groups: [
         // tg's /obj/item/storage/belt/utility: one icon_state,

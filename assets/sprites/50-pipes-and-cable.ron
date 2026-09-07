@@ -1,5 +1,5 @@
 // Subfloor infrastructure. Pipe, cable and stub art lives as tagged
-// Aseprite documents under originals/pipes_n_cables/, converted from
+// Aseprite documents under originals/art/subfloor/, converted from
 // tg's matching .dmi sheets by `cargo run -p xtask -- convert-dmi`.
 // State names stay verbatim: the client still builds pipe_l3_5 etc.
 //
@@ -10,10 +10,10 @@
 (
     // Sheet aliases are local to this family; @names below resolve here.
     sheets: [
-        ("pipes_bitmask", "pipes_n_cables/pipes_bitmask.aseprite"),
-        ("cable", "pipes_n_cables/layer_cable.aseprite"),
-        ("manifold_underlays", "pipes_n_cables/layer_manifold_underlays.aseprite"),
-        ("pipe_underlays", "pipes_n_cables/pipe_underlays.aseprite"),
+        ("pipes_bitmask", "art/subfloor/plumbing/pipes_bitmask.aseprite"),
+        ("cable", "art/subfloor/electrical/layer_cable.aseprite"),
+        ("manifold_underlays", "art/subfloor/plumbing/layer_manifold_underlays.aseprite"),
+        ("pipe_underlays", "art/subfloor/plumbing/pipe_underlays.aseprite"),
     ],
     sprites: [
         // Atmospheric pipe, tg's !pipes_bitmask.dmi state names kept
