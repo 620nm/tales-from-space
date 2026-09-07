@@ -1,5 +1,6 @@
 // Browser checks for the local study; no game server or production UI claims.
 import { checkSurfaces } from "./surface-checks.mjs";
+import { checkCompositeHover, checkGestureBadges } from "./hover-checks.mjs";
 
 export async function checkConcept(call, role, screenshot) {
   const ALT = 1, SHIFT = 8;
@@ -77,10 +78,12 @@ export async function checkConcept(call, role, screenshot) {
     assert(candidates.some(item => item.raster.alpha.some(alpha => alpha === 0)), "Fixture must exercise transparent pixels");
     return points;
   });
+  await checkCompositeHover(call, evaluate, screenshot, points);
   const laptop = points.find(point => /^laptop$/i.test(point.title));
   if (!laptop) throw new Error("Missing laptop hit sample");
   await move(laptop);
   await checkHover(laptop);
+  await run(checkGestureBadges);
   await screenshot("hover-laptop");
   await run(() => {
     ConceptSurfaces.close("device");
