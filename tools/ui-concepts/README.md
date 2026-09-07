@@ -57,7 +57,9 @@ drag/resize in Chromium, and captures the hover examples as well as each actor.
   palette holds the remainder. Toggle, disabled and cooldown states are
   explicit, and changing state does not reorder the row. Equipment actions
   remain attributable to their source rather than becoming anonymous icons.
-- The cursor hint is translucent, left-aligned and click-through. It sits
+- The cursor hint has a translucent dark background and thin border, with
+  compact modifier keycaps and left/right mouse-button glyphs. Accessible
+  names spell out each gesture. It stays left-aligned and click-through, sits
   right of the cursor and flips at the viewport edge. Its miniature uses the
   target's current drawn appearance; the rows describe gestures, not clickable
   menu entries. Opening the laptop's lid changes both the picture and verb.
@@ -65,6 +67,12 @@ drag/resize in Chromium, and captures the hover examples as well as each actor.
   renderer and picker use one ordered primitive list and the same atlas alpha
   pixels. Only the frontmost nontransparent pixel wins; a fully occluded
   lower object is not secretly selectable through an upper object.
+- Hover selects a sprite pixel but highlights its whole owning object: all
+  visible layers brighten together, without outlining clothing or body parts
+  separately. Drawing order and original alpha keep other objects occluding
+  it. The live entity renderer already groups hover by owner
+  (`lunatic/crates/lunatic-client/src/app/frame.rs:149`, `:201`); this corrects
+  the study's per-primitive feedback, not a production renderer change.
 
 Timing, pin limits and mock readouts are illustration choices, not copied tg
 tuning or proposed gameplay values. Cyborg and AI scene markers are schematic:

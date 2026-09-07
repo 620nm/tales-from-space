@@ -1,4 +1,4 @@
-// Transparent pointer feedback in the trusted mock; no guest DOM or geometry API.
+// Pointer feedback in the trusted mock; no guest DOM or geometry API.
 (() => {
   let canvas, stage, hint, pointer, initialized = false;
   const scene = window.ConceptScene;
@@ -18,28 +18,36 @@
     hint.replaceChildren(); hint.dataset.target = hit.owner; hint.dataset.primitive = hit.id;
     const heading = text('div', '', 'hover-heading');
     heading.append(scene.icon(canvas, hit, 32), text('strong', hit.title)); hint.append(heading);
-    const row = (gesture, action, unavailable = false) => {
+    const row = (modifier, button, action, unavailable = false) => {
       const line = text('div', '', `hover-gesture${unavailable ? ' unavailable' : ''}`);
-      line.append(text('span', gesture), text('span', action)); hint.append(line);
+      const gesture = text('span', '', 'hover-keys');
+      gesture.setAttribute('role', 'img');
+      gesture.setAttribute('aria-label', `${modifier ? `${modifier} + ` : ''}${button} mouse button`);
+      if (modifier) {
+        const key = text('kbd', modifier); key.setAttribute('aria-hidden', 'true'); gesture.append(key);
+      }
+      const mouse = text('span', '', `hover-mouse ${button}`);
+      mouse.setAttribute('aria-hidden', 'true'); gesture.append(mouse);
+      line.append(gesture, text('span', action)); hint.append(line);
     };
     const crew = scene.getRole() === 'crew';
     if (crew && ['portable', 'laptop'].includes(hit.kind)) {
       const available = window.ConceptHands?.canTake?.() === true;
-      row('Click', available ? 'Take' : 'Take · free a hand', !available);
+      row('', 'left', available ? 'Take' : 'Take · free a hand', !available);
     }
-    if (hit.kind === 'laptop') row('Right-click', hit.item.closed ? 'Open lid' : 'Close lid');
-    row('Shift + click', 'Inspect');
-    if (hit.kind === 'laptop') row('Alt + click', 'View interface');
+    if (hit.kind === 'laptop') row('', 'right', hit.item.closed ? 'Open lid' : 'Close lid');
+    row('Shift', 'left', 'Inspect');
+    if (hit.kind === 'laptop') row('Alt', 'left', 'View interface');
     hint.hidden = false;
     const rect = stage.getBoundingClientRect();
-    hint.style.maxWidth = `${Math.max(0, Math.min(290, rect.width - 24))}px`;
+    hint.style.maxWidth = `${Math.max(0, Math.min(260, rect.width - 24))}px`;
     const width = hint.offsetWidth, height = hint.offsetHeight;
     let left = pointer.x + 20;
     if (left + width > rect.right - 10) left = pointer.x - width - 20;
     left = Math.max(rect.left + 8, Math.min(left, rect.right - width - 8));
     const top = Math.max(rect.top + 8, Math.min(pointer.y - 8, rect.bottom - height - 8));
     hint.style.left = `${left}px`; hint.style.top = `${top}px`;
-    scene.highlight(canvas, hit.id);
+    scene.highlight(canvas, hit.owner);
   }
   function init() {
     if (initialized) return;

@@ -44,26 +44,27 @@
       backgroundPosition: `${-source.x * scale}px ${-source.y * scale}px`, backgroundRepeat: 'no-repeat'});
     return node;
   }
-  function outline(source) {
-    if (source.outline) return source.outline;
+  function highlighted(source) {
+    if (source.highlighted) return source.highlighted;
     const canvas = document.createElement('canvas'); canvas.width = source.width; canvas.height = source.height;
-    const ctx = canvas.getContext('2d'), pixels = ctx.createImageData(canvas.width, canvas.height);
-    for (let y = 0; y < source.height; y++) for (let x = 0; x < source.width; x++) {
-      const index = y * source.width + x;
+    const ctx = canvas.getContext('2d'); ctx.drawImage(source.image, 0, 0);
+    const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    for (let index = 0; index < source.alpha.length; index++) {
       if (!source.alpha[index]) continue;
-      if (x && y && x < source.width - 1 && y < source.height - 1
-        && source.alpha[index - 1] && source.alpha[index + 1] && source.alpha[index - source.width] && source.alpha[index + source.width]) continue;
-      pixels.data.set([218, 242, 191, 225], index * 4);
+      for (let channel = 0; channel < 3; channel++) {
+        const offset = index * 4 + channel;
+        pixels.data[offset] += (255 - pixels.data[offset]) * .25;
+      }
     }
-    ctx.putImageData(pixels, 0, 0); source.outline = canvas; return canvas;
+    ctx.putImageData(pixels, 0, 0); source.highlighted = canvas; return canvas;
   }
   function render(canvas, view) {
     const ctx = canvas.getContext('2d'); ctx.imageSmoothingEnabled = false;
     ctx.fillStyle = '#080c11'; ctx.fillRect(0, 0, canvas.width, canvas.height);
     for (const primitive of view.primitives) {
       const {x, y, width, height, raster: source} = primitive;
-      ctx.drawImage(source.image, x, y, width, height);
-      if (primitive.id === view.hover) ctx.drawImage(outline(source), x, y, width, height);
+      const image = primitive.owner === view.hover ? highlighted(source) : source.image;
+      ctx.drawImage(image, x, y, width, height);
     }
     ctx.fillStyle = '#65747c'; ctx.font = 'bold 15px monospace'; ctx.textAlign = 'center';
     ctx.fillText('ENGINEERING', view.ox + 10.5 * view.tile, view.oy + 4.3 * view.tile);
@@ -131,9 +132,9 @@
         part.width / hit.width * atlas.tile, part.height / hit.height * atlas.tile);
     return node;
   }
-  function highlight(canvas, id) {
-    const view = views.get(canvas); if (!view || view.hover === id) return;
-    view.hover = id; render(canvas, view);
+  function highlight(canvas, owner) {
+    const view = views.get(canvas); if (!view || view.hover === owner) return;
+    view.hover = owner; render(canvas, view);
   }
   function act(canvas, hit, action) {
     const item = hit?.item; if (!item || item.taken) return false;
