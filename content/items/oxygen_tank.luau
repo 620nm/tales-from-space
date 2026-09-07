@@ -18,6 +18,9 @@
 -- hands for the job.
 
 local content = {
+    interaction_labels = {
+        self = { label = "lunatic/tfs:ui.affordance.toggle_internals" },
+    },
     id = "oxygen_tank",
     name = "oxygen tank",
     sprite = "oxygen_tank",
@@ -86,12 +89,11 @@ if sim ~= nil then
         local self, user, x, y = ev.owner, ev.actor, ev.at.x, ev.at.y
         sim.sound.play({ asset = "lunatic/tfs:sound/spray", at = ev.at })
     end)
-    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
-        local self, user = ev.subject, ev.actor
-        sim.toggle_internals(user, self)
-        ui.open({ viewer = user, owner = self })
-        return true
-    end)
+    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, item_actions.internals)
+    item_actions.attach(script_definition, {
+        id = content.id, sprite = content.sprite, state = "supply",
+        label = "lunatic/tfs:ui.actions.internals",
+    }, item_actions.internals)
 end
 
 return content

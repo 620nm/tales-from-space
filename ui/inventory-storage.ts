@@ -1,119 +1,86 @@
-// What an opened container holds. Which one is open is this package's
-// own state — no server round trip decides whether a bag is showing —
-// and every gesture out of it is a native inventory claim. It is a HUD
-// region of its own, above the hands rather than at the item, as tg
-// places storage (HUD_GROUP_STORAGE, code/__DEFINES/hud.dm:37;
-// screen_start_x/y, code/datums/storage/storage.dm:117-120).
-import type { UiNode } from "@lunatic/ui";
-import { Slot } from "@lunatic/ui";
+// Disclosed container paths open next to their source item. Paths are bounded
+// by the native inventory projection and every move is revalidated there.
+import type { Json, UiNode } from "@lunatic/ui";
+import { hudSlot } from "./slots";
+import { Pane } from "@lunatic/ui";
 import type { GameplayView, InventoryState, ItemView } from "./model";
-import { bind, column, inspect, press, row, some, text, type Box } from "./view";
+import { bind, column, inspect, press, row, some, type Box } from "./view";
 import * as S from "./strings";
 
-let opened: { slot?: string; hand?: number } | undefined;
+interface Container { slot?: string; hand?: number; path: number[] }
+let opened: Container[] = [];
+const root = (which: Container): string => which.slot === undefined ? `hand/${which.hand ?? 0}` : `equipment/${which.slot}`;
+const key = (which: Container): string => `${root(which)}/${which.path.join("-")}`;
+const source = (which: Container): string => which.path.length
+  ? `stored/${key(which)}/take`
+  : which.slot === undefined ? `hand/${which.hand ?? 0}/pick` : `equipment/${which.slot}/pick`;
+const site = (which: Container): Json => which.path.length
+  ? which.slot === undefined ? { NestedHeld: { hand: which.hand ?? 0, path: which.path } } : { NestedEquipment: { slot: which.slot, path: which.path } }
+  : which.slot === undefined ? { Held: { hand: which.hand ?? 0 } } : { Equipment: { slot: which.slot } };
 
-export const openStorage = (which: { slot?: string; hand?: number }): void => {
-  opened = which;
-};
-export const closeStorage = (): void => {
-  opened = undefined;
-};
+export function openStorage(which: { slot?: string; hand?: number; path?: number[] }): void {
+  const container = { ...which, path: which.path ?? [] };
+  if (container.path.length >= 4 || opened.some((held) => key(held) === key(container))) return;
+  if (opened.length >= 8) opened = opened.slice(1);
+  opened.push(container);
+}
+export const closeStorage = (): void => { opened = []; };
 
-function storedSlot(
-  index: number,
-  item: ItemView,
-  slot: string | undefined,
-  hand: number,
-): UiNode {
-  const id = `stored/${index}/take`;
-  return Slot(id, {
-    sprite: item.sprite,
-    label: S.short(item.name),
+function close(which: Container): void {
+  opened = opened.filter((held) => root(held) !== root(which)
+    || !which.path.every((part, index) => held.path[index] === part));
+}
+
+function contents(view: GameplayView, current: InventoryState, which: Container): { items: ItemView[]; label: string } | undefined {
+  const roster = view.state.equipment?.slots ?? [];
+  const slot = roster.findIndex((candidate) => candidate.id === which.slot);
+  const equipment = current.equipment?.find((worn) => worn.slot === slot);
+  let item = which.slot === undefined ? current.hands?.[which.hand ?? 0] : equipment?.item;
+  let items = which.slot === undefined ? current.held?.[which.hand ?? 0] : equipment?.contents;
+  for (const index of which.path) { item = items?.[index]; items = item?.contents; }
+  if (!items) return undefined;
+  return { items, label: item?.name ?? (which.slot === undefined ? S.hand(which.hand ?? 0) : roster[slot]?.label ?? S.STORAGE) };
+}
+
+function storedSlot(index: number, item: ItemView, container: Container, current: InventoryState): UiNode {
+  const which = { ...container, path: [...container.path, index] };
+  const id = source(which);
+  return hudSlot(id, {
+    sprite: item.sprite, label: S.short(item.name),
     ...(item.fill ? { fill: item.fill } : {}),
-    item:
-      slot === undefined
-        ? `stored-held/${hand}/${index}`
-        : `stored-equipment/${slot}/${index}`,
+    item: which.slot === undefined
+      ? `nested-held/${which.hand ?? 0}/${which.path.join("/")}`
+      : `nested-equipment/${which.slot}/${which.path.join("/")}`,
     event: bind(id, (e) => {
-      if (e.type === "context")
-        return inspect(
-          slot === undefined
-            ? { StoredHeld: { hand, index } }
-            : { StoredEquipment: { slot, index } },
-        );
-      return slot === undefined
-        ? { kind: "take_held", hand, index }
-        : { kind: "take", slot, index };
+      if (e.type === "context") return inspect(site(which));
+      if (item.contents) { openStorage(which); return undefined; }
+      return { kind: "move_item", from: site(which), to: { Held: { hand: current.active } } };
     }),
   });
 }
 
-/** The open container where a body has one open, placed by the caller. */
-export function storageRegion(
-  view: GameplayView,
-  place: Box = {},
-): UiNode | null {
+export function storageRegion(view: GameplayView, place: Box = {}): UiNode | null {
   const current = view.state.inventory;
-  if (!view.body || !current) return null;
-  return storagePanel(view, current, place);
-}
-
-/** The open container, or nothing where what was open has gone. */
-function storagePanel(
-  view: GameplayView,
-  current: InventoryState,
-  place: Box,
-): UiNode | null {
-  if (!opened) return null;
-  const slot = opened.slot;
-  const hand = opened.hand ?? 0;
-  const roster = view.state.equipment?.slots ?? [];
-  const slotIndex = roster.findIndex((rosterSlot) => rosterSlot.id === slot);
-  const items =
-    slot === undefined
-      ? current.held?.[hand]
-      : current.equipment?.find((worn) => worn.slot === slotIndex)?.contents;
-  if (!items) {
-    opened = undefined;
-    return null;
-  }
-  const label =
-    slot === undefined ? S.hand(hand) : (roster[slotIndex]?.label ?? S.STORAGE);
-  return column(
-    "storage",
-    [
-      row(
-        "storage-controls",
-        some(
-          text("storage-title", S.storageTitle(label), ["caption", "grow"]),
-          press("storage-store", S.STORE_HELD, {
-            kind: "store",
-            dest: slot === undefined ? "OtherHand" : { Equipment: slot },
-          }),
-          slot === undefined
-            ? null
-            : press("storage-off", S.TAKE_OFF, { kind: "unequip", slot }),
-          press(
-            "storage-close",
-            S.CLOSE_MARK,
-            () => {
-              opened = undefined;
-              return undefined;
-            },
-            { variant: "ghost" },
-          ),
-        ),
-        { style: { alignItems: "center", gap: 4 } },
-      ),
-      row(
-        "storage-items",
-        items.map((item, index) => storedSlot(index, item, slot, hand)),
-        { style: { gap: 4, flexWrap: "wrap" } },
-      ),
-    ],
-    {
-      cls: ["hudgroup", ...(place.cls ?? [])],
-      ...(place.style ? { style: place.style } : {}),
-    },
-  );
+  if (!view.body || !current) { closeStorage(); return null; }
+  opened = opened.filter((which) => contents(view, current, which));
+  const panels = opened.map((which) => {
+    const disclosed = contents(view, current, which)!;
+    const id = `storage/${key(which)}`;
+    const destination = site(which);
+    return {
+      ...Pane(id, [
+        row(`${id}/controls`, some(
+          press(`${id}/store`, S.STORE_HELD, { kind: "move_item", from: { Held: { hand: current.active } }, to: destination }),
+          which.path.length
+            ? press(`${id}/take`, S.tfs("ui.storage.take_container"), { kind: "move_item", from: destination, to: { Held: { hand: current.active } } })
+            : which.slot === undefined ? null : press(`${id}/off`, S.TAKE_OFF, { kind: "unequip", slot: which.slot }),
+          press(`${id}/close`, S.CLOSE_MARK, () => { close(which); return undefined; }, { variant: "ghost" }),
+        ), { style: { alignItems: "center", gap: 4 } }),
+        row(`${id}/items`, disclosed.items.map((item, index) => storedSlot(index, item, which, current)), { style: { gap: 4, flexWrap: "wrap" } }),
+      ], { cls: place.cls ?? [], ...(place.style ? { style: place.style } : {}) }),
+      window: { key: id, title: S.storageTitle(disclosed.label), width: 350,
+        height: Math.min(420, 100 + Math.ceil(disclosed.items.length / 7) * 44), source: source(which) },
+    };
+  });
+  return panels.length ? column("storage-windows", panels, { cls: ["hudgroup"] }) : null;
 }
