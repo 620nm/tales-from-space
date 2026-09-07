@@ -12,6 +12,19 @@ local content = {
         closed = "laptop_closed", off = "laptop_off", on = "laptop_on",
     },
     gestures = { "secondary", "alt", "ctrl_shift" },
+    interaction_labels = {
+        primary = { label = "lunatic/tfs:ui.affordance.take" },
+        self = { label = "lunatic/tfs:ui.affordance.view_interface", states = {
+            closed = "lunatic/tfs:ui.affordance.open_lid",
+        } },
+        secondary = { label = "lunatic/tfs:ui.affordance.view_interface", states = {
+            closed = "lunatic/tfs:ui.affordance.open_lid",
+        } },
+        alt = { label = "lunatic/tfs:ui.affordance.close_lid", states = {
+            closed = "lunatic/tfs:ui.affordance.lid_closed",
+        } },
+        ctrl_shift = { label = "lunatic/tfs:ui.affordance.eject_cartridge" },
+    },
     acts_on_items = true,
     drive = {},
     card_slot = { equipment = "id" },
