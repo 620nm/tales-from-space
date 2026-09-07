@@ -19,7 +19,7 @@ This standalone repository is loaded by the lunatic engine through
 | `tests/`         | Luau specs (`*_test.luau`) run by the engine's spec runner, with focused RON fixtures embedded inline where needed. |
 | `locale/`        | One flat catalog per language, `<tag>.json`, holding every word this pack writes: its interface, its key bindings, a rendering for every settings-module label id, its own message keys, and its wording for the engine keys it overrides (`docs/WORDS.md`). |
 | `docs/`          | This pack's own contracts: `WORDS.md`, the catalog grammar. Every other `docs/…` path cited here is the ENGINE's, in the lunatic checkout. |
-| `tools/`         | `keyed-messages.mjs` enforces catalog-backed messages; [`ui-concepts/`](tools/ui-concepts/README.md) exports a standalone gameplay layout comparison. |
+| `tools/`         | `keyed-messages.mjs` enforces catalog-backed messages; [`ui-concepts/`](tools/ui-concepts/README.md) exports a standalone floating HUD study. |
 
 ## Running
 
