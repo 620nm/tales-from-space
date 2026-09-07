@@ -34,18 +34,10 @@ export const docRules = [
     borderRadius: 5,
     overflow: "hidden",
   }),
-  // The host owns the title bar and draws no close control, so the pack's
-  // sits as a bare row under it rather than as a second bar.
-  rule("doc-head", {
-    height: 28,
-    alignItems: "center",
-    justifyContent: "end",
-    paddingLeft: 9,
-    paddingRight: 6,
-    backgroundColor: "transparent",
-    borderBottom: none,
-  }),
-  rule("doc-close", {
+  // The host draws the close in the title bar for any window that names
+  // the event one posts, so the pack paints that part rather than
+  // keeping a strip of its own beneath the bar.
+  rule("window-close", {
     width: 26,
     minWidth: 26,
     height: 25,
@@ -53,12 +45,15 @@ export const docRules = [
     fontFamily: "mono",
     fontSize: 17,
     color: "#d2e0d5",
-    backgroundColor: "#15262b",
-    border: edge("#668078"),
+    backgroundColor: "transparent",
+    border: none,
     borderRadius: 3,
   }),
-  rule("doc-close", { backgroundColor: "#385458" }, "hover"),
-  rule("doc-body", { padding: 16, paddingTop: 0, gap: 6 }),
+  rule("window-close", { backgroundColor: "#385458" }, "hover"),
+  // The tail under a fresh window, pointing back at the control it came
+  // out of: the same amber every other "this is yours" mark wears.
+  rule("window-caret", { backgroundColor: "#b39c67" }),
+  rule("doc-body", { padding: 16, gap: 6 }),
 
   // A module readout: eyebrow, heading, stat blocks, then its rows.
   rule("mod-eyebrow", {

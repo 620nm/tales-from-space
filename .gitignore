@@ -1,4 +1,5 @@
 /.worktrees/
 
-# Restricted frontend build product
+# Restricted frontend build products
 ui/bundle.json
+ui/overlay.json

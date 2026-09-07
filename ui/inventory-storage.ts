@@ -79,6 +79,9 @@ export function storageRegion(view: GameplayView, place: Box = {}): UiNode | nul
     const disclosed = contents(view, current, which)!;
     const id = `storage/${key(which)}`;
     const destination = site(which);
+    // The tray closes from the host's title bar; only the meaning is
+    // registered here, under the id the descriptor names.
+    bind(`${id}/close`, () => { close(which); return undefined; });
     return {
       ...Pane(id, [
         row(`${id}/controls`, some(
@@ -89,12 +92,12 @@ export function storageRegion(view: GameplayView, place: Box = {}): UiNode | nul
           disclosed.cap === undefined
             ? null
             : text(`${id}/fill`, S.storageFill(disclosed.items.length, disclosed.cap), ["storage-count"]),
-          press(`${id}/close`, S.CLOSE_MARK, () => { close(which); return undefined; }, { variant: "ghost" }),
         ), { cls: ["storage-head"] }),
         row(`${id}/items`, disclosed.items.map((item, index) => storedSlot(index, item, which, current)), { cls: ["storage-grid"] }),
       ], { cls: ["storage-window", ...(place.cls ?? [])], ...(place.style ? { style: place.style } : {}) }),
       window: { key: id, title: S.storageTitle(disclosed.label), width: 320,
-        height: Math.min(420, 66 + Math.max(1, Math.ceil(disclosed.items.length / 7)) * 48), source: source(which) },
+        height: Math.min(420, 66 + Math.max(1, Math.ceil(disclosed.items.length / 7)) * 48),
+        source: source(which), close: `${id}/close` },
     };
   });
   return panels.length ? column("storage-windows", panels, { cls: ["hudgroup"] }) : null;

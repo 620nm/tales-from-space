@@ -23,21 +23,19 @@ export function desktopPane(
   id: string,
   doc: DocumentIdentity,
   state: Partial<ScriptState>,
-  head: UiNode,
   active: boolean,
 ): UiNode {
   const data = state.data as Json & DesktopData;
   const wallpaper = data.wallpaper === "wallpaper_moonlake"
     ? "wallpaper_moonlake" : "wallpaper_bliss";
-  // What a press SENDS and the node it IS are separate names: the head
-  // row already holds `${id}/close`, and two nodes under one id take the
-  // whole interface down, so the lid press is a node of its own.
+  // What a press SENDS and the node it IS are separate names: the
+  // window's own close is registered under `${id}/close`, and two things
+  // under one id take the whole interface down, so the lid is `/lid`.
   const action = (name: string, label: string, node = name): UiNode => press(
     `${id}/${node}`, tfs(label), documentAction(doc, name, {}),
     { disabled: !active || !state.actions?.some((offered) => offered.id === name) },
   );
   return Pane(id, [
-    head,
     panel(`${id}/screen`, [
       {
         id: `${id}/wallpaper`, type: "image", asset: wallpaper,
