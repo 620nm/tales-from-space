@@ -9,6 +9,7 @@ import type {
   ModuleState,
   OpenFile,
   PanelDocument,
+  SocketRowState,
 } from "./document-model";
 import { documentAction } from "./document-action";
 import { labelId, labelText } from "./labels";
@@ -30,7 +31,7 @@ let nextEditor = 0;
 const SOURCE_EXTS = new Set(["disl"]);
 
 /** The engine's editing surface, or undefined the moment a field is off. */
-function editorOf(raw: OpenFile["editor"]): EditorState | undefined {
+function editorOf(raw: ModuleState["editor"]): EditorState | undefined {
   if (!raw || typeof raw !== "object") return undefined;
   const e = raw as Partial<EditorState>;
   if (
@@ -101,6 +102,7 @@ export function filePanes(
         { label: S.MEDIA, value: labelText(state.media_slot), tone: "idle" },
       ]),
     );
+  if (state.sockets?.length) out.push(socketRows(id, doc, state, active));
   out.push(
     panel(
       `${id}/panes`,
@@ -160,14 +162,24 @@ function listPane(
       { cls: ["filerow"] },
     );
   });
-  const create = (state.create ?? []).map((ext, index) =>
-    press(
-      `${id}/create/${index}`,
-      S.newFile(ext),
-      documentAction(doc, "toggle", { field: "file_create", option: ext }),
-      { disabled: !active },
-    ),
-  );
+  // A create names the side it lands on (`<side>:<ext>`), never
+  // inferred (docs/files/scriptable-machine.md §2); the button says
+  // which store it is, in the store's own words.
+  const create = Object.entries(state.create ?? {}).flatMap(([side, exts]) => {
+    const store = (state.stores ?? []).find((row) => row.key === side);
+    const where = store ? labelText(store.label) : side;
+    return exts.map((ext, index) =>
+      press(
+        `${id}/create/${side}/${index}`,
+        S.newFileOn(ext, where),
+        documentAction(doc, "toggle", {
+          field: "file_create",
+          option: `${side}:${ext}`,
+        }),
+        { disabled: !active },
+      ),
+    );
+  });
   return column(
     `${id}/list`,
     [
@@ -178,6 +190,72 @@ function listPane(
     ],
     { cls: ["card"] },
   );
+}
+
+/** The socket rows: what each declared socket runs, its counters, and
+ *  the load/unload presses (engine settings/sockets.rs sends the rows;
+ *  this draws them). A load candidate is a source file on the HOST
+ *  store — media never runs (docs/files/scriptable-machine.md §1). */
+function socketRows(
+  id: string,
+  doc: DocumentIdentity,
+  state: Partial<ModuleState>,
+  active: boolean,
+): UiNode {
+  const loadable = (state.files ?? []).filter(
+    (file) => file.store === "host" && SOURCE_EXTS.has(file.ext),
+  );
+  const rows = (state.sockets ?? []).map((socket: SocketRowState, index) => {
+    const key = `${id}/socket/${index}`;
+    return column(
+      key,
+      some(
+        row(
+          `${key}/head`,
+          some(
+            text(`${key}/id`, socket.id, ["grow", "list-label"]),
+            text(`${key}/state`, labelText(socket.state), ["hint"]),
+            socket.file ? text(`${key}/file`, socket.file, ["fname"]) : null,
+            text(
+              `${key}/stats`,
+              S.socketStats(socket.runs ?? 0, socket.faults ?? 0),
+              ["fsize"],
+            ),
+            socket.uid !== null && socket.uid !== undefined
+              ? press(
+                  `${key}/unload`,
+                  S.UNLOAD,
+                  documentAction(doc, "toggle", {
+                    field: "socket_unload",
+                    option: socket.id,
+                  }),
+                  { variant: "ghost", disabled: !active },
+                )
+              : null,
+          ),
+          { cls: ["list-row"] },
+        ),
+        loadable.length
+          ? row(
+              `${key}/load`,
+              loadable.map((file, i) =>
+                press(
+                  `${key}/load/${i}`,
+                  S.socketLoad(S.fileName(file.name, file.ext)),
+                  documentAction(doc, "toggle", {
+                    field: "socket_load",
+                    option: `${socket.id}:${file.uid}`,
+                  }),
+                  { variant: "ghost", disabled: !active },
+                ),
+              ),
+              { style: { gap: 4, flexWrap: "wrap" } },
+            )
+          : null,
+      ),
+    );
+  });
+  return column(`${id}/sockets`, rows, { cls: ["card"] });
 }
 
 /** The whole-body editor for whichever entry is open. */
@@ -196,7 +274,7 @@ function editorPane(
   const current = editorBuffer(`${id}/${option}`, open);
   const bodyId = `${id}/editor/body/${current.key}`;
   const conflict = current.revision !== open.revision;
-  const editor = editorOf(open.editor);
+  const editor = editorOf(state.editor);
   return column(
     `${id}/editor`,
     some(
