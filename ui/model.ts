@@ -77,6 +77,9 @@ export interface GameplayView {
     inspections?: {
       sequence: number;
       sprite?: string | null;
+      /** The composed look the client minted for this receipt, when it
+       *  had one: the whole entity, not its base sprite. */
+      appearance?: string | null;
       title: string;
       lines: { spans: { text: string; color?: string | null }[] }[];
     }[];
