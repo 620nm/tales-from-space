@@ -18,7 +18,7 @@ import { moduleBody } from "./documents-modules";
 import { shelfRows } from "./documents-shelf";
 import { desktopPane, isDesktop } from "./documents-desktop";
 import { filePanes, retainOpenFileBuffers } from "./files";
-import { entry, icon, press, row, some, text } from "./view";
+import { column, entry, icon, press, row, some, text } from "./view";
 import * as S from "./strings";
 import { actionSurface } from "./actions";
 
@@ -40,11 +40,13 @@ export function documents(view: GameplayView): UiNode[] {
     // interface down.
     const state: Partial<DocumentState> = doc.state ?? {};
     const active = state.status === undefined || state.status >= 2;
-    const head = row(`${id}/controls`, [press(`${id}/close`, S.CLOSE_MARK, {
+    // The host's chrome carries no close, so the pack keeps one; the
+    // strip it sits in is painted to read as the rest of the title bar.
+    const head = row(`${id}/head`, [press(`${id}/close`, S.CLOSE_MARK, {
         kind: "close",
         document: doc.id,
         generation: doc.generation,
-      }, { variant: "ghost" })], { style: { justifyContent: "end" } });
+      }, { variant: "ghost", cls: ["doc-close"] })], { cls: ["doc-head"] });
     let body: UiNode[];
     let width = WIDTH.modules;
     if (state.document === "build") {
@@ -65,7 +67,10 @@ export function documents(view: GameplayView): UiNode[] {
         ...(module.stores ? filePanes(id, doc, module, active) : []),
       ];
     }
-    return Pane(id, [head, ...body], {
+    // The host window's body is bare: the padding a document reads at
+    // belongs to the document, not to every surface the pack opens.
+    return Pane(id, [head, column(`${id}/body`, body, { cls: ["doc-body"] })], {
+      cls: ["doc-pane"],
       style: { width, maxWidth: "100%", maxHeight: 540 },
     });
   }).map((node, index) => {
