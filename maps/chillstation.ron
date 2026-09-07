@@ -84,8 +84,9 @@
 // Demo: docs/chillstation-v2.png.
 (
     name: "Chillstation 13",
+    tags: ["space"],
     legend: {
-        ' ': (turf: Space),
+        ' ': (turf: Environment, outdoors: true),
         '#': (turf: Wall),
         // Bare deck, and the station's DEFAULT. Everything under it is
         // visible: pipe, cable, and the paint that tells two mains apart.

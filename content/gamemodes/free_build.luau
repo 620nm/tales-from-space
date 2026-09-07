@@ -40,9 +40,9 @@ local content = {
         -- days and not others would make every temperature reading in
         -- it a question about the weather.
         environment = {
-            sink_k = 2.7,
             rolls = {
-                { id = "dead_space", name = "dead space", weight = 1, insolation = 0 },
+                { id = "cold_outdoors", required_tags = { "terrestrial" }, weight = 1 },
+                { id = "dead_space", excluded_tags = { "terrestrial" }, weight = 1 },
             },
         },
     },

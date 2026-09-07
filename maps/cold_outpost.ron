@@ -1,0 +1,25 @@
+// One enclosed warm room opens through an airlock onto cold surroundings.
+(
+    name: "Cold outpost",
+    tags: ["space", "terrestrial", "no_gravity_generator"],
+    legend: {
+        ' ': (turf: Environment, outdoors: true),
+        '#': (turf: Wall),
+        '.': (turf: Floor),
+        'g': (turf: Ground, outdoors: true),
+        'v': (turf: Space),
+    },
+    rows: [
+        "           ",
+        "  #####    ",
+        "  #...#    ",
+        "  #....gg  ",
+        "  #...#    ",
+        "  #####  v ",
+        "           ",
+    ],
+    spawns: [(4, 3)],
+    structures: [(6, 3, "airlock"), (5, 3, "apc", { "l1_emergency": true, "l2": "input" }), (4, 2, "light"), (4, 3, "utility_outlet_port"), (8, 3, "generator")],
+    cables: [(4, 3, 1), (5, 3, 3), (6, 3, 3), (7, 3, 2), (8, 3, 2)],
+    items: [(4, 3, "analyzer")],
+)
