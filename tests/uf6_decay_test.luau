@@ -104,7 +104,7 @@ local function gas_moles(room)
     end)
 end
 
-local function liquid_moles(room)
+local function liquid_litres(room)
     return room_sum(room, function(x, y)
         local litres = t.room_liquid(x, y)
         return (litres and litres.uf6) or 0.0
@@ -149,7 +149,7 @@ local gas_b = gas_moles(ROOM_B)
 assert(gas_b < 0.25 * fill_b,
     "below the triple point the fill rests as a solid: "
         .. gas_b .. " of " .. fill_b .. " mol in the air")
-near(liquid_moles(ROOM_B), 0.0, 1e-12,
+near(liquid_litres(ROOM_B), 0.0, 1e-12,
     "and nothing melted: there is no liquid at one atmosphere")
 
 local book_a0 = room_book(ROOM_A)
