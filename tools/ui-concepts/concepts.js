@@ -30,7 +30,8 @@
   }
   const worn = [['uniform_eng', 'Uniform'], ['breath_mask', 'Mask'], ['headset', 'Ears'], ['id', 'ID'], ['light_bulb', 'Lamp'], [null, 'Suit'], [null, 'Gloves'], [null, 'Shoes']];
   worn.forEach((item, index) => {
-    const slot = makeSlot(...item); if (index > 3) slot.classList.add('extra');
+    const slot = makeSlot(...item); slot.dataset.worn = item[1].toLowerCase();
+    if (index > 4) slot.classList.add('extra');
     slot.addEventListener('click', () => {
       if (index === 4) actions.activate('lamp');
       else surfaces.inspect({ key: `worn-${index}`, title: item[1], sprite: item[0], lines: [item[0] ? 'Equipped · local sample' : 'Empty equipment slot'] });
@@ -87,6 +88,12 @@
   }
   function localMessage(text) { addMessage(['18:42', 'system', '', text]); }
   [
+    ['18:36', 'system', '', 'The area power controller switches to external supply.'],
+    ['18:37', 'radio', 'Mara', 'Engineering, is the maintenance loop clear?'],
+    ['18:37', 'local', 'Dr. Ames', 'There’s a toolbox in the west locker.'],
+    ['18:38', 'local', 'Elias', 'Got it. Heading for the junction.'],
+    ['18:38', 'system', '', 'The portable computer connects to the local monitor.'],
+    ['18:39', 'radio', 'Mara', 'I’m watching the area pressure.'],
     ['18:39', 'radio', 'Mara', 'Anyone near engineering?'],
     ['18:40', 'local', 'Elias', 'At the east airlock.'],
     ['18:40', 'system', '', 'The maintenance airlock closes.'],
@@ -108,7 +115,16 @@
       button.setAttribute('aria-label', `${button.dataset.hand} hand: ${item?.[1] || 'empty'}`);
       button.querySelector('.hand-item').replaceChildren(...(item ? [scene.sprite(item[0], item[1])] : []));
     });
+    document.dispatchEvent(new CustomEvent('concept-hands-change'));
   }
+  window.ConceptHands = { canTake: () => role === 'crew' && !hands[activeHand] };
+  document.addEventListener('concept-take', event => {
+    if (!event.cancelable || !window.ConceptHands.canTake()) return;
+    const { sprite, title } = event.detail;
+    hands[activeHand] = [sprite, title]; setHand(activeHand);
+    localMessage(`${title} picked up in this local sample.`);
+    event.preventDefault();
+  });
   function renderTarget() {
     const [key, label] = targets[target]; $('#target-doll').replaceChildren(scene.sprite('target_doll', '', 64), scene.sprite(`target_${key}`, label, 64));
     $('#target-label').textContent = label.toUpperCase(); $('#target-doll').setAttribute('aria-label', `Target: ${label}`);
@@ -122,6 +138,7 @@
     $('#actor-name').textContent = { crew: 'Elias Voss', cyborg: 'Engineering unit', ai: 'Station intelligence' }[role];
     $('#location-name').textContent = role === 'ai' ? cameras[camera].split(' / ')[0] : 'Engineering';
     setContainer(null); actions.setRole(role); scene.setRole(role); scene.draw(canvas);
+    document.dispatchEvent(new CustomEvent('concept-hands-change'));
     const url = new URL(location.href); url.searchParams.set('role', role);
     try { history.replaceState(null, '', url); } catch { /* File hosts may restrict URL updates. */ }
   }

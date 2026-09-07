@@ -8,7 +8,7 @@
 </head>
 <body>
   <header class="gallery">
-    <div class="gallery-brand"><span class="brand-mark">T / S</span><strong>Floating HUD <small>/ v2</small></strong></div>
+    <div class="gallery-brand"><span class="brand-mark">T / S</span><strong>Floating HUD <small>/ v3</small></strong></div>
     <nav aria-label="Actor interface"><button data-role="crew">Crew</button><button data-role="cyborg">Cyborg</button><button data-role="ai">AI</button></nav>
     <div class="gallery-tools"><button id="device-toggle">Device</button><button id="second-device">Second device</button><button id="inspect-demo">Inspect demo</button><details><summary>Help</summary><div class="about"><strong>A workspace over the world.</strong><p>Shift-click the map to inspect. Inspect cards fade; hover to keep reading. Drag a device's title bar and resize its edges. Several devices can stay open.</p><p>Click a bag to open storage above its slot. Chat filters, hands and action pins change local mock state. The + control finds and pins abilities.</p><p>Trusted local mock only: illustrative map, sample readings, no server connection. Production UI remains in the restricted guest interpreter.</p></div></details></div>
   </header>
@@ -23,7 +23,7 @@
       <div id="chat-log" role="log" aria-live="polite"></div>
       <form id="chat-form"><label for="chat-input">SAY ›</label><input id="chat-input" maxlength="240" placeholder="Enter a message…" autocomplete="off"><button type="submit" aria-label="Send local message">↵</button></form>
     </section>
-    <section id="equipment" class="equipment" aria-label="Worn equipment"><div class="equipment-label"><span>WORN</span><button id="equipment-toggle" aria-expanded="false">More ▴</button></div><div id="equipment-slots"></div></section>
+    <section id="equipment" class="equipment expanded" aria-label="Worn equipment"><div class="equipment-label"><span>WORN</span><button id="equipment-toggle" aria-expanded="true">Less ▾</button></div><div id="equipment-slots"></div></section>
     <section id="crew-controls" class="actor-controls" aria-label="Hands and carry slots"><div id="carry-left" class="carry-slots"></div><div class="hand-cluster"><div class="hand-row"><button class="hand" data-hand="left" aria-label="Left hand"><small>1 / LEFT</small><span class="hand-item"></span></button><button class="hand active" data-hand="right" aria-label="Right hand"><small>2 / RIGHT</small><span class="hand-item"></span></button></div><div class="hand-actions"><button id="swap-hands" title="Swap active hand (Tab)">⇄ <small>SWAP</small></button><button id="drop-item" title="Drop active item">↓ <small>DROP</small></button><button id="throw-item" aria-pressed="false">↗ <small>THROW</small></button></div></div><div id="carry-right" class="carry-slots"></div></section>
     <section id="cyborg-controls" class="actor-controls" aria-label="Cyborg tools" hidden><div class="tool-module"><small>ENGINEERING MODULE</small><div id="cyborg-tools"></div></div><div class="cyborg-power"><strong>▰ 82%</strong><small>CHARGE</small><button id="borg-lamp" aria-pressed="false">☼ Lamp</button></div></section>
     <section id="ai-controls" class="actor-controls" aria-label="AI camera controls" hidden><button id="camera-prev" title="Previous camera">◀</button><div class="camera-focus"><small>CAMERA NETWORK</small><strong id="camera-location">Engineering / 04</strong><span>● ONLINE</span></div><button id="camera-next" title="Next camera">▶</button><button id="core-return">▣<small>CORE</small></button></section>
@@ -37,6 +37,7 @@
   <script>{{SCENE}}</script>
   <script>{{SURFACES}}</script>
   <script>{{ACTIONS}}</script>
+  <script>{{HOVER}}</script>
   <script>{{CONCEPTS}}</script>
 </body>
 </html>

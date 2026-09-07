@@ -1,0 +1,9 @@
+#hover-hint{position:fixed;z-index:90;display:flex;flex-direction:column;align-items:stretch;gap:4px;width:max-content;max-width:290px;padding:0;border:0;background:none;box-shadow:none;pointer-events:none!important;user-select:none;text-align:left;color:#dce7d8;font:11px/1.35 monospace;text-shadow:0 1px 2px #000,1px 0 2px #000,-1px 0 2px #000,0 0 5px #000}
+#hover-hint[hidden]{display:none}
+.hover-heading{display:flex;align-items:center;gap:6px;margin-bottom:2px;min-width:0}
+.hover-heading strong{font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hover-sprite{flex-shrink:0;image-rendering:pixelated;filter:drop-shadow(0 1px 2px #000)}
+.hover-gesture{display:grid;grid-template-columns:105px minmax(0,1fr);gap:8px;white-space:nowrap}
+.hover-gesture>span:first-child{color:#a0b8b5}
+.hover-gesture>span:last-child{overflow:hidden;text-overflow:ellipsis}
+.hover-gesture.unavailable>span:last-child{color:#9aaca8}
