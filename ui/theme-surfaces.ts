@@ -147,15 +147,9 @@ export const surfaceRules: UiStyleRule[] = [
   }),
   rule("composer-entry", { borderBottom: edge("#8ac1ab"), color: "#ffffff" }, "focus"),
 
-  // The host's own window parts, and the action bar's controls. The
-  // renderer names these classes; a pack only says what they look like.
-  rule("window-title", {
-    alignItems: "center", gap: 8, minHeight: 24,
-    paddingTop: 5, paddingBottom: 5, paddingLeft: 9, paddingRight: 9,
-    color: "#d5e3d9", backgroundColor: "#2f4347", borderBottom: edge("#54716b"),
-    fontFamily: "mono", fontSize: 11, textTransform: "uppercase", letterSpacing: 1,
-  }),
-  rule("window-body", { padding: 16 }),
+  // The host's own window grip and action-bar controls; the title and
+  // body rules live in theme-hud-doc.ts. The renderer names these
+  // classes; a pack only says what they look like.
   rule("window-grip", { backgroundColor: "transparent" }),
   rule("actions-bar", { alignItems: "end", gap: 4 }),
   rule("actions-control", {
