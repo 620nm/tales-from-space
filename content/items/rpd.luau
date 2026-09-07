@@ -165,6 +165,9 @@ local function lay_run(self, recipe, user, x, y, at)
 end
 
 local content = {
+    interaction_labels = {
+        self = { label = "lunatic/tfs:ui.affordance.view_interface" },
+    },
     id = "rpd",
     name = "rapid pipe dispenser",
     -- tg's own art off the tool sheet (`icon_state = "rpd"`, RPD.dm:26).
@@ -247,11 +250,16 @@ local content = {
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
+    local function open_interface(ev)
         local self, user = ev.subject, ev.actor
         ui.open({ viewer = user, owner = self })
         return true
-    end)
+    end
+    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, open_interface)
+    item_actions.attach(script_definition, {
+        id = content.id, sprite = content.sprite,
+        label = "lunatic/tfs:ui.actions.rpd",
+    }, open_interface)
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
         local clicked, target = ev.claim, ev.claim

@@ -15,6 +15,7 @@ export interface ItemView {
   name: string;
   sprite: string;
   fill?: ItemFill | null;
+  contents?: ItemView[] | null;
 }
 export interface EquipmentSlot {
   id: string;
@@ -71,11 +72,13 @@ export interface GameplayView {
     vitals?: { values: { slot: number; value?: number }[] };
     readouts?: { slots: { label: string; suffix?: string }[] };
     armed?: number;
-    examine?: {
+    inspections?: {
+      sequence: number;
       sprite?: string | null;
       title: string;
       lines: { spans: { text: string; color?: string | null }[] }[];
-    };
+    }[];
+    hover?: { kind: string; name: string; appearance: string; hints: { gesture: string; label: string }[] };
     context?: { sprite?: string | null; name: string; target: Json }[];
     progress?: { job: number; sequence: number; ms: number }[];
     speech?: {

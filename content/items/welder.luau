@@ -6,6 +6,11 @@
 -- tfs/content/structures/.
 local content = {
     id = "welder",
+    interaction_labels = {
+        self = { label = "lunatic/tfs:ui.affordance.ignite", states = {
+            lit = "lunatic/tfs:ui.affordance.extinguish",
+        } },
+    },
     name = "welding tool",
     sprite = "welder",
     inhand_sprite = { "held_welder_l", "held_welder_r" },
@@ -45,7 +50,7 @@ local content = {
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
+    local function use(ev)
         local self, user = ev.subject, ev.actor
         if self.state == "lit" then
             sim.set_flame(self, false)
@@ -61,7 +66,12 @@ if sim ~= nil then
             })
         end
         return true
-    end)
+    end
+    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, use)
+    item_actions.attach(script_definition, {
+        id = content.id, sprite = content.sprite, state = "flame",
+        label = "lunatic/tfs:ui.actions.welder",
+    }, use)
 end
 
 return content

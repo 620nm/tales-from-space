@@ -1,0 +1,20 @@
+// Midnight style: tgstation code/_onclick/hud/hud.dm:9.
+// Empty states and occupied templates: code/_onclick/hud/human.dm:85-188;
+// compositing the item over the frame: inventory_slot.dm:19-21,54-65.
+(
+    sheets: [("hud", "hud/screen_midnight.dmi")],
+    sprites: [
+        ("hud_template", Dmi("@hud", "template", 0)),
+        ("hud_template_small", Dmi("@hud", "template_small", 0)),
+        ("hud_uniform", Dmi("@hud", "uniform", 0)),
+        ("hud_suit", Dmi("@hud", "suit", 0)),
+        ("hud_id", Dmi("@hud", "id", 0)),
+        ("hud_mask", Dmi("@hud", "mask", 0)),
+        ("hud_back", Dmi("@hud", "back", 0)),
+        ("hud_belt", Dmi("@hud", "belt", 0)),
+        ("hud_gloves", Dmi("@hud", "gloves", 0)),
+        ("hud_shoes", Dmi("@hud", "shoes", 0)),
+        ("hud_ears", Dmi("@hud", "ears", 0)),
+        ("hud_head", Dmi("@hud", "head", 0)),
+    ],
+)
