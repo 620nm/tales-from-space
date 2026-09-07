@@ -74,6 +74,11 @@ export const hudRules = [
     backgroundColor: "transparent",
     textShadow: outline,
   }),
+  // The edge belongs to the PRESS, not to the box behind it. An
+  // absolutely placed child fills its parent's PADDING box, so a border
+  // out here leaves the pressable node two pixels short of the square a
+  // player aims at. The box stays bare; the press is the 40 and draws
+  // the edge, so what is hit and what is seen are one rectangle.
   rule("worn-toggle", {
     position: "relative",
     width: 40,
@@ -85,11 +90,13 @@ export const hudRules = [
     gap: 2,
     padding: 0,
     backgroundColor: "#20394ee8",
-    border: edge("#5280ac"),
+    border: none,
     borderRadius: 0,
     overflow: "hidden",
   }),
-  rule("worn-on", { backgroundColor: "#315673ed", border: edge("#b2d7ff") }),
+  rule("worn-on", { backgroundColor: "#315673ed" }),
+  rule("worn-hit", { border: edge("#5280ac"), borderRadius: 0 }),
+  rule("worn-hit-on", { border: edge("#b2d7ff") }),
   rule("worn-glyph", { fontFamily: "mono", fontSize: 18, lineHeight: 1, color: "#a4c4df" }),
   rule("worn-cap", {
     fontFamily: "mono",

@@ -2,8 +2,9 @@
 // is a native inventory claim the server revalidates. Nothing in the
 // cluster moves as items, trays or the worn grid come and go: the rows
 // that appear are absolute, so the hands stay under the cursor.
-import type { UiNode } from "@lunatic/ui";
+import type { Json, UiNode } from "@lunatic/ui";
 import { Pane } from "@lunatic/ui";
+import { labelText } from "./labels";
 import { hudSlot } from "./slots";
 import type { GameplayView, InventoryState } from "./model";
 import { openStorage } from "./inventory-storage";
@@ -38,7 +39,9 @@ function glyphControl(id: string, glyph: unknown, caption: unknown, action: Comm
   return panel(`${id}/box`, some(
     text(`${id}/glyph`, glyph, ["hud-glyph"]),
     text(`${id}/cap`, caption, ["hud-cap"]),
-    press(id, "", action, { cls: ["hud-hit"] }),
+    // The press is a bare hit box over a glyph and a word, so the word
+    // is what it is read out as.
+    press(id, "", action, { cls: ["hud-hit"], label: labelText(caption as Json) }),
   ), { cls: on ? ["hand-action", "hand-action-on"] : ["hand-action"] });
 }
 
@@ -138,7 +141,12 @@ function wornToggle(): UiNode {
   return panel("worn-toggle/box", some(
     text("worn-toggle/glyph", S.MARK_WORN, ["worn-glyph"]),
     text("worn-toggle/cap", S.WORN, ["worn-cap"]),
-    press("worn-toggle", "", () => { wornVisible = !wornVisible; return undefined; }, { cls: ["hud-hit"] }),
+    press("worn-toggle", "", () => { wornVisible = !wornVisible; return undefined; }, {
+      cls: wornVisible
+        ? ["hud-hit", "worn-hit", "worn-hit-on"]
+        : ["hud-hit", "worn-hit"],
+      label: S.WORN,
+    }),
   ), {
     cls: wornVisible ? ["worn-toggle", "worn-on"] : ["worn-toggle"],
     style: { position: "absolute", left: 0, bottom: 0 },
