@@ -92,7 +92,10 @@ export interface FieldOpts extends Box {
   submitOnly?: boolean;
   clearOnSubmit?: boolean;
   blurOnSubmit?: boolean;
+  debounceMs?: number;
   revision?: number;
+  disabled?: boolean;
+  language?: "luau";
 }
 
 export function entry(
@@ -112,7 +115,10 @@ export function entry(
     ...(opts.submitOnly ? { submitOnly: true } : {}),
     ...(opts.clearOnSubmit ? { clearOnSubmit: true } : {}),
     ...(opts.blurOnSubmit ? { blurOnSubmit: true } : {}),
+    ...(opts.debounceMs === undefined ? {} : { debounceMs: opts.debounceMs }),
+    ...(opts.disabled ? { disabled: true } : {}),
     ...(opts.revision === undefined ? {} : { revision: opts.revision }),
+    ...(opts.language === undefined ? {} : { language: opts.language }),
   };
 }
 

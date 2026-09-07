@@ -106,8 +106,14 @@ export interface ModuleState {
   stores?: StoreRow[];
   media_slot?: Label | null;
   files?: FileRow[];
-  create?: string[];
+  /** Creatable extensions per WRITABLE side (`host`/`media`); a create
+   *  names where it lands as `<side>:<ext>` (engine files module). */
+  create?: Record<string, string[]>;
+  /** The machine's guest-program sockets, one row per declared socket
+   *  (engine `sockets` key; absent when the prototype declares none). */
+  sockets?: SocketRowState[];
   open?: OpenFile | null;
+  editor?: EditorState | null;
 }
 export type MatterPhase = "gas" | "liquid" | "solid";
 export interface MatterRow {
@@ -157,4 +163,30 @@ export interface OpenFile {
   body: string;
   revision: number;
   cap?: number;
+}
+/** The editing surface of the open source/text entry (engine `editor`
+ *  module), a TOP-LEVEL document key beside `open`; absent means the
+ *  plain body view of today. */
+export interface EditorState {
+  body: string;
+  read_only: boolean;
+  byte_budget: number;
+  markers: EditorMarker[];
+  revision: number;
+  bound: boolean;
+}
+export interface EditorMarker {
+  line?: number;
+  message: string;
+}
+/** One socket row of a panes document: the id, the bound file's
+ *  `name.ext` and uid (both null when unbound), the socket's counters
+ *  and the state word as a label id (engine settings/sockets.rs). */
+export interface SocketRowState {
+  id: string;
+  file?: string | null;
+  uid?: number | null;
+  runs?: number;
+  faults?: number;
+  state?: Label;
 }

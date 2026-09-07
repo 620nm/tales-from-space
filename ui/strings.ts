@@ -51,6 +51,7 @@ export const RENAME = tfs("ui.files.rename");
 export const SAVE = tfs("ui.files.save");
 export const REVERT = tfs("ui.files.revert");
 export const CONFLICT = tfs("ui.files.conflict");
+export const MARKERS_CLEAR = tfs("ui.files.markers_clear");
 export const STOCK = tfs("ui.shelf.stock");
 export const VEND = tfs("ui.shelf.vend");
 export const ARM = tfs("ui.shelf.arm");
@@ -73,12 +74,24 @@ export const short = (text: string, limit = 10): string =>
   text.length > limit ? `${text.slice(0, limit - 1)}…` : text;
 export const storageTitle = (label: string): string =>
   tfs("ui.tray.storage_of", { label });
-export const newFile = (ext: string): string => tfs("ui.files.new", { ext });
+export const newFileOn = (ext: string, store: string): string =>
+  tfs("ui.files.new_on", { ext, store });
+export const UNLOAD = tfs("ui.files.unload");
+export const socketLoad = (file: string): string =>
+  tfs("ui.files.socket_load", { file });
+export const socketStats = (runs: number, faults: number): string =>
+  tfs("ui.files.socket_stats", { runs, faults });
 export const fileName = (name: string, ext: string): string =>
   tfs("ui.files.name", { name, ext });
 export const fileTitle = (name: string, ext: string, dirty: boolean): string =>
   tfs(dirty ? "ui.files.name_modified" : "ui.files.name", { name, ext });
 export const bytes = (size: number): string => tfs("ui.files.bytes", { size });
+export const marker = (line: number | undefined, message: string): string =>
+  line === undefined
+    ? tfs("ui.files.marker", { message })
+    : tfs("ui.files.marker_at", { line, message });
+export const byteBudget = (budget: number): string =>
+  tfs("ui.files.byte_budget", { budget });
 export const storeUse = (
   used: number,
   capacity: number,
