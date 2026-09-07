@@ -215,11 +215,7 @@
     historyList = element('ol'); historyView.append(historyList); toastRoot.append(historyView);
     toastRoot.addEventListener('pointerdown', event => event.stopPropagation());
     toastRoot.addEventListener('click', event => event.stopPropagation());
-    document.querySelector('canvas#world')?.addEventListener('click', event => {
-      if (!event.shiftKey) return;
-      event.preventDefault(); event.stopImmediatePropagation();
-      inspect(window.ConceptScene?.inspect?.(event.currentTarget, event.clientX, event.clientY));
-    });
+    window.ConceptHover?.init();
   }
   window.ConceptSurfaces = {init, open, close, inspect, demoInspect};
 })();

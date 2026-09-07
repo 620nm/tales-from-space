@@ -22,7 +22,7 @@
 .surface-resize-se{bottom:-4px;right:-4px;cursor:nwse-resize}
 .surface-resize-sw{bottom:-4px;left:-4px;cursor:nesw-resize}
 .surface-resize-se:after{content:'';position:absolute;right:5px;bottom:5px;width:6px;height:6px;border-right:2px solid #789389;border-bottom:2px solid #789389;opacity:.8}
-#toasts{position:absolute;top:var(--inspect-top,58px);left:var(--inspect-left,16px);width:max-content;max-width:min(320px,calc(100% - 32px));max-height:max(0px,calc(100% - var(--inspect-top,58px) - 16px));display:flex;flex-direction:column;align-items:flex-start;gap:7px;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;z-index:25;pointer-events:auto}
+#toasts{position:absolute;top:var(--inspect-top,18px);left:var(--inspect-left,16px);width:max-content;max-width:min(320px,calc(100% - 32px));max-height:max(0px,calc(100% - var(--inspect-top,18px) - 16px));display:flex;flex-direction:column;align-items:flex-start;gap:7px;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;z-index:25;pointer-events:auto}
 .inspect-toast{width:320px;max-width:100%;flex-shrink:0;box-sizing:border-box;padding:9px 10px 10px;border:1px solid #75938666;border-left:2px solid #90b9a1;border-radius:3px;background:linear-gradient(110deg,#102025ee,#102025d9);box-shadow:0 3px 12px #0007;backdrop-filter:blur(3px);color:#d2dfd6;pointer-events:auto;opacity:1;transition:opacity 450ms ease,transform 450ms ease}
 .inspect-toast:focus-visible,.inspect-toast button:focus-visible,.inspect-history summary:focus-visible{outline:2px solid #c2d9b4;outline-offset:2px}
 .inspect-toast.inspect-fading{opacity:0;transform:translateY(-4px);pointer-events:none}
