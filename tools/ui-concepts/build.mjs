@@ -33,12 +33,14 @@ const hashes = [...atlasDelivery.matchAll(/sha256:\s*"([a-f0-9]{64})"/g)].map(ma
 const expectedPages = Math.ceil(atlas.cells / (atlas.columns * atlas.rows_per_page));
 if (hashes.length !== expectedPages || !atlas.sprites.floor) throw new Error("Atlas metadata is incomplete.");
 atlas.pages = await Promise.all(hashes.map(async hash => `data:image/png;base64,${(await readFile(join(assets, "obj", `${hash}.png`))).toString("base64")}`));
-const names = ["index.html", "concepts.css", "surfaces.css", "actions.css", "scene.js", "surfaces.js", "actions.js", "concepts.js"];
-const [template, styles, surfaceStyles, actionStyles, scene, surfaces, actions, concepts] = await Promise.all(names.map(name => readFile(join(here, name), "utf8")));
-const replacements = { STYLES: [styles, surfaceStyles, actionStyles].join("\n"),
+const source = async names => (await Promise.all(names.map(name => readFile(join(here, name), "utf8")))).join("\n");
+const template = await source(["index.html"]);
+const replacements = { STYLES: await source(["concepts.css", "surfaces.css", "actions.css", "hover.css"]),
   ATLAS: `window.conceptAtlas = ${JSON.stringify(atlas).replaceAll("<", "\\u003c")};`,
-  SCENE: scene, SURFACES: surfaces, ACTIONS: actions, CONCEPTS: concepts };
-const html = template.replace(/\{\{(STYLES|ATLAS|SCENE|SURFACES|ACTIONS|CONCEPTS)\}\}/g, (_, key) => replacements[key]);
+  SCENE: await source(["picking.js", "scene-data.js", "scene.js"]),
+  SURFACES: await source(["surfaces.js"]), ACTIONS: await source(["actions.js"]),
+  HOVER: await source(["hover.js"]), CONCEPTS: await source(["concepts.js"]) };
+const html = template.replace(/\{\{(STYLES|ATLAS|SCENE|SURFACES|ACTIONS|HOVER|CONCEPTS)\}\}/g, (_, key) => replacements[key]);
 const output = resolve(options.get("--output"));
 await mkdir(dirname(output), { recursive: true });
 await writeFile(output, html, { flag: "wx" });
