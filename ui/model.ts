@@ -44,6 +44,8 @@ export interface LogLine {
   kind?: string | null;
   channel?: string | null;
   name?: string;
+  /** Shift seconds when the line was heard; absent on an older server. */
+  second?: number;
   text: string;
 }
 export interface GameplayView {
