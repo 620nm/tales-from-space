@@ -3,7 +3,7 @@
 // they were sent, so the SERVER's row order is the layout and the
 // document grows no nesting level (docs/tgui/documents.md).
 import type { ListRow, Tone, UiNode } from "@lunatic/ui";
-import { Gauge, LabeledList, Notice, Section } from "@lunatic/ui";
+import { Gauge, LabeledList, Section } from "@lunatic/ui";
 import type {
   DocumentIdentity,
   LabelRow,
@@ -50,10 +50,10 @@ function labelRow(
             field: entryRow.field,
             ...(entryRow.option == null ? {} : { option: entryRow.option }),
           }),
-          { disabled: !active || !entryRow.enabled },
+          { disabled: !active || !entryRow.enabled, cls: ["mod-pill"] },
         ),
       ],
-      { cls: ["list-row"] },
+      { cls: ["module-row"] },
     );
   if (entryRow.row === "input") {
     const box = `${id}/value`;
@@ -133,7 +133,7 @@ function setpointRow(
             },
             { cls: ["num"] },
           ),
-          point.unit ? text(`${id}/unit`, point.unit, ["hint"]) : null,
+          point.unit ? text(`${id}/unit`, point.unit, ["mod-unit"]) : null,
           press(`${id}/up`, S.RAISE, stepBy(step), {
             disabled: !active,
           }),
@@ -167,9 +167,13 @@ export function moduleBody(
   for (const point of setpoints) see(labelText(point.section));
   for (const block of blocks) see(labelText(block.section));
 
-  const out: UiNode[] = [];
-  if (state.notice)
-    out.push(Notice(`${id}/notice`, labelText(state.notice)));
+  // The demo's hierarchy: the document names itself small, the machine
+  // names itself large, and its leading readings are the block a reader
+  // takes in from across the room.
+  const out: UiNode[] = [
+    row(`${id}/eyebrow`, [text(`${id}/eyebrow/title`, doc.title)], { cls: ["mod-eyebrow"] }),
+  ];
+  if (state.name) out.push(text(`${id}/heading`, state.name, ["mod-head"]));
   if (state.gauge !== null && state.gauge !== undefined)
     out.push(Gauge(`${id}/gauge`, state.gauge));
   for (const [place, section] of order.entries()) {
@@ -182,7 +186,12 @@ export function moduleBody(
         ...(toneOf(reading.tone) ? { tone: toneOf(reading.tone)! } : {}),
       }));
     const children: UiNode[] = [];
-    if (rows.length) children.push(LabeledList(`${key}/readouts`, rows));
+    // The first section's leading readings are the document's headline;
+    // everything after it stays a labelled list.
+    const stats = place === 0 ? rows.slice(0, 4) : [];
+    if (stats.length) children.push(statBlocks(`${key}/stats`, stats));
+    if (rows.length > stats.length)
+      children.push(LabeledList(`${key}/readouts`, rows.slice(stats.length)));
     children.push(
       ...toggleRows(
         key,
@@ -207,5 +216,19 @@ export function moduleBody(
         : column(key, children, { style: { gap: 4 } }),
     );
   }
+  // What the machine is saying about itself, under a rule: the demo's
+  // footer, and the only document-wide line a provider writes.
+  if (state.notice)
+    out.push(row(`${id}/foot`, [text(`${id}/foot/word`, labelText(state.notice))], {
+      cls: ["mod-foot"],
+    }));
   return out;
+}
+
+/** A reading drawn to be read at a distance: its word over its number. */
+function statBlocks(id: string, rows: ListRow[]): UiNode {
+  return row(id, rows.map((reading, index) => column(`${id}/${index}`, [
+    text(`${id}/${index}/label`, reading.label, ["mod-stat-label"]),
+    text(`${id}/${index}/value`, reading.value, ["mod-stat-value"]),
+  ], { cls: ["mod-stat"] })), { cls: ["mod-stats"] });
 }
