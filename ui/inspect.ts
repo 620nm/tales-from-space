@@ -27,11 +27,18 @@ function inspectionCard(look: Inspection, history = false): UiNode {
   return {
     ...Pane(id, some(
       row(`${id}/head`, some(
-        // Never a blank frame: with no sprite the header keeps its 24px
-        // square, so every title in the stack starts on the same line.
-        look.sprite
-          ? icon(`${id}/icon`, look.sprite, "", ["inspect-icon"])
-          : panel(`${id}/icon`, [], { cls: ["inspect-blank"] }),
+        // The whole thing as it stands, when the client composed one for
+        // this receipt; its base sprite otherwise. Never a blank frame:
+        // with neither, the header keeps its 24px square, so every title
+        // in the stack starts on the same line.
+        look.appearance
+          ? {
+              id: `${id}/icon`, type: "image" as const,
+              appearance: look.appearance, class: ["inspect-icon"],
+            }
+          : look.sprite
+            ? icon(`${id}/icon`, look.sprite, "", ["inspect-icon"])
+            : panel(`${id}/icon`, [], { cls: ["inspect-blank"] }),
         text(`${id}/title`, look.title, ["inspect-title"]),
         press(`${id}/pin`, S.tfs(pinned ? "ui.look.unpin" : "ui.look.pin"), () => {
           if (pinned) pins.delete(look.sequence); else if (pins.size < 3) {
