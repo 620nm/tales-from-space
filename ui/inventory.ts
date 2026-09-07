@@ -1,17 +1,12 @@
-// The tray: the hands, the worn roster and the verbs, at the foot of the
-// bottom-right stack. Every square is one slot; every press is a native
-// inventory claim the server revalidates. The target figure and an open
-// container are HUD regions of their own, stacked over this one by
-// `main.tsx`, so neither reflows it and its own height is free to grow.
+// Independent hand, carry and anatomical equipment regions. Every press
+// is a native inventory claim the server revalidates.
 import type { UiNode } from "@lunatic/ui";
-import { Pane, Slot } from "@lunatic/ui";
+import { Pane } from "@lunatic/ui";
+import { hudSlot } from "./slots";
 import type { GameplayView, InventoryState } from "./model";
 import { openStorage } from "./inventory-storage";
 import { bind, column, inspect, press, row, some, text, type Command } from "./view";
 import * as S from "./strings";
-
-/** How wide the tray is, which the groups stacked over it wrap against. */
-export const TRAY_WIDE = 470;
 
 export function inventory(view: GameplayView): UiNode | null {
   if (!view.body || !view.state.inventory) return null;
@@ -19,25 +14,16 @@ export function inventory(view: GameplayView): UiNode | null {
   return Pane(
     "inventory",
     some(
-      row(
-        "tray-head",
-        some(
-          text("identity", view.state.identity?.name ?? "", ["chipval", "grow"], {
-            minWidth: 92,
-          }),
-          vitals(view),
-        ),
-        { style: { alignItems: "center", gap: 8 } },
-      ),
-      row("tray", some(handsGroup(current), wornGroup(view, current)), {
-        cls: ["tray"],
-        style: { flexWrap: "wrap" },
-      }),
-      verbs(view),
+      handsGroup(current),
+      row("hand-controls", [
+        press("swap", S.SWAP, { kind: "swap" }),
+        press("drop", S.DROP, { kind: "drop" }),
+        press("use_self", S.USE, { kind: "use_self" }),
+      ], { cls: ["hand-controls"], style: { gap: 3 } }),
     ),
     {
-      cls: ["hudgroup"],
-      style: { width: TRAY_WIDE, maxWidth: "100%" },
+      cls: ["hudgroup", "hand-cluster"],
+      style: { position: "absolute", left: 0, marginLeft: -62, bottom: 17, minWidth: 124, width: 124 },
     },
   );
 }
@@ -46,7 +32,7 @@ function handsGroup(current: InventoryState): UiNode {
   const hands = current.hands ?? [];
   const squares = hands.map((item, index) => {
     const id = `hand/${index}/pick`;
-    return Slot(id, {
+    return hudSlot(id, {
       ...(item?.sprite ? { sprite: item.sprite } : {}),
       label: S.short(item?.name ?? S.hand(index)),
       active: current.active === index,
@@ -66,7 +52,7 @@ function handsGroup(current: InventoryState): UiNode {
           ? inspect({ Held: { hand: index } })
           : { kind: "hand", index };
       }),
-    });
+    }, "hand", "hand-slot");
   });
   const openers = hands.flatMap((_item, index) =>
     current.held?.[index]
@@ -96,13 +82,24 @@ function handsGroup(current: InventoryState): UiNode {
   );
 }
 
-function wornGroup(view: GameplayView, current: InventoryState): UiNode | null {
+let wornVisible = true;
+const anatomy: Record<string, [number, number]> = {
+  ears: [0, 0], head: [1, 0], lamp: [1, 0], mask: [2, 0],
+  gloves: [0, 1], uniform: [1, 1], suit: [2, 1],
+  shoes: [1, 2], id: [2, 2],
+};
+
+export function wornGroup(view: GameplayView, carry = false): UiNode | null {
+  const current = view.state.inventory;
+  if (!view.body || !current) return null;
   const roster = view.state.equipment?.slots ?? [];
   if (!roster.length) return null;
-  const squares = roster.map((slot, index) => {
+  const squares = roster.flatMap((slot, index) => {
+    if ((slot.id === "back" || slot.id === "belt") !== carry) return [];
+    if (!carry && !wornVisible) return [];
     const worn = (current.equipment ?? []).find((row) => row.slot === index);
     const id = `equipment/${slot.id}/pick`;
-    return Slot(id, {
+    const square = hudSlot(id, {
       ...(worn?.item?.sprite ? { sprite: worn.item.sprite } : {}),
       label: S.short(worn?.item?.name ?? slot.label),
       empty: !worn?.item,
@@ -118,42 +115,27 @@ function wornGroup(view: GameplayView, current: InventoryState): UiNode | null {
           ? { kind: "equip" }
           : { kind: "unequip", slot: slot.id };
       }),
-    });
+    }, slot.id);
+    const position = anatomy[slot.id] ?? [index % 3, Math.floor(index / 3) + 3];
+    return [{ ...square, ...(!carry ? { style: { position: "absolute" as const, left: position[0] * 44, top: position[1] * 44 } } : {}) }];
+  });
+  if (carry) return column("carry", ["back", "belt"].flatMap((slot) => squares.filter((square) => square.id === `equipment/${slot}/pick/box`)), {
+    cls: ["hudgroup"], style: { position: "absolute", right: 70, width: 40, minWidth: 40, bottom: 40, gap: 4 },
   });
   return column(
     "worn-group",
     [
-      text("worn-caption", S.WORN, ["caption"]),
-      row("equipment", squares, { style: { gap: 4, flexWrap: "wrap" } }),
-    ],
-    { cls: ["trayset"] },
-  );
-}
-
-function verbs(view: GameplayView): UiNode {
-  return row(
-    "item-controls",
-    [
-      press("swap", S.SWAP, { kind: "swap" }),
-      press("drop", S.DROP, { kind: "drop" }),
-      press("use_self", S.USE, { kind: "use_self" }),
-      press("use_other", S.USE_OTHER, { kind: "use_other" }),
-      press("equip", S.EQUIP, { kind: "equip" }),
-      press(
-        "throw_mode",
-        view.state.throwing ? S.THROWING : S.THROW,
-        { kind: "throw_mode" },
-        { variant: view.state.throwing ? "selected" : "default" },
-      ),
-      press("open_build", S.BUILD, { kind: "open_build" }, {
-        variant: "primary",
+      ...squares,
+      press("worn-toggle", S.WORN, () => { wornVisible = !wornVisible; return undefined; }, {
+        cls: ["worn-toggle"], variant: wornVisible ? "selected" : "default",
+        style: { position: "absolute", left: 0, bottom: 0, width: 40, minWidth: 40, height: 40 },
       }),
     ],
-    { style: { gap: 4, flexWrap: "wrap" } },
+    { cls: ["hudgroup"], style: { position: "absolute", right: 124, bottom: 40, width: 128, minWidth: 128, height: 128 } },
   );
 }
 
-function vitals(view: GameplayView): UiNode | null {
+export function vitals(view: GameplayView): UiNode | null {
   const samples = view.state.vitals?.values ?? [];
   const roster = view.state.readouts?.slots ?? [];
   const chips = samples.flatMap((sample, index) => {

@@ -13,18 +13,15 @@ const rule_line = "#242a3e";
 const face = "#232839";
 const raised = "#303751";
 const field = "#14172a";
-const accent = "#ff6eb4";
+const accent = "#d4b76e";
 const info = "#8fb4ff";
 const good = "#7fd18c";
 const paneBack = "#0e101af2";
 const inner = "#141828cc";
 const innerLine = "#262c42";
-const slotHint = "#c3cbe4a8";
-const slotShade = "#080a1259";
 
 const edge = (color: string, width = 1) =>
   ({ width, style: "solid", color }) as const;
-const dashed = (color: string) => ({ width: 1, style: "dashed", color }) as const;
 const none = { width: 0, style: "none", color: "transparent" } as const;
 const drop = [{ x: 0, y: 6, blur: 18, spread: 0, color: "#00000073" }];
 const ring = (color: string, spread: number) => [{ x: 0, y: 0, blur: 0, spread, color }];
@@ -43,6 +40,11 @@ const press = { pointerEvents: "auto" } as const;
 
 export default defineStyles([
   ...theme,
+  rule("slot-frame", { position: "absolute", left: 0, top: 0, width: "100%", height: "100%", imageRendering: "pixelated", pointerEvents: "none" }),
+  rule("hand-controls", { fontSize: 8 }),
+  rule("hover-preview", { width: 28, height: 28, flexShrink: 0, imageRendering: "pixelated", pointerEvents: "none" }),
+  rule("hover-key", { fontFamily: "mono", fontSize: 8, padding: 2, backgroundColor: "#243c42c9", border: edge("#6f8b9066"), borderRadius: 2, minWidth: 24, textAlign: "center" }),
+  rule("hover-description", { fontSize: 10, color: "#b4c6bf" }),
   rule("desktop-screen", {
     display: "block", position: "relative", width: "100%", height: 0,
     paddingTop: "56.25%", backgroundColor: "#000000", overflow: "hidden",
@@ -97,14 +99,14 @@ export default defineStyles([
   // screen icon over a transparent HUD, backed by an icon state rather
   // than by chrome (code/_onclick/hud/inventory_slot.dm:20-30). The two
   // states that SAY something are restated after it, or they lose to it.
-  rule("slot", { backgroundColor: "transparent", border: none, borderRadius: 4, boxShadow: flat }),
+  rule("slot", { backgroundColor: "transparent", border: none, borderRadius: 0, boxShadow: flat }),
   rule("slot-active", { border: edge(accent), boxShadow: ring(accent, 1) }),
   // Two-tone, because a bare square has to be findable on a lit floor as
   // well as in a dark corridor: a light dash over a dark pane, which is
   // what tg's `template` icon state is a drawn version of.
   rule("slot-empty", {
-    border: dashed(slotHint),
-    backgroundColor: slotShade,
+    border: none,
+    backgroundColor: "transparent",
     opacity: 1,
   }),
   rule("slot-hit", { borderRadius: 4, ...press }),
@@ -376,4 +378,16 @@ export default defineStyles([
     border: edge("#ffffff59"),
   }),
   rule("good", { color: good }),
+  rule("slot-icon", { position: "relative", zIndex: 1 }),
+  rule("slot-fill", { zIndex: 2 }),
+  rule("slot-label", { zIndex: 3 }),
+  rule("slot-hit", { zIndex: 4 }),
+  rule("mouse-glyph", { position: "relative", width: 12, height: 17, flexShrink: 0, border: edge("#a6beb5"), borderRadius: 5, backgroundColor: "#16272dcc", pointerEvents: "none" }),
+  rule("action-button", { display: "flex", flexDirection: "column", alignItems: "center", gap: 2, padding: 4, minWidth: 44, fontSize: 8, backgroundColor: "#223639df", border: edge("#61766b"), borderRadius: 2 }),
+  rule("action-label", { fontSize: 8, maxWidth: 72, overflow: "hidden" }),
+  rule("floating-chat", { backgroundColor: "#152127b8", border: none, borderRadius: 0, boxShadow: flat, minWidth: 240 }),
+  rule("hover-card", { minWidth: 0, width: 220, padding: 8, backgroundColor: "#152127d9", border: edge("#7b958f55"), borderRadius: 3, pointerEvents: "none", gap: 5 }),
+  rule("inspect-toast", { minWidth: 0, width: 320, padding: 8, backgroundColor: "#152127df", border: edge("#66887c77"), borderRadius: 3 }),
+  rule("hand-slot", { width: 60, height: 61 }),
+  rule("worn-toggle", { padding: 0, minWidth: 0, fontFamily: "mono", fontSize: 7, color: "#a4c4df", backgroundColor: "#20394ee8", border: edge("#5280ac"), borderRadius: 0 }),
 ]);

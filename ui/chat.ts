@@ -24,25 +24,29 @@ export function chatPanel(view: GameplayView): UiNode[] {
       "chat-pane",
       some(
         text("chat-title", S.CHAT_TITLE, ["caption"]),
-        lines.length
-          ? column("log", lines, { cls: ["log"], style: { maxHeight: 200 } })
-          : text("log-empty", S.CHAT_EMPTY, ["hint"]),
+        column("log", lines.length ? lines : [text("log-empty", S.CHAT_EMPTY, ["hint"])], {
+          cls: ["log"], style: { minHeight: 0, maxHeight: 280, flexGrow: 1 },
+        }),
         view.body
           ? entry(
               "chat",
               "",
               (value) => (value.trim() ? { kind: "say", text: value } : undefined),
-              { submitOnly: true, clearOnSubmit: true, blurOnSubmit: true },
+              { submitOnly: true, clearOnSubmit: true, blurOnSubmit: true,
+                style: { height: 24, minHeight: 24, flexGrow: 0, flexShrink: 0 } },
             )
           : null,
       ),
       {
+        cls: ["floating-chat"],
         style: {
           position: "absolute",
           left: 14,
           bottom: 12,
-          width: 400,
-          maxHeight: "46%",
+          width: 500,
+          height: 340,
+          maxWidth: "33%",
+          maxHeight: "48%",
         },
       },
     ),

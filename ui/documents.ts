@@ -3,7 +3,7 @@
 // `presentation` picks the SHAPE it is drawn in, never a renderer and
 // never an act (docs/tgui/documents.md).
 import type { Json, UiNode } from "@lunatic/ui";
-import { Pane, Section, Table, TitleBar } from "@lunatic/ui";
+import { Pane, Section, Table } from "@lunatic/ui";
 import type { GameplayView } from "./model";
 import type {
   BuildState,
@@ -18,8 +18,9 @@ import { moduleBody } from "./documents-modules";
 import { shelfRows } from "./documents-shelf";
 import { desktopPane, isDesktop } from "./documents-desktop";
 import { filePanes, retainOpenFileBuffers } from "./files";
-import { bind, entry, icon, press, row, some, text } from "./view";
+import { entry, icon, press, row, some, text } from "./view";
 import * as S from "./strings";
+import { actionSurface } from "./actions";
 
 const WIDTH: Record<Presentation, number> = {
   modules: 420,
@@ -30,7 +31,7 @@ const WIDTH: Record<Presentation, number> = {
 };
 
 export function documents(view: GameplayView): UiNode[] {
-  const open = Object.values(view.documents ?? {});
+  const open = Object.values(view.documents ?? {}).filter((doc) => !actionSurface(doc));
   retainOpenFileBuffers(open);
   return open.map((doc) => {
     const id = `doc/${doc.id}/${doc.generation}`;
@@ -39,13 +40,11 @@ export function documents(view: GameplayView): UiNode[] {
     // interface down.
     const state: Partial<DocumentState> = doc.state ?? {};
     const active = state.status === undefined || state.status >= 2;
-    const head = TitleBar(`${id}/title`, doc.title, {
-      closeEvent: bind(`${id}/close`, {
+    const head = row(`${id}/controls`, [press(`${id}/close`, S.CLOSE_MARK, {
         kind: "close",
         document: doc.id,
         generation: doc.generation,
-      }),
-    });
+      }, { variant: "ghost" })], { style: { justifyContent: "end" } });
     let body: UiNode[];
     let width = WIDTH.modules;
     if (state.document === "build") {
@@ -69,6 +68,10 @@ export function documents(view: GameplayView): UiNode[] {
     return Pane(id, [head, ...body], {
       style: { width, maxWidth: "100%", maxHeight: 540 },
     });
+  }).map((node, index) => {
+    const doc = open[index]!;
+    return { ...node, window: { key: `document/${doc.id}/${doc.generation}`, title: doc.title, source: "status",
+      document: doc.id, generation: doc.generation, width: Number(node.style?.width) || 520 } };
   });
 }
 

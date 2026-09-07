@@ -16,6 +16,7 @@ native_edges = [
     "interaction.use",
     "interaction.act",
     "item_slot.command",
+    "inventory.presentation",
     "lifecycle.entity_initialize",
     "attack.swing",
     "entity.pull",
