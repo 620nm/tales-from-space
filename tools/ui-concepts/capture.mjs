@@ -4,18 +4,20 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import { checkConcept } from "./checks.mjs";
 
 const args = process.argv.slice(2);
 const options = new Map();
 for (let index = 0; index < args.length; index += 2) {
   const flag = args[index];
   const value = args[index + 1];
-  if (!["--input", "--output", "--browser", "--width", "--height"].includes(flag) || !value || options.has(flag)) {
-    throw new Error("Usage: node capture.mjs --input /tmp/concepts.html --output /tmp/shots [--browser /path/to/chrome] [--width 1600 --height 1000]");
+  if (!["--input", "--output", "--browser", "--width", "--height", "--check"].includes(flag) || !value || options.has(flag)) {
+    throw new Error("Usage: node capture.mjs --input /tmp/concepts.html --output /tmp/shots [--browser /path/to/chrome] [--width 1600 --height 1000] [--check true]");
   }
   options.set(flag, value);
 }
 if (!options.has("--input") || !options.has("--output")) throw new Error("--input and --output are required.");
+if (options.has("--check") && options.get("--check") !== "true") throw new Error("--check accepts true only.");
 const width = Number(options.get("--width") ?? 1600);
 const height = Number(options.get("--height") ?? 1000);
 if (![width, height].every(value => Number.isSafeInteger(value) && value >= 600 && value <= 4096)) {
@@ -100,13 +102,17 @@ try {
       })]);
     } finally { clearTimeout(loadTimer); }
     const ready = await call("Runtime.evaluate", {
-      expression: "ConceptScene.ready.then(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))",
+      expression: "Promise.all([ConceptScene.ready, ConceptSlotSkin.ready]).then(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))",
       awaitPromise: true, returnByValue: true,
     });
     if (ready.exceptionDetails) throw new Error(`Concept failed: ${ready.exceptionDetails.exception?.description ?? ready.exceptionDetails.text}; ${errors.join("; ")}`);
-    const shot = await call("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
-    await writeFile(join(directory, `${role}.png`), Buffer.from(shot.data, "base64"), { flag: "wx" });
+    const screenshot = async name => {
+      const shot = await call("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
+      await writeFile(join(directory, `${name}.png`), Buffer.from(shot.data, "base64"), { flag: "wx" });
+    };
+    await screenshot(role);
     console.log(`Captured ${role}: ${width}×${height}`);
+    if (options.has("--check")) await checkConcept(call, role, screenshot);
   }
   if (errors.length) throw new Error(`Browser exceptions: ${errors.join("; ")}`);
 } finally {
@@ -116,5 +122,5 @@ try {
     ? Promise.resolve() : new Promise(resolveExit => browser.once("exit", resolveExit));
   browser.kill("SIGTERM");
   await stopped;
-  await rm(profile, { recursive: true, force: true });
+  await rm(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 }
