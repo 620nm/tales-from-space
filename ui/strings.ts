@@ -19,6 +19,12 @@ export const BODY_TITLE = tfs("ui.lobby.condition");
 // Comms.
 export const CHAT_TITLE = tfs("ui.comms.title");
 export const CHAT_EMPTY = tfs("ui.comms.empty");
+export const CHAT_ALL = tfs("ui.comms.tab_all");
+export const CHAT_LOCAL = tfs("ui.comms.tab_local");
+export const CHAT_RADIO = tfs("ui.comms.tab_radio");
+export const CHAT_SYSTEM = tfs("ui.comms.tab_system");
+export const CHAT_HISTORY = tfs("ui.comms.history");
+export const CHAT_SAY = tfs("ui.comms.say");
 
 // The tray.
 export const HANDS = tfs("ui.tray.hands");
@@ -112,6 +118,15 @@ export const channel = (name: string): string =>
   tfs("ui.comms.channel", { name });
 export const speaker = (name: string): string =>
   tfs("ui.comms.speaker", { name });
+// A clock face, not a number: the catalog owns the separator, and the
+// pad is done here because there is no `Intl` in the guest.
+export const stamp = (second: number): string =>
+  tfs("ui.comms.stamp", {
+    minutes: Math.floor(second / 60),
+    seconds: `${Math.floor(second % 60)}`.padStart(2, "0"),
+  });
+export const inspectHistory = (count: number): string =>
+  tfs("ui.look.history_row", { count });
 
 // The contents block's phase headings and rows: one authored template
 // each, never a word joined to a reading (docs/LOCALIZATION.md §5).

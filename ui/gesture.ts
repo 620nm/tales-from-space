@@ -7,8 +7,20 @@ export function gesture(id: string, name: string): UiNode {
   const modifiers = name === "ctrl_shift" ? ["ctrl", "shift"] : name === "alt" ? ["alt"] : name === "examine" ? ["shift"] : [];
   const children = modifiers.map((key) => text(`${id}/${key}`, S.tfs(`ui.key.${key}`), ["hover-key"]));
   if (name === "self") children.push(text(`${id}/self`, S.tfs("ui.key.self"), ["hover-key"]));
-  else children.push(panel(`${id}/mouse`, [
-    panel(`${id}/mouse/button`, [], { style: { position: "absolute", top: 1, left: name === "secondary" ? 6 : 1, width: 4, height: 5, backgroundColor: "#b9d2ca", borderRadius: 1 } }),
-  ], { cls: ["mouse-glyph"] }));
-  return row(id, children, { style: { gap: 3, alignItems: "center" } });
+  else {
+    // Both buttons are drawn and the gesture's own one is lit, so a
+    // glance says which side of the mouse the verb is on.
+    const right = name === "secondary";
+    children.push(panel(`${id}/mouse`, [
+      panel(`${id}/mouse/left`, [], {
+        cls: right ? ["mouse-key"] : ["mouse-key", "mouse-key-on"],
+        style: { left: 1 },
+      }),
+      panel(`${id}/mouse/right`, [], {
+        cls: right ? ["mouse-key", "mouse-key-on"] : ["mouse-key"],
+        style: { right: 1 },
+      }),
+    ], { cls: ["mouse-glyph"] }));
+  }
+  return row(id, children, { cls: ["hover-keys"] });
 }
