@@ -129,6 +129,27 @@ ui = t.ui(operator)
 assert(ui.open.body == SHOUT, "the filter's source is on the disk of the tower")
 assert(ui.editor and ui.editor.bound == false, "nothing runs it yet")
 
+-- ---- check as you type ----------------------------------------------------
+-- A `file_change` carries the WHOLE draft and answers with the native
+-- check's markers on the same pane; a `file_revert` drops the draft.
+-- Neither act is ledgered and neither touches the saved body.
+t.ui_act(operator, "text", '{"field":"file_change","option":"' .. file
+    .. '","text":"return {","revision":0}')
+t.tick()
+ui = t.ui(operator)
+assert(ui.editor and #ui.editor.markers == 1, "a broken draft checks as it is typed")
+assert(ui.editor.markers[1].line == 1 and #ui.editor.markers[1].message > 0,
+    "the marker names a line and a fault: " .. tostring(ui.editor.markers[1].message))
+assert(ui.editor.body == "return {", "the editor shows the draft, not the saved body")
+assert(ui.open.body == SHOUT, "the saved body is untouched by a draft")
+
+t.ui_act(operator, "toggle", '{"field":"file_revert","option":"' .. file .. '"}')
+t.tick()
+ui = t.ui(operator)
+assert(ui.editor.body == SHOUT and #ui.editor.markers == 0,
+    "revert drops the draft and its markers")
+assert(ui.open.body == SHOUT, "and the saved body is what remains")
+
 -- ---- bind it ------------------------------------------------------------
 t.ui_act(operator, "toggle", '{"field":"socket_load","option":"carry:' .. uid .. '"}')
 t.tick()
