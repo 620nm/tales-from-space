@@ -8,6 +8,9 @@ device windows. Only device contents need a substantial panel background.
 This is trusted concept tooling, not a production pack UI implementation. It
 uses an illustrative scene and mocked actions; it neither connects to a game
 server nor demonstrates sandbox integration. Actual gameplay stays in `ui/`.
+`ui/` carries this look through the pack style grammar (engine
+`docs/pack-ui/styles.md`), which has no gradient, blur, transform or
+pseudo-element: fills are flat, and the tray draws no pointer to its slot.
 
 ## Export and capture
 

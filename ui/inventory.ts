@@ -1,11 +1,13 @@
 // Independent hand, carry and anatomical equipment regions. Every press
-// is a native inventory claim the server revalidates.
+// is a native inventory claim the server revalidates. Nothing in the
+// cluster moves as items, trays or the worn grid come and go: the rows
+// that appear are absolute, so the hands stay under the cursor.
 import type { UiNode } from "@lunatic/ui";
 import { Pane } from "@lunatic/ui";
 import { hudSlot } from "./slots";
 import type { GameplayView, InventoryState } from "./model";
 import { openStorage } from "./inventory-storage";
-import { bind, column, inspect, press, row, some, text, type Command } from "./view";
+import { bind, column, inspect, panel, press, row, some, text, type Command } from "./view";
 import * as S from "./strings";
 
 export function inventory(view: GameplayView): UiNode | null {
@@ -14,12 +16,15 @@ export function inventory(view: GameplayView): UiNode | null {
   return Pane(
     "inventory",
     some(
-      handsGroup(current),
+      row("hands", handSquares(current), { style: { gap: 4 } }),
       row("hand-controls", [
-        press("swap", S.SWAP, { kind: "swap" }),
-        press("drop", S.DROP, { kind: "drop" }),
-        press("use_self", S.USE, { kind: "use_self" }),
-      ], { cls: ["hand-controls"], style: { gap: 3 } }),
+        glyphControl("swap", S.MARK_SWAP, S.SWAP, { kind: "swap" }),
+        glyphControl("drop", S.MARK_DROP, S.DROP, { kind: "drop" }),
+        glyphControl("throw_mode", S.MARK_THROW,
+          view.state.throwing ? S.THROWING : S.THROW, { kind: "throw_mode" },
+          view.state.throwing === true),
+      ], { cls: ["hand-actions"] }),
+      openers(current),
     ),
     {
       cls: ["hudgroup", "hand-cluster"],
@@ -28,13 +33,22 @@ export function inventory(view: GameplayView): UiNode | null {
   );
 }
 
-function handsGroup(current: InventoryState): UiNode {
+/** A glyph over its word, with the press stretched across both. */
+function glyphControl(id: string, glyph: unknown, caption: unknown, action: Command, on = false): UiNode {
+  return panel(`${id}/box`, some(
+    text(`${id}/glyph`, glyph, ["hud-glyph"]),
+    text(`${id}/cap`, caption, ["hud-cap"]),
+    press(id, "", action, { cls: ["hud-hit"] }),
+  ), { cls: on ? ["hand-action", "hand-action-on"] : ["hand-action"] });
+}
+
+function handSquares(current: InventoryState): UiNode[] {
   const hands = current.hands ?? [];
-  const squares = hands.map((item, index) => {
+  return hands.map((item, index) => {
     const id = `hand/${index}/pick`;
     return hudSlot(id, {
       ...(item?.sprite ? { sprite: item.sprite } : {}),
-      label: S.short(item?.name ?? S.hand(index)),
+      label: S.hand(index),
       active: current.active === index,
       empty: !item,
       ...(item?.fill ? { fill: item.fill } : {}),
@@ -54,32 +68,22 @@ function handsGroup(current: InventoryState): UiNode {
       }),
     }, "hand", "hand-slot");
   });
-  const openers = hands.flatMap((_item, index) =>
+}
+
+/** The presses that open a held container, floated clear of the cells. */
+function openers(current: InventoryState): UiNode | null {
+  const rows = (current.hands ?? []).flatMap((_item, index) =>
     current.held?.[index]
-      ? [
-          press(
-            `hand/${index}/open`,
-            S.OPEN,
-            () => {
-              openStorage({ hand: index });
-              return undefined;
-            },
-            { variant: "ghost" },
-          ),
-        ]
+      ? [press(`hand/${index}/open`, S.OPEN, () => { openStorage({ hand: index }); return undefined; },
+          { variant: "ghost" })]
       : [],
   );
-  return column(
-    "hands-group",
-    some(
-      text("hands-caption", S.HANDS, ["caption"]),
-      row("hands", squares, { style: { gap: 4 } }),
-      openers.length
-        ? row("hands-open", openers, { style: { gap: 4 } })
-        : null,
-    ),
-    { cls: ["trayset"] },
-  );
+  return rows.length
+    ? row("hands-open", rows, {
+        cls: ["hudgroup"],
+        style: { position: "absolute", left: 0, bottom: 89, gap: 4 },
+      })
+    : null;
 }
 
 let wornVisible = true;
@@ -101,7 +105,7 @@ export function wornGroup(view: GameplayView, carry = false): UiNode | null {
     const id = `equipment/${slot.id}/pick`;
     const square = hudSlot(id, {
       ...(worn?.item?.sprite ? { sprite: worn.item.sprite } : {}),
-      label: S.short(worn?.item?.name ?? slot.label),
+      label: S.short(slot.label),
       empty: !worn?.item,
       ...(worn?.item?.fill ? { fill: worn.item.fill } : {}),
       item: `equipment/${slot.id}`,
@@ -124,42 +128,58 @@ export function wornGroup(view: GameplayView, carry = false): UiNode | null {
   });
   return column(
     "worn-group",
-    [
-      ...squares,
-      press("worn-toggle", S.WORN, () => { wornVisible = !wornVisible; return undefined; }, {
-        cls: ["worn-toggle"], variant: wornVisible ? "selected" : "default",
-        style: { position: "absolute", left: 0, bottom: 0, width: 40, minWidth: 40, height: 40 },
-      }),
-    ],
+    [...squares, wornToggle()],
     { cls: ["hudgroup"], style: { position: "absolute", right: 124, bottom: 40, width: 128, minWidth: 128, height: 128 } },
   );
 }
 
-export function vitals(view: GameplayView): UiNode | null {
+/** The one square in the grid that never moves and never holds an item. */
+function wornToggle(): UiNode {
+  return panel("worn-toggle/box", some(
+    text("worn-toggle/glyph", S.MARK_WORN, ["worn-glyph"]),
+    text("worn-toggle/cap", S.WORN, ["worn-cap"]),
+    press("worn-toggle", "", () => { wornVisible = !wornVisible; return undefined; }, { cls: ["hud-hit"] }),
+  ), {
+    cls: wornVisible ? ["worn-toggle", "worn-on"] : ["worn-toggle"],
+    style: { position: "absolute", left: 0, bottom: 0 },
+  });
+}
+
+interface Reading { key: string; label: string; value: string }
+
+/** The readouts this body is sending, in the roster's own words. */
+function readings(view: GameplayView): Reading[] {
   const samples = view.state.vitals?.values ?? [];
   const roster = view.state.readouts?.slots ?? [];
-  const chips = samples.flatMap((sample, index) => {
+  return samples.flatMap((sample, index) => {
     const slot = roster[sample.slot] ?? roster[index];
     if (!slot) return [];
     const value = sample.value;
-    return [
-      row(
-        `vital/${index}`,
-        [
-          text(`vital/${index}/key`, slot.label, ["chipkey"]),
-          text(
-            `vital/${index}/value`,
-            `${Number.isFinite(value) ? Math.round(value as number) : "—"}${slot.suffix ?? ""}`,
-            ["chipval"],
-          ),
-        ],
-        { cls: ["chip"] },
-      ),
-    ];
+    return [{
+      key: `vital/${index}`,
+      label: slot.label,
+      value: `${Number.isFinite(value) ? Math.round(value as number) : S.NO_READING}${slot.suffix ?? ""}`,
+    }];
   });
-  return chips.length
-    ? row("vitals", chips, { style: { gap: 4, flexWrap: "wrap" } })
-    : null;
+}
+
+/**
+ * What stands beside the target figure: a slot held empty for the intent
+ * pill this HUD has yet to grow, and the body's own readouts, one per row.
+ */
+export function targetMeta(view: GameplayView): UiNode | null {
+  if (!view.body) return null;
+  const lines = readings(view);
+  return column("target-meta", some(
+    panel("target-reserve", [], { cls: ["target-reserve"] }),
+    lines.length
+      ? column("target-status", lines.map((line, index) => row(line.key, some(
+          index === 0 ? text("target-status/dot", S.MARK_STATUS, ["status-dot"]) : null,
+          text(`${line.key}/key`, line.label, ["status-key"]),
+          text(`${line.key}/value`, line.value),
+        ), { cls: ["status-row"] })), { cls: ["target-status"] })
+      : null,
+  ), { cls: ["hudgroup", "target-meta"] });
 }
 
 export function shortcut(id: string, view: GameplayView): Command | undefined {

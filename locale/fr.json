@@ -100,5 +100,15 @@
   "lunatic/tfs:ui.desktop.power_off": "Éteindre",
   "lunatic/tfs:ui.desktop.eject_id": "Éjecter la carte d'identité",
   "lunatic/tfs:ui.desktop.eject_cartridge": "Éjecter la cartouche",
-  "lunatic/tfs:ui.desktop.close_lid": "Fermer le capot"
+  "lunatic/tfs:ui.desktop.close_lid": "Fermer le capot",
+  "lunatic/tfs:ui.comms.tab_all": "Tout",
+  "lunatic/tfs:ui.comms.tab_local": "Local",
+  "lunatic/tfs:ui.comms.tab_radio": "Radio",
+  "lunatic/tfs:ui.comms.tab_system": "Système",
+  "lunatic/tfs:ui.comms.history": "Historique ↗",
+  "lunatic/tfs:ui.comms.say": "DIRE ›",
+  "lunatic/tfs:ui.comms.stamp": "{minutes}:{seconds}",
+  "lunatic/tfs:ui.look.read_full": "Lire l'examen complet",
+  "lunatic/tfs:ui.look.read_less": "Réduire",
+  "lunatic/tfs:ui.look.history_row": "▸ Historique d'examen · {count}"
 }
