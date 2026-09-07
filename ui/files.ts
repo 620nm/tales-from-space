@@ -5,6 +5,7 @@ import type { UiNode } from "@lunatic/ui";
 import { LabeledList, Notice } from "@lunatic/ui";
 import type {
   DocumentIdentity,
+  EditorState,
   ModuleState,
   OpenFile,
   PanelDocument,
@@ -23,6 +24,34 @@ interface Buffer {
 }
 const buffers = new Map<string, Buffer>();
 let nextEditor = 0;
+
+// Program-text extensions from this pack's own roster
+// (content/filetypes.luau): a source entry is edited as Luau.
+const SOURCE_EXTS = new Set(["disl"]);
+
+/** The engine's editing surface, or undefined the moment a field is off. */
+function editorOf(raw: OpenFile["editor"]): EditorState | undefined {
+  if (!raw || typeof raw !== "object") return undefined;
+  const e = raw as Partial<EditorState>;
+  if (
+    typeof e.body !== "string" ||
+    typeof e.read_only !== "boolean" ||
+    typeof e.byte_budget !== "number" ||
+    !Number.isFinite(e.byte_budget) ||
+    !Array.isArray(e.markers) ||
+    e.markers.some(
+      (m) =>
+        !m ||
+        typeof m !== "object" ||
+        typeof m.message !== "string" ||
+        (m.line !== undefined && typeof m.line !== "number"),
+    ) ||
+    typeof e.revision !== "number" ||
+    typeof e.bound !== "boolean"
+  )
+    return undefined;
+  return e as EditorState;
+}
 
 export function filePanes(
   id: string,
@@ -167,6 +196,7 @@ function editorPane(
   const current = editorBuffer(`${id}/${option}`, open);
   const bodyId = `${id}/editor/body/${current.key}`;
   const conflict = current.revision !== open.revision;
+  const editor = editorOf(open.editor);
   return column(
     `${id}/editor`,
     some(
@@ -202,7 +232,35 @@ function editorPane(
         multiline: true,
         submitOnly: true,
         revision: current.revision,
+        ...(editor
+          ? {
+              disabled: editor.read_only,
+              ...(SOURCE_EXTS.has(open.ext) ? { language: "luau" as const } : {}),
+            }
+          : {}),
       }),
+      editor
+        ? row(
+            `${id}/editor/status`,
+            [
+              ...(editor.markers.length
+                ? editor.markers
+                    .slice(0, 8)
+                    .map((m, i) =>
+                      text(
+                        `${id}/editor/marker/${i}`,
+                        S.marker(m.line, m.message),
+                        ["marker"],
+                      ),
+                    )
+                : [text(`${id}/editor/clear`, S.MARKERS_CLEAR, ["hint"])]),
+              text(`${id}/editor/budget`, S.byteBudget(editor.byte_budget), [
+                "fsize",
+              ]),
+            ],
+            { style: { gap: 8, alignItems: "baseline", flexWrap: "wrap" } },
+          )
+        : null,
       row(
         `${id}/editor/buttons`,
         [
@@ -221,7 +279,7 @@ function editorPane(
                 revision: current.revision,
               });
             },
-            { submit: bodyId, variant: "primary", disabled: conflict },
+            { submit: bodyId, variant: "primary", disabled: conflict || editor?.read_only },
           ),
           press(`${id}/editor/revert`, S.REVERT, () => {
             buffers.delete(`${id}/${option}`);

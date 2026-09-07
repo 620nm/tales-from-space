@@ -164,6 +164,7 @@ export default defineStyles([
     borderRadius: 6,
   }),
   rule("hint", { color: dim, fontSize: 11, fontStyle: "italic" }),
+  rule("marker", { color: accent, fontSize: 11 }),
   rule("grow", { flexGrow: 1, minWidth: 0 }),
   rule("right", { textAlign: "right" }),
   rule("mono", { fontFamily: "mono" }),
