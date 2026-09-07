@@ -1,0 +1,13 @@
+{
+  "approved_source": "/tmp/tfs-terminal-frameset-NcP2SU/sprites/",
+  "font_source": "/home/josh/Downloads/BoldsPixels.ttf",
+  "sha256": {
+    "assets/originals/art/computer/files/file-disl.png": "b8839d248d528d963fbc53c7dc3d10dcd5473f4d0b0ab4eb683f82911205823e",
+    "assets/originals/art/computer/files/file-md.png": "f2cd504b339debda583d67f3ac7ca120fec792fcfbf6e86e2a6628a2a4ee6199",
+    "assets/originals/art/computer/files/file-atmo.png": "44fbb6fd04e20e944877e387bd93bea16b6d7639986a6b33b81b41a8e94a5edc",
+    "assets/originals/art/computer/files/file-pem.png": "9bb92beb037ba4b585a553e929783097ef545ba530b2dab0cf370e152877f738",
+    "docs/art-reference/fonts/BoldsPixels.ttf": "3ad8f6139e8e16e78836f506a5151e6dae1db9a50ddcad44e6ece7311b9a0874",
+    "docs/art-reference/palettes/chatgpt.gpl": "fd6a0a6c07b368f11662927478e69848fcb1f7d2c1ce27c948b7f99558bd0caa",
+    "docs/art-reference/palettes/claude.gpl": "01d51876b0e89ab868d1ff3448d552eb536ba0fb5d45f6df8c56509b2a16233f"
+  }
+}

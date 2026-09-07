@@ -106,7 +106,7 @@ assert(ui.sockets[1].state.id == "sockets.state.unbound", "and it starts empty")
 assert(ui.sockets[1].runs == 0 and ui.sockets[1].faults == 0, "with clean counters")
 
 -- The tower reads program text only: the create control offers `disl`
--- on the host store and nothing else (no disk in the slot, and `doc`
+-- on the host store and nothing else (no disk in the slot, and `md`
 -- is a word this machine cannot read).
 assert(ui.create.host and #ui.create.host == 1 and ui.create.host[1] == "disl",
     "the tower creates program text only")
@@ -115,12 +115,13 @@ assert(ui.create.media == nil, "and has no disk side until a disk is in it")
 -- ---- write the filter on A: --------------------------------------------
 -- The SHOUT filter: every line it touches comes out uppercase.
 local SHOUT = "return { text = string.upper(content) }"
-t.ui_act(operator, "toggle", '{"field":"file_create","option":"host:disl"}')
+t.ui_act(operator, "text", '{"field":"file_create","option":"host:disl:' .. ui.stores[1].binding
+    .. '","text":"untitled"}')
 t.tick()
 ui = t.ui(operator)
 assert(ui.open and ui.open.store == "host" and ui.open.ext == "disl",
     "the new program is open on the host store")
-local file = "host:" .. string.format("%d", ui.open.uid)
+local file = "host:" .. string.format("%d", ui.open.uid) .. ":" .. ui.open.binding
 local uid = ui.open.uid
 t.ui_act(operator, "text", '{"field":"file_save","option":"' .. file
     .. '","text":"' .. SHOUT .. '","revision":0}')
@@ -151,7 +152,7 @@ assert(ui.editor.body == SHOUT and #ui.editor.markers == 0,
 assert(ui.open.body == SHOUT, "and the saved body is what remains")
 
 -- ---- bind it ------------------------------------------------------------
-t.ui_act(operator, "toggle", '{"field":"socket_load","option":"carry:' .. uid .. '"}')
+t.ui_act(operator, "toggle", '{"field":"socket_load","option":"carry:' .. uid .. ":" .. ui.stores[1].binding .. '"}')
 t.tick()
 ui = t.ui(operator)
 assert(ui.sockets[1].state.id == "sockets.state.bound", "the socket is bound")
@@ -256,7 +257,7 @@ ui = t.ui(operator)
 assert(ui.sockets[1].state.id == "sockets.state.bound", "still bound")
 
 -- ---- unload, and the tower is stock again ----------------------------------
-t.ui_act(operator, "toggle", '{"field":"socket_unload","option":"carry"}')
+t.ui_act(operator, "toggle", '{"field":"socket_unload","option":"carry:' .. ui.stores[1].binding .. '"}')
 t.tick()
 ui = t.ui(operator)
 assert(ui.sockets[1].state.id == "sockets.state.unbound", "unbound")

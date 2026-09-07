@@ -48,7 +48,7 @@ local function has(list, want)
 end
 
 local function addr(row)
-    return row.store .. ":" .. string.format("%d", row.uid)
+    return row.store .. ":" .. string.format("%d", row.uid) .. ":" .. row.binding
 end
 
 -- A wired closet: generator, panel, port, and the terminal standing
@@ -139,20 +139,23 @@ assert(#ui.files == 0, "both stores start bare")
 -- declared order (content/filetypes.luau), PER WRITABLE SIDE: a create
 -- names where it lands (`<side>:<ext>`), never inferred
 -- (docs/files/scriptable-machine.md §2).
-assert(#ui.create.host == 2 and ui.create.host[1] == "doc" and ui.create.host[2] == "disl",
-    "the pack's two words reach the host side: " .. table.concat(ui.create.host, ","))
-assert(#ui.create.media == 2 and ui.create.media[1] == "doc" and ui.create.media[2] == "disl",
+assert(#ui.create.host == 4 and ui.create.host[1] == "md" and ui.create.host[2] == "disl"
+    and ui.create.host[3] == "atmo" and ui.create.host[4] == "pem",
+    "the pack's four formats reach the host side: " .. table.concat(ui.create.host, ","))
+assert(#ui.create.media == 4 and ui.create.media[1] == "md" and ui.create.media[2] == "disl"
+    and ui.create.media[3] == "atmo" and ui.create.media[4] == "pem",
     "and the disk side: " .. table.concat(ui.create.media, ","))
 
 -- ---- make one ---------------------------------------------------------
 -- Create lands on the MEDIUM, because a crewman who put a disk in came
 -- to write to the disk -- and now SAYS so, in the option itself.
-t.ui_act(p, "toggle", '{"field":"file_create","option":"media:doc"}')
+t.ui_act(p, "text", '{"field":"file_create","option":"media:md:' .. ui.stores[2].binding
+    .. '","text":"untitled"}')
 t.tick()
 ui = t.ui(p)
 assert(ui.open, "the new file is what the panel is showing")
 assert(ui.open.store == "media", "and it landed on the disk")
-assert(ui.open.name == "untitled" and ui.open.ext == "doc", "named for nothing yet")
+assert(ui.open.name == "untitled" and ui.open.ext == "md", "named for nothing yet")
 assert(ui.open.revision == 0, "and unedited")
 assert(ui.open.cap == BODY_CAP, "the panel publishes the byte cap a save is held to")
 local disk_file = addr(ui.open)
@@ -168,7 +171,7 @@ assert(ui.open.body == NOTE, "the body comes back whole")
 assert(ui.open.revision == 1, "and a save moves the revision")
 -- The store readout weighs stem, extension and body rather than
 -- counting entries.
-assert(ui.stores[2].used == #NOTE + #"untitled" + #"doc",
+assert(ui.stores[2].used == #NOTE + #"untitled" + #"md",
     "the disk's used figure is what it holds: " .. ui.stores[2].used)
 
 local saved = t.ledger_rows("file_saved")
@@ -211,18 +214,19 @@ t.ui_act(p, "text", '{"field":"file_rename","option":"' .. disk_file
 t.tick()
 ui = t.ui(p)
 assert(ui.open.name == "tank_room", "renamed")
-assert(has(listing(ui), "media:tank_room.doc"), "and the listing agrees: "
+assert(has(listing(ui), "media:tank_room.md"), "and the listing agrees: "
     .. table.concat(listing(ui), " "))
 assert(#t.ledger_rows("file_renamed") == 1, "renames are on the record too")
 
 -- ---- disk -> terminal -------------------------------------------------
 -- Copy goes to the OTHER store, because there is only ever one other.
-t.ui_act(p, "toggle", '{"field":"file_copy","option":"' .. disk_file .. '"}')
+t.ui_act(p, "text", '{"field":"file_copy","option":"' .. disk_file
+    .. ":" .. ui.stores[1].binding .. '","text":"tank_room"}')
 t.tick()
 ui = t.ui(p)
-assert(has(listing(ui), "host:tank_room.doc"),
+assert(has(listing(ui), "host:tank_room.md"),
     "the note is on the terminal now: " .. table.concat(listing(ui), " "))
-assert(has(listing(ui), "media:tank_room.doc"), "and still on the disk -- copy, never move")
+assert(has(listing(ui), "media:tank_room.md"), "and still on the disk -- copy, never move")
 local copied = t.ledger_rows("file_copied")
 assert(#copied == 1 and copied[1].body == NOTE,
     "a copy carries the body into the record, which is the counterplay to copying a secret")
@@ -231,7 +235,7 @@ assert(#copied == 1 and copied[1].body == NOTE,
 t.ui_act(p, "toggle", '{"field":"file_delete","option":"' .. disk_file .. '"}')
 t.tick()
 ui = t.ui(p)
-assert(not has(listing(ui), "media:tank_room.doc"), "gone from the disk: "
+assert(not has(listing(ui), "media:tank_room.md"), "gone from the disk: "
     .. table.concat(listing(ui), " "))
 assert(not ui.open, "and the selection went with the file it named")
 assert(#t.ledger_rows("file_deleted") == 1, "deletions are on the record")
@@ -246,29 +250,30 @@ for _, row in ipairs(ui.files) do
     end
 end
 assert(host_file, "the terminal kept its copy")
-t.ui_act(p, "toggle", '{"field":"file_copy","option":"' .. host_file .. '"}')
+t.ui_act(p, "text", '{"field":"file_copy","option":"' .. host_file
+    .. ":" .. ui.stores[2].binding .. '","text":"tank_room"}')
 t.tick()
 ui = t.ui(p)
-assert(has(listing(ui), "media:tank_room.doc"),
+assert(has(listing(ui), "media:tank_room.md"),
     "and back onto the disk: " .. table.concat(listing(ui), " "))
 assert(#t.ledger_rows("file_copied") == 2, "both crossings are attributed")
 
 -- ---- take it back out -------------------------------------------------
-t.ui_act(p, "toggle", '{"field":"media_eject"}')
+local media_binding = ui.stores[2].binding
+t.ui_act(p, "toggle", '{"field":"media_eject","option":"' .. media_binding .. '"}')
 t.tick()
 ui = t.ui(p)
 assert(ui.media_slot.id == "files.media.empty", "the slot is empty")
 assert(#ui.stores == 1, "and the disk's store left with it")
-assert(not has(listing(ui), "media:tank_room.doc"),
+assert(not has(listing(ui), "media:tank_room.md"),
     "so the note is somewhere in a pocket, which is the whole point of a disk")
 assert(#t.ledger_rows("media_ejected") == 1, "and taking one out is a row as well")
 local hands = t.hands(p)
 assert(hands[1] == "floppy_disk" or hands[2] == "floppy_disk",
     "it came back into a hand rather than onto the deck")
 
--- A second press has nothing to give back and says so.
-t.ui_act(p, "toggle", '{"field":"media_eject"}')
+-- A delayed second press no longer has authority over a mounted store.
+t.ui_act(p, "toggle", '{"field":"media_eject","option":"' .. media_binding .. '"}')
 t.tick()
-assert(said(p, "There is nothing in it."), "an empty drive says so: "
-    .. table.concat(t.messages(p), " | "))
+assert(#t.ui(p).stores == 1, "the stale binding cannot restore access to the removed disk")
 assert(#t.ledger_rows("media_ejected") == 1, "and ejected nothing twice")
