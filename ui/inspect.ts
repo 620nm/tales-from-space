@@ -6,6 +6,7 @@ import type { GameplayView } from "./model";
 import { column, icon, panel, press, row, some, text } from "./view";
 import * as S from "./strings";
 import { gesture } from "./gesture";
+import { hintText } from "./labels";
 
 type Inspection = NonNullable<GameplayView["state"]["inspections"]>[number];
 let historyOpen = false;
@@ -116,7 +117,7 @@ export function inspectionPanels(view: GameplayView): UiNode[] {
       ], { cls: ["hover-head"] }),
       ...[...hints, { gesture: "examine", label: S.tfs("ui.look.examine") }].map((hint, index) => row(`hover/hint/${index}`, [
         gesture(`hover/key/${index}`, hint.gesture),
-        text(`hover/label/${index}`, hint.label, ["hover-description"]),
+        text(`hover/label/${index}`, hintText(hint.label), ["hover-description"]),
       ], { cls: ["hover-row"] })),
     ], { cls: ["hover-card"] }), anchor: "@cursor" });
   }

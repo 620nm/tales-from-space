@@ -3,6 +3,7 @@
 // (docs/tgui/labels.md); one reader for both, so a row reads the same
 // whichever author wrote it.
 import type { Json } from "@lunatic/ui";
+import { t } from "@lunatic/ui";
 import { tfs } from "./strings";
 
 export type Label =
@@ -73,6 +74,18 @@ export function labelText(label: Label | undefined | Json): string {
       row.arg_ids,
     ).slice(0, TEXT_LIMIT);
   return typeof row.text === "string" ? row.text.slice(0, TEXT_LIMIT) : "";
+}
+
+/** An interaction hint's word. The engine sends the label a pack
+ *  declared for the affordance, which is a fully-qualified catalog key
+ *  (`<mod>:<id>`) whenever the pack named one and content's own word
+ *  otherwise (docs/luau-api/click.md). A key belongs to whichever mod
+ *  wrote it, so it resolves unscoped; an unrendered key answers with
+ *  itself rather than going blank. */
+export function hintText(label: Label | undefined | Json): string {
+  if (typeof label === "string" && label.includes(":") && !/\s/.test(label))
+    return t(label).slice(0, TEXT_LIMIT);
+  return labelText(label);
 }
 
 /** The catalog id a `Label` NAMES, for a reader that branches on which
