@@ -1,10 +1,10 @@
 :root{color-scheme:dark;--bg:#11191d;--line:#526064;--dim:#93a5a6;--text:#d4dfdb;--teal:#91c9b6;--amber:#dcc18a;font-family:Arial,Helvetica,sans-serif;font-size:12px}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);height:100vh;min-width:1000px;display:flex;flex-direction:column;overflow:hidden}
-button,input{font:inherit}
+button,input,select{font:inherit}
 button{color:var(--text);background:linear-gradient(#344146,#253036);border:1px solid #667173;border-bottom-color:#101b20;border-right-color:#101b20;cursor:pointer;border-radius:2px}
 button:hover{background:#425452;color:#fff}
-button:focus-visible,input:focus-visible,summary:focus-visible,[role=button]:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,[role=button]:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 button:active{border-color:#182327 #617370 #617370 #182327}
 button.selected,button[aria-pressed=true]{color:#d5eadf;background:#354d46;border-top-color:var(--teal)}
 [hidden]{display:none!important}
@@ -19,6 +19,7 @@ small{font-size:9px}
 .gallery nav button{padding:5px 14px;font-size:11px}
 .gallery-tools{margin-left:auto;gap:8px}
 .gallery-tools>button{padding:5px 9px;font-size:10px}
+#slot-skin{width:116px;padding:4px 6px;border:1px solid #596c64;background:#23312e;color:#d4dfdb;font-size:10px}
 .gallery details{position:relative;margin-left:5px;font-size:11px}
 .gallery summary{cursor:pointer;color:#bccbc5}
 .about{position:absolute;right:0;top:28px;width:305px;background:#202c30;border:1px solid #6c8079;padding:16px;line-height:1.6;box-shadow:0 8px 26px #0009}
@@ -48,10 +49,13 @@ small{font-size:9px}
 #chat-input::placeholder{color:#9cafa8}
 #chat-form button{border:0;background:none;color:#bed2c6;padding:0 5px}
 .history-open .chat{height:min(620px,calc(100% - 90px));max-height:none;background:linear-gradient(90deg,#152127ed 91%,#15212740);border-left:1px solid #75887b;padding-top:5px}
-.equipment{position:absolute;left:calc(var(--hud-center) - 252px);bottom:40px;width:128px;z-index:4}
-.equipment-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:#b0bfb3;font:8px monospace;letter-spacing:1px;text-shadow:0 1px 3px #000}
-.equipment-label button{font:8px monospace;background:#1b282dcc;border:0;padding:3px 5px;color:#adbbb0}
+.equipment{position:absolute;left:calc(var(--hud-center) - 252px);bottom:40px;width:128px;height:128px;z-index:4;pointer-events:none}
+#equipment-toggle{position:absolute;left:0;bottom:0;width:40px;height:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0;border:1px solid #5280ac;background:#20394ee8;box-shadow:inset 1px 1px #8eb4d140,inset -1px -1px #071621;color:#a4c4df;pointer-events:auto}
+#equipment-toggle[aria-pressed=true]{border-color:#b2d7ff;background:#315673ed;color:#e0f1ff}
+#equipment-toggle>span{font-size:18px;line-height:18px}
+#equipment-toggle>small{font:7px monospace;letter-spacing:.5px}
 #equipment-slots{display:grid;grid-template-columns:repeat(3,40px);grid-template-rows:repeat(3,40px);gap:4px}
+#equipment-slots .slot{pointer-events:auto}
 #equipment-slots [data-worn=lamp]{grid-column:2;grid-row:1}
 #equipment-slots [data-worn=ears]{grid-column:1;grid-row:1}
 #equipment-slots [data-worn=mask]{grid-column:3;grid-row:1}
@@ -65,8 +69,6 @@ small{font-size:9px}
 .slot.empty:before{content:'·';font-size:20px}
 .slot .slot-label{position:absolute;bottom:2px;left:3px;font:7px monospace;color:#b5c6b5;text-shadow:0 1px #000}
 .slot.open{border-color:var(--amber);background:#4c4932ed;box-shadow:inset 0 0 0 1px #b3965b}
-.slot.extra{display:none}
-.equipment.expanded .slot.extra{display:flex}
 .actor-controls{position:absolute;bottom:17px;left:var(--hud-center);transform:translateX(-50%);display:flex;align-items:flex-end;gap:8px;z-index:4}
 .carry-slots{display:grid;grid-template-columns:40px;gap:4px;margin-bottom:23px}
 .hand-cluster{display:flex;flex-direction:column;gap:4px}

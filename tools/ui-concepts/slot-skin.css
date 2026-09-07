@@ -1,0 +1,9 @@
+.tg-slot-frame{display:none;position:absolute;inset:0;pointer-events:none;image-rendering:pixelated;background-repeat:no-repeat;z-index:0}
+#stage[data-slot-skin=classic] .tg-slot-frame{display:block}
+#stage[data-slot-skin=classic] :is(.slot,.hand){background:transparent;box-shadow:none;border-color:transparent}
+#stage[data-slot-skin=classic] :is(.slot,.hand)>:not(.tg-slot-frame){z-index:1}
+#stage[data-slot-skin=classic] :is(.slot>.sprite,.hand-item){position:relative}
+#stage[data-slot-skin=classic] .slot.empty:before{display:none}
+#stage[data-slot-skin=classic] :is(.slot.open,.slot.selected,.slot[aria-pressed=true],.hand.active){outline:1px solid var(--amber);outline-offset:-2px}
+#stage[data-slot-skin=classic] :is(.slot,.hand):hover .tg-slot-frame{filter:brightness(1.2)}
+#stage[data-slot-skin=classic] :is(.slot,.hand):focus-visible{outline:2px solid var(--amber);outline-offset:2px}

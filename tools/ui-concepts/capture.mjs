@@ -102,7 +102,7 @@ try {
       })]);
     } finally { clearTimeout(loadTimer); }
     const ready = await call("Runtime.evaluate", {
-      expression: "ConceptScene.ready.then(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))",
+      expression: "Promise.all([ConceptScene.ready, ConceptSlotSkin.ready]).then(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))",
       awaitPromise: true, returnByValue: true,
     });
     if (ready.exceptionDetails) throw new Error(`Concept failed: ${ready.exceptionDetails.exception?.description ?? ready.exceptionDetails.text}; ${errors.join("; ")}`);
@@ -122,5 +122,5 @@ try {
     ? Promise.resolve() : new Promise(resolveExit => browser.once("exit", resolveExit));
   browser.kill("SIGTERM");
   await stopped;
-  await rm(profile, { recursive: true, force: true });
+  await rm(profile, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
 }

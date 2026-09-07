@@ -63,11 +63,13 @@ export function checkGestureBadges() {
   const alpha = Number(style.backgroundColor.match(/[\d.]+/g)?.[3] ?? 1);
   if (!(alpha > 0 && alpha < 1) || parseFloat(style.borderTopWidth) < 1) throw new Error("Hover hint needs a translucent framed background");
   const gestures = [...hint.querySelectorAll(".hover-keys")];
+  const iconLeft = hint.querySelector('.hover-sprite').getBoundingClientRect().left;
   const labels = gestures.map(node => node.getAttribute("aria-label"));
   for (const label of ["left mouse button", "right mouse button", "Shift + left mouse button", "Alt + left mouse button"]) {
     if (!labels.includes(label)) throw new Error(`Missing accessible gesture: ${label}`);
   }
   for (const gesture of gestures) {
+    if (gesture.firstElementChild.getBoundingClientRect().left !== iconLeft) throw new Error('Gesture badges do not align with the object icon');
     if (gesture.getAttribute("role") !== "img") throw new Error("Gesture icon lacks accessible image role");
     const mouse = gesture.querySelector(".hover-mouse");
     if (!mouse || mouse.getAttribute("aria-hidden") !== "true") throw new Error("Gesture lacks decorative mouse glyph");

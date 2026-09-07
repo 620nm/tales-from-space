@@ -31,7 +31,6 @@
   const worn = [['uniform_eng', 'Uniform'], ['breath_mask', 'Mask'], ['headset', 'Ears'], ['id', 'ID'], ['light_bulb', 'Lamp'], [null, 'Suit'], [null, 'Gloves'], [null, 'Shoes']];
   worn.forEach((item, index) => {
     const slot = makeSlot(...item); slot.dataset.worn = item[1].toLowerCase();
-    if (index > 4) slot.classList.add('extra');
     slot.addEventListener('click', () => {
       if (index === 4) actions.activate('lamp');
       else surfaces.inspect({ key: `worn-${index}`, title: item[1], sprite: item[0], lines: [item[0] ? 'Equipped · local sample' : 'Empty equipment slot'] });
@@ -148,7 +147,12 @@
   $('#drop-item').addEventListener('click', () => { if (hands[activeHand]) localMessage(`${hands[activeHand][1]} removed from ${activeHand} hand in this local sample.`); hands[activeHand] = null; setHand(activeHand); });
   $('#throw-item').addEventListener('click', event => { const button = event.currentTarget; button.setAttribute('aria-pressed', String(button.getAttribute('aria-pressed') !== 'true')); });
   $('#inventory-close').addEventListener('click', () => setContainer(null));
-  $('#equipment-toggle').addEventListener('click', event => { const expanded = $('#equipment').classList.toggle('expanded'); event.currentTarget.setAttribute('aria-expanded', String(expanded)); event.currentTarget.textContent = expanded ? 'Less ▾' : 'More ▴'; });
+  $('#equipment-toggle').addEventListener('click', event => {
+    const grid = $('#equipment-slots'); grid.hidden = !grid.hidden;
+    $('#equipment').classList.toggle('expanded', !grid.hidden);
+    event.currentTarget.setAttribute('aria-expanded', String(!grid.hidden));
+    event.currentTarget.setAttribute('aria-pressed', String(!grid.hidden));
+  });
   $('#history-toggle').addEventListener('click', event => { const expanded = stage.classList.toggle('history-open'); event.currentTarget.setAttribute('aria-expanded', String(expanded)); event.currentTarget.textContent = expanded ? 'Close history ↙' : 'History ↗'; });
   $('#chat-form').addEventListener('submit', event => {
     event.preventDefault(); const input = $('#chat-input'); if (!input.value.trim()) return;

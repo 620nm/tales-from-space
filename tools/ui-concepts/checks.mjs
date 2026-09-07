@@ -1,6 +1,7 @@
 // Browser checks for the local study; no game server or production UI claims.
 import { checkSurfaces } from "./surface-checks.mjs";
 import { checkCompositeHover, checkGestureBadges } from "./hover-checks.mjs";
+import { checkInventoryLayout } from "./inventory-checks.mjs";
 
 export async function checkConcept(call, role, screenshot) {
   const ALT = 1, SHIFT = 8;
@@ -43,6 +44,14 @@ export async function checkConcept(call, role, screenshot) {
     assert(chat.bottom > stage.bottom - 40, "Chat belongs at bottom-left");
     assert(actions.bottom <= center.top && actions.top > stage.top + stage.height / 2, "Abilities belong above lower-middle controls");
     assert(!overlaps(chat, center) && !overlaps(chat, actions), "Chat overlaps central controls");
+    if (role === "cyborg") {
+      const modules = [...document.querySelectorAll('#cyborg-tools .slot')];
+      for (const module of modules) {
+        module.click();
+        assert(module.getAttribute('aria-pressed') === 'true' && parseFloat(getComputedStyle(module).outlineWidth) >= 1, 'TG frame hides selected module state');
+        assert(modules.filter(node => node.classList.contains('selected')).length === 1, 'Module selection is ambiguous');
+      }
+    }
     if (role === "crew") {
       const worn = rect("#equipment"), target = rect("#target");
       assert(worn.right <= center.left, "Worn must sit left of hands");
@@ -63,6 +72,7 @@ export async function checkConcept(call, role, screenshot) {
     return;
   }
 
+  await checkInventoryLayout(call, evaluate, screenshot);
   const points = await run(() => {
     document.querySelector("#inventory-close").click();
     const canvas = document.querySelector("#world");

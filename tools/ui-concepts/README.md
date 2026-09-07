@@ -12,15 +12,17 @@ server nor demonstrates sandbox integration. Actual gameplay stays in `ui/`.
 ## Export and capture
 
 Requires Node 22+ with native WebSocket support and the engine's existing
-baked `web/assets/atlas.ron`, `delivery.ron`, and atlas objects. Capture also
+baked `web/assets/atlas.ron`, `delivery.ron`, and atlas objects. The read-only
+tg checkout must match `assets/tg-revision`. Capture also
 requires a local Chromium executable. No dependencies are installed.
 
 ```sh
 node tools/ui-concepts/build.mjs \
-  --engine /home/josh/Source/lunatic --output /tmp/tfs-floating.html
+  --engine /home/josh/Source/lunatic --tg /home/josh/Source/tgstation \
+  --output /tmp/tfs-floating.html
 node tools/ui-concepts/capture.mjs \
   --input /tmp/tfs-floating.html --output /tmp/tfs-floating-shots --check true
-node --test tools/ui-concepts/picking.test.mjs
+node --test tools/ui-concepts/*.test.mjs
 ```
 
 Open the exported HTML directly in a browser. Scripts, styles and sprites are
@@ -53,6 +55,14 @@ drag/resize in Chromium, and captures the hover examples as well as each actor.
 - Worn slots sit left of the central hands, with bag/belt slots between them;
   target and intent sit immediately right. Abilities sit above this cluster,
   leaving both upper corners for information rather than permanent controls.
+- WORN is a stationary blue toggle, not a backpack button. It hides the entire
+  worn grid without moving itself or the hands; hidden cells pass world input
+  through. Bag/belt slots and their open contents remain independent.
+- The header compares TG frames with the previous squares without changing
+  control geometry. Classic uses original `template`, `template_small` and
+  empty-slot states from `icons/hud/screen_midnight.dmi`, the targeting doll's
+  own sheet. The exporter embeds the unchanged PNG and reads its state
+  addresses; it neither redraws the art nor alters production atlas outputs.
 - A few pinned actions form a short floating row. A grouped searchable
   palette holds the remainder. Toggle, disabled and cooldown states are
   explicit, and changing state does not reorder the row. Equipment actions
@@ -85,6 +95,8 @@ References name the read-only sibling `tgstation` checkout:
 | Behavior | Source |
 | --- | --- |
 | Human hands, gear, physiology and movement controls | `code/_onclick/hud/human.dm:1-35` |
+| Static inventory toggle; separate toggleable worn group | `code/_onclick/hud/screen_objects/human.dm:4-30`, `code/__DEFINES/hud.dm:210-211` |
+| Occupied inventory frames and empty-slot silhouettes | `code/_onclick/hud/human.dm:86-198`, `code/_onclick/hud/screen_objects/screen_objects.dm:232-261` |
 | Cyborg's three module slots and radio/lamp/camera controls | `code/_onclick/hud/robot.dm:13-37` |
 | AI's camera, crew, alerts, laws and operational controls | `code/_onclick/hud/ai.dm:1-26` |
 | Minimal guardian interface and optional dextrous storage | `code/_onclick/hud/guardian.dm:1-21` |

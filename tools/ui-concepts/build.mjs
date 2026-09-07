@@ -2,6 +2,7 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadHudSheet } from "./hud-sheet.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2);
@@ -9,14 +10,15 @@ const options = new Map();
 for (let index = 0; index < args.length; index += 2) {
   const flag = args[index];
   const value = args[index + 1];
-  if (!["--engine", "--output"].includes(flag) || !value || options.has(flag)) {
-    throw new Error("Usage: node build.mjs --engine /path/to/lunatic --output /tmp/concepts.html");
+  if (!["--engine", "--tg", "--output"].includes(flag) || !value || options.has(flag)) {
+    throw new Error("Usage: node build.mjs --engine /path/to/lunatic --tg /path/to/tgstation --output /tmp/concepts.html");
   }
   options.set(flag, value);
 }
-if (!options.has("--engine") || !options.has("--output")) {
-  throw new Error("Both --engine and --output are required; no repository paths are inferred.");
+if (!["--engine", "--tg", "--output"].every(flag => options.has(flag))) {
+  throw new Error("--engine, --tg and --output are required; no repository paths are inferred.");
 }
+const hud = await loadHudSheet(resolve(options.get("--tg")), await readFile(join(here, "../../assets/tg-revision"), "utf8"));
 const assets = join(resolve(options.get("--engine")), "web/assets");
 const atlasText = await readFile(join(assets, "atlas.ron"), "utf8");
 const delivery = await readFile(join(assets, "delivery.ron"), "utf8");
@@ -35,12 +37,13 @@ if (hashes.length !== expectedPages || !atlas.sprites.floor) throw new Error("At
 atlas.pages = await Promise.all(hashes.map(async hash => `data:image/png;base64,${(await readFile(join(assets, "obj", `${hash}.png`))).toString("base64")}`));
 const source = async names => (await Promise.all(names.map(name => readFile(join(here, name), "utf8")))).join("\n");
 const template = await source(["index.html"]);
-const replacements = { STYLES: await source(["concepts.css", "surfaces.css", "actions.css", "hover.css"]),
+const replacements = { STYLES: await source(["concepts.css", "surfaces.css", "actions.css", "hover.css", "slot-skin.css"]),
   ATLAS: `window.conceptAtlas = ${JSON.stringify(atlas).replaceAll("<", "\\u003c")};`,
   SCENE: await source(["picking.js", "scene-data.js", "scene.js"]),
   SURFACES: await source(["surfaces.js"]), ACTIONS: await source(["actions.js"]),
-  HOVER: await source(["hover.js"]), CONCEPTS: await source(["concepts.js"]) };
-const html = template.replace(/\{\{(STYLES|ATLAS|SCENE|SURFACES|ACTIONS|HOVER|CONCEPTS)\}\}/g, (_, key) => replacements[key]);
+  HOVER: await source(["hover.js"]), CONCEPTS: await source(["concepts.js"]),
+  SLOT_SKIN: `window.conceptHudSheet = ${JSON.stringify(hud).replaceAll("<", "\\u003c")};\n${await source(["slot-skin.js"])}` };
+const html = template.replace(/\{\{(STYLES|ATLAS|SCENE|SURFACES|ACTIONS|HOVER|CONCEPTS|SLOT_SKIN)\}\}/g, (_, key) => replacements[key]);
 const output = resolve(options.get("--output"));
 await mkdir(dirname(output), { recursive: true });
 await writeFile(output, html, { flag: "wx" });
