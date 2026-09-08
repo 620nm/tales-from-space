@@ -10,21 +10,22 @@ green screen sprite in the world and inventory.
 
 Opening a laptop is the lid, then the power button, then the screen, and no
 press does two of them. The hover card names the step the next press takes:
-Open lid on a closed one, Power on once the lid is up, Power off once it is
+Open lid on a closed one, Power on once the lid is up, View interface once it is
 running.
 
 - Self-use or right-click raises the lid of a closed laptop. Nothing boots
   and no window opens. A laptop that kept its charge comes up already
   running; an unpowered one shows its dark screen.
-- The same gesture on an open laptop is its power button, on or off, with
-  the startup or shutdown sound and a refresh for every current reader.
-- Alt-click on an open laptop shows the 16:9 desktop, powered or not. On a
-  closed one it says Lid closed and does nothing.
+- The same gesture on an unpowered open laptop switches it on, with the
+  startup sound and a refresh for every current reader.
+- Once powered, the same gesture shows the 16:9 desktop without toggling
+  power. Alt-click offers Close lid only while open, powered or not; on a
+  closed laptop that hint is absent and the gesture does nothing.
 
-The desktop's Power control switches the same power the gesture does. Its
-Close lid control closes the lid and every reader's window; that control is
-the only way to close a lid. The titlebar × dismisses only that reader's
-window and leaves the lid open. Closed laptops reject stale desktop acts.
+The desktop's Power control switches power on or off. Its Close lid control
+and Alt-click both close the lid and every reader's window, preserving power.
+The titlebar × dismisses only that reader's window and leaves the lid open.
+Closed laptops reject stale desktop acts.
 
 Switching off leaves the desktop window available with a black screen and
 controls. All current readers see power and slot changes together.
@@ -59,9 +60,9 @@ navigation; using the active hand's own square does not apply it to itself.
 The powered desktop shares the programming terminal's file workspace: A: is
 the laptop's 64 KiB, 16-file store, and an inserted floppy appears as B:.
 Native providers validate every file operation. Switching off revokes file
-disclosure and actions without losing saved files, and so does the desktop an
-Alt-click opens on a laptop that was never switched on: composition follows
-power, not the lid.
+disclosure and actions without losing saved files. A desktop left open while
+switched off has no native file workspace: composition follows power, not
+the lid.
 
 The screen below the trusted title bar stays 16:9. Its wallpaper lies beneath
 translucent information, drive and reader frames. Drive panes resize locally;
@@ -99,7 +100,7 @@ Paths below are relative to the read-only tgstation checkout.
   ID insertion and swapping; `:557-562`: the Ctrl+Shift disk gesture.
 - `code/game/sound/sound_keys/sound_keys.dm:458-467`: keyboard roster.
 
-Where this departs from tg: Alt-click shows the desktop rather than closing
-the lid, so the three steps each own a gesture and the lid closes from the
-screen it opened. Battery drain, modular hardware, programs and background
-computer audio are absent.
+Lid, power and screen remain separate presses; Alt-click closes an open lid
+as in the reference. Accessible inventory items support the same gestures,
+including laptops in bags. Battery drain, modular hardware, programs and
+background computer audio are absent.
