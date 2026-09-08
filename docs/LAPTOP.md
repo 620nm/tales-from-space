@@ -36,6 +36,9 @@ to insert it; an occupied slot swaps its previous item into the inserting
 hand. This works on the floor, in the other hand and inside an opened
 container, including nested bags. A hand holding either one reads the
 laptop's own row as Insert cartridge or Insert ID card.
+The input glyphs show a plus and the active item's 32×32 sprite on this
+row, in world and inventory hover cards. Inspect and unrelated shortcuts
+stay key-only; descriptions retain one shared left edge.
 That variant sits on `primary.held`, because the
 insertion IS the plain click, and it reads the same on a closed laptop:
 the interact route takes the card or the disk whatever the lid is doing.

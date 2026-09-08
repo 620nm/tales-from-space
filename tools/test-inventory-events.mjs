@@ -10,6 +10,7 @@ const result = await build({
   stdin: { contents: `export { inventory, wornGroup } from './inventory';
     export { openStorage, closeStorage, storageRegion } from './inventory-storage';
     export { begin, event } from './view';
+    export { overlayRules } from './theme-overlay';
     export { default as overlay } from './overlay/main';`,
     resolveDir: fileURLToPath(new URL("../ui", import.meta.url)), loader: "ts" },
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") },
@@ -81,4 +82,58 @@ test("hover uses structured fallback and never fills an explicitly hidden row", 
   assert(declared.includes("lunatic/tfs:ui.affordance.insert_disk"));
   assert(!declared.includes("lunatic/tfs:ui.look.use_held"));
   assert(labels({ appearance: "world" }).includes("lunatic/tfs:ui.look.interact"));
+});
+
+const flatten = (node) => [node, ...(node.children ?? []).flatMap(flatten)];
+const hoverNodes = (hover) => flatten(UI.overlay.render({ state: {
+  hover: { name: "laptop", sprite: "laptop", hints: [], primary_fallback: null, ...hover },
+} }));
+const heldImplement = { name: "diskette", sprite: "diskette_blue", gestures: ["primary"] };
+const insertHint = { gesture: "primary", label: "lunatic/tfs:ui.affordance.insert_disk" };
+const itemIcons = (nodes) => nodes.filter((node) => node.class?.includes("hover-implement"));
+test("held-object hints combine input, plus and the actual named atlas sprite", () => {
+  const nodes = hoverNodes({ hints: [insertHint], implement: heldImplement });
+  const keys = nodes.find((node) => node.id === "hover/key/0");
+  assert.deepEqual(keys.children.map((node) => node.type), ["panel", "text", "image"]);
+  assert.equal(keys.children[1].text, "+");
+  assert.equal(keys.children[2].asset, "diskette_blue");
+  assert.equal(keys.children[2].text, "diskette");
+  assert.equal(itemIcons(nodes).length, 1);
+  const spriteStyle = UI.overlayRules.find((rule) => rule.class === "hover-implement").props;
+  assert.equal(spriteStyle.width, 32);
+  assert.equal(spriteStyle.height, 32);
+  assert.equal(spriteStyle.imageRendering, "pixelated");
+});
+test("mixed hints share a rail wide enough for two modifiers and an item", () => {
+  const nodes = hoverNodes({ hints: [insertHint, { gesture: "shift_ctrl_primary", label: "tool action" }],
+    implement: { ...heldImplement, gestures: ["primary", "shift_ctrl_primary", "shift_primary"] } });
+  const rows = nodes.filter((node) => node.class?.includes("hover-row"));
+  assert.equal(rows.length, 3);
+  assert(rows.every((node) => node.style.gridTemplateColumns[0] === 132));
+  assert(rows.every((node) => node.children[0].class.includes("hover-keys")));
+  assert.equal(itemIcons(flatten(rows[1])).length, 0, "examine never uses the held item");
+  const modifiedKeys = rows[2].children[0];
+  assert.equal(modifiedKeys.children.length, 5);
+  assert.equal(modifiedKeys.children[4].asset, "diskette_blue");
+  assert.equal(nodes.find((node) => node.id === "hover/title").children[0].id, "hover/preview");
+});
+test("hover drops item icons when source clears and updates same-named item sprites", () => {
+  assert.equal(itemIcons(hoverNodes({ hints: [insertHint], implement: heldImplement }))[0].asset, "diskette_blue");
+  assert.equal(itemIcons(hoverNodes({ hints: [insertHint],
+    implement: { ...heldImplement, sprite: "diskette_red" } }))[0].asset, "diskette_red");
+  for (const implement of [undefined, null, { ...heldImplement, sprite: "" }]) {
+    const nodes = hoverNodes({ hints: [insertHint], implement });
+    assert.equal(itemIcons(nodes).length, 0);
+    assert(!nodes.some((node) => node.class?.includes("hover-combination-plus")));
+    assert(nodes.filter((node) => node.class?.includes("hover-row"))
+      .every((node) => node.style.gridTemplateColumns[0] === 58));
+  }
+});
+test("held item metadata never resurrects hidden hints or decorates unrelated rows", () => {
+  const nodes = hoverNodes({ hints: [{ gesture: "alt_primary", label: "open" }], implement: heldImplement });
+  assert.equal(itemIcons(nodes).length, 0);
+  assert.equal(nodes.filter((node) => node.class?.includes("hover-row")).length, 2);
+  for (const primary_fallback of ["interact", "store"]) {
+    assert.equal(itemIcons(hoverNodes({ primary_fallback, implement: heldImplement })).length, 1);
+  }
 });
