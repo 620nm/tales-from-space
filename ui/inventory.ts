@@ -66,9 +66,12 @@ function handSquares(current: InventoryState): UiNode[] {
         const mask = item?.gestures ?? 0;
         if (shape && !e.meta && ((mask >>> shape.rank) & 1) === 1)
           return { kind: "use_item", target, gesture: shape.id };
-        return e.type === "context" || (e.type === "activate" && e.shift)
-          ? inspect(target)
-          : { kind: "hand", index };
+        if (e.type === "context" || (e.type === "activate" && e.shift))
+          return inspect(target);
+        // Only a plain click takes the hand. A middle press the item
+        // never declared means nothing here, and must not swap hands
+        // because the thing in this one answered to no such gesture.
+        return e.type === "activate" ? { kind: "hand", index } : undefined;
       }),
     }, "hand", "hand-slot");
   });
@@ -115,6 +118,9 @@ export function wornGroup(view: GameplayView, carry = false): UiNode | null {
       item: `equipment/${slot.id}`,
       event: bind(id, (e) => {
         if (e.type === "context") return inspect({ Equipment: { slot: slot.id } });
+        // A worn square answers the two clicks it draws and no other:
+        // a middle press means nothing on a slot that declares none.
+        if (e.type !== "activate") return undefined;
         if (worn?.contents) {
           openStorage({ slot: slot.id });
           return undefined;
