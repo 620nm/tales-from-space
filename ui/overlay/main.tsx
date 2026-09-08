@@ -4,40 +4,58 @@
 // claims `state.hover` and `state.context` and the host wakes this guest
 // for nothing else (docs/pack-ui/sdk.md, "Slots").
 import type { GuestUi, UiNode } from "@lunatic/ui";
-import { Pane } from "@lunatic/ui";
-import type { GameplayView } from "../model";
-import { begin, event, icon, press, row, some, text } from "../view";
-import { hintText } from "../labels";
-import { gesture, modifierCount, order } from "../gesture";
+import { Pane, t } from "@lunatic/ui";
+import type { ActionLabel, GameplayView, HoverAction } from "../model";
+import { begin, event, icon, panel, press, row, some, text } from "../view";
+import { gesture, order } from "../gesture";
 import * as S from "../strings";
+import { actionStyles } from "./actions";
 
 /** What the cursor is over, with the verbs it answers to. */
-function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>): UiNode {
-  const rows = [...hover.hints];
-  if (hover.primary_fallback === undefined && hover.appearance
-      && !rows.some((hint) => hint.gesture === "primary"))
-    rows.unshift({ gesture: "primary", label: S.tfs("ui.look.interact") });
-  if (hover.primary_fallback && !rows.some((hint) => hint.gesture === "primary"))
-    rows.unshift({ gesture: "primary", label: S.tfs(hover.primary_fallback === "store"
-      ? "ui.look.store_held" : "ui.look.use_held") });
-  // Examine is Shift+LMB and takes the place its own rank names, between
-  // the bare group and the shift group. The rows arrive ranked, so this
-  // is one insertion and never a sort.
-  const examine = { gesture: "shift_primary", label: S.tfs("ui.look.examine") };
-  const at = rows.findIndex((hint) => order(hint.gesture) > order(examine.gesture));
-  rows.splice(at < 0 ? rows.length : at, 0, examine);
-  const implement = hover.implement;
-  const usesImplement = (name: string) => name !== examine.gesture
-    && !!implement?.sprite && implement.gestures.includes(name);
-  // Every description shares one rail, including rows without an item.
-  // The item adds 32px, an 8px plus and two 4px gaps to its input glyphs.
-  const wide = rows.some((hint) => modifierCount(hint.gesture) > 1);
-  const width = Math.max(58, ...rows.map((hint) => {
-    const modifiers = modifierCount(hint.gesture);
-    const keys = modifiers > 1 ? 84 : modifiers === 1 ? 58 : hint.gesture === "self" ? 34 : 14;
-    return keys + (usesImplement(hint.gesture) ? 48 : 0);
-  }));
-  const rail = { gridTemplateColumns: [width, "1fr"] };
+function actionText(label: ActionLabel): string {
+  if (label.text !== undefined && label.text !== null) return label.text;
+  const args = { ...label.args };
+  for (const key of label.arg_keys ?? []) if (args[key] !== undefined) args[key] = t(args[key]!);
+  return t(label.key, args);
+}
+
+function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>,
+  bindings?: Record<string, readonly string[]>): UiNode {
+  const rows: HoverAction[] = [...(hover.actions ?? [])];
+  const rank = (hint: HoverAction) => hint.group === "suggestion" ? 2 : hint.available ? 0 : 1;
+  rows.sort((a, b) => rank(a) - rank(b) || (a.order ?? order(a.gesture)) - (b.order ?? order(b.gesture)));
+  const cells: UiNode[] = [];
+  let previousGroup = "";
+  let previousPresentation = "";
+  for (const hint of rows) {
+    if (hint.group === "suggestion" && previousGroup !== "suggestion")
+      cells.push(text("hover/group/suggestion", S.tfs("ui.look.other"), ["hover-group"],
+        { gridColumn: { start: 1, span: 2 } }));
+    previousGroup = hint.group;
+    if (hint.presentation_group && hint.presentation_group !== previousPresentation)
+      cells.push(text(`hover/group/${hint.id}`, t(hint.presentation_group), ["hover-group"],
+        { gridColumn: { start: 1, span: 2 } }));
+    previousPresentation = hint.presentation_group ?? "";
+    const keyId = `hover/key/${hint.id}`;
+    const keys = gesture(keyId, hint.gesture, false, bindings);
+    if (hint.implement?.sprite) keys.children = [...(keys.children ?? []),
+      text(`${keyId}/plus`, "+", ["hover-combination-plus"]),
+      icon(`${keyId}/implement`, hint.implement.sprite, actionText(hint.implement.name), ["hover-implement"])!,
+    ];
+    if (!hint.available) keys.class = [...(keys.class ?? []), "hover-unavailable"];
+    const style = hint.style ? actionStyles[hint.style] : undefined;
+    const cls = ["hover-description", ...(style ? [style] : []),
+      ...(hint.available ? [] : ["hover-unavailable"])];
+    cells.push(keys, panel(`hover/hint/${hint.id}`, [
+      text(`hover/label/${hint.id}`, actionText(hint.label), cls),
+      ...(hint.requirements ?? []).map((requirement, index) => text(`hover/requirement/${hint.id}/${index}`,
+        S.tfs(requirement.count > 1 ? "ui.look.requires_quantity" : "ui.look.requires", {
+          item: actionText(requirement.label), quantity: String(requirement.count),
+        }), ["hover-requirement"])),
+      ...(hint.unavailable_reason
+        ? [text(`hover/reason/${hint.id}`, actionText(hint.unavailable_reason), ["hover-requirement"])] : []),
+    ], { cls: ["hover-row"] }));
+  }
   // The header's image and every hint's key cell are both the first
   // child of a full-width row inside one padding, so their left edges
   // are the same edge: the card reads as one column, not two.
@@ -47,6 +65,7 @@ function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>): UiNode {
         {
           id: "hover/preview",
           type: "image",
+          text: hover.name_label ? actionText(hover.name_label) : hover.name,
           // A slot's item comes with a sprite and no composed look, so
           // it is drawn the way every other icon is: one named asset.
           ...(hover.appearance
@@ -56,21 +75,9 @@ function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>): UiNode {
               : {}),
           class: ["hover-preview"],
         },
-        text("hover/name", hover.name, ["hover-title"]),
+        text("hover/name", hover.name_label ? actionText(hover.name_label) : hover.name, ["hover-title"]),
       ], { cls: ["hover-head"] }),
-      ...rows.map((hint, index) => {
-        const keys = gesture(`hover/key/${index}`, hint.gesture, wide);
-        if (usesImplement(hint.gesture) && implement) {
-          keys.children = [...(keys.children ?? []),
-            text(`hover/plus/${index}`, "+", ["hover-combination-plus"]),
-            icon(`hover/implement/${index}`, implement.sprite, implement.name, ["hover-implement"])!,
-          ];
-        }
-        return row(`hover/hint/${index}`, [
-          keys,
-          text(`hover/label/${index}`, hintText(hint.label), ["hover-description"]),
-        ], { cls: ["hover-row"], style: rail });
-      }),
+      panel("hover/actions", cells, { cls: ["hover-actions"] }),
     ], { cls: ["hover-card"] }),
     anchor: "@cursor",
   };
@@ -118,7 +125,7 @@ const ui: GuestUi = {
     begin();
     const state = view.state ?? {};
     return Pane("overlay", some(
-      state.hover ? hoverCard(state.hover) : null,
+      state.hover ? hoverCard(state.hover, state.effectiveBindings) : null,
       state.context ? contextMenu(state.context) : null,
     ), { cls: ["overlay"] });
   },

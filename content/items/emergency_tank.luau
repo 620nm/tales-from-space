@@ -32,6 +32,7 @@ local content = {
         self = { label = "lunatic/tfs:ui.affordance.toggle_internals" },
     },
     id = "emergency_tank",
+    name_label = "lunatic/tfs:entity.emergency_tank.name",
     name = "emergency tank",
     sprite = "emergency_tank",
     ui = { modules = { "held_tank" } },
@@ -106,6 +107,7 @@ local content = {
         -- tg's own: oxygen at 10*ONE_ATMOSPHERE in three litres
         -- (tank_types.dm:182-183).
         oxygen = {
+            name_label = "lunatic/tfs:entity.emergency_tank.oxygen.name",
             name = "emergency oxygen tank",
             tank = {
                 fill = { { substance = "o2", kpa = 10 * 101.325 } },

@@ -5,6 +5,7 @@
 -- preserve the implemented parts of that contract.
 return {
     id = "chemistry_bag",
+    name_label = "lunatic/tfs:entity.chemistry_bag.name",
     name = "chemistry bag",
     sprite = "chemistry_bag",
     slot = "belt",

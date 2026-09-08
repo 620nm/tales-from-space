@@ -9,6 +9,7 @@
 -- under the knife (_bodyparts.dm:1643-1644).
 return {
     id = "human_l_arm",
+    name_label = "lunatic/tfs:entity.human_l_arm.name",
     name = "left arm",
     sprite = "part_l_arm",
     part = {

@@ -11,6 +11,7 @@ local content = {
             lit = "lunatic/tfs:ui.affordance.extinguish",
         } },
     },
+    name_label = "lunatic/tfs:entity.welder.name",
     name = "welding tool",
     sprite = "welder",
     inhand_sprite = { "held_welder_l", "held_welder_r" },

@@ -46,6 +46,7 @@ return {
     -- repeats onto the network what the engine just decided about the
     -- air on its own tile (fixtures/vent.luau).
     script = "vent",
+    name_label = "lunatic/tfs:entity.vent.name",
     name = "air vent",
     sprite = "vent_off",
     -- The panel above: a switch and the three pressures. Same module

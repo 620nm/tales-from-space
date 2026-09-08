@@ -194,12 +194,18 @@ end
 
 local content = {
     id = "analyzer",
+    name_label = "lunatic/tfs:entity.analyzer.name",
     name = "analyzer",
     sprite = "analyzer",
     -- tg gas_analyzer.dm:20-21.
     pickup_sound = "analyzer_pickup",
     drop_sound = "analyzer_drop",
 }
+
+content.actions = { action_rules.primary("analyze", { any = {
+    action_rules.kind("turf"), action_rules.kind("pipe"), action_rules.kind("cable"),
+    action_rules.kind("machine"),
+} }) }
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })

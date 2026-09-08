@@ -99,6 +99,7 @@
 -- station has.
 return {
     id = "chem_dispenser",
+    name_label = "lunatic/tfs:entity.chem_dispenser.name",
     name = "chem dispenser",
     sprite = "chem_dispenser",
     ui = { modules = { "mint_dock", "parts" } },
@@ -226,6 +227,7 @@ return {
         -- new ones. No lathe prints the board here, so an upgraded
         -- dispenser is a thing a map places.
         fullupgrade = {
+            name_label = "lunatic/tfs:entity.chem_dispenser.fullupgrade.name",
             name = "chem dispenser (upgraded)",
             props = {
                 bin_1 = "4",

@@ -22,6 +22,7 @@
 -- ordinary free row would discard the lock rather than port it.
 return {
     id = "nanomed_plus",
+    name_label = "lunatic/tfs:entity.nanomed_plus.name",
     name = "NanoMed Plus",
     sprite = "nanomed_plus",
     ui = { modules = { "shelf" }, opens_on_click = false },

@@ -45,6 +45,7 @@
 -- chamber: how hard the element drives.
 return {
     id = "evaporator",
+    name_label = "lunatic/tfs:entity.evaporator.name",
     name = "evaporator",
     sprite = "evaporator",
     ui = { modules = { "line_dock", "parts" } },

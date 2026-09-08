@@ -26,6 +26,7 @@
 -- for the last rung of the ladder is the trade that ladder is tuned for.
 return {
     id = "chem_heater",
+    name_label = "lunatic/tfs:entity.chem_heater.name",
     name = "reaction chamber",
     sprite = "chem_heater",
     -- What the SOCKET is worth is the one thing about this chamber that
@@ -105,6 +106,7 @@ return {
         -- exactly the placement key a mapper could have written by hand
         -- (docs/MAP-PROPERTIES.md).
         fullupgrade = {
+            name_label = "lunatic/tfs:entity.chem_heater.fullupgrade.name",
             name = "reaction chamber (upgraded)",
             props = { laser_1 = "4" },
         },

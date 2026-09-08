@@ -27,6 +27,7 @@
 -- pack wants and not a limit it ran into.
 return {
     id = "chem_packager",
+    name_label = "lunatic/tfs:entity.chem_packager.name",
     name = "chem packager",
     sprite = "chem_packager",
     examine = {

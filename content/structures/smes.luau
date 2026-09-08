@@ -13,6 +13,7 @@
 -- ever surprised by a meter that will not move.
 return {
     id = "smes",
+    name_label = "lunatic/tfs:entity.smes.name",
     name = "power storage unit",
     sprite = "smes",
     ui = { modules = { "battery", "throttles", "ports" } },

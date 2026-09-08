@@ -15,6 +15,7 @@
 -- because getting it wrong costs nothing but blood.
 return {
     id = "organ_appendix",
+    name_label = "lunatic/tfs:entity.organ_appendix.name",
     name = "appendix",
     sprite = "organ_appendix",
     organ = {

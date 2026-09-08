@@ -31,6 +31,7 @@
 -- tile up and the same click works.
 local content = {
     id = "wrench",
+    name_label = "lunatic/tfs:entity.wrench.name",
     name = "wrench",
     sprite = "wrench",
     inhand_sprite = { "held_wrench_l", "held_wrench_r" },
@@ -43,6 +44,14 @@ local content = {
     -- up. Anything else still returns "pass" and keeps the ordinary pickup
     -- behavior (tg `/obj/item/pipe/wrench_act`, construction.dm:268-312).
     acts_on_items = true,
+}
+
+content.actions = {
+    action_rules.primary("unfasten_pipe", action_rules.kind("pipe")),
+    action_rules.primary("fasten_pipe", { all = {
+        action_rules.kind("item"), action_rules.fact("target.proto", "pipe"),
+        action_rules.fact("target.subfloor_exposed", true),
+    } }),
 }
 
 if sim ~= nil then

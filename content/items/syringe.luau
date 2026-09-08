@@ -45,6 +45,7 @@ local DRAW, INJECT = 0, 1
 
 local content = {
     id = "syringe",
+    name_label = "lunatic/tfs:entity.syringe.name",
     name = "syringe",
     sprite = "syringe",
     inhand_sprite = { "held_syringe_l", "held_syringe_r" },
@@ -88,6 +89,15 @@ local content = {
 -- (syringes.dm:11) through the documented dose bridge of
 -- 1 u = 0.025 mol (docs/CHEMISTRY.md 4).
 local STROKE = 5 * U
+
+content.actions = {
+    action_rules.primary("draw", action_rules.fact("target.has_matter", true),
+        action_rules.fact("held.mode", 0)),
+    action_rules.primary("inject", action_rules.fact("target.has_matter", true),
+        action_rules.fact("held.mode", 1)),
+    action_rules.attack("draw_body", action_rules.fact("held.mode", 0), "draw"),
+    action_rules.attack("inject_body", action_rules.fact("held.mode", 1), "inject"),
+}
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })

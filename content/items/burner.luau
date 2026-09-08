@@ -22,6 +22,7 @@ local U = 0.025
 
 local content = {
     id = "burner",
+    name_label = "lunatic/tfs:entity.burner.name",
     name = "burner",
     sprite = "burner",
     examine = {
@@ -54,6 +55,10 @@ local content = {
     sealed = true,
     contents = { ethanol = 15 * U },
     acts_on_items = true,
+}
+
+content.actions = {
+    action_rules.primary("heat", action_rules.fact("target.has_matter", true)),
 }
 
 if sim ~= nil then

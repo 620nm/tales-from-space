@@ -1,5 +1,6 @@
 return {
     id = "uniform_grey",
+    name_label = "lunatic/tfs:entity.uniform_grey.name",
     name = "grey jumpsuit",
     sprite = "uniform_grey",
     slot = "uniform",

@@ -22,6 +22,7 @@ end
 
 local content = {
     id = "d12",
+    name_label = "lunatic/tfs:entity.d12.name",
     name = "d12",
     sprite = "d12",
     states = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12" },

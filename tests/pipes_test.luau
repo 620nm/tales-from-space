@@ -62,8 +62,8 @@ t.click(p, 2, 2)
 t.run_ticks(4)
 assert(t.pipe(2, 2) == 0, "no length under a finished floor")
 assert(
-    said(p, "The floor is in the way. Pry the tile up first."),
-    "and the refusal says what to do about it"
+    not said(p, "The floor is in the way. Pry the tile up first."),
+    "an inapplicable target does not invoke the held pipe handler"
 )
 
 -- A run a player builds starts empty -- nobody filled it.

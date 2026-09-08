@@ -14,6 +14,7 @@
 -- smaller and fail sooner than anything else in the head.
 local content = {
     id = "organ_eyes",
+    name_label = "lunatic/tfs:entity.organ_eyes.name",
     name = "eyes",
     sprite = "organ_eyes",
     organ = {

@@ -11,6 +11,7 @@
 -- one, so the trade closes with nothing minted or eaten.
 return {
     id = "reinforced_floor",
+    name_label = "lunatic/tfs:entity.reinforced_floor.name",
     name = "reinforced floor",
     sprite = "reinforced_floor",
     turf = "reinforced_floor",

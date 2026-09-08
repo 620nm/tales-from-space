@@ -5,6 +5,7 @@
 -- `"adapter_center"` here (pipes/color_adapter.dm:17).
 return {
     id = "color_adapter_fitting",
+    name_label = "lunatic/tfs:entity.color_adapter_fitting.name",
     name = "color adapter fitting",
     sprite = "color_adapter_loose",
     category = "fittings",

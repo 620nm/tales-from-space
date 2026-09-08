@@ -40,9 +40,9 @@ laptop's own row as Insert cartridge or Insert ID card.
 The input glyphs show a plus and the active item's 32×32 sprite on this
 row, in world and inventory hover cards. Inspect and unrelated shortcuts
 stay key-only; descriptions retain one shared left edge.
-That variant sits on `primary.held`, because the
-insertion IS the plain click, and it reads the same on a closed laptop:
-the interact route takes the card or the disk whatever the lid is doing.
+Insertion actions select the held card or disk explicitly and use the
+receiver route with `uses_held = true`. They read the same on a closed
+laptop: insertion takes the card or disk whatever the lid is doing.
 The desktop ejects either slot. Shift+Ctrl-click
 ejects the floppy and Shift+Ctrl right-click the card; each row is offered
 only while that slot holds something, which the laptop keeps as its `media`

@@ -8,6 +8,7 @@
 -- adding a machine costs zero edits here.
 return {
     id = "machine_frame",
+    name_label = "lunatic/tfs:entity.machine_frame.name",
     name = "machine frame",
     sprite = "frame",
     dense = true,
@@ -23,6 +24,7 @@ return {
         {
             at = "empty",
             with = { cable_coil = 5 },
+            hint = { id = "wire", label = "lunatic/tfs:ui.affordance.wire_frame", suggest = true },
             secs = 2.0,
             to = "wired",
             start = "You start wiring the frame.",
@@ -33,6 +35,7 @@ return {
         {
             at = "empty",
             tool = "welder",
+            hint = { id = "dismantle", label = "lunatic/tfs:ui.affordance.dismantle_frame", suggest = true },
             secs = 4.0,
             fuel = 2.0,
             yields = { metal = 5 },

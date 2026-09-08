@@ -85,6 +85,7 @@ end
 
 local content = {
     id = "card_deck",
+    name_label = "lunatic/tfs:entity.card_deck.name",
     name = "deck of cards",
     -- THE PICTURE FOLLOWS THE STRING, not a roster the engine keeps.
     --
@@ -109,6 +110,15 @@ local content = {
     -- falls through, so a deck in hand never became a thing that
     -- swallows every click made while holding one.
     acts_on_items = true,
+}
+
+content.actions = {
+    action_rules.primary("return_card", action_rules.fact("target.proto", "card")),
+    action_rules.primary("deal", { all = {
+        { any = { action_rules.kind("turf"), action_rules.kind("machine") } },
+        { any = { action_rules.fact("target.turf", "floor"),
+            action_rules.fact("target.turf", "plating") } },
+    } }),
 }
 
 if sim ~= nil then

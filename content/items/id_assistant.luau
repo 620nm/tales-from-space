@@ -1,5 +1,6 @@
 return {
     id = "id_assistant",
+    name_label = "lunatic/tfs:entity.id_assistant.name",
     name = "assistant ID card",
     sprite = "id",
     inhand_sprite = { "held_id_l", "held_id_r" },

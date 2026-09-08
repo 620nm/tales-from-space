@@ -37,6 +37,7 @@
 -- part of the deck, laid with the cable.
 return {
     id = "utility_outlet_port",
+    name_label = "lunatic/tfs:entity.utility_outlet_port.name",
     name = "utility outlet port",
     -- The housing on its own. The three lamps are overlays the engine
     -- lays over it, one per layer, and a port with no cable under it at

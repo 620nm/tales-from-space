@@ -6,6 +6,7 @@ local WALLPAPERS = { "wallpaper_bliss", "wallpaper_moonlake" }
 
 local content = {
     id = "laptop",
+    name_label = "lunatic/tfs:entity.laptop.name",
     name = "laptop",
     sprite = "laptop_closed",
     state = "closed",
@@ -53,6 +54,21 @@ local content = {
     files = { capacity = 65536, files = 16 },
     ui = { modules = { "files", "editor" } },
     card_slot = { equipment = "id" },
+}
+
+content.actions = {
+    action_rules.primary("connect", action_rules.fact("target.has_network", true),
+        action_rules.fact("held.state", "on")),
+    {
+        id = "insert_disk", gesture = "primary", route = "receiver", uses_held = true,
+        label = "lunatic/tfs:ui.affordance.insert_disk",
+        held = action_rules.fact("held.tag", "floppy"),
+    },
+    {
+        id = "insert_id", gesture = "primary", route = "receiver", uses_held = true,
+        label = "lunatic/tfs:ui.affordance.insert_id",
+        held = action_rules.fact("held.tag", "card"),
+    },
 }
 
 if sim ~= nil then

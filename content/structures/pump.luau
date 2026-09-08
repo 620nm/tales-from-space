@@ -31,6 +31,7 @@
 -- (pump.dm:68), where the manual valve's starts the wheel turning.
 return {
     id = "pump",
+    name_label = "lunatic/tfs:entity.pump.name",
     name = "pump",
     sprite = "pump_off_n",
     ui = { modules = { "flow" } },

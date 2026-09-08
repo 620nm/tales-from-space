@@ -5,6 +5,7 @@
 -- `"scrubber"` here (components/unary_devices/vent_scrubber.dm:17).
 return {
     id = "air_scrubber_fitting",
+    name_label = "lunatic/tfs:entity.air_scrubber_fitting.name",
     name = "air scrubber fitting",
     sprite = "air_scrubber_loose",
     category = "fittings",

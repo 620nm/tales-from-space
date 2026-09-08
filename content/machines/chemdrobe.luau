@@ -15,6 +15,7 @@
 -- than becoming decorative or mechanically dishonest rows.
 return {
     id = "chemdrobe",
+    name_label = "lunatic/tfs:entity.chemdrobe.name",
     name = "ChemDrobe",
     sprite = "chemdrobe",
     ui = { modules = { "shelf" }, opens_on_click = false },

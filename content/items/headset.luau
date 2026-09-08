@@ -8,6 +8,7 @@
 -- and stamps the line with whatever the item answered.
 local content = {
     id = "headset",
+    name_label = "lunatic/tfs:entity.headset.name",
     name = "radio headset",
     sprite = "headset",
     inhand_sprite = { "held_headset_l", "held_headset_r" },

@@ -28,6 +28,7 @@
 -- does not exist here; none of them changes what a table IS.
 return {
     id = "table",
+    name_label = "lunatic/tfs:entity.table.name",
     name = "table",
     -- The isolated frame. Everything else it can wear is derived from
     -- the prefix below and interned at load, so a family missing one of

@@ -5,6 +5,7 @@
 -- `pipe_state`, `"pvalve"` (pressure_valve.dm:129).
 return {
     id = "pressure_valve_fitting",
+    name_label = "lunatic/tfs:entity.pressure_valve_fitting.name",
     name = "pressure valve fitting",
     sprite = "pressure_valve_loose",
     category = "fittings",

@@ -47,6 +47,7 @@
 --   labels: [(12, 5, "The Commons")]
 return {
     id = "apc",
+    name_label = "lunatic/tfs:entity.apc.name",
     name = "APC",
     sprite = "apc",
     -- The bridge's own four modules, then the network half: the

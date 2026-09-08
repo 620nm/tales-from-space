@@ -27,6 +27,7 @@
 -- The group order below is the window's stable order between rounds.
 return {
     id = "pipe_dispenser",
+    name_label = "lunatic/tfs:entity.pipe_dispenser.name",
     name = "pipe dispenser",
     sprite = "pipe_dispenser",
     ui = { modules = { "shelf" }, opens_on_click = false },

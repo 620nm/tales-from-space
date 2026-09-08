@@ -31,6 +31,7 @@
 -- and warm rather than to boil a beaker dry.
 return {
     id = "steam_generator",
+    name_label = "lunatic/tfs:entity.steam_generator.name",
     name = "steam generator",
     sprite = "steam_generator",
     ui = { modules = { "line_dock", "parts" } },

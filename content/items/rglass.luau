@@ -9,6 +9,7 @@
 -- is stocked, not made.
 return {
     id = "rglass",
+    name_label = "lunatic/tfs:entity.rglass.name",
     name = "reinforced glass sheets",
     sprite = "rglass",
     inhand_sprite = { "held_rglass_l", "held_rglass_r" },

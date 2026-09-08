@@ -36,6 +36,7 @@
 -- the kit.
 return {
     id = "filter",
+    name_label = "lunatic/tfs:entity.filter.name",
     name = "filter",
     sprite = "filter_off_n",
     ui = { modules = { "filter" } },
@@ -119,11 +120,13 @@ return {
     -- your hands only ever knows how to become a plain filter.
     variants = {
         co2 = {
+            name_label = "lunatic/tfs:entity.filter.co2.name",
             name = "carbon dioxide filter",
             sprite = "filter_on_n",
             props = { on = true, filter = "co2" },
         },
         n2 = {
+            name_label = "lunatic/tfs:entity.filter.n2.name",
             name = "nitrogen filter",
             sprite = "filter_on_n",
             props = { on = true, filter = "n2" },
@@ -140,6 +143,7 @@ return {
         -- same fitting comes back up, which is why its `transitions`
         -- are restated too.
         flipped = {
+            name_label = "lunatic/tfs:entity.filter.flipped.name",
             name = "filter",
             sprite = "filter_f_off_n",
             props = { flipped = true },

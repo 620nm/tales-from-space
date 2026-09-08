@@ -9,6 +9,7 @@
 -- seven things it arrives with.
 return {
     id = "toolbelt",
+    name_label = "lunatic/tfs:entity.toolbelt.name",
     name = "toolbelt",
     sprite = "toolbelt",
     inhand_sprite = { "held_toolbelt_l", "held_toolbelt_r" },

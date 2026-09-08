@@ -22,6 +22,7 @@
 -- recipes still represent the honest two layouts.
 return {
     id = "filter_fitting",
+    name_label = "lunatic/tfs:entity.filter_fitting.name",
     name = "filter fitting",
     sprite = "filter_fitting",
     category = "fittings",

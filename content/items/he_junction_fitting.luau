@@ -5,6 +5,7 @@
 -- (heat_exchange/junction.dm:16).
 return {
     id = "he_junction_fitting",
+    name_label = "lunatic/tfs:entity.he_junction_fitting.name",
     name = "junction fitting",
     sprite = "he_junction_loose",
     category = "fittings",

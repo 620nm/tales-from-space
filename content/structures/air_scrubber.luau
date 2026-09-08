@@ -55,6 +55,7 @@ return {
     -- repeats onto the network what the engine just decided about the
     -- air on its own tile (fixtures/air_scrubber.luau).
     script = "air_scrubber",
+    name_label = "lunatic/tfs:entity.air_scrubber.name",
     name = "air scrubber",
     sprite = "scrubber_off_n",
     ui = { modules = { "scrubber" } },

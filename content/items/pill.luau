@@ -20,6 +20,7 @@
 -- `ItemConsumed` rather than as the LOSS `entity.despawn` would write.
 local content = {
     id = "pill",
+    name_label = "lunatic/tfs:entity.pill.name",
     name = "pill",
     sprite = "pill",
     inhand_sprite = { "held_pill_l", "held_pill_r" },
@@ -42,6 +43,10 @@ local content = {
     fill_sprites = {
         { 1, "pill_fill" },
     },
+}
+
+content.actions = {
+    action_rules.primary("drink", action_rules.fact("target.is_actor_tile", true)),
 }
 
 if sim ~= nil then

@@ -23,6 +23,7 @@
 -- in structures/connector_port.luau where the target is the expert.
 return {
     id = "connector_port_fitting",
+    name_label = "lunatic/tfs:entity.connector_port_fitting.name",
     name = "connector port fitting",
     sprite = "connector_port_loose",
     -- tg's `inhand_icon_state = "buildpipe"` for the whole /obj/item/pipe

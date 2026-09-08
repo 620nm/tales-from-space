@@ -17,6 +17,7 @@
 -- dropper's. Liquid only: a pipette does not pick up a crystal.
 local content = {
     id = "dropper",
+    name_label = "lunatic/tfs:entity.dropper.name",
     name = "dropper",
     sprite = "dropper",
     examine = {
@@ -35,15 +36,18 @@ local content = {
     acts_on_items = true,
 }
 
+local vessel_spec = {
+    id = content.id,
+    noun = "dropper",
+    phases = { "liquid" },
+    pour = { units = 1, message = "lunatic/tfs:items.dropper.you_squeeze_a_drop_out" },
+    sip = { units = 1, message = "lunatic/tfs:items.dropper.you_squeeze_the_dropper_onto" },
+    spill = { message = "lunatic/tfs:items.dropper.you_squeeze_the_dropper_out" },
+}
+content.actions = vessel.actions(vessel_spec)
+
 if sim ~= nil then
-    vessel.attach({
-        id = content.id,
-        noun = "dropper",
-        phases = { "liquid" },
-        pour = { units = 1, message = "lunatic/tfs:items.dropper.you_squeeze_a_drop_out" },
-        sip = { units = 1, message = "lunatic/tfs:items.dropper.you_squeeze_the_dropper_onto" },
-        spill = { message = "lunatic/tfs:items.dropper.you_squeeze_the_dropper_out" },
-    })
+    vessel.attach(vessel_spec)
 end
 
 return content

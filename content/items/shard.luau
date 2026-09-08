@@ -3,6 +3,6 @@
 -- chest but never saw the ribs (docs/SURGERY.md 6.3). Reuses the glass
 -- sheet's picture until a shard sprite is baked.
 return {
-    id = "shard", name = "shard", sprite = "glass",
+    id = "shard", name_label = "lunatic/tfs:entity.shard.name", name = "shard", sprite = "glass",
     force = 5, sharp = "edged",
 }

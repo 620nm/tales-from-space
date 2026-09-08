@@ -29,6 +29,7 @@
 -- engineer who screwed it together is exactly that somebody.
 return {
     id = "access_point",
+    name_label = "lunatic/tfs:entity.access_point.name",
     name = "access point",
     sprite = "access_point",
     mount = true,

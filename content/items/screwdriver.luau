@@ -4,6 +4,7 @@
 -- to a frame.
 return {
     id = "screwdriver",
+    name_label = "lunatic/tfs:entity.screwdriver.name",
     name = "screwdriver",
     sprite = "screwdriver",
     inhand_sprite = { "held_screwdriver_l", "held_screwdriver_r" },

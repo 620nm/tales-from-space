@@ -14,22 +14,26 @@
 -- `lib/stock_parts.luau`, which is where this pack's ladder is argued.
 return {
     id = "micro_laser",
+    name_label = "lunatic/tfs:entity.micro_laser.name",
     name = "micro-laser",
     sprite = "micro_laser",
     examine = { flavor = "A tiny laser used in certain devices." },
     component = { kind = "laser", tier = 1, efficiency = stock_parts.efficiency[1] },
     variants = {
         tier2 = {
+            name_label = "lunatic/tfs:entity.micro_laser.tier2.name",
             name = "high-power micro-laser",
             sprite = "high_micro_laser",
             component = stock_parts.rung(2),
         },
         tier3 = {
+            name_label = "lunatic/tfs:entity.micro_laser.tier3.name",
             name = "ultra-high-power micro-laser",
             sprite = "ultra_high_micro_laser",
             component = stock_parts.rung(3),
         },
         tier4 = {
+            name_label = "lunatic/tfs:entity.micro_laser.tier4.name",
             name = "quad-ultra micro-laser",
             sprite = "quadultra_micro_laser",
             component = stock_parts.rung(4),

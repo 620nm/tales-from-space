@@ -14,6 +14,7 @@
 -- wants (docs/MAP-PROPERTIES.md).
 return {
     id = "matter_bin",
+    name_label = "lunatic/tfs:entity.matter_bin.name",
     name = "matter bin",
     sprite = "matter_bin",
     examine = {
@@ -22,16 +23,19 @@ return {
     component = { kind = "bin", tier = 1, efficiency = stock_parts.efficiency[1] },
     variants = {
         tier2 = {
+            name_label = "lunatic/tfs:entity.matter_bin.tier2.name",
             name = "advanced matter bin",
             sprite = "advanced_matter_bin",
             component = stock_parts.rung(2),
         },
         tier3 = {
+            name_label = "lunatic/tfs:entity.matter_bin.tier3.name",
             name = "super matter bin",
             sprite = "super_matter_bin",
             component = stock_parts.rung(3),
         },
         tier4 = {
+            name_label = "lunatic/tfs:entity.matter_bin.tier4.name",
             name = "bluespace matter bin",
             sprite = "bluespace_matter_bin",
             component = stock_parts.rung(4),

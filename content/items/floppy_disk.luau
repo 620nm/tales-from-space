@@ -19,6 +19,7 @@
 -- there is nothing in a hand to read it WITH.
 return {
     id = "floppy_disk",
+    name_label = "lunatic/tfs:entity.floppy_disk.name",
     name = "floppy disk",
     -- tg's `/obj/item/disk` off `icons/obj/devices/floppy_disks.dmi`,
     -- `icon_state = "datadisk3"` -- the black sleeve

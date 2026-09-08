@@ -4,6 +4,7 @@
 -- with the turfs that make them, in tfs/content/structures/.
 return {
     id = "floor_tile",
+    name_label = "lunatic/tfs:entity.floor_tile.name",
     name = "floor tiles",
     sprite = "floor_tile",
     inhand_sprite = { "held_floor_tile_l", "held_floor_tile_r" },

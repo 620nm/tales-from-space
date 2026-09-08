@@ -47,6 +47,7 @@ end
 
 local content = {
     id = "d00",
+    name_label = "lunatic/tfs:entity.d00.name",
     name = "d00",
     sprite = "d00",
     -- The CELLS, not the readings. See the header.

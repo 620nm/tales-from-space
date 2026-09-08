@@ -19,6 +19,7 @@
 -- back and puts the wall back.
 return {
     id = "reinforced_wall",
+    name_label = "lunatic/tfs:entity.reinforced_wall.name",
     name = "reinforced wall",
     sprite = "reinforced_wall",
     turf = "reinforced_wall",

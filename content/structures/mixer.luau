@@ -34,6 +34,7 @@
 -- gets switched on. No power hookup yet, as with the rest of the kit.
 return {
     id = "mixer",
+    name_label = "lunatic/tfs:entity.mixer.name",
     name = "mixer",
     sprite = "mixer_off_n",
     ui = { modules = { "mixer" } },
@@ -109,6 +110,7 @@ return {
         -- same thing on a bare `mixer` and this variant is only
         -- the shorthand. No `build`: it is laid, not raised.
         airmix = {
+            name_label = "lunatic/tfs:entity.mixer.airmix.name",
             name = "air mixer",
             props = { on = true, ratio = 0.79, target_kpa = 4500.0 },
         },
@@ -119,6 +121,7 @@ return {
         -- the back port when it comes at the junction from the other
         -- side, without re-routing the run.
         flipped = {
+            name_label = "lunatic/tfs:entity.mixer.flipped.name",
             name = "mixer",
             sprite = "mixer_f_off_n",
             props = { flipped = true },

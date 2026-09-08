@@ -15,6 +15,7 @@
 -- economy exists it becomes a row rather than a file.
 return {
     id = "capacitor",
+    name_label = "lunatic/tfs:entity.capacitor.name",
     name = "capacitor",
     sprite = "capacitor",
     examine = {
@@ -23,16 +24,19 @@ return {
     component = { kind = "capacitor", tier = 1, efficiency = stock_parts.efficiency[1] },
     variants = {
         tier2 = {
+            name_label = "lunatic/tfs:entity.capacitor.tier2.name",
             name = "advanced capacitor",
             sprite = "adv_capacitor",
             component = stock_parts.rung(2),
         },
         tier3 = {
+            name_label = "lunatic/tfs:entity.capacitor.tier3.name",
             name = "super capacitor",
             sprite = "super_capacitor",
             component = stock_parts.rung(3),
         },
         tier4 = {
+            name_label = "lunatic/tfs:entity.capacitor.tier4.name",
             name = "quadratic capacitor",
             sprite = "quadratic_capacitor",
             component = stock_parts.rung(4),

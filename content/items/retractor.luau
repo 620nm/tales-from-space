@@ -1,6 +1,6 @@
 -- Holds an incision open (tg surgery_tools.dm:1-16).
 local content = {
-    id = "retractor", name = "retractor", sprite = "retractor",
+    id = "retractor", name_label = "lunatic/tfs:entity.retractor.name", name = "retractor", sprite = "retractor",
     tool = "retractor", tool_speed = 1, surgical = true,
     -- Refused rather than swung on a patient, the reason on
     -- `info.surgery_refusal` (docs/SURGERY.md §6.3).

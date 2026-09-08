@@ -25,6 +25,7 @@
 -- something in hand leaves it on the wood at the pixel you pointed at.
 return {
     id = "wood_table",
+    name_label = "lunatic/tfs:entity.wood_table.name",
     name = "wooden table",
     sprite = "wood_table-0",
     dense = true,

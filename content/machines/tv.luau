@@ -1,6 +1,7 @@
 -- Furniture with opinions.
 return {
     id = "tv",
+    name_label = "lunatic/tfs:entity.tv.name",
     name = "television set",
     sprite = "tv",
     dense = true,

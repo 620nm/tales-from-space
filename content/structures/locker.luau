@@ -20,6 +20,7 @@
 -- prototype id rather than a structure plus an out-of-band loot table.
 return {
     id = "locker",
+    name_label = "lunatic/tfs:entity.locker.name",
     name = "locker",
     sprite = "locker",
     dense = true,
@@ -38,6 +39,7 @@ return {
     },
     variants = {
         tools = {
+            name_label = "lunatic/tfs:entity.locker.tools.name",
             name = "tool locker",
             sprite = "locker_tools",
             state_sprites = { open = "locker_tools_open" },

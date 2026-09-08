@@ -23,6 +23,7 @@
 -- steps.
 return {
     id = "passive_gate",
+    name_label = "lunatic/tfs:entity.passive_gate.name",
     name = "passive gate",
     sprite = "passgate_off_n",
     ui = { modules = { "flow" } },

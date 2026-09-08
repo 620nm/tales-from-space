@@ -57,6 +57,7 @@
 -- economy. The clean-room shelf exposes only live stock (docs/TGUI.md).
 return {
     id = "games_vendor",
+    name_label = "lunatic/tfs:entity.games_vendor.name",
     name = "Good Clean Fun",
     sprite = "games_vendor",
     ui = { modules = { "shelf" }, opens_on_click = false },

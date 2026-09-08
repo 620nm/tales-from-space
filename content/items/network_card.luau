@@ -22,6 +22,7 @@
 -- a tier two would be a rung with nothing on it.
 return {
     id = "network_card",
+    name_label = "lunatic/tfs:entity.network_card.name",
     name = "network card",
     sprite = "network_card",
     examine = {

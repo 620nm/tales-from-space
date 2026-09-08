@@ -6,6 +6,7 @@
 -- source.
 return {
     id = "solar",
+    name_label = "lunatic/tfs:entity.solar.name",
     name = "solar panel",
     sprite = "solar",
     fixture = "Solar",

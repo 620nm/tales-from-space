@@ -19,6 +19,7 @@
 -- (part_replacer.dm:70-74).
 local content = {
     id = "part_replacer",
+    name_label = "lunatic/tfs:entity.part_replacer.name",
     name = "rapid part exchange device",
     examine = {
         flavor = "Special mechanical module made to store, sort, and apply "
@@ -29,6 +30,12 @@ local content = {
     -- this pack's own bag size and every socket a station machine has
     -- fits inside it several times over.
     storage = 7,
+}
+
+content.actions = {
+    action_rules.primary("replace_parts", { all = {
+        action_rules.kind("machine"), action_rules.fact("target.has_components", true),
+    } }),
 }
 
 if sim ~= nil then

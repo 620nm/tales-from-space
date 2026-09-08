@@ -5,6 +5,7 @@
 -- Lava, fall, footstep, and cable effects have no pack substrate.
 return {
     id = "catwalk",
+    name_label = "lunatic/tfs:entity.catwalk.name",
     name = "catwalk",
     sprite = "catwalk-0",
     dense = false,

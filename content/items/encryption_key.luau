@@ -22,6 +22,7 @@
 -- items/network_card.luau).
 local content = {
     id = "encryption_key",
+    name_label = "lunatic/tfs:entity.encryption_key.name",
     name = "encryption key",
     sprite = "encryption_key",
     category = "machine components",
@@ -37,26 +38,31 @@ local content = {
     -- Wrench (docs/content-schema/variants.md).
     variants = {
         engineering = {
+            name_label = "lunatic/tfs:entity.encryption_key.engineering.name",
             name = "encryption key (" .. radio.channels.engineering .. ")",
             sprite = "encryption_key_eng",
             radio = radio.channels.engineering,
         },
         medical = {
+            name_label = "lunatic/tfs:entity.encryption_key.medical.name",
             name = "encryption key (" .. radio.channels.medical .. ")",
             sprite = "encryption_key_med",
             radio = radio.channels.medical,
         },
         security = {
+            name_label = "lunatic/tfs:entity.encryption_key.security.name",
             name = "encryption key (" .. radio.channels.security .. ")",
             sprite = "encryption_key_sec",
             radio = radio.channels.security,
         },
         command = {
+            name_label = "lunatic/tfs:entity.encryption_key.command.name",
             name = "encryption key (" .. radio.channels.command .. ")",
             sprite = "encryption_key_com",
             radio = radio.channels.command,
         },
         common = {
+            name_label = "lunatic/tfs:entity.encryption_key.common.name",
             name = "encryption key (" .. radio.channels.common .. ")",
             sprite = "encryption_key_common",
             radio = radio.channels.common,

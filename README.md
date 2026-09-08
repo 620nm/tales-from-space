@@ -46,6 +46,8 @@ add `--mode free_build` or use `"$LUNATIC_PACK/maps/outpost.ron"` as the map.
 
 The portable computer's controls and desktop are documented in
 [`docs/LAPTOP.md`](docs/LAPTOP.md).
+Interaction cards and their presentation tokens are documented in
+[`docs/ACTIONS.md`](docs/ACTIONS.md).
 
 Gameplay presentation and controls belong to `ui/`, including jobs, lobby,
 respawn, chat, HUD, build and device/file panels. The trusted host interprets the
