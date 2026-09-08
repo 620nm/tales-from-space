@@ -132,9 +132,9 @@ function wornToggle(): UiNode {
     text("worn-toggle/glyph", S.MARK_WORN, ["worn-glyph"]),
     text("worn-toggle/cap", S.WORN, ["worn-cap"]),
     press("worn-toggle", "", () => { wornVisible = !wornVisible; return undefined; }, {
-      cls: wornVisible
-        ? ["hud-hit", "worn-hit", "worn-hit-on"]
-        : ["hud-hit", "worn-hit"],
+      // The lit edge belongs to the box, which wears `worn-on`; the press
+      // is the square over it and draws nothing.
+      cls: ["hud-hit", "worn-hit"],
       label: S.WORN,
     }),
   ), {
