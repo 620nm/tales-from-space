@@ -27,6 +27,16 @@ const icons = (nodes) => nodes.filter((node) => node.class?.includes("hover-impl
 test("empty descriptors never invent primary or examine actions", () => {
   assert.equal(render([]).filter((node) => node.id.startsWith("hover/hint/")).length, 0);
 });
+test("equivalent laptop controls retain distinct nodes across state labels", () => {
+  for (const state of ["open_lid", "power_on", "view_interface"]) {
+    const label = { key: `lunatic/tfs:ui.affordance.${state}`, args: {} };
+    const nodes = render(["self", "secondary"].map((gesture) =>
+      descriptor(`gesture/${gesture}`, { gesture, label })), { use_self: ["P"] });
+    assert.equal(new Set(nodes.map((node) => node.id)).size, nodes.length);
+    for (const gesture of ["self", "secondary"])
+      assert(nodes.some((node) => node.id === `hover/key/gesture/${gesture}`));
+  }
+});
 test("same gesture preserves distinct available, range and suggested rows", () => {
   const held = { name: { key: "", text: "wrench" }, sprite: "actual_wrench", suggested: false };
   const nodes = render([
