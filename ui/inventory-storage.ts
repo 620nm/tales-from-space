@@ -4,7 +4,8 @@ import type { Json, UiNode } from "@lunatic/ui";
 import { hudSlot } from "./slots";
 import { Pane } from "@lunatic/ui";
 import type { GameplayView, InventoryState, ItemView } from "./model";
-import { bind, column, inspect, press, row, some, text, type Box } from "./view";
+import { bind, column, press, row, some, text, type Box } from "./view";
+import { inventoryEvent } from "./inventory-event";
 import * as S from "./strings";
 
 interface Container { slot?: string; hand?: number; path: number[] }
@@ -63,11 +64,10 @@ function storedSlot(index: number, item: ItemView, container: Container, current
     item: which.slot === undefined
       ? `nested-held/${which.hand ?? 0}/${which.path.join("/")}`
       : `nested-equipment/${which.slot}/${which.path.join("/")}`,
-    event: bind(id, (e) => {
-      if (e.type === "context") return inspect(site(which));
+    event: bind(id, (e) => inventoryEvent(e, site(which), item, current, () => {
       if (item.contents) { openStorage(which); return undefined; }
       return { kind: "move_item", from: site(which), to: { Held: { hand: current.active } } };
-    }),
+    })),
   });
 }
 

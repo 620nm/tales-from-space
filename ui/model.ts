@@ -23,6 +23,7 @@ export interface EquipmentSlot {
   quick_store: boolean;
 }
 export interface InventoryState {
+  receipt: number;
   active: number;
   hands: (ItemView | null)[];
   held: (ItemView[] | null)[];
@@ -91,6 +92,7 @@ export interface GameplayView {
       appearance?: string | null;
       sprite?: string | null;
       hints: { gesture: string; label: string }[];
+      primary_fallback?: "interact" | "store" | null;
     };
     context?: { sprite?: string | null; name: string; target: Json }[];
     progress?: { job: number; sequence: number; ms: number }[];

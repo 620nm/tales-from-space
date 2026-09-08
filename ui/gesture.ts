@@ -24,7 +24,7 @@ export function parse(id: string): Gesture | null {
   if (group < 0) return null;
   return {
     id,
-    keys: group > 0 ? GROUPS[group].split("_") : [],
+    keys: group > 0 ? GROUPS[group]!.split("_") : [],
     button,
     rank: group * 3 + button,
   };
