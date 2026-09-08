@@ -134,7 +134,7 @@ function wornToggle(): UiNode {
     press("worn-toggle", "", () => { wornVisible = !wornVisible; return undefined; }, {
       // The lit edge belongs to the box, which wears `worn-on`; the press
       // is the square over it and draws nothing.
-      cls: ["hud-hit", "worn-hit"],
+      cls: ["hud-hit"],
       label: S.WORN,
     }),
   ), {

@@ -4,7 +4,7 @@
 // `theme.ts`'s, so each is the last word on its class.
 import { rule } from "@lunatic/ui";
 import { docRules } from "./theme-hud-doc";
-import { amber, amberLine, dim, edge, flat, ink, none, outline, press, teal } from "./theme-tokens";
+import { amber, amberLine, dim, edge, flat, ink, none, stroke, press, teal } from "./theme-tokens";
 
 export const hudRules = [
   // The hand cluster: two 60x61 cells over a row of compact controls.
@@ -17,13 +17,16 @@ export const hudRules = [
     borderRadius: 0,
     boxShadow: [{ x: 0, y: 0, blur: 0, spread: 2, color: "#142126", inset: true }],
   }),
-  // An outline, so the frame art and the press stretched over the square do
+  // An stroke, so the frame art and the press stretched over the square do
   // not shrink the instant a hand goes live (docs/pack-ui/box-model.md).
   rule("slot-active", {
     outline: edge(amber),
     outlineOffset: -1,
     backgroundColor: "#4a483584",
-    boxShadow: [{ x: 0, y: 0, blur: 0, spread: 2, color: "#504632", inset: true }],
+    // Spread 3, not 2: an inset shadow starts at the padding edge, which the
+    // vanished border moved out by one, and the stroke covers the first
+    // pixel of it. Three paints the two a player sees.
+    boxShadow: [{ x: 0, y: 0, blur: 0, spread: 3, color: "#504632", inset: true }],
   }),
   rule("hand-actions", { gap: 3, height: 20, pointerEvents: "none" }),
   rule("hand-action", {
@@ -76,7 +79,7 @@ export const hudRules = [
     textTransform: "uppercase",
     color: "#b5c6b5",
     backgroundColor: "transparent",
-    textShadow: outline,
+    textShadow: stroke,
   }),
   // The edge outlines the box itself, so what is hit and what is seen are
   // one rectangle: a border would leave the press stretched over it two
@@ -99,7 +102,6 @@ export const hudRules = [
     overflow: "hidden",
   }),
   rule("worn-on", { backgroundColor: "#315673ed", outline: edge("#b2d7ff") }),
-  rule("worn-hit", { borderRadius: 0 }),
   rule("worn-glyph", { fontFamily: "mono", fontSize: 18, lineHeight: 1, color: "#a4c4df" }),
   rule("worn-cap", {
     fontFamily: "mono",
@@ -131,7 +133,7 @@ export const hudRules = [
     fontSize: 8,
     letterSpacing: 1,
     color: "#b5d5bc",
-    textShadow: outline,
+    textShadow: stroke,
   }),
   rule("status-dot", { color: teal, fontFamily: "mono", fontSize: 8 }),
   rule("status-key", { color: dim, fontFamily: "mono", fontSize: 8, textTransform: "uppercase" }),

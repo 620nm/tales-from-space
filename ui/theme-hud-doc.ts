@@ -2,7 +2,7 @@
 // document's head strip and body, the readout hierarchy inside it, the
 // action strip and the status line. Appended to `hudRules`.
 import { rule } from "@lunatic/ui";
-import { edge, face, faceLine, flat, ink, none, outline, teal, titleFace, titleLine } from "./theme-tokens";
+import { edge, face, faceLine, flat, ink, none, stroke, teal, titleFace, titleLine } from "./theme-tokens";
 
 export const docRules = [
   // Host window parts: the title strip the pack may paint, and a body
@@ -159,7 +159,7 @@ export const docRules = [
     letterSpacing: 1,
     textTransform: "uppercase",
     color: "#c0cfc0",
-    textShadow: outline,
+    textShadow: stroke,
   }),
   rule("ability", {
     width: 34,
@@ -198,7 +198,7 @@ export const docRules = [
     fontFamily: "mono",
     fontSize: 11,
     color: "#d6dfd2",
-    textShadow: outline,
+    textShadow: stroke,
     pointerEvents: "none",
   }),
   rule("statusdot", {
@@ -215,7 +215,7 @@ export const docRules = [
     fontFamily: "mono",
     fontSize: 11,
     color: "#a4b5af",
-    textShadow: outline,
+    textShadow: stroke,
   }),
 ];
 

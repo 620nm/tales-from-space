@@ -12,7 +12,7 @@ import { baseRules } from "./theme-base";
 import { surfaceRules } from "./theme-surfaces";
 import { hudRules } from "./theme-hud";
 import {
-  amber, bright, dim, edge, field, flat, ink, line, none, outline, press,
+  amber, bright, dim, edge, field, flat, ink, line, none, stroke, press,
   ring, rule_line, teal,
 } from "./theme-tokens";
 
@@ -24,7 +24,7 @@ export default defineStyles([
   // than by chrome (code/_onclick/hud/inventory_slot.dm:20-30). The two
   // states that SAY something are restated after it, or they lose to it.
   rule("slot", { backgroundColor: "transparent", border: none, borderRadius: 0, boxShadow: flat }),
-  // An outline, never a border: the frame art and the press are absolutely
+  // An stroke, never a border: the frame art and the press are absolutely
   // placed over the square and a border would shrink both
   // (docs/pack-ui/box-model.md).
   rule("slot-active", { outline: edge(amber), outlineOffset: -1, boxShadow: ring(amber, 1) }),
@@ -61,11 +61,11 @@ export default defineStyles([
     border: none, borderRadius: 0, boxShadow: flat, pointerEvents: "none",
   }),
   // Captions and readings float bare over the station now, so both wear
-  // the outline. Inside a pane it is a black edge on a black face and
+  // the stroke. Inside a pane it is a black edge on a black face and
   // costs nothing.
   rule("caption", {
     color: dim, fontFamily: "mono", fontSize: 9, fontWeight: 700,
-    textTransform: "uppercase", letterSpacing: 1, textShadow: outline,
+    textTransform: "uppercase", letterSpacing: 1, textShadow: stroke,
   }),
 
   // The tray: hands and worn slots over the station's bottom edge.
@@ -80,7 +80,7 @@ export default defineStyles([
     color: dim, fontFamily: "mono", fontSize: 8,
     textTransform: "uppercase", letterSpacing: 1,
   }),
-  rule("chipval", { color: bright, fontSize: 11, fontWeight: 700, textShadow: outline }),
+  rule("chipval", { color: bright, fontSize: 11, fontWeight: 700, textShadow: stroke }),
 
   // The target figure: one atlas cell at twice its size, so a hand and a
   // foot are separable at a glance. The renderer scales a cell to the
@@ -132,10 +132,10 @@ export default defineStyles([
 
   // Words over a head: tgstation's runechat, which is lettering and not
   // a box. The look is `interface/skin.dmf:79` — Grand9K Pixel, a 1px
-  // black outline, line-height 1 — scaled from BYOND's 32px tile to the
+  // black stroke, line-height 1 — scaled from BYOND's 32px tile to the
   // ~48 CSS px one this camera draws at its default zoom, so 6pt (8px)
   // becomes 12 and tg's CHAT_MESSAGE_WIDTH of 112 (3.5 tiles) becomes
-  // 168. The outline is what `-dm-text-outline: 1px black` means once
+  // 168. The text outline is what `-dm-text-outline: 1px black` means once
   // spelled as shadows; both it and the font inherit to the runs.
   rule("rune", {
     // Fixed, like tg's CHAT_MESSAGE_WIDTH: an anchored box with auto
@@ -155,7 +155,7 @@ export default defineStyles([
     border: none,
     boxShadow: flat,
     userSelect: "none",
-    textShadow: outline,
+    textShadow: stroke,
   }),
   // The words themselves wear the speaker's hue, written inline; the run
   // only has to be allowed to wrap inside the cap above.

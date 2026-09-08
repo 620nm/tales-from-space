@@ -29,9 +29,9 @@ export const ring = (color: string, spread: number) => [
 ];
 // An empty shadow list renders `none`: how a later rule cancels an earlier.
 export const flat: StyleValue[] = [];
-// The 1px black outline BYOND draws with `-dm-text-outline`, and the only
-// thing that holds a bare HUD word together over a lit floor.
-export const outline = [
+// The 1px black text outline BYOND draws with `-dm-text-outline`, and the
+// only thing that holds a bare HUD word together over a lit floor.
+export const stroke = [
   { x: -1, y: 0, blur: 0, color: "#000000" },
   { x: 1, y: 0, blur: 0, color: "#000000" },
   { x: 0, y: -1, blur: 0, color: "#000000" },
