@@ -65,6 +65,7 @@ supplies the component kit and default theme these screens are built from
 | `document-action.ts` | the one builder every panel's act goes out through |
 | `lobby.ts`, `chat.ts`, `inspect.ts` | the crew board and condition card, comms, examine and the tile menu |
 | `inventory.ts`, `inventory-storage.ts`, `doll.ts` | the tray, an opened container, and the body-target figure |
+| `inventory-event.ts` | shared inventory gesture precedence and snapshot-bound item interaction claims |
 | `documents.ts` | one pane per document; the discriminator picks the body, `presentation` the shape |
 | `documents-desktop.ts` | the shared 16:9 computer screen, laptop wallpaper and physical controls |
 | `documents-modules.ts` | readouts, switches, label rows and setpoints, grouped by section |
@@ -169,6 +170,16 @@ The filter is a case-insensitive substring of the spec's FILE NAME, so
 `vendor`, `vend`, and `vendor_test.luau` all select the same file; the
 tail line reports how many specs were filtered out. A failure prints the
 assertion's own message with Luau's `file:line` stamp.
+
+Inventory regressions use `t.interact_item(p, target)` to apply the active
+held item and `t.use_item_site(p, site, gesture)` for a declared slot gesture.
+The target is an observed entity id or a wire-shaped site table, such as
+`{ Held = { hand = 0 } }` or
+`{ NestedEquipment = { slot = "back", path = {0, 0} } }`. Site hands and
+paths are zero-based; `t.hands(p).active` is one-based. These commands use
+the player's disclosed inventory receipt. The UI event regression runs from
+the engine checkout with
+`node "$LUNATIC_PACK/tools/test-inventory-events.mjs" "$PWD"`.
 
 Each spec runs in a fresh trusted VM against a fresh headless Sim and
 drives it through `t`, which is the same `SimCommand` seam the Rust

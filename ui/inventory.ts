@@ -8,8 +8,8 @@ import { labelText } from "./labels";
 import { hudSlot } from "./slots";
 import type { GameplayView, InventoryState } from "./model";
 import { openStorage } from "./inventory-storage";
-import { fromEvent } from "./gesture";
-import { bind, column, inspect, panel, press, row, some, text, type Command } from "./view";
+import { inventoryEvent } from "./inventory-event";
+import { bind, column, panel, press, row, some, text, type Command } from "./view";
 import * as S from "./strings";
 
 export function inventory(view: GameplayView): UiNode | null {
@@ -57,22 +57,8 @@ function handSquares(current: InventoryState): UiNode[] {
       empty: !item,
       ...(item?.fill ? { fill: item.fill } : {}),
       item: `held/${index}`,
-      event: bind(id, (e) => {
-        const target = { Held: { hand: index } };
-        // The press names a gesture; the item's mask says whether it
-        // declared that one. The reserved bits are never in a mask, so
-        // Shift still examines and a bare click still takes the hand.
-        const shape = fromEvent(e);
-        const mask = item?.gestures ?? 0;
-        if (shape && !e.meta && ((mask >>> shape.rank) & 1) === 1)
-          return { kind: "use_item", target, gesture: shape.id };
-        if (e.type === "context" || (e.type === "activate" && e.shift))
-          return inspect(target);
-        // Only a plain click takes the hand. A middle press the item
-        // never declared means nothing here, and must not swap hands
-        // because the thing in this one answered to no such gesture.
-        return e.type === "activate" ? { kind: "hand", index } : undefined;
-      }),
+      event: bind(id, (e) => inventoryEvent(e, { Held: { hand: index } }, item,
+        current, () => ({ kind: "hand", index }), current.active === index)),
     }, "hand", "hand-slot");
   });
 }
@@ -116,11 +102,8 @@ export function wornGroup(view: GameplayView, carry = false): UiNode | null {
       empty: !worn?.item,
       ...(worn?.item?.fill ? { fill: worn.item.fill } : {}),
       item: `equipment/${slot.id}`,
-      event: bind(id, (e) => {
-        if (e.type === "context") return inspect({ Equipment: { slot: slot.id } });
-        // A worn square answers the two clicks it draws and no other:
-        // a middle press means nothing on a slot that declares none.
-        if (e.type !== "activate") return undefined;
+      event: bind(id, (e) => inventoryEvent(e, { Equipment: { slot: slot.id } },
+        worn?.item, current, (): Command | undefined => {
         if (worn?.contents) {
           openStorage({ slot: slot.id });
           return undefined;
@@ -128,7 +111,7 @@ export function wornGroup(view: GameplayView, carry = false): UiNode | null {
         return current.hands?.[current.active]
           ? { kind: "equip" }
           : { kind: "unequip", slot: slot.id };
-      }),
+      })),
     }, slot.id);
     const position = anatomy[slot.id] ?? [index % 3, Math.floor(index / 3) + 3];
     return [{ ...square, ...(!carry ? { style: { position: "absolute" as const, left: position[0] * 44, top: position[1] * 44 } } : {}) }];

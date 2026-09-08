@@ -31,10 +31,12 @@ controls. All current readers see power and slot changes together.
 
 ## Slots
 
-Apply an ID card or floppy disk to insert it; an occupied slot swaps its
-previous item into the inserting hand. A hand holding either one reads the
-laptop's own row as Insert disk or Insert ID card rather than Take, which
-is what that click does. That variant sits on `primary.held`, because the
+Hold an ID card or floppy cartridge in the active hand and click the laptop
+to insert it; an occupied slot swaps its previous item into the inserting
+hand. This works on the floor, in the other hand and inside an opened
+container, including nested bags. A hand holding either one reads the
+laptop's own row as Insert cartridge or Insert ID card.
+That variant sits on `primary.held`, because the
 insertion IS the plain click, and it reads the same on a closed laptop:
 the interact route takes the card or the disk whatever the lid is doing.
 The desktop ejects either slot. Shift+Ctrl-click
@@ -42,6 +44,12 @@ ejects the floppy and Shift+Ctrl right-click the card; each row is offered
 only while that slot holds something, which the laptop keeps as its `media`
 and `card` hint flags. Cards retain their identity and disks retain their
 files.
+
+Inventory squares honor the same declared right-click, Alt-click and
+Shift+Ctrl gestures as the laptop on the floor. Shift-click examines.
+Undeclared modified presses never move an item or open a container. With
+an empty active hand, bare clicks retain hand selection and container
+navigation; using the active hand's own square does not apply it to itself.
 
 ## Files
 

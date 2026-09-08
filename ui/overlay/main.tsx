@@ -13,14 +13,13 @@ import * as S from "../strings";
 
 /** What the cursor is over, with the verbs it answers to. */
 function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>): UiNode {
-  // Out in the world primary is always offered: a thing with no declared
-  // verbs is still something a hand can be put on. A thing already in a
-  // slot is not — the server drops that row, and a bare click there is
-  // the hand itself, not a reach for the item.
-  const slot = !hover.appearance;
-  const rows = slot || hover.hints.some((hint) => hint.gesture === "primary")
-    ? [...hover.hints]
-    : [{ gesture: "primary", label: S.tfs("ui.look.interact") }, ...hover.hints];
+  const rows = [...hover.hints];
+  if (hover.primary_fallback === undefined && hover.appearance
+      && !rows.some((hint) => hint.gesture === "primary"))
+    rows.unshift({ gesture: "primary", label: S.tfs("ui.look.interact") });
+  if (hover.primary_fallback && !rows.some((hint) => hint.gesture === "primary"))
+    rows.unshift({ gesture: "primary", label: S.tfs(hover.primary_fallback === "store"
+      ? "ui.look.store_held" : "ui.look.use_held") });
   // Examine is Shift+LMB and takes the place its own rank names, between
   // the bare group and the shift group. The rows arrive ranked, so this
   // is one insertion and never a sort.
