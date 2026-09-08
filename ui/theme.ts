@@ -24,11 +24,14 @@ export default defineStyles([
   // than by chrome (code/_onclick/hud/inventory_slot.dm:20-30). The two
   // states that SAY something are restated after it, or they lose to it.
   rule("slot", { backgroundColor: "transparent", border: none, borderRadius: 0, boxShadow: flat }),
-  rule("slot-active", { border: edge(amber), boxShadow: ring(amber, 1) }),
+  // An outline, never a border: the frame art and the press are absolutely
+  // placed over the square and a border would shrink both
+  // (docs/pack-ui/box-model.md).
+  rule("slot-active", { outline: edge(amber), outlineOffset: -1, boxShadow: ring(amber, 1) }),
   // Two-tone, because a bare square has to be findable on a lit floor as
   // well as in a dark corridor: a light dash over a dark pane, which is
   // what tg's `template` icon state is a drawn version of.
-  rule("slot-empty", { border: none, backgroundColor: "transparent", opacity: 1 }),
+  rule("slot-empty", { backgroundColor: "transparent", opacity: 1 }),
   rule("slot-hit", { borderRadius: 2, ...press }),
   // One line, clipped: an item's whole name will not fit a 40px square,
   // and a wrapped one climbs over the sprite it belongs to.

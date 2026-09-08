@@ -17,8 +17,11 @@ export const hudRules = [
     borderRadius: 0,
     boxShadow: [{ x: 0, y: 0, blur: 0, spread: 2, color: "#142126", inset: true }],
   }),
+  // An outline, so the frame art and the press stretched over the square do
+  // not shrink the instant a hand goes live (docs/pack-ui/box-model.md).
   rule("slot-active", {
-    border: edge(amber),
+    outline: edge(amber),
+    outlineOffset: -1,
     backgroundColor: "#4a483584",
     boxShadow: [{ x: 0, y: 0, blur: 0, spread: 2, color: "#504632", inset: true }],
   }),
@@ -31,12 +34,13 @@ export const hudRules = [
     justifyContent: "center",
     gap: 3,
     backgroundColor: "#1f2e31db",
-    border: edge("#667173"),
+    outline: edge("#667173"),
+    outlineOffset: -1,
     borderRadius: 2,
     overflow: "hidden",
   }),
   rule("hand-action", { backgroundColor: "#2c4145e8" }, "hover"),
-  rule("hand-action-on", { backgroundColor: "#4a483584", border: edge(amber) }),
+  rule("hand-action-on", { backgroundColor: "#4a483584", outline: edge(amber) }),
   rule("hud-glyph", { fontFamily: "mono", fontSize: 11, lineHeight: 1, color: ink }),
   rule("hud-cap", {
     fontFamily: "mono",
@@ -74,11 +78,9 @@ export const hudRules = [
     backgroundColor: "transparent",
     textShadow: outline,
   }),
-  // The edge belongs to the PRESS, not to the box behind it. An
-  // absolutely placed child fills its parent's PADDING box, so a border
-  // out here leaves the pressable node two pixels short of the square a
-  // player aims at. The box stays bare; the press is the 40 and draws
-  // the edge, so what is hit and what is seen are one rectangle.
+  // The edge outlines the box itself, so what is hit and what is seen are
+  // one rectangle: a border would leave the press stretched over it two
+  // pixels short of the square (docs/pack-ui/box-model.md).
   rule("worn-toggle", {
     position: "relative",
     width: 40,
@@ -91,12 +93,13 @@ export const hudRules = [
     padding: 0,
     backgroundColor: "#20394ee8",
     border: none,
+    outline: edge("#5280ac"),
+    outlineOffset: -1,
     borderRadius: 0,
     overflow: "hidden",
   }),
-  rule("worn-on", { backgroundColor: "#315673ed" }),
-  rule("worn-hit", { border: edge("#5280ac"), borderRadius: 0 }),
-  rule("worn-hit-on", { border: edge("#b2d7ff") }),
+  rule("worn-on", { backgroundColor: "#315673ed", outline: edge("#b2d7ff") }),
+  rule("worn-hit", { borderRadius: 0 }),
   rule("worn-glyph", { fontFamily: "mono", fontSize: 18, lineHeight: 1, color: "#a4c4df" }),
   rule("worn-cap", {
     fontFamily: "mono",
