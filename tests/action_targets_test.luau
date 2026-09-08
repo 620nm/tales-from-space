@@ -87,12 +87,33 @@ t.run_ticks(2)
 assert(t.health(patient).brute > health, "the advertised strike executes through a player click")
 
 take("laptop")
+local function laptop_gesture_ids(label)
+    for _, view in ipairs(t.actions(actor)) do
+        local ids, gestures = {}, {}
+        for _, action in ipairs(view.actions) do
+            assert(not ids[action.id], "each hover row has a unique ID: " .. action.id)
+            ids[action.id] = true
+            if action.label.key == label then gestures[action.gesture] = action.id end
+        end
+        if gestures.self then
+            assert(gestures.secondary, "the held laptop exposes both equivalent controls")
+            assert(gestures.self ~= gestures.secondary, "shared labels do not share row identity")
+            return gestures.self, gestures.secondary
+        end
+    end
+    error("the active laptop has no self-use action for " .. label)
+end
+local self_id, secondary_id = laptop_gesture_ids("lunatic/tfs:ui.affordance.open_lid")
 local network = assert(t.target_at(2, 1))
 assert(entity_action(network, "connect") == nil, "a closed laptop does not offer typing")
 t.use_self(actor)
 t.run_ticks(2)
+local off_self, off_secondary = laptop_gesture_ids("lunatic/tfs:ui.affordance.power_on")
+assert(off_self == self_id and off_secondary == secondary_id, "lid state does not change gesture IDs")
 t.use_self(actor)
 t.run_ticks(2)
+local on_self, on_secondary = laptop_gesture_ids("lunatic/tfs:ui.affordance.view_interface")
+assert(on_self == self_id and on_secondary == secondary_id, "power state does not change gesture IDs")
 t.use_self(actor)
 t.run_ticks(2)
 local desktop = assert(t.ui(actor), "the laptop screen opens")
