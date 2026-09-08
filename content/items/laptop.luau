@@ -1,5 +1,7 @@
--- Lid and cartridge gestures: tg laptop.dm:68-122, computer.dm:557-562.
--- Desktop policy and the deliberate one-step boot are in docs/LAPTOP.md.
+-- Lid, power and cartridge gestures: tg laptop.dm:68-105 (a closed lid
+-- answers self-use with the lid alone), computer.dm:564 (the power
+-- button is its own press), computer.dm:557-562 (disk eject).
+-- Desktop policy and where this departs from tg are in docs/LAPTOP.md.
 local WALLPAPERS = { "wallpaper_bliss", "wallpaper_moonlake" }
 
 local content = {
@@ -11,19 +13,40 @@ local content = {
     state_sprites = {
         closed = "laptop_closed", off = "laptop_off", on = "laptop_on",
     },
-    gestures = { "secondary", "alt", "ctrl_shift" },
+    gestures = {
+        "secondary", "alt_primary", "shift_ctrl_primary", "shift_ctrl_secondary",
+    },
+    -- What is in the two slots, so an eject row is offered only when
+    -- there is something to eject.
+    hint_flags = { "media", "card" },
     interaction_labels = {
-        primary = { label = "lunatic/tfs:ui.affordance.take" },
-        self = { label = "lunatic/tfs:ui.affordance.view_interface", states = {
-            closed = "lunatic/tfs:ui.affordance.open_lid",
+        -- A hand holding something the laptop takes is there to put it
+        -- in, not to pick the laptop up.
+        primary = { label = "lunatic/tfs:ui.affordance.take", held = {
+            floppy = "lunatic/tfs:ui.affordance.insert_disk",
+            card = "lunatic/tfs:ui.affordance.insert_id",
         } },
-        secondary = { label = "lunatic/tfs:ui.affordance.view_interface", states = {
+        -- One press, one step: the lid, then the power button, then the
+        -- screen. Each state says which step this gesture is now.
+        self = { label = "lunatic/tfs:ui.affordance.power_off", states = {
             closed = "lunatic/tfs:ui.affordance.open_lid",
+            off = "lunatic/tfs:ui.affordance.power_on",
         } },
-        alt = { label = "lunatic/tfs:ui.affordance.close_lid", states = {
+        secondary = { label = "lunatic/tfs:ui.affordance.power_off", states = {
+            closed = "lunatic/tfs:ui.affordance.open_lid",
+            off = "lunatic/tfs:ui.affordance.power_on",
+        } },
+        alt_primary = { label = "lunatic/tfs:ui.affordance.view_interface", states = {
             closed = "lunatic/tfs:ui.affordance.lid_closed",
         } },
-        ctrl_shift = { label = "lunatic/tfs:ui.affordance.eject_cartridge" },
+        shift_ctrl_primary = {
+            label = "lunatic/tfs:ui.affordance.eject_cartridge",
+            only_when = { "media" },
+        },
+        shift_ctrl_secondary = {
+            label = "lunatic/tfs:ui.affordance.eject_id",
+            only_when = { "card" },
+        },
     },
     acts_on_items = true,
     drive = {},
@@ -67,16 +90,29 @@ if sim ~= nil then
         ui.close_all({ owner = self })
     end
 
-    local function open(self, user, at)
+    -- The lid alone: a laptop that kept its charge comes up lit, an
+    -- unpowered one shows a dark screen until the power button.
+    local function raise(self)
         local powered = self.vars.laptop_powered == true
-        if not powered then
-            self.vars.laptop_powered = true
-            sound("computer_start", at)
-        end
-        sim.appearance.set_state({ entity = self, state = "on" })
-        refresh(self, true)
-        local view, actions = document(self, true)
-        ui.open({ viewer = user, owner = self, view = view, actions = actions, include_native = true })
+        sim.appearance.set_state({ entity = self, state = if powered then "on" else "off" })
+    end
+
+    local function switch(self, powered, at)
+        self.vars.laptop_powered = powered
+        sim.appearance.set_state({ entity = self, state = if powered then "on" else "off" })
+        sound(if powered then "computer_start" else "computer_end", at)
+        refresh(self, powered)
+    end
+
+    -- The screen: the file workspace composes only while the machine is
+    -- running, so an unpowered desktop opens without native disclosure.
+    local function view_interface(self, user)
+        local powered = self.vars.laptop_powered == true
+        local view, actions = document(self, powered)
+        ui.open({
+            viewer = user, owner = self, view = view, actions = actions,
+            include_native = powered,
+        })
     end
 
     behavior:handle("entity.initialize.done", { kind = "react" }, function(ev)
@@ -88,14 +124,20 @@ if sim ~= nil then
 
     behavior:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self = ev.subject
-        if ev.gesture == "alt" then
-            if self.state ~= "closed" then close(self) end
-        elseif ev.gesture == "ctrl_shift" then
+        if ev.gesture == "alt_primary" then
+            if self.state ~= "closed" then view_interface(self, ev.actor) end
+        elseif ev.gesture == "shift_ctrl_primary" then
             if self:item_slot("media") ~= nil then
                 sim.item_slot.eject({ subject = self, slot = "media" })
             end
+        elseif ev.gesture == "shift_ctrl_secondary" then
+            if self:item_slot("card") ~= nil then
+                sim.item_slot.eject({ subject = self, slot = "card" })
+            end
+        elseif self.state == "closed" then
+            raise(self)
         else
-            open(self, ev.actor, ev.at)
+            switch(self, self.vars.laptop_powered ~= true, ev.at)
         end
         return true
     end)
@@ -115,6 +157,13 @@ if sim ~= nil then
     behavior:handle("item_slot.changed.done", { kind = "react" }, function(ev)
         if ev.outcome ~= "completed" then return end
         sound(if ev.slot == "card" then "terminal_insert_disc" else "card_slide", ev.at)
+        -- The eject rows are offered off what is in the slots, so the
+        -- flags follow every insertion and every ejection.
+        sim.hints.set_flag({
+            entity = ev.subject,
+            flag = if ev.slot == "card" then "card" else "media",
+            on = ev.subject:item_slot(ev.slot) ~= nil,
+        })
         if ev.subject.state ~= "closed" then
             refresh(ev.subject, ev.subject.vars.laptop_powered == true)
         end
@@ -137,11 +186,7 @@ if sim ~= nil then
         if ev.action == "close" then
             close(self)
         elseif ev.action == "power" then
-            local powered = self.vars.laptop_powered ~= true
-            self.vars.laptop_powered = powered
-            sim.appearance.set_state({ entity = self, state = if powered then "on" else "off" })
-            sound(if powered then "computer_start" else "computer_end", ev.at)
-            refresh(self, powered)
+            switch(self, self.vars.laptop_powered ~= true, ev.at)
         elseif ev.action == "eject_id" then
             sim.item_slot.eject({ subject = self, slot = "card" })
         elseif ev.action == "eject_cartridge" then

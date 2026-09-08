@@ -8,6 +8,7 @@ import { labelText } from "./labels";
 import { hudSlot } from "./slots";
 import type { GameplayView, InventoryState } from "./model";
 import { openStorage } from "./inventory-storage";
+import { fromEvent } from "./gesture";
 import { bind, column, inspect, panel, press, row, some, text, type Command } from "./view";
 import * as S from "./strings";
 
@@ -57,17 +58,20 @@ function handSquares(current: InventoryState): UiNode[] {
       ...(item?.fill ? { fill: item.fill } : {}),
       item: `held/${index}`,
       event: bind(id, (e) => {
+        const target = { Held: { hand: index } };
+        // The press names a gesture; the item's mask says whether it
+        // declared that one. The reserved bits are never in a mask, so
+        // Shift still examines and a bare click still takes the hand.
+        const shape = fromEvent(e);
         const mask = item?.gestures ?? 0;
-        const gesture = e.type === "context" && !e.alt && !e.ctrl && !e.shift
-          ? ((mask & 1) ? "secondary" : undefined)
-          : e.type === "activate" && e.ctrl && e.shift && !e.alt
-            ? ((mask & 4) ? "ctrl_shift" : undefined)
-            : e.type === "activate" && e.alt && !e.ctrl && !e.shift
-              ? ((mask & 2) ? "alt" : undefined) : undefined;
-        if (gesture && !e.meta) return { kind: "use_item", target: { Held: { hand: index } }, gesture };
-        return e.type === "context"
-          ? inspect({ Held: { hand: index } })
-          : { kind: "hand", index };
+        if (shape && !e.meta && ((mask >>> shape.rank) & 1) === 1)
+          return { kind: "use_item", target, gesture: shape.id };
+        if (e.type === "context" || (e.type === "activate" && e.shift))
+          return inspect(target);
+        // Only a plain click takes the hand. A middle press the item
+        // never declared means nothing here, and must not swap hands
+        // because the thing in this one answered to no such gesture.
+        return e.type === "activate" ? { kind: "hand", index } : undefined;
       }),
     }, "hand", "hand-slot");
   });
@@ -114,6 +118,9 @@ export function wornGroup(view: GameplayView, carry = false): UiNode | null {
       item: `equipment/${slot.id}`,
       event: bind(id, (e) => {
         if (e.type === "context") return inspect({ Equipment: { slot: slot.id } });
+        // A worn square answers the two clicks it draws and no other:
+        // a middle press means nothing on a slot that declares none.
+        if (e.type !== "activate") return undefined;
         if (worn?.contents) {
           openStorage({ slot: slot.id });
           return undefined;

@@ -178,7 +178,7 @@ no direct spawn in `t`, and none should ever be added.
 
 | Group | Functions |
 | ----- | --------- |
-| Item gestures | `t.use_item(p, entity_id, gesture)` (`"secondary"`, `"alt"`, or `"ctrl_shift"`; the item must declare that gesture and be reachable or in the player's hands) |
+| Item gestures | `t.use_item(p, entity_id, gesture)` (any of the eighteen declarable pointer ids — `"secondary"`, `"middle"`, `"alt_primary"`, `"shift_ctrl_primary"` and the rest of the grid, spelled and ranked in the engine's `docs/luau-api/click.md`; the item must declare that gesture and be reachable or in the player's hands) |
 | World | `t.world(ron [, seed [, mode]])`, `t.world_file(name [, seed [, mode]])` (mode = a `content/gamemodes/` id; omitted = the pack default), `t.join([job]) -> player` (a mode that seats bodies on connection takes no job), `t.respawn(p [, job])` (take the mode's offer to leave this body: where the mode lobbies the session lands back at the board on a fresh Mind and `job` picks the next role, and where bodies are connection-scoped there is no board, so naming a job is an error) |
 | Seeds | `t.fault(x, y, tick)` (hull failure), `t.outage([tick])` (breaker trip) |
 | Clock | `t.now()`, `t.tick()`, `t.run_ticks(n)`, `t.run_seconds(s)` |
