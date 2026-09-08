@@ -6,6 +6,7 @@
 -- "air vent fitting" (construction.dm:53).
 return {
     id = "vent_fitting",
+    name_label = "lunatic/tfs:entity.vent_fitting.name",
     name = "air vent fitting",
     sprite = "vent_loose",
     category = "fittings",

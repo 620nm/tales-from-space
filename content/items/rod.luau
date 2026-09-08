@@ -2,6 +2,7 @@
 -- window hangs in.
 return {
     id = "rod",
+    name_label = "lunatic/tfs:entity.rod.name",
     name = "metal rods",
     sprite = "rods",
     inhand_sprite = { "held_rods_l", "held_rods_r" },

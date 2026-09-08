@@ -29,6 +29,7 @@
 -- ends has two axes and not four facings.
 return {
     id = "color_adapter",
+    name_label = "lunatic/tfs:entity.color_adapter.name",
     name = "color adapter",
     sprite = "color_adapter_ns",
     dense = false,

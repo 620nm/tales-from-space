@@ -169,6 +169,7 @@ local content = {
         self = { label = "lunatic/tfs:ui.affordance.view_interface" },
     },
     id = "rpd",
+    name_label = "lunatic/tfs:entity.rpd.name",
     name = "rapid pipe dispenser",
     -- tg's own art off the tool sheet (`icon_state = "rpd"`, RPD.dm:26).
     sprite = "rpd",
@@ -246,6 +247,27 @@ local content = {
     },
     -- tg's `attack_self` is `ui_interact(user)` (RPD.dm:124-125): the
     -- in-hand key or tg-style pickup double-click opens its window.
+}
+
+local breakdown_groups = {}
+for first = 1, #RECIPES, 8 do
+    local group = {}
+    for index = first, math.min(first + 7, #RECIPES) do
+        table.insert(group, action_rules.fact("target.proto", RECIPES[index].item))
+    end
+    table.insert(breakdown_groups, { any = group })
+end
+content.actions = {
+    action_rules.primary("disassemble", { all = {
+        action_rules.kind("item"), { any = breakdown_groups },
+    } }, { any = {
+        action_rules.fact("held.dial", "mode=Build"),
+        action_rules.fact("held.dial", "mode=Destroy"),
+    } }),
+    action_rules.primary("copy_pipe", action_rules.network("pipe"),
+        action_rules.fact("held.dial", "mode=Copy")),
+    action_rules.primary("build_pipe", action_rules.exposed_deck(),
+        action_rules.fact("held.dial", "mode=Build")),
 }
 
 if sim ~= nil then

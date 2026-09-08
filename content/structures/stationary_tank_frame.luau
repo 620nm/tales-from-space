@@ -25,6 +25,7 @@
 -- step and not a way of taking the bolts back out.
 return {
     id = "stationary_tank_frame",
+    name_label = "lunatic/tfs:entity.stationary_tank_frame.name",
     name = "tank frame",
     sprite = "stationary_tank_frame",
     dense = true,

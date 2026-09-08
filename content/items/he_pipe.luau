@@ -27,6 +27,7 @@ local LAYERS = { 2, 3, 4 }
 
 local content = {
     id = "he_pipe",
+    name_label = "lunatic/tfs:entity.he_pipe.name",
     name = "heat-exchanging pipe",
     sprite = "he_pipe",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
@@ -50,6 +51,8 @@ local content = {
     modes = 5,
     mode = 2,
 }
+
+content.actions = { action_rules.primary("lay_pipe", action_rules.exposed_deck()) }
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })

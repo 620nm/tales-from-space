@@ -17,6 +17,7 @@
 -- vending machine, not of any particular one.
 return {
     id = "tool_vendor",
+    name_label = "lunatic/tfs:entity.tool_vendor.name",
     name = "YouTool vending machine",
     sprite = "tool_vendor",
     ui = { modules = { "shelf" }, opens_on_click = false },

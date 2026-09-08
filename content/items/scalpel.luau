@@ -1,6 +1,6 @@
 -- The first thing a surgeon reaches for (tg surgery_tools.dm:208-231).
 local content = {
-    id = "scalpel", name = "scalpel", sprite = "scalpel",
+    id = "scalpel", name_label = "lunatic/tfs:entity.scalpel.name", name = "scalpel", sprite = "scalpel",
     tool = "scalpel", tool_speed = 1, surgical = true,
     force = 10, sharp = "edged",
     -- A surgical tool with nothing to do is refused rather than swung,

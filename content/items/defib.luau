@@ -30,6 +30,7 @@
 -- three clips that say which of the three things happened.
 local content = {
     id = "defib",
+    name_label = "lunatic/tfs:entity.defib.name",
     name = "defibrillator",
     sprite = "defib",
     force = 5,             -- defib.dm:16
@@ -84,6 +85,8 @@ local function refusal(patient)
     end
     return nil
 end
+
+content.actions = { action_rules.attack("defibrillate") }
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })

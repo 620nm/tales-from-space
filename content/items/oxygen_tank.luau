@@ -22,6 +22,7 @@ local content = {
         self = { label = "lunatic/tfs:ui.affordance.toggle_internals" },
     },
     id = "oxygen_tank",
+    name_label = "lunatic/tfs:entity.oxygen_tank.name",
     name = "oxygen tank",
     sprite = "oxygen_tank",
     ui = { modules = { "held_tank" } },

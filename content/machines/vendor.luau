@@ -6,6 +6,7 @@
 -- name of nothing on it.
 return {
     id = "vendor",
+    name_label = "lunatic/tfs:entity.vendor.name",
     name = "Robust Softdrinks vending machine",
     sprite = "vendor",
     ui = { modules = { "shelf" }, opens_on_click = false },

@@ -9,6 +9,7 @@
 -- this is a second item rather than a click on the first.
 return {
     id = "filter_flipped_fitting",
+    name_label = "lunatic/tfs:entity.filter_flipped_fitting.name",
     name = "flipped filter fitting",
     sprite = "filter_fitting",
     category = "fittings",

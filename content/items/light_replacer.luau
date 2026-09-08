@@ -7,6 +7,7 @@
 -- refill (tubes and glass back into the device) is not written yet.
 return {
     id = "light_replacer",
+    name_label = "lunatic/tfs:entity.light_replacer.name",
     name = "light replacer",
     sprite = "light_replacer",
     -- Charges, not a stack: an empty replacer stays in your hand and

@@ -26,6 +26,7 @@
 -- frame; every noun in it is from this file.
 return {
     id = "manual_valve",
+    name_label = "lunatic/tfs:entity.manual_valve.name",
     name = "manual valve",
     sprite = "valve_shut_ns",
     dense = false,

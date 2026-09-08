@@ -30,6 +30,7 @@
 -- zero edits here.
 return {
     id = "wall_frame",
+    name_label = "lunatic/tfs:entity.wall_frame.name",
     name = "wall frame",
     sprite = "wall_frame",
     mount = true,

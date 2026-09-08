@@ -6,6 +6,7 @@
 -- As the left arm (default_parts.dm:123-125, _bodyparts.dm:1643-1644).
 return {
     id = "human_r_arm",
+    name_label = "lunatic/tfs:entity.human_r_arm.name",
     name = "right arm",
     sprite = "part_r_arm",
     part = {

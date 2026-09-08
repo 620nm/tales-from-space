@@ -15,6 +15,7 @@
 -- everything else you can do to a deck you do to the plating under it.
 return {
     id = "floor",
+    name_label = "lunatic/tfs:entity.floor.name",
     name = "floor",
     sprite = "floor",
     turf = "floor",

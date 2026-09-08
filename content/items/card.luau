@@ -55,6 +55,7 @@
 
 local content = {
     id = "card",
+    name_label = "lunatic/tfs:entity.card.name",
     name = "card",
     -- The resting picture is the back: an item's base `sprite` is the
     -- fallback for a state that named no cell of its own, and here
@@ -93,6 +94,10 @@ local content = {
     scatter = 6,
     -- tg's `/obj/item/toy` gives cards no throwforce; a thrown one is
     -- litter. `throw_range`/`throw_speed` are tg's defaults, unstated.
+}
+
+content.actions = {
+    action_rules.primary("return_card", action_rules.fact("target.proto", "card_deck")),
 }
 
 if sim ~= nil then

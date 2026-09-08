@@ -26,6 +26,11 @@ one of them will drift.
 
 ## Adding a line
 
+Prototype tooltip names declare `name_label = "lunatic/tfs:entity.<id>.name"`
+beside their existing `name`. A variant uses its full `<base>.<variant>` id.
+The catalog holds the default name; `name` remains the literal value scripts
+and specs read. Player-authored names remain literal text.
+
 Write it in `locale/en.json` and emit
 `sim.msg("lunatic/tfs:<key>", { … })`, whose argument names must be exactly
 the `{placeholders}` the template asks for. One key is one FINISHED
@@ -41,6 +46,16 @@ keep every `{placeholder}` the English uses, and give it
 `lunatic/tfs:locale.name` — its own name, in itself, for the picker to
 read. A key you leave out reads in English; nothing else has to change.
 `locale/fr.json` is a worked partial example.
+`zh-hans.json`, `sr-cyrl.json` and `sr-latn.json` cover representative hover
+actions, requirements and shortcut words. They are partial catalogs with
+the same English fallback, not complete game translations.
+
+Hover action labels carry catalog keys and named arguments; `arg_keys`
+explicitly identifies arguments that need translation before substitution.
+A label's `text` is literal player-authored text. Shortcut keycaps read
+`state.effectiveBindings`; an absent or empty binding has no keycap.
+The hover grid sizes its shared key column intrinsically and wraps long
+chords and descriptions. It does not estimate translated text width.
 
 ## The gate
 

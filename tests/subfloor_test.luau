@@ -115,20 +115,23 @@ assert(#t.ledger_rows("CableCut") == 1, "and that cut is attributed")
 assert(t.count_items("cable_coil") == 2, "the cut line returned as a one-piece coil")
 
 -- ---------------------------------------------------------------
--- Laying, both trades: refused over a tile, and it says why.
+-- Laying, both trades: no work is offered through a finished floor.
 -- ---------------------------------------------------------------
 t.drop(p)
 t.run_ticks(2)
 t.click(p, 1, 3, t.target_at(1, 3, "cable_coil")) -- the coil
 t.run_ticks(2)
 _ = t.messages(p)
+for _, action in ipairs(t.action_hints(p, { Turf = { x = 2, y = 3 } })) do
+    assert(action.id ~= "lay_cable", "covered deck offers no cable laying")
+end
 t.click(p, 2, 3)
 t.run_seconds(1.5)
 assert(t.cable_at(2, 3) == 0, "no cable goes down over a finished floor")
 assert(#t.ledger_rows("CableLaid") == 0, "nothing laid, nothing recorded")
 assert(
-    said(p, "The floor is in the way. Pry the tile up first."),
-    "and the refusal says what to do about it"
+    not said(p, "The floor is in the way. Pry the tile up first."),
+    "the inapplicable cable handler does not execute"
 )
 
 t.drop(p)
@@ -136,12 +139,15 @@ t.run_ticks(2)
 t.click(p, 1, 2, t.target_at(1, 2, "pipe")) -- the length of pipe
 t.run_ticks(2)
 _ = t.messages(p)
+for _, action in ipairs(t.action_hints(p, { Turf = { x = 2, y = 3 } })) do
+    assert(action.id ~= "lay_pipe", "covered deck offers no pipe laying")
+end
 t.click(p, 2, 3)
 t.run_seconds(1.5)
 assert(t.pipe(2, 3) == 0, "no length goes down over a finished floor either")
 assert(
-    said(p, "The floor is in the way. Pry the tile up first."),
-    "same instruction, same words"
+    not said(p, "The floor is in the way. Pry the tile up first."),
+    "the inapplicable pipe handler does not execute"
 )
 
 -- ---------------------------------------------------------------

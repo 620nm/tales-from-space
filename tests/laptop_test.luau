@@ -177,10 +177,23 @@ assert(not desktop(p).cartridge and not desktop(q).cartridge, "disk removal refr
 t.drop(p)
 t.run_ticks(2)
 
-insert("screwdriver")
+take("screwdriver")
+local pickup = nil
+for _, action in ipairs(t.action_hints(p, laptop)) do
+    assert(action.id ~= "insert_disk" and action.id ~= "insert_id", "a screwdriver fits neither slot")
+    if action.id == "engine.action.take" then pickup = action end
+end
+assert(pickup and pickup.implement == nil, "the incompatible tool leaves a key-only pickup action")
+t.click(p, 2, 2, laptop)
+t.run_ticks(2)
 assert(t.hands(p).held == "screwdriver", "a tool cannot occupy either slot")
+local hands = t.hands(p)
+assert(hands[3 - hands.active] == "laptop", "ordinary pickup puts the laptop into the free hand")
 assert(not desktop(p).card and not desktop(p).cartridge, "invalid insertion changes no slot")
 t.drop(p)
+t.swap_hands(p)
+t.drop(p)
+t.swap_hands(p)
 t.run_ticks(2)
 
 insert("floppy_disk")

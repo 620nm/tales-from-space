@@ -9,12 +9,14 @@
 -- which have no socket of their own.
 return {
     id = "machine_board",
+    name_label = "lunatic/tfs:entity.machine_board.name",
     name = "unprogrammed machine board",
     sprite = "board",
     inhand_sprite = { "held_board_l", "held_board_r" },
     category = "machine components",
     variants = {
         access_point = {
+            name_label = "lunatic/tfs:entity.machine_board.access_point.name",
             name = "machine board (access point)",
             -- A STRUCTURE board, for the same reason the thermomachine's
             -- is one: what it builds has states, a transition table and
@@ -37,6 +39,7 @@ return {
             },
         },
         air_alarm = {
+            name_label = "lunatic/tfs:entity.machine_board.air_alarm.name",
             name = "machine board (air alarm)",
             -- A STRUCTURE board, the access point's argument exactly:
             -- what it builds hangs on a wall and has a transition
@@ -60,6 +63,7 @@ return {
             },
         },
         chem_dispenser = {
+            name_label = "lunatic/tfs:entity.machine_board.chem_dispenser.name",
             name = "machine board (chem dispenser)",
             -- tg machine_circuitboards.dm:752-762. The two matter bins,
             -- capacitor and servo are product sockets; the pane remains.
@@ -69,6 +73,7 @@ return {
             },
         },
         chem_heater = {
+            name_label = "lunatic/tfs:entity.machine_board.chem_heater.name",
             name = "machine board (reaction chamber)",
             -- tg machine_circuitboards.dm:803-809. Its micro-laser is a
             -- product socket and the pane is the remaining stack part.
@@ -78,6 +83,7 @@ return {
             },
         },
         evaporator = {
+            name_label = "lunatic/tfs:entity.machine_board.evaporator.name",
             name = "machine board (evaporator)",
             -- Baystation12, not tgstation, which has no such machine:
             -- code/game/objects/items/weapons/circuitboards/machinery/
@@ -94,18 +100,22 @@ return {
             },
         },
         chemdrobe = {
+            name_label = "lunatic/tfs:entity.machine_board.chemdrobe.name",
             name = "machine board (ChemDrobe)",
             board = { machine = "chemdrobe" },
         },
         games_vendor = {
+            name_label = "lunatic/tfs:entity.machine_board.games_vendor.name",
             name = "machine board (Good Clean Fun)",
             board = { machine = "games_vendor" },
         },
         nanomed_plus = {
+            name_label = "lunatic/tfs:entity.machine_board.nanomed_plus.name",
             name = "machine board (NanoMed Plus)",
             board = { machine = "nanomed_plus" },
         },
         programming_terminal = {
+            name_label = "lunatic/tfs:entity.machine_board.programming_terminal.name",
             name = "machine board (programming terminal)",
             -- tg builds consoles on a frame of their own rather than a
             -- machine frame, and that frame is finished with two glass
@@ -119,6 +129,7 @@ return {
             },
         },
         network_router = {
+            name_label = "lunatic/tfs:entity.machine_board.network_router.name",
             name = "machine board (network router)",
             -- tg's relay board asks for two servos, two lengths of cable
             -- and two subspace filters
@@ -133,6 +144,7 @@ return {
             },
         },
         transceiver = {
+            name_label = "lunatic/tfs:entity.machine_board.transceiver.name",
             name = "machine board (transceiver)",
             -- tg's bus mainframe board asks for two servos, a length
             -- of cable and a subspace filter
@@ -147,6 +159,7 @@ return {
             },
         },
         steam_generator = {
+            name_label = "lunatic/tfs:entity.machine_board.steam_generator.name",
             name = "machine board (steam generator)",
             -- Baystation12's water-only board, which is the
             -- evaporator's with a different `build_path` and nothing
@@ -161,6 +174,7 @@ return {
             },
         },
         thermomachine = {
+            name_label = "lunatic/tfs:entity.machine_board.thermomachine.name",
             name = "machine board (temperature control unit)",
             -- tg machine_circuitboards.dm:406-415. The bins and lasers
             -- are sockets; cable and glass are stack materials. This
@@ -174,14 +188,17 @@ return {
             },
         },
         tool_vendor = {
+            name_label = "lunatic/tfs:entity.machine_board.tool_vendor.name",
             name = "machine board (YouTool)",
             board = { machine = "tool_vendor" },
         },
         tv = {
+            name_label = "lunatic/tfs:entity.machine_board.tv.name",
             name = "machine board (television)",
             board = { machine = "tv" },
         },
         vendor = {
+            name_label = "lunatic/tfs:entity.machine_board.vendor.name",
             name = "machine board (vending)",
             board = { machine = "vendor" },
         },

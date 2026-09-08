@@ -5,6 +5,7 @@
 -- know about itself.
 return {
     id = "metal",
+    name_label = "lunatic/tfs:entity.metal.name",
     name = "metal sheets",
     sprite = "metal",
     inhand_sprite = { "held_metal_l", "held_metal_r" },

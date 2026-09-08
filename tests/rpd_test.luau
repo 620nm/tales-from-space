@@ -168,11 +168,25 @@ assert(
 
 -- The precedence is typed, not permission to erase arbitrary clutter.
 local _ = t.messages(p)
-t.click(p, 1, 1, t.target_at(1, 1, "wrench"))
+local wrench = assert(t.target_at(1, 1, "wrench"))
+local pickup = nil
+for _, action in ipairs(t.action_hints(p, wrench)) do
+    assert(action.id ~= "disassemble", "the dispenser cannot break down a wrench")
+    if action.id == "engine.action.take" then pickup = action end
+end
+assert(pickup and pickup.implement == nil, "the free hand offers ordinary pickup without a tool label")
+t.click(p, 1, 1, wrench)
 work(p)
-assert(t.count_items("wrench") == 1, "build mode protects an ordinary item")
+local hands = t.hands(p)
+assert(hands.held == "rpd" and hands[3 - hands.active] == "wrench",
+    "an incompatible item is picked up intact into the free hand")
 assert(t.pipe(1, 1) == 0, "an ordinary item click is not retargeted to turf")
-assert(said(p, "That loose item is not atmospherics construction."), "the refusal names the type")
+assert(not said(p, "That loose item is not atmospherics construction."), "pickup does not invoke breakdown")
+t.swap_hands(p)
+t.drop(p)
+t.swap_hands(p)
+t.run_ticks(2)
+assert(t.count_items("wrench") == 1, "putting it down preserves the ordinary item")
 
 -- ---- pipe: the layer and the paint are real ----
 --
@@ -283,10 +297,14 @@ set(p, MODE, 1)
 assert(shows(p, MODE) == "Destroy", "destroy mode")
 
 local _ = t.messages(p)
-t.click(p, 5, 1, t.target_at(5, 1, "manual_valve"))
+local valve = assert(t.target_at(5, 1, "manual_valve"))
+for _, action in ipairs(t.action_hints(p, valve)) do
+    assert(action.id ~= "disassemble", "an anchored valve offers no loose-item breakdown")
+end
+t.click(p, 5, 1, valve)
 work(p)
 assert(t.structure_at(5, 1).id == "manual_valve", "a bolted-down valve is not loose")
-assert(said(p, "There is nothing loose there to break down."), "and it says so")
+assert(not said(p, "There is nothing loose there to break down."), "the incompatible breakdown handler stays uncalled")
 
 -- The loose fitting the map put down, on the other hand, goes.
 walk(p, "west")
@@ -304,10 +322,21 @@ assert(t.ledger_has("ItemConsumed", "manual_valve_fitting"), "on the record")
 -- tg's destroy branch is typed: it accepts loose atmos construction,
 -- not every ordinary item which happens to be named by the click.
 local _ = t.messages(p)
-t.click(p, 1, 1, t.target_at(1, 1, "wrench"))
+local ordinary = assert(t.target_at(1, 2, "wrench"))
+for _, action in ipairs(t.action_hints(p, ordinary)) do
+    assert(action.id ~= "disassemble", "destroy mode does not offer to break down a tool")
+end
+t.click(p, 1, 2, ordinary)
 work(p)
-assert(t.count_items("wrench") == 1, "destroy mode does not eat an ordinary tool")
-assert(said(p, "There is nothing loose there to break down."), "the tool earns the narrow refusal")
+local carrying = t.hands(p)
+assert(carrying.held == "rpd" and carrying[3 - carrying.active] == "wrench",
+    "destroy mode leaves ordinary pickup intact")
+assert(not said(p, "There is nothing loose there to break down."), "pickup does not invoke the breakdown refusal")
+t.swap_hands(p)
+t.drop(p)
+t.swap_hands(p)
+t.run_ticks(2)
+assert(t.count_items("wrench") == 1, "the ordinary tool is preserved after putting it down")
 
 -- ---- copy mode: point it at a run and it takes the settings ----
 --
@@ -330,11 +359,14 @@ assert(shows(p, LAYER) == "2", "it took the layer: " .. tostring(shows(p, LAYER)
 assert(shows(p, PAINT) == "red", "and the paint: " .. tostring(shows(p, PAINT)))
 assert(said(p, "Layer 2, red."), "and told the technician what it read")
 
--- NEGATIVE: nothing to copy is a reason, not a silence.
+-- No visible run means no copy action.
 local _ = t.messages(p)
+for _, action in ipairs(t.action_hints(p, { Turf = { x = 1, y = 1 } })) do
+    assert(action.id ~= "copy_pipe", "empty deck offers no pipe settings to copy")
+end
 t.click(p, 1, 1) -- the technician's own tile, bare deck
 t.run_ticks(2)
-assert(said(p, "There is no pipe under the floor here."), "an empty tile earns a reason")
+assert(not said(p, "There is no pipe under the floor here."), "the unavailable copy handler does not run")
 
 -- NEGATIVE, build mode: pipe is subfloor infrastructure. A run you
 -- have not opened the deck over is one you cannot fit, however fast
@@ -342,12 +374,15 @@ assert(said(p, "There is no pipe under the floor here."), "an empty tile earns a
 set(p, MODE, pick(p, MODE, "Build"))
 set(p, RECIPE, pick(p, RECIPE, "Pipe"))
 local _ = t.messages(p)
+for _, action in ipairs(t.action_hints(p, { Turf = { x = 1, y = 2 } })) do
+    assert(action.id ~= "build_pipe", "covered deck offers no pipe construction")
+end
 t.click(p, 1, 2) -- finished floor, one tile south
 work(p)
 assert(t.pipe(1, 2) == 0, "nothing was laid under a tiled floor")
 assert(
-    said(p, "The floor is in the way. Pry the tile up first."),
-    "and the technician is told to pry it up"
+    not said(p, "The floor is in the way. Pry the tile up first."),
+    "the unavailable construction handler does not run"
 )
 
 -- ---- NEGATIVE: the client is hostile ----

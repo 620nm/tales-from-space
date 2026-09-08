@@ -17,6 +17,7 @@
 -- gameplay-wise" (brain_item.dm:16).
 local content = {
     id = "organ_brain",
+    name_label = "lunatic/tfs:entity.organ_brain.name",
     name = "brain",
     sprite = "organ_brain",
     organ = {

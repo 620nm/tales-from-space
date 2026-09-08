@@ -7,6 +7,7 @@
 -- (structures/mixer.luau).
 return {
     id = "mixer_fitting",
+    name_label = "lunatic/tfs:entity.mixer_fitting.name",
     name = "mixer fitting",
     sprite = "mixer_fitting",
     category = "fittings",

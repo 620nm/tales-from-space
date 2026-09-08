@@ -18,6 +18,7 @@
 -- is most of what makes it worth putting up.
 return {
     id = "grille",
+    name_label = "lunatic/tfs:entity.grille.name",
     name = "grille",
     sprite = "grille",
     dense = true,

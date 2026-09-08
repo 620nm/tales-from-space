@@ -4,6 +4,7 @@
 -- toggle).
 local content = {
     id = "crowbar",
+    name_label = "lunatic/tfs:entity.crowbar.name",
     name = "crowbar",
     sprite = "crowbar",
     -- Two names because tg draws held items from PAIRED lefthand /
@@ -16,6 +17,14 @@ local content = {
     drop_sound = "crowbar_drop",
     -- The equipment class targets dispatch on; no tank, nothing to burn.
     tool = "crowbar",
+}
+
+content.actions = {
+    action_rules.primary("pry_floor", action_rules.deck("floor")),
+    action_rules.primary("pry_door", { all = {
+        action_rules.kind("door"), action_rules.fact("target.door_open", false),
+        action_rules.fact("target.door_powered", false),
+    } }),
 }
 
 if sim ~= nil then

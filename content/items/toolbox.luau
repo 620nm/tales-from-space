@@ -3,6 +3,7 @@
 -- with the engineering loop (open it from your hand to get at them).
 local content = {
     id = "toolbox",
+    name_label = "lunatic/tfs:entity.toolbox.name",
     name = "mechanical toolbox",
     sprite = "toolbox",
     inhand_sprite = { "held_toolbox_l", "held_toolbox_r" },
@@ -13,6 +14,8 @@ local content = {
     storage = 7,
     holds = { "welder", "crowbar", "wirecutters", "screwdriver", "wrench", "cable_coil" },
 }
+
+content.actions = { action_rules.attack("strike") }
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })

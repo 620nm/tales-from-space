@@ -34,6 +34,7 @@
 -- the nearest truthful reading is "still going".
 return {
     id = "cadaver_chamber",
+    name_label = "lunatic/tfs:entity.cadaver_chamber.name",
     name = "cadaver chamber",
     sprite = "morgue1_s",
     dense = true,
@@ -117,6 +118,7 @@ return {
             -- a morgue (morgue.dm:226-237), and a chamber that announced
             -- what was in it before you opened it would be a different
             -- object.
+            name_label = "lunatic/tfs:entity.cadaver_chamber.cadaver.name",
             name = "cadaver chamber",
             drawer = {
                 stock = {

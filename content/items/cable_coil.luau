@@ -31,6 +31,7 @@ local LINES = {
 
 local content = {
     id = "cable_coil",
+    name_label = "lunatic/tfs:entity.cable_coil.name",
     name = "cable coil",
     sprite = "coil",
     inhand_sprite = { "held_coil_l", "held_coil_r" },
@@ -50,6 +51,8 @@ local content = {
     -- have no radial widget, so this cycles and says where it landed,
     -- which is the same information in one keypress instead of two.
 }
+
+content.actions = { action_rules.primary("lay_cable", action_rules.exposed_deck()) }
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })

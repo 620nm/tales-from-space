@@ -32,6 +32,7 @@ local DIRECTIONS = { "off", "port", "starboard", "fore", "aft" }
 
 local content = {
     id = "captains_aid",
+    name_label = "lunatic/tfs:entity.captains_aid.name",
     name = "Captain's Aid",
     -- The resting picture is the off one, which is also the state a
     -- fresh unit mints in: an Aid out of the machine is switched off.

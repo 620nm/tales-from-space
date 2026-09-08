@@ -8,6 +8,7 @@
 -- half rate under the knife (_bodyparts.dm:1641-1642).
 return {
     id = "human_head",
+    name_label = "lunatic/tfs:entity.human_head.name",
     name = "head",
     sprite = "part_head",
     part = {

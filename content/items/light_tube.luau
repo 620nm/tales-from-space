@@ -4,6 +4,7 @@
 -- (docs/CONSTRUCTION.md — the target is the expert).
 return {
     id = "light_tube",
+    name_label = "lunatic/tfs:entity.light_tube.name",
     name = "light tube",
     sprite = "light_tube",
 }

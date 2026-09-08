@@ -8,6 +8,7 @@
 -- your own feet falls through to whatever it would otherwise have been.
 local content = {
     id = "cola",
+    name_label = "lunatic/tfs:entity.cola.name",
     name = "can of Space Cola",
     sprite = "cola",
     inhand_sprite = { "held_cola_l", "held_cola_r" },
@@ -27,13 +28,16 @@ local content = {
     sealed = true,
 }
 
+local vessel_spec = {
+    id = content.id,
+    noun = "can",
+    phases = { "liquid", "solid" },
+    sip = { units = 2, message = "lunatic/tfs:items.cola.you_take_a_swig_of" },
+}
+content.actions = vessel.actions(vessel_spec)
+
 if sim ~= nil then
-    vessel.attach({
-        id = content.id,
-        noun = "can",
-        phases = { "liquid", "solid" },
-        sip = { units = 2, message = "lunatic/tfs:items.cola.you_take_a_swig_of" },
-    })
+    vessel.attach(vessel_spec)
 end
 
 return content

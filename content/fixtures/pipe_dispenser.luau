@@ -18,6 +18,7 @@
 -- machine, which does not run this script, still cannot swallow a pump.
 local content = {
     id = "pipe_dispenser",
+    name_label = "lunatic/tfs:entity.pipe_dispenser.name",
     name = "pipe dispenser",
     sprite = "pipe_dispenser",
     -- The item is the thing swung; `self` is the machine. The target is

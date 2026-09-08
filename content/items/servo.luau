@@ -14,6 +14,7 @@
 -- called what tg calls it.
 return {
     id = "servo",
+    name_label = "lunatic/tfs:entity.servo.name",
     name = "micro-servo",
     sprite = "micro_servo",
     examine = {
@@ -22,16 +23,19 @@ return {
     component = { kind = "servo", tier = 1, efficiency = stock_parts.efficiency[1] },
     variants = {
         tier2 = {
+            name_label = "lunatic/tfs:entity.servo.tier2.name",
             name = "nano-servo",
             sprite = "nano_servo",
             component = stock_parts.rung(2),
         },
         tier3 = {
+            name_label = "lunatic/tfs:entity.servo.tier3.name",
             name = "pico-servo",
             sprite = "pico_servo",
             component = stock_parts.rung(3),
         },
         tier4 = {
+            name_label = "lunatic/tfs:entity.servo.tier4.name",
             name = "femto-servo",
             sprite = "femto_servo",
             component = stock_parts.rung(4),

@@ -20,6 +20,7 @@
 -- subspace plumbing.
 return {
     id = "transceiver",
+    name_label = "lunatic/tfs:entity.transceiver.name",
     name = "radio transceiver",
     script = "transceiver",
     -- The running picture is a script var the fixture writes off the
@@ -77,22 +78,27 @@ return {
     -- these must agree with it.
     variants = {
         common = {
+            name_label = "lunatic/tfs:entity.transceiver.common.name",
             name = "radio transceiver (Common)",
             props = { encryption_1 = "encryption_key.common" },
         },
         engineering = {
+            name_label = "lunatic/tfs:entity.transceiver.engineering.name",
             name = "radio transceiver (Wrench)",
             props = { encryption_1 = "encryption_key.engineering" },
         },
         medical = {
+            name_label = "lunatic/tfs:entity.transceiver.medical.name",
             name = "radio transceiver (Lifeline)",
             props = { encryption_1 = "encryption_key.medical" },
         },
         security = {
+            name_label = "lunatic/tfs:entity.transceiver.security.name",
             name = "radio transceiver (Watchline)",
             props = { encryption_1 = "encryption_key.security" },
         },
         command = {
+            name_label = "lunatic/tfs:entity.transceiver.command.name",
             name = "radio transceiver (Charter)",
             props = { encryption_1 = "encryption_key.command" },
         },

@@ -34,6 +34,7 @@
 -- lights on.
 return {
     id = "temperature_gate",
+    name_label = "lunatic/tfs:entity.temperature_gate.name",
     name = "temperature gate",
     sprite = "tgate_off_n",
     ui = { modules = { "flow" } },

@@ -11,6 +11,7 @@
 -- ledger edge and is not a hook.
 local content = {
     id = "atmos_resin_projector",
+    name_label = "lunatic/tfs:entity.atmos_resin_projector.name",
     name = "atmos resin projector",
     -- Reuse the rapid pipe dispenser silhouette until the next asset
     -- bake brings in tg's backpack nozzle; this change does not alter the
@@ -18,6 +19,10 @@ local content = {
     sprite = "rpd",
     category = "tools",
     uses = 5,
+}
+
+content.actions = {
+    action_rules.primary("seal_deck", action_rules.deck("floor", "plating", "reinforced_floor")),
 }
 
 if sim ~= nil then

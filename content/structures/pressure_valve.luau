@@ -26,6 +26,7 @@
 -- not a safety device.
 return {
     id = "pressure_valve",
+    name_label = "lunatic/tfs:entity.pressure_valve.name",
     name = "pressure valve",
     sprite = "pvalve_off_n",
     ui = { modules = { "flow" } },

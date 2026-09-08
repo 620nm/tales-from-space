@@ -258,6 +258,30 @@ end
 -- Every `message` is a catalog KEY, and every default is the shared
 -- sentence that takes this vessel's noun as its argument; a file names
 -- one only where it says something else.
+function vessel.actions(spec)
+    local actions = {}
+    if spec.pour ~= nil then
+        table.insert(actions, action_rules.primary("charge_vessel", { all = {
+            action_rules.kind("machine"), action_rules.fact("target.has_matter", true),
+        } }))
+        table.insert(actions, action_rules.primary("pour", { all = {
+            { ["not"] = action_rules.kind("machine") },
+            { ["not"] = action_rules.kind("player") },
+            action_rules.fact("target.has_matter", true),
+        } }))
+    end
+    if spec.sip ~= nil then
+        table.insert(actions, action_rules.primary("drink", { all = {
+            action_rules.kind("turf"), action_rules.fact("target.is_actor_tile", true),
+        } }))
+    end
+    if spec.spill ~= nil or spec.soak ~= nil then
+        table.insert(actions, action_rules.primary(if spec.soak then "soak" else "spill",
+            action_rules.deck("floor", "plating")))
+    end
+    return actions
+end
+
 function vessel.attach(spec)
     if spec.spill ~= nil and spec.soak ~= nil then
         error("vessel.attach: " .. tostring(spec.id)

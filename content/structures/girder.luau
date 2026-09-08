@@ -12,6 +12,7 @@
 -- (tg's wall recipes all demand GIRDER_NORMAL).
 return {
     id = "girder",
+    name_label = "lunatic/tfs:entity.girder.name",
     name = "girder",
     sprite = "girder",
     dense = true,

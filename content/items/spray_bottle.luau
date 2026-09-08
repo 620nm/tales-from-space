@@ -1,9 +1,11 @@
 local SPRAY, STREAM = 0, 1
 local content = {
-    id = "spray_bottle", name = "spray bottle", sprite = "spray_bottle",
+    id = "spray_bottle", name_label = "lunatic/tfs:entity.spray_bottle.name", name = "spray bottle", sprite = "spray_bottle",
     volume_ml = 250, modes = 2, mode = SPRAY, acts_on_items = true,
     ranged_use = { range = 5, effect = "spray_puff", sound = "spray" },
 }
+content.actions = { action_rules.primary("spray", true) }
+
 if sim ~= nil then
     local d = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     d:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)

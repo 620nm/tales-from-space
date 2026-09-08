@@ -26,6 +26,7 @@
 -- shoving a live one somewhere it should not be is a decision.
 return {
     id = "canister",
+    name_label = "lunatic/tfs:entity.canister.name",
     name = "canister",
     sprite = "canister",
     -- The shell is GREYSCALE art with a colour multiplied over it, the

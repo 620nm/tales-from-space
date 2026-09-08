@@ -66,6 +66,7 @@
 -- stack recipe on the frame beside this file is its only route here.
 return {
     id = "stationary_tank",
+    name_label = "lunatic/tfs:entity.stationary_tank.name",
     name = "pressure tank",
     sprite = "stationary_tank",
     -- The shell is greyscale art plus a multiply, exactly as tg draws

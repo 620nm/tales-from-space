@@ -62,6 +62,7 @@
 -- see tfs/assets/sprites/71-thermomachine.ron.
 return {
     id = "thermomachine",
+    name_label = "lunatic/tfs:entity.thermomachine.name",
     name = "temperature control unit",
     sprite = "thermo_off",
     ui = { modules = { "thermal", "parts" } },
@@ -129,6 +130,7 @@ return {
         -- 1133.15 K at the hot one, against the plain unit's 73.15 and
         -- 573.15.
         fullupgrade = {
+            name_label = "lunatic/tfs:entity.thermomachine.fullupgrade.name",
             name = "temperature control unit (upgraded)",
             props = {
                 bin_1 = "4",

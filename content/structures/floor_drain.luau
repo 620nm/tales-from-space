@@ -35,6 +35,7 @@
 -- built with one.
 return {
     id = "floor_drain",
+    name_label = "lunatic/tfs:entity.floor_drain.name",
     name = "floor drain",
     sprite = "floor_drain",
     -- Flush with the deck: you walk over it, and you see the pipe and

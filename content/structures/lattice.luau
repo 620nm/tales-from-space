@@ -5,6 +5,7 @@
 -- Fall, footstep, and turf-trait effects have no pack substrate.
 return {
     id = "lattice",
+    name_label = "lunatic/tfs:entity.lattice.name",
     name = "lattice",
     sprite = "lattice-0",
     dense = false,

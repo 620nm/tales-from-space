@@ -28,6 +28,7 @@
 -- card in the network socket, and the placement's own `access` word.
 return {
     id = "network_router",
+    name_label = "lunatic/tfs:entity.network_router.name",
     name = "network router",
     sprite = "network_router",
     script = "network_router",

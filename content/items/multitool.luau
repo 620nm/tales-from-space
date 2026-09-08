@@ -12,6 +12,7 @@
 -- tg: /obj/item/multitool (multitool.dm:14).
 local content = {
     id = "multitool",
+    name_label = "lunatic/tfs:entity.multitool.name",
     name = "multitool",
     sprite = "multitool",
     tool = "multitool",
@@ -35,6 +36,8 @@ local content = {
     -- order but not last (docs/LUAU-API.md §9), so declining is what
     -- keeps the rungs below it reachable.
 }
+
+content.actions = { action_rules.primary("analyze", action_rules.network("cable")) }
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })

@@ -7,6 +7,7 @@
 -- tile waiting for a wrench.
 return {
     id = "pump_fitting",
+    name_label = "lunatic/tfs:entity.pump_fitting.name",
     name = "pump fitting",
     sprite = "pump_loose",
     category = "fittings",

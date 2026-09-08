@@ -15,6 +15,7 @@
 -- line is refused.
 local content = {
     id = "test_tube",
+    name_label = "lunatic/tfs:entity.test_tube.name",
     name = "test tube",
     sprite = "test_tube",
     examine = {
@@ -36,21 +37,24 @@ local content = {
     acts_on_items = true,
 }
 
+local vessel_spec = {
+    id = content.id,
+    -- What the sentences call it. Short of the prototype's own name
+    -- on purpose: "you pour from the test tube" is not how anybody
+    -- at a bench says it.
+    noun = "tube",
+    phases = { "liquid", "solid" },
+    -- tg's cup default `amount_per_transfer_from_this = 10`
+    -- (_cup.dm:4), which is also the beaker's gesture: a pour is a
+    -- pour whatever it comes out of.
+    pour = { units = 10 },
+    sip = { units = 2 },
+    spill = true,
+}
+content.actions = vessel.actions(vessel_spec)
+
 if sim ~= nil then
-    vessel.attach({
-        id = content.id,
-        -- What the sentences call it. Short of the prototype's own name
-        -- on purpose: "you pour from the test tube" is not how anybody
-        -- at a bench says it.
-        noun = "tube",
-        phases = { "liquid", "solid" },
-        -- tg's cup default `amount_per_transfer_from_this = 10`
-        -- (_cup.dm:4), which is also the beaker's gesture: a pour is a
-        -- pour whatever it comes out of.
-        pour = { units = 10 },
-        sip = { units = 2 },
-        spill = true,
-    })
+    vessel.attach(vessel_spec)
 end
 
 return content

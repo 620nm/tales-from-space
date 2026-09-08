@@ -6,6 +6,7 @@
 -- As the left leg (default_parts.dm:376-377).
 return {
     id = "human_r_leg",
+    name_label = "lunatic/tfs:entity.human_r_leg.name",
     name = "right leg",
     sprite = "part_r_leg",
     part = {

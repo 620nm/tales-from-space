@@ -13,6 +13,7 @@
 -- nouns that make it a beaker.
 local content = {
     id = "beaker",
+    name_label = "lunatic/tfs:entity.beaker.name",
     name = "beaker",
     sprite = "beaker",
     examine = {
@@ -49,10 +50,12 @@ local content = {
     -- it wears the same gestures out of the same `lib/vessel.luau`.
     variants = {
         libital = {
+            name_label = "lunatic/tfs:entity.beaker.libital.name",
             name = "beaker (libital)",
             contents = { water = 0.20, libital = 0.15 },
         },
         salt = {
+            name_label = "lunatic/tfs:entity.beaker.salt.name",
             name = "beaker (salt)",
             contents = { salt = 0.80 },
         },
@@ -63,27 +66,32 @@ local content = {
         -- therefore a real negative rather than a substance that could
         -- never have left the glass anyway).
         water = {
+            name_label = "lunatic/tfs:entity.beaker.water.name",
             name = "beaker (water)",
             contents = { water = 0.60 },
         },
         ethanol = {
+            name_label = "lunatic/tfs:entity.beaker.ethanol.name",
             name = "beaker (ethanol)",
             contents = { ethanol = 0.60 },
         },
     },
 }
 
+local vessel_spec = {
+    id = content.id,
+    noun = "beaker",
+    phases = { "liquid", "solid" },
+    -- tg's cup default `amount_per_transfer_from_this = 10`
+    -- (_cup.dm:4). Two units is a mouthful.
+    pour = { units = 10 },
+    sip = { units = 2 },
+    spill = true,
+}
+content.actions = vessel.actions(vessel_spec)
+
 if sim ~= nil then
-    vessel.attach({
-        id = content.id,
-        noun = "beaker",
-        phases = { "liquid", "solid" },
-        -- tg's cup default `amount_per_transfer_from_this = 10`
-        -- (_cup.dm:4). Two units is a mouthful.
-        pour = { units = 10 },
-        sip = { units = 2 },
-        spill = true,
-    })
+    vessel.attach(vessel_spec)
 end
 
 return content

@@ -20,6 +20,7 @@ local LAYERS = { 1, 2, 4, 8, 16 }
 
 local content = {
     id = "pipe",
+    name_label = "lunatic/tfs:entity.pipe.name",
     name = "pipe",
     sprite = "pipe",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
@@ -39,6 +40,8 @@ local content = {
     -- channel, so the cycle moves to the in-hand key -- same cycle,
     -- same wrap, same balloon-alert-sized message.
 }
+
+content.actions = { action_rules.primary("lay_pipe", action_rules.exposed_deck()) }
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })

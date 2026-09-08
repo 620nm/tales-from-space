@@ -17,6 +17,7 @@
 -- (content/substances/*.luau, `hazard.special`).
 return {
     id = "hazard_diamond",
+    name_label = "lunatic/tfs:entity.hazard_diamond.name",
     name = "hazard diamond",
     sprite = "nfpa_704_placard",
     -- No `mount` line: the sign block below is what makes it one

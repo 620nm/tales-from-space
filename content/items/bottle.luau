@@ -24,6 +24,7 @@
 -- that says `sealed`, so the bottle is the one that can.
 local content = {
     id = "bottle",
+    name_label = "lunatic/tfs:entity.bottle.name",
     name = "bottle",
     sprite = "bottle",
     examine = {
@@ -66,6 +67,7 @@ local content = {
         -- of crystals carries a tenth of that, 0.125 mol = 32 g =
         -- 6.4 mL of the fifty.
         iodine = {
+            name_label = "lunatic/tfs:entity.bottle.iodine.name",
             name = "bottle (iodine)",
             contents = { iodine = 0.125 },
             examine = {
@@ -76,17 +78,20 @@ local content = {
     },
 }
 
+local vessel_spec = {
+    id = content.id,
+    noun = "bottle",
+    phases = { "liquid", "solid" },
+    -- tg's cup default `amount_per_transfer_from_this = 10`
+    -- (_cup.dm:4), which is also the beaker's gesture.
+    pour = { units = 10 },
+    sip = { units = 2 },
+    spill = true,
+}
+content.actions = vessel.actions(vessel_spec)
+
 if sim ~= nil then
-    vessel.attach({
-        id = content.id,
-        noun = "bottle",
-        phases = { "liquid", "solid" },
-        -- tg's cup default `amount_per_transfer_from_this = 10`
-        -- (_cup.dm:4), which is also the beaker's gesture.
-        pour = { units = 10 },
-        sip = { units = 2 },
-        spill = true,
-    })
+    vessel.attach(vessel_spec)
 end
 
 return content

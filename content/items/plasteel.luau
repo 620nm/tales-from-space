@@ -11,6 +11,7 @@
 -- and a stack of plasteel is a rarer thing to be holding.
 return {
     id = "plasteel",
+    name_label = "lunatic/tfs:entity.plasteel.name",
     name = "plasteel sheets",
     sprite = "plasteel",
     inhand_sprite = { "held_plasteel_l", "held_plasteel_r" },

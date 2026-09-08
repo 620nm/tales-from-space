@@ -7,6 +7,7 @@
 -- creation, one level deep.
 return {
     id = "box_lights",
+    name_label = "lunatic/tfs:entity.box_lights.name",
     name = "box of replacement lights",
     sprite = "box_lights",
     storage = 21,

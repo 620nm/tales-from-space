@@ -5,6 +5,7 @@
 -- `"injector"` here (components/unary_devices/outlet_injector.dm:11).
 return {
     id = "air_injector_fitting",
+    name_label = "lunatic/tfs:entity.air_injector_fitting.name",
     name = "air injector fitting",
     sprite = "air_injector_loose",
     category = "fittings",

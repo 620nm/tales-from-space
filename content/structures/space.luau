@@ -4,6 +4,7 @@
 -- that already exists, never floating alone in the dark.
 return {
     id = "space",
+    name_label = "lunatic/tfs:entity.space.name",
     name = "space",
     sprite = "plating", -- turf entries never spawn; this is the finish it lays
     turf = "space",

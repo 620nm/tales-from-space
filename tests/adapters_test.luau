@@ -246,11 +246,8 @@ near(net_moles(6, 1, DISTRO), joined, 0.001, "the far end of the blue run reads 
 
 local paint_books = joined + moles(t.room_pressure(3, 2), ROOM_M3)
 
--- ---- painting it is refused, and says so ----
---
--- tg's `paintable = FALSE` (color_adapter.dm:16). A thing whose whole
--- job is to join every colour has no colour to be, and a painter that
--- silently changed nothing would be the worst of both.
+-- tg's `paintable = FALSE` (color_adapter.dm:16): this adapter offers
+-- no painting action and the attempted click cannot change its network.
 t.click(c, 6, 2, t.target_at(6, 2, "pipe_painter"))
 t.run_ticks(2)
 assert(t.hands(c).held == "pipe_painter", "painter in hand")
@@ -258,11 +255,14 @@ for _ = 1, 3 do
     walk(c, "west")
 end
 local _ = t.messages(c)
+for _, action in ipairs(t.action_hints(c, { Turf = { x = 3, y = 1 } })) do
+    assert(action.id ~= "paint_pipe", "a nonpaintable adapter offers no painting action")
+end
 t.click(c, 3, 1)
 t.run_ticks(4)
 assert(
-    said(c, "The color adapter takes no paint."),
-    "the refusal names the thing that refused"
+    not said(c, "The color adapter takes no paint."),
+    "an inapplicable target does not invoke the painter"
 )
 assert(
     not t.ledger_has("PipePainted"),

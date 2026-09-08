@@ -15,6 +15,7 @@ local EMPTY_MOL = 0.01
 
 local content = {
     id = "vendor",
+    name_label = "lunatic/tfs:entity.vendor.name",
     name = "Robust Softdrinks vending machine",
     sprite = "vendor",
 }

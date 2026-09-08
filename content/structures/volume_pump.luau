@@ -28,6 +28,7 @@
 -- over it, like the pipe either side.
 return {
     id = "volume_pump",
+    name_label = "lunatic/tfs:entity.volume_pump.name",
     name = "volumetric pump",
     sprite = "volpump_off_n",
     ui = { modules = { "flow" } },

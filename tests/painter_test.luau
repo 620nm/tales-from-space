@@ -126,17 +126,22 @@ t.use_self(p)
 t.run_ticks(2)
 assert(said(p, "Pipe painter set to red."), "three clicks along tg's roster")
 
--- ---- painting nothing is refused, and says so ----
+-- Empty or covered deck offers no painting action.
 walk(p, "east")
 walk(p, "east")
 walk(p, "east")
 walk(p, "east")
 local _ = t.messages(p)
+for _, y in ipairs({ 1, 2 }) do
+    for _, action in ipairs(t.action_hints(p, { Turf = { x = 6, y = y } })) do
+        assert(action.id ~= "paint_pipe", "painting needs a visible run")
+    end
+end
 t.click(p, 6, 2) -- open deck, no run under it
 t.run_ticks(2)
 assert(
-    said(p, "There is no pipe under the floor here."),
-    "a painter waved at bare deck earns a reason"
+    not said(p, "There is no pipe under the floor here."),
+    "bare deck does not invoke the painter"
 )
 assert(not t.ledger_has("PipePainted"), "and writes no row")
 
@@ -144,7 +149,7 @@ assert(not t.ledger_has("PipePainted"), "and writes no row")
 t.click(p, 6, 1) -- tiled, with the run buried under it
 t.run_ticks(2)
 assert(
-    said(p, "The floor is in the way. Pry the tile up first."),
+    not said(p, "The floor is in the way. Pry the tile up first."),
     "you cannot paint a run you cannot see"
 )
 assert(not t.ledger_has("PipePainted"), "still no row")

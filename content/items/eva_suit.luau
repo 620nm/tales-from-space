@@ -24,6 +24,7 @@
 -- cloth pair its plain-suit parent uses.
 return {
     id = "eva_suit",
+    name_label = "lunatic/tfs:entity.eva_suit.name",
     name = "EVA suit",
     sprite = "eva_suit",
     inhand_sprite = { "held_eva_suit_l", "held_eva_suit_r" },

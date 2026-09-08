@@ -72,6 +72,7 @@ state_sprites.on[5] = { "gravgen_on_5", "gravgen_activated" }
 
 return {
     id = "gravity_generator",
+    name_label = "lunatic/tfs:entity.gravity_generator.name",
     name = "gravitational generator",
     sprite = "gravgen_off_8",
     dense = true,

@@ -28,6 +28,7 @@
 -- (temperature_pump.dm:70-76). A dead equipment channel stops it.
 return {
     id = "temperature_pump",
+    name_label = "lunatic/tfs:entity.temperature_pump.name",
     name = "temperature pump",
     sprite = "tpump_off_n",
     ui = { modules = { "flow" } },

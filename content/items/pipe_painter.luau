@@ -22,6 +22,7 @@ local FIXED_COLOUR = { he_pipe = true }
 
 local content = {
     id = "pipe_painter",
+    name_label = "lunatic/tfs:entity.pipe_painter.name",
     name = "pipe painter",
     -- tg's own art: the label gun off the bureaucracy sheet
     -- (`icon_state = "labeler1"`, pipe_painter.dm:6).
@@ -40,6 +41,8 @@ local content = {
     -- mechanism the length of pipe uses for its piping layer, and the
     -- same in-hand key.
 }
+
+content.actions = { action_rules.primary("paint_pipe", action_rules.network("pipe")) }
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })

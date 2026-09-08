@@ -13,6 +13,7 @@
 -- (code/modules/surgery/organs/internal/liver/_liver.dm:16).
 return {
     id = "organ_liver",
+    name_label = "lunatic/tfs:entity.organ_liver.name",
     name = "liver",
     sprite = "organ_liver",
     organ = {

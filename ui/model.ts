@@ -1,6 +1,26 @@
 import type { Json } from "@lunatic/ui";
 import type { PanelDocument } from "./document-model";
 
+export interface ActionLabel {
+  key: string;
+  args?: Record<string, string>;
+  arg_keys?: string[];
+  text?: string | null;
+}
+export interface HoverAction {
+  id: string;
+  gesture: string;
+  label: ActionLabel;
+  implement?: { sprite: string; name: ActionLabel; suggested: boolean } | null;
+  available: boolean;
+  group: string;
+  style?: string | null;
+  order?: number;
+  presentation_group?: string | null;
+  requirements?: { label: ActionLabel; sprite?: string | null; count: number }[];
+  unavailable_reason?: ActionLabel | null;
+}
+
 // Consumed projections: lunatic crates/lunatic-client/src/ui/mod.rs and
 // crates/lunatic-core/src/protocol/{messages,types}.rs; docs/PACK-UI.md.
 // Compile-time shapes, never runtime validators: every reader here
@@ -86,14 +106,14 @@ export interface GameplayView {
     }[];
     /** A thing in the world is read as the composed look the client
      *  minted for it; a thing in a slot has only its own sprite. */
+    effectiveBindings?: Record<string, readonly string[]>;
     hover?: {
       kind: string;
       name: string;
+      name_label?: ActionLabel | null;
       appearance?: string | null;
       sprite?: string | null;
-      hints: { gesture: string; label: string }[];
-      primary_fallback?: "interact" | "store" | null;
-      implement?: { name: string; sprite: string; gestures: string[] } | null;
+      actions?: HoverAction[];
     };
     context?: { sprite?: string | null; name: string; target: Json }[];
     progress?: { job: number; sequence: number; ms: number }[];

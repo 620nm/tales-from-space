@@ -4,6 +4,7 @@
 -- light requires a tube!", light.dm:396).
 return {
     id = "light_bulb",
+    name_label = "lunatic/tfs:entity.light_bulb.name",
     name = "light bulb",
     sprite = "light_bulb",
 }

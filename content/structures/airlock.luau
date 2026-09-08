@@ -29,6 +29,7 @@
 -- station came with.
 return {
     id = "airlock",
+    name_label = "lunatic/tfs:entity.airlock.name",
     name = "airlock",
     sprite = "door",
     fixture = "Door",
@@ -80,10 +81,12 @@ return {
     -- engineering door somebody left solid.
     variants = {
         engineering = {
+            name_label = "lunatic/tfs:entity.airlock.engineering.name",
             name = "engineering airlock",
             props = { paint = "engineering", access = "engineering" },
         },
         engineering_glass = {
+            name_label = "lunatic/tfs:entity.airlock.engineering_glass.name",
             name = "engineering airlock",
             props = { paint = "engineering", access = "engineering", glass = true },
         },

@@ -34,6 +34,7 @@
 --     north and west onto east.
 return {
     id = "layer_adapter",
+    name_label = "lunatic/tfs:entity.layer_adapter.name",
     name = "layer adapter",
     sprite = "layer_adapter_ns",
     dense = false,

@@ -59,16 +59,18 @@ export function modifierCount(name: string): number {
 
 /** Compact input glyphs use the same origin as the composed preview above.
  *  `tight` narrows the pills for a card whose widest row holds two keys. */
-export function gesture(id: string, name: string, tight = false): UiNode {
+export function gesture(id: string, name: string, tight = false, bindings?: Record<string, readonly string[]>): UiNode {
   const keyCls = tight ? ["hover-key", "hover-key-tight"] : ["hover-key"];
   const shape = parse(name);
   const children = (shape?.keys ?? [])
     .map((key) => text(`${id}/${key}`, S.tfs(`ui.key.${key}`), keyCls));
-  if (!shape) children.push(text(`${id}/self`, S.tfs("ui.key.self"), keyCls));
+  if (!shape) children.push(...(name === "self" ? bindings?.use_self ?? [] : [])
+    .map((key, index) => text(`${id}/binding/${index}`, key, keyCls)));
   else {
     // All three buttons are drawn and the gesture's own one is lit, so a
     // glance says which part of the mouse the verb is on.
     const lit = SQUARE[shape.button];
+    children.push(text(`${id}/mouse-label`, S.tfs(`ui.key.${BUTTONS[shape.button]}`), ["hover-accessible"]));
     children.push(panel(`${id}/mouse`, ["left", "middle", "right"].map((side, index) =>
       panel(`${id}/mouse/${side}`, [], {
         cls: index === lit ? ["mouse-key", "mouse-key-on"] : ["mouse-key"],

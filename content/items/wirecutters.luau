@@ -24,6 +24,7 @@
 
 local content = {
     id = "wirecutters",
+    name_label = "lunatic/tfs:entity.wirecutters.name",
     name = "wirecutters",
     sprite = "wirecutters",
     inhand_sprite = { "held_wirecutters_l", "held_wirecutters_r" },
@@ -35,6 +36,8 @@ local content = {
     -- The equipment class targets dispatch on; no tank, nothing to burn.
     tool = "cutters",
 }
+
+content.actions = { action_rules.primary("cut_cable", action_rules.kind("cable")) }
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })

@@ -14,6 +14,7 @@
 -- second shelf rather than being invented alongside it.
 return {
     id = "scanning_module",
+    name_label = "lunatic/tfs:entity.scanning_module.name",
     name = "scanning module",
     sprite = "scan_module",
     examine = {
@@ -23,16 +24,19 @@ return {
     component = { kind = "scanner", tier = 1, efficiency = stock_parts.efficiency[1] },
     variants = {
         tier2 = {
+            name_label = "lunatic/tfs:entity.scanning_module.tier2.name",
             name = "advanced scanning module",
             sprite = "adv_scan_module",
             component = stock_parts.rung(2),
         },
         tier3 = {
+            name_label = "lunatic/tfs:entity.scanning_module.tier3.name",
             name = "phasic scanning module",
             sprite = "super_scan_module",
             component = stock_parts.rung(3),
         },
         tier4 = {
+            name_label = "lunatic/tfs:entity.scanning_module.tier4.name",
             name = "triphasic scanning module",
             sprite = "triphasic_scan_module",
             component = stock_parts.rung(4),

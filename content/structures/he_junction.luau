@@ -43,6 +43,7 @@
 -- (pipes.dm:27-28).
 return {
     id = "he_junction",
+    name_label = "lunatic/tfs:entity.he_junction.name",
     name = "junction",
     sprite = "he_junction_s",
     dense = false,

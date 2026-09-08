@@ -22,11 +22,11 @@ export const overlayRules: UiStyleRule[] = [
   // The hover card. Mono, translucent, click-through: it is a reading of
   // what is under the cursor, never a thing to press.
   rule("hover-card", {
-    minWidth: 0, maxWidth: 260, gap: 5,
+    minWidth: 0, maxWidth: 520, gap: 5,
     paddingTop: 9, paddingBottom: 9, paddingLeft: 10, paddingRight: 10,
     backgroundColor: "#142125ed", border: edge("#718278"), borderRadius: 3,
     boxShadow: shade, overflow: "hidden",
-    fontFamily: "mono", fontSize: 11, lineHeight: 1.35,
+    fontFamily: "sans", fontSize: 11, lineHeight: 1.35,
     color: "#dce7d8", textShadow: sunk, userSelect: "none",
     pointerEvents: "none",
   }),
@@ -37,20 +37,25 @@ export const overlayRules: UiStyleRule[] = [
   }),
   rule("hover-title", {
     minWidth: 0, fontSize: 12, fontWeight: 700,
-    whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+    whiteSpace: "normal",
   }),
   // Two tracks, so the left cell of every hint starts exactly where the
   // header's icon starts: same padding, no margin, one column width. The
   // card sizes the shared first track for its widest input/item combination.
-  rule("hover-row", {
-    display: "grid", gridTemplateColumns: [58, "1fr"],
-    alignItems: "center", gap: 8, whiteSpace: "nowrap",
-  }),
+  rule("hover-actions", { display: "grid", gridTemplateColumns: ["auto", "1fr"], alignItems: "center", gap: 8 }),
+  rule("hover-row", { minWidth: 0, gap: 2, whiteSpace: "normal" }),
+  rule("hover-group", { color: "#a8bcb0", fontSize: 10, marginTop: 4 }),
+  rule("hover-unavailable", { color: "#85958f", opacity: 0.6 }),
+  rule("hover-role", { color: "#ef9992" }),
+  rule("hover-danger", { color: "#ef9992" }),
+  rule("hover-construction", { color: "#dfc68c" }),
+  rule("hover-requirement", { color: "#98aaa1", fontSize: 10, whiteSpace: "normal" }),
   rule("hover-keys", {
     display: "flex", alignItems: "center", justifyContent: "start",
-    gap: 4, minHeight: 20,
+    gap: 4, minHeight: 20, minWidth: 0, flexWrap: "wrap", maxWidth: 240,
   }),
   rule("hover-combination-plus", { width: 8, flexShrink: 0, textAlign: "center" }),
+  rule("hover-accessible", { position: "absolute", width: 1, height: 1, overflow: "hidden" }),
   rule("hover-implement", {
     width: 32, height: 32, flexShrink: 0,
     imageRendering: "pixelated", pointerEvents: "none",
@@ -58,7 +63,7 @@ export const overlayRules: UiStyleRule[] = [
   // A floor under the pill, so "Alt" and "Shift" leave the same gap
   // before the mouse whichever word a language uses.
   rule("hover-key", {
-    fontFamily: "mono", fontSize: 9, lineHeight: 1.4, minWidth: 24,
+    fontFamily: "sans", fontSize: 9, lineHeight: 1.4, minWidth: 0, whiteSpace: "normal",
     paddingTop: 1, paddingBottom: 1, paddingLeft: 4, paddingRight: 4,
     color: "#c4d5c9", backgroundColor: "#2b3b35", textAlign: "center",
     border: edge("#62786c"), borderBottom: edge("#62786c", 2), borderRadius: 2,
@@ -70,7 +75,7 @@ export const overlayRules: UiStyleRule[] = [
   }),
   rule("hover-description", {
     minWidth: 0, fontSize: 11, color: "#c6d6cf",
-    overflow: "hidden", textOverflow: "ellipsis",
+    whiteSpace: "normal",
   }),
   // A mouse in fourteen by twenty pixels: a bordered body and the three
   // buttons at 1, 5 and 9, of which the gesture's own is lit.

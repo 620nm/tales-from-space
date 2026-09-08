@@ -20,6 +20,7 @@ local SIDES = 4
 
 local content = {
     id = "d4",
+    name_label = "lunatic/tfs:entity.d4.name",
     name = "d4",
     sprite = "d4",
     states = { "1", "2", "3", "4" },

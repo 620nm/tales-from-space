@@ -1,5 +1,6 @@
 return {
     id = "id_medical",
+    name_label = "lunatic/tfs:entity.id_medical.name",
     name = "medical ID card",
     sprite = "id",
     slot = "id",

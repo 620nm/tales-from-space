@@ -5,6 +5,7 @@
 -- `"volumepump"` (volume_pump.dm:20).
 return {
     id = "volume_pump_fitting",
+    name_label = "lunatic/tfs:entity.volume_pump_fitting.name",
     name = "volumetric pump fitting",
     sprite = "volume_pump_loose",
     category = "fittings",

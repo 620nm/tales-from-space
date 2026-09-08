@@ -19,6 +19,7 @@ local LAYERS = { 1, 2, 4, 8, 16 }
 
 local content = {
     id = "pipe_meter",
+    name_label = "lunatic/tfs:entity.pipe_meter.name",
     name = "meter",
     -- tg's `icon_state = "meter"` off the fittings sheet: the gauge
     -- with no pipe drawn through it, because in your hands it is
@@ -30,6 +31,8 @@ local content = {
     modes = 5,
     mode = 2,
 }
+
+content.actions = { action_rules.primary("set_layer", action_rules.kind("pipe")) }
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
