@@ -46,7 +46,7 @@ end
 assert(desktop() == nil, "the first self-use only raises the lid")
 t.use_self(p)
 t.run_ticks(2)
-t.use_item(p, laptop, "alt_primary")
+t.use_self(p)
 t.run_ticks(2)
 assert(desktop() ~= nil and desktop().powered,
     "lid, power and screen are three separate steps on the held laptop")

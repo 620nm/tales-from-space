@@ -28,16 +28,16 @@ local content = {
         } },
         -- One press, one step: the lid, then the power button, then the
         -- screen. Each state says which step this gesture is now.
-        self = { label = "lunatic/tfs:ui.affordance.power_off", states = {
+        self = { label = "lunatic/tfs:ui.affordance.view_interface", states = {
             closed = "lunatic/tfs:ui.affordance.open_lid",
             off = "lunatic/tfs:ui.affordance.power_on",
         } },
-        secondary = { label = "lunatic/tfs:ui.affordance.power_off", states = {
+        secondary = { label = "lunatic/tfs:ui.affordance.view_interface", states = {
             closed = "lunatic/tfs:ui.affordance.open_lid",
             off = "lunatic/tfs:ui.affordance.power_on",
         } },
-        alt_primary = { label = "lunatic/tfs:ui.affordance.view_interface", states = {
-            closed = "lunatic/tfs:ui.affordance.lid_closed",
+        alt_primary = { label = "lunatic/tfs:ui.desktop.close_lid", states = {
+            closed = false,
         } },
         shift_ctrl_primary = {
             label = "lunatic/tfs:ui.affordance.eject_cartridge",
@@ -125,7 +125,7 @@ if sim ~= nil then
     behavior:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self = ev.subject
         if ev.gesture == "alt_primary" then
-            if self.state ~= "closed" then view_interface(self, ev.actor) end
+            if self.state ~= "closed" then close(self) end
         elseif ev.gesture == "shift_ctrl_primary" then
             if self:item_slot("media") ~= nil then
                 sim.item_slot.eject({ subject = self, slot = "media" })
@@ -136,8 +136,10 @@ if sim ~= nil then
             end
         elseif self.state == "closed" then
             raise(self)
+        elseif self.vars.laptop_powered ~= true then
+            switch(self, true, ev.at)
         else
-            switch(self, self.vars.laptop_powered ~= true, ev.at)
+            view_interface(self, ev.actor)
         end
         return true
     end)
