@@ -40,7 +40,9 @@ export const overlayRules: UiStyleRule[] = [
     whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
   }),
   // Two tracks, so the left cell of every hint starts exactly where the
-  // header's icon starts: same padding, no margin, one column width.
+  // header's icon starts: same padding, no margin, one column width. The
+  // card widens the first track to 84 for a two-key row and gives that
+  // one width to every row, so the rail is still a single edge.
   rule("hover-row", {
     display: "grid", gridTemplateColumns: [58, "1fr"],
     alignItems: "center", gap: 8, whiteSpace: "nowrap",
@@ -49,23 +51,30 @@ export const overlayRules: UiStyleRule[] = [
     display: "flex", alignItems: "center", justifyContent: "start",
     gap: 4, minHeight: 20,
   }),
+  // A floor under the pill, so "Alt" and "Shift" leave the same gap
+  // before the mouse whichever word a language uses.
   rule("hover-key", {
-    fontFamily: "mono", fontSize: 9, lineHeight: 1.4,
+    fontFamily: "mono", fontSize: 9, lineHeight: 1.4, minWidth: 24,
     paddingTop: 1, paddingBottom: 1, paddingLeft: 4, paddingRight: 4,
-    color: "#c4d5c9", backgroundColor: "#2b3b35",
+    color: "#c4d5c9", backgroundColor: "#2b3b35", textAlign: "center",
     border: edge("#62786c"), borderBottom: edge("#62786c", 2), borderRadius: 2,
+  }),
+  // Two keys and a mouse in one rail: the pills give back what the
+  // second one costs.
+  rule("hover-key-tight", {
+    fontSize: 8, minWidth: 20, paddingLeft: 3, paddingRight: 3,
   }),
   rule("hover-description", {
     minWidth: 0, fontSize: 11, color: "#c6d6cf",
     overflow: "hidden", textOverflow: "ellipsis",
   }),
-  // A mouse in fourteen by twenty pixels: a bordered body and the two
-  // buttons, of which the gesture's own is lit.
+  // A mouse in fourteen by twenty pixels: a bordered body and the three
+  // buttons at 1, 5 and 9, of which the gesture's own is lit.
   rule("mouse-glyph", {
     position: "relative", width: 14, height: 20, flexShrink: 0,
     border: edge("#9bb3a5"), borderRadius: 4,
     backgroundColor: "#25382f", pointerEvents: "none",
   }),
-  rule("mouse-key", { position: "absolute", top: 2, width: 4, height: 6, backgroundColor: "#51695c" }),
+  rule("mouse-key", { position: "absolute", top: 2, width: 3, height: 6, backgroundColor: "#51695c" }),
   rule("mouse-key-on", { backgroundColor: "#e0cc91" }),
 ];

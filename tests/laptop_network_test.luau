@@ -33,7 +33,23 @@ t.run_ticks(2)
 assert(#keyboards() == 0, "a closed laptop cannot type")
 t.use_self(p)
 t.run_ticks(2)
-assert(t.ui(p) and t.ui(p).script and t.ui(p).script.data.powered, "self-use powered the held laptop")
+-- The access point clicked above owns the open window, so the lid reads
+-- as the absence of a desktop rather than of any document at all. A
+-- powered desktop composes the native workspace, so its own rows sit
+-- under `script`; an unpowered one keeps them at the top level.
+local function desktop()
+    local state = t.ui(p)
+    if state == nil then return nil end
+    local data = if state.script then state.script.data else state.data
+    return if data ~= nil and data.kind == "desktop" then data else nil
+end
+assert(desktop() == nil, "the first self-use only raises the lid")
+t.use_self(p)
+t.run_ticks(2)
+t.use_item(p, laptop, "alt_primary")
+t.run_ticks(2)
+assert(desktop() ~= nil and desktop().powered,
+    "lid, power and screen are three separate steps on the held laptop")
 t.sounds(p)
 t.click(p, 3, 2, near)
 t.run_ticks(2)
@@ -56,7 +72,7 @@ t.run_ticks(2)
 assert(#keyboards() == 0, "an open powered-off laptop cannot type")
 t.ui_act(p, "power")
 t.run_ticks(2)
-t.use_item(p, laptop, "alt")
+t.ui_act(p, "close")
 t.run_ticks(2)
 t.sounds(p)
 t.click(p, 3, 2, near)

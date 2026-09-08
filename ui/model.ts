@@ -83,7 +83,15 @@ export interface GameplayView {
       title: string;
       lines: { spans: { text: string; color?: string | null }[] }[];
     }[];
-    hover?: { kind: string; name: string; appearance: string; hints: { gesture: string; label: string }[] };
+    /** A thing in the world is read as the composed look the client
+     *  minted for it; a thing in a slot has only its own sprite. */
+    hover?: {
+      kind: string;
+      name: string;
+      appearance?: string | null;
+      sprite?: string | null;
+      hints: { gesture: string; label: string }[];
+    };
     context?: { sprite?: string | null; name: string; target: Json }[];
     progress?: { job: number; sequence: number; ms: number }[];
     speech?: {

@@ -7,5 +7,7 @@ return {
     -- tg cards_ids.dm:29-30, shared by every card.
     pickup_sound = "id_card_pickup",
     drop_sound = "id_card_drop",
+    -- What a card reader calls this while a hand holds it.
+    hint_tags = { "card" },
     grants = "engineering",
 }
