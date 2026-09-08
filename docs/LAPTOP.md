@@ -34,7 +34,10 @@ controls. All current readers see power and slot changes together.
 Apply an ID card or floppy disk to insert it; an occupied slot swaps its
 previous item into the inserting hand. A hand holding either one reads the
 laptop's own row as Insert disk or Insert ID card rather than Take, which
-is what that click does. The desktop ejects either slot. Shift+Ctrl-click
+is what that click does. That variant sits on `primary.held`, because the
+insertion IS the plain click, and it reads the same on a closed laptop:
+the interact route takes the card or the disk whatever the lid is doing.
+The desktop ejects either slot. Shift+Ctrl-click
 ejects the floppy and Shift+Ctrl right-click the card; each row is offered
 only while that slot holds something, which the laptop keeps as its `media`
 and `card` hint flags. Cards retain their identity and disks retain their
