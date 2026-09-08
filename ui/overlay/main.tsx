@@ -26,11 +26,18 @@ function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>): UiNode {
   const examine = { gesture: "shift_primary", label: S.tfs("ui.look.examine") };
   const at = rows.findIndex((hint) => order(hint.gesture) > order(examine.gesture));
   rows.splice(at < 0 ? rows.length : at, 0, examine);
-  // One rail for the card, sized off its widest row: a two-key gesture
-  // needs 84px for its pills and mouse, everything else fits 58. Every
-  // row takes that one width, so widening never staggers the rail.
+  const implement = hover.implement;
+  const usesImplement = (name: string) => name !== examine.gesture
+    && !!implement?.sprite && implement.gestures.includes(name);
+  // Every description shares one rail, including rows without an item.
+  // The item adds 32px, an 8px plus and two 4px gaps to its input glyphs.
   const wide = rows.some((hint) => modifierCount(hint.gesture) > 1);
-  const rail = { gridTemplateColumns: [wide ? 84 : 58, "1fr"] };
+  const width = Math.max(58, ...rows.map((hint) => {
+    const modifiers = modifierCount(hint.gesture);
+    const keys = modifiers > 1 ? 84 : modifiers === 1 ? 58 : hint.gesture === "self" ? 34 : 14;
+    return keys + (usesImplement(hint.gesture) ? 48 : 0);
+  }));
+  const rail = { gridTemplateColumns: [width, "1fr"] };
   // The header's image and every hint's key cell are both the first
   // child of a full-width row inside one padding, so their left edges
   // are the same edge: the card reads as one column, not two.
@@ -51,10 +58,19 @@ function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>): UiNode {
         },
         text("hover/name", hover.name, ["hover-title"]),
       ], { cls: ["hover-head"] }),
-      ...rows.map((hint, index) => row(`hover/hint/${index}`, [
-        gesture(`hover/key/${index}`, hint.gesture, wide),
-        text(`hover/label/${index}`, hintText(hint.label), ["hover-description"]),
-      ], { cls: ["hover-row"], style: rail })),
+      ...rows.map((hint, index) => {
+        const keys = gesture(`hover/key/${index}`, hint.gesture, wide);
+        if (usesImplement(hint.gesture) && implement) {
+          keys.children = [...(keys.children ?? []),
+            text(`hover/plus/${index}`, "+", ["hover-combination-plus"]),
+            icon(`hover/implement/${index}`, implement.sprite, implement.name, ["hover-implement"])!,
+          ];
+        }
+        return row(`hover/hint/${index}`, [
+          keys,
+          text(`hover/label/${index}`, hintText(hint.label), ["hover-description"]),
+        ], { cls: ["hover-row"], style: rail });
+      }),
     ], { cls: ["hover-card"] }),
     anchor: "@cursor",
   };

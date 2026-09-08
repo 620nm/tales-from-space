@@ -41,8 +41,7 @@ export const overlayRules: UiStyleRule[] = [
   }),
   // Two tracks, so the left cell of every hint starts exactly where the
   // header's icon starts: same padding, no margin, one column width. The
-  // card widens the first track to 84 for a two-key row and gives that
-  // one width to every row, so the rail is still a single edge.
+  // card sizes the shared first track for its widest input/item combination.
   rule("hover-row", {
     display: "grid", gridTemplateColumns: [58, "1fr"],
     alignItems: "center", gap: 8, whiteSpace: "nowrap",
@@ -50,6 +49,11 @@ export const overlayRules: UiStyleRule[] = [
   rule("hover-keys", {
     display: "flex", alignItems: "center", justifyContent: "start",
     gap: 4, minHeight: 20,
+  }),
+  rule("hover-combination-plus", { width: 8, flexShrink: 0, textAlign: "center" }),
+  rule("hover-implement", {
+    width: 32, height: 32, flexShrink: 0,
+    imageRendering: "pixelated", pointerEvents: "none",
   }),
   // A floor under the pill, so "Alt" and "Shift" leave the same gap
   // before the mouse whichever word a language uses.

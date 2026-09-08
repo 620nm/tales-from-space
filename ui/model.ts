@@ -93,6 +93,7 @@ export interface GameplayView {
       sprite?: string | null;
       hints: { gesture: string; label: string }[];
       primary_fallback?: "interact" | "store" | null;
+      implement?: { name: string; sprite: string; gestures: string[] } | null;
     };
     context?: { sprite?: string | null; name: string; target: Json }[];
     progress?: { job: number; sequence: number; ms: number }[];
