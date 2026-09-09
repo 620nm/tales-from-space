@@ -27,6 +27,10 @@
         ("airlock_engineering", "obj/doors/airlocks/station/engineering.dmi"),
         ("airlock_public", "obj/doors/airlocks/station/public.dmi"),
         ("airlock_overlays", "obj/doors/airlocks/station/overlays.dmi"),
+        ("airlock_interior", "obj/doors/airlocks/public/glass.dmi"),
+        ("airlock_interior_overlays", "obj/doors/airlocks/public/overlays.dmi"),
+        ("airlock_wide", "obj/doors/airlocks/multi_tile/public/glass.dmi"),
+        ("airlock_wide_overlays", "obj/doors/airlocks/multi_tile/public/overlays.dmi"),
         ("soda", "obj/drinks/soda.dmi"),
         ("lighting", "obj/lighting.dmi"),
         ("lighting_overlay", "obj/lighting_overlay.dmi"),
@@ -165,6 +169,86 @@
             ("@airlock_engineering", "closing"),
             ("@airlock_overlays", "glass_closing"),
         ], 0)),
+        // The INTERIOR leaf: two narrow panes over the full height of
+        // the doorway rather than the station livery's letterbox slot.
+        // tg's /obj/machinery/door/airlock/public
+        // (code/game/machinery/doors/airlock.dm:2274-2283), which
+        // carries its own sheet AND its own overlays -- the glass sits
+        // where this frame's panes are, not where station/overlays.dmi
+        // puts them, so the glazed rows below read the interior sheet's
+        // overlays and never the station's.
+        ("door_int", DmiLayers([
+            ("@airlock_interior", "closed"),
+            ("@airlock_interior", "fill_closed"),
+        ], 0)),
+        ("door_int_open", DmiLayers([
+            ("@airlock_interior", "open"),
+            ("@airlock_interior", "fill_open"),
+        ], 0)),
+        ("door_int_opening", DmiAnimLayers([
+            ("@airlock_interior", "opening"),
+            ("@airlock_interior", "fill_opening"),
+        ], 0)),
+        ("door_int_closing", DmiAnimLayers([
+            ("@airlock_interior", "closing"),
+            ("@airlock_interior", "fill_closing"),
+        ], 0)),
+        ("door_int_glass", DmiLayers([
+            ("@airlock_interior", "closed"),
+            ("@airlock_interior_overlays", "glass_closed"),
+        ], 0)),
+        ("door_int_glass_open", DmiLayers([
+            ("@airlock_interior", "open"),
+            ("@airlock_interior_overlays", "glass_open"),
+        ], 0)),
+        ("door_int_glass_opening", DmiAnimLayers([
+            ("@airlock_interior", "opening"),
+            ("@airlock_interior_overlays", "glass_opening"),
+        ], 0)),
+        ("door_int_glass_closing", DmiAnimLayers([
+            ("@airlock_interior", "closing"),
+            ("@airlock_interior_overlays", "glass_closing"),
+        ], 0)),
+        // The TWO-TILE leaf, half a doorway per sprite. tg authors it
+        // 64x64 and hangs it off its west tile
+        // (/obj/machinery/door/airlock/multi_tile, airlock.dm:2581-2607;
+        // the filler goes one step east, door.dm:198-208), so the
+        // south-facing leaf lives in the bottom 64x32 of the cell and
+        // the two windows below are its west and east halves. There is
+        // no `fill_` family on this sheet: tg ships no solid multi-tile
+        // leaf, and the entry is glazed by construction.
+        ("door_wide_l", DmiWindow([
+            ("@airlock_wide", "closed"),
+            ("@airlock_wide_overlays", "glass_closed"),
+        ], 0, 0, 32)),
+        ("door_wide_r", DmiWindow([
+            ("@airlock_wide", "closed"),
+            ("@airlock_wide_overlays", "glass_closed"),
+        ], 0, 32, 32)),
+        ("door_wide_open_l", DmiWindow([
+            ("@airlock_wide", "open"),
+            ("@airlock_wide_overlays", "glass_open"),
+        ], 0, 0, 32)),
+        ("door_wide_open_r", DmiWindow([
+            ("@airlock_wide", "open"),
+            ("@airlock_wide_overlays", "glass_open"),
+        ], 0, 32, 32)),
+        ("door_wide_opening_l", DmiAnimWindow([
+            ("@airlock_wide", "opening"),
+            ("@airlock_wide_overlays", "glass_opening"),
+        ], 0, 0, 32)),
+        ("door_wide_opening_r", DmiAnimWindow([
+            ("@airlock_wide", "opening"),
+            ("@airlock_wide_overlays", "glass_opening"),
+        ], 0, 32, 32)),
+        ("door_wide_closing_l", DmiAnimWindow([
+            ("@airlock_wide", "closing"),
+            ("@airlock_wide_overlays", "glass_closing"),
+        ], 0, 0, 32)),
+        ("door_wide_closing_r", DmiAnimWindow([
+            ("@airlock_wide", "closing"),
+            ("@airlock_wide_overlays", "glass_closing"),
+        ], 0, 32, 32)),
         ("apc", Dmi("@wallmounts", "apc0", 0)),
         ("apc_s", Dmi("@wallmounts", "apc0", 0)),
         ("apc_n", Dmi("@wallmounts", "apc0", 0)),

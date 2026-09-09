@@ -68,13 +68,34 @@ return {
                 closing = "door_eng_glass_closing",
             },
         },
+        -- The interior leaf, for a doorway inside the hull rather than
+        -- one onto a maintenance shaft: two tall panes over the height
+        -- of the door instead of the station livery's letterbox slot.
+        -- tg's /obj/machinery/door/airlock/public
+        -- (code/game/machinery/doors/airlock.dm:2274-2283), which is a
+        -- whole sheet and not a recolour, so the glazed set below reads
+        -- ITS overlays -- panes are only in the right place on the
+        -- frame they were drawn for.
+        {
+            id = "interior",
+            closed = "door_int",
+            open = "door_int_open",
+            opening = "door_int_opening",
+            closing = "door_int_closing",
+            glass = {
+                closed = "door_int_glass",
+                open = "door_int_glass_open",
+                opening = "door_int_glass_opening",
+                closing = "door_int_glass_closing",
+            },
+        },
     },
     examine = {
         flavor = "A powered leaf on a track. It opens for anyone it "
             .. "recognises and shuts itself behind them.",
     },
-    -- The two doors a mapper reaches for often enough to name. Both are
-    -- the same three properties any placement may already write, said
+    -- The doors a mapper reaches for often enough to name. Each is the
+    -- same three properties any placement may already write, said
     -- once: this is the subtype ladder collapsed rather than rebuilt,
     -- and a placement may still say otherwise -- `(x, y,
     -- "airlock.engineering_glass", { "glass": false })` is an
@@ -89,6 +110,16 @@ return {
             name_label = "lunatic/tfs:entity.airlock.engineering_glass.name",
             name = "engineering airlock",
             props = { paint = "engineering", access = "engineering", glass = true },
+        },
+        -- The windowed interior door, which is the one a hallway wants:
+        -- the interior livery with the panes glazed, so a corridor can
+        -- be shut off without being blinded. Unlocked, because a door
+        -- across a public hallway is not a door anybody was meant to be
+        -- stopped by.
+        interior_glass = {
+            name_label = "lunatic/tfs:entity.airlock.interior_glass.name",
+            name = "glass airlock",
+            props = { paint = "interior", glass = true },
         },
     },
 }
