@@ -44,6 +44,8 @@ add `--mode free_build` or use `"$LUNATIC_PACK/maps/outpost.ron"` as the map.
 
 ## Authoring
 
+Programmable airlock assembly and guest policy: [docs/PROGRAMMABLE-AIRLOCK.md](docs/PROGRAMMABLE-AIRLOCK.md).
+
 The portable computer's controls and desktop are documented in
 [`docs/LAPTOP.md`](docs/LAPTOP.md).
 Interaction cards and their presentation tokens are documented in

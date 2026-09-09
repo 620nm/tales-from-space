@@ -39,7 +39,7 @@ if sim ~= nil then
         -- an otherwise target-less tile click.
         local door = nil
         if target ~= nil and target.kind == "door" then
-            door = sim.door(x, y)
+            door = sim.door.at(x, y)
         end
         if target == nil and sim.turf(x, y) == "floor" then
             -- The quick pop, not the heave: tg's pry_tile calls
@@ -64,7 +64,7 @@ if sim ~= nil then
         })
         sim.spawn_task(user, function()
             if sim.do_after(user, sim.ticks(2.5), {}) == "ok" then
-                local d = sim.door(x, y)
+                local d = sim.door.at(x, y)
                 if d ~= nil and not d.open and not d.powered then
                     sim.pry_door(x, y)
                     sim.message.send({

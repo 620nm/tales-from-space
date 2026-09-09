@@ -1,0 +1,130 @@
+-- Copy and program through a held laptop; target identity stays native-bound.
+t.world([==[(
+    name: "contact workspace",
+    legend: {
+        '.': (turf: Floor), '#': (turf: Wall),
+        'G': (turf: Floor, fixture: Some(Generator)),
+        'a': (turf: Floor, fixture: Some(Apc)),
+        'o': (turf: Floor, fixture: Some(Outlet)),
+    },
+    rows: ["#######", "#.....#", "#Gao..#", "#######"],
+    spawns: [(1, 1)],
+    items: [(1, 1, "laptop"), (1, 1, "floppy_disk")],
+    machines: [(2, 1, "transceiver", { "encryption_1": "encryption_key.medical" })],
+    cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
+)]==], 0)
+local p = t.join()
+t.run_ticks(20)
+local laptop = t.target_at(1, 1, "laptop")
+local target = t.target_at(2, 1)
+
+local function act(kind, payload)
+    t.ui_act(p, kind, payload, "programming")
+    t.run_ticks(2)
+end
+local function workspace()
+    local ui = t.ui(p, "programming")
+    assert(ui and ui.sockets and #ui.sockets == 1, "contact opens the target's socket workspace")
+    return ui
+end
+local function store(ui, side)
+    for _, row in ipairs(ui.stores) do if row.key == side then return row end end
+    return nil
+end
+local function file(ui, side, name)
+    for _, row in ipairs(ui.files) do
+        if row.store == side and row.name == name then return row end
+    end
+    return nil
+end
+local function address(row)
+    return row.store .. ":" .. tostring(row.uid) .. ":" .. row.binding
+end
+local function copy(row, destination, name)
+    t.run_ticks(10)
+    act("text", '{"field":"file_copy","option":"' .. address(row) .. ':' .. destination.binding
+        .. '","text":"' .. name .. '"}')
+end
+local function contact()
+    t.click(p, 2, 1, target)
+    t.run_ticks(2)
+    return workspace()
+end
+
+-- Seat transport media, boot and create a source in the local host store.
+t.click(p, 1, 1, t.target_at(1, 1, "floppy_disk"))
+t.run_ticks(2)
+t.click(p, 1, 1, laptop)
+t.run_ticks(2)
+for _ = 1, 3 do t.use_item(p, laptop, "secondary"); t.run_ticks(2) end
+local desktop = t.ui(p)
+assert(desktop.stores and #desktop.stores == 2, "both laptop stores are available")
+t.ui_act(p, "text", '{"field":"file_create","option":"host:disl:' .. desktop.stores[1].binding
+    .. '","text":"local_program"}')
+t.run_ticks(2)
+local local_file = t.ui(p).open
+t.ui_act(p, "text", '{"field":"file_save","option":"' .. address(local_file)
+    .. '","text":"return { pass = true }","revision":0}')
+t.run_ticks(2)
+t.ui_close(p)
+t.run_ticks(2)
+t.click(p, 1, 1, laptop)
+t.run_ticks(2)
+assert(t.hands(p).held == "laptop", "the powered laptop is actively held")
+
+local ui = contact()
+assert(ui.contact_store == "host", "contact begins with laptop-local source storage")
+copy(file(ui, "media", "local_program"), store(ui, "host"), "target_program")
+ui = workspace()
+local target_file = file(ui, "host", "target_program")
+assert(target_file, "copy puts the program onto the target host")
+act("toggle", '{"field":"file_open","option":"' .. address(target_file) .. '"}')
+ui = workspace()
+assert(ui.open.body == "return { pass = true }", "the copied bytes arrive whole")
+act("toggle", '{"field":"socket_load","option":"carry:' .. tostring(target_file.uid)
+    .. ':' .. store(ui, "host").binding .. '"}')
+assert(workspace().sockets[1].uid == target_file.uid, "target socket binds its host copy")
+
+t.run_ticks(10)
+act("text", '{"field":"file_save","option":"' .. address(target_file)
+    .. '","text":"return { pass = false }","revision":0}')
+assert(workspace().open.body == "return { pass = false }", "contact edits a running target file")
+t.run_ticks(10)
+act("text", '{"field":"file_save","option":"' .. address(target_file)
+    .. '","text":"return {}","revision":0}')
+assert(workspace().open.body == "return { pass = false }", "stale revision cannot overwrite source")
+ui = workspace()
+copy(target_file, store(ui, "media"), "local_return")
+assert(file(workspace(), "media", "local_return"), "target copies back to the laptop host")
+
+ui = workspace()
+local stale_source = file(ui, "media", "local_program")
+local target_store = store(ui, "host")
+act("toggle", '{"field":"contact_store","option":"media"}')
+ui = workspace()
+assert(ui.contact_store == "media" and #ui.stores == 2, "the inserted disk is selectable")
+local copied = #t.ledger_rows("file_copied")
+copy(stale_source, target_store, "stale_copy")
+assert(#t.ledger_rows("file_copied") == copied, "source-switch rejects the old laptop binding")
+copy(target_file, store(workspace(), "media"), "disk_return")
+ui = workspace()
+copy(file(ui, "media", "disk_return"), store(ui, "host"), "disk_program")
+assert(file(workspace(), "host", "disk_program"), "the inserted disk copies into the target")
+act("toggle", '{"field":"socket_unload","option":"carry:' .. store(workspace(), "host").binding .. '"}')
+assert(workspace().sockets[1].state.id == "sockets.state.unbound", "contact unloads the target socket")
+
+t.swap_hands(p)
+t.run_ticks(20)
+assert(t.ui(p, "programming") == nil, "switching the active hand revokes contact")
+t.swap_hands(p)
+t.run_ticks(2)
+contact()
+t.use_item(p, laptop, "alt_primary")
+t.run_ticks(20)
+assert(t.ui(p, "programming") == nil, "closing the held laptop revokes contact")
+t.use_self(p)
+t.run_ticks(2)
+contact()
+t.outage()
+t.run_ticks(20)
+assert(t.ui(p, "programming") == nil, "target power loss revokes contact")

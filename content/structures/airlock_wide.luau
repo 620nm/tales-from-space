@@ -44,6 +44,8 @@ return {
     name = "wide airlock",
     sprite = "door_wide_w",
     fixture = "Door",
+    script = "airlock",
+    link = { network_interface = true, role = "endpoint", class = "atmos" },
     category = "power",
     facings = { "south", "east" },
     -- The south shape: the anchor, then the tile east of it. That order
@@ -58,6 +60,10 @@ return {
         {
             id = "interior",
             glass = {
+                bolt_lights = {
+                    south = { "door_wide_bolt_lights_w", "door_wide_bolt_lights_e" },
+                    east = { "door_wide_bolt_lights_s", "door_wide_bolt_lights_n" },
+                },
                 closed = {
                     south = { "door_wide_w", "door_wide_e" },
                     east = { "door_wide_s", "door_wide_n" },

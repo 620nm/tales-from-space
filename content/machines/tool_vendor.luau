@@ -81,6 +81,10 @@ return {
             amount = 2,
         },
         {
+            item = "airlock_button_fitting",
+            name = "Airlock Button Fitting", category = "Parts", amount = 6,
+        },
+        {
             item = "machine_board.access_point",
             name = "Machine Board (Access Point)",
             category = "Parts",

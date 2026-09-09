@@ -18,6 +18,7 @@ native_edges = [
     "item_slot.command",
     "inventory.presentation",
     "lifecycle.entity_initialize",
+    "lifecycle.entity_despawn",
     "attack.swing",
     "entity.pull",
     "throw.land",
@@ -38,6 +39,9 @@ native_edges = [
     "speech.relay",
     "link.message",
     "atmos.hazard",
+    "atmos.pressure_target",
+    "door.permission",
+    "door.operation",
     "flow.backup",
     "link.command",
 ]

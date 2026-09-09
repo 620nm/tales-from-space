@@ -80,6 +80,16 @@ the workspace. Save waits for a matching accepted revision before continuing.
 Disk ejection guards only dirty work on B:. Revoked providers, lost media and
 closed documents cancel pending continuations.
 
+## Contact programming
+
+Use an open, powered laptop on a reachable scriptable device to open its
+programming workspace. A: belongs to the target. The source selector chooses
+whether B: shows the laptop's own store or its inserted disk. Copy works in
+both directions; edit target files and load or unload its sockets there.
+Only host files run. Changing the source clears the file selection and stale
+store bindings. Switching hands, dropping or closing the laptop, losing reach,
+or the target losing power or access closes the contact workspace.
+
 ## Typing
 
 An open, powered laptop used on an exact networked device plays one of the

@@ -45,7 +45,7 @@ return {
     -- Everything the pack declares. A terminal that could not read a
     -- word somebody's disk is written in would be a terminal you carry
     -- the disk PAST.
-    drive = {},
+    drive = { accepts = { "floppy" } },
     -- Scratch space, not a filing cabinet. See the header.
     files = { capacity = 65536, files = 16 },
     -- The two generic rungs every finished machine has: a screwdriver

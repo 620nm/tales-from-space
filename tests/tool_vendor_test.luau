@@ -92,6 +92,7 @@ local parts = {
     -- to gate.
     "network_card",
     "machine_board.thermomachine",
+    "airlock_button_fitting",
     "machine_board.access_point",
     -- The air alarm hangs in the same wall frame the access point does
     -- and is built out of the same ladder, so its board is on the same

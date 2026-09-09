@@ -75,6 +75,7 @@ return {
         -- it needs one of.
         { item = "air_scrubber_fitting", name = "Air Scrubber", category = "Devices", amount = 999 },
         { item = "air_injector_fitting", name = "Air Injector", category = "Devices", amount = 999 },
+        { item = "dual_port_vent_fitting", name = "Dual-Port Air Vent", category = "Devices", amount = 999 },
         { item = "vent_fitting", name = "Air Vent", category = "Devices", amount = 999 },
         { item = "passive_vent_fitting", name = "Passive Vent", category = "Devices", amount = 999 },
 

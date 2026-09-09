@@ -27,7 +27,15 @@ local NOUN = "access point"
 local MEMBER = "device"
 
 if sim ~= nil then
+    sim.define("script_var", "lunatic/tfs:button_sequence", { replicate = "server" })
+    sim.define("script_var", "lunatic/tfs:controller_request", { replicate = "server" })
+    sim.define("script_var", "lunatic/tfs:device_outbox", { replicate = "server" })
+    sim.define("script_var", "lunatic/tfs:device_sending", { replicate = "server" })
+    sim.define("script_var", "lunatic/tfs:controller_status", { replicate = "server" })
+    sim.define("script_var", "lunatic/tfs:controller_timer", { replicate = "server" })
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("link.message.done", { kind = "react" }, controller.message)
+    script_definition:handle("entity.despawn.done", { kind = "react" }, controller.cleanup)
 
     script_definition:handle("interaction.use.done", { kind = "react", route = "interact" }, function(ev)
         -- AN EMPTY HAND, and a use that actually resolved.

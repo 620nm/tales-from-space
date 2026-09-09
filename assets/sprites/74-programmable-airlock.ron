@@ -1,0 +1,40 @@
+// tg dp_vent_pump.dm:29-39; access_controller.dm:34-38, :83-91.
+// Device behavior belongs to the pack's event sockets.
+(
+    sheets: [
+        ("vents", "obj/machines/atmospherics/unary_devices.dmi"),
+        ("buttons", "obj/machines/wallmounts.dmi"),
+        ("station", "obj/doors/airlocks/station/overlays.dmi"),
+        ("interior", "obj/doors/airlocks/public/overlays.dmi"),
+        ("wide", "obj/doors/airlocks/multi_tile/public/overlays.dmi"),
+    ],
+    sprites: [
+        ("dual_port_vent_off", DmiLayers([
+            ("@vents", "vent_off"), ("@vents", "dpvent_cap"),
+        ], 0)),
+        ("dual_port_vent_blowing", DmiAnimLayers([
+            ("@vents", "vent_out"), ("@vents", "dpvent_cap"),
+        ], 0)),
+        ("dual_port_vent_siphoning", DmiAnimLayers([
+            ("@vents", "vent_in"), ("@vents", "dpvent_cap"),
+        ], 0)),
+        ("dual_port_vent_loose", Dmi("@vents", "dpvent_map-3", 0)),
+        // tg airlock.dm:565-600 selects lights_bolts while closed.
+        ("door_bolt_lights", Dmi("@station", "lights_bolts", 0)),
+        ("door_int_bolt_lights", Dmi("@interior", "lights_bolts", 0)),
+        ("door_wide_bolt_lights_w", DmiWindow([("@wide", "lights_bolts")], 0, 0, 32)),
+        ("door_wide_bolt_lights_e", DmiWindow([("@wide", "lights_bolts")], 0, 32, 32)),
+        ("door_wide_bolt_lights_n", DmiWindow([("@wide", "lights_bolts")], 2, 0, 0)),
+        ("door_wide_bolt_lights_s", DmiWindow([("@wide", "lights_bolts")], 2, 0, 32)),
+    ],
+    groups: [
+        (sheet: "vents", sprites: [
+            Directions("dual_port_vent_loose", "dpvent_map-3"),
+        ]),
+        (sheet: "buttons", sprites: [
+            Faces(25, Sprite("airlock_button", "access_button_standby", s)),
+            Faces(25, Sprite("airlock_button_off", "access_button_off", s)),
+            Faces(25, Sprite("airlock_button_active", "access_button_cycle", s)),
+        ]),
+    ],
+)

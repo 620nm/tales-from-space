@@ -25,6 +25,9 @@
     ("vend", "machines/machine_vend.ogg"),
     ("airlock_open", "machines/airlock/airlockopen.ogg"),
     ("airlock_close", "machines/airlock/airlockclose.ogg"),
+    // tg code/game/machinery/doors/airlock.dm:131-132.
+    ("airlock_bolts_up", "machines/airlock/boltsup.ogg"),
+    ("airlock_bolts_down", "machines/airlock/boltsdown.ogg"),
     // The closet substrate's own two clips
     // (code/game/objects/structures/crates_lockers/closets.dm:58-59).
     ("locker_open", "machines/closet/closet_open.ogg"),

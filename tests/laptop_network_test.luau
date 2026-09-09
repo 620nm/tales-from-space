@@ -62,6 +62,8 @@ t.click(p, 2, 2, t.target_at(2, 2, "screwdriver"))
 t.run_ticks(2)
 assert(#keyboards() == 0, "a nonnetworked item cannot trigger typing")
 
+t.ui_close(p, "programming")
+t.run_ticks(2)
 t.ui_act(p, "power")
 t.run_ticks(2)
 assert(t.ui(p) and t.ui(p).data and not t.ui(p).data.powered,
