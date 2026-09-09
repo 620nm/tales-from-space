@@ -3,7 +3,8 @@
 Tales from Space (TfS) is the game: every item, job, substance, reaction,
 map, and behavior handler that turns the lunatic engine into something worth
 logging into. Its server behavior is authored as a Luau mod with id `lunatic/tfs`
-(docs/SCRIPTING.md §5.1 — vendor/mod; the vendor is the authoring group).
+(the engine's `docs/SCRIPTING.md` §5.1 — vendor/mod; the vendor is the
+authoring group).
 This standalone repository is loaded by the lunatic engine through
 `LUNATIC_PACK`; the engine ships no game content of its own.
 
@@ -19,7 +20,7 @@ This standalone repository is loaded by the lunatic engine through
 | `assets/`        | Sprite, sound and whole-picture source manifests plus the tracked `tg-revision` consumed and verified by `cargo run -p xtask -- bake-atlas`. |
 | `tests/`         | Luau specs (`*_test.luau`) run by the engine's spec runner, with focused RON fixtures embedded inline where needed. |
 | `locale/`        | One flat catalog per language, `<tag>.json`, holding every word this pack writes: its interface, its key bindings, a rendering for every settings-module label id, its own message keys, and its wording for the engine keys it overrides (`docs/WORDS.md`). |
-| `docs/`          | Pack controls, authoring guides and terminology; `scripting/` covers guest controllers and reference files. Other `docs/…` citations below name engine contracts unless linked to a pack file. |
+| `docs/`          | This pack's own contracts — what it ships and the numbers it chose: `ATMOS.md` (the station loop), `BIOLOGY.md` (body and surgery tuning), `CHEMISTRY.md` (the shelf), `GAMEMODES.md` (the two modes), plus controls, terminology and `scripting/` for guest controllers and reference files. A bare `docs/…` citation names a file HERE; an engine contract is always written "the engine's `docs/…`". |
 | `tools/`         | `keyed-messages.mjs` enforces catalog-backed messages; [`ui-concepts/`](tools/ui-concepts/README.md) exports a standalone floating HUD study. |
 
 ## Running
@@ -60,7 +61,7 @@ package through the restricted UI SDK; it supplies no browser globals or
 per-frame script hook. Native providers supply readouts and validate intents.
 The engine's `docs/PACK-UI.md` documents this contract, and `@lunatic/ui`
 supplies the component kit and default theme these screens are built from
-(`docs/pack-ui/components.md`).
+(the engine's `docs/pack-ui/components.md`).
 
 | File | Owns |
 | ---- | ---- |
@@ -94,18 +95,20 @@ engine's `web/node_modules` at a config whose `paths` map `@lunatic/ui` to
 "@lunatic/pack-ui"` and `lib: ["ES2022", "DOM"]` — the same settings
 `web/tsconfig.sdk.json` checks the engine's own fixture package with.
 
-Editor declarations in `editor/manifest.json` configure the native document engine; see
-`docs/mapping/manifest.md`. Neither UI guests nor server gameplay scripts access
+Editor declarations in `editor/manifest.json` configure the native document
+engine; see the engine's `docs/mapping/manifest.md`. Neither UI guests nor
+server gameplay scripts access
 editor drafts. The trusted client connects through an independently operated
 gateway; running a game server alone does not host its executable bootstrap.
 
-- `docs/SCRIPTING.md` is the v1 content design: anchors, handler kinds,
-  transactions, events, tasks, and scoped state.
-- `docs/LUAU-API.md` documents the as-built v1 `sim` surface and named
-  occurrence records; `idl/v1.json` freezes its names.
-- `docs/BIOLOGY.md` is what a body IS: `content/bodies/*.luau` plans,
-  the `part` and `organ` blocks on items, and the capacity formulas that
-  decide what a crewman can do.
+- The engine's `docs/SCRIPTING.md` is the v1 content design: anchors,
+  handler kinds, transactions, events, tasks, and scoped state.
+- The engine's `docs/LUAU-API.md` documents the as-built v1 `sim` surface
+  and named occurrence records; `idl/v1.json` freezes its names.
+- The engine's `docs/BIOLOGY.md` is what a body IS: `content/bodies/*.luau`
+  plans, the `part` and `organ` blocks on items, and the capacity formulas
+  that decide what a crewman can do. `docs/BIOLOGY.md` here is what THIS
+  pack sets those to.
 - `content/tuning.luau` overrides engine feel constants; the engine's
   compiled defaults are the values its tests pin.
 - `content/capabilities.luau` opts into optional client grammars. TfS
@@ -114,18 +117,21 @@ gateway; running a game server alone does not host its executable bootstrap.
 - `content/blends/*.luau` are the Matter Blends a mapper paints rooms and
   fills holders with
   (`{ id, name, rows = { {key, moles} }, temperature_k, amount }`,
-  docs/content-schema/blends.md). Required content like every other roster;
+  the engine's `docs/content-schema/blends.md`). Required content like every
+  other roster;
   they are DEFAULTS the map editor copies into a map, never state — the sim
   seeds every tile and every holder from the map's own blends.
-- `docs/GAMEMODES.md` defines the Space Station/Free Build split and the
-  `content/gamemodes/*.luau` policy schema.
+- `docs/GAMEMODES.md` defines the Space Station/Free Build split this pack
+  ships; the engine's `docs/GAMEMODES.md` owns the
+  `content/gamemodes/*.luau` policy schema those files satisfy.
 - A shift runs one hour of sim time under either mode. The engine knows
   no round length: it publishes `clock.second` and ends the round only
   when content calls `sim.round.finish`. Each mode declares the numbers
   in `rules.shift` and `content/lib/shift.luau` is what reads them, so
   retuning the shift is one edit per mode and no new answer.
 - `content/lib/*.luau` is the pack's SHARED CODE. There is no `require`
-  (docs/SCRIPTING.md §1.6): a `lib/` file returns a table and the loader
+  (the engine's `docs/SCRIPTING.md` §1.6): a `lib/` file returns a table
+  and the loader
   publishes it as a global named for the file, so `lib/vessel.luau`
   becomes `vessel` and every roster file may read it — at prototype time
   as well as inside a handler. `lib/` loads after the entrypoints and
@@ -137,7 +143,8 @@ gateway; running a game server alone does not host its executable bootstrap.
   card and a deck of cards both read; `lib/radio.luau` owns every radio
   number and who finally hears a `;` line, and `lib/radio_relay.luau`
   owns what a tower, a wall box and a router each do to one crossing
-  them (`docs/luau-api/radio-relay.md`); `lib/shift.luau` owns when a
+  them (the engine's `docs/luau-api/radio-relay.md`); `lib/shift.luau` owns
+  when a
   shift warns the crew and when it asks to end; `lib/thermal.luau` owns
   how hard a run of pipe pulls on the room over it, which a spec reads
   back through `t.pipe_law` rather than spelling twice;
@@ -210,8 +217,8 @@ no direct spawn in `t`, and none should ever be added.
 | Power | `t.cable_at(x, y)`, `t.apc_at(x, y) -> {charge, equipment, lighting, environment, alarmed, charging}`, `t.segment_at(x, y) -> {l1, l2, l3, live, feed, lighting_feed}` (the segment id on each layer that has cable, and which layer BIT a consumer here would bind to per channel), `t.ports_at(x, y) -> {kind, energized, l1 = {mode, in_w, out_w}, l2 =, l3 =}` (a bridge's ports, one per layer that has cable under it), `t.lit(x, y)` |
 | Observed | `t.messages(p)`, `t.sounds(p)`, `t.last_ui(p) -> state, pushes`, `t.ui(p)` (parsed), `t.vitals(p) -> {<readout id> = n}` (the last private readout push this client got, keyed by the pack's declared readout ids) |
 | Pictures | `t.layers(p, id)` and `t.seen(p)` (what actually reached a viewer, stack and all), `t.overlays(handle) -> {sprite, ...}` (what one thing is wearing above its base picture, bottom first — `t.structure_at`'s `overlays` for anything a handle names, and how a vessel's fill layer is asserted), `t.hud(p) -> {[1], [2]}` and `t.hud_fill(p) -> {[1], [2]}` (the picture and the fill layer each hand's panel row was last TOLD to draw — a held vessel has no tile and no entity delta, so the inventory push is the only place its level exists) |
-| Books | `t.matter_totals() -> {moles, energy_j, substances = {<key> = moles}}` — every body of matter there is, added up: every cell, the vented register, the reservoirs and the hull's radiation account, plus every beaker, bottle, canister, reservoir and bloodstream. The one reading here that is not a gauge a crewman could hold, and it exists because an identity spec's claim is that a mole which left one surface ARRIVED at another rather than being made on the way. Read-only, taken on demand, no counter. NEITHER TOTAL IS INVARIANT ACROSS EVERYTHING: a reaction whose product count differs from its reactant count moves `moles`; a reaction with an enthalpy, a thermostat pass and a sunlit hull each move `energy_j`; a dispenser press and a metabolizing liver leave no accumulator behind. A spec asserts one of them over a window where the arithmetic holds, and says which and why (`tests/identity_*_test.luau`). `t.nullified_moles()` is the companion reading: moles the settling sweep has taken off tiles that were left holding less gas than the engine still has an opinion about (`docs/MATTER-WORLD.md` §3 step 8). It is inside `t.matter_totals` already, and it is exposed on its own because a spec proving a room reached zero has to tell gas that left through a grille from gas that fell under that floor. `t.nullified() -> {<key> = moles}` is the same register by substance, `t.room_gas`'s shape, which is what a per-substance conservation sum needs. `t.drained() -> {<key> = moles}` is the third register in the same shape: what the deck's drains have swallowed. It is separate from `nullified` for the reason the other two are separate from each other -- a spec proving a flood went down a grating must not pass on a flood the settling sweep happened to take |
-| Hazard | `t.hazard({<key> = moles}) -> {health, fire, instability, specials}` — the placard a blend earns, the three 0..4 scales and the special words its substances declare (`hazard` in a substance file, `docs/matter/hazard.md`). Rows fold by substance, so two phases of one are a single contributor. The spec-side spelling of `sim.hazard_summary` |
+| Books | `t.matter_totals() -> {moles, energy_j, substances = {<key> = moles}}` — every body of matter there is, added up: every cell, the vented register, the reservoirs and the hull's radiation account, plus every beaker, bottle, canister, reservoir and bloodstream. The one reading here that is not a gauge a crewman could hold, and it exists because an identity spec's claim is that a mole which left one surface ARRIVED at another rather than being made on the way. Read-only, taken on demand, no counter. NEITHER TOTAL IS INVARIANT ACROSS EVERYTHING: a reaction whose product count differs from its reactant count moves `moles`; a reaction with an enthalpy, a thermostat pass and a sunlit hull each move `energy_j`; a dispenser press and a metabolizing liver leave no accumulator behind. A spec asserts one of them over a window where the arithmetic holds, and says which and why (`tests/identity_*_test.luau`). `t.nullified_moles()` is the companion reading: moles the settling sweep has taken off tiles that were left holding less gas than the engine still has an opinion about (the engine's `docs/MATTER-WORLD.md` §3 step 8). It is inside `t.matter_totals` already, and it is exposed on its own because a spec proving a room reached zero has to tell gas that left through a grille from gas that fell under that floor. `t.nullified() -> {<key> = moles}` is the same register by substance, `t.room_gas`'s shape, which is what a per-substance conservation sum needs. `t.drained() -> {<key> = moles}` is the third register in the same shape: what the deck's drains have swallowed. It is separate from `nullified` for the reason the other two are separate from each other -- a spec proving a flood went down a grating must not pass on a flood the settling sweep happened to take |
+| Hazard | `t.hazard({<key> = moles}) -> {health, fire, instability, specials}` — the placard a blend earns, the three 0..4 scales and the special words its substances declare (`hazard` in a substance file, the engine's `docs/matter/hazard.md`). Rows fold by substance, so two phases of one are a single contributor. The spec-side spelling of `sim.hazard_summary` |
 | Ledger | `t.ledger_rows([event])`, `t.ledger_has(...needles)` |
 
 `t.ledger_rows` hands back rows in the shift JSONL's own shape — `tick`,

@@ -32,10 +32,14 @@ agent decisions rather than duplicating those details.
 ## Engine boundary and validation
 
 Mechanics (layout, running, spec commands) live in `README.md`. The
-engine is the sibling checkout `../lunatic`; its `docs/` are the
-contracts: `docs/SCRIPTING.md` is the v1 design, `docs/LUAU-API.md` the
-surface these files CALL, `docs/CONTENT-SCHEMA.md` the fields they
-DECLARE. Run the engine with `LUNATIC_PACK` pointing here.
+engine is the sibling checkout `../lunatic`. A bare `docs/…` names a file
+HERE; an engine contract is always written "the engine's `docs/…`". The
+engine's `docs/SCRIPTING.md` is the v1 design, the engine's
+`docs/LUAU-API.md` the surface these files CALL, the engine's
+`docs/CONTENT-SCHEMA.md` the fields they DECLARE. Four names sit on both
+sides (`ATMOS`, `BIOLOGY`, `CHEMISTRY`, `GAMEMODES`): the engine owns the
+mechanism, this pack the numbers it chose. Run the engine with
+`LUNATIC_PACK` pointing here.
 
 Run engine commands from the engine checkout and set `LUNATIC_PACK` to this
 pack's absolute path. A worktree under this repository's `.worktrees/` is not
@@ -48,8 +52,8 @@ suite before completion; exact commands and filter semantics are in
 
 - Content is the default home for game ideas: nouns (prototypes, rosters,
   constants, ids, maps, manifests) are data here; verbs at discrete event
-  boundaries are Luau anchor handlers. `docs/LUAU-API.md` §4 is the
-  as-built list of record and `idl/v1.json` freezes their names.
+  boundaries are Luau anchor handlers. The engine's `docs/LUAU-API.md` §4
+  is the as-built list of record and `idl/v1.json` freezes their names.
   An idea that seems to need per-tick native execution becomes a native
   system with data-driven knobs — never a faster handler.
 - Game fiction never says "lunatic"; engine words stay out of content.
@@ -73,7 +77,7 @@ suite before completion; exact commands and filter semantics are in
   a second path would be a second answer. The four relay stages are one
   published native edge, so `mod.toml` must keep `speech.relay` in
   `native_edges` or every registration fails at load
-  (`docs/luau-api/radio-relay.md`).
+  (the engine's `docs/luau-api/radio-relay.md`).
 - Specs (`tests/*_test.luau`) assert what a PLAYER could cause, through
   `t` — the same SimCommand seam the Rust harness uses. No raw entity
   handles, no component access, no direct spawn, and none should ever be
