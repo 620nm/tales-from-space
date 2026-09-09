@@ -15,6 +15,9 @@ agent decisions rather than duplicating those details.
   game's prototypes and handlers.
 - `content/lib/` contains shared Luau tables; see the rules below before adding
   or moving code there.
+- `reference/manifest.ron` catalogs preset files by ID. Its raw bodies stay
+  outside trusted content; guest programs are standalone `.luau` sources.
+  See `docs/scripting/reference-files.md` for authoring and disk seeding.
 - `maps/` contains shipped RON maps. `tests/` contains player-facing Luau
   specs, including any inline RON fixtures they need.
 - `assets/*.ron` are source manifests. `assets/tg-revision` pins the read-only

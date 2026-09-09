@@ -90,6 +90,10 @@ Only host files run. Changing the source clears the file selection and stale
 store bindings. Switching hands, dropping or closing the laptop, losing reach,
 or the target losing power or access closes the contact workspace.
 
+[Preset disks](scripting/reference-files.md) carry reference files ready to
+copy. The [airlock example](scripting/airlocks.md) includes a controller and
+instructions; copy its source to the host before loading the socket.
+
 ## Typing
 
 An open, powered laptop used on an exact networked device plays one of the

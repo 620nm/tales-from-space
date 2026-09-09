@@ -1,0 +1,14 @@
+[
+    (
+        id: "airlock_controller",
+        name: "airlock",
+        ext: "disl",
+        path: "scripts/airlock.luau",
+    ),
+    (
+        id: "airlock_instructions",
+        name: "readme",
+        ext: "md",
+        path: "text/airlock.md",
+    ),
+]

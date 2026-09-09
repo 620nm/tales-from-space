@@ -1,5 +1,4 @@
--- The distributable source is the only airlock cycle policy.
-return { source = [==[
+-- Guest bindings: event, devices, mem. See docs/scripting/controllers.md.
 -- Public access by default. Change this function to deny requests.
 local function permitted(request)
     -- For an engineering-only policy, return request.engineering instead.
@@ -112,4 +111,3 @@ elseif state.phase == "bolt_open" then
     result.status, result.timer = "idle", false
 end
 return remember()
-]==] }

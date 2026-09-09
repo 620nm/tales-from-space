@@ -1,0 +1,4 @@
+{
+    "languageMode": "nonstrict",
+    "globals": ["event", "devices", "mem"]
+}

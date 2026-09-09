@@ -9,7 +9,7 @@ t.world([==[(
     },
     rows: ["#######", "#.....#", "#Gao..#", "#######"],
     spawns: [(1, 1)],
-    items: [(1, 1, "laptop"), (1, 1, "floppy_disk")],
+    items: [(1, 1, "laptop"), (1, 1, "airlock_program_disk")],
     machines: [(2, 1, "transceiver", { "encryption_1": "encryption_key.medical" })],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
 )]==], 0)
@@ -51,14 +51,31 @@ local function contact()
     return workspace()
 end
 
--- Seat transport media, boot and create a source in the local host store.
-t.click(p, 1, 1, t.target_at(1, 1, "floppy_disk"))
+-- Preset text and source share the same physical medium and copy path.
+t.click(p, 1, 1, t.target_at(1, 1, "airlock_program_disk"))
 t.run_ticks(2)
 t.click(p, 1, 1, laptop)
 t.run_ticks(2)
 for _ = 1, 3 do t.use_item(p, laptop, "secondary"); t.run_ticks(2) end
 local desktop = t.ui(p)
 assert(desktop.stores and #desktop.stores == 2, "both laptop stores are available")
+local instructions = file(desktop, "media", "readme")
+assert(instructions and instructions.fixed and instructions.ext == "md", "the text reference seeds a fixed Markdown file")
+t.ui_act(p, "toggle", '{"field":"file_open","option":"' .. address(instructions) .. '"}')
+t.run_ticks(2)
+local instructions_text = t.ui(p).open.body
+assert(instructions_text:find("# Airlock controller", 1, true), "the reference body is readable text")
+t.run_ticks(10)
+t.ui_act(p, "text", '{"field":"file_copy","option":"' .. address(instructions) .. ':'
+    .. store(desktop, "host").binding .. '","text":"manual"}')
+t.run_ticks(2)
+local manual = file(t.ui(p), "host", "manual")
+assert(manual and not manual.fixed and manual.ext == "md", "a text reference copy is editable and keeps its extension")
+t.ui_act(p, "toggle", '{"field":"file_open","option":"' .. address(manual) .. '"}')
+t.run_ticks(2)
+assert(t.ui(p).open.body == instructions_text, "copy preserves the complete reference text")
+t.run_ticks(10)
+desktop = t.ui(p)
 t.ui_act(p, "text", '{"field":"file_create","option":"host:disl:' .. desktop.stores[1].binding
     .. '","text":"local_program"}')
 t.run_ticks(2)
