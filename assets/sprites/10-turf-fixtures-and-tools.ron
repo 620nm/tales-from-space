@@ -209,46 +209,80 @@
             ("@airlock_interior", "closing"),
             ("@airlock_interior_overlays", "glass_closing"),
         ], 0)),
-        // The TWO-TILE leaf, half a doorway per sprite. tg authors it
-        // 64x64 and hangs it off its west tile
+        // The TWO-TILE leaf, half a doorway per sprite, in both of the
+        // orientations tg draws it in. It authors 64x64 cells and hangs
+        // the door off ONE of them
         // (/obj/machinery/door/airlock/multi_tile, airlock.dm:2581-2607;
-        // the filler goes one step east, door.dm:198-208), so the
-        // south-facing leaf lives in the bottom 64x32 of the cell and
-        // the two windows below are its west and east halves. There is
-        // no `fill_` family on this sheet: tg ships no solid multi-tile
-        // leaf, and the entry is glazed by construction.
-        ("door_wide_l", DmiWindow([
+        // the filler goes one step east of a north/south-facing leaf and
+        // one step north of an east/west-facing one, `set_filler` and
+        // `n(dir)`, door.dm:198-208). So:
+        //
+        //   dir 0, the south-facing leaf, fills the bottom 64x32 of the
+        //   cell -- its halves are the windows at (0, 32) and (32, 32),
+        //   west then east, and it stands in an east-west doorway;
+        //
+        //   dir 2, the east-facing leaf, fills the left 32x64 -- windows
+        //   at (0, 0) and (0, 32), north then south, standing in a
+        //   north-south one.
+        //
+        // There is no `fill_` family on this sheet: tg ships no solid
+        // multi-tile leaf, and the entry is glazed by construction. Nor
+        // is there anything to lay over an OPEN one -- the sheet's
+        // `glass_open` is an empty cell, which is why tg authors it with
+        // one direction and why the two open rows below are the frame
+        // alone.
+        ("door_wide_w", DmiWindow([
             ("@airlock_wide", "closed"),
             ("@airlock_wide_overlays", "glass_closed"),
         ], 0, 0, 32)),
-        ("door_wide_r", DmiWindow([
+        ("door_wide_e", DmiWindow([
             ("@airlock_wide", "closed"),
             ("@airlock_wide_overlays", "glass_closed"),
         ], 0, 32, 32)),
-        ("door_wide_open_l", DmiWindow([
-            ("@airlock_wide", "open"),
-            ("@airlock_wide_overlays", "glass_open"),
-        ], 0, 0, 32)),
-        ("door_wide_open_r", DmiWindow([
-            ("@airlock_wide", "open"),
-            ("@airlock_wide_overlays", "glass_open"),
-        ], 0, 32, 32)),
-        ("door_wide_opening_l", DmiAnimWindow([
+        ("door_wide_open_w", DmiWindow([("@airlock_wide", "open")], 0, 0, 32)),
+        ("door_wide_open_e", DmiWindow([("@airlock_wide", "open")], 0, 32, 32)),
+        ("door_wide_opening_w", DmiAnimWindow([
             ("@airlock_wide", "opening"),
             ("@airlock_wide_overlays", "glass_opening"),
         ], 0, 0, 32)),
-        ("door_wide_opening_r", DmiAnimWindow([
+        ("door_wide_opening_e", DmiAnimWindow([
             ("@airlock_wide", "opening"),
             ("@airlock_wide_overlays", "glass_opening"),
         ], 0, 32, 32)),
-        ("door_wide_closing_l", DmiAnimWindow([
+        ("door_wide_closing_w", DmiAnimWindow([
             ("@airlock_wide", "closing"),
             ("@airlock_wide_overlays", "glass_closing"),
         ], 0, 0, 32)),
-        ("door_wide_closing_r", DmiAnimWindow([
+        ("door_wide_closing_e", DmiAnimWindow([
             ("@airlock_wide", "closing"),
             ("@airlock_wide_overlays", "glass_closing"),
         ], 0, 32, 32)),
+        ("door_wide_n", DmiWindow([
+            ("@airlock_wide", "closed"),
+            ("@airlock_wide_overlays", "glass_closed"),
+        ], 2, 0, 0)),
+        ("door_wide_s", DmiWindow([
+            ("@airlock_wide", "closed"),
+            ("@airlock_wide_overlays", "glass_closed"),
+        ], 2, 0, 32)),
+        ("door_wide_open_n", DmiWindow([("@airlock_wide", "open")], 2, 0, 0)),
+        ("door_wide_open_s", DmiWindow([("@airlock_wide", "open")], 2, 0, 32)),
+        ("door_wide_opening_n", DmiAnimWindow([
+            ("@airlock_wide", "opening"),
+            ("@airlock_wide_overlays", "glass_opening"),
+        ], 2, 0, 0)),
+        ("door_wide_opening_s", DmiAnimWindow([
+            ("@airlock_wide", "opening"),
+            ("@airlock_wide_overlays", "glass_opening"),
+        ], 2, 0, 32)),
+        ("door_wide_closing_n", DmiAnimWindow([
+            ("@airlock_wide", "closing"),
+            ("@airlock_wide_overlays", "glass_closing"),
+        ], 2, 0, 0)),
+        ("door_wide_closing_s", DmiAnimWindow([
+            ("@airlock_wide", "closing"),
+            ("@airlock_wide_overlays", "glass_closing"),
+        ], 2, 0, 32)),
         ("apc", Dmi("@wallmounts", "apc0", 0)),
         ("apc_s", Dmi("@wallmounts", "apc0", 0)),
         ("apc_n", Dmi("@wallmounts", "apc0", 0)),
