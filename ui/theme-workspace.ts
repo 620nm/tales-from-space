@@ -28,6 +28,9 @@ export const workspaceRules = [
   rule("workspace-file", { gap: 0, paddingBottom: 4, borderBottom: edge("#8da5ae40") }),
   rule("workspace-file-icon", { width: 32, height: 32, minWidth: 32, flexShrink: 0, imageRendering: "pixelated" }),
   rule("workspace-file-name", { minWidth: 0, flexShrink: 1, whiteSpace: "normal", textAlign: "left" }),
+  rule("workspace-read-only", {
+    padding: 3, border: edge("#8da5ae80"), borderRadius: 2, fontSize: 11, flexShrink: 0,
+  }),
   rule("workspace-editor", { backgroundColor: "#15262fe6", height: "100%", overflow: "auto", minWidth: 0 }),
   rule("workspace-reader", { flexGrow: 1, minHeight: 0, overflow: "auto", gap: 7 }),
   rule("workspace-editor-area", { flexGrow: 1, minHeight: 120, backgroundColor: "#08131ce6" }),

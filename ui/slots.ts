@@ -19,6 +19,7 @@ export function hudSlot(id: string, opts: SlotOpts, slot = "", cls?: string): Ui
     ...node,
     class: [...(node.class ?? []), "midnight-slot", ...(cls ? [cls] : [])],
     children: [
+      ...(opts.active ? [{ id: `${id}/active`, type: "panel" as const, class: ["slot-active-ring"] }] : []),
       { id: `${id}/frame`, type: "image", asset: `hud_${frame}`, class: ["slot-frame"] },
       // The drawn silhouette already says which slot this is; a caption
       // over it repeats the art it sits on.

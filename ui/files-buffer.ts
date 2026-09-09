@@ -8,6 +8,7 @@ export interface FileBuffer {
   text: string;
   revision: number;
   dirty: boolean;
+  sourceView?: boolean;
   pending?: { text: string; revision: number; request: string };
   continuation?: Command;
   confirmed?: Command;
@@ -63,7 +64,8 @@ export function editorBuffer(id: string, doc: DocumentIdentity, state: Partial<M
 
 export function bodyId(id: string): string | undefined {
   const current = buffers.get(id);
-  return current ? `${id}/editor/body/${current.key}` : undefined;
+  return current && (current.open.ext !== "md" || current.sourceView)
+    ? `${id}/editor/body/${current.key}` : undefined;
 }
 
 export function editBuffer(current: FileBuffer, value: string, revision?: number): void {

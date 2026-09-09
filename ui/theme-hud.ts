@@ -28,6 +28,10 @@ export const hudRules = [
     // pixel of it. Three paints the two a player sees.
     boxShadow: [{ x: 0, y: 0, blur: 0, spread: 3, color: "#504632", inset: true }],
   }),
+  rule("slot-active-ring", {
+    position: "absolute", left: 0, top: 0, width: "100%", height: "100%",
+    pointerEvents: "none", zIndex: 5, border: edge(amber), backgroundColor: "transparent",
+  }),
   rule("hand-actions", { gap: 3, height: 20, pointerEvents: "none" }),
   rule("hand-action", {
     position: "relative",

@@ -9,7 +9,8 @@ t.world([==[(
     },
     rows: ["#######", "#.....#", "#Gao..#", "#######"],
     spawns: [(1, 1)],
-    items: [(1, 1, "laptop"), (1, 1, "airlock_program_disk")],
+    items: [(1, 1, "laptop"), (1, 1, "airlock_program_disk"),
+        (1, 1, "floppy_disk")],
     machines: [(2, 1, "transceiver", { "encryption_1": "encryption_key.medical" })],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
 )]==], 0)
@@ -90,18 +91,50 @@ t.run_ticks(2)
 assert(t.hands(p).held == "laptop", "the powered laptop is actively held")
 
 local ui = contact()
-assert(ui.contact_store == "host", "contact begins with laptop-local source storage")
-copy(file(ui, "media", "local_program"), store(ui, "host"), "target_program")
+assert(#ui.stores == 1 and store(ui, "media") == nil,
+    "contact never mounts the laptop's internal store or inserted disk as B:")
+assert(ui.script.data.wallpaper == desktop.script.data.wallpaper,
+    "the target workspace uses the held laptop's wallpaper")
+for _, row in ipairs(t.actions(p)) do
+    if row.target.Entity == target then
+        local connects = false
+        for _, action in ipairs(row.actions) do
+            if action.id == "connect" then connects = true end
+        end
+        assert(connects, "the configured target offers a laptop connection")
+    end
+end
+
+-- Carry a separate blank disk to the target without removing the laptop disk.
+t.ui_close(p, "programming")
+t.run_ticks(2)
+t.swap_hands(p)
+t.run_ticks(2)
+t.click(p, 1, 1, t.target_at(1, 1, "floppy_disk"))
+t.run_ticks(2)
+t.click(p, 2, 1, target)
+t.run_ticks(2)
+t.swap_hands(p)
+t.run_ticks(2)
+ui = contact()
+assert(#ui.stores == 2 and store(ui, "media"), "B: is the target's inserted disk")
+assert(file(ui, "media", "airlock") == nil and file(ui, "media", "local_program") == nil,
+    "neither laptop store leaks into the target disk")
+t.run_ticks(10)
+act("text", '{"field":"file_create","option":"media:disl:' .. store(ui, "media").binding
+    .. '","text":"disk_program"}')
+local disk_file = workspace().open
+act("text", '{"field":"file_save","option":"' .. address(disk_file)
+    .. '","text":"return { pass = true }","revision":0}')
 ui = workspace()
-local target_file = file(ui, "host", "target_program")
-assert(target_file, "copy puts the program onto the target host")
+copy(file(ui, "media", "disk_program"), store(ui, "host"), "target_program")
+ui = workspace()
+local target_file = assert(file(ui, "host", "target_program"), "copy places a program on target A:")
 act("toggle", '{"field":"file_open","option":"' .. address(target_file) .. '"}')
-ui = workspace()
-assert(ui.open.body == "return { pass = true }", "the copied bytes arrive whole")
+assert(workspace().open.body == "return { pass = true }", "the copied bytes arrive whole")
 act("toggle", '{"field":"socket_load","option":"carry:' .. tostring(target_file.uid)
     .. ':' .. store(ui, "host").binding .. '"}')
 assert(workspace().sockets[1].uid == target_file.uid, "target socket binds its host copy")
-
 t.run_ticks(10)
 act("text", '{"field":"file_save","option":"' .. address(target_file)
     .. '","text":"return { pass = false }","revision":0}')
@@ -111,22 +144,15 @@ act("text", '{"field":"file_save","option":"' .. address(target_file)
     .. '","text":"return {}","revision":0}')
 assert(workspace().open.body == "return { pass = false }", "stale revision cannot overwrite source")
 ui = workspace()
-copy(target_file, store(ui, "media"), "local_return")
-assert(file(workspace(), "media", "local_return"), "target copies back to the laptop host")
-
-ui = workspace()
-local stale_source = file(ui, "media", "local_program")
-local target_store = store(ui, "host")
-act("toggle", '{"field":"contact_store","option":"media"}')
-ui = workspace()
-assert(ui.contact_store == "media" and #ui.stores == 2, "the inserted disk is selectable")
+copy(target_file, store(ui, "media"), "disk_return")
+assert(file(workspace(), "media", "disk_return"), "the target copies back to its disk")
+local stale_source = file(workspace(), "media", "disk_program")
+local target_store = store(workspace(), "host")
+act("toggle", '{"field":"media_eject","option":"' .. store(workspace(), "media").binding .. '"}')
+assert(store(workspace(), "media") == nil, "eject removes the target disk from the workspace")
 local copied = #t.ledger_rows("file_copied")
 copy(stale_source, target_store, "stale_copy")
-assert(#t.ledger_rows("file_copied") == copied, "source-switch rejects the old laptop binding")
-copy(target_file, store(workspace(), "media"), "disk_return")
-ui = workspace()
-copy(file(ui, "media", "disk_return"), store(ui, "host"), "disk_program")
-assert(file(workspace(), "host", "disk_program"), "the inserted disk copies into the target")
+assert(#t.ledger_rows("file_copied") == copied, "an ejected disk cannot supply a stale copy")
 act("toggle", '{"field":"socket_unload","option":"carry:' .. store(workspace(), "host").binding .. '"}')
 assert(workspace().sockets[1].state.id == "sockets.state.unbound", "contact unloads the target socket")
 

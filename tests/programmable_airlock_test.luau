@@ -39,10 +39,10 @@ assert(joined == 5, "two doors, two buttons and one vent join the same host")
 t.ui_close(operator)
 t.run_ticks(2)
 
--- Fit the disk, boot the laptop on the ground, then hold it against the host.
+-- Fit the source disk in the host, boot the laptop, then hold it against the host.
 t.click(operator, 3, 3, t.target_at(3, 3, "airlock_program_disk"))
 t.run_ticks(2)
-t.click(operator, 3, 3, laptop)
+t.click(operator, 4, 3, host)
 t.run_ticks(2)
 for _ = 1, 3 do t.use_item(operator, laptop, "secondary"); t.run_ticks(2) end
 t.ui_close(operator)
@@ -70,7 +70,6 @@ end
 local function address(row)
     return row.store .. ":" .. tostring(row.uid) .. ":" .. row.binding
 end
-act("toggle", '{"field":"contact_store","option":"media"}')
 local ui = workspace()
 local original = file(ui, "media")
 assert(original and original.fixed, "the distribution disk contains a fixed original")
@@ -98,7 +97,12 @@ local function press_inside()
     local px, py = t.pos(operator)
     assert(px == 3 and py == 3 and t.hands(operator).held == nil,
         "operator ready " .. px .. "," .. py .. " held=" .. tostring(t.hands(operator).held))
-    assert(t.target_at(2, 3, "airlock_button"), "the inside button is targetable")
+    local button = assert(t.target_at(2, 3, "airlock_button"), "the inside button is targetable")
+    local offered = false
+    for _, action in ipairs(t.action_hints(operator, { Entity = button })) do
+        if action.id == "press" and action.gesture == "primary" then offered = true end
+    end
+    assert(offered, "the button offers its left-click press action")
     t.click(operator, 2, 3, t.target_at(2, 3, "airlock_button"))
     t.run_ticks(2)
 end

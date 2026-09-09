@@ -7,7 +7,7 @@ t.world([==[(
     items: [(2, 2, "wrench"), (2, 2, "wirecutters"), (2, 2, "toolbox"),
         (2, 2, "laptop"), (2, 2, "floppy_disk"), (2, 2, "beaker.water"), (1, 2, "beaker"),
         (3, 1, "pipe"), (3, 3, "pipe"), (2, 3, "metal")],
-    structures: [(2, 1, "access_point")],
+    structures: [(2, 1, "airlock_button")],
     pipes: [(3, 2, 31), (3, 3, 8)],
     cables: [(3, 2, 7)],
 )]==], 0)
@@ -105,7 +105,7 @@ local function laptop_gesture_ids(label)
 end
 local self_id, secondary_id = laptop_gesture_ids("lunatic/tfs:ui.affordance.open_lid")
 local network = assert(t.target_at(2, 1))
-assert(entity_action(network, "connect") == nil, "a closed laptop does not offer typing")
+assert(entity_action(network, "connect") == nil, "a closed laptop does not offer a connection")
 t.use_self(actor)
 t.run_ticks(2)
 local off_self, off_secondary = laptop_gesture_ids("lunatic/tfs:ui.affordance.power_on")
@@ -127,9 +127,9 @@ local typing = false
 for _, sound in ipairs(t.sounds(actor)) do
     if string.sub(sound, 1, 16) == "keyboard_clicks_" then typing = true end
 end
-assert(network_action, "powering on offers typing on a networked target")
-assert(typing, "the advertised network action types on the receiver")
-assert(entity_action(metal, "connect") == nil, "typing is absent on a nonnetworked item")
+assert(network_action == nil, "a network endpoint without a programming interface offers no connection")
+assert(not typing, "an unsupported endpoint produces no dummy typing")
+assert(entity_action(metal, "connect") == nil, "a connection is absent on a nonnetworked item")
 t.drop(actor)
 t.run_ticks(2)
 local laptop = assert(t.target_at(2, 2, "laptop"))

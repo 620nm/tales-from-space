@@ -5,7 +5,7 @@ import { documentAction } from "./document-action";
 import { column, entry, press, row, some, text } from "./view";
 import * as S from "./strings";
 import { fileReader } from "./files-reader";
-import { editorBuffer, fileOption, editBuffer, saveBuffer, discardBuffer, guard, discardGuard, cancelGuard } from "./files-buffer";
+import { editorBuffer, fileOption, editBuffer, saveBuffer, guard, discardGuard, cancelGuard } from "./files-buffer";
 const SOURCE_EXTS = new Set(["disl"]);
 function editorOf(raw: ModuleState["editor"]): EditorState | undefined {
   if (!raw || typeof raw !== "object") return undefined;
@@ -47,19 +47,22 @@ export function editorPane(
   const bodyId = `${id}/editor/body/${current.key}`;
   const conflict = current.revision !== open.revision;
   const editor = editorOf(state.editor);
+  const readOnly = editor?.read_only === true;
+  const markdown = open.ext === "md";
+  const showSource = !markdown || current.sourceView === true;
+  const submitBody = showSource ? bodyId : undefined;
   const reader = fileReader(`${id}/reader/content`, open.ext, current.text);
   return { ...column(
     `${id}/editor`,
     some(
-      text(
-        `${id}/editor/title`,
-        S.fileTitle(open.name, open.ext, current.dirty),
-        ["mstate"],
-      ),
+      row(`${id}/editor/heading`, some(
+        text(`${id}/editor/title`, S.fileTitle(open.name, open.ext, current.dirty), ["mstate"]),
+        readOnly ? text(`${id}/editor/read-only`, S.tfs("ui.files.read_only"), ["workspace-read-only"]) : null,
+      ), { style: { alignItems: "center", gap: 8, flexWrap: "wrap" } }),
       conflict
         ? Notice(`${id}/editor/conflict`, S.CONFLICT, { tone: "off" })
         : null,
-      row(
+      !readOnly ? row(
         `${id}/editor/rename`,
         [
           entry(`${id}/editor/name`, open.name, () => undefined, {
@@ -78,13 +81,24 @@ export function editorPane(
           ),
         ],
         { style: { gap: 4, alignItems: "center" } },
-      ),
-      reader
+      ) : null,
+      markdown ? row(`${id}/editor/mode`, [
+        press(`${id}/editor/view`, S.tfs("ui.files.view"), (e) => {
+          if (e.value !== undefined) editBuffer(current, e.value, e.revision);
+          current.sourceView = false;
+          return undefined;
+        }, { submit: submitBody, variant: !showSource ? "selected" : "ghost" }),
+        press(`${id}/editor/edit`, S.tfs(readOnly ? "ui.files.source" : "ui.files.edit"), () => {
+          current.sourceView = true;
+          return undefined;
+        }, { variant: showSource ? "selected" : "ghost" }),
+      ]) : null,
+      reader && (!markdown || !showSource)
         ? column(`${id}/reader`, reader, { cls: ["workspace-reader"] })
         : null,
       // Typing checks as it goes: a debounced change ships the whole
       // draft, and the engine's markers answer on the next push.
-      entry(
+      showSource ? entry(
         bodyId,
         current.text,
         (value, e) => {
@@ -108,8 +122,8 @@ export function editorPane(
               }
             : {}),
         },
-      ),
-      editor
+      ) : null,
+      editor && showSource
         ? row(
             `${id}/editor/status`,
             [
@@ -131,32 +145,32 @@ export function editorPane(
             { style: { gap: 8, alignItems: "center", flexWrap: "wrap" } },
           )
         : null,
-      current.guard ? column(`${id}/editor/guard`, [
+      current.guard && !readOnly ? column(`${id}/editor/guard`, [
         text(`${id}/editor/guard/message`, S.tfs("ui.files.dirty_guard")),
         row(`${id}/editor/guard/actions`, [
           press(`${id}/editor/guard/save`, S.SAVE, (e) => saveBuffer(current, e, true),
-            { submit: bodyId, disabled: !active || conflict || editor?.read_only }),
+            { submit: submitBody, disabled: !active || conflict || editor?.read_only }),
           press(`${id}/editor/guard/discard`, S.tfs("ui.files.discard"), () => discardGuard(current)),
           press(`${id}/editor/guard/cancel`, S.tfs("ui.files.cancel"), () => { cancelGuard(current); return undefined; }),
         ]),
       ]) : null,
-      row(
+      !readOnly ? row(
         `${id}/editor/buttons`,
         [
           press(
             `${id}/editor/save`,
             S.SAVE,
             (e) => saveBuffer(current, e),
-            { submit: bodyId, variant: "primary", disabled: !active || conflict || editor?.read_only },
+            { submit: submitBody, variant: "primary", disabled: !active || conflict || editor?.read_only },
           ),
           press(`${id}/editor/revert`, S.REVERT, guard(id, documentAction(doc, "toggle", {
             field: "file_revert", option,
-          })), { submit: bodyId, disabled: !active }),
+          })), { submit: submitBody, disabled: !active }),
         ],
         { style: { gap: 4 } },
-      ),
+      ) : null,
     ),
     { cls: ["workspace-editor"] },
-  ), primarySave: `${id}/editor/save` };
+  ), ...(!readOnly ? { primarySave: `${id}/editor/save` } : {}) };
 }
 

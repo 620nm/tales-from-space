@@ -57,7 +57,7 @@ local content = {
 }
 
 content.actions = {
-    action_rules.primary("connect", action_rules.fact("target.has_network", true),
+    action_rules.primary("connect", action_rules.fact("target.has_programming_interface", true),
         action_rules.fact("held.state", "on")),
     {
         id = "insert_disk", gesture = "primary", route = "receiver", uses_held = true,
@@ -195,11 +195,10 @@ if sim ~= nil then
         end
         ui.open({
             viewer = ev.actor, owner = target, contact = self, contact_state = "on",
-            channel = "programming", view = { kind = "programming" }, actions = {},
+            channel = "programming",
+            view = { kind = "programming", wallpaper = self.vars.laptop_wallpaper }, actions = {},
             include_native = true,
         })
-        local clip = 1 + math.floor(sim.random("keyboard") * 7)
-        sound("keyboard_clicks_" .. tostring(clip), ev.actor.tile)
         return true
     end)
 
