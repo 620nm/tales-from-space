@@ -16,6 +16,16 @@ bounded timeouts. A button supplies `engineering`, a verified access check
 on the clicking actor. Every admitted press reaches the guest's permission
 policy, including repeats and interruptions.
 
+## Who a door answers to
+
+A door a controller drives answers to the guest, not to its own access tag.
+`content/fixtures/airlock.luau` grants every actor-less `door.permission`
+request, so a program opens an `airlock.engineering` leaf the presser could
+not open by hand. The gate is reaching the host and loading a program: the
+panel's lock and the host's own access decide who may install policy, and
+the installed policy decides the rest. `door.permission` carries no
+requesting host, so the grant cannot be narrowed to the joined parent.
+
 ## Outputs
 
 Return `{ commands, status?, timer?, replace?, accepted? }`. Each command
