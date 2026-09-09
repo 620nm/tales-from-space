@@ -109,7 +109,7 @@
         "   #________________________________#   ",
         "   #####_##########_###########_#####   ",
         "   ###________#..........#________###   ",
-        "   #___________..........#__________#   ",
+        "   #__________#..........___________#   ",
         "   ____________..........____________   ",
         "   #__________#..........#__________#   ",
         "   ###________#..........#________###   ",
@@ -587,16 +587,19 @@
         // per axis, because a footprint does not rotate and the two
         // orientations are drawn separately: the Cargo Bay's threshold
         // is `airlock_wide_ew` on (30, 10) and the tile east of it, and
-        // the Commons' west entrance is `airlock_wide_ns` on (14, 15)
+        // the Commons' east entrance is `airlock_wide_ns` on (25, 15)
         // and the tile north of it. Both hulls were opened by one tile
         // to take them -- a crate does not fit through a doorway a man
         // fits through, and the room the whole crew walks into should
-        // not be entered single file. The Commons' east door stays one
-        // leaf, glazed (`airlock.interior_glass`), so the room can be
-        // seen into from the concourse either way round.
+        // not be entered single file. The EAST wall took the wide one
+        // because the west wall is carrying the room's APC and its
+        // placard and has no tile to spare. The third is the Commons'
+        // north entrance off the concourse (`airlock.interior_glass`),
+        // one leaf with a window in it, so the room the crew sits down
+        // in can be seen into on the way past.
         (8, 10, "airlock"), (19, 10, "airlock"), (30, 10, "airlock_wide_ew"),
-        (19, 12, "airlock"), (3, 15, "airlock"), (5, 15, "airlock"),
-        (14, 15, "airlock_wide_ns"), (25, 15, "airlock.interior_glass"),
+        (19, 12, "airlock.interior_glass"), (3, 15, "airlock"),
+        (5, 15, "airlock"), (14, 15, "airlock"), (25, 15, "airlock_wide_ns"),
         (34, 15, "airlock"),
         (36, 15, "airlock"), (19, 19, "airlock"), (8, 21, "airlock"),
         (19, 21, "airlock"), (31, 21, "airlock"), (20, 30, "airlock"),
