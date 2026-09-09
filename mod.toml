@@ -18,7 +18,6 @@ native_edges = [
     "item_slot.command",
     "inventory.presentation",
     "lifecycle.entity_initialize",
-    "lifecycle.entity_despawn",
     "attack.swing",
     "entity.pull",
     "throw.land",
