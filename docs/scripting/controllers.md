@@ -20,8 +20,9 @@ policy, including repeats and interruptions.
 
 A door a controller drives answers to the guest, not to its own access tag.
 `content/fixtures/airlock.luau` grants every actor-less `door.permission`
-request, so a program opens an `airlock.engineering` leaf the presser could
-not open by hand. The gate is reaching the host and loading a program: the
+request and hands a request that has an actor the engine's own answer back
+untouched, so a program opens an `airlock.engineering` leaf the presser
+could not open by hand, and the hand stays refused. The gate is reaching the host and loading a program: the
 panel's lock and the host's own access decide who may install policy, and
 the installed policy decides the rest. `door.permission` carries no
 requesting host, so the grant cannot be narrowed to the joined parent.
