@@ -109,6 +109,7 @@ export interface ModuleState {
   matter?: MatterBlock[];
   stores?: StoreRow[];
   media_slot?: Label | null;
+  contact_store?: "host" | "media" | null;
   files?: FileRow[];
   /** Creatable extensions per WRITABLE side (`host`/`media`); a create
    *  names where it lands as `<side>:<ext>` (engine files module). */
@@ -160,6 +161,7 @@ export interface FileRow {
   ext: string;
   size: number;
   open?: boolean;
+  fixed?: boolean;
 }
 export interface OpenFile {
   binding: string;

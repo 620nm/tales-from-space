@@ -17,6 +17,8 @@ local sounds = {
     "paper_insert",
     "card_slide",
     "terminal_insert_disc",
+    "airlock_bolts_up",
+    "airlock_bolts_down",
     "card_flip",
     "card_shuffle",
     "click",

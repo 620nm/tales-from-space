@@ -45,7 +45,7 @@ return {
     -- bound program on. Program text is all a tower understands: it
     -- has no use for prose.
     files = { capacity = 65536, files = 16 },
-    drive = { reads = { "disl" } },
+    drive = { reads = { "disl" }, accepts = { "floppy" } },
     sockets = { "carry" },
     dense = true,
     corded = true,

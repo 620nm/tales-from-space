@@ -27,7 +27,7 @@
 -- compartment (Atmospherics, thirteen by seven) from its long wall, and
 -- an alarm could not adopt the plant next door. At seventeen it is a
 -- ceiling and nothing more, and WHICH machines an alarm holds is
--- decided by the two things below it -- `accepts = { "atmos" }`, which
+-- decided by the two things below it -- `accepts = { "atmos", "control_button" }`, which
 -- refuses everything that is not plumbing, and the join gesture itself,
 -- which an engineer makes one machine at a time. A room's alarm is the
 -- one somebody joined its vents to, not the one that happens to be
@@ -92,7 +92,10 @@ return {
     -- what it could take. `reach` is the atmospherics half: one section
     -- per machine joined to it, drawn from that machine's own module.
     -- `parts` is the socket the card sits in.
-    ui = { modules = { "link", "reach", "parts" } },
+    ui = { modules = { "link", "reach", "parts", "files", "editor" } },
+    files = { capacity = 65536, files = 16 },
+    drive = { reads = { "disl" }, accepts = { "floppy" } },
+    sockets = { "controller" },
     -- WHAT IT LOOKS LIKE IS WHAT IT IS DOING. tg draws this box shut
     -- (`alarmp`) with a teal lamp laid over it, and draws NO lamp at
     -- all while it is unpowered, broken or shorted
@@ -132,7 +135,7 @@ return {
         radius = 17,
         socket = "network",
         locked = true,
-        accepts = { "atmos" },
+        accepts = { "atmos", "control_button" },
     },
     examine = {
         flavor = "A flat panel with a lamp on it, wired into the room's "

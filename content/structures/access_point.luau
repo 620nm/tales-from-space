@@ -38,7 +38,10 @@ return {
     -- mechanism is what it SAYS about itself, and that lives in
     -- fixtures/access_point.luau.
     script = "access_point",
-    ui = { modules = { "link", "parts" } },
+    ui = { modules = { "link", "parts", "files", "editor" } },
+    files = { capacity = 65536, files = 16 },
+    drive = { reads = { "disl" }, accepts = { "floppy" } },
+    sockets = { "controller" },
     -- WHAT IT LOOKS LIKE IS WHAT IT IS DOING, and tg has the art for
     -- it: this console drops to `[base_icon_state]_off` on NOPOWER
     -- (access_controller.dm:224-227) and otherwise draws standby

@@ -34,7 +34,7 @@ export function drivePane(id: string, doc: DocumentIdentity, state: Partial<Modu
             });
           }, { submitValues: { stem }, variant: "ghost", disabled: !active }) : null,
           press(`${item}/delete`, S.DELETE, guard(id, documentAction(doc, "toggle", { field: "file_delete", option }), side),
-            { submit: bodyId(id), variant: "ghost", disabled: !active }),
+            { submit: bodyId(id), variant: "ghost", disabled: !active || file.fixed }),
         ), { style: { flexWrap: "wrap", gap: 3 } }),
       ], { cls: ["workspace-file"] });
     }), { cls: ["workspace-drive-list"] }),
@@ -48,7 +48,7 @@ export function drivePane(id: string, doc: DocumentIdentity, state: Partial<Modu
         const handler = guard(id, documentAction(doc, "text", { field: "file_create", option: `${side}:${ext}:${store.binding}`, text: requested }));
         return typeof handler === "function" ? handler(event) : handler;
       }, { submit: bodyId(id), submitValues: { stem }, disabled: !active })), { style: { gap: 4, flexWrap: "wrap" } }),
-    ...(side === "media" ? [press(`${key}/eject`, S.tfs("ui.workspace.eject"),
+    ...(side === "media" && !state.contact_store ? [press(`${key}/eject`, S.tfs("ui.workspace.eject"),
       guard(id, documentAction(doc, "toggle", { field: "media_eject", option: store.binding }), "media"),
       { submit: bodyId(id), disabled: !active })] : []),
   ], { cls: ["workspace-frame", "workspace-drive"] });

@@ -50,7 +50,7 @@ local content = {
         },
     },
     acts_on_items = true,
-    drive = {},
+    drive = { accepts = { "floppy" } },
     files = { capacity = 65536, files = 16 },
     ui = { modules = { "files", "editor" } },
     card_slot = { equipment = "id" },
@@ -193,6 +193,11 @@ if sim ~= nil then
             or target == nil or sim.link_state(target) == nil then
             return { replaced = false }
         end
+        ui.open({
+            viewer = ev.actor, owner = target, contact = self, contact_state = "on",
+            channel = "programming", view = { kind = "programming" }, actions = {},
+            include_native = true,
+        })
         local clip = 1 + math.floor(sim.random("keyboard") * 7)
         sound("keyboard_clicks_" .. tostring(clip), ev.actor.tile)
         return true

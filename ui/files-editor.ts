@@ -74,7 +74,7 @@ export function editorPane(
                 option,
                 text: e.value ?? open.name,
               }),
-            { submit: `${id}/editor/name`, disabled: !active },
+            { submit: `${id}/editor/name`, disabled: !active || editor?.read_only },
           ),
         ],
         { style: { gap: 4, alignItems: "center" } },
