@@ -109,7 +109,7 @@
         "   #________________________________#   ",
         "   #####_##########_###########_#####   ",
         "   ###________#..........#________###   ",
-        "   #__________#..........#__________#   ",
+        "   #___________..........#__________#   ",
         "   ____________..........____________   ",
         "   #__________#..........#__________#   ",
         "   ###________#..........#________###   ",
@@ -583,17 +583,20 @@
         // (structures/airlock.luau), so the station can paint
         // Engineering's doors without a second prototype existing.
         //
-        // TWO OF THEM ARE NOT ORDINARY. The Cargo Bay's threshold is a
-        // two-tile leaf (`airlock_wide`, standing on (30, 10) and the
-        // tile east of it) because a crate does not fit through a
-        // doorway a man fits through; the hull was widened by one tile
-        // to take it. And the Commons' own two doors are glazed
-        // (`airlock.interior_glass`), so the one room the crew sits
-        // down in is a room you can see into from the concourse rather
-        // than a shut box in the middle of the station.
-        (8, 10, "airlock"), (19, 10, "airlock"), (30, 10, "airlock_wide"),
+        // THREE OF THEM ARE NOT ORDINARY. Two are two-tile leaves, one
+        // per axis, because a footprint does not rotate and the two
+        // orientations are drawn separately: the Cargo Bay's threshold
+        // is `airlock_wide_ew` on (30, 10) and the tile east of it, and
+        // the Commons' west entrance is `airlock_wide_ns` on (14, 15)
+        // and the tile north of it. Both hulls were opened by one tile
+        // to take them -- a crate does not fit through a doorway a man
+        // fits through, and the room the whole crew walks into should
+        // not be entered single file. The Commons' east door stays one
+        // leaf, glazed (`airlock.interior_glass`), so the room can be
+        // seen into from the concourse either way round.
+        (8, 10, "airlock"), (19, 10, "airlock"), (30, 10, "airlock_wide_ew"),
         (19, 12, "airlock"), (3, 15, "airlock"), (5, 15, "airlock"),
-        (14, 15, "airlock.interior_glass"), (25, 15, "airlock.interior_glass"),
+        (14, 15, "airlock_wide_ns"), (25, 15, "airlock.interior_glass"),
         (34, 15, "airlock"),
         (36, 15, "airlock"), (19, 19, "airlock"), (8, 21, "airlock"),
         (19, 21, "airlock"), (31, 21, "airlock"), (20, 30, "airlock"),
