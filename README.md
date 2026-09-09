@@ -15,10 +15,11 @@ This standalone repository is loaded by the lunatic engine through
 | `ui/`           | Restricted TypeScript/TSX gameplay presentation and semantic bindings, delivered separately from client wasm. |
 | `editor/`       | Versioned pack/mode editor palettes, schemas, declarative previews and composed native tools. |
 | `maps/`          | Station maps as RON (`chillstation.ron` is the default; `outpost.ron` is the test/demo map). |
+| `reference/`     | ID catalog and raw preset file bodies; guest programs in `scripts/` are standalone Luau sources, separate from trusted content. |
 | `assets/`        | Sprite, sound and whole-picture source manifests plus the tracked `tg-revision` consumed and verified by `cargo run -p xtask -- bake-atlas`. |
 | `tests/`         | Luau specs (`*_test.luau`) run by the engine's spec runner, with focused RON fixtures embedded inline where needed. |
 | `locale/`        | One flat catalog per language, `<tag>.json`, holding every word this pack writes: its interface, its key bindings, a rendering for every settings-module label id, its own message keys, and its wording for the engine keys it overrides (`docs/WORDS.md`). |
-| `docs/`          | This pack's own contracts: `WORDS.md`, the catalog grammar. Every other `docs/…` path cited here is the ENGINE's, in the lunatic checkout. |
+| `docs/`          | Pack controls, authoring guides and terminology; `scripting/` covers guest controllers and reference files. Other `docs/…` citations below name engine contracts unless linked to a pack file. |
 | `tools/`         | `keyed-messages.mjs` enforces catalog-backed messages; [`ui-concepts/`](tools/ui-concepts/README.md) exports a standalone floating HUD study. |
 
 ## Running
@@ -44,7 +45,9 @@ add `--mode free_build` or use `"$LUNATIC_PACK/maps/outpost.ron"` as the map.
 
 ## Authoring
 
-Programmable airlock assembly and guest policy: [docs/PROGRAMMABLE-AIRLOCK.md](docs/PROGRAMMABLE-AIRLOCK.md).
+Guest authoring: [reference files and preset disks](docs/scripting/reference-files.md),
+[device controllers](docs/scripting/controllers.md), and
+[programmable airlocks](docs/scripting/airlocks.md).
 
 The portable computer's controls and desktop are documented in
 [`docs/LAPTOP.md`](docs/LAPTOP.md).

@@ -6,6 +6,9 @@ return {
     inhand_sprite = { "held_id_l", "held_id_r" },
     hint_tags = { "floppy" },
     files = { capacity = 737280, files = 112,
-        seed = { { name = "airlock", ext = "disl", body = airlock_program.source } },
+        seed = {
+            { reference = "airlock_controller" },
+            { reference = "airlock_instructions" },
+        },
     },
 }
