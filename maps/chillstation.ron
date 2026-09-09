@@ -105,7 +105,7 @@
         "   #_________#___________#__________#   ",
         "   #_________#___________#__________#   ",
         "   #_________#___________#__________#   ",
-        "   #####_##########_##########_######   ",
+        "   #####_##########_##########__#####   ",
         "   #________________________________#   ",
         "   #####_##########_###########_#####   ",
         "   ###________#..........#________###   ",
@@ -582,9 +582,19 @@
         // and who may walk through are per placement now
         // (structures/airlock.luau), so the station can paint
         // Engineering's doors without a second prototype existing.
-        (8, 10, "airlock"), (19, 10, "airlock"), (30, 10, "airlock"),
+        //
+        // TWO OF THEM ARE NOT ORDINARY. The Cargo Bay's threshold is a
+        // two-tile leaf (`airlock_wide`, standing on (30, 10) and the
+        // tile east of it) because a crate does not fit through a
+        // doorway a man fits through; the hull was widened by one tile
+        // to take it. And the Commons' own two doors are glazed
+        // (`airlock.interior_glass`), so the one room the crew sits
+        // down in is a room you can see into from the concourse rather
+        // than a shut box in the middle of the station.
+        (8, 10, "airlock"), (19, 10, "airlock"), (30, 10, "airlock_wide"),
         (19, 12, "airlock"), (3, 15, "airlock"), (5, 15, "airlock"),
-        (14, 15, "airlock"), (25, 15, "airlock"), (34, 15, "airlock"),
+        (14, 15, "airlock.interior_glass"), (25, 15, "airlock.interior_glass"),
+        (34, 15, "airlock"),
         (36, 15, "airlock"), (19, 19, "airlock"), (8, 21, "airlock"),
         (19, 21, "airlock"), (31, 21, "airlock"), (20, 30, "airlock"),
         (13, 31, "airlock"), (16, 32, "airlock"), (20, 32, "airlock"),

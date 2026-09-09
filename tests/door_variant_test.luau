@@ -36,6 +36,8 @@ t.world([==[(
         (3, 1, "airlock.engineering_glass"),
         (3, 2, "airlock.engineering_glass", { "glass": false }),
         (5, 2, "airlock"),
+        (4, 1, "airlock.interior_glass"),
+        (4, 2, "airlock", { "paint": "interior" }),
     ],
     cables: [
         (1, 1, 1), (2, 1, 1), (3, 1, 1), (4, 1, 1), (5, 1, 1),
@@ -70,3 +72,25 @@ assert(
 local plain = t.structure_at(5, 2)
 assert(plain.id == "airlock", "the base is still the base")
 assert(plain.sprite == "door", "in the station's own livery")
+
+-- The interior leaf is a third LIVERY on the same file and nothing
+-- else -- tg's /obj/machinery/door/airlock/public (airlock.dm:2274-
+-- 2283), a whole sheet with its panes drawn the height of the door.
+-- The glazed variant reads that sheet's own overlays, which is the
+-- point of a livery carrying its two sets rather than the station's
+-- glass being laid over anybody's frame.
+local interior = t.structure_at(4, 1)
+assert(interior.id == "airlock.interior_glass", "the interior variant")
+assert(
+    interior.sprite == "door_int_glass",
+    "arrives windowed, out of its own sheet: " .. tostring(interior.sprite)
+)
+
+-- ...and the same livery said on a placement, with no window in it,
+-- is the solid interior leaf. One livery, two sets, one bit chooses.
+local interior_solid = t.structure_at(4, 2)
+assert(interior_solid.id == "airlock", "the base with a livery written on it")
+assert(
+    interior_solid.sprite == "door_int",
+    "is the same door solid: " .. tostring(interior_solid.sprite)
+)
