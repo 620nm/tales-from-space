@@ -1,5 +1,5 @@
--- The two-tile airlock: one leaf, two tiles, and a window in it. Both
--- ways round, because a footprint does not rotate.
+-- The two-tile airlock: one leaf, two tiles, a window in it, and the
+-- two ways it can stand.
 --
 -- tg's /obj/machinery/door/airlock/multi_tile
 -- (code/game/machinery/doors/airlock.dm:2581-2607) is one door object
@@ -7,10 +7,13 @@
 -- leaf facing north or south, north of one facing east or west
 -- (`set_filler` and `n(dir)`, code/game/machinery/doors/door.dm:198-208)
 -- -- so every question about the second tile is a question about the
--- first. Here that is a footprint per orientation, and this spec asks
--- the second tile every question a player could: what stands there, is
--- it shut, may I walk through it, will it close on me, and CAN I SEE
--- THROUGH IT.
+-- first. Here that is one entry with a `footprint` and two `facings`,
+-- and this spec asks the second tile every question a player could:
+-- what stands there, is it shut, may I walk through it, will it close
+-- on me, and CAN I SEE THROUGH IT.
+--
+-- It asks all of them TWICE, once per facing, because a turn moves the
+-- cells and the pictures both and either could be got wrong on its own.
 --
 -- The last one is why a plain leaf stands beside the wide one in the
 -- first map. A glazed door that sees through is only worth proving
@@ -54,7 +57,7 @@ t.world([==[(
     ],
     spawns: [(4, 5)],
     structures: [
-        (3, 3, "airlock_wide_ew"),
+        (3, 3, "airlock_wide"),
         (7, 3, "airlock"),
         (4, 1, "locker"),
         (7, 1, "locker"),
@@ -75,15 +78,15 @@ t.run_ticks(4)
 -- ---------------------------------------------------------------
 for _, at in ipairs({ { 3, 3 }, { 4, 3 } }) do
     local it = t.structure_at(at[1], at[2])
-    assert(it and it.id == "airlock_wide_ew",
+    assert(it and it.id == "airlock_wide",
         ("(%d, %d) is the wide leaf, got %s"):format(at[1], at[2], tostring(it and it.id)))
 end
 assert(t.structure_at(4, 4) == nil, "the tile south of it is bare floor")
 
 -- Half a doorway per tile, and the east half names the west half as
 -- its body: one door drawn across two atlas cells, not two doors.
-local body = t.target_at(3, 3, "airlock_wide_ew")
-local east = t.target_at(4, 3, "airlock_wide_ew")
+local body = t.target_at(3, 3, "airlock_wide")
+local east = t.target_at(4, 3, "airlock_wide")
 assert(body and east and body ~= east, "the east tile is a cell with a wire id of its own")
 
 local west_seen = t.seen(p, body)
@@ -146,11 +149,11 @@ assert(not t.door_at(3, 3).open, "and once the doorway is empty it shuts itself"
 assert(not t.door_at(4, 3).open, "both halves of it")
 
 -- ===============================================================
--- NORTH TO SOUTH. The same door in a wall that runs down the map --
--- a second entry, not the first one turned, because a footprint does
--- not rotate and tg draws each direction of the cell separately. The
--- anchor a map names is the SOUTH tile (offsets are map frame, so
--- north is -y).
+-- NORTH TO SOUTH. The SAME entry in a wall that runs down the map,
+-- turned: `dir = "east"` is three clockwise quarters off the south the
+-- footprint was authored in, so the second cell walks from one step
+-- east to one step NORTH (docs/content-schema/facings.md). The anchor a
+-- map names stays the anchor -- here the SOUTH tile of the pair.
 --
 --   y1  # a  .  #  .  .  #
 --   y2  # .  .  N  .  .  #      N = the north half
@@ -176,7 +179,7 @@ t.world([==[(
     ],
     spawns: [(1, 3)],
     structures: [
-        (3, 3, "airlock_wide_ns"),
+        (3, 3, "airlock_wide", { "dir": "east" }),
         (5, 3, "locker"),
     ],
     cables: [
@@ -189,15 +192,16 @@ t.run_ticks(4)
 
 for _, at in ipairs({ { 3, 3 }, { 3, 2 } }) do
     local it = t.structure_at(at[1], at[2])
-    assert(it and it.id == "airlock_wide_ns",
+    assert(it and it.id == "airlock_wide",
         ("(%d, %d) is the upright leaf, got %s"):format(at[1], at[2], tostring(it and it.id)))
 end
 
--- Its own pictures, not the east-west leaf's: tg draws the
--- east-facing door down the left of the cell and the south-facing one
--- across the bottom, and they are two drawings.
-local anchor = t.target_at(3, 3, "airlock_wide_ns")
-local north = t.target_at(3, 2, "airlock_wide_ns")
+-- The turn moves the PICTURES too, and they are not the resting ones
+-- rotated: tg draws the east-facing door down the left of its 64x64
+-- cell and the south-facing one across the bottom, two drawings, and
+-- the entry says which cell wears which per facing.
+local anchor = t.target_at(3, 3, "airlock_wide")
+local north = t.target_at(3, 2, "airlock_wide")
 assert(t.seen(q, anchor).layers[1].sprite == "door_wide_s",
     "the south half wears the south picture, got "
         .. tostring(t.seen(q, anchor).layers[1].sprite))
