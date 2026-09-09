@@ -2,8 +2,13 @@
 return {
     id = "airlock_button",
     name_label = "lunatic/tfs:entity.airlock_button.name",
-    name = "airlock button", sprite = "airlock_button",
+    name = "button", sprite = "airlock_button",
     mount = true, script = "airlock_button",
+    actions = { {
+        id = "press", gesture = "primary", route = "receiver",
+        label = "lunatic/tfs:ui.affordance.press",
+        held = { fact = "held.present", value = "false" },
+    } },
     link = { network_interface = true, role = "endpoint", class = "control_button" },
     appearance = { mounted = {
         north = "airlock_button_n", south = "airlock_button_s",

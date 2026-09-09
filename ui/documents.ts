@@ -16,7 +16,7 @@ import type {
 import { documentAction } from "./document-action";
 import { moduleBody } from "./documents-modules";
 import { shelfRows } from "./documents-shelf";
-import { computerPane, desktopPane, isDesktop } from "./documents-desktop";
+import { computerPane, desktopPane, isDesktop, programmingWallpaper } from "./documents-desktop";
 import { filePanes, guard, retainOpenFileBuffers } from "./files";
 import { bind, column, entry, icon, press, row, some, text } from "./view";
 import * as S from "./strings";
@@ -61,7 +61,7 @@ export function documents(view: GameplayView): UiNode[] {
       const module = state as Partial<ModuleState>;
       if (module.script && isDesktop(module.script.data))
         return desktopPane(id, doc, module.script, active, module);
-      if (module.stores) return computerPane(id, filePanes(id, doc, module, active));
+      if (module.stores) return computerPane(id, filePanes(id, doc, module, active), programmingWallpaper(module.script?.data));
       width = WIDTH[module.presentation ?? "modules"] ?? WIDTH.modules;
       body = [
         ...moduleBody(id, doc, module, active),
@@ -79,7 +79,8 @@ export function documents(view: GameplayView): UiNode[] {
     });
   }).map((node, index) => {
     const doc = open[index]!;
-    return { ...node, ...((doc.state as Partial<ModuleState>)?.open ? { primarySave: `doc/${doc.id}/${doc.generation}/editor/save` } : {}), window: {
+    const module = doc.state as Partial<ModuleState>;
+    return { ...node, ...(module?.open && !module.editor?.read_only ? { primarySave: `doc/${doc.id}/${doc.generation}/editor/save` } : {}), window: {
       ...(node.class?.includes("computer-screen") ? { contentAspectRatio: 16 / 9, minWidth: 740, maximizable: true, titleAsset: doc.owner_sprite ?? (doc.state as Partial<ModuleState>)?.owner_sprite } : {}),
       key: `document/${doc.id}/${doc.generation}`, title: doc.title, source: "status",
       close: `doc/${doc.id}/${doc.generation}/close`,

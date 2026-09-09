@@ -16,9 +16,17 @@ socket. A host commands its direct, joined, reachable members.
 
 The `airlock_program_disk` contains fixed originals of `airlock.disl` and
 `readme.md`, loaded by reference ID from `reference/manifest.ron`. Use
-[laptop contact programming](../LAPTOP.md#contact-programming) to copy the
-program onto the host, then load the host copy into `controller`. Edit that
-copy in the same workspace. An uninstalled host has no fallback program.
+[laptop contact programming](../LAPTOP.md#contact-programming): insert the
+orange disk into the host, hold an open, powered laptop and click the host.
+Copy the program from B (the host's inserted disk) to A (the host's internal
+store), then load the A copy into `controller`. Edit that copy in the same
+workspace. The laptop's own disk is absent from this contact workspace. An
+uninstalled host has no fallback program.
+
+The demonstration also supplies a `disk_box` with eight blank floppy disks.
+Its ordinary storage holds the disks loose, without tgstation's individual
+wrappers. The engineering program disk uses the orange `datadisk12` shell
+from tgstation's floppy sheet, preserving its gray metal shutter.
 
 The RPD and pipe dispenser supply `dual_port_vent_fitting`; wrench it onto
 plating or floor. Its intake is the back port on layer 2 and its effluent
@@ -65,6 +73,11 @@ construction spec assembles and removes its fittings.
 
 Paths are relative to the read-only tgstation checkout:
 
+- `code/game/objects/items/storage/boxes/science_boxes.dm:27` declares the
+  disk box and eight-disk roster; `_boxes.dm:5` supplies its base sprite and
+  `_boxes.dm:38` layers the `disk_kit` illustration.
+- `code/game/objects/items/floppy_disk.dm:6` declares precolored disk skins;
+  `icons/obj/devices/floppy_disks.dmi` also contains the orange `datadisk12`.
 - `code/modules/atmospherics/machinery/components/binary_devices/dp_vent_pump.dm:9`
   assigns intake and output ports; lines 29–38 select vent art and
   lines 48–100 transfer between each main and the room.

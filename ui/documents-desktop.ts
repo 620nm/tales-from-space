@@ -12,6 +12,10 @@ interface DesktopData { kind: "desktop"; wallpaper?: string; powered?: boolean; 
 export function isDesktop(data: Json | undefined): data is Json & DesktopData {
   return data !== null && typeof data === "object" && !Array.isArray(data) && data.kind === "desktop";
 }
+export function programmingWallpaper(data: Json | undefined): string | undefined {
+  if (!data || typeof data !== "object" || Array.isArray(data) || data.kind !== "programming") return undefined;
+  return data.wallpaper === "wallpaper_moonlake" ? "wallpaper_moonlake" : "wallpaper_bliss";
+}
 export function desktopPane(id: string, doc: DocumentIdentity, state: Partial<ScriptState>, active: boolean, native?: Partial<ModuleState>): UiNode {
   const data = state.data as Json & DesktopData;
   const wallpaper = data.wallpaper === "wallpaper_moonlake" ? "wallpaper_moonlake" : "wallpaper_bliss";

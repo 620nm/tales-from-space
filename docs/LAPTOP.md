@@ -71,7 +71,11 @@ sprite and provides maximize/restore and reader-local dismissal.
 
 New offers Markdown (`.md`), Luau source (`.disl`), atmosphere records (`.atmo`)
 and access material (`.pem`). Source uses the trusted editor and native
-diagnostics. Markdown is bounded, inert content. Valid ATMO JSON has a pack
+diagnostics and a scrollable source view. Read-only files carry tags in the
+file list and viewer; their views omit rename, save and revert controls.
+Markdown switches between View and Edit (View and Source for read-only files),
+preserving unsaved text across switches. Markdown is bounded, inert content.
+Valid ATMO JSON has a pack
 reader; malformed or empty records stay editable. PEM files are ordinary
 text: writing one grants no credentials or authentication authority.
 
@@ -82,23 +86,19 @@ closed documents cancel pending continuations.
 
 ## Contact programming
 
-Use an open, powered laptop on a reachable scriptable device to open its
-programming workspace. A: belongs to the target. The source selector chooses
-whether B: shows the laptop's own store or its inserted disk. Copy works in
-both directions; edit target files and load or unload its sockets there.
-Only host files run. Changing the source clears the file selection and stale
-store bindings. Switching hands, dropping or closing the laptop, losing reach,
-or the target losing power or access closes the contact workspace.
+Use an open, powered laptop on a reachable device with a configured programming
+interface to open its workspace over the laptop's wallpaper. A: belongs to the
+target; B: is the disk inserted into that target. The laptop's own storage and
+inserted disk remain in its desktop and are not exposed in the contact workspace.
+Copy works between the target's stores; only files on A: run in its sockets.
+Switching hands, dropping or closing the laptop, losing reach, or the target
+losing power or access closes the contact workspace.
 
 [Preset disks](scripting/reference-files.md) carry reference files ready to
 copy. The [airlock example](scripting/airlocks.md) includes a controller and
-instructions; copy its source to the host before loading the socket.
-
-## Typing
-
-An open, powered laptop used on an exact networked device plays one of the
-seven keyboard recordings, chosen uniformly. Closed or switched-off laptops
-and targets without a network endpoint do not produce typing sounds.
+instructions; insert its disk into the host, copy its source to A:, then load
+the socket. Network connectivity alone offers no laptop connection, and using
+the laptop on a device does not play a dummy typing sound.
 
 ## Reference
 

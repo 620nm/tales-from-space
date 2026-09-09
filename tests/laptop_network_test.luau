@@ -1,11 +1,11 @@
--- Typing is a discrete held-tool interaction with a networked target.
+-- A network endpoint alone does not provide a laptop programming interface.
 t.world([==[(
     name: "laptop network bench",
     legend: { '.': (turf: Floor), '#': (turf: Wall) },
     rows: ["#######", "#.....#", "#.....#", "#.....#", "#######"],
     spawns: [(2, 2)],
     items: [(2, 2, "laptop"), (2, 2, "screwdriver")],
-    structures: [(3, 2, "access_point"), (5, 2, "access_point")],
+    structures: [(3, 2, "airlock_button"), (5, 2, "airlock_button")],
 )]==], 0)
 local p = t.join()
 t.run_ticks(3)
@@ -33,10 +33,7 @@ t.run_ticks(2)
 assert(#keyboards() == 0, "a closed laptop cannot type")
 t.use_self(p)
 t.run_ticks(2)
--- The access point clicked above owns the open window, so the lid reads
--- as the absence of a desktop rather than of any document at all. A
--- powered desktop composes the native workspace, so its own rows sit
--- under `script`; an unpowered one keeps them at the top level.
+-- Powered desktops compose their script view with the native file workspace.
 local function desktop()
     local state = t.ui(p)
     if state == nil then return nil end
@@ -53,7 +50,8 @@ assert(desktop() ~= nil and desktop().powered,
 t.sounds(p)
 t.click(p, 3, 2, near)
 t.run_ticks(2)
-assert(#keyboards() == 1, "an open powered laptop types once on a networked device")
+assert(#keyboards() == 0, "a network endpoint has no dummy typing interaction")
+assert(t.ui(p, "programming") == nil, "a target without a programming interface opens no workspace")
 
 t.click(p, 5, 2, far)
 t.run_ticks(2)

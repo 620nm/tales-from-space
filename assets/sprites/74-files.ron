@@ -16,19 +16,21 @@
     sheets: [
         ("floppy", "obj/devices/floppy_disks.dmi"),
         ("computer", "obj/machines/computer.dmi"),
+        ("box", "obj/storage/box.dmi"),
+        ("medical_l", "mob/inhands/equipment/medical_lefthand.dmi"),
+        ("medical_r", "mob/inhands/equipment/medical_righthand.dmi"),
     ],
     sprites: [
         ("file_disl", Png("art/computer/files/file-disl.png")),
         ("file_md", Png("art/computer/files/file-md.png")),
         ("file_atmo", Png("art/computer/files/file-atmo.png")),
         ("file_pem", Png("art/computer/files/file-pem.png")),
-        // The black sleeve, which is what `/obj/item/disk` itself wears
-        // (code/game/objects/items/floppy_disk.dm:41-45,
-        // `icon_state = "datadisk3"`). tg's other twelve `datadisk*`
-        // cells are colour skins and its `o_*` cells are sticker
-        // overlays a player writes on; neither is a thing this pack
-        // models, so the plain disk is one cell.
+        // tg floppy_disk.dm:6-39 uses precolored skins, leaving metal gray.
+        // The same sheet's datadisk12 is the orange shell.
         ("floppy_disk", Dmi("@floppy", "datadisk3", 0)),
+        ("airlock_program_disk", Dmi("@floppy", "datadisk12", 0)),
+        // tg storage/boxes/_boxes.dm:5-6,38-41; science_boxes.dm:27-34.
+        ("disk_box", DmiLayers([("@box", "box"), ("@box", "disk_kit")], 0)),
 
         // The terminal, composited the way tg draws every console: the
         // frame's own `icon_state`, the keyboard over it, and the
@@ -53,5 +55,10 @@
             ("@computer", "rd_key"),
             ("@computer", "rdcomp"),
         ], 0)),
+    ],
+    // tg storage/boxes/_boxes.dm:7-9 shares the syringe-kit hand art.
+    groups: [
+        (sheet: "medical_l", sprites: [Directions("held_disk_box_l", "syringe_kit")]),
+        (sheet: "medical_r", sprites: [Directions("held_disk_box_r", "syringe_kit")]),
     ],
 )
