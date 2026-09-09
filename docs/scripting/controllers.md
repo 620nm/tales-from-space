@@ -25,8 +25,8 @@ names `mac`, a bounded correlation `id`, and an operation:
 | --- | --- |
 | `open`, `close` | no extra fields |
 | `bolt` | `bolted` boolean |
-| `vent` | `on`; while on, `direction = "fill" | "drain"`, `target` kPa |
-| `watch` | `target` kPa, `comparison = "at_least" | "below"`, `ticks` |
+| `vent` | `on`; while on, `direction = "fill" \| "drain"`, `target` kPa |
+| `watch` | `target` kPa, `comparison = "at_least" \| "below"`, `ticks` |
 
 `status` is `idle`, `working`, `denied` or `fault`. `timer = { id, ticks }`
 replaces the host deadline, `timer = false` cancels it, and omission leaves

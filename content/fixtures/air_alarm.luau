@@ -89,7 +89,6 @@ if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:alarm_flags", { replicate = "server" })
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("link.message.done", { kind = "react" }, controller.message)
-    script_definition:handle("entity.despawn.done", { kind = "react" }, controller.cleanup)
 
     -- WHO IT BELIEVES: `child` and `sibling`. A child is a fan joined
     -- to this alarm by hand, which is the pairing the whole box exists

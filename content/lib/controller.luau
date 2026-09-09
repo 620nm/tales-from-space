@@ -133,10 +133,6 @@ local function schedule(host, timer)
     timers[key] = { host = host, task = task }
 end
 
-function controller.cleanup(ev)
-    if ev.outcome == "completed" then timers[ev.identity] = nil end
-end
-
 function controller.run(host, event)
     local handles, rows = members(host)
     local answer = socket.run(host, "controller", { event = event, devices = rows })
