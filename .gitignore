@@ -1,4 +1,6 @@
-/.worktrees/
+/.worktrees
+/.claude
+/.codex
 
 # Restricted frontend build products
 ui/bundle.json
