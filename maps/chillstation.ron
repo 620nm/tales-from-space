@@ -105,11 +105,11 @@
         "   #_________#___________#__________#   ",
         "   #_________#___________#__________#   ",
         "   #_________#___________#__________#   ",
-        "   #####_##########_##########_######   ",
+        "   #####_##########_##########__#####   ",
         "   #________________________________#   ",
         "   #####_##########_###########_#####   ",
         "   ###________#..........#________###   ",
-        "   #__________#..........#__________#   ",
+        "   #__________#..........___________#   ",
         "   ____________..........____________   ",
         "   #__________#..........#__________#   ",
         "   ###________#..........#________###   ",
@@ -582,9 +582,25 @@
         // and who may walk through are per placement now
         // (structures/airlock.luau), so the station can paint
         // Engineering's doors without a second prototype existing.
-        (8, 10, "airlock"), (19, 10, "airlock"), (30, 10, "airlock"),
-        (19, 12, "airlock"), (3, 15, "airlock"), (5, 15, "airlock"),
-        (14, 15, "airlock"), (25, 15, "airlock"), (34, 15, "airlock"),
+        //
+        // THREE OF THEM ARE NOT ORDINARY. Two are the same two-tile
+        // leaf standing the two ways it is drawn: the Cargo Bay's
+        // threshold is `airlock_wide` resting on (30, 10) and the tile
+        // east of it, and the Commons' east entrance is the same entry
+        // turned -- `dir: east` on (25, 15), which puts its second cell
+        // one step NORTH (docs/content-schema/facings.md). Both hulls were opened by one tile
+        // to take them -- a crate does not fit through a doorway a man
+        // fits through, and the room the whole crew walks into should
+        // not be entered single file. The EAST wall took the wide one
+        // because the west wall is carrying the room's APC and its
+        // placard and has no tile to spare. The third is the Commons'
+        // north entrance off the concourse (`airlock.interior_glass`),
+        // one leaf with a window in it, so the room the crew sits down
+        // in can be seen into on the way past.
+        (8, 10, "airlock"), (19, 10, "airlock"), (30, 10, "airlock_wide"),
+        (19, 12, "airlock.interior_glass"), (3, 15, "airlock"),
+        (5, 15, "airlock"), (14, 15, "airlock"), (25, 15, "airlock_wide", { "dir": "east" }),
+        (34, 15, "airlock"),
         (36, 15, "airlock"), (19, 19, "airlock"), (8, 21, "airlock"),
         (19, 21, "airlock"), (31, 21, "airlock"), (20, 30, "airlock"),
         (13, 31, "airlock"), (16, 32, "airlock"), (20, 32, "airlock"),
