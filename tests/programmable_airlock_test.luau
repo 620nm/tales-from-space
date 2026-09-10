@@ -1,4 +1,4 @@
--- Install the actual shipped source, then operate the room through its buttons.
+-- Rebuild the commissioned bench by hand: release, rejoin, reinstall, then operate it.
 t.set_breathing(false)
 t.world_file("programmable_airlock.ron", 0)
 t.set_environment({ sink_k = 293.15, insolation = 0 })
@@ -11,10 +11,34 @@ assert(t.door_at(5, 3).bolted and not t.door_at(5, 3).open, "interior starts clo
 assert(t.door_at(8, 3).open and not t.door_at(8, 3).bolted, "exterior starts open and unbolted")
 assert(t.room_pressure(6, 3) < 1, "the chamber starts evacuated")
 
--- Join actual nearby endpoints from the access point's ordinary panel.
+-- The map joined every endpoint; release them all through the access point's panel.
+local function members()
+    local rows = {}
+    for _, row in ipairs(t.ui(operator).toggles or {}) do
+        if row.field == "link_drop" then table.insert(rows, row.option) end
+    end
+    return rows
+end
 t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
 t.run_ticks(2)
 ui_controls.toggle(operator, "link_lock")
+t.run_ticks(2)
+assert(#members() == 5, "the map joined two doors, two buttons and the vent: " .. #members())
+for dropped = 1, 5 do
+    ui_controls.toggle(operator, "link_drop", members()[1])
+    t.run_ticks(2)
+    assert(#members() == 5 - dropped, "each release removes one member")
+end
+t.ui_close(operator)
+t.run_ticks(2)
+local _ = t.messages(operator)
+t.click(operator, 2, 3, assert(t.target_at(operator, 2, 3, "airlock_button")))
+t.run_ticks(2)
+local heard = table.concat(t.messages(operator), " | ")
+assert(heard:find("The button clicks, but nothing answers.", 1, true), "a released button has nobody to ask: " .. heard)
+
+-- Rejoin the same endpoints from the ordinary panel; its lock is already open.
+t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
 t.run_ticks(2)
 local joined = 0
 while true do
@@ -65,6 +89,16 @@ local function file(ui, side)
 end
 
 local ui = workspace()
+local shipped = file(ui, "host")
+assert(shipped and not shipped.fixed and ui.sockets[1].uid == shipped.uid,
+    "the map installed an editable copy and bound it to the socket")
+-- A copy cannot land on a taken name, and a bound file cannot be deleted: unload, then delete.
+ui_files.socket(operator, "controller", nil)
+t.run_ticks(10)
+ui_files.press(operator, file(workspace(), "host"), "delete")
+t.run_ticks(2)
+assert(file(workspace(), "host") == nil, "the old copy is gone before the new one lands")
+ui = workspace()
 local original = file(ui, "media")
 assert(original and original.fixed, "the distribution disk contains a fixed original")
 t.run_ticks(10)
@@ -98,77 +132,73 @@ local function press_inside()
         if action.id == "press" and action.gesture == "primary" then offered = true end
     end
     assert(offered, "the button offers its left-click press action")
+    local mark = airlock_cycle.mark()
     t.click(operator, 2, 3, t.target_at(operator, 2, 3, "airlock_button"))
     t.run_ticks(2)
+    return mark
 end
-local function until_door(x, open)
-    for _ = 1, 160 do
+-- Polled every tick: the visitor keeps (7, 3). While the watched door rests shut, the
+-- four chamber tiles are recorded, so the record is the last tick before it moves; then
+-- all four read at least 100 kPa (the interior) or below 10 (space). Rest re-arms it.
+local CHAMBER = { { 6, 3 }, { 7, 3 }, { 6, 4 }, { 7, 4 } }
+local function until_door(x, open, since, each)
+    local last
+    return airlock_cycle.until_door(x, open, operator, since, function()
+        local vx, vy = t.pos(visitor)
+        assert(vx == 7 and vy == 3, "the visitor keeps (7, 3): " .. vx .. "," .. vy)
         local d = t.door_at(x, 3)
-        local latest_status
-        for _, row in ipairs(t.ledger_rows("disl_run")) do
-            local value = row.value.Map
-            if value and value.status then latest_status = value.status.String end
+        if not (d.open or d.moving) then
+            last = {}
+            for _, tile in ipairs(CHAMBER) do
+                table.insert(last, { tile[1], tile[2], t.room_pressure(tile[1], tile[2]) })
+            end
+        elseif last then
+            for _, row in ipairs(last) do
+                assert(if x == 5 then row[3] >= 100 else row[3] < 10, "chamber tile " .. row[1] .. "," .. row[2]
+                    .. " read " .. row[3] .. " kPa just before door " .. x .. " moved")
+            end
+            last = nil
         end
-        if d.open == open and d.bolted and not d.moving and latest_status == "idle" then return end
-        t.run_ticks(4)
-    end
-    local debug = { "sounds=" .. table.concat(t.sounds(operator), ","), "messages=" .. table.concat(t.messages(operator), " | ") }
-    for _, row in ipairs(t.ledger_rows("disl_fault")) do table.insert(debug, "fault=" .. tostring(row.fault) .. ":" .. tostring(row.message)) end
-    for _, row in ipairs(t.ledger_rows("script_error")) do table.insert(debug, "script=" .. tostring(row.file) .. ":" .. tostring(row.why)) end
-    for _, row in ipairs(t.ledger_rows("script_var_refused")) do table.insert(debug, "var=" .. tostring(row.why)) end
-    local runs = t.ledger_rows("disl_run")
-    for index = math.max(1, #runs - 14), #runs do
-        local row = runs[index]
-        local event = row.env.Map.event.Map
-        table.insert(debug, event.kind.String .. ":" .. (event.id and event.id.String or "") .. " -> "
-            .. tostring(row.value.Map and row.value.Map.status and row.value.Map.status.String))
-    end
-    error("door rest x=" .. x .. " pressure=" .. t.room_pressure(6, 3) .. " " .. table.concat(debug, " | "))
+        if each then each() end
+    end, 1)
 end
 -- Walk in through the initially open exterior, leaving both tracks clear.
 for _ = 1, 2 do t.move(visitor, "west"); t.run_ticks(4) end
 assert(t.pos(visitor) == 7, "the visitor stands in the chamber")
-press_inside()
-until_door(5, true)
+until_door(5, true, press_inside())
 assert(t.door_at(8, 3).bolted and not t.door_at(8, 3).open, "the exterior is secured before the interior opens")
-local function pressure_result()
-    local found
-    for _, row in ipairs(t.ledger_rows("machine_setpoint")) do
-        if row.field == "pressure_watch_result" then found = row.value end
-    end
-    return found
-end
+local pressure_result = airlock_cycle.pressure
 assert(pressure_result() and pressure_result() >= 100,
     "the native pressure completion measures at least 100 kPa before opening")
-assert(t.room_pressure(6, 3) > 40, "the real intake supplied gas before the rooms joined")
 t.run_ticks(100)
 assert(t.door_at(5, 3).open, "bolting the open leaf holds it against autoclose")
 
 -- The chamber button reverses the cycle: close, drain, then open space.
+local since = airlock_cycle.mark()
 t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
 t.run_ticks(2)
-until_door(8, true)
+until_door(8, true, since)
 assert(t.door_at(5, 3).bolted and not t.door_at(5, 3).open, "the interior is secured before space opens")
 assert(pressure_result() < 10, "the distinct effluent main evacuates below 10 kPa before opening")
 assert((t.pipe_pressure(6, 2, 8) or 0) > (t.pipe_pressure(6, 2, 2) or 0), "intake and effluent remain distinct mains")
 
 -- A repeat press of the same button requests the opposite destination.
-press_inside()
+since = press_inside()
 t.run_ticks(8)
 press_inside()
 t.run_ticks(80)
-until_door(8, true)
+until_door(8, true, since)
 assert(not t.door_at(5, 3).open and pressure_result() < 10,
     "the same button reverses the pending cycle and drains before opening")
-press_inside()
-until_door(5, true)
+until_door(5, true, press_inside())
 
 -- An opposite request during travel supersedes the older operation.
+since = airlock_cycle.mark()
 t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
 t.run_ticks(8)
 press_inside()
 t.run_ticks(80)
-until_door(5, true)
+until_door(5, true, since)
 assert(not t.door_at(8, 3).open and pressure_result() >= 100,
     "an interrupted outward motor settles under the newer inward generation")
 
@@ -179,7 +209,7 @@ for _ = 1, 7 do t.click(operator, 2, 3, t.target_at(operator, 2, 3, "airlock_but
 t.tick()
 t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
 t.run_ticks(80)
-until_door(8, true)
+until_door(8, true, burst_start)
 assert(not t.door_at(5, 3).open and pressure_result() < 10,
     "nine accepted presses advance the same sequence to the exterior")
 local burst_sequences, burst_count = {}, 0
@@ -194,8 +224,7 @@ for index = burst_start + 1, #burst_rows do
     end
 end
 assert(burst_count == 9, "all nine admitted presses survive batching and cross-button reordering: " .. burst_count)
-press_inside()
-until_door(5, true)
+until_door(5, true, press_inside())
 
 -- Edit the installed source through the same contact and deny public requests.
 t.click(operator, 3, 3, assert(t.target_at(operator, 3, 3, laptop)))
@@ -212,10 +241,14 @@ ui_files.save(operator, denied)
 t.run_ticks(2)
 assert(workspace().open.body == denied, "a live socket is editable from the laptop")
 close_contact()
+local _ = t.messages(visitor)
+since = airlock_cycle.mark()
 t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
 t.run_ticks(100)
 assert(t.door_at(5, 3).open and not t.door_at(8, 3).open, "denied requests leave the completed state alone")
-assert(#t.ledger_rows("disl_run") > 10, "the guest ran for requests and actual completions")
+assert(#t.ledger_rows("disl_run") > since, "the denied press reached the guest")
+local refusal = table.concat(t.messages(visitor), " | ")
+assert(refusal:find("The controller refuses your airlock request.", 1, true), "the presser hears the refusal: " .. refusal)
 
 local function edit_program(body)
     t.click(operator, 3, 3, assert(t.target_at(operator, 3, 3, laptop)))
@@ -263,10 +296,14 @@ end
 
 -- An editable guest cannot turn an arbitrary address into a device capability.
 edit_program('return { commands = {{ mac = "ff-ff-ff-ff-ff-ff", op = "open", id = "foreign" }} }')
-press_inside()
+local _ = t.messages(operator)
+since = press_inside()
 t.run_ticks(30)
 assert(t.door_at(5, 3).open and not t.door_at(8, 3).open,
     "a foreign address is rejected before a door operation can apply")
+assert(#t.ledger_rows("disl_run") > since, "the press reached the edited guest")
+local stopped = table.concat(t.messages(operator), " | ")
+assert(stopped:find("The controller has stopped the airlock cycle.", 1, true), "the presser hears the controller stop: " .. stopped)
 
 -- Cutting actual membership prevents requests reaching the installed guest.
 t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))

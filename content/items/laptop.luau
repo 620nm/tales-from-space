@@ -59,6 +59,15 @@ local content = {
 content.actions = {
     action_rules.primary("connect", action_rules.fact("target.has_programming_interface", true),
         action_rules.fact("held.state", "on")),
+    -- The hint alone: shown while the laptop is not on and never ready, so it
+    -- authorizes nothing; `connect` above is the row such a click is refused by.
+    {
+        id = "connect_not_ready", gesture = "primary", route = "held",
+        label = "lunatic/tfs:ui.affordance.connect_not_ready",
+        visible = { ["not"] = action_rules.fact("held.state", "on") },
+        target = action_rules.fact("target.has_programming_interface", true),
+        held = false, suggest = true,
+    },
     {
         id = "insert_disk", gesture = "primary", route = "receiver", uses_held = true,
         label = "lunatic/tfs:ui.affordance.insert_disk",
@@ -193,6 +202,15 @@ if sim ~= nil then
             or target == nil or sim.link_state(target) == nil then
             return { replaced = false }
         end
+        -- The host's half of the engine's contact check (sim/ui/contact.rs), said
+        -- here because a refused `ui.open` closes without a word.
+        local refusal = if sim.link_state(target).locked then "lunatic/tfs:entity.laptop.contact_locked"
+            elseif not sim.is_powered(target) then "lunatic/tfs:entity.laptop.contact_unpowered"
+            else nil
+        if refusal then
+            sim.message.send({ recipient = ev.actor, message = sim.msg(refusal, {}) })
+            return true
+        end
         ui.open({
             viewer = ev.actor, owner = target, contact = self, contact_state = "on",
             channel = "programming",
@@ -200,6 +218,14 @@ if sim ~= nil then
             include_native = true,
         })
         return true
+    end)
+
+    -- `connect` refused a laptop that is not on. Even when the host's own panel
+    -- resolved the click, the laptop still says what it was missing.
+    behavior:handle("interaction.use.refused", { kind = "react", route = "use" }, function(ev)
+        local r = ev.action_refusal
+        if r.action ~= "connect" or r.fact ~= "held.state" then return end
+        sim.message.send({ recipient = ev.actor, message = sim.msg("lunatic/tfs:entity.laptop.not_ready", {}) })
     end)
 
     behavior:handle("interaction.act", { kind = "replace", route = "act" }, function(ev)

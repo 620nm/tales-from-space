@@ -35,24 +35,30 @@ local function token(s)
     return type(s) == "string" and #s > 0 and #s <= 64
 end
 
-local function status(host, value)
-    if host.vars["controller_status"] == value then return end
+-- The statuses a room hears. A button event's `voice` repeats one to every
+-- press, said at the pressed button's tile, once per packet (`said`).
+local STATUS_LINES = {
+    fault = "lunatic/tfs:lib.controller.fault",
+    denied = "lunatic/tfs:lib.controller.denied",
+    unprogrammed = "lunatic/tfs:lib.controller.unprogrammed",
+}
+local function status(host, value, voice)
+    local line = STATUS_LINES[value]
+    if host.vars["controller_status"] == value and not (voice and line) then return end
     host.vars["controller_status"] = value
-    if value == "fault" or value == "denied" then
-        sim.message.broadcast({ at = host.tile, radius = 5,
-            message = sim.msg(value == "fault" and "lunatic/tfs:lib.controller.fault"
-                or "lunatic/tfs:lib.controller.denied", {}) })
-    end
+    if line == nil or (voice and voice.said[value]) then return end
+    if voice then voice.said[value] = true end
+    sim.message.broadcast({ at = if voice then voice.at else host.tile, radius = 5, message = sim.msg(line, {}) })
 end
 
-local function fail(host, handles)
+local function fail(host, handles, why, voice)
     device_queue.clear(host)
     local commands = {}
     for mac, obj in pairs(handles) do
         if sim.atmos.read(obj) then table.insert(commands, { mac = mac, op = "vent", id = "fault", on = false }) end
     end
     if #commands > 0 then device_queue.send(host, { kind = "device.commands", commands = commands }) end
-    status(host, "fault")
+    status(host, why, voice)
     host.vars["controller_timer"] = nil
     local key = tostring(host)
     if timers[key] then timers[key].task:cancel(); timers[key] = nil end
@@ -133,16 +139,22 @@ local function schedule(host, timer)
     timers[key] = { host = host, task = task }
 end
 
-function controller.run(host, event)
+-- `voice` is set for a button event only (see `status`).
+function controller.run(host, event, voice)
     local handles, rows = members(host)
+    -- An empty socket stops the cycle like a fault, but names the cause.
+    if sim.disl.socket_program(host, "controller") == nil then
+        fail(host, handles, "unprogrammed", voice)
+        return false
+    end
     local answer = socket.run(host, "controller", { event = event, devices = rows })
-    if not valid(answer, handles) then fail(host, handles); return false end
-    if answer.status then status(host, answer.status) end
+    if not valid(answer, handles) then fail(host, handles, "fault", voice); return false end
+    if answer.status then status(host, answer.status, voice) end
     if answer.replace then device_queue.clear(host) end
     schedule(host, answer.timer)
     if #answer.commands > 0 then
         if not device_queue.send(host, { kind = "device.commands", commands = answer.commands }) then
-            fail(host, handles)
+            fail(host, handles, "fault", voice)
         end
     end
     return answer.accepted == true
@@ -180,7 +192,7 @@ function controller.device(ev)
     end
 end
 
-local function receive_one(ev, p)
+local function receive_one(ev, p, said)
     if type(p) ~= "table" or (p.kind ~= "button" and p.kind ~= "door" and p.kind ~= "pressure") then return end
     local handles = members(ev.self)
     local sender = handles[ev.from]
@@ -201,7 +213,8 @@ local function receive_one(ev, p)
         if not sim.atmos.read(sender) or not token(p.id) or type(p.success) ~= "boolean" then return end
         event.id, event.success = p.id, p.success
     end
-    local accepted = controller.run(ev.self, event)
+    local voice = if event.kind == "button" then { at = sender.tile, said = said } else nil
+    local accepted = controller.run(ev.self, event, voice)
     if event.kind == "button" and accepted then
         local seen = ev.self.vars["controller_request"] or {}
         for mac in pairs(seen) do if handles[mac] == nil then seen[mac] = nil end end
@@ -217,9 +230,10 @@ function controller.message(ev)
         for _, request in ipairs(p.events) do
             if type(request) ~= "table" or (request.kind ~= "button" and request.kind ~= "door" and request.kind ~= "pressure") then return end
         end
-        for _, request in ipairs(p.events) do receive_one(ev, request) end
+        local said = {}
+        for _, request in ipairs(p.events) do receive_one(ev, request, said) end
     else
-        receive_one(ev, p)
+        receive_one(ev, p, {})
     end
 end
 
@@ -235,10 +249,16 @@ function controller.pressure(ev)
     device_queue.completion(ev.entity, { kind = "pressure", id = ev.request_id, success = ev.success })
 end
 function controller.button(ev)
-    if ev.implement ~= nil then return end
     sim.sound.play({ at = ev.subject.tile, asset = "lunatic/tfs:sound/click" })
+    -- Every press takes a number; hosts dedupe per sender, so a hostless one costs nothing.
     local sequence = (sim.var("mod", "button_sequence") or 0) + 1
     sim.script_var.set({ scope = "mod", key = "button_sequence", value = sequence })
+    -- Nothing joined above, or cut off: no host will ever hear this press.
+    local state = sim.link_state(ev.subject)
+    if state == nil or state.suspended or state.parent == nil then
+        sim.message.send({ recipient = ev.actor, message = sim.msg("lunatic/tfs:lib.controller.unanswered", {}) })
+        return
+    end
     local queued = device_queue.button(ev.subject, { kind = "button", sequence = sequence,
         engineering = sim.has_access(ev.actor, "engineering") })
     if not queued then
