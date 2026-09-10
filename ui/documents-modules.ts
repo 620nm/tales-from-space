@@ -200,14 +200,15 @@ export function moduleBody(
         doc,
         toggles.filter((toggle) => labelText(toggle.section) === section),
         active,
+        toggles,
       ),
     );
     for (const [index, entryRow] of labels.entries())
       if (labelText(entryRow.section) === section)
-        children.push(labelRow(`${id}/label/${index}`, doc, entryRow, active));
-    for (const [index, point] of setpoints.entries())
+        children.push(labelRow(`${id}/label/${entryRow.row === "input" ? entryRow.action : index}`, doc, entryRow, active));
+    for (const point of setpoints)
       if (labelText(point.section) === section)
-        children.push(setpointRow(`${id}/set/${index}`, doc, point, active));
+        children.push(setpointRow(`${id}/set/${point.field}`, doc, point, active));
     for (const [index, block] of blocks.entries())
       if (labelText(block.section) === section)
         children.push(matterBlock(`${id}/matter/${index}`, block));

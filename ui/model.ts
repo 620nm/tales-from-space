@@ -47,6 +47,7 @@ export interface InventoryState {
   active: number;
   hands: (ItemView | null)[];
   held: (ItemView[] | null)[];
+  open_ground?: { target: number; pos: { x: number; y: number }; item: ItemView; contents: ItemView[] }[];
   equipment: {
     slot: number;
     item: ItemView | null;

@@ -8,7 +8,7 @@ A fixture is evidence for its disclosed state, not for live station rendering.
 |---|---|---|
 | HUD controls | empty hands, worn equipment, busy action groups, unavailable body | compact/regular/wide HUD and expanded-action fixtures; hands and action targets remain visible |
 | Chat and inspection | empty, long log, expanded history, pinned/full receipt | separate bounded scrolling; chat input remains visible |
-| Storage | populated, empty, nested containers | real click opens each container; close and store remain reachable |
+| Storage | held, worn, ground, empty, nested, revoked disclosure | Alt-click opens each container; close and transfers echo the shown receipt; ground panels disappear when access ends |
 | Crew board | lobby, full job, condition/respawn | labels explain unavailable choices; keyboard reaches available choices |
 | Readouts and matter | populated, empty, long labels, unavailable device | title/status/body/footer; readout values never truncate controls |
 | Construction | affordable, insufficient stock, selected recipe, empty roster | material counts beside unavailable arm; selected action has a word |

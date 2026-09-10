@@ -57,6 +57,12 @@ export function actionGroups(view: GameplayView): UiNode[] {
     ] : []),
     press("open_build", S.BUILD, { kind: "open_build" }, { cls: ["action-button"] }),
   ]));
+  if (view.body && view.state.bodyStatus?.state.controllable) actions.push(strip(
+    "body-actions", "body-controls", S.tfs("ui.body.posture"), [
+      press("rest", S.tfs("ui.body.rest"), { kind: "set_resting", on: true }, { cls: ["action-button"] }),
+      press("stand", S.tfs("ui.body.stand"), { kind: "set_resting", on: false }, { cls: ["action-button"] }),
+    ],
+  ));
   return some(
     actions.length
       ? panel("action-anchor", [row("action-strip", actions, { cls: ["hudgroup", "action-strip"] })],

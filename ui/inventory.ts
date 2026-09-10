@@ -5,7 +5,7 @@ import { Pane, Stack } from "@lunatic/ui";
 import { labelText } from "./labels";
 import { hudSlot } from "./slots";
 import type { GameplayView, InventoryState } from "./model";
-import { openStorage } from "./inventory-storage";
+import { openStorageSite } from "./inventory-storage";
 import { inventoryEvent } from "./inventory-event";
 import { bind, column, panel, press, row, some, text, type Command } from "./view";
 import * as S from "./strings";
@@ -65,7 +65,7 @@ function handSquares(current: InventoryState): UiNode[] {
 function openers(current: InventoryState): UiNode | null {
   const rows = (current.hands ?? []).flatMap((_item, index) =>
     current.held?.[index]
-      ? [press(`hand/${index}/open`, S.OPEN, () => { openStorage({ hand: index }); return undefined; },
+      ? [press(`hand/${index}/open`, S.OPEN, () => openStorageSite({ Held: { hand: index } }, current.receipt),
           { variant: "ghost" })]
       : [],
   );
@@ -101,10 +101,9 @@ export function wornGroup(view: GameplayView, carry = false): UiNode | null {
       ...(worn?.item?.fill ? { fill: worn.item.fill } : {}),
       item: `equipment/${slot.id}`,
       event: bind(id, (e) => inventoryEvent(e, { Equipment: { slot: slot.id } },
-        worn?.item, current, (): Command | undefined => {
+        worn?.item ? { ...worn.item, contents: worn.contents } : worn?.item, current, (): Command | undefined => {
         if (worn?.contents) {
-          openStorage({ slot: slot.id });
-          return undefined;
+          return openStorageSite({ Equipment: { slot: slot.id } }, current.receipt);
         }
         return current.hands?.[current.active]
           ? { kind: "equip" }

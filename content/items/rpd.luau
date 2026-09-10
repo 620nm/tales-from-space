@@ -68,7 +68,7 @@ local RECIPES = {
     { label = "Junction", item = "he_junction_fitting", structure = "he_junction", icon = "he_junction_loose", group = "Heat Exchange" },
     { label = "Air Scrubber", item = "air_scrubber_fitting", structure = "air_scrubber", icon = "air_scrubber_loose", group = "Room Devices" },
     { label = "Air Injector", item = "air_injector_fitting", structure = "air_injector", icon = "air_injector_loose", group = "Room Devices" },
-    { label = "Dual-Port Air Vent", item = "dual_port_vent_fitting", structure = "dual_port_vent", icon = "dual_port_vent_loose", group = "Room Devices", fixed_layer = true },
+    { label = "External Airlock Pump", item = "airlock_pump_fitting", structure = "airlock_pump", icon = "airlock_pump_loose", group = "Room Devices", fixed_layer = true },
     { label = "Air Vent", item = "vent_fitting", structure = "vent", icon = "vent_loose", group = "Room Devices" },
     { label = "Passive Vent", item = "passive_vent_fitting", structure = "passive_vent", icon = "passive_vent_loose", group = "Room Devices" },
 }

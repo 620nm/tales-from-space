@@ -78,7 +78,7 @@
   "steps": [
     {
       "type": "click",
-      "id": "doc/1/1/set/0/up",
+      "id": "doc/1/1/set/pressure/up",
       "expect": {
         "actionCount": 1
       }

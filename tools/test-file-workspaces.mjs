@@ -9,7 +9,7 @@ if (!engine) throw new Error("Set LUNATIC_ENGINE or pass the absolute engine che
 const { build } = await import(pathToFileURL(resolve(engine, "web/node_modules/esbuild/lib/main.js")));
 const result = await build({
   stdin: { contents: `export * from './files'; export * from './files-buffer';
-    export { begin, event } from './view';`,
+    export { toggleRows } from './documents-choices'; export { begin, event } from './view';`,
     resolveDir: fileURLToPath(new URL("../ui", import.meta.url)), loader: "ts" },
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") },
   bundle: true, format: "esm", platform: "node", write: false,
@@ -112,7 +112,7 @@ test("repairing malformed atmosphere keeps source and focus until View is chosen
   const input = nodes.find((n) => n.id.startsWith(`${id}/editor/body/`));
   assert.equal(input.label, "File contents");
   assert.equal(get(nodes, "editor/name").label, "File name");
-  assert(get(nodes, "drive/host/stem").label);
+  assert(!get(nodes, "drive/host/stem"));
   U.event({ id: input.id, value: atmo, revision: 3 });
   nodes = render(s);
   assert.equal(nodes.find((n) => n.id === input.id).value, atmo);
@@ -135,4 +135,48 @@ test("an unanswered save can be cancelled, preserving Create for retry or discar
   s.open = { ...s.open, revision: 4, body: "Draft" };
   s.save_ack = { request: save.payload.request, binding: "disk", uid: 1, revision: 4 };
   assert.equal(U.pollContinuation([{ ...doc, state: s }]), undefined);
+});
+
+test("Copy retains the source filename without a destination input", () => {
+  U.retainOpenFileBuffers([]);
+  const s = state();
+  s.stores.push({ key: "media", binding: "removable", label: "Removable", used: 0, capacity: 100, count: 0, count_cap: 8 });
+  s.files[0].name = "a-very-long-filename-with-its-full-accessible-name";
+  const nodes = render(s);
+  assert(!get(nodes, "drive/host/stem"));
+  assert(!get(nodes, "drive/media/stem"));
+  assert.equal(get(nodes, "drive/host/file/0/open").text, `${s.files[0].name}.md`);
+  assert.equal(get(nodes, "drive/host/file/0/copy").submitValues, undefined);
+  const command = act("drive/host/file/0/copy", { values: { stem: { value: "ignored" } } });
+  assert.equal(command.payload.field, "file_copy");
+  assert.equal(command.payload.option, "host:1:disk:removable");
+  assert.equal(command.payload.text, s.files[0].name);
+});
+test("choice captions stay stable while selected styling follows state", () => {
+  for (const on of [true, false]) {
+    U.begin();
+    const nodes = U.toggleRows(id, doc, [{ field: "mode", option: "one", label: "Normal", on }], true).flatMap(flatten);
+    assert.equal(nodes.find((n) => n.id === `${id}/toggle/mode/one/label`).text, "Normal");
+    assert.equal(nodes.find((n) => n.id === `${id}/toggle/mode/one/box`).class.includes("choice-on"), on);
+    assert.equal(act("toggle/mode/one").payload.option, "one");
+  }
+});
+
+test("arbitrary choice values keep valid distinct IDs and unchanged commands", () => {
+  const toggles = [
+    { field: "mode", option: "safe", label: "Safe", on: true },
+    { field: "surgery", option: "remove_organ|chest/heart", label: "Remove", on: false },
+    { field: "mode", option: "x".repeat(128), label: "Long", on: false },
+    { field: "mode", option: "same", label: "First", on: false },
+    { field: "mode", option: "same", label: "Second", on: false },
+  ];
+  U.begin();
+  const nodes = U.toggleRows(id, doc, toggles.slice(1), true, toggles).flatMap(flatten);
+  assert.equal(new Set(nodes.map((n) => n.id)).size, nodes.length);
+  for (const node of nodes) assert.match(node.id, /^[a-zA-Z0-9_:/.-]{1,128}$/);
+  for (let index = 1; index < toggles.length; index++) {
+    const command = act(`toggle-index/${index}`);
+    assert.equal(command.payload.option, toggles[index].option);
+    assert.equal(command.payload.field, toggles[index].field);
+  }
 });

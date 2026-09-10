@@ -95,7 +95,8 @@
             "item": null,
             "contents": null
           }
-        ]
+        ],
+        "receipt": 47
       },
       "equipment": {
         "slots": [
@@ -162,7 +163,8 @@
       "expect": {
         "visible": [
           "stored/hand/0/0/take"
-        ]
+        ],
+        "actionCount": 1
       }
     },
     {
@@ -172,7 +174,7 @@
         "visible": [
           "stored/hand/0/0-0/take"
         ],
-        "actionCount": 0
+        "actionCount": 2
       }
     }
   ]

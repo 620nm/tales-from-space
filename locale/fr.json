@@ -123,9 +123,13 @@
   "lunatic/tfs:ui.look.history_row": "▸ Historique d'examen · {count}",
   "lunatic/tfs:ui.workspace.drive_a": "A:",
   "lunatic/tfs:ui.workspace.drive_b": "B:",
-  "lunatic/tfs:ui.workspace.destination_name": "Nom de destination",
   "lunatic/tfs:ui.workspace.eject": "⏏ Éjecter le disque",
   "lunatic/tfs:ui.files.dirty_guard": "Enregistrer les modifications avant de continuer ?",
   "lunatic/tfs:ui.files.discard": "Abandonner",
-  "lunatic/tfs:ui.files.cancel": "Annuler"
+  "lunatic/tfs:ui.files.cancel": "Annuler",
+  "engine.action.open_storage": "Ouvrir le rangement",
+  "engine.action.close_storage": "Fermer le rangement",
+  "lunatic/tfs:ui.body.posture": "Posture",
+  "lunatic/tfs:ui.body.rest": "S’allonger",
+  "lunatic/tfs:ui.body.stand": "Se lever"
 }

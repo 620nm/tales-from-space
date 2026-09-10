@@ -3,26 +3,37 @@
 import type { Json, UiNode } from "@lunatic/ui";
 import { hudSlot } from "./slots";
 import type { GameplayView, InventoryState, ItemView } from "./model";
-import { bind, column, press, row, screen, some, text, type Box } from "./view";
+import { bind, column, press, row, screen, some, text, type Command, type Box } from "./view";
 import { inventoryEvent } from "./inventory-event";
 import * as S from "./strings";
 
-interface Container { slot?: string; hand?: number; path: number[] }
+interface Container { slot?: string; hand?: number; target?: number; pos?: { x: number; y: number }; path: number[] }
 let opened: Container[] = [];
-const root = (which: Container): string => which.slot === undefined ? `hand/${which.hand ?? 0}` : `equipment/${which.slot}`;
+const root = (which: Container): string => which.target !== undefined ? `ground/${which.target}` : which.slot === undefined ? `hand/${which.hand ?? 0}` : `equipment/${which.slot}`;
 const key = (which: Container): string => `${root(which)}/${which.path.join("-")}`;
-const source = (which: Container): string => which.path.length
+const source = (which: Container): string => which.target !== undefined && !which.path.length ? `ground/${which.target}` : which.path.length
   ? `stored/${key(which)}/take`
   : which.slot === undefined ? `hand/${which.hand ?? 0}/pick` : `equipment/${which.slot}/pick`;
-const site = (which: Container): Json => which.path.length
+const site = (which: Container): Json => which.target !== undefined
+  ? { NestedGround: { target: which.target, pos: which.pos!, path: which.path } }
+  : which.path.length
   ? which.slot === undefined ? { NestedHeld: { hand: which.hand ?? 0, path: which.path } } : { NestedEquipment: { slot: which.slot, path: which.path } }
   : which.slot === undefined ? { Held: { hand: which.hand ?? 0 } } : { Equipment: { slot: which.slot } };
 
-export function openStorage(which: { slot?: string; hand?: number; path?: number[] }): void {
+export function openStorage(which: Omit<Container, "path"> & { path?: number[] }): void {
   const container = { ...which, path: which.path ?? [] };
   if (container.path.length >= 4 || opened.some((held) => key(held) === key(container))) return;
   if (opened.length >= 8) opened = opened.slice(1);
   opened.push(container);
+}
+export function openStorageSite(target: Json, receipt: number | null): Command {
+  const value = target as Record<string, { hand?: number; slot?: string; target?: number; pos?: { x: number; y: number }; path?: number[]; index?: number }>;
+  const held = value.Held ?? value.NestedHeld ?? value.StoredHeld;
+  const worn = value.Equipment ?? value.NestedEquipment ?? value.StoredEquipment;
+  const ground = value.NestedGround;
+  const selected = held ?? worn ?? ground;
+  if (selected) openStorage({ ...selected, path: selected.path ?? (selected.index === undefined ? [] : [selected.index]) });
+  return { kind: "open_storage", target, receipt };
 }
 export const closeStorage = (): void => { opened = []; };
 
@@ -39,11 +50,12 @@ const capacityOf = (item: ItemView | null | undefined): number | undefined => {
 };
 
 function contents(view: GameplayView, current: InventoryState, which: Container): { items: ItemView[]; label: string; cap?: number } | undefined {
+  const ground = current.open_ground?.find((root) => root.target === which.target);
   const roster = view.state.equipment?.slots ?? [];
   const slot = roster.findIndex((candidate) => candidate.id === which.slot);
   const equipment = current.equipment?.find((worn) => worn.slot === slot);
-  let item = which.slot === undefined ? current.hands?.[which.hand ?? 0] : equipment?.item;
-  let items = which.slot === undefined ? current.held?.[which.hand ?? 0] : equipment?.contents;
+  let item = which.target !== undefined ? ground?.item : which.slot === undefined ? current.hands?.[which.hand ?? 0] : equipment?.item;
+  let items = which.target !== undefined ? ground?.contents : which.slot === undefined ? current.held?.[which.hand ?? 0] : equipment?.contents;
   for (const index of which.path) { item = items?.[index]; items = item?.contents; }
   if (!items) return undefined;
   const cap = capacityOf(item);
@@ -60,12 +72,12 @@ function storedSlot(index: number, item: ItemView, container: Container, current
   return hudSlot(id, {
     sprite: item.sprite, label: S.short(item.name),
     ...(item.fill ? { fill: item.fill } : {}),
-    item: which.slot === undefined
+    item: which.target !== undefined ? `nested-ground/${which.target}/${which.path.join("/")}` : which.slot === undefined
       ? `nested-held/${which.hand ?? 0}/${which.path.join("/")}`
       : `nested-equipment/${which.slot}/${which.path.join("/")}`,
     event: bind(id, (e) => inventoryEvent(e, site(which), item, current, () => {
-      if (item.contents) { openStorage(which); return undefined; }
-      return { kind: "move_item", from: site(which), to: { Held: { hand: current.active } } };
+      if (item.contents) return openStorageSite(site(which), current.receipt);
+      return { kind: "move_item", from: site(which), to: { Held: { hand: current.active } }, receipt: current.receipt };
     })),
   });
 }
@@ -74,19 +86,23 @@ export function storageRegion(view: GameplayView, place: Box = {}): UiNode | nul
   const current = view.state.inventory;
   if (!view.body || !current) { closeStorage(); return null; }
   opened = opened.filter((which) => contents(view, current, which));
+  const groundRoots = (current.open_ground ?? []).map((root) => ({ target: root.target, pos: root.pos, path: [] as number[] }));
+  for (const root of groundRoots) if (!opened.some((which) => key(which) === key(root))) opened.push(root);
   const panels = opened.map((which) => {
     const disclosed = contents(view, current, which)!;
     const id = `storage/${key(which)}`;
     const destination = site(which);
+    const takeSource = which.target !== undefined && !which.path.length
+      ? { Ground: { target: which.target, pos: which.pos! } } : destination;
     // The tray closes from the host's title bar; only the meaning is
     // registered here, under the id the descriptor names.
-    bind(`${id}/close`, () => { close(which); return undefined; });
+    bind(`${id}/close`, () => { close(which); return { kind: "close_storage", target: destination, receipt: current.receipt }; });
     return {
       ...screen(id, {
         toolbar: some(
-          press(`${id}/store`, S.STORE_HELD, { kind: "move_item", from: { Held: { hand: current.active } }, to: destination }, { variant: "ghost" }),
-          which.path.length
-            ? press(`${id}/take`, S.tfs("ui.storage.take_container"), { kind: "move_item", from: destination, to: { Held: { hand: current.active } } }, { variant: "ghost" })
+          press(`${id}/store`, S.STORE_HELD, { kind: "move_item", from: { Held: { hand: current.active } }, to: destination, receipt: current.receipt }, { variant: "ghost" }),
+          which.path.length || which.target !== undefined
+            ? press(`${id}/take`, S.tfs("ui.storage.take_container"), { kind: "move_item", from: takeSource, to: { Held: { hand: current.active } }, receipt: current.receipt }, { variant: "ghost" })
             : which.slot === undefined ? null : press(`${id}/off`, S.TAKE_OFF, { kind: "unequip", slot: which.slot }, { variant: "ghost" }),
           disclosed.cap === undefined
             ? null
