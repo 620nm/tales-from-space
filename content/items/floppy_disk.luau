@@ -40,4 +40,60 @@ return {
     files = { capacity = 737280, files = 112 },
     -- What a machine with a drive calls this while a hand holds it.
     hint_tags = { "floppy" },
+    -- tg precolours the sleeves as skins of one disk
+    -- (code/game/objects/items/floppy_disk.dm:6-39): the same medium in
+    -- a different colour of plastic. The keys are the sheet's cells
+    -- (assets/sprites/74-files.ron).
+    variants = {
+        red = {
+            name_label = "lunatic/tfs:entity.floppy_disk.red.name",
+            name = "red floppy disk",
+            sprite = "floppy_disk_red",
+        },
+        dark_blue = {
+            name_label = "lunatic/tfs:entity.floppy_disk.dark_blue.name",
+            name = "dark blue floppy disk",
+            sprite = "floppy_disk_dark_blue",
+        },
+        yellow = {
+            name_label = "lunatic/tfs:entity.floppy_disk.yellow.name",
+            name = "yellow floppy disk",
+            sprite = "floppy_disk_yellow",
+        },
+        green = {
+            name_label = "lunatic/tfs:entity.floppy_disk.green.name",
+            name = "green floppy disk",
+            sprite = "floppy_disk_green",
+        },
+        purple = {
+            name_label = "lunatic/tfs:entity.floppy_disk.purple.name",
+            name = "purple floppy disk",
+            sprite = "floppy_disk_purple",
+        },
+        grey = {
+            name_label = "lunatic/tfs:entity.floppy_disk.grey.name",
+            name = "grey floppy disk",
+            sprite = "floppy_disk_grey",
+        },
+        light_blue = {
+            name_label = "lunatic/tfs:entity.floppy_disk.light_blue.name",
+            name = "light blue floppy disk",
+            sprite = "floppy_disk_light_blue",
+        },
+        -- The disk stock scripts ship on: the orange datadisk12 sleeve
+        -- (floppy_disk.dm:36-39), written with the fixed originals from
+        -- reference/manifest.ron. More stock atmos programs land in this
+        -- seed list.
+        atmos_stock = {
+            name_label = "lunatic/tfs:entity.floppy_disk.atmos_stock.name",
+            name = "atmos stock disk",
+            sprite = "floppy_disk_atmos_stock",
+            files = {
+                seed = {
+                    { reference = "airlock_controller" },
+                    { reference = "airlock_instructions" },
+                },
+            },
+        },
+    },
 }

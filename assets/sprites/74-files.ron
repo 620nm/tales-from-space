@@ -25,10 +25,19 @@
         ("file_md", Png("art/computer/files/file-md.png")),
         ("file_atmo", Png("art/computer/files/file-atmo.png")),
         ("file_pem", Png("art/computer/files/file-pem.png")),
-        // tg floppy_disk.dm:6-39 uses precolored skins, leaving metal gray.
-        // The same sheet's datadisk12 is the orange shell.
+        // tg floppy_disk.dm:6-39 precolours the sleeves as skins,
+        // datadisk0-7; the pack bakes each as its own cell for the
+        // colour variants of `content/items/floppy_disk.luau`. The same
+        // sheet's datadisk12 is the orange shell of the stock disk.
         ("floppy_disk", Dmi("@floppy", "datadisk3", 0)),
-        ("airlock_program_disk", Dmi("@floppy", "datadisk12", 0)),
+        ("floppy_disk_red", Dmi("@floppy", "datadisk0", 0)),
+        ("floppy_disk_dark_blue", Dmi("@floppy", "datadisk1", 0)),
+        ("floppy_disk_yellow", Dmi("@floppy", "datadisk2", 0)),
+        ("floppy_disk_green", Dmi("@floppy", "datadisk4", 0)),
+        ("floppy_disk_purple", Dmi("@floppy", "datadisk5", 0)),
+        ("floppy_disk_grey", Dmi("@floppy", "datadisk6", 0)),
+        ("floppy_disk_light_blue", Dmi("@floppy", "datadisk7", 0)),
+        ("floppy_disk_atmos_stock", Dmi("@floppy", "datadisk12", 0)),
         // tg storage/boxes/_boxes.dm:5-6,38-41; science_boxes.dm:27-34.
         ("disk_box", DmiLayers([("@box", "box"), ("@box", "disk_kit")], 0)),
 
