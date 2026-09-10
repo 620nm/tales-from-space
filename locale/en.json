@@ -330,7 +330,7 @@
   "lunatic/tfs:ui.affordance.pry_floor": "Pry up floor",
   "lunatic/tfs:ui.affordance.pry_door": "Pry open door",
   "lunatic/tfs:ui.affordance.connect": "Connect",
-  "lunatic/tfs:ui.affordance.connect_not_ready": "Connect (laptop is off)",
+  "lunatic/tfs:ui.affordance.connect_not_ready": "Connect (open and power the laptop)",
   "lunatic/tfs:ui.affordance.strike": "Strike",
   "lunatic/tfs:ui.affordance.pour": "Pour",
   "lunatic/tfs:ui.affordance.drink": "Drink",
