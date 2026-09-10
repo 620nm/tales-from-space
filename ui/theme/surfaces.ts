@@ -42,28 +42,20 @@ export const surfaceRules: UiStyleRule[] = [
   // station with the tabs across its top and the say line at its foot.
   // The open state lights its left edge inside the box, so nothing moves.
   rule("floating-chat", {
-    padding: 0, gap: 0, minWidth: 240, backgroundColor: alpha(field, 0.8),
-    border: none, borderRadius: 0, boxShadow: flat, overflow: "hidden", textShadow: sunk,
+    paddingTop: 5, paddingBottom: 4, paddingLeft: 8, paddingRight: 8, gap: 0, minWidth: 240,
+    backgroundColor: alpha(field, 0.8), border: none, borderRadius: 0, boxShadow: flat,
+    overflow: "hidden", textShadow: sunk,
   }),
   rule("chat-open", { backgroundColor: alpha(field, 0.93), boxShadow: insetLine("left", faint) }),
-  rule("chat-tabs", { alignItems: "center", gap: 12, flexShrink: 0, paddingTop: 5, paddingBottom: 6, paddingLeft: 8, paddingRight: 8 }),
-  // A tab is lettering; the open one is underlined inside its own box.
-  rule("chat-tab", {
-    padding: 0, paddingBottom: 4, minWidth: 0, fontFamily: "mono", fontSize: 9, color: dim,
-    backgroundColor: "transparent", border: none, borderRadius: 0,
-  }),
-  rule("chat-tab", { color: bright, backgroundColor: "transparent" }, "hover"),
-  rule("chat-tab-on", { color: bright, boxShadow: insetLine("bottom", amber) }),
-  rule("chat-log", { flexGrow: 1, minHeight: 0, overflowY: "auto", gap: 2, paddingLeft: 8, paddingRight: 8 }),
+  // A tab is small lettering here, the kit's tab otherwise.
+  rule("tab", { fontFamily: "mono", fontSize: 9 }, { within: "floating-chat" }),
   rule("stamp", { flexShrink: 0, fontFamily: "mono", fontSize: 9, color: faint }),
-  rule("log", { gap: 2, overflowY: "auto" }),
   rule("line", { alignItems: "start", gap: 5, flexWrap: "wrap", lineHeight: 1.5 }),
   rule("chan", { flexShrink: 0, color: amber, fontSize: 11 }),
   rule("who", { flexShrink: 0, color: bright, fontWeight: 700 }),
   rule("who-radio", { color: amber }),
   rule("said", { flexGrow: 1, minWidth: 0, color: ink, whiteSpace: "pre-wrap" }),
   rule("sys", { color: dim, fontStyle: "italic" }),
-  rule("composer", { alignItems: "center", gap: 6, flexShrink: 0, marginTop: 4, paddingLeft: 8, paddingRight: 8, paddingBottom: 4 }),
   rule("composer-label", { flexShrink: 0, fontFamily: "mono", fontSize: 9, color: teal }),
   // The say line's underline is drawn inside its box, so focus recolours
   // it without a border a state turns on.
