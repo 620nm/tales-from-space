@@ -2,9 +2,8 @@
 // by the native inventory projection and every move is revalidated there.
 import type { Json, UiNode } from "@lunatic/ui";
 import { hudSlot } from "./slots";
-import { Pane } from "@lunatic/ui";
 import type { GameplayView, InventoryState, ItemView } from "./model";
-import { bind, column, press, row, some, text, type Box } from "./view";
+import { bind, column, press, row, screen, some, text, type Box } from "./view";
 import { inventoryEvent } from "./inventory-event";
 import * as S from "./strings";
 
@@ -83,8 +82,8 @@ export function storageRegion(view: GameplayView, place: Box = {}): UiNode | nul
     // registered here, under the id the descriptor names.
     bind(`${id}/close`, () => { close(which); return undefined; });
     return {
-      ...Pane(id, [
-        row(`${id}/controls`, some(
+      ...screen(id, {
+        toolbar: some(
           press(`${id}/store`, S.STORE_HELD, { kind: "move_item", from: { Held: { hand: current.active } }, to: destination }, { variant: "ghost" }),
           which.path.length
             ? press(`${id}/take`, S.tfs("ui.storage.take_container"), { kind: "move_item", from: destination, to: { Held: { hand: current.active } } }, { variant: "ghost" })
@@ -92,9 +91,9 @@ export function storageRegion(view: GameplayView, place: Box = {}): UiNode | nul
           disclosed.cap === undefined
             ? null
             : text(`${id}/fill`, S.storageFill(disclosed.items.length, disclosed.cap), ["storage-count"]),
-        ), { cls: ["storage-head"] }),
-        row(`${id}/items`, disclosed.items.map((item, index) => storedSlot(index, item, which, current)), { cls: ["storage-grid"] }),
-      ], { cls: ["storage-window", ...(place.cls ?? [])], ...(place.style ? { style: place.style } : {}) }),
+        ),
+        body: [row(`${id}/items`, disclosed.items.map((item, index) => storedSlot(index, item, which, current)), { cls: ["storage-grid"] })],
+      }, { cls: ["pane", "storage-window", ...(place.cls ?? [])], ...(place.style ? { style: place.style } : {}) }),
       window: { key: id, title: S.storageTitle(disclosed.label), width: 320,
         height: Math.min(420, 66 + Math.max(1, Math.ceil(disclosed.items.length / 7)) * 48),
         source: source(which), close: `${id}/close` },

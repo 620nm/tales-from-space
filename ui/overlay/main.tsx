@@ -6,7 +6,7 @@
 import type { GuestUi, UiNode } from "@lunatic/ui";
 import { Pane, Stack, t } from "@lunatic/ui";
 import type { ActionLabel, GameplayView, HoverAction } from "../model";
-import { begin, event, icon, panel, press, row, some, text } from "../view";
+import { begin, event, icon, panel, press, row, screen, some, text } from "../view";
 import { gesture, order } from "../gesture";
 import * as S from "../strings";
 import { actionStyles } from "./actions";
@@ -95,14 +95,13 @@ function contextMenu(
     // stands only while this projection does, so the close press still
     // ends the menu (docs/pack-ui/sdk.md, "Spatial overlays").
     anchor: "@context",
-    ...Pane("context", [
-      row("context-title", [
+    // A screen as tall as its rows, up to the cap, and then scrolling.
+    ...screen("context", { toolbar: [
         text("context-heading", S.TILE_TITLE, ["titlebar-title", "grow"]),
         press("context-close", S.CLOSE_MARK, { kind: "dismiss", panel: "context" }, {
           variant: "ghost",
         }),
-      ], { cls: ["titlebar"] }),
-      ...targets.map((target, index) => Stack(
+      ], body: targets.map((target, index) => Stack(
         `context/${index}`,
         some(
           icon(`context/${index}/icon`, target?.sprite),
@@ -114,8 +113,7 @@ function contextMenu(
           ),
         ),
         { gap: 4, align: "center" },
-      )),
-    ], { style: { width: 300, maxHeight: "60%" } }),
+      )) }, { cls: ["pane"], style: { width: 300, height: "auto", maxHeight: "60%" } }),
   };
 }
 

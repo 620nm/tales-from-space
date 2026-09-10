@@ -19,7 +19,7 @@ export const surfaceRules: UiStyleRule[] = [
     borderRadius: 3, boxShadow: shade, overflow: "hidden", color: ink, ...press,
   }),
   rule("inspect-head", { alignItems: "center", gap: 7, minHeight: 24 }),
-  rule("inspect-icon", { width: 24, height: 24, flexShrink: 0, imageRendering: "pixelated", pointerEvents: "none" }),
+  rule("inspect-icon", { display: "flex", width: 24, height: 24, flexShrink: 0, imageRendering: "pixelated", pointerEvents: "none" }),
   // No sprite is still a frame: a neutral square keeps the header's
   // baseline and its title where every other toast puts them.
   rule("inspect-blank", { width: 24, height: 24, flexShrink: 0, backgroundColor: titleFace, border: edge(titleLine), borderRadius: 2 }),

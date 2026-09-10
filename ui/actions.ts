@@ -59,8 +59,11 @@ export function actionGroups(view: GameplayView): UiNode[] {
     press("open_build", S.BUILD, { kind: "open_build" }, { cls: ["action-button"] }),
   ]));
   return some(
+    // The anchor's left edge is the origin; the strip hangs off its
+    // middle (`action-strip`, ui/theme/documents.ts).
     actions.length
-      ? row("action-strip", actions, { cls: ["hudgroup", "action-strip"] })
+      ? panel("action-anchor", [row("action-strip", actions, { cls: ["hudgroup", "action-strip"] })],
+        { cls: ["hudgroup"], style: { position: "absolute", left: 0, bottom: 290, width: 640, height: 0 } })
       : null,
     intents.length ? column("intent", intents, { cls: ["hudgroup"], style: { position: "absolute", left: 202, bottom: 40 } }) : null,
   );
