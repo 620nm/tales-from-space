@@ -250,14 +250,15 @@ function controller.pressure(ev)
 end
 function controller.button(ev)
     sim.sound.play({ at = ev.subject.tile, asset = "lunatic/tfs:sound/click" })
+    -- Every press takes a number; hosts dedupe per sender, so a hostless one costs nothing.
+    local sequence = (sim.var("mod", "button_sequence") or 0) + 1
+    sim.script_var.set({ scope = "mod", key = "button_sequence", value = sequence })
     -- Nothing joined above, or cut off: no host will ever hear this press.
     local state = sim.link_state(ev.subject)
     if state == nil or state.suspended or state.parent == nil then
         sim.message.send({ recipient = ev.actor, message = sim.msg("lunatic/tfs:lib.controller.unanswered", {}) })
         return
     end
-    local sequence = (sim.var("mod", "button_sequence") or 0) + 1
-    sim.script_var.set({ scope = "mod", key = "button_sequence", value = sequence })
     local queued = device_queue.button(ev.subject, { kind = "button", sequence = sequence,
         engineering = sim.has_access(ev.actor, "engineering") })
     if not queued then
