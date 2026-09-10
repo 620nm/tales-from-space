@@ -52,6 +52,8 @@ Guest authoring: [reference files and preset disks](docs/scripting/reference-fil
 
 The portable computer's controls and desktop are documented in
 [`docs/LAPTOP.md`](docs/LAPTOP.md).
+The station interface and acceptance loop are documented in
+[`docs/UI.md`](docs/UI.md).
 Interaction cards and their presentation tokens are documented in
 [`docs/ACTIONS.md`](docs/ACTIONS.md).
 
