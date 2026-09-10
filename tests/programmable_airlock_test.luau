@@ -137,21 +137,39 @@ local function press_inside()
     t.run_ticks(2)
     return mark
 end
-local function until_door(x, open, since, each) return airlock_cycle.until_door(x, open, operator, since, each) end
+-- Polled every tick: the visitor keeps (7, 3). While the watched door rests shut, the
+-- four chamber tiles are recorded, so the record is the last tick before it moves; then
+-- all four read at least 100 kPa (the interior) or below 10 (space). Rest re-arms it.
+local CHAMBER = { { 6, 3 }, { 7, 3 }, { 6, 4 }, { 7, 4 } }
+local function until_door(x, open, since, each)
+    local last
+    return airlock_cycle.until_door(x, open, operator, since, function()
+        local vx, vy = t.pos(visitor)
+        assert(vx == 7 and vy == 3, "the visitor keeps (7, 3): " .. vx .. "," .. vy)
+        local d = t.door_at(x, 3)
+        if not (d.open or d.moving) then
+            last = {}
+            for _, tile in ipairs(CHAMBER) do
+                table.insert(last, { tile[1], tile[2], t.room_pressure(tile[1], tile[2]) })
+            end
+        elseif last then
+            for _, row in ipairs(last) do
+                assert(if x == 5 then row[3] >= 100 else row[3] < 10, "chamber tile " .. row[1] .. "," .. row[2]
+                    .. " read " .. row[3] .. " kPa just before door " .. x .. " moved")
+            end
+            last = nil
+        end
+        if each then each() end
+    end, 1)
+end
 -- Walk in through the initially open exterior, leaving both tracks clear.
 for _ = 1, 2 do t.move(visitor, "west"); t.run_ticks(4) end
 assert(t.pos(visitor) == 7, "the visitor stands in the chamber")
--- Sampled every step until the interior moves: the real intake filled the chamber.
-local filled
-until_door(5, true, press_inside(), function()
-    local d = t.door_at(5, 3)
-    if not (d.open or d.moving) then filled = t.room_pressure(6, 3) end
-end)
+until_door(5, true, press_inside())
 assert(t.door_at(8, 3).bolted and not t.door_at(8, 3).open, "the exterior is secured before the interior opens")
 local pressure_result = airlock_cycle.pressure
 assert(pressure_result() and pressure_result() >= 100,
     "the native pressure completion measures at least 100 kPa before opening")
-assert(filled and filled >= 95, "the real intake filled the chamber before the interior moved: " .. tostring(filled))
 t.run_ticks(100)
 assert(t.door_at(5, 3).open, "bolting the open leaf holds it against autoclose")
 

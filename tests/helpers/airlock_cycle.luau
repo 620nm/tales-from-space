@@ -52,12 +52,13 @@ local function settled(since)
     return true
 end
 
--- Step until the door at (x, 3) rests `open` and bolted once the press marked
--- `since` has settled; `each` runs before every step. Fails as soon as `observer`
--- hears the controller stop the cycle; returns everything `observer` heard.
-function cycle.until_door(x, open, observer, since, each)
+-- Step `step` ticks (4) at a time until the door at (x, 3) rests `open` and bolted
+-- once the press marked `since` settled; `each` runs before every step. Fails as soon
+-- as `observer` hears the controller stop the cycle; returns all `observer` heard.
+function cycle.until_door(x, open, observer, since, each, step)
+    step = step or 4
     local heard = {}
-    for _ = 1, 160 do
+    for _ = 1, math.ceil(640 / step) do
         if each then each() end
         for _, line in ipairs(t.messages(observer)) do
             table.insert(heard, line)
@@ -65,7 +66,7 @@ function cycle.until_door(x, open, observer, since, each)
         end
         local d = t.door_at(x, 3)
         if d.open == open and d.bolted and not d.moving and settled(since) then return heard end
-        t.run_ticks(4)
+        t.run_ticks(step)
     end
     local debug = { "sounds=" .. table.concat(t.sounds(observer), ","), "messages=" .. table.concat(heard, " | ") }
     for _, row in ipairs(t.ledger_rows("disl_fault")) do table.insert(debug, "fault=" .. tostring(row.fault) .. ":" .. tostring(row.message)) end
