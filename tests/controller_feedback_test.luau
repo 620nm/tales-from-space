@@ -15,6 +15,14 @@ local function count(lines, text)
 end
 local function said(lines, text) return count(lines, text) > 0 end
 local function once(lines, text) return count(lines, text) == 1 end
+-- Ledgered script-var writes whose key contains `fragment`.
+local function rows_like(fragment)
+    local n = 0
+    for _, row in ipairs(t.ledger_rows("var_set")) do
+        if tostring(row.key):find(fragment, 1, true) then n += 1 end
+    end
+    return n
+end
 local function press(p, x, y)
     t.click(p, x, y, (assert(t.target_at(p, x, y, "airlock_button"), "the button is targetable")))
 end
@@ -32,10 +40,13 @@ t.world([==[(
 local p = t.join()
 t.run_ticks(2)
 local _ = t.messages(p)
+local numbered, queued = rows_like("button_sequence"), rows_like("device_outbox")
 press(p, 2, 1)
 t.run_ticks(10)
 local lines = t.messages(p)
 assert(once(lines, UNANSWERED), "an orphan button answers the presser once, got: " .. table.concat(lines, " | "))
+assert(rows_like("lunatic/tfs:button_sequence") == numbered + 1, "a hostless press still takes a sequence number")
+assert(rows_like("device_outbox") == queued, "a hostless press queues nothing")
 assert(table.concat(t.sounds(p), ","):find("click", 1, true), "the press still clicks")
 
 -- A held non-tool item is refused with the reason, and only that.
@@ -88,6 +99,7 @@ t.world([==[(
 p = t.join()
 t.run_ticks(20)
 local before = t.door_at(5, 1)
+local outbox_before = rows_like("device_outbox")
 for round = 1, 2 do
     local _ = t.messages(p)
     press(p, 2, 1)
@@ -97,6 +109,7 @@ for round = 1, 2 do
         "press " .. round .. " hears the empty socket once, got: " .. table.concat(lines, " | "))
 end
 local after = t.door_at(5, 1)
+assert(rows_like("device_outbox") > outbox_before, "a joined button does queue its press, so the outbox check has teeth")
 assert(after.open == before.open and after.bolted == before.bolted, "the door is left alone")
 
 -- A burst batched into one packet hears the empty socket once per packet, not per press.
