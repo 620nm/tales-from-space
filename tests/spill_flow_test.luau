@@ -128,7 +128,7 @@ assert(litres(1) + litres(2) + litres(3) < 60.1, "and no tile invented any")
 -- could not reach and all five stand at one depth -- twelve litres
 -- apiece, because sixty litres over five tiles is what levelling MEANS.
 -- ---------------------------------------------------------------
-t.click(p, 2, 1, t.target_at(2, 1, "crowbar"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "crowbar"))
 t.tick()
 assert(t.hands(p).held == "crowbar", "the crowbar is in hand")
 t.move(p, "east")
@@ -136,7 +136,7 @@ t.run_ticks(4)
 t.move(p, "east")
 t.run_ticks(4)
 assert(not t.door_at(4, 1).powered, "the leaf is dark, so it will not shut itself again")
-t.click(p, 4, 1, t.target_at(4, 1))
+t.click(p, 4, 1, t.target_at(p, 4, 1))
 t.run_ticks(80)
 assert(t.door_at(4, 1).open, "pried open")
 
@@ -189,7 +189,7 @@ t.world([==[(
 local q = t.join()
 t.tick()
 
-local beaker = t.target_at(3, 1, "beaker.water")
+local beaker = t.target_at(q, 3, 1, "beaker.water")
 t.click(q, 3, 1, beaker) -- pick it up
 t.tick()
 t.click(q, 4, 1) -- and tip it onto the deck beside us

@@ -51,11 +51,11 @@ local function idle(hands)
 end
 
 -- ---- the deck in one hand, a card in the other ------------------------
-t.click(p, 2, 1, t.target_at(2, 1, "card_deck"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "card_deck"))
 t.tick()
 assert(t.hands(p).held == "card_deck", "the deck is in hand")
 
-t.click(p, 1, 2)
+t.click_turf(p, 1, 2)
 t.tick()
 assert(t.item_at(1, 2, "card") ~= nil, "and it dealt one card onto the floor")
 
@@ -63,7 +63,7 @@ assert(t.item_at(1, 2, "card") ~= nil, "and it dealt one card onto the floor")
 -- pick up. Which leaves the card active and the deck idle.
 t.swap_hands(p)
 t.tick()
-t.click(p, 1, 2, t.target_at(1, 2, "card"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "card"))
 t.tick()
 local hands = t.hands(p)
 assert(hands.held == "card", "the card is in the active hand: " .. tostring(hands.held))
@@ -91,13 +91,13 @@ assert(said:find("You slide the card into the deck.", 1, true),
 t.swap_hands(p)
 t.tick()
 assert(t.hands(p).held == "card_deck", "the deck is active again")
-t.click(p, 1, 2)
+t.click_turf(p, 1, 2)
 t.tick()
 assert(t.item_at(1, 2, "card") ~= nil, "one card back on the floor")
 
 t.swap_hands(p)
 t.tick()
-t.click(p, 1, 2, t.target_at(1, 2, "card"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "card"))
 t.tick()
 t.swap_hands(p)
 t.tick()
@@ -122,7 +122,7 @@ assert(said:find("You slide the card into the deck.", 1, true),
 -- (deck.dm:171-181) -- and the eleventh card back must move it up a
 -- step, through the hand-to-hand channel.
 for _ = 1, 44 do
-    t.click(p, 2, 2)
+    t.click_turf(p, 2, 2)
     t.tick()
 end
 assert(#t.items_at(2, 2) == 44, "forty-four cards dealt onto one tile")
@@ -131,7 +131,7 @@ assert(t.hud(p)[t.hands(p).active] == "card_deck_low",
 
 t.swap_hands(p)
 t.tick()
-t.click(p, 2, 2, t.target_at(2, 2, "card"))
+t.click(p, 2, 2, t.target_at(p, 2, 2, "card"))
 t.tick()
 t.swap_hands(p)
 t.tick()
@@ -157,12 +157,12 @@ t.run_ticks(5)
 local px, py = t.pos(p)
 assert(px == 2 and py == 1, "standing within reach of the second deck")
 
-t.click(p, 2, 2, t.target_at(2, 2, "card"))
+t.click(p, 2, 2, t.target_at(p, 2, 2, "card"))
 t.tick()
 assert(t.hands(p).held == "card", "a card off the pile")
 t.swap_hands(p)
 t.tick()
-t.click(p, 3, 1, t.target_at(3, 1, "card_deck"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "card_deck"))
 t.tick()
 hands = t.hands(p)
 assert(hands.held == "card_deck", "the untouched deck is in the active hand")

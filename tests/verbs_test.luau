@@ -41,12 +41,11 @@ local medic = t.join()
 local patient = t.join()
 t.run_ticks(3)
 
-local full = t.target_at(1, 1, "beaker.libital")
-local empty = t.target_at(2, 1, "beaker")
-local jar = t.target_at(3, 1, "bottle")
-local syringe = t.target_at(4, 1, "syringe")
-local dose = t.target_at(4, 1, "beaker.libital")
-local pid = t.body_id(patient)
+local full = t.target_at(medic, 1, 1, "beaker.libital")
+local empty = t.target_at(medic, 2, 1, "beaker")
+local jar = t.target_at(medic, 3, 1, "bottle")
+local syringe = t.target_at(medic, 4, 1, "syringe")
+local dose = t.target_at(medic, 4, 1, "beaker.libital")
 
 local function take(p, x, y, id)
     if t.hands(p).held ~= nil then
@@ -66,7 +65,7 @@ end
 
 -- ---- pour: vessel to vessel ------------------------------------------
 take(medic, 1, 1, full)
-t.click(medic, 2, 1, empty)
+t.click(medic, 2, 1, t.target_at(medic, 2, 1, "beaker"))
 t.run_ticks(2)
 assert(rows("poured") == 1, ("one pour, got %d"):format(rows("poured")))
 
@@ -74,7 +73,7 @@ assert(rows("poured") == 1, ("one pour, got %d"):format(rows("poured")))
 -- A click on your own tile with a beaker in hand. The word is `drink`
 -- and not `transfer`, so the vessel has to be in the DRINKER's own
 -- hands -- which it is, because they are holding it.
-t.click(medic, 1, 1)
+t.click_turf(medic, 1, 1)
 t.run_ticks(2)
 assert(rows("drank") == 1, ("one swig, got %d"):format(rows("drank")))
 
@@ -90,7 +89,7 @@ assert(puddle.at[1] == 1 and puddle.at[2] == 2, "on the tile it was tipped onto"
 -- pour is, and it is NOT a pour: it moves the gas phase and it lands a
 -- `filled` row, because "who took this out of the loop" is a question
 -- worth being able to ask of a shift log.
-local can = t.target_at(3, 2)
+local can = t.target_at(medic, 3, 2)
 assert(can ~= nil, "a canister stands on the deck")
 assert(t.charge_vessel(3, 2, "o2", 2000.0), "the canister takes a charge")
 t.tick()
@@ -98,7 +97,7 @@ walk(medic, "east")
 walk(medic, "east")
 take(medic, 3, 1, jar)
 assert(t.hands(medic).held == "bottle", "the bottle is in hand")
-t.click(medic, 3, 2, can)
+t.click(medic, 3, 2, t.target_at(medic, 3, 2))
 t.run_ticks(2)
 assert(rows("filled") == 1, ("one charge, got %d"):format(rows("filled")))
 assert(rows("poured") == 1, "and it did not pass itself off as a pour")
@@ -110,7 +109,7 @@ assert(rows("poured") == 1, "and it did not pass itself off as a pour")
 walk(medic, "east")
 take(medic, 4, 1, syringe)
 assert(t.hands(medic).held == "syringe", "the syringe is in hand")
-t.click(medic, 4, 1, dose)
+t.click(medic, 4, 1, t.target_at(medic, 4, 1, "beaker.libital"))
 t.run_ticks(2)
 assert(rows("matter_moved") == 1, ("one draw, got %d"):format(rows("matter_moved")))
 assert(rows("poured") == 1, "a draw is not a pour")
@@ -123,7 +122,7 @@ assert(rows("drank") == 1, "and it is not a drink either")
 -- not, which is why a beaker cannot be spelled this way at all.
 t.use_self(medic)
 t.run_ticks(2)
-t.click(medic, 5, 1, pid)
+t.click(medic, 5, 1, t.body_target(medic, patient))
 t.run_ticks(2)
 assert(rows("injected") == 0, "the needle parks before it lands")
 t.run_ticks(62) -- tg's CHEM_INTERACT_DELAY, three seconds

@@ -36,18 +36,19 @@ t.world([==[(
         "########",
         "#......#",
         "#Gao...#",
+        "#......#",
         "########",
     ],
     spawns: [(5, 1)],
     items: [
-        (5, 1, "metal"),
-        (5, 1, "cable_coil"),
-        (5, 1, "machine_board.transceiver"),
-        (5, 1, "network_card"),
-        (5, 1, "encryption_key.medical"),
-        (5, 1, "encryption_key"),
-        (5, 1, "screwdriver"),
-        (5, 1, "crowbar"),
+        (4, 2, "metal"),
+        (5, 2, "cable_coil"),
+        (6, 2, "machine_board.transceiver"),
+        (3, 3, "network_card"),
+        (4, 3, "encryption_key.medical"),
+        (5, 3, "encryption_key"),
+        (6, 3, "screwdriver"),
+        (3, 2, "crowbar"),
     ],
     machines: [
         (4, 1, "transceiver"),
@@ -59,9 +60,28 @@ local p = t.join()
 t.run_ticks(20)
 
 local function take(x, y, id)
-    t.click(p, x, y, t.target_at(x, y, id))
+    local places = {["metal"] = {4, 2},["cable_coil"] = {5, 2},["machine_board.transceiver"] = {6, 2},["network_card"] = {3, 3},["encryption_key.medical"] = {4, 3},["encryption_key"] = {5, 3},["screwdriver"] = {6, 3},["crowbar"] = {3, 2}}
+    local at = if t.target_at(p, x, y, id) then {x, y} else places[id]
+    local home_x, home_y = t.pos(p)
+    local px, py = home_x, home_y
+    for _ = 1, 16 do
+        if math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1 then break end
+        local dir = if py == 1 and math.abs(px - at[1]) > 1 then "south" elseif math.abs(py - at[2]) > 1 then (if py < at[2] then "south" else "north") else (if px < at[1] then "east" else "west")
+        t.move(p, dir)
+        t.run_ticks(3)
+        px, py = t.pos(p)
+    end
+    assert(math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1, "the supply is reachable")
+    t.click(p, at[1], at[2], t.target_at(p, at[1], at[2], id))
     t.run_ticks(2)
-    assert(t.hands(p).held == id, "expected " .. id .. " in hand")
+    assert(t.hands(p).held == id, "expected " .. id .. " in hand from " .. x .. "," .. y .. " via " .. at[1] .. "," .. at[2])
+    for _ = 1, 16 do
+        if px == home_x and py == home_y then break end
+        t.move(p, if px ~= home_x then (if px < home_x then "east" else "west") else (if py < home_y then "south" else "north"))
+        t.run_ticks(3)
+        px, py = t.pos(p)
+    end
+    assert(px == home_x and py == home_y, "returned to the workbench")
 end
 
 local function put_down()
@@ -70,7 +90,7 @@ local function put_down()
 end
 
 local function work(seconds)
-    t.click(p, 6, 1, t.target_at(6, 1, "machine_frame"))
+    t.click(p, 6, 1, t.target_at(p, 6, 1, "machine_frame"))
     t.run_seconds(seconds)
 end
 
@@ -92,7 +112,7 @@ end
 --    they fill, then the board's own length of cable.
 -- ---------------------------------------------------------------
 take(5, 1, "metal")
-t.build(p, "metal", "machine_frame", 6, 1)
+ui_controls.build(p, "metal", "machine_frame", 6, 1)
 t.run_seconds(8.5)
 assert(t.structure_at(6, 1).id == "machine_frame", "five sheets box up into a frame")
 
@@ -136,7 +156,7 @@ t.run_ticks(40)
 --    key says nothing -- carries no channel at all.
 -- ---------------------------------------------------------------
 local _ = t.messages(p)
-t.click(p, 6, 1, t.target_at(6, 1))
+t.click(p, 6, 1, t.target_at(p, 6, 1))
 t.tick()
 -- RELAYED, because the APC feeding this tower is a hub and every
 -- device it powers is hardwired under it (docs/devices/joining.md).
@@ -148,7 +168,7 @@ t.ui_close(p)
 t.tick()
 
 local _ = t.messages(p)
-t.click(p, 4, 1, t.target_at(4, 1))
+t.click(p, 4, 1, t.target_at(p, 4, 1))
 t.tick()
 assert(
     said(p, "There is no channel keyed into it. Until there is, it carries nothing."),
@@ -166,18 +186,18 @@ t.tick()
 --    so the count is asserted while the key is out in the world.)
 -- ---------------------------------------------------------------
 take(5, 1, "screwdriver")
-t.click(p, 6, 1, t.target_at(6, 1))
+t.click(p, 6, 1, t.target_at(p, 6, 1))
 t.run_ticks(2)
 put_down()
 take(5, 1, "crowbar")
-t.click(p, 6, 1, t.target_at(6, 1))
+t.click(p, 6, 1, t.target_at(p, 6, 1))
 t.run_ticks(2)
 local frame = t.structure_at(6, 1)
 assert(frame ~= nil and frame.id == "machine_frame" and frame.state == "boarded",
     "the assembly is what is left standing, holding its parts")
 
 -- The frame's own crowbar is the one path the parts come back out by.
-t.click(p, 6, 1, t.target_at(6, 1, "machine_frame"))
+t.click(p, 6, 1, t.target_at(p, 6, 1, "machine_frame"))
 t.run_ticks(2)
 put_down()
 assert(t.item_at(6, 1, "encryption_key.medical") ~= nil,
@@ -200,9 +220,9 @@ end
 work(0.5)
 take(6, 1, "network_card")
 work(0.5)
-take(6, 1, "encryption_key.medical")
-work(0.5)
 take(6, 1, "encryption_key")
+work(0.5)
+take(6, 1, "encryption_key.medical")
 work(0.5)
 take(6, 1, "cable_coil")
 work(0.5)
@@ -214,7 +234,7 @@ put_down()
 t.run_ticks(40)
 
 local _ = t.messages(p)
-t.click(p, 6, 1, t.target_at(6, 1))
+t.click(p, 6, 1, t.target_at(p, 6, 1))
 t.tick()
 assert(
     said(p, "The transceiver is on the air, carrying Lifeline, relayed through its network."),

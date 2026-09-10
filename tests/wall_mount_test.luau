@@ -52,7 +52,7 @@ local p = t.join()
 t.tick()
 
 local function take(id)
-    t.click(p, 1, 1, t.target_at(1, 1, id))
+    t.click(p, 1, 1, t.target_at(p, 1, 1, id))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
 end
@@ -71,7 +71,7 @@ take("metal")
 -- tg's "stand in line with wall!": the wall at (0, 0) is a corner the
 -- builder can see and cannot reach squarely.
 local _ = t.messages(p)
-t.build(p, "metal", "wall_frame", 0, 0)
+ui_controls.build(p, "metal", "wall_frame", 0, 0)
 t.run_seconds(4.5)
 assert(said(p, "You have to stand square to the wall."), "a diagonal is not square to anything")
 assert(t.structure_at(1, 1) == nil, "and nothing rose")
@@ -84,7 +84,7 @@ assert(t.structure_at(1, 1) == nil, "and nothing rose")
 -- assertion that proves it, since the box lands underfoot rather than
 -- wherever the click named.
 local _ = t.messages(p)
-t.build(p, "metal", "wall_frame", 3, 3)
+ui_controls.build(p, "metal", "wall_frame", 3, 3)
 t.run_seconds(4.5)
 assert(said(p, "You can't reach that from here."), "a wall across the room is not one you stand at")
 assert(t.structure_at(3, 3) == nil and t.structure_at(1, 1) == nil, "and nothing rose anywhere")
@@ -93,7 +93,7 @@ assert(t.structure_at(3, 3) == nil and t.structure_at(1, 1) == nil, "and nothing
 -- what the thing hangs ON -- so a floor tile offers no bracket at all
 -- and the placement is refused rather than quietly landing somewhere.
 local _ = t.messages(p)
-t.build(p, "metal", "wall_frame", 2, 1)
+ui_controls.build(p, "metal", "wall_frame", 2, 1)
 t.run_seconds(4.5)
 assert(said(p, "You can't build that there."), "nothing hangs off a floor tile")
 assert(t.structure_at(2, 1) == nil, "and the floor stayed bare")
@@ -103,7 +103,7 @@ assert(t.structure_at(1, 1) == nil, "and nothing rose underfoot either")
 -- AND THE BRACKET ITSELF: on the BUILDER's tile, facing the wall,
 -- with the wall left exactly as bare as it was.
 -- ---------------------------------------------------------------
-t.build(p, "metal", "wall_frame", 1, 0)
+ui_controls.build(p, "metal", "wall_frame", 1, 0)
 t.run_seconds(4.5)
 local frame = t.structure_at(1, 1)
 assert(frame ~= nil and frame.id == "wall_frame", "the box rises where the builder is standing")
@@ -114,7 +114,7 @@ assert(t.structure_at(1, 0) == nil, "and nothing whatever stands on the wall its
 -- One bracket to a TILE, which is this engine's rule rather than tg's
 -- one-per-FACE: turning to the other wall earns the fourth refusal.
 local _ = t.messages(p)
-t.build(p, "metal", "wall_frame", 0, 1)
+ui_controls.build(p, "metal", "wall_frame", 0, 1)
 t.run_seconds(4.5)
 assert(said(p, "Something is already mounted here."), "a tile holds one bracket")
 assert(t.structure_at(1, 1).sprite == "wall_frame_n", "and the one it holds did not turn")
@@ -126,7 +126,7 @@ assert(t.structure_at(1, 1).sprite == "wall_frame_n", "and the one it holds did 
 -- ---------------------------------------------------------------
 put_down()
 take("cable_coil")
-t.click(p, 1, 1, t.target_at(1, 1, "wall_frame"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "wall_frame"))
 t.run_seconds(2.5)
 assert(t.structure_at(1, 1).state == "wired", "five lengths of cable wire it")
 assert(t.structure_at(1, 1).sprite == "wall_frame_wired_n",
@@ -135,7 +135,7 @@ assert(t.structure_at(1, 1).sprite == "wall_frame_wired_n",
 -- ...and backwards, because every rung of this ladder runs both ways.
 put_down()
 take("wirecutters")
-t.click(p, 1, 1, t.target_at(1, 1, "wall_frame"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "wall_frame"))
 t.run_seconds(2.5)
 assert(t.structure_at(1, 1).state == "empty", "the cutters take the wiring back out")
 assert(t.count_items("cable_coil") > 0, "and hand the cable back")
@@ -148,7 +148,7 @@ assert(t.count_items("cable_coil") > 0, "and hand the cable back")
 put_down()
 take("welder")
 local _ = t.messages(p)
-t.click(p, 1, 0, t.target_at(1, 0, "wall"))
+t.click_turf(p, 1, 0)
 t.run_seconds(10.5)
 assert(said(p, "Take the wall frame off the wall first."),
     "the wall names what is hanging on it")
@@ -156,10 +156,10 @@ assert(t.turf(1, 0) == "wall", "and stays a wall")
 
 -- Take the box off and the same torch goes through. The frame is bare
 -- again by now, which is the only state a torch will cut one off in.
-t.click(p, 1, 1, t.target_at(1, 1, "wall_frame"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "wall_frame"))
 t.run_seconds(4.5)
 assert(t.structure_at(1, 1) == nil, "the torch takes a bare frame off the wall")
 
-t.click(p, 1, 0, t.target_at(1, 0, "wall"))
+t.click_turf(p, 1, 0)
 t.run_seconds(10.5)
 assert(t.turf(1, 0) ~= "wall", "and now the wall itself comes apart")

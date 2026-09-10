@@ -26,7 +26,6 @@ t.run_ticks(3)
 t.rest(patient, true)
 t.run_ticks(2)
 local PX, PY = 2, 1
-local pid = t.body_id(patient)
 -- The head is bare (the jumpsuit covers the torso and limbs, not the
 -- head), so no strip is needed; the surgeon just aims there.
 t.set_zone(surgeon, "head")
@@ -44,11 +43,11 @@ end
 
 local function hold(id)
     if t.hands(surgeon).held then t.drop(surgeon); t.tick() end
-    t.click(surgeon, 1, 1, t.target_at(1, 1, id)); t.run_ticks(2)
+    t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, id)); t.run_ticks(2)
 end
 local function step(tool, secs, done, why)
     hold(tool)
-    t.click(surgeon, PX, PY, pid); t.run_ticks(math.ceil(secs * 20) + 3)
+    t.click(surgeon, PX, PY, t.body_target(surgeon, patient)); t.run_ticks(math.ceil(secs * 20) + 3)
     assert(done(), why)
 end
 
@@ -63,7 +62,7 @@ step("shard", 5.4, function() return has(t.parts(patient).head.states, "organs_c
 -- No saw: the brain is locked, the eyes and ears are not. A hemostat here
 -- opens the window over the reachable organs.
 hold("hemostat")
-t.click(surgeon, PX, PY, pid); t.run_ticks(2)
+t.click(surgeon, PX, PY, t.body_target(surgeon, patient)); t.run_ticks(2)
 local win = t.ui(surgeon)
 assert(win and win.document == "modules" and win.presentation == "choices",
     "several head organs to reach: the choice document opened")
@@ -85,20 +84,19 @@ t.rest(pat, true)
 t.unequip(pat, "uniform") -- into a hand; drop it so the hand is free
 t.drop(pat)
 t.run_ticks(2)
-local ppid = t.body_id(pat)
 
 -- The doctor makes the incision (incise is not self-operable).
-t.click(doc, 1, 1, t.target_at(1, 1, "scalpel")); t.run_ticks(2)
+t.click(doc, 1, 1, t.target_at(doc, 1, 1, "scalpel")); t.run_ticks(2)
 for _ = 1, 30 do
     if has(t.parts(pat).chest.states, "skin_cut") then break end
-    t.click(doc, 2, 1, ppid); t.run_ticks(85)
+    t.click(doc, 2, 1, t.body_target(doc, pat)); t.run_ticks(85)
 end
 assert(has(t.parts(pat).chest.states, "skin_cut"), "the doctor opened the chest")
 
 -- Now the patient takes the welder off the next tile (in reach), lights
 -- it, and closes their OWN wound (close_incision_self is self_only -- no
 -- second party can perform it). The patient clicks themselves.
-t.click(pat, 1, 1, t.target_at(1, 1, "welder"))
+t.click(pat, 1, 1, t.target_at(pat, 1, 1, "welder"))
 t.run_ticks(2)
 assert(t.hands(pat).held == "welder", "the patient holds the welder")
 t.use_self(pat) -- strike it on
@@ -108,7 +106,7 @@ local ppx, ppy = t.pos(pat)
 for _ = 1, 40 do
     local s = t.parts(pat).chest.states
     if not has(s, "skin_cut") and not has(s, "skin_open") then break end
-    t.click(pat, ppx, ppy, t.body_id(pat)) -- click YOURSELF
+    t.click(pat, ppx, ppy, t.body_target(pat, pat)) -- click YOURSELF
     t.run_ticks(math.ceil(4.8 * 20) + 3)
 end
 local s = t.parts(pat).chest.states

@@ -95,7 +95,7 @@ t.world([==[(
 
 local p = t.join()
 t.tick()
-t.click(p, 3, 1, t.target_at(3, 1, "thermomachine"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "thermomachine"))
 t.tick()
 
 local charged = moles(1, 1)
@@ -111,12 +111,12 @@ near(t.ui(p).gauge, needle(T20C), 1e-9, "and the needle opens at the default set
 -- numbers under absolute zero are all the same request, answered with
 -- 73.15 K rather than with a refusal or a dead machine.
 -- ---------------------------------------------------------------
-t.ui_act(p, "set", '{"field":"temperature","value":73.15}')
+ui_controls.set(p, "temperature", 73.15)
 t.tick()
 near(t.ui(p).setpoints[1].value, FLOOR, 1e-12, "the stop itself is a settable number")
 
 for _, asked in ipairs({ 20, 0, -40, -1000 }) do
-    t.ui_act(p, "set", '{"field":"temperature","value":' .. asked .. "}")
+    ui_controls.set(p, "temperature", asked)
     t.tick()
     near(t.ui(p).setpoints[1].value, FLOOR, 1e-9, asked .. " K is answered with the machine's floor")
 end
@@ -132,7 +132,7 @@ near(t.ui(p).gauge, 0.0, 1e-9, "and the needle sits hard against the cold end")
 -- way. A machine that clamped its panel and not its arithmetic would
 -- pass every assertion above and freeze this run solid.
 -- ---------------------------------------------------------------
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "running", "the unit is running")
 
@@ -171,7 +171,7 @@ near(t.pipe_pressure(1, 1) / opening_kpa, FLOOR / T20C, 1e-6, "and the pressure 
 -- with the sign of `target - T_port` the only thing that changed.
 -- ---------------------------------------------------------------
 for _, asked in ipairs({ 900, 5000 }) do
-    t.ui_act(p, "set", '{"field":"temperature","value":' .. asked .. "}")
+    ui_controls.set(p, "temperature", asked)
     t.tick()
     near(t.ui(p).setpoints[1].value, CEILING, 1e-9, asked .. " K is answered with the machine's ceiling")
 end
@@ -245,7 +245,7 @@ local e = t.join()
 t.tick()
 assert(t.structure_at(3, 1).state == "shut", "the hand valve opens the shift shut")
 
-t.click(e, 3, 1, t.target_at(3, 1, "manual_valve"))
+t.click(e, 3, 1, t.target_at(e, 3, 1, "manual_valve"))
 t.run_seconds(4)
 assert(t.structure_at(3, 1).state == "open", "and an engineer opens it onto the line")
 assert(t.pipe_pressure(5, 1) > 300.0, "which charges the run off the tank: " .. t.pipe_pressure(5, 1))
@@ -254,12 +254,12 @@ for _ = 1, 3 do
     t.move(e, "east")
     t.run_ticks(5)
 end
-t.click(e, 6, 1, t.target_at(6, 1, "thermomachine"))
+t.click(e, 6, 1, t.target_at(e, 6, 1, "thermomachine"))
 t.tick()
 assert(t.ui(e), "the unit at the far end of the line answers an empty hand")
 
-t.ui_act(e, "set", '{"field":"temperature","value":573.15}')
-t.ui_act(e, "toggle", '{"field":"power"}')
+ui_controls.set(e, "temperature", 573.15)
+ui_controls.toggle(e, "power")
 t.run_ticks(2)
 near(t.ui(e).setpoints[1].value, CEILING, 1e-9, "dialled to the top")
 near(t.ui(e).gauge, 100.0, 1e-9, "and the needle says so")
@@ -276,7 +276,7 @@ assert(readout(t.ui(e), "thermo.pipe"):find("K", 1, true), "the panel is reading
 -- every time and has no memory of which way it was working last, so
 -- there is no ramp to unwind and no state to flush: the very next pass
 -- is a cooling pass.
-t.ui_act(e, "set", '{"field":"temperature","value":250}')
+ui_controls.set(e, "temperature", 250)
 t.run_ticks(2)
 near(t.ui(e).setpoints[1].value, 250.0, 1e-9, "the thermostat takes the new number")
 near(t.ui(e).gauge, needle(250.0), 1e-9, "and the needle walks back down the range with it")
@@ -298,7 +298,7 @@ end
 -- settings in one job, and the panel tracked every one of them.
 local mid = t.pipe_temperature(5, 1)
 assert(mid > 250.0 + 5.0, "still on its way down when the dial moves again: " .. mid)
-t.ui_act(e, "set", '{"field":"temperature","value":300}')
+ui_controls.set(e, "temperature", 300)
 t.run_ticks(2)
 near(t.ui(e).setpoints[1].value, 300.0, 1e-9, "the third setting of the shift")
 near(t.ui(e).gauge, needle(300.0), 1e-9, "with the needle back up the range")

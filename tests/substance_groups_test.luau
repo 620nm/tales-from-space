@@ -50,7 +50,7 @@ end
 for _ = 1, 3 do
     walk("west")
 end
-t.click(p, 2, 1, t.target_at(2, 1, "air_scrubber"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "air_scrubber"))
 t.tick()
 
 local panel = t.ui(p)
@@ -175,7 +175,7 @@ for _ = 1, 2 do
     t.move(q, "west")
     t.run_ticks(5)
 end
-t.click(q, 3, 1, t.target_at(3, 1, "filter"))
+t.click(q, 3, 1, t.target_at(q, 3, 1, "filter"))
 t.tick()
 
 local filter_panel = t.ui(q)

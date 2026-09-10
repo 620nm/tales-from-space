@@ -51,7 +51,7 @@ local NANOMED = {
     { "machine_board.chem_dispenser", "Machine Board (Chem Dispenser)", "Parts", 2 },
 }
 
-t.click(p, 2, 1, t.target_at(2, 1))
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 local ui = t.ui(p)
 assert(ui and ui.document == "modules" and ui.presentation == "shelf",
@@ -97,7 +97,7 @@ end
 for _, want in ipairs(NANOMED) do
     local item = want[1]
     local before = t.count_items(item)
-    t.ui_act(p, "vend", '{"product":"' .. item .. '"}')
+    ui_controls.vend(p, item)
     t.tick()
     assert(t.count_items(item) == before + 1, item .. " dispensed")
     assert(t.ledger_has("ItemSpawned", item, "Player"),
@@ -107,13 +107,13 @@ end
 -- The client names a product, but the server's shelf remains authority.
 for _, item in ipairs({ "id_medical", "uniform_chemist", "cola" }) do
     local before = t.count_items(item)
-    t.ui_act(p, "vend", '{"product":"' .. item .. '"}')
+    assert(not ui_controls.has_product(p, item), "excluded product has no rendered control")
     t.tick()
     assert(t.count_items(item) == before, "NanoMed refuses " .. item)
 end
 
 t.ui_close(p)
-t.click(p, 2, 3, t.target_at(2, 3))
+t.click(p, 2, 3, t.target_at(p, 2, 3))
 t.tick()
 ui = t.ui(p)
 
@@ -150,13 +150,13 @@ for i, want in ipairs(CHEMDROBE) do
         item .. " keeps its category and tg stock count")
     assert(row.sprite ~= "missing", item .. " resolves to atlas art")
     local before = t.count_items(item)
-    t.ui_act(p, "vend", '{"product":"' .. item .. '"}')
+    ui_controls.vend(p, item)
     t.tick()
     assert(t.count_items(item) == before + 1, item .. " dispensed")
 end
 
 local pills = t.count_items("pill")
-t.ui_act(p, "vend", '{"product":"pill"}')
+assert(not ui_controls.has_product(p, "pill"), "excluded product has no rendered control")
 t.tick()
 assert(t.count_items("pill") == pills,
     "ChemDrobe cannot be talked into excluded medicine stock")
@@ -167,7 +167,7 @@ assert(t.count_items("pill") == pills,
 t.world_file("chillstation.ron", 7)
 t.join()
 t.run_ticks(20)
-assert(t.target_at(23, 4) ~= nil, "NanoMed stands in the lab")
-assert(t.target_at(24, 4) ~= nil, "ChemDrobe stands in the lab")
+assert(t.machine_at(23, 4).id == "nanomed_plus", "NanoMed stands in the lab")
+assert(t.machine_at(24, 4).id == "chemdrobe", "ChemDrobe stands in the lab")
 assert(t.item_at(11, 7, "machine_board.nanomed_plus") ~= nil, "NanoMed has a spare board")
 assert(t.item_at(12, 7, "machine_board.chemdrobe") ~= nil, "ChemDrobe has a spare board")

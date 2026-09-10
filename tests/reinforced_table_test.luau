@@ -38,9 +38,9 @@ t.world([==[(
 
 local p = t.join()
 t.tick()
-t.click(p, 2, 1, t.target_at(2, 1, "rod"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "rod"))
 t.run_ticks(2)
-t.build(p, "rod", "table_frame", 2, 2)
+ui_controls.build(p, "rod", "table_frame", 2, 2)
 t.run_seconds(1.5)
 assert(t.structure_at(2, 2).id == "table_frame", "the same frame as any other table")
 
@@ -48,10 +48,10 @@ assert(t.structure_at(2, 2).id == "table_frame", "the same frame as any other ta
 -- because this pack has no plasteel: tg's rglass stack builds a
 -- reinforced table too (glass.dm:173).
 t.swap_hands(p)
-t.click(p, 1, 2, t.target_at(1, 2, "rglass"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "rglass"))
 t.run_ticks(2)
 assert(t.hands(p).held == "rglass", "reinforced glass in hand")
-t.click(p, 2, 2, t.target_at(2, 2, "table_frame"))
+t.click(p, 2, 2, t.target_at(p, 2, 2, "table_frame"))
 t.run_seconds(2.5)
 local hard = t.structure_at(2, 2)
 assert(hard ~= nil and hard.id == "reinforced_table",
@@ -66,10 +66,10 @@ assert(hard.sprite == "reinforced_table-0",
 t.swap_hands(p)
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 1, 1, t.target_at(1, 1, "wrench"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "wrench"))
 t.run_ticks(2)
 local _ = t.messages(p)
-t.click(p, 2, 2, t.target_at(2, 2, "reinforced_table"))
+t.click(p, 2, 2, t.target_at(p, 2, 2, "reinforced_table"))
 t.run_seconds(4.5)
 assert(t.structure_at(2, 2) ~= nil, "the table is still standing")
 local refused = false
@@ -84,10 +84,10 @@ assert(refused, "the refusal named the state the job wants")
 t.swap_hands(p)
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 1, 1, t.target_at(1, 1, "welder"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "welder"))
 t.run_ticks(2)
 assert(t.hands(p).held == "welder", "a torch in hand")
-t.click(p, 2, 2, t.target_at(2, 2, "reinforced_table"))
+t.click(p, 2, 2, t.target_at(p, 2, 2, "reinforced_table"))
 t.run_seconds(5.5)
 assert(t.structure_at(2, 2).state == "loosened",
     "five seconds of welding weakened the cover: "
@@ -95,7 +95,7 @@ assert(t.structure_at(2, 2).state == "loosened",
 
 t.swap_hands(p)
 assert(t.hands(p).held == "wrench", "the ratchet is back in the active hand")
-t.click(p, 2, 2, t.target_at(2, 2, "reinforced_table"))
+t.click(p, 2, 2, t.target_at(p, 2, 2, "reinforced_table"))
 t.run_seconds(4.5)
 assert(t.structure_at(2, 2) == nil, "and now it comes apart")
 assert(t.item_at(2, 2, "rglass") ~= nil, "the pane is back on the deck")

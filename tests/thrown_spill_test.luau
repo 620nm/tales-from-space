@@ -20,7 +20,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local beaker = t.target_at(5, 1, "beaker.salt")
+local beaker = t.target_at(p, 5, 1, "beaker.salt")
 assert(beaker ~= nil, "the salt beaker is on the deck")
 local before = t.matter_totals()
 local contents = t.contents(beaker)
@@ -58,7 +58,7 @@ assert(math.abs(after.energy_j - before.energy_j) < 1e-5,
 
 -- A seal is the content-visible opt-out. The same vessel library owns
 -- bottles, but their stopper keeps real matter inside through impact.
-local bottle = t.target_at(5, 1, "bottle.iodine")
+local bottle = t.target_at(p, 5, 1, "bottle.iodine")
 assert(bottle ~= nil, "the sealed control bottle is on the deck")
 t.click(p, 5, 1, bottle)
 t.tick()

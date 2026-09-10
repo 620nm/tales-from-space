@@ -206,7 +206,7 @@ near(
 -- the gas swirling behind it and a sticker giving the rating -- so this
 -- panel IS those two readings, and it has to be exact about both.
 -- ---------------------------------------------------------------
-t.click(p, 2, 1, t.target_at(2, 1))
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 local half = t.ui(p)
 assert(half and half.document == "modules" and half.presentation == "modules",
@@ -252,7 +252,7 @@ for _ = 1, 8 do
     t.move(p, "east")
     t.run_ticks(5)
 end
-t.click(p, 10, 1, t.target_at(10, 1))
+t.click(p, 10, 1, t.target_at(p, 10, 1))
 t.tick()
 local over = t.ui(p)
 assert(over and over.document == "modules" and over.presentation == "modules",
@@ -342,7 +342,7 @@ end
 -- reading 0.0 mol, or worse a row for a gas nobody put in -- and a
 -- station engineer reading a phantom row off a tank they are about to
 -- cut open is exactly the failure this panel exists to prevent.
-t.click(q, 3, 1, t.target_at(3, 1))
+t.click(q, 3, 1, t.target_at(q, 3, 1))
 t.tick()
 local empty = t.ui(q)
 assert(empty and empty.document == "modules" and empty.presentation == "modules",

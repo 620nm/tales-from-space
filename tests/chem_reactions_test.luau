@@ -87,32 +87,32 @@ t.tick()
 -- The crewman stands in the middle of the bench, so both machines and
 -- all four beakers are within arm's reach and the spec is never about
 -- walking.
-local dispenser = t.target_at(1, 1)
-local heater = t.target_at(3, 1)
-local a = t.target_at(1, 2, "beaker")
-local slop = t.target_at(3, 2, "beaker")
-local d = t.target_at(3, 3, "beaker")
-local e = t.target_at(2, 3, "beaker")
+local dispenser = t.target_at(p, 1, 1)
+local heater = t.target_at(p, 3, 1)
+local a = t.target_at(p, 1, 2, "beaker")
+local slop = t.target_at(p, 3, 2, "beaker")
+local d = t.target_at(p, 3, 3, "beaker")
+local e = t.target_at(p, 2, 3, "beaker")
 
 -- Every gesture in this spec is one of five, so they get names.
 local function take(handle, x, y)
-    t.click(p, x, y, handle)
+    t.click(p, x, y, assert(t.target_at(p, x, y, handle)))
     t.tick()
 end
 
 local function dock(machine, x, y)
-    t.click(p, x, y, machine)
+    t.click(p, x, y, assert(t.target_at(p, x, y, machine)))
     t.tick()
     assert(t.hands(p).held == nil, "the vessel went into the machine")
 end
 
 local function panel(machine, x, y)
-    t.click(p, x, y, machine)
+    t.click(p, x, y, assert(t.target_at(p, x, y, machine)))
     t.tick()
 end
 
 local function press(key)
-    t.ui_act(p, "toggle", '{"field":"dispense","option":"' .. key .. '"}')
+    ui_controls.toggle(p, "dispense", key)
     t.run_ticks(2)
 end
 
@@ -121,14 +121,14 @@ end
 -- the recipe wants, and the amount that goes in is the chemist's to
 -- choose rather than the glass's to impose.
 local function dial_to(moles)
-    t.ui_act(p, "set", '{"field":"amount","value":' .. moles .. '}')
+    ui_controls.set(p, "amount", moles)
     t.run_ticks(2)
 end
 
 local ejects = 0
 local function eject()
     ejects += 1
-    t.ui_act(p, "toggle", '{"field":"eject"}')
+    ui_controls.toggle(p, "eject")
     t.run_ticks(2)
     assert(t.hands(p).held == "beaker", "the vessel comes back out (eject " .. ejects .. ")")
 end
@@ -183,7 +183,7 @@ near(amount(slop, "thermite"), 0.0, 1e-12, "a lone leg is inert wherever it is s
 -- is 0.05, so the OXIDE is the limit and a third of the aluminium is
 -- still standing in the glass at the end.
 -- ---------------------------------------------------------------
-take(a, 1, 2)
+assert(t.hands(p).held == "beaker", "the aluminium beaker remains in hand after pouring")
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
 dial_to(RUST)
@@ -246,8 +246,8 @@ near(amount(d, "ash"), 0.0, 1e-12, "and no ash at all, because the beaker is col
 eject()
 dock(heater, 3, 1)
 panel(heater, 3, 1)
-t.ui_act(p, "set", '{"field":"temperature","value":500}')
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.set(p, "temperature", 500)
+ui_controls.toggle(p, "power")
 t.run_seconds(120)
 assert(t.holder_k(d) > 480.0, "the chamber crossed the threshold: " .. t.holder_k(d))
 near(amount(d, "ash"), 2.0 * LEG, 1e-6, "every mole of oil became a mole of ash")
@@ -266,7 +266,7 @@ near(amount(d, "oil"), 0.0, 1e-6, "and there is none of it left")
 -- The water is in excess, so the SILICON is the clamp and the run has
 -- an end rather than an asymptote.
 -- ---------------------------------------------------------------
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 eject()
 t.drop(p)
 t.tick()

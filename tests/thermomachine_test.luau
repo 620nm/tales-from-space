@@ -93,7 +93,7 @@ near(t.pipe_temperature(1, 1), T20C, 0.5, "and the run it is plumbed into opens 
 -- pair the server clamps to, so no setting can be dialled that the
 -- machine will not honour.
 -- ---------------------------------------------------------------
-t.click(p, 3, 1, t.target_at(3, 1, "thermomachine"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "thermomachine"))
 t.tick()
 local panel = t.ui(p)
 assert(panel, "a temperature control unit wears its own panel")
@@ -106,18 +106,18 @@ near(t.pipe_pressure(1, 1), tonumber(readout(panel, "thermo.pressure"):match("[%
     "the panel reads the run it is actually plumbed into")
 
 -- ---- the dial cannot be asked for more than the parts can give ----
-t.ui_act(p, "set", '{"field":"temperature","value":50}')
+ui_controls.set(p, "temperature", 50)
 t.tick()
 near(t.ui(p).setpoints[1].value, 73.15, 0.01, "a colder setting is clamped to the machine's floor")
-t.ui_act(p, "set", '{"field":"temperature","value":900}')
+ui_controls.set(p, "temperature", 900)
 t.tick()
 near(t.ui(p).setpoints[1].value, 573.15, 0.01, "and a hotter one to its ceiling")
 
 -- ---------------------------------------------------------------
 -- HEATING: monotone towards the dial, and an ARREST on it.
 -- ---------------------------------------------------------------
-t.ui_act(p, "set", '{"field":"temperature","value":400}')
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.set(p, "temperature", 400)
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "running", "the unit is running")
 
@@ -145,7 +145,7 @@ assert(t.pipe_pressure(1, 1) > 101.0, "and the hotter gas pushes harder: " .. t.
 
 -- The panel tracks the run live rather than reporting the moment it
 -- was opened.
-t.click(p, 3, 1, t.target_at(3, 1, "thermomachine"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "thermomachine"))
 t.tick()
 near(
     tonumber(word(t.ui(p).readouts[1].value):match("[%d%.]+")),
@@ -161,12 +161,12 @@ near(
 -- switch, and the books freeze exactly where they were -- tg's
 -- `process_atmos` opens with `if(!on) return` (thermomachine.dm:167).
 -- ---------------------------------------------------------------
-t.ui_act(p, "set", '{"field":"temperature","value":150}')
+ui_controls.set(p, "temperature", 150)
 pass()
 local cooling = t.pipe_temperature(1, 1)
 assert(cooling < 400.0 - 5.0, "the same machine cools: 400 -> " .. cooling)
 
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "off", "switched off mid-job")
 local frozen = t.pipe_temperature(1, 1)
@@ -200,12 +200,12 @@ t.tick()
 t.run_seconds(3)
 local dead_0 = t.pipe_temperature(1, 1)
 
-t.click(d, 3, 1, t.target_at(3, 1, "thermomachine"))
+t.click(d, 3, 1, t.target_at(d, 3, 1, "thermomachine"))
 t.tick()
 assert(readout(t.ui(d), "thermo.supply") == "thermo.supply.dead",
     "the panel says the mains are not behind it")
-t.ui_act(d, "set", '{"field":"temperature","value":500}')
-t.ui_act(d, "toggle", '{"field":"power"}')
+ui_controls.set(d, "temperature", 500)
+ui_controls.toggle(d, "power")
 t.run_seconds(30)
 
 assert(t.ui(d).toggles[1].on == true, "the switch is on")

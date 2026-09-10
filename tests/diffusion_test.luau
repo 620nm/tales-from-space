@@ -316,7 +316,7 @@ assert(t.room_pressure(4, 1) == far_kpa_0, "its gauge did not move at all")
 -- A hand on the door. The leaf takes tg's 0.6 s to swing, and then the
 -- breaker goes so nothing tidies up after us -- a dead motor holds
 -- whatever position it had.
-t.click(p, 3, 1, t.target_at(3, 1))
+t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.run_ticks(15)
 assert(t.door_at(3, 1).open, "the airlock opened")
 t.outage()

@@ -89,7 +89,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-t.click(p, 1, 2, t.target_at(1, 2, "pipe_painter"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "pipe_painter"))
 t.run_ticks(2)
 assert(t.hands(p).held == "pipe_painter", "painter in hand")
 

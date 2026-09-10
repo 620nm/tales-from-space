@@ -43,7 +43,7 @@ t.tick()
 -- The lamp overhead burns, and the client has been told so.
 local light = t.light_at(2, 1)
 assert(light ~= nil and light.status == "ok" and light.emits, "a fresh fitting burns")
-local light_target = light.target
+local light_target = t.target_at(p, 2, 1)
 assert(light_target ~= nil, "the fixture exposes the id a sprite click names")
 assert(light.color == TUNGSTEN, "in the colour the map put in it, got " .. light.color)
 local function lamp_colour_on_the_wire()
@@ -62,10 +62,10 @@ assert(lamp_colour_on_the_wire() == TUNGSTEN,
     "and disclosed in its own colour, so the client lights the corridor warm")
 
 -- One swing with something heavy.
-t.click(p, 1, 1, t.target_at(1, 1, "toolbox"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "toolbox"))
 t.tick()
 assert(t.hands(p).held == "toolbox", "picked the toolbox up")
-t.click(p, 2, 1, light_target)
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
 t.tick()
 assert(t.light_at(2, 1).status == "broken", "the tube shattered")
 assert(not t.light_at(2, 1).emits, "and throws no light")
@@ -85,10 +85,10 @@ assert(changed[1].actor.kind == "script"
 
 -- The janitor's device, one click.
 t.swap_hands(p)
-t.click(p, 1, 2, t.target_at(1, 2, "light_replacer"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "light_replacer"))
 t.tick()
 assert(t.hands(p).held == "light_replacer", "picked the replacer up")
-t.click(p, 2, 1, light_target)
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
 t.tick()
 assert(t.light_at(2, 1).status == "ok", "the replacer fitted a new tube")
 assert(t.light_at(2, 1).emits, "and the corridor is lit again")
@@ -106,22 +106,22 @@ assert(repaint[#repaint].color == TUBE,
 -- tg's replacer holds ten. Break and fix until it is dry.
 for _ = 1, 9 do
     t.swap_hands(p) -- toolbox
-    t.click(p, 2, 1, light_target)
+    t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
     t.tick()
     assert(t.light_at(2, 1).status == "broken", "smashed again")
     t.swap_hands(p) -- replacer
-    t.click(p, 2, 1, light_target)
+    t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
     t.tick()
     assert(t.light_at(2, 1).status == "ok", "and fixed again")
 end
 assert(#t.ledger_rows("ItemConsumed") == 10, "ten charges is the whole device")
 
 t.swap_hands(p)
-t.click(p, 2, 1, light_target)
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
 t.tick()
 assert(t.light_at(2, 1).status == "broken", "one last smash")
 t.swap_hands(p)
-t.click(p, 2, 1, light_target)
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
 t.tick()
 assert(t.light_at(2, 1).status == "broken", "an empty replacer fixes nothing")
 assert(#t.ledger_rows("ItemConsumed") == 10, "and spends nothing")
@@ -134,7 +134,7 @@ t.drop(p)
 t.swap_hands(p)
 t.drop(p)
 t.tick()
-t.click(p, 2, 2, t.target_at(2, 2, "box_lights"))
+t.click(p, 2, 2, t.target_at(p, 2, 2, "box_lights"))
 t.tick()
 assert(t.hands(p).held == "box_lights", "picked the box up")
 t.take_held(p, 0)
@@ -145,7 +145,7 @@ assert(hands[1] == "light_tube" or hands[2] == "light_tube",
 t.swap_hands(p)
 assert(t.hands(p).held == "light_tube", "a tube in the working hand")
 
-t.click(p, 2, 1, light_target)
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
 t.tick()
 assert(t.light_at(2, 1).status == "ok", "the tube goes in by hand")
 assert(t.light_at(2, 1).emits, "and the corridor is lit")

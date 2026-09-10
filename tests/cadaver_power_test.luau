@@ -45,7 +45,7 @@ local dark_attendant = t.join()
 local dark_patient = t.join()
 t.tick()
 
-local dark = t.target_at(2, 1, "cadaver_chamber")
+local dark = t.target_at(dark_attendant, 2, 1, "cadaver_chamber")
 assert(#t.structure_at(2, 1).overlays == 0,
     "an unwired chamber shows no lamp at all")
 
@@ -93,7 +93,7 @@ local attendant = t.join()
 local patient = t.join()
 t.tick()
 
-local chamber = t.target_at(2, 1, "cadaver_chamber")
+local chamber = t.target_at(attendant, 2, 1, "cadaver_chamber")
 assert(#t.structure_at(2, 1).overlays == 0,
     "an empty chamber names no lamp of its own, wired or not")
 

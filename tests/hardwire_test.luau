@@ -123,13 +123,13 @@ t.run_ticks(60)
 --    alarm with its own card are all under it, each drawn as wired
 --    in rather than as something to let go of.
 -- ---------------------------------------------------------------
-t.click(p, 9, 1, t.target_at(9, 1))
+t.click(p, 9, 1, t.target_at(p, 9, 1))
 t.tick()
 local panel = t.ui(p)
 assert(panel ~= nil, "the panel opens")
 -- Placed with no `access` word: a lock with no key opens for whoever
 -- is standing at it (tests/network_test.luau, the router's case).
-t.ui_act(p, "toggle", '{"field":"link_lock"}')
+ui_controls.toggle(p, "link_lock")
 t.tick()
 panel = t.ui(p)
 
@@ -139,15 +139,11 @@ assert(#rows(panel, "link_drop") == 0,
     "and not one of them is the panel's to let go of")
 
 -- ---------------------------------------------------------------
--- 2. AND WILL NOT LET GO. There is no row to press, so a client that
---    wants one has to name an address the window never offered --
---    which is the hostile case, and the one the panel contract
---    already answers: what a client may name is exactly what the
---    document published (docs/TGUI.md). The press moves nothing and
---    files nothing, because there was no gesture to refuse.
+-- 2. AND WILL NOT LET GO. Hardwired membership has no rendered
+-- release control. The edge and ledger stay unchanged.
 -- ---------------------------------------------------------------
 local victim = members[1]
-t.ui_act(p, "toggle", string.format('{"field":"link_drop","option":"%s"}', victim))
+assert(ui_controls.find(p, "/toggle/link_drop/" .. victim) == nil, "hardwired member has no release control")
 t.tick()
 t.run_seconds(3)
 t.run_ticks(40)
@@ -167,11 +163,11 @@ t.move(p, "west")
 t.run_ticks(5)
 t.move(p, "west")
 t.run_ticks(5)
-t.click(p, 7, 1, t.target_at(7, 1))
+t.click(p, 7, 1, t.target_at(p, 7, 1))
 t.tick()
 local alarm = t.ui(p)
 assert(alarm ~= nil, "the alarm opens too")
-t.ui_act(p, "toggle", '{"field":"link_lock"}')
+ui_controls.toggle(p, "link_lock")
 t.tick()
 alarm = t.ui(p)
 
@@ -186,7 +182,7 @@ end
 assert(fitting ~= nil, "one member is on nobody's list")
 
 local fan = offers[1].option
-t.ui_act(p, "toggle", string.format('{"field":"link_join","option":"%s"}', fan))
+ui_controls.toggle(p, "link_join", fan)
 t.tick()
 alarm = t.ui(p)
 assert(row_for(alarm, "link_drop", fan) ~= nil, "the alarm holds it now")
@@ -202,7 +198,7 @@ t.move(p, "east")
 t.run_ticks(5)
 t.move(p, "east")
 t.run_ticks(5)
-t.click(p, 9, 1, t.target_at(9, 1))
+t.click(p, 9, 1, t.target_at(p, 9, 1))
 t.tick()
 panel = t.ui(p)
 assert(not holds(hardwired(panel), fan), "the panel let the fan go")
@@ -221,9 +217,9 @@ t.move(p, "west")
 t.run_ticks(5)
 t.move(p, "west")
 t.run_ticks(5)
-t.click(p, 7, 1, t.target_at(7, 1))
+t.click(p, 7, 1, t.target_at(p, 7, 1))
 t.tick()
-t.ui_act(p, "toggle", string.format('{"field":"link_drop","option":"%s"}', fan))
+ui_controls.toggle(p, "link_drop", fan)
 t.tick()
 assert(row_for(t.ui(p), "link_drop", fan) == nil, "the console let it go")
 t.ui_close(p)
@@ -235,7 +231,7 @@ t.move(p, "east")
 t.run_ticks(5)
 t.move(p, "east")
 t.run_ticks(5)
-t.click(p, 9, 1, t.target_at(9, 1))
+t.click(p, 9, 1, t.target_at(p, 9, 1))
 t.tick()
 panel = t.ui(p)
 assert(holds(hardwired(panel), fan), "and the wire has it back")

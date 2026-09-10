@@ -5,16 +5,16 @@ t.set_environment({ sink_k = 293.15, insolation = 0 })
 local operator = t.join()
 local visitor = t.join()
 t.run_ticks(20)
-local host = t.target_at(4, 3, "access_point")
-local laptop = t.target_at(3, 3, "laptop")
+local host = t.target_at(operator, 4, 3, "access_point")
+local laptop = t.target_at(operator, 3, 3, "laptop")
 assert(t.door_at(5, 3).bolted and not t.door_at(5, 3).open, "interior starts closed and bolted")
 assert(t.door_at(8, 3).open and not t.door_at(8, 3).bolted, "exterior starts open and unbolted")
 assert(t.room_pressure(6, 3) < 1, "the chamber starts evacuated")
 
 -- Join actual nearby endpoints from the access point's ordinary panel.
-t.click(operator, 4, 3, host)
+t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
 t.run_ticks(2)
-t.ui_act(operator, "toggle", '{"field":"link_lock"}')
+ui_controls.toggle(operator, "link_lock")
 t.run_ticks(2)
 local joined = 0
 while true do
@@ -23,7 +23,7 @@ while true do
         if row.field == "link_join" and row.label.id == "link.candidate.endpoint" then candidate = row.option; break end
     end
     if not candidate then break end
-    t.ui_act(operator, "toggle", '{"field":"link_join","option":"' .. candidate .. '"}')
+    ui_controls.toggle(operator, "link_join", candidate)
     t.run_ticks(2)
     joined += 1
     if joined > 8 then
@@ -40,26 +40,22 @@ t.ui_close(operator)
 t.run_ticks(2)
 
 -- Fit the source disk in the host, boot the laptop, then hold it against the host.
-t.click(operator, 3, 3, t.target_at(3, 3, "floppy_disk.atmos_stock"))
+t.click(operator, 3, 3, t.target_at(operator, 3, 3, "floppy_disk.atmos_stock"))
 t.run_ticks(2)
-t.click(operator, 4, 3, host)
+t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
 t.run_ticks(2)
 for _ = 1, 3 do t.use_item(operator, laptop, "secondary"); t.run_ticks(2) end
 t.ui_close(operator)
 t.run_ticks(2)
-t.click(operator, 3, 3, laptop)
+t.click(operator, 3, 3, assert(t.target_at(operator, 3, 3, laptop)))
 t.run_ticks(2)
 assert(t.hands(operator).held == "laptop", "programming uses the held powered laptop")
-t.click(operator, 4, 3, host)
+t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
 t.run_ticks(2)
 local function workspace()
     local ui = t.ui(operator, "programming")
     assert(ui and ui.sockets, "the contact workspace belongs to the target")
     return ui
-end
-local function act(kind, body)
-    t.ui_act(operator, kind, body, "programming")
-    t.run_ticks(2)
 end
 local function store(ui, side)
     for _, row in ipairs(ui.stores) do if row.key == side then return row end end
@@ -67,23 +63,22 @@ end
 local function file(ui, side)
     for _, row in ipairs(ui.files) do if row.store == side and row.name == "airlock" then return row end end
 end
-local function address(row)
-    return row.store .. ":" .. tostring(row.uid) .. ":" .. row.binding
-end
+
 local ui = workspace()
 local original = file(ui, "media")
 assert(original and original.fixed, "the distribution disk contains a fixed original")
 t.run_ticks(10)
-act("text", '{"field":"file_copy","option":"' .. address(original) .. ':' .. store(ui, "host").binding
-    .. '","text":"airlock"}')
+ui_files.press(operator, original, "copy")
+t.run_ticks(2)
 ui = workspace()
 local installed = file(ui, "host")
 assert(installed and not installed.fixed, "the target copy is editable")
-act("toggle", '{"field":"file_open","option":"' .. address(installed) .. '"}')
+ui_files.press(operator, installed, "open")
+t.run_ticks(2)
 local source = workspace().open.body
 assert(#source <= 8192 and source:find("local function permitted", 1, true), "the installed file is the guest controller source")
-act("toggle", '{"field":"socket_load","option":"controller:' .. tostring(installed.uid)
-    .. ':' .. store(workspace(), "host").binding .. '"}')
+ui_files.socket(operator, "controller", installed.uid)
+t.run_ticks(2)
 assert(workspace().sockets[1].uid == installed.uid, "the controller socket runs the target copy")
 
 local function close_contact()
@@ -97,13 +92,13 @@ local function press_inside()
     local px, py = t.pos(operator)
     assert(px == 3 and py == 3 and t.hands(operator).held == nil,
         "operator ready " .. px .. "," .. py .. " held=" .. tostring(t.hands(operator).held))
-    local button = assert(t.target_at(2, 3, "airlock_button"), "the inside button is targetable")
+    local button = assert(t.target_at(operator, 2, 3, "airlock_button"), "the inside button is targetable")
     local offered = false
     for _, action in ipairs(t.action_hints(operator, { Entity = button })) do
         if action.id == "press" and action.gesture == "primary" then offered = true end
     end
     assert(offered, "the button offers its left-click press action")
-    t.click(operator, 2, 3, t.target_at(2, 3, "airlock_button"))
+    t.click(operator, 2, 3, t.target_at(operator, 2, 3, "airlock_button"))
     t.run_ticks(2)
 end
 local function until_door(x, open)
@@ -150,12 +145,12 @@ t.run_ticks(100)
 assert(t.door_at(5, 3).open, "bolting the open leaf holds it against autoclose")
 
 -- The chamber button reverses the cycle: close, drain, then open space.
-t.click(visitor, 7, 4, t.target_at(7, 4, "airlock_button"))
+t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
 t.run_ticks(2)
 until_door(8, true)
 assert(t.door_at(5, 3).bolted and not t.door_at(5, 3).open, "the interior is secured before space opens")
 assert(pressure_result() < 10, "the distinct effluent main evacuates below 10 kPa before opening")
-assert((t.pipe_pressure(6, 2, 2) or 0) > (t.pipe_pressure(6, 4, 4) or 0), "intake and effluent remain distinct mains")
+assert((t.pipe_pressure(6, 2, 8) or 0) > (t.pipe_pressure(6, 2, 2) or 0), "intake and effluent remain distinct mains")
 
 -- A repeat press of the same button requests the opposite destination.
 press_inside()
@@ -169,7 +164,7 @@ press_inside()
 until_door(5, true)
 
 -- An opposite request during travel supersedes the older operation.
-t.click(visitor, 7, 4, t.target_at(7, 4, "airlock_button"))
+t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
 t.run_ticks(8)
 press_inside()
 t.run_ticks(80)
@@ -180,9 +175,9 @@ assert(not t.door_at(8, 3).open and pressure_result() >= 100,
 -- Both buttons advance the same alternating sequence through a paced burst.
 local burst_start = #t.ledger_rows("disl_run")
 press_inside() -- Start this sender's pacing sleep.
-for _ = 1, 7 do t.click(operator, 2, 3, t.target_at(2, 3, "airlock_button")) end
+for _ = 1, 7 do t.click(operator, 2, 3, t.target_at(operator, 2, 3, "airlock_button")) end
 t.tick()
-t.click(visitor, 7, 4, t.target_at(7, 4, "airlock_button"))
+t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
 t.run_ticks(80)
 until_door(8, true)
 assert(not t.door_at(5, 3).open and pressure_result() < 10,
@@ -203,37 +198,36 @@ press_inside()
 until_door(5, true)
 
 -- Edit the installed source through the same contact and deny public requests.
-t.click(operator, 3, 3, laptop)
+t.click(operator, 3, 3, assert(t.target_at(operator, 3, 3, laptop)))
 t.run_ticks(2)
-t.click(operator, 4, 3, host)
+t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
 t.run_ticks(2)
 ui = workspace()
 installed = file(ui, "host")
-act("toggle", '{"field":"file_open","option":"' .. address(installed) .. '"}')
+ui_files.press(operator, installed, "open")
+t.run_ticks(2)
 local denied = source:gsub("return true", "return false", 1)
-local function json(s)
-    return '"' .. s:gsub('\\', '\\\\'):gsub('"', '\\"'):gsub('\n', '\\n'):gsub('\r', '\\r') .. '"'
-end
 t.run_ticks(10)
-act("text", '{"field":"file_save","option":"' .. address(installed) .. '","text":'
-    .. json(denied) .. ',"revision":' .. tostring(workspace().open.revision) .. '}')
+ui_files.save(operator, denied)
+t.run_ticks(2)
 assert(workspace().open.body == denied, "a live socket is editable from the laptop")
 close_contact()
-t.click(visitor, 7, 4, t.target_at(7, 4, "airlock_button"))
+t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
 t.run_ticks(100)
 assert(t.door_at(5, 3).open and not t.door_at(8, 3).open, "denied requests leave the completed state alone")
 assert(#t.ledger_rows("disl_run") > 10, "the guest ran for requests and actual completions")
 
 local function edit_program(body)
-    t.click(operator, 3, 3, laptop)
+    t.click(operator, 3, 3, assert(t.target_at(operator, 3, 3, laptop)))
     t.run_ticks(2)
-    t.click(operator, 4, 3, host)
+    t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
     t.run_ticks(2)
     local current = file(workspace(), "host")
-    act("toggle", '{"field":"file_open","option":"' .. address(current) .. '"}')
+    ui_files.press(operator, current, "open")
+    t.run_ticks(2)
     t.run_ticks(10)
-    act("text", '{"field":"file_save","option":"' .. address(current) .. '","text":'
-        .. json(body) .. ',"revision":' .. tostring(workspace().open.revision) .. '}')
+    ui_files.save(operator, body)
+    t.run_ticks(2)
     assert(workspace().open.body == body, "the edited guest is installed")
     close_contact()
 end
@@ -275,7 +269,7 @@ assert(t.door_at(5, 3).open and not t.door_at(8, 3).open,
     "a foreign address is rejected before a door operation can apply")
 
 -- Cutting actual membership prevents requests reaching the installed guest.
-t.click(operator, 4, 3, host)
+t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
 t.run_ticks(2)
 local released = 0
 while true do
@@ -284,7 +278,7 @@ while true do
         if row.field == "link_drop" then member = row.option; break end
     end
     if not member then break end
-    t.ui_act(operator, "toggle", '{"field":"link_drop","option":"' .. member .. '"}')
+    ui_controls.toggle(operator, "link_drop", member)
     t.run_ticks(2)
     released += 1
     assert(released <= 5, "each release removes one member")
@@ -294,6 +288,6 @@ t.ui_close(operator)
 t.run_ticks(10)
 local isolated_runs = #t.ledger_rows("disl_run")
 press_inside()
-t.click(visitor, 7, 4, t.target_at(7, 4, "airlock_button"))
+t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
 t.run_ticks(30)
 assert(#t.ledger_rows("disl_run") == isolated_runs, "disconnected buttons cannot reach the guest")

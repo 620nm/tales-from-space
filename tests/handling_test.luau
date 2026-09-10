@@ -38,7 +38,7 @@ local p = t.join()
 t.tick()
 
 -- ---- into a hand -------------------------------------------------------
-t.click(p, 2, 1, t.target_at(2, 1, "wrench"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "wrench"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "the wrench is in hand")
 assert(heard(p):find(" wrench_pickup ", 1, true),
@@ -52,7 +52,7 @@ assert(heard(p):find(" wrench_drop ", 1, true),
     "and putting it down is a different noise from picking it up")
 
 -- ---- thrown: nothing leaving the hand, something where it stops --------
-t.click(p, 1, 1, t.target_at(1, 1, "wrench"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "wrench"))
 t.run_ticks(2)
 heard(p) -- discard the pickup we just caused
 
@@ -70,7 +70,7 @@ assert(heard(p):find(" wrench_drop ", 1, true),
 -- The negative that keeps the boundary honest. Silence here is content's
 -- decision, not a missing engine default: if the engine ever invents a
 -- fallback name, it invents a game word, and this line fails.
-t.click(p, 2, 1, t.target_at(2, 1, "headset"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "headset"))
 t.run_ticks(2)
 assert(t.hands(p).held == "headset", "the headset is in hand")
 assert(heard(p) == "  ", "an item that names no sound is picked up in silence")

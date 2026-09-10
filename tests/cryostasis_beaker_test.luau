@@ -55,9 +55,9 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local dispenser = t.target_at(1, 1)
-local cold = t.target_at(1, 2, "beaker_cryostasis")
-local warm = t.target_at(3, 2, "beaker")
+local dispenser = t.target_at(p, 1, 1)
+local cold = t.target_at(p, 1, 2, "beaker_cryostasis")
+local warm = t.target_at(p, 3, 2, "beaker")
 
 local function take(handle, x, y)
     t.click(p, x, y, handle)
@@ -65,12 +65,12 @@ local function take(handle, x, y)
 end
 
 local function press(key)
-    t.ui_act(p, "toggle", '{"field":"dispense","option":"' .. key .. '"}')
+    ui_controls.toggle(p, "dispense", key)
     t.run_ticks(2)
 end
 
 local function dial_to(moles)
-    t.ui_act(p, "set", '{"field":"amount","value":' .. moles .. '}')
+    ui_controls.set(p, "amount", moles)
     t.run_ticks(2)
 end
 
@@ -88,7 +88,7 @@ local function charge(handle, x, y, id)
     dial_to(SAND)
     press("silicon")
     dial_to(PRESS)
-    t.ui_act(p, "toggle", '{"field":"eject"}')
+    ui_controls.toggle(p, "eject")
     t.run_ticks(2)
     assert(t.hands(p).held == id, id .. " came back out")
     t.drop(p)

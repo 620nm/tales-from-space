@@ -64,7 +64,7 @@ local function pick(p, label)
 end
 
 local function arm(p, label)
-    t.ui_act(p, "toggle", '{"field":"' .. RECIPE .. '","option":"' .. pick(p, label) .. '"}')
+    ui_controls.toggle(p, RECIPE, pick(p, label))
     t.tick()
 end
 
@@ -131,7 +131,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-t.click(p, 3, 2, t.target_at(3, 2, "rpd"))
+t.click(p, 3, 2, t.target_at(p, 3, 2, "rpd"))
 t.run_ticks(2)
 assert(t.hands(p).held == "rpd", "the RPD is in hand")
 t.use_self(p)
@@ -148,7 +148,7 @@ assert(t.structure_at(3, 1) == nil, "and nothing stands where the vent will go")
 arm(p, "Air Vent")
 walk(p, "east") -- (4, 2), under the main
 local _ = t.messages(p)
-t.click(p, 4, 1)
+t.click(p, 4, 1, nil, -14, 14)
 work()
 assert(t.structure_at(4, 1) == nil, "a vent did not cover its centre run")
 assert(t.pipe(4, 1) == DISTRO, "and the raw run is intact")
@@ -159,7 +159,7 @@ assert(
 
 -- ---- and then the machine ----
 walk(p, "west") -- back to (3, 2)
-t.click(p, 3, 1)
+t.click(p, 3, 1, nil, -14, 14)
 work()
 local vent = t.structure_at(3, 1)
 assert(vent ~= nil and vent.id == "vent", "one click of the RPD built a vent")
@@ -241,9 +241,9 @@ t.world([==[(
 local q = t.join()
 t.tick()
 
-local fitting = t.target_at(3, 1, "passive_vent_fitting")
+local fitting = t.target_at(q, 3, 1, "passive_vent_fitting")
 assert(fitting ~= nil, "the fitting is lying on the deck, targetable")
-t.click(q, 3, 2, t.target_at(3, 2, "wrench"))
+t.click(q, 3, 2, t.target_at(q, 3, 2, "wrench"))
 t.run_ticks(2)
 assert(t.hands(q).held == "wrench", "wrench in hand, which is the whole toolkit")
 
@@ -269,7 +269,7 @@ assert(
 
 -- ---- and it comes up again ----
 local _ = t.messages(q)
-t.click(q, 3, 1, t.target_at(3, 1, "passive_vent"))
+t.click(q, 3, 1, t.target_at(q, 3, 1, "passive_vent"))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "the passive vent came up off the deck")
 assert(

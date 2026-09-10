@@ -70,7 +70,7 @@ local function near(got, want, tol, what)
         ("%s: wanted %g, got %g"):format(what, want, got))
 end
 
-local glass = t.target_at(3, 1, "beaker")
+local glass = t.target_at(p, 3, 1, "beaker")
 
 -- ---------------------------------------------------------------
 -- Out of the freezer: a solid, and cold.
@@ -171,7 +171,7 @@ t.run_ticks(5)
 t.move(p, "east")
 t.run_ticks(5)
 
-local dispenser = t.target_at(5, 1)
+local dispenser = t.target_at(p, 5, 1)
 assert(dispenser ~= nil, "a dispenser stands at the end of the bench")
 t.click(p, 5, 1, dispenser)
 t.tick()

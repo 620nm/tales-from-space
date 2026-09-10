@@ -48,10 +48,10 @@ t.tick()
 local charged_start = t.tank_pressure(5, 2)
 assert(math.abs(charged_start - 2000.0) < 20.0,
     "the map's tank opens holding what the map said: " .. charged_start)
-t.click(p, 2, 1, t.target_at(2, 1, "metal")) -- a pile of thirty
+t.click(p, 2, 1, t.target_at(p, 2, 1, "metal")) -- a pile of thirty
 t.run_ticks(2)
 t.swap_hands(p)
-t.click(p, 2, 3, t.target_at(2, 3, "wrench"))
+t.click(p, 2, 3, t.target_at(p, 2, 3, "wrench"))
 t.run_ticks(2)
 t.swap_hands(p) -- the sheets are the active hand again
 
@@ -63,7 +63,7 @@ t.swap_hands(p) -- the sheets are the active hand again
 -- girders, machine frames and tank frames, and a bare click has to
 -- take the first of them. Naming the row is what a player does too.
 -- ---------------------------------------------------------------
-t.build(p, "metal", "stationary_tank_frame", 3, 2)
+ui_controls.build(p, "metal", "stationary_tank_frame", 3, 2)
 t.run_seconds(1.5)
 local frame = t.structure_at(3, 2)
 assert(frame and frame.id == "stationary_tank_frame",
@@ -76,7 +76,7 @@ assert(frame.state == "displaced", "and it is not bolted yet: " .. tostring(fram
 -- says which state the job wants instead of starting work that cannot
 -- finish.
 local _ = t.messages(p)
-t.click(p, 3, 2, t.target_at(3, 2))
+t.click(p, 3, 2, t.target_at(p, 3, 2))
 t.run_ticks(2)
 local refused = false
 for _, m in ipairs(t.messages(p)) do
@@ -91,21 +91,21 @@ assert(refused, "an unbolted frame takes no plating, and says so")
 -- Bolt it, plate it, seal it. tg's 0.5 s / 3 s / 2 s.
 -- ---------------------------------------------------------------
 t.swap_hands(p) -- the wrench
-t.click(p, 3, 2, t.target_at(3, 2))
+t.click(p, 3, 2, t.target_at(p, 3, 2))
 t.run_seconds(1.0)
 assert(t.structure_at(3, 2).state == "anchored", "the wrench bolts it down")
 
 t.swap_hands(p) -- the sheets
-t.click(p, 3, 2, t.target_at(3, 2))
+t.click(p, 3, 2, t.target_at(p, 3, 2))
 t.run_seconds(3.5)
 assert(t.structure_at(3, 2).state == "plated", "twelve more sheets plate it")
 
 t.swap_hands(p) -- put the wrench down and take the torch
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 2, 1, t.target_at(2, 1, "welder"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "welder"))
 t.run_ticks(2)
-t.click(p, 3, 2, t.target_at(3, 2))
+t.click(p, 3, 2, t.target_at(p, 3, 2))
 t.run_seconds(2.5)
 local tank = t.structure_at(3, 2)
 assert(tank and tank.id == "stationary_tank",
@@ -136,7 +136,7 @@ assert(math.abs(held - t.tank_pressure(5, 2)) < 50.0,
         .. held .. " vs " .. t.tank_pressure(5, 2))
 local room_before = t.room_gas(3, 2).plasma or 0.0
 
-t.click(p, 3, 2, t.target_at(3, 2))
+t.click(p, 3, 2, t.target_at(p, 3, 2))
 t.run_seconds(4.5)
 local left = t.structure_at(3, 2)
 assert(left and left.id == "stationary_tank_frame",

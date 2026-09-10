@@ -89,7 +89,7 @@ end
 -- because a hand that is already holding something has nowhere to put
 -- a space suit -- which is a fact about hands, not about suits.
 -- ---------------------------------------------------------------
-t.click(diver, 1, 1, t.target_at(1, 1, "eva_suit"))
+t.click(diver, 1, 1, t.target_at(diver, 1, 1, "eva_suit"))
 t.run_ticks(2)
 assert(t.hands(diver).held == "eva_suit", "the suit is in hand")
 t.equip(diver)
@@ -197,7 +197,7 @@ assert(t.vitals(diver).tank == nil, "the readout goes dark within a tick of lett
 -- the same valve and twenty-odd times the air. Picked up off the deck
 -- and opened exactly like the small one, because a tank is a tank.
 -- ---------------------------------------------------------------
-t.click(diver, 1, 1, t.target_at(1, 1, "oxygen_tank"))
+t.click(diver, 1, 1, t.target_at(diver, 1, 1, "oxygen_tank"))
 t.run_ticks(2)
 assert(t.hands(diver).held == "oxygen_tank", "the big bottle is in hand")
 t.use_self(diver)

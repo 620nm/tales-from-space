@@ -164,7 +164,7 @@ t.click(p, 5, 2, nil)
 for _ = 1, 3 do
     walk(p, "west")
 end
-t.click(p, 2, 1, t.target_at(2, 1, "air_scrubber"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "air_scrubber"))
 t.tick()
 local panel = t.ui(p)
 assert(panel, "a scrubber wears a panel of its own")
@@ -202,7 +202,7 @@ assert(
     "one tile of reach out of the box"
 )
 
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.structure_at(2, 1).state == "scrubbing", "it is running")
 
@@ -211,8 +211,8 @@ near(room_total("o2"), room_o2_0, 0.05, "a scrubber set to CO2 in a clean room t
 near(room_total("n2"), room_n2_0, 0.05, "not a mole of it")
 
 -- ---- point it at oxygen, and only oxygen moves ----
-t.ui_act(p, "toggle", '{"field":"filter","option":"co2"}')
-t.ui_act(p, "toggle", '{"field":"filter","option":"o2"}')
+ui_controls.toggle(p, "filter", "co2")
+ui_controls.toggle(p, "filter", "o2")
 t.run_seconds(30)
 
 local room_o2_1 = room_total("o2")
@@ -242,7 +242,7 @@ near(
 -- tg's siphon, spelled in the dials the machine already has: the
 -- placement shipped with the floor at zero, so the roster switch alone
 -- is the whole emergency.
-t.ui_act(p, "toggle", '{"field":"roster"}')
+ui_controls.toggle(p, "roster")
 t.run_ticks(2)
 assert(
     t.ledger_has("MachineToggled", "roster", "Player"),
@@ -332,7 +332,7 @@ assert(t.structure_at(3, 1).state == "off", "off out of the crate")
 local room_0 = t.room_pressure(5, 2)
 assert(room_0 > 90.0 and room_0 < 110.0, "the room opens at about an atmosphere: " .. room_0)
 
-t.click(q, 3, 1, t.target_at(3, 1, "air_injector"))
+t.click(q, 3, 1, t.target_at(q, 3, 1, "air_injector"))
 t.tick()
 local inj = t.ui(q)
 assert(inj.setpoints[1].field == "rate", "the injector's dial is a volume rate")
@@ -354,7 +354,7 @@ assert(labels["flow.room"] ~= nil, "and the other end is a ROOM, so it reads one
 -- Left at tg's default fifty litres a second: enough to overfill a
 -- room, calm enough to stand next to while it does. (The dial goes to
 -- two hundred, and what THAT is like is the next paragraph.)
-t.ui_act(q, "toggle", '{"field":"power"}')
+ui_controls.toggle(q, "power")
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "injecting", "it is running")
 
@@ -372,7 +372,7 @@ assert(
 )
 
 -- Switched off, it stops dead — no coasting, no setpoint to settle to.
-t.ui_act(q, "toggle", '{"field":"power"}')
+ui_controls.toggle(q, "power")
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "off", "and off is off")
 local settled = room_air()
@@ -389,8 +389,8 @@ near(room_air(), settled, 0.5, "a stopped injector injects nothing")
 -- was thrown while it was still calm. Asserted rather than worked
 -- around: a machine you cannot walk back to while it runs is a real
 -- property of a machine this strong.
-t.ui_act(q, "set", '{"field":"rate","value":200}')
-t.ui_act(q, "toggle", '{"field":"power"}')
+ui_controls.set(q, "rate", 200)
+ui_controls.toggle(q, "power")
 t.run_ticks(2)
 local before_x, before_y = t.pos(q)
 t.run_seconds(30)
@@ -444,7 +444,7 @@ for _, job in ipairs({
     for _, dir in ipairs(job.walk) do
         walk(d, dir)
     end
-    t.click(d, job.x, 1, t.target_at(job.x, 1, job.id))
+    t.click(d, job.x, 1, t.target_at(d, job.x, 1, job.id))
     t.tick()
     local ui = t.ui(d)
     local supply = nil
@@ -454,7 +454,7 @@ for _, job in ipairs({
         end
     end
     assert(supply == job.supply .. ".dead", job.id .. " says the mains are not behind it")
-    t.ui_act(d, "toggle", '{"field":"power"}')
+    ui_controls.toggle(d, "power")
     t.run_ticks(2)
     assert(
         t.structure_at(job.x, 1).state == "off",
@@ -503,7 +503,7 @@ t.world([==[(
 
 local s = t.join()
 t.tick()
-t.click(s, 1, 2, t.target_at(1, 2, "wrench"))
+t.click(s, 1, 2, t.target_at(s, 1, 2, "wrench"))
 t.run_ticks(2)
 assert(t.hands(s).held == "wrench", "wrench in hand")
 
@@ -514,7 +514,7 @@ for _, job in ipairs({
     -- Stand one tile clear: you cannot raise a machine on the tile you
     -- are standing on (thermal_devices_test.luau asserts the refusal).
     walk(s, "east")
-    t.click(s, job.x, 2, t.target_at(job.x, 2, job.id .. "_fitting"))
+    t.click(s, job.x, 2, t.target_at(s, job.x, 2, job.id .. "_fitting"))
     t.run_seconds(2.5)
     local built = t.structure_at(job.x, 2)
     assert(
@@ -522,7 +522,7 @@ for _, job in ipairs({
         "a wrenched " .. job.id .. " fitting becomes the machine"
     )
     assert(
-        t.target_at(job.x, 2, job.id .. "_fitting") == nil,
+        t.target_at(s, job.x, 2, job.id .. "_fitting") == nil,
         "and the fitting is spent rather than left lying under it"
     )
 end
@@ -532,7 +532,7 @@ for _, job in ipairs({
     { x = 4, id = "air_injector" },
     { x = 3, id = "air_scrubber" },
 }) do
-    t.click(s, job.x, 2, t.target_at(job.x, 2, job.id))
+    t.click(s, job.x, 2, t.target_at(s, job.x, 2, job.id))
     t.run_seconds(2.5)
     assert(t.structure_at(job.x, 2) == nil, job.id .. " comes up off the deck")
     assert(

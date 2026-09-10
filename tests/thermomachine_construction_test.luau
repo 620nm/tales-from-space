@@ -37,7 +37,7 @@ local function readout(ui, label)
 end
 
 -- The bench: a run reaching in from the west, a bare tile to build on,
--- and every part of the machine lying at the builder's feet.
+-- and the machine's parts laid out on the nearby floor.
 t.world([==[(
     name: "assembly bench",
     legend: {
@@ -49,20 +49,21 @@ t.world([==[(
         "########",
         "#......#",
         "#......#",
+        "#......#",
         "########",
     ],
     spawns: [(3, 2)],
     items: [
-        (3, 2, "metal"),
-        (3, 2, "cable_coil"),
-        (3, 2, "machine_board.thermomachine"),
+        (1, 3, "metal"),
+        (2, 3, "cable_coil"),
+        (3, 3, "machine_board.thermomachine"),
+        (4, 3, "matter_bin"),
         (3, 2, "matter_bin"),
-        (3, 2, "matter_bin"),
+        (5, 3, "micro_laser"),
         (3, 2, "micro_laser"),
-        (3, 2, "micro_laser"),
-        (3, 2, "glass"),
-        (3, 2, "screwdriver"),
-        (3, 2, "crowbar"),
+        (6, 3, "glass"),
+        (1, 2, "screwdriver"),
+        (5, 2, "crowbar"),
     ],
     pipes: [(1, 1, 4), (2, 1, 4)],
 )]==], 7)
@@ -70,13 +71,32 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
--- Everything is picked up from the tile underfoot, one thing at a
--- time: two hands, and a spec that walks around proves nothing this
--- one does not.
+-- Supplies lie apart so each has a visible pixel. Fetch one at a
+-- time and return to the workbench before using it.
 local function take(id)
-    t.click(p, 3, 2, t.target_at(3, 2, id))
+    local x, y = 3, 2
+    local places = {["metal"] = {1, 3},["cable_coil"] = {2, 3},["machine_board.thermomachine"] = {3, 3},["matter_bin"] = {4, 3},["micro_laser"] = {5, 3},["glass"] = {6, 3},["screwdriver"] = {1, 2},["crowbar"] = {5, 2}}
+    local at = if t.target_at(p, x, y, id) then {x, y} else places[id]
+    local home_x, home_y = t.pos(p)
+    local px, py = home_x, home_y
+    for _ = 1, 16 do
+        if math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1 then break end
+        local dir = if math.abs(py - at[2]) > 1 then (if py < at[2] then "south" else "north") else (if px < at[1] then "east" else "west")
+        t.move(p, dir)
+        t.run_ticks(3)
+        px, py = t.pos(p)
+    end
+    assert(math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1, "the supply is reachable")
+    t.click(p, at[1], at[2], t.target_at(p, at[1], at[2], id))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
+    for _ = 1, 16 do
+        if px == home_x and py == home_y then break end
+        t.move(p, if px ~= home_x then (if px < home_x then "east" else "west") else (if py < home_y then "south" else "north"))
+        t.run_ticks(3)
+        px, py = t.pos(p)
+    end
+    assert(px == home_x and py == home_y, "returned to the workbench")
 end
 
 local function put_down()
@@ -90,7 +110,7 @@ end
 -- click would raise one. tg's radial asks the same question.
 -- ---------------------------------------------------------------
 take("metal")
-t.build(p, "metal", "machine_frame", 3, 1)
+ui_controls.build(p, "metal", "machine_frame", 3, 1)
 t.run_seconds(8.5)
 local frame = t.structure_at(3, 1)
 assert(frame ~= nil and frame.id == "machine_frame", "five sheets box up into a frame")
@@ -101,7 +121,7 @@ assert(frame.state == "empty", "and it opens bare")
 put_down()
 take("matter_bin")
 local _ = t.messages(p)
-t.click(p, 3, 1, t.target_at(3, 1, "machine_frame"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "machine_frame"))
 t.run_ticks(2)
 assert(
     said(p, "The machine frame must be boarded first."),
@@ -114,13 +134,13 @@ assert(t.hands(p).held == "matter_bin", "and swallows nothing")
 -- ---------------------------------------------------------------
 put_down()
 take("cable_coil")
-t.click(p, 3, 1, t.target_at(3, 1, "machine_frame"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "machine_frame"))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1).state == "wired", "five lengths of cable wire it")
 
 put_down()
 take("machine_board.thermomachine")
-t.click(p, 3, 1, t.target_at(3, 1, "machine_frame"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "machine_frame"))
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "boarded", "the board clicks into place")
 assert(t.count_items("machine_board.thermomachine") == 0, "and is installed rather than dropped")
@@ -146,7 +166,7 @@ assert(t.count_items("machine_board.thermomachine") == 0, "and is installed rath
 -- ---------------------------------------------------------------
 take("screwdriver")
 local _ = t.messages(p)
-t.click(p, 3, 1, t.target_at(3, 1, "machine_frame"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "machine_frame"))
 t.run_seconds(4.5)
 local heard = table.concat(t.messages(p), " | ")
 assert(
@@ -160,7 +180,7 @@ assert(t.structure_at(3, 1).id == "machine_frame", "and nothing was assembled")
 put_down()
 take("metal")
 local _ = t.messages(p)
-t.click(p, 3, 1, t.target_at(3, 1, "machine_frame"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "machine_frame"))
 t.run_ticks(2)
 assert(said(p, "The machine frame has no use for that."), "the assembly is not a rubbish bin")
 
@@ -168,7 +188,7 @@ assert(said(p, "The machine frame has no use for that."), "the assembly is not a
 put_down()
 for _, part in ipairs({ "matter_bin", "matter_bin", "micro_laser", "micro_laser" }) do
     take(part)
-    t.click(p, 3, 1, t.target_at(3, 1, "machine_frame"))
+    t.click(p, 3, 1, t.target_at(p, 3, 1, "machine_frame"))
     t.run_ticks(2)
     assert(t.hands(p).held == nil, "a loose part is spent whole")
 end
@@ -178,7 +198,7 @@ end
 -- sockets being full is what lets the board's own rows be heard.
 take("screwdriver")
 local _ = t.messages(p)
-t.click(p, 3, 1, t.target_at(3, 1, "machine_frame"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "machine_frame"))
 t.run_seconds(4.5)
 heard = table.concat(t.messages(p), " | ")
 assert(
@@ -192,7 +212,7 @@ assert(
 put_down()
 for _, part in ipairs({ "cable_coil", "glass" }) do
     take(part)
-    t.click(p, 3, 1, t.target_at(3, 1, "machine_frame"))
+    t.click(p, 3, 1, t.target_at(p, 3, 1, "machine_frame"))
     t.run_ticks(2)
     assert(t.hands(p).held == part, "a stack gives up a unit and stays in the hand")
     put_down()
@@ -202,7 +222,7 @@ end
 -- THE SCREWDRIVER, AND A MACHINE STANDING IN THE RUN.
 -- ---------------------------------------------------------------
 take("screwdriver")
-t.click(p, 3, 1, t.target_at(3, 1, "machine_frame"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "machine_frame"))
 t.run_seconds(4.5)
 local unit = t.structure_at(3, 1)
 assert(unit ~= nil and unit.id == "thermomachine", "the assembly becomes the machine its board named")
@@ -215,7 +235,7 @@ assert(
 -- It is PLUMBED IN: the board built a structure, so it went down the
 -- same path a mapped one does and found the run beside it.
 put_down()
-t.click(p, 3, 1, t.target_at(3, 1, "thermomachine"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "thermomachine"))
 t.tick()
 local panel = t.ui(p)
 assert(panel, "a temperature control unit wears a panel")
@@ -235,7 +255,7 @@ take("crowbar")
 -- weighed outright, because none of those are left on the deck.
 local glass_before = t.count_items("glass")
 local coil_before = t.count_items("cable_coil")
-t.click(p, 3, 1, t.target_at(3, 1, "thermomachine"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "thermomachine"))
 t.run_seconds(4.5)
 local left = t.structure_at(3, 1)
 assert(left ~= nil and left.id == "machine_frame", "a frame is what is left standing")

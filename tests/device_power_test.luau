@@ -169,7 +169,7 @@ end
 -- The panel is opened bare-handed every time: a tool in the working
 -- hand is not an interface, it is the tool.
 local function open_panel(p, id)
-    t.click(p, 5, 1, t.target_at(5, 1, id))
+    t.click(p, 5, 1, t.target_at(p, 5, 1, id))
     t.tick()
     assert(t.ui(p), id .. " answers an empty hand with its panel")
 end
@@ -200,9 +200,9 @@ local TRINARIES = {
         -- from being drained dry before the switch can be thrown, which
         -- would make the stop below a stop with nothing left to stop.
         configure = function(p)
-            t.ui_act(p, "set", '{"field":"rate","value":20}')
-            t.ui_act(p, "toggle", '{"field":"filter","option":"o2"}')
-            t.ui_act(p, "toggle", '{"field":"power"}')
+            ui_controls.set(p, "rate", 20)
+            ui_controls.toggle(p, "filter", "o2")
+            ui_controls.toggle(p, "power")
         end,
         moved = function(was)
             assert(
@@ -232,8 +232,8 @@ local TRINARIES = {
         -- time given: a mixer AT its target has finished, and finished
         -- is not off.
         configure = function(p)
-            t.ui_act(p, "set", '{"field":"pressure","value":250}')
-            t.ui_act(p, "toggle", '{"field":"power"}')
+            ui_controls.set(p, "pressure", 250)
+            ui_controls.toggle(p, "power")
         end,
         moved = function(was)
             assert(
@@ -279,7 +279,7 @@ for _, job in ipairs(TRINARIES) do
 
     -- ...and stop it.
     open_panel(p, job.id)
-    t.ui_act(p, "toggle", '{"field":"power"}')
+    ui_controls.toggle(p, "power")
     t.run_ticks(2)
     assert(t.structure_at(5, 1).state == "off", job.id .. " is switched off")
     assert(
@@ -299,7 +299,7 @@ for _, job in ipairs(TRINARIES) do
     -- the APC and the machine, throw the switch back on, and ask the
     -- books the same question: a switch thrown over a dead circuit is a
     -- promise, not a machine.
-    t.click(p, 5, 2, t.target_at(5, 2, "wirecutters"))
+    t.click(p, 5, 2, t.target_at(p, 5, 2, "wirecutters"))
     t.run_ticks(2)
     assert(t.hands(p).held == "wirecutters", "cutters in hand")
     t.click_subfloor(p, 4, 2, "cable", ROOM)
@@ -313,7 +313,7 @@ for _, job in ipairs(TRINARIES) do
     )
 
     open_panel(p, job.id)
-    t.ui_act(p, "toggle", '{"field":"power"}')
+    ui_controls.toggle(p, "power")
     t.run_ticks(2)
     assert(t.ui(p).toggles[1].on == true, "the switch is thrown all the same")
     assert(
@@ -356,7 +356,7 @@ local p = bench(GATE, LINE, "shut")
 -- a release valve across less than ten kPa (release.rs, "friction in
 -- the mechanism"), so anything under that would be a gate that is
 -- allowed to sit still.
-t.click(p, 5, 2, t.target_at(5, 2, "pipe"))
+t.click(p, 5, 2, t.target_at(p, 5, 2, "pipe"))
 t.run_ticks(2)
 assert(t.hands(p).held == "pipe", "a coil of pipe in hand")
 t.click(p, 6, 2)
@@ -388,7 +388,7 @@ t.run_ticks(2)
 -- a thing the harness does, because `t` exposes the power grid to READ
 -- and leaves the mutation to a tool in somebody's hands (spec/api/
 -- power.rs).
-t.click(p, 5, 2, t.target_at(5, 2, "wirecutters"))
+t.click(p, 5, 2, t.target_at(p, 5, 2, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
 t.click_subfloor(p, 4, 2, "cable", ROOM)
@@ -407,8 +407,8 @@ assert(
 -- click that opened it.
 open_panel(p, GATE)
 panel_says(p, "flow.supply.dead", "the gate's panel says the mains are not behind it")
-t.ui_act(p, "set", '{"field":"temperature","value":500}')
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.set(p, "temperature", 500)
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.ui(p).toggles[1].on == true, "the switch is on all the same")
 near(t.ui(p).setpoints[1].value, 500.0, 0.01, "and the dial took the setting")
@@ -433,7 +433,7 @@ has_work("and the job is still sitting there untouched")
 -- it does the moment it wakes.
 local was = { out_kpa = t.pipe_pressure(OUT[1], OUT[2]), in_kpa = t.pipe_pressure(IN[1], IN[2]) }
 
-t.click(p, 6, 2, t.target_at(6, 2, "cable_coil"))
+t.click(p, 6, 2, t.target_at(p, 6, 2, "cable_coil"))
 t.run_ticks(2)
 assert(t.hands(p).held == "cable_coil", "a fresh coil in hand")
 -- A fresh coil arrives on yellow (tg's CABLE_LAYER_2 default) and this
@@ -477,7 +477,7 @@ near(
 -- this one too, a few seconds later.
 open_panel(p, GATE)
 panel_says(p, "flow.supply.fed", "the mains are behind it again")
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.structure_at(5, 1).state == "shut", "the gate is shut")
 assert(t.apc_at(2, 2).equipment == true, "with the APC feeding it the whole time")

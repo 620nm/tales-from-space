@@ -75,7 +75,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-t.click(p, 1, 2, t.target_at(1, 2, "wrench"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "wrench"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "wrench in hand")
 
@@ -91,7 +91,7 @@ assert(charged > 90.0, "the run is live: " .. charged .. " kPa")
 -- that, and it is the same `over = "pipe"` rule a connector port takes.
 walk(p, "east")
 local _ = t.messages(p)
-t.click(p, 3, 2, t.target_at(3, 2, "pipe_meter"))
+t.click(p, 3, 2, t.target_at(p, 3, 2, "pipe_meter"))
 t.run_ticks(2)
 assert(
     said(p, "There is no pipe under the floor here."),
@@ -101,7 +101,7 @@ assert(t.structure_at(3, 2) == nil, "nothing was bolted to nothing")
 assert(lying_at(3, 2, "pipe_meter"), "and the fitting survived the attempt")
 
 -- ---- bolt one onto the run ----
-t.click(p, 2, 1, t.target_at(2, 1, "pipe_meter"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "pipe_meter"))
 t.run_ticks(1)
 assert(not t.ledger_has("StructureStep", "meter", "built"), "one tick in, still a fitting")
 t.run_seconds(2.5)
@@ -138,7 +138,7 @@ assert(
 -- twenty (meter.dm:82-94) -- the low scale gets half the dial, because
 -- that is the range a station actually runs at, and every stop of that
 -- scale wears tg's `buttons1`.
-local drawn = t.layers(p, t.target_at(2, 1, "meter"))
+local drawn = t.layers(p, t.target_at(p, 2, 1, "meter"))
 assert(drawn[1] == "meter_base", "the housing")
 assert(drawn[2] == "meter_p1_3", "and the needle at one atmosphere: " .. tostring(drawn[2]))
 assert(drawn[3] == "meter_l1", "and the lamp for that band: " .. tostring(drawn[3]))
@@ -159,7 +159,7 @@ local reading = "The pressure gauge reads "
 walk(p, "east")
 walk(p, "east")
 assert(t.pos(p) == 4, "standing off down the deck: " .. t.pos(p))
-local look = t.examine(p, 2, 1, t.target_at(2, 1, "meter"))
+local look = t.examine(p, 2, 1, t.target_at(p, 2, 1, "meter"))
 assert(look ~= nil, "a gauge in view answers a look")
 local read_at_range = false
 for _, line in ipairs(look.lines) do
@@ -172,7 +172,7 @@ assert(read_at_range, "the look carries the reading: " .. table.concat(look.line
 -- ...and a click on it from there reaches nothing at all, because a
 -- look is done with the eyes and a hand is still a hand.
 local _ = t.messages(p)
-t.click(p, 2, 1, t.target_at(2, 1, "meter"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "meter"))
 t.run_ticks(2)
 assert(t.ui(p) == nil, "no panel opens from across the room")
 
@@ -186,7 +186,7 @@ assert(t.ui(p) == nil, "no panel opens from across the room")
 walk(p, "west")
 walk(p, "west")
 t.swap_hands(p)
-t.click(p, 2, 1, t.target_at(2, 1, "meter"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "meter"))
 t.run_ticks(2)
 local panel = t.ui(p)
 assert(panel ~= nil, "an attached gauge answers an empty hand with a panel")
@@ -221,7 +221,7 @@ assert(line.sealed == nil, "a run has no lid to report")
 -- tg's `wrench_act`: forty deciseconds, and `on_deconstruction` mints
 -- the fitting back onto the tile (meter.dm:139-147).
 t.swap_hands(p)
-t.click(p, 2, 1, t.target_at(2, 1, "meter"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "meter"))
 t.run_ticks(1)
 assert(not t.ledger_has("StructureStep", "meter", "gone"), "one tick in, still bolted down")
 t.run_seconds(4.5)
@@ -265,7 +265,7 @@ local m = t.join()
 t.tick()
 t.run_seconds(1.0)
 
-local gauge = t.target_at(1, 1, "meter")
+local gauge = t.target_at(m, 1, 1, "meter")
 -- Housing, needle, lamp: the needle is the MIDDLE layer, never the last
 -- one, because tg draws its button panel over the top of the dial.
 local function needle()
@@ -293,9 +293,9 @@ assert(
 )
 
 -- Pick the length up and lay it on the end of the main.
-t.click(m, 3, 1, t.target_at(3, 1, "pipe"))
+t.click(m, 3, 1, t.target_at(m, 3, 1, "pipe"))
 t.run_ticks(2)
-t.click(m, 3, 1)
+t.click(m, 3, 1, nil, -14, 14)
 
 -- Tick by tick, so that "the tick it happens" means something.
 local laid = false

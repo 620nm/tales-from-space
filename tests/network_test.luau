@@ -75,16 +75,17 @@ t.world([==[(
         "########",
         "#......#",
         "#Gao...#",
+        "#......#",
         "########",
     ],
     spawns: [(5, 1)],
     items: [
-        (5, 1, "metal"),
-        (5, 1, "cable_coil"),
-        (5, 1, "machine_board.network_router"),
-        (5, 1, "network_card"),
-        (5, 1, "screwdriver"),
-        (5, 1, "id_engineering"),
+        (4, 2, "metal"),
+        (5, 2, "cable_coil"),
+        (6, 2, "machine_board.network_router"),
+        (4, 3, "network_card"),
+        (5, 3, "screwdriver"),
+        (6, 3, "id_engineering"),
     ],
     structures: [(4, 1, "access_point", { "access": "engineering" })],
     mounts: [(4, 1, North)],
@@ -95,9 +96,29 @@ local p = t.join()
 t.run_ticks(20)
 
 local function take(id)
-    t.click(p, 5, 1, t.target_at(5, 1, id))
+    local x, y = 5, 1
+    local places = {["metal"] = {4, 2},["cable_coil"] = {5, 2},["machine_board.network_router"] = {6, 2},["network_card"] = {4, 3},["screwdriver"] = {5, 3},["id_engineering"] = {6, 3}}
+    local at = if t.target_at(p, x, y, id) then {x, y} else places[id]
+    local home_x, home_y = t.pos(p)
+    local px, py = home_x, home_y
+    for _ = 1, 16 do
+        if math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1 then break end
+        local dir = if math.abs(py - at[2]) > 1 then (if py < at[2] then "south" else "north") else (if px < at[1] then "east" else "west")
+        t.move(p, dir)
+        t.run_ticks(3)
+        px, py = t.pos(p)
+    end
+    assert(math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1, "the supply is reachable")
+    t.click(p, at[1], at[2], t.target_at(p, at[1], at[2], id))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
+    for _ = 1, 16 do
+        if px == home_x and py == home_y then break end
+        t.move(p, if px ~= home_x then (if px < home_x then "east" else "west") else (if py < home_y then "south" else "north"))
+        t.run_ticks(3)
+        px, py = t.pos(p)
+    end
+    assert(px == home_x and py == home_y, "returned to the workbench")
 end
 
 local function put_down()
@@ -106,7 +127,7 @@ local function put_down()
 end
 
 local function work(seconds)
-    t.click(p, 6, 1, t.target_at(6, 1, "machine_frame"))
+    t.click(p, 6, 1, t.target_at(p, 6, 1, "machine_frame"))
     t.run_seconds(seconds)
 end
 
@@ -117,7 +138,7 @@ end
 --    on the box the reader is standing at, and its state -- and then
 --    no roster and no candidates at all (docs/DEVICES.md §1, §8).
 -- ---------------------------------------------------------------
-t.click(p, 4, 1, t.target_at(4, 1, "access_point"))
+t.click(p, 4, 1, t.target_at(p, 4, 1, "access_point"))
 t.tick()
 local panel = t.ui(p)
 assert(panel ~= nil, "the access point wears a panel")
@@ -140,7 +161,7 @@ t.tick()
 --    socket is empty, exactly as the access point's frame does.
 -- ---------------------------------------------------------------
 take("metal")
-t.build(p, "metal", "machine_frame", 6, 1)
+ui_controls.build(p, "metal", "machine_frame", 6, 1)
 t.run_seconds(8.5)
 assert(t.structure_at(6, 1).id == "machine_frame", "five sheets box up into a frame")
 
@@ -184,7 +205,7 @@ t.run_ticks(40)
 -- worked by somebody standing at it (docs/DEVICES.md §8).
 -- ---------------------------------------------------------------
 local _ = t.messages(p)
-t.click(p, 6, 1, t.target_at(6, 1))
+t.click(p, 6, 1, t.target_at(p, 6, 1))
 t.tick()
 panel = t.ui(p)
 assert(panel ~= nil, "the router wears the same panel")
@@ -204,7 +225,7 @@ assert(
     "a shut box says it is shut, got: " .. table.concat(t.messages(p), " | ")
 )
 
-t.ui_act(p, "toggle", '{"field":"link_lock"}')
+ui_controls.toggle(p, "link_lock")
 t.tick()
 panel = t.ui(p)
 assert(rows(panel, "link_lock")[1].on, "it opens for whoever is standing at it")
@@ -222,7 +243,7 @@ assert(offer.label.id == "link.candidate.hub", "named by what it is: " .. word(o
 -- 4. THE JOIN. One press, one edge, one row on the record -- and the
 --    edge is permanent until somebody cuts it.
 -- ---------------------------------------------------------------
-t.ui_act(p, "toggle", string.format('{"field":"link_join","option":"%s"}', point))
+ui_controls.toggle(p, "link_join", point)
 t.tick()
 panel = t.ui(p)
 local held = row_for(panel, "link_drop", point)
@@ -261,7 +282,7 @@ assert(row_for(panel, "link_join", point) == nil, "and it is on nobody's list an
 t.ui_close(p)
 t.tick()
 local _ = t.messages(p)
-t.click(p, 6, 1, t.target_at(6, 1))
+t.click(p, 6, 1, t.target_at(p, 6, 1))
 t.tick()
 assert(
     said(p, "The router is on the air, carrying one access point."),
@@ -271,7 +292,7 @@ assert(
 -- ---------------------------------------------------------------
 -- 5. AND CUT. A release is deliberate and says so.
 -- ---------------------------------------------------------------
-t.ui_act(p, "toggle", string.format('{"field":"link_drop","option":"%s"}', point))
+ui_controls.toggle(p, "link_drop", point)
 t.tick()
 panel = t.ui(p)
 assert(row_for(panel, "link_drop", point) == nil, "the edge is cut")
@@ -288,7 +309,7 @@ for _, row in ipairs(t.ledger_rows("link_released")) do
 end
 assert(cuts == 1, "with the cut on the record: " .. cuts)
 
-t.ui_act(p, "toggle", string.format('{"field":"link_join","option":"%s"}', point))
+ui_controls.toggle(p, "link_join", point)
 t.tick()
 assert(row_for(t.ui(p), "link_drop", point) ~= nil, "joined again")
 
@@ -299,14 +320,14 @@ assert(row_for(t.ui(p), "link_drop", point) ~= nil, "joined again")
 -- ---------------------------------------------------------------
 t.ui_close(p)
 t.tick()
-t.click(p, 4, 1, t.target_at(4, 1, "access_point"))
+t.click(p, 4, 1, t.target_at(p, 4, 1, "access_point"))
 t.tick()
-t.ui_act(p, "toggle", '{"field":"link_lock"}')
+ui_controls.toggle(p, "link_lock")
 t.tick()
 assert(not rows(t.ui(p), "link_lock")[1].on, "an empty hand does not open a keyed lock")
 
 take("id_engineering")
-t.ui_act(p, "toggle", '{"field":"link_lock"}')
+ui_controls.toggle(p, "link_lock")
 t.tick()
 panel = t.ui(p)
 assert(rows(panel, "link_lock")[1].on, "the claim does")
@@ -321,7 +342,7 @@ assert(readout(panel, "link.state") == "link.state.online", "and it is on the ai
 put_down()
 t.ui_close(p)
 t.tick()
-t.click(p, 6, 1, t.target_at(6, 1))
+t.click(p, 6, 1, t.target_at(p, 6, 1))
 t.tick()
 assert(row_for(t.ui(p), "link_drop", point).label.args.state == "link.state.online",
     "on the air while the breaker is in")

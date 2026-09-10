@@ -14,7 +14,7 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(1, 1)],
+    spawns: [(2, 1)],
     items: [(1, 1, "cola")],
 )]==], 7)
 
@@ -24,11 +24,12 @@ t.tick()
 -- A rough shift so far: some oxygen damage to heal.
 t.set_health(p, { oxy = 30 })
 
-t.click(p, 1, 1, t.target_at(1, 1, "cola")) -- pick up the can
+t.click(p, 1, 1, t.target_at(p, 1, 1, "cola")) -- pick up the can
 t.tick()
+assert(t.hands(p).held == "cola", "the can is held")
 assert(t.blood_moles(p) == 0, "nothing in the blood yet")
 
-t.click(p, 1, 1) -- click your own tile: a swig
+t.click_turf(p, 2, 1) -- drink from the held can
 t.tick()
 local swig = t.blood_moles(p)
 assert(math.abs(swig - 0.05) < 1e-9, ("one 0.05 mol gulp, got %g"):format(swig))

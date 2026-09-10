@@ -103,7 +103,7 @@ local TUBE = near.color
 --    on its own cell -- and a cell is exactly what tells the two
 --    layers apart.
 -- ---------------------------------------------------------------
-t.click(p, 3, 2, t.target_at(3, 2, "wirecutters"))
+t.click(p, 3, 2, t.target_at(p, 3, 2, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
 t.click_subfloor(p, 3, 1, "cable", 2)
@@ -148,7 +148,7 @@ assert(not far.emits, "the fitting on the dark layer throws nothing")
 -- ---------------------------------------------------------------
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 3, 2, t.target_at(3, 2, "cable_coil"))
+t.click(p, 3, 2, t.target_at(p, 3, 2, "cable_coil"))
 t.run_ticks(2)
 t.click(p, 3, 1)
 t.run_seconds(1.5)

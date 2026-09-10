@@ -76,8 +76,8 @@ t.set_environment({ sink_k = 293.15, insolation = 0.0 })
 local chemist = t.join("engineer")
 t.tick()
 
-local dispenser = t.target_at(1, 2)
-local jar = t.target_at(2, 3, "bottle")
+local dispenser = t.target_at(chemist, 1, 2)
+local jar = t.target_at(chemist, 2, 3, "bottle")
 assert(dispenser ~= nil and jar ~= nil, "the bench is set")
 
 local ROOM = {}
@@ -111,7 +111,7 @@ end
 -- makes the closing sum below mean something.
 -- ---------------------------------------------------------------
 assert(t.worn(chemist).mask == "breath_mask", "the shift starts with apparatus on")
-t.click(chemist, 3, 3, t.target_at(3, 3, "oxygen_tank"))
+t.click(chemist, 3, 3, t.target_at(chemist, 3, 3, "oxygen_tank"))
 t.run_ticks(2)
 assert(t.hands(chemist).held == "oxygen_tank", "the tank is in hand")
 t.use_self(chemist)
@@ -132,13 +132,13 @@ t.click(chemist, 1, 2, dispenser)
 t.tick()
 t.click(chemist, 1, 2, dispenser)
 t.tick()
-t.ui_act(chemist, "set", '{"field":"amount","value":' .. PRESS .. '}')
+ui_controls.set(chemist, "amount", PRESS)
 t.run_ticks(2)
-t.ui_act(chemist, "toggle", '{"field":"dispense","option":"chlorine"}')
+ui_controls.toggle(chemist, "dispense", "chlorine")
 -- The press lands in one pass; the sweep takes a few more to walk the
 -- superheat down onto the saturation line.
 t.run_seconds(10)
-t.ui_act(chemist, "toggle", '{"field":"eject"}')
+ui_controls.toggle(chemist, "eject")
 t.run_ticks(2)
 assert(t.hands(chemist).held == "bottle", "the vessel comes back out")
 

@@ -54,7 +54,7 @@ local p = t.join()
 t.tick()
 
 -- ---- the window ----
-t.click(p, 2, 1, t.target_at(2, 1))
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 local ui = t.ui(p)
 assert(ui, "clicking the dispenser opens its window")
@@ -91,7 +91,7 @@ assert(shelf.cola == nil, "a pipe dispenser sells no softdrinks")
 -- tg's `new /obj/item/pipe(loc)` (pipe_dispenser.dm:209): out of the
 -- machine, onto the machine. The buyer bends down for it.
 assert(t.count_items("pump_fitting") == 0)
-t.ui_act(p, "vend", '{"product":"pump_fitting"}')
+ui_controls.vend(p, "pump_fitting")
 t.tick()
 assert(t.count_items("pump_fitting") == 1, "the named fitting dispensed")
 assert(on_tile(2, 1, "pump_fitting"), "onto the dispenser's tile, not the buyer's")
@@ -104,14 +104,14 @@ assert(t.ledger_has("ItemSpawned", "pump_fitting", "Player"),
 -- presses in the same breath are one fitting; the second press is not
 -- queued, it is dropped, so the button is worth exactly as much to a
 -- script as to a finger.
-t.ui_act(p, "vend", '{"product":"pump_fitting"}')
-t.ui_act(p, "vend", '{"product":"manual_valve_fitting"}')
+ui_controls.vend(p, "pump_fitting")
+ui_controls.vend(p, "manual_valve_fitting")
 t.tick()
 assert(t.count_items("pump_fitting") == 1, "the second press inside the second is dropped")
 assert(t.count_items("manual_valve_fitting") == 0, "and so is a press for something else")
 
 t.run_seconds(1)
-t.ui_act(p, "vend", '{"product":"manual_valve_fitting"}')
+ui_controls.vend(p, "manual_valve_fitting")
 t.tick()
 assert(t.count_items("manual_valve_fitting") == 1, "a second later it hands out again")
 
@@ -119,7 +119,7 @@ assert(t.count_items("manual_valve_fitting") == 1, "a second later it hands out 
 -- mints nothing — not a fallback, and certainly not an arbitrary
 -- prototype named by the payload.
 t.run_seconds(1)
-t.ui_act(p, "vend", '{"product":"id_captain"}')
+assert(not ui_controls.has_product(p, "id_captain"), "excluded product has no rendered control")
 t.tick()
 assert(t.count_items("id_captain") == 0, "no dispenser can be talked into minting an ID card")
 
@@ -134,9 +134,9 @@ assert(t.count_items("id_captain") == 0, "no dispenser can be talked into mintin
 -- names the pile before it names the machine, exactly as it would in
 -- tg. You pick your fittings up and then the machine is clickable.
 t.ui_close(p)
-t.click(p, 2, 1, t.target_at(2, 1, "manual_valve_fitting"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "manual_valve_fitting"))
 t.run_ticks(2)
-t.click(p, 2, 1, t.target_at(2, 1, "pump_fitting"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "pump_fitting"))
 t.run_ticks(2)
 local hands = t.hands(p)
 assert(hands.held == "manual_valve_fitting", "the valve fitting is in the working hand")
@@ -144,7 +144,7 @@ assert(hands[2] == "pump_fitting", "and the pump fitting in the other")
 assert(#t.items_at(2, 1) == 0, "the dispenser's tile is clear again")
 
 local _ = t.messages(p)
-t.click(p, 2, 1, t.target_at(2, 1))
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.run_ticks(2)
 assert(t.hands(p).held == nil, "the dispenser swallowed what was in the working hand")
 assert(t.hands(p)[2] == "pump_fitting", "and left the other hand alone")
@@ -162,10 +162,10 @@ assert(eaten[1].actor.triggered_by, "and it names who asked")
 -- NEGATIVE: it takes back its OWN kit and nothing else. A wrench is a
 -- tool, not stock, and a machine that ate an engineer's wrench because
 -- they clicked the wrong tile would be a griefing device.
-t.click(p, 1, 1, t.target_at(1, 1, "wrench"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "wrench"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "wrench in the working hand")
-t.click(p, 2, 1, t.target_at(2, 1))
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "the dispenser does not deal in wrenches")
 assert(not t.ledger_has("ItemConsumed", "wrench"), "and wrote no row about one")

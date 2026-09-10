@@ -46,12 +46,12 @@ t.world([==[(
 local p = t.join()
 t.run_ticks(2)
 
-local dispenser = t.target_at(1, 1)
-local heater = t.target_at(2, 1)
+local dispenser = t.target_at(p, 1, 1)
+local heater = t.target_at(p, 2, 1)
 -- Taken while it is still standing on the deck: the handle is the
 -- entity and outlives every move, but `t.target_at` can only find a
 -- thing that is on a tile.
-local beaker = t.target_at(2, 2, "beaker")
+local beaker = t.target_at(p, 2, 2, "beaker")
 
 -- Water hanging in the closet's air, over every tile of it.
 local function damp()
@@ -76,7 +76,7 @@ local function panel(machine, x, y)
 end
 
 local function eject()
-    t.ui_act(p, "toggle", '{"field":"eject"}')
+    ui_controls.toggle(p, "eject")
     t.run_ticks(2)
 end
 
@@ -93,9 +93,9 @@ t.run_ticks(2)
 assert(t.hands(p).held == "beaker", "the beaker is in hand")
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
-t.ui_act(p, "toggle", '{"field":"dispense","option":"water"}')
+ui_controls.toggle(p, "dispense", "water")
 t.run_ticks(2)
-t.ui_act(p, "toggle", '{"field":"dispense","option":"water"}')
+ui_controls.toggle(p, "dispense", "water")
 t.run_ticks(2)
 local filled = water_in(beaker)
 assert(filled > 1.0, "filled to the brim: " .. filled .. " mol")
@@ -115,11 +115,11 @@ eject()
 -- ---------------------------------------------------------------
 dock(heater, 2, 1)
 panel(heater, 2, 1)
-t.ui_act(p, "set", '{"field":"temperature","value":400}')
+ui_controls.set(p, "temperature", 400)
 t.run_ticks(2)
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_seconds(600)
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 
 local left = water_in(beaker)

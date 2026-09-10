@@ -92,7 +92,7 @@ end
 -- THE AREA PANEL. Three modules: the cell it keeps, the channels only
 -- it has, and a block for each of the two lines under it.
 -- ---------------------------------------------------------------
-t.click(p, 1, 2, t.target_at(1, 2))
+t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.tick()
 local apc = t.ui(p)
 assert(apc, "clicking the panel opens its window")
@@ -114,14 +114,14 @@ assert(#apc.setpoints == 0, "an APC has no dial: the ladder is the pass's")
 -- themselves, and it takes the room with it.
 assert(toggle(apc, "breaker").on, "the main breaker ships closed")
 assert(toggle(apc, "breaker").section.id == "channels.channels", "beside the lamps it gates")
-t.ui_act(p, "toggle", '{"field":"breaker"}')
+ui_controls.toggle(p, "breaker")
 t.run_seconds(3)
 assert(not t.apc_at(1, 2).operating, "the breaker opened")
 assert(not toggle(t.ui(p), "breaker").on, "and the panel says so")
 assert(not t.apc_at(1, 2).lighting, "a panel that is not operating feeds nothing")
 assert(not t.lit(6, 2), "so its room is dark on a full cell")
 assert(t.ledger_has("MachineToggled"), "throwing it is on the record")
-t.ui_act(p, "toggle", '{"field":"breaker"}')
+ui_controls.toggle(p, "breaker")
 t.run_seconds(3)
 assert(t.apc_at(1, 2).operating and t.lit(6, 2), "and closing it brings the room back")
 
@@ -132,29 +132,29 @@ assert(toggle(apc, "l3", "output") == nil, "and there is no blue main under it")
 assert(readout(apc, "ports.out").value.text:find("W", 1, true), "a port says what it carried")
 
 -- The one control the panel publishes answers, and lands on the record.
-t.ui_act(p, "toggle", '{"field":"l1","option":"bidirectional"}')
+ui_controls.toggle(p, "l1", "bidirectional")
 t.tick()
 assert(t.ports_at(1, 2).l1.mode == "bidirectional", "the port turned round")
 assert(toggle(t.ui(p), "l1", "bidirectional").on, "and the panel says so")
 assert(t.ledger_has("MachineToggled"), "turning a port is on the record")
-t.ui_act(p, "toggle", '{"field":"l1","option":"output"}')
+ui_controls.toggle(p, "l1", "output")
 t.run_seconds(3)
 assert(t.lit(6, 2), "the room circuit is feeding its lamp again")
 
 -- ---------------------------------------------------------------
--- THE HOSTILE CLIENT. A channel is not a switch on this panel and a
+-- A channel is not a switch on this panel and a
 -- port on a layer with no cable is not a control at all -- the window
 -- in front of the player IS the whitelist, so neither is refused
 -- politely, they are simply not there.
 -- ---------------------------------------------------------------
-t.ui_act(p, "toggle", '{"field":"equipment"}')
-t.ui_act(p, "toggle", '{"field":"lighting"}')
+assert(ui_controls.find(p, "/toggle/equipment/switch") == nil, "unoffered control is absent")
+assert(ui_controls.find(p, "/toggle/lighting/switch") == nil, "unoffered control is absent")
 t.tick()
 assert(t.apc_at(1, 2).equipment, "a channel nobody offered stays where it was")
 assert(t.apc_at(1, 2).lighting, "both of them")
 
-t.ui_act(p, "toggle", '{"field":"l3","option":"input"}')
-t.ui_act(p, "toggle", '{"field":"l1","option":"sideways"}')
+assert(ui_controls.find(p, "/toggle/l3/input") == nil, "unoffered control is absent")
+assert(ui_controls.find(p, "/toggle/l1/sideways") == nil, "unoffered control is absent")
 t.tick()
 assert(t.ports_at(1, 2).l3 == nil, "there is no third port to have moved")
 assert(t.ports_at(1, 2).l1.mode == "output", "and no mode nobody named")
@@ -165,7 +165,7 @@ assert(t.ports_at(1, 2).l1.mode == "output", "and no mode nobody named")
 -- ---------------------------------------------------------------
 walk("east")
 walk("east")
-t.click(p, 4, 1, t.target_at(4, 1))
+t.click(p, 4, 1, t.target_at(p, 4, 1))
 t.tick()
 local smes = t.ui(p)
 assert(smes, "clicking the bank opens its window")
@@ -181,14 +181,14 @@ assert(toggle(smes, "l2", "input").on, "it takes from the backbone")
 assert(toggle(smes, "l1", "output") == nil, "and stands on no other line")
 
 -- The four things it does, in the framework's two verbs.
-t.ui_act(p, "set", '{"field":"output_w","value":"min"}')
+ui_controls.set(p, "output_w", "min")
 t.tick()
 assert(setpoint(t.ui(p), "output_w").value == 0.0, "the throttle went to nothing")
-t.ui_act(p, "set", '{"field":"output_w","value":1e30}')
+ui_controls.set(p, "output_w", 1e+30)
 t.tick()
 assert(setpoint(t.ui(p), "output_w").value == 200000.0,
     "and a client cannot dial past the unit's rate")
-t.ui_act(p, "toggle", '{"field":"output_breaker"}')
+ui_controls.toggle(p, "output_breaker")
 t.tick()
 assert(not toggle(t.ui(p), "output_breaker").on, "the breaker opened")
 assert(readout(t.ui(p), "throttles.output").value.id == "throttles.line.breaker_open", "and the lamp says so")

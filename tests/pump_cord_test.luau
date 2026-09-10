@@ -94,7 +94,7 @@ assert(t.structure_at(6, 2).id == "volume_pump", "the map stood one there")
 -- pump has no notion of arriving, so a main whose only outlet is this
 -- machine ends EMPTY. Nothing else on this map can move a mole.
 -- ---------------------------------------------------------------
-t.click(p, 6, 2, t.target_at(6, 2, "volume_pump"))
+t.click(p, 6, 2, t.target_at(p, 6, 2, "volume_pump"))
 t.tick()
 assert(readout(p, "flow.supply") == "flow.supply.fed", "the socket across the room is behind it")
 t.ui_close(p)

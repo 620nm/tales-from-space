@@ -85,8 +85,8 @@ assert(t.structure_at(4, 4) == nil, "the tile south of it is bare floor")
 
 -- Half a doorway per tile, and the east half names the west half as
 -- its body: one door drawn across two atlas cells, not two doors.
-local body = t.target_at(3, 3, "airlock_wide")
-local east = t.target_at(4, 3, "airlock_wide")
+local body = t.target_at(p, 3, 3, "airlock_wide")
+local east = t.target_at(p, 4, 3, "airlock_wide")
 assert(body and east and body ~= east, "the east tile is a cell with a wire id of its own")
 
 local west_seen = t.seen(p, body)
@@ -95,7 +95,7 @@ assert(west_seen.layers[1].sprite == "door_wide_w",
     "the west half wears the west picture, got " .. tostring(west_seen.layers[1].sprite))
 assert(east_seen.layers[1].sprite == "door_wide_e",
     "and the east half the east one, got " .. tostring(east_seen.layers[1].sprite))
-assert(east_seen.extent_of == body, "which belongs to the leaf standing west of it")
+assert(t.same_target(east_seen.extent_of, body), "which belongs to the leaf standing west of it")
 assert(east_seen.kind == "door",
     "and streams as a DOOR, so the client predicts it like one: " .. tostring(east_seen.kind))
 
@@ -117,9 +117,9 @@ end
 -- same distance, and nothing to see.
 -- ---------------------------------------------------------------
 step(p, "north") -- (4, 4), square on the east half of the wide leaf
-assert(t.seen(p, t.target_at(4, 1, "locker")).kind ~= "unseen",
+assert(t.seen(p, t.target_at(p, 4, 1, "locker")).kind ~= "unseen",
     "the locker beyond the shut glazed leaf is in sight")
-assert(t.seen(p, t.target_at(7, 1, "locker")).kind == "unseen",
+assert(t.target_at(p, 7, 1, "locker") == nil,
     "and the one behind the shut solid leaf is not")
 
 -- ---------------------------------------------------------------
@@ -200,15 +200,15 @@ end
 -- rotated: tg draws the east-facing door down the left of its 64x64
 -- cell and the south-facing one across the bottom, two drawings, and
 -- the entry says which cell wears which per facing.
-local anchor = t.target_at(3, 3, "airlock_wide")
-local north = t.target_at(3, 2, "airlock_wide")
+local anchor = t.target_at(q, 3, 3, "airlock_wide")
+local north = t.target_at(q, 3, 2, "airlock_wide")
 assert(t.seen(q, anchor).layers[1].sprite == "door_wide_s",
     "the south half wears the south picture, got "
         .. tostring(t.seen(q, anchor).layers[1].sprite))
 assert(t.seen(q, north).layers[1].sprite == "door_wide_n",
     "and the north half the north one, got "
         .. tostring(t.seen(q, north).layers[1].sprite))
-assert(t.seen(q, north).extent_of == anchor, "one body, laid from its south tile")
+assert(t.same_target(t.seen(q, north).extent_of, anchor), "one body, laid from its south tile")
 
 for _, at in ipairs({ { 3, 3 }, { 3, 2 } }) do
     local d = t.door_at(at[1], at[2])
@@ -218,7 +218,7 @@ end
 
 -- Glazed the same way round: the locker across the shut leaf is in
 -- sight from the corridor west of it.
-assert(t.seen(q, t.target_at(5, 3, "locker")).kind ~= "unseen",
+assert(t.seen(q, t.target_at(q, 5, 3, "locker")).kind ~= "unseen",
     "the upright leaf sees through too")
 
 -- ...and bumping its NORTH half opens the whole thing.

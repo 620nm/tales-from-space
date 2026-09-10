@@ -37,8 +37,7 @@ t.run_ticks(3)
 -- The whole lay delay and a tick over, in ticks (20 Hz).
 local LAY_TICKS = 2 * 20 + 2
 
-local pid = t.body_id(patient)
-local table_id = t.target_at(2, 2, "optable")
+local table_id = t.target_at(surgeon, 2, 2, "optable")
 assert(table_id ~= nil, "the map stood one there")
 assert(t.structure_at(2, 2).id == "optable", "and it is the operating table")
 
@@ -58,7 +57,7 @@ t.move(surgeon, "east")
 t.run_ticks(8)
 local sx = t.pos(surgeon)
 assert(sx >= 3, "the surgeon walked away from the patient: " .. sx)
-t.drag(surgeon, 2, 1, pid, 2, 2, table_id)
+t.drag(surgeon, 2, 1, t.body_target(surgeon, patient), 2, 2, table_id)
 t.run_ticks(LAY_TICKS)
 local px, py = t.pos(patient)
 assert(px == 2 and py == 1, "out of reach: nobody was moved")
@@ -77,7 +76,7 @@ assert(t.pos(surgeon) == 1, "back beside the patient")
 -- A patient who does not want to be on the table simply leaves, and the
 -- engine's per-tick guard ends the attempt where they left rather than
 -- at its wake tick.
-t.drag(surgeon, 2, 1, pid, 2, 2, table_id)
+t.drag(surgeon, 2, 1, t.body_target(surgeon, patient), 2, 2, table_id)
 t.run_ticks(2)
 px, py = t.pos(patient)
 assert(px == 2 and py == 1, "two ticks in, nothing has happened yet")
@@ -99,7 +98,7 @@ t.move(patient, "west")
 t.run_ticks(8)
 assert(t.pos(patient) == 2, "back beside the surgeon")
 _ = t.messages(surgeon)
-t.drag(surgeon, 2, 1, pid, 2, 2, table_id)
+t.drag(surgeon, 2, 1, t.body_target(surgeon, patient), 2, 2, table_id)
 t.run_ticks(LAY_TICKS)
 px, py = t.pos(patient)
 assert(px == 2 and py == 2, "the patient is on the table: " .. px .. "," .. py)
@@ -118,9 +117,9 @@ assert(t.seen(surgeon, patient).facing == "east",
 -- because a covered chest is the OTHER refusal.
 t.unequip(patient, "uniform")
 t.run_ticks(2)
-t.click(surgeon, 1, 1, t.target_at(1, 1, "scalpel"))
+t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, "scalpel"))
 t.run_ticks(2)
-t.click(surgeon, 2, 2, pid)
+t.click(surgeon, 2, 2, t.body_target(surgeon, patient))
 t.run_ticks(4)
 assert(#t.ledger_rows("DoAfterStarted") > 0, "the incision parked: the patient is lying down")
 assert(not said(surgeon, "lying down"), "and nothing refused it for posture")

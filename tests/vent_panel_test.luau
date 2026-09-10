@@ -68,7 +68,7 @@ local function dial(p, field)
 end
 
 local function set(p, field, value)
-    t.ui_act(p, "set", '{"field":"' .. field .. '","value":' .. value .. "}")
+    ui_controls.set(p, field, value)
     t.run_ticks(2)
 end
 
@@ -148,7 +148,7 @@ t.run_ticks(2)
 -- grilles are tuned against. A panel that showed anything else would be
 -- a panel reading a constant instead of the machine.
 -- ---------------------------------------------------------------
-t.click(p, 2, 1, t.target_at(2, 1, "vent"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "vent"))
 t.tick()
 local panel = t.ui(p)
 assert(panel ~= nil, "an empty hand on a vent opens a panel")
@@ -216,7 +216,7 @@ local TUNED = 150.0
 -- it is a press that needed reach, sight and an interactive document,
 -- and it earns a ledger row naming who made it, because a room that
 -- stops being fed is how people die slowly.
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_seconds(2)
 assert(toggle(p, "power").on == false, "the switch is thrown")
 assert(t.structure_at(2, 1).state == "off", "and the fan is drawn dead")
@@ -238,9 +238,9 @@ near(room_moles(), opening, 0.5, "a switched-off vent hands the corridor nothing
 -- ...and on, it works to the number it was GIVEN. Against the constant
 -- this machine used to be nailed to it would stop at one atmosphere,
 -- which is the whole of what this file catches.
-t.click(p, 2, 1, t.target_at(2, 1, "vent"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "vent"))
 t.tick()
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(toggle(p, "power").on == true, "the fan is switched back on")
 t.ui_close(p)

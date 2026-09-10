@@ -87,7 +87,7 @@ t.run_ticks(20)
 
 local function pocket(p)
     local x, y = t.pos(p)
-    t.click(p, x, y, t.target_at(x, y, "encryption_key.medical"))
+    t.click(p, x, y, t.target_at(p, x, y, "encryption_key.medical"))
     t.run_ticks(2)
     assert(t.hands(p).held == "encryption_key.medical", "the key is in hand")
 end
@@ -139,13 +139,13 @@ assert(#say_and_read("the tower chain is up, check your bands") > 0,
 --    both puts two POWERED towers on one tree, blank one included.
 -- ---------------------------------------------------------------
 to_panel()
-t.click(speaker, 8, 1, t.target_at(8, 1, "access_point"))
+t.click(speaker, 8, 1, t.target_at(speaker, 8, 1, "access_point"))
 t.tick()
 local panel = t.ui(speaker)
 assert(panel ~= nil, "the access point wears its panel")
 -- Placed with no `access` word: a lock with no key opens for whoever
 -- is standing at it (network_test.luau, the router's case).
-t.ui_act(speaker, "toggle", '{"field":"link_lock"}')
+ui_controls.toggle(speaker, "link_lock")
 t.tick()
 panel = t.ui(speaker)
 assert(rows(panel, "link_lock")[1].on, "it opens for whoever is standing at it")
@@ -153,7 +153,7 @@ local offered = rows(panel, "link_join")
 assert(#offered == 2, "both towers are on offer: " .. #offered)
 for _ = 1, 2 do
     local offer = rows(t.ui(speaker), "link_join")[1]
-    t.ui_act(speaker, "toggle", string.format('{"field":"link_join","option":"%s"}', offer.option))
+    ui_controls.toggle(speaker, "link_join", offer.option)
     t.tick()
 end
 -- Two joins on the record, counting the ones somebody MADE: the
@@ -177,7 +177,7 @@ to_mark()
 t.drop(speaker)
 t.run_ticks(2)
 local _ = t.messages(speaker)
-t.click(speaker, 5, 2, t.target_at(5, 2))
+t.click(speaker, 5, 2, t.target_at(speaker, 5, 2))
 t.tick()
 assert(
     said(speaker, "The transceiver is on the air, carrying Lifeline, relayed through its network."),
@@ -211,11 +211,11 @@ assert(rim_ok, "a blank tower on the tree still amplifies: " .. table.concat(hea
 --    cut is still a deliberate panel act and still on the record.
 -- ---------------------------------------------------------------
 to_panel()
-t.click(speaker, 8, 1, t.target_at(8, 1, "access_point"))
+t.click(speaker, 8, 1, t.target_at(speaker, 8, 1, "access_point"))
 t.tick()
 local held = rows(t.ui(speaker), "link_drop")
 assert(#held == 2, "the panel holds both towers")
-t.ui_act(speaker, "toggle", string.format('{"field":"link_drop","option":"%s"}', held[2].option))
+ui_controls.toggle(speaker, "link_drop", held[2].option)
 t.tick()
 -- The cut somebody ASKED for. A released device falls straight back
 -- to the panel feeding it, and that re-sewing files its own rows with
@@ -236,11 +236,11 @@ assert(#say_and_read("still with me on the long band") == 1,
 
 -- Rejoin whichever tower came off, so the roster is whole again.
 to_panel()
-t.click(speaker, 8, 1, t.target_at(8, 1, "access_point"))
+t.click(speaker, 8, 1, t.target_at(speaker, 8, 1, "access_point"))
 t.tick()
 local offer = rows(t.ui(speaker), "link_join")[1]
 assert(offer ~= nil, "the released tower is offerable again")
-t.ui_act(speaker, "toggle", string.format('{"field":"link_join","option":"%s"}', offer.option))
+ui_controls.toggle(speaker, "link_join", offer.option)
 t.tick()
 t.ui_close(speaker)
 t.tick()
@@ -256,7 +256,7 @@ assert(#say_and_read("the tower chain is up, check your bands") == 1,
 -- ---------------------------------------------------------------
 t.swap_hands(speaker)
 t.tick()
-t.click(speaker, 6, 2, t.target_at(6, 2, "wirecutters"))
+t.click(speaker, 6, 2, t.target_at(speaker, 6, 2, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(speaker).held == "wirecutters", "the cutters are in hand")
 t.click_subfloor(speaker, 7, 2, "cable", 1)

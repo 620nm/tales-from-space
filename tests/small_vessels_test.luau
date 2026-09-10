@@ -34,10 +34,10 @@ local U = 0.025
 local p = t.join()
 t.tick()
 
-local beaker = t.target_at(2, 1, "beaker.libital")
-local dropper = t.target_at(3, 1, "dropper")
-local bottle = t.target_at(4, 1, "bottle")
-local tube = t.target_at(5, 1, "test_tube")
+local beaker = t.target_at(p, 2, 1, "beaker.libital")
+local dropper = t.target_at(p, 3, 1, "dropper")
+local bottle = t.target_at(p, 4, 1, "bottle")
+local tube = t.target_at(p, 5, 1, "test_tube")
 
 local function total(handle)
     local contents = t.contents(handle)

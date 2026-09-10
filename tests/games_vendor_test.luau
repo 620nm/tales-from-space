@@ -41,7 +41,7 @@ local p = t.join()
 t.tick()
 
 -- ---- the shelf --------------------------------------------------------
-t.click(p, 2, 1, t.target_at(2, 1))
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 local ui = t.ui(p)
 assert(ui.document == "modules" and ui.presentation == "shelf",
@@ -76,7 +76,7 @@ assert(ui.products[1].category == "Cards" and ui.products[2].category == "Toys"
     "content owns the shelf-group order")
 
 -- ---- a bag of dice, and the dice really in it -------------------------
-t.ui_act(p, "vend", '{"product":"dice_bag"}')
+ui_controls.vend(p, "dice_bag")
 t.tick()
 assert(t.count_items("dice_bag") == 1, "a bag came out")
 -- The vend drops at the MACHINE's feet, never the buyer's, so a machine
@@ -85,7 +85,7 @@ assert(t.item_at(2, 1, "dice_bag") ~= nil, "at the machine's feet")
 
 t.ui_close(p)
 t.tick()
-t.click(p, 2, 1, t.target_at(2, 1, "dice_bag"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "dice_bag"))
 t.tick()
 assert(t.hands(p).held == "dice_bag", "the bag is in hand")
 -- A container minted by a vending machine goes through the same one
@@ -107,7 +107,7 @@ t.tick()
 
 -- ...and one of them rolls, which is the whole point of a machine that
 -- hands out dice rather than a floor that has two on it.
-t.click(p, 1, 1, t.target_at(1, 1, "d20"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "d20"))
 t.tick()
 t.use_self(p)
 t.tick()
@@ -118,14 +118,14 @@ t.drop(p)
 t.tick()
 
 -- ---- a deck, and a card off it ----------------------------------------
-t.click(p, 2, 1, t.target_at(2, 1))
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
-t.ui_act(p, "vend", '{"product":"card_deck"}')
+ui_controls.vend(p, "card_deck")
 t.tick()
 assert(t.count_items("card_deck") == 1, "a deck came out")
 t.ui_close(p)
 t.tick()
-t.click(p, 2, 1, t.target_at(2, 1, "card_deck"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "card_deck"))
 t.tick()
 assert(t.hands(p).held == "card_deck", "the deck is in hand")
 
@@ -146,14 +146,15 @@ assert(wrote[#wrote].key == "lunatic/tfs:picture",
 -- ---- the Captain's Aid, which the machine is stingy with --------------
 t.drop(p)
 t.tick()
-t.click(p, 2, 1, t.target_at(2, 1))
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
-t.ui_act(p, "vend", '{"product":"captains_aid"}')
+ui_controls.vend(p, "captains_aid")
 t.tick()
 assert(t.count_items("captains_aid") == 1, "the one Aid came out")
 -- tg stocks exactly one (games.dm:26), and a finite shelf must actually
 -- run out -- otherwise `amount` is decoration.
-t.ui_act(p, "vend", '{"product":"captains_aid"}')
+local empty = ui_controls.product(p, "captains_aid")
+assert(empty.disabled, "the exhausted product button is disabled")
 t.tick()
 assert(t.count_items("captains_aid") == 1,
     "and the shelf is empty: a second buy mints nothing")
@@ -165,7 +166,7 @@ assert(t.count_items("captains_aid") == 1,
 -- the shelf list is the only thing that decides.
 for _, ref in ipairs({ "cola", "d20", "card", "id_captain", "toolbox" }) do
     local before = t.count_items(ref)
-    t.ui_act(p, "vend", '{"product":"' .. ref .. '"}')
+    assert(not ui_controls.has_product(p, ref), "excluded product has no rendered control")
     t.tick()
     assert(t.count_items(ref) == before,
         "Good Clean Fun does not deal in " .. ref)
@@ -196,7 +197,7 @@ assert(t.count_items("d6") == 0 and t.count_items("d20") == 0,
 local x, y = t.pos(crew)
 assert(x == 18 and y == 16, "the first joiner takes the first spawn")
 
-t.click(crew, 24, 16, t.target_at(24, 16))
+t.click(crew, 24, 16, t.target_at(crew, 24, 16))
 t.tick()
 assert(t.ui(crew) == nil, "and cannot shop from across the room")
 
@@ -207,7 +208,7 @@ end
 x, y = t.pos(crew)
 assert(x == 23 and y == 16, "standing beside it: " .. x .. "," .. y)
 
-t.click(crew, 24, 16, t.target_at(24, 16))
+t.click(crew, 24, 16, t.target_at(crew, 24, 16))
 t.tick()
 local shelf = t.ui(crew)
 assert(shelf ~= nil, "the machine has power and opens: "

@@ -60,7 +60,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local heater = t.target_at(2, 1)
+local heater = t.target_at(p, 2, 1)
 assert(heater ~= nil, "a chamber stands on the bench")
 
 -- ---------------------------------------------------------------
@@ -76,7 +76,7 @@ assert(row(ui, "dock.vessel").value.id == "dock.vessel.empty", "and it says ther
 near(ui.setpoints[1].value, 300.0, 1e-9, "the dial opens at tg's 300 K")
 t.ui_close(p)
 
-local beaker = t.target_at(1, 1, "beaker.libital")
+local beaker = t.target_at(p, 1, 1, "beaker.libital")
 t.click(p, 1, 1, beaker)
 t.tick()
 assert(t.hands(p).held == "beaker.libital", "the beaker is in hand")
@@ -114,8 +114,8 @@ near(t.holder_k(beaker), T20C, 0.3, "a chamber nobody switched on moves nothing"
 -- temperature only ever climbs, that it gets there, and that it stops
 -- -- not a number per tick.
 -- ---------------------------------------------------------------
-t.ui_act(p, "set", '{"field":"temperature","value":350}')
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.set(p, "temperature", 350)
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.ui(p).toggles[1].on == true, "the element is on")
 near(t.ui(p).setpoints[1].value, 350.0, 1e-9, "and the dial is where it was put")
@@ -149,7 +149,7 @@ assert(row(t.ui(p), "dock.temperature").tone == "off", "the panel says it is sti
 -- the same line with a negative gap cools. Dialling under the beaker
 -- is the whole test.
 -- ---------------------------------------------------------------
-t.ui_act(p, "set", '{"field":"temperature","value":310}')
+ui_controls.set(p, "temperature", 310)
 t.run_ticks(2)
 assert(row(t.ui(p), "dock.temperature").tone == "on", "the vessel is over the dial now")
 last = t.holder_k(beaker)
@@ -167,7 +167,7 @@ near(t.holder_k(beaker), 310.0, 0.5, "arriving from above, and arresting there")
 -- AND YOU GET IT BACK.
 -- ---------------------------------------------------------------
 local warm = t.holder_k(beaker)
-t.ui_act(p, "toggle", '{"field":"eject"}')
+ui_controls.toggle(p, "eject")
 t.run_ticks(2)
 assert(t.hands(p).held == "beaker.libital", "the eject button hands it back")
 near(t.holder_k(beaker), warm, 0.5, "still carrying the heat it was given")

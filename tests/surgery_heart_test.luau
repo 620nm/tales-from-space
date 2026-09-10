@@ -29,7 +29,6 @@ assert(t.body(patient).posture == "lying" and t.body(patient).conscious,
 assert(t.worn(patient).uniform == nil, "the chest is bared")
 
 local PX, PY = 2, 1
-local pid = t.body_id(patient)
 
 local function has(states, name) return states[name] == true end
 
@@ -46,7 +45,7 @@ end
 
 local function hold(id)
     if t.hands(surgeon).held ~= nil then t.drop(surgeon); t.tick() end
-    t.click(surgeon, 1, 1, t.target_at(1, 1, id))
+    t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, id))
     t.run_ticks(2)
     assert(t.hands(surgeon).held == id, "the surgeon holds the " .. id)
 end
@@ -55,7 +54,7 @@ end
 -- assert it landed (0 % failure, so no loop).
 local function step(tool, secs, done, why)
     hold(tool)
-    t.click(surgeon, PX, PY, pid)
+    t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
     t.run_ticks(math.ceil(secs * 20) + 3)
     assert(done(), why)
 end
@@ -71,7 +70,7 @@ step("scalpel", 2.4, function() return has(t.parts(patient).chest.states, "organ
 -- removal is offered — but so are the other chest organs, so a hemostat
 -- here opens the CHOICE WINDOW rather than performing one thing.
 hold("hemostat")
-t.click(surgeon, PX, PY, pid)
+t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(2)
 local win = t.ui(surgeon)
 assert(win ~= nil and win.document == "modules" and win.presentation == "choices",
@@ -95,7 +94,7 @@ assert(pick, "the window lists the heart among the organs to remove")
 -- are the same procedure with the tension moved: nothing decays while
 -- `animate` is false, so an interrupted swap leaves a corpse that keeps
 -- indefinitely rather than one that spoils.
-t.ui_act(surgeon, "toggle", string.format('{"field":"operation","option":"%s"}', pick))
+ui_controls.toggle(surgeon, "operation", pick)
 t.run_ticks(23) -- the 1 s removal
 assert(t.organ_damage(patient, "heart") == nil, "the heart socket is empty")
 assert(not t.body(patient).conscious, "the heart is out and the patient is under")
@@ -111,7 +110,7 @@ assert(t.count_items("organ_heart") >= 2, "the old heart is on the deck beside t
 -- Seat the donor heart. The socket fills, the blood capacity returns, and
 -- the body comes back to the state its numbers say.
 hold("organ_heart")
-t.click(surgeon, PX, PY, pid)
+t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(23) -- the 1 s insertion
 -- Seated (the donor picked up a little decay lying on the deck, which is
 -- why a spare organ is kept cold in tg); what matters is that it beats.

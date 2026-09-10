@@ -48,7 +48,7 @@ local function within(off, spread, what)
         what .. " is inside its declared spread: " .. off.x .. "," .. off.y)
 end
 
-t.click(p, 1, 2, t.target_at(1, 2, "crowbar"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "crowbar"))
 t.tick()
 assert(t.hands(p).held == "crowbar", "the crowbar is in hand")
 
@@ -96,7 +96,7 @@ assert(kinds > 1, "each tile got its own offset, not one shared: " .. table.conc
 -- (4, 2), which is where the dice were left for it.
 t.drop(p)
 t.tick()
-t.click(p, 4, 2, t.target_at(4, 2, "d6"))
+t.click(p, 4, 2, t.target_at(p, 4, 2, "d6"))
 t.tick()
 assert(t.hands(p).held == "d6", "the die is in hand")
 t.drop(p)
@@ -111,7 +111,7 @@ within(dropped.offset, 6, "a dropped die")
 -- accumulated would walk itself off its own tile.
 local wandered = false
 for _ = 1, 12 do
-    t.click(p, 4, 2, t.target_at(4, 2, "d6"))
+    t.click(p, 4, 2, t.target_at(p, 4, 2, "d6"))
     t.tick()
     t.drop(p)
     t.tick()
@@ -125,7 +125,7 @@ assert(not wandered, "twelve drops never walk it past one drop's reach")
 -- Wider again: tg throws at +/-8 (code/game/objects/items.dm:899-900).
 -- A die thrown out of a hand starts centred, which is also the
 -- condition tg guards the roll on.
-t.click(p, 5, 2, t.target_at(5, 2, "d20"))
+t.click(p, 5, 2, t.target_at(p, 5, 2, "d20"))
 t.tick()
 assert(t.hands(p).held == "d20", "the good one is in hand")
 t.throw(p, 6, 2)
@@ -144,6 +144,6 @@ t.move(p, "east")
 t.run_ticks(5)
 t.move(p, "east")
 t.run_ticks(5)
-t.click(p, 6, 2, t.target_at(6, 2, "d20"))
+t.click(p, 6, 2, t.target_at(p, 6, 2, "d20"))
 t.tick()
 assert(t.hands(p).held == "d20", "a crooked thing is picked up off its own tile")

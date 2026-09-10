@@ -52,10 +52,10 @@ assert(t.canister_pressure(2, 2) > 4000.0, "the bottle starts full")
 -- Shut the valve first, through the panel, the way a crewman shuts
 -- one: a loose canister with its valve open is pointed at the room and
 -- would spend itself into the floor instead of straining.
-t.click(p, 2, 2, t.target_at(2, 2))
+t.click(p, 2, 2, t.target_at(p, 2, 2))
 t.tick()
 assert(t.ui(p).toggles[1].field == "valve")
-t.ui_act(p, "toggle", '{"field":"valve"}')
+ui_controls.toggle(p, "valve")
 t.tick()
 assert(t.ui(p).toggles[1].on == false, "the valve is shut")
 
@@ -72,7 +72,7 @@ assert(t.room_pressure(1, 2) > room_start,
     "because the room took all of it: " .. room_start .. " -> " .. t.room_pressure(1, 2))
 
 -- It is still there, and it looks like what happened to it.
-local look = t.examine(p, 2, 2, t.target_at(2, 2))
+local look = t.examine(p, 2, 2, t.target_at(p, 2, 2))
 assert(look ~= nil, "a broken canister is still a thing you can look at")
 assert(table.concat(look.lines, " | "):find("broken"),
     "and the look says so: " .. table.concat(look.lines, " | "))
@@ -110,7 +110,7 @@ assert(t.charge_vessel(2, 2, "n2", 40000.0), "a reservoir takes a charge")
 t.run_seconds(5)
 assert(#t.ledger_rows("pressure_damaged") == 0,
     "a tank inside its rating is doing nothing at all")
-local look_sound = t.examine(q, 2, 2, t.target_at(2, 2))
+local look_sound = t.examine(q, 2, 2, t.target_at(q, 2, 2))
 assert(not table.concat(look_sound.lines, " | "):find("strain"),
     "and says nothing about strain: " .. table.concat(look_sound.lines, " | "))
 
@@ -126,6 +126,6 @@ assert(damage[1].amount ~= nil and math.abs(damage[1].amount - 0.1) < 1e-4,
     "at tg's flat 0.1 a pass: " .. tostring(damage[1].amount))
 assert(t.tank_pressure(2, 2) ~= nil,
     "and it is still standing -- 800 integrity is most of a shift")
-local strained = t.examine(q, 2, 2, t.target_at(2, 2))
+local strained = t.examine(q, 2, 2, t.target_at(q, 2, 2))
 assert(table.concat(strained.lines, " | "):find("strain"),
     "which is what a look says: " .. table.concat(strained.lines, " | "))

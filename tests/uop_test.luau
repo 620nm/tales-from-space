@@ -120,7 +120,7 @@ assert(spur.feeder ~= nil, "with a panel behind it")
 --    backbone rather than feeding it, so the far half of a cut
 --    backbone has no supply on it at all.
 -- ---------------------------------------------------------------
-t.click(p, 6, 2, t.target_at(6, 2, "wirecutters"))
+t.click(p, 6, 2, t.target_at(p, 6, 2, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
 
@@ -156,10 +156,10 @@ t.move(p, "west")
 t.run_ticks(5)
 t.move(p, "west")
 t.run_ticks(5)
-t.click(p, 4, 1, t.target_at(4, 1))
+t.click(p, 4, 1, t.target_at(p, 4, 1))
 t.tick()
 assert(t.ui(p) ~= nil, "the panel opens")
-t.ui_act(p, "toggle", '{"field":"breaker"}')
+ui_controls.toggle(p, "breaker")
 t.run_seconds(3)
 assert(not t.apc_at(4, 1).operating, "the breaker is open")
 
@@ -173,7 +173,7 @@ assert(all.l3 == "starved", "the spare main is starved for the same reason: " ..
 assert(all.l2 == "inactive", "where the parted backbone still has no source at all")
 
 -- Close it again and the room comes back exactly as it was.
-t.ui_act(p, "toggle", '{"field":"breaker"}')
+ui_controls.toggle(p, "breaker")
 t.run_seconds(3)
 assert(t.outlet_at(5, 2).l1 == "nominal", "the spur is carrying again")
 assert(t.outlet_at(7, 1).feed == 4, "and the port is back on blue")

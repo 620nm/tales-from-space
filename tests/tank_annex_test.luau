@@ -87,7 +87,7 @@ end
 -- bottom, and the mixture is exactly at the temperature above which
 -- there could not be.
 do
-    local co2 = t.vessel(t.target_at(8, 28, "stationary_tank"))
+    local co2 = t.vessel_at(8, 28, "stationary_tank")
     assert(co2 ~= nil, "the carbon dioxide tank reads")
     local entry = co2.contents.co2
     assert(entry ~= nil, "and it is carbon dioxide")

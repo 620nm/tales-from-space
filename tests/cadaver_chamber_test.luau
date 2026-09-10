@@ -53,7 +53,7 @@ assert(ax == 1 and ay == 1, "the attendant stands beside the drawer")
 local px, py = t.pos(patient)
 assert(px == 3 and py == 1, "the patient stands where the tray will be")
 
-local drawer = t.target_at(2, 1, "cadaver_chamber")
+local drawer = t.target_at(attendant, 2, 1, "cadaver_chamber")
 assert(drawer ~= nil, "one targetable drawer")
 local shut = t.structure_at(2, 1)
 assert(shut.state == "closed" and shut.sprite == "morgue1_e",
@@ -90,7 +90,7 @@ assert(t.structure_at(2, 1).state == "closed", "it shuts again")
 assert(has(t.sounds(attendant), "morgue_clank"), "and is heard doing it")
 assert(t.structure_at(3, 1) == nil, "the tray goes back in with everything on it")
 assert(#t.items_at(3, 1) == 0, "the dropped thing is concealed")
-assert(t.target_at(3, 1) == nil, "and there is nothing left on that tile to click")
+assert(t.target_at(attendant, 3, 1) == nil, "and there is nothing left on that tile to click")
 assert(t.body_id(patient) ~= nil, "the body still exists; it simply has no tile")
 -- The patient is a player who lay down on the slab and is very much
 -- still going, so this is the `morgue4` lamp rather than the `morgue2`
@@ -162,7 +162,7 @@ t.world([==[(
 
 local crew = t.join()
 t.tick()
-local walled = t.target_at(2, 1, "cadaver_chamber")
+local walled = t.target_at(crew, 2, 1, "cadaver_chamber")
 _ = t.messages(crew)
 t.click(crew, 2, 1, walled)
 t.tick()
@@ -216,14 +216,14 @@ assert(t.pos(orderly) == 3, "the orderly stands in the aisle")
 local cx, cy = t.pos(corpse)
 assert(cx == 4 and cy == 1, "and the body beside the slab's tile")
 
-local bay = t.target_at(2, 1, "cadaver_chamber")
+local bay = t.target_at(orderly, 2, 1, "cadaver_chamber")
 t.click(orderly, 2, 1, bay)
 t.tick()
-local slab = t.target_at(3, 1, "cadaver_drawer")
+local slab = t.target_at(orderly, 3, 1, "cadaver_drawer")
 assert(slab ~= nil, "the slab is out on the deck")
 
 -- Nothing lands in the tick the drag arrives.
-t.drag(orderly, 4, 1, t.body_id(corpse), 3, 1, slab)
+t.drag(orderly, 4, 1, t.body_target(orderly, corpse), 3, 1, slab)
 t.run_ticks(2)
 cx, cy = t.pos(corpse)
 assert(cx == 4 and cy == 1, "two ticks in, the body has not moved")
@@ -240,7 +240,7 @@ t.click(orderly, 2, 1, bay)
 t.tick()
 assert(t.structure_at(2, 1).state == "closed", "the drawer shuts on them")
 assert(t.structure_at(3, 1) == nil, "the slab went back in")
-assert(t.target_at(3, 1) == nil,
+assert(t.target_at(orderly, 3, 1) == nil,
     "a stowed body has no tile at all: there is nothing left to click")
 assert(t.body_id(corpse) ~= nil, "the body still exists")
 assert(t.structure_at(2, 1).overlays[1] == "morgue4_e",

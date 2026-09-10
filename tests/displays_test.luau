@@ -44,7 +44,7 @@ assert(status.vars["lunatic/tfs:display_line1"] == nil
     and status.vars["lunatic/tfs:display_line2"] == nil,
     "a new status display is blank")
 
-t.click(p, 3, 1, t.target_at(3, 1, "status_display"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "status_display"))
 t.tick()
 local panel = t.ui(p)
 assert(panel and panel.document == "modules" and panel.presentation == "modules",
@@ -55,7 +55,7 @@ assert(panel.labels[1].row == "input" and panel.labels[1].action == "line1"
 assert(panel.labels[2].row == "input" and panel.labels[2].action == "line2"
     and panel.labels[2].max_length == 40, "the bottom line is bounded to forty characters")
 
-t.ui_act(p, "action", '{"action":"line1","value":"shift #3: go! @ 00:30"}')
+ui_controls.input(p, "line1", "shift #3: go! @ 00:30")
 t.tick()
 status = t.structure_at(3, 1)
 assert(status.vars["lunatic/tfs:display_line1"] == "SHIFT #3: GO! @ 00:30",
@@ -63,46 +63,38 @@ assert(status.vars["lunatic/tfs:display_line1"] == "SHIFT #3: GO! @ 00:30",
 assert(status.vars["lunatic/tfs:display_line2"] == nil,
     "programming one line leaves the other blank")
 
-t.ui_act(p, "action", '{"action":"line2","value":"- eta -"}')
+ui_controls.input(p, "line2", "- eta -")
 t.tick()
 status = t.structure_at(3, 1)
 assert(status.vars["lunatic/tfs:display_line2"] == "- ETA -",
     "the lower line preserves the delimiters used for short-header emphasis")
 
 local forty = "0123456789012345678901234567890123456789"
-t.ui_act(p, "action", '{"action":"line1","value":"' .. forty .. '"}')
+ui_controls.input(p, "line1", forty)
 t.tick()
 assert(t.structure_at(3, 1).vars["lunatic/tfs:display_line1"] == forty,
     "forty characters fit exactly")
 
 local forty_one = forty .. "0"
-t.ui_act(p, "action", '{"action":"line1","value":"' .. forty_one .. '"}')
+ui_controls.input(p, "line1", forty_one)
 t.tick()
 assert(t.structure_at(3, 1).vars["lunatic/tfs:display_line1"] == forty,
-    "the native input boundary refuses a forty-first character")
+    "the rendered input caps a forty-first character before submission")
 
 -- The grammar starts with tg's command-console `reject_bad_text`
 -- boundary (`code/game/machinery/computer/communications.dm:386-392`):
 -- slashes, backslashes, angle brackets, non-ASCII text, and all-whitespace
 -- strings cannot reach the bitmap face. These controls are single-line,
 -- so they intentionally reject tab/newline and every other control too.
-local bad_inputs = {
-    [==[{"action":"line1","value":"NO/ENTRY"}]==],
-    [==[{"action":"line1","value":"NO\\ENTRY"}]==],
-    [==[{"action":"line1","value":"NO<ENTRY"}]==],
-    [==[{"action":"line1","value":"NO>ENTRY"}]==],
-    [==[{"action":"line1","value":"NO\nENTRY"}]==],
-    [==[{"action":"line1","value":"CAFÉ"}]==],
-    [==[{"action":"line1","value":"   "}]==],
-}
-for _, payload in ipairs(bad_inputs) do
-    t.ui_act(p, "action", payload)
+local bad_inputs = { "NO/ENTRY", "NO\\ENTRY", "NO<ENTRY", "NO>ENTRY", "NO\nENTRY", "CAFÉ", "   " }
+for _, value in ipairs(bad_inputs) do
+    ui_controls.input(p, "line1", value)
     t.tick()
     assert(t.structure_at(3, 1).vars["lunatic/tfs:display_line1"] == forty,
-        "unrenderable status text changes nothing: " .. payload)
+        "unrenderable status text changes nothing: " .. value)
 end
 
-t.ui_act(p, "toggle", '{"field":"action","option":"clear"}')
+ui_controls.toggle(p, "action", "clear")
 t.tick()
 status = t.structure_at(3, 1)
 assert(status.vars["lunatic/tfs:display_line1"] == nil

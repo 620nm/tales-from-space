@@ -44,8 +44,8 @@ end
 -- down beside the sprayer, pick the sprayer up and draw from the
 -- bottle at arm's length (chemical_containers_test.luau has the
 -- capped-source refusal).
-local reservoir = t.target_at(1, 1, "water_bottle_large")
-t.click(p, 1, 1, reservoir)
+local reservoir = t.target_at(p, 1, 1, "water_bottle_large")
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, reservoir)))
 t.tick()
 t.use_self(p)
 t.tick()
@@ -55,10 +55,10 @@ t.drop(p)
 t.tick()
 t.move(p, "west")
 t.tick()
-local spray = t.target_at(3, 1, "spray_bottle")
-t.click(p, 3, 1, spray)
+local spray = t.target_at(p, 3, 1, "spray_bottle")
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, spray)))
 t.tick()
-t.click(p, 3, 1, reservoir)
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, reservoir)))
 t.tick()
 near(t.contents(spray).water, 1.25, "the sprayer holds 50 u")
 assert(t.hands(p).held == "spray_bottle", "and it is in the active hand")
@@ -66,7 +66,7 @@ assert(t.hands(p).held == "spray_bottle", "and it is in the active hand")
 -- OUT OF RANGE. Six tiles is inside what the crewman can see and one
 -- past the bottle's declared five: the click is refused before any
 -- handler runs, so nothing is drawn and nothing is heard.
-t.click(p, 8, 1)
+t.click_turf(p, 8, 1)
 t.tick()
 assert(#t.sounds(p) == 0, "a click past the range is silent")
 assert(#t.ledger_rows("MatterSprayed") == 0, "and launches nothing")
@@ -78,7 +78,7 @@ near(t.contents(spray).water, 1.25, "and draws nothing")
 t.swap_hands(p)
 t.tick()
 assert(t.hands(p).held == nil, "the active hand is empty")
-t.click(p, 5, 1)
+t.click_turf(p, 5, 1)
 t.tick()
 assert(#t.sounds(p) == 0, "the off hand makes no ranged claim")
 assert(#t.ledger_rows("MatterSprayed") == 0, "and launches nothing")
@@ -86,7 +86,7 @@ t.swap_hands(p)
 t.tick()
 
 -- ...and the same click with the bottle back in the active hand.
-t.click(p, 5, 1)
+t.click_turf(p, 5, 1)
 t.tick()
 local launched = t.sounds(p)
 assert(#launched == 1 and launched[1] == "spray", "an accepted launch is heard once")
@@ -101,7 +101,7 @@ assert(#t.ledger_rows("ParcelLost") == 0,
 -- carrying for the wall's tile is lost, and the record says so: one
 -- row, caused by the launch, for exactly the moles the world is short.
 local before = t.matter_totals()
-t.click(p, 0, 1)
+t.click_turf(p, 0, 1)
 t.tick()
 assert(#t.ledger_rows("MatterSprayed") == 2, "aimed at a wall still launches")
 t.run_ticks(20)

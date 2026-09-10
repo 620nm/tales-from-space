@@ -104,7 +104,7 @@ local p = t.join()
 t.run_ticks(10)
 
 local function take(id)
-    t.click(p, 4, 1, t.target_at(4, 1, id))
+    t.click(p, 4, 1, t.target_at(p, 4, 1, id))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
 end
@@ -115,12 +115,12 @@ local function put_down()
 end
 
 local function work(id, seconds)
-    t.click(p, 4, 1, t.target_at(4, 1, id))
+    t.click(p, 4, 1, t.target_at(p, 4, 1, id))
     t.run_seconds(seconds)
 end
 
 take("metal")
-t.build(p, "metal", "wall_frame", 4, 0)
+ui_controls.build(p, "metal", "wall_frame", 4, 0)
 t.run_seconds(4.5)
 assert(t.structure_at(4, 1).id == "wall_frame", "two sheets make the box")
 
@@ -190,7 +190,7 @@ put_down()
 -- Long enough for the box to find the socket behind it and start
 -- drawing: no panel on a dead cord takes a press.
 t.run_ticks(40)
-t.click(p, 4, 1, t.target_at(4, 1, "access_point"))
+t.click(p, 4, 1, t.target_at(p, 4, 1, "access_point"))
 t.tick()
 local panel = t.ui(p)
 assert(panel ~= nil, "an access point wears a panel")
@@ -199,7 +199,7 @@ local lock = rows(panel, "link_lock")
 assert(#lock == 1 and not lock[1].on, "a lock row, shut, because a fresh boot finds them all shut")
 assert(#rows(panel, "link_join") == 0, "and a shut panel offers nothing to join")
 
-t.ui_act(p, "toggle", '{"field":"link_lock"}')
+ui_controls.toggle(p, "link_lock")
 t.tick()
 panel = t.ui(p)
 assert(panel ~= nil, "the panel stays open under a press")
@@ -224,7 +224,7 @@ assert(candidates[1].label.id == "link.candidate.hub", "offered as the hub it is
 t.ui_close(p)
 t.tick()
 local _ = t.messages(p)
-t.click(p, 4, 1, t.target_at(4, 1, "access_point"))
+t.click(p, 4, 1, t.target_at(p, 4, 1, "access_point"))
 t.tick()
 assert(t.ui(p) ~= nil, "the window still opens under the hook")
 assert(
@@ -296,7 +296,7 @@ t.world([==[(
 local eng = t.join()
 t.run_ticks(10)
 
-t.click(eng, 4, 1, t.target_at(4, 1, "access_point"))
+t.click(eng, 4, 1, t.target_at(eng, 4, 1, "access_point"))
 t.tick()
 panel = t.ui(eng)
 assert(panel ~= nil, "the mapped box wears the same panel")
@@ -304,7 +304,7 @@ assert(not rows(panel, "link_lock")[1].on, "shut, as every lock is at boot")
 
 -- Empty-handed, and it stays shut. Opening it is checked against
 -- whoever is standing there, on the tick the lock moves.
-t.ui_act(eng, "toggle", '{"field":"link_lock"}')
+ui_controls.toggle(eng, "link_lock")
 t.tick()
 assert(not rows(t.ui(eng), "link_lock")[1].on, "and it does not open for an empty hand")
 local denials = t.ledger_rows("link_denied")
@@ -312,10 +312,10 @@ assert(#denials == 1 and denials[1].why == "access", "the refusal names the rule
 
 -- The claim itself, in a hand -- worn or held, the check is the same
 -- one an airlock makes.
-t.click(eng, 5, 1, t.target_at(5, 1, "id_engineering"))
+t.click(eng, 5, 1, t.target_at(eng, 5, 1, "id_engineering"))
 t.run_ticks(2)
 assert(t.hands(eng).held == "id_engineering", "with the card in hand")
-t.ui_act(eng, "toggle", '{"field":"link_lock"}')
+ui_controls.toggle(eng, "link_lock")
 t.tick()
 assert(rows(t.ui(eng), "link_lock")[1].on, "the claim opens it")
 
@@ -323,6 +323,6 @@ assert(rows(t.ui(eng), "link_lock")[1].on, "the claim opens it")
 -- card cannot put back.
 t.drop(eng)
 t.run_ticks(2)
-t.ui_act(eng, "toggle", '{"field":"link_lock"}')
+ui_controls.toggle(eng, "link_lock")
 t.tick()
 assert(not rows(t.ui(eng), "link_lock")[1].on, "and anybody may shut it again")

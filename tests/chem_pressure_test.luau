@@ -67,7 +67,7 @@ t.world([==[(
 t.tick()
 
 local function bottle(x)
-    local reading = t.vessel(t.target_at(x, 1, "canister"))
+    local reading = t.vessel_at(x, 1, "canister")
     assert(reading ~= nil, "a canister stands at " .. x)
     return reading
 end
@@ -162,27 +162,27 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local machine = t.target_at(2, 2)
-local jar = t.target_at(1, 2, "bottle")
-local glass = t.target_at(3, 2, "beaker")
+local machine = t.target_at(p, 2, 2)
+local jar = t.target_at(p, 1, 2, "bottle")
+local glass = t.target_at(p, 3, 2, "beaker")
 
 local function press(key)
-    t.ui_act(p, "toggle", '{"field":"dispense","option":"' .. key .. '"}')
+    ui_controls.toggle(p, "dispense", key)
     t.run_ticks(2)
 end
 
 local function dial_to(moles)
-    t.ui_act(p, "set", '{"field":"amount","value":' .. moles .. '}')
+    ui_controls.set(p, "amount", moles)
     t.run_ticks(2)
 end
 
 local function open_panel()
-    t.click(p, 2, 2, machine)
+    t.click(p, 2, 2, assert(t.target_at(p, 2, 2, machine)))
     t.tick()
 end
 
 local function eject()
-    t.ui_act(p, "toggle", '{"field":"eject"}')
+    ui_controls.toggle(p, "eject")
     t.run_ticks(2)
 end
 
@@ -202,9 +202,9 @@ local function said(want)
 end
 
 -- The refusal first, because it is the reason for everything after it.
-t.click(p, 3, 2, glass)
+t.click(p, 3, 2, assert(t.target_at(p, 3, 2, glass)))
 t.tick()
-t.click(p, 2, 2, machine)
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, machine)))
 t.tick()
 open_panel()
 dial_to(0.1)
@@ -219,9 +219,9 @@ t.tick()
 
 -- ...and the identical press into something with a stopper in it.
 local LEG = 0.1
-t.click(p, 1, 2, jar)
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, jar)))
 t.tick()
-t.click(p, 2, 2, machine)
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, machine)))
 t.tick()
 open_panel()
 dial_to(LEG)
@@ -240,9 +240,9 @@ t.drop(p)
 t.run_seconds(600)
 assert(t.holder_k(jar) < 340.0, "the deck cooled it: " .. t.holder_k(jar))
 
-t.click(p, 2, 1, jar)
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, jar)))
 t.tick()
-t.click(p, 2, 2, machine)
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, machine)))
 t.tick()
 open_panel()
 dial_to(LEG)

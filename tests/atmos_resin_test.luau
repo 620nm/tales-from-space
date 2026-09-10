@@ -30,9 +30,9 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local projector = t.target_at(1, 1, "atmos_resin_projector")
+local projector = t.target_at(p, 1, 1, "atmos_resin_projector")
 assert(projector ~= nil, "the emergency projector is on the deck")
-t.click(p, 1, 1, projector)
+t.click(p, 1, 1, t.target_at(p, 1, 1, "atmos_resin_projector"))
 t.tick()
 assert(t.hands(p).held == "atmos_resin_projector", "the player picked the projector up")
 
@@ -43,7 +43,7 @@ assert(#ignitions == 1, ("the room caught fire once, got %d ignitions"):format(#
 assert(ignitions[1].at[1] == 1 and ignitions[1].at[2] == 1, "the fire is in this room")
 
 -- A ground click on the room is the projector's authored gesture.
-t.click(p, 1, 1)
+t.click_turf(p, 1, 1)
 t.tick()
 assert(t.hands(p).held == "atmos_resin_projector", "a spent charge leaves the device")
 

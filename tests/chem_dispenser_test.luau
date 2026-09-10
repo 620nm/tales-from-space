@@ -114,14 +114,14 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local machine = t.target_at(2, 1)
+local machine = t.target_at(p, 2, 1)
 assert(machine ~= nil, "a dispenser stands on the bench")
-local beaker = t.target_at(1, 1, "beaker")
+local beaker = t.target_at(p, 1, 1, "beaker")
 
 -- ---------------------------------------------------------------
 -- AN EMPTY HAND ASKS; A FULL ONE LOADS.
 -- ---------------------------------------------------------------
-t.click(p, 2, 1, machine)
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 local ui = t.ui(p)
 assert(ui, "an empty hand opens the panel")
@@ -158,12 +158,13 @@ assert(
 )
 t.ui_close(p)
 
-t.click(p, 1, 1, beaker)
+beaker = t.target_at(p, 1, 1, "beaker")
+t.click(p, 1, 1, t.target_at(p, 1, 1, "beaker"))
 t.tick()
 assert(t.hands(p).held == "beaker", "the beaker is in hand")
 near(total(beaker), 0, 1e-9, "and it ships empty off the shelf")
 
-t.click(p, 2, 1, machine)
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 assert(t.hands(p).held == nil, "clicking the dispenser with it puts it IN")
 assert(t.ledger_has("Docked", "beaker"), "the dock is on the record")
@@ -171,9 +172,9 @@ assert(t.ledger_has("Docked", "beaker"), "the dock is on the record")
 -- ---------------------------------------------------------------
 -- ONE PRESS IS ONE PRESS.
 -- ---------------------------------------------------------------
-t.click(p, 2, 1, machine)
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
-t.ui_act(p, "toggle", '{"field":"dispense","option":"water"}')
+ui_controls.toggle(p, "dispense", "water")
 t.run_ticks(2)
 near(t.contents(beaker).water, PRESS, 1e-9, "one press is tg's 30 u")
 -- A tenth of a kelvin of slack: what lands is settled on the spot
@@ -197,7 +198,7 @@ near(glass.volume_l, 0.05, 1e-9, "against the size of the glass")
 -- Three more presses of 30 u is 3.0 mol asked for and 54 mL of water
 -- wanted, which is four millilitres more glass than there is.
 for _ = 1, 3 do
-    t.ui_act(p, "toggle", '{"field":"dispense","option":"water"}')
+    ui_controls.toggle(p, "dispense", "water")
     t.run_ticks(2)
 end
 near(total(beaker), BRIM, 1e-9, "the last press stopped at the brim")
@@ -206,7 +207,7 @@ near(total(beaker), BRIM, 1e-9, "the last press stopped at the brim")
 -- glass has is what its own surface has evaporated into the air above
 -- it -- micromoles, and a rounding error rather than a dose.
 local before = #t.ledger_rows("minted")
-t.ui_act(p, "toggle", '{"field":"dispense","option":"water"}')
+ui_controls.toggle(p, "dispense", "water")
 t.run_ticks(2)
 near(total(beaker), BRIM, 1e-5, "nothing you could measure fits")
 local after = t.ledger_rows("minted")
@@ -244,7 +245,7 @@ near(minted, total(beaker), 1e-4, "every mole in the beaker has a row behind it"
 -- ---------------------------------------------------------------
 -- AND YOU GET IT BACK.
 -- ---------------------------------------------------------------
-t.ui_act(p, "toggle", '{"field":"eject"}')
+ui_controls.toggle(p, "eject")
 t.run_ticks(2)
 assert(t.hands(p).held == "beaker", "the eject button hands it back")
 near(total(beaker), BRIM, 1e-5, "still holding what it was given")
@@ -255,18 +256,18 @@ assert(row(t.ui(p), "dock.vessel").value.id == "dock.vessel.empty", "the panel a
 -- dispenser that puddled on the floor instead would be a second
 -- deposit path nobody asked for.
 before = #t.ledger_rows("minted")
-t.ui_act(p, "toggle", '{"field":"dispense","option":"water"}')
+ui_controls.toggle(p, "dispense", "water")
 t.run_ticks(2)
 assert(#t.ledger_rows("minted") == before, "an empty dock dispenses nothing")
 
 -- ...and neither does a button this machine does not have. The shelf is
 -- sixteen substances; the registry knows dozens.
-t.click(p, 2, 1, machine)
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 assert(t.hands(p).held == nil, "the beaker goes back in")
-t.click(p, 2, 1, machine)
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
-t.ui_act(p, "toggle", '{"field":"dispense","option":"plasma"}')
+assert(ui_controls.find(p, "/toggle/dispense/plasma") == nil, "unstocked substance has no button")
 t.run_ticks(2)
 near(total(beaker), BRIM, 1e-5, "a substance that is real but not stocked is not a button")
 
@@ -283,7 +284,7 @@ near(total(beaker), BRIM, 1e-5, "a substance that is real but not stocked is not
 local held = total(beaker)
 near(held, BRIM, 1e-5, "the beaker is still full of the wrong thing")
 
-t.ui_act(p, "toggle", '{"field":"empty"}')
+ui_controls.toggle(p, "empty")
 t.run_ticks(2)
 near(total(beaker), 0, 1e-9, "and one press empties it")
 assert(t.hands(p).held == nil, "the vessel stays in the machine")
@@ -297,17 +298,17 @@ assert(flushed[1].actor.kind == "player", "a window act is the crewman acting")
 -- Pressing it again is a refusal in silence: there is nothing to
 -- destroy, and a row saying zero moles went nowhere is not a record of
 -- anything.
-t.ui_act(p, "toggle", '{"field":"empty"}')
+ui_controls.toggle(p, "empty")
 t.run_ticks(2)
 assert(#t.ledger_rows("Annihilated") == 1, "an empty vessel flushes nothing")
 
 -- ---------------------------------------------------------------
 -- THE DIAL: THE NEXT PRESS IS THE ONE YOU ASKED FOR.
 -- ---------------------------------------------------------------
-t.ui_act(p, "set", '{"field":"amount","value":0.25}')
+ui_controls.set(p, "amount", 0.25)
 t.run_ticks(2)
 near(dial(t.ui(p), "amount").value, 0.25, 1e-9, "the dial took the number")
-t.ui_act(p, "toggle", '{"field":"dispense","option":"water"}')
+ui_controls.toggle(p, "dispense", "water")
 t.run_ticks(2)
 -- A tenth of a millimole of slack: the vessel settles as it fills
 -- (sim/owner.rs, `deposit_into`), so a whisker of what landed is
@@ -332,10 +333,10 @@ near(minted, BRIM + 0.25, 1e-4, "every mole ever minted has a row, flushed or no
 -- the bounds this panel declared comes back clamped rather than obeyed,
 -- and the row on the record is the number the machine ACCEPTED.
 -- ---------------------------------------------------------------
-t.ui_act(p, "set", '{"field":"amount","value":99}')
+ui_controls.set(p, "amount", 99)
 t.run_ticks(2)
 near(dial(t.ui(p), "amount").value, DIAL_MAX, 1e-9, "past the top is the top")
-t.ui_act(p, "set", '{"field":"amount","value":-5}')
+ui_controls.set(p, "amount", -5)
 t.run_ticks(2)
 near(dial(t.ui(p), "amount").value, NOTCH, 1e-9, "under the bottom is the bottom")
 
@@ -374,7 +375,7 @@ near(reading.temp_k, NOZZLE_K, 0.3, "at the nozzle's temperature")
 -- minted, so there is nothing to account for.
 local _ = t.messages(p)
 before = #t.ledger_rows("minted")
-t.ui_act(p, "toggle", '{"field":"dispense","option":"chlorine"}')
+ui_controls.toggle(p, "dispense", "chlorine")
 t.run_ticks(2)
 near(total(beaker) - 0.25, 0, 1e-3, "an open glass takes none of it")
 assert(#t.ledger_rows("minted") == before, "and nothing is on the record")
@@ -418,24 +419,24 @@ local function chlorine_line_kpa(temp_k)
     return 101.325 * math.exp((-CHLORINE_L_VAP / 8.314) * (1.0 / temp_k - 1.0 / CHLORINE_BOIL_K))
 end
 
-t.ui_act(p, "toggle", '{"field":"eject"}')
+ui_controls.toggle(p, "eject")
 t.run_ticks(2)
 t.drop(p)
 t.tick()
 
-local bottle = t.target_at(1, 1, "bottle")
+local bottle = t.target_at(p, 1, 1, "bottle")
 assert(bottle ~= nil, "a bottle is standing on the bench")
-t.click(p, 1, 1, bottle)
+t.click(p, 1, 1, t.target_at(p, 1, 1, "bottle"))
 t.tick()
 assert(t.hands(p).held == "bottle", "the bottle is in hand")
-t.click(p, 2, 1, machine)
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 assert(t.hands(p).held == nil, "and it goes into the dock")
-t.click(p, 2, 1, machine)
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
-t.ui_act(p, "set", '{"field":"amount","value":0.25}')
+ui_controls.set(p, "amount", 0.25)
 t.run_ticks(2)
-t.ui_act(p, "toggle", '{"field":"dispense","option":"chlorine"}')
+ui_controls.toggle(p, "dispense", "chlorine")
 -- The press lands in one pass; the sweep takes a few more to walk the
 -- superheat down onto the line, and a docked vessel is insulated from
 -- the deck (sim/holder/heat.rs) so nothing else is touching it.
@@ -480,7 +481,7 @@ assert(t.ledger_has("Minted", "bottle"), "and the mint is on the record")
 -- vapour pressure of liquid chlorine at room temperature and the
 -- number the shelf is really offering.
 -- ---------------------------------------------------------------
-t.ui_act(p, "toggle", '{"field":"eject"}')
+ui_controls.toggle(p, "eject")
 t.run_ticks(2)
 t.drop(p)
 t.tick()

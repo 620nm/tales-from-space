@@ -108,14 +108,14 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-t.click(p, 2, 1, t.target_at(2, 1, "rod"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "rod"))
 t.run_ticks(2)
 assert(t.hands(p).held == "rod", "rods in hand")
 
 -- Armed, because rods make two things in this pack: a grille and a
 -- table frame. A bare click takes the first in registry order, so a
 -- spec that means the second says so exactly as the build menu does.
-t.build(p, "rod", "table_frame", 2, 2)
+ui_controls.build(p, "rod", "table_frame", 2, 2)
 t.run_seconds(1.5)
 local frame = t.structure_at(2, 2)
 assert(frame ~= nil and frame.id == "table_frame",
@@ -125,10 +125,10 @@ assert(frame.sprite == "table_frame", "and it wears its own picture, not a junct
 -- A sheet over the frame is a table. tg picks WHICH table off the
 -- stack (`get_table_type`); here the frame's own table says it.
 t.swap_hands(p)
-t.click(p, 1, 2, t.target_at(1, 2, "metal"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "metal"))
 t.run_ticks(2)
 assert(t.hands(p).held == "metal", "sheets in the other hand")
-t.click(p, 2, 2, t.target_at(2, 2, "table_frame"))
+t.click(p, 2, 2, t.target_at(p, 2, 2, "table_frame"))
 t.run_seconds(2.5)
 local built = t.structure_at(2, 2)
 assert(built ~= nil and built.id == "table",
@@ -147,11 +147,11 @@ assert(built.sprite == "table-0",
 t.swap_hands(p)
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 1, 1, t.target_at(1, 1, "light_bulb"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "light_bulb"))
 t.run_ticks(2)
 assert(t.hands(p).held == "light_bulb", "a bulb in the free hand")
 
-t.click(p, 2, 2, t.target_at(2, 2, "table"), 7, -11)
+t.click(p, 2, 2, t.target_at(p, 2, 2, "table"), 7, -11)
 t.run_ticks(2)
 assert(t.hands(p).held == nil, "the bulb left the hand for the table")
 local laid = t.item_at(2, 2, "light_bulb")
@@ -162,10 +162,10 @@ assert(laid.offset.x == 7 and laid.offset.y == -11,
 
 -- Put down again three pixels the other way: tg ASSIGNS the offset, so
 -- the second placement is the second pixel and never the sum of both.
-t.click(p, 2, 2, t.target_at(2, 2, "light_bulb"))
+t.click(p, 2, 2, t.target_at(p, 2, 2, "light_bulb"))
 t.run_ticks(2)
 assert(t.hands(p).held == "light_bulb", "picked back up off the table")
-t.click(p, 2, 2, t.target_at(2, 2, "table"), -3, -4)
+t.click(p, 2, 2, t.target_at(p, 2, 2, "table"), -3, -4)
 t.run_ticks(2)
 local moved = t.item_at(2, 2, "light_bulb")
 assert(moved.offset.x == -3 and moved.offset.y == -4,
@@ -174,7 +174,7 @@ assert(moved.offset.x == -3 and moved.offset.y == -4,
 -- The floor is not a table, which is the negative the whole flag exists
 -- for: tg's turfs have no generic place branch, so a held thing clicked
 -- at bare deck stays held.
-t.click(p, 2, 2, t.target_at(2, 2, "light_bulb"))
+t.click(p, 2, 2, t.target_at(p, 2, 2, "light_bulb"))
 t.run_ticks(2)
 assert(t.hands(p).held == "light_bulb", "the bulb is in hand again")
 t.click(p, 2, 1, nil, 7, -11)
@@ -188,10 +188,10 @@ t.run_ticks(2)
 -- Two ways out, and they differ by one thing: the driver lifts the top
 -- off and leaves the frame, the ratchet takes the legs too
 -- (tables_racks.dm:325-341).
-t.click(p, 1, 1, t.target_at(1, 1, "screwdriver"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "screwdriver"))
 t.run_ticks(2)
 assert(t.hands(p).held == "screwdriver", "a driver in hand")
-t.click(p, 2, 2, t.target_at(2, 2, "table"))
+t.click(p, 2, 2, t.target_at(p, 2, 2, "table"))
 t.run_seconds(2.5)
 local stripped = t.structure_at(2, 2)
 assert(stripped ~= nil and stripped.id == "table_frame",
@@ -202,16 +202,16 @@ assert(t.item_at(2, 2, "metal") ~= nil, "and the sheet is back on the deck")
 -- Rebuild it, so the ratchet has something to take apart.
 t.swap_hands(p)
 assert(t.hands(p).held == "metal", "the rest of the stack is still in hand")
-t.click(p, 2, 2, t.target_at(2, 2, "table_frame"))
+t.click(p, 2, 2, t.target_at(p, 2, 2, "table_frame"))
 t.run_seconds(2.5)
 assert(t.structure_at(2, 2).id == "table", "a table again")
 
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 1, 1, t.target_at(1, 1, "wrench"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "wrench"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "a ratchet in hand")
-t.click(p, 2, 2, t.target_at(2, 2, "table"), 0, 0)
+t.click(p, 2, 2, t.target_at(p, 2, 2, "table"))
 t.run_seconds(4.5)
 assert(t.structure_at(2, 2) == nil, "the table came apart entirely")
 assert(t.item_at(2, 2, "metal") ~= nil, "the sheet is on the deck")

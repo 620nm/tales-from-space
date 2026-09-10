@@ -62,7 +62,7 @@ assert(boxed.var_state == nil,
 assert(boxed.sprite == "card_deck_full",
     "so every viewer draws the base the wire sent: " .. tostring(boxed.sprite))
 
-t.click(p, 2, 1, t.target_at(2, 1, "card_deck"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "card_deck"))
 t.tick()
 assert(t.hands(p).held == "card_deck", "the deck is in hand")
 
@@ -70,7 +70,7 @@ assert(t.hands(p).held == "card_deck", "the deck is in hand")
 -- Dealing is a click on a TILE with the deck in hand (this pack's
 -- `interaction.use`), which is tg's deal pointed at the table instead of at a
 -- hand -- see items/card_deck.luau for why the bindings differ.
-t.click(p, 1, 2)
+t.click_turf(p, 1, 2)
 t.tick()
 local first = t.item_at(1, 2, "card")
 assert(first ~= nil, "a card is on the tile that was clicked")
@@ -92,7 +92,7 @@ assert(math.abs(first.offset.x + 5) <= 6 and math.abs(first.offset.y) <= 6,
     "and it is scattered around the -5 anchor: "
         .. first.offset.x .. "," .. first.offset.y)
 
-local drawn = table.concat(t.layers(p, t.target_at(1, 2, "card")), " ")
+local drawn = table.concat(t.layers(p, t.target_at(p, 1, 2, "card")), " ")
 assert(drawn:find("card_back", 1, true),
     "the client was sent the back: " .. drawn)
 local secret = first.state:sub(6)
@@ -121,7 +121,7 @@ assert(wrote[#wrote].value == "card_deck_full",
 -- ---- turning it over --------------------------------------------------
 t.drop(p)
 t.tick()
-t.click(p, 1, 2, t.target_at(1, 2, "card"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "card"))
 t.tick()
 assert(t.hands(p).held == "card", "the card is in hand")
 
@@ -143,13 +143,13 @@ assert(faceup.state == "up_" .. secret,
         .. tostring(faceup.state))
 assert(faceup.sprite == "card_" .. secret,
     "wearing that face's cell: " .. tostring(faceup.sprite))
-local shown = table.concat(t.layers(p, t.target_at(1, 1, "card")), " ")
+local shown = table.concat(t.layers(p, t.target_at(p, 1, 1, "card")), " ")
 assert(shown:find("card_" .. secret, 1, true),
     "and NOW the room can see it: " .. shown)
 
 -- ...and back over again, which is what needed `sim.state`: a thing
 -- that toggles has to ask what it is currently showing.
-t.click(p, 1, 1, t.target_at(1, 1, "card"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "card"))
 t.tick()
 t.use_self(p)
 t.tick()
@@ -167,10 +167,10 @@ assert(facedown.sprite == "card_back", "back to the back")
 -- with `acts_on_items`, so a click naming the deck is the card's
 -- business rather than a pickup. The deck is underfoot, where it was
 -- dropped.
-t.click(p, 1, 1, t.target_at(1, 1, "card"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "card"))
 t.tick()
 assert(t.hands(p).held == "card", "the card is in hand again")
-t.click(p, 1, 1, t.target_at(1, 1, "card_deck"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "card_deck"))
 t.tick()
 assert(t.hands(p).held == nil, "the card left the hand")
 assert(t.item_at(1, 1, "card") == nil and t.item_at(1, 2, "card") == nil,
@@ -186,7 +186,7 @@ assert(DECLARED[back.var_state], "and it is one of the pictures the prototype de
 -- remembered what it had already given out -- and the memory is a
 -- string in `ScriptVars`, because a shuffle is not a number the
 -- prototype could have enumerated.
-t.click(p, 1, 1, t.target_at(1, 1, "card_deck"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "card_deck"))
 t.tick()
 assert(t.hands(p).held == "card_deck", "the deck is in hand again")
 
@@ -197,7 +197,7 @@ assert(t.hands(p).held == "card_deck", "the deck is in hand again")
 -- would pass a check at each end and be wrong the whole way through.
 local FLIPS = { [28] = "card_deck_half", [44] = "card_deck_low" }
 for deal = 1, 54 do
-    t.click(p, 2, 2)
+    t.click_turf(p, 2, 2)
     t.tick()
     assert(#t.items_at(2, 2) == deal,
         "deal " .. deal .. " put a card on the pile, got " .. #t.items_at(2, 2))
@@ -217,7 +217,7 @@ for deal = 1, 54 do
             "and it is a picture the prototype declared: " .. tostring(mid.var_state))
         assert(mid.sprite == "card_deck_full",
             "while the base the server sent never moved: " .. tostring(mid.sprite))
-        t.click(p, 1, 1, t.target_at(1, 1, "card_deck"))
+        t.click(p, 1, 1, t.target_at(p, 1, 1, "card_deck"))
         t.tick()
         assert(t.hands(p).held == "card_deck", "the deck is back in hand")
     end
@@ -225,13 +225,17 @@ end
 
 -- Empty, and it says so in the picture as well as in the string --
 -- tg's own three thresholds (deck.dm:171-181).
+t.move(p, "south")
+t.run_ticks(5)
 t.drop(p)
 t.tick()
-local emptied = t.item_at(1, 1, "card_deck")
+local emptied = t.item_at(1, 2, "card_deck")
 assert(emptied ~= nil, "the deck is at the dealer's feet")
 assert(emptied.var_state == "card_deck_empty",
     "and it is drawn empty: " .. tostring(emptied.var_state))
 assert(DECLARED[emptied.var_state], "which is a picture the prototype declared")
+t.move(p, "north")
+t.run_ticks(5)
 
 -- ---- and every one of them is a different card ------------------------
 -- Read the way a player would: pick each card up off the pile, turn it
@@ -241,9 +245,9 @@ assert(DECLARED[emptied.var_state], "which is a picture the prototype declared")
 -- other check in this file.
 local seen, names = {}, {}
 for card = 1, 54 do
-    local on_pile = t.target_at(2, 2, "card")
+    local on_pile = t.target_at(p, 2, 2, "card")
     assert(on_pile ~= nil, "card " .. card .. " is still on the pile")
-    t.click(p, 2, 2, on_pile)
+    t.click(p, 2, 2, t.target_at(p, 2, 2, "card"))
     t.tick()
     assert(t.hands(p).held == "card", "card " .. card .. " is in hand")
     t.use_self(p)
@@ -291,10 +295,10 @@ local px, py = t.pos(p)
 assert(px == 2 and py == 1, "standing between the cards and the second deck")
 
 -- An untouched deck is whole, so it takes nothing at all.
-t.click(p, 1, 1, t.target_at(1, 1, "card"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "card"))
 t.tick()
 assert(t.hands(p).held == "card", "a card off the floor is in hand")
-t.click(p, 3, 1, t.target_at(3, 1, "card_deck"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "card_deck"))
 t.tick()
 assert(t.hands(p).held == "card", "an untouched deck refuses a fifty-fifth card")
 local refused = table.concat(t.messages(p), "\n")
@@ -304,10 +308,10 @@ assert(refused:find("The deck is already full.", 1, true), "and says so: " .. re
 -- back. The SECOND return is the one that must bounce.
 t.drop(p)
 t.tick()
-t.click(p, 3, 1, t.target_at(3, 1, "card_deck"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "card_deck"))
 t.tick()
 assert(t.hands(p).held == "card_deck", "the second deck is in hand")
-t.click(p, 3, 2)
+t.click_turf(p, 3, 2)
 t.tick()
 assert(t.item_at(3, 2, "card") ~= nil, "it dealt one, so it has room for one")
 t.drop(p)
@@ -315,17 +319,17 @@ t.tick()
 
 -- Both the deck and that first card are underfoot now: a drop lands on
 -- the dropper's own tile, so putting the deck down moved it off (3, 1).
-t.click(p, 2, 1, t.target_at(2, 1, "card"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "card"))
 t.tick()
 assert(t.hands(p).held == "card", "the card put down a moment ago is in hand")
-t.click(p, 2, 1, t.target_at(2, 1, "card_deck"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "card_deck"))
 t.tick()
 assert(t.hands(p).held == nil, "the one free slot took it")
 
-t.click(p, 3, 2, t.target_at(3, 2, "card"))
+t.click(p, 3, 2, t.target_at(p, 3, 2, "card"))
 t.tick()
 assert(t.hands(p).held == "card", "and one more card is in hand")
-t.click(p, 2, 1, t.target_at(2, 1, "card_deck"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "card_deck"))
 t.tick()
 assert(t.hands(p).held == "card",
     "a deck already holding fifty-four refuses the next one")
@@ -364,10 +368,10 @@ assert(dealt ~= table.concat(roster, ","), "the deck was shuffled, not read out"
 assert(dealt ~= table.concat(reversed, ","), "and not read out backwards either")
 
 -- ---- the fifty-fifth deal ---------------------------------------------
-t.click(p, 1, 1, t.target_at(1, 1, "card_deck"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "card_deck"))
 t.tick()
 assert(t.hands(p).held == "card_deck", "the empty deck is in hand")
-t.click(p, 2, 2)
+t.click_turf(p, 2, 2)
 t.tick()
 assert(#t.items_at(2, 2) == 0, "an empty deck deals nothing")
 local told = table.concat(t.messages(p), "\n")

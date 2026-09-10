@@ -101,7 +101,7 @@ assert(off.id == "air_scrubber", "the map bolted one to the deck")
 assert(off.state == "off", "and tg's ships off")
 assert(off.sprite == "scrubber_off_e", "dark, and aimed: " .. tostring(off.sprite))
 
-t.click(p, 2, 1, t.target_at(2, 1, "air_scrubber"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "air_scrubber"))
 t.tick()
 assert(t.ui(p), "a scrubber wears a panel")
 
@@ -112,14 +112,14 @@ assert(t.ui(p), "a scrubber wears a panel")
 -- posture to show and stays exactly as dark as it was. Setting a
 -- machine up before you start it must not paint a purge warning on an
 -- occupied room.
-t.ui_act(p, "toggle", '{"field":"roster"}')
+ui_controls.toggle(p, "roster")
 t.run_ticks(2)
 local armed = t.structure_at(2, 1)
 assert(toggle(p, "roster").on == true, "the dial moved")
 assert(armed.state == "off", "and the machine did not: " .. tostring(armed.state))
 assert(armed.sprite == "scrubber_off_e", "nor its picture: " .. tostring(armed.sprite))
 
-t.ui_act(p, "toggle", '{"field":"roster"}')
+ui_controls.toggle(p, "roster")
 t.run_ticks(2)
 
 -- ---- switched on: the everyday picture ----
@@ -130,9 +130,9 @@ t.run_ticks(2)
 -- clean air at one atmosphere satisfies at once -- and a machine that
 -- has ARRIVED is drawn idle now, which is the next scenario rather than
 -- this one.
-t.ui_act(p, "set", '{"field":"floor","value":0}')
-t.ui_act(p, "toggle", '{"field":"roster"}')
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.set(p, "floor", 0)
+ui_controls.toggle(p, "roster")
+ui_controls.toggle(p, "power")
 t.run_seconds(1)
 local running = t.structure_at(2, 1)
 assert(running.state == "scrubbing", "the fan is turning")
@@ -148,7 +148,7 @@ assert(running.sprite == "scrubber_on_e", "wearing its working body: " .. runnin
 -- carries -- so the sim reads it and sends the answer under the body,
 -- on the layer stack already there (sim/atmos_machines/underlays.rs).
 -- `intact` is tg's word for a mouth that FOUND its run; 8 is west.
-local drawn = t.layers(p, t.target_at(2, 1, "air_scrubber"))
+local drawn = t.layers(p, t.target_at(p, 2, 1, "air_scrubber"))
 assert(#drawn == 2, "a stub under a body, and nothing else: " .. #drawn)
 assert(drawn[1] == "pipe_intact_l2_8", "the mouth it bound, beneath it: " .. drawn[1])
 assert(drawn[2] == "scrubber_on_e", "then the machine: " .. tostring(drawn[2]))
@@ -205,7 +205,7 @@ assert(
 -- ...and back, because a warning you cannot clear is not a warning:
 -- narrow the roster to its named gases and the bulk draw -- the thing
 -- the warning was about -- stops with it.
-t.ui_act(p, "toggle", '{"field":"roster"}')
+ui_controls.toggle(p, "roster")
 t.run_seconds(1)
 local calm = t.structure_at(2, 1)
 assert(
@@ -247,11 +247,11 @@ t.world([==[(
 
 local lone = t.join()
 t.tick()
-local unplumbed = t.target_at(2, 1, "air_scrubber")
+local unplumbed = t.target_at(lone, 2, 1, "air_scrubber")
 t.click(lone, 2, 1, unplumbed)
 t.tick()
 assert(readout(lone, "room.supply") == "room.supply.fed", "the mains are behind it")
-t.ui_act(lone, "toggle", '{"field":"power"}')
+ui_controls.toggle(lone, "power")
 t.run_seconds(1)
 assert(toggle(lone, "power").on == true, "the switch is thrown")
 local nothing = t.structure_at(2, 1)
@@ -306,7 +306,7 @@ local JUNCTION = [==[(
 local ARM = {
     filter = function() end,
     mixer = function(q)
-        t.ui_act(q, "set", '{"field":"pressure","value":4500}')
+        ui_controls.set(q, "pressure", 4500)
     end,
 }
 
@@ -320,11 +320,11 @@ for _, machine in ipairs({ "filter", "mixer" }) do
     assert(cold.state == "off", machine .. " ships off")
     assert(cold.sprite == machine .. "_off_e", machine .. " is dark, aimed east: " .. cold.sprite)
 
-    t.click(q, 3, 1, t.target_at(3, 1, machine))
+    t.click(q, 3, 1, t.target_at(q, 3, 1, machine))
     t.tick()
     assert(t.ui(q), machine .. " answers an empty hand with a window")
     ARM[machine](q)
-    t.ui_act(q, "toggle", '{"field":"power"}')
+    ui_controls.toggle(q, "power")
     t.run_seconds(1)
 
     local hot = t.structure_at(3, 1)
@@ -342,7 +342,7 @@ for _, machine in ipairs({ "filter", "mixer" }) do
 
     -- ...and off again. A one-way picture change would pass every
     -- assertion above.
-    t.ui_act(q, "toggle", '{"field":"power"}')
+    ui_controls.toggle(q, "power")
     t.run_seconds(1)
     local back = t.structure_at(3, 1).sprite
     assert(back == machine .. "_off_e", machine .. " goes dark again: " .. back)
@@ -386,10 +386,10 @@ t.world([==[(
 
 local m = t.join()
 t.tick()
-t.click(m, 3, 1, t.target_at(3, 1, "mixer"))
+t.click(m, 3, 1, t.target_at(m, 3, 1, "mixer"))
 t.tick()
-t.ui_act(m, "set", '{"field":"pressure","value":4500}')
-t.ui_act(m, "toggle", '{"field":"power"}')
+ui_controls.set(m, "pressure", 4500)
+ui_controls.toggle(m, "power")
 t.run_seconds(1)
 local starved = t.structure_at(3, 1)
 assert(toggle(m, "power").on == true, "the switch is thrown and stays thrown")
@@ -445,7 +445,7 @@ t.tick()
 -- disturb it.
 assert(t.structure_at(4, 2).sprite == "scrubber_off_w", "aimed by its own plumbing")
 
-t.click(e, 4, 2, t.target_at(4, 2, "air_scrubber"))
+t.click(e, 4, 2, t.target_at(e, 4, 2, "air_scrubber"))
 t.tick()
 assert(readout(e, "room.supply") == "room.supply.fed", "the mains are behind it")
 -- Whole air with the floor down to nothing, so this scrubber never
@@ -453,16 +453,16 @@ assert(readout(e, "room.supply") == "room.supply.fed", "the mains are behind it"
 -- the SUPPLY, and a machine that has reached its floor is drawn idle
 -- for a reason of its own -- which would make the last assertion in
 -- the file ambiguous.
-t.ui_act(e, "set", '{"field":"floor","value":0}')
-t.ui_act(e, "toggle", '{"field":"roster"}')
-t.ui_act(e, "toggle", '{"field":"power"}')
+ui_controls.set(e, "floor", 0)
+ui_controls.toggle(e, "roster")
+ui_controls.toggle(e, "power")
 t.run_seconds(1)
 assert(t.structure_at(4, 2).sprite == "scrubber_on_w", "and it runs")
 t.ui_close(e)
 t.tick()
 
 -- ---- one snip, three tiles away ----
-t.click(e, 4, 1, t.target_at(4, 1, "wirecutters"))
+t.click(e, 4, 1, t.target_at(e, 4, 1, "wirecutters"))
 t.run_ticks(2)
 t.click_subfloor(e, 3, 2, "cable", 1)
 t.run_seconds(1.5)
@@ -480,7 +480,7 @@ assert(dark.sprite == "scrubber_off_w",
 -- But NOT switched off. The two are different facts and the panel keeps
 -- them apart: the switch is where the engineer left it, and the supply
 -- line is what changed.
-t.click(e, 4, 2, t.target_at(4, 2, "air_scrubber"))
+t.click(e, 4, 2, t.target_at(e, 4, 2, "air_scrubber"))
 t.tick()
 assert(toggle(e, "power").on == true, "the switch is still thrown")
 assert(readout(e, "room.supply") == "room.supply.dead", "and the panel names what is actually wrong")
@@ -490,7 +490,7 @@ t.tick()
 -- ---- put the cable back ----
 t.drop(e)
 t.run_ticks(2)
-t.click(e, 5, 1, t.target_at(5, 1, "cable_coil"))
+t.click(e, 5, 1, t.target_at(e, 5, 1, "cable_coil"))
 t.run_ticks(2)
 -- A fresh coil arrives on yellow (tg's CABLE_LAYER_2 default), and this
 -- department runs on red, so dial it twice: yellow -> blue -> red.

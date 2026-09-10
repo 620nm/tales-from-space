@@ -87,10 +87,10 @@ t.set_environment({ sink_k = 293.15, insolation = 0.0 })
 local chemist = t.join()
 t.tick()
 
-local dispenser = t.target_at(1, 2)
-local heater = t.target_at(3, 2)
-local supply = t.target_at(2, 1)
-local jar = t.target_at(2, 3, "bottle")
+local dispenser = t.target_at(chemist, 1, 2)
+local heater = t.target_at(chemist, 3, 2)
+local supply = t.target_at(chemist, 2, 1)
+local jar = t.target_at(chemist, 2, 3, "bottle")
 assert(dispenser ~= nil and heater ~= nil and supply ~= nil and jar ~= nil, "the bench is set")
 
 -- Twenty atmospheres of oxygen on the line: a quarter of what a supply
@@ -113,21 +113,21 @@ t.click(chemist, 1, 2, dispenser)
 t.tick()
 t.click(chemist, 1, 2, dispenser)
 t.tick()
-t.ui_act(chemist, "set", '{"field":"amount","value":1.0}')
+ui_controls.set(chemist, "amount", 1.0)
 t.run_ticks(2)
-t.ui_act(chemist, "toggle", '{"field":"dispense","option":"ammonia"}')
+ui_controls.toggle(chemist, "dispense", "ammonia")
 t.run_ticks(4)
-t.ui_act(chemist, "toggle", '{"field":"eject"}')
+ui_controls.toggle(chemist, "eject")
 t.run_ticks(2)
 
 t.click(chemist, 3, 2, heater)
 t.tick()
 t.click(chemist, 3, 2, heater)
 t.tick()
-t.ui_act(chemist, "set", '{"field":"temperature","value":530}')
+ui_controls.set(chemist, "temperature", 530)
 t.run_ticks(2)
 if t.ui(chemist).toggles[1].on ~= true then
-    t.ui_act(chemist, "toggle", '{"field":"power"}')
+    ui_controls.toggle(chemist, "power")
     t.run_ticks(2)
 end
 assert(t.ui(chemist).toggles[1].on == true, "the element is on")
@@ -148,9 +148,9 @@ assert(t.vessel(jar).contents.n2o.gas == BENCH_MADE, "keyed as `n2o` and nothing
 
 -- ...and so does the examine pane, in the substance file's own words
 -- (sim/examine.rs, `matter_lines`; substances/n2o.luau, `name`).
-t.ui_act(chemist, "toggle", '{"field":"power"}')
+ui_controls.toggle(chemist, "power")
 t.run_ticks(2)
-t.ui_act(chemist, "toggle", '{"field":"eject"}')
+ui_controls.toggle(chemist, "eject")
 t.run_ticks(2)
 assert(t.hands(chemist).held == "bottle", "the bottle comes back out")
 local look = t.examine_held(chemist)
@@ -216,8 +216,8 @@ local reader = t.join("engineer")
 local diver = t.join("engineer")
 t.run_ticks(2)
 
-local can = t.target_at(5, 1)
-local scrubber = t.target_at(5, 2, "air_scrubber")
+local can = t.target_at(reader, 5, 1)
+local scrubber = t.target_at(diver, 5, 2, "air_scrubber")
 assert(can ~= nil and scrubber ~= nil, "the chamber is set")
 
 local ROOM = {}
@@ -273,7 +273,7 @@ local MAPPED = bottle.contents.n2o.gas
 -- and no table of its own (items/analyzer.luau deleted the one it used
 -- to carry). The same three words the examine pane used on the bench
 -- bottle, on a completely different route in.
-t.click(reader, 4, 1, t.target_at(4, 1, "analyzer"))
+t.click(reader, 4, 1, t.target_at(reader, 4, 1, "analyzer"))
 t.run_ticks(2)
 assert(t.hands(reader).held == "analyzer", "the analyzer is in hand")
 local _ = t.messages(reader)
@@ -329,7 +329,7 @@ assert(string.find(air_named, "(100 %)", 1, true) ~= nil,
 -- hundred litres a second out of one tile is a wind, and a spec about
 -- breathing should not be a spec about being blown across a room.
 assert(t.worn(diver).mask == "breath_mask", "the shift starts with apparatus on")
-t.click(diver, 4, 2, t.target_at(4, 2, "oxygen_tank"))
+t.click(diver, 4, 2, t.target_at(diver, 4, 2, "oxygen_tank"))
 t.run_ticks(2)
 assert(t.hands(diver).held == "oxygen_tank", "the tank is in hand")
 t.use_self(diver)
@@ -380,9 +380,9 @@ assert(sleepy_on == false, "and starts unselected")
 local before_room = room("n2o")
 local before_pipe = pipe("n2o")
 local before_lungs = lungs("n2o")
-t.ui_act(diver, "toggle", '{"field":"filter","option":"n2o"}')
+ui_controls.toggle(diver, "filter", "n2o")
 t.run_ticks(2)
-t.ui_act(diver, "toggle", '{"field":"power"}')
+ui_controls.toggle(diver, "power")
 t.run_seconds(120)
 
 local moved = before_room - room("n2o")

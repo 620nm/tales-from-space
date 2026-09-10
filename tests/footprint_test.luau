@@ -127,23 +127,23 @@ walk("north", 7, 4, "and up beside the far corner of the head")
 -- The head is drawn OVER whatever stands on it, and every cell says
 -- whose it is.
 -- ---------------------------------------------------------------
-local body = t.target_at(5, 6, "gravity_generator")
-local cell1 = t.target_at(6, 4, "gravity_generator")
+local body = t.target_at(p, 5, 6, "gravity_generator")
+local cell1 = t.target_at(p, 6, 4, "gravity_generator")
 assert(body and cell1 and body ~= cell1,
     "a corner has a wire id of its own, distinct from the body's")
 
 local head = t.seen(p, cell1)
 assert(head.kind == "overhead",
     "the head draws over what stands on it, got " .. tostring(head.kind))
-assert(head.extent_of == body,
+assert(t.same_target(head.extent_of, body),
     "and names the body it belongs to, got " .. tostring(head.extent_of))
 assert(head.layers[1] and head.layers[1].sprite == "gravgen_fix0_1",
     "wearing its own part's picture, got "
         .. tostring(head.layers[1] and head.layers[1].sprite))
 
-local flank = t.seen(p, t.target_at(6, 5, "gravity_generator"))
+local flank = t.seen(p, t.target_at(p, 6, 5, "gravity_generator"))
 assert(flank.kind ~= "overhead", "the solid rows are not overhead")
-assert(flank.extent_of == body, "but belong to the same body")
+assert(t.same_target(flank.extent_of, body), "but belong to the same body")
 
 -- ---------------------------------------------------------------
 -- Looking at a corner names the machine, not the tile.
@@ -165,7 +165,7 @@ assert(line(look, "A device which produces a graviton field when set up."),
 local function grab(id)
     t.drop(p)
     t.run_ticks(2)
-    t.click(p, 7, 4, t.target_at(7, 4, id))
+    t.click(p, 7, 4, t.target_at(p, 7, 4, id))
     t.run_ticks(2)
     assert(has(t.hands(p), id), "picked up the " .. id)
     t.messages(p)
@@ -173,7 +173,7 @@ end
 
 local function rung(tool, to, said)
     grab(tool)
-    t.click(p, 6, 4, t.target_at(6, 4, "gravity_generator"))
+    t.click(p, 6, 4, t.target_at(p, 6, 4, "gravity_generator"))
     t.run_seconds(1.0)
     local it = t.structure_at(5, 6)
     assert(it and it.state == to,
@@ -196,7 +196,7 @@ rung("welder", "fix2", "You mend the damaged framework.")
 -- (gravitygenerator.dm:264-266), so the tool simply finds nothing to
 -- say.
 grab("wrench")
-t.click(p, 6, 4, t.target_at(6, 4, "gravity_generator"))
+t.click(p, 6, 4, t.target_at(p, 6, 4, "gravity_generator"))
 t.run_seconds(1.0)
 assert(t.structure_at(5, 6).state == "fix2",
     "the wrong tool leaves the ladder where it was")
@@ -220,13 +220,13 @@ local q = t.join()
 t.run_ticks(4)
 
 assert(t.structure_at(5, 6).sprite == "gravgen_on_8", "it is running")
-local centre = t.seen(q, t.target_at(5, 5, "gravity_generator"))
+local centre = t.seen(q, t.target_at(q, 5, 5, "gravity_generator"))
 assert(#centre.layers == 2, "the centre wears two layers, got " .. #centre.layers)
 assert(centre.layers[1].sprite == "gravgen_on_5"
     and centre.layers[2].sprite == "gravgen_activated",
     "its own part under the charge overlay, got "
         .. centre.layers[1].sprite .. " + " .. tostring(centre.layers[2].sprite))
 
-local off_centre = t.seen(q, t.target_at(4, 5, "gravity_generator"))
+local off_centre = t.seen(q, t.target_at(q, 4, 5, "gravity_generator"))
 assert(#off_centre.layers == 1,
     "and no other cell wears it, got " .. #off_centre.layers)

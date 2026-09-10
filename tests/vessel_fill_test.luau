@@ -57,8 +57,8 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local full = t.target_at(1, 1, "beaker.water")
-local empty = t.target_at(3, 1, "beaker")
+local full = t.target_at(p, 1, 1, "beaker.water")
+local empty = t.target_at(p, 3, 1, "beaker")
 
 -- ---------------------------------------------------------------
 -- ONE: A POUR SHOWS ON BOTH VESSELS, IN THE TICK IT LANDS.
@@ -124,9 +124,9 @@ assert(
 t.drop(p)
 t.tick()
 
-local dispenser = t.target_at(1, 2)
-local heater = t.target_at(3, 2)
-local beaker = t.target_at(2, 1, "beaker")
+local dispenser = t.target_at(p, 1, 2)
+local heater = t.target_at(p, 3, 2)
+local beaker = t.target_at(p, 2, 1, "beaker")
 
 t.click(p, 2, 1, beaker)
 t.tick()
@@ -134,23 +134,23 @@ t.click(p, 1, 2, dispenser)
 t.tick()
 t.click(p, 1, 2, dispenser)
 t.tick()
-t.ui_act(p, "toggle", '{"field":"dispense","option":"water"}')
+ui_controls.toggle(p, "dispense", "water")
 t.run_ticks(2)
 -- A press, less whatever the open mouth has already breathed off into
 -- the room by now: the glass has been standing in station air for the
 -- whole of part one (sim/holder/vent.rs), so this is a press to within
 -- a thousandth and not to the bit.
 assert(math.abs(amount(beaker, "water") - PRESS) < 1e-3, "three quarters of a mole of water")
-t.ui_act(p, "toggle", '{"field":"eject"}')
+ui_controls.toggle(p, "eject")
 t.run_ticks(2)
 
 t.click(p, 3, 2, heater)
 t.tick()
 t.click(p, 3, 2, heater)
 t.tick()
-t.ui_act(p, "set", '{"field":"temperature","value":600}')
+ui_controls.set(p, "temperature", 600)
 t.run_ticks(2)
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 
 -- Watch the PICTURE rather than the moles: the assertion is about what
 -- a crewman sees, and the two only agree if the repaint follows the

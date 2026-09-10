@@ -82,12 +82,12 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local machine = t.target_at(2, 2)
-local jar = t.target_at(1, 2, "bottle")
-local b = t.target_at(3, 2, "beaker")
+local machine = t.target_at(p, 2, 2)
+local jar = t.target_at(p, 1, 2, "bottle")
+local b = t.target_at(p, 3, 2, "beaker")
 
 local function press(key)
-    t.ui_act(p, "toggle", '{"field":"dispense","option":"' .. key .. '"}')
+    ui_controls.toggle(p, "dispense", key)
     t.run_ticks(2)
 end
 
@@ -96,17 +96,17 @@ end
 -- the recipe wants, and the amount that goes in is the chemist's to
 -- choose rather than the glass's to impose.
 local function dial_to(moles)
-    t.ui_act(p, "set", '{"field":"amount","value":' .. moles .. '}')
+    ui_controls.set(p, "amount", moles)
     t.run_ticks(2)
 end
 
 local function open()
-    t.click(p, 2, 2, machine)
+    t.click(p, 2, 2, assert(t.target_at(p, 2, 2, machine)))
     t.tick()
 end
 
 local function eject()
-    t.ui_act(p, "toggle", '{"field":"eject"}')
+    ui_controls.toggle(p, "eject")
     t.run_ticks(2)
 end
 
@@ -114,7 +114,7 @@ end
 -- there, so picking a vessel back up off the deck is a click on their
 -- own feet.
 local function pick_up(handle)
-    t.click(p, 2, 1, handle)
+    t.click(p, 2, 1, assert(t.target_at(p, 2, 1, handle)))
     t.tick()
 end
 
@@ -128,10 +128,10 @@ end
 -- alone), so the 20.4 kJ/mol of latent heat lands in a mixture whose
 -- whole capacity is a few joules per kelvin and the bottle gets HOT.
 -- ---------------------------------------------------------------
-t.click(p, 1, 2, jar)
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, jar)))
 t.tick()
 assert(t.hands(p).held == "bottle", "the bottle is in hand")
-t.click(p, 2, 2, machine)
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, machine)))
 t.tick()
 assert(t.hands(p).held == nil, "and it goes into the dock")
 
@@ -187,7 +187,7 @@ near(cooled.pressure_kpa,
 -- generator in it, so what the exotherm gives up does not come back.
 -- ---------------------------------------------------------------
 pick_up(jar)
-t.click(p, 2, 2, machine)
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, machine)))
 t.tick()
 open()
 dial_to(SODIUM)
@@ -244,7 +244,7 @@ near(amount(jar, "salt"), settled, 1e-9, "a stalled reaction makes nothing more"
 -- ---------------------------------------------------------------
 pick_up(jar)
 local warmth = t.holder_k(jar)
-t.click(p, 3, 2, b)
+t.click(p, 3, 2, assert(t.target_at(p, 3, 2, b)))
 t.tick()
 near(amount(b, "salt"), settled, 1e-9, "the salt went across")
 near(amount(b, "sodium"), SODIUM - settled, 1e-9, "and so did the leftover sodium")
@@ -266,9 +266,9 @@ near(t.holder_k(b), warmth, 1.0, "the heat travelled with the matter")
 -- ---------------------------------------------------------------
 t.drop(p)
 t.tick()
-t.click(p, 3, 2, b)
+t.click(p, 3, 2, assert(t.target_at(p, 3, 2, b)))
 t.tick()
-t.click(p, 2, 2, machine)
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, machine)))
 t.tick()
 open()
 dial_to(0.75)

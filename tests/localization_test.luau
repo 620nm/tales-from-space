@@ -75,7 +75,7 @@ end
 --    face; the sentence it comes out as is `locale/en.json`'s, and it
 --    is English because this session asked for no other language.
 -- ---------------------------------------------------------------
-t.click(p, 1, 1, t.target_at(1, 1, "d6"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "d6"))
 t.tick()
 assert(t.hands(p).held == "d6", "the die is in hand")
 local _ = t.messages(p)
@@ -97,7 +97,7 @@ t.run_ticks(2)
 --    names the field, the value and the heading, and every one of them
 --    is an id out of `sim/ui/ids.rs` that this pack renders.
 -- ---------------------------------------------------------------
-t.click(p, 2, 2, t.target_at(2, 2))
+t.click(p, 2, 2, t.target_at(p, 2, 2))
 t.tick()
 local ui = t.ui(p)
 assert(ui ~= nil and ui.document == "modules", "the canister opens its window")

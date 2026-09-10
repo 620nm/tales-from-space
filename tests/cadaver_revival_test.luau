@@ -83,11 +83,11 @@ end
 assert(t.pos(surgeon) == 4, "beside the drawer: " .. t.pos(surgeon))
 
 -- ---- what the chamber was holding -------------------------------------
-t.click(surgeon, 5, 2, t.target_at(5, 2, "cadaver_chamber.cadaver"))
+t.click(surgeon, 5, 2, t.target_at(surgeon, 5, 2, "cadaver_chamber.cadaver"))
 t.run_ticks(2)
 local found = t.bodies_at(5, 1)
 assert(#found == 1, "one body rolled out on the slab")
-local cid = found[1].id
+local corpse_name = found[1].name
 
 -- The mint itself latched it. 200 brute crosses the plan's `dead` line
 -- inside `stand_up_stock_body`, the plan's hook stops the heart on that
@@ -98,32 +98,32 @@ assert(found[1].label == "Dead", "in the pack's own word")
 assert(found[1].parts.chest.organs.heart, "with its heart still in its chest")
 
 -- ---- onto the table, and out of the jumpsuit --------------------------
-local optable = t.target_at(3, 2, "optable")
+local optable = t.target_at(surgeon, 3, 2, "optable")
 -- Laying a body out TAKES TIME now (`lay_body_secs`,
 -- content/tuning.luau), so this waits the do_after out.
-t.drag(surgeon, 5, 1, cid, 3, 2, optable)
+t.drag(surgeon, 5, 1, t.target_at(surgeon, 5, 1, "name:" .. corpse_name), 3, 2, optable)
 t.run_ticks(2 * 20 + 2)
 local function corpse()
     return t.bodies_at(3, 2)[1]
 end
 assert(corpse() ~= nil and corpse().posture == "lying", "laid out on the table")
 
-t.drag(surgeon, 3, 2, cid, 4, 1, t.body_id(surgeon))
+t.drag(surgeon, 3, 2, t.target_at(surgeon, 3, 2, "name:" .. corpse_name), 4, 1, t.body_target(surgeon, surgeon))
 t.run_ticks(2)
 assert(slot_row(t.ui(surgeon), "Uniform") ~= nil, "the wardrobe opened")
-t.ui_act(surgeon, "toggle", '{"field":"strip","option":"uniform"}')
+ui_controls.toggle(surgeon, "strip", "uniform")
 t.run_ticks(90)
 assert(corpse().worn.uniform == nil, "the jumpsuit is off")
 
 local function hold(id)
     if t.hands(surgeon).held ~= nil then t.drop(surgeon); t.tick() end
-    t.click(surgeon, 4, 1, t.target_at(4, 1, id))
+    t.click(surgeon, 4, 1, t.target_at(surgeon, 4, 1, id))
     t.run_ticks(2)
     assert(t.hands(surgeon).held == id, "the surgeon holds the " .. id)
 end
 local function step(tool, ticks, done, why)
     hold(tool)
-    t.click(surgeon, 3, 2, cid)
+    t.click(surgeon, 3, 2, t.target_at(surgeon, 3, 2, "name:" .. corpse_name))
     t.run_ticks(ticks)
     assert(done(), why)
 end
@@ -154,7 +154,7 @@ step("scalpel", 55, function() return states().organs_cut end, "organs cut")
 
 -- ---- 3. take the stopped heart out ------------------------------------
 hold("hemostat")
-t.click(surgeon, 3, 2, cid)
+t.click(surgeon, 3, 2, t.target_at(surgeon, 3, 2, "name:" .. corpse_name))
 t.run_ticks(2)
 local win = t.ui(surgeon)
 assert(win ~= nil and win.presentation == "choices", "several organs to reach")
@@ -170,14 +170,14 @@ for _, toggle in ipairs(win.toggles) do
     end
 end
 assert(pick, "the window offers to take the heart out: " .. tostring(pick))
-t.ui_act(surgeon, "toggle", string.format('{"field":"operation","option":"%s"}', pick))
+ui_controls.toggle(surgeon, "operation", pick)
 t.run_ticks(60)
 assert(corpse().parts.chest.organs.heart == false, "the socket is empty")
 assert(corpse().animate == false, "no heart at all is no more alive than a stopped one")
 
 -- ---- 4. ...and put a living one in ------------------------------------
 hold("organ_heart")
-t.click(surgeon, 3, 2, cid)
+t.click(surgeon, 3, 2, t.target_at(surgeon, 3, 2, "name:" .. corpse_name))
 t.run_ticks(60)
 assert(corpse().parts.chest.organs.heart ~= false, "a heart is seated")
 assert(corpse().animate == true,

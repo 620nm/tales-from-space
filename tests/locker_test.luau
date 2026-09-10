@@ -27,7 +27,7 @@ end
 
 local p = t.join()
 t.tick()
-local locker = t.target_at(2, 1, "locker.tools")
+local locker = t.target_at(p, 2, 1, "locker.tools")
 assert(locker ~= nil, "the variant is one targetable structure")
 local shut = t.structure_at(2, 1)
 assert(shut.state == "closed" and shut.sprite == "locker_tools",
@@ -67,7 +67,7 @@ x, y = t.pos(p)
 assert(x == 2 and y == 1, "the open locker no longer blocks movement")
 t.move(p, "west")
 t.run_ticks(3)
-t.click(p, 1, 1, t.target_at(1, 1, "headset"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "headset"))
 t.tick()
 assert(t.hands(p).held == "headset", "the known item is in hand")
 t.click(p, 2, 1, locker)

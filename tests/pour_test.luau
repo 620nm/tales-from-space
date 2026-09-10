@@ -35,10 +35,10 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local a = t.target_at(1, 1, "beaker.libital")
-local b = t.target_at(2, 1, "beaker.libital")
-local c = t.target_at(3, 1, "beaker")
-local e = t.target_at(4, 1, "beaker.libital")
+local a = t.target_at(p, 1, 1, "beaker.libital")
+local b = t.target_at(p, 2, 1, "beaker.libital")
+local c = t.target_at(p, 3, 1, "beaker")
+local e = t.target_at(p, 4, 1, "beaker.libital")
 
 local function total(handle)
     local contents = t.contents(handle)
