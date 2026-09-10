@@ -2,7 +2,7 @@
 // through, with the crew board in the middle of it and every other
 // panel pinned to an edge.
 import type { GuestUi, UiNode } from "@lunatic/ui";
-import { Pane } from "@lunatic/ui";
+import { Pane, Stack } from "@lunatic/ui";
 import type { GameplayView } from "./model";
 import { begin, column, event, panel, row, some, text } from "./view";
 import { crewPanels } from "./lobby";
@@ -23,10 +23,10 @@ function statusLine(view: GameplayView): UiNode {
   const place = (view.state as { location?: { name?: string } }).location?.name;
   return row("status", some(
     place
-      ? row("status-place", [
+      ? Stack("status-place", [
           panel("status-dot", [], { cls: ["statusdot"] }),
           text("status-place/name", place),
-        ], { cls: ["hudgroup"], style: { alignItems: "center", gap: 8 } })
+        ], { cls: ["hudgroup"], gap: 8, align: "center" })
       : null,
     text("identity", view.state.identity?.name ?? "", ["statusname"]),
   ), { cls: ["hudgroup", "statusline"], style: { position: "absolute", right: 14, top: 14 } });
@@ -47,9 +47,9 @@ const ui: GuestUi = {
     children.push(...some(
       column("hud-origin", some(
         inventory(view), wornGroup(view), wornGroup(view, true),
-        row("target-block", some(bodyTarget(view), targetMeta(view)), {
-          cls: ["hudgroup"],
-          style: { position: "absolute", left: 126, bottom: 40, width: 220, gap: 7, alignItems: "center" },
+        Stack("target-block", some(bodyTarget(view), targetMeta(view)), {
+          cls: ["hudgroup"], gap: 7, align: "center",
+          style: { position: "absolute", left: 126, bottom: 40, width: 220 },
         }),
         ...actionGroups(view),
       ), { cls: ["hudgroup"], style: { position: "absolute", left: "55%", bottom: 0, width: 0, height: 0 } }),
@@ -60,10 +60,7 @@ const ui: GuestUi = {
     children.push(...documents(view));
     children.push(...inspectionPanels(view));
     children.push(...worldOverlays(view));
-    return Pane("gameplay", children, {
-      cls: ["hud"],
-      style: { justifyContent: "center", alignItems: "center" },
-    });
+    return Pane("gameplay", children, { cls: ["hud", "centered"] });
   },
   onEvent(e, view) {
     const command = shortcut(e.id, view as unknown as GameplayView);

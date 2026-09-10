@@ -6,8 +6,9 @@
 // the zone selector (ui_zonesel, code/__DEFINES/hud.dm:238; added at
 // code/_onclick/hud/human.dm:19); `main.tsx` says where.
 import type { UiNode } from "@lunatic/ui";
+import { Stack } from "@lunatic/ui";
 import type { GameplayView, TargetZone } from "./model";
-import { bind, column, icon, panel, press, row, some, text, type Box } from "./view";
+import { bind, icon, panel, press, some, text, type Box } from "./view";
 import * as S from "./strings";
 
 const pct = (value: number): string =>
@@ -42,11 +43,11 @@ export function bodyTarget(view: GameplayView, place: Box = {}): UiNode | null {
   const base = view.state.targets?.base;
   const label = text("doll-label", aimed?.label ?? "", ["chipval"]);
   if (!base)
-    return column(
+    return Stack(
       "doll-block",
       [
         text("doll-caption", S.TARGET, ["caption"]),
-        row(
+        Stack(
           "zones",
           zones.map((zone, index) =>
             press(`zone/${zone.id}`, zone.label, {
@@ -54,12 +55,12 @@ export function bodyTarget(view: GameplayView, place: Box = {}): UiNode | null {
               zone: zone.id,
             }, { variant: index === at ? "selected" : "default" }),
           ),
-          { style: { gap: 4, flexWrap: "wrap" } },
+          { gap: 4, wrap: true },
         ),
       ],
-      { cls, style: { gap: 4, ...place.style } },
+      { dir: "column", gap: 4, cls, style: place.style },
     );
-  return column(
+  return Stack(
     "doll-block",
     [
       text("doll-caption", S.TARGET, ["caption"]),
@@ -76,6 +77,6 @@ export function bodyTarget(view: GameplayView, place: Box = {}): UiNode | null {
       ),
       label,
     ],
-    { cls, style: { alignItems: "center", gap: 3, ...place.style } },
+    { dir: "column", align: "center", gap: 3, cls, style: place.style },
   );
 }

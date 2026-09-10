@@ -1,4 +1,5 @@
 import type { UiNode } from "@lunatic/ui";
+import { Stack } from "@lunatic/ui";
 import type { DocumentIdentity, ModuleState, StoreRow } from "./document-model";
 import { documentAction } from "./document-action";
 import { bodyId, guard } from "./files-buffer";
@@ -21,11 +22,11 @@ export function drivePane(id: string, doc: DocumentIdentity, state: Partial<Modu
       const option = `${side}:${file.uid}:${file.binding}`;
       return column(item, [
         row(`${item}/head`, some(
-          icon(`${item}/icon`, `file_${file.ext}`, "", ["workspace-file-icon"]),
+          icon(`${item}/icon`, `file_${file.ext}`),
           press(`${item}/open`, S.fileName(file.name, file.ext), guard(id, documentAction(doc, "toggle", { field: "file_open", option })),
             { variant: file.open ? "selected" : "ghost", disabled: !active, submit: bodyId(id), cls: ["workspace-file-name"] }),
         )),
-        row(`${item}/actions`, some(
+        Stack(`${item}/actions`, some(
           text(`${item}/size`, S.bytes(file.size), ["fsize"]),
           destination ? press(`${item}/copy`, S.COPY, (e) => {
             const requested = e.values?.stem?.value;
@@ -36,7 +37,7 @@ export function drivePane(id: string, doc: DocumentIdentity, state: Partial<Modu
           }, { submitValues: { stem }, disabled: !active }) : null,
           file.fixed ? text(`${item}/read-only`, S.tfs("ui.files.read_only"), ["workspace-read-only"]) : press(`${item}/delete`, S.DELETE, guard(id, documentAction(doc, "toggle", { field: "file_delete", option }), side),
             { submit: bodyId(id), variant: "danger", disabled: !active || file.fixed }),
-        ), { style: { flexWrap: "wrap", gap: 3 } }),
+        ), { wrap: true, gap: 3 }),
       ], { cls: ["workspace-file"] });
     }), { cls: ["workspace-drive-list"] }),
     text(`${key}/capacity`, S.storeUse(store.used, store.capacity, store.count, store.count_cap), ["hint"]),

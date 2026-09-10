@@ -66,8 +66,7 @@ export function chatPanel(view: GameplayView): UiNode[] {
           ),
           press("chat-history", S.CHAT_HISTORY, () => { historyOpen = !historyOpen; return undefined; }, {
             variant: "ghost",
-            cls: historyOpen ? ["chat-tab", "chat-tab-on"] : ["chat-tab"],
-            style: { marginLeft: "auto" },
+            cls: historyOpen ? ["chat-tab", "chat-tab-on", "at-end"] : ["chat-tab", "at-end"],
           }),
         ], { cls: ["chat-tabs"] }),
         column("log", lines.length ? lines : [text("log-empty", S.CHAT_EMPTY, ["hint"])], {
@@ -81,8 +80,7 @@ export function chatPanel(view: GameplayView): UiNode[] {
                 "",
                 (value) => (value.trim() ? { kind: "say", text: value } : undefined),
                 { submitOnly: true, clearOnSubmit: true, blurOnSubmit: true,
-                  cls: ["composer-entry"],
-                  style: { height: 22, minHeight: 22, flexGrow: 1, flexShrink: 1 } },
+                  cls: ["composer-entry"] },
               ),
             ], { cls: ["composer"] })
           : null,

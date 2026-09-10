@@ -100,7 +100,9 @@ suite before completion; exact commands and filter semantics are in
   language.
 - `ui/` owns every gameplay surface and binding in restricted TypeScript/TSX.
   Use the pack UI SDK; no real DOM, browser APIs, networking, guest clocks or
-  per-frame script hooks. Native providers expose readouts and validated actions;
+  per-frame script hooks. A colour is spelled only in `ui/theme/tokens.ts`;
+  the kit is retuned through `ui/theme/roles.ts`, never restated; an inline
+  `style` says placement only (`node tools/test.mjs <engine>` runs the lint). Native providers expose readouts and validated actions;
   they do not prescribe gameplay panels. Server Luau view models update from
   events and subscriptions.
 - The UI loop, from the engine checkout: edit `ui/*.ts` →

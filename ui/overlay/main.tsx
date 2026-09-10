@@ -4,7 +4,7 @@
 // claims `state.hover` and `state.context` and the host wakes this guest
 // for nothing else (docs/pack-ui/sdk.md, "Slots").
 import type { GuestUi, UiNode } from "@lunatic/ui";
-import { Pane, t } from "@lunatic/ui";
+import { Pane, Stack, t } from "@lunatic/ui";
 import type { ActionLabel, GameplayView, HoverAction } from "../model";
 import { begin, event, icon, panel, press, row, some, text } from "../view";
 import { gesture, order } from "../gesture";
@@ -102,7 +102,7 @@ function contextMenu(
           variant: "ghost",
         }),
       ], { cls: ["titlebar"] }),
-      ...targets.map((target, index) => row(
+      ...targets.map((target, index) => Stack(
         `context/${index}`,
         some(
           icon(`context/${index}/icon`, target?.sprite),
@@ -113,7 +113,7 @@ function contextMenu(
             { variant: "ghost", cls: ["fname"] },
           ),
         ),
-        { cls: ["filerow"] },
+        { gap: 4, align: "center" },
       )),
     ], { style: { width: 300, maxHeight: "60%" } }),
   };

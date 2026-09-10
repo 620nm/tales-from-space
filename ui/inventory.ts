@@ -3,7 +3,7 @@
 // cluster moves as items, trays or the worn grid come and go: the rows
 // that appear are absolute, so the hands stay under the cursor.
 import type { Json, UiNode } from "@lunatic/ui";
-import { Pane } from "@lunatic/ui";
+import { Pane, Stack } from "@lunatic/ui";
 import { labelText } from "./labels";
 import { hudSlot } from "./slots";
 import type { GameplayView, InventoryState } from "./model";
@@ -18,7 +18,7 @@ export function inventory(view: GameplayView): UiNode | null {
   return Pane(
     "inventory",
     some(
-      row("hands", handSquares(current), { style: { gap: 4 } }),
+      Stack("hands", handSquares(current), { gap: 4 }),
       row("hand-controls", [
         glyphControl("swap", S.MARK_SWAP, S.SWAP, { kind: "swap" }),
         glyphControl("drop", S.MARK_DROP, S.DROP, { kind: "drop" }),
@@ -30,7 +30,7 @@ export function inventory(view: GameplayView): UiNode | null {
     ),
     {
       cls: ["hudgroup", "hand-cluster"],
-      style: { position: "absolute", left: 0, marginLeft: -62, bottom: 17, minWidth: 124, width: 124 },
+      style: { position: "absolute", left: 0, bottom: 17, minWidth: 124, width: 124 },
     },
   );
 }
@@ -72,9 +72,9 @@ function openers(current: InventoryState): UiNode | null {
       : [],
   );
   return rows.length
-    ? row("hands-open", rows, {
-        cls: ["hudgroup"],
-        style: { position: "absolute", left: 0, bottom: 89, gap: 4 },
+    ? Stack("hands-open", rows, {
+        cls: ["hudgroup"], gap: 4,
+        style: { position: "absolute", left: 0, bottom: 89 },
       })
     : null;
 }
@@ -116,8 +116,8 @@ export function wornGroup(view: GameplayView, carry = false): UiNode | null {
     const position = anatomy[slot.id] ?? [index % 3, Math.floor(index / 3) + 3];
     return [{ ...square, ...(!carry ? { style: { position: "absolute" as const, left: position[0] * 44, top: position[1] * 44 } } : {}) }];
   });
-  if (carry) return column("carry", ["back", "belt"].flatMap((slot) => squares.filter((square) => square.id === `equipment/${slot}/pick/box`)), {
-    cls: ["hudgroup"], style: { position: "absolute", right: 70, width: 40, minWidth: 40, bottom: 40, gap: 4 },
+  if (carry) return Stack("carry", ["back", "belt"].flatMap((slot) => squares.filter((square) => square.id === `equipment/${slot}/pick/box`)), {
+    dir: "column", gap: 4, cls: ["hudgroup"], style: { position: "absolute", right: 70, width: 40, minWidth: 40, bottom: 40 },
   });
   return column(
     "worn-group",
@@ -168,16 +168,16 @@ function readings(view: GameplayView): Reading[] {
 export function targetMeta(view: GameplayView): UiNode | null {
   if (!view.body) return null;
   const lines = readings(view);
-  return column("target-meta", some(
+  return Stack("target-meta", some(
     panel("target-reserve", [], { cls: ["target-reserve"] }),
     lines.length
-      ? column("target-status", lines.map((line, index) => row(line.key, some(
+      ? column("target-status", lines.map((line, index) => Stack(line.key, some(
           index === 0 ? text("target-status/dot", S.MARK_STATUS, ["status-dot"]) : null,
           text(`${line.key}/key`, line.label, ["status-key"]),
           text(`${line.key}/value`, line.value),
-        ), { cls: ["status-row"] })), { cls: ["target-status"] })
+        ), { gap: 4, align: "center" })), { cls: ["target-status"] })
       : null,
-  ), { cls: ["hudgroup", "target-meta"] });
+  ), { dir: "column", gap: 7, align: "center", cls: ["hudgroup"] });
 }
 
 export function shortcut(id: string, view: GameplayView): Command | undefined {

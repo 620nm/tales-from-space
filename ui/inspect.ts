@@ -3,7 +3,7 @@
 // server wrote them in. The hover card and the menu over a tile are the
 // overlay package's, in `overlay/main.tsx`.
 import type { UiNode } from "@lunatic/ui";
-import { color, Pane } from "@lunatic/ui";
+import { color, Pane, Stack } from "@lunatic/ui";
 import type { GameplayView } from "./model";
 import { column, icon, panel, press, row, some, text } from "./view";
 import * as S from "./strings";
@@ -53,7 +53,7 @@ function inspectionCard(look: Inspection, history = false): UiNode {
           return undefined;
         }, { variant: "ghost" }),
       ), { cls: ["inspect-head"] }),
-      column(`${id}/lines`, examineLines(lines, id), open ? { style: { gap: 3 } } : { cls: ["inspect-body"] }),
+      open ? Stack(`${id}/lines`, examineLines(lines, id), { dir: "column", gap: 3 }) : column(`${id}/lines`, examineLines(lines, id), { cls: ["inspect-body"] }),
       !history && lines.length > 3
         ? press(`${id}/full`, S.tfs(open ? "ui.look.read_less" : "ui.look.read_full"), () => {
             if (open) opened.delete(look.sequence); else opened.add(look.sequence);
@@ -102,12 +102,12 @@ export function inspectionPanels(view: GameplayView): UiNode[] {
     press("inspection-history", S.inspectHistory(records.length), () => { historyOpen = !historyOpen; return undefined; }, {
       variant: "ghost", cls: ["inspect-history-row"],
     }),
-  ], { cls: ["hudgroup"], style: { position: "absolute", left: 16, top: 18, width: 320, maxHeight: "72%", overflowY: "auto", gap: 7, alignItems: "start" } }));
+  ], { cls: ["hudgroup", "inspect-stack"], style: { position: "absolute", left: 16, top: 18, width: 320 } }));
   if (historyOpen) out.push({
     ...Pane("inspection-history-window", [
       press("inspection-history-close", S.CLOSE_MARK, () => { historyOpen = false; return undefined; }, { variant: "ghost" }),
       ...newest.map((look) => inspectionCard(look, true)),
-    ], { style: { gap: 6 } }),
+    ]),
     window: { key: "inspection-history", title: S.tfs("ui.look.history"), width: 360, height: 520 },
   });
   return out;
@@ -120,7 +120,7 @@ function examineLines(
 ): UiNode[] {
   if (!lines.length) return [text(`${id}/empty`, S.NOTHING_MORE, ["hint"])];
   return lines.map((line, index) =>
-    row(
+    Stack(
       `${id}/line/${index}`,
       (line?.spans ?? []).map((span, place) => {
         const paint = span?.color ? color(span.color) : undefined;
@@ -129,10 +129,10 @@ function examineLines(
           type: "text" as const,
           text: span?.text ?? "",
           class: ["said"],
-          ...(paint ? { style: { color: paint } } : {}),
+          ...(paint ? { style: { color: paint } } : {}), // theme-lint: allow the span's own colour
         };
       }),
-      { cls: ["line"], style: { gap: 0 } },
+      { cls: ["line"], gap: 0 },
     ),
   );
 }

@@ -32,7 +32,7 @@ export function desktopPane(id: string, doc: DocumentIdentity, state: Partial<Sc
   ];
   return computerPane(id, data.powered && native?.stores
     ? filePanes(id, doc, native, active, controls)
-    : [row(`${id}/machine-controls`, controls, { cls: ["workspace-controls"], style: { justifyContent: "end" } })],
+    : [row(`${id}/machine-controls`, controls, { cls: ["workspace-controls", "at-end"] })],
   data.powered ? wallpaper : undefined, !data.powered);
 }
 const POWER_GLYPH = "\u23FB";

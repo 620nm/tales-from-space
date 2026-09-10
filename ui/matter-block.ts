@@ -48,7 +48,7 @@ const weighed = (grams: number): string => (grams > 0 ? mass(grams) : "");
 function dot(id: string, hex: string | null | undefined): UiNode | null {
   const paint = hex ? color(hex) : undefined;
   return paint
-    ? { id, type: "panel", class: ["dot"], style: { backgroundColor: paint } }
+    ? { id, type: "panel", class: ["dot"], style: { backgroundColor: paint } } // theme-lint: allow the substance's own colour
     : null;
 }
 

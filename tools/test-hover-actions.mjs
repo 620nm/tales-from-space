@@ -9,7 +9,7 @@ if (!engine) throw new Error("Set LUNATIC_ENGINE or pass the absolute engine che
 const { build } = await import(pathToFileURL(resolve(engine, "web/node_modules/esbuild/lib/main.js")));
 const result = await build({
   stdin: { contents: `export { default as overlay } from './overlay/main';
-    export { overlayRules } from './theme-overlay';`,
+    export { overlayRules } from './theme/overlay';`,
     resolveDir: fileURLToPath(new URL("../ui", import.meta.url)), loader: "ts" },
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") },
   bundle: true, format: "esm", platform: "node", write: false,

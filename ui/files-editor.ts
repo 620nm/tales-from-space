@@ -1,5 +1,5 @@
 import type { UiNode } from "@lunatic/ui";
-import { Notice } from "@lunatic/ui";
+import { Notice, Stack } from "@lunatic/ui";
 import type { DocumentIdentity, EditorState, ModuleState } from "./document-model";
 import { documentAction } from "./document-action";
 import { column, entry, press, row, some, text } from "./view";
@@ -56,14 +56,14 @@ export function editorPane(
   return { ...column(
     `${id}/editor`,
     some(
-      row(`${id}/editor/heading`, some(
+      Stack(`${id}/editor/heading`, some(
         text(`${id}/editor/title`, S.fileTitle(open.name, open.ext, current.dirty), ["mstate"]),
         readOnly ? text(`${id}/editor/read-only`, S.tfs("ui.files.read_only"), ["workspace-read-only"]) : null,
-      ), { style: { alignItems: "center", gap: 8, flexWrap: "wrap" } }),
+      ), { align: "center", gap: 8, wrap: true }),
       conflict
         ? Notice(`${id}/editor/conflict`, S.CONFLICT, { tone: "off" })
         : null,
-      !readOnly ? row(
+      !readOnly ? Stack(
         `${id}/editor/rename`,
         [
           entry(`${id}/editor/name`, open.name, () => undefined, {
@@ -81,7 +81,7 @@ export function editorPane(
             { submit: `${id}/editor/name`, disabled: !active || editor?.read_only },
           ),
         ],
-        { style: { gap: 4, alignItems: "center" } },
+        { gap: 4, align: "center" },
       ) : null,
       markdown ? row(`${id}/editor/mode`, [
         press(`${id}/editor/view`, S.tfs("ui.files.view"), (e) => {
@@ -125,7 +125,7 @@ export function editorPane(
         },
       ) : null,
       editor && showSource
-        ? row(
+        ? Stack(
             `${id}/editor/status`,
             [
               ...(editor.markers.length
@@ -143,7 +143,7 @@ export function editorPane(
                 "fsize",
               ]),
             ],
-            { style: { gap: 8, alignItems: "center", flexWrap: "wrap" } },
+            { gap: 8, align: "center", wrap: true },
           )
         : null,
       current.guard && !readOnly ? column(`${id}/editor/guard`, [
@@ -155,7 +155,7 @@ export function editorPane(
           press(`${id}/editor/guard/cancel`, S.tfs("ui.files.cancel"), () => { cancelGuard(current); return undefined; }),
         ]),
       ]) : null,
-      !readOnly ? row(
+      !readOnly ? Stack(
         `${id}/editor/buttons`,
         [
           press(
@@ -168,7 +168,7 @@ export function editorPane(
             field: "file_revert", option,
           })), { submit: submitBody, disabled: !active }),
         ],
-        { style: { gap: 4 } },
+        { gap: 4 },
       ) : null,
     ),
     { cls: ["workspace-editor"] },
