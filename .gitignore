@@ -5,3 +5,8 @@
 # Restricted frontend build products
 ui/bundle.json
 ui/overlay.json
+
+# Pack UI lab by-products (docs/pack-ui/lab.md in the engine)
+ui/fixtures/out/
+ui/fixtures/baselines/*.new.png
+ui/fixtures/baselines/*.diff.png
