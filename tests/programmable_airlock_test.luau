@@ -101,43 +101,14 @@ local function press_inside()
     t.click(operator, 2, 3, t.target_at(operator, 2, 3, "airlock_button"))
     t.run_ticks(2)
 end
-local function until_door(x, open)
-    for _ = 1, 160 do
-        local d = t.door_at(x, 3)
-        local latest_status
-        for _, row in ipairs(t.ledger_rows("disl_run")) do
-            local value = row.value.Map
-            if value and value.status then latest_status = value.status.String end
-        end
-        if d.open == open and d.bolted and not d.moving and latest_status == "idle" then return end
-        t.run_ticks(4)
-    end
-    local debug = { "sounds=" .. table.concat(t.sounds(operator), ","), "messages=" .. table.concat(t.messages(operator), " | ") }
-    for _, row in ipairs(t.ledger_rows("disl_fault")) do table.insert(debug, "fault=" .. tostring(row.fault) .. ":" .. tostring(row.message)) end
-    for _, row in ipairs(t.ledger_rows("script_error")) do table.insert(debug, "script=" .. tostring(row.file) .. ":" .. tostring(row.why)) end
-    for _, row in ipairs(t.ledger_rows("script_var_refused")) do table.insert(debug, "var=" .. tostring(row.why)) end
-    local runs = t.ledger_rows("disl_run")
-    for index = math.max(1, #runs - 14), #runs do
-        local row = runs[index]
-        local event = row.env.Map.event.Map
-        table.insert(debug, event.kind.String .. ":" .. (event.id and event.id.String or "") .. " -> "
-            .. tostring(row.value.Map and row.value.Map.status and row.value.Map.status.String))
-    end
-    error("door rest x=" .. x .. " pressure=" .. t.room_pressure(6, 3) .. " " .. table.concat(debug, " | "))
-end
+local function until_door(x, open) airlock_cycle.until_door(x, open, operator) end
 -- Walk in through the initially open exterior, leaving both tracks clear.
 for _ = 1, 2 do t.move(visitor, "west"); t.run_ticks(4) end
 assert(t.pos(visitor) == 7, "the visitor stands in the chamber")
 press_inside()
 until_door(5, true)
 assert(t.door_at(8, 3).bolted and not t.door_at(8, 3).open, "the exterior is secured before the interior opens")
-local function pressure_result()
-    local found
-    for _, row in ipairs(t.ledger_rows("machine_setpoint")) do
-        if row.field == "pressure_watch_result" then found = row.value end
-    end
-    return found
-end
+local pressure_result = airlock_cycle.pressure
 assert(pressure_result() and pressure_result() >= 100,
     "the native pressure completion measures at least 100 kPa before opening")
 assert(t.room_pressure(6, 3) > 40, "the real intake supplied gas before the rooms joined")
