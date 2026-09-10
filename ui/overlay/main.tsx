@@ -113,7 +113,7 @@ function contextMenu(
           ),
         ),
         { gap: 4, align: "center" },
-      )) }, { cls: ["pane"], style: { width: 300, height: "auto", maxHeight: "60%" } }),
+      )) }, { cls: ["pane"], fit: true, style: { width: 300, maxHeight: "60%" } }),
   };
 }
 

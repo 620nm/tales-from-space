@@ -65,6 +65,8 @@ export const row = (id: string, children: UiNode[], opts: Box = {}): UiNode =>
 export interface ScreenOpts extends Box {
   /** Which way the body yields: down unless the panes in it scroll down themselves. */
   axis?: ScrollAxis;
+  /** As tall as its content rather than the room it is given (`fit`, theme/kit.ts). */
+  fit?: boolean;
 }
 
 /** A window's whole body on the kit's `Screen`: bars that never shrink
@@ -73,8 +75,9 @@ export interface ScreenOpts extends Box {
  *  Answered as a `panel`, the one type a window descriptor may sit on;
  *  a panel and a column lay out alike (docs/pack-ui/box-model.md). */
 export function screen(id: string, parts: ScreenParts, opts: ScreenOpts = {}): UiNode {
+  const cls = [...(opts.cls ?? []), ...(opts.fit ? ["fit"] : [])];
   const node: UiNode = {
-    ...Screen(id, parts, { ...(opts.cls ? { cls: opts.cls } : {}), ...(opts.style ? { style: opts.style } : {}) }),
+    ...Screen(id, parts, { ...(cls.length ? { cls } : {}), ...(opts.style ? { style: opts.style } : {}) }),
     type: "panel",
   };
   const across = opts.axis === "x" ? "scroll-x" : opts.axis === "both" ? "scroll-xy" : undefined;
