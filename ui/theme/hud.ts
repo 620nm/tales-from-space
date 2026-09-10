@@ -70,15 +70,17 @@ export const hudRules: UiStyleRule[] = [
     width: 60, height: 61, backgroundColor: alpha(titleFace, 0.9), border: none, borderRadius: 0,
     boxShadow: [{ x: 0, y: 0, blur: 0, spread: 2, color: surface, inset: true }],
   }),
-  rule("hand-actions", { gap: 3, height: 20, pointerEvents: "none" }),
+  // A glyph over its word: each line box holds the face's whole ascent
+  // and descent (mono runs past 1.2em), and the control is the two plus a gap.
+  rule("hand-actions", { gap: 3, height: 23, pointerEvents: "none" }),
   rule("hand-action", {
-    position: "relative", flexGrow: 1, height: 20, alignItems: "center", justifyContent: "center", gap: 3,
+    position: "relative", flexGrow: 1, height: 23, alignItems: "center", justifyContent: "center", gap: 1,
     backgroundColor: alpha(titleFace, 0.85), outline: edge(line), outlineOffset: -1, borderRadius: 2, overflow: "hidden",
   }),
   rule("hand-action", { backgroundColor: alpha(face, 0.9) }, "hover"),
   rule("hand-action-on", { backgroundColor: alpha(amber, 0.3), outline: edge(amber) }),
-  rule("hud-glyph", { fontFamily: "mono", fontSize: 11, lineHeight: 1, color: ink }),
-  rule("hud-cap", { fontFamily: "mono", fontSize: 6, lineHeight: 1, letterSpacing: 1, textTransform: "uppercase", color: ink }),
+  rule("hud-glyph", { fontFamily: "mono", fontSize: 11, lineHeight: 1.3, color: ink }),
+  rule("hud-cap", { fontFamily: "mono", fontSize: 6, lineHeight: 1.2, letterSpacing: 1, textTransform: "uppercase", color: ink }),
   // The transparent press stretched over a box that draws itself.
   rule("hud-hit", {
     ...cover, padding: 0, backgroundColor: "transparent", border: none, borderRadius: 0,
@@ -94,8 +96,8 @@ export const hudRules: UiStyleRule[] = [
     borderRadius: 0, overflow: "hidden",
   }),
   rule("worn-on", { backgroundColor: alpha(skyLine, 0.6), outline: edge(sky) }),
-  rule("worn-glyph", { fontFamily: "mono", fontSize: 18, lineHeight: 1, color: sky }),
-  rule("worn-cap", { fontFamily: "mono", fontSize: 7, lineHeight: 1, letterSpacing: 1, textTransform: "uppercase", color: sky }),
+  rule("worn-glyph", { fontFamily: "mono", fontSize: 18, lineHeight: 1.2, color: sky }),
+  rule("worn-cap", { fontFamily: "mono", fontSize: 7, lineHeight: 1.2, letterSpacing: 1, textTransform: "uppercase", color: sky }),
 
   // The target figure: one atlas cell at twice its size, so a hand and a
   // foot are separable at a glance; the aiming rectangles are
@@ -118,12 +120,13 @@ export const hudRules: UiStyleRule[] = [
   rule("status-dot", { color: teal, fontFamily: "mono", fontSize: 8 }),
   rule("status-key", { color: dim, fontFamily: "mono", fontSize: 8, textTransform: "uppercase" }),
 
-  // The storage tray, the one amber-framed surface.
+  // The storage tray, the one amber-framed surface: a screen whose
+  // toolbar is the tray's head and whose body is the grid.
   rule("storage-window", {
     padding: 0, gap: 0, minWidth: 0, maxWidth: "100%",
     backgroundColor: alpha(titleFace, 0.9), border: edge(amberLine), borderRadius: 4, overflow: "hidden",
   }),
-  rule("storage-head", { height: 23, alignItems: "center", gap: 8, paddingLeft: 7, paddingRight: 7, fontFamily: "mono", fontSize: 9, color: amber }),
+  rule("toolbar", { height: 23, gap: 8, paddingBottom: 0, paddingLeft: 7, paddingRight: 7, fontFamily: "mono", fontSize: 9, color: amber }, { within: "storage-window" }),
   rule("storage-count", { marginLeft: "auto", fontFamily: "mono", fontSize: 9, color: dim }),
   rule("storage-grid", { display: "grid", gridTemplateColumns: { repeat: 7, min: 40, max: 40 }, gap: 4, paddingLeft: 7, paddingRight: 7, paddingBottom: 8 }),
 
@@ -147,13 +150,13 @@ export const hudRules: UiStyleRule[] = [
   // Words over a head: tgstation's runechat, lettering and not a box
   // (interface/skin.dmf:79). CHAT_MESSAGE_WIDTH 112 on a 32px tile is
   // 168 on this camera's ~48; the pixel face draws at a whole multiple
-  // of its native 8, so 16 rather than the 12 the tile ratio would give.
-  // Fixed width, because an anchored box with auto width shrink-wraps
-  // against the viewport edge into a word tower.
+  // of its native 11 (`PIXEL_NATIVE`), the one nearest the 12 the tile
+  // ratio would give. Fixed width, because an anchored box with auto
+  // width shrink-wraps against the viewport edge into a word tower.
   rule("rune", {
     width: 168, gap: 3, paddingLeft: 2, paddingRight: 2,
     flexWrap: "wrap", alignItems: "center", justifyContent: "center", textAlign: "center",
-    fontFamily: "pixel", fontSize: 16, lineHeight: 1,
+    fontFamily: "pixel", fontSize: 11, lineHeight: 1,
     backgroundColor: "transparent", border: none, boxShadow: flat, userSelect: "none", textShadow: stroke,
   }),
   rule("rune-said", { minWidth: 0, whiteSpace: "pre-wrap" }),

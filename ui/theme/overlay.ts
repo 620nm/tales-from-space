@@ -22,7 +22,9 @@ export const overlayRules: UiStyleRule[] = [
     fontFamily: "sans", fontSize: 11, lineHeight: 1.35, color: ink, textShadow: sunk, userSelect: "none", pointerEvents: "none",
   }),
   rule("hover-head", { alignItems: "center", gap: 6, minWidth: 0, marginBottom: 2 }),
-  rule("hover-preview", { width: 32, height: 32, flexShrink: 0, imageRendering: "pixelated", pointerEvents: "none" }),
+  // A flex box, so a composed look's canvas is an item filling it and
+  // not an inline sitting on a baseline with a descender under it.
+  rule("hover-preview", { display: "flex", width: 32, height: 32, flexShrink: 0, imageRendering: "pixelated", pointerEvents: "none" }),
   rule("hover-title", { minWidth: 0, fontSize: 12, fontWeight: 700, whiteSpace: "normal" }),
   // Two tracks, so the left cell of every hint starts exactly where the
   // header's icon starts; the card sizes the shared first track for its

@@ -48,8 +48,13 @@ export const documentRules: UiStyleRule[] = [
   }),
   rule("mod-foot", { justifyContent: "space-between", gap: 8, borderTop: edge(titleLine), paddingTop: 11, marginTop: 13, fontFamily: "mono", fontSize: 8, fontStyle: "normal", color: faint }),
 
-  // The action strip, centred on the same origin as the hands.
-  rule("action-strip", { position: "absolute", left: 0, bottom: 290, width: 0, alignItems: "end", justifyContent: "center", gap: 9, pointerEvents: "none" }),
+  // The action strip, centred on the same origin as the hands. A stated
+  // width, because a box sized by its content inside a zero-width origin
+  // shrinks to its widest group and the rest overflows it; its right edge
+  // sits halfway along an anchor of the same width whose left edge is the
+  // origin (ui/actions.ts), which is how a box wider than the grammar's
+  // 64px margin is centred on a point.
+  rule("action-strip", { position: "absolute", right: "50%", bottom: 0, width: 640, alignItems: "end", justifyContent: "center", gap: 9, pointerEvents: "none" }),
   rule("action-group", { position: "relative", flexShrink: 0, paddingTop: 11, gap: 4, alignItems: "end" }),
   rule("action-buttons", { display: "flex", maxWidth: 4096, whiteSpace: "nowrap", flexDirection: "row-reverse", alignItems: "end", gap: 4 }),
   rule("group-label", { position: "absolute", whiteSpace: "nowrap", left: 1, top: 0, fontFamily: "mono", fontSize: 7, letterSpacing: 1, textTransform: "uppercase", color: ink, textShadow: stroke }),
