@@ -66,7 +66,12 @@ actual motor completion, bolts it, fills through the intake to at least
 100 kPa, then stops the vent, unbolts and opens the interior, waits, and
 bolts it open. Exit reverses this sequence, draining through the effluent
 main below 10 kPa before opening space. A bolted-open door resists autoclose.
-Pressure thresholds use the vent's native sensor after atmosphere transport.
+The sensor is the pump's own tile, and the pump works the whole chamber
+evenly: `spread = "adjacent"` fills and siphons its tile and every tile open
+air joins to it (tg `unary_devices/airlock_pump.dm:207-254` over `check_turfs`,
+`:472-476`). It meters 800 L/s of each 1000 L tile, the fraction tg's
+`volume_rate` 2000 (`:55`) takes of its 2500 L turf, so every chamber tile
+stays level with the sensor and both thresholds hold for all four tiles.
 
 If the closing leaf is moving, a new request waits for its actual rest
 before restarting. Old completions cannot advance later phases. Pressure
@@ -96,6 +101,10 @@ Paths are relative to the read-only tgstation checkout:
 - `code/modules/atmospherics/machinery/components/binary_devices/dp_vent_pump.dm:9`
   assigns intake and output ports; lines 29–38 select vent art and
   lines 48–100 transfer between each main and the room.
+- `code/modules/atmospherics/machinery/components/unary_devices/airlock_pump.dm:199-254`
+  processes a cycle: it fills and siphons its own turf and every atmos-adjacent
+  one (`check_turfs`, lines 472–476) at `volume_rate` 2000 (line 55) of a 2500 L
+  turf (`code/__DEFINES/atmospherics/atmos_core.dm:152`).
 - `code/game/machinery/airlock_control.dm:17` implements secure opening and
   closing by changing bolts around door operations.
 - `code/game/machinery/embedded_controller/airlock_controller.dm:37`
@@ -103,4 +112,5 @@ Paths are relative to the read-only tgstation checkout:
   owns the fixed cycle and pressure decisions.
 
 TfS keeps the cycle in editable guest source. Pipe layers 2/4 and completion
-thresholds of at least 100 kPa and below 10 kPa are this fixture's contract.
+thresholds of at least 100 kPa and below 10 kPa on every chamber tile are this
+fixture's contract.
