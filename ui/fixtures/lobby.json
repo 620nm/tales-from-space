@@ -1,0 +1,22 @@
+{
+  "note": "The crew board a session sees before it has a body: one open role, one full, one unlimited.",
+  "viewport": { "width": 1600, "height": 1000, "dpr": 1 },
+  "locale": "en",
+  "view": {
+    "version": 3,
+    "revision": 1,
+    "body": false,
+    "state": {
+      "identity": { "name": "Reader" },
+      "jobs": {
+        "jobs": [
+          { "key": "assistant", "name": "Assistant", "taken": 3, "slots": null },
+          { "key": "engineer", "name": "Station Engineer", "taken": 1, "slots": 3 },
+          { "key": "doctor", "name": "Medical Doctor", "taken": 2, "slots": 2 }
+        ]
+      }
+    },
+    "log": [],
+    "documents": {}
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "note": "One laptop open on its desktop: two empty drives, power, and the card and cartridge seated.",
+  "viewport": { "width": 1600, "height": 1000, "dpr": 1 },
+  "locale": "en",
+  "view": {
+    "version": 3,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "laptop",
+        "state": {
+          "document": "modules",
+          "owner_sprite": "laptop",
+          "stores": [
+            { "key": "host", "binding": "host-1", "label": { "text": "Local" }, "used": 0, "capacity": 65536, "count": 0, "count_cap": 16 },
+            { "key": "media", "binding": "media-1", "label": { "text": "Disk" }, "used": 0, "capacity": 65536, "count": 0, "count_cap": 16 }
+          ],
+          "files": [],
+          "create": { "host": ["md", "disl", "atmo", "pem"], "media": ["md", "disl", "atmo", "pem"] },
+          "script": {
+            "status": 2,
+            "data": { "kind": "desktop", "powered": true, "card": true, "cartridge": true },
+            "actions": [{ "id": "power" }, { "id": "eject_id" }, { "id": "eject_cartridge" }, { "id": "close" }]
+          }
+        }
+      }
+    }
+  }
+}
