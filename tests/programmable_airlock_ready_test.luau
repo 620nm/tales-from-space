@@ -32,6 +32,7 @@ local function hold(step)
     local facts = step .. " tick=" .. tostring(t.now()) .. " interior=" .. tostring(t.door_at(5, 3).open)
         .. " exterior=" .. tostring(t.door_at(8, 3).open) .. " chamber=" .. tostring(t.room_pressure(6, 3))
     assert(ox == 3 and oy == 3, "the operator keeps the west room tile: " .. ox .. "," .. oy .. " " .. facts)
+    -- Scoped to the chamber pending the drain-draft fix; then pin the visitor to (7, 3) throughout.
     assert((x == 6 or x == 7) and (y == 3 or y == 4), "the visitor stays in the chamber: " .. x .. "," .. y .. " " .. facts)
 end
 -- A leaf opens only once its partner is bolted shut, and no draft moves the
