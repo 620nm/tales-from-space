@@ -59,6 +59,14 @@ local content = {
 content.actions = {
     action_rules.primary("connect", action_rules.fact("target.has_programming_interface", true),
         action_rules.fact("held.state", "on")),
+    -- Never offered: admits a laptop that is not on to the `use` hook on a
+    -- programmable target, so its completion can say why nothing connected.
+    {
+        id = "connect_not_ready", gesture = "primary", route = "held", visible = false,
+        label = "lunatic/tfs:ui.affordance.connect",
+        target = action_rules.fact("target.has_programming_interface", true),
+        held = { ["not"] = action_rules.fact("held.state", "on") },
+    },
     {
         id = "insert_disk", gesture = "primary", route = "receiver", uses_held = true,
         label = "lunatic/tfs:ui.affordance.insert_disk",
@@ -200,6 +208,14 @@ if sim ~= nil then
             include_native = true,
         })
         return true
+    end)
+
+    -- A completion reaches a laptop that is not on only through the hidden
+    -- `connect_not_ready` row, so the target is programmable: "completed" is
+    -- the host's own panel opening, "failed" nothing at all; a veto stays quiet.
+    behavior:handle("interaction.use.done", { kind = "react", route = "use" }, function(ev)
+        if ev.subject.state == "on" or (ev.outcome ~= "completed" and ev.outcome ~= "failed") then return end
+        sim.message.send({ recipient = ev.actor, message = sim.msg("lunatic/tfs:entity.laptop.not_ready", {}) })
     end)
 
     behavior:handle("interaction.act", { kind = "replace", route = "act" }, function(ev)

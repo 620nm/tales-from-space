@@ -152,6 +152,7 @@
   "lunatic/tfs:entity.id_medical.name": "medical ID card",
   "lunatic/tfs:entity.id_security.name": "security ID card",
   "lunatic/tfs:entity.laptop.name": "laptop",
+  "lunatic/tfs:entity.laptop.not_ready": "Open the laptop and turn it on first.",
   "lunatic/tfs:entity.lattice.name": "lattice",
   "lunatic/tfs:entity.layer_adapter_fitting.name": "layer adapter fitting",
   "lunatic/tfs:entity.layer_adapter.name": "layer adapter",
