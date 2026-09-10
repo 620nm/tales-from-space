@@ -222,9 +222,9 @@ if sim ~= nil then
 
     -- `connect` refused a laptop that is not on. Even when the host's own panel
     -- resolved the click, the laptop still says what it was missing.
-    behavior:handle("interaction.use.done", { kind = "react", route = "use" }, function(ev)
-        local refusal = ev.refusal
-        if ev.outcome ~= "refused" or refusal.action ~= "connect" or refusal.fact ~= "held.state" then return end
+    behavior:handle("interaction.use.refused", { kind = "react", route = "use" }, function(ev)
+        local r = ev.refusal
+        if r.action ~= "connect" or r.fact ~= "held.state" then return end
         sim.message.send({ recipient = ev.actor, message = sim.msg("lunatic/tfs:entity.laptop.not_ready", {}) })
     end)
 
