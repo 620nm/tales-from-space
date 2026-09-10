@@ -35,24 +35,28 @@ local function token(s)
     return type(s) == "string" and #s > 0 and #s <= 64
 end
 
-local function status(host, value)
-    if host.vars["controller_status"] == value then return end
+-- The statuses the room hears; `again` repeats one to a fresh press.
+local STATUS_LINES = {
+    fault = "lunatic/tfs:lib.controller.fault",
+    denied = "lunatic/tfs:lib.controller.denied",
+    unprogrammed = "lunatic/tfs:lib.controller.unprogrammed",
+}
+local function status(host, value, again)
+    if host.vars["controller_status"] == value and not again then return end
     host.vars["controller_status"] = value
-    if value == "fault" or value == "denied" then
-        sim.message.broadcast({ at = host.tile, radius = 5,
-            message = sim.msg(value == "fault" and "lunatic/tfs:lib.controller.fault"
-                or "lunatic/tfs:lib.controller.denied", {}) })
+    if STATUS_LINES[value] then
+        sim.message.broadcast({ at = host.tile, radius = 5, message = sim.msg(STATUS_LINES[value], {}) })
     end
 end
 
-local function fail(host, handles)
+local function fail(host, handles, why, again)
     device_queue.clear(host)
     local commands = {}
     for mac, obj in pairs(handles) do
         if sim.atmos.read(obj) then table.insert(commands, { mac = mac, op = "vent", id = "fault", on = false }) end
     end
     if #commands > 0 then device_queue.send(host, { kind = "device.commands", commands = commands }) end
-    status(host, "fault")
+    status(host, why or "fault", again)
     host.vars["controller_timer"] = nil
     local key = tostring(host)
     if timers[key] then timers[key].task:cancel(); timers[key] = nil end
@@ -135,6 +139,11 @@ end
 
 function controller.run(host, event)
     local handles, rows = members(host)
+    -- An empty socket stops the cycle like a fault, but names the cause to every press.
+    if sim.disl.socket_program(host, "controller") == nil then
+        fail(host, handles, "unprogrammed", event.kind == "button")
+        return false
+    end
     local answer = socket.run(host, "controller", { event = event, devices = rows })
     if not valid(answer, handles) then fail(host, handles); return false end
     if answer.status then status(host, answer.status) end
