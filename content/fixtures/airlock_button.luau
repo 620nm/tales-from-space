@@ -7,10 +7,9 @@ if sim ~= nil then
     end)
     -- The `press` row refused a full hand and no later step took the click;
     -- a screwdriver's removal resolves it and stays quiet.
-    def:handle("interaction.use.done", { kind = "react", route = "interact" }, function(ev)
-        local refusal = ev.refusal
-        if ev.outcome ~= "refused" or refusal.action ~= "press" or refusal.fact ~= "held.present"
-            or refusal.resolved then return end
+    def:handle("interaction.use.refused", { kind = "react", route = "interact" }, function(ev)
+        local r = ev.refusal
+        if r.action ~= "press" or r.fact ~= "held.present" or r.resolved then return end
         sim.message.send({ recipient = ev.actor,
             message = sim.msg("lunatic/tfs:entity.airlock_button.hand_full", {}) })
     end)
