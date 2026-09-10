@@ -35,6 +35,7 @@ export function editorPane(
   doc: DocumentIdentity,
   state: Partial<ModuleState>,
   active: boolean,
+  readerNodes?: number,
 ): UiNode {
   const open = state.open;
   if (!open)
@@ -51,7 +52,7 @@ export function editorPane(
   const markdown = open.ext === "md";
   const showSource = !markdown || current.sourceView === true;
   const submitBody = showSource ? bodyId : undefined;
-  const reader = fileReader(`${id}/reader/content`, open.ext, current.text);
+  const reader = fileReader(`${id}/reader/content`, open.ext, current.text, readerNodes);
   return { ...column(
     `${id}/editor`,
     some(

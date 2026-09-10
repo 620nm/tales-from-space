@@ -2,6 +2,7 @@ import type { UiNode } from "@lunatic/ui";
 import type { DocumentIdentity, ModuleState, StoreRow } from "./document-model";
 import { documentAction } from "./document-action";
 import { bodyId, guard } from "./files-buffer";
+import { createFile } from "./files-create";
 import { labelText } from "./labels";
 import { column, entry, icon, press, row, some, text } from "./view";
 import * as S from "./strings";
@@ -32,22 +33,16 @@ export function drivePane(id: string, doc: DocumentIdentity, state: Partial<Modu
             return documentAction(doc, "text", {
               field: "file_copy", option: `${option}:${destination.binding}`, text: requested || file.name,
             });
-          }, { submitValues: { stem }, variant: "ghost", disabled: !active }) : null,
+          }, { submitValues: { stem }, disabled: !active }) : null,
           file.fixed ? text(`${item}/read-only`, S.tfs("ui.files.read_only"), ["workspace-read-only"]) : press(`${item}/delete`, S.DELETE, guard(id, documentAction(doc, "toggle", { field: "file_delete", option }), side),
-            { submit: bodyId(id), variant: "ghost", disabled: !active || file.fixed }),
+            { submit: bodyId(id), variant: "danger", disabled: !active || file.fixed }),
         ), { style: { flexWrap: "wrap", gap: 3 } }),
       ], { cls: ["workspace-file"] });
     }), { cls: ["workspace-drive-list"] }),
     text(`${key}/capacity`, S.storeUse(store.used, store.capacity, store.count, store.count_cap), ["hint"]),
     text(`${key}/stem-label`, S.tfs("ui.workspace.destination_name"), ["hint"]),
     entry(stem, "", () => undefined, { submitOnly: true, revision: 0, cls: ["workspace-stem"] }),
-    row(`${key}/new`, (state.create?.[side] ?? []).map((ext) => press(`${key}/new/${ext}`, S.tfs("ui.files.new", { ext }),
-      (event) => {
-        const requested = event.values?.stem?.value;
-        if (requested === undefined) return undefined;
-        const handler = guard(id, documentAction(doc, "text", { field: "file_create", option: `${side}:${ext}:${store.binding}`, text: requested }));
-        return typeof handler === "function" ? handler(event) : handler;
-      }, { submit: bodyId(id), submitValues: { stem }, disabled: !active })), { style: { gap: 4, flexWrap: "wrap" } }),
+    createFile(id, doc, store, state.create?.[side] ?? [], active),
     ...(side === "media" ? [press(`${key}/eject`, S.tfs("ui.workspace.eject"),
       guard(id, documentAction(doc, "toggle", { field: "media_eject", option: store.binding }), "media"),
       { submit: bodyId(id), disabled: !active })] : []),
