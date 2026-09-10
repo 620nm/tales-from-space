@@ -123,3 +123,34 @@ test("guard captures an unflushed live editor draft", () => {
   assert.equal(b.dirty, true);
   assert.deepEqual(b.guard, command);
 });
+test("Discard and release cannot execute twice", () => {
+  const b = dirty(); let released = 0;
+  B.guard(id, command, undefined, () => released++)({});
+  assert.deepEqual(B.discardGuard(b), command);
+  assert.equal(B.discardGuard(b), undefined);
+  assert.equal(released, 1);
+});
+test("Cancel while saving cancels only the continuation", () => {
+  const b = pending(); const request = b.pending.request;
+  B.cancelGuard(b);
+  assert.equal(b.pending, undefined, "Cancel releases a refused or unanswered save");
+  assert.equal(B.pollContinuation(documents(acknowledged(state("old", 4, "draft"), request))), undefined);
+});
+test("create naming draft survives extension changes with one owner", () => {
+  B.retainOpenFileBuffers([]);
+  B.openCreateDialog(`${id}/host`, "md");
+  B.createDialog(`${id}/host`).stem = "Station notes";
+  B.openCreateDialog(`${id}/host`, "atmo");
+  assert.equal(B.createDialog(`${id}/host`).stem, "Station notes");
+  B.openCreateDialog(`${id}/media`, "pem");
+  assert.equal(B.createDialog(`${id}/host`), undefined);
+  assert.equal(B.createDialog(`${id}/media`).ext, "pem");
+});
+test("conflicting receipt releases pending lock while retaining guard and draft", () => {
+  const b = pending();
+  B.editorBuffer(id, doc, state("old", 4, "Other writer"));
+  assert.equal(b.pending, undefined);
+  assert.deepEqual(b.guard, command);
+  assert.equal(b.text, "draft");
+  assert.equal(b.continuation, undefined);
+});

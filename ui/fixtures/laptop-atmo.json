@@ -1,0 +1,117 @@
+{
+  "note": "Valid atmosphere record preview at minimum viewport",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "laptop",
+        "state": {
+          "document": "modules",
+          "owner_sprite": "laptop_on",
+          "stores": [
+            {
+              "key": "host",
+              "binding": "host-1",
+              "label": {
+                "text": "Local"
+              },
+              "used": 140,
+              "capacity": 65536,
+              "count": 1,
+              "count_cap": 16
+            },
+            {
+              "key": "media",
+              "binding": "media-1",
+              "label": {
+                "text": "Disk"
+              },
+              "used": 0,
+              "capacity": 65536,
+              "count": 0,
+              "count_cap": 16
+            }
+          ],
+          "files": [
+            {
+              "store": "host",
+              "binding": "host-1",
+              "uid": 1,
+              "name": "notes",
+              "ext": "atmo",
+              "size": 140,
+              "open": true,
+              "fixed": false
+            }
+          ],
+          "create": {
+            "host": [
+              "md",
+              "disl",
+              "atmo",
+              "pem"
+            ],
+            "media": [
+              "md",
+              "disl",
+              "atmo",
+              "pem"
+            ]
+          },
+          "script": {
+            "status": 2,
+            "data": {
+              "kind": "desktop",
+              "powered": true,
+              "card": true,
+              "cartridge": true
+            },
+            "actions": [
+              {
+                "id": "power"
+              },
+              {
+                "id": "eject_id"
+              },
+              {
+                "id": "eject_cartridge"
+              },
+              {
+                "id": "close"
+              }
+            ]
+          },
+          "open": {
+            "store": "host",
+            "binding": "host-1",
+            "uid": 1,
+            "revision": 3,
+            "name": "notes",
+            "ext": "atmo",
+            "body": "{\"version\": 1, \"title\": \"Engineering atmosphere\", \"temperature_k\": 293.15, \"pressure_kpa\": 101.325, \"gases\": [{\"id\": \"oxygen\", \"moles\": 3}]}"
+          },
+          "editor": {
+            "body": "{\"version\": 1, \"title\": \"Engineering atmosphere\", \"temperature_k\": 293.15, \"pressure_kpa\": 101.325, \"gases\": [{\"id\": \"oxygen\", \"moles\": 3}]}",
+            "revision": 3,
+            "read_only": false,
+            "byte_budget": 65536,
+            "markers": [],
+            "bound": true
+          }
+        }
+      }
+    }
+  }
+}

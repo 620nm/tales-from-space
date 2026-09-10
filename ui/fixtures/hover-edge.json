@@ -1,0 +1,289 @@
+{
+  "note": "Hover actions wrap inward at the bottom right viewport edge.",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "cursor": {
+    "x": 1014,
+    "y": 758
+  },
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": true,
+    "state": {
+      "identity": {
+        "you": 1,
+        "name": "Production UI fixture"
+      },
+      "effectiveBindings": {
+        "use_self": [
+          "P"
+        ]
+      },
+      "inventory": {
+        "active": 0,
+        "hands": [
+          {
+            "name": "Tool",
+            "sprite": "toolbox"
+          },
+          null
+        ],
+        "held": [
+          null,
+          null
+        ],
+        "equipment": [
+          {
+            "slot": 0,
+            "item": {
+              "name": "ears",
+              "sprite": "headset"
+            },
+            "contents": null
+          },
+          {
+            "slot": 1,
+            "item": {
+              "name": "head",
+              "sprite": "toolbox"
+            },
+            "contents": null
+          },
+          {
+            "slot": 2,
+            "item": {
+              "name": "mask",
+              "sprite": "toolbox"
+            },
+            "contents": null
+          },
+          {
+            "slot": 3,
+            "item": {
+              "name": "gloves",
+              "sprite": "toolbox"
+            },
+            "contents": null
+          },
+          {
+            "slot": 4,
+            "item": {
+              "name": "uniform",
+              "sprite": "toolbox"
+            },
+            "contents": null
+          },
+          {
+            "slot": 5,
+            "item": {
+              "name": "suit",
+              "sprite": "toolbox"
+            },
+            "contents": null
+          },
+          {
+            "slot": 6,
+            "item": {
+              "name": "shoes",
+              "sprite": "toolbox"
+            },
+            "contents": null
+          },
+          {
+            "slot": 7,
+            "item": {
+              "name": "id",
+              "sprite": "toolbox"
+            },
+            "contents": null
+          },
+          {
+            "slot": 8,
+            "item": {
+              "name": "back",
+              "sprite": "backpack"
+            },
+            "contents": null
+          },
+          {
+            "slot": 9,
+            "item": {
+              "name": "belt",
+              "sprite": "toolbox"
+            },
+            "contents": null
+          }
+        ]
+      },
+      "equipment": {
+        "slots": [
+          {
+            "id": "ears",
+            "label": "ears",
+            "quick_store": false
+          },
+          {
+            "id": "head",
+            "label": "head",
+            "quick_store": false
+          },
+          {
+            "id": "mask",
+            "label": "mask",
+            "quick_store": false
+          },
+          {
+            "id": "gloves",
+            "label": "gloves",
+            "quick_store": false
+          },
+          {
+            "id": "uniform",
+            "label": "uniform",
+            "quick_store": false
+          },
+          {
+            "id": "suit",
+            "label": "suit",
+            "quick_store": false
+          },
+          {
+            "id": "shoes",
+            "label": "shoes",
+            "quick_store": false
+          },
+          {
+            "id": "id",
+            "label": "id",
+            "quick_store": false
+          },
+          {
+            "id": "back",
+            "label": "back",
+            "quick_store": false
+          },
+          {
+            "id": "belt",
+            "label": "belt",
+            "quick_store": false
+          }
+        ]
+      },
+      "hover": {
+        "kind": "item",
+        "name": "Exposed component",
+        "appearance": "hover",
+        "name_label": {
+          "key": "lunatic/tfs:entity.machine_frame.name",
+          "args": {}
+        },
+        "actions": [
+          {
+            "id": "face",
+            "gesture": "primary",
+            "label": {
+              "key": "lunatic/tfs:ui.look.face",
+              "args": {}
+            },
+            "available": true,
+            "group": "action",
+            "implement": null,
+            "requirements": [],
+            "style": null,
+            "presentation_group": null
+          },
+          {
+            "id": "self",
+            "gesture": "self",
+            "label": {
+              "key": "lunatic/tfs:ui.affordance.view_interface",
+              "args": {}
+            },
+            "available": true,
+            "group": "action",
+            "implement": null,
+            "requirements": [],
+            "style": null,
+            "presentation_group": null
+          },
+          {
+            "id": "examine",
+            "gesture": "shift_primary",
+            "label": {
+              "key": "lunatic/tfs:ui.look.examine",
+              "args": {}
+            },
+            "available": true,
+            "group": "action",
+            "implement": null,
+            "requirements": [],
+            "style": null,
+            "presentation_group": null
+          },
+          {
+            "id": "range",
+            "gesture": "shift_ctrl_primary",
+            "label": {
+              "key": "lunatic/tfs:ui.affordance.dismantle_frame",
+              "args": {}
+            },
+            "available": false,
+            "group": "range",
+            "implement": {
+              "sprite": "welder",
+              "name": {
+                "key": "lunatic/tfs:entity.welder.name",
+                "args": {}
+              },
+              "suggested": false
+            },
+            "requirements": [],
+            "style": null,
+            "presentation_group": null,
+            "unavailable_reason": {
+              "key": "lunatic/tfs:ui.look.out_of_range",
+              "args": {}
+            }
+          },
+          {
+            "id": "suggestion",
+            "gesture": "primary",
+            "label": {
+              "key": "lunatic/tfs:ui.affordance.wire_frame",
+              "args": {}
+            },
+            "available": false,
+            "group": "suggestion",
+            "implement": {
+              "sprite": "coil",
+              "name": {
+                "key": "lunatic/tfs:entity.cable_coil.name",
+                "args": {}
+              },
+              "suggested": true
+            },
+            "requirements": [
+              {
+                "label": {
+                  "key": "lunatic/tfs:entity.cable_coil.name",
+                  "args": {}
+                },
+                "sprite": "coil",
+                "count": 5
+              }
+            ],
+            "style": null,
+            "presentation_group": null
+          }
+        ]
+      }
+    },
+    "log": [],
+    "documents": {}
+  }
+}

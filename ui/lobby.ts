@@ -21,7 +21,7 @@ export function crewPanels(view: GameplayView): UiNode[] {
         body: [
           Stack(
             "lobby-jobs",
-            jobs.map((job) => {
+            jobs.length ? jobs.map((job) => {
               const id = `job/${job.key}`;
               const full = job.slots !== null && job.taken >= job.slots;
               return row(
@@ -35,6 +35,7 @@ export function crewPanels(view: GameplayView): UiNode[] {
                     id,
                     type: "button",
                     text: "",
+                    label: job.name,
                     class: ["choice-hit"],
                     event: bind(id, { kind: "join", job: job.key }),
                     ...(full ? { disabled: true } : {}),
@@ -42,7 +43,7 @@ export function crewPanels(view: GameplayView): UiNode[] {
                 ],
                 { cls: full ? ["job", "full"] : ["job"] },
               );
-            }),
+            }) : [text("lobby-empty", S.tfs("ui.lobby.empty"), ["hint"])],
             { dir: "column", gap: 4 },
           ),
         ],

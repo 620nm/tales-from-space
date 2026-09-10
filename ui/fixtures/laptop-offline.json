@@ -1,0 +1,48 @@
+{
+  "note": "Powered off equipment retains identity and physical controls",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "laptop",
+        "state": {
+          "document": "script",
+          "status": 2,
+          "data": {
+            "kind": "desktop",
+            "powered": false,
+            "card": true,
+            "cartridge": true
+          },
+          "actions": [
+            {
+              "id": "power"
+            },
+            {
+              "id": "eject_id"
+            },
+            {
+              "id": "eject_cartridge"
+            },
+            {
+              "id": "close"
+            }
+          ]
+        },
+        "owner_sprite": "laptop_off"
+      }
+    }
+  }
+}

@@ -32,7 +32,7 @@ export const workspaceRules: UiStyleRule[] = [
   rule(SCREEN, {
     position: "relative", display: "block", width: "100%", height: "100%", minHeight: 0,
     padding: 0, gap: 0, backgroundColor: screen, border: none, borderRadius: 0, overflow: "hidden",
-    fontFamily: "mono", color: phosphor,
+    fontFamily: "mono", fontSize: 13, color: phosphor,
   }),
   ...screenKit([
     "btn", "btn-default", "btn-ghost", "list-value", "card", "gauge", "notice", "section-title",
@@ -43,15 +43,18 @@ export const workspaceRules: UiStyleRule[] = [
   rule("scroll", { gap: 6 }, { within: SCREEN }),
 
   rule("desktop-wallpaper", { ...cover, imageRendering: "pixelated", pointerEvents: "none" }),
-  rule("computer-workspace", { padding: 10, gap: 8 }),
+  rule("computer-workspace", { padding: 8, gap: 6 }),
   rule("computer-off", { backgroundColor: black }),
   // A translucent frame over the wallpaper: the heading, a drive, the reader.
-  rule("workspace-frame", { backgroundColor: alpha(surface, 0.8), border: edge(alpha(dim, 0.5)), borderRadius: 0, padding: 8, gap: 6 }),
-  rule("workspace-machine-name", { fontSize: 14, fontWeight: "bold" }),
-  rule("workspace-drive-title", { fontSize: 17, fontWeight: "bold" }),
+  rule("workspace-frame", { backgroundColor: alpha(surface, 0.92), border: edge(alpha(dim, 0.65)), borderRadius: 0, padding: 8, gap: 6 }),
+  rule("workspace-machine-name", { fontSize: 15, fontWeight: "bold" }),
+  rule("workspace-drive-title", { fontSize: 15, fontWeight: "bold" }),
   // A file's two lines wear classes rather than an inline style: two
   // full drives stand at the tree's byte budget (ui/files-drive.ts).
   rule("workspace-file", { flexShrink: 0, gap: 2, paddingBottom: 4, borderBottom: edge(alpha(dim, 0.25)) }),
+  rule("workspace-file-selected", { borderLeft: edge(phosphor, 3), paddingLeft: 4, backgroundColor: alpha(phosphor, 0.08) }),
+  rule("workspace-drive-full", { fontSize: 11, fontWeight: "bold", borderBottom: edge(phosphor) }),
+  rule("workspace-offline", { padding: 16, fontSize: 13, color: dim }),
   rule("workspace-file-head", { alignItems: "center", gap: 4 }),
   rule("workspace-file-name", { flexGrow: 1, minWidth: 0, whiteSpace: "normal", textAlign: "left" }),
   rule("workspace-file-actions", { justifyContent: "end", alignItems: "center", gap: 3 }),

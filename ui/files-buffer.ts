@@ -9,6 +9,7 @@ export interface FileBuffer {
   revision: number;
   dirty: boolean;
   sourceView?: boolean;
+  sourceVisible?: boolean;
   pending?: { text: string; revision: number; request: string };
   continuation?: Command;
   confirmed?: Command;
@@ -54,8 +55,12 @@ export function editorBuffer(id: string, doc: DocumentIdentity, state: Partial<M
     if (buffer.text === buffer.pending.text) {
       buffer.dirty = false;
       buffer.confirmed = buffer.continuation;
-      if (buffer.confirmed) { buffer.released?.(); buffer.released = undefined; }
+      if (buffer.confirmed) { buffer.released?.(); buffer.released = undefined; buffer.guard = undefined; }
     }
+    buffer.pending = undefined;
+    buffer.continuation = undefined;
+  }
+  if (buffer.pending && buffer.pending.revision !== open.revision) {
     buffer.pending = undefined;
     buffer.continuation = undefined;
   }
@@ -66,7 +71,7 @@ export function editorBuffer(id: string, doc: DocumentIdentity, state: Partial<M
 
 export function bodyId(id: string): string | undefined {
   const current = buffers.get(id);
-  return current && (current.open.ext !== "md" || current.sourceView)
+  return current && current.sourceVisible
     ? `${id}/editor/body/${current.key}` : undefined;
 }
 
@@ -85,7 +90,7 @@ export function saveBuffer(current: FileBuffer, event: UiEvent, continueGuard = 
   editBuffer(current, event.value ?? current.text, event.revision);
   current.pending = { text: current.text, revision: current.revision, request: `${current.key}/${nextSave++}` };
   current.continuation = continueGuard ? current.guard : undefined;
-  current.guard = undefined;
+  if (!continueGuard) current.guard = undefined;
   if (!continueGuard) current.released = undefined;
   return documentAction(current.doc, "text", { field: "file_save", option: fileOption(current.open),
     text: current.text, revision: current.revision, request: current.pending.request });
@@ -110,18 +115,31 @@ export function guard(id: string, command: Command, affectedSide?: string, relea
 
 export function discardGuard(current: FileBuffer): Command | undefined {
   const command = current.guard;
+  if (!command) return undefined;
+  current.guard = undefined;
+  current.continuation = undefined;
+  current.confirmed = undefined;
   current.released?.();
+  current.released = undefined;
   buffers.delete(scope(current.doc));
   return command;
 }
-export function cancelGuard(current: FileBuffer): void { current.guard = undefined; current.released = undefined; }
+export function cancelGuard(current: FileBuffer): void {
+  current.guard = undefined; current.continuation = undefined; current.pending = undefined;
+  current.confirmed = undefined; current.released = undefined;
+}
 export function discardBuffer(id: string): void { buffers.delete(id); }
 
-/** The open create-file dialog per drive, keyed `${id}/${side}`; the
- *  chosen extension is client state until the press names it. */
-const createDialogs = new Map<string, { ext: string }>();
-export const createDialog = (key: string): { ext: string } | undefined => createDialogs.get(key);
-export function openCreateDialog(key: string, ext: string): void { createDialogs.set(key, { ext }); }
+/** One Create owner per workspace; naming state survives guard replacement. */
+interface CreateDraft { ext: string; stem: string }
+const createDialogs = new Map<string, CreateDraft>();
+export const createDialog = (key: string): CreateDraft | undefined => createDialogs.get(key);
+export function openCreateDialog(key: string, ext: string): void {
+  const stem = createDialogs.get(key)?.stem ?? "";
+  const workspace = key.slice(0, key.lastIndexOf("/"));
+  for (const other of createDialogs.keys()) if (other.startsWith(`${workspace}/`)) createDialogs.delete(other);
+  createDialogs.set(key, { ext, stem });
+}
 export function closeCreateDialog(key: string): void { createDialogs.delete(key); }
 
 export function retainOpenFileBuffers(documents: PanelDocument[]): void {

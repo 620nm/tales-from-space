@@ -930,5 +930,22 @@
   "lunatic/tfs:ui.files.discard": "Discard",
   "lunatic/tfs:ui.files.cancel": "Cancel",
   "lunatic/tfs:ui.workspace.contact_host": "Computer storage",
-  "lunatic/tfs:ui.workspace.contact_media": "Inserted disk"
+  "lunatic/tfs:ui.workspace.contact_media": "Inserted disk",
+  "lunatic/tfs:ui.document.available": "Ready",
+  "lunatic/tfs:ui.document.unavailable": "Unavailable — this device is not accepting actions.",
+  "lunatic/tfs:ui.document.empty": "No entries are available.",
+  "lunatic/tfs:ui.document.materials": "More materials are needed.",
+  "lunatic/tfs:ui.document.stock_empty": "Out of stock",
+  "lunatic/tfs:ui.lobby.empty": "No positions are available.",
+  "lunatic/tfs:ui.storage.empty": "This container is empty.",
+  "lunatic/tfs:ui.workspace.empty": "No files on this drive.",
+  "lunatic/tfs:ui.workspace.full": "Drive full",
+  "lunatic/tfs:ui.workspace.offline": "Powered off — use the power control to start this computer.",
+  "lunatic/tfs:ui.workspace.ready": "Online",
+  "lunatic/tfs:ui.files.saving_guard": "Waiting for the save result. If saving is refused, Cancel returns to your draft.",
+  "lunatic/tfs:ui.files.dirty_guard_detail": "Save changes before continuing, discard the draft, or cancel to keep editing.",
+  "lunatic/tfs:ui.document.selected": "Selected: {label}",
+  "lunatic/tfs:ui.files.filename": "File name",
+  "lunatic/tfs:ui.files.filetype": "File type",
+  "lunatic/tfs:ui.files.contents": "File contents"
 }

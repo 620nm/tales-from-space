@@ -1,0 +1,87 @@
+{
+  "note": "Document family and disclosed state acceptance.",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "Station equipment",
+        "state": {
+          "document": "modules",
+          "status": 2,
+          "name": "Distribution manifold",
+          "readouts": [
+            {
+              "label": "Pressure",
+              "value": "101.3 kPa",
+              "section": "Readings"
+            },
+            {
+              "label": "Temperature",
+              "value": "293.2 K",
+              "section": "Readings"
+            }
+          ],
+          "setpoints": [
+            {
+              "label": "Output pressure",
+              "unit": "kPa",
+              "value": 101,
+              "field": "pressure",
+              "min": 0,
+              "max": 4500,
+              "step": 10,
+              "section": "Controls"
+            }
+          ],
+          "matter": [
+            {
+              "section": "Contents",
+              "volume_l": 100,
+              "headspace_l": 100,
+              "temperature_k": 293,
+              "sealed": true,
+              "states": [
+                {
+                  "phase": "gas",
+                  "moles": 4,
+                  "measure": 100,
+                  "mass_g": 120,
+                  "rows": [
+                    {
+                      "key": "oxygen",
+                      "name": "Oxygen",
+                      "moles": 4,
+                      "measure": 100,
+                      "mass_g": 120
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "steps": [
+    {
+      "type": "click",
+      "id": "doc/1/1/set/0/up",
+      "expect": {
+        "actionCount": 1
+      }
+    }
+  ]
+}

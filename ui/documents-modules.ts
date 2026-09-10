@@ -61,7 +61,7 @@ function labelRow(
       id,
       [
         caption,
-        entry(box, "", () => undefined, { submitOnly: true }),
+        entry(box, "", () => undefined, { submitOnly: true, disabled: !active, label: labelText(entryRow.label) }),
         press(
           `${id}/send`,
           labelText(entryRow.text) || S.SET,
@@ -131,7 +131,7 @@ function setpointRow(
               const wanted = Number(value);
               return Number.isFinite(wanted) ? move(wanted) : undefined;
             },
-            { cls: ["num"] },
+            { cls: ["num"], disabled: !active, label: labelText(point.label) },
           ),
           point.unit ? text(`${id}/unit`, point.unit, ["mod-unit"]) : null,
           press(`${id}/up`, S.RAISE, stepBy(step), {
@@ -152,6 +152,7 @@ export function moduleBody(
   state: Partial<ModuleState>,
   active: boolean,
   heading = true,
+  footer = true,
 ): UiNode[] {
   const readouts = state.readouts ?? [];
   const toggles = state.toggles ?? [];
@@ -219,7 +220,7 @@ export function moduleBody(
   }
   // What the machine is saying about itself, under a rule: the demo's
   // footer, and the only document-wide line a provider writes.
-  if (state.notice)
+  if (footer && state.notice)
     out.push(row(`${id}/foot`, [text(`${id}/foot/word`, labelText(state.notice))], {
       cls: ["mod-foot"],
     }));

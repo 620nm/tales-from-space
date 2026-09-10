@@ -1,0 +1,179 @@
+{
+  "note": "Opening a held container and a nested pouch uses real input.",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": true,
+    "state": {
+      "identity": {
+        "you": 1,
+        "name": "Production UI fixture"
+      },
+      "effectiveBindings": {
+        "use_self": [
+          "P"
+        ]
+      },
+      "inventory": {
+        "active": 1,
+        "hands": [
+          {
+            "name": "Toolbox",
+            "sprite": "toolbox"
+          },
+          null
+        ],
+        "held": [
+          [
+            {
+              "name": "Pouch",
+              "sprite": "toolbox",
+              "contents": [
+                {
+                  "name": "Tool",
+                  "sprite": "toolbox"
+                }
+              ]
+            }
+          ],
+          null
+        ],
+        "equipment": [
+          {
+            "slot": 0,
+            "item": null,
+            "contents": null
+          },
+          {
+            "slot": 1,
+            "item": null,
+            "contents": null
+          },
+          {
+            "slot": 2,
+            "item": null,
+            "contents": null
+          },
+          {
+            "slot": 3,
+            "item": null,
+            "contents": null
+          },
+          {
+            "slot": 4,
+            "item": null,
+            "contents": null
+          },
+          {
+            "slot": 5,
+            "item": null,
+            "contents": null
+          },
+          {
+            "slot": 6,
+            "item": null,
+            "contents": null
+          },
+          {
+            "slot": 7,
+            "item": null,
+            "contents": null
+          },
+          {
+            "slot": 8,
+            "item": null,
+            "contents": null
+          },
+          {
+            "slot": 9,
+            "item": null,
+            "contents": null
+          }
+        ]
+      },
+      "equipment": {
+        "slots": [
+          {
+            "id": "ears",
+            "label": "ears",
+            "quick_store": false
+          },
+          {
+            "id": "head",
+            "label": "head",
+            "quick_store": false
+          },
+          {
+            "id": "mask",
+            "label": "mask",
+            "quick_store": false
+          },
+          {
+            "id": "gloves",
+            "label": "gloves",
+            "quick_store": false
+          },
+          {
+            "id": "uniform",
+            "label": "uniform",
+            "quick_store": false
+          },
+          {
+            "id": "suit",
+            "label": "suit",
+            "quick_store": false
+          },
+          {
+            "id": "shoes",
+            "label": "shoes",
+            "quick_store": false
+          },
+          {
+            "id": "id",
+            "label": "id",
+            "quick_store": false
+          },
+          {
+            "id": "back",
+            "label": "back",
+            "quick_store": false
+          },
+          {
+            "id": "belt",
+            "label": "belt",
+            "quick_store": false
+          }
+        ]
+      }
+    },
+    "log": [],
+    "documents": {}
+  },
+  "steps": [
+    {
+      "type": "click",
+      "id": "hand/0/open",
+      "expect": {
+        "visible": [
+          "stored/hand/0/0/take"
+        ]
+      }
+    },
+    {
+      "type": "click",
+      "id": "stored/hand/0/0/take",
+      "expect": {
+        "visible": [
+          "stored/hand/0/0-0/take"
+        ],
+        "actionCount": 0
+      }
+    }
+  ]
+}

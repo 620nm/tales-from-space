@@ -1,0 +1,122 @@
+{
+  "note": "Malformed atmosphere source remains editable with diagnostics",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "laptop",
+        "state": {
+          "document": "modules",
+          "owner_sprite": "laptop_on",
+          "stores": [
+            {
+              "key": "host",
+              "binding": "host-1",
+              "label": {
+                "text": "Local"
+              },
+              "used": 28,
+              "capacity": 65536,
+              "count": 1,
+              "count_cap": 16
+            },
+            {
+              "key": "media",
+              "binding": "media-1",
+              "label": {
+                "text": "Disk"
+              },
+              "used": 0,
+              "capacity": 65536,
+              "count": 0,
+              "count_cap": 16
+            }
+          ],
+          "files": [
+            {
+              "store": "host",
+              "binding": "host-1",
+              "uid": 1,
+              "name": "notes",
+              "ext": "atmo",
+              "size": 28,
+              "open": true,
+              "fixed": false
+            }
+          ],
+          "create": {
+            "host": [
+              "md",
+              "disl",
+              "atmo",
+              "pem"
+            ],
+            "media": [
+              "md",
+              "disl",
+              "atmo",
+              "pem"
+            ]
+          },
+          "script": {
+            "status": 2,
+            "data": {
+              "kind": "desktop",
+              "powered": true,
+              "card": true,
+              "cartridge": true
+            },
+            "actions": [
+              {
+                "id": "power"
+              },
+              {
+                "id": "eject_id"
+              },
+              {
+                "id": "eject_cartridge"
+              },
+              {
+                "id": "close"
+              }
+            ]
+          },
+          "open": {
+            "store": "host",
+            "binding": "host-1",
+            "uid": 1,
+            "revision": 3,
+            "name": "notes",
+            "ext": "atmo",
+            "body": "{\n  \"version\": 1,\n  \"gases\":"
+          },
+          "editor": {
+            "body": "{\n  \"version\": 1,\n  \"gases\":",
+            "revision": 3,
+            "read_only": false,
+            "byte_budget": 65536,
+            "markers": [
+              {
+                "line": 3,
+                "message": "Unexpected end of record"
+              }
+            ],
+            "bound": true
+          }
+        }
+      }
+    }
+  }
+}

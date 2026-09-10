@@ -1,0 +1,750 @@
+{
+  "note": "Busy controls and long communication records share bounded regions.",
+  "viewport": {
+    "width": 1366,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": true,
+    "state": {
+      "identity": {
+        "you": 1,
+        "name": "Production UI fixture"
+      },
+      "effectiveBindings": {
+        "use_self": [
+          "P"
+        ]
+      },
+      "inventory": {
+        "active": 0,
+        "hands": [
+          {
+            "name": "Tool",
+            "sprite": "toolbox"
+          },
+          null
+        ],
+        "held": [
+          null,
+          null
+        ],
+        "equipment": [
+          {
+            "slot": 0,
+            "item": {
+              "name": "ears",
+              "sprite": "headset"
+            },
+            "contents": null
+          },
+          {
+            "slot": 1,
+            "item": {
+              "name": "head",
+              "sprite": "toolbox"
+            },
+            "contents": null
+          },
+          {
+            "slot": 2,
+            "item": {
+              "name": "mask",
+              "sprite": "toolbox"
+            },
+            "contents": null
+          },
+          {
+            "slot": 3,
+            "item": {
+              "name": "gloves",
+              "sprite": "toolbox"
+            },
+            "contents": null
+          },
+          {
+            "slot": 4,
+            "item": {
+              "name": "uniform",
+              "sprite": "toolbox"
+            },
+            "contents": null
+          },
+          {
+            "slot": 5,
+            "item": {
+              "name": "suit",
+              "sprite": "toolbox"
+            },
+            "contents": null
+          },
+          {
+            "slot": 6,
+            "item": {
+              "name": "shoes",
+              "sprite": "toolbox"
+            },
+            "contents": null
+          },
+          {
+            "slot": 7,
+            "item": {
+              "name": "id",
+              "sprite": "toolbox"
+            },
+            "contents": null
+          },
+          {
+            "slot": 8,
+            "item": {
+              "name": "back",
+              "sprite": "backpack"
+            },
+            "contents": null
+          },
+          {
+            "slot": 9,
+            "item": {
+              "name": "belt",
+              "sprite": "toolbox"
+            },
+            "contents": null
+          }
+        ]
+      },
+      "equipment": {
+        "slots": [
+          {
+            "id": "ears",
+            "label": "ears",
+            "quick_store": false
+          },
+          {
+            "id": "head",
+            "label": "head",
+            "quick_store": false
+          },
+          {
+            "id": "mask",
+            "label": "mask",
+            "quick_store": false
+          },
+          {
+            "id": "gloves",
+            "label": "gloves",
+            "quick_store": false
+          },
+          {
+            "id": "uniform",
+            "label": "uniform",
+            "quick_store": false
+          },
+          {
+            "id": "suit",
+            "label": "suit",
+            "quick_store": false
+          },
+          {
+            "id": "shoes",
+            "label": "shoes",
+            "quick_store": false
+          },
+          {
+            "id": "id",
+            "label": "id",
+            "quick_store": false
+          },
+          {
+            "id": "back",
+            "label": "back",
+            "quick_store": false
+          },
+          {
+            "id": "belt",
+            "label": "belt",
+            "quick_store": false
+          }
+        ]
+      },
+      "inspections": [
+        {
+          "sequence": 1,
+          "title": "Distribution manifold 1",
+          "lines": [
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            },
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            },
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            },
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            },
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            },
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence": 2,
+          "title": "Distribution manifold 2",
+          "lines": [
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            },
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            },
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            },
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            },
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            },
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "sequence": 3,
+          "title": "Distribution manifold 3",
+          "lines": [
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            },
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            },
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            },
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            },
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            },
+            {
+              "spans": [
+                {
+                  "text": "A working valve with a clearly marked handwheel."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "readouts": {
+        "slots": [
+          {
+            "label": "Health",
+            "suffix": "%"
+          },
+          {
+            "label": "Pressure",
+            "suffix": " kPa"
+          }
+        ]
+      },
+      "vitals": {
+        "values": [
+          {
+            "slot": 0,
+            "value": 98
+          },
+          {
+            "slot": 1,
+            "value": 101
+          }
+        ]
+      }
+    },
+    "log": [
+      {
+        "second": 0,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 1,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 2,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 3,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 4,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 5,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 6,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 7,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 8,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 9,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 10,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 11,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 12,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 13,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 14,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 15,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 16,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 17,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 18,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 19,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 20,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 21,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 22,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 23,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 24,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 25,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 26,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 27,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 28,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 29,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 30,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 31,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 32,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 33,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 34,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 35,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 36,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 37,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 38,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 39,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 40,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 41,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 42,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 43,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 44,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 45,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 46,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 47,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 48,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 49,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 50,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 51,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 52,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 53,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 54,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 55,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 56,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 57,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 58,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 59,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 60,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 61,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 62,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 63,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      },
+      {
+        "second": 64,
+        "name": "Station Engineer",
+        "text": "Checking a long pressure reading from the distribution manifold before opening the next valve."
+      }
+    ],
+    "documents": {
+      "90": {
+        "id": 90,
+        "generation": 1,
+        "title": "Actions",
+        "state": {
+          "document": "script",
+          "status": 2,
+          "data": {
+            "presentation": "actions",
+            "groups": [
+              {
+                "id": "tools",
+                "label": "Equipment",
+                "actions": [
+                  {
+                    "id": "flash",
+                    "label": "Flash",
+                    "sprite": "toolbox"
+                  },
+                  {
+                    "id": "light",
+                    "label": "Light",
+                    "sprite": "headset"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "steps": [
+    {
+      "type": "click",
+      "id": "chat-history",
+      "expect": {
+        "visible": [
+          "chat",
+          "swap",
+          "drop",
+          "open_build"
+        ]
+      }
+    },
+    {
+      "type": "fill",
+      "id": "chat",
+      "value": "Ready at the manifold.",
+      "expect": {
+        "value": "Ready at the manifold.",
+        "focused": "chat",
+        "actionCount": 0
+      }
+    },
+    {
+      "type": "key",
+      "id": "chat",
+      "key": "Enter",
+      "expect": {
+        "actionCount": 1,
+        "value": ""
+      }
+    },
+    {
+      "type": "click",
+      "id": "worn-toggle",
+      "expect": {
+        "absent": [
+          "equipment/head/pick"
+        ],
+        "visible": [
+          "hand/0/pick",
+          "open_build"
+        ]
+      }
+    }
+  ]
+}

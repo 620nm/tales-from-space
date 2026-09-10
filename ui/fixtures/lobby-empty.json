@@ -1,0 +1,24 @@
+{
+  "note": "Empty recruitment board remains readable at the minimum viewport.",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {
+      "identity": {
+        "name": "Reader"
+      },
+      "jobs": {
+        "jobs": []
+      }
+    },
+    "log": [],
+    "documents": {}
+  }
+}

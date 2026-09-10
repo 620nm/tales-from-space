@@ -1,0 +1,43 @@
+{
+  "note": "Document family and disclosed state acceptance.",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "Station equipment",
+        "state": {
+          "document": "modules",
+          "status": 1,
+          "name": "Distribution manifold",
+          "readouts": [
+            {
+              "label": "Power",
+              "value": "Offline"
+            }
+          ],
+          "toggles": [
+            {
+              "label": "Power",
+              "on": false,
+              "on_text": "On",
+              "off_text": "Off",
+              "field": "power"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

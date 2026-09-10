@@ -22,26 +22,28 @@ export const kitRules: UiStyleRule[] = [
   }),
   rule("titlebar", { gap: 8, paddingBottom: 5, marginBottom: 4, borderBottom: edge(ruleLine) }),
   rule("titlebar-title", { color: bright }),
-  rule("section-title", { fontFamily: "mono", fontSize: 9, letterSpacing: 1, borderBottom: edge(ruleLine) }),
+  rule("section-title", { fontFamily: "mono", fontSize: 15, letterSpacing: 1, borderBottom: edge(ruleLine) }),
   rule("list-row", { paddingTop: 3, paddingBottom: 3, borderBottom: edge(ruleLine) }),
-  rule("list-label", { fontSize: 11 }),
-  rule("list-value", { fontSize: 11, fontWeight: 700 }),
+  rule("list-label", { fontSize: 13 }),
+  rule("list-value", { fontSize: 13, fontWeight: 700 }),
   rule("notice", { color: teal, fontStyle: "normal" }),
   rule("cell", { paddingTop: 2, paddingBottom: 2 }),
   // Presses: a flat face, a hairline, a 2px corner; the accented ones
   // keep a darker edge than their ink.
-  rule("btn", { paddingTop: 4, paddingBottom: 4, paddingLeft: 8, paddingRight: 8, ...press }),
+  rule("btn", { minHeight: 28, minWidth: 28, fontSize: 12, paddingTop: 4, paddingBottom: 4, paddingLeft: 8, paddingRight: 8, ...press }),
   rule("btn", { color: bright }, "hover"),
   rule("btn-primary", { border: edge(amberLine) }),
   rule("btn-danger", { border: edge(redLine) }),
+  rule("btn-selected", { outline: edge(teal, 2), outlineOffset: -2 }),
   rule("btn-selected", { backgroundColor: alpha(teal, 0.4) }, "hover"),
   // pointer-events inherits, so a press in a group the station shows
   // through hands every click to the floor unless it says otherwise.
+  rule("choice", { minHeight: 30 }),
   rule("choice-hit", press),
 
   // Typed fields: a well with the pane's frame colour.
   rule("entry", {
-    flexGrow: 1, minWidth: 0, color: ink, fontSize: 11,
+    flexGrow: 1, minWidth: 0, minHeight: 28, color: ink, fontSize: 12,
     backgroundColor: field, border: edge(line), borderRadius: 2,
     paddingTop: 4, paddingBottom: 4, paddingLeft: 6, paddingRight: 6,
     ...press,
@@ -67,7 +69,7 @@ export const kitRules: UiStyleRule[] = [
   rule("mono", { fontFamily: "mono" }),
   rule("icon", sprite),
   rule("fname", { flexGrow: 1, minWidth: 0, textAlign: "left" }),
-  rule("fsize", { color: faint, fontSize: 10, flexShrink: 0 }),
+  rule("fsize", { color: faint, fontSize: 11, flexShrink: 0 }),
   rule("pname", { color: ink, fontSize: 12, textAlign: "left" }),
   rule("stock", { color: dim, fontSize: 11, textAlign: "right" }),
   // Placement a node asks for by name rather than inline; `fit` is a

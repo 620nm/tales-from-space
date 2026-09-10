@@ -32,9 +32,10 @@ export function createFileDialog(id: string, doc: DocumentIdentity, store: Store
     if (requested === undefined) return undefined;
     const picked = event.values?.ext?.value ?? dialog.ext;
     if (!exts.includes(picked)) return undefined;
+    dialog.stem = requested;
+    dialog.ext = picked;
     const command = documentAction(doc, "text", { field: "file_create", option: `${side}:${picked}:${store.binding}`, text: requested });
-    // A dirty editor parks the command behind its guard; the dialog stays
-    // until the guard resolves, so a cancelled discard loses nothing.
+    // The workspace shows its guard while this naming draft is retained.
     const handler = guard(id, command, undefined, () => closeCreateDialog(dialogKey(id, side)));
     return typeof handler === "function" ? handler(event) : handler;
   };
@@ -44,11 +45,11 @@ export function createFileDialog(id: string, doc: DocumentIdentity, store: Store
     body: [
       text(`${key}/caption`, S.tfs("ui.files.create_caption"), ["hint"]),
       Stack(`${key}/name`, [
-        entry(stem, "", () => undefined, { submitOnly: true, revision: 0 }),
-        select(ext, dialog.ext, exts.map((value) => ({ value, text: S.extension(value) })), (value) => {
+        { ...entry(stem, dialog.stem, () => undefined, { submitOnly: true, revision: 0 }), label: S.tfs("ui.files.filename") },
+        { ...select(ext, dialog.ext, exts.map((value) => ({ value, text: S.extension(value) })), (value) => {
           if (exts.includes(value)) openCreateDialog(dialogKey(id, side), value);
           return undefined;
-        }, { disabled: !active }),
+        }, { disabled: !active }), label: S.tfs("ui.files.filetype") },
       ], { gap: 4, align: "center" }),
     ],
     actions: [
@@ -57,5 +58,5 @@ export function createFileDialog(id: string, doc: DocumentIdentity, store: Store
         { submit: bodyId(id), submitValues: { stem, ext }, variant: "primary", disabled: !active }),
     ],
     // The scrim is the same press as Cancel: one meaning, registered once.
-  }, { dismissEvent: `${key}/cancel`, dismissLabel: S.tfs("ui.files.cancel") });
+  }, { initialFocus: stem, dismissEvent: `${key}/cancel`, dismissLabel: S.tfs("ui.files.cancel") });
 }

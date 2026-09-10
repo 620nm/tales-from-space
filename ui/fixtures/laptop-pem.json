@@ -1,0 +1,117 @@
+{
+  "note": "Read-only access material preview with source tab",
+  "viewport": {
+    "width": 1366,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "laptop",
+        "state": {
+          "document": "modules",
+          "owner_sprite": "laptop_on",
+          "stores": [
+            {
+              "key": "host",
+              "binding": "host-1",
+              "label": {
+                "text": "Local"
+              },
+              "used": 75,
+              "capacity": 65536,
+              "count": 1,
+              "count_cap": 16
+            },
+            {
+              "key": "media",
+              "binding": "media-1",
+              "label": {
+                "text": "Disk"
+              },
+              "used": 0,
+              "capacity": 65536,
+              "count": 0,
+              "count_cap": 16
+            }
+          ],
+          "files": [
+            {
+              "store": "host",
+              "binding": "host-1",
+              "uid": 1,
+              "name": "notes",
+              "ext": "pem",
+              "size": 75,
+              "open": true,
+              "fixed": true
+            }
+          ],
+          "create": {
+            "host": [
+              "md",
+              "disl",
+              "atmo",
+              "pem"
+            ],
+            "media": [
+              "md",
+              "disl",
+              "atmo",
+              "pem"
+            ]
+          },
+          "script": {
+            "status": 2,
+            "data": {
+              "kind": "desktop",
+              "powered": true,
+              "card": true,
+              "cartridge": true
+            },
+            "actions": [
+              {
+                "id": "power"
+              },
+              {
+                "id": "eject_id"
+              },
+              {
+                "id": "eject_cartridge"
+              },
+              {
+                "id": "close"
+              }
+            ]
+          },
+          "open": {
+            "store": "host",
+            "binding": "host-1",
+            "uid": 1,
+            "revision": 3,
+            "name": "notes",
+            "ext": "pem",
+            "body": "-----BEGIN PUBLIC KEY-----\nSTATION ACCESS MATERIAL\n-----END PUBLIC KEY-----"
+          },
+          "editor": {
+            "body": "-----BEGIN PUBLIC KEY-----\nSTATION ACCESS MATERIAL\n-----END PUBLIC KEY-----",
+            "revision": 3,
+            "read_only": true,
+            "byte_budget": 65536,
+            "markers": [],
+            "bound": true
+          }
+        }
+      }
+    }
+  }
+}

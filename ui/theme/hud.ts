@@ -21,16 +21,18 @@ export const hudRules: UiStyleRule[] = [
   }),
   // A HUD region: a group pinned to an edge with no box of its own
   // (tg code/__DEFINES/hud.dm:37, :238). It follows `pane`, so a Pane
-  // wearing it keeps the type and loses the frame. maxWidth in pixels:
-  // the HUD anchor is a zero-width box, so a percentage collapses it.
+  // wearing it keeps the type and loses the frame.
   rule("hudgroup", {
     padding: 0, gap: 6, maxWidth: 4096, backgroundColor: "transparent",
     border: none, borderRadius: 0, boxShadow: flat, pointerEvents: "none",
   }),
+  rule("hud-comms", { justifyContent: "end", minHeight: 0, gap: 10 }),
+  rule("hud-controls-region", { alignItems: "end", gap: 12 }),
+  rule("hud-controls", { alignItems: "end", justifyContent: "end", gap: 12, flexWrap: "wrap" }),
   // Captions and readings float bare over the station, so both wear
   // the stroke. Inside a pane it is a black edge on a black face.
   rule("caption", {
-    color: dim, fontFamily: "mono", fontSize: 9, fontWeight: 700,
+    color: dim, fontFamily: "mono", fontSize: 11, fontWeight: 700,
     textTransform: "uppercase", letterSpacing: 1, textShadow: stroke,
   }),
   rule("chipval", { color: bright, fontSize: 11, fontWeight: 700, textShadow: stroke }),
@@ -48,8 +50,8 @@ export const hudRules: UiStyleRule[] = [
   // One clipped line: a name will not fit a 40px square, and a wrapped
   // one climbs over the sprite it belongs to.
   rule("slot-label", {
-    zIndex: 3, fontFamily: "mono", fontSize: 7, lineHeight: 1.2, maxHeight: 9,
-    paddingLeft: 1, paddingRight: 1, letterSpacing: 1, textTransform: "uppercase", color: ink,
+    zIndex: 3, fontFamily: "mono", fontSize: 11, lineHeight: 1.2, maxHeight: 14,
+    paddingLeft: 1, paddingRight: 1, letterSpacing: 0, textTransform: "uppercase", color: ink,
     backgroundColor: "transparent", overflow: "hidden", textShadow: stroke,
   }),
   rule("slot-hit", { zIndex: 4, borderRadius: 2, ...press }),
@@ -63,29 +65,30 @@ export const hudRules: UiStyleRule[] = [
   }),
   rule("slot-active-ring", { ...cover, pointerEvents: "none", zIndex: 5, border: edge(amber), backgroundColor: "transparent" }),
 
-  // The hand cluster: two 60x61 cells over a row of compact controls,
-  // centred on the HUD origin by its own half width.
-  rule("hand-cluster", { gap: 4, marginLeft: -62, pointerEvents: "none" }),
+  // Two 60x61 hand cells share a row above their labeled controls.
+  rule("hand-cluster", { gap: 4, marginLeft: 0, pointerEvents: "none" }),
   rule("hand-slot", {
     width: 60, height: 61, backgroundColor: alpha(titleFace, 0.9), border: none, borderRadius: 0,
     boxShadow: [{ x: 0, y: 0, blur: 0, spread: 2, color: surface, inset: true }],
   }),
   // A glyph over its word: each line box holds the face's whole ascent
   // and descent (mono runs past 1.2em), and the control is the two plus a gap.
-  rule("hand-actions", { gap: 3, height: 23, pointerEvents: "none" }),
+  rule("hand-actions", { gap: 3, height: 32, pointerEvents: "none" }),
   rule("hand-action", {
-    position: "relative", flexGrow: 1, height: 23, alignItems: "center", justifyContent: "center", gap: 1,
+    position: "relative", flexGrow: 1, height: 32, alignItems: "center", justifyContent: "center", gap: 1,
     backgroundColor: alpha(titleFace, 0.85), outline: edge(line), outlineOffset: -1, borderRadius: 2, overflow: "hidden",
   }),
   rule("hand-action", { backgroundColor: alpha(face, 0.9) }, "hover"),
   rule("hand-action-on", { backgroundColor: alpha(amber, 0.3), outline: edge(amber) }),
   rule("hud-glyph", { fontFamily: "mono", fontSize: 11, lineHeight: 1.3, color: ink }),
-  rule("hud-cap", { fontFamily: "mono", fontSize: 6, lineHeight: 1.2, letterSpacing: 1, textTransform: "uppercase", color: ink }),
+  rule("hud-cap", { fontFamily: "mono", fontSize: 11, lineHeight: 1.2, letterSpacing: 0, textTransform: "uppercase", color: ink }),
   // The transparent press stretched over a box that draws itself.
   rule("hud-hit", {
     ...cover, padding: 0, backgroundColor: "transparent", border: none, borderRadius: 0,
     boxShadow: flat, cursor: "pointer", ...press,
   }),
+
+  rule("hud-hit", { backgroundColor: "transparent" }, "hover"),
 
   // The worn grid's stationary toggle: its edge outlines the box, so what
   // is hit and what is seen are one rectangle.
@@ -97,7 +100,7 @@ export const hudRules: UiStyleRule[] = [
   }),
   rule("worn-on", { backgroundColor: alpha(skyLine, 0.6), outline: edge(sky) }),
   rule("worn-glyph", { fontFamily: "mono", fontSize: 18, lineHeight: 1.2, color: sky }),
-  rule("worn-cap", { fontFamily: "mono", fontSize: 7, lineHeight: 1.2, letterSpacing: 1, textTransform: "uppercase", color: sky }),
+  rule("worn-cap", { fontFamily: "mono", fontSize: 11, lineHeight: 1.2, letterSpacing: 1, textTransform: "uppercase", color: sky }),
 
   // The target figure: one atlas cell at twice its size, so a hand and a
   // foot are separable at a glance; the aiming rectangles are
@@ -115,10 +118,10 @@ export const hudRules: UiStyleRule[] = [
   rule("target-reserve", { width: 56, maxWidth: 56, height: 28, backgroundColor: "transparent", border: none, borderRadius: 0, boxShadow: flat }),
   rule("target-status", {
     alignItems: "start", gap: 1, whiteSpace: "nowrap", justifyContent: "end",
-    fontFamily: "mono", fontSize: 8, letterSpacing: 1, color: ink, textShadow: stroke,
+    fontFamily: "mono", fontSize: 11, letterSpacing: 1, color: ink, textShadow: stroke,
   }),
-  rule("status-dot", { color: teal, fontFamily: "mono", fontSize: 8 }),
-  rule("status-key", { color: dim, fontFamily: "mono", fontSize: 8, textTransform: "uppercase" }),
+  rule("status-dot", { color: teal, fontFamily: "mono", fontSize: 11 }),
+  rule("status-key", { color: dim, fontFamily: "mono", fontSize: 11, textTransform: "uppercase" }),
 
   // The storage tray, the one amber-framed surface: a screen whose
   // toolbar is the tray's head and whose body is the grid.
@@ -126,8 +129,8 @@ export const hudRules: UiStyleRule[] = [
     padding: 0, gap: 0, minWidth: 0, maxWidth: "100%",
     backgroundColor: alpha(titleFace, 0.9), border: edge(amberLine), borderRadius: 4, overflow: "hidden",
   }),
-  rule("toolbar", { height: 23, gap: 8, paddingBottom: 0, paddingLeft: 7, paddingRight: 7, fontFamily: "mono", fontSize: 9, color: amber }, { within: "storage-window" }),
-  rule("storage-count", { marginLeft: "auto", fontFamily: "mono", fontSize: 9, color: dim }),
+  rule("toolbar", { height: 32, gap: 8, paddingBottom: 0, paddingLeft: 7, paddingRight: 7, fontFamily: "mono", fontSize: 11, color: amber }, { within: "storage-window" }),
+  rule("storage-count", { marginLeft: "auto", fontFamily: "mono", fontSize: 11, color: dim }),
   rule("storage-grid", { display: "grid", gridTemplateColumns: { repeat: 7, min: 40, max: 40 }, gap: 4, paddingLeft: 7, paddingRight: 7, paddingBottom: 8 }),
 
   // The crew board.

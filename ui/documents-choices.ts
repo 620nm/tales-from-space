@@ -8,6 +8,7 @@ import type { DocumentIdentity, Toggle } from "./document-model";
 import { documentAction } from "./document-action";
 import { labelText } from "./labels";
 import { bind, row, text } from "./view";
+import * as S from "./strings";
 
 const toggleAction = (doc: DocumentIdentity, toggle: Toggle) =>
   documentAction(doc, "toggle", {
@@ -69,7 +70,7 @@ export function toggleRows(
     }
     open.choices.push(
       Choice(key, {
-        label: labelText(toggle.label),
+        label: toggle.on ? S.tfs("ui.document.selected", { label: labelText(toggle.label) }) : labelText(toggle.label),
         ...(toggle.icon ? { sprite: toggle.icon } : {}),
         ...(toggle.color ? { color: toggle.color } : {}),
         selected: toggle.on,

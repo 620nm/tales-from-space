@@ -1,1 +1,6 @@
-chrome: 152
+reference: mcr.microsoft.com/playwright:v1.58.2-noble@sha256:6446946a1d9fd62d9ae501312a2d76a43ee688542b21622056a372959b65d63d
+chrome: 145.0.7632.6
+os: VERSION_ID="24.04" ID=ubuntu
+arch: x64
+fonts: 44f05249bd8b90e1c4297717987718a680236e6de786f5607b92590ced06299b
+flags: ["--no-sandbox","--disable-gpu","--font-render-hinting=none","--disable-lcd-text","--hide-scrollbars","--force-device-scale-factor=1"]

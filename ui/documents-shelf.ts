@@ -6,7 +6,7 @@ import { Section, Table } from "@lunatic/ui";
 import type { DocumentIdentity, Product } from "./document-model";
 import { documentAction } from "./document-action";
 import { labelText } from "./labels";
-import { icon, press, text } from "./view";
+import { column, icon, press, some, text } from "./view";
 import * as S from "./strings";
 
 const COLUMNS = [32, "1fr", "auto", "auto"] as const;
@@ -21,7 +21,10 @@ function productRow(
   const key = `${id}/product/${index}`;
   return [
     icon(`${key}/icon`, product.sprite) ?? text(`${key}/icon`, ""),
-    text(`${key}/name`, labelText(product.label), ["pname"]),
+    column(`${key}/description`, some(
+      text(`${key}/name`, labelText(product.label), ["pname"]),
+      (product.stock ?? 0) <= 0 ? text(`${key}/unavailable`, S.tfs("ui.document.stock_empty"), ["hint"]) : null,
+    )),
     text(`${key}/stock`, String(product.stock ?? 0), ["stock"]),
     press(
       `${key}/vend`,
@@ -42,6 +45,7 @@ export function shelfRows(
   products: Product[],
   active: boolean,
 ): UiNode[] {
+  if (!products.length) return [text(`${id}/empty`, S.tfs("ui.document.empty"), ["hint"])];
   const groups: { name: string; rows: UiNode[][] }[] = [];
   for (const [index, product] of products.entries()) {
     const name = product.category ?? "";

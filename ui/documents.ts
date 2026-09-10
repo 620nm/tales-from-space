@@ -20,6 +20,7 @@ import { computerPane, desktopPane, isDesktop, programmingWallpaper } from "./do
 import { filePanes, guard, retainOpenFileBuffers } from "./files";
 import { bind, column, entry, icon, press, row, screen, some, text } from "./view";
 import * as S from "./strings";
+import { labelText } from "./labels";
 import { actionSurface } from "./actions";
 
 const WIDTH: Record<Presentation, number> = {
@@ -51,7 +52,7 @@ export function documents(view: GameplayView): UiNode[] {
     let body: UiNode[];
     let width = WIDTH.modules;
     if (state.document === "build") {
-      body = buildRows(id, doc, state, view.state?.armed);
+      body = buildRows(id, doc, state, view.state?.armed, active);
     } else if (state.document === "script") {
       if (isDesktop(state.data)) return desktopPane(id, doc, state, active);
       body = scriptRows(id, doc, state, active);
@@ -64,15 +65,21 @@ export function documents(view: GameplayView): UiNode[] {
       if (module.stores) return computerPane(id, filePanes(id, doc, module, active), programmingWallpaper(module.script?.data));
       width = WIDTH[module.presentation ?? "modules"] ?? WIDTH.modules;
       body = [
-        ...moduleBody(id, doc, module, active),
-        ...(module.products?.length
+        ...moduleBody(id, doc, module, active, false, false),
+        ...(module.products !== undefined
           ? shelfRows(id, doc, module.products, active)
           : []),
       ];
     }
     // The host window's body is bare: the padding a document reads at
     // belongs to the document, not to every surface the pack opens.
-    return screen(id, { body: [column(`${id}/document`, body, { cls: ["doc-body"] })] }, {
+    const module = state as Partial<ModuleState>;
+    const footer = module.notice ? labelText(module.notice) : S.tfs(active ? "ui.document.available" : "ui.document.unavailable");
+    return screen(id, {
+      toolbar: [text(`${id}/heading`, module.name ?? doc.title, ["doc-heading"])],
+      body: [column(`${id}/document`, body.length ? body : [text(`${id}/empty`, S.tfs("ui.document.empty"), ["hint"])], { cls: ["doc-body"] })],
+      footer: [text(`${id}/status`, footer, [active ? "doc-status" : "doc-unavailable"])],
+    }, {
       cls: ["pane", "doc-pane"],
       style: { width, maxWidth: "100%", maxHeight: 540 },
     });
@@ -83,7 +90,7 @@ export function documents(view: GameplayView): UiNode[] {
       ...(node.class?.includes("computer-screen") ? { contentAspectRatio: 16 / 9, minWidth: 740, maximizable: true, titleAsset: doc.owner_sprite ?? (doc.state as Partial<ModuleState>)?.owner_sprite } : {}),
       key: `document/${doc.id}/${doc.generation}`, title: doc.title, source: "status",
       close: `doc/${doc.id}/${doc.generation}/close`,
-      document: doc.id, generation: doc.generation, width: Number(node.style?.width) || 520 } };
+      document: doc.id, generation: doc.generation, height: 520, width: Number(node.style?.width) || 520 } };
   });
 }
 
@@ -93,12 +100,16 @@ function buildRows(
   doc: DocumentIdentity,
   state: Partial<BuildState>,
   armed: number | undefined,
+  active: boolean,
 ): UiNode[] {
   const rows = (state.recipes ?? []).map((recipe, index) => {
     const key = `${id}/recipe/${index}`;
     return [
       icon(`${key}/icon`, recipe.sprite) ?? text(`${key}/icon`, ""),
-      text(`${key}/name`, recipe.label, ["pname"]),
+      column(`${key}/description`, some(
+        text(`${key}/name`, recipe.label, ["pname"]),
+        (recipe.have ?? 0) < (recipe.cost ?? 0) ? text(`${key}/unavailable`, S.tfs("ui.document.materials"), ["hint"]) : null,
+      )),
       text(
         `${key}/cost`,
         S.recipeCost(recipe.have ?? 0, recipe.cost ?? 0, recipe.secs ?? 0),
@@ -110,7 +121,7 @@ function buildRows(
         { kind: "arm", document: doc.id, generation: doc.generation, index },
         {
           variant: armed === index ? "selected" : "primary",
-          disabled: (recipe.have ?? 0) < (recipe.cost ?? 0),
+          disabled: !active || (recipe.have ?? 0) < (recipe.cost ?? 0),
         },
       ),
     ];
@@ -140,7 +151,7 @@ function scriptRows(
         key,
         [
           text(`${key}/label`, action.id, ["grow", "list-label"]),
-          entry(box, "", () => undefined, { submitOnly: true }),
+          entry(box, "", () => undefined, { submitOnly: true, disabled: !active, label: action.id }),
           press(
             `${key}/send`,
             S.SET,

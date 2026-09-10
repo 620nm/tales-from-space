@@ -1,7 +1,5 @@
-// Independent hand, carry and anatomical equipment regions. Every press
-// is a native inventory claim the server revalidates. Nothing in the
-// cluster moves as items, trays or the worn grid come and go: the rows
-// that appear are absolute, so the hands stay under the cursor.
+// Hand, carry and equipment groups share the HUD control row. Individual
+// equipment cells retain their anatomical positions and native item claims.
 import type { Json, UiNode } from "@lunatic/ui";
 import { Pane, Stack } from "@lunatic/ui";
 import { labelText } from "./labels";
@@ -30,7 +28,7 @@ export function inventory(view: GameplayView): UiNode | null {
     ),
     {
       cls: ["hudgroup", "hand-cluster"],
-      style: { position: "absolute", left: 0, bottom: 17, minWidth: 124, width: 124 },
+      style: { minWidth: 148, width: 148 },
     },
   );
 }
@@ -74,7 +72,7 @@ function openers(current: InventoryState): UiNode | null {
   return rows.length
     ? Stack("hands-open", rows, {
         cls: ["hudgroup"], gap: 4,
-        style: { position: "absolute", left: 0, bottom: 89 },
+        style: { minHeight: 28 },
       })
     : null;
 }
@@ -117,12 +115,12 @@ export function wornGroup(view: GameplayView, carry = false): UiNode | null {
     return [{ ...square, ...(!carry ? { style: { position: "absolute" as const, left: position[0] * 44, top: position[1] * 44 } } : {}) }];
   });
   if (carry) return Stack("carry", ["back", "belt"].flatMap((slot) => squares.filter((square) => square.id === `equipment/${slot}/pick/box`)), {
-    dir: "column", gap: 4, cls: ["hudgroup"], style: { position: "absolute", right: 70, width: 40, minWidth: 40, bottom: 40 },
+    dir: "column", gap: 4, cls: ["hudgroup"], style: { width: 40, minWidth: 40 },
   });
   return column(
     "worn-group",
     [...squares, wornToggle()],
-    { cls: ["hudgroup"], style: { position: "absolute", right: 124, bottom: 40, width: 128, minWidth: 128, height: 128 } },
+    { cls: ["hudgroup"], style: { position: "relative", width: 128, minWidth: 128, height: 128 } },
   );
 }
 
@@ -161,15 +159,11 @@ function readings(view: GameplayView): Reading[] {
   });
 }
 
-/**
- * What stands beside the target figure: a slot held empty for the intent
- * pill this HUD has yet to grow, and the body's own readouts, one per row.
- */
+/** The body's own readouts sit beside the target figure. */
 export function targetMeta(view: GameplayView): UiNode | null {
   if (!view.body) return null;
   const lines = readings(view);
   return Stack("target-meta", some(
-    panel("target-reserve", [], { cls: ["target-reserve"] }),
     lines.length
       ? column("target-status", lines.map((line, index) => Stack(line.key, some(
           index === 0 ? text("target-status/dot", S.MARK_STATUS, ["status-dot"]) : null,
