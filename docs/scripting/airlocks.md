@@ -27,8 +27,9 @@ The atmos stock disk (`floppy_disk.atmos_stock`) contains fixed originals of
 `airlock.disl` and `readme.md`, loaded by reference ID from
 `reference/manifest.ron`. To reinstall, use
 [laptop contact programming](../LAPTOP.md#contact-programming): insert the
-orange disk into the host, hold an open, powered laptop and click the host.
-The host already holds the map's `airlock.disl`; a copy cannot take a name A
+orange disk into the host, unlock the access point at its panel, then hold an
+open, powered laptop and click the host. A locked or unpowered host refuses the
+contact and says which. The host already holds the map's `airlock.disl`; a copy cannot take a name A
 already holds, and a bound file cannot be deleted. Unload `controller`, delete
 the old copy, copy the program from B (the host's inserted disk) to A (the
 host's internal store), then load the new copy into `controller`. Edit that
