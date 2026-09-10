@@ -1,4 +1,5 @@
 import type { UiNode } from "@lunatic/ui";
+import { Stack } from "@lunatic/ui";
 import type { DocumentIdentity, ModuleState, SocketRowState } from "./document-model";
 import { documentAction } from "./document-action";
 import { labelText } from "./labels";
@@ -45,7 +46,7 @@ export function socketRows(
           { cls: ["list-row"] },
         ),
         loadable.length
-          ? row(
+          ? Stack(
               `${key}/load`,
               loadable.map((file, i) =>
                 press(
@@ -58,7 +59,7 @@ export function socketRows(
                   { variant: "ghost", disabled: !active },
                 ),
               ),
-              { style: { gap: 4, flexWrap: "wrap" } },
+              { gap: 4, wrap: true },
             )
           : null,
       ),

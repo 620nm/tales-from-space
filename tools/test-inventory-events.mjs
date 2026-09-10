@@ -10,7 +10,7 @@ const result = await build({
   stdin: { contents: `export { inventory, wornGroup } from './inventory';
     export { openStorage, closeStorage, storageRegion } from './inventory-storage';
     export { begin, event } from './view';
-    export { overlayRules } from './theme-overlay';
+    export { overlayRules } from './theme/overlay';
     export { default as overlay } from './overlay/main';`,
     resolveDir: fileURLToPath(new URL("../ui", import.meta.url)), loader: "ts" },
   alias: { "@lunatic/ui": resolve(engine, "web/sdk/index.ts") },

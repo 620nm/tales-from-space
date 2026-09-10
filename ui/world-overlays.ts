@@ -7,9 +7,9 @@
 // `code/datums/chatmessage.dm:1-18`. Sizes and colours live in
 // `theme.ts`; what a speaker's words are painted is `voice.ts`.
 import type { UiNode } from "@lunatic/ui";
-import { color } from "@lunatic/ui";
+import { Stack, color } from "@lunatic/ui";
 import type { GameplayView } from "./model";
-import { column, row, some, text } from "./view";
+import { row, some, text } from "./view";
 import { voiceColor } from "./voice";
 import * as S from "./strings";
 
@@ -30,7 +30,7 @@ export function worldOverlays(view: GameplayView): UiNode[] {
   const state = view.state;
   if (state.identity?.you != null && state.progress?.length)
     out.push({
-      ...column(
+      ...Stack(
         "progress",
         state.progress.map((job) => ({
           id: `progress/${job.job}/${job.sequence}`,
@@ -40,7 +40,7 @@ export function worldOverlays(view: GameplayView): UiNode[] {
           duration: bounded(job.ms),
           expires: bounded(job.ms),
         })),
-        { style: { width: 120, gap: 2 } },
+        { dir: "column", gap: 2, style: { width: 120 } },
       ),
       anchor: String(state.identity.you),
     });
@@ -57,6 +57,7 @@ export function worldOverlays(view: GameplayView): UiNode[] {
                 "rune-chan",
               ])
             : null,
+          // theme-lint: allow the speaker's own hue
           text(`speech/${speech.id}/text`, speech.text, ["rune-said"], {
             ...(paint ? { color: paint } : {}),
           }),

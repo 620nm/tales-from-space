@@ -29,14 +29,16 @@ assert.equal(read("unknown", "text"), undefined);
 const attack = '<script>alert(1)</script>\n![remote](https://example.invalid/image)\n[link](javascript:alert(1))';
 const markdown = read("md", `# Title\n${attack}\n> Quote\n- List item\n\x60\x60\x60luau\n# Code\n\x60\x60\x60`);
 assert.equal(markdown[0].text, "Title");
-assert.equal(markdown[0].style.fontWeight, 700);
+assert.ok(markdown[0].class.includes("reader-head"));
+assert.equal(markdown[0].style.fontSize, 20);
+assert.ok(markdown[4].class.includes("reader-quote"));
 assert.equal(markdown[1].text, '<script>alert(1)</script>');
 assert.equal(markdown[2].text, '![remote](https://example.invalid/image)');
 assert.equal(markdown[3].text, '[link](javascript:alert(1))');
 assert.equal(markdown[4].text, "Quote");
 assert.equal(markdown[5].text, "- List item");
 assert.equal(markdown[6].text, "# Code");
-assert.equal(markdown[6].style.fontFamily, "mono");
+assert.ok(markdown[6].class.includes("mono"));
 assert.ok(markdown.every((node) => node.type === "text" && !node.events && !node.asset));
 
 for (const ext of ["md", "pem"]) {

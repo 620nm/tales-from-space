@@ -20,7 +20,7 @@ export function filePanes(id: string, doc: DocumentIdentity, state: Partial<Modu
     row(`${id}/heading`, [
       text(`${id}/machine-name`, state.name ?? doc.title, ["workspace-machine-name"]),
       row(`${id}/machine-controls`, controls, { cls: ["workspace-controls"] }),
-    ], { style: { justifyContent: "space-between", alignItems: "center", gap: 6 } }),
+    ], { cls: ["workspace-heading"] }),
     ...moduleBody(`${id}/information`, doc, state, active, false),
     ...(state.sockets?.length ? [socketRows(id, doc, state, active)] : []),
   ], { cls: ["workspace-frame", "workspace-information"] });

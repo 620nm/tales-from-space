@@ -70,6 +70,6 @@ export function actionGroups(view: GameplayView): UiNode[] {
 function strip(id: string, key: string, label: Json, buttons: UiNode[]): UiNode {
   return column(id, [
     text(`${id}/title`, label, ["group-label"]),
-    { ...panel(`${id}/buttons`, buttons, { cls: ["action-buttons"], style: { display: "flex", gap: 4 } }), actionGroup: key },
+    { ...panel(`${id}/buttons`, buttons, { cls: ["action-buttons"] }), actionGroup: key },
   ], { cls: ["hudgroup", "action-group"] });
 }

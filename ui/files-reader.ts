@@ -29,19 +29,15 @@ export function fileReader(id: string, ext: string, body: string, limit = READER
     const heading = ext === "md" && !fenced ? /^(#{1,6})\s+(.*)$/.exec(line) : null;
     const quote = ext === "md" && !fenced && /^>\s?/.test(line);
     const value = heading ? heading[2]! : quote ? line.replace(/^>\s?/, "") : line;
-    const style: StyleProps = { whiteSpace: "pre-wrap", flexShrink: 0 };
-    if (fenced || ext === "pem") style.fontFamily = "mono";
-    if (heading) {
-      style.fontWeight = 700;
-      style.fontSize = Math.max(12, 22 - heading[1]!.length * 2);
-    }
-    if (quote) style.paddingLeft = 12;
+    const cls = ["reader-line", ...(fenced || ext === "pem" ? ["mono"] : []), ...(heading ? ["reader-head"] : []), ...(quote ? ["reader-quote"] : [])];
+    // theme-lint: allow — a heading's size follows its level.
+    const style: StyleProps | undefined = heading ? { fontSize: Math.max(12, 22 - heading[1]!.length * 2) } : undefined;
     for (let offset = 0; offset < Math.max(1, value.length); offset += TEXT_LIMIT) {
       if (nodes.length >= NODE_LIMIT - 1) {
         consumed -= value.length - offset;
         break;
       }
-      nodes.push(text(`${id}/line/${nodes.length}`, value.slice(offset, offset + TEXT_LIMIT), undefined, style));
+      nodes.push(text(`${id}/line/${nodes.length}`, value.slice(offset, offset + TEXT_LIMIT), cls, style));
     }
   }
   if (body.length > BODY_LIMIT || consumed < body.length) {

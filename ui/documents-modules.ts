@@ -3,7 +3,7 @@
 // they were sent, so the SERVER's row order is the layout and the
 // document grows no nesting level (docs/tgui/documents.md).
 import type { ListRow, Tone, UiNode } from "@lunatic/ui";
-import { Gauge, LabeledList, Section } from "@lunatic/ui";
+import { Gauge, LabeledList, Section, Stack } from "@lunatic/ui";
 import type {
   DocumentIdentity,
   LabelRow,
@@ -118,7 +118,7 @@ function setpointRow(
         ],
         { cls: ["list-row"] },
       ),
-      row(
+      Stack(
         `${id}/controls`,
         some(
           press(`${id}/down`, S.LOWER, stepBy(-step), {
@@ -138,7 +138,7 @@ function setpointRow(
             disabled: !active,
           }),
         ),
-        { style: { alignItems: "center", gap: 4 } },
+        { align: "center", gap: 4 },
       ),
     ],
     { cls: ["card"] },
@@ -214,7 +214,7 @@ export function moduleBody(
     out.push(
       section
         ? Section(key, section, children)
-        : column(key, children, { style: { gap: 4 } }),
+        : Stack(key, children, { dir: "column", gap: 4 }),
     );
   }
   // What the machine is saying about itself, under a rule: the demo's
@@ -228,8 +228,8 @@ export function moduleBody(
 
 /** A reading drawn to be read at a distance: its word over its number. */
 function statBlocks(id: string, rows: ListRow[]): UiNode {
-  return row(id, rows.map((reading, index) => column(`${id}/${index}`, [
-    text(`${id}/${index}/label`, reading.label, ["mod-stat-label"]),
+  return row(id, rows.map((reading, index) => Stack(`${id}/${index}`, [
+    text(`${id}/${index}/label`, reading.label, ["mod-eyebrow"]),
     text(`${id}/${index}/value`, reading.value, ["mod-stat-value"]),
-  ], { cls: ["mod-stat"] })), { cls: ["mod-stats"] });
+  ], { dir: "column", gap: 7 })), { cls: ["mod-stats"] });
 }

@@ -1,9 +1,10 @@
 // The create-file dialog of one drive: a stem, a type, Create or Cancel.
 import type { UiEvent, UiNode } from "@lunatic/ui";
+import { Stack } from "@lunatic/ui";
 import type { DocumentIdentity, StoreRow } from "./document-model";
 import { documentAction } from "./document-action";
 import { bodyId, closeCreateDialog, createDialog, guard, openCreateDialog } from "./files-buffer";
-import { column, entry, press, row, select, text } from "./view";
+import { column, entry, press, select, text } from "./view";
 import type { Command } from "./view";
 import * as S from "./strings";
 
@@ -32,17 +33,17 @@ export function createFile(id: string, doc: DocumentIdentity, store: StoreRow, e
   };
   return column(`${key}/create`, [
     text(`${key}/create/caption`, S.tfs("ui.files.create_caption"), ["hint"]),
-    row(`${key}/create/name`, [
+    Stack(`${key}/create/name`, [
       entry(stem, "", () => undefined, { submitOnly: true, revision: 0, cls: ["workspace-stem"] }),
       select(ext, dialog.ext, exts.map((value) => ({ value, text: S.extension(value) })), (value) => {
         if (exts.includes(value)) openCreateDialog(dialogKey, value);
         return undefined;
       }, { cls: ["workspace-ext"], disabled: !active }),
-    ], { style: { gap: 4, alignItems: "center" } }),
-    row(`${key}/create/actions`, [
+    ], { gap: 4, align: "center" }),
+    Stack(`${key}/create/actions`, [
       press(`${key}/create/confirm`, S.tfs("ui.files.create_confirm"), create,
         { submit: bodyId(id), submitValues: { stem, ext }, variant: "primary", disabled: !active }),
       press(`${key}/create/cancel`, S.tfs("ui.files.cancel"), () => { closeCreateDialog(dialogKey); return undefined; }),
-    ], { style: { gap: 4 } }),
+    ], { gap: 4 }),
   ], { cls: ["workspace-create"] });
 }

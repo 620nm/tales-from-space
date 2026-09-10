@@ -1,7 +1,7 @@
 // The board a session sits at before it has a body, and the card it is
 // left with when the body it had stops answering.
 import type { UiNode } from "@lunatic/ui";
-import { Pane } from "@lunatic/ui";
+import { Pane, Stack } from "@lunatic/ui";
 import type { GameplayView } from "./model";
 import { bind, column, press, row, some, text } from "./view";
 import * as S from "./strings";
@@ -17,7 +17,7 @@ export function crewPanels(view: GameplayView): UiNode[] {
         [
           text("lobby-title", S.LOBBY_TITLE, ["titlebar-title"]),
           text("lobby-hint", S.LOBBY_HINT, ["hint"]),
-          column(
+          Stack(
             "lobby-jobs",
             jobs.map((job) => {
               const id = `job/${job.key}`;
@@ -41,7 +41,7 @@ export function crewPanels(view: GameplayView): UiNode[] {
                 { cls: full ? ["job", "full"] : ["job"] },
               );
             }),
-            { style: { gap: 4 } },
+            { dir: "column", gap: 4 },
           ),
         ],
         { style: { width: 380, maxHeight: "76%" } },
@@ -61,7 +61,7 @@ export function crewPanels(view: GameplayView): UiNode[] {
               })
             : null,
         ),
-        { style: { width: 320, alignItems: "center" } },
+        { cls: ["centered"], style: { width: 320 } },
       ),
     );
   return out;
