@@ -3,7 +3,7 @@
 // `presentation` picks the SHAPE it is drawn in, never a renderer and
 // never an act (docs/tgui/documents.md).
 import type { Json, UiNode } from "@lunatic/ui";
-import { Pane, Section, Table } from "@lunatic/ui";
+import { Section, Table } from "@lunatic/ui";
 import type { GameplayView } from "./model";
 import type {
   BuildState,
@@ -18,7 +18,7 @@ import { moduleBody } from "./documents-modules";
 import { shelfRows } from "./documents-shelf";
 import { computerPane, desktopPane, isDesktop, programmingWallpaper } from "./documents-desktop";
 import { filePanes, guard, retainOpenFileBuffers } from "./files";
-import { bind, column, entry, icon, press, row, some, text } from "./view";
+import { bind, column, entry, icon, press, row, screen, some, text } from "./view";
 import * as S from "./strings";
 import { actionSurface } from "./actions";
 
@@ -68,13 +68,12 @@ export function documents(view: GameplayView): UiNode[] {
         ...(module.products?.length
           ? shelfRows(id, doc, module.products, active)
           : []),
-        ...(module.stores ? filePanes(id, doc, module, active) : []),
       ];
     }
     // The host window's body is bare: the padding a document reads at
     // belongs to the document, not to every surface the pack opens.
-    return Pane(id, [column(`${id}/body`, body, { cls: ["doc-body"] })], {
-      cls: ["doc-pane"],
+    return screen(id, { body: [column(`${id}/document`, body, { cls: ["doc-body"] })] }, {
+      cls: ["pane", "doc-pane"],
       style: { width, maxWidth: "100%", maxHeight: 540 },
     });
   }).map((node, index) => {
