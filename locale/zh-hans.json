@@ -36,5 +36,10 @@
   "lunatic/tfs:ui.key.shift": "上档",
   "lunatic/tfs:ui.key.ctrl": "控制",
   "lunatic/tfs:ui.key.alt": "换档",
-  "engine.chrome.key.shift": "上档"
+  "engine.chrome.key.shift": "上档",
+  "engine.action.open_storage": "打开储物空间",
+  "engine.action.close_storage": "关闭储物空间",
+  "lunatic/tfs:ui.body.posture": "姿势",
+  "lunatic/tfs:ui.body.rest": "躺下",
+  "lunatic/tfs:ui.body.stand": "站起"
 }

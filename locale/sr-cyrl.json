@@ -36,5 +36,10 @@
   "lunatic/tfs:ui.key.shift": "Шифт",
   "lunatic/tfs:ui.key.ctrl": "Контрол",
   "lunatic/tfs:ui.key.alt": "Алт",
-  "engine.chrome.key.shift": "Шифт"
+  "engine.chrome.key.shift": "Шифт",
+  "engine.action.open_storage": "Отвори складиште",
+  "engine.action.close_storage": "Затвори складиште",
+  "lunatic/tfs:ui.body.posture": "Положај",
+  "lunatic/tfs:ui.body.rest": "Лези",
+  "lunatic/tfs:ui.body.stand": "Устани"
 }

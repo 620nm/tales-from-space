@@ -27,6 +27,9 @@ layout. Pack rules cannot theme trusted recovery or editor controls.
 `main.tsx` places communication and controls in separate bounded regions.
 Chat history grows within the communication region, shrinking the inspection
 stack. Inventory, worn equipment, target and actions share flow on the right.
+The body controls expose separate Rest and Stand presses when the observed
+body is controllable. Both request voluntary posture; a forced knockdown
+still prevents standing. They introduce no additional keyboard binding.
 Native item controls reserve the first action pins; long document action lists
 expand inside a 240px scrolling region.
 Storage and inspection history open as host windows. Their bodies scroll

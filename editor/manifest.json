@@ -1,18 +1,240 @@
 {
   "version": 1,
   "pack": "lunatic/tfs",
-  "revision": "1",
+  "revision": "2",
   "default_mode": "space_station",
   "modes": {
     "space_station": {
       "label": "Space Station",
-      "tools": ["select", "paint", "fill", "erase", "clone", "spawn", "link"],
-      "lenses": ["surface", "subfloor", "blend", "networking"]
+      "tools": [
+        "select",
+        "paint",
+        "fill",
+        "erase",
+        "clone",
+        "spawn",
+        "link"
+      ],
+      "lenses": [
+        "surface",
+        "subfloor",
+        "blend",
+        "networking"
+      ],
+      "prototypes": [
+        {
+          "kind": "structure",
+          "id": "airlock",
+          "previews": [
+            {"when": {"paint": "engineering", "glass": true, "open": true}, "layers": ["door_eng_glass_open"]},
+            {"when": {"paint": "engineering", "open": true}, "layers": ["door_eng_open"]},
+            {"when": {"paint": "engineering", "glass": true, "bolted": true}, "layers": ["door_eng_glass", "door_bolt_lights"]},
+            {"when": {"paint": "engineering", "bolted": true}, "layers": ["door_eng", "door_bolt_lights"]},
+            {"when": {"paint": "engineering", "glass": true}, "layers": ["door_eng_glass"]},
+            {"when": {"paint": "engineering"}, "layers": ["door_eng"]},
+            {"when": {"paint": "interior", "glass": true, "open": true}, "layers": ["door_int_glass_open"]},
+            {"when": {"paint": "interior", "open": true}, "layers": ["door_int_open"]},
+            {"when": {"paint": "interior", "glass": true, "bolted": true}, "layers": ["door_int_glass", "door_int_bolt_lights"]},
+            {"when": {"paint": "interior", "bolted": true}, "layers": ["door_int", "door_int_bolt_lights"]},
+            {"when": {"paint": "interior", "glass": true}, "layers": ["door_int_glass"]},
+            {"when": {"paint": "interior"}, "layers": ["door_int"]},
+            {"when": {"paint": "public", "glass": true, "open": true}, "layers": ["door_glass_open"]},
+            {"when": {"paint": "public", "open": true}, "layers": ["door_open"]},
+            {"when": {"paint": "public", "glass": true, "bolted": true}, "layers": ["door_glass", "door_bolt_lights"]},
+            {"when": {"paint": "public", "bolted": true}, "layers": ["door", "door_bolt_lights"]},
+            {"when": {"paint": "public", "glass": true}, "layers": ["door_glass"]},
+            {"when": {"paint": "public"}, "layers": ["door"]}
+          ]
+        },
+        {
+          "kind": "structure",
+          "id": "airlock.engineering",
+          "previews": [
+            {"when": {"paint": "engineering", "glass": true, "open": true}, "layers": ["door_eng_glass_open"]},
+            {"when": {"paint": "engineering", "open": true}, "layers": ["door_eng_open"]},
+            {"when": {"paint": "engineering", "glass": true, "bolted": true}, "layers": ["door_eng_glass", "door_bolt_lights"]},
+            {"when": {"paint": "engineering", "bolted": true}, "layers": ["door_eng", "door_bolt_lights"]},
+            {"when": {"paint": "engineering", "glass": true}, "layers": ["door_eng_glass"]},
+            {"when": {"paint": "engineering"}, "layers": ["door_eng"]},
+            {"when": {"paint": "interior", "glass": true, "open": true}, "layers": ["door_int_glass_open"]},
+            {"when": {"paint": "interior", "open": true}, "layers": ["door_int_open"]},
+            {"when": {"paint": "interior", "glass": true, "bolted": true}, "layers": ["door_int_glass", "door_int_bolt_lights"]},
+            {"when": {"paint": "interior", "bolted": true}, "layers": ["door_int", "door_int_bolt_lights"]},
+            {"when": {"paint": "interior", "glass": true}, "layers": ["door_int_glass"]},
+            {"when": {"paint": "interior"}, "layers": ["door_int"]},
+            {"when": {"paint": "public", "glass": true, "open": true}, "layers": ["door_glass_open"]},
+            {"when": {"paint": "public", "open": true}, "layers": ["door_open"]},
+            {"when": {"paint": "public", "glass": true, "bolted": true}, "layers": ["door_glass", "door_bolt_lights"]},
+            {"when": {"paint": "public", "bolted": true}, "layers": ["door", "door_bolt_lights"]},
+            {"when": {"paint": "public", "glass": true}, "layers": ["door_glass"]},
+            {"when": {"paint": "public"}, "layers": ["door"]}
+          ]
+        },
+        {
+          "kind": "structure",
+          "id": "airlock.engineering_glass",
+          "previews": [
+            {"when": {"paint": "engineering", "glass": true, "open": true}, "layers": ["door_eng_glass_open"]},
+            {"when": {"paint": "engineering", "open": true}, "layers": ["door_eng_open"]},
+            {"when": {"paint": "engineering", "glass": true, "bolted": true}, "layers": ["door_eng_glass", "door_bolt_lights"]},
+            {"when": {"paint": "engineering", "bolted": true}, "layers": ["door_eng", "door_bolt_lights"]},
+            {"when": {"paint": "engineering", "glass": true}, "layers": ["door_eng_glass"]},
+            {"when": {"paint": "engineering"}, "layers": ["door_eng"]},
+            {"when": {"paint": "interior", "glass": true, "open": true}, "layers": ["door_int_glass_open"]},
+            {"when": {"paint": "interior", "open": true}, "layers": ["door_int_open"]},
+            {"when": {"paint": "interior", "glass": true, "bolted": true}, "layers": ["door_int_glass", "door_int_bolt_lights"]},
+            {"when": {"paint": "interior", "bolted": true}, "layers": ["door_int", "door_int_bolt_lights"]},
+            {"when": {"paint": "interior", "glass": true}, "layers": ["door_int_glass"]},
+            {"when": {"paint": "interior"}, "layers": ["door_int"]},
+            {"when": {"paint": "public", "glass": true, "open": true}, "layers": ["door_glass_open"]},
+            {"when": {"paint": "public", "open": true}, "layers": ["door_open"]},
+            {"when": {"paint": "public", "glass": true, "bolted": true}, "layers": ["door_glass", "door_bolt_lights"]},
+            {"when": {"paint": "public", "bolted": true}, "layers": ["door", "door_bolt_lights"]},
+            {"when": {"paint": "public", "glass": true}, "layers": ["door_glass"]},
+            {"when": {"paint": "public"}, "layers": ["door"]}
+          ]
+        },
+        {
+          "kind": "structure",
+          "id": "airlock.interior_glass",
+          "previews": [
+            {"when": {"paint": "engineering", "glass": true, "open": true}, "layers": ["door_eng_glass_open"]},
+            {"when": {"paint": "engineering", "open": true}, "layers": ["door_eng_open"]},
+            {"when": {"paint": "engineering", "glass": true, "bolted": true}, "layers": ["door_eng_glass", "door_bolt_lights"]},
+            {"when": {"paint": "engineering", "bolted": true}, "layers": ["door_eng", "door_bolt_lights"]},
+            {"when": {"paint": "engineering", "glass": true}, "layers": ["door_eng_glass"]},
+            {"when": {"paint": "engineering"}, "layers": ["door_eng"]},
+            {"when": {"paint": "interior", "glass": true, "open": true}, "layers": ["door_int_glass_open"]},
+            {"when": {"paint": "interior", "open": true}, "layers": ["door_int_open"]},
+            {"when": {"paint": "interior", "glass": true, "bolted": true}, "layers": ["door_int_glass", "door_int_bolt_lights"]},
+            {"when": {"paint": "interior", "bolted": true}, "layers": ["door_int", "door_int_bolt_lights"]},
+            {"when": {"paint": "interior", "glass": true}, "layers": ["door_int_glass"]},
+            {"when": {"paint": "interior"}, "layers": ["door_int"]},
+            {"when": {"paint": "public", "glass": true, "open": true}, "layers": ["door_glass_open"]},
+            {"when": {"paint": "public", "open": true}, "layers": ["door_open"]},
+            {"when": {"paint": "public", "glass": true, "bolted": true}, "layers": ["door_glass", "door_bolt_lights"]},
+            {"when": {"paint": "public", "bolted": true}, "layers": ["door", "door_bolt_lights"]},
+            {"when": {"paint": "public", "glass": true}, "layers": ["door_glass"]},
+            {"when": {"paint": "public"}, "layers": ["door"]}
+          ]
+        }
+      ]
     },
     "free_build": {
       "label": "Free Build",
-      "tools": ["select", "paint", "fill", "erase", "clone", "spawn", "link"],
-      "lenses": ["surface", "subfloor", "blend", "networking"]
+      "tools": [
+        "select",
+        "paint",
+        "fill",
+        "erase",
+        "clone",
+        "spawn",
+        "link"
+      ],
+      "lenses": [
+        "surface",
+        "subfloor",
+        "blend",
+        "networking"
+      ],
+      "prototypes": [
+        {
+          "kind": "structure",
+          "id": "airlock",
+          "previews": [
+            {"when": {"paint": "engineering", "glass": true, "open": true}, "layers": ["door_eng_glass_open"]},
+            {"when": {"paint": "engineering", "open": true}, "layers": ["door_eng_open"]},
+            {"when": {"paint": "engineering", "glass": true, "bolted": true}, "layers": ["door_eng_glass", "door_bolt_lights"]},
+            {"when": {"paint": "engineering", "bolted": true}, "layers": ["door_eng", "door_bolt_lights"]},
+            {"when": {"paint": "engineering", "glass": true}, "layers": ["door_eng_glass"]},
+            {"when": {"paint": "engineering"}, "layers": ["door_eng"]},
+            {"when": {"paint": "interior", "glass": true, "open": true}, "layers": ["door_int_glass_open"]},
+            {"when": {"paint": "interior", "open": true}, "layers": ["door_int_open"]},
+            {"when": {"paint": "interior", "glass": true, "bolted": true}, "layers": ["door_int_glass", "door_int_bolt_lights"]},
+            {"when": {"paint": "interior", "bolted": true}, "layers": ["door_int", "door_int_bolt_lights"]},
+            {"when": {"paint": "interior", "glass": true}, "layers": ["door_int_glass"]},
+            {"when": {"paint": "interior"}, "layers": ["door_int"]},
+            {"when": {"paint": "public", "glass": true, "open": true}, "layers": ["door_glass_open"]},
+            {"when": {"paint": "public", "open": true}, "layers": ["door_open"]},
+            {"when": {"paint": "public", "glass": true, "bolted": true}, "layers": ["door_glass", "door_bolt_lights"]},
+            {"when": {"paint": "public", "bolted": true}, "layers": ["door", "door_bolt_lights"]},
+            {"when": {"paint": "public", "glass": true}, "layers": ["door_glass"]},
+            {"when": {"paint": "public"}, "layers": ["door"]}
+          ]
+        },
+        {
+          "kind": "structure",
+          "id": "airlock.engineering",
+          "previews": [
+            {"when": {"paint": "engineering", "glass": true, "open": true}, "layers": ["door_eng_glass_open"]},
+            {"when": {"paint": "engineering", "open": true}, "layers": ["door_eng_open"]},
+            {"when": {"paint": "engineering", "glass": true, "bolted": true}, "layers": ["door_eng_glass", "door_bolt_lights"]},
+            {"when": {"paint": "engineering", "bolted": true}, "layers": ["door_eng", "door_bolt_lights"]},
+            {"when": {"paint": "engineering", "glass": true}, "layers": ["door_eng_glass"]},
+            {"when": {"paint": "engineering"}, "layers": ["door_eng"]},
+            {"when": {"paint": "interior", "glass": true, "open": true}, "layers": ["door_int_glass_open"]},
+            {"when": {"paint": "interior", "open": true}, "layers": ["door_int_open"]},
+            {"when": {"paint": "interior", "glass": true, "bolted": true}, "layers": ["door_int_glass", "door_int_bolt_lights"]},
+            {"when": {"paint": "interior", "bolted": true}, "layers": ["door_int", "door_int_bolt_lights"]},
+            {"when": {"paint": "interior", "glass": true}, "layers": ["door_int_glass"]},
+            {"when": {"paint": "interior"}, "layers": ["door_int"]},
+            {"when": {"paint": "public", "glass": true, "open": true}, "layers": ["door_glass_open"]},
+            {"when": {"paint": "public", "open": true}, "layers": ["door_open"]},
+            {"when": {"paint": "public", "glass": true, "bolted": true}, "layers": ["door_glass", "door_bolt_lights"]},
+            {"when": {"paint": "public", "bolted": true}, "layers": ["door", "door_bolt_lights"]},
+            {"when": {"paint": "public", "glass": true}, "layers": ["door_glass"]},
+            {"when": {"paint": "public"}, "layers": ["door"]}
+          ]
+        },
+        {
+          "kind": "structure",
+          "id": "airlock.engineering_glass",
+          "previews": [
+            {"when": {"paint": "engineering", "glass": true, "open": true}, "layers": ["door_eng_glass_open"]},
+            {"when": {"paint": "engineering", "open": true}, "layers": ["door_eng_open"]},
+            {"when": {"paint": "engineering", "glass": true, "bolted": true}, "layers": ["door_eng_glass", "door_bolt_lights"]},
+            {"when": {"paint": "engineering", "bolted": true}, "layers": ["door_eng", "door_bolt_lights"]},
+            {"when": {"paint": "engineering", "glass": true}, "layers": ["door_eng_glass"]},
+            {"when": {"paint": "engineering"}, "layers": ["door_eng"]},
+            {"when": {"paint": "interior", "glass": true, "open": true}, "layers": ["door_int_glass_open"]},
+            {"when": {"paint": "interior", "open": true}, "layers": ["door_int_open"]},
+            {"when": {"paint": "interior", "glass": true, "bolted": true}, "layers": ["door_int_glass", "door_int_bolt_lights"]},
+            {"when": {"paint": "interior", "bolted": true}, "layers": ["door_int", "door_int_bolt_lights"]},
+            {"when": {"paint": "interior", "glass": true}, "layers": ["door_int_glass"]},
+            {"when": {"paint": "interior"}, "layers": ["door_int"]},
+            {"when": {"paint": "public", "glass": true, "open": true}, "layers": ["door_glass_open"]},
+            {"when": {"paint": "public", "open": true}, "layers": ["door_open"]},
+            {"when": {"paint": "public", "glass": true, "bolted": true}, "layers": ["door_glass", "door_bolt_lights"]},
+            {"when": {"paint": "public", "bolted": true}, "layers": ["door", "door_bolt_lights"]},
+            {"when": {"paint": "public", "glass": true}, "layers": ["door_glass"]},
+            {"when": {"paint": "public"}, "layers": ["door"]}
+          ]
+        },
+        {
+          "kind": "structure",
+          "id": "airlock.interior_glass",
+          "previews": [
+            {"when": {"paint": "engineering", "glass": true, "open": true}, "layers": ["door_eng_glass_open"]},
+            {"when": {"paint": "engineering", "open": true}, "layers": ["door_eng_open"]},
+            {"when": {"paint": "engineering", "glass": true, "bolted": true}, "layers": ["door_eng_glass", "door_bolt_lights"]},
+            {"when": {"paint": "engineering", "bolted": true}, "layers": ["door_eng", "door_bolt_lights"]},
+            {"when": {"paint": "engineering", "glass": true}, "layers": ["door_eng_glass"]},
+            {"when": {"paint": "engineering"}, "layers": ["door_eng"]},
+            {"when": {"paint": "interior", "glass": true, "open": true}, "layers": ["door_int_glass_open"]},
+            {"when": {"paint": "interior", "open": true}, "layers": ["door_int_open"]},
+            {"when": {"paint": "interior", "glass": true, "bolted": true}, "layers": ["door_int_glass", "door_int_bolt_lights"]},
+            {"when": {"paint": "interior", "bolted": true}, "layers": ["door_int", "door_int_bolt_lights"]},
+            {"when": {"paint": "interior", "glass": true}, "layers": ["door_int_glass"]},
+            {"when": {"paint": "interior"}, "layers": ["door_int"]},
+            {"when": {"paint": "public", "glass": true, "open": true}, "layers": ["door_glass_open"]},
+            {"when": {"paint": "public", "open": true}, "layers": ["door_open"]},
+            {"when": {"paint": "public", "glass": true, "bolted": true}, "layers": ["door_glass", "door_bolt_lights"]},
+            {"when": {"paint": "public", "bolted": true}, "layers": ["door", "door_bolt_lights"]},
+            {"when": {"paint": "public", "glass": true}, "layers": ["door_glass"]},
+            {"when": {"paint": "public"}, "layers": ["door"]}
+          ]
+        }
+      ]
     }
   }
 }

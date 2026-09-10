@@ -1,7 +1,7 @@
 # Programmable exterior airlocks
 
 `maps/programmable_airlock.ron` assembles ordinary networked doors, two wall
-buttons, a dual-port vent and an access point. The interior opens west and
+buttons, a airlock pump and an access point. The interior opens west and
 space is east. Initially the interior is closed and bolted, the exterior is
 open and unbolted, and the chamber is empty.
 
@@ -28,9 +28,10 @@ Its ordinary storage holds the disks loose, without tgstation's individual
 wrappers. The atmos stock disk uses the orange `datadisk12` shell
 from tgstation's floppy sheet, preserving its gray metal shutter.
 
-The RPD and pipe dispenser supply `dual_port_vent_fitting`; wrench it onto
-plating or floor. Its intake is the back port on layer 2 and its effluent
-is the front port on layer 4. These layers are fixed. Wire the vent and doors
+The RPD and pipe dispenser supply `airlock_pump_fitting`; wrench it onto
+plating or floor. Its supply is port 0 on layer 4 and its waste
+is port 1 on layer 2. Both mouths face the declared direction and these layers
+are fixed (tg `unary_devices/airlock_pump.dm:114-120`). Wire the vent and doors
 to a powered room circuit and plug the hub into a live outlet.
 
 The tool vendor supplies `airlock_button_fitting`; hold the fitting and

@@ -1,8 +1,8 @@
 {
-  "note": "Two full drives and a long Markdown reader: the desktop at the tree budget.",
+  "note": "Two full drives, a long filename and Markdown reader at the minimum viewport and tree budget.",
   "viewport": {
-    "width": 1600,
-    "height": 1000,
+    "width": 1024,
+    "height": 768,
     "dpr": 1
   },
   "locale": "en",
@@ -45,7 +45,7 @@
             }
           ],
           "files": [
-            {"store": "host", "uid": 1, "binding": "host-1", "name": "f0", "ext": "md", "size": 10, "open": false, "fixed": true},
+            {"store": "host", "uid": 1, "binding": "host-1", "name": "a-very-long-filename-that-must-stay-on-one-line", "ext": "md", "size": 10, "open": false, "fixed": true},
             {"store": "host", "uid": 2, "binding": "host-1", "name": "f1", "ext": "md", "size": 10, "open": false, "fixed": false},
             {"store": "host", "uid": 3, "binding": "host-1", "name": "f2", "ext": "md", "size": 10, "open": false, "fixed": true},
             {"store": "host", "uid": 4, "binding": "host-1", "name": "f3", "ext": "md", "size": 10, "open": false, "fixed": false},
