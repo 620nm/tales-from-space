@@ -9,7 +9,7 @@ t.world([==[(
     },
     rows: ["#######", "#.....#", "#Gao..#", "#######"],
     spawns: [(1, 1)],
-    items: [(1, 1, "laptop"), (1, 1, "airlock_program_disk"),
+    items: [(1, 1, "laptop"), (1, 1, "floppy_disk.atmos_stock"),
         (1, 1, "floppy_disk")],
     machines: [(2, 1, "transceiver", { "encryption_1": "encryption_key.medical" })],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
@@ -53,7 +53,7 @@ local function contact()
 end
 
 -- Preset text and source share the same physical medium and copy path.
-t.click(p, 1, 1, t.target_at(1, 1, "airlock_program_disk"))
+t.click(p, 1, 1, t.target_at(1, 1, "floppy_disk.atmos_stock"))
 t.run_ticks(2)
 t.click(p, 1, 1, laptop)
 t.run_ticks(2)

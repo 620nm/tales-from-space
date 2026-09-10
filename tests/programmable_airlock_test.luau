@@ -40,7 +40,7 @@ t.ui_close(operator)
 t.run_ticks(2)
 
 -- Fit the source disk in the host, boot the laptop, then hold it against the host.
-t.click(operator, 3, 3, t.target_at(3, 3, "airlock_program_disk"))
+t.click(operator, 3, 3, t.target_at(3, 3, "floppy_disk.atmos_stock"))
 t.run_ticks(2)
 t.click(operator, 4, 3, host)
 t.run_ticks(2)

@@ -39,7 +39,7 @@
     cables: [(1, 4, 2), (2, 4, 3), (3, 4, 1), (4, 4, 1),
         (2, 3, 1), (3, 3, 1), (4, 3, 1), (5, 3, 1),
         (6, 3, 1), (7, 3, 1), (8, 3, 1)],
-    items: [(3, 3, "laptop"), (3, 3, "airlock_program_disk"),
+    items: [(3, 3, "laptop"), (3, 3, "floppy_disk.atmos_stock"),
         (2, 4, "disk_box"), (3, 4, "screwdriver"), (3, 4, "wrench"),
         (3, 4, "airlock_button_fitting"), (3, 4, "dual_port_vent_fitting")],
 )

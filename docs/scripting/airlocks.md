@@ -14,7 +14,7 @@ Join both doors, both buttons and the vent through one powered access point
 or air alarm. These hubs offer an internal file store and a `controller`
 socket. A host commands its direct, joined, reachable members.
 
-The `airlock_program_disk` contains fixed originals of `airlock.disl` and
+The atmos stock disk (`floppy_disk.atmos_stock`) contains fixed originals of `airlock.disl` and
 `readme.md`, loaded by reference ID from `reference/manifest.ron`. Use
 [laptop contact programming](../LAPTOP.md#contact-programming): insert the
 orange disk into the host, hold an open, powered laptop and click the host.
@@ -25,7 +25,7 @@ uninstalled host has no fallback program.
 
 The demonstration also supplies a `disk_box` with eight blank floppy disks.
 Its ordinary storage holds the disks loose, without tgstation's individual
-wrappers. The engineering program disk uses the orange `datadisk12` shell
+wrappers. The atmos stock disk uses the orange `datadisk12` shell
 from tgstation's floppy sheet, preserving its gray metal shutter.
 
 The RPD and pipe dispenser supply `dual_port_vent_fitting`; wrench it onto
