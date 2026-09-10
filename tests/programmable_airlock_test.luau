@@ -1,4 +1,4 @@
--- Install the actual shipped source, then operate the room through its buttons.
+-- Rebuild the commissioned bench by hand: release, rejoin, reinstall, then operate it.
 t.set_breathing(false)
 t.world_file("programmable_airlock.ron", 0)
 t.set_environment({ sink_k = 293.15, insolation = 0 })
@@ -11,10 +11,34 @@ assert(t.door_at(5, 3).bolted and not t.door_at(5, 3).open, "interior starts clo
 assert(t.door_at(8, 3).open and not t.door_at(8, 3).bolted, "exterior starts open and unbolted")
 assert(t.room_pressure(6, 3) < 1, "the chamber starts evacuated")
 
--- Join actual nearby endpoints from the access point's ordinary panel.
+-- The map joined every endpoint; release them all through the access point's panel.
+local function members()
+    local rows = {}
+    for _, row in ipairs(t.ui(operator).toggles or {}) do
+        if row.field == "link_drop" then table.insert(rows, row.option) end
+    end
+    return rows
+end
 t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
 t.run_ticks(2)
 ui_controls.toggle(operator, "link_lock")
+t.run_ticks(2)
+assert(#members() == 5, "the map joined two doors, two buttons and the vent: " .. #members())
+for dropped = 1, 5 do
+    ui_controls.toggle(operator, "link_drop", members()[1])
+    t.run_ticks(2)
+    assert(#members() == 5 - dropped, "each release removes one member")
+end
+t.ui_close(operator)
+t.run_ticks(2)
+local _ = t.messages(operator)
+t.click(operator, 2, 3, assert(t.target_at(operator, 2, 3, "airlock_button")))
+t.run_ticks(2)
+local heard = table.concat(t.messages(operator), " | ")
+assert(heard:find("The button clicks, but nothing answers.", 1, true), "a released button has nobody to ask: " .. heard)
+
+-- Rejoin the same endpoints from the ordinary panel; its lock is already open.
+t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
 t.run_ticks(2)
 local joined = 0
 while true do
@@ -65,6 +89,16 @@ local function file(ui, side)
 end
 
 local ui = workspace()
+local shipped = file(ui, "host")
+assert(shipped and not shipped.fixed and ui.sockets[1].uid == shipped.uid,
+    "the map installed an editable copy and bound it to the socket")
+-- A copy cannot land on a taken name, and a bound file cannot be deleted: unload, then delete.
+ui_files.socket(operator, "controller", nil)
+t.run_ticks(10)
+ui_files.press(operator, file(workspace(), "host"), "delete")
+t.run_ticks(2)
+assert(file(workspace(), "host") == nil, "the old copy is gone before the new one lands")
+ui = workspace()
 local original = file(ui, "media")
 assert(original and original.fixed, "the distribution disk contains a fixed original")
 t.run_ticks(10)
