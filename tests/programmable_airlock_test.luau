@@ -132,48 +132,55 @@ local function press_inside()
         if action.id == "press" and action.gesture == "primary" then offered = true end
     end
     assert(offered, "the button offers its left-click press action")
+    local mark = airlock_cycle.mark()
     t.click(operator, 2, 3, t.target_at(operator, 2, 3, "airlock_button"))
     t.run_ticks(2)
+    return mark
 end
-local function until_door(x, open) airlock_cycle.until_door(x, open, operator) end
+local function until_door(x, open, since, each) return airlock_cycle.until_door(x, open, operator, since, each) end
 -- Walk in through the initially open exterior, leaving both tracks clear.
 for _ = 1, 2 do t.move(visitor, "west"); t.run_ticks(4) end
 assert(t.pos(visitor) == 7, "the visitor stands in the chamber")
-press_inside()
-until_door(5, true)
+-- Sampled every step until the interior moves: the real intake filled the chamber.
+local filled
+until_door(5, true, press_inside(), function()
+    local d = t.door_at(5, 3)
+    if not (d.open or d.moving) then filled = t.room_pressure(6, 3) end
+end)
 assert(t.door_at(8, 3).bolted and not t.door_at(8, 3).open, "the exterior is secured before the interior opens")
 local pressure_result = airlock_cycle.pressure
 assert(pressure_result() and pressure_result() >= 100,
     "the native pressure completion measures at least 100 kPa before opening")
-assert(t.room_pressure(6, 3) > 40, "the real intake supplied gas before the rooms joined")
+assert(filled and filled >= 95, "the real intake filled the chamber before the interior moved: " .. tostring(filled))
 t.run_ticks(100)
 assert(t.door_at(5, 3).open, "bolting the open leaf holds it against autoclose")
 
 -- The chamber button reverses the cycle: close, drain, then open space.
+local since = airlock_cycle.mark()
 t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
 t.run_ticks(2)
-until_door(8, true)
+until_door(8, true, since)
 assert(t.door_at(5, 3).bolted and not t.door_at(5, 3).open, "the interior is secured before space opens")
 assert(pressure_result() < 10, "the distinct effluent main evacuates below 10 kPa before opening")
 assert((t.pipe_pressure(6, 2, 8) or 0) > (t.pipe_pressure(6, 2, 2) or 0), "intake and effluent remain distinct mains")
 
 -- A repeat press of the same button requests the opposite destination.
-press_inside()
+since = press_inside()
 t.run_ticks(8)
 press_inside()
 t.run_ticks(80)
-until_door(8, true)
+until_door(8, true, since)
 assert(not t.door_at(5, 3).open and pressure_result() < 10,
     "the same button reverses the pending cycle and drains before opening")
-press_inside()
-until_door(5, true)
+until_door(5, true, press_inside())
 
 -- An opposite request during travel supersedes the older operation.
+since = airlock_cycle.mark()
 t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
 t.run_ticks(8)
 press_inside()
 t.run_ticks(80)
-until_door(5, true)
+until_door(5, true, since)
 assert(not t.door_at(8, 3).open and pressure_result() >= 100,
     "an interrupted outward motor settles under the newer inward generation")
 
@@ -184,7 +191,7 @@ for _ = 1, 7 do t.click(operator, 2, 3, t.target_at(operator, 2, 3, "airlock_but
 t.tick()
 t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
 t.run_ticks(80)
-until_door(8, true)
+until_door(8, true, burst_start)
 assert(not t.door_at(5, 3).open and pressure_result() < 10,
     "nine accepted presses advance the same sequence to the exterior")
 local burst_sequences, burst_count = {}, 0
@@ -199,8 +206,7 @@ for index = burst_start + 1, #burst_rows do
     end
 end
 assert(burst_count == 9, "all nine admitted presses survive batching and cross-button reordering: " .. burst_count)
-press_inside()
-until_door(5, true)
+until_door(5, true, press_inside())
 
 -- Edit the installed source through the same contact and deny public requests.
 t.click(operator, 3, 3, assert(t.target_at(operator, 3, 3, laptop)))
@@ -217,10 +223,14 @@ ui_files.save(operator, denied)
 t.run_ticks(2)
 assert(workspace().open.body == denied, "a live socket is editable from the laptop")
 close_contact()
+local _ = t.messages(visitor)
+since = airlock_cycle.mark()
 t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
 t.run_ticks(100)
 assert(t.door_at(5, 3).open and not t.door_at(8, 3).open, "denied requests leave the completed state alone")
-assert(#t.ledger_rows("disl_run") > 10, "the guest ran for requests and actual completions")
+assert(#t.ledger_rows("disl_run") > since, "the denied press reached the guest")
+local refusal = table.concat(t.messages(visitor), " | ")
+assert(refusal:find("The controller refuses your airlock request.", 1, true), "the presser hears the refusal: " .. refusal)
 
 local function edit_program(body)
     t.click(operator, 3, 3, assert(t.target_at(operator, 3, 3, laptop)))
@@ -268,10 +278,14 @@ end
 
 -- An editable guest cannot turn an arbitrary address into a device capability.
 edit_program('return { commands = {{ mac = "ff-ff-ff-ff-ff-ff", op = "open", id = "foreign" }} }')
-press_inside()
+local _ = t.messages(operator)
+since = press_inside()
 t.run_ticks(30)
 assert(t.door_at(5, 3).open and not t.door_at(8, 3).open,
     "a foreign address is rejected before a door operation can apply")
+assert(#t.ledger_rows("disl_run") > since, "the press reached the edited guest")
+local stopped = table.concat(t.messages(operator), " | ")
+assert(stopped:find("The controller has stopped the airlock cycle.", 1, true), "the presser hears the controller stop: " .. stopped)
 
 -- Cutting actual membership prevents requests reaching the installed guest.
 t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
