@@ -3,6 +3,7 @@ local UNANSWERED = "The button clicks, but nothing answers."
 local UNPROGRAMMED = "The access point beeps: no program is loaded."
 local HAND_FULL = "Your hand is full; press it with an empty hand."
 local FAULT = "The controller has stopped the airlock cycle."
+local NOT_READY = "Open the laptop and turn it on first."
 
 local function said(lines, text)
     for _, line in ipairs(lines) do
@@ -78,6 +79,7 @@ t.world([==[(
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1), (4, 2, 1),
         (2, 1, 1), (3, 1, 1), (4, 1, 1), (5, 1, 1)],
     links: [(4, 1, 2, 1), (4, 1, 5, 1)],
+    items: [(3, 1, "laptop")],
 )]==], 0)
 p = t.join()
 t.run_ticks(20)
@@ -92,3 +94,33 @@ for round = 1, 2 do
 end
 local after = t.door_at(5, 1)
 assert(after.open == before.open and after.bolted == before.bolted, "the door is left alone")
+
+-- A shut laptop held against the host says what to do; opened and on, it connects.
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "laptop")))
+t.run_ticks(2)
+assert(t.hands(p).held == "laptop", "the closed laptop is in hand")
+local _ = t.messages(p)
+t.click(p, 4, 1, assert(t.target_at(p, 4, 1, "access_point")))
+t.run_ticks(2)
+lines = t.messages(p)
+assert(said(lines, NOT_READY), "a closed laptop names the missing step, got: " .. table.concat(lines, " | "))
+assert(t.ui(p, "programming") == nil, "nothing connects through a closed laptop")
+assert(t.ui(p) and t.ui(p).name == "access point", "the box still shows its own panel beside the line")
+-- A contact workspace needs the box's lock open (the engine's contact_workspace_valid).
+ui_controls.toggle(p, "link_lock")
+t.run_ticks(2)
+t.ui_close(p)
+t.run_ticks(2)
+t.drop(p)
+t.run_ticks(2)
+local laptop = assert(t.target_at(p, 3, 1, "laptop"))
+for _ = 1, 2 do t.use_item(p, laptop, "secondary"); t.run_ticks(2) end
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, laptop)))
+t.run_ticks(2)
+assert(t.hands(p).held == "laptop", "the running laptop is back in hand")
+local _ = t.messages(p)
+t.click(p, 4, 1, assert(t.target_at(p, 4, 1, "access_point")))
+t.run_ticks(2)
+lines = t.messages(p)
+assert(t.ui(p, "programming"), "the running laptop opens the programming workspace")
+assert(not said(lines, NOT_READY), "a connected laptop is not refused: " .. table.concat(lines, " | "))
