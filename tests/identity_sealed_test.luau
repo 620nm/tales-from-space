@@ -86,9 +86,9 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local dispenser = t.target_at(1, 2)
-local heater = t.target_at(3, 2)
-local jar = t.target_at(1, 1, "bottle")
+local dispenser = t.target_at(p, 1, 2)
+local heater = t.target_at(p, 3, 2)
+local jar = t.target_at(p, 1, 1, "bottle")
 
 local function gas_in(handle, key)
     local entry = t.vessel(handle).contents[key]
@@ -110,9 +110,9 @@ t.click(p, 1, 2, dispenser)
 t.tick()
 t.click(p, 1, 2, dispenser)
 t.tick()
-t.ui_act(p, "set", '{"field":"amount","value":1.0}')
+ui_controls.set(p, "amount", 1.0)
 t.run_ticks(2)
-t.ui_act(p, "toggle", '{"field":"dispense","option":"water"}')
+ui_controls.toggle(p, "dispense", "water")
 t.run_ticks(2)
 near(t.contents(jar).water, 1.0, 1e-9, "a mole of water, and the dial's whole press landed")
 -- All but a whisker of it is LIQUID: a source chooses no phase (D11)
@@ -121,7 +121,7 @@ near(t.contents(jar).water, 1.0, 1e-9, "a mole of water, and the dial's whole pr
 -- The whisker is the vessel's own headspace coming to saturation, and
 -- it is the thing the next section watches grow.
 assert(liquid_in(jar, "water") > 0.999, "and it is liquid: " .. liquid_in(jar, "water"))
-t.ui_act(p, "toggle", '{"field":"eject"}')
+ui_controls.toggle(p, "eject")
 t.run_ticks(2)
 
 -- A mole is 18 mL of the bottle's fifty, so there is headspace over it
@@ -141,9 +141,9 @@ t.click(p, 3, 2, heater)
 t.tick()
 t.click(p, 3, 2, heater)
 t.tick()
-t.ui_act(p, "set", '{"field":"temperature","value":450}')
+ui_controls.set(p, "temperature", 450)
 t.run_ticks(2)
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.ui(p).toggles[1].on == true, "the element is on")
 
@@ -204,9 +204,9 @@ near(after.substances.water, before.substances.water, 1e-9, "the water is all st
 -- which `t.matter_totals().energy_j` books back in through
 -- `space_radiated`. So the whole station's energy is a constant, and
 -- one joule of slack out of the tens of millions this room holds.
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
-t.ui_act(p, "toggle", '{"field":"eject"}')
+ui_controls.toggle(p, "eject")
 t.run_ticks(2)
 t.drop(p)
 t.tick()

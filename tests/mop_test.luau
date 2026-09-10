@@ -44,8 +44,8 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local mop = t.target_at(1, 1, "mop")
-local beaker = t.target_at(1, 1, "beaker_bluespace")
+local mop = t.target_at(p, 1, 1, "mop")
+local beaker = t.target_at(p, 1, 1, "beaker_bluespace")
 
 -- A quarter of a litre is the head, which is the whole of what one
 -- stroke can lift.
@@ -71,7 +71,7 @@ end
 local water_at_the_start = t.matter_totals().substances.water
 
 assert(math.abs(puddle() - 3.0) < 0.01, ("three litres on the deck, got %g"):format(puddle()))
-t.click(p, 1, 1, mop) -- pick it up
+t.click(p, 1, 1, t.target_at(p, 1, 1, "mop")) -- pick it up
 t.tick()
 assert(held(mop) == 0, "and a dry mop in hand")
 
@@ -80,7 +80,7 @@ assert(held(mop) == 0, "and a dry mop in hand")
 -- transfer against what is there and what fits, so the deck keeps the
 -- rest: a mop is not a drain.
 -- ---------------------------------------------------------------
-t.click(p, 2, 1)
+t.click_turf(p, 2, 1)
 t.tick()
 local stroke = said()
 assert(stroke == "You run the mop over the deck.", "the stroke is reported: " .. stroke)
@@ -98,7 +98,7 @@ assert(t.vessel(mop).headspace_l < 0.01, "with no room left in it")
 -- rather than silently doing nothing.
 -- ---------------------------------------------------------------
 local before = puddle()
-t.click(p, 2, 1)
+t.click_turf(p, 2, 1)
 t.tick()
 local refusal = said()
 assert(refusal == "The mop is soaked through.", "a full mop refuses: " .. refusal)
@@ -109,7 +109,7 @@ assert(math.abs(held(mop) - in_the_head) < 1e-6, "and takes on nothing")
 -- WRINGING IT OUT into the beaker beside you. A wring is not a
 -- measured pour: what comes out is the head.
 -- ---------------------------------------------------------------
-t.click(p, 1, 1, beaker)
+t.click(p, 1, 1, t.target_at(p, 1, 1, "beaker_bluespace"))
 t.tick()
 local wring = said()
 assert(wring == "You wring the mop out.", "the wring is reported: " .. wring)
@@ -119,14 +119,14 @@ assert(math.abs(held(beaker) - in_the_head) < 1e-6,
 
 -- And an empty mop has nothing to wring, in the words every empty
 -- vessel uses.
-t.click(p, 1, 1, beaker)
+t.click(p, 1, 1, t.target_at(p, 1, 1, "beaker_bluespace"))
 t.tick()
 local spent = said()
 assert(spent == "The mop is empty.", "a dry mop refuses: " .. spent)
 
 -- A dry deck is a dry deck: the tile the crewman is standing on never
 -- had anything on it.
-t.click(p, 1, 1)
+t.click_turf(p, 1, 1)
 t.tick()
 local dry = said()
 assert(dry == "The deck here is dry.", "nothing to take up: " .. dry)
@@ -135,7 +135,7 @@ assert(dry == "The deck here is dry.", "nothing to take up: " .. dry)
 -- AND AGAIN: a wrung-out mop takes another head off the same puddle,
 -- which is what makes a flood a chore rather than one click.
 -- ---------------------------------------------------------------
-t.click(p, 2, 1)
+t.click_turf(p, 2, 1)
 t.tick()
 assert(
     math.abs(puddle() - (3.0 - 2 * HEAD_L)) < 0.02,

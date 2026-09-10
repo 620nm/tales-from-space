@@ -24,17 +24,16 @@ t.world([==[(
 
 local p = t.join()
 t.tick()
-local fitting = t.target_at(2, 2, "connector_port_fitting")
+local fitting = t.target_at(p, 2, 2, "connector_port_fitting")
 assert(fitting ~= nil, "the streamed loose fitting is targetable")
 
--- South -> east counter-clockwise, east -> south clockwise, then
--- south -> west clockwise. Both browser bindings share this command.
-t.rotate(p, 2, 2, fitting, false)
+-- The browser Alt gesture turns clockwise: three turns reach east.
+for _ = 1, 3 do t.rotate(p, 2, 2, fitting, true) end
 t.rotate(p, 2, 2, fitting, true)
 t.rotate(p, 2, 2, fitting, true)
-assert(#t.ledger_rows("Rotated") == 3, "every accepted quarter-turn is recorded")
+assert(#t.ledger_rows("Rotated") == 5, "every accepted quarter-turn is recorded")
 
-t.click(p, 1, 2, t.target_at(1, 2, "wrench"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "wrench"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "the wrench is in hand")
 t.click(p, 2, 2, fitting)
@@ -43,13 +42,13 @@ t.run_seconds(2.5)
 local port = t.structure_at(2, 2)
 assert(port ~= nil and port.id == "connector_port", "the fitting became a port")
 assert(port.sprite == "connector_port_w", "the chosen west facing survived anchoring")
-assert(t.target_at(2, 2, "connector_port_fitting") == nil, "the loose fitting was consumed")
+assert(t.target_at(p, 2, 2, "connector_port_fitting") == nil, "the loose fitting was consumed")
 
 -- Taking it back up returns the component item rather than deleting it,
 -- and that item remembers the direction when it is fastened again.
-t.click(p, 2, 2, t.target_at(2, 2, "connector_port"))
+t.click(p, 2, 2, t.target_at(p, 2, 2, "connector_port"))
 t.run_seconds(2.5)
-local returned = t.target_at(2, 2, "connector_port_fitting")
+local returned = t.target_at(p, 2, 2, "connector_port_fitting")
 assert(returned ~= nil, "unwrenching returned the fitting item")
 t.click(p, 2, 2, returned)
 t.run_seconds(2.5)
@@ -58,12 +57,12 @@ assert(port ~= nil and port.sprite == "connector_port_w", "the returned fitting 
 
 -- Anchoring is the boundary: the same explicit claim cannot turn live
 -- network topology behind the server's back.
-local anchored = t.target_at(2, 2, "connector_port")
+local anchored = t.target_at(p, 2, 2, "connector_port")
 t.rotate(p, 2, 2, anchored, true)
 t.tick()
 port = t.structure_at(2, 2)
 assert(port.sprite == "connector_port_w", "an anchored fixture refuses rotation")
-assert(#t.ledger_rows("Rotated") == 3, "a refused turn creates no ledger row")
+assert(#t.ledger_rows("Rotated") == 5, "a refused turn creates no ledger row")
 
 -- A connector carries a Stub, but ordinary binary and trinary devices
 -- do not. Their loose fitting's Facing must survive the same boundary:
@@ -93,11 +92,11 @@ t.world([==[(
 
 local q = t.join()
 t.tick()
-local valve_fitting = t.target_at(3, 2, "manual_valve_fitting")
+local valve_fitting = t.target_at(q, 3, 2, "manual_valve_fitting")
 assert(valve_fitting ~= nil, "the valve fitting is targetable")
-t.rotate(q, 3, 2, valve_fitting, false) -- south -> east
+for _ = 1, 3 do t.rotate(q, 3, 2, valve_fitting, true) end -- south -> east
 
-t.click(q, 4, 3, t.target_at(4, 3, "wrench"))
+t.click(q, 4, 3, t.target_at(q, 4, 3, "wrench"))
 t.run_ticks(2)
 t.click(q, 3, 2, valve_fitting)
 t.run_seconds(2.5)
@@ -112,7 +111,7 @@ assert(t.pipe(3, 2) == 0, "the valve replaces its centre length")
 -- north remains charged only if it did not silently fall back to NS.
 t.drop(q)
 t.run_ticks(2)
-t.click(q, 3, 2, t.target_at(3, 2, "manual_valve"))
+t.click(q, 3, 2, t.target_at(q, 3, 2, "manual_valve"))
 t.run_seconds(2)
 assert(t.structure_at(3, 2).state == "open", "the valve opened")
 t.fault(5, 1, t.now() + 4)

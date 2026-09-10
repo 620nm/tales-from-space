@@ -44,7 +44,6 @@ local medic = t.join()
 local patient = t.join()
 local attendant = t.join()   -- somebody with a free hand for the drawer
 t.run_ticks(3)
-local pid = t.body_id(patient)
 
 assert(t.body(patient).animate == true, "they start out alive")
 assert(t.organ_damage(patient, "heart") == 0, "with an undamaged heart")
@@ -72,11 +71,11 @@ assert(t.organ_damage(patient, "heart") == 100, "the heart is where the death le
 -- =====================================================================
 -- REVIVAL A: a defibrillator restarts the heart.
 -- =====================================================================
-t.click(medic, 1, 1, t.target_at(1, 1, "defib"))
+t.click(medic, 1, 1, t.target_at(medic, 1, 1, "defib"))
 t.run_ticks(2)
 assert(t.hands(medic).held == "defib", "the defibrillator is in hand")
 
-t.click(medic, 2, 1, pid)
+t.click(medic, 2, 1, t.body_target(medic, patient))
 t.run_ticks(2)
 assert(said(medic, "charge the defibrillator"), "it charges")
 -- tg's five seconds end to end (defib.dm:564-568), and the shock lands
@@ -93,7 +92,7 @@ assert(t.capacity(patient, "blood") > 0, "circulating")
 -- (code/modules/mob/living/carbon/carbon.dm:784-835).
 -- =====================================================================
 -- The living: tg refuses them outright.
-t.click(medic, 2, 1, pid)
+t.click(medic, 2, 1, t.body_target(medic, patient))
 t.run_ticks(3)
 assert(said(medic, "heart is beating"), "you do not shock the living")
 
@@ -103,7 +102,7 @@ assert(said(medic, "heart is beating"), "you do not shock the living")
 t.set_health(patient, { brute = 200 })
 t.run_ticks(2)
 assert(t.body(patient).animate == false, "dead again")
-t.click(medic, 2, 1, pid)
+t.click(medic, 2, 1, t.body_target(medic, patient))
 t.run_ticks(3)
 assert(said(medic, "too severe"), "treat them before you shock them")
 assert(t.organ_damage(patient, "heart") == 100, "and nothing was restarted")
@@ -120,7 +119,7 @@ t.run_ticks(2)
 t.set_organ_damage(patient, "brain", 200)
 t.run_ticks(2)
 assert(t.organ_damage(patient, "brain") == 200, "the brain has decayed to failure")
-t.click(medic, 2, 1, pid)
+t.click(medic, 2, 1, t.body_target(medic, patient))
 t.run_ticks(3)
 assert(said(medic, "too far gone"), "there is nothing to shock back")
 assert(t.body(patient).animate == false, "and they stay dead")
@@ -142,7 +141,7 @@ _ = t.messages(medic)
 -- Here for the contrast with the half below it: a corpse cannot walk
 -- away by itself, so the patient half needs a guard of its own or it has
 -- no way of ending at all.
-t.click(medic, 2, 1, pid)
+t.click(medic, 2, 1, t.body_target(medic, patient))
 t.run_ticks(3)
 assert(said(medic, "charge the defibrillator"), "the charge started")
 for _ = 1, 3 do
@@ -165,12 +164,12 @@ assert(t.pos(medic) == 1, "back beside the patient")
 -- slab comes out onto the patient's own tile, so shutting it takes them
 -- with it (`sim/drawers.rs`: bodies are not dense and are exactly what a
 -- close is for).
-local chamber = t.target_at(2, 2, "cadaver_chamber")
+local chamber = t.target_at(attendant, 2, 2, "cadaver_chamber")
 t.click(attendant, 2, 2, chamber)
 t.run_ticks(2)
 assert(t.structure_at(2, 1) ~= nil, "the slab is out, under the patient")
 _ = t.messages(medic)
-t.click(medic, 2, 1, pid)
+t.click(medic, 2, 1, t.body_target(medic, patient))
 t.run_ticks(3)
 assert(said(medic, "charge the defibrillator"), "the charge started again")
 t.click(attendant, 2, 2, chamber)

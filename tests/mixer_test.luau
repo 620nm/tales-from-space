@@ -129,7 +129,7 @@ near(moles(OUT_X, OUT_Y) / moles(SIDE_X, SIDE_Y), OUT_M3 / SIDE_M3, 0.02, "an of
 -- ---------------------------------------------------------------
 -- The panel.
 -- ---------------------------------------------------------------
-t.click(p, 9, 1, t.target_at(9, 1, "mixer"))
+t.click(p, 9, 1, t.target_at(p, 9, 1, "mixer"))
 t.tick()
 local ui = t.ui(p)
 assert(ui, "clicking a mixer opens its window")
@@ -159,8 +159,8 @@ assert(mix.id == "mixer.mix.split" and mix.args.back == "50%" and mix.args.side 
 -- FIFTY-FIFTY: THE TWO INTAKES PAY EQUALLY, AND IT STOPS AT TARGET.
 -- ---------------------------------------------------------------
 local back0, side0 = moles(BACK_X, BACK_Y), moles(SIDE_X, SIDE_Y)
-t.ui_act(p, "set", '{"field":"pressure","value":150}')
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.set(p, "pressure", 150)
+ui_controls.toggle(p, "power")
 t.tick()
 assert(t.structure_at(9, 1).state == "running", "switched on")
 
@@ -190,8 +190,8 @@ near(
 -- the rest, and the two move together.
 -- ---------------------------------------------------------------
 back0, side0 = moles(BACK_X, BACK_Y), moles(SIDE_X, SIDE_Y)
-t.ui_act(p, "set", '{"field":"ratio","value":80}')
-t.ui_act(p, "set", '{"field":"pressure","value":200}')
+ui_controls.set(p, "ratio", 80)
+ui_controls.set(p, "pressure", 200)
 t.tick()
 local said_mix = nil
 for _, r in ipairs(t.ui(p).readouts) do
@@ -217,8 +217,8 @@ near(gave_back / gave_side, 4.0, 0.05, "in the ratio the machine was set to")
 -- not lose a mole.
 -- ---------------------------------------------------------------
 back0, side0 = moles(BACK_X, BACK_Y), moles(SIDE_X, SIDE_Y)
-t.ui_act(p, "set", '{"field":"ratio","value":100}')
-t.ui_act(p, "set", '{"field":"pressure","value":220}')
+ui_controls.set(p, "ratio", 100)
+ui_controls.set(p, "pressure", 220)
 t.run_seconds(20)
 assert(back0 - moles(BACK_X, BACK_Y) > 1.0, "the back intake carried it alone")
 near(moles(SIDE_X, SIDE_Y), side0, 1e-9, "and the idle side never lost a mole")
@@ -233,8 +233,8 @@ near(moles(SIDE_X, SIDE_Y), side0, 1e-9, "and the idle side never lost a mole")
 -- which still has plenty, must stop dead rather than keep pouring one
 -- gas neat into the outlet.
 -- ---------------------------------------------------------------
-t.ui_act(p, "set", '{"field":"ratio","value":50}')
-t.ui_act(p, "set", '{"field":"pressure","value":"max"}')
+ui_controls.set(p, "ratio", 50)
+ui_controls.set(p, "pressure", "max")
 t.tick()
 near(t.ui(p).setpoints[1].value, 4500.0, 0.001, "wound to MAX_OUTPUT_PRESSURE")
 
@@ -265,21 +265,21 @@ near(
 -- ---------------------------------------------------------------
 -- NEGATIVE: the window is the whitelist here too.
 -- ---------------------------------------------------------------
-t.ui_act(p, "set", '{"field":"ratio","value":400}')
+ui_controls.set(p, "ratio", 400)
 t.tick()
 near(t.ui(p).setpoints[2].value, 100.0, 0.001, "a share cannot exceed the whole")
-t.ui_act(p, "set", '{"field":"ratio","value":-90}')
+ui_controls.set(p, "ratio", -90)
 t.tick()
 near(t.ui(p).setpoints[2].value, 0.0, 0.001, "nor go below nothing")
-t.ui_act(p, "set", '{"field":"pressure","value":99999}')
+ui_controls.set(p, "pressure", 99999)
 t.tick()
 near(t.ui(p).setpoints[1].value, 4500.0, 0.001, "nor dial past MAX_OUTPUT_PRESSURE")
 
 -- A knob belonging to the machine next door, and a switch this one does
 -- not have.
 local before = t.ui(p).setpoints[1].value
-t.ui_act(p, "set", '{"field":"rate","value":50}')
-t.ui_act(p, "toggle", '{"field":"filter","option":"o2"}')
+assert(ui_controls.find(p, "/set/rate/value") == nil, "no filter dial is rendered")
+assert(ui_controls.find(p, "/toggle/filter/o2") == nil, "no filter choice is rendered")
 t.tick()
 assert(t.ui(p).setpoints[1].value == before, "a filter's knobs are not a mixer's")
 assert(t.ui(p).toggles[1].on == true, "and it has no roster to toggle")
@@ -332,10 +332,10 @@ assert(t.structure_at(9, 1).id == "mixer.flipped", "the mirrored machine")
 local west0 = moles(BACK_X, BACK_Y)
 local east0 = moles(OUT_X, OUT_Y)
 local stub0 = moles(SIDE_X, SIDE_Y)
-t.click(q, 9, 1, t.target_at(9, 1, "mixer.flipped"))
+t.click(q, 9, 1, t.target_at(q, 9, 1, "mixer.flipped"))
 t.tick()
-t.ui_act(q, "set", '{"field":"pressure","value":300}')
-t.ui_act(q, "toggle", '{"field":"power"}')
+ui_controls.set(q, "pressure", 300)
+ui_controls.toggle(q, "power")
 t.run_seconds(30)
 
 assert(
@@ -369,7 +369,7 @@ t.tick()
 assert(t.structure_at(9, 1).id == "mixer.airmix", "the air mixer is a real id")
 assert(t.structure_at(9, 1).state == "running", "and it opens the shift running")
 
-t.click(a, 9, 1, t.target_at(9, 1, "mixer.airmix"))
+t.click(a, 9, 1, t.target_at(a, 9, 1, "mixer.airmix"))
 t.tick()
 local air = t.ui(a)
 assert(air.toggles[1].field == "power" and air.toggles[1].on, "its switch is thrown")

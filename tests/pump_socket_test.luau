@@ -76,10 +76,10 @@ assert(charged > 90.0, "the mapped main opened the shift commissioned: " .. char
 t.run_seconds(5)
 near(t.pipe_pressure(1, 2), charged, 0.001, "a pump that is off is a wall")
 
-t.click(p, 3, 2, t.target_at(3, 2, "volume_pump"))
+t.click(p, 3, 2, t.target_at(p, 3, 2, "volume_pump"))
 t.tick()
 assert(t.ui(p), "the pump wears a panel")
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.structure_at(3, 2).state == "running", "it is on")
 
@@ -129,7 +129,7 @@ t.world([==[(
 
 local q = t.join()
 t.tick()
-local fitting = t.target_at(2, 2, "volume_pump_fitting")
+local fitting = t.target_at(q, 2, 2, "volume_pump_fitting")
 assert(fitting ~= nil, "the loose fitting is targetable")
 
 -- South turns to west turns to north: two quarter-turns onto the axis
@@ -137,7 +137,7 @@ assert(fitting ~= nil, "the loose fitting is targetable")
 t.rotate(q, 2, 2, fitting, true)
 t.rotate(q, 2, 2, fitting, true)
 
-t.click(q, 2, 3, t.target_at(2, 3, "wrench"))
+t.click(q, 2, 3, t.target_at(q, 2, 3, "wrench"))
 t.run_ticks(2)
 assert(t.hands(q).held == "wrench", "the wrench is in hand")
 t.click(q, 2, 2, fitting)

@@ -70,7 +70,7 @@ t.run_ticks(20)
 --    sentence says the word (fixtures/transceiver.luau).
 -- ---------------------------------------------------------------
 local _ = t.messages(p)
-t.click(p, 6, 1, t.target_at(6, 1))
+t.click(p, 6, 1, t.target_at(p, 6, 1))
 t.tick()
 -- RELAYED, because the APC feeding this tower is a hub and every
 -- device it powers is hardwired under it (docs/devices/joining.md).
@@ -101,7 +101,7 @@ assert(px == 8 and py == 1, "standing beside the second tower: " .. px .. "," ..
 --    but its row named engineering's key, so Wrench is what boots.
 -- ---------------------------------------------------------------
 local _ = t.messages(p)
-t.click(p, 9, 1, t.target_at(9, 1))
+t.click(p, 9, 1, t.target_at(p, 9, 1))
 t.tick()
 assert(
     said(p, "The transceiver is on the air, carrying Wrench, relayed through its network."),
@@ -124,7 +124,7 @@ t.tick()
 t.outage()
 t.run_ticks(60)
 local _ = t.messages(p)
-t.click(p, 9, 1, t.target_at(9, 1))
+t.click(p, 9, 1, t.target_at(p, 9, 1))
 t.tick()
 assert(
     said(p, "The transceiver is dark. Check what is feeding it."),

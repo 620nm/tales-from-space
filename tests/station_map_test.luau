@@ -78,7 +78,7 @@ end
 -- an examine in the room succeeds and a forged claim through its west door
 -- is refused by the same FOV-filtered seam the browser uses.
 assert(t.examine(p, 17, 14) ~= nil, "the player sees their own room")
-assert(t.examine(p, 13, 15) == nil, "the west hall stays behind the shut door")
+assert(not pcall(function() t.examine(p, 13, 15) end), "the west hall stays behind the shut door")
 
 -- Both EVA exits are vestibules: outer door, three tiles of chamber, inner
 -- door, with vacuum beyond and air held between the leaves.
@@ -118,7 +118,7 @@ end
 local px, py = t.pos(p)
 assert(px == 22 and py == 14, "standing under the Common tower: " .. px .. "," .. py)
 local _ = t.messages(p)
-t.click(p, 22, 13, t.target_at(22, 13))
+t.click(p, 22, 13, t.target_at(p, 22, 13))
 t.tick()
 local heard = t.messages(p)
 local on_air = false

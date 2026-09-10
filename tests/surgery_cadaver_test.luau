@@ -80,7 +80,7 @@ end
 assert(t.pos(surgeon) == 4, "beside the drawer: " .. t.pos(surgeon))
 
 -- ---- the drawer, and what is in it ------------------------------------
-local chamber = t.target_at(5, 2, "cadaver_chamber.cadaver")
+local chamber = t.target_at(surgeon, 5, 2, "cadaver_chamber.cadaver")
 assert(chamber ~= nil, "the map stood the occupied variant there")
 t.click(surgeon, 5, 2, chamber)
 t.run_ticks(2)
@@ -88,7 +88,7 @@ t.run_ticks(2)
 local found = t.bodies_at(5, 1)
 assert(#found == 1, "one body rolled out on the slab")
 local corpse = found[1]
-local cid = corpse.id
+local corpse_name = corpse.name
 assert(corpse.player == false, "nobody is at the wheel of it")
 assert(corpse.label == "Dead", "and the plan calls it dead")
 
@@ -100,10 +100,10 @@ local function on_table()
 end
 
 -- ---- onto the table ---------------------------------------------------
-local optable = t.target_at(3, 2, "optable")
+local optable = t.target_at(surgeon, 3, 2, "optable")
 -- Laying a body out TAKES TIME now (`lay_body_secs`,
 -- content/tuning.luau), so this waits the do_after out.
-t.drag(surgeon, 5, 1, cid, 3, 2, optable)
+t.drag(surgeon, 5, 1, t.target_at(surgeon, 5, 1, "name:" .. corpse_name), 3, 2, optable)
 t.run_ticks(2 * 20 + 2)
 assert(on_table() ~= nil, "the cadaver is on the table")
 assert(on_table().posture == "lying", "laid out on it")
@@ -114,13 +114,13 @@ assert(on_table().posture == "lying", "laid out on it")
 -- off (tests/strip_test.luau).
 t.drop(surgeon)
 t.run_ticks(2)
-t.drag(surgeon, 3, 2, cid, 4, 1, t.body_id(surgeon))
+t.drag(surgeon, 3, 2, t.target_at(surgeon, 3, 2, "name:" .. corpse_name), 4, 1, t.body_target(surgeon, surgeon))
 t.run_ticks(2)
 local wardrobe = t.ui(surgeon)
 assert(wardrobe ~= nil, "the drag opened its wearables")
 local worn_row = slot_row(wardrobe, "Uniform")
 assert(worn_row ~= nil and worn_row.field == "strip", "it is wearing the jumpsuit")
-t.ui_act(surgeon, "toggle", '{"field":"strip","option":"uniform"}')
+ui_controls.toggle(surgeon, "strip", "uniform")
 t.run_ticks(90)
 assert(on_table().worn.uniform == nil, "the jumpsuit is off")
 
@@ -136,7 +136,7 @@ t.move(surgeon, "west")
 t.run_ticks(8)
 assert(t.pos(surgeon) == 3, "beside the console")
 assert(t.set_zone(surgeon, "chest"), "aiming at the chest")
-t.click(surgeon, 2, 2, t.target_at(2, 2))
+t.click(surgeon, 2, 2, t.target_at(surgeon, 2, 2))
 t.run_ticks(2)
 
 local console = t.ui(surgeon)
@@ -156,13 +156,13 @@ t.run_ticks(8)
 assert(t.pos(surgeon) == 4, "back beside the table")
 
 -- ---- and the cut ------------------------------------------------------
-t.click(surgeon, 4, 1, t.target_at(4, 1, "scalpel"))
+t.click(surgeon, 4, 1, t.target_at(surgeon, 4, 1, "scalpel"))
 t.run_ticks(2)
 assert(t.hands(surgeon).held == "scalpel", "the scalpel is back in hand")
 assert(t.set_zone(surgeon, "chest"), "aiming at the chest")
 
 local parked = #t.ledger_rows("DoAfterStarted")
-t.click(surgeon, 3, 2, cid)
+t.click(surgeon, 3, 2, t.target_at(surgeon, 3, 2, "name:" .. corpse_name))
 t.run_ticks(2)
 assert(not said(surgeon, "nothing to do"), "a bare, laid-out cadaver has work in it")
 assert(#t.ledger_rows("DoAfterStarted") > parked, "the incision parked")

@@ -50,7 +50,7 @@ end
 -- The chamber's one part row, read off a panel opened with a BARE hand
 -- -- a click with something in it is that thing being used.
 local function socket(p, x, y)
-    t.click(p, x, y, t.target_at(x, y))
+    t.click(p, x, y, t.target_at(p, x, y))
     t.tick()
     local rows = rows_in(t.ui(p), "parts.parts")
     assert(#rows == 1, "one socket, one row: got " .. #rows)
@@ -90,8 +90,8 @@ t.world([==[(
 local p = t.join()
 t.run_seconds(1)
 
-local heater = t.target_at(2, 1)
-local beaker = t.target_at(1, 1, "beaker.libital")
+local heater = t.target_at(p, 2, 1)
+local beaker = t.target_at(p, 1, 1, "beaker.libital")
 
 -- ---------------------------------------------------------------
 -- ONE: LOADING THE BAG IS THE ORDINARY GESTURE.
@@ -101,11 +101,11 @@ local beaker = t.target_at(1, 1, "beaker.libital")
 -- one hand and the tool in the other. The exchanger is a bag like any
 -- other and there is no second road into one.
 -- ---------------------------------------------------------------
-t.click(p, 1, 1, t.target_at(1, 1, "part_replacer"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "part_replacer"))
 t.run_ticks(2)
 assert(t.hands(p).held == "part_replacer", "the exchanger is in hand")
 t.swap_hands(p)
-t.click(p, 1, 1, t.target_at(1, 1, "micro_laser.tier3"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "micro_laser.tier3"))
 t.run_ticks(2)
 assert(t.hands(p).held == "micro_laser.tier3", "and a rung three laser in the other")
 
@@ -125,10 +125,11 @@ assert(t.examine_held_stored(p, 0).title == "ultra-high-power micro-laser",
 -- against what it does here.
 -- ---------------------------------------------------------------
 t.swap_hands(p)
-t.click(p, 1, 1, beaker)
+beaker = t.target_at(p, 1, 1, "beaker.libital")
+t.click(p, 1, 1, t.target_at(p, 1, 1, "beaker.libital"))
 t.run_ticks(2)
 assert(t.hands(p).held == "beaker.libital", "the beaker is in hand")
-t.click(p, 2, 1, heater)
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.run_ticks(2)
 assert(t.hands(p).held == nil, "and clicking the chamber with it puts it in")
 
@@ -138,11 +139,11 @@ local tier, eff = worth(before.value)
 assert(tier == 1 and math.abs(eff - 1.0) < 1e-9,
     "the plain rung, worth the plain part: " .. tier .. " " .. eff)
 
-t.click(p, 2, 1, heater)
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 assert(row(t.ui(p), "dock.vessel").value.text == "beaker (libital)", "with the beaker docked")
-t.ui_act(p, "set", '{"field":"temperature","value":350}')
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.set(p, "temperature", 350)
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 t.ui_close(p)
 
@@ -169,7 +170,7 @@ assert(plain_shut < plain_open,
 t.swap_hands(p)
 assert(t.hands(p).held == "part_replacer", "the exchanger comes back out")
 local _ = t.messages(p)
-t.click(p, 2, 1, heater)
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.run_ticks(2)
 assert(table.concat(t.messages(p), " | "):find("swap out 1", 1, true) ~= nil,
     "the tool says what it did: " .. table.concat(t.messages(p), " | "))
@@ -202,7 +203,7 @@ assert(after_tier == 3 and math.abs(after_eff - 2.0) < 1e-9,
 -- ---------------------------------------------------------------
 t.swap_hands(p)
 local _ = t.messages(p)
-t.click(p, 2, 1, heater)
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.run_ticks(2)
 assert(#t.ledger_rows("part_swapped") == 1, "still one swap on the record")
 assert(table.concat(t.messages(p), " | "):find("any better", 1, true) ~= nil,

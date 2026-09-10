@@ -69,7 +69,7 @@ local function near(got, want, tol, what)
         ("%s: wanted %g, got %g"):format(what, want, got))
 end
 
-local can = t.target_at(2, 1, "canister")
+local can = t.target_at(p, 2, 1, "canister")
 local shut = t.vessel(can)
 assert(shut ~= nil, "a canister has an inside")
 
@@ -133,8 +133,8 @@ local ui = t.ui(p)
 assert(ui ~= nil, "clicking a bottle opens its panel")
 assert(ui.toggles[1].field == "valve" and ui.toggles[1].on == false,
     "it arrives shut, because a map that said nothing said nothing")
-t.ui_act(p, "set", '{"field":"release","value":400}')
-t.ui_act(p, "toggle", '{"field":"valve"}')
+ui_controls.set(p, "release", 400)
+ui_controls.toggle(p, "valve")
 t.run_ticks(200)
 
 -- ---------------------------------------------------------------

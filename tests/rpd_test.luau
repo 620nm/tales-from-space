@@ -42,7 +42,7 @@ end
 local MODE, RECIPE, LAYER, PAINT = "dial0", "dial1", "dial2", "dial3"
 
 local function set(p, field, index)
-    t.ui_act(p, "toggle", '{"field":"' .. field .. '","option":"' .. index .. '"}')
+    ui_controls.toggle(p, field, index)
     t.tick()
 end
 
@@ -101,7 +101,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-t.click(p, 1, 2, t.target_at(1, 2, "rpd"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "rpd"))
 t.run_ticks(2)
 assert(t.hands(p).held == "rpd", "the RPD is in hand")
 
@@ -157,7 +157,7 @@ assert(shows(p, PAINT) == "green", "and tg's green")
 -- DESTROY together, with loose pipe breakdown first, so Build mode
 -- consumes the fitting the client named instead of dispensing over it.
 local _ = t.messages(p)
-t.click(p, 2, 1, t.target_at(2, 1, "manual_valve_fitting"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "manual_valve_fitting"))
 work(p)
 assert(t.count_items("manual_valve_fitting") == 1, "build mode consumed exactly one named fitting")
 assert(t.pipe(2, 1) == 0, "and does not reinterpret the item click as turf")
@@ -168,7 +168,7 @@ assert(
 
 -- The precedence is typed, not permission to erase arbitrary clutter.
 local _ = t.messages(p)
-local wrench = assert(t.target_at(1, 1, "wrench"))
+local wrench = assert(t.target_at(p, 1, 1, "wrench"))
 local pickup = nil
 for _, action in ipairs(t.action_hints(p, wrench)) do
     assert(action.id ~= "disassemble", "the dispenser cannot break down a wrench")
@@ -195,20 +195,20 @@ assert(t.count_items("wrench") == 1, "putting it down preserves the ordinary ite
 -- without joining is the whole reason layers exist.
 walk(p, "north")
 assert(t.pipe(2, 1) == 0, "nothing laid yet")
-t.click(p, 2, 1)
+t.click(p, 2, 1, nil, -14, 14)
 work(p)
 assert(t.pipe(2, 1) == 4, "one length on the distribution layer: " .. t.pipe(2, 1))
 
 set(p, LAYER, pick(p, LAYER, "2"))
 set(p, PAINT, pick(p, PAINT, "red"))
 assert(shows(p, LAYER) == "2" and shows(p, PAINT) == "red", "the dials moved")
-t.click(p, 2, 1)
+t.click(p, 2, 1, nil, -14, 14)
 work(p)
 assert(t.pipe(2, 1) == 6, "a second run crosses the first: " .. t.pipe(2, 1))
 
 set(p, LAYER, pick(p, LAYER, "4"))
 set(p, PAINT, pick(p, PAINT, "blue"))
-t.click(p, 2, 1)
+t.click(p, 2, 1, nil, -14, 14)
 work(p)
 assert(t.pipe(2, 1) == 14, "and a third: " .. t.pipe(2, 1))
 
@@ -233,7 +233,7 @@ walk(p, "east") -- (2, 1), so the next tile along is in reach
 set(p, RECIPE, pick(p, RECIPE, "Manual Valve"))
 assert(shows(p, RECIPE) == "Manual Valve", "the shelf is a list of buttons")
 assert(t.structure_at(3, 1) == nil, "bare deck")
-t.click(p, 3, 1)
+t.click(p, 3, 1, nil, -14, 14)
 work(p)
 local valve = t.structure_at(3, 1)
 assert(valve and valve.id == "manual_valve", "the valve stands, in one action")
@@ -253,7 +253,7 @@ walk(p, "east")
 walk(p, "east") -- (4, 1)
 set(p, RECIPE, pick(p, RECIPE, "Connector"))
 local _ = t.messages(p)
-t.click(p, 4, 1) -- the technician's own tile: a port goes UNDER the deck
+t.click(p, 4, 1, nil, -14, 14) -- the technician's own tile: a port goes UNDER the deck
 work(p)
 local socket = t.structure_at(4, 1)
 assert(socket and socket.id == "connector_port", "a port stands on bare deck, in one action")
@@ -269,7 +269,7 @@ assert(t.ledger_has("StructureStep", "connector_port", "built"), "on the record 
 -- One fitting per turf is a refusal that stayed (tg's
 -- PIPING_ONE_PER_TURF): a second port cannot claim this tile.
 local _ = t.messages(p)
-t.click(p, 4, 1)
+t.click(p, 4, 1, nil, -14, 14)
 work(p)
 assert(
     said(p, "Something is already under the floor here."),
@@ -278,11 +278,11 @@ assert(
 
 -- And the same rule one layer up for components.
 set(p, RECIPE, pick(p, RECIPE, "Manual Valve"))
-t.click(p, 5, 1)
+t.click(p, 5, 1, nil, -14, 14)
 work(p)
 assert(t.structure_at(5, 1).id == "manual_valve", "a valve goes down on bare deck")
 local _ = t.messages(p)
-t.click(p, 5, 1)
+t.click(p, 5, 1, nil, -14, 14)
 work(p)
 assert(
     said(p, "Something is already under the floor here."),
@@ -297,7 +297,7 @@ set(p, MODE, 1)
 assert(shows(p, MODE) == "Destroy", "destroy mode")
 
 local _ = t.messages(p)
-local valve = assert(t.target_at(5, 1, "manual_valve"))
+local valve = assert(t.target_at(p, 5, 1, "manual_valve"))
 for _, action in ipairs(t.action_hints(p, valve)) do
     assert(action.id ~= "disassemble", "an anchored valve offers no loose-item breakdown")
 end
@@ -312,7 +312,7 @@ walk(p, "west")
 walk(p, "west") -- back to (1, 1), beside it
 assert(t.count_items("manual_valve_fitting") == 1, "the loose fitting is still lying there")
 local _ = t.messages(p)
-t.click(p, 2, 1, t.target_at(2, 1, "manual_valve_fitting"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "manual_valve_fitting"))
 work(p)
 assert(t.count_items("manual_valve_fitting") == 0, "destroy mode ate it")
 assert(t.hands(p).held == "rpd", "and did not pocket it instead")
@@ -322,7 +322,7 @@ assert(t.ledger_has("ItemConsumed", "manual_valve_fitting"), "on the record")
 -- tg's destroy branch is typed: it accepts loose atmos construction,
 -- not every ordinary item which happens to be named by the click.
 local _ = t.messages(p)
-local ordinary = assert(t.target_at(1, 2, "wrench"))
+local ordinary = assert(t.target_at(p, 1, 2, "wrench"))
 for _, action in ipairs(t.action_hints(p, ordinary)) do
     assert(action.id ~= "disassemble", "destroy mode does not offer to break down a tool")
 end
@@ -347,7 +347,7 @@ set(p, PAINT, pick(p, PAINT, "omni")) -- deliberately wrong
 set(p, MODE, 2)
 assert(shows(p, MODE) == "Copy", "copy mode")
 local _ = t.messages(p)
-t.click(p, 2, 1)
+t.click_subfloor(p, 2, 1, "pipe", 2)
 -- A second, because a copy turns the dials without anyone pressing a
 -- button on the panel: the window catches up on its own refresh
 -- cadence (tg's SStgui `UI_STATUS_EVERY`), which is what makes a live
@@ -364,7 +364,7 @@ local _ = t.messages(p)
 for _, action in ipairs(t.action_hints(p, { Turf = { x = 1, y = 1 } })) do
     assert(action.id ~= "copy_pipe", "empty deck offers no pipe settings to copy")
 end
-t.click(p, 1, 1) -- the technician's own tile, bare deck
+t.click(p, 1, 1, nil, -14, 14) -- the technician's own tile, bare deck
 t.run_ticks(2)
 assert(not said(p, "There is no pipe under the floor here."), "the unavailable copy handler does not run")
 
@@ -377,7 +377,7 @@ local _ = t.messages(p)
 for _, action in ipairs(t.action_hints(p, { Turf = { x = 1, y = 2 } })) do
     assert(action.id ~= "build_pipe", "covered deck offers no pipe construction")
 end
-t.click(p, 1, 2) -- finished floor, one tile south
+t.click(p, 1, 2, nil, -14, 14) -- finished floor, one tile south
 work(p)
 assert(t.pipe(1, 2) == 0, "nothing was laid under a tiled floor")
 assert(
@@ -385,23 +385,23 @@ assert(
     "the unavailable construction handler does not run"
 )
 
--- ---- NEGATIVE: the client is hostile ----
+-- ---- Unoffered controls are absent ----
 --
 -- The window a device is showing IS the whitelist. A position past the
 -- end of a roster, and a dial the device does not have, both turn
 -- nothing at all.
-set(p, PAINT, 99)
-assert(shows(p, PAINT) == "red", "no payload can dial past the end of the roster")
-t.ui_act(p, "toggle", '{"field":"dial7","option":"0"}')
+assert(ui_controls.find(p, "/toggle/" .. PAINT .. "/99") == nil, "no choice beyond the palette")
+assert(shows(p, PAINT) == "red", "no rendered choice extends beyond the roster")
+assert(ui_controls.find(p, "/toggle/dial7/0") == nil, "no invented dial")
 t.tick()
 assert(shows(p, PAINT) == "red", "nor invent a fifth dial")
-t.ui_act(p, "set", '{"field":"dial2","value":4}')
+assert(ui_controls.find(p, "/set/dial2/value") == nil, "choices expose no numeric input")
 t.tick()
 assert(shows(p, LAYER) == "2", "nor reach a dial through a verb the panel has no controls for")
 
 local before = shows(p, MODE)
 t.ui_close(p)
-t.ui_act(p, "toggle", '{"field":"dial0","option":"1"}')
+assert(ui_controls.find(p, "/toggle/dial0/1") == nil, "closing removes the device control")
 t.tick()
 -- Reopen to observe the device; the closed subtree itself is gone.
 t.use_self(p)
@@ -440,7 +440,7 @@ t.world([==[(
 
 local o = t.join()
 t.tick()
-t.click(o, 1, 2, t.target_at(1, 2, "rpd"))
+t.click(o, 1, 2, t.target_at(o, 1, 2, "rpd"))
 t.run_ticks(2)
 t.use_self(o)
 t.tick()
@@ -448,7 +448,7 @@ t.tick()
 -- Raw pipe cannot be laid under either component shape.
 for _, x in ipairs({ 1, 2 }) do
     local _ = t.messages(o)
-    t.click(o, x, 1)
+    t.click(o, x, 1, nil, -14, 14)
     work(o)
     assert(t.pipe(x, 1) == 0, "no hidden pipe appeared at " .. x)
     assert(
@@ -458,7 +458,7 @@ for _, x in ipairs({ 1, 2 }) do
 end
 
 -- A layer-3 length may cross a layer-2 valve.
-t.click(o, 3, 1)
+t.click(o, 3, 1, nil, -14, 14)
 work(o)
 assert(
     t.pipe(3, 1) == 4,
@@ -470,14 +470,14 @@ assert(
 -- other component.
 set(o, RECIPE, pick(o, RECIPE, "Connector"))
 local _ = t.messages(o)
-t.click(o, 1, 1)
+t.click(o, 1, 1, nil, -14, 14)
 work(o)
 assert(t.structure_at(1, 1).id == "manual_valve", "the valve survived")
 assert(said(o, "Something is already under the floor here."), "connector over valve refused")
 
 set(o, RECIPE, pick(o, RECIPE, "Manual Valve"))
 local _ = t.messages(o)
-t.click(o, 2, 1)
+t.click(o, 2, 1, nil, -14, 14)
 work(o)
 assert(t.structure_at(2, 1).id == "connector_port", "the connector survived")
 assert(said(o, "Something is already under the floor here."), "valve over connector refused")
@@ -489,7 +489,7 @@ for _, case in ipairs({
 }) do
     set(o, RECIPE, pick(o, RECIPE, case.recipe))
     local _ = t.messages(o)
-    t.click(o, case.x, case.y)
+    t.click(o, case.x, case.y, nil, -14, 14)
     work(o)
     assert(t.structure_at(case.x, case.y) == nil, case.recipe .. " did not cover raw pipe")
     assert(said(o, "Something is already under the floor here."), "raw pipe blocks " .. case.recipe)
@@ -523,13 +523,13 @@ t.world([==[(
 
 local u = t.join()
 t.tick()
-t.click(u, 2, 2, t.target_at(2, 2, "rpd"))
+t.click(u, 2, 2, t.target_at(u, 2, 2, "rpd"))
 t.run_ticks(2)
 t.use_self(u)
 t.tick()
 
 set(u, RECIPE, pick(u, RECIPE, "Connector"))
-t.click(u, 2, 1)
+t.click(u, 2, 1, nil, -14, 14)
 work(u)
 assert(t.structure_at(2, 1).id == "connector_port", "a connector builds beside its run")
 assert(t.pipe(2, 1) == 0, "the connector has no raw centre length")
@@ -537,7 +537,7 @@ assert(t.pipe(2, 1) == 0, "the connector has no raw centre length")
 walk(u, "east")
 walk(u, "east") -- (4,2)
 set(u, RECIPE, pick(u, RECIPE, "Air Scrubber"))
-t.click(u, 4, 1)
+t.click(u, 4, 1, nil, -14, 14)
 work(u)
 assert(t.structure_at(4, 1).id == "air_scrubber", "a scrubber needs no underlying raw pipe")
 assert(t.pipe(4, 1) == 0, "the scrubber is a unary component, not pipe-over-pipe")
@@ -545,7 +545,7 @@ assert(t.pipe(4, 1) == 0, "the scrubber is a unary component, not pipe-over-pipe
 walk(u, "east")
 walk(u, "east") -- (6,2)
 set(u, RECIPE, pick(u, RECIPE, "Air Injector"))
-t.click(u, 6, 1)
+t.click(u, 6, 1, nil, -14, 14)
 work(u)
 assert(t.structure_at(6, 1).id == "air_injector", "an injector needs no underlying raw pipe")
 assert(t.pipe(6, 1) == 0, "the injector centre is raw-pipe-free")
@@ -568,7 +568,7 @@ for _, case in ipairs({
     set(u, LAYER, pick(u, LAYER, case.dial))
     set(u, RECIPE, pick(u, RECIPE, case.recipe))
     local _ = t.messages(u)
-    t.click(u, case.x, 3)
+    t.click(u, case.x, 3, nil, -14, 14)
     work(u)
     assert(t.structure_at(case.x, 3) == nil, case.recipe .. " did not cover its centre run")
     assert(t.pipe(case.x, 3) == case.layer, case.recipe .. " left the raw run intact")
@@ -584,7 +584,7 @@ end
 set(u, LAYER, pick(u, LAYER, "2"))
 set(u, RECIPE, pick(u, RECIPE, "Manual Valve"))
 local _ = t.messages(u)
-t.click(u, 2, 3)
+t.click(u, 2, 3, nil, -14, 14)
 work(u)
 local crossing = t.structure_at(2, 3)
 assert(

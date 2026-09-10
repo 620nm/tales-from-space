@@ -49,23 +49,23 @@ local shells = {
     { 3, 1, "spray_bottle", 0.250 },
 }
 for _, row in ipairs(shells) do
-    local vessel = t.vessel(t.target_at(row[1], row[2], row[3]))
+    local vessel = t.vessel(t.target_at(p, row[1], row[2], row[3]))
     assert(vessel ~= nil, row[3] .. " has an inside")
     near(vessel.volume_l, row[4], row[3] .. " keeps tg's shell size")
 end
 
-local small = t.target_at(1, 1, "water_bottle")
+local small = t.target_at(p, 1, 1, "water_bottle")
 local small_contents = t.contents(small)
 near(small_contents.water, 1.2375, "the small bottle carries 49.5 u water")
 near(small_contents.fluorine, 0.0125, "the small bottle carries 0.5 u fluorine")
-near(t.contents(t.target_at(4, 1, "water_bottle_large")).water, 2.5,
+near(t.contents(t.target_at(p, 4, 1, "water_bottle_large")).water, 2.5,
     "the large bottle carries 100 u water")
-assert(next(t.contents(t.target_at(1, 3, "water_bottle.empty"))) == nil,
+assert(next(t.contents(t.target_at(p, 1, 3, "water_bottle.empty"))) == nil,
     "the small empty form is empty")
-assert(next(t.contents(t.target_at(2, 3, "water_bottle_large.empty"))) == nil,
+assert(next(t.contents(t.target_at(p, 2, 3, "water_bottle_large.empty"))) == nil,
     "the large empty form is empty")
 
-t.click(p, 1, 1, small)
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, small)))
 t.tick()
 assert(t.vessel(small).sealed, "the filled bottle starts capped")
 t.use_self(p)
@@ -79,11 +79,11 @@ assert(#t.ledger_rows("Unsealed") == 1 and #t.ledger_rows("Sealed") == 1,
 
 t.drop(p)
 t.tick()
-local spray = t.target_at(3, 1, "spray_bottle")
-t.click(p, 3, 1, spray)
+local spray = t.target_at(p, 3, 1, "spray_bottle")
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, spray)))
 t.tick()
 assert(#t.sounds(p) == 0, "picking up the empty sprayer is silent")
-t.click(p, 6, 1)
+t.click_turf(p, 6, 1)
 t.tick()
 assert(#t.sounds(p) == 0, "an empty sprayer emits no launch sound")
 assert(#t.ledger_rows("MatterSprayed") == 0, "an empty sprayer launches nothing")
@@ -97,9 +97,9 @@ t.tick()
 -- A capped bottle is not a source. tg refills a sprayer only from
 -- something drainable (spray.dm:52), and nothing is drawn through a
 -- lid: the sprayer stays empty and the bottle keeps its water.
-local reservoir = t.target_at(4, 1, "water_bottle_large")
+local reservoir = t.target_at(p, 4, 1, "water_bottle_large")
 assert(t.vessel(reservoir).sealed, "the large bottle starts capped")
-t.click(p, 4, 1, reservoir)
+t.click(p, 4, 1, assert(t.target_at(p, 4, 1, reservoir)))
 t.tick()
 assert(next(t.contents(spray)) == nil, "a sealed source refills nothing")
 near(t.contents(reservoir).water, 2.5, "and loses nothing")
@@ -110,7 +110,7 @@ assert(#t.ledger_rows("MatterMoved") == 0, "no transfer is on the record")
 -- the sprayer up again -- and refill from arm's length.
 t.drop(p)
 t.tick()
-t.click(p, 4, 1, reservoir)
+t.click(p, 4, 1, assert(t.target_at(p, 4, 1, reservoir)))
 t.tick()
 t.use_self(p)
 t.tick()
@@ -119,21 +119,21 @@ t.drop(p)
 t.tick()
 t.move(p, "west")
 t.tick()
-t.click(p, 3, 1, spray)
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, spray)))
 t.tick()
-t.click(p, 3, 1, reservoir)
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, reservoir)))
 t.tick()
 near(t.contents(spray).water, 1.25, "an adjacent refill takes 50 u")
 near(t.contents(reservoir).water, 1.25, "out of the open bottle")
 assert(#t.sounds(p) == 0, "refilling emits no launch sound")
 
 local before = t.matter_totals()
-t.click(p, 6, 1)
+t.click_turf(p, 6, 1)
 t.tick()
 local launched = t.sounds(p)
 assert(#launched == 1 and launched[1] == "spray",
     "an accepted launch emits its declared sound once")
-t.click(p, 6, 1)
+t.click_turf(p, 6, 1)
 t.tick()
 assert(#t.sounds(p) == 0, "a cooldown refusal emits no launch sound")
 assert(#t.ledger_rows("MatterSprayed") == 1, "cooldown refuses a second launch")

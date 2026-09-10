@@ -63,7 +63,7 @@ local p = t.join()
 t.tick()
 
 local function take(id)
-    t.click(p, 2, 2, t.target_at(2, 2, id))
+    t.click(p, 2, 2, t.target_at(p, 2, 2, id))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
 end
@@ -88,37 +88,37 @@ end
 -- socket is WORTH; this one is about getting it back out).
 -- ---------------------------------------------------------------
 take("metal")
-t.build(p, "metal", "machine_frame", 2, 1)
+ui_controls.build(p, "metal", "machine_frame", 2, 1)
 t.run_seconds(8.5)
 assert(t.structure_at(2, 1).id == "machine_frame", "five sheets box up into a frame")
 
 put_down()
 take("cable_coil")
-t.click(p, 2, 1, t.target_at(2, 1, "machine_frame"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "machine_frame"))
 t.run_seconds(2.5)
 assert(t.structure_at(2, 1).state == "wired", "five lengths of cable wire it")
 
 put_down()
 take("machine_board.chem_heater")
-t.click(p, 2, 1, t.target_at(2, 1, "machine_frame"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "machine_frame"))
 t.run_ticks(2)
 assert(t.structure_at(2, 1).state == "boarded", "the board clicks into place")
 
 put_down()
 take("glass")
-t.click(p, 2, 1, t.target_at(2, 1, "machine_frame"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "machine_frame"))
 t.run_ticks(2)
 
 put_down()
 take("micro_laser.tier3")
-t.click(p, 2, 1, t.target_at(2, 1, "machine_frame"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "machine_frame"))
 t.run_ticks(2)
 assert(t.hands(p).held == nil, "a rung three laser fills the socket like any other")
 
 take("screwdriver")
-t.click(p, 2, 1, t.target_at(2, 1, "machine_frame"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "machine_frame"))
 t.run_seconds(4.5)
-local chamber = t.target_at(2, 1)
+local chamber = t.target_at(p, 2, 1)
 assert(chamber ~= nil, "the assembly becomes the machine its board named")
 assert(t.structure_at(2, 1) == nil, "and the frame is spent into it")
 
@@ -134,13 +134,13 @@ t.click(p, 2, 1, chamber)
 t.run_ticks(2)
 local heard = table.concat(t.messages(p), " | ")
 assert(heard:find("panel", 1, true), "the refusal says which rung is missing: " .. heard)
-assert(t.target_at(2, 1) ~= nil, "and the chamber is still standing")
+assert(t.target_at(p, 2, 1) ~= nil, "and the chamber is still standing")
 
 put_down()
 take("screwdriver")
 t.click(p, 2, 1, chamber)
 t.run_ticks(2)
-assert(t.target_at(2, 1) ~= nil, "the driver opens the panel and does nothing else")
+assert(t.target_at(p, 2, 1) ~= nil, "the driver opens the panel and does nothing else")
 
 put_down()
 take("crowbar")
@@ -156,7 +156,7 @@ assert(
 
 -- The frame's own crowbar is the ONE path a board and its parts come
 -- back out by — the same row that has always undone a board.
-t.click(p, 2, 1, t.target_at(2, 1, "machine_frame"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "machine_frame"))
 t.run_ticks(2)
 local left = t.items_at(2, 1)
 assert(count(left, "micro_laser.tier3") == 1,
@@ -181,7 +181,7 @@ assert(hands[1] == "machine_board.chem_heater" or hands[2] == "machine_board.che
 put_down()
 take("crowbar")
 walk("east", 4)
-t.click(p, 7, 1, t.target_at(7, 1, "thermomachine.fullupgrade"))
+t.click(p, 7, 1, t.target_at(p, 7, 1, "thermomachine.fullupgrade"))
 t.run_seconds(4.5)
 assert(t.structure_at(7, 1).id == "machine_frame", "a frame is what is left standing")
 

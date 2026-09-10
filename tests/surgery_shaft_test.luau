@@ -43,7 +43,6 @@ assert(t.body(patient).posture == "lying", "the patient is on the deck")
 assert(t.worn(patient).uniform == nil, "the chest is bared")
 
 local PX, PY = 2, 1
-local pid = t.body_id(patient)
 local TICK_HZ = 20
 
 -- A part's `states` is a SET keyed by name (`states.skin_open == true`),
@@ -58,7 +57,7 @@ local function hold(id)
         t.drop(surgeon)
         t.tick()
     end
-    t.click(surgeon, 1, 1, t.target_at(1, 1, id))
+    t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, id))
     t.run_ticks(2)
     assert(t.hands(surgeon).held == id, "the surgeon holds the " .. id)
 end
@@ -70,7 +69,7 @@ local function operate(done, step_secs)
     local attempts, ticks = 0, 0
     for _ = 1, 40 do
         if done(t.parts(patient).chest.states) then break end
-        t.click(surgeon, PX, PY, pid)
+        t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
         t.run_ticks(step_ticks)
         attempts = attempts + 1
         ticks = ticks + step_ticks

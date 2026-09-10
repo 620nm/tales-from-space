@@ -95,9 +95,9 @@ t.set_environment({ sink_k = 293.15, insolation = 0.0 })
 local p = t.join()
 t.tick()
 
-local heater = t.target_at(3, 2)
-local can = t.target_at(2, 1)
-local jar = t.target_at(2, 3, "bottle")
+local heater = t.target_at(p, 3, 2)
+local can = t.target_at(p, 2, 1)
+local jar = t.target_at(p, 2, 3, "bottle")
 
 local function phases(handle)
     local reading = t.vessel(handle)
@@ -149,10 +149,10 @@ local function condition(target_k, secs)
     t.tick()
     t.click(p, 3, 2, heater)
     t.tick()
-    t.ui_act(p, "set", '{"field":"temperature","value":' .. target_k .. '}')
+    ui_controls.set(p, "temperature", target_k)
     t.run_ticks(2)
     if t.ui(p).toggles[1].on ~= true then
-        t.ui_act(p, "toggle", '{"field":"power"}')
+        ui_controls.toggle(p, "power")
     end
     t.run_ticks(2)
     t.run_seconds(secs)
@@ -160,10 +160,10 @@ end
 
 local function undock()
     if t.ui(p).toggles[1].on == true then
-        t.ui_act(p, "toggle", '{"field":"power"}')
+        ui_controls.toggle(p, "power")
         t.run_ticks(2)
     end
-    t.ui_act(p, "toggle", '{"field":"eject"}')
+    ui_controls.toggle(p, "eject")
     t.run_ticks(2)
     assert(t.hands(p).held == "bottle", "the bottle comes back out")
 end

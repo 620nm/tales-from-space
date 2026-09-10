@@ -144,7 +144,7 @@ assert(
 -- panel rather than assumed.
 local p = t.join()
 t.tick()
-t.click(p, 2, 1, t.target_at(2, 1, "air_scrubber"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "air_scrubber"))
 t.tick()
 local panel = t.ui(p)
 assert(panel ~= nil, "a scrubber wears a panel")

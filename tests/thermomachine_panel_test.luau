@@ -90,7 +90,7 @@ assert(t.structure_at(5, 1).state == "off", "switched off out of the crate")
 assert(t.apc_at(2, 2).equipment == true, "with the bench's APC feeding its circuit")
 assert(t.segment_at(5, 1).feed == 1, "which reaches the machine's own tile")
 
-t.click(p, 5, 1, t.target_at(5, 1, "thermomachine"))
+t.click(p, 5, 1, t.target_at(p, 5, 1, "thermomachine"))
 t.tick()
 assert(t.ui(p), "the unit answers an empty hand with its panel")
 
@@ -109,12 +109,12 @@ assert(row(t.ui(p), "thermo.supply").value.id == "thermo.supply.fed", "and that 
 -- Dial well above the gas and the tone flips before a single joule
 -- moves: this is the setpoint's side of the comparison changing, not
 -- the machine's.
-t.ui_act(p, "set", '{"field":"temperature","value":500}')
+ui_controls.set(p, "temperature", 500)
 t.tick()
 assert(row(t.ui(p), "thermo.pipe").tone == "off", "the gas is under the dial, and the panel says so")
 near(t.pipe_temperature(3, 1), T20C, 0.5, "with nothing switched on and nothing moved")
 
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.structure_at(5, 1).state == "running", "now it is running")
 
@@ -126,7 +126,7 @@ assert(row(t.ui(p), "thermo.pipe").tone == "off", "so the gas is still under the
 
 -- ...and now the dial goes UNDER the gas, which is the third tone and
 -- the one that only a machine that heats AND cools can ever show.
-t.ui_act(p, "set", '{"field":"temperature","value":300}')
+ui_controls.set(p, "temperature", 300)
 t.tick()
 assert(row(t.ui(p), "thermo.pipe").tone == "on", "the gas is over the dial now, and only the dial moved")
 near(t.ui(p).gauge, (300.0 - 73.15) / 500.0 * 100.0, 1e-9, "with the needle at the new setting's place")
@@ -177,7 +177,7 @@ assert(
 -- A dead machine takes orders perfectly happily -- the panel is fed by
 -- the click that opened it and by nothing else. What it must not do is
 -- act on them.
-t.ui_act(p, "set", '{"field":"temperature","value":73.15}')
+ui_controls.set(p, "temperature", 73.15)
 t.run_ticks(2)
 near(t.ui(p).setpoints[1].value, 73.15, 1e-9, "the dial goes to the stop while the grid is dark")
 near(t.ui(p).gauge, 0.0, 1e-9, "and the needle with it")
@@ -188,7 +188,7 @@ near(t.pipe_temperature(3, 1), caught_k, 1e-9, "and not one joule followed the o
 -- The switch survives being thrown while dead, too: off is a position
 -- somebody chose, and a machine that came back up on its own would be
 -- one that ignored the last hand on it.
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.ui(p).toggles[1].on == false, "the switch went over on a dead grid")
 assert(t.structure_at(5, 1).state == "off", "and the picture is the same either way, which is the point")

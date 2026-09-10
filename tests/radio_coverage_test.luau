@@ -76,7 +76,7 @@ t.run_ticks(20)
 -- radio, transmit and receive both (items/encryption_key.luau).
 local function pocket(p)
     local x, y = t.pos(p)
-    t.click(p, x, y, t.target_at(x, y, "encryption_key.medical"))
+    t.click(p, x, y, t.target_at(p, x, y, "encryption_key.medical"))
     t.run_ticks(2)
     assert(t.hands(p).held == "encryption_key.medical", "the key is in hand")
 end
@@ -251,7 +251,7 @@ t.run_ticks(20)
 
 local function take_headset(p)
     local x, y = t.pos(p)
-    t.click(p, x, y, t.target_at(x, y, "headset"))
+    t.click(p, x, y, t.target_at(p, x, y, "headset"))
     t.run_ticks(2)
     assert(t.hands(p).held == "headset", "the Common headset is in hand")
 end

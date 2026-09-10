@@ -93,7 +93,7 @@ assert(#belt_art(mine) == 5, "five pictures for seven tools")
 -- The loose belt on the floor is unchanged: the object view composed
 -- its contents before this divergence and composes them the same way
 -- now, base sprite first.
-local floor_belt = t.target_at(3, 1, "toolbelt")
+local floor_belt = t.target_at(eng, 3, 1, "toolbelt")
 assert(floor_belt, "a stocked belt lies on the deck")
 local loose = t.layers(eng, floor_belt)
 assert(loose[1] == "toolbelt", "the object's own picture is the base")
@@ -129,7 +129,9 @@ assert(#t.stored(eng, "belt") == 7, "the belt was not touched")
 -- NEGATIVE: a row that does not exist changes nothing (a stale click
 -- from a client whose panel is a tick behind).
 t.swap_hands(eng)
-t.take_from(eng, "belt", 99)
+local unavailable_ok, unavailable_error = pcall(function() t.take_from(eng, "belt", 99) end)
+assert(not unavailable_ok and tostring(unavailable_error):find("no observed item or slot", 1, true),
+    "the disclosed belt has no ninety-ninth row to select")
 t.tick()
 assert(t.hands(eng).held == nil, "no such row, nothing taken")
 assert(#t.stored(eng, "belt") == 7, "and nothing left the belt")

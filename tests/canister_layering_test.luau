@@ -29,22 +29,21 @@ t.world(MAP, 7)
 local p = t.join()
 t.tick()
 
-local canister = t.target_at(3, 1, "canister")
-local tiles = t.target_at(2, 2, "floor_tile")
+local canister = t.target_at(p, 3, 1, "canister")
+local tiles = t.target_at(p, 2, 2, "floor_tile")
 assert(canister ~= nil and tiles ~= nil, "the map placed both click targets")
-t.click(p, 2, 2, tiles)
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, tiles)))
 t.tick()
 assert(t.hands(p).held == "floor_tile", "the player picked up the tiles")
 
 -- The exact entity claim is the vessel, not the deck or socket below it.
-t.click(p, 3, 1, canister)
+t.click(p, 3, 1, assert(t.target_at(p, 3, 1, canister)))
 t.run_seconds(1)
 assert(t.turf(3, 1) == "plating", "clicking the vessel did not tile the deck")
 t.ui_close(p)
 
--- Omitting the target is the browser saying its hit-test landed on a
--- transparent pixel. That ground click spends the tile on the plating.
-t.click(p, 3, 1)
+-- A pixel where only turf is visible spends the tile on the plating.
+t.click_turf(p, 3, 1)
 t.run_seconds(1)
 assert(t.turf(3, 1) == "floor", "the transparent click reached the deck")
 local standing = t.structure_at(3, 1)

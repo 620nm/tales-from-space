@@ -101,17 +101,17 @@ assert(t.body(near).posture == "lying", "the patients are down")
 -- (content/items/uniform_*.luau `covers`).
 t.unequip(near, "uniform")
 t.run_ticks(2)
-t.click(surgeon, 2, 2, t.target_at(2, 2, "scalpel"))
+t.click(surgeon, 2, 2, t.target_at(surgeon, 2, 2, "scalpel"))
 t.run_ticks(2)
 assert(t.hands(surgeon).held ~= nil, "the scalpel is in hand")
-t.click(surgeon, 3, 2, t.body_id(near))
+t.click(surgeon, 3, 2, t.body_target(surgeon, near))
 t.run_ticks(100)
 assert(t.parts(near).chest.states.skin_cut == true, "the chest is open")
 
 -- ---- the console, read by a surgeon standing beside it ----------------
 t.drop(surgeon) -- an empty hand is what opens a machine's window
 t.run_ticks(2)
-t.click(surgeon, CX, CY, t.target_at(CX, CY))
+t.click(surgeon, CX, CY, t.target_at(surgeon, CX, CY))
 t.run_ticks(2)
 
 local ui = t.ui(surgeon)
@@ -190,13 +190,13 @@ end
 assert(aimed ~= nil, "the panel offers the head as a target")
 assert(word(aimed.label) == "head", "labelled out of the plan: " .. tostring(word(aimed.label)))
 
-t.ui_act(surgeon, "toggle", '{"field":"zone","option":"head"}')
+ui_controls.toggle(surgeon, "zone", "head")
 t.run_ticks(2)
 
 -- The same scalpel, the same patient, a different part.
-t.click(surgeon, 2, 2, t.target_at(2, 2, "scalpel"))
+t.click(surgeon, 2, 2, t.target_at(surgeon, 2, 2, "scalpel"))
 t.run_ticks(2)
-t.click(surgeon, 3, 2, t.body_id(near))
+t.click(surgeon, 3, 2, t.body_target(surgeon, near))
 t.run_ticks(100)
 assert(t.parts(near).head.states.skin_cut == true, "the head is where the cut landed")
 

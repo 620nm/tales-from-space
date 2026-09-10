@@ -26,8 +26,6 @@ t.run_ticks(3)
 
 local AX, AY = 1, 1 -- the crewman
 local CX, CY = 2, 1 -- the body being worked on
-local cid = t.body_id(cadaver)
-local aid = t.body_id(crewman)
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
@@ -62,7 +60,7 @@ end
 
 -- ---- the drag opens the wardrobe --------------------------------------
 assert(t.worn(cadaver).uniform ~= nil, "roundstart puts them in a jumpsuit")
-t.drag(crewman, CX, CY, cid, AX, AY, aid)
+t.drag(crewman, CX, CY, t.body_target(crewman, cadaver), AX, AY, t.body_target(crewman, crewman))
 t.run_ticks(2)
 local panel = t.ui(crewman)
 assert(panel ~= nil, "dragging a body onto yourself opens its wearables")
@@ -78,7 +76,7 @@ assert(suit ~= nil and suit.row == "word" and word(suit.text) == "wearables.empt
     "the empty suit slot is still named, and says it is bare")
 
 -- ---- the strip: parked, then landed -----------------------------------
-t.ui_act(crewman, "toggle", '{"field":"strip","option":"uniform"}')
+ui_controls.toggle(crewman, "strip", "uniform")
 t.run_ticks(2)
 assert(#t.ledger_rows("DoAfterStarted") > 0, "the strip parked")
 assert(t.worn(cadaver).uniform ~= nil, "and nothing has come off yet")
@@ -97,10 +95,10 @@ assert(said(crewman, "You take"), "and the crewman is told what they did")
 -- now finds a bare chest and starts cutting.
 t.rest(cadaver, true)
 t.run_ticks(2)
-t.click(crewman, 1, 1, t.target_at(1, 1, "scalpel"))
+t.click(crewman, 1, 1, t.target_at(crewman, 1, 1, "scalpel"))
 t.run_ticks(2)
 local parked = #t.ledger_rows("DoAfterStarted")
-t.click(crewman, CX, CY, cid)
+t.click(crewman, CX, CY, t.body_target(crewman, cadaver))
 t.run_ticks(2)
 assert(not said(crewman, "covered"), "nothing is in the way any more")
 assert(#t.ledger_rows("DoAfterStarted") > parked, "the incision parked")
@@ -113,11 +111,11 @@ assert(#t.ledger_rows("DoAfterStarted") > parked, "the incision parked")
 -- subject.
 t.drop(crewman)
 t.run_ticks(2)
-t.click(crewman, CX, CY, t.target_at(CX, CY, "uniform_grey"))
+t.click(crewman, CX, CY, t.target_at(crewman, CX, CY, "uniform_grey"))
 t.run_ticks(2)
 assert(t.hands(crewman).held == "uniform_grey", "the jumpsuit is back in hand")
 
-t.drag(crewman, CX, CY, cid, AX, AY, aid)
+t.drag(crewman, CX, CY, t.body_target(crewman, cadaver), AX, AY, t.body_target(crewman, crewman))
 t.run_ticks(2)
 local after = t.ui(crewman)
 assert(row_labels(after) == order,
@@ -128,7 +126,7 @@ assert(refill.text.id == "wearables.put_on" and refill.text.args.item == "grey j
     "and a dress button can never be misread as a strip one: " .. tostring(word(refill.text)))
 
 local dressed = #t.ledger_rows("Dressed")
-t.ui_act(crewman, "toggle", '{"field":"dress","option":"uniform"}')
+ui_controls.toggle(crewman, "dress", "uniform")
 t.run_ticks(2)
 assert(t.worn(cadaver).uniform == nil, "still in hand while the do_after runs")
 t.run_ticks(85)

@@ -33,8 +33,8 @@ local p = t.join()
 t.tick()
 
 -- 1. THE DOTTED ID IS AN ID.
-local mixed = t.target_at(1, 1, "beaker.libital")
-local empty = t.target_at(2, 1, "beaker")
+local mixed = t.target_at(p, 1, 1, "beaker.libital")
+local empty = t.target_at(p, 2, 1, "beaker")
 assert(mixed ~= nil, "the map placed the variant by its own id")
 assert(empty ~= nil, "and the bare beaker beside it")
 assert(mixed ~= empty, "they are two different things on two tiles")

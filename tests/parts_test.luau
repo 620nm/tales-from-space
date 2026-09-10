@@ -65,6 +65,7 @@ t.world([==[(
         "############",
         "#o..a#g#...#",
         "#......o...#",
+        "#..........#",
         "############",
     ],
     spawns: [(8, 2)],
@@ -79,13 +80,13 @@ t.world([==[(
     items: [
         (2, 2, "beaker.libital"),
         (3, 2, "beaker.libital"),
-        (8, 2, "beaker.libital"),
-        (8, 2, "metal"),
-        (8, 2, "cable_coil"),
-        (8, 2, "machine_board.chem_heater"),
-        (8, 2, "glass"),
-        (8, 2, "micro_laser.tier3"),
-        (8, 2, "screwdriver"),
+        (10, 2, "beaker.libital"),
+        (7, 3, "metal"),
+        (8, 3, "cable_coil"),
+        (9, 3, "machine_board.chem_heater"),
+        (10, 3, "glass"),
+        (7, 2, "micro_laser.tier3"),
+        (9, 2, "screwdriver"),
     ],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
@@ -99,9 +100,28 @@ local p = t.join()
 t.tick()
 
 local function take(x, y, id)
-    t.click(p, x, y, t.target_at(x, y, id))
+    local places = {["beaker.libital"] = {10, 2},["metal"] = {7, 3},["cable_coil"] = {8, 3},["machine_board.chem_heater"] = {9, 3},["glass"] = {10, 3},["micro_laser.tier3"] = {7, 2},["screwdriver"] = {9, 2}}
+    local at = if x ~= 8 or y ~= 2 or t.target_at(p, x, y, id) then {x, y} else places[id]
+    local home_x, home_y = t.pos(p)
+    local px, py = home_x, home_y
+    for _ = 1, 16 do
+        if math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1 then break end
+        local dir = if py == 1 and math.abs(px - at[1]) > 1 then "south" elseif math.abs(py - at[2]) > 1 then (if py < at[2] then "south" else "north") else (if px < at[1] then "east" else "west")
+        t.move(p, dir)
+        t.run_ticks(3)
+        px, py = t.pos(p)
+    end
+    assert(math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1, "the supply is reachable")
+    t.click(p, at[1], at[2], t.target_at(p, at[1], at[2], id))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
+    for _ = 1, 16 do
+        if px == home_x and py == home_y then break end
+        t.move(p, if px ~= home_x then (if px < home_x then "east" else "west") else (if py < home_y then "south" else "north"))
+        t.run_ticks(3)
+        px, py = t.pos(p)
+    end
+    assert(px == home_x and py == home_y, "returned to the workbench")
 end
 
 local function put_down()
@@ -133,19 +153,19 @@ end
 -- without ever saying so twice.
 -- ---------------------------------------------------------------
 take(8, 2, "metal")
-t.build(p, "metal", "machine_frame", 8, 1)
+ui_controls.build(p, "metal", "machine_frame", 8, 1)
 t.run_seconds(8.5)
 assert(t.structure_at(8, 1).id == "machine_frame", "five sheets box up into a frame")
 
 put_down()
 take(8, 2, "cable_coil")
-t.click(p, 8, 1, t.target_at(8, 1, "machine_frame"))
+t.click(p, 8, 1, t.target_at(p, 8, 1, "machine_frame"))
 t.run_seconds(2.5)
 assert(t.structure_at(8, 1).state == "wired", "five lengths of cable wire it")
 
 put_down()
 take(8, 2, "machine_board.chem_heater")
-t.click(p, 8, 1, t.target_at(8, 1, "machine_frame"))
+t.click(p, 8, 1, t.target_at(p, 8, 1, "machine_frame"))
 t.run_ticks(2)
 assert(t.structure_at(8, 1).state == "boarded", "the board clicks into place")
 
@@ -154,7 +174,7 @@ assert(t.structure_at(8, 1).state == "boarded", "the board clicks into place")
 -- for before the board's own stack materials.
 take(8, 2, "screwdriver")
 local _ = t.messages(p)
-t.click(p, 8, 1, t.target_at(8, 1, "machine_frame"))
+t.click(p, 8, 1, t.target_at(p, 8, 1, "machine_frame"))
 t.run_seconds(4.5)
 local heard = table.concat(t.messages(p), " | ")
 assert(
@@ -164,32 +184,32 @@ assert(
 
 put_down()
 take(8, 2, "glass")
-t.click(p, 8, 1, t.target_at(8, 1, "machine_frame"))
+t.click(p, 8, 1, t.target_at(p, 8, 1, "machine_frame"))
 t.run_ticks(2)
 put_down()
 
 take(8, 2, "micro_laser.tier3")
-t.click(p, 8, 1, t.target_at(8, 1, "machine_frame"))
+t.click(p, 8, 1, t.target_at(p, 8, 1, "machine_frame"))
 t.run_ticks(2)
 assert(t.hands(p).held == nil, "a rung three laser fills the socket like any other")
 
 take(8, 2, "screwdriver")
-t.click(p, 8, 1, t.target_at(8, 1, "machine_frame"))
+t.click(p, 8, 1, t.target_at(p, 8, 1, "machine_frame"))
 t.run_seconds(4.5)
-local built = t.target_at(8, 1)
+local built = t.target_at(p, 8, 1)
 assert(built ~= nil, "the assembly becomes the machine its board named")
 put_down()
 
 -- ---------------------------------------------------------------
 -- TWO: THE PANEL SAYS WHAT IS INSIDE.
 -- ---------------------------------------------------------------
-local warm_beaker = t.target_at(8, 2, "beaker.libital")
+local warm_beaker = t.target_at(p, 10, 2, "beaker.libital")
 take(8, 2, "beaker.libital")
-t.click(p, 8, 1, built)
+t.click(p, 8, 1, t.target_at(p, 8, 1))
 t.run_ticks(2)
 
 t.run_seconds(2)
-t.click(p, 8, 1, built)
+t.click(p, 8, 1, t.target_at(p, 8, 1))
 t.tick()
 local ui = t.ui(p)
 local parts = rows_in(ui, "parts.parts")
@@ -203,18 +223,18 @@ assert(row(ui, "dock.vessel").value.text == "beaker (libital)",
     "a machine out of a frame docks like any other: " .. tostring(word(row(ui, "dock.vessel").value)))
 assert(row(ui, "dock.supply").value.id == "dock.supply.fed",
     "and the frame it came out of was wired: " .. tostring(word(row(ui, "dock.supply").value)))
-t.ui_act(p, "set", '{"field":"temperature","value":400}')
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.set(p, "temperature", 400)
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 t.ui_close(p)
 
 -- The chamber a map stocked with the BEST laser.
 walk("west", 5)
-local best_beaker = t.target_at(3, 2, "beaker.libital")
+local best_beaker = t.target_at(p, 3, 2, "beaker.libital")
 take(3, 2, "beaker.libital")
-t.click(p, 3, 1, t.target_at(3, 1))
+t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.run_ticks(2)
-t.click(p, 3, 1, t.target_at(3, 1))
+t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.tick()
 parts = rows_in(t.ui(p), "parts.parts")
 assert(#parts == 1 and parts[1].label.text == "quad-ultra micro-laser",
@@ -222,19 +242,19 @@ assert(#parts == 1 and parts[1].label.text == "quad-ultra micro-laser",
 local four_tier, four_eff = worth(parts[1].value)
 assert(four_tier == 4 and math.abs(four_eff - 3.0) < 1e-9,
     "worth three plain lasers: " .. four_tier .. " " .. four_eff)
-t.ui_act(p, "set", '{"field":"temperature","value":400}')
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.set(p, "temperature", 400)
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 t.ui_close(p)
 
 -- ...and the one nobody upgraded, which is what a placement that says
 -- nothing gets: the lowest rung the pack ships.
 walk("west", 1)
-local plain_beaker = t.target_at(2, 2, "beaker.libital")
+local plain_beaker = t.target_at(p, 2, 2, "beaker.libital")
 take(2, 2, "beaker.libital")
-t.click(p, 2, 1, t.target_at(2, 1))
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.run_ticks(2)
-t.click(p, 2, 1, t.target_at(2, 1))
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 parts = rows_in(t.ui(p), "parts.parts")
 assert(#parts == 1 and parts[1].label.text == "micro-laser",
@@ -243,8 +263,8 @@ local plain_tier, plain_eff = worth(parts[1].value)
 assert(plain_tier == 1 and math.abs(plain_eff - 1.0) < 1e-9,
     "and the neutral part: " .. plain_tier .. " " .. plain_eff)
 assert(row(t.ui(p), "dock.vessel").value.text == "beaker (libital)", "with a beaker in it")
-t.ui_act(p, "set", '{"field":"temperature","value":400}')
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.set(p, "temperature", 400)
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 t.ui_close(p)
 
@@ -278,7 +298,7 @@ assert(best <= 400.0 + 1e-9, "none of them crosses the dial: " .. best)
 -- onto the hot one (thermomachine.dm:34, :95-96).
 -- ---------------------------------------------------------------
 walk("east", 7)
-t.click(p, 9, 1, t.target_at(9, 1))
+t.click(p, 9, 1, t.target_at(p, 9, 1))
 t.tick()
 ui = t.ui(p)
 local dial = ui.setpoints[1]
@@ -291,7 +311,7 @@ assert(#rows_in(ui, "parts.parts") == 4, "four sockets: two bins and two lasers"
 t.ui_close(p)
 
 walk("east", 1)
-t.click(p, 10, 1, t.target_at(10, 1))
+t.click(p, 10, 1, t.target_at(p, 10, 1))
 t.tick()
 ui = t.ui(p)
 local upgraded = ui.setpoints[1]

@@ -131,10 +131,10 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local taps = t.target_at(2, 2)
-local mixer = t.target_at(1, 1, "beaker")
-local bottle = t.target_at(3, 1, "bottle")
-local twin = t.target_at(3, 2, "beaker")
+local taps = t.target_at(p, 2, 2)
+local mixer = t.target_at(p, 1, 1, "beaker")
+local bottle = t.target_at(p, 3, 1, "bottle")
+local twin = t.target_at(p, 3, 2, "beaker")
 
 -- The whole room's CO2, over every tile of it. A sealed room with no
 -- vents in it has nowhere else to put gas, so this is the honest test
@@ -163,12 +163,12 @@ local function open_panel()
 end
 
 local function dial(moles)
-    t.ui_act(p, "set", '{"field":"amount","value":' .. moles .. '}')
+    ui_controls.set(p, "amount", moles)
     t.run_ticks(2)
 end
 
 local function press(key)
-    t.ui_act(p, "toggle", '{"field":"dispense","option":"' .. key .. '"}')
+    ui_controls.toggle(p, "dispense", key)
     t.run_ticks(2)
 end
 
@@ -183,7 +183,7 @@ local function brew_into(x, y, vessel)
     press("water")
     dial(SUGAR)
     press("sugar")
-    t.ui_act(p, "toggle", '{"field":"eject"}')
+    ui_controls.toggle(p, "eject")
     t.run_ticks(2)
     assert(t.hands(p).held == "beaker", "and it comes back out")
     t.click(p, x, y, vessel)

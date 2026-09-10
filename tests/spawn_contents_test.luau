@@ -59,14 +59,14 @@ end
 -- a thing the machine did not recognise as a bottle would have been an
 -- ordinary swing and said nothing at all.
 -- ---------------------------------------------------------------
-local bottle = t.target_at(2, 2, "bottle.iodine")
+local bottle = t.target_at(p, 2, 2, "bottle.iodine")
 assert(bottle ~= nil, "the map placed the labelled bottle")
 t.click(p, 2, 2, bottle) -- pick it up
 t.run_ticks(2)
 assert(t.hands(p).held == "bottle.iodine", "the bottle is in the working hand")
 
 local _ = t.messages(p)
-t.click(p, 2, 1, t.target_at(2, 1)) -- swing it at the machine
+t.click(p, 2, 1, t.target_at(p, 2, 1)) -- swing it at the machine
 t.run_ticks(2)
 assert(said("only takes empties"),
     "the machine knows a bottle when it sees one, and this one is full")
@@ -85,12 +85,12 @@ t.run_ticks(4)
 assert(t.vessel(bottle).moles < 1e-6, "the bottle is an empty now")
 
 local _ = t.messages(p)
-t.click(p, 2, 1, t.target_at(2, 1))
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.run_ticks(2)
 assert(said("cold bottle of water"), "the machine served one")
 assert(t.hands(p).held == nil, "and swallowed the empty you handed over")
 
-local served = t.target_at(2, 1, "bottle")
+local served = t.target_at(p, 2, 1, "bottle")
 assert(served ~= nil, "a plain bottle is standing at the machine's feet")
 local reading = t.vessel(served)
 assert(reading ~= nil, "and it is a vessel")

@@ -100,7 +100,7 @@ assert(t.structure_at(9, 2).state == "shut", "shut, like its twin")
 
 -- The manual valve: no window at all, and a wheel that takes tg's
 -- second.
-t.click(p, 3, 1, t.target_at(3, 1, "manual_valve"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "manual_valve"))
 t.tick()
 assert(t.ui(p) == nil, "a manual valve has no panel to open")
 assert(t.structure_at(3, 1).state == "shut", "and a second is a second")
@@ -113,9 +113,9 @@ assert(said(p, "The manual valve is open."), "and it says where it landed")
 walk(p, "east")
 walk(p, "east")
 walk(p, "east")
-t.click(p, 6, 1, t.target_at(6, 1, "pipe"))
+t.click(p, 6, 1, t.target_at(p, 6, 1, "pipe"))
 t.run_ticks(2)
-t.click(p, 6, 2)
+t.click(p, 6, 2, nil, -14, 14)
 t.run_seconds(1.5)
 assert(t.pipe(6, 2) == 4, "the west main is three lengths now")
 t.drop(p)
@@ -137,7 +137,7 @@ local level = (moles(west, WEST_M3) + moles(east, EAST_M3))
 walk(p, "east")
 walk(p, "east")
 walk(p, "east")
-t.click(p, 9, 2, t.target_at(9, 2, "digital_valve"))
+t.click(p, 9, 2, t.target_at(p, 9, 2, "digital_valve"))
 t.tick()
 local panel = t.ui(p)
 assert(panel, "a digital valve answers an empty hand with a panel")
@@ -147,7 +147,7 @@ assert(panel.toggles[1].on_text.text == "open", panel.toggles[1].on_text.text)
 assert(panel.toggles[1].off_text.text == "shut")
 assert(panel.toggles[1].label.id == "flow.switch.valve", "and it is a valve, not a pump")
 
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.structure_at(9, 2).state == "open", "no wheel: it throws on the command")
 assert(
@@ -195,7 +195,7 @@ local d = t.join()
 t.tick()
 t.run_seconds(3)
 
-t.click(d, 3, 1, t.target_at(3, 1, "pump"))
+t.click(d, 3, 1, t.target_at(d, 3, 1, "pump"))
 t.tick()
 local supply = nil
 for _, r in ipairs(t.ui(d).readouts) do
@@ -207,8 +207,8 @@ assert(supply == "flow.supply.dead", "the panel says the mains are not behind it
 
 -- Wind the setpoint up so a working pump would have plenty to do, and
 -- throw the switch.
-t.ui_act(d, "set", '{"field":"target","value":300}')
-t.ui_act(d, "toggle", '{"field":"power"}')
+ui_controls.set(d, "target", 300)
+ui_controls.toggle(d, "power")
 t.run_ticks(2)
 assert(t.ui(d).toggles[1].on == true, "the switch is on")
 assert(
@@ -269,18 +269,18 @@ t.tick()
 assert(t.pipe_pressure(3, 1) == nil, "no net claims the tile the machine is on")
 
 -- Switch it on through its panel, then pick the wrench up.
-t.click(w, 3, 1, t.target_at(3, 1, "pump"))
+t.click(w, 3, 1, t.target_at(w, 3, 1, "pump"))
 t.tick()
-t.ui_act(w, "toggle", '{"field":"power"}')
+ui_controls.toggle(w, "power")
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "running", "the pump is running")
 
-t.click(w, 4, 2, t.target_at(4, 2, "wrench"))
+t.click(w, 4, 2, t.target_at(w, 4, 2, "wrench"))
 t.run_ticks(2)
 assert(t.hands(w).held == "wrench", "wrench in hand")
 
 local _ = t.messages(w)
-t.click(w, 3, 1, t.target_at(3, 1, "pump"))
+t.click(w, 3, 1, t.target_at(w, 3, 1, "pump"))
 t.run_seconds(2.5)
 assert(
     said(w, "The pump must be off first."),
@@ -290,11 +290,11 @@ assert(t.structure_at(3, 1).id == "pump", "and the pump is still bolted down")
 
 -- The panel is still open and still in reach, so the switch is right
 -- there -- which is the whole point of it being a windowed machine.
-t.ui_act(w, "toggle", '{"field":"power"}')
+ui_controls.toggle(w, "power")
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "off", "switched off")
 
-t.click(w, 3, 1, t.target_at(3, 1, "pump"))
+t.click(w, 3, 1, t.target_at(w, 3, 1, "pump"))
 t.run_ticks(1)
 assert(t.structure_at(3, 1) ~= nil, "one tick in, it is still bolted down")
 t.run_seconds(2.5)
@@ -326,7 +326,7 @@ assert(fx, "the machine came up as a fitting")
 -- and step off before wrenching: a machine needs the deck clear, where
 -- a fitting hides under it.
 t.swap_hands(w)
-t.click(w, fx, fy, t.target_at(fx, fy, "pump_fitting"))
+t.click(w, fx, fy, t.target_at(w, fx, fy, "pump_fitting"))
 t.run_ticks(2)
 assert(t.hands(w).held == "pump_fitting", "the fitting is in hand")
 walk(w, "north")
@@ -337,7 +337,7 @@ assert(lying_at(3, 1, "pump_fitting"), "dropped back over the run")
 walk(w, "south")
 
 t.swap_hands(w)
-t.click(w, 3, 1, t.target_at(3, 1, "pump_fitting"))
+t.click(w, 3, 1, t.target_at(w, 3, 1, "pump_fitting"))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) ~= nil, "the machine is standing again")
 assert(t.structure_at(3, 1).id == "pump", "and it is the same machine")

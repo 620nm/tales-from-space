@@ -98,12 +98,12 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local dispenser = t.target_at(1, 1)
-local heater = t.target_at(3, 1)
-local a = t.target_at(1, 2, "beaker")
-local jar = t.target_at(3, 2, "bottle")
-local b = t.target_at(3, 3, "beaker")
-local med = t.target_at(2, 3, "beaker.libital")
+local dispenser = t.target_at(p, 1, 1)
+local heater = t.target_at(p, 3, 1)
+local a = t.target_at(p, 1, 2, "beaker")
+local jar = t.target_at(p, 3, 2, "bottle")
+local b = t.target_at(p, 3, 3, "beaker")
+local med = t.target_at(p, 2, 3, "beaker.libital")
 
 -- The crewman stands in the middle of the bench, so both machines and
 -- all four vessels are within arm's reach and this spec is never about
@@ -111,33 +111,33 @@ local med = t.target_at(2, 3, "beaker.libital")
 -- everything they pick up again is named by the handle rather than by
 -- the tile.
 local function take(handle, x, y)
-    t.click(p, x, y, handle)
+    t.click(p, x, y, assert(t.target_at(p, x, y, handle)))
     t.tick()
 end
 
 local function dock(machine, x, y)
-    t.click(p, x, y, machine)
+    t.click(p, x, y, assert(t.target_at(p, x, y, machine)))
     t.tick()
     assert(t.hands(p).held == nil, "the vessel went into the machine")
 end
 
 local function panel(machine, x, y)
-    t.click(p, x, y, machine)
+    t.click(p, x, y, assert(t.target_at(p, x, y, machine)))
     t.tick()
 end
 
 local function press(key)
-    t.ui_act(p, "toggle", '{"field":"dispense","option":"' .. key .. '"}')
+    ui_controls.toggle(p, "dispense", key)
     t.run_ticks(2)
 end
 
 local function dial_to(moles)
-    t.ui_act(p, "set", '{"field":"amount","value":' .. moles .. '}')
+    ui_controls.set(p, "amount", moles)
     t.run_ticks(2)
 end
 
 local function eject()
-    t.ui_act(p, "toggle", '{"field":"eject"}')
+    ui_controls.toggle(p, "eject")
     t.run_ticks(2)
 end
 
@@ -206,7 +206,7 @@ assert((cooled.contents.chlorine.liquid or 0) > 0.5 * CHLORINE,
 -- deck's temperature rather than chasing the nozzle.
 -- ---------------------------------------------------------------
 take(a, 2, 2)
-t.click(p, 2, 2, jar)
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, jar)))
 t.tick()
 near(amount(jar, "oil"), LEG, 1e-9, "the oil went into the bottle")
 near(amount(a, "oil"), 0.0, 1e-9, "and the beaker is empty")
@@ -256,8 +256,8 @@ eject()
 
 dock(heater, 3, 1)
 panel(heater, 3, 1)
-t.ui_act(p, "set", '{"field":"temperature","value":800}')
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.set(p, "temperature", 800)
+ui_controls.toggle(p, "power")
 
 -- Two minutes of sim time, heating included. The thermostat closes a
 -- twentieth of its gap every atmos pass, so the plateau arrives inside
@@ -268,7 +268,7 @@ near(amount(jar, "libital"), 3.0 * LEG, 1e-4, "three of libital for one of saltp
 near(amount(jar, "saltpetre"), 0.0, 1e-4, "which spent every mole of it")
 near(amount(jar, "phenol"), 2.0 * LEG, 1e-4, "and two thirds of the phenol is still standing")
 
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 eject()
 put_down()
 
@@ -297,8 +297,8 @@ eject()
 
 dock(heater, 3, 1)
 panel(heater, 3, 1)
-t.ui_act(p, "set", '{"field":"temperature","value":370}')
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.set(p, "temperature", 370)
+ui_controls.toggle(p, "power")
 t.run_seconds(120)
 
 -- The thermostat approaches its setpoint asymptotically and never
@@ -310,14 +310,14 @@ near(amount(b, "multiver"), 0.0, 1e-12, "and ten kelvin short is nothing at all"
 near(amount(b, "ash"), LEG, 1e-9, "with every mole of ash still standing")
 
 -- ...and then thirty more on the dial.
-t.ui_act(p, "set", '{"field":"temperature","value":400}')
+ui_controls.set(p, "temperature", 400)
 t.run_seconds(120)
 assert(t.holder_k(b) > 385.0, "the chamber crossed the floor: " .. t.holder_k(b))
 near(amount(b, "multiver"), 2.0 * LEG, 1e-4, "two of multiver for one of each leg")
 near(amount(b, "ash"), 0.0, 1e-4, "which spent all the ash")
 near(amount(b, "salt"), 0.0, 1e-4, "and all the salt")
 
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 eject()
 put_down()
 
@@ -343,7 +343,7 @@ t.tick()
 near(t.health(p).brute, 30.0, 1e-3, "a crewman with bruises")
 
 take(med, 2, 3)
-t.click(p, 2, 2)
+t.click_turf(p, 2, 2)
 t.tick()
 local dose = t.blood(p).libital or 0
 assert(dose > 0.015, "the swig reached the bloodstream: " .. dose .. " mol")
@@ -414,9 +414,9 @@ t.world([==[(
 p = t.join()
 t.tick()
 
-dispenser = t.target_at(1, 1)
-heater = t.target_at(3, 1)
-local flask = t.target_at(3, 2, "bottle")
+dispenser = t.target_at(p, 1, 1)
+heater = t.target_at(p, 3, 1)
+local flask = t.target_at(p, 3, 2, "bottle")
 
 -- Ammonia first, and the same wait the chlorine needed: a condensable
 -- gas pressed into a sealed vessel arrives with its latent heat still
@@ -458,8 +458,8 @@ assert(t.holder_k(flask) < settled_k - 100.0,
 eject()
 dock(heater, 3, 1)
 panel(heater, 3, 1)
-t.ui_act(p, "set", '{"field":"temperature","value":320}')
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.set(p, "temperature", 320)
+ui_controls.toggle(p, "power")
 t.run_seconds(600)
 assert(amount(flask, "aiuri") > 1.5 * LEG,
     "and the chamber saw it through: " .. amount(flask, "aiuri") .. " mol")

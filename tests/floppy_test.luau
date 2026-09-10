@@ -89,9 +89,9 @@ t.run_seconds(3) -- the electrical pass is 0.5 Hz; let one land
 -- verb for this and no window open yet: a held medium docks before a
 -- click can open anything, which is why the drive works for somebody
 -- who has never seen the panel.
-t.click(p, 2, 1, t.target_at(2, 1, "floppy_disk"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "floppy_disk"))
 t.run_ticks(2)
-t.click(p, 3, 1, t.target_at(3, 1))
+t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.tick()
 
 local inserted = t.ledger_rows("media_inserted")
@@ -104,9 +104,9 @@ assert(inserted[1].machine == "programming terminal",
 -- The click is SPENT on the refusal rather than falling through to
 -- swinging a disk at the console, so the second one is still in hand
 -- afterwards.
-t.click(p, 2, 2, t.target_at(2, 2, "floppy_disk"))
+t.click(p, 2, 2, t.target_at(p, 2, 2, "floppy_disk"))
 t.run_ticks(2)
-t.click(p, 3, 1, t.target_at(3, 1))
+t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.tick()
 assert(said(p, "There is already"), "an occupied drive says so: "
     .. table.concat(t.messages(p), " | "))
@@ -115,7 +115,7 @@ t.drop(p)
 t.run_ticks(2)
 
 -- ---- the panel ------------------------------------------------------
-t.click(p, 3, 1, t.target_at(3, 1))
+t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.tick()
 local ui = t.ui(p)
 assert(ui, "a bare-handed click opens the terminal's window")
@@ -149,8 +149,7 @@ assert(#ui.create.media == 4 and ui.create.media[1] == "md" and ui.create.media[
 -- ---- make one ---------------------------------------------------------
 -- Create lands on the MEDIUM, because a crewman who put a disk in came
 -- to write to the disk -- and now SAYS so, in the option itself.
-t.ui_act(p, "text", '{"field":"file_create","option":"media:md:' .. ui.stores[2].binding
-    .. '","text":"untitled"}')
+ui_files.create(p, "media", "md", "untitled")
 t.tick()
 ui = t.ui(p)
 assert(ui.open, "the new file is what the panel is showing")
@@ -162,9 +161,16 @@ local disk_file = addr(ui.open)
 assert(#t.ledger_rows("file_created") == 1, "made files are on the record")
 
 -- ---- type into it ------------------------------------------------------
+local other = t.join()
+t.tick()
+t.click(other, 3, 1, t.target_at(other, 3, 1))
+t.tick()
+ui_files.address(other, disk_file, "open")
+t.tick()
+local stale_input = ui_files.edit(other, "and I checked it twice")
+t.ui_press(other, stale_input, "change")
 local NOTE = "Pressure in the tank room reads low. Do not vent it to check."
-t.ui_act(p, "text", '{"field":"file_save","option":"' .. disk_file
-    .. '","text":"' .. NOTE .. '","revision":0}')
+ui_files.save(p, NOTE)
 t.tick()
 ui = t.ui(p)
 assert(ui.open.body == NOTE, "the body comes back whole")
@@ -179,29 +185,32 @@ assert(#saved == 1 and saved[1].body == NOTE,
     "the save is on the record with the body VERBATIM -- the point of the whole ledger")
 assert(saved[1].revision == 1, "at the revision it became")
 
--- ---- a body past the cap is refused, silently -------------------------
--- Silent on purpose: the panel already published `open.cap`, so a
--- longer body is a client disagreeing with its own reading rather than
--- a crewman being told something they could not have known.
-t.ui_act(p, "text", '{"field":"file_save","option":"' .. disk_file
-    .. '","text":"' .. string.rep("x", BODY_CAP + 1) .. '","revision":1}')
+-- ---- the source control bounds a long paste ---------------------------
+t.run_ticks(10)
+ui_files.save(p, string.rep("x", BODY_CAP + 1))
 t.tick()
 ui = t.ui(p)
-assert(ui.open.body == NOTE, "the oversize save changed nothing")
-assert(ui.open.revision == 1, "not even the revision")
+assert(#ui.open.body == BODY_CAP, "the rendered editor caps the submitted text")
+assert(ui.open.revision == 2, "the bounded text is a normal save")
+t.run_ticks(10)
+ui_files.save(p, NOTE)
+t.tick()
+assert(t.ui(p).open.body == NOTE, "the first reader restores the note")
 
 -- ---- a save at a revision that moved ----------------------------------
 -- Two crew at one terminal. The first save moved the file; the second
 -- names the revision it was seeded from, and that number is stale, so
 -- it is refused rather than allowed to clobber the faster hand.
-t.ui_act(p, "text", '{"field":"file_save","option":"' .. disk_file
-    .. '","text":"and I checked it twice","revision":0}')
-t.tick()
-assert(said(p, "It changed while you were editing"),
-    "a stale save has to SAY so, or the loser believes they saved: "
-    .. table.concat(t.messages(p), " | "))
+t.run_ticks(20)
+local stale_save = ui_controls.node(other, "/editor/save")
+assert(stale_save.disabled, "a conflicting draft disables Save")
+assert(ui_controls.find(other, "/editor/conflict"), "the editor explains the conflict")
+assert(not pcall(function() t.ui_press(other, stale_save.id) end), "a disabled Save cannot overwrite newer text")
 ui = t.ui(p)
 assert(ui.open.body == NOTE, "and the first hand's work is still there")
+
+local restored = ui_files.edit(p, NOTE)
+t.ui_press(p, restored, "change")
 
 -- ---- name it ----------------------------------------------------------
 -- The rename would land in the same breath as the save above, and an
@@ -209,8 +218,7 @@ assert(ui.open.body == NOTE, "and the first hand's work is still there")
 -- (docs/TGUI.md: refusals speak, successes wait). A person renaming a
 -- file they just saved has this half-second without noticing it.
 t.run_ticks(10)
-t.ui_act(p, "text", '{"field":"file_rename","option":"' .. disk_file
-    .. '","text":"tank_room"}')
+ui_files.rename(p, "tank_room")
 t.tick()
 ui = t.ui(p)
 assert(ui.open.name == "tank_room", "renamed")
@@ -220,8 +228,7 @@ assert(#t.ledger_rows("file_renamed") == 1, "renames are on the record too")
 
 -- ---- disk -> terminal -------------------------------------------------
 -- Copy goes to the OTHER store, because there is only ever one other.
-t.ui_act(p, "text", '{"field":"file_copy","option":"' .. disk_file
-    .. ":" .. ui.stores[1].binding .. '","text":"tank_room"}')
+ui_files.address(p, disk_file, "copy")
 t.tick()
 ui = t.ui(p)
 assert(has(listing(ui), "host:tank_room.md"),
@@ -232,7 +239,7 @@ assert(#copied == 1 and copied[1].body == NOTE,
     "a copy carries the body into the record, which is the counterplay to copying a secret")
 
 -- ---- delete off the disk ----------------------------------------------
-t.ui_act(p, "toggle", '{"field":"file_delete","option":"' .. disk_file .. '"}')
+ui_files.address(p, disk_file, "delete")
 t.tick()
 ui = t.ui(p)
 assert(not has(listing(ui), "media:tank_room.md"), "gone from the disk: "
@@ -250,8 +257,7 @@ for _, row in ipairs(ui.files) do
     end
 end
 assert(host_file, "the terminal kept its copy")
-t.ui_act(p, "text", '{"field":"file_copy","option":"' .. host_file
-    .. ":" .. ui.stores[2].binding .. '","text":"tank_room"}')
+ui_files.address(p, host_file, "copy")
 t.tick()
 ui = t.ui(p)
 assert(has(listing(ui), "media:tank_room.md"),
@@ -259,8 +265,8 @@ assert(has(listing(ui), "media:tank_room.md"),
 assert(#t.ledger_rows("file_copied") == 2, "both crossings are attributed")
 
 -- ---- take it back out -------------------------------------------------
-local media_binding = ui.stores[2].binding
-t.ui_act(p, "toggle", '{"field":"media_eject","option":"' .. media_binding .. '"}')
+local eject_control = ui_controls.node(p, "/drive/media/eject").id
+ui_controls.press(p, "/drive/media/eject")
 t.tick()
 ui = t.ui(p)
 assert(ui.media_slot.id == "files.media.empty", "the slot is empty")
@@ -273,7 +279,7 @@ assert(hands[1] == "floppy_disk" or hands[2] == "floppy_disk",
     "it came back into a hand rather than onto the deck")
 
 -- A delayed second press no longer has authority over a mounted store.
-t.ui_act(p, "toggle", '{"field":"media_eject","option":"' .. media_binding .. '"}')
+assert(not pcall(function() t.ui_press(p, eject_control) end), "an empty drive offers no eject")
 t.tick()
 assert(#t.ui(p).stores == 1, "the stale binding cannot restore access to the removed disk")
 assert(#t.ledger_rows("media_ejected") == 1, "and ejected nothing twice")

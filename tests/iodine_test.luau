@@ -50,7 +50,7 @@ t.set_environment({ sink_k = 293.15, insolation = 0.0 })
 local p = t.join()
 t.tick()
 
-local bottle = t.target_at(1, 1, "bottle.iodine")
+local bottle = t.target_at(p, 1, 1, "bottle.iodine")
 
 local function phases(handle)
     local reading = t.vessel(handle)

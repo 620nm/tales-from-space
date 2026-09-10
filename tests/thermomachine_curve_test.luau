@@ -97,10 +97,10 @@ local function bench(gas)
     local p = t.join()
     t.tick()
 
-    t.click(p, 3, 1, t.target_at(3, 1, "manual_valve"))
+    t.click(p, 3, 1, t.target_at(p, 3, 1, "manual_valve"))
     t.run_seconds(4)
     assert(t.structure_at(3, 1).state == "open", "the hand valve is open")
-    t.click(p, 3, 1, t.target_at(3, 1, "manual_valve"))
+    t.click(p, 3, 1, t.target_at(p, 3, 1, "manual_valve"))
     t.run_seconds(3)
     assert(t.structure_at(3, 1).state == "shut", "and shut again behind the charge")
     assert(
@@ -113,7 +113,7 @@ local function bench(gas)
         t.move(p, "east")
         t.run_ticks(5)
     end
-    t.click(p, 6, 1, t.target_at(6, 1, "thermomachine"))
+    t.click(p, 6, 1, t.target_at(p, 6, 1, "thermomachine"))
     t.tick()
     assert(t.ui(p), "the unit answers an empty hand with its panel")
     return p
@@ -143,8 +143,8 @@ near(n2_c / n2_moles, 20.0, 1e-9, "a nitrogen line carries twenty joules per mol
 local r = n2_c / (n2_c + C_BATH)
 assert(r > 0.2 and r < 0.25, "which puts this run's pass fraction near a fifth: " .. r)
 
-t.ui_act(p, "set", '{"field":"temperature","value":150}')
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.set(p, "temperature", 150)
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.structure_at(6, 1).state == "running", "the unit is running")
 
@@ -215,8 +215,8 @@ assert(
     "and this lot carries nearly twice the heat: " .. n2_c .. " vs " .. n2o_c .. " J/K"
 )
 
-t.ui_act(heavy, "set", '{"field":"temperature","value":150}')
-t.ui_act(heavy, "toggle", '{"field":"power"}')
+ui_controls.set(heavy, "temperature", 150)
+ui_controls.toggle(heavy, "power")
 t.run_ticks(2)
 for _ = 1, 3 do
     pass()
@@ -278,14 +278,14 @@ t.world([==[(
 
 local d = t.join()
 t.tick()
-t.click(d, 3, 2, t.target_at(3, 2, "wrench"))
+t.click(d, 3, 2, t.target_at(d, 3, 2, "wrench"))
 t.run_ticks(2)
 t.click_subfloor(d, 2, 1, "pipe", 4)
 t.run_seconds(1.5)
 assert(t.pipe(2, 1) == 0, "the mapped length came up")
 t.drop(d)
 t.run_ticks(2)
-t.click(d, 2, 1, t.target_at(2, 1, "pipe"))
+t.click(d, 2, 1, t.target_at(d, 2, 1, "pipe"))
 t.run_ticks(2)
 assert(t.hands(d).held == "pipe", "and it is a length you can lay again")
 t.click(d, 2, 1)
@@ -296,13 +296,13 @@ assert(t.pipe(2, 1) == 4, "so it goes straight back down")
 near(t.pipe_pressure(2, 1), 0.0, 1e-9, "empty, because nobody filled it")
 near(t.pipe_energy(2, 1), 0.0, 1e-9, "with no joules in it either")
 
-t.click(d, 3, 1, t.target_at(3, 1, "thermomachine"))
+t.click(d, 3, 1, t.target_at(d, 3, 1, "thermomachine"))
 t.tick()
 -- The thermometer is this window's first row (sim/ui/settings/thermo.rs).
 local mouth = word(t.ui(d).readouts[1].value)
 assert(mouth ~= "thermo.pipe.none", "the unit's mouth found the new length: " .. mouth)
-t.ui_act(d, "set", '{"field":"temperature","value":500}')
-t.ui_act(d, "toggle", '{"field":"power"}')
+ui_controls.set(d, "temperature", 500)
+ui_controls.toggle(d, "power")
 t.run_seconds(60)
 
 assert(t.structure_at(3, 1).state == "running", "it is switched on and fed -- there is simply nothing to condition")

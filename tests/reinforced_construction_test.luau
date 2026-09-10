@@ -43,7 +43,7 @@ t.tick()
 local function take(id)
     t.drop(p)
     t.tick()
-    t.click(p, 2, 1, t.target_at(2, 1, id))
+    t.click(p, 2, 1, t.target_at(p, 2, 1, id))
     t.tick()
     t.messages(p)
 end
@@ -106,7 +106,7 @@ t.tick()
 local function grab(id)
     t.drop(p)
     t.tick()
-    t.click(p, 2, 2, t.target_at(2, 2, id))
+    t.click(p, 2, 2, t.target_at(p, 2, 2, id))
     t.tick()
     t.messages(p)
 end
@@ -117,13 +117,13 @@ local function frame_state()
 end
 
 grab("plasteel")
-t.click(p, 1, 2, t.target_at(1, 2))
+t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.run_seconds(5.5)
 local girder = t.structure_at(1, 2)
 assert(girder ~= nil and girder.id == "reinforced_girder",
     "one sheet struts the frame")
 
-t.click(p, 1, 2, t.target_at(1, 2))
+t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.run_seconds(5.5)
 assert(t.turf(1, 2) == "reinforced_wall",
     "one more plates it into hull, got " .. tostring(t.turf(1, 2)))
@@ -144,7 +144,7 @@ assert(frame_state() == "support_lines", "the frame is standing in it")
 
 -- The first rung repairs: tg's INTACT/SUPPORT_LINES pair is a snip
 -- either way, and going back up is a wall again.
-t.click(p, 1, 2, t.target_at(1, 2))
+t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.run_ticks(4)
 assert(t.turf(1, 2) == "reinforced_wall", "the grille is woven shut")
 t.click(p, 1, 2)
@@ -152,32 +152,32 @@ t.run_ticks(4)
 assert(frame_state() == "support_lines", "and open again for the ladder")
 
 grab("screwdriver")
-t.click(p, 1, 2, t.target_at(1, 2))
+t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.run_seconds(4.5)
 assert(frame_state() == "cover", "the support lines come unsecured")
 
 grab("welder")
-t.click(p, 1, 2, t.target_at(1, 2))
+t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.run_seconds(6.5)
 assert(frame_state() == "cut_cover", "the cover is sliced through")
 
 grab("crowbar")
-t.click(p, 1, 2, t.target_at(1, 2))
+t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.run_seconds(10.5)
 assert(frame_state() == "anchor_bolts", "the cover is pried away")
 
 grab("wrench")
-t.click(p, 1, 2, t.target_at(1, 2))
+t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.run_seconds(4.5)
 assert(frame_state() == "support_rods", "the anchoring bolts come out")
 
 grab("welder")
-t.click(p, 1, 2, t.target_at(1, 2))
+t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.run_seconds(10.5)
 assert(frame_state() == "sheath", "the support rods are sliced")
 
 grab("crowbar")
-t.click(p, 1, 2, t.target_at(1, 2))
+t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.run_seconds(10.5)
 local left = t.structure_at(1, 2)
 assert(left ~= nil and left.id == "reinforced_girder",

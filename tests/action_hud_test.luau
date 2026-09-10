@@ -13,7 +13,7 @@ t.tick()
 assert(t.ui(p, "actions") == nil, "empty hands have no item actions")
 
 local function pickup(id)
-    t.click(p, 1, 1, t.target_at(1, 1, id))
+    t.click(p, 1, 1, t.target_at(p, 1, 1, id))
     t.tick()
 end
 local function action()
@@ -24,7 +24,13 @@ local function action()
     return view.data.groups[1].actions[1]
 end
 local function activate()
-    t.ui_act(p, "activate", "{}", "actions")
+    local group = assert(t.ui(p, "actions")).data.groups[1]
+    local base = "actions/" .. group.id .. "/buttons"
+    if not ui_controls.find(p, base .. "/search") then
+        ui_controls.press(p, base .. "/more")
+    end
+    local address = assert(t.ui_document(p, "actions"))
+    ui_controls.press(p, "action/" .. address.document .. "/" .. address.generation .. "/" .. group.actions[1].id)
     t.tick()
 end
 

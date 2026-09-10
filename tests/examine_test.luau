@@ -50,11 +50,11 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local burner = t.target_at(2, 1, "burner")
-local mixed = t.target_at(3, 1, "beaker.libital")
-local taps = t.target_at(3, 0)
-local beaker = t.target_at(4, 1, "beaker")
-local locked_away = t.target_at(6, 1, "bottle")
+local burner = t.target_at(p, 2, 1, "burner")
+local mixed = t.target_at(p, 3, 1, "beaker.libital")
+local taps = t.target_at(p, 3, 0)
+local beaker = t.target_at(p, 4, 1, "beaker")
+assert(t.target_at(p, 6, 1, "bottle") == nil, "the wall hides the bottle from target selection")
 
 -- The tinted run of one line: which words are written in a colour, and
 -- which colour. A line is spans now, and `spans[i]` is always the same
@@ -105,7 +105,7 @@ assert(not has(lamp, "It is lit."), "and it is not burning yet: " .. dump(lamp))
 -- ---------------------------------------------------------------
 -- TWO: A LIT FLAME IS A THING ANYONE CAN SEE.
 -- ---------------------------------------------------------------
-t.click(p, 2, 1, burner)
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, burner)))
 t.tick()
 t.use_self(p)
 t.tick()
@@ -125,17 +125,16 @@ t.tick()
 -- does not, and the refusal is nothing at all -- no message, no error
 -- shape a client could count.
 -- ---------------------------------------------------------------
-assert(t.examine(p, 6, 1, locked_away) == nil, "nothing about a thing behind a wall")
-assert(t.examine(p, 6, 1) == nil, "nor about a tile nobody can see")
+assert(not pcall(function() t.examine(p, 6, 1) end), "nor about a tile nobody can see")
 assert(t.examine(p, 4, 1, beaker) ~= nil, "but three tiles of clear floor is a look")
 
 -- A claim naming the wrong tile is the same silence a wall gets.
-assert(t.examine(p, 3, 1, beaker) == nil, "a lie buys no look")
+assert(not pcall(function() t.examine(p, 3, 1, beaker) end), "a lie buys no look")
 
 -- ---------------------------------------------------------------
 -- FOUR: THE GROUND, AND THE MACHINE.
 -- ---------------------------------------------------------------
-local deck = t.examine(p, 1, 1)
+local deck = t.examine_turf(p, 1, 1)
 assert(deck ~= nil and deck.title == "floor", "the deck names its turf")
 assert(#deck.lines == 0, "and states nothing else: " .. dump(deck))
 
@@ -189,28 +188,28 @@ t.run_ticks(4)
 t.move(p, "east")
 t.run_ticks(4)
 
-t.click(p, 4, 1, beaker) -- into the hand
+t.click(p, 4, 1, assert(t.target_at(p, 4, 1, beaker))) -- into the hand
 t.tick()
-t.click(p, 3, 0, taps) -- and into the machine
+t.click(p, 3, 0, assert(t.target_at(p, 3, 0, taps))) -- and into the machine
 t.tick()
-t.click(p, 3, 0, taps) -- ...which opens its panel
+t.click(p, 3, 0, assert(t.target_at(p, 3, 0, taps))) -- ...which opens its panel
 t.tick()
 -- Two presses, because one press is not yet a puddle: the pane names a
 -- spill at exactly the amount the floor starts DRAWING one, so a look
 -- can never report something the eye cannot find.
-t.ui_act(p, "toggle", '{"field":"dispense","option":"water"}')
+ui_controls.toggle(p, "dispense", "water")
 t.run_ticks(2)
-t.ui_act(p, "toggle", '{"field":"dispense","option":"water"}')
+ui_controls.toggle(p, "dispense", "water")
 t.run_ticks(2)
-t.ui_act(p, "toggle", '{"field":"eject"}')
+ui_controls.toggle(p, "eject")
 t.run_ticks(2)
 assert(t.hands(p).held == "beaker", "the beaker comes back out full")
 
 -- Tip it onto the deck beside us.
-t.click(p, 4, 1)
+t.click_turf(p, 4, 1)
 t.tick()
 
-local spill = t.examine(p, 4, 1)
+local spill = t.examine_turf(p, 4, 1)
 assert(spill ~= nil, "the deck answers")
 assert(spill.title == "floor", "still by its turf word: " .. spill.title)
 assert(#spill.lines > 0, "and now it has something to say")
@@ -222,5 +221,5 @@ assert(pw == "water" and pc == "#AAAAAA", "in water's colour, as through glass")
 
 -- A dry tile a stride away says nothing at all, which is the negative
 -- that makes the positive mean something.
-local dry = t.examine(p, 2, 1)
+local dry = t.examine_turf(p, 2, 1)
 assert(dry ~= nil and #dry.lines == 0, "a dry deck states nothing: " .. dump(dry))

@@ -163,7 +163,7 @@ t.tick()
 
 -- Run the west half by hand. Two lengths, and the valve's back port
 -- has something to open into.
-t.click(q, 1, 2, t.target_at(1, 2, "pipe"))
+t.click(q, 1, 2, t.target_at(q, 1, 2, "pipe"))
 t.run_ticks(2)
 for _, x in ipairs({ 1, 2 }) do
     t.click(q, x, 1)
@@ -190,7 +190,7 @@ end
 -- Turn it. tg gives the wheel a second and will not be hurried: a
 -- tick in, nothing has happened yet.
 local _ = t.messages(q)
-t.click(q, 3, 1, t.target_at(3, 1, "manual_valve"))
+t.click(q, 3, 1, t.target_at(q, 3, 1, "manual_valve"))
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "shut", "a second is a second")
 assert(t.pipe_pressure(2, 1) < 1.0, "and nothing has crossed yet")
@@ -198,7 +198,7 @@ assert(t.pipe_pressure(2, 1) < 1.0, "and nothing has crossed yet")
 -- And it will not be double-clicked out of that second: tg refuses
 -- every interaction while `switching` is set (valve.dm:63-69), so a
 -- second click is not a cancel, not a queue, and not a second turn.
-t.click(q, 3, 1, t.target_at(3, 1, "manual_valve"))
+t.click(q, 3, 1, t.target_at(q, 3, 1, "manual_valve"))
 t.run_seconds(1.5)
 assert(t.structure_at(3, 1).state == "open", "and then the wheel is over")
 assert(said(q, "The manual valve is open."), "which it says so")
@@ -221,7 +221,7 @@ near(
 )
 
 -- Shut it again. Two nets, and every mole still accounted for.
-t.click(q, 3, 1, t.target_at(3, 1, "manual_valve"))
+t.click(q, 3, 1, t.target_at(q, 3, 1, "manual_valve"))
 t.run_seconds(2)
 assert(t.structure_at(3, 1).state == "shut", "shut again")
 t.run_seconds(1)
@@ -284,7 +284,7 @@ assert(t.structure_at(5, 1).state == "off", "and tg's pump ships off")
 
 -- Lengthen the output main: the same air, more room to be in, and so
 -- less pressure. Four lengths east of the one the map drew.
-t.click(r, 6, 2, t.target_at(6, 2, "pipe"))
+t.click(r, 6, 2, t.target_at(r, 6, 2, "pipe"))
 t.run_ticks(2)
 for x = 7, 10 do
     t.click(r, x, 1)
@@ -320,7 +320,7 @@ for _ = 1, 3 do
     t.run_ticks(5)
 end
 local _ = t.messages(r)
-t.click(r, 5, 1, t.target_at(5, 1, "pump"))
+t.click(r, 5, 1, t.target_at(r, 5, 1, "pump"))
 t.tick()
 local panel = t.ui(r)
 assert(panel, "a pump answers an empty hand with a panel")
@@ -333,7 +333,7 @@ assert(panel.toggles[1].off_text.text == "off")
 assert(panel.setpoints[1].field == "target", "and one dial, in kPa")
 assert(math.abs(panel.setpoints[1].value - 101.325) < 0.001)
 
-t.ui_act(r, "toggle", '{"field":"power"}')
+ui_controls.toggle(r, "power")
 t.run_ticks(2)
 assert(t.structure_at(5, 1).state == "running", "and the switch throws")
 assert(t.ledger_has("AtmosDeviceSet", "pump"), "switching it is on the record")
@@ -403,7 +403,7 @@ local s = t.join()
 t.tick()
 
 -- Lengthen the BACK main, so the pump's input is the slack one.
-t.click(s, 1, 2, t.target_at(1, 2, "pipe"))
+t.click(s, 1, 2, t.target_at(s, 1, 2, "pipe"))
 t.run_ticks(2)
 t.click(s, 1, 1)
 t.run_seconds(1.5)
@@ -418,9 +418,9 @@ for _ = 1, 2 do
     t.move(s, "east")
     t.run_ticks(5)
 end
-t.click(s, 3, 1, t.target_at(3, 1, "pump"))
+t.click(s, 3, 1, t.target_at(s, 3, 1, "pump"))
 t.tick()
-t.ui_act(s, "toggle", '{"field":"power"}')
+ui_controls.toggle(s, "power")
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "running", "switched on")
 t.run_seconds(60)
@@ -475,7 +475,7 @@ assert(
 )
 local layer1 = t.pipe_pressure(5, 1, 1)
 
-t.click(u, 3, 1, t.target_at(3, 1, "manual_valve"))
+t.click(u, 3, 1, t.target_at(u, 3, 1, "manual_valve"))
 t.run_seconds(2)
 assert(t.structure_at(3, 1).state == "open", "the wheel still turns")
 t.run_seconds(2)

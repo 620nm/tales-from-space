@@ -207,7 +207,7 @@ local function open(x, y, id)
     t.ui_close(p)
     t.tick()
     walk_to(x)
-    t.click(p, x, y, t.target_at(x, y, id))
+    t.click(p, x, y, t.target_at(p, x, y, id))
     t.tick()
     local panel = t.ui(p)
     assert(panel ~= nil, tostring(id or "the machine") .. " at " .. x .. "," .. y .. " wears a panel")
@@ -259,12 +259,12 @@ assert(#scoped(panel) == 0, "not one row on it belongs to something else")
 t.ui_close(p)
 t.tick()
 walk_to(7)
-t.click(p, 7, 2, t.target_at(7, 2, "id_engineering"))
+t.click(p, 7, 2, t.target_at(p, 7, 2, "id_engineering"))
 t.run_ticks(2)
 assert(t.hands(p).held == "id_engineering", "the claim is in hand")
 
 panel = open(6, 1, "air_alarm")
-t.ui_act(p, "toggle", '{"field":"link_lock"}')
+ui_controls.toggle(p, "link_lock")
 t.tick()
 panel = t.ui(p)
 assert(rows(panel, "link_lock")[1].on, "engineering's claim opens it")
@@ -277,25 +277,11 @@ for _, row in ipairs(rows(panel, "link_join")) do
 end
 assert(#candidates == 3, "the vent, the pump and the scrubber, and nothing else: " .. #candidates)
 
--- ...AND ASKING ANYWAY GETS NOTHING, which is the half a roster alone
--- does not prove. A forged press names a row this panel never drew, and
--- the seam rebuilds the window and matches field and option against it
--- before any gesture exists (`settings_act`, sim/ui/settings.rs) -- so
--- the press is not a refused join, it is not a join at all. That is why
--- the assertion below is an absence of BOTH: no edge, and no
--- `link_denied` row either, because nothing ever reached the forest to
--- be refused.
---
--- The refusal itself is the engine's and is tested there, where a
--- caller can reach past the panel: `devicenet_accept` answers
--- `ClassForbidden` and writes the one `class_forbidden` row
--- (crates/lunatic-server/src/sim/tests/devicenet/classes.rs,
--- `a_hub_that_names_classes_refuses_the_rest`). A pack spec asserts
--- what a player could cause, and a player cannot cause that one.
+-- Undisclosed rows cannot generate a player gesture.
 local before = #t.ledger_rows("link_denied")
-t.ui_act(p, "toggle", string.format('{"field":"link_join","option":"%s"}', point))
+assert(not pcall(ui_controls.toggle, p, "link_join", point), "access point has no rendered join control")
 t.tick()
-t.ui_act(p, "toggle", string.format('{"field":"link_join","option":"%s"}', relay))
+assert(not pcall(ui_controls.toggle, p, "link_join", relay), "transceiver has no rendered join control")
 t.tick()
 panel = t.ui(p)
 assert(#rows(panel, "link_drop") == 0, "neither box is on the alarm")
@@ -313,7 +299,7 @@ assert(#t.ledger_rows("link_denied") == before,
 -- a shift log names only that half.
 -- ---------------------------------------------------------------
 for _, mac in ipairs(candidates) do
-    t.ui_act(p, "toggle", string.format('{"field":"link_join","option":"%s"}', mac))
+    ui_controls.toggle(p, "link_join", mac)
     t.tick()
 end
 panel = t.ui(p)
@@ -336,9 +322,9 @@ assert(proxied(panel, "radio transceiver") == nil, "the transceiver is in nobody
 local key = vent .. "/setpoint"
 near(dial(panel, key).value, ONE_ATM, 0.001, "the vent opens on tg's external_pressure_bound")
 
-t.ui_act(p, "set", string.format('{"field":"%s/siphon","value":200.0}', vent))
+ui_controls.set(p, vent .. "/siphon", 200.0)
 t.run_ticks(2)
-t.ui_act(p, "set", string.format('{"field":"%s","value":%f}', key, TUNED))
+ui_controls.set(p, key, TUNED)
 t.run_ticks(2)
 panel = t.ui(p)
 near(dial(panel, key).value, TUNED, 0.001, "and the alarm moved it to a hundred and fifty")
@@ -378,7 +364,7 @@ assert(casing.notice.id == "proxy.controlled_from" and casing.notice.args.addres
 -- (docs/tgui/modules.md).
 -- ---------------------------------------------------------------
 panel = open(6, 1, "air_alarm")
-t.ui_act(p, "toggle", '{"field":"link_lock"}')
+ui_controls.toggle(p, "link_lock")
 t.tick()
 panel = t.ui(p)
 assert(not rows(panel, "link_lock")[1].on, "the alarm is shut again")

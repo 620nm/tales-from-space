@@ -38,7 +38,7 @@ assert(table.concat(t.messages(p), "\n"):find("wobbles", 1, true),
     "the shared move.bump fired")
 
 -- Its clean-room shelf document is stocked from ITS OWN list.
-t.click(p, 2, 1, t.target_at(2, 1))
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 local ui = t.ui(p)
 assert(ui, "clicking the tool vendor opens its window")
@@ -172,7 +172,7 @@ local additions = {
 }
 for _, item in ipairs(additions) do
     assert(t.count_items(item) == 0)
-    t.ui_act(p, "vend", '{"product":"' .. item .. '"}')
+    ui_controls.vend(p, item)
     t.tick()
     assert(t.count_items(item) == 1, item .. " did not dispense")
     assert(t.ledger_has("ItemSpawned", item, "Player"),
@@ -183,7 +183,7 @@ end
 -- and the ledger names the buyer, not the script that opened the
 -- window.
 assert(t.count_items("wrench") == 0)
-t.ui_act(p, "vend", '{"product":"wrench"}')
+ui_controls.vend(p, "wrench")
 t.tick()
 assert(t.count_items("wrench") == 1, "the named product dispensed")
 assert(t.count_items("crowbar") == 0, "and only that one")
@@ -194,25 +194,25 @@ assert(t.ledger_has("ItemSpawned", "wrench", "Player"),
 -- NEGATIVE: the client is hostile. A product this machine does not stock
 -- mints nothing at all — not the first product, not a fallback, and
 -- certainly not an arbitrary prototype named by the payload.
-t.ui_act(p, "vend", '{"product":"cola"}')
+assert(not ui_controls.has_product(p, "cola"), "excluded product has no rendered control")
 t.tick()
 assert(t.count_items("cola") == 0, "a machine cannot be talked into stock it lacks")
-t.ui_act(p, "vend", '{"product":"id_engineering"}')
+assert(not ui_controls.has_product(p, "id_engineering"), "excluded product has no rendered control")
 t.tick()
 assert(t.count_items("id_engineering") == 0, "nor into minting an ID card")
 
 -- NEGATIVE: closing the window disarms acts, as for any machine.
 t.ui_close(p)
-t.ui_act(p, "vend", '{"product":"wrench"}')
+assert(not ui_controls.has_product(p, "wrench"), "closing removes the shelf control")
 t.tick()
 assert(t.count_items("wrench") == 1, "no window, no vending")
 
 -- The machine next door is a DIFFERENT shelf through the same code.
-t.click(p, 2, 2, t.target_at(2, 2))
+t.click(p, 2, 2, t.target_at(p, 2, 2))
 t.tick()
 local cola_ui = t.ui(p)
 assert(cola_ui.products[1].payload.product == "cola",
     "the softdrinks machine still sells softdrinks")
-t.ui_act(p, "vend", '{"product":"cola"}')
+ui_controls.vend(p, "cola")
 t.tick()
 assert(t.count_items("cola") == 1, "and dispenses them")

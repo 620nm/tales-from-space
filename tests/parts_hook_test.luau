@@ -56,7 +56,7 @@ end
 -- being the `parts.tier` label id and its two numbers
 -- (sim/ui/settings/parts.rs).
 local function socket(p, x, y)
-    t.click(p, x, y, t.target_at(x, y))
+    t.click(p, x, y, t.target_at(p, x, y))
     t.tick()
     local rows = rows_in(t.ui(p), "parts.parts")
     assert(#rows == 1, "a chamber has one socket: got " .. #rows)
@@ -77,7 +77,7 @@ end
 local function elements(machine)
     local out = {}
     for _, row in ipairs(t.ledger_rows("VarSet")) do
-        if row.key == "lunatic/tfs:element" and row.entity == machine then
+        if row.key == "lunatic/tfs:element" and t.same_target(row.entity, machine) then
             table.insert(out, word(row.value))
         end
     end
@@ -138,10 +138,10 @@ local east = t.join()
 -- pass and not on the tick (sim/tick.rs).
 t.run_seconds(1)
 
-local plain_cold = t.target_at(2, 1)
-local upgraded_cold = t.target_at(4, 1)
-local plain_hot = t.target_at(8, 1)
-local upgraded_hot = t.target_at(10, 1)
+local plain_cold = t.target_at(west, 2, 1)
+local upgraded_cold = t.target_at(west, 4, 1)
+local plain_hot = t.target_at(east, 8, 1)
+local upgraded_hot = t.target_at(east, 10, 1)
 
 -- ---------------------------------------------------------------
 -- ONE: THE HOOK RAN BEFORE THE ROUND OPENED.
@@ -246,14 +246,14 @@ local function chamber_spoke()
     return n
 end
 
-t.click(west, 3, 2, t.target_at(3, 2, "part_replacer"))
+t.click(west, 3, 2, t.target_at(west, 3, 2, "part_replacer"))
 t.run_ticks(2)
 assert(t.hands(west).held == "part_replacer", "the exchanger is in hand, and empty")
 
 local swaps_before = #t.ledger_rows("part_swapped")
 local spoke_before = chamber_spoke()
 local _ = t.messages(west)
-t.click(west, 2, 1, t.target_at(2, 1))
+t.click(west, 2, 1, t.target_at(west, 2, 1))
 t.run_ticks(2)
 
 assert(#t.ledger_rows("part_swapped") == swaps_before, "an empty bag fits nothing")

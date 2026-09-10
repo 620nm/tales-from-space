@@ -92,10 +92,10 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local dispenser = t.target_at(1, 1)
-local heater = t.target_at(3, 1)
-local cold = t.target_at(1, 2, "beaker")
-local hot = t.target_at(3, 2, "beaker")
+local dispenser = t.target_at(p, 1, 1)
+local heater = t.target_at(p, 3, 1)
+local cold = t.target_at(p, 1, 2, "beaker")
+local hot = t.target_at(p, 3, 2, "beaker")
 
 local function take(handle, x, y)
     t.click(p, x, y, handle)
@@ -114,7 +114,7 @@ local function panel(machine, x, y)
 end
 
 local function press(key)
-    t.ui_act(p, "toggle", '{"field":"dispense","option":"' .. key .. '"}')
+    ui_controls.toggle(p, "dispense", key)
     t.run_ticks(2)
 end
 
@@ -123,18 +123,18 @@ end
 -- the recipe wants, and the amount that goes in is the chemist's to
 -- choose rather than the glass's to impose.
 local function dial_to(moles)
-    t.ui_act(p, "set", '{"field":"amount","value":' .. moles .. '}')
+    ui_controls.set(p, "amount", moles)
     t.run_ticks(2)
 end
 
 local function eject()
-    t.ui_act(p, "toggle", '{"field":"eject"}')
+    ui_controls.toggle(p, "eject")
     t.run_ticks(2)
     assert(t.hands(p).held == "beaker", "the vessel comes back out")
 end
 
 local function dial(kelvin)
-    t.ui_act(p, "set", '{"field":"temperature","value":' .. kelvin .. '}')
+    ui_controls.set(p, "temperature", kelvin)
     t.run_ticks(2)
 end
 
@@ -166,7 +166,7 @@ eject()
 dock(heater, 3, 1)
 panel(heater, 3, 1)
 dial(400)
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_seconds(120)
 near(t.holder_k(cold), 400.0, 1.0, "the chamber holds it at 400 K")
 near(amount(cold, "ash"), 0.0, 1e-12, "eighty kelvin short is short")
@@ -185,7 +185,7 @@ near(t.holder_k(cold), 700.0, 25.0, "the chamber took it up into the window")
 near(amount(cold, "ash"), MADE, 1e-6, "every mole of oil became a mole of ash")
 near(amount(cold, "oil"), 0.0, 1e-6, "and there is none of it left")
 
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 eject()
 t.drop(p)
 t.tick()
@@ -229,7 +229,7 @@ eject()
 dock(heater, 3, 1)
 panel(heater, 3, 1)
 dial(960)
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_seconds(150)
 assert(t.holder_k(hot) > 940.0, "the chamber overshot the window on purpose: " .. t.holder_k(hot))
 

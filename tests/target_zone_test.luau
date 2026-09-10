@@ -30,7 +30,6 @@ t.rest(patient, true)
 t.unequip(patient, "uniform")
 t.run_ticks(2)
 local PX, PY = 2, 1
-local pid = t.body_id(patient)
 
 -- =====================================================================
 -- A word the plan never declared is refused, and the aim does not move.
@@ -44,9 +43,9 @@ assert(not t.set_zone(surgeon, ""), "and the empty word names nothing")
 -- The chosen zone is where the hands land. Aim at the head, cut, and it
 -- is the HEAD that is open.
 -- =====================================================================
-t.click(surgeon, 1, 1, t.target_at(1, 1, "scalpel"))
+t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, "scalpel"))
 t.run_ticks(2)
-t.click(surgeon, PX, PY, pid)
+t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(math.ceil(1.6 * 20) + 3)
 
 local parts = t.parts(patient)
@@ -58,7 +57,7 @@ assert(not has(parts.chest.states, "skin_cut"), "and nowhere else was")
 -- a different part opened.
 -- =====================================================================
 assert(t.set_zone(surgeon, "l_arm"), "the plan declares a left arm")
-t.click(surgeon, PX, PY, pid)
+t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(math.ceil(1.6 * 20) + 3)
 
 parts = t.parts(patient)
@@ -73,9 +72,9 @@ assert(not has(parts.r_arm.states, "skin_cut"), "the other arm is a different zo
 assert(not t.set_zone(surgeon, "wing"), "no wing on this plan")
 t.drop(surgeon)
 t.tick()
-t.click(surgeon, 1, 1, t.target_at(1, 1, "retractor"))
+t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, "retractor"))
 t.run_ticks(2)
-t.click(surgeon, PX, PY, pid)
+t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(math.ceil(2.4 * 20) + 3)
 
 parts = t.parts(patient)
@@ -125,9 +124,9 @@ end
 assert(t.set_zone(surgeon, zone_for_slot(surgeon, 2)), "the plan declares a pelvis")
 t.drop(surgeon)
 t.tick()
-t.click(surgeon, 1, 1, t.target_at(1, 1, "scalpel"))
+t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, "scalpel"))
 t.run_ticks(2)
-t.click(surgeon, PX, PY, pid)
+t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(math.ceil(1.6 * 20) + 3)
 
 parts = t.parts(patient)
@@ -155,14 +154,13 @@ t.world(BRAWL, 7)
 local attacker = t.join()
 local victim = t.join()
 t.run_ticks(3)
-local vid = t.body_id(victim)
 
-t.click(attacker, 1, 1, t.target_at(1, 1, "toolbox"))
+t.click(attacker, 1, 1, t.target_at(attacker, 1, 1, "toolbox"))
 t.run_ticks(2)
 
 local function brute(zone) return t.parts(victim)[zone].brute or 0 end
 local function swing()
-    t.click(attacker, 2, 1, vid)
+    t.click(attacker, 2, 1, t.body_target(attacker, victim))
     t.run_ticks(4)
 end
 

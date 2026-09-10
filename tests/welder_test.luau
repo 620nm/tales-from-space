@@ -23,7 +23,7 @@ t.world([==[(
 
 local p = t.join()
 t.tick()
-t.click(p, 2, 2, t.target_at(2, 2, "welder")) -- grab the welder underfoot-adjacent
+t.click(p, 2, 2, t.target_at(p, 2, 2, "welder")) -- grab the welder underfoot-adjacent
 t.fault(1, 1, 5) -- the hull fails next door
 t.run_ticks(40)  -- a couple of atmos ticks of venting
 assert(t.is_breached(1, 1), "the fault breached the corner")
@@ -57,7 +57,7 @@ t.world([==[(
 
 p = t.join()
 t.tick()
-t.click(p, 3, 1, t.target_at(3, 1, "welder")) -- grab the welder
+t.click(p, 3, 1, t.target_at(p, 3, 1, "welder")) -- grab the welder
 t.fault(1, 1, 3)
 t.run_ticks(10)
 t.click(p, 1, 1) -- start the weld

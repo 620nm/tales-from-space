@@ -82,7 +82,7 @@ local door = t.door_at(6, 1)
 assert(door.powered and not door.open and not door.bolted, "powered, shut, unbolted")
 
 -- ---- by hand: refused ----------------------------------------------------
-t.click(crew, 6, 1, t.target_at(6, 1))
+t.click(crew, 6, 1, t.target_at(crew, 6, 1))
 t.run_ticks(4)
 assert(not t.door_at(6, 1).open, "an empty-handed crewman does not get it open")
 local denied = t.ledger_rows("door_denied")
@@ -93,9 +93,9 @@ assert(#t.ledger_rows("script_error") == 0, "answering a hand is not a fault")
 -- ---- install policy on the host ------------------------------------------
 -- Placed with no `access` word, the lock opens for whoever is standing
 -- at it (tests/hardwire_test.luau).
-t.click(crew, 4, 2, t.target_at(4, 2, "access_point"))
+t.click(crew, 4, 2, t.target_at(crew, 4, 2, "access_point"))
 t.run_ticks(2)
-t.ui_act(crew, "toggle", '{"field":"link_lock"}')
+ui_controls.toggle(crew, "link_lock")
 t.run_ticks(2)
 assert(rows(ui(), "link_lock")[1].on, "an unkeyed host opens for an empty hand")
 
@@ -106,7 +106,7 @@ while true do
         if row.label.id == "link.candidate.endpoint" then candidate = row.option break end
     end
     if not candidate then break end
-    t.ui_act(crew, "toggle", '{"field":"link_join","option":"' .. candidate .. '"}')
+    ui_controls.toggle(crew, "link_join", candidate)
     t.run_ticks(2)
     joined += 1
     assert(joined <= 2, "only the door and the button are in reach")
@@ -114,22 +114,21 @@ end
 assert(joined == 2, "the door and the button hang off the host: " .. joined)
 
 local store = ui().stores[1].binding
-t.ui_act(crew, "text", '{"field":"file_create","option":"host:disl:' .. store .. '","text":"opener"}')
+ui_files.create(crew, "host", "disl", "opener")
 t.run_ticks(2)
 local uid = string.format("%d", ui().open.uid)
 t.run_ticks(10) -- the pacing window on text acts (docs/TGUI.md)
-t.ui_act(crew, "text", '{"field":"file_save","option":"host:' .. uid .. ':' .. store
-    .. '","text":"' .. PROGRAM .. '","revision":0}')
+ui_files.save(crew, PROGRAM)
 t.run_ticks(2)
 assert(ui().open.body == PROGRAM, "the guest's source is on the host's own disk")
-t.ui_act(crew, "toggle", '{"field":"socket_load","option":"controller:' .. uid .. ':' .. store .. '"}')
+ui_files.socket(crew, "controller", uid)
 t.run_ticks(2)
 assert(ui().sockets[1].state.id == "sockets.state.bound", "and the controller socket runs it")
 t.ui_close(crew)
 t.run_ticks(2)
 
 -- ---- through the host: opened --------------------------------------------
-t.click(crew, 6, 2, t.target_at(6, 2, "airlock_button"))
+t.click(crew, 6, 2, t.target_at(crew, 6, 2, "airlock_button"))
 t.run_ticks(20)
 assert(t.door_at(6, 1).open, "the program opened the tagged door for the hand it just refused")
 assert(#t.ledger_rows("door_denied") == 1, "and refused nothing on the way")

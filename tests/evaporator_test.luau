@@ -73,7 +73,7 @@ local p = t.join()
 t.tick()
 
 assert(t.structure_at(4, 1).id == "evaporator", "the map stood one there")
-local machine = t.target_at(4, 1, "evaporator")
+local machine = t.target_at(p, 4, 1, "evaporator")
 
 -- ---------------------------------------------------------------
 -- ANYTHING THAT BOILS, NOT JUST WATER.
@@ -82,7 +82,7 @@ local machine = t.target_at(4, 1, "evaporator")
 -- point of running the same gesture on this machine: the sieve is the
 -- only difference between the two files.
 -- ---------------------------------------------------------------
-local booze = t.target_at(3, 1, "beaker.ethanol")
+local booze = t.target_at(p, 3, 1, "beaker.ethanol")
 t.click(p, 3, 1, booze)
 t.tick()
 t.click(p, 4, 1, machine)
@@ -99,7 +99,7 @@ local ui = t.ui(p)
 assert(row(ui, "dock.vessel").value.text == "beaker (ethanol)", "the panel names what is in it")
 near(ui.setpoints[1].value, 373.15, 1e-9, "and its dial opens at water's boil")
 
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 t.run_seconds(30)
 local crossed = pipe_of(3, 1, "ethanol")
@@ -120,7 +120,7 @@ near(
 -- ---------------------------------------------------------------
 local left = held_in(booze, "ethanol")
 assert(left > 0.0, "the test is only interesting with some left: " .. left)
-t.ui_act(p, "toggle", '{"field":"eject"}')
+ui_controls.toggle(p, "eject")
 t.run_ticks(2)
 assert(t.hands(p).held == "beaker.ethanol", "the eject button hands it back")
 assert(t.ledger_has("Undocked", "beaker"), "and the undock is on the record too")

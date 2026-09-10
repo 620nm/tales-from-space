@@ -65,9 +65,9 @@ local chemist = t.join("engineer")
 local diver = t.join("engineer")
 t.run_ticks(2)
 
-local dispenser = t.target_at(1, 1)
-local scrubber = t.target_at(4, 1, "air_scrubber")
-local jar = t.target_at(1, 2, "bottle")
+local dispenser = t.target_at(chemist, 1, 1)
+local scrubber = t.target_at(diver, 4, 1, "air_scrubber")
+local jar = t.target_at(chemist, 1, 2, "bottle")
 
 -- What the whole closet holds of a gas. A tipped-out puddle boils on
 -- the tile it landed on and the air moves between tiles the moment it
@@ -98,7 +98,7 @@ end
 -- breathing gear in a bag issues it too late. The tank is the act.
 -- ---------------------------------------------------------------
 assert(t.worn(diver).mask == "breath_mask", "the shift starts with apparatus on")
-t.click(diver, 4, 2, t.target_at(4, 2, "oxygen_tank"))
+t.click(diver, 4, 2, t.target_at(diver, 4, 2, "oxygen_tank"))
 t.run_ticks(2)
 assert(t.hands(diver).held == "oxygen_tank", "the tank is in hand")
 t.use_self(diver)
@@ -128,28 +128,28 @@ assert(supply ~= nil and supply.tank ~= nil, "and the valve is open")
 local PRESS = 1.25
 
 local function bottleful()
-    t.click(chemist, 1, 2, jar)
+    t.click(chemist, 1, 2, assert(t.target_at(chemist, 1, 2, jar)))
     t.run_ticks(2)
     assert(t.hands(chemist).held == "bottle", "the bottle is in hand")
 
-    t.click(chemist, 1, 1, dispenser)
+    t.click(chemist, 1, 1, assert(t.target_at(chemist, 1, 1, dispenser)))
     t.tick()
     assert(t.hands(chemist).held == nil, "and it goes into the dock")
-    t.click(chemist, 1, 1, dispenser)
+    t.click(chemist, 1, 1, assert(t.target_at(chemist, 1, 1, dispenser)))
     t.tick()
-    t.ui_act(chemist, "set", '{"field":"amount","value":' .. PRESS .. '}')
+    ui_controls.set(chemist, "amount", PRESS)
     t.run_ticks(2)
-    t.ui_act(chemist, "toggle", '{"field":"dispense","option":"chlorine"}')
+    ui_controls.toggle(chemist, "dispense", "chlorine")
     -- The press lands in one pass; the sweep takes a few more to walk
     -- the superheat down onto the saturation line.
     t.run_seconds(10)
-    t.ui_act(chemist, "toggle", '{"field":"eject"}')
+    ui_controls.toggle(chemist, "eject")
     t.run_ticks(2)
     assert(t.hands(chemist).held == "bottle", "the vessel comes back out")
 
     -- ...and the gesture that costs a shift: a click on the deck tips a
     -- vessel's whole condensed content onto it (items/bottle.luau).
-    t.click(chemist, 2, 1)
+    t.click_turf(chemist, 2, 1)
     t.run_seconds(20)
     t.drop(chemist)
     t.tick()
@@ -246,7 +246,7 @@ local before_n2 = room("n2")
 -- THE DIVER WORKS IT, and that is not staging. The chemist is standing
 -- in the cloud with ten breaths of it in them; the crewman who opened a
 -- tank is the crewman who can still cross the room and press a switch.
-t.click(diver, 4, 1, scrubber)
+t.click(diver, 4, 1, assert(t.target_at(diver, 4, 1, scrubber)))
 t.tick()
 local roster = {}
 for _, sw in ipairs(t.ui(diver).toggles) do
@@ -256,8 +256,8 @@ for _, sw in ipairs(t.ui(diver).toggles) do
 end
 assert(roster.chlorine == false, "chlorine is on the roster, and starts unselected")
 
-t.ui_act(diver, "toggle", '{"field":"filter","option":"chlorine"}')
-t.ui_act(diver, "toggle", '{"field":"power"}')
+ui_controls.toggle(diver, "filter", "chlorine")
+ui_controls.toggle(diver, "power")
 -- Five minutes. A scrubber only ever works the tile it stands on and
 -- the rest of the room refills that tile by ordinary diffusion between
 -- passes, so this is one mouth against six neighbours -- which is why

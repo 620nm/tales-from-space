@@ -106,7 +106,7 @@ local DELIVERY_M3 = net_m3(3, 1)
 -- Lay the two fresh lengths, put the coil down, and walk back to the
 -- gate. Returns the two pressures the scenario starts from.
 local function charge_gate_map(p)
-    t.click(p, 5, 2, t.target_at(5, 2, "pipe"))
+    t.click(p, 5, 2, t.target_at(p, 5, 2, "pipe"))
     t.run_ticks(2)
     for _, x in ipairs({ 5, 6 }) do
         t.click(p, x, 1)
@@ -154,7 +154,7 @@ near(t.pipe_temperature(1, 1), T20C, 0.5, "a mapped run opens at room temperatur
 local supply_0, delivery_0 = charge_gate_map(p)
 local books = moles(supply_0, SUPPLY_M3) + moles(delivery_0, DELIVERY_M3)
 
-t.click(p, 3, 1, t.target_at(3, 1, "temperature_gate"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "temperature_gate"))
 t.tick()
 local panel = t.ui(p)
 assert(panel, "a temperature gate wears the shared flow panel")
@@ -168,7 +168,7 @@ assert(
     "the panel says which way round it reads, which tg hides on examine"
 )
 
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "armed", "the gate is armed")
 
@@ -177,11 +177,11 @@ near(t.pipe_pressure(6, 1), delivery_0, 0.5, "nothing crossed: the gas is too wa
 near(t.pipe_pressure(1, 1), supply_0, 0.5, "and the supply is untouched")
 
 -- ---- a multitool on the sensor, and the test reverses ----
-t.click(p, 3, 2, t.target_at(3, 2, "multitool"))
+t.click(p, 3, 2, t.target_at(p, 3, 2, "multitool"))
 t.run_ticks(2)
 assert(t.hands(p).held == "multitool", "multitool in hand")
 local _ = t.messages(p)
-t.click(p, 3, 1, t.target_at(3, 1, "temperature_gate"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "temperature_gate"))
 t.run_ticks(2)
 assert(
     said(
@@ -214,7 +214,7 @@ assert(
 -- is the one thing tg's interface cannot tell you.
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 3, 1, t.target_at(3, 1, "temperature_gate"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "temperature_gate"))
 t.tick()
 assert(
     readout(t.ui(p), "flow.sensor") == "flow.sensor.reversed",
@@ -235,10 +235,10 @@ t.tick()
 local cold_supply_0, cold_delivery_0 = charge_gate_map(c)
 local cold_books = moles(cold_supply_0, SUPPLY_M3) + moles(cold_delivery_0, DELIVERY_M3)
 
-t.click(c, 3, 1, t.target_at(3, 1, "temperature_gate"))
+t.click(c, 3, 1, t.target_at(c, 3, 1, "temperature_gate"))
 t.tick()
-t.ui_act(c, "set", '{"field":"temperature","value":400}')
-t.ui_act(c, "toggle", '{"field":"power"}')
+ui_controls.set(c, "temperature", 400)
+ui_controls.toggle(c, "power")
 t.run_seconds(60)
 
 local cold_out = t.pipe_pressure(6, 1)
@@ -316,7 +316,7 @@ local hot_moles_0 = t.pipe_gas(1, 1).n2
 local cold_moles_0 = t.pipe_gas(5, 1).n2
 assert(hot_moles_0 > 0.0 and cold_moles_0 > 0.0, "both sides hold gas")
 
-t.click(q, 3, 1, t.target_at(3, 1, "temperature_pump"))
+t.click(q, 3, 1, t.target_at(q, 3, 1, "temperature_pump"))
 t.tick()
 local pump_panel = t.ui(q)
 assert(pump_panel.setpoints[1].field == "share", "the pump's dial is a throttle")
@@ -328,13 +328,13 @@ near(pump_panel.setpoints[1].value, 0.0, 0.01, "and tg ships it shut at zero")
 -- tg's `heat_transfer_rate = 0` (temperature_pump.dm:11) is a real trap
 -- and is kept: a pump somebody has only switched on does nothing at
 -- all, forever.
-t.ui_act(q, "toggle", '{"field":"power"}')
+ui_controls.toggle(q, "power")
 t.run_seconds(20)
 assert(t.structure_at(3, 1).state == "running", "the pump is running")
 near(t.pipe_temperature(1, 1), hot_0, 0.5, "and moving no heat, because its throttle is shut")
 
 -- ---- open the throttle ----
-t.ui_act(q, "set", '{"field":"share","value":100}')
+ui_controls.set(q, "share", 100)
 t.run_seconds(30)
 local hot_1 = t.pipe_temperature(1, 1)
 local cold_1 = t.pipe_temperature(5, 1)
@@ -399,12 +399,12 @@ t.tick()
 local dead_hot = t.pipe_temperature(1, 1)
 local dead_cold = t.pipe_temperature(5, 1)
 
-t.click(d, 3, 1, t.target_at(3, 1, "temperature_pump"))
+t.click(d, 3, 1, t.target_at(d, 3, 1, "temperature_pump"))
 t.tick()
 assert(readout(t.ui(d), "flow.supply") == "flow.supply.dead",
     "the panel says the mains are not behind it")
-t.ui_act(d, "set", '{"field":"share","value":100}')
-t.ui_act(d, "toggle", '{"field":"power"}')
+ui_controls.set(d, "share", 100)
+ui_controls.toggle(d, "power")
 t.run_seconds(60)
 assert(t.ui(d).toggles[1].on == true, "the switch is on")
 assert(
@@ -552,9 +552,9 @@ t.tick()
 -- hand is not an interface -- it is the wrench, and a click carrying
 -- one means the transition. So: switch first, tool second, throughout.
 local function throw_pump_switch(want)
-    t.click(s, 3, 1, t.target_at(3, 1, "temperature_pump"))
+    t.click(s, 3, 1, t.target_at(s, 3, 1, "temperature_pump"))
     t.tick()
-    t.ui_act(s, "toggle", '{"field":"power"}')
+    ui_controls.toggle(s, "power")
     t.run_ticks(2)
     t.ui_close(s)
     t.tick()
@@ -562,7 +562,7 @@ local function throw_pump_switch(want)
 end
 
 local function take_wrench()
-    t.click(s, 3, 2, t.target_at(3, 2, "wrench"))
+    t.click(s, 3, 2, t.target_at(s, 3, 2, "wrench"))
     t.run_ticks(2)
     assert(t.hands(s).held == "wrench", "wrench in hand")
 end
@@ -571,7 +571,7 @@ end
 throw_pump_switch("running")
 take_wrench()
 
-t.click(s, 3, 1, t.target_at(3, 1, "temperature_pump"))
+t.click(s, 3, 1, t.target_at(s, 3, 1, "temperature_pump"))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) ~= nil, "a wrench will not take it up while it runs")
 assert(t.structure_at(3, 1).state == "running", "it is still running, in fact")
@@ -582,7 +582,7 @@ t.run_ticks(2)
 throw_pump_switch("off")
 take_wrench()
 local room_before = t.room_pressure(3, 1)
-t.click(s, 3, 1, t.target_at(3, 1, "temperature_pump"))
+t.click(s, 3, 1, t.target_at(s, 3, 1, "temperature_pump"))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "off, it comes up off the deck")
 
@@ -615,7 +615,7 @@ walk(s, "east")
 walk(s, "east")
 walk(s, "east")
 local _ = t.messages(s)
-t.click(s, 6, 2, t.target_at(6, 2, "temperature_gate_fitting"))
+t.click(s, 6, 2, t.target_at(s, 6, 2, "temperature_gate_fitting"))
 t.run_seconds(2.5)
 assert(t.structure_at(6, 2) == nil, "a fitting under your own boots stays a fitting")
 assert(said(s, "Something is in the way."), "and the refusal says why")
@@ -626,7 +626,7 @@ for _, job in ipairs({
     { x = 6, id = "temperature_gate" },
     { x = 7, id = "heat_exchanger" },
 }) do
-    t.click(s, job.x, 2, t.target_at(job.x, 2, job.id .. "_fitting"))
+    t.click(s, job.x, 2, t.target_at(s, job.x, 2, job.id .. "_fitting"))
     t.run_seconds(2.5)
     local built = t.structure_at(job.x, 2)
     assert(
@@ -634,7 +634,7 @@ for _, job in ipairs({
         "a wrenched " .. job.id .. " fitting becomes the machine"
     )
     assert(
-        t.target_at(job.x, 2, job.id .. "_fitting") == nil,
+        t.target_at(s, job.x, 2, job.id .. "_fitting") == nil,
         "and the fitting is spent rather than left lying under it"
     )
     walk(s, "east")

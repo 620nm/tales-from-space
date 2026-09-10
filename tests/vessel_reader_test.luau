@@ -51,7 +51,7 @@ end
 -- The bottle on the shelf: seventy litres of oxygen at six
 -- atmospheres, and every one of those numbers readable.
 -- ---------------------------------------------------------------
-local tank = t.vessel(t.target_at(2, 1, "oxygen_tank"))
+local tank = t.vessel(t.target_at(p, 2, 1, "oxygen_tank"))
 assert(tank ~= nil, "a tank has an inside")
 near(tank.pressure_kpa, 6 * 101.325, 1.0, "the bottle reads its fill pressure")
 near(tank.volume_l, 70.0, 1e-9, "seventy litres of shell")
@@ -71,7 +71,7 @@ assert(tank.contents.o2.solid == nil, "and none of it is ice")
 -- The beaker beside it: the same reading of a thing with a wet
 -- bottom and an open top.
 -- ---------------------------------------------------------------
-local beaker = t.vessel(t.target_at(3, 1, "beaker.libital"))
+local beaker = t.vessel(t.target_at(p, 3, 1, "beaker.libital"))
 assert(beaker ~= nil, "a beaker has an inside too")
 assert(not beaker.sealed, "an open glass breathes, and says so")
 assert(beaker.contents.water ~= nil, "there is water in it")
@@ -93,7 +93,7 @@ near(beaker.headspace_l, 0.05 - 0.0306, 1e-4,
 
 -- The empty beaker on the end of the bench is the other half of that
 -- contract: fifty millilitres of authored glass, every drop of it free.
-local empty = t.vessel(t.target_at(5, 1, "beaker"))
+local empty = t.vessel(t.target_at(p, 5, 1, "beaker"))
 near(empty.volume_l, 0.05, 1e-9, "fifty millilitres of glass, as authored")
 near(empty.headspace_l, 0.05, 1e-9, "and nothing in the way of it")
 assert(empty.moles == 0, "it ships empty: " .. tostring(empty.moles))
@@ -102,18 +102,18 @@ assert(empty.pressure_kpa == 0, "and nothing pressing on anything")
 
 -- The collapsed reading is still there and still agrees: `t.contents`
 -- is the same water, summed over its phases.
-local collapsed = t.contents(t.target_at(3, 1, "beaker.libital"))
+local collapsed = t.contents(t.target_at(p, 3, 1, "beaker.libital"))
 near(collapsed.water,
     beaker.contents.water.liquid + (beaker.contents.water.gas or 0.0),
     1e-12, "one substance, two ways of counting it")
-near(t.holder_kpa(t.target_at(3, 1, "beaker.libital")), beaker.pressure_kpa,
+near(t.holder_kpa(t.target_at(p, 3, 1, "beaker.libital")), beaker.pressure_kpa,
     1e-12, "and one pressure, two ways of asking")
 
 -- ---------------------------------------------------------------
 -- The canister in the corner: the vessel a station's air comes out
 -- of, reading exactly what its own gauge reads.
 -- ---------------------------------------------------------------
-local canister = t.vessel(t.target_at(5, 2))
+local canister = t.vessel(t.target_at(p, 5, 2))
 assert(canister ~= nil, "a canister has an inside")
 near(canister.pressure_kpa, t.canister_pressure(5, 2), 1e-12,
     "one gauge, whichever way you ask for it")
@@ -124,5 +124,5 @@ assert(canister.contents.o2.gas > 0 and canister.contents.n2.gas > 0,
 -- ---------------------------------------------------------------
 -- And the refusal: nil is the type test, here as everywhere.
 -- ---------------------------------------------------------------
-assert(t.vessel(t.target_at(4, 1, "crowbar")) == nil,
+assert(t.vessel(t.target_at(p, 4, 1, "crowbar")) == nil,
     "a crowbar has no inside, and answering nothing is how it says so")

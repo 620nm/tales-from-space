@@ -56,7 +56,7 @@ local function pick(p, field, label)
 end
 
 local function set(p, field, index)
-    t.ui_act(p, "toggle", '{"field":"' .. field .. '","option":"' .. index .. '"}')
+    ui_controls.toggle(p, field, index)
     t.tick()
 end
 
@@ -109,12 +109,12 @@ assert(bottle.state == "displaced", "standing loose, with nothing under it to fa
 --
 -- A fitting, a wrench and two seconds, on deck with no run within
 -- reach of the whole map.
-t.click(p, 1, 2, t.target_at(1, 2, "wrench"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "wrench"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "wrench in hand")
 
 local _ = t.messages(p)
-t.click(p, 1, 2, t.target_at(1, 2, "connector_port_fitting"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "connector_port_fitting"))
 t.run_seconds(2.5)
 assert(
     not said(p, "There is no pipe under the floor here."),
@@ -136,7 +136,7 @@ assert(t.ledger_has("StructureStep", "connector_port", "built"), "and the raise 
 -- hands goes through. So the two either both allow this or both refuse
 -- it; there is no second rulebook to keep in step.
 t.swap_hands(p)
-t.click(p, 1, 2, t.target_at(1, 2, "rpd"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "rpd"))
 t.run_ticks(2)
 assert(t.hands(p).held == "rpd", "the RPD is in hand")
 t.use_self(p)
@@ -147,7 +147,7 @@ local _ = t.messages(p)
 -- Under the bottle: a fitting goes UNDER the deck, so what is standing
 -- on the tile is not in its way (tg's `wrench_act` looks for
 -- conflicting atmospherics on the turf and at nothing else).
-t.click(p, 2, 2)
+t.click(p, 2, 2, nil, -14, 14)
 work(p)
 assert(
     not said(p, "There is no pipe under the floor here."),
@@ -156,7 +156,7 @@ assert(
 -- Asked by name, because `structure_at` resolves fittings LAST and the
 -- bottle is standing on top of this one -- which is the whole of what
 -- `fitting = true` buys.
-assert(t.target_at(2, 2, "connector_port") ~= nil, "a second port, in one action")
+assert(t.target_at(p, 2, 2, "connector_port") ~= nil, "a second port, in one action")
 assert(#t.items_at(2, 2) == 0, "and no fitting was left lying about")
 assert(t.pipe(2, 2) == 0 and t.pipe(2, 1) == 0, "with no run under it or beside it")
 
@@ -174,7 +174,7 @@ t.run_ticks(2)
 t.swap_hands(p)
 assert(t.hands(p).held == "wrench", "back to the wrench")
 
-t.click(p, 2, 2, t.target_at(2, 2, "canister"))
+t.click(p, 2, 2, t.target_at(p, 2, 2, "canister"))
 t.run_ticks(2)
 assert(
     t.ledger_has("StructureStep", "canister", "anchored"),
@@ -187,9 +187,9 @@ assert(t.structure_at(2, 2).state == "anchored", "and reads as connected")
 -- atmosphere costs nothing, so any gas that moves now moved because a
 -- player asked for it (canister_window_test.luau owns the knob).
 t.swap_hands(p)
-t.click(p, 2, 2, t.target_at(2, 2, "canister"))
+t.click(p, 2, 2, t.target_at(p, 2, 2, "canister"))
 t.tick()
-t.ui_act(p, "set", '{"field":"release","value":400}')
+ui_controls.set(p, "release", 400)
 t.tick()
 
 local room_before = t.room_pressure(1, 1)
@@ -217,13 +217,13 @@ assert(t.pipe_pressure(2, 1) == nil, "there is still no run anywhere to have fed
 t.ui_close(p)
 -- Still on the free hand -- the wrench is in the other one, and a
 -- wrench swung at an RPD lying on the deck is not a pick-up.
-t.click(p, 1, 2, t.target_at(1, 2, "rpd"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "rpd"))
 t.run_ticks(2)
 assert(t.hands(p).held == "rpd", "the RPD again")
 t.use_self(p)
 t.tick()
 set(p, RECIPE, pick(p, RECIPE, "Pipe"))
-t.click(p, 2, 1) -- one north of the port: the tile its stub reaches
+t.click(p, 2, 1, nil, -14, 14) -- one north of the port: the tile its stub reaches
 work(p)
 assert(t.pipe(2, 1) == 4, "a length on the distribution layer: " .. t.pipe(2, 1))
 

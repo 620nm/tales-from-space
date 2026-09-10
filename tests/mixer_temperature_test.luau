@@ -125,13 +125,13 @@ local energy0 = t.pipe_energy(BACK_X, BACK_Y)
     + t.pipe_energy(SIDE_X, SIDE_Y)
     + t.pipe_energy(OUT_X, OUT_Y)
 
-t.click(p, 9, 1, t.target_at(9, 1, "mixer"))
+t.click(p, 9, 1, t.target_at(p, 9, 1, "mixer"))
 t.tick()
 assert(t.ui(p).document == "modules" and t.ui(p).presentation == "modules",
     "the mixer's declared document")
 near(t.ui(p).setpoints[2].value, 50.0, 0.001, "half and half out of the box")
-t.ui_act(p, "set", '{"field":"pressure","value":200}')
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.set(p, "pressure", 200)
+ui_controls.toggle(p, "power")
 t.run_seconds(30)
 -- Thirty seconds later the outlet is at the 200 kPa it was dialled to,
 -- so the machine has ARRIVED -- and a trinary is drawn by what the last
@@ -207,11 +207,11 @@ energy0 = t.pipe_energy(BACK_X, BACK_Y)
     + t.pipe_energy(SIDE_X, SIDE_Y)
     + t.pipe_energy(OUT_X, OUT_Y)
 
-t.click(q, 9, 1, t.target_at(9, 1, "mixer"))
+t.click(q, 9, 1, t.target_at(q, 9, 1, "mixer"))
 t.tick()
-t.ui_act(q, "set", '{"field":"ratio","value":80}')
-t.ui_act(q, "set", '{"field":"pressure","value":200}')
-t.ui_act(q, "toggle", '{"field":"power"}')
+ui_controls.set(q, "ratio", 80)
+ui_controls.set(q, "pressure", 200)
+ui_controls.toggle(q, "power")
 t.run_seconds(30)
 
 gave_back = back0 - moles(BACK_X, BACK_Y)

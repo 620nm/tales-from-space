@@ -91,7 +91,7 @@ local speaker, listener
 
 local function pocket(p)
     local x, y = t.pos(p)
-    t.click(p, x, y, t.target_at(x, y, "encryption_key.medical"))
+    t.click(p, x, y, t.target_at(p, x, y, "encryption_key.medical"))
     t.run_ticks(2)
     assert(t.hands(p).held == "encryption_key.medical", "the key is in hand")
 end
@@ -108,16 +108,16 @@ end
 -- every candidate it offers. Answers how many it took. `id` names a
 -- structure; a machine is whatever is standing on its tile.
 local function join_all(p, x, y, id)
-    t.click(p, x, y, if id ~= nil then t.target_at(x, y, id) else t.target_at(x, y))
+    t.click(p, x, y, if id ~= nil then t.target_at(p, x, y, id) else t.target_at(p, x, y))
     t.tick()
     assert(t.ui(p) ~= nil, "the box wears its panel")
-    t.ui_act(p, "toggle", '{"field":"link_lock"}')
+    ui_controls.toggle(p, "link_lock")
     t.tick()
     assert(rows(t.ui(p), "link_lock")[1].on, "the lock opens for whoever stands at it")
     local offered = #rows(t.ui(p), "link_join")
     for _ = 1, offered do
         local offer = rows(t.ui(p), "link_join")[1]
-        t.ui_act(p, "toggle", string.format('{"field":"link_join","option":"%s"}', offer.option))
+        ui_controls.toggle(p, "link_join", offer.option)
         t.tick()
     end
     t.ui_close(p)
@@ -248,7 +248,7 @@ assert(#t.ledger_rows("radio_intercepted") == 0,
 -- ---------------------------------------------------------------
 t.swap_hands(listener)
 t.tick()
-t.click(listener, 50, 2, t.target_at(50, 2, "wirecutters"))
+t.click(listener, 50, 2, t.target_at(listener, 50, 2, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(listener).held == "wirecutters", "the cutters are in hand")
 listener_to_box()
@@ -268,7 +268,7 @@ walk(listener, "west", 2)
 t.drop(listener)
 t.run_ticks(2)
 local _ = t.messages(listener)
-t.click(listener, 45, 1, t.target_at(45, 1))
+t.click(listener, 45, 1, t.target_at(listener, 45, 1))
 t.tick()
 assert(said(listener, "The transceiver is on the air, carrying Lifeline."),
     "the far tower is lit and keyed and no longer relayed: "

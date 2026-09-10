@@ -79,7 +79,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-t.click(p, 1, 2, t.target_at(1, 2, "analyzer"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "analyzer"))
 t.run_ticks(2)
 assert(t.hands(p).held == "analyzer", "analyzer in hand")
 
@@ -91,7 +91,7 @@ t.run_seconds(10)
 -- A turf click is the ground: tg falls back to `get_turf(...)` for
 -- anything with no gas mixture of its own, and open deck is that.
 local _ = t.messages(p)
-t.click(p, 2, 2)
+t.click_turf(p, 2, 2)
 t.run_ticks(2)
 local air = t.messages(p)
 assert(has(air, "Results of analysis of the air."), "the header names what was read")
@@ -144,7 +144,7 @@ assert(has(other, "Volume: 70 L"), "one length, not the run beside it")
 -- A click that touches NO run -- bare deck between the pipes -- falls
 -- through to the turf, pipes or no pipes under it.
 local _ = t.messages(p)
-t.click(p, 2, 1)
+t.click_turf(p, 2, 1)
 t.run_ticks(2)
 local ground = t.messages(p)
 assert(has(ground, "Results of analysis of the air."), "a miss means the air")
@@ -176,7 +176,7 @@ assert(matching(air, "Oil: ", " %)") == nil, "and names nothing that is not on i
 -- tg reads the ATOM you pointed at when it has air of its own
 -- (`return_analyzable_air`), and a canister does.
 local _ = t.messages(p)
-t.click(p, 1, 1, t.target_at(1, 1, "canister"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "canister"))
 t.run_ticks(2)
 local can = t.messages(p)
 assert(has(can, "Results of analysis of the canister."), "the bottle answers for itself")
@@ -193,14 +193,14 @@ assert(has(can, "Volume: 2000 L"), "and it is a two thousand litre bottle")
 -- is not commissioned, so it holds nothing at all. tg prints the volume
 -- for an empty mixture and nothing else, deliberately.
 t.swap_hands(p)
-t.click(p, 2, 2, t.target_at(2, 2, "pipe"))
+t.click(p, 2, 2, t.target_at(p, 2, 2, "pipe"))
 t.run_ticks(2)
 assert(t.hands(p).held == "pipe", "a length of pipe in the off hand")
 
 walk(p, "east")
 walk(p, "east")
 walk(p, "east")
-t.click(p, 5, 2)
+t.click_turf(p, 5, 2)
 t.run_seconds(1.5)
 assert(t.pipe(5, 2) == 4, "a fresh length on the distribution layer")
 

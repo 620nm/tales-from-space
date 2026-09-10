@@ -49,12 +49,12 @@ t.world([==[(
 
 local p = t.join()
 t.tick()
-t.click(p, 1, 1, t.target_at(1, 1, "card_deck"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "card_deck"))
 t.run_ticks(2)
 assert(t.hands(p).held == "card_deck", "the deck is in hand")
 
 -- ---- dealing at a table ---------------------------------------------
-t.click(p, 2, 1, t.target_at(2, 1, "table"), 9, -6)
+t.click(p, 2, 1, t.target_at(p, 2, 1, "table"), 9, -6)
 t.run_ticks(2)
 
 local dealt = t.item_at(2, 1, "card")
@@ -94,11 +94,11 @@ assert(math.abs(floored.offset.x + 5) <= 6 and math.abs(floored.offset.y) <= 6,
 -- exactly as any other held thing would be.
 t.drop(p)
 t.run_ticks(2)
-t.click(p, 1, 2, t.target_at(1, 2, "card"))
+t.click(p, 1, 2, t.target_at(p, 1, 2, "card"))
 t.run_ticks(2)
 assert(t.hands(p).held == "card", "the card off the floor is in hand")
 
-t.click(p, 2, 2, t.target_at(2, 2, "table"), -12, 4)
+t.click(p, 2, 2, t.target_at(p, 2, 2, "table"), -12, 4)
 t.run_ticks(2)
 assert(t.hands(p).held == nil, "the card left the hand for the table")
 

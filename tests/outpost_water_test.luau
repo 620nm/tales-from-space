@@ -117,7 +117,7 @@ for _ = 1, 3 do
 end
 local x, y = t.pos(p)
 assert(x == 11 and y == 6, ("at the sill, got (%d,%d)"):format(x, y))
-t.click(p, 11, 7, t.target_at(11, 7))
+t.click(p, 11, 7, t.target_at(p, 11, 7))
 t.run_ticks(15)
 assert(t.door_at(11, 7).open, "the glazed sill is open")
 t.outage()

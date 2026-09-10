@@ -50,7 +50,7 @@ local p = t.join()
 t.tick()
 t.run_seconds(3) -- the electrical pass is 0.5 Hz; let one land
 
-t.click(p, 2, 1, t.target_at(2, 1, "multitool")) -- pick the probe up
+t.click(p, 2, 1, t.target_at(p, 2, 1, "multitool")) -- pick the probe up
 t.run_ticks(2)
 
 -- ---- a line with something pushing into it ----------------------------

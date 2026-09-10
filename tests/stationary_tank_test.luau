@@ -108,7 +108,7 @@ assert(standing.state == "anchored", "bolted down: " .. tostring(standing.state)
 -- controls, because the ports are the valves.
 -- ---------------------------------------------------------------
 t.tick()
-t.click(p, 3, 2, t.target_at(3, 2))
+t.click(p, 3, 2, t.target_at(p, 3, 2))
 t.tick()
 local ui = t.ui(p)
 assert(ui, "clicking the tank opens its window")
@@ -174,13 +174,12 @@ assert(math.abs(after_total - before_total) < before_total * 0.001,
     "the books balance: " .. before_total .. " -> " .. after_total)
 
 -- ---------------------------------------------------------------
--- NEGATIVE: the window a machine is showing IS the whitelist, and
--- this one shows nothing. A client inventing the canister's valve or
--- the pump's dial moves neither.
+-- This read-only window renders neither the canister's valve nor
+-- the pump's dial.
 -- ---------------------------------------------------------------
-t.ui_act(p, "toggle", '{"field":"valve"}')
-t.ui_act(p, "set", '{"field":"target","value":0}')
-t.ui_act(p, "set", '{"field":"release","value":0}')
+assert(ui_controls.find(p, "/toggle/valve/switch") == nil, "no valve control")
+assert(ui_controls.find(p, "/set/target/value") == nil, "no target dial")
+assert(ui_controls.find(p, "/set/release/value") == nil, "no release dial")
 t.run_ticks(2)
 assert(#t.ui(p).toggles == 0 and #t.ui(p).setpoints == 0,
     "no invented control appears on the panel")

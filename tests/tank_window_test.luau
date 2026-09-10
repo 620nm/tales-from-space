@@ -97,7 +97,7 @@ t.run_ticks(5)
 t.drop(p)
 t.run_ticks(5)
 
-t.click(p, 2, 1, t.target_at(2, 1, "oxygen_tank"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "oxygen_tank"))
 t.run_ticks(2)
 assert(t.hands(p).held == "oxygen_tank", "the bottle is in hand")
 assert(t.ui(p) == nil, "picking a thing up opens nothing")
@@ -142,21 +142,21 @@ assert(math.abs(dial.value - 16.0) < 0.001, "at tg's default: " .. tostring(dial
 assert(dial.min == 0.0, "tg's TANK_MIN_RELEASE_PRESSURE")
 assert(math.abs(dial.max - 3 * 101.325) < 0.001, "and tg's maximum, three atmospheres")
 
-t.ui_act(p, "set", '{"field":"release","value":30}')
+ui_controls.set(p, "release", 30)
 t.tick()
 assert(math.abs(setpoint(t.ui(p), "release").value - 30.0) < 0.001, "the valve took 30 kPa")
-t.ui_act(p, "set", '{"field":"release","value":9000}')
+ui_controls.set(p, "release", 9000)
 t.tick()
 assert(math.abs(setpoint(t.ui(p), "release").value - 3 * 101.325) < 0.001,
     "and a client cannot dial past three atmospheres")
-t.ui_act(p, "set", '{"field":"release","value":"min"}')
+ui_controls.set(p, "release", "min")
 t.tick()
 assert(setpoint(t.ui(p), "release").value == 0.0, "nor below nothing")
 assert(t.ledger_has("MachineSetpoint"), "and every setting is on the record")
 
 -- Nothing else on this panel is a control, so nothing else answers.
-t.ui_act(p, "toggle", '{"field":"valve"}')
-t.ui_act(p, "set", '{"field":"pressure","value":500}')
+assert(ui_controls.find(p, "/toggle/valve/switch") == nil, "no valve control")
+assert(ui_controls.find(p, "/set/pressure/value") == nil, "no pressure dial")
 t.tick()
 assert(setpoint(t.ui(p), "release").value == 0.0, "a field the panel never offered moves nothing")
 

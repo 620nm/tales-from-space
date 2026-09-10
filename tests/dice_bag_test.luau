@@ -35,7 +35,7 @@ local p = t.join()
 t.tick()
 
 -- ---- the roster, in the order the file declares it ---------------------
-t.click(p, 2, 1, t.target_at(2, 1, "dice_bag"))
+t.click(p, 2, 1, t.target_at(p, 2, 1, "dice_bag"))
 t.tick()
 assert(t.hands(p).held == "dice_bag", "the bag is in hand")
 
@@ -66,10 +66,12 @@ end
 assert(table.concat(emptied, ",") == table.concat(ROSTER, ","),
     "the bag ships with its declared roster, in order: " .. table.concat(emptied, ","))
 
-t.take_held(p, 0)
+local unavailable_ok, unavailable_error = pcall(function() t.take_held(p, 0) end)
+assert(not unavailable_ok and tostring(unavailable_error):find("no observed item or slot", 1, true),
+    "an empty bag has no observed row to take")
 t.tick()
 t.swap_hands(p)
-assert(t.hands(p).held == nil, "an eighth take finds an empty bag")
+assert(t.hands(p).held == nil, "an empty bag offers no eighth die")
 t.swap_hands(p)
 -- The empty bag goes down too, so every click below reaches a die
 -- rather than being the bag being USED on the tile.
@@ -96,7 +98,7 @@ end
 -- runs it through `manipulate_result` -> `(original - 1) * 10`
 -- (dice.dm:114-116, 222-223). So the CELL is 1..10 and the SENTENCE is
 -- 0..90, and the port's whole risk is those two drifting apart.
-t.click(p, 1, 1, t.target_at(1, 1, "d00"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "d00"))
 t.tick()
 assert(t.hands(p).held == "d00", "the percentile die is in hand")
 
@@ -128,7 +130,7 @@ for _ = 1, 60 do
             "the bottom face reads 0 and still earns tg's remark: " .. last)
         seen_zero = true
     end
-    t.click(p, 1, 1, t.target_at(1, 1, "d00"))
+    t.click(p, 1, 1, t.target_at(p, 1, 1, "d00"))
     t.tick()
 end
 assert(seen_zero, "sixty rolls of a ten-sider turn up its bottom face")
@@ -146,7 +148,7 @@ t.tick()
 -- dice.dm:1-3, 90-91). Four is under it, so a d4 landing on 1 is
 -- silent where a d6 landing on 1 is not -- the same branch, two
 -- answers, and the only way to see it is to roll the small one a lot.
-t.click(p, 1, 1, t.target_at(1, 1, "d4"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "d4"))
 t.tick()
 assert(t.hands(p).held == "d4", "the caltrop is in hand")
 
@@ -170,7 +172,7 @@ assert(ones > 0, "forty rolls of a four-sider include a 1 to be silent about")
 -- ...where the d6 beside it, on the same branch, does say so.
 t.drop(p)
 t.tick()
-t.click(p, 1, 1, t.target_at(1, 1, "d6"))
+t.click(p, 1, 1, t.target_at(p, 1, 1, "d6"))
 t.tick()
 assert(t.hands(p).held == "d6", "the six-sider is in hand")
 local remarked = false

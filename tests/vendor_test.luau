@@ -37,12 +37,12 @@ local msgs = table.concat(t.messages(p), "\n")
 assert(msgs:find("wobbles", 1, true), "move.bump fired: " .. msgs)
 
 -- Click it: the machine's content-authored clean-room shelf opens.
-t.click(p, 2, 1)
+t.click_turf(p, 2, 1)
 t.tick()
 local missed = t.last_ui(p)
 assert(missed == nil, "a target-less transparent-pixel click is only ground")
 
-t.click(p, 2, 1, t.target_at(2, 1))
+t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 local raw, pushes = t.last_ui(p)
 assert(raw, "clicking the machine opens its window")
@@ -58,7 +58,7 @@ assert(ui.products[1].stock == 99, "the product row carries its live stock")
 
 -- act('vend') dispenses; the ledger names the player, not a script.
 assert(t.count_items("cola") == 0)
-t.ui_act(p, "vend", '{"product":"cola"}')
+ui_controls.vend(p, "cola")
 t.tick()
 assert(t.count_items("cola") == 1, "act('vend') dispenses")
 local sounds = table.concat(t.sounds(p), "\n")
@@ -76,6 +76,6 @@ assert(t.ledger_has("ItemSpawned", "cola", "Player"), "and grep finds it too")
 
 -- Closing the window disarms acts.
 t.ui_close(p)
-t.ui_act(p, "vend", '{"product":"cola"}')
+assert(not ui_controls.has_product(p, "cola"), "closing removes the shelf control")
 t.tick()
 assert(t.count_items("cola") == 1, "no window, no vending")

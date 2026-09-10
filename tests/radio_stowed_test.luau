@@ -62,7 +62,7 @@ t.run_ticks(20)
 
 local function pocket(p)
     local x, y = t.pos(p)
-    t.click(p, x, y, t.target_at(x, y, "encryption_key.medical"))
+    t.click(p, x, y, t.target_at(p, x, y, "encryption_key.medical"))
     t.run_ticks(2)
     assert(t.hands(p).held == "encryption_key.medical", "the key is in hand")
 end
@@ -77,7 +77,7 @@ pocket(l_far)
 -- doorman's work and comes back after.
 t.drop(speaker)
 t.run_ticks(2)
-local drawer = t.target_at(2, 1, "cadaver_chamber")
+local drawer = t.target_at(speaker, 2, 1, "cadaver_chamber")
 assert(drawer ~= nil, "one targetable drawer")
 t.click(speaker, 2, 1, drawer)
 t.tick()

@@ -40,8 +40,8 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local full = t.target_at(1, 1, "beaker.libital")
-local empty = t.target_at(3, 1, "beaker")
+local full = t.target_at(p, 1, 1, "beaker.libital")
+local empty = t.target_at(p, 3, 1, "beaker")
 
 local function total(handle)
     local contents = t.contents(handle)
@@ -60,11 +60,11 @@ end
 close(total(empty), 0, "the bare beaker ships empty")
 
 -- ---- owner: another vessel --------------------------------------------
-t.click(p, 1, 1, full) -- pick the full one up
+t.click(p, 1, 1, t.target_at(p, 1, 1, "beaker.libital")) -- pick the full one up
 t.tick()
 close(total(full), 0.35, "the libital beaker ships full")
 
-t.click(p, 3, 1, empty)
+t.click(p, 3, 1, t.target_at(p, 3, 1, "beaker"))
 t.tick()
 close(total(empty), 0.25, "a transfer into a vessel moves what it says")
 close(total(full), 0.10, "and the source is down by exactly that")
@@ -78,7 +78,7 @@ assert(poured[1].actor.kind == "script", "attributed to the file that asked")
 -- The same call with the far end named as a MOB: liquid out of a held
 -- vessel into a bloodstream is drinking, and the ledger says so without
 -- the content file ever spelling the word.
-t.click(p, 2, 1)
+t.click_turf(p, 2, 1)
 t.tick()
 close(total(full), 0.05, "a swig takes 0.05 mol")
 local drank = t.ledger_rows("drank")
@@ -119,7 +119,7 @@ assert(dried > gas_before, "the puddle is drying into the room: " .. dried .. " 
 -- ---- and the refusals are still native --------------------------------
 -- An empty vessel has nothing to give, whichever owner is on the far
 -- end, and a refusal writes no second row.
-t.click(p, 3, 1, empty)
+t.click(p, 3, 1, t.target_at(p, 3, 1, "beaker"))
 t.tick()
 t.click(p, 2, 2)
 t.tick()

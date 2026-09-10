@@ -63,9 +63,9 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local dispenser = t.target_at(1, 2)
-local heater = t.target_at(3, 2)
-local beaker = t.target_at(1, 1, "beaker")
+local dispenser = t.target_at(p, 1, 2)
+local heater = t.target_at(p, 3, 2)
+local beaker = t.target_at(p, 1, 1, "beaker")
 
 local function dock(machine, x, y)
     t.click(p, x, y, machine)
@@ -83,10 +83,10 @@ assert(t.hands(p).held == nil, "the beaker is in the dispenser")
 -- press only means anything to a session that has one open.
 t.click(p, 1, 2, dispenser)
 t.tick()
-t.ui_act(p, "toggle", '{"field":"dispense","option":"water"}')
+ui_controls.toggle(p, "dispense", "water")
 t.run_ticks(2)
 assert(math.abs(amount(beaker, "water") - PRESS) < 1e-9, "three quarters of a mole of water")
-t.ui_act(p, "toggle", '{"field":"eject"}')
+ui_controls.toggle(p, "eject")
 t.run_ticks(2)
 assert(t.hands(p).held == "beaker", "and it comes back out")
 
@@ -96,9 +96,9 @@ assert(t.hands(p).held == "beaker", "and it comes back out")
 dock(heater, 3, 2)
 t.click(p, 3, 2, heater)
 t.tick()
-t.ui_act(p, "set", '{"field":"temperature","value":600}')
+ui_controls.set(p, "temperature", 600)
 t.run_ticks(2)
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 
 -- The chamber has to get there before anything can leave, so watch for
 -- the vapour rather than guessing the tick it appears on: the crossing

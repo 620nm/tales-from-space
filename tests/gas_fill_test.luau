@@ -67,7 +67,7 @@ t.world([==[(
     spawns: [(2, 1)],
     items: [
         (1, 1, "bottle"),
-        (3, 1, "beaker"), (3, 1, "beaker.libital"), (3, 1, "dropper"),
+        (3, 1, "beaker"), (3, 2, "beaker.libital"), (1, 2, "dropper"),
     ],
     structures: [
         (2, 2, "canister"),
@@ -77,13 +77,13 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local can = t.target_at(2, 2)
+local can = t.target_at(p, 2, 2)
 assert(can ~= nil, "a canister stands on the deck")
 assert(t.charge_vessel(2, 2, "o2", 2000.0), "and it takes a charge")
 t.tick()
 near(t.canister_pressure(2, 2), 2000.0, 1.0, "twenty atmospheres of oxygen")
 
-local jar = t.target_at(1, 1, "bottle")
+local jar = t.target_at(p, 1, 1, "bottle")
 t.click(p, 1, 1, jar)
 t.tick()
 assert(t.hands(p).held == "bottle", "the bottle is in hand")
@@ -91,7 +91,7 @@ near(vessel(jar).pressure_kpa, 0.0, 1e-9, "and it is empty, so its gauge reads n
 
 local can_before = gas(can, "o2")
 local _ = t.messages(p)
-t.click(p, 2, 2, can)
+t.click(p, 2, 2, t.target_at(p, 2, 2))
 t.run_ticks(2)
 
 -- The gauge is the assertion, because the gauge is what a crewman
@@ -111,7 +111,7 @@ assert(said(p, "You hold the bottle to the valve until it stops hissing."),
 -- rather than transferring a silent zero.
 _ = t.messages(p)
 local charged = gas(jar, "o2")
-t.click(p, 2, 2, can)
+t.click(p, 2, 2, t.target_at(p, 2, 2))
 t.run_ticks(2)
 near(gas(jar, "o2"), charged, 1e-9, "a bottle at the line's pressure takes no more")
 assert(said(p, "The bottle is already at the line's pressure."), "and it says why")
@@ -119,12 +119,12 @@ assert(said(p, "The bottle is already at the line's pressure."), "and it says wh
 -- ...AND THE OPEN GLASS, WHICH IS THE POINT OF THE LID.
 t.drop(p)
 t.tick()
-local glass = t.target_at(3, 1, "beaker")
-t.click(p, 3, 1, glass)
+local glass = t.target_at(p, 3, 1, "beaker")
+t.click(p, 3, 1, t.target_at(p, 3, 1, "beaker"))
 t.tick()
 assert(t.hands(p).held == "beaker", "the beaker is in hand")
 _ = t.messages(p)
-t.click(p, 2, 2, can)
+t.click(p, 2, 2, t.target_at(p, 2, 2))
 t.run_ticks(2)
 near(gas(glass, "o2"), 0.0, 1e-12, "an open beaker takes none of it")
 assert(said(p, "That would only escape: seal a vessel first."),
@@ -140,13 +140,14 @@ assert(said(p, "That would only escape: seal a vessel first."),
 for _, open in ipairs({ "beaker.libital", "dropper" }) do
     t.drop(p)
     t.tick()
-    local glassware = t.target_at(3, 1, open)
+    local x, y = if open == "dropper" then 1 else 3, 2
+    local glassware = t.target_at(p, x, y, open)
     assert(glassware ~= nil, open .. " is on the deck")
-    t.click(p, 3, 1, glassware)
+    t.click(p, x, y, t.target_at(p, x, y, open))
     t.tick()
     assert(t.hands(p).held == open, open .. " is in hand")
     _ = t.messages(p)
-    t.click(p, 2, 2, can)
+    t.click(p, 2, 2, t.target_at(p, 2, 2))
     t.run_ticks(2)
     near(gas(glassware, "o2"), 0.0, 1e-12, "an open " .. open .. " takes none of it")
     assert(said(p, "That would only escape: seal a vessel first."),
@@ -209,8 +210,8 @@ t.world([==[(
 p = t.join()
 t.tick()
 
-local dispenser = t.target_at(1, 2)
-local heater = t.target_at(6, 2)
+local dispenser = t.target_at(p, 1, 2)
+local heater = t.target_at(p, 6, 2)
 assert(dispenser ~= nil and heater ~= nil, "the bench is set")
 -- The full line, and the one that is nearly empty. Twenty atmospheres
 -- is a quarter of what a supply bottle ships holding (docs/ATMOS.md 9),
@@ -273,7 +274,7 @@ end
 -- the element. Answers the bottle, still docked and still hot.
 local function bake(bx, by, cx, key, mol, target_k, seconds)
     walk_to(bx, by)
-    local jar = t.target_at(bx, by, "bottle")
+    local jar = t.target_at(p, bx, by, "bottle")
     assert(jar ~= nil, "there is a bottle at " .. bx .. ", " .. by)
     t.click(p, bx, by, jar)
     t.tick()
@@ -281,7 +282,7 @@ local function bake(bx, by, cx, key, mol, target_k, seconds)
 
     -- The oxygen, which no button on that shelf can give it.
     walk_to(cx, 2)
-    t.click(p, cx, 1, t.target_at(cx, 1))
+    t.click(p, cx, 1, t.target_at(p, cx, 1))
     t.run_ticks(2)
     local charge = gas(jar, "o2")
     assert(charge > 0.0, "the bottle came away with oxygen in it")
@@ -290,11 +291,11 @@ local function bake(bx, by, cx, key, mol, target_k, seconds)
     walk_to(2, 2)
     panel(1, 2, dispenser)
     panel(1, 2, dispenser)
-    t.ui_act(p, "set", '{"field":"amount","value":' .. mol .. '}')
+    ui_controls.set(p, "amount", mol)
     t.run_ticks(2)
-    t.ui_act(p, "toggle", '{"field":"dispense","option":"' .. key .. '"}')
+    ui_controls.toggle(p, "dispense", key)
     t.run_ticks(4)
-    t.ui_act(p, "toggle", '{"field":"eject"}')
+    ui_controls.toggle(p, "eject")
     t.run_ticks(2)
     assert(t.hands(p).held == "bottle", "the bottle comes back out")
     near(condensed(jar, key) + gas(jar, key), mol, 1e-9,
@@ -304,9 +305,9 @@ local function bake(bx, by, cx, key, mol, target_k, seconds)
     walk_to(5, 2)
     panel(6, 2, heater)
     panel(6, 2, heater)
-    t.ui_act(p, "set", '{"field":"temperature","value":' .. target_k .. '}')
+    ui_controls.set(p, "temperature", target_k)
     if t.ui(p).toggles[1].on ~= true then
-        t.ui_act(p, "toggle", '{"field":"power"}')
+        ui_controls.toggle(p, "power")
     end
     t.run_ticks(2)
     assert(t.ui(p).toggles[1].on == true, "the element is on")
@@ -317,10 +318,10 @@ end
 -- Off the element and out of the way, so the next bottle gets its turn.
 local function unload()
     if t.ui(p).toggles[1].on == true then
-        t.ui_act(p, "toggle", '{"field":"power"}')
+        ui_controls.toggle(p, "power")
         t.run_ticks(2)
     end
-    t.ui_act(p, "toggle", '{"field":"eject"}')
+    ui_controls.toggle(p, "eject")
     t.run_ticks(2)
     t.drop(p)
     t.tick()

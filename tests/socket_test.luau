@@ -112,7 +112,6 @@ t.run_ticks(2)
 assert(t.body(patient).posture == "lying", "the patient is on the table")
 
 local PX, PY = 2, 1
-local pid = t.body_id(patient)
 
 -- What a candidate button says. An operation ON AN ORGAN is the
 -- `procedure.on_organ` id carrying the two words as arguments; a plain
@@ -127,14 +126,14 @@ end
 
 local function hold(id)
     if t.hands(surgeon).held ~= nil then t.drop(surgeon); t.tick() end
-    t.click(surgeon, 1, 1, t.target_at(1, 1, id))
+    t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, id))
     t.run_ticks(2)
     assert(t.hands(surgeon).held == id, "the surgeon holds the " .. id)
 end
 
 local function step(tool, secs, state)
     hold(tool)
-    t.click(surgeon, PX, PY, pid)
+    t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
     t.run_ticks(math.ceil(secs * 20) + 3)
     assert(t.parts(patient).chest.states[state] == true, "the chest is " .. state)
 end
@@ -148,7 +147,7 @@ step("scalpel", 2.4, "organs_cut")
 -- Several organs are reachable, so a hemostat opens the CHOICE window
 -- rather than performing one thing.
 hold("hemostat")
-t.click(surgeon, PX, PY, pid)
+t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(2)
 local win = t.ui(surgeon)
 assert(win ~= nil and win.presentation == "choices", "the choice document opened")
@@ -157,7 +156,7 @@ for _, toggle in ipairs(win.toggles) do
     if face(toggle.label):find("lungs", 1, true) then pick = toggle.option end
 end
 assert(pick, "the window lists the lungs among the organs to remove")
-t.ui_act(surgeon, "toggle", string.format('{"field":"operation","option":"%s"}', pick))
+ui_controls.toggle(surgeon, "operation", pick)
 t.run_ticks(23)
 
 local hole = t.sockets(patient).lungs

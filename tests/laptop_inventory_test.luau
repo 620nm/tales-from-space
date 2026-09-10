@@ -4,18 +4,36 @@ local ARENA = [==[(
     legend: { '.': (turf: Floor), '#': (turf: Wall) },
     rows: ["#####", "#...#", "#...#", "#...#", "#####"],
     spawns: [(2, 2)],
-    items: [(2, 2, "laptop"), (2, 2, "floppy_disk"),
-        (2, 2, "floppy_disk"), (2, 2, "id_assistant"),
-        (2, 2, "id_captain"), (2, 2, "backpack"), (3, 2, "backpack")],
+    items: [(1, 2, "laptop"), (1, 3, "floppy_disk"),
+        (1, 3, "floppy_disk"), (1, 1, "id_assistant"),
+        (3, 1, "id_captain"), (2, 3, "backpack"), (3, 2, "backpack")],
 )]==]
 
 t.world(ARENA, 0)
 local p = t.join()
 t.run_ticks(3)
 local function step() t.run_ticks(2) end
+local function put_down()
+    if t.hands(p).held == "floppy_disk" then
+        t.move(p, "west")
+        t.run_ticks(3)
+        t.move(p, "south")
+        t.run_ticks(3)
+        t.drop(p)
+        step()
+        t.move(p, "north")
+        t.run_ticks(3)
+        t.move(p, "east")
+        t.run_ticks(3)
+    else
+        t.drop(p)
+    end
+end
 local function take(id, x)
-    x = x or 2
-    t.click(p, x, 2, assert(t.target_at(x, 2, id)))
+    local places = {["floppy_disk"] = {1, 3},["id_assistant"] = {1, 1},["id_captain"] = {3, 1},["screwdriver"] = {3, 3},["backpack"] = {2, 3},["laptop"] = {1, 2}}
+    local px, py = t.pos(p)
+    local at = if x then {x, 2} elseif t.target_at(p, px, py, id) then {px, py} else places[id]
+    t.click(p, at[1], at[2], (assert(t.target_at(p, at[1], at[2], id), id .. " is visible")))
     step()
     assert(t.hands(p).held == id, "picked up " .. id)
 end
@@ -51,12 +69,12 @@ apply(held_laptop)
 assert(t.hands(p).held == "floppy_disk", "occupied cartridge slot swaps into the inserting hand")
 assert(#t.ledger_rows("media_inserted") == 2 and #t.ledger_rows("media_ejected") == 1,
     "cartridge replacement records both the old cartridge leaving and the new one entering")
-t.drop(p)
+put_down()
 step()
 gesture(held_laptop, "shift_ctrl_primary")
 assert(t.hands(p).held == "floppy_disk" and not desktop().cartridge,
     "declared modified click ejects from the other hand")
-t.drop(p)
+put_down()
 step()
 take("id_assistant")
 apply(held_laptop)
@@ -64,11 +82,11 @@ assert(t.hands(p).held == nil and desktop().card, "ID inserts into the held lapt
 take("id_captain")
 apply(held_laptop)
 assert(t.hands(p).held == "id_assistant", "ID replacement returns the original card")
-t.drop(p)
+put_down()
 step()
 gesture(held_laptop, "shift_ctrl_secondary")
 assert(t.hands(p).held == "id_captain" and not desktop().card, "modified right-click ejects the replacement ID")
-t.drop(p)
+put_down()
 step()
 
 -- Empty-hand navigation remains separate from item-pair commands.
@@ -88,7 +106,7 @@ t.equip(p)
 step()
 assert(t.worn(p).back == "backpack", "outer bag is worn")
 if t.hands(p).held ~= nil then
-    t.drop(p)
+    put_down()
     step()
 end
 t.swap_hands(p)
@@ -105,7 +123,7 @@ gesture(stored_laptop, "secondary")
 assert(desktop().cartridge, "stored laptop exposes its inserted cartridge")
 gesture(stored_laptop, "shift_ctrl_primary")
 assert(t.hands(p).held == "floppy_disk", "stored laptop ejects to the active hand")
-t.drop(p)
+put_down()
 step()
 t.ui_close(p)
 step()
@@ -130,7 +148,7 @@ gesture(held_stored_laptop, "secondary")
 assert(desktop().cartridge, "held bag laptop opens its desktop")
 gesture(held_stored_laptop, "shift_ctrl_primary")
 assert(t.hands(p).held == "floppy_disk", "held bag laptop ejects its cartridge")
-t.drop(p)
+put_down()
 step()
 t.swap_hands(p)
 step()

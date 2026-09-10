@@ -99,9 +99,9 @@ assert(volume_out > 90.0)
 local books = moles(volume_in, IN_M3) + moles(volume_out, OUT_M3)
 
 -- Both on, through the panel every machine with a dial on it wears.
-t.click(p, 3, 1, t.target_at(3, 1, "pump"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "pump"))
 t.tick()
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "running", "the pressure pump is on")
 
@@ -109,14 +109,14 @@ for _ = 1, 6 do
     t.move(p, "east")
     t.run_ticks(5)
 end
-t.click(p, 9, 2, t.target_at(9, 2, "volume_pump"))
+t.click(p, 9, 2, t.target_at(p, 9, 2, "volume_pump"))
 t.tick()
 local panel = t.ui(p)
 assert(panel, "a volume pump wears the same panel")
 assert(panel.setpoints[1].field == "rate", "with a rate knob, not a pressure one")
 assert(panel.setpoints[1].unit == "L/s")
 near(panel.setpoints[1].value, 200.0, 0.001, "MAX_TRANSFER_RATE out of the box")
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.structure_at(9, 2).state == "running", "and it is on")
 
@@ -196,10 +196,10 @@ local held = supply_before + moles(t.pipe_pressure(5, 1), LEAK_OUT_M3)
 -- Defeat the limiters. A multitool in hand and a click on the machine:
 -- tg makes this a TOOL act rather than a button on the panel, because
 -- somebody has to physically get at the mechanism.
-t.click(q, 4, 2, t.target_at(4, 2, "multitool"))
+t.click(q, 4, 2, t.target_at(q, 4, 2, "multitool"))
 t.run_ticks(2)
 assert(t.hands(q).held == "multitool", "the multitool is in hand")
-t.click(q, 3, 1, t.target_at(3, 1, "volume_pump"))
+t.click(q, 3, 1, t.target_at(q, 3, 1, "volume_pump"))
 t.run_ticks(2)
 assert(
     t.ledger_has("MachineToggled", "overclock", "Player"),
@@ -210,7 +210,7 @@ assert(
 -- an empty hand to open -- so put the tool down first.)
 t.drop(q)
 t.run_ticks(2)
-t.click(q, 3, 1, t.target_at(3, 1, "volume_pump"))
+t.click(q, 3, 1, t.target_at(q, 3, 1, "volume_pump"))
 t.tick()
 local limits = nil
 for _, r in ipairs(t.ui(q).readouts) do
@@ -219,7 +219,7 @@ for _, r in ipairs(t.ui(q).readouts) do
     end
 end
 assert(limits == "flow.limiters.defeated", "and the panel says so: " .. tostring(limits))
-t.ui_act(q, "toggle", '{"field":"power"}')
+ui_controls.toggle(q, "power")
 t.run_seconds(60)
 
 local supply_after = moles(t.pipe_pressure(1, 1), LEAK_IN_M3)
@@ -283,7 +283,7 @@ assert(t.structure_at(3, 1).state == "shut", "a gate opens the shift shut")
 -- Run the west half by hand, so the gate's back port has an EMPTY main
 -- behind it... and then the charged one is on its front, which is
 -- uphill. Nothing may cross.
-t.click(g, 1, 2, t.target_at(1, 2, "pipe"))
+t.click(g, 1, 2, t.target_at(g, 1, 2, "pipe"))
 t.run_ticks(2)
 for _, x in ipairs({ 1, 2 }) do
     t.click(g, x, 1)
@@ -308,10 +308,10 @@ for _ = 1, 2 do
     t.move(g, "east")
     t.run_ticks(5)
 end
-t.click(g, 3, 1, t.target_at(3, 1, "passive_gate"))
+t.click(g, 3, 1, t.target_at(g, 3, 1, "passive_gate"))
 t.tick()
 assert(t.ui(g), "a gate wears the panel")
-t.ui_act(g, "toggle", '{"field":"power"}')
+ui_controls.toggle(g, "power")
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "open", "the gate is open")
 t.run_seconds(30)
@@ -354,7 +354,7 @@ t.world([==[(
 
 local d = t.join()
 t.tick()
-t.click(d, 6, 2, t.target_at(6, 2, "pipe"))
+t.click(d, 6, 2, t.target_at(d, 6, 2, "pipe"))
 t.run_ticks(2)
 for _, x in ipairs({ 5, 6 }) do
     t.click(d, x, 1)
@@ -385,9 +385,9 @@ for _ = 1, 2 do
     t.move(d, "west")
     t.run_ticks(5)
 end
-t.click(d, 3, 1, t.target_at(3, 1, "passive_gate"))
+t.click(d, 3, 1, t.target_at(d, 3, 1, "passive_gate"))
 t.tick()
-t.ui_act(d, "toggle", '{"field":"power"}')
+ui_controls.toggle(d, "power")
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "open", "the gate is open")
 t.run_seconds(60)
@@ -460,7 +460,7 @@ t.world([==[(
 
 local v = t.join()
 t.tick()
-t.click(v, 6, 2, t.target_at(6, 2, "pipe"))
+t.click(v, 6, 2, t.target_at(v, 6, 2, "pipe"))
 t.run_ticks(2)
 for _, x in ipairs({ 5, 6 }) do
     t.click(v, x, 1)
@@ -482,7 +482,7 @@ assert(
         .. " well below it: " .. relief_out
 )
 
-t.click(v, 3, 1, t.target_at(3, 1, "pressure_valve"))
+t.click(v, 3, 1, t.target_at(v, 3, 1, "pressure_valve"))
 t.tick()
 local relief_panel = t.ui(v)
 assert(relief_panel.setpoints[1].label.id == "flow.trip_pressure",
@@ -491,8 +491,8 @@ near(relief_panel.setpoints[1].max, 10132.5, 0.001, "tg's ONE_ATMOSPHERE * 100")
 
 -- Arm it, trip pressure well above the supply. Nothing crosses, because
 -- nothing upstream is over the line.
-t.ui_act(v, "set", '{"field":"target","value":400}')
-t.ui_act(v, "toggle", '{"field":"power"}')
+ui_controls.set(v, "target", 400)
+ui_controls.toggle(v, "power")
 t.run_ticks(2)
 assert(t.structure_at(3, 1).state == "armed", "the valve is armed")
 t.run_seconds(30)
@@ -501,7 +501,7 @@ near(t.pipe_pressure(1, 1), relief_in, 0.5, "and holds the supply where it was")
 
 -- Wind the trip pressure under the supply. Same valve, same position,
 -- and now it relieves.
-t.ui_act(v, "set", '{"field":"target","value":50}')
+ui_controls.set(v, "target", 50)
 t.run_seconds(60)
 assert(
     t.pipe_pressure(5, 1) > relief_out + 10.0,

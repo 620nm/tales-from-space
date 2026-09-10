@@ -67,7 +67,7 @@ t.world([==[(
         "#######",
     ],
     spawns: [(3, 1)],
-    items: [(3, 1, "beaker.water"), (3, 1, "beaker.ethanol")],
+    items: [(3, 2, "beaker.water"), (2, 2, "beaker.ethanol")],
     pipes: [(2, 1, 4), (3, 1, 4)],
     structures: [
         (1, 1, "air_injector", { "pipe": "east" }),
@@ -83,7 +83,7 @@ local p = t.join()
 t.tick()
 
 assert(t.structure_at(4, 1).id == "steam_generator", "the map stood one there")
-local machine = t.target_at(4, 1, "steam_generator")
+local machine = t.target_at(p, 4, 1, "steam_generator")
 assert(machine ~= nil, "and a hand can reach it")
 
 -- ---------------------------------------------------------------
@@ -94,7 +94,7 @@ assert(machine ~= nil, "and a hand can reach it")
 -- what is in the pipe, which is the room-device panel's whole argument
 -- borrowed intact (../lunatic/sim/ui/settings/room_device.rs).
 -- ---------------------------------------------------------------
-t.click(p, 4, 1, machine)
+t.click(p, 4, 1, t.target_at(p, 4, 1, "steam_generator"))
 t.tick()
 local ui = t.ui(p)
 assert(ui, "an empty hand opens the panel")
@@ -106,11 +106,11 @@ t.ui_close(p)
 -- ---------------------------------------------------------------
 -- A BEAKER OF WATER GOES IN, AND THE LINE FILLS WITH STEAM.
 -- ---------------------------------------------------------------
-local water = t.target_at(3, 1, "beaker.water")
-t.click(p, 3, 1, water)
+local water = t.target_at(p, 3, 2, "beaker.water")
+t.click(p, 3, 2, t.target_at(p, 3, 2, "beaker.water"))
 t.tick()
 assert(t.hands(p).held == "beaker.water", "the beaker is in hand")
-t.click(p, 4, 1, machine)
+t.click(p, 4, 1, t.target_at(p, 4, 1, "steam_generator"))
 t.tick()
 assert(t.hands(p).held == nil, "clicking the machine with it puts it IN")
 assert(t.ledger_has("Docked", "beaker"), "and the dock is on the record")
@@ -119,15 +119,15 @@ local charged = held_in(water, "water")
 assert(charged > 0.5, "with the water it shipped with: " .. charged)
 near(pipe_of(3, 1, "water"), 0.0, 1e-9, "the run opens dry")
 
-t.click(p, 4, 1, machine)
+t.click(p, 4, 1, t.target_at(p, 4, 1, "steam_generator"))
 t.tick()
 assert(row(t.ui(p), "dock.vessel").value.text == "beaker (water)", "the panel names what is in it")
 assert(t.ui(p).toggles[1].on == false, "and nothing ships switched on")
 
 -- Dialled over water's boiling point, because the dial it opens at is
 -- Bay's warm-room number and this spec is about steam.
-t.ui_act(p, "set", '{"field":"temperature","value":400}')
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.set(p, "temperature", 400)
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.ui(p).toggles[1].on == true, "the element is on")
 
@@ -151,10 +151,10 @@ t.move(p, "west")
 t.run_ticks(5)
 t.move(p, "west")
 t.run_ticks(5)
-local injector = t.target_at(1, 1, "air_injector")
-t.click(p, 1, 1, injector)
+local injector = t.target_at(p, 1, 1, "air_injector")
+t.click(p, 1, 1, t.target_at(p, 1, 1, "air_injector"))
 t.tick()
-t.ui_act(p, "toggle", '{"field":"power"}')
+ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(t.structure_at(1, 1).state == "injecting", "the injector is running")
 t.ui_close(p)
@@ -179,9 +179,9 @@ t.run_ticks(5)
 -- GAS: ethanol boils at 351.5 K and could perfectly well cross a mouth,
 -- and this one will not let it.
 -- ---------------------------------------------------------------
-t.click(p, 4, 1, machine)
+t.click(p, 4, 1, t.target_at(p, 4, 1, "steam_generator"))
 t.tick()
-t.ui_act(p, "toggle", '{"field":"eject"}')
+ui_controls.toggle(p, "eject")
 t.run_ticks(2)
 assert(t.hands(p).held == "beaker.water", "the water comes back out")
 -- Put it down rather than clicking the deck with it: a beaker clicked
@@ -190,10 +190,10 @@ assert(t.hands(p).held == "beaker.water", "the water comes back out")
 t.drop(p)
 t.run_ticks(2)
 
-local booze = t.target_at(3, 1, "beaker.ethanol")
-t.click(p, 3, 1, booze)
+local booze = t.target_at(p, 2, 2, "beaker.ethanol")
+t.click(p, 2, 2, t.target_at(p, 2, 2, "beaker.ethanol"))
 t.tick()
-t.click(p, 4, 1, machine)
+t.click(p, 4, 1, t.target_at(p, 4, 1, "steam_generator"))
 t.tick()
 assert(t.hands(p).held == nil, "the ethanol goes in exactly as the water did")
 local spirit = held_in(booze, "ethanol")

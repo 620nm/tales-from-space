@@ -1,0 +1,20 @@
+{
+  "map": "world-pointer.ron",
+  "mode": "free_build",
+  "action": "press",
+  "label": "Press button",
+  "ledgerKey": "lunatic/tfs:button_sequence",
+  "storage": {
+    "slot": "back",
+    "label": "backpack",
+    "containedLabel": "metal she…",
+    "ground": { "x": 3, "y": 3 },
+    "step": { "key": "d", "code": "KeyD", "x": 4, "y": 3 }
+  },
+  "targets": [
+    { "orientation": "north", "x": 3, "y": 2, "sprite": "airlock_button_n" },
+    { "orientation": "east", "x": 4, "y": 3, "sprite": "airlock_button_e" },
+    { "orientation": "south", "x": 3, "y": 4, "sprite": "airlock_button_s" },
+    { "orientation": "west", "x": 2, "y": 3, "sprite": "airlock_button_w" }
+  ]
+}

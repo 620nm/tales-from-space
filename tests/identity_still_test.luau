@@ -103,16 +103,16 @@ local function bench()
     t.set_environment({ sink_k = 293.15, insolation = 0.0 })
     p = t.join()
     t.tick()
-    dispenser = t.target_at(1, 2)
-    boiler = t.target_at(3, 2)
-    pot = t.target_at(3, 3, "beaker")
+    dispenser = t.target_at(p, 1, 2)
+    boiler = t.target_at(p, 3, 2)
+    pot = t.target_at(p, 3, 3, "beaker")
     assert(dispenser ~= nil and boiler ~= nil and pot ~= nil, "the bench is set")
 end
 
 local function press(key, mol)
-    t.ui_act(p, "set", '{"field":"amount","value":' .. mol .. '}')
+    ui_controls.set(p, "amount", mol)
     t.run_ticks(2)
-    t.ui_act(p, "toggle", '{"field":"dispense","option":"' .. key .. '"}')
+    ui_controls.toggle(p, "dispense", key)
     t.run_ticks(4)
 end
 
@@ -127,7 +127,7 @@ local function charge(keys, mol)
     for _, key in ipairs(keys) do
         press(key, mol)
     end
-    t.ui_act(p, "toggle", '{"field":"eject"}')
+    ui_controls.toggle(p, "eject")
     t.run_ticks(2)
 end
 
@@ -136,10 +136,10 @@ local function onto_the_element(target_k)
     t.tick()
     t.click(p, 3, 2, boiler)
     t.tick()
-    t.ui_act(p, "set", '{"field":"temperature","value":' .. target_k .. '}')
+    ui_controls.set(p, "temperature", target_k)
     t.run_ticks(2)
     if t.ui(p).toggles[1].on ~= true then
-        t.ui_act(p, "toggle", '{"field":"power"}')
+        ui_controls.toggle(p, "power")
         t.run_ticks(2)
     end
     assert(t.ui(p).toggles[1].on == true, "the element is on")

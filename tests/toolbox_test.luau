@@ -29,7 +29,7 @@ assert(#joins == 2, "two crewmen signed on")
 local attacker_id, victim_id = joins[1].actor.id, joins[2].actor.id
 assert(attacker_id ~= victim_id)
 
-t.click(attacker, 1, 1, t.target_at(1, 1, "toolbox")) -- the toolbox underfoot
+t.click(attacker, 1, 1, t.target_at(attacker, 1, 1, "toolbox")) -- the toolbox underfoot
 t.tick()
 assert(t.hands(attacker).held == "toolbox", "picked it up")
 assert(t.vitals(victim) == nil, "nobody has been hurt yet")
@@ -38,7 +38,7 @@ assert(t.vitals(victim) == nil, "nobody has been hurt yet")
 -- when the cursor is over a sprite: an attack is a click that NAMED
 -- the crewman, never a click that merely shares his tile.
 for _ = 1, 10 do
-    t.click(attacker, 2, 1, victim_id)
+    t.click(attacker, 2, 1, t.body_target(attacker, victim))
     t.tick()
 end
 local h = t.health(victim)
@@ -67,13 +67,13 @@ assert(zoned == 10, "every blow named the part it landed on: " .. zoned)
 -- however the rolls fell.
 local swings = 0
 while t.health(victim).controllable and swings < 40 do
-    t.click(attacker, 2, 1, victim_id)
+    t.click(attacker, 2, 1, t.body_target(attacker, victim))
     t.tick()
     swings = swings + 1
 end
 assert(not t.health(victim).controllable, "the weighted damage crossed `crit`")
 while t.health(victim).animate and swings < 120 do
-    t.click(attacker, 2, 1, victim_id)
+    t.click(attacker, 2, 1, t.body_target(attacker, victim))
     t.tick()
     swings = swings + 1
 end

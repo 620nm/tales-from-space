@@ -159,7 +159,7 @@ local px, py = t.pos(p)
 assert(px == 14 and py == 29, "standing at the wheel, at " .. px .. "," .. py)
 
 assert(t.structure_at(14, 28).state == "open", "still open on the way in")
-t.click(p, 14, 28, t.target_at(14, 28, "manual_valve"))
+t.click(p, 14, 28, t.target_at(p, 14, 28, "manual_valve"))
 t.run_seconds(3)
 assert(
     t.structure_at(14, 28).state == "shut",

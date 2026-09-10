@@ -81,7 +81,7 @@ t.run_ticks(20)
 -- gesture, not a panel one.
 local function pocket(p)
     local x, y = t.pos(p)
-    t.click(p, x, y, t.target_at(x, y, "encryption_key.medical"))
+    t.click(p, x, y, t.target_at(p, x, y, "encryption_key.medical"))
     t.run_ticks(2)
     assert(t.hands(p).held == "encryption_key.medical", "the key is in hand")
 end
@@ -95,7 +95,7 @@ local function drain_all()
 end
 
 -- ---- the panel: one socket, nothing bound ------------------------------
-t.click(operator, 2, 1, t.target_at(2, 1))
+t.click(operator, 2, 1, t.target_at(operator, 2, 1))
 t.tick()
 local ui = t.ui(operator)
 assert(ui, "a bare hand opens the tower's window")
@@ -115,16 +115,14 @@ assert(ui.create.media == nil, "and has no disk side until a disk is in it")
 -- ---- write the filter on A: --------------------------------------------
 -- The SHOUT filter: every line it touches comes out uppercase.
 local SHOUT = "return { text = string.upper(content) }"
-t.ui_act(operator, "text", '{"field":"file_create","option":"host:disl:' .. ui.stores[1].binding
-    .. '","text":"untitled"}')
+ui_files.create(operator, "host", "disl", "untitled")
 t.tick()
 ui = t.ui(operator)
 assert(ui.open and ui.open.store == "host" and ui.open.ext == "disl",
     "the new program is open on the host store")
 local file = "host:" .. string.format("%d", ui.open.uid) .. ":" .. ui.open.binding
 local uid = ui.open.uid
-t.ui_act(operator, "text", '{"field":"file_save","option":"' .. file
-    .. '","text":"' .. SHOUT .. '","revision":0}')
+ui_files.save(operator, SHOUT)
 t.tick()
 ui = t.ui(operator)
 assert(ui.open.body == SHOUT, "the filter's source is on the disk of the tower")
@@ -134,8 +132,8 @@ assert(ui.editor and ui.editor.bound == false, "nothing runs it yet")
 -- A `file_change` carries the WHOLE draft and answers with the native
 -- check's markers on the same pane; a `file_revert` drops the draft.
 -- Neither act is ledgered and neither touches the saved body.
-t.ui_act(operator, "text", '{"field":"file_change","option":"' .. file
-    .. '","text":"return {","revision":0}')
+local draft_input = ui_files.edit(operator, "return {")
+t.ui_press(operator, draft_input, "change")
 t.tick()
 ui = t.ui(operator)
 assert(ui.editor and #ui.editor.markers == 1, "a broken draft checks as it is typed")
@@ -144,7 +142,8 @@ assert(ui.editor.markers[1].line == 1 and #ui.editor.markers[1].message > 0,
 assert(ui.editor.body == "return {", "the editor shows the draft, not the saved body")
 assert(ui.open.body == SHOUT, "the saved body is untouched by a draft")
 
-t.ui_act(operator, "toggle", '{"field":"file_revert","option":"' .. file .. '"}')
+ui_controls.press(operator, "/editor/revert")
+ui_controls.press(operator, "/editor/guard/discard")
 t.tick()
 ui = t.ui(operator)
 assert(ui.editor.body == SHOUT and #ui.editor.markers == 0,
@@ -152,7 +151,7 @@ assert(ui.editor.body == SHOUT and #ui.editor.markers == 0,
 assert(ui.open.body == SHOUT, "and the saved body is what remains")
 
 -- ---- bind it ------------------------------------------------------------
-t.ui_act(operator, "toggle", '{"field":"socket_load","option":"carry:' .. uid .. ":" .. ui.stores[1].binding .. '"}')
+ui_files.socket(operator, "carry", uid)
 t.tick()
 ui = t.ui(operator)
 assert(ui.sockets[1].state.id == "sockets.state.bound", "the socket is bound")
@@ -190,8 +189,7 @@ assert(runs[1].value.Map.text.String == "HELLO THERE CREW", "and what it answere
 -- in place, and the next line meets the new program (atomic recompile).
 t.run_ticks(10) -- the pacing window on text acts (docs/TGUI.md)
 local DROP = "return { pass = false }"
-t.ui_act(operator, "text", '{"field":"file_save","option":"' .. file
-    .. '","text":"' .. DROP .. '","revision":1}')
+ui_files.save(operator, DROP)
 t.tick()
 drain_all()
 t.say(speaker, ";the tank room is leaking")
@@ -214,8 +212,7 @@ assert(ui.sockets[1].runs == 2 and ui.sockets[1].faults == 0,
 -- attribution.md §10).
 t.run_ticks(10)
 local BROKEN = "error('boom')"
-t.ui_act(operator, "text", '{"field":"file_save","option":"' .. file
-    .. '","text":"' .. BROKEN .. '","revision":2}')
+ui_files.save(operator, BROKEN)
 t.tick()
 drain_all()
 t.say(speaker, ";anyone copy")
@@ -235,8 +232,7 @@ assert(ui.sockets[1].runs == 3 and ui.sockets[1].faults == 1,
 -- ---- the edit of a running program takes ----------------------------------
 t.run_ticks(10)
 local PREFIX = "return { text = 'filtered: ' .. content }"
-t.ui_act(operator, "text", '{"field":"file_save","option":"' .. file
-    .. '","text":"' .. PREFIX .. '","revision":3}')
+ui_files.save(operator, PREFIX)
 t.tick()
 drain_all()
 t.say(speaker, ";medical to the lab")
@@ -247,7 +243,7 @@ assert(#t.ledger_rows("disl_compiled") == 4,
     "every distinct body compiled is its own row, the old ones intact")
 
 -- ---- a bound file cannot be deleted ---------------------------------------
-t.ui_act(operator, "toggle", '{"field":"file_delete","option":"' .. file .. '"}')
+ui_files.address(operator, file, "delete")
 t.tick()
 assert(heard(operator, "unload it first"),
     "deleting what a socket runs refuses and SAYS so: "
@@ -257,7 +253,7 @@ ui = t.ui(operator)
 assert(ui.sockets[1].state.id == "sockets.state.bound", "still bound")
 
 -- ---- unload, and the tower is stock again ----------------------------------
-t.ui_act(operator, "toggle", '{"field":"socket_unload","option":"carry:' .. ui.stores[1].binding .. '"}')
+ui_files.socket(operator, "carry")
 t.tick()
 ui = t.ui(operator)
 assert(ui.sockets[1].state.id == "sockets.state.unbound", "unbound")

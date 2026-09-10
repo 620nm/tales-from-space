@@ -34,7 +34,6 @@ t.rest(patient, true)
 t.run_ticks(2)
 
 local PX, PY = 2, 1
-local pid = t.body_id(patient)
 -- The head is bare (the jumpsuit covers the torso and limbs), so both
 -- surgeons simply aim there; the eyes sit outside the bone lock.
 t.set_zone(left, "head")
@@ -53,13 +52,13 @@ end
 
 local function left_holds(id)
     if t.hands(left).held then t.drop(left); t.tick() end
-    t.click(left, 1, 1, t.target_at(1, 1, id))
+    t.click(left, 1, 1, t.target_at(left, 1, 1, id))
     t.run_ticks(2)
     assert(t.hands(left).held == id, "left holds the " .. id)
 end
 local function step(id, secs, done, why)
     left_holds(id)
-    t.click(left, PX, PY, pid)
+    t.click(left, PX, PY, t.body_target(left, patient))
     t.run_ticks(math.ceil(secs * 20) + 3)
     assert(done(), why)
 end
@@ -80,7 +79,7 @@ assert(whole.seated == whole.total - 2, "the two donor eyes are the only loose o
 -- Take the eyes out. The head holds several reachable organs, so a
 -- hemostat opens the choice window; pick the eyes.
 left_holds("hemostat")
-t.click(left, PX, PY, pid)
+t.click(left, PX, PY, t.body_target(left, patient))
 t.run_ticks(2)
 local win = t.ui(left)
 assert(win and win.document == "modules" and win.presentation == "choices",
@@ -90,15 +89,15 @@ for _, tg in ipairs(win.toggles) do
     if face(tg.label):find("eyes", 1, true) then pick = tg.option end
 end
 assert(pick, "the eyes are among the organs to remove")
-t.ui_act(left, "toggle", string.format('{"field":"operation","option":"%s"}', pick))
+ui_controls.toggle(left, "operation", pick)
 t.run_ticks(23) -- the 1 s removal
 assert(t.organ_damage(patient, "eyes") == nil, "the eyes socket is empty")
 
 -- Both surgeons pick up a donor eye (left's by its feet, right's by its).
 t.drop(left); t.tick() -- drop the hemostat first
-t.click(left, 1, 1, t.target_at(1, 1, "organ_eyes"))
+t.click(left, 1, 1, t.target_at(left, 1, 1, "organ_eyes"))
 t.run_ticks(2)
-t.click(right, 3, 1, t.target_at(3, 1, "organ_eyes"))
+t.click(right, 3, 1, t.target_at(right, 3, 1, "organ_eyes"))
 t.run_ticks(2)
 assert(t.hands(left).held == "organ_eyes" and t.hands(right).held == "organ_eyes",
     "both surgeons hold an eye")
@@ -112,8 +111,8 @@ assert(before.orphan == 0, "still nothing orphaned going in")
 -- SAME TICK: both clicks land before any step, so both park the 1 s
 -- insert on the one empty eyes socket and both wake in the same pump.
 -- One seats; the other's completion must find the socket full.
-t.click(left, PX, PY, pid)
-t.click(right, PX, PY, pid)
+t.click(left, PX, PY, t.body_target(left, patient))
+t.click(right, PX, PY, t.body_target(right, patient))
 t.run_ticks(23)
 
 -- The socket is seated exactly once, and the census is conserved with
