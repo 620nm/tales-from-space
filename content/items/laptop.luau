@@ -201,6 +201,15 @@ if sim ~= nil then
             or target == nil or sim.link_state(target) == nil then
             return { replaced = false }
         end
+        -- The host's half of the engine's contact check (sim/ui/contact.rs), said
+        -- here because a refused `ui.open` closes without a word.
+        local refusal = if sim.link_state(target).locked then "lunatic/tfs:entity.laptop.contact_locked"
+            elseif not sim.is_powered(target) then "lunatic/tfs:entity.laptop.contact_unpowered"
+            else nil
+        if refusal then
+            sim.message.send({ recipient = ev.actor, message = sim.msg(refusal, {}) })
+            return true
+        end
         ui.open({
             viewer = ev.actor, owner = target, contact = self, contact_state = "on",
             channel = "programming",
