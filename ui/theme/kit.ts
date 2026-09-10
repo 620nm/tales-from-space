@@ -70,7 +70,9 @@ export const kitRules: UiStyleRule[] = [
   rule("fsize", { color: faint, fontSize: 10, flexShrink: 0 }),
   rule("pname", { color: ink, fontSize: 12, textAlign: "left" }),
   rule("stock", { color: dim, fontSize: 11, textAlign: "right" }),
-  // Placement a node asks for by name rather than inline.
+  // Placement a node asks for by name rather than inline; `fit` is a
+  // screen as tall as its content, up to whatever caps it, not the room.
   rule("centered", { alignItems: "center", justifyContent: "center" }),
   rule("at-end", { marginLeft: "auto" }),
+  rule("fit", { height: "auto", flexGrow: 0 }),
 ];

@@ -3,7 +3,7 @@
 import type { UiNode } from "@lunatic/ui";
 import { Pane, Stack } from "@lunatic/ui";
 import type { GameplayView } from "./model";
-import { bind, column, press, row, some, text } from "./view";
+import { bind, press, row, screen, some, text } from "./view";
 import * as S from "./strings";
 
 export function crewPanels(view: GameplayView): UiNode[] {
@@ -12,11 +12,13 @@ export function crewPanels(view: GameplayView): UiNode[] {
   const jobs = state.jobs?.jobs;
   if (jobs)
     out.push(
-      Pane(
-        "lobby",
-        [
+      // A screen as tall as its roster, up to the cap, and then scrolling.
+      screen("lobby", {
+        toolbar: [Stack("lobby-head", [
           text("lobby-title", S.LOBBY_TITLE, ["titlebar-title"]),
           text("lobby-hint", S.LOBBY_HINT, ["hint"]),
+        ], { dir: "column", gap: 2, cls: ["grow"] })],
+        body: [
           Stack(
             "lobby-jobs",
             jobs.map((job) => {
@@ -44,8 +46,7 @@ export function crewPanels(view: GameplayView): UiNode[] {
             { dir: "column", gap: 4 },
           ),
         ],
-        { style: { width: 380, maxHeight: "76%" } },
-      ),
+      }, { cls: ["pane"], fit: true, style: { width: 380, maxHeight: "76%" } }),
     );
   const body = state.bodyStatus;
   if (body && (!body.state?.controllable || !body.state?.animate))
