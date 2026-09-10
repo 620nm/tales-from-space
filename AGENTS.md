@@ -103,6 +103,12 @@ suite before completion; exact commands and filter semantics are in
   per-frame script hooks. Native providers expose readouts and validated actions;
   they do not prescribe gameplay panels. Server Luau view models update from
   events and subscriptions.
+- The UI loop, from the engine checkout: edit `ui/*.ts` →
+  `cargo run -q -p xtask -- build-ui` (or the lab's `serve --watch`) →
+  `node tools/ui-lab.mjs shot <fixture>` → Read the PNG under `ui/fixtures/out/`.
+  Fixtures live in `ui/fixtures/`, baselines in `ui/fixtures/baselines/`;
+  `shot all --check` compares, `--update` re-records when a change is intended.
+  The lab is the engine's `docs/pack-ui/lab.md`; there is no other preview.
 - `editor/manifest.json` declares pack/mode palettes, property schemas, previews
   and bounded compositions of native edit operations. The trusted editor owns
   documents and undo; UI guests never receive editor drafts.

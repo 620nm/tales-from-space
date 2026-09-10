@@ -15,10 +15,12 @@ lettering; the browser keeps its ordinary UI typography and receives no font.
 - `examples/` holds the supplied font chart, rasterized glyphs, and inspected
   TG stamp/sign examples. These are reference images, not runtime sprites.
 - `file-icons/prompts.json` preserves artwork prompts;
-  `file-icons/machine-source.json` records the concept's existing machine image.
+  `file-icons/machine-source.json` records the composed machine sprite the
+  icons were drawn beside.
 - `file-icons/provenance.json` records input and runtime SHA-256 identities.
-- [Terminal concept](../../tools/ui-concepts/terminal/README.md) keeps the approved
-  interactive study and visual baselines apart from gameplay presentation.
+- The rendered look of these sprites in the terminal is checked by the pack's
+  UI fixtures (`ui/fixtures/`) through the engine's lab (the engine's
+  `docs/pack-ui/lab.md`).
 
 Runtime wallpapers, sounds, sprite PNGs, pixel matrices, generated artwork inputs,
 production preparation scripts and Aseprite documents stay under `assets/`.
@@ -53,7 +55,6 @@ the magenta key, samples with nearest-neighbor filtering, and centers the page.
 font and checks that pixels outside those fields are unchanged. The importer
 then exports the exact palette and 32 indexed pixel rows beside each PNG.
 Review each icon at 1× on light and dark backgrounds before accepting changes.
-The concept gallery also offers enlarged previews for pixel inspection.
 
 The prepared PNGs are authoritative bake inputs; reproduction requires no image
 service. Bake with `cargo run -p xtask -- bake-atlas` from the engine checkout,
@@ -67,9 +68,10 @@ under `assets/sources/computer/files/`; the prompt record captures their origin.
 The font source is `/home/josh/Downloads/BoldsPixels.ttf`.
 TG reference revision is `7cb126ac8864a0d0952c48d25375a5bebaef512b`:
 `icons/stamp_icons/font.png`, `icons/stamp_icons/large_stamp-ce.png`, and
-`icons/obj/signs.dmi`. The concept machine is the existing composed
-`programming_terminal` sprite, from states `computer`, `rd_key`, and `rdcomp`
-in `icons/obj/machines/computer.dmi`. Production titles resolve the owner's sprite.
+`icons/obj/signs.dmi`. The machine the icons were drawn beside is the existing
+composed `programming_terminal` sprite, from states `computer`, `rd_key`, and
+`rdcomp` in `icons/obj/machines/computer.dmi`. Production titles resolve the
+owner's sprite.
 
 These notes describe sources and preparation, without changing licensing
 or attribution declarations.
