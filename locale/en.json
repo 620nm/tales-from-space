@@ -17,6 +17,7 @@
   "lunatic/tfs:entity.airlock_button.build.done": "The button is fastened to the wall.",
   "lunatic/tfs:entity.airlock_button.remove.start": "You start unfastening the button.",
   "lunatic/tfs:entity.airlock_button.remove.done": "The button comes free of the wall.",
+  "lunatic/tfs:entity.airlock_button.hand_full": "Your hand is full; press it with an empty hand.",
   "lunatic/tfs:lib.controller.fault": "The controller has stopped the airlock cycle. Check the devices and press a button to retry.",
   "lunatic/tfs:lib.controller.denied": "The controller refuses your airlock request.",
   "lunatic/tfs:lib.controller.busy": "The button is busy. Try again in a moment.",

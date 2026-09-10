@@ -8,6 +8,13 @@ return {
         id = "press", gesture = "primary", route = "receiver",
         label = "lunatic/tfs:ui.affordance.press",
         held = { fact = "held.present", value = "false" },
+    }, {
+        -- Never offered: it only admits an armed click to the fixture, whose
+        -- completion explains the empty-hand rule (fixtures/airlock_button.luau).
+        id = "held_refusal", gesture = "primary", route = "receiver",
+        label = "lunatic/tfs:ui.affordance.press",
+        visible = false,
+        held = { fact = "held.present", value = "true" },
     } },
     link = { network_interface = true, role = "endpoint", class = "control_button" },
     appearance = { mounted = {
