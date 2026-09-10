@@ -130,5 +130,4 @@ export const surfaceRules: UiStyleRule[] = [
     position: "absolute", left: 0, top: 0, width: "100%", height: "100%",
     imageRendering: "pixelated",
   }),
-  rule("desktop-controls", { gap: 6, flexWrap: "wrap" }),
 ];

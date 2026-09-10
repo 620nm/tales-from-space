@@ -42,7 +42,7 @@ assert.ok(markdown.every((node) => node.type === "text" && !node.events && !node
 for (const ext of ["md", "pem"]) {
   for (const body of ["a".repeat(70000), "a\n".repeat(70000), "```\n".repeat(17000)]) {
     const nodes = read(ext, body);
-    assert.ok(nodes.length <= 96);
+    assert.ok(nodes.length <= 384);
     assert.ok(nodes.every((node) => node.text.length <= 4096));
     assert.equal(new Set(nodes.map((node) => node.id)).size, nodes.length);
     assert.match(nodes.at(-1).text, /Preview shortened/);

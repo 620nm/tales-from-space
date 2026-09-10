@@ -22,13 +22,14 @@ running.
   power. Alt-click offers Close lid only while open, powered or not; on a
   closed laptop that hint is absent and the gesture does nothing.
 
-The desktop's Power control switches power on or off. Its Close lid control
-and Alt-click both close the lid and every reader's window, preserving power.
+The desktop's power glyph, top right of the machine heading, switches power
+on or off; the eject actions sit beside it. Alt-click closes the lid and every
+reader's window, preserving power; the desktop draws no lid control.
 The titlebar × dismisses only that reader's window and leaves the lid open.
 Closed laptops reject stale desktop acts.
 
 Switching off leaves the desktop window available with a black screen and
-controls. All current readers see power and slot changes together.
+the power and eject presses. All current readers see power and slot changes together.
 
 ## Slots
 

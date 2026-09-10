@@ -127,6 +127,38 @@ export function entry(
   };
 }
 
+export interface Choice {
+  value: string;
+  text: unknown;
+}
+
+/** A closed list of choices; a change answers with the chosen value,
+ *  and a press naming this id in `submitValues` carries it too. */
+export function select(
+  id: string,
+  value: string,
+  choices: Choice[],
+  callback: (value: string, e: UiEvent) => Command | undefined,
+  opts: Box & { disabled?: boolean } = {},
+): UiNode {
+  bind(id, (e) => callback(e.value ?? "", e));
+  return {
+    id,
+    type: "select",
+    value,
+    event: id,
+    class: ["entry", ...(opts.cls ?? [])],
+    ...(opts.style ? { style: opts.style as Record<string, StyleValue> } : {}),
+    ...(opts.disabled ? { disabled: true } : {}),
+    children: choices.map((choice) => ({
+      id: `${id}/${choice.value}`,
+      type: "option" as const,
+      value: choice.value,
+      text: labelText(choice.text as Json),
+    })),
+  };
+}
+
 export function icon(
   id: string,
   sprite: string | null | undefined,
@@ -148,6 +180,10 @@ export const withItem = (node: UiNode, token: string): UiNode => ({
   ...node,
   item: token,
 });
+
+/** Nodes in a subtree, against the protocol's per-tree budget. */
+export const nodeCount = (nodes: UiNode[]): number =>
+  nodes.reduce((sum, node) => sum + 1 + nodeCount(node.children ?? []), 0);
 
 export const some = (...nodes: (UiNode | null | false)[]): UiNode[] =>
   nodes.filter((node): node is UiNode => !!node);

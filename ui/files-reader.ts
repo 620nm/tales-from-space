@@ -3,11 +3,14 @@ import { tfs } from "./strings";
 import { text } from "./view";
 
 const BODY_LIMIT = 65536;
-const NODE_LIMIT = 96;
+// Ceiling per reader; the caller passes what the tree has left
+// (docs/pack-ui/components.md budgets).
+export const READER_NODES = 384;
 const TEXT_LIMIT = 4096;
 
 /** Text-only readers; unsupported or invalid records use the editor. */
-export function fileReader(id: string, ext: string, body: string): UiNode[] | undefined {
+export function fileReader(id: string, ext: string, body: string, limit = READER_NODES): UiNode[] | undefined {
+  const NODE_LIMIT = Math.max(2, Math.min(READER_NODES, limit));
   if (ext === "atmo") return atmosphere(id, body);
   if (ext !== "md" && ext !== "pem") return undefined;
   const nodes: UiNode[] = [];
@@ -41,8 +44,11 @@ export function fileReader(id: string, ext: string, body: string): UiNode[] | un
       nodes.push(text(`${id}/line/${nodes.length}`, value.slice(offset, offset + TEXT_LIMIT), undefined, style));
     }
   }
-  if (body.length > BODY_LIMIT || consumed < body.length)
-    nodes.push(text(`${id}/truncated`, tfs("ui.files.reader.truncated")));
+  if (body.length > BODY_LIMIT || consumed < body.length) {
+    const rest = body.slice(Math.min(consumed, BODY_LIMIT));
+    const lines = rest.split("\n").length - (rest.endsWith("\n") ? 1 : 0);
+    nodes.push(text(`${id}/truncated`, tfs("ui.files.reader.truncated", { lines })));
+  }
   return nodes;
 }
 
