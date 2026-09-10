@@ -120,6 +120,7 @@ export function press(
 }
 
 export interface FieldOpts extends Box {
+  label?: string;
   multiline?: boolean;
   submitOnly?: boolean;
   clearOnSubmit?: boolean;
@@ -142,6 +143,7 @@ export function entry(
     type: opts.multiline ? "textarea" : "input",
     value,
     event: id,
+    ...(opts.label ? { label: opts.label } : {}),
     class: [opts.multiline ? "area" : "entry", ...(opts.cls ?? [])],
     ...(opts.style ? { style: opts.style as Record<string, StyleValue> } : {}),
     ...(opts.submitOnly ? { submitOnly: true } : {}),

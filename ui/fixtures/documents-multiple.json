@@ -1,0 +1,61 @@
+{
+  "note": "Independent construction and shelf documents retain window anatomy.",
+  "viewport": {
+    "width": 1366,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "Station equipment",
+        "state": {
+          "document": "build",
+          "status": 2,
+          "recipes": [
+            {
+              "label": "Reinforced panel",
+              "have": 2,
+              "cost": 4,
+              "secs": 3
+            },
+            {
+              "label": "Floor panel",
+              "have": 8,
+              "cost": 2,
+              "secs": 1
+            }
+          ]
+        }
+      },
+      "2": {
+        "id": 2,
+        "generation": 1,
+        "title": "Tool dispenser",
+        "state": {
+          "document": "modules",
+          "status": 2,
+          "presentation": "shelf",
+          "products": [
+            {
+              "label": "Emergency tool kit",
+              "stock": 0,
+              "act": "vend",
+              "payload": {
+                "product": "tool"
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

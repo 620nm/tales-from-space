@@ -1,8 +1,9 @@
 import type { Json, UiNode } from "@lunatic/ui";
 import type { GameplayView } from "./model";
 import type { PanelDocument, ScriptState } from "./document-model";
+import { labelText } from "./labels";
 import { documentAction } from "./document-action";
-import { column, icon, panel, press, row, some, text } from "./view";
+import { column, panel, press, row, some, text } from "./view";
 import * as S from "./strings";
 
 interface Action { id: string; label: Json; sprite?: string; state?: string; pinned?: boolean }
@@ -29,17 +30,15 @@ export function actionGroups(view: GameplayView): UiNode[] {
       if (!merged) { merged = { label: group.label, buttons: [], intent: data.presentation === "intent" }; groups.set(group.id, merged); }
       for (const action of group.actions ?? []) {
         const id = `action/${doc.id}/${doc.generation}/${action.id}`;
-        // A sprite says what the action is; the word under it would not
-        // fit the 34px square the strip gives each one.
         const button = press(id, action.label, documentAction(doc, action.id, {}), {
           variant: action.state === "on" ? "selected" : "default",
           disabled: doc.state?.status !== undefined && doc.state.status < 2,
-          cls: [action.sprite ? "ability" : "action-button"],
+          label: labelText(action.label),
+          cls: ["action-button"],
         });
         merged.buttons.push({ ...button,
           actionKey: `${group.id}/${action.id}`,
           actionDocument: doc.id, actionGeneration: doc.generation,
-          ...(action.sprite ? { children: some(icon(`${id}/icon`, action.sprite, "", ["ability-icon"])) } : {}),
         });
       }
     }
@@ -50,7 +49,7 @@ export function actionGroups(view: GameplayView): UiNode[] {
     (group.intent ? intents : actions).push(strip(`actions/${key}`, key, group.label, group.buttons));
   // The controls that belong to no document: what the held item does,
   // and the build roster.
-  if (view.body) actions.push(strip("item-actions", "item-controls", S.ITEMS, [
+  if (view.body) actions.unshift(strip("item-actions", "item-controls", S.ITEMS, [
     ...(view.state.inventory ? [
       press("use_other", S.USE_OTHER, { kind: "use_other" }, { cls: ["action-button"] }),
       press("use_self", S.USE, { kind: "use_self" }, { cls: ["action-button"] }),
@@ -59,13 +58,11 @@ export function actionGroups(view: GameplayView): UiNode[] {
     press("open_build", S.BUILD, { kind: "open_build" }, { cls: ["action-button"] }),
   ]));
   return some(
-    // The anchor's left edge is the origin; the strip hangs off its
-    // middle (`action-strip`, ui/theme/documents.ts).
     actions.length
       ? panel("action-anchor", [row("action-strip", actions, { cls: ["hudgroup", "action-strip"] })],
-        { cls: ["hudgroup"], style: { position: "absolute", left: 0, bottom: 290, width: 640, height: 0 } })
+        { cls: ["hudgroup"], style: { width: "100%" } })
       : null,
-    intents.length ? column("intent", intents, { cls: ["hudgroup"], style: { position: "absolute", left: 202, bottom: 40 } }) : null,
+    intents.length ? row("intent", intents, { cls: ["hudgroup", "action-strip"] }) : null,
   );
 }
 

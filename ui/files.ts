@@ -6,11 +6,12 @@ import type { ScreenParts, UiNode } from "@lunatic/ui";
 import { Scroll, Stack } from "@lunatic/ui";
 import type { DocumentIdentity, ModuleState } from "./document-model";
 import { drivePane } from "./files-drive";
-import { editorPane } from "./files-editor";
+import { editorGuard, editorPane } from "./files-editor";
 import { createFileDialog } from "./files-create";
 import { socketRows } from "./files-sockets";
 import { moduleBody } from "./documents-modules";
-import { nodeCount, panel, some, text } from "./view";
+import { tfs } from "./strings";
+import { icon, nodeCount, panel, some, text } from "./view";
 
 /** The protocol's per-tree node budget (docs/pack-ui/components.md) and the
  *  share kept for the editor's own rows (~32), the screen wrappers and slack. */
@@ -21,10 +22,12 @@ export { retainOpenFileBuffers, pollContinuation, guard } from "./files-buffer";
 export function filePanes(id: string, doc: DocumentIdentity, state: Partial<ModuleState>, active: boolean, controls: UiNode[] = []): ScreenParts {
   const host = state.stores?.find((store) => store.key === "host");
   const media = state.stores?.find((store) => store.key === "media");
-  const heading = Stack(`${id}/heading`, [
+  const heading = Stack(`${id}/heading`, some(
+    icon(`${id}/machine-icon`, state.owner_sprite ?? doc.owner_sprite, state.name ?? doc.title),
     text(`${id}/machine-name`, state.name ?? doc.title, ["workspace-machine-name", "grow"]),
+    text(`${id}/machine-status`, tfs("ui.workspace.ready"), ["hint"]),
     Stack(`${id}/machine-controls`, controls, { gap: 4, align: "center" }),
-  ], { align: "center", gap: 6, cls: ["workspace-frame"], style: { width: "100%" } });
+  ), { align: "center", gap: 6, cls: ["workspace-frame"], style: { width: "100%" } });
   const readings = [
     ...moduleBody(`${id}/information`, doc, state, active, false),
     ...(state.sockets?.length ? [socketRows(id, doc, state, active)] : []),
@@ -44,6 +47,7 @@ export function filePanes(id: string, doc: DocumentIdentity, state: Partial<Modu
     editorPane(id, doc, state, active, TREE_NODES - TREE_RESERVE - spent),
     drives.media ?? null,
   );
+  const confirmation = editorGuard(id, doc, state, active);
   return {
     toolbar: some(heading, information),
     // The panes stand as tall as the body and no narrower than they can
@@ -56,7 +60,7 @@ export function filePanes(id: string, doc: DocumentIdentity, state: Partial<Modu
         ...(media ? [{ key: "media", initialWidth: 184, minWidth: 152 }] : []),
       ],
     } }],
-    overlay: some(
+    overlay: confirmation ? [confirmation] : some(
       host ? createFileDialog(id, doc, host, state.create?.host ?? [], active) : null,
       media ? createFileDialog(id, doc, media, state.create?.media ?? [], active) : null,
     ),

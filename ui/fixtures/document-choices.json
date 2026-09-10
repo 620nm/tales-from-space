@@ -1,0 +1,70 @@
+{
+  "note": "Document family and disclosed state acceptance.",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "Station equipment",
+        "state": {
+          "document": "modules",
+          "status": 2,
+          "presentation": "visual_choices",
+          "name": "Room lighting",
+          "toggles": [
+            {
+              "label": "White",
+              "on": true,
+              "on_text": "Selected",
+              "off_text": "Select",
+              "field": "colour",
+              "option": "0",
+              "group": "Lighting",
+              "section": "Control"
+            },
+            {
+              "label": "Blue",
+              "on": false,
+              "on_text": "Selected",
+              "off_text": "Select",
+              "field": "colour",
+              "option": "1",
+              "group": "Lighting",
+              "section": "Control"
+            },
+            {
+              "label": "Amber",
+              "on": false,
+              "on_text": "Selected",
+              "off_text": "Select",
+              "field": "colour",
+              "option": "2",
+              "group": "Lighting",
+              "section": "Control"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "steps": [
+    {
+      "type": "click",
+      "id": "doc/1/1/part/0/toggle/1",
+      "expect": {
+        "actionCount": 1
+      }
+    }
+  ]
+}

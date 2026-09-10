@@ -15,17 +15,20 @@ export function drivePane(id: string, doc: DocumentIdentity, state: Partial<Modu
   const key = `${id}/drive/${side}`;
   const destination = state.stores?.find((other) => other.binding !== store.binding);
   const stem = `${key}/stem`;
+  const full = store.used >= store.capacity || store.count >= store.count_cap;
   const files = (state.files ?? []).filter((file) => file.store === side);
   return screen(key, {
     toolbar: [
       text(`${key}/letter`, S.tfs(side === "host" ? "ui.workspace.drive_a" : "ui.workspace.drive_b"), ["workspace-drive-title"]),
       text(`${key}/name`, labelText(store.label), ["hint"]),
     ],
-    body: files.map((file, index) => fileRow(id, doc, `${key}/file/${index}`, file, side, active, stem, destination)),
+    body: files.length ? files.map((file, index) => fileRow(id, doc, `${key}/file/${index}`, file, side, active, stem, destination))
+      : [text(`${key}/empty`, S.tfs("ui.workspace.empty"), ["hint"])],
     footer: [Stack(`${key}/foot`, some(
+      full ? text(`${key}/full`, S.tfs("ui.workspace.full"), ["workspace-drive-full"]) : null,
       text(`${key}/capacity`, S.storeUse(store.used, store.capacity, store.count, store.count_cap), ["hint"]),
       text(`${key}/stem-label`, S.tfs("ui.workspace.destination_name"), ["hint"]),
-      entry(stem, "", () => undefined, { submitOnly: true, revision: 0 }),
+      { ...entry(stem, "", () => undefined, { submitOnly: true, revision: 0 }), label: S.tfs("ui.workspace.destination_name") },
       createFilePress(id, store, state.create?.[side] ?? [], active),
       side === "media" ? press(`${key}/eject`, S.tfs("ui.workspace.eject"),
         guard(id, documentAction(doc, "toggle", { field: "media_eject", option: store.binding }), "media"),
@@ -63,5 +66,5 @@ function fileRow(
       file.fixed ? null : press(`${item}/delete`, S.DELETE, guard(id, documentAction(doc, "toggle", { field: "file_delete", option }), side),
         { submit: bodyId(id), variant: "danger", disabled: !active }),
     ), { cls: ["workspace-file-actions"] }),
-  ], { cls: ["workspace-file"] });
+  ], { cls: ["workspace-file", ...(file.open ? ["workspace-file-selected"] : [])] });
 }

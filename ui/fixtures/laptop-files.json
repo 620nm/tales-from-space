@@ -7,7 +7,7 @@
   },
   "locale": "en",
   "view": {
-    "version": 4,
+    "version": 5,
     "revision": 1,
     "body": false,
     "state": {},
@@ -19,10 +19,30 @@
         "title": "laptop",
         "state": {
           "document": "modules",
-          "owner_sprite": "laptop",
+          "owner_sprite": "laptop_on",
           "stores": [
-            {"key": "host", "binding": "host-1", "label": {"text": "Local"}, "used": 0, "capacity": 65536, "count": 112, "count_cap": 112},
-            {"key": "media", "binding": "media-1", "label": {"text": "Disk"}, "used": 0, "capacity": 65536, "count": 112, "count_cap": 112}
+            {
+              "key": "host",
+              "binding": "host-1",
+              "label": {
+                "text": "Local"
+              },
+              "used": 0,
+              "capacity": 65536,
+              "count": 112,
+              "count_cap": 112
+            },
+            {
+              "key": "media",
+              "binding": "media-1",
+              "label": {
+                "text": "Disk"
+              },
+              "used": 0,
+              "capacity": 65536,
+              "count": 112,
+              "count_cap": 112
+            }
           ],
           "files": [
             {"store": "host", "uid": 1, "binding": "host-1", "name": "f0", "ext": "md", "size": 10, "open": false, "fixed": true},
@@ -290,8 +310,12 @@
               "cartridge": true
             },
             "actions": [
-              {"id": "power"},
-              {"id": "eject_id"}
+              {
+                "id": "power"
+              },
+              {
+                "id": "eject_id"
+              }
             ]
           }
         }

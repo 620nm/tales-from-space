@@ -92,10 +92,10 @@ export function storageRegion(view: GameplayView, place: Box = {}): UiNode | nul
             ? null
             : text(`${id}/fill`, S.storageFill(disclosed.items.length, disclosed.cap), ["storage-count"]),
         ),
-        body: [row(`${id}/items`, disclosed.items.map((item, index) => storedSlot(index, item, which, current)), { cls: ["storage-grid"] })],
+        body: disclosed.items.length ? [row(`${id}/items`, disclosed.items.map((item, index) => storedSlot(index, item, which, current)), { cls: ["storage-grid"] })] : [text(`${id}/empty`, S.tfs("ui.storage.empty"), ["hint"])],
       }, { cls: ["pane", "storage-window", ...(place.cls ?? [])], ...(place.style ? { style: place.style } : {}) }),
       window: { key: id, title: S.storageTitle(disclosed.label), width: 320,
-        height: Math.min(420, 66 + Math.max(1, Math.ceil(disclosed.items.length / 7)) * 48),
+        height: Math.min(420, 100 + Math.max(1, Math.ceil(disclosed.items.length / 7)) * 48),
         source: source(which), close: `${id}/close` },
     };
   });

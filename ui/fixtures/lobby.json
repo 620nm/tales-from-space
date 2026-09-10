@@ -3,7 +3,7 @@
   "viewport": { "width": 1600, "height": 1000, "dpr": 1 },
   "locale": "en",
   "view": {
-    "version": 4,
+    "version": 5,
     "revision": 1,
     "body": false,
     "state": {

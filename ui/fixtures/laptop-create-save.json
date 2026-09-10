@@ -1,0 +1,173 @@
+{
+  "note": "Create with unsaved source: save",
+  "viewport": {
+    "width": 1600,
+    "height": 1000,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "laptop",
+        "state": {
+          "document": "modules",
+          "owner_sprite": "laptop_on",
+          "stores": [
+            {
+              "key": "host",
+              "binding": "host-1",
+              "label": {
+                "text": "Local"
+              },
+              "used": 35,
+              "capacity": 65536,
+              "count": 1,
+              "count_cap": 16
+            },
+            {
+              "key": "media",
+              "binding": "media-1",
+              "label": {
+                "text": "Disk"
+              },
+              "used": 0,
+              "capacity": 65536,
+              "count": 0,
+              "count_cap": 16
+            }
+          ],
+          "files": [
+            {
+              "store": "host",
+              "binding": "host-1",
+              "uid": 1,
+              "name": "notes",
+              "ext": "md",
+              "size": 35,
+              "open": true,
+              "fixed": false
+            }
+          ],
+          "create": {
+            "host": [
+              "md",
+              "disl",
+              "atmo",
+              "pem"
+            ],
+            "media": [
+              "md",
+              "disl",
+              "atmo",
+              "pem"
+            ]
+          },
+          "script": {
+            "status": 2,
+            "data": {
+              "kind": "desktop",
+              "powered": true,
+              "card": true,
+              "cartridge": true
+            },
+            "actions": [
+              {
+                "id": "power"
+              },
+              {
+                "id": "eject_id"
+              },
+              {
+                "id": "eject_cartridge"
+              },
+              {
+                "id": "close"
+              }
+            ]
+          },
+          "open": {
+            "store": "host",
+            "binding": "host-1",
+            "uid": 1,
+            "revision": 3,
+            "name": "notes",
+            "ext": "md",
+            "body": "# Station notes\nSaved instructions."
+          },
+          "editor": {
+            "body": "# Station notes\nSaved instructions.",
+            "revision": 3,
+            "read_only": false,
+            "byte_budget": 65536,
+            "markers": [],
+            "bound": true
+          }
+        }
+      }
+    }
+  },
+  "steps": [
+    {
+      "type": "click",
+      "id": "doc/1/1/editor/mode/edit"
+    },
+    {
+      "type": "fill",
+      "id": "doc/1/1/editor/body/0",
+      "value": "Unsaved station instructions."
+    },
+    {
+      "type": "click",
+      "id": "doc/1/1/drive/host/create",
+      "expect": {
+        "focused": "doc/1/1/drive/host/create/stem"
+      }
+    },
+    {
+      "type": "fill",
+      "id": "doc/1/1/drive/host/create/stem",
+      "value": "Air notes"
+    },
+    {
+      "type": "select",
+      "id": "doc/1/1/drive/host/create/ext",
+      "value": "atmo"
+    },
+    {
+      "type": "click",
+      "id": "doc/1/1/drive/host/create/confirm",
+      "expect": {
+        "visible": [
+          "doc/1/1/editor/guard/cancel",
+          "doc/1/1/editor/guard/discard",
+          "doc/1/1/editor/guard/save"
+        ],
+        "absent": [
+          "doc/1/1/drive/host/create/stem"
+        ],
+        "focused": "doc/1/1/editor/guard/cancel"
+      }
+    },
+    {
+      "type": "click",
+      "id": "doc/1/1/editor/guard/save",
+      "expect": {
+        "visible": [
+          "doc/1/1/editor/guard/cancel"
+        ],
+        "absent": [
+          "doc/1/1/drive/host/create/stem"
+        ],
+        "actionCount": 2
+      }
+    }
+  ]
+}

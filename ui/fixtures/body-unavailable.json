@@ -1,0 +1,30 @@
+{
+  "note": "Unavailable body explains its disclosed condition without inventing recovery actions.",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {
+      "identity": {
+        "you": 1,
+        "name": "Injured crew member"
+      },
+      "bodyStatus": {
+        "state": {
+          "controllable": false,
+          "animate": false,
+          "label": "Unconscious"
+        },
+        "can_respawn": false
+      }
+    },
+    "log": [],
+    "documents": {}
+  }
+}

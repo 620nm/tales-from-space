@@ -1,0 +1,169 @@
+{
+  "note": "Long diagnostic records scroll beneath a fixed error/status region.",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "Station equipment",
+        "state": {
+          "document": "modules",
+          "status": 2,
+          "notice": {
+            "text": "Sensor error: measurement unavailable. Check the connected sensor."
+          },
+          "labels": [
+            {
+              "row": "word",
+              "label": "Diagnostic 0",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 1",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 2",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 3",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 4",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 5",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 6",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 7",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 8",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 9",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 10",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 11",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 12",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 13",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 14",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 15",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 16",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 17",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 18",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 19",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 20",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 21",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 22",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 23",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            },
+            {
+              "row": "word",
+              "label": "Diagnostic 24",
+              "text": "A long equipment reading remains contained in the document body and its label stays next to its value."
+            }
+          ]
+        }
+      }
+    }
+  },
+  "steps": [
+    {
+      "type": "scroll",
+      "id": "doc/1/1/body",
+      "deltaY": 900,
+      "expect": {
+        "visible": [
+          "doc/1/1/status"
+        ]
+      }
+    }
+  ]
+}

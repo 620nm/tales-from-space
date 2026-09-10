@@ -20,8 +20,8 @@ let lastSequence = -1;
 function inspectionCard(look: Inspection, history = false): UiNode {
   const id = `${history ? "history" : "inspect"}/${look.sequence}`;
   const pinned = pins.has(look.sequence);
-  // A toast shows the opening of a reading and offers the rest; the
-  // history window is where a whole one belongs, so it never clamps.
+  // A toast shows two complete lines and offers the rest; the history
+  // window and an expanded receipt show every disclosed line.
   const open = history || opened.has(look.sequence);
   const lines = look.lines ?? [];
   return {
@@ -53,8 +53,8 @@ function inspectionCard(look: Inspection, history = false): UiNode {
           return undefined;
         }, { variant: "ghost" }),
       ), { cls: ["inspect-head"] }),
-      open ? Stack(`${id}/lines`, examineLines(lines, id), { dir: "column", gap: 3 }) : column(`${id}/lines`, examineLines(lines, id), { cls: ["inspect-body"] }),
-      !history && lines.length > 3
+      open ? Stack(`${id}/lines`, examineLines(lines, id), { dir: "column", gap: 3 }) : column(`${id}/lines`, examineLines(lines.slice(0, 2), id), { cls: ["inspect-body"] }),
+      !history && lines.length > 2
         ? press(`${id}/full`, S.tfs(open ? "ui.look.read_less" : "ui.look.read_full"), () => {
             if (open) opened.delete(look.sequence); else opened.add(look.sequence);
             return undefined;
@@ -102,7 +102,7 @@ export function inspectionPanels(view: GameplayView): UiNode[] {
     press("inspection-history", S.inspectHistory(records.length), () => { historyOpen = !historyOpen; return undefined; }, {
       variant: "ghost", cls: ["inspect-history-row"],
     }),
-  ], { cls: ["hudgroup", "inspect-stack"], style: { position: "absolute", left: 16, top: 18, width: 320 } }));
+  ], { cls: ["hudgroup", "inspect-stack"], style: { width: "100%" } }));
   if (historyOpen) out.push({
     ...screen("inspection-history-window", {
       toolbar: [press("inspection-history-close", S.CLOSE_MARK, () => { historyOpen = false; return undefined; }, { variant: "ghost", cls: ["at-end"] })],

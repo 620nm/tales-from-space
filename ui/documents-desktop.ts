@@ -5,7 +5,7 @@ import type { DocumentIdentity, ModuleState, ScriptState } from "./document-mode
 import { documentAction } from "./document-action";
 import { bodyId } from "./files-buffer";
 import { filePanes, guard } from "./files";
-import { press, screen } from "./view";
+import { icon, press, screen, some, text } from "./view";
 import { tfs } from "./strings";
 
 interface DesktopData { kind: "desktop"; wallpaper?: string; powered?: boolean; card?: boolean; cartridge?: boolean }
@@ -33,7 +33,12 @@ export function desktopPane(id: string, doc: DocumentIdentity, state: Partial<Sc
   ];
   const parts: ScreenParts = data.powered && native?.stores
     ? filePanes(id, doc, native, active, controls)
-    : { toolbar: [Stack(`${id}/machine-controls`, controls, { gap: 4, align: "center", cls: ["at-end"] })], body: [] };
+    : { toolbar: [Stack(`${id}/heading`, some(
+      icon(`${id}/machine-icon`, native?.owner_sprite ?? doc.owner_sprite, doc.title),
+      text(`${id}/machine-name`, native?.name ?? doc.title, ["workspace-machine-name", "grow"]),
+      Stack(`${id}/machine-controls`, controls, { gap: 4, align: "center" }),
+    ), { gap: 8, align: "center", cls: ["workspace-frame"], style: { width: "100%" } })],
+      body: [text(`${id}/offline`, tfs("ui.workspace.offline"), ["workspace-offline"])] };
   return computerPane(id, parts, data.powered ? wallpaper : undefined, !data.powered);
 }
 const POWER_GLYPH = "⏻";

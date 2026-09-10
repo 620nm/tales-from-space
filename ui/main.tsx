@@ -1,6 +1,5 @@
-// The whole gameplay surface: a transparent sheet the station shows
-// through, with the crew board in the middle of it and every other
-// panel pinned to an edge.
+// Two coordinated regions keep communication and body controls clear of
+// each other; host windows contain expandable documents and storage.
 import type { GuestUi, UiNode } from "@lunatic/ui";
 import { Pane, Stack } from "@lunatic/ui";
 import type { GameplayView } from "./model";
@@ -44,21 +43,24 @@ const ui: GuestUi = {
     // The board and the condition card are the only nodes in flow, so
     // the root's own centring puts them where a modal belongs.
     children.push(...crewPanels(view));
-    children.push(...some(
-      column("hud-origin", some(
-        inventory(view), wornGroup(view), wornGroup(view, true),
+    children.push(column("hud-comms", [
+      ...inspectionPanels(view), ...chatPanel(view),
+    ], { cls: ["hudgroup", "hud-comms"], style: {
+      position: "absolute", left: 12, top: 18, bottom: 12, width: "32%", minWidth: 320, maxWidth: 420,
+    } }));
+    children.push(column("hud-origin", [
+      ...actionGroups(view),
+      row("hud-controls", some(
+        wornGroup(view), wornGroup(view, true), inventory(view),
         Stack("target-block", some(bodyTarget(view), targetMeta(view)), {
-          cls: ["hudgroup"], gap: 7, align: "center",
-          style: { position: "absolute", left: 126, bottom: 40, width: 220 },
+          cls: ["hudgroup"], gap: 8, align: "center",
         }),
-        ...actionGroups(view),
-      ), { cls: ["hudgroup"], style: { position: "absolute", left: "55%", bottom: 0, width: 0, height: 0 } }),
-      storageRegion(view),
-      view.body ? statusLine(view) : null,
-    ));
-    children.push(...chatPanel(view));
+      ), { cls: ["hudgroup", "hud-controls"] }),
+    ], { cls: ["hudgroup", "hud-controls-region"], style: {
+      position: "absolute", left: "35%", right: 12, bottom: 12,
+    } }));
+    children.push(...some(storageRegion(view), view.body ? statusLine(view) : null));
     children.push(...documents(view));
-    children.push(...inspectionPanels(view));
     children.push(...worldOverlays(view));
     return Pane("gameplay", children, { cls: ["hud", "centered"] });
   },

@@ -26,7 +26,7 @@ export const roles: RolePatch = {
   on: { face: alpha(teal, 0.25), line: teal, ink: bright },
   radius: { sm: 2, md: 2, lg: 3 },
   font: { body: "sans" },
-  size: { xs: 8, sm: 11, md: 12, lg: 14 },
+  size: { xs: 11, sm: 12, md: 13, lg: 15 },
   space: { xs: 2, sm: 4, md: 6, lg: 8, xl: 8 },
 };
 

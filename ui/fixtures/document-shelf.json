@@ -1,0 +1,59 @@
+{
+  "note": "Document family and disclosed state acceptance.",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "Station equipment",
+        "state": {
+          "document": "modules",
+          "status": 2,
+          "presentation": "shelf",
+          "name": "Tool dispenser",
+          "products": [
+            {
+              "label": "Emergency tool kit",
+              "stock": 0,
+              "act": "vend",
+              "payload": {
+                "product": "tool"
+              }
+            },
+            {
+              "label": "Replacement lamp",
+              "stock": 3,
+              "act": "vend",
+              "payload": {
+                "product": "lamp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "steps": [
+    {
+      "type": "click",
+      "id": "doc/1/1/product/1/vend",
+      "expect": {
+        "actionCount": 1,
+        "visible": [
+          "doc/1/1/product/0/unavailable"
+        ]
+      }
+    }
+  ]
+}

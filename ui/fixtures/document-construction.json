@@ -1,0 +1,53 @@
+{
+  "note": "Document family and disclosed state acceptance.",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "Station equipment",
+        "state": {
+          "document": "build",
+          "status": 2,
+          "recipes": [
+            {
+              "label": "Reinforced panel",
+              "have": 2,
+              "cost": 4,
+              "secs": 3
+            },
+            {
+              "label": "Floor panel",
+              "have": 8,
+              "cost": 2,
+              "secs": 1
+            }
+          ]
+        }
+      }
+    }
+  },
+  "steps": [
+    {
+      "type": "click",
+      "id": "doc/1/1/recipe/1/arm",
+      "expect": {
+        "actionCount": 1,
+        "visible": [
+          "doc/1/1/recipe/0/unavailable"
+        ]
+      }
+    }
+  ]
+}
