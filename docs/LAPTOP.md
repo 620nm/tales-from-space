@@ -74,7 +74,8 @@ New offers Markdown (`.md`), Luau source (`.disl`), atmosphere records (`.atmo`)
 and access material (`.pem`). Source uses the trusted editor and native
 diagnostics and a scrollable source view. Read-only files carry tags in the
 file list and viewer; their views omit rename, save and revert controls.
-Markdown switches between View and Edit (View and Source for read-only files),
+Markdown, valid ATMO and PEM switch between View and Edit (View and Source
+for read-only files),
 preserving unsaved text across switches. Markdown is bounded, inert content.
 Valid ATMO JSON has a pack
 reader; malformed or empty records stay editable. PEM files are ordinary
@@ -82,6 +83,11 @@ text: writing one grants no credentials or authentication authority.
 
 Save/Discard/Cancel protects unsaved work when changing files or dismissing
 the workspace. Save waits for a matching accepted revision before continuing.
+Create retains its filename and extension while the unsaved-work guard
+owns the workspace. Cancel restores Create with that naming draft; Save
+keeps the guard open until its receipt; Discard continues once. Cancel also
+releases a pending save guard so a refused save cannot trap the naming draft;
+a late receipt cannot continue the cancelled operation.
 Disk ejection guards only dirty work on B:. Revoked providers, lost media and
 closed documents cancel pending continuations.
 

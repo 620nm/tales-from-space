@@ -98,14 +98,11 @@ suite before completion; exact commands and filter semantics are in
   once. `node tools/keyed-messages.mjs --check` fails on a literal that
   came back, and `docs/WORDS.md` is the grammar and how to add a
   language.
-- `ui/` owns every gameplay surface and binding in restricted TypeScript/TSX;
-  `ui/AGENTS.md` is its rulebook (file map, `screen()` on every window,
-  tokens, inline placement only, class namespaces, pinned ids, the lab
-  loop and `node tools/test.mjs <engine>`), over the engine's
-  `docs/pack-ui/authoring.md`. Native providers expose readouts and
-  validated actions; they do not prescribe gameplay panels. Server Luau
-  view models update from events and subscriptions. The lab is the only
-  preview; the layout lint is on everywhere and never a warning.
+- `ui/` owns every gameplay surface and binding in restricted TypeScript/TSX.
+  `ui/AGENTS.md` routes surfaces to owners, narrow commands and acceptance
+  evidence. `docs/UI.md` owns pack composition and authoring rules; the
+  engine's `docs/pack-ui/authoring.md` owns the SDK. Native providers expose
+  disclosed readouts and validated actions. Layout findings fail validation.
 - `editor/manifest.json` declares pack/mode palettes, property schemas, previews
   and bounded compositions of native edit operations. The trusted editor owns
   documents and undo; UI guests never receive editor drafts.
