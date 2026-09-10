@@ -1,27 +1,39 @@
 # Programmable exterior airlocks
 
 `maps/programmable_airlock.ron` assembles ordinary networked doors, two wall
-buttons, a airlock pump and an access point. The interior opens west and
+buttons, an airlock pump and an access point. The interior opens west and
 space is east. Initially the interior is closed and bolted, the exterior is
 open and unbolted, and the chamber is empty.
+
+The map opens commissioned. Its `links` table joins both doors, both buttons
+and the pump to the access point, and the access point's `program.controller`
+placement row copies the `airlock_controller` reference into its store as an
+editable `airlock.disl` bound to `controller` at boot (the engine's
+`docs/map-properties/machine-settings.md`). The first press cycles the room.
 
 The shared guest interface is in [controllers.md](controllers.md); preset
 source authoring is in [reference-files.md](reference-files.md).
 
-## Installation and assembly
+## Rebuilding and reprogramming
 
-Join both doors, both buttons and the vent through one powered access point
-or air alarm. These hubs offer an internal file store and a `controller`
-socket. A host commands its direct, joined, reachable members.
+A host commands its direct, joined, reachable members. Access points and air
+alarms offer an internal file store and a `controller` socket. To rebuild the
+network, open the access point's panel, open its lock, release members and
+rejoin them from its candidate list. A button joined to nothing says nobody
+answered. A host with an empty `controller` socket has no fallback program and
+says no program is loaded.
 
-The atmos stock disk (`floppy_disk.atmos_stock`) contains fixed originals of `airlock.disl` and
-`readme.md`, loaded by reference ID from `reference/manifest.ron`. Use
+The atmos stock disk (`floppy_disk.atmos_stock`) contains fixed originals of
+`airlock.disl` and `readme.md`, loaded by reference ID from
+`reference/manifest.ron`. To reinstall, use
 [laptop contact programming](../LAPTOP.md#contact-programming): insert the
 orange disk into the host, hold an open, powered laptop and click the host.
-Copy the program from B (the host's inserted disk) to A (the host's internal
-store), then load the A copy into `controller`. Edit that copy in the same
-workspace. The laptop's own disk is absent from this contact workspace. An
-uninstalled host has no fallback program.
+The host already holds the map's `airlock.disl`; a copy cannot take a name A
+already holds, and a bound file cannot be deleted. Unload `controller`, delete
+the old copy, copy the program from B (the host's inserted disk) to A (the
+host's internal store), then load the new copy into `controller`. Edit that
+copy in the same workspace. The laptop's own disk is absent from this contact
+workspace.
 
 The demonstration also supplies a `disk_box` with eight blank floppy disks.
 Its ordinary storage holds the disks loose, without tgstation's individual
@@ -65,8 +77,9 @@ The default `permitted(request)` accepts everyone. Returning
 `request.engineering` restricts each press to engineering access. A denial
 leaves the previous accepted request alone.
 
-`tests/programmable_airlock_test.luau` operates the shipped bench through
-player commands, copies and edits its reference files through laptop
+`tests/programmable_airlock_ready_test.luau` cycles the bench exactly as
+shipped. `tests/programmable_airlock_test.luau` releases, rejoins and
+reinstalls it through player commands, edits its program through laptop
 contact, and checks real pressure and door completions. The companion
 construction spec assembles and removes its fittings.
 
