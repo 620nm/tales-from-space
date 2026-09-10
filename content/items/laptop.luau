@@ -59,13 +59,14 @@ local content = {
 content.actions = {
     action_rules.primary("connect", action_rules.fact("target.has_programming_interface", true),
         action_rules.fact("held.state", "on")),
-    -- The same target with the laptop not on: the hint names the missing step,
-    -- and admits the `use` hook so its completion can say it.
+    -- The hint alone: shown while the laptop is not on and never ready, so it
+    -- authorizes nothing; `connect` above is the row such a click is refused by.
     {
         id = "connect_not_ready", gesture = "primary", route = "held",
         label = "lunatic/tfs:ui.affordance.connect_not_ready",
+        visible = { ["not"] = action_rules.fact("held.state", "on") },
         target = action_rules.fact("target.has_programming_interface", true),
-        held = { ["not"] = action_rules.fact("held.state", "on") },
+        held = false, suggest = true,
     },
     {
         id = "insert_disk", gesture = "primary", route = "receiver", uses_held = true,
@@ -219,11 +220,11 @@ if sim ~= nil then
         return true
     end)
 
-    -- A completion reaches a laptop that is not on only through the
-    -- `connect_not_ready` row, so the target is programmable: "completed" is
-    -- the host's own panel opening, "failed" nothing at all; a veto stays quiet.
+    -- `connect` refused a laptop that is not on. Even when the host's own panel
+    -- resolved the click, the laptop still says what it was missing.
     behavior:handle("interaction.use.done", { kind = "react", route = "use" }, function(ev)
-        if ev.subject.state == "on" or (ev.outcome ~= "completed" and ev.outcome ~= "failed") then return end
+        local refusal = ev.refusal
+        if ev.outcome ~= "refused" or refusal.action ~= "connect" or refusal.fact ~= "held.state" then return end
         sim.message.send({ recipient = ev.actor, message = sim.msg("lunatic/tfs:entity.laptop.not_ready", {}) })
     end)
 
