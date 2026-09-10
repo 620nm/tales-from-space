@@ -1,10 +1,11 @@
 // What the crew heard, and the one box a crewman answers with. The well
-// is a darkened corner of the station rather than a framed panel: tabs
-// across the top, the say line at the foot, nothing in between but words.
+// is a darkened corner of the station rather than a framed panel: a
+// screen whose toolbar is the tabs, whose body is the words and whose
+// footer is the say line.
 import type { UiNode } from "@lunatic/ui";
-import { Pane } from "@lunatic/ui";
+import { Tabs } from "@lunatic/ui";
 import type { GameplayView, LogLine } from "./model";
-import { column, entry, press, row, some, text } from "./view";
+import { bind, entry, press, row, screen, some, text } from "./view";
 import * as S from "./strings";
 
 type Tab = "all" | "local" | "radio" | "system";
@@ -54,51 +55,41 @@ export function chatPanel(view: GameplayView): UiNode[] {
   const heard = (view.log ?? []).map((line, index) => [line, index] as const).filter(([line]) => belongs(line, tab));
   const lines = heard.slice(-(historyOpen ? 200 : 40)).map(([line, index]) => logLine(line, index));
   return [
-    Pane(
-      "chat-pane",
-      some(
-        row("chat-tabs", [
-          ...TABS.map(([which, label]) =>
-            press(`chat-tab/${which}`, label, () => { tab = which; return undefined; }, {
-              variant: "ghost",
-              cls: which === tab ? ["chat-tab", "chat-tab-on"] : ["chat-tab"],
-            }),
-          ),
-          press("chat-history", S.CHAT_HISTORY, () => { historyOpen = !historyOpen; return undefined; }, {
-            variant: "ghost",
-            cls: historyOpen ? ["chat-tab", "chat-tab-on", "at-end"] : ["chat-tab", "at-end"],
-          }),
-        ], { cls: ["chat-tabs"] }),
-        column("log", lines.length ? lines : [text("log-empty", S.CHAT_EMPTY, ["hint"])], {
-          cls: ["chat-log"],
+    screen("chat-pane", {
+      toolbar: [
+        Tabs("chat-tabs", TABS.map(([which, label]) => ({
+          key: which, label, selected: which === tab,
+          event: bind(`chat-tab/${which}`, () => { tab = which; return undefined; }),
+        }))),
+        // The way into the whole record: a tab of its own, at the far end.
+        press("chat-history", S.CHAT_HISTORY, () => { historyOpen = !historyOpen; return undefined; }, {
+          variant: "ghost",
+          cls: historyOpen ? ["tab", "tab-on", "at-end"] : ["tab", "at-end"],
         }),
-        view.body
-          ? row("composer", [
-              text("composer-label", S.CHAT_SAY, ["composer-label"]),
-              entry(
-                "chat",
-                "",
-                (value) => (value.trim() ? { kind: "say", text: value } : undefined),
-                { submitOnly: true, clearOnSubmit: true, blurOnSubmit: true,
-                  cls: ["composer-entry"] },
-              ),
-            ], { cls: ["composer"] })
-          : null,
-      ),
-      {
-        cls: historyOpen ? ["floating-chat", "chat-open"] : ["floating-chat"],
-        style: {
-          position: "absolute",
-          left: 18,
-          bottom: 18,
-          width: "32%",
-          height: historyOpen ? "58%" : "28%",
-          minWidth: 240,
-          minHeight: 205,
-          maxWidth: "50%",
-          maxHeight: historyOpen ? 620 : 340,
-        },
+      ],
+      body: lines.length ? lines : [text("log-empty", S.CHAT_EMPTY, ["hint"])],
+      ...(view.body ? { footer: [
+        text("composer-label", S.CHAT_SAY, ["composer-label"]),
+        entry(
+          "chat",
+          "",
+          (value) => (value.trim() ? { kind: "say", text: value } : undefined),
+          { submitOnly: true, clearOnSubmit: true, blurOnSubmit: true, cls: ["composer-entry"] },
+        ),
+      ] } : {}),
+    }, {
+      cls: historyOpen ? ["pane", "floating-chat", "chat-open"] : ["pane", "floating-chat"],
+      style: {
+        position: "absolute",
+        left: 18,
+        bottom: 18,
+        width: "32%",
+        height: historyOpen ? "58%" : "28%",
+        minWidth: 240,
+        minHeight: 205,
+        maxWidth: "50%",
+        maxHeight: historyOpen ? 620 : 340,
       },
-    ),
+    }),
   ];
 }
