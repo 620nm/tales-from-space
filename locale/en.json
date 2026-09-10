@@ -22,7 +22,7 @@
   "lunatic/tfs:lib.controller.denied": "The controller refuses your airlock request.",
   "lunatic/tfs:lib.controller.busy": "The button is busy. Try again in a moment.",
   "lunatic/tfs:lib.controller.unanswered": "The button clicks, but nothing answers.",
-  "lunatic/tfs:lib.controller.unprogrammed": "The access point beeps: no program is loaded.",
+  "lunatic/tfs:lib.controller.unprogrammed": "The controller beeps: no program is loaded.",
   "lunatic/tfs:entity.access_point.name": "access point",
   "lunatic/tfs:entity.air_alarm.name": "air alarm",
   "lunatic/tfs:entity.air_injector_fitting.name": "air injector fitting",
