@@ -14,12 +14,11 @@ import {
 export const kitRules: UiStyleRule[] = [
   ...kitTheme(roles),
 
-  // A floating surface: one flat fill, one hairline, one soft drop.
-  // A pane still scrolls its own overflow until its screens lay out
-  // with `Scroll`; the kit's pane clips.
+  // A floating surface: one flat fill, one hairline, one soft drop. It
+  // clips; what must scroll is a `Screen`'s body (ui/view.ts `screen`).
   rule("pane", {
     fontFamily: "sans", lineHeight: 1.4, minWidth: 200, maxWidth: 560,
-    border: edge(line), boxShadow: shade, overflow: "auto",
+    border: edge(line), boxShadow: shade,
   }),
   rule("titlebar", { gap: 8, paddingBottom: 5, marginBottom: 4, borderBottom: edge(ruleLine) }),
   rule("titlebar-title", { color: bright }),
@@ -29,7 +28,6 @@ export const kitRules: UiStyleRule[] = [
   rule("list-value", { fontSize: 11, fontWeight: 700 }),
   rule("notice", { color: teal, fontStyle: "normal" }),
   rule("cell", { paddingTop: 2, paddingBottom: 2 }),
-  rule("card", { gap: 5, padding: 8, backgroundColor: alpha(field, 0.8), border: edge(ruleLine), borderRadius: 3 }),
   // Presses: a flat face, a hairline, a 2px corner; the accented ones
   // keep a darker edge than their ink.
   rule("btn", { paddingTop: 4, paddingBottom: 4, paddingLeft: 8, paddingRight: 8, ...press }),

@@ -17,7 +17,9 @@ export const documentRules: UiStyleRule[] = [
     textTransform: "uppercase", backgroundColor: titleFace, borderBottom: edge(titleLine),
     fontFamily: "mono", fontSize: 11, letterSpacing: 1, color: ink,
   }),
-  rule("window-body", { padding: 0, overflow: "auto" }),
+  // The body hands scrolling down to the Screen laid in it
+  // (docs/pack-ui/components.md, "Scrolling and the height chain").
+  rule("window-body", { padding: 0, overflow: "hidden" }),
   rule("window-close", {
     width: 26, minWidth: 26, height: 25, padding: 0, fontFamily: "mono", fontSize: 17, color: ink,
     backgroundColor: "transparent", border: none, borderRadius: 3,

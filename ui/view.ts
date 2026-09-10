@@ -8,7 +8,10 @@ import type {
   UiEvent,
   UiNode,
 } from "@lunatic/ui";
-import { Button, type ButtonOpts } from "@lunatic/ui";
+import {
+  Button, Dropdown, Screen,
+  type ButtonOpts, type ScreenParts, type ScrollAxis,
+} from "@lunatic/ui";
 import { labelText } from "./labels";
 
 export type Command = Record<string, Json>;
@@ -58,6 +61,27 @@ export const column = (id: string, children: UiNode[], opts: Box = {}): UiNode =
   box("column", id, children, opts);
 export const row = (id: string, children: UiNode[], opts: Box = {}): UiNode =>
   box("row", id, children, opts);
+
+export interface ScreenOpts extends Box {
+  /** Which way the body yields: down unless the panes in it scroll down themselves. */
+  axis?: ScrollAxis;
+}
+
+/** A window's whole body on the kit's `Screen`: bars that never shrink
+ *  around the one `Scroll`, at `<id>/body`, which `axis` turns sideways
+ *  when the body holds screens of its own (docs/pack-ui/components.md).
+ *  Answered as a `panel`, the one type a window descriptor may sit on;
+ *  a panel and a column lay out alike (docs/pack-ui/box-model.md). */
+export function screen(id: string, parts: ScreenParts, opts: ScreenOpts = {}): UiNode {
+  const node: UiNode = {
+    ...Screen(id, parts, { ...(opts.cls ? { cls: opts.cls } : {}), ...(opts.style ? { style: opts.style } : {}) }),
+    type: "panel",
+  };
+  const across = opts.axis === "x" ? "scroll-x" : opts.axis === "both" ? "scroll-xy" : undefined;
+  if (!across) return node;
+  return { ...node, children: node.children?.map((child) =>
+    child.id === `${id}/body` ? { ...child, class: [...(child.class ?? []), across] } : child) };
+}
 
 export function text(
   id: string,
@@ -141,22 +165,12 @@ export function select(
   callback: (value: string, e: UiEvent) => Command | undefined,
   opts: Box & { disabled?: boolean } = {},
 ): UiNode {
-  bind(id, (e) => callback(e.value ?? "", e));
-  return {
-    id,
-    type: "select",
-    value,
-    event: id,
-    class: ["entry", ...(opts.cls ?? [])],
-    ...(opts.style ? { style: opts.style as Record<string, StyleValue> } : {}),
+  return Dropdown(id, value, choices.map((choice) => ({ value: choice.value, text: labelText(choice.text as Json) })), {
+    event: bind(id, (e) => callback(e.value ?? "", e)),
+    ...(opts.cls ? { cls: opts.cls } : {}),
+    ...(opts.style ? { style: opts.style } : {}),
     ...(opts.disabled ? { disabled: true } : {}),
-    children: choices.map((choice) => ({
-      id: `${id}/${choice.value}`,
-      type: "option" as const,
-      value: choice.value,
-      text: labelText(choice.text as Json),
-    })),
-  };
+  });
 }
 
 export function icon(

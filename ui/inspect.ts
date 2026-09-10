@@ -5,7 +5,7 @@
 import type { UiNode } from "@lunatic/ui";
 import { color, Pane, Stack } from "@lunatic/ui";
 import type { GameplayView } from "./model";
-import { column, icon, panel, press, row, some, text } from "./view";
+import { column, icon, panel, press, row, screen, some, text } from "./view";
 import * as S from "./strings";
 
 type Inspection = NonNullable<GameplayView["state"]["inspections"]>[number];
@@ -104,10 +104,10 @@ export function inspectionPanels(view: GameplayView): UiNode[] {
     }),
   ], { cls: ["hudgroup", "inspect-stack"], style: { position: "absolute", left: 16, top: 18, width: 320 } }));
   if (historyOpen) out.push({
-    ...Pane("inspection-history-window", [
-      press("inspection-history-close", S.CLOSE_MARK, () => { historyOpen = false; return undefined; }, { variant: "ghost" }),
-      ...newest.map((look) => inspectionCard(look, true)),
-    ]),
+    ...screen("inspection-history-window", {
+      toolbar: [press("inspection-history-close", S.CLOSE_MARK, () => { historyOpen = false; return undefined; }, { variant: "ghost", cls: ["at-end"] })],
+      body: newest.map((look) => inspectionCard(look, true)),
+    }, { cls: ["pane"] }),
     window: { key: "inspection-history", title: S.tfs("ui.look.history"), width: 360, height: 520 },
   });
   return out;
