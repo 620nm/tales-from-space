@@ -99,6 +99,13 @@ assert(after.open == before.open and after.bolted == before.bolted, "the door is
 t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "laptop")))
 t.run_ticks(2)
 assert(t.hands(p).held == "laptop", "the closed laptop is in hand")
+local function offers(id)
+    for _, action in ipairs(t.action_hints(p, { Entity = t.target_at(p, 4, 1, "access_point") })) do
+        if action.id == id then return true end
+    end
+    return false
+end
+assert(offers("connect_not_ready") and not offers("connect"), "the hint names the laptop as not ready")
 local _ = t.messages(p)
 t.click(p, 4, 1, assert(t.target_at(p, 4, 1, "access_point")))
 t.run_ticks(2)
@@ -118,6 +125,7 @@ for _ = 1, 2 do t.use_item(p, laptop, "secondary"); t.run_ticks(2) end
 t.click(p, 3, 1, assert(t.target_at(p, 3, 1, laptop)))
 t.run_ticks(2)
 assert(t.hands(p).held == "laptop", "the running laptop is back in hand")
+assert(offers("connect") and not offers("connect_not_ready"), "a running laptop offers the real connection")
 local _ = t.messages(p)
 t.click(p, 4, 1, assert(t.target_at(p, 4, 1, "access_point")))
 t.run_ticks(2)

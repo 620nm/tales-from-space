@@ -59,11 +59,11 @@ local content = {
 content.actions = {
     action_rules.primary("connect", action_rules.fact("target.has_programming_interface", true),
         action_rules.fact("held.state", "on")),
-    -- Never offered: admits a laptop that is not on to the `use` hook on a
-    -- programmable target, so its completion can say why nothing connected.
+    -- The same target with the laptop not on: the hint names the missing step,
+    -- and admits the `use` hook so its completion can say it.
     {
-        id = "connect_not_ready", gesture = "primary", route = "held", visible = false,
-        label = "lunatic/tfs:ui.affordance.connect",
+        id = "connect_not_ready", gesture = "primary", route = "held",
+        label = "lunatic/tfs:ui.affordance.connect_not_ready",
         target = action_rules.fact("target.has_programming_interface", true),
         held = { ["not"] = action_rules.fact("held.state", "on") },
     },
@@ -210,7 +210,7 @@ if sim ~= nil then
         return true
     end)
 
-    -- A completion reaches a laptop that is not on only through the hidden
+    -- A completion reaches a laptop that is not on only through the
     -- `connect_not_ready` row, so the target is programmable: "completed" is
     -- the host's own panel opening, "failed" nothing at all; a veto stays quiet.
     behavior:handle("interaction.use.done", { kind = "react", route = "use" }, function(ev)
