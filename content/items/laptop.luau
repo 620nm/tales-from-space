@@ -54,6 +54,15 @@ local content = {
     files = { capacity = 65536, files = 16 },
     ui = { modules = { "files", "editor" } },
     card_slot = { equipment = "id" },
+    -- What a map may place: a raised lid and a running machine (the
+    -- engine's docs/content-schema/placement.md). A mapped disk rides
+    -- the engine's own `media` row.
+    placement = {
+        open = { var = "lunatic/tfs:laptop_open", kind = "flag", default = false,
+            label = "lunatic/tfs:editor.laptop.open" },
+        powered = { var = "lunatic/tfs:laptop_powered", kind = "flag", default = false,
+            label = "lunatic/tfs:editor.laptop.powered" },
+    },
 }
 
 content.actions = {
@@ -84,6 +93,7 @@ content.actions = {
 if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:laptop_wallpaper", { replicate = "server" })
     sim.define("script_var", "lunatic/tfs:laptop_powered", { replicate = "server" })
+    sim.define("script_var", "lunatic/tfs:laptop_open", { replicate = "server" })
     local behavior = sim.define("behavior", "lunatic/tfs:laptop", { prototype = "laptop" })
 
     local function sound(asset, at)
@@ -112,6 +122,7 @@ if sim ~= nil then
     end
 
     local function close(self)
+        self.vars.laptop_open = false
         sim.appearance.set_state({ entity = self, state = "closed" })
         ui.close_all({ owner = self })
     end
@@ -119,6 +130,7 @@ if sim ~= nil then
     -- The lid alone: a laptop that kept its charge comes up lit, an
     -- unpowered one shows a dark screen until the power button.
     local function raise(self)
+        self.vars.laptop_open = true
         local powered = self.vars.laptop_powered == true
         sim.appearance.set_state({ entity = self, state = if powered then "on" else "off" })
     end
@@ -141,11 +153,18 @@ if sim ~= nil then
         })
     end
 
+    -- A mapped laptop's lid, power and disk were seeded before this runs,
+    -- so the picture and the eject hints follow what it was placed with.
     behavior:handle("entity.initialize.done", { kind = "react" }, function(ev)
         local self = ev.entity
         local index = 1 + math.floor(sim.random_for("wallpaper", self) * #WALLPAPERS)
         self.vars.laptop_wallpaper = WALLPAPERS[index]
-        self.vars.laptop_powered = false
+        if self.vars.laptop_open == true then
+            raise(self)
+        end
+        for _, slot in ipairs({ "media", "card" }) do
+            sim.hints.set_flag({ entity = self, flag = slot, on = self:item_slot(slot) ~= nil })
+        end
     end)
 
     behavior:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)

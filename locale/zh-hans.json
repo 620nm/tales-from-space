@@ -1,4 +1,6 @@
 {
+  "lunatic/tfs:editor.laptop.open": "屏幕已打开",
+  "lunatic/tfs:editor.laptop.powered": "已开机",
   "lunatic/tfs:locale.name": "简体中文",
   "lunatic/tfs:entity.machine_frame.name": "机器框架",
   "lunatic/tfs:entity.wrench.name": "扳手",

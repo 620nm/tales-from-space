@@ -1,4 +1,6 @@
 {
+  "lunatic/tfs:editor.laptop.open": "Lid open",
+  "lunatic/tfs:editor.laptop.powered": "Powered on",
   "lunatic/tfs:ui.affordance.press": "Press button",
   "lunatic/tfs:entity.disk_box.name": "box of disks",
   "lunatic/tfs:ui.files.source": "Source",

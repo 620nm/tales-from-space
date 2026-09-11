@@ -37,6 +37,28 @@ Original seeds are fixed; copying one creates an ordinary editable file.
 Use [laptop contact](../LAPTOP.md#contact-programming) to install a program
 from a preset disk onto a host's store and load it into a program slot.
 
+## Map files and store rows
+
+A map places editable copies on one placement's own store, beside its seeds.
+`"file.<id>": true` names a reference ID or a document in the map's own
+`files` table, whose IDs may not repeat a reference ID; `"program.<slot>":
+"<id>"` binds that copy to a program slot; `"media"` docks a disk
+(the engine's `docs/map-properties/stores.md`):
+
+```ron
+files: {
+    "welcome": (name: "welcome", ext: "md", body: r#"Hello, mapper."#),
+},
+structures: [
+    (4, 3, "access_point", { "file.airlock_controller": true, "file.welcome": true,
+        "program.controller": "airlock_controller" }),
+],
+```
+
+`maps/programmable_airlock.ron` opens its access point this way. A copy the
+round edits or renames is the round's: the map export writes back only copies
+still exactly as the map made them.
+
 ## Editing DiSL
 
 Edit `reference/scripts/airlock.luau` directly in a Lua/Luau IDE. It is the
