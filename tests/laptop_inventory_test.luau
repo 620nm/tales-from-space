@@ -89,6 +89,53 @@ assert(t.hands(p).held == "id_captain" and not desktop().card, "modified right-c
 put_down()
 step()
 
+-- Use on the other hand names no direction. Disk in hand, laptop in the
+-- other is the forward pair (the laptop's receiver row); laptop in hand,
+-- disk in the other is offered reversed, and the same row judges the
+-- other hand's disk as the implement.
+local inserted = #t.ledger_rows("media_inserted")
+take("floppy_disk")
+t.use_on_other(p)
+step()
+assert(t.hands(p).held == nil and t.hands(p)[laptop_hand + 1] == "laptop",
+    "forward use on the other hand inserts the disk into the laptop")
+assert(#t.ledger_rows("media_inserted") == inserted + 1, "forward insertion is recorded")
+gesture(held_laptop, "shift_ctrl_primary")
+assert(t.hands(p).held == "floppy_disk", "the disk ejects back to the active hand")
+local disk_hand = t.hands(p).active - 1
+t.swap_hands(p)
+step()
+assert(t.hands(p).held == "laptop" and t.hands(p)[disk_hand + 1] == "floppy_disk",
+    "laptop active, disk in the other hand")
+t.use_on_other(p)
+step()
+assert(t.hands(p).held == "laptop" and t.hands(p)[disk_hand + 1] == nil,
+    "reverse use on the other hand inserts the other hand's disk")
+assert(#t.ledger_rows("media_inserted") == inserted + 2, "reverse insertion is recorded")
+for _, line in ipairs(t.messages(p)) do
+    assert(not line:find("can't use those two together", 1, true), "no dead-end message: " .. line)
+end
+t.swap_hands(p)
+step()
+gesture(held_laptop, "shift_ctrl_primary")
+assert(t.hands(p).held == "floppy_disk", "the reversed disk ejects like any other")
+put_down()
+step()
+take("id_assistant")
+local card_hand = t.hands(p).active - 1
+t.swap_hands(p)
+step()
+t.use_on_other(p)
+step()
+assert(t.hands(p).held == "laptop" and t.hands(p)[card_hand + 1] == nil,
+    "reverse use on the other hand inserts the other hand's ID card")
+t.swap_hands(p)
+step()
+gesture(held_laptop, "shift_ctrl_secondary")
+assert(t.hands(p).held == "id_assistant", "the reversed ID ejects to the active hand")
+put_down()
+step()
+
 -- Empty-hand navigation remains separate from item-pair commands.
 t.ui_close(p)
 step()
