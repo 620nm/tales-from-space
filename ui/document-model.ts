@@ -110,7 +110,9 @@ export interface ModuleState {
   stores?: StoreRow[];
   media_slot?: Label | null;
   files?: FileRow[];
-  /** Creatable extensions per WRITABLE side (`host`/`media`); a create
+  /** A contact workspace over a shut link lock: only the link rows ride. */
+  contact_locked?: boolean;
+  /** Creatable extensions per WRITABLE side (`host`/`media`/`contact`); a create
    *  names where it lands as `<side>:<ext>` (engine files module). */
   create?: Record<string, string[]>;
   /** The machine's guest-program sockets, one row per declared socket

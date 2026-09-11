@@ -47,6 +47,7 @@ t.world([==[(
         "#########",
     ],
     spawns: [(5, 1)],
+    items: [(5, 1, "laptop")],
     structures: [
         (4, 2, "access_point", { "network_1": "network_card" }),
         (6, 2, "airlock_button"),
@@ -63,9 +64,7 @@ local crew = t.join()
 t.run_ticks(20)
 
 local function ui()
-    local doc = t.ui(crew)
-    assert(doc ~= nil, "the host's window is open")
-    return doc
+    return laptop.ui(crew)
 end
 local function rows(doc, field)
     local out = {}
@@ -91,13 +90,13 @@ assert(denied[1].at[1] == 6 and denied[1].at[2] == 1, "at the leaf's own tile")
 assert(#t.ledger_rows("script_error") == 0, "answering a hand is not a fault")
 
 -- ---- install policy on the host ------------------------------------------
--- Placed with no `access` word, the lock opens for whoever is standing
--- at it (tests/hardwire_test.luau).
-t.click(crew, 4, 2, t.target_at(crew, 4, 2, "access_point"))
+-- Through a held laptop. Placed with no `access` word, the lock opens
+-- for whoever is standing at it (tests/hardwire_test.luau).
+laptop.ready(crew, 5, 1)
+assert(laptop.connect(crew, 4, 2, "access_point").contact_locked, "the host boots locked")
+laptop.unlock(crew)
 t.run_ticks(2)
-ui_controls.toggle(crew, "link_lock")
-t.run_ticks(2)
-assert(rows(ui(), "link_lock")[1].on, "an unkeyed host opens for an empty hand")
+assert(rows(ui(), "link_lock")[1].on, "an unkeyed host opens for anyone holding a laptop")
 
 local joined = 0
 while true do
@@ -106,7 +105,7 @@ while true do
         if row.label.id == "link.candidate.endpoint" then candidate = row.option break end
     end
     if not candidate then break end
-    ui_controls.toggle(crew, "link_join", candidate)
+    laptop.toggle(crew, "link_join", candidate)
     t.run_ticks(2)
     joined += 1
     assert(joined <= 2, "only the door and the button are in reach")
@@ -124,7 +123,9 @@ assert(ui().open.body == PROGRAM, "the guest's source is on the host's own disk"
 ui_files.socket(crew, "controller", uid)
 t.run_ticks(2)
 assert(ui().sockets[1].state.id == "sockets.state.bound", "and the controller socket runs it")
-t.ui_close(crew)
+laptop.close(crew)
+-- A button is pressed with an empty hand.
+t.drop(crew)
 t.run_ticks(2)
 
 -- ---- through the host: opened --------------------------------------------

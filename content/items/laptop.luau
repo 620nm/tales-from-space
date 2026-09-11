@@ -196,19 +196,31 @@ if sim ~= nil then
         end
     end)
 
+    -- The step a laptop is missing before it can connect: the lid, then power.
+    local function unready(self)
+        if self.state == "closed" then return "lunatic/tfs:entity.laptop.lid_closed" end
+        if self.vars.laptop_powered ~= true then return "lunatic/tfs:entity.laptop.powered_off" end
+        return nil
+    end
+
+    -- A shut lock is the engine's to show: the same session opens on the lock
+    -- screen and widens once it opens (the engine's docs/pack-ui/server.md).
     behavior:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local self, target = ev.subject, ev.claim and ev.claim.entity
-        if self.state == "closed" or self.vars.laptop_powered ~= true
-            or target == nil or sim.link_state(target) == nil then
+        -- The `connect` row's own fact: anything else keeps its ordinary click.
+        local link = target and sim.link_state(target)
+        if link == nil or not link.programming then
             return { replaced = false }
+        end
+        local missing = unready(self)
+        if missing then
+            sim.message.send({ recipient = ev.actor, message = sim.msg(missing, {}) })
+            return true
         end
         -- The host's half of the engine's contact check (sim/ui/contact.rs), said
         -- here because a refused `ui.open` closes without a word.
-        local refusal = if sim.link_state(target).locked then "lunatic/tfs:entity.laptop.contact_locked"
-            elseif not sim.is_powered(target) then "lunatic/tfs:entity.laptop.contact_unpowered"
-            else nil
-        if refusal then
-            sim.message.send({ recipient = ev.actor, message = sim.msg(refusal, {}) })
+        if not sim.is_powered(target) then
+            sim.message.send({ recipient = ev.actor, message = sim.msg("lunatic/tfs:entity.laptop.contact_unpowered", {}) })
             return true
         end
         ui.open({
@@ -220,12 +232,14 @@ if sim ~= nil then
         return true
     end)
 
-    -- `connect` refused a laptop that is not on. Even when the host's own panel
-    -- resolved the click, the laptop still says what it was missing.
+    -- `connect` refused a laptop that is not on: say which step is missing.
     behavior:handle("interaction.use.refused", { kind = "react", route = "use" }, function(ev)
         local r = ev.action_refusal
         if r.action ~= "connect" or r.fact ~= "held.state" then return end
-        sim.message.send({ recipient = ev.actor, message = sim.msg("lunatic/tfs:entity.laptop.not_ready", {}) })
+        local missing = unready(ev.subject)
+        if missing then
+            sim.message.send({ recipient = ev.actor, message = sim.msg(missing, {}) })
+        end
     end)
 
     behavior:handle("interaction.act", { kind = "replace", route = "act" }, function(ev)

@@ -86,6 +86,7 @@ t.world([==[(
         (4, 3, "network_card"),
         (5, 3, "screwdriver"),
         (6, 3, "id_engineering"),
+        (5, 1, "laptop"),
     ],
     structures: [(4, 1, "access_point", { "access": "engineering" })],
     mounts: [(4, 1, North)],
@@ -132,16 +133,16 @@ local function work(seconds)
 end
 
 -- ---------------------------------------------------------------
--- 1. WHO THE ACCESS POINT IS. A shut panel says what this box is and
---    nothing about the network behind it: its own address, because
---    that is an identifier rather than a credential and it is written
---    on the box the reader is standing at, and its state -- and then
---    no roster and no candidates at all (docs/DEVICES.md §1, §8).
+-- 1. WHO THE ACCESS POINT IS. A held laptop meets its lock screen,
+--    which says what this box is and nothing about the network behind
+--    it: its own address, because that is an identifier rather than a
+--    credential and it is written on the box the reader is standing
+--    at, and its state -- and then no roster and no candidates at all
+--    (docs/DEVICES.md §1, §8).
 -- ---------------------------------------------------------------
-t.click(p, 4, 1, t.target_at(p, 4, 1, "access_point"))
-t.tick()
-local panel = t.ui(p)
-assert(panel ~= nil, "the access point wears a panel")
+laptop.ready(p, 5, 1)
+local panel = laptop.connect(p, 4, 1, "access_point")
+assert(panel ~= nil and panel.contact_locked, "the laptop meets the access point's lock screen")
 local point = readout(panel, "link.address")
 assert(point ~= nil and #point == 17, "with an address in it: " .. tostring(point))
 -- ON THE AIR ALREADY, with nothing above it. A hub with a device
@@ -152,8 +153,8 @@ assert(point ~= nil and #point == 17, "with an address in it: " .. tostring(poin
 assert(readout(panel, "link.state") == "link.state.online", "a hub tops its own tree, got: " .. tostring(readout(panel, "link.state")))
 assert(#rows(panel, "link_join") == 0 and #rows(panel, "link_drop") == 0,
     "and a shut panel offers neither a roster nor a candidate")
-t.ui_close(p)
-t.tick()
+laptop.close(p)
+put_down()
 
 -- ---------------------------------------------------------------
 -- 2. THE ROUTER, THE LONG WAY. A frame, a board, and the one socket
@@ -320,18 +321,29 @@ assert(row_for(t.ui(p), "link_drop", point) ~= nil, "joined again")
 -- ---------------------------------------------------------------
 t.ui_close(p)
 t.tick()
-t.click(p, 4, 1, t.target_at(p, 4, 1, "access_point"))
+laptop.take(p, 5, 1)
+assert(laptop.connect(p, 4, 1, "access_point").contact_locked, "the lock screen again")
+laptop.unlock(p)
 t.tick()
-ui_controls.toggle(p, "link_lock")
-t.tick()
-assert(not rows(t.ui(p), "link_lock")[1].on, "an empty hand does not open a keyed lock")
+assert(laptop.ui(p).contact_locked, "a laptop without the claim does not open a keyed lock")
+local denials = t.ledger_rows("link_denied")
+assert(#denials == 1 and denials[1].why == "access", "the refusal names the rule it broke")
+laptop.close(p)
 
+-- The claim goes in the other hand; the laptop stays the active one.
+t.swap_hands(p)
+t.run_ticks(2)
 take("id_engineering")
-ui_controls.toggle(p, "link_lock")
+t.swap_hands(p)
+t.run_ticks(2)
+assert(t.hands(p).held == "laptop", "the laptop is the active hand again")
+laptop.connect(p, 4, 1, "access_point")
+laptop.unlock(p)
 t.tick()
-panel = t.ui(p)
-assert(rows(panel, "link_lock")[1].on, "the claim does")
+panel = laptop.ui(p)
+assert(not panel.contact_locked and rows(panel, "link_lock")[1].on, "the claim does, straight into the workspace")
 assert(readout(panel, "link.state") == "link.state.online", "and it is on the air under the router now")
+laptop.close(p)
 
 -- ---------------------------------------------------------------
 -- 7. THE LIGHTS GO OUT. Suspension is derived every pass, right behind
