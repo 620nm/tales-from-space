@@ -1,0 +1,18 @@
+# Line endings are content here, not a style preference.
+#
+# Git for Windows ships `core.autocrlf=true` in its SYSTEM config, so without
+# this file a fresh clone on Windows checks text out with CRLF. A reference
+# document's bytes are its store cost and a program's hash, and a map's
+# documents are raw strings, so a checkout must hand every tool LF.
+# Mirrors the engine's `.gitattributes`.
+* text=auto eol=lf
+
+# Art and sound are bytes, never text.
+*.png  binary
+*.ogg  binary
+*.dmi  binary
+*.wasm binary
+*.ico  binary
+*.ase  binary
+*.aseprite binary
+*.woff2 binary
