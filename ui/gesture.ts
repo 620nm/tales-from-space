@@ -1,7 +1,9 @@
 // The one place a gesture id is read. An id is `[<modifiers>_]<button>`
 // with the modifiers in the engine's fixed spelling, and its rank is
-// `group * 3 + button` — the same number the server sorts hint rows by
-// (lunatic docs/luau-api/click.md, "Declared item gestures").
+// `group * 3 + button` (lunatic docs/luau-api/click.md, "Declared item
+// gestures"). The rank orders gestures on the client only: the server sorts
+// hint rows by group, then each row's declared `order`, then its own
+// gesture tie-break, and the card keeps the order it is sent.
 import type { UiNode } from "@lunatic/ui";
 import { panel, row, text } from "./view";
 import * as S from "./strings";
@@ -43,9 +45,11 @@ export function fromEvent(
   return parse([...keys.filter((key) => key !== ""), button].join("_"));
 }
 
-/** Where a row sits in the card: the bare click, then the use key, then
- *  the use-on-other-hand key, then every pointer gesture by rank — the
- *  order the server already sent. */
+/** A client-side fallback order for gestures: the bare click, then the use
+ *  key, then the use-on-other-hand key, then every pointer gesture by rank.
+ *  It matches the server only among rows of one group and equal `order`,
+ *  and even then not for every pointer gesture; rows the server sent keep
+ *  the server's order. */
 export function order(name: string): number {
   if (name === "primary") return 0;
   if (name === "self") return 1;

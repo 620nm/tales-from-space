@@ -26,8 +26,10 @@ same action instead of adding a duplicate suggestion.
 Self-use keycaps come from the host's effective `use_self` binding.
 Rows with gesture `other` (on the active-hand item's card, naming what the
 use-on-other-hand key does with the other hand's item) take their keycaps
-from `use_other`, sort right after self-use rows, and carry the second line
-"In other hand" in their `detail`.
+from `use_other` and carry the second line "In other hand" in their
+`detail`. The server sorts rows by group, then declared `order`, then
+gesture, so an `other` row sits right after self-use rows only where both
+share a group and an `order`.
 Pointer modifiers and action words use the selected catalog. The card uses
 one intrinsic grid column for every input combination and wraps labels and
 long chords. It contains no interactive folds.
