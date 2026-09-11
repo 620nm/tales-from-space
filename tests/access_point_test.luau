@@ -212,7 +212,7 @@ assert(said(p, NEEDS_LAPTOP), "and says what it wants: " .. table.concat(t.messa
 laptop.ready(p, 5, 1)
 local panel = laptop.connect(p, 4, 1, "access_point")
 assert(panel and panel.contact_locked, "the laptop meets the lock screen first")
-assert(panel.stores == nil and panel.sockets == nil, "with no file or socket behind it")
+assert(panel.stores == nil and panel.program_slots == nil, "with no file or program slot behind it")
 assert(#readout(panel, "link.address") == 17, "with the address a shift log will name")
 local lock = rows(panel, "link_lock")
 assert(#lock == 1 and not lock[1].on, "a lock row, shut, because a fresh boot finds them all shut")

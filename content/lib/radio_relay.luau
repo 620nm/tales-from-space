@@ -57,21 +57,21 @@ function radio_relay.read(ev)
 end
 
 -- The hop that changes nothing -- unless the machine crossing it hosts
--- a guest script. A tower declares a `carry` socket
--- (machines/transceiver.luau); a crewman who binds a program to it
--- (the panes document's socket rows) owns what the words become here.
+-- a guest script. A tower declares a `carry` program slot
+-- (machines/transceiver.luau); a crewman who loads a program into it
+-- (the panes document's program slot rows) owns what the words become here.
 -- The guest sees one in-flight line -- `content`, `channel`, the
 -- speaker's name as `source` (a Handle cannot cross the guest
 -- boundary, so the word is what crosses), and `pass` as the hop count
 -- -- and its answer is honored as: a `text`/`channel` pair rewrites,
--- `pass == false` drops the line, and anything else, an unbound socket
+-- `pass == false` drops the line, and anything else, an empty slot
 -- or a faulted script passes the words UNCHANGED. Fail-open, matching
 -- the stage's own policy (docs/luau-api/radio-relay.md): delivery
 -- matters more than the script, and the fault is on the record either
 -- way (docs/diegetic-scripting/attribution.md §10). The stage
 -- re-sanitizes whatever this answers, so nothing here sanitizes.
 function radio_relay.carry(ev)
-    local answer = socket.run(ev.self, "carry", {
+    local answer = program_slot.run(ev.self, "carry", {
         content = ev.text,
         channel = ev.channel,
         source = ev.speaker.name,

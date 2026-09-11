@@ -3,7 +3,7 @@
 t.set_breathing(false)
 t.world_file("programmable_airlock.ron", 0)
 
--- Tick 0, before anyone arrives: five drawn edges and one bound socket, all the map's doing.
+-- Tick 0, before anyone arrives: five drawn edges and one loaded program slot, all the map's doing.
 local function by_map(row)
     return row.actor and row.actor.kind == "system" and row.actor.source == "map"
 end
@@ -12,9 +12,9 @@ for _, row in ipairs(t.ledger_rows("link_accepted")) do
     if row.wired and by_map(row) then wired += 1 end
 end
 assert(wired == 5, "two doors, two buttons and the vent open joined: " .. wired)
-local loaded = t.ledger_rows("disl_socket_loaded")
-assert(#loaded == 1 and loaded[1].socket == "controller" and by_map(loaded[1]),
-    "the controller socket opens bound by the map")
+local loaded = t.ledger_rows("disl_program_loaded")
+assert(#loaded == 1 and loaded[1].slot == "controller" and by_map(loaded[1]),
+    "the controller slot opens loaded by the map")
 
 local operator = t.join()
 local visitor = t.join()

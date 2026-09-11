@@ -1,12 +1,12 @@
 import type { UiNode } from "@lunatic/ui";
 import { Stack } from "@lunatic/ui";
-import type { DocumentIdentity, ModuleState, SocketRowState } from "./document-model";
+import type { DocumentIdentity, ModuleState, ProgramSlotRowState } from "./document-model";
 import { documentAction } from "./document-action";
 import { labelText } from "./labels";
 import { column, press, row, some, text } from "./view";
 import * as S from "./strings";
 const SOURCE_EXTS = new Set(["disl"]);
-export function socketRows(
+export function programSlotRows(
   id: string,
   doc: DocumentIdentity,
   state: Partial<ModuleState>,
@@ -15,29 +15,29 @@ export function socketRows(
   const loadable = (state.files ?? []).filter(
     (file) => file.store === "host" && SOURCE_EXTS.has(file.ext),
   );
-  const rows = (state.sockets ?? []).map((socket: SocketRowState, index) => {
-    const key = `${id}/socket/${index}`;
+  const rows = (state.program_slots ?? []).map((slot: ProgramSlotRowState, index) => {
+    const key = `${id}/program/${index}`;
     return column(
       key,
       some(
         row(
           `${key}/head`,
           some(
-            text(`${key}/id`, socket.id, ["grow", "list-label"]),
-            text(`${key}/state`, labelText(socket.state), ["hint"]),
-            socket.file ? text(`${key}/file`, socket.file, ["fname"]) : null,
+            text(`${key}/id`, slot.id, ["grow", "list-label"]),
+            text(`${key}/state`, labelText(slot.state), ["hint"]),
+            slot.file ? text(`${key}/file`, slot.file, ["fname"]) : null,
             text(
               `${key}/stats`,
-              S.socketStats(socket.runs ?? 0, socket.faults ?? 0),
+              S.programStats(slot.runs ?? 0, slot.faults ?? 0),
               ["fsize"],
             ),
-            socket.uid !== null && socket.uid !== undefined
+            slot.uid !== null && slot.uid !== undefined
               ? press(
                   `${key}/unload`,
                   S.UNLOAD,
                   documentAction(doc, "toggle", {
-                    field: "socket_unload",
-                    option: `${socket.id}:${state.stores?.find((store) => store.key === "host")?.binding ?? ""}`,
+                    field: "program_unload",
+                    option: `${slot.id}:${state.stores?.find((store) => store.key === "host")?.binding ?? ""}`,
                   }),
                   { variant: "ghost", disabled: !active },
                 )
@@ -51,10 +51,10 @@ export function socketRows(
               loadable.map((file, i) =>
                 press(
                   `${key}/load/${i}`,
-                  S.socketLoad(S.fileName(file.name, file.ext)),
+                  S.programLoad(S.fileName(file.name, file.ext)),
                   documentAction(doc, "toggle", {
-                    field: "socket_load",
-                    option: `${socket.id}:${file.uid}:${file.binding}`,
+                    field: "program_load",
+                    option: `${slot.id}:${file.uid}:${file.binding}`,
                   }),
                   { variant: "ghost", disabled: !active },
                 ),
@@ -65,6 +65,9 @@ export function socketRows(
       ),
     );
   });
-  return column(`${id}/sockets`, rows, { cls: ["card"] });
+  return column(
+    `${id}/programs`,
+    [text(`${id}/programs/title`, S.PROGRAM, ["section-title"]), ...rows],
+    { cls: ["card"] },
+  );
 }
-

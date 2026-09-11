@@ -95,7 +95,7 @@ return {
     ui = { modules = { "link", "reach", "parts", "files", "editor" } },
     files = { capacity = 65536, files = 16 },
     drive = { reads = { "disl" }, accepts = { "floppy" } },
-    sockets = { "controller" },
+    program_slots = { "controller" },
     -- WHAT IT LOOKS LIKE IS WHAT IT IS DOING. tg draws this box shut
     -- (`alarmp`) with a teal lamp laid over it, and draws NO lamp at
     -- all while it is unpowered, broken or shorted
