@@ -22,6 +22,25 @@
         ],
         skin: (232, 200, 168),
     )),
+    // Editor Space uses tg's three parallax layers
+    // (`code/_onclick/hud/parallax/parallax.dm:410-448`). Bake each 32px
+    // window into an atlas cell and wrap the row-major table over map
+    // coordinates; the editor keeps this art static.
+    backgrounds: [
+        (
+            name: "space_backdrop",
+            turf: Space,
+            size: (15, 15),
+            dmi: "effects/parallax.dmi",
+            layers: [
+                ("layer1", Over, false),
+                ("layer2", Add, false),
+                ("layer3", Add, false),
+            ],
+            dir: 0,
+            paint: (255, 255, 255),
+        ),
+    ],
     // tg renders status-display maptext in 12pt TinyUnicode
     // (`code/game/machinery/status_display.dm:3-11`). At 96dpi that is
     // 16px. The direct controls start from tg's `reject_bad_text`
