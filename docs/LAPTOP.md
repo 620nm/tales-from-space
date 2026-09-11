@@ -41,7 +41,10 @@ the power and eject presses. All current readers see power and slot changes toge
 Hold an ID card or floppy cartridge in the active hand and click the laptop
 to insert it; an occupied slot swaps its previous item into the inserting
 hand. This works on the floor, in the other hand and inside an opened
-container, including nested bags. A hand holding either one reads the
+container, including nested bags. Use on the other hand works either
+way round: with the laptop active and the disk or card in the other
+hand, the engine offers the pair reversed and the laptop's receiver
+row judges the other-hand item. A hand holding either one reads the
 laptop's own row as Insert cartridge or Insert ID card.
 The input glyphs show a plus and the active item's 32×32 sprite on this
 row, in world and inventory hover cards. Inspect and unrelated shortcuts
