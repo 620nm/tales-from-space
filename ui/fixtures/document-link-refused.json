@@ -1,0 +1,67 @@
+{
+  "note": "A device's own module document refused an unlock: the heading carries its address and toned link state, the Access denied dialog stands over the panel.",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "air alarm",
+        "owner_sprite": "air_alarm",
+        "state": {
+          "document": "modules",
+          "status": 2,
+          "presentation": "modules",
+          "name": "air alarm",
+          "owner_sprite": "air_alarm",
+          "link": {
+            "address": "02-4a-1f-00-3c-02",
+            "state": {
+              "id": "link.state.unpowered"
+            },
+            "online": false
+          },
+          "readouts": [],
+          "labels": [],
+          "setpoints": [],
+          "toggles": [
+            {
+              "field": "link_lock",
+              "option": null,
+              "label": {
+                "id": "link.lock"
+              },
+              "on": false,
+              "on_text": {
+                "id": "link.lock.unlocked"
+              },
+              "off_text": {
+                "id": "link.lock.locked"
+              },
+              "icon": null,
+              "group": null,
+              "color": null,
+              "section": null
+            }
+          ],
+          "refusal": {
+            "serial": 1,
+            "text": {
+              "id": "link.access_denied"
+            }
+          }
+        }
+      }
+    }
+  }
+}
