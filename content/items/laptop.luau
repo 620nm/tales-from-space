@@ -260,7 +260,7 @@ if sim ~= nil then
     -- `connect` refused a laptop that is not on: say which step is missing.
     behavior:handle("interaction.use.refused", { kind = "react", route = "use" }, function(ev)
         local r = ev.action_refusal
-        if r.action ~= "connect" or r.fact ~= "held.state" then return end
+        if r.action ~= "connect" or r.fact ~= "held.state" or r.resolved then return end
         local missing = unready(ev.subject)
         if missing then
             sim.message.send({ recipient = ev.actor, message = sim.msg(missing, {}) })
