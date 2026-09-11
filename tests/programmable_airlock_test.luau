@@ -69,7 +69,7 @@ laptop.close(operator)
 
 local function workspace()
     local ui = t.ui(operator, "programming")
-    assert(ui and ui.sockets, "the contact workspace belongs to the target")
+    assert(ui and ui.program_slots, "the contact workspace belongs to the target")
     return ui
 end
 local function file(ui, side)
@@ -99,10 +99,10 @@ laptop.connect(operator, 4, 3, host)
 
 local ui = workspace()
 local shipped = file(ui, "host")
-assert(shipped and not shipped.fixed and ui.sockets[1].uid == shipped.uid,
-    "the map installed an editable copy and bound it to the socket")
+assert(shipped and not shipped.fixed and ui.program_slots[1].uid == shipped.uid,
+    "the map installed an editable copy and loaded it into the slot")
 -- A copy cannot land on a taken name, and a bound file cannot be deleted: unload, then delete.
-ui_files.socket(operator, "controller", nil)
+ui_files.program(operator, "controller", nil)
 t.run_ticks(10)
 ui_files.press(operator, file(workspace(), "host"), "delete")
 t.run_ticks(2)
@@ -120,9 +120,9 @@ ui_files.press(operator, installed, "open")
 t.run_ticks(2)
 local source = workspace().open.body
 assert(#source <= 8192 and source:find("local function permitted", 1, true), "the installed file is the guest controller source")
-ui_files.socket(operator, "controller", installed.uid)
+ui_files.program(operator, "controller", installed.uid)
 t.run_ticks(2)
-assert(workspace().sockets[1].uid == installed.uid, "the controller socket runs the target copy")
+assert(workspace().program_slots[1].uid == installed.uid, "the controller slot runs the target copy")
 
 local function close_contact()
     t.ui_close(operator, "programming")
@@ -248,7 +248,7 @@ local denied = source:gsub("return true", "return false", 1)
 t.run_ticks(10)
 ui_files.save(operator, denied)
 t.run_ticks(2)
-assert(workspace().open.body == denied, "a live socket is editable from the laptop")
+assert(workspace().open.body == denied, "a running program is editable from the laptop")
 close_contact()
 local _ = t.messages(visitor)
 since = airlock_cycle.mark()

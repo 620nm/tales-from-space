@@ -117,9 +117,9 @@ export interface ModuleState {
   /** Creatable extensions per WRITABLE side (`host`/`media`/`contact`); a create
    *  names where it lands as `<side>:<ext>` (engine files module). */
   create?: Record<string, string[]>;
-  /** The machine's guest-program sockets, one row per declared socket
-   *  (engine `sockets` key; absent when the prototype declares none). */
-  sockets?: SocketRowState[];
+  /** The machine's program slots, one row per declared slot
+   *  (engine `program_slots` key; absent when the prototype declares none). */
+  program_slots?: ProgramSlotRowState[];
   open?: OpenFile | null;
   editor?: EditorState | null;
 }
@@ -196,10 +196,10 @@ export interface EditorMarker {
   line?: number;
   message: string;
 }
-/** One socket row of a panes document: the id, the bound file's
- *  `name.ext` and uid (both null when unbound), the socket's counters
- *  and the state word as a label id (engine settings/sockets.rs). */
-export interface SocketRowState {
+/** One program slot row of a panes document: the id, the loaded file's
+ *  `name.ext` and uid (both null when empty), the slot's counters
+ *  and the state word as a label id (engine settings/program_slots.rs). */
+export interface ProgramSlotRowState {
   id: string;
   file?: string | null;
   uid?: number | null;

@@ -8,7 +8,7 @@ to layer 4.
 Insert this disk into the access point or air alarm. Open and power on the
 laptop, then hold it and click that host. Drive A is the host's internal
 storage; drive B is the disk inside the host. Copy airlock.disl from B to A,
-then load the A copy into the controller socket. The laptop provides the
+then load the A copy into the controller program slot. The laptop provides the
 screen and keyboard; its own disk is not shown while connected to a device.
 
 The orange disk holds read-only originals. The box of disks supplies eight

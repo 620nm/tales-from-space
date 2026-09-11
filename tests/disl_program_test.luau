@@ -1,9 +1,9 @@
--- The first socket: a guest script filtering the lines that cross a
+-- The first program slot: a guest script filtering the lines that cross a
 -- tower (docs/files/scriptable-machine.md, docs/diegetic-scripting/
 -- attribution.md §11).
 --
 -- The transceiver declares a host store, a drive that reads nothing but
--- program text, and one socket -- `carry`, the relay stage a line's
+-- program text, and one program slot -- `carry`, the relay stage a line's
 -- words pass through (content/machines/transceiver.luau,
 -- lib/radio_relay.luau). This spec drives the whole lifecycle the way a
 -- crewman would: write a filter on A:, bind it, hear the line come out
@@ -43,7 +43,7 @@ end
 -- circle; tower -> listener is 18, well inside the clear band, so the
 -- tower's settled words arrive whole.
 t.world([==[(
-    name: "socket corridor",
+    name: "program corridor",
     legend: {
         ' ': (turf: Space),
         '.': (turf: Floor),
@@ -94,16 +94,16 @@ local function drain_all()
     local _ = t.messages(listener)
 end
 
--- ---- the panel: one socket, nothing bound ------------------------------
+-- ---- the panel: one program slot, nothing loaded ------------------------------
 t.click(operator, 2, 1, t.target_at(operator, 2, 1))
 t.tick()
 local ui = t.ui(operator)
 assert(ui, "a bare hand opens the tower's window")
 assert(ui.presentation == "panes", "the files module is the panes one")
-assert(ui.sockets and #ui.sockets == 1, "one declared socket: " .. tostring(ui.sockets and #ui.sockets))
-assert(ui.sockets[1].id == "carry", "named for the stage it filters")
-assert(ui.sockets[1].state.id == "sockets.state.unbound", "and it starts empty")
-assert(ui.sockets[1].runs == 0 and ui.sockets[1].faults == 0, "with clean counters")
+assert(ui.program_slots and #ui.program_slots == 1, "one declared program slot: " .. tostring(ui.program_slots and #ui.program_slots))
+assert(ui.program_slots[1].id == "carry", "named for the stage it filters")
+assert(ui.program_slots[1].state.id == "program_slots.state.empty", "and it starts empty")
+assert(ui.program_slots[1].runs == 0 and ui.program_slots[1].faults == 0, "with clean counters")
 
 -- The tower reads program text only: the create control offers `disl`
 -- on the host store and nothing else (no disk in the slot, and `md`
@@ -151,17 +151,17 @@ assert(ui.editor.body == SHOUT and #ui.editor.markers == 0,
 assert(ui.open.body == SHOUT, "and the saved body is what remains")
 
 -- ---- bind it ------------------------------------------------------------
-ui_files.socket(operator, "carry", uid)
+ui_files.program(operator, "carry", uid)
 t.tick()
 ui = t.ui(operator)
-assert(ui.sockets[1].state.id == "sockets.state.bound", "the socket is bound")
-assert(ui.sockets[1].file == "untitled.disl", "and names what it runs: "
-    .. tostring(ui.sockets[1].file))
-assert(ui.sockets[1].uid == uid, "the uid is the binding's identity")
-assert(ui.editor.bound == true, "the open file knows a socket is running it")
+assert(ui.program_slots[1].state.id == "program_slots.state.loaded", "the program slot is loaded")
+assert(ui.program_slots[1].file == "untitled.disl", "and names what it runs: "
+    .. tostring(ui.program_slots[1].file))
+assert(ui.program_slots[1].uid == uid, "the uid is the binding's identity")
+assert(ui.editor.bound == true, "the open file knows a program slot is running it")
 
-local loaded = t.ledger_rows("disl_socket_loaded")
-assert(#loaded == 1 and loaded[1].socket == "carry" and loaded[1].uid == uid,
+local loaded = t.ledger_rows("disl_program_loaded")
+assert(#loaded == 1 and loaded[1].slot == "carry" and loaded[1].uid == uid,
     "the load is on the record")
 assert(loaded[1].machine == "radio transceiver", "naming the machine: "
     .. tostring(loaded[1].machine))
@@ -178,8 +178,8 @@ assert(said(listener, "HELLO THERE CREW"), "the tower's words came out filtered:
 
 local runs = t.ledger_rows("disl_run")
 assert(#runs == 1, "one run for one crossing: " .. #runs)
-assert(runs[1].socket == "carry" and runs[1].hosting == "radio transceiver",
-    "the transcript names its socket and its machine")
+assert(runs[1].slot == "carry" and runs[1].hosting == "radio transceiver",
+    "the transcript names its slot and its machine")
 -- ScriptValue is externally tagged on the wire: a guest table reads as
 -- `{ Map = { <key> = { String = ... } } }`.
 assert(runs[1].value.Map.text.String == "HELLO THERE CREW", "and what it answered")
@@ -202,9 +202,9 @@ assert(#runs == 2 and runs[2].value.Map.pass.Bool == false, "the drop is a run l
 assert(#t.ledger_rows("disl_fault") == 0, "a drop is not a fault")
 t.run_ticks(20) -- the pane republishes on the window cadence, not per line
 ui = t.ui(operator)
-assert(ui.sockets[1].runs == 2 and ui.sockets[1].faults == 0,
-    "the counters belong to the socket and survive the re-save: runs="
-        .. tostring(ui.sockets[1].runs) .. " faults=" .. tostring(ui.sockets[1].faults))
+assert(ui.program_slots[1].runs == 2 and ui.program_slots[1].faults == 0,
+    "the counters belong to the slot and survive the re-save: runs="
+        .. tostring(ui.program_slots[1].runs) .. " faults=" .. tostring(ui.program_slots[1].faults))
 
 -- ---- a fault delivers the line UNCHANGED ---------------------------------
 -- Fail-open: a broken script must not silence the radio, and the fault
@@ -222,12 +222,12 @@ assert(said(listener, "anyone copy"), "a faulted filter passes the words as they
 local faults = t.ledger_rows("disl_fault")
 assert(#faults == 1 and faults[1].fault == "error",
     "the fault is on the record")
-assert(faults[1].socket == "carry" and faults[1].hosting == "radio transceiver",
-    "attributed to the socket that ran it")
+assert(faults[1].slot == "carry" and faults[1].hosting == "radio transceiver",
+    "attributed to the slot that ran it")
 t.run_ticks(20) -- the window cadence again
 ui = t.ui(operator)
-assert(ui.sockets[1].runs == 3 and ui.sockets[1].faults == 1,
-    "the fault tally is the socket's, not the file's")
+assert(ui.program_slots[1].runs == 3 and ui.program_slots[1].faults == 1,
+    "the fault tally is the slot's, not the file's")
 
 -- ---- the edit of a running program takes ----------------------------------
 t.run_ticks(10)
@@ -246,18 +246,18 @@ assert(#t.ledger_rows("disl_compiled") == 4,
 ui_files.address(operator, file, "delete")
 t.tick()
 assert(heard(operator, "unload it first"),
-    "deleting what a socket runs refuses and SAYS so: "
+    "deleting what a program slot runs refuses and SAYS so: "
         .. table.concat(t.messages(operator), " | "))
 assert(#t.ledger_rows("file_deleted") == 0, "and nothing was deleted")
 ui = t.ui(operator)
-assert(ui.sockets[1].state.id == "sockets.state.bound", "still bound")
+assert(ui.program_slots[1].state.id == "program_slots.state.loaded", "still loaded")
 
 -- ---- unload, and the tower is stock again ----------------------------------
-ui_files.socket(operator, "carry")
+ui_files.program(operator, "carry")
 t.tick()
 ui = t.ui(operator)
-assert(ui.sockets[1].state.id == "sockets.state.unbound", "unbound")
-local unloaded = t.ledger_rows("disl_socket_unloaded")
+assert(ui.program_slots[1].state.id == "program_slots.state.empty", "emptied")
+local unloaded = t.ledger_rows("disl_program_unloaded")
 assert(#unloaded == 1 and unloaded[1].uid == uid, "the unload is on the record")
 
 drain_all()
@@ -267,4 +267,4 @@ assert(said(listener, "stock hardware is honest hardware"),
     "with nothing bound the words pass as they stand")
 -- Three successful runs on the record (the faulting one is a
 -- `disl_fault` row, not a transcript) and the unload added none.
-assert(#t.ledger_rows("disl_run") == 3, "an unbound socket runs nothing")
+assert(#t.ledger_rows("disl_run") == 3, "an empty slot runs nothing")
