@@ -152,7 +152,7 @@ t.world([==[(
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
-    items: [(7, 2, "id_engineering")],
+    items: [(7, 2, "id_engineering"), (9, 2, "laptop")],
     // The waste main runs out under the west wall, so the scrubber has
     // somewhere to put what it takes (tests/room_devices_test.luau).
     pipes: [(0, 2, 2), (1, 2, 2)],
@@ -221,7 +221,14 @@ end
 --    address to anybody standing at them -- an identifier and never a
 --    credential (docs/devices/addresses.md).
 -- ---------------------------------------------------------------
-local point = readout(open(9, 1, "access_point"), "link.address")
+-- The access point answers only a held laptop; its lock screen still
+-- prints the address.
+walk_to(9)
+laptop.ready(p, 9, 2)
+local point = readout(assert(laptop.connect(p, 9, 1, "access_point"), "the laptop connects"), "link.address")
+laptop.close(p)
+t.drop(p)
+t.run_ticks(2)
 assert(point ~= nil and #point == 17, "the access point has an address: " .. tostring(point))
 -- A machine rather than a structure, so the hit-test names the tile and
 -- not an id (tests/network_test.luau's router).

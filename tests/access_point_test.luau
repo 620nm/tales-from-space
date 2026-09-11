@@ -28,6 +28,8 @@ local function word(label)
     return label.id or label.text
 end
 
+local NEEDS_LAPTOP = "Its interface answers only a laptop. Click it with an open, running laptop."
+
 local function said(p, line)
     for _, m in ipairs(t.messages(p)) do
         if m == line then
@@ -96,6 +98,7 @@ t.world([==[(
         (4, 1, "network_card"),
         (4, 1, "screwdriver"),
         (4, 1, "crowbar"),
+        (5, 1, "laptop"),
     ],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
 )]==], 7)
@@ -178,85 +181,81 @@ assert(
 )
 
 -- ---------------------------------------------------------------
--- 2. THE PANEL, AND A LOCK WITH NO KEY.
+-- 2. THE LAPTOP, AND A LOCK WITH NO KEY.
 --
--- A fresh boot finds every lock shut, and this one was never placed by
--- a map, so nothing names a claim for it. It still has to be WORKED by
--- somebody standing at it, which is the whole of what a lock on a panel
--- is -- and while it is shut the panel says what this box is and not
--- one word about the network behind it.
+-- A bare hand gets no window here: the interface answers only a held,
+-- running laptop, and the box says so on hover and aloud. A fresh boot
+-- finds every lock shut and this one was never placed by a map, so
+-- nothing names a claim for it -- the laptop's first screen is the
+-- lock, which says what this box is and not one word behind it.
 -- ---------------------------------------------------------------
 put_down()
 -- Long enough for the box to find the socket behind it and start
 -- drawing: no panel on a dead cord takes a press.
 t.run_ticks(40)
-t.click(p, 4, 1, t.target_at(p, 4, 1, "access_point"))
+local box = t.target_at(p, 4, 1, "access_point")
+local hinted = false
+for _, action in ipairs(t.action_hints(p, { Entity = box })) do
+    if action.id == "needs_laptop" then hinted = true end
+end
+assert(hinted, "a bare hand reads that the box wants a laptop")
+local _ = t.messages(p)
+t.click(p, 4, 1, box)
 t.tick()
-local panel = t.ui(p)
-assert(panel ~= nil, "an access point wears a panel")
+assert(t.ui(p) == nil and t.ui(p, "programming") == nil, "an access point opens nothing for a bare hand")
+assert(said(p, NEEDS_LAPTOP), "and says what it wants: " .. table.concat(t.messages(p), " | "))
+
+laptop.ready(p, 5, 1)
+local panel = laptop.connect(p, 4, 1, "access_point")
+assert(panel and panel.contact_locked, "the laptop meets the lock screen first")
+assert(panel.stores == nil and panel.sockets == nil, "with no file or socket behind it")
 assert(#readout(panel, "link.address") == 17, "with the address a shift log will name")
 local lock = rows(panel, "link_lock")
 assert(#lock == 1 and not lock[1].on, "a lock row, shut, because a fresh boot finds them all shut")
-assert(#rows(panel, "link_join") == 0, "and a shut panel offers nothing to join")
+assert(#rows(panel, "link_join") == 0, "and a shut lock offers nothing to join")
 
-ui_controls.toggle(p, "link_lock")
+laptop.unlock(p)
 t.tick()
-panel = t.ui(p)
-assert(panel ~= nil, "the panel stays open under a press")
+panel = laptop.ui(p)
+assert(not panel.contact_locked and panel.stores ~= nil, "the same session goes straight in")
 assert(rows(panel, "link_lock")[1].on, "a lock with no key opens for whoever is standing at it")
 assert(#t.ledger_rows("link_locked") == 1, "and the lock is on the record either way")
 
--- An unlocked panel is an operable panel: the roster and the
--- candidates are drawn now. Nothing has joined this box, and the one
--- thing in range to join is the PANEL feeding the bench -- which is a
--- hub in its own right the moment it carries a card, and which nobody
--- has joined to anything either.
+-- An unlocked box is an operable box: the roster and the candidates
+-- ride the workspace beside the files. Nothing has joined this box,
+-- and the one thing in range to join is the PANEL feeding the bench --
+-- a hub in its own right the moment it carries a card.
 assert(#rows(panel, "link_drop") == 0, "nothing has joined it")
 local candidates = rows(panel, "link_join")
 assert(#candidates == 1, "the room's own panel, and nothing else: " .. #candidates)
 assert(candidates[1].label.id == "link.candidate.hub", "offered as the hub it is")
-
--- The pack's own sentence about the box, which is the one thing about
--- an access point that is not native panel work
--- (content/fixtures/access_point.luau, content/lib/network.luau). The
--- window opens AND the line is heard: the hook rides the completion, so
--- it adds a sentence rather than eating the panel.
-t.ui_close(p)
-t.tick()
-local _ = t.messages(p)
-t.click(p, 4, 1, t.target_at(p, 4, 1, "access_point"))
-t.tick()
-assert(t.ui(p) ~= nil, "the window still opens under the hook")
-assert(
-    said(p, "The access point is on the air with nothing joined to it."),
-    "and it says so in words somebody could repeat, got: " .. table.concat(t.messages(p), " | ")
-)
+local parts = false
+for _, r in ipairs(panel.readouts or {}) do
+    if word(r.section) == "parts.parts" or word(r.label) == "parts.tier" then parts = true end
+end
+assert(parts, "and the parts it was built from ride beside them")
+laptop.close(p)
 
 -- ---------------------------------------------------------------
 -- 3. AND BACK APART. The crowbar takes the whole assembly off,
 --    leaving the frame on its wall -- and the card comes back because
 --    the SOCKET says what comes out, not the `yields` list.
 -- ---------------------------------------------------------------
-t.ui_close(p)
-t.tick()
+put_down()
 take("crowbar")
 local coil_before = t.count_items("cable_coil")
 
--- A TOOL CLICK IS NOT A QUESTION. The crowbar's own step completes the
--- box's `interaction.use` on its way past, so the hook runs for this
--- click too -- and declines, because `implement` names what the hand
--- was holding. An engineer taking a fixture off the wall is not asking
--- it how it is (content/fixtures/access_point.luau).
+-- A TOOL CLICK IS NOT A QUESTION. The crowbar's own step answers the
+-- click, so the refusal the laptop hint raises is `resolved` and the
+-- box keeps quiet (content/fixtures/access_point.luau).
 local _ = t.messages(p)
 work("access_point", 4.5)
 local during = t.messages(p)
 local said_during = table.concat(during, " | ")
 assert(among(during, "You start prying the access point apart."),
     "the crowbar step ran: " .. said_during)
-assert(not among(during, "is on the air"),
-    "and the box said nothing about itself: " .. said_during)
-assert(not among(during, "is locked"),
-    "in either direction: " .. said_during)
+assert(not among(during, NEEDS_LAPTOP),
+    "and the box asked for no laptop: " .. said_during)
 local left = t.structure_at(4, 1)
 assert(left ~= nil and left.id == "wall_frame", "a frame is what is left on the wall")
 assert(left.state == "empty", "standing in its first state, as anything a step leaves does")
@@ -287,7 +286,7 @@ t.world([==[(
         "#######",
     ],
     spawns: [(5, 1)],
-    items: [(5, 1, "id_engineering")],
+    items: [(5, 1, "id_engineering"), (5, 1, "laptop")],
     structures: [(4, 1, "access_point", { "access": "engineering" })],
     mounts: [(4, 1, North)],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
@@ -296,33 +295,42 @@ t.world([==[(
 local eng = t.join()
 t.run_ticks(10)
 
-t.click(eng, 4, 1, t.target_at(eng, 4, 1, "access_point"))
-t.tick()
-panel = t.ui(eng)
-assert(panel ~= nil, "the mapped box wears the same panel")
+laptop.ready(eng, 5, 1)
+panel = laptop.connect(eng, 4, 1, "access_point")
+assert(panel and panel.contact_locked, "the mapped box greets the laptop with the same lock screen")
 assert(not rows(panel, "link_lock")[1].on, "shut, as every lock is at boot")
 
--- Empty-handed, and it stays shut. Opening it is checked against
--- whoever is standing there, on the tick the lock moves.
-ui_controls.toggle(eng, "link_lock")
+-- No claim in either hand, and it stays shut. Opening it is checked
+-- against whoever is standing there, on the tick the lock moves.
+laptop.unlock(eng)
 t.tick()
-assert(not rows(t.ui(eng), "link_lock")[1].on, "and it does not open for an empty hand")
+panel = laptop.ui(eng)
+assert(panel.contact_locked and not rows(panel, "link_lock")[1].on, "and it does not open without the claim")
 local denials = t.ledger_rows("link_denied")
 assert(#denials == 1 and denials[1].why == "access", "the refusal names the rule it broke")
 
--- The claim itself, in a hand -- worn or held, the check is the same
--- one an airlock makes.
+-- The claim itself, in the other hand -- worn or held, the check is the
+-- same one an airlock makes, and the laptop stays the active hand.
 t.click(eng, 5, 1, t.target_at(eng, 5, 1, "id_engineering"))
 t.run_ticks(2)
-assert(t.hands(eng).held == "id_engineering", "with the card in hand")
-ui_controls.toggle(eng, "link_lock")
+assert(t.hands(eng).held == "laptop", "the card went into the other hand")
+laptop.unlock(eng)
 t.tick()
-assert(rows(t.ui(eng), "link_lock")[1].on, "the claim opens it")
+panel = laptop.ui(eng)
+assert(not panel.contact_locked and rows(panel, "link_lock")[1].on, "the claim opens it, straight into the workspace")
+laptop.close(eng)
 
 -- Shutting one is not checked at all: it takes nothing away that a
--- card cannot put back.
+-- card cannot put back. The card goes down; the laptop comes back up.
+t.swap_hands(eng)
+t.run_ticks(2)
 t.drop(eng)
 t.run_ticks(2)
-ui_controls.toggle(eng, "link_lock")
+t.swap_hands(eng)
+t.run_ticks(2)
+panel = laptop.connect(eng, 4, 1, "access_point")
+assert(panel and not panel.contact_locked, "still open for the next laptop")
+laptop.toggle(eng, "link_lock")
 t.tick()
-assert(not rows(t.ui(eng), "link_lock")[1].on, "and anybody may shut it again")
+panel = laptop.ui(eng)
+assert(panel.contact_locked and not rows(panel, "link_lock")[1].on, "and anybody may shut it again")

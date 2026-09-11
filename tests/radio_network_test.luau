@@ -68,6 +68,7 @@ t.world([==[(
         (6, 2, "encryption_key.medical"),
         (6, 2, "wirecutters"),
         (41, 2, "encryption_key.medical"),
+        (7, 1, "laptop"),
     ],
     machines: [
         (5, 2, "transceiver.medical"),
@@ -113,6 +114,34 @@ local function to_mark()
     assert(x == 6 and y == 2, "back on the mark: " .. x .. "," .. y)
 end
 
+-- The access point answers only a held laptop, which waits on the floor
+-- at (7,1): the speaker swaps to the empty hand, takes it (booting it
+-- the first time), unlocks the box's lock screen if it shows one, runs
+-- `body` over the workspace, and puts the laptop back down with the key
+-- in hand again. Answers `body`'s result and whether the lock was shut.
+local booted = false
+local function at_box(body)
+    t.swap_hands(speaker)
+    t.tick()
+    if booted then laptop.take(speaker, 7, 1) else laptop.ready(speaker, 7, 1) end
+    booted = true
+    local ui = laptop.connect(speaker, 8, 1, "access_point")
+    assert(ui ~= nil, "the access point opens to the laptop")
+    local was_locked = ui.contact_locked == true
+    if was_locked then
+        laptop.unlock(speaker)
+        t.tick()
+    end
+    local result = body(laptop.ui(speaker))
+    laptop.close(speaker)
+    t.drop(speaker)
+    t.run_ticks(2)
+    t.swap_hands(speaker)
+    t.tick()
+    assert(t.hands(speaker).held == "encryption_key.medical", "the key is back in hand")
+    return result, was_locked
+end
+
 local function say_and_read(line)
     local _ = t.messages(speaker)
     local _ = t.messages(listener)
@@ -134,28 +163,24 @@ assert(#say_and_read("the tower chain is up, check your bands") > 0,
     "two towers on one panel are one tree, and 36 is inside its reach")
 
 -- ---------------------------------------------------------------
--- 2. THE JOIN. The access point's panel offers both unjoined towers
+-- 2. THE JOIN. The access point's workspace offers both unjoined towers
 --    (their cards lend them addresses, docs/DEVICES.md §5a); joining
 --    both puts two POWERED towers on one tree, blank one included.
 -- ---------------------------------------------------------------
 to_panel()
-t.click(speaker, 8, 1, t.target_at(speaker, 8, 1, "access_point"))
-t.tick()
-local panel = t.ui(speaker)
-assert(panel ~= nil, "the access point wears its panel")
 -- Placed with no `access` word: a lock with no key opens for whoever
 -- is standing at it (network_test.luau, the router's case).
-ui_controls.toggle(speaker, "link_lock")
-t.tick()
-panel = t.ui(speaker)
-assert(rows(panel, "link_lock")[1].on, "it opens for whoever is standing at it")
-local offered = rows(panel, "link_join")
-assert(#offered == 2, "both towers are on offer: " .. #offered)
-for _ = 1, 2 do
-    local offer = rows(t.ui(speaker), "link_join")[1]
-    ui_controls.toggle(speaker, "link_join", offer.option)
-    t.tick()
-end
+local _, was_locked = at_box(function(panel)
+    assert(rows(panel, "link_lock")[1].on, "it opens for whoever is standing at it")
+    local offered = rows(panel, "link_join")
+    assert(#offered == 2, "both towers are on offer: " .. #offered)
+    for _ = 1, 2 do
+        local offer = rows(laptop.ui(speaker), "link_join")[1]
+        laptop.toggle(speaker, "link_join", offer.option)
+        t.tick()
+    end
+end)
+assert(was_locked, "the box boots behind its lock screen")
 -- Two joins on the record, counting the ones somebody MADE: the
 -- electrical pass files its own sews on the same row type, flagged
 -- `hardwired` (../lunatic/docs/devices/joining.md).
@@ -166,8 +191,6 @@ for _, row in ipairs(t.ledger_rows("link_accepted")) do
     end
 end
 assert(made == 2, "two joins on the record: " .. made)
-t.ui_close(speaker)
-t.tick()
 to_mark()
 
 -- The tower's own sentence now reports the relay: joined under the
@@ -211,12 +234,12 @@ assert(rim_ok, "a blank tower on the tree still amplifies: " .. table.concat(hea
 --    cut is still a deliberate panel act and still on the record.
 -- ---------------------------------------------------------------
 to_panel()
-t.click(speaker, 8, 1, t.target_at(speaker, 8, 1, "access_point"))
-t.tick()
-local held = rows(t.ui(speaker), "link_drop")
-assert(#held == 2, "the panel holds both towers")
-ui_controls.toggle(speaker, "link_drop", held[2].option)
-t.tick()
+at_box(function(panel)
+    local held = rows(panel, "link_drop")
+    assert(#held == 2, "the box holds both towers")
+    laptop.toggle(speaker, "link_drop", held[2].option)
+    t.tick()
+end)
 -- The cut somebody ASKED for. A released device falls straight back
 -- to the panel feeding it, and that re-sewing files its own rows with
 -- a `why` (../lunatic/docs/devices/joining.md).
@@ -227,8 +250,6 @@ for _, row in ipairs(t.ledger_rows("link_released")) do
     end
 end
 assert(cuts == 1, "the cut is on the record: " .. cuts)
-t.ui_close(speaker)
-t.tick()
 to_mark()
 
 assert(#say_and_read("still with me on the long band") == 1,
@@ -236,14 +257,12 @@ assert(#say_and_read("still with me on the long band") == 1,
 
 -- Rejoin whichever tower came off, so the roster is whole again.
 to_panel()
-t.click(speaker, 8, 1, t.target_at(speaker, 8, 1, "access_point"))
-t.tick()
-local offer = rows(t.ui(speaker), "link_join")[1]
-assert(offer ~= nil, "the released tower is offerable again")
-ui_controls.toggle(speaker, "link_join", offer.option)
-t.tick()
-t.ui_close(speaker)
-t.tick()
+at_box(function(panel)
+    local offer = rows(panel, "link_join")[1]
+    assert(offer ~= nil, "the released tower is offerable again")
+    laptop.toggle(speaker, "link_join", offer.option)
+    t.tick()
+end)
 to_mark()
 assert(#say_and_read("the tower chain is up, check your bands") == 1,
     "rejoined, the pair reaches the rim again")

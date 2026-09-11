@@ -71,6 +71,8 @@ local BENCH = [==[(
         (5, 2, "encryption_key.medical"),
         (50, 2, "encryption_key.medical"),
         (50, 2, "wirecutters"),
+        (5, 1, "laptop"),
+        (50, 1, "laptop"),
     ],
     machines: [
         (4, 1, "%s"),
@@ -103,25 +105,51 @@ local function walk(p, dir, n)
     end
 end
 
--- Open a box's panel, unlock it -- a lock placed with no access word
--- opens for whoever is standing at it (network_test.luau) -- and accept
--- every candidate it offers. Answers how many it took. `id` names a
--- structure; a machine is whatever is standing on its tile.
+-- Which players have booted the laptop waiting at their wall box; a
+-- fresh world (`two_roots`) starts every laptop shut.
+local booted = {}
+
+-- Unlock a box -- a lock placed with no access word opens for whoever
+-- is standing at it (network_test.luau) -- and accept every candidate it
+-- offers. Answers how many it took. An access point (`id` given) answers
+-- only a held laptop, which waits on the player's own tile: the empty
+-- hand takes it, and it goes back down with the key in hand again. The
+-- router (no id, a machine on its tile) wears its own panel.
 local function join_all(p, x, y, id)
-    t.click(p, x, y, if id ~= nil then t.target_at(p, x, y, id) else t.target_at(p, x, y))
+    local channel = nil
+    if id ~= nil then
+        channel = "programming"
+        local px, py = t.pos(p)
+        t.swap_hands(p)
+        t.tick()
+        if booted[p] then laptop.take(p, px, py) else laptop.ready(p, px, py) end
+        booted[p] = true
+        local ui = laptop.connect(p, x, y, id)
+        assert(ui ~= nil and ui.contact_locked, "the box shows the laptop its lock screen")
+        laptop.unlock(p)
+    else
+        t.click(p, x, y, t.target_at(p, x, y))
+        t.tick()
+        assert(t.ui(p) ~= nil, "the box wears its panel")
+        ui_controls.toggle(p, "link_lock")
+    end
     t.tick()
-    assert(t.ui(p) ~= nil, "the box wears its panel")
-    ui_controls.toggle(p, "link_lock")
-    t.tick()
-    assert(rows(t.ui(p), "link_lock")[1].on, "the lock opens for whoever stands at it")
-    local offered = #rows(t.ui(p), "link_join")
+    assert(rows(t.ui(p, channel), "link_lock")[1].on, "the lock opens for whoever stands at it")
+    local offered = #rows(t.ui(p, channel), "link_join")
     for _ = 1, offered do
-        local offer = rows(t.ui(p), "link_join")[1]
-        ui_controls.toggle(p, "link_join", offer.option)
+        local offer = rows(t.ui(p, channel), "link_join")[1]
+        ui_controls.toggle(p, "link_join", offer.option, channel)
         t.tick()
     end
-    t.ui_close(p)
+    t.ui_close(p, channel)
     t.tick()
+    if id ~= nil then
+        t.drop(p)
+        t.run_ticks(2)
+        t.swap_hands(p)
+        t.tick()
+        assert(t.hands(p).held == "encryption_key.medical", "the key is back in hand")
+    end
     return offered
 end
 
@@ -162,6 +190,7 @@ end
 -- is the only thing the two runs below disagree about.
 local function two_roots(near)
     t.world(string.format(BENCH, near), 0)
+    booted = {}
     speaker = t.join()
     listener = t.join()
     t.run_ticks(20)
