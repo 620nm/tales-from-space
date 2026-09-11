@@ -34,6 +34,16 @@ local function file(ui, side, name)
     end
     return nil
 end
+-- Which drives a file's rendered copy press lands on, by id.
+local function copies(side, uid)
+    local found = {}
+    for _, destination in ipairs({ "host", "media", "tool_host", "tool_media" }) do
+        if pcall(function() return ui_files.row(p, side, uid, "copy-" .. destination) end) then
+            table.insert(found, destination)
+        end
+    end
+    return table.concat(found, ",")
+end
 
 -- On a contact a file's one copy press lands on the drive the far side
 -- shows, and its id names that side: bring the destination up first.
@@ -98,6 +108,11 @@ assert(store(ui, "tool_host").owner == "tool" and store(ui, "tool_media").drive 
 local carried = assert(file(ui, "tool_host", "local_program"), "the laptop's A: lists its own files")
 assert(file(ui, "tool_media", "readme"), "the laptop's B: lists its disk")
 assert(file(ui, "tool_host", "readme") and not file(ui, "host", "readme"), "and nothing of the target's")
+-- The far side showing its empty B: takes no copy at all.
+assert(ui_controls.find(p, "/show/media", t.ui_document(p, "programming")), "the target's empty slot is a drive")
+ui_files.show(p, "media")
+assert(copies("tool_host", carried.uid) == "", "no copy lands on a drive with no disk in it")
+ui_files.show(p, "host")
 copy(carried, store(ui, "host"), carried.name)
 ui = workspace()
 assert(file(ui, "host", "local_program"), "a laptop file copies onto the target")
@@ -127,7 +142,8 @@ local bar = ui_controls.node(p, "/machine-name", scope)
 assert(bar.text == ui.name, "the bar names the target, got: " .. tostring(bar.text))
 assert(ui_controls.find(p, "/details", scope) and ui_controls.find(p, "/information", scope) == nil,
     "the target's own rows start behind Details")
-ui_files.details(p)
+assert(ui_controls.find(p, "/programs", scope), "while its program slots stand in view")
+ui_controls.details(p, scope)
 assert(ui_controls.find(p, "/information", scope), "and Details opens them")
 local panes = ui_controls.node(p, "/panes", scope).children
 assert(panes[1].id:sub(-#"/side/target") == "/side/target" and panes[#panes].id:sub(-#"/side/tool") == "/side/tool",
@@ -157,15 +173,6 @@ assert(file(ui, "media", "readme") == nil and file(ui, "media", "local_program")
 copy(file(ui, "tool_media", "readme"), store(ui, "media"), "readme")
 assert(file(workspace(), "media", "readme"), "the laptop's disk copies onto the device's disk")
 -- One copy press per file, and it follows the far side's drive switch.
-local function copies(side, uid)
-    local found = {}
-    for _, destination in ipairs({ "host", "media", "tool_host", "tool_media" }) do
-        if pcall(function() return ui_files.row(p, side, uid, "copy-" .. destination) end) then
-            table.insert(found, destination)
-        end
-    end
-    return table.concat(found, ",")
-end
 local shared = file(workspace(), "host", "local_program")
 ui_files.show(p, "tool_media")
 assert(copies("host", shared.uid) == "tool_media", "a device file copies to the laptop's shown B:")

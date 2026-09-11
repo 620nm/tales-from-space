@@ -1,5 +1,5 @@
 {
-  "note": "Laptop contact with Details open: the device's lock, its members and joinable nodes as two-line cards (name, address, Online/Offline), a wired-in member as a disabled card, and its program slot.",
+  "note": "Laptop contact with Details open and scrolled to the joinable node: the lock, members and candidates as two-line cards (name, address or address and role, state), the wired-in member a disabled card.",
   "viewport": {
     "width": 1024,
     "height": 768,
@@ -49,6 +49,9 @@
                 "name": "air alarm",
                 "address": "02-4a-1f-00-3c-02",
                 "online": true,
+                "state": {
+                  "id": "link.state.online"
+                },
                 "sprite": "air_alarm"
               }
             }
@@ -102,6 +105,9 @@
                 "name": "airlock button",
                 "address": "02-4a-1f-00-3c-11",
                 "online": true,
+                "state": {
+                  "id": "link.state.online"
+                },
                 "sprite": "airlock_button"
               }
             },
@@ -131,6 +137,9 @@
                 "name": "access point",
                 "address": "02-4a-1f-00-3c-20",
                 "online": false,
+                "state": {
+                  "id": "link.state.unbound"
+                },
                 "sprite": "access_point_off"
               }
             }
@@ -258,6 +267,17 @@
       "expect": {
         "visible": [
           "doc/1/1/information"
+        ]
+      }
+    },
+    {
+      "type": "scroll",
+      "id": "doc/1/1/information",
+      "deltaX": 0,
+      "deltaY": 400,
+      "expect": {
+        "visible": [
+          "doc/1/1/information/part/2/toggle/link_join/02-4a-1f-00-3c-20"
         ]
       }
     }

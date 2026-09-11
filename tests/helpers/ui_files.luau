@@ -65,12 +65,7 @@ function files.rename(p, name)
     t.ui_edit(p, node(p, "/editor/name").id, name)
     press(p, "/editor/rename-button")
 end
--- Program slots sit under the workspace's Details with its device rows.
-function files.details(p)
-    ui_controls.details(p, scope(p))
-end
 function files.program(p, slot, uid)
-    files.details(p)
     for index, row in ipairs(state(p).program_slots or {}) do
         if row.id == slot then
             if uid == nil then press(p, "/program/" .. (index - 1) .. "/unload"); return end

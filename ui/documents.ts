@@ -17,8 +17,8 @@ import { documentAction } from "./document-action";
 import { moduleBody } from "./documents-modules";
 import { shelfRows } from "./documents-shelf";
 import { computerPane, desktopPane, isDesktop, lockParts, programmingTool, programmingWallpaper } from "./documents-desktop";
-import { filePanes, guard, retainOpenFileBuffers } from "./files";
-import { linkMeta, refusalDialog } from "./documents-device";
+import { filePanes, guard, retainOpenFileBuffers, retainWorkspaces } from "./files";
+import { linkMeta, refusalDialog, retainRefusals } from "./documents-device";
 import { bind, column, entry, icon, press, row, screen, some, text } from "./view";
 import * as S from "./strings";
 import { labelText } from "./labels";
@@ -35,6 +35,8 @@ const WIDTH: Record<Presentation, number> = {
 export function documents(view: GameplayView): UiNode[] {
   const open = Object.values(view.documents ?? {}).filter((doc) => !actionSurface(doc));
   retainOpenFileBuffers(open);
+  retainWorkspaces(open);
+  retainRefusals(open);
   return open.map((doc) => {
     const id = `doc/${doc.id}/${doc.generation}`;
     // A provider that sent no state, or one that is not a record, still
@@ -83,7 +85,7 @@ export function documents(view: GameplayView): UiNode[] {
     const heading = text(`${id}/heading`, module.name ?? doc.title, ["doc-heading"]);
     const refusal = refusalDialog(id, doc, module);
     return screen(id, {
-      toolbar: [module.link ? row(`${id}/head`, some(heading, linkMeta(id, module, ["doc-heading-meta"])), { cls: ["doc-head"] }) : heading],
+      toolbar: [module.link ? row(`${id}/head`, some(heading, linkMeta(id, module, ["doc-heading-meta"], ["doc-heading-state"])), { cls: ["doc-head"] }) : heading],
       body: [column(`${id}/document`, body.length ? body : [text(`${id}/empty`, S.tfs("ui.document.empty"), ["hint"])], { cls: ["doc-body"] })],
       footer: [text(`${id}/status`, footer, [active ? "doc-status" : "doc-unavailable"])],
       ...(refusal ? { overlay: [refusal] } : {}),
