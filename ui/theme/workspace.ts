@@ -57,7 +57,8 @@ export const workspaceRules: UiStyleRule[] = [
   rule("workspace-offline", { padding: 16, fontSize: 13, color: dim }),
   rule("workspace-file-head", { alignItems: "center", gap: 4 }),
   rule("workspace-file-name", { flexGrow: 1, minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", textAlign: "left" }),
-  rule("workspace-file-actions", { justifyContent: "end", alignItems: "center", gap: 3 }),
+  // Wraps rather than squeezing: a contact file offers a copy per far drive.
+  rule("workspace-file-actions", { justifyContent: "end", alignItems: "center", gap: 3, flexWrap: "wrap" }),
   rule("workspace-editor", { backgroundColor: alpha(surface, 0.9) }),
   rule("workspace-editor-area", { flexGrow: 1, backgroundColor: alpha(screen, 0.9) }),
 ];

@@ -4,7 +4,7 @@ import { Pane, Stack } from "@lunatic/ui";
 import type { DocumentIdentity, ModuleState, ScriptState } from "./document-model";
 import { documentAction } from "./document-action";
 import { bodyId } from "./files-buffer";
-import { filePanes, guard } from "./files";
+import { filePanes, guard, workspaceHeading, type Identity } from "./files";
 import { icon, press, screen, some, text } from "./view";
 import { tfs } from "./strings";
 
@@ -12,21 +12,33 @@ interface DesktopData { kind: "desktop"; wallpaper?: string; powered?: boolean; 
 export function isDesktop(data: Json | undefined): data is Json & DesktopData {
   return data !== null && typeof data === "object" && !Array.isArray(data) && data.kind === "desktop";
 }
+function programming(data: Json | undefined): Record<string, Json> | undefined {
+  return data && typeof data === "object" && !Array.isArray(data) && data.kind === "programming" ? data : undefined;
+}
 export function programmingWallpaper(data: Json | undefined): string | undefined {
-  if (!data || typeof data !== "object" || Array.isArray(data) || data.kind !== "programming") return undefined;
-  return data.wallpaper === "wallpaper_moonlake" ? "wallpaper_moonlake" : "wallpaper_bliss";
+  const view = programming(data);
+  if (!view) return undefined;
+  return view.wallpaper === "wallpaper_moonlake" ? "wallpaper_moonlake" : "wallpaper_bliss";
+}
+/** The laptop a contact is worked through, as its script names it: the
+ *  workspace's own bar wears it while the window frame names the target. */
+export function programmingTool(data: Json | undefined): Identity | undefined {
+  const view = programming(data);
+  if (!view) return undefined;
+  const tool = view.tool;
+  if (!tool || typeof tool !== "object" || Array.isArray(tool)) return {};
+  return {
+    sprite: typeof tool.sprite === "string" ? tool.sprite : undefined,
+    name: typeof tool.name === "string" ? tool.name : undefined,
+  };
 }
 /** A contact over a shut lock: the engine composes only the link rows
  *  (`contact_locked`); Unlock is its lock row's own press, so access is
  *  checked natively and success widens this same document. */
-export function lockParts(id: string, doc: DocumentIdentity, state: Partial<ModuleState>, active: boolean): ScreenParts {
+export function lockParts(id: string, doc: DocumentIdentity, state: Partial<ModuleState>, active: boolean, tool?: Identity): ScreenParts {
   const lock = state.toggles?.find((row) => row.field === "link_lock");
   return {
-    toolbar: [Stack(`${id}/heading`, some(
-      icon(`${id}/machine-icon`, state.owner_sprite ?? doc.owner_sprite, state.name ?? doc.title),
-      text(`${id}/machine-name`, state.name ?? doc.title, ["workspace-machine-name", "grow"]),
-      text(`${id}/machine-status`, tfs("ui.workspace.locked"), ["hint"]),
-    ), { align: "center", gap: 6, cls: ["workspace-frame"], style: { width: "100%" } })],
+    toolbar: [workspaceHeading(id, doc, state, tfs("ui.workspace.locked"), [], tool)],
     body: [Stack(`${id}/lock`, some(
       text(`${id}/lock/hint`, tfs("ui.workspace.locked_hint"), ["workspace-offline"]),
       lock ? press(`${id}/toggle/link_lock/switch`, tfs("ui.workspace.unlock"),

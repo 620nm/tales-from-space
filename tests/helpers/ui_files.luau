@@ -7,7 +7,15 @@ local function press(p, suffix) return ui_controls.press(p, suffix, nil, scope(p
 local function state(p)
     return t.ui(p, "programming") or t.ui(p)
 end
+-- A contact side draws one drive at a time: bring `side` up where a
+-- rendered switch names it.
+local function show(p, side)
+    local switch = find(p, "/show/" .. side)
+    if switch then t.ui_press(p, switch.id) end
+end
+files.show = show
 function files.create(p, side, ext, name)
+    show(p, side)
     local base = "/drive/" .. side .. "/create"
     press(p, base)
     t.ui_edit(p, node(p, base .. "/stem").id, name)
@@ -15,6 +23,7 @@ function files.create(p, side, ext, name)
     press(p, base .. "/confirm")
 end
 function files.row(p, side, uid, action)
+    show(p, side)
     local index = 0
     for _, row in ipairs(state(p).files or {}) do
         if row.store == side then
