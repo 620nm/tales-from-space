@@ -35,9 +35,10 @@ local function file(ui, side, name)
     return nil
 end
 
+-- With three drives listed, each copy press names its destination side.
 local function copy(row, destination, name)
     t.run_ticks(10)
-    ui_files.press(p, row, "copy")
+    ui_files.press(p, row, if #workspace().stores > 2 then "copy-" .. destination.key else "copy")
     t.run_ticks(2)
     if name ~= row.name then
         local copied = assert(file(workspace(), destination.key, row.name))
@@ -88,8 +89,14 @@ t.run_ticks(2)
 assert(t.hands(p).held == "laptop", "the powered laptop is actively held")
 
 local ui = contact()
-assert(#ui.stores == 1 and store(ui, "media") == nil,
-    "contact never mounts the laptop's internal store or inserted disk as B:")
+assert(#ui.stores == 2 and store(ui, "contact") and store(ui, "media") == nil,
+    "the laptop's own store rides as L:; its inserted disk never mounts")
+local carried = assert(file(ui, "contact", "local_program"), "L: lists the laptop's own files")
+assert(file(ui, "contact", "airlock") == nil, "and nothing from the laptop's disk")
+copy(carried, store(ui, "host"), carried.name)
+ui = workspace()
+assert(file(ui, "host", "local_program"), "a laptop file copies onto the target")
+assert(file(ui, "contact", "local_program"), "and stays on the laptop")
 assert(ui.script.data.wallpaper == desktop.script.data.wallpaper,
     "the target workspace uses the held laptop's wallpaper")
 local connects = false
@@ -110,7 +117,7 @@ t.run_ticks(2)
 t.swap_hands(p)
 t.run_ticks(2)
 ui = contact()
-assert(#ui.stores == 2 and store(ui, "media"), "B: is the target's inserted disk")
+assert(#ui.stores == 3 and store(ui, "media"), "B: is the target's inserted disk")
 assert(file(ui, "media", "airlock") == nil and file(ui, "media", "local_program") == nil,
     "neither laptop store leaks into the target disk")
 t.run_ticks(10)
@@ -144,7 +151,7 @@ ui = workspace()
 copy(target_file, store(ui, "media"), "disk_return")
 assert(file(workspace(), "media", "disk_return"), "the target copies back to its disk")
 local stale_source = file(workspace(), "media", "disk_program")
-local stale_copy_control = ui_files.row(p, stale_source.store, stale_source.uid, "copy").id
+local stale_copy_control = ui_files.row(p, stale_source.store, stale_source.uid, "copy-host").id
 ui_controls.press(p, "/drive/media/eject")
 t.run_ticks(2)
 assert(store(workspace(), "media") == nil, "eject removes the target disk from the workspace")
