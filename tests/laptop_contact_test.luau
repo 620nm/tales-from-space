@@ -108,6 +108,37 @@ assert(store(ui, "tool_host").owner == "tool" and store(ui, "tool_media").drive 
 local carried = assert(file(ui, "tool_host", "local_program"), "the laptop's A: lists its own files")
 assert(file(ui, "tool_media", "readme"), "the laptop's B: lists its disk")
 assert(file(ui, "tool_host", "readme") and not file(ui, "host", "readme"), "and nothing of the target's")
+-- A file opens by the drive on its own side: the laptop reads Markdown
+-- though the target's drive reads only `disl`.
+local function press_open(row)
+    t.run_ticks(10)
+    local _ = t.messages(p)
+    ui_files.press(p, row, "open")
+    t.run_ticks(2)
+    return workspace().open, table.concat(t.messages(p), " | ")
+end
+for _, side in ipairs({ "tool_media", "tool_host" }) do
+    local row = assert(file(ui, side, "readme"))
+    local open, heard = press_open(row)
+    assert(open and open.store == side and open.uid == row.uid and not heard:find("can't open", 1, true),
+        "the laptop opens its own " .. side .. " Markdown: " .. heard)
+end
+copy(file(ui, "tool_host", "readme"), store(ui, "host"), "readme")
+local refused, heard = press_open(assert(file(workspace(), "host", "readme")))
+assert((refused == nil or refused.store ~= "host") and heard:find("can't open", 1, true),
+    "the target's own disl-only drive still refuses Markdown: " .. heard)
+-- Creates narrow the same way: each side offers what its own drive reads.
+local creates = workspace().create
+assert(table.find(creates.host or {}, "disl") and not table.find(creates.host or {}, "md"),
+    "the target's disl-only A: offers no Markdown create")
+assert(table.find(creates.tool_host or {}, "md"), "the laptop's A: offers Markdown")
+t.run_ticks(10)
+ui_files.create(p, "tool_host", "md", "notes")
+t.run_ticks(2)
+local notes = assert(file(workspace(), "tool_host", "notes"), "the Markdown create lands on the laptop")
+local opened = workspace().open
+assert(opened and opened.store == "tool_host" and opened.uid == notes.uid,
+    "and opens by the laptop's drive")
 -- The far side showing its empty B: takes no copy at all.
 assert(ui_controls.find(p, "/show/media", t.ui_document(p, "programming")), "the target's empty slot is a drive")
 ui_files.show(p, "media")
