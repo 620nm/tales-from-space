@@ -33,7 +33,7 @@ A: on its desktop, then hold the laptop and click the host. An unpowered host
 refuses the contact and says so. The host already holds the map's
 `airlock.disl`; a copy cannot take a name A already holds, and a bound file
 cannot be deleted. Unload `controller`, delete the old copy, copy the program
-from L: (the laptop's own store) to A: (the host's internal store), then load
+from the laptop's A: to the host's A: (its internal store), then load
 the new copy into `controller`. Edit that copy in the same workspace.
 
 The demonstration also supplies a `disk_box` with eight blank floppy disks.

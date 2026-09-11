@@ -77,7 +77,7 @@ local function file(ui, side)
 end
 
 -- The distribution disk goes into the laptop, whose desktop copies its
--- fixed original onto the laptop's own store: that store is L: in contact.
+-- fixed original onto the laptop's own store: its A:, `tool_host` in contact.
 t.drop(operator)
 t.run_ticks(2)
 t.click(operator, 3, 3, t.target_at(operator, 3, 3, "floppy_disk.atmos_stock"))
@@ -108,10 +108,10 @@ ui_files.press(operator, file(workspace(), "host"), "delete")
 t.run_ticks(2)
 assert(file(workspace(), "host") == nil, "the old copy is gone before the new one lands")
 ui = workspace()
-local original = file(ui, "contact")
-assert(original and file(ui, "media") == nil, "L: carries the laptop's copy; the host has no disk slot")
+local original = file(ui, "tool_host")
+assert(original and file(ui, "media") == nil, "the laptop's A: carries its copy; the host has no disk slot")
 t.run_ticks(10)
-ui_files.press(operator, original, "copy")
+ui_files.press(operator, original, "copy-host")
 t.run_ticks(2)
 ui = workspace()
 local installed = file(ui, "host")

@@ -109,6 +109,8 @@ export interface ModuleState {
   matter?: MatterBlock[];
   stores?: StoreRow[];
   media_slot?: Label | null;
+  /** The same for a contact's held tool: absent where it has no slot. */
+  tool_media_slot?: Label | null;
   files?: FileRow[];
   /** A contact workspace over a shut link lock: only the link rows ride. */
   contact_locked?: boolean;
@@ -147,7 +149,12 @@ export interface MatterBlock {
 }
 export interface StoreRow {
   binding: string;
+  /** The side token acts name: `host`, `media`, `tool_host`, `tool_media`. */
   key?: string;
+  /** Whose store: the document's target or a contact's held tool. */
+  owner?: "target" | "tool";
+  /** Which of that owner's stores: its own (A:) or its slot's (B:). */
+  drive?: "host" | "media";
   label: Label;
   used: number;
   capacity: number;

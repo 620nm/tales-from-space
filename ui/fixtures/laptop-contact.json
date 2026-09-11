@@ -1,0 +1,70 @@
+{
+  "note": "Laptop contact: the workspace bar wears the laptop, the window frame names the device, each side switches A:/B:.",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "access point",
+        "owner_sprite": "access_point",
+        "state": {
+          "document": "modules",
+          "status": 2,
+          "name": "access point",
+          "owner_sprite": "access_point",
+          "stores": [
+            {
+              "key": "host", "owner": "target", "drive": "host", "binding": "host-1",
+              "label": { "text": "access point" },
+              "used": 22, "capacity": 65536, "count": 1, "count_cap": 16
+            },
+            {
+              "key": "tool_host", "owner": "tool", "drive": "host", "binding": "tool-host-1",
+              "label": { "text": "laptop" },
+              "used": 44, "capacity": 65536, "count": 2, "count_cap": 16
+            },
+            {
+              "key": "tool_media", "owner": "tool", "drive": "media", "binding": "tool-media-1",
+              "label": { "text": "atmospherics disk" },
+              "used": 0, "capacity": 65536, "count": 0, "count_cap": 16
+            }
+          ],
+          "media_slot": null,
+          "tool_media_slot": { "id": "files.media.loaded" },
+          "files": [
+            { "store": "host", "binding": "host-1", "uid": 1, "name": "relay", "ext": "disl", "size": 22 },
+            { "store": "tool_host", "binding": "tool-host-1", "uid": 1, "name": "relay", "ext": "disl", "size": 22 },
+            { "store": "tool_host", "binding": "tool-host-1", "uid": 2, "name": "notes", "ext": "md", "size": 22 }
+          ],
+          "create": {
+            "host": ["disl"],
+            "tool_host": ["md", "disl"],
+            "tool_media": ["md", "disl"]
+          },
+          "open": null,
+          "editor": null,
+          "include_native": true,
+          "script": {
+            "data": {
+              "kind": "programming",
+              "wallpaper": "wallpaper_moonlake",
+              "tool": { "name": "laptop", "sprite": "laptop_on" }
+            },
+            "actions": []
+          }
+        }
+      }
+    }
+  }
+}

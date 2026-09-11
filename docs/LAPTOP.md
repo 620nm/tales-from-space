@@ -96,10 +96,12 @@ closed documents cancel pending continuations.
 Use an open, powered laptop on a reachable device with a configured programming
 interface to open its workspace over the laptop's wallpaper. The workspace
 carries the target's own panel rows — its network address, roster, join
-candidates, lock and parts — above the drives. A: belongs to the target; B: is
-a disk inserted into the target, where it has a slot; L: is the laptop's own
-storage. The laptop's inserted disk stays in its desktop. Copy works between
-any two listed drives; only files on A: run in the target's sockets.
+candidates, lock and parts — above the drives. The workspace's bar shows the
+laptop it is worked through; the window's title names the device. Its two
+sides each switch between their own drives: the laptop's A: (its storage) and
+B: (its disk slot), and the device's A: and, where it has a disk slot, B:.
+Copy works between any two drives on either side; only files on the device's
+A: run in its sockets.
 
 A closed laptop says its lid needs opening and an open, unpowered one says to
 turn it on; neither connects. A target whose lock is shut opens on a lock
@@ -109,13 +111,15 @@ from the workspace returns it to the lock screen.
 
 An access point has no panel of its own and no disk slot. A bare hand or any
 other tool hovering it reads Connect with a laptop, and clicking it says a
-laptop is needed. Switching hands, dropping or closing the laptop, losing
-reach, or the target losing power closes the contact workspace.
+laptop is needed. Switching hands, dropping, closing or switching off the
+laptop, losing reach, or the target losing power closes the contact workspace.
+The laptop has no battery to lose; its power button is the one way it goes dark.
 
 [Preset disks](scripting/reference-files.md) carry reference files ready to
 copy. The [airlock example](scripting/airlocks.md) includes a controller and
 instructions; insert its disk into the laptop, copy its source to the laptop's
-A: on the desktop, then copy it from L: to the host's A: and load the socket.
+A: on the desktop, then copy it from the laptop's A: to the device's A: and load
+the socket — or connect with the disk still in and copy from the laptop's B:.
 Network connectivity alone offers no laptop connection, and using the laptop on
 a device does not play a dummy typing sound.
 

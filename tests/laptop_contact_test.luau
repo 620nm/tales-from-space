@@ -35,10 +35,10 @@ local function file(ui, side, name)
     return nil
 end
 
--- With three drives listed, each copy press names its destination side.
+-- On a contact every copy press names its destination side.
 local function copy(row, destination, name)
     t.run_ticks(10)
-    ui_files.press(p, row, if #workspace().stores > 2 then "copy-" .. destination.key else "copy")
+    ui_files.press(p, row, "copy-" .. destination.key)
     t.run_ticks(2)
     if name ~= row.name then
         local copied = assert(file(workspace(), destination.key, row.name))
@@ -89,16 +89,23 @@ t.run_ticks(2)
 assert(t.hands(p).held == "laptop", "the powered laptop is actively held")
 
 local ui = contact()
-assert(#ui.stores == 2 and store(ui, "contact") and store(ui, "media") == nil,
-    "the laptop's own store rides as L:; its inserted disk never mounts")
-local carried = assert(file(ui, "contact", "local_program"), "L: lists the laptop's own files")
-assert(file(ui, "contact", "airlock") == nil, "and nothing from the laptop's disk")
+assert(#ui.stores == 3 and store(ui, "tool_host") and store(ui, "tool_media") and store(ui, "media") == nil,
+    "the laptop side lists its A: and the disk in it as B:; the target has no slot loaded")
+assert(store(ui, "tool_host").owner == "tool" and store(ui, "tool_media").drive == "media",
+    "each drive says whose it is and which")
+local carried = assert(file(ui, "tool_host", "local_program"), "the laptop's A: lists its own files")
+assert(file(ui, "tool_media", "readme"), "the laptop's B: lists its disk")
+assert(file(ui, "tool_host", "readme") and not file(ui, "host", "readme"), "and nothing of the target's")
 copy(carried, store(ui, "host"), carried.name)
 ui = workspace()
 assert(file(ui, "host", "local_program"), "a laptop file copies onto the target")
-assert(file(ui, "contact", "local_program"), "and stays on the laptop")
+assert(file(ui, "tool_host", "local_program"), "and stays on the laptop")
 assert(ui.script.data.wallpaper == desktop.script.data.wallpaper,
     "the target workspace uses the held laptop's wallpaper")
+-- The workspace's own bar is the laptop's; the window's frame names the target.
+assert(ui.script.data.tool.sprite == "laptop_on", "the bar wears the running laptop")
+local bar = ui_controls.node(p, "/machine-name", t.ui_document(p, "programming"))
+assert(bar.text == ui.script.data.tool.name, "the bar names the laptop, got: " .. tostring(bar.text))
 local connects = false
 for _, action in ipairs(t.action_hints(p, { Entity = target })) do
     if action.id == "connect" then connects = true end
@@ -117,9 +124,12 @@ t.run_ticks(2)
 t.swap_hands(p)
 t.run_ticks(2)
 ui = contact()
-assert(#ui.stores == 3 and store(ui, "media"), "B: is the target's inserted disk")
-assert(file(ui, "media", "airlock") == nil and file(ui, "media", "local_program") == nil,
+assert(#ui.stores == 4 and store(ui, "media"), "B: on the device side is the target's inserted disk")
+assert(file(ui, "media", "readme") == nil and file(ui, "media", "local_program") == nil,
     "neither laptop store leaks into the target disk")
+-- Disk to disk: the laptop's B: copies straight onto the device's B:.
+copy(file(ui, "tool_media", "readme"), store(ui, "media"), "readme")
+assert(file(workspace(), "media", "readme"), "the laptop's disk copies onto the device's disk")
 t.run_ticks(10)
 ui_files.create(p, "media", "disl", "disk_program")
 t.run_ticks(2)
@@ -152,6 +162,7 @@ copy(target_file, store(ui, "media"), "disk_return")
 assert(file(workspace(), "media", "disk_return"), "the target copies back to its disk")
 local stale_source = file(workspace(), "media", "disk_program")
 local stale_copy_control = ui_files.row(p, stale_source.store, stale_source.uid, "copy-host").id
+ui_files.show(p, "media")
 ui_controls.press(p, "/drive/media/eject")
 t.run_ticks(2)
 assert(store(workspace(), "media") == nil, "eject removes the target disk from the workspace")
@@ -171,6 +182,15 @@ contact()
 t.use_item_site(p, { Held = { hand = t.hands(p).active - 1 } }, "alt_primary")
 t.run_ticks(20)
 assert(t.ui(p, "programming") == nil, "closing the held laptop revokes contact")
+t.use_self(p)
+t.run_ticks(2)
+contact()
+-- The laptop's own power button, pressed on its desktop mid-contact.
+t.use_self(p)
+t.run_ticks(2)
+ui_controls.press(p, "/power")
+t.run_ticks(20)
+assert(t.ui(p, "programming") == nil, "switching the laptop off revokes contact")
 t.use_self(p)
 t.run_ticks(2)
 contact()
