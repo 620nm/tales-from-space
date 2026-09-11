@@ -59,8 +59,16 @@ test("device cards say each node's state, and gone once forgotten", async () => 
       state: { id: "link.state.parent_offline" }, sprite: "airlock_button" },
     { id: "link.member", args: { address: "02-4a-1f-00-3c-11", state: "link.state.parent_offline" }, arg_ids: ["state"] }),
     member("02-4a-1f-00-3c-12", { name: "", address: "02-4a-1f-00-3c-12", online: null, state: null, sprite: null },
-      { id: "link.member.gone", args: { address: "02-4a-1f-00-3c-12", state: "" } })];
+      { id: "link.member.gone", args: { address: "02-4a-1f-00-3c-12", state: "" } }),
+    { field: "link_join", option: "02-4a-1f-00-3c-20", on: false, section: { id: "link.joinable" },
+      label: { id: "link.candidate.hub", args: { address: "02-4a-1f-00-3c-20" } },
+      on_text: { id: "link.join.act" }, off_text: { id: "link.join.act" },
+      subject: { name: "panel", address: "02-4a-1f-00-3c-20", online: false, state: { id: "link.state.unbound" }, sprite: "apc" } }];
   const nodes = flatten(ui.render(view));
+  const candidate = (name) => nodes.find((node) => node.id.endsWith(`/toggle/link_join/02-4a-1f-00-3c-20/${name}`));
+  assert.equal(candidate("badge").text, "unbound");
+  assert(!candidate("badge").class.some((cls) => cls.startsWith("tone-")), "not joined is neither on nor off");
+  assert.equal(candidate("detail").text, "02-4a-1f-00-3c-20 · hub");
   const part = (mac, name) => nodes.find((node) => node.id.endsWith(`/toggle/link_drop/${mac}/${name}`));
   assert.equal(part("02-4a-1f-00-3c-11", "badge").text, "parent offline");
   assert(part("02-4a-1f-00-3c-11", "badge").class.includes("tone-off"));
