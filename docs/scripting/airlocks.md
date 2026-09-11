@@ -6,10 +6,11 @@ space is east. Initially the interior is closed and bolted, the exterior is
 open and unbolted, and the chamber is empty.
 
 The map opens commissioned. Its `links` table joins both doors, both buttons
-and the pump to the access point, and the access point's `program.controller`
-placement row copies the `airlock_controller` reference into its store as an
-editable `airlock.disl` bound to `controller` at boot (the engine's
-`docs/map-properties/machine-settings.md`). The first press cycles the room.
+and the pump to the access point. The access point's
+`"file.airlock_controller": true` row puts an editable copy of that reference,
+`airlock.disl`, on its store, and `"program.controller": "airlock_controller"`
+binds that copy to `controller` at boot (the engine's
+`docs/map-properties/stores.md`). The first press cycles the room.
 
 The shared guest interface is in [controllers.md](controllers.md); preset
 source authoring is in [reference-files.md](reference-files.md).

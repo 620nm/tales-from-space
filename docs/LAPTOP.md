@@ -1,6 +1,11 @@
 # Laptop
 
-The laptop starts closed and switched off. Creation assigns one wallpaper
+The laptop starts closed and switched off unless a map places it otherwise:
+its `open` and `powered` knobs raise the lid and switch it on, and the
+engine's `media` row docks a disk in its slot (the engine's
+`docs/content-schema/placement.md` and `docs/map-properties/stores.md`). A
+laptop placed so draws its lid and screen, and offers its eject rows, from the
+first tick. Creation assigns one wallpaper
 from `wallpaper_bliss` and `wallpaper_moonlake`; that selection stays with
 the item through handoffs, lid changes and power cycles. Wallpapers fill the
 16:9 screen with hard pixel scaling. An open, powered laptop uses an animated
