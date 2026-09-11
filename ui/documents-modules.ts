@@ -3,7 +3,7 @@
 // they were sent, so the SERVER's row order is the layout and the
 // document grows no nesting level (docs/tgui/documents.md).
 import type { ListRow, Tone, UiNode } from "@lunatic/ui";
-import { Gauge, LabeledList, Section, Stack } from "@lunatic/ui";
+import { Choice, Gauge, LabeledList, Section, Stack } from "@lunatic/ui";
 import type {
   DocumentIdentity,
   LabelRow,
@@ -13,7 +13,7 @@ import type {
 import { documentAction } from "./document-action";
 import { labelText } from "./labels";
 import { matterBlock } from "./matter-block";
-import { toggleRows } from "./documents-choices";
+import { subjectCard, toggleRows } from "./documents-choices";
 import { column, entry, press, row, some, text } from "./view";
 import * as S from "./strings";
 
@@ -163,8 +163,11 @@ export function moduleBody(
   const see = (section: string): void => {
     if (!order.includes(section)) order.push(section);
   };
-  for (const reading of readouts) see(labelText(reading.section));
+  // A reading about another node joins its section's cards, so it
+  // places that section no earlier than the switches do.
+  for (const reading of readouts) if (!reading.subject) see(labelText(reading.section));
   for (const toggle of toggles) see(labelText(toggle.section));
+  for (const reading of readouts) if (reading.subject) see(labelText(reading.section));
   for (const entryRow of labels) see(labelText(entryRow.section));
   for (const point of setpoints) see(labelText(point.section));
   for (const block of blocks) see(labelText(block.section));
@@ -180,8 +183,14 @@ export function moduleBody(
     out.push(Gauge(`${id}/gauge`, state.gauge));
   for (const [place, section] of order.entries()) {
     const key = `${id}/part/${place}`;
-    const rows: ListRow[] = readouts
-      .filter((reading) => labelText(reading.section) === section)
+    const here = readouts.filter((reading) => labelText(reading.section) === section);
+    // A reading about another node is a card beside its section's
+    // device choices, pressable by nobody (engine `subject`).
+    const cards = here.flatMap((reading, index) => reading.subject
+      ? [Choice(`${key}/card/${index}`, { ...subjectCard(reading.subject, reading.label, labelText(reading.label)), disabled: true })]
+      : []);
+    const rows: ListRow[] = here
+      .filter((reading) => !reading.subject)
       .map((reading) => ({
         label: labelText(reading.label),
         value: labelText(reading.value),
@@ -201,6 +210,7 @@ export function moduleBody(
         toggles.filter((toggle) => labelText(toggle.section) === section),
         active,
         toggles,
+        cards,
       ),
     );
     for (const [index, entryRow] of labels.entries())

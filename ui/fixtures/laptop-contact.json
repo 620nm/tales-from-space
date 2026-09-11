@@ -1,5 +1,5 @@
 {
-  "note": "Laptop contact: the workspace bar wears the laptop, the window frame names the device, each side switches A:/B:.",
+  "note": "Laptop contact: the window title wears the laptop, the workspace bar names the device with its link and a shut Details, the device's side left and the laptop's right, each switching A:/B: with one Copy per file.",
   "viewport": {
     "width": 1024,
     "height": 768,
@@ -23,6 +23,40 @@
           "status": 2,
           "name": "access point",
           "owner_sprite": "access_point",
+          "link": { "address": "02-4a-1f-00-3c-07", "state": { "id": "link.state.online" }, "online": true },
+          "readouts": [
+            {
+              "label": { "id": "link.member.hardwired", "args": { "address": "02-4a-1f-00-3c-02" } },
+              "value": { "id": "link.state.online" }, "tone": "on", "section": { "id": "link.members" },
+              "subject": { "name": "air alarm", "address": "02-4a-1f-00-3c-02", "online": true, "sprite": "air_alarm" }
+            }
+          ],
+          "toggles": [
+            {
+              "field": "link_lock", "option": null, "label": { "id": "link.lock" }, "on": true,
+              "on_text": { "id": "link.lock.unlocked" }, "off_text": { "id": "link.lock.locked" },
+              "icon": null, "group": null, "color": null, "section": null
+            },
+            {
+              "field": "link_drop", "option": "02-4a-1f-00-3c-11",
+              "label": { "id": "link.member", "args": { "address": "02-4a-1f-00-3c-11", "state": "link.state.online" }, "arg_ids": ["state"] },
+              "on": false, "on_text": { "id": "link.release.act" }, "off_text": { "id": "link.release.act" },
+              "icon": null, "group": null, "color": null, "section": { "id": "link.members" },
+              "subject": { "name": "airlock button", "address": "02-4a-1f-00-3c-11", "online": true, "sprite": "airlock_button" }
+            },
+            {
+              "field": "link_join", "option": "02-4a-1f-00-3c-20",
+              "label": { "id": "link.candidate.endpoint", "args": { "address": "02-4a-1f-00-3c-20" } },
+              "on": false, "on_text": { "id": "link.join.act" }, "off_text": { "id": "link.join.act" },
+              "icon": null, "group": null, "color": null, "section": { "id": "link.joinable" },
+              "subject": { "name": "access point", "address": "02-4a-1f-00-3c-20", "online": false, "sprite": "access_point_off" }
+            }
+          ],
+          "labels": [],
+          "setpoints": [],
+          "program_slots": [
+            { "id": "relay", "file": "relay.disl", "uid": 1, "runs": 12, "faults": 0, "state": { "id": "program_slots.state.loaded" } }
+          ],
           "stores": [
             {
               "key": "host", "owner": "target", "drive": "host", "binding": "host-1",

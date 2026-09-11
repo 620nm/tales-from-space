@@ -213,7 +213,7 @@ laptop.ready(p, 5, 1)
 local panel = laptop.connect(p, 4, 1, "access_point")
 assert(panel and panel.contact_locked, "the laptop meets the lock screen first")
 assert(panel.stores == nil and panel.program_slots == nil, "with no file or program slot behind it")
-assert(#readout(panel, "link.address") == 17, "with the address a shift log will name")
+assert(panel.link and #panel.link.address == 17, "with the address a shift log will name")
 local lock = rows(panel, "link_lock")
 assert(#lock == 1 and not lock[1].on, "a lock row, shut, because a fresh boot finds them all shut")
 assert(#rows(panel, "link_join") == 0, "and a shut lock offers nothing to join")
@@ -315,6 +315,12 @@ panel = laptop.ui(eng)
 assert(panel.contact_locked and not rows(panel, "link_lock")[1].on, "and it does not open without the claim")
 local denials = t.ledger_rows("link_denied")
 assert(#denials == 1 and denials[1].why == "access", "the refusal names the rule it broke")
+-- ...and the presser is told, in a modal over the lock screen, until OK.
+assert(panel.refusal and panel.refusal.text.id == "link.access_denied", "the refusal rides the presser's window")
+local scope = t.ui_document(eng, "programming")
+assert(ui_controls.find(eng, "/refusal/ok", scope), "an Access denied dialog stands over the lock screen")
+ui_controls.press(eng, "/refusal/ok", nil, scope)
+assert(ui_controls.find(eng, "/refusal/ok", scope) == nil, "OK puts it away")
 
 -- The claim itself, in the other hand -- worn or held, the check is the
 -- same one an airlock makes, and the laptop stays the active hand.
@@ -325,6 +331,7 @@ laptop.unlock(eng)
 t.tick()
 panel = laptop.ui(eng)
 assert(not panel.contact_locked and rows(panel, "link_lock")[1].on, "the claim opens it, straight into the workspace")
+assert(panel.refusal == nil, "and the press that landed retires the refusal")
 laptop.close(eng)
 
 -- Shutting one is not checked at all: it takes nothing away that a
