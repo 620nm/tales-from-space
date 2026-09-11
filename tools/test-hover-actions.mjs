@@ -73,9 +73,9 @@ test("pack group, style, requirements and order stay data-driven", () => {
 });
 test("disabled role actions render their authoritative reason", () => {
   const nodes = render([descriptor("role", { available: false, style: "role",
-    unavailable_reason: { key: "", text: "Permission needed" },
+    detail: { key: "", text: "Permission needed" },
   })]);
-  assert.equal(nodes.find((node) => node.id === "hover/reason/role").text, "Permission needed");
+  assert.equal(nodes.find((node) => node.id === "hover/detail/role").text, "Permission needed");
   assert(!nodes.some((node) => node.text?.includes("out_of_range")));
 });
 test("representative catalogs preserve variables and fall back to English", async () => {
