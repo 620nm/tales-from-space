@@ -125,8 +125,20 @@ for _, side in ipairs({ "tool_media", "tool_host" }) do
 end
 copy(file(ui, "tool_host", "readme"), store(ui, "host"), "readme")
 local refused, heard = press_open(assert(file(workspace(), "host", "readme")))
-assert(refused.store ~= "host" and heard:find("can't open", 1, true),
+assert((refused == nil or refused.store ~= "host") and heard:find("can't open", 1, true),
     "the target's own disl-only drive still refuses Markdown: " .. heard)
+-- Creates narrow the same way: each side offers what its own drive reads.
+local creates = workspace().create
+assert(table.find(creates.host or {}, "disl") and not table.find(creates.host or {}, "md"),
+    "the target's disl-only A: offers no Markdown create")
+assert(table.find(creates.tool_host or {}, "md"), "the laptop's A: offers Markdown")
+t.run_ticks(10)
+ui_files.create(p, "tool_host", "md", "notes")
+t.run_ticks(2)
+local notes = assert(file(workspace(), "tool_host", "notes"), "the Markdown create lands on the laptop")
+local opened = workspace().open
+assert(opened and opened.store == "tool_host" and opened.uid == notes.uid,
+    "and opens by the laptop's drive")
 -- The far side showing its empty B: takes no copy at all.
 assert(ui_controls.find(p, "/show/media", t.ui_document(p, "programming")), "the target's empty slot is a drive")
 ui_files.show(p, "media")
