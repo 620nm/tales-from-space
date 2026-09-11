@@ -18,7 +18,12 @@
 --   * deck in hand, card in the other -- `singlecard/item_interaction`
 --     (singlecard.dm:150-158), which is items/card_deck.luau's.
 -- A player should never have to work out which of the two they are
--- holding, so the two produce the same result.
+-- holding, so the two produce the same result. The engine no longer
+-- needs both hooks for that: use on the other hand offers an unclaimed
+-- pair again with the roles swapped (the lunatic engine's
+-- docs/luau-api/inventory-interactions.md). The deck keeps both only
+-- because tg does, and each one claims the pair before the reverse
+-- would run.
 --
 -- Seed 0 pins the shuffle; nothing here asserts WHICH card, only that
 -- the deck's count and its picture follow the cards.
