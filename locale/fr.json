@@ -1,4 +1,6 @@
 {
+  "lunatic/tfs:editor.laptop.open": "Couvercle ouvert",
+  "lunatic/tfs:editor.laptop.powered": "Allumé",
   "lunatic/tfs:locale.name": "Français",
   "lunatic/tfs:shift_warning": "Le quart se termine dans {minutes} minutes.",
   "lunatic/tfs:shift_final_minute": "Le quart se termine dans une minute.",
