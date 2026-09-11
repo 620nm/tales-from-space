@@ -27,10 +27,19 @@ function controls.press(p, suffix, gesture, scope)
     t.ui_press(p, node.id, gesture)
 end
 
+-- A workspace draws its device rows under a Details press: open it where
+-- it stands shut (ui/files.ts).
+function controls.details(p, scope)
+    if controls.find(p, "/details", scope) and not controls.find(p, "/information", scope) then
+        controls.press(p, "/details", nil, scope)
+    end
+end
+
 -- `channel` names a script channel's document ("programming" for a laptop
 -- contact); nil is the default document.
 function controls.toggle(p, field, option, channel)
     local scope = assert(t.ui_document(p, channel), "no document observed")
+    controls.details(p, scope)
     local suffix = "/toggle/" .. field .. "/" .. (option == nil and "switch" or tostring(option))
     if controls.find(p, suffix, scope) then controls.press(p, suffix, nil, scope); return end
     local selected = nil

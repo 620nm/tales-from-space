@@ -1,0 +1,285 @@
+{
+  "note": "Laptop contact with Details open and scrolled to the joinable node: the lock, members and candidates as two-line cards (name, address or address and role, state), the wired-in member a disabled card.",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "access point",
+        "owner_sprite": "access_point",
+        "state": {
+          "document": "modules",
+          "status": 2,
+          "name": "access point",
+          "owner_sprite": "access_point",
+          "link": {
+            "address": "02-4a-1f-00-3c-07",
+            "state": {
+              "id": "link.state.online"
+            },
+            "online": true
+          },
+          "readouts": [
+            {
+              "label": {
+                "id": "link.member.hardwired",
+                "args": {
+                  "address": "02-4a-1f-00-3c-02"
+                }
+              },
+              "value": {
+                "id": "link.state.online"
+              },
+              "tone": "on",
+              "section": {
+                "id": "link.members"
+              },
+              "subject": {
+                "name": "air alarm",
+                "address": "02-4a-1f-00-3c-02",
+                "online": true,
+                "state": {
+                  "id": "link.state.online"
+                },
+                "sprite": "air_alarm"
+              }
+            }
+          ],
+          "toggles": [
+            {
+              "field": "link_lock",
+              "option": null,
+              "label": {
+                "id": "link.lock"
+              },
+              "on": true,
+              "on_text": {
+                "id": "link.lock.unlocked"
+              },
+              "off_text": {
+                "id": "link.lock.locked"
+              },
+              "icon": null,
+              "group": null,
+              "color": null,
+              "section": null
+            },
+            {
+              "field": "link_drop",
+              "option": "02-4a-1f-00-3c-11",
+              "label": {
+                "id": "link.member",
+                "args": {
+                  "address": "02-4a-1f-00-3c-11",
+                  "state": "link.state.online"
+                },
+                "arg_ids": [
+                  "state"
+                ]
+              },
+              "on": false,
+              "on_text": {
+                "id": "link.release.act"
+              },
+              "off_text": {
+                "id": "link.release.act"
+              },
+              "icon": null,
+              "group": null,
+              "color": null,
+              "section": {
+                "id": "link.members"
+              },
+              "subject": {
+                "name": "airlock button",
+                "address": "02-4a-1f-00-3c-11",
+                "online": true,
+                "state": {
+                  "id": "link.state.online"
+                },
+                "sprite": "airlock_button"
+              }
+            },
+            {
+              "field": "link_join",
+              "option": "02-4a-1f-00-3c-20",
+              "label": {
+                "id": "link.candidate.endpoint",
+                "args": {
+                  "address": "02-4a-1f-00-3c-20"
+                }
+              },
+              "on": false,
+              "on_text": {
+                "id": "link.join.act"
+              },
+              "off_text": {
+                "id": "link.join.act"
+              },
+              "icon": null,
+              "group": null,
+              "color": null,
+              "section": {
+                "id": "link.joinable"
+              },
+              "subject": {
+                "name": "access point",
+                "address": "02-4a-1f-00-3c-20",
+                "online": false,
+                "state": {
+                  "id": "link.state.unbound"
+                },
+                "sprite": "access_point_off"
+              }
+            }
+          ],
+          "labels": [],
+          "setpoints": [],
+          "program_slots": [
+            {
+              "id": "relay",
+              "file": "relay.disl",
+              "uid": 1,
+              "runs": 12,
+              "faults": 0,
+              "state": {
+                "id": "program_slots.state.loaded"
+              }
+            }
+          ],
+          "stores": [
+            {
+              "key": "host",
+              "owner": "target",
+              "drive": "host",
+              "binding": "host-1",
+              "label": {
+                "text": "access point"
+              },
+              "used": 22,
+              "capacity": 65536,
+              "count": 1,
+              "count_cap": 16
+            },
+            {
+              "key": "tool_host",
+              "owner": "tool",
+              "drive": "host",
+              "binding": "tool-host-1",
+              "label": {
+                "text": "laptop"
+              },
+              "used": 44,
+              "capacity": 65536,
+              "count": 2,
+              "count_cap": 16
+            },
+            {
+              "key": "tool_media",
+              "owner": "tool",
+              "drive": "media",
+              "binding": "tool-media-1",
+              "label": {
+                "text": "atmospherics disk"
+              },
+              "used": 0,
+              "capacity": 65536,
+              "count": 0,
+              "count_cap": 16
+            }
+          ],
+          "media_slot": null,
+          "tool_media_slot": {
+            "id": "files.media.loaded"
+          },
+          "files": [
+            {
+              "store": "host",
+              "binding": "host-1",
+              "uid": 1,
+              "name": "relay",
+              "ext": "disl",
+              "size": 22
+            },
+            {
+              "store": "tool_host",
+              "binding": "tool-host-1",
+              "uid": 1,
+              "name": "relay",
+              "ext": "disl",
+              "size": 22
+            },
+            {
+              "store": "tool_host",
+              "binding": "tool-host-1",
+              "uid": 2,
+              "name": "notes",
+              "ext": "md",
+              "size": 22
+            }
+          ],
+          "create": {
+            "host": [
+              "disl"
+            ],
+            "tool_host": [
+              "md",
+              "disl"
+            ],
+            "tool_media": [
+              "md",
+              "disl"
+            ]
+          },
+          "open": null,
+          "editor": null,
+          "include_native": true,
+          "script": {
+            "data": {
+              "kind": "programming",
+              "wallpaper": "wallpaper_moonlake",
+              "tool": {
+                "name": "laptop",
+                "sprite": "laptop_on"
+              }
+            },
+            "actions": []
+          }
+        }
+      }
+    }
+  },
+  "steps": [
+    {
+      "type": "click",
+      "id": "doc/1/1/details",
+      "expect": {
+        "visible": [
+          "doc/1/1/information"
+        ]
+      }
+    },
+    {
+      "type": "scroll",
+      "id": "doc/1/1/information",
+      "deltaX": 0,
+      "deltaY": 400,
+      "expect": {
+        "visible": [
+          "doc/1/1/information/part/2/toggle/link_join/02-4a-1f-00-3c-20"
+        ]
+      }
+    }
+  ]
+}

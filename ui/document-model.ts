@@ -42,11 +42,20 @@ export interface ScriptState {
   data: Json;
   actions: { id: string; input: number }[];
 }
+/** The node a row is about, for a two-line card; `online` is null once
+ *  the member is gone (engine `docs/tgui/device-panels.md`). */
+export interface Subject {
+  name: string;
+  address: string;
+  online?: boolean | null;
+  sprite?: string | null;
+}
 export interface Readout {
   section?: Label;
   label: Label;
   value: Json;
   tone?: string | null;
+  subject?: Subject | null;
 }
 export interface Toggle {
   label: Label;
@@ -59,6 +68,18 @@ export interface Toggle {
   group?: string | null;
   color?: string | null;
   section?: Label;
+  subject?: Subject | null;
+}
+/** The document's own node on its network (engine `link` key). */
+export interface LinkIdentity {
+  address: string;
+  state: Label;
+  online: boolean;
+}
+/** The reader's last refused act, until their next act (engine `refusal`). */
+export interface Refusal {
+  serial: number;
+  text: Label;
 }
 export type LabelRow = { section?: Label } & (
   | {
@@ -100,6 +121,8 @@ export interface ModuleState {
   owner_sprite?: string;
   name?: string;
   notice?: Label;
+  link?: LinkIdentity | null;
+  refusal?: Refusal | null;
   gauge?: number | null;
   readouts?: Readout[];
   toggles?: Toggle[];
