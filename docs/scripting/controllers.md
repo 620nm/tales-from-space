@@ -1,6 +1,6 @@
 # Device controller guests
 
-`content/lib/controller.luau` bridges a host's `controller` socket and its
+`content/lib/controller.luau` bridges a host's `controller` program slot and its
 device network. The [airlock program](airlocks.md) is one consumer; its
 sequencing and permission policy live in its own reference source.
 

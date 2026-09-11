@@ -17,12 +17,12 @@ source authoring is in [reference-files.md](reference-files.md).
 ## Rebuilding and reprogramming
 
 A host commands its direct, joined, reachable members. Access points and air
-alarms offer an internal file store and a `controller` socket. To rebuild the
+alarms offer an internal file store and a `controller` program slot. To rebuild the
 network, hold an open, powered laptop and click the access point. Its lock
 boots shut, so the laptop first shows the lock screen; Unlock, then release
 members and rejoin them from the candidate list in the same workspace. A
 button joined to nothing says nobody answered. A host with an empty
-`controller` socket has no fallback program and says no program is loaded.
+`controller` program slot has no fallback program and says no program is loaded.
 
 The atmos stock disk (`floppy_disk.atmos_stock`) contains fixed originals of
 `airlock.disl` and `readme.md`, loaded by reference ID from

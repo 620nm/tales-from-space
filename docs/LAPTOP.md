@@ -101,7 +101,7 @@ laptop it is worked through; the window's title names the device. Its two
 sides each switch between their own drives: the laptop's A: (its storage) and
 B: (its disk slot), and the device's A: and, where it has a disk slot, B:.
 Copy works between any two drives on either side; only files on the device's
-A: run in its sockets.
+A: run in its program slots.
 
 A closed laptop says its lid needs opening and an open, unpowered one says to
 turn it on; neither connects. A target whose lock is shut opens on a lock
@@ -119,7 +119,7 @@ The laptop has no battery to lose; its power button is the one way it goes dark.
 copy. The [airlock example](scripting/airlocks.md) includes a controller and
 instructions; insert its disk into the laptop, copy its source to the laptop's
 A: on the desktop, then copy it from the laptop's A: to the device's A: and load
-the socket — or connect with the disk still in and copy from the laptop's B:.
+it into the program slot — or connect with the disk still in and copy from the laptop's B:.
 Network connectivity alone offers no laptop connection, and using the laptop on
 a device does not play a dummy typing sound.
 

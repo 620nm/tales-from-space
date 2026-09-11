@@ -35,7 +35,7 @@ The reference supplies the name, extension and exact body. Do not combine
 duplicate names and registered filetypes are checked during loading.
 Original seeds are fixed; copying one creates an ordinary editable file.
 Use [laptop contact](../LAPTOP.md#contact-programming) to install a program
-from a preset disk onto a host's store and load its socket.
+from a preset disk onto a host's store and load it into a program slot.
 
 ## Editing DiSL
 
