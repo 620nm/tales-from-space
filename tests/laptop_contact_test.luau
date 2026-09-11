@@ -108,6 +108,25 @@ assert(store(ui, "tool_host").owner == "tool" and store(ui, "tool_media").drive 
 local carried = assert(file(ui, "tool_host", "local_program"), "the laptop's A: lists its own files")
 assert(file(ui, "tool_media", "readme"), "the laptop's B: lists its disk")
 assert(file(ui, "tool_host", "readme") and not file(ui, "host", "readme"), "and nothing of the target's")
+-- A file opens by the drive on its own side: the laptop reads Markdown
+-- though the target's drive reads only `disl`.
+local function press_open(row)
+    t.run_ticks(10)
+    local _ = t.messages(p)
+    ui_files.press(p, row, "open")
+    t.run_ticks(2)
+    return workspace().open, table.concat(t.messages(p), " | ")
+end
+for _, side in ipairs({ "tool_media", "tool_host" }) do
+    local row = assert(file(ui, side, "readme"))
+    local open, heard = press_open(row)
+    assert(open and open.store == side and open.uid == row.uid and not heard:find("can't open", 1, true),
+        "the laptop opens its own " .. side .. " Markdown: " .. heard)
+end
+copy(file(ui, "tool_host", "readme"), store(ui, "host"), "readme")
+local refused, heard = press_open(assert(file(workspace(), "host", "readme")))
+assert(refused.store ~= "host" and heard:find("can't open", 1, true),
+    "the target's own disl-only drive still refuses Markdown: " .. heard)
 -- The far side showing its empty B: takes no copy at all.
 assert(ui_controls.find(p, "/show/media", t.ui_document(p, "programming")), "the target's empty slot is a drive")
 ui_files.show(p, "media")
