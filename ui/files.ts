@@ -10,7 +10,7 @@ import type { DocumentIdentity, ModuleState, StoreRow } from "./document-model";
 import { driveLetter, drivePane } from "./files-drive";
 import { editorGuard, editorPane } from "./files-editor";
 import { createFileDialog } from "./files-create";
-import { socketRows } from "./files-sockets";
+import { programSlotRows } from "./files-programs";
 import { moduleBody } from "./documents-modules";
 import { tfs } from "./strings";
 import { column, icon, nodeCount, panel, press, some, text } from "./view";
@@ -49,7 +49,7 @@ export function filePanes(id: string, doc: DocumentIdentity, state: Partial<Modu
     tool ? tfs("ui.workspace.connected", { device }) : tfs("ui.workspace.ready"), controls, tool);
   const readings = [
     ...moduleBody(`${id}/information`, doc, state, active, false),
-    ...(state.sockets?.length ? [socketRows(id, doc, state, active)] : []),
+    ...(state.program_slots?.length ? [programSlotRows(id, doc, state, active)] : []),
   ];
   const information = readings.length
     ? Scroll(`${id}/information`, readings, { cls: ["workspace-frame"], style: { width: "100%", maxHeight: 180 } })

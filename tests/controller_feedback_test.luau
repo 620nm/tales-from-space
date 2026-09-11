@@ -106,13 +106,13 @@ for round = 1, 2 do
     t.run_ticks(20)
     lines = t.messages(p)
     assert(once(lines, UNPROGRAMMED) and not said(lines, FAULT) and not said(lines, UNANSWERED),
-        "press " .. round .. " hears the empty socket once, got: " .. table.concat(lines, " | "))
+        "press " .. round .. " hears the empty slot once, got: " .. table.concat(lines, " | "))
 end
 local after = t.door_at(5, 1)
 assert(rows_like("device_outbox") > outbox_before, "a joined button does queue its press, so the outbox check has teeth")
 assert(after.open == before.open and after.bolted == before.bolted, "the door is left alone")
 
--- A burst batched into one packet hears the empty socket once per packet, not per press.
+-- A burst batched into one packet hears the empty slot once per packet, not per press.
 local _ = t.messages(p)
 press(p, 2, 1)
 t.run_ticks(2) -- The first packet leaves; its sender sleeps out the pacing.

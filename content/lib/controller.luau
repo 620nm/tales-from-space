@@ -1,4 +1,4 @@
--- Capability-scoped device socket: only joined, reachable members enter the guest.
+-- Capability-scoped controller program slot: only joined, reachable members enter the guest.
 local controller = {}
 -- Opaque task resources only; deadlines and guest state remain entity-owned.
 local timers = {}
@@ -142,12 +142,12 @@ end
 -- `voice` is set for a button event only (see `status`).
 function controller.run(host, event, voice)
     local handles, rows = members(host)
-    -- An empty socket stops the cycle like a fault, but names the cause.
-    if sim.disl.socket_program(host, "controller") == nil then
+    -- An empty slot stops the cycle like a fault, but names the cause.
+    if sim.disl.slot_program(host, "controller") == nil then
         fail(host, handles, "unprogrammed", voice)
         return false
     end
-    local answer = socket.run(host, "controller", { event = event, devices = rows })
+    local answer = program_slot.run(host, "controller", { event = event, devices = rows })
     if not valid(answer, handles) then fail(host, handles, "fault", voice); return false end
     if answer.status then status(host, answer.status, voice) end
     if answer.replace then device_queue.clear(host) end

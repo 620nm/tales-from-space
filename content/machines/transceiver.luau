@@ -40,13 +40,13 @@ return {
     -- The scriptable half (docs/files/scriptable-machine.md): an
     -- internal store a crewman writes filter programs onto, a drive
     -- that reads nothing but program text (a disk is how a filter
-    -- TRAVELS, copy to A: then load), and the one socket this pack
-    -- wires up -- `carry`, the relay stage lib/radio_relay.luau runs a
-    -- bound program on. Program text is all a tower understands: it
+    -- TRAVELS, copy to A: then load), and the one program slot this
+    -- pack wires up -- `carry`, the relay stage lib/radio_relay.luau
+    -- runs a loaded program on. Program text is all a tower understands: it
     -- has no use for prose.
     files = { capacity = 65536, files = 16 },
     drive = { reads = { "disl" }, accepts = { "floppy" } },
-    sockets = { "carry" },
+    program_slots = { "carry" },
     dense = true,
     corded = true,
     examine = {
