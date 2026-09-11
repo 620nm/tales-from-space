@@ -41,14 +41,19 @@ local function other_rows(role)
     return rows
 end
 
-local function assert_insert(rows, why)
+-- `partner` names the OTHER hand's item, pictured whichever way round the
+-- pair resolved (a sprite fragment: the floppy's variants vary its name).
+local function assert_insert(rows, partner, why)
     assert(#rows == 1, why .. ": one other-hand row, got " .. #rows)
     local row = rows[1]
     assert(row.id == "other/insert_disk", why .. ": id " .. tostring(row.id))
     assert(row.label.key == "lunatic/tfs:ui.affordance.insert_disk", why .. ": label")
     assert(row.available, why .. ": available")
     assert(row.detail and row.detail.key == "engine.action.other_hand", why .. ": detail line")
-    assert(row.implement ~= nil, why .. ": the implement is pictured")
+    assert(row.implement ~= nil, why .. ": the partner is pictured")
+    local sprite = tostring(row.implement.sprite)
+    assert(string.find(sprite, partner, 1, true) ~= nil,
+        why .. ": pictures the other hand's " .. partner .. ", got " .. sprite)
 end
 
 take(2, "floppy_disk")
@@ -57,10 +62,10 @@ assert(#other_rows("active") == 0, "an empty other hand offers no other-hand row
 t.swap_hands(p)
 t.run_ticks(2)
 take(2, "laptop")
-assert_insert(other_rows("active"), "laptop active, floppy other")
+assert_insert(other_rows("active"), "floppy", "laptop active, floppy other")
 assert(#other_rows("other") == 0, "the other-hand item's card shows ordinary rows only")
 
 t.swap_hands(p)
 t.run_ticks(2)
 assert(t.hands(p).held == "floppy_disk", "the floppy is active again")
-assert_insert(other_rows("active"), "floppy active, laptop other")
+assert_insert(other_rows("active"), "laptop", "floppy active, laptop other")
