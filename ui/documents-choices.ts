@@ -16,12 +16,12 @@ type Badge = NonNullable<ChoiceOpts["badge"]>;
 const CARD_MIN = 248;
 
 /** What a device card says about its node's state: the engine's
- *  diagnosis (`link.state.*`), or gone once the forest forgot it. */
+ *  diagnosis (`link.state.*`), or gone once the forest forgot it. A node
+ *  merely not joined (`unbound`) is neither good nor bad news: no tone. */
 export function subjectBadge(subject: Subject): Badge {
-  return {
-    text: subject.state == null ? tfs("ui.device.gone") : labelText(subject.state),
-    tone: subject.online ? "on" : "off",
-  };
+  const text = subject.state == null ? tfs("ui.device.gone") : labelText(subject.state);
+  if (labelId(subject.state) === "link.state.unbound") return { text };
+  return { text, tone: subject.online ? "on" : "off" };
 }
 
 /** A row about another node as a two-line card: its name and sprite over
