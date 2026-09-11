@@ -227,7 +227,7 @@ if sim ~= nil then
         ui.open({
             viewer = ev.actor, owner = target, contact = self, contact_state = "on",
             channel = "programming",
-            -- The laptop is the workspace's own bar; the window names the target.
+            -- The laptop titles the window; the workspace bar names the target.
             view = {
                 kind = "programming", wallpaper = self.vars.laptop_wallpaper,
                 tool = { name = self.name, sprite = content.state_sprites[self.state] },

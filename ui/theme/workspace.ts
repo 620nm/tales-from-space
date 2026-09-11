@@ -48,6 +48,11 @@ export const workspaceRules: UiStyleRule[] = [
   // A translucent frame over the wallpaper: the heading, a drive, the reader.
   rule("workspace-frame", { backgroundColor: alpha(surface, 0.92), border: edge(alpha(dim, 0.65)), borderRadius: 0, padding: 8, gap: 6 }),
   rule("workspace-machine-name", { fontSize: 15, fontWeight: "bold" }),
+  // The device's address and link state, small beside its name.
+  rule("workspace-machine-link", { fontSize: 11, color: dim, whiteSpace: "nowrap" }),
+  // The link state beside it keeps its reading's tone: no colour here.
+  rule("workspace-machine-state", { fontSize: 11, whiteSpace: "nowrap" }),
+  rule("workspace-details", { flexShrink: 0, whiteSpace: "nowrap" }),
   rule("workspace-drive-title", { fontSize: 15, fontWeight: "bold" }),
   // A file's two lines wear classes rather than an inline style: two
   // full drives stand at the tree's byte budget (ui/files-drive.ts).

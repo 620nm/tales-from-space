@@ -34,10 +34,22 @@ local function file(ui, side, name)
     end
     return nil
 end
+-- Which drives a file's rendered copy press lands on, by id.
+local function copies(side, uid)
+    local found = {}
+    for _, destination in ipairs({ "host", "media", "tool_host", "tool_media" }) do
+        if pcall(function() return ui_files.row(p, side, uid, "copy-" .. destination) end) then
+            table.insert(found, destination)
+        end
+    end
+    return table.concat(found, ",")
+end
 
--- On a contact every copy press names its destination side.
+-- On a contact a file's one copy press lands on the drive the far side
+-- shows, and its id names that side: bring the destination up first.
 local function copy(row, destination, name)
     t.run_ticks(10)
+    ui_files.show(p, destination.key)
     ui_files.press(p, row, "copy-" .. destination.key)
     t.run_ticks(2)
     if name ~= row.name then
@@ -96,16 +108,46 @@ assert(store(ui, "tool_host").owner == "tool" and store(ui, "tool_media").drive 
 local carried = assert(file(ui, "tool_host", "local_program"), "the laptop's A: lists its own files")
 assert(file(ui, "tool_media", "readme"), "the laptop's B: lists its disk")
 assert(file(ui, "tool_host", "readme") and not file(ui, "host", "readme"), "and nothing of the target's")
+-- The far side showing its empty B: takes no copy at all.
+assert(ui_controls.find(p, "/show/media", t.ui_document(p, "programming")), "the target's empty slot is a drive")
+ui_files.show(p, "media")
+assert(copies("tool_host", carried.uid) == "", "no copy lands on a drive with no disk in it")
+ui_files.show(p, "host")
 copy(carried, store(ui, "host"), carried.name)
 ui = workspace()
 assert(file(ui, "host", "local_program"), "a laptop file copies onto the target")
 assert(file(ui, "tool_host", "local_program"), "and stays on the laptop")
 assert(ui.script.data.wallpaper == desktop.script.data.wallpaper,
     "the target workspace uses the held laptop's wallpaper")
--- The workspace's own bar is the laptop's; the window's frame names the target.
-assert(ui.script.data.tool.sprite == "laptop_on", "the bar wears the running laptop")
-local bar = ui_controls.node(p, "/machine-name", t.ui_document(p, "programming"))
-assert(bar.text == ui.script.data.tool.name, "the bar names the laptop, got: " .. tostring(bar.text))
+-- The window is titled with the laptop in hand; the workspace's own bar
+-- names the target, and its panel rows wait under a shut Details.
+local scope = t.ui_document(p, "programming")
+local function window()
+    local found = nil
+    local function visit(node)
+        if type(node) ~= "table" or found then return end
+        if node.window and node.window.document == scope.document and node.window.generation == scope.generation then
+            found = node.window
+            return
+        end
+        for _, child in pairs(node) do visit(child) end
+    end
+    visit(t.ui_tree(p))
+    return assert(found, "the contact workspace has a window")
+end
+assert(ui.script.data.tool.sprite == "laptop_on", "the script names the running laptop")
+assert(window().title == ui.script.data.tool.name and window().titleAsset == "laptop_on",
+    "the window wears the laptop, got: " .. tostring(window().title))
+local bar = ui_controls.node(p, "/machine-name", scope)
+assert(bar.text == ui.name, "the bar names the target, got: " .. tostring(bar.text))
+assert(ui_controls.find(p, "/details", scope) and ui_controls.find(p, "/information", scope) == nil,
+    "the target's own rows start behind Details")
+assert(ui_controls.find(p, "/programs", scope), "while its program slots stand in view")
+ui_controls.details(p, scope)
+assert(ui_controls.find(p, "/information", scope), "and Details opens them")
+local panes = ui_controls.node(p, "/panes", scope).children
+assert(panes[1].id:sub(-#"/side/target") == "/side/target" and panes[#panes].id:sub(-#"/side/tool") == "/side/tool",
+    "the target's side stands left of the laptop's")
 local connects = false
 for _, action in ipairs(t.action_hints(p, { Entity = target })) do
     if action.id == "connect" then connects = true end
@@ -130,13 +172,22 @@ assert(file(ui, "media", "readme") == nil and file(ui, "media", "local_program")
 -- Disk to disk: the laptop's B: copies straight onto the device's B:.
 copy(file(ui, "tool_media", "readme"), store(ui, "media"), "readme")
 assert(file(workspace(), "media", "readme"), "the laptop's disk copies onto the device's disk")
+-- One copy press per file, and it follows the far side's drive switch.
+local shared = file(workspace(), "host", "local_program")
+ui_files.show(p, "tool_media")
+assert(copies("host", shared.uid) == "tool_media", "a device file copies to the laptop's shown B:")
+ui_files.show(p, "tool_host")
+assert(copies("host", shared.uid) == "tool_host", "and to its A: once A: is shown")
 t.run_ticks(10)
 ui_files.create(p, "media", "disl", "disk_program")
 t.run_ticks(2)
 ui_files.save(p, "return { pass = true }")
 t.run_ticks(2)
+-- Device B: to device A: goes by way of the laptop, the side across.
 ui = workspace()
-copy(file(ui, "media", "disk_program"), store(ui, "host"), "target_program")
+copy(file(ui, "media", "disk_program"), store(ui, "tool_host"), "carried_program")
+ui = workspace()
+copy(file(ui, "tool_host", "carried_program"), store(ui, "host"), "target_program")
 ui = workspace()
 local target_file = assert(file(ui, "host", "target_program"), "copy places a program on target A:")
 ui_files.press(p, target_file, "open")
@@ -158,10 +209,11 @@ ui_controls.press(p, "/editor/revert")
 ui_controls.press(p, "/editor/guard/discard")
 t.run_ticks(2)
 ui = workspace()
-copy(target_file, store(ui, "media"), "disk_return")
-assert(file(workspace(), "media", "disk_return"), "the target copies back to its disk")
+copy(target_file, store(ui, "tool_host"), "disk_return")
+assert(file(workspace(), "tool_host", "disk_return"), "the target copies back to the laptop")
 local stale_source = file(workspace(), "media", "disk_program")
-local stale_copy_control = ui_files.row(p, stale_source.store, stale_source.uid, "copy-host").id
+ui_files.show(p, "tool_host")
+local stale_copy_control = ui_files.row(p, stale_source.store, stale_source.uid, "copy-tool_host").id
 ui_files.show(p, "media")
 ui_controls.press(p, "/drive/media/eject")
 t.run_ticks(2)

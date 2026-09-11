@@ -1,0 +1,78 @@
+{
+  "note": "Laptop contact refused at the lock screen: an Access denied dialog over it, put away by OK until the next refusal.",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "access point",
+        "owner_sprite": "access_point",
+        "state": {
+          "document": "modules",
+          "status": 2,
+          "name": "access point",
+          "owner_sprite": "access_point",
+          "link": {
+            "address": "02-4a-1f-00-3c-07",
+            "state": {
+              "id": "link.state.online"
+            },
+            "online": true
+          },
+          "toggles": [
+            {
+              "field": "link_lock",
+              "option": null,
+              "label": {
+                "id": "link.lock"
+              },
+              "on": false,
+              "on_text": {
+                "id": "link.lock.unlocked"
+              },
+              "off_text": {
+                "id": "link.lock.locked"
+              },
+              "icon": null,
+              "group": null,
+              "color": null,
+              "section": null
+            }
+          ],
+          "labels": [],
+          "setpoints": [],
+          "include_native": true,
+          "script": {
+            "data": {
+              "kind": "programming",
+              "wallpaper": "wallpaper_moonlake",
+              "tool": {
+                "name": "laptop",
+                "sprite": "laptop_on"
+              }
+            },
+            "actions": []
+          },
+          "contact_locked": true,
+          "refusal": {
+            "serial": 1,
+            "text": {
+              "id": "link.access_denied"
+            }
+          }
+        }
+      }
+    }
+  }
+}

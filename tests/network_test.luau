@@ -30,13 +30,9 @@ local function said(p, line)
     return false
 end
 
-local function readout(ui, label)
-    for _, r in ipairs(ui.readouts) do
-        if word(r.label) == label then
-            return word(r.value)
-        end
-    end
-    return nil
+-- The document's own node on its network: `address` or `state`.
+local function link(ui, key)
+    return ui.link and word(ui.link[key])
 end
 
 local function rows(ui, field)
@@ -143,14 +139,14 @@ end
 laptop.ready(p, 5, 1)
 local panel = laptop.connect(p, 4, 1, "access_point")
 assert(panel ~= nil and panel.contact_locked, "the laptop meets the access point's lock screen")
-local point = readout(panel, "link.address")
+local point = link(panel, "address")
 assert(point ~= nil and #point == 17, "with an address in it: " .. tostring(point))
 -- ON THE AIR ALREADY, with nothing above it. A hub with a device
 -- joined to it IS a network: there is no `unrooted` suspension and
 -- there never will be, because needing a router above it would make
 -- the smallest useful thing in the system impossible to build
 -- (docs/DEVICES.md §4).
-assert(readout(panel, "link.state") == "link.state.online", "a hub tops its own tree, got: " .. tostring(readout(panel, "link.state")))
+assert(link(panel, "state") == "link.state.online", "a hub tops its own tree, got: " .. tostring(link(panel, "state")))
 assert(#rows(panel, "link_join") == 0 and #rows(panel, "link_drop") == 0,
     "and a shut panel offers neither a roster nor a candidate")
 laptop.close(p)
@@ -210,7 +206,7 @@ t.click(p, 6, 1, t.target_at(p, 6, 1))
 t.tick()
 panel = t.ui(p)
 assert(panel ~= nil, "the router wears the same panel")
-local router = readout(panel, "link.address")
+local router = link(panel, "address")
 assert(router ~= nil and #router == 17 and router ~= point, "with an address of its own")
 assert(#rows(panel, "link_join") == 0, "and offers nothing while it is shut")
 
@@ -328,6 +324,8 @@ t.tick()
 assert(laptop.ui(p).contact_locked, "a laptop without the claim does not open a keyed lock")
 local denials = t.ledger_rows("link_denied")
 assert(#denials == 1 and denials[1].why == "access", "the refusal names the rule it broke")
+-- The presser is told in a modal over the window, which OK puts away.
+ui_controls.press(p, "/refusal/ok", nil, t.ui_document(p, "programming"))
 laptop.close(p)
 
 -- The claim goes in the other hand; the laptop stays the active one.
@@ -342,7 +340,7 @@ laptop.unlock(p)
 t.tick()
 panel = laptop.ui(p)
 assert(not panel.contact_locked and rows(panel, "link_lock")[1].on, "the claim does, straight into the workspace")
-assert(readout(panel, "link.state") == "link.state.online", "and it is on the air under the router now")
+assert(link(panel, "state") == "link.state.online", "and it is on the air under the router now")
 laptop.close(p)
 
 -- ---------------------------------------------------------------
@@ -363,7 +361,7 @@ t.outage()
 t.run_ticks(60)
 panel = t.ui(p)
 assert(panel ~= nil, "the panel keeps reporting")
-assert(readout(panel, "link.state") == "link.state.unpowered", "the router itself has stopped carrying traffic")
+assert(link(panel, "state") == "link.state.unpowered", "the router itself has stopped carrying traffic")
 local dark = row_for(panel, "link_drop", point)
 assert(dark ~= nil, "the edge survives the outage: a bond is not a signal")
 assert(dark.label.args.state == "link.state.unpowered",

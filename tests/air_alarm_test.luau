@@ -44,6 +44,11 @@ local function readout(ui, label)
     return nil
 end
 
+-- The document's own node on its network: `address` or `state`.
+local function link(ui, key)
+    return ui.link and word(ui.link[key])
+end
+
 local function rows(ui, field)
     local out = {}
     for _, row in ipairs(ui.toggles or {}) do
@@ -225,14 +230,14 @@ end
 -- prints the address.
 walk_to(9)
 laptop.ready(p, 9, 2)
-local point = readout(assert(laptop.connect(p, 9, 1, "access_point"), "the laptop connects"), "link.address")
+local point = link(assert(laptop.connect(p, 9, 1, "access_point"), "the laptop connects"), "address")
 laptop.close(p)
 t.drop(p)
 t.run_ticks(2)
 assert(point ~= nil and #point == 17, "the access point has an address: " .. tostring(point))
 -- A machine rather than a structure, so the hit-test names the tile and
 -- not an id (tests/network_test.luau's router).
-local relay = readout(open(11, 1, nil), "link.address")
+local relay = link(open(11, 1, nil), "address")
 assert(relay ~= nil and #relay == 17, "and so does the transceiver: " .. tostring(relay))
 assert(relay ~= point, "two boxes, two addresses")
 
@@ -246,9 +251,9 @@ assert(relay ~= point, "two boxes, two addresses")
 -- been given one.
 -- ---------------------------------------------------------------
 local panel = open(6, 1, "air_alarm")
-local alarm = readout(panel, "link.address")
+local alarm = link(panel, "address")
 assert(alarm ~= nil and #alarm == 17, "the alarm's own address is on it: " .. tostring(alarm))
-assert(readout(panel, "link.state") == "link.state.online", "a hub tops its own tree")
+assert(link(panel, "state") == "link.state.online", "a hub tops its own tree")
 assert(not rows(panel, "link_lock")[1].on, "and a fresh boot finds every lock shut")
 assert(proxied(panel, "air vent") == nil, "and no machine is drawn under it")
 assert(#scoped(panel) == 0, "not one row on it belongs to something else")
@@ -377,7 +382,7 @@ panel = t.ui(p)
 assert(not rows(panel, "link_lock")[1].on, "the alarm is shut again")
 assert(proxied(panel, "air vent") == nil, "and the room is off the console")
 assert(dial(panel, key) == nil, "with no dial left to turn")
-assert(readout(panel, "link.address") == alarm, "the address stays: it was never the secret")
+assert(link(panel, "address") == alarm, "the address stays: it was never the secret")
 
 -- ---------------------------------------------------------------
 -- 8. AND THE BOX SAYS ALL OF THIS FROM ACROSS THE ROOM.
