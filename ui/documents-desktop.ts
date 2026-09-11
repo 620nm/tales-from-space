@@ -5,6 +5,7 @@ import type { DocumentIdentity, ModuleState, ScriptState } from "./document-mode
 import { documentAction } from "./document-action";
 import { bodyId } from "./files-buffer";
 import { filePanes, guard, workspaceHeading, type Identity } from "./files";
+import { refusalDialog } from "./documents-device";
 import { icon, press, screen, some, text } from "./view";
 import { tfs } from "./strings";
 
@@ -21,7 +22,7 @@ export function programmingWallpaper(data: Json | undefined): string | undefined
   return view.wallpaper === "wallpaper_moonlake" ? "wallpaper_moonlake" : "wallpaper_bliss";
 }
 /** The laptop a contact is worked through, as its script names it: the
- *  workspace's own bar wears it while the window frame names the target. */
+ *  window's title wears it while the workspace bar names the target. */
 export function programmingTool(data: Json | undefined): Identity | undefined {
   const view = programming(data);
   if (!view) return undefined;
@@ -34,16 +35,19 @@ export function programmingTool(data: Json | undefined): Identity | undefined {
 }
 /** A contact over a shut lock: the engine composes only the link rows
  *  (`contact_locked`); Unlock is its lock row's own press, so access is
- *  checked natively and success widens this same document. */
-export function lockParts(id: string, doc: DocumentIdentity, state: Partial<ModuleState>, active: boolean, tool?: Identity): ScreenParts {
+ *  checked natively, success widens this same document and a refusal
+ *  comes back as its `refusal` modal. */
+export function lockParts(id: string, doc: DocumentIdentity, state: Partial<ModuleState>, active: boolean): ScreenParts {
   const lock = state.toggles?.find((row) => row.field === "link_lock");
+  const refusal = refusalDialog(id, doc, state);
   return {
-    toolbar: [workspaceHeading(id, doc, state, tfs("ui.workspace.locked"), [], tool)],
+    toolbar: [workspaceHeading(id, doc, state, tfs("ui.workspace.locked"))],
     body: [Stack(`${id}/lock`, some(
       text(`${id}/lock/hint`, tfs("ui.workspace.locked_hint"), ["workspace-offline"]),
       lock ? press(`${id}/toggle/link_lock/switch`, tfs("ui.workspace.unlock"),
         documentAction(doc, "toggle", { field: "link_lock" }), { disabled: !active }) : null,
     ), { dir: "column", gap: 8, align: "center", cls: ["workspace-frame"] })],
+    ...(refusal ? { overlay: [refusal] } : {}),
   };
 }
 export function desktopPane(id: string, doc: DocumentIdentity, state: Partial<ScriptState>, active: boolean, native?: Partial<ModuleState>): UiNode {

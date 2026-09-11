@@ -17,7 +17,8 @@ import { documentAction } from "./document-action";
 import { moduleBody } from "./documents-modules";
 import { shelfRows } from "./documents-shelf";
 import { computerPane, desktopPane, isDesktop, lockParts, programmingTool, programmingWallpaper } from "./documents-desktop";
-import { filePanes, guard, retainOpenFileBuffers } from "./files";
+import { filePanes, guard, retainOpenFileBuffers, retainWorkspaces } from "./files";
+import { linkMeta, refusalDialog, retainRefusals } from "./documents-device";
 import { bind, column, entry, icon, press, row, screen, some, text } from "./view";
 import * as S from "./strings";
 import { labelText } from "./labels";
@@ -34,6 +35,8 @@ const WIDTH: Record<Presentation, number> = {
 export function documents(view: GameplayView): UiNode[] {
   const open = Object.values(view.documents ?? {}).filter((doc) => !actionSurface(doc));
   retainOpenFileBuffers(open);
+  retainWorkspaces(open);
+  retainRefusals(open);
   return open.map((doc) => {
     const id = `doc/${doc.id}/${doc.generation}`;
     // A provider that sent no state, or one that is not a record, still
@@ -62,10 +65,10 @@ export function documents(view: GameplayView): UiNode[] {
       const module = state as Partial<ModuleState>;
       if (module.script && isDesktop(module.script.data))
         return desktopPane(id, doc, module.script, active, module);
-      // A contact's workspace wears the tool it is worked through; the
-      // window's own frame (below) still names the target it reaches.
+      // A contact's window is titled with the tool it is worked through
+      // (below); its workspace bar names the target it reaches.
       const tool = programmingTool(module.script?.data);
-      if (module.contact_locked) return computerPane(id, lockParts(id, doc, module, active, tool), programmingWallpaper(module.script?.data));
+      if (module.contact_locked) return computerPane(id, lockParts(id, doc, module, active), programmingWallpaper(module.script?.data));
       if (module.stores) return computerPane(id, filePanes(id, doc, module, active, [], tool), programmingWallpaper(module.script?.data));
       width = WIDTH[module.presentation ?? "modules"] ?? WIDTH.modules;
       body = [
@@ -79,10 +82,13 @@ export function documents(view: GameplayView): UiNode[] {
     // belongs to the document, not to every surface the pack opens.
     const module = state as Partial<ModuleState>;
     const footer = module.notice ? labelText(module.notice) : S.tfs(active ? "ui.document.available" : "ui.document.unavailable");
+    const heading = text(`${id}/heading`, module.name ?? doc.title, ["doc-heading"]);
+    const refusal = refusalDialog(id, doc, module);
     return screen(id, {
-      toolbar: [text(`${id}/heading`, module.name ?? doc.title, ["doc-heading"])],
+      toolbar: [module.link ? row(`${id}/head`, some(heading, linkMeta(id, module, ["doc-heading-meta"], ["doc-heading-state"])), { cls: ["doc-head"] }) : heading],
       body: [column(`${id}/document`, body.length ? body : [text(`${id}/empty`, S.tfs("ui.document.empty"), ["hint"])], { cls: ["doc-body"] })],
       footer: [text(`${id}/status`, footer, [active ? "doc-status" : "doc-unavailable"])],
+      ...(refusal ? { overlay: [refusal] } : {}),
     }, {
       cls: ["pane", "doc-pane"],
       style: { width, maxWidth: "100%", maxHeight: 540 },
@@ -90,9 +96,13 @@ export function documents(view: GameplayView): UiNode[] {
   }).map((node, index) => {
     const doc = open[index]!;
     const module = doc.state as Partial<ModuleState>;
+    // A contact's window wears the tool in hand; its workspace bar names
+    // the device (ui/files.ts `workspaceHeading`).
+    const tool = programmingTool(module?.script?.data);
+    const titleAsset = tool?.sprite ?? doc.owner_sprite ?? module?.owner_sprite;
     return { ...node, ...(module?.open && !module.editor?.read_only ? { primarySave: `doc/${doc.id}/${doc.generation}/editor/save` } : {}), window: {
-      ...(node.class?.includes("computer-screen") ? { contentAspectRatio: 16 / 9, minWidth: 740, maximizable: true, titleAsset: doc.owner_sprite ?? (doc.state as Partial<ModuleState>)?.owner_sprite } : {}),
-      key: `document/${doc.id}/${doc.generation}`, title: doc.title, source: "status",
+      ...(node.class?.includes("computer-screen") ? { contentAspectRatio: 16 / 9, minWidth: 740, maximizable: true, titleAsset } : {}),
+      key: `document/${doc.id}/${doc.generation}`, title: tool?.name ?? doc.title, source: "status",
       close: `doc/${doc.id}/${doc.generation}/close`,
       document: doc.id, generation: doc.generation, height: 520, width: Number(node.style?.width) || 520 } };
   });
