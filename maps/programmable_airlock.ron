@@ -26,7 +26,7 @@
         (9, 3, "vacuum"), (10, 3, "vacuum"), (11, 3, "vacuum"),
         (9, 4, "vacuum"), (10, 4, "vacuum"), (11, 4, "vacuum"), (8, 1, "vacuum")],
     structures: [
-        (4, 3, "access_point", { "network_1": "network_card", "program.controller": "airlock_controller" }),
+        (4, 3, "access_point", { "network_1": "network_card", "file.airlock_controller": true, "program.controller": "airlock_controller" }),
         (2, 3, "airlock_button"), (7, 4, "airlock_button"),
         (5, 3, "airlock", { "bolted": true }),
         (8, 3, "airlock", { "open": true, "bolted": false }),
