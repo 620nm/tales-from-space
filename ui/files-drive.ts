@@ -13,7 +13,6 @@ import * as S from "./strings";
 /** Drive letters per engine store drive: an owner's own store A:, the disk
  *  in its slot B: (engine `docs/tgui/files.md`). */
 const LETTER: Record<string, string> = { host: "ui.workspace.drive_a", media: "ui.workspace.drive_b" };
-const COPY_TO: Record<string, string> = { host: "ui.files.copy_to_a", media: "ui.files.copy_to_b" };
 
 /** Where a drive's files copy to: the store the opposite pane shows, the
  *  press's id suffix, and its caption. */
@@ -28,9 +27,9 @@ function driveOf(store: StoreRow): string {
   return store.drive ?? (store.key === "media" ? "media" : "host");
 }
 
-/** A plain desktop's copy into its other drive, named by that letter. */
+/** A plain desktop's copy into its one other drive: a bare Copy. */
 export function plainCopy(store: StoreRow): CopyTarget {
-  return { store, suffix: "copy", label: S.tfs(COPY_TO[driveOf(store)] ?? COPY_TO.host!) };
+  return { store, suffix: "copy", label: S.COPY };
 }
 
 export function drivePane(id: string, doc: DocumentIdentity, state: Partial<ModuleState>, store: StoreRow,

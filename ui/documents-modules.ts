@@ -11,9 +11,9 @@ import type {
   Setpoint,
 } from "./document-model";
 import { documentAction } from "./document-action";
-import { labelText } from "./labels";
+import { labelId, labelText } from "./labels";
 import { matterBlock } from "./matter-block";
-import { subjectCard, toggleRows } from "./documents-choices";
+import { subjectBadge, subjectCard, toggleRows } from "./documents-choices";
 import { column, entry, press, row, some, text } from "./view";
 import * as S from "./strings";
 
@@ -185,9 +185,13 @@ export function moduleBody(
     const key = `${id}/part/${place}`;
     const here = readouts.filter((reading) => labelText(reading.section) === section);
     // A reading about another node is a card beside its section's
-    // device choices, pressable by nobody (engine `subject`).
+    // device choices, pressable by nobody (engine `subject`); a member
+    // the wire joined says so beside its state.
     const cards = here.flatMap((reading, index) => reading.subject
-      ? [Choice(`${key}/card/${index}`, { ...subjectCard(reading.subject, reading.label, labelText(reading.label)), disabled: true })]
+      ? [Choice(`${key}/card/${index}`, { ...subjectCard(reading.subject, reading.label, undefined,
+        labelId(reading.label) === "link.member.hardwired"
+          ? { ...subjectBadge(reading.subject), text: S.tfs("ui.device.wired", { state: subjectBadge(reading.subject).text }) }
+          : undefined), disabled: true })]
       : []);
     const rows: ListRow[] = here
       .filter((reading) => !reading.subject)

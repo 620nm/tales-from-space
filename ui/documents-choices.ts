@@ -6,18 +6,28 @@ import type { ChoiceOpts, UiNode } from "@lunatic/ui";
 import { Choice, ChoiceGrid } from "@lunatic/ui";
 import type { DocumentIdentity, Subject, Toggle } from "./document-model";
 import { documentAction } from "./document-action";
-import { labelText, type Label } from "./labels";
+import { labelId, labelText, type Label } from "./labels";
 import { tfs } from "./strings";
 import { bind, row, text } from "./view";
 
-/** Columns wide enough for a device card's name over its address. */
-const CARD_MIN = 200;
+type Badge = NonNullable<ChoiceOpts["badge"]>;
 
-/** A row about another node as a two-line card: its name, sprite,
- *  address and whether it is online (engine `subject`). */
-export function subjectCard(subject: Subject, fallback: Label, detail?: string): Pick<ChoiceOpts, "label" | "sprite" | "detail" | "badge"> {
-  const badge = subject.online == null ? { text: tfs("ui.device.gone"), tone: "off" as const }
-    : { text: tfs(subject.online ? "ui.device.online" : "ui.device.offline"), tone: subject.online ? "on" as const : "off" as const };
+/** Columns wide enough for a device card's address and role on one line. */
+const CARD_MIN = 248;
+
+/** What a device card says about its node's state: the engine's
+ *  diagnosis (`link.state.*`), or gone once the forest forgot it. */
+export function subjectBadge(subject: Subject): Badge {
+  return {
+    text: subject.state == null ? tfs("ui.device.gone") : labelText(subject.state),
+    tone: subject.online ? "on" : "off",
+  };
+}
+
+/** A row about another node as a two-line card: its name and sprite over
+ *  its address (or `detail`) and `badge` (engine `subject`). */
+export function subjectCard(subject: Subject, fallback: Label, detail?: string,
+  badge: Badge = subjectBadge(subject)): Pick<ChoiceOpts, "label" | "sprite" | "detail" | "badge"> {
   return {
     label: subject.name || labelText(fallback),
     ...(subject.sprite ? { sprite: subject.sprite } : {}),
@@ -25,6 +35,11 @@ export function subjectCard(subject: Subject, fallback: Label, detail?: string):
     badge,
   };
 }
+
+/** A joinable row's detail is its own label, the address with the kind
+ *  of node it is; a member's is its bare address. */
+const cardDetail = (toggle: Toggle): string | undefined =>
+  labelId(toggle.label)?.startsWith("link.candidate.") ? labelText(toggle.label) : undefined;
 
 const toggleAction = (doc: DocumentIdentity, toggle: Toggle) =>
   documentAction(doc, "toggle", {
@@ -99,7 +114,7 @@ export function toggleRows(
         label: labelText(toggle.label),
         ...(toggle.icon ? { sprite: toggle.icon } : {}),
         ...(toggle.color ? { color: toggle.color } : {}),
-        ...(toggle.subject ? subjectCard(toggle.subject, toggle.label) : {}),
+        ...(toggle.subject ? subjectCard(toggle.subject, toggle.label, cardDetail(toggle)) : {}),
         selected: toggle.on,
         event: bind(key, toggleAction(doc, toggle)),
         disabled: !active,

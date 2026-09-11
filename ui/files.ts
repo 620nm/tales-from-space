@@ -1,9 +1,10 @@
 // Shared computer frameset; native providers own every file operation.
-// What it answers is the parts of the workspace screen: the heading and
-// its Details across the top, the drives and the reader side by side in
-// the body, and any dialog over the lot. A contact workspace draws two
-// sides — the target's on the left, the held tool's on the right — each
-// switching between its own A: and B: (engine `docs/tgui/files.md`).
+// What it answers is the parts of the workspace screen: the heading, the
+// program slots and the device's Details across the top, the drives and
+// the reader side by side in the body, and any dialog over the lot. A
+// contact workspace draws two sides — the target's on the left, the held
+// tool's on the right — each switching between its own A: and B:
+// (engine `docs/tgui/files.md`).
 import type { ScreenParts, UiNode } from "@lunatic/ui";
 import { Scroll, Stack } from "@lunatic/ui";
 import type { DocumentIdentity, ModuleState, StoreRow } from "./document-model";
@@ -27,10 +28,18 @@ export interface Identity { sprite?: string; name?: string }
 
 type Owner = "tool" | "target";
 
-/** Which drive each contact side shows, per document; never sent. */
+/** Which drive each contact side shows, keyed `<doc>/<generation>/<owner>`;
+ *  never sent. */
 const shown = new Map<string, string>();
-/** The documents whose device details are open; never sent. */
+/** The documents (`<doc>/<generation>`) whose device details are open. */
 const expanded = new Set<string>();
+
+/** Forget drive and Details choices for documents no longer open. */
+export function retainWorkspaces(open: DocumentIdentity[]): void {
+  const live = new Set(open.map((doc) => `${doc.id}/${doc.generation}`));
+  for (const key of expanded) if (!live.has(key)) expanded.delete(key);
+  for (const key of shown.keys()) if (!live.has(key.slice(0, key.lastIndexOf("/")))) shown.delete(key);
+}
 
 interface Side { key: string; node: UiNode }
 
@@ -46,7 +55,7 @@ export function workspaceHeading(id: string, doc: DocumentIdentity, state: Parti
   return Stack(`${id}/heading`, some(
     icon(`${id}/machine-icon`, state.owner_sprite ?? doc.owner_sprite, device),
     text(`${id}/machine-name`, device, ["workspace-machine-name", ...(state.link ? [] : ["grow"])]),
-    linkMeta(id, state, ["workspace-machine-link", "grow"]),
+    linkMeta(id, state, ["workspace-machine-link"], ["workspace-machine-state"], true),
     text(`${id}/machine-status`, status, ["hint"]),
     details,
     controls.length ? Stack(`${id}/machine-controls`, controls, { gap: 4, align: "center" }) : null,
@@ -57,10 +66,10 @@ export function filePanes(id: string, doc: DocumentIdentity, state: Partial<Modu
   controls: UiNode[] = [], tool?: Identity): ScreenParts {
   const stores = state.stores ?? [];
   const device = state.name ?? doc.title;
-  const readings = [
-    ...moduleBody(`${id}/information`, doc, state, active, false),
-    ...(state.program_slots?.length ? [programSlotRows(id, doc, state, active)] : []),
-  ];
+  // The program slots are what a workspace is for: always in view. The
+  // device's own rows wait under Details.
+  const programs = state.program_slots?.length ? programSlotRows(id, doc, state, active) : null;
+  const readings = moduleBody(`${id}/information`, doc, state, active, false);
   const memory = `${doc.id}/${doc.generation}`;
   const open = expanded.has(memory);
   const details = readings.length ? press(`${id}/details`,
@@ -69,14 +78,14 @@ export function filePanes(id: string, doc: DocumentIdentity, state: Partial<Modu
       return undefined;
     }, { variant: "ghost", cls: ["workspace-details"] }) : null;
   const heading = workspaceHeading(id, doc, state,
-    tool ? tfs("ui.workspace.connected", { tool: tool.name ?? "" }) : tfs("ui.workspace.ready"), controls, details);
+    tfs(tool ? "ui.workspace.connected" : "ui.workspace.ready"), controls, details);
   const information = open && readings.length
     ? Scroll(`${id}/information`, readings, { cls: ["workspace-frame"], style: { width: "100%", maxHeight: 180 } })
     : null;
   const [left, right] = tool ? contactSides(id, doc, state, tool.name ?? "", device, active) : plainSides(id, doc, state, active);
   // The reader takes what the tree has left: two full drives alone can
   // approach the budget, and one node over faults the whole desktop.
-  const spent = nodeCount(some(heading, information, left?.node ?? null, right?.node ?? null));
+  const spent = nodeCount(some(heading, programs, information, left?.node ?? null, right?.node ?? null));
   const children = some(
     left?.node ?? null,
     editorPane(id, doc, state, active, TREE_NODES - TREE_RESERVE - spent),
@@ -85,7 +94,7 @@ export function filePanes(id: string, doc: DocumentIdentity, state: Partial<Modu
   const refusal = refusalDialog(id, doc, state);
   const confirmation = editorGuard(id, doc, state, active);
   return {
-    toolbar: some(heading, information),
+    toolbar: some(heading, programs, information),
     // The panes stand as tall as the body and no narrower than they can
     // be read at; the body scrolls sideways past that.
     body: [{ ...panel(`${id}/panes`, children, { style: { width: "100%", height: "100%", minWidth: 740 } }), split: {

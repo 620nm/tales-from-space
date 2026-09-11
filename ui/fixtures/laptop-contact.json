@@ -28,7 +28,7 @@
             {
               "label": { "id": "link.member.hardwired", "args": { "address": "02-4a-1f-00-3c-02" } },
               "value": { "id": "link.state.online" }, "tone": "on", "section": { "id": "link.members" },
-              "subject": { "name": "air alarm", "address": "02-4a-1f-00-3c-02", "online": true, "sprite": "air_alarm" }
+              "subject": { "name": "air alarm", "address": "02-4a-1f-00-3c-02", "online": true, "state": { "id": "link.state.online" }, "sprite": "air_alarm" }
             }
           ],
           "toggles": [
@@ -42,14 +42,14 @@
               "label": { "id": "link.member", "args": { "address": "02-4a-1f-00-3c-11", "state": "link.state.online" }, "arg_ids": ["state"] },
               "on": false, "on_text": { "id": "link.release.act" }, "off_text": { "id": "link.release.act" },
               "icon": null, "group": null, "color": null, "section": { "id": "link.members" },
-              "subject": { "name": "airlock button", "address": "02-4a-1f-00-3c-11", "online": true, "sprite": "airlock_button" }
+              "subject": { "name": "airlock button", "address": "02-4a-1f-00-3c-11", "online": true, "state": { "id": "link.state.online" }, "sprite": "airlock_button" }
             },
             {
               "field": "link_join", "option": "02-4a-1f-00-3c-20",
               "label": { "id": "link.candidate.endpoint", "args": { "address": "02-4a-1f-00-3c-20" } },
               "on": false, "on_text": { "id": "link.join.act" }, "off_text": { "id": "link.join.act" },
               "icon": null, "group": null, "color": null, "section": { "id": "link.joinable" },
-              "subject": { "name": "access point", "address": "02-4a-1f-00-3c-20", "online": false, "sprite": "access_point_off" }
+              "subject": { "name": "access point", "address": "02-4a-1f-00-3c-20", "online": false, "state": { "id": "link.state.unbound" }, "sprite": "access_point_off" }
             }
           ],
           "labels": [],
