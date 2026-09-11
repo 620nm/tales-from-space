@@ -17,10 +17,9 @@ if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:transceiver_look", { replicate = "sight" })
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
-    -- AN EMPTY HAND, and a use that actually resolved -- the access
-    -- point's contract exactly (fixtures/access_point.luau): the
-    -- panel and the crowbar both arrive here too, and both already
-    -- did their own work on the way past.
+    -- AN EMPTY HAND, and a use that actually resolved: the panel and
+    -- the crowbar both arrive here too, and both already did their own
+    -- work on the way past.
     script_definition:handle("interaction.use.done", { kind = "react", route = "interact" }, function(ev)
         if ev.implement ~= nil or ev.outcome ~= "completed" then
             return
