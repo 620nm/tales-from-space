@@ -10,16 +10,22 @@ import { labelText } from "./labels";
 import { column, icon, press, row, screen, some, text } from "./view";
 import * as S from "./strings";
 
-/** Drive letters per engine store side: target A:, its disk B:, the held
- *  laptop L: (engine `docs/tgui/files.md`). */
-const LETTER: Record<string, string> = {
-  host: "ui.workspace.drive_a", media: "ui.workspace.drive_b", contact: "ui.workspace.drive_l",
-};
-const COPY_TO: Record<string, string> = {
-  host: "ui.files.copy_to_a", media: "ui.files.copy_to_b", contact: "ui.files.copy_to_l",
-};
+/** Drive letters per engine store drive: an owner's own store A:, the disk
+ *  in its slot B: (engine `docs/tgui/files.md`). */
+const LETTER: Record<string, string> = { host: "ui.workspace.drive_a", media: "ui.workspace.drive_b" };
+const COPY_TO: Record<string, string> = { host: "ui.files.copy_to_a", media: "ui.files.copy_to_b" };
 
-export function drivePane(id: string, doc: DocumentIdentity, state: Partial<ModuleState>, store: StoreRow, active: boolean): UiNode {
+export function driveLetter(drive?: string): string {
+  return LETTER[drive ?? "host"] ?? LETTER.host!;
+}
+
+/** The drive a store row is: its `drive`, or its side on a plain panel. */
+function driveOf(store: StoreRow): string {
+  return store.drive ?? (store.key === "media" ? "media" : "host");
+}
+
+export function drivePane(id: string, doc: DocumentIdentity, state: Partial<ModuleState>, store: StoreRow,
+  active: boolean, copyLabel?: (destination: StoreRow) => string): UiNode {
   const side = store.key ?? "host";
   const key = `${id}/drive/${side}`;
   const destinations = (state.stores ?? []).filter((other) => other.binding !== store.binding);
@@ -27,17 +33,17 @@ export function drivePane(id: string, doc: DocumentIdentity, state: Partial<Modu
   const files = (state.files ?? []).filter((file) => file.store === side);
   return screen(key, {
     toolbar: [
-      text(`${key}/letter`, S.tfs(LETTER[side] ?? LETTER.host!), ["workspace-drive-title"]),
+      text(`${key}/letter`, S.tfs(driveLetter(driveOf(store))), ["workspace-drive-title"]),
       text(`${key}/name`, labelText(store.label), ["hint"]),
     ],
-    body: files.length ? files.map((file, index) => fileRow(id, doc, `${key}/file/${index}`, file, side, active, destinations))
+    body: files.length ? files.map((file, index) => fileRow(id, doc, `${key}/file/${index}`, file, side, active, destinations, copyLabel))
       : [text(`${key}/empty`, S.tfs("ui.workspace.empty"), ["hint"])],
     footer: [Stack(`${key}/foot`, some(
       full ? text(`${key}/full`, S.tfs("ui.workspace.full"), ["workspace-drive-full"]) : null,
       text(`${key}/capacity`, S.storeUse(store.used, store.capacity, store.count, store.count_cap), ["hint"]),
       createFilePress(id, store, state.create?.[side] ?? [], active),
-      side === "media" ? press(`${key}/eject`, S.tfs("ui.workspace.eject"),
-        guard(id, documentAction(doc, "toggle", { field: "media_eject", option: store.binding }), "media"),
+      driveOf(store) === "media" ? press(`${key}/eject`, S.tfs("ui.workspace.eject"),
+        guard(id, documentAction(doc, "toggle", { field: "media_eject", option: store.binding }), side),
         { submit: bodyId(id), disabled: !active }) : null,
     ), { dir: "column", gap: 4, cls: ["grow"] })],
   }, { cls: ["workspace-frame"] });
@@ -47,17 +53,18 @@ export function drivePane(id: string, doc: DocumentIdentity, state: Partial<Modu
  *  on the next. Eight nodes and no inline style: two full drives stand
  *  at the tree's node and byte budgets, so the rows wear classes and the
  *  read-only mark is one text in the chip's clothes rather than the
- *  kit's three-node `Chip`. One copy press per other drive; with two, each
- *  names its letter and its id its side (`copy-<side>`). */
+ *  kit's three-node `Chip`. One copy press per other drive; with two, or
+ *  on a contact, each names its destination and its id its side. */
 function fileRow(
   id: string, doc: DocumentIdentity, item: string, file: FileRow, side: string,
-  active: boolean, destinations: StoreRow[],
+  active: boolean, destinations: StoreRow[], copyLabel?: (destination: StoreRow) => string,
 ): UiNode {
   const option = `${side}:${file.uid}:${file.binding}`;
-  const several = destinations.length > 1;
+  const several = destinations.length > 1 || copyLabel !== undefined;
   const copies = destinations.map((destination) => press(
     several ? `${item}/copy-${destination.key}` : `${item}/copy`,
-    several ? S.tfs(COPY_TO[destination.key ?? "host"] ?? COPY_TO.host!) : S.COPY,
+    copyLabel ? copyLabel(destination)
+      : several ? S.tfs(COPY_TO[driveOf(destination)] ?? COPY_TO.host!) : S.COPY,
     documentAction(doc, "text", { field: "file_copy", option: `${option}:${destination.binding}`, text: file.name }),
     { disabled: !active },
   ));

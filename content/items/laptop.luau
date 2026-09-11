@@ -67,6 +67,7 @@ content.actions = {
         visible = { ["not"] = action_rules.fact("held.state", "on") },
         target = action_rules.fact("target.has_programming_interface", true),
         held = false, suggest = true,
+        suggest_implement = { item = "laptop", state = "on" },
     },
     {
         id = "insert_disk", gesture = "primary", route = "receiver", uses_held = true,
@@ -226,7 +227,12 @@ if sim ~= nil then
         ui.open({
             viewer = ev.actor, owner = target, contact = self, contact_state = "on",
             channel = "programming",
-            view = { kind = "programming", wallpaper = self.vars.laptop_wallpaper }, actions = {},
+            -- The laptop is the workspace's own bar; the window names the target.
+            view = {
+                kind = "programming", wallpaper = self.vars.laptop_wallpaper,
+                tool = { name = self.name, sprite = content.state_sprites[self.state] },
+            },
+            actions = {},
             include_native = true,
         })
         return true

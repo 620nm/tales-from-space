@@ -16,7 +16,7 @@ import type {
 import { documentAction } from "./document-action";
 import { moduleBody } from "./documents-modules";
 import { shelfRows } from "./documents-shelf";
-import { computerPane, desktopPane, isDesktop, lockParts, programmingWallpaper } from "./documents-desktop";
+import { computerPane, desktopPane, isDesktop, lockParts, programmingTool, programmingWallpaper } from "./documents-desktop";
 import { filePanes, guard, retainOpenFileBuffers } from "./files";
 import { bind, column, entry, icon, press, row, screen, some, text } from "./view";
 import * as S from "./strings";
@@ -62,8 +62,11 @@ export function documents(view: GameplayView): UiNode[] {
       const module = state as Partial<ModuleState>;
       if (module.script && isDesktop(module.script.data))
         return desktopPane(id, doc, module.script, active, module);
-      if (module.contact_locked) return computerPane(id, lockParts(id, doc, module, active), programmingWallpaper(module.script?.data));
-      if (module.stores) return computerPane(id, filePanes(id, doc, module, active), programmingWallpaper(module.script?.data));
+      // A contact's workspace wears the tool it is worked through; the
+      // window's own frame (below) still names the target it reaches.
+      const tool = programmingTool(module.script?.data);
+      if (module.contact_locked) return computerPane(id, lockParts(id, doc, module, active, tool), programmingWallpaper(module.script?.data));
+      if (module.stores) return computerPane(id, filePanes(id, doc, module, active, [], tool), programmingWallpaper(module.script?.data));
       width = WIDTH[module.presentation ?? "modules"] ?? WIDTH.modules;
       body = [
         ...moduleBody(id, doc, module, active, false, false),

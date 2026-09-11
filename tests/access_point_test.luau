@@ -196,7 +196,11 @@ t.run_ticks(40)
 local box = t.target_at(p, 4, 1, "access_point")
 local hinted = false
 for _, action in ipairs(t.action_hints(p, { Entity = box })) do
-    if action.id == "needs_laptop" then hinted = true end
+    if action.id == "needs_laptop" then
+        hinted = true
+        assert(action.implement and action.implement.sprite == "laptop_on",
+            "the hint pictures an open, powered laptop")
+    end
 end
 assert(hinted, "a bare hand reads that the box wants a laptop")
 local _ = t.messages(p)

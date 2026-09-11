@@ -58,6 +58,8 @@ return {
             permission = { ["not"] = { fact = "held.proto", value = "laptop" } },
             held = { fact = "held.proto", value = "laptop" },
             suggest = true,
+            -- Pictured as the laptop that connects: open and powered.
+            suggest_implement = { item = "laptop", state = "on" },
         },
     },
     -- WHAT IT LOOKS LIKE IS WHAT IT IS DOING, and tg has the art for
