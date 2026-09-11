@@ -32,6 +32,9 @@ export const documentRules: UiStyleRule[] = [
   // A document window: a head strip that reads as part of the title bar.
   rule("doc-pane", { padding: 0, gap: 0, maxWidth: "100%", backgroundColor: surface, border: edge(titleLine), borderRadius: 5, overflow: "hidden" }),
   rule("doc-heading", { fontSize: 15, fontWeight: 700, color: ink, minWidth: 0 }),
+  // A device's heading carries its address and link state, small.
+  rule("doc-head", { alignItems: "center", gap: 8, minWidth: 0 }),
+  rule("doc-heading-meta", { fontFamily: "mono", fontSize: 11, color: dim, whiteSpace: "nowrap" }),
   rule("doc-status", { fontSize: 11, color: dim }),
   rule("doc-unavailable", { fontSize: 11, color: ink }),
   rule("toolbar", { padding: 12, borderBottom: edge(titleLine) }, { within: "doc-pane" }),

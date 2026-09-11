@@ -15,6 +15,10 @@ import * as S from "./strings";
 const LETTER: Record<string, string> = { host: "ui.workspace.drive_a", media: "ui.workspace.drive_b" };
 const COPY_TO: Record<string, string> = { host: "ui.files.copy_to_a", media: "ui.files.copy_to_b" };
 
+/** Where a drive's files copy to: the store the opposite pane shows, the
+ *  press's id suffix, and its caption. */
+export interface CopyTarget { store: StoreRow; suffix: string; label: string }
+
 export function driveLetter(drive?: string): string {
   return LETTER[drive ?? "host"] ?? LETTER.host!;
 }
@@ -24,11 +28,15 @@ function driveOf(store: StoreRow): string {
   return store.drive ?? (store.key === "media" ? "media" : "host");
 }
 
+/** A plain desktop's copy into its other drive, named by that letter. */
+export function plainCopy(store: StoreRow): CopyTarget {
+  return { store, suffix: "copy", label: S.tfs(COPY_TO[driveOf(store)] ?? COPY_TO.host!) };
+}
+
 export function drivePane(id: string, doc: DocumentIdentity, state: Partial<ModuleState>, store: StoreRow,
-  active: boolean, copyLabel?: (destination: StoreRow) => string): UiNode {
+  active: boolean, copy?: CopyTarget): UiNode {
   const side = store.key ?? "host";
   const key = `${id}/drive/${side}`;
-  const destinations = (state.stores ?? []).filter((other) => other.binding !== store.binding);
   const full = store.used >= store.capacity || store.count >= store.count_cap;
   const files = (state.files ?? []).filter((file) => file.store === side);
   return screen(key, {
@@ -36,7 +44,7 @@ export function drivePane(id: string, doc: DocumentIdentity, state: Partial<Modu
       text(`${key}/letter`, S.tfs(driveLetter(driveOf(store))), ["workspace-drive-title"]),
       text(`${key}/name`, labelText(store.label), ["hint"]),
     ],
-    body: files.length ? files.map((file, index) => fileRow(id, doc, `${key}/file/${index}`, file, side, active, destinations, copyLabel))
+    body: files.length ? files.map((file, index) => fileRow(id, doc, `${key}/file/${index}`, file, side, active, copy))
       : [text(`${key}/empty`, S.tfs("ui.workspace.empty"), ["hint"])],
     footer: [Stack(`${key}/foot`, some(
       full ? text(`${key}/full`, S.tfs("ui.workspace.full"), ["workspace-drive-full"]) : null,
@@ -53,21 +61,13 @@ export function drivePane(id: string, doc: DocumentIdentity, state: Partial<Modu
  *  on the next. Eight nodes and no inline style: two full drives stand
  *  at the tree's node and byte budgets, so the rows wear classes and the
  *  read-only mark is one text in the chip's clothes rather than the
- *  kit's three-node `Chip`. One copy press per other drive; with two, or
- *  on a contact, each names its destination and its id its side. */
+ *  kit's three-node `Chip`. One copy press, into the opposite pane's
+ *  drive, and none while that pane shows no drive. */
 function fileRow(
   id: string, doc: DocumentIdentity, item: string, file: FileRow, side: string,
-  active: boolean, destinations: StoreRow[], copyLabel?: (destination: StoreRow) => string,
+  active: boolean, copy?: CopyTarget,
 ): UiNode {
   const option = `${side}:${file.uid}:${file.binding}`;
-  const several = destinations.length > 1 || copyLabel !== undefined;
-  const copies = destinations.map((destination) => press(
-    several ? `${item}/copy-${destination.key}` : `${item}/copy`,
-    copyLabel ? copyLabel(destination)
-      : several ? S.tfs(COPY_TO[driveOf(destination)] ?? COPY_TO.host!) : S.COPY,
-    documentAction(doc, "text", { field: "file_copy", option: `${option}:${destination.binding}`, text: file.name }),
-    { disabled: !active },
-  ));
   return column(item, [
     row(`${item}/head`, some(
       icon(`${item}/icon`, `file_${file.ext}`),
@@ -77,7 +77,9 @@ function fileRow(
     ), { cls: ["workspace-file-head"] }),
     row(`${item}/actions`, some(
       file.fixed ? text(`${item}/read-only`, S.tfs("ui.files.read_only"), ["chip", "chip-key"]) : null,
-      ...copies,
+      copy ? press(`${item}/${copy.suffix}`, copy.label,
+        documentAction(doc, "text", { field: "file_copy", option: `${option}:${copy.store.binding}`, text: file.name }),
+        { disabled: !active }) : null,
       file.fixed ? null : press(`${item}/delete`, S.DELETE, guard(id, documentAction(doc, "toggle", { field: "file_delete", option }), side),
         { submit: bodyId(id), variant: "danger", disabled: !active }),
     ), { cls: ["workspace-file-actions"] }),

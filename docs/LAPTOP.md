@@ -94,19 +94,23 @@ closed documents cancel pending continuations.
 ## Contact programming
 
 Use an open, powered laptop on a reachable device with a configured programming
-interface to open its workspace over the laptop's wallpaper. The workspace
-carries the target's own panel rows — its network address, roster, join
-candidates, lock and parts — above the drives. The workspace's bar shows the
-laptop it is worked through; the window's title names the device. Its two
-sides each switch between their own drives: the laptop's A: (its storage) and
-B: (its disk slot), and the device's A: and, where it has a disk slot, B:.
-Copy works between any two drives on either side; only files on the device's
-A: run in its program slots.
+interface to open its workspace over the laptop's wallpaper. The window's
+title shows the laptop it is worked through; the workspace's bar names the
+device with its address and whether it is online. The device's own panel rows
+— roster, join candidates, lock, parts and program slots — sit under the
+bar's Details press, shut until opened; members and candidates read as cards
+naming each device, its address and whether it is online. The device's side
+stands on the left and the laptop's on the right, each switching between its
+own drives: the device's A: and, where it has a disk slot, B:, and the
+laptop's A: (its storage) and B: (its disk slot). Each file has one Copy
+press, into the drive the other side shows; only files on the device's A: run
+in its program slots.
 
 A closed laptop says its lid needs opening and an open, unpowered one says to
 turn it on; neither connects. A target whose lock is shut opens on a lock
 screen. Unlock checks the access the user carries, worn or in either hand; a
-refusal is recorded, and success opens the same workspace. Shutting the lock
+refusal is recorded and shows that user an Access denied dialog until OK, and
+success opens the same workspace. Shutting the lock
 from the workspace returns it to the lock screen.
 
 An access point has no panel of its own and no disk slot. A bare hand or any
