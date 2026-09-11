@@ -245,7 +245,7 @@
             "requirements": [],
             "style": null,
             "presentation_group": null,
-            "unavailable_reason": {
+            "detail": {
               "key": "lunatic/tfs:ui.look.out_of_range",
               "args": {}
             }

@@ -52,8 +52,8 @@ function hoverCard(hover: NonNullable<GameplayView["state"]["hover"]>,
         S.tfs(requirement.count > 1 ? "ui.look.requires_quantity" : "ui.look.requires", {
           item: actionText(requirement.label), quantity: String(requirement.count),
         }), ["hover-requirement"])),
-      ...(hint.unavailable_reason
-        ? [text(`hover/reason/${hint.id}`, actionText(hint.unavailable_reason), ["hover-requirement"])] : []),
+      ...(hint.detail
+        ? [text(`hover/detail/${hint.id}`, actionText(hint.detail), ["hover-requirement"])] : []),
     ], { cls: ["hover-row"] }));
   }
   // The header's image and every hint's key cell are both the first

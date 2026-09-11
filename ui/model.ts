@@ -18,7 +18,9 @@ export interface HoverAction {
   order?: number;
   presentation_group?: string | null;
   requirements?: { label: ActionLabel; sprite?: string | null; count: number }[];
-  unavailable_reason?: ActionLabel | null;
+  /** Second line: why a disabled row cannot run, or how an available one
+   *  is invoked ("In other hand"). */
+  detail?: ActionLabel | null;
 }
 
 // Consumed projections: lunatic crates/lunatic-client/src/ui/mod.rs and
