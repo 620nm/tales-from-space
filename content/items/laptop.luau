@@ -207,7 +207,9 @@ if sim ~= nil then
     -- screen and widens once it opens (the engine's docs/pack-ui/server.md).
     behavior:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local self, target = ev.subject, ev.claim and ev.claim.entity
-        if target == nil or sim.link_state(target) == nil then
+        -- The `connect` row's own fact: anything else keeps its ordinary click.
+        local link = target and sim.link_state(target)
+        if link == nil or not link.programming then
             return { replaced = false }
         end
         local missing = unready(self)
