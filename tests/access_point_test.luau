@@ -234,6 +234,9 @@ for _, r in ipairs(panel.readouts or {}) do
     if word(r.section) == "parts.parts" or word(r.label) == "parts.tier" then parts = true end
 end
 assert(parts, "and the parts it was built from ride beside them")
+assert(panel.media_slot == nil, "the box has no disk slot")
+local creatable = panel.create and panel.create.host or {}
+assert(#creatable == 1 and creatable[1] == "disl", "and its A: makes guest source only")
 laptop.close(p)
 
 -- ---------------------------------------------------------------
