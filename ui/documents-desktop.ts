@@ -16,6 +16,24 @@ export function programmingWallpaper(data: Json | undefined): string | undefined
   if (!data || typeof data !== "object" || Array.isArray(data) || data.kind !== "programming") return undefined;
   return data.wallpaper === "wallpaper_moonlake" ? "wallpaper_moonlake" : "wallpaper_bliss";
 }
+/** A contact over a shut lock: the engine composes only the link rows
+ *  (`contact_locked`); Unlock is its lock row's own press, so access is
+ *  checked natively and success widens this same document. */
+export function lockParts(id: string, doc: DocumentIdentity, state: Partial<ModuleState>, active: boolean): ScreenParts {
+  const lock = state.toggles?.find((row) => row.field === "link_lock");
+  return {
+    toolbar: [Stack(`${id}/heading`, some(
+      icon(`${id}/machine-icon`, state.owner_sprite ?? doc.owner_sprite, state.name ?? doc.title),
+      text(`${id}/machine-name`, state.name ?? doc.title, ["workspace-machine-name", "grow"]),
+      text(`${id}/machine-status`, tfs("ui.workspace.locked"), ["hint"]),
+    ), { align: "center", gap: 6, cls: ["workspace-frame"], style: { width: "100%" } })],
+    body: [Stack(`${id}/lock`, some(
+      text(`${id}/lock/hint`, tfs("ui.workspace.locked_hint"), ["workspace-offline"]),
+      lock ? press(`${id}/toggle/link_lock/switch`, tfs("ui.workspace.unlock"),
+        documentAction(doc, "toggle", { field: "link_lock" }), { disabled: !active }) : null,
+    ), { dir: "column", gap: 8, align: "center", cls: ["workspace-frame"] })],
+  };
+}
 export function desktopPane(id: string, doc: DocumentIdentity, state: Partial<ScriptState>, active: boolean, native?: Partial<ModuleState>): UiNode {
   const data = state.data as Json & DesktopData;
   const wallpaper = data.wallpaper === "wallpaper_moonlake" ? "wallpaper_moonlake" : "wallpaper_bliss";

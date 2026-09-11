@@ -27,19 +27,21 @@ function controls.press(p, suffix, gesture, scope)
     t.ui_press(p, node.id, gesture)
 end
 
-function controls.toggle(p, field, option)
-    local scope = assert(t.ui_document(p), "no default document observed")
+-- `channel` names a script channel's document ("programming" for a laptop
+-- contact); nil is the default document.
+function controls.toggle(p, field, option, channel)
+    local scope = assert(t.ui_document(p, channel), "no document observed")
     local suffix = "/toggle/" .. field .. "/" .. (option == nil and "switch" or tostring(option))
     if controls.find(p, suffix, scope) then controls.press(p, suffix, nil, scope); return end
     local selected = nil
     if option ~= nil then selected = tostring(option) end
-    for index, row in ipairs((t.ui(p) or {}).toggles or {}) do
+    for index, row in ipairs((t.ui(p, channel) or {}).toggles or {}) do
         if row.field == field and row.option == selected then
             controls.press(p, "/toggle-index/" .. (index - 1), nil, scope)
             return
         end
     end
-    for index, row in ipairs((t.ui(p) or {}).labels or {}) do
+    for index, row in ipairs((t.ui(p, channel) or {}).labels or {}) do
         if row.row == "press" and row.field == field and row.option == selected then
             controls.press(p, "/label/" .. (index - 1) .. "/press", nil, scope)
             return

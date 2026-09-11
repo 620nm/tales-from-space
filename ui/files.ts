@@ -22,6 +22,7 @@ export { retainOpenFileBuffers, pollContinuation, guard } from "./files-buffer";
 export function filePanes(id: string, doc: DocumentIdentity, state: Partial<ModuleState>, active: boolean, controls: UiNode[] = []): ScreenParts {
   const host = state.stores?.find((store) => store.key === "host");
   const media = state.stores?.find((store) => store.key === "media");
+  const contact = state.stores?.find((store) => store.key === "contact");
   const heading = Stack(`${id}/heading`, some(
     icon(`${id}/machine-icon`, state.owner_sprite ?? doc.owner_sprite, state.name ?? doc.title),
     text(`${id}/machine-name`, state.name ?? doc.title, ["workspace-machine-name", "grow"]),
@@ -38,14 +39,16 @@ export function filePanes(id: string, doc: DocumentIdentity, state: Partial<Modu
   const drives = {
     host: host ? drivePane(id, doc, state, host, active) : undefined,
     media: media ? drivePane(id, doc, state, media, active) : undefined,
+    contact: contact ? drivePane(id, doc, state, contact, active) : undefined,
   };
   // The reader takes what the tree has left: two full drives alone can
   // approach the budget, and one node over faults the whole desktop.
-  const spent = nodeCount(some(heading, information, drives.host ?? null, drives.media ?? null));
+  const spent = nodeCount(some(heading, information, drives.host ?? null, drives.media ?? null, drives.contact ?? null));
   const children = some(
     drives.host ?? null,
     editorPane(id, doc, state, active, TREE_NODES - TREE_RESERVE - spent),
     drives.media ?? null,
+    drives.contact ?? null,
   );
   const confirmation = editorGuard(id, doc, state, active);
   return {
@@ -58,11 +61,13 @@ export function filePanes(id: string, doc: DocumentIdentity, state: Partial<Modu
         ...(host ? [{ key: "host", initialWidth: 184, minWidth: 152 }] : []),
         { key: "editor", minWidth: 280, flexible: true },
         ...(media ? [{ key: "media", initialWidth: 184, minWidth: 152 }] : []),
+        ...(contact ? [{ key: "contact", initialWidth: 184, minWidth: 152 }] : []),
       ],
     } }],
     overlay: confirmation ? [confirmation] : some(
       host ? createFileDialog(id, doc, host, state.create?.host ?? [], active) : null,
       media ? createFileDialog(id, doc, media, state.create?.media ?? [], active) : null,
+      contact ? createFileDialog(id, doc, contact, state.create?.contact ?? [], active) : null,
     ),
   };
 }

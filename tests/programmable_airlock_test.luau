@@ -6,30 +6,35 @@ local operator = t.join()
 local visitor = t.join()
 t.run_ticks(20)
 local host = t.target_at(operator, 4, 3, "access_point")
-local laptop = t.target_at(operator, 3, 3, "laptop")
+local lap = t.target_at(operator, 3, 3, "laptop")
 assert(t.door_at(5, 3).bolted and not t.door_at(5, 3).open, "interior starts closed and bolted")
 assert(t.door_at(8, 3).open and not t.door_at(8, 3).bolted, "exterior starts open and unbolted")
 assert(t.room_pressure(6, 3) < 1, "the chamber starts evacuated")
 
--- The map joined every endpoint; release them all through the access point's panel.
+-- The map joined every endpoint to a host that boots locked. A laptop held
+-- against it meets the lock screen; unlocking goes straight to the members.
 local function members()
     local rows = {}
-    for _, row in ipairs(t.ui(operator).toggles or {}) do
+    for _, row in ipairs(laptop.ui(operator).toggles or {}) do
         if row.field == "link_drop" then table.insert(rows, row.option) end
     end
     return rows
 end
-t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
+laptop.ready(operator, 3, 3)
+local locked = laptop.connect(operator, 4, 3, host)
+assert(locked and locked.contact_locked, "the shipped host shows a laptop its lock screen first")
+assert(locked.stores == nil and #members() == 0, "with nothing behind the lock")
+laptop.unlock(operator)
 t.run_ticks(2)
-ui_controls.toggle(operator, "link_lock")
-t.run_ticks(2)
+assert(not laptop.ui(operator).contact_locked, "unlocking goes straight into the workspace")
 assert(#members() == 5, "the map joined two doors, two buttons and the vent: " .. #members())
 for dropped = 1, 5 do
-    ui_controls.toggle(operator, "link_drop", members()[1])
+    laptop.toggle(operator, "link_drop", members()[1])
     t.run_ticks(2)
     assert(#members() == 5 - dropped, "each release removes one member")
 end
-t.ui_close(operator)
+laptop.close(operator)
+t.drop(operator)
 t.run_ticks(2)
 local _ = t.messages(operator)
 t.click(operator, 2, 3, assert(t.target_at(operator, 2, 3, "airlock_button")))
@@ -37,22 +42,22 @@ t.run_ticks(2)
 local heard = table.concat(t.messages(operator), " | ")
 assert(heard:find("The button clicks, but nothing answers.", 1, true), "a released button has nobody to ask: " .. heard)
 
--- Rejoin the same endpoints from the ordinary panel; its lock is already open.
-t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
-t.run_ticks(2)
+-- Rejoin the same endpoints through the laptop; the lock is already open.
+laptop.take(operator, 3, 3)
+laptop.connect(operator, 4, 3, host)
 local joined = 0
 while true do
     local candidate
-    for _, row in ipairs(t.ui(operator).toggles or {}) do
+    for _, row in ipairs(laptop.ui(operator).toggles or {}) do
         if row.field == "link_join" and row.label.id == "link.candidate.endpoint" then candidate = row.option; break end
     end
     if not candidate then break end
-    ui_controls.toggle(operator, "link_join", candidate)
+    laptop.toggle(operator, "link_join", candidate)
     t.run_ticks(2)
     joined += 1
     if joined > 8 then
         local facts = {}
-        for _, row in ipairs(t.ui(operator).readouts or {}) do
+        for _, row in ipairs(laptop.ui(operator).readouts or {}) do
             table.insert(facts, tostring(row.label.id) .. "=" .. tostring(row.value.id or row.value.text))
         end
         for _, row in ipairs(t.ledger_rows("link_denied")) do table.insert(facts, "denied=" .. tostring(row.why)) end
@@ -60,33 +65,37 @@ while true do
     end
 end
 assert(joined == 5, "two doors, two buttons and one vent join the same host")
-t.ui_close(operator)
-t.run_ticks(2)
+laptop.close(operator)
 
--- Fit the source disk in the host, boot the laptop, then hold it against the host.
-t.click(operator, 3, 3, t.target_at(operator, 3, 3, "floppy_disk.atmos_stock"))
-t.run_ticks(2)
-t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
-t.run_ticks(2)
-for _ = 1, 3 do t.use_item(operator, laptop, "secondary"); t.run_ticks(2) end
-t.ui_close(operator)
-t.run_ticks(2)
-t.click(operator, 3, 3, assert(t.target_at(operator, 3, 3, laptop)))
-t.run_ticks(2)
-assert(t.hands(operator).held == "laptop", "programming uses the held powered laptop")
-t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
-t.run_ticks(2)
 local function workspace()
     local ui = t.ui(operator, "programming")
     assert(ui and ui.sockets, "the contact workspace belongs to the target")
     return ui
 end
-local function store(ui, side)
-    for _, row in ipairs(ui.stores) do if row.key == side then return row end end
-end
 local function file(ui, side)
     for _, row in ipairs(ui.files) do if row.store == side and row.name == "airlock" then return row end end
 end
+
+-- The distribution disk goes into the laptop, whose desktop copies its
+-- fixed original onto the laptop's own store: that store is L: in contact.
+t.drop(operator)
+t.run_ticks(2)
+t.click(operator, 3, 3, t.target_at(operator, 3, 3, "floppy_disk.atmos_stock"))
+t.run_ticks(2)
+t.click(operator, 3, 3, assert(t.target_at(operator, 3, 3, lap)))
+t.run_ticks(2)
+t.use_item(operator, assert(t.target_at(operator, 3, 3, lap)), "secondary")
+t.run_ticks(2)
+local disk = file(t.ui(operator), "media")
+assert(disk and disk.fixed, "the distribution disk contains a fixed original")
+t.run_ticks(10)
+ui_files.press(operator, disk, "copy")
+t.run_ticks(2)
+assert(file(t.ui(operator), "host"), "the laptop keeps an editable copy")
+t.ui_close(operator)
+t.run_ticks(2)
+laptop.take(operator, 3, 3)
+laptop.connect(operator, 4, 3, host)
 
 local ui = workspace()
 local shipped = file(ui, "host")
@@ -99,8 +108,8 @@ ui_files.press(operator, file(workspace(), "host"), "delete")
 t.run_ticks(2)
 assert(file(workspace(), "host") == nil, "the old copy is gone before the new one lands")
 ui = workspace()
-local original = file(ui, "media")
-assert(original and original.fixed, "the distribution disk contains a fixed original")
+local original = file(ui, "contact")
+assert(original and file(ui, "media") == nil, "L: carries the laptop's copy; the host has no disk slot")
 t.run_ticks(10)
 ui_files.press(operator, original, "copy")
 t.run_ticks(2)
@@ -227,7 +236,7 @@ assert(burst_count == 9, "all nine admitted presses survive batching and cross-b
 until_door(5, true, press_inside())
 
 -- Edit the installed source through the same contact and deny public requests.
-t.click(operator, 3, 3, assert(t.target_at(operator, 3, 3, laptop)))
+t.click(operator, 3, 3, assert(t.target_at(operator, 3, 3, lap)))
 t.run_ticks(2)
 t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
 t.run_ticks(2)
@@ -251,7 +260,7 @@ local refusal = table.concat(t.messages(visitor), " | ")
 assert(refusal:find("The controller refuses your airlock request.", 1, true), "the presser hears the refusal: " .. refusal)
 
 local function edit_program(body)
-    t.click(operator, 3, 3, assert(t.target_at(operator, 3, 3, laptop)))
+    t.click(operator, 3, 3, assert(t.target_at(operator, 3, 3, lap)))
     t.run_ticks(2)
     t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
     t.run_ticks(2)
@@ -306,22 +315,23 @@ local stopped = table.concat(t.messages(operator), " | ")
 assert(stopped:find("The controller has stopped the airlock cycle.", 1, true), "the presser hears the controller stop: " .. stopped)
 
 -- Cutting actual membership prevents requests reaching the installed guest.
-t.click(operator, 4, 3, assert(t.target_at(operator, 4, 3, host)))
-t.run_ticks(2)
+laptop.take(operator, 3, 3)
+laptop.connect(operator, 4, 3, host)
 local released = 0
 while true do
     local member
-    for _, row in ipairs(t.ui(operator).toggles or {}) do
+    for _, row in ipairs(laptop.ui(operator).toggles or {}) do
         if row.field == "link_drop" then member = row.option; break end
     end
     if not member then break end
-    ui_controls.toggle(operator, "link_drop", member)
+    laptop.toggle(operator, "link_drop", member)
     t.run_ticks(2)
     released += 1
     assert(released <= 5, "each release removes one member")
 end
 assert(released == 5, "all five endpoints leave the controller")
-t.ui_close(operator)
+laptop.close(operator)
+t.drop(operator)
 t.run_ticks(10)
 local isolated_runs = #t.ledger_rows("disl_run")
 press_inside()

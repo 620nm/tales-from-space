@@ -38,10 +38,28 @@ return {
     -- mechanism is what it SAYS about itself, and that lives in
     -- fixtures/access_point.luau.
     script = "access_point",
-    ui = { modules = { "link", "parts", "files", "editor" } },
+    -- NO WINDOW FOR A BARE HAND, and no disk slot: the interface is
+    -- reached through a held laptop (docs/LAPTOP.md), which carries the
+    -- files that used to ride a floppy in the box.
+    ui = { modules = { "link", "parts", "files", "editor" }, opens_on_click = false },
     files = { capacity = 65536, files = 16 },
-    drive = { reads = { "disl" }, accepts = { "floppy" } },
+    -- Reads guest source only; an empty `accepts` stands up no disk slot.
+    drive = { reads = { "disl" }, accepts = {} },
     sockets = { "controller" },
+    -- The hint a bare hand or any other tool reads on hover; the refusal
+    -- it answers speaks in fixtures/access_point.luau. A held laptop fails
+    -- `permission`, which is silent and admits nothing, so the laptop's own
+    -- `connect` row is the one that answers it (items/laptop.luau).
+    actions = {
+        {
+            id = "needs_laptop", gesture = "primary", route = "receiver",
+            label = "lunatic/tfs:ui.affordance.needs_laptop",
+            visible = { ["not"] = { fact = "held.proto", value = "laptop" } },
+            permission = { ["not"] = { fact = "held.proto", value = "laptop" } },
+            held = { fact = "held.proto", value = "laptop" },
+            suggest = true,
+        },
+    },
     -- WHAT IT LOOKS LIKE IS WHAT IT IS DOING, and tg has the art for
     -- it: this console drops to `[base_icon_state]_off` on NOPOWER
     -- (access_controller.dm:224-227) and otherwise draws standby
