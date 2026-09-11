@@ -207,7 +207,9 @@ module switches, setpoints, inputs and stocked products from the rendered
 pack interface. `ui_controls.build(p, item, recipe, x, y)` opens that
 interface, arms a disclosed recipe through its button, calls
 `t.place_build(p, x, y)`, then closes the window. Native placement accepts
-only the currently armed document and recipe. Negative UI specs assert
+only the currently armed document and recipe. `laptop` boots and takes a
+laptop, connects it to a device, and works the contact workspace's lock
+screen and rows under the `programming` channel. Negative UI specs assert
 absent or disabled controls.
 
 Each spec runs in a fresh trusted VM against a fresh headless Sim and

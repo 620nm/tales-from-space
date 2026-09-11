@@ -94,18 +94,30 @@ closed documents cancel pending continuations.
 ## Contact programming
 
 Use an open, powered laptop on a reachable device with a configured programming
-interface to open its workspace over the laptop's wallpaper. A: belongs to the
-target; B: is the disk inserted into that target. The laptop's own storage and
-inserted disk remain in its desktop and are not exposed in the contact workspace.
-Copy works between the target's stores; only files on A: run in its sockets.
-Switching hands, dropping or closing the laptop, losing reach, or the target
-losing power or access closes the contact workspace.
+interface to open its workspace over the laptop's wallpaper. The workspace
+carries the target's own panel rows — its network address, roster, join
+candidates, lock and parts — above the drives. A: belongs to the target; B: is
+a disk inserted into the target, where it has a slot; L: is the laptop's own
+storage. The laptop's inserted disk stays in its desktop. Copy works between
+any two listed drives; only files on A: run in the target's sockets.
+
+A closed laptop says its lid needs opening and an open, unpowered one says to
+turn it on; neither connects. A target whose lock is shut opens on a lock
+screen. Unlock checks the access the user carries, worn or in either hand; a
+refusal is recorded, and success opens the same workspace. Shutting the lock
+from the workspace returns it to the lock screen.
+
+An access point has no panel of its own and no disk slot. A bare hand or any
+other tool hovering it reads Connect with a laptop, and clicking it says a
+laptop is needed. Switching hands, dropping or closing the laptop, losing
+reach, or the target losing power closes the contact workspace.
 
 [Preset disks](scripting/reference-files.md) carry reference files ready to
 copy. The [airlock example](scripting/airlocks.md) includes a controller and
-instructions; insert its disk into the host, copy its source to A:, then load
-the socket. Network connectivity alone offers no laptop connection, and using
-the laptop on a device does not play a dummy typing sound.
+instructions; insert its disk into the laptop, copy its source to the laptop's
+A: on the desktop, then copy it from L: to the host's A: and load the socket.
+Network connectivity alone offers no laptop connection, and using the laptop on
+a device does not play a dummy typing sound.
 
 ## Reference
 

@@ -18,23 +18,23 @@ source authoring is in [reference-files.md](reference-files.md).
 
 A host commands its direct, joined, reachable members. Access points and air
 alarms offer an internal file store and a `controller` socket. To rebuild the
-network, open the access point's panel, open its lock, release members and
-rejoin them from its candidate list. A button joined to nothing says nobody
-answered. A host with an empty `controller` socket has no fallback program and
-says no program is loaded.
+network, hold an open, powered laptop and click the access point. Its lock
+boots shut, so the laptop first shows the lock screen; Unlock, then release
+members and rejoin them from the candidate list in the same workspace. A
+button joined to nothing says nobody answered. A host with an empty
+`controller` socket has no fallback program and says no program is loaded.
 
 The atmos stock disk (`floppy_disk.atmos_stock`) contains fixed originals of
 `airlock.disl` and `readme.md`, loaded by reference ID from
 `reference/manifest.ron`. To reinstall, use
 [laptop contact programming](../LAPTOP.md#contact-programming): insert the
-orange disk into the host, unlock the access point at its panel, then hold an
-open, powered laptop and click the host. A locked or unpowered host refuses the
-contact and says which. The host already holds the map's `airlock.disl`; a copy cannot take a name A
-already holds, and a bound file cannot be deleted. Unload `controller`, delete
-the old copy, copy the program from B (the host's inserted disk) to A (the
-host's internal store), then load the new copy into `controller`. Edit that
-copy in the same workspace. The laptop's own disk is absent from this contact
-workspace.
+orange disk into the laptop and copy `airlock.disl` from B: to the laptop's
+A: on its desktop, then hold the laptop and click the host. An unpowered host
+refuses the contact and says so. The host already holds the map's
+`airlock.disl`; a copy cannot take a name A already holds, and a bound file
+cannot be deleted. Unload `controller`, delete the old copy, copy the program
+from L: (the laptop's own store) to A: (the host's internal store), then load
+the new copy into `controller`. Edit that copy in the same workspace.
 
 The demonstration also supplies a `disk_box` with eight blank floppy disks.
 Its ordinary storage holds the disks loose, without tgstation's individual
