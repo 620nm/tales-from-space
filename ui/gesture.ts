@@ -15,7 +15,7 @@ const SQUARE = [0, 2, 1];
 export type Gesture = { id: string; keys: string[]; button: number; rank: number };
 
 /** The id as its keys, its button and its rank, or null for a name that
- *  is no pointer slot: `self`, or a spelling nothing declares. */
+ *  is no pointer slot: `self`, `other`, or a spelling nothing declares. */
 export function parse(id: string): Gesture | null {
   const parts = id.split("_");
   const button = BUTTONS.indexOf(parts[parts.length - 1] ?? "");
@@ -44,12 +44,18 @@ export function fromEvent(
 }
 
 /** Where a row sits in the card: the bare click, then the use key, then
- *  every pointer gesture by rank — the order the server already sent. */
+ *  the use-on-other-hand key, then every pointer gesture by rank — the
+ *  order the server already sent. */
 export function order(name: string): number {
   if (name === "primary") return 0;
   if (name === "self") return 1;
-  return 2 + (parse(name)?.rank ?? 0);
+  if (name === "other") return 2;
+  return 3 + (parse(name)?.rank ?? 0);
 }
+
+/** The host binding a key-only gesture is drawn with: `self` is the use
+ *  key, `other` the use-on-other-hand key. */
+const KEY_BINDINGS: Record<string, string> = { self: "use_self", other: "use_other" };
 
 /** How many keys a row's rail must fit. The card sizes one rail off the
  *  widest row and gives it to every row, so the left edges stay one edge. */
@@ -64,8 +70,11 @@ export function gesture(id: string, name: string, tight = false, bindings?: Reco
   const shape = parse(name);
   const children = (shape?.keys ?? [])
     .map((key) => text(`${id}/${key}`, S.tfs(`ui.key.${key}`), keyCls));
-  if (!shape) children.push(...(name === "self" ? bindings?.use_self ?? [] : [])
-    .map((key, index) => text(`${id}/binding/${index}`, key, keyCls)));
+  if (!shape) {
+    const binding = KEY_BINDINGS[name];
+    children.push(...(binding ? bindings?.[binding] ?? [] : [])
+      .map((key, index) => text(`${id}/binding/${index}`, key, keyCls)));
+  }
   else {
     // All three buttons are drawn and the gesture's own one is lit, so a
     // glance says which part of the mouse the verb is on.
