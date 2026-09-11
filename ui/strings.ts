@@ -83,10 +83,11 @@ export const storageTitle = (label: string): string =>
   tfs("ui.tray.storage_of", { label });
 export const extension = (ext: string): string => tfs("ui.files.extension", { ext });
 export const UNLOAD = tfs("ui.files.unload");
-export const socketLoad = (file: string): string =>
-  tfs("ui.files.socket_load", { file });
-export const socketStats = (runs: number, faults: number): string =>
-  tfs("ui.files.socket_stats", { runs, faults });
+export const PROGRAM = tfs("ui.files.program");
+export const programLoad = (file: string): string =>
+  tfs("ui.files.program_load", { file });
+export const programStats = (runs: number, faults: number): string =>
+  tfs("ui.files.program_stats", { runs, faults });
 export const fileName = (name: string, ext: string): string =>
   tfs("ui.files.name", { name, ext });
 export const fileTitle = (name: string, ext: string, dirty: boolean): string =>

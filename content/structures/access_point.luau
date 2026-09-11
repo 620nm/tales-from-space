@@ -45,7 +45,7 @@ return {
     files = { capacity = 65536, files = 16 },
     -- Reads guest source only; an empty `accepts` stands up no disk slot.
     drive = { reads = { "disl" }, accepts = {} },
-    sockets = { "controller" },
+    program_slots = { "controller" },
     -- The hint a bare hand or any other tool reads on hover; the refusal
     -- it answers speaks in fixtures/access_point.luau. A held laptop fails
     -- `permission`, which is silent and admits nothing, so the laptop's own

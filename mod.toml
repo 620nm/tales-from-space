@@ -62,8 +62,8 @@ replace_handlers = true
 prototype_handlers = true
 global_handlers = true
 notify_audience = true
-# The transceiver hosts guest scripts: its `carry` socket compiles and
-# runs player-authored .disl files (content/lib/socket.luau).
+# The transceiver hosts guest scripts: its `carry` program slot compiles
+# and runs player-authored .disl files (content/lib/program_slot.luau).
 disl_host = true
 
 # This pack spells no sentence: every player-visible line it sends names

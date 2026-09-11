@@ -65,15 +65,15 @@ function files.rename(p, name)
     t.ui_edit(p, node(p, "/editor/name").id, name)
     press(p, "/editor/rename-button")
 end
-function files.socket(p, socket, uid)
-    for index, row in ipairs(state(p).sockets or {}) do
-        if row.id == socket then
-            if uid == nil then press(p, "/socket/" .. (index - 1) .. "/unload"); return end
+function files.program(p, slot, uid)
+    for index, row in ipairs(state(p).program_slots or {}) do
+        if row.id == slot then
+            if uid == nil then press(p, "/program/" .. (index - 1) .. "/unload"); return end
             local load = 0
             for _, file in ipairs(state(p).files or {}) do
                 if file.store == "host" and file.ext == "disl" then
                     if tostring(file.uid) == tostring(uid) then
-                        press(p, "/socket/" .. (index - 1) .. "/load/" .. load)
+                        press(p, "/program/" .. (index - 1) .. "/load/" .. load)
                         return
                     end
                     load += 1
@@ -81,6 +81,6 @@ function files.socket(p, socket, uid)
             end
         end
     end
-    error("socket file is not offered")
+    error("program file is not offered")
 end
 return files

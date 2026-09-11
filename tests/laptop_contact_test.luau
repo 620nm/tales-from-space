@@ -21,7 +21,7 @@ local target = t.target_at(p, 2, 1)
 
 local function workspace()
     local ui = t.ui(p, "programming")
-    assert(ui and ui.sockets and #ui.sockets == 1, "contact opens the target's socket workspace")
+    assert(ui and ui.program_slots and #ui.program_slots == 1, "contact opens the target's program workspace")
     return ui
 end
 local function store(ui, side)
@@ -142,9 +142,9 @@ local target_file = assert(file(ui, "host", "target_program"), "copy places a pr
 ui_files.press(p, target_file, "open")
 t.run_ticks(2)
 assert(workspace().open.body == "return { pass = true }", "the copied bytes arrive whole")
-ui_files.socket(p, "carry", target_file.uid)
+ui_files.program(p, "carry", target_file.uid)
 t.run_ticks(2)
-assert(workspace().sockets[1].uid == target_file.uid, "target socket binds its host copy")
+assert(workspace().program_slots[1].uid == target_file.uid, "target slot loads its host copy")
 t.run_ticks(10)
 ui_files.save(p, "return { pass = false }")
 t.run_ticks(2)
@@ -169,9 +169,9 @@ assert(store(workspace(), "media") == nil, "eject removes the target disk from t
 local copied = #t.ledger_rows("file_copied")
 assert(not pcall(function() t.ui_press(p, stale_copy_control) end), "removed disk exposes no copy control")
 assert(#t.ledger_rows("file_copied") == copied, "an ejected disk cannot supply a stale copy")
-ui_files.socket(p, "carry")
+ui_files.program(p, "carry")
 t.run_ticks(2)
-assert(workspace().sockets[1].state.id == "sockets.state.unbound", "contact unloads the target socket")
+assert(workspace().program_slots[1].state.id == "program_slots.state.empty", "contact unloads the target slot")
 
 t.swap_hands(p)
 t.run_ticks(20)
