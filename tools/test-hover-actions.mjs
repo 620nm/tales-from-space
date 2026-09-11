@@ -61,6 +61,19 @@ test("only bound self-use keys render, including long localized chords", () => {
   const grid = UI.overlayRules.find((rule) => rule.class === "hover-actions");
   assert.deepEqual(grid.props.gridTemplateColumns, ["auto", "1fr"]);
 });
+test("other-hand rows show the use_other keys, the implement and their detail line", () => {
+  const floppy = { name: { key: "", text: "floppy" }, sprite: "floppy_disk", suggested: false };
+  const action = descriptor("other/insert_disk", { gesture: "other", implement: floppy,
+    label: { key: "lunatic/tfs:ui.affordance.insert_disk", args: {} },
+    detail: { key: "", text: "In other hand" } });
+  const keys = (nodes) => nodes.filter((node) => node.id.startsWith("hover/key/other/insert_disk/binding/"));
+  assert.equal(keys(render([action], { use_self: ["P"] })).length, 0);
+  const nodes = render([action], { use_self: ["P"], use_other: ["Shift", "P"] });
+  assert.deepEqual(keys(nodes).map((node) => node.text), ["Shift", "P"]);
+  assert.equal(icons(nodes)[0].asset, "floppy_disk");
+  assert.equal(nodes.find((node) => node.id === "hover/detail/other/insert_disk").text, "In other hand");
+  assert(!nodes.find((node) => node.id === "hover/key/other/insert_disk").class?.includes("hover-unavailable"));
+});
 test("pack group, style, requirements and order stay data-driven", () => {
   const nodes = render([descriptor("second", { order: 2 }), descriptor("wire_frame", {
     order: 1, style: "construction", presentation_group: "lunatic/tfs:ui.look.role",
