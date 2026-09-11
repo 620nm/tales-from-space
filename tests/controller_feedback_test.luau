@@ -128,11 +128,13 @@ t.run_ticks(2)
 assert(t.hands(p).held == "laptop", "the closed laptop is in hand")
 local function offers(id)
     for _, action in ipairs(t.action_hints(p, { Entity = t.target_at(p, 4, 1, "access_point") })) do
-        if action.id == id then return true end
+        if action.id == id then return action end
     end
-    return false
+    return nil
 end
 assert(offers("connect_not_ready") and not offers("connect"), "the hint names the laptop as not ready")
+assert(offers("connect_not_ready").implement.sprite == "laptop_on",
+    "and pictures the laptop as it must be: open and powered")
 assert(not offers("needs_laptop"), "a held laptop is not told to fetch one")
 local function refused_with(line, why)
     local _ = t.messages(p)
@@ -161,6 +163,7 @@ lines = refused_with(OFF, "an open, dark laptop names its power once")
 assert(not said(lines, LID), "and not its lid")
 step()
 assert(offers("connect") and not offers("connect_not_ready"), "a running laptop offers the real connection")
+assert(offers("connect").implement.sprite == "laptop_on", "pictured as the running laptop in hand")
 
 -- The box ships locked: the running laptop opens on its lock screen, and
 -- the lock row's own press lets it straight into the workspace.
