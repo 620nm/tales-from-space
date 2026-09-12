@@ -1,0 +1,44 @@
+{
+  "note": "A ready draft locks all setup controls while the authoritative countdown remains visible.",
+  "viewport": { "width": 1024, "height": 768, "dpr": 1 },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 4,
+    "body": false,
+    "state": {
+      "round": {
+        "round": 12,
+        "phase": "preparing",
+        "remaining_seconds": 97,
+        "ready": 1,
+        "connected": 2,
+        "paused": false,
+        "waiting": false,
+        "fault": null
+      },
+      "preparation": {
+        "round": 12,
+        "revision": 4,
+        "draft": { "name": "Mira Pike", "ranked_jobs": ["engineer", "assistant"], "fallback": true },
+        "ready": true,
+        "can_edit": false,
+        "can_ready": false,
+        "fallback_job": "assistant",
+        "issue": null
+      },
+      "preparationPending": false,
+      "jobs": {
+        "jobs": [
+          { "key": "assistant", "name": "Assistant", "taken": 2, "slots": 3 },
+          { "key": "engineer", "name": "Engineer", "taken": 1, "slots": 2 },
+          { "key": "doctor", "name": "Doctor", "taken": 0, "slots": 2 }
+        ]
+      }
+    },
+    "log": [
+      { "kind": "ooc", "name": "A7K2", "text": "Draft submitted." }
+    ],
+    "documents": {}
+  }
+}

@@ -26,10 +26,13 @@ local content = {
         respawn = "inanimate",
         body = "human",
         infinite_vending = false,
-        -- Plain pack data. The native mode loader reads six named keys
-        -- out of `rules` -- bodies, respawn, infinite_vending, outfit,
-        -- body, environment -- and never inspects another, so this file
-        -- and `lib/shift.luau` are the only readers this block has.
+        preparation = {
+            countdown_seconds = 120,
+            fallback_job = "assistant",
+        },
+        -- Plain pack data. The native mode loader reads the mode rules,
+        -- including preparation; `shift` remains pack policy read by this
+        -- file and `lib/shift.luau`.
         shift = shift_rules,
         environment = {
             rolls = {
@@ -54,6 +57,8 @@ if sim ~= nil then
     local behavior = sim.define("behavior", "lunatic/tfs:space_station_shift", {
         prototype = content.id,
     })
+
+    behavior:handle("round.allocate", { kind = "transform", route = "lifecycle" }, preparation.allocate)
 
     behavior:handle("clock.second", { kind = "react" }, function(ev)
         shift.on_second(shift_rules, ev)

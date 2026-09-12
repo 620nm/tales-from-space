@@ -1,0 +1,51 @@
+{
+  "note": "Round preparation keeps OOC on the left and the editable character setup on the right.",
+  "viewport": { "width": 1024, "height": 768, "dpr": 1 },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": false,
+    "state": {
+      "round": {
+        "round": 12,
+        "phase": "preparing",
+        "remaining_seconds": 120,
+        "ready": 0,
+        "connected": 2,
+        "paused": false,
+        "waiting": true,
+        "fault": null
+      },
+      "preparation": {
+        "round": 12,
+        "revision": 3,
+        "draft": { "name": "Mira", "ranked_jobs": ["assistant", "engineer"], "fallback": false },
+        "ready": false,
+        "can_edit": true,
+        "can_ready": true,
+        "fallback_job": "assistant",
+        "issue": null
+      },
+      "preparationStorage": { "available": true },
+      "jobs": {
+        "jobs": [
+          { "key": "assistant", "name": "Assistant", "taken": 0, "slots": 3 },
+          { "key": "engineer", "name": "Engineer", "taken": 1, "slots": 2 },
+          { "key": "doctor", "name": "Doctor", "taken": 0, "slots": 2 }
+        ]
+      }
+    },
+    "log": [
+      { "kind": "ooc", "name": "A7K2", "text": "Ready when you are." },
+      { "kind": "local", "name": "Station", "text": "This line stays out of the OOC column." }
+    ],
+    "documents": {}
+  },
+  "steps": [
+    { "type": "fill", "id": "preparation/name", "value": "Mira Pike", "expect": { "value": "Mira Pike", "actionCount": 1 } },
+    { "type": "click", "id": "preparation/ranked/engineer/up", "expect": { "visible": ["preparation/ranked/engineer/up"], "actionCount": 2 } },
+    { "type": "select", "id": "preparation/add", "value": "doctor", "expect": { "visible": ["preparation/add"], "actionCount": 3 } },
+    { "type": "click", "id": "preparation/ready", "expect": { "visible": ["preparation/ready"], "actionCount": 4 } }
+  ]
+}

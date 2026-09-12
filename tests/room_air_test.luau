@@ -63,7 +63,7 @@ local MAP = [==[
 )
 ]==]
 
-t.world(MAP)
+t.world(MAP, nil, "free_build")
 
 -- One recipe, two tiles, one answer. Read before a single tick, because
 -- after one the two are already exchanging with each other.

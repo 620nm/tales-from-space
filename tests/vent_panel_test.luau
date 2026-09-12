@@ -135,9 +135,8 @@ t.world(BENCH, 7)
 -- absorbs, so a corridor watched for minutes is not also bleeding heat
 -- into space and reading a kilopascal light on the gauge.
 t.set_environment({ sink_k = 293.15, insolation = 0 })
-t.tick()
-
 local p = t.join()
+t.tick()
 t.run_ticks(2)
 
 -- ---------------------------------------------------------------

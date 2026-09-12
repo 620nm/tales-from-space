@@ -53,7 +53,7 @@ t.world([==[(
         ),
     },
     painted: [(1, 1, "burning_mix"), (2, 1, "burning_mix"), (1, 2, "burning_mix"), (2, 2, "burning_mix")],
-)]==], 0)
+)]==], 0, "free_build")
 
 -- A sky at absolute zero with no star in it: the hull radiates and
 -- nothing comes back, which is how a chamber that has just been on

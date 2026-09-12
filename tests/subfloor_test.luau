@@ -63,6 +63,16 @@ t.world([==[(
 
 local p = t.join()
 t.tick()
+
+local function set_down_clear()
+    t.move(p, "south")
+    t.run_ticks(5)
+    t.drop(p)
+    t.run_ticks(2)
+    t.move(p, "north")
+    t.run_ticks(5)
+end
+
 assert(t.turf(2, 1) == "plating", "one tile is open")
 assert(t.turf(2, 2) == "floor", "and its neighbour is tiled over")
 assert(t.pipe(2, 2) == DISTRO, "the run passes under the tiled one")
@@ -95,8 +105,7 @@ assert(t.count_items("pipe") == 2, "the removed length returned as a one-piece i
 -- ---------------------------------------------------------------
 -- The wirecutters. Same rule, sabotage side.
 -- ---------------------------------------------------------------
-t.drop(p)
-t.run_ticks(2)
+set_down_clear()
 t.click(p, 3, 1, t.target_at(p, 3, 1, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
@@ -117,8 +126,7 @@ assert(t.count_items("cable_coil") == 2, "the cut line returned as a one-piece c
 -- ---------------------------------------------------------------
 -- Laying, both trades: no work is offered through a finished floor.
 -- ---------------------------------------------------------------
-t.drop(p)
-t.run_ticks(2)
+set_down_clear()
 t.click(p, 1, 3, t.target_at(p, 1, 3, "cable_coil")) -- the coil
 t.run_ticks(2)
 _ = t.messages(p)
@@ -134,8 +142,7 @@ assert(
     "the inapplicable cable handler does not execute"
 )
 
-t.drop(p)
-t.run_ticks(2)
+set_down_clear()
 t.click(p, 1, 2, t.target_at(p, 1, 2, "pipe")) -- the length of pipe
 t.run_ticks(2)
 _ = t.messages(p)
@@ -153,20 +160,33 @@ assert(
 -- ---------------------------------------------------------------
 -- Pry the tile up and the plumbing is ordinary work again.
 -- ---------------------------------------------------------------
-t.drop(p)
-t.run_ticks(2)
+set_down_clear()
 t.click(p, 3, 3, t.target_at(p, 3, 3, "crowbar")) -- the crowbar
 t.run_ticks(2)
 t.click(p, 2, 2, nil, -14, 14)
 t.run_ticks(2)
 assert(t.turf(2, 2) == "plating", "the tile came up")
 
+t.move(p, "south")
+t.run_ticks(5)
+local lifted = t.target_at(p, 2, 2, "floor_tile")
+assert(lifted ~= nil, "the pried tile is visible from beside it")
+t.click(p, 2, 2, lifted)
+t.run_ticks(2)
+t.swap_hands(p)
 t.drop(p)
 t.run_ticks(2)
+t.swap_hands(p)
+t.move(p, "north")
+t.run_ticks(5)
+
+set_down_clear()
 t.click(p, 3, 2, t.target_at(p, 3, 2, "wrench")) -- the spare wrench, kept clear of the pile at our feet
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "wrench in hand again")
 
+t.move(p, "south")
+t.run_ticks(5)
 t.click_subfloor(p, 2, 2, "pipe", DISTRO)
 t.run_seconds(1.5)
 assert(t.pipe(2, 2) == 0, "the same click that did nothing now pulls the run")

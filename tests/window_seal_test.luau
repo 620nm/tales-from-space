@@ -90,7 +90,7 @@ t.world([==[(
         (1, 2, "hot_chlorine"), (2, 2, "hot_chlorine"), (3, 2, "hot_chlorine"),
         (1, 3, "hot_chlorine"), (2, 3, "hot_chlorine"), (3, 3, "hot_chlorine"),
     ],
-)]==])
+)]==], nil, "free_build")
 check("windows-first")
 
 -- ---------------------------------------------------------------
@@ -124,5 +124,5 @@ t.world([==[(
         (1, 2, "hot_chlorine"), (2, 2, "hot_chlorine"), (3, 2, "hot_chlorine"),
         (1, 3, "hot_chlorine"), (2, 3, "hot_chlorine"), (3, 3, "hot_chlorine"),
     ],
-)]==])
+)]==], nil, "free_build")
 check("neighbour-first")

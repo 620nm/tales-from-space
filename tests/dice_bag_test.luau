@@ -143,6 +143,42 @@ assert(distinct >= 8, "and they are not all the same face: " .. distinct .. " of
 t.drop(p)
 t.tick()
 
+-- Clear the last rolled die from the pickup tile by carrying it away and
+-- dropping it, as a player would; its sprite can cover the d4.
+t.click(p, 1, 1, t.target_at(p, 1, 1, "d00"))
+t.tick()
+assert(t.hands(p).held == "d00", "the percentile die can be moved aside")
+t.move(p, "east")
+t.run_ticks(5)
+t.move(p, "east")
+t.run_ticks(5)
+t.drop(p)
+t.tick()
+t.move(p, "west")
+t.run_ticks(5)
+t.move(p, "west")
+t.run_ticks(5)
+
+local function move_aside(id)
+    local target = assert(t.target_at(p, 1, 1, id), id .. " is visible to move aside")
+    t.click(p, 1, 1, target)
+    t.tick()
+    assert(t.hands(p).held == id, id .. " can be moved aside")
+    t.move(p, "east")
+    t.run_ticks(5)
+    t.move(p, "east")
+    t.run_ticks(5)
+    t.drop(p)
+    t.tick()
+    t.move(p, "west")
+    t.run_ticks(5)
+    t.move(p, "west")
+    t.run_ticks(5)
+end
+for _, id in ipairs({ "d6", "d8", "d10", "d12", "d20" }) do
+    move_aside(id)
+end
+
 -- ---- the d4 says nothing, and that absence is the port -----------------
 -- tg only comments on a roll when `sides > MIN_SIDES_ALERT` (5,
 -- dice.dm:1-3, 90-91). Four is under it, so a d4 landing on 1 is
@@ -170,6 +206,19 @@ end
 assert(ones > 0, "forty rolls of a four-sider include a 1 to be silent about")
 
 -- ...where the d6 beside it, on the same branch, does say so.
+t.drop(p)
+t.tick()
+-- It was carried clear with the other dice; bring it back to the test tile.
+t.move(p, "east")
+t.run_ticks(5)
+t.move(p, "east")
+t.run_ticks(5)
+t.click(p, 3, 1, t.target_at(p, 3, 1, "d6"))
+t.tick()
+t.move(p, "west")
+t.run_ticks(5)
+t.move(p, "west")
+t.run_ticks(5)
 t.drop(p)
 t.tick()
 t.click(p, 1, 1, t.target_at(p, 1, 1, "d6"))

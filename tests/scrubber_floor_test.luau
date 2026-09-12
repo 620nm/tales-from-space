@@ -129,6 +129,7 @@ t.world(DEAD_SUPPLY, 7)
 -- kelvin reads a kilopascal light on the very gauge this file asserts
 -- against.
 t.set_environment({ sink_k = 293.15, insolation = 0 })
+local p = t.join()
 t.tick()
 
 local machine = t.structure_at(2, 1)
@@ -142,8 +143,6 @@ assert(
 
 -- What a silent placement actually got, read off the machine's own
 -- panel rather than assumed.
-local p = t.join()
-t.tick()
 t.click(p, 2, 1, t.target_at(p, 2, 1, "air_scrubber"))
 t.tick()
 local panel = t.ui(p)
@@ -247,7 +246,7 @@ local LIVE_SUPPLY = [==[(
     ],
 )]==]
 
-t.world(LIVE_SUPPLY, 7)
+t.world(LIVE_SUPPLY, 7, "free_build")
 t.set_environment({ sink_k = 293.15, insolation = 0 })
 t.tick()
 
@@ -296,7 +295,7 @@ local PURGE = string.gsub(
     '%(2, 1, "air_scrubber", "scrubbing"%)',
     '(2, 1, "air_scrubber", "siphoning", { "rate_lps": 200.0 })'
 )
-t.world(PURGE, 7)
+t.world(PURGE, 7, "free_build")
 t.set_environment({ sink_k = 293.15, insolation = 0 })
 t.tick()
 
@@ -372,7 +371,7 @@ local NAMED = [==[(
     ],
 )]==]
 
-t.world(NAMED, 7)
+t.world(NAMED, 7, "free_build")
 t.set_environment({ sink_k = 293.15, insolation = 0 })
 t.tick()
 

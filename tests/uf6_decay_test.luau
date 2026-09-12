@@ -79,7 +79,7 @@ t.world([==[(
         (1, 1, "hot_hex"), (2, 1, "hot_hex"), (1, 2, "hot_hex"), (2, 2, "hot_hex"),
         (4, 1, "cold_hex"), (5, 1, "cold_hex"), (4, 2, "cold_hex"), (5, 2, "cold_hex"),
     ],
-)]==], 0)
+)]==], 0, "free_build")
 
 -- A sky at the deck's own temperature with no star in it: the hull
 -- starts radiating nothing, and what it picks up as the rooms warm past

@@ -79,14 +79,11 @@ local mine = t.look(subject)
 local seen = t.seen(watcher, subject)
 assert(seen.posture == "standing", "the crewman is on his feet")
 
--- Six bodyparts, two eyes, a beard and a hairstyle — then the three
--- pictures the job's kit puts on top of all of it, which is the old
--- worn-layer path drawing over the new body one.
+-- Six bodyparts, two eyes, optional facial hair and hair, then the kit.
 local names = {}
 for index, layer in ipairs(seen.layers) do
     names[index] = layer.sprite
 end
-assert(#names == 13, "ten body layers under three worn ones: " .. table.concat(names, " "))
 
 assert(names[1] == "body_chest_" .. mine.physique,
     "the chest is the bottom layer, because the plan declares that slot first: " .. names[1])
@@ -102,16 +99,23 @@ assert(names[7] == "eye_l" and names[8] == "eye_r", "the two eyes sit over the b
 assert(seen.layers[7].color == mine.eye_color, "left eye in the colour that was rolled")
 assert(seen.layers[8].color == mine.eye_color_right, "and the right in its own")
 
-assert(names[9] == "facial_" .. mine.facial_hair, "the beard over the eyes")
-assert(names[10] == "hair_" .. mine.hair, "and the hair on top of the body")
-assert(seen.layers[9].color == mine.facial_hair_color, "both in the rolled hair colour")
-assert(seen.layers[10].color == mine.hair_color)
-
--- A roster's "none" row names no cell, so `bald` and `shaved` cost the
--- wire a layer rather than an empty picture. Seed 0 rolls neither, and
--- the count above is what would say so if that ever changed.
-assert(mine.hair ~= "bald" and mine.facial_hair ~= "shaved",
-    "seed 0 rolls a crewman with hair on both ends")
+-- A roster's "none" row emits no layer; verify the rolled traits rather
+-- than assuming a particular face survives unrelated random draws.
+local next_layer = 9
+if mine.facial_hair ~= "shaved" then
+    assert(names[next_layer] == "facial_" .. mine.facial_hair, "the beard over the eyes")
+    assert(seen.layers[next_layer].color == mine.facial_hair_color, "the rolled beard colour")
+    next_layer += 1
+end
+if mine.hair ~= "bald" then
+    assert(names[next_layer] == "hair_" .. mine.hair, "the hair on top of the body")
+    assert(seen.layers[next_layer].color == mine.hair_color, "the rolled hair colour")
+    next_layer += 1
+end
+assert(names[next_layer] == "worn_uniform_grey", "the uniform over the body")
+assert(names[next_layer + 1] == "worn_backpack", "then the backpack")
+assert(names[next_layer + 2] == "worn_breath_mask", "then the mask")
+assert(#names == next_layer + 2, "only visible body and worn layers: " .. table.concat(names, " "))
 
 -- ---------------------------------------------------------------
 -- Posture is public, and it moves.
@@ -121,7 +125,7 @@ t.run_ticks(2)
 assert(t.body(subject).posture == "lying", "the body went down")
 assert(t.seen(watcher, subject).posture == "lying",
     "and the man standing next to him was told")
-assert(#t.seen(watcher, subject).layers == 13,
+assert(#t.seen(watcher, subject).layers == #names,
     "without one layer changing: a crewman lying down is the same picture, turned")
 
 t.rest(subject, false)

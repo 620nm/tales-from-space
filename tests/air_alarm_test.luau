@@ -187,9 +187,8 @@ t.world([==[(
 )]==], 7)
 
 t.set_environment({ sink_k = 293.15, insolation = 0 })
-t.tick()
-
 local p = t.join()
+t.tick()
 t.run_ticks(20)
 
 -- Every machine on this bench stands on the north row and every walk

@@ -88,7 +88,7 @@ t.world([==[(
         // exactly what tg's two independent couplings mean.
         (7, 1, "canister", { "blend": "hot_chlorine", "open": true }),
     ],
-)]==], 7)
+)]==], 7, "free_build")
 
 t.tick()
 
