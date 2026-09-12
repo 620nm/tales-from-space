@@ -10,6 +10,7 @@
         "#..#..#",
         "#######",
     ],
+    environment: (gravity_m_s2: Exact(9.80665)),
     spawns: [(3, 3)],
     structures: [
         (3, 2, "airlock_button"),

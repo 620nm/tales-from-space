@@ -37,6 +37,7 @@ local content = {
                 { id = "dead_space", excluded_tags = { "terrestrial" }, weight = 4 },
                 { id = "orbit", excluded_tags = { "terrestrial" }, weight = 3 },
                 { id = "sunward", excluded_tags = { "terrestrial" }, weight = 1 },
+                { id = "microgravity", excluded_tags = { "terrestrial" }, weight = 1 },
             },
         },
     },

@@ -17,7 +17,7 @@ spells only `neutral`, and everything below is a name this pack invented.
 | Incapacitation | Respawn offered on a dead body (`inanimate`) | Respawn offered in critical state or death (`uncontrollable`) |
 | Respawning | Returns to the lobby on a fresh Mind | Seats a new body at once |
 | Vending | Roundstart quantities deplete | Every shelf remains stocked forever |
-| Sky | Rolled (below) | One sky per map kind, no dice |
+| Sky | Rolled (below) | Rolled (below) |
 | Playtesting | — | The mode a posted map boots into |
 | Shift | One hour | One hour — the same hour |
 
@@ -109,12 +109,27 @@ entries are eligible.
 
 | Mode | Terrestrial map | Otherwise |
 |---|---|---|
-| `space_station` | `cold_outdoors` | `dead_space` 4, `orbit` 3, `sunward` 1 |
-| `free_build` | `cold_outdoors` | `dead_space` |
+| `space_station` | `cold_outdoors` | `dead_space` 4, `orbit` 3, `sunward` 1, `microgravity` 1 |
+| `free_build` | `cold_outdoors` | `dead_space` 1, `microgravity` 1 |
 
-Free Build takes one sky and no dice: a sandbox that came out sunward some days
-and not others would make every temperature reading in it a question about the
-weather.
+The space profiles use the `space_backdrop` atlas background. `dead_space`,
+`orbit`, and `sunward` retain standard gravity (`9.80665` m/s²); `microgravity`
+has zero gravity and the same cold vacuum as `dead_space`. Its weight is one in
+both modes, so it is available whenever the map leaves gravity unconstrained.
+
+Each roll entry is a filter as well as a weight. Every `required_tags` value
+must be present on the map, and every `excluded_tags` value must be absent. The
+ordinary entries that pass those tag filters and the map's saved physical
+preferences are the candidates. A `fallback = true` entry is considered only
+when no ordinary entry passes; it is unconditional for tags but still must
+satisfy the map's physical preferences. If no candidate survives, the map is
+rejected before the round starts.
+
+The four shipped maps save `gravity_m_s2: Exact(9.80665)` so their existing
+stations continue to use walking movement. A new map omits `environment` by
+default; that leaves its physical preferences unconstrained and allows the
+mode to choose microgravity. The saved preference filters profiles; it never
+overrides a profile's physics.
 
 ## Playtesting
 

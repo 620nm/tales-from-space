@@ -2,6 +2,7 @@
 (
     name: "Cold outpost",
     tags: ["space", "terrestrial", "no_gravity_generator"],
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (turf: Environment, outdoors: true),
         '#': (turf: Wall),
