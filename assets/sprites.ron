@@ -189,6 +189,22 @@
         ("status_display_e", 32, 0),
         ("status_display_w", -32, 0),
     ],
+    // lighting.dmi's tube art spans x=4..28 at y=0..4 (N) or
+    // y=28..32 (S), so its center is 14px from the tile center;
+    // the diagonal correction moves it to the corner
+    // (assets/sprites/10-turf-fixtures-and-tools.ron).
+    corner_shifts: [
+        ("light_on_n", 14),
+        ("light_on_s", 14),
+        ("light_off_n", 14),
+        ("light_off_s", 14),
+        ("light_broken_n", 14),
+        ("light_broken_s", 14),
+        ("light_empty_n", 14),
+        ("light_empty_s", 14),
+        ("light_burned_n", 14),
+        ("light_burned_s", 14),
+    ],
     emissive: [
         // tg couples the time overlays to its blue-light appearance
         // (`code/game/machinery/digital_clock.dm:87-105`). Here these
