@@ -49,7 +49,7 @@ t.world([==[(
         "#Gao....o..#",
         "############",
     ],
-    spawns: [(5, 1)],
+    structures: [(5, 1, "player_spawn")],
     machines: [
         (6, 1, "transceiver.medical"),
         (9, 1, "transceiver.medical", { "encryption_1": "encryption_key.engineering" }),

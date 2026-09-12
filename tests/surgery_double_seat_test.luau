@@ -12,8 +12,12 @@ local ARENA = [==[(
     name: "double theatre",
     legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
     rows: [ "#####", "#...#", "#####" ],
-    spawns: [(1, 1), (2, 1), (3, 1)],
-    structures: [(2, 1, "optable")],
+    structures: [
+        (1, 1, "player_spawn", { "jobs": "assistant" }),
+        (2, 1, "player_spawn", { "jobs": "medic" }),
+        (3, 1, "player_spawn", { "jobs": "security" }),
+        (2, 1, "optable"),
+    ],
     items: [
         (1, 1, "scalpel"), (1, 1, "retractor"), (1, 1, "shard"),
         (1, 1, "hemostat"),
@@ -26,9 +30,9 @@ local ARENA = [==[(
 local function has(states, name) return states[name] == true end
 
 t.world(ARENA, 0)
-local left = t.join()       -- (1,1): opens the patient, then races
-local patient = t.join()    -- (2,1): on the optable
-local right = t.join()      -- (3,1): the rival surgeon
+local left = t.join("assistant")       -- (1,1): opens the patient, then races
+local patient = t.join("medic")    -- (2,1): on the optable
+local right = t.join("security")      -- (3,1): the rival surgeon
 t.run_ticks(3)
 t.rest(patient, true)
 t.run_ticks(2)

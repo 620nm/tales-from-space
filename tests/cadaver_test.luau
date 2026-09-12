@@ -26,9 +26,9 @@ t.world([==[(
         "#Gao..#",
         "#######",
     ],
-    spawns: [(1, 1)],
     items: [],
     structures: [
+        (1, 1, "player_spawn"),
         (2, 1, "cadaver_chamber.cadaver", { "dir": "east" }),
         (2, 2, "cadaver_chamber", { "dir": "east" }),
     ],
@@ -107,9 +107,8 @@ local function rolled_name(seed)
             "#Gao#",
             "#####",
         ],
-        spawns: [(1, 1)],
         items: [],
-        structures: [(2, 1, "cadaver_chamber.cadaver", { "dir": "east" })],
+        structures: [(1, 1, "player_spawn"), (2, 1, "cadaver_chamber.cadaver", { "dir": "east" })],
         cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
     )]==], seed)
     local crew = t.join()

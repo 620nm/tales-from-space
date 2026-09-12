@@ -17,6 +17,18 @@ end
 t.world_file("chillstation.ron", 7)
 local p = t.join()
 t.run_seconds(10)
+local spawn_x, spawn_y = t.pos(p)
+while spawn_x > 18 do
+    t.move(p, "west")
+    t.run_ticks(6)
+    spawn_x, spawn_y = t.pos(p)
+end
+while spawn_x < 18 do
+    t.move(p, "east")
+    t.run_ticks(6)
+    spawn_x, spawn_y = t.pos(p)
+end
+assert(spawn_x == 18 and spawn_y == 16, "the crew reaches the Commons start")
 
 -- The Commons north wall carries the two public displays where the
 -- waking crew can see them.

@@ -77,7 +77,6 @@ t.world([==[(
         "#...........#",
         "#############",
     ],
-    spawns: [(3, 2)],
     items: [(6, 1, "pipe")],
     // Two mains that never touch: the manual valve's on row 1, the
     // digital one's on row 2, x ranges disjoint so no length of either
@@ -86,7 +85,7 @@ t.world([==[(
         (1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4),
         (7, 2, 4), (8, 2, 4), (10, 2, 4), (11, 2, 4),
     ],
-    structures: [(3, 1, "manual_valve"), (9, 2, "digital_valve")],
+    structures: [(3, 2, "player_spawn"), (3, 1, "manual_valve"), (9, 2, "digital_valve")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3), (11, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3),
@@ -186,9 +185,8 @@ t.world([==[(
         "#......#",
         "########",
     ],
-    spawns: [(4, 2)],
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4)],
-    structures: [(3, 1, "pump")],
+    structures: [(4, 2, "player_spawn"), (3, 1, "pump")],
 )]==], 7)
 
 local d = t.join()
@@ -252,12 +250,11 @@ t.world([==[(
         "#...a.g#",
         "########",
     ],
-    spawns: [(4, 2)],
     items: [(4, 2, "wrench")],
     // The pump replaces the centre length; taking it up leaves a real
     // gap until an engineer lays a replacement.
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4)],
-    structures: [(3, 1, "pump")],
+    structures: [(4, 2, "player_spawn"), (3, 1, "pump")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),

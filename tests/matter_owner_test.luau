@@ -30,7 +30,7 @@ t.world([==[(
         "#....#",
         "######",
     ],
-    spawns: [(2, 1)],
+    structures: [(2, 1, "player_spawn")],
     items: [
         (1, 1, "beaker.libital"),
         (3, 1, "beaker"),

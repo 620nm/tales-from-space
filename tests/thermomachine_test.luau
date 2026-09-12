@@ -54,9 +54,8 @@ local ROWS = [==[
         "#a....g#",
         "########",
     ],
-    spawns: [(3, 2)],
     pipes: [(1, 1, 4), (2, 1, 4)],
-    structures: [(3, 1, "thermomachine")],
+    structures: [(3, 2, "player_spawn"), (3, 1, "thermomachine")],
 ]==]
 
 t.world(

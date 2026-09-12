@@ -4,7 +4,7 @@ local MAP = [==[(
     environment: (atmosphere: Exact(true), %s),
     legend: { 'e': (turf: Empty), '#': (turf: Wall), '.': (turf: Floor) },
     rows: ["eeeee", "e###e", "e#.#e", "e###e", "eeeee"],
-    spawns: [(2, 2)],
+    structures: [(2, 2, "player_spawn")],
     blends: { "%s": (
         rows: [("co2", 35.0)], temperature_k: 310.0, amount: per_tile,
     ), "room_air": (

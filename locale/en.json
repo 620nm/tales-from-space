@@ -1011,5 +1011,11 @@
   "lunatic/tfs:ui.lobby.issue.locked": "Your setup is locked. Unready before making changes.",
   "lunatic/tfs:ui.lobby.issue.allocation_failed": "The round could not start. An operator needs to resolve the problem.",
   "lunatic/tfs:ui.lobby.issue.no_assignments": "Your choices could not be assigned. Choose another role or fallback.",
-  "lunatic/tfs:ui.lobby.starting": "Starting round…"
+  "lunatic/tfs:ui.lobby.starting": "Starting round…",
+  "lunatic/tfs:entity.player_spawn.name": "Player Spawn",
+  "lunatic/tfs:entity.threat_spawn.name": "Threat Spawn",
+  "lunatic/tfs:editor.player_spawn.weight": "Relative weight",
+  "lunatic/tfs:editor.player_spawn.jobs": "Allowed jobs",
+  "lunatic/tfs:editor.player_spawn.roles": "Allowed roles",
+  "lunatic/tfs:editor.threat_spawn.weight": "Relative weight"
 }

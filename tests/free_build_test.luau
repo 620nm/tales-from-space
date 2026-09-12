@@ -17,7 +17,7 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(1, 1), (2, 1)],
+    structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn")],
 )]==], 7, "free_build")
 
 -- No job argument: this mode seats the body on connection, and there is

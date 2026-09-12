@@ -108,11 +108,11 @@ local BENCH = [==[(
     ],
     // A crewman stands ON the pump, which is where an engineer working
     // this end of the run stands: nothing in the plumbing is dense.
-    spawns: [(3, 1)],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
+        (3, 1, "player_spawn"),
         (2, 1, "vent"),
         // Charged well past a room's worth, because this bench asks the
         // vent to hold a corridor ABOVE one atmosphere and a vent only

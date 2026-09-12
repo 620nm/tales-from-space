@@ -3,11 +3,10 @@ t.world([==[(
     name: "action targets",
     legend: { '.': (turf: Plating), 'f': (turf: Floor), '#': (turf: Wall) },
     rows: ["########", "#......#", "#......#", "#..f...#", "#......#", "########"],
-    spawns: [(2, 2), (3, 2)],
     items: [(1, 4, "wrench"), (2, 4, "wirecutters"), (3, 4, "toolbox"),
         (4, 4, "laptop"), (5, 4, "floppy_disk"), (6, 4, "beaker.water"), (1, 2, "beaker"),
         (3, 1, "pipe"), (3, 3, "pipe"), (2, 3, "metal")],
-    structures: [(2, 1, "airlock_button")],
+    structures: [(2, 2, "player_spawn"), (3, 2, "player_spawn"), (2, 1, "airlock_button")],
     pipes: [(3, 2, 31), (3, 3, 8)],
     cables: [(3, 2, 7)],
 )]==], 0)

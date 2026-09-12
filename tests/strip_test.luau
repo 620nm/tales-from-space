@@ -15,13 +15,16 @@ local ARENA = [==[(
     name: "ward",
     legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
     rows: [ "#####", "#...#", "#####" ],
-    spawns: [(1, 1), (2, 1)],
+    structures: [
+        (1, 1, "player_spawn", { "jobs": "engineer" }),
+        (2, 1, "player_spawn", { "jobs": "assistant" }),
+    ],
     items: [ (1, 1, "scalpel") ],
 )]==]
 
 t.world(ARENA, 0)
-local crewman = t.join()
-local cadaver = t.join()
+local crewman = t.join("engineer")
+local cadaver = t.join("assistant")
 t.run_ticks(3)
 
 local AX, AY = 1, 1 -- the crewman

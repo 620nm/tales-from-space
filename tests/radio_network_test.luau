@@ -63,7 +63,6 @@ t.world([==[(
         "#Gao.....o................................#",
         "###########################################",
     ],
-    spawns: [(6, 2), (41, 2)],
     items: [
         (6, 2, "encryption_key.medical"),
         (6, 2, "wirecutters"),
@@ -74,7 +73,11 @@ t.world([==[(
         (5, 2, "transceiver.medical"),
         (10, 2, "transceiver"),
     ],
-    structures: [(8, 1, "access_point")],
+    structures: [
+        (6, 2, "player_spawn", { "jobs": "assistant" }),
+        (41, 2, "player_spawn", { "jobs": "medic" }),
+        (8, 1, "access_point"),
+    ],
     mounts: [(8, 1, North)],
     cables: [
         (1, 2, 2), (2, 2, 3), (3, 2, 1), (4, 2, 1), (5, 2, 1),
@@ -82,8 +85,8 @@ t.world([==[(
     ],
 )]==], 0)
 
-local speaker = t.join()
-local listener = t.join()
+local speaker = t.join("assistant")
+local listener = t.join("medic")
 t.run_ticks(20)
 
 local function pocket(p)

@@ -49,7 +49,13 @@ t.world([==[(
         "#Gao..............................#",
         "###################################",
     ],
-    spawns: [(1, 1), (24, 1), (31, 1), (32, 1), (33, 1)],
+    structures: [
+        (1, 1, "player_spawn", { "jobs": "assistant" }),
+        (24, 1, "player_spawn", { "jobs": "medic" }),
+        (31, 1, "player_spawn", { "jobs": "captain" }),
+        (32, 1, "player_spawn", { "jobs": "engineer" }),
+        (33, 1, "player_spawn", { "jobs": "security" }),
+    ],
     items: [
         (1, 1, "encryption_key.medical"),
         (24, 1, "encryption_key.medical"),
@@ -63,13 +69,13 @@ t.world([==[(
     cables: [
         (1, 2, 2), (2, 2, 3), (3, 2, 1),
     ],
-)]==], 0)
+)]==], 0, "space_station")
 
-local speaker = t.join()
-local l_clear = t.join()
-local l_rim = t.join()
-local l_edge = t.join()
-local l_out = t.join()
+local speaker = t.join("assistant")
+local l_clear = t.join("medic")
+local l_rim = t.join("captain")
+local l_edge = t.join("engineer")
+local l_out = t.join("security")
 t.run_ticks(20)
 
 -- Everyone pockets the key at their feet: a carried key IS a Lifeline
@@ -170,7 +176,13 @@ t.world([==[(
         "#Gao.........#",
         "##############",
     ],
-    spawns: [(1, 1), (8, 1), (9, 1), (11, 1), (12, 1)],
+    structures: [
+        (1, 1, "player_spawn", { "jobs": "assistant" }),
+        (8, 1, "player_spawn", { "jobs": "medic" }),
+        (9, 1, "player_spawn", { "jobs": "captain" }),
+        (11, 1, "player_spawn", { "jobs": "engineer" }),
+        (12, 1, "player_spawn", { "jobs": "security" }),
+    ],
     items: [
         (1, 1, "encryption_key.medical"),
         (8, 1, "encryption_key.medical"),
@@ -184,13 +196,13 @@ t.world([==[(
     cables: [
         (1, 2, 2), (2, 2, 3), (3, 2, 1),
     ],
-)]==], 0)
+)]==], 0, "space_station")
 
-speaker = t.join()
-local l_near = t.join()
-local l_quarter = t.join()
-local l_edge = t.join()
-local l_far = t.join()
+speaker = t.join("assistant")
+local l_near = t.join("medic")
+local l_quarter = t.join("captain")
+local l_edge = t.join("engineer")
+local l_far = t.join("security")
 t.run_ticks(20)
 pocket(speaker)
 pocket(l_near)
@@ -236,17 +248,21 @@ t.world([==[(
         "#............#",
         "##############",
     ],
-    spawns: [(1, 1), (11, 1), (12, 1)],
+    structures: [
+        (1, 1, "player_spawn", { "jobs": "assistant" }),
+        (11, 1, "player_spawn", { "jobs": "medic" }),
+        (12, 1, "player_spawn", { "jobs": "captain" }),
+    ],
     items: [
         (1, 1, "headset"),
         (11, 1, "headset"),
         (12, 1, "headset"),
     ],
-)]==], 0)
+)]==], 0, "space_station")
 
-speaker = t.join()
-local headset_edge = t.join()
-local headset_out = t.join()
+speaker = t.join("assistant")
+local headset_edge = t.join("medic")
+local headset_out = t.join("captain")
 t.run_ticks(20)
 
 local function take_headset(p)

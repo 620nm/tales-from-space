@@ -48,7 +48,7 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 2)],
+    structures: [(2, 2, "player_spawn")],
     items: [(2, 1, "wrench"), (2, 1, "pipe_meter")],
     pipes: [(2, 1, 2), (2, 1, 8)],
 )]==], 7)
@@ -126,7 +126,7 @@ t.world([==[(
         "#....#",
         "######",
     ],
-    spawns: [(2, 2)],
+    structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "rpd"), (2, 2, "wrench")],
     pipes: [(2, 1, 2), (3, 1, 2), (3, 1, 8)],
 )]==], 7)

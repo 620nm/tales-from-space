@@ -43,5 +43,11 @@
   "engine.action.close_storage": "Затвори складиште",
   "lunatic/tfs:ui.body.posture": "Положај",
   "lunatic/tfs:ui.body.rest": "Лези",
-  "lunatic/tfs:ui.body.stand": "Устани"
+  "lunatic/tfs:ui.body.stand": "Устани",
+  "lunatic/tfs:entity.player_spawn.name": "Место појављивања играча",
+  "lunatic/tfs:entity.threat_spawn.name": "Место појављивања претњи",
+  "lunatic/tfs:editor.player_spawn.weight": "Релативна тежина",
+  "lunatic/tfs:editor.player_spawn.jobs": "Дозвољени послови",
+  "lunatic/tfs:editor.player_spawn.roles": "Дозвољене улоге",
+  "lunatic/tfs:editor.threat_spawn.weight": "Релативна тежина"
 }

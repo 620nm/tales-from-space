@@ -8,8 +8,7 @@ local ARENA = [==[(
     name: "ward",
     legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
     rows: [ "#####", "#...#", "#####" ],
-    spawns: [(1, 1), (2, 1)],
-    structures: [(2, 1, "optable")],
+    structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn"), (2, 1, "optable")],
     items: [ (1, 1, "scalpel"), (1, 1, "shard"), (1, 1, "retractor"), (1, 1, "hemostat"), (1, 1, "welder") ],
 )]==]
 

@@ -33,7 +33,10 @@ t.world([==[(
         "#o.......a#g#",
         "#############",
     ],
-    spawns: [(3, 1), (7, 1)],
+    structures: [
+        (3, 1, "player_spawn", { "jobs": "medic" }),
+        (7, 1, "player_spawn", { "jobs": "assistant" }),
+    ],
     items: [
         (3, 1, "syringe"),
         (3, 1, "beaker.libital"),
@@ -49,8 +52,8 @@ t.world([==[(
     ],
 )]==], 0)
 
-local medic = t.join()
-local patient = t.join()
+local medic = t.join("medic")
+local patient = t.join("assistant")
 t.run_ticks(3)
 
 local packager = t.target_at(medic, 2, 1)

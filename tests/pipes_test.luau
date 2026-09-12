@@ -33,7 +33,7 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 2)],
+    structures: [(2, 2, "player_spawn")],
     items: [
         (1, 1, "pipe"),
         (3, 3, "wrench"),
@@ -97,7 +97,7 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 2)],
+    structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "wrench"), (2, 1, "screwdriver")],
     pipes: [(1, 1, 2), (2, 1, 6), (3, 1, 2), (2, 2, 4)],
     pipe_facing: [(1, 1, 2, 4), (2, 1, 2, 12), (3, 1, 2, 8),
@@ -140,7 +140,7 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 2), (2, 2)],
+    structures: [(2, 2, "player_spawn"), (2, 2, "player_spawn")],
     items: [(1, 2, "wrench"), (3, 2, "wrench"), (2, 1, "pipe")],
 )]==], 11)
 
@@ -209,13 +209,12 @@ t.world([==[(
         "#..........#.#",
         "##############",
     ],
-    spawns: [(12, 2)],
     items: [(12, 2, "welder"), (12, 3, "pipe")],
     pipes: [
         (6, 2, 4), (6, 3, 4), (7, 3, 4), (8, 3, 4),
         (9, 3, 4), (10, 3, 4), (11, 3, 4),
     ],
-    structures: [(5, 2, "passive_vent"), (12, 2, "passive_vent")],
+    structures: [(12, 2, "player_spawn"), (5, 2, "passive_vent"), (12, 2, "passive_vent")],
 )]==], 7)
 local q = t.join()
 t.tick()
@@ -315,7 +314,7 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 2)],
+    structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "pipe"), (1, 2, "wrench")],
     pipes: [(1, 1, 4), (2, 1, 4), (3, 1, 4)],
 )]==], 7)
@@ -389,7 +388,6 @@ t.world([==[(
         "#.....#",
         "#######",
     ],
-    spawns: [(1, 1)],
     pipes: [
         (3, 1, 4), (3, 2, 4), (3, 3, 4),
         (4, 1, 4), (4, 2, 4), (4, 3, 4),
@@ -398,7 +396,7 @@ t.world([==[(
         (3, 1, 4, 3), (3, 2, 4, 11), (3, 3, 4, 3),
         (4, 1, 4, 3), (4, 2, 4, 3), (4, 3, 4, 3),
     ],
-    structures: [(2, 2, "passive_vent")],
+    structures: [(1, 1, "player_spawn"), (2, 2, "passive_vent")],
 )]==], 7)
 t.join()
 t.tick()
@@ -439,12 +437,11 @@ t.world([==[(
         "#.....#",
         "#######",
     ],
-    spawns: [(1, 1)],
     pipes: [
         (3, 1, 4), (3, 2, 4), (3, 3, 4),
         (4, 1, 4), (4, 2, 4), (4, 3, 4),
     ],
-    structures: [(2, 2, "passive_vent")],
+    structures: [(1, 1, "player_spawn"), (2, 2, "passive_vent")],
 )]==], 7)
 t.join()
 t.tick()
@@ -475,9 +472,9 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 2)],
     items: [(2, 2, "pipe")],
     structures: [
+        (2, 2, "player_spawn"),
         (1, 1, "vent"),
         (2, 1, "manual_valve"),
         (3, 1, "manual_valve", { "layer": 2 }),

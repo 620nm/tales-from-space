@@ -65,9 +65,8 @@ t.world([==[(
         "#........#",
         "##########",
     ],
-    spawns: [(6, 2)],
     pipes: [(1, 1, 4), (2, 1, 4), (3, 1, 4), (4, 1, 4), (5, 1, 4), (7, 1, 4)],
-    structures: [(6, 1, "manual_valve")],
+    structures: [(6, 2, "player_spawn"), (6, 1, "manual_valve")],
 )]==], 7)
 
 local p = t.join()

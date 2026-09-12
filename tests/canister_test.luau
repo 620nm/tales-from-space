@@ -49,7 +49,6 @@ t.world([==[(
         "#..g#",
         "#####",
     ],
-    spawns: [(2, 2)],
     items: [(2, 2, "welder")],
     pipes: [(2, 2, 4)],
     // The vent, and the socket under the canister. Without the socket
@@ -58,6 +57,7 @@ t.world([==[(
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
+        (2, 2, "player_spawn"),
         (1, 2, "vent"), (3, 2, "connector_port"),
         (3, 2, "canister", { "blend": "canister_air", "open": true }),
     ],
@@ -188,7 +188,6 @@ t.world([==[(
         "#..g#                   ",
         "#####                   ",
     ],
-    spawns: [(2, 2)],
     items: [(2, 2, "welder")],
     pipes: [
         (2, 2, 4), (3, 2, 4), (4, 2, 4), (5, 2, 4), (6, 2, 4),
@@ -200,6 +199,7 @@ t.world([==[(
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
+        (2, 2, "player_spawn"),
         (1, 2, "vent"),
         (20, 2, "passive_vent"),
         (22, 2, "connector_port"),
@@ -289,7 +289,6 @@ t.world([==[(
         "#a.....g# ",
         "######### ",
     ],
-    spawns: [(1, 1)],
     items: [(1, 2, "wrench")],
     // The run reaches the vent by going AROUND (3, 1): that tile is
     // bare deck with nothing under it, so the canister can be stood
@@ -306,6 +305,7 @@ t.world([==[(
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
+        (1, 1, "player_spawn"),
         (1, 1, "connector_port"),
         (2, 1, "connector_port"),
         (5, 1, "connector_port"),
@@ -481,7 +481,6 @@ t.world([==[(
         "#......g# ",
         "######### ",
     ],
-    spawns: [(1, 1)],
     items: [(1, 1, "wrench")],
     // One run along the second row, out under the east wall to the
     // vent hanging over open space -- so anything in the line goes
@@ -497,6 +496,7 @@ t.world([==[(
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
+        (1, 1, "player_spawn"),
         (2, 1, "connector_port"),
         (4, 1, "connector_port"),
         (3, 1, "air_injector"),

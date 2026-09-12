@@ -66,10 +66,10 @@ t.world([==[(
         "#...ag#",
         "#######",
     ],
-    spawns: [(3, 1)],
     items: [(3, 2, "beaker.water"), (2, 2, "beaker.ethanol")],
     pipes: [(2, 1, 4), (3, 1, 4)],
     structures: [
+        (3, 1, "player_spawn"),
         (1, 1, "air_injector", { "pipe": "east" }),
         (4, 1, "steam_generator", { "pipe": "west" }),
     ],

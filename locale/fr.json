@@ -133,5 +133,11 @@
   "engine.action.close_storage": "Fermer le rangement",
   "lunatic/tfs:ui.body.posture": "Posture",
   "lunatic/tfs:ui.body.rest": "S’allonger",
-  "lunatic/tfs:ui.body.stand": "Se lever"
+  "lunatic/tfs:ui.body.stand": "Se lever",
+  "lunatic/tfs:entity.player_spawn.name": "Point d’apparition des joueurs",
+  "lunatic/tfs:entity.threat_spawn.name": "Point d’apparition de menaces",
+  "lunatic/tfs:editor.player_spawn.weight": "Poids relatif",
+  "lunatic/tfs:editor.player_spawn.jobs": "Postes autorisés",
+  "lunatic/tfs:editor.player_spawn.roles": "Rôles autorisés",
+  "lunatic/tfs:editor.threat_spawn.weight": "Poids relatif"
 }

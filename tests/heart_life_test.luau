@@ -27,9 +27,13 @@ local ARENA = [==[(
     name: "theatre",
     legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
     rows: [ "######", "#....#", "#....#", "######" ],
-    spawns: [(1, 1), (2, 1), (3, 1)],
     items: [ (1, 1, "hemostat"), (1, 1, "defib") ],
-    structures: [(2, 2, "cadaver_chamber", { "dir": "north" })],
+    structures: [
+        (1, 1, "player_spawn", { "jobs": "medic" }),
+        (2, 1, "player_spawn", { "jobs": "assistant" }),
+        (3, 1, "player_spawn", { "jobs": "engineer" }),
+        (2, 2, "cadaver_chamber", { "dir": "north" }),
+    ],
 )]==]
 
 local function said(who, needle)
@@ -40,9 +44,9 @@ end
 -- Dying stops the heart, and healing the parts does not restart it.
 -- =====================================================================
 t.world(ARENA, 0)
-local medic = t.join()
-local patient = t.join()
-local attendant = t.join()   -- somebody with a free hand for the drawer
+local medic = t.join("medic")
+local patient = t.join("assistant")
+local attendant = t.join("engineer")   -- somebody with a free hand for the drawer
 t.run_ticks(3)
 
 assert(t.body(patient).animate == true, "they start out alive")

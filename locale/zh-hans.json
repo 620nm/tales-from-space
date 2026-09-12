@@ -43,5 +43,11 @@
   "engine.action.close_storage": "关闭储物空间",
   "lunatic/tfs:ui.body.posture": "姿势",
   "lunatic/tfs:ui.body.rest": "躺下",
-  "lunatic/tfs:ui.body.stand": "站起"
+  "lunatic/tfs:ui.body.stand": "站起",
+  "lunatic/tfs:entity.player_spawn.name": "玩家出生点",
+  "lunatic/tfs:entity.threat_spawn.name": "威胁出生点",
+  "lunatic/tfs:editor.player_spawn.weight": "相对权重",
+  "lunatic/tfs:editor.player_spawn.jobs": "允许的职位",
+  "lunatic/tfs:editor.player_spawn.roles": "允许的角色",
+  "lunatic/tfs:editor.threat_spawn.weight": "相对权重"
 }

@@ -105,7 +105,10 @@ t.world([==[(
         "#a....#.....#.#",
         "###############",
     ],
-    spawns: [(3, 2), (9, 2)],
+    structures: [
+        (3, 2, "player_spawn", { "jobs": "assistant" }),
+        (9, 2, "player_spawn", { "jobs": "engineer" }),
+    ],
     machines: [
         (2, 1, "chem_heater"),
         (4, 1, "chem_heater", { "laser_1": "3" }),
@@ -132,8 +135,8 @@ t.world([==[(
     ],
 )]==], 0)
 
-local west = t.join()
-local east = t.join()
+local west = t.join("assistant")
+local east = t.join("engineer")
 -- One atmos pass, because the environment multiplier is applied on the
 -- pass and not on the tick (sim/tick.rs).
 t.run_seconds(1)

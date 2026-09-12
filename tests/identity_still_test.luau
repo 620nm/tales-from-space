@@ -72,7 +72,7 @@ local BENCH = [==[(
         "#.ag....#",
         "#########",
     ],
-    spawns: [(2, 2)],
+    structures: [(2, 2, "player_spawn")],
     items: [(3, 3, "beaker")],
     machines: [(1, 2, "chem_dispenser"), (3, 2, "chem_heater")],
     cables: [

@@ -19,8 +19,7 @@
         "  #####  v ",
         "           ",
     ],
-    spawns: [(4, 3)],
-    structures: [(6, 3, "airlock"), (5, 3, "apc", { "l1_emergency": true, "l2": "input" }), (4, 2, "light"), (4, 3, "utility_outlet_port"), (8, 3, "generator")],
+    structures: [(4, 3, "player_spawn"), (6, 3, "airlock"), (5, 3, "apc", { "l1_emergency": true, "l2": "input" }), (4, 2, "light"), (4, 3, "utility_outlet_port"), (8, 3, "generator")],
     cables: [(4, 3, 1), (5, 3, 3), (6, 3, 3), (7, 3, 2), (8, 3, 2)],
     items: [(4, 3, "analyzer")],
 )

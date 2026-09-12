@@ -73,10 +73,9 @@ t.world([==[(
         "#.....#",
         "#######",
     ],
-    spawns: [(2, 2)],
     items: [(2, 3, "bottle")],
     machines: [(1, 2, "chem_dispenser"), (3, 2, "chem_heater")],
-    structures: [(2, 1, "canister")],
+    structures: [(2, 2, "player_spawn"), (2, 1, "canister")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3),
@@ -181,7 +180,6 @@ t.world([==[(
         "#ag...##",
         "########",
     ],
-    spawns: [(4, 1), (4, 2)],
     items: [(4, 1, "analyzer"), (4, 2, "oxygen_tank")],
     blends: {
         // chillstation.ron:1065's own recipe, to the digit: a tank of
@@ -202,6 +200,8 @@ t.world([==[(
     // has somewhere to go that is not the room.
     pipes: [(6, 1, 2), (6, 2, 2)],
     structures: [
+        (4, 1, "player_spawn"),
+        (4, 2, "player_spawn"),
         (5, 1, "canister", { "blend": "n2o_23000kpa" }),
         (5, 2, "air_scrubber", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 }),
     ],

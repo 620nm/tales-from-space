@@ -43,9 +43,8 @@ t.world([==[(
         "#.......#",
         "#########",
     ],
-    spawns: [(3, 3)],
     items: [(3, 3, "wrench")],
-    structures: [(4, 4, "stationary_tank", "anchored", ("o2", 20000.0))],
+    structures: [(3, 3, "player_spawn"), (4, 4, "stationary_tank", "anchored", ("o2", 20000.0))],
     pipes: [
         (4, 3, 4), (4, 2, 4), (4, 1, 4),
         (4, 5, 4), (4, 6, 4),

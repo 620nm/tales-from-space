@@ -38,7 +38,7 @@ t.world([==[(
         "#o..a.#",
         "#######",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     items: [
         (3, 1, "beaker", { "blend": "ice_block" }),
     ],

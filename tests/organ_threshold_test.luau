@@ -25,7 +25,7 @@ local ARENA = [==[(
         "#....#",
         "######",
     ],
-    spawns: [(1, 1), (2, 1), (3, 1)],
+    structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn"), (3, 1, "player_spawn")],
 )]==]
 
 t.world(ARENA, 0)

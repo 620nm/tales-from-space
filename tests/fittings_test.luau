@@ -102,7 +102,6 @@ t.world([==[(
         "#.......g#  ",
         "##########  ",
     ],
-    spawns: [(1, 1)],
     items: [(1, 1, "wrench")],
     pipes: [
         (2, 2, 4), (3, 2, 4), (4, 2, 4), (5, 2, 4),
@@ -112,6 +111,7 @@ t.world([==[(
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
+        (1, 1, "player_spawn"),
         (2, 1, "connector_port"), (10, 1, "vent"),
         (2, 1, "canister", { "blend": "canister_air", "open": true }),
     ],

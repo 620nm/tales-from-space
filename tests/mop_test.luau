@@ -34,7 +34,7 @@ t.world([==[(
         "water_3l": (rows: [("water", 166.53), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
     },
     painted: [(2, 1, "water_3l")],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     items: [
         (1, 1, "mop"),
         (1, 1, "beaker_bluespace"),

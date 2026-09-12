@@ -41,7 +41,7 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 1)],
+    structures: [(2, 1, "player_spawn")],
     items: [(2, 1, "multitool")],
     cables: [(1, 1, 2), (2, 1, 2), (3, 1, 2), (2, 2, 1)],
 )]==], 7)

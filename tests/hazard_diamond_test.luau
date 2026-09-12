@@ -48,7 +48,6 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 2)],
     blends: {
         // A store of plasma with a little nitrogen over it: the one
         // substance this station is built to keep away from itself.
@@ -56,6 +55,7 @@ t.world([==[(
     },
     mounts: [(1, 1, West), (3, 1, East)],
     structures: [
+        (2, 2, "player_spawn"),
         (1, 1, "hazard_diamond", { "blend": "store" }),
         (3, 1, "hazard_diamond"),
     ],

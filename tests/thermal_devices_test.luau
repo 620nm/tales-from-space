@@ -90,10 +90,9 @@ local GATE_MAP = [==[(
         "#..a....g#",
         "##########",
     ],
-    spawns: [(5, 2)],
     items: [(5, 2, "pipe"), (3, 2, "multitool")],
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4)],
-    structures: [(3, 1, "temperature_gate")],
+    structures: [(5, 2, "player_spawn"), (3, 1, "temperature_gate")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3),
@@ -277,9 +276,8 @@ local PUMP_ROWS = [==[
         "#a.....g#",
         "#########",
     ],
-    spawns: [(3, 2)],
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4)],
-    structures: [(3, 1, "temperature_pump")],
+    structures: [(3, 2, "player_spawn"), (3, 1, "temperature_pump")],
 ]==]
 
 t.world(
@@ -441,13 +439,13 @@ t.world([==[(
         "#............#",
         "##############",
     ],
-    spawns: [(6, 2)],
     pipes: [
         (1, 1, 4), (2, 1, 4),
         (5, 1, 4), (6, 1, 4),
         (10, 1, 4), (11, 1, 4),
     ],
     structures: [
+        (6, 2, "player_spawn"),
         (3, 1, "heat_exchanger"),
         (4, 1, "heat_exchanger"),
         (9, 1, "heat_exchanger"),
@@ -531,14 +529,13 @@ t.world([==[(
         "#..a....g#",
         "##########",
     ],
-    spawns: [(3, 2)],
     items: [
         (3, 2, "wrench"),
         (6, 2, "temperature_gate_fitting"),
         (7, 2, "heat_exchanger_fitting"),
     ],
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4)],
-    structures: [(3, 1, "temperature_pump")],
+    structures: [(3, 2, "player_spawn"), (3, 1, "temperature_pump")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3),

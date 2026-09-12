@@ -16,7 +16,6 @@
         "############ ",
         "             ",
     ],
-    spawns: [(3, 3), (9, 3)],
     blends: {
         "vacuum": (temperature_k: 293.15, amount: per_tile),
         "supply": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)],
@@ -27,6 +26,8 @@
         (9, 3, "vacuum"), (10, 3, "vacuum"), (11, 3, "vacuum"),
         (9, 4, "vacuum"), (10, 4, "vacuum"), (11, 4, "vacuum"), (8, 1, "vacuum")],
     structures: [
+        (3, 3, "player_spawn"),
+        (9, 3, "player_spawn"),
         (4, 3, "access_point", { "network_1": "network_card", "file.airlock_controller": true, "program.controller": "airlock_controller" }),
         (2, 3, "airlock_button"), (7, 4, "airlock_button"),
         (5, 3, "airlock", { "bolted": true }),

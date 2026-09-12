@@ -46,9 +46,9 @@ t.world([==[(
         "#l.......g#",
         "###########",
     ],
-    spawns: [(7, 2)],
     items: [(7, 2, "wirecutters"), (7, 2, "cable_coil")],
     structures: [
+        (7, 2, "player_spawn"),
         (4, 1, "vent"),
         (5, 1, "air_alarm", { "access": "engineering", "network_1": "network_card" }),
         (8, 1, "apc"),
@@ -219,9 +219,9 @@ t.world([==[(
         "#l........o.#......#",
         "####################",
     ],
-    spawns: [(9, 2)],
     items: [(9, 2, "wirecutters"), (2, 2, "toolbox"), (2, 2, "light_tube"), (2, 2, "wrench")],
     structures: [
+        (9, 2, "player_spawn"),
         (3, 1, "air_alarm", { "access": "engineering", "network_1": "network_card" }),
         (4, 1, "vent"),
         (11, 1, "air_alarm", { "access": "engineering", "network_1": "network_card" }),

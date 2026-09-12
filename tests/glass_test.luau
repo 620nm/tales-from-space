@@ -19,7 +19,7 @@ local ROOM = [==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 2)],
+    structures: [(2, 2, "player_spawn")],
     items: [
         (1, 1, "rod"),
         (3, 1, "glass"),
@@ -132,7 +132,7 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 2)],
+    structures: [(2, 2, "player_spawn")],
     items: [
         (1, 1, "rod"),
         (3, 1, "rglass"),

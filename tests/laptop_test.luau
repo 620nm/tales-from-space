@@ -4,7 +4,10 @@ local ARENA = [==[(
     name: "laptop desk",
     legend: { '.': (turf: Floor), '#': (turf: Wall) },
     rows: ["#######", "#.....#", "#.....#", "#.....#", "#######"],
-    spawns: [(2, 2), (3, 2)],
+    structures: [
+        (2, 2, "player_spawn", { "jobs": "assistant" }),
+        (3, 2, "player_spawn", { "jobs": "engineer" }),
+    ],
     items: [
         (2, 2, "laptop"), (1, 3, "floppy_disk"),
         (1, 1, "id_assistant"), (1, 2, "id_captain"),
@@ -37,7 +40,7 @@ local function sound_count(player, needle)
 end
 
 t.world(ARENA, 0)
-local p, q = t.join(), t.join()
+local p, q = t.join("assistant"), t.join("engineer")
 t.run_ticks(3)
 local laptop = t.target_at(p, 2, 2, "laptop")
 assert(laptop ~= nil, "the laptop exists on the floor")

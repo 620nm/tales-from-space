@@ -20,7 +20,7 @@ t.world([==[(
         "#..........#",
         "############",
     ],
-    spawns: [(2, 1)],
+    structures: [(2, 1, "player_spawn")],
     items: [
         (3, 1, "spray_bottle"),
         (1, 1, "water_bottle_large"),

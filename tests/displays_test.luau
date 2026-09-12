@@ -17,8 +17,8 @@ t.world([==[(
         "#....#",
         "######",
     ],
-    spawns: [(4, 1)],
     structures: [
+        (4, 1, "player_spawn"),
         (2, 1, "digital_clock"),
         (3, 1, "status_display"),
     ],

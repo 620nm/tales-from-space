@@ -45,7 +45,7 @@ local VESTIBULE = [==[(
         "#...g#_# ",
         "######## ",
     ],
-    spawns: [(1, 2), (2, 2)],
+    structures: [(1, 2, "player_spawn"), (2, 2, "player_spawn")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3),
@@ -57,8 +57,8 @@ local VESTIBULE = [==[(
 -- partner lies in, and the link resolves only because both of them do
 -- (airlock.dm:235 throws away a door that does not point back).
 local LINKED = VESTIBULE:gsub(
-    "spawns: %[%(1, 2%), %(2, 2%)%],",
-    "spawns: [(1, 2), (2, 2)],\n    cycle_links: [(5, 2, East), (7, 2, West)],"
+    "structures: %[%(%s*1, 2, \"player_spawn\"%), %(2, 2, \"player_spawn\"%)%],",
+    "structures: [(1, 2, \"player_spawn\"), (2, 2, \"player_spawn\")],\n    cycle_links: [(5, 2, East), (7, 2, West)],"
 )
 
 -- Walk east out of the room, through the inner airlock (bump opens it),
@@ -238,12 +238,11 @@ local VIEWPORT = [==[(
         "#.a.#",
         "#####",
     ],
-    spawns: [(2, 3), (1, 3)],
     items: [
         (2, 4, "screwdriver"),
         (3, 4, "crowbar"),
     ],
-    structures: [(2, 2, "grille", "glazed")],
+    structures: [(2, 3, "player_spawn"), (1, 3, "player_spawn"), (2, 2, "grille", "glazed")],
     cables: [
         (2, 2, 3),
         (1, 3, 3), (2, 3, 3), (3, 3, 3),

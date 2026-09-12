@@ -72,9 +72,8 @@ t.world([==[(
         "#ga........#",
         "############",
     ],
-    spawns: [(5, 2)],
     pipes: [(3, 1, 4), (4, 1, 4)],
-    structures: [(5, 1, "thermomachine")],
+    structures: [(5, 2, "player_spawn"), (5, 1, "thermomachine")],
     cables: [
         (1, 2, 2), (2, 2, 3),
         (3, 2, 1), (4, 2, 1), (4, 1, 1), (5, 1, 1),

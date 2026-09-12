@@ -103,7 +103,7 @@ t.world([==[(
         "#o.a#",
         "#####",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     items: [(1, 1, "beaker"), (1, 1, "bottle")],
     machines: [(2, 1, "chem_dispenser")],
     cables: [

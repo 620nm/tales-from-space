@@ -3,7 +3,7 @@ t.world([==[(
     name: "action controls",
     legend: { '#': (turf: Wall), '.': (turf: Floor) },
     rows: ["#######", "#.....#", "#######"],
-    spawns: [(1, 1), (5, 1)],
+    structures: [(1, 1, "player_spawn"), (5, 1, "player_spawn")],
     items: [(1, 1, "welder"), (1, 1, "rpd"),
         (1, 1, "breath_mask"), (1, 1, "oxygen_tank")],
 )]==], 7)

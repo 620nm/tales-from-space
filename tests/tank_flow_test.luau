@@ -75,8 +75,7 @@ t.world([==[(
     name: "one vessel, one run",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: ["#######", "#.....#", "#######"],
-    spawns: [(1, 1)],
-    structures: [(2, 1, "stationary_tank", "anchored", ("o2", 9000.0))],
+    structures: [(1, 1, "player_spawn"), (2, 1, "stationary_tank", "anchored", ("o2", 9000.0))],
     pipes: [(3, 1, 4), (4, 1, 4), (5, 1, 4)],
 )]==], 7)
 
@@ -176,8 +175,8 @@ t.world([==[(
     name: "two vessels, one run",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: ["#######", "#.....#", "#######"],
-    spawns: [(1, 1)],
     structures: [
+        (1, 1, "player_spawn"),
         (2, 1, "stationary_tank", "anchored", ("o2", 10000.0)),
         (5, 1, "stationary_tank", "anchored", ("n2", 20000.0)),
     ],
@@ -227,8 +226,7 @@ t.world([==[(
     name: "an empty vessel on a charged main",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: ["##############", "#............#", "##############"],
-    spawns: [(1, 1)],
-    structures: [(12, 1, "stationary_tank", "anchored")],
+    structures: [(1, 1, "player_spawn"), (12, 1, "stationary_tank", "anchored")],
     pipes: [
         (2, 1, 4), (3, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4),
         (7, 1, 4), (8, 1, 4), (9, 1, 4), (10, 1, 4), (11, 1, 4),
@@ -271,9 +269,8 @@ t.world([==[(
     name: "the torch",
     legend: { '.': (turf: Floor), '#': (turf: Wall) },
     rows: ["#####", "#...#", "#...#", "#...#", "#####"],
-    spawns: [(2, 2)],
     items: [(2, 2, "welder")],
-    structures: [(3, 2, "stationary_tank", "anchored", ("n2", 3000.0))],
+    structures: [(2, 2, "player_spawn"), (3, 2, "stationary_tank", "anchored", ("n2", 3000.0))],
 )]==], 7)
 
 local w = t.join()

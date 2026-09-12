@@ -31,8 +31,8 @@ t.world([==[(
         "#.....#",
         "#######",
     ],
-    spawns: [(1, 1)],
     structures: [
+        (1, 1, "player_spawn"),
         (3, 1, "airlock.engineering_glass"),
         (3, 2, "airlock.engineering_glass", { "glass": false }),
         (5, 2, "airlock"),

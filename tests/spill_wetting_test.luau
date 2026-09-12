@@ -28,7 +28,7 @@ local CORRIDOR = [==[(
         "#....................#",
         "######################",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     blends: {
         "pour": (rows: [("%s", %s), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
     },

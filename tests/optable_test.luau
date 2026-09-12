@@ -24,8 +24,7 @@ local ARENA = [==[(
     name: "theatre",
     legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
     rows: [ "######", "#....#", "#....#", "######" ],
-    spawns: [(1, 1), (2, 1)],
-    structures: [(2, 2, "optable", { "dir": "east" })],
+    structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn"), (2, 2, "optable", { "dir": "east" })],
     items: [ (1, 1, "scalpel") ],
 )]==]
 

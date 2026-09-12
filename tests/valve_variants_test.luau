@@ -69,14 +69,13 @@ local CROSSING = [==[(
         "#......#",
         "########",
     ],
-    spawns: [(3, 2)],
     // Every tile of the line carries all three mains. The valve's OWN
     // layer is the one length that is missing under it -- a run does
     // not pass through a machine, and a map that draws one there is
     // refused at boot ("conflicting atmospherics", sim/mod.rs), so
     // this mask is the only legal way to draw a crossing.
     pipes: [(1, 1, 14), (2, 1, 14), (3, 1, %d), (4, 1, 14), (5, 1, 14)],
-    structures: [(3, 1, "manual_valve", { "layer": %d })],
+    structures: [(3, 2, "player_spawn"), (3, 1, "manual_valve", { "layer": %d })],
 )]==]
 
 -- One placed valve, proved against the two layers it is not on.
@@ -177,14 +176,13 @@ t.world([==[(
         "#........#",
         "##########",
     ],
-    spawns: [(4, 2)],
     // Row 2 carries no pipe at all, so the two mains are never
     // adjacent: one walkway between them, and no plumbing across it.
     pipes: [
         (1, 1, 4), (2, 1, 4), (3, 1, 4), (5, 1, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4),
         (1, 3, 4), (2, 3, 4), (3, 3, 4), (5, 3, 4), (6, 3, 4), (7, 3, 4), (8, 3, 4),
     ],
-    structures: [(4, 1, "manual_valve"), (4, 3, "digital_valve")],
+    structures: [(4, 2, "player_spawn"), (4, 1, "manual_valve"), (4, 3, "digital_valve")],
 )]==], 7)
 
 local v = t.join()

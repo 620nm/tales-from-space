@@ -3,9 +3,8 @@ t.world([==[(
     name: "laptop network bench",
     legend: { '.': (turf: Floor), '#': (turf: Wall) },
     rows: ["#######", "#.....#", "#.....#", "#.....#", "#######"],
-    spawns: [(2, 2)],
     items: [(2, 2, "laptop"), (2, 2, "screwdriver")],
-    structures: [(3, 2, "airlock_button"), (5, 2, "airlock_button")],
+    structures: [(2, 2, "player_spawn"), (3, 2, "airlock_button"), (5, 2, "airlock_button")],
 )]==], 0)
 local p = t.join()
 t.run_ticks(3)

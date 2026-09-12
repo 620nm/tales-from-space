@@ -97,7 +97,6 @@ t.world([==[(
         "#......#",
         "########",
     ],
-    spawns: [(6, 2)],
     items: [(6, 2, "wrench")],
     pipes: [
         // Layer 2 along the top row: two lengths west of the adapter,
@@ -106,7 +105,7 @@ t.world([==[(
         // Layer 4, dropping south out of the same two tiles.
         (2, 1, 8), (2, 2, 8), (4, 1, 8), (4, 2, 8),
     ],
-    structures: [(3, 1, "layer_adapter")],
+    structures: [(6, 2, "player_spawn"), (3, 1, "layer_adapter")],
 )]==], 7)
 
 local p = t.join()
@@ -220,7 +219,6 @@ t.world([==[(
         "#......#",
         "########",
     ],
-    spawns: [(6, 2)],
     items: [(6, 2, "wrench"), (6, 2, "pipe_painter")],
     // Two lengths of red, three of blue, meeting at the adapter.
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4)],
@@ -228,7 +226,7 @@ t.world([==[(
         (1, 1, 4, "#F04137"), (2, 1, 4, "#F04137"),
         (4, 1, 4, "#5491E8"), (5, 1, 4, "#5491E8"), (6, 1, 4, "#5491E8"),
     ],
-    structures: [(3, 1, "color_adapter")],
+    structures: [(6, 2, "player_spawn"), (3, 1, "color_adapter")],
 )]==], 7)
 
 local c = t.join()

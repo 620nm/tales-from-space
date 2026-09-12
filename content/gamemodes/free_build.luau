@@ -58,6 +58,11 @@ if sim ~= nil then
         prototype = content.id,
     })
 
+    local function spawn_player(ev)
+        return map_markers.player_spawn(ev, "builder")
+    end
+
+    behavior:handle("round.spawn", { kind = "transform", route = "lifecycle" }, spawn_player)
     behavior:handle("clock.second", { kind = "react" }, function(ev)
         shift.on_second(shift_rules, ev)
     end)

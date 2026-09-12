@@ -12,8 +12,8 @@ t.world([==[(
         'o': (turf: Plating, fixture: Some(Outlet)),
     },
     rows: ["#######", "#.....#", "#GA.o##", "#######"],
-    spawns: [(4, 1)],
     structures: [
+        (4, 1, "player_spawn"),
         (4, 1, "access_point", { "network_1": "network_card" }),
         (5, 1, "airlock"),
     ],

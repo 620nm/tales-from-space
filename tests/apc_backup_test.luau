@@ -59,9 +59,9 @@ t.world([==[(
         "############",
     ],
     structures: [
+        (3, 2, "player_spawn"),
         (4, 1, "apc", { "l1_emergency": true }),
     ],
-    spawns: [(3, 2)],
     items: [(3, 2, "wirecutters"), (3, 2, "cable_coil")],
     cables: [
         (1, 1, 2), (2, 1, 2), (3, 1, 2), (4, 1, 2),

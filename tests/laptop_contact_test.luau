@@ -8,7 +8,7 @@ t.world([==[(
         'o': (turf: Floor, fixture: Some(Outlet)),
     },
     rows: ["#######", "#.....#", "#Gao..#", "#######"],
-    spawns: [(2, 1)],
+    structures: [(2, 2, "player_spawn")],
     items: [(1, 1, "laptop"), (1, 2, "floppy_disk.atmos_stock"),
         (3, 1, "floppy_disk")],
     machines: [(2, 1, "transceiver", { "encryption_1": "encryption_key.medical" })],

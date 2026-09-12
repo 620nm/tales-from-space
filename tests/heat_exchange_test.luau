@@ -96,7 +96,7 @@ t.world([==[(
         "#......#",
         "########",
     ],
-    spawns: [(6, 1)],
+    structures: [(6, 1, "player_spawn")],
     items: [(6, 1, "pipe_painter")],
     pipes: [(1, 1, 4), (2, 1, 4), (3, 1, 4), (4, 1, 4), (5, 1, 4)],
     pipe_kind: [(1, 1, 4, "he_pipe"), (2, 1, 4, "he_pipe"), (3, 1, 4, "he_pipe")],
@@ -173,11 +173,10 @@ t.world([==[(
         "#......#",
         "########",
     ],
-    spawns: [(6, 2)],
     items: [(6, 2, "wrench")],
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4)],
     pipe_kind: [(1, 1, 4, "he_pipe"), (2, 1, 4, "he_pipe")],
-    structures: [(3, 1, "he_junction")],
+    structures: [(6, 2, "player_spawn"), (3, 1, "he_junction")],
 )]==], 7)
 
 local j = t.join()
@@ -242,9 +241,8 @@ t.world([==[(
         "#......#",
         "########",
     ],
-    spawns: [(6, 1)],
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4)],
-    structures: [(3, 1, "he_junction")],
+    structures: [(6, 1, "player_spawn"), (3, 1, "he_junction")],
 )]==], 7)
 
 t.join()
@@ -294,7 +292,7 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 1)],
+    structures: [(2, 1, "player_spawn")],
     pipes: [(1, 1, 6), (2, 1, 6), (3, 1, 6)],
     pipe_kind: [(1, 1, 4, "he_pipe"), (2, 1, 4, "he_pipe"), (3, 1, 4, "he_pipe")],
 )]==], 7)
@@ -409,7 +407,7 @@ t.world([==[(
         "#####",
         "     ",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     pipes: [(1, 1, 4), (2, 1, 4), (1, 3, 4), (2, 3, 4)],
     pipe_kind: [
         (1, 1, 4, "he_pipe"), (2, 1, 4, "he_pipe"),
@@ -480,7 +478,7 @@ t.world([==[(
         "#a.g#",
         "#####",
     ],
-    spawns: [(3, 1)],
+    structures: [(3, 1, "player_spawn")],
     items: [(3, 1, "rpd")],
     machines: [(2, 1, "pipe_dispenser")],
     cables: [

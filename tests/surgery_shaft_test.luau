@@ -23,7 +23,7 @@ local ARENA = [==[(
         "#...#",
         "#####",
     ],
-    spawns: [(1, 1), (2, 1)],
+    structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn")],
     items: [(1, 1, "shard"), (1, 1, "wirecutters"), (1, 1, "welder")],
 )]==]
 

@@ -29,7 +29,7 @@ t.world([==[(
         "#a.g#",
         "#####",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     machines: [(2, 1, "games_vendor")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
@@ -191,11 +191,18 @@ assert(t.count_items("d6") == 0 and t.count_items("d20") == 0,
 -- assertion: the fixture script refuses with "dark and silent" when
 -- `sim.is_powered` says no, and that refusal would leave `t.ui` nil.
 --
--- The first joiner spawns at (18, 16), five tiles west of the machine
--- along the Commons' open row, so the walk is deterministic rather
--- than a search.
 local x, y = t.pos(crew)
-assert(x == 18 and y == 16, "the first joiner takes the first spawn")
+while x > 18 do
+    t.move(crew, "west")
+    t.run_ticks(5)
+    x, y = t.pos(crew)
+end
+while x < 18 do
+    t.move(crew, "east")
+    t.run_ticks(5)
+    x, y = t.pos(crew)
+end
+assert(x == 18 and y == 16, "the crewman reaches the Commons start")
 
 t.click(crew, 24, 16, t.target_at(crew, 24, 16))
 t.tick()

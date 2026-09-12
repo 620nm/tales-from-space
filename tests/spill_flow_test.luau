@@ -38,7 +38,7 @@ local CORRIDOR = [==[(
         "#...+.#",
         "#######",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     items: [(2, 1, "crowbar")],
     blends: {
         "spill_60l": (rows: [("water", 3330.6), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
@@ -178,7 +178,7 @@ t.world([==[(
         "#.....#",
         "#######",
     ],
-    spawns: [(3, 1)],
+    structures: [(3, 1, "player_spawn")],
     items: [(3, 1, "beaker.water")],
     blends: {
         "film_3l": (rows: [("water", 166.53), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),

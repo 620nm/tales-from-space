@@ -20,8 +20,8 @@ t.world([==[(
         "~~~~~",
         ".....",
     ],
-    spawns: [(1, 1)],
     structures: [
+        (1, 1, "player_spawn"),
         (0, 0, "lattice"), (1, 0, "catwalk"), (2, 0, "catwalk"),
     ],
 )]==], 7)
@@ -55,7 +55,7 @@ t.world([==[(
         ".~..",
         "....",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     items: [(1, 1, "rod"), (1, 1, "wirecutters")],
 )]==], 7)
 
@@ -135,9 +135,8 @@ t.world([==[(
         ".....",
         ".....",
     ],
-    spawns: [(2, 2)],
     items: [(2, 2, "crowbar")],
-    structures: [(2, 1, "lattice"), (3, 2, "catwalk")],
+    structures: [(2, 2, "player_spawn"), (2, 1, "lattice"), (3, 2, "catwalk")],
 )]==], 7)
 
 local tiler = t.join()

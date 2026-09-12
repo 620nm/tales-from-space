@@ -55,8 +55,7 @@ t.world([==[(
         "#.#",
         "###",
     ],
-    spawns: [(1, 1)],
-    structures: [(1, 1, "floor_drain")],]==] .. SPILL .. [==[
+    structures: [(1, 1, "player_spawn"), (1, 1, "floor_drain")],]==] .. SPILL .. [==[
     painted: [(1, 1, "spill_10l")],
 )]==], 0)
 
@@ -148,8 +147,7 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(1, 1)],
-    structures: [(2, 1, "floor_drain")],]==] .. SPILL .. [==[
+    structures: [(1, 1, "player_spawn"), (2, 1, "floor_drain")],]==] .. SPILL .. [==[
     painted: [(3, 1, "spill_10l")],
 )]==], 0)
 

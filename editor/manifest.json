@@ -1,7 +1,7 @@
 {
   "version": 1,
   "pack": "lunatic/tfs",
-  "revision": "2",
+  "revision": "3",
   "default_mode": "space_station",
   "modes": {
     "space_station": {
@@ -12,7 +12,6 @@
         "fill",
         "erase",
         "clone",
-        "spawn",
         "link"
       ],
       "lenses": [
@@ -116,6 +115,26 @@
             {"when": {"paint": "public", "bolted": true}, "layers": ["door", "door_bolt_lights"]},
             {"when": {"paint": "public", "glass": true}, "layers": ["door_glass"]},
             {"when": {"paint": "public"}, "layers": ["door"]}
+          ]
+        },
+        {
+          "kind": "structure",
+          "id": "player_spawn",
+          "section": "Map Markers",
+          "category": "",
+          "properties": [
+            {"key": "weight", "kind": "number", "label": "lunatic/tfs:editor.player_spawn.weight", "default": 1, "min": 0, "max": 1000000, "step": 1},
+            {"key": "jobs", "kind": "words", "label": "lunatic/tfs:editor.player_spawn.jobs", "default": ""},
+            {"key": "roles", "kind": "words", "label": "lunatic/tfs:editor.player_spawn.roles", "default": ""}
+          ]
+        },
+        {
+          "kind": "structure",
+          "id": "threat_spawn",
+          "section": "Map Markers",
+          "category": "",
+          "properties": [
+            {"key": "weight", "kind": "number", "label": "lunatic/tfs:editor.threat_spawn.weight", "default": 1, "min": 0, "max": 1000000, "step": 1}
           ]
         }
       ]
@@ -128,7 +147,6 @@
         "fill",
         "erase",
         "clone",
-        "spawn",
         "link"
       ],
       "lenses": [
@@ -232,6 +250,26 @@
             {"when": {"paint": "public", "bolted": true}, "layers": ["door", "door_bolt_lights"]},
             {"when": {"paint": "public", "glass": true}, "layers": ["door_glass"]},
             {"when": {"paint": "public"}, "layers": ["door"]}
+          ]
+        },
+        {
+          "kind": "structure",
+          "id": "player_spawn",
+          "section": "Map Markers",
+          "category": "",
+          "properties": [
+            {"key": "weight", "kind": "number", "label": "lunatic/tfs:editor.player_spawn.weight", "default": 1, "min": 0, "max": 1000000, "step": 1},
+            {"key": "jobs", "kind": "words", "label": "lunatic/tfs:editor.player_spawn.jobs", "default": ""},
+            {"key": "roles", "kind": "words", "label": "lunatic/tfs:editor.player_spawn.roles", "default": ""}
+          ]
+        },
+        {
+          "kind": "structure",
+          "id": "threat_spawn",
+          "section": "Map Markers",
+          "category": "",
+          "properties": [
+            {"key": "weight", "kind": "number", "label": "lunatic/tfs:editor.threat_spawn.weight", "default": 1, "min": 0, "max": 1000000, "step": 1}
           ]
         }
       ]

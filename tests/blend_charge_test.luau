@@ -28,7 +28,7 @@ t.world([==[(
         "#....#",
         "######",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     items: [
         (2, 1, "beaker", { "blend": "rinse" }),
         (3, 1, "beaker.libital", { "blend": "rinse" }),
@@ -79,4 +79,3 @@ assert(untouched.contents.libital ~= nil,
     "a placement that says nothing gets the prototype's own fill")
 assert(untouched.contents.libital.liquid > 0,
     "standing as liquid: " .. tostring(untouched.contents.libital.liquid))
-

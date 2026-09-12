@@ -89,7 +89,7 @@ t.world([==[(
         "#ooooooo#",
         "#########",
     ],
-    spawns: [(1, 2)],
+    structures: [(1, 2, "player_spawn")],
     items: [
         (1, 1, "wrench"),
         (1, 2, "rpd"),
@@ -428,10 +428,10 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 2)],
     items: [(1, 2, "rpd"), (1, 1, "wrench")],
     pipes: [(1, 2, 4), (2, 2, 4), (3, 2, 4), (1, 3, 4), (3, 3, 4)],
     structures: [
+        (2, 2, "player_spawn"),
         (1, 1, "manual_valve"),
         (2, 1, "connector_port"),
         (3, 1, "manual_valve", { "layer": 2 }),
@@ -514,7 +514,7 @@ t.world([==[(
         "#.......#",
         "#########",
     ],
-    spawns: [(2, 2)],
+    structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "rpd")],
     // The positive connector reaches west from (2,1). The southern
     // three entries are the layer each refusal below dials up to.

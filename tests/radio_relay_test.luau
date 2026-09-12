@@ -66,7 +66,6 @@ local BENCH = [==[(
         "#Gao....o...............................Gao......o.#",
         "####################################################",
     ],
-    spawns: [(5, 2), (50, 2)],
     items: [
         (5, 2, "encryption_key.medical"),
         (50, 2, "encryption_key.medical"),
@@ -79,7 +78,11 @@ local BENCH = [==[(
         (9, 1, "network_router"),
         (45, 1, "transceiver.medical"),
     ],
-    structures: [(6, 1, "access_point"), (49, 1, "access_point")],
+    structures: [
+        (5, 2, "player_spawn", { "jobs": "assistant" }),
+        (50, 2, "player_spawn", { "jobs": "medic" }),
+        (6, 1, "access_point"), (49, 1, "access_point"),
+    ],
     mounts: [(6, 1, North), (49, 1, North)],
     cables: [
         (1, 2, 2), (2, 2, 3), (3, 2, 1), (4, 2, 1), (5, 2, 1),
@@ -191,8 +194,8 @@ end
 local function two_roots(near)
     t.world(string.format(BENCH, near), 0)
     booted = {}
-    speaker = t.join()
-    listener = t.join()
+    speaker = t.join("assistant")
+    listener = t.join("medic")
     t.run_ticks(20)
     pocket(speaker)
     pocket(listener)

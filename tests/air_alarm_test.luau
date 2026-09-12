@@ -153,7 +153,6 @@ t.world([==[(
         "#............ag#",
         "################",
     ],
-    spawns: [(7, 2)],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
@@ -162,6 +161,7 @@ t.world([==[(
     // somewhere to put what it takes (tests/room_devices_test.luau).
     pipes: [(0, 2, 2), (1, 2, 2)],
     structures: [
+        (7, 2, "player_spawn"),
         (2, 1, "vent"),
         (3, 1, "pump", "running", { "dir": "west", "target_kpa": 900.0 }),
         (4, 1, "connector_port", { "dir": "west" }),
