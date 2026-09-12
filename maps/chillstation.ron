@@ -533,11 +533,11 @@
         // draws is that store's rating rather than the room's -- a sign
         // says what went into the chamber, once, at commissioning
         // (docs/construction/signs.md).
-        (4, 29, "hazard_diamond", { "blend": "plasma_23000kpa" }),
+        (4, 29, "hazard_diamond", { "blend": "plasma_23000kpa", "mount": "west" }),
         // ...and one in the commons with nothing named on it, which is
         // a blank placard: no digits and no symbol, because a sign
         // nobody has filled in has nothing to say.
-        (15, 16, "hazard_diamond"),
+        (15, 16, "hazard_diamond", { "mount": "west" }),
         (5, 33, "stationary_tank", "anchored", { "blend": "tritium_23000kpa" }),
         (7, 33, "stationary_tank", "anchored", { "blend": "n2o_23000kpa" }),
         // The temperature control unit, on the machine tile the annex
@@ -629,34 +629,34 @@
         // replaced. Four tiles from the tube at (16, 13), so the deck
         // between them is a gradient from cool to warm and back --
         // the whole point of coloured light, standing on one floor.
-        (6, 4, "light", { "color": "#F3FFFA" }), (11, 4, "light", { "color": "#F3FFFA" }),
-        (16, 4, "light", { "color": "#F3FFFA" }), (22, 4, "light", { "color": "#F3FFFA" }),
-        (28, 4, "light", { "color": "#F3FFFA" }), (33, 4, "light", { "color": "#F3FFFA" }),
-        (6, 9, "light", { "color": "#F3FFFA" }), (11, 9, "light", { "color": "#F3FFFA" }),
-        (16, 9, "light", { "color": "#F3FFFA" }), (22, 9, "light", { "color": "#F3FFFA" }),
-        (28, 9, "light", { "color": "#F3FFFA" }), (33, 9, "light", { "color": "#F3FFFA" }),
-        (6, 11, "light", { "color": "#F3FFFA" }), (10, 11, "light", { "color": "#F3FFFA" }),
-        (14, 11, "light", { "color": "#F3FFFA" }), (21, 11, "light", { "color": "#F3FFFA" }),
-        (25, 11, "light", { "color": "#F3FFFA" }), (29, 11, "light", { "color": "#F3FFFA" }),
-        (33, 11, "light", { "color": "#F3FFFA" }), (7, 13, "light", { "color": "#F3FFFA" }),
-        (12, 13, "light", { "color": "#F3FFFA" }), (16, 13, "light", { "color": "#F3FFFA" }),
-        (20, 13, "light", { "color": "#FFD6AA" }), (23, 13, "light", { "color": "#F3FFFA" }),
-        (27, 13, "light", { "color": "#F3FFFA" }), (32, 13, "light", { "color": "#F3FFFA" }),
-        (7, 18, "light", { "color": "#F3FFFA" }), (12, 18, "light", { "color": "#F3FFFA" }),
-        (16, 18, "light", { "color": "#F3FFFA" }), (23, 18, "light", { "color": "#F3FFFA" }),
-        (27, 18, "light", { "color": "#F3FFFA" }), (32, 18, "light", { "color": "#F3FFFA" }),
-        (5, 20, "light", { "color": "#F3FFFA" }), (10, 20, "light", { "color": "#F3FFFA" }),
-        (15, 20, "light", { "color": "#F3FFFA" }), (18, 20, "light", { "color": "#F3FFFA" }),
-        (24, 20, "light", { "color": "#F3FFFA" }), (28, 20, "light", { "color": "#F3FFFA" }),
-        (32, 20, "light", { "color": "#F3FFFA" }), (20, 22, "light", { "color": "#F3FFFA" }),
-        (24, 22, "light", { "color": "#F3FFFA" }), (28, 23, "light", { "color": "#F3FFFA" }),
-        (35, 23, "light", { "color": "#F3FFFA" }), (5, 25, "light", { "color": "#F3FFFA" }),
-        (11, 25, "light", { "color": "#F3FFFA" }), (5, 27, "light", { "color": "#F3FFFA" }),
-        (11, 27, "light", { "color": "#F3FFFA" }), (28, 27, "light", { "color": "#F3FFFA" }),
-        (35, 28, "light", { "color": "#F3FFFA" }),
+        (6, 4, "light", { "color": "#F3FFFA", "mount": "north" }), (11, 4, "light", { "color": "#F3FFFA", "mount": "north" }),
+        (16, 4, "light", { "color": "#F3FFFA", "mount": "north" }), (22, 4, "light", { "color": "#F3FFFA", "mount": "north" }),
+        (28, 4, "light", { "color": "#F3FFFA", "mount": "north" }), (33, 4, "light", { "color": "#F3FFFA", "mount": "north" }),
+        (6, 9, "light", { "color": "#F3FFFA", "mount": "south" }), (11, 9, "light", { "color": "#F3FFFA", "mount": "south" }),
+        (16, 9, "light", { "color": "#F3FFFA", "mount": "south" }), (22, 9, "light", { "color": "#F3FFFA", "mount": "south" }),
+        (28, 9, "light", { "color": "#F3FFFA", "mount": "south" }), (33, 9, "light", { "color": "#F3FFFA", "mount": "south" }),
+        (6, 11, "light", { "color": "#F3FFFA", "mount": "north" }), (10, 11, "light", { "color": "#F3FFFA", "mount": "north" }),
+        (14, 11, "light", { "color": "#F3FFFA", "mount": "north" }), (21, 11, "light", { "color": "#F3FFFA", "mount": "north" }),
+        (25, 11, "light", { "color": "#F3FFFA", "mount": "north" }), (29, 11, "light", { "color": "#F3FFFA", "mount": "north" }),
+        (33, 11, "light", { "color": "#F3FFFA", "mount": "north" }), (7, 13, "light", { "color": "#F3FFFA", "mount": "north" }),
+        (12, 13, "light", { "color": "#F3FFFA", "mount": "north" }), (16, 13, "light", { "color": "#F3FFFA", "mount": "north" }),
+        (20, 13, "light", { "color": "#FFD6AA", "mount": "north" }), (23, 13, "light", { "color": "#F3FFFA", "mount": "north" }),
+        (27, 13, "light", { "color": "#F3FFFA", "mount": "north" }), (32, 13, "light", { "color": "#F3FFFA", "mount": "north" }),
+        (7, 18, "light", { "color": "#F3FFFA", "mount": "south" }), (12, 18, "light", { "color": "#F3FFFA", "mount": "south" }),
+        (16, 18, "light", { "color": "#F3FFFA", "mount": "south" }), (23, 18, "light", { "color": "#F3FFFA", "mount": "south" }),
+        (27, 18, "light", { "color": "#F3FFFA", "mount": "south" }), (32, 18, "light", { "color": "#F3FFFA", "mount": "south" }),
+        (5, 20, "light", { "color": "#F3FFFA", "mount": "south" }), (10, 20, "light", { "color": "#F3FFFA", "mount": "south" }),
+        (15, 20, "light", { "color": "#F3FFFA", "mount": "south" }), (18, 20, "light", { "color": "#F3FFFA", "mount": "south" }),
+        (24, 20, "light", { "color": "#F3FFFA", "mount": "south" }), (28, 20, "light", { "color": "#F3FFFA", "mount": "south" }),
+        (32, 20, "light", { "color": "#F3FFFA", "mount": "south" }), (20, 22, "light", { "color": "#F3FFFA", "mount": "north" }),
+        (24, 22, "light", { "color": "#F3FFFA", "mount": "north" }), (28, 23, "light", { "color": "#F3FFFA", "mount": "west" }),
+        (35, 23, "light", { "color": "#F3FFFA", "mount": "east" }), (5, 25, "light", { "color": "#F3FFFA", "mount": "south" }),
+        (11, 25, "light", { "color": "#F3FFFA", "mount": "south" }), (5, 27, "light", { "color": "#F3FFFA", "mount": "north" }),
+        (11, 27, "light", { "color": "#F3FFFA", "mount": "north" }), (28, 27, "light", { "color": "#F3FFFA", "mount": "west" }),
+        (35, 28, "light", { "color": "#F3FFFA", "mount": "east" }),
         // ---- THE NINE APCs ---------------------------------------
         // One per room the station lights, each on the wall it is
-        // mounted to (`mounts` below) and each labelled with the room
+        // mounted with its placement's `mount` property and each labelled with the room
         // it serves (`labels` below) -- an APC's label IS the room's
         // name (docs/POWER.md, "rooms are names").
         //
@@ -674,15 +674,15 @@
         // (docs/map-properties/placements.md). That is what gives every
         // APC an address, and every room's plant and fittings a hub to
         // hang off without an engineer joining a single one of them.
-        (4, 5, "apc", { "l1_emergency": true }),
-        (14, 5, "apc", { "l1_emergency": true }),
-        (26, 5, "apc", { "l1_emergency": true }),
-        (18, 11, "apc", { "l1_emergency": true }),
-        (15, 14, "apc", { "l1_emergency": true }),
-        (4, 22, "apc", { "l1_emergency": true }),
-        (18, 22, "apc", { "l1_emergency": true }),
-        (28, 22, "apc", { "l1_emergency": true }),
-        (4, 27, "apc", { "l1_emergency": true }),
+        (4, 5, "apc", { "l1_emergency": true, "mount": "west" }),
+        (14, 5, "apc", { "l1_emergency": true, "mount": "west" }),
+        (26, 5, "apc", { "l1_emergency": true, "mount": "west" }),
+        (18, 11, "apc", { "l1_emergency": true, "mount": "north" }),
+        (15, 14, "apc", { "l1_emergency": true, "mount": "west" }),
+        (4, 22, "apc", { "l1_emergency": true, "mount": "west" }),
+        (18, 22, "apc", { "l1_emergency": true, "mount": "north" }),
+        (28, 22, "apc", { "l1_emergency": true, "mount": "west" }),
+        (4, 27, "apc", { "l1_emergency": true, "mount": "west" }),
         // ---- THE ONE ACCESS POINT THE STATION SHIPS --------------
         // Engineering's own, on the wall of the tank rank one cell of
         // cord from the port at (9, 27). Its lock is keyed to the
@@ -690,13 +690,13 @@
         // than about the entry -- the same row an airlock carries, so
         // one entry stands up a rack of nodes keyed to different claims
         // (docs/DEVICES.md SS8).
-        (8, 27, "access_point", { "access": "engineering" }),
+        (8, 27, "access_point", { "access": "engineering", "mount": "north" }),
         // ---- THE COMMONS DISPLAYS ---------------------------------
         // The shift clock and the board beside it share the north wall,
         // between the room's two light fittings, where everybody waking
         // in the Commons can see the time and whatever the board says.
-        (21, 13, "digital_clock"),
-        (22, 13, "status_display"),
+        (21, 13, "digital_clock", { "mount": "north" }),
+        (22, 13, "status_display", { "mount": "north" }),
         // ---- THE UTILITY OUTLET PORTS ----------------------------
         // A port is what everything on a cord plugs into, and on this
         // station that is the light fittings as much as the appliances
@@ -1342,30 +1342,5 @@
         (28, 22, "Cargo Hall"),
         (18, 22, "Atmospherics"),
         (4, 27, "Tank Annex"),
-    ],
-    // A wall fixture names the wall it is bolted to, and the shipped-map
-    // test refuses one that does not (lunatic-core map.rs,
-    // `shipped_maps_mount_every_wall_fixture`). The utility outlet
-    // ports are not here: they stand on the deck.
-    mounts: [
-        (4, 5, West), (14, 5, West), (26, 5, West), (18, 11, North),
-        (15, 14, West), (4, 22, West), (28, 22, West), (18, 22, North),
-        (4, 27, West), (6, 4, North), (11, 4, North), (6, 9, South),
-        (11, 9, South), (16, 4, North), (22, 4, North), (16, 9, South),
-        (22, 9, South), (28, 4, North), (33, 4, North), (28, 9, South),
-        (33, 9, South), (6, 11, North), (10, 11, North), (14, 11, North),
-        (21, 11, North), (25, 11, North), (29, 11, North), (33, 11, North),
-        (5, 20, South), (10, 20, South), (15, 20, South), (18, 20, South),
-        (24, 20, South), (28, 20, South), (32, 20, South), (7, 13, North),
-        (12, 13, North), (7, 18, South), (12, 18, South), (27, 13, North),
-        (32, 13, North), (27, 18, South), (32, 18, South), (16, 13, North),
-        (23, 13, North), (16, 18, South), (23, 18, South), (20, 13, North),
-        (5, 25, South), (11, 25, South), (28, 23, West), (28, 27, West),
-        (35, 23, East), (35, 28, East), (20, 22, North), (24, 22, North),
-        (8, 27, North),
-        (5, 27, North), (11, 27, North),
-        (21, 13, North), (22, 13, North),
-        // The two hazard placards, each naming the wall it is bolted to.
-        (4, 29, West), (15, 16, West),
     ],
 )

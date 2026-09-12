@@ -76,9 +76,8 @@ t.world([==[(
     structures: [
         (6, 2, "player_spawn", { "jobs": "assistant" }),
         (41, 2, "player_spawn", { "jobs": "medic" }),
-        (8, 1, "access_point"),
+        (8, 1, "access_point", { "mount": "north" }),
     ],
-    mounts: [(8, 1, North)],
     cables: [
         (1, 2, 2), (2, 2, 3), (3, 2, 1), (4, 2, 1), (5, 2, 1),
         (6, 2, 1), (7, 2, 1), (8, 2, 1), (9, 2, 1),

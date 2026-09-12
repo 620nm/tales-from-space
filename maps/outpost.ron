@@ -89,23 +89,23 @@
         // (docs/power/map-format.md). The network card in each one is
         // not written here -- a socket seats its lowest-tier part by
         // default (docs/map-properties/placements.md).
-        (3, 2, "apc", { "l1_emergency": true }),
+        (3, 2, "apc", { "l1_emergency": true, "mount": "north" }),
         (4, 2, "utility_outlet_port"),
-        (13, 2, "light"),
+        (13, 2, "light", { "mount": "north" }),
         (16, 2, "utility_outlet_port"),
-        (17, 2, "light"),
-        (18, 2, "apc", { "l1_emergency": true }),
+        (17, 2, "light", { "mount": "north" }),
+        (18, 2, "apc", { "l1_emergency": true, "mount": "north" }),
         (12, 2, "utility_outlet_port"),
         (10, 3, "airlock"),
         (15, 3, "airlock.engineering"),
-        (3, 4, "light"),
+        (3, 4, "light", { "mount": "south" }),
         (6, 5, "airlock"),
-        (3, 6, "light"),
+        (3, 6, "light", { "mount": "north" }),
         (4, 6, "utility_outlet_port"),
-        (5, 6, "apc", { "l1_emergency": true }),
+        (5, 6, "apc", { "l1_emergency": true, "mount": "north" }),
         (10, 6, "airlock"),
         (15, 6, "airlock"),
-        (20, 6, "light"),
+        (20, 6, "light", { "mount": "north" }),
         // The sill: the one leaf between the corridor and the
         // flooded vestibule, glazed so the water is something you
         // can see before you are standing in it. The backbone
@@ -116,8 +116,8 @@
         (20, 7, "smes", { "l2": "bidirectional" }),
         (8, 8, "utility_outlet_port"),
         (12, 8, "utility_outlet_port"),
-        (14, 8, "apc", { "l1_emergency": true }),
-        (18, 8, "apc", { "l1_emergency": true }),
+        (14, 8, "apc", { "l1_emergency": true, "mount": "south" }),
+        (18, 8, "apc", { "l1_emergency": true, "mount": "south" }),
         (20, 8, "utility_outlet_port"),
         (11, 9, "airlock"),
     ],
@@ -194,16 +194,4 @@
     ],
     // The utility outlet ports are absent: they stand on the deck
     // rather than hanging on a wall.
-    mounts: [
-        (3, 2, North),
-        (13, 2, North),
-        (17, 2, North),
-        (18, 2, North),
-        (3, 4, South),
-        (3, 6, North),
-        (5, 6, North),
-        (20, 6, North),
-        (14, 8, South),
-        (18, 8, South),
-    ],
 )

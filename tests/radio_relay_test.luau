@@ -81,9 +81,8 @@ local BENCH = [==[(
     structures: [
         (5, 2, "player_spawn", { "jobs": "assistant" }),
         (50, 2, "player_spawn", { "jobs": "medic" }),
-        (6, 1, "access_point"), (49, 1, "access_point"),
+        (6, 1, "access_point", { "mount": "north" }), (49, 1, "access_point", { "mount": "north" }),
     ],
-    mounts: [(6, 1, North), (49, 1, North)],
     cables: [
         (1, 2, 2), (2, 2, 3), (3, 2, 1), (4, 2, 1), (5, 2, 1),
         (6, 2, 1), (7, 2, 1), (8, 2, 1),

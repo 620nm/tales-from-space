@@ -19,12 +19,8 @@ t.world([==[(
     ],
     structures: [
         (4, 1, "player_spawn"),
-        (2, 1, "digital_clock"),
-        (3, 1, "status_display"),
-    ],
-    mounts: [
-        (2, 1, North),
-        (3, 1, North),
+        (2, 1, "digital_clock", { "mount": "north" }),
+        (3, 1, "status_display", { "mount": "north" }),
     ],
 )]==], 0)
 

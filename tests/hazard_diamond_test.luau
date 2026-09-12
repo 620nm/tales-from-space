@@ -53,11 +53,10 @@ t.world([==[(
         // substance this station is built to keep away from itself.
         "store": (rows: [("plasma", 90.0), ("n2", 10.0)], temperature_k: 293.15, amount: total),
     },
-    mounts: [(1, 1, West), (3, 1, East)],
     structures: [
         (2, 2, "player_spawn"),
-        (1, 1, "hazard_diamond", { "blend": "store" }),
-        (3, 1, "hazard_diamond"),
+        (1, 1, "hazard_diamond", { "blend": "store", "mount": "west" }),
+        (3, 1, "hazard_diamond", { "mount": "east" }),
     ],
 )]==], 0)
 
