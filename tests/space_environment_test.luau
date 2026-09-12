@@ -30,7 +30,7 @@ local MAP = [==[(
         "#.#",
         "###",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
 )]==]
 
 -- A new map with no saved physical preference accepts every compatible
@@ -46,7 +46,7 @@ local UNRESTRICTED_MAP = [==[(
         "#.#",
         "###",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
 )]==]
 
 local TERRESTRIAL_MAP = UNRESTRICTED_MAP:gsub(
@@ -66,7 +66,7 @@ local ZERO_GRAVITY_MAP = [==[(
         "#.#",
         "###",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
 )]==]
 
 local MICROGRAVITY_FILTER_MAP = [==[(
@@ -84,7 +84,7 @@ local MICROGRAVITY_FILTER_MAP = [==[(
         "#.#",
         "###",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
 )]==]
 
 -- The station's roster, verbatim from content/gamemodes/space_station.

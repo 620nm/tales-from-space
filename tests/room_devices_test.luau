@@ -124,7 +124,6 @@ local SCRUB_MAP = [==[(
         "#....ag#",
         "########",
     ],
-    spawns: [(5, 2)],
     // The waste main runs out under the west wall, so the room's air
     // has somewhere to go that is not the room.
     // Layer 2, because that is where a scrubber lives (tg's
@@ -135,7 +134,7 @@ local SCRUB_MAP = [==[(
     // about the other machine: tg's scrubber, pointed at one gas with
     // the dial wide open and nothing under it. scrubber_floor_test.luau
     // is the grille's.
-    structures: [(2, 1, "air_scrubber", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 })],
+    structures: [(5, 2, "player_spawn"), (2, 1, "air_scrubber", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 })],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
@@ -307,11 +306,11 @@ t.world([==[(
         "#...a.g#",
         "########",
     ],
-    spawns: [(4, 2)],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
+        (4, 2, "player_spawn"),
         (1, 1, "connector_port", { "pipe": "east" }),
         (1, 1, "canister", { "blend": "canister_air" }),
         (2, 1, "pump", "running", { "dir": "east" }),
@@ -424,11 +423,10 @@ t.world([==[(
         "#......#",
         "########",
     ],
-    spawns: [(5, 2)],
     // The scrubber's waste line is layer 2, the injector's supply is
     // the default 3 -- which is exactly how the two are mapped.
     pipes: [(0, 1, 2), (1, 1, 2), (5, 1, 4), (6, 1, 4)],
-    structures: [(2, 1, "air_scrubber"), (4, 1, "air_injector")],
+    structures: [(5, 2, "player_spawn"), (2, 1, "air_scrubber"), (4, 1, "air_injector")],
 )]==], 7)
 
 local d = t.join()
@@ -488,7 +486,7 @@ t.world([==[(
         "#a....g#",
         "########",
     ],
-    spawns: [(1, 2)],
+    structures: [(1, 2, "player_spawn")],
     items: [
         (1, 2, "wrench"),
         (3, 2, "air_scrubber_fitting"),

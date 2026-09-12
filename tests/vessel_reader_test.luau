@@ -21,6 +21,7 @@ t.world([==[(
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
+        (1, 1, "player_spawn"),
         (5, 2, "canister", { "blend": "canister_air", "open": true }),
     ],
     rows: [
@@ -29,7 +30,6 @@ t.world([==[(
         "#....c#",
         "#######",
     ],
-    spawns: [(1, 1)],
     items: [
         (2, 1, "oxygen_tank"),
         (3, 1, "beaker.libital"),

@@ -32,8 +32,7 @@ t.world([==[(
     name: "lone button",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: ["######", "#....#", "######"],
-    spawns: [(3, 1)],
-    structures: [(2, 1, "airlock_button")],
+    structures: [(3, 1, "player_spawn"), (2, 1, "airlock_button")],
     mounts: [(2, 1, North)],
     items: [(4, 1, "cola"), (4, 1, "screwdriver")],
 )]==], 0)
@@ -84,8 +83,8 @@ t.world([==[(
         'o': (turf: Plating, fixture: Some(Outlet)),
     },
     rows: ["#######", "#.....#", "#GA.o##", "#######"],
-    spawns: [(3, 1)],
     structures: [
+        (3, 1, "player_spawn"),
         (4, 1, "access_point", { "network_1": "network_card" }),
         (2, 1, "airlock_button"),
         (5, 1, "airlock"),

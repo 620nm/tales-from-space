@@ -58,7 +58,11 @@ t.world([==[(
         "#Gao..................#",
         "#######################",
     ],
-    spawns: [(1, 1), (3, 1), (20, 1)],
+    structures: [
+        (1, 1, "player_spawn", { "jobs": "assistant" }),
+        (3, 1, "player_spawn", { "jobs": "engineer" }),
+        (20, 1, "player_spawn", { "jobs": "medic" }),
+    ],
     items: [
         (1, 1, "encryption_key.medical"),
         (20, 1, "encryption_key.medical"),
@@ -71,9 +75,9 @@ t.world([==[(
     ],
 )]==], 0)
 
-local speaker = t.join()
-local operator = t.join()
-local listener = t.join()
+local speaker = t.join("assistant")
+local operator = t.join("engineer")
+local listener = t.join("medic")
 t.run_ticks(20)
 
 -- The speaker and the listener carry the Lifeline key; the operator's

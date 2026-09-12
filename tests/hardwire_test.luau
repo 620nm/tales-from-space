@@ -97,8 +97,8 @@ t.world([==[(
         "#l.........#",
         "############",
     ],
-    spawns: [(9, 2)],
     structures: [
+        (9, 2, "player_spawn"),
         (3, 2, "vent"),
         (5, 1, "vent"),
         (7, 1, "air_alarm", { "network_1": "network_card" }),

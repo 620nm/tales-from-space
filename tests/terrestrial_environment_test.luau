@@ -26,7 +26,7 @@ assert(t.room_temperature(4, 3) < 293.15, "outside air cools the opened room")
 t.world([==[(
     name: "ground construction", tags: ["terrestrial"],
     legend: { '#': (turf: Wall), '.': (turf: Floor), 'g': (turf: Ground, outdoors: true) },
-    rows: ["###", "#.g", "###"], spawns: [(1, 1)],
+    rows: ["###", "#.g", "###"], structures: [(1, 1, "player_spawn")],
     items: [(1, 1, "floor_tile")],
 )]==], 7)
 local builder = t.join("assistant")

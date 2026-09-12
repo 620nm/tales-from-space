@@ -12,16 +12,19 @@ local ARENA = [==[(
     name: "ward",
     legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
     rows: [ "#####", "#...#", "#####" ],
-    spawns: [(1, 1), (2, 1)],
-    structures: [(2, 1, "optable")],
+    structures: [
+        (1, 1, "player_spawn", { "jobs": "assistant" }),
+        (2, 1, "player_spawn", { "jobs": "medic" }),
+        (2, 1, "optable"),
+    ],
     items: [ (1, 1, "scalpel"), (1, 1, "retractor") ],
 )]==]
 
 local function has(states, name) return states[name] == true end
 
 t.world(ARENA, 0)
-local surgeon = t.join()
-local patient = t.join()
+local surgeon = t.join("assistant")
+local patient = t.join("medic")
 t.run_ticks(3)
 t.rest(patient, true)
 -- Bare the torso and limbs: the jumpsuit `covers` them and a covered
@@ -146,13 +149,16 @@ local BRAWL = [==[(
     name: "brawl",
     legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
     rows: [ "#####", "#...#", "#####" ],
-    spawns: [(1, 1), (2, 1)],
+    structures: [
+        (1, 1, "player_spawn", { "jobs": "assistant" }),
+        (2, 1, "player_spawn", { "jobs": "medic" }),
+    ],
     items: [ (1, 1, "toolbox") ],
 )]==]
 
 t.world(BRAWL, 7)
-local attacker = t.join()
-local victim = t.join()
+local attacker = t.join("assistant")
+local victim = t.join("medic")
 t.run_ticks(3)
 
 t.click(attacker, 1, 1, t.target_at(attacker, 1, 1, "toolbox"))

@@ -3,7 +3,7 @@ local ARENA = [==[(
     name: "inventory laptop",
     legend: { '.': (turf: Floor), '#': (turf: Wall) },
     rows: ["#####", "#...#", "#...#", "#...#", "#####"],
-    spawns: [(2, 2)],
+    structures: [(2, 2, "player_spawn")],
     items: [(1, 2, "laptop"), (1, 3, "floppy_disk"),
         (1, 3, "floppy_disk"), (1, 1, "id_assistant"),
         (3, 1, "id_captain"), (2, 3, "backpack"), (3, 2, "backpack")],

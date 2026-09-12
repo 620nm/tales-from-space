@@ -36,9 +36,8 @@ t.world([==[(
         "#.....#",
         "#######",
     ],
-    spawns: [(1, 1), (3, 1)],
     items: [],
-    structures: [(2, 1, "cadaver_chamber", { "dir": "east" })],
+    structures: [(1, 1, "player_spawn"), (3, 1, "player_spawn"), (2, 1, "cadaver_chamber", { "dir": "east" })],
 )]==], 7)
 
 local dark_attendant = t.join()
@@ -83,9 +82,8 @@ t.world([==[(
         "#Gao..#",
         "#######",
     ],
-    spawns: [(1, 1), (3, 1)],
     items: [],
-    structures: [(2, 1, "cadaver_chamber", { "dir": "east" })],
+    structures: [(1, 1, "player_spawn"), (3, 1, "player_spawn"), (2, 1, "cadaver_chamber", { "dir": "east" })],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
 )]==], 7)
 

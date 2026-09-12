@@ -133,10 +133,9 @@ local BENCH = [==[(
         "#ga........#",
         "############",
     ],
-    spawns: [(5, 2)],
     items: [(5, 2, "wirecutters"), (5, 2, "pipe"), (6, 2, "cable_coil")],
     pipes: [%s],
-    structures: [(5, 1, "%s")],
+    structures: [(5, 2, "player_spawn"), (5, 1, "%s")],
     cables: [
         (1, 2, 2), (2, 2, 3),
         (3, 2, 1), (4, 2, 1), (4, 1, 1), (5, 1, 1),

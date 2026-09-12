@@ -13,9 +13,8 @@ t.world([==[(
         "#..#",
         "####",
     ],
-    spawns: [(1, 1)],
     items: [(1, 1, "headset")],
-    structures: [(2, 1, "locker.tools")],
+    structures: [(1, 1, "player_spawn"), (2, 1, "locker.tools")],
 )]==], 7)
 
 local function has(rows, wanted)

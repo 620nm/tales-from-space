@@ -63,7 +63,6 @@ t.world([==[(
         "#..#..#..#",
         "##########",
     ],
-    spawns: [(1, 1)],
     pipes: [(5, 1, 4), (8, 1, 4)],
     blends: {
         "pumped_down": (temperature_k: 293.15, amount: per_tile),
@@ -75,6 +74,7 @@ t.world([==[(
         (7, 1, "pumped_down"), (8, 1, "pumped_down"),
     ],
     structures: [
+        (1, 1, "player_spawn"),
         (1, 1, "canister", { "blend": "hot_chlorine", "open": true }),
         (4, 1, "connector_port"),
         // Valve SHUT, because the wrench is the coupling: a fastened

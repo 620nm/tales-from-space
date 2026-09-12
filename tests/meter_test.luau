@@ -55,7 +55,6 @@ t.world([==[(
         "#oo..#",
         "######",
     ],
-    spawns: [(1, 2)],
     items: [(1, 2, "wrench"), (2, 1, "pipe_meter"), (3, 2, "pipe_meter")],
     pipes: [(2, 1, 4), (3, 1, 4)],
     blends: {
@@ -67,6 +66,7 @@ t.world([==[(
         "canister_air": (rows: [("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
+        (1, 2, "player_spawn"),
         (1, 1, "connector_port"),
         (1, 1, "canister", { "blend": "canister_air", "open": true }),
     ],
@@ -255,10 +255,9 @@ t.world([==[(
         "#....#",
         "######",
     ],
-    spawns: [(3, 1)],
     items: [(3, 1, "pipe")],
     pipes: [(1, 1, 4), (2, 1, 4)],
-    structures: [(1, 1, "meter")],
+    structures: [(3, 1, "player_spawn"), (1, 1, "meter")],
 )]==], 7)
 
 local m = t.join()

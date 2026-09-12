@@ -44,7 +44,6 @@ t.world([==[(
         "#oa.g##",
         "#######",
     ],
-    spawns: [(1, 2), (4, 2)],
     items: [(1, 2, "bottle"), (4, 2, "oxygen_tank")],
     machines: [(1, 1, "chem_dispenser")],
     // The waste main runs out under the east wall, so what the scrubber
@@ -54,7 +53,12 @@ t.world([==[(
     // tg's scrubber, spelled out: pointed at a roster with the dial
     // wide open and no floor under it. A placement that SAYS nothing
     // is a return grille instead (scrubber_floor_test.luau).
-    structures: [(4, 1, "air_scrubber", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 })],
+    structures: [
+        (1, 2, "player_spawn", { "jobs": "engineer" }),
+        (4, 2, "player_spawn", { "weight": 0, "jobs": "assistant" }),
+        (4, 1, "player_spawn", { "jobs": "assistant" }),
+        (4, 1, "air_scrubber", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 }),
+    ],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3),
@@ -62,7 +66,7 @@ t.world([==[(
 )]==], 0)
 
 local chemist = t.join("engineer")
-local diver = t.join("engineer")
+local diver = t.join("assistant")
 t.run_ticks(2)
 
 local dispenser = t.target_at(chemist, 1, 1)

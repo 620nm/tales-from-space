@@ -33,7 +33,7 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     painted: [(1, 1, "humid_air"), (2, 1, "humid_air"), (3, 1, "humid_air")],
 )]==], 0)
 

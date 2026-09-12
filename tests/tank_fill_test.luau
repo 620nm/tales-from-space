@@ -142,8 +142,8 @@ t.world([==[(
         "#..........#",
         "############",
     ],
-    spawns: [(2, 2)],
     structures: [
+        (2, 2, "player_spawn"),
         (2, 1, "stationary_tank", "anchored", ("o2", 23000.0)),
         (4, 1, "stationary_tank", "anchored", ("o2", 4000.0)),
         (6, 1, "stationary_tank", "anchored", ("n2", 34500.0)),
@@ -293,8 +293,8 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 2)],
     structures: [
+        (2, 2, "player_spawn"),
         (1, 1, "stationary_tank"),
         (3, 1, "stationary_tank", "anchored"),
         (1, 3, "stationary_tank", ("n2", 5000.0)),

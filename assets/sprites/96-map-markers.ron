@@ -1,0 +1,6 @@
+(
+    sprites: [
+        ("marker_player_spawn", Png("art/markers/player_spawn.png")),
+        ("marker_threat_spawn", Png("art/markers/threat_spawn.png")),
+    ],
+)

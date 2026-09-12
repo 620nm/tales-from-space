@@ -46,9 +46,9 @@ t.world([==[(
         "#GAo....#",
         "#########",
     ],
-    spawns: [(5, 1)],
     items: [(5, 1, "laptop")],
     structures: [
+        (5, 1, "player_spawn"),
         (4, 2, "access_point", { "network_1": "network_card" }),
         (6, 2, "airlock_button"),
         (6, 1, "airlock.engineering"),

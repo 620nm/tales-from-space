@@ -64,12 +64,12 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 1)],
     items: [
         (1, 1, "bottle"),
         (3, 1, "beaker"), (3, 2, "beaker.libital"), (1, 2, "dropper"),
     ],
     structures: [
+        (2, 1, "player_spawn"),
         (2, 2, "canister"),
     ],
 )]==], 0)
@@ -193,13 +193,12 @@ t.world([==[(
         "#..a....#",
         "#########",
     ],
-    spawns: [(3, 2)],
     items: [
         (1, 3, "bottle"), (2, 3, "bottle"),
         (4, 3, "bottle"), (5, 3, "bottle"),
     ],
     machines: [(1, 2, "chem_dispenser"), (6, 2, "chem_heater")],
-    structures: [(2, 1, "canister"), (4, 1, "canister")],
+    structures: [(3, 2, "player_spawn"), (2, 1, "canister"), (4, 1, "canister")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3),
@@ -389,4 +388,3 @@ assert(t.holder_k(flat) > 520.0 and t.holder_k(flat) < 610.0,
     "the same chamber, the same dial: " .. t.holder_k(flat))
 near(gas(flat, "n2o"), 0.0, 1e-12, "a thin oxygen share makes none of it")
 assert(gas(flat, "o2") > 0.0, "and spends none of the oxygen it does have")
-

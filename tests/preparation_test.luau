@@ -13,7 +13,7 @@ local MAP = [==[(
         "#...#",
         "#####",
     ],
-    spawns: [(1, 1), (2, 1), (3, 1)],
+    structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn"), (3, 1, "player_spawn")],
 )]==]
 
 local TICKS_PER_SECOND = 20

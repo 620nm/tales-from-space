@@ -48,7 +48,7 @@ t.world([==[(
         "#.o.#",
         "#####",
     ],
-    spawns: [(2, 2)],
+    structures: [(2, 2, "player_spawn")],
     items: [
         (1, 1, "wrench"),
         (3, 1, "wirecutters"),
@@ -211,10 +211,9 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 2)],
     items: [(2, 2, "floor_tile")],
     pipes: [(1, 1, 4), (3, 2, 4)],
-    structures: [(2, 1, "manual_valve"), (3, 1, "connector_port")],
+    structures: [(2, 2, "player_spawn"), (2, 1, "manual_valve"), (3, 1, "connector_port")],
 )]==], 7)
 
 local c = t.join()
@@ -262,13 +261,13 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 2)],
     items: [(2, 2, "floor_tile")],
     pipes: [(1, 1, 4)],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
+        (2, 2, "player_spawn"),
         (2, 1, "connector_port"),
         (2, 1, "canister", { "blend": "canister_air", "open": true }),
     ],
@@ -321,7 +320,7 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 2)],
+    structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "wirecutters")],
     cables: [(2, 1, 1), (3, 1, 1)],
 )]==], 7)

@@ -56,7 +56,6 @@ t.world([==[(
         "#oo...#",
         "#######",
     ],
-    spawns: [(1, 2)],
     items: [(1, 2, "analyzer"), (2, 2, "pipe")],
     pipes: [(2, 1, 5), (3, 1, 4)],
     blends: {
@@ -71,6 +70,7 @@ t.world([==[(
     },
     painted: [(2, 1, "oil_1l")],
     structures: [
+        (1, 2, "player_spawn"),
         (1, 1, "connector_port"),
         (1, 1, "canister", { "blend": "canister_air", "open": true }),
     ],

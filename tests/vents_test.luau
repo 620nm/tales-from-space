@@ -121,7 +121,6 @@ local SUPPLY_MAP = [==[(
         "#...c.ga#",
         "#########",
     ],
-    spawns: [(5, 1)],
     // The pump regulates the vent's feed at one atmosphere off the
     // bottle's forty -- tg's own station shape, because a fastened
     // bottle IS its line and a vent on a forty-atmosphere main would
@@ -131,6 +130,7 @@ local SUPPLY_MAP = [==[(
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
+        (5, 1, "player_spawn"),
         (2, 1, "vent"),
         (3, 1, "pump", "running", { "dir": "west" }),
         (4, 1, "connector_port", { "pipe": "west" }),
@@ -265,9 +265,8 @@ local RELIEF_MAP = [==[(
         "#....ga.#",
         "#########",
     ],
-    spawns: [(4, 1)],
     pipes: [(2, 1, 4), (3, 1, 4), (4, 1, 4)],
-    structures: [(1, 1, "vent")],
+    structures: [(4, 1, "player_spawn"), (1, 1, "vent")],
     cables: [
         (5, 1, 3), (6, 1, 3),
         (4, 1, 1), (3, 1, 1), (2, 1, 1), (1, 1, 1),
@@ -364,12 +363,12 @@ local PASSIVE_MAP = [==[(
         "#....c..#",
         "#########",
     ],
-    spawns: [(4, 1)],
     pipes: [(3, 1, 4), (4, 1, 4)],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
+        (4, 1, "player_spawn"),
         (2, 1, "passive_vent"), (5, 1, "connector_port"),
         (5, 1, "canister", { "blend": "canister_air", "open": true }),
     ],

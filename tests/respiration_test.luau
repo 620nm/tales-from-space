@@ -33,7 +33,7 @@ local ARENA = [==[(
     name: "closet",
     legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
     rows: [ "###", "#.#", "###" ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
 )]==]
 
 local BREATH = 160 -- one breath cycle, 8 s at 20 Hz
@@ -123,7 +123,7 @@ local VOID = [==[(
     name: "the void",
     legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
     rows: [ "###", "#. ", "###" ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
 )]==]
 t.world(VOID, 0)
 local spacer = t.join()
@@ -146,8 +146,11 @@ local THEATRE = [==[(
     name: "theatre",
     legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
     rows: [ "#####", "#...#", "#####" ],
-    spawns: [(1, 1), (2, 1)],
-    structures: [(2, 1, "optable")],
+    structures: [
+        (1, 1, "player_spawn", { "jobs": "assistant" }),
+        (2, 1, "player_spawn", { "jobs": "medic" }),
+        (2, 1, "optable"),
+    ],
     items: [
         (1, 1, "scalpel"), (1, 1, "retractor"), (1, 1, "hemostat"),
         (1, 1, "circular_saw"), (1, 1, "cautery"),
@@ -155,8 +158,8 @@ local THEATRE = [==[(
 )]==]
 
 t.world(THEATRE, 0)
-local surgeon = t.join()
-local patient = t.join()
+local surgeon = t.join("assistant")
+local patient = t.join("medic")
 t.run_ticks(3)
 t.rest(patient, true)
 t.unequip(patient, "uniform")

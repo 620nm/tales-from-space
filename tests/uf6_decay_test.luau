@@ -52,7 +52,7 @@ t.world([==[(
         "#..#..#",
         "#######",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     blends: {
         // Hot UF6 gas, thin enough to STAY gas: at 350 K the fill is
         // far under the sublimation line, and once the deck has drunk

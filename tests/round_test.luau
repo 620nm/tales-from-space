@@ -15,7 +15,7 @@ local MAP = [==[(
         "#....#",
         "######",
     ],
-    spawns: [(1, 1), (4, 1)],
+    structures: [(1, 1, "player_spawn"), (4, 1, "player_spawn")],
 )]==]
 
 local function count(messages, needle)

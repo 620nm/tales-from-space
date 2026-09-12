@@ -35,7 +35,11 @@ t.world([==[(
         "#.#.#.#.#",
         "#########",
     ],
-    spawns: [(1, 1), (3, 1), (5, 1)],
+    structures: [
+        (1, 1, "player_spawn", { "jobs": "engineer" }),
+        (3, 1, "player_spawn", { "jobs": "assistant" }),
+        (5, 1, "player_spawn", { "jobs": "medic" }),
+    ],
     items: [(1, 1, "eva_suit"), (1, 1, "oxygen_tank")],
     room_gas: [(1, 1, "n2", 1.0), (3, 1, "n2", 1.0), (5, 1, "n2", 1.0)],
 )]==], 7)
@@ -64,8 +68,8 @@ local function heard(p)
 end
 
 local diver = t.join("engineer")
-local tanked = t.join("engineer")
-local bare = t.join("engineer")
+local tanked = t.join("assistant")
+local bare = t.join("medic")
 t.run_ticks(2)
 
 -- ---------------------------------------------------------------

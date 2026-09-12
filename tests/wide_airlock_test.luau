@@ -55,8 +55,8 @@ t.world([==[(
         "#........#",
         "##########",
     ],
-    spawns: [(4, 5)],
     structures: [
+        (4, 5, "player_spawn"),
         (3, 3, "airlock_wide"),
         (7, 3, "airlock"),
         (4, 1, "locker"),
@@ -177,8 +177,8 @@ t.world([==[(
         "#g.#..#",
         "#######",
     ],
-    spawns: [(1, 3)],
     structures: [
+        (1, 3, "player_spawn"),
         (3, 3, "airlock_wide", { "dir": "east" }),
         (5, 3, "locker"),
     ],

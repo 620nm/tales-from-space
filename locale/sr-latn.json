@@ -43,5 +43,11 @@
   "engine.action.close_storage": "Zatvori skladište",
   "lunatic/tfs:ui.body.posture": "Položaj",
   "lunatic/tfs:ui.body.rest": "Lezi",
-  "lunatic/tfs:ui.body.stand": "Ustani"
+  "lunatic/tfs:ui.body.stand": "Ustani",
+  "lunatic/tfs:entity.player_spawn.name": "Mesto pojavljivanja igrača",
+  "lunatic/tfs:entity.threat_spawn.name": "Mesto pojavljivanja pretnji",
+  "lunatic/tfs:editor.player_spawn.weight": "Relativna težina",
+  "lunatic/tfs:editor.player_spawn.jobs": "Dozvoljeni poslovi",
+  "lunatic/tfs:editor.player_spawn.roles": "Dozvoljene uloge",
+  "lunatic/tfs:editor.threat_spawn.weight": "Relativna težina"
 }

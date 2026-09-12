@@ -15,7 +15,7 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     // All within reach of the spawn: `t.target_at` picks by prototype.
     items: [(2, 1, "laptop"), (2, 1, "floppy_disk"), (2, 1, "crowbar")],
 )]==], 0)

@@ -14,7 +14,7 @@ t.world([==[(
         "#.#",
         "###",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     items: [(1, 1, "atmos_resin_projector")],
     blends: {
         "burning_mix": (

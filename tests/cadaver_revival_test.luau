@@ -35,12 +35,12 @@ local ARENA = [==[(
         "#Gao..#",
         "#######",
     ],
-    spawns: [(1, 1)],
     items: [
         (4, 1, "scalpel"), (4, 1, "retractor"), (4, 1, "hemostat"),
         (4, 1, "circular_saw"), (4, 1, "cautery"), (4, 1, "organ_heart"),
     ],
     structures: [
+        (1, 1, "player_spawn"),
         (3, 2, "optable"),
         (5, 2, "cadaver_chamber.cadaver", { "dir": "north" }),
     ],

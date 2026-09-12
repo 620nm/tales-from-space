@@ -44,8 +44,8 @@ t.world([==[(
         "#.......#",
         "#########",
     ],
-    spawns: [(2, 2)],
     structures: [
+        (2, 2, "player_spawn"),
         (7, 1, "thermomachine.fullupgrade", "off"),
     ],
     items: [

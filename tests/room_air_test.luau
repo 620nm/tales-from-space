@@ -54,7 +54,7 @@ local MAP = [==[
         "#.....#",
         "#######",
     ],
-    spawns: [(5, 1)],
+    structures: [(5, 1, "player_spawn")],
     blends: {
         "walk_in": (rows: [("o2", ]==] .. cold * 0.21 .. [==[), ("n2", ]==] .. cold * 0.79 .. [==[)], temperature_k: ]==] .. COLD_K .. [==[, amount: per_tile),
         "pumped_down": (temperature_k: 2.7, amount: per_tile),

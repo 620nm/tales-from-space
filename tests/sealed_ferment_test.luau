@@ -119,7 +119,7 @@ t.world([==[(
         "#g..#",
         "#####",
     ],
-    spawns: [(2, 1)],
+    structures: [(2, 1, "player_spawn")],
     items: [(1, 1, "beaker"), (3, 1, "bottle"), (3, 2, "beaker")],
     machines: [(2, 2, "chem_dispenser")],
     cables: [

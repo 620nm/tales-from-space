@@ -20,7 +20,7 @@ t.world([==[(
         "#.......#",
         "#########",
     ],
-    spawns: [(6, 1)],
+    structures: [(6, 1, "player_spawn")],
 )]==], 7)
 
 local p = t.join()

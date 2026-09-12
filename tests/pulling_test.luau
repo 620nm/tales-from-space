@@ -18,7 +18,6 @@ t.world([==[(
         "#...c#",
         "######",
     ],
-    spawns: [(3, 1)],
     items: [(3, 1, "wrench")],
     pipes: [(3, 1, 4)],
     // Without the socket the bottle is furniture; with it, the bottle
@@ -27,6 +26,7 @@ t.world([==[(
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
+        (3, 1, "player_spawn"),
         (4, 1, "connector_port"),
         (4, 1, "canister", { "blend": "canister_air", "open": true }),
     ],

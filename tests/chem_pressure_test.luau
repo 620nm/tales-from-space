@@ -51,13 +51,13 @@ t.world([==[(
         "#.#.#.##",
         "########",
     ],
-    spawns: [(1, 1)],
     blends: {
         "haber": (rows: [("n2", 40.0), ("hydrogen", 120.0)], temperature_k: 700.0, amount: per_tile),
         "cold_haber": (rows: [("n2", 40.0), ("hydrogen", 120.0)], temperature_k: 293.15, amount: per_tile),
         "thin_haber": (rows: [("n2", 40.0), ("hydrogen", 20.0)], temperature_k: 700.0, amount: per_tile),
     },
     structures: [
+        (1, 1, "player_spawn"),
         (1, 1, "canister", { "blend": "haber" }),
         (3, 1, "canister", { "blend": "cold_haber" }),
         (5, 1, "canister", { "blend": "thin_haber" }),
@@ -150,7 +150,7 @@ t.world([==[(
         "#o.a#",
         "#####",
     ],
-    spawns: [(2, 1)],
+    structures: [(2, 1, "player_spawn")],
     items: [(1, 2, "bottle"), (3, 2, "beaker")],
     machines: [(2, 2, "chem_dispenser")],
     cables: [

@@ -68,12 +68,12 @@ t.world([==[(
         "#..........#",
         "############",
     ],
-    spawns: [(8, 2)],
     machines: [
         (2, 1, "chem_heater"),
         (3, 1, "chem_heater", { "laser_1": "4" }),
     ],
     structures: [
+        (8, 2, "player_spawn"),
         (9, 1, "thermomachine", "off"),
         (10, 1, "thermomachine.fullupgrade", "off"),
     ],

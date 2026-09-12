@@ -47,12 +47,11 @@ local ROOM = [==[(
         "#.........#",
         "###########",
     ],
-    spawns: [(5, 8)],
     items: [
         (7, 4, "screwdriver"), (7, 4, "welder"),
         (7, 4, "plasteel"), (7, 4, "wrench"),
     ],
-    structures: [(5, 6, "gravity_generator", "fix0")],
+    structures: [(5, 8, "player_spawn"), (5, 6, "gravity_generator", "fix0")],
 )]==]
 
 t.world(ROOM, 7)

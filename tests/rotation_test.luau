@@ -12,7 +12,7 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(1, 2)],
+    structures: [(1, 2, "player_spawn")],
     items: [
         (1, 2, "wrench"),
         (2, 2, "connector_port_fitting"),
@@ -81,13 +81,12 @@ t.world([==[(
         "#.....#",
         "#######",
     ],
-    spawns: [(4, 3)],
     items: [(4, 3, "wrench"), (3, 2, "manual_valve_fitting")],
     // Both axes are completely plumbed. Automatic alignment therefore
     // chooses north first; an explicit east is the only reason this
     // valve may join the west/east pair instead.
     pipes: [(3, 1, 4), (2, 2, 4), (4, 2, 4), (3, 3, 4)],
-    structures: [(1, 2, "passive_vent")],
+    structures: [(4, 3, "player_spawn"), (1, 2, "passive_vent")],
 )]==], 7)
 
 local q = t.join()

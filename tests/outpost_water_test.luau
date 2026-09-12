@@ -20,6 +20,28 @@
 t.world_file("outpost.ron", 7)
 local p = t.join()
 t.tick()
+local spawn_x, spawn_y = t.pos(p)
+while spawn_y > 3 do
+    t.move(p, "north")
+    t.run_ticks(6)
+    spawn_x, spawn_y = t.pos(p)
+end
+while spawn_y < 3 do
+    t.move(p, "south")
+    t.run_ticks(6)
+    spawn_x, spawn_y = t.pos(p)
+end
+while spawn_x > 11 do
+    t.move(p, "west")
+    t.run_ticks(6)
+    spawn_x, spawn_y = t.pos(p)
+end
+while spawn_x < 11 do
+    t.move(p, "east")
+    t.run_ticks(6)
+    spawn_x, spawn_y = t.pos(p)
+end
+assert(spawn_x == 11 and spawn_y == 3, "the crew reaches the corridor start")
 
 local DEEP = { 11, 8 }
 local SHALLOW = { 13, 7 }

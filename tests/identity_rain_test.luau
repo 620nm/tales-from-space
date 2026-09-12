@@ -41,7 +41,7 @@ t.world([==[(
         "#..#",
         "####",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     blends: {
         // fire_watch_test.luau's own mixture: fuelled, oxidised, and
         // already over the ignition window, so the chamber catches on

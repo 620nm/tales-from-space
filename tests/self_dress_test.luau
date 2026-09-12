@@ -17,7 +17,7 @@ local ARENA = [==[(
     name: "locker room",
     legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
     rows: [ "#####", "#...#", "#####" ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     items: [ (1, 1, "eva_suit") ],
 )]==]
 

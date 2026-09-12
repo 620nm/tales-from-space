@@ -59,10 +59,9 @@ t.world([==[(
         "#...ag#",
         "#######",
     ],
-    spawns: [(3, 1)],
     items: [(3, 1, "beaker.ethanol")],
     pipes: [(2, 1, 4), (3, 1, 4)],
-    structures: [(4, 1, "evaporator", { "pipe": "west" })],
+    structures: [(3, 1, "player_spawn"), (4, 1, "evaporator", { "pipe": "west" })],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3),

@@ -3,7 +3,7 @@ t.world([==[(
     name: "controller fittings bench",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: ["#######", "#.....#", "#.....#", "#######"],
-    spawns: [(2, 1)],
+    structures: [(2, 1, "player_spawn")],
     items: [(1, 1, "airlock_button_fitting"), (1, 2, "screwdriver"),
         (2, 2, "wrench"), (3, 1, "airlock_pump_fitting")],
     pipes: [(3, 0, 2), (3, 2, 8)],

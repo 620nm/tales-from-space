@@ -45,11 +45,11 @@ t.world([==[(
         "#......#",
         "########",
     ],
-    spawns: [(3, 1)],
     // The whole of the plumbing: two lengths, and nothing anywhere near
     // the socket at (4, 2).
     pipes: [(1, 2, 4), (2, 2, 4)],
     structures: [
+        (3, 1, "player_spawn"),
         (3, 2, "volume_pump"),
         (4, 2, "connector_port", { "pipe": "west" }),
     ],
@@ -120,7 +120,7 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(2, 3)],
+    structures: [(2, 3, "player_spawn")],
     // East and west of (2, 2) and nothing north or south of it: the fit
     // has exactly one axis to offer, and it is not the one chosen.
     pipes: [(1, 2, 4), (3, 2, 4)],

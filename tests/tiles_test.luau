@@ -32,9 +32,8 @@ t.world([==[(
         "#.....#",
         "#######",
     ],
-    spawns: [(1, 2)],
     items: [(1, 2, "crowbar")],
-    structures: [(4, 1, "vent")],
+    structures: [(1, 2, "player_spawn"), (4, 1, "vent")],
 )]==], 7)
 
 local p = t.join()
@@ -102,7 +101,7 @@ t.world([==[(
         "#..+#",
         "#####",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     items: [(1, 1, "crowbar")],
     // One length of backbone with no generator behind it, which is a
     // station with the lights off: the airlock's motors never wake.

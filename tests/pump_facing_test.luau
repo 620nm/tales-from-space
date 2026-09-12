@@ -28,7 +28,7 @@ local function build(rotations, want_sprite, drained, fed)
             "#...#",
             "#####",
         ],
-        spawns: [(1, 1)],
+        structures: [(1, 1, "player_spawn")],
         pipes: [(1, 2, 4), (3, 2, 4), (2, 1, 4), (2, 3, 4)],
         items: [(1, 1, "wrench"), (2, 2, "volume_pump_fitting")],
     )]==], 7)

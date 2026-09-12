@@ -105,7 +105,6 @@ local DEAD_SUPPLY = [==[(
         "#....ag#",
         "########",
     ],
-    spawns: [(3, 1)],
     // The waste main runs out under the west wall, so the room's air
     // has somewhere to go that is not the room. Layer 2, where a
     // scrubber lives.
@@ -114,7 +113,7 @@ local DEAD_SUPPLY = [==[(
     // says nothing is a return grille, and this file is what that
     // means. It is put down running, the way a commissioned station's
     // machines are.
-    structures: [(2, 1, "air_scrubber", "scrubbing")],
+    structures: [(3, 1, "player_spawn"), (2, 1, "air_scrubber", "scrubbing")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
@@ -226,7 +225,6 @@ local LIVE_SUPPLY = [==[(
         "#....ag#",
         "########",
     ],
-    spawns: [(5, 2)],
     // Two runs sharing one corridor and never meeting, which is what
     // the layer convention is for: the waste main on L2 under the
     // grille, the supply on L4 between the bottle and the vent.
@@ -235,6 +233,7 @@ local LIVE_SUPPLY = [==[(
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
+        (5, 2, "player_spawn"),
         (2, 1, "air_scrubber", "scrubbing"),
         (5, 1, "vent"),
         (3, 1, "connector_port"),
@@ -357,11 +356,11 @@ local NAMED = [==[(
         "#....ag#",
         "########",
     ],
-    spawns: [(5, 2)],
     pipes: [(0, 1, 2), (1, 1, 2)],
     // Sieving, dial wide open so the section is short, and the floor
     // the machine ships with.
     structures: [
+        (5, 2, "player_spawn"),
         (2, 1, "air_scrubber", "scrubbing",
             { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 100.0 }),
     ],

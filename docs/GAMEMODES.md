@@ -189,3 +189,10 @@ between the two passes.
 
 Each mode binds its behavior with `prototype = content.id`, so the mode hears
 `clock.second` and `round.end` on its own id with no `global_handlers` grant.
+
+## Spawn markers
+
+Both modes route body admission through `round.spawn` and the pack's weighted
+`player_spawn` markers. Space Station uses role `crew`; Free Build uses role
+`builder`. Job and role filters, disabled points, and threat sites are owned
+by [`MAP-MARKERS.md`](MAP-MARKERS.md); a mode only supplies its default role.

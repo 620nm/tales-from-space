@@ -23,8 +23,11 @@ local ARENA = [==[(
     name: "theatre",
     legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
     rows: [ "#####", "#...#", "#####" ],
-    spawns: [(1, 1), (2, 1)],
-    structures: [(2, 1, "optable")],
+    structures: [
+        (1, 1, "player_spawn", { "jobs": "assistant" }),
+        (2, 1, "player_spawn", { "jobs": "medic" }),
+        (2, 1, "optable"),
+    ],
     items: [
         (1, 1, "scalpel"), (1, 1, "retractor"), (1, 1, "hemostat"),
         (1, 1, "circular_saw"), (1, 1, "cautery"),
@@ -32,8 +35,8 @@ local ARENA = [==[(
 )]==]
 
 t.world(ARENA, 0)
-local surgeon = t.join()
-local patient = t.join()
+local surgeon = t.join("assistant")
+local patient = t.join("medic")
 t.run_ticks(3)
 
 -- =====================================================================

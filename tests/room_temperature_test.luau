@@ -167,7 +167,7 @@ t.world([==[(
         "#.ag#",
         "#####",
     ],
-    spawns: [(2, 2)],
+    structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "analyzer")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
@@ -254,10 +254,9 @@ t.world([==[(
         "#ag#######",
         "##########",
     ],
-    spawns: [(1, 2)],
     items: [(1, 2, "analyzer")],
     pipes: [(3, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4)],
-    structures: [(2, 1, "air_injector")],
+    structures: [(1, 2, "player_spawn"), (2, 1, "air_injector")],
     cables: [
         (1, 1, 3), (2, 1, 3),
         (1, 2, 3), (2, 2, 3),
@@ -471,7 +470,7 @@ t.world([==[(
         "#a#",
         "###",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     cables: [
         (1, 1, 1),
     ],
@@ -545,7 +544,7 @@ t.world([==[(
         "#...g#",
         "######",
     ],
-    spawns: [(2, 2)],
+    structures: [(2, 2, "player_spawn")],
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3),
@@ -594,7 +593,7 @@ t.world([==[(
         "#a#",
         "###",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
     cables: [
         (1, 1, 1),
     ],

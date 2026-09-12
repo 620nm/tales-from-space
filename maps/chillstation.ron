@@ -138,7 +138,6 @@
         "                                        ",
         "                                        ",
     ],
-    spawns: [(18, 16), (19, 16), (20, 16), (21, 16)],
     items: [
         (17, 16, "toolbox"),
         // ---- the Commons -----------------------------------------
@@ -247,6 +246,14 @@
         (11, 27, "floppy_disk"),
     ],
     structures: [
+        // Medical-side Chemistry Lab floor, beside the operating computer
+        // and table at (23, 5) and (24, 5).
+        (23, 6, "player_spawn", { "weight": 99, "jobs": "medic" }),
+        // Commons floor is the station's unrestricted social spawn area.
+        (18, 16, "player_spawn", { "weight": 1 }),
+        (19, 16, "player_spawn"),
+        (20, 16, "player_spawn"),
+        (21, 16, "player_spawn"),
         // The Workshop's tool locker. Which tools happen to be inside
         // is rolled from structures/locker.luau at roundstart; the map
         // places one variant and carries no duplicate loot vocabulary.

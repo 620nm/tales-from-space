@@ -35,7 +35,7 @@ t.world([==[(
         "#.#",
         "###",
     ],
-    spawns: [(1, 1)],
+    structures: [(1, 1, "player_spawn")],
 )]==], 0)
 
 t.join()

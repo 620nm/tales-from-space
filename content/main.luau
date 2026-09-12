@@ -54,6 +54,10 @@ end
 -- whole station did belongs to the round, not to any one thing on it.
 sim.define("script_var", "lunatic/tfs:fires_lit", { replicate = "server" })
 sim.define("script_var", "lunatic/tfs:fires_out", { replicate = "server" })
+sim.define("script_var", "lunatic/tfs:marker_weight", { replicate = "server" })
+sim.define("script_var", "lunatic/tfs:marker_jobs", { replicate = "server" })
+sim.define("script_var", "lunatic/tfs:marker_roles", { replicate = "server" })
+sim.define("script_var", "lunatic/tfs:spawn_role", { replicate = "server" })
 
 local function tally(key)
     return function(_ev)

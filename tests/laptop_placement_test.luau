@@ -7,7 +7,7 @@ t.world([==[(
     name: "laptop desk",
     legend: { '.': (turf: Floor), '#': (turf: Wall) },
     rows: ["#####", "#...#", "#...#", "#####"],
-    spawns: [(2, 1)],
+    structures: [(2, 1, "player_spawn")],
     items: [
         (1, 1, "laptop", { "open": true, "powered": true, "media": "floppy_disk.atmos_stock" }),
         (3, 1, "laptop"),

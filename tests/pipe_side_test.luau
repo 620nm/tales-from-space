@@ -33,11 +33,11 @@ local function bench(side)
         "#....ag#",
         "########",
     ],
-    spawns: [(5, 2)],
     // Layer 2 under the west wall and under the scrubber's own tile:
     // the waste main, which is where a scrubber lives.
     pipes: [(0, 1, 2), (1, 1, 2)],
     structures: [
+        (5, 2, "player_spawn"),
         (2, 1, "air_scrubber", "siphoning", { "pipe": "SIDE", "whole_air": true, "rate_lps": 200.0, "floor_kpa": 0.0 }),
     ],
     cables: [

@@ -1,7 +1,59 @@
 -- The bench exactly as shipped: joined and programmed at boot, cycled from its buttons.
 -- Nobody breathes here: the visitor arrives through vacuum without internals.
+-- This local copy assigns its two spawn points to distinct jobs so the seating
+-- assertions remain about the commissioned bench rather than draw order.
+local AIRLOCK = [==[
+(
+    name: "Programmable Exterior Airlock",
+    environment: (gravity_m_s2: Exact(9.80665)),
+    legend: {
+        ' ': (turf: Space), '.': (turf: Plating), '#': (turf: Wall),
+        'G': (turf: Plating, fixture: Some(Generator)),
+        'A': (turf: Plating, fixture: Some(Apc)),
+        'o': (turf: Plating, fixture: Some(Outlet)),
+    },
+    rows: [
+        "#############", "######.#.####", "#############",
+        "#........... ", "#GA.o#..#... ", "############ ",
+        "             ",
+    ],
+    blends: {
+        "vacuum": (temperature_k: 293.15, amount: per_tile),
+        "supply": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)],
+            temperature_k: 293.15, amount: per_tile),
+    },
+    painted: [(6, 1, "supply"), (6, 3, "vacuum"), (7, 3, "vacuum"),
+        (6, 4, "vacuum"), (7, 4, "vacuum"), (8, 3, "vacuum"),
+        (9, 3, "vacuum"), (10, 3, "vacuum"), (11, 3, "vacuum"),
+        (9, 4, "vacuum"), (10, 4, "vacuum"), (11, 4, "vacuum"),
+        (8, 1, "vacuum")],
+    structures: [
+        (3, 3, "player_spawn", { "jobs": "assistant" }),
+        (9, 3, "player_spawn", { "jobs": "engineer" }),
+        (4, 3, "access_point", { "network_1": "network_card", "file.airlock_controller": true, "program.controller": "airlock_controller" }),
+        (2, 3, "airlock_button"), (7, 4, "airlock_button"),
+        (5, 3, "airlock", { "bolted": true }),
+        (8, 3, "airlock", { "open": true, "bolted": false }),
+        (6, 3, "airlock_pump", { "dir": "north" }),
+        (6, 1, "passive_vent", { "layer": 4, "pipe": "south" }),
+        (8, 1, "passive_vent", { "layer": 2, "pipe": "south" }),
+    ],
+    mounts: [(4, 3, North), (2, 3, North), (7, 4, South)],
+    links: [
+        (4, 3, 2, 3), (4, 3, 5, 3), (4, 3, 6, 3),
+        (4, 3, 8, 3), (4, 3, 7, 4),
+    ],
+    pipes: [(6, 2, 8), (6, 2, 2), (7, 2, 2), (8, 2, 2)],
+    cables: [(1, 4, 2), (2, 4, 3), (3, 4, 1), (4, 4, 1),
+        (2, 3, 1), (3, 3, 1), (4, 3, 1), (5, 3, 1),
+        (6, 3, 1), (7, 3, 1), (8, 3, 1)],
+    items: [(3, 3, "laptop"), (3, 3, "floppy_disk.atmos_stock"),
+        (2, 4, "disk_box"), (3, 4, "screwdriver"), (3, 4, "wrench"),
+        (3, 4, "airlock_button_fitting"), (3, 4, "airlock_pump_fitting")],
+)
+]==]
 t.set_breathing(false)
-t.world_file("programmable_airlock.ron", 0)
+t.world(AIRLOCK, 0)
 
 -- Tick 0, before anyone arrives: five drawn edges and one loaded program slot, all the map's doing.
 local function by_map(row)
@@ -16,8 +68,8 @@ local loaded = t.ledger_rows("disl_program_loaded")
 assert(#loaded == 1 and loaded[1].slot == "controller" and by_map(loaded[1]),
     "the controller slot opens loaded by the map")
 
-local operator = t.join()
-local visitor = t.join()
+local operator = t.join("assistant")
+local visitor = t.join("engineer")
 t.run_ticks(20)
 assert(t.door_at(5, 3).bolted and not t.door_at(5, 3).open, "interior starts closed and bolted")
 assert(t.door_at(8, 3).open and not t.door_at(8, 3).bolted, "exterior starts open and unbolted")

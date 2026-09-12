@@ -43,21 +43,26 @@ t.world([==[(
         "#Gao.........#",
         "##############",
     ],
-    spawns: [(1, 1), (3, 1), (8, 1), (12, 1)],
     items: [
         (1, 1, "encryption_key.medical"),
         (3, 1, "encryption_key.medical"),
         (8, 1, "encryption_key.medical"),
         (12, 1, "encryption_key.medical"),
     ],
-    structures: [(2, 1, "cadaver_chamber", { "dir": "east" })],
+    structures: [
+        (1, 1, "player_spawn", { "jobs": "assistant" }),
+        (3, 1, "player_spawn", { "jobs": "engineer" }),
+        (8, 1, "player_spawn", { "jobs": "medic" }),
+        (12, 1, "player_spawn", { "jobs": "captain" }),
+        (2, 1, "cadaver_chamber", { "dir": "east" }),
+    ],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
 )]==], 0)
 
-local speaker = t.join()
-local patient = t.join()
-local l_near = t.join()
-local l_far = t.join()
+local speaker = t.join("assistant")
+local patient = t.join("engineer")
+local l_near = t.join("medic")
+local l_far = t.join("captain")
 t.run_ticks(20)
 
 local function pocket(p)

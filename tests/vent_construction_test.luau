@@ -107,7 +107,6 @@ t.world([==[(
         "#..a..g#",
         "########",
     ],
-    spawns: [(3, 2)],
     items: [(3, 2, "rpd")],
     // One length short of the socket: the pump at (5,1) regulates
     // the main at one atmosphere off the bottle's forty -- tg's own
@@ -118,6 +117,7 @@ t.world([==[(
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
     structures: [
+        (3, 2, "player_spawn"),
         (5, 1, "pump", "running", { "dir": "west" }),
         (6, 1, "connector_port", { "pipe": "west" }),
         (6, 1, "canister", { "blend": "canister_air" }),
@@ -229,7 +229,7 @@ t.world([==[(
         "#.....g#",
         "########",
     ],
-    spawns: [(3, 2)],
+    structures: [(3, 2, "player_spawn")],
     items: [(3, 2, "wrench"), (3, 1, "passive_vent_fitting")],
     pipes: [(4, 1, 4), (5, 1, 4), (6, 1, 4)],
     cables: [

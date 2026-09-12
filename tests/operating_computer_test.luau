@@ -26,7 +26,12 @@ local ARENA = [==[(
         "#.....#",
         "#######",
     ],
-    spawns: [(2, 2), (3, 2), (2, 3), (4, 2)],
+    structures: [
+        (2, 2, "player_spawn", { "jobs": "assistant" }),
+        (3, 2, "player_spawn", { "jobs": "medic" }),
+        (2, 3, "player_spawn", { "jobs": "engineer" }),
+        (4, 2, "player_spawn", { "jobs": "captain" }),
+    ],
     items: [(2, 2, "scalpel")],
     machines: [(3, 3, "operating_computer")],
     cables: [
@@ -83,10 +88,10 @@ local function has(haystack, needle)
 end
 
 t.world(ARENA, 0)
-local surgeon = t.join()
-local near = t.join()   -- (3, 2): the tile north of the console
-local other = t.join()  -- (2, 3): the tile west of it
-local corner = t.join() -- (4, 2): a corner, and therefore nobody
+local surgeon = t.join("assistant")
+local near = t.join("medic")   -- (3, 2): the tile north of the console
+local other = t.join("engineer")  -- (2, 3): the tile west of it
+local corner = t.join("captain") -- (4, 2): a corner, and therefore nobody
 t.run_ticks(3)
 
 -- ---- three patients on the deck ---------------------------------------

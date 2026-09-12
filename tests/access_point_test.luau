@@ -90,7 +90,7 @@ t.world([==[(
         "#Gao..#",
         "#######",
     ],
-    spawns: [(4, 1)],
+    structures: [(4, 1, "player_spawn")],
     items: [
         (4, 1, "metal"),
         (4, 1, "cable_coil"),
@@ -292,9 +292,8 @@ t.world([==[(
         "#Gao..#",
         "#######",
     ],
-    spawns: [(5, 1)],
     items: [(5, 1, "id_engineering"), (5, 1, "laptop")],
-    structures: [(4, 1, "access_point", { "access": "engineering" })],
+    structures: [(5, 1, "player_spawn"), (4, 1, "access_point", { "access": "engineering" })],
     mounts: [(4, 1, North)],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
 )]==], 7)

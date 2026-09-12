@@ -15,10 +15,10 @@ local MAP = [==[
         "#...#",
         "#####",
     ],
-    spawns: [(2, 2)],
     items: [(2, 2, "floor_tile")],
     pipes: [(1, 1, 4), (2, 1, 4)],
     structures: [
+        (2, 2, "player_spawn"),
         (3, 1, "connector_port"),
         (3, 1, "canister"),
     ],

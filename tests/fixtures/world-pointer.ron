@@ -11,8 +11,8 @@
         "#######",
     ],
     environment: (gravity_m_s2: Exact(9.80665)),
-    spawns: [(3, 3)],
     structures: [
+        (3, 3, "player_spawn"),
         (3, 2, "airlock_button"),
         (4, 3, "airlock_button"),
         (3, 4, "airlock_button"),

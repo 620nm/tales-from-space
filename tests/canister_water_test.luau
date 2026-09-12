@@ -50,8 +50,8 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(1, 1)],
     structures: [
+        (1, 1, "player_spawn"),
         (2, 1, "canister", { "blend": "wet_air" }),
     ],
 )]==], 0)

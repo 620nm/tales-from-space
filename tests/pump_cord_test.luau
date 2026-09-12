@@ -57,12 +57,12 @@ t.world([==[(
         "#a.o.........#",
         "##############",
     ],
-    spawns: [(6, 1)],
     pipes: [
         (4, 2, 4), (5, 2, 4), (7, 2, 4),
         (9, 2, 4), (10, 2, 4), (12, 2, 4),
     ],
     structures: [
+        (6, 1, "player_spawn"),
         (6, 2, "volume_pump", "running", { "dir": "east" }),
         (11, 2, "volume_pump", "running", { "dir": "east" }),
     ],

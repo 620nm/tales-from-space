@@ -40,11 +40,10 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-    spawns: [(1, 1)],
     items: [(1, 1, "card_deck")],
     // Two tables, joined, so a card can be laid on one of them without
     // being read back off a pile on the other.
-    structures: [(2, 1, "table"), (2, 2, "table")],
+    structures: [(1, 1, "player_spawn"), (2, 1, "table"), (2, 2, "table")],
 )]==], 0)
 
 local p = t.join()

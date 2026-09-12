@@ -26,8 +26,10 @@ t.world([==[(
         "#####",
         "#####",
     ],
-    spawns: [(2, 2)],
-    structures: [(2, 2, "airlock_button")],
+    structures: [
+        (2, 2, "player_spawn"),
+        (2, 2, "airlock_button"),
+    ],
     mounts: [(2, 2, SouthEast)],
 )]==], 0)
 
@@ -107,7 +109,7 @@ t.world([==[(
         "#####",
         "#####",
     ],
-    spawns: [(2, 2)],
+    structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "metal"), (2, 2, "welder")],
 )]==], 0)
 p = t.join()
