@@ -85,6 +85,9 @@
 (
     name: "Chillstation 13",
     tags: ["space"],
+    // The commissioned station assumes ordinary walking. New maps may omit
+    // this preference when they want the mode to choose microgravity.
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (turf: Environment, outdoors: true),
         '#': (turf: Wall),
@@ -739,8 +742,9 @@
         // (gravitygenerator.dm:179-198). Nothing else stands in that
         // block; the L1 room circuit runs under it, which is where
         // cable belongs. It arrives RUNNING, as tg's plain `main` does
-        // (`:118`); `main/off` is the variant a mapper picks to open
-        // the shift weightless, and this station is not that station.
+        // (`:118`); `main/off` is the variant a mapper picks for a
+        // nonfunctional machine. World gravity comes from the selected
+        // profile, and this station's saved preference keeps it standard.
         (8, 25, "gravity_generator", "on"),
         // ---- THE SUPPLY BOTTLES ----------------------------------
         // Eight canisters, each standing on a connector port and each

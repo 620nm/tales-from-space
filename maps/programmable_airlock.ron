@@ -1,5 +1,6 @@
 (
     name: "Programmable Exterior Airlock",
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (turf: Space), '.': (turf: Plating), '#': (turf: Wall),
         'G': (turf: Plating, fixture: Some(Generator)),

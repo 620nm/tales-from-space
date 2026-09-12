@@ -32,9 +32,10 @@
 -- Only the working pair is offered in the editor palette: a mapper
 -- places a generator, not a stage of somebody's repair.
 --
--- The charge ramp, the interface, the shake and gravity itself are
--- deferred (docs/FOOTPRINTS.md §10). What is here is the body, the
--- picture, and the repair.
+-- The charge ramp, interface, shake, and generator field control are
+-- unimplemented (the engine's docs/FOOTPRINTS.md §9). Uniform gravity comes from the
+-- selected environment profile; what is here is the body, picture, and
+-- repair.
 local ORDER = {
     -- Top row, walk-under: tg's parts 1, 2, 3.
     { 1, -2 }, { 0, -2 }, { -1, -2 },

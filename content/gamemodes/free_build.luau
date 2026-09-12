@@ -36,13 +36,14 @@ local content = {
         -- slot is taken and the crew manifest is unchanged. Somebody
         -- who spawns to build should already be holding the tools.
         outfit = "engineer",
-        -- One sky and no dice: a sandbox that came out sunward some
-        -- days and not others would make every temperature reading in
-        -- it a question about the weather.
+        -- The space choices are cold vacuum or microgravity; a sandbox
+        -- that came out sunward some days and not others would make every
+        -- temperature reading in it a question about the weather.
         environment = {
             rolls = {
                 { id = "cold_outdoors", required_tags = { "terrestrial" }, weight = 1 },
                 { id = "dead_space", excluded_tags = { "terrestrial" }, weight = 1 },
+                { id = "microgravity", excluded_tags = { "terrestrial" }, weight = 1 },
             },
         },
     },

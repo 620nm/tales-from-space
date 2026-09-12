@@ -8,6 +8,7 @@
 (
     name: "Outpost Zero",
     tags: ["space"],
+    environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
         ' ': (turf: Environment, outdoors: true),
         '#': (turf: Wall),
