@@ -1,17 +1,6 @@
--- WHAT HANGS ON A WALL, walked by the only thing in this pack that a
--- player can hang there: the wall frame.
---
--- A mount is an ordinary structure on the tile BESIDE a wall, wearing a
--- facing that points at it (docs/CONSTRUCTION.md, "What hangs on a
--- wall"). Everything below is that one sentence asked from a different
--- side: where the box actually rises, which claims about where the
--- builder is standing are refused and in whose words, that a tile holds
--- one bracket, and that the wall it is bolted to cannot be taken out
--- from under it by somebody who was not looking.
---
--- The four refusals are tg's four, in tg's order
--- (`/obj/item/wallframe/try_build`,
--- code/game/objects/items/wall_mounted.dm:88-101).
+-- Wall-frame construction, refusal, transitions, and supporting-wall teardown.
+-- Contract: the engine's docs/construction/mounts.md; diagonal placement and
+-- button interactions are covered in diagonal_wall_mount_test.luau.
 
 local function said(p, line)
     for _, m in ipairs(t.messages(p)) do
@@ -68,15 +57,7 @@ end
 -- ---------------------------------------------------------------
 take("metal")
 
--- tg's "stand in line with wall!": the wall at (0, 0) is a corner the
--- builder can see and cannot reach squarely.
-local _ = t.messages(p)
-ui_controls.build(p, "metal", "wall_frame", 0, 0)
-t.run_seconds(4.5)
-assert(said(p, "You have to stand square to the wall."), "a diagonal is not square to anything")
-assert(t.structure_at(1, 1) == nil, "and nothing rose")
-
--- A wall across the room never gets as far as the cardinal rule: a
+-- A wall across the room never gets as far as the adjacency rule: a
 -- build MENU placement is explicit intent, so the reach check answers
 -- it first and in its own words. The anti-cheat claim survives either
 -- way -- the tile the box would rise on is the server's record of
