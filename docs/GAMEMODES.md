@@ -128,8 +128,16 @@ rejected before the round starts.
 The four shipped maps save `gravity_m_s2: Exact(9.80665)` so their existing
 stations continue to use walking movement. A new map omits `environment` by
 default; that leaves its physical preferences unconstrained and allows the
-mode to choose microgravity. The saved preference filters profiles; it never
-overrides a profile's physics.
+mode to choose microgravity. These preferences filter profiles.
+
+An optional `atmosphere_blend: Some("map_air")` instead fixes the ambient recipe.
+The map's own blend definition takes precedence over a pack blend with the same
+ID. The game chooses an atmospheric profile for the remaining conditions and
+keeps the authored composition and air temperature. Without a fixed blend,
+`atmosphere: Exact(true)` requires air and lets the game choose its mix; the
+current terrestrial profile supplies `refrigerated_air`. Outdoor initial air
+and atmospheric recovery use the chosen or authored recipe. Painted initial
+air remains a tile-specific choice.
 
 ## Playtesting
 
