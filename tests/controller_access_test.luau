@@ -49,11 +49,10 @@ t.world([==[(
     items: [(5, 1, "laptop")],
     structures: [
         (5, 1, "player_spawn"),
-        (4, 2, "access_point", { "network_1": "network_card" }),
-        (6, 2, "airlock_button"),
+        (4, 2, "access_point", { "network_1": "network_card", "mount": "south" }),
+        (6, 2, "airlock_button", { "mount": "south" }),
         (6, 1, "airlock.engineering"),
     ],
-    mounts: [(4, 2, South), (6, 2, South)],
     cables: [
         (1, 2, 2), (2, 2, 3), (3, 2, 1), (4, 2, 1), (5, 2, 1), (6, 2, 1),
         (6, 1, 1),

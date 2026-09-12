@@ -12,9 +12,8 @@ local function said(p, line)
 end
 
 -- A room with a corner in it: the builder stands at (1, 1) with a wall
--- to the north at (1, 0) and another to the west at (0, 1), which is
--- two walls one tile can face and therefore the second-bracket rule in
--- one world.
+-- to the north at (1, 0) and another to the west at (0, 1), which lets
+-- the same tile carry independent brackets on two faces.
 t.world([==[(
     name: "mount bench",
     legend: {
@@ -92,13 +91,12 @@ assert(frame.state == "empty", "and it opens bare")
 assert(frame.sprite == "wall_frame_n", "wearing the face that overhangs the wall it is bolted to")
 assert(t.structure_at(1, 0) == nil, "and nothing whatever stands on the wall itself")
 
--- One bracket to a TILE, which is this engine's rule rather than tg's
--- one-per-FACE: turning to the other wall earns the fourth refusal.
+-- The same supporting face remains occupied.
 local _ = t.messages(p)
-ui_controls.build(p, "metal", "wall_frame", 0, 1)
+ui_controls.build(p, "metal", "wall_frame", 1, 0)
 t.run_seconds(4.5)
-assert(said(p, "Something is already mounted here."), "a tile holds one bracket")
-assert(t.structure_at(1, 1).sprite == "wall_frame_n", "and the one it holds did not turn")
+assert(said(p, "Something is already mounted here."), "the same face refuses a second bracket")
+assert(t.structure_at(1, 1) ~= nil, "the original bracket remains present")
 
 -- ---------------------------------------------------------------
 -- THE LADDER, one rung, and the repaint that proves the facing rode

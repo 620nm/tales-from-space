@@ -13,10 +13,9 @@
     environment: (gravity_m_s2: Exact(9.80665)),
     structures: [
         (3, 3, "player_spawn"),
-        (3, 2, "airlock_button"),
-        (4, 3, "airlock_button"),
-        (3, 4, "airlock_button"),
-        (2, 3, "airlock_button"),
+        (3, 2, "airlock_button", { "mount": "north" }),
+        (4, 3, "airlock_button", { "mount": "east" }),
+        (3, 4, "airlock_button", { "mount": "south" }),
+        (2, 3, "airlock_button", { "mount": "west" }),
     ],
-    mounts: [(3, 2, North), (4, 3, East), (3, 4, South), (2, 3, West)],
 )

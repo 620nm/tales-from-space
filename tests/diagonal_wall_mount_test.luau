@@ -28,9 +28,8 @@ t.world([==[(
     ],
     structures: [
         (2, 2, "player_spawn"),
-        (2, 2, "airlock_button"),
+        (2, 2, "airlock_button", { "mount": "southeast" }),
     ],
-    mounts: [(2, 2, SouthEast)],
 )]==], 0)
 
 local p = t.join()

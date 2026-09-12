@@ -14,10 +14,9 @@ t.world([==[(
     rows: ["#######", "#.....#", "#GA.o##", "#######"],
     structures: [
         (4, 1, "player_spawn"),
-        (4, 1, "access_point", { "network_1": "network_card" }),
+        (4, 1, "access_point", { "network_1": "network_card", "mount": "north" }),
         (5, 1, "airlock"),
     ],
-    mounts: [(4, 1, North)],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1), (4, 2, 1),
         (3, 1, 1), (4, 1, 1), (5, 1, 1)],
     links: [(4, 1, 5, 1)],

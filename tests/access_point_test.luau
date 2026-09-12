@@ -293,8 +293,7 @@ t.world([==[(
         "#######",
     ],
     items: [(5, 1, "id_engineering"), (5, 1, "laptop")],
-    structures: [(5, 1, "player_spawn"), (4, 1, "access_point", { "access": "engineering" })],
-    mounts: [(4, 1, North)],
+    structures: [(5, 1, "player_spawn"), (4, 1, "access_point", { "access": "engineering", "mount": "north" })],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
 )]==], 7)
 

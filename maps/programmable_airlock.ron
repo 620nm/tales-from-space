@@ -28,15 +28,14 @@
     structures: [
         (3, 3, "player_spawn"),
         (9, 3, "player_spawn"),
-        (4, 3, "access_point", { "network_1": "network_card", "file.airlock_controller": true, "program.controller": "airlock_controller" }),
-        (2, 3, "airlock_button"), (7, 4, "airlock_button"),
+        (4, 3, "access_point", { "network_1": "network_card", "file.airlock_controller": true, "program.controller": "airlock_controller", "mount": "north" }),
+        (2, 3, "airlock_button", { "mount": "north" }), (7, 4, "airlock_button", { "mount": "south" }),
         (5, 3, "airlock", { "bolted": true }),
         (8, 3, "airlock", { "open": true, "bolted": false }),
         (6, 3, "airlock_pump", { "dir": "north" }),
         (6, 1, "passive_vent", { "layer": 4, "pipe": "south" }),
         (8, 1, "passive_vent", { "layer": 2, "pipe": "south" }),
     ],
-    mounts: [(4, 3, North), (2, 3, North), (7, 4, South)],
     links: [
         (4, 3, 2, 3),
         (4, 3, 5, 3),

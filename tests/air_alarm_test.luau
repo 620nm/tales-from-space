@@ -171,10 +171,9 @@ t.world([==[(
         // default, because this box is nothing at all without one and a
         // bench should say so (docs/map-properties/placements.md,
         // "Sockets").
-        (6, 1, "air_alarm", { "access": "engineering", "network_1": "network_card" }),
-        (9, 1, "access_point"),
+        (6, 1, "air_alarm", { "access": "engineering", "network_1": "network_card", "mount": "north" }),
+        (9, 1, "access_point", { "mount": "north" }),
     ],
-    mounts: [(6, 1, North), (9, 1, North)],
     machines: [(11, 1, "transceiver")],
     cables: [
         (13, 3, 3), (14, 3, 2),
