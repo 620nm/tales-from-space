@@ -62,7 +62,7 @@ t.world([==[(
         (3, 1, "canister", { "blend": "cold_haber" }),
         (5, 1, "canister", { "blend": "thin_haber" }),
     ],
-)]==], 7)
+)]==], 7, "free_build")
 
 t.tick()
 

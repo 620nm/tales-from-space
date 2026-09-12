@@ -1,0 +1,44 @@
+{
+  "note": "A validated setup mutation is waiting for its authoritative preparation snapshot, so duplicate edits stay disabled.",
+  "viewport": { "width": 1024, "height": 768, "dpr": 1 },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 6,
+    "body": false,
+    "state": {
+      "round": {
+        "round": 12,
+        "phase": "preparing",
+        "remaining_seconds": 90,
+        "ready": 0,
+        "connected": 2,
+        "paused": false,
+        "waiting": false,
+        "fault": null
+      },
+      "preparation": {
+        "round": 12,
+        "revision": 6,
+        "draft": { "name": "Mira Pike", "ranked_jobs": ["engineer"], "fallback": false },
+        "ready": false,
+        "can_edit": true,
+        "can_ready": true,
+        "fallback_job": "assistant",
+        "issue": null
+      },
+      "preparationPending": true,
+      "jobs": {
+        "jobs": [
+          { "key": "assistant", "name": "Assistant", "taken": 1, "slots": 3 },
+          { "key": "engineer", "name": "Engineer", "taken": 1, "slots": 2 },
+          { "key": "doctor", "name": "Doctor", "taken": 0, "slots": 2 }
+        ]
+      }
+    },
+    "log": [
+      { "kind": "ooc", "name": "A7K2", "text": "Saving the updated choices." }
+    ],
+    "documents": {}
+  }
+}

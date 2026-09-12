@@ -475,7 +475,7 @@ t.world([==[(
     cables: [
         (1, 1, 1),
     ],
-)]==], 7)
+)]==], 7, "free_build")
 
 t.set_environment({ sink_k = 2.7, insolation = 0 })
 t.tick()
@@ -552,7 +552,7 @@ t.world([==[(
         (1, 3, 3), (2, 3, 3), (3, 3, 3), (4, 3, 3),
         (1, 4, 3), (2, 4, 3), (3, 4, 3), (4, 4, 3),
     ],
-)]==], 7)
+)]==], 7, "free_build")
 
 t.set_environment({ sink_k = 2.7, insolation = 0 })
 t.tick()
@@ -598,7 +598,7 @@ t.world([==[(
     cables: [
         (1, 1, 1),
     ],
-)]==], 7)
+)]==], 7, "free_build")
 
 t.set_environment({ sink_k = 2.7, insolation = 2700 })
 t.tick()

@@ -50,6 +50,31 @@ The computer and file workflow lives in [LAPTOP.md](LAPTOP.md). File workspace
 modal ownership, readers and buffering use the engine's
 `docs/pack-ui/components.md` and `docs/pack-ui/authoring.md` contracts.
 
+## Round preparation and OOC
+
+The gameplay package reads the engine projections `state.round` and
+`state.preparation`. During `preparing`, it presents the character name, ranked
+jobs, explicit fallback choice, ready control, countdown, cohort counts and
+server issue. It keeps gameplay controls closed until admission. A body is not
+required to edit the draft, ready or use OOC. The trusted operator controls are
+owned by the engine shell and described in the engine's `docs/ui/rounds.md`.
+
+The package emits typed semantic actions:
+
+```text
+{ kind: "character_draft", round, revision, draft }
+{ kind: "ready", round, revision, ready }
+{ kind: "ooc", text }
+```
+
+Each draft or ready action echoes the currently disclosed round and revision;
+the engine validates both again. OOC is available in every phase and appears
+in the log with `kind = "ooc"`, an opaque display name and the sanitized player
+text. Existing `join` remains the latejoin board action after `playing`.
+Preparation storage belongs to the trusted host and is reconciled with the
+accepted server draft; the package receives no arbitrary storage access. The
+engine's `docs/UI-PRIVACY.md` owns that storage boundary.
+
 ## Authoring boundaries
 
 Every player-visible sentence names a catalog key; [WORDS.md](WORDS.md) owns

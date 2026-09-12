@@ -1,0 +1,39 @@
+{
+  "note": "A body can choose local speech or OOC explicitly while the same chat input stays mounted.",
+  "viewport": { "width": 1366, "height": 768, "dpr": 1 },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": true,
+    "state": { "identity": { "you": 1, "name": "Reader" } },
+    "log": [],
+    "documents": {}
+  },
+  "steps": [
+    {
+      "type": "select",
+      "id": "chat-channel",
+      "value": "ooc",
+      "expect": { "value": "ooc", "visible": ["chat"] }
+    },
+    {
+      "type": "fill",
+      "id": "chat",
+      "value": "The signal is clear.",
+      "expect": { "focused": "chat", "value": "The signal is clear.", "actionCount": 0 }
+    },
+    {
+      "type": "key",
+      "id": "chat",
+      "key": "Enter",
+      "expect": { "value": "", "actionCount": 1 }
+    },
+    {
+      "type": "select",
+      "id": "chat-channel",
+      "value": "local",
+      "expect": { "value": "local", "visible": ["chat"] }
+    }
+  ]
+}

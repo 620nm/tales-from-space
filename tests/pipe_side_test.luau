@@ -48,7 +48,7 @@ local function bench(side)
 end
 
 -- ---- aimed AT the run: the mouth finds it, and the room comes down --
-t.world(bench("west"), 7)
+t.world(bench("west"), 7, "free_build")
 t.tick()
 
 assert(t.structure_at(2, 1).id == "air_scrubber", "the map stood one there")
@@ -77,7 +77,7 @@ assert(
 -- run east of it, so the one mouth binds to nothing and the room holds
 -- -- which is exactly the station a mapper used to draw by accident
 -- when the key was the facing and they aimed it at the pipe.
-t.world(bench("east"), 7)
+t.world(bench("east"), 7, "free_build")
 t.tick()
 
 local held_0 = t.room_pressure(4, 1)

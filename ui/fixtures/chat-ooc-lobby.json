@@ -1,0 +1,37 @@
+{
+  "note": "An unadmitted session can send OOC and sort an explicitly typed OOC line apart from radio.",
+  "viewport": { "width": 1366, "height": 768, "dpr": 1 },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": true,
+    "state": { "identity": { "you": null, "name": "Reader" } },
+    "log": [
+      { "kind": "speech", "name": "Nearby", "text": "Can you hear me?" },
+      { "kind": "speech", "channel": "common", "name": "Radio", "text": "Common channel." },
+      { "kind": "ooc", "channel": "ignored", "name": "A7K2", "text": "Outside the station." },
+      { "kind": "system", "text": "The airlock is sealed." }
+    ],
+    "documents": {}
+  },
+  "steps": [
+    {
+      "type": "click",
+      "id": "chat-tabs/ooc",
+      "expect": { "visible": ["log/2/who", "log/2/text"], "absent": ["log/1/text", "log/3/text", "log/2/chan"] }
+    },
+    {
+      "type": "fill",
+      "id": "chat",
+      "value": "Need a moderator.",
+      "expect": { "focused": "chat", "value": "Need a moderator.", "actionCount": 0 }
+    },
+    {
+      "type": "key",
+      "id": "chat",
+      "key": "Enter",
+      "expect": { "value": "", "actionCount": 1 }
+    }
+  ]
+}

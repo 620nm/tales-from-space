@@ -43,6 +43,10 @@ const ui: GuestUi = {
     // The board and the condition card are the only nodes in flow, so
     // the root's own centring puts them where a modal belongs.
     children.push(...crewPanels(view));
+    // Preparation owns the whole bounded surface. Keeping the gameplay HUD
+    // out of this branch leaves the OOC and setup columns unobscured.
+    if (view.state.round?.phase === "preparing")
+      return Pane("gameplay", children, { cls: ["hud", "centered"] });
     children.push(column("hud-comms", [
       ...inspectionPanels(view), ...chatPanel(view),
     ], { cls: ["hudgroup", "hud-comms"], style: {

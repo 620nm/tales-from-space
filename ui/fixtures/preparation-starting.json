@@ -1,0 +1,44 @@
+{
+  "note": "At zero seconds the authoritative start presentation freezes setup until the server reports the next phase.",
+  "viewport": { "width": 1024, "height": 768, "dpr": 1 },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 5,
+    "body": false,
+    "state": {
+      "round": {
+        "round": 12,
+        "phase": "preparing",
+        "remaining_seconds": 0,
+        "ready": 1,
+        "connected": 2,
+        "paused": false,
+        "waiting": false,
+        "fault": null
+      },
+      "preparation": {
+        "round": 12,
+        "revision": 5,
+        "draft": { "name": "Mira Pike", "ranked_jobs": ["engineer", "assistant"], "fallback": true },
+        "ready": false,
+        "can_edit": true,
+        "can_ready": true,
+        "fallback_job": "assistant",
+        "issue": null
+      },
+      "preparationPending": false,
+      "jobs": {
+        "jobs": [
+          { "key": "assistant", "name": "Assistant", "taken": 2, "slots": 3 },
+          { "key": "engineer", "name": "Engineer", "taken": 1, "slots": 2 },
+          { "key": "doctor", "name": "Doctor", "taken": 0, "slots": 2 }
+        ]
+      }
+    },
+    "log": [
+      { "kind": "ooc", "name": "A7K2", "text": "The round is starting." }
+    ],
+    "documents": {}
+  }
+}

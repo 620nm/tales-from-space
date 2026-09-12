@@ -11,6 +11,7 @@ spells only `neutral`, and everything below is a name this pack invented.
 | Policy | Space Station (default) | Free Build |
 |---|---|---|
 | `id` | `space_station` | `free_build` |
+| Preparation | 120-second setup; Assistant fallback when opted in | Immediate start |
 | Joining | Lobby and job selection | Body spawns on connection |
 | Spawn gear | The chosen job's outfit | Station Engineer's outfit, without the job |
 | Disconnecting | Body remains and can be reclaimed | Body and carried inventory despawn |
@@ -25,6 +26,36 @@ Space Station is the home for imported station systems and the station shift
 itself. Free Build is a development construction playground; its rules exist to
 shorten the edit/test loop, not to become exceptions inside station gameplay,
 which is why it runs the same hour and the same map refresh.
+
+## Preparation
+
+`space_station` declares:
+
+```luau
+preparation = {
+    countdown_seconds = 120,
+    fallback_job = "assistant",
+}
+```
+
+The countdown begins when the first ready setup is present. A player chooses a
+name and an ordered list of jobs, then explicitly opts into the Assistant
+fallback when the ranked list cannot be assigned. The allocator shuffles the
+cohort once, makes preference passes in rank order, and considers that fallback
+afterward. An unassignable cohort waits for changed choices; it does not start
+empty. The mode binds `round.allocate` as the `lifecycle` route to the
+engine's `lifecycle.round_allocate` edge. The engine's phase, draft validation
+and admission rules are in its
+`docs/rounds/preparation.md` and `docs/rounds/allocation.md`.
+
+`free_build` omits `preparation`, so it retains its immediate connection spawn.
+Preparation does not consume the shift hour: the pack's `clock.second` policy
+starts when admission transitions the round to `playing`.
+
+The reference checkout's `code/controllers/subsystem/ticker.dm:44` declares
+120 seconds; its ready tally and countdown are at `ticker.dm:134`, and jobless
+overflow consent is at `code/controllers/subsystem/job.dm:557`. TfS adds
+first-ready countdown activation, an empty-ready hold, and browser-local drafts.
 
 ```sh
 cargo run -p lunatic-server                          # Space Station

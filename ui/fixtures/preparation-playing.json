@@ -1,0 +1,48 @@
+{
+  "note": "Playing keeps the job board as the late-join action and lets a bodyless session choose its name first.",
+  "viewport": { "width": 1024, "height": 768, "dpr": 1 },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 9,
+    "body": false,
+    "state": {
+      "round": {
+        "round": 12,
+        "phase": "playing",
+        "remaining_seconds": null,
+        "ready": 1,
+        "connected": 2,
+        "paused": false,
+        "waiting": false,
+        "fault": null
+      },
+      "preparation": {
+        "round": 12,
+        "revision": 9,
+        "draft": { "name": "", "ranked_jobs": [], "fallback": false },
+        "ready": false,
+        "can_edit": true,
+        "can_ready": false,
+        "fallback_job": "assistant",
+        "issue": null
+      },
+      "identity": { "you": null, "name": "Reader" },
+      "jobs": {
+        "jobs": [
+          { "key": "assistant", "name": "Assistant", "taken": 2, "slots": 3 },
+          { "key": "engineer", "name": "Engineer", "taken": 1, "slots": 2 },
+          { "key": "doctor", "name": "Doctor", "taken": 2, "slots": 2 }
+        ]
+      }
+    },
+    "log": [
+      { "kind": "ooc", "name": "A7K2", "text": "Welcome aboard." }
+    ],
+    "documents": {}
+  },
+  "steps": [
+    { "type": "fill", "id": "preparation/name", "value": "Rook", "expect": { "value": "Rook", "actionCount": 1 } },
+    { "type": "click", "id": "job/assistant", "expect": { "visible": ["job/assistant"], "actionCount": 2 } }
+  ]
+}

@@ -68,15 +68,45 @@ export interface LogLine {
   kind?: string | null;
   channel?: string | null;
   name?: string;
-  /** Shift seconds when the line was heard; absent on an older server. */
+  /** Shift seconds when the line was heard. */
   second?: number;
   text: string;
+}
+export interface CharacterDraft {
+  name: string;
+  ranked_jobs: string[];
+  fallback: boolean;
+}
+export type PreparationIssue = "invalid_draft" | "stale" | "locked" | "allocation_failed" | "no_assignments";
+export interface RoundStatus {
+  round: number;
+  phase: "preparing" | "playing" | "ending";
+  remaining_seconds: number | null;
+  ready: number;
+  connected: number;
+  paused: boolean;
+  waiting: boolean;
+  fault: PreparationIssue | null;
+}
+export interface PreparationState {
+  round: number;
+  revision: number;
+  draft: CharacterDraft;
+  ready: boolean;
+  can_edit: boolean;
+  can_ready: boolean;
+  fallback_job: string | null;
+  issue: PreparationIssue | null;
 }
 export interface GameplayView {
   body: boolean;
   documents?: Record<string, PanelDocument>;
   log?: LogLine[];
   state: {
+    round?: RoundStatus;
+    preparation?: PreparationState;
+    preparationPending?: boolean;
+    preparationStorage?: { available: boolean };
     jobs?: {
       jobs: {
         key: string;

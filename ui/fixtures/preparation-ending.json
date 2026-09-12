@@ -1,0 +1,43 @@
+{
+  "note": "Ending shows the phase status and leaves the late-join board unavailable.",
+  "viewport": { "width": 1024, "height": 768, "dpr": 1 },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 10,
+    "body": false,
+    "state": {
+      "round": {
+        "round": 12,
+        "phase": "ending",
+        "remaining_seconds": null,
+        "ready": 0,
+        "connected": 2,
+        "paused": false,
+        "waiting": false,
+        "fault": null
+      },
+      "preparation": {
+        "round": 12,
+        "revision": 10,
+        "draft": { "name": "Rook", "ranked_jobs": [], "fallback": false },
+        "ready": false,
+        "can_edit": false,
+        "can_ready": false,
+        "fallback_job": null,
+        "issue": null
+      },
+      "identity": { "you": null, "name": "Reader" },
+      "jobs": {
+        "jobs": [
+          { "key": "assistant", "name": "Assistant", "taken": 2, "slots": 3 },
+          { "key": "engineer", "name": "Engineer", "taken": 1, "slots": 2 }
+        ]
+      }
+    },
+    "log": [
+      { "kind": "ooc", "name": "A7K2", "text": "The shift is closing." }
+    ],
+    "documents": {}
+  }
+}

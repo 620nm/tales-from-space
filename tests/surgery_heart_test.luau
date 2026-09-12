@@ -8,7 +8,7 @@
 local ARENA = [==[(
     name: "theatre",
     legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
-    rows: [ "#####", "#...#", "#####" ],
+    rows: [ "#########", "#.......#", "#########" ],
     spawns: [(1, 1), (2, 1)],
     structures: [(2, 1, "optable")],
     items: [
@@ -29,6 +29,14 @@ assert(t.body(patient).posture == "lying" and t.body(patient).conscious,
 assert(t.worn(patient).uniform == nil, "the chest is bared")
 
 local PX, PY = 2, 1
+local TOOL_X = {
+    scalpel = 3,
+    retractor = 4,
+    hemostat = 5,
+    circular_saw = 6,
+    cautery = 7,
+}
+local moved_to = {}
 
 local function has(states, name) return states[name] == true end
 
@@ -43,10 +51,39 @@ local function face(label)
     return tostring(label.text or label.id)
 end
 
+local function walk_to(destination)
+    local start = t.pos(surgeon)
+    local step = if destination > start then 1 else -1
+    for offset = 1, math.abs(destination - start) do
+        t.move(surgeon, if step == 1 then "east" else "west")
+        t.run_ticks(5)
+        assert(t.pos(surgeon) == start + offset * step, "the tool aisle stays clear")
+    end
+end
+
 local function hold(id)
-    if t.hands(surgeon).held ~= nil then t.drop(surgeon); t.tick() end
-    t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, id))
+    local held = t.hands(surgeon).held
+    if held ~= nil then
+        -- Keep spent tools off the pickup tile so their sprites cannot cover the next tool.
+        local away = TOOL_X[held]
+        if away ~= nil then
+            walk_to(away)
+            t.drop(surgeon)
+            t.tick()
+            moved_to[held] = away
+            walk_to(1)
+        else
+            t.drop(surgeon)
+            t.tick()
+        end
+    end
+
+    local pickup = moved_to[id] or 1
+    walk_to(pickup)
+    local target = assert(t.target_at(surgeon, pickup, 1, id), id .. " is visible to pick up")
+    t.click(surgeon, pickup, 1, target)
     t.run_ticks(2)
+    walk_to(1)
     assert(t.hands(surgeon).held == id, "the surgeon holds the " .. id)
 end
 

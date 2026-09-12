@@ -20,7 +20,7 @@ This standalone repository is loaded by the lunatic engine through
 | `assets/`        | Sprite, sound and whole-picture source manifests plus the tracked `tg-revision` consumed and verified by `cargo run -p xtask -- bake-atlas`. |
 | `tests/`         | Luau specs (`*_test.luau`) run by the engine's spec runner, with focused RON fixtures embedded inline where needed. |
 | `locale/`        | One flat catalog per language, `<tag>.json`, holding every word this pack writes: its interface, its key bindings, a rendering for every settings-module label id, its own message keys, and its wording for the engine keys it overrides (`docs/WORDS.md`). |
-| `docs/`          | This pack's own contracts — what it ships and the numbers it chose: `ATMOS.md` (the station loop), `BIOLOGY.md` (body and surgery tuning), `CHEMISTRY.md` (the shelf), `GAMEMODES.md` (the two modes), plus controls, terminology and `scripting/` for guest controllers and reference files. A bare `docs/…` citation names a file HERE; an engine contract is always written "the engine's `docs/…`". |
+| `docs/`          | This pack's own contracts — what it ships and the numbers it chose: `ATMOS.md` (the station loop), `BIOLOGY.md` (body and surgery tuning), `CHEMISTRY.md` (the shelf), `GAMEMODES.md` (the two modes and preparation policy), `UI.md` (gameplay surfaces), plus controls, terminology and `scripting/` for guest controllers and reference files. A bare `docs/…` citation names a file HERE; an engine contract is always written "the engine's `docs/…`". |
 | `tools/`         | `node tools/test.mjs <engine>` runs every node check: `theme-lint.mjs` (colours only in `ui/theme/tokens.ts`, inline style is placement only), `keyed-messages.mjs --check`, and the `test-*.mjs` tests over `ui/`. To preview a surface, run the engine's lab from the engine checkout, `node tools/ui-lab.mjs serve --watch` or `shot <fixture>` (the engine's `docs/pack-ui/lab.md`). |
 
 ## Running
@@ -57,10 +57,13 @@ The station interface and acceptance loop are documented in
 Interaction cards and their presentation tokens are documented in
 [`docs/ACTIONS.md`](docs/ACTIONS.md).
 
-Gameplay presentation and controls belong to `ui/`, including jobs, lobby,
-respawn, chat, HUD, build and device/file panels. The trusted host interprets the
-package through the restricted UI SDK; it supplies no browser globals or
-per-frame script hook. Native providers supply readouts and validate intents.
+Gameplay presentation and controls belong to `ui/`, including preparation,
+jobs, lobby, respawn, OOC/chat, HUD, build and device/file panels. The trusted
+host interprets the package through the restricted UI SDK; it supplies no
+browser globals or per-frame script hook. Native providers supply readouts and
+validate intents. Preparation reads `state.round` and `state.preparation`, and
+emits the typed `character_draft`, `ready` and `ooc` actions described in
+`docs/UI.md`.
 The engine's `docs/PACK-UI.md` documents this contract, and `@lunatic/ui`
 supplies the component kit and default theme these screens are built from
 (the engine's `docs/pack-ui/components.md`).
@@ -218,10 +221,19 @@ harness uses — a spec asserts what a player could cause, never what a
 mod could sneak. There is no raw entity handle, no component access, and
 no direct spawn in `t`, and none should ever be added.
 
+`SpecSession` may be bodyless, so preparation and OOC specs do not fabricate an
+entity just to exercise a session. The production `t.world` lifecycle stays
+the same: `t.join([job])` submits a synthetic valid draft with one chosen job,
+readies the first preparation cohort, and advances bounded host pulses until
+the round is playing; later calls to `t.join` exercise latejoin. Cohort specs
+use the explicit `t.connect`, `t.prepare`, `t.ready` and
+`t.preparation_steps` helpers and inspect round status directly.
+
 | Group | Functions |
 | ----- | --------- |
 | Item gestures | `t.use_item(p, observed_target, gesture)` (any of the eighteen declarable pointer ids — `"secondary"`, `"middle"`, `"alt_primary"`, `"shift_ctrl_primary"` and the rest of the grid, spelled and ranked in the engine's `docs/luau-api/click.md`; the observed world picture must declare that gesture; carried items use `t.use_item_site`) |
-| World | `t.world(ron [, seed [, mode]])`, `t.world_file(name [, seed [, mode]])` (mode = a `content/gamemodes/` id; omitted = the pack default), `t.join([job]) -> player` (a mode that seats bodies on connection takes no job), `t.respawn(p [, job])` (take the mode's offer to leave this body: where the mode lobbies the session lands back at the board on a fresh Mind and `job` picks the next role, and where bodies are connection-scoped there is no board, so naming a job is an error) |
+| World | `t.world(ron [, seed [, mode]])`, `t.world_file(name [, seed [, mode]])` (mode = a `content/gamemodes/` id; omitted = the pack default), `t.join([job]) -> player` (in a preparation mode this submits one chosen job and readies the first cohort before bounded setup pulses; a mode that seats bodies on connection still takes no job), `t.respawn(p [, job])` (take the mode's offer to leave this body: where the mode lobbies the session lands back at the board on a fresh Mind and `job` picks the next role, and where bodies are connection-scoped there is no board, so naming a job is an error) |
+| Round preparation | `t.connect`, `t.prepare`, `t.ready`, `t.preparation_steps` and round-status inspection (explicit session/cohort controls; bodyless sessions are legal) |
 | Seeds | `t.fault(x, y, tick)` (hull failure), `t.outage([tick])` (breaker trip) |
 | Clock | `t.now()`, `t.tick()`, `t.run_ticks(n)`, `t.run_seconds(s)` |
 | Verbs | `t.click(p, x, y [, target])` (target = an opaque player-scoped token from `t.target_at(p, x, y [, selector])`; omitted = a real tile-centre pick), `t.throw(p, x, y [, target])` (the same click while throw mode is armed: the active hand's item flies at that tile), `t.move(p, dir)`, `t.say(p, text)`, `t.drop(p)`, `t.equip(p)`, `t.unequip(p, slot)` (a worn slot off into a free hand), `t.swap_hands(p)`, `t.use_self(p)`, `t.use_on_other(p)` (the active hand's item used on the item in the other hand),  `t.rotate(p, x, y, target, true)` (Alt-primary; clockwise), `t.pull(p, x, y, target)` (ctrl+click: take hold of a loose thing and drag it), `t.stop_pull(p)`, `t.ui_press(p, node_id [, gesture])`, `t.ui_edit(p, node_id, value)`, `t.ui_close(p [, channel])` |

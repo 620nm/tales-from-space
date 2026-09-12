@@ -8,6 +8,8 @@ A fixture is evidence for its disclosed state, not for live station rendering.
 |---|---|---|
 | HUD controls | empty hands, worn equipment, busy action groups, unavailable body | compact/regular/wide HUD and expanded-action fixtures; hands and action targets remain visible |
 | Chat and inspection | empty, long log, expanded history, pinned/full receipt | separate bounded scrolling; chat input remains visible |
+| Round preparation | empty, valid draft, invalid draft, countdown, waiting, admitted | draft and ready actions echo round/revision; controls explain server issues |
+| OOC | bodyless session, long history, reconnect/cutover | opaque display name, bounded log, text preserved and composer remains available |
 | Storage | held, worn, ground, empty, nested, revoked disclosure | Alt-click opens each container; close and transfers echo the shown receipt; ground panels disappear when access ends |
 | Crew board | lobby, full job, condition/respawn | labels explain unavailable choices; keyboard reaches available choices |
 | Readouts and matter | populated, empty, long labels, unavailable device | title/status/body/footer; readout values never truncate controls |

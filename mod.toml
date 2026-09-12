@@ -32,6 +32,7 @@ native_edges = [
     "lifecycle.mob",
     "lifecycle.clock",
     "lifecycle.round_end",
+    "lifecycle.round_allocate",
     "parts.refresh",
     "component.command",
     "speech.radio",

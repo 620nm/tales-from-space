@@ -1,0 +1,41 @@
+{
+  "note": "An allocator refusal stays visible beside the draft while the player can correct it.",
+  "viewport": { "width": 1024, "height": 768, "dpr": 1 },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 8,
+    "body": false,
+    "state": {
+      "round": {
+        "round": 13,
+        "phase": "preparing",
+        "remaining_seconds": null,
+        "ready": 0,
+        "connected": 1,
+        "paused": true,
+        "waiting": true,
+        "fault": "allocation_failed"
+      },
+      "preparation": {
+        "round": 13,
+        "revision": 8,
+        "draft": { "name": "", "ranked_jobs": [], "fallback": false },
+        "ready": false,
+        "can_edit": true,
+        "can_ready": false,
+        "fallback_job": "assistant",
+        "issue": "allocation_failed"
+      },
+      "preparationStorage": { "available": false },
+      "jobs": {
+        "jobs": [
+          { "key": "assistant", "name": "Assistant", "taken": 3, "slots": 3 },
+          { "key": "engineer", "name": "Engineer", "taken": 2, "slots": 2 }
+        ]
+      }
+    },
+    "log": [{ "kind": "ooc", "name": "A7K2", "text": "Allocator needs attention." }],
+    "documents": {}
+  }
+}
