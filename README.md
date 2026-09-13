@@ -32,9 +32,6 @@ row:
 <!-- tree-debt-table -->
 | Directory | Files | Why |
 |---|---|---|
-| `tests/` | 227 | one spec per file; splits when the runner reads nested spec directories |
-| `content/items/` | 148 | flat roster; splits when the loader reads nested roster directories |
-| `content/structures/` | 68 | flat roster; splits when the loader reads nested roster directories |
 | `ui/fixtures/baselines/` | 54 | one baseline image per fixture state |
 | `ui/fixtures/` | 53 | one fixture per surface state |
 <!-- end -->

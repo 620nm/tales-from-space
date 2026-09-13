@@ -12,8 +12,8 @@ machines, `docs/atmos/vessels-and-meter.md` for bottles and ports). This
 file owns only what THIS pack chose.
 
 Sources: `maps/chillstation.ron`, `content/blends/canister_air.luau`,
-`content/structures/air_scrubber.luau`, `content/tuning.luau`,
-`tests/station_air_test.luau`.
+`content/structures/atmos/air_scrubber.luau`, `content/tuning.luau`,
+`tests/atmos/environment/station_air_test.luau`.
 
 ## The loop, by coordinate
 
@@ -82,7 +82,7 @@ This one placement contradicts the prototype deliberately. A grille
 dropped on a deck today is a RETURN GRILLE — whole air, gently, down to
 a floor just under the vent's release line, which is what a hull that
 radiates wants once there is a heating loop to feed
-(`content/structures/air_scrubber.luau` ships `rate_lps = 5.0`,
+(`content/structures/atmos/air_scrubber.luau` ships `rate_lps = 5.0`,
 `target_kpa = 100.0`). This grille is the department's **CO2 recovery
 leg** and predates that loop: pointed at the one gas, dial wide open at
 no floor, taking it to the last mole, with the chamber at the far end of

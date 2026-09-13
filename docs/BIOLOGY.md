@@ -103,7 +103,7 @@ arrest's `when_zero` oxy 4/s + brute 1/s held unconscious
 is not a handler's to make; the liverless 0.5/s random organ damage
 (carbon/life.dm:746-747).
 
-## Organs — `content/items/organ_*.luau`
+## Organs — `content/items/anatomy/organ_*.luau`
 
 `max_health / low / high`, then `heal_per_s` and `decay_per_s` as fractions
 of `max_health` per second (`STANDARD_ORGAN_HEALING` 50/100000 and
@@ -162,7 +162,7 @@ availability on purpose so it does not crowd the mid-operation window.
 Organ repair models `heal_to` as set-to-fraction for every organ, the brain
 included, and the repair times are ours, not tg's. There is no `revival`
 operation: a defibrillator is an ITEM here
-(`content/items/defib.luau`). `amputate` waits on the engine's B5 wounds.
+(`content/items/surgery/defib.luau`). `amputate` waits on the engine's B5 wounds.
 
 **The bone lock stays.** Chest sockets keep `requires = { "bone_sawed" }`,
 and no improvised edge under force 10 stands in for a saw
@@ -182,7 +182,7 @@ port reads 0 the moment it is missing or failing; `human.luau`'s threshold
 handler calls `sim.fail_organ` on the heart when its own `dead` line is
 crossed. Healing the parts clears the health line and leaves the heart
 stopped; the body returns only when a replacement is seated, a `repair`
-lands, or `content/items/defib.luau` heals it. The engine's account of why
+lands, or `content/items/surgery/defib.luau` heals it. The engine's account of why
 this shape is content's is `../lunatic/docs/surgery/as-built.md`.
 
 ## Looks
