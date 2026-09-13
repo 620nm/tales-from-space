@@ -14,6 +14,7 @@ import { storageRegion } from "./inventory-storage";
 import { pollContinuation } from "./files";
 import { documents } from "./documents";
 import { actionGroups } from "./actions";
+import { contactOnView, contactPanel } from "./contact/actions";
 
 /** Where this body is, and who it is: two spans over the station, no
  *  pane behind them. A viewer whose projection names no place gets the
@@ -34,7 +35,7 @@ function statusLine(view: GameplayView): UiNode {
 const ui: GuestUi = {
   onView(raw) {
     const view = raw as unknown as GameplayView;
-    return { action: pollContinuation(Object.values(view.documents ?? {})) };
+    return { action: contactOnView(view) ?? pollContinuation(Object.values(view.documents ?? {})) };
   },
   render(raw) {
     const view = raw as unknown as GameplayView;
@@ -45,10 +46,17 @@ const ui: GuestUi = {
     children.push(...crewPanels(view));
     // Preparation owns the whole bounded surface. Keeping the gameplay HUD
     // out of this branch leaves the OOC and setup columns unobscured.
-    if (view.state.round?.phase === "preparing")
+    if (view.state.round?.phase === "preparing" && !view.state.staff_view) {
+      const contact = contactPanel(view);
+      if (contact) children.push(panel("preparation-contact", [contact], {
+        cls: ["hudgroup"], style: {
+          position: "absolute", left: 12, bottom: 12, width: "32%", minWidth: 320, maxWidth: 420,
+        },
+      }));
       return Pane("gameplay", children, { cls: ["hud", "centered"] });
+    }
     children.push(column("hud-comms", [
-      ...inspectionPanels(view), ...chatPanel(view),
+      ...inspectionPanels(view), ...some(contactPanel(view)), ...chatPanel(view),
     ], { cls: ["hudgroup", "hud-comms"], style: {
       position: "absolute", left: 12, top: 18, bottom: 12, width: "32%", minWidth: 320, maxWidth: 420,
     } }));

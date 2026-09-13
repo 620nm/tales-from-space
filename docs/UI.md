@@ -10,6 +10,7 @@ Production images stay under `assets/` and ship through the asset manifests.
 |---|---|
 | Gameplay | translucent communication and control regions over the station; restrained document cards; existing TG inventory frames and 32px artwork |
 | Computers | square phosphor screen; device identity and artwork above structured drives, readers and diagnostics; physical controls stay separate from viewer close |
+| Staff | BWOINK live canvas and case desk; shared account cards, target inspector and audit ledger |
 | Trusted shell/editor | stock engine surfaces; engine documentation owns their styling and interaction |
 
 The body size is 13px, controls 12px, secondary metadata 11px and headings
@@ -49,6 +50,15 @@ power, access or proximity diagnosis that the provider did not disclose.
 The computer and file workflow lives in [LAPTOP.md](LAPTOP.md). File workspace
 modal ownership, readers and buffering use the engine's
 `docs/pack-ui/components.md` and `docs/pack-ui/authoring.md` contracts.
+
+## Staff workspaces and contact
+
+`ui/staff/` is a separately declared staff package; its slot depends on
+`state.staff`. Ordinary HUD updates do not rerun it. The ordinary package owns
+`ui/contact/` and receives only that player's contact projection. [STAFF.md](STAFF.md)
+owns the workflows and acceptance checks; the engine's `docs/STAFF.md` owns
+authority and durable records. The themes live in `ui/theme/staff.ts` and
+`ui/theme/contact.ts`.
 
 ## Round preparation and OOC
 

@@ -61,6 +61,8 @@ tests = "tests"
 [ui]
 entry = "ui/main.tsx"
 bundle = "ui/bundle.json"
+staff_entry = "ui/staff/main.ts"
+staff_bundle = "ui/staff.json"
 
 [permissions]
 replace_handlers = true

@@ -11,6 +11,7 @@ import { surfaceRules } from "./theme/surfaces";
 import { documentRules } from "./theme/documents";
 import { workspaceRules } from "./theme/workspace";
 import { lobbyRules } from "./theme/lobby";
+import { contactRules } from "./theme/contact";
 
 export default defineStyles([
   ...kitRules,
@@ -19,4 +20,5 @@ export default defineStyles([
   ...documentRules,
   ...workspaceRules,
   ...lobbyRules,
+  ...contactRules,
 ] as UiStyleRule[]);

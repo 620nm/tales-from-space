@@ -1,4 +1,6 @@
 [
+    // tg sound/effects/adminhelp.ogg; original staff-contact sound.
+    ("bwoink", "effects/adminhelp.ogg"),
     // Copied verbatim from tg sound/machines/computer/ with attribution.txt.
     ("computer_start", "originals/sound/computer/computer_start.ogg"),
     ("computer_end", "originals/sound/computer/computer_end.ogg"),
