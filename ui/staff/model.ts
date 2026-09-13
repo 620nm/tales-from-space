@@ -536,7 +536,16 @@ export const staffRef = (round: string, kind: string, id: string, labelText?: st
   round: kind === "account" ? "" : round, kind, id: String(id), ...(labelText ? { label: labelText } : {}),
 });
 
-export const refKey = (value: StaffRef | null | undefined): string => value ? `${value.round}:${value.kind}:${value.id}` : "";
+/**
+ * The one collision-proof ref key for the staff package. A colon join
+ * folds distinct refs together: the wire charset lets ':' occur inside
+ * `kind` and `id` (lunatic-core's `validate_identifier`), so a colon
+ * landing in one field can shift where the next field's boundary
+ * appears to be. `cases/records.ts` re-exports this rather than
+ * defining its own.
+ */
+export const refKey = (value: StaffRef | null | undefined): string =>
+  value ? JSON.stringify([value.round, value.kind, value.id]) : "";
 export const recordRef = (round: string, id: string): StaffRef => staffRef(round, "event", id);
 export const accountRef = (id: ProfileId, labelText?: string): StaffRef => staffRef("", "account", id, labelText);
 export const label = (value: unknown, fallback = "—"): string => typeof value === "string" || typeof value === "number" ? String(value) : fallback;
