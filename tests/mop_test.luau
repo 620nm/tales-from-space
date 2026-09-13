@@ -44,15 +44,15 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local mop = t.target_at(p, 1, 1, "mop")
-local beaker = t.target_at(p, 1, 1, "beaker_bluespace")
+local mop = assert(t.target_at(p, 1, 1, "mop"))
+local beaker = assert(t.target_at(p, 1, 1, "beaker_bluespace"))
 
 -- A quarter of a litre is the head, which is the whole of what one
 -- stroke can lift.
 local HEAD_L = 0.25
 
 local function puddle()
-    return t.room_liquid(2, 1).water or 0
+    return assert(t.room_liquid(2, 1)).water or 0
 end
 
 local function held(handle)
@@ -91,7 +91,7 @@ assert(
 local in_the_head = held(mop)
 assert(in_the_head > 13.0 and in_the_head < 14.5,
     ("and the head is holding it: %g mol"):format(in_the_head))
-assert(t.vessel(mop).headspace_l < 0.01, "with no room left in it")
+assert(assert(t.vessel(mop)).headspace_l < 0.01, "with no room left in it")
 
 -- ---------------------------------------------------------------
 -- A SECOND STROKE with a full head moves nothing at all, and says so

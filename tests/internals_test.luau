@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Internals: what a crewman does when the room stops being breathable.
 --
 -- Three bodies in three sealed cells, each holding a wisp of nitrogen
@@ -47,24 +49,20 @@ t.world([==[(
 -- One breath cycle, tg's SSmobs × next_breath (8 s at 20 Hz).
 local BREATH = 160
 
-local function oxy(p)
-    return t.health(p).oxy
+local function oxy(p: number)
+    return ui_controls.number(t.health(p).oxy)
 end
 
 -- Where in the pack the pocket bottle ended up. Indexed rather than
 -- assumed, because a job's kit is a list its own file orders and a spec
 -- that hardcodes slot 1 breaks the day somebody reorders it.
-local function bottle_row(p)
+local function bottle_row(p: number): number?
     for i, id in ipairs(t.stored(p, "back")) do
         if id == "emergency_tank.oxygen" then
             return i
         end
     end
     return nil
-end
-
-local function heard(p)
-    return " " .. table.concat(t.messages(p), " | ") .. " "
 end
 
 local diver = t.join("engineer")
@@ -108,8 +106,8 @@ assert(t.worn(diver).suit == "eva_suit", "the suit is on")
 -- cannot be breathed from (tg's `internal.loc != src`), which is why
 -- the first gesture is taking it out.
 -- ---------------------------------------------------------------
-local function open_bottle(p)
-    t.take_from(p, "back", bottle_row(p))
+local function open_bottle(p: number)
+    t.take_from(p, "back", assert(bottle_row(p), "the pocket contains a tank"))
     t.run_ticks(2)
     assert(t.hands(p).held == "emergency_tank.oxygen", "the bottle is in hand")
     t.use_self(p)
@@ -120,7 +118,7 @@ open_bottle(diver)
 local supply = t.vitals(diver)
 assert(supply ~= nil and supply.tank ~= nil, "the readout lights up on a tank")
 assert(
-    math.abs(supply.tank - 10 * 101.325) < 1.0,
+    math.abs(ui_controls.number(supply.tank) - 10 * 101.325) < 1.0,
     "and reads what the file charged it to, ten atmospheres: " .. tostring(supply.tank)
 )
 -- The panel the tank opens for whoever worked the valve -- tg's own
@@ -129,7 +127,7 @@ assert(
 -- examine sheet. Its own spec is tank_window_test.luau; here it is
 -- only asked to be THERE, because opening the valve and looking at
 -- the bottle are one gesture.
-local panel = t.ui(diver)
+local panel = ui_controls.state(diver)
 assert(panel and panel.document == "modules" and panel.presentation == "modules",
     "the tank reads itself out")
 
@@ -140,10 +138,10 @@ assert(panel and panel.document == "modules" and panel.presentation == "modules"
 -- neither. Then everybody stands still for five breaths.
 -- ---------------------------------------------------------------
 open_bottle(tanked)
-assert(t.vitals(tanked).tank ~= nil, "the second bottle is open too")
+assert(assert(t.vitals(tanked)).tank ~= nil, "the second bottle is open too")
 
 local opening = { diver = oxy(diver), tanked = oxy(tanked), bare = oxy(bare) }
-local gauge_0 = t.vitals(diver).tank
+local gauge_0 = assert(t.vitals(diver)).tank
 -- Four, not more: past this the unprotected pair start dropping, and a
 -- body that falls over is a body whose valve the sim shuts for it --
 -- which would be a different assertion wearing this one's clothes.
@@ -175,7 +173,7 @@ assert(
 )
 
 -- ...and the bottle paid for those breaths.
-local gauge_1 = t.vitals(diver).tank
+local gauge_1 = assert(t.vitals(diver)).tank
 assert(
     gauge_1 < gauge_0,
     "the gauge falls as it is breathed: " .. gauge_0 .. " -> " .. gauge_1
@@ -191,7 +189,7 @@ assert(
 -- ---------------------------------------------------------------
 t.drop(diver)
 t.run_ticks(2)
-assert(t.vitals(diver).tank == nil, "the readout goes dark within a tick of letting go")
+assert(assert(t.vitals(diver)).tank == nil, "the readout goes dark within a tick of letting go")
 
 -- ---------------------------------------------------------------
 -- SIX: THE BIG BOTTLE.
@@ -206,7 +204,7 @@ t.run_ticks(2)
 assert(t.hands(diver).held == "oxygen_tank", "the big bottle is in hand")
 t.use_self(diver)
 t.run_ticks(2)
-local big = t.vitals(diver).tank
+local big = assert(t.vitals(diver)).tank
 assert(big ~= nil, "and it opens like any other tank")
 assert(
     math.abs(big - 6 * 101.325) < 1.0,
@@ -223,9 +221,9 @@ assert(
     "suit and bottle together are a shift outside: " .. settled .. " -> " .. oxy(diver)
 )
 assert(
-    t.vitals(diver).tank < big,
+    assert(t.vitals(diver)).tank < big,
     "and the big gauge falls as the small one did: " .. big .. " -> "
-        .. tostring(t.vitals(diver).tank)
+        .. tostring(assert(t.vitals(diver)).tank)
 )
 
 -- ---------------------------------------------------------------
@@ -236,11 +234,11 @@ assert(
 -- cutoff (code/modules/mob/living/carbon/inventory.dm:330-334), asked
 -- fresh every tick rather than remembered.
 -- ---------------------------------------------------------------
-assert(t.vitals(diver).tank ~= nil, "the big bottle is still open")
+assert(assert(t.vitals(diver)).tank ~= nil, "the big bottle is still open")
 t.unequip(diver, "mask")
 t.run_ticks(2)
 assert(t.worn(diver).mask == nil, "the apparatus is off")
-assert(t.vitals(diver).tank == nil, "and the valve shut the moment it was")
+assert(assert(t.vitals(diver)).tank == nil, "and the valve shut the moment it was")
 
 -- ---------------------------------------------------------------
 -- EIGHT: AND BARE-FACED, THE VALVE REFUSES TO OPEN AT ALL.
@@ -251,7 +249,7 @@ assert(t.vitals(diver).tank == nil, "and the valve shut the moment it was")
 -- ---------------------------------------------------------------
 t.use_self(diver)
 t.run_ticks(2)
-assert(t.vitals(diver).tank == nil, "no apparatus, no internals")
+assert(assert(t.vitals(diver)).tank == nil, "no apparatus, no internals")
 
 t.swap_hands(diver)
 t.equip(diver)
@@ -260,4 +258,4 @@ assert(t.worn(diver).mask == "breath_mask", "the apparatus is back on")
 t.swap_hands(diver)
 t.use_self(diver)
 t.run_ticks(2)
-assert(t.vitals(diver).tank ~= nil, "and the same gesture opens the same tank")
+assert(assert(t.vitals(diver)).tank ~= nil, "and the same gesture opens the same tank")

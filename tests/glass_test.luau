@@ -31,20 +31,11 @@ local ROOM = [==[(
 -- Empty the active hand, then take what is on that tile. A click while
 -- holding a material BUILDS and one while holding a tool USES, so the
 -- hand has to be empty first.
-local function take(p, x, y)
+local function take(p: number, x: number, y: number)
     t.drop(p)
     t.run_ticks(2)
     t.click(p, x, y, t.target_at(p, x, y))
     t.run_ticks(2)
-end
-
-local function said(p, want)
-    for _, m in ipairs(t.messages(p)) do
-        if m == want then
-            return true
-        end
-    end
-    return false
 end
 
 t.world(ROOM, 7)
@@ -78,7 +69,7 @@ t.run_ticks(2)
 -- rungs a crowbar works on rather than whichever the file lists first
 -- -- as two whole sentences, never one joined with "or"
 -- (docs/LOCALIZATION.md).
-local _ = t.messages(p)
+t.messages(p)
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.run_ticks(4)
 local unsealed, unscrewed = false, false

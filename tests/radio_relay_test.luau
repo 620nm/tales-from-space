@@ -19,6 +19,9 @@
 -- The listener always stands deep inside the far tower's clear band,
 -- so every line here arrives whole and no static literal is pinned.
 
+local laptop = require("@helpers/laptop")
+local ui_controls = require("@helpers/ui_controls")
+
 local function said(p, line)
     for _, m in ipairs(t.messages(p)) do
         if m == line then
@@ -28,9 +31,9 @@ local function said(p, line)
     return false
 end
 
-local function rows(ui, field)
-    local out = {}
-    for _, row in ipairs(ui.toggles or {}) do
+local function rows(ui: unknown, field: string)
+    local out: {ui_controls.Record} = {}
+    for _, row in ipairs(ui_controls.rows(ui_controls.record(ui).toggles or {})) do
         if row.field == field then
             out[#out + 1] = row
         end
@@ -91,7 +94,8 @@ local BENCH = [==[(
     ],
 )]==]
 
-local speaker, listener
+local speaker: number
+local listener: number
 
 local function pocket(p)
     local x, y = t.pos(p)
@@ -117,7 +121,7 @@ local booted = {}
 -- only a held laptop, which waits on the player's own tile: the empty
 -- hand takes it, and it goes back down with the key in hand again. The
 -- router (no id, a machine on its tile) wears its own panel.
-local function join_all(p, x, y, id)
+local function join_all(p: number, x: number, y: number, id: string?)
     local channel = nil
     if id ~= nil then
         channel = "programming"
@@ -140,7 +144,7 @@ local function join_all(p, x, y, id)
     local offered = #rows(t.ui(p, channel), "link_join")
     for _ = 1, offered do
         local offer = rows(t.ui(p, channel), "link_join")[1]
-        ui_controls.toggle(p, "link_join", offer.option, channel)
+        ui_controls.toggle(p, "link_join", ui_controls.text(offer.option), channel)
         t.tick()
     end
     t.ui_close(p, channel)
@@ -155,7 +159,7 @@ local function join_all(p, x, y, id)
     return offered
 end
 
-local function say_and_read(line)
+local function say_and_read(line: string)
     local _ = t.messages(speaker)
     local _ = t.messages(listener)
     t.say(speaker, ";" .. line)

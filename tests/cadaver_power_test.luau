@@ -45,7 +45,7 @@ local dark_patient = t.join()
 t.tick()
 
 local dark = t.target_at(dark_attendant, 2, 1, "cadaver_chamber")
-assert(#t.structure_at(2, 1).overlays == 0,
+assert(#assert(t.structure_at(2, 1)).overlays == 0,
     "an unwired chamber shows no lamp at all")
 
 -- ...and it goes on showing nothing with somebody shut inside it. The
@@ -57,8 +57,8 @@ t.tick()
 t.rest(dark_patient)
 t.click(dark_attendant, 2, 1, dark)
 t.tick()
-assert(t.structure_at(2, 1).state == "closed", "it shuts on them")
-assert(#t.structure_at(2, 1).overlays == 0,
+assert(assert(t.structure_at(2, 1)).state == "closed", "it shuts on them")
+assert(#assert(t.structure_at(2, 1)).overlays == 0,
     "a dead readout reports nothing rather than reporting wrongly")
 assert(not has(t.sounds(dark_attendant), "cadaver_alert"),
     "and an unpowered chamber has nothing to beep with")
@@ -92,17 +92,17 @@ local patient = t.join()
 t.tick()
 
 local chamber = t.target_at(attendant, 2, 1, "cadaver_chamber")
-assert(#t.structure_at(2, 1).overlays == 0,
+assert(#assert(t.structure_at(2, 1)).overlays == 0,
     "an empty chamber names no lamp of its own, wired or not")
 
 -- Somebody alive on the slab, and the door shut on them.
 t.click(attendant, 2, 1, chamber)
 t.tick()
 t.rest(patient)
-_ = t.sounds(attendant)
+t.sounds(attendant)
 t.click(attendant, 2, 1, chamber)
 t.tick()
-assert(t.structure_at(2, 1).overlays[1] == "morgue4_e",
+assert(assert(t.structure_at(2, 1)).overlays[1] == "morgue4_e",
     "somebody who has not stopped lights tg's revivable lamp")
 assert(has(t.sounds(attendant), "cadaver_alert"),
     "and the chamber says so out loud (morgue.dm:274-276)")
@@ -113,10 +113,10 @@ assert(has(t.sounds(attendant), "cadaver_alert"),
 -- number and repaints the drawer around the body.
 t.set_health(patient, { brute = 400 })
 t.tick()
-assert(not t.body(patient).animate, "the plan stopped them")
-assert(t.structure_at(2, 1).overlays[1] == "morgue2_e",
+assert(not assert(t.body(patient)).animate, "the plan stopped them")
+assert(assert(t.structure_at(2, 1)).overlays[1] == "morgue2_e",
     "a corpse drops the chamber back to the plain body lamp")
-_ = t.sounds(attendant)
+t.sounds(attendant)
 t.run_seconds(90)
 assert(not has(t.sounds(attendant), "cadaver_alert"),
     "a corpse is not an emergency, so the beeping stops")
@@ -146,7 +146,7 @@ t.click(attendant, 2, 1, chamber)
 t.tick()
 t.run_seconds(600)
 local out = t.organ_damage(patient, "brain")
-assert(out > held, "a corpse on an open slab goes off like any other")
+assert(assert(out) > held, "a corpse on an open slab goes off like any other")
 
 -- ...and shutting it stops it again, where it stopped.
 t.click(attendant, 2, 1, chamber)

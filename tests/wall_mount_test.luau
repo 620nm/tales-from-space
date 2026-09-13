@@ -2,7 +2,9 @@
 -- Contract: the engine's docs/construction/mounts.md; diagonal placement and
 -- button interactions are covered in diagonal_wall_mount_test.luau.
 
-local function said(p, line)
+local ui_controls = require("@helpers/ui_controls")
+
+local function said(p: number, line: string)
     for _, m in ipairs(t.messages(p)) do
         if m == line then
             return true
@@ -39,7 +41,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local function take(id)
+local function take(id: string)
     t.click(p, 1, 1, t.target_at(p, 1, 1, id))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
@@ -107,8 +109,8 @@ put_down()
 take("cable_coil")
 t.click(p, 1, 1, t.target_at(p, 1, 1, "wall_frame"))
 t.run_seconds(2.5)
-assert(t.structure_at(1, 1).state == "wired", "five lengths of cable wire it")
-assert(t.structure_at(1, 1).sprite == "wall_frame_wired_n",
+assert(assert(t.structure_at(1, 1)).state == "wired", "five lengths of cable wire it")
+assert(assert(t.structure_at(1, 1)).sprite == "wall_frame_wired_n",
     "and the new picture is still the one that faces the wall")
 
 -- ...and backwards, because every rung of this ladder runs both ways.
@@ -116,7 +118,7 @@ put_down()
 take("wirecutters")
 t.click(p, 1, 1, t.target_at(p, 1, 1, "wall_frame"))
 t.run_seconds(2.5)
-assert(t.structure_at(1, 1).state == "empty", "the cutters take the wiring back out")
+assert(assert(t.structure_at(1, 1)).state == "empty", "the cutters take the wiring back out")
 assert(t.count_items("cable_coil") > 0, "and hand the cable back")
 
 -- ---------------------------------------------------------------

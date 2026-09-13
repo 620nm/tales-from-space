@@ -15,6 +15,10 @@
 -- deterministic (radio_coverage_test.luau explains the hash, and why a
 -- literal pins change rather than correctness).
 
+local ui_controls = require("@helpers/ui_controls")
+
+local laptop = require("@helpers/laptop")
+
 local function said(p, line)
     for _, m in ipairs(t.messages(p)) do
         if m == line then
@@ -24,9 +28,9 @@ local function said(p, line)
     return false
 end
 
-local function rows(ui, field)
-    local out = {}
-    for _, row in ipairs(ui.toggles or {}) do
+local function rows(ui: unknown, field: string)
+    local out: {ui_controls.Record} = {}
+    for _, row in ipairs(ui_controls.rows(ui_controls.record(ui).toggles or {})) do
         if row.field == field then
             out[#out + 1] = row
         end
@@ -101,6 +105,7 @@ pocket(listener)
 -- (6,2), and (7,1) beside the access point.
 local function to_panel()
     for _, dir in ipairs({ "north", "east" }) do
+        assert(dir == "east" or dir == "west" or dir == "north" or dir == "south")
         t.move(speaker, dir)
         t.run_ticks(6)
     end
@@ -109,6 +114,7 @@ local function to_panel()
 end
 local function to_mark()
     for _, dir in ipairs({ "west", "south" }) do
+        assert(dir == "east" or dir == "west" or dir == "north" or dir == "south")
         t.move(speaker, dir)
         t.run_ticks(6)
     end
@@ -120,9 +126,9 @@ end
 -- at (7,1): the speaker swaps to the empty hand, takes it (booting it
 -- the first time), unlocks the box's lock screen if it shows one, runs
 -- `body` over the workspace, and puts the laptop back down with the key
--- in hand again. Answers `body`'s result and whether the lock was shut.
+-- in hand again. Answers whether the lock was shut.
 local booted = false
-local function at_box(body)
+local function at_box(body: (ui_controls.Record) -> ())
     t.swap_hands(speaker)
     t.tick()
     if booted then laptop.take(speaker, 7, 1) else laptop.ready(speaker, 7, 1) end
@@ -134,17 +140,17 @@ local function at_box(body)
         laptop.unlock(speaker)
         t.tick()
     end
-    local result = body(laptop.ui(speaker))
+    body(laptop.ui(speaker))
     laptop.close(speaker)
     t.drop(speaker)
     t.run_ticks(2)
     t.swap_hands(speaker)
     t.tick()
     assert(t.hands(speaker).held == "encryption_key.medical", "the key is back in hand")
-    return result, was_locked
+    return was_locked
 end
 
-local function say_and_read(line)
+local function say_and_read(line: string)
     local _ = t.messages(speaker)
     local _ = t.messages(listener)
     t.say(speaker, ";" .. line)
@@ -172,13 +178,13 @@ assert(#say_and_read("the tower chain is up, check your bands") > 0,
 to_panel()
 -- Placed with no `access` word: a lock with no key opens for whoever
 -- is standing at it (network_test.luau, the router's case).
-local _, was_locked = at_box(function(panel)
+local was_locked = at_box(function(panel)
     assert(rows(panel, "link_lock")[1].on, "it opens for whoever is standing at it")
     local offered = rows(panel, "link_join")
     assert(#offered == 2, "both towers are on offer: " .. #offered)
     for _ = 1, 2 do
         local offer = rows(laptop.ui(speaker), "link_join")[1]
-        laptop.toggle(speaker, "link_join", offer.option)
+        laptop.toggle(speaker, "link_join", ui_controls.text(offer.option))
         t.tick()
     end
 end)
@@ -239,7 +245,7 @@ to_panel()
 at_box(function(panel)
     local held = rows(panel, "link_drop")
     assert(#held == 2, "the box holds both towers")
-    laptop.toggle(speaker, "link_drop", held[2].option)
+    laptop.toggle(speaker, "link_drop", ui_controls.text(held[2].option))
     t.tick()
 end)
 -- The cut somebody ASKED for. A released device falls straight back
@@ -262,7 +268,7 @@ to_panel()
 at_box(function(panel)
     local offer = rows(panel, "link_join")[1]
     assert(offer ~= nil, "the released tower is offerable again")
-    laptop.toggle(speaker, "link_join", offer.option)
+    laptop.toggle(speaker, "link_join", ui_controls.text(offer.option))
     t.tick()
 end)
 to_mark()

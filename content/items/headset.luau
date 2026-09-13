@@ -1,3 +1,5 @@
+local radio = require("@lib/radio")
+
 -- Common-channel radio headset: carrying one anywhere on you is what
 -- makes ';' speak on the radio (docs: closeout step 6d).
 --

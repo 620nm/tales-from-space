@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The atmos emergency-kit case, end to end: a room whose own authored
 -- mixture is already above plasma's ignition point catches fire; a
 -- player picks up the resin projector and sprays that room; the native
@@ -40,7 +42,7 @@ assert(t.hands(p).held == "atmos_resin_projector", "the player picked the projec
 t.run_seconds(1)
 local ignitions = t.ledger_rows("IgnitionAt")
 assert(#ignitions == 1, ("the room caught fire once, got %d ignitions"):format(#ignitions))
-assert(ignitions[1].at[1] == 1 and ignitions[1].at[2] == 1, "the fire is in this room")
+assert(ui_controls.array(ignitions[1].at)[1] == 1 and ui_controls.array(ignitions[1].at)[2] == 1, "the fire is in this room")
 
 -- A ground click on the room is the projector's authored gesture.
 t.click_turf(p, 1, 1)
@@ -59,15 +61,15 @@ t.run_seconds(1)
 local extinguished = t.ledger_rows("ExtinguishedAt")
 assert(#extinguished == 1, ("one fire went out, got %d rows"):format(#extinguished))
 assert(
-    extinguished[1].at[1] == 1 and extinguished[1].at[2] == 1,
+    ui_controls.array(extinguished[1].at)[1] == 1 and ui_controls.array(extinguished[1].at)[2] == 1,
     "ExtinguishedAt names the sprayed tile"
 )
 
 -- This is suppression, not a fire that merely ran out of ingredients
 -- or cooled below its gate. The room remains hot and fuelled after the
 -- edge, yet the persistent column prevents a new ignition.
-local gas = t.room_gas(1, 1)
+local gas = assert(t.room_gas(1, 1))
 assert(gas.plasma > 0.01 and gas.o2 > 0.01, "the room still has both fire reactants")
-assert(t.room_temperature(1, 1) > 373.15, "the room is still above the ignition floor")
+assert(assert(t.room_temperature(1, 1)) > 373.15, "the room is still above the ignition floor")
 t.run_seconds(5)
 assert(#t.ledger_rows("IgnitionAt") == 1, "fresh resin stops the fire from restarting")

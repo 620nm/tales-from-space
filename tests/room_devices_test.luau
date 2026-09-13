@@ -21,6 +21,8 @@
 -- is a source and a sink, and the books below are the ATMOSPHERICS
 -- engine's -- so the crew are switched off as scaffolding, the same
 -- standing `t.set_health` has.
+local ui_controls = require("@helpers/ui_controls")
+
 t.set_breathing(false)
 
 local PIPE_M3 = 0.070
@@ -28,12 +30,9 @@ local PORT_M3 = 0.200
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -52,12 +51,12 @@ local function walk(p, dir)
 end
 
 -- Moles of one gas in the run under a tile, or in the room over it.
-local function pipe_of(x, y, which, layer)
+local function pipe_of(x: number, y: number, which: string, layer: number?)
     local held = t.pipe_gas(x, y, layer)
     return held and held[which] or 0.0
 end
 
-local function room_of(x, y, which)
+local function room_of(x: number, y: number, which: string)
     local held = t.room_gas(x, y)
     return held and held[which] or 0.0
 end
@@ -146,8 +145,8 @@ t.world(SCRUB_MAP, 7)
 local p = t.join()
 t.tick()
 
-assert(t.structure_at(2, 1).id == "air_scrubber", "the map stood one there")
-assert(t.structure_at(2, 1).state == "off", "and tg's ships off")
+assert(assert(t.structure_at(2, 1)).id == "air_scrubber", "the map stood one there")
+assert(assert(t.structure_at(2, 1)).state == "off", "and tg's ships off")
 
 -- The waste main is two lengths and the scrubber's one mouth.
 local WASTE_M3 = 2 * PIPE_M3 + PORT_M3
@@ -165,25 +164,25 @@ for _ = 1, 3 do
 end
 t.click(p, 2, 1, t.target_at(p, 2, 1, "air_scrubber"))
 t.tick()
-local panel = t.ui(p)
+local panel = ui_controls.state(p)
 assert(panel, "a scrubber wears a panel of its own")
-assert(panel.setpoints[1].field == "rate", "with a rate on it")
-near(panel.setpoints[1].value, 200.0, 0.001, "tg's volume_rate")
+assert(ui_controls.rows(panel.setpoints)[1].field == "rate", "with a rate on it")
+near(ui_controls.number(ui_controls.rows(panel.setpoints)[1].value), 200.0, 0.001, "tg's volume_rate")
 -- And a second dial, which tg has no equivalent of: the pressure the
 -- machine works down to and stops at. Zero is tg exactly, and zero is
 -- what this one was placed with.
-assert(panel.setpoints[2].field == "floor", "and a floor under it")
-assert(panel.setpoints[2].unit == "kPa", "which is a pressure, not a rate")
-near(panel.setpoints[2].value, 0.0, 0.001, "set to tg's nothing")
+assert(ui_controls.rows(panel.setpoints)[2].field == "floor", "and a floor under it")
+assert(ui_controls.rows(panel.setpoints)[2].unit == "kPa", "which is a pressure, not a rate")
+near(ui_controls.number(ui_controls.rows(panel.setpoints)[2].value), 0.0, 0.001, "set to tg's nothing")
 
-local roster = {}
-local service = {}
+local roster: {[string]: unknown} = {}
+local service: {[string]: unknown} = {}
 local shape = nil
-for _, sw in ipairs(panel.toggles) do
+for _, sw in ipairs(ui_controls.rows(panel.toggles)) do
     if sw.field == "filter" then
-        roster[sw.option] = sw.on
+        roster[ui_controls.text(sw.option)] = sw.on
     elseif sw.field == "service" then
-        service[sw.option] = sw.on
+        service[ui_controls.text(sw.option)] = sw.on
     elseif sw.field == "roster" then
         shape = sw
     end
@@ -203,7 +202,7 @@ assert(
 
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
-assert(t.structure_at(2, 1).state == "scrubbing", "it is running")
+assert(assert(t.structure_at(2, 1)).state == "scrubbing", "it is running")
 
 t.run_seconds(20)
 near(room_total("o2"), room_o2_0, 0.05, "a scrubber set to CO2 in a clean room takes nothing")
@@ -252,7 +251,7 @@ assert(
 -- switch, so it waits for the air at the grille to fall under
 -- `safe_pressure_kpa` (docs/ATMOS.md SS8; device_looks_test.luau owns
 -- the crossing). This room is still full.
-assert(t.structure_at(2, 1).state == "scrubbing", "which the corridor is not told about yet")
+assert(assert(t.structure_at(2, 1)).state == "scrubbing", "which the corridor is not told about yet")
 
 local n2_before_siphon = room_total("n2")
 t.run_seconds(30)
@@ -268,9 +267,9 @@ assert(WASTE_M3 > 0.0, "the waste main is a real net")
 -- ...and by now it HAS emptied the tile it stands on, so the machine is
 -- finally drawn as the dangerous thing it has been all along.
 assert(
-    t.structure_at(2, 1).state == "siphoning",
+    assert(t.structure_at(2, 1)).state == "siphoning",
     "and once the air at the grille is gone the machine is drawn"
-        .. " differently: " .. tostring(t.structure_at(2, 1).state)
+        .. " differently: " .. tostring(assert(t.structure_at(2, 1)).state)
 )
 
 -- ---------------------------------------------------------------
@@ -325,23 +324,23 @@ t.world([==[(
 local q = t.join()
 t.tick()
 
-assert(t.structure_at(3, 1).id == "air_injector", "an injector")
-assert(t.structure_at(3, 1).state == "off", "off out of the crate")
+assert(assert(t.structure_at(3, 1)).id == "air_injector", "an injector")
+assert(assert(t.structure_at(3, 1)).state == "off", "off out of the crate")
 
-local room_0 = t.room_pressure(5, 2)
+local room_0 = assert(t.room_pressure(5, 2))
 assert(room_0 > 90.0 and room_0 < 110.0, "the room opens at about an atmosphere: " .. room_0)
 
 t.click(q, 3, 1, t.target_at(q, 3, 1, "air_injector"))
 t.tick()
-local inj = t.ui(q)
-assert(inj.setpoints[1].field == "rate", "the injector's dial is a volume rate")
-assert(inj.setpoints[1].unit == "L/s")
-near(inj.setpoints[1].value, 50.0, 0.001, "tg's volume_rate = 50")
-near(inj.setpoints[1].max, 200.0, 0.001, "up to MAX_TRANSFER_RATE")
+local inj = ui_controls.state(q)
+assert(ui_controls.rows(inj.setpoints)[1].field == "rate", "the injector's dial is a volume rate")
+assert(ui_controls.rows(inj.setpoints)[1].unit == "L/s")
+near(ui_controls.number(ui_controls.rows(inj.setpoints)[1].value), 50.0, 0.001, "tg's volume_rate = 50")
+near(ui_controls.number(ui_controls.rows(inj.setpoints)[1].max), 200.0, 0.001, "up to MAX_TRANSFER_RATE")
 -- A unary machine has ONE mouth, and the panel says so rather than
 -- reading "no pipe" forever on a port it does not have.
-local labels = {}
-for _, r in ipairs(inj.readouts) do
+local labels: {[string]: unknown} = {}
+for _, r in ipairs(ui_controls.rows(inj.readouts)) do
     labels[word(r.label)] = r.value
 end
 assert(labels["flow.pipe"] ~= nil, "one port readout, not two")
@@ -355,7 +354,7 @@ assert(labels["flow.room"] ~= nil, "and the other end is a ROOM, so it reads one
 -- two hundred, and what THAT is like is the next paragraph.)
 ui_controls.toggle(q, "power")
 t.run_ticks(2)
-assert(t.structure_at(3, 1).state == "injecting", "it is running")
+assert(assert(t.structure_at(3, 1)).state == "injecting", "it is running")
 
 -- Sixty seconds, where thirty used to do: the regulated feed tops out
 -- at the pump's own 120 L/s, where the old bottle-setpoint line was
@@ -373,7 +372,7 @@ assert(
 -- Switched off, it stops dead — no coasting, no setpoint to settle to.
 ui_controls.toggle(q, "power")
 t.run_ticks(2)
-assert(t.structure_at(3, 1).state == "off", "and off is off")
+assert(assert(t.structure_at(3, 1)).state == "off", "and off is off")
 local settled = room_air()
 t.run_seconds(30)
 near(room_air(), settled, 0.5, "a stopped injector injects nothing")
@@ -440,13 +439,14 @@ for _, job in ipairs({
     { x = 4, id = "air_injector", supply = "flow.supply", walk = { "east", "east" } },
 }) do
     for _, dir in ipairs(job.walk) do
+        assert(dir == "east" or dir == "west")
         walk(d, dir)
     end
     t.click(d, job.x, 1, t.target_at(d, job.x, 1, job.id))
     t.tick()
-    local ui = t.ui(d)
+    local ui = ui_controls.state(d)
     local supply = nil
-    for _, r in ipairs(ui.readouts) do
+    for _, r in ipairs(ui_controls.rows(ui.readouts)) do
         if word(r.label) == job.supply then
             supply = word(r.value)
         end
@@ -455,7 +455,7 @@ for _, job in ipairs({
     ui_controls.toggle(d, "power")
     t.run_ticks(2)
     assert(
-        t.structure_at(job.x, 1).state == "off",
+        assert(t.structure_at(job.x, 1)).state == "off",
         job.id .. " is still drawn dead, which is tg's `on && is_operational`"
     )
     t.ui_close(d)
@@ -463,10 +463,10 @@ for _, job in ipairs({
 end
 
 local dark_room_o2 = room_of(3, 2, "o2")
-local dark_room_kpa = t.room_pressure(3, 2)
+local dark_room_kpa = assert(t.room_pressure(3, 2))
 t.run_seconds(60)
 near(room_of(3, 2, "o2"), dark_room_o2, 0.05, "an unpowered scrubber takes nothing")
-near(t.room_pressure(3, 2), dark_room_kpa, 0.5, "and an unpowered injector gives nothing")
+near(assert(t.room_pressure(3, 2)), dark_room_kpa, 0.5, "and an unpowered injector gives nothing")
 
 -- ---------------------------------------------------------------
 -- THE ROUND TRIP, both ways, for both machines.

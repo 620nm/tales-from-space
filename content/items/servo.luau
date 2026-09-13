@@ -1,3 +1,5 @@
+local stock_parts = require("@lib/stock_parts")
+
 -- A micro-servo: the stock part that decides how FINE a machine's hand
 -- is.
 --

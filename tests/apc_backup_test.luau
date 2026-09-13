@@ -81,17 +81,17 @@ t.run_ticks(40) -- and the device pass, which is what sews the fittings
 --    both lines, both fittings burning at what their own prototype
 --    says a tube throws.
 -- ---------------------------------------------------------------
-local both = t.outlet_at(6, 1)
+local both = assert(t.outlet_at(6, 1))
 assert(both ~= nil, "the port on the room circuit answers")
 assert(both.l1 == "nominal", "the room circuit is carrying: " .. both.l1)
 assert(both.l3 == "nominal", "so is the spare main: " .. both.l3)
 assert(both.feed == 1, "and it draws off the room circuit: " .. tostring(both.feed))
 
-local blue = t.outlet_at(10, 1)
+local blue = assert(t.outlet_at(10, 1))
 assert(blue.l3 == "nominal", "the far port is carrying too: " .. blue.l3)
 
-local near = t.light_at(5, 2)
-local far = t.light_at(10, 2)
+local near = assert(t.light_at(5, 2))
+local far = assert(t.light_at(10, 2))
 assert(near.lit and near.emits, "the near fitting is burning")
 assert(far.lit and far.emits, "and so is the far one")
 assert(math.abs(near.power - 1.0) < 1e-6, "at its own power: " .. near.power)
@@ -112,15 +112,15 @@ assert(t.cable_at(3, 1) == 0, "the backbone is parted")
 t.run_seconds(3)
 t.run_ticks(40)
 
-assert(t.apc_at(4, 1).charging == "not_charging", "nothing is topping the panel up")
-assert(t.apc_at(4, 1).charge > 0.0, "and it still has a cell to run on")
+assert(assert(t.apc_at(4, 1)).charging == "not_charging", "nothing is topping the panel up")
+assert(assert(t.apc_at(4, 1)).charge > 0.0, "and it still has a cell to run on")
 
-both = t.outlet_at(6, 1)
+both = assert(t.outlet_at(6, 1))
 assert(both.l1 == "emergency", "the flagged layer is carrying off the reserve: " .. both.l1)
 assert(both.l3 == "starved", "the unflagged one has a source that stopped: " .. both.l3)
 assert(both.feed == 1, "so the port draws off the flagged layer alone")
 
-blue = t.outlet_at(10, 1)
+blue = assert(t.outlet_at(10, 1))
 assert(blue.l3 == "starved", "the far port's only layer went with it: " .. blue.l3)
 assert(not blue.powered, "so the far port is dead")
 
@@ -132,8 +132,8 @@ assert(not blue.powered, "so the far port is dead")
 --    a flag from the panel, read by the fitting, looked up in the
 --    pack's own table.
 -- ---------------------------------------------------------------
-near = t.light_at(5, 2)
-far = t.light_at(10, 2)
+near = assert(t.light_at(5, 2))
+far = assert(t.light_at(10, 2))
 assert(near.lit and near.emits, "the fitting on the reserve is still burning")
 assert(math.abs(near.power - 0.5) < 1e-6, "turned down: " .. near.power)
 assert(near.color == TUBE, "still the colour of its own tube: " .. near.color)
@@ -156,11 +156,11 @@ assert(t.cable_at(3, 1) == 2, "the backbone is whole again")
 t.run_seconds(3)
 t.run_ticks(40)
 
-both = t.outlet_at(6, 1)
+both = assert(t.outlet_at(6, 1))
 assert(both.l1 == "nominal", "the room circuit is off the mains again: " .. both.l1)
 assert(both.l3 == "nominal", "and so is the spare main: " .. both.l3)
 
-near = t.light_at(5, 2)
+near = assert(t.light_at(5, 2))
 assert(math.abs(near.power - 1.0) < 1e-6, "the fitting is back up: " .. near.power)
 assert(near.color == TUBE, "the fitting kept the tube it always had")
-assert(t.light_at(10, 2).emits, "and the dark one is burning again")
+assert(assert(t.light_at(10, 2)).emits, "and the dark one is burning again")

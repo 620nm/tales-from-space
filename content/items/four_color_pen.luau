@@ -1,3 +1,5 @@
+local writing = require("@lib/writing")
+
 -- Unlimited black, red, green, blue writing. The native writer snapshots
 -- the exact selected state and font for each committed fragment.
 -- tg pen.dm:125-152.
@@ -38,7 +40,7 @@ if sim ~= nil then
     local colors = { "black", "red", "green", "blue" }
 
     behavior:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
-        local index = sim.mode(ev.subject).index
+        local index = assert(sim.mode(ev.subject)).index
         local next_index = (index + 1) % #colors
         sim.set_mode(ev.subject, next_index)
         sim.appearance.set_state({ entity = ev.subject, state = colors[next_index + 1] })

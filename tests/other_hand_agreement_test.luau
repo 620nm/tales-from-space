@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The hover card's `other` row and the use-other-hand key agree: where the
 -- active item's card offers `other/insert_disk`, the key inserts the disk;
 -- where it offers no `other` row, the key reports a dead end. A floppy and a
@@ -25,7 +27,7 @@ t.tick()
 
 local function step() t.run_ticks(2) end
 
-local function take(id)
+local function take(id: string)
     t.click(p, 2, 1, (assert(t.target_at(p, 2, 1, id), id .. " is visible")))
     step()
     assert(t.hands(p).held == id, "picked up " .. id .. "; hands=" .. tostring(t.hands(p).held))
@@ -35,7 +37,9 @@ end
 local function other_rows()
     local hand = t.hands(p).active - 1
     local rows = {}
-    for _, action in ipairs(t.action_hints(p, { Inventory = { Held = { hand = hand } } })) do
+    local site: SpecItemSite = { Held = { hand = hand } }
+    local target: SpecActionTarget = { Inventory = site }
+    for _, action in ipairs(t.action_hints(p, target)) do
         if action.gesture == "other" then
             table.insert(rows, action)
         end
@@ -43,7 +47,7 @@ local function other_rows()
     return rows
 end
 
-local function assert_insert_row(why)
+local function assert_insert_row(why: string)
     local rows = other_rows()
     assert(#rows == 1, why .. ": one other-hand row, got " .. #rows)
     assert(rows[1].id == "other/insert_disk", why .. ": id " .. tostring(rows[1].id))
@@ -53,7 +57,7 @@ end
 local function media_count(kind)
     local count = 0
     for _, row in ipairs(t.ledger_rows()) do
-        if row.audit and row.audit.audit == kind then count += 1 end
+        if row.audit and ui_controls.record(row.audit).audit == kind then count += 1 end
     end
     return count
 end

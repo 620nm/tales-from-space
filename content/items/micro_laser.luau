@@ -1,3 +1,5 @@
+local stock_parts = require("@lib/stock_parts")
+
 -- A micro-laser: the stock part that decides how HARD a machine works.
 --
 -- tg's `/obj/item/stock_parts/micro_laser` and its three better rungs

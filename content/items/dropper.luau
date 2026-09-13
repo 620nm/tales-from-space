@@ -1,3 +1,5 @@
+local vessel = require("@lib/vessel")
+
 -- The dropper: five units of anything, moved a unit at a time. The
 -- precision end of the bench, where the beaker is the bulk end.
 --
@@ -36,7 +38,7 @@ local content = {
     acts_on_items = true,
 }
 
-local vessel_spec = {
+local vessel_spec: vessel.Spec = {
     id = content.id,
     noun = "dropper",
     phases = { "liquid" },

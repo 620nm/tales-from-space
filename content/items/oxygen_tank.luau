@@ -1,3 +1,5 @@
+local item_actions = require("@lib/item_actions")
+
 -- The blue bottle: seventy litres at six atmospheres, worn on the back
 -- in place of a pack. This is the one you take outside -- twenty-odd
 -- times what the pocket bottle holds, which is the difference between

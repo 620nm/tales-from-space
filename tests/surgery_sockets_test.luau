@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Which organs a surgeon can reach, and self-surgery (docs/SURGERY.md
 -- §6.4/§6.5). A socket's `requires` is the saw lock: the brain and the
 -- chest organs sit behind a sawed bone, the eyes and ears do not. And a
@@ -32,41 +34,43 @@ t.set_zone(surgeon, "head")
 -- What a candidate button says. An operation ON AN ORGAN is the
 -- `procedure.on_organ` id carrying the two words as arguments; a plain
 -- one is content's own word (docs/tgui/labels.md).
-local function face(label)
-    if type(label) ~= "table" then return tostring(label) end
-    if label.args and label.args.organ then
-        return tostring(label.args.operation) .. " " .. tostring(label.args.organ)
+local function face(value: unknown): string
+    if type(value) ~= "table" then return tostring(value) end
+    local label = ui_controls.record(value)
+    if label.args then
+        local args = ui_controls.record(label.args)
+        if args.organ then return tostring(args.operation) .. " " .. tostring(args.organ) end
     end
     return tostring(label.text or label.id)
 end
 
-local function hold(id)
+local function hold(id: string)
     if t.hands(surgeon).held then t.drop(surgeon); t.tick() end
     t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, id)); t.run_ticks(2)
 end
-local function step(tool, secs, done, why)
+local function step(tool: string, secs: number, done: () -> boolean, why: string)
     hold(tool)
     t.click(surgeon, PX, PY, t.body_target(surgeon, patient)); t.run_ticks(math.ceil(secs * 20) + 3)
     assert(done(), why)
 end
 
-step("scalpel", 1.6, function() return has(t.parts(patient).head.states, "skin_cut") end, "head incised")
-step("retractor", 2.4, function() return has(t.parts(patient).head.states, "skin_open") end, "head retracted")
+step("scalpel", 1.6, function() return has(assert(t.parts(patient)).head.states, "skin_cut") end, "head incised")
+step("retractor", 2.4, function() return has(assert(t.parts(patient)).head.states, "skin_open") end, "head retracted")
 -- A shard, not the scalpel: a scalpel is edged AND force 10, so it also
 -- matches saw_bone and would open the choice window here (tg's own
 -- ambiguity); a shard (force 5) cannot saw, so it cleanly incises. Its
 -- 2.25 multiplier makes the real delay 2.4 x 2.25 = 5.4 s.
-step("shard", 5.4, function() return has(t.parts(patient).head.states, "organs_cut") end, "head organs cut")
+step("shard", 5.4, function() return has(assert(t.parts(patient)).head.states, "organs_cut") end, "head organs cut")
 
 -- No saw: the brain is locked, the eyes and ears are not. A hemostat here
 -- opens the window over the reachable organs.
 hold("hemostat")
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient)); t.run_ticks(2)
-local win = t.ui(surgeon)
+local win = ui_controls.record(t.ui(surgeon))
 assert(win and win.document == "modules" and win.presentation == "choices",
     "several head organs to reach: the choice document opened")
 local labels = {}
-for _, tg in ipairs(win.toggles) do labels[#labels + 1] = face(tg.label) end
+for _, tg in ipairs(ui_controls.rows(win.toggles)) do labels[#labels + 1] = face(tg.label) end
 local blob = table.concat(labels, " || ")
 assert(blob:find("eyes", 1, true), "the eyes are reachable without a saw: " .. blob)
 assert(not blob:find("brain", 1, true), "the brain is NOT -- it needs the bone sawed: " .. blob)
@@ -87,10 +91,10 @@ t.run_ticks(2)
 -- The doctor makes the incision (incise is not self-operable).
 t.click(doc, 1, 1, t.target_at(doc, 1, 1, "scalpel")); t.run_ticks(2)
 for _ = 1, 30 do
-    if has(t.parts(pat).chest.states, "skin_cut") then break end
+    if has(assert(t.parts(pat)).chest.states, "skin_cut") then break end
     t.click(doc, 2, 1, t.body_target(doc, pat)); t.run_ticks(85)
 end
-assert(has(t.parts(pat).chest.states, "skin_cut"), "the doctor opened the chest")
+assert(has(assert(t.parts(pat)).chest.states, "skin_cut"), "the doctor opened the chest")
 
 -- Now the patient takes the welder off the next tile (in reach), lights
 -- it, and closes their OWN wound (close_incision_self is self_only -- no
@@ -103,14 +107,14 @@ t.run_ticks(2)
 
 local ppx, ppy = t.pos(pat)
 for _ = 1, 40 do
-    local s = t.parts(pat).chest.states
+    local s = assert(t.parts(pat)).chest.states
     if not has(s, "skin_cut") and not has(s, "skin_open") then break end
     t.click(pat, ppx, ppy, t.body_target(pat, pat)) -- click YOURSELF
     t.run_ticks(math.ceil(4.8 * 20) + 3)
 end
-local s = t.parts(pat).chest.states
+local s = assert(t.parts(pat)).chest.states
 assert(not has(s, "skin_cut") and not has(s, "skin_open"), "the patient sealed their own wound")
 -- The self-cauterise costs 5 burn.
-assert(t.parts(pat).chest.burn > 0, "and it burned to do it (5 burn)")
+assert(ui_controls.number(assert(t.parts(pat)).chest.burn) > 0, "and it burned to do it (5 burn)")
 
 print("sockets: eyes reachable without a saw, brain not; self-cauterise works")

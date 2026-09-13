@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The steam generator: put water in it, switch it on, and the pipe
 -- behind it fills with steam that an injector hands to the room.
 --
@@ -14,35 +16,32 @@
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function row(ui, label)
-    for _, r in ipairs(ui.readouts) do
+local function row(ui: ui_controls.Record, label: string): ui_controls.Record
+    for _, r in ipairs(ui_controls.rows(ui.readouts)) do
         if word(r.label) == label then
             return r
         end
     end
-    return nil
+    error("missing readout: " .. label)
 end
 
-local function pipe_of(x, y, which)
+local function pipe_of(x: number, y: number, which: string)
     local held = t.pipe_gas(x, y)
     return held and held[which] or 0.0
 end
 
-local function room_of(x, y, which)
+local function room_of(x: number, y: number, which: string)
     local held = t.room_gas(x, y)
     return held and held[which] or 0.0
 end
 
-local function held_in(handle, key)
+local function held_in(handle: SpecObservedTarget, key: string)
     local contents = t.contents(handle)
     assert(contents ~= nil, "that is a vessel")
     return contents[key] or 0.0
@@ -82,7 +81,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-assert(t.structure_at(4, 1).id == "steam_generator", "the map stood one there")
+assert(assert(t.structure_at(4, 1)).id == "steam_generator", "the map stood one there")
 local machine = t.target_at(p, 4, 1, "steam_generator")
 assert(machine ~= nil, "and a hand can reach it")
 
@@ -96,17 +95,17 @@ assert(machine ~= nil, "and a hand can reach it")
 -- ---------------------------------------------------------------
 t.click(p, 4, 1, t.target_at(p, 4, 1, "steam_generator"))
 t.tick()
-local ui = t.ui(p)
+local ui = ui_controls.state(p)
 assert(ui, "an empty hand opens the panel")
-assert(row(ui, "dock.vessel").value.id == "dock.vessel.empty", "it says there is nothing in it")
+assert(ui_controls.record(row(ui, "dock.vessel").value).id == "dock.vessel.empty", "it says there is nothing in it")
 assert(row(ui, "line_dock.line") ~= nil, "and it reads the run behind the machine")
-near(ui.setpoints[1].value, 313.15, 1e-9, "the dial opens at Bay's T0C+40")
+near(ui_controls.number(ui_controls.rows(ui.setpoints)[1].value), 313.15, 1e-9, "the dial opens at Bay's T0C+40")
 t.ui_close(p)
 
 -- ---------------------------------------------------------------
 -- A BEAKER OF WATER GOES IN, AND THE LINE FILLS WITH STEAM.
 -- ---------------------------------------------------------------
-local water = t.target_at(p, 3, 2, "beaker.water")
+local water = assert(t.target_at(p, 3, 2, "beaker.water"))
 t.click(p, 3, 2, t.target_at(p, 3, 2, "beaker.water"))
 t.tick()
 assert(t.hands(p).held == "beaker.water", "the beaker is in hand")
@@ -121,15 +120,15 @@ near(pipe_of(3, 1, "water"), 0.0, 1e-9, "the run opens dry")
 
 t.click(p, 4, 1, t.target_at(p, 4, 1, "steam_generator"))
 t.tick()
-assert(row(t.ui(p), "dock.vessel").value.text == "beaker (water)", "the panel names what is in it")
-assert(t.ui(p).toggles[1].on == false, "and nothing ships switched on")
+assert(ui_controls.record(row(ui_controls.state(p), "dock.vessel").value).text == "beaker (water)", "the panel names what is in it")
+assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == false, "and nothing ships switched on")
 
 -- Dialled over water's boiling point, because the dial it opens at is
 -- Bay's warm-room number and this spec is about steam.
 ui_controls.set(p, "temperature", 400)
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
-assert(t.ui(p).toggles[1].on == true, "the element is on")
+assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == true, "the element is on")
 
 t.run_seconds(30)
 local steamed = pipe_of(3, 1, "water")
@@ -156,7 +155,7 @@ t.click(p, 1, 1, t.target_at(p, 1, 1, "air_injector"))
 t.tick()
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
-assert(t.structure_at(1, 1).state == "injecting", "the injector is running")
+assert(assert(t.structure_at(1, 1)).state == "injecting", "the injector is running")
 t.ui_close(p)
 
 t.run_seconds(45)
@@ -190,7 +189,7 @@ assert(t.hands(p).held == "beaker.water", "the water comes back out")
 t.drop(p)
 t.run_ticks(2)
 
-local booze = t.target_at(p, 2, 2, "beaker.ethanol")
+local booze = assert(t.target_at(p, 2, 2, "beaker.ethanol"))
 t.click(p, 2, 2, t.target_at(p, 2, 2, "beaker.ethanol"))
 t.tick()
 t.click(p, 4, 1, t.target_at(p, 4, 1, "steam_generator"))

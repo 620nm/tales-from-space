@@ -29,6 +29,9 @@
 -- why an alarm's flags reach the room's lights -- they hang off the
 -- same APC the alarm does, so they are its siblings -- and why they do
 -- not reach the next room's.
+export type Flag = { color: string?, power: number, importance: number }
+export type LightFlag = { kind: string, op: string, flag: string }
+export type Hazard = { kind: string, level: HazardLevel, previous: HazardLevel }
 local netmsg = {}
 
 -- The `kind` word every payload leads with. A listener that does not
@@ -63,19 +66,19 @@ netmsg.flags = {
     deadly = { color = "#FF2020", power = 1.5, importance = 100 },
     unbreathable = { color = "#3060FF", power = 1.2, importance = 50 },
     low_power = { power = 0.5, importance = 10 },
-}
+} :: {[string]: Flag}
 
 -- One flag, set or cleared. The name is checked by the listener rather
 -- than here: a sender is entitled to be wrong and a fitting is not
 -- entitled to trust it.
-function netmsg.light_flag(op, flag)
+function netmsg.light_flag(op: string, flag: string): LightFlag
     return { kind = netmsg.LIGHT_FLAG, op = op, flag = flag }
 end
 
 -- One band crossing, in the engine's own three words. `previous` rides
 -- along because a listener that missed a delivery can still tell which
 -- way the air is going.
-function netmsg.hazard(level, previous)
+function netmsg.hazard(level: HazardLevel, previous: HazardLevel): Hazard
     return { kind = netmsg.ATMOS_HAZARD, level = level, previous = previous }
 end
 
@@ -86,14 +89,16 @@ end
 -- version of this pack. So the shape is checked at the door: the kind,
 -- an operation from the closed pair, and a flag name this file has an
 -- answer for.
-function netmsg.is_light_flag(payload)
-    if type(payload) ~= "table" or payload.kind ~= netmsg.LIGHT_FLAG then
+function netmsg.is_light_flag(payload: unknown): boolean
+    if type(payload) ~= "table" then return false end
+    local value = payload :: {[string]: unknown}
+    if value.kind ~= netmsg.LIGHT_FLAG then
         return false
     end
-    if payload.op ~= "set" and payload.op ~= "clear" then
+    if value.op ~= "set" and value.op ~= "clear" then
         return false
     end
-    return netmsg.flags[payload.flag] ~= nil
+    return type(value.flag) == "string" and netmsg.flags[value.flag] ~= nil
 end
 
 -- Is this row of the stack standing? A flag is held BY somebody, so
@@ -107,7 +112,7 @@ end
 -- report the room, and one of them fixing its own patch of air must
 -- not take the other's word off a light. Keying by emitter also bounds
 -- what a hostile sibling can do to exactly its own row.
-local function standing(held)
+local function standing(held: unknown): boolean
     if held == true then
         return true
     end
@@ -124,17 +129,19 @@ netmsg.standing = standing
 -- pick the same one; `pairs` over a table has no order to rely on, and
 -- a picture that flickered with the iteration order would be a bug
 -- nobody could reproduce.
-function netmsg.winner(flags)
+function netmsg.winner(flags: unknown): (Flag?, string?)
     if type(flags) ~= "table" then
-        return nil
+        return nil, nil
     end
-    local best, best_name = nil, nil
+    local best: Flag? = nil
+    local best_name: string? = nil
     for name, held in pairs(flags) do
+        if type(name) ~= "string" then continue end
         local spec = standing(held) and netmsg.flags[name] or nil
         if spec ~= nil then
             if best == nil
                 or spec.importance > best.importance
-                or (spec.importance == best.importance and name < best_name)
+                or (spec.importance == best.importance and best_name ~= nil and name < best_name)
             then
                 best, best_name = spec, name
             end
@@ -149,7 +156,7 @@ end
 -- which is the rule for a gesture two roster files would otherwise
 -- spell out (AGENTS.md); the `Definition:handle` naming it still lives
 -- in each fixture file, because `lib/` may not define anything.
-function netmsg.report_hazard(ev)
+function netmsg.report_hazard(ev: AtmosHazardDonePayload): ()
     sim.link.emit({
         subject = ev.self,
         payload = netmsg.hazard(ev.level, ev.previous),

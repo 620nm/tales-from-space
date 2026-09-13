@@ -17,11 +17,14 @@
 -- earns a shift-record row; range and keys are arithmetic every tower
 -- does on every line, and writing those down would bury the rows that
 -- mean something. A mod that wants its own drop on the record says so.
+local radio = require("@lib/radio")
+local program_slot = require("@lib/program_slot")
+
 local radio_relay = {}
 
 -- Whether a machine's encryption sockets carry `channel`. A machine
 -- with no keys in it carries nothing, which is the blank tower.
-local function keyed_to(node, channel)
+local function keyed_to(node: Handle, channel: string): boolean
     for _, word in ipairs(radio.keyed_words(node) or {}) do
         if word == channel then
             return true
@@ -36,7 +39,7 @@ radio_relay.keyed_to = keyed_to
 -- count sets what that buys. `reads` is the separate question of
 -- whether this tower could make the word out; answering it false is not
 -- a refusal, it just sends the question up to the tree's top.
-function radio_relay.receive(ev)
+function radio_relay.receive(ev: RadioReceivePayload): { cancelled: boolean } | { reads: boolean }
     if ev.distance > radio.radius_for(ev.peers) then
         return { cancelled = true }
     end
@@ -47,7 +50,7 @@ end
 -- tower the words are read from: the first one on it keyed to the
 -- channel, in the engine's ascending-address order. None means the tree
 -- has no business with this line at all.
-function radio_relay.read(ev)
+function radio_relay.read(ev: RadioReadPayload): { reader: Handle } | { cancelled: boolean }
     for _, row in ipairs(ev.relays) do
         if keyed_to(row.node, ev.channel) then
             return { reader = row.node }
@@ -70,7 +73,7 @@ end
 -- matters more than the script, and the fault is on the record either
 -- way (docs/diegetic-scripting/attribution.md §10). The stage
 -- re-sanitizes whatever this answers, so nothing here sanitizes.
-function radio_relay.carry(ev)
+function radio_relay.carry(ev: RadioCarryPayload): { cancelled: boolean } | { text: string, channel: string }
     local answer = program_slot.run(ev.self, "carry", {
         content = ev.text,
         channel = ev.channel,
@@ -80,12 +83,13 @@ function radio_relay.carry(ev)
     if type(answer) ~= "table" then
         return { text = ev.text, channel = ev.channel }
     end
-    if answer.pass == false then
+    local fields = answer :: { [string]: unknown }
+    if fields.pass == false then
         return { cancelled = true }
     end
     return {
-        text = if type(answer.text) == "string" then answer.text else ev.text,
-        channel = if type(answer.channel) == "string" then answer.channel else ev.channel,
+        text = if type(fields.text) == "string" then fields.text else ev.text,
+        channel = if type(fields.channel) == "string" then fields.channel else ev.channel,
     }
 end
 
@@ -93,7 +97,7 @@ end
 -- and the channel here is the one the tree SETTLED on -- so a line
 -- moved onto another band goes back out only through towers keyed to
 -- that band.
-function radio_relay.send(ev)
+function radio_relay.send(ev: RadioSendPayload): { cancelled: boolean }
     return { cancelled = not keyed_to(ev.self, ev.channel) }
 end
 

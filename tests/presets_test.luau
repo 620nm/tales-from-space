@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The machines a MAP lays already set up.
 --
 -- tg's atmospherics roster is mostly presets: eighteen filter subtypes
@@ -25,17 +27,14 @@
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
 -- Moles of one gas standing in the run under a tile, or 0.
-local function gas(x, y, which)
+local function gas(x: number, y: number, which: string): number
     local held = t.pipe_gas(x, y)
     return (held and held[which]) or 0.0
 end
@@ -109,7 +108,7 @@ t.tick()
 -- The outlet main before the machine has had a pass at it, kept for the
 -- end: what a running air mixer does is only visible against where it
 -- started.
-local early = t.pipe_pressure(7, 1)
+local early = assert(t.pipe_pressure(7, 1))
 
 local m = t.structure_at(5, 1)
 assert(m ~= nil and m.id == "mixer.airmix", "the air mixer is where the map put it")
@@ -117,8 +116,8 @@ assert(m.state == "running", "and unlike a plain mixer it opens the shift RUNNIN
 
 -- The chambers are what the map said, which is what makes the mix
 -- assertion below mean anything at all.
-local n2_store = t.room_gas(1, 1)
-local o2_store = t.room_gas(5, 4)
+local n2_store = assert(t.room_gas(1, 1))
+local o2_store = assert(t.room_gas(5, 4))
 assert(n2_store.n2 > 1000.0, "the nitrogen chamber is charged: " .. n2_store.n2)
 assert(n2_store.o2 == nil, "with nitrogen and nothing else")
 assert(o2_store.o2 > 1000.0, "and the oxygen chamber likewise: " .. o2_store.o2)
@@ -136,20 +135,22 @@ assert(side_pure > 0.97, "and the side intake oxygen: " .. side_pure)
 -- ---- the panel, read and not touched ----
 t.click(p, 5, 1, t.target_at(p, 5, 1, "mixer.airmix"))
 t.tick()
-local ui = t.ui(p)
+local ui = ui_controls.state(p)
 assert(ui and ui.document == "modules" and ui.presentation == "modules",
     "an air mixer is an ordinary module document")
-assert(ui.toggles[1].field == "power" and ui.toggles[1].on == true, "shipped switched on")
-near(ui.setpoints[1].value, 4500.0, 0.001, "its dial wound to MAX_OUTPUT_PRESSURE")
-near(ui.setpoints[2].value, 79.0, 0.001, "and the split at tg's N2STANDARD")
-local mix = nil
-for _, r in ipairs(ui.readouts) do
+assert(ui_controls.rows(ui.toggles)[1].field == "power" and ui_controls.rows(ui.toggles)[1].on == true, "shipped switched on")
+near(ui_controls.number(ui_controls.rows(ui.setpoints)[1].value), 4500.0, 0.001, "its dial wound to MAX_OUTPUT_PRESSURE")
+near(ui_controls.number(ui_controls.rows(ui.setpoints)[2].value), 79.0, 0.001, "and the split at tg's N2STANDARD")
+local mix: ui_controls.Record? = nil
+for _, r in ipairs(ui_controls.rows(ui.readouts)) do
     if word(r.label) == "mixer.mix" then
-        mix = r.value
+        mix = ui_controls.record(r.value)
     end
 end
-assert(mix.id == "mixer.mix.split" and mix.args.back == "79%" and mix.args.side == "21%",
-    "which the panel says in both halves: " .. tostring(mix.args and mix.args.back))
+assert(mix, "the mixer reports its split")
+local mix_args = ui_controls.record(mix.args)
+assert(mix.id == "mixer.mix.split" and mix_args.back == "79%" and mix_args.side == "21%",
+    "which the panel says in both halves: " .. tostring(mix_args.back))
 t.ui_close(p)
 
 -- ---- and what it made ----
@@ -157,12 +158,12 @@ near(early, 101.325, 0.001, "the outlet main opened the shift at one atmosphere"
 t.run_seconds(8)
 
 near(
-    t.pipe_pressure(7, 1),
+    assert(t.pipe_pressure(7, 1)),
     4500.0,
     1.0,
     "and the mixer filled it to the setpoint with nobody touching it"
 )
-assert(t.pipe_pressure(7, 1) <= 4500.0, "and not one kPa past it: " .. t.pipe_pressure(7, 1))
+assert(assert(t.pipe_pressure(7, 1)) <= 4500.0, "and not one kPa past it: " .. assert(t.pipe_pressure(7, 1)))
 
 local out_n2, out_o2, out_all = gas(7, 1, "n2"), gas(7, 1, "o2"), moles(7, 1)
 near(out_n2 / out_all, 0.79, 0.02, "and what stands in it is 79% nitrogen")
@@ -237,11 +238,12 @@ assert(in_o2 > 0.5 and in_n2 > 1.0, "over the air already in it: " .. in_o2 .. "
 -- keeps a few micromoles of the gas it no longer carries, under the
 -- floor the share still chases, and the sweep books them off the line
 -- rather than dropping them (lunatic docs/MATTER-WORLD.md §3 step 8).
-local function books(which)
+local function books(which: string): number
+    local chamber: { [string]: number } = t.room_gas(1, 1) or {}
     return gas(3, 1, which)
         + gas(4, 2, which)
         + gas(5, 1, which)
-        + ((t.room_gas(1, 1) or {})[which] or 0.0)
+        + (chamber[which] or 0.0)
         + (t.nullified()[which] or 0.0)
 end
 local books_co2, books_o2, books_n2 = books("co2"), books("o2"), books("n2")
@@ -249,13 +251,13 @@ local books_co2, books_o2, books_n2 = books("co2"), books("o2"), books("n2")
 -- ---- the panel, read and not touched ----
 t.click(q, 4, 1, t.target_at(q, 4, 1, "filter.co2"))
 t.tick()
-local panel = t.ui(q)
+local panel = ui_controls.state(q)
 assert(panel and panel.document == "modules" and panel.presentation == "modules",
     "the filter's declared module document")
-assert(panel.toggles[1].field == "power" and panel.toggles[1].on == true, "shipped switched on")
-near(panel.setpoints[1].value, 200.0, 0.001, "at tg's MAX_TRANSFER_RATE")
+assert(ui_controls.rows(panel.toggles)[1].field == "power" and ui_controls.rows(panel.toggles)[1].on == true, "shipped switched on")
+near(ui_controls.number(ui_controls.rows(panel.setpoints)[1].value), 200.0, 0.001, "at tg's MAX_TRANSFER_RATE")
 local roster = 0
-for _, sw in ipairs(panel.toggles) do
+for _, sw in ipairs(ui_controls.rows(panel.toggles)) do
     if sw.field == "filter" then
         roster = roster + 1
         assert(

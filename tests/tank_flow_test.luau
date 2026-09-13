@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- A reservoir with the books open.
 --
 -- stationary_tank_test.luau settles WHAT a tank is -- no valve, no dial,
@@ -32,17 +34,14 @@ local PORT_M3 = 0.200
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
 -- Moles in an analyser's reading, off whichever holder.
-local function total(mix)
+local function total(mix: {[string]: number}?)
     local sum = 0.0
     for _, moles in pairs(mix or {}) do
         sum = sum + moles
@@ -51,19 +50,19 @@ local function total(mix)
 end
 
 -- What `moles` in a volume comes to, kPa.
-local function pressure_of(moles, volume_m3, kelvin)
+local function pressure_of(moles: number, volume_m3: number, kelvin: number)
     return moles * R * kelvin / volume_m3 / 1000.0
 end
 
 -- The warmth off the open window's contents block, which is where a
 -- vessel's own numbers live now (docs/tgui/matter-block.md).
-local function window_k(p)
-    for _, b in ipairs(t.ui(p).matter or {}) do
+local function window_k(p: number): number
+    for _, b in ipairs(ui_controls.rows(ui_controls.state(p).matter or {})) do
         if word(b.section) == "holder.contents" then
-            return b.temperature_k
+            return ui_controls.number(b.temperature_k)
         end
     end
-    return nil
+    error("missing vessel contents")
 end
 
 -- ---------------------------------------------------------------
@@ -83,10 +82,10 @@ local p = t.join()
 t.tick()
 
 local RUN_M3 = 3.0 * PIPE_M3 + PORT_M3
-local tank_0 = total(t.tank_gas(2, 1))
-local run_0 = total(t.pipe_gas(3, 1))
-near(t.tank_pressure(2, 1), 9000.0, 0.01, "the vessel as authored")
-near(t.pipe_pressure(3, 1), 101.325, 0.01, "the run at one atmosphere")
+local tank_0 = total(assert(t.tank_gas(2, 1)))
+local run_0 = total(assert(t.pipe_gas(3, 1)))
+near(assert(t.tank_pressure(2, 1)), 9000.0, 0.01, "the vessel as authored")
+near(assert(t.pipe_pressure(3, 1)), 101.325, 0.01, "the run at one atmosphere")
 
 local settled_kpa = pressure_of(tank_0 + run_0, TANK_M3 + RUN_M3, T20C)
 
@@ -94,14 +93,14 @@ local settled_kpa = pressure_of(tank_0 + run_0, TANK_M3 + RUN_M3, T20C)
 -- in a pass and so does this: a vessel is not a machine working towards a
 -- setpoint, it is a room with steel walls.
 t.run_ticks(10)
-near(t.tank_pressure(2, 1), settled_kpa, settled_kpa * 1e-9,
+near(assert(t.tank_pressure(2, 1)), settled_kpa, settled_kpa * 1e-9,
     "one pass lands the vessel on the volume-weighted pressure")
-near(t.pipe_pressure(3, 1), settled_kpa, settled_kpa * 1e-9, "and the run with it")
+near(assert(t.pipe_pressure(3, 1)), settled_kpa, settled_kpa * 1e-9, "and the run with it")
 
 -- What the run gained is what the vessel lost: a transfer, not two
 -- agreeable gauges.
-local tank_1 = total(t.tank_gas(2, 1))
-local run_1 = total(t.pipe_gas(3, 1))
+local tank_1 = total(assert(t.tank_gas(2, 1)))
+local run_1 = total(assert(t.pipe_gas(3, 1)))
 near(tank_1 + run_1, tank_0 + run_0, (tank_0 + run_0) * 1e-12, "not a mole minted")
 near(tank_0 - tank_1, run_1 - run_0, (run_1 - run_0) * 1e-9,
     "and the vessel is what paid for the run's gain")
@@ -113,8 +112,8 @@ near(tank_1 / TANK_M3, run_1 / RUN_M3, (tank_1 / TANK_M3) * 1e-12,
 
 -- And it stays there. Nothing oscillates, nothing creeps.
 t.run_seconds(20)
-near(t.tank_pressure(2, 1), settled_kpa, settled_kpa * 1e-9, "settled is settled")
-near(total(t.tank_gas(2, 1)), tank_1, 1e-9, "the vessel's book unmoved 20 s on")
+near(assert(t.tank_pressure(2, 1)), settled_kpa, settled_kpa * 1e-9, "settled is settled")
+near(total(assert(t.tank_gas(2, 1))), tank_1, 1e-9, "the vessel's book unmoved 20 s on")
 
 -- ---------------------------------------------------------------
 -- HEAT TRAVELS WITH THE GAS, AND ONLY WITH THE GAS.
@@ -126,12 +125,12 @@ near(total(t.tank_gas(2, 1)), tank_1, 1e-9, "the vessel's book unmoved 20 s on")
 -- yet, so the gradient is `t.heat_pipe`: precondition scaffolding with
 -- `t.set_health`'s standing, never an assertion.)
 -- ---------------------------------------------------------------
-local vessel_n = total(t.tank_gas(2, 1))
-local run_n = total(t.pipe_gas(3, 1))
-local rest_k = t.pipe_temperature(3, 1)
+local vessel_n = total(assert(t.tank_gas(2, 1)))
+local run_n = total(assert(t.pipe_gas(3, 1)))
+local rest_k = assert(t.pipe_temperature(3, 1))
 -- One molar heat capacity, taken off the world rather than written down.
 -- The vessel answers to it too: the two are one body of gas.
-local cv = t.pipe_energy(3, 1) / (run_n * rest_k)
+local cv = assert(t.pipe_energy(3, 1)) / (run_n * rest_k)
 
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
@@ -139,12 +138,12 @@ near(window_k(p), rest_k, 1e-6,
     "the vessel's window agrees with an analyser held against the run")
 
 local INJECTED = 10000000.0
-local energy_0 = t.pipe_energy(3, 1) + vessel_n * cv * rest_k
+local energy_0 = assert(t.pipe_energy(3, 1)) + vessel_n * cv * rest_k
 t.heat_pipe(3, 1, INJECTED)
 t.run_seconds(5)
 
-local hot_k = t.pipe_temperature(3, 1)
-local energy_1 = t.pipe_energy(3, 1) + total(t.tank_gas(2, 1)) * cv * hot_k
+local hot_k = assert(t.pipe_temperature(3, 1))
+local energy_1 = assert(t.pipe_energy(3, 1)) + total(assert(t.tank_gas(2, 1))) * cv * hot_k
 near(energy_1, energy_0 + INJECTED, (energy_0 + INJECTED) * 1e-9,
     "the joules that went in are the joules that are there")
 near(hot_k, (energy_0 + INJECTED) / ((vessel_n + run_n) * cv), 1e-6,
@@ -156,8 +155,8 @@ near(window_k(p), hot_k, 1e-6,
 -- MASS did not move: the split is by volume and both holders were already
 -- at one density, so what crossed the mouth was energy on parcels that
 -- came straight back.
-near(total(t.tank_gas(2, 1)), vessel_n, vessel_n * 1e-12, "the vessel's moles are untouched")
-near(total(t.pipe_gas(3, 1)), run_n, run_n * 1e-12, "and so are the run's")
+near(total(assert(t.tank_gas(2, 1))), vessel_n, vessel_n * 1e-12, "the vessel's moles are untouched")
+near(total(assert(t.pipe_gas(3, 1))), run_n, run_n * 1e-12, "and so are the run's")
 
 -- ---------------------------------------------------------------
 -- TWO VESSELS, TWO GASES, ONE RUN.
@@ -188,19 +187,19 @@ t.tick()
 
 -- Two lengths, and a mouth from each vessel folded in.
 local SHARED_M3 = 2.0 * PIPE_M3 + 2.0 * PORT_M3
-local o2_0 = t.tank_gas(2, 1).o2 + t.pipe_gas(3, 1).o2
-local n2_0 = t.tank_gas(5, 1).n2 + t.pipe_gas(3, 1).n2
-assert(t.tank_gas(2, 1).n2 == nil, "the oxygen vessel starts pure")
-assert(t.tank_gas(5, 1).o2 == nil, "and so does the nitrogen one")
+local o2_0 = assert(t.tank_gas(2, 1)).o2 + assert(t.pipe_gas(3, 1)).o2
+local n2_0 = assert(t.tank_gas(5, 1)).n2 + assert(t.pipe_gas(3, 1)).n2
+assert(assert(t.tank_gas(2, 1)).n2 == nil, "the oxygen vessel starts pure")
+assert(assert(t.tank_gas(5, 1)).o2 == nil, "and so does the nitrogen one")
 
 t.run_seconds(60)
 
-local left, right, between = t.tank_gas(2, 1), t.tank_gas(5, 1), t.pipe_gas(3, 1)
-local function oxygen_fraction(mix)
+local left, right, between = assert(t.tank_gas(2, 1)), assert(t.tank_gas(5, 1)), assert(t.pipe_gas(3, 1))
+local function oxygen_fraction(mix: {[string]: number})
     return mix.o2 / (mix.o2 + mix.n2)
 end
 
-assert(left.o2 and left.n2 and right.o2 and right.n2, "neither vessel kept a pure gas")
+assert(type(left.o2) == "number" and type(left.n2) == "number" and type(right.o2) == "number" and type(right.n2) == "number", "neither vessel kept a pure gas")
 near(oxygen_fraction(left), oxygen_fraction(right), 1e-9, "one mixture, both vessels")
 near(oxygen_fraction(between), oxygen_fraction(right), 1e-9, "and the run between them")
 near(oxygen_fraction(left), o2_0 / (o2_0 + n2_0), 1e-9, "the shift's own gas, stirred")
@@ -210,9 +209,9 @@ near(left.o2 + right.o2 + between.o2, o2_0, o2_0 * 1e-12, "the oxygen book")
 near(left.n2 + right.n2 + between.n2, n2_0, n2_0 * 1e-12, "the nitrogen book")
 
 local shared_kpa = pressure_of(o2_0 + n2_0, 2.0 * TANK_M3 + SHARED_M3, T20C)
-near(t.tank_pressure(2, 1), shared_kpa, shared_kpa * 1e-9, "one pressure, both vessels")
-near(t.tank_pressure(5, 1), shared_kpa, shared_kpa * 1e-9, "and the run between them")
-near(t.pipe_pressure(3, 1), shared_kpa, shared_kpa * 1e-9, "on the same number")
+near(assert(t.tank_pressure(2, 1)), shared_kpa, shared_kpa * 1e-9, "one pressure, both vessels")
+near(assert(t.tank_pressure(5, 1)), shared_kpa, shared_kpa * 1e-9, "and the run between them")
+near(assert(t.pipe_pressure(3, 1)), shared_kpa, shared_kpa * 1e-9, "on the same number")
 
 -- ---------------------------------------------------------------
 -- THE OTHER DIRECTION: AN EMPTY VESSEL ON A CHARGED MAIN.
@@ -237,24 +236,24 @@ t.join()
 t.tick()
 
 local MAIN_M3 = 10.0 * PIPE_M3 + PORT_M3
-local main_0 = total(t.pipe_gas(2, 1))
+local main_0 = total(assert(t.pipe_gas(2, 1)))
 local drained_kpa = pressure_of(main_0, MAIN_M3 + TANK_M3, T20C)
-assert(t.tank_pressure(12, 1) == 0.0, "the vessel opens the shift empty")
-assert(total(t.tank_gas(12, 1)) == 0.0, "with nothing in its book at all")
+assert(assert(t.tank_pressure(12, 1)) == 0.0, "the vessel opens the shift empty")
+assert(total(assert(t.tank_gas(12, 1))) == 0.0, "with nothing in its book at all")
 t.run_ticks(10)
 
-local main_1 = total(t.pipe_gas(2, 1))
-local vessel_1 = total(t.tank_gas(12, 1))
+local main_1 = total(assert(t.pipe_gas(2, 1)))
+local vessel_1 = total(assert(t.tank_gas(12, 1)))
 assert(vessel_1 > 0.0, "the vessel filled from the main")
 near(main_0 - main_1, vessel_1, vessel_1 * 1e-9,
     "every mole in it came out of the run -- THE MAIN PAYS")
 near(main_1 + vessel_1, main_0, main_0 * 1e-12, "with the book balancing")
-near(t.tank_pressure(12, 1), drained_kpa, drained_kpa * 1e-9,
+near(assert(t.tank_pressure(12, 1)), drained_kpa, drained_kpa * 1e-9,
     "and both settle on the volume-weighted pressure, from below")
-near(t.pipe_pressure(2, 1), drained_kpa, drained_kpa * 1e-9, "the main with it")
-assert(t.pipe_pressure(2, 1) < 30.0,
+near(assert(t.pipe_pressure(2, 1)), drained_kpa, drained_kpa * 1e-9, "the main with it")
+assert(assert(t.pipe_pressure(2, 1)) < 30.0,
     "ten lengths against 2500 L is a main with nothing left: "
-        .. t.pipe_pressure(2, 1) .. " kPa")
+        .. assert(t.pipe_pressure(2, 1)) .. " kPa")
 
 -- ---------------------------------------------------------------
 -- THE TORCH.
@@ -280,13 +279,14 @@ local function room_nitrogen()
     local sum = 0.0
     for y = 1, 3 do
         for x = 1, 3 do
-            sum = sum + ((t.room_gas(x, y) or {}).n2 or 0.0)
+            local gas = t.room_gas(x, y)
+            sum = sum + (if gas then gas.n2 or 0.0 else 0.0)
         end
     end
     return sum
 end
 
-local held = t.tank_gas(3, 2).n2
+local held = assert(t.tank_gas(3, 2)).n2
 local room_0 = room_nitrogen()
 assert(held > 3000.0, "a vessel with real weight in it: " .. held .. " mol")
 t.click(w, 2, 2, t.target_at(w, 2, 2, "welder"))

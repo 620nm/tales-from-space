@@ -1,3 +1,6 @@
+local action_rules = require("@lib/action_rules")
+local cards = require("@lib/cards")
+
 -- One playing card, which is fifty-four cards and a back.
 --
 -- tg's `/obj/item/toy/singlecard` (code/modules/cards/singlecard.dm).
@@ -105,6 +108,7 @@ if sim ~= nil then
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self, user = ev.subject, ev.actor
         local face_up, key = cards.read(self.state)
+        assert(key, "card state must name a face")
         if face_up then
             sim.appearance.set_state({ entity = self, state = "down_" .. key })
             sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = user.tile })

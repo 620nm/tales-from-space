@@ -1,6 +1,7 @@
 /.worktrees
 /.claude
 /.codex
+/lunatic.code-workspace
 
 # Restricted frontend build products
 ui/bundle.json

@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- IDENTITY: one carbon dioxide, in all three phases, out of one
 -- canister.
 --
@@ -41,19 +43,19 @@ local R = 8.314462618
 local TRIPLE_K, TRIPLE_PA = 216.55, 517000.0
 local CRITICAL_K = 304.1
 
-local function line_kpa(latent, temp_k)
+local function line_kpa(latent: number, temp_k: number)
     return TRIPLE_PA * math.exp((-latent / R) * (1.0 / temp_k - 1.0 / TRIPLE_K)) / 1000.0
 end
 
-local function vapour_kpa(temp_k)
+local function vapour_kpa(temp_k: number)
     return line_kpa(16200.0, temp_k)
 end
 
-local function sublimation_kpa(temp_k)
+local function sublimation_kpa(temp_k: number)
     return line_kpa(9020.0 + 16200.0, temp_k)
 end
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -94,29 +96,29 @@ t.set_environment({ sink_k = 293.15, insolation = 0.0 })
 local p = t.join()
 t.tick()
 
-local heater = t.target_at(p, 3, 2)
-local can = t.target_at(p, 2, 1)
-local jar = t.target_at(p, 2, 3, "bottle")
+local heater = assert(t.target_at(p, 3, 2), "the target is visible")
+local can = assert(t.target_at(p, 2, 1), "the target is visible")
+local jar = assert(t.target_at(p, 2, 3, "bottle"), "the target is visible")
 
-local function phases(handle)
+local function phases(handle: SpecObservedTarget)
     local reading = t.vessel(handle)
     assert(reading ~= nil, "that is a vessel")
-    return reading.contents.co2 or {}
+    return reading.contents.co2 or { solid = 0, liquid = 0, gas = 0 }
 end
 
-local function solid(handle)
+local function solid(handle: SpecObservedTarget)
     return phases(handle).solid or 0.0
 end
 
-local function liquid(handle)
+local function liquid(handle: SpecObservedTarget)
     return phases(handle).liquid or 0.0
 end
 
-local function gas(handle)
+local function gas(handle: SpecObservedTarget)
     return phases(handle).gas or 0.0
 end
 
-local function tile_co2(x, y)
+local function tile_co2(x: number, y: number)
     local gases = t.room_gas(x, y)
     return (gases and gases.co2) or 0.0
 end
@@ -143,14 +145,14 @@ end
 -- (sim/holder/heat.rs) -- so the reaction chamber is the station's
 -- refrigerator as well as its hotplate, and no second machine has to
 -- exist for this spec to be reachable.
-local function condition(target_k, secs)
+local function condition(target_k: number, secs: number)
     t.click(p, 3, 2, heater)
     t.tick()
     t.click(p, 3, 2, heater)
     t.tick()
     ui_controls.set(p, "temperature", target_k)
     t.run_ticks(2)
-    if t.ui(p).toggles[1].on ~= true then
+    if ui_controls.rows(ui_controls.state(p).toggles)[1].on ~= true then
         ui_controls.toggle(p, "power")
     end
     t.run_ticks(2)
@@ -158,7 +160,7 @@ local function condition(target_k, secs)
 end
 
 local function undock()
-    if t.ui(p).toggles[1].on == true then
+    if ui_controls.rows(ui_controls.state(p).toggles)[1].on == true then
         ui_controls.toggle(p, "power")
         t.run_ticks(2)
     end
@@ -182,7 +184,7 @@ end
 -- ---------------------------------------------------------------
 assert(t.charge_vessel(2, 1, "co2", 9000.0), "ninety atmospheres of carbon dioxide")
 t.run_seconds(5)
-local bottle_line = t.vessel(can)
+local bottle_line = assert(t.vessel(can), "the vessel has a reading")
 near(bottle_line.temp_k, CRITICAL_K, 0.01,
     "the canister settled on the critical isotherm: " .. bottle_line.temp_k .. " K")
 assert(liquid(can) > 100.0, "with liquid carbon dioxide in it: " .. liquid(can) .. " mol")
@@ -206,14 +208,14 @@ t.run_ticks(2)
 assert(t.hands(p).held == "bottle", "the bottle is in hand")
 t.click(p, 2, 1, can)
 t.run_ticks(4)
-local drawn = t.vessel(jar).moles
+local drawn = assert(t.vessel(jar)).moles
 assert(drawn > 0.15, "it came away with carbon dioxide: " .. drawn .. " mol")
 near(liquid(jar), 0.0, 1e-12, "and none of it is liquid, because it is over the critical point")
 near(gas(jar), drawn, 1e-12, "all of it is gas")
 
 condition(293.15, 300)
 assert(liquid(jar) > 0.05, "at station temperature it is a LIQUID: " .. liquid(jar) .. " mol")
-near(t.holder_kpa(jar), vapour_kpa(t.holder_k(jar)), 0.01 * vapour_kpa(t.holder_k(jar)),
+near(assert(t.holder_kpa(jar)), vapour_kpa(assert(t.holder_k(jar))), 0.01 * vapour_kpa(assert(t.holder_k(jar))),
     "standing at its own vapour pressure")
 near(solid(jar), 0.0, 1e-12, "and no solid, because 293 K is well over the triple point")
 undock()
@@ -229,22 +231,22 @@ undock()
 -- all. It does not puddle. It is gas before anybody looks down, and
 -- the tile it landed on paid the latent heat.
 -- ---------------------------------------------------------------
-local floor_k = t.room_temperature(1, 2)
-local gauge = t.holder_kpa(jar)
+local floor_k = assert(t.room_temperature(1, 2))
+local gauge = assert(t.holder_kpa(jar))
 local flashed = liquid(jar)
 t.click(p, 1, 2)
 t.run_ticks(4)
 near(liquid(jar), 0.0, 1e-12, "the liquid all went")
 near(tile_co2(1, 2), flashed, 1e-9, "and it is standing on the tile as GAS: " .. tile_co2(1, 2))
-assert(t.room_temperature(1, 2) < floor_k - 0.5,
-    "which cost the deck it landed on: " .. floor_k .. " -> " .. t.room_temperature(1, 2))
+assert(assert(t.room_temperature(1, 2)) < floor_k - 0.5,
+    "which cost the deck it landed on: " .. floor_k .. " -> " .. assert(t.room_temperature(1, 2)))
 -- The bottle's gauge falls, and the reason is geometry rather than
 -- cold: the same vapour now has the whole shell to be spread through
 -- instead of the sliver over the liquid. Its TEMPERATURE does not
 -- move at all -- a parcel leaves carrying its own energy, always
 -- (`Mixture::draw`, lunatic-matter/src/mixture.rs) -- which is why the
 -- kelvin that went missing turned up in the room and not in the glass.
-assert(t.holder_kpa(jar) < gauge, "the bottle's gauge fell: " .. gauge .. " -> " .. t.holder_kpa(jar))
+assert(assert(t.holder_kpa(jar)) < gauge, "the bottle's gauge fell: " .. gauge .. " -> " .. assert(t.holder_kpa(jar)))
 
 -- ---------------------------------------------------------------
 -- FOUR: THE SAME BOTTLE, THIRTY KELVIN UNDER THE TRIPLE POINT.
@@ -260,15 +262,15 @@ assert(t.holder_kpa(jar) < gauge, "the bottle's gauge fell: " .. gauge .. " -> "
 -- ---------------------------------------------------------------
 t.click(p, 2, 1, can)
 t.run_ticks(4)
-local recharged = t.vessel(jar).moles
+local recharged = assert(t.vessel(jar)).moles
 assert(recharged > 0.15, "recharged off the same line: " .. recharged .. " mol")
 
 condition(180.0, 300)
 assert(solid(jar) > 0.15, "the bottle is holding DRY ICE: " .. solid(jar) .. " mol")
 near(liquid(jar), 0.0, 1e-12, "and not one mole of liquid, under the triple point")
-near(t.holder_kpa(jar), sublimation_kpa(t.holder_k(jar)), 0.02 * sublimation_kpa(180.0),
-    "its gauge reads the sublimation line: " .. t.holder_kpa(jar) .. " kPa")
-assert(t.holder_kpa(jar) < 50.0, "which is under half an atmosphere: " .. t.holder_kpa(jar))
+near(assert(t.holder_kpa(jar)), sublimation_kpa(assert(t.holder_k(jar))), 0.02 * sublimation_kpa(180.0),
+    "its gauge reads the sublimation line: " .. assert(t.holder_kpa(jar)) .. " kPa")
+assert(assert(t.holder_kpa(jar)) < 50.0, "which is under half an atmosphere: " .. assert(t.holder_kpa(jar)))
 undock()
 
 -- ---------------------------------------------------------------
@@ -283,7 +285,7 @@ undock()
 -- two tiles is the ice.
 -- ---------------------------------------------------------------
 local ice = solid(jar)
-local deck_k = t.room_temperature(1, 3)
+local deck_k = assert(t.room_temperature(1, 3))
 local carbon_0 = room_co2()
 t.click(p, 1, 3)
 t.run_ticks(4)
@@ -299,8 +301,8 @@ assert(
     "the moment it lands it is still ICE on the deck: "
         .. tile_co2(1, 3) .. " gas of " .. ice .. " mol"
 )
-assert(t.room_temperature(1, 3) < deck_k - 0.5,
-    "and it is already cooling the tile: " .. deck_k .. " -> " .. t.room_temperature(1, 3))
+assert(assert(t.room_temperature(1, 3)) < deck_k - 0.5,
+    "and it is already cooling the tile: " .. deck_k .. " -> " .. assert(t.room_temperature(1, 3)))
 
 t.run_seconds(30)
 -- Weighed over the room. The ice's whole mass is gas half a minute
@@ -321,14 +323,14 @@ near(
 -- else in the room is running. The claim was never that the far tile is
 -- untouched; it is that the GAP between the two tiles is the ice, which
 -- is the assertion below.
-local control = t.room_temperature(4, 3)
+local control = assert(t.room_temperature(4, 3))
 near(control, 293.15, 0.5, "the far side of the room hardly moved")
 -- A quarter of a kelvin, and the margin is narrow BECAUSE the crew are
 -- switched off above: nothing else in this room stirs the air, so the
 -- gap half a minute on is the ice's alone and no larger.
-assert(t.room_temperature(1, 3) < control - 0.25,
+assert(assert(t.room_temperature(1, 3)) < control - 0.25,
     "and the tile the ice was on is still the cold one: "
-        .. t.room_temperature(1, 3) .. " vs " .. control)
+        .. assert(t.room_temperature(1, 3)) .. " vs " .. control)
 
 -- ---------------------------------------------------------------
 -- SIX: THE BOOKS.

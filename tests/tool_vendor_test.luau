@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The tool vendor, beside the softdrinks machine: same behaviour, a
 -- different shelf. It proves the mechanism is generic — the engine
 -- has no word for either machine, so a second one costs two content
@@ -40,14 +42,13 @@ assert(table.concat(t.messages(p), "\n"):find("wobbles", 1, true),
 -- Its clean-room shelf document is stocked from ITS OWN list.
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
-local ui = t.ui(p)
-assert(ui, "clicking the tool vendor opens its window")
+local ui = ui_controls.record(assert(t.ui(p), "clicking the tool vendor opens its window"))
 assert(ui.document == "modules" and ui.presentation == "shelf",
     "the generic shelf document")
-assert(ui.notice.text == "Tools for tools.", "and its own ad copy")
-local shelf = {}
-for _, rec in ipairs(ui.products) do
-    shelf[rec.payload.product] = rec
+assert(ui_controls.record(ui.notice).text == "Tools for tools.", "and its own ad copy")
+local shelf: {[string]: ui_controls.Record} = {}
+for _, rec in ipairs(ui_controls.rows(ui.products)) do
+    shelf[ui_controls.text(ui_controls.record(rec.payload).product)] = rec
 end
 -- This is the complete TfS tool roster, not only tg's base YouTool
 -- stock. Keep the explicit inventory here as the tripwire: every
@@ -125,23 +126,23 @@ for _, item in ipairs(tools) do
     assert(shelf[item].category == "Tools", item .. " is not under Tools")
     assert(shelf[item].sprite ~= "missing",
         item .. " does not resolve to atlas art")
-    assert(shelf[item].stock > 0, item .. " has no displayed stock")
+    assert(ui_controls.number(shelf[item].stock) > 0, item .. " has no displayed stock")
 end
 for _, item in ipairs(parts) do
     assert(shelf[item], item .. " is missing from the tool vendor")
     assert(shelf[item].category == "Parts", item .. " is not under Parts")
     assert(shelf[item].sprite ~= "missing",
         item .. " does not resolve to atlas art")
-    assert(shelf[item].stock > 0, item .. " has no displayed stock")
+    assert(ui_controls.number(shelf[item].stock) > 0, item .. " has no displayed stock")
 end
 for _, item in ipairs(media) do
     assert(shelf[item], item .. " is missing from the tool vendor")
     assert(shelf[item].category == "Media", item .. " is not under Media")
     assert(shelf[item].sprite ~= "missing",
         item .. " does not resolve to atlas art")
-    assert(shelf[item].stock > 0, item .. " has no displayed stock")
+    assert(ui_controls.number(shelf[item].stock) > 0, item .. " has no displayed stock")
 end
-assert(#ui.products == #tools + #parts + #media,
+assert(#ui_controls.rows(ui.products) == #tools + #parts + #media,
     "the tool shelf and its asserted roster drifted apart")
 assert(shelf.cable_coil.sprite == "coil",
     "item ids that differ from their sprite still select their atlas art")
@@ -210,8 +211,9 @@ assert(t.count_items("wrench") == 1, "no window, no vending")
 -- The machine next door is a DIFFERENT shelf through the same code.
 t.click(p, 2, 2, t.target_at(p, 2, 2))
 t.tick()
-local cola_ui = t.ui(p)
-assert(cola_ui.products[1].payload.product == "cola",
+local cola_ui = ui_controls.record(t.ui(p))
+local cola_product = ui_controls.record(ui_controls.rows(cola_ui.products)[1].payload)
+assert(cola_product.product == "cola",
     "the softdrinks machine still sells softdrinks")
 ui_controls.vend(p, "cola")
 t.tick()

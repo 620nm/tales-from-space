@@ -1,3 +1,5 @@
+local netmsg = require("@lib/netmsg")
+
 -- The air scrubber, and the one thing about it that is not mechanism.
 --
 -- It is the vent's argument exactly (fixtures/vent.luau): the engine

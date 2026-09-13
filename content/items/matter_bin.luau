@@ -1,3 +1,5 @@
+local stock_parts = require("@lib/stock_parts")
+
 -- A matter bin: the stock part that decides how MUCH a machine holds.
 --
 -- tg's `/obj/item/stock_parts/matter_bin` and its three better rungs

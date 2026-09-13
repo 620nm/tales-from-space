@@ -83,7 +83,7 @@ t.tick()
 -- half -- that the state a fresh die is MINTED in is the one whose
 -- picture the prototype's own `sprite` field was baked from, so a die
 -- straight out of the bag looks like a die and not like a blank body.
-local MINTED = { d4 = "4", d6 = "6", d8 = "8", d10 = "10", d12 = "12", d20 = "20", d00 = "10" }
+local MINTED: { [string]: string } = { d4 = "4", d6 = "6", d8 = "8", d10 = "10", d12 = "12", d20 = "20", d00 = "10" }
 for id, face in pairs(MINTED) do
     local lying = t.item_at(1, 1, id)
     assert(lying ~= nil, id .. " is on the deck where the bag was emptied")
@@ -112,7 +112,7 @@ for _ = 1, 60 do
     local reading = last:match("It lands on (%d+)%.")
     assert(reading ~= nil, "the roll said a number: " .. tostring(last))
     reading = tonumber(reading)
-    assert(reading % 10 == 0 and reading >= 0 and reading <= 90,
+    assert(assert(reading) % 10 == 0 and assert(reading) >= 0 and assert(reading) <= 90,
         "a d00 reads out in tens, 0 through 90, got " .. reading)
     readings[reading] = true
     -- The tripwire. Put the die down, read the cell it is showing off
@@ -121,9 +121,9 @@ for _ = 1, 60 do
     t.tick()
     local down = t.item_at(1, 1, "d00")
     assert(down ~= nil, "the die is at the roller's feet")
-    assert(tonumber(down.state) == reading / 10 + 1,
+    assert(tonumber(down.state) == assert(reading) / 10 + 1,
         "cell " .. tostring(down.state) .. " is the one that reads " .. reading)
-    assert(down.sprite == "d00_" .. down.state,
+    assert(down.sprite == "d00_" .. assert(down.state),
         "and it wears that cell's picture: " .. tostring(down.sprite))
     if reading == 0 then
         assert(last:find("It lands on 0. Ouch, bad luck.", 1, true),
@@ -159,7 +159,7 @@ t.run_ticks(5)
 t.move(p, "west")
 t.run_ticks(5)
 
-local function move_aside(id)
+local function move_aside(id: string)
     local target = assert(t.target_at(p, 1, 1, id), id .. " is visible to move aside")
     t.click(p, 1, 1, target)
     t.tick()

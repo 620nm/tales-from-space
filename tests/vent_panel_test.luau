@@ -23,6 +23,8 @@
 -- one atmosphere off a constant in Rust, and the dials in the property
 -- sheet were decoration.
 
+local ui_controls = require("@helpers/ui_controls")
+
 local ONE_ATM = 101.325
 -- The pack's own defaults (structures/vent.luau), which are the numbers
 -- the whole station's air loop is tuned against.
@@ -31,17 +33,19 @@ local EMPTIES_OVER = 109.431
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
+local function word(label: unknown): unknown
     if type(label) ~= "table" then return label end
-    return label.id or label.text
+    local record = ui_controls.record(label)
+    return record.id or record.text
 end
 
-local function near(a, b, slack, what)
+local function near(a: number?, b: number?, slack: number, what: string)
+    assert(a ~= nil and b ~= nil, what .. ": both readings are present")
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function readout(p, label)
-    for _, r in ipairs(t.ui(p).readouts) do
+local function readout(p: number, label: string): unknown
+    for _, r in ipairs(ui_controls.rows(ui_controls.state(p).readouts)) do
         if word(r.label) == label then
             return word(r.value)
         end
@@ -49,25 +53,27 @@ local function readout(p, label)
     return nil
 end
 
-local function toggle(p, field)
-    for _, sw in ipairs(t.ui(p).toggles) do
+local function toggle(p: number, field: string): ui_controls.Record
+    for _, sw in ipairs(ui_controls.rows(ui_controls.state(p).toggles)) do
         if sw.field == field then
             return sw
         end
     end
-    return nil
+    error("missing toggle " .. field)
 end
 
-local function dial(p, field)
-    for _, row in ipairs(t.ui(p).setpoints) do
+local function dial(p: number, field: string): {unit: unknown, value: number, min: number, max: number}
+    for _, row in ipairs(ui_controls.rows(ui_controls.state(p).setpoints)) do
         if row.field == field then
-            return row
+            assert(type(row.value) == "number" and type(row.min) == "number" and type(row.max) == "number",
+                "a pressure dial discloses a numeric value and bounds")
+            return {unit = row.unit, value = row.value, min = row.min, max = row.max}
         end
     end
-    return nil
+    error("missing dial " .. field)
 end
 
-local function set(p, field, value)
+local function set(p: number, field: string, value: number)
     ui_controls.set(p, field, value)
     t.run_ticks(2)
 end
@@ -218,7 +224,7 @@ local TUNED = 150.0
 ui_controls.toggle(p, "power")
 t.run_seconds(2)
 assert(toggle(p, "power").on == false, "the switch is thrown")
-assert(t.structure_at(2, 1).state == "off", "and the fan is drawn dead")
+assert(assert(t.structure_at(2, 1)).state == "off", "and the fan is drawn dead")
 assert(t.ledger_has("MachineToggled"), "with the press on the record")
 
 set(p, "siphon", 200.0)
@@ -230,7 +236,7 @@ t.ui_close(p)
 t.tick()
 
 local opening = room_moles()
-assert(t.room_pressure(5, 1) < 110.0, "the corridor opens well under the new line")
+assert(assert(t.room_pressure(5, 1)) < 110.0, "the corridor opens well under the new line")
 t.run_seconds(60)
 near(room_moles(), opening, 0.5, "a switched-off vent hands the corridor nothing")
 
@@ -248,7 +254,7 @@ t.tick()
 local peak = 0.0
 for _ = 1, 150 do
     t.run_seconds(1)
-    peak = math.max(peak, t.room_pressure(2, 1))
+    peak = math.max(peak, assert(t.room_pressure(2, 1)))
 end
 assert(
     peak <= TUNED + 0.5,
@@ -257,13 +263,13 @@ assert(
         .. " clamped away, it is unrepresentable: " .. peak .. " kPa"
 )
 assert(
-    t.room_pressure(5, 1) > TUNED - 1.0,
+    assert(t.room_pressure(5, 1)) > TUNED - 1.0,
     "and the corridor came up to the line it was told to hold, which is"
-        .. " not one it could have reached before: " .. t.room_pressure(5, 1) .. " kPa"
+        .. " not one it could have reached before: " .. assert(t.room_pressure(5, 1)) .. " kPa"
 )
 
 -- It STAYS there, which is the half of "arrest" a single reading cannot
 -- show: a settled room is a room the vent has no demand from.
-local settled = t.room_pressure(5, 1)
+local settled = assert(t.room_pressure(5, 1))
 t.run_seconds(60)
-near(t.room_pressure(5, 1), settled, 0.5, "a minute later the room has not moved")
+near(assert(t.room_pressure(5, 1)), settled, 0.5, "a minute later the room has not moved")

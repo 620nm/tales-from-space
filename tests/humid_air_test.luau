@@ -37,7 +37,7 @@ t.world([==[(
     painted: [(1, 1, "humid_air"), (2, 1, "humid_air"), (3, 1, "humid_air")],
 )]==], 0)
 
-local p = t.join()
+t.join()
 t.tick()
 
 local PER_TILE = 0.5
@@ -47,7 +47,7 @@ local VISIBLE_MOLES = 0.25
 local function room_water()
     local total = 0.0
     for x = 1, TILES do
-        total = total + (t.room_gas(x, 1).water or 0.0)
+        total = total + (assert(t.room_gas(x, 1)).water or 0.0)
     end
     return total
 end
@@ -60,7 +60,7 @@ end
 local wet = room_water()
 assert(math.abs(wet - PER_TILE * TILES) < 1e-6,
     "half a mole a tile, three tiles: " .. wet)
-assert(t.room_gas(2, 1).water > VISIBLE_MOLES,
+assert(assert(t.room_gas(2, 1)).water > VISIBLE_MOLES,
     "and over the line water is visible from, so the room reads as fogged")
 
 -- ---------------------------------------------------------------
@@ -74,8 +74,8 @@ t.run_ticks(700)
 local later = room_water()
 assert(later > wet * 0.99,
     ("the fog did not rain out: %g -> %g"):format(wet, later))
-assert(t.room_temperature(2, 1) > 290.0,
-    "and the room is still the room it was: " .. t.room_temperature(2, 1))
+assert(assert(t.room_temperature(2, 1)) > 290.0,
+    "and the room is still the room it was: " .. assert(t.room_temperature(2, 1)))
 
 -- ---------------------------------------------------------------
 -- The station ships one: the chem bench, under a burner that has
@@ -85,6 +85,6 @@ t.world_file("chillstation.ron", 0)
 t.join()
 t.tick()
 
-local bench = t.room_gas(19, 5).water
+local bench = assert(t.room_gas(19, 5)).water
 assert(bench ~= nil and bench > VISIBLE_MOLES,
     "the air over the chem bench is damp: " .. tostring(bench))

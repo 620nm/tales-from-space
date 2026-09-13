@@ -18,6 +18,8 @@
 -- over everything it is holding at once and stands there split open
 -- (tg's `canister_break`).
 -- ---------------------------------------------------------------
+local ui_controls = require("@helpers/ui_controls")
+
 t.world([==[(
     name: "canister bay",
     legend: {
@@ -46,18 +48,18 @@ local p = t.join()
 t.tick()
 t.run_seconds(5)
 
-local room_start = t.room_pressure(1, 2)
-assert(t.canister_pressure(2, 2) > 4000.0, "the bottle starts full")
+local room_start = assert(t.room_pressure(1, 2))
+assert(assert(t.canister_pressure(2, 2)) > 4000.0, "the bottle starts full")
 
 -- Shut the valve first, through the panel, the way a crewman shuts
 -- one: a loose canister with its valve open is pointed at the room and
 -- would spend itself into the floor instead of straining.
 t.click(p, 2, 2, t.target_at(p, 2, 2))
 t.tick()
-assert(t.ui(p).toggles[1].field == "valve")
+assert(ui_controls.rows(ui_controls.state(p).toggles)[1].field == "valve")
 ui_controls.toggle(p, "valve")
 t.tick()
-assert(t.ui(p).toggles[1].on == false, "the valve is shut")
+assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == false, "the valve is shut")
 
 -- Sixty times the sticker. tg's damage is the RATIO of pressure to
 -- rating, clamped to 5..50 a pass, so this is the ceiling: 300
@@ -66,10 +68,10 @@ assert(t.charge_vessel(2, 2, "n2", 30000000.0), "a canister takes a charge")
 t.run_seconds(4)
 
 assert(#t.ledger_rows("pressure_ruptured") > 0, "the record says a vessel went")
-assert(t.canister_pressure(2, 2) < 1.0,
-    "and the canister is empty: " .. t.canister_pressure(2, 2))
-assert(t.room_pressure(1, 2) > room_start,
-    "because the room took all of it: " .. room_start .. " -> " .. t.room_pressure(1, 2))
+assert(assert(t.canister_pressure(2, 2)) < 1.0,
+    "and the canister is empty: " .. assert(t.canister_pressure(2, 2)))
+assert(assert(t.room_pressure(1, 2)) > room_start,
+    "because the room took all of it: " .. room_start .. " -> " .. assert(t.room_pressure(1, 2)))
 
 -- It is still there, and it looks like what happened to it.
 local look = t.examine(p, 2, 2, t.target_at(p, 2, 2))
@@ -109,22 +111,23 @@ assert(t.charge_vessel(2, 2, "n2", 40000.0), "a reservoir takes a charge")
 t.run_seconds(5)
 assert(#t.ledger_rows("pressure_damaged") == 0,
     "a tank inside its rating is doing nothing at all")
-local look_sound = t.examine(q, 2, 2, t.target_at(q, 2, 2))
+local look_sound = assert(t.examine(q, 2, 2, t.target_at(q, 2, 2)))
 assert(not table.concat(look_sound.lines, " | "):find("strain"),
     "and says nothing about strain: " .. table.concat(look_sound.lines, " | "))
 
 -- ...and past it, the same tank is visibly working.
 assert(t.charge_vessel(2, 2, "n2", 20000.0), "topped up over the sticker")
-assert(t.tank_pressure(2, 2) > 46000.0,
-    "past tg's max_pressure: " .. t.tank_pressure(2, 2))
+assert(assert(t.tank_pressure(2, 2)) > 46000.0,
+    "past tg's max_pressure: " .. assert(t.tank_pressure(2, 2)))
 t.run_seconds(5)
 
 local damage = t.ledger_rows("pressure_damaged")
 assert(#damage > 0, "the record shows it taking damage")
-assert(damage[1].amount ~= nil and math.abs(damage[1].amount - 0.1) < 1e-4,
+local amount = ui_controls.number(damage[1].amount)
+assert(math.abs(amount - 0.1) < 1e-4,
     "at tg's flat 0.1 a pass: " .. tostring(damage[1].amount))
 assert(t.tank_pressure(2, 2) ~= nil,
     "and it is still standing -- 800 integrity is most of a shift")
-local strained = t.examine(q, 2, 2, t.target_at(q, 2, 2))
+local strained = assert(t.examine(q, 2, 2, t.target_at(q, 2, 2)))
 assert(table.concat(strained.lines, " | "):find("strain"),
     "which is what a look says: " .. table.concat(strained.lines, " | "))

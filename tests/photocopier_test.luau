@@ -1,6 +1,13 @@
+local ui_controls = require("@helpers/ui_controls")
+
+local function script_data(panel: ui_controls.Record): ui_controls.Record
+    local script = panel.script
+    return ui_controls.record(if script then ui_controls.record(script).data else panel.data)
+end
+
 -- Player seam for a paper copy: the script document supplies controls while
 -- the native document job owns admission, timing, stock, and output.
-local function control(player, channel, suffix)
+local function control(player: number, channel: string, suffix: string)
     local address = assert(t.ui_document(player, channel), "document address is available")
     return "doc/" .. address.document .. "/" .. address.generation .. suffix
 end
@@ -38,11 +45,12 @@ local draft = control(p, "writing", "/paper/draft")
 t.ui_edit(p, draft, "copy this")
 t.ui_press(p, control(p, "writing", "/paper/commit"))
 t.run_ticks(2)
-local written_panel = assert(t.ui(p, "writing"), "the source writer remains open after commit")
-local written_data = written_panel.script and written_panel.script.data or written_panel.data
-assert(#written_data.committed == 1 and written_data.committed[1].text == "copy this",
+local written_panel = ui_controls.record(assert(t.ui(p, "writing"), "the source writer remains open after commit"))
+local written_data = script_data(written_panel)
+local committed = ui_controls.rows(written_data.committed)
+assert(#committed == 1 and committed[1].text == "copy this",
     "the copier source contains the committed text")
-assert(written_data.committed[1].style.color == "#FF0000", "the source keeps the pen's selected color")
+assert(ui_controls.record(committed[1].style).color == "#FF0000", "the source keeps the pen's selected color")
 t.drop(p)
 t.run_ticks(1)
 t.swap_hands(p)
@@ -65,30 +73,30 @@ assert(t.hands(p).held == "paper", "the source sheet is picked up before loading
 t.click(p, 4, 1, copier)
 t.run_ticks(2)
 assert(t.hands(p).held == nil, "the source sheet is docked")
-local panel = assert(t.ui(p, "copier"), "the copier panel refreshes after loading")
-local data = panel.script and panel.script.data or panel.data
+local panel = ui_controls.record(assert(t.ui(p, "copier"), "the copier panel refreshes after loading"))
+local data = script_data(panel)
 assert(data.kind == "copier" and data.count == 1 and data.mode == "bw",
     "the copier exposes one BW copy as its default")
 assert(data.paper == 30 and data.toner == 30, "the copier starts with counted supplies")
-assert(#data.original > 0,
+assert(#ui_controls.rows(data.original) > 0,
     "the copier previews the written source")
 assert(data.busy ~= true, "the copier is idle before the copy")
-assert(panel.status == nil or panel.status >= 2, "the copier provider is actionable")
+assert(panel.status == nil or ui_controls.number(panel.status) >= 2, "the copier provider is actionable")
 local papers_before = t.count_items("paper")
 
 -- Loading consumes the hand-held sheet; copying is a native 80-tick job.
 local copy_control = control(p, "copier", "/copy")
 t.ui_press(p, copy_control)
 t.run_ticks(2)
-local started = t.ui(p, "copier")
-local started_data = started and (started.script and started.script.data or started.data)
-assert(started_data and started_data.busy == true, "the copier enters its native job")
+local started = ui_controls.state(p, "copier")
+local started_data = script_data(started)
+assert(started_data.busy == true, "the copier enters its native job")
 t.run_ticks(77)
 assert(t.count_items("paper") == papers_before, "no output appears before the 80-tick page")
 t.run_ticks(1)
 assert(t.count_items("paper") == papers_before + 1,
     "one completed copy lands on the machine tile")
-data = (t.ui(p, "copier").script and t.ui(p, "copier").script.data) or t.ui(p, "copier").data
+data = script_data(ui_controls.state(p, "copier"))
 assert(data.paper == 29 and data.toner == 29,
     "one paper and one toner are charged per completed copy batch")
 
@@ -101,7 +109,7 @@ local mode_control = control(p, "copier", "/mode")
 t.ui_edit(p, mode_control, "color")
 t.ui_press(p, mode_control, "change")
 t.run_ticks(1)
-data = (t.ui(p, "copier").script and t.ui(p, "copier").script.data) or t.ui(p, "copier").data
+data = script_data(ui_controls.state(p, "copier"))
 assert(data.count == 2 and data.mode == "color", "the copier accepts a two-page color batch")
 local batch_before = t.count_items("paper")
 t.ui_press(p, control(p, "copier", "/copy"))
@@ -111,15 +119,15 @@ t.ui_close(p, "copier")
 copier = assert(t.target_at(p, 4, 1, "photocopier"), "the copier remains reachable after a color batch")
 t.click(p, 4, 1, copier)
 t.run_ticks(2)
-data = (t.ui(p, "copier").script and t.ui(p, "copier").script.data) or t.ui(p, "copier").data
+data = script_data(ui_controls.state(p, "copier"))
 assert(data.paper == 27 and data.toner == 27 and data.busy ~= true,
     "a two-page batch charges one paper and toner per output")
 local color_output = assert(t.target_at(p, 4, 1, "paper"), "a color output is readable")
 t.click(p, 4, 1, color_output)
 t.run_ticks(2)
-local color_window = assert(t.ui(p, "writing"), "the color output opens as paper")
-local color_data = color_window.script and color_window.script.data or color_window.data
-assert(color_data.committed[1].style.color == "#FF0000", "color output preserves the source style")
+local color_window = ui_controls.record(assert(t.ui(p, "writing"), "the color output opens as paper"))
+local color_data = script_data(color_window)
+assert(ui_controls.record(ui_controls.rows(color_data.committed)[1].style).color == "#FF0000", "color output preserves the source style")
 t.ui_close(p, "writing")
 t.drop(p)
 t.run_ticks(1)
@@ -134,7 +142,7 @@ t.click(p, 4, 1, copier)
 t.run_ticks(2)
 t.drop(p)
 t.run_ticks(1)
-data = (t.ui(p, "copier").script and t.ui(p, "copier").script.data) or t.ui(p, "copier").data
+data = script_data(ui_controls.state(p, "copier"))
 assert(data.paper == 30, "a paper bin restores copier stock")
 
 local toner = assert(t.target_at(p, 3, 3, "toner_cartridge"), "a toner cartridge is available")
@@ -146,5 +154,5 @@ t.click(p, 4, 1, copier)
 t.run_ticks(2)
 t.drop(p)
 t.run_ticks(1)
-data = (t.ui(p, "copier").script and t.ui(p, "copier").script.data) or t.ui(p, "copier").data
+data = script_data(ui_controls.state(p, "copier"))
 assert(data.toner == 30, "a toner cartridge restores copier stock")

@@ -54,7 +54,7 @@ assert(px == 3 and py == 1, "the patient stands where the tray will be")
 
 local drawer = t.target_at(attendant, 2, 1, "cadaver_chamber")
 assert(drawer ~= nil, "one targetable drawer")
-local shut = t.structure_at(2, 1)
+local shut = assert(t.structure_at(2, 1))
 assert(shut.state == "closed" and shut.sprite == "morgue1_e",
     "it starts shut, wearing the empty face")
 assert(#shut.overlays == 0, "an empty drawer wears no lamp")
@@ -67,10 +67,10 @@ t.run_ticks(3)
 ax, ay = t.pos(attendant)
 assert(ax == 1 and ay == 1, "the shut drawer blocks movement")
 
-_ = t.sounds(attendant)
+t.sounds(attendant)
 t.click(attendant, 2, 1, drawer)
 t.tick()
-local open = t.structure_at(2, 1)
+local open = assert(t.structure_at(2, 1))
 assert(open.state == "open" and open.sprite == "morgue0_e",
     "opening selects the authored state and art")
 assert(has(t.sounds(attendant), "morgue_clank"), "the tray is heard rolling")
@@ -82,10 +82,10 @@ assert(px == 3 and py == 1, "the tray arrives under whoever is standing there")
 
 -- Lie down on it, and let the attendant shut the drawer.
 t.rest(patient)
-_ = t.sounds(attendant)
+t.sounds(attendant)
 t.click(attendant, 2, 1, drawer)
 t.tick()
-assert(t.structure_at(2, 1).state == "closed", "it shuts again")
+assert(assert(t.structure_at(2, 1)).state == "closed", "it shuts again")
 assert(has(t.sounds(attendant), "morgue_clank"), "and is heard doing it")
 assert(t.structure_at(3, 1) == nil, "the tray goes back in with everything on it")
 assert(#t.items_at(3, 1) == 0, "the dropped thing is concealed")
@@ -96,14 +96,14 @@ assert(t.body_id(patient) ~= nil, "the body still exists; it simply has no tile"
 -- one: tg lights it for an occupant a defibrillator could bring back
 -- (morgue.dm:303-321, :384-403), and "has not stopped" is what that
 -- reads as here. `cadaver_test.luau` is where a corpse lights the other.
-assert(t.structure_at(2, 1).overlays[1] == "morgue4_e",
+assert(assert(t.structure_at(2, 1)).overlays[1] == "morgue4_e",
     "a drawer with somebody alive in it wears the living lamp")
 
 -- tg's relaymove: a conscious body inside pushing any direction slides
 -- it back out (morgue.dm:75-83).
 t.move(patient, "west")
 t.run_ticks(3)
-assert(t.structure_at(2, 1).state == "open", "the push from inside opened it")
+assert(assert(t.structure_at(2, 1)).state == "open", "the push from inside opened it")
 px, py = t.pos(patient)
 assert(px == 3 and py == 1, "and put the patient back on the slab")
 assert(has(t.items_at(3, 1), "headset"), "everything else came out with them")
@@ -123,7 +123,7 @@ assert(px == 4 and py == 1, "and cannot step back onto it: an open tray is dense
 t.click(attendant, 2, 1, drawer)
 t.tick()
 assert(#t.items_at(3, 1) == 0, "the dropped thing is inside")
-assert(t.structure_at(2, 1).overlays[1] == "morgue3_e",
+assert(assert(t.structure_at(2, 1)).overlays[1] == "morgue3_e",
     "things but nobody is the other lamp")
 
 assert(#t.ledger_rows("drawer_opened") == 2, "both opens are attributed")
@@ -161,15 +161,15 @@ t.world([==[(
 local crew = t.join()
 t.tick()
 local walled = t.target_at(crew, 2, 1, "cadaver_chamber")
-_ = t.messages(crew)
+t.messages(crew)
 t.click(crew, 2, 1, walled)
 t.tick()
-assert(t.structure_at(2, 1).state == "closed", "a drawer facing a wall stays shut")
+assert(assert(t.structure_at(2, 1)).state == "closed", "a drawer facing a wall stays shut")
 assert(#t.messages(crew) > 0, "and says why")
 t.move(crew, "east")
 t.run_ticks(3)
-local cx, cy = t.pos(crew)
-assert(cx == 1 and cy == 1, "a refused drawer is still an obstacle")
+local crew_x, crew_y = t.pos(crew)
+assert(crew_x == 1 and crew_y == 1, "a refused drawer is still an obstacle")
 
 -- ---- dragging somebody onto the slab --------------------------------
 -- tg lets you stuff a body into a cadaver drawer: the tray's own
@@ -228,19 +228,19 @@ assert(cx == 4 and cy == 1, "two ticks in, the body has not moved")
 t.run_ticks(LAY_TICKS)
 cx, cy = t.pos(corpse)
 assert(cx == 3 and cy == 1, "the body is on the slab: " .. cx .. "," .. cy)
-assert(t.body(corpse).posture == "lying", "lying on it")
+assert(assert(t.body(corpse)).posture == "lying", "lying on it")
 
 -- ...and that is already everything the close needs. A body on the
 -- tray's tile is what `close_drawer` gathers; the drag added no second
 -- mechanism.
 t.click(orderly, 2, 1, bay)
 t.tick()
-assert(t.structure_at(2, 1).state == "closed", "the drawer shuts on them")
+assert(assert(t.structure_at(2, 1)).state == "closed", "the drawer shuts on them")
 assert(t.structure_at(3, 1) == nil, "the slab went back in")
 assert(t.target_at(orderly, 3, 1) == nil,
     "a stowed body has no tile at all: there is nothing left to click")
 assert(t.body_id(corpse) ~= nil, "the body still exists")
-assert(t.structure_at(2, 1).overlays[1] == "morgue4_e",
+assert(assert(t.structure_at(2, 1)).overlays[1] == "morgue4_e",
     "and the drawer wears the lamp for somebody still going")
 
 print("cadaver chamber: obstacle, slab, concealment, lamps, the push out, "

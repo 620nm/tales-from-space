@@ -25,15 +25,8 @@
 -- than having no line at all.
 local network = {}
 
--- THE CLASS WORD IS NOT HERE, and cannot be. `link.class` and
--- `link.accepts` are the pack's own words for what KIND of device a
--- node is (docs/content-schema/link.md), and one word shared by
--- fourteen files is exactly what this directory is for -- except that
--- `lib/` is published into the ITEM sandbox and not into the structure
--- registry's (`crates/lunatic-server/src/structures/registry.rs`), so a
--- structure reading `network.class` reads nil at prototype time. It is
--- therefore spelled out in each file, and `structures/air_alarm.luau`
--- is where the argument for the word lives.
+-- Device class declarations live with their prototypes; the link contract
+-- is in the engine's docs/content-schema/link.md.
 
 -- One sentence about `node`, called what the file calling this calls
 -- it. `noun` is the pack's word for the box itself ("access point");
@@ -44,7 +37,7 @@ local network = {}
 -- box means its socket is empty -- the caller says so in its own words,
 -- because "there is no card in it" is a different sentence from every
 -- one below.
-function network.line(node, noun, member)
+function network.line(node: Handle, noun: string, member: string): Message?
     local state = sim.link_state(node)
     if state == nil then
         return nil

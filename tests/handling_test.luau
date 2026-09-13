@@ -30,7 +30,7 @@ t.world([==[(
     items: [(2, 1, "wrench"), (2, 1, "headset")],
 )]==], 7)
 
-local function heard(p)
+local function heard(p: number)
     return " " .. table.concat(t.sounds(p), " ") .. " "
 end
 

@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The pipe painter, and what a stripe of the wrong colour costs.
 --
 -- tg's `is_connectable` refuses two pipe ends whose paint disagrees
@@ -101,17 +103,17 @@ t.run_seconds(10)
 -- Six lengths in one blue line are ONE body of gas, so both ends read
 -- the same number to the last decimal: they are literally the same
 -- cell. That equality is what the rest of this spec breaks.
-local west = t.pipe_pressure(2, 1)
-local east = t.pipe_pressure(7, 1)
+local west = assert(t.pipe_pressure(2, 1))
+local east = assert(t.pipe_pressure(7, 1))
 assert(
     math.abs(west - east) < 0.01,
     "one painted run is one pipenet: " .. west .. " vs " .. east
 )
 
 -- And the bottle is paying for the vent at the far end of it.
-local opening = t.canister_pressure(1, 1)
+local opening = assert(t.canister_pressure(1, 1))
 t.run_seconds(10)
-local spent = opening - t.canister_pressure(1, 1)
+local spent = opening - assert(t.canister_pressure(1, 1))
 assert(spent > 100.0, "the canister feeds the line: " .. spent .. " kPa spent")
 
 -- ---- the dial ----
@@ -153,7 +155,7 @@ assert(
     "you cannot paint a run you cannot see"
 )
 assert(not t.ledger_has("PipePainted"), "still no row")
-assert(t.pipe_pressure(2, 1) == t.pipe_pressure(7, 1), "and still one net")
+assert(t.pipe_pressure(2, 1) == assert(t.pipe_pressure(7, 1)), "and still one net")
 
 -- ---- **the headline**: a brush cuts the main ----
 t.click(p, 5, 1)
@@ -163,24 +165,25 @@ assert(heard(p, "click"), "and the room hears it happen")
 
 local rows = t.ledger_rows("pipe_painted")
 assert(#rows == 1, "one act, one row: " .. #rows)
-assert(rows[1].at[1] == 5 and rows[1].at[2] == 1, "which tile")
+local at = ui_controls.array(rows[1].at)
+assert(at[1] == 5 and at[2] == 1, "which tile")
 assert(rows[1].layers == 4, "which piping layer")
 assert(rows[1].color == "#F04137", "and which colour, so the record can say")
 
 -- The line is intact. Nothing was cut, nothing was welded, the deck is
 -- exactly as it was — and the two ends of it are now two networks.
 t.run_seconds(10)
-local fed = t.pipe_pressure(2, 1)
-local starved = t.pipe_pressure(7, 1)
+local fed = assert(t.pipe_pressure(2, 1))
+local starved = assert(t.pipe_pressure(7, 1))
 assert(fed > 90.0, "the bottle's half filled to its setpoint: " .. fed)
 assert(starved < 10.0, "and the vent's half emptied into space: " .. starved)
 
 -- The bookkeeping half of the same fact: with nowhere left to send it,
 -- the canister has stopped spending. (Measured after the near half has
 -- filled, so what is left is the flat line and not the filling.)
-local settled = t.canister_pressure(1, 1)
+local settled = assert(t.canister_pressure(1, 1))
 t.run_seconds(10)
-local trickle = settled - t.canister_pressure(1, 1)
+local trickle = settled - assert(t.canister_pressure(1, 1))
 assert(trickle < 2.0, "a severed main draws nothing: " .. trickle .. " kPa")
 
 -- ---- and paints it back ----
@@ -209,16 +212,16 @@ t.run_ticks(2)
 assert(said(p, "You paint the pipe blue."), "the stripe comes out")
 t.run_seconds(10)
 
-local rejoined_west = t.pipe_pressure(2, 1)
-local rejoined_east = t.pipe_pressure(7, 1)
+local rejoined_west = assert(t.pipe_pressure(2, 1))
+local rejoined_east = assert(t.pipe_pressure(7, 1))
 assert(
     math.abs(rejoined_west - rejoined_east) < 0.01,
     "one line again: " .. rejoined_west .. " vs " .. rejoined_east
 )
 
-local resumed = t.canister_pressure(1, 1)
+local resumed = assert(t.canister_pressure(1, 1))
 t.run_seconds(10)
-local paying = resumed - t.canister_pressure(1, 1)
+local paying = resumed - assert(t.canister_pressure(1, 1))
 assert(paying > 100.0, "and the bottle is paying for the hole again: " .. paying)
 
 -- Two acts, two rows. The record can name who cut the main and who put

@@ -1,3 +1,5 @@
+local stock_parts = require("@lib/stock_parts")
+
 -- A network interface card: the stock part that gives a device its
 -- ADDRESS.
 --

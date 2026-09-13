@@ -1,3 +1,6 @@
+local radio = require("@lib/radio")
+local radio_relay = require("@lib/radio_relay")
+
 -- The transceiver's behaviors (machines/transceiver.luau): a sentence
 -- for whoever touches it, a lamp that follows its keys, and its three
 -- stages of the relay walk. WHO FINALLY HEARS is still the transmitting

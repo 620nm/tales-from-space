@@ -17,6 +17,14 @@
 -- `validate` already accepted, and no call below reads round-scoped
 -- state -- which stops being legal the moment `round.end` returns.
 
+export type Rules = {
+    shift_minutes: number,
+    grace_seconds: number,
+    warnings: {number},
+    announcer: string,
+    channel: string,
+}
+
 local shift = {}
 
 -- Everyone still watching the station, ghosts included
@@ -35,21 +43,21 @@ local MAX_MINUTES = 1440
 -- `MAX_ROUND_END_GRACE_SECS`).
 local MAX_GRACE = 120
 
-local function fail(mode, detail)
+local function fail(mode: string, detail: string): never
     error("gamemodes/" .. mode .. " rules.shift: " .. detail)
 end
 
-local function whole(value, low, high)
+local function whole(value: unknown, low: number, high: number): boolean
     return type(value) == "number" and value % 1 == 0 and value >= low and value <= high
 end
 
-local function nonempty(value)
+local function nonempty(value: unknown): boolean
     return type(value) == "string" and #value > 0
 end
 
 -- Checked where the mode file declares it, so a typo is a `--load-only`
 -- failure rather than a shift that quietly never ends.
-function shift.validate(mode, rules)
+function shift.validate(mode: string, rules: Rules): ()
     if type(rules) ~= "table" then
         fail(mode, "must be a table")
     end
@@ -74,7 +82,7 @@ function shift.validate(mode, rules)
         fail(mode, "warnings must be a dense list, with no gaps and no named keys")
     end
     local total = rules.shift_minutes * MINUTE
-    local seen = {}
+    local seen: {[number]: boolean} = {}
     for _, mark in ipairs(rules.warnings) do
         -- A mark is a whole minute of REMAINING time, so the crew hears
         -- a round number and the sentence needs no fractions.
@@ -94,7 +102,7 @@ function shift.validate(mode, rules)
     end
 end
 
-function shift.announce(rules, message)
+function shift.announce(rules: Rules, message: Message | string): ()
     sim.message.notify({
         audience = AUDIENCE,
         sender = rules.announcer,
@@ -108,7 +116,7 @@ end
 -- shift too: `remaining` goes negative there, matches no mark, and the
 -- second passes without a word. Asking to finish on EXACTLY one second
 -- is what keeps those seconds from asking again.
-function shift.on_second(rules, ev)
+function shift.on_second(rules: Rules, ev: ClockSecondPayload): ()
     local remaining = rules.shift_minutes * MINUTE - ev.elapsed_seconds
     if remaining == 0 then
         sim.round.finish({ grace_seconds = rules.grace_seconds })
@@ -132,7 +140,7 @@ end
 -- thing that happens. It is also the last moment round-scoped state is
 -- legal, which is why the shift keeps none: the engine marks the round
 -- over as soon as this returns.
-function shift.on_end(rules)
+function shift.on_end(rules: Rules): ()
     shift.announce(rules, sim.msg(OVER, {}))
 end
 

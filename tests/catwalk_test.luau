@@ -28,14 +28,14 @@ t.world([==[(
 
 local viewer = t.join()
 t.tick()
-assert(t.structure_at(0, 0).sprite == "lattice-4",
+assert(assert(t.structure_at(0, 0)).sprite == "lattice-4",
     "the mapped lattice joins the catwalk eastward")
-assert(t.structure_at(1, 0).sprite == "catwalk-4",
+assert(assert(t.structure_at(1, 0)).sprite == "catwalk-4",
     "the catwalk ignores lattice west and joins catwalk east")
-assert(t.structure_at(2, 0).sprite == "catwalk-8",
+assert(assert(t.structure_at(2, 0)).sprite == "catwalk-8",
     "the second catwalk joins the first westward")
 
-local lattice_look = t.examine(viewer, 0, 0, t.target_at(viewer, 0, 0, "lattice"))
+local lattice_look = assert(t.examine(viewer, 0, 0, t.target_at(viewer, 0, 0, "lattice")))
 assert(lattice_look.lines[1]
         == "A lightweight support lattice. These hold our station together.",
     "the lattice keeps tg's description")
@@ -67,19 +67,19 @@ t.messages(builder)
 
 t.click(builder, 2, 1)
 t.run_ticks(2)
-assert(t.structure_at(2, 1).id == "lattice", "one rod raises a lattice on Space")
+assert(assert(t.structure_at(2, 1)).id == "lattice", "one rod raises a lattice on Space")
 assert(has(t.messages(builder), "You construct a lattice."),
     "the lattice construction uses tg's message")
 
 t.click(builder, 2, 1, t.target_at(builder, 2, 1, "lattice"))
 t.run_ticks(2)
-assert(t.structure_at(2, 1).id == "catwalk", "a second rod replaces it with a catwalk")
+assert(assert(t.structure_at(2, 1)).id == "catwalk", "a second rod replaces it with a catwalk")
 assert(has(t.messages(builder), "You construct a catwalk."),
     "the catwalk construction uses tg's message")
 
 t.click(builder, 1, 2)
 t.run_ticks(2)
-assert(t.structure_at(1, 2).id == "lattice", "the cutter test has a bare lattice")
+assert(assert(t.structure_at(1, 2)).id == "lattice", "the cutter test has a bare lattice")
 
 t.drop(builder)
 t.run_ticks(2)
@@ -108,7 +108,7 @@ t.click(builder, 1, 2, t.target_at(builder, 1, 2, "rod"))
 t.run_ticks(2)
 t.click(builder, 1, 2)
 t.run_ticks(2)
-assert(t.structure_at(1, 2).id == "lattice", "one refunded rod rebuilds the lattice")
+assert(assert(t.structure_at(1, 2)).id == "lattice", "one refunded rod rebuilds the lattice")
 assert(t.hands(builder).held == nil, "the lattice refunded exactly one rod")
 
 t.click(builder, 2, 1, t.target_at(builder, 2, 1, "rod"))
@@ -117,7 +117,7 @@ t.click(builder, 2, 1)
 t.run_ticks(2)
 t.click(builder, 2, 1, t.target_at(builder, 2, 1, "lattice"))
 t.run_ticks(2)
-assert(t.structure_at(2, 1).id == "catwalk", "two refunded rods rebuild the catwalk")
+assert(assert(t.structure_at(2, 1)).id == "catwalk", "two refunded rods rebuild the catwalk")
 assert(t.hands(builder).held == nil, "the catwalk refunded exactly two rods")
 
 -- A floor tile consumes the support and turns its Space into plating.

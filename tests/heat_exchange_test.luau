@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Heat-exchanging pipe: the run that is SUPPOSED to leak heat.
 --
 -- Every other length on the station is a sealed tube. This one trades
@@ -41,22 +43,19 @@ local T20C = 293.15
 -- what space is.
 local TCMB = 2.7
 
-local function moles(kpa, m3)
+local function moles(kpa: number, m3: number)
     return kpa * 1000.0 * m3 / (8.314 * T20C)
 end
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function said(p, line)
+local function said(p: number, line: string)
     for _, m in ipairs(t.messages(p)) do
         if m == line then
             return true
@@ -65,12 +64,12 @@ local function said(p, line)
     return false
 end
 
-local function walk(p, dir)
+local function walk(p: number, dir: "east" | "west" | "north" | "south")
     t.move(p, dir)
     t.run_ticks(5)
 end
 
-local function net_moles(x, y, layer)
+local function net_moles(x: number, y: number, layer: number)
     local gas = t.pipe_gas(x, y, layer)
     assert(gas ~= nil, "there is a run under (" .. x .. ", " .. y .. ")")
     return (gas.n2 or 0.0) + (gas.o2 or 0.0)
@@ -108,7 +107,7 @@ t.tick()
 assert(t.pipe(3, 1) == DISTRO, "the last heat-exchange length is laid")
 assert(t.pipe(4, 1) == DISTRO, "and the first ordinary one is right beside it")
 
-local seam_kpa = t.pipe_pressure(1, 1)
+local seam_kpa = assert(t.pipe_pressure(1, 1))
 assert(seam_kpa > 90.0, "both runs open the shift charged: " .. seam_kpa)
 
 local exchange = net_moles(1, 1, DISTRO)
@@ -132,7 +131,7 @@ t.run_ticks(2)
 assert(t.hands(p).held == "pipe_painter", "painter in hand")
 walk(p, "west")
 walk(p, "west")
-local _ = t.messages(p)
+t.messages(p)
 t.click_subfloor(p, 3, 1, "pipe", DISTRO)
 t.run_ticks(4)
 assert(said(p, "That pipe has a colour of its own."), "the painter says why")
@@ -182,7 +181,7 @@ t.world([==[(
 local j = t.join()
 t.tick()
 
-assert(t.structure_at(3, 1).id == "he_junction", "the map stood a junction there")
+assert(assert(t.structure_at(3, 1)).id == "he_junction", "the map stood a junction there")
 
 -- AND IT TURNED ITSELF ROUND TO FACE THE RIGHT WAY. The map spells no
 -- direction, so the junction seats itself -- and geometry alone cannot
@@ -192,11 +191,11 @@ assert(t.structure_at(3, 1).id == "he_junction", "the map stood a junction there
 -- (junction.dm:30-33), that run is west, so it points west and wears
 -- the picture of a junction pointing west.
 assert(
-    t.structure_at(3, 1).sprite == "he_junction_w",
-    "it faces its heat-exchange side: " .. tostring(t.structure_at(3, 1).sprite)
+    assert(t.structure_at(3, 1)).sprite == "he_junction_w",
+    "it faces its heat-exchange side: " .. tostring(assert(t.structure_at(3, 1)).sprite)
 )
 
-local junction_kpa = t.pipe_pressure(1, 1)
+local junction_kpa = assert(t.pipe_pressure(1, 1))
 local FUSED_M3 = 5 * PIPE_M3 + 2 * ADAPTER_PORT_M3
 local joined = net_moles(1, 1, DISTRO)
 near(joined, moles(junction_kpa, FUSED_M3), 0.05, "both kinds are one body of gas")
@@ -248,8 +247,8 @@ t.world([==[(
 t.join()
 t.tick()
 
-assert(t.structure_at(3, 1).id == "he_junction", "a junction between two plain mains")
-local plain_kpa = t.pipe_pressure(1, 1)
+assert(assert(t.structure_at(3, 1)).id == "he_junction", "a junction between two plain mains")
+local plain_kpa = assert(t.pipe_pressure(1, 1))
 local west = net_moles(1, 1, DISTRO)
 local east = net_moles(6, 1, DISTRO)
 -- Whichever way it seated itself, exactly one end could bind: the one
@@ -297,35 +296,35 @@ t.world([==[(
     pipe_kind: [(1, 1, 4, "he_pipe"), (2, 1, 4, "he_pipe"), (3, 1, 4, "he_pipe")],
 )]==], 7)
 
-local h = t.join()
+t.join()
 t.tick()
 
-near(t.pipe_temperature(1, 1, DISTRO), T20C, 0.5, "the exchange run opens at room temperature")
-near(t.pipe_temperature(1, 1, L2), T20C, 0.5, "and so does the ordinary one over it")
-near(t.room_temperature(2, 1), T20C, 0.5, "as does the air")
+near(assert(t.pipe_temperature(1, 1, DISTRO)), T20C, 0.5, "the exchange run opens at room temperature")
+near(assert(t.pipe_temperature(1, 1, L2)), T20C, 0.5, "and so does the ordinary one over it")
+near(assert(t.room_temperature(2, 1)), T20C, 0.5, "as does the air")
 
 -- Enough to matter, and far outside any deadband a kind could sensibly
 -- declare, but nowhere near the 673 K where superconduction joins in.
 t.heat_pipe(1, 1, 12000.0, DISTRO)
 t.heat_pipe(1, 1, 12000.0, L2)
 t.tick()
-local hot_he = t.pipe_temperature(1, 1, DISTRO)
-local hot_plain = t.pipe_temperature(1, 1, L2)
+local hot_he = assert(t.pipe_temperature(1, 1, DISTRO))
+local hot_plain = assert(t.pipe_temperature(1, 1, L2))
 assert(hot_he > T20C + 50.0, "the exchange run is hot: " .. hot_he)
 near(hot_plain, hot_he, 1.0, "and the ordinary run is exactly as hot")
 
-local room_0 = t.room_temperature(2, 1)
-local pipe_0 = t.pipe_energy(1, 1, DISTRO)
+local room_0 = assert(t.room_temperature(2, 1))
+local pipe_0 = assert(t.pipe_energy(1, 1, DISTRO))
 
 t.run_seconds(30)
 
-local settled_he = t.pipe_temperature(1, 1, DISTRO)
-local settled_plain = t.pipe_temperature(1, 1, L2)
+local settled_he = assert(t.pipe_temperature(1, 1, DISTRO))
+local settled_plain = assert(t.pipe_temperature(1, 1, L2))
 assert(settled_he < hot_he - 20.0, "the exchange run gave heat up: " .. settled_he)
 near(settled_plain, hot_plain, 1.0, "the ordinary run gave up none of its own")
 assert(
-    t.room_temperature(2, 1) > room_0 + 0.5,
-    "and the room felt it: " .. room_0 .. " -> " .. t.room_temperature(2, 1)
+    assert(t.room_temperature(2, 1)) > room_0 + 0.5,
+    "and the room felt it: " .. room_0 .. " -> " .. assert(t.room_temperature(2, 1))
 )
 
 -- What LEFT the run is the reading a spec can hold honestly: the deck
@@ -335,9 +334,9 @@ assert(
 -- are exactly the joules the room takes is pinned in Rust, against the
 -- matter world's audit (`sim/tests/conduction.rs`).
 assert(
-    t.pipe_energy(1, 1, DISTRO) < pipe_0,
+    assert(t.pipe_energy(1, 1, DISTRO)) < pipe_0,
     "the run is poorer by what it gave: " .. pipe_0 .. " J -> "
-        .. t.pipe_energy(1, 1, DISTRO) .. " J"
+        .. assert(t.pipe_energy(1, 1, DISTRO)) .. " J"
 )
 
 -- ---- the deadband ----
@@ -347,13 +346,13 @@ assert(
 -- is the pack's own tuning and belongs to `content/lib/thermal.luau`,
 -- so this asks the engine what was declared rather than spelling a
 -- number that the tuning would then have to keep in step.
-local BAND = t.pipe_law("he_pipe").min_delta_k
+local BAND = assert(t.pipe_law("he_pipe")).min_delta_k
 assert(BAND ~= nil and BAND > 0.0, "the exchange pipe declares a band: " .. tostring(BAND))
 
 local shed_fast = hot_he - settled_he
 t.run_seconds(60)
-local parked_pipe = t.pipe_temperature(1, 1, DISTRO)
-local parked_room = t.room_temperature(2, 1)
+local parked_pipe = assert(t.pipe_temperature(1, 1, DISTRO))
+local parked_room = assert(t.room_temperature(2, 1))
 assert(
     math.abs(parked_pipe - parked_room) <= BAND,
     "the two close to within the band: " .. parked_pipe .. " vs " .. parked_room
@@ -364,7 +363,7 @@ assert(
 -- fractions -- but the run tracks it at a crawl instead of chasing the
 -- air to equality, which is the whole of what a deadband buys.
 t.run_seconds(120)
-local drift = math.abs(t.pipe_temperature(1, 1, DISTRO) - parked_pipe)
+local drift = math.abs(assert(t.pipe_temperature(1, 1, DISTRO)) - parked_pipe)
 assert(
     drift < shed_fast / 10.0,
     "the run has all but stopped: " .. drift .. " K in 120 s against "
@@ -375,7 +374,7 @@ assert(
 -- the warmer of the two, by most of a band, however narrow the band is.
 -- A run that crossed its room would be a deadband that had stopped
 -- holding, which is the failure this catches whatever the number is.
-local gap = t.pipe_temperature(1, 1, DISTRO) - t.room_temperature(2, 1)
+local gap = assert(t.pipe_temperature(1, 1, DISTRO)) - assert(t.room_temperature(2, 1))
 assert(
     gap >= BAND / 2.0,
     "and the two never meet: " .. gap .. " K still between them, band " .. BAND
@@ -415,7 +414,7 @@ t.world([==[(
     ],
 )]==], 7)
 
-local v = t.join()
+t.join()
 t.tick()
 
 assert(t.pipe(1, 3) == DISTRO, "a length runs out over the hull")
@@ -423,15 +422,15 @@ t.heat_pipe(1, 1, 12000.0, DISTRO)
 t.heat_pipe(1, 3, 12000.0, DISTRO)
 t.tick()
 
-local inside_0 = t.pipe_temperature(1, 1, DISTRO)
-local outside_0 = t.pipe_temperature(1, 3, DISTRO)
+local inside_0 = assert(t.pipe_temperature(1, 1, DISTRO))
+local outside_0 = assert(t.pipe_temperature(1, 3, DISTRO))
 near(outside_0, inside_0, 1.0, "both runs start equally hot")
 assert(outside_0 > T20C + 50.0, "and hot enough to clear the band")
 
 t.run_seconds(30)
 
-local inside_1 = t.pipe_temperature(1, 1, DISTRO)
-local outside_1 = t.pipe_temperature(1, 3, DISTRO)
+local inside_1 = assert(t.pipe_temperature(1, 1, DISTRO))
+local outside_1 = assert(t.pipe_temperature(1, 3, DISTRO))
 assert(outside_1 < outside_0 - 20.0, "the exposed run sheds: " .. outside_1)
 assert(
     outside_1 < inside_1 - 5.0,
@@ -447,11 +446,11 @@ assert(
     "past room temperature already: " .. outside_1
 )
 t.run_seconds(240)
-local floored = t.pipe_temperature(1, 3, DISTRO)
+local floored = assert(t.pipe_temperature(1, 3, DISTRO))
 assert(floored < TCMB + 20.0, "it comes to rest just above TCMB: " .. floored)
 assert(floored >= TCMB, "and never below it")
 t.run_seconds(240)
-near(t.pipe_temperature(1, 3, DISTRO), floored, 0.001, "and stays there")
+near(assert(t.pipe_temperature(1, 3, DISTRO)), floored, 0.001, "and stays there")
 
 -- ---------------------------------------------------------------
 -- THE SHELF AND THE DISPENSER OFFER IT.
@@ -493,9 +492,11 @@ t.tick()
 -- ---- the machine on the wall ----
 t.click(e, 2, 1, t.target_at(e, 2, 1))
 t.tick()
-local shelf = {}
-for _, rec in ipairs(t.ui(e).products) do
-    shelf[rec.payload.product] = rec
+local shelf: { [string]: ui_controls.Record } = {}
+for _, rec in ipairs(ui_controls.rows(ui_controls.state(e).products)) do
+    local product = ui_controls.record(rec.payload).product
+    assert(type(product) == "string", "the shelf row names a product")
+    shelf[product] = rec
 end
 assert(shelf.he_pipe, "the dispenser stocks a length of heat-exchanging pipe")
 assert(shelf.he_pipe.category == "Heat Exchange", "under tg's own heading")
@@ -516,8 +517,8 @@ assert(t.hands(e).held == "rpd", "the RPD is in hand")
 t.use_self(e)
 t.tick()
 
-local offered = {}
-for _, tog in ipairs(t.ui(e).toggles) do
+local offered: { [string]: unknown } = {}
+for _, tog in ipairs(ui_controls.rows(ui_controls.state(e).toggles)) do
     if tog.field == RECIPE and tog.option ~= nil and tog.group == "Heat Exchange" then
         offered[word(tog.label)] = tog.icon
     end

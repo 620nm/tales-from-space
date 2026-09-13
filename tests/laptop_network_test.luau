@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- A network endpoint alone does not provide a laptop programming interface.
 t.world([==[(
     name: "laptop network bench",
@@ -33,10 +35,11 @@ assert(#keyboards() == 0, "a closed laptop cannot type")
 t.use_self(p)
 t.run_ticks(2)
 -- Powered desktops compose their script view with the native file workspace.
-local function desktop()
+local function desktop(): ui_controls.Record?
     local state = t.ui(p)
     if state == nil then return nil end
-    local data = if state.script then state.script.data else state.data
+    local fields = ui_controls.record(state)
+    local data = ui_controls.record(if fields.script then ui_controls.record(fields.script).data else fields.data)
     return if data ~= nil and data.kind == "desktop" then data else nil
 end
 assert(desktop() == nil, "the first self-use only raises the lid")
@@ -44,7 +47,7 @@ t.use_self(p)
 t.run_ticks(2)
 t.use_self(p)
 t.run_ticks(2)
-assert(desktop() ~= nil and desktop().powered,
+assert(assert(desktop()).powered,
     "lid, power and screen are three separate steps on the held laptop")
 t.sounds(p)
 t.click(p, 3, 2, near)
@@ -63,7 +66,7 @@ t.ui_close(p, "programming")
 t.run_ticks(2)
 ui_controls.press(p, "/power")
 t.run_ticks(2)
-assert(t.ui(p) and t.ui(p).data and not t.ui(p).data.powered,
+assert(not ui_controls.record(ui_controls.state(p).data).powered,
     "desktop power switches off the held laptop")
 t.sounds(p)
 t.click(p, 3, 2, near)

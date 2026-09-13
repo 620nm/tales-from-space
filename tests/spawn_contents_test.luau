@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- A hook that mints a vessel says what is in it.
 --
 -- `sim.entity.spawn`'s `initial.contents` is the fill grammar spelled at
@@ -59,7 +61,7 @@ end
 -- a thing the machine did not recognise as a bottle would have been an
 -- ordinary swing and said nothing at all.
 -- ---------------------------------------------------------------
-local bottle = t.target_at(p, 2, 2, "bottle.iodine")
+local bottle = assert(t.target_at(p, 2, 2, "bottle.iodine"))
 assert(bottle ~= nil, "the map placed the labelled bottle")
 t.click(p, 2, 2, bottle) -- pick it up
 t.run_ticks(2)
@@ -82,7 +84,7 @@ assert(t.hands(p).held == "bottle.iodine", "and it is still in your hand")
 -- ---------------------------------------------------------------
 t.click(p, 3, 2) -- the deck beside you: a spill
 t.run_ticks(4)
-assert(t.vessel(bottle).moles < 1e-6, "the bottle is an empty now")
+assert(assert(t.vessel(bottle)).moles < 1e-6, "the bottle is an empty now")
 
 local _ = t.messages(p)
 t.click(p, 2, 1, t.target_at(p, 2, 1))
@@ -90,7 +92,7 @@ t.run_ticks(2)
 assert(said("cold bottle of water"), "the machine served one")
 assert(t.hands(p).held == nil, "and swallowed the empty you handed over")
 
-local served = t.target_at(p, 2, 1, "bottle")
+local served = assert(t.target_at(p, 2, 1, "bottle"))
 assert(served ~= nil, "a plain bottle is standing at the machine's feet")
 local reading = t.vessel(served)
 assert(reading ~= nil, "and it is a vessel")
@@ -112,8 +114,9 @@ assert(reading.temp_k > 270.0,
 -- ---------------------------------------------------------------
 local mints = t.ledger_rows("minted")
 assert(#mints == 1, "one charge was named, one row: " .. #mints)
-assert(mints[1].substance == "water", "and it names what appeared: " .. mints[1].substance)
-assert(math.abs(mints[1].moles - 2.5) < 1e-6,
-    "and how much: " .. mints[1].moles)
-assert(mints[1].actor.kind == "script", "the machine's own file did it")
-assert(mints[1].actor.triggered_by, "at the request of the crewman standing there")
+assert(mints[1].substance == "water", "and it names what appeared: " .. tostring(mints[1].substance))
+assert(math.abs(ui_controls.number(mints[1].moles) - 2.5) < 1e-6,
+    "and how much: " .. ui_controls.number(mints[1].moles))
+local actor = mints[1].actor
+assert(actor.kind == "script", "the machine's own file did it")
+assert(actor.triggered_by, "at the request of the crewman standing there")

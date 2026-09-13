@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- One transfer, three far ends: a beaker poured into another vessel,
 -- drunk from, and tipped onto the deck are one primitive underneath
 -- (`Sim::move_matter`, sim/owner/ops.rs), differing only in which owner
@@ -40,8 +42,8 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local full = t.target_at(p, 1, 1, "beaker.libital")
-local empty = t.target_at(p, 3, 1, "beaker")
+local full = assert(t.target_at(p, 1, 1, "beaker.libital"))
+local empty = assert(t.target_at(p, 3, 1, "beaker"))
 
 local function total(handle)
     local contents = t.contents(handle)
@@ -53,7 +55,7 @@ local function total(handle)
     return n
 end
 
-local function close(got, want, what)
+local function close(got: number, want: number, what: string): ()
     assert(math.abs(got - want) < 1e-9, ("%s: wanted %g, got %g"):format(what, want, got))
 end
 
@@ -71,7 +73,7 @@ close(total(full), 0.10, "and the source is down by exactly that")
 
 local poured = t.ledger_rows("poured")
 assert(#poured == 1, ("one pour on the record, got %d"):format(#poured))
-close(poured[1].moles, 0.25, "the row names what moved")
+close(ui_controls.number(poured[1].moles), 0.25, "the row names what moved")
 assert(poured[1].actor.kind == "script", "attributed to the file that asked")
 
 -- ---- owner: a body's blood --------------------------------------------
@@ -83,13 +85,13 @@ t.tick()
 close(total(full), 0.05, "a swig takes 0.05 mol")
 local drank = t.ledger_rows("drank")
 assert(#drank == 1, ("one swig on the record, got %d"):format(#drank))
-close(drank[1].moles, 0.05, "and the row names the mouthful")
+close(ui_controls.number(drank[1].moles), 0.05, "and the row names the mouthful")
 
 -- ---- owner: the room over a tile --------------------------------------
 -- The far end nothing but a spill could name before. `sim.cell(x, y)` is
 -- a body of matter like any other, so "tip it out" is the one transfer
 -- with a tile on the end of it.
-local function vapour(key)
+local function vapour(key: string): number
     local gases = t.room_gas(2, 2)
     return (gases and gases[key]) or 0
 end
@@ -101,8 +103,9 @@ close(total(full), 0, "the beaker is empty")
 
 local spilled = t.ledger_rows("spilled")
 assert(#spilled == 1, ("one spill on the record, got %d"):format(#spilled))
-close(spilled[1].moles, 0.05, "the row names the remainder")
-assert(spilled[1].at[1] == 2 and spilled[1].at[2] == 2, "and the tile it landed on")
+close(ui_controls.number(spilled[1].moles), 0.05, "the row names the remainder")
+local spill_tile = ui_controls.array(spilled[1].at)
+assert(spill_tile[1] == 2 and spill_tile[2] == 2, "and the tile it landed on")
 
 -- Nothing gasified on the way down: what a transfer deposits in a cell
 -- arrives in the phase it left in.

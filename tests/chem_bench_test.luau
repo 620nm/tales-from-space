@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The bench, end to end: press two buttons into a BOTTLE, watch salt
 -- appear, pour it into a beaker, add water and watch brine be exactly
 -- what brine is -- salt in water, in one glass, with no third name.
@@ -36,19 +38,19 @@ local NOZZLE_K = 300.0
 local CHLORINE = 0.1
 local SODIUM = 0.25
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function amount(handle, key)
-    local contents = t.contents(handle)
+local function amount(handle, key: string)
+    local contents = assert(t.contents(handle))
     assert(contents ~= nil, "that is a vessel")
     return contents[key] or 0
 end
 
 local function total(handle)
     local n = 0
-    for _, moles in pairs(t.contents(handle)) do
+    for _, moles in pairs(assert(t.contents(handle))) do
         n = n + moles
     end
     return n
@@ -83,8 +85,8 @@ local p = t.join()
 t.tick()
 
 local machine = t.target_at(p, 2, 2)
-local jar = t.target_at(p, 1, 2, "bottle")
-local b = t.target_at(p, 3, 2, "beaker")
+local jar = assert(t.target_at(p, 1, 2, "bottle"))
+local b = assert(t.target_at(p, 3, 2, "beaker"))
 
 local function press(key)
     ui_controls.toggle(p, "dispense", key)
@@ -140,7 +142,7 @@ dial_to(CHLORINE)
 press("chlorine")
 t.run_seconds(20)
 near(amount(jar, "chlorine"), CHLORINE, 1e-9, "the whole press landed, because there is a lid")
-local charged = t.vessel(jar)
+local charged = assert(t.vessel(jar))
 assert((charged.contents.chlorine.liquid or 0) > 0.0, "most of it standing as liquid")
 assert(charged.temp_k > NOZZLE_K + 80.0,
     "and the latent heat is where the temperature went: " .. charged.temp_k)
@@ -152,7 +154,7 @@ assert(charged.temp_k > NOZZLE_K + 80.0,
 eject()
 t.drop(p)
 t.run_seconds(600)
-local cooled = t.vessel(jar)
+local cooled = assert(t.vessel(jar))
 near(cooled.temp_k, 303.0, 5.0, "the deck took the heat back: " .. cooled.temp_k)
 assert((cooled.contents.chlorine.liquid or 0) > 0.8 * CHLORINE,
     "and most of it is liquid now: " .. tostring(cooled.contents.chlorine.liquid))
@@ -202,7 +204,7 @@ near(amount(jar, "sodium"), SODIUM, 1e-9, "a press of sodium")
 -- reached its own END, not that it converted everything.
 t.run_seconds(300)
 local spent = CHLORINE - amount(jar, "chlorine")
-local done = t.vessel(jar)
+local done = assert(t.vessel(jar))
 
 -- The stoichiometry, exact and whatever the residue turns out to be:
 -- two of salt for every one of chlorine that was actually spent.
@@ -248,7 +250,7 @@ t.click(p, 3, 2, assert(t.target_at(p, 3, 2, b)))
 t.tick()
 near(amount(b, "salt"), settled, 1e-9, "the salt went across")
 near(amount(b, "sodium"), SODIUM - settled, 1e-9, "and so did the leftover sodium")
-near(t.holder_k(b), warmth, 1.0, "the heat travelled with the matter")
+near(assert(t.holder_k(b)), assert(warmth), 1.0, "the heat travelled with the matter")
 
 -- ---------------------------------------------------------------
 -- FOUR: AND SALT IN WATER IS SALT IN WATER.
@@ -287,7 +289,7 @@ near(amount(b, "salt"), salt_before, 1e-9, "the salt is still salt")
 -- of a mole.
 near(amount(b, "water"), 0.75, 5e-3, "and the water is still water")
 local kinds = 0
-for _ in pairs(t.contents(b)) do
+for _ in pairs(assert(t.contents(b))) do
     kinds = kinds + 1
 end
 assert(kinds == 3, "salt, the spare sodium and water -- and no fourth id for the brine: " .. kinds)

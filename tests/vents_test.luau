@@ -33,19 +33,20 @@ local R, T20C = 8.314, 293.15
 -- A canister is tg's 2000 L.
 local CAN_M3 = 2.0
 
-local function near(a, b, slack, what)
+local function near(a: number?, b: number?, slack: number, what: string)
+    assert(a ~= nil and b ~= nil, what .. ": both readings are present")
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
 -- Moles in a volume at a pressure and room temperature -- the ideal gas
 -- law, so a canister's GAUGE can be weighed against the mole books the
 -- run and the room are read in.
-local function moles(kpa, m3)
+local function moles(kpa: number, m3: number)
     return kpa * 1000.0 * m3 / (R * T20C)
 end
 
 -- Everything standing in the run under a tile, in moles.
-local function pipe_moles(x, y)
+local function pipe_moles(x: number, y: number)
     local n = 0.0
     for _, amount in pairs(t.pipe_gas(x, y) or {}) do
         n = n + amount
@@ -57,7 +58,7 @@ end
 -- cell per TILE and a vent only ever works the tile it stands on, so
 -- anything asserted about a room filling, emptying or holding still is
 -- asserted on the whole room's conserved quantity.
-local function room_moles(tiles)
+local function room_moles(tiles: {{number}})
     local n = 0.0
     for _, tile in ipairs(tiles) do
         for _, amount in pairs(t.room_gas(tile[1], tile[2]) or {}) do
@@ -72,11 +73,11 @@ end
 -- violent happens to a room -- gas crosses tile to tile at its own pace
 -- -- so a room that is meant to be holding STILL is read this way, on
 -- the conserved quantity, and never off one tile.
-local function room_kpa(tiles)
+local function room_kpa(tiles: {{number}})
     return room_moles(tiles) * R * T20C / (#tiles * 1000.0)
 end
 
-local function row(x0, x1, y)
+local function row(x0: number, x1: number, y: number)
     local tiles = {}
     for x = x0, x1 do
         tiles[#tiles + 1] = { x, y }
@@ -154,18 +155,18 @@ t.world(SUPPLY_MAP, 7, "free_build")
 t.set_environment({ sink_k = 293.15, insolation = 0 })
 t.tick()
 
-local apc = t.apc_at(7, 1)
+local apc = assert(t.apc_at(7, 1))
 assert(apc ~= nil, "the map wired an APC")
 assert(apc.equipment == true, "and the generator behind it is feeding the equipment channel")
-assert(t.canister_pressure(4, 1) > 4000.0, "a fresh canister is at 45 atm")
-assert(t.room_pressure(2, 1) > 90.0, "and the corridor opens breathable off the regulated feed")
+assert(assert(t.canister_pressure(4, 1)) > 4000.0, "a fresh canister is at 45 atm")
+assert(assert(t.room_pressure(2, 1)) > 90.0, "and the corridor opens breathable off the regulated feed")
 
 -- Tear the deck open beside the vent. There is no breach STATE anywhere
 -- (CLAUDE.md): a hull breach is a floor that became space, so that is
 -- literally what this is, through the one geometry seam.
 assert(t.set_turf(1, 1, "space"), "the deck beside the vent opens")
 t.run_seconds(20)
-local emptied = t.room_pressure(2, 1)
+local emptied = assert(t.room_pressure(2, 1))
 assert(
     emptied < SUPPLIES_UNDER,
     "the corridor blew down past the vent's release line: " .. emptied .. " kPa"
@@ -178,26 +179,26 @@ t.tick()
 local peak = 0.0
 for _ = 1, 150 do
     t.run_seconds(1)
-    peak = math.max(peak, t.room_pressure(2, 1))
+    peak = math.max(peak, assert(t.room_pressure(2, 1)))
 end
 assert(
     peak <= ONE_ATM + 0.5,
     "the fan never once blew its own tile past one atmosphere: " .. peak .. " kPa"
 )
 assert(
-    t.room_pressure(5, 1) > SUPPLIES_UNDER,
-    "and the corridor is back inside the band: " .. t.room_pressure(5, 1) .. " kPa"
+    assert(t.room_pressure(5, 1)) > SUPPLIES_UNDER,
+    "and the corridor is back inside the band: " .. assert(t.room_pressure(5, 1)) .. " kPa"
 )
 
 -- ...and it STAYS stopped, which is the half of "arrest" a single
 -- reading cannot show. A settled room is a room the vent has no demand
 -- from, so the canister behind it stops spending -- exactly the
 -- assertion canister_test.luau opens with, said the other way round.
-local settled_room = t.room_pressure(5, 1)
-local settled_can = t.canister_pressure(4, 1)
+local settled_room = assert(t.room_pressure(5, 1))
+local settled_can = assert(t.canister_pressure(4, 1))
 t.run_seconds(60)
-near(t.room_pressure(5, 1), settled_room, 0.5, "a minute later the room has not moved")
-near(t.canister_pressure(4, 1), settled_can, 1.0, "and a settled room costs the bottle nothing")
+near(assert(t.room_pressure(5, 1)), settled_room, 0.5, "a minute later the room has not moved")
+near(assert(t.canister_pressure(4, 1)), settled_can, 1.0, "and a settled room costs the bottle nothing")
 
 -- ---------------------------------------------------------------
 -- WITH THE BREAKER OUT, IT IS A GRILLE.
@@ -216,12 +217,12 @@ near(t.canister_pressure(4, 1), settled_can, 1.0, "and a settled room costs the 
 -- ---------------------------------------------------------------
 t.outage()
 t.run_seconds(3)
-local dark = t.apc_at(7, 1)
+local dark = assert(t.apc_at(7, 1))
 assert(dark.equipment == false, "the breaker took the equipment channel down")
 assert(dark.alarmed == true, "and the APC is calling it")
 
 local dark_net = pipe_moles(3, 1)
-local dark_can = t.canister_pressure(4, 1)
+local dark_can = assert(t.canister_pressure(4, 1))
 assert(t.set_turf(1, 1, "space"), "the deck opens again")
 t.run_seconds(45)
 assert(t.set_turf(1, 1, "plating"), "and is sealed again")
@@ -234,7 +235,7 @@ t.run_seconds(60)
 near(room_kpa(CORRIDOR), sealed, 0.001, "a dead vent gives the room nothing back")
 near(pipe_moles(3, 1), dark_net, 0.001, "and takes not one mole out of the run")
 near(
-    t.canister_pressure(4, 1),
+    assert(t.canister_pressure(4, 1)),
     dark_can,
     0.5,
     "so the bottle behind it is never asked for anything either"
@@ -278,7 +279,7 @@ t.set_environment({ sink_k = 293.15, insolation = 0 }) -- inert sky, as above
 t.tick()
 
 local ROOM = row(1, 7, 1)
-assert(t.apc_at(6, 1).equipment == true, "this bench is wired too")
+assert(assert(t.apc_at(6, 1)).equipment == true, "this bench is wired too")
 
 -- A room already inside the band is a room the vent has nothing to say
 -- to, in EITHER direction. The negative comes first because it is the
@@ -301,30 +302,30 @@ t.tick()
 local fouled_room = room_moles(ROOM)
 near(fouled_room, idle_room + 210.0, 0.001, "two hundred and ten moles went in")
 assert(
-    t.room_pressure(1, 1) > SIPHONS_OVER,
-    "which puts the vent's own tile over its siphon line: " .. t.room_pressure(1, 1) .. " kPa"
+    assert(t.room_pressure(1, 1)) > SIPHONS_OVER,
+    "which puts the vent's own tile over its siphon line: " .. assert(t.room_pressure(1, 1)) .. " kPa"
 )
-local fouled_far = t.room_pressure(7, 1)
+local fouled_far = assert(t.room_pressure(7, 1))
 local books = fouled_room + pipe_moles(2, 1)
 
 t.run_seconds(120)
 
 assert(
-    t.room_pressure(1, 1) <= SIPHONS_OVER + 0.05,
+    assert(t.room_pressure(1, 1)) <= SIPHONS_OVER + 0.05,
     "the tile the fan stands on is back inside its dead band: "
-        .. t.room_pressure(1, 1) .. " kPa, the line being " .. SIPHONS_OVER
+        .. assert(t.room_pressure(1, 1)) .. " kPa, the line being " .. SIPHONS_OVER
 )
 assert(
-    t.room_pressure(1, 1) > ONE_ATM,
+    assert(t.room_pressure(1, 1)) > ONE_ATM,
     "and it stopped THERE rather than emptying the room -- a vent has a"
         .. " floor as well as a ceiling, which is the whole difference"
-        .. " between it and a scrubber set to siphon: " .. t.room_pressure(1, 1)
+        .. " between it and a scrubber set to siphon: " .. assert(t.room_pressure(1, 1))
 )
 assert(
-    t.room_pressure(7, 1) < fouled_far - 40.0,
+    assert(t.room_pressure(7, 1)) < fouled_far - 40.0,
     "the far end of the corridor came down with it, at the pace gas"
         .. " crosses tiles rather than the pace the fan works: "
-        .. fouled_far .. " -> " .. t.room_pressure(7, 1) .. " kPa"
+        .. fouled_far .. " -> " .. assert(t.room_pressure(7, 1)) .. " kPa"
 )
 assert(
     pipe_moles(2, 1) > idle_net + 5.0,
@@ -385,9 +386,9 @@ local BAY = row(1, 7, 1)
 -- breathable. An unpowered bay off a fat bottle is a pressure chamber;
 -- a breathable one needs the powered vent's setpoint, which is the
 -- other half of this file.
-assert(t.pipe_pressure(3, 1) > 90.0, "the bottle charged the run through its socket")
+assert(assert(t.pipe_pressure(3, 1)) > 90.0, "the bottle charged the run through its socket")
 t.run_seconds(20)
-local settled_bay = t.room_pressure(2, 1)
+local settled_bay = assert(t.room_pressure(2, 1))
 assert(settled_bay > 300.0, "the bay runs far past an atmosphere: " .. settled_bay)
 
 -- Open the deck beside the vent. There is no valve anywhere in this
@@ -399,17 +400,17 @@ assert(settled_bay > 300.0, "the bay runs far past an atmosphere: " .. settled_b
 -- line now, so a breach drinks the whole reserve at line speed rather
 -- than at a valve's metered trickle -- leave it open half a minute and
 -- there is nothing left to refill the bay WITH.
-local before_hole = t.canister_pressure(5, 1)
+local before_hole = assert(t.canister_pressure(5, 1))
 assert(t.set_turf(1, 1, "space"), "the deck opens")
 t.run_seconds(10)
 assert(
-    t.room_pressure(2, 1) < settled_bay * 0.5,
-    "the bay blew down: " .. settled_bay .. " -> " .. t.room_pressure(2, 1)
+    assert(t.room_pressure(2, 1)) < settled_bay * 0.5,
+    "the bay blew down: " .. settled_bay .. " -> " .. assert(t.room_pressure(2, 1))
 )
 assert(
-    t.canister_pressure(5, 1) < before_hole - 50.0,
+    assert(t.canister_pressure(5, 1)) < before_hole - 50.0,
     "and the bottle paid for every second of it: "
-        .. before_hole .. " -> " .. t.canister_pressure(5, 1) .. " kPa"
+        .. before_hole .. " -> " .. assert(t.canister_pressure(5, 1)) .. " kPa"
 )
 assert(t.set_turf(1, 1, "plating"), "and is sealed again")
 t.tick()
@@ -424,22 +425,22 @@ t.tick()
 -- world while it does.
 local bay_0 = room_moles(BAY)
 local net_0 = pipe_moles(3, 1)
-local can_0 = moles(t.canister_pressure(5, 1), CAN_M3)
+local can_0 = moles(assert(t.canister_pressure(5, 1)), CAN_M3)
 t.run_seconds(120)
 local bay_1 = room_moles(BAY)
 local net_1 = pipe_moles(3, 1)
-local can_1 = moles(t.canister_pressure(5, 1), CAN_M3)
+local can_1 = moles(assert(t.canister_pressure(5, 1)), CAN_M3)
 
 near(
-    t.pipe_pressure(3, 1),
-    t.room_pressure(2, 1),
+    assert(t.pipe_pressure(3, 1)),
+    assert(t.room_pressure(2, 1)),
     1.0,
     "run and bay came level -- at one temperature, equal pressure IS"
         .. " equal density, which is the whole of `internal.equalize`"
 )
 near(
-    t.canister_pressure(5, 1),
-    t.room_pressure(2, 1),
+    assert(t.canister_pressure(5, 1)),
+    assert(t.room_pressure(2, 1)),
     5.0,
     "and the bottle came level with both: it is one body with its line"
 )
@@ -458,7 +459,7 @@ near(
 -- out). The three books are closed, so the sum is exact.
 local base_bay = room_moles(BAY)
 local base_net = pipe_moles(3, 1)
-local base_can = t.canister_pressure(5, 1)
+local base_can = assert(t.canister_pressure(5, 1))
 local base_held = base_bay + base_net + moles(base_can, CAN_M3)
 for x = 1, 7 do
     assert(t.foul_room(x, 1, "n2", 30.0), "gas goes into every tile of the bay")
@@ -476,19 +477,19 @@ assert(
     "and the bay is lighter than what was put in it: " .. room_moles(BAY) .. " mol"
 )
 assert(
-    t.canister_pressure(5, 1) > base_can + 0.5,
+    assert(t.canister_pressure(5, 1)) > base_can + 0.5,
     "the bottle took its share of what was pushed back: "
-        .. base_can .. " -> " .. t.canister_pressure(5, 1) .. " kPa"
+        .. base_can .. " -> " .. assert(t.canister_pressure(5, 1)) .. " kPa"
 )
 near(
-    room_moles(BAY) + pipe_moles(3, 1) + moles(t.canister_pressure(5, 1), CAN_M3),
+    room_moles(BAY) + pipe_moles(3, 1) + moles(assert(t.canister_pressure(5, 1)), CAN_M3),
     base_held + 210.0,
     0.001,
     "and the books balance to the mole across all three holders"
 )
 near(
-    t.pipe_pressure(3, 1),
-    t.room_pressure(2, 1),
+    assert(t.pipe_pressure(3, 1)),
+    assert(t.room_pressure(2, 1)),
     1.0,
     "level again, from the other side"
 )

@@ -47,7 +47,7 @@ if sim ~= nil then
     -- Everything that is actually IN a vessel, condensed phases only:
     -- what a pill can carry is a liquid or a powder, and a vapour over
     -- it belongs to the beaker.
-    local function condensed(obj)
+    local function condensed(obj: Handle): number?
         local read = sim.matter_read(obj)
         if read == nil then
             return nil
@@ -61,7 +61,7 @@ if sim ~= nil then
 
     -- The one blank on the tray, or nil. A pill that already holds
     -- something is somebody's dose and is never topped up.
-    local function blank_at(tile)
+    local function blank_at(tile: TileAddress): Handle?
         for _, pill in ipairs(sim.query.range(tile, 0, { prototype = "pill" })) do
             local read = sim.matter_read(pill)
             if read ~= nil and read.moles < 1e-9 then

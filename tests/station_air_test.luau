@@ -20,11 +20,11 @@ local L2 = 2 -- scrubbers
 local L3 = 4 -- the department's process line
 local L4 = 8 -- supply
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function room_of(x, y, which)
+local function room_of(x: number, y: number, which: string)
     local held = t.room_gas(x, y)
     return held and held[which] or 0.0
 end
@@ -50,12 +50,12 @@ t.tick()
 -- test that only looks at tick zero.
 -- ---------------------------------------------------------------
 local COMMONS = { 19, 15 }
-local opening = t.room_pressure(COMMONS[1], COMMONS[2])
+local opening = assert(t.room_pressure(COMMONS[1], COMMONS[2]))
 assert(opening > 90.0 and opening < 115.0, "the Commons opens breathable: " .. opening)
 assert(room_of(COMMONS[1], COMMONS[2], "o2") > 0.0, "and there is oxygen in it")
 
 t.run_seconds(180)
-local held = t.room_pressure(COMMONS[1], COMMONS[2])
+local held = assert(t.room_pressure(COMMONS[1], COMMONS[2]))
 assert(
     held > 90.0 and held < 115.0,
     "and three minutes later it is still breathable: " .. opening .. " -> " .. held
@@ -158,12 +158,12 @@ walk("south", 10)   -- pins on the south hull, y = 29
 local px, py = t.pos(p)
 assert(px == 14 and py == 29, "standing at the wheel, at " .. px .. "," .. py)
 
-assert(t.structure_at(14, 28).state == "open", "still open on the way in")
+assert(assert(t.structure_at(14, 28)).state == "open", "still open on the way in")
 t.click(p, 14, 28, t.target_at(p, 14, 28, "manual_valve"))
 t.run_seconds(3)
 assert(
-    t.structure_at(14, 28).state == "shut",
-    "an empty hand shuts it: " .. tostring(t.structure_at(14, 28).state)
+    assert(t.structure_at(14, 28)).state == "shut",
+    "an empty hand shuts it: " .. tostring(assert(t.structure_at(14, 28)).state)
 )
 
 -- What isolation actually looks like, given time. Below the wheel the
@@ -172,11 +172,11 @@ assert(
 -- nothing; above it the department carries on. One wheel, two fates --
 -- which is the difference between cutting a leg out and stopping the
 -- station.
-local below_0 = t.pipe_pressure(14, 29, L3)
+local below_0 = assert(t.pipe_pressure(14, 29, L3))
 assert(below_0 > 20.0, "the chamber feed was charged when it was shut: " .. below_0)
 t.run_seconds(180)
-local above_1 = t.pipe_pressure(14, 27, L3)
-local below_1 = t.pipe_pressure(14, 29, L3)
+local above_1 = assert(t.pipe_pressure(14, 27, L3))
+local below_1 = assert(t.pipe_pressure(14, 29, L3))
 assert(
     below_1 < 5.0,
     "the isolated side empties into the chambers and cannot refill: "
@@ -199,7 +199,7 @@ assert(
 -- back, and the supply main should refill it — with nobody carrying a
 -- canister anywhere.
 -- ---------------------------------------------------------------
-local before_breach = t.room_pressure(COMMONS[1], COMMONS[2])
+local before_breach = assert(t.room_pressure(COMMONS[1], COMMONS[2]))
 assert(before_breach > 80.0, "the Commons is pressurised: " .. before_breach)
 
 -- The Commons is a room with vents in it, so it is a room distro can
@@ -218,7 +218,7 @@ t.run_seconds(90)
 -- it, which is the department doing its job under the worst condition
 -- it has, and it is only possible because the supply main has a whole
 -- gas storage behind it instead of one bottle.
-local breached = t.room_pressure(COMMONS[1], COMMONS[2])
+local breached = assert(t.room_pressure(COMMONS[1], COMMONS[2]))
 assert(
     breached < before_breach * 0.7,
     "opening the hull costs the room most of its air: "
@@ -230,7 +230,7 @@ for _, x in ipairs({ 22, 23, 24 }) do
     t.set_turf(x, 16, "floor")
 end
 t.run_seconds(600)
-local recovered = t.room_pressure(COMMONS[1], COMMONS[2])
+local recovered = assert(t.room_pressure(COMMONS[1], COMMONS[2]))
 assert(
     recovered > breached + 10.0,
     "and sealed, the station puts the air back: "

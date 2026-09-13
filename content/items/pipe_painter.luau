@@ -1,3 +1,6 @@
+local action_rules = require("@lib/action_rules")
+local pipe_paints = require("@lib/pipe_paints")
+
 -- The pipe painter: tg's `/obj/item/pipe_painter`
 -- (code/game/objects/items/devices/pipe_painter.dm).
 --
@@ -48,7 +51,7 @@ if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self, user = ev.subject, ev.actor
-        local dial = sim.mode(self)
+        local dial = assert(sim.mode(self))
         local next_index = (dial.index + 1) % dial.count
         sim.set_mode(self, next_index)
         sim.message.send({
@@ -128,7 +131,7 @@ if sim ~= nil then
             })
             return true
         end
-        local paint = COLORS[sim.mode(self).index + 1]
+        local paint = COLORS[assert(sim.mode(self)).index + 1]
         sim.paint_pipe(x, y, layers - fixed, paint.hex)
         sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })
         sim.message.send({

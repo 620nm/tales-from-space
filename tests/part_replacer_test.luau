@@ -16,35 +16,36 @@
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local ui_controls = require("@helpers/ui_controls")
 
-local function rows_in(ui, section)
+local word = ui_controls.word
+
+local function rows_in(ui: unknown, section: string)
     local out = {}
-    for _, r in ipairs(ui.readouts) do
-        if word(r.section) == section then
+    for _, r in ipairs(ui_controls.rows(ui_controls.record(ui).readouts)) do
+        if r.section and word(r.section) == section then
             table.insert(out, r)
         end
     end
     return out
 end
 
-local function row(ui, label)
-    for _, r in ipairs(ui.readouts) do
+local function row(ui: unknown, label: string)
+    for _, r in ipairs(ui_controls.rows(ui_controls.record(ui).readouts)) do
         if word(r.label) == label then
             return r
         end
     end
-    return nil
+    error("missing expected panel row")
 end
 
 -- A socket row's two numbers ride one label id, as ARGUMENTS the pack
 -- frames into a sentence (sim/ui/settings/parts.rs).
-local function worth(value)
-    assert(value.id == "parts.tier", "the numbers ride a label id: " .. tostring(word(value)))
-    return tonumber(value.args.tier), tonumber(value.args.efficiency)
+local function worth(raw: unknown): (number, number)
+    local value = ui_controls.record(raw)
+    assert(value.id == "parts.tier", "the numbers ride a label id: " .. word(value))
+    local args = ui_controls.record(value.args)
+    return assert(tonumber(ui_controls.text(args.tier))), assert(tonumber(ui_controls.text(args.efficiency)))
 end
 
 -- The chamber's one part row, read off a panel opened with a BARE hand
@@ -90,8 +91,6 @@ t.world([==[(
 local p = t.join()
 t.run_seconds(1)
 
-local heater = t.target_at(p, 2, 1)
-local beaker = t.target_at(p, 1, 1, "beaker.libital")
 
 -- ---------------------------------------------------------------
 -- ONE: LOADING THE BAG IS THE ORDINARY GESTURE.
@@ -114,7 +113,7 @@ t.run_ticks(2)
 assert(t.hands(p).held == nil, "putting one into the other empties the working hand")
 t.swap_hands(p)
 assert(t.hands(p).held == "part_replacer", "the bag is the thing still held")
-assert(t.examine_held_stored(p, 0).title == "ultra-high-power micro-laser",
+assert(assert(t.examine_held_stored(p, 0)).title == "ultra-high-power micro-laser",
     "and it is what is in the bag")
 
 -- ---------------------------------------------------------------
@@ -125,7 +124,7 @@ assert(t.examine_held_stored(p, 0).title == "ultra-high-power micro-laser",
 -- against what it does here.
 -- ---------------------------------------------------------------
 t.swap_hands(p)
-beaker = t.target_at(p, 1, 1, "beaker.libital")
+local beaker = assert(t.target_at(p, 1, 1, "beaker.libital"))
 t.click(p, 1, 1, t.target_at(p, 1, 1, "beaker.libital"))
 t.run_ticks(2)
 assert(t.hands(p).held == "beaker.libital", "the beaker is in hand")
@@ -134,14 +133,14 @@ t.run_ticks(2)
 assert(t.hands(p).held == nil, "and clicking the chamber with it puts it in")
 
 local before = socket(p, 2, 1)
-assert(before.label.text == "micro-laser", "nobody has upgraded it: " .. word(before.label))
+assert(word(before.label) == "micro-laser", "nobody has upgraded it: " .. word(before.label))
 local tier, eff = worth(before.value)
 assert(tier == 1 and math.abs(eff - 1.0) < 1e-9,
     "the plain rung, worth the plain part: " .. tier .. " " .. eff)
 
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
-assert(row(t.ui(p), "dock.vessel").value.text == "beaker (libital)", "with the beaker docked")
+assert(word(row(t.ui(p), "dock.vessel").value) == "beaker (libital)", "with the beaker docked")
 ui_controls.set(p, "temperature", 350)
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
@@ -154,7 +153,7 @@ t.ui_close(p)
 -- moves, and the two windows below are the same length and both
 -- measured with nothing else happening in them.
 local function gap()
-    return 350.0 - t.holder_k(beaker)
+    return 350.0 - assert(t.holder_k(beaker))
 end
 
 local WINDOW_S = 6
@@ -177,18 +176,18 @@ assert(table.concat(t.messages(p), " | "):find("swap out 1", 1, true) ~= nil,
 
 local swaps = t.ledger_rows("part_swapped")
 assert(#swaps == 1, "one socket changed, so one row: " .. #swaps)
-assert(swaps[1].slot == 1, "and it names the socket, counting from one: " .. swaps[1].slot)
-assert(swaps[1].from == "micro_laser", "what came out: " .. swaps[1].from)
-assert(swaps[1].to == "micro_laser.tier3", "and what went in: " .. swaps[1].to)
+assert(swaps[1].slot == 1, "and it names the socket, counting from one: " .. tostring(swaps[1].slot))
+assert(swaps[1].from == "micro_laser", "what came out: " .. tostring(swaps[1].from))
+assert(swaps[1].to == "micro_laser.tier3", "and what went in: " .. tostring(swaps[1].to))
 
 -- What came out went back into the bag it came out of, which is what
 -- makes one pass leave a tech carrying what they set out with.
-assert(t.examine_held_stored(p, 0).title == "micro-laser",
+assert(assert(t.examine_held_stored(p, 0)).title == "micro-laser",
     "the displaced part is in the bag now")
 
 t.swap_hands(p)
 local after = socket(p, 2, 1)
-assert(after.label.text == "ultra-high-power micro-laser",
+assert(word(after.label) == "ultra-high-power micro-laser",
     "and the panel names what is in there now: " .. word(after.label))
 local after_tier, after_eff = worth(after.value)
 assert(after_tier == 3 and math.abs(after_eff - 2.0) < 1e-9,

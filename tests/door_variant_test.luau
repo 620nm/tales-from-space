@@ -59,7 +59,7 @@ assert(
 
 -- ...and a placement outranks it. Same variant, one property said
 -- otherwise, and only that property changes: the stripes stay.
-local solid = t.structure_at(3, 2)
+local solid = assert(t.structure_at(3, 2))
 assert(solid.id == "airlock.engineering_glass", "the same variant")
 assert(
     solid.sprite == "door_eng",
@@ -69,7 +69,7 @@ assert(
 
 -- The base is untouched by either of them: a variant defaults a
 -- PLACEMENT, never the file it came from.
-local plain = t.structure_at(5, 2)
+local plain = assert(t.structure_at(5, 2))
 assert(plain.id == "airlock", "the base is still the base")
 assert(plain.sprite == "door", "in the station's own livery")
 
@@ -79,7 +79,7 @@ assert(plain.sprite == "door", "in the station's own livery")
 -- The glazed variant reads that sheet's own overlays, which is the
 -- point of a livery carrying its two sets rather than the station's
 -- glass being laid over anybody's frame.
-local interior = t.structure_at(4, 1)
+local interior = assert(t.structure_at(4, 1))
 assert(interior.id == "airlock.interior_glass", "the interior variant")
 assert(
     interior.sprite == "door_int_glass",
@@ -88,7 +88,7 @@ assert(
 
 -- ...and the same livery said on a placement, with no window in it,
 -- is the solid interior leaf. One livery, two sets, one bit chooses.
-local interior_solid = t.structure_at(4, 2)
+local interior_solid = assert(t.structure_at(4, 2))
 assert(interior_solid.id == "airlock", "the base with a livery written on it")
 assert(
     interior_solid.sprite == "door_int",

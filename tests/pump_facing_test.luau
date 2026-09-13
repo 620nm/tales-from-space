@@ -17,7 +17,9 @@
 -- numbers are exact: the input net ends empty and the output net holds
 -- both charges over pipe-plus-mouth.
 
-local function build(rotations, want_sprite, drained, fed)
+local ui_controls = require("@helpers/ui_controls")
+
+local function build(rotations: number, want_sprite: string, drained: {number}, fed: {number})
     t.world([==[(
         name: "pump sign",
         legend: { '.': (turf: Plating), '#': (turf: Wall) },
@@ -34,7 +36,7 @@ local function build(rotations, want_sprite, drained, fed)
     )]==], 7)
     local q = t.join()
     t.tick()
-    local fitting = t.target_at(q, 2, 2, "volume_pump_fitting")
+    local fitting = assert(t.target_at(q, 2, 2, "volume_pump_fitting"))
     for _ = 1, rotations do
         t.rotate(q, 2, 2, fitting, true)
     end
@@ -52,9 +54,9 @@ local function build(rotations, want_sprite, drained, fed)
     t.tick()
     ui_controls.toggle(q, "power")
     t.run_seconds(20)
-    assert(t.pipe_pressure(drained[1], drained[2]) < 1.0,
+    assert(assert(t.pipe_pressure(drained[1], drained[2])) < 1.0,
         want_sprite .. ": the input net should have emptied")
-    assert(t.pipe_pressure(fed[1], fed[2]) > 40.0,
+    assert(assert(t.pipe_pressure(fed[1], fed[2])) > 40.0,
         want_sprite .. ": the output net should hold the gas")
 end
 

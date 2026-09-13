@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Good Clean Fun: the rec-room shelf, and what comes off it.
 --
 -- `vendor_test.luau` already proves what a vending machine IS -- dense,
@@ -43,24 +45,25 @@ t.tick()
 -- ---- the shelf --------------------------------------------------------
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
-local ui = t.ui(p)
+local ui = ui_controls.state(p)
 assert(ui.document == "modules" and ui.presentation == "shelf",
     "the clean-room shelf document")
-assert(ui.notice.text == "Roll for initiative!",
-    "the content-authored slogan across the top: " .. tostring(ui.notice.text))
+assert(ui_controls.record(ui.notice).text == "Roll for initiative!",
+    "the content-authored slogan across the top: " .. tostring(ui_controls.record(ui.notice).text))
 
 -- Every declared product is on the window, in its declared category,
 -- with an atlas sprite the client can actually resolve and the stock the
 -- file says. A shelf row whose art did not resolve would draw a blank
 -- button, which is the failure this checks.
-local WANT = {
+local WANT: { [string]: { name: string, category: string, amount: number } } = {
     card_deck = { name = "Deck of Cards", category = "Cards", amount = 5 },
     captains_aid = { name = "Captain's Aid", category = "Toys", amount = 1 },
     dice_bag = { name = "Bag of Dice", category = "Other", amount = 10 },
 }
 local found = 0
-for _, row in ipairs(ui.products) do
-    local product = row.payload.product
+local products = ui_controls.rows(ui.products)
+for _, row in ipairs(products) do
+    local product = ui_controls.text(ui_controls.record(row.payload).product)
     local want = WANT[product]
     assert(want ~= nil, "the shelf stocks nothing undeclared: " .. tostring(product))
     assert(row.label == want.name, product .. " is called " .. want.name)
@@ -71,8 +74,8 @@ for _, row in ipairs(ui.products) do
     found += 1
 end
 assert(found == 3, "three products, got " .. found)
-assert(ui.products[1].category == "Cards" and ui.products[2].category == "Toys"
-        and ui.products[3].category == "Other",
+assert(products[1].category == "Cards" and products[2].category == "Toys"
+        and products[3].category == "Other",
     "content owns the shelf-group order")
 
 -- ---- a bag of dice, and the dice really in it -------------------------
@@ -133,7 +136,7 @@ t.click(p, 1, 2)
 t.tick()
 local card = t.item_at(1, 2, "card")
 assert(card ~= nil, "a vended deck deals a card")
-assert(card.state:sub(1, 5) == "down_", "face down: " .. tostring(card.state))
+assert(assert(card.state, "the card has a face state"):sub(1, 5) == "down_", "face down: " .. tostring(card.state))
 assert(card.sprite == "card_back", "showing its back: " .. tostring(card.sprite))
 -- The deck's shuffle is written on the record the moment it is dealt
 -- from, which is the only trace a string in `ScriptVars` leaves.
@@ -217,10 +220,11 @@ assert(x == 23 and y == 16, "standing beside it: " .. x .. "," .. y)
 
 t.click(crew, 24, 16, t.target_at(crew, 24, 16))
 t.tick()
-local shelf = t.ui(crew)
-assert(shelf ~= nil, "the machine has power and opens: "
+local disclosed_shelf = t.ui(crew)
+assert(disclosed_shelf ~= nil, "the machine has power and opens: "
     .. table.concat(t.messages(crew), " "))
+local shelf = ui_controls.record(disclosed_shelf)
 assert(shelf.document == "modules" and shelf.presentation == "shelf",
     "the shelf document")
-assert(shelf.notice.text == "Roll for initiative!",
+assert(ui_controls.record(shelf.notice).text == "Roll for initiative!",
     "and it is the right machine, not one of its two neighbours")

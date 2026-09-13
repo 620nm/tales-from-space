@@ -4,18 +4,18 @@
 -- allocator returns one row per candidate (`docs/GAMEMODES.md`).
 local preparation = {}
 
-local function has_capacity(known, remaining, key)
+local function has_capacity(known: {[string]: boolean}, remaining: {[string]: number}, key: string): boolean
     return known[key] == true and (remaining[key] == nil or remaining[key] > 0)
 end
 
-local function use_capacity(remaining, key)
+local function use_capacity(remaining: {[string]: number}, key: string): ()
     if remaining[key] ~= nil then
         remaining[key] -= 1
     end
 end
 
-local function shuffled_order(count)
-    local order = {}
+local function shuffled_order(count: number): {number}
+    local order: {number} = {}
     for index = 1, count do
         order[index] = index
     end
@@ -26,19 +26,19 @@ local function shuffled_order(count)
     return order
 end
 
-local function ranked_jobs(candidate)
+local function ranked_jobs(candidate: AllocationCandidate): {string}
     return candidate.ranked_jobs
 end
 
 -- Allocate only declared preferences. The fallback is a separate pass and
 -- requires the player's explicit consent, like tg's overflow job
 -- (`code/controllers/subsystem/job.dm:557`).
-function preparation.allocate(ev)
+function preparation.allocate(ev: RoundAllocatePayload): {assignments: {AllocationAssignment}}
     local candidates = ev.candidates
     local jobs = ev.jobs
-    local assignments = {}
-    local known = {}
-    local remaining = {}
+    local assignments: {AllocationAssignment} = {}
+    local known: {[string]: boolean} = {}
+    local remaining: {[string]: number} = {}
     local max_rank = 0
 
     for index = 1, #candidates do

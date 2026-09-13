@@ -18,7 +18,7 @@ local MAP = [==[(
     structures: [(1, 1, "player_spawn"), (4, 1, "player_spawn")],
 )]==]
 
-local function count(messages, needle)
+local function count(messages: {string}, needle: string)
     local n = 0
     for _, line in ipairs(messages) do
         if line:find(needle, 1, true) ~= nil then
@@ -32,7 +32,7 @@ end
 -- fact about the shift is a fact for whoever is still watching it, so
 -- the dead spectator is held to the same expectation as the crewman
 -- with a pulse (content/audiences.luau).
-local function heard(sessions, needle)
+local function heard(sessions: {number}, needle: string)
     local seen = nil
     for _, p in ipairs(sessions) do
         local n = count(t.messages(p), needle)
@@ -50,7 +50,7 @@ t.world(MAP, 0)
 local crew = t.join("engineer")
 local ghost = t.join("assistant")
 t.set_health(ghost, { oxy = 500 })
-assert(t.body(ghost).animate == false, "the spectator is dead in the pack's terms")
+assert(assert(t.body(ghost)).animate == false, "the spectator is dead in the pack's terms")
 local watching = { crew, ghost }
 heard(watching, "The shift")
 
@@ -114,9 +114,9 @@ assert(#t.ledger_rows("ScriptVarRefused") == 0, "and never wrote past the end of
 t.world(MAP, 0)
 local dead = t.join("assistant")
 t.set_health(dead, { oxy = 500 })
-assert(t.body(dead).animate == false, "the precondition is a body nobody can steer")
+assert(assert(t.body(dead)).animate == false, "the precondition is a body nobody can steer")
 t.respawn(dead, "engineer")
-assert(t.body(dead).animate, "the session steers a living body again")
+assert(assert(t.body(dead)).animate, "the session steers a living body again")
 assert(t.worn(dead).id == "id_engineering", "wearing the kit of the job it just picked")
 assert(#t.ledger_rows("ReturnedToLobby") == 1, "one abandonment, attributed")
 assert(#t.ledger_rows("Respawned") == 0, "a persistent mode never swaps one body for the next")

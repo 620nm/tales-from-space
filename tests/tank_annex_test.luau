@@ -49,21 +49,21 @@ t.run_seconds(5)
 
 -- The store, as the map authored it: (x, y) -> the one substance in it,
 -- and, for the tank whose reading is moles, how many the fill comes to.
-local store = {
-    { 4, 28, "o2" },
-    { 6, 28, "n2" },
-    { 8, 28, "co2", nil, "condenses" },
-    { 10, 28, "plasma" },
-    { 12, 28, "water", 69000.0 },
-    { 5, 33, "tritium" },
-    { 7, 33, "n2o" },
+local store: {{x: number, y: number, gas: string, moles: number?, condenses: boolean?}} = {
+    { x = 4, y = 28, gas = "o2" },
+    { x = 6, y = 28, gas = "n2" },
+    { x = 8, y = 28, gas = "co2", condenses = true },
+    { x = 10, y = 28, gas = "plasma" },
+    { x = 12, y = 28, gas = "water", moles = 69000.0 },
+    { x = 5, y = 33, gas = "tritium" },
+    { x = 7, y = 33, gas = "n2o" },
 }
 
 -- CO2's own critical temperature, out of substances/co2.luau.
 local CO2_CRITICAL_K = 304.1
 
 for _, row in ipairs(store) do
-    local x, y = row[1], row[2]
+    local x, y = row.x, row.y
     local where = "(" .. x .. ", " .. y .. ")"
     local standing = t.structure_at(x, y)
     assert(standing and standing.id == "stationary_tank",
@@ -74,8 +74,8 @@ for _, row in ipairs(store) do
     -- seconds of atmos has had nowhere to move a mole to. Skipped for
     -- the water tank, whose gauge is a phase reading rather than a
     -- charge (see the header).
-    if row[4] == nil and row[5] == nil then
-        local kpa = t.tank_pressure(x, y)
+    if row.moles == nil and row.condenses == nil then
+        local kpa = assert(t.tank_pressure(x, y))
         assert(math.abs(kpa - 23000.0) < 50.0,
             where .. " opens at half its rating: " .. kpa)
     end
@@ -109,9 +109,9 @@ end
 -- whole room exists for. A pressure cannot say which gas it is, and
 -- "seven tanks of oxygen" would pass every reading above.
 for _, row in ipairs(store) do
-    local x, y, held_key, want_moles = row[1], row[2], row[3], row[4]
+    local x, y, held_key, want_moles = row.x, row.y, row.gas, row.moles
     local where = "(" .. x .. ", " .. y .. ")"
-    local held = t.tank_gas(x, y)
+    local held = assert(t.tank_gas(x, y))
     assert(held, where .. " is a vessel with contents")
     local kinds = 0
     for key, moles in pairs(held) do
@@ -135,8 +135,8 @@ end
 -- The room itself: sealed, breathable, named, and reachable from the
 -- department through its own door. A store nobody can walk into is a
 -- wall with tanks behind it.
-assert(t.room_pressure(8, 30) > 90.0,
-    "the annex holds its air: " .. t.room_pressure(8, 30) .. " kPa")
+assert(assert(t.room_pressure(8, 30)) > 90.0,
+    "the annex holds its air: " .. assert(t.room_pressure(8, 30)) .. " kPa")
 assert(t.turf(10, 31) == "plating", "bare plating, like the rest of the station")
 assert(t.door_at(13, 31), "and a door into the machine hall's corridor")
 

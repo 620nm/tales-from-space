@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- IDENTITY: a sealed bottle of water, heated, and the gauge that only
 -- ever goes up.
 --
@@ -50,11 +52,11 @@ local ONE_ATM_PA = 101325.0
 local WATER_TB = 373.15
 local WATER_K = -40660.0 / 8.314462618
 
-local function vapour_kpa(temp_k)
+local function vapour_kpa(temp_k: number)
     return ONE_ATM_PA * math.exp(WATER_K * (1.0 / temp_k - 1.0 / WATER_TB)) / 1000.0
 end
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -86,17 +88,17 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local dispenser = t.target_at(p, 1, 2)
-local heater = t.target_at(p, 3, 2)
-local jar = t.target_at(p, 1, 1, "bottle")
+local dispenser = assert(t.target_at(p, 1, 2), "the target is visible")
+local heater = assert(t.target_at(p, 3, 2), "the target is visible")
+local jar = assert(t.target_at(p, 1, 1, "bottle"), "the target is visible")
 
-local function gas_in(handle, key)
-    local entry = t.vessel(handle).contents[key]
+local function gas_in(handle: SpecObservedTarget, key: string)
+    local entry = assert(t.vessel(handle)).contents[key]
     return entry and (entry.gas or 0.0) or 0.0
 end
 
-local function liquid_in(handle, key)
-    local entry = t.vessel(handle).contents[key]
+local function liquid_in(handle: SpecObservedTarget, key: string)
+    local entry = assert(t.vessel(handle)).contents[key]
     return entry and (entry.liquid or 0.0) or 0.0
 end
 
@@ -114,7 +116,7 @@ ui_controls.set(p, "amount", 1.0)
 t.run_ticks(2)
 ui_controls.toggle(p, "dispense", "water")
 t.run_ticks(2)
-near(t.contents(jar).water, 1.0, 1e-9, "a mole of water, and the dial's whole press landed")
+near(assert(t.contents(jar)).water, 1.0, 1e-9, "a mole of water, and the dial's whole press landed")
 -- All but a whisker of it is LIQUID: a source chooses no phase (D11)
 -- and water at 300 K and one atmosphere rests as a liquid, so what a
 -- press of water into a bottle puts there is water rather than steam.
@@ -126,8 +128,8 @@ t.run_ticks(2)
 
 -- A mole is 18 mL of the bottle's fifty, so there is headspace over it
 -- and the gauge below is reading a real one.
-assert(t.vessel(jar).headspace_l > 0.02, "and there is room over it: "
-    .. t.vessel(jar).headspace_l .. " L")
+assert(assert(t.vessel(jar)).headspace_l > 0.02, "and there is room over it: "
+    .. assert(t.vessel(jar)).headspace_l .. " L")
 
 -- ---------------------------------------------------------------
 -- TWO: ON THE ELEMENT, AND TWENTY SWEEPS OF THE GAUGE.
@@ -145,16 +147,16 @@ ui_controls.set(p, "temperature", 450)
 t.run_ticks(2)
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
-assert(t.ui(p).toggles[1].on == true, "the element is on")
+assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == true, "the element is on")
 
 local before = t.matter_totals()
 
-local kpa = t.holder_kpa(jar)
+local kpa = assert(t.holder_kpa(jar))
 local steam = gas_in(jar, "water")
 local climbed = 0
 for sweep = 1, 20 do
     t.run_ticks(SWEEP)
-    local now_kpa = t.holder_kpa(jar)
+    local now_kpa = assert(t.holder_kpa(jar))
     local now_steam = gas_in(jar, "water")
     -- A kilopascal in ten thousand is under the resolution of any
     -- gauge; a CHATTERING bottle fell by whole atmospheres a pass.
@@ -179,11 +181,11 @@ assert(gas_in(jar, "water") > 0.0, "with its own vapour over it")
 -- the element closes a fixed share of the gap every pass, so the
 -- bottle is always a shade under the dial and the vapour a shade
 -- behind the bottle.
-local warmth = t.holder_k(jar)
+local warmth = assert(t.holder_k(jar))
 local want = vapour_kpa(warmth)
-assert(math.abs(t.holder_kpa(jar) - want) < 0.02 * want,
+assert(math.abs(assert(t.holder_kpa(jar)) - want) < 0.02 * want,
     "the gauge is water's own vapour pressure at " .. warmth .. " K: "
-        .. t.holder_kpa(jar) .. " vs " .. want)
+        .. assert(t.holder_kpa(jar)) .. " vs " .. want)
 
 -- ---------------------------------------------------------------
 -- THREE: THE BOOKS.
