@@ -100,7 +100,7 @@ for _, row in ipairs(t.ledger_rows("Damaged")) do
     if math.abs(pool_amount(row, "brute") - 10) < 0.01
         and row.target == victim_id
         and row.actor.kind == "script"
-        and row.actor.file == "items/toolbox.luau"
+        and row.actor.file == "items/gear/toolbox.luau"
         and row.actor.triggered_by == attacker_id
     then
         hits += 1
