@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- What a LID buys, and what only a canister can.
 --
 -- Three of this pack's recipes name a phase no open beaker can hold.
@@ -13,7 +15,7 @@
 -- tg's is, and the Haber process was three presses and a stir. What is
 -- here instead is a pressure vessel.
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -72,7 +74,7 @@ local function bottle(x)
     return reading
 end
 
-local function held(x, key)
+local function held(x, key: string)
     local entry = bottle(x).contents[key]
     return entry and (entry.gas or 0.0) or 0.0
 end
@@ -163,8 +165,8 @@ local p = t.join()
 t.tick()
 
 local machine = t.target_at(p, 2, 2)
-local jar = t.target_at(p, 1, 2, "bottle")
-local glass = t.target_at(p, 3, 2, "beaker")
+local jar = assert(t.target_at(p, 1, 2, "bottle"))
+local glass = assert(t.target_at(p, 3, 2, "beaker"))
 
 local function press(key)
     ui_controls.toggle(p, "dispense", key)
@@ -186,8 +188,8 @@ local function eject()
     t.run_ticks(2)
 end
 
-local function amount(handle, key)
-    local contents = t.contents(handle)
+local function amount(handle, key: string)
+    local contents = assert(t.contents(handle))
     assert(contents ~= nil, "that is a vessel")
     return contents[key] or 0
 end
@@ -228,7 +230,7 @@ dial_to(LEG)
 press("ammonia")
 t.run_seconds(20)
 near(amount(jar, "ammonia"), LEG, 1e-9, "the whole press landed, because there is a lid")
-local charged = t.vessel(jar)
+local charged = assert(t.vessel(jar))
 assert((charged.contents.ammonia.liquid or 0) > 0.0,
     "and most of it is standing as LIQUID ammonia")
 
@@ -238,7 +240,7 @@ assert((charged.contents.ammonia.liquid or 0) > 0.0,
 eject()
 t.drop(p)
 t.run_seconds(600)
-assert(t.holder_k(jar) < 340.0, "the deck cooled it: " .. t.holder_k(jar))
+assert(assert(t.holder_k(jar)) < 340.0, "the deck cooled it: " .. tostring(t.holder_k(jar)))
 
 t.click(p, 2, 1, assert(t.target_at(p, 2, 1, jar)))
 t.tick()

@@ -33,11 +33,11 @@
 -- the pack's numbers -- that is what makes it a spec.
 local VISIBLE_MOL = 0.15
 
-local function held(x, y, key)
+local function held(x, y, key: string): number
     return (t.room_gas(x, y) or {})[key] or 0.0
 end
 
-local function in_pipe(x, y, key)
+local function in_pipe(x, y, key: string): number
     return (t.pipe_gas(x, y) or {})[key] or 0.0
 end
 
@@ -93,7 +93,7 @@ t.world([==[(
 t.tick()
 
 -- ---- the bottle that was filled with a gas ----
-assert(t.canister_pressure(1, 1) > 0.0, "bay A's bottle is charged")
+assert(assert(t.canister_pressure(1, 1)) > 0.0, "bay A's bottle is charged")
 
 t.run_seconds(20)
 
@@ -104,7 +104,7 @@ assert(
     "and there is enough of it in the cell to draw: " .. cloud .. " mol"
 )
 assert(held(2, 1, "chlorine") > VISIBLE_MOL, "the bay filled, not just the tile under it")
-assert(t.room_pressure(1, 1) > 1.0, "which reads on a gauge too")
+assert(assert(t.room_pressure(1, 1)) > 1.0, "which reads on a gauge too")
 
 -- ---- the bottle on a port ----
 --
@@ -119,8 +119,8 @@ assert(
         .. held(4, 1, "chlorine") .. " / " .. held(5, 1, "chlorine")
 )
 assert(
-    t.room_pressure(4, 1) < 1.0,
-    "the bay stayed pumped down: " .. t.room_pressure(4, 1) .. " kPa"
+    assert(t.room_pressure(4, 1)) < 1.0,
+    "the bay stayed pumped down: " .. assert(t.room_pressure(4, 1)) .. " kPa"
 )
 
 -- ---- the trap ----

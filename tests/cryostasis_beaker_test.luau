@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- `reactive = false` is a vessel that will not run a recipe.
 --
 -- The cryostasis beaker is tg's "no reactions" beaker (_cup.dm:529:
@@ -12,11 +14,11 @@ local WET = 0.15
 local SAND = 0.1
 local PRESS = 0.75
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function amount(handle, key)
+local function amount(handle, key: string)
     local contents = t.contents(handle)
     assert(contents ~= nil, "that is a vessel")
     return contents[key] or 0
@@ -56,8 +58,8 @@ local p = t.join()
 t.tick()
 
 local dispenser = t.target_at(p, 1, 1)
-local cold = t.target_at(p, 1, 2, "beaker_cryostasis")
-local warm = t.target_at(p, 3, 2, "beaker")
+local cold = assert(t.target_at(p, 1, 2, "beaker_cryostasis"))
+local warm = assert(t.target_at(p, 3, 2, "beaker"))
 
 local function take(handle, x, y)
     t.click(p, x, y, handle)
@@ -76,7 +78,7 @@ end
 
 -- Dock a vessel, press both legs into it, take it back and set it on
 -- the deck: the same six gestures for both beakers.
-local function charge(handle, x, y, id)
+local function charge(handle, x, y, id: string)
     take(handle, x, y)
     t.click(p, 1, 1, dispenser)
     t.tick()

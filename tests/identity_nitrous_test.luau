@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- IDENTITY: nitrous oxide, made on a bench and poured out of a map,
 -- and there is only ONE of it.
 --
@@ -32,11 +34,11 @@
 
 local BREATH = 160 -- one breath cycle, 8 s at 20 Hz
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function has_text(lines, needle)
+local function has_text(lines: { string }, needle: string): string?
     for _, line in ipairs(lines) do
         if string.find(line, needle, 1, true) ~= nil then
             return line
@@ -86,10 +88,10 @@ t.set_environment({ sink_k = 293.15, insolation = 0.0 })
 local chemist = t.join()
 t.tick()
 
-local dispenser = t.target_at(chemist, 1, 2)
-local heater = t.target_at(chemist, 3, 2)
-local supply = t.target_at(chemist, 2, 1)
-local jar = t.target_at(chemist, 2, 3, "bottle")
+local dispenser = assert(t.target_at(chemist, 1, 2), "the target is visible")
+local heater = assert(t.target_at(chemist, 3, 2), "the target is visible")
+local supply = assert(t.target_at(chemist, 2, 1), "the target is visible")
+local jar = assert(t.target_at(chemist, 2, 3, "bottle"), "the target is visible")
 assert(dispenser ~= nil and heater ~= nil and supply ~= nil and jar ~= nil, "the bench is set")
 
 -- Twenty atmospheres of oxygen on the line: a quarter of what a supply
@@ -103,7 +105,7 @@ t.run_ticks(2)
 assert(t.hands(chemist).held == "bottle", "the bottle is in hand")
 t.click(chemist, 2, 1, supply)
 t.run_ticks(4)
-local charge = t.vessel(jar).contents.o2.gas
+local charge = assert(assert(t.vessel(jar)).contents.o2.gas, "the bottle holds oxygen gas")
 assert(charge > 0.0, "and it came away with oxygen: " .. charge .. " mol")
 
 -- A mole of ammonia, which condenses under the lid the moment it is
@@ -125,25 +127,25 @@ t.click(chemist, 3, 2, heater)
 t.tick()
 ui_controls.set(chemist, "temperature", 530)
 t.run_ticks(2)
-if t.ui(chemist).toggles[1].on ~= true then
+if ui_controls.rows(ui_controls.state(chemist).toggles)[1].on ~= true then
     ui_controls.toggle(chemist, "power")
     t.run_ticks(2)
 end
-assert(t.ui(chemist).toggles[1].on == true, "the element is on")
+assert(ui_controls.rows(ui_controls.state(chemist).toggles)[1].on == true, "the element is on")
 t.run_seconds(600)
 
-local made = t.vessel(jar).contents.n2o
+local made = assert(t.vessel(jar)).contents.n2o
 assert(made ~= nil and (made.gas or 0.0) > 1e-6,
     "the bench made nitrous oxide: " .. tostring(made and made.gas))
-local BENCH_MADE = made.gas
-assert(t.vessel(jar).contents.ammonia ~= nil, "out of the liquid ammonia the recipe names")
+local BENCH_MADE = assert(made.gas, "the bench made nitrous gas")
+assert(assert(t.vessel(jar)).contents.ammonia ~= nil, "out of the liquid ammonia the recipe names")
 
 -- ...and the VESSEL WINDOW names it. `t.vessel` is `ctx.vessel` off
 -- the same backend, which is what the chem panel itemises for anybody
 -- standing at the bench, and the key it itemises under is the registry
 -- id -- so there is no second nitrous oxide for a window to have to
 -- choose between.
-assert(t.vessel(jar).contents.n2o.gas == BENCH_MADE, "keyed as `n2o` and nothing else")
+assert(assert(t.vessel(jar)).contents.n2o.gas == BENCH_MADE, "keyed as `n2o` and nothing else")
 
 -- ...and so does the examine pane, in the substance file's own words
 -- (sim/examine.rs, `matter_lines`; substances/n2o.luau, `name`).
@@ -216,8 +218,8 @@ local reader = t.join("engineer")
 local diver = t.join("engineer")
 t.run_ticks(2)
 
-local can = t.target_at(reader, 5, 1)
-local scrubber = t.target_at(diver, 5, 2, "air_scrubber")
+local can = assert(t.target_at(reader, 5, 1), "the target is visible")
+local scrubber = assert(t.target_at(diver, 5, 2, "air_scrubber"), "the target is visible")
 assert(can ~= nil and scrubber ~= nil, "the chamber is set")
 
 local ROOM = {}
@@ -227,7 +229,7 @@ for x = 1, 5 do
     end
 end
 
-local function room(key)
+local function room(key: string)
     local n = 0.0
     for _, tile in ipairs(ROOM) do
         local gases = t.room_gas(tile[1], tile[2])
@@ -236,7 +238,7 @@ local function room(key)
     return n
 end
 
-local function pipe(key)
+local function pipe(key: string)
     local held = t.pipe_gas(6, 1, 2)
     return (held and held[key]) or 0.0
 end
@@ -247,10 +249,10 @@ end
 -- so a crewman standing in a chamber that is being scrubbed is
 -- carrying a share of what left the air. The books below weigh him,
 -- because "not lost" has to mean not lost anywhere.
-local function lungs(key)
+local function lungs(key: string)
     local n = 0.0
     for _, who in ipairs({ reader, diver }) do
-        local seated = t.sockets(who).lungs.seated
+        local seated = assert(t.sockets(who)).lungs.seated
         local held = seated and t.vessel(seated)
         local rows = held and held.contents[key]
         n = n + ((rows and rows.gas) or 0.0)
@@ -261,11 +263,12 @@ end
 -- SURFACE 1 -- THE CANISTER. The gauge and the itemised contents are
 -- the same reading a beaker gives, because a canister IS a beaker with
 -- a thicker wall (docs/CHEMISTRY.md 1).
-local bottle = t.vessel(can)
+local bottle = assert(t.vessel(can), "the vessel has a reading")
 assert(bottle.contents.n2o ~= nil, "the canister is holding `n2o`")
+assert(bottle.contents.n2o.gas ~= nil, "the canister holds nitrous gas")
 assert(bottle.contents.n2o.gas > 1000.0,
     "and a lot of it: " .. bottle.contents.n2o.gas .. " mol")
-near(t.canister_pressure(5, 1), bottle.pressure_kpa, 1e-9,
+near(assert(t.canister_pressure(5, 1)), bottle.pressure_kpa, 1e-9,
     "the tile's gauge and the vessel reading are one number")
 local MAPPED = bottle.contents.n2o.gas
 
@@ -276,7 +279,7 @@ local MAPPED = bottle.contents.n2o.gas
 t.click(reader, 4, 1, t.target_at(reader, 4, 1, "analyzer"))
 t.run_ticks(2)
 assert(t.hands(reader).held == "analyzer", "the analyzer is in hand")
-local _ = t.messages(reader)
+t.messages(reader)
 t.click(reader, 5, 1, can)
 t.run_ticks(2)
 local printed = t.messages(reader)
@@ -293,9 +296,9 @@ assert(string.find(named, "(100 %)", 1, true) ~= nil,
 local loose = room("n2o")
 assert(loose > 400.0, "the chamber is standing in it: " .. loose .. " mol")
 near(room("o2"), 0.0, 1e-9, "and there is no oxygen in here whatsoever")
-assert(t.room_pressure(2, 2) > 95.0,
+assert(assert(t.room_pressure(2, 2)) > 95.0,
     "at an ordinary pressure, which is what makes it a trap rather than a vacuum: "
-        .. t.room_pressure(2, 2) .. " kPa")
+        .. assert(t.room_pressure(2, 2)) .. " kPa")
 local LOADED = loose + MAPPED
 
 -- The analyzer over a TILE of it prints the same three words it
@@ -303,7 +306,7 @@ local LOADED = loose + MAPPED
 -- bottle are one substance answering one readout, through the same
 -- `sim.matter_read` (items/analyzer.luau reads a machine and a turf
 -- through one printer).
-local _ = t.messages(reader)
+t.messages(reader)
 t.click(reader, 3, 1)
 t.run_ticks(2)
 local air = t.messages(reader)
@@ -340,11 +343,11 @@ assert(supply_open ~= nil and supply_open.tank ~= nil, "and the valve is open")
 for _ = 1, 8 do
     t.run_ticks(BREATH)
 end
-assert(t.health(reader).oxy > 10,
-    "the one breathing the chamber is drowning in it: " .. t.health(reader).oxy)
+assert(ui_controls.number(t.health(reader).oxy) > 10,
+    "the one breathing the chamber is drowning in it: " .. ui_controls.number(t.health(reader).oxy))
 assert((t.blood(reader).n2o or 0) == 0,
     "and keeping none of it, because the file authors no `inhale`")
-assert(t.health(diver).oxy == 0, "the one on a tank is fine: " .. t.health(diver).oxy)
+assert(ui_controls.number(t.health(diver).oxy) == 0, "the one on a tank is fine: " .. ui_controls.number(t.health(diver).oxy))
 assert((t.blood(diver).n2o or 0) == 0, "and keeps none of it either")
 
 -- SURFACE 4 -- THE SCRUBBER, and the roster it offers. The roster is
@@ -362,7 +365,7 @@ t.click(diver, 5, 2, scrubber)
 t.tick()
 local offers = 0
 local sleepy_on = nil
-for _, sw in ipairs(t.ui(diver).toggles) do
+for _, sw in ipairs(ui_controls.rows(ui_controls.state(diver).toggles)) do
     if sw.field == "filter" and sw.option == "n2o" then
         offers = offers + 1
         sleepy_on = sw.on
@@ -401,7 +404,7 @@ near(landed, moved, 1e-6,
 -- nitrous oxides it was looking at, because there is one.
 -- ---------------------------------------------------------------
 assert(BENCH_MADE > 0.0 and MAPPED > 0.0, "both routes put some there")
-assert(t.room_gas(2, 2).n2o ~= nil, "the room reads the same key the bench bottle did")
+assert(assert(t.room_gas(2, 2)).n2o ~= nil, "the room reads the same key the bench bottle did")
 
 -- ...and the books. Every mole in this chamber came out of the map's
 -- own presets and went where a machine put it: the room, the main, or

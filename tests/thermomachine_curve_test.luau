@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The shape of the approach, worked out on paper and then checked
 -- against the machine pass by pass.
 --
@@ -39,12 +41,9 @@ local TARGET = 150.0
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -99,15 +98,15 @@ local function bench(gas)
 
     t.click(p, 3, 1, t.target_at(p, 3, 1, "manual_valve"))
     t.run_seconds(4)
-    assert(t.structure_at(3, 1).state == "open", "the hand valve is open")
+    assert(assert(t.structure_at(3, 1)).state == "open", "the hand valve is open")
     t.click(p, 3, 1, t.target_at(p, 3, 1, "manual_valve"))
     t.run_seconds(3)
-    assert(t.structure_at(3, 1).state == "shut", "and shut again behind the charge")
+    assert(assert(t.structure_at(3, 1)).state == "shut", "and shut again behind the charge")
     assert(
-        t.pipe_pressure(MOUTH_X, MOUTH_Y) > 300.0,
-        "the run is charged: " .. t.pipe_pressure(MOUTH_X, MOUTH_Y) .. " kPa"
+        assert(t.pipe_pressure(MOUTH_X, MOUTH_Y)) > 300.0,
+        "the run is charged: " .. assert(t.pipe_pressure(MOUTH_X, MOUTH_Y)) .. " kPa"
     )
-    near(t.pipe_temperature(MOUTH_X, MOUTH_Y), T20C, 0.01, "and still at room temperature")
+    near(assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)), T20C, 0.01, "and still at room temperature")
 
     for _ = 1, 3 do
         t.move(p, "east")
@@ -124,7 +123,7 @@ end
 -- down from the gas roster, so a station that recharges its lines with
 -- something else does not silently invalidate the arithmetic.
 local function capacity()
-    return t.pipe_energy(MOUTH_X, MOUTH_Y) / t.pipe_temperature(MOUTH_X, MOUTH_Y)
+    return assert(t.pipe_energy(MOUTH_X, MOUTH_Y)) / assert(t.pipe_temperature(MOUTH_X, MOUTH_Y))
 end
 
 -- ---------------------------------------------------------------
@@ -146,19 +145,19 @@ assert(r > 0.2 and r < 0.25, "which puts this run's pass fraction near a fifth: 
 ui_controls.set(p, "temperature", 150)
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
-assert(t.structure_at(6, 1).state == "running", "the unit is running")
+assert(assert(t.structure_at(6, 1)).state == "running", "the unit is running")
 
-local start_k = t.pipe_temperature(MOUTH_X, MOUTH_Y)
+local start_k = assert(t.pipe_temperature(MOUTH_X, MOUTH_Y))
 local previous_k = start_k
-local previous_j = t.pipe_energy(MOUTH_X, MOUTH_Y)
+local previous_j = assert(t.pipe_energy(MOUTH_X, MOUTH_Y))
 for n = 1, 6 do
     -- What the formula says this pass will do, from where the gas is:
     -- the energy first, because Q is the quantity the machine computes
     -- and the temperature is only Q divided out.
     local q = (TARGET - previous_k) * (n2_c * (C_BATH / (n2_c + C_BATH)))
     pass()
-    local now_k = t.pipe_temperature(MOUTH_X, MOUTH_Y)
-    local now_j = t.pipe_energy(MOUTH_X, MOUTH_Y)
+    local now_k = assert(t.pipe_temperature(MOUTH_X, MOUTH_Y))
+    local now_j = assert(t.pipe_energy(MOUTH_X, MOUTH_Y))
 
     near(now_k, TARGET + (start_k - TARGET) * r ^ n, 1e-6, "pass " .. n .. " lands where r^" .. n .. " says")
     -- THE GAS BOOK MOVED BY EXACTLY Q. The joules came out of nowhere
@@ -178,19 +177,19 @@ near(moles(MOUTH_X, MOUTH_Y), n2_moles, n2_moles * 1e-9, "and the mole book neve
 -- The same six numbers said the other way round: the gap left after
 -- each pass is r times the gap before it, forever, which is the whole
 -- content of "asymptotic rather than a snap".
-local gap = t.pipe_temperature(MOUTH_X, MOUTH_Y) - TARGET
+local gap = assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)) - TARGET
 for n = 1, 4 do
     pass()
-    local left = t.pipe_temperature(MOUTH_X, MOUTH_Y) - TARGET
+    local left = assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)) - TARGET
     near(left, gap * r, math.abs(gap * r) * 1e-6, "gap " .. n .. " closes by the same fraction as the last")
     gap = left
 end
 
 t.run_seconds(30)
-near(t.pipe_temperature(MOUTH_X, MOUTH_Y), TARGET, 1e-6, "and the line arrests on the setpoint")
-local n2_settled_j = t.pipe_energy(MOUTH_X, MOUTH_Y)
+near(assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)), TARGET, 1e-6, "and the line arrests on the setpoint")
+local n2_settled_j = assert(t.pipe_energy(MOUTH_X, MOUTH_Y))
 t.run_seconds(20)
-near(t.pipe_energy(MOUTH_X, MOUTH_Y), n2_settled_j, 1e-6, "with the book flat once it is there")
+near(assert(t.pipe_energy(MOUTH_X, MOUTH_Y)), n2_settled_j, 1e-6, "with the book flat once it is there")
 
 -- ---------------------------------------------------------------
 -- THE SAME MACHINE IS SLOWER THROUGH A HEAVIER GAS.
@@ -221,7 +220,7 @@ t.run_ticks(2)
 for _ = 1, 3 do
     pass()
 end
-local heavy_gap = t.pipe_temperature(MOUTH_X, MOUTH_Y) - TARGET
+local heavy_gap = assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)) - TARGET
 local light_gap = (T20C - TARGET) * r ^ 3
 assert(
     heavy_gap > light_gap * 2.5,
@@ -229,14 +228,14 @@ assert(
         .. heavy_gap .. " K left against " .. light_gap .. " K"
 )
 near(
-    t.pipe_temperature(MOUTH_X, MOUTH_Y),
+    assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)),
     TARGET + (T20C - TARGET) * (n2o_c / (n2o_c + C_BATH)) ^ 3,
     1e-6,
     "and it is exactly where ITS own r puts it -- same formula, heavier gas"
 )
 
 t.run_seconds(60)
-near(t.pipe_temperature(MOUTH_X, MOUTH_Y), TARGET, 1e-6, "it gets there in the end, on the same setpoint")
+near(assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)), TARGET, 1e-6, "it gets there in the end, on the same setpoint")
 
 -- ---------------------------------------------------------------
 -- AND NOTHING AT ALL, FOREVER, INTO AN EMPTY LINE.
@@ -292,21 +291,21 @@ t.run_seconds(1.5)
 t.drop(d)
 t.run_ticks(2)
 assert(t.pipe(2, 1) == 4, "so it goes straight back down")
-near(t.pipe_pressure(2, 1), 0.0, 1e-9, "empty, because nobody filled it")
-near(t.pipe_energy(2, 1), 0.0, 1e-9, "with no joules in it either")
+near(assert(t.pipe_pressure(2, 1)), 0.0, 1e-9, "empty, because nobody filled it")
+near(assert(t.pipe_energy(2, 1)), 0.0, 1e-9, "with no joules in it either")
 
 t.click(d, 3, 1, t.target_at(d, 3, 1, "thermomachine"))
 t.tick()
 -- The thermometer is this window's first row (sim/ui/settings/thermo.rs).
-local mouth = word(t.ui(d).readouts[1].value)
+local mouth = word(ui_controls.rows(ui_controls.state(d).readouts)[1].value)
 assert(mouth ~= "thermo.pipe.none", "the unit's mouth found the new length: " .. mouth)
 ui_controls.set(d, "temperature", 500)
 ui_controls.toggle(d, "power")
 t.run_seconds(60)
 
-assert(t.structure_at(3, 1).state == "running", "it is switched on and fed -- there is simply nothing to condition")
-near(t.pipe_energy(2, 1), 0.0, 1e-9, "and a minute later the line still holds no joules")
+assert(assert(t.structure_at(3, 1)).state == "running", "it is switched on and fed -- there is simply nothing to condition")
+near(assert(t.pipe_energy(2, 1)), 0.0, 1e-9, "and a minute later the line still holds no joules")
 near(moles(2, 1), 0.0, 1e-9, "and no moles")
-local dry_k = t.pipe_temperature(2, 1)
+local dry_k = assert(t.pipe_temperature(2, 1))
 assert(dry_k == dry_k, "the empty line's temperature is a number, not a NaN: " .. dry_k)
 near(dry_k, 2.7, 1e-9, "and it is TCMB, where an empty mixture sits")

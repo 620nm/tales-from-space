@@ -1,3 +1,6 @@
+local action_rules = require("@lib/action_rules")
+local cards = require("@lib/cards")
+
 -- A deck of space-grade playing cards, and the first thing in this pack
 -- that had to remember something the engine could not enumerate.
 --
@@ -64,7 +67,7 @@
 -- A fresh deck, shuffled. Fisher-Yates over the roster, drawing from
 -- the shift RNG so the shuffle is a fact about the round rather than
 -- about the machine that ran it.
-local function shuffled(ctx)
+local function shuffled()
     local order = {}
     for i, face in ipairs(cards.FACES) do
         order[i] = cards.slug(face)
@@ -79,8 +82,11 @@ end
 -- The deck's order, generating it if this is the first time anybody has
 -- touched it. `nil` from sim.var means "nothing has been written here",
 -- which for a deck means "still in the box".
-local function order_of(ctx, self)
-    return self.vars["order"] or shuffled(ctx)
+local function order_of(self: Handle): string
+    local order = self.vars["order"]
+    if order == nil then return shuffled() end
+    assert(type(order) == "string", "deck order must be a string")
+    return order
 end
 
 local content = {
@@ -112,13 +118,16 @@ local content = {
     acts_on_items = true,
 }
 
+local deal_kinds: {action_rules.Selector} = { action_rules.kind("turf"), action_rules.kind("machine") }
+local deal_turfs: {action_rules.Selector} = {
+    action_rules.fact("target.turf", "floor"), action_rules.fact("target.turf", "plating"),
+}
+local deal_conditions: {action_rules.Selector} = { { any = deal_kinds }, { any = deal_turfs } }
+local deal_target: action_rules.Selector = { all = deal_conditions }
+
 content.actions = {
     action_rules.primary("return_card", action_rules.fact("target.proto", "card")),
-    action_rules.primary("deal", { all = {
-        { any = { action_rules.kind("turf"), action_rules.kind("machine") } },
-        { any = { action_rules.fact("target.turf", "floor"),
-            action_rules.fact("target.turf", "plating") } },
-    } }),
+    action_rules.primary("deal", deal_target),
 }
 
 if sim ~= nil then
@@ -135,7 +144,7 @@ if sim ~= nil then
         -- Shuffling an EMPTY deck is not magic and must not look like
         -- it: the cards are on the table, and gathering them is the
         -- players' job (each one clicked back in through card.luau).
-        local order = order_of(ctx, self)
+        local order = order_of(self)
         if order == "" then
             sim.message.send({
                 recipient = user,
@@ -243,7 +252,7 @@ if sim ~= nil then
             return true
         end
 
-        local order = order_of(ctx, self)
+        local order = order_of(self)
         if order == "" then
             sim.message.send({
                 recipient = user,
@@ -256,6 +265,7 @@ if sim ~= nil then
         -- `sim.var` is a query and `sim.set_var` is an effect, so a
         -- handler that wrote and then read would get the old value back.
         local top, rest = order:match("^([^,]+),?(.*)$")
+        assert(top and rest, "nonempty deck order must name a card")
         self.vars["order"] = rest
         -- Face DOWN, which is how tg deals unless the dealer says
         -- otherwise (deck.dm:146-161, and `insert` forces it on the way

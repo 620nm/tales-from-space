@@ -61,7 +61,7 @@ if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self, user = ev.subject, ev.actor
-        local dial = sim.mode(self)
+        local dial = assert(sim.mode(self))
         -- `dial.count` is what the ENGINE minted from `modes`, not
         -- `#DIRECTIONS`: reading the count back means the wrap is
         -- computed against the dial that actually exists.

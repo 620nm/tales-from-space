@@ -1,3 +1,5 @@
+local action_rules = require("@lib/action_rules")
+
 -- Sabotage, attributable: cutting a cable is a Script-actor ledger row
 -- naming this file and the player holding the cutters. Layer masks:
 -- 1 = red, 2 = yellow, 4 = blue. What each line CARRIES is the

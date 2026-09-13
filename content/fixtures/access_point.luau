@@ -1,3 +1,6 @@
+local controller = require("@lib/controller")
+local radio_relay = require("@lib/radio_relay")
+
 -- The access point, and the one thing about it that is not mechanism.
 --
 -- Everything a player DOES to one of these is native and goes through a

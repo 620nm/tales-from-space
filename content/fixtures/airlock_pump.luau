@@ -1,3 +1,5 @@
+local controller = require("@lib/controller")
+
 local content = { id = "airlock_pump" }
 if sim ~= nil then
     local def = sim.define("behavior", "lunatic/tfs:airlock_pump", { prototype = content.id })

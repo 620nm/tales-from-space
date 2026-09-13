@@ -62,7 +62,7 @@ t.world([==[(
 t.join()
 t.tick()
 
-assert(t.structure_at(1, 1).id == "floor_drain", "the grating is in the deck")
+assert(assert(t.structure_at(1, 1)).id == "floor_drain", "the grating is in the deck")
 local POURED = t.matter_totals().substances.water
 local spilled = litres(1)
 assert(spilled > 9.99 and spilled < 10.01, ("ten litres on the grating: %.4f L"):format(spilled))

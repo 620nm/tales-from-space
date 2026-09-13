@@ -1,3 +1,5 @@
+local stock_parts = require("@lib/stock_parts")
+
 -- A scanning module: the stock part that decides how WELL a machine
 -- sees.
 --

@@ -1,3 +1,5 @@
+local writing = require("@lib/writing")
+
 -- A single writable sheet. The file store is the paper's authoritative
 -- body; fragments preserve each writing gesture's presentation.
 -- tg paper.dm:13-31 and :182-190.

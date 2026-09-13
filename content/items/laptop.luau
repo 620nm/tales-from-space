@@ -1,3 +1,5 @@
+local action_rules = require("@lib/action_rules")
+
 -- Lid, power and cartridge gestures: tg laptop.dm:68-105 (a closed lid
 -- answers self-use with the lid alone), computer.dm:564 (the power
 -- button is its own press), computer.dm:557-562 (disk eject).
@@ -96,11 +98,11 @@ if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:laptop_open", { replicate = "server" })
     local behavior = sim.define("behavior", "lunatic/tfs:laptop", { prototype = "laptop" })
 
-    local function sound(asset, at)
+    local function sound(asset: string, at: TileAddress)
         sim.sound.play({ asset = "lunatic/tfs:sound/" .. asset, at = at })
     end
 
-    local function document(self, powered)
+    local function document(self: Handle, powered: boolean)
         local card = self:item_slot("card") ~= nil
         local cartridge = self:item_slot("media") ~= nil
         local view = {
@@ -110,18 +112,18 @@ if sim ~= nil then
             card = card,
             cartridge = cartridge,
         }
-        local actions = { power = 0, close = 0 }
+        local actions: {[string]: number} = { power = 0, close = 0 }
         if card then actions.eject_id = 0 end
         if cartridge then actions.eject_cartridge = 0 end
         return view, actions
     end
 
-    local function refresh(self, powered)
+    local function refresh(self: Handle, powered: boolean)
         local view, actions = document(self, powered)
         ui.update_all({ owner = self, view = view, actions = actions, include_native = powered })
     end
 
-    local function close(self)
+    local function close(self: Handle)
         self.vars.laptop_open = false
         sim.appearance.set_state({ entity = self, state = "closed" })
         ui.close_all({ owner = self })
@@ -129,13 +131,13 @@ if sim ~= nil then
 
     -- The lid alone: a laptop that kept its charge comes up lit, an
     -- unpowered one shows a dark screen until the power button.
-    local function raise(self)
+    local function raise(self: Handle)
         self.vars.laptop_open = true
         local powered = self.vars.laptop_powered == true
         sim.appearance.set_state({ entity = self, state = if powered then "on" else "off" })
     end
 
-    local function switch(self, powered, at)
+    local function switch(self: Handle, powered: boolean, at: TileAddress)
         self.vars.laptop_powered = powered
         sim.appearance.set_state({ entity = self, state = if powered then "on" else "off" })
         sound(if powered then "computer_start" else "computer_end", at)
@@ -144,7 +146,7 @@ if sim ~= nil then
 
     -- The screen: the file workspace composes only while the machine is
     -- running, so an unpowered desktop opens without native disclosure.
-    local function view_interface(self, user)
+    local function view_interface(self: Handle, user: Handle)
         local powered = self.vars.laptop_powered == true
         local view, actions = document(self, powered)
         ui.open({
@@ -217,7 +219,7 @@ if sim ~= nil then
     end)
 
     -- The step a laptop is missing before it can connect: the lid, then power.
-    local function unready(self)
+    local function unready(self: Handle): string?
         if self.state == "closed" then return "lunatic/tfs:entity.laptop.lid_closed" end
         if self.vars.laptop_powered ~= true then return "lunatic/tfs:entity.laptop.powered_off" end
         return nil
@@ -229,7 +231,7 @@ if sim ~= nil then
         local self, target = ev.subject, ev.claim and ev.claim.entity
         -- The `connect` row's own fact: anything else keeps its ordinary click.
         local link = target and sim.link_state(target)
-        if link == nil or not link.programming then
+        if not link or not link.programming then
             return { replaced = false }
         end
         local missing = unready(self)

@@ -496,7 +496,9 @@ if sim ~= nil then
     script_definition:handle("body.threshold.done", { kind = "react", route = "threshold" }, function(ev)
         local body = ev.body
         local stop, hold, dead = false, false, false
-        for _, id in ipairs(sim.body(body).thresholds) do
+        local snapshot = sim.body(body)
+        if snapshot == nil then return end
+        for _, id in ipairs(snapshot.thresholds) do
             if STOP[id] then stop = true end
             if HOLD[id] then hold = true end
             if id == "dead" then dead = true end

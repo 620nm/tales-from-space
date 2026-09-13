@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- What atmospherics machinery LOOKS like while it is working, as a
 -- player standing in the room sees it.
 --
@@ -57,7 +59,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local valve = t.structure_at(3, 1)
+local valve = assert(t.structure_at(3, 1))
 assert(valve.id == "manual_valve", "the map stood a valve on the main")
 assert(valve.state == "shut", "and tg's valve ships shut")
 assert(
@@ -72,7 +74,7 @@ assert(
 t.click(p, 3, 1, t.target_at(p, 3, 1, "manual_valve"))
 t.run_ticks(1)
 
-local turning = t.structure_at(3, 1)
+local turning = assert(t.structure_at(3, 1))
 assert(
     turning.sprite == "valve_opening_ew",
     "the wheel is turning on the click: " .. tostring(turning.sprite)
@@ -85,7 +87,7 @@ assert(turning.state == "shut", "and the gas has not moved yet")
 -- changed. A repaint that wrote the resting picture here would cut the
 -- wheel off mid-swing.
 t.run_seconds(1.0)
-local mid = t.structure_at(3, 1)
+local mid = assert(t.structure_at(3, 1))
 assert(mid.state == "open", "a second is a second, and then it is open")
 assert(
     mid.sprite == "valve_opening_ew",
@@ -95,7 +97,7 @@ assert(
 
 -- The rest of the art plays out and the valve comes to rest.
 t.run_seconds(0.6)
-local rest = t.structure_at(3, 1)
+local rest = assert(t.structure_at(3, 1))
 assert(rest.state == "open")
 assert(
     rest.sprite == "valve_open_ew",
@@ -112,9 +114,9 @@ assert(
 t.click(p, 3, 1, t.target_at(p, 3, 1, "manual_valve"))
 t.run_ticks(1)
 assert(
-    t.structure_at(3, 1).sprite == "valve_closing_ew",
+    assert(t.structure_at(3, 1)).sprite == "valve_closing_ew",
     "the other direction is its own picture: "
-        .. tostring(t.structure_at(3, 1).sprite)
+        .. tostring(assert(t.structure_at(3, 1)).sprite)
 )
 
 -- And a second click during the turn is nothing at all -- not a cancel,
@@ -122,7 +124,7 @@ assert(
 -- `switching` is set (valve.dm:65-66).
 t.click(p, 3, 1, t.target_at(p, 3, 1, "manual_valve"))
 t.run_seconds(2.0)
-local shut = t.structure_at(3, 1)
+local shut = assert(t.structure_at(3, 1))
 assert(shut.state == "shut", "it shut once, and stayed shut")
 assert(
     shut.sprite == "valve_shut_ew",
@@ -165,7 +167,7 @@ t.world([==[(
 local q = t.join()
 t.tick()
 
-local pump = t.structure_at(3, 1)
+local pump = assert(t.structure_at(3, 1))
 assert(pump.id == "pump", "the map stood a pump on the main")
 assert(pump.state == "off", "and tg's pump ships off")
 assert(
@@ -182,7 +184,7 @@ assert(t.ui(q), "a pump answers an empty hand with a panel")
 ui_controls.toggle(q, "power")
 t.run_ticks(2)
 
-local running = t.structure_at(3, 1)
+local running = assert(t.structure_at(3, 1))
 assert(running.state == "running", "the switch throws")
 assert(
     running.sprite == "pump_on_e",
@@ -193,6 +195,6 @@ assert(
 -- frames are the client's clock, not the sim's.
 t.run_seconds(20)
 assert(
-    t.structure_at(3, 1).sprite == "pump_on_e",
+    assert(t.structure_at(3, 1)).sprite == "pump_on_e",
     "a loop needs no anchor and never changes its name"
 )

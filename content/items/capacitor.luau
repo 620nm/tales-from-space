@@ -1,3 +1,5 @@
+local stock_parts = require("@lib/stock_parts")
+
 -- A capacitor: the stock part that stores a charge.
 --
 -- tg's `/obj/item/stock_parts/capacitor` and its three better rungs

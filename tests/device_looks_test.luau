@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The pictures a WORKED machine wears once it has settled.
 --
 -- atmos_anim_test.luau owns the moving half -- the wheel turning under
@@ -34,13 +36,10 @@
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function readout(p, label)
-    for _, r in ipairs(t.ui(p).readouts) do
+local function readout(p: number, label: string): string?
+    for _, r in ipairs(ui_controls.rows(ui_controls.state(p).readouts)) do
         if word(r.label) == label then
             return word(r.value)
         end
@@ -48,13 +47,13 @@ local function readout(p, label)
     return nil
 end
 
-local function toggle(p, field)
-    for _, sw in ipairs(t.ui(p).toggles) do
+local function toggle(p: number, field: string): ui_controls.Record
+    for _, sw in ipairs(ui_controls.rows(ui_controls.state(p).toggles)) do
         if sw.field == field then
             return sw
         end
     end
-    return nil
+    error("missing toggle: " .. field)
 end
 
 -- ---------------------------------------------------------------
@@ -95,7 +94,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local off = t.structure_at(2, 1)
+local off = assert(t.structure_at(2, 1))
 assert(off.id == "air_scrubber", "the map bolted one to the deck")
 assert(off.state == "off", "and tg's ships off")
 assert(off.sprite == "scrubber_off_e", "dark, and aimed: " .. tostring(off.sprite))
@@ -113,7 +112,7 @@ assert(t.ui(p), "a scrubber wears a panel")
 -- occupied room.
 ui_controls.toggle(p, "roster")
 t.run_ticks(2)
-local armed = t.structure_at(2, 1)
+local armed = assert(t.structure_at(2, 1))
 assert(toggle(p, "roster").on == true, "the dial moved")
 assert(armed.state == "off", "and the machine did not: " .. tostring(armed.state))
 assert(armed.sprite == "scrubber_off_e", "nor its picture: " .. tostring(armed.sprite))
@@ -133,9 +132,9 @@ ui_controls.set(p, "floor", 0)
 ui_controls.toggle(p, "roster")
 ui_controls.toggle(p, "power")
 t.run_seconds(1)
-local running = t.structure_at(2, 1)
+local running = assert(t.structure_at(2, 1))
 assert(running.state == "scrubbing", "the fan is turning")
-assert(running.sprite == "scrubber_on_e", "wearing its working body: " .. running.sprite)
+assert(running.sprite == "scrubber_on_e", "wearing its working body: " .. assert(running.sprite))
 
 -- The one wire-truth check here: the picture is not merely right in the
 -- sim, it reached the client that can see the tile -- and it arrives as
@@ -164,8 +163,8 @@ assert(drawn[2] == "scrubber_on_e", "then the machine: " .. tostring(drawn[2]))
 -- The pressure that decides is the machine's OWN TILE -- the air it is
 -- actually taking, and the air anybody standing beside it is breathing,
 -- which a wide-open fan draws down well below the rest of the room.
-assert(t.room_pressure(2, 1) > 85.0, "the air at the grille is comfortable to start with")
-local emptying = t.structure_at(2, 1)
+assert(assert(t.room_pressure(2, 1)) > 85.0, "the air at the grille is comfortable to start with")
+local emptying = assert(t.structure_at(2, 1))
 assert(toggle(p, "roster").on == true, "the panel says whole air")
 assert(
     emptying.sprite == "scrubber_on_e",
@@ -180,16 +179,16 @@ assert(
 -- against the engine's, so this is the machine crossing a line rather
 -- than anybody moving one.
 local guard = 0
-while t.structure_at(2, 1).state ~= "siphoning" and guard < 240 do
+while assert(t.structure_at(2, 1)).state ~= "siphoning" and guard < 240 do
     t.run_seconds(1)
     guard = guard + 1
 end
-local purging = t.structure_at(2, 1)
+local purging = assert(t.structure_at(2, 1))
 assert(purging.state == "siphoning", "NOW it is an emergency")
 assert(
-    t.room_pressure(2, 1) < 85.0,
+    assert(t.room_pressure(2, 1)) < 85.0,
     "and it waited for the air at the grille to go under the line: "
-        .. t.room_pressure(2, 1) .. " kPa"
+        .. assert(t.room_pressure(2, 1)) .. " kPa"
 )
 assert(
     purging.sprite == "scrubber_purge_e",
@@ -206,7 +205,7 @@ assert(
 -- the warning was about -- stops with it.
 ui_controls.toggle(p, "roster")
 t.run_seconds(1)
-local calm = t.structure_at(2, 1)
+local calm = assert(t.structure_at(2, 1))
 assert(
     calm.state ~= "siphoning" and calm.sprite ~= "scrubber_purge_e",
     "narrowed back, the warning clears: " .. tostring(calm.sprite)
@@ -252,7 +251,7 @@ assert(readout(lone, "room.supply") == "room.supply.fed", "the mains are behind 
 ui_controls.toggle(lone, "power")
 t.run_seconds(1)
 assert(toggle(lone, "power").on == true, "the switch is thrown")
-local nothing = t.structure_at(2, 1)
+local nothing = assert(t.structure_at(2, 1))
 assert(
     nothing.state == "off",
     "and a fan with nowhere to put the air is drawn off: " .. tostring(nothing.state)
@@ -312,10 +311,10 @@ for _, machine in ipairs({ "filter", "mixer" }) do
     local q = t.join()
     t.tick()
 
-    local cold = t.structure_at(3, 1)
+    local cold = assert(t.structure_at(3, 1))
     assert(cold.id == machine, machine .. " is where the map put it")
     assert(cold.state == "off", machine .. " ships off")
-    assert(cold.sprite == machine .. "_off_e", machine .. " is dark, aimed east: " .. cold.sprite)
+    assert(cold.sprite == machine .. "_off_e", machine .. " is dark, aimed east: " .. assert(cold.sprite))
 
     t.click(q, 3, 1, t.target_at(q, 3, 1, machine))
     t.tick()
@@ -324,24 +323,24 @@ for _, machine in ipairs({ "filter", "mixer" }) do
     ui_controls.toggle(q, "power")
     t.run_seconds(1)
 
-    local hot = t.structure_at(3, 1)
+    local hot = assert(t.structure_at(3, 1))
     assert(hot.state == "running", machine .. " is running")
     assert(hot.sprite == machine .. "_on_e",
-        machine .. " swapped picture, not facing: " .. hot.sprite)
+        machine .. " swapped picture, not facing: " .. assert(hot.sprite))
     -- The running bodies of both trinaries are four-frame loops
     -- (assets/sprites/20-atmos-inline-devices.ron). A loop is the
     -- client's own clock and costs the wire nothing, so the NAME is the
     -- whole of what the sim has to get right -- and it must not drift
     -- while the machine keeps working.
     t.run_seconds(3)
-    assert(t.structure_at(3, 1).sprite == machine .. "_on_e",
+    assert(assert(t.structure_at(3, 1)).sprite == machine .. "_on_e",
         machine .. " keeps one name while it keeps working")
 
     -- ...and off again. A one-way picture change would pass every
     -- assertion above.
     ui_controls.toggle(q, "power")
     t.run_seconds(1)
-    local back = t.structure_at(3, 1).sprite
+    local back = assert(assert(t.structure_at(3, 1)).sprite)
     assert(back == machine .. "_off_e", machine .. " goes dark again: " .. back)
 end
 
@@ -387,7 +386,7 @@ t.tick()
 ui_controls.set(m, "pressure", 4500)
 ui_controls.toggle(m, "power")
 t.run_seconds(1)
-local starved = t.structure_at(3, 1)
+local starved = assert(t.structure_at(3, 1))
 assert(toggle(m, "power").on == true, "the switch is thrown and stays thrown")
 assert(
     starved.state == "off",
@@ -438,7 +437,7 @@ t.tick()
 -- The waste main is east this time, so the machine wears the other
 -- picture: the facing is the run's doing and the switch must not
 -- disturb it.
-assert(t.structure_at(4, 2).sprite == "scrubber_off_w", "aimed by its own plumbing")
+assert(assert(t.structure_at(4, 2)).sprite == "scrubber_off_w", "aimed by its own plumbing")
 
 t.click(e, 4, 2, t.target_at(e, 4, 2, "air_scrubber"))
 t.tick()
@@ -452,7 +451,7 @@ ui_controls.set(e, "floor", 0)
 ui_controls.toggle(e, "roster")
 ui_controls.toggle(e, "power")
 t.run_seconds(1)
-assert(t.structure_at(4, 2).sprite == "scrubber_on_w", "and it runs")
+assert(assert(t.structure_at(4, 2)).sprite == "scrubber_on_w", "and it runs")
 t.ui_close(e)
 t.tick()
 
@@ -467,10 +466,10 @@ assert(t.ledger_has("CableCut"), "and cutting it is attributable")
 -- The grid is swept on tg's SSmachines cadence (every 40th tick), so
 -- the machine notices on the next pass rather than in the same instant.
 t.run_seconds(2.5)
-local dark = t.structure_at(4, 2)
+local dark = assert(t.structure_at(4, 2))
 assert(dark.state == "off", "the machine is drawn dead: " .. tostring(dark.state))
 assert(dark.sprite == "scrubber_off_w",
-    "the picture it wore before anyone switched it on: " .. dark.sprite)
+    "the picture it wore before anyone switched it on: " .. assert(dark.sprite))
 
 -- But NOT switched off. The two are different facts and the panel keeps
 -- them apart: the switch is where the engineer left it, and the supply
@@ -499,7 +498,7 @@ assert(t.cable_at(3, 2) == 1, "the coil lays the red line back")
 assert(t.segment_at(4, 2).feed == 1, "and the machine is back on the panel")
 
 t.run_seconds(2.5)
-local revived = t.structure_at(4, 2)
-assert(revived.state == "scrubbing", "it started again on its own: " .. revived.state)
+local revived = assert(t.structure_at(4, 2))
+assert(revived.state == "scrubbing", "it started again on its own: " .. assert(revived.state))
 assert(revived.sprite == "scrubber_on_w",
-    "and the picture came back with the power: " .. revived.sprite)
+    "and the picture came back with the power: " .. assert(revived.sprite))

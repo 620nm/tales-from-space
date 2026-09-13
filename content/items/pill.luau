@@ -1,3 +1,5 @@
+local action_rules = require("@lib/action_rules")
+
 -- The pill: one dose, once.
 -- tg: `/obj/item/reagent_containers/applicator/pill`
 -- (code/modules/reagents/reagent_containers/pill.dm:1-11).

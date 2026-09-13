@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Building a temperature control unit the long way, which is the only
 -- way there is.
 --
@@ -22,18 +24,16 @@ end
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function readout(ui, label)
-    for _, r in ipairs(ui.readouts) do
+local function readout(value: unknown, label: string): string
+    local panel = ui_controls.record(value)
+    for _, r in ipairs(ui_controls.rows(panel.readouts)) do
         if word(r.label) == label then
             return word(r.value)
         end
     end
-    return nil
+    error("missing readout: " .. label)
 end
 
 -- The bench: a run reaching in from the west, a bare tile to build on,
@@ -73,7 +73,7 @@ t.tick()
 
 -- Supplies lie apart so each has a visible pixel. Fetch one at a
 -- time and return to the workbench before using it.
-local function take(id)
+local function take(id: string)
     local x, y = 3, 2
     local places = {["metal"] = {1, 3},["cable_coil"] = {2, 3},["machine_board.thermomachine"] = {3, 3},["matter_bin"] = {4, 3},["micro_laser"] = {5, 3},["glass"] = {6, 3},["screwdriver"] = {1, 2},["crowbar"] = {5, 2}}
     local at = if t.target_at(p, x, y, id) then {x, y} else places[id]
@@ -136,13 +136,13 @@ put_down()
 take("cable_coil")
 t.click(p, 3, 1, t.target_at(p, 3, 1, "machine_frame"))
 t.run_seconds(2.5)
-assert(t.structure_at(3, 1).state == "wired", "five lengths of cable wire it")
+assert(assert(t.structure_at(3, 1)).state == "wired", "five lengths of cable wire it")
 
 put_down()
 take("machine_board.thermomachine")
 t.click(p, 3, 1, t.target_at(p, 3, 1, "machine_frame"))
 t.run_ticks(2)
-assert(t.structure_at(3, 1).state == "boarded", "the board clicks into place")
+assert(assert(t.structure_at(3, 1)).state == "boarded", "the board clicks into place")
 assert(t.count_items("machine_board.thermomachine") == 0, "and is installed rather than dropped")
 
 -- ---------------------------------------------------------------
@@ -173,7 +173,7 @@ assert(
     heard:find("It still needs 2 x matter bin.", 1, true),
     "the screwdriver says what the board is short of, got: " .. heard
 )
-assert(t.structure_at(3, 1).id == "machine_frame", "and nothing was assembled")
+assert(assert(t.structure_at(3, 1)).id == "machine_frame", "and nothing was assembled")
 
 -- Something the board never asked for is refused by NAME rather than
 -- eaten: a frame is not a bin.
@@ -237,9 +237,9 @@ assert(
 put_down()
 t.click(p, 3, 1, t.target_at(p, 3, 1, "thermomachine"))
 t.tick()
-local panel = t.ui(p)
-assert(panel, "a temperature control unit wears a panel")
-assert(panel.setpoints[1].field == "temperature", "with a thermostat on it")
+local panel = ui_controls.record(assert(t.ui(p), "a temperature control unit wears a panel"))
+local setpoint = ui_controls.rows(panel.setpoints)[1]
+assert(setpoint.field == "temperature", "with a thermostat on it")
 assert(readout(panel, "thermo.pipe") ~= "thermo.pipe.none",
     "and its mouth found the run: " .. tostring(readout(panel, "thermo.pipe")))
 t.ui_close(p)
@@ -259,11 +259,12 @@ t.click(p, 3, 1, t.target_at(p, 3, 1, "thermomachine"))
 t.run_seconds(4.5)
 local left = t.structure_at(3, 1)
 assert(left ~= nil and left.id == "machine_frame", "a frame is what is left standing")
-for item, count in pairs({
+local returned_parts: { [string]: number } = {
     ["machine_board.thermomachine"] = 1,
     matter_bin = 2,
     micro_laser = 2,
-}) do
+}
+for item, count in pairs(returned_parts) do
     assert(
         t.count_items(item) == count,
         item .. ": expected " .. count .. " back, got " .. t.count_items(item)

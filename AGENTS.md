@@ -92,20 +92,21 @@ allowance (`access/10_engineering.luau`).
   An idea that seems to need per-tick native execution becomes a native
   system with data-driven knobs — never a faster handler.
 - Game fiction never says "lunatic"; engine words stay out of content.
-- Shared code lives in `content/lib/`. There is no `require`: a `lib/`
-  file returns a table and the loader publishes it as a global named for
-  the file (`lib/vessel.luau` -> `vessel`), before every roster. It is
-  readable inside every handler, and at prototype time in the ITEM
-  sandbox only: the structure registry has its own, so a file under
-  `structures/` reads nil there and spells the word out
-  (`structures/light.luau`, `lib/network.luau`). Nothing in
-  `lib/` may call `sim.define` — shared code publishes tables, rosters
-  declare things. A gesture spelled out in two roster files belongs
+- Shared code lives in `content/lib/`; import its returned table with
+  `local vessel = require("@lib/vessel")`. Dependencies are explicit in
+  libraries too. Prototype sandboxes have imports but no `sim`; library
+  initialization cannot call `sim.define`. Shared code exports tables,
+  rosters declare things. A gesture spelled out in two roster files belongs
   there instead; that duplication is what it exists to prevent. Because
   a `lib/` file may not `sim.define`, a shared answer is a FUNCTION
   there and the `Definition:handle` naming it lives in the roster file
   — `lib/radio_relay.luau` against `fixtures/transceiver.luau`,
   `fixtures/access_point.luau` and `fixtures/network_router.luau`.
+- Every trusted Luau source passes strict checking. From the engine run
+  `node tools/luau.mjs check "$LUNATIC_PACK"` after edits; append `content`
+  or `spec` and filenames to narrow it. One editor window offers both
+  native APIs; the command enforces their separate runtime contexts.
+  Authoring setup is the engine's `docs/luau-api/authoring.md`.
 - Radio policy is `lib/radio.luau` (every number, and who finally hears
   a `;` line) and `lib/radio_relay.luau` (what a tower, a wall box and a
   router each do to one crossing them). Nothing else decides who hears:

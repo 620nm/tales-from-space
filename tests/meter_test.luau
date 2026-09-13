@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The flow meter: a dial bolted onto a run.
 --
 -- tg's `/obj/machinery/meter` (code/modules/atmospherics/machinery/
@@ -6,13 +8,13 @@
 -- line reads the same with the meter on it as without, because an
 -- instrument that changed what it was measuring would be a poor one.
 
-local function r2(n)
+local function r2(n: number): string
     local scaled = n * 100
     local rounded = if scaled >= 0 then math.floor(scaled + 0.5) else math.ceil(scaled - 0.5)
     return tostring(rounded / 100)
 end
 
-local function said(p, line)
+local function said(p: number, line: string): boolean
     for _, m in ipairs(t.messages(p)) do
         if m == line then
             return true
@@ -21,7 +23,7 @@ local function said(p, line)
     return false
 end
 
-local function lying_at(x, y, id)
+local function lying_at(x: number, y: number, id: string): boolean
     for _, item in ipairs(t.items_at(x, y)) do
         if item == id then
             return true
@@ -81,7 +83,7 @@ assert(t.hands(p).held == "wrench", "wrench in hand")
 
 -- Let the bottle and the run settle into one body of gas.
 t.run_seconds(10)
-local charged = t.pipe_pressure(2, 1)
+local charged = assert(t.pipe_pressure(2, 1))
 assert(charged > 90.0, "the run is live: " .. charged .. " kPa")
 
 -- ---- a gauge needs something to gauge ----
@@ -121,12 +123,12 @@ assert(not lying_at(2, 1, "pipe_meter"), "the fitting was spent into it")
 -- to it.
 t.run_seconds(5)
 assert(
-    t.pipe_pressure(2, 1) == t.pipe_pressure(3, 1),
+    assert(t.pipe_pressure(2, 1)) == assert(t.pipe_pressure(3, 1)),
     "the meter did not split the run it is measuring"
 )
 assert(
-    math.abs(t.pipe_pressure(2, 1) - charged) < 1.0,
-    "nor change what it reads: " .. charged .. " -> " .. t.pipe_pressure(2, 1)
+    math.abs(assert(t.pipe_pressure(2, 1)) - charged) < 1.0,
+    "nor change what it reads: " .. charged .. " -> " .. assert(t.pipe_pressure(2, 1))
 )
 
 -- ---- the needle reaches the wire ----
@@ -153,7 +155,7 @@ assert(#drawn == 3, "and nothing else")
 -- reading it without walking over. Two tiles east is past arm's length
 -- and well inside the room.
 local reading = "The pressure gauge reads "
-    .. r2(t.pipe_pressure(2, 1))
+    .. r2(assert(t.pipe_pressure(2, 1)))
     .. " kPa; 293.15 K (20°C)."
 
 walk(p, "east")
@@ -188,30 +190,30 @@ walk(p, "west")
 t.swap_hands(p)
 t.click(p, 2, 1, t.target_at(p, 2, 1, "meter"))
 t.run_ticks(2)
-local panel = t.ui(p)
+local panel = ui_controls.record(t.ui(p))
 assert(panel ~= nil, "an attached gauge answers an empty hand with a panel")
 assert(panel.document == "modules" and panel.presentation == "modules",
     "its declared module document")
-assert(#panel.toggles == 0 and #panel.setpoints == 0, "and nothing on it to turn")
+assert(#ui_controls.rows(panel.toggles) == 0 and #ui_controls.rows(panel.setpoints) == 0, "and nothing on it to turn")
 
 -- What is in the run, itemised: one block under the LINE heading —
 -- the composition tg's chat line cannot give (docs/tgui/matter-block.md).
-local line = panel.matter and panel.matter[1]
-assert(line and line.section.id == "meter.line", "the panel draws the run it is reading")
-local gas = nil
-for _, st in ipairs(line.states or {}) do
+local line = ui_controls.rows(panel.matter or {})[1]
+assert(line and ui_controls.record(line.section).id == "meter.line", "the panel draws the run it is reading")
+local gas: ui_controls.Record? = nil
+for _, st in ipairs(ui_controls.rows(line.states or {})) do
     if st.phase == "gas" then
         gas = st
     end
 end
 assert(gas, "a charged run holds a gas")
-assert(math.abs(gas.measure - t.pipe_pressure(2, 1)) < 1e-9,
+assert(math.abs(ui_controls.number(gas.measure) - assert(t.pipe_pressure(2, 1))) < 1e-9,
     "the panel reads the run: " .. tostring(gas.measure))
-assert(math.abs(line.temperature_k - 293.15) < 0.05,
+assert(math.abs(ui_controls.number(line.temperature_k) - 293.15) < 0.05,
     "and how warm it is: " .. tostring(line.temperature_k))
-local seen = {}
-for _, row in ipairs(gas.rows) do
-    seen[row.key] = row.moles
+local seen: {[string]: unknown} = {}
+for _, row in ipairs(ui_controls.rows(gas.rows)) do
+    seen[ui_controls.text(row.key)] = row.moles
 end
 assert(seen.o2 and seen.n2, "and what the pressure is made OF: o2 and n2")
 assert(line.sealed == nil, "a run has no lid to report")
@@ -232,8 +234,8 @@ assert(lying_at(2, 1, "pipe_meter"), "and what came up is the fitting it was bui
 -- The line never noticed any of it.
 assert(t.pipe(2, 1) == 4, "the run it was bolted to is untouched")
 assert(
-    math.abs(t.pipe_pressure(2, 1) - charged) < 1.0,
-    "and still at the pressure it was: " .. t.pipe_pressure(2, 1)
+    math.abs(assert(t.pipe_pressure(2, 1)) - charged) < 1.0,
+    "and still at the pressure it was: " .. assert(t.pipe_pressure(2, 1))
 )
 
 -- ---------------------------------------------------------------
@@ -277,7 +279,7 @@ local function lamp()
 end
 -- The lamp tg pairs with a needle face: `pressureN_M` -> `buttonsN`
 -- (datums/greyscale/json_configs/meter.json).
-local function band_of(face)
+local function band_of(face: string): string
     return "meter_l" .. string.sub(face, 8, 8)
 end
 

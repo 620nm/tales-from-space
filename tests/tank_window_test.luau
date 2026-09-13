@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The bottle on your back has a window, and it is the same window the
 -- canister and the bolted-in reservoir wear.
 --
@@ -33,13 +35,10 @@ t.tick()
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function readout(ui, label)
-    for _, r in ipairs(ui.readouts) do
+local function readout(ui: ui_controls.Record, label: string): ui_controls.Record?
+    for _, r in ipairs(ui_controls.rows(ui.readouts)) do
         if word(r.label) == label then
             return r
         end
@@ -47,8 +46,8 @@ local function readout(ui, label)
     return nil
 end
 
-local function setpoint(ui, field)
-    for _, s in ipairs(ui.setpoints) do
+local function setpoint(ui: ui_controls.Record, field: string): ui_controls.Record?
+    for _, s in ipairs(ui_controls.rows(ui.setpoints)) do
         if s.field == field then
             return s
         end
@@ -58,8 +57,8 @@ end
 
 -- The contents block: what the vessel is HOLDING, by state, in the
 -- units each state is read in (docs/tgui/matter-block.md).
-local function block(ui, section)
-    for _, b in ipairs(ui.matter or {}) do
+local function block(ui: ui_controls.Record, section: string): ui_controls.Record?
+    for _, b in ipairs(ui_controls.rows(ui.matter or {})) do
         if word(b.section) == section then
             return b
         end
@@ -67,8 +66,8 @@ local function block(ui, section)
     return nil
 end
 
-local function state(b, phase)
-    for _, s in ipairs(b and b.states or {}) do
+local function state(b: ui_controls.Record?, phase: string): ui_controls.Record?
+    for _, s in ipairs(ui_controls.rows(b and b.states or {})) do
         if s.phase == phase then
             return s
         end
@@ -76,8 +75,8 @@ local function state(b, phase)
     return nil
 end
 
-local function named(st, name)
-    for _, r in ipairs(st and st.rows or {}) do
+local function named(st: ui_controls.Record?, name: string): ui_controls.Record?
+    for _, r in ipairs(ui_controls.rows(st and st.rows or {})) do
         if r.name == name then
             return r
         end
@@ -104,11 +103,11 @@ assert(t.ui(p) == nil, "picking a thing up opens nothing")
 
 t.use_self(p)
 t.run_ticks(2)
-local ui = t.ui(p)
+local ui = ui_controls.state(p)
 assert(ui, "the in-hand key opens the panel")
 assert(ui.document == "modules" and ui.presentation == "modules",
     "the shared module document")
-assert(#ui.toggles == 0, "the valve is a KEY, not a button on the panel")
+assert(#ui_controls.rows(ui.toggles) == 0, "the valve is a KEY, not a button on the panel")
 
 -- ---------------------------------------------------------------
 -- WHAT IS IN IT. The shared contents block: a row per substance
@@ -120,16 +119,16 @@ local gas = state(contents, "gas")
 assert(gas, "a bottle of oxygen holds a gas")
 assert(named(gas, "oxygen"), "one row PER SUBSTANCE PRESENT, named by the substance")
 assert(named(gas, "nitrogen") == nil, "and no row for one that is not in there")
-assert(math.abs(gas.measure - 6 * 101.325) < 5.0,
-    "charged to the six atmospheres its file says: " .. tostring(gas.measure))
-assert(contents.temperature_k > 200.0, "a temperature")
-assert(math.abs(contents.volume_l - 70.0) < 0.001,
-    "and tg's TANK_STANDARD_VOLUME, in litres: " .. tostring(contents.volume_l))
+assert(math.abs(ui_controls.number(gas.measure) - 6 * 101.325) < 5.0,
+    "charged to the six atmospheres its file says: " .. tostring(ui_controls.number(gas.measure)))
+assert(ui_controls.number(contents.temperature_k) > 200.0, "a temperature")
+assert(math.abs(ui_controls.number(contents.volume_l) - 70.0) < 0.001,
+    "and tg's TANK_STANDARD_VOLUME, in litres: " .. tostring(ui_controls.number(contents.volume_l)))
 assert(contents.sealed == true, "a bottle has a lid")
 assert(readout(ui, "holder.supply") == nil, "an ordinary bottle is not inexhaustible")
 assert(readout(ui, "holder.rating") == nil, "and nothing wrote a rating on the side of it")
 assert(ui.gauge == nil, "so there is no needle to draw against one")
-assert(readout(ui, "tank.internals").value.id == "tank.internals.connected", "the key opened the valve too")
+assert(ui_controls.record(assert(readout(ui, "tank.internals")).value).id == "tank.internals.connected", "the key opened the valve too")
 
 -- ---------------------------------------------------------------
 -- THE ONE KNOB. tg's release pressure, tg's bounds, and the clamp is
@@ -138,27 +137,27 @@ assert(readout(ui, "tank.internals").value.id == "tank.internals.connected", "th
 -- ---------------------------------------------------------------
 local dial = setpoint(ui, "release")
 assert(dial, "the release valve is a dial")
-assert(math.abs(dial.value - 16.0) < 0.001, "at tg's default: " .. tostring(dial.value))
+assert(math.abs(ui_controls.number(dial.value) - 16.0) < 0.001, "at tg's default: " .. tostring(ui_controls.number(dial.value)))
 assert(dial.min == 0.0, "tg's TANK_MIN_RELEASE_PRESSURE")
-assert(math.abs(dial.max - 3 * 101.325) < 0.001, "and tg's maximum, three atmospheres")
+assert(math.abs(ui_controls.number(dial.max) - 3 * 101.325) < 0.001, "and tg's maximum, three atmospheres")
 
 ui_controls.set(p, "release", 30)
 t.tick()
-assert(math.abs(setpoint(t.ui(p), "release").value - 30.0) < 0.001, "the valve took 30 kPa")
+assert(math.abs(ui_controls.number(assert(setpoint(ui_controls.state(p), "release")).value) - 30.0) < 0.001, "the valve took 30 kPa")
 ui_controls.set(p, "release", 9000)
 t.tick()
-assert(math.abs(setpoint(t.ui(p), "release").value - 3 * 101.325) < 0.001,
+assert(math.abs(ui_controls.number(assert(setpoint(ui_controls.state(p), "release")).value) - 3 * 101.325) < 0.001,
     "and a client cannot dial past three atmospheres")
 ui_controls.set(p, "release", "min")
 t.tick()
-assert(setpoint(t.ui(p), "release").value == 0.0, "nor below nothing")
+assert(ui_controls.number(assert(setpoint(ui_controls.state(p), "release")).value) == 0.0, "nor below nothing")
 assert(t.ledger_has("MachineSetpoint"), "and every setting is on the record")
 
 -- Nothing else on this panel is a control, so nothing else answers.
 assert(ui_controls.find(p, "/toggle/valve/switch") == nil, "no valve control")
 assert(ui_controls.find(p, "/set/pressure/value") == nil, "no pressure dial")
 t.tick()
-assert(setpoint(t.ui(p), "release").value == 0.0, "a field the panel never offered moves nothing")
+assert(ui_controls.number(assert(setpoint(ui_controls.state(p), "release")).value) == 0.0, "a field the panel never offered moves nothing")
 
 -- ---------------------------------------------------------------
 -- AND IT STAYS OPEN ON YOUR BACK. A panel on your own kit has no
@@ -170,7 +169,7 @@ t.equip(p)
 t.run_ticks(30)
 assert(t.worn(p).back == "oxygen_tank", "the bottle is on the back now")
 assert(t.hands(p)[1] == nil and t.hands(p)[2] == nil, "and out of both hands")
-local worn = t.ui(p)
+local worn = ui_controls.state(p)
 assert(worn and worn.document == "modules" and worn.presentation == "modules",
     "its document is still up")
 assert(named(state(block(worn, "holder.contents"), "gas"), "oxygen"),

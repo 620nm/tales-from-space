@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The crowbar pries only what the motors have let go of: a powered
 -- door opens on a click like any other, a dark one takes work and then
 -- stays open, because an unpowered door has nothing to close itself
@@ -32,31 +34,31 @@ t.move(p, "east")
 t.tick()
 
 -- Powered: the crowbar handler passes, the native toggle opens it.
-assert(t.door_at(3, 1).powered, "the shipped grid feeds this door")
+assert(assert(t.door_at(3, 1)).powered, "the shipped grid feeds this door")
 t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.tick()
-assert(not t.door_at(3, 1).open, "the airlock is still swinging")
+assert(not assert(t.door_at(3, 1)).open, "the airlock is still swinging")
 t.run_ticks(12) -- the swing: tg's 0.6 seconds
-assert(t.door_at(3, 1).open, "powered doors ignore the crowbar")
+assert(assert(t.door_at(3, 1)).open, "powered doors ignore the crowbar")
 t.run_ticks(90) -- the swing + DOOR_AUTOCLOSE_TICKS + change
-assert(not t.door_at(3, 1).open, "autoclosed")
+assert(not assert(t.door_at(3, 1)).open, "autoclosed")
 
 -- Kill the power: the same click starts a pry do_after instead.
 t.outage()
 t.tick()
-assert(not t.door_at(3, 1).powered, "the breaker tripped")
+assert(not assert(t.door_at(3, 1)).powered, "the breaker tripped")
 t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.tick()
-assert(not t.door_at(3, 1).open, "prying takes time")
+assert(not assert(t.door_at(3, 1)).open, "prying takes time")
 t.run_ticks(60)
-assert(t.door_at(3, 1).open, "pried open")
+assert(assert(t.door_at(3, 1)).open, "pried open")
 t.run_ticks(65)
-assert(t.door_at(3, 1).open,
+assert(assert(t.door_at(3, 1)).open,
     "an unpowered door has no motors to autoclose with")
 
 assert(#t.ledger_rows("PowerOutage") == 1, "the outage is on the record")
 local pried = t.ledger_rows("DoorPried")
-assert(#pried == 1 and pried[1].at[1] == 3 and pried[1].at[2] == 1,
+assert(#pried == 1 and ui_controls.array(pried[1].at)[1] == 3 and ui_controls.array(pried[1].at)[2] == 1,
     "the pry names the door it opened")
 local msgs = table.concat(t.messages(p), "\n")
 assert(msgs:find("gives way", 1, true), "the door gave way: " .. msgs)

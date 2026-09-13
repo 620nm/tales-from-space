@@ -169,7 +169,7 @@ assert(t.turf(2, 2) == "plating", "the tile came up")
 
 t.move(p, "south")
 t.run_ticks(5)
-local lifted = t.target_at(p, 2, 2, "floor_tile")
+local lifted = assert(t.target_at(p, 2, 2, "floor_tile"))
 assert(lifted ~= nil, "the pried tile is visible from beside it")
 t.click(p, 2, 2, lifted)
 t.run_ticks(2)
@@ -235,12 +235,12 @@ assert(t.pipe(1, 1) == DISTRO, "covering does not consume the raw pipe")
 t.click(c, 2, 1, t.target_at(c, 2, 1, "manual_valve"))
 t.run_seconds(2)
 assert(t.turf(2, 1) == "floor", "a floor tile covers a pipe device")
-assert(t.structure_at(2, 1).id == "manual_valve", "the device remains under the tile")
+assert(assert(t.structure_at(2, 1)).id == "manual_valve", "the device remains under the tile")
 
 t.click(c, 3, 1, t.target_at(c, 3, 1, "connector_port"))
 t.run_seconds(2)
 assert(t.turf(3, 1) == "floor", "a floor tile covers a connector")
-assert(t.structure_at(3, 1).id == "connector_port", "the connector remains under the tile")
+assert(assert(t.structure_at(3, 1)).id == "connector_port", "the connector remains under the tile")
 assert(t.pipe(3, 1) == 0, "the unary connector still replaces its centre length")
 
 -- The above cases clicked the plumbing art itself. A canister stacked over
@@ -276,14 +276,14 @@ t.world([==[(
 local d = t.join()
 t.tick()
 assert(t.target_at(d, 2, 1, "connector_port") ~= nil, "a real port starts under the canister")
-assert(t.canister_pressure(2, 1) > 4000.0, "the canister starts fastened and full")
-assert(t.pipe_pressure(1, 1) > 90.0, "its port has charged the neighbouring run")
+assert(assert(t.canister_pressure(2, 1)) > 4000.0, "the canister starts fastened and full")
+assert(assert(t.pipe_pressure(1, 1)) > 90.0, "its port has charged the neighbouring run")
 t.click(d, 2, 2, t.target_at(d, 2, 2, "floor_tile"))
 t.run_ticks(2)
 
 -- Naming the native canister is naming the bottle, not its connector and
 -- not the turf. It must not collapse into the ground operation below.
-local bottle = t.target_at(d, 2, 1)
+local bottle = assert(t.target_at(d, 2, 1))
 assert(bottle ~= nil, "the visible canister has an exact wire identity")
 t.click(d, 2, 1, bottle)
 t.run_seconds(2)
@@ -294,10 +294,10 @@ assert(t.canister_pressure(2, 1) ~= nil, "the named bottle and port remain intac
 t.click(d, 2, 1, nil, -14, 14)
 t.run_seconds(2)
 assert(t.turf(2, 1) == "floor", "a ground pixel tiles beneath the canister")
-assert(t.structure_at(2, 1).id == "canister", "the canister remains above the tile")
+assert(assert(t.structure_at(2, 1)).id == "canister", "the canister remains above the tile")
 assert(t.canister_pressure(2, 1) ~= nil, "it remains anchored to its socket")
 assert(t.pipe(2, 1) == 0, "the connector did not become a hidden raw length")
-assert(t.pipe_pressure(1, 1) > 90.0, "the port remains plumbed to its neighbouring run")
+assert(assert(t.pipe_pressure(1, 1)) > 90.0, "the port remains plumbed to its neighbouring run")
 
 -- ---------------------------------------------------------------
 -- The open deck is a fact about the TILE, not about the letter its

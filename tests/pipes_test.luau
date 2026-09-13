@@ -68,7 +68,7 @@ assert(
 
 -- A run a player builds starts empty -- nobody filled it.
 assert(t.pipe_pressure(2, 1) ~= nil, "the run is a real net")
-assert(t.pipe_pressure(2, 1) < 1.0, "and it is empty until something fills it")
+assert(assert(t.pipe_pressure(2, 1)) < 1.0, "and it is empty until something fills it")
 
 -- Unwrench the middle: the run parts in two and gives back a length.
 t.drop(p)
@@ -222,8 +222,8 @@ t.tick()
 -- The mapped run is commissioned, unlike the one built above, and it
 -- runs toward the wall between the two rooms. It stops one tile short
 -- of that wall: the closet's vent has nothing to draw from yet.
-assert(t.pipe_pressure(8, 3) > 90.0, "a mapped line is handed over charged")
-assert(t.room_pressure(12, 1) > 90.0, "and both rooms start breathable")
+assert(assert(t.pipe_pressure(8, 3)) > 90.0, "a mapped line is handed over charged")
+assert(assert(t.room_pressure(12, 1)) > 90.0, "and both rooms start breathable")
 assert(t.turf(11, 3) == "wall", "the line runs under a wall")
 assert(t.pipe_pressure(12, 3) == nil, "but stops short of the closet")
 
@@ -240,7 +240,7 @@ t.click(q, 12, 2, t.target_at(q, 12, 2, "welder")) -- the welder, underfoot
 t.fault(12, 1, 6)
 t.run_seconds(6)
 assert(t.is_breached(12, 1), "the fault opened the closet")
-local emptied = t.room_pressure(12, 3)
+local emptied = assert(t.room_pressure(12, 3))
 assert(emptied < 25.0, "the closet emptied: " .. emptied)
 
 -- Seal it again by hand. Now it is a sealed vacuum with a dead vent.
@@ -249,7 +249,7 @@ t.run_seconds(4.5)
 assert(not t.is_breached(12, 1), "welded shut")
 t.run_seconds(10)
 assert(
-    t.room_pressure(12, 3) < 25.0,
+    assert(t.room_pressure(12, 3)) < 25.0,
     "and a sealed vacuum stays a vacuum while the line stops short"
 )
 
@@ -271,8 +271,8 @@ assert(t.pipe(12, 3) == DISTRO, "the last length went down")
 assert(t.pipe_pressure(12, 3) ~= nil, "and the vent has a run to draw on")
 
 t.run_seconds(60)
-local west_end = t.room_pressure(2, 1)
-local east_end = t.room_pressure(12, 3)
+local west_end = assert(t.room_pressure(2, 1))
+local east_end = assert(t.room_pressure(12, 3))
 assert(east_end > 40.0, "the line repressurised the closet: " .. east_end)
 assert(
     west_end < 100.0,
@@ -321,7 +321,7 @@ t.world([==[(
 
 local e = t.join()
 t.tick()
-assert(t.pipe_pressure(2, 1, DISTRO) > 90.0, "the mapped main is charged")
+assert(assert(t.pipe_pressure(2, 1, DISTRO)) > 90.0, "the mapped main is charged")
 
 -- Pick the pipe up and walk the dial round from 3 to 1, tg's
 -- 1->2->3->4->5->1 cycle (construction.dm:438-445).
@@ -343,11 +343,11 @@ assert(t.ledger_has("ModeSet"), "which layer you chose is on the record")
 t.click(e, 2, 1, nil, -14, 14)
 t.run_seconds(1.5)
 assert(t.pipe(2, 1) == DISTRO + 1, "both layers are under the tile: " .. t.pipe(2, 1))
-assert(t.pipe_pressure(2, 1, DISTRO) > 90.0, "the main is still charged")
+assert(assert(t.pipe_pressure(2, 1, DISTRO)) > 90.0, "the main is still charged")
 assert(t.pipe_pressure(2, 1, 1) ~= nil, "and the new length is a real net")
 assert(
-    t.pipe_pressure(2, 1, 1) < 1.0,
-    "which is empty, because it never touched the main: " .. t.pipe_pressure(2, 1, 1)
+    assert(t.pipe_pressure(2, 1, 1)) < 1.0,
+    "which is empty, because it never touched the main: " .. assert(t.pipe_pressure(2, 1, 1))
 )
 
 -- One pull, one length: the wrench takes the layer the alpha-tested
@@ -401,8 +401,8 @@ t.world([==[(
 t.join()
 t.tick()
 
-assert(t.pipe_pressure(3, 2) > 90.0, "both mains are handed over charged")
-assert(t.pipe_pressure(4, 2) > 90.0)
+assert(assert(t.pipe_pressure(3, 2)) > 90.0, "both mains are handed over charged")
+assert(assert(t.pipe_pressure(4, 2)) > 90.0)
 
 -- Open the room to space. The vented main drains through its hole.
 t.fault(1, 1, 6)
@@ -410,8 +410,8 @@ t.run_seconds(6)
 assert(t.is_breached(1, 1), "the room is open to space")
 t.run_seconds(40)
 
-local vented = t.pipe_pressure(3, 2)
-local neighbour = t.pipe_pressure(4, 2)
+local vented = assert(t.pipe_pressure(3, 2))
+local neighbour = assert(t.pipe_pressure(4, 2))
 assert(vented < 25.0, "the vented main emptied: " .. vented)
 assert(
     neighbour > 90.0,
@@ -449,9 +449,9 @@ t.fault(1, 1, 6)
 t.run_seconds(6)
 t.run_seconds(40)
 assert(
-    t.pipe_pressure(4, 2) < 25.0,
+    assert(t.pipe_pressure(4, 2)) < 25.0,
     "unaimed, the second column is the same net and drains too: "
-        .. t.pipe_pressure(4, 2)
+        .. assert(t.pipe_pressure(4, 2))
 )
 
 -- ---------------------------------------------------------------

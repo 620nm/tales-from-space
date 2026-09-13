@@ -24,7 +24,7 @@
 
 -- Moles in a volume at a pressure, at room temperature -- the ideal gas
 -- law, so the spec can audit the books rather than trust a direction.
-local function moles(kpa, volume_m3)
+local function moles(kpa: number, volume_m3: number)
     return kpa * 1000.0 * volume_m3 / (8.314 * 293.15)
 end
 
@@ -136,11 +136,11 @@ local seated = t.structure_at(2, 1)
 assert(seated ~= nil and seated.id == "canister", "the canister is on its tile")
 assert(seated.state == "anchored", "and it opened the shift fastened down")
 
-local mapped_full = t.canister_pressure(2, 1)
+local mapped_full = assert(t.canister_pressure(2, 1))
 t.run_seconds(10)
 assert(
-    t.canister_pressure(2, 1) < mapped_full - 100.0,
-    "a fastened canister feeds the run: " .. mapped_full .. " -> " .. t.canister_pressure(2, 1)
+    assert(t.canister_pressure(2, 1)) < mapped_full - 100.0,
+    "a fastened canister feeds the run: " .. mapped_full .. " -> " .. tostring(t.canister_pressure(2, 1))
 )
 
 -- ---- you do not pull the socket out from under the bottle ----
@@ -199,7 +199,7 @@ assert(
 -- the far end of the round trip nothing is feeding anything, which is
 -- what makes the books below worth taking.
 t.run_seconds(15)
-assert(t.pipe_pressure(5, 1) < 5.0, "the run the port left is spent")
+assert(assert(t.pipe_pressure(5, 1)) < 5.0, "the run the port left is spent")
 
 -- The books, taken with everything static. The room is 8x3 tiles of
 -- 1 m³, the run is nine lengths of 70 L plus the vent's 200 L mouth,
@@ -209,9 +209,9 @@ local RUN_M3 = 9 * 0.070 + 0.200
 local CAN_M3 = 2.0
 
 local function books(can_x, can_y)
-    return moles(t.canister_pressure(can_x, can_y), CAN_M3)
-        + moles(t.pipe_pressure(5, 1), RUN_M3)
-        + moles(t.room_pressure(4, 2), ROOM_M3)
+    return moles(assert(t.canister_pressure(can_x, can_y)), CAN_M3)
+        + moles(assert(t.pipe_pressure(5, 1)), RUN_M3)
+        + moles(assert(t.room_pressure(4, 2)), ROOM_M3)
 end
 
 local opening = books(2, 1)
@@ -357,9 +357,9 @@ local before = t.canister_pressure(3, 1)
 t.run_seconds(10)
 local after = t.canister_pressure(3, 1)
 assert(
-    after < before - 100.0,
+    assert(after) < assert(before) - 100.0,
     "the canister feeds the run through the port it was carried to: "
-        .. before
+        .. assert(before)
         .. " -> "
         .. after
 )
@@ -368,8 +368,8 @@ assert(
 -- and both of them are paying the hole together. That is what makes a
 -- breach expensive.
 assert(
-    math.abs(t.pipe_pressure(5, 1) - after) < after * 0.2 + 10.0,
+    math.abs(assert(t.pipe_pressure(5, 1)) - after) < assert(after) * 0.2 + 10.0,
     "the run reads the bottle it is coupled to: "
-        .. t.pipe_pressure(5, 1) .. " vs " .. after
+        .. assert(t.pipe_pressure(5, 1)) .. " vs " .. after
 )
-assert(t.room_pressure(4, 2) > 90.0, "and the sealed room never noticed any of it")
+assert(assert(t.room_pressure(4, 2)) > 90.0, "and the sealed room never noticed any of it")

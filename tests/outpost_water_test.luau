@@ -77,8 +77,8 @@ assert(look_at(DRY) == "", "a dry deck is a deck: " .. look_at(DRY))
 -- the deep end reads higher than the air over a dry one. A picture
 -- would not do that.
 -- ---------------------------------------------------------------
-local deep_kpa = t.room_pressure(DEEP[1], DEEP[2])
-local dry_kpa = t.room_pressure(DRY[1], DRY[2])
+local deep_kpa = assert(t.room_pressure(DEEP[1], DEEP[2]))
+local dry_kpa = assert(t.room_pressure(DRY[1], DRY[2]))
 assert(deep_kpa > dry_kpa + 1.0,
     ("the slug displaces the air over it: %.2f vs %.2f"):format(deep_kpa, dry_kpa))
 
@@ -141,10 +141,10 @@ local x, y = t.pos(p)
 assert(x == 11 and y == 6, ("at the sill, got (%d,%d)"):format(x, y))
 t.click(p, 11, 7, t.target_at(p, 11, 7))
 t.run_ticks(15)
-assert(t.door_at(11, 7).open, "the glazed sill is open")
+assert(assert(t.door_at(11, 7)).open, "the glazed sill is open")
 t.outage()
 t.run_ticks(5)
-assert(t.door_at(11, 7).open, "and a dead leaf stays where it was left")
+assert(assert(t.door_at(11, 7)).open, "and a dead leaf stays where it was left")
 
 t.run_ticks(10000)
 

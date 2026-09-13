@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The heart swap the charter promises on a proper table (docs/SURGERY.md
 -- §6.3, tg's replace-a-failing-heart workflow). On an operating table the
 -- modifier is 1.0 and nothing can fail, so this is the OTHER half of the
@@ -23,7 +25,7 @@ t.run_ticks(3)
 t.rest(patient, true)
 t.unequip(patient, "uniform") -- bare the chest (Strip is B3)
 t.run_ticks(2)
-assert(t.body(patient).posture == "lying" and t.body(patient).conscious,
+assert(assert(t.body(patient)).posture == "lying" and assert(t.body(patient)).conscious,
     "the patient is on the table, awake for now")
 assert(t.worn(patient).uniform == nil, "the chest is bared")
 
@@ -42,10 +44,12 @@ local function has(states, name) return states[name] == true end
 -- What a candidate button says. An operation ON AN ORGAN is the
 -- `procedure.on_organ` id carrying the two words as arguments; a plain
 -- one is content's own word (docs/tgui/labels.md).
-local function face(label)
-    if type(label) ~= "table" then return tostring(label) end
-    if label.args and label.args.organ then
-        return tostring(label.args.operation) .. " " .. tostring(label.args.organ)
+local function face(value: unknown): string
+    if type(value) ~= "table" then return tostring(value) end
+    local label = ui_controls.record(value)
+    if label.args then
+        local args = ui_controls.record(label.args)
+        if args.organ then return tostring(args.operation) .. " " .. tostring(args.organ) end
     end
     return tostring(label.text or label.id)
 end
@@ -60,7 +64,7 @@ local function walk_to(destination)
     end
 end
 
-local function hold(id)
+local function hold(id: string)
     local held = t.hands(surgeon).held
     if held ~= nil then
         -- Keep spent tools off the pickup tile so their sprites cannot cover the next tool.
@@ -88,7 +92,7 @@ end
 
 -- A single-attempt operation on the table: click once, wait it out, and
 -- assert it landed (0 % failure, so no loop).
-local function step(tool, secs, done, why)
+local function step(tool: string, secs: number, done: () -> boolean, why: string)
     hold(tool)
     t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
     t.run_ticks(math.ceil(secs * 20) + 3)
@@ -96,11 +100,11 @@ local function step(tool, secs, done, why)
 end
 
 -- The open-up sequence, each step nothing can fail on the table.
-step("scalpel", 1.6, function() return has(t.parts(patient).chest.states, "skin_cut") end, "incised")
-step("retractor", 2.4, function() return has(t.parts(patient).chest.states, "skin_open") end, "retracted")
-step("hemostat", 2.4, function() return has(t.parts(patient).chest.states, "vessels_clamped") end, "clamped")
-step("circular_saw", 5.4, function() return has(t.parts(patient).chest.states, "bone_sawed") end, "sawed")
-step("scalpel", 2.4, function() return has(t.parts(patient).chest.states, "organs_cut") end, "organs cut")
+step("scalpel", 1.6, function() return has(assert(t.parts(patient)).chest.states, "skin_cut") end, "incised")
+step("retractor", 2.4, function() return has(assert(t.parts(patient)).chest.states, "skin_open") end, "retracted")
+step("hemostat", 2.4, function() return has(assert(t.parts(patient)).chest.states, "vessels_clamped") end, "clamped")
+step("circular_saw", 5.4, function() return has(assert(t.parts(patient)).chest.states, "bone_sawed") end, "sawed")
+step("scalpel", 2.4, function() return has(assert(t.parts(patient)).chest.states, "organs_cut") end, "organs cut")
 
 -- The heart is whole and beating, so the socket is reachable and the
 -- removal is offered — but so are the other chest organs, so a hemostat
@@ -108,12 +112,12 @@ step("scalpel", 2.4, function() return has(t.parts(patient).chest.states, "organ
 hold("hemostat")
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(2)
-local win = t.ui(surgeon)
+local win = ui_controls.record(t.ui(surgeon))
 assert(win ~= nil and win.document == "modules" and win.presentation == "choices",
     "several organs to reach: the choice document opened")
 local pick
-for _, toggle in ipairs(win.toggles) do
-    if face(toggle.label):find("heart", 1, true) then pick = toggle.option end
+for _, toggle in ipairs(ui_controls.rows(win.toggles)) do
+    if face(toggle.label):find("heart", 1, true) then pick = ui_controls.text(toggle.option) end
 end
 assert(pick, "the window lists the heart among the organs to remove")
 
@@ -133,13 +137,13 @@ assert(pick, "the window lists the heart among the organs to remove")
 ui_controls.toggle(surgeon, "operation", pick)
 t.run_ticks(23) -- the 1 s removal
 assert(t.organ_damage(patient, "heart") == nil, "the heart socket is empty")
-assert(not t.body(patient).conscious, "the heart is out and the patient is under")
-assert(not t.body(patient).animate, "and dead of the missing heart, not of any wound")
+assert(not assert(t.body(patient)).conscious, "the heart is out and the patient is under")
+assert(not assert(t.body(patient)).animate, "and dead of the missing heart, not of any wound")
 -- The wound did NOT stop the heart there is no heart to stop: the latch
 -- fires on the `dead` HEALTH line (content/bodies/human.luau), and this
 -- patient's health never moved. So the donor heart will take.
-local past = {}
-for _, id in ipairs(t.body(patient).thresholds) do past[id] = true end
+local past: { [string]: boolean } = {}
+for _, id in ipairs(assert(t.body(patient)).thresholds) do past[id] = true end
 assert(past.undone and not past.dead, "dead of viability alone")
 assert(t.count_items("organ_heart") >= 2, "the old heart is on the deck beside the donor")
 
@@ -151,17 +155,17 @@ t.run_ticks(23) -- the 1 s insertion
 -- Seated (the donor picked up a little decay lying on the deck, which is
 -- why a spare organ is kept cold in tg); what matters is that it beats.
 assert(t.organ_damage(patient, "heart") ~= nil, "a heart is seated in the socket")
-assert(t.organ_damage(patient, "heart") < 40, "and it is in good order")
-assert(t.body(patient).conscious, "the heart beats again and the patient comes to")
-assert(t.body(patient).animate and t.body(patient).controllable,
+assert(assert(t.organ_damage(patient, "heart")) < 40, "and it is in good order")
+assert(assert(t.body(patient)).conscious, "the heart beats again and the patient comes to")
+assert(assert(t.body(patient)).animate and assert(t.body(patient)).controllable,
     "ALIVE AGAIN: a living heart in the socket clears the viability line")
 
 -- Close up. The bone states and the incision clear, and 40 of the saw's
 -- 50 brute is mended on the way out.
 step("cautery", 2.4, function()
-    local s = t.parts(patient).chest.states
+    local s = assert(t.parts(patient)).chest.states
     return not has(s, "skin_open") and not has(s, "skin_cut")
 end, "closed")
-assert(t.body(patient).bleed_rate == 0, "and no longer bleeding")
+assert(assert(t.body(patient)).bleed_rate == 0, "and no longer bleeding")
 
 print("heart: swapped on the table with 0 failures; dead between hearts, alive after")

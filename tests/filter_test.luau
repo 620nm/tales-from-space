@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The filter: the first machine with THREE mouths, and the first
 -- one that cares which gas it is moving.
 --
@@ -22,11 +24,11 @@
 local PIPE_M3 = 0.070
 local PORT_M3 = 0.200
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function said(p, want)
+local function said(p: number, want: string): boolean
     for _, m in ipairs(t.messages(p)) do
         if m == want then
             return true
@@ -36,7 +38,7 @@ local function said(p, want)
 end
 
 -- Moles of one gas standing in the run under a tile, or 0.
-local function gas(x, y, which)
+local function gas(x: number, y: number, which: string): number
     local held = t.pipe_gas(x, y)
     return (held and held[which]) or 0.0
 end
@@ -94,9 +96,9 @@ assert(m.state == "off", "and tg's filter ships off")
 -- The run does not pass through the machine: its own length is nobody's
 -- and each mouth opens onto a net of its own.
 assert(t.pipe_pressure(3, 1) == nil, "no net claims the machine's tile")
-assert(t.pipe_pressure(IN_X, IN_Y) > 90.0, "the input main is charged")
-assert(t.pipe_pressure(OUT_X, OUT_Y) > 90.0, "so is the pass-through main")
-assert(t.pipe_pressure(SIDE_X, SIDE_Y) > 90.0, "and so is the side stub")
+assert(assert(t.pipe_pressure(IN_X, IN_Y)) > 90.0, "the input main is charged")
+assert(assert(t.pipe_pressure(OUT_X, OUT_Y)) > 90.0, "so is the pass-through main")
+assert(assert(t.pipe_pressure(SIDE_X, SIDE_Y)) > 90.0, "and so is the side stub")
 
 -- Each net is 200 L bigger than its lengths, because the mouth in the
 -- machine's face belongs to it: two lengths either side, one below.
@@ -128,16 +130,16 @@ near(gas(SIDE_X, SIDE_Y, "o2"), side_o2, 1e-9, "out of either mouth")
 -- ---------------------------------------------------------------
 t.click(p, 3, 1, t.target_at(p, 3, 1, "filter"))
 t.tick()
-local ui = t.ui(p)
+local ui = ui_controls.record(t.ui(p))
 assert(ui, "clicking a filter opens its window")
 assert(ui.document == "modules" and ui.presentation == "modules",
     "the generic module document")
 
-assert(ui.toggles[1].field == "power", "the first switch is the power")
-assert(ui.toggles[1].on == false)
-assert(ui.setpoints[1].field == "rate", "the one knob is the transfer rate")
-near(ui.setpoints[1].value, 200.0, 0.001, "at tg's MAX_TRANSFER_RATE")
-near(ui.setpoints[1].max, 200.0, 0.001, "which is also the top of the dial")
+assert(ui_controls.rows(ui.toggles)[1].field == "power", "the first switch is the power")
+assert(ui_controls.rows(ui.toggles)[1].on == false)
+assert(ui_controls.rows(ui.setpoints)[1].field == "rate", "the one knob is the transfer rate")
+near(ui_controls.number(ui_controls.rows(ui.setpoints)[1].value), 200.0, 0.001, "at tg's MAX_TRANSFER_RATE")
+near(ui_controls.number(ui_controls.rows(ui.setpoints)[1].max), 200.0, 0.001, "which is also the top of the dial")
 
 -- The roster: a field carrying a LIST, one toggle per substance the
 -- matter registry gives a GAS PHASE to, each naming its own option.
@@ -146,10 +148,10 @@ near(ui.setpoints[1].max, 200.0, 0.001, "which is also the top of the dial")
 -- whenever the run is hot or thin enough; only a substance with no
 -- modelled gas phase at all is left off, because its button could
 -- never divert anything.
-local roster = {}
-for _, sw in ipairs(ui.toggles) do
+local roster: {[string]: unknown} = {}
+for _, sw in ipairs(ui_controls.rows(ui.toggles)) do
     if sw.field == "filter" then
-        roster[sw.option] = sw.on
+        roster[ui_controls.text(sw.option)] = sw.on
     end
 end
 assert(roster.o2 == false, "oxygen is offered, and starts unselected")
@@ -165,9 +167,9 @@ assert(roster.salt == nil, "and salt has none, so it does not")
 ui_controls.toggle(p, "power")
 ui_controls.toggle(p, "filter", "o2")
 t.tick()
-assert(t.ui(p).toggles[1].on == true, "the panel reports the machine running")
-assert(t.structure_at(3, 1).state == "running", "and the machine wears it")
-for _, sw in ipairs(t.ui(p).toggles) do
+assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == true, "the panel reports the machine running")
+assert(assert(t.structure_at(3, 1)).state == "running", "and the machine wears it")
+for _, sw in ipairs(ui_controls.rows(ui_controls.state(p).toggles)) do
     if sw.field == "filter" and sw.option == "o2" then
         assert(sw.on == true, "oxygen is selected")
     end
@@ -196,8 +198,8 @@ near(gas(OUT_X, OUT_Y, "o2"), main_o2, 1e-9, "no oxygen ever reached the pass-th
 
 -- The input paid for all of it, and the books balance to the mole.
 assert(
-    t.pipe_pressure(IN_X, IN_Y) < 5.0,
-    "the input main is drained: " .. t.pipe_pressure(IN_X, IN_Y)
+    assert(assert(t.pipe_pressure(IN_X, IN_Y))) < 5.0,
+    "the input main is drained: " .. assert(t.pipe_pressure(IN_X, IN_Y))
 )
 -- `t.nullified` is part of "somewhere". A run the filter has separated
 -- is left with a few micromoles of the gas it no longer carries, under
@@ -237,8 +239,8 @@ assert(t.ledger_has("MachineToggled", "filter", "o2", "Player"), "so is selectin
 -- all, and a rate past the dial: none of them is a knob this panel
 -- offered, so none of them moves anything.
 -- ---------------------------------------------------------------
-local function selected(which)
-    for _, sw in ipairs(t.ui(p).toggles) do
+local function selected(which: string): unknown
+    for _, sw in ipairs(ui_controls.rows(ui_controls.state(p).toggles)) do
         if sw.field == "filter" and sw.option == which then
             return sw.on
         end
@@ -252,14 +254,14 @@ assert(ui_controls.find(p, "/toggle/power/o2") == nil, "power is a switch")
 t.tick()
 assert(selected("o2") == true, "an invented gas selects nothing")
 assert(selected("n2") == false, "and unselects nothing")
-assert(t.ui(p).toggles[1].on == true, "and the power switch is not a roster")
+assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == true, "and the power switch is not a roster")
 
 ui_controls.set(p, "rate", 9000)
 t.tick()
-near(t.ui(p).setpoints[1].value, 200.0, 0.001, "a client cannot dial past MAX_TRANSFER_RATE")
+near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value), 200.0, 0.001, "a client cannot dial past MAX_TRANSFER_RATE")
 ui_controls.set(p, "rate", -40)
 t.tick()
-near(t.ui(p).setpoints[1].value, 0.0, 0.001, "nor below nothing at all")
+near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value), 0.0, 0.001, "nor below nothing at all")
 
 -- ---------------------------------------------------------------
 -- AN EMPTY ROSTER PASSES EVERYTHING.
@@ -288,7 +290,7 @@ assert(
 )
 near(gas(SIDE_X, SIDE_Y, "o2"), was_side_o2, 1e-9, "and the side port took no oxygen")
 near(gas(SIDE_X, SIDE_Y, "n2"), was_side_n2, 1e-9, "and no nitrogen either")
-assert(t.pipe_pressure(IN_X, IN_Y) < 5.0, "the input still emptied: nothing was lost")
+assert(assert(t.pipe_pressure(IN_X, IN_Y)) < 5.0, "the input still emptied: nothing was lost")
 
 -- ---------------------------------------------------------------
 -- THE ROUND TRIP, AND THE REFUSAL IN FRONT OF IT.
@@ -309,7 +311,7 @@ t.click(r, 3, 1, t.target_at(r, 3, 1, "filter"))
 t.tick()
 ui_controls.toggle(r, "power")
 t.run_ticks(2)
-assert(t.structure_at(3, 1).state == "running", "running")
+assert(assert(t.structure_at(3, 1)).state == "running", "running")
 t.ui_close(r)
 
 t.click(r, 3, 2, t.target_at(r, 3, 2, "wrench"))
@@ -331,7 +333,7 @@ t.click(r, 3, 1, t.target_at(r, 3, 1, "filter"))
 t.tick()
 ui_controls.toggle(r, "power")
 t.run_ticks(2)
-assert(t.structure_at(3, 1).state == "off", "off")
+assert(assert(t.structure_at(3, 1)).state == "off", "off")
 t.ui_close(r)
 t.swap_hands(r)
 
@@ -361,7 +363,7 @@ t.world(JUNCTION:format("filter.n2"), 7)
 
 local s = t.join()
 t.tick()
-assert(t.structure_at(3, 1).state == "running", "a preset filter opens the shift running")
+assert(assert(t.structure_at(3, 1)).state == "running", "a preset filter opens the shift running")
 local pre_side_o2 = gas(SIDE_X, SIDE_Y, "o2")
 local pre_main_n2 = gas(OUT_X, OUT_Y, "n2")
 
@@ -369,7 +371,7 @@ local pre_main_n2 = gas(OUT_X, OUT_Y, "n2")
 -- its behaviour: the panel shows nitrogen already selected.
 t.click(s, 3, 1, t.target_at(s, 3, 1, "filter.n2"))
 t.tick()
-for _, sw in ipairs(t.ui(s).toggles) do
+for _, sw in ipairs(ui_controls.rows(ui_controls.state(s).toggles)) do
     if sw.field == "filter" then
         assert(
             sw.on == (sw.option == "n2"),
@@ -386,7 +388,7 @@ assert(
 )
 near(gas(SIDE_X, SIDE_Y, "o2"), pre_side_o2, 1e-9, "and only nitrogen")
 near(gas(OUT_X, OUT_Y, "n2"), pre_main_n2, 1e-9, "none of which reached the pass-through")
-assert(t.pipe_pressure(IN_X, IN_Y) < 5.0, "and the input emptied into the pair")
+assert(assert(t.pipe_pressure(IN_X, IN_Y)) < 5.0, "and the input emptied into the pair")
 
 -- ---------------------------------------------------------------
 -- ...AND THE PRESET IS ONLY A SHORTHAND.
@@ -409,14 +411,14 @@ t.world(BY_HAND, 7)
 
 local h = t.join()
 t.tick()
-local hand = t.structure_at(3, 1)
+local hand = assert(t.structure_at(3, 1))
 assert(hand.id == "filter", "a bare filter, with the map's own words on it")
 assert(hand.state == "running", "which is running, because the placement said so")
 local hand_side_o2 = gas(SIDE_X, SIDE_Y, "o2")
 local hand_main_n2 = gas(OUT_X, OUT_Y, "n2")
 t.click(h, 3, 1, t.target_at(h, 3, 1, "filter"))
 t.tick()
-for _, sw in ipairs(t.ui(h).toggles) do
+for _, sw in ipairs(ui_controls.rows(ui_controls.state(h).toggles)) do
     if sw.field == "filter" then
         assert(
             sw.on == (sw.option == "n2"),

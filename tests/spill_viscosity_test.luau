@@ -42,7 +42,7 @@ local TILES = 6
 local STEP = 10 -- ticks between readings
 local PATIENCE = 6000 -- ticks: past this a regression fails rather than hangs
 
-local function held(key, x)
+local function held(key: string, x: number)
     local standing = t.room_liquid(x, 1)
     return (standing and standing[key]) or 0
 end
@@ -55,7 +55,7 @@ end
 -- The 21/79 air rows ride along in all three, because a `total` blend
 -- is the tile's whole contents (41.573 mol over a cubic metre is
 -- 101.325 kPa) and no corridor here may open airless.
-local function run(key, moles)
+local function run(key: string, moles: number)
     t.world(CORRIDOR:format(key, moles), 0)
     t.join()
     t.tick()

@@ -1,3 +1,5 @@
+local vessel = require("@lib/vessel")
+
 -- The bare beaker: empty off the shelf, and the vessel everything else
 -- on a chem bench is poured into. Fifty millilitres of glass, which is
 -- the whole of what it holds.
@@ -78,7 +80,7 @@ local content = {
     },
 }
 
-local vessel_spec = {
+local vessel_spec: vessel.Spec = {
     id = content.id,
     noun = "beaker",
     phases = { "liquid", "solid" },

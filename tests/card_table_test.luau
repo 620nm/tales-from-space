@@ -56,9 +56,9 @@ assert(t.hands(p).held == "card_deck", "the deck is in hand")
 t.click(p, 2, 1, t.target_at(p, 2, 1, "table"), 9, -6)
 t.run_ticks(2)
 
-local dealt = t.item_at(2, 1, "card")
+local dealt = assert(t.item_at(2, 1, "card"))
 assert(dealt ~= nil, "a card is on the table")
-assert(dealt.state:sub(1, 5) == "down_",
+assert(assert(dealt.state):sub(1, 5) == "down_",
     "face down, as tg deals: " .. tostring(dealt.state))
 assert(dealt.offset.x == 4 and dealt.offset.y == -6,
     "on the clicked pixel, measured from the card's own anchor: "
@@ -109,7 +109,7 @@ assert(laid.offset.x == -17 and laid.offset.y == 4,
 -- The first deal has not moved: a placement puts down the thing in the
 -- hand and touches nothing else on the surface.
 assert(#t.items_at(2, 1) == 1, "the dealt card is still alone on the first table")
-local first_again = t.item_at(2, 1, "card")
+local first_again = assert(t.item_at(2, 1, "card"))
 assert(first_again.offset.x == 4 and first_again.offset.y == -6,
     "and still where it was dealt: "
         .. first_again.offset.x .. "," .. first_again.offset.y)

@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- A connector port needs nothing under it, and that is safe because
 -- nothing about it is remembered.
 --
@@ -23,10 +25,7 @@
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
 local function said(p, line)
     for _, m in ipairs(t.messages(p)) do
@@ -46,10 +45,10 @@ end
 -- Which button on a dial's row wears that word. Looked up rather than
 -- counted, because the fitting roster grows every time a content file
 -- lands.
-local function pick(p, field, label)
-    for _, tog in ipairs(t.ui(p).toggles) do
+local function pick(p: number, field: string, label: string): string
+    for _, tog in ipairs(ui_controls.rows(ui_controls.state(p).toggles)) do
         if tog.field == field and tog.option ~= nil and word(tog.label) == label then
-            return tog.option
+            return ui_controls.text(tog.option)
         end
     end
     error("no " .. field .. " button labelled " .. label)
@@ -109,12 +108,12 @@ assert(bottle.state == "displaced", "standing loose, with nothing under it to fa
 --
 -- A fitting, a wrench and two seconds, on deck with no run within
 -- reach of the whole map.
-t.click(p, 1, 2, t.target_at(p, 1, 2, "wrench"))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "wrench")))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "wrench in hand")
 
 local _ = t.messages(p)
-t.click(p, 1, 2, t.target_at(p, 1, 2, "connector_port_fitting"))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "connector_port_fitting")))
 t.run_seconds(2.5)
 assert(
     not said(p, "There is no pipe under the floor here."),
@@ -136,7 +135,7 @@ assert(t.ledger_has("StructureStep", "connector_port", "built"), "and the raise 
 -- hands goes through. So the two either both allow this or both refuse
 -- it; there is no second rulebook to keep in step.
 t.swap_hands(p)
-t.click(p, 1, 2, t.target_at(p, 1, 2, "rpd"))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "rpd")))
 t.run_ticks(2)
 assert(t.hands(p).held == "rpd", "the RPD is in hand")
 t.use_self(p)
@@ -174,20 +173,20 @@ t.run_ticks(2)
 t.swap_hands(p)
 assert(t.hands(p).held == "wrench", "back to the wrench")
 
-t.click(p, 2, 2, t.target_at(p, 2, 2, "canister"))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "canister")))
 t.run_ticks(2)
 assert(
     t.ledger_has("StructureStep", "canister", "anchored"),
     "the bottle fastened to a port with no plumbing behind it"
 )
-assert(t.structure_at(2, 2).state == "anchored", "and reads as connected")
+assert(assert(t.structure_at(2, 2)).state == "anchored", "and reads as connected")
 
 -- Dial the regulator over room pressure, which is the only way to make
 -- a settled room legible: at the default setpoint a room already at one
 -- atmosphere costs nothing, so any gas that moves now moved because a
 -- player asked for it (canister_window_test.luau owns the knob).
 t.swap_hands(p)
-t.click(p, 2, 2, t.target_at(p, 2, 2, "canister"))
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "canister")))
 t.tick()
 ui_controls.set(p, "release", 400)
 t.tick()
@@ -197,13 +196,13 @@ local can_before = t.canister_pressure(2, 2)
 t.run_seconds(60)
 local room_after = t.room_pressure(1, 1)
 assert(
-    room_after > room_before + 80.0,
+    assert(room_after) > assert(room_before) + 80.0,
     "an unplumbed socket puts the bottle's air in the ROOM: "
-        .. room_before .. " -> " .. room_after
+        .. assert(room_before) .. " -> " .. room_after
 )
 assert(
-    t.canister_pressure(2, 2) < can_before - 50.0,
-    "and the bottle is what paid: " .. t.canister_pressure(2, 2)
+    assert(t.canister_pressure(2, 2)) < assert(can_before) - 50.0,
+    "and the bottle is what paid: " .. assert(t.canister_pressure(2, 2))
 )
 assert(t.pipe_pressure(2, 1) == nil, "there is still no run anywhere to have fed")
 
@@ -217,7 +216,7 @@ assert(t.pipe_pressure(2, 1) == nil, "there is still no run anywhere to have fed
 t.ui_close(p)
 -- Still on the free hand -- the wrench is in the other one, and a
 -- wrench swung at an RPD lying on the deck is not a pick-up.
-t.click(p, 1, 2, t.target_at(p, 1, 2, "rpd"))
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "rpd")))
 t.run_ticks(2)
 assert(t.hands(p).held == "rpd", "the RPD again")
 t.use_self(p)
@@ -227,15 +226,15 @@ t.click(p, 2, 1, nil, -14, 14) -- one north of the port: the tile its stub reach
 work(p)
 assert(t.pipe(2, 1) == 4, "a length on the distribution layer: " .. t.pipe(2, 1))
 
-local room_at_lay = t.room_pressure(1, 1)
+local room_at_lay = assert(t.room_pressure(1, 1))
 t.run_seconds(20)
 assert(
-    t.pipe_pressure(2, 1) > 150.0,
+    assert(t.pipe_pressure(2, 1)) > 150.0,
     "the port bound itself to the new run and the bottle charged it: "
         .. tostring(t.pipe_pressure(2, 1))
 )
 assert(
-    math.abs(t.room_pressure(1, 1) - room_at_lay) < 5.0,
+    math.abs(assert(t.room_pressure(1, 1)) - room_at_lay) < 5.0,
     "and the room stopped being the thing it fed: "
-        .. room_at_lay .. " -> " .. t.room_pressure(1, 1)
+        .. room_at_lay .. " -> " .. assert(t.room_pressure(1, 1))
 )

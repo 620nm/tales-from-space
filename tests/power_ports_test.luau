@@ -14,7 +14,7 @@
 -- electrician parts it, which is the whole point of wiring a fixture to
 -- two lines -- and the lamp on that socket's cord never notices.
 
-local function near(got, want, tol, why)
+local function near(got: number, want: number, tol: number, why: string)
     assert(math.abs(got - want) <= tol, why .. ": " .. got .. " vs " .. want)
 end
 
@@ -75,6 +75,7 @@ assert(t.segment_at(6, 1).l1 ~= nil, "though the room circuit runs under it as w
 local ports = t.ports_at(4, 1)
 assert(ports ~= nil, "the panel answers for its ports")
 assert(ports.kind == "apc", "and says what it is: " .. ports.kind)
+assert(ports.l1 and ports.l2 and ports.l3, "the panel exposes all three ports")
 assert(ports.energized, "its own pool is carrying")
 assert(ports.l1.mode == "output", "L1 feeds the room: " .. ports.l1.mode)
 assert(ports.l2.mode == "input", "L2 is where it takes from: " .. ports.l2.mode)
@@ -108,7 +109,7 @@ t.run_seconds(3)
 
 assert(t.lit(5, 2), "the lamp never went out")
 assert(t.segment_at(6, 1).lighting_feed == 1, "its socket is on the room circuit now")
-near(t.ports_at(4, 1).l1.out_w, TUBE_W, 0.001, "and the panel's room circuit carries it")
+near(assert(assert(t.ports_at(4, 1)).l1).out_w, TUBE_W, 0.001, "and the panel's room circuit carries it")
 
 -- ---------------------------------------------------------------
 -- THE STATION BREAKER. An outage is every port at zero and every pool
@@ -119,11 +120,12 @@ t.outage()
 t.run_seconds(3)
 assert(t.ledger_has("PowerOutage"), "the trip is on the record")
 
-local dead = t.ports_at(4, 1)
+local dead = assert(t.ports_at(4, 1))
 assert(not dead.energized, "the panel's pool is dark")
-for _, line in ipairs({ "l1", "l2", "l3" }) do
-    near(dead[line].in_w, 0.0, 1e-9, line .. " draws nothing")
-    near(dead[line].out_w, 0.0, 1e-9, line .. " feeds nothing")
+local dead_ports: { [string]: SpecPort } = { l1 = assert(dead.l1), l2 = assert(dead.l2), l3 = assert(dead.l3) }
+for line, port in pairs(dead_ports) do
+    near(port.in_w, 0.0, 1e-9, line .. " draws nothing")
+    near(port.out_w, 0.0, 1e-9, line .. " feeds nothing")
 end
 assert(not t.lit(1, 2), "the lamp off the spare main is out")
 assert(not t.lit(5, 2), "and so is the one off the room circuit")

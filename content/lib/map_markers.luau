@@ -3,7 +3,7 @@
 local map_markers = {}
 
 local MAX_WEIGHT = 1000000
-local JOBS = {
+local JOBS: {[string]: boolean} = {
     assistant = true,
     captain = true,
     security = true,
@@ -11,17 +11,17 @@ local JOBS = {
     medic = true,
 }
 
-local function trim(value)
-    return value:match("^%s*(.-)%s*$")
+local function trim(value: string): string
+    return assert(value:match("^%s*(.-)%s*$"))
 end
 
 -- A malformed list is unusable as a filter. Returning nil makes the whole
 -- marker ineligible, so a typo cannot silently widen a spawn pool.
-local function parse_filter(value, known)
+local function parse_filter(value: unknown, known: {[string]: boolean}?): {string}?
     if type(value) ~= "string" then return nil end
     if value == "" then return {} end
-    local result = {}
-    local seen = {}
+    local result: {string} = {}
+    local seen: {[string]: boolean} = {}
     for raw in (value .. ","):gmatch("([^,]*),") do
         local token = trim(raw)
         if token == "" then return nil end
@@ -34,7 +34,7 @@ local function parse_filter(value, known)
     return result
 end
 
-local function matches(tokens, value)
+local function matches(tokens: {string}?, value: unknown): boolean
     if tokens == nil or #tokens == 0 then return tokens ~= nil end
     if type(value) ~= "string" then return false end
     for _, token in ipairs(tokens) do
@@ -43,7 +43,7 @@ local function matches(tokens, value)
     return false
 end
 
-local function weight(marker)
+local function weight(marker: Handle): number
     local value = marker.vars["marker_weight"]
     if value == nil then value = 1 end
     if type(value) ~= "number" or value < 0 or value > MAX_WEIGHT then
@@ -54,8 +54,8 @@ end
 
 -- Select one marker with one draw after summing eligible weights. Entity
 -- enumeration is stable, so equal seeds and maps produce equal locations.
-local function choose(definition, eligible, stream)
-    local candidates = {}
+local function choose(definition: string, eligible: (Handle) -> boolean, stream: string): TileAddress?
+    local candidates: {{marker: Handle, weight: number}} = {}
     local total = 0
     for _, marker in ipairs(sim.query.all(definition)) do
         local marker_weight = weight(marker)
@@ -76,8 +76,8 @@ local function choose(definition, eligible, stream)
     return candidates[#candidates].marker.tile
 end
 
-function map_markers.player_spawn(ev, default_role)
-    local role = default_role
+function map_markers.player_spawn(ev: RoundSpawnPayload, default_role: string): {at: TileAddress?}
+    local role: unknown = default_role
     if ev.mind ~= nil then
         role = ev.mind.vars["spawn_role"] or default_role
     end
@@ -92,7 +92,7 @@ function map_markers.player_spawn(ev, default_role)
     return { at = chosen }
 end
 
-function map_markers.threat_location()
+function map_markers.threat_location(): TileAddress?
     return choose("threat_spawn", function(_marker)
         return true
     end, "map_markers.threat_spawn")
@@ -101,10 +101,10 @@ end
 -- A marker keeps its own entity so later round/gameplay handlers can enumerate
 -- it. The handler is intentionally present: marker prototypes are scriptable
 -- at map initialization even when their current policy needs no setup.
-function map_markers.initialize(_ev)
+function map_markers.initialize(_ev: EntityInitializeDonePayload): ()
 end
 
-function map_markers.spawn_threat(definition)
+function map_markers.spawn_threat(definition: unknown): boolean
     if type(definition) ~= "string" or definition == "" then return false end
     local at = map_markers.threat_location()
     if at == nil then return false end

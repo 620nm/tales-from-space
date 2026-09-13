@@ -15,6 +15,8 @@
 -- raw pipe under its centre, and it reaches the run beside it through
 -- one mouth.
 
+local ui_controls = require("@helpers/ui_controls")
+
 local ONE_ATM = 101.325
 -- The release line the powered vent works to (vents.rs SUPPLY_BELOW).
 local SUPPLIES_UNDER = ONE_ATM * 0.99
@@ -23,12 +25,13 @@ local DISTRO = 4
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
+local function word(label: unknown): unknown
     if type(label) ~= "table" then return label end
-    return label.id or label.text
+    local record = ui_controls.record(label)
+    return record.id or record.text
 end
 
-local function said(p, line)
+local function said(p: number, line: string)
     for _, m in ipairs(t.messages(p)) do
         if m == line then
             return true
@@ -54,9 +57,10 @@ end
 -- grows, and this spec is what growing it is for.
 local RECIPE = "dial1"
 
-local function pick(p, label)
-    for _, tog in ipairs(t.ui(p).toggles) do
+local function pick(p: number, label: string): string
+    for _, tog in ipairs(ui_controls.rows(ui_controls.state(p).toggles)) do
         if tog.field == RECIPE and tog.option ~= nil and word(tog.label) == label then
+            assert(type(tog.option) == "string", "a fitting button names its option")
             return tog.option
         end
     end
@@ -69,7 +73,7 @@ local function arm(p, label)
 end
 
 -- Everything standing in the run under a tile, in moles.
-local function pipe_moles(x, y)
+local function pipe_moles(x: number, y: number)
     local n = 0.0
     for _, amount in pairs(t.pipe_gas(x, y) or {}) do
         n = n + amount
@@ -137,7 +141,7 @@ assert(t.hands(p).held == "rpd", "the RPD is in hand")
 t.use_self(p)
 t.tick()
 
-assert(t.pipe_pressure(4, 1) > 90.0, "the mapped main opens the shift charged")
+assert(assert(t.pipe_pressure(4, 1)) > 90.0, "the mapped main opens the shift charged")
 assert(t.structure_at(3, 1) == nil, "and nothing stands where the vent will go")
 
 -- ---- the refusal comes first ----
@@ -180,27 +184,27 @@ walk(p, "east") -- out of the way of the wind
 assert(t.set_turf(2, 1, "space"), "the deck opens")
 t.run_seconds(20)
 assert(
-    t.room_pressure(3, 1) < SUPPLIES_UNDER,
-    "the bay blew down past the vent's release line: " .. t.room_pressure(3, 1)
+    assert(t.room_pressure(3, 1)) < SUPPLIES_UNDER,
+    "the bay blew down past the vent's release line: " .. assert(t.room_pressure(3, 1))
 )
 assert(t.set_turf(2, 1, "plating"), "and the deck goes back")
 t.tick()
 
-local spent_before = t.canister_pressure(6, 1)
+local spent_before = assert(t.canister_pressure(6, 1))
 t.run_seconds(40)
 assert(
-    t.room_pressure(3, 1) > SUPPLIES_UNDER,
+    assert(t.room_pressure(3, 1)) > SUPPLIES_UNDER,
     "the built vent worked its own tile back to one atmosphere: "
-        .. t.room_pressure(3, 1) .. " kPa"
+        .. assert(t.room_pressure(3, 1)) .. " kPa"
 )
 assert(
-    t.room_pressure(3, 1) <= ONE_ATM + 0.5,
-    "and stopped there, the way a mapped one does: " .. t.room_pressure(3, 1)
+    assert(t.room_pressure(3, 1)) <= ONE_ATM + 0.5,
+    "and stopped there, the way a mapped one does: " .. assert(t.room_pressure(3, 1))
 )
 assert(
-    t.canister_pressure(6, 1) < spent_before,
+    assert(t.canister_pressure(6, 1)) < spent_before,
     "every mole of it came out of the bottle: "
-        .. spent_before .. " -> " .. t.canister_pressure(6, 1) .. " kPa"
+        .. spent_before .. " -> " .. assert(t.canister_pressure(6, 1)) .. " kPa"
 )
 
 -- ---------------------------------------------------------------

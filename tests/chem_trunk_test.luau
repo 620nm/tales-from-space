@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- THE MEDICINE TRUNK, end to end: an empty beaker, an empty bottle,
 -- and a shelf of buttons, and at the far end a crewman whose bruises
 -- stop hurting.
@@ -49,12 +51,12 @@ local LEG = 0.05
 -- and this spec does not need to repeat.
 local CHLORINE = 0.10
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function amount(handle, key)
-    local contents = t.contents(handle)
+local function amount(handle, key: string)
+    local contents = assert(t.contents(handle))
     assert(contents ~= nil, "that is a vessel")
     return contents[key] or 0
 end
@@ -100,9 +102,9 @@ t.tick()
 
 local dispenser = t.target_at(p, 1, 1)
 local heater = t.target_at(p, 3, 1)
-local a = t.target_at(p, 1, 2, "beaker")
-local jar = t.target_at(p, 3, 2, "bottle")
-local b = t.target_at(p, 3, 3, "beaker")
+local a = assert(t.target_at(p, 1, 2, "beaker"))
+local jar = assert(t.target_at(p, 3, 2, "bottle"))
+local b = assert(t.target_at(p, 3, 3, "beaker"))
 local med = t.target_at(p, 2, 3, "beaker.libital")
 
 -- The crewman stands in the middle of the bench, so both machines and
@@ -183,15 +185,15 @@ dial_to(CHLORINE)
 press("chlorine")
 t.run_seconds(10)
 near(amount(jar, "chlorine"), CHLORINE, 1e-9, "the whole press landed, because there is a lid")
-assert(t.holder_k(jar) > NOZZLE_K + 40.0,
-    "and the latent heat is where the temperature went: " .. t.holder_k(jar))
+assert(assert(t.holder_k(jar)) > NOZZLE_K + 40.0,
+    "and the latent heat is where the temperature went: " .. tostring(t.holder_k(jar)))
 
 -- A container LYING ON THE DECK trades heat with its tile every atmos
 -- pass (sim/holder/heat.rs); a docked or carried one is insulated.
 eject()
 put_down()
 t.run_seconds(600)
-local cooled = t.vessel(jar)
+local cooled = assert(t.vessel(jar))
 assert(cooled.temp_k < 320.0, "the deck took the heat back: " .. cooled.temp_k)
 assert((cooled.contents.chlorine.liquid or 0) > 0.5 * CHLORINE,
     "and most of it is standing as LIQUID chlorine: " .. tostring(cooled.contents.chlorine.liquid))
@@ -263,7 +265,7 @@ ui_controls.toggle(p, "power")
 -- twentieth of its gap every atmos pass, so the plateau arrives inside
 -- half a minute and the rest is the reaction.
 t.run_seconds(120)
-assert(t.holder_k(jar) > 690.0, "the chamber reached the plateau: " .. t.holder_k(jar))
+assert(assert(t.holder_k(jar)) > 690.0, "the chamber reached the plateau: " .. tostring(t.holder_k(jar)))
 near(amount(jar, "libital"), 3.0 * LEG, 1e-4, "three of libital for one of saltpetre")
 near(amount(jar, "saltpetre"), 0.0, 1e-4, "which spent every mole of it")
 near(amount(jar, "phenol"), 2.0 * LEG, 1e-4, "and two thirds of the phenol is still standing")
@@ -305,14 +307,14 @@ t.run_seconds(120)
 -- crosses it (sim/virtual_bath.rs), so 370 on the dial is a beaker that
 -- is genuinely under the floor.
 local warm = t.holder_k(b)
-assert(warm > 360.0 and warm < 380.0, "the chamber is ten kelvin short: " .. warm)
+assert(assert(warm) > 360.0 and assert(warm) < 380.0, "the chamber is ten kelvin short: " .. warm)
 near(amount(b, "multiver"), 0.0, 1e-12, "and ten kelvin short is nothing at all")
 near(amount(b, "ash"), LEG, 1e-9, "with every mole of ash still standing")
 
 -- ...and then thirty more on the dial.
 ui_controls.set(p, "temperature", 400)
 t.run_seconds(120)
-assert(t.holder_k(b) > 385.0, "the chamber crossed the floor: " .. t.holder_k(b))
+assert(assert(t.holder_k(b)) > 385.0, "the chamber crossed the floor: " .. tostring(t.holder_k(b)))
 near(amount(b, "multiver"), 2.0 * LEG, 1e-4, "two of multiver for one of each leg")
 near(amount(b, "ash"), 0.0, 1e-4, "which spent all the ash")
 near(amount(b, "salt"), 0.0, 1e-4, "and all the salt")
@@ -340,14 +342,14 @@ put_down()
 -- ---------------------------------------------------------------
 t.set_health(p, { brute = 30.0 })
 t.tick()
-near(t.health(p).brute, 30.0, 1e-3, "a crewman with bruises")
+near(ui_controls.number(t.health(p).brute), 30.0, 1e-3, "a crewman with bruises")
 
 take(med, 2, 3)
 t.click_turf(p, 2, 2)
 t.tick()
 local dose = t.blood(p).libital or 0
 assert(dose > 0.015, "the swig reached the bloodstream: " .. dose .. " mol")
-local hurt = t.health(p).brute
+local hurt = ui_controls.number(t.health(p).brute)
 
 -- One tick per 0.003 mol, and the last partial mouthful still fires the
 -- handler -- the metabolism takes `min(present, rate)` and calls it
@@ -355,13 +357,13 @@ local hurt = t.health(p).brute
 local ticks = math.ceil(dose / 0.003)
 t.run_seconds(60)
 near(t.blood(p).libital or 0, 0.0, 1e-9, "the dose is spent")
-near(hurt - t.health(p).brute, ticks * 1.5, 1.6,
+near(hurt - ui_controls.number(t.health(p).brute), ticks * 1.5, 1.6,
     "and it healed 1.5 a tick while it lasted, " .. ticks .. " times over")
 
 -- ...and then it stops, because there is nothing left to burn.
-local settled = t.health(p).brute
+local settled = ui_controls.number(t.health(p).brute)
 t.run_seconds(60)
-near(t.health(p).brute, settled, 1e-3, "an empty bloodstream heals nobody")
+near(ui_controls.number(t.health(p).brute), settled, 1e-3, "an empty bloodstream heals nobody")
 put_down()
 
 -- ---------------------------------------------------------------
@@ -416,7 +418,7 @@ t.tick()
 
 dispenser = t.target_at(p, 1, 1)
 heater = t.target_at(p, 3, 1)
-local flask = t.target_at(p, 3, 2, "bottle")
+local flask = assert(t.target_at(p, 3, 2, "bottle"))
 
 -- Ammonia first, and the same wait the chlorine needed: a condensable
 -- gas pressed into a sealed vessel arrives with its latent heat still
@@ -432,8 +434,8 @@ eject()
 put_down()
 t.run_seconds(600)
 local settled_k = t.holder_k(flask)
-assert(settled_k < 320.0, "the deck took the condensation heat back: " .. settled_k)
-assert((t.vessel(flask).contents.ammonia.liquid or 0) > 0.0,
+assert(assert(settled_k) < 320.0, "the deck took the condensation heat back: " .. settled_k)
+assert((assert(t.vessel(flask)).contents.ammonia.liquid or 0) > 0.0,
     "and there is LIQUID ammonia standing in it")
 
 -- ...and then the acid, which is a button of its own now
@@ -450,8 +452,8 @@ near(amount(flask, "sulfuric_acid"), LEG, 1e-9, "a press of sulphuric acid")
 -- the reaction, and the reaction is the thing taking heat out.
 t.run_seconds(6)
 assert(amount(flask, "aiuri") > 0.0, "it started: " .. amount(flask, "aiuri") .. " mol")
-assert(t.holder_k(flask) < settled_k - 100.0,
-    "and it froze itself doing it: " .. t.holder_k(flask) .. " K, from " .. settled_k)
+assert(assert(t.holder_k(flask)) < assert(settled_k) - 100.0,
+    "and it froze itself doing it: " .. assert(t.holder_k(flask)) .. " K, from " .. settled_k)
 
 -- Which is exactly why it goes on the hotplate. The chamber pushes back
 -- against the endotherm every pass, and what stalled finishes.

@@ -1,3 +1,5 @@
+local action_rules = require("@lib/action_rules")
+
 -- The hand-held half of tg's atmospherics emergency resin kit. tg's
 -- backpack nozzle lays resin foam on an adjacent turf, with five charges
 -- regenerating on ten-second timers (code/game/objects/items/tanks/

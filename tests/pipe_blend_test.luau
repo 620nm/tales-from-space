@@ -39,7 +39,7 @@ local PORT_M3 = 0.200
 local WEST_M3 = 5.0 * PIPE_M3 + PORT_M3
 local EAST_M3 = 1.0 * PIPE_M3 + PORT_M3
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -72,13 +72,13 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-assert(t.structure_at(6, 1).id == "manual_valve", "the wheel is where the map put it")
-assert(t.structure_at(6, 1).state == "shut", "and it opens the shift shut")
+assert(assert(t.structure_at(6, 1)).id == "manual_valve", "the wheel is where the map put it")
+assert(assert(t.structure_at(6, 1)).state == "shut", "and it opens the shift shut")
 assert(t.pipe(6, 1) == 0, "a run does not pass through a machine")
-assert(t.pipe_pressure(1, 1) > 90.0, "both mapped runs are handed over charged")
-assert(t.pipe_pressure(7, 1) > 90.0)
-near(t.pipe_temperature(1, 1), T20C, 0.01, "both at room temperature")
-near(t.pipe_temperature(7, 1), T20C, 0.01, "the short one too")
+assert(assert(t.pipe_pressure(1, 1)) > 90.0, "both mapped runs are handed over charged")
+assert(assert(t.pipe_pressure(7, 1)) > 90.0)
+near(assert(t.pipe_temperature(1, 1)), T20C, 0.01, "both at room temperature")
+near(assert(t.pipe_temperature(7, 1)), T20C, 0.01, "the short one too")
 
 -- ---- one molar heat capacity, and both runs answer to it ----
 --
@@ -90,9 +90,9 @@ near(t.pipe_temperature(7, 1), T20C, 0.01, "the short one too")
 -- silently invalidate the arithmetic below.
 local west_n_0 = moles_in(1, 1)
 local east_n_0 = moles_in(7, 1)
-local cv = t.pipe_energy(1, 1) / (west_n_0 * t.pipe_temperature(1, 1))
+local cv = assert(t.pipe_energy(1, 1)) / (west_n_0 * assert(t.pipe_temperature(1, 1)))
 near(
-    t.pipe_energy(7, 1) / (east_n_0 * t.pipe_temperature(7, 1)),
+    assert(t.pipe_energy(7, 1)) / (east_n_0 * assert(t.pipe_temperature(7, 1))),
     cv,
     1e-9,
     "both runs carry the same admixture, so one capacity serves both books"
@@ -105,18 +105,18 @@ assert(
 -- ---- the gradient, on the SMALL side ----
 t.heat_pipe(7, 1, 200000.0)
 t.tick()
-local hot_k = t.pipe_temperature(7, 1)
-local cold_k = t.pipe_temperature(1, 1)
+local hot_k = assert(t.pipe_temperature(7, 1))
+local cold_k = assert(t.pipe_temperature(1, 1))
 assert(hot_k > 1000.0, "the short run is glowing: " .. hot_k)
 near(cold_k, T20C, 0.01, "and the long one has not noticed: " .. cold_k)
 near(moles_in(7, 1), east_n_0, 1e-9, "heat is not moles: nothing was added")
 
 -- The books, read TWICE, because a shut valve leaves two nets and each
 -- reports its own.
-local energy_0 = t.pipe_energy(1, 1) + t.pipe_energy(7, 1)
+local energy_0 = assert(t.pipe_energy(1, 1)) + assert(t.pipe_energy(7, 1))
 local moles_0 = west_n_0 + east_n_0
-local east_energy_0 = t.pipe_energy(7, 1)
-local west_energy_0 = t.pipe_energy(1, 1)
+local east_energy_0 = assert(t.pipe_energy(7, 1))
+local west_energy_0 = assert(t.pipe_energy(1, 1))
 
 -- ---------------------------------------------------------------
 -- A SHUT VALVE STOPS HEAT AS WELL AS GAS.
@@ -128,9 +128,9 @@ local west_energy_0 = t.pipe_energy(1, 1)
 -- exchanger, and it does not conduct on the quiet.
 -- ---------------------------------------------------------------
 t.run_seconds(30)
-near(t.pipe_temperature(7, 1), hot_k, 0.5, "the hot run stayed hot behind the wheel")
-near(t.pipe_temperature(1, 1), cold_k, 0.5, "and the cold run stayed cold")
-near(t.pipe_energy(1, 1) + t.pipe_energy(7, 1), energy_0, 1.0, "with the books untouched")
+near(assert(t.pipe_temperature(7, 1)), hot_k, 0.5, "the hot run stayed hot behind the wheel")
+near(assert(t.pipe_temperature(1, 1)), cold_k, 0.5, "and the cold run stayed cold")
+near(assert(t.pipe_energy(1, 1)) + assert(t.pipe_energy(7, 1)), energy_0, 1.0, "with the books untouched")
 
 -- ---------------------------------------------------------------
 -- OPEN, IT IS ONE NET, AND ITS TEMPERATURE IS THE JOULES DIVIDED OUT.
@@ -145,17 +145,17 @@ near(t.pipe_energy(1, 1) + t.pipe_energy(7, 1), energy_0, 1.0, "with the books u
 -- ---------------------------------------------------------------
 t.click(p, 6, 1, t.target_at(p, 6, 1, "manual_valve"))
 t.run_seconds(2)
-assert(t.structure_at(6, 1).state == "open", "the wheel is over")
+assert(assert(t.structure_at(6, 1)).state == "open", "the wheel is over")
 t.run_seconds(2)
 
 assert(
-    t.pipe_energy(1, 1) == t.pipe_energy(7, 1),
+    assert(t.pipe_energy(1, 1)) == assert(t.pipe_energy(7, 1)),
     "both ends report one net's joules, to the bit: "
-        .. t.pipe_energy(1, 1) .. " vs " .. t.pipe_energy(7, 1)
+        .. assert(t.pipe_energy(1, 1)) .. " vs " .. assert(t.pipe_energy(7, 1))
 )
-local fused_energy = t.pipe_energy(1, 1)
+local fused_energy = assert(t.pipe_energy(1, 1))
 local fused_moles = moles_in(1, 1)
-local fused_k = t.pipe_temperature(1, 1)
+local fused_k = assert(t.pipe_temperature(1, 1))
 
 near(
     fused_energy,
@@ -169,7 +169,7 @@ near(
     moles_0 * 1e-9,
     "and not a mole: " .. moles_0 .. " -> " .. fused_moles
 )
-near(t.pipe_temperature(7, 1), fused_k, 1e-9, "one net, one temperature, both ends")
+near(assert(t.pipe_temperature(7, 1)), fused_k, 1e-9, "one net, one temperature, both ends")
 
 -- The temperature is not a separate fact. It is what those joules,
 -- spread through those moles, come to -- which is the same number as
@@ -207,19 +207,19 @@ assert(
 -- ---------------------------------------------------------------
 t.click(p, 6, 1, t.target_at(p, 6, 1, "manual_valve"))
 t.run_seconds(3)
-assert(t.structure_at(6, 1).state == "shut", "shut again")
+assert(assert(t.structure_at(6, 1)).state == "shut", "shut again")
 t.run_seconds(1)
 
-near(t.pipe_temperature(1, 1), fused_k, 1e-6, "the west run kept the blend")
-near(t.pipe_temperature(7, 1), fused_k, 1e-6, "and so did the east one")
+near(assert(t.pipe_temperature(1, 1)), fused_k, 1e-6, "the west run kept the blend")
+near(assert(t.pipe_temperature(7, 1)), fused_k, 1e-6, "and so did the east one")
 near(
-    t.pipe_energy(1, 1) + t.pipe_energy(7, 1),
+    assert(t.pipe_energy(1, 1)) + assert(t.pipe_energy(7, 1)),
     energy_0,
     energy_0 * 1e-6,
     "and the two books add back up to what went in"
 )
 near(
-    t.pipe_energy(1, 1) / (t.pipe_energy(1, 1) + t.pipe_energy(7, 1)),
+    assert(t.pipe_energy(1, 1)) / (assert(t.pipe_energy(1, 1)) + assert(t.pipe_energy(7, 1))),
     WEST_M3 / (WEST_M3 + EAST_M3),
     1e-6,
     "split by volume, which is the same division the moles took"
@@ -231,31 +231,31 @@ near(
     "as the moles say too"
 )
 assert(
-    t.pipe_energy(7, 1) < east_energy_0 * 0.6,
+    assert(t.pipe_energy(7, 1)) < east_energy_0 * 0.6,
     "the short run gave up most of its heat for good: "
-        .. east_energy_0 .. " J -> " .. t.pipe_energy(7, 1) .. " J"
+        .. east_energy_0 .. " J -> " .. assert(t.pipe_energy(7, 1)) .. " J"
 )
 assert(
-    t.pipe_temperature(7, 1) < hot_k - 400.0,
+    assert(t.pipe_temperature(7, 1)) < hot_k - 400.0,
     "and it is nowhere near as hot as it was: " .. hot_k .. " K -> "
-        .. t.pipe_temperature(7, 1) .. " K"
+        .. assert(t.pipe_temperature(7, 1)) .. " K"
 )
 near(
-    t.pipe_energy(1, 1) - west_energy_0,
-    east_energy_0 - t.pipe_energy(7, 1),
+    assert(t.pipe_energy(1, 1)) - west_energy_0,
+    east_energy_0 - assert(t.pipe_energy(7, 1)),
     energy_0 * 1e-6,
     "and what the short run lost is exactly what the long one gained"
 )
 
 -- And it stays that way. A shut valve is a wall in both directions:
 -- nothing crosses back, and neither side drifts anywhere on its own.
-local rest_west = t.pipe_temperature(1, 1)
-local rest_east = t.pipe_temperature(7, 1)
+local rest_west = assert(t.pipe_temperature(1, 1))
+local rest_east = assert(t.pipe_temperature(7, 1))
 t.run_seconds(30)
-near(t.pipe_temperature(1, 1), rest_west, 0.01, "the west run settles where it is")
-near(t.pipe_temperature(7, 1), rest_east, 0.01, "and the east one with it")
+near(assert(t.pipe_temperature(1, 1)), rest_west, 0.01, "the west run settles where it is")
+near(assert(t.pipe_temperature(7, 1)), rest_east, 0.01, "and the east one with it")
 near(
-    t.pipe_energy(1, 1) + t.pipe_energy(7, 1),
+    assert(t.pipe_energy(1, 1)) + assert(t.pipe_energy(7, 1)),
     energy_0,
     energy_0 * 1e-6,
     "with the joule book still balancing at the end of it"

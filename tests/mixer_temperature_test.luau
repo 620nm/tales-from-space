@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- What temperature comes out of a mixer.
 --
 -- mixer_test.luau weighs the machine in MOLES: who paid, how much,
@@ -33,12 +35,12 @@
 -- a long back main, a one-length stub dropping south as the side
 -- intake, and a short outlet main east.
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string): ()
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
 -- Everything standing in the run under a tile, in moles.
-local function moles(x, y)
+local function moles(x: number, y: number): number
     local held = t.pipe_gas(x, y)
     if not held then
         return 0.0
@@ -102,33 +104,35 @@ t.world(JUNCTION, 7)
 
 local p = t.join()
 t.tick()
-assert(t.structure_at(9, 1).id == "mixer", "the mixer is where the map put it")
+assert(assert(t.structure_at(9, 1)).id == "mixer", "the mixer is where the map put it")
 
-near(t.pipe_temperature(BACK_X, BACK_Y), 293.15, 0.5, "every mapped run opens at room temperature")
-near(t.pipe_temperature(SIDE_X, SIDE_Y), 293.15, 0.5, "the side stub too")
-near(t.pipe_temperature(OUT_X, OUT_Y), 293.15, 0.5, "and the outlet main")
+near(assert(t.pipe_temperature(BACK_X, BACK_Y)), 293.15, 0.5, "every mapped run opens at room temperature")
+near(assert(t.pipe_temperature(SIDE_X, SIDE_Y)), 293.15, 0.5, "the side stub too")
+near(assert(t.pipe_temperature(OUT_X, OUT_Y)), 293.15, 0.5, "and the outlet main")
 
 assert(t.heat_pipe(SIDE_X, SIDE_Y, FIRE), "the side stub takes the heat")
 t.tick()
 
-local back_k = t.pipe_temperature(BACK_X, BACK_Y)
-local side_k = t.pipe_temperature(SIDE_X, SIDE_Y)
-local out_k = t.pipe_temperature(OUT_X, OUT_Y)
+local back_k = assert(t.pipe_temperature(BACK_X, BACK_Y))
+local side_k = assert(t.pipe_temperature(SIDE_X, SIDE_Y))
+local out_k = assert(t.pipe_temperature(OUT_X, OUT_Y))
 assert(side_k > back_k + 300.0, "the side intake is the hot one: " .. side_k .. " vs " .. back_k)
 -- Three nets, and heat crosses between them no more than moles do: an
 -- idle mixer is a length of pipe in both books.
 near(out_k, 293.15, 0.5, "and the heat went nowhere else: " .. out_k)
 
-local back0, side0, out0 = moles(BACK_X, BACK_Y), moles(SIDE_X, SIDE_Y), moles(OUT_X, OUT_Y)
-local energy0 = t.pipe_energy(BACK_X, BACK_Y)
-    + t.pipe_energy(SIDE_X, SIDE_Y)
-    + t.pipe_energy(OUT_X, OUT_Y)
+local back0 = moles(BACK_X, BACK_Y)
+local side0 = moles(SIDE_X, SIDE_Y)
+local out0 = moles(OUT_X, OUT_Y)
+local energy0 = assert(t.pipe_energy(BACK_X, BACK_Y))
+    + assert(t.pipe_energy(SIDE_X, SIDE_Y))
+    + assert(t.pipe_energy(OUT_X, OUT_Y))
 
 t.click(p, 9, 1, t.target_at(p, 9, 1, "mixer"))
 t.tick()
-assert(t.ui(p).document == "modules" and t.ui(p).presentation == "modules",
+assert(ui_controls.state(p).document == "modules" and ui_controls.state(p).presentation == "modules",
     "the mixer's declared document")
-near(t.ui(p).setpoints[2].value, 50.0, 0.001, "half and half out of the box")
+near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[2].value), 50.0, 0.001, "half and half out of the box")
 ui_controls.set(p, "pressure", 200)
 ui_controls.toggle(p, "power")
 t.run_seconds(30)
@@ -137,7 +141,7 @@ t.run_seconds(30)
 -- pass saw it do rather than by its switch, so an arrived mixer is drawn
 -- idle (docs/ATMOS.md SS6; device_looks_test.luau owns the picture
 -- rule). That it RAN is the three assertions below, which count moles.
-assert(t.structure_at(9, 1).state == "off", "it arrived and stopped")
+assert(assert(t.structure_at(9, 1)).state == "off", "it arrived and stopped")
 
 local gave_back = back0 - moles(BACK_X, BACK_Y)
 local gave_side = side0 - moles(SIDE_X, SIDE_Y)
@@ -149,8 +153,8 @@ assert(gave_side > 1.0, "and so did the hot side: " .. gave_side)
 -- onto the parcel and never writes it back (gas_mixture.dm:215). This
 -- is the assertion a mixer that "equalised" its intakes would fail
 -- while still reading plausibly on every pressure gauge on the line.
-near(t.pipe_temperature(BACK_X, BACK_Y), back_k, 0.001, "the back main is exactly as cold as it was")
-near(t.pipe_temperature(SIDE_X, SIDE_Y), side_k, 0.001, "and the side stub exactly as hot")
+near(assert(t.pipe_temperature(BACK_X, BACK_Y)), back_k, 0.001, "the back main is exactly as cold as it was")
+near(assert(t.pipe_temperature(SIDE_X, SIDE_Y)), side_k, 0.001, "and the side stub exactly as hot")
 
 -- THE BLEND. What reached the outlet is the two parcels at their own
 -- temperatures, on top of the air the outlet already held; one mole is
@@ -158,10 +162,10 @@ near(t.pipe_temperature(SIDE_X, SIDE_Y), side_k, 0.001, "and the side stub exact
 -- mole-weighted average of the three.
 local blend = (out0 * out_k + gave_back * back_k + gave_side * side_k)
     / (out0 + gave_back + gave_side)
-near(t.pipe_temperature(OUT_X, OUT_Y), blend, 0.5, "the outlet reads the blend of what it was given")
+near(assert(t.pipe_temperature(OUT_X, OUT_Y)), blend, 0.5, "the outlet reads the blend of what it was given")
 assert(
-    t.pipe_temperature(OUT_X, OUT_Y) > out_k + 20.0,
-    "which is warmer than the main started: " .. out_k .. " -> " .. t.pipe_temperature(OUT_X, OUT_Y)
+    assert(t.pipe_temperature(OUT_X, OUT_Y)) > out_k + 20.0,
+    "which is warmer than the main started: " .. out_k .. " -> " .. assert(t.pipe_temperature(OUT_X, OUT_Y))
 )
 
 -- The stream the machine actually delivered, by itself: equal shares
@@ -173,7 +177,7 @@ near(stream_50, (back_k + side_k) / 2.0, 1.0, "a 50/50 stream is the midpoint of
 -- cannot catch a machine that moved heat and made some on the trip;
 -- the conserved quantity can.
 near(
-    t.pipe_energy(BACK_X, BACK_Y) + t.pipe_energy(SIDE_X, SIDE_Y) + t.pipe_energy(OUT_X, OUT_Y),
+    assert(t.pipe_energy(BACK_X, BACK_Y)) + assert(t.pipe_energy(SIDE_X, SIDE_Y)) + assert(t.pipe_energy(OUT_X, OUT_Y)),
     energy0,
     1.0,
     "every joule the outlet gained came off an intake"
@@ -196,15 +200,17 @@ t.tick()
 assert(t.heat_pipe(SIDE_X, SIDE_Y, FIRE), "the same stub, the same heat")
 t.tick()
 
-local cold_k = t.pipe_temperature(BACK_X, BACK_Y)
-local hot_k = t.pipe_temperature(SIDE_X, SIDE_Y)
-local main_k = t.pipe_temperature(OUT_X, OUT_Y)
+local cold_k = assert(t.pipe_temperature(BACK_X, BACK_Y))
+local hot_k = assert(t.pipe_temperature(SIDE_X, SIDE_Y))
+local main_k = assert(t.pipe_temperature(OUT_X, OUT_Y))
 near(hot_k, side_k, 0.5, "the gradient is the one the last section blended")
 
-back0, side0, out0 = moles(BACK_X, BACK_Y), moles(SIDE_X, SIDE_Y), moles(OUT_X, OUT_Y)
-energy0 = t.pipe_energy(BACK_X, BACK_Y)
-    + t.pipe_energy(SIDE_X, SIDE_Y)
-    + t.pipe_energy(OUT_X, OUT_Y)
+back0 = moles(BACK_X, BACK_Y)
+side0 = moles(SIDE_X, SIDE_Y)
+out0 = moles(OUT_X, OUT_Y)
+energy0 = assert(t.pipe_energy(BACK_X, BACK_Y))
+    + assert(t.pipe_energy(SIDE_X, SIDE_Y))
+    + assert(t.pipe_energy(OUT_X, OUT_Y))
 
 t.click(q, 9, 1, t.target_at(q, 9, 1, "mixer"))
 t.tick()
@@ -231,14 +237,14 @@ assert(
 )
 
 near(
-    t.pipe_temperature(OUT_X, OUT_Y),
+    assert(t.pipe_temperature(OUT_X, OUT_Y)),
     (out0 * main_k + gave_back * cold_k + gave_side * hot_k) / (out0 + gave_back + gave_side),
     0.5,
     "and the outlet again reads the blend of exactly what it was given"
 )
-near(t.pipe_temperature(SIDE_X, SIDE_Y), hot_k, 0.001, "the hot stub is still as hot as it was")
+near(assert(t.pipe_temperature(SIDE_X, SIDE_Y)), hot_k, 0.001, "the hot stub is still as hot as it was")
 near(
-    t.pipe_energy(BACK_X, BACK_Y) + t.pipe_energy(SIDE_X, SIDE_Y) + t.pipe_energy(OUT_X, OUT_Y),
+    assert(t.pipe_energy(BACK_X, BACK_Y)) + assert(t.pipe_energy(SIDE_X, SIDE_Y)) + assert(t.pipe_energy(OUT_X, OUT_Y)),
     energy0,
     1.0,
     "and the books balance at a lopsided ratio too"

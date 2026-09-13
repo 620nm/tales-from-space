@@ -39,7 +39,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local function near(got, want, tol, what)
+local function near(got: number?, want: number, tol: number, what: string)
     assert(got ~= nil, what .. ": nothing was answered")
     assert(math.abs(got - want) <= tol,
         ("%s: wanted %g, got %g"):format(what, want, got))
@@ -49,7 +49,7 @@ end
 -- The glass off the shelf, filled by the map. A charge is an
 -- AMOUNT, not a density: 0.20 mol is 0.20 mol whatever the shell.
 -- ---------------------------------------------------------------
-local charged = t.vessel(t.target_at(p, 2, 1, "beaker"))
+local charged = t.vessel(assert(t.target_at(p, 2, 1, "beaker")))
 assert(charged ~= nil, "a beaker has an inside")
 assert(charged.contents.water ~= nil, "the map put water in it")
 near(charged.contents.water.liquid, 0.20, 1e-9, "the charge's own amount")
@@ -62,7 +62,7 @@ near(charged.temp_k, 293.15, 0.5, "at the temperature the charge names")
 -- STATES what is in the vessel, so placement beats variant beats
 -- base and nothing is ever the sum of two of them.
 -- ---------------------------------------------------------------
-local overruled = t.vessel(t.target_at(p, 3, 1, "beaker.libital"))
+local overruled = t.vessel(assert(t.target_at(p, 3, 1, "beaker.libital")))
 assert(overruled ~= nil, "a variant is a beaker like any other")
 near(overruled.contents.water.liquid, 0.20, 1e-9,
     "the map's amount, not the variant's 0.20 plus it")
@@ -73,9 +73,9 @@ assert(overruled.contents.libital == nil,
 -- ...and the one nobody said anything about is untouched by all of
 -- it: what its own file declares, which is what it has always been.
 -- ---------------------------------------------------------------
-local untouched = t.vessel(t.target_at(p, 4, 1, "beaker.libital"))
+local untouched = assert(t.vessel(assert(t.target_at(p, 4, 1, "beaker.libital"))))
 assert(untouched ~= nil, "the third glass has an inside too")
 assert(untouched.contents.libital ~= nil,
     "a placement that says nothing gets the prototype's own fill")
-assert(untouched.contents.libital.liquid > 0,
+assert(assert(untouched.contents.libital.liquid) > 0,
     "standing as liquid: " .. tostring(untouched.contents.libital.liquid))

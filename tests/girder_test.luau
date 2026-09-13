@@ -49,7 +49,7 @@ assert(t.ledger_has("StructureStep", "girder", "displaced"),
 -- And now no wall goes on it. The refusal is immediate and says which
 -- state the job wants; a silent no-op would read as a dropped click.
 t.swap_hands(p)
-local _ = t.messages(p)
+t.messages(p)
 t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.run_ticks(2)
 local said = t.messages(p)
@@ -134,6 +134,10 @@ t.run_seconds(4.5)
 assert(not t.ledger_has("StructureStep", "girder", "displaced"),
     "walked away, no bolts out")
 local cut = t.ledger_rows("DoAfterInterrupted")
-assert(#cut == 1 and cut[1].file == "girder"
-    and cut[1].at[1] == 1 and cut[1].at[2] == 2,
+assert(#cut == 1, "one interruption is recorded")
+local at = cut[1].at
+assert(type(at) == "table", "the interruption records its location")
+local coordinates = at :: { unknown }
+assert(cut[1].file == "girder"
+    and coordinates[1] == 1 and coordinates[2] == 2,
     "the guard names the work it cut short")

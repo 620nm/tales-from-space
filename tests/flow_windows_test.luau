@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The three things you DO to an in-line machine that are not gas:
 -- open its panel, put a wrench to it, and cut its power.
 --
@@ -17,10 +19,7 @@ end
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
 local function walk(p, dir)
     t.move(p, dir)
@@ -36,11 +35,11 @@ local function lying_at(x, y, id)
     return false
 end
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function moles(kpa, m3)
+local function moles(kpa: number, m3: number)
     return kpa * 1000.0 * m3 / (8.314 * 293.15)
 end
 
@@ -94,17 +93,17 @@ t.world([==[(
 
 local p = t.join()
 t.tick()
-assert(t.structure_at(9, 2).id == "digital_valve", "the map stood one there")
-assert(t.structure_at(9, 2).state == "shut", "shut, like its twin")
+assert(assert(t.structure_at(9, 2)).id == "digital_valve", "the map stood one there")
+assert(assert(t.structure_at(9, 2)).state == "shut", "shut, like its twin")
 
 -- The manual valve: no window at all, and a wheel that takes tg's
 -- second.
 t.click(p, 3, 1, t.target_at(p, 3, 1, "manual_valve"))
 t.tick()
 assert(t.ui(p) == nil, "a manual valve has no panel to open")
-assert(t.structure_at(3, 1).state == "shut", "and a second is a second")
+assert(assert(t.structure_at(3, 1)).state == "shut", "and a second is a second")
 t.run_seconds(1.5)
-assert(t.structure_at(3, 1).state == "open", "then the wheel is over")
+assert(assert(t.structure_at(3, 1)).state == "open", "then the wheel is over")
 assert(said(p, "The manual valve is open."), "and it says where it landed")
 
 -- Lengthen the digital valve's west main by one length, so the two
@@ -122,8 +121,8 @@ t.run_ticks(2)
 
 local WEST_M3 = 3 * PIPE_M3 + PORT_M3
 local EAST_M3 = 2 * PIPE_M3 + PORT_M3
-local west = t.pipe_pressure(7, 2)
-local east = t.pipe_pressure(11, 2)
+local west = assert(t.pipe_pressure(7, 2))
+local east = assert(t.pipe_pressure(11, 2))
 assert(east > west + 10.0, "the two sides differ: " .. west .. " / " .. east)
 local level = (moles(west, WEST_M3) + moles(east, EAST_M3))
     / (WEST_M3 + EAST_M3)
@@ -138,17 +137,17 @@ walk(p, "east")
 walk(p, "east")
 t.click(p, 9, 2, t.target_at(p, 9, 2, "digital_valve"))
 t.tick()
-local panel = t.ui(p)
+local panel = ui_controls.record(assert(t.ui(p)))
 assert(panel, "a digital valve answers an empty hand with a panel")
 assert(panel.document == "modules" and panel.presentation == "modules",
     "the document the whole roster shares")
-assert(panel.toggles[1].on_text.text == "open", panel.toggles[1].on_text.text)
-assert(panel.toggles[1].off_text.text == "shut")
-assert(panel.toggles[1].label.id == "flow.switch.valve", "and it is a valve, not a pump")
+assert(ui_controls.word(ui_controls.rows(panel.toggles)[1].on_text) == "open", ui_controls.word(ui_controls.rows(panel.toggles)[1].on_text))
+assert(ui_controls.word(ui_controls.rows(panel.toggles)[1].off_text) == "shut")
+assert(ui_controls.word(ui_controls.rows(panel.toggles)[1].label) == "flow.switch.valve", "and it is a valve, not a pump")
 
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
-assert(t.structure_at(9, 2).state == "open", "no wheel: it throws on the command")
+assert(assert(t.structure_at(9, 2)).state == "open", "no wheel: it throws on the command")
 assert(
     t.ledger_has("AtmosDeviceSet", "digital_valve", "Player"),
     "and opening a main from a panel is on the record, against the player"
@@ -157,8 +156,8 @@ assert(
 -- It is still a VALVE: open, it does not pump, it fuses. The two mains
 -- become one body of gas and settle where their volumes say.
 t.run_seconds(2)
-near(t.pipe_pressure(7, 2), t.pipe_pressure(11, 2), 0.5, "both ends of one net read alike")
-near(t.pipe_pressure(7, 2), level, 2.0, "and read what the volumes say they should")
+near(assert(t.pipe_pressure(7, 2)), assert(t.pipe_pressure(11, 2)), 0.5, "both ends of one net read alike")
+near(assert(t.pipe_pressure(7, 2)), level, 2.0, "and read what the volumes say they should")
 
 -- ---------------------------------------------------------------
 -- A PUMP ON A DEAD BRANCH.
@@ -196,7 +195,7 @@ t.run_seconds(3)
 t.click(d, 3, 1, t.target_at(d, 3, 1, "pump"))
 t.tick()
 local supply = nil
-for _, r in ipairs(t.ui(d).readouts) do
+for _, r in ipairs(ui_controls.rows(ui_controls.state(d).readouts)) do
     if word(r.label) == "flow.supply" then
         supply = word(r.value)
     end
@@ -208,18 +207,18 @@ assert(supply == "flow.supply.dead", "the panel says the mains are not behind it
 ui_controls.set(d, "target", 300)
 ui_controls.toggle(d, "power")
 t.run_ticks(2)
-assert(t.ui(d).toggles[1].on == true, "the switch is on")
+assert(ui_controls.rows(ui_controls.state(d).toggles)[1].on == true, "the switch is on")
 assert(
-    t.structure_at(3, 1).state == "off",
+    assert(t.structure_at(3, 1)).state == "off",
     "and the machine is still drawn dead, which is tg's `on &&"
         .. " is_operational` picking the picture"
 )
 
-local dead_in = t.pipe_pressure(1, 1)
-local dead_out = t.pipe_pressure(5, 1)
+local dead_in = assert(t.pipe_pressure(1, 1))
+local dead_out = assert(t.pipe_pressure(5, 1))
 t.run_seconds(60)
-near(t.pipe_pressure(5, 1), dead_out, 0.5, "an unpowered pump moves nothing")
-near(t.pipe_pressure(1, 1), dead_in, 0.5, "out of either end")
+near(assert(t.pipe_pressure(5, 1)), dead_out, 0.5, "an unpowered pump moves nothing")
+near(assert(t.pipe_pressure(1, 1)), dead_in, 0.5, "out of either end")
 
 -- ---------------------------------------------------------------
 -- YOU DO NOT UNBOLT A RUNNING PUMP.
@@ -270,7 +269,7 @@ t.click(w, 3, 1, t.target_at(w, 3, 1, "pump"))
 t.tick()
 ui_controls.toggle(w, "power")
 t.run_ticks(2)
-assert(t.structure_at(3, 1).state == "running", "the pump is running")
+assert(assert(t.structure_at(3, 1)).state == "running", "the pump is running")
 
 t.click(w, 4, 2, t.target_at(w, 4, 2, "wrench"))
 t.run_ticks(2)
@@ -283,13 +282,13 @@ assert(
     said(w, "The pump must be off first."),
     "the refusal names the state the job wants"
 )
-assert(t.structure_at(3, 1).id == "pump", "and the pump is still bolted down")
+assert(assert(t.structure_at(3, 1)).id == "pump", "and the pump is still bolted down")
 
 -- The panel is still open and still in reach, so the switch is right
 -- there -- which is the whole point of it being a windowed machine.
 ui_controls.toggle(w, "power")
 t.run_ticks(2)
-assert(t.structure_at(3, 1).state == "off", "switched off")
+assert(assert(t.structure_at(3, 1)).state == "off", "switched off")
 
 t.click(w, 3, 1, t.target_at(w, 3, 1, "pump"))
 t.run_ticks(1)
@@ -298,8 +297,8 @@ t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "and two seconds in, it is up")
 assert(t.pipe(3, 1) == 0, "and no hidden centre length reappeared")
 near(
-    t.pipe_pressure(1, 1),
-    t.pipe_pressure(5, 1),
+    assert(t.pipe_pressure(1, 1)),
+    assert(t.pipe_pressure(5, 1)),
     0.5,
     "which is one main from end to end now"
 )
@@ -323,7 +322,7 @@ assert(fx, "the machine came up as a fitting")
 -- and step off before wrenching: a machine needs the deck clear, where
 -- a fitting hides under it.
 t.swap_hands(w)
-t.click(w, fx, fy, t.target_at(w, fx, fy, "pump_fitting"))
+t.click(w, fx, assert(fy), t.target_at(w, fx, assert(fy), "pump_fitting"))
 t.run_ticks(2)
 assert(t.hands(w).held == "pump_fitting", "the fitting is in hand")
 walk(w, "north")
@@ -337,8 +336,8 @@ t.swap_hands(w)
 t.click(w, 3, 1, t.target_at(w, 3, 1, "pump_fitting"))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) ~= nil, "the machine is standing again")
-assert(t.structure_at(3, 1).id == "pump", "and it is the same machine")
-assert(t.structure_at(3, 1).state == "off", "a machine you just bolted down is off")
+assert(assert(t.structure_at(3, 1)).id == "pump", "and it is the same machine")
+assert(assert(t.structure_at(3, 1)).state == "off", "a machine you just bolted down is off")
 t.run_seconds(1)
 assert(
     t.pipe_pressure(3, 1) == nil,

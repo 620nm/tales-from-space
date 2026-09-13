@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- A canister with WATER in it.
 --
 -- The bottle is the same noun every gas store on the station uses. It
@@ -63,13 +65,13 @@ local CHARGE_MOL = 555.0929780738273
 local SHELL_L = 2000.0
 local SLUG_L = 10.0
 
-local function near(got, want, tol, what)
+local function near(got: number?, want: number, tol: number, what: string)
     assert(got ~= nil, what .. ": nothing was answered")
     assert(math.abs(got - want) <= tol,
         ("%s: wanted %g, got %g"):format(what, want, got))
 end
 
-local can = t.target_at(p, 2, 1, "canister")
+local can = assert(t.target_at(p, 2, 1, "canister"))
 local shut = t.vessel(can)
 assert(shut ~= nil, "a canister has an inside")
 
@@ -97,7 +99,7 @@ near(shut.headspace_l, SHELL_L - SLUG_L, 0.1,
 -- ---------------------------------------------------------------
 t.run_ticks(200)
 
-local settled = t.vessel(can)
+local settled = assert(t.vessel(can))
 local s = settled.contents.water
 assert(s ~= nil, "the water is still in there")
 assert(s.gas ~= nil and s.gas > 0.0,
@@ -123,15 +125,15 @@ near((s.liquid or 0.0) + (s.gas or 0.0) + (s.solid or 0.0), CHARGE_MOL, 1e-6,
 -- past what the room already holds and the bottle has ten
 -- atmospheres to push with and somewhere to push it.
 -- ---------------------------------------------------------------
-local air_before = settled.contents.o2.gas + settled.contents.n2.gas
+local air_before = assert(settled.contents.o2.gas) + assert(settled.contents.n2.gas)
 local water_before = (s.liquid or 0.0) + (s.gas or 0.0)
-local room_before = t.room_pressure(3, 1)
+local room_before = assert(t.room_pressure(3, 1))
 
 t.click(p, 2, 1, can)
 t.tick()
-local ui = t.ui(p)
+local ui = ui_controls.record(t.ui(p))
 assert(ui ~= nil, "clicking a bottle opens its panel")
-assert(ui.toggles[1].field == "valve" and ui.toggles[1].on == false,
+assert(ui_controls.rows(ui.toggles)[1].field == "valve" and ui_controls.rows(ui.toggles)[1].on == false,
     "it arrives shut, because a map that said nothing said nothing")
 ui_controls.set(p, "release", 400)
 ui_controls.toggle(p, "valve")
@@ -148,20 +150,20 @@ t.run_ticks(200)
 -- valve is opened -- which is exactly the gap the engine marks for
 -- itself rather than pretending it is closed.
 -- ---------------------------------------------------------------
-local open = t.vessel(can)
+local open = assert(t.vessel(can))
 local w = open.contents.water
 assert(w ~= nil, "the water did not leave through the valve")
 
-local air_after = open.contents.o2.gas + open.contents.n2.gas
-assert(air_after < air_before * 0.7,
-    ("the air emptied into the room: %g -> %g"):format(air_before, air_after))
-assert(t.room_pressure(3, 1) > room_before + 100.0,
-    "and the room's own gauge went up with it: " .. t.room_pressure(3, 1))
+local air_after = assert(open.contents.o2.gas) + assert(open.contents.n2.gas)
+assert(air_after < assert(air_before) * 0.7,
+    ("the air emptied into the room: %g -> %g"):format(assert(air_before), air_after))
+assert(assert(t.room_pressure(3, 1)) > assert(room_before) + 100.0,
+    "and the room's own gauge went up with it: " .. assert(t.room_pressure(3, 1)))
 
 local water_after = (w.liquid or 0.0) + (w.gas or 0.0)
 assert(water_after > water_before * 0.99,
     ("while the water hardly moved: %g -> %g"):format(water_before, water_after))
-assert(w.liquid > CHARGE_MOL * 0.99,
+assert(assert(w.liquid) > CHARGE_MOL * 0.99,
     "and the slug is still the slug: " .. w.liquid)
 assert(water_before - water_after < (w.gas or 0.0) * 2.0,
     "what left it was vapour, and not much more than a headspace of that")

@@ -9,6 +9,8 @@
 -- two patients laid orthogonally beside it are on the panel, one laid on
 -- a corner is not.
 
+local ui_controls = require("@helpers/ui_controls")
+
 local ARENA = [==[(
     name: "theatre",
     legend: {
@@ -43,13 +45,10 @@ local CX, CY = 3, 3
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function row(ui, label)
-    for _, r in ipairs(ui.readouts) do
+local function row(ui: ui_controls.Record, label: string): ui_controls.Record?
+    for _, r in ipairs(ui_controls.rows(ui.readouts)) do
         if word(r.label) == label then
             return r
         end
@@ -57,9 +56,9 @@ local function row(ui, label)
     return nil
 end
 
-local function rows_named(ui, label)
+local function rows_named(ui: ui_controls.Record, label: string)
     local n = 0
-    for _, r in ipairs(ui.readouts) do
+    for _, r in ipairs(ui_controls.rows(ui.readouts)) do
         if word(r.label) == label then
             n = n + 1
         end
@@ -69,21 +68,21 @@ end
 
 -- Every heading the document draws, once each, minus the surgeon's own
 -- aim block. One per body the panel is willing to talk about.
-local function body_sections(ui)
+local function body_sections(ui: ui_controls.Record)
     local seen, order = {}, {}
-    local function note(r)
-        local at = word(r.section)
+    local function note(r: ui_controls.Record)
+        local at = if r.section then word(r.section) else nil
         if at and at ~= "procedure.target" and not seen[at] then
             seen[at] = true
             order[#order + 1] = at
         end
     end
-    for _, r in ipairs(ui.readouts) do note(r) end
-    for _, r in ipairs(ui.toggles) do note(r) end
+    for _, r in ipairs(ui_controls.rows(ui.readouts)) do note(r) end
+    for _, r in ipairs(ui_controls.rows(ui.toggles)) do note(r) end
     return order
 end
 
-local function has(haystack, needle)
+local function has(haystack: string?, needle: string)
     return (haystack or ""):find(needle, 1, true) ~= nil
 end
 
@@ -99,7 +98,7 @@ for _, who in ipairs({ near, other, corner }) do
     t.rest(who, true)
 end
 t.run_ticks(2)
-assert(t.body(near).posture == "lying", "the patients are down")
+assert(assert(t.body(near)).posture == "lying", "the patients are down")
 
 -- ---- one of them gets opened up ---------------------------------------
 -- Bare the chest first: a jumpsuit is what "obstructed" means
@@ -111,7 +110,7 @@ t.run_ticks(2)
 assert(t.hands(surgeon).held ~= nil, "the scalpel is in hand")
 t.click(surgeon, 3, 2, t.body_target(surgeon, near))
 t.run_ticks(100)
-assert(t.parts(near).chest.states.skin_cut == true, "the chest is open")
+assert(assert(t.parts(near)).chest.states.skin_cut == true, "the chest is open")
 
 -- ---- the console, read by a surgeon standing beside it ----------------
 t.drop(surgeon) -- an empty hand is what opens a machine's window
@@ -119,8 +118,7 @@ t.run_ticks(2)
 t.click(surgeon, CX, CY, t.target_at(surgeon, CX, CY))
 t.run_ticks(2)
 
-local ui = t.ui(surgeon)
-assert(ui, "the console opened a window")
+local ui = ui_controls.record(assert(t.ui(surgeon), "the console opened a window"))
 assert(ui.document == "modules", "a clean-room module document")
 
 -- TWO bodies, not three and not four: the two on orthogonal tiles. The
@@ -138,8 +136,9 @@ assert(#blocks == 2, "two patients, one block each: got " .. #blocks)
 -- nobody has cut yet, which is no use to a surgeon deciding where to
 -- start (tests/surgery_cadaver_test.luau).
 assert(rows_named(ui, "chest") == 2, "the open chest and the aimed one")
-local opened, untouched = nil, nil
-for _, r in ipairs(ui.readouts) do
+local opened: ui_controls.Record? = nil
+local untouched: ui_controls.Record? = nil
+for _, r in ipairs(ui_controls.rows(ui.readouts)) do
     if word(r.label) == "chest" then
         if has(word(r.value), "skin_cut") then opened = r else untouched = r end
     end
@@ -158,7 +157,8 @@ assert(blood ~= nil, "and how much blood is left to lose")
 -- One row, two facts: `procedure.blood.bleeding` carries the volume and
 -- the rate as arguments, and a body that is not losing any carries the
 -- volume alone.
-local volume = blood.value.args and blood.value.args.volume or blood.value.text
+local blood_value = ui_controls.record(blood.value)
+local volume = ui_controls.text(if blood_value.args then ui_controls.record(blood_value.args).volume else blood_value.text)
 assert(volume:match("^%d+%.%d%d L") ~= nil,
     "the blood row is in litres: " .. tostring(volume))
 -- Nothing is wrong with the head and nobody is aiming at it, so the head
@@ -186,8 +186,8 @@ assert(row(ui, "cauterise your own wound") == nil, "a self-only step is nobody e
 -- ---- the aim ----------------------------------------------------------
 -- One button per part slot of the SURGEON's own plan, and pressing one
 -- is what their next click means.
-local aimed = nil
-for _, toggle in ipairs(ui.toggles) do
+local aimed: ui_controls.Record? = nil
+for _, toggle in ipairs(ui_controls.rows(ui.toggles)) do
     if toggle.field == "zone" and toggle.option == "head" then
         aimed = toggle
     end
@@ -203,6 +203,6 @@ t.click(surgeon, 2, 2, t.target_at(surgeon, 2, 2, "scalpel"))
 t.run_ticks(2)
 t.click(surgeon, 3, 2, t.body_target(surgeon, near))
 t.run_ticks(100)
-assert(t.parts(near).head.states.skin_cut == true, "the head is where the cut landed")
+assert(assert(t.parts(near)).head.states.skin_cut == true, "the head is where the cut landed")
 
 print("operating computer: four tiles, the state that is there, the next step, and the aim")

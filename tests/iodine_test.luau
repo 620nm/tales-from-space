@@ -15,17 +15,17 @@ local MELT_K, BOIL_K = 386.75, 457.4
 local L_FUS, L_VAP = 15520.0, 41570.0
 local ONE_ATM_PA = 101325.0
 
-local function vapour_pa(temp_k)
+local function vapour_pa(temp_k: number)
     return ONE_ATM_PA * math.exp((-L_VAP / R) * (1.0 / temp_k - 1.0 / BOIL_K))
 end
 
 local TRIPLE_PA = vapour_pa(MELT_K)
 
-local function sublimation_pa(temp_k)
+local function sublimation_pa(temp_k: number)
     return TRIPLE_PA * math.exp((-(L_FUS + L_VAP) / R) * (1.0 / temp_k - 1.0 / MELT_K))
 end
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -50,15 +50,15 @@ t.set_environment({ sink_k = 293.15, insolation = 0.0 })
 local p = t.join()
 t.tick()
 
-local bottle = t.target_at(p, 1, 1, "bottle.iodine")
+local bottle = assert(t.target_at(p, 1, 1, "bottle.iodine"), "the target is visible")
 
-local function phases(handle)
+local function phases(handle: SpecObservedTarget)
     local reading = t.vessel(handle)
     assert(reading ~= nil, "that is a vessel")
-    return reading.contents.iodine or {}
+    return reading.contents.iodine or { solid = 0, liquid = 0, gas = 0 }
 end
 
-local function tile_iodine(x, y)
+local function tile_iodine(x: number, y: number)
     local gases = t.room_gas(x, y)
     return (gases and gases.iodine) or 0.0
 end
@@ -74,7 +74,7 @@ end
 -- nothing else, because there is no air in the bottle to add to it.
 -- ---------------------------------------------------------------
 t.run_seconds(5)
-local reading = t.vessel(bottle)
+local reading = assert(t.vessel(bottle), "the vessel has a reading")
 local before = phases(bottle)
 assert((before.solid or 0) > 0.12, "crystals in the bottle: " .. tostring(before.solid))
 assert((before.liquid or 0) < 1e-9, "and not a drop of liquid: it never melts down here")
@@ -85,7 +85,7 @@ near(reading.pressure_kpa, line_kpa, line_kpa * 0.05,
     "the gauge reads the sublimation line at " .. reading.temp_k .. " K")
 local headspace_m3 = reading.headspace_l / 1000.0
 local n_line = sublimation_pa(reading.temp_k) * headspace_m3 / (R * reading.temp_k)
-near(before.gas, n_line, n_line * 0.05, "the haze is the line's worth of vapour, no more")
+near(assert(before.gas, "the bottle contains iodine vapour"), n_line, n_line * 0.05, "the haze is the line's worth of vapour, no more")
 
 local booked = t.matter_totals()
 
@@ -101,11 +101,11 @@ local booked = t.matter_totals()
 local charge = (before.solid or 0) + (before.gas or 0)
 t.click(p, 1, 1, bottle) -- pick it up
 t.tick()
-local deck_k = t.room_temperature(2, 1)
+local deck_k = assert(t.room_temperature(2, 1))
 t.click(p, 2, 1) -- the deck beside you, with the bottle in hand
 t.run_ticks(4)
 
-assert(t.vessel(bottle).moles < 1e-6, "the bottle is empty now: " .. t.vessel(bottle).moles)
+assert(assert(t.vessel(bottle)).moles < 1e-6, "the bottle is empty now: " .. assert(t.vessel(bottle)).moles)
 local rows = t.ledger_rows("spilled")
 assert(#rows == 1, "one spill on the record, got " .. #rows)
 local landed = tile_iodine(2, 1)
@@ -116,11 +116,11 @@ t.run_seconds(120)
 local plume = tile_iodine(2, 1) + tile_iodine(1, 1) + tile_iodine(3, 1) + tile_iodine(4, 1)
 assert(plume > landed + 1e-4,
     "two minutes later the crystal is going up as vapour: " .. landed .. " -> " .. plume)
-local control = t.room_temperature(4, 1)
-assert(t.room_temperature(2, 1) < deck_k - 0.05,
-    "and the tile it lay on paid the latent heat: " .. deck_k .. " -> " .. t.room_temperature(2, 1))
-assert(t.room_temperature(2, 1) < control,
-    "colder than the far end of the room: " .. t.room_temperature(2, 1) .. " vs " .. control)
+local control = assert(t.room_temperature(4, 1))
+assert(assert(t.room_temperature(2, 1)) < deck_k - 0.05,
+    "and the tile it lay on paid the latent heat: " .. deck_k .. " -> " .. assert(t.room_temperature(2, 1)))
+assert(assert(t.room_temperature(2, 1)) < control,
+    "colder than the far end of the room: " .. assert(t.room_temperature(2, 1)) .. " vs " .. control)
 
 -- ---------------------------------------------------------------
 -- THREE: THE BOOKS CLOSE.

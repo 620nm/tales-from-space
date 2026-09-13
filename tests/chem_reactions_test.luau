@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The roster's gates: what a recipe will not do without, and what it
 -- will not do cold.
 --
@@ -39,11 +41,11 @@ local RUST = 0.05
 local WET = 0.15
 local SAND = 0.1
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function amount(handle, key)
+local function amount(handle, key: string)
     local contents = t.contents(handle)
     assert(contents ~= nil, "that is a vessel")
     return contents[key] or 0
@@ -89,10 +91,10 @@ t.tick()
 -- walking.
 local dispenser = t.target_at(p, 1, 1)
 local heater = t.target_at(p, 3, 1)
-local a = t.target_at(p, 1, 2, "beaker")
-local slop = t.target_at(p, 3, 2, "beaker")
-local d = t.target_at(p, 3, 3, "beaker")
-local e = t.target_at(p, 2, 3, "beaker")
+local a = assert(t.target_at(p, 1, 2, "beaker"))
+local slop = assert(t.target_at(p, 3, 2, "beaker"))
+local d = assert(t.target_at(p, 3, 3, "beaker"))
+local e = assert(t.target_at(p, 2, 3, "beaker"))
 
 -- Every gesture in this spec is one of five, so they get names.
 local function take(handle, x, y)
@@ -249,7 +251,7 @@ panel(heater, 3, 1)
 ui_controls.set(p, "temperature", 500)
 ui_controls.toggle(p, "power")
 t.run_seconds(120)
-assert(t.holder_k(d) > 480.0, "the chamber crossed the threshold: " .. t.holder_k(d))
+assert(assert(t.holder_k(d)) > 480.0, "the chamber crossed the threshold: " .. tostring(t.holder_k(d)))
 near(amount(d, "ash"), 2.0 * LEG, 1e-6, "every mole of oil became a mole of ash")
 near(amount(d, "oil"), 0.0, 1e-6, "and there is none of it left")
 

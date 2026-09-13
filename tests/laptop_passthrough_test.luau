@@ -25,7 +25,7 @@ t.world([==[(
 local p = t.join()
 t.run_ticks(20)
 
-local function heard_any(lines, ...)
+local function heard_any(lines: { string }, ...: string)
     for _, line in ipairs(lines) do
         for _, needle in ipairs({ ... }) do
             if line:find(needle, 1, true) then return true end
@@ -37,13 +37,13 @@ end
 t.click(p, 4, 1, assert(t.target_at(p, 4, 1, "laptop")))
 t.run_ticks(2)
 assert(t.hands(p).held == "laptop", "the closed laptop is in hand")
-local door = t.door_at(5, 1)
+local door = assert(t.door_at(5, 1))
 assert(door.powered and not door.open and not door.bolted, "a powered, shut, public door")
 
 local _ = t.messages(p)
 t.click(p, 5, 1, t.target_at(p, 5, 1))
 t.run_ticks(20)
 local lines = t.messages(p)
-assert(t.door_at(5, 1).open, "a click with a closed laptop still opens the door")
+assert(assert(t.door_at(5, 1)).open, "a click with a closed laptop still opens the door")
 assert(not heard_any(lines, LID, OFF), "and the laptop says nothing: " .. table.concat(lines, " | "))
 assert(t.ui(p, "programming") == nil, "nothing connects to a door")

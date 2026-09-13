@@ -41,7 +41,7 @@ local p = t.join()
 t.tick()
 
 -- ---- out of the box, full -------------------------------------------
-local boxed = t.item_at(2, 1, "card_deck")
+local boxed = assert(t.item_at(2, 1, "card_deck"))
 assert(boxed ~= nil, "the deck is on the table")
 -- THE DECK'S LOOK IS A REPLICATED SCRIPT VAR, not an engine state, so
 -- what a spec can assert on this side of the wire is the row a viewer
@@ -52,11 +52,12 @@ assert(boxed ~= nil, "the deck is on the table")
 -- the entity stream carries.
 assert(boxed.var == "lunatic/tfs:picture",
     "the deck hangs its picture on the mod's own key: " .. tostring(boxed.var))
-local DECLARED = {}
-for _, cell in ipairs(boxed.var_states) do
+local DECLARED: {[string]: boolean} = {}
+local var_states = assert(boxed.var_states, "the deck declares its picture roster")
+for _, cell in ipairs(var_states) do
     DECLARED[cell] = true
 end
-assert(#boxed.var_states == 4, "four thicknesses are declared, got " .. #boxed.var_states)
+assert(#var_states == 4, "four thicknesses are declared, got " .. #var_states)
 assert(boxed.var_state == nil,
     "an unopened deck has had nothing written: " .. tostring(boxed.var_state))
 assert(boxed.sprite == "card_deck_full",
@@ -72,8 +73,9 @@ assert(t.hands(p).held == "card_deck", "the deck is in hand")
 -- hand -- see items/card_deck.luau for why the bindings differ.
 t.click_turf(p, 1, 2)
 t.tick()
-local first = t.item_at(1, 2, "card")
+local first = assert(t.item_at(1, 2, "card"))
 assert(first ~= nil, "a card is on the tile that was clicked")
+assert(first.state ~= nil, "a dealt card has its hidden state")
 assert(first.state:sub(1, 5) == "down_",
     "dealt face down, as tg deals: " .. tostring(first.state))
 assert(first.sprite == "card_back",
@@ -158,7 +160,7 @@ assert(t.hud(p)[1] == "card_back",
     "and turning it back down shows a back again: " .. tostring(t.hud(p)[1]))
 t.drop(p)
 t.tick()
-local facedown = t.item_at(1, 1, "card")
+local facedown = assert(t.item_at(1, 1, "card"))
 assert(facedown.state == "down_" .. secret, "face down again, same card")
 assert(facedown.sprite == "card_back", "back to the back")
 
@@ -176,7 +178,7 @@ t.tick()
 assert(t.hands(p).held == nil, "the card left the hand")
 assert(t.item_at(1, 1, "card") == nil and t.item_at(1, 2, "card") == nil,
     "and is not lying anywhere: it is in the deck")
-local back = t.item_at(1, 1, "card_deck")
+local back = assert(t.item_at(1, 1, "card_deck"))
 assert(back.var_state == "card_deck_full",
     "a deck with all fifty-four back in it is drawn full again: " .. tostring(back.var_state))
 assert(DECLARED[back.var_state], "and it is one of the pictures the prototype declared")
@@ -209,12 +211,12 @@ for deal = 1, 54 do
         -- not merely stored on it.
         t.drop(p)
         t.tick()
-        local mid = t.item_at(1, 1, "card_deck")
+        local mid = assert(t.item_at(1, 1, "card_deck"))
         assert(mid ~= nil, "the deck is at the dealer's feet")
         assert(mid.var_state == wanted,
             "after " .. deal .. " deals the row names " .. wanted .. ": "
                 .. tostring(mid.var_state))
-        assert(DECLARED[mid.var_state],
+        assert(DECLARED[assert(mid.var_state)],
             "and it is a picture the prototype declared: " .. tostring(mid.var_state))
         assert(mid.sprite == "card_deck_full",
             "while the base the server sent never moved: " .. tostring(mid.sprite))
@@ -253,9 +255,9 @@ for card = 1, 54 do
     assert(t.hands(p).held == "card", "card " .. card .. " is in hand")
     t.use_self(p)
     t.tick()
-    local said = t.messages(p)
-    local name = said[#said]:match("It is the (.+)%.$")
-    assert(name ~= nil, "turning it over names it: " .. tostring(said[#said]))
+    local messages = t.messages(p)
+    local name = messages[#messages]:match("It is the (.+)%.$")
+    assert(name ~= nil, "turning it over names it: " .. tostring(messages[#messages]))
     assert(not seen[name], "no card comes out of one deck twice: " .. name)
     seen[name] = true
     names[#names + 1] = name

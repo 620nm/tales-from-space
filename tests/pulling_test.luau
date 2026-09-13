@@ -37,7 +37,7 @@ t.tick()
 
 local canister = t.target_at(p, 4, 1, "canister")
 assert(canister ~= nil, "the streamed canister is targetable")
-assert(t.structure_at(4, 1).state == "anchored", "it starts on the socket")
+assert(assert(t.structure_at(4, 1)).state == "anchored", "it starts on the socket")
 
 -- Fastened is bolted, and bolted refuses. tg drops a pull the moment
 -- `pulling.anchored` is true and never starts one on an anchored atom
@@ -53,7 +53,7 @@ t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "the wrench is in hand")
 t.click(p, 4, 1, assert(t.target_at(p, 4, 1, canister)))
 t.run_ticks(2)
-assert(t.structure_at(4, 1).state == "displaced", "it came off the socket")
+assert(assert(t.structure_at(4, 1)).state == "displaced", "it came off the socket")
 
 -- Now it drags. The follow step puts it on the tile the player just
 -- left, which is what makes a drag a drag rather than a teleport.

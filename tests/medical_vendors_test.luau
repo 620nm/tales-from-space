@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- NanoMed Plus and ChemDrobe share the generic vending mechanism, but
 -- their shelves are content contracts. This spec pins every row, proves
 -- every declared product really mints, and keeps medical IDs and the two
@@ -32,46 +34,46 @@ local p = t.join()
 t.tick()
 
 local NANOMED = {
-    { "syringe", "Syringe", "Medical", 12 },
-    { "scalpel", "Scalpel", "Surgery", 2 },
-    { "hemostat", "Hemostat", "Surgery", 2 },
-    { "retractor", "Retractor", "Surgery", 2 },
-    { "cautery", "Cautery", "Surgery", 2 },
-    { "circular_saw", "Circular Saw", "Surgery", 2 },
-    { "surgical_drill", "Surgical Drill", "Surgery", 2 },
-    { "bone_gel", "Bone Gel", "Surgery", 4 },
-    { "suture", "Suture", "Surgery", 2 },
-    { "surgical_kit", "Surgical Kit", "Surgery", 2 },
-    { "dropper", "Dropper", "Chemistry", 3 },
-    { "beaker", "Beaker", "Chemistry", 5 },
-    { "bottle", "Bottle", "Chemistry", 5 },
-    { "test_tube", "Test Tube", "Chemistry", 6 },
-    { "burner", "Burner", "Chemistry", 2 },
-    { "machine_board.chem_heater", "Machine Board (Reaction Chamber)", "Parts", 2 },
-    { "machine_board.chem_dispenser", "Machine Board (Chem Dispenser)", "Parts", 2 },
+    { item = "syringe", label = "Syringe", category = "Medical", stock = 12 },
+    { item = "scalpel", label = "Scalpel", category = "Surgery", stock = 2 },
+    { item = "hemostat", label = "Hemostat", category = "Surgery", stock = 2 },
+    { item = "retractor", label = "Retractor", category = "Surgery", stock = 2 },
+    { item = "cautery", label = "Cautery", category = "Surgery", stock = 2 },
+    { item = "circular_saw", label = "Circular Saw", category = "Surgery", stock = 2 },
+    { item = "surgical_drill", label = "Surgical Drill", category = "Surgery", stock = 2 },
+    { item = "bone_gel", label = "Bone Gel", category = "Surgery", stock = 4 },
+    { item = "suture", label = "Suture", category = "Surgery", stock = 2 },
+    { item = "surgical_kit", label = "Surgical Kit", category = "Surgery", stock = 2 },
+    { item = "dropper", label = "Dropper", category = "Chemistry", stock = 3 },
+    { item = "beaker", label = "Beaker", category = "Chemistry", stock = 5 },
+    { item = "bottle", label = "Bottle", category = "Chemistry", stock = 5 },
+    { item = "test_tube", label = "Test Tube", category = "Chemistry", stock = 6 },
+    { item = "burner", label = "Burner", category = "Chemistry", stock = 2 },
+    { item = "machine_board.chem_heater", label = "Machine Board (Reaction Chamber)", category = "Parts", stock = 2 },
+    { item = "machine_board.chem_dispenser", label = "Machine Board (Chem Dispenser)", category = "Parts", stock = 2 },
 }
 
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
-local ui = t.ui(p)
+local ui = ui_controls.record(t.ui(p))
 assert(ui and ui.document == "modules" and ui.presentation == "shelf",
     "NanoMed opens the shared shelf document")
-assert(ui.notice.text == "Go save some lives!", "NanoMed carries its own ad copy")
-assert(#ui.products == #NANOMED, "NanoMed's complete shelf is asserted")
+assert(ui_controls.record(ui.notice).text == "Go save some lives!", "NanoMed carries its own ad copy")
+assert(#ui_controls.rows(ui.products) == #NANOMED, "NanoMed's complete shelf is asserted")
 
 for i, want in ipairs(NANOMED) do
-    local row = ui.products[i]
-    local item = want[1]
-    assert(row.payload.product == item, "NanoMed row " .. i .. " is " .. item)
-    assert(row.label == want[2], item .. " has its shelf name")
-    assert(row.category == want[3], item .. " is under " .. want[3])
-    assert(row.stock == want[4], item .. " keeps its declared stock")
+    local row = ui_controls.rows(ui.products)[i]
+    local item = want.item
+    assert(ui_controls.record(row.payload).product == item, "NanoMed row " .. i .. " is " .. item)
+    assert(row.label == want.label, item .. " has its shelf name")
+    assert(row.category == want.category, item .. " is under " .. want.category)
+    assert(row.stock == want.stock, item .. " keeps its declared stock")
     assert(row.sprite ~= "missing", item .. " resolves to atlas art")
 end
 
 -- Every medical tool is a direct row. The kit remains useful as a belt,
 -- but completeness does not rely on transitive contents hidden inside it.
-local MEDICAL_TOOLS = {
+local MEDICAL_TOOLS: {[string]: boolean} = {
     syringe = true,
     scalpel = true,
     hemostat = true,
@@ -86,8 +88,8 @@ local MEDICAL_TOOLS = {
 }
 for item in pairs(MEDICAL_TOOLS) do
     local found = false
-    for _, row in ipairs(ui.products) do
-        found = found or row.payload.product == item
+    for _, row in ipairs(ui_controls.rows(ui.products)) do
+        found = found or ui_controls.record(row.payload).product == item
     end
     assert(found, item .. " is directly recoverable from NanoMed")
 end
@@ -95,7 +97,7 @@ end
 -- A row in a document is not enough: every one goes through the real
 -- mint route, including glassware, stocked containers, and boards.
 for _, want in ipairs(NANOMED) do
-    local item = want[1]
+    local item = want.item
     local before = t.count_items(item)
     ui_controls.vend(p, item)
     t.tick()
@@ -115,38 +117,38 @@ end
 t.ui_close(p)
 t.click(p, 2, 3, t.target_at(p, 2, 3))
 t.tick()
-ui = t.ui(p)
+ui = ui_controls.record(t.ui(p))
 
 local CHEMDROBE = {
-    { "uniform_chemist", "Chemist's Jumpsuit", "Uniforms", 2 },
-    { "chemistry_backpack", "Chemistry Backpack", "Storage", 2 },
-    { "chemistry_bag", "Chemistry Bag", "Storage", 2 },
-    { "headset", "Headset", "Communications", 2 },
-    { "syringe", "Syringe", "Chemistry", 12 },
-    { "dropper", "Dropper", "Chemistry", 3 },
-    { "beaker", "Beaker", "Chemistry", 5 },
-    { "bottle", "Bottle", "Chemistry", 5 },
-    { "test_tube", "Test Tube", "Chemistry", 6 },
-    { "beaker_large", "Large Beaker", "Chemistry", 5 },
-    { "beaker_plastic", "X-Large Beaker", "Chemistry", 5 },
-    { "beaker_metamaterial", "Metamaterial Beaker", "Chemistry", 5 },
-    { "beaker_cryostasis", "Cryostasis Beaker", "Chemistry", 5 },
-    { "beaker_bluespace", "Bluespace Beaker", "Chemistry", 5 },
-    { "water_bottle", "Bottle of Water", "Chemistry", 5 },
-    { "water_bottle.empty", "Empty Water Bottle", "Chemistry", 5 },
-    { "water_bottle_large", "Large Bottle of Water", "Chemistry", 5 },
-    { "water_bottle_large.empty", "Empty Large Water Bottle", "Chemistry", 5 },
-    { "spray_bottle", "Spray Bottle", "Chemistry", 5 },
+    { item = "uniform_chemist", label = "Chemist's Jumpsuit", category = "Uniforms", stock = 2 },
+    { item = "chemistry_backpack", label = "Chemistry Backpack", category = "Storage", stock = 2 },
+    { item = "chemistry_bag", label = "Chemistry Bag", category = "Storage", stock = 2 },
+    { item = "headset", label = "Headset", category = "Communications", stock = 2 },
+    { item = "syringe", label = "Syringe", category = "Chemistry", stock = 12 },
+    { item = "dropper", label = "Dropper", category = "Chemistry", stock = 3 },
+    { item = "beaker", label = "Beaker", category = "Chemistry", stock = 5 },
+    { item = "bottle", label = "Bottle", category = "Chemistry", stock = 5 },
+    { item = "test_tube", label = "Test Tube", category = "Chemistry", stock = 6 },
+    { item = "beaker_large", label = "Large Beaker", category = "Chemistry", stock = 5 },
+    { item = "beaker_plastic", label = "X-Large Beaker", category = "Chemistry", stock = 5 },
+    { item = "beaker_metamaterial", label = "Metamaterial Beaker", category = "Chemistry", stock = 5 },
+    { item = "beaker_cryostasis", label = "Cryostasis Beaker", category = "Chemistry", stock = 5 },
+    { item = "beaker_bluespace", label = "Bluespace Beaker", category = "Chemistry", stock = 5 },
+    { item = "water_bottle", label = "Bottle of Water", category = "Chemistry", stock = 5 },
+    { item = "water_bottle.empty", label = "Empty Water Bottle", category = "Chemistry", stock = 5 },
+    { item = "water_bottle_large", label = "Large Bottle of Water", category = "Chemistry", stock = 5 },
+    { item = "water_bottle_large.empty", label = "Empty Large Water Bottle", category = "Chemistry", stock = 5 },
+    { item = "spray_bottle", label = "Spray Bottle", category = "Chemistry", stock = 5 },
 }
-assert(ui and ui.notice.text == "Our clothes are 0.5% more resistant to acid spills! Get yours now!",
+assert(ui and ui_controls.record(ui.notice).text == "Our clothes are 0.5% more resistant to acid spills! Get yours now!",
     "ChemDrobe opens with tg's ad")
-assert(#ui.products == #CHEMDROBE, "ChemDrobe's implemented wardrobe is exact")
+assert(#ui_controls.rows(ui.products) == #CHEMDROBE, "ChemDrobe's implemented wardrobe is exact")
 for i, want in ipairs(CHEMDROBE) do
-    local row = ui.products[i]
-    local item = want[1]
-    assert(row.payload.product == item and row.label == want[2],
+    local row = ui_controls.rows(ui.products)[i]
+    local item = want.item
+    assert(ui_controls.record(row.payload).product == item and row.label == want.label,
         "ChemDrobe row " .. i .. " is " .. item)
-    assert(row.category == want[3] and row.stock == want[4],
+    assert(row.category == want.category and row.stock == want.stock,
         item .. " keeps its category and tg stock count")
     assert(row.sprite ~= "missing", item .. " resolves to atlas art")
     local before = t.count_items(item)
@@ -167,7 +169,7 @@ assert(t.count_items("pill") == pills,
 t.world_file("chillstation.ron", 7)
 t.join()
 t.run_ticks(20)
-assert(t.machine_at(23, 4).id == "nanomed_plus", "NanoMed stands in the lab")
-assert(t.machine_at(24, 4).id == "chemdrobe", "ChemDrobe stands in the lab")
+assert(assert(t.machine_at(23, 4)).id == "nanomed_plus", "NanoMed stands in the lab")
+assert(assert(t.machine_at(24, 4)).id == "chemdrobe", "ChemDrobe stands in the lab")
 assert(t.item_at(11, 7, "machine_board.nanomed_plus") ~= nil, "NanoMed has a spare board")
 assert(t.item_at(12, 7, "machine_board.chemdrobe") ~= nil, "ChemDrobe has a spare board")

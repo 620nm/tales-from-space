@@ -155,16 +155,13 @@ gateway; running a game server alone does not host its executable bootstrap.
   when content calls `sim.round.finish`. Each mode declares the numbers
   in `rules.shift` and `content/lib/shift.luau` is what reads them, so
   retuning the shift is one edit per mode and no new answer.
-- `content/lib/*.luau` is the pack's SHARED CODE. There is no `require`
-  (the engine's `docs/SCRIPTING.md` §1.6): a `lib/` file returns a table
-  and the loader
-  publishes it as a global named for the file, so `lib/vessel.luau`
-  becomes `vessel` and every roster file may read it — at prototype time
-  as well as inside a handler. `lib/` loads after the entrypoints and
-  before every roster, lexically within itself, so one shared file may
-  read another. Nothing in `lib/` may call `sim.define`: shared code
-  publishes tables, rosters declare things, and the loader refuses the
-  other way round. `lib/vessel.luau` is the pour, swig, spill and
+- `content/lib/*.luau` is the pack's shared code. Import returned tables
+  explicitly: `local vessel = require("@lib/vessel")`. Libraries import
+  their own dependencies too, so types and navigation follow the source.
+  Modules are available in prototype sandboxes and handlers, with separate
+  caches and capabilities. Library initialization cannot call `sim.define`;
+  rosters declare things. The engine's `docs/luau-api/loading.md` owns
+  resolution and load order. `lib/vessel.luau` is the pour, swig, spill and
   gas-charge gestures every vessel wears; `lib/cards.luau` is the deck a
   card and a deck of cards both read; `lib/radio.luau` owns every radio
   number and who finally hears a `;` line, and `lib/radio_relay.luau`
@@ -224,8 +221,8 @@ the engine checkout with
 UI specs select actual nodes from `t.ui_tree(p)` and use `t.ui_press` or
 `t.ui_edit`; the rendered callback supplies the action and payload. Edits
 change a draft; a `"change"` or `"submit"` gesture commits it. Disabled or
-missing controls cannot be pressed. `tests/helpers/*.luau` return tables
-published under their filenames before each spec; `ui_controls` selects
+missing controls cannot be pressed. Import returned helper tables with
+`local ui_controls = require("@helpers/ui_controls")`; `ui_controls` selects
 module switches, setpoints, inputs and stocked products from the rendered
 pack interface. `ui_controls.build(p, item, recipe, x, y)` opens that
 interface, arms a disclosed recipe through its button, calls

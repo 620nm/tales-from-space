@@ -1,3 +1,6 @@
+local printing = require("@lib/printing")
+local writing = require("@lib/writing")
+
 -- The copier's player actions are native jobs. This fixture only translates
 -- the pack's button vocabulary into those generic helpers.
 -- tg code/modules/paperwork/photocopier.dm:281-379, :386-464, :548-619.
@@ -8,20 +11,20 @@ if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:photocopier_color", { replicate = "server" })
     sim.define("script_var", "lunatic/tfs:photocopier_failed", { replicate = "server" })
     sim.define("script_var", "lunatic/tfs:photocopier_reason", { replicate = "server" })
-    local function resource(machine, id)
+    local function resource(machine: Handle, id: string): number
         for _, row in ipairs(sim.resources.read(machine)) do
             if row.id == id then return row.current end
         end
         return 0
     end
-    local function preview(machine)
+    local function preview(machine: Handle)
         local source = machine:item_slot("media")
         if source == nil then return {} end
         local ok, document = pcall(sim.documents.read, source, 0)
         if not ok or document == nil then return {} end
         return writing.fragments(document)
     end
-    local function view(machine)
+    local function view(machine: Handle)
         return {
             kind = "copier", name = machine.name, powered = sim.is_powered(machine),
             original = preview(machine), count = machine.vars.photocopier_count or 1,
@@ -32,22 +35,22 @@ if sim ~= nil then
             reason = machine.vars.photocopier_reason,
         }
     end
-    local function open(machine, viewer)
+    local function open(machine: Handle, viewer: Handle)
         ui.open({ viewer = viewer, owner = machine, channel = "copier", view = view(machine), actions = {
             set_count = 8, set_color = 8, copy = 16, eject = 8,
         }, presentation_key = "writing/copier" })
     end
-    local function update(machine, viewer)
+    local function update(machine: Handle, viewer: Handle)
         ui.update({ viewer = viewer, owner = machine, channel = "copier", view = view(machine), actions = {
             set_count = 8, set_color = 8, copy = 16, eject = 8,
         } })
     end
-    local function update_all(machine)
+    local function update_all(machine: Handle)
         ui.update_all({ owner = machine, channel = "copier", view = view(machine), actions = {
             set_count = 8, set_color = 8, copy = 16, eject = 8,
         } })
     end
-    local function refresh_after_admission(machine)
+    local function refresh_after_admission(machine: Handle)
         -- Admission reserves stock and marks the endpoint busy in the native
         -- job transaction. Reproject once after that commit so the panel does
         -- not show the pre-admission idle snapshot.
@@ -118,15 +121,17 @@ if sim ~= nil then
                 or count < 1 or count > printing.max_copies then return true end
             machine.vars.photocopier_failed = nil
             machine.vars.photocopier_reason = nil
-            local accepted, reason = pcall(function()
+            local document_source: DocumentFileSource = { store = source, uid = 0, expected_revision = snapshot.revision }
+            local color: DocumentColor = if machine.vars.photocopier_color == "color" then "preserve" else "monochrome"
+            local accepted = pcall(function()
                 sim.documents.start({
                     machine = machine,
-                    source = { store = source, uid = 0, expected_revision = snapshot.revision },
+                    source = document_source,
                     output = "paper", ext = "md", stem = "paper1",
                     duration_ticks = printing.copy_ticks,
                     count = count,
                     eject_input = false,
-                    color = (machine.vars.photocopier_color == "color") and "preserve" or "monochrome",
+                    color = color,
                     costs = printing.costs(),
                 })
             end)

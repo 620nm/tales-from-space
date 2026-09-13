@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The reaction chamber, from the outside: put a beaker in it, dial a
 -- temperature, and the thing in the beaker gets there and STOPS there.
 --
@@ -16,22 +18,19 @@ local T20C = 293.15
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function row(ui, label)
-    for _, r in ipairs(ui.readouts) do
+local function row(ui: unknown, label: string): ui_controls.Record
+    for _, r in ipairs(ui_controls.rows(ui_controls.record(ui).readouts)) do
         if word(r.label) == label then
             return r
         end
     end
-    return nil
+    error("missing readout: " .. label)
 end
 
 t.world([==[(
@@ -68,19 +67,19 @@ assert(heater ~= nil, "a chamber stands on the bench")
 -- ---------------------------------------------------------------
 t.click(p, 2, 1, heater)
 t.tick()
-local ui = t.ui(p)
+local ui = ui_controls.record(t.ui(p))
 assert(ui, "an empty hand opens the panel")
 assert(ui.document == "modules" and ui.presentation == "modules",
     "which is assembled from this machine's modules")
-assert(row(ui, "dock.vessel").value.id == "dock.vessel.empty", "and it says there is nothing in it")
-near(ui.setpoints[1].value, 300.0, 1e-9, "the dial opens at tg's 300 K")
+assert(ui_controls.record(row(assert(ui), "dock.vessel").value).id == "dock.vessel.empty", "and it says there is nothing in it")
+near(ui_controls.number(ui_controls.rows(ui.setpoints)[1].value), 300.0, 1e-9, "the dial opens at tg's 300 K")
 t.ui_close(p)
 
-local beaker = t.target_at(p, 1, 1, "beaker.libital")
+local beaker = assert(t.target_at(p, 1, 1, "beaker.libital"))
 t.click(p, 1, 1, beaker)
 t.tick()
 assert(t.hands(p).held == "beaker.libital", "the beaker is in hand")
-near(t.holder_k(beaker), T20C, 0.01, "at room temperature, as everything ships")
+near(assert(t.holder_k(beaker)), T20C, 0.01, "at room temperature, as everything ships")
 
 t.click(p, 2, 1, heater)
 t.tick()
@@ -93,9 +92,9 @@ assert(t.ledger_has("Docked", "beaker"), "the dock is on the record")
 -- ---------------------------------------------------------------
 t.click(p, 2, 1, heater)
 t.tick()
-ui = t.ui(p)
-assert(row(ui, "dock.vessel").value.text == "beaker (libital)", "the panel names what is in it")
-assert(ui.toggles[1].on == false, "and it is switched off out of the crate")
+ui = ui_controls.record(t.ui(p))
+assert(ui_controls.record(row(assert(ui), "dock.vessel").value).text == "beaker (libital)", "the panel names what is in it")
+assert(ui_controls.rows(ui.toggles)[1].on == false, "and it is switched off out of the crate")
 t.run_seconds(20)
 -- A third of a kelvin of slack, not a hundredth: the beaker is open,
 -- and evaporation into its own headspace carries a little latent heat
@@ -104,7 +103,7 @@ t.run_seconds(20)
 -- it to saturate and a little more heat goes with the vapour. It is
 -- still under the deck coupling's half-kelvin deadband, which is why
 -- nothing pulls it back.
-near(t.holder_k(beaker), T20C, 0.3, "a chamber nobody switched on moves nothing")
+near(assert(t.holder_k(beaker)), T20C, 0.3, "a chamber nobody switched on moves nothing")
 
 -- ---------------------------------------------------------------
 -- THE APPROACH, AND THE ARREST.
@@ -117,15 +116,15 @@ near(t.holder_k(beaker), T20C, 0.3, "a chamber nobody switched on moves nothing"
 ui_controls.set(p, "temperature", 350)
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
-assert(t.ui(p).toggles[1].on == true, "the element is on")
-near(t.ui(p).setpoints[1].value, 350.0, 1e-9, "and the dial is where it was put")
+assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == true, "the element is on")
+near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value), 350.0, 1e-9, "and the dial is where it was put")
 
-local last = t.holder_k(beaker)
+local last = assert(t.holder_k(beaker))
 for _ = 1, 12 do
     t.run_seconds(1)
-    local now = t.holder_k(beaker)
-    assert(now > last, "it climbs every pass: " .. last .. " -> " .. now)
-    assert(now <= 350.0 + 1e-9, "and never crosses the dial: " .. now)
+    local now = assert(t.holder_k(beaker))
+    assert(assert(now) > last, "it climbs every pass: " .. assert(last) .. " -> " .. now)
+    assert(assert(now) <= 350.0 + 1e-9, "and never crosses the dial: " .. now)
     last = now
 end
 -- A kelvin and a half of slack at the top, because the arrest is a
@@ -133,10 +132,10 @@ end
 -- latent heat to the room as fast as the element can put sensible heat
 -- in. It settles just under the dial and stays there.
 t.run_seconds(120)
-near(t.holder_k(beaker), 350.0, 1.5, "given long enough it arrives")
-local held = t.holder_k(beaker)
+near(assert(t.holder_k(beaker)), 350.0, 1.5, "given long enough it arrives")
+local held = assert(t.holder_k(beaker))
 t.run_seconds(60)
-near(t.holder_k(beaker), held, 0.05, "and then it sits there")
+near(assert(t.holder_k(beaker)), assert(held), 0.05, "and then it sits there")
 -- ...and the element never gets to stop. The balance is a kelvin and
 -- a bit under the dial, which is outside the panel's own deadband, so
 -- the window keeps saying the machine is working -- which it is.
@@ -152,27 +151,27 @@ assert(row(t.ui(p), "dock.temperature").tone == "off", "the panel says it is sti
 ui_controls.set(p, "temperature", 310)
 t.run_ticks(2)
 assert(row(t.ui(p), "dock.temperature").tone == "on", "the vessel is over the dial now")
-last = t.holder_k(beaker)
+last = assert(t.holder_k(beaker))
 for _ = 1, 12 do
     t.run_seconds(1)
-    local now = t.holder_k(beaker)
-    assert(now < last, "it falls every pass: " .. last .. " -> " .. now)
-    assert(now >= 310.0 - 1e-9, "and never crosses the dial from above: " .. now)
+    local now = assert(t.holder_k(beaker))
+    assert(assert(now) < last, "it falls every pass: " .. assert(last) .. " -> " .. now)
+    assert(assert(now) >= 310.0 - 1e-9, "and never crosses the dial from above: " .. now)
     last = now
 end
 t.run_seconds(150)
-near(t.holder_k(beaker), 310.0, 0.5, "arriving from above, and arresting there")
+near(assert(t.holder_k(beaker)), 310.0, 0.5, "arriving from above, and arresting there")
 
 -- ---------------------------------------------------------------
 -- AND YOU GET IT BACK.
 -- ---------------------------------------------------------------
-local warm = t.holder_k(beaker)
+local warm = assert(t.holder_k(beaker))
 ui_controls.toggle(p, "eject")
 t.run_ticks(2)
 assert(t.hands(p).held == "beaker.libital", "the eject button hands it back")
-near(t.holder_k(beaker), warm, 0.5, "still carrying the heat it was given")
+near(assert(t.holder_k(beaker)), assert(warm), 0.5, "still carrying the heat it was given")
 assert(t.ledger_has("Undocked", "beaker"), "and the eject is on the record too")
-assert(row(t.ui(p), "dock.vessel").value.id == "dock.vessel.empty", "the panel agrees there is nothing in it")
+assert(ui_controls.record(row(t.ui(p), "dock.vessel").value).id == "dock.vessel.empty", "the panel agrees there is nothing in it")
 
 -- ...and a vessel IN A HAND is a vessel you are insulating: the deck
 -- coupling is for things lying on the deck (sim/holder/heat.rs), so
@@ -183,13 +182,13 @@ assert(row(t.ui(p), "dock.vessel").value.id == "dock.vessel.empty", "the panel a
 -- tenths of slack keeps the claim -- no deck coupling in a hand --
 -- while telling the truth about the vapour.
 t.run_seconds(20)
-near(t.holder_k(beaker), warm, 0.6, "carried, it keeps every joule the room could take")
+near(assert(t.holder_k(beaker)), assert(warm), 0.6, "carried, it keeps every joule the room could take")
 
 -- Put it down and the room gets to work on it. tg has no ambient
 -- coupling at all; this is the deliberate departure that makes a beaker
 -- left standing about behave like a beaker left standing about.
 t.drop(p)
 t.run_seconds(20)
-assert(t.holder_k(beaker) < warm - 1.0,
-    "on the deck it cools towards the room: " .. t.holder_k(beaker))
-assert(t.holder_k(beaker) > T20C, "though not instantly: " .. t.holder_k(beaker))
+assert(assert(t.holder_k(beaker)) < assert(warm) - 1.0,
+    "on the deck it cools towards the room: " .. assert(t.holder_k(beaker)))
+assert(assert(t.holder_k(beaker)) > T20C, "though not instantly: " .. assert(t.holder_k(beaker)))

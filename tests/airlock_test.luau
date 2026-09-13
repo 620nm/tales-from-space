@@ -76,7 +76,7 @@ local function step_into_the_chamber(p)
     -- starts the motion, it does not finish it. Give the leaf its swing
     -- before asking whether it is open.
     t.run_ticks(15)
-    assert(t.door_at(5, 2).open, "bumping the inner airlock opened it")
+    assert(assert(t.door_at(5, 2)).open, "bumping the inner airlock opened it")
     walk_east(p, 2) -- through the doorway into the vestibule
     local x, y = t.pos(p)
     assert(x == 6 and y == 2, "standing in the vestibule, not " .. x .. "," .. y)
@@ -91,10 +91,10 @@ t.tick()
 
 assert(t.turf(6, 2) == "plating", "the vestibule deck is bare, as tg's is")
 assert(t.turf(8, 2) == "space", "and the outer airlock opens onto space")
-assert(not t.door_at(5, 2).open and not t.door_at(7, 2).open,
+assert(not assert(t.door_at(5, 2)).open and not assert(t.door_at(7, 2)).open,
     "both airlocks start shut")
-assert(t.room_pressure(2, 2) > 90.0, "the station starts breathable")
-assert(t.room_pressure(6, 2) > 90.0,
+assert(assert(t.room_pressure(2, 2)) > 90.0, "the station starts breathable")
+assert(assert(t.room_pressure(6, 2)) > 90.0,
     "and so does the vestibule -- it is a room that holds air, not a hole")
 
 step_into_the_chamber(p)
@@ -102,13 +102,13 @@ step_into_the_chamber(p)
 -- Let the inner airlock shut behind us. Nobody is standing in the
 -- doorway, so the autoclose takes.
 t.run_ticks(65)
-assert(not t.door_at(5, 2).open, "the inner airlock shut behind us")
-assert(t.room_pressure(6, 2) > 90.0, "the sealed chamber kept its air")
+assert(not assert(t.door_at(5, 2)).open, "the inner airlock shut behind us")
+assert(assert(t.room_pressure(6, 2)) > 90.0, "the sealed chamber kept its air")
 
 -- Now open the outer airlock, with the inner one shut.
 t.click(p, 7, 2, t.target_at(p, 7, 2))
 t.run_ticks(15) -- the leaf swings; it is not open on the click tick
-assert(t.door_at(7, 2).open, "the outer airlock opened")
+assert(assert(t.door_at(7, 2)).open, "the outer airlock opened")
 -- Held open past its autoclose while the chamber empties. Three tiles
 -- of one atmosphere take a while to leave through one doorway, which
 -- is itself the reason a vestibule works.
@@ -124,11 +124,11 @@ assert(t.door_at(7, 2).open, "the outer airlock opened")
 t.outage()
 t.run_ticks(2400)
 
-assert(t.room_pressure(6, 2) < 25.0,
-    "the vestibule blew out to space: " .. t.room_pressure(6, 2))
-assert(t.room_pressure(2, 2) > 90.0,
-    "and THE STATION DID NOT VENT: " .. t.room_pressure(2, 2))
-assert(t.room_pressure(1, 1) > 90.0, "not in any corner of it")
+assert(assert(t.room_pressure(6, 2)) < 25.0,
+    "the vestibule blew out to space: " .. tostring(t.room_pressure(6, 2)))
+assert(assert(t.room_pressure(2, 2)) > 90.0,
+    "and THE STATION DID NOT VENT: " .. tostring(t.room_pressure(2, 2)))
+assert(assert(t.room_pressure(1, 1)) > 90.0, "not in any corner of it")
 
 -- ---------------------------------------------------------------
 -- Both doors at once: the same geometry with the discipline removed.
@@ -137,17 +137,17 @@ t.world(VESTIBULE, 7)
 local q = t.join()
 t.tick()
 local before = t.room_pressure(2, 2)
-assert(before > 90.0, "same station, same starting atmosphere")
+assert(assert(before) > 90.0, "same station, same starting atmosphere")
 
 step_into_the_chamber(q)
 
 -- The inner airlock is still standing open behind us -- nothing has
 -- shut it, because nothing links these two doors. Open the outer one
 -- on top of that and the station is a straight line to vacuum.
-assert(t.door_at(5, 2).open, "the inner airlock is still open behind us")
+assert(assert(t.door_at(5, 2)).open, "the inner airlock is still open behind us")
 t.click(q, 7, 2, t.target_at(q, 7, 2))
 t.run_ticks(15) -- again, the leaf needs its swing
-assert(t.door_at(7, 2).open, "and the outer one opens anyway")
+assert(assert(t.door_at(7, 2)).open, "and the outer one opens anyway")
 
 -- Trip the breaker so both stay where they are: dead motors hold
 -- whatever position they had, so this is the vestibule wedged open
@@ -156,13 +156,13 @@ assert(t.door_at(7, 2).open, "and the outer one opens anyway")
 -- the point of the assertion.)
 t.outage()
 t.run_ticks(2400)
-assert(t.door_at(5, 2).open and t.door_at(7, 2).open,
+assert(assert(t.door_at(5, 2)).open and assert(t.door_at(7, 2)).open,
     "unpowered airlocks have no motors to shut themselves with")
 
 local after = t.room_pressure(2, 2)
-assert(after < before - 10.0,
+assert(assert(after) < assert(before) - 10.0,
     "with both airlocks open the station vents through the vestibule: "
-        .. before .. " -> " .. after)
+        .. assert(before) .. " -> " .. after)
 
 -- ---------------------------------------------------------------
 -- The same chamber, cycle-linked: the discipline becomes machinery.
@@ -171,15 +171,15 @@ t.world(LINKED, 7)
 local r = t.join()
 t.tick()
 local linked_before = t.room_pressure(2, 2)
-assert(linked_before > 90.0, "same station, same starting atmosphere")
+assert(assert(linked_before) > 90.0, "same station, same starting atmosphere")
 
 walk_east(r, 4)
 t.run_ticks(15) -- the leaf swings before it is open
-assert(t.door_at(5, 2).open, "bumping the inner airlock still opens it")
+assert(assert(t.door_at(5, 2)).open, "bumping the inner airlock still opens it")
 walk_east(r, 2)
 local rx, ry = t.pos(r)
 assert(rx == 6 and ry == 2, "standing in the vestibule, not " .. rx .. "," .. ry)
-assert(t.door_at(5, 2).open,
+assert(assert(t.door_at(5, 2)).open,
     "and the inner airlock is still open behind us -- nothing has asked "
         .. "it to shut yet")
 
@@ -187,8 +187,8 @@ assert(t.door_at(5, 2).open,
 -- one, without anybody deciding to be careful (airlock.dm:1357).
 t.click(r, 7, 2, t.target_at(r, 7, 2))
 t.run_ticks(15) -- both leaves swing: this one open, its partner shut
-assert(t.door_at(7, 2).open, "the outer airlock opened")
-assert(not t.door_at(5, 2).open,
+assert(assert(t.door_at(7, 2)).open, "the outer airlock opened")
+assert(not assert(t.door_at(5, 2)).open,
     "AND THE INNER ONE SHUT ITSELF: opening one end of a cycle-linked "
         .. "airlock closes the other")
 
@@ -198,13 +198,13 @@ assert(not t.door_at(5, 2).open,
 t.outage()
 t.run_ticks(2400)
 
-assert(t.room_pressure(6, 2) < 25.0,
+assert(assert(t.room_pressure(6, 2)) < 25.0,
     "the chamber still empties -- an interlock is not a plug: "
-        .. t.room_pressure(6, 2))
+        .. tostring(t.room_pressure(6, 2)))
 local linked_after = t.room_pressure(2, 2)
-assert(linked_after > 90.0,
+assert(assert(linked_after) > 90.0,
     "and the station never lost its air, because the two doors were "
-        .. "never open together: " .. linked_before .. " -> " .. linked_after)
+        .. "never open together: " .. assert(linked_before) .. " -> " .. linked_after)
 
 -- ---------------------------------------------------------------
 -- A window is a barrier. Glass in a hull holds an atmosphere back,
@@ -268,7 +268,7 @@ assert(t.turf(2, 1) == "space", "with vacuum on the far side of it")
 -- open to space through a tile that merely looked solid.
 t.run_ticks(600)
 local sealed = t.room_pressure(2, 3)
-assert(sealed > 90.0,
+assert(assert(sealed) > 90.0,
     "A WINDOW IN A HULL HOLDS PRESSURE: " .. sealed)
 
 -- Take it out, the long way, with the tools tg asks for: four seconds
@@ -279,12 +279,12 @@ t.tick()
 assert(t.hands(w).held == "screwdriver", "screwdriver in hand")
 t.click(w, 2, 2, t.target_at(w, 2, 2))
 t.run_ticks(100)
-assert(t.structure_at(2, 2).state == "unsealed",
+assert(assert(t.structure_at(2, 2)).state == "unsealed",
     "the pane is loose in its frame")
 -- Loose is still glass in a frame, and tg agrees: the room is not open
 -- to space until the pane actually comes out.
-assert(t.room_pressure(2, 3) > 90.0,
-    "an unscrewed pane is still a pane: " .. t.room_pressure(2, 3))
+assert(assert(t.room_pressure(2, 3)) > 90.0,
+    "an unscrewed pane is still a pane: " .. tostring(t.room_pressure(2, 3)))
 
 t.swap_hands(w) -- the screwdriver stays in the other hand
 t.click(w, 3, 4, t.target_at(w, 3, 4, "crowbar")) -- and now the crowbar
@@ -292,7 +292,7 @@ t.tick()
 assert(t.hands(w).held == "crowbar", "crowbar in hand")
 t.click(w, 2, 2, t.target_at(w, 2, 2))
 t.run_ticks(240)
-assert(t.structure_at(2, 2).state == "bolted",
+assert(assert(t.structure_at(2, 2)).state == "bolted",
     "the pane came free and left the bare grille standing")
 
 -- And THAT is a breach -- computed, not declared. Nothing anywhere
@@ -300,8 +300,8 @@ assert(t.structure_at(2, 2).state == "bolted",
 -- matter engine did the rest.
 t.run_ticks(1200)
 local vented = t.room_pressure(2, 3)
-assert(vented < 25.0,
-    "PULLING THE PANE VENTS THE ROOM: " .. sealed .. " -> " .. vented)
+assert(assert(vented) < 25.0,
+    "PULLING THE PANE VENTS THE ROOM: " .. assert(sealed) .. " -> " .. vented)
 
 -- (Chillstation's own vestibule and its viewports are pinned in
 -- crates/lunatic-server/src/sim/tests/chill.rs, where the rest of that

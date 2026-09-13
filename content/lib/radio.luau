@@ -14,6 +14,15 @@
 -- edit. Distances are Euclidean over tile coordinates; a signal fades
 -- by the fraction of a circle's radius a listener stands at, and past
 -- three quarters of it the words start dropping out.
+type Circle = {
+    x: number,
+    y: number,
+    radius: number,
+    text: string,
+    seed: number?,
+    spoken: { [number]: string },
+}
+
 local radio = {}
 
 -- The channels, one word each: the bracket every listener sees, and the
@@ -31,8 +40,10 @@ radio.channels = {
 -- ids (items/encryption_key.luau) against the words above. The blank
 -- base key is deliberately absent -- a key stamped with nothing is
 -- silent.
-radio.key_for = {}
-for department, word in pairs(radio.channels) do
+local key_for: { [string]: string } = {}
+radio.key_for = key_for
+local channel_words: { [string]: string } = radio.channels
+for department, word in pairs(channel_words) do
     radio.key_for["encryption_key." .. department] = word
 end
 
@@ -52,7 +63,7 @@ radio.NETWORK_MULT = 1.2
 radio.CLEAR_FRACTION = 0.75
 
 -- What one tower on a tree of `n` powered towers reaches.
-function radio.radius_for(n)
+function radio.radius_for(n: number): number
     return radio.TRANSCEIVER_RADIUS * radio.NETWORK_MULT ^ (n - 1)
 end
 
@@ -61,8 +72,9 @@ end
 -- offered. Ties keep the EARLIER circle, which is why `deliver` lists
 -- the handheld's own first and the relays after it, in the order
 -- `ev.sources` arrives (docs/luau-api/speech-radio.md).
-local function nearest(circles, x, y)
-    local best, best_f = nil, math.huge
+local function nearest(circles: { Circle }, x: number, y: number): (Circle?, number)
+    local best: Circle? = nil
+    local best_f = math.huge
     for _, circle in ipairs(circles) do
         local dx, dy = x - circle.x, y - circle.y
         local f = math.sqrt(dx * dx + dy * dy) / circle.radius
@@ -76,7 +88,7 @@ end
 -- djb2 over the spoken line: the per-transmission seed the static is
 -- keyed on. 32-bit by modulus; every intermediate stays under 2^53, so
 -- the arithmetic is exact in Luau's doubles.
-local function djb2(text)
+local function djb2(text: string): number
     local h = 5381
     for i = 1, #text do
         h = (h * 33 + string.byte(text, i)) % 4294967296
@@ -93,7 +105,7 @@ end
 -- every intermediate here stays under 2^38, exact in Luau doubles.
 -- The floor-divisions are the right-shifts of an ordinary avalanche;
 -- the quality bar is "spread a seed over 4096 buckets", nothing more.
-local function mix32(n)
+local function mix32(n: number): number
     local h = n % 4294967296
     h = (h * 33 + 421 + math.floor(h / 8192)) % 4294967296
     h = (h * 33 + 421 + math.floor(h / 128)) % 4294967296
@@ -107,7 +119,7 @@ end
 -- survives. The seed comes in from outside so `deliver` pays djb2 once
 -- per CIRCLE rather than once per listener -- the host meters fuel per
 -- invocation, and an exhausted handler forfeits its whole answer.
-local function garble_seeded(seed, text, f)
+local function garble_seeded(seed: number, text: string, f: number): string
     if f <= radio.CLEAR_FRACTION then
         return text
     end
@@ -123,7 +135,7 @@ local function garble_seeded(seed, text, f)
     return table.concat(out)
 end
 
-function radio.garble(text, f)
+function radio.garble(text: string, f: number): string
     return garble_seeded(djb2(text), text, f)
 end
 
@@ -131,8 +143,8 @@ end
 -- order, or nil against a machine with none. Reads the settled roster
 -- (`Handle.components`, docs/luau-api/queries.md), so a swapped key counts
 -- from the tick the swap settled.
-local function keyed_words(machine)
-    local words = nil
+local function keyed_words(machine: Handle): { string }?
+    local words: { string }? = nil
     for _, slot in ipairs(machine.components or {}) do
         if slot.kind == "encryption" then
             local word = radio.key_for[slot.item]
@@ -150,7 +162,7 @@ radio.keyed_words = keyed_words
 -- (fixtures/transceiver.luau): what it carries, and whether anything is
 -- feeding it -- the access point's own contract, in this machine's
 -- words (fixtures/access_point.luau, lib/network.luau).
-function radio.status_line(machine)
+function radio.status_line(machine: Handle): Message
     if not sim.is_powered(machine) then
         return sim.msg("lunatic/tfs:lib.radio.dark", {})
     end
@@ -180,7 +192,7 @@ end
 -- words and its `peers` count (lib/radio_relay.luau). The rows arrive
 -- tree by tree, ascending address within a tree. All that is left here
 -- is geometry.
-function radio.deliver(ev)
+function radio.deliver(ev: SpeechRadioPayload): { listeners: { SpeechListenerRow } }
     -- One circle per signal in the air, filed under the word it is
     -- spoken in: the handheld's own first -- it reaches this far
     -- whatever the towers are doing -- then every source, the tree's
@@ -190,8 +202,8 @@ function radio.deliver(ev)
     -- own radio is tuned to, which is what makes a rewritten channel a
     -- REBROADCAST rather than a leak: the towers move the line onto
     -- another band and the crew still on the old one keep their own.
-    local bands = {}
-    local function circle(channel, x, y, radius, text)
+    local bands: { [string]: { Circle } } = {}
+    local function circle(channel: string, x: number, y: number, radius: number, text: string)
         local band = bands[channel]
         if band == nil then
             band = {}
@@ -207,7 +219,7 @@ function radio.deliver(ev)
     -- One djb2 per CIRCLE and one garble per distinct fraction of it --
     -- listeners cluster on few of them -- so a crowd costs rows, not
     -- hashes (the fuel argument on `garble_seeded`).
-    local answered = {}
+    local answered: { SpeechListenerRow } = {}
     for index, row in ipairs(ev.listeners) do
         -- A LIVING listener may have no tile at all: a body stowed in
         -- a drawer keeps its radio and loses its coordinates
@@ -224,12 +236,13 @@ function radio.deliver(ev)
         local heard, text = false, row.text
         if ok and tile ~= nil and band ~= nil then
             local reach, f = nearest(band, tile.x, tile.y)
-            if f <= 1 then
+            if reach ~= nil and f <= 1 then
                 heard = true
                 text = reach.spoken[f]
                 if text == nil then
-                    reach.seed = reach.seed or djb2(reach.text)
-                    text = garble_seeded(reach.seed, reach.text, f)
+                    local seed = reach.seed or djb2(reach.text)
+                    reach.seed = seed
+                    text = garble_seeded(seed, reach.text, f)
                     reach.spoken[f] = text
                 end
             end

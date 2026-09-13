@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Bringing back the body the map arrived holding, the surgical way.
 --
 -- tests/heart_life_test.luau proves the MODEL on a patient a session is
@@ -53,24 +55,27 @@ t.run_ticks(3)
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
 -- The wearables panel is a row model of its own (docs/TGUI.md): one
 -- `labels` row per declared equipment slot, named by the slot's LABEL.
 -- A candidate button's face: an operation ON AN ORGAN carries the two
 -- words as arguments of `procedure.on_organ` (docs/tgui/labels.md).
-local function face(label)
-    if type(label) == "table" and label.args and label.args.organ then
-        return tostring(label.args.operation) .. " " .. tostring(label.args.organ)
+local function face(value: unknown)
+    if type(value) == "table" then
+        local label = ui_controls.record(value)
+        if label.args then
+            local args = ui_controls.record(label.args)
+            if args.organ then
+                return tostring(args.operation) .. " " .. tostring(args.organ)
+            end
+        end
     end
-    return tostring(word(label))
+    return word(value)
 end
 
-local function slot_row(panel, label)
-    for _, r in ipairs(panel.labels or {}) do
+local function slot_row(panel: ui_controls.Record, label): ui_controls.Record?
+    for _, r in ipairs(ui_controls.rows(panel.labels or {})) do
         if word(r.label) == label then return r end
     end
     return nil
@@ -95,27 +100,27 @@ local corpse_name = found[1].name
 -- maximum -- a stopped one -- and not merely with a lot of bruises.
 assert(found[1].animate == false, "it arrived dead")
 assert(found[1].label == "Dead", "in the pack's own word")
-assert(found[1].parts.chest.organs.heart, "with its heart still in its chest")
+assert(assert(found[1].parts).chest.organs.heart, "with its heart still in its chest")
 
 -- ---- onto the table, and out of the jumpsuit --------------------------
-local optable = t.target_at(surgeon, 3, 2, "optable")
+local optable = assert(t.target_at(surgeon, 3, 2, "optable"))
 -- Laying a body out TAKES TIME now (`lay_body_secs`,
 -- content/tuning.luau), so this waits the do_after out.
-t.drag(surgeon, 5, 1, t.target_at(surgeon, 5, 1, "name:" .. corpse_name), 3, 2, optable)
+t.drag(surgeon, 5, 1, assert(t.target_at(surgeon, 5, 1, "name:" .. corpse_name)), 3, 2, optable)
 t.run_ticks(2 * 20 + 2)
 local function corpse()
     return t.bodies_at(3, 2)[1]
 end
 assert(corpse() ~= nil and corpse().posture == "lying", "laid out on the table")
 
-t.drag(surgeon, 3, 2, t.target_at(surgeon, 3, 2, "name:" .. corpse_name), 4, 1, t.body_target(surgeon, surgeon))
+t.drag(surgeon, 3, 2, assert(t.target_at(surgeon, 3, 2, "name:" .. corpse_name)), 4, 1, t.body_target(surgeon, surgeon))
 t.run_ticks(2)
-assert(slot_row(t.ui(surgeon), "Uniform") ~= nil, "the wardrobe opened")
+assert(slot_row(ui_controls.state(surgeon), "Uniform") ~= nil, "the wardrobe opened")
 ui_controls.toggle(surgeon, "strip", "uniform")
 t.run_ticks(90)
 assert(corpse().worn.uniform == nil, "the jumpsuit is off")
 
-local function hold(id)
+local function hold(id: string)
     if t.hands(surgeon).held ~= nil then t.drop(surgeon); t.tick() end
     t.click(surgeon, 4, 1, t.target_at(surgeon, 4, 1, id))
     t.run_ticks(2)
@@ -128,7 +133,7 @@ local function step(tool, ticks, done, why)
     assert(done(), why)
 end
 local function states()
-    return corpse().parts.chest.states
+    return assert(corpse().parts).chest.states
 end
 
 assert(t.set_zone(surgeon, "chest"), "aiming at the chest")
@@ -138,8 +143,8 @@ assert(t.set_zone(surgeon, "chest"), "aiming at the chest")
 -- exactly ON the dead line (200 brute of a 200-brute chest), and
 -- `tend_wounds` takes five off it. Under the old model that alone stood
 -- the corpse up. Now it clears one line of two.
-step("hemostat", 130, function() return corpse().parts.chest.brute < 200 end, "tended")
-local past = {}
+step("hemostat", 130, function() return ui_controls.number(assert(corpse().parts).chest.brute) < 200 end, "tended")
+local past: { [string]: boolean } = {}
 for _, id in ipairs(corpse().thresholds) do past[id] = true end
 assert(not past.dead, "the dead line is clear")
 assert(past.undone, "and the stopped heart is not")
@@ -156,30 +161,30 @@ step("scalpel", 55, function() return states().organs_cut end, "organs cut")
 hold("hemostat")
 t.click(surgeon, 3, 2, t.target_at(surgeon, 3, 2, "name:" .. corpse_name))
 t.run_ticks(2)
-local win = t.ui(surgeon)
+local win = ui_controls.state(surgeon)
 assert(win ~= nil and win.presentation == "choices", "several organs to reach")
 -- Matched on the OPERATION and not on the label, because a stopped
 -- heart is a damaged organ and `repair_heart` is on this window too --
 -- which is a third way back, and not the one this spec is about. The
 -- option is `<operation>|<socket>`.
-local pick
-for _, toggle in ipairs(win.toggles) do
-    if toggle.option:find("remove_organ", 1, true) == 1
+local pick: string? = nil
+for _, toggle in ipairs(ui_controls.rows(win.toggles)) do
+    if ui_controls.text(toggle.option):find("remove_organ", 1, true) == 1
         and face(toggle.label):find("heart", 1, true) then
-        pick = toggle.option
+        pick = ui_controls.text(toggle.option)
     end
 end
 assert(pick, "the window offers to take the heart out: " .. tostring(pick))
 ui_controls.toggle(surgeon, "operation", pick)
 t.run_ticks(60)
-assert(corpse().parts.chest.organs.heart == false, "the socket is empty")
+assert(assert(corpse().parts).chest.organs.heart == false, "the socket is empty")
 assert(corpse().animate == false, "no heart at all is no more alive than a stopped one")
 
 -- ---- 4. ...and put a living one in ------------------------------------
 hold("organ_heart")
 t.click(surgeon, 3, 2, t.target_at(surgeon, 3, 2, "name:" .. corpse_name))
 t.run_ticks(60)
-assert(corpse().parts.chest.organs.heart ~= false, "a heart is seated")
+assert(assert(corpse().parts).chest.organs.heart ~= false, "a heart is seated")
 assert(corpse().animate == true,
     "AND THE CADAVER IS ALIVE: a living heart clears the viability line, " ..
     "and the dead line was cleared before the first cut")

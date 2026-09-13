@@ -1,3 +1,6 @@
+local action_rules = require("@lib/action_rules")
+local vessel = require("@lib/vessel")
+
 -- The syringe: fifteen millilitres of glass with a needle on it, and
 -- the only thing on the station that reaches INTO somebody.
 -- tg: `/obj/item/reagent_containers/syringe`
@@ -170,7 +173,7 @@ if sim ~= nil then
     -- radial layer menu.
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self, user = ev.subject, ev.actor
-        local dial = sim.mode(self)
+        local dial = assert(sim.mode(self))
         local next_index = (dial.index + 1) % dial.count
         sim.set_mode(self, next_index)
         if next_index == DRAW then
@@ -198,7 +201,7 @@ if sim ~= nil then
         if sim.matter_read(clicked.entity) == nil then
             return { replaced = false } -- not something that holds anything
         end
-        local mode = sim.mode(self).index
+        local mode = assert(sim.mode(self)).index
         if not stroke(self, user, clicked.entity, mode, false) then
             return true
         end
@@ -229,7 +232,7 @@ if sim ~= nil then
         if victim == nil or sim.body(victim) == nil then
             return { replaced = false } -- not a body; let the click mean something else
         end
-        local mode = sim.mode(self).index
+        local mode = assert(sim.mode(self)).index
         -- Yourself is immediate, which is the whole of tg's condition
         -- (`if(living_target != user)`, syringes.dm:77,122).
         if victim == user then

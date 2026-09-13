@@ -1,3 +1,8 @@
+local ui_controls = require("@helpers/ui_controls")
+
+local laptop = require("@helpers/laptop")
+local ui_files = require("@helpers/ui_files")
+
 -- A player installs an AP guest that prints through a reachable fax service.
 -- The press, addressed request, native 40-tick job, and reply all cross the
 -- player-facing seams; no script handle is supplied by the fixture.
@@ -51,15 +56,8 @@ t.world([==[ (
 local crew = t.join()
 t.run_ticks(10)
 
-local function node(player, suffix)
-    local found
-    local function visit(value)
-        if type(value) ~= "table" then return end
-        if found == nil and type(value.id) == "string" and value.id:sub(-#suffix) == suffix then found = value end
-        for _, child in pairs(value) do visit(child) end
-    end
-    visit(t.ui_tree(player))
-    return assert(found, "missing UI control " .. suffix)
+local function node(player: number, suffix: string): ui_controls.Node
+    return ui_controls.node(player, suffix)
 end
 
 -- Install the source through the laptop's actual contact and file panes.
@@ -72,9 +70,9 @@ t.run_ticks(2)
 local joined = 0
 while true do
     local candidate
-    for _, row in ipairs(laptop.ui(crew).toggles or {}) do
+    for _, row in ipairs(ui_controls.rows(laptop.ui(crew).toggles or {})) do
         if row.field == "link_join" then
-            candidate = row.option
+            candidate = ui_controls.text(row.option)
             break
         end
     end
@@ -88,14 +86,14 @@ assert(joined > 0, "the laptop joins the controller button")
 
 ui_files.create(crew, "host", "disl", "fax_controller")
 t.run_ticks(2)
-local uid = string.format("%d", laptop.ui(crew).open.uid)
+local uid = string.format("%d", ui_controls.number(ui_controls.record(laptop.ui(crew).open).uid))
 t.run_ticks(10)
 ui_files.save(crew, PROGRAM)
 t.run_ticks(2)
-assert(laptop.ui(crew).open.body == PROGRAM, "the source is saved on the AP")
+assert(ui_controls.record(laptop.ui(crew).open).body == PROGRAM, "the source is saved on the AP")
 ui_files.program(crew, "controller", uid)
 t.run_ticks(2)
-assert(laptop.ui(crew).program_slots[1].state.id == "program_slots.state.loaded",
+assert(ui_controls.record(ui_controls.rows(laptop.ui(crew).program_slots)[1].state).id == "program_slots.state.loaded",
     "the controller slot accepts the player-authored guest")
 laptop.close(crew)
 t.drop(crew)
@@ -129,11 +127,11 @@ assert(#t.items_at(1, 2) == 0, "the print job still runs through tick 39")
 t.run_ticks(1)
 assert(t.items_at(1, 2)[1] == "paper", "the fax ejects fresh paper at tick 40")
 t.run_ticks(10) -- delivery, command completion, then the door animation
-local replying_door = t.door_at(6, 1)
+local replying_door = assert(t.door_at(6, 1))
 assert(replying_door.moving and not replying_door.open,
     "the correlated fax.printed callback starts the joined door")
 t.run_ticks(12)
-assert(t.door_at(6, 1).open, "the door becomes passable after its swing")
+assert(assert(t.door_at(6, 1)).open, "the door becomes passable after its swing")
 
 -- The input crosses the 4096-byte boundary with a three-byte codepoint. The
 -- received paper proves the service chunker retained the complete character.
@@ -143,11 +141,11 @@ t.move(crew, "south"); t.run_ticks(2)
 local printed = assert(t.target_at(crew, 1, 2, "paper"), "printed paper is readable")
 t.click(crew, 1, 2, printed)
 t.run_ticks(2)
-local printed_window = assert(t.ui(crew, "writing"), "printed paper opens")
-local printed_data = printed_window.script and printed_window.script.data or printed_window.data
+local printed_window = ui_controls.record(assert(t.ui(crew, "writing"), "printed paper opens"))
+local printed_data = ui_controls.record(printed_window.script and ui_controls.record(printed_window.script).data or printed_window.data)
 local expected = string.rep("a", 4093) .. "€" .. "tail"
 local received = {}
-for _, fragment in ipairs(printed_data.committed or {}) do table.insert(received, fragment.text) end
+for _, fragment in ipairs(ui_controls.rows(printed_data.committed or {})) do table.insert(received, ui_controls.text(fragment.text)) end
 local actual = table.concat(received)
 assert(actual == expected, "multibyte fax text survives service chunking: bytes=" .. #actual .. ", expected=" .. #expected .. ", tail=" .. actual:sub(-16))
 t.ui_close(crew, "writing")
@@ -157,6 +155,6 @@ t.run_ticks(1)
 local fax = assert(t.target_at(crew, 1, 2, "fax"))
 t.click(crew, 1, 2, fax)
 t.run_ticks(2)
-local panel = t.ui(crew, "fax")
-local data = panel.script and panel.script.data or panel.data
+local panel = ui_controls.record(t.ui(crew, "fax"))
+local data = ui_controls.record(panel.script and ui_controls.record(panel.script).data or panel.data)
 assert(data.paper == 29 and data.toner == 29, "printing debits one paper and one toner")

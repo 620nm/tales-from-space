@@ -1,3 +1,6 @@
+local network = require("@lib/network")
+local radio_relay = require("@lib/radio_relay")
+
 -- The network router's one sentence, which is the access point's one
 -- sentence with a different noun in it (fixtures/access_point.luau
 -- explains why this is all there is, and lib/network.luau is where the
@@ -32,9 +35,7 @@ if sim ~= nil then
             return
         end
         local said = network.line(ev.subject, NOUN, MEMBER)
-        if said == nil then
-            said = sim.msg("lunatic/tfs:fixtures.network_router.no_card", {})
-        end
+            or sim.msg("lunatic/tfs:fixtures.network_router.no_card", {})
         sim.message.send({ recipient = ev.actor, message = said })
     end)
 

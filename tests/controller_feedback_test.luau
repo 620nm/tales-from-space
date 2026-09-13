@@ -1,3 +1,5 @@
+local laptop = require("@helpers/laptop")
+
 -- A press that cannot act still tells the presser why, exactly once.
 local UNANSWERED = "The button clicks, but nothing answers."
 local UNPROGRAMMED = "The controller beeps: no program is loaded."
@@ -6,17 +8,17 @@ local FAULT = "The controller has stopped the airlock cycle."
 local LID = "The laptop's lid is closed. Open it first."
 local OFF = "The laptop is off. Turn it on first."
 
-local function count(lines, text)
+local function count(lines: { string }, text: string)
     local n = 0
     for _, line in ipairs(lines) do
         if line:find(text, 1, true) then n += 1 end
     end
     return n
 end
-local function said(lines, text) return count(lines, text) > 0 end
-local function once(lines, text) return count(lines, text) == 1 end
+local function said(lines: { string }, text: string) return count(lines, text) > 0 end
+local function once(lines: { string }, text: string) return count(lines, text) == 1 end
 -- Ledgered script-var writes whose key contains `fragment`.
-local function rows_like(fragment)
+local function rows_like(fragment: string)
     local n = 0
     for _, row in ipairs(t.ledger_rows("var_set")) do
         if tostring(row.key):find(fragment, 1, true) then n += 1 end
@@ -95,7 +97,7 @@ t.world([==[(
 )]==], 0)
 p = t.join()
 t.run_ticks(20)
-local before = t.door_at(5, 1)
+local before = assert(t.door_at(5, 1))
 local outbox_before = rows_like("device_outbox")
 for round = 1, 2 do
     local _ = t.messages(p)
@@ -105,7 +107,7 @@ for round = 1, 2 do
     assert(once(lines, UNPROGRAMMED) and not said(lines, FAULT) and not said(lines, UNANSWERED),
         "press " .. round .. " hears the empty slot once, got: " .. table.concat(lines, " | "))
 end
-local after = t.door_at(5, 1)
+local after = assert(t.door_at(5, 1))
 assert(rows_like("device_outbox") > outbox_before, "a joined button does queue its press, so the outbox check has teeth")
 assert(after.open == before.open and after.bolted == before.bolted, "the door is left alone")
 
@@ -123,17 +125,17 @@ assert(count(lines, UNPROGRAMMED) == 2, "six presses in two packets hear two lin
 t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "laptop")))
 t.run_ticks(2)
 assert(t.hands(p).held == "laptop", "the closed laptop is in hand")
-local function offers(id)
-    for _, action in ipairs(t.action_hints(p, { Entity = t.target_at(p, 4, 1, "access_point") })) do
+local function offers(id: string): SpecActionDescriptor?
+    for _, action in ipairs(t.action_hints(p, { Entity = assert(t.target_at(p, 4, 1, "access_point")) })) do
         if action.id == id then return action end
     end
     return nil
 end
 assert(offers("connect_not_ready") and not offers("connect"), "the hint names the laptop as not ready")
-assert(offers("connect_not_ready").implement.sprite == "laptop_on",
+assert(assert(assert(offers("connect_not_ready")).implement).sprite == "laptop_on",
     "and pictures the laptop as it must be: open and powered")
 assert(not offers("needs_laptop"), "a held laptop is not told to fetch one")
-local function refused_with(line, why)
+local function refused_with(line: string, why: string)
     local _ = t.messages(p)
     t.click(p, 4, 1, assert(t.target_at(p, 4, 1, "access_point")))
     t.run_ticks(2)
@@ -160,7 +162,7 @@ lines = refused_with(OFF, "an open, dark laptop names its power once")
 assert(not said(lines, LID), "and not its lid")
 step()
 assert(offers("connect") and not offers("connect_not_ready"), "a running laptop offers the real connection")
-assert(offers("connect").implement.sprite == "laptop_on", "pictured as the running laptop in hand")
+assert(assert(assert(offers("connect")).implement).sprite == "laptop_on", "pictured as the running laptop in hand")
 
 -- The box ships locked: the running laptop opens on its lock screen, and
 -- the lock row's own press lets it straight into the workspace.

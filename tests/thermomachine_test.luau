@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The temperature control unit: the machine that makes a pipe colder
 -- than everything around it, and hotter, off the same dial.
 --
@@ -22,22 +24,20 @@ local T20C = 293.15
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function readout(ui, label)
-    for _, r in ipairs(ui.readouts) do
+local function readout(value: unknown, label: string): string
+    local panel = ui_controls.record(value)
+    for _, r in ipairs(ui_controls.rows(panel.readouts)) do
         if word(r.label) == label then
             return word(r.value)
         end
     end
-    return nil
+    error("missing readout: " .. label)
 end
 
 -- One atmos pass: the machine works its port once every half second
@@ -79,9 +79,9 @@ t.world(
 local p = t.join()
 t.tick()
 
-assert(t.structure_at(3, 1).id == "thermomachine", "a unit stands on the line")
-assert(t.structure_at(3, 1).state == "off", "off out of the crate")
-near(t.pipe_temperature(1, 1), T20C, 0.5, "and the run it is plumbed into opens at room temperature")
+assert(assert(t.structure_at(3, 1)).id == "thermomachine", "a unit stands on the line")
+assert(assert(t.structure_at(3, 1)).state == "off", "off out of the crate")
+near(assert(t.pipe_temperature(1, 1)), T20C, 0.5, "and the run it is plumbed into opens at room temperature")
 
 -- ---------------------------------------------------------------
 -- THE PANEL, AND THE RANGE ITS PARTS GIVE IT.
@@ -94,23 +94,23 @@ near(t.pipe_temperature(1, 1), T20C, 0.5, "and the run it is plumbed into opens 
 -- ---------------------------------------------------------------
 t.click(p, 3, 1, t.target_at(p, 3, 1, "thermomachine"))
 t.tick()
-local panel = t.ui(p)
-assert(panel, "a temperature control unit wears its own panel")
-assert(panel.setpoints[1].field == "temperature", "with a thermostat on it")
-assert(panel.setpoints[1].unit == "K")
-near(panel.setpoints[1].value, T20C, 0.01, "tg's T20C out of the crate")
-near(panel.setpoints[1].min, 73.15, 0.01, "two tier-1 lasers at the cold end")
-near(panel.setpoints[1].max, 573.15, 0.01, "and at the hot end")
-near(t.pipe_pressure(1, 1), tonumber(readout(panel, "thermo.pressure"):match("[%d%.]+")), 0.2,
+local panel = ui_controls.record(assert(t.ui(p), "a temperature control unit wears its own panel"))
+local setpoint = ui_controls.rows(panel.setpoints)[1]
+assert(setpoint.field == "temperature", "with a thermostat on it")
+assert(setpoint.unit == "K")
+near(ui_controls.number(setpoint.value), T20C, 0.01, "tg's T20C out of the crate")
+near(ui_controls.number(setpoint.min), 73.15, 0.01, "two tier-1 lasers at the cold end")
+near(ui_controls.number(setpoint.max), 573.15, 0.01, "and at the hot end")
+near(assert(t.pipe_pressure(1, 1)), assert(tonumber(readout(panel, "thermo.pressure"):match("[%d%.]+"))), 0.2,
     "the panel reads the run it is actually plumbed into")
 
 -- ---- the dial cannot be asked for more than the parts can give ----
 ui_controls.set(p, "temperature", 50)
 t.tick()
-near(t.ui(p).setpoints[1].value, 73.15, 0.01, "a colder setting is clamped to the machine's floor")
+near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value), 73.15, 0.01, "a colder setting is clamped to the machine's floor")
 ui_controls.set(p, "temperature", 900)
 t.tick()
-near(t.ui(p).setpoints[1].value, 573.15, 0.01, "and a hotter one to its ceiling")
+near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value), 573.15, 0.01, "and a hotter one to its ceiling")
 
 -- ---------------------------------------------------------------
 -- HEATING: monotone towards the dial, and an ARREST on it.
@@ -118,37 +118,37 @@ near(t.ui(p).setpoints[1].value, 573.15, 0.01, "and a hotter one to its ceiling"
 ui_controls.set(p, "temperature", 400)
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
-assert(t.structure_at(3, 1).state == "running", "the unit is running")
+assert(assert(t.structure_at(3, 1)).state == "running", "the unit is running")
 
-local moles_0 = t.pipe_gas(1, 1).n2
-local previous = t.pipe_temperature(1, 1)
+local moles_0 = assert(t.pipe_gas(1, 1)).n2
+local previous = assert(t.pipe_temperature(1, 1))
 for _ = 1, 12 do
     pass()
-    local now = t.pipe_temperature(1, 1)
+    local now = assert(t.pipe_temperature(1, 1))
     assert(now >= previous - 0.01, "the approach never runs backwards: " .. previous .. " -> " .. now)
     assert(now <= 400.0 + 0.01, "and never overshoots the dial: " .. now)
     previous = now
 end
-near(t.pipe_temperature(1, 1), 400.0, 0.5, "it arrests on the setpoint")
+near(assert(t.pipe_temperature(1, 1)), 400.0, 0.5, "it arrests on the setpoint")
 
 -- Long after it has arrived, it is still sitting there. A machine that
 -- kept adding heat would have run away by now.
 t.run_seconds(60)
-near(t.pipe_temperature(1, 1), 400.0, 0.5, "and holds there for as long as you like")
+near(assert(t.pipe_temperature(1, 1)), 400.0, 0.5, "and holds there for as long as you like")
 
 -- NOT ONE MOLE. It conditions the gas standing in its mouth; it does
 -- not move any. The pressure rose because the gas got hotter, which is
 -- the gas law and not a transfer.
-near(t.pipe_gas(1, 1).n2, moles_0, moles_0 * 0.0001, "no gas entered or left the run")
-assert(t.pipe_pressure(1, 1) > 101.0, "and the hotter gas pushes harder: " .. t.pipe_pressure(1, 1))
+near(assert(t.pipe_gas(1, 1)).n2, moles_0, moles_0 * 0.0001, "no gas entered or left the run")
+assert(assert(t.pipe_pressure(1, 1)) > 101.0, "and the hotter gas pushes harder: " .. assert(t.pipe_pressure(1, 1)))
 
 -- The panel tracks the run live rather than reporting the moment it
 -- was opened.
 t.click(p, 3, 1, t.target_at(p, 3, 1, "thermomachine"))
 t.tick()
 near(
-    tonumber(word(t.ui(p).readouts[1].value):match("[%d%.]+")),
-    t.pipe_temperature(1, 1),
+    assert(tonumber(word(ui_controls.rows(ui_controls.state(p).readouts)[1].value):match("[%d%.]+"))),
+    assert(t.pipe_temperature(1, 1)),
     0.5,
     "the thermometer on the panel is the run's own"
 )
@@ -162,15 +162,15 @@ near(
 -- ---------------------------------------------------------------
 ui_controls.set(p, "temperature", 150)
 pass()
-local cooling = t.pipe_temperature(1, 1)
+local cooling = assert(t.pipe_temperature(1, 1))
 assert(cooling < 400.0 - 5.0, "the same machine cools: 400 -> " .. cooling)
 
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
-assert(t.structure_at(3, 1).state == "off", "switched off mid-job")
-local frozen = t.pipe_temperature(1, 1)
+assert(assert(t.structure_at(3, 1)).state == "off", "switched off mid-job")
+local frozen = assert(t.pipe_temperature(1, 1))
 t.run_seconds(30)
-near(t.pipe_temperature(1, 1), frozen, 0.5, "and the gas is left exactly where it was")
+near(assert(t.pipe_temperature(1, 1)), frozen, 0.5, "and the gas is left exactly where it was")
 
 -- ---------------------------------------------------------------
 -- A DEAD GRID IS THE SAME ANSWER, ASKED IN BOTH PLACES.
@@ -197,20 +197,20 @@ t.world(
 local d = t.join()
 t.tick()
 t.run_seconds(3)
-local dead_0 = t.pipe_temperature(1, 1)
+local dead_0 = assert(t.pipe_temperature(1, 1))
 
 t.click(d, 3, 1, t.target_at(d, 3, 1, "thermomachine"))
 t.tick()
-assert(readout(t.ui(d), "thermo.supply") == "thermo.supply.dead",
+assert(readout(ui_controls.state(d), "thermo.supply") == "thermo.supply.dead",
     "the panel says the mains are not behind it")
 ui_controls.set(d, "temperature", 500)
 ui_controls.toggle(d, "power")
 t.run_seconds(30)
 
-assert(t.ui(d).toggles[1].on == true, "the switch is on")
+assert(ui_controls.rows(ui_controls.state(d).toggles)[1].on == true, "the switch is on")
 assert(
-    t.structure_at(3, 1).state == "off",
+    assert(t.structure_at(3, 1)).state == "off",
     "and the machine is still drawn dead, which is tg's `on && is_operational`"
         .. " picking the picture"
 )
-near(t.pipe_temperature(1, 1), dead_0, 0.5, "an unpowered unit conditions nothing")
+near(assert(t.pipe_temperature(1, 1)), dead_0, 0.5, "an unpowered unit conditions nothing")

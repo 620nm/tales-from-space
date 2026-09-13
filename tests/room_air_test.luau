@@ -21,11 +21,11 @@ local ONE_ATM_PA = 101325.0
 -- Moles of ideal gas filling one tile at a pressure and a temperature.
 -- The same pV/RT the map format converts through, spelled here so the
 -- map below can be written in the numbers a mapper would reason in.
-local function tile_moles(pa, k)
+local function tile_moles(pa: number, k: number)
     return pa * TILE_M3 / (R_GAS * k)
 end
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -70,23 +70,23 @@ t.world(MAP, nil, "free_build")
 local a, b = total(1, 1), total(2, 1)
 near(a, b, 1e-6, "two tiles of one recipe hold the same air")
 near(a, cold, 0.01, "and it is the quantity the recipe named")
-near(t.room_temperature(1, 1), COLD_K, 0.01, "the walk-in opens cold")
-near(t.room_pressure(1, 1), 101.325, 0.05, "at one atmosphere, because that is what those moles are")
+near(assert(t.room_temperature(1, 1)), COLD_K, 0.01, "the walk-in opens cold")
+near(assert(t.room_pressure(1, 1)), 101.325, 0.05, "at one atmosphere, because that is what those moles are")
 
 -- The tiles nobody painted opened on standard air, at room temperature
 -- -- so "ordinary air, but cold" cost the map a temperature and nothing
 -- else.
 near(total(4, 1), warm, 0.01, "an unpainted tile is standard air")
-near(t.room_temperature(4, 1), T20C, 0.5, "at room temperature")
+near(assert(t.room_temperature(4, 1)), T20C, 0.5, "at room temperature")
 
 -- A recipe for nothing is a vacuum, and it is an INTERIOR one: the room
 -- beside it flows in, which is exactly what a hole in the hull would
 -- not let it do.
 near(total(3, 1), 0.0, 1e-6, "a recipe with no gases holds nothing")
-assert(t.room_pressure(3, 1) < 0.001, "and reads as vacuum: " .. t.room_pressure(3, 1))
+assert(assert(t.room_pressure(3, 1)) < 0.001, "and reads as vacuum: " .. assert(t.room_pressure(3, 1)))
 
 t.run_seconds(60)
 
-assert(t.room_pressure(3, 1) > 1.0, "the sealed row fills the empty tile")
-local left, right = t.room_pressure(2, 1), t.room_pressure(4, 1)
+assert(assert(t.room_pressure(3, 1)) > 1.0, "the sealed row fills the empty tile")
+local left, right = assert(t.room_pressure(2, 1)), assert(t.room_pressure(4, 1))
 near(left, right, 5.0, "and a sealed row equalises rather than venting")

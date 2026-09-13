@@ -1,3 +1,5 @@
+local vessel = require("@lib/vessel")
+
 -- The bottle: fifty units with a neck on it. Same size as the beaker
 -- and a different shape of thing to carry it in -- a beaker is what you
 -- mix in and a bottle is what you put on a shelf afterwards.
@@ -78,7 +80,7 @@ local content = {
     },
 }
 
-local vessel_spec = {
+local vessel_spec: vessel.Spec = {
     id = content.id,
     noun = "bottle",
     phases = { "liquid", "solid" },
