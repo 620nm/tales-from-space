@@ -55,7 +55,7 @@ if sim ~= nil then
     -- the same mob twice, as the thing the handler is on and as the body
     -- it is happening to, and the moles metabolized this tick last.
     script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
-        local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount
+        local mob, _user, _moles = ev.entity, ev.entity, ev.amount
         -- tg's SPT_PROB(18, 2), which its own description rounds to a
         -- third of the ticks.
         if math.random(1, 3) ~= 1 then

@@ -313,11 +313,11 @@ assert(
 local warned = false
 for _ = 1, 120 do
     t.run_seconds(5)
-    local shape = assert(t.structure_at(2, 1))
-    if shape.state == "siphoning" then
+    local judged = assert(t.structure_at(2, 1))
+    if judged.state == "siphoning" then
         assert(
-            string.find(assert(shape.sprite), "purge") ~= nil,
-            "the judged emergency wears the purge art: " .. tostring(shape.sprite)
+            string.find(assert(judged.sprite), "purge") ~= nil,
+            "the judged emergency wears the purge art: " .. tostring(judged.sprite)
         )
         warned = true
         break

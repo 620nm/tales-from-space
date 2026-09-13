@@ -60,7 +60,7 @@ if sim ~= nil then
     -- the same mob twice, as the thing the handler is on and as the body
     -- it is happening to, and the moles metabolized this tick last.
     script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
-        local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount
+        local mob, _user, _moles = ev.entity, ev.entity, ev.amount
         sim.healing.apply({ target = mob, amounts = { tox = 0.5 } })
         sim.damage_organ(mob, "lungs", 0.5)
         if math.random(1, 10) == 1 then

@@ -23,7 +23,7 @@ t.world([==[(
     structures: [(6, 1, "player_spawn")],
 )]==], 7)
 
-local p = t.join()
+t.join()
 t.tick()
 
 local function speed(x: number, y: number)
