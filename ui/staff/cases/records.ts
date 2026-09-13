@@ -1,6 +1,6 @@
 import type { Json } from "@lunatic/ui";
 import type { StaffCase, StaffEntity, StaffEvent, StaffProfile, StaffRef, StaffSession } from "../model";
-import { isDecimalId, isProfileId, isStaffIdentifier, isStaffRefId, isStaffRound, staffRef } from "../model";
+import { isDecimalId, isProfileId, isStaffIdentifier, isStaffRefId, isStaffRound, refKey, staffRef } from "../model";
 import { historicalEventPresentation } from "../shared/presentation";
 import { eventReference } from "../shared/records";
 
@@ -64,16 +64,9 @@ export function readRefs(value: unknown, round: string): StaffRef[] {
   return value.slice(0, MAX_CONTEXT_ROWS).map((item) => readRef(item, round)).filter((item): item is StaffRef => !!item);
 }
 
-/**
- * A colon join would collide: the wire charset permits `:` inside
- * `kind` and `id` (lunatic-core's `validate_identifier`), so two
- * distinct refs can print the same joined string. `JSON.stringify`
- * escapes each part instead of trusting none of them contain the
- * separator.
- */
-export function refKey(ref: StaffRef): string {
-  return JSON.stringify([ref.round, ref.kind, ref.id]);
-}
+// The one collision-proof key lives on `../model`; re-exported here so
+// every existing `from "../cases/records"` import keeps working.
+export { refKey };
 
 export function uniqueRefs(refs: StaffRef[]): StaffRef[] {
   return [...new Map(refs.map((ref) => [refKey(ref), ref])).values()];
