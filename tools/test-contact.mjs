@@ -15,8 +15,8 @@ const result = await build({
 const { ui } = await import(`data:text/javascript;base64,${Buffer.from(result.outputFiles[0].text).toString("base64")}`);
 globalThis.__lunaticLocale = { tag: "en", catalog: JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url))) };
 
-const fixture = JSON.parse(await readFile(new URL("../ui/fixtures/contact-inbox.json", import.meta.url))).view;
-const deniedFixture = JSON.parse(await readFile(new URL("../ui/fixtures/contact-denied.json", import.meta.url))).view;
+const fixture = JSON.parse(await readFile(new URL("../ui/fixtures/contact/contact-inbox.json", import.meta.url))).view;
+const deniedFixture = JSON.parse(await readFile(new URL("../ui/fixtures/contact/contact-denied.json", import.meta.url))).view;
 const nodes = (node) => [node, ...(node.children ?? []).flatMap(nodes)];
 const copy = (value) => JSON.parse(JSON.stringify(value));
 const contact = fixture.state.staff_contact;

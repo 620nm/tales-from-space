@@ -68,8 +68,8 @@ test("name edits preserve typing and follow-up clicks through pending updates", 
   cdp = await Cdp.tab(browser.endpoint, { timeout: 30000 });
 
   for (const [fixtureName, value, completion] of [
-    ["preparation", "Mira Pike", "chat"],
-    ["preparation-playing", "Rook", "chat"],
+    ["preparation/preparation", "Mira Pike", "chat"],
+    ["preparation/preparation-playing", "Rook", "chat"],
   ]) {
     const fixture = lab.fixtures().find((candidate) => candidate.name === fixtureName);
     assert(fixture, `missing ${fixtureName} fixture`);
@@ -126,9 +126,9 @@ test("name edits preserve typing and follow-up clicks through pending updates", 
   }
 
   for (const [fixtureName, target, kind] of [
-    ["preparation", "preparation/ready", "ready"],
-    ["preparation", "preparation/ranked/assistant/remove", "character_draft"],
-    ["preparation-playing", "job/assistant", "join"],
+    ["preparation/preparation", "preparation/ready", "ready"],
+    ["preparation/preparation", "preparation/ranked/assistant/remove", "character_draft"],
+    ["preparation/preparation-playing", "job/assistant", "join"],
   ]) {
     const fixture = lab.fixtures().find((candidate) => candidate.name === fixtureName);
     await cdp.call("Emulation.setDeviceMetricsOverride", {

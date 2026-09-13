@@ -17,25 +17,25 @@ const flatten = (node) => [node, ...(node.children ?? []).flatMap(flatten)];
 const fixture = async (name) => JSON.parse(await readFile(resolve(pack, `ui/fixtures/${name}.json`))).view;
 const tree = (name) => flatten(ui.render(name));
 
-const paper = tree(await fixture("document-paper"));
+const paper = tree(await fixture("document/document-paper"));
 const committedRuns = paper.find((node) => node.id === "doc/1/1/paper/committed/part/0").runs;
 assert.equal(committedRuns[1].color, "#bb2222");
 assert.equal(committedRuns.map((run) => run.text).join(""), "Meet at the airlock. Bring the red key.");
 assert.equal(paper.find((node) => node.id === "doc/1/1/paper/draft").type, "textarea");
-const paperView = await fixture("document-paper");
+const paperView = await fixture("document/document-paper");
 tree(paperView);
 const paperAction = ui.onEvent({ id: "doc/1/1/paper/draft", type: "change", value: "draft" }, paperView).action;
 assert.equal(paperAction.act, "write");
 assert.deepEqual(paperAction.payload, { value: "draft" });
-const denseView = await fixture("document-paper");
+const denseView = await fixture("document/document-paper");
 const dense = "**x**".repeat(700);
 denseView.documents["1"].state.data.draft = dense;
 assert.equal(tree(denseView).find((node) => node.id === "doc/1/1/paper/draft").value, dense.slice(0, 4096));
-const unicodeView = await fixture("document-paper");
+const unicodeView = await fixture("document/document-paper");
 const unicode = "😀".repeat(1024);
 unicodeView.documents["1"].state.data.draft = unicode;
 assert.equal(new TextEncoder().encode(tree(unicodeView).find((node) => node.id === "doc/1/1/paper/draft").value).length, 4096);
-const splitView = await fixture("document-paper");
+const splitView = await fixture("document/document-paper");
 splitView.documents["1"].state.data.committed = [
   { text: "**left", style: { color: "#111111", weight: 400 } },
   { text: "right**", style: { color: "#222222", weight: 400 } },
@@ -43,17 +43,17 @@ splitView.documents["1"].state.data.committed = [
 const splitRuns = tree(splitView).find((node) => node.id === "doc/1/1/paper/committed/part/0").runs;
 assert.equal(splitRuns.map((run) => run.text).join(""), "**leftright**");
 assert.equal(splitRuns[0].fontWeight, 400);
-const markdownView = await fixture("document-paper");
+const markdownView = await fixture("document/document-paper");
 markdownView.documents["1"].state.data.committed = [{ text: "**marked**", style: { color: "#333333" } }];
 const markdownRun = tree(markdownView).find((node) => node.id === "doc/1/1/paper/committed/part/0").runs[0];
 assert.equal(markdownRun.text, "marked");
 assert.equal(markdownRun.fontWeight, 700);
-const italicView = await fixture("document-paper");
+const italicView = await fixture("document/document-paper");
 italicView.documents["1"].state.data.committed = [{ text: "*italic*" }];
 const italicRun = tree(italicView).find((node) => node.id === "doc/1/1/paper/committed/part/0").runs[0];
 assert.equal(italicRun.text, "italic");
 assert.equal(italicRun.fontStyle, "italic");
-const nativeMarkdownView = await fixture("document-paper");
+const nativeMarkdownView = await fixture("document/document-paper");
 nativeMarkdownView.documents["1"].state.data.committed = [
   { text: "**red**", style: { color: "#bb2222", font_family: "patrick-hand" } },
   { text: "**blue**", style: { color: "#2222bb", font_family: "kalam-bold" } },
@@ -66,19 +66,19 @@ assert.equal(nativeRuns[0].fontWeight, 700);
 assert.equal(nativeRuns[1].fontWeight, 700);
 assert.equal(nativeRuns[0].color, "#bb2222");
 assert.equal(nativeRuns[1].color, "#2222bb");
-const fullView = await fixture("document-paper");
+const fullView = await fixture("document/document-paper");
 const full = "z".repeat(8192);
 fullView.documents["1"].state.data.committed = [{ text: full, style: { font_family: "patrick-hand", color: "#202c2d", weight: 400 } }];
 const fullRuns = tree(fullView).filter((node) => node.id.startsWith("doc/1/1/paper/committed/part/"))
   .flatMap((node) => node.runs ?? []);
 assert.equal(fullRuns.map((run) => run.text).join(""), full);
-const structuredView = await fixture("document-paper");
+const structuredView = await fixture("document/document-paper");
 const structured = "q".repeat(8192);
 structuredView.documents["1"].state.data.committed = [{ text: structured, style: { color: "#202c2d" } }];
 const structuredRuns = tree(structuredView).filter((node) => node.id.startsWith("doc/1/1/paper/committed/part/"))
   .flatMap((node) => node.runs ?? []);
 assert.equal(structuredRuns.map((run) => run.text).join(""), structured);
-const faxView = await fixture("document-fax");
+const faxView = await fixture("document/document-fax");
 const fax = tree(faxView);
 assert(fax.some((node) => node.id === "doc/2/1/directory/entry/0/target"));
 assert(fax.some((node) => node.id === "doc/2/1/send"));
@@ -93,7 +93,7 @@ assert.deepEqual(confirmAction.payload, { value: "ops" });
 const nameAction = ui.onEvent({ id: "doc/2/1/controls/name/set", type: "activate", value: "Relay" }, faxView).action;
 assert.equal(nameAction.act, "name");
 assert.deepEqual(nameAction.payload, { value: "Relay" });
-const copierView = await fixture("document-copier");
+const copierView = await fixture("document/document-copier");
 const copier = tree(copierView);
 assert.equal(copier.find((node) => node.id === "doc/3/1/count").value, "1");
 assert.equal(copier.find((node) => node.id === "doc/3/1/mode").value, "bw");
@@ -105,14 +105,14 @@ assert.deepEqual(countAction.payload, { value: "4" });
 const copyAction = ui.onEvent({ id: "doc/3/1/copy", type: "activate" }, copierView).action;
 assert.equal(copyAction.act, "copy");
 assert.deepEqual(copyAction.payload, { value: "" });
-const emptyFax = tree(await fixture("document-fax-empty"));
+const emptyFax = tree(await fixture("document/document-fax-empty"));
 assert(emptyFax.some((node) => node.id === "doc/2/1/loaded/empty"));
 assert(emptyFax.some((node) => node.id === "doc/2/1/directory/page"));
-const confirmingFax = tree(await fixture("document-fax-confirm"));
+const confirmingFax = tree(await fixture("document/document-fax-confirm"));
 assert(confirmingFax.some((node) => node.id === "doc/2/1/confirm"));
 assert(confirmingFax.some((node) => node.id === "doc/2/1/directory/entry/1/name" && node.text.includes("[aa:02]")));
-const emptyCopier = tree(await fixture("document-copier-empty"));
+const emptyCopier = tree(await fixture("document/document-copier-empty"));
 assert(emptyCopier.some((node) => node.id === "doc/3/1/original/empty"));
-const busyCopier = tree(await fixture("document-copier-busy"));
+const busyCopier = tree(await fixture("document/document-copier-busy"));
 assert(busyCopier.some((node) => node.id === "doc/3/1/progress"));
 console.log("Writing UI: paper, fax, and copier projections passed");

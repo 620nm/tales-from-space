@@ -18,7 +18,7 @@ globalThis.__lunaticLocale = {
   catalog: JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url))),
 };
 
-const view = JSON.parse(await readFile(new URL("../ui/fixtures/preparation.json", import.meta.url)));
+const view = JSON.parse(await readFile(new URL("../ui/fixtures/preparation/preparation.json", import.meta.url)));
 const flatten = (node) => [node, ...(node.children ?? []).flatMap(flatten)];
 
 test("preparation name commits only a complete field change or Enter submission", () => {
@@ -39,7 +39,7 @@ test("preparation name commits only a complete field change or Enter submission"
 });
 
 test("a later blur does not resubmit an acknowledged name", async () => {
-  for (const fixture of ["preparation", "preparation-playing"]) {
+  for (const fixture of ["preparation/preparation", "preparation/preparation-playing"]) {
     const { view } = JSON.parse(await readFile(new URL(`../ui/fixtures/${fixture}.json`, import.meta.url)));
     const accepted = structuredClone(view);
     accepted.state.preparation.revision++;
