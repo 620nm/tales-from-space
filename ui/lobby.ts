@@ -9,6 +9,7 @@ import * as S from "./strings";
 
 export function crewPanels(view: GameplayView): UiNode[] {
   const state = view.state ?? {};
+  if (state.staff_view) return [];
   if (state.round?.phase === "preparing") return preparationPanels(view);
   const out: UiNode[] = [];
   const jobs = state.jobs?.jobs;

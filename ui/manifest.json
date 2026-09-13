@@ -1,5 +1,8 @@
 {
   "styles": "theme.ts",
+  "notifications": {
+    "staff_contact": { "kind": "sound", "name": "bwoink" }
+  },
   "slots": {
     "overlay": {
       "left": 0,

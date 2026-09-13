@@ -1,0 +1,758 @@
+{
+  "note": "Canonical destructive review retains the selected body reference until confirmation.",
+  "viewport": {
+    "width": 1600,
+    "height": 1000,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 7,
+    "body": false,
+    "state": {
+      "staff": {
+        "allowed": true,
+        "active": true,
+        "revision": "7",
+        "round_id": "84",
+        "frozen": false,
+        "control_held": true,
+        "camera": {
+          "x": 18,
+          "y": 42
+        },
+        "operator": {
+          "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "username": "Sol",
+          "avatar": "portrait-01",
+          "role": "owner"
+        },
+        "payload": {
+          "current_round": "84",
+          "revision": "7",
+          "workspace": "live",
+          "selected": {
+            "target": {
+              "round": "84",
+              "kind": "body",
+              "id": "4294967297"
+            },
+            "found": true,
+            "tombstone": false,
+            "payload": {
+              "reference": {
+                "round": "84",
+                "kind": "body",
+                "id": "4294967297"
+              },
+              "entity_id": "4294967297",
+              "kind": "body",
+              "live": true,
+              "editable": true,
+              "capabilities": [
+                "inspect",
+                "freeze",
+                "restore",
+                "drive",
+                "kill",
+                "delete",
+                "gib",
+                "move",
+                "duplicate",
+                "property"
+              ],
+              "name": "Mara Venn",
+              "position": {
+                "x": 18,
+                "y": 42
+              },
+              "frozen": false,
+              "properties": [
+                {
+                  "path": "health.state",
+                  "label": "Life state",
+                  "type": "enum",
+                  "value": "Dying",
+                  "options": [
+                    "Healthy",
+                    "Dying",
+                    "Dead"
+                  ],
+                  "editable": false,
+                  "reason": "Life state is authoritative body state."
+                },
+                {
+                  "path": "facing",
+                  "label": "Facing",
+                  "type": "enum",
+                  "value": "north",
+                  "editable": true,
+                  "options": [
+                    "north",
+                    "east",
+                    "south",
+                    "west",
+                    "northeast",
+                    "southeast",
+                    "southwest",
+                    "northwest"
+                  ]
+                },
+                {
+                  "path": "position.z",
+                  "label": "Deck",
+                  "type": "number",
+                  "value": 1,
+                  "unit": "deck",
+                  "editable": false
+                }
+              ],
+              "account_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+              "mind_id": "4294967307",
+              "profile_card": {
+                "id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+                "username": "Mara Venn",
+                "avatar": "portrait-04"
+              }
+            },
+            "related": [
+              {
+                "round": "",
+                "kind": "account",
+                "id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+              },
+              {
+                "round": "84",
+                "kind": "mind",
+                "id": "4294967307"
+              },
+              {
+                "round": "84",
+                "kind": "case",
+                "id": "1201"
+              }
+            ],
+            "audit": [
+              {
+                "reference": {
+                  "round": "84",
+                  "kind": "event",
+                  "id": "903"
+                },
+                "event_type": "staff_record_write",
+                "server_id": "3d9c7f09-4ac7-4f4d-82e2-1bb6ce0d5f84",
+                "created_at_ms": 1750000000903,
+                "actor": null,
+                "occupant_account": null,
+                "occupant_mind": null,
+                "controller": null,
+                "operation_id": "7c9d4a61e2b3471f8d0e6c9ab5f10234-3",
+                "admin_origin": {
+                  "profile": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                  "staff_account": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                  "request_id": "7c9d4a61e2b3471f8d0e6c9ab5f10234-3",
+                  "interface": "staff"
+                },
+                "control": {
+                  "session_id": "27",
+                  "origin": "staff",
+                  "request_id": "7c9d4a61e2b3471f8d0e6c9ab5f10234-3"
+                },
+                "payload": {
+                  "seq": 12003,
+                  "time": "20:44:00",
+                  "action": "Freeze body",
+                  "result": "Applied",
+                  "target": "4294967297",
+                  "target_ref": {
+                    "round": "84",
+                    "kind": "body",
+                    "id": "4294967297"
+                  }
+                },
+                "refs": [
+                  {
+                    "round": "84",
+                    "kind": "body",
+                    "id": "4294967297"
+                  },
+                  {
+                    "round": "",
+                    "kind": "account",
+                    "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                  }
+                ],
+                "tick": 1244,
+                "body": {
+                  "round": "84",
+                  "kind": "body",
+                  "id": "4294967297"
+                },
+                "account": {
+                  "round": "",
+                  "kind": "account",
+                  "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                },
+                "mind": null,
+                "name": "Cedar Vale",
+                "deleted": false
+              }
+            ]
+          },
+          "audit": [
+            {
+              "reference": {
+                "round": "84",
+                "kind": "event",
+                "id": "903"
+              },
+              "event_type": "staff_record_write",
+              "server_id": "3d9c7f09-4ac7-4f4d-82e2-1bb6ce0d5f84",
+              "created_at_ms": 1750000000903,
+              "actor": null,
+              "occupant_account": null,
+              "occupant_mind": null,
+              "controller": null,
+              "operation_id": "7c9d4a61e2b3471f8d0e6c9ab5f10234-3",
+              "admin_origin": {
+                "profile": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "staff_account": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "request_id": "7c9d4a61e2b3471f8d0e6c9ab5f10234-3",
+                "interface": "staff"
+              },
+              "control": {
+                "session_id": "27",
+                "origin": "staff",
+                "request_id": "7c9d4a61e2b3471f8d0e6c9ab5f10234-3"
+              },
+              "payload": {
+                "seq": 12003,
+                "time": "20:44:00",
+                "action": "Freeze body",
+                "result": "Applied",
+                "target": "4294967297",
+                "target_ref": {
+                  "round": "84",
+                  "kind": "body",
+                  "id": "4294967297"
+                }
+              },
+              "refs": [
+                {
+                  "round": "84",
+                  "kind": "body",
+                  "id": "4294967297"
+                },
+                {
+                  "round": "",
+                  "kind": "account",
+                  "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                }
+              ],
+              "tick": 1244,
+              "body": {
+                "round": "84",
+                "kind": "body",
+                "id": "4294967297"
+              },
+              "account": {
+                "round": "",
+                "kind": "account",
+                "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              "mind": null,
+              "name": "Cedar Vale",
+              "deleted": false
+            },
+            {
+              "reference": {
+                "round": "84",
+                "kind": "event",
+                "id": "904"
+              },
+              "event_type": "staff_contact_write",
+              "server_id": "3d9c7f09-4ac7-4f4d-82e2-1bb6ce0d5f84",
+              "created_at_ms": 1750000000904,
+              "actor": null,
+              "occupant_account": null,
+              "occupant_mind": null,
+              "controller": null,
+              "operation_id": "7c9d4a61e2b3471f8d0e6c9ab5f10234-4",
+              "admin_origin": {
+                "profile": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "staff_account": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "request_id": "7c9d4a61e2b3471f8d0e6c9ab5f10234-4",
+                "interface": "staff"
+              },
+              "control": {
+                "session_id": "27",
+                "origin": "staff",
+                "request_id": "7c9d4a61e2b3471f8d0e6c9ab5f10234-4"
+              },
+              "payload": {
+                "seq": 12004,
+                "time": "20:44:14",
+                "action": "Staff contact recorded",
+                "result": "Recorded",
+                "target_ref": {
+                  "round": "",
+                  "kind": "account",
+                  "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+                }
+              },
+              "refs": [
+                {
+                  "round": "",
+                  "kind": "account",
+                  "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+                },
+                {
+                  "round": "",
+                  "kind": "account",
+                  "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                }
+              ],
+              "tick": 1245,
+              "body": null,
+              "account": {
+                "round": "",
+                "kind": "account",
+                "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              "mind": null,
+              "name": "Rowan Vale",
+              "deleted": false
+            }
+          ],
+          "profiles": [
+            {
+              "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "username": "Sol",
+              "avatar": "portrait-01",
+              "role": "owner"
+            },
+            {
+              "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "username": "Rowan Vale",
+              "avatar": "portrait-02",
+              "role": "player",
+              "warnings": [
+                "Restricted role detail is server-visible."
+              ],
+              "message_count": 2
+            },
+            {
+              "id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+              "username": "Iris Quill",
+              "avatar": "portrait-03",
+              "role": "player",
+              "message_count": 3
+            },
+            {
+              "id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+              "username": "Mara Venn",
+              "avatar": "portrait-04",
+              "role": "player"
+            },
+            {
+              "id": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+              "username": "Unknown account",
+              "avatar": "unknown",
+              "role": "player"
+            }
+          ],
+          "world": {
+            "entities": [
+              {
+                "id": "4294967297",
+                "ref": {
+                  "round": "84",
+                  "kind": "entity",
+                  "id": "4294967297"
+                },
+                "kind": "player",
+                "name": "Mara Venn",
+                "position": {
+                  "x": 18,
+                  "y": 42
+                },
+                "live": true
+              },
+              {
+                "id": "4294967298",
+                "ref": {
+                  "round": "84",
+                  "kind": "entity",
+                  "id": "4294967298"
+                },
+                "kind": "player",
+                "name": "Rowan Vale",
+                "position": {
+                  "x": 22,
+                  "y": 39
+                },
+                "live": true
+              },
+              {
+                "id": "4294967299",
+                "ref": {
+                  "round": "84",
+                  "kind": "entity",
+                  "id": "4294967299"
+                },
+                "kind": "player",
+                "name": "Iris Quill",
+                "position": {
+                  "x": 27,
+                  "y": 40
+                },
+                "live": true
+              },
+              {
+                "id": "4294967300",
+                "ref": {
+                  "round": "84",
+                  "kind": "entity",
+                  "id": "4294967300"
+                },
+                "kind": "item",
+                "name": "Spare ID",
+                "position": {
+                  "x": 31,
+                  "y": 41
+                },
+                "live": true
+              },
+              {
+                "id": "4294967301",
+                "ref": {
+                  "round": "84",
+                  "kind": "entity",
+                  "id": "4294967301"
+                },
+                "kind": "item",
+                "name": "Service trashcan",
+                "position": {
+                  "x": 31,
+                  "y": 41
+                },
+                "live": true
+              },
+              {
+                "id": "4294967302",
+                "ref": {
+                  "round": "84",
+                  "kind": "entity",
+                  "id": "4294967302"
+                },
+                "kind": "machine",
+                "name": "Service APC",
+                "position": {
+                  "x": 34,
+                  "y": 42
+                },
+                "live": true
+              },
+              {
+                "id": "4294967303",
+                "ref": {
+                  "round": "84",
+                  "kind": "entity",
+                  "id": "4294967303"
+                },
+                "kind": "machine",
+                "name": "Service console",
+                "position": {
+                  "x": 35,
+                  "y": 42
+                },
+                "live": true
+              },
+              {
+                "id": "4294967304",
+                "ref": {
+                  "round": "84",
+                  "kind": "entity",
+                  "id": "4294967304"
+                },
+                "kind": "player",
+                "name": "Rowan Vale \u00b7 prior body",
+                "live": false
+              }
+            ]
+          },
+          "records": {
+            "cases": [
+              {
+                "reference": {
+                  "round": "84",
+                  "kind": "case",
+                  "id": "1201"
+                },
+                "created_at": 1230,
+                "label": "Spare ID handoff",
+                "direct_anchor_history": [
+                  {
+                    "round": "84",
+                    "kind": "item",
+                    "id": "4294967300"
+                  },
+                  {
+                    "round": "84",
+                    "kind": "container",
+                    "id": "4294967301"
+                  }
+                ],
+                "case_addressed_events": [
+                  {
+                    "round": "84",
+                    "kind": "event",
+                    "id": "901"
+                  },
+                  {
+                    "round": "84",
+                    "kind": "event",
+                    "id": "902"
+                  }
+                ],
+                "attachments": [
+                  {
+                    "round": "",
+                    "kind": "account",
+                    "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+                  },
+                  {
+                    "round": "",
+                    "kind": "account",
+                    "id": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+                  },
+                  {
+                    "round": "84",
+                    "kind": "mind",
+                    "id": "4294967308"
+                  },
+                  {
+                    "round": "84",
+                    "kind": "mind",
+                    "id": "4294967309"
+                  },
+                  {
+                    "round": "84",
+                    "kind": "body",
+                    "id": "4294967298"
+                  },
+                  {
+                    "round": "84",
+                    "kind": "body",
+                    "id": "4294967299"
+                  }
+                ],
+                "notes": [
+                  {
+                    "author": {
+                      "round": "",
+                      "kind": "account",
+                      "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                    },
+                    "at": 1233,
+                    "text": "Confirm the custody chain against the source rows."
+                  }
+                ],
+                "statuses": [
+                  {
+                    "value": "Open",
+                    "recipients": [
+                      "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                      "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+                    ],
+                    "reason": "Awaiting review",
+                    "label": "Initial",
+                    "at": 1231
+                  }
+                ],
+                "outcomes": []
+              }
+            ],
+            "response": null
+          },
+          "roster": {
+            "items": [
+              {
+                "kind": "item",
+                "prototype": "toolbox",
+                "name": "mechanical toolbox",
+                "default_properties": {
+                  "name": "mechanical toolbox"
+                },
+                "properties": [
+                  {
+                    "path": "name",
+                    "label": "name",
+                    "type": "text",
+                    "value": "mechanical toolbox",
+                    "editable": true
+                  }
+                ]
+              },
+              {
+                "kind": "item",
+                "prototype": "id_assistant",
+                "name": "assistant ID card",
+                "default_properties": {
+                  "name": "assistant ID card"
+                },
+                "properties": [
+                  {
+                    "path": "name",
+                    "label": "name",
+                    "type": "text",
+                    "value": "assistant ID card",
+                    "editable": true
+                  }
+                ]
+              }
+            ],
+            "structures": [
+              {
+                "kind": "structure",
+                "prototype": "apc",
+                "name": "APC",
+                "default_properties": {
+                  "name": "APC"
+                },
+                "properties": [
+                  {
+                    "path": "name",
+                    "label": "name",
+                    "type": "text",
+                    "value": "APC",
+                    "editable": true
+                  }
+                ]
+              },
+              {
+                "kind": "structure",
+                "prototype": "airlock",
+                "name": "airlock",
+                "default_properties": {
+                  "name": "airlock"
+                },
+                "properties": [
+                  {
+                    "path": "name",
+                    "label": "name",
+                    "type": "text",
+                    "value": "airlock",
+                    "editable": true
+                  }
+                ]
+              }
+            ],
+            "machines": [
+              {
+                "kind": "machine",
+                "prototype": "vendor",
+                "name": "vendor",
+                "default_properties": {
+                  "name": "vendor"
+                },
+                "properties": [
+                  {
+                    "path": "name",
+                    "label": "name",
+                    "type": "text",
+                    "value": "vendor",
+                    "editable": true
+                  }
+                ]
+              },
+              {
+                "kind": "machine",
+                "prototype": "programming_terminal",
+                "name": "programming terminal",
+                "default_properties": {
+                  "name": "programming terminal"
+                },
+                "properties": [
+                  {
+                    "path": "name",
+                    "label": "name",
+                    "type": "text",
+                    "value": "programming terminal",
+                    "editable": true
+                  }
+                ]
+              }
+            ],
+            "mobs": [],
+            "bodies": [
+              {
+                "kind": "body",
+                "prototype": "human",
+                "name": "human",
+                "default_properties": {
+                  "facing": "south"
+                },
+                "properties": [
+                  {
+                    "path": "facing",
+                    "label": "facing",
+                    "type": "enum",
+                    "value": "south",
+                    "editable": true,
+                    "options": [
+                      "south",
+                      "north",
+                      "east",
+                      "west"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "station": {
+            "name": "Running station",
+            "shift": "Shift 084",
+            "clock": "20:44:14",
+            "status": "RUNNING"
+          }
+        }
+      }
+    },
+    "log": [],
+    "documents": {}
+  },
+  "steps": [
+    {
+      "type": "click",
+      "id": "staff/live/review/kill",
+      "expect": {
+        "visible": [
+          "staff/review",
+          "staff/review/confirm"
+        ]
+      }
+    },
+    {
+      "type": "click",
+      "id": "staff/review/cancel",
+      "expect": {
+        "visible": [
+          "staff/live/inspector"
+        ]
+      }
+    },
+    {
+      "type": "click",
+      "id": "staff/live/review/kill",
+      "expect": {
+        "visible": [
+          "staff/review",
+          "staff/review/confirm"
+        ]
+      }
+    }
+  ]
+}

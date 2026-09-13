@@ -1,5 +1,7 @@
 import type { Json } from "@lunatic/ui";
 import type { PanelDocument } from "./document-model";
+import type { StaffState } from "./staff/model";
+import type { StaffContactState } from "./contact/model";
 
 export interface ActionLabel {
   key: string;
@@ -103,11 +105,17 @@ export interface GameplayView {
   documents?: Record<string, PanelDocument>;
   log?: LogLine[];
   state: {
+    /** Presentation only; privileged state is delivered to the staff audience. */
+    staff_view?: boolean;
     round?: RoundStatus;
     preparation?: PreparationState;
     preparationPending?: boolean;
     preparationCanQueue?: boolean;
     preparationStorage?: { available: boolean };
+    /** Present only for an authenticated, server-approved staff audience. */
+    staff?: StaffState | null;
+    /** Ordinary-only private staff contact; never contains case or account data. */
+    staff_contact?: StaffContactState | null;
     jobs?: {
       jobs: {
         key: string;

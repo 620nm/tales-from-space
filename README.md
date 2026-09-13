@@ -57,6 +57,8 @@ The portable computer's controls and desktop are documented in
 [`docs/LAPTOP.md`](docs/LAPTOP.md).
 The station interface and acceptance loop are documented in
 [`docs/UI.md`](docs/UI.md).
+BWOINK live moderation, cases and private staff contact are documented in
+[`docs/STAFF.md`](docs/STAFF.md).
 Interaction cards and their presentation tokens are documented in
 [`docs/ACTIONS.md`](docs/ACTIONS.md).
 
@@ -88,6 +90,8 @@ supplies the component kit and default theme these screens are built from
 | `documents-choices.ts`, `documents-shelf.ts` | dials as choice grids, and the pictured shelf |
 | `files.ts`, `files-drive.ts`, `files-editor.ts`, `files-buffer.ts`, `files-reader.ts` | the shared computer frameset, drives, editing controller and bounded readers |
 | `world-overlays.ts` | anchored speech and progress over the station |
+| `staff/` | the separate BWOINK package: live tools, cases and account profiles |
+| `contact/` | the ordinary player's private staff conversations |
 | `model.ts`, `document-model.ts` | the provider fields these surfaces consume |
 
 `matter-block.ts` renders one body of matter.

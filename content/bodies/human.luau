@@ -22,6 +22,20 @@ local content = {
     sprite = "human",
     playable = true,
 
+    -- Staff body actions are engine mechanisms selected by this pack's
+    -- recipe. Gib mints every declared remain through the ordinary item
+    -- path, so a pack can add matter by declaring it on an item prototype.
+    staff_body = {
+        restore = true,
+        remains = {
+            "human_head", "human_chest", "human_pelvis",
+            "human_l_arm", "human_r_arm", "human_l_leg", "human_r_leg",
+            "organ_brain", "organ_eyes", "organ_ears", "organ_tongue",
+            "organ_heart", "organ_lungs", "organ_liver", "organ_stomach",
+            "organ_appendix", "staff_remains",
+        },
+    },
+
     max_health = 100,          -- MAX_LIVING_HEALTH, code/__DEFINES/mobs.dm:236
 
     -- The lines a crewman's numbers can be on either side of. The engine

@@ -1,0 +1,27 @@
+{
+  "note": "Ordinary player sees the staff contact denial without a privileged projection.",
+  "viewport": { "width": 1024, "height": 768, "dpr": 1 },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 5,
+    "body": true,
+    "state": {
+      "round": { "round": 5, "phase": "playing", "remaining_seconds": null, "ready": 1, "connected": 1, "paused": false, "waiting": false, "fault": null },
+      "identity": { "you": 18, "name": "Mara Venn" },
+      "staff_contact": {
+        "revision": "0",
+        "available": false,
+        "conversations": [],
+        "unread": 0,
+        "cursor": null,
+        "denial": "contact.unavailable"
+      }
+    },
+    "log": [],
+    "documents": {}
+  },
+  "steps": [
+    { "type": "click", "id": "contact/entry", "expect": { "visible": ["contact/window", "contact/window/unavailable"] } }
+  ]
+}

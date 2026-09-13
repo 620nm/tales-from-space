@@ -11,6 +11,8 @@ Commands below run from the engine with `LUNATIC_PACK` set to this pack;
 | Shared controls/type | `view.ts`, `theme/roles.ts`, `theme/kit.ts` | `node tools/test.mjs <engine>` | valid tokens, readable labels, 28px controls |
 | HUD/chat/inspection | `main.tsx`, `chat.ts`, `inspect.ts`, `inventory*.ts`, `actions.ts` | `node tools/ui-lab.mjs shot hud-busy-compact --lint` | [state checklist](../docs/ui/surfaces-acceptance.md), contained regions and real input |
 | Crew board/condition | `lobby.ts` | `node tools/ui-lab.mjs shot lobby lobby-empty --lint` | empty/full/unavailable states |
+| Staff workspaces | `staff/` | `node tools/ui-lab.mjs shot all --audience staff --check --lint` | [staff acceptance](../docs/STAFF.md), live edits, exact references and profile flows |
+| Player staff contact | `contact/` | `node tools/ui-lab.mjs shot contact-inbox --check --lint` | private conversation, replies and fresh-message sound |
 | Device documents | `documents*.ts`, `matter-block.ts` | `node tools/ui-lab.mjs shot document-matter document-shelf --lint` | heading, status, scrolling, disclosed disabled reason |
 | Computer/files | `documents-desktop.ts`, `files*.ts`, `theme/workspace.ts` | `node tools/ui-lab.mjs shot laptop-create-cancel --lint` | previews, single modal, naming/draft preservation |
 | Hover/world overlays | `overlay/`, `world-overlays.ts` | `node tools/ui-lab.mjs shot hover-actions --lint` | edge containment, native-size pixel type |

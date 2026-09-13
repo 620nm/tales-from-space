@@ -1,0 +1,67 @@
+{
+  "note": "Ordinary player opens a private staff inbox, reads a bounded thread and replies.",
+  "viewport": { "width": 1024, "height": 768, "dpr": 1 },
+  "locale": "en",
+  "view": {
+    "version": 5,
+    "revision": 4,
+    "body": true,
+    "state": {
+      "round": { "round": 4, "phase": "playing", "remaining_seconds": null, "ready": 1, "connected": 1, "paused": false, "waiting": false, "fault": null },
+      "identity": { "you": 18, "name": "Mara Venn" },
+      "staff_contact": {
+        "revision": "4",
+        "available": true,
+        "conversations": [
+          {
+            "ref": { "round": "4", "kind": "conversation", "id": "26" },
+            "messages": [
+              {
+                "ref": { "round": "4", "kind": "message", "id": "39" },
+                "from": "staff",
+                "body": "Earlier location check.",
+                "second": 18,
+                "delivered": true,
+                "unread": false,
+                "fresh": false
+              },
+              {
+                "ref": { "round": "4", "kind": "message", "id": "40" },
+                "from": "staff",
+                "body": "Please confirm your location.",
+                "second": 22,
+                "delivered": false,
+                "unread": true,
+                "fresh": true
+              },
+              {
+                "ref": { "round": "4", "kind": "message", "id": "41" },
+                "from": "player",
+                "body": "I am in engineering.",
+                "second": 28,
+                "delivered": false,
+                "unread": false,
+                "fresh": false
+              }
+            ],
+            "cursor": "43",
+            "unread": 1
+          }
+        ],
+        "unread": 1,
+        "cursor": "43",
+        "denial": null
+      }
+    },
+    "log": [],
+    "documents": {}
+  },
+  "steps": [
+    { "type": "click", "id": "contact/entry", "expect": { "visible": ["contact/window", "contact/list/0", "contact/composer"] } },
+    { "type": "click", "id": "contact/list/0", "expect": { "actionCount": 1 } },
+    { "type": "fill", "id": "contact/composer", "value": "I am safe.", "expect": { "value": "I am safe." } },
+    { "type": "key", "id": "contact/composer", "key": "Enter", "expect": { "actionCount": 2 } },
+    { "type": "click", "id": "contact/window/close" },
+    { "type": "click", "id": "contact/entry", "expect": { "visible": ["contact/window", "contact/history", "contact/composer"] } }
+  ]
+}

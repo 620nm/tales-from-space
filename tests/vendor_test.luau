@@ -58,6 +58,7 @@ assert(ui.products[1].stock == 99, "the product row carries its live stock")
 
 -- act('vend') dispenses; the ledger names the player, not a script.
 assert(t.count_items("cola") == 0)
+local spawned_before = #t.ledger_rows("ItemSpawned")
 ui_controls.vend(p, "cola")
 t.tick()
 assert(t.count_items("cola") == 1, "act('vend') dispenses")
@@ -69,8 +70,8 @@ assert(after > pushes, "the window got fresh state")
 -- A UI act is a DIRECT player action: the row names the crewman, not
 -- the file that ran on their behalf.
 local spawned = t.ledger_rows("ItemSpawned")
-assert(#spawned == 1 and spawned[1].proto == "cola"
-    and spawned[1].actor.kind == "player",
+assert(#spawned == spawned_before + 1 and spawned[spawned_before + 1].proto == "cola"
+    and spawned[spawned_before + 1].actor.kind == "player",
     "UI acts are player-attributed")
 assert(t.ledger_has("ItemSpawned", "cola", "Player"), "and grep finds it too")
 
