@@ -9,10 +9,10 @@
 -- here -- `lib/vessel.luau` owns both -- and this file is the numbers
 -- and the nouns that make them a mop.
 --
--- WHAT CAME FROM TG AND WHAT DID NOT (mop.dm:20-22, which declares
--- `max_reagent_volume = 15` and `mopspeed = 1.5 SECONDS`). The SHAPE is
--- tg's: one head, holding a fixed amount, filled a stroke at a time off
--- the floor. The numbers are not, and cannot be. A tg unit is a
+-- WHAT CAME FROM TG AND WHAT DID NOT. tg declares
+-- `max_reagent_volume = 15` and `mopspeed = 1.5 SECONDS` (mop.dm:20-22).
+-- The SHAPE is tg's: one head, holding a fixed amount, filled a stroke
+-- at a time off the floor. The numbers are not, and cannot be. A tg unit is a
 -- millilitre of nothing in particular, so tg's head holds fifteen of
 -- them and its floors hold a decal; here a spill is real litres of a
 -- real substance and a fifteen-millilitre head would be a teaspoon

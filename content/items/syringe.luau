@@ -1,6 +1,6 @@
 -- The syringe: fifteen millilitres of glass with a needle on it, and
--- the only thing on the station that reaches INTO somebody. tg's
--- `/obj/item/reagent_containers/syringe`
+-- the only thing on the station that reaches INTO somebody.
+-- tg: `/obj/item/reagent_containers/syringe`
 -- (code/modules/reagents/reagent_containers/syringes.dm:1-24,49-144).
 --
 -- Two gestures, and they are the same transfer with the ends swapped

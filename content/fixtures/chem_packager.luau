@@ -4,7 +4,7 @@
 -- One operation: dock a vessel, press `package`, and the machine prints
 -- five pills onto its own tray, each carrying a fifth of what was in
 -- the vessel. tg's ChemMaster splits its buffer the same way --
--- `volume_in_each = min(round(reagents.total_volume / item_count), ...)`
+-- tg: `volume_in_each = min(round(reagents.total_volume / item_count), ...)`
 -- computed once and then N containers filled on a timer
 -- (chem_master.dm:514,552-580, `printing_speed = 0.75 SECONDS`).
 --

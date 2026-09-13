@@ -65,7 +65,7 @@ local content = {
     -- gone quiet may have swept off it (lunatic docs/MATTER-WORLD.md §3
     -- step 8).
     visible = { moles = 0.15, factor = 20, tint = "#C4D64A" },
-    -- Through glass, the colour its reagent wears
+    -- Through glass, the colour tg's reagent wears
     -- (tg: other_reagents.dm:1090).
     color = "#FFFB89",
     -- A thing the station is built to keep away from itself.

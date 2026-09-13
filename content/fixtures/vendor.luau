@@ -39,7 +39,7 @@ if sim ~= nil then
     -- THE EMPTIES. Hand the machine a bottle and it gives you a cold one
     -- back. A drinks machine with nowhere to put the glass is furniture
     -- with a hole in it, and tg's own vendors stock bottled water
-    -- (`/obj/item/reagent_containers/cup/glass/bottle/water` on the
+    -- (tg: `/obj/item/reagent_containers/cup/glass/bottle/water` on the
     -- boozeomat shelf, code/game/machinery/vending/boozeomat.dm:14). The
     -- bottle you hand back goes into the crate; what comes out is the
     -- machine's own product, minted the way every vended thing is.
