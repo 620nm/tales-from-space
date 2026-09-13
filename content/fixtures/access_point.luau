@@ -24,6 +24,11 @@ if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:controller_timer", { replicate = "server" })
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("link.message.done", { kind = "react" }, controller.message)
+    script_definition:handle("link.service.delivery", { kind = "react" }, controller.message)
+    script_definition:handle("link.service.reply", { kind = "react" }, controller.message)
+    -- Addressed completion is submitter delivered and therefore mod scoped;
+    -- install it globally and let the controller verify the live slot.
+    sim.handle("link.service.send.done", { kind = "react" }, controller.service_send_done)
 
     script_definition:handle("interaction.use.refused", { kind = "react", route = "interact" }, function(ev)
         local r = ev.action_refusal

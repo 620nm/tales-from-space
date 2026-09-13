@@ -5,6 +5,18 @@
     ("computer_mid1", "originals/sound/computer/computer_mid1.ogg"),
     ("computer_mid2", "originals/sound/computer/computer_mid2.ogg"),
     ("paper_insert", "originals/sound/computer/paper_insert.ogg"),
+    // paper.dm:27-28 and pen.dm:77-84.
+    ("paper_pickup", "items/handling/paper_pickup.ogg"),
+    ("paper_drop", "items/handling/paper_drop.ogg"),
+    // blueprints.dm:149-157 uses the same page-turn clip.
+    ("paper_flip", "items/paper_flip.ogg"),
+    ("pen_click", "items/pen_click.ogg"),
+    // The sound key chooses one of seven authored variants
+    // (game/sound/sound_keys/sound_keys.dm:650-660); one manifest id is
+    // deliberately backed by its first clip, as with other random tg keys.
+    ("writing_pen", "effects/writing_pen/writing_pen1.ogg"),
+    // fax.dm:439-441 plays this when correspondence arrives.
+    ("printer", "machines/printer.ogg"),
     // tg computer.dm:313 (ID), :562 and :1032 (cartridge).
     ("card_slide", "machines/card_slide.ogg"),
     ("terminal_insert_disc", "machines/terminal/terminal_insert_disc.ogg"),

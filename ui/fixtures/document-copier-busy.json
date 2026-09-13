@@ -1,0 +1,38 @@
+{
+  "note": "A copier processing a color job while the original remains loaded.",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": true,
+    "state": {},
+    "documents": {
+      "3": {
+        "id": 3,
+        "generation": 1,
+        "title": "Photocopier",
+        "state": {
+          "document": "script",
+          "status": 2,
+          "data": {
+            "kind": "copier",
+            "name": "Photocopier",
+            "powered": true,
+            "original": [{ "text": "Inventory report\nInk: **low**" }],
+            "count": 2,
+            "mode": "color",
+            "paper": 4,
+            "toner": 4,
+            "busy": true,
+            "progress": 0.5
+          },
+          "actions": [
+            { "id": "copy", "input": 1 }, { "id": "set_count", "input": 2 },
+            { "id": "set_color", "input": 8 }, { "id": "eject", "input": 1 }
+          ]
+        }
+      }
+    },
+    "log": []
+  },
+  "viewport": { "width": 1024, "height": 768, "dpr": 1 }
+}

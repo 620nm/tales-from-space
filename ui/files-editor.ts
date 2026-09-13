@@ -49,7 +49,8 @@ export function editorPane(
   const conflict = current.revision !== open.revision;
   const editor = editorOf(state.editor);
   const readOnly = editor?.read_only === true;
-  const reader = fileReader(`${id}/reader/content`, open.ext, current.text, readerNodes);
+  const reader = fileReader(`${id}/reader/content`, open.ext, current.text, readerNodes,
+    current.dirty ? undefined : open.fragments);
   if (!reader) current.sourceView = true;
   const showSource = current.sourceView === true;
   current.sourceVisible = showSource;

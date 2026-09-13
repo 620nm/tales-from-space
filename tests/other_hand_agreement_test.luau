@@ -50,6 +50,14 @@ local function assert_insert_row(why)
     assert(rows[1].available, why .. ": available")
 end
 
+local function media_count(kind)
+    local count = 0
+    for _, row in ipairs(t.ledger_rows()) do
+        if row.audit and row.audit.audit == kind then count += 1 end
+    end
+    return count
+end
+
 -- Fire the key; return whether it reported a dead end.
 local function use_other()
     t.messages(p)
@@ -71,11 +79,11 @@ t.swap_hands(p)
 step()
 take("floppy_disk")
 assert_insert_row("floppy active, laptop other")
-local inserted = #t.ledger_rows("media_inserted")
+local inserted = media_count("media_inserted")
 assert(not use_other(), "floppy active: the key is not a dead end")
 assert(t.hands(p).held == nil and t.hands(p)[laptop_hand + 1] == "laptop",
     "floppy active: the key inserted the disk the row named")
-assert(#t.ledger_rows("media_inserted") == inserted + 1, "forward insertion is recorded")
+assert(media_count("media_inserted") == inserted + 1, "forward insertion is recorded")
 
 t.use_item_site(p, held_laptop, "shift_ctrl_primary")
 step()
@@ -91,7 +99,7 @@ assert_insert_row("laptop active, floppy other")
 assert(not use_other(), "laptop active: the key is not a dead end")
 assert(t.hands(p).held == "laptop" and t.hands(p)[disk_hand + 1] == nil,
     "laptop active: the key inserted the other hand's disk")
-assert(#t.ledger_rows("media_inserted") == inserted + 2, "reverse insertion is recorded")
+assert(media_count("media_inserted") == inserted + 2, "reverse insertion is recorded")
 
 -- ---- laptop and a crowbar: no combination --------------------------------
 t.swap_hands(p)

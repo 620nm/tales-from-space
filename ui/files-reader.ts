@@ -1,6 +1,8 @@
 import type { StyleProps, UiNode } from "@lunatic/ui";
 import { tfs } from "./strings";
-import { text } from "./view";
+import { panel, text } from "./view";
+import { flowingText, markdownRuns, sliceUtf8, utf8Length } from "./writing-text";
+import type { FileFragment } from "./document-model";
 
 const BODY_LIMIT = 65536;
 // Ceiling per reader; the caller passes what the tree has left
@@ -9,10 +11,11 @@ export const READER_NODES = 384;
 const TEXT_LIMIT = 4096;
 
 /** Text-only readers; unsupported or invalid records use the editor. */
-export function fileReader(id: string, ext: string, body: string, limit = READER_NODES): UiNode[] | undefined {
+export function fileReader(id: string, ext: string, body: string, limit = READER_NODES, fragments?: FileFragment[]): UiNode[] | undefined {
   const NODE_LIMIT = Math.max(2, Math.min(READER_NODES, limit));
   if (ext === "atmo") return atmosphere(id, body);
   if (ext !== "md" && ext !== "pem") return undefined;
+  if (ext === "md" && fragments?.length) return committedReader(id, fragments, NODE_LIMIT);
   const nodes: UiNode[] = [];
   if (ext === "pem")
     nodes.push(text(`${id}/access`, tfs("ui.files.reader.access"), undefined, { fontWeight: 700 }));
@@ -37,7 +40,9 @@ export function fileReader(id: string, ext: string, body: string, limit = READER
         consumed -= value.length - offset;
         break;
       }
-      nodes.push(text(`${id}/line/${nodes.length}`, value.slice(offset, offset + TEXT_LIMIT), cls, style));
+      const chunk = value.slice(offset, offset + TEXT_LIMIT);
+      const runs = ext === "md" && !fenced ? markdownRuns(chunk) : undefined;
+      nodes.push(text(`${id}/line/${nodes.length}`, runs?.map((run) => run.text).join("") ?? chunk, cls, style, runs));
     }
   }
   if (body.length > BODY_LIMIT || consumed < body.length) {
@@ -45,6 +50,32 @@ export function fileReader(id: string, ext: string, body: string, limit = READER
     const lines = rest.split("\n").length - (rest.endsWith("\n") ? 1 : 0);
     nodes.push(text(`${id}/truncated`, tfs("ui.files.reader.truncated", { lines })));
   }
+  return nodes;
+}
+
+function committedReader(id: string, fragments: FileFragment[], limit: number): UiNode[] {
+  const bounded: { text: string; style?: FileFragment["style"] }[] = [];
+  let bytes = 0;
+  let omitted = fragments.length > 64;
+  for (const fragment of fragments.slice(0, 64)) {
+    if (!fragment || typeof fragment.text !== "string") continue;
+    const remaining = BODY_LIMIT - bytes;
+    if (remaining <= 0) { omitted = true; break; }
+    const textValue = sliceUtf8(fragment.text, Math.min(TEXT_LIMIT, remaining));
+    if (!textValue) continue;
+    bytes += utf8Length(textValue);
+    bounded.push({ text: textValue, style: fragment.style });
+    if (textValue.length < fragment.text.length || utf8Length(textValue) < utf8Length(fragment.text)) {
+      omitted = true;
+      break;
+    }
+  }
+  // The wrapper is one block in the reader column; its children remain
+  // inline so a node-size boundary cannot introduce a visual line break.
+  const flow = flowingText(id, bounded, ["reader-inline"], Math.max(1, limit - 2));
+  const nodes = flow.nodes.length ? [panel(`${id}/flow`, flow.nodes, { cls: ["reader-flow"] })] : [];
+  if (omitted || flow.truncated)
+    nodes.push(text(`${id}/truncated`, tfs("ui.files.reader.truncated", { lines: 1 })));
   return nodes;
 }
 

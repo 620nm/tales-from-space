@@ -7,6 +7,7 @@ import { edge, none, stroke } from "./parts";
 import {
   alpha, amberLine, dim, face, faceLine, faint, field, ink, raised, surface, teal,
   titleFace, titleLine,
+  paper, paperInk,
 } from "./tokens";
 
 export const documentRules: UiStyleRule[] = [
@@ -70,4 +71,32 @@ export const documentRules: UiStyleRule[] = [
   rule("ability", { backgroundColor: alpha(raised, 0.87) }, "hover"),
   rule("ability-icon", { width: 32, height: 32, pointerEvents: "none" }),
   rule("action-button", { minHeight: 34, maxWidth: 180, whiteSpace: "normal", minWidth: 44, fontSize: 12, paddingLeft: 6, paddingRight: 6, backgroundColor: face, border: edge(faceLine), borderRadius: 2 }),
+
+  // Physical documents keep their own paper and handwriting surfaces.
+  rule("paper-identity", { alignItems: "center", justifyContent: "space-between", gap: 8 }),
+  rule("paper-title", { fontFamily: "patrick-hand", fontSize: 22, color: ink }),
+  rule("paper-sheet", { display: "block", backgroundColor: paper, color: paperInk, padding: 14, minHeight: 100, whiteSpace: "pre-wrap" }),
+  rule("paper-line", { display: "inline", fontFamily: "patrick-hand", fontSize: 22, lineHeight: 1.25, color: paperInk, whiteSpace: "pre-wrap" }),
+  rule("paper-committed", { fontWeight: 400 }),
+  rule("paper-label", { flexShrink: 0, whiteSpace: "nowrap", fontFamily: "mono", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, color: dim }),
+  rule("paper-draft-area", { gap: 6, paddingTop: 10 }),
+  rule("paper-draft", { width: "100%", minHeight: 90, fontFamily: "patrick-hand", fontSize: 19, color: paperInk, backgroundColor: paper }),
+  rule("fax-identity", { width: "100%", alignItems: "center", gap: 12, flexWrap: "wrap" }),
+  rule("fax-controls", { width: "100%", alignItems: "center", gap: 6, flexWrap: "wrap", paddingBottom: 8, borderBottom: edge(titleLine) }),
+  rule("fax-name-entry", { minWidth: 100, flexGrow: 1 }),
+  rule("fax-count", { fontFamily: "mono", fontSize: 11, color: dim }),
+  rule("fax-body", { width: "100%", alignItems: "start", gap: 10, paddingTop: 10 }),
+  rule("fax-paper", { display: "block", backgroundColor: paper, color: paperInk, padding: 12, minHeight: 160 }),
+  rule("fax-directory-side", { gap: 8, minWidth: 0 }),
+  rule("fax-directory", { gap: 4, width: "100%", minWidth: 0 }),
+  rule("fax-directory-row", { alignItems: "center", justifyContent: "space-between", gap: 5, width: "100%", minWidth: 0, overflow: "hidden" }),
+  rule("fax-directory-name", { minWidth: 0, flexGrow: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }),
+  rule("fax-directory-target", { width: 58, minWidth: 58, flexShrink: 0, paddingLeft: 3, paddingRight: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }),
+  rule("fax-directory-nav", { justifyContent: "space-between", alignItems: "center", paddingTop: 6, minWidth: 0 }),
+  rule("fax-directory-page", { flexShrink: 0, minWidth: 76, whiteSpace: "nowrap" }),
+  rule("fax-directory-previous", { width: 58, minWidth: 58, flexShrink: 0, paddingLeft: 3, paddingRight: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }),
+  rule("fax-directory-next", { width: 36, minWidth: 36, flexShrink: 0, paddingLeft: 3, paddingRight: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }),
+  rule("copier-identity", { alignItems: "center", justifyContent: "space-between", gap: 8 }),
+  rule("copier-controls", { width: "100%", alignItems: "center", gap: 8, paddingBottom: 8, borderBottom: edge(titleLine) }),
+  rule("copier-paper", { display: "block", backgroundColor: paper, color: paperInk, padding: 12, minHeight: 180 }),
 ];

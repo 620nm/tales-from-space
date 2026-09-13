@@ -133,12 +133,27 @@ t.run_ticks(20)
 assert(t.door_at(6, 1).open, "the program opened the tagged door for the hand it just refused")
 assert(#t.ledger_rows("door_denied") == 1, "and refused nothing on the way")
 
--- The presser carried no claim and the guest was told so: the leaf
--- opened despite `engineering = false`, not because of it.
-local press
-for _, row in ipairs(t.ledger_rows("disl_run")) do
-    local event = row.env.Map.event.Map
-    if event.kind.String == "button" then press = event end
+-- The presser carried no claim and the guest was told so: the leaf opened
+-- despite `engineering = false`, not because of it. Transcript payload keys
+-- and strings are bounded hashes; the program slot row carries the stable
+-- provenance, while this checks no event body escaped into the transcript.
+local loaded = t.ledger_rows("disl_program_loaded")
+local installed = false
+for _, row in ipairs(loaded) do
+    if row.slot == "controller" and tostring(row.uid) == uid then installed = true end
 end
-assert(press ~= nil, "the press reached the guest")
-assert(press.engineering.Bool == false, "with the presser's missing claim spelled out")
+assert(installed, "the run is joined to its installed program slot")
+local runs = t.ledger_rows("disl_run")
+assert(#runs > 0, "the press reached the guest")
+local function contains_raw(value, marker)
+    if type(value) == "string" then return value:find(marker, 1, true) ~= nil end
+    if type(value) ~= "table" then return false end
+    for key, child in pairs(value) do
+        if contains_raw(key, marker) or contains_raw(child, marker) then return true end
+    end
+    return false
+end
+for _, row in ipairs(runs) do
+    assert(not contains_raw(row.env, "button"), "the event body is bounded in the audit row")
+    assert(not contains_raw(row.env, "engineering"), "the access body is bounded in the audit row")
+end

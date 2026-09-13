@@ -1,0 +1,33 @@
+{
+  "note": "Committed handwriting remains visible beside an editable Markdown draft.",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": true,
+    "state": {},
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "Paper",
+        "state": {
+          "document": "script",
+          "status": 2,
+          "data": {
+            "kind": "paper",
+            "name": "Captain's note",
+            "revision": 1,
+            "committed": [
+            { "text": "Meet at the airlock. ", "style": { "font_family": "patrick-hand", "color": "#202c2d", "weight": 400 } },
+            { "text": "Bring the red key.", "style": { "font_family": "patrick-hand", "color": "#bb2222", "weight": 700 } }
+          ],
+            "draft": "**Supply list**\n- oxygen\n- water"
+          },
+          "actions": [{ "id": "write", "input": 4096 }]
+        }
+      }
+    },
+    "log": []
+  },
+  "viewport": { "width": 1024, "height": 768, "dpr": 1 }
+}

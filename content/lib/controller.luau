@@ -2,11 +2,15 @@
 local controller = {}
 -- Opaque task resources only; deadlines and guest state remain entity-owned.
 local timers = {}
+local pending_services = {}
 
 local function members(host)
+    for key, pending in pairs(pending_services) do
+        if pending.host == nil or not pending.host.alive then pending_services[key] = nil end
+    end
     local hs = sim.link_state(host)
-    local handles, rows = {}, {}
-    if hs == nil or hs.suspended then return handles, rows end
+    local handles, rows, directory = {}, {}, {}
+    if hs == nil or hs.suspended then return handles, rows, directory end
     local reach = {}
     for _, obj in ipairs(sim.query.link_reach(host)) do
         local state = sim.link_state(obj)
@@ -25,7 +29,21 @@ local function members(host)
             end
         end
     end
-    return handles, rows
+    -- Keep the service directory separate from direct members. A reachable
+    -- service may be behind another endpoint and still be a legal target.
+    for _, service in ipairs({ "fax.print", "fax.send" }) do
+        local cursor = 0
+        local pages = 0
+        repeat
+            local page = sim.query.link_directory(host, service, cursor)
+            for _, row in ipairs(page.rows or {}) do
+                table.insert(directory, { mac = row.mac, service = row.service, name = row.name })
+            end
+            cursor = page.next
+            pages += 1
+        until cursor == nil or pages >= 32
+    end
+    return handles, rows, directory
 end
 
 local function finite(n, low, high)
@@ -33,6 +51,11 @@ local function finite(n, low, high)
 end
 local function token(s)
     return type(s) == "string" and #s > 0 and #s <= 64
+        and not s:find("%c")
+end
+local function address(s)
+    return type(s) == "string" and #s == 17 and s == s:lower()
+        and s:match("^%x%x%-%x%x%-%x%x%-%x%x%-%x%x%-%x%x$") ~= nil
 end
 
 -- The statuses a room hears. A button event's `voice` repeats one to every
@@ -74,6 +97,10 @@ local COMMAND_FIELDS = {
     bolt = { mac = true, op = true, id = true, bolted = true },
     vent = { mac = true, op = true, id = true, on = true, direction = true, target = true },
     watch = { mac = true, op = true, id = true, target = true, comparison = true, ticks = true },
+    -- The controller host originates an addressed service request. `to` is
+    -- data and native link.send checks the live tree and advertisement again.
+    service = { op = true, id = true, to = true, service = true, payload = true,
+        request = true },
 }
 
 -- Validate the complete plan before applying any of it.
@@ -89,6 +116,7 @@ local function valid(result, handles)
             or not finite(result.timer.ticks, 1, 1200) or result.timer.ticks % 1 ~= 0 then return false end
     end
     local count = 0
+    local services = 0
     for index, command in pairs(result.commands) do
         count += 1
         if type(index) ~= "number" or index % 1 ~= 0 or index < 1 or index > #result.commands
@@ -96,7 +124,7 @@ local function valid(result, handles)
         local allowed = COMMAND_FIELDS[command.op]
         if allowed == nil or not fields(command, allowed) then return false end
         local obj = handles[command.mac]
-        if obj == nil then return false end
+        if command.op ~= "service" and obj == nil then return false end
         if command.op == "open" or command.op == "close" then
             if sim.door.state(obj) == nil then return false end
         elseif command.op == "bolt" then
@@ -109,6 +137,11 @@ local function valid(result, handles)
             if sim.atmos.read(obj) == nil or not finite(command.target, 0, 1000)
                 or (command.comparison ~= "at_least" and command.comparison ~= "below")
                 or not finite(command.ticks, 1, 1200) or command.ticks % 1 ~= 0 then return false end
+        elseif command.op == "service" then
+            services += 1
+            if services > 1 then return false end
+            if not address(command.to) or not token(command.service)
+                or type(command.request) ~= "boolean" or command.payload == nil then return false end
         else return false end
     end
     return count == #result.commands
@@ -141,19 +174,55 @@ end
 
 -- `voice` is set for a button event only (see `status`).
 function controller.run(host, event, voice)
-    local handles, rows = members(host)
+    local service_state = pending_services[tostring(host)]
+    if event.kind == "timeout" and service_state and service_state.active
+        and service_state.active.id == event.id then
+        if service_state.active.token == nil then
+            service_state.active.abandoned = true
+        else
+            service_state.active = nil
+        end
+    end
+    local handles, rows, directory = members(host)
     -- An empty slot stops the cycle like a fault, but names the cause.
     if sim.disl.slot_program(host, "controller") == nil then
         fail(host, handles, "unprogrammed", voice)
         return false
     end
-    local answer = program_slot.run(host, "controller", { event = event, devices = rows })
+    local answer = program_slot.run(host, "controller", {
+        event = event, devices = rows, directory = directory,
+    })
     if not valid(answer, handles) then fail(host, handles, "fault", voice); return false end
     if answer.status then status(host, answer.status, voice) end
     if answer.replace then device_queue.clear(host) end
     schedule(host, answer.timer)
-    if #answer.commands > 0 then
-        if not device_queue.send(host, { kind = "device.commands", commands = answer.commands }) then
+    local device_commands = {}
+    for _, command in ipairs(answer.commands) do
+        if command.op == "service" then
+            local key = tostring(host)
+            local pending = pending_services[key] or { host = host, active = nil }
+            if pending.active ~= nil then
+                -- A second request cannot be admitted while its native token
+                -- is outstanding. Refuse it at the bridge boundary without
+                -- re-entering the guest (which could request it again).
+                status(host, "fault", voice)
+            else
+                pending.active = command
+            end
+            pending_services[key] = pending
+        else
+            table.insert(device_commands, command)
+        end
+    end
+    local pending = pending_services[tostring(host)]
+    if pending and pending.active ~= nil and pending.active.sent ~= true then
+        local command = pending.active
+        command.sent = true
+        sim.link.send({ subject = host, to = command.to, service = command.service,
+            payload = command.payload, request = command.request })
+    end
+    if #device_commands > 0 then
+        if not device_queue.send(host, { kind = "device.commands", commands = device_commands }) then
             fail(host, handles, "fault", voice)
         end
     end
@@ -225,7 +294,29 @@ end
 
 function controller.message(ev)
     local p = ev.payload
-    if type(p) == "table" and (p.kind == "buttons" or p.kind == "completions") then
+    if ev.service ~= nil then
+        -- Addressed traffic has its service name in the native occurrence,
+        -- not in the portable payload. Present one bounded guest event for
+        -- both delivery and private reply anchors.
+        if not token(ev.service) or p == nil then return end
+        local key = tostring(ev.self)
+        local pending = pending_services[key]
+        local active = pending and pending.active
+        if active == nil or active.token == nil or ev.correlation == nil
+            or active.token ~= ev.correlation or active.service ~= ev.service
+            or active.to ~= ev.from then return end
+        local payload = type(p) == "table" and p or {}
+        local expected = active.service == "fax.print" and "fax.printed"
+            or (active.service == "fax.send" and "fax.sent" or nil)
+        if payload.kind ~= expected and payload.kind ~= "fax.failed" then return end
+        if active.abandoned then pending.active = nil; pending_services[key] = nil; return end
+        pending.active = nil
+        pending_services[key] = nil
+        controller.run(ev.self, {
+            kind = "service", service = ev.service, payload = payload,
+            request_id = active.id,
+        })
+    elseif type(p) == "table" and (p.kind == "buttons" or p.kind == "completions") then
         if type(p.events) ~= "table" or #p.events > 16 then return end
         for _, request in ipairs(p.events) do
             if type(request) ~= "table" or (request.kind ~= "button" and request.kind ~= "door" and request.kind ~= "pressure") then return end
@@ -234,6 +325,31 @@ function controller.message(ev)
         for _, request in ipairs(p.events) do receive_one(ev, request, said) end
     else
         receive_one(ev, p, {})
+    end
+end
+
+function controller.service_send_done(ev)
+    if ev.self == nil or sim.disl.slot_program(ev.self, "controller") == nil then return end
+    if not token(ev.service) or not token(ev.outcome) then return end
+    local key = tostring(ev.self)
+    local pending = pending_services[key]
+    local active = pending and pending.active
+    if active == nil or active.to ~= ev.to or active.service ~= ev.service then return end
+    if active.abandoned then pending.active = nil; pending_services[key] = nil; return end
+    if ev.outcome == "completed" and ev.requested and ev.correlation ~= nil then
+        active.token = ev.correlation
+        return
+    end
+    if ev.outcome == "completed" then
+        pending.active = nil
+        pending_services[key] = nil
+        return
+    end
+    if ev.outcome ~= "completed" then
+        pending.active = nil
+        pending_services[key] = nil
+        controller.run(ev.self, { kind = "service", service = ev.service,
+            payload = { kind = "fax.failed" }, request_id = active.id })
     end
 end
 
