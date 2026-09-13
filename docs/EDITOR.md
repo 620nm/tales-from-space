@@ -10,7 +10,7 @@ Airlock previews cover public, engineering and interior paint, glass, open
 position and bolts. Open rules precede bolted rules: an open leaf has no bolt
 lamp. Closed bolted rules place the paint's bolt lamp over the selected leaf.
 These are authored editor appearances; live power and motion are simulation
-state. `content/structures/airlock.luau` owns the corresponding runtime art.
+state. `content/structures/access/airlock.luau` owns the corresponding runtime art.
 The same rules are declared for each airlock variant in both modes.
 
 To add a preview for another structure, add its `kind` and `id` to each
@@ -38,6 +38,6 @@ runtime structures are invisible and never appear in a player's world view.
 `player_spawn` exposes `weight`, `jobs` and `roles`. `threat_spawn` exposes
 `weight`. The number rows run from `0` through `1,000,000`; the words rows are
 comma-separated filters and default to empty. These editor defaults match the
-placement declarations in `content/structures/player_spawn.luau` and
-`content/structures/threat_spawn.luau`. Runtime selection and handler behavior
+placement declarations in `content/structures/spawns/player_spawn.luau` and
+`content/structures/spawns/threat_spawn.luau`. Runtime selection and handler behavior
 are documented in [`MAP-MARKERS.md`](MAP-MARKERS.md).
