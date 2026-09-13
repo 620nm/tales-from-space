@@ -36,7 +36,7 @@ local ARENA = [==[(
     ],
 )]==]
 
-local function said(who, needle)
+local function said(who: number, needle: string)
     return (" " .. table.concat(t.messages(who), " || ") .. " "):find(needle, 1, true) ~= nil
 end
 
@@ -49,28 +49,28 @@ local patient = t.join("assistant")
 local attendant = t.join("engineer")   -- somebody with a free hand for the drawer
 t.run_ticks(3)
 
-assert(t.body(patient).animate == true, "they start out alive")
-assert(t.organ_damage(patient, "heart") == 0, "with an undamaged heart")
+assert(assert(t.body(patient)).animate == true, "they start out alive")
+assert(assert(t.organ_damage(patient, "heart")) == 0, "with an undamaged heart")
 
 -- 200 brute is what the cadaver chamber's own stock row deals
 -- (content/structures/cadaver_chamber.luau), i.e. how this game makes a
 -- corpse.
 t.set_health(patient, { brute = 200 })
 t.run_ticks(2)
-assert(t.body(patient).animate == false, "200 brute is past the dead line")
-assert(t.body(patient).label == "Dead", "and the plan says the word")
-assert(t.organ_damage(patient, "heart") == 100,
-    "...and the crossing STOPPED THE HEART: " .. t.organ_damage(patient, "heart"))
-assert(t.capacity(patient, "blood") == 0, "a failing heart circulates nothing")
+assert(assert(t.body(patient)).animate == false, "200 brute is past the dead line")
+assert(assert(t.body(patient)).label == "Dead", "and the plan says the word")
+assert(assert(t.organ_damage(patient, "heart")) == 100,
+    "...and the crossing STOPPED THE HEART: " .. assert(t.organ_damage(patient, "heart")))
+assert(assert(t.capacity(patient, "blood")) == 0, "a failing heart circulates nothing")
 
 -- Now heal every part back to nothing. Under the old model this alone
 -- brought them back; now it clears one line and leaves the other.
 t.set_health(patient, { brute = 0, burn = 0, oxy = 0, tox = 0 })
 t.run_ticks(2)
-assert(t.parts(patient).chest.brute == 0, "the parts are whole again")
-assert(t.body(patient).animate == false,
+assert(assert(t.parts(patient)).chest.brute == 0, "the parts are whole again")
+assert(assert(t.body(patient)).animate == false,
     "PARTS HEALED, STILL DEAD: the dead line cleared and the heart did not")
-assert(t.organ_damage(patient, "heart") == 100, "the heart is where the death left it")
+assert(assert(t.organ_damage(patient, "heart")) == 100, "the heart is where the death left it")
 
 -- =====================================================================
 -- REVIVAL A: a defibrillator restarts the heart.
@@ -84,12 +84,12 @@ t.run_ticks(2)
 assert(said(medic, "charge the defibrillator"), "it charges")
 -- tg's five seconds end to end (defib.dm:564-568), and the shock lands
 -- at the end of it and not before.
-assert(t.body(patient).animate == false, "still dead half way through")
+assert(assert(t.body(patient)).animate == false, "still dead half way through")
 t.run_ticks(110)
 assert(said(medic, "heart restarts"), "the shock landed")
-assert(t.organ_damage(patient, "heart") < 100, "the heart is out of failure")
-assert(t.body(patient).animate == true, "AND THE BODY IS ALIVE AGAIN")
-assert(t.capacity(patient, "blood") > 0, "circulating")
+assert(assert(t.organ_damage(patient, "heart")) < 100, "the heart is out of failure")
+assert(assert(t.body(patient)).animate == true, "AND THE BODY IS ALIVE AGAIN")
+assert(assert(t.capacity(patient, "blood")) > 0, "circulating")
 
 -- =====================================================================
 -- The refusals, which are tg's `can_defib` in this pack's words
@@ -105,11 +105,11 @@ assert(said(medic, "heart is beating"), "you do not shock the living")
 -- plan's own `dead` line is the same claim, and it is still crossed.
 t.set_health(patient, { brute = 200 })
 t.run_ticks(2)
-assert(t.body(patient).animate == false, "dead again")
+assert(assert(t.body(patient)).animate == false, "dead again")
 t.click(medic, 2, 1, t.body_target(medic, patient))
 t.run_ticks(3)
 assert(said(medic, "too severe"), "treat them before you shock them")
-assert(t.organ_damage(patient, "heart") == 100, "and nothing was restarted")
+assert(assert(t.organ_damage(patient, "heart")) == 100, "and nothing was restarted")
 
 -- A brain too far gone: DEFIB_FAIL_FAILING_BRAIN (carbon.dm:830-831).
 -- This is the revival WINDOW, and it is a clock the map sets — a brain
@@ -122,11 +122,11 @@ t.set_health(patient, { brute = 0, burn = 0, oxy = 0, tox = 0 })
 t.run_ticks(2)
 t.set_organ_damage(patient, "brain", 200)
 t.run_ticks(2)
-assert(t.organ_damage(patient, "brain") == 200, "the brain has decayed to failure")
+assert(assert(t.organ_damage(patient, "brain")) == 200, "the brain has decayed to failure")
 t.click(medic, 2, 1, t.body_target(medic, patient))
 t.run_ticks(3)
 assert(said(medic, "too far gone"), "there is nothing to shock back")
-assert(t.body(patient).animate == false, "and they stay dead")
+assert(assert(t.body(patient)).animate == false, "and they stay dead")
 
 -- =====================================================================
 -- The charge is a TWO-PARTY wait. A body effect is applied without a
@@ -137,8 +137,8 @@ assert(t.body(patient).animate == false, "and they stay dead")
 -- =====================================================================
 t.set_organ_damage(patient, "brain", 0)
 t.run_ticks(2)
-assert(t.body(patient).animate == false, "a fresh corpse to work on")
-_ = t.messages(medic)
+assert(assert(t.body(patient)).animate == false, "a fresh corpse to work on")
+t.messages(medic)
 
 -- ---- the medic walks off mid-charge ----------------------------------
 -- The USER half, which the ordinary single-party guard already watched.
@@ -155,7 +155,7 @@ end
 assert(t.pos(medic) == 4, "two tiles clear of the patient: " .. t.pos(medic))
 t.run_ticks(120)
 assert(not said(medic, "heart restarts"), "a medic who walked off shocked nobody")
-assert(t.body(patient).animate == false, "still dead")
+assert(assert(t.body(patient)).animate == false, "still dead")
 for _ = 1, 3 do
     t.move(medic, "west")
     t.run_ticks(10)
@@ -168,11 +168,11 @@ assert(t.pos(medic) == 1, "back beside the patient")
 -- slab comes out onto the patient's own tile, so shutting it takes them
 -- with it (`sim/drawers.rs`: bodies are not dense and are exactly what a
 -- close is for).
-local chamber = t.target_at(attendant, 2, 2, "cadaver_chamber")
+local chamber = assert(t.target_at(attendant, 2, 2, "cadaver_chamber"), "the target is visible")
 t.click(attendant, 2, 2, chamber)
 t.run_ticks(2)
 assert(t.structure_at(2, 1) ~= nil, "the slab is out, under the patient")
-_ = t.messages(medic)
+t.messages(medic)
 t.click(medic, 2, 1, t.body_target(medic, patient))
 t.run_ticks(3)
 assert(said(medic, "charge the defibrillator"), "the charge started again")
@@ -181,6 +181,6 @@ t.run_ticks(2)
 assert(t.structure_at(2, 1) == nil, "the slab went back in")
 t.run_ticks(140)
 assert(not said(medic, "heart restarts"), "a stowed patient is not shocked")
-assert(t.body(patient).animate == false, "still dead in the drawer")
+assert(assert(t.body(patient)).animate == false, "still dead in the drawer")
 
 print("heart life: dying stops the heart, healing does not restart it, a defibrillator does")

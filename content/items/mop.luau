@@ -1,3 +1,5 @@
+local vessel = require("@lib/vessel")
+
 -- The mop: the one thing on the station that takes a puddle OFF the
 -- deck rather than putting one there.
 --
@@ -39,7 +41,7 @@ local content = {
     acts_on_items = true,
 }
 
-local vessel_spec = {
+local vessel_spec: vessel.Spec = {
     id = content.id,
     noun = "mop",
     -- A mop takes up liquid and leaves the salt on the deck.

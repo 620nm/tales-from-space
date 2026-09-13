@@ -1,3 +1,5 @@
+local action_rules = require("@lib/action_rules")
+
 -- The defibrillator: the other way a stopped heart starts again
 -- (docs/SURGERY.md §6.8; tg code/game/objects/items/tools/medical/
 -- defib.dm).
@@ -50,7 +52,7 @@ local content = {
 -- for "too hurt to be alive" -- `dead`. Restarting a heart under a body
 -- still past that line would revive it into a corpse on the next
 -- evaluation, so the refusal is the same refusal.
-local function refusal(patient)
+local function refusal(patient: Handle): Message?
     local body = sim.body(patient)
     if body == nil then
         return nil -- not a body at all; the swing is somebody else's business
@@ -64,7 +66,7 @@ local function refusal(patient)
         end
     end
     local heart, brain = nil, nil
-    for _, part in pairs(sim.parts(patient)) do
+    for _, part in pairs(assert(sim.parts(patient))) do
         heart = heart or (part.organs and part.organs.heart or nil)
         brain = brain or (part.organs and part.organs.brain or nil)
     end
@@ -80,7 +82,7 @@ local function refusal(patient)
     -- drawer's `preserves` multiplies that decay. The revival window is
     -- therefore a real clock a mapper set, and a preserved cadaver has
     -- no clock at all.
-    if sim.organ(brain).failing then
+    if assert(sim.organ(brain)).failing then
         return sim.msg("lunatic/tfs:items.defib.brain_gone", {})
     end
     return nil
@@ -142,9 +144,9 @@ if sim ~= nil then
             -- clear a threshold -- if the body is otherwise fit to live,
             -- the engine's own `viability` says so on this write and the
             -- plan's handler says the word.
-            for _, part in pairs(sim.parts(patient)) do
+            for _, part in pairs(assert(sim.parts(patient))) do
                 if part.organs and part.organs.heart then
-                    sim.heal_organ(patient, "heart", sim.organ(part.organs.heart).max)
+                    sim.heal_organ(patient, "heart", assert(sim.organ(part.organs.heart)).max)
                 end
             end
             sim.sound.play({ asset = "lunatic/tfs:sound/defib_success", at = user.tile })

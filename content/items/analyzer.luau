@@ -1,3 +1,5 @@
+local action_rules = require("@lib/action_rules")
+
 -- The analyzer: tg's `/obj/item/analyzer`
 -- (code/game/objects/items/devices/scanners/gas_analyzer.dm), and the
 -- one thing in an atmospherics technician's pocket that is pure
@@ -40,7 +42,7 @@
 
 -- tg's `round(n, 0.01)`, and tg's printing of the result: nearest
 -- hundredth, trailing zeros dropped.
-local function r2(n)
+local function r2(n: number): string
     local scaled = n * 100
     local rounded = if scaled >= 0 then math.floor(scaled + 0.5) else math.ceil(scaled - 0.5)
     return tostring(rounded / 100)
@@ -50,7 +52,7 @@ end
 -- atmos_core.dm:29), so a readout in K and one in degrees agree.
 local T0C = 273.15
 
-local function sentence_case(s)
+local function sentence_case(s: string): string
     return string.upper(string.sub(s, 1, 1)) .. string.sub(s, 2)
 end
 
@@ -60,10 +62,14 @@ end
 -- vessel in the pack is authored in (docs/luau-api/matter.md). A phase
 -- nothing is standing in is absent from the reading rather than zero,
 -- so an absence here is an absence there.
-local function collect(sample, phase)
-    local rows, names, order, total = {}, {}, {}, 0
+local function collect(sample: MatterRead, phase: "gas" | "liquid_ml" | "solid_ml")
+    local rows: {[string]: number} = {}
+    local names: {[string]: string} = {}
+    local order: {[string]: number} = {}
+    local total = 0
     for id, entry in pairs(sample.contents) do
-        local amount = entry[phase]
+        local amount = if phase == "gas" then entry.gas
+            elseif phase == "liquid_ml" then entry.liquid_ml else entry.solid_ml
         if amount ~= nil and amount > 0 then
             rows[id] = amount
             names[id] = entry.name
@@ -85,8 +91,9 @@ end
 -- station's own: the substance groups this pack declared first, the id
 -- inside each block. A printout that listed the air in a different
 -- order from every panel would be one more thing to hold in your head.
-local function print_rows(user, rows, names, order, total, unit)
-    local ids = {}
+local function print_rows(user: Handle, rows: {[string]: number}, names: {[string]: string},
+    order: {[string]: number}, total: number, unit: string)
+    local ids: {string} = {}
     for id in pairs(rows) do
         table.insert(ids, id)
     end
@@ -114,7 +121,7 @@ local function print_rows(user, rows, names, order, total, unit)
     end
 end
 
-local function report(user, of, sample)
+local function report(user: Handle, of: string, sample: MatterRead)
     sim.message.send({
         recipient = user,
         message = sim.msg("lunatic/tfs:items.analyzer.results", { of = of }),

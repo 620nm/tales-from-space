@@ -50,6 +50,8 @@
 -- is a source and a sink, and the books below are the ATMOSPHERICS
 -- engine's -- so the crew are switched off as scaffolding, the same
 -- standing `t.set_health` has.
+local ui_controls = require("@helpers/ui_controls")
+
 t.set_breathing(false)
 
 local T20C = 293.15
@@ -58,7 +60,7 @@ local TILE_L = 1000.0
 -- Stefan-Boltzmann, W/(m^2 K^4). Not a tg number: tg has no radiation.
 local SIGMA = 5.670374419e-8
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -78,7 +80,7 @@ local function pipe_total(x, y)
     return sum
 end
 
-local function room_moles(tiles)
+local function room_moles(tiles: {{number}})
     local sum = 0.0
     for _, tile in ipairs(tiles) do
         sum = sum + total(tile[1], tile[2])
@@ -91,7 +93,7 @@ end
 -- included -- it is the hull plate, massed as the slab it is
 -- (docs/MATTER-WORLD.md §5) -- but the maps in this file are laid in floor
 -- so that one deck capacity serves every tile in the arithmetic.
-local function deck_energy(tiles)
+local function deck_energy(tiles: {{number}})
     local sum = 0.0
     for _, tile in ipairs(tiles) do
         local deck = t.deck(tile[1], tile[2])
@@ -101,10 +103,10 @@ local function deck_energy(tiles)
     return sum
 end
 
-local function deck_capacity(tiles)
+local function deck_capacity(tiles: {{number}})
     local sum = 0.0
     for _, tile in ipairs(tiles) do
-        sum = sum + t.deck(tile[1], tile[2]).capacity
+        sum = sum + assert(t.deck(tile[1], tile[2])).capacity
     end
     return sum
 end
@@ -193,9 +195,9 @@ end
 local opening = analyzed(p, 2, 2)
 near(opening, T20C, 0.005, "a station opens at room temperature")
 local held_0 = room_moles(SEALED)
-local kpa_0 = t.room_pressure(2, 2)
+local kpa_0 = assert(t.room_pressure(2, 2))
 local deck_0 = deck_energy(SEALED)
-near(t.deck(2, 2).temperature, T20C, 1e-9, "the deck opens at room temperature too")
+near(assert(t.deck(2, 2)).temperature, T20C, 1e-9, "the deck opens at room temperature too")
 
 t.run_seconds(120)
 local later = analyzed(p, 2, 2)
@@ -208,8 +210,8 @@ t.run_seconds(20)
 local fouled = analyzed(p, 2, 2)
 near(room_moles(SEALED), held_0 + 10.0, 1e-6, "ten moles of carbon dioxide went in")
 assert(
-    t.room_pressure(2, 2) > kpa_0 + 3.0,
-    "the room is over-pressured for it: " .. kpa_0 .. " -> " .. t.room_pressure(2, 2)
+    assert(t.room_pressure(2, 2)) > kpa_0 + 3.0,
+    "the room is over-pressured for it: " .. kpa_0 .. " -> " .. assert(t.room_pressure(2, 2))
 )
 assert(
     fouled == opening,
@@ -273,8 +275,8 @@ local q = t.join()
 t.tick()
 local ROOM = { { 1, 1 }, { 2, 1 }, { 1, 2 }, { 2, 2 } }
 
-assert(t.structure_at(2, 1).id == "air_injector", "an injector in the corner")
-assert(t.structure_at(2, 1).state == "off", "off out of the crate")
+assert(assert(t.structure_at(2, 1)).id == "air_injector", "an injector in the corner")
+assert(assert(t.structure_at(2, 1)).state == "off", "off out of the crate")
 assert(t.turf(4, 1) == "wall", "its run is buried under the hull")
 assert(t.room_pressure(4, 1) == nil, "where there is no room for it to be part of")
 
@@ -285,13 +287,13 @@ assert(t.room_pressure(4, 1) == nil, "where there is no room for it to be part o
 -- They are, and it is checked rather than assumed: both are tg's
 -- standard 21/79, so one molar capacity serves the whole book.
 local n_pipe_0 = pipe_total(5, 1)
-local cv = t.pipe_energy(5, 1) / (n_pipe_0 * t.pipe_temperature(5, 1))
+local cv = assert(t.pipe_energy(5, 1)) / (n_pipe_0 * assert(t.pipe_temperature(5, 1)))
 assert(cv > 1.0, "the run's molar heat capacity is readable: " .. cv)
-near(t.pipe_temperature(5, 1), T20C, 0.01, "and it opens at room temperature")
+near(assert(t.pipe_temperature(5, 1)), T20C, 0.01, "and it opens at room temperature")
 
 local n_room_0 = room_moles(ROOM)
-local function o2_share(gas, n)
-    return gas.o2 / n
+local function o2_share(gas: {[string]: number}?, n: number)
+    return assert(gas).o2 / n
 end
 near(
     o2_share(t.pipe_gas(5, 1), n_pipe_0),
@@ -313,8 +315,8 @@ assert(
 -- ---- the gradient ----
 t.heat_pipe(5, 1, 300000.0)
 t.tick()
-local hot_k = t.pipe_temperature(5, 1)
-local pipe_e0 = t.pipe_energy(5, 1)
+local hot_k = assert(t.pipe_temperature(5, 1))
+local pipe_e0 = assert(t.pipe_energy(5, 1))
 local energy_0 = pipe_e0 + n_room_0 * cv * T20C + deck_e0
 -- The book's fourth column: what leaves through the hull. The sky here
 -- is at the station's OPENING temperature, so it is inert until the
@@ -340,11 +342,11 @@ t.run_ticks(2)
 t.swap_hands(q)
 t.click(q, 2, 1, t.target_at(q, 2, 1, "air_injector"))
 t.tick()
-assert(t.ui(q).setpoints[1].field == "rate", "the injector's dial is a volume rate")
+assert(ui_controls.rows(ui_controls.state(q).setpoints)[1].field == "rate", "the injector's dial is a volume rate")
 ui_controls.set(q, "rate", 200)
 ui_controls.toggle(q, "power")
 t.run_ticks(2)
-assert(t.structure_at(2, 1).state == "injecting", "and it is running")
+assert(assert(t.structure_at(2, 1)).state == "injecting", "and it is running")
 
 t.run_seconds(30)
 assert(
@@ -378,8 +380,8 @@ local air_1 = n_room_1 * cv * blended
 local deck_1 = deck_energy(ROOM)
 
 assert(
-    t.pipe_energy(5, 1) < pipe_e0 * 1e-6,
-    "the run kept nothing back: " .. t.pipe_energy(5, 1)
+    assert(t.pipe_energy(5, 1)) < pipe_e0 * 1e-6,
+    "the run kept nothing back: " .. assert(t.pipe_energy(5, 1))
 )
 local radiated_1 = t.space_radiated() - radiated_0
 assert(radiated_1 > 0.0, "the warmed hull did radiate: " .. radiated_1)
@@ -427,7 +429,7 @@ assert(
 -- without the pressure following would be a thermometer disagreeing
 -- with the station it is standing in.
 near(
-    t.room_pressure(px, py),
+    assert(t.room_pressure(px, py)),
     total(px, py) * R_GAS * blended / TILE_L,
     0.05,
     "and the gauge on the wall agrees with the thermometer in your hand"
@@ -446,7 +448,7 @@ near(
 -- dT/dt = -sigma*A*T^4/C, which integrates to
 -- 1/T1^3 - 1/T0^3 = 3*sigma*A*t/C, so where it is after ten minutes is
 -- arithmetic and not a guess. Both halves of that are readable: C is
--- `t.deck(x, y).capacity`, and A is emissivity times area -- 0.5 for
+-- `assert(t.deck(x, y)).capacity`, and A is emissivity times area -- 0.5 for
 -- painted steel (content/tuning.luau) over two slab faces per solid,
 -- because a deck has a face over it and a face under it, plus the same
 -- again for each of the four walls, every one of which leans on this
@@ -479,15 +481,15 @@ t.world([==[(
 t.set_environment({ sink_k = 2.7, insolation = 0 })
 t.tick()
 
-local cell_c = t.deck(1, 1).capacity
+local cell_c = assert(t.deck(1, 1)).capacity
 near(
     cell_c,
     20000.0 + 4.0 * 62500.0,
     1e-6,
     "the deck is its own 20 000 J/K plus four walls that lean on nothing else"
 )
-near(t.deck(1, 1).temperature, T20C, 1e-9, "and it opens at room temperature")
-local radiated_0 = t.space_radiated()
+near(assert(t.deck(1, 1)).temperature, T20C, 1e-9, "and it opens at room temperature")
+local cell_radiated_0 = t.space_radiated()
 
 -- 0.5 emissivity, two slab faces, one square metre a tile: the deck's
 -- own share, plus one whole wall's share for each of the four.
@@ -503,13 +505,13 @@ assert(T20C - closed >= 4.0, "ten minutes in dead space is worth real kelvin: " 
 -- (8 s), so a reading taken between two visits lags by up to a stride of
 -- radiation -- about 0.06 K on this deck (docs/matter-world/thermal.md).
 near(
-    t.deck(1, 1).temperature,
+    assert(t.deck(1, 1)).temperature,
     closed,
     0.15,
     "AND THE DECK IS WHERE THE FOURTH-POWER LAW PUTS IT"
 )
 assert(
-    t.space_radiated() - radiated_0 >= 1.0,
+    t.space_radiated() - cell_radiated_0 >= 1.0,
     "with the joules booked as having left the world: " .. t.space_radiated()
 )
 
@@ -556,12 +558,12 @@ t.world([==[(
 t.set_environment({ sink_k = 2.7, insolation = 0 })
 t.tick()
 
-near(t.deck(1, 1).capacity, 20000.0 + 2.0 * 62500.0, 1e-6, "a corner leans on two walls")
-near(t.deck(2, 2).capacity, 20000.0, 1e-6, "and the middle of the floor on none")
+near(assert(t.deck(1, 1)).capacity, 20000.0 + 2.0 * 62500.0, 1e-6, "a corner leans on two walls")
+near(assert(t.deck(2, 2)).capacity, 20000.0, 1e-6, "and the middle of the floor on none")
 
 t.run_seconds(600)
-local corner_k = t.deck(1, 1).temperature
-local middle_k = t.deck(2, 2).temperature
+local corner_k = assert(t.deck(1, 1)).temperature
+local middle_k = assert(t.deck(2, 2)).temperature
 assert(T20C - corner_k >= 1.0, "the corner cooled: " .. corner_k)
 assert(
     corner_k - middle_k >= 2.0,
@@ -601,10 +603,10 @@ t.world([==[(
 
 t.set_environment({ sink_k = 2.7, insolation = 2700 })
 t.tick()
-near(t.deck(1, 1).temperature, T20C, 1e-9, "the same deck, opening at the same place")
+near(assert(t.deck(1, 1)).temperature, T20C, 1e-9, "the same deck, opening at the same place")
 
 t.run_seconds(600)
-local warmed = t.deck(1, 1).temperature
+local warmed = assert(t.deck(1, 1)).temperature
 assert(warmed - T20C >= 5.0, "ten minutes sunward warms the deck: " .. warmed)
 assert(
     t.space_radiated() <= 0.0,

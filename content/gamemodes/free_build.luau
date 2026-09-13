@@ -1,3 +1,6 @@
+local map_markers = require("@lib/map_markers")
+local shift = require("@lib/shift")
+
 -- Development construction playground: a connection owns one disposable
 -- body and supplies never run out.
 --

@@ -26,6 +26,8 @@
 -- ...and then the machine that was built for this. A scrubber pointed
 -- at chlorine takes chlorine out of the room and leaves the air, which
 -- is a question about WHICH gas and therefore asserted in moles.
+local ui_controls = require("@helpers/ui_controls")
+
 local BREATH = 160 -- one breath cycle, 8 s at 20 Hz
 
 t.world([==[(
@@ -81,7 +83,7 @@ local ROOM = {
     { 1, 1 }, { 2, 1 }, { 3, 1 }, { 4, 1 },
     { 1, 2 }, { 2, 2 }, { 3, 2 }, { 4, 2 },
 }
-local function room(key)
+local function room(key: string)
     local n = 0
     for _, tile in ipairs(ROOM) do
         local gases = t.room_gas(tile[1], tile[2])
@@ -90,7 +92,7 @@ local function room(key)
     return n
 end
 
-local function pipe(key)
+local function pipe(key: string)
     local held = t.pipe_gas(5, 1, 2)
     return (held and held[key]) or 0.0
 end
@@ -167,7 +169,7 @@ assert(one > 0.5, "one bottleful boiled off into the room: " .. one .. " mol")
 -- the closet is eight cubic metres, so the partial pressure the moles
 -- imply is the partial pressure a gauge would read.
 local function partial()
-    return room("chlorine") * 8.314 * t.room_temperature(2, 1) / (#ROOM * 1000.0)
+    return room("chlorine") * 8.314 * assert(t.room_temperature(2, 1)) / (#ROOM * 1000.0)
 end
 assert(partial() > 0.2, "which is a real partial pressure: " .. partial() .. " kPa")
 
@@ -203,11 +205,13 @@ for _ = 1, 10 do
 end
 
 assert(t.blood(chemist) ~= nil, "a body has a bloodstream to read")
-assert(t.health(chemist).oxy > 10, "it is hurting them: " .. t.health(chemist).oxy)
+local chemist_oxy = ui_controls.number(t.health(chemist).oxy)
+assert(chemist_oxy > 10, "it is hurting them: " .. chemist_oxy)
 assert(t.health(chemist).animate, "but they are still on their feet")
 
 assert((t.blood(diver).chlorine or 0) == 0, "the valve kept it out of the diver")
-assert(t.health(diver).oxy == 0, "who is entirely fine: " .. t.health(diver).oxy)
+local diver_oxy = ui_controls.number(t.health(diver).oxy)
+assert(diver_oxy == 0, "who is entirely fine: " .. diver_oxy)
 
 -- ONE ROW, NOT NINETY. The first breath of a substance is a ledger row
 -- and the rest are not (sim/breathing.rs, the ReactedInHolder
@@ -252,9 +256,10 @@ local before_n2 = room("n2")
 -- tank is the crewman who can still cross the room and press a switch.
 t.click(diver, 4, 1, assert(t.target_at(diver, 4, 1, scrubber)))
 t.tick()
-local roster = {}
-for _, sw in ipairs(t.ui(diver).toggles) do
+local roster: {[string]: boolean} = {}
+for _, sw in ipairs(ui_controls.rows(ui_controls.state(diver).toggles)) do
     if sw.field == "filter" then
+        assert(type(sw.option) == "string" and type(sw.on) == "boolean", "a filter has a named switch")
         roster[sw.option] = sw.on
     end
 end
@@ -284,5 +289,5 @@ assert(math.abs((pipe("chlorine") - before_pipe) - moved) < 5e-3,
 -- difference between a scrubber and a siphon.
 assert(math.abs(room("o2") - before_o2) < 0.05 * before_o2, "the oxygen stayed")
 assert(math.abs(room("n2") - before_n2) < 0.05 * before_n2, "and so did the nitrogen")
-assert(t.room_pressure(2, 2) > 80.0,
-    "the closet still has its atmosphere: " .. t.room_pressure(2, 2) .. " kPa")
+assert(assert(t.room_pressure(2, 2)) > 80.0,
+    "the closet still has its atmosphere: " .. assert(t.room_pressure(2, 2)) .. " kPa")

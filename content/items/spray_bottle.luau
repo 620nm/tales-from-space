@@ -1,3 +1,5 @@
+local action_rules = require("@lib/action_rules")
+
 local SPRAY, STREAM = 0, 1
 local content = {
     id = "spray_bottle", name_label = "lunatic/tfs:entity.spray_bottle.name", name = "spray bottle", sprite = "spray_bottle",
@@ -9,7 +11,7 @@ content.actions = { action_rules.primary("spray", true) }
 if sim ~= nil then
     local d = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     d:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
-        local next_mode = (sim.mode(ev.subject).index + 1) % 2
+        local next_mode = (assert(sim.mode(ev.subject)).index + 1) % 2
         sim.set_mode(ev.subject, next_mode)
         sim.message.send({
             recipient = ev.actor,
@@ -23,7 +25,7 @@ if sim ~= nil then
         local target = ev.at
         if ev.claim ~= nil and ev.claim.entity ~= nil then target = ev.claim.entity end
         sim.matter.spray({ from = ev.subject, target = target,
-            mode = sim.mode(ev.subject).index == STREAM and "stream" or "spray" })
+            mode = assert(sim.mode(ev.subject)).index == STREAM and "stream" or "spray" })
         return true
     end)
 end

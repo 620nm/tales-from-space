@@ -19,7 +19,9 @@
 -- rule: a facing somebody chose is never a facing the fit may
 -- overrule.
 
-local function near(a, b, slack, what)
+local ui_controls = require("@helpers/ui_controls")
+
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -65,23 +67,23 @@ t.tick()
 local pump = t.structure_at(3, 2)
 assert(pump ~= nil and pump.id == "volume_pump", "the map stood one there")
 assert(pump.state == "off", "and tg's ships off")
-assert(t.structure_at(4, 2).sprite == "connector_port_w", "the socket reaches the pump")
+assert(assert(t.structure_at(4, 2)).sprite == "connector_port_w", "the socket reaches the pump")
 assert(t.pipe(4, 2) == 0, "with no length of pipe under it or beside it")
 
-local charged = t.pipe_pressure(1, 2)
+local charged = assert(t.pipe_pressure(1, 2))
 assert(charged > 90.0, "the mapped main opened the shift commissioned: " .. charged)
 
 -- Nothing moves while it is off, which is what makes the next number
 -- mean something.
 t.run_seconds(5)
-near(t.pipe_pressure(1, 2), charged, 0.001, "a pump that is off is a wall")
+near(assert(t.pipe_pressure(1, 2)), charged, 0.001, "a pump that is off is a wall")
 
 t.click(p, 3, 2, t.target_at(p, 3, 2, "volume_pump"))
 t.tick()
 assert(t.ui(p), "the pump wears a panel")
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
-assert(t.structure_at(3, 2).state == "running", "it is on")
+assert(assert(t.structure_at(3, 2)).state == "running", "it is on")
 
 -- A volumetric pump has no notion of arriving (flow_devices_test.luau):
 -- it keeps moving its input port's share and never asks whether the far
@@ -91,7 +93,7 @@ assert(t.structure_at(3, 2).state == "running", "it is on")
 -- only place on this map the gas can be, and the main can only have
 -- paid it if the fit found a mouth where there was no length of pipe.
 t.run_seconds(60)
-local settled = t.pipe_pressure(1, 2)
+local settled = assert(t.pipe_pressure(1, 2))
 assert(
     settled < charged * 0.05,
     "the main emptied itself through the pump into the socket: "

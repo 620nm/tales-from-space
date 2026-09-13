@@ -102,14 +102,15 @@ local ROSTER = {
 -- ---------------------------------------------------------------
 t.world(MAP, 7)
 local sky = t.environment()
+local sky_profile = assert(sky.profile)
 assert(ROSTER[sky.id] ~= nil, "the roll is one of the roster's own: " .. sky.id)
 assert(
     sky.insolation == ROSTER[sky.id],
     sky.id .. " arrives with the sunlight the mode file gave it: " .. sky.insolation
 )
 assert(sky.sink_k == TCMB, "and the sink is the microwave background: " .. sky.sink_k)
-assert(sky.profile.gravity_m_s2 == STANDARD_GRAVITY, "the profile carries standard gravity")
-assert(sky.profile.background == "space_backdrop", "the profile carries the backdrop")
+assert(sky_profile.gravity_m_s2 == STANDARD_GRAVITY, "the profile carries standard gravity")
+assert(sky_profile.background == "space_backdrop", "the profile carries the backdrop")
 assert(#sky.name > 0, "a sky has something to call it: " .. tostring(sky.name))
 
 -- Shipped stations retain their commissioned walking contract even though
@@ -122,7 +123,7 @@ for _, map in ipairs({
 }) do
     t.world_file(map, 7)
     assert(
-        t.environment().profile.gravity_m_s2 == STANDARD_GRAVITY,
+        assert(t.environment().profile).gravity_m_s2 == STANDARD_GRAVITY,
         map .. " keeps standard gravity"
     )
 end
@@ -146,7 +147,7 @@ for seed = 1, 40 do
     t.world(MAP, seed)
     local id = t.environment().id
     assert(ROSTER[id] ~= nil, "every seed lands on the roster: " .. id)
-    assert(t.environment().profile.gravity_m_s2 == STANDARD_GRAVITY, "the fixture filters zero gravity")
+    assert(assert(t.environment().profile).gravity_m_s2 == STANDARD_GRAVITY, "the fixture filters zero gravity")
     if not seen[id] then
         seen[id] = true
         distinct = distinct + 1
@@ -161,11 +162,12 @@ for _, mode in ipairs({ "space_station", "free_build" }) do
     for seed = 1, 3 do
         t.world(UNRESTRICTED_MAP, seed, mode)
         local selected = t.environment()
+        local selected_profile = assert(selected.profile)
         assert(
-            selected.profile.gravity_m_s2 == STANDARD_GRAVITY or selected.profile.gravity_m_s2 == 0,
+            selected_profile.gravity_m_s2 == STANDARD_GRAVITY or selected_profile.gravity_m_s2 == 0,
             "the unrestricted map selects a declared gravity"
         )
-        assert(selected.profile.background == "space_backdrop", "the selected space backdrop is valid")
+        assert(selected_profile.background == "space_backdrop", "the selected space backdrop is valid")
     end
 end
 
@@ -174,9 +176,10 @@ end
 for _, mode in ipairs({ "space_station", "free_build" }) do
     t.world(ZERO_GRAVITY_MAP, 7, mode)
     local zero = t.environment()
+    local zero_profile = assert(zero.profile)
     assert(zero.id == "microgravity", "an Exact(0) map selects microgravity")
-    assert(zero.profile.gravity_m_s2 == 0, "the selected profile is exactly zero")
-    assert(zero.profile.background == "space_backdrop", "zero gravity still has a space backdrop")
+    assert(zero_profile.gravity_m_s2 == 0, "the selected profile is exactly zero")
+    assert(zero_profile.background == "space_backdrop", "zero gravity still has a space backdrop")
 end
 
 -- A narrow range and a named backdrop are the same physical filter: both
@@ -184,9 +187,10 @@ end
 for _, mode in ipairs({ "space_station", "free_build" }) do
     t.world(MICROGRAVITY_FILTER_MAP, 7, mode)
     local filtered = t.environment()
+    local filtered_profile = assert(filtered.profile)
     assert(filtered.id == "microgravity", "the range and backdrop select microgravity")
-    assert(filtered.profile.gravity_m_s2 == 0, "the range includes only zero gravity here")
-    assert(filtered.profile.background == "space_backdrop", "the exact backdrop is preserved")
+    assert(filtered_profile.gravity_m_s2 == 0, "the range includes only zero gravity here")
+    assert(filtered_profile.background == "space_backdrop", "the exact backdrop is preserved")
 end
 
 -- ---------------------------------------------------------------

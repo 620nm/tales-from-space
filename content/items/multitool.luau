@@ -1,3 +1,5 @@
+local action_rules = require("@lib/action_rules")
+
 -- Reads what a wire is doing before you cut it, and defeats a safety
 -- interlock if you would rather it did that.
 --

@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- What the panel says while the machine works, and what it says when
 -- the station stops paying for it.
 --
@@ -29,22 +31,20 @@ local T20C = 293.15
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function row(ui, label)
-    for _, r in ipairs(ui.readouts) do
+local function row(value: unknown, label: string): ui_controls.Record
+    local panel = ui_controls.record(value)
+    for _, r in ipairs(ui_controls.rows(panel.readouts)) do
         if word(r.label) == label then
             return r
         end
     end
-    return nil
+    error("missing readout: " .. label)
 end
 
 local function pass()
@@ -84,9 +84,9 @@ local p = t.join()
 t.tick()
 t.run_seconds(3) -- the electrical pass is 0.5 Hz; let one land
 
-assert(t.structure_at(5, 1).id == "thermomachine", "a unit stands on the bench")
-assert(t.structure_at(5, 1).state == "off", "switched off out of the crate")
-assert(t.apc_at(2, 2).equipment == true, "with the bench's APC feeding its circuit")
+assert(assert(t.structure_at(5, 1)).id == "thermomachine", "a unit stands on the bench")
+assert(assert(t.structure_at(5, 1)).state == "off", "switched off out of the crate")
+assert(assert(t.apc_at(2, 2)).equipment == true, "with the bench's APC feeding its circuit")
 assert(t.segment_at(5, 1).feed == 1, "which reaches the machine's own tile")
 
 t.click(p, 5, 1, t.target_at(p, 5, 1, "thermomachine"))
@@ -100,35 +100,35 @@ assert(t.ui(p), "the unit answers an empty hand with its panel")
 -- says neither: the gas is ON the setpoint, and a machine sitting on
 -- its setpoint is idle for a reason of its own rather than stopped.
 -- ---------------------------------------------------------------
-near(t.ui(p).setpoints[1].value, T20C, 0.01, "the thermostat opens at tg's T20C")
-near(t.pipe_temperature(3, 1), T20C, 0.5, "and the run opens there too")
-assert(row(t.ui(p), "thermo.pipe").tone == "idle", "so the panel says the gas is on the dial")
-assert(row(t.ui(p), "thermo.supply").value.id == "thermo.supply.fed", "and that the mains are behind it")
+near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value), T20C, 0.01, "the thermostat opens at tg's T20C")
+near(assert(t.pipe_temperature(3, 1)), T20C, 0.5, "and the run opens there too")
+assert(row(ui_controls.state(p), "thermo.pipe").tone == "idle", "so the panel says the gas is on the dial")
+assert(ui_controls.record(row(ui_controls.state(p), "thermo.supply").value).id == "thermo.supply.fed", "and that the mains are behind it")
 
 -- Dial well above the gas and the tone flips before a single joule
 -- moves: this is the setpoint's side of the comparison changing, not
 -- the machine's.
 ui_controls.set(p, "temperature", 500)
 t.tick()
-assert(row(t.ui(p), "thermo.pipe").tone == "off", "the gas is under the dial, and the panel says so")
-near(t.pipe_temperature(3, 1), T20C, 0.5, "with nothing switched on and nothing moved")
+assert(row(ui_controls.state(p), "thermo.pipe").tone == "off", "the gas is under the dial, and the panel says so")
+near(assert(t.pipe_temperature(3, 1)), T20C, 0.5, "with nothing switched on and nothing moved")
 
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
-assert(t.structure_at(5, 1).state == "running", "now it is running")
+assert(assert(t.structure_at(5, 1)).state == "running", "now it is running")
 
 pass()
-local climbed = t.pipe_temperature(3, 1)
+local climbed = assert(t.pipe_temperature(3, 1))
 assert(climbed > T20C + 100.0, "and one pass takes this short run most of the way: " .. climbed)
 assert(climbed < 500.0 - 5.0, "though not all of it -- the job is not finished: " .. climbed)
-assert(row(t.ui(p), "thermo.pipe").tone == "off", "so the gas is still under the dial")
+assert(row(ui_controls.state(p), "thermo.pipe").tone == "off", "so the gas is still under the dial")
 
 -- ...and now the dial goes UNDER the gas, which is the third tone and
 -- the one that only a machine that heats AND cools can ever show.
 ui_controls.set(p, "temperature", 300)
 t.tick()
-assert(row(t.ui(p), "thermo.pipe").tone == "on", "the gas is over the dial now, and only the dial moved")
-near(t.ui(p).gauge, (300.0 - 73.15) / 500.0 * 100.0, 1e-9, "with the needle at the new setting's place")
+assert(row(ui_controls.state(p), "thermo.pipe").tone == "on", "the gas is over the dial now, and only the dial moved")
+near(ui_controls.number(ui_controls.state(p).gauge), (300.0 - 73.15) / 500.0 * 100.0, 1e-9, "with the needle at the new setting's place")
 
 -- ---------------------------------------------------------------
 -- AND THE STATION STOPS PAYING, MID-JOB.
@@ -140,24 +140,24 @@ near(t.ui(p).gauge, (300.0 - 73.15) / 500.0 * 100.0, 1e-9, "with the needle at t
 -- agree in the same tick -- and the ONE of them that must not change is
 -- the switch, because nobody threw it.
 -- ---------------------------------------------------------------
-local caught_k = t.pipe_temperature(3, 1)
-local caught_j = t.pipe_energy(3, 1)
+local caught_k = assert(t.pipe_temperature(3, 1))
+local caught_j = assert(t.pipe_energy(3, 1))
 assert(caught_k > 300.0 + 100.0, "there is a real job in front of it: " .. caught_k .. " K, dialled to 300")
 
 t.outage()
 t.run_seconds(3)
 
 assert(t.ledger_has("PowerOutage"), "the fault is on the record")
-assert(t.apc_at(2, 2).equipment == false, "the APC has nothing to hand the equipment channel")
+assert(assert(t.apc_at(2, 2)).equipment == false, "the APC has nothing to hand the equipment channel")
 assert(t.segment_at(5, 1).l1 ~= nil, "the cable under the machine is still cable")
 assert(t.segment_at(5, 1).feed == nil, "but nothing on it is carrying")
 assert(
-    t.structure_at(5, 1).state == "off",
+    assert(t.structure_at(5, 1)).state == "off",
     "and the unit is drawn stopped, which is `on && is_operational` picking the picture"
 )
-assert(t.ui(p).toggles[1].on == true, "while the switch is exactly where the engineer left it")
-assert(row(t.ui(p), "thermo.supply").value.id == "thermo.supply.dead", "the panel says which of the two it is")
-near(t.ui(p).setpoints[1].value, 300.0, 1e-9, "and the thermostat kept its setting through the fault")
+assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == true, "while the switch is exactly where the engineer left it")
+assert(ui_controls.record(row(ui_controls.state(p), "thermo.supply").value).id == "thermo.supply.dead", "the panel says which of the two it is")
+near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value), 300.0, 1e-9, "and the thermostat kept its setting through the fault")
 
 -- The gas is left standing precisely where the last fed pass put it.
 -- Not "roughly": an unpowered thermomachine is not a slow one, and a
@@ -165,12 +165,12 @@ near(t.ui(p).setpoints[1].value, 300.0, 1e-9, "and the thermostat kept its setti
 -- quietly drawing.
 for n = 1, 6 do
     t.run_seconds(10)
-    near(t.pipe_temperature(3, 1), caught_k, 1e-9, "sample " .. n .. ": the gas has not moved")
-    near(t.pipe_energy(3, 1), caught_j, 1e-6, "and neither has its joule book")
+    near(assert(t.pipe_temperature(3, 1)), caught_k, 1e-9, "sample " .. n .. ": the gas has not moved")
+    near(assert(t.pipe_energy(3, 1)), caught_j, 1e-6, "and neither has its joule book")
 end
 assert(
-    t.pipe_temperature(3, 1) > 300.0 + 100.0,
-    "the job it was doing is still sitting there untouched: " .. t.pipe_temperature(3, 1)
+    assert(t.pipe_temperature(3, 1)) > 300.0 + 100.0,
+    "the job it was doing is still sitting there untouched: " .. assert(t.pipe_temperature(3, 1))
 )
 
 -- A dead machine takes orders perfectly happily -- the panel is fed by
@@ -178,18 +178,18 @@ assert(
 -- act on them.
 ui_controls.set(p, "temperature", 73.15)
 t.run_ticks(2)
-near(t.ui(p).setpoints[1].value, 73.15, 1e-9, "the dial goes to the stop while the grid is dark")
-near(t.ui(p).gauge, 0.0, 1e-9, "and the needle with it")
-assert(row(t.ui(p), "thermo.pipe").tone == "on", "the tone still reads the two numbers it is given")
+near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value), 73.15, 1e-9, "the dial goes to the stop while the grid is dark")
+near(ui_controls.number(ui_controls.state(p).gauge), 0.0, 1e-9, "and the needle with it")
+assert(row(ui_controls.state(p), "thermo.pipe").tone == "on", "the tone still reads the two numbers it is given")
 t.run_seconds(30)
-near(t.pipe_temperature(3, 1), caught_k, 1e-9, "and not one joule followed the order")
+near(assert(t.pipe_temperature(3, 1)), caught_k, 1e-9, "and not one joule followed the order")
 
 -- The switch survives being thrown while dead, too: off is a position
 -- somebody chose, and a machine that came back up on its own would be
 -- one that ignored the last hand on it.
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
-assert(t.ui(p).toggles[1].on == false, "the switch went over on a dead grid")
-assert(t.structure_at(5, 1).state == "off", "and the picture is the same either way, which is the point")
+assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == false, "the switch went over on a dead grid")
+assert(assert(t.structure_at(5, 1)).state == "off", "and the picture is the same either way, which is the point")
 t.run_seconds(20)
-near(t.pipe_temperature(3, 1), caught_k, 1e-9, "with the gas still exactly where the blackout left it")
+near(assert(t.pipe_temperature(3, 1)), caught_k, 1e-9, "with the gas still exactly where the blackout left it")

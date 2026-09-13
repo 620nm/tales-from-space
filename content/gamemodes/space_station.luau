@@ -1,3 +1,7 @@
+local map_markers = require("@lib/map_markers")
+local preparation = require("@lib/preparation")
+local shift = require("@lib/shift")
+
 -- The full station round: persistent characters, finite supplies, and an
 -- hour on the clock. A crewman the pack calls dead may leave the body
 -- behind and return to the job board as somebody new; the corpse stays

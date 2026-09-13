@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- A pump with no wire under it, and the socket across the room that
 -- runs it.
 --
@@ -21,13 +23,10 @@
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function readout(p, label)
-    for _, r in ipairs(t.ui(p).readouts) do
+local function readout(p: number, label: string): string?
+    for _, r in ipairs(ui_controls.rows(ui_controls.state(p).readouts)) do
         if word(r.label) == label then
             return word(r.value)
         end
@@ -78,14 +77,14 @@ t.tick()
 -- Both mains, as the map commissioned them and before anything has had
 -- a chance to move a mole. The boot settles the grid before the first
 -- tick, so the far pump has never been fed for an instant.
-local charged = t.pipe_pressure(4, 2)
-local far = t.pipe_pressure(9, 2)
+local charged = assert(t.pipe_pressure(4, 2))
+local far = assert(t.pipe_pressure(9, 2))
 assert(charged > 90.0, "the near main opened the shift commissioned: " .. charged)
 assert(far > 90.0, "and so did the far one: " .. far)
 
 assert(t.cable_at(6, 2) == 0, "there is no wire under the near pump at all")
 assert(t.cable_at(11, 2) == 0, "nor under the far one")
-assert(t.structure_at(6, 2).id == "volume_pump", "the map stood one there")
+assert(assert(t.structure_at(6, 2)).id == "volume_pump", "the map stood one there")
 
 -- ---------------------------------------------------------------
 -- THREE CELLS FROM THE SOCKET: CORDED, AND IT RUNS.
@@ -101,18 +100,18 @@ t.ui_close(p)
 t.tick()
 
 assert(
-    t.structure_at(6, 2).sprite == "volpump_on_e",
-    "and it is drawn running: " .. tostring(t.structure_at(6, 2).sprite)
+    assert(t.structure_at(6, 2)).sprite == "volpump_on_e",
+    "and it is drawn running: " .. tostring(assert(t.structure_at(6, 2)).sprite)
 )
 
 t.run_seconds(60)
-local drained = t.pipe_pressure(4, 2)
+local drained = assert(t.pipe_pressure(4, 2))
 assert(
     drained < charged * 0.05,
     "the corded pump emptied its main into the run in front of it: "
         .. charged .. " -> " .. drained
 )
-assert(t.pipe_pressure(7, 2) > charged, "which is where it went")
+assert(assert(t.pipe_pressure(7, 2)) > charged, "which is where it went")
 
 -- ---------------------------------------------------------------
 -- EIGHT CELLS FROM IT: PAST THE END OF THE CORD.
@@ -123,10 +122,10 @@ assert(t.pipe_pressure(7, 2) > charged, "which is where it went")
 -- being `working()` and not `on`.
 -- ---------------------------------------------------------------
 assert(
-    t.structure_at(11, 2).sprite == "volpump_off_e",
-    "and it is drawn dead: " .. tostring(t.structure_at(11, 2).sprite)
+    assert(t.structure_at(11, 2)).sprite == "volpump_off_e",
+    "and it is drawn dead: " .. tostring(assert(t.structure_at(11, 2)).sprite)
 )
 assert(
-    math.abs(t.pipe_pressure(9, 2) - far) < 0.001,
-    "sixty seconds and it has moved nothing: " .. far .. " -> " .. t.pipe_pressure(9, 2)
+    math.abs(assert(t.pipe_pressure(9, 2)) - far) < 0.001,
+    "sixty seconds and it has moved nothing: " .. far .. " -> " .. assert(t.pipe_pressure(9, 2))
 )

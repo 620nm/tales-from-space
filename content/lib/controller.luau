@@ -1,17 +1,44 @@
 -- Capability-scoped controller program slot: only joined, reachable members enter the guest.
+local device_queue = require("@lib/device_queue")
+local program_slot = require("@lib/program_slot")
+
+export type Voice = { at: TileAddress, said: {[string]: boolean} }
+export type Event = {
+    kind: string, id: string?, mac: string?, sequence: number?, engineering: boolean?,
+    success: boolean?, operation: string?, service: string?, payload: unknown, request_id: string?,
+}
+type DoorCommand = { op: "open" | "close", mac: string, id: string }
+type BoltCommand = { op: "bolt", mac: string, id: string, bolted: boolean }
+type VentCommand = { op: "vent", mac: string, id: string } & (
+    { on: false, target: unknown, direction: unknown }
+    | { on: true, target: number, direction: "fill" | "drain" }
+)
+type WatchCommand = { op: "watch", mac: string, id: string, target: number, comparison: "at_least" | "below", ticks: number }
+type ServiceCommand = {
+    op: "service", id: string, to: string, service: string, payload: unknown, request: boolean,
+    sent: boolean?, abandoned: boolean?, token: LinkReplyToken?,
+}
+type DeviceCommand = DoorCommand | BoltCommand | VentCommand | WatchCommand
+type Command = DeviceCommand | ServiceCommand
+type PendingService = {host: Handle, active: ServiceCommand?}
+type Timer = { id: string, ticks: number }
+type Plan = { commands: {Command}, status: string?, timer: (Timer | false)?, replace: boolean?, accepted: boolean? }
+type MessageEvent = { self: Handle, from: string, payload: unknown, service: string?, correlation: LinkReplyToken? }
 local controller = {}
 -- Opaque task resources only; deadlines and guest state remain entity-owned.
-local timers = {}
-local pending_services = {}
+local timers: {[string]: {host: Handle, task: Task}} = {}
+local pending_services: {[string]: PendingService} = {}
 
-local function members(host)
+local function members(host: Handle)
     for key, pending in pairs(pending_services) do
         if pending.host == nil or not pending.host.alive then pending_services[key] = nil end
     end
     local hs = sim.link_state(host)
-    local handles, rows, directory = {}, {}, {}
+    local handles: {[string]: Handle} = {}
+    local rows = {}
+    local directory: {ServiceDescriptor} = {}
     if hs == nil or hs.suspended then return handles, rows, directory end
-    local reach = {}
+    local reach: {[string]: boolean} = {}
     for _, obj in ipairs(sim.query.link_reach(host)) do
         local state = sim.link_state(obj)
         if state then reach[state.mac] = true end
@@ -32,7 +59,7 @@ local function members(host)
     -- Keep the service directory separate from direct members. A reachable
     -- service may be behind another endpoint and still be a legal target.
     for _, service in ipairs({ "fax.print", "fax.send" }) do
-        local cursor = 0
+        local cursor: number? = 0
         local pages = 0
         repeat
             local page = sim.query.link_directory(host, service, cursor)
@@ -46,26 +73,26 @@ local function members(host)
     return handles, rows, directory
 end
 
-local function finite(n, low, high)
+local function finite(n: unknown, low: number, high: number): boolean
     return type(n) == "number" and n == n and n >= low and n <= high
 end
-local function token(s)
+local function token(s: unknown): boolean
     return type(s) == "string" and #s > 0 and #s <= 64
         and not s:find("%c")
 end
-local function address(s)
+local function address(s: unknown): boolean
     return type(s) == "string" and #s == 17 and s == s:lower()
         and s:match("^%x%x%-%x%x%-%x%x%-%x%x%-%x%x%-%x%x$") ~= nil
 end
 
 -- The statuses a room hears. A button event's `voice` repeats one to every
 -- press, said at the pressed button's tile, once per packet (`said`).
-local STATUS_LINES = {
+local STATUS_LINES: {[string]: string} = {
     fault = "lunatic/tfs:lib.controller.fault",
     denied = "lunatic/tfs:lib.controller.denied",
     unprogrammed = "lunatic/tfs:lib.controller.unprogrammed",
 }
-local function status(host, value, voice)
+local function status(host: Handle, value: string, voice: Voice?): ()
     local line = STATUS_LINES[value]
     if host.vars["controller_status"] == value and not (voice and line) then return end
     host.vars["controller_status"] = value
@@ -74,7 +101,7 @@ local function status(host, value, voice)
     sim.message.broadcast({ at = if voice then voice.at else host.tile, radius = 5, message = sim.msg(line, {}) })
 end
 
-local function fail(host, handles, why, voice)
+local function fail(host: Handle, handles: {[string]: Handle}, why: string, voice: Voice?): ()
     device_queue.clear(host)
     local commands = {}
     for mac, obj in pairs(handles) do
@@ -87,11 +114,12 @@ local function fail(host, handles, why, voice)
     if timers[key] then timers[key].task:cancel(); timers[key] = nil end
 end
 
-local function fields(value, allowed)
-    for key in pairs(value) do if not allowed[key] then return false end end
+local function fields(value: unknown, allowed: {[string]: boolean}): boolean
+    if type(value) ~= "table" then return false end
+    for key in pairs(value) do if type(key) ~= "string" or not allowed[key] then return false end end
     return true
 end
-local COMMAND_FIELDS = {
+local COMMAND_FIELDS: {[string]: {[string]: boolean}} = {
     open = { mac = true, op = true, id = true },
     close = { mac = true, op = true, id = true },
     bolt = { mac = true, op = true, id = true, bolted = true },
@@ -104,39 +132,45 @@ local COMMAND_FIELDS = {
 }
 
 -- Validate the complete plan before applying any of it.
-local function valid(result, handles)
-    if type(result) ~= "table" or type(result.commands) ~= "table" or #result.commands > 6 then return false end
+local function valid(candidate: unknown, handles: {[string]: Handle}): boolean
+    if type(candidate) ~= "table" then return false end
+    local result = candidate :: {[string]: unknown}
+    if type(result.commands) ~= "table" or #result.commands > 6 then return false end
     if not fields(result, { commands = true, status = true, timer = true, replace = true, accepted = true }) then return false end
     if result.accepted ~= nil and type(result.accepted) ~= "boolean" then return false end
     if result.replace ~= nil and type(result.replace) ~= "boolean" then return false end
     if result.status ~= nil and result.status ~= "idle" and result.status ~= "working"
         and result.status ~= "denied" and result.status ~= "fault" then return false end
     if result.timer ~= nil and result.timer ~= false then
-        if type(result.timer) ~= "table" or not fields(result.timer, { id = true, ticks = true }) or not token(result.timer.id)
-            or not finite(result.timer.ticks, 1, 1200) or result.timer.ticks % 1 ~= 0 then return false end
+        if type(result.timer) ~= "table" then return false end
+        local timer = result.timer :: {[string]: unknown}
+        if not fields(timer, { id = true, ticks = true }) or not token(timer.id)
+            or not finite(timer.ticks, 1, 1200) or (timer.ticks :: number) % 1 ~= 0 then return false end
     end
     local count = 0
     local services = 0
-    for index, command in pairs(result.commands) do
+    for index, value in pairs(result.commands) do
         count += 1
         if type(index) ~= "number" or index % 1 ~= 0 or index < 1 or index > #result.commands
-            or type(command) ~= "table" or not token(command.id) then return false end
+            or type(value) ~= "table" then return false end
+        local command = value :: {[string]: unknown}
+        if not token(command.id) or type(command.op) ~= "string" then return false end
         local allowed = COMMAND_FIELDS[command.op]
         if allowed == nil or not fields(command, allowed) then return false end
-        local obj = handles[command.mac]
+        local obj = if type(command.mac) == "string" then handles[command.mac] else nil
         if command.op ~= "service" and obj == nil then return false end
         if command.op == "open" or command.op == "close" then
-            if sim.door.state(obj) == nil then return false end
+            if obj == nil or sim.door.state(obj) == nil then return false end
         elseif command.op == "bolt" then
-            if sim.door.state(obj) == nil or type(command.bolted) ~= "boolean" then return false end
+            if obj == nil or sim.door.state(obj) == nil or type(command.bolted) ~= "boolean" then return false end
         elseif command.op == "vent" then
-            if sim.atmos.read(obj) == nil or type(command.on) ~= "boolean" then return false end
+            if obj == nil or sim.atmos.read(obj) == nil or type(command.on) ~= "boolean" then return false end
             if command.on and (not finite(command.target, 0, 1000)
                 or (command.direction ~= "fill" and command.direction ~= "drain")) then return false end
         elseif command.op == "watch" then
-            if sim.atmos.read(obj) == nil or not finite(command.target, 0, 1000)
+            if obj == nil or sim.atmos.read(obj) == nil or not finite(command.target, 0, 1000)
                 or (command.comparison ~= "at_least" and command.comparison ~= "below")
-                or not finite(command.ticks, 1, 1200) or command.ticks % 1 ~= 0 then return false end
+                or not finite(command.ticks, 1, 1200) or (command.ticks :: number) % 1 ~= 0 then return false end
         elseif command.op == "service" then
             services += 1
             if services > 1 then return false end
@@ -147,7 +181,7 @@ local function valid(result, handles)
     return count == #result.commands
 end
 
-local function schedule(host, timer)
+local function schedule(host: Handle, timer: (Timer | false)?): ()
     if timer == nil then return end
     for identity, row in pairs(timers) do
         if not row.host.alive then timers[identity] = nil end
@@ -163,7 +197,7 @@ local function schedule(host, timer)
     local task = sim.spawn_task(host, function()
         sim.sleep(math.max(1, due - sim.tick()))
         timers[key] = nil
-        local current = host.vars["controller_timer"]
+        local current = host.vars["controller_timer"] :: {id: string, due: number}?
         if current and current.id == timer.id and current.due == due then
             host.vars["controller_timer"] = nil
             controller.run(host, { kind = "timeout", id = current.id })
@@ -173,7 +207,7 @@ local function schedule(host, timer)
 end
 
 -- `voice` is set for a button event only (see `status`).
-function controller.run(host, event, voice)
+function controller.run(host: Handle, event: Event, voice: Voice?): boolean
     local service_state = pending_services[tostring(host)]
     if event.kind == "timeout" and service_state and service_state.active
         and service_state.active.id == event.id then
@@ -189,18 +223,19 @@ function controller.run(host, event, voice)
         fail(host, handles, "unprogrammed", voice)
         return false
     end
-    local answer = program_slot.run(host, "controller", {
+    local candidate = program_slot.run(host, "controller", {
         event = event, devices = rows, directory = directory,
     })
-    if not valid(answer, handles) then fail(host, handles, "fault", voice); return false end
+    if not valid(candidate, handles) then fail(host, handles, "fault", voice); return false end
+    local answer = candidate :: Plan
     if answer.status then status(host, answer.status, voice) end
     if answer.replace then device_queue.clear(host) end
     schedule(host, answer.timer)
-    local device_commands = {}
+    local device_commands: {Command} = {}
     for _, command in ipairs(answer.commands) do
         if command.op == "service" then
             local key = tostring(host)
-            local pending = pending_services[key] or { host = host, active = nil }
+            local pending: PendingService = pending_services[key] or { host = host, active = nil }
             if pending.active ~= nil then
                 -- A second request cannot be admitted while its native token
                 -- is outstanding. Refuse it at the bridge boundary without
@@ -229,25 +264,28 @@ function controller.run(host, event, voice)
     return answer.accepted == true
 end
 
-function controller.device(ev)
+function controller.device(ev: LinkMessageDonePayload): ()
     local state = sim.link_state(ev.self)
     local p = ev.payload
     if state == nil or state.suspended or state.parent ~= ev.from or type(p) ~= "table"
         or p.kind ~= "device.commands" or type(p.commands) ~= "table" or #p.commands > 64 then return end
     local commands = {}
-    for _, command in ipairs(p.commands) do
-        if type(command) == "table" and command.mac == state.mac then table.insert(commands, command) end
+    for _, value in ipairs(p.commands :: {unknown}) do
+        if type(value) == "table" then
+            local command = value :: {[string]: unknown}
+            if command.mac == state.mac then table.insert(commands, command) end
+        end
     end
     local handles = { [state.mac] = ev.self }
     if not valid({ commands = commands }, handles) then return end
-    for _, command in ipairs(commands) do
+    for _, command in ipairs(commands :: {DeviceCommand}) do
         local obj = handles[command.mac]
         if command.op == "open" then sim.door.open({ subject = obj, request_id = command.id })
         elseif command.op == "close" then sim.door.close({ subject = obj, request_id = command.id })
         elseif command.op == "bolt" then
             sim.door.set_bolted({ subject = obj, request_id = command.id, bolted = command.bolted })
         elseif command.op == "vent" then
-            local args = { entity = obj, on = command.on }
+            local args: AtmosConfigureCommand = { entity = obj, on = command.on }
             if command.on then
                 args.target_kpa = command.target
                 args.release_below_kpa = command.direction == "fill" and command.target or 0
@@ -261,38 +299,42 @@ function controller.device(ev)
     end
 end
 
-local function receive_one(ev, p, said)
-    if type(p) ~= "table" or (p.kind ~= "button" and p.kind ~= "door" and p.kind ~= "pressure") then return end
+local function receive_one(ev: MessageEvent, payload: unknown, said: {[string]: boolean}): ()
+    if type(payload) ~= "table" then return end
+    local p = payload :: {[string]: unknown}
+    if p.kind ~= "button" and p.kind ~= "door" and p.kind ~= "pressure" then return end
     local handles = members(ev.self)
     local sender = handles[ev.from]
     if sender == nil then return end
-    local event = { kind = p.kind, mac = ev.from }
+    local event: Event = { kind = p.kind, mac = ev.from }
     if p.kind == "button" then
-        if sim.link_state(sender).class ~= "control_button" or type(p.engineering) ~= "boolean"
-            or not finite(p.sequence, 1, 9007199254740991) or p.sequence % 1 ~= 0 then return end
-        local seen = ev.self.vars["controller_request"] or {}
-        if p.sequence <= (seen[ev.from] or 0) then return end
-        event.sequence = p.sequence
+        local sender_state = sim.link_state(sender)
+        if sender_state == nil or sender_state.class ~= "control_button" or type(p.engineering) ~= "boolean"
+            or not finite(p.sequence, 1, 9007199254740991) or (p.sequence :: number) % 1 ~= 0 then return end
+        local seen = (ev.self.vars["controller_request"] :: {[string]: number}?) or {}
+        local sequence = p.sequence :: number
+        if sequence <= (seen[ev.from] or 0) then return end
+        event.sequence = sequence
         event.engineering = p.engineering
     elseif p.kind == "door" then
         if not sim.door.state(sender) or not token(p.id) or type(p.success) ~= "boolean"
             or (p.operation ~= "open" and p.operation ~= "close" and p.operation ~= "set_bolted") then return end
-        event.id, event.success, event.operation = p.id, p.success, p.operation
+        event.id, event.success, event.operation = p.id :: string, p.success, p.operation
     else
         if not sim.atmos.read(sender) or not token(p.id) or type(p.success) ~= "boolean" then return end
-        event.id, event.success = p.id, p.success
+        event.id, event.success = p.id :: string, p.success
     end
     local voice = if event.kind == "button" then { at = sender.tile, said = said } else nil
     local accepted = controller.run(ev.self, event, voice)
     if event.kind == "button" and accepted then
-        local seen = ev.self.vars["controller_request"] or {}
+        local seen = (ev.self.vars["controller_request"] :: {[string]: number}?) or {}
         for mac in pairs(seen) do if handles[mac] == nil then seen[mac] = nil end end
         seen[ev.from] = event.sequence
         ev.self.vars["controller_request"] = seen
     end
 end
 
-function controller.message(ev)
+function controller.message(ev: MessageEvent): ()
     local p = ev.payload
     if ev.service ~= nil then
         -- Addressed traffic has its service name in the native occurrence,
@@ -317,18 +359,20 @@ function controller.message(ev)
             request_id = active.id,
         })
     elseif type(p) == "table" and (p.kind == "buttons" or p.kind == "completions") then
-        if type(p.events) ~= "table" or #p.events > 16 then return end
-        for _, request in ipairs(p.events) do
+        local packet = p :: {[string]: unknown}
+        if type(packet.events) ~= "table" or #packet.events > 16 then return end
+        local events = packet.events :: {unknown}
+        for _, request in ipairs(events) do
             if type(request) ~= "table" or (request.kind ~= "button" and request.kind ~= "door" and request.kind ~= "pressure") then return end
         end
         local said = {}
-        for _, request in ipairs(p.events) do receive_one(ev, request, said) end
+        for _, request in ipairs(events) do receive_one(ev, request, said) end
     else
         receive_one(ev, p, {})
     end
 end
 
-function controller.service_send_done(ev)
+function controller.service_send_done(ev: LinkServiceSendDonePayload): ()
     if ev.self == nil or sim.disl.slot_program(ev.self, "controller") == nil then return end
     if not token(ev.service) or not token(ev.outcome) then return end
     local key = tostring(ev.self)
@@ -353,7 +397,7 @@ function controller.service_send_done(ev)
     end
 end
 
-function controller.door(ev)
+function controller.door(ev: DoorOperationDonePayload): ()
     if ev.success and ev.operation == "set_bolted" then
         sim.sound.play({ at = ev.subject.tile, asset = ev.bolted
             and "lunatic/tfs:sound/airlock_bolts_down" or "lunatic/tfs:sound/airlock_bolts_up" })
@@ -361,13 +405,13 @@ function controller.door(ev)
     device_queue.completion(ev.subject, { kind = "door", id = ev.request_id,
         operation = ev.operation, success = ev.success })
 end
-function controller.pressure(ev)
+function controller.pressure(ev: AtmosPressureTargetDonePayload): ()
     device_queue.completion(ev.entity, { kind = "pressure", id = ev.request_id, success = ev.success })
 end
-function controller.button(ev)
+function controller.button(ev: InteractionUsePayload): ()
     sim.sound.play({ at = ev.subject.tile, asset = "lunatic/tfs:sound/click" })
     -- Every press takes a number; hosts dedupe per sender, so a hostless one costs nothing.
-    local sequence = (sim.var("mod", "button_sequence") or 0) + 1
+    local sequence = ((sim.var("mod", "button_sequence") :: number?) or 0) + 1
     sim.script_var.set({ scope = "mod", key = "button_sequence", value = sequence })
     -- Nothing joined above, or cut off: no host will ever hear this press.
     local state = sim.link_state(ev.subject)

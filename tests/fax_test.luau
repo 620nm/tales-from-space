@@ -1,23 +1,25 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- End-to-end fax coverage through the player, UI, and native network seams.
 -- Two access-point branches share one router; the third branch has its own
 -- root and must stay out of the directory.
-local function control(player, channel, suffix)
+local function control(player: number, channel: string, suffix: string): string
     local address = assert(t.ui_document(player, channel), "document address is available")
     return "doc/" .. address.document .. "/" .. address.generation .. suffix
 end
 
-local function data(player, channel)
-    local panel = assert(t.ui(player, channel), "a document panel is open")
-    return panel.script and panel.script.data or panel.data
+local function data(player: number, channel: string): ui_controls.Record
+    local panel = ui_controls.record(assert(t.ui(player, channel), "a document panel is open"))
+    return ui_controls.record(panel.script and ui_controls.record(panel.script).data or panel.data)
 end
 
-local function assert_no_script_errors(label)
+local function assert_no_script_errors(label: string): ()
     local errors = t.ledger_rows("script_error")
     local first = errors[1]
     assert(#errors == 0, label .. ": " .. tostring(first and (first.why or first.file) or "unknown script error"))
 end
 
-local function advertise(player, x, y, name)
+local function advertise(player: number, x: number, y: number, name: string): SpecObservedTarget
     local fax = assert(t.target_at(player, x, y, "fax"), "fax is present")
     t.click(player, x, y, fax)
     t.run_ticks(2)
@@ -131,11 +133,11 @@ t.run_ticks(1)
 t.click(sender, 4, 2, sender_fax)
 t.run_ticks(2)
 assert(t.hands(sender).held == nil, "loading a fax consumes the held source sheet")
-    local sender_data = data(sender, "fax")
+local sender_data = data(sender, "fax")
 assert(sender_data.kind == "fax" and sender_data.directory ~= nil,
     "the sender panel exposes its native directory")
-assert(#sender_data.directory == 1 and sender_data.directory[1].name == "Medical Fax",
-    "same-router discovery excludes the isolated fax; rows=" .. tostring(#sender_data.directory))
+assert(#ui_controls.rows(sender_data.directory) == 1 and ui_controls.rows(sender_data.directory)[1].name == "Medical Fax",
+    "same-router discovery excludes the isolated fax; rows=" .. tostring(#ui_controls.rows(sender_data.directory)))
 
 -- Selection and send require the viewer-specific confirmation step.
 t.ui_press(sender, control(sender, "fax", "/directory/entry/0/target"))
@@ -160,11 +162,11 @@ assert(t.items_at(12, 2)[1] == "paper", "one fresh recipient sheet arrives at ti
 local output = assert(t.target_at(receiver, 12, 2, "paper"), "recipient output is readable")
 t.click(receiver, 12, 2, output)
 t.run_ticks(2)
-local output_window = assert(t.ui(receiver, "writing"), "recipient paper opens for reading")
-local output_data = output_window.script and output_window.script.data or output_window.data
-assert(#output_data.committed == 1, "recipient output has one committed fragment")
-assert(output_data.committed[1].text == "hello from the shared fax tree", "recipient output preserves the source text")
-assert(output_data.committed[1].style.color == "#000000", "recipient output is monochrome")
+local output_window = ui_controls.record(assert(t.ui(receiver, "writing"), "recipient paper opens for reading"))
+local output_data = ui_controls.record(output_window.script and ui_controls.record(output_window.script).data or output_window.data)
+assert(#ui_controls.rows(output_data.committed) == 1, "recipient output has one committed fragment")
+assert(ui_controls.rows(output_data.committed)[1].text == "hello from the shared fax tree", "recipient output preserves the source text")
+assert(ui_controls.record(ui_controls.rows(output_data.committed)[1].style).color == "#000000", "recipient output is monochrome")
 
 -- The output is a real paper item, so put it down before inspecting the
 -- recipient machine's post-job stock.

@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Pipe meters bind to one exact piping layer, even where several runs
 -- cross the same tile. These are tg's three placement doors together:
 -- a loose meter defaults to layer 3, using it on a raw pipe programs it
@@ -8,12 +10,9 @@ local L2, L4 = 2, 8
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function said(p, line)
+local function said(p: number, line: string): boolean
     for _, message in ipairs(t.messages(p)) do
         if message == line then
             return true
@@ -22,7 +21,7 @@ local function said(p, line)
     return false
 end
 
-local function lying_at(x, y, id)
+local function lying_at(x: number, y: number, id: string): boolean
     for _, item in ipairs(t.items_at(x, y)) do
         if item == id then
             return true
@@ -88,13 +87,13 @@ t.click(p, 2, 2, t.target_at(p, 2, 2, "wrench"))
 t.run_ticks(2)
 t.click(p, 2, 1, t.target_at(p, 2, 1, "pipe_meter"))
 work()
-assert(t.structure_at(2, 1).id == "meter", "the programmed meter fastens to layer 2")
+assert(assert(t.structure_at(2, 1)).id == "meter", "the programmed meter fastens to layer 2")
 
 t.click_subfloor(p, 2, 1, "pipe", L4)
 t.run_seconds(1.5)
 t.run_seconds(1.0)
 assert(t.pipe(2, 1) == L2, "only layer 4 came up")
-assert(t.structure_at(2, 1).id == "meter", "another layer disappearing does not drop it")
+assert(assert(t.structure_at(2, 1)).id == "meter", "another layer disappearing does not drop it")
 
 t.click_subfloor(p, 2, 1, "pipe", L2)
 t.run_seconds(1.5)
@@ -139,16 +138,16 @@ t.use_self(r)
 t.tick()
 
 local RECIPE, LAYER = "dial1", "dial2"
-local function pick(field, label)
-    for _, toggle in ipairs(t.ui(r).toggles) do
+local function pick(field: string, label: string): string
+    for _, toggle in ipairs(ui_controls.rows(ui_controls.state(r).toggles)) do
         if toggle.field == field and toggle.option ~= nil and word(toggle.label) == label then
-            return toggle.option
+            return ui_controls.text(toggle.option)
         end
     end
     error("no " .. field .. " button labelled " .. label)
 end
 
-local function set(field, label)
+local function set(field: string, label: string): ()
     local option = pick(field, label)
     ui_controls.toggle(r, field, option)
     t.tick()
@@ -165,12 +164,12 @@ assert(said(r, "There is no pipe under the floor here."), "the ordinary same-lay
 set(LAYER, "2")
 t.click(r, 2, 1, nil, -14, 14)
 t.run_seconds(1.0)
-assert(t.structure_at(2, 1).id == "meter", "RPD layer 2 fastens to the layer-2 run")
+assert(assert(t.structure_at(2, 1)).id == "meter", "RPD layer 2 fastens to the layer-2 run")
 
 set(LAYER, "4")
 t.click(r, 3, 1, nil, -14, 14)
 t.run_seconds(1.0)
-assert(t.structure_at(3, 1).id == "meter", "RPD chooses layer 4 at a multilayer crossing")
+assert(assert(t.structure_at(3, 1)).id == "meter", "RPD chooses layer 4 at a multilayer crossing")
 
 t.drop(r)
 t.run_ticks(2)
@@ -178,7 +177,7 @@ t.click(r, 2, 2, t.target_at(r, 2, 2, "wrench"))
 t.run_ticks(2)
 t.click_subfloor(r, 3, 1, "pipe", L2)
 t.run_seconds(2.5)
-assert(t.structure_at(3, 1).id == "meter", "the RPD meter did not bind the other crossing layer")
+assert(assert(t.structure_at(3, 1)).id == "meter", "the RPD meter did not bind the other crossing layer")
 t.click_subfloor(r, 3, 1, "pipe", L4)
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "it drops when the RPD-selected layer is removed")

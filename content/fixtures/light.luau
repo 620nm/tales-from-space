@@ -1,3 +1,5 @@
+local netmsg = require("@lib/netmsg")
+
 -- The ceiling light. It knows three things about itself, and they are
 -- all things only IT could know: what is in its socket, what a tube or
 -- a replacer does to that socket, and what happens when somebody swings
@@ -19,6 +21,9 @@
 -- because the FITTING is what knows what went into it — the engine
 -- ships no colour but white, and a tube is a game word.
 local TUBE_COLOR = "#F3FFFA"
+
+type LightFlags = { [string]: { [string]: boolean? }? }
+type LightState = { base: string?, base_power: number?, flags: LightFlags? }
 
 local content = {
     id = "light",
@@ -55,8 +60,8 @@ local content = {
 -- is what its prototype declares, a mapper may one day vary it, and a
 -- flag clearing back to a literal 1.0 would quietly re-tune every
 -- fitting that was not 1.0 to begin with.
-local function relight(self, base, flags, base_power)
-    local v = self.vars["light_flags"] or {}
+local function relight(self: Handle, base: string?, flags: LightFlags?, base_power: number?)
+    local v: LightState = self.vars["light_flags"] or {}
     base = base or v.base
     base_power = base_power or v.base_power
     flags = flags or v.flags or {}
@@ -106,10 +111,10 @@ if sim ~= nil then
             return
         end
         local self = ev.self
-        local v = self.vars["light_flags"] or {}
-        local flags = v.flags or {}
-        local name = ev.payload.flag
-        local held = flags[name] or {}
+        local v: LightState = self.vars["light_flags"] or {}
+        local flags: LightFlags = v.flags or {}
+        local name: string = ev.payload.flag
+        local held: { [string]: boolean? } = flags[name] or {}
         local on = ev.payload.op == "set"
         if (held[ev.from] == true) == on then
             -- A repeat of what this sender already said. It relights

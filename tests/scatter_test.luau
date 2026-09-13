@@ -42,7 +42,7 @@ t.tick()
 -- Nothing has touched these; they are jittered because the PROTOTYPE
 -- asks to be, the moment it exists.
 local SPREAD = 3
-local function within(off, spread, what)
+local function within(off: {x: number, y: number}?, spread: number, what: string)
     assert(off ~= nil, what .. " has an offset at all")
     assert(math.abs(off.x) <= spread and math.abs(off.y) <= spread,
         what .. " is inside its declared spread: " .. off.x .. "," .. off.y)
@@ -115,7 +115,7 @@ for _ = 1, 12 do
     t.tick()
     t.drop(p)
     t.tick()
-    local again = t.item_at(4, 2, "d6")
+    local again = assert(t.item_at(4, 2, "d6"))
     within(again.offset, 6, "a die dropped over and over")
     wandered = wandered or math.abs(again.offset.x) > 6 or math.abs(again.offset.y) > 6
 end

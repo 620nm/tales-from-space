@@ -38,7 +38,7 @@ local LAY_TICKS = 2 * 20 + 2
 
 local table_id = t.target_at(surgeon, 2, 2, "optable")
 assert(table_id ~= nil, "the map stood one there")
-assert(t.structure_at(2, 2).id == "optable", "and it is the operating table")
+assert(assert(t.structure_at(2, 2)).id == "optable", "and it is the operating table")
 
 local function said(who, needle)
     return (" " .. table.concat(t.messages(who), " || ") .. " "):find(needle, 1, true) ~= nil
@@ -60,7 +60,7 @@ t.drag(surgeon, 2, 1, t.body_target(surgeon, patient), 2, 2, table_id)
 t.run_ticks(LAY_TICKS)
 local px, py = t.pos(patient)
 assert(px == 2 and py == 1, "out of reach: nobody was moved")
-assert(t.body(patient).posture == "standing", "and nobody was laid out")
+assert(assert(t.body(patient)).posture == "standing", "and nobody was laid out")
 
 -- ---- in reach: the drag lands ---------------------------------------
 t.move(surgeon, "west")
@@ -79,7 +79,7 @@ t.drag(surgeon, 2, 1, t.body_target(surgeon, patient), 2, 2, table_id)
 t.run_ticks(2)
 px, py = t.pos(patient)
 assert(px == 2 and py == 1, "two ticks in, nothing has happened yet")
-assert(t.body(patient).posture == "standing", "nobody is lying down yet")
+assert(assert(t.body(patient)).posture == "standing", "nobody is lying down yet")
 assert(said(surgeon, "start laying"), "but the surgeon was told it started")
 t.move(patient, "east")
 t.run_ticks(8)
@@ -87,7 +87,7 @@ t.move(patient, "east")
 t.run_ticks(8)
 assert(t.pos(patient) >= 4, "the patient walked out of arm's reach")
 t.run_ticks(LAY_TICKS)
-assert(t.body(patient).posture == "standing", "and was never laid out")
+assert(assert(t.body(patient)).posture == "standing", "and was never laid out")
 assert(#t.ledger_rows("DoAfterInterrupted") > 0, "the record says it was interrupted")
 
 -- ---- in reach, and waited out: the drag lands -----------------------
@@ -96,12 +96,12 @@ t.run_ticks(8)
 t.move(patient, "west")
 t.run_ticks(8)
 assert(t.pos(patient) == 2, "back beside the surgeon")
-_ = t.messages(surgeon)
+t.messages(surgeon)
 t.drag(surgeon, 2, 1, t.body_target(surgeon, patient), 2, 2, table_id)
 t.run_ticks(LAY_TICKS)
 px, py = t.pos(patient)
 assert(px == 2 and py == 2, "the patient is on the table: " .. px .. "," .. py)
-assert(t.body(patient).posture == "lying", "lying on it")
+assert(assert(t.body(patient)).posture == "lying", "lying on it")
 assert(said(surgeon, "operating table"), "and the surgeon is told so")
 
 -- ...facing the way the table does, not the way they walked in. The

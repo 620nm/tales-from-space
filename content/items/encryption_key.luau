@@ -1,3 +1,6 @@
+local radio = require("@lib/radio")
+local stock_parts = require("@lib/stock_parts")
+
 -- An encryption key: the stock part that lends a transceiver its
 -- channel (machines/transceiver.luau), and -- carried loose -- a radio
 -- of its own.

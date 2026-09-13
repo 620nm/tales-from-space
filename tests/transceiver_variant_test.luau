@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- A department transceiver arrives keyed: the variant's own
 -- `encryption_1` seats the key at spawn, and a placement that names
 -- the socket itself wins over the variant
@@ -8,10 +10,7 @@
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
 local function said(p, line)
     for _, m in ipairs(t.messages(p)) do
@@ -22,9 +21,9 @@ local function said(p, line)
     return false
 end
 
-local function part_row(ui, label)
-    for _, r in ipairs(ui.readouts) do
-        if word(r.section) == "parts.parts" and word(r.label) == label then
+local function part_row(ui: unknown, label: string): ui_controls.Record?
+    for _, r in ipairs(ui_controls.rows(ui_controls.record(ui).readouts)) do
+        if r.section and word(r.section) == "parts.parts" and word(r.label) == label then
             return r
         end
     end
@@ -89,7 +88,8 @@ t.tick()
 
 -- Walk around the dense tower, along the cord row, to stand beside
 -- the overridden one at (8, 1).
-for _, dir in ipairs({ "south", "east", "east", "east", "north" }) do
+local route: {"north" | "east" | "south" | "west"} = { "south", "east", "east", "east", "north" }
+for _, dir in ipairs(route) do
     t.move(p, dir)
     t.run_ticks(6)
 end

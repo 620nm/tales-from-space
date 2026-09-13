@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The small glass: a dropper, a test tube and a bottle, each holding
 -- what tg says it holds and each moving what tg says it moves.
 --
@@ -34,10 +36,10 @@ local U = 0.025
 local p = t.join()
 t.tick()
 
-local beaker = t.target_at(p, 2, 1, "beaker.libital")
-local dropper = t.target_at(p, 3, 1, "dropper")
-local bottle = t.target_at(p, 4, 1, "bottle")
-local tube = t.target_at(p, 5, 1, "test_tube")
+local beaker = assert(t.target_at(p, 2, 1, "beaker.libital"))
+local dropper = assert(t.target_at(p, 3, 1, "dropper"))
+local bottle = assert(t.target_at(p, 4, 1, "bottle"))
+local tube = assert(t.target_at(p, 5, 1, "test_tube"))
 
 local function total(handle)
     local contents = t.contents(handle)
@@ -49,7 +51,7 @@ local function total(handle)
     return n
 end
 
-local function close(got, want, what)
+local function close(got: number, want: number, what: string)
     assert(math.abs(got - want) < 1e-9, ("%s: wanted %g, got %g"):format(what, want, got))
 end
 
@@ -89,8 +91,8 @@ close(total(beaker), 0.35 - 10 * U, "and the beaker gave up the whole gesture")
 local over = t.ledger_rows("spilled")
 assert(#over == 1, ("one overflow on the record, got %d"):format(#over))
 assert(
-    math.abs(over[1].moles - (10 * U - FIT)) < 1e-6,
-    ("the row names what would not fit, got %g"):format(over[1].moles)
+    math.abs(ui_controls.number(over[1].moles) - (10 * U - FIT)) < 1e-6,
+    ("the row names what would not fit, got %g"):format(ui_controls.number(over[1].moles))
 )
 
 -- Now the squeeze: ONE unit out of the dropper, the bottom of tg's
@@ -109,7 +111,7 @@ close(total(dropper), FIT - 1 * U, "and the dropper is down exactly one")
 
 -- Proportional, like every other transfer here: what arrives is what
 -- left, in the ratio it was standing in.
-local drops = t.contents(bottle)
+local drops = assert(t.contents(bottle))
 close(drops.water, (0.20 / 0.35) * (1 * U), "water went in proportion")
 close(drops.libital, (0.15 / 0.35) * (1 * U), "libital went in proportion")
 

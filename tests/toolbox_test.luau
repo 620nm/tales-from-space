@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The toolbox as a weapon: ten robust hits put a crewman in crit, ten
 -- more kill him, every swing is a Script-attributed ledger row naming
 -- the file that decided the damage and the player who swung, and both
@@ -26,7 +28,9 @@ t.tick()
 -- actor of `joined_job` IS the joining player, in join order.
 local joins = t.ledger_rows("joined_job")
 assert(#joins == 2, "two crewmen signed on")
-local attacker_id, victim_id = joins[1].actor.id, joins[2].actor.id
+local attacker_actor, victim_actor = joins[1].actor, joins[2].actor
+assert(attacker_actor.kind == "player" and victim_actor.kind == "player", "the join rows name their players")
+local attacker_id, victim_id = attacker_actor.id, victim_actor.id
 assert(attacker_id ~= victim_id)
 
 t.click(attacker, 1, 1, t.target_at(attacker, 1, 1, "toolbox")) -- the toolbox underfoot
@@ -42,7 +46,7 @@ for _ = 1, 10 do
     t.tick()
 end
 local h = t.health(victim)
-assert(math.abs(h.brute - 100) < 0.01, "10 hits x 10 brute: " .. h.brute)
+assert(math.abs(ui_controls.number(h.brute) - 100) < 0.01, "10 hits x 10 brute: " .. tostring(h.brute))
 -- What a hundred brute COSTS depends on where it landed. A blow that
 -- named no zone rolls (docs/BIOLOGY.md §3.2), and each part weighs its
 -- own damage into the body's health -- the chest at 1, a limb at 0.75
@@ -78,14 +82,15 @@ while t.health(victim).animate and swings < 120 do
     swings = swings + 1
 end
 assert(not t.health(victim).animate, "and then `dead`")
-assert(t.body(victim).posture == "lying", "and the body lies down")
+assert(assert(t.body(victim)).posture == "lying", "and the body lies down")
 
 -- Every swing is on the record, attributed to the FILE that decided
 -- the damage and the player whose click triggered it.
-local function pool_amount(row, id)
-    for _, entry in ipairs(row.pools or {}) do
-        if entry[1] == id then
-            return entry[2]
+local function pool_amount(row: SpecLedgerRow, id: string): number
+    for _, entry in ipairs(ui_controls.array(row.pools or {})) do
+        local pool = ui_controls.array(entry)
+        if pool[1] == id then
+            return ui_controls.number(pool[2])
         end
     end
     return 0

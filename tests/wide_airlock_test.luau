@@ -95,7 +95,7 @@ assert(west_seen.layers[1].sprite == "door_wide_w",
     "the west half wears the west picture, got " .. tostring(west_seen.layers[1].sprite))
 assert(east_seen.layers[1].sprite == "door_wide_e",
     "and the east half the east one, got " .. tostring(east_seen.layers[1].sprite))
-assert(t.same_target(east_seen.extent_of, body), "which belongs to the leaf standing west of it")
+assert(t.same_target(assert(east_seen.extent_of), body), "which belongs to the leaf standing west of it")
 assert(east_seen.kind == "door",
     "and streams as a DOOR, so the client predicts it like one: " .. tostring(east_seen.kind))
 
@@ -103,7 +103,7 @@ assert(east_seen.kind == "door",
 -- Both tiles are the same door, shut and live.
 -- ---------------------------------------------------------------
 for _, at in ipairs({ { 3, 3 }, { 4, 3 } }) do
-    local d = t.door_at(at[1], at[2])
+    local d = assert(t.door_at(at[1], at[2]))
     assert(d ~= nil, ("(%d, %d) answers as a door"):format(at[1], at[2]))
     assert(not d.open, "shut")
     assert(d.powered, "and on the room circuit")
@@ -128,8 +128,8 @@ assert(t.target_at(p, 7, 1, "locker") == nil,
 local x, y = step(p, "north")
 assert(x == 4 and y == 4, "a shut leaf is a shut leaf from either half")
 t.run_ticks(15) -- tg's airlock takes 0.6 s to swing; let it finish
-assert(t.door_at(3, 3).open, "bumping the east tile opened the whole leaf")
-assert(t.door_at(4, 3).open, "including the tile that was bumped")
+assert(assert(t.door_at(3, 3)).open, "bumping the east tile opened the whole leaf")
+assert(assert(t.door_at(4, 3)).open, "including the tile that was bumped")
 
 x, y = step(p, "north")
 assert(x == 4 and y == 3, "and you walk through the half you opened")
@@ -140,13 +140,13 @@ assert(x == 4 and y == 3, "and you walk through the half you opened")
 -- locs)`, airlock.dm:1420-1430) and so does this.
 -- ---------------------------------------------------------------
 t.run_ticks(90) -- well past the autoclose delay
-assert(t.door_at(3, 3).open, "the leaf stayed open with a man in its east half")
+assert(assert(t.door_at(3, 3)).open, "the leaf stayed open with a man in its east half")
 
 x, y = step(p, "north")
 assert(x == 4 and y == 2, "step clear of the doorway")
 t.run_ticks(90)
-assert(not t.door_at(3, 3).open, "and once the doorway is empty it shuts itself")
-assert(not t.door_at(4, 3).open, "both halves of it")
+assert(not assert(t.door_at(3, 3)).open, "and once the doorway is empty it shuts itself")
+assert(not assert(t.door_at(4, 3)).open, "both halves of it")
 
 -- ===============================================================
 -- NORTH TO SOUTH. The SAME entry in a wall that runs down the map,
@@ -208,10 +208,10 @@ assert(t.seen(q, anchor).layers[1].sprite == "door_wide_s",
 assert(t.seen(q, north).layers[1].sprite == "door_wide_n",
     "and the north half the north one, got "
         .. tostring(t.seen(q, north).layers[1].sprite))
-assert(t.same_target(t.seen(q, north).extent_of, anchor), "one body, laid from its south tile")
+assert(t.same_target(assert(t.seen(q, north).extent_of), assert(anchor)), "one body, laid from its south tile")
 
 for _, at in ipairs({ { 3, 3 }, { 3, 2 } }) do
-    local d = t.door_at(at[1], at[2])
+    local d = assert(t.door_at(at[1], at[2]))
     assert(d ~= nil and not d.open and d.powered,
         ("(%d, %d) is the same shut, live door"):format(at[1], at[2]))
 end
@@ -229,6 +229,6 @@ assert(qx == 2 and qy == 2, "beside the north half")
 qx, qy = step(q, "east")
 assert(qx == 2 and qy == 2, "which is shut")
 t.run_ticks(15)
-assert(t.door_at(3, 3).open, "and bumping it opened the leaf its body stands south of")
+assert(assert(t.door_at(3, 3)).open, "and bumping it opened the leaf its body stands south of")
 qx, qy = step(q, "east")
 assert(qx == 3 and qy == 2, "so you walk through the half you bumped")

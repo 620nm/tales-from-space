@@ -1,3 +1,5 @@
+local vessel = require("@lib/vessel")
+
 local content = {
     id = "water_bottle_large", name_label = "lunatic/tfs:entity.water_bottle_large.name", name = "large bottle of water", sprite = "water_bottle_large",
     volume_ml = 100, sealed = true, resealable = true, acts_on_items = true,
@@ -10,14 +12,14 @@ local content = {
     },
     variants = { empty = { name_label = "lunatic/tfs:entity.water_bottle_large.empty.name", name = "empty large water bottle", contents = {}, sealed = false } },
 }
-local vessel_spec = { id = content.id, noun = "bottle", phases = { "liquid" },
+local vessel_spec: vessel.Spec = { id = content.id, noun = "bottle", phases = { "liquid" },
     pour = { units = 10 }, spill = true }
 content.actions = vessel.actions(vessel_spec)
 
 if sim ~= nil then
     local d = vessel.attach(vessel_spec)
     d:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
-        if sim.matter_read(ev.subject).sealed then sim.unseal(ev.subject) else sim.seal(ev.subject) end
+        if assert(sim.matter_read(ev.subject)).sealed then sim.unseal(ev.subject) else sim.seal(ev.subject) end
         return true
     end)
 end

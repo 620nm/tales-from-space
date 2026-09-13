@@ -1,3 +1,5 @@
+local action_rules = require("@lib/action_rules")
+
 -- A length of pipe, wrenched down under the deck on whichever of the
 -- five piping layers you have it set to.
 --
@@ -47,7 +49,7 @@ if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self, user = ev.subject, ev.actor
-        local dial = sim.mode(self)
+        local dial = assert(sim.mode(self))
         local next_index = (dial.index + 1) % dial.count
         sim.set_mode(self, next_index)
         sim.message.send({
@@ -72,7 +74,7 @@ if sim ~= nil then
             })
             return true
         end
-        local mask = LAYERS[sim.mode(self).index + 1]
+        local mask = LAYERS[assert(sim.mode(self)).index + 1]
         if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
             sim.message.send({
                 recipient = user,
@@ -98,7 +100,7 @@ if sim ~= nil then
             -- The same question again at the end: while you worked, another
             -- engineer may have run the line through this very tile -- and
             -- you may have turned the dial yourself.
-            mask = LAYERS[sim.mode(self).index + 1]
+            mask = LAYERS[assert(sim.mode(self)).index + 1]
             if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
                 sim.message.send({
                     recipient = user,

@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Ice in a beaker, in a room at twenty degrees.
 --
 -- The glass is the pack's ordinary fifty-millilitre beaker and the ice
@@ -59,18 +61,15 @@ local MELT_K = 273.15
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function near(got, want, tol, what)
+local function near(got: number, want: number, tol: number, what: string)
     assert(got ~= nil, what .. ": nothing was answered")
     assert(math.abs(got - want) <= tol,
         ("%s: wanted %g, got %g"):format(what, want, got))
 end
 
-local glass = t.target_at(p, 3, 1, "beaker")
+local glass = assert(t.target_at(p, 3, 1, "beaker"), "the target is visible")
 
 -- ---------------------------------------------------------------
 -- Out of the freezer: a solid, and cold.
@@ -78,7 +77,7 @@ local glass = t.target_at(p, 3, 1, "beaker")
 local cold = t.vessel(glass)
 assert(cold ~= nil, "a beaker has an inside")
 assert(cold.contents.water ~= nil, "the map put water in it")
-near(cold.contents.water.solid, LUMP_MOL, 1e-9, "two moles of it, frozen")
+near(assert(cold.contents.water.solid, "the water is solid"), LUMP_MOL, 1e-9, "two moles of it, frozen")
 assert(cold.contents.water.liquid == nil, "and not a drop of liquid yet")
 near(cold.temp_k, FROZEN_K, 0.5, "at the temperature the blend names")
 assert(cold.temp_k < MELT_K, "which is under the melt, or it would not be ice")
@@ -90,7 +89,7 @@ assert(cold.temp_k < MELT_K, "which is under the melt, or it would not be ice")
 -- ---------------------------------------------------------------
 t.run_ticks(700)
 
-local thawing = t.vessel(glass)
+local thawing = assert(t.vessel(glass), "the vessel has a reading")
 local w = thawing.contents.water
 assert(w ~= nil, "the water did not go anywhere")
 assert(w.liquid ~= nil and w.liquid > 0.0,
@@ -113,7 +112,7 @@ assert(in_glass < LUMP_MOL, "the open glass exhaled a little of it")
 
 local in_room = 0.0
 for x = 1, 5 do
-    in_room = in_room + (t.room_gas(x, 1).water or 0.0)
+    in_room = in_room + (assert(t.room_gas(x, 1)).water or 0.0)
 end
 assert(in_room > 0.0, "and the room over the bench is where it went: " .. in_room)
 
@@ -134,8 +133,8 @@ near(in_glass + in_room + swept, LUMP_MOL, 1e-6,
 -- ---------------------------------------------------------------
 local MOLAR_MASS_G = 18.015
 
-local function block(ui, section)
-    for _, b in ipairs(ui.matter or {}) do
+local function block(ui: ui_controls.Record, section: string): ui_controls.Record?
+    for _, b in ipairs(ui_controls.rows(ui.matter or {})) do
         if word(b.section) == section then
             return b
         end
@@ -143,8 +142,8 @@ local function block(ui, section)
     return nil
 end
 
-local function phase_of(b, phase)
-    for _, st in ipairs(b and b.states or {}) do
+local function phase_of(b: ui_controls.Record?, phase: string): ui_controls.Record?
+    for _, st in ipairs(ui_controls.rows(b and b.states or {})) do
         if st.phase == phase then
             return st
         end
@@ -152,8 +151,8 @@ local function phase_of(b, phase)
     return nil
 end
 
-local function named(st, name)
-    for _, r in ipairs(st and st.rows or {}) do
+local function named(st: ui_controls.Record?, name: string): ui_controls.Record?
+    for _, r in ipairs(ui_controls.rows(st and st.rows or {})) do
         if r.name == name then
             return r
         end
@@ -179,20 +178,23 @@ assert(t.hands(p).held == nil, "clicking the dock with it puts it IN")
 t.click(p, 5, 1, dispenser)
 t.tick()
 
-local contents = block(t.ui(p), "dock.contents")
+local contents = block(ui_controls.state(p), "dock.contents")
 assert(contents ~= nil, "the panel draws what the docked glass is holding")
 
 local lump = phase_of(contents, "solid")
 assert(lump ~= nil, "there is still a lump of it in there")
+assert(type(lump.moles) == "number" and type(lump.mass_g) == "number", "matter readout has moles and mass")
 assert(lump.moles > 0.0, "with moles on the state: " .. tostring(lump.moles))
 near(lump.mass_g, lump.moles * MOLAR_MASS_G, 1e-6,
     "the lump weighs water's own molar mass a mole")
 local ice_row = named(lump, "water")
 assert(ice_row ~= nil, "and the one row in it is the water")
+assert(type(ice_row.moles) == "number" and type(ice_row.mass_g) == "number", "matter readout has moles and mass")
 near(ice_row.mass_g, ice_row.moles * MOLAR_MASS_G, 1e-6, "which weighs the same way")
 
 local melt = phase_of(contents, "liquid")
 assert(melt ~= nil, "the meltwater is a state of its own")
+assert(type(melt.moles) == "number" and type(melt.mass_g) == "number", "matter readout has moles and mass")
 near(melt.mass_g, melt.moles * MOLAR_MASS_G, 1e-6, "and it weighs what it is")
 
 -- Both states together are the lump that was set down, minus what the

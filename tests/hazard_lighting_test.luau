@@ -89,10 +89,10 @@ local UNBREATHABLE = "#3060FF"
 --    through the door should be able to tell an airless room from a
 --    lethal one before they take their helmet off.
 -- ---------------------------------------------------------------
-assert(t.room_pressure(3, 2) > 90.0, "the room is at pressure: " .. t.room_pressure(3, 2))
+assert(assert(t.room_pressure(3, 2)) > 90.0, "the room is at pressure: " .. assert(t.room_pressure(3, 2)))
 assert(t.hazard_level(4, 1) == "unbreathable",
     "the fan has sorted its own tile: " .. tostring(t.hazard_level(4, 1)))
-local lamp = t.light_at(1, 2)
+local lamp = assert(t.light_at(1, 2))
 assert(lamp ~= nil and lamp.lit, "the fitting is burning")
 assert(lamp.color == UNBREATHABLE, "and it has gone blue: " .. lamp.color)
 assert(math.abs(lamp.power - 1.2) < 1e-6, "a touch harder: " .. lamp.power)
@@ -125,8 +125,8 @@ assert(t.cable_at(8, 2) == 0, "the backbone is parted")
 t.run_seconds(3)
 t.run_ticks(60)
 
-assert(t.apc_at(8, 1).charging == "not_charging", "the panel is on its own cell")
-lamp = t.light_at(1, 2)
+assert(assert(t.apc_at(8, 1)).charging == "not_charging", "the panel is on its own cell")
+lamp = assert(t.light_at(1, 2))
 assert(lamp.color == UNBREATHABLE, "the air still outranks the batteries: " .. lamp.color)
 assert(math.abs(lamp.power - 1.2) < 1e-6, "at the air's own power: " .. lamp.power)
 
@@ -145,7 +145,7 @@ assert(t.foul_room(3, 2, "o2", 320.0), "oxygen into the room")
 t.run_seconds(6)
 t.run_ticks(60)
 
-lamp = t.light_at(1, 2)
+lamp = assert(t.light_at(1, 2))
 local TUBE = lamp.color
 assert(TUBE ~= UNBREATHABLE and TUBE ~= DEADLY, "the fitting is its own colour again: " .. TUBE)
 assert(math.abs(lamp.power - 0.5) < 1e-6, "and dim, on the flag underneath: " .. lamp.power)
@@ -165,7 +165,7 @@ assert(t.cable_at(8, 2) == 2, "the backbone is whole again")
 t.run_seconds(3)
 t.run_ticks(60)
 
-lamp = t.light_at(1, 2)
+lamp = assert(t.light_at(1, 2))
 assert(lamp.color == TUBE, "still its own colour: " .. lamp.color)
 assert(math.abs(lamp.power - 1.0) < 1e-6, "and back at its own power: " .. lamp.power)
 
@@ -182,7 +182,7 @@ t.run_ticks(60)
 
 assert(t.hazard_level(4, 1) == "deadly",
     "the fan calls it lethal: " .. tostring(t.hazard_level(4, 1)))
-lamp = t.light_at(1, 2)
+lamp = assert(t.light_at(1, 2))
 assert(lamp.color == DEADLY, "the room is red: " .. lamp.color)
 assert(math.abs(lamp.power - 1.5) < 1e-6, "and harder still: " .. lamp.power)
 assert(math.abs(lamp.range - 6.0) < 1e-6, "reach untouched by any of it")
@@ -266,7 +266,7 @@ t.run_ticks(60)
 --    breathe, both alarms hold both fans, so the flag arrives twice
 --    and the fitting keeps a row per sender rather than one bool.
 -- ---------------------------------------------------------------
-lamp = t.light_at(1, 2)
+lamp = assert(t.light_at(1, 2))
 assert(lamp ~= nil and lamp.lit, "the fitting is burning")
 assert(lamp.color == UNBREATHABLE, "and both alarms have it blue: " .. lamp.color)
 
@@ -303,7 +303,7 @@ end
 t.run_seconds(6)
 t.run_ticks(60)
 
-lamp = t.light_at(1, 2)
+lamp = assert(t.light_at(1, 2))
 assert(lamp.color == UNBREATHABLE,
     "one alarm let go, the other never did, and the flag stands: " .. lamp.color)
 assert(math.abs(lamp.power - 1.2) < 1e-6, "at the flag's own power: " .. lamp.power)
@@ -317,7 +317,7 @@ assert(t.foul_room(3, 1, "plasma", 30.0), "plasma into the west room")
 t.run_seconds(6)
 t.run_ticks(60)
 
-lamp = t.light_at(1, 2)
+lamp = assert(t.light_at(1, 2))
 assert(lamp.color == DEADLY, "deadly outranks the standing blue: " .. lamp.color)
 assert(math.abs(lamp.power - 1.5) < 1e-6, "and burns harder: " .. lamp.power)
 
@@ -335,14 +335,14 @@ for _ = 1, 24 do
     t.run_ticks(5)
 end
 assert(t.pos(q) == 2, "at the fitting's own tile")
-local fitting = t.target_at(q, 1, 2)
+local fitting = assert(t.target_at(q, 1, 2), "the target is visible")
 t.click(q, 2, 2, t.target_at(q, 2, 2, "toolbox"))
 t.run_ticks(2)
 assert(t.hands(q).held == "toolbox", "something heavy in hand")
 t.click(q, 1, 2, fitting)
 t.run_ticks(2)
-assert(t.light_at(1, 2).status == "broken", "the tube shattered")
-assert(not t.light_at(1, 2).emits, "and throws nothing")
+assert(assert(t.light_at(1, 2)).status == "broken", "the tube shattered")
+assert(not assert(t.light_at(1, 2)).emits, "and throws nothing")
 
 t.drop(q)
 t.run_ticks(2)
@@ -352,7 +352,7 @@ assert(t.hands(q).held == "light_tube", "a fresh tube in hand")
 t.click(q, 1, 2, fitting)
 t.run_ticks(5)
 
-lamp = t.light_at(1, 2)
+lamp = assert(t.light_at(1, 2))
 assert(lamp.status == "ok", "the tube goes in")
 assert(lamp.emits, "and the room is lit again")
 assert(lamp.color == DEADLY,
@@ -402,7 +402,7 @@ t.run_ticks(60)
 assert(t.hazard_level(15, 1) == "unbreathable",
     "the far fan crosses: " .. tostring(t.hazard_level(15, 1)))
 
-lamp = t.light_at(1, 2)
+lamp = assert(t.light_at(1, 2))
 assert(lamp.color == UNBREATHABLE,
     "the red went with the fan that reported it: " .. lamp.color)
 assert(math.abs(lamp.power - 1.2) < 1e-6, "and the blue nobody can withdraw stands")

@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The scrubber's FLOOR: the one thing about this machine that is not
 -- tg's, and the reason a station on a radiating hull stays habitable.
 --
@@ -33,7 +35,7 @@ local R, T20C = 8.314, 293.15
 local PLACED_RATE = 5.0
 local PLACED_FLOOR = 100.0
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -144,20 +146,21 @@ assert(
 -- panel rather than assumed.
 t.click(p, 2, 1, t.target_at(p, 2, 1, "air_scrubber"))
 t.tick()
-local panel = t.ui(p)
+local panel = ui_controls.state(p)
+local setpoints = ui_controls.rows(panel.setpoints)
 assert(panel ~= nil, "a scrubber wears a panel")
-assert(panel.setpoints[1].field == "rate", "a rate")
-near(panel.setpoints[1].value, PLACED_RATE, 0.001, "gentle, not tg's 200")
-assert(panel.setpoints[2].field == "floor", "and a floor")
-near(panel.setpoints[2].value, PLACED_FLOOR, 0.001, "just under the vent's line")
+assert(setpoints[1].field == "rate", "a rate")
+near(ui_controls.number(setpoints[1].value), PLACED_RATE, 0.001, "gentle, not tg's 200")
+assert(setpoints[2].field == "floor", "and a floor")
+near(ui_controls.number(setpoints[2].value), PLACED_FLOOR, 0.001, "just under the vent's line")
 assert(
-    panel.setpoints[2].value < SUPPLIES_UNDER,
+    ui_controls.number(setpoints[2].value) < SUPPLIES_UNDER,
     "which is the circulation: the room sits below the line the vent"
         .. " works to, so the vent is always feeding -- "
-        .. panel.setpoints[2].value .. " against " .. SUPPLIES_UNDER
+        .. ui_controls.number(setpoints[2].value) .. " against " .. SUPPLIES_UNDER
 )
 local shape = nil
-for _, sw in ipairs(panel.toggles) do
+for _, sw in ipairs(ui_controls.rows(panel.toggles)) do
     if sw.field == "roster" then
         shape = sw
     end
@@ -249,8 +252,8 @@ t.world(LIVE_SUPPLY, 7, "free_build")
 t.set_environment({ sink_k = 293.15, insolation = 0 })
 t.tick()
 
-assert(t.structure_at(5, 1).id == "vent", "a supply vent at the far end")
-assert(t.canister_pressure(3, 1) > 4000.0, "on a full bottle")
+assert(assert(t.structure_at(5, 1)).id == "vent", "a supply vent at the far end")
+assert(assert(t.canister_pressure(3, 1)) > 4000.0, "on a full bottle")
 
 t.run_seconds(30)
 local early = pipe_moles(1, 1, 2)
@@ -273,7 +276,7 @@ assert(
         .. " release line: " .. room_early .. " -> " .. room_late .. " kPa"
 )
 assert(
-    t.structure_at(2, 1).state == "scrubbing",
+    assert(t.structure_at(2, 1)).state == "scrubbing",
     "and the grille is still an ordinary running scrubber throughout"
 )
 
@@ -301,7 +304,7 @@ t.tick()
 local before_purge = room_kpa()
 assert(before_purge > 90.0, "the room opens breathable: " .. before_purge)
 assert(
-    t.structure_at(2, 1).state ~= "siphoning",
+    assert(t.structure_at(2, 1)).state ~= "siphoning",
     "over comfortable air the warning is not yet earned"
 )
 
@@ -310,11 +313,11 @@ assert(
 local warned = false
 for _ = 1, 120 do
     t.run_seconds(5)
-    local shape = t.structure_at(2, 1)
+    local shape = assert(t.structure_at(2, 1))
     if shape.state == "siphoning" then
         assert(
-            string.find(shape.sprite, "purge") ~= nil,
-            "the judged emergency wears the purge art: " .. shape.sprite
+            string.find(assert(shape.sprite), "purge") ~= nil,
+            "the judged emergency wears the purge art: " .. tostring(shape.sprite)
         )
         warned = true
         break

@@ -1,3 +1,5 @@
+local action_rules = require("@lib/action_rules")
+
 -- A bench burner: a small tank of spirit with a wick, for heating one
 -- beaker at a time. tg's `/obj/item/burner`
 -- (code/modules/reagents/chemistry/items.dm:151-291).

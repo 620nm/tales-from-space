@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Diagonal wall mounts remain ordinary structures on their room tile. The
 -- wallward direction changes their support and overhang; visibility and reach
 -- are checked against the room tile.
@@ -120,7 +122,7 @@ local corners = {
     { x = 1, y = 3, sprite = "wall_frame_s" },
     { x = 3, y = 3, sprite = "wall_frame_s" },
 }
-local function take(id)
+local function take(id: string)
     t.click(p, 2, 2, assert(t.target_at(p, 2, 2, id)))
     t.run_ticks(2)
 end

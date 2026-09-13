@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- "Gas meters leak air from pipes."
 --
 -- They do not, and this file is the standing answer. There is no
@@ -34,17 +36,14 @@ t.set_breathing(false)
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
 local function walk(p, dir)
     t.move(p, dir)
     t.run_ticks(5)
 end
 
-local function lying_at(x, y, id)
+local function lying_at(x: number, y: number, id: string): boolean
     for _, item in ipairs(t.items_at(x, y)) do
         if item == id then
             return true
@@ -111,7 +110,7 @@ assert(t.hands(p).held == "wrench", "wrench in hand")
 walk(p, "north")
 t.click(p, 3, 1, t.target_at(p, 3, 1, "pipe_meter"))
 t.run_seconds(2.5)
-assert(t.structure_at(3, 1).id == "meter", "a gauge stands on the northern main")
+assert(assert(t.structure_at(3, 1)).id == "meter", "a gauge stands on the northern main")
 assert(not lying_at(3, 1, "pipe_meter"), "the fitting was spent into it")
 
 -- The moment it goes down, and again after a long shift of being read.
@@ -128,7 +127,7 @@ assert(
 )
 assert(gauged > 0.0, "and both mains are actually carrying something")
 assert(
-    math.abs(t.pipe_pressure(3, 1) - t.pipe_pressure(3, 3)) < 1e-9,
+    math.abs(assert(t.pipe_pressure(3, 1)) - assert(t.pipe_pressure(3, 3))) < 1e-9,
     "which is the same statement on a gauge"
 )
 
@@ -136,15 +135,15 @@ assert(
 -- the same reason the two mains do: whatever ordinary air the room
 -- holds, the gauged tile holds exactly as much of it.
 assert(
-    math.abs(t.room_pressure(3, 1) - t.room_pressure(3, 3)) < 1e-9,
+    math.abs(assert(t.room_pressure(3, 1)) - assert(t.room_pressure(3, 3))) < 1e-9,
     "the deck over the gauge is the deck over the bare main: "
-        .. t.room_pressure(3, 1) .. " vs " .. t.room_pressure(3, 3)
+        .. assert(t.room_pressure(3, 1)) .. " vs " .. assert(t.room_pressure(3, 3))
 )
 
 -- And the bottles paid the same price, which is where a leak into the
 -- room would have to have come from.
 assert(
-    math.abs(t.canister_pressure(1, 1) - t.canister_pressure(1, 3)) < 1e-9,
+    math.abs(assert(t.canister_pressure(1, 1)) - assert(t.canister_pressure(1, 3))) < 1e-9,
     "the two bottles are equally spent"
 )
 
@@ -182,16 +181,16 @@ t.run_ticks(2)
 t.use_self(r)
 t.tick()
 
-local function pick(field, label)
-    for _, toggle in ipairs(t.ui(r).toggles) do
+local function pick(field: string, label: string): string
+    for _, toggle in ipairs(ui_controls.rows(ui_controls.state(r).toggles)) do
         if toggle.field == field and toggle.option ~= nil and word(toggle.label) == label then
-            return toggle.option
+            return ui_controls.text(toggle.option)
         end
     end
     error("no " .. field .. " button labelled " .. label)
 end
 
-local function set(field, label)
+local function set(field: string, label: string): ()
     ui_controls.toggle(r, field, pick(field, label))
     t.tick()
 end
@@ -200,7 +199,7 @@ set("dial1", "Meter")
 set("dial2", "3")
 t.click(r, 2, 1, nil, -14, 14)
 t.run_seconds(1.0)
-assert(t.structure_at(2, 1).id == "meter", "the RPD put a gauge on the main")
+assert(assert(t.structure_at(2, 1)).id == "meter", "the RPD put a gauge on the main")
 
 assert(
     math.abs(moles(2, 1) - sealed) < 1e-9,
@@ -213,4 +212,4 @@ assert(
     "still, a minute later: " .. moles(2, 1) .. " vs " .. sealed
 )
 assert(t.pipe(2, 1) == 4, "the run it stands on was never cut")
-assert(t.structure_at(2, 1).id == "meter", "and it is still standing on it")
+assert(assert(t.structure_at(2, 1)).id == "meter", "and it is still standing on it")

@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- EVERY WORD A PLAYER READS COMES OUT OF THE CATALOG, and this is the
 -- three ways it gets there.
 --
@@ -47,13 +49,10 @@ t.tick()
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function readout(ui, label)
-    for _, r in ipairs(ui.readouts or {}) do
+local function readout(ui: ui_controls.Record, label: string): ui_controls.Record?
+    for _, r in ipairs(ui_controls.rows(ui.readouts or {})) do
         if word(r.label) == label then
             return r
         end
@@ -61,7 +60,7 @@ local function readout(ui, label)
     return nil
 end
 
-local function heard(who, needle)
+local function heard(who: number, needle: string): string?
     for _, line in ipairs(t.messages(who)) do
         if line:find(needle, 1, true) then
             return line
@@ -87,7 +86,8 @@ assert(rolled ~= nil,
 -- The face is an ARGUMENT, so the number is in the sentence rather than
 -- the sentence being built around it.
 local face = rolled:match("It lands on (%d+)%.")
-assert(face ~= nil and tonumber(face) >= 1 and tonumber(face) <= 6,
+local face_number = if face then tonumber(face) else nil
+assert(face_number ~= nil and face_number >= 1 and face_number <= 6,
     "with the face substituted into it: " .. rolled)
 t.drop(p)
 t.run_ticks(2)
@@ -99,34 +99,34 @@ t.run_ticks(2)
 -- ---------------------------------------------------------------
 t.click(p, 2, 2, t.target_at(p, 2, 2))
 t.tick()
-local ui = t.ui(p)
+local ui = ui_controls.record(t.ui(p))
 assert(ui ~= nil and ui.document == "modules", "the canister opens its window")
 
 local port = readout(ui, "canister.port")
 assert(port ~= nil, "the panel says whether it is plumbed in")
-assert(port.label.id == "canister.port",
+assert(ui_controls.record(port.label).id == "canister.port",
     "and it says so as an id, not as a word: " .. tostring(word(port.label)))
-assert(port.value.id == "canister.port.loose",
+assert(ui_controls.record(port.value).id == "canister.port.loose",
     "a bottle standing on the deck is loose: " .. tostring(word(port.value)))
 
-local valve = ui.toggles and ui.toggles[1]
-assert(valve ~= nil and valve.label.id == "canister.valve",
+local valve = ui_controls.rows(ui.toggles or {})[1]
+assert(valve ~= nil and ui_controls.record(valve.label).id == "canister.valve",
     "the release valve is a switch, named by id")
-assert(valve.on_text.id == "canister.valve.open" and valve.off_text.id == "canister.valve.shut",
+assert(ui_controls.record(valve.on_text).id == "canister.valve.open" and ui_controls.record(valve.off_text).id == "canister.valve.shut",
     "with both of its positions named the same way")
 
-local dial = ui.setpoints and ui.setpoints[1]
-assert(dial ~= nil and dial.label.id == "canister.release",
+local dial = ui_controls.rows(ui.setpoints or {})[1]
+assert(dial ~= nil and ui_controls.record(dial.label).id == "canister.release",
     "the regulator's dial carries an id and a number, never a caption")
 
-local block = ui.matter and ui.matter[1]
-assert(block ~= nil and block.section.id == "holder.contents",
+local block = ui_controls.rows(ui.matter or {})[1]
+assert(block ~= nil and ui_controls.record(block.section).id == "holder.contents",
     "and the contents block's heading is one too: " .. tostring(block and word(block.section)))
 -- What a substance is CALLED is the pack's own word and travels as
 -- itself: content wrote it, so nothing looks it up.
 local named = false
-for _, state in ipairs(block.states or {}) do
-    for _, row in ipairs(state.rows or {}) do
+for _, state in ipairs(ui_controls.rows(block.states or {})) do
+    for _, row in ipairs(ui_controls.rows(state.rows or {})) do
         named = named or row.name == "oxygen"
     end
 end
@@ -149,7 +149,7 @@ t.move(p, "south")
 t.run_ticks(5)
 t.move(p, "east")
 t.run_ticks(5)
-assert(not t.door_at(4, 2).open, "an airlock with no mains behind it stays shut")
+assert(not assert(t.door_at(4, 2)).open, "an airlock with no mains behind it stays shut")
 assert(heard(p, "The airlock's motors are dead.") ~= nil,
     "and it is refused in the pack's words: " .. table.concat(t.messages(p), " | "))
 assert(heard(p, "It has no power to move.") == nil,

@@ -14,7 +14,7 @@
 
 -- Moles in a volume at a pressure, at room temperature -- the ideal gas
 -- law, so the spec can check the books rather than trust a direction.
-local function moles(kpa, volume_m3)
+local function moles(kpa: number, volume_m3: number)
     return kpa * 1000.0 * volume_m3 / (8.314 * 293.15)
 end
 
@@ -77,11 +77,11 @@ local ROOM_M3 = 9.0
 local CAN_M3 = 2.0
 
 -- A full canister reads about 45 atm. That is the whole supply.
-local full = t.canister_pressure(3, 2)
+local full = assert(t.canister_pressure(3, 2))
 assert(full ~= nil, "the canister is where the map put it")
 assert(full > 4000.0, "a fresh canister is at 45 atm: " .. full)
-assert(t.pipe_pressure(2, 2) > 90.0, "and it has charged the run to one atmosphere")
-assert(t.room_pressure(2, 2) > 90.0, "so the room is breathable from the start")
+assert(assert(t.pipe_pressure(2, 2)) > 90.0, "and it has charged the run to one atmosphere")
+assert(assert(t.room_pressure(2, 2)) > 90.0, "so the room is breathable from the start")
 
 -- The bottle IS the network while it is fastened (tg's connector
 -- reconciliation, portables_connector.dm:48-52): it equalises with the
@@ -89,20 +89,20 @@ assert(t.room_pressure(2, 2) > 90.0, "so the room is breathable from the start")
 -- is the VENT and its one-atmosphere setpoint -- the line behind it is
 -- simply the reserve, standing at whatever the bottle brought.
 t.run_seconds(10)
-local settled = t.canister_pressure(3, 2)
+local settled = assert(t.canister_pressure(3, 2))
 assert(
-    math.abs(settled - t.pipe_pressure(2, 2)) < 5.0,
-    "bottle and run are one body of gas: " .. settled .. " / " .. t.pipe_pressure(2, 2)
+    math.abs(assert(settled) - assert(t.pipe_pressure(2, 2))) < 5.0,
+    "bottle and run are one body of gas: " .. assert(settled) .. " / " .. assert(t.pipe_pressure(2, 2))
 )
-assert(settled > 3500.0, "and the reserve still reads as a reserve: " .. settled)
+assert(assert(settled) > 3500.0, "and the reserve still reads as a reserve: " .. settled)
 t.run_seconds(5)
 assert(
-    math.abs(t.canister_pressure(3, 2) - settled) < 1.0,
-    "a settled station does not keep draining its canister: " .. t.canister_pressure(3, 2)
+    math.abs(assert(t.canister_pressure(3, 2)) - settled) < 1.0,
+    "a settled station does not keep draining its canister: " .. assert(t.canister_pressure(3, 2))
 )
 assert(
-    math.abs(t.room_pressure(2, 2) - 101.325) < 3.0,
-    "the vent holds the room at its own line, not the bottle's: " .. t.room_pressure(2, 2)
+    math.abs(assert(t.room_pressure(2, 2)) - 101.325) < 3.0,
+    "the vent holds the room at its own line, not the bottle's: " .. assert(t.room_pressure(2, 2))
 )
 
 -- Take the welder off the deck FIRST: loose things do not survive a
@@ -116,14 +116,14 @@ t.run_ticks(2)
 t.fault(2, 1, t.now() + 4)
 t.run_seconds(10)
 assert(t.is_breached(2, 1), "the fault opened the room")
-local emptied = t.room_pressure(2, 3)
+local emptied = assert(t.room_pressure(2, 3))
 -- It does not reach hard vacuum: the vent is feeding it the whole
 -- time, off a line the bottle equalised to forty atmospheres, and what
 -- the line sends into the room goes straight out the hole. The
 -- standoff sits well below breathable and well above vacuum, and it is
 -- exactly the cost of leaving a breach open.
-assert(emptied < 80.0, "the room emptied: " .. emptied)
-assert(emptied > 20.0, "into a standoff, not a vacuum: " .. emptied)
+assert(assert(emptied) < 80.0, "the room emptied: " .. emptied)
+assert(assert(emptied) > 20.0, "into a standoff, not a vacuum: " .. emptied)
 
 -- Weld it shut. Now it is a sealed vacuum with a live vent over a
 -- charged run.
@@ -131,21 +131,21 @@ t.click(p, 2, 1)
 t.run_seconds(4.5)
 assert(not t.is_breached(2, 1), "welded shut")
 
-local room_before = t.room_pressure(2, 3)
-local can_before = t.canister_pressure(3, 2)
+local room_before = assert(t.room_pressure(2, 3))
+local can_before = assert(t.canister_pressure(3, 2))
 t.run_seconds(60)
-local room_after = t.room_pressure(2, 3)
-local can_after = t.canister_pressure(3, 2)
+local room_after = assert(t.room_pressure(2, 3))
+local can_after = assert(t.canister_pressure(3, 2))
 
-assert(room_after > 90.0, "the vent brought the room back up: " .. room_after)
-assert(can_after < can_before, "and the canister is what paid: " .. can_after)
+assert(assert(room_after) > 90.0, "the vent brought the room back up: " .. room_after)
+assert(assert(can_after) < assert(can_before), "and the canister is what paid: " .. can_after)
 
 -- The books balance: what the room gained, the canister lost. (Not to
 -- the mole -- the run itself holds some of it, and the room is sampled
 -- at one tile -- but to the same order, which is the difference between
 -- plumbing and a magic trick.)
-local gained = moles(room_after - room_before, ROOM_M3)
-local spent = moles(can_before - can_after, CAN_M3)
+local gained = moles(assert(room_after) - room_before, ROOM_M3)
+local spent = moles(assert(can_before) - can_after, CAN_M3)
 assert(gained > 100.0, "the room gained a real amount: " .. gained)
 assert(
     spent > gained * 0.7 and spent < gained * 1.5,
@@ -160,7 +160,7 @@ assert(
 assert(heard(p, "hiss"), "the room heard the valve open")
 
 -- The gauge has moved off full, which is the point of a gauge.
-assert(can_after < full, "the reading dropped: " .. full .. " -> " .. can_after)
+assert(assert(can_after) < full, "the reading dropped: " .. assert(full) .. " -> " .. can_after)
 
 -- ---------------------------------------------------------------
 -- Air is finite, and this is what that means.
@@ -214,8 +214,8 @@ t.world([==[(
 
 local q = t.join()
 t.tick()
-assert(t.canister_pressure(22, 2) > 4000.0, "the second canister starts full too")
-assert(t.room_pressure(2, 2) > 90.0, "and the crew room starts breathable")
+assert(assert(t.canister_pressure(22, 2)) > 4000.0, "the second canister starts full too")
+assert(assert(t.room_pressure(2, 2)) > 90.0, "and the crew room starts breathable")
 
 -- Tear the deck open under the strip. (The station is handed over
 -- SETTLED, so a hole has to actually happen for anything to move --
@@ -224,13 +224,13 @@ assert(t.room_pressure(2, 2) > 90.0, "and the crew room starts breathable")
 -- canister empties itself into space one lungful per pass.
 t.fault(10, 2, t.now() + 4)
 t.run_seconds(300)
-local left = t.canister_pressure(22, 2)
-assert(left < 100.0, "the canister blew itself empty: " .. left)
-assert(t.pipe_pressure(21, 2) < 10.0, "and the bottle's outlet run is dead with it")
+local left = assert(t.canister_pressure(22, 2))
+assert(assert(left) < 100.0, "the canister blew itself empty: " .. left)
+assert(assert(t.pipe_pressure(21, 2)) < 10.0, "and the bottle's outlet run is dead with it")
 
 -- The crew room never noticed: it was already at one atmosphere, so
 -- its vent had no reason to run.
-assert(t.room_pressure(2, 2) > 80.0, "the sealed room is still fine")
+assert(assert(t.room_pressure(2, 2)) > 80.0, "the sealed room is still fine")
 
 -- Until it isn't. Breach it, weld it shut, and give the vent every
 -- chance: it is a fan over a dead line, and a fan moves no air it was
@@ -244,13 +244,13 @@ t.click(q, 2, 1)
 t.run_seconds(4.5)
 assert(not t.is_breached(2, 1), "and was welded shut again")
 
-local sealed = t.room_pressure(2, 3)
-assert(sealed < 45.0, "sealed at a fraction of an atmosphere: " .. sealed)
+local sealed = assert(t.room_pressure(2, 3))
+assert(assert(sealed) < 45.0, "sealed at a fraction of an atmosphere: " .. sealed)
 t.run_seconds(60)
-local later = t.room_pressure(2, 3)
+local later = assert(t.room_pressure(2, 3))
 assert(
-    later < sealed + 5.0,
-    "an empty canister repressurises nothing: " .. sealed .. " -> " .. later
+    assert(later) < assert(sealed) + 5.0,
+    "an empty canister repressurises nothing: " .. assert(sealed) .. " -> " .. later
 )
 
 -- ---------------------------------------------------------------
@@ -325,12 +325,12 @@ t.run_ticks(2)
 
 -- Fastened to the port it was mapped on: it is feeding the leak, and
 -- you can watch it happen on the gauge.
-local before = t.canister_pressure(2, 1)
+local before = assert(t.canister_pressure(2, 1))
 assert(before ~= nil, "the canister is where the map put it")
 t.run_seconds(10)
-local fastened = t.canister_pressure(2, 1)
-assert(fastened < before - 100.0,
-    "a fastened canister feeds the run: " .. before .. " -> " .. fastened)
+local fastened = assert(t.canister_pressure(2, 1))
+assert(assert(fastened) < before - 100.0,
+    "a fastened canister feeds the run: " .. assert(before) .. " -> " .. fastened)
 
 -- Laying plumbing is slow. The player is standing on a port of their
 -- own at (1, 1); a wrench takes two seconds to break it out of the run
@@ -352,7 +352,7 @@ assert(#t.items_at(1, 1) == 1, "and it is lying on the deck as a fitting")
 -- next atmos pass, which is half a second of a canister with no reading
 -- on it, every time an engineer touched one.
 local bottle = t.target_at(w, 2, 1)
-local function lit(who, when)
+local function lit(who: SpecObservedTarget?, when: string): ()
     local drawn = t.layers(w, who)
     local lights, band = false, false
     for _, layer in ipairs(drawn) do
@@ -378,13 +378,13 @@ lit(bottle, "and in the very tick it comes off, it still reads")
 -- Read the gauge the moment it is off. The run it left holds a full
 -- forty-atmosphere charge now (the bottle equalised with it while
 -- fastened), so give the hole longer to swallow it.
-local off = t.canister_pressure(2, 1)
+local off = assert(t.canister_pressure(2, 1))
 t.run_seconds(30)
-local loose = t.canister_pressure(2, 1)
-assert(math.abs(loose - off) < 1.0,
-    "off the port, it feeds nothing: " .. off .. " -> " .. loose)
-assert(t.pipe_pressure(2, 2) < 20.0,
-    "and the adjacent run it left is emptying into space: " .. t.pipe_pressure(2, 2))
+local loose = assert(t.canister_pressure(2, 1))
+assert(math.abs(assert(loose) - off) < 1.0,
+    "off the port, it feeds nothing: " .. assert(off) .. " -> " .. loose)
+assert(assert(t.pipe_pressure(2, 2)) < 20.0,
+    "and the adjacent run it left is emptying into space: " .. assert(t.pipe_pressure(2, 2)))
 
 -- Loose means loose. Walk into it and it gives way (see
 -- movement.rs::shove -- tg would have you PULL it), and the tile it
@@ -436,7 +436,7 @@ assert(not t.ledger_has("StructureStep", "canister", "anchored"),
 t.move(w, "east")
 t.run_ticks(3)
 assert(t.canister_pressure(5, 1) ~= nil, "it is on the second port")
-local moved = t.canister_pressure(5, 1)
+local moved = assert(t.canister_pressure(5, 1))
 t.click(w, 5, 1, t.target_at(w, 5, 1))
 t.run_ticks(1)
 assert(t.ledger_has("StructureStep", "canister", "anchored"),
@@ -444,10 +444,10 @@ assert(t.ledger_has("StructureStep", "canister", "anchored"),
 lit(t.target_at(w, 5, 1), "and the tick it goes back on a port it reads too")
 
 t.run_seconds(10)
-local rejoined = t.canister_pressure(5, 1)
-assert(rejoined < moved - 100.0,
+local rejoined = assert(t.canister_pressure(5, 1))
+assert(assert(rejoined) < assert(moved) - 100.0,
     "and it is feeding the loop from its new tile: "
-        .. moved .. " -> " .. rejoined)
+        .. assert(moved) .. " -> " .. rejoined)
 
 -- ---------------------------------------------------------------
 -- A bottle is pushed ACROSS the atmospherics kit, not around it.
@@ -516,10 +516,10 @@ t.run_ticks(2)
 assert(t.hands(v).held == "wrench", "wrench in hand")
 
 assert(t.target_at(v, 3, 1, "air_injector") ~= nil, "the injector stands between the two sockets")
-local supply = t.canister_pressure(2, 1)
+local supply = assert(t.canister_pressure(2, 1))
 t.run_seconds(10)
-assert(t.canister_pressure(2, 1) < supply - 100.0,
-    "the bottle opens the shift plumbed into the first socket: " .. t.canister_pressure(2, 1))
+assert(assert(t.canister_pressure(2, 1)) < assert(supply) - 100.0,
+    "the bottle opens the shift plumbed into the first socket: " .. assert(t.canister_pressure(2, 1)))
 
 -- Off the socket, instantly, and now nothing holds it down.
 t.click(v, 2, 1, t.target_at(v, 2, 1, "canister"))
@@ -547,8 +547,8 @@ t.run_ticks(1)
 assert(t.ledger_has("StructureStep", "canister", "anchored"),
     "fastened to the socket on the far side")
 
-local landed = t.canister_pressure(4, 1)
+local landed = assert(t.canister_pressure(4, 1))
 t.run_seconds(10)
-assert(t.canister_pressure(4, 1) < landed - 100.0,
+assert(assert(t.canister_pressure(4, 1)) < assert(landed) - 100.0,
     "and feeding the run again from there: "
-        .. landed .. " -> " .. t.canister_pressure(4, 1))
+        .. assert(landed) .. " -> " .. assert(t.canister_pressure(4, 1)))

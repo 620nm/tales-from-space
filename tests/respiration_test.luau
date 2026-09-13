@@ -29,6 +29,8 @@
 -- The room is one tile and sealed, so nothing that leaves a pair of
 -- lungs can wander off before it is weighed.
 
+local ui_controls = require("@helpers/ui_controls")
+
 local ARENA = [==[(
     name: "closet",
     legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
@@ -38,15 +40,15 @@ local ARENA = [==[(
 
 local BREATH = 160 -- one breath cycle, 8 s at 20 Hz
 
-local function gas(key)
+local function gas(key: string)
     local held = t.room_gas(1, 1)
     return (held and held[key]) or 0.0
 end
 
 -- What is standing inside somebody, which for a pair of lungs is a real
 -- reading and not a figure of speech.
-local function inside(who, key)
-    local seated = t.sockets(who).lungs.seated
+local function inside(who: number, key: string)
+    local seated = assert(t.sockets(who)).lungs.seated
     if not seated then
         return 0.0
     end
@@ -62,8 +64,8 @@ t.world(ARENA, 0)
 local crew = t.join()
 t.run_ticks(3)
 
-assert(t.sockets(crew).lungs.ok, "the crewman arrives with lungs")
-assert(t.body(crew).animate, "and a beating heart")
+assert(assert(t.sockets(crew)).lungs.ok, "the crewman arrives with lungs")
+assert(assert(t.body(crew)).animate, "and a beating heart")
 local o2_0, co2_0 = gas("o2"), gas("co2")
 assert(o2_0 > 0.0, "the closet is commissioned with air in it")
 
@@ -104,8 +106,8 @@ assert(math.abs((waste + air) - burned) < 1e-6,
 -- =====================================================================
 t.set_health(crew, { brute = 200 })
 t.run_ticks(3)
-assert(t.body(crew).animate == false, "200 brute is past the dead line")
-assert(t.sockets(crew).heart.failing, "and it stopped the heart")
+assert(assert(t.body(crew)).animate == false, "200 brute is past the dead line")
+assert(assert(t.sockets(crew)).heart.failing, "and it stopped the heart")
 
 local o2_dead, co2_dead = gas("o2"), gas("co2")
 t.run_ticks(BREATH * 4)
@@ -137,7 +139,7 @@ assert(gas("o2") < 1e-6, "the tile is vacuum: " .. gas("o2") .. " mol of air")
 t.run_ticks(BREATH * 12)
 assert(inside(spacer, "o2") < 1e-9 and inside(spacer, "co2") < 1e-9,
     "a pair of lungs cycling vacuum is empty")
-assert(t.health(spacer).oxy > 0, "and the crewman is suffocating in it")
+assert(ui_controls.number(t.health(spacer).oxy) > 0, "and the crewman is suffocating in it")
 
 -- =====================================================================
 -- NO LUNGS, BEATING HEART: alive, and drowning.
@@ -170,26 +172,30 @@ local PX, PY = 2, 1
 -- What a candidate button says. An operation ON AN ORGAN is the
 -- `procedure.on_organ` id carrying the two words as arguments; a plain
 -- one is content's own word (docs/tgui/labels.md).
-local function face(label)
+local function face(label: unknown): string
     if type(label) ~= "table" then return tostring(label) end
-    if label.args and label.args.organ then
-        return tostring(label.args.operation) .. " " .. tostring(label.args.organ)
+    local row = ui_controls.record(label)
+    if row.args then
+        local args = ui_controls.record(row.args)
+        if args.organ then
+            return tostring(args.operation) .. " " .. tostring(args.organ)
+        end
     end
-    return tostring(label.text or label.id)
+    return tostring(row.text or row.id)
 end
 
-local function hold(id)
+local function hold(id: string)
     if t.hands(surgeon).held ~= nil then t.drop(surgeon); t.tick() end
     t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, id))
     t.run_ticks(2)
     assert(t.hands(surgeon).held == id, "the surgeon holds the " .. id)
 end
 
-local function step(tool, secs, state)
+local function step(tool: string, secs: number, state: string)
     hold(tool)
     t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
     t.run_ticks(math.ceil(secs * 20) + 3)
-    assert(t.parts(patient).chest.states[state] == true, "the chest is " .. state)
+    assert(assert(t.parts(patient)).chest.states[state] == true, "the chest is " .. state)
 end
 
 step("scalpel", 1.6, "skin_cut")
@@ -201,24 +207,24 @@ step("scalpel", 2.4, "organs_cut")
 hold("hemostat")
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(2)
-local win = t.ui(surgeon)
+local win = ui_controls.state(surgeon)
 local pick
-for _, toggle in ipairs(win.toggles) do
-    if face(toggle.label):find("lungs", 1, true) then pick = toggle.option end
+for _, toggle in ipairs(ui_controls.rows(win.toggles)) do
+    if face(toggle.label):find("lungs", 1, true) then pick = ui_controls.text(toggle.option) end
 end
 assert(pick, "the window offers the lungs")
 ui_controls.toggle(surgeon, "operation", pick)
 t.run_ticks(23)
 
-assert(t.sockets(patient).lungs.seated == false, "the lungs are out")
-assert(t.body(patient).animate == true,
+assert(assert(t.sockets(patient)).lungs.seated == false, "the lungs are out")
+assert(assert(t.body(patient)).animate == true,
     "and the patient is ALIVE, because in this pack life is the heart")
 assert(t.capacity(patient, "breathing") == 0, "but breathes nothing at all")
 
 -- The room is perfectly good air; the only thing wrong is the hole.
-local hurt_0 = t.health(patient).oxy
+local hurt_0 = ui_controls.number(t.health(patient).oxy)
 t.run_ticks(BREATH * 3)
-assert(t.health(patient).oxy > hurt_0,
+assert(ui_controls.number(t.health(patient).oxy) > hurt_0,
     "a body with no lungs drowns in breathable air: "
-        .. hurt_0 .. " -> " .. t.health(patient).oxy)
-assert(t.body(patient).animate == true, "still alive while it happens")
+        .. hurt_0 .. " -> " .. ui_controls.number(t.health(patient).oxy))
+assert(assert(t.body(patient)).animate == true, "still alive while it happens")

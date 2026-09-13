@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The viewer's action rows describe the same exact targets that clicks use.
 t.world([==[(
     name: "action targets",
@@ -19,7 +21,7 @@ local function walk(dir)
     t.move(actor, dir)
     t.run_ticks(5)
 end
-local function take(id)
+local function take(id: string)
     if t.hands(actor).held ~= nil then
         t.drop(actor)
         t.run_ticks(2)
@@ -37,7 +39,7 @@ local function take(id)
     assert(t.hands(actor).held == id, "picked up " .. id)
 end
 
-local function entity_action(entity, id)
+local function entity_action(entity: SpecObservedTarget, id: string): SpecActionDescriptor?
     for _, action in ipairs(t.action_hints(actor, { Entity = entity })) do
         if action.id == id then return action end
     end
@@ -53,12 +55,14 @@ assert(entity_action(covered, "fasten_pipe") == nil, "finished flooring hides fa
 assert(entity_action(metal, "fasten_pipe") == nil, "a wrench is not compatible with arbitrary items")
 local pipe_layers = {}
 for _, view in ipairs(t.actions(actor)) do
-    local subfloor = view.target.Subfloor
-    if subfloor then
-        assert(subfloor.pos.x ~= 3 or subfloor.pos.y ~= 3, "covered infrastructure has no action target")
-        if subfloor.kind == "Pipe" and subfloor.pos.x == 3 and subfloor.pos.y == 2 then
+    local disclosed = ui_controls.record(view.target).Subfloor
+    if disclosed then
+        local subfloor = ui_controls.record(disclosed)
+        local pos = ui_controls.record(subfloor.pos)
+        assert(pos.x ~= 3 or pos.y ~= 3, "covered infrastructure has no action target")
+        if subfloor.kind == "Pipe" and pos.x == 3 and pos.y == 2 then
             for _, action in ipairs(view.actions) do
-                if action.id == "unfasten_pipe" then pipe_layers[subfloor.layer] = true end
+                if action.id == "unfasten_pipe" then pipe_layers[ui_controls.number(subfloor.layer)] = true end
             end
         end
     end
@@ -68,7 +72,8 @@ for _, layer in ipairs({ 1, 2, 4, 8, 16 }) do
 end
 
 take("wirecutters")
-for _, kind in ipairs({ "Cable", "Pipe" }) do
+local kinds: { "Cable" | "Pipe" } = { "Cable", "Pipe" }
+for _, kind in ipairs(kinds) do
     local offered = false
     for _, action in ipairs(t.action_hints(actor,
         { Subfloor = { pos = { x = 3, y = 2 }, kind = kind, layer = 2 } })) do
@@ -88,17 +93,18 @@ take("toolbox")
 local body = t.body_target(actor, patient)
 assert(entity_action(body, "strike"), "the toolbox advertises its scripted body strike")
 assert(entity_action(metal, "strike") == nil, "the body strike is absent on a loose item")
-local health = t.health(patient).brute
+local health = ui_controls.number(t.health(patient).brute)
 t.run_ticks(3)
 assert(t.health(patient).brute == health, "projecting the strike never executes damage")
 t.click(actor, 3, 2, t.body_target(actor, patient))
 t.run_ticks(2)
-assert(t.health(patient).brute > health, "the advertised strike executes through a player click")
+assert(ui_controls.number(t.health(patient).brute) > health, "the advertised strike executes through a player click")
 
 take("laptop")
-local function laptop_gesture_ids(label)
+local function laptop_gesture_ids(label: string)
     for _, view in ipairs(t.actions(actor)) do
-        local ids, gestures = {}, {}
+        local ids: { [string]: boolean } = {}
+        local gestures: { [string]: string } = {}
         for _, action in ipairs(view.actions) do
             assert(not ids[action.id], "each hover row has a unique ID: " .. action.id)
             ids[action.id] = true
@@ -125,8 +131,8 @@ local on_self, on_secondary = laptop_gesture_ids("lunatic/tfs:ui.affordance.view
 assert(on_self == self_id and on_secondary == secondary_id, "power state does not change gesture IDs")
 t.use_self(actor)
 t.run_ticks(2)
-local desktop = assert(t.ui(actor), "the laptop screen opens")
-local data = if desktop.script then desktop.script.data else desktop.data
+local desktop = ui_controls.record(assert(t.ui(actor), "the laptop screen opens"))
+local data = ui_controls.record(if desktop.script then ui_controls.record(desktop.script).data else desktop.data)
 assert(data.powered, "the laptop is powered before projecting its network action")
 local network_action = entity_action(network, "connect")
 t.sounds(actor)

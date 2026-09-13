@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- A bottle of homebrew, and the lid that makes it one.
 --
 -- Sugar in water ferments at room temperature (reactions/fermentation.
@@ -85,7 +87,7 @@ local STRAIN = 150.0 -- lunatic_core::STRAINING_KPA
 local STRAIN_STEP = 2 -- where 0.00244 mol of headspace is bought
 local STEPS = 10 -- watched steps, with sugar to spare
 
-local function near(got, want, slack, what)
+local function near(got: number?, want: number, slack: number, what: string)
     assert(got ~= nil, what .. ": nothing was answered")
     assert(
         math.abs(got - want) < slack,
@@ -93,7 +95,7 @@ local function near(got, want, slack, what)
     )
 end
 
-local function says(look, needle)
+local function says(look: SpecExamine?, needle: string)
     assert(look ~= nil, "the look was refused")
     for _, line in ipairs(look.lines) do
         if line:find(needle, 1, true) ~= nil then
@@ -131,10 +133,10 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local taps = t.target_at(p, 2, 2)
-local mixer = t.target_at(p, 1, 1, "beaker")
-local bottle = t.target_at(p, 3, 1, "bottle")
-local twin = t.target_at(p, 3, 2, "beaker")
+local taps = assert(t.target_at(p, 2, 2))
+local mixer = assert(t.target_at(p, 1, 1, "beaker"))
+local bottle = assert(t.target_at(p, 3, 1, "bottle"))
+local twin = assert(t.target_at(p, 3, 2, "beaker"))
 
 -- The whole room's CO2, over every tile of it. A sealed room with no
 -- vents in it has nowhere else to put gas, so this is the honest test
@@ -151,8 +153,7 @@ local function room_co2()
 end
 
 local function co2_in(vessel)
-    local reading = t.vessel(vessel)
-    assert(reading ~= nil, "that is a vessel")
+    local reading = assert(t.vessel(vessel), "that is a vessel")
     local entry = reading.contents.co2
     return entry and (entry.gas or 0) or 0
 end
@@ -192,7 +193,7 @@ local function brew_into(x, y, vessel)
     -- a pour moves the LIQUID phase, and the mixing beaker is open, so
     -- what its own surface has evaporated into its headspace stays
     -- behind (docs/MATTER.md 5).
-    near(t.vessel(mixer).moles, 0, 1e-4, "one gesture is the whole 10 u")
+    near(assert(t.vessel(mixer)).moles, 0, 1e-4, "one gesture is the whole 10 u")
 end
 
 -- ---------------------------------------------------------------
@@ -202,7 +203,7 @@ t.click(p, 1, 1, mixer)
 t.tick()
 brew_into(3, 1, bottle)
 
-local started = t.vessel(bottle)
+local started = assert(t.vessel(bottle))
 assert(started.sealed, "a bottle has a stopper in it")
 -- A tenth of a millimole of slack, for the vapour the mixing beaker
 -- kept: a pour moves the liquid, and an open glass always has a little
@@ -224,7 +225,7 @@ assert(
 local last_co2, last_kpa, last_made = 0, 0, math.huge
 for step = 1, STEPS do
     t.run_seconds(2)
-    local reading = t.vessel(bottle)
+    local reading = assert(t.vessel(bottle))
     local co2 = co2_in(bottle)
     local made = co2 - last_co2
     if step == 1 then
@@ -274,14 +275,14 @@ assert(last_kpa > 600.0, "a bottle under real pressure: " .. last_kpa)
 -- phases, because ethanol has a real vapour curve (substances/
 -- ethanol.luau) and a trace of it is standing in the headspace with
 -- the CO2 -- which is also part of what the gauge is reading.
-local spirit = t.vessel(bottle).contents.ethanol
+local spirit = assert(t.vessel(bottle)).contents.ethanol
 near(
-    spirit.liquid + (spirit.gas or 0),
+    assert(spirit.liquid) + (spirit.gas or 0),
     last_co2,
     1e-9,
     "as much ethanol as carbon dioxide, which is the recipe"
 )
-assert(spirit.gas > 0, "and some of it is vapour: " .. spirit.gas)
+assert(spirit.gas ~= nil and spirit.gas > 0, "and some of it is vapour: " .. tostring(spirit.gas))
 
 -- ---------------------------------------------------------------
 -- TWO: THE SAME BREW, IN AN OPEN GLASS.
@@ -292,7 +293,7 @@ assert(spirit.gas > 0, "and some of it is vapour: " .. spirit.gas)
 -- ---------------------------------------------------------------
 brew_into(3, 2, twin)
 
-local twin_start = t.vessel(twin)
+local twin_start = assert(t.vessel(twin))
 assert(not twin_start.sealed, "a beaker has no lid to strain against")
 near(twin_start.moles, WATER + SUGAR, 2e-4, "the same quarter of a mole")
 near(twin_start.contents.sugar.solid, SUGAR, 1e-9, "and the same unit of sugar")
@@ -304,7 +305,7 @@ for step = 1, STEPS do
         near(room_co2(), FIRST_CO2, 1e-6, "the room took the first step's whole 1.32 mmol")
     end
     near(co2_in(twin), 0, 1e-9, "and the glass kept none of it")
-    local reading = t.vessel(twin)
+    local reading = assert(t.vessel(twin))
     assert(
         reading.pressure_kpa < STRAIN,
         "an open glass never builds a pressure: " .. reading.pressure_kpa

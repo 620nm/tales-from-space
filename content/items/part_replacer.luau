@@ -1,3 +1,5 @@
+local action_rules = require("@lib/action_rules")
+
 -- The rapid part exchange device: a bag you walk a machine's sockets
 -- with (tg `code/modules/research/part_replacer.dm:2-26`).
 --
@@ -46,14 +48,14 @@ if sim ~= nil then
         if not claim or claim.kind ~= "machine" or not claim.entity then
             return { replaced = false } -- not a machine; let the click mean whatever else it means
         end
-        local sockets = claim.entity.components
+        local sockets: {PartSlotView}? = claim.entity.components
         if not sockets then
             return { replaced = false } -- nothing this one is built out of
         end
-        local bag = ev.subject.contents or {}
+        local bag: {Handle} = ev.subject.contents or {}
         -- One part fits one socket: a bag holding a single better laser
         -- upgrades the first laser socket and not both of them.
-        local spent = {}
+        local spent: {[number]: boolean} = {}
         local fitted = 0
         for index, socket in ipairs(sockets) do
             local best, best_tier = nil, socket.tier

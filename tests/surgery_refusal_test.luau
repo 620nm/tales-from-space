@@ -24,7 +24,7 @@ local PX, PY = 2, 1
 local function said(who, needle)
     return (" " .. table.concat(t.messages(who), " || ") .. " "):find(needle, 1, true) ~= nil
 end
-local function hold(id)
+local function hold(id: string)
     if t.hands(surgeon).held then t.drop(surgeon); t.tick() end
     t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, id)); t.run_ticks(2)
 end
@@ -44,7 +44,7 @@ assert(said(surgeon, "covered"), "a covered chest: obstructed")
 t.unequip(patient, "uniform")
 t.rest(patient, false)
 t.run_ticks(2)
-assert(t.body(patient).posture == "standing", "on their feet")
+assert(assert(t.body(patient)).posture == "standing", "on their feet")
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(2)
 assert(said(surgeon, "lying down"), "a standing patient: not_lying")
@@ -57,7 +57,7 @@ t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(2)
 assert(said(surgeon, "nothing to retract"), "no incision yet: nothing_to_do")
 -- And nothing was cut: the retractor never touched the patient.
-assert(t.parts(patient).chest.states.skin_cut ~= true, "a refusal is not a swing")
+assert(assert(t.parts(patient)).chest.states.skin_cut ~= true, "a refusal is not a swing")
 
 -- ---- the two-party guard: the patient stands up -----------------------
 -- Now everything is right (bare, lying, a scalpel), so this parks. Part
@@ -76,7 +76,7 @@ assert(said(surgeon, "already operating"), "and the surgeon is told they are bus
 t.rest(patient, false) -- they sit up
 t.run_ticks(3)
 assert(#t.ledger_rows("DoAfterInterrupted") > 0, "the patient stood: interrupted")
-assert(t.parts(patient).chest.states.skin_cut ~= true, "no cut landed")
+assert(assert(t.parts(patient)).chest.states.skin_cut ~= true, "no cut landed")
 
 -- ---- the two-party guard: the surgeon drops the tool ------------------
 t.rest(patient, true)
@@ -87,6 +87,6 @@ t.run_ticks(20)
 t.drop(surgeon) -- the scalpel leaves the hand
 t.run_ticks(3)
 assert(#t.ledger_rows("DoAfterInterrupted") > before, "the tool left the hand: interrupted")
-assert(t.parts(patient).chest.states.skin_cut ~= true, "and still no cut")
+assert(assert(t.parts(patient)).chest.states.skin_cut ~= true, "and still no cut")
 
 print("refusal: not_lying, obstructed, nothing_to_do; guard interrupts on both parties")

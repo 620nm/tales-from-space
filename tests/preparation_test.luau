@@ -24,9 +24,11 @@ local function status()
 end
 
 local function job_rows()
-    local out = {}
+    local out: { [string]: number } = {}
     for _, row in ipairs(t.ledger_rows("joined_job")) do
-        out[row.job] = (out[row.job] or 0) + 1
+        local job = row.job
+        assert(type(job) == "string", "joined job has an identifier")
+        out[job] = (out[job] or 0) + 1
     end
     return out
 end
@@ -46,14 +48,14 @@ assert(idle_status.remaining_seconds == COUNTDOWN, "no ready player does not spe
 
 -- The first ready player starts the full countdown. The accepted name is
 -- trimmed before admission and remains on the Mind that receives the body.
-local first = t.prepare(idle, {
+local first = assert(t.prepare(idle, {
     name = "  Ada Lovelace  ",
     ranked_jobs = { "engineer" },
     fallback = false,
-})
+}))
 assert(first.draft.name == "Ada Lovelace", "the accepted draft trims its name")
 assert(first.revision == 1, "accepting a draft advances its revision")
-first = t.ready(idle)
+first = assert(t.ready(idle))
 assert(first.ready and first.can_edit == false, "ready locks the accepted draft")
 local started = status()
 assert(started.ready == 1 and started.remaining_seconds == COUNTDOWN, "the first ready player starts at 120")
@@ -73,20 +75,20 @@ assert(job_rows().engineer == 1, "the selected role is admitted")
 -- With consent, the mode's assistant fallback supplies the role.
 t.world(MAP, 7, "space_station")
 local fallback = t.connect()
-local empty = t.prepare(fallback, {
+local empty = assert(t.prepare(fallback, {
     name = "Fallback Pilot",
     ranked_jobs = {},
     fallback = false,
-})
-empty = t.ready(fallback)
+}))
+empty = assert(t.ready(fallback))
 assert(not empty.ready and empty.issue == "invalid_draft", "empty choices need fallback consent")
-empty = t.prepare(fallback, {
+empty = assert(t.prepare(fallback, {
     name = "Fallback Pilot",
     ranked_jobs = {},
     fallback = true,
-})
+}))
 assert(empty.issue == nil and empty.draft.fallback, "fallback consent is part of the draft")
-empty = t.ready(fallback)
+empty = assert(t.ready(fallback))
 assert(empty.ready, "a consented fallback draft can ready")
 t.preparation_steps(COUNTDOWN * TICKS_PER_SECOND)
 assert(status().phase == "playing", "a consented fallback cohort starts")

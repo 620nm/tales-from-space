@@ -41,7 +41,7 @@ t.run_seconds(2.5)
 
 local port = t.structure_at(2, 2)
 assert(port ~= nil and port.id == "connector_port", "the fitting became a port")
-assert(port.sprite == "connector_port_w", "the chosen west facing survived anchoring")
+assert(assert(port).sprite == "connector_port_w", "the chosen west facing survived anchoring")
 assert(t.target_at(p, 2, 2, "connector_port_fitting") == nil, "the loose fitting was consumed")
 
 -- Taking it back up returns the component item rather than deleting it,
@@ -58,10 +58,10 @@ assert(port ~= nil and port.sprite == "connector_port_w", "the returned fitting 
 -- Anchoring is the boundary: the same explicit claim cannot turn live
 -- network topology behind the server's back.
 local anchored = t.target_at(p, 2, 2, "connector_port")
-t.rotate(p, 2, 2, anchored, true)
+t.rotate(p, 2, 2, assert(anchored), true)
 t.tick()
 port = t.structure_at(2, 2)
-assert(port.sprite == "connector_port_w", "an anchored fixture refuses rotation")
+assert(assert(port).sprite == "connector_port_w", "an anchored fixture refuses rotation")
 assert(#t.ledger_rows("Rotated") == 5, "a refused turn creates no ledger row")
 
 -- A connector carries a Stub, but ordinary binary and trinary devices
@@ -112,15 +112,15 @@ t.drop(q)
 t.run_ticks(2)
 t.click(q, 3, 2, t.target_at(q, 3, 2, "manual_valve"))
 t.run_seconds(2)
-assert(t.structure_at(3, 2).state == "open", "the valve opened")
+assert(assert(t.structure_at(3, 2)).state == "open", "the valve opened")
 t.fault(5, 1, t.now() + 4)
 t.run_seconds(80)
 assert(t.is_breached(5, 1), "the room opened to space")
 assert(
-    t.pipe_pressure(4, 2) < 25.0,
-    "the selected east mouth joined the vented west run: " .. t.pipe_pressure(4, 2)
+    assert(t.pipe_pressure(4, 2)) < 25.0,
+    "the selected east mouth joined the vented west run: " .. assert(t.pipe_pressure(4, 2))
 )
 assert(
-    t.pipe_pressure(3, 1) > 90.0,
-    "the unselected north run stayed sealed: " .. t.pipe_pressure(3, 1)
+    assert(t.pipe_pressure(3, 1)) > 90.0,
+    "the unselected north run stayed sealed: " .. assert(t.pipe_pressure(3, 1))
 )

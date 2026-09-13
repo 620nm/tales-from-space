@@ -1,3 +1,5 @@
+local netmsg = require("@lib/netmsg")
+
 -- The air vent, and the one thing about it that is not mechanism.
 --
 -- Everything a fan DOES is native: which way it blows, the dead band

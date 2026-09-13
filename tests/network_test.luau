@@ -16,10 +16,10 @@
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local laptop = require("@helpers/laptop")
+local ui_controls = require("@helpers/ui_controls")
+
+local word = ui_controls.word
 
 local function said(p, line)
     for _, m in ipairs(t.messages(p)) do
@@ -31,13 +31,13 @@ local function said(p, line)
 end
 
 -- The document's own node on its network: `address` or `state`.
-local function link(ui, key)
-    return ui.link and word(ui.link[key])
+local function link(ui: ui_controls.Record, key: string): string?
+    return if ui.link then word(ui_controls.record(ui.link)[key]) else nil
 end
 
-local function rows(ui, field)
+local function rows(ui: ui_controls.Record, field: string): { ui_controls.Record }
     local out = {}
-    for _, row in ipairs(ui.toggles or {}) do
+    for _, row in ipairs(ui_controls.rows(ui.toggles or {})) do
         if row.field == field then
             out[#out + 1] = row
         end
@@ -45,13 +45,18 @@ local function rows(ui, field)
     return out
 end
 
-local function row_for(ui, field, option)
+local function row_for(ui: ui_controls.Record, field: string, option: string): ui_controls.Record?
     for _, row in ipairs(rows(ui, field)) do
         if row.option == option then
             return row
         end
     end
     return nil
+end
+
+local function roster_state(row: ui_controls.Record): string
+    local label = ui_controls.record(row.label)
+    return ui_controls.text(ui_controls.record(label.args).state)
 end
 
 -- The bench: a plant, a controller and a port along the back wall, an
@@ -90,7 +95,7 @@ t.world([==[(
 local p = t.join()
 t.run_ticks(20)
 
-local function take(id)
+local function take(id: string)
     local x, y = 5, 1
     local places = {["metal"] = {4, 2},["cable_coil"] = {5, 2},["machine_board.network_router"] = {6, 2},["network_card"] = {4, 3},["screwdriver"] = {5, 3},["id_engineering"] = {6, 3}}
     local at = if t.target_at(p, x, y, id) then {x, y} else places[id]
@@ -158,17 +163,17 @@ put_down()
 take("metal")
 ui_controls.build(p, "metal", "machine_frame", 6, 1)
 t.run_seconds(8.5)
-assert(t.structure_at(6, 1).id == "machine_frame", "five sheets box up into a frame")
+assert(assert(t.structure_at(6, 1)).id == "machine_frame", "five sheets box up into a frame")
 
 put_down()
 take("cable_coil")
 work(2.5)
-assert(t.structure_at(6, 1).state == "wired", "five lengths of cable wire it")
+assert(assert(t.structure_at(6, 1)).state == "wired", "five lengths of cable wire it")
 
 put_down()
 take("machine_board.network_router")
 work(0.5)
-assert(t.structure_at(6, 1).state == "boarded", "and the board says what it is becoming")
+assert(assert(t.structure_at(6, 1)).state == "boarded", "and the board says what it is becoming")
 
 put_down()
 take("screwdriver")
@@ -202,7 +207,7 @@ t.run_ticks(40)
 local _ = t.messages(p)
 t.click(p, 6, 1, t.target_at(p, 6, 1))
 t.tick()
-panel = t.ui(p)
+panel = ui_controls.record(assert(t.ui(p), "the device panel is open"))
 assert(panel ~= nil, "the router wears the same panel")
 local router = link(panel, "address")
 assert(router ~= nil and #router == 17 and router ~= point, "with an address of its own")
@@ -222,7 +227,7 @@ assert(
 
 ui_controls.toggle(p, "link_lock")
 t.tick()
-panel = t.ui(p)
+panel = ui_controls.record(assert(t.ui(p), "the device panel is open"))
 assert(rows(panel, "link_lock")[1].on, "it opens for whoever is standing at it")
 
 -- A ROOT ACCEPTS HUBS, STATION-WIDE: the thing it is joining is bolted
@@ -232,7 +237,7 @@ assert(rows(panel, "link_lock")[1].on, "it opens for whoever is standing at it")
 -- router.
 local offer = row_for(panel, "link_join", point)
 assert(offer ~= nil, "the access point is on offer: " .. #rows(panel, "link_join") .. " candidates")
-assert(offer.label.id == "link.candidate.hub", "named by what it is: " .. word(offer.label))
+assert(ui_controls.record(offer.label).id == "link.candidate.hub", "named by what it is: " .. word(offer.label))
 
 -- ---------------------------------------------------------------
 -- 4. THE JOIN. One press, one edge, one row on the record -- and the
@@ -240,11 +245,11 @@ assert(offer.label.id == "link.candidate.hub", "named by what it is: " .. word(o
 -- ---------------------------------------------------------------
 ui_controls.toggle(p, "link_join", point)
 t.tick()
-panel = t.ui(p)
+panel = ui_controls.record(assert(t.ui(p), "the device panel is open"))
 local held = row_for(panel, "link_drop", point)
 assert(held ~= nil, "the panel now holds it")
-assert(held.label.args.state == "link.state.online",
-    "saying what it is doing: " .. tostring(held.label.args.state))
+assert(roster_state(held) == "link.state.online",
+    "saying what it is doing: " .. tostring(roster_state(held)))
 
 -- One edge, one row -- counting the edges somebody MADE. The
 -- electrical pass sews its own under every device a panel feeds and
@@ -289,7 +294,7 @@ assert(
 -- ---------------------------------------------------------------
 ui_controls.toggle(p, "link_drop", point)
 t.tick()
-panel = t.ui(p)
+panel = ui_controls.record(assert(t.ui(p), "the device panel is open"))
 assert(row_for(panel, "link_drop", point) == nil, "the edge is cut")
 assert(row_for(panel, "link_join", point) ~= nil, "and it is offerable again")
 -- The cut on the record, counting the ones somebody ASKED for: a
@@ -306,7 +311,7 @@ assert(cuts == 1, "with the cut on the record: " .. cuts)
 
 ui_controls.toggle(p, "link_join", point)
 t.tick()
-assert(row_for(t.ui(p), "link_drop", point) ~= nil, "joined again")
+assert(row_for(ui_controls.record(assert(t.ui(p), "the device panel is open")), "link_drop", point) ~= nil, "joined again")
 
 -- ---------------------------------------------------------------
 -- 6. THE ACCESS POINT'S OWN VIEW, which needs the claim its placement
@@ -316,7 +321,7 @@ assert(row_for(t.ui(p), "link_drop", point) ~= nil, "joined again")
 t.ui_close(p)
 t.tick()
 laptop.take(p, 5, 1)
-assert(laptop.connect(p, 4, 1, "access_point").contact_locked, "the lock screen again")
+assert(assert(laptop.connect(p, 4, 1, "access_point")).contact_locked, "the lock screen again")
 laptop.unlock(p)
 t.tick()
 assert(laptop.ui(p).contact_locked, "a laptop without the claim does not open a keyed lock")
@@ -352,15 +357,15 @@ t.ui_close(p)
 t.tick()
 t.click(p, 6, 1, t.target_at(p, 6, 1))
 t.tick()
-assert(row_for(t.ui(p), "link_drop", point).label.args.state == "link.state.online",
+assert(roster_state(assert(row_for(ui_controls.record(assert(t.ui(p))), "link_drop", point))) == "link.state.online",
     "on the air while the breaker is in")
 
 t.outage()
 t.run_ticks(60)
-panel = t.ui(p)
+panel = ui_controls.record(assert(t.ui(p), "the device panel is open"))
 assert(panel ~= nil, "the panel keeps reporting")
 assert(link(panel, "state") == "link.state.unpowered", "the router itself has stopped carrying traffic")
 local dark = row_for(panel, "link_drop", point)
 assert(dark ~= nil, "the edge survives the outage: a bond is not a signal")
-assert(dark.label.args.state == "link.state.unpowered",
-    "and the roster says why it went quiet: " .. tostring(dark.label.args.state))
+assert(roster_state(dark) == "link.state.unpowered",
+    "and the roster says why it went quiet: " .. tostring(roster_state(dark)))

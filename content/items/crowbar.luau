@@ -1,3 +1,5 @@
+local action_rules = require("@lib/action_rules")
+
 -- The classic, both jobs: pry a floor tile off its plating (instant,
 -- tile refunded — the subfloor shows), and pry open a dead airlock
 -- ("pass" hands powered doors back to the native access-checked

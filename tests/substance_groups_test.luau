@@ -1,3 +1,7 @@
+local ui_controls = require("@helpers/ui_controls")
+
+type GasRow = { id: string, section: string }
+
 -- The station's own idea of which gases belong together, read off a
 -- panel a player has open.
 --
@@ -52,23 +56,20 @@ end
 t.click(p, 2, 1, t.target_at(p, 2, 1, "air_scrubber"))
 t.tick()
 
-local panel = t.ui(p)
+local panel = ui_controls.state(p)
 assert(panel, "a scrubber wears a panel of its own")
 
 -- Only the roster's buttons: the power, direction and roster switches
 -- are three controls of their own and carry no heading.
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function gas_rows(window)
-    local rows = {}
-    for _, sw in ipairs(window.toggles) do
+local function gas_rows(window: ui_controls.Record): { GasRow }
+    local rows: { GasRow } = {}
+    for _, sw in ipairs(ui_controls.rows(window.toggles)) do
         if sw.field == "filter" then
-            rows[#rows + 1] = { id = sw.option, section = word(sw.section) }
+            rows[#rows + 1] = { id = ui_controls.text(sw.option), section = word(sw.section) }
         end
     end
     return rows
@@ -116,9 +117,9 @@ assert(
 -- (docs/TGUI.md), so a block that came out in two pieces would be drawn
 -- as two headings with the same words.
 local DECLARED = { "Station atmosphere", "Atmospheric poisons", "Volatiles" }
-local function block_order(list)
-    local seen = {}
-    local order = {}
+local function block_order(list: { GasRow }): { string }
+    local seen: { [string]: boolean } = {}
+    local order: { string } = {}
     for _, row in ipairs(list) do
         local heading = row.section
         assert(heading ~= nil, tostring(row.id) .. " is under no heading at all")
@@ -176,7 +177,7 @@ end
 t.click(q, 3, 1, t.target_at(q, 3, 1, "filter"))
 t.tick()
 
-local filter_panel = t.ui(q)
+local filter_panel = ui_controls.state(q)
 assert(filter_panel, "a filter wears a panel of its own")
 local filter_rows = gas_rows(filter_panel)
 assert(#filter_rows == #rows, "the two machines offer the same roster")

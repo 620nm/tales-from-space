@@ -45,13 +45,13 @@ local SETTLE = 1600 -- ticks, long past the surge and into the creep
 -- The air rows are the same 21/79 at 20 C in both corridors (41.573
 -- mol over a cubic metre is 101.325 kPa), because a `total` blend is
 -- the tile's whole contents and neither corridor may open airless.
-local function pour(key, moles)
+local function pour(key: string, moles: number)
     t.world(CORRIDOR:format(key, moles), 0)
     t.join()
     t.tick()
 end
 
-local function held(key, x)
+local function held(key: string, x: number)
     local standing = t.room_liquid(x, 1)
     return (standing and standing[key]) or 0
 end
@@ -70,7 +70,7 @@ local function reach(key)
     return n
 end
 
-local function spread(key, moles)
+local function spread(key: string, moles: number)
     pour(key, moles)
     local poured = t.matter_totals().substances[key]
     assert(

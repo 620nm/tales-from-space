@@ -1,3 +1,5 @@
+local pipe_paints = require("@lib/pipe_paints")
+
 -- Map-authoring choices. Names stay in TfS and the engine carries only
 -- this declared roster to whichever editor is connected.
 local paints = {}

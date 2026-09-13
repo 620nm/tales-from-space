@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Pouring: a beaker tipped into another vessel moves exactly what it
 -- says, in the proportions it was holding, and stops where the GLASS
 -- runs out. Capacity is geometry (docs/MATTER.md 5), so "the brim" is
@@ -35,12 +37,12 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local a = t.target_at(p, 1, 1, "beaker.libital")
-local b = t.target_at(p, 2, 1, "beaker.libital")
-local c = t.target_at(p, 3, 1, "beaker")
-local e = t.target_at(p, 4, 1, "beaker.libital")
+local a = assert(t.target_at(p, 1, 1, "beaker.libital"))
+local b = assert(t.target_at(p, 2, 1, "beaker.libital"))
+local c = assert(t.target_at(p, 3, 1, "beaker"))
+local e = assert(t.target_at(p, 4, 1, "beaker.libital"))
 
-local function total(handle)
+local function total(handle: SpecObservedTarget)
     local contents = t.contents(handle)
     assert(contents ~= nil, "that is a vessel")
     local n = 0
@@ -50,11 +52,11 @@ local function total(handle)
     return n
 end
 
-local function close(got, want, what)
+local function close(got: number, want: number, what: string)
     assert(math.abs(got - want) < 1e-9, ("%s: wanted %g, got %g"):format(what, want, got))
 end
 
-local function near(got, want, tol, what)
+local function near(got: number, want: number, tol: number, what: string)
     assert(math.abs(got - want) < tol, ("%s: wanted %g, got %g"):format(what, want, got))
 end
 
@@ -64,7 +66,7 @@ end
 -- is 30.60 of those fifty. Everything the trims below come to is those
 -- four numbers and nothing else.
 local WATER_ML, LIBITAL_ML, GLASS_ML = 18.015, 180.0, 50.0
-local function litres_of(water, libital)
+local function litres_of(water: number, libital: number)
     return water * WATER_ML + libital * LIBITAL_ML
 end
 -- The share of a 0.25 mol parcel of that mix which fits in what a full
@@ -88,7 +90,7 @@ close(total(c), 0.25, "one gesture pours 0.25 mol")
 close(total(a), before - 0.25, "and the source is down by exactly that")
 -- Proportional, like tg's trans_to: the mix that arrives is the mix
 -- that left, in the same ratio.
-local poured = t.contents(c)
+local poured = assert(t.contents(c))
 close(poured.water, 0.20 * (0.25 / 0.35), "water went in proportion")
 close(poured.libital, 0.15 * (0.25 / 0.35), "libital went in proportion")
 
@@ -110,8 +112,9 @@ near(total(b), 0.35 + FIT, 1e-4, "0.35 plus what the glass had room for")
 close(total(c), 0, "the source gave up the whole gesture")
 local over = t.ledger_rows("spilled")
 assert(#over == 1, ("one overflow on the record, got %d"):format(#over))
-near(over[1].moles, 0.25 - FIT, 1e-6, "the row names what would not fit")
-assert(over[1].at[1] == 2 and over[1].at[2] == 1, "on the tile the far beaker stands on")
+near(ui_controls.number(over[1].moles), 0.25 - FIT, 1e-6, "the row names what would not fit")
+local spill_at = ui_controls.array(over[1].at)
+assert(spill_at[1] == 2 and spill_at[2] == 1, "on the tile the far beaker stands on")
 
 -- b is brim-full now: fifty millilitres of liquid in fifty millilitres
 -- of glass. Pouring a whole beaker into it moves nothing at all — and
@@ -139,8 +142,8 @@ close(total(e), 0.35, "nothing left the source")
 -- transfer and writes no row.
 local rows = t.ledger_rows("poured")
 assert(#rows == 2, ("two pours are on the record, got %d"):format(#rows))
-close(rows[1].moles, 0.25, "the first row names what moved")
-near(rows[2].moles, FIT, 1e-4, "and the second names the trimmed amount")
+close(ui_controls.number(rows[1].moles), 0.25, "the first row names what moved")
+near(ui_controls.number(rows[2].moles), FIT, 1e-4, "and the second names the trimmed amount")
 -- And the overflow is still the ONE row it always was: the two refused
 -- pours above spilled nothing, because nothing was drawn.
 assert(#t.ledger_rows("spilled") == 1, "a refused pour overflows nothing")

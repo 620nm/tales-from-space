@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Boil a beaker dry: what leaves the glass ends up in the room.
 --
 -- The chamber holds the vessel over water's boil, the phase step turns
@@ -17,14 +19,14 @@
 -- the water went.
 local PRESS = 0.75
 
-local function amount(handle, key)
-    local contents = t.contents(handle)
+local function amount(handle, key: string)
+    local contents = assert(t.contents(handle))
     assert(contents ~= nil, "that is a vessel")
     return contents[key] or 0
 end
 
 -- What the sealed room holds of a GAS, over every tile of it.
-local function room_gas(key)
+local function room_gas(key: string)
     local n = 0
     for x = 1, 3 do
         for y = 1, 2 do
@@ -65,7 +67,7 @@ t.tick()
 
 local dispenser = t.target_at(p, 1, 2)
 local heater = t.target_at(p, 3, 2)
-local beaker = t.target_at(p, 1, 1, "beaker")
+local beaker = assert(t.target_at(p, 1, 1, "beaker"))
 
 local function dock(machine, x, y)
     t.click(p, x, y, machine)
@@ -123,7 +125,7 @@ for _ = 1, 400 do
     -- between passes finds is one pass's worth rather than a beaker
     -- full of steam. What is asserted is that the gas phase exists in
     -- there at all while the liquid one still does.
-    local inside = t.vessel(beaker)
+    local inside = assert(t.vessel(beaker))
     local water = inside.contents.water
     if
         water ~= nil
@@ -148,4 +150,4 @@ assert(
     amount(beaker, "water") <= PRESS * 0.05,
     "and the glass all but boiled dry: " .. amount(beaker, "water")
 )
-assert(t.holder_k(beaker) > 373.0, "the chamber held it over the boil the whole time")
+assert(assert(t.holder_k(beaker)) > 373.0, "the chamber held it over the boil the whole time")

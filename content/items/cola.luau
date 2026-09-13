@@ -1,3 +1,5 @@
+local vessel = require("@lib/vessel")
+
 -- Dispensed by the vending machine; drinkable since M7. Clicking your
 -- own tile with the can in hand takes a swig — the contents transfer
 -- into your bloodstream mole by mole, and metabolism does the rest.
@@ -28,7 +30,7 @@ local content = {
     sealed = true,
 }
 
-local vessel_spec = {
+local vessel_spec: vessel.Spec = {
     id = content.id,
     noun = "can",
     phases = { "liquid", "solid" },

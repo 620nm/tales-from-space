@@ -1,3 +1,6 @@
+local action_rules = require("@lib/action_rules")
+local thermal = require("@lib/thermal")
+
 -- A length of heat-exchanging pipe: the run you lay when you WANT the
 -- room to feel what is inside it.
 --
@@ -58,7 +61,7 @@ if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self, user = ev.subject, ev.actor
-        local layer = sim.mode(self).index + 1
+        local layer = assert(sim.mode(self)).index + 1
         -- 2 -> 3 -> 4 -> 2. Ordinary pipe wraps 1..5; this wraps the
         -- three tg drew art for, so the dial never stops somewhere the
         -- wrench would refuse.
@@ -87,7 +90,7 @@ if sim ~= nil then
             })
             return true
         end
-        local layer = sim.mode(self).index + 1
+        local layer = assert(sim.mode(self)).index + 1
         local mask = 2 ^ (layer - 1)
         if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
             sim.message.send({
@@ -111,7 +114,7 @@ if sim ~= nil then
                 })
                 return true
             end
-            layer = sim.mode(self).index + 1
+            layer = assert(sim.mode(self)).index + 1
             mask = 2 ^ (layer - 1)
             if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
                 sim.message.send({

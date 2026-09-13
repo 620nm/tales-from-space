@@ -7,13 +7,13 @@
 -- same reading the spec API takes off the sim, so a readout that
 -- silently drifted from the world it claims to describe fails here.
 
-local function r2(n)
+local function r2(n: number)
     local scaled = n * 100
     local rounded = if scaled >= 0 then math.floor(scaled + 0.5) else math.ceil(scaled - 0.5)
     return tostring(rounded / 100)
 end
 
-local function has(lines, want)
+local function has(lines: { string }, want: string)
     for _, m in ipairs(lines) do
         if m == want then
             return true
@@ -22,7 +22,7 @@ local function has(lines, want)
     return false
 end
 
-local function matching(lines, prefix, suffix)
+local function matching(lines: { string }, prefix: string, suffix: string): string?
     for _, m in ipairs(lines) do
         if string.sub(m, 1, #prefix) == prefix and string.sub(m, -#suffix) == suffix then
             return m
@@ -97,7 +97,7 @@ local air = t.messages(p)
 assert(has(air, "Results of analysis of the air."), "the header names what was read")
 assert(has(air, "Moles: " .. r2(0) .. " mol") == false, "and it is not empty")
 assert(
-    has(air, "Pressure: " .. r2(t.room_pressure(2, 2)) .. " kPa"),
+    has(air, "Pressure: " .. r2(assert(t.room_pressure(2, 2))) .. " kPa"),
     "the pressure it prints is the pressure the room is at"
 )
 -- One room cell is one cubic metre of station.
@@ -125,7 +125,7 @@ assert(has(pipe, "Results of analysis of the layer 3 pipe."), "the run touched, 
 assert(not has(pipe, "Results of analysis of the air."), "and nothing that was not touched")
 assert(not has(pipe, "Results of analysis of the layer 1 pipe."), "not even its neighbour")
 assert(
-    has(pipe, "Pressure: " .. r2(t.pipe_pressure(2, 1)) .. " kPa"),
+    has(pipe, "Pressure: " .. r2(assert(t.pipe_pressure(2, 1))) .. " kPa"),
     "and the number an engineer would read off a meter there"
 )
 -- Two lengths of tg's UNARY_PIPE_VOLUME * 2, which is 70 L each.
@@ -158,7 +158,7 @@ assert(not has(ground, "Results of analysis of the layer 3 pipe."), "and never a
 -- the air over a tile reads what is standing on it too, in the
 -- millilitres a vessel is authored in. Cross-checked against the same
 -- reading the spec API takes, like every other number here.
-local ml = t.room_liquid(2, 1).oil * 1000
+local ml = assert(t.room_liquid(2, 1)).oil * 1000
 assert(has(ground, "Liquid: " .. r2(ml) .. " mL"), "a litre of oil on the deck: " .. r2(ml))
 assert(
     has(ground, "Oil: " .. r2(ml) .. " mL (100 %)"),
@@ -181,7 +181,7 @@ t.run_ticks(2)
 local can = t.messages(p)
 assert(has(can, "Results of analysis of the canister."), "the bottle answers for itself")
 assert(
-    has(can, "Pressure: " .. r2(t.canister_pressure(1, 1)) .. " kPa"),
+    has(can, "Pressure: " .. r2(assert(t.canister_pressure(1, 1))) .. " kPa"),
     "at the pressure its own gauge lamps are a coarse picture of"
 )
 -- tg's canister is 2000 L.

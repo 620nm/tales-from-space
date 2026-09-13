@@ -1,3 +1,9 @@
+local ui_controls = require("@helpers/ui_controls")
+local ui_files = require("@helpers/ui_files")
+local record, rows = ui_controls.record, ui_controls.rows
+local text, number = ui_controls.text, ui_controls.number
+
+
 -- The first program slot: a guest script filtering the lines that cross a
 -- tower (docs/files/scriptable-machine.md, docs/diegetic-scripting/
 -- attribution.md §11).
@@ -101,36 +107,37 @@ end
 -- ---- the panel: one program slot, nothing loaded ------------------------------
 t.click(operator, 2, 1, t.target_at(operator, 2, 1))
 t.tick()
-local ui = t.ui(operator)
-assert(ui, "a bare hand opens the tower's window")
+local ui = record(assert(t.ui(operator), "a bare hand opens the tower's window"))
 assert(ui.presentation == "panes", "the files module is the panes one")
-assert(ui.program_slots and #ui.program_slots == 1, "one declared program slot: " .. tostring(ui.program_slots and #ui.program_slots))
-assert(ui.program_slots[1].id == "carry", "named for the stage it filters")
-assert(ui.program_slots[1].state.id == "program_slots.state.empty", "and it starts empty")
-assert(ui.program_slots[1].runs == 0 and ui.program_slots[1].faults == 0, "with clean counters")
+local slots = rows(ui.program_slots)
+assert(#slots == 1, "one declared program slot: " .. #slots)
+assert(slots[1].id == "carry", "named for the stage it filters")
+assert(record(slots[1].state).id == "program_slots.state.empty", "and it starts empty")
+assert(slots[1].runs == 0 and slots[1].faults == 0, "with clean counters")
 
 -- The tower reads program text only: the create control offers `disl`
 -- on the host store and nothing else (no disk in the slot, and `md`
 -- is a word this machine cannot read).
-assert(ui.create.host and #ui.create.host == 1 and ui.create.host[1] == "disl",
+local host_formats = ui_controls.texts(record(ui.create).host)
+assert(#host_formats == 1 and host_formats[1] == "disl",
     "the tower creates program text only")
-assert(ui.create.media == nil, "and has no disk side until a disk is in it")
+assert(record(ui.create).media == nil, "and has no disk side until a disk is in it")
 
 -- ---- write the filter on A: --------------------------------------------
 -- The SHOUT filter: every line it touches comes out uppercase.
 local SHOUT = "return { text = string.upper(content) }"
 ui_files.create(operator, "host", "disl", "untitled")
 t.tick()
-ui = t.ui(operator)
-assert(ui.open and ui.open.store == "host" and ui.open.ext == "disl",
+ui = ui_controls.state(operator)
+assert(ui.open and record(ui.open).store == "host" and record(ui.open).ext == "disl",
     "the new program is open on the host store")
-local file = "host:" .. string.format("%d", ui.open.uid) .. ":" .. ui.open.binding
-local uid = ui.open.uid
+local file = "host:" .. string.format("%d", number(record(ui.open).uid)) .. ":" .. text(record(ui.open).binding)
+local uid = number(record(ui.open).uid)
 ui_files.save(operator, SHOUT)
 t.tick()
-ui = t.ui(operator)
-assert(ui.open.body == SHOUT, "the filter's source is on the disk of the tower")
-assert(ui.editor and ui.editor.bound == false, "nothing runs it yet")
+ui = ui_controls.state(operator)
+assert(record(ui.open).body == SHOUT, "the filter's source is on the disk of the tower")
+assert(ui.editor and record(ui.editor).bound == false, "nothing runs it yet")
 
 -- ---- check as you type ----------------------------------------------------
 -- A `file_change` carries the WHOLE draft and answers with the native
@@ -139,30 +146,30 @@ assert(ui.editor and ui.editor.bound == false, "nothing runs it yet")
 local draft_input = ui_files.edit(operator, "return {")
 t.ui_press(operator, draft_input, "change")
 t.tick()
-ui = t.ui(operator)
-assert(ui.editor and #ui.editor.markers == 1, "a broken draft checks as it is typed")
-assert(ui.editor.markers[1].line == 1 and #ui.editor.markers[1].message > 0,
-    "the marker names a line and a fault: " .. tostring(ui.editor.markers[1].message))
-assert(ui.editor.body == "return {", "the editor shows the draft, not the saved body")
-assert(ui.open.body == SHOUT, "the saved body is untouched by a draft")
+ui = ui_controls.state(operator)
+assert(ui.editor and #rows(record(ui.editor).markers) == 1, "a broken draft checks as it is typed")
+assert(rows(record(ui.editor).markers)[1].line == 1 and #text(rows(record(ui.editor).markers)[1].message) > 0,
+    "the marker names a line and a fault: " .. tostring(rows(record(ui.editor).markers)[1].message))
+assert(record(ui.editor).body == "return {", "the editor shows the draft, not the saved body")
+assert(record(ui.open).body == SHOUT, "the saved body is untouched by a draft")
 
 ui_controls.press(operator, "/editor/revert")
 ui_controls.press(operator, "/editor/guard/discard")
 t.tick()
-ui = t.ui(operator)
-assert(ui.editor.body == SHOUT and #ui.editor.markers == 0,
+ui = ui_controls.state(operator)
+assert(record(ui.editor).body == SHOUT and #rows(record(ui.editor).markers) == 0,
     "revert drops the draft and its markers")
-assert(ui.open.body == SHOUT, "and the saved body is what remains")
+assert(record(ui.open).body == SHOUT, "and the saved body is what remains")
 
 -- ---- bind it ------------------------------------------------------------
 ui_files.program(operator, "carry", uid)
 t.tick()
-ui = t.ui(operator)
-assert(ui.program_slots[1].state.id == "program_slots.state.loaded", "the program slot is loaded")
-assert(ui.program_slots[1].file == "untitled.disl", "and names what it runs: "
-    .. tostring(ui.program_slots[1].file))
-assert(ui.program_slots[1].uid == uid, "the uid is the binding's identity")
-assert(ui.editor.bound == true, "the open file knows a program slot is running it")
+ui = ui_controls.state(operator)
+assert(record(rows(ui.program_slots)[1].state).id == "program_slots.state.loaded", "the program slot is loaded")
+assert(rows(ui.program_slots)[1].file == "untitled.disl", "and names what it runs: "
+    .. tostring(rows(ui.program_slots)[1].file))
+assert(rows(ui.program_slots)[1].uid == uid, "the uid is the binding's identity")
+assert(record(ui.editor).bound == true, "the open file knows a program slot is running it")
 
 local loaded = t.ledger_rows("disl_program_loaded")
 assert(#loaded == 1 and loaded[1].slot == "carry" and loaded[1].uid == uid,
@@ -187,10 +194,10 @@ assert(runs[1].slot == "carry" and runs[1].hosting == "radio transceiver",
 -- ScriptValue is externally tagged on the wire. Authored strings in a
 -- transcript are length/hash summaries, so the radio assertion above owns
 -- the returned text and this row assertion owns its bounded shape.
-local function has_string_leaf(value)
+local function has_string_leaf(value: unknown): boolean
     if type(value) ~= "table" then return false end
-    for _, child in pairs(value) do
-        if type(child) == "table" and child.String then return true end
+    for _, child in pairs(record(value)) do
+        if type(child) == "table" and record(child).String then return true end
         if has_string_leaf(child) then return true end
     end
     return false
@@ -212,16 +219,16 @@ assert(#t.messages(listener) == 0, "a pass=false answer drops the line for the t
 
 runs = t.ledger_rows("disl_run")
 local dropped = false
-for _, child in pairs(runs[2].value.Map or {}) do
-    if child.Bool == false then dropped = true end
+for _, child in pairs(record(record(runs[2].value).Map or {})) do
+    if record(child).Bool == false then dropped = true end
 end
 assert(#runs == 2 and dropped, "the drop is a run like any other")
 assert(#t.ledger_rows("disl_fault") == 0, "a drop is not a fault")
 t.run_ticks(20) -- the pane republishes on the window cadence, not per line
-ui = t.ui(operator)
-assert(ui.program_slots[1].runs == 2 and ui.program_slots[1].faults == 0,
+ui = ui_controls.state(operator)
+assert(rows(ui.program_slots)[1].runs == 2 and rows(ui.program_slots)[1].faults == 0,
     "the counters belong to the slot and survive the re-save: runs="
-        .. tostring(ui.program_slots[1].runs) .. " faults=" .. tostring(ui.program_slots[1].faults))
+        .. tostring(rows(ui.program_slots)[1].runs) .. " faults=" .. tostring(rows(ui.program_slots)[1].faults))
 
 -- ---- a fault delivers the line UNCHANGED ---------------------------------
 -- Fail-open: a broken script must not silence the radio, and the fault
@@ -242,8 +249,8 @@ assert(#faults == 1 and faults[1].fault == "error",
 assert(faults[1].slot == "carry" and faults[1].hosting == "radio transceiver",
     "attributed to the slot that ran it")
 t.run_ticks(20) -- the window cadence again
-ui = t.ui(operator)
-assert(ui.program_slots[1].runs == 3 and ui.program_slots[1].faults == 1,
+ui = ui_controls.state(operator)
+assert(rows(ui.program_slots)[1].runs == 3 and rows(ui.program_slots)[1].faults == 1,
     "the fault tally is the slot's, not the file's")
 
 -- ---- the edit of a running program takes ----------------------------------
@@ -266,14 +273,14 @@ assert(heard(operator, "unload it first"),
     "deleting what a program slot runs refuses and SAYS so: "
         .. table.concat(t.messages(operator), " | "))
 assert(#t.ledger_rows("file_deleted") == 0, "and nothing was deleted")
-ui = t.ui(operator)
-assert(ui.program_slots[1].state.id == "program_slots.state.loaded", "still loaded")
+ui = ui_controls.state(operator)
+assert(record(rows(ui.program_slots)[1].state).id == "program_slots.state.loaded", "still loaded")
 
 -- ---- unload, and the tower is stock again ----------------------------------
 ui_files.program(operator, "carry")
 t.tick()
-ui = t.ui(operator)
-assert(ui.program_slots[1].state.id == "program_slots.state.empty", "emptied")
+ui = ui_controls.state(operator)
+assert(record(rows(ui.program_slots)[1].state).id == "program_slots.state.empty", "emptied")
 local unloaded = t.ledger_rows("disl_program_unloaded")
 assert(#unloaded == 1 and unloaded[1].uid == uid, "the unload is on the record")
 

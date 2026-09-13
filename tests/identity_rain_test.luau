@@ -24,7 +24,7 @@
 -- station's matter in one reading (sim/holder_kinds.rs) -- so "the gas
 -- went and the substance stayed" is two readings of one fact.
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -63,7 +63,7 @@ t.set_environment({ sink_k = 2.7, insolation = 0.0 })
 
 local ROOM = { { 1, 1 }, { 2, 1 }, { 1, 2 }, { 2, 2 } }
 
-local function room(key)
+local function room(key: string)
     local n = 0.0
     for _, tile in ipairs(ROOM) do
         local gases = t.room_gas(tile[1], tile[2])
@@ -75,7 +75,7 @@ end
 local function warmth()
     local sum = 0.0
     for _, tile in ipairs(ROOM) do
-        sum = sum + t.room_temperature(tile[1], tile[2])
+        sum = sum + assert(t.room_temperature(tile[1], tile[2]))
     end
     return sum / #ROOM
 end

@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The mixer: the filter run backwards.
 --
 -- Two intakes -- the back port and the side one -- drawn from at a set
@@ -27,17 +29,14 @@ local OUTLET_M3 = 0.300
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string): ()
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
 -- Everything standing in the run under a tile, in moles.
-local function moles(x, y)
+local function moles(x: number, y: number): number
     local held = t.pipe_gas(x, y)
     if not held then
         return 0.0
@@ -130,52 +129,53 @@ near(moles(OUT_X, OUT_Y) / moles(SIDE_X, SIDE_Y), OUT_M3 / SIDE_M3, 0.02, "an of
 -- ---------------------------------------------------------------
 t.click(p, 9, 1, t.target_at(p, 9, 1, "mixer"))
 t.tick()
-local ui = t.ui(p)
+local ui = ui_controls.record(t.ui(p))
 assert(ui, "clicking a mixer opens its window")
 assert(ui.document == "modules" and ui.presentation == "modules")
-assert(ui.toggles[1].field == "power" and ui.toggles[1].on == false)
-assert(#ui.toggles == 1, "a mixer has one switch and no roster")
+assert(ui_controls.rows(ui.toggles)[1].field == "power" and ui_controls.rows(ui.toggles)[1].on == false)
+assert(#ui_controls.rows(ui.toggles) == 1, "a mixer has one switch and no roster")
 
-assert(ui.setpoints[1].field == "pressure", "the output setpoint")
-near(ui.setpoints[1].value, 101.325, 0.001, "at tg's ONE_ATMOSPHERE")
-near(ui.setpoints[1].max, 4500.0, 0.001, "up to MAX_OUTPUT_PRESSURE")
-assert(ui.setpoints[2].field == "ratio", "and the split")
-near(ui.setpoints[2].value, 50.0, 0.001, "half and half out of the box")
+assert(ui_controls.rows(ui.setpoints)[1].field == "pressure", "the output setpoint")
+near(ui_controls.number(ui_controls.rows(ui.setpoints)[1].value), 101.325, 0.001, "at tg's ONE_ATMOSPHERE")
+near(ui_controls.number(ui_controls.rows(ui.setpoints)[1].max), 4500.0, 0.001, "up to MAX_OUTPUT_PRESSURE")
+assert(ui_controls.rows(ui.setpoints)[2].field == "ratio", "and the split")
+near(ui_controls.number(ui_controls.rows(ui.setpoints)[2].value), 50.0, 0.001, "half and half out of the box")
 
 -- One number, two views: tg keeps two boxes that must sum to 100, and
 -- the second one is a readout here because nobody should have to
 -- subtract to read their own machine.
-local mix = nil
-for _, r in ipairs(ui.readouts) do
+local mix: ui_controls.Record = {}
+for _, r in ipairs(ui_controls.rows(ui.readouts)) do
     if word(r.label) == "mixer.mix" then
-        mix = r.value
+        mix = ui_controls.record(r.value)
     end
 end
-assert(mix.id == "mixer.mix.split" and mix.args.back == "50%" and mix.args.side == "50%",
-    "the panel says both shares: " .. tostring(mix.args and mix.args.back))
+assert(mix.id == "mixer.mix.split" and ui_controls.record(mix.args).back == "50%" and ui_controls.record(mix.args).side == "50%",
+    "the panel says both shares: " .. tostring(mix.args and ui_controls.record(mix.args).back))
 
 -- ---------------------------------------------------------------
 -- FIFTY-FIFTY: THE TWO INTAKES PAY EQUALLY, AND IT STOPS AT TARGET.
 -- ---------------------------------------------------------------
-local back0, side0 = moles(BACK_X, BACK_Y), moles(SIDE_X, SIDE_Y)
+local back0 = moles(BACK_X, BACK_Y)
+local side0 = moles(SIDE_X, SIDE_Y)
 ui_controls.set(p, "pressure", 150)
 ui_controls.toggle(p, "power")
 t.tick()
-assert(t.structure_at(9, 1).state == "running", "switched on")
+assert(assert(t.structure_at(9, 1)).state == "running", "switched on")
 
 t.run_seconds(20)
 local gave_back = back0 - moles(BACK_X, BACK_Y)
 local gave_side = side0 - moles(SIDE_X, SIDE_Y)
 assert(gave_back > 1.0, "the back intake paid: " .. gave_back)
 near(gave_back, gave_side, 0.02, "and the side paid exactly as much")
-near(t.pipe_pressure(OUT_X, OUT_Y), 150.0, 1.0, "the outlet came up to the setpoint")
+near(assert(t.pipe_pressure(OUT_X, OUT_Y)), 150.0, 1.0, "the outlet came up to the setpoint")
 
 -- ...and stopped there. tg's `output_starting_pressure >= target_pressure`
 -- ends the pass before a mole is drawn (mixer.dm:80-82).
 local held_back = moles(BACK_X, BACK_Y)
 t.run_seconds(20)
 near(moles(BACK_X, BACK_Y), held_back, 1e-6, "a mixer at its setpoint draws nothing more")
-assert(t.pipe_pressure(OUT_X, OUT_Y) < 151.0, "and never one kPa past it")
+assert(assert(t.pipe_pressure(OUT_X, OUT_Y)) < 151.0, "and never one kPa past it")
 
 near(
     moles(BACK_X, BACK_Y) + moles(SIDE_X, SIDE_Y) + moles(OUT_X, OUT_Y),
@@ -188,18 +188,19 @@ near(
 -- FOUR TO ONE. The ratio is the BACK intake's share; the side supplies
 -- the rest, and the two move together.
 -- ---------------------------------------------------------------
-back0, side0 = moles(BACK_X, BACK_Y), moles(SIDE_X, SIDE_Y)
+back0 = moles(BACK_X, BACK_Y)
+side0 = moles(SIDE_X, SIDE_Y)
 ui_controls.set(p, "ratio", 80)
 ui_controls.set(p, "pressure", 200)
 t.tick()
-local said_mix = nil
-for _, r in ipairs(t.ui(p).readouts) do
+local said_mix: ui_controls.Record = {}
+for _, r in ipairs(ui_controls.rows(ui_controls.state(p).readouts)) do
     if word(r.label) == "mixer.mix" then
-        said_mix = r.value
+        said_mix = ui_controls.record(r.value)
     end
 end
-assert(said_mix.args.back == "80%" and said_mix.args.side == "20%",
-    "the other share follows: " .. tostring(said_mix.args and said_mix.args.back))
+assert(ui_controls.record(said_mix.args).back == "80%" and ui_controls.record(said_mix.args).side == "20%",
+    "the other share follows: " .. tostring(said_mix.args and ui_controls.record(said_mix.args).back))
 
 t.run_seconds(20)
 gave_back = back0 - moles(BACK_X, BACK_Y)
@@ -215,7 +216,8 @@ near(gave_back / gave_side, 4.0, 0.05, "in the ratio the machine was set to")
 -- one mouth on bare deck. Here the mouth has pipe on it and simply must
 -- not lose a mole.
 -- ---------------------------------------------------------------
-back0, side0 = moles(BACK_X, BACK_Y), moles(SIDE_X, SIDE_Y)
+back0 = moles(BACK_X, BACK_Y)
+side0 = moles(SIDE_X, SIDE_Y)
 ui_controls.set(p, "ratio", 100)
 ui_controls.set(p, "pressure", 220)
 t.run_seconds(20)
@@ -235,7 +237,7 @@ near(moles(SIDE_X, SIDE_Y), side0, 1e-9, "and the idle side never lost a mole")
 ui_controls.set(p, "ratio", 50)
 ui_controls.set(p, "pressure", "max")
 t.tick()
-near(t.ui(p).setpoints[1].value, 4500.0, 0.001, "wound to MAX_OUTPUT_PRESSURE")
+near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value), 4500.0, 0.001, "wound to MAX_OUTPUT_PRESSURE")
 
 back0 = moles(BACK_X, BACK_Y)
 t.run_seconds(60)
@@ -251,8 +253,8 @@ near(
     "it gave up exactly what the short side could match"
 )
 assert(
-    t.pipe_pressure(OUT_X, OUT_Y) < 4000.0,
-    "so the outlet never reached its target: " .. t.pipe_pressure(OUT_X, OUT_Y)
+    assert(t.pipe_pressure(OUT_X, OUT_Y)) < 4000.0,
+    "so the outlet never reached its target: " .. assert(t.pipe_pressure(OUT_X, OUT_Y))
 )
 near(
     moles(BACK_X, BACK_Y) + moles(SIDE_X, SIDE_Y) + moles(OUT_X, OUT_Y),
@@ -266,22 +268,22 @@ near(
 -- ---------------------------------------------------------------
 ui_controls.set(p, "ratio", 400)
 t.tick()
-near(t.ui(p).setpoints[2].value, 100.0, 0.001, "a share cannot exceed the whole")
+near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[2].value), 100.0, 0.001, "a share cannot exceed the whole")
 ui_controls.set(p, "ratio", -90)
 t.tick()
-near(t.ui(p).setpoints[2].value, 0.0, 0.001, "nor go below nothing")
+near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[2].value), 0.0, 0.001, "nor go below nothing")
 ui_controls.set(p, "pressure", 99999)
 t.tick()
-near(t.ui(p).setpoints[1].value, 4500.0, 0.001, "nor dial past MAX_OUTPUT_PRESSURE")
+near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value), 4500.0, 0.001, "nor dial past MAX_OUTPUT_PRESSURE")
 
 -- A knob belonging to the machine next door, and a switch this one does
 -- not have.
-local before = t.ui(p).setpoints[1].value
+local before = ui_controls.rows(ui_controls.state(p).setpoints)[1].value
 assert(ui_controls.find(p, "/set/rate/value") == nil, "no filter dial is rendered")
 assert(ui_controls.find(p, "/toggle/filter/o2") == nil, "no filter choice is rendered")
 t.tick()
-assert(t.ui(p).setpoints[1].value == before, "a filter's knobs are not a mixer's")
-assert(t.ui(p).toggles[1].on == true, "and it has no roster to toggle")
+assert(ui_controls.rows(ui_controls.state(p).setpoints)[1].value == before, "a filter's knobs are not a mixer's")
+assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == true, "and it has no roster to toggle")
 
 assert(t.ledger_has("MachineSetpoint", "ratio", "Player"), "re-splitting the mix is recorded")
 assert(t.ledger_has("MachineSetpoint", "pressure", "Player"), "so is the output setpoint")
@@ -325,7 +327,7 @@ t.world([==[(
 
 local q = t.join()
 t.tick()
-assert(t.structure_at(9, 1).id == "mixer.flipped", "the mirrored machine")
+assert(assert(t.structure_at(9, 1)).id == "mixer.flipped", "the mirrored machine")
 
 local west0 = moles(BACK_X, BACK_Y)
 local east0 = moles(OUT_X, OUT_Y)
@@ -364,13 +366,13 @@ t.world(THREE_WAY:gsub('%(9, 1, "mixer"%)', '(9, 1, "mixer.airmix")'), 7)
 
 local a = t.join()
 t.tick()
-assert(t.structure_at(9, 1).id == "mixer.airmix", "the air mixer is a real id")
-assert(t.structure_at(9, 1).state == "running", "and it opens the shift running")
+assert(assert(t.structure_at(9, 1)).id == "mixer.airmix", "the air mixer is a real id")
+assert(assert(t.structure_at(9, 1)).state == "running", "and it opens the shift running")
 
 t.click(a, 9, 1, t.target_at(a, 9, 1, "mixer.airmix"))
 t.tick()
-local air = t.ui(a)
-assert(air.toggles[1].field == "power" and air.toggles[1].on, "its switch is thrown")
-near(air.setpoints[1].value, 4500.0, 0.001, "its dial is at MAX_OUTPUT_PRESSURE")
-near(air.setpoints[2].value, 79.0, 0.001, "and its blend is tg's N2STANDARD")
+local air = ui_controls.record(t.ui(a))
+assert(ui_controls.rows(air.toggles)[1].field == "power" and ui_controls.rows(air.toggles)[1].on, "its switch is thrown")
+near(ui_controls.number(ui_controls.rows(air.setpoints)[1].value), 4500.0, 0.001, "its dial is at MAX_OUTPUT_PRESSURE")
+near(ui_controls.number(ui_controls.rows(air.setpoints)[2].value), 79.0, 0.001, "and its blend is tg's N2STANDARD")
 t.ui_close(a)

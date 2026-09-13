@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- WHAT A SOCKET IS WORTH IS THE PACK'S ANSWER, AND THE ROOM GETS A
 -- VOTE UNTIL THE PARTS ARE GOOD ENOUGH TO OUTVOTE IT.
 --
@@ -31,21 +33,18 @@ local IDEAL_K = 293.15
 local LOSS_PER_K = 0.002
 local FLOOR = 0.2
 
-local function expected_factor(room_k)
+local function expected_factor(room_k: number)
     return math.max(FLOOR, 1.0 - LOSS_PER_K * math.abs(room_k - IDEAL_K))
 end
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function rows_in(ui, section)
+local function rows_in(ui: unknown, section: string)
     local out = {}
-    for _, r in ipairs(ui.readouts) do
-        if word(r.section) == section then
+    for _, r in ipairs(ui_controls.rows(ui_controls.record(ui).readouts)) do
+        if r.section and word(r.section) == section then
             table.insert(out, r)
         end
     end
@@ -64,20 +63,21 @@ local function socket(p, x, y)
     return rows[1]
 end
 
-local function worth(row)
-    assert(row.value.id == "parts.tier",
-        "the row reads as a rung and a worth: " .. tostring(word(row.value)))
-    return tonumber(row.value.args.tier), tonumber(row.value.args.efficiency)
+local function worth(row: ui_controls.Record): (number, number)
+    local value = ui_controls.record(row.value)
+    assert(value.id == "parts.tier", "the row reads as a rung and a worth: " .. word(value))
+    local args = ui_controls.record(value.args)
+    return assert(tonumber(ui_controls.text(args.tier))), assert(tonumber(ui_controls.text(args.efficiency)))
 end
 
 -- Every "element" a chamber's script has written since the shift began,
 -- newest last, keyed by the machine it was written about. The handler is a
 -- transform and may not write; the `.done` half keeps this word, so a
 -- row here IS the handler having run (fixtures/chem_heater.luau).
-local function elements(machine)
+local function elements(machine: SpecObservedTarget)
     local out = {}
     for _, row in ipairs(t.ledger_rows("VarSet")) do
-        if row.key == "lunatic/tfs:element" and t.same_target(row.entity, machine) then
+        if row.key == "lunatic/tfs:element" and t.same_target(ui_controls.number(row.entity), machine) then
             table.insert(out, word(row.value))
         end
     end
@@ -147,10 +147,10 @@ local east = t.join("engineer")
 -- pass and not on the tick (sim/tick.rs).
 t.run_seconds(1)
 
-local plain_cold = t.target_at(west, 2, 1)
-local upgraded_cold = t.target_at(west, 4, 1)
-local plain_hot = t.target_at(east, 8, 1)
-local upgraded_hot = t.target_at(east, 10, 1)
+local plain_cold = assert(t.target_at(west, 2, 1))
+local upgraded_cold = assert(t.target_at(west, 4, 1))
+local plain_hot = assert(t.target_at(east, 8, 1))
+local upgraded_hot = assert(t.target_at(east, 10, 1))
 
 -- ---------------------------------------------------------------
 -- ONE: THE HANDLER RAN BEFORE THE ROUND OPENED.
@@ -173,18 +173,18 @@ assert(#elements(plain_hot) == 1 and #elements(upgraded_hot) == 1,
 -- than as a penalty: a station kept at the temperature it was built
 -- for pays nothing, and the number on the panel is the part's own.
 -- ---------------------------------------------------------------
-local cold_k = t.room_temperature(2, 1)
+local cold_k = assert(t.room_temperature(2, 1))
 assert(math.abs(cold_k - T20C) < 0.5, "the west bench is at twenty degrees: " .. cold_k)
 
 local row = socket(west, 2, 1)
-assert(row.label.text == "micro-laser", "the plain part, by its own name: " .. word(row.label))
+assert(word(row.label) == "micro-laser", "the plain part, by its own name: " .. word(row.label))
 local tier, eff = worth(row)
 assert(tier == 1 and math.abs(eff - 1.0) < 1e-9,
     "worth exactly what its file says: " .. word(row.value))
 assert(row.tone == "idle", "a neutral part reads neutral: " .. tostring(row.tone))
 
 row = socket(west, 4, 1)
-assert(row.label.text == "ultra-high-power micro-laser", "the better part: " .. word(row.label))
+assert(word(row.label) == "ultra-high-power micro-laser", "the better part: " .. word(row.label))
 tier, eff = worth(row)
 assert(tier == 3 and math.abs(eff - 2.0) < 1e-9,
     "and the ladder's own 2.00 (lib/stock_parts.luau): " .. word(row.value))
@@ -197,7 +197,7 @@ assert(tier == 3 and math.abs(eff - 2.0) < 1e-9,
 -- the panel's efficiency is the number the scaling law is actually
 -- using -- so this row is the mechanism and not a second copy of it.
 -- ---------------------------------------------------------------
-local hot_k = t.room_temperature(8, 1)
+local hot_k = assert(t.room_temperature(8, 1))
 assert(hot_k > T20C + 30.0, "the east bench opened sweltering: " .. hot_k)
 
 row = socket(east, 8, 1)
@@ -248,7 +248,7 @@ assert(tier == 3 and math.abs(eff - 2.0) < 1e-9,
 local function chamber_spoke()
     local n = 0
     for _, r in ipairs(t.ledger_rows("script_provenance")) do
-        if r.actor.file == "fixtures/chem_heater.luau" then
+        if r.actor.kind == "script" and r.actor.file == "fixtures/chem_heater.luau" then
             n += 1
         end
     end

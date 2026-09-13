@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Undressing somebody else, and what it unblocks.
 --
 -- The whole point of the feature is the last two assertions: surgery
@@ -32,10 +34,7 @@ local CX, CY = 2, 1 -- the body being worked on
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
 local function said(who, needle)
     return (" " .. table.concat(t.messages(who), " || ") .. " "):find(needle, 1, true) ~= nil
@@ -48,16 +47,16 @@ end
 -- half of a row that never changes.  Every declared slot is a row, in
 -- the order content/part_tree.luau declares them, so this never has to
 -- ask what the slot currently holds to find it.
-local function row(panel, label)
-    for _, r in ipairs(panel.labels or {}) do
+local function row(panel: ui_controls.Record, label: string): ui_controls.Record?
+    for _, r in ipairs(ui_controls.rows(panel.labels or {})) do
         if word(r.label) == label then return r end
     end
     return nil
 end
 
-local function row_labels(panel)
+local function row_labels(panel: ui_controls.Record): string
     local out = {}
-    for _, r in ipairs(panel.labels or {}) do table.insert(out, word(r.label)) end
+    for _, r in ipairs(ui_controls.rows(panel.labels or {})) do table.insert(out, word(r.label)) end
     return table.concat(out, ",")
 end
 
@@ -65,8 +64,7 @@ end
 assert(t.worn(cadaver).uniform ~= nil, "roundstart puts them in a jumpsuit")
 t.drag(crewman, CX, CY, t.body_target(crewman, cadaver), AX, AY, t.body_target(crewman, crewman))
 t.run_ticks(2)
-local panel = t.ui(crewman)
-assert(panel ~= nil, "dragging a body onto yourself opens its wearables")
+local panel = ui_controls.record(assert(t.ui(crewman), "dragging a body onto yourself opens its wearables"))
 assert(panel.presentation == "choices", "a slot grid is a list of choices")
 local order = row_labels(panel)
 local uniform = row(panel, "Uniform")
@@ -120,12 +118,14 @@ assert(t.hands(crewman).held == "uniform_grey", "the jumpsuit is back in hand")
 
 t.drag(crewman, CX, CY, t.body_target(crewman, cadaver), AX, AY, t.body_target(crewman, crewman))
 t.run_ticks(2)
-local after = t.ui(crewman)
+local after = ui_controls.record(t.ui(crewman))
 assert(row_labels(after) == order,
     "the rows did not move when the jumpsuit came off: " .. row_labels(after) .. " vs " .. order)
 local refill = row(after, "Uniform")
 assert(refill ~= nil and refill.field == "dress", "the empty slot offers to be filled")
-assert(refill.text.id == "wearables.put_on" and refill.text.args.item == "grey jumpsuit",
+local refill_text = ui_controls.record(refill.text)
+local refill_args = ui_controls.record(refill_text.args)
+assert(refill_text.id == "wearables.put_on" and refill_args.item == "grey jumpsuit",
     "and a dress button can never be misread as a strip one: " .. tostring(word(refill.text)))
 
 local dressed = #t.ledger_rows("Dressed")

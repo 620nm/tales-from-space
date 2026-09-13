@@ -7,6 +7,8 @@
 -- does not: it stocks the atmospherics kit, it waits a second between
 -- handouts, and it swallows what it handed out.
 
+local ui_controls = require("@helpers/ui_controls")
+
 local function said(p, line)
     for _, m in ipairs(t.messages(p)) do
         if m == line then
@@ -56,7 +58,7 @@ t.tick()
 -- ---- the window ----
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
-local ui = t.ui(p)
+local ui = ui_controls.state(p)
 assert(ui, "clicking the dispenser opens its window")
 assert(ui.document == "modules" and ui.presentation == "shelf",
     "the shared shelf document")
@@ -65,11 +67,11 @@ assert(ui.document == "modules" and ui.presentation == "shelf",
 -- (code/_globalvars/lists/pipe_recipes.dm). All four are stocked now
 -- that the plate heat exchanger exists — a tab exists exactly when
 -- something on it does.
-local shelf = {}
-local cats = {}
-for _, rec in ipairs(ui.products) do
-    shelf[rec.payload.product] = rec
-    cats[rec.category] = true
+local shelf: { [string]: ui_controls.Record } = {}
+local cats: { [string]: boolean } = {}
+for _, rec in ipairs(ui_controls.rows(ui.products)) do
+    shelf[ui_controls.text(ui_controls.record(rec.payload).product)] = rec
+    cats[ui_controls.text(rec.category)] = true
 end
 assert(cats.Pipes and cats.Binary and cats.Devices, "three of tg's four categories")
 assert(cats["Heat Exchange"], "and the fourth, now that a plate lives on it")
@@ -156,8 +158,10 @@ assert(said(p, "You put the manual valve fitting back into the dispenser."),
 assert(t.ledger_has("ItemConsumed", "manual_valve_fitting", "pipe_dispenser"),
     "a thing that stopped existing is on the record")
 local eaten = t.ledger_rows("item_consumed")
-assert(#eaten == 1 and eaten[1].actor.kind == "script", "one row, attributed to the machine")
-assert(eaten[1].actor.triggered_by, "and it names who asked")
+assert(#eaten == 1, "one row, attributed to the machine")
+local actor = eaten[1].actor
+assert(actor.kind == "script", "the machine's script consumed it")
+assert(actor.triggered_by, "and it names who asked")
 
 -- NEGATIVE: it takes back its OWN kit and nothing else. A wrench is a
 -- tool, not stock, and a machine that ate an engineer's wrench because

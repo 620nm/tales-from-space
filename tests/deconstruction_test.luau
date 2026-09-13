@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- TAKING IT APART AGAIN, and getting back what was actually inside.
 --
 -- Two claims, and both used to be false.
@@ -62,7 +64,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local function take(id)
+local function take(id: string)
     t.click(p, 2, 2, t.target_at(p, 2, 2, id))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
@@ -90,19 +92,19 @@ end
 take("metal")
 ui_controls.build(p, "metal", "machine_frame", 2, 1)
 t.run_seconds(8.5)
-assert(t.structure_at(2, 1).id == "machine_frame", "five sheets box up into a frame")
+assert(assert(t.structure_at(2, 1)).id == "machine_frame", "five sheets box up into a frame")
 
 put_down()
 take("cable_coil")
 t.click(p, 2, 1, t.target_at(p, 2, 1, "machine_frame"))
 t.run_seconds(2.5)
-assert(t.structure_at(2, 1).state == "wired", "five lengths of cable wire it")
+assert(assert(t.structure_at(2, 1)).state == "wired", "five lengths of cable wire it")
 
 put_down()
 take("machine_board.chem_heater")
 t.click(p, 2, 1, t.target_at(p, 2, 1, "machine_frame"))
 t.run_ticks(2)
-assert(t.structure_at(2, 1).state == "boarded", "the board clicks into place")
+assert(assert(t.structure_at(2, 1)).state == "boarded", "the board clicks into place")
 
 put_down()
 take("glass")
@@ -183,7 +185,7 @@ take("crowbar")
 walk("east", 4)
 t.click(p, 7, 1, t.target_at(p, 7, 1, "thermomachine.fullupgrade"))
 t.run_seconds(4.5)
-assert(t.structure_at(7, 1).id == "machine_frame", "a frame is what is left standing")
+assert(assert(t.structure_at(7, 1)).id == "machine_frame", "a frame is what is left standing")
 
 local apart = t.items_at(7, 1)
 assert(count(apart, "matter_bin.tier4") == 2,

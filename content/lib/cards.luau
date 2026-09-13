@@ -12,7 +12,7 @@ local cards = {}
 -- tg's own generator, in tg's own order: two jokers, then Hearts,
 -- Spades, Clubs, Diamonds, each Ace, 2..10, Jack, Queen, King
 -- (`initialize_cards`, deck.dm:44-53). Fifty-four.
-local FACES = {}
+local FACES: {string} = {}
 FACES[1] = "Joker Clown"
 FACES[2] = "Joker Mime"
 for _, suit in ipairs({ "Hearts", "Spades", "Clubs", "Diamonds" }) do
@@ -31,7 +31,7 @@ cards.FACES = FACES
 -- spaces and all; this pack's names are lower case with underscores, so
 -- the transformation happens once, here, and the sprite manifest
 -- (tfs/assets/sprites/80-toys.ron) was generated to match.
-function cards.slug(face)
+function cards.slug(face: string): string
     return (face:lower():gsub(" ", "_"))
 end
 
@@ -43,7 +43,8 @@ end
 -- the SAME cell, `card_back`, and that is the whole trick: the state
 -- carries the card's identity, the picture carries only what a
 -- bystander is allowed to see.
-local states, state_sprites = {}, {}
+local states: {string} = {}
+local state_sprites: {[string]: string} = {}
 for _, face in ipairs(FACES) do
     local key = cards.slug(face)
     -- Face down first, so a card whose state was somehow never set
@@ -60,7 +61,7 @@ cards.state_sprites = state_sprites
 -- The English name of a slug, for the sentence a player reads when they
 -- turn one over. Built from the roster rather than by un-slugging, so
 -- the two can never disagree.
-local NAMES = {}
+local NAMES: {[string]: string} = {}
 for _, face in ipairs(FACES) do
     NAMES[cards.slug(face)] = face
 end
@@ -69,14 +70,14 @@ cards.NAMES = NAMES
 -- The face a state names, and which way up it is. Every state is one of
 -- the two prefixes by construction, so a nil here would mean the engine
 -- handed back a state nothing declared -- which it cannot.
-function cards.read(state)
+function cards.read(state: string): (boolean, string?)
     local up, key = state:match("^(%a+)_(.+)$")
     return up == "up", key
 end
 
 -- How many cards a comma-separated order holds. Empty is nought; every
 -- other string is its commas plus one.
-function cards.count(order)
+function cards.count(order: string): number
     if order == "" then
         return 0
     end
@@ -89,7 +90,7 @@ end
 -- It answers a CELL rather than a state name: a deck's look is a
 -- replicated script var its prototype hangs `sprite` on, so what goes
 -- into the var is the picture every viewer draws.
-function cards.picture(n)
+function cards.picture(n: number): string
     if n >= 27 then
         return "card_deck_full"
     elseif n >= 11 then

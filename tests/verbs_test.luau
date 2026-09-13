@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- SIX WORDS FOR ONE TRANSFER, and the six rows they leave behind.
 --
 -- Every gesture below moves matter through the same primitive
@@ -85,7 +87,8 @@ t.click(medic, 1, 2)
 t.run_ticks(2)
 assert(rows("spilled") == 1, ("one spill, got %d"):format(rows("spilled")))
 local puddle = t.ledger_rows("spilled")[1]
-assert(puddle.at[1] == 1 and puddle.at[2] == 2, "on the tile it was tipped onto")
+local spill_at = ui_controls.array(puddle.at)
+assert(spill_at[1] == 1 and spill_at[2] == 2, "on the tile it was tipped onto")
 
 -- ---- fill: a line into a vessel, gas only ----------------------------
 -- Charging a bottle off a canister is vessel to vessel exactly as a

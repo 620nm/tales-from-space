@@ -3,7 +3,7 @@
 -- Mechanism benches belong in Rust; every noun and coordinate here belongs
 -- to the map players actually load.
 
-local function standing(x, y, id, state)
+local function standing(x: number, y: number, id: string, state: string?)
     local found = t.structure_at(x, y)
     assert(found ~= nil, "a structure stands at " .. x .. "," .. y)
     assert(found.id == id, "at " .. x .. "," .. y .. ": " .. tostring(found.id))
@@ -34,43 +34,47 @@ assert(spawn_x == 18 and spawn_y == 16, "the crew reaches the Commons start")
 -- waking crew can see them.
 standing(21, 13, "digital_clock")
 standing(22, 13, "status_display")
-for _, device in ipairs({ { 23, 14, "fax" }, { 24, 18, "photocopier" }, { 21, 6, "fax" } }) do
-    local machine = t.machine_at(device[1], device[2])
-    assert(machine and machine.id == device[3], device[3] .. " stands at its document station")
+for _, device in ipairs({
+    { x = 23, y = 14, id = "fax" },
+    { x = 24, y = 18, id = "photocopier" },
+    { x = 21, y = 6, id = "fax" },
+}) do
+    local machine = t.machine_at(device.x, device.y)
+    assert(machine and machine.id == device.id, device.id .. " stands at its document station")
 end
 standing(22, 18, "access_point")
 standing(24, 6, "access_point")
 
 -- Atmospherics is commissioned rather than merely drawn.
 for _, row in ipairs({
-    { 21, 23, "filter.co2", "running" },
-    { 23, 23, "mixer.airmix", "running" },
-    { 25, 23, "pump", "running" },
-    { 18, 26, "pump", "running" }, -- the waste lift: a pressure pump,
+    { x = 21, y = 23, id = "filter.co2", state = "running" },
+    { x = 23, y = 23, id = "mixer.airmix", state = "running" },
+    { x = 25, y = 23, id = "pump", state = "running" },
+    { x = 18, y = 26, id = "pump", state = "running" }, -- the waste lift: a pressure pump,
     -- because a volumetric one refuses the drained main's trickle
-    { 14, 25, "pump", "running" }, -- the wheel feed's regulator
-    { 18, 23, "pump", "running" }, -- the process inlet's regulator
+    { x = 14, y = 25, id = "pump", state = "running" }, -- the wheel feed's regulator
+    { x = 18, y = 23, id = "pump", state = "running" }, -- the process inlet's regulator
     -- Switched on and drawn OFF, and both are true. This one is the
     -- department's CO2 recovery leg (maps/chillstation.ron): a roster of
     -- one gas, in a room that at roundstart holds none of it. A machine
     -- is drawn by what the last atmos pass saw it do rather than by its
     -- switch (docs/ATMOS.md SS8), so it lights up the moment somebody
     -- breathes in that room and not a pass before.
-    { 16, 17, "air_scrubber", "off" },
-    { 15, 33, "air_injector", "injecting" },
+    { x = 16, y = 17, id = "air_scrubber", state = "off" },
+    { x = 15, y = 33, id = "air_injector", state = "injecting" },
     -- The map ships this one turned round -- it is a vestibule's pump
     -- down -- and at roundstart the chamber is still at station
     -- pressure, so it is drawn as the ordinary scrubber it is currently
     -- being. The third picture is a warning about a room going EMPTY,
     -- and it arrives when the chamber does (docs/ATMOS.md SS8;
     -- device_looks_test.luau owns the crossing).
-    { 15, 34, "air_scrubber", "scrubbing" },
-    { 14, 28, "manual_valve", "open" },
-    { 26, 24, "layer_adapter", "anchored" },
-    { 22, 20, "layer_adapter", "anchored" },
-    { 17, 27, "layer_adapter", "anchored" },
+    { x = 15, y = 34, id = "air_scrubber", state = "scrubbing" },
+    { x = 14, y = 28, id = "manual_valve", state = "open" },
+    { x = 26, y = 24, id = "layer_adapter", state = "anchored" },
+    { x = 22, y = 20, id = "layer_adapter", state = "anchored" },
+    { x = 17, y = 27, id = "layer_adapter", state = "anchored" },
 }) do
-    standing(row[1], row[2], row[3], row[4])
+    standing(row.x, row.y, row.id, row.state)
 end
 
 -- Supply and process mains share a shaft without becoming one run.
@@ -88,7 +92,7 @@ for _, row in ipairs({
     { 5, 27, 8, 30 },
 }) do
     assert(t.lit(row[1], row[2]), "the station grid lights " .. row[1] .. "," .. row[2])
-    assert(t.room_pressure(row[3], row[4]) > 90.0,
+    assert(assert(t.room_pressure(row[3], row[4])) > 90.0,
         "the room at " .. row[3] .. "," .. row[4] .. " holds air")
 end
 
@@ -108,7 +112,7 @@ for _, row in ipairs({
     assert(t.door_at(row[3], row[4]), "the inner vestibule leaf exists")
     assert(t.turf(row[5], row[6]) == "space", "the outer leaf opens to space")
     assert(t.turf(row[7], row[8]) == "plating", "the chamber is bare deck")
-    assert(t.room_pressure(row[7], row[8]) > 90.0, "the shut vestibule holds air")
+    assert(assert(t.room_pressure(row[7], row[8])) > 90.0, "the shut vestibule holds air")
 end
 
 -- The hull gallery is glazing, not decorative mesh over a hole, and the
@@ -118,7 +122,7 @@ for _, at in ipairs({ { 29, 3 }, { 30, 3 }, { 31, 3 }, { 3, 23 }, { 36, 25 } }) 
     assert(t.turf(at[1], at[2]) == "plating", "the pane replaces the hull on deck")
 end
 assert(t.turf(30, 2) == "space", "the north gallery looks into vacuum")
-assert(t.room_pressure(30, 6) > 90.0, "the cargo bay holds air through its panes")
+assert(assert(t.room_pressure(30, 6)) > 90.0, "the cargo bay holds air through its panes")
 
 -- The Common transceiver is commissioned, not merely drawn: it stands
 -- on the Commons' north rank at (22, 13), its cord reaches the port
@@ -129,7 +133,8 @@ assert(t.room_pressure(30, 6) > 90.0, "the cargo bay holds air through its panes
 -- gate (fixtures/transceiver.luau). Without this tower the crew's
 -- shipped Common headsets make a ten-tile bubble
 -- (radio_coverage_test.luau owns that exact boundary).
-for _, dir in ipairs({ "east", "east", "east", "east", "north", "north" }) do
+local route: { "east" | "north" | "south" | "west" } = { "east", "east", "east", "east", "north", "north" }
+for _, dir in ipairs(route) do
     t.move(p, dir)
     t.run_ticks(6)
 end

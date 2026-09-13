@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- A radio transceiver from a crate of parts, and back into one.
 --
 -- The build ladder is the machine frame's, generically
@@ -59,7 +61,7 @@ t.world([==[(
 local p = t.join()
 t.run_ticks(20)
 
-local function take(x, y, id)
+local function take(x: number, y: number, id: string)
     local places = {["metal"] = {4, 2},["cable_coil"] = {5, 2},["machine_board.transceiver"] = {6, 2},["network_card"] = {3, 3},["encryption_key.medical"] = {4, 3},["encryption_key"] = {5, 3},["screwdriver"] = {6, 3},["crowbar"] = {3, 2}}
     local at = if t.target_at(p, x, y, id) then {x, y} else places[id]
     local home_x, home_y = t.pos(p)
@@ -114,17 +116,17 @@ end
 take(5, 1, "metal")
 ui_controls.build(p, "metal", "machine_frame", 6, 1)
 t.run_seconds(8.5)
-assert(t.structure_at(6, 1).id == "machine_frame", "five sheets box up into a frame")
+assert(assert(t.structure_at(6, 1)).id == "machine_frame", "five sheets box up into a frame")
 
 put_down()
 take(5, 1, "cable_coil")
 work(2.5)
-assert(t.structure_at(6, 1).state == "wired", "five lengths of cable wire it")
+assert(assert(t.structure_at(6, 1)).state == "wired", "five lengths of cable wire it")
 
 put_down()
 take(5, 1, "machine_board.transceiver")
 work(0.5)
-assert(t.structure_at(6, 1).state == "boarded", "and the board says what it is becoming")
+assert(assert(t.structure_at(6, 1)).state == "boarded", "and the board says what it is becoming")
 put_down()
 
 still_needs("It still needs 1 x network card.")

@@ -10,8 +10,8 @@ service.failed = "fax.failed"
 service.max_chunk = 4096
 service.max_payload = 8192
 
-function service.chunks(text)
-    local out = {}
+function service.chunks(text: string): {string}
+    local out: {string} = {}
     local at = 1
     while at <= #text do
         local finish = math.min(#text, at + service.max_chunk - 1)
