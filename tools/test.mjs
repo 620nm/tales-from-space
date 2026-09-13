@@ -27,7 +27,9 @@ for (const [name, args] of steps) {
     cwd: ROOT, encoding: "utf8", env: { ...process.env, LUNATIC_ENGINE: engine },
   });
   const ok = run.status === 0;
-  console.log(`${ok ? "ok  " : "FAIL"}  ${name}`);
+  const skips = (run.stdout ?? "").split("\n").filter((line) => line.startsWith("SKIP "));
+  console.log(`${ok ? skips.length ? "skip" : "ok  " : "FAIL"}  ${name}`);
+  if (ok) for (const skip of skips) console.log(skip);
   if (!ok) {
     failed++;
     process.stdout.write(run.stdout ?? "");

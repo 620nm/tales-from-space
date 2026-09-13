@@ -1,5 +1,5 @@
 {
-  "note": "A ready draft locks all setup controls while the authoritative countdown remains visible.",
+  "note": "A ready draft locks character editing while Unready and the authoritative countdown remain available.",
   "viewport": { "width": 1024, "height": 768, "dpr": 1 },
   "locale": "en",
   "view": {
@@ -23,7 +23,7 @@
         "draft": { "name": "Mira Pike", "ranked_jobs": ["engineer", "assistant"], "fallback": true },
         "ready": true,
         "can_edit": false,
-        "can_ready": false,
+        "can_ready": true,
         "fallback_job": "assistant",
         "issue": null
       },

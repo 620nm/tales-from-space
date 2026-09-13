@@ -75,6 +75,14 @@ Preparation storage belongs to the trusted host and is reconciled with the
 accepted server draft; the package receives no arbitrary storage access. The
 engine's `docs/UI-PRIVACY.md` owns that storage boundary.
 
+The character name field keeps its local text while the server publishes
+ordinary round updates. It emits one complete `character_draft` on the native
+input change (when the field loses focus) or when the player presses Enter;
+typing pauses never submit a partial name. The accepted action then waits for
+the authoritative pending/revision snapshot before setup becomes editable
+again. While the trusted client discloses `preparationCanQueue`, role controls
+and Ready remain available for one follow-up click behind the name save.
+
 ## Authoring boundaries
 
 Every player-visible sentence names a catalog key; [WORDS.md](WORDS.md) owns

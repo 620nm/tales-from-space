@@ -17,6 +17,7 @@ export function crewPanels(view: GameplayView): UiNode[] {
     ? state.preparation
     : undefined;
   const latejoinPending = state.preparationPending === true;
+  const joinPending = latejoinPending && !state.preparationCanQueue;
   if (jobs)
     out.push(
       // A screen as tall as its roster, up to the cap, and then scrolling.
@@ -30,7 +31,7 @@ export function crewPanels(view: GameplayView): UiNode[] {
             text("preparation/latejoin-hint", S.tfs("ui.lobby.preparation.latejoin_hint"), ["hint"]),
             row("preparation/name-row", [
               text("preparation/name-label", S.tfs("ui.lobby.preparation.name"), ["lobby-field-label"]),
-              entry("preparation/name", latejoinPrep.draft.name, (value) => ({
+              entry("preparation/name", latejoinPrep.draft.name, (value) => value === latejoinPrep.draft.name ? undefined : ({
                 kind: "character_draft",
                 round: latejoinPrep.round,
                 revision: latejoinPrep.revision,
@@ -38,7 +39,6 @@ export function crewPanels(view: GameplayView): UiNode[] {
               }), {
                 label: S.tfs("ui.lobby.preparation.name"),
                 disabled: latejoinPending,
-                debounceMs: 120,
                 cls: ["lobby-name-entry"],
               }),
             ], { cls: ["lobby-field"] }),
@@ -64,10 +64,10 @@ export function crewPanels(view: GameplayView): UiNode[] {
                     label: job.name,
                     class: ["choice-hit"],
                     event: bind(id, { kind: "join", job: job.key }),
-                    ...(!playing || full || latejoinPending ? { disabled: true } : {}),
+                    ...(!playing || full || joinPending ? { disabled: true } : {}),
                   },
                 ],
-                { cls: !playing || full || latejoinPending ? ["job", "full"] : ["job"] },
+                { cls: !playing || full || joinPending ? ["job", "full"] : ["job"] },
               );
             }) : [text("lobby-empty", S.tfs("ui.lobby.empty"), ["hint"])],
             { dir: "column", gap: 4 },
