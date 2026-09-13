@@ -48,6 +48,39 @@ Use the narrowest filename-filtered spec while iterating, then the full pack
 suite before completion; exact commands and filter semantics are in
 `README.md`.
 
+## Code Organization
+
+**Files per directory**
+- Target: 5–15
+- Split at: 20–30 (split by feature or layer)
+- Never exceed: 50
+
+**Subdirectories per directory**
+- Target: 3–10
+- Rationale: a reader opening a directory should grasp its partitioning without re-reading names.
+
+**Directory depth**
+- Measured from the crate root (e.g. `crates/lunatic-module/`).
+- Target: 3–5 levels for hand-written source
+- Never exceed: 7
+
+**Rust module layout**
+- Use `xyz.rs` + `xyz/` for modules with children.
+- Do not create `mod.rs` files.
+- Enforce with `#![warn(clippy::mod_module_files)]`.
+
+**Rust unit tests**
+- Default: inline `#[cfg(test)] mod tests { ... }` at the bottom of the file.
+- When the file exceeds the length threshold, move the test body to `file/tests.rs` and leave `#[cfg(test)] mod tests;` in `file.rs`.
+- Never use `#[path]` for test modules.
+- Never place unit tests in the crate-root `tests/` directory; that directory is for integration tests only.
+
+This pack has no crates: measure depth from the repository root, and apply
+the directory rules to `content/`, `ui/`, `tests/` and `tools/`. Generated
+trees (`ui/fixtures/out/`, the `ui/*.json` build products) are outside the
+counts. The Rust rules bind the engine checkout, where the same section is
+its `docs/CODE-ORGANIZATION.md`.
+
 ## Content design rules
 
 - Content is the default home for game ideas: nouns (prototypes, rosters,

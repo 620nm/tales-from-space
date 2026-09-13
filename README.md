@@ -23,6 +23,9 @@ This standalone repository is loaded by the lunatic engine through
 | `docs/`          | This pack's own contracts — what it ships and the numbers it chose: `ATMOS.md` (the station loop), `BIOLOGY.md` (body and surgery tuning), `CHEMISTRY.md` (the shelf), `GAMEMODES.md` (the two modes and preparation policy), `UI.md` (gameplay surfaces), plus controls, terminology and `scripting/` for guest controllers and reference files. A bare `docs/…` citation names a file HERE; an engine contract is always written "the engine's `docs/…`". |
 | `tools/`         | `node tools/test.mjs <engine>` runs every node check: `theme-lint.mjs` (colours only in `ui/theme/tokens.ts`, inline style is placement only), `keyed-messages.mjs --check`, and the `test-*.mjs` tests over `ui/`. To preview a surface, run the engine's lab from the engine checkout, `node tools/ui-lab.mjs serve --watch` or `shot <fixture>` (the engine's `docs/pack-ui/lab.md`). |
 
+How many files and subdirectories a directory holds, and how deep a tree
+goes, is `AGENTS.md` §Code Organization.
+
 ## Running
 
 This repository is content only; the engine is
