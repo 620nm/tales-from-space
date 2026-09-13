@@ -14,7 +14,7 @@
 -- actually choosing between at a junction box.
 local RED, YELLOW = 1, 2
 
-local function said(p, want)
+local function said(p: number, want: string): boolean
     for _, m in ipairs(t.messages(p)) do
         if m == want then
             return true

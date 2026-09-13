@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Inventory interactions use the same player commands as the slot UI.
 local ARENA = [==[(
     name: "inventory laptop",
@@ -29,30 +31,31 @@ local function put_down()
         t.drop(p)
     end
 end
-local function take(id, x)
-    local places = {["floppy_disk"] = {1, 3},["id_assistant"] = {1, 1},["id_captain"] = {3, 1},["screwdriver"] = {3, 3},["backpack"] = {2, 3},["laptop"] = {1, 2}}
+local function take(id: string, x: number?)
+    local places: { [string]: { number } } = {["floppy_disk"] = {1, 3},["id_assistant"] = {1, 1},["id_captain"] = {3, 1},["screwdriver"] = {3, 3},["backpack"] = {2, 3},["laptop"] = {1, 2}}
     local px, py = t.pos(p)
     local at = if x then {x, 2} elseif t.target_at(p, px, py, id) then {px, py} else places[id]
     t.click(p, at[1], at[2], (assert(t.target_at(p, at[1], at[2], id), id .. " is visible")))
     step()
     assert(t.hands(p).held == id, "picked up " .. id)
 end
-local function gesture(site, name)
+local function gesture(site: SpecItemSite, name: string)
     t.use_item_site(p, site, name)
     step()
 end
-local function apply(site)
+local function apply(site: SpecItemSite)
     t.interact_item(p, site)
     step()
 end
 local function desktop()
     local ui = assert(t.ui(p), "desktop is open")
-    return if ui.script then ui.script.data else ui.data
+    local state = ui_controls.record(ui)
+    return ui_controls.record(if state.script then ui_controls.record(state.script).data else state.data)
 end
-local function media_count(kind)
+local function media_count(kind: string)
     local count = 0
     for _, row in ipairs(t.ledger_rows()) do
-        if row.audit and row.audit.audit == kind then count += 1 end
+        if row.audit and ui_controls.record(row.audit).audit == kind then count += 1 end
     end
     return count
 end

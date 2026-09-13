@@ -41,7 +41,7 @@ local function variant(face)
 end
 
 -- tg's `manipulate_result` (dice.dm:222-223): 0, 10, 20 ... 90.
-local function reading(face)
+local function reading(face: number)
     return (face - 1) * 10
 end
 

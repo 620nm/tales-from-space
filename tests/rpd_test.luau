@@ -9,10 +9,9 @@
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local ui_controls = require("@helpers/ui_controls")
+
+local word = ui_controls.word
 
 local function said(p, line)
     for _, m in ipairs(t.messages(p)) do
@@ -48,8 +47,8 @@ end
 
 -- What one dial's caption row currently reads, which is also what the
 -- device is set to.
-local function shows(p, field)
-    for _, tog in ipairs(t.ui(p).toggles) do
+local function shows(p: number, field: string): string?
+    for _, tog in ipairs(ui_controls.rows(ui_controls.state(p).toggles)) do
         if tog.field == field and tog.option == nil then
             return word(tog.on_text)
         end
@@ -61,10 +60,10 @@ end
 -- counted on purpose: the fitting roster GROWS every time a new device
 -- lands, and a spec that hardcoded "recipe 11 is the connector" would
 -- break on somebody else's content file.
-local function pick(p, field, label)
-    for _, tog in ipairs(t.ui(p).toggles) do
+local function pick(p: number, field: string, label: string): string
+    for _, tog in ipairs(ui_controls.rows(ui_controls.state(p).toggles)) do
         if tog.field == field and tog.option ~= nil and word(tog.label) == label then
-            return tog.option
+            return ui_controls.text(tog.option)
         end
     end
     error("no " .. field .. " button labelled " .. label)
@@ -112,21 +111,21 @@ assert(t.hands(p).held == "rpd", "the RPD is in hand")
 -- point: the engine has never heard of a piping layer.
 t.use_self(p)
 t.tick()
-local ui = t.ui(p)
+local ui = ui_controls.state(p)
 assert(ui, "the in-hand key opens the RPD's window")
 assert(ui.document == "modules" and ui.presentation == "visual_choices",
     "the generic visual-choice document")
 assert(ui.name == "rapid pipe dispenser", "wearing the device's own name")
 
-local captions = {}
-local options = {}
+local captions: {[string]: string} = {}
+local options: {[string]: number} = {}
 local manual_presentation = nil
 local green_swatch = nil
-for _, tog in ipairs(ui.toggles) do
+for _, tog in ipairs(ui_controls.rows(ui.toggles)) do
     if tog.option == nil then
-        captions[tog.field] = word(tog.label)
+        captions[ui_controls.text(tog.field)] = word(tog.label)
     else
-        options[tog.field] = (options[tog.field] or 0) + 1
+        options[ui_controls.text(tog.field)] = (options[ui_controls.text(tog.field)] or 0) + 1
         if tog.field == RECIPE and word(tog.label) == "Manual Valve" then
             manual_presentation = tog
         elseif tog.field == PAINT and word(tog.label) == "green" then
@@ -140,7 +139,7 @@ assert(options[LAYER] == 5, "five piping layers, tg's PIPING_LAYER_MIN..MAX")
 assert(options[PAINT] == 13, "tg's twelve paints plus TfS white")
 assert(options[RECIPE] >= 12, "the whole shelf, one button each: " .. options[RECIPE])
 assert(
-    manual_presentation.icon == "manual_valve_loose"
+    assert(manual_presentation).icon == "manual_valve_loose"
         and manual_presentation.group == "Binary Devices",
     "recipes carry content-authored atlas icons and tg-style groups"
 )
@@ -280,7 +279,7 @@ assert(
 set(p, RECIPE, pick(p, RECIPE, "Manual Valve"))
 t.click(p, 5, 1, nil, -14, 14)
 work(p)
-assert(t.structure_at(5, 1).id == "manual_valve", "a valve goes down on bare deck")
+assert(assert(t.structure_at(5, 1)).id == "manual_valve", "a valve goes down on bare deck")
 local _ = t.messages(p)
 t.click(p, 5, 1, nil, -14, 14)
 work(p)
@@ -297,13 +296,13 @@ set(p, MODE, 1)
 assert(shows(p, MODE) == "Destroy", "destroy mode")
 
 local _ = t.messages(p)
-local valve = assert(t.target_at(p, 5, 1, "manual_valve"))
-for _, action in ipairs(t.action_hints(p, valve)) do
+local anchored_valve = assert(t.target_at(p, 5, 1, "manual_valve"))
+for _, action in ipairs(t.action_hints(p, anchored_valve)) do
     assert(action.id ~= "disassemble", "an anchored valve offers no loose-item breakdown")
 end
-t.click(p, 5, 1, valve)
+t.click(p, 5, 1, anchored_valve)
 work(p)
-assert(t.structure_at(5, 1).id == "manual_valve", "a bolted-down valve is not loose")
+assert(assert(t.structure_at(5, 1)).id == "manual_valve", "a bolted-down valve is not loose")
 assert(not said(p, "There is nothing loose there to break down."), "the incompatible breakdown handler stays uncalled")
 
 -- The loose fitting the map put down, on the other hand, goes.
@@ -472,14 +471,14 @@ set(o, RECIPE, pick(o, RECIPE, "Connector"))
 local _ = t.messages(o)
 t.click(o, 1, 1, nil, -14, 14)
 work(o)
-assert(t.structure_at(1, 1).id == "manual_valve", "the valve survived")
+assert(assert(t.structure_at(1, 1)).id == "manual_valve", "the valve survived")
 assert(said(o, "Something is already under the floor here."), "connector over valve refused")
 
 set(o, RECIPE, pick(o, RECIPE, "Manual Valve"))
 local _ = t.messages(o)
 t.click(o, 2, 1, nil, -14, 14)
 work(o)
-assert(t.structure_at(2, 1).id == "connector_port", "the connector survived")
+assert(assert(t.structure_at(2, 1)).id == "connector_port", "the connector survived")
 assert(said(o, "Something is already under the floor here."), "valve over connector refused")
 
 -- Nor may a component be placed over an existing same-layer raw run.
@@ -531,7 +530,7 @@ t.tick()
 set(u, RECIPE, pick(u, RECIPE, "Connector"))
 t.click(u, 2, 1, nil, -14, 14)
 work(u)
-assert(t.structure_at(2, 1).id == "connector_port", "a connector builds beside its run")
+assert(assert(t.structure_at(2, 1)).id == "connector_port", "a connector builds beside its run")
 assert(t.pipe(2, 1) == 0, "the connector has no raw centre length")
 
 walk(u, "east")
@@ -539,7 +538,7 @@ walk(u, "east") -- (4,2)
 set(u, RECIPE, pick(u, RECIPE, "Air Scrubber"))
 t.click(u, 4, 1, nil, -14, 14)
 work(u)
-assert(t.structure_at(4, 1).id == "air_scrubber", "a scrubber needs no underlying raw pipe")
+assert(assert(t.structure_at(4, 1)).id == "air_scrubber", "a scrubber needs no underlying raw pipe")
 assert(t.pipe(4, 1) == 0, "the scrubber is a unary component, not pipe-over-pipe")
 
 walk(u, "east")
@@ -547,7 +546,7 @@ walk(u, "east") -- (6,2)
 set(u, RECIPE, pick(u, RECIPE, "Air Injector"))
 t.click(u, 6, 1, nil, -14, 14)
 work(u)
-assert(t.structure_at(6, 1).id == "air_injector", "an injector needs no underlying raw pipe")
+assert(assert(t.structure_at(6, 1)).id == "air_injector", "an injector needs no underlying raw pipe")
 assert(t.pipe(6, 1) == 0, "the injector centre is raw-pipe-free")
 
 -- The reverse direction is refused without consuming the run. `dial`
@@ -556,7 +555,7 @@ assert(t.pipe(6, 1) == 0, "the injector centre is raw-pipe-free")
 -- socket is the one that ignores it, since a stub binds on the run
 -- every dispenser hands out.
 for _, case in ipairs({
-    { x = 6, recipe = "Air Injector", layer = 4, dial = "3" },
+    { x = 6, recipe = "Air Injector", layer = 4, dial = "3", west = 0 },
     { x = 4, recipe = "Air Scrubber", layer = 2, dial = "2", west = 2 },
     { x = 2, recipe = "Connector", layer = 4, dial = "3", west = 2 },
 }) do

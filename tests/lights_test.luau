@@ -46,10 +46,12 @@ assert(light ~= nil and light.status == "ok" and light.emits, "a fresh fitting b
 local light_target = t.target_at(p, 2, 1)
 assert(light_target ~= nil, "the fixture exposes the id a sprite click names")
 assert(light.color == TUNGSTEN, "in the colour the map put in it, got " .. light.color)
-local function lamp_colour_on_the_wire()
+local function lamp_colour_on_the_wire(): string?
     for _, src in ipairs(t.light_sources(p)) do
         if src[1] == 2 and src[2] == 1 then
-            return src[4]
+            local color = src[4]
+            assert(type(color) == "string", "the source color is a string")
+            return color
         end
     end
     return nil
@@ -67,9 +69,9 @@ t.tick()
 assert(t.hands(p).held == "toolbox", "picked the toolbox up")
 t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
 t.tick()
-assert(t.light_at(2, 1).status == "broken", "the tube shattered")
-assert(not t.light_at(2, 1).emits, "and throws no light")
-assert(t.light_at(2, 1).lit, "though the branch still feeds the fitting")
+assert(assert(t.light_at(2, 1)).status == "broken", "the tube shattered")
+assert(not assert(t.light_at(2, 1)).emits, "and throws no light")
+assert(assert(t.light_at(2, 1)).lit, "though the branch still feeds the fitting")
 assert(not told_about_the_lamp(),
     "a dead fixture is a source the viewer is no longer told about")
 assert(table.concat(t.sounds(p), "\n"):find("glass_break", 1, true), "glass")
@@ -79,8 +81,9 @@ assert(table.concat(t.sounds(p), "\n"):find("glass_break", 1, true), "glass")
 local changed = t.ledger_rows("LightChanged")
 assert(#changed == 1, "one socket change so far, got " .. #changed)
 assert(changed[1].from == "ok" and changed[1].to == "broken", "from ok to broken")
-assert(changed[1].actor.kind == "script"
-    and changed[1].actor.file == "fixtures/light.luau",
+local actor = changed[1].actor
+assert(actor.kind == "script"
+    and actor.file == "fixtures/light.luau",
     "the fixture's own file decided it")
 
 -- The janitor's device, one click.
@@ -90,14 +93,14 @@ t.tick()
 assert(t.hands(p).held == "light_replacer", "picked the replacer up")
 t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
 t.tick()
-assert(t.light_at(2, 1).status == "ok", "the replacer fitted a new tube")
-assert(t.light_at(2, 1).emits, "and the corridor is lit again")
+assert(assert(t.light_at(2, 1)).status == "ok", "the replacer fitted a new tube")
+assert(assert(t.light_at(2, 1)).emits, "and the corridor is lit again")
 assert(told_about_the_lamp(), "the viewer is told about the source again")
 assert(#t.ledger_rows("ItemConsumed") == 1, "one charge spent, on the record")
 -- A tube is a tube: the warm fitting comes back fluorescent, and the
 -- viewer is told the corridor changed colour.
-assert(t.light_at(2, 1).color == TUBE,
-    "a fitted tube burns what a tube burns, got " .. t.light_at(2, 1).color)
+assert(assert(t.light_at(2, 1)).color == TUBE,
+    "a fitted tube burns what a tube burns, got " .. assert(t.light_at(2, 1)).color)
 assert(lamp_colour_on_the_wire() == TUBE, "and the wire carries the new colour")
 local repaint = t.ledger_rows("LightChanged")
 assert(repaint[#repaint].color == TUBE,
@@ -108,22 +111,22 @@ for _ = 1, 9 do
     t.swap_hands(p) -- toolbox
     t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
     t.tick()
-    assert(t.light_at(2, 1).status == "broken", "smashed again")
+    assert(assert(t.light_at(2, 1)).status == "broken", "smashed again")
     t.swap_hands(p) -- replacer
     t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
     t.tick()
-    assert(t.light_at(2, 1).status == "ok", "and fixed again")
+    assert(assert(t.light_at(2, 1)).status == "ok", "and fixed again")
 end
 assert(#t.ledger_rows("ItemConsumed") == 10, "ten charges is the whole device")
 
 t.swap_hands(p)
 t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
 t.tick()
-assert(t.light_at(2, 1).status == "broken", "one last smash")
+assert(assert(t.light_at(2, 1)).status == "broken", "one last smash")
 t.swap_hands(p)
 t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
 t.tick()
-assert(t.light_at(2, 1).status == "broken", "an empty replacer fixes nothing")
+assert(assert(t.light_at(2, 1)).status == "broken", "an empty replacer fixes nothing")
 assert(#t.ledger_rows("ItemConsumed") == 10, "and spends nothing")
 local msgs = table.concat(t.messages(p), "\n")
 assert(msgs:find("replacer is empty", 1, true), "and says so: " .. msgs)
@@ -147,7 +150,7 @@ assert(t.hands(p).held == "light_tube", "a tube in the working hand")
 
 t.click(p, 2, 1, assert(t.target_at(p, 2, 1, light_target)))
 t.tick()
-assert(t.light_at(2, 1).status == "ok", "the tube goes in by hand")
-assert(t.light_at(2, 1).emits, "and the corridor is lit")
+assert(assert(t.light_at(2, 1)).status == "ok", "the tube goes in by hand")
+assert(assert(t.light_at(2, 1)).emits, "and the corridor is lit")
 assert(t.hands(p).held == nil, "the tube was used up putting it in")
 assert(#t.ledger_rows("ItemConsumed") == 11, "the tube is on the record too")

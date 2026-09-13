@@ -13,6 +13,8 @@
 -- The material is reinforced glass rather than plasteel because this
 -- pack has no plasteel; tg's rglass stack builds a reinforced table too
 -- (glass.dm:173), and structures/reinforced_table.luau says so.
+local ui_controls = require("@helpers/ui_controls")
+
 t.world([==[(
     name: "glazier's corner",
     legend: {
@@ -42,7 +44,7 @@ t.click(p, 2, 1, t.target_at(p, 2, 1, "rod"))
 t.run_ticks(2)
 ui_controls.build(p, "rod", "table_frame", 2, 2)
 t.run_seconds(1.5)
-assert(t.structure_at(2, 2).id == "table_frame", "the same frame as any other table")
+assert(assert(t.structure_at(2, 2)).id == "table_frame", "the same frame as any other table")
 
 -- The sheet decides which table the frame becomes. Reinforced glass,
 -- because this pack has no plasteel: tg's rglass stack builds a
@@ -89,9 +91,9 @@ t.run_ticks(2)
 assert(t.hands(p).held == "welder", "a torch in hand")
 t.click(p, 2, 2, t.target_at(p, 2, 2, "reinforced_table"))
 t.run_seconds(5.5)
-assert(t.structure_at(2, 2).state == "loosened",
+assert(assert(t.structure_at(2, 2)).state == "loosened",
     "five seconds of welding weakened the cover: "
-        .. tostring(t.structure_at(2, 2).state))
+        .. tostring(assert(t.structure_at(2, 2)).state))
 
 t.swap_hands(p)
 assert(t.hands(p).held == "wrench", "the ratchet is back in the active hand")

@@ -1,3 +1,5 @@
+local vessel = require("@lib/vessel")
+
 -- The test tube: thirty units, and the vessel you keep a batch in once
 -- the beaker is needed for the next one. A rack of these is what a
 -- chemist's bench looks like.
@@ -37,7 +39,7 @@ local content = {
     acts_on_items = true,
 }
 
-local vessel_spec = {
+local vessel_spec: vessel.Spec = {
     id = content.id,
     -- What the sentences call it. Short of the prototype's own name
     -- on purpose: "you pour from the test tube" is not how anybody

@@ -26,7 +26,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local function speed(x, y)
+local function speed(x: number, y: number)
     local east, north = t.wind(x, y)
     return math.sqrt(east * east + north * north), east, north
 end
@@ -63,4 +63,4 @@ for x = 2, 7 do
     local s = speed(x, 1)
     assert(s < 0.05, "the wind settled at " .. x .. ", got " .. s)
 end
-assert(t.room_pressure(4, 1) < 5, "because the corridor is empty")
+assert(assert(t.room_pressure(4, 1)) < 5, "because the corridor is empty")

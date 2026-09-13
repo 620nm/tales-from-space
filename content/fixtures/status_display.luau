@@ -20,7 +20,7 @@ if sim ~= nil then
         { prototype = content.id }
     )
 
-    local function display_text(value)
+    local function display_text(value: string?): string?
         if value == nil or string.match(value, "%S") == nil then
             return nil
         end

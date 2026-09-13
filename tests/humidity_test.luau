@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Humidity: boil a beaker dry in a sealed room and the room stays
 -- humid, instead of raining the water straight back onto the deck.
 --
@@ -46,12 +48,12 @@ t.world([==[(
 local p = t.join()
 t.run_ticks(2)
 
-local dispenser = t.target_at(p, 1, 1)
-local heater = t.target_at(p, 2, 1)
+local dispenser = assert(t.target_at(p, 1, 1), "the target is visible")
+local heater = assert(t.target_at(p, 2, 1), "the target is visible")
 -- Taken while it is still standing on the deck: the handle is the
 -- entity and outlives every move, but `t.target_at` can only find a
 -- thing that is on a tile.
-local beaker = t.target_at(p, 2, 2, "beaker")
+local beaker = assert(t.target_at(p, 2, 2, "beaker"), "the target is visible")
 
 -- Water hanging in the closet's air, over every tile of it.
 local function damp()
@@ -65,12 +67,12 @@ local function damp()
     return n
 end
 
-local function dock(machine, x, y)
+local function dock(machine: SpecObservedTarget, x: number, y: number)
     t.click(p, x, y, machine)
     t.tick()
 end
 
-local function panel(machine, x, y)
+local function panel(machine: SpecObservedTarget, x: number, y: number)
     t.click(p, x, y, machine)
     t.tick()
 end
@@ -80,7 +82,7 @@ local function eject()
     t.run_ticks(2)
 end
 
-local function water_in(handle)
+local function water_in(handle: SpecObservedTarget)
     local c = t.contents(handle)
     return (c and c.water) or 0
 end

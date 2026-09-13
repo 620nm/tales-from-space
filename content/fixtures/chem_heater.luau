@@ -29,7 +29,7 @@ local SHIELDED_TIER = 3
 -- Is every laser in this roster good enough to shield the element? A
 -- chamber with no laser socket at all is not shielded -- there is
 -- nothing in it doing the shielding -- which is what `found` is for.
-local function shielded(slots)
+local function shielded(slots: { { read kind: string, read tier: number } }): boolean
     local found = false
     for _, slot in ipairs(slots) do
         if slot.kind == "laser" then

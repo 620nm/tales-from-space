@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The rest of tg's in-line roster, by what each one does to the gas.
 --
 -- atmos_devices_test.luau covers the two machines that teach the shape:
@@ -15,22 +17,19 @@ local DISTRO = 4
 local PIPE_M3 = 0.070
 local PORT_M3 = 0.200
 
-local function net_m3(lengths, ports)
+local function net_m3(lengths: number, ports: number)
     return lengths * PIPE_M3 + ports * PORT_M3
 end
 
-local function moles(kpa, m3)
+local function moles(kpa: number, m3: number)
     return kpa * 1000.0 * m3 / (8.314 * 293.15)
 end
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -84,15 +83,15 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-assert(t.structure_at(9, 2).id == "volume_pump", "the map stood one there")
-assert(t.structure_at(9, 2).state == "off", "and tg's ships off")
+assert(assert(t.structure_at(9, 2)).id == "volume_pump", "the map stood one there")
+assert(assert(t.structure_at(9, 2)).state == "off", "and tg's ships off")
 
 local IN_M3 = net_m3(2, 1)
 local OUT_M3 = net_m3(2, 1)
-local pressure_in = t.pipe_pressure(1, 1)
-local pressure_out = t.pipe_pressure(5, 1)
-local volume_in = t.pipe_pressure(7, 2)
-local volume_out = t.pipe_pressure(11, 2)
+local pressure_in = assert(t.pipe_pressure(1, 1))
+local pressure_out = assert(t.pipe_pressure(5, 1))
+local volume_in = assert(t.pipe_pressure(7, 2))
+local volume_out = assert(t.pipe_pressure(11, 2))
 assert(pressure_in > 90.0, "all four mains open the shift charged")
 assert(volume_out > 90.0)
 local books = moles(volume_in, IN_M3) + moles(volume_out, OUT_M3)
@@ -102,7 +101,7 @@ t.click(p, 3, 1, t.target_at(p, 3, 1, "pump"))
 t.tick()
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
-assert(t.structure_at(3, 1).state == "running", "the pressure pump is on")
+assert(assert(t.structure_at(3, 1)).state == "running", "the pressure pump is on")
 
 for _ = 1, 6 do
     t.move(p, "east")
@@ -110,33 +109,33 @@ for _ = 1, 6 do
 end
 t.click(p, 9, 2, t.target_at(p, 9, 2, "volume_pump"))
 t.tick()
-local panel = t.ui(p)
+local panel = ui_controls.record(assert(t.ui(p)))
 assert(panel, "a volume pump wears the same panel")
-assert(panel.setpoints[1].field == "rate", "with a rate knob, not a pressure one")
-assert(panel.setpoints[1].unit == "L/s")
-near(panel.setpoints[1].value, 200.0, 0.001, "MAX_TRANSFER_RATE out of the box")
+assert(ui_controls.rows(panel.setpoints)[1].field == "rate", "with a rate knob, not a pressure one")
+assert(ui_controls.rows(panel.setpoints)[1].unit == "L/s")
+near(ui_controls.number(ui_controls.rows(panel.setpoints)[1].value), 200.0, 0.001, "MAX_TRANSFER_RATE out of the box")
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
-assert(t.structure_at(9, 2).state == "running", "and it is on")
+assert(assert(t.structure_at(9, 2)).state == "running", "and it is on")
 
 t.run_seconds(60)
 
 -- The pressure pump: nothing, in either direction, forever. It is not
 -- broken and it is not off -- it has arrived.
-near(t.pipe_pressure(5, 1), pressure_out, 1.0, "a pump at its setpoint has finished")
-near(t.pipe_pressure(1, 1), pressure_in, 1.0, "and takes nothing from its supply")
+near(assert(t.pipe_pressure(5, 1)), pressure_out, 1.0, "a pump at its setpoint has finished")
+near(assert(t.pipe_pressure(1, 1)), pressure_in, 1.0, "and takes nothing from its supply")
 
 -- The volume pump: its supply is empty and its delivery main is at
 -- twice an atmosphere, because nothing in this machine ever said stop.
 assert(
-    t.pipe_pressure(11, 2) > 180.0,
-    "the volumetric pump kept going past one atmosphere: " .. t.pipe_pressure(11, 2)
+    assert(t.pipe_pressure(11, 2)) > 180.0,
+    "the volumetric pump kept going past one atmosphere: " .. assert(t.pipe_pressure(11, 2))
 )
 assert(
-    t.pipe_pressure(7, 2) < 10.0,
-    "and it did it by emptying its own supply: " .. t.pipe_pressure(7, 2)
+    assert(t.pipe_pressure(7, 2)) < 10.0,
+    "and it did it by emptying its own supply: " .. assert(t.pipe_pressure(7, 2))
 )
-local after = moles(t.pipe_pressure(7, 2), IN_M3) + moles(t.pipe_pressure(11, 2), OUT_M3)
+local after = moles(assert(t.pipe_pressure(7, 2)), IN_M3) + moles(assert(t.pipe_pressure(11, 2)), OUT_M3)
 assert(
     math.abs(after - books) < books * 0.02,
     "every mole came out of the supply main, not out of nowhere: "
@@ -187,9 +186,9 @@ t.run_seconds(2)
 
 local LEAK_IN_M3 = net_m3(2, 1)
 local LEAK_OUT_M3 = net_m3(3, 1)
-local room_before = t.room_pressure(4, 2)
-local supply_before = moles(t.pipe_pressure(1, 1), LEAK_IN_M3)
-local held = supply_before + moles(t.pipe_pressure(5, 1), LEAK_OUT_M3)
+local room_before = assert(t.room_pressure(4, 2))
+local supply_before = moles(assert(t.pipe_pressure(1, 1)), LEAK_IN_M3)
+local held = supply_before + moles(assert(t.pipe_pressure(5, 1)), LEAK_OUT_M3)
 
 -- Defeat the limiters. A multitool in hand and a click on the machine:
 -- tg makes this a TOOL act rather than a button on the panel, because
@@ -211,7 +210,7 @@ t.run_ticks(2)
 t.click(q, 3, 1, t.target_at(q, 3, 1, "volume_pump"))
 t.tick()
 local limits = nil
-for _, r in ipairs(t.ui(q).readouts) do
+for _, r in ipairs(ui_controls.rows(ui_controls.state(q).readouts)) do
     if word(r.label) == "flow.limiters" then
         limits = word(r.value)
     end
@@ -220,8 +219,8 @@ assert(limits == "flow.limiters.defeated", "and the panel says so: " .. tostring
 ui_controls.toggle(q, "power")
 t.run_seconds(60)
 
-local supply_after = moles(t.pipe_pressure(1, 1), LEAK_IN_M3)
-local left = supply_after + moles(t.pipe_pressure(5, 1), LEAK_OUT_M3)
+local supply_after = moles(assert(t.pipe_pressure(1, 1)), LEAK_IN_M3)
+local left = supply_after + moles(assert(t.pipe_pressure(5, 1)), LEAK_OUT_M3)
 local moved = supply_before - supply_after
 local lost = held - left
 assert(moved > 1.0, "the pump moved something to leak out of: " .. moved .. " mol")
@@ -230,9 +229,9 @@ assert(moved > 1.0, "the pump moved something to leak out of: " .. moved .. " mo
 -- the supply main never arrived in the delivery main.
 near(lost / moved, 0.1, 0.01, "a tenth of every transfer leaks")
 assert(
-    t.room_pressure(4, 2) > room_before,
+    assert(t.room_pressure(4, 2)) > room_before,
     "and the room the pump is standing in is where it went: "
-        .. room_before .. " -> " .. t.room_pressure(4, 2) .. " kPa"
+        .. room_before .. " -> " .. assert(t.room_pressure(4, 2)) .. " kPa"
 )
 
 -- ---------------------------------------------------------------
@@ -275,7 +274,7 @@ t.world([==[(
 
 local g = t.join()
 t.tick()
-assert(t.structure_at(3, 1).state == "shut", "a gate opens the shift shut")
+assert(assert(t.structure_at(3, 1)).state == "shut", "a gate opens the shift shut")
 
 -- Run the west half by hand, so the gate's back port has an EMPTY main
 -- behind it... and then the charged one is on its front, which is
@@ -290,8 +289,8 @@ assert(t.pipe(2, 1) == DISTRO, "the west main went down")
 
 local WEST_M3 = net_m3(2, 1)
 local EAST_M3 = net_m3(3, 1)
-local empty = t.pipe_pressure(2, 1)
-local charged = t.pipe_pressure(5, 1)
+local empty = assert(t.pipe_pressure(2, 1))
+local charged = assert(t.pipe_pressure(5, 1))
 assert(empty < 1.0, "a run you laid yourself starts empty")
 assert(charged > 90.0, "the mapped one beside it did not")
 local gate_books = moles(empty, WEST_M3) + moles(charged, EAST_M3)
@@ -310,10 +309,10 @@ t.tick()
 assert(t.ui(g), "a gate wears the panel")
 ui_controls.toggle(g, "power")
 t.run_ticks(2)
-assert(t.structure_at(3, 1).state == "open", "the gate is open")
+assert(assert(t.structure_at(3, 1)).state == "open", "the gate is open")
 t.run_seconds(30)
-near(t.pipe_pressure(2, 1), empty, 0.5, "an open gate pointed uphill moves nothing")
-near(t.pipe_pressure(5, 1), charged, 0.5, "and its supply never notices")
+near(assert(t.pipe_pressure(2, 1)), empty, 0.5, "an open gate pointed uphill moves nothing")
+near(assert(t.pipe_pressure(5, 1)), charged, 0.5, "and its supply never notices")
 
 -- ---------------------------------------------------------------
 -- ...AND DOWNHILL, IT STOPS AT LEVEL.
@@ -359,11 +358,11 @@ end
 
 local SUPPLY_M3 = net_m3(2, 1)
 local DELIVERY_M3 = net_m3(3, 1)
-local supply = t.pipe_pressure(1, 1)
-local delivery = t.pipe_pressure(5, 1)
+local supply = assert(t.pipe_pressure(1, 1))
+local delivery = assert(t.pipe_pressure(5, 1))
 assert(supply > 90.0, "the supply main is the charged one: " .. supply)
 assert(
-    delivery < supply - 20.0,
+    assert(delivery) < supply - 20.0,
     "and the delivery main, diluted by the pipe just laid onto it, is"
         .. " well below it: " .. delivery
 )
@@ -385,14 +384,14 @@ t.click(d, 3, 1, t.target_at(d, 3, 1, "passive_gate"))
 t.tick()
 ui_controls.toggle(d, "power")
 t.run_ticks(2)
-assert(t.structure_at(3, 1).state == "open", "the gate is open")
+assert(assert(t.structure_at(3, 1)).state == "open", "the gate is open")
 t.run_seconds(60)
 
-local settled_out = t.pipe_pressure(5, 1)
-local settled_in = t.pipe_pressure(1, 1)
+local settled_out = assert(t.pipe_pressure(5, 1))
+local settled_in = assert(t.pipe_pressure(1, 1))
 assert(settled_out > delivery + 10.0, "gas ran downhill through the gate: " .. settled_out)
 assert(
-    settled_out <= settled_in + 0.001,
+    assert(settled_out) <= settled_in + 0.001,
     "and never once got above its own supply, which is the whole of"
         .. " 'can not transfer low pressure to higher pressure': "
         .. settled_in .. " / " .. settled_out
@@ -405,7 +404,7 @@ assert(
 near(settled_out, level, 1.0, "the two mains came level")
 near(settled_in, level, 1.0, "from both sides at once")
 assert(
-    settled_out < 101.325,
+    assert(settled_out) < 101.325,
     "and stopped BELOW the gate's own setpoint: a target is a ceiling"
         .. " here, never a promise: " .. settled_out
 )
@@ -468,43 +467,43 @@ for _ = 1, 2 do
     t.run_ticks(5)
 end
 
-local relief_in = t.pipe_pressure(1, 1)
-local relief_out = t.pipe_pressure(5, 1)
+local relief_in = assert(t.pipe_pressure(1, 1))
+local relief_out = assert(t.pipe_pressure(5, 1))
 assert(relief_in > 90.0, "the supply is charged: " .. relief_in)
 assert(
-    relief_out < relief_in - 20.0,
+    assert(relief_out) < relief_in - 20.0,
     "and the delivery main, diluted by the pipe just laid onto it, is"
         .. " well below it: " .. relief_out
 )
 
 t.click(v, 3, 1, t.target_at(v, 3, 1, "pressure_valve"))
 t.tick()
-local relief_panel = t.ui(v)
-assert(relief_panel.setpoints[1].label.id == "flow.trip_pressure",
-    tostring(word(relief_panel.setpoints[1].label)))
-near(relief_panel.setpoints[1].max, 10132.5, 0.001, "tg's ONE_ATMOSPHERE * 100")
+local relief_panel = ui_controls.record(assert(t.ui(v)))
+assert(ui_controls.word(ui_controls.rows(relief_panel.setpoints)[1].label) == "flow.trip_pressure",
+    tostring(word(ui_controls.rows(relief_panel.setpoints)[1].label)))
+near(ui_controls.number(ui_controls.rows(relief_panel.setpoints)[1].max), 10132.5, 0.001, "tg's ONE_ATMOSPHERE * 100")
 
 -- Arm it, trip pressure well above the supply. Nothing crosses, because
 -- nothing upstream is over the line.
 ui_controls.set(v, "target", 400)
 ui_controls.toggle(v, "power")
 t.run_ticks(2)
-assert(t.structure_at(3, 1).state == "armed", "the valve is armed")
+assert(assert(t.structure_at(3, 1)).state == "armed", "the valve is armed")
 t.run_seconds(30)
-near(t.pipe_pressure(5, 1), relief_out, 0.5, "armed above its input, it passes nothing")
-near(t.pipe_pressure(1, 1), relief_in, 0.5, "and holds the supply where it was")
+near(assert(t.pipe_pressure(5, 1)), relief_out, 0.5, "armed above its input, it passes nothing")
+near(assert(t.pipe_pressure(1, 1)), relief_in, 0.5, "and holds the supply where it was")
 
 -- Wind the trip pressure under the supply. Same valve, same position,
 -- and now it relieves.
 ui_controls.set(v, "target", 50)
 t.run_seconds(60)
 assert(
-    t.pipe_pressure(5, 1) > relief_out + 10.0,
-    "under its input, the same valve opens: " .. t.pipe_pressure(5, 1)
+    assert(t.pipe_pressure(5, 1)) > relief_out + 10.0,
+    "under its input, the same valve opens: " .. assert(t.pipe_pressure(5, 1))
 )
 assert(
-    t.pipe_pressure(1, 1) < relief_in,
-    "and the supply is what paid for it: " .. t.pipe_pressure(1, 1)
+    assert(t.pipe_pressure(1, 1)) < relief_in,
+    "and the supply is what paid for it: " .. assert(t.pipe_pressure(1, 1))
 )
 assert(
     t.ledger_has("MachineSetpoint", "target", "Player"),

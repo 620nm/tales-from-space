@@ -27,7 +27,8 @@
 -- together at that rate; the slack on temperature is wide because the
 -- lag and the radiation are only bounded, not modelled.
 
-local function near(a, b, slack, what)
+local function near(a: number?, b: number?, slack: number, what: string)
+    assert(a ~= nil and b ~= nil, what .. ": both readings are present")
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -89,22 +90,22 @@ t.set_environment({ sink_k = 293.15, insolation = 0.0 })
 local ROOM_A = { { 1, 1 }, { 2, 1 }, { 1, 2 }, { 2, 2 } }
 local ROOM_B = { { 4, 1 }, { 5, 1 }, { 4, 2 }, { 5, 2 } }
 
-local function room_sum(room, f)
+local function room_sum(room: {{number}}, f: (number, number) -> number?)
     local sum = 0.0
     for _, tile in ipairs(room) do
-        sum = sum + f(tile[1], tile[2])
+        sum = sum + assert(f(tile[1], tile[2]), "the room tile has a reading")
     end
     return sum
 end
 
-local function gas_moles(room)
+local function gas_moles(room: {{number}})
     return room_sum(room, function(x, y)
         local gases = t.room_gas(x, y)
         return (gases and gases.uf6) or 0.0
     end)
 end
 
-local function liquid_litres(room)
+local function liquid_litres(room: {{number}})
     return room_sum(room, function(x, y)
         local litres = t.room_liquid(x, y)
         return (litres and litres.uf6) or 0.0
@@ -113,9 +114,9 @@ end
 
 -- The room's whole energy book: what stands in the air plus what the
 -- deck under it holds.
-local function room_book(room)
+local function room_book(room: {{number}})
     return room_sum(room, function(x, y)
-        return t.room_energy(x, y) + t.deck(x, y).energy
+        return assert(t.room_energy(x, y)) + assert(t.deck(x, y)).energy
     end)
 end
 
@@ -156,8 +157,8 @@ local book_a0 = room_book(ROOM_A)
 local book_b0 = room_book(ROOM_B)
 local air_a0 = room_sum(ROOM_A, t.room_temperature) / 4.0
 local air_b0 = room_sum(ROOM_B, t.room_temperature) / 4.0
-local deck_a = room_sum(ROOM_A, function(x, y) return t.deck(x, y).capacity end)
-local deck_b = room_sum(ROOM_B, function(x, y) return t.deck(x, y).capacity end)
+local deck_a = room_sum(ROOM_A, function(x, y) return assert(t.deck(x, y)).capacity end)
+local deck_b = room_sum(ROOM_B, function(x, y) return assert(t.deck(x, y)).capacity end)
 
 -- ---------------------------------------------------------------
 -- MEASURE. Each room's book must grow by exactly the decay joules;

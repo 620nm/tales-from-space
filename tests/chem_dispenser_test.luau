@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The chem dispenser, from the outside: a beaker goes in, a button
 -- fills it, and the machine will not put in more than the beaker holds.
 --
@@ -23,12 +25,9 @@ local NOTCH = 0.025
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -41,8 +40,8 @@ local function said(p, line)
     return false
 end
 
-local function row(ui, label)
-    for _, r in ipairs(ui.readouts) do
+local function row(ui: ui_controls.Record, label): ui_controls.Record?
+    for _, r in ipairs(ui_controls.rows(ui.readouts)) do
         if word(r.label) == label then
             return r
         end
@@ -52,8 +51,8 @@ end
 
 -- The contents block: what the docked vessel is HOLDING, by state
 -- (docs/tgui/matter-block.md).
-local function block(ui, section)
-    for _, b in ipairs(ui.matter or {}) do
+local function block(ui: ui_controls.Record, section): ui_controls.Record?
+    for _, b in ipairs(ui_controls.rows(ui.matter or {})) do
         if word(b.section) == section then
             return b
         end
@@ -61,8 +60,8 @@ local function block(ui, section)
     return nil
 end
 
-local function state(b, phase)
-    for _, st in ipairs(b and b.states or {}) do
+local function state(b: ui_controls.Record?, phase): ui_controls.Record?
+    for _, st in ipairs(ui_controls.rows(b and b.states or {})) do
         if st.phase == phase then
             return st
         end
@@ -70,8 +69,8 @@ local function state(b, phase)
     return nil
 end
 
-local function dial(ui, field)
-    for _, s in ipairs(ui.setpoints) do
+local function dial(ui: ui_controls.Record, field): ui_controls.Record?
+    for _, s in ipairs(ui_controls.rows(ui.setpoints)) do
         if s.field == field then
             return s
         end
@@ -116,34 +115,33 @@ t.tick()
 
 local machine = t.target_at(p, 2, 1)
 assert(machine ~= nil, "a dispenser stands on the bench")
-local beaker = t.target_at(p, 1, 1, "beaker")
 
 -- ---------------------------------------------------------------
 -- AN EMPTY HAND ASKS; A FULL ONE LOADS.
 -- ---------------------------------------------------------------
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
-local ui = t.ui(p)
+local ui = ui_controls.state(p)
 assert(ui, "an empty hand opens the panel")
 assert(ui.document == "modules", "which is a clean-room module document")
-assert(row(ui, "dock.vessel").value.id == "dock.vessel.empty", "and it says there is nothing in it")
+assert(ui_controls.record(assert(row(ui, "dock.vessel")).value).id == "dock.vessel.empty", "and it says there is nothing in it")
 
 -- The measure is a DIAL, not a reading: a chemist who wants half a
 -- beaker turns it down rather than pressing and pouring back.
 local measure = dial(ui, "amount")
 assert(measure ~= nil, "the panel offers an amount to dispense")
-near(measure.value, PRESS, 1e-9, "opening at tg's 30 u")
-near(measure.min, NOTCH, 1e-9, "one tg unit at the bottom")
-near(measure.max, DIAL_MAX, 1e-9, "and tg's 50 u at the top")
-near(measure.step, NOTCH, 1e-9, "a notch is one tg unit")
+near(ui_controls.number(measure.value), PRESS, 1e-9, "opening at tg's 30 u")
+near(ui_controls.number(measure.min), NOTCH, 1e-9, "one tg unit at the bottom")
+near(ui_controls.number(measure.max), DIAL_MAX, 1e-9, "and tg's 50 u at the top")
+near(ui_controls.number(measure.step), NOTCH, 1e-9, "a notch is one tg unit")
 assert(measure.unit == "mol", "in the units the contents are counted in")
 
 -- The shelf is the machine's own file, and the panel IS the whitelist:
 -- every button on it names something the registry answered to.
-local buttons = {}
-for _, toggle in ipairs(ui.toggles) do
+local buttons: { [string]: ui_controls.Record } = {}
+for _, toggle in ipairs(ui_controls.rows(ui.toggles)) do
     if toggle.field == "dispense" then
-        buttons[toggle.option] = toggle
+        buttons[ui_controls.text(toggle.option)] = toggle
     end
 end
 assert(buttons.sodium ~= nil, "sodium is on the shelf")
@@ -158,7 +156,7 @@ assert(
 )
 t.ui_close(p)
 
-beaker = t.target_at(p, 1, 1, "beaker")
+local beaker = assert(t.target_at(p, 1, 1, "beaker"))
 t.click(p, 1, 1, t.target_at(p, 1, 1, "beaker"))
 t.tick()
 assert(t.hands(p).held == "beaker", "the beaker is in hand")
@@ -176,18 +174,18 @@ t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 ui_controls.toggle(p, "dispense", "water")
 t.run_ticks(2)
-near(t.contents(beaker).water, PRESS, 1e-9, "one press is tg's 30 u")
+near(assert(t.contents(beaker)).water, PRESS, 1e-9, "one press is tg's 30 u")
 -- A tenth of a kelvin of slack: what lands is settled on the spot
 -- (sim/owner.rs, `deposit_into`), so the first thing the water does is
 -- evaporate into thirty-six millilitres of empty glass and carry a
 -- little latent heat with it.
-near(t.holder_k(beaker), NOZZLE_K, 0.1, "arriving at the nozzle's own temperature")
+near(assert(t.holder_k(beaker)), NOZZLE_K, 0.1, "arriving at the nozzle's own temperature")
 -- The panel counts the GLASS, in litres: 0.75 mol of water is 13.5 mL
 -- of a fifty millilitre beaker (docs/MATTER.md 5). Capacity is
 -- geometry, so what a crewman reads is the level against the shell.
-local glass = block(t.ui(p), "dock.contents")
-near(state(glass, "liquid").measure, 0.0135, 1e-4, "the level in the vessel")
-near(glass.volume_l, 0.05, 1e-9, "against the size of the glass")
+local glass = assert(block(ui_controls.state(p), "dock.contents"))
+near(ui_controls.number(assert(state(glass, "liquid")).measure), 0.0135, 1e-4, "the level in the vessel")
+near(ui_controls.number(glass.volume_l), 0.05, 1e-9, "against the size of the glass")
 
 -- ---------------------------------------------------------------
 -- ...AND A PRESS INTO A NEARLY-FULL BEAKER IS TRIMMED, NOT REFUSED.
@@ -213,8 +211,8 @@ near(total(beaker), BRIM, 1e-5, "nothing you could measure fits")
 local after = t.ledger_rows("minted")
 assert(#after <= before + 1, "at most one row, and it is not a press")
 if #after > before then
-    assert(after[#after].moles < 1e-5,
-        "a rounding error, not a dose: " .. after[#after].moles)
+    assert(ui_controls.number(after[#after].moles) < 1e-5,
+        "a rounding error, not a dose: " .. ui_controls.number(after[#after].moles))
 end
 
 -- ---------------------------------------------------------------
@@ -230,9 +228,9 @@ local rows = t.ledger_rows("minted")
 assert(#rows == 4 or #rows == 5, "four presses landed: " .. #rows)
 local minted = 0
 for _, r in ipairs(rows) do
-    minted = minted + r.moles
-    assert(r.substance == "water", "the row names the substance: " .. r.substance)
-    assert(r.actor.kind == "player", "and the crewman who pressed the button")
+    minted = minted + ui_controls.number(r.moles)
+    assert(r.substance == "water", "the row names the substance: " .. ui_controls.text(r.substance))
+    assert(ui_controls.record(r.actor).kind == "player", "and the crewman who pressed the button")
 end
 -- Every mole in the glass has a row behind it, and the rows come to a
 -- hair MORE than the glass holds: an open beaker breathes its own
@@ -250,7 +248,7 @@ t.run_ticks(2)
 assert(t.hands(p).held == "beaker", "the eject button hands it back")
 near(total(beaker), BRIM, 1e-5, "still holding what it was given")
 assert(t.ledger_has("Undocked", "beaker"), "and the eject is on the record too")
-assert(row(t.ui(p), "dock.vessel").value.id == "dock.vessel.empty", "the panel agrees the slot is clear")
+assert(ui_controls.record(assert(row(ui_controls.state(p), "dock.vessel")).value).id == "dock.vessel.empty", "the panel agrees the slot is clear")
 
 -- A press with nothing in the slot mints nothing, anywhere: a
 -- dispenser that puddled on the floor instead would be a second
@@ -291,9 +289,9 @@ assert(t.hands(p).held == nil, "the vessel stays in the machine")
 
 local flushed = t.ledger_rows("Annihilated")
 assert(#flushed == 1, "one press is one row: " .. #flushed)
-near(flushed[1].moles, held, 1e-9, "carrying every mole that was destroyed")
-assert(flushed[1].owner == "beaker", "and naming the vessel: " .. flushed[1].owner)
-assert(flushed[1].actor.kind == "player", "a window act is the crewman acting")
+near(ui_controls.number(flushed[1].moles), held, 1e-9, "carrying every mole that was destroyed")
+assert(flushed[1].owner == "beaker", "and naming the vessel: " .. ui_controls.text(flushed[1].owner))
+assert(ui_controls.record(flushed[1].actor).kind == "player", "a window act is the crewman acting")
 
 -- Pressing it again is a refusal in silence: there is nothing to
 -- destroy, and a row saying zero moles went nowhere is not a record of
@@ -307,24 +305,24 @@ assert(#t.ledger_rows("Annihilated") == 1, "an empty vessel flushes nothing")
 -- ---------------------------------------------------------------
 ui_controls.set(p, "amount", 0.25)
 t.run_ticks(2)
-near(dial(t.ui(p), "amount").value, 0.25, 1e-9, "the dial took the number")
+near(ui_controls.number(assert(dial(ui_controls.state(p), "amount")).value), 0.25, 1e-9, "the dial took the number")
 ui_controls.toggle(p, "dispense", "water")
 t.run_ticks(2)
 -- A tenth of a millimole of slack: the vessel settles as it fills
 -- (sim/owner.rs, `deposit_into`), so a whisker of what landed is
 -- already vapour on its way to the room.
 near(total(beaker), 0.25, 1e-3, "and the press is what the dial says")
-near(t.holder_k(beaker), NOZZLE_K, 0.3, "still off the same nozzle")
+near(assert(t.holder_k(beaker)), NOZZLE_K, 0.3, "still off the same nozzle")
 
 -- A smaller press is still a full row, so the audit holds at any
 -- setting: what the beaker holds is the sum of what was minted into it.
-local minted = 0
+local total_minted = 0
 for _, r in ipairs(t.ledger_rows("minted")) do
     if r.substance == "water" then
-        minted = minted + r.moles
+        total_minted = total_minted + ui_controls.number(r.moles)
     end
 end
-near(minted, BRIM + 0.25, 1e-4, "every mole ever minted has a row, flushed or not")
+near(total_minted, BRIM + 0.25, 1e-4, "every mole ever minted has a row, flushed or not")
 
 -- ---------------------------------------------------------------
 -- ...AND THE ENDS ARE THE MACHINE'S, NOT THE CLIENT'S.
@@ -335,10 +333,10 @@ near(minted, BRIM + 0.25, 1e-4, "every mole ever minted has a row, flushed or no
 -- ---------------------------------------------------------------
 ui_controls.set(p, "amount", 99)
 t.run_ticks(2)
-near(dial(t.ui(p), "amount").value, DIAL_MAX, 1e-9, "past the top is the top")
+near(ui_controls.number(assert(dial(ui_controls.state(p), "amount")).value), DIAL_MAX, 1e-9, "past the top is the top")
 ui_controls.set(p, "amount", -5)
 t.run_ticks(2)
-near(dial(t.ui(p), "amount").value, NOTCH, 1e-9, "under the bottom is the bottom")
+near(ui_controls.number(assert(dial(ui_controls.state(p), "amount")).value), NOTCH, 1e-9, "under the bottom is the bottom")
 
 local knobs = t.ledger_rows("machine_setpoint")
 local turns = 0
@@ -346,7 +344,7 @@ for _, r in ipairs(knobs) do
     if r.field == "amount" then
         turns = turns + 1
         assert(r.unit == "mol", "the row says what the number is in")
-        assert(r.value >= NOTCH and r.value <= DIAL_MAX, "post-clamp: " .. r.value)
+        assert(ui_controls.number(r.value) >= NOTCH and ui_controls.number(r.value) <= DIAL_MAX, "post-clamp: " .. ui_controls.number(r.value))
     end
 end
 assert(turns == 3, "three turns of the dial are three rows: " .. turns)
@@ -364,7 +362,7 @@ assert(turns == 3, "three turns of the dial are three rows: " .. turns)
 -- ---------------------------------------------------------------
 local reading = t.vessel(beaker)
 assert(reading ~= nil, "the beaker reads")
-near(reading.contents.water.liquid, 0.25, 1e-3, "a press of water is a liquid")
+near(assert(reading.contents.water.liquid), 0.25, 1e-3, "a press of water is a liquid")
 assert((reading.contents.water.gas or 0) < 1e-3, "with only its own vapour over it")
 near(reading.temp_k, NOZZLE_K, 0.3, "at the nozzle's temperature")
 
@@ -415,7 +413,7 @@ local CHLORINE_CV = 33.9
 -- 239.1 K boiling point, k = -L_vap/R (docs/MATTER.md 5, Appendix A of
 -- the milestone spec). About 8 atm at 300 K, and Appendix B's
 -- reference is 6.6 atm at 293 K.
-local function chlorine_line_kpa(temp_k)
+local function chlorine_line_kpa(temp_k: number)
     return 101.325 * math.exp((-CHLORINE_L_VAP / 8.314) * (1.0 / temp_k - 1.0 / CHLORINE_BOIL_K))
 end
 
@@ -442,7 +440,7 @@ ui_controls.toggle(p, "dispense", "chlorine")
 -- the deck (sim/holder/heat.rs) so nothing else is touching it.
 t.run_seconds(20)
 
-local bottled = t.vessel(bottle)
+local bottled = assert(t.vessel(bottle))
 assert(bottled.sealed, "a bottle has a stopper in it")
 assert(bottled.contents.chlorine ~= nil, "and this time the press landed")
 near(bottled.moles, 0.25, 1e-6, "the whole press went in this time")
@@ -487,11 +485,11 @@ t.drop(p)
 t.tick()
 t.run_seconds(300)
 
-local cooled = t.vessel(bottle)
+local cooled = assert(t.vessel(bottle))
 near(cooled.moles, 0.25, 1e-6, "a stopper means nothing left while it cooled")
 near(
     cooled.temp_k,
-    t.room_temperature(1, 1),
+    assert(t.room_temperature(1, 1)),
     1.5,
     "the bottle has come back to the deck's own temperature"
 )

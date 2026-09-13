@@ -17,35 +17,36 @@
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local ui_controls = require("@helpers/ui_controls")
+
+local word = ui_controls.word
 
 -- A socket row's two numbers ride one label id, as ARGUMENTS the pack
 -- frames into a sentence (sim/ui/settings/parts.rs).
-local function worth(value)
-    assert(value.id == "parts.tier", "the numbers ride a label id: " .. tostring(word(value)))
-    return tonumber(value.args.tier), tonumber(value.args.efficiency)
+local function worth(raw: unknown): (number, number)
+    local value = ui_controls.record(raw)
+    assert(value.id == "parts.tier", "the numbers ride a label id: " .. word(value))
+    local args = ui_controls.record(value.args)
+    return assert(tonumber(ui_controls.text(args.tier))), assert(tonumber(ui_controls.text(args.efficiency)))
 end
 
-local function rows_in(ui, section)
+local function rows_in(ui: unknown, section: string)
     local out = {}
-    for _, r in ipairs(ui.readouts) do
-        if word(r.section) == section then
+    for _, r in ipairs(ui_controls.rows(ui_controls.record(ui).readouts)) do
+        if r.section and word(r.section) == section then
             table.insert(out, r)
         end
     end
     return out
 end
 
-local function row(ui, label)
-    for _, r in ipairs(ui.readouts) do
+local function row(ui: unknown, label: string)
+    for _, r in ipairs(ui_controls.rows(ui_controls.record(ui).readouts)) do
         if word(r.label) == label then
             return r
         end
     end
-    return nil
+    error("missing expected panel row")
 end
 
 -- The bench: mains down the west end, two chambers a map stood up, a
@@ -99,7 +100,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local function take(x, y, id)
+local function take(x: number, y: number, id: string)
     local places = {["beaker.libital"] = {10, 2},["metal"] = {7, 3},["cable_coil"] = {8, 3},["machine_board.chem_heater"] = {9, 3},["glass"] = {10, 3},["micro_laser.tier3"] = {7, 2},["screwdriver"] = {9, 2}}
     local at = if x ~= 8 or y ~= 2 or t.target_at(p, x, y, id) then {x, y} else places[id]
     local home_x, home_y = t.pos(p)
@@ -155,19 +156,19 @@ end
 take(8, 2, "metal")
 ui_controls.build(p, "metal", "machine_frame", 8, 1)
 t.run_seconds(8.5)
-assert(t.structure_at(8, 1).id == "machine_frame", "five sheets box up into a frame")
+assert(assert(t.structure_at(8, 1)).id == "machine_frame", "five sheets box up into a frame")
 
 put_down()
 take(8, 2, "cable_coil")
 t.click(p, 8, 1, t.target_at(p, 8, 1, "machine_frame"))
 t.run_seconds(2.5)
-assert(t.structure_at(8, 1).state == "wired", "five lengths of cable wire it")
+assert(assert(t.structure_at(8, 1)).state == "wired", "five lengths of cable wire it")
 
 put_down()
 take(8, 2, "machine_board.chem_heater")
 t.click(p, 8, 1, t.target_at(p, 8, 1, "machine_frame"))
 t.run_ticks(2)
-assert(t.structure_at(8, 1).state == "boarded", "the board clicks into place")
+assert(assert(t.structure_at(8, 1)).state == "boarded", "the board clicks into place")
 
 -- The screwdriver reads the shortfall out, and what it names first is
 -- the SOCKET, because the sockets come from the product and are asked
@@ -196,14 +197,14 @@ assert(t.hands(p).held == nil, "a rung three laser fills the socket like any oth
 take(8, 2, "screwdriver")
 t.click(p, 8, 1, t.target_at(p, 8, 1, "machine_frame"))
 t.run_seconds(4.5)
-local built = t.target_at(p, 8, 1)
+local built = assert(t.target_at(p, 8, 1))
 assert(built ~= nil, "the assembly becomes the machine its board named")
 put_down()
 
 -- ---------------------------------------------------------------
 -- TWO: THE PANEL SAYS WHAT IS INSIDE.
 -- ---------------------------------------------------------------
-local warm_beaker = t.target_at(p, 10, 2, "beaker.libital")
+local warm_beaker = assert(t.target_at(p, 10, 2, "beaker.libital"))
 take(8, 2, "beaker.libital")
 t.click(p, 8, 1, t.target_at(p, 8, 1))
 t.run_ticks(2)
@@ -211,17 +212,17 @@ t.run_ticks(2)
 t.run_seconds(2)
 t.click(p, 8, 1, t.target_at(p, 8, 1))
 t.tick()
-local ui = t.ui(p)
+local ui = ui_controls.state(p)
 local parts = rows_in(ui, "parts.parts")
 assert(#parts == 1, "one socket, one row: got " .. #parts)
-assert(parts[1].label.text == "ultra-high-power micro-laser",
+assert(word(parts[1].label) == "ultra-high-power micro-laser",
     "the row is the part's own name: " .. word(parts[1].label))
 local built_tier, built_eff = worth(parts[1].value)
 assert(built_tier == 3 and math.abs(built_eff - 2.0) < 1e-9,
     "against its rung and what it is worth: " .. built_tier .. " " .. built_eff)
-assert(row(ui, "dock.vessel").value.text == "beaker (libital)",
+assert(word(row(ui, "dock.vessel").value) == "beaker (libital)",
     "a machine out of a frame docks like any other: " .. tostring(word(row(ui, "dock.vessel").value)))
-assert(row(ui, "dock.supply").value.id == "dock.supply.fed",
+assert(word(row(ui, "dock.supply").value) == "dock.supply.fed",
     "and the frame it came out of was wired: " .. tostring(word(row(ui, "dock.supply").value)))
 ui_controls.set(p, "temperature", 400)
 ui_controls.toggle(p, "power")
@@ -230,14 +231,14 @@ t.ui_close(p)
 
 -- The chamber a map stocked with the BEST laser.
 walk("west", 5)
-local best_beaker = t.target_at(p, 3, 2, "beaker.libital")
+local best_beaker = assert(t.target_at(p, 3, 2, "beaker.libital"))
 take(3, 2, "beaker.libital")
 t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.run_ticks(2)
 t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.tick()
 parts = rows_in(t.ui(p), "parts.parts")
-assert(#parts == 1 and parts[1].label.text == "quad-ultra micro-laser",
+assert(#parts == 1 and word(parts[1].label) == "quad-ultra micro-laser",
     "a placement that named tier four got tier four")
 local four_tier, four_eff = worth(parts[1].value)
 assert(four_tier == 4 and math.abs(four_eff - 3.0) < 1e-9,
@@ -250,19 +251,19 @@ t.ui_close(p)
 -- ...and the one nobody upgraded, which is what a placement that says
 -- nothing gets: the lowest rung the pack ships.
 walk("west", 1)
-local plain_beaker = t.target_at(p, 2, 2, "beaker.libital")
+local plain_beaker = assert(t.target_at(p, 2, 2, "beaker.libital"))
 take(2, 2, "beaker.libital")
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.run_ticks(2)
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 parts = rows_in(t.ui(p), "parts.parts")
-assert(#parts == 1 and parts[1].label.text == "micro-laser",
+assert(#parts == 1 and word(parts[1].label) == "micro-laser",
     "silence in a placement is the plain rung")
 local plain_tier, plain_eff = worth(parts[1].value)
 assert(plain_tier == 1 and math.abs(plain_eff - 1.0) < 1e-9,
     "and the neutral part: " .. plain_tier .. " " .. plain_eff)
-assert(row(t.ui(p), "dock.vessel").value.text == "beaker (libital)", "with a beaker in it")
+assert(word(row(t.ui(p), "dock.vessel").value) == "beaker (libital)", "with a beaker in it")
 ui_controls.set(p, "temperature", 400)
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
@@ -278,9 +279,9 @@ t.ui_close(p)
 -- (chem_heater.dm:172) -- which is exactly the claim the sockets make.
 -- ---------------------------------------------------------------
 t.run_seconds(30)
-local plain = t.holder_k(plain_beaker)
-local middle = t.holder_k(warm_beaker)
-local best = t.holder_k(best_beaker)
+local plain = assert(t.holder_k(plain_beaker))
+local middle = assert(t.holder_k(warm_beaker))
+local best = assert(t.holder_k(best_beaker))
 assert(plain < middle,
     "a rung three laser beats the plain one: " .. plain .. " vs " .. middle)
 assert(middle < best,
@@ -300,25 +301,25 @@ assert(best <= 400.0 + 1e-9, "none of them crosses the dial: " .. best)
 walk("east", 7)
 t.click(p, 9, 1, t.target_at(p, 9, 1))
 t.tick()
-ui = t.ui(p)
-local dial = ui.setpoints[1]
+ui = ui_controls.state(p)
+local dial = ui_controls.rows(ui.setpoints)[1]
 assert(dial.field == "temperature", "a temperature control unit wears a thermostat")
-assert(math.abs(dial.min - 73.15) < 1e-6,
-    "two plain lasers are tg's own cold end: " .. dial.min)
-assert(math.abs(dial.max - 573.15) < 1e-6,
-    "and tg's own hot end: " .. dial.max)
+assert(math.abs(ui_controls.number(dial.min) - 73.15) < 1e-6,
+    "two plain lasers are tg's own cold end: " .. ui_controls.number(dial.min))
+assert(math.abs(ui_controls.number(dial.max) - 573.15) < 1e-6,
+    "and tg's own hot end: " .. ui_controls.number(dial.max))
 assert(#rows_in(ui, "parts.parts") == 4, "four sockets: two bins and two lasers")
 t.ui_close(p)
 
 walk("east", 1)
 t.click(p, 10, 1, t.target_at(p, 10, 1))
 t.tick()
-ui = t.ui(p)
-local upgraded = ui.setpoints[1]
-assert(upgraded.min < dial.min - 50.0,
-    "the upgraded unit reaches far colder: " .. upgraded.min .. " vs " .. dial.min)
-assert(upgraded.max > dial.max + 500.0,
-    "and far hotter: " .. upgraded.max .. " vs " .. dial.max)
+ui = ui_controls.state(p)
+local upgraded = ui_controls.rows(ui.setpoints)[1]
+assert(ui_controls.number(upgraded.min) < ui_controls.number(dial.min) - 50.0,
+    "the upgraded unit reaches far colder: " .. ui_controls.number(upgraded.min) .. " vs " .. ui_controls.number(dial.min))
+assert(ui_controls.number(upgraded.max) > ui_controls.number(dial.max) + 500.0,
+    "and far hotter: " .. ui_controls.number(upgraded.max) .. " vs " .. ui_controls.number(dial.max))
 local four = rows_in(ui, "parts.parts")
 assert(#four == 4, "still four sockets")
 for _, r in ipairs(four) do

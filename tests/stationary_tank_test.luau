@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The stationary pressure tank: what a map put in one, where it goes,
 -- and what the glass in its side says about it.
 --
@@ -40,13 +42,10 @@ local p = t.join()
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function readout(panel, label)
-    for _, r in ipairs(panel.readouts) do
+local function readout(panel: ui_controls.Record, label: string): string?
+    for _, r in ipairs(ui_controls.rows(panel.readouts)) do
         if word(r.label) == label then
             return word(r.value)
         end
@@ -56,8 +55,8 @@ end
 
 -- The contents block: what the vessel is HOLDING, by state
 -- (docs/tgui/matter-block.md).
-local function block(panel, section)
-    for _, b in ipairs(panel.matter or {}) do
+local function block(panel: ui_controls.Record, section: string): ui_controls.Record?
+    for _, b in ipairs(ui_controls.rows(panel.matter or {})) do
         if word(b.section) == section then
             return b
         end
@@ -65,8 +64,8 @@ local function block(panel, section)
     return nil
 end
 
-local function state(b, phase)
-    for _, st in ipairs(b and b.states or {}) do
+local function state(b: ui_controls.Record?, phase: string): ui_controls.Record?
+    for _, st in ipairs(ui_controls.rows(b and b.states or {})) do
         if st.phase == phase then
             return st
         end
@@ -74,8 +73,8 @@ local function state(b, phase)
     return nil
 end
 
-local function named(st, name)
-    for _, r in ipairs(st and st.rows or {}) do
+local function named(st: ui_controls.Record?, name: string): ui_controls.Record?
+    for _, r in ipairs(ui_controls.rows(st and st.rows or {})) do
         if r.name == name then
             return r
         end
@@ -83,21 +82,20 @@ local function named(st, name)
     return nil
 end
 
-local function moles(panel, name)
+local function moles(panel: ui_controls.Record, name: string): number
     local row = named(state(block(panel, "holder.contents"), "gas"), name)
-    return row and row.moles or 0.0
+    return row and ui_controls.number(row.moles) or 0.0
 end
 
 -- ---------------------------------------------------------------
 -- What the map authored is what stands there, before a single atmos
 -- pass has had a chance to move it.
 -- ---------------------------------------------------------------
-local filled = t.tank_pressure(3, 2)
-assert(filled, "a tank stands where the map placed one")
+local filled = assert(t.tank_pressure(3, 2), "a tank stands where the map placed one")
 assert(math.abs(filled - 23000.0) < 50.0,
     "filled to the authored pressure by the ideal gas law: " .. filled)
 
-local standing = t.structure_at(3, 2)
+local standing = assert(t.structure_at(3, 2))
 assert(standing.id == "stationary_tank", "and it is the tank: " .. standing.id)
 assert(standing.state == "anchored", "bolted down: " .. tostring(standing.state))
 
@@ -110,28 +108,28 @@ assert(standing.state == "anchored", "bolted down: " .. tostring(standing.state)
 t.tick()
 t.click(p, 3, 2, t.target_at(p, 3, 2))
 t.tick()
-local ui = t.ui(p)
+local ui = ui_controls.state(p)
 assert(ui, "clicking the tank opens its window")
 assert(ui.document == "modules" and ui.presentation == "modules",
     "the generic module document")
-assert(#ui.toggles == 0, "a tank has no switch")
-assert(#ui.setpoints == 0, "and no dial -- its ports are its valves")
-assert(ui.gauge and ui.gauge > 0.0 and ui.gauge < 100.0,
+assert(#ui_controls.rows(ui.toggles) == 0, "a tank has no switch")
+assert(#ui_controls.rows(ui.setpoints) == 0, "and no dial -- its ports are its valves")
+assert(ui_controls.number(ui.gauge) > 0.0 and ui_controls.number(ui.gauge) < 100.0,
     "the gauge reads against the 46 000 kPa sticker: " .. tostring(ui.gauge))
 
 local contents = block(ui, "holder.contents")
 assert(contents, "the vessel's contents block")
-local gas = state(contents, "gas")
+local gas = assert(state(contents, "gas"))
 assert(named(gas, "oxygen"), "one row PER SUBSTANCE PRESENT, named by the substance")
 assert(named(gas, "nitrogen") == nil, "and no row for one that is not in there")
-assert(gas.measure > 0.0, "the state's own reading is a pressure")
-assert(contents.temperature_k > 0.0, "a temperature")
-assert(contents.volume_l > 0.0, "and the vessel's own size")
+assert(ui_controls.number(gas.measure) > 0.0, "the state's own reading is a pressure")
+assert(ui_controls.number(contents.temperature_k) > 0.0, "a temperature")
+assert(ui_controls.number(contents.volume_l) > 0.0, "and the vessel's own size")
 assert(readout(ui, "holder.rating") == "46000 kPa", "with the sticker beside it")
 
 local tank_o2 = moles(ui, "oxygen")
 assert(tank_o2 > 20000.0, "a full 2500 L vessel is tens of thousands of moles: " .. tank_o2)
-local pipe_o2 = t.pipe_gas(5, 2).o2
+local pipe_o2 = assert(t.pipe_gas(5, 2)).o2
 
 -- ---------------------------------------------------------------
 -- It free-flows into the run its east mouth reaches, and the books
@@ -149,8 +147,8 @@ assert(piped.o2 > pipe_o2 + 1000.0, "and it is now full of the tank's gas: " .. 
 assert(piped.o2 > 100.0 * (piped.n2 or 0.0),
     "overwhelmingly the tank's gas, not the air it started with")
 
-local settled = t.tank_pressure(3, 2)
-local pipe_kpa = t.pipe_pressure(5, 2)
+local settled = assert(t.tank_pressure(3, 2))
+local pipe_kpa = assert(t.pipe_pressure(5, 2))
 assert(settled < filled - 500.0,
     "the tank is what paid for it: " .. filled .. " -> " .. settled)
 -- One body of gas, split by volume, means one PRESSURE. tg equalises
@@ -162,7 +160,7 @@ assert(math.abs(settled - pipe_kpa) < 50.0,
 -- The window is LIVE, not a snapshot taken when it opened: the same
 -- panel, re-read after the gas moved, reports the vessel it is
 -- standing in front of.
-local tank_now = moles(t.ui(p), "oxygen")
+local tank_now = moles(ui_controls.state(p), "oxygen")
 assert(tank_now < tank_o2 - 1000.0,
     "the window tracks the vessel: " .. tank_o2 .. " -> " .. tank_now)
 
@@ -181,5 +179,5 @@ assert(ui_controls.find(p, "/toggle/valve/switch") == nil, "no valve control")
 assert(ui_controls.find(p, "/set/target/value") == nil, "no target dial")
 assert(ui_controls.find(p, "/set/release/value") == nil, "no release dial")
 t.run_ticks(2)
-assert(#t.ui(p).toggles == 0 and #t.ui(p).setpoints == 0,
+assert(#ui_controls.rows(ui_controls.state(p).toggles) == 0 and #ui_controls.rows(ui_controls.state(p).setpoints) == 0,
     "no invented control appears on the panel")

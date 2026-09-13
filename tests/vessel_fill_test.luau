@@ -12,15 +12,19 @@
 -- at once with nothing entering or leaving a hand; boiling a beaker dry
 -- is contents leaving with no gesture at all. Neither is allowed to
 -- need a stow-and-fetch to catch up.
+local ui_controls = require("@helpers/ui_controls")
+
 local PRESS = 0.75
 
-local function amount(handle, key)
+local function amount(handle: (SpecObservedTarget | number)?, key: string)
+    assert(handle ~= nil, "the vessel is visible")
     local contents = t.contents(handle)
     assert(contents ~= nil, "that is a vessel")
     return contents[key] or 0
 end
 
-local function fill_of(handle)
+local function fill_of(handle: (SpecObservedTarget | number)?)
+    assert(handle ~= nil, "the vessel is visible")
     local worn = t.overlays(handle)
     return worn[1]
 end
@@ -174,4 +178,4 @@ assert(
         .. amount(beaker, "water")
         .. " mol"
 )
-assert(t.holder_k(beaker) > 373.0, "the chamber held it over the boil the whole time")
+assert(assert(t.holder_k(assert(beaker))) > 373.0, "the chamber held it over the boil the whole time")

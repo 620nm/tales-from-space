@@ -1,3 +1,5 @@
+local map_markers = require("@lib/map_markers")
+
 local content = { id = "player_spawn" }
 if sim ~= nil then
     local behavior = sim.define("behavior", "lunatic/tfs:player_spawn", { prototype = content.id })

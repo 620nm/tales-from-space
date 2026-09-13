@@ -56,7 +56,9 @@ if sim ~= nil then
     script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
         local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount
         local down = false
-        for _, id in ipairs(sim.body(mob).thresholds) do
+        local snapshot = sim.body(mob)
+        if snapshot == nil then return end
+        for _, id in ipairs(snapshot.thresholds) do
             if id == "crit" then
                 down = true
             end

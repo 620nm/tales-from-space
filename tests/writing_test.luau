@@ -1,6 +1,8 @@
 -- Writing is driven through the same pointer, inventory, and script-window
 -- seams as a browser. Native documents own revision, bounds, style, and use
 -- charges; this spec only observes the resulting window and hands.
+local ui_controls = require("@helpers/ui_controls")
+
 t.world([==[(
     name: "writing bench",
     legend: {
@@ -23,7 +25,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local function pick(id, x, y)
+local function pick(id: string, x: number, y: number)
     local target = assert(t.target_at(p, x, y), id .. " is visible; tile=" .. table.concat(t.items_at(x, y), ","))
     t.click(p, x, y, target)
     t.tick()
@@ -31,9 +33,16 @@ local function pick(id, x, y)
 end
 
 local function paper_data()
-    local window = assert(t.ui(p, "writing"), "the paper window is open")
+    local window = ui_controls.record(t.ui(p, "writing"))
     assert(window.document == "script", "paper uses a script document")
-    return assert(window.script).data, window
+    local script = ui_controls.record(window.script)
+    local data = ui_controls.record(script.data)
+    local committed = {}
+    for _, fragment in ipairs(ui_controls.rows(data.committed or {})) do
+        assert(type(fragment.text) == "string", "a committed fragment has text")
+        table.insert(committed, {text = fragment.text, style = ui_controls.record(fragment.style)})
+    end
+    return {kind = data.kind, draft = data.draft, committed = committed}, script
 end
 
 local function paper_prefix()
@@ -44,9 +53,10 @@ end
 -- A held sheet is readable without a writer. Its UI is bounded and an empty
 -- writer cannot mutate the append-only file.
 pick("paper", 2, 1)
-local data, window = paper_data()
+local data, script = paper_data()
 assert(data.kind == "paper" and data.draft == "", "paper opens with an empty draft")
-assert(window.script.actions[1].id == "write" and window.script.actions[1].input == 4096,
+local write_action = ui_controls.rows(script.actions)[1]
+assert(write_action.id == "write" and write_action.input == 4096,
     "paper declares one bounded write action")
 local prefix = paper_prefix()
 assert(#(data.committed or {}) == 0, "an empty writer cannot append")
@@ -63,8 +73,8 @@ t.use_on_other(p)
 t.tick()
 prefix = paper_prefix()
 local first_text = string.rep("a", 4096)
-local writer_window = assert(t.ui(p, "writing"))
-assert(writer_window.status == nil or writer_window.status >= 2,
+local writer_window = ui_controls.record(t.ui(p, "writing"))
+assert(writer_window.status == nil or (type(writer_window.status) == "number" and writer_window.status >= 2),
     "writer window unavailable: " .. tostring(writer_window.status))
 t.ui_edit(p, prefix .. "/draft", first_text)
 t.ui_press(p, prefix .. "/commit")

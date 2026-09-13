@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Tables: a row of them reads as one surface, and a shift can raise and
 -- take apart every one of them.
 --
@@ -48,20 +50,20 @@ t.tick()
 -- No corners appear anywhere below because a corner bit is only set
 -- where both cardinals beside it already were, and a single row has no
 -- vertical neighbours at all.
-local west_end = t.structure_at(1, 1)
+local west_end = assert(t.structure_at(1, 1))
 assert(west_end.id == "table", "a steel table stands at the west end")
 assert(west_end.sprite == "table-4",
     "with one neighbour, to its east: " .. tostring(west_end.sprite))
 
 -- The middle steel table has a table on either side -- and one of them
 -- is reinforced. It counts, because both files said "tables".
-local middle = t.structure_at(2, 1)
+local middle = assert(t.structure_at(2, 1))
 assert(middle.sprite == "table-12",
     "joined both ways, steel to reinforced: " .. tostring(middle.sprite))
 
 -- The reinforced table joins back, and its OTHER neighbour is wood,
 -- which it does not see at all.
-local reinforced = t.structure_at(3, 1)
+local reinforced = assert(t.structure_at(3, 1))
 assert(reinforced.id == "reinforced_table", "a reinforced table stands beside it")
 assert(reinforced.sprite == "reinforced_table-8",
     "joined west to the steel run, and not east to the wood: "
@@ -71,12 +73,12 @@ assert(reinforced.sprite == "reinforced_table-8",
 -- the wooden one on its east, which is the asymmetry stated from the
 -- side that proves it is a group rather than a material: same
 -- mechanism, different word.
-local wood = t.structure_at(4, 1)
+local wood = assert(t.structure_at(4, 1))
 assert(wood.id == "wood_table", "a wooden table stands beside the reinforced one")
 assert(wood.sprite == "wood_table-4",
     "wood joins wood eastward and refuses steel westward: " .. tostring(wood.sprite))
-assert(t.structure_at(5, 1).sprite == "wood_table-8",
-    "and the far wooden one joins back: " .. tostring(t.structure_at(5, 1).sprite))
+assert(assert(t.structure_at(5, 1)).sprite == "wood_table-8",
+    "and the far wooden one joins back: " .. tostring(assert(t.structure_at(5, 1)).sprite))
 
 -- ---- two rods to a table, and back ----------------------------------
 -- Everything within arm's reach of one tile, because the point is the
@@ -167,7 +169,7 @@ t.run_ticks(2)
 assert(t.hands(p).held == "light_bulb", "picked back up off the table")
 t.click(p, 2, 2, t.target_at(p, 2, 2, "table"), -3, -4)
 t.run_ticks(2)
-local moved = t.item_at(2, 2, "light_bulb")
+local moved = assert(t.item_at(2, 2, "light_bulb"))
 assert(moved.offset.x == -3 and moved.offset.y == -4,
     "moved, not accumulated: " .. moved.offset.x .. "," .. moved.offset.y)
 
@@ -204,7 +206,7 @@ t.swap_hands(p)
 assert(t.hands(p).held == "metal", "the rest of the stack is still in hand")
 t.click(p, 2, 2, t.target_at(p, 2, 2, "table_frame"))
 t.run_seconds(2.5)
-assert(t.structure_at(2, 2).id == "table", "a table again")
+assert(assert(t.structure_at(2, 2)).id == "table", "a table again")
 
 t.drop(p)
 t.run_ticks(2)

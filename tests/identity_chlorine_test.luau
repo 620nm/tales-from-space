@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- IDENTITY: chlorine, and the door that is not there any more.
 --
 -- THE ACCIDENT ITSELF IS vapors_test.luau, in full: a press of the
@@ -32,11 +34,11 @@
 
 local PRESS = 1.25
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function has_text(lines, needle)
+local function has_text(lines: { string }, needle: string)
     for _, line in ipairs(lines) do
         if string.find(line, needle, 1, true) ~= nil then
             return true
@@ -76,8 +78,8 @@ t.set_environment({ sink_k = 293.15, insolation = 0.0 })
 local chemist = t.join("engineer")
 t.tick()
 
-local dispenser = t.target_at(chemist, 1, 2)
-local jar = t.target_at(chemist, 2, 3, "bottle")
+local dispenser = assert(t.target_at(chemist, 1, 2), "the target is visible")
+local jar = assert(t.target_at(chemist, 2, 3, "bottle"), "the target is visible")
 assert(dispenser ~= nil and jar ~= nil, "the bench is set")
 
 local ROOM = {}
@@ -87,7 +89,7 @@ for x = 1, 4 do
     end
 end
 
-local function room(key)
+local function room(key: string)
     local n = 0.0
     for _, tile in ipairs(ROOM) do
         local gases = t.room_gas(tile[1], tile[2])
@@ -116,7 +118,7 @@ t.run_ticks(2)
 assert(t.hands(chemist).held == "oxygen_tank", "the tank is in hand")
 t.use_self(chemist)
 t.run_ticks(2)
-assert(t.vitals(chemist) ~= nil and t.vitals(chemist).tank ~= nil, "the valve is open")
+assert(t.vitals(chemist) ~= nil and assert(t.vitals(chemist)).tank ~= nil, "the valve is open")
 -- The bottle goes in the OTHER hand: an open valve is a tank still
 -- held, and letting go of it shuts it (internals_test.luau).
 t.swap_hands(chemist)
@@ -142,7 +144,8 @@ ui_controls.toggle(chemist, "eject")
 t.run_ticks(2)
 assert(t.hands(chemist).held == "bottle", "the vessel comes back out")
 
-local inside = t.vessel(jar)
+local inside = assert(t.vessel(jar), "the vessel has a reading")
+assert(inside.contents.chlorine.liquid ~= nil, "the bottle holds liquid chlorine")
 near(inside.contents.chlorine.liquid + (inside.contents.chlorine.gas or 0.0), PRESS, 1e-9,
     "the whole press landed, because there is a lid")
 assert(inside.contents.chlorine.liquid > 0.5 * PRESS,
@@ -174,7 +177,7 @@ t.run_seconds(20)
 
 local loose = room("chlorine")
 assert(loose > 0.5 * PRESS, "it boiled off into the room: " .. loose .. " mol")
-near(t.contents(jar).chlorine or 0.0, PRESS - loose, 1e-6,
+near(assert(t.contents(jar)).chlorine or 0.0, PRESS - loose, 1e-6,
     "and what is left in the bottle is the saturated vapour it kept")
 
 -- ---------------------------------------------------------------

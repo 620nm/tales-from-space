@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The target selector: what the HUD doll and the numbered target keys
 -- choose, and what a surgeon's hands then reach (docs/SURGERY.md §6.3,
 -- docs/BIOLOGY.md §9).
@@ -51,7 +53,7 @@ t.run_ticks(2)
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(math.ceil(1.6 * 20) + 3)
 
-local parts = t.parts(patient)
+local parts = assert(t.parts(patient))
 assert(has(parts.head.states, "skin_cut"), "the head was cut: that is where the aim was")
 assert(not has(parts.chest.states, "skin_cut"), "and nowhere else was")
 
@@ -63,7 +65,7 @@ assert(t.set_zone(surgeon, "l_arm"), "the plan declares a left arm")
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(math.ceil(1.6 * 20) + 3)
 
-parts = t.parts(patient)
+parts = assert(t.parts(patient))
 assert(has(parts.l_arm.states, "skin_cut"), "the arm was cut once the aim moved there")
 assert(not has(parts.r_arm.states, "skin_cut"), "the other arm is a different zone")
 
@@ -80,7 +82,7 @@ t.run_ticks(2)
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(math.ceil(2.4 * 20) + 3)
 
-parts = t.parts(patient)
+parts = assert(t.parts(patient))
 assert(has(parts.l_arm.states, "skin_open"),
     "the aim stayed on the arm: a refused claim moves nothing, not even to the default")
 assert(not has(parts.chest.states, "skin_cut"), "the default zone was never fallen back to")
@@ -97,8 +99,8 @@ assert(not has(parts.chest.states, "skin_cut"), "the default zone was never fall
 -- code/datums/keybinding/mob.dm:217-222) and this plan hangs its pelvis
 -- there.
 -- =====================================================================
-local function zone_for_slot(who, slot)
-    for _, row in ipairs(t.doll(who)) do
+local function zone_for_slot(who: number, slot: number): string?
+    for _, row in ipairs(assert(t.doll(who))) do
         if row.slot == slot then return row.id end
     end
     return nil
@@ -111,7 +113,7 @@ assert(zone_for_slot(surgeon, 7) == nil, "7 is tg's eyes and this plan has none"
 -- The doll rectangle the pelvis owns is tg's own groin band -- icon_y
 -- 10..13, icon_x 12..20 (get_zone_at, screen_objects.dm:764-800) -- and
 -- a click in the middle of it is what a mouse does with that number.
-for _, row in ipairs(t.doll(surgeon)) do
+for _, row in ipairs(assert(t.doll(surgeon))) do
     if row.id == "pelvis" then
         assert(math.abs(row.rect[2] - 19 / 32) < 1e-6,
             "the band starts where tg's does: " .. row.rect[2])
@@ -124,7 +126,7 @@ end
 -- came off at the top of this file, which is what makes the pelvis
 -- reachable at all (tg jumpsuits are body_parts_covered CHEST|GROIN|
 -- LEGS|ARMS, clothing/under/_under.dm:8).
-assert(t.set_zone(surgeon, zone_for_slot(surgeon, 2)), "the plan declares a pelvis")
+assert(t.set_zone(surgeon, assert(zone_for_slot(surgeon, 2))), "the plan declares a pelvis")
 t.drop(surgeon)
 t.tick()
 t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, "scalpel"))
@@ -132,7 +134,7 @@ t.run_ticks(2)
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(math.ceil(1.6 * 20) + 3)
 
-parts = t.parts(patient)
+parts = assert(t.parts(patient))
 assert(has(parts.pelvis.states, "skin_cut"), "the pelvis was cut: that is where the aim was")
 assert(not has(parts.chest.states, "skin_cut"), "and the chest above it was not")
 
@@ -164,7 +166,9 @@ t.run_ticks(3)
 t.click(attacker, 1, 1, t.target_at(attacker, 1, 1, "toolbox"))
 t.run_ticks(2)
 
-local function brute(zone) return t.parts(victim)[zone].brute or 0 end
+local function brute(zone: string): number
+    return ui_controls.number(assert(t.parts(victim))[zone].brute or 0)
+end
 local function swing()
     t.click(attacker, 2, 1, t.body_target(attacker, victim))
     t.run_ticks(4)
@@ -205,4 +209,4 @@ end
 assert(gained.l_arm >= 30,
     "the second volley followed the aim to the arm: " .. gained.l_arm)
 assert(gained.l_arm > worst,
-    "and the arm took more than any other zone (" .. worst_zone .. " took " .. worst .. ")")
+    "and the arm took more than any other zone (" .. assert(worst_zone) .. " took " .. worst .. ")")

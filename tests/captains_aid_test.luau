@@ -109,6 +109,6 @@ t.use_self(p)
 t.tick()
 t.drop(p)
 t.tick()
-local second_lap = t.item_at(1, 1, "captains_aid")
+local second_lap = assert(t.item_at(1, 1, "captains_aid"))
 assert(second_lap.state == "port",
     "off + one is port again, not stuck at the end: " .. tostring(second_lap.state))

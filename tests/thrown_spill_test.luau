@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- An open vessel spills its real condensed contents when a throw comes
 -- to rest. The wall is the obstacle; the salt lands on the standable
 -- tile immediately before it and remains solid matter there.
@@ -20,7 +22,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local beaker = t.target_at(p, 5, 1, "beaker.salt")
+local beaker = assert(t.target_at(p, 5, 1, "beaker.salt"))
 assert(beaker ~= nil, "the salt beaker is on the deck")
 local before = t.matter_totals()
 local contents = t.contents(beaker)
@@ -42,12 +44,12 @@ assert(landed ~= nil, "the beaker stopped before the wall")
 local left = t.contents(beaker)
 assert(left ~= nil and math.abs(left.salt or 0) < 1e-9,
     ("the open beaker spilled all condensed salt (left=%s sealed=%s)"):format(
-        tostring(left and left.salt), tostring(t.vessel(beaker).sealed)))
+        tostring(left and left.salt), tostring(assert(t.vessel(beaker)).sealed)))
 
 local spilled = t.ledger_rows("spilled")
 assert(#spilled == 1, ("one impact spill, got %d"):format(#spilled))
-assert(math.abs(spilled[1].moles - 0.80) < 1e-9, "the whole charge moved")
-assert(spilled[1].at[1] == 9 and spilled[1].at[2] == 1,
+assert(math.abs(ui_controls.number(spilled[1].moles) - 0.80) < 1e-9, "the whole charge moved")
+assert(ui_controls.array(spilled[1].at)[1] == 9 and ui_controls.array(spilled[1].at)[2] == 1,
     "the spill is on the landing tile before the wall")
 
 local after = t.matter_totals()
@@ -58,7 +60,7 @@ assert(math.abs(after.energy_j - before.energy_j) < 1e-5,
 
 -- A seal is the content-visible opt-out. The same vessel library owns
 -- bottles, but their stopper keeps real matter inside through impact.
-local bottle = t.target_at(p, 5, 1, "bottle.iodine")
+local bottle = assert(t.target_at(p, 5, 1, "bottle.iodine"))
 assert(bottle ~= nil, "the sealed control bottle is on the deck")
 t.click(p, 5, 1, bottle)
 t.tick()

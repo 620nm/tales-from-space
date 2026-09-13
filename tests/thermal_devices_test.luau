@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The three machines that care how HOT the gas is.
 --
 -- Everything else in the atmospherics kit sorts by pressure (the pumps
@@ -29,20 +31,17 @@ local PORT_M3 = 0.200
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function net_m3(lengths, ports)
+local function net_m3(lengths: number, ports: number)
     return lengths * PIPE_M3 + ports * PORT_M3
 end
 
-local function moles(kpa, m3)
+local function moles(kpa: number, m3: number)
     return kpa * 1000.0 * m3 / (8.314 * T20C)
 end
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -55,13 +54,14 @@ local function said(p, line)
     return false
 end
 
-local function readout(ui, label)
-    for _, r in ipairs(ui.readouts) do
+local function readout(value: unknown, label: string): string
+    local panel = ui_controls.record(value)
+    for _, r in ipairs(ui_controls.rows(panel.readouts)) do
         if word(r.label) == label then
             return word(r.value)
         end
     end
-    return nil
+    error("missing readout: " .. label)
 end
 
 -- One step plus the move cooldown, so two calls in a row are two steps.
@@ -116,8 +116,8 @@ local function charge_gate_map(p)
     walk(p, "west")
     walk(p, "west")
 
-    local supply = t.pipe_pressure(1, 1)
-    local delivery = t.pipe_pressure(6, 1)
+    local supply = assert(t.pipe_pressure(1, 1))
+    local delivery = assert(t.pipe_pressure(6, 1))
     assert(supply > 90.0, "the supply is charged: " .. supply)
     assert(
         delivery < supply - 20.0,
@@ -146,22 +146,22 @@ t.world(GATE_MAP, 7)
 local p = t.join()
 t.tick()
 
-assert(t.structure_at(3, 1).id == "temperature_gate", "the map stood one there")
-assert(t.structure_at(3, 1).state == "shut", "and tg's ships shut")
-near(t.pipe_temperature(1, 1), T20C, 0.5, "a mapped run opens at room temperature")
+assert(assert(t.structure_at(3, 1)).id == "temperature_gate", "the map stood one there")
+assert(assert(t.structure_at(3, 1)).state == "shut", "and tg's ships shut")
+near(assert(t.pipe_temperature(1, 1)), T20C, 0.5, "a mapped run opens at room temperature")
 
 local supply_0, delivery_0 = charge_gate_map(p)
 local books = moles(supply_0, SUPPLY_M3) + moles(delivery_0, DELIVERY_M3)
 
 t.click(p, 3, 1, t.target_at(p, 3, 1, "temperature_gate"))
 t.tick()
-local panel = t.ui(p)
-assert(panel, "a temperature gate wears the shared flow panel")
-assert(panel.setpoints[1].field == "temperature", "with a thermometer on it")
-assert(panel.setpoints[1].unit == "K")
-near(panel.setpoints[1].value, T0C, 0.01, "tg's T0C out of the crate")
-near(panel.setpoints[1].max, 4500.0, 0.01, "tg's max_temperature")
-assert(panel.setpoints[1].min < 3.0, "and its floor is TCMB, not zero")
+local panel = ui_controls.record(assert(t.ui(p), "a temperature gate wears the shared flow panel"))
+local setpoint = ui_controls.rows(panel.setpoints)[1]
+assert(setpoint.field == "temperature", "with a thermometer on it")
+assert(setpoint.unit == "K")
+near(ui_controls.number(setpoint.value), T0C, 0.01, "tg's T0C out of the crate")
+near(ui_controls.number(setpoint.max), 4500.0, 0.01, "tg's max_temperature")
+assert(ui_controls.number(setpoint.min) < 3.0, "and its floor is TCMB, not zero")
 assert(
     readout(panel, "flow.sensor") == "flow.sensor.normal",
     "the panel says which way round it reads, which tg hides on examine"
@@ -169,11 +169,11 @@ assert(
 
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
-assert(t.structure_at(3, 1).state == "armed", "the gate is armed")
+assert(assert(t.structure_at(3, 1)).state == "armed", "the gate is armed")
 
 t.run_seconds(30)
-near(t.pipe_pressure(6, 1), delivery_0, 0.5, "nothing crossed: the gas is too warm")
-near(t.pipe_pressure(1, 1), supply_0, 0.5, "and the supply is untouched")
+near(assert(t.pipe_pressure(6, 1)), delivery_0, 0.5, "nothing crossed: the gas is too warm")
+near(assert(t.pipe_pressure(1, 1)), supply_0, 0.5, "and the supply is untouched")
 
 -- ---- a multitool on the sensor, and the test reverses ----
 t.click(p, 3, 2, t.target_at(p, 3, 2, "multitool"))
@@ -196,13 +196,13 @@ assert(
 )
 
 t.run_seconds(60)
-local inverted_out = t.pipe_pressure(6, 1)
+local inverted_out = assert(t.pipe_pressure(6, 1))
 assert(
     inverted_out > delivery_0 + 10.0,
     "inverted, the same warm gas passes: " .. delivery_0 .. " -> " .. inverted_out
 )
-assert(t.pipe_pressure(1, 1) < supply_0, "and the supply is what paid for it")
-local after = moles(t.pipe_pressure(1, 1), SUPPLY_M3) + moles(inverted_out, DELIVERY_M3)
+assert(assert(t.pipe_pressure(1, 1)) < supply_0, "and the supply is what paid for it")
+local after = moles(assert(t.pipe_pressure(1, 1)), SUPPLY_M3) + moles(inverted_out, DELIVERY_M3)
 assert(
     math.abs(after - books) < books * 0.02,
     "the books balance across the gate: " .. books .. " mol -> " .. after .. " mol"
@@ -216,7 +216,7 @@ t.run_ticks(2)
 t.click(p, 3, 1, t.target_at(p, 3, 1, "temperature_gate"))
 t.tick()
 assert(
-    readout(t.ui(p), "flow.sensor") == "flow.sensor.reversed",
+    readout(ui_controls.state(p), "flow.sensor") == "flow.sensor.reversed",
     "and the panel says the sensor is reversed"
 )
 
@@ -240,7 +240,7 @@ ui_controls.set(c, "temperature", 400)
 ui_controls.toggle(c, "power")
 t.run_seconds(60)
 
-local cold_out = t.pipe_pressure(6, 1)
+local cold_out = assert(t.pipe_pressure(6, 1))
 assert(
     cold_out > cold_delivery_0 + 10.0,
     "under the setting, the gas is 'cold' and flows: "
@@ -251,7 +251,7 @@ assert(
     "and it stopped short of the supply -- a gate releases towards its"
         .. " own input pressure and never past level: " .. cold_out
 )
-local cold_after = moles(t.pipe_pressure(1, 1), SUPPLY_M3) + moles(cold_out, DELIVERY_M3)
+local cold_after = moles(assert(t.pipe_pressure(1, 1)), SUPPLY_M3) + moles(cold_out, DELIVERY_M3)
 assert(
     math.abs(cold_after - cold_books) < cold_books * 0.02,
     "and these books balance too: " .. cold_books .. " -> " .. cold_after
@@ -300,26 +300,27 @@ t.world(
 
 local q = t.join()
 t.tick()
-assert(t.structure_at(3, 1).id == "temperature_pump", "a heat pump")
-assert(t.structure_at(3, 1).state == "off", "off out of the crate")
+assert(assert(t.structure_at(3, 1)).id == "temperature_pump", "a heat pump")
+assert(assert(t.structure_at(3, 1)).state == "off", "off out of the crate")
 
 t.heat_pipe(1, 1, 40000.0)
 t.tick()
-local hot_0 = t.pipe_temperature(1, 1)
-local cold_0 = t.pipe_temperature(5, 1)
+local hot_0 = assert(t.pipe_temperature(1, 1))
+local cold_0 = assert(t.pipe_temperature(5, 1))
 assert(hot_0 > cold_0 + 50.0, "the input side is hot: " .. hot_0 .. " vs " .. cold_0)
 
-local energy_0 = t.pipe_energy(1, 1) + t.pipe_energy(5, 1)
-local hot_moles_0 = t.pipe_gas(1, 1).n2
-local cold_moles_0 = t.pipe_gas(5, 1).n2
+local energy_0 = assert(t.pipe_energy(1, 1)) + assert(t.pipe_energy(5, 1))
+local hot_moles_0 = assert(t.pipe_gas(1, 1)).n2
+local cold_moles_0 = assert(t.pipe_gas(5, 1)).n2
 assert(hot_moles_0 > 0.0 and cold_moles_0 > 0.0, "both sides hold gas")
 
 t.click(q, 3, 1, t.target_at(q, 3, 1, "temperature_pump"))
 t.tick()
-local pump_panel = t.ui(q)
-assert(pump_panel.setpoints[1].field == "share", "the pump's dial is a throttle")
-assert(pump_panel.setpoints[1].unit == "%")
-near(pump_panel.setpoints[1].value, 0.0, 0.01, "and tg ships it shut at zero")
+local pump_panel = ui_controls.record(assert(t.ui(q), "panel opens"))
+local throttle = ui_controls.rows(pump_panel.setpoints)[1]
+assert(throttle.field == "share", "the pump's dial is a throttle")
+assert(throttle.unit == "%")
+near(ui_controls.number(throttle.value), 0.0, 0.01, "and tg ships it shut at zero")
 
 -- ---- switched on with the throttle shut: still nothing ----
 --
@@ -328,29 +329,29 @@ near(pump_panel.setpoints[1].value, 0.0, 0.01, "and tg ships it shut at zero")
 -- all, forever.
 ui_controls.toggle(q, "power")
 t.run_seconds(20)
-assert(t.structure_at(3, 1).state == "running", "the pump is running")
-near(t.pipe_temperature(1, 1), hot_0, 0.5, "and moving no heat, because its throttle is shut")
+assert(assert(t.structure_at(3, 1)).state == "running", "the pump is running")
+near(assert(t.pipe_temperature(1, 1)), hot_0, 0.5, "and moving no heat, because its throttle is shut")
 
 -- ---- open the throttle ----
 ui_controls.set(q, "share", 100)
 t.run_seconds(30)
-local hot_1 = t.pipe_temperature(1, 1)
-local cold_1 = t.pipe_temperature(5, 1)
+local hot_1 = assert(t.pipe_temperature(1, 1))
+local cold_1 = assert(t.pipe_temperature(5, 1))
 assert(hot_1 < hot_0 - 5.0, "the input got cooler: " .. hot_0 .. " -> " .. hot_1)
 assert(cold_1 > cold_0 + 5.0, "and the output hotter: " .. cold_0 .. " -> " .. cold_1)
 
 -- NOT ONE MOLE. The assertion the machine exists for, and the one a
 -- pressure gauge would never catch on its own.
-near(t.pipe_gas(1, 1).n2, hot_moles_0, hot_moles_0 * 0.0001, "no moles left the input")
+near(assert(t.pipe_gas(1, 1)).n2, hot_moles_0, hot_moles_0 * 0.0001, "no moles left the input")
 near(
-    t.pipe_gas(5, 1).n2,
+    assert(t.pipe_gas(5, 1)).n2,
     cold_moles_0,
     cold_moles_0 * 0.0001,
     "and none arrived at the output"
 )
 
 -- And the books: every joule the output gained came off the input.
-local energy_1 = t.pipe_energy(1, 1) + t.pipe_energy(5, 1)
+local energy_1 = assert(t.pipe_energy(1, 1)) + assert(t.pipe_energy(5, 1))
 near(energy_1, energy_0, 1.0, "thermal energy is conserved across the pump")
 
 -- ---- and it never pushes uphill ----
@@ -360,11 +361,11 @@ near(energy_1, energy_0, 1.0, "thermal energy is conserved across the pump")
 -- refrigerator: run it as long as you like and the two converge and
 -- stop, and no setting carries it past level.
 t.run_seconds(240)
-local hot_2 = t.pipe_temperature(1, 1)
-local cold_2 = t.pipe_temperature(5, 1)
+local hot_2 = assert(t.pipe_temperature(1, 1))
+local cold_2 = assert(t.pipe_temperature(5, 1))
 assert(hot_2 >= cold_2 - 0.5, "it approaches level and stops: " .. hot_2 .. " vs " .. cold_2)
 near(
-    t.pipe_energy(1, 1) + t.pipe_energy(5, 1),
+    assert(t.pipe_energy(1, 1)) + assert(t.pipe_energy(5, 1)),
     energy_0,
     1.0,
     "and the books still balance at the end of it"
@@ -394,24 +395,24 @@ t.tick()
 t.run_seconds(3)
 t.heat_pipe(1, 1, 40000.0)
 t.tick()
-local dead_hot = t.pipe_temperature(1, 1)
-local dead_cold = t.pipe_temperature(5, 1)
+local dead_hot = assert(t.pipe_temperature(1, 1))
+local dead_cold = assert(t.pipe_temperature(5, 1))
 
 t.click(d, 3, 1, t.target_at(d, 3, 1, "temperature_pump"))
 t.tick()
-assert(readout(t.ui(d), "flow.supply") == "flow.supply.dead",
+assert(readout(ui_controls.state(d), "flow.supply") == "flow.supply.dead",
     "the panel says the mains are not behind it")
 ui_controls.set(d, "share", 100)
 ui_controls.toggle(d, "power")
 t.run_seconds(60)
-assert(t.ui(d).toggles[1].on == true, "the switch is on")
+assert(ui_controls.rows(ui_controls.state(d).toggles)[1].on == true, "the switch is on")
 assert(
-    t.structure_at(3, 1).state == "off",
+    assert(t.structure_at(3, 1)).state == "off",
     "and the machine is still drawn dead, which is tg's `on &&"
         .. " is_operational` picking the picture"
 )
-near(t.pipe_temperature(1, 1), dead_hot, 0.5, "an unpowered heat pump moves nothing")
-near(t.pipe_temperature(5, 1), dead_cold, 0.5, "in either direction")
+near(assert(t.pipe_temperature(1, 1)), dead_hot, 0.5, "an unpowered heat pump moves nothing")
+near(assert(t.pipe_temperature(5, 1)), dead_cold, 0.5, "in either direction")
 
 -- ---------------------------------------------------------------
 -- A PLATE HEAT EXCHANGER IS HALF A MACHINE.
@@ -452,34 +453,34 @@ t.world([==[(
     ],
 )]==], 7)
 
-local r = t.join()
+local _r = t.join()
 t.tick()
 
-assert(t.structure_at(3, 1).id == "heat_exchanger", "two plates meet on the seam")
-assert(t.structure_at(4, 1).id == "heat_exchanger")
-assert(t.structure_at(9, 1).id == "heat_exchanger", "and one stands on its own")
+assert(assert(t.structure_at(3, 1)).id == "heat_exchanger", "two plates meet on the seam")
+assert(assert(t.structure_at(4, 1)).id == "heat_exchanger")
+assert(assert(t.structure_at(9, 1)).id == "heat_exchanger", "and one stands on its own")
 
-near(t.pipe_temperature(1, 1), T20C, 0.5, "every run opens at room temperature")
-near(t.pipe_temperature(6, 1), T20C, 0.5, "the far side of the pair too")
-near(t.pipe_temperature(11, 1), T20C, 0.5, "and the lone plate's own run")
+near(assert(t.pipe_temperature(1, 1)), T20C, 0.5, "every run opens at room temperature")
+near(assert(t.pipe_temperature(6, 1)), T20C, 0.5, "the far side of the pair too")
+near(assert(t.pipe_temperature(11, 1)), T20C, 0.5, "and the lone plate's own run")
 
 -- Heat one side of the pair, and the lone plate's run by the same
 -- amount, so the two cases are compared like for like.
 t.heat_pipe(1, 1, 30000.0)
 t.heat_pipe(11, 1, 30000.0)
 t.tick()
-local pair_energy_0 = t.pipe_energy(1, 1) + t.pipe_energy(6, 1)
-local lone_energy_0 = t.pipe_energy(11, 1)
-local hot_side_0 = t.pipe_temperature(1, 1)
-local lone_hot_0 = t.pipe_temperature(11, 1)
+local pair_energy_0 = assert(t.pipe_energy(1, 1)) + assert(t.pipe_energy(6, 1))
+local lone_energy_0 = assert(t.pipe_energy(11, 1))
+local hot_side_0 = assert(t.pipe_temperature(1, 1))
+local lone_hot_0 = assert(t.pipe_temperature(11, 1))
 assert(hot_side_0 > T20C + 50.0, "one side of the pair is hot: " .. hot_side_0)
 near(lone_hot_0, hot_side_0, 1.0, "and the lone plate's run is heated the same")
 
 t.run_seconds(10)
 
 -- ---- the pair: complete equalisation, and quickly ----
-local settled_a = t.pipe_temperature(1, 1)
-local settled_b = t.pipe_temperature(6, 1)
+local settled_a = assert(t.pipe_temperature(1, 1))
+local settled_b = assert(t.pipe_temperature(6, 1))
 near(settled_a, settled_b, 0.5, "two facing plates equalise the runs behind them")
 assert(
     settled_a < hot_side_0 - 20.0,
@@ -487,7 +488,7 @@ assert(
 )
 assert(settled_b > T20C + 5.0, "and the cold side came up: " .. settled_b)
 near(
-    t.pipe_energy(1, 1) + t.pipe_energy(6, 1),
+    assert(t.pipe_energy(1, 1)) + assert(t.pipe_energy(6, 1)),
     pair_energy_0,
     1.0,
     "and not a joule was made or lost doing it"
@@ -502,8 +503,8 @@ assert(t.pipe_pressure(1, 1) ~= nil and t.pipe_pressure(6, 1) ~= nil, "both runs
 -- tg's `atmos_init` finds no partner and gives up quietly
 -- (heat_exchanger.dm:52-55). A single plate is not broken; it is half
 -- of a machine.
-near(t.pipe_temperature(11, 1), lone_hot_0, 1.0, "a plate with nobody to face does nothing")
-near(t.pipe_energy(11, 1), lone_energy_0, 1.0, "and keeps every joule it was given")
+near(assert(t.pipe_temperature(11, 1)), lone_hot_0, 1.0, "a plate with nobody to face does nothing")
+near(assert(t.pipe_energy(11, 1)), lone_energy_0, 1.0, "and keeps every joule it was given")
 
 -- ---------------------------------------------------------------
 -- THE ROUND TRIP, and the refusal each of the three carries.
@@ -548,14 +549,14 @@ t.tick()
 -- The switch is thrown BARE-HANDED, because a wrench in the working
 -- hand is not an interface -- it is the wrench, and a click carrying
 -- one means the transition. So: switch first, tool second, throughout.
-local function throw_pump_switch(want)
+local function throw_pump_switch(want: string)
     t.click(s, 3, 1, t.target_at(s, 3, 1, "temperature_pump"))
     t.tick()
     ui_controls.toggle(s, "power")
     t.run_ticks(2)
     t.ui_close(s)
     t.tick()
-    assert(t.structure_at(3, 1).state == want, "the pump is " .. want)
+    assert(assert(t.structure_at(3, 1)).state == want, "the pump is " .. want)
 end
 
 local function take_wrench()
@@ -571,14 +572,14 @@ take_wrench()
 t.click(s, 3, 1, t.target_at(s, 3, 1, "temperature_pump"))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) ~= nil, "a wrench will not take it up while it runs")
-assert(t.structure_at(3, 1).state == "running", "it is still running, in fact")
+assert(assert(t.structure_at(3, 1)).state == "running", "it is still running, in fact")
 
 -- Off, and now it comes up -- and yields its own fitting back.
 t.drop(s)
 t.run_ticks(2)
 throw_pump_switch("off")
 take_wrench()
-local room_before = t.room_pressure(3, 1)
+local room_before = assert(t.room_pressure(3, 1))
 t.click(s, 3, 1, t.target_at(s, 3, 1, "temperature_pump"))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "off, it comes up off the deck")
@@ -588,9 +589,9 @@ assert(t.structure_at(3, 1) == nil, "off, it comes up off the deck")
 -- port that loses its run vents like any other severed pipe end), so
 -- an engineer who unbolts a charged main gets a faceful --
 assert(
-    t.room_pressure(3, 1) > room_before,
+    assert(t.room_pressure(3, 1)) > room_before,
     "the ports vented into the room when the machine left the run: "
-        .. room_before .. " -> " .. t.room_pressure(3, 1)
+        .. room_before .. " -> " .. assert(t.room_pressure(3, 1))
 )
 -- -- and the fitting lands on the MACHINE's tile
 -- (docs/CONSTRUCTION.md), where the air it just let go of is moving,

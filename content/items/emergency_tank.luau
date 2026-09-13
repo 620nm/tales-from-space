@@ -1,3 +1,5 @@
+local item_actions = require("@lib/item_actions")
+
 -- The pocket bottle: three litres, small enough to live in a bag, and
 -- the reason a hull breach is a bad afternoon rather than a death. THE
 -- SHELL IS THE PROTOTYPE and the gas is a variant of it: an empty

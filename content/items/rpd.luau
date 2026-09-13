@@ -1,3 +1,7 @@
+local action_rules = require("@lib/action_rules")
+local item_actions = require("@lib/item_actions")
+local pipe_paints = require("@lib/pipe_paints")
+
 -- The rapid pipe dispenser: the whole atmospherics kit in one hand.
 --
 -- tg's `/obj/item/pipe_dispenser` (code/game/objects/items/rcd/RPD.dm).
@@ -37,7 +41,12 @@
 -- entries for it. `structure` names what stands up; the one row without
 -- one is pipe itself, which is not a structure at all but a length in
 -- the grid under the deck.
-local RECIPES = {
+type Recipe = {
+    label: string, item: string, icon: string, group: string,
+    structure: string?, fixed_layer: boolean?, paints: boolean?,
+}
+
+local RECIPES: {Recipe} = {
     { label = "Pipe", item = "pipe", icon = "pipe", group = "Pipes" },
     { label = "Manual Valve", item = "manual_valve_fitting", structure = "manual_valve", icon = "manual_valve_loose", group = "Binary Devices" },
     { label = "Digital Valve", item = "digital_valve_fitting", structure = "digital_valve", icon = "digital_valve_loose", group = "Binary Devices" },
@@ -92,23 +101,23 @@ local LAYERS = { 1, 2, 4, 8, 16 }
 
 local BUILD, DESTROY, COPY = 0, 1, 2
 
-local function recipe_of(self)
-    return RECIPES[sim.dial(self, "recipe").index + 1]
+local function recipe_of(self: Handle): Recipe
+    return RECIPES[assert(sim.dial(self, "recipe")).index + 1]
 end
 
-local function layer_of(self)
-    return LAYERS[sim.dial(self, "layer").index + 1]
+local function layer_of(self: Handle): number
+    return LAYERS[assert(sim.dial(self, "layer")).index + 1]
 end
 
-local function paint_of(self)
-    return COLORS[sim.dial(self, "paint").index + 1]
+local function paint_of(self: Handle)
+    return COLORS[assert(sim.dial(self, "paint")).index + 1]
 end
 
 -- Pipe is subfloor infrastructure: you lay it where the deck is open
 -- and put the floor back over it. The engine refuses a covered deck
 -- silently, so this says why first — a refusal with no explanation
 -- reads as a dropped click.
-local function lay_run(self, recipe, user, x, y, at)
+local function lay_run(self: Handle, recipe: Recipe, user: Handle, x: number, y: number, at: TileAddress)
     if not sim.subfloor_exposed(x, y) then
         sim.message.send({
             recipient = user,
@@ -250,9 +259,9 @@ local content = {
     -- in-hand key or tg-style pickup double-click opens its window.
 }
 
-local breakdown_groups = {}
+local breakdown_groups: {action_rules.Selector} = {}
 for first = 1, #RECIPES, 8 do
-    local group = {}
+    local group: {action_rules.Selector} = {}
     for index = first, math.min(first + 7, #RECIPES) do
         table.insert(group, action_rules.fact("target.proto", RECIPES[index].item))
     end
@@ -285,9 +294,9 @@ if sim ~= nil then
     }, open_interface)
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
-        local clicked, target = ev.claim, ev.claim
+        local target = ev.claim
         local _x, _y, _choice = x, y, choice
-        local mode = sim.dial(self, "mode").index
+        local mode = assert(sim.dial(self, "mode")).index
         local loose_item = nil
         if target and target.kind == "item" then
             loose_item = target.entity.prototype
@@ -385,7 +394,8 @@ if sim ~= nil then
         end
 
         local recipe = recipe_of(self)
-        if not recipe.structure then
+        local structure = recipe.structure
+        if not structure then
             lay_run(self, recipe, user, x, y, ev.at)
             return true
         end
@@ -413,9 +423,9 @@ if sim ~= nil then
             -- refusal rather than a setting.
             local fitting_mode = nil
             if not recipe.fixed_layer then
-                fitting_mode = sim.dial(self, "layer").index
+                fitting_mode = assert(sim.dial(self, "layer")).index
             end
-            sim.fit(x, y, recipe.structure, fitting_mode)
+            sim.fit(x, y, structure, fitting_mode)
             sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = ev.at })
         end)
         return true

@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Looking at the bench: what a crewman is told about a vessel, and
 -- what they are told about one they cannot see.
 --
@@ -60,7 +62,7 @@ assert(t.target_at(p, 6, 1, "bottle") == nil, "the wall hides the bottle from ta
 -- which colour. A line is spans now, and `spans[i]` is always the same
 -- text as `lines[i]` -- the cuts fall at colour changes, never at word
 -- breaks -- so a spec can assert either and mean the same sentence.
-local function tinted(look, line)
+local function tinted(look: SpecExamine, line: string)
     for i, l in ipairs(look.lines) do
         if l == line then
             assert(look.spans[i] ~= nil, "every line has its spans")
@@ -222,4 +224,4 @@ assert(pw == "water" and pc == "#AAAAAA", "in water's colour, as through glass")
 -- A dry tile a stride away says nothing at all, which is the negative
 -- that makes the positive mean something.
 local dry = t.examine_turf(p, 2, 1)
-assert(dry ~= nil and #dry.lines == 0, "a dry deck states nothing: " .. dump(dry))
+assert(dry ~= nil and #dry.lines == 0, "a dry deck states nothing: " .. dump(assert(dry)))

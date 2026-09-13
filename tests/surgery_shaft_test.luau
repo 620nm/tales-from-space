@@ -39,7 +39,7 @@ t.tick()
 t.rest(patient, true)
 t.unequip(patient, "uniform")
 t.tick()
-assert(t.body(patient).posture == "lying", "the patient is on the deck")
+assert(assert(t.body(patient)).posture == "lying", "the patient is on the deck")
 assert(t.worn(patient).uniform == nil, "the chest is bared")
 
 local PX, PY = 2, 1
@@ -52,7 +52,7 @@ local function has(states, name)
 end
 
 -- Pick a tool up off the surgeon's own tile, dropping whatever was held.
-local function hold(id)
+local function hold(id: string)
     if t.hands(surgeon).held ~= nil then
         t.drop(surgeon)
         t.tick()
@@ -64,17 +64,17 @@ end
 
 -- Click the patient until the targeted part reaches `done`, one attempt
 -- per do_after. Returns attempts and the ticks they cost.
-local function operate(done, step_secs)
+local function operate(done: ({ [string]: boolean }) -> boolean, step_secs: number)
     local step_ticks = math.ceil(step_secs * TICK_HZ) + 2
     local attempts, ticks = 0, 0
     for _ = 1, 40 do
-        if done(t.parts(patient).chest.states) then break end
+        if done(assert(t.parts(patient)).chest.states) then break end
         t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
         t.run_ticks(step_ticks)
         attempts = attempts + 1
         ticks = ticks + step_ticks
     end
-    assert(done(t.parts(patient).chest.states), "the step completed within 40 tries")
+    assert(done(assert(t.parts(patient)).chest.states), "the step completed within 40 tries")
     return attempts, ticks
 end
 
@@ -87,18 +87,18 @@ hold("shard")
 local a1, t1 = operate(function(s) return has(s, "skin_cut") or has(s, "skin_open") end, 4.0)
 total_ticks = total_ticks + t1
 failures.incise = a1 - 1
-assert(has(t.parts(patient).chest.states, "vessels_unclamped"),
+assert(has(assert(t.parts(patient)).chest.states, "vessels_unclamped"),
     "the incision opened the vessels")
 -- The open chest bleeds 1.5/s, x0.75 while lying = 1.125.
-assert(math.abs(t.body(patient).bleed_rate - 1.125) < 0.01,
-    "unclamped vessels bleed 1.5/s x0.75 lying: " .. t.body(patient).bleed_rate)
+assert(math.abs(assert(assert(t.body(patient)).bleed_rate) - 1.125) < 0.01,
+    "unclamped vessels bleed 1.5/s x0.75 lying: " .. assert(assert(t.body(patient)).bleed_rate))
 
 -- 2. Retract with the wirecutters: 6 s per attempt, 77 % failure.
 hold("wirecutters")
 local a2, t2 = operate(function(s) return has(s, "skin_open") end, 6.0)
 total_ticks = total_ticks + t2
 failures.retract = a2 - 1
-assert(math.abs(t.body(patient).bleed_rate - 1.125) < 0.01,
+assert(math.abs(assert(assert(t.body(patient)).bleed_rate) - 1.125) < 0.01,
     "still bleeding 1.125 with the skin open")
 
 -- 3. Clamp with the wirecutters: 6 s per attempt, 20 % failure. Drops
@@ -106,8 +106,8 @@ assert(math.abs(t.body(patient).bleed_rate - 1.125) < 0.01,
 local a3, t3 = operate(function(s) return has(s, "vessels_clamped") end, 6.0)
 total_ticks = total_ticks + t3
 failures.clamp = a3 - 1
-assert(math.abs(t.body(patient).bleed_rate - 0.15) < 0.01,
-    "clamped vessels bleed 0.2/s x0.75 lying: " .. t.body(patient).bleed_rate)
+assert(math.abs(assert(assert(t.body(patient)).bleed_rate) - 0.15) < 0.01,
+    "clamped vessels bleed 0.2/s x0.75 lying: " .. assert(assert(t.body(patient)).bleed_rate))
 
 -- 4. Close with the lit welder: 6 s per attempt, 12 % failure. Clears
 --    every open state, and the bleeding stops.
@@ -117,19 +117,19 @@ t.tick()
 local a4, t4 = operate(function(s) return not has(s, "skin_open") and not has(s, "skin_cut") end, 6.0)
 total_ticks = total_ticks + t4
 failures.close = a4 - 1
-assert(t.body(patient).bleed_rate == 0, "the wound is closed and no longer bleeds")
+assert(assert(assert(t.body(patient)).bleed_rate) == 0, "the wound is closed and no longer bleeds")
 
 -- Failure cost only time: the four generic movers do no damage, so the
 -- chest is unhurt however many attempts it took.
-assert(t.parts(patient).chest.brute == 0 and t.parts(patient).chest.burn == 0,
+assert(assert(t.parts(patient)).chest.brute == 0 and assert(t.parts(patient)).chest.burn == 0,
     "the generic steps never wound the chest")
 
 -- The patient bled through the ordeal but is nowhere near death — about
 -- forty units, on tg's 560 (docs/SURGERY.md §6.3 "never near BAD").
-local left = t.body(patient).blood
+local left = assert(assert(t.body(patient)).blood)
 assert(left < 560 and left > 460,
     "bled but survivable (started 560): " .. left)
-assert(t.body(patient).animate, "and still alive")
+assert(assert(t.body(patient)).animate, "and still alive")
 
 -- The whole ordeal is the sum of the attempts the seed took; report it.
 print(string.format(

@@ -22,18 +22,20 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local function take(x, id)
+local function take(x: number, id: string)
     t.click(p, x, 1, t.target_at(p, x, 1, id))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "picked up " .. id .. "; hands=" .. tostring(t.hands(p).held))
 end
 
 -- The `other` rows on a held item's card, by hand role.
-local function other_rows(role)
+local function other_rows(role: string)
     local hands = t.hands(p)
-    local hand = if role == "active" then hands.active - 1 else 2 - hands.active
-    local rows = {}
-    for _, action in ipairs(t.action_hints(p, { Inventory = { Held = { hand = hand } } })) do
+    local hand: number = if role == "active" then hands.active - 1 else 2 - hands.active
+    local rows: { SpecActionDescriptor } = {}
+    local inventory: SpecItemSite = { Held = { hand = hand } }
+    local target: SpecActionTarget = { Inventory = inventory }
+    for _, action in ipairs(t.action_hints(p, target)) do
         if action.gesture == "other" then
             table.insert(rows, action)
         end
@@ -43,7 +45,7 @@ end
 
 -- `partner` names the OTHER hand's item, pictured whichever way round the
 -- pair resolved (a sprite fragment: the floppy's variants vary its name).
-local function assert_insert(rows, partner, why)
+local function assert_insert(rows: { SpecActionDescriptor }, partner: string, why: string)
     assert(#rows == 1, why .. ": one other-hand row, got " .. #rows)
     local row = rows[1]
     assert(row.id == "other/insert_disk", why .. ": id " .. tostring(row.id))

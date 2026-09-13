@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The network a station gets for free, and the one gesture that
 -- overrides it.
 --
@@ -30,14 +32,11 @@
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function rows(ui, field)
+local function rows(ui: ui_controls.Record, field: string)
     local out = {}
-    for _, row in ipairs(ui.toggles or {}) do
+    for _, row in ipairs(ui_controls.rows(ui.toggles or {})) do
         if row.field == field then
             out[#out + 1] = row
         end
@@ -45,7 +44,7 @@ local function rows(ui, field)
     return out
 end
 
-local function row_for(ui, field, option)
+local function row_for(ui: ui_controls.Record, field: string, option: string): ui_controls.Record?
     for _, row in ipairs(rows(ui, field)) do
         if row.option == option then
             return row
@@ -56,18 +55,20 @@ end
 
 -- Every address the panel draws as WIRED IN: a readout rather than a
 -- toggle, which is the whole difference this file is about.
-local function hardwired(ui)
+local function hardwired(ui: ui_controls.Record)
     local out = {}
-    for _, r in ipairs(ui.readouts or {}) do
+    for _, r in ipairs(ui_controls.rows(ui.readouts or {})) do
         if word(r.label) == "link.member.hardwired" then
-            out[#out + 1] = r.label.args.address
+            local address = ui_controls.record(ui_controls.record(r.label).args).address
+            assert(type(address) == "string", "the wired member has an address")
+            out[#out + 1] = address
         end
     end
     table.sort(out)
     return out
 end
 
-local function holds(list, mac)
+local function holds(list: { string }, mac: string)
     for _, held in ipairs(list) do
         if held == mac then
             return true
@@ -125,13 +126,12 @@ t.run_ticks(60)
 -- ---------------------------------------------------------------
 t.click(p, 9, 1, t.target_at(p, 9, 1))
 t.tick()
-local panel = t.ui(p)
-assert(panel ~= nil, "the panel opens")
+local panel = ui_controls.record(assert(t.ui(p), "the panel opens"))
 -- Placed with no `access` word: a lock with no key opens for whoever
 -- is standing at it (tests/network_test.luau, the router's case).
 ui_controls.toggle(p, "link_lock")
 t.tick()
-panel = t.ui(p)
+panel = ui_controls.state(p)
 
 local members = hardwired(panel)
 assert(#members == 4, "the whole room hangs off the panel: " .. #members)
@@ -147,7 +147,7 @@ assert(ui_controls.find(p, "/toggle/link_drop/" .. victim) == nil, "hardwired me
 t.tick()
 t.run_seconds(3)
 t.run_ticks(40)
-assert(holds(hardwired(t.ui(p)), victim), "the edge is still there")
+assert(holds(hardwired(ui_controls.state(p)), victim), "the edge is still there")
 assert(#t.ledger_rows("link_released") == 0, "and nothing was cut")
 t.ui_close(p)
 t.tick()
@@ -165,11 +165,10 @@ t.move(p, "west")
 t.run_ticks(5)
 t.click(p, 7, 1, t.target_at(p, 7, 1))
 t.tick()
-local alarm = t.ui(p)
-assert(alarm ~= nil, "the alarm opens too")
+local alarm = ui_controls.record(assert(t.ui(p), "the alarm opens too"))
 ui_controls.toggle(p, "link_lock")
 t.tick()
-alarm = t.ui(p)
+alarm = ui_controls.state(p)
 
 local offers = rows(alarm, "link_join")
 assert(#offers > 0, "the alarm has something to take")
@@ -182,9 +181,10 @@ end
 assert(fitting ~= nil, "one member is on nobody's list")
 
 local fan = offers[1].option
+assert(type(fan) == "string", "the offered fan has an address")
 ui_controls.toggle(p, "link_join", fan)
 t.tick()
-alarm = t.ui(p)
+alarm = ui_controls.state(p)
 assert(row_for(alarm, "link_drop", fan) ~= nil, "the alarm holds it now")
 assert(row_for(alarm, "link_join", fan) == nil, "and no longer offers it")
 t.ui_close(p)
@@ -200,7 +200,7 @@ t.move(p, "east")
 t.run_ticks(5)
 t.click(p, 9, 1, t.target_at(p, 9, 1))
 t.tick()
-panel = t.ui(p)
+panel = ui_controls.state(p)
 assert(not holds(hardwired(panel), fan), "the panel let the fan go")
 assert(#hardwired(panel) == 3, "and holds the other three: " .. #hardwired(panel))
 t.ui_close(p)
@@ -221,7 +221,7 @@ t.click(p, 7, 1, t.target_at(p, 7, 1))
 t.tick()
 ui_controls.toggle(p, "link_drop", fan)
 t.tick()
-assert(row_for(t.ui(p), "link_drop", fan) == nil, "the console let it go")
+assert(row_for(ui_controls.state(p), "link_drop", fan) == nil, "the console let it go")
 t.ui_close(p)
 t.tick()
 t.run_seconds(3)
@@ -233,6 +233,6 @@ t.move(p, "east")
 t.run_ticks(5)
 t.click(p, 9, 1, t.target_at(p, 9, 1))
 t.tick()
-panel = t.ui(p)
+panel = ui_controls.state(p)
 assert(holds(hardwired(panel), fan), "and the wire has it back")
 assert(#hardwired(panel) == 4, "the room is whole again: " .. #hardwired(panel))

@@ -48,7 +48,7 @@ end
 t.world(WARD, 0)
 local again = t.join()
 t.tick()
-local twice = t.look(again)
+local twice = assert(t.look(again))
 assert(twice.physique == look.physique and twice.skin_tone == look.skin_tone
     and twice.hair == look.hair and twice.hair_color == look.hair_color,
     "the same seed rolls the same crewman")
@@ -58,7 +58,7 @@ assert(twice.physique == look.physique and twice.skin_tone == look.skin_tone
 t.world(WARD, 99)
 local other = t.join()
 t.tick()
-local elsewhere = t.look(other)
+local elsewhere = assert(t.look(other))
 local same = elsewhere.physique == look.physique and elsewhere.skin_tone == look.skin_tone
     and elsewhere.hair == look.hair and elsewhere.facial_hair == look.facial_hair
     and elsewhere.hair_color == look.hair_color and elsewhere.eye_color == look.eye_color
@@ -75,7 +75,7 @@ local watcher = t.join()
 t.tick()
 t.run_ticks(2)
 
-local mine = t.look(subject)
+local mine = assert(t.look(subject))
 local seen = t.seen(watcher, subject)
 assert(seen.posture == "standing", "the crewman is on his feet")
 
@@ -102,6 +102,7 @@ assert(seen.layers[8].color == mine.eye_color_right, "and the right in its own")
 -- A roster's "none" row emits no layer; verify the rolled traits rather
 -- than assuming a particular face survives unrelated random draws.
 local next_layer = 9
+assert(mine.facial_hair ~= nil and mine.hair ~= nil, "this body declares both hair slots")
 if mine.facial_hair ~= "shaved" then
     assert(names[next_layer] == "facial_" .. mine.facial_hair, "the beard over the eyes")
     assert(seen.layers[next_layer].color == mine.facial_hair_color, "the rolled beard colour")
@@ -122,7 +123,7 @@ assert(#names == next_layer + 2, "only visible body and worn layers: " .. table.
 -- ---------------------------------------------------------------
 t.rest(subject, true)
 t.run_ticks(2)
-assert(t.body(subject).posture == "lying", "the body went down")
+assert(assert(t.body(subject)).posture == "lying", "the body went down")
 assert(t.seen(watcher, subject).posture == "lying",
     "and the man standing next to him was told")
 assert(#t.seen(watcher, subject).layers == #names,
@@ -138,4 +139,4 @@ assert(t.seen(watcher, subject).posture == "standing", "and back up again")
 -- amputation — so the "lose the head, lose the hair" half of the rule
 -- is proved in the engine, against a fixture plan whose parts can be
 -- detached (`crates/lunatic-server/src/sim/tests/looks.rs`).
-assert(t.parts(subject).head ~= nil, "the plan carries the part the face rides on")
+assert(assert(t.parts(subject)).head ~= nil, "the plan carries the part the face rides on")

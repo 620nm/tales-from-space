@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The machines that stand IN a pipe run: the manual valve and the gas
 -- pump.
 --
@@ -21,13 +23,13 @@ local DISTRO = 4
 local PIPE_M3 = 0.070
 local PORT_M3 = 0.200
 
-local function net_m3(lengths, ports)
+local function net_m3(lengths: number, ports: number)
     return lengths * PIPE_M3 + ports * PORT_M3
 end
 
 -- The ideal gas law at room temperature, so a spec can audit the books
 -- rather than trust a direction.
-local function moles(kpa, m3)
+local function moles(kpa: number, m3: number)
     return kpa * 1000.0 * m3 / (8.314 * 293.15)
 end
 
@@ -40,7 +42,7 @@ local function said(p, want)
     return false
 end
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -82,11 +84,11 @@ t.world([==[(
     ],
 )]==], 7)
 
-local p = t.join()
+local _p = t.join()
 t.tick()
 
-assert(t.structure_at(3, 2).id == "manual_valve", "the map stood a valve on the main")
-assert(t.structure_at(3, 2).state == "shut", "and it opens the shift shut")
+assert(assert(t.structure_at(3, 2)).id == "manual_valve", "the map stood a valve on the main")
+assert(assert(t.structure_at(3, 2)).state == "shut", "and it opens the shift shut")
 
 -- Both atmos fixtures replace their centre lengths.
 assert(t.pipe(1, 2) == 0, "there is no hidden pipe under the vent")
@@ -98,23 +100,23 @@ assert(
 
 -- Each side is a net of its own, and each is 200 L bigger than its
 -- lengths because the port in the valve's mouth belongs to it.
-assert(t.pipe_pressure(2, 2) > 90.0, "the west main is handed over charged")
-assert(t.pipe_pressure(5, 2) > 90.0, "and so is the east one")
+assert(assert(t.pipe_pressure(2, 2)) > 90.0, "the west main is handed over charged")
+assert(assert(t.pipe_pressure(5, 2)) > 90.0, "and so is the east one")
 
 local west_m3 = net_m3(1, 2) -- (2,2), plus vent and valve ports
 local east_m3 = net_m3(3, 1) -- (4,2) (5,2) (6,2) plus its front port
-local held = moles(t.pipe_pressure(2, 2), west_m3) + moles(t.pipe_pressure(5, 2), east_m3)
+local held = moles(assert(t.pipe_pressure(2, 2)), west_m3) + moles(assert(t.pipe_pressure(5, 2)), east_m3)
 
 -- Open the hull. Whatever is on the west main goes out with the room.
 t.fault(1, 1, t.now() + 4)
 t.run_seconds(40)
 assert(t.is_breached(1, 1), "the fault opened the room")
 
-local drained = t.pipe_pressure(2, 2)
-local sealed = t.pipe_pressure(5, 2)
+local drained = assert(t.pipe_pressure(2, 2))
+local sealed = assert(t.pipe_pressure(5, 2))
 assert(drained < 25.0, "the vented main emptied: " .. drained)
 assert(
-    sealed > 90.0,
+    assert(sealed) > 90.0,
     "and the main on the far side of a shut valve never lost a mole: " .. sealed
 )
 assert(held > 0.0, "the books were readable to begin with")
@@ -171,9 +173,9 @@ assert(t.pipe(2, 1) == DISTRO, "the west main went down")
 
 local WEST_M3 = net_m3(2, 1)
 local EAST_M3 = net_m3(3, 1)
-assert(t.pipe_pressure(2, 1) < 1.0, "a run you built yourself starts empty")
-assert(t.pipe_pressure(5, 1) > 90.0, "the mapped run beside it did not")
-local before = moles(t.pipe_pressure(2, 1), WEST_M3) + moles(t.pipe_pressure(5, 1), EAST_M3)
+assert(assert(t.pipe_pressure(2, 1)) < 1.0, "a run you built yourself starts empty")
+assert(assert(t.pipe_pressure(5, 1)) > 90.0, "the mapped run beside it did not")
+local before = moles(assert(t.pipe_pressure(2, 1)), WEST_M3) + moles(assert(t.pipe_pressure(5, 1)), EAST_M3)
 
 -- Walk over to it, empty-handed. A wheel is a thing you put a HAND on:
 -- with a coil of pipe in it you are laying pipe, exactly as tg's
@@ -190,15 +192,15 @@ end
 local _ = t.messages(q)
 t.click(q, 3, 1, t.target_at(q, 3, 1, "manual_valve"))
 t.run_ticks(2)
-assert(t.structure_at(3, 1).state == "shut", "a second is a second")
-assert(t.pipe_pressure(2, 1) < 1.0, "and nothing has crossed yet")
+assert(assert(t.structure_at(3, 1)).state == "shut", "a second is a second")
+assert(assert(t.pipe_pressure(2, 1)) < 1.0, "and nothing has crossed yet")
 
 -- And it will not be double-clicked out of that second: tg refuses
 -- every interaction while `switching` is set (valve.dm:63-69), so a
 -- second click is not a cancel, not a queue, and not a second turn.
 t.click(q, 3, 1, t.target_at(q, 3, 1, "manual_valve"))
 t.run_seconds(1.5)
-assert(t.structure_at(3, 1).state == "open", "and then the wheel is over")
+assert(assert(t.structure_at(3, 1)).state == "open", "and then the wheel is over")
 assert(said(q, "The manual valve is open."), "which it says so")
 assert(
     t.ledger_has("AtmosDeviceSet", "manual_valve"),
@@ -209,10 +211,10 @@ assert(
 -- is what the east main's air comes to when it is given the whole
 -- volume to spread through.
 t.run_seconds(1)
-local fused = t.pipe_pressure(2, 1)
-near(fused, t.pipe_pressure(5, 1), 0.5, "both ends of one net read alike")
+local fused = assert(t.pipe_pressure(2, 1))
+near(fused, assert(t.pipe_pressure(5, 1)), 0.5, "both ends of one net read alike")
 near(
-    fused,
+    assert(fused),
     101.325 * EAST_M3 / (WEST_M3 + EAST_M3),
     2.0,
     "and they read what the volume says they should"
@@ -221,18 +223,18 @@ near(
 -- Shut it again. Two nets, and every mole still accounted for.
 t.click(q, 3, 1, t.target_at(q, 3, 1, "manual_valve"))
 t.run_seconds(2)
-assert(t.structure_at(3, 1).state == "shut", "shut again")
+assert(assert(t.structure_at(3, 1)).state == "shut", "shut again")
 t.run_seconds(1)
-local after = moles(t.pipe_pressure(2, 1), WEST_M3) + moles(t.pipe_pressure(5, 1), EAST_M3)
+local after = moles(assert(t.pipe_pressure(2, 1)), WEST_M3) + moles(assert(t.pipe_pressure(5, 1)), EAST_M3)
 assert(
     math.abs(after - before) < before * 0.02,
     "opening and shutting a valve makes and loses nothing: "
         .. before .. " mol -> " .. after .. " mol"
 )
 assert(
-    t.pipe_pressure(2, 1) > 40.0,
+    assert(t.pipe_pressure(2, 1)) > 40.0,
     "and the west main, which nobody ever filled, is charged: "
-        .. t.pipe_pressure(2, 1)
+        .. assert(t.pipe_pressure(2, 1))
 )
 
 -- ---------------------------------------------------------------
@@ -276,8 +278,8 @@ t.world([==[(
 
 local r = t.join()
 t.tick()
-assert(t.structure_at(5, 1).id == "pump", "the pump is where the map put it")
-assert(t.structure_at(5, 1).state == "off", "and tg's pump ships off")
+assert(assert(t.structure_at(5, 1)).id == "pump", "the pump is where the map put it")
+assert(assert(t.structure_at(5, 1)).state == "off", "and tg's pump ships off")
 
 -- Lengthen the output main: the same air, more room to be in, and so
 -- less pressure. Four lengths east of the one the map drew.
@@ -295,16 +297,16 @@ assert(t.pipe(10, 1) == DISTRO, "the output main is five lengths now")
 
 local IN_M3 = net_m3(4, 1) -- (1,1)..(4,1) plus the pump's back port
 local OUT_M3 = net_m3(5, 1) -- (6,1)..(10,1) plus its front port
-local supply = t.pipe_pressure(2, 1)
-local delivery = t.pipe_pressure(7, 1)
+local supply = assert(t.pipe_pressure(2, 1))
+local delivery = assert(t.pipe_pressure(7, 1))
 assert(supply > 90.0, "the supply main is charged: " .. supply)
 assert(delivery < 80.0, "and the delivery main is not: " .. delivery)
 local books = moles(supply, IN_M3) + moles(delivery, OUT_M3)
 
 -- An idle pump is a length of pipe. Give it every chance.
 t.run_seconds(20)
-near(t.pipe_pressure(7, 1), delivery, 0.5, "an off pump moves nothing")
-near(t.pipe_pressure(2, 1), supply, 0.5, "from either end")
+near(assert(t.pipe_pressure(7, 1)), delivery, 0.5, "an off pump moves nothing")
+near(assert(t.pipe_pressure(2, 1)), supply, 0.5, "from either end")
 
 -- Switch it on, hands empty. A pump has no wheel: tg's `interact()` on
 -- one opens its interface (pump.dm:68) where the valve's starts the
@@ -319,41 +321,41 @@ end
 local _ = t.messages(r)
 t.click(r, 5, 1, t.target_at(r, 5, 1, "pump"))
 t.tick()
-local panel = t.ui(r)
+local panel = ui_controls.record(assert(t.ui(r)))
 assert(panel, "a pump answers an empty hand with a panel")
 assert(panel.document == "modules" and panel.presentation == "modules",
     "the module document every in-line machine shares")
 -- The words on the button are the machine's own states, out of
 -- tfs/content/structures/pump.luau.
-assert(panel.toggles[1].on_text.text == "running", panel.toggles[1].on_text.text)
-assert(panel.toggles[1].off_text.text == "off")
-assert(panel.setpoints[1].field == "target", "and one dial, in kPa")
-assert(math.abs(panel.setpoints[1].value - 101.325) < 0.001)
+assert(ui_controls.word(ui_controls.rows(panel.toggles)[1].on_text) == "running", ui_controls.word(ui_controls.rows(panel.toggles)[1].on_text))
+assert(ui_controls.word(ui_controls.rows(panel.toggles)[1].off_text) == "off")
+assert(ui_controls.rows(panel.setpoints)[1].field == "target", "and one dial, in kPa")
+assert(math.abs(ui_controls.number(ui_controls.rows(panel.setpoints)[1].value) - 101.325) < 0.001)
 
 ui_controls.toggle(r, "power")
 t.run_ticks(2)
-assert(t.structure_at(5, 1).state == "running", "and the switch throws")
+assert(assert(t.structure_at(5, 1)).state == "running", "and the switch throws")
 assert(t.ledger_has("AtmosDeviceSet", "pump"), "switching it is on the record")
 
 -- One atmos pass moves what is standing in the 200 L input port and no
 -- more (tg drains `airs[1]` and stops). So it starts, and it is
 -- nowhere near finished.
 t.run_ticks(11)
-local first = t.pipe_pressure(7, 1)
+local first = assert(t.pipe_pressure(7, 1))
 assert(first > delivery + 1.0, "the first pass moved something: " .. first)
 assert(
-    first < 101.0,
+    assert(first) < 101.0,
     "and nothing like all of it -- a pump is throttled by its own port: " .. first
 )
 
 -- Let it run. It arrives at the setpoint and stops there.
 t.run_seconds(60)
-local out = t.pipe_pressure(7, 1)
-local back = t.pipe_pressure(2, 1)
+local out = assert(t.pipe_pressure(7, 1))
+local back = assert(t.pipe_pressure(2, 1))
 near(out, 101.325, 1.5, "the delivery main came up to one atmosphere")
 assert(out < 101.5, "and not one kPa past it: " .. out)
 assert(
-    back < out,
+    assert(back) < out,
     "which it pushed UPHILL: supply " .. back .. " kPa, delivery " .. out .. " kPa"
 )
 assert(
@@ -404,8 +406,8 @@ t.run_ticks(2)
 t.click(s, 1, 1)
 t.run_seconds(1.5)
 
-local slack = t.pipe_pressure(2, 1)
-local charged = t.pipe_pressure(5, 1)
+local slack = assert(t.pipe_pressure(2, 1))
+local charged = assert(t.pipe_pressure(5, 1))
 assert(slack < charged - 10.0, "the input main is the slack one: " .. slack)
 
 t.drop(s)
@@ -418,11 +420,11 @@ t.click(s, 3, 1, t.target_at(s, 3, 1, "pump"))
 t.tick()
 ui_controls.toggle(s, "power")
 t.run_ticks(2)
-assert(t.structure_at(3, 1).state == "running", "switched on")
+assert(assert(t.structure_at(3, 1)).state == "running", "switched on")
 t.run_seconds(60)
 
-near(t.pipe_pressure(2, 1), slack, 0.5, "a pump does not pull its output back")
-near(t.pipe_pressure(5, 1), charged, 0.5, "nor let its output down the pipe")
+near(assert(t.pipe_pressure(2, 1)), slack, 0.5, "a pump does not pull its output back")
+near(assert(t.pipe_pressure(5, 1)), charged, 0.5, "nor let its output down the pipe")
 
 -- ---------------------------------------------------------------
 -- A MACHINE BINDS TO ITS OWN LAYER AND NOTHING ELSE.
@@ -458,23 +460,23 @@ t.world([==[(
 
 local u = t.join()
 t.tick()
-assert(t.structure_at(3, 1).id == "manual_valve", "the valve is on the line")
+assert(assert(t.structure_at(3, 1)).id == "manual_valve", "the valve is on the line")
 assert(t.pipe(3, 1) == 1, "which is a LAYER 1 line")
 assert(
     t.pipe_pressure(3, 1, 4) == nil,
     "there is no distribution run here at all"
 )
 assert(
-    t.pipe_pressure(3, 1, 1) > 90.0,
+    assert(t.pipe_pressure(3, 1, 1)) > 90.0,
     "and the length under the valve is still part of the layer-1 run"
 )
-local layer1 = t.pipe_pressure(5, 1, 1)
+local layer1 = assert(t.pipe_pressure(5, 1, 1))
 
 t.click(u, 3, 1, t.target_at(u, 3, 1, "manual_valve"))
 t.run_seconds(2)
-assert(t.structure_at(3, 1).state == "open", "the wheel still turns")
+assert(assert(t.structure_at(3, 1)).state == "open", "the wheel still turns")
 t.run_seconds(2)
-near(t.pipe_pressure(5, 1, 1), layer1, 0.5, "and the line it is not on never noticed")
+near(assert(t.pipe_pressure(5, 1, 1)), layer1, 0.5, "and the line it is not on never noticed")
 assert(
     t.pipe_pressure(3, 1, 1) ~= nil,
     "the length under it still belongs to that run"

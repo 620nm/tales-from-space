@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- The evaporator: the same machine with no allow-list on its mouth, so
 -- whatever boils in the glass goes down the line — and comes back off
 -- it, which is the half Baystation12's own machine cannot do.
@@ -15,30 +17,27 @@
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function row(ui, label)
-    for _, r in ipairs(ui.readouts) do
+local function row(ui: ui_controls.Record, label: string): ui_controls.Record
+    for _, r in ipairs(ui_controls.rows(ui.readouts)) do
         if word(r.label) == label then
             return r
         end
     end
-    return nil
+    error("missing readout: " .. label)
 end
 
-local function pipe_of(x, y, which)
+local function pipe_of(x: number, y: number, which: string)
     local held = t.pipe_gas(x, y)
     return held and held[which] or 0.0
 end
 
-local function held_in(handle, key)
+local function held_in(handle: SpecObservedTarget, key: string)
     local contents = t.contents(handle)
     assert(contents ~= nil, "that is a vessel")
     return contents[key] or 0.0
@@ -71,8 +70,8 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-assert(t.structure_at(4, 1).id == "evaporator", "the map stood one there")
-local machine = t.target_at(p, 4, 1, "evaporator")
+assert(assert(t.structure_at(4, 1)).id == "evaporator", "the map stood one there")
+local machine = assert(t.target_at(p, 4, 1, "evaporator"))
 
 -- ---------------------------------------------------------------
 -- ANYTHING THAT BOILS, NOT JUST WATER.
@@ -81,7 +80,7 @@ local machine = t.target_at(p, 4, 1, "evaporator")
 -- point of running the same gesture on this machine: the sieve is the
 -- only difference between the two files.
 -- ---------------------------------------------------------------
-local booze = t.target_at(p, 3, 1, "beaker.ethanol")
+local booze = assert(t.target_at(p, 3, 1, "beaker.ethanol"))
 t.click(p, 3, 1, booze)
 t.tick()
 t.click(p, 4, 1, machine)
@@ -94,9 +93,9 @@ assert(charged > 0.5, "with what it shipped with: " .. charged)
 
 t.click(p, 4, 1, machine)
 t.tick()
-local ui = t.ui(p)
-assert(row(ui, "dock.vessel").value.text == "beaker (ethanol)", "the panel names what is in it")
-near(ui.setpoints[1].value, 373.15, 1e-9, "and its dial opens at water's boil")
+local ui = ui_controls.record(assert(t.ui(p)))
+assert(ui_controls.record(row(ui, "dock.vessel").value).text == "beaker (ethanol)", "the panel names what is in it")
+near(ui_controls.number(ui_controls.rows(ui.setpoints)[1].value), 373.15, 1e-9, "and its dial opens at water's boil")
 
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
@@ -124,7 +123,7 @@ t.run_ticks(2)
 assert(t.hands(p).held == "beaker.ethanol", "the eject button hands it back")
 assert(t.ledger_has("Undocked", "beaker"), "and the undock is on the record too")
 near(held_in(booze, "ethanol"), left, 1e-6, "carrying exactly what was left in it")
-assert(row(t.ui(p), "dock.vessel").value.id == "dock.vessel.empty", "the panel agrees the slot is bare")
+assert(ui_controls.record(row(ui_controls.record(assert(t.ui(p))), "dock.vessel").value).id == "dock.vessel.empty", "the panel agrees the slot is bare")
 
 -- ...and an empty dock has no reservoir behind its mouth, so the line
 -- keeps what it was given and nothing else arrives.

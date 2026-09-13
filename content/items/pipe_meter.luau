@@ -1,3 +1,5 @@
+local action_rules = require("@lib/action_rules")
+
 -- A meter, in your hands rather than on a run.
 --
 -- tg's `/obj/item/pipe_meter` (code/game/machinery/pipe/

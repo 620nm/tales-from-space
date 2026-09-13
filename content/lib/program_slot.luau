@@ -23,7 +23,7 @@ local program_slot = {}
 -- when the slot is empty or the run faulted. `env` gets `mem`, the
 -- machine's own persistence capsule; the copy-boundary rules apply to
 -- the rest (plain data only -- a Handle cannot cross, docs/luau-api/disl.md).
-function program_slot.run(machine, id, env)
+function program_slot.run(machine: Handle, id: string, env: { [string]: unknown }): unknown
     local program = sim.disl.slot_program(machine, id)
     if program == nil then
         return nil

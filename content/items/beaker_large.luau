@@ -1,3 +1,5 @@
+local vessel = require("@lib/vessel")
+
 local content = {
     id = "beaker_large", name_label = "lunatic/tfs:entity.beaker_large.name", name = "large beaker", sprite = "beaker_large",
     volume_ml = 100, acts_on_items = true,
@@ -7,7 +9,7 @@ local content = {
         { 80, "beaker_large_fill_80" }, { 100, "beaker_large_fill_100" },
     },
 }
-local vessel_spec = { id = content.id, noun = "beaker", phases = { "liquid", "solid" },
+local vessel_spec: vessel.Spec = { id = content.id, noun = "beaker", phases = { "liquid", "solid" },
     pour = { units = 10 }, sip = { units = 2 }, spill = true }
 content.actions = vessel.actions(vessel_spec)
 

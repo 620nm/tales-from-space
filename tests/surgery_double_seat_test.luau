@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Two surgeons racing to seat an organ into ONE empty socket
 -- (docs/SURGERY.md §6.4). Seating an organ writes no surgical STATE, so
 -- the parked guard's mask check cannot see a rival empty-then-fill the
@@ -46,21 +48,23 @@ t.set_zone(right, "head")
 -- What a candidate button says. An operation ON AN ORGAN is the
 -- `procedure.on_organ` id carrying the two words as arguments; a plain
 -- one is content's own word (docs/tgui/labels.md).
-local function face(label)
-    if type(label) ~= "table" then return tostring(label) end
-    if label.args and label.args.organ then
-        return tostring(label.args.operation) .. " " .. tostring(label.args.organ)
+local function face(value: unknown): string
+    if type(value) ~= "table" then return tostring(value) end
+    local label = ui_controls.record(value)
+    if label.args then
+        local args = ui_controls.record(label.args)
+        if args.organ then return tostring(args.operation) .. " " .. tostring(args.organ) end
     end
     return tostring(label.text or label.id)
 end
 
-local function left_holds(id)
+local function left_holds(id: string)
     if t.hands(left).held then t.drop(left); t.tick() end
     t.click(left, 1, 1, t.target_at(left, 1, 1, id))
     t.run_ticks(2)
     assert(t.hands(left).held == id, "left holds the " .. id)
 end
-local function step(id, secs, done, why)
+local function step(id: string, secs: number, done: () -> boolean, why: string)
     left_holds(id)
     t.click(left, PX, PY, t.body_target(left, patient))
     t.run_ticks(math.ceil(secs * 20) + 3)
@@ -71,9 +75,9 @@ end
 -- bone-locked). A shard, not the scalpel, incises the organs -- a scalpel
 -- is edged AND force 10, so it would also offer saw_bone and open the
 -- choice window (see surgery_sockets_test).
-step("scalpel", 1.6, function() return has(t.parts(patient).head.states, "skin_cut") end, "incised")
-step("retractor", 2.4, function() return has(t.parts(patient).head.states, "skin_open") end, "retracted")
-step("shard", 5.4, function() return has(t.parts(patient).head.states, "organs_cut") end, "organs cut")
+step("scalpel", 1.6, function() return has(assert(t.parts(patient)).head.states, "skin_cut") end, "incised")
+step("retractor", 2.4, function() return has(assert(t.parts(patient)).head.states, "skin_open") end, "retracted")
+step("shard", 5.4, function() return has(assert(t.parts(patient)).head.states, "organs_cut") end, "organs cut")
 
 -- A whole body: every organ seated, nothing stranded.
 local whole = t.organ_census()
@@ -85,12 +89,12 @@ assert(whole.seated == whole.total - 2, "the two donor eyes are the only loose o
 left_holds("hemostat")
 t.click(left, PX, PY, t.body_target(left, patient))
 t.run_ticks(2)
-local win = t.ui(left)
+local win = ui_controls.record(t.ui(left))
 assert(win and win.document == "modules" and win.presentation == "choices",
     "the head's organs open a choice document")
 local pick
-for _, tg in ipairs(win.toggles) do
-    if face(tg.label):find("eyes", 1, true) then pick = tg.option end
+for _, tg in ipairs(ui_controls.rows(win.toggles)) do
+    if face(tg.label):find("eyes", 1, true) then pick = ui_controls.text(tg.option) end
 end
 assert(pick, "the eyes are among the organs to remove")
 ui_controls.toggle(left, "operation", pick)

@@ -45,7 +45,7 @@ local pack = t.stored(eng, "back")
 assert(table.concat(pack, ",") == "metal,floor_tile,emergency_tank.oxygen,headset",
     "the pack keeps what a belt cannot: " .. table.concat(pack, ","))
 
-local function index_of(layers, name)
+local function index_of(layers: {string}, name: string): number?
     for n, layer in ipairs(layers) do
         if layer == name then
             return n
@@ -54,11 +54,11 @@ local function index_of(layers, name)
     return nil
 end
 
-local function drawn(name, viewer, who)
+local function drawn(name: string, viewer: number?, who: (number | SpecObservedTarget)?)
     return index_of(t.layers(viewer or eng, who), name) ~= nil
 end
 
-local function belt_art(layers)
+local function belt_art(layers: {string})
     local found = {}
     for _, layer in ipairs(layers) do
         if string.sub(layer, 1, 5) == "belt_" then
@@ -93,7 +93,7 @@ assert(#belt_art(mine) == 5, "five pictures for seven tools")
 -- The loose belt on the floor is unchanged: the object view composed
 -- its contents before this divergence and composes them the same way
 -- now, base sprite first.
-local floor_belt = t.target_at(eng, 3, 1, "toolbelt")
+local floor_belt = assert(t.target_at(eng, 3, 1, "toolbelt"))
 assert(floor_belt, "a stocked belt lies on the deck")
 local loose = t.layers(eng, floor_belt)
 assert(loose[1] == "toolbelt", "the object's own picture is the base")

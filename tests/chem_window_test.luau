@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- A window has a CEILING as well as a floor, and that is the reason the
 -- reaction chamber has a dial rather than a switch.
 --
@@ -38,30 +40,14 @@ local LEG = 0.05
 -- then asked about.
 local MADE = 2.0 * LEG
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function amount(handle, key)
+local function amount(handle, key: string)
     local contents = t.contents(handle)
     assert(contents ~= nil, "that is a vessel")
     return contents[key] or 0
-end
-
--- What the SEALED ROOM holds of a gas, over every tile of it. An open
--- vessel breathes its gas phase into the air (sim/holder/vent.rs),
--- so a recipe whose product is a gas fills the room rather than the
--- beaker -- and the room is where it has to be counted, because the
--- air moves between tiles the moment it is there.
-local function room(key)
-    local n = 0
-    for x = 1, 3 do
-        for y = 1, 2 do
-            local gases = t.room_gas(x, y)
-            n = n + ((gases and gases[key]) or 0)
-        end
-    end
-    return n
 end
 
 t.world([==[(
@@ -94,8 +80,8 @@ t.tick()
 
 local dispenser = t.target_at(p, 1, 1)
 local heater = t.target_at(p, 3, 1)
-local cold = t.target_at(p, 1, 2, "beaker")
-local hot = t.target_at(p, 3, 2, "beaker")
+local cold = assert(t.target_at(p, 1, 2, "beaker"))
+local hot = assert(t.target_at(p, 3, 2, "beaker"))
 
 local function take(handle, x, y)
     t.click(p, x, y, handle)
@@ -168,7 +154,7 @@ panel(heater, 3, 1)
 dial(400)
 ui_controls.toggle(p, "power")
 t.run_seconds(120)
-near(t.holder_k(cold), 400.0, 1.0, "the chamber holds it at 400 K")
+near(assert(t.holder_k(cold)), 400.0, 1.0, "the chamber holds it at 400 K")
 near(amount(cold, "ash"), 0.0, 1e-12, "eighty kelvin short is short")
 near(amount(cold, "oil"), MADE, 1e-6, "and every mole of oil is still oil")
 
@@ -181,7 +167,7 @@ near(amount(cold, "oil"), MADE, 1e-6, "and every mole of oil is still oil")
 -- ---------------------------------------------------------------
 dial(700)
 t.run_seconds(120)
-near(t.holder_k(cold), 700.0, 25.0, "the chamber took it up into the window")
+near(assert(t.holder_k(cold)), 700.0, 25.0, "the chamber took it up into the window")
 near(amount(cold, "ash"), MADE, 1e-6, "every mole of oil became a mole of ash")
 near(amount(cold, "oil"), 0.0, 1e-6, "and there is none of it left")
 
@@ -231,7 +217,7 @@ panel(heater, 3, 1)
 dial(960)
 ui_controls.toggle(p, "power")
 t.run_seconds(150)
-assert(t.holder_k(hot) > 940.0, "the chamber overshot the window on purpose: " .. t.holder_k(hot))
+assert(assert(t.holder_k(hot)) > 940.0, "the chamber overshot the window on purpose: " .. tostring(t.holder_k(hot)))
 
 eject()
 dock(dispenser, 1, 1)
@@ -239,7 +225,7 @@ panel(dispenser, 1, 1)
 dial_to(NOTCH)
 press("welding_fuel")
 dial_to(PRESS)
-assert(t.holder_k(hot) > 920.0, "and the mixture is still over the window: " .. t.holder_k(hot))
+assert(assert(t.holder_k(hot)) > 920.0, "and the mixture is still over the window: " .. tostring(t.holder_k(hot)))
 
 -- Five minutes, because the oil rule is running at a QUARTER of its
 -- plateau up here -- 950 K is most of the way down the far shoulder of

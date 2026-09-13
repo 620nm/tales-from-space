@@ -51,18 +51,18 @@ end
 t.world(bench("west"), 7, "free_build")
 t.tick()
 
-assert(t.structure_at(2, 1).id == "air_scrubber", "the map stood one there")
+assert(assert(t.structure_at(2, 1)).id == "air_scrubber", "the map stood one there")
 -- The mapped third state means the emptying POSTURE (whole air, no
 -- floor); the purge art itself is judged off the air, so a machine
 -- over a still-comfortable room opens wearing the ordinary running
 -- body (docs/ATMOS.md, the purge picture).
-assert(t.structure_at(2, 1).state == "scrubbing", "and it ships running")
+assert(assert(t.structure_at(2, 1)).state == "scrubbing", "and it ships running")
 
-local opening = t.room_pressure(4, 1)
+local opening = assert(t.room_pressure(4, 1))
 assert(opening > 90.0, "the room opens at about an atmosphere: " .. opening)
 
 t.run_seconds(20)
-local drawn = t.room_pressure(4, 1)
+local drawn = assert(t.room_pressure(4, 1))
 assert(
     drawn < opening - 10.0,
     "a scrubber whose mouth reaches the waste main draws the room down: "
@@ -80,9 +80,9 @@ assert(
 t.world(bench("east"), 7, "free_build")
 t.tick()
 
-local held_0 = t.room_pressure(4, 1)
+local held_0 = assert(t.room_pressure(4, 1))
 t.run_seconds(20)
-local held = t.room_pressure(4, 1)
+local held = assert(t.room_pressure(4, 1))
 assert(
     math.abs(held - held_0) < 5.0,
     "a mouth pointed at nothing moves nothing: " .. held_0 .. " -> " .. held

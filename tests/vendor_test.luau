@@ -1,6 +1,8 @@
 -- The vending machine: dense on bump, opens its shelf document on click,
 -- dispenses on act('vend') as a PLAYER-attributed action, and a closed
 -- window disarms acts. (Port of the Rust m4 vendor test.)
+local ui_controls = require("@helpers/ui_controls")
+
 t.world([==[(
     name: "canteen",
     legend: {
@@ -46,15 +48,16 @@ t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 local raw, pushes = t.last_ui(p)
 assert(raw, "clicking the machine opens its window")
-local ui = t.ui(p)
+local ui = ui_controls.record(t.ui(p))
 assert(ui.document == "modules" and ui.presentation == "shelf",
     "the clean-room shelf document")
-assert(ui.notice.text == "Robust! Refreshing! Occasionally fermented!",
+assert(ui_controls.record(ui.notice).text == "Robust! Refreshing! Occasionally fermented!",
     "the shelf wears the content-authored notice")
-assert(ui.products[1].payload.product == "cola",
+local product = ui_controls.rows(ui.products)[1]
+assert(ui_controls.record(product.payload).product == "cola",
     "cola heads the product list")
-assert(ui.products[1].sprite == "cola", "the shelf names cola's atlas sprite")
-assert(ui.products[1].stock == 99, "the product row carries its live stock")
+assert(product.sprite == "cola", "the shelf names cola's atlas sprite")
+assert(product.stock == 99, "the product row carries its live stock")
 
 -- act('vend') dispenses; the ledger names the player, not a script.
 assert(t.count_items("cola") == 0)

@@ -1,3 +1,7 @@
+local ui_controls = require("@helpers/ui_controls")
+local laptop = require("@helpers/laptop")
+local ui_files = require("@helpers/ui_files")
+
 -- The door a controller drives answers to the guest, not to its own
 -- access tag (docs/scripting/controllers.md, "Who a door answers to").
 --
@@ -65,9 +69,9 @@ t.run_ticks(20)
 local function ui()
     return laptop.ui(crew)
 end
-local function rows(doc, field)
-    local out = {}
-    for _, row in ipairs(doc.toggles or {}) do
+local function rows(doc: ui_controls.Record, field: string): {ui_controls.Record}
+    local out: {ui_controls.Record} = {}
+    for _, row in ipairs(ui_controls.rows(doc.toggles or {})) do
         if row.field == field then table.insert(out, row) end
     end
     return out
@@ -75,33 +79,36 @@ end
 
 -- The leaf carries engineering's claim and is powered, shut and free to
 -- move, so nothing but the claim can be what stops a hand.
-assert(t.structure_at(6, 1).id == "airlock.engineering", "the variant that says `access`")
-local door = t.door_at(6, 1)
+assert(assert(t.structure_at(6, 1)).id == "airlock.engineering", "the variant that says `access`")
+local door = assert(t.door_at(6, 1))
 assert(door.powered and not door.open and not door.bolted, "powered, shut, unbolted")
 
 -- ---- by hand: refused ----------------------------------------------------
-t.click(crew, 6, 1, t.target_at(crew, 6, 1))
+t.click(crew, 6, 1, assert(t.target_at(crew, 6, 1)))
 t.run_ticks(4)
-assert(not t.door_at(6, 1).open, "an empty-handed crewman does not get it open")
+assert(not assert(t.door_at(6, 1)).open, "an empty-handed crewman does not get it open")
 local denied = t.ledger_rows("door_denied")
 assert(#denied == 1, "and the refusal is on the record: " .. #denied)
-assert(denied[1].at[1] == 6 and denied[1].at[2] == 1, "at the leaf's own tile")
+assert(ui_controls.array(denied[1].at)[1] == 6 and ui_controls.array(denied[1].at)[2] == 1, "at the leaf's own tile")
 assert(#t.ledger_rows("script_error") == 0, "answering a hand is not a fault")
 
 -- ---- install policy on the host ------------------------------------------
 -- Through a held laptop. Placed with no `access` word, the lock opens
 -- for whoever is standing at it (tests/hardwire_test.luau).
 laptop.ready(crew, 5, 1)
-assert(laptop.connect(crew, 4, 2, "access_point").contact_locked, "the host boots locked")
+assert(assert(laptop.connect(crew, 4, 2, "access_point")).contact_locked, "the host boots locked")
 laptop.unlock(crew)
 t.run_ticks(2)
 assert(rows(ui(), "link_lock")[1].on, "an unkeyed host opens for anyone holding a laptop")
 
 local joined = 0
 while true do
-    local candidate
+    local candidate: string? = nil
     for _, row in ipairs(rows(ui(), "link_join")) do
-        if row.label.id == "link.candidate.endpoint" then candidate = row.option break end
+        if ui_controls.word(row.label) == "link.candidate.endpoint" then
+            candidate = ui_controls.text(row.option)
+            break
+        end
     end
     if not candidate then break end
     laptop.toggle(crew, "link_join", candidate)
@@ -111,26 +118,26 @@ while true do
 end
 assert(joined == 2, "the door and the button hang off the host: " .. joined)
 
-local store = ui().stores[1].binding
+local _store = ui_controls.rows(ui().stores)[1].binding
 ui_files.create(crew, "host", "disl", "opener")
 t.run_ticks(2)
-local uid = string.format("%d", ui().open.uid)
+local uid = string.format("%d", ui_controls.number(ui_controls.record(ui().open).uid))
 t.run_ticks(10) -- the pacing window on text acts (docs/TGUI.md)
 ui_files.save(crew, PROGRAM)
 t.run_ticks(2)
-assert(ui().open.body == PROGRAM, "the guest's source is on the host's own disk")
+assert(ui_controls.record(ui().open).body == PROGRAM, "the guest's source is on the host's own disk")
 ui_files.program(crew, "controller", uid)
 t.run_ticks(2)
-assert(ui().program_slots[1].state.id == "program_slots.state.loaded", "and the controller slot runs it")
+assert(ui_controls.word(ui_controls.rows(ui().program_slots)[1].state) == "program_slots.state.loaded", "and the controller slot runs it")
 laptop.close(crew)
 -- A button is pressed with an empty hand.
 t.drop(crew)
 t.run_ticks(2)
 
 -- ---- through the host: opened --------------------------------------------
-t.click(crew, 6, 2, t.target_at(crew, 6, 2, "airlock_button"))
+t.click(crew, 6, 2, assert(t.target_at(crew, 6, 2, "airlock_button")))
 t.run_ticks(20)
-assert(t.door_at(6, 1).open, "the program opened the tagged door for the hand it just refused")
+assert(assert(t.door_at(6, 1)).open, "the program opened the tagged door for the hand it just refused")
 assert(#t.ledger_rows("door_denied") == 1, "and refused nothing on the way")
 
 -- The presser carried no claim and the guest was told so: the leaf opened
@@ -145,11 +152,11 @@ end
 assert(installed, "the run is joined to its installed program slot")
 local runs = t.ledger_rows("disl_run")
 assert(#runs > 0, "the press reached the guest")
-local function contains_raw(value, marker)
+local function contains_raw(value: unknown, marker: string): boolean
     if type(value) == "string" then return value:find(marker, 1, true) ~= nil end
     if type(value) ~= "table" then return false end
     for key, child in pairs(value) do
-        if contains_raw(key, marker) or contains_raw(child, marker) then return true end
+        if contains_raw(assert(key), marker) or contains_raw(child, marker) then return true end
     end
     return false
 end

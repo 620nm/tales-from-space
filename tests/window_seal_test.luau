@@ -25,14 +25,14 @@ local CHAMBER = { { 1, 1 }, { 2, 1 }, { 3, 1 }, { 1, 2 }, { 2, 2 }, { 3, 2 }, { 
 local OUTSIDE = { { 4, 1 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 6, 2 } }
 local SEEDED = 9 * 250.0
 
-local function chlorine_at(x, y)
-    local g = t.room_gas(x, y) or {}
-    return g.chlorine or 0.0
+local function chlorine_at(x: number, y: number)
+    local g = t.room_gas(x, y)
+    return (g and g.chlorine) or 0.0
 end
 
-local function pipe_chlorine(x, y)
-    local g = t.pipe_gas(x, y) or {}
-    return g.chlorine or 0.0
+local function pipe_chlorine(x: number, y: number)
+    local g = t.pipe_gas(x, y)
+    return (g and g.chlorine) or 0.0
 end
 
 local function check(order)

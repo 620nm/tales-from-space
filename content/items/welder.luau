@@ -1,3 +1,5 @@
+local item_actions = require("@lib/item_actions")
+
 -- A torch does not understand every single thing it is capable of
 -- doing. It knows it is welding equipment and that it burns fuel to do
 -- it; a wall knows what a torch does to a wall, a girder knows what one

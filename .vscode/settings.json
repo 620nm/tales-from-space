@@ -1,0 +1,9 @@
+{
+    "luau-lsp.platform.type": "standard",
+    "luau-lsp.types.roblox": false,
+    "luau-lsp.sourcemap.enabled": false,
+    "luau-lsp.fflags.enableNewSolver": true,
+    "luau-lsp.types.definitionFiles": {
+        "@lunatic": "../lunatic/idl/generated/lunatic-editor.d.luau"
+    }
+}

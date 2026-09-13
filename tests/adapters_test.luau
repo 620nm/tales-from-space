@@ -39,11 +39,11 @@ local MANIFOLD_PORT_M3 = 0.020
 local ADAPTER_PORT_M3 = 0.035
 local ROOM_M3 = 12.0
 
-local function moles(kpa, m3)
+local function moles(kpa: number, m3: number)
     return kpa * 1000.0 * m3 / (8.314 * 293.15)
 end
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
@@ -111,7 +111,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-assert(t.structure_at(3, 1).id == "layer_adapter", "the map stood one there")
+assert(assert(t.structure_at(3, 1)).id == "layer_adapter", "the map stood one there")
 assert(t.pipe(2, 1) == L2 + L4, "the tile west of it carries both layers")
 assert(t.pipe(2, 2) == L4, "and the tile below carries only layer 4")
 
@@ -146,18 +146,18 @@ end
 local FUSED_M3 = 9 * PIPE_M3 + 4 * MANIFOLD_PORT_M3
 
 local start_kpa = t.pipe_pressure(1, 1, L2)
-assert(start_kpa > 90.0, "the runs open the shift charged: " .. start_kpa)
+assert(assert(start_kpa) > 90.0, "the runs open the shift charged: " .. start_kpa)
 
 -- Every one of the four tiles reports the SAME gas, and it is the whole
 -- fused volume's worth. Four runs of three different lengths cannot do
 -- that; one net has to.
 local fused = net_moles(1, 1, L2)
-near(fused, moles(start_kpa, FUSED_M3), 0.05, "the adapter's net is all nine lengths")
+near(fused, moles(assert(start_kpa), FUSED_M3), 0.05, "the adapter's net is all nine lengths")
 near(net_moles(6, 1, L2), fused, 0.001, "the long layer 2 run reads the same gas")
 near(net_moles(2, 2, L4), fused, 0.001, "and so does layer 4 west, on another layer")
 near(net_moles(4, 2, L4), fused, 0.001, "and layer 4 east")
 
-local books = fused + moles(t.room_pressure(3, 2), ROOM_M3)
+local books = fused + moles(assert(t.room_pressure(3, 2)), ROOM_M3)
 
 -- ---- take the adapter out, and the layers part ----
 t.click(p, 6, 2, t.target_at(p, 6, 2, "wrench"))
@@ -180,16 +180,16 @@ local west2 = net_moles(1, 1, L2)
 local east2 = net_moles(6, 1, L2)
 local west4 = net_moles(2, 2, L4)
 local east4 = net_moles(4, 2, L4)
-near(west2, moles(start_kpa, 2 * PIPE_M3), 0.05, "layer 2 west is two lengths again")
-near(east2, moles(start_kpa, 3 * PIPE_M3), 0.05, "layer 2 east is three")
-near(west4, moles(start_kpa, 2 * PIPE_M3), 0.05, "and the layer 4 runs are two apiece")
-near(east4, moles(start_kpa, 2 * PIPE_M3), 0.05, "both of them")
+near(west2, moles(assert(start_kpa), 2 * PIPE_M3), 0.05, "layer 2 west is two lengths again")
+near(east2, moles(assert(start_kpa), 3 * PIPE_M3), 0.05, "layer 2 east is three")
+near(west4, moles(assert(start_kpa), 2 * PIPE_M3), 0.05, "and the layer 4 runs are two apiece")
+near(east4, moles(assert(start_kpa), 2 * PIPE_M3), 0.05, "both of them")
 assert(east2 > west2 + 0.5, "the long run holds more than the short one, as it must")
 
 -- Conservation across the split: the nine lengths kept their gas and
 -- the four mouths hissed into the room on the way out, which is what
 -- unbolting a machine out of a charged line costs.
-local parted = west2 + east2 + west4 + east4 + moles(t.room_pressure(3, 2), ROOM_M3)
+local parted = west2 + east2 + west4 + east4 + moles(assert(t.room_pressure(3, 2)), ROOM_M3)
 assert(
     math.abs(parted - books) < books * 0.02,
     "and the books balance across the split: " .. books .. " mol -> " .. parted .. " mol"
@@ -232,17 +232,17 @@ t.world([==[(
 local c = t.join()
 t.tick()
 
-assert(t.structure_at(3, 1).id == "color_adapter", "a colour adapter between them")
+assert(assert(t.structure_at(3, 1)).id == "color_adapter", "a colour adapter between them")
 
 local ADAPTER_M3 = 5 * PIPE_M3 + 2 * ADAPTER_PORT_M3
 local paint_kpa = t.pipe_pressure(1, 1)
-assert(paint_kpa > 90.0, "both runs are charged: " .. paint_kpa)
+assert(assert(paint_kpa) > 90.0, "both runs are charged: " .. paint_kpa)
 
 local joined = net_moles(1, 1, DISTRO)
-near(joined, moles(paint_kpa, ADAPTER_M3), 0.05, "red and blue are one body of gas")
+near(joined, moles(assert(paint_kpa), ADAPTER_M3), 0.05, "red and blue are one body of gas")
 near(net_moles(6, 1, DISTRO), joined, 0.001, "the far end of the blue run reads the same")
 
-local paint_books = joined + moles(t.room_pressure(3, 2), ROOM_M3)
+local paint_books = joined + moles(assert(t.room_pressure(3, 2)), ROOM_M3)
 
 -- tg's `paintable = FALSE` (color_adapter.dm:16): this adapter offers
 -- no painting action and the attempted click cannot change its network.
@@ -288,13 +288,13 @@ assert(t.count_items("color_adapter_fitting") == 1, "and hands its fitting back"
 
 local red = net_moles(1, 1, DISTRO)
 local blue = net_moles(6, 1, DISTRO)
-near(red, moles(paint_kpa, 2 * PIPE_M3), 0.05, "two lengths of red, on their own")
-near(blue, moles(paint_kpa, 3 * PIPE_M3), 0.05, "three of blue, on theirs")
+near(red, moles(assert(paint_kpa), 2 * PIPE_M3), 0.05, "two lengths of red, on their own")
+near(blue, moles(assert(paint_kpa), 3 * PIPE_M3), 0.05, "three of blue, on theirs")
 assert(blue > red + 0.5, "and they are no longer the same body of gas")
 assert(t.pipe(2, 1) == DISTRO, "both runs are still where they always were")
 assert(t.pipe(4, 1) == DISTRO)
 
-local paint_parted = red + blue + moles(t.room_pressure(3, 2), ROOM_M3)
+local paint_parted = red + blue + moles(assert(t.room_pressure(3, 2)), ROOM_M3)
 assert(
     math.abs(paint_parted - paint_books) < paint_books * 0.02,
     "and the books balance: " .. paint_books .. " mol -> " .. paint_parted .. " mol"

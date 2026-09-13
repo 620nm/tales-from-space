@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- How a permanent gas gets into a bottle, and what it is for.
 --
 -- Oxygen, nitrogen, hydrogen and fluorine left the dispenser shelf when
@@ -16,11 +18,11 @@
 -- ATMOSPHERES rather than quantities, which is the thing a mole count
 -- cannot say and the reason the milestone folded the shelf at all.
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function said(p, want)
+local function said(p: number, want: string)
     for _, m in ipairs(t.messages(p)) do
         if m == want then
             return true
@@ -33,13 +35,13 @@ end
 -- for a bottle and for a canister because both ARE one Mixture in a
 -- known volume (docs/CHEMISTRY.md 1). `t.holder_kpa` would only reach
 -- half of them.
-local function vessel(handle)
+local function vessel(handle: SpecObservedTarget)
     local reading = t.vessel(handle)
     assert(reading ~= nil, "that is a vessel")
     return reading
 end
 
-local function gas(handle, key)
+local function gas(handle: SpecObservedTarget, key: string)
     local entry = vessel(handle).contents[key]
     return entry and (entry.gas or 0.0) or 0.0
 end
@@ -81,16 +83,16 @@ local can = t.target_at(p, 2, 2)
 assert(can ~= nil, "a canister stands on the deck")
 assert(t.charge_vessel(2, 2, "o2", 2000.0), "and it takes a charge")
 t.tick()
-near(t.canister_pressure(2, 2), 2000.0, 1.0, "twenty atmospheres of oxygen")
+near(assert(t.canister_pressure(2, 2)), 2000.0, 1.0, "twenty atmospheres of oxygen")
 
-local jar = t.target_at(p, 1, 1, "bottle")
+local jar = assert(t.target_at(p, 1, 1, "bottle"), "the target is visible")
 t.click(p, 1, 1, jar)
 t.tick()
 assert(t.hands(p).held == "bottle", "the bottle is in hand")
 near(vessel(jar).pressure_kpa, 0.0, 1e-9, "and it is empty, so its gauge reads nothing")
 
 local can_before = gas(can, "o2")
-local _ = t.messages(p)
+t.messages(p)
 t.click(p, 2, 2, t.target_at(p, 2, 2))
 t.run_ticks(2)
 
@@ -109,7 +111,7 @@ assert(said(p, "You hold the bottle to the valve until it stops hissing."),
 
 -- A second click moves nothing: the two are level, and the file says so
 -- rather than transferring a silent zero.
-_ = t.messages(p)
+t.messages(p)
 local charged = gas(jar, "o2")
 t.click(p, 2, 2, t.target_at(p, 2, 2))
 t.run_ticks(2)
@@ -119,11 +121,11 @@ assert(said(p, "The bottle is already at the line's pressure."), "and it says wh
 -- ...AND THE OPEN GLASS, WHICH IS THE POINT OF THE LID.
 t.drop(p)
 t.tick()
-local glass = t.target_at(p, 3, 1, "beaker")
+local glass = assert(t.target_at(p, 3, 1, "beaker"), "the target is visible")
 t.click(p, 3, 1, t.target_at(p, 3, 1, "beaker"))
 t.tick()
 assert(t.hands(p).held == "beaker", "the beaker is in hand")
-_ = t.messages(p)
+t.messages(p)
 t.click(p, 2, 2, t.target_at(p, 2, 2))
 t.run_ticks(2)
 near(gas(glass, "o2"), 0.0, 1e-12, "an open beaker takes none of it")
@@ -146,7 +148,7 @@ for _, open in ipairs({ "beaker.libital", "dropper" }) do
     t.click(p, x, y, t.target_at(p, x, y, open))
     t.tick()
     assert(t.hands(p).held == open, open .. " is in hand")
-    _ = t.messages(p)
+    t.messages(p)
     t.click(p, 2, 2, t.target_at(p, 2, 2))
     t.run_ticks(2)
     near(gas(glassware, "o2"), 0.0, 1e-12, "an open " .. open .. " takes none of it")
@@ -209,8 +211,8 @@ t.world([==[(
 p = t.join()
 t.tick()
 
-local dispenser = t.target_at(p, 1, 2)
-local heater = t.target_at(p, 6, 2)
+local dispenser = assert(t.target_at(p, 1, 2), "the target is visible")
+local heater = assert(t.target_at(p, 6, 2), "the target is visible")
 assert(dispenser ~= nil and heater ~= nil, "the bench is set")
 -- The full line, and the one that is nearly empty. Twenty atmospheres
 -- is a quarter of what a supply bottle ships holding (docs/ATMOS.md 9),
@@ -224,22 +226,22 @@ t.tick()
 -- Greedy, and it tries the other axis when a machine is in the way --
 -- the dispenser stands in the corridor, so a walker that only ever
 -- closed x first would put its nose against it and stay there.
-local function walk_to(tx, ty)
+local function walk_to(tx: number, ty: number)
     for _ = 1, 40 do
         local x, y = t.pos(p)
         if x == tx and y == ty then
             return
         end
-        local tries = {}
+        local tries: { "east" | "west" | "north" | "south" } = {}
         if x < tx then
-            table.insert(tries, "east")
+            tries[#tries + 1] = "east"
         elseif x > tx then
-            table.insert(tries, "west")
+            tries[#tries + 1] = "west"
         end
         if y < ty then
-            table.insert(tries, "south")
+            tries[#tries + 1] = "south"
         elseif y > ty then
-            table.insert(tries, "north")
+            tries[#tries + 1] = "north"
         end
         for _, dir in ipairs(tries) do
             t.move(p, dir)
@@ -256,12 +258,12 @@ local function walk_to(tx, ty)
     end
 end
 
-local function panel(mx, my, machine)
+local function panel(mx: number, my: number, machine: SpecObservedTarget)
     t.click(p, mx, my, machine)
     t.tick()
 end
 
-local function condensed(handle, key)
+local function condensed(handle: SpecObservedTarget, key: string)
     local entry = vessel(handle).contents[key]
     if entry == nil then
         return 0.0
@@ -271,7 +273,7 @@ end
 
 -- The bench run: charge off the line, press the reagent in, put it on
 -- the element. Answers the bottle, still docked and still hot.
-local function bake(bx, by, cx, key, mol, target_k, seconds)
+local function bake(bx: number, by: number, cx: number, key: string, mol: number, target_k: number, seconds: number)
     walk_to(bx, by)
     local jar = t.target_at(p, bx, by, "bottle")
     assert(jar ~= nil, "there is a bottle at " .. bx .. ", " .. by)
@@ -305,18 +307,18 @@ local function bake(bx, by, cx, key, mol, target_k, seconds)
     panel(6, 2, heater)
     panel(6, 2, heater)
     ui_controls.set(p, "temperature", target_k)
-    if t.ui(p).toggles[1].on ~= true then
+    if ui_controls.rows(ui_controls.state(p).toggles)[1].on ~= true then
         ui_controls.toggle(p, "power")
     end
     t.run_ticks(2)
-    assert(t.ui(p).toggles[1].on == true, "the element is on")
+    assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == true, "the element is on")
     t.run_seconds(seconds)
     return jar, charge
 end
 
 -- Off the element and out of the way, so the next bottle gets its turn.
 local function unload()
-    if t.ui(p).toggles[1].on == true then
+    if ui_controls.rows(ui_controls.state(p).toggles)[1].on == true then
         ui_controls.toggle(p, "power")
         t.run_ticks(2)
     end
@@ -328,7 +330,7 @@ end
 
 -- ---- CARBON DIOXIDE, CHARGED ----
 local hot, hot_o2 = bake(1, 3, 2, "carbon", 0.1, 800, 240)
-assert(t.holder_k(hot) > 770.0, "the chamber got there: " .. t.holder_k(hot))
+assert(assert(t.holder_k(hot)) > 770.0, "the chamber got there: " .. assert(t.holder_k(hot)))
 local made = gas(hot, "co2")
 assert(made > 0.03, "and the charged bottle made carbon dioxide: " .. made .. " mol")
 -- One carbon and one oxygen per molecule: the atoms balance, so the
@@ -341,7 +343,7 @@ unload()
 
 -- ---- CARBON DIOXIDE, THIN ----
 local thin = bake(2, 3, 4, "carbon", 0.1, 800, 240)
-assert(t.holder_k(thin) > 770.0, "the same chamber, the same dial: " .. t.holder_k(thin))
+assert(assert(t.holder_k(thin)) > 770.0, "the same chamber, the same dial: " .. assert(t.holder_k(thin)))
 near(gas(thin, "co2"), 0.0, 1e-12, "and a thin charge makes nothing at all")
 near(condensed(thin, "carbon"), 0.1, 1e-9, "spending none of its carbon")
 unload()
@@ -354,8 +356,8 @@ unload()
 -- heat is why the glass arrives at the element hot rather than cold,
 -- and why the dial below is a CEILING the chamber pulls it down to.
 local sweet, sweet_o2 = bake(4, 3, 2, "ammonia", 1.0, 530, 600)
-assert(t.holder_k(sweet) > 520.0 and t.holder_k(sweet) < 610.0,
-    "the chamber holds it in tg's window: " .. t.holder_k(sweet))
+assert(assert(t.holder_k(sweet)) > 520.0 and assert(t.holder_k(sweet)) < 610.0,
+    "the chamber holds it in tg's window: " .. assert(t.holder_k(sweet)))
 assert(vessel(sweet).contents.ammonia.liquid ~= nil,
     "and there is still LIQUID ammonia in it, which is the phase the recipe names")
 local sleepy = gas(sweet, "n2o")
@@ -384,7 +386,7 @@ unload()
 -- a smaller bottle would pass. That is the gate a mole count cannot
 -- express (docs/CHEMISTRY.md 5).
 local flat = bake(5, 3, 4, "ammonia", 1.0, 530, 600)
-assert(t.holder_k(flat) > 520.0 and t.holder_k(flat) < 610.0,
-    "the same chamber, the same dial: " .. t.holder_k(flat))
+assert(assert(t.holder_k(flat)) > 520.0 and assert(t.holder_k(flat)) < 610.0,
+    "the same chamber, the same dial: " .. assert(t.holder_k(flat)))
 near(gas(flat, "n2o"), 0.0, 1e-12, "a thin oxygen share makes none of it")
 assert(gas(flat, "o2") > 0.0, "and spends none of the oxygen it does have")

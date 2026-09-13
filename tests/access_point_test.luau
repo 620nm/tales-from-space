@@ -1,3 +1,6 @@
+local laptop = require("@helpers/laptop")
+local ui_controls = require("@helpers/ui_controls")
+
 -- Building an access point, and then working its lock.
 --
 -- The ladder is `machine_frame`'s ladder said against a wall: two
@@ -23,10 +26,7 @@
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
 local NEEDS_LAPTOP = "Its interface answers only a laptop. Click it with an open, running laptop."
 
@@ -41,7 +41,7 @@ end
 
 -- `t.messages` DRAINS, so a block asking two questions of one moment
 -- captures the traffic once and asks both of the list.
-local function among(lines, needle)
+local function among(lines: { string }, needle: string)
     for _, m in ipairs(lines) do
         if m:find(needle, 1, true) then
             return true
@@ -50,19 +50,10 @@ local function among(lines, needle)
     return false
 end
 
-local function readout(ui, label)
-    for _, r in ipairs(ui.readouts) do
-        if word(r.label) == label then
-            return word(r.value)
-        end
-    end
-    return nil
-end
-
 -- Every toggle row on one field, in the order the panel drew them.
-local function rows(ui, field)
-    local out = {}
-    for _, row in ipairs(ui.toggles or {}) do
+local function rows(ui: ui_controls.Record, field)
+    local out: { ui_controls.Record } = {}
+    for _, row in ipairs(ui_controls.rows(ui.toggles or {})) do
         if row.field == field then
             out[#out + 1] = row
         end
@@ -106,7 +97,7 @@ t.world([==[(
 local p = t.join()
 t.run_ticks(10)
 
-local function take(id)
+local function take(id: string)
     t.click(p, 4, 1, t.target_at(p, 4, 1, id))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
@@ -125,17 +116,17 @@ end
 take("metal")
 ui_controls.build(p, "metal", "wall_frame", 4, 0)
 t.run_seconds(4.5)
-assert(t.structure_at(4, 1).id == "wall_frame", "two sheets make the box")
+assert(assert(t.structure_at(4, 1)).id == "wall_frame", "two sheets make the box")
 
 put_down()
 take("cable_coil")
 work("wall_frame", 2.5)
-assert(t.structure_at(4, 1).state == "wired", "and five lengths of cable wire it")
+assert(assert(t.structure_at(4, 1)).state == "wired", "and five lengths of cable wire it")
 
 put_down()
 take("machine_board.access_point")
 work("wall_frame", 0.5)
-assert(t.structure_at(4, 1).state == "boarded", "the board says what it is becoming")
+assert(assert(t.structure_at(4, 1)).state == "boarded", "the board says what it is becoming")
 
 -- THE REFUSAL NAMES THE CARD. The board spells no component of its own
 -- (docs/CONTENT-SCHEMA.md §1.10b) -- what the assembly is short of is
@@ -150,7 +141,7 @@ assert(
     heard:find("It still needs 1 x network card.", 1, true),
     "the screwdriver says the box has no address yet, got: " .. heard
 )
-assert(t.structure_at(4, 1).id == "wall_frame", "and nothing was assembled")
+assert(assert(t.structure_at(4, 1)).id == "wall_frame", "and nothing was assembled")
 
 put_down()
 take("network_card")
@@ -193,9 +184,9 @@ put_down()
 -- Long enough for the box to find the socket behind it and start
 -- drawing: no panel on a dead cord takes a press.
 t.run_ticks(40)
-local box = t.target_at(p, 4, 1, "access_point")
+local hinted_box = assert(t.target_at(p, 4, 1, "access_point"))
 local hinted = false
-for _, action in ipairs(t.action_hints(p, { Entity = box })) do
+for _, action in ipairs(t.action_hints(p, { Entity = hinted_box })) do
     if action.id == "needs_laptop" then
         hinted = true
         assert(action.implement and action.implement.sprite == "laptop_on",
@@ -204,7 +195,7 @@ for _, action in ipairs(t.action_hints(p, { Entity = box })) do
 end
 assert(hinted, "a bare hand reads that the box wants a laptop")
 local _ = t.messages(p)
-t.click(p, 4, 1, box)
+t.click(p, 4, 1, hinted_box)
 t.tick()
 assert(t.ui(p) == nil and t.ui(p, "programming") == nil, "an access point opens nothing for a bare hand")
 assert(said(p, NEEDS_LAPTOP), "and says what it wants: " .. table.concat(t.messages(p), " | "))
@@ -213,7 +204,7 @@ laptop.ready(p, 5, 1)
 local panel = laptop.connect(p, 4, 1, "access_point")
 assert(panel and panel.contact_locked, "the laptop meets the lock screen first")
 assert(panel.stores == nil and panel.program_slots == nil, "with no file or program slot behind it")
-assert(panel.link and #panel.link.address == 17, "with the address a shift log will name")
+assert(panel.link and #ui_controls.text(ui_controls.record(panel.link).address) == 17, "with the address a shift log will name")
 local lock = rows(panel, "link_lock")
 assert(#lock == 1 and not lock[1].on, "a lock row, shut, because a fresh boot finds them all shut")
 assert(#rows(panel, "link_join") == 0, "and a shut lock offers nothing to join")
@@ -232,15 +223,20 @@ assert(#t.ledger_rows("link_locked") == 1, "and the lock is on the record either
 assert(#rows(panel, "link_drop") == 0, "nothing has joined it")
 local candidates = rows(panel, "link_join")
 assert(#candidates == 1, "the room's own panel, and nothing else: " .. #candidates)
-assert(candidates[1].label.id == "link.candidate.hub", "offered as the hub it is")
+assert(ui_controls.record(candidates[1].label).id == "link.candidate.hub", "offered as the hub it is")
 local parts = false
-for _, r in ipairs(panel.readouts or {}) do
-    if word(r.section) == "parts.parts" or word(r.label) == "parts.tier" then parts = true end
+for _, r in ipairs(ui_controls.rows(panel.readouts or {})) do
+    if (r.section and word(r.section) == "parts.parts") or word(r.label) == "parts.tier" then parts = true end
 end
 assert(parts, "and the parts it was built from ride beside them")
 assert(panel.media_slot == nil, "the box has no disk slot")
-local creatable = panel.create and panel.create.host or {}
-assert(#creatable == 1 and creatable[1] == "disl", "and its A: makes guest source only")
+local creatable = ui_controls.record(ui_controls.record(panel.create).host)
+local creatable_count = 0
+for _, kind in pairs(creatable) do
+    creatable_count += 1
+    assert(kind == "disl", "its A: makes guest source only")
+end
+assert(creatable_count == 1, "its A: exposes exactly one creatable file type")
 laptop.close(p)
 
 -- ---------------------------------------------------------------
@@ -314,7 +310,7 @@ assert(panel.contact_locked and not rows(panel, "link_lock")[1].on, "and it does
 local denials = t.ledger_rows("link_denied")
 assert(#denials == 1 and denials[1].why == "access", "the refusal names the rule it broke")
 -- ...and the presser is told, in a modal over the lock screen, until OK.
-assert(panel.refusal and panel.refusal.text.id == "link.access_denied", "the refusal rides the presser's window")
+assert(panel.refusal and ui_controls.record(ui_controls.record(panel.refusal).text).id == "link.access_denied", "the refusal rides the presser's window")
 local scope = t.ui_document(eng, "programming")
 assert(ui_controls.find(eng, "/refusal/ok", scope), "an Access denied dialog stands over the lock screen")
 ui_controls.press(eng, "/refusal/ok", nil, scope)

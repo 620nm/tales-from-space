@@ -31,16 +31,16 @@
 -- standing `t.set_health` has.
 t.set_breathing(false)
 
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
 -- Moles of one gas over a tile, and every gas over a tile. A walled
 -- tile has no cell at all, so `t.room_gas` answers nil there and both
 -- read zero -- which is the honest arithmetic, not a guard.
-local function held(x, y, which)
+local function held(x: number, y: number, which: string?): number
     local gas = t.room_gas(x, y)
-    return gas and gas[which] or 0.0
+    return gas and gas[assert(which)] or 0.0
 end
 
 local function total(x, y)
@@ -51,7 +51,7 @@ local function total(x, y)
     return sum
 end
 
-local function sum_over(tiles, f, which)
+local function sum_over(tiles: { { number } }, f: (number, number, string?) -> number, which: string?): number
     local s = 0.0
     for _, tile in ipairs(tiles) do
         s = s + f(tile[1], tile[2], which)
@@ -118,7 +118,7 @@ local EAST = {
     { 4, 2 }, { 5, 2 }, { 6, 2 },
     { 4, 3 }, { 5, 3 }, { 6, 3 },
 }
-local EVERY = {}
+local EVERY: { { number } } = {}
 for _, room in ipairs({ WEST, GAP, EAST }) do
     for _, tile in ipairs(room) do
         EVERY[#EVERY + 1] = tile
@@ -129,14 +129,14 @@ assert(t.turf(3, 1) == "wall" and t.turf(3, 3) == "wall", "the dividing wall is 
 assert(t.turf(3, 2) == "floor", "with one tile of floor through it")
 
 local air_0 = sum_over(EVERY, total)
-near(t.room_pressure(2, 2), 101.325, 0.01, "the west room opens at one atmosphere")
-near(t.room_pressure(6, 3), 101.325, 0.01, "and so does the east one")
+near(assert(t.room_pressure(2, 2)), 101.325, 0.01, "the west room opens at one atmosphere")
+near(assert(t.room_pressure(6, 3)), 101.325, 0.01, "and so does the east one")
 
 t.foul_room(2, 2, "co2", 16.0)
 t.tick()
 near(held(2, 2, "co2"), 16.0, 1e-9, "all of it is standing on one tile")
 assert(sum_over(EAST, held, "co2") == 0.0, "and none of it is next door yet")
-near(t.room_pressure(6, 3), 101.325, 0.01, "which the far room's gauge agrees about")
+near(assert(t.room_pressure(6, 3)), 101.325, 0.01, "which the far room's gauge agrees about")
 
 -- A minute, which is what it takes. Nobody does anything.
 --
@@ -169,8 +169,8 @@ near(sum_over(EVERY, total), air_0 + 16.0, 1e-6, "and the map's whole book with 
 -- CONSEQUENCE of the moles being where they are.
 local west_kpa = t.room_pressure(1, 1)
 local east_kpa = t.room_pressure(6, 3)
-near(west_kpa, east_kpa, 0.01, "both rooms settle at one pressure")
-assert(west_kpa > 101.5, "which is above where they started: " .. west_kpa)
+near(assert(west_kpa), assert(east_kpa), 0.01, "both rooms settle at one pressure")
+assert(assert(west_kpa) > 101.5, "which is above where they started: " .. west_kpa)
 
 -- ---------------------------------------------------------------
 -- A WALL IS NOT A SLOW DOORWAY.
@@ -240,8 +240,8 @@ for _, tile in ipairs(FOULED) do
     )
 end
 assert(
-    t.room_pressure(1, 1) > 106.0,
-    "and it is over-pressured for it: " .. t.room_pressure(1, 1)
+    assert(t.room_pressure(1, 1)) > 106.0,
+    "and it is over-pressured for it: " .. tostring(t.room_pressure(1, 1))
 )
 
 -- The sealed side did nothing whatsoever.
@@ -300,9 +300,9 @@ t.tick()
 local NEAR = { { 1, 1 }, { 2, 1 } }
 local LEAF = { { 3, 1 } }
 local FAR = { { 4, 1 }, { 5, 1 } }
-assert(not t.door_at(3, 1).open, "the airlock starts shut")
+assert(not assert(t.door_at(3, 1)).open, "the airlock starts shut")
 
-local far_kpa_0 = t.room_pressure(4, 1)
+local far_kpa_0 = assert(t.room_pressure(4, 1))
 t.foul_room(1, 1, "co2", 10.0)
 t.run_seconds(60)
 
@@ -318,10 +318,10 @@ assert(t.room_pressure(4, 1) == far_kpa_0, "its gauge did not move at all")
 -- whatever position it had.
 t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.run_ticks(15)
-assert(t.door_at(3, 1).open, "the airlock opened")
+assert(assert(t.door_at(3, 1)).open, "the airlock opened")
 t.outage()
 t.run_ticks(20)
-assert(t.door_at(3, 1).open, "and an unpowered leaf stays where it was left")
+assert(assert(t.door_at(3, 1)).open, "and an unpowered leaf stays where it was left")
 
 t.run_seconds(35)
 
@@ -338,9 +338,9 @@ for _, room in ipairs({ NEAR, LEAF, FAR }) do
 end
 local crossed = sum_over(NEAR, held, "co2") + sum_over(LEAF, held, "co2")
 near(crossed + sum_over(FAR, held, "co2"), 10.0, 1e-6, "still the ten that went in")
-near(t.room_pressure(1, 1), t.room_pressure(5, 1), 0.01, "both rooms at one pressure")
+near(assert(t.room_pressure(1, 1)), assert(t.room_pressure(5, 1)), 0.01, "both rooms at one pressure")
 assert(
-    t.room_pressure(5, 1) > far_kpa_0,
+    assert(t.room_pressure(5, 1)) > far_kpa_0,
     "the far room, which a shut door left untouched for a minute, is up: "
-        .. far_kpa_0 .. " -> " .. t.room_pressure(5, 1)
+        .. far_kpa_0 .. " -> " .. tostring(t.room_pressure(5, 1))
 )

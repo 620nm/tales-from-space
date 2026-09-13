@@ -201,19 +201,19 @@ t.world([==[(
 speaker = t.join("assistant")
 local l_near = t.join("medic")
 local l_quarter = t.join("captain")
-local l_edge = t.join("engineer")
+local l_local_edge = t.join("engineer")
 local l_far = t.join("security")
 t.run_ticks(20)
 pocket(speaker)
 pocket(l_near)
 pocket(l_quarter)
-pocket(l_edge)
+pocket(l_local_edge)
 pocket(l_far)
 
 local _ = t.messages(speaker)
 local _ = t.messages(l_near)
 local _ = t.messages(l_quarter)
-local _ = t.messages(l_edge)
+local _ = t.messages(l_local_edge)
 local _ = t.messages(l_far)
 t.say(speaker, ";local radius boundary check")
 t.run_ticks(2)
@@ -223,7 +223,7 @@ local quarter_heard = t.messages(l_quarter)
 assert(quarter_heard[1] == "loc~l r~~ius ~oun~ary check",
     "the outer quarter of the local circle garbles too: "
         .. table.concat(quarter_heard, " | "))
-local local_edge_heard = t.messages(l_edge)
+local local_edge_heard = t.messages(l_local_edge)
 assert(local_edge_heard[1] == "~~~~~ ~~~~~~ ~~~~~~~~ ~~~~~",
     "f == 1 exactly is HEARD -- the rim is inside -- as pure static: "
         .. table.concat(local_edge_heard, " | "))

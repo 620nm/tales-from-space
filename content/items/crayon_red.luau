@@ -1,3 +1,5 @@
+local writing = require("@lib/writing")
+
 -- One red crayon stick. Thirty successful commits consume its uses.
 -- tg crayons.dm:636-690.
 local content = {

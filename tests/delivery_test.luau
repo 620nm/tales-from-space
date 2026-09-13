@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Delivery: how a finished solution gets out of the beaker and into
 -- somebody. Three gestures, all of them a click a crewman could make --
 -- a syringe drawn out of a vessel and pushed into a crewman, a packager
@@ -58,8 +60,8 @@ t.run_ticks(3)
 
 local packager = t.target_at(medic, 2, 1)
 local syringe = t.target_at(medic, 3, 1, "syringe")
-local source = t.target_at(medic, 3, 1, "beaker.libital")
-local empty = t.target_at(medic, 4, 1, "beaker")
+local source = assert(t.target_at(medic, 3, 1, "beaker.libital"))
+local empty = assert(t.target_at(medic, 4, 1, "beaker"))
 local first = t.target_at(medic, 5, 1, "beaker.libital")
 local second = t.target_at(medic, 6, 1, "beaker.libital")
 assert(packager ~= nil and syringe ~= nil, "the bench is laid out")
@@ -89,10 +91,10 @@ local function condensed(handle)
     end
     return n
 end
-local function close(got, want, what)
+local function close(got: number, want: number, what: string)
     assert(math.abs(got - want) < 1e-9, ("%s: wanted %g, got %g"):format(what, want, got))
 end
-local function near(got, want, slack, what)
+local function near(got: number, want: number, slack: number, what: string)
     assert(math.abs(got - want) < slack, ("%s: wanted %g, got %g"):format(what, want, got))
 end
 local function take(p, x, y, id)
@@ -139,7 +141,7 @@ t.run_ticks(2)
 assert(said(medic, "You fill the syringe."), "the plunger comes back")
 close(total(syringe), STROKE, "one stroke is tg's five units")
 close(total(source), SHIPS - STROKE, "and the beaker is down by exactly that")
-local drawn = t.contents(syringe)
+local drawn = assert(t.contents(syringe))
 close(drawn.water, 0.20 * (STROKE / SHIPS), "water came in proportion")
 close(drawn.libital, 0.15 * (STROKE / SHIPS), "libital came in proportion")
 
@@ -293,7 +295,7 @@ t.click(medic, 3, 1, assert(t.target_at(medic, 3, 1, source)))
 t.run_ticks(2)
 t.click(medic, 3, 1, assert(t.target_at(medic, 3, 1, source)))
 t.run_ticks(2)
-near(t.vessel(syringe).headspace_l, 0, 1e-6, "two strokes fill the barrel to the brim")
+near(assert(t.vessel(syringe)).headspace_l, 0, 1e-6, "two strokes fill the barrel to the brim")
 t.click(medic, 3, 1, assert(t.target_at(medic, 3, 1, source)))
 t.run_ticks(2)
 assert(said(medic, "The syringe is full."), "and a third stroke is refused")

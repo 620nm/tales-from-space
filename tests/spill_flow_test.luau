@@ -135,10 +135,10 @@ t.move(p, "east")
 t.run_ticks(4)
 t.move(p, "east")
 t.run_ticks(4)
-assert(not t.door_at(4, 1).powered, "the leaf is dark, so it will not shut itself again")
+assert(not assert(t.door_at(4, 1)).powered, "the leaf is dark, so it will not shut itself again")
 t.click(p, 4, 1, t.target_at(p, 4, 1))
 t.run_ticks(80)
-assert(t.door_at(4, 1).open, "pried open")
+assert(assert(t.door_at(4, 1)).open, "pried open")
 
 t.run_ticks(200)
 level(1, 2, "the whole corridor levelled")
@@ -189,7 +189,7 @@ t.world([==[(
 local q = t.join()
 t.tick()
 
-local beaker = t.target_at(q, 3, 1, "beaker.water")
+local beaker = assert(t.target_at(q, 3, 1, "beaker.water"))
 t.click(q, 3, 1, beaker) -- pick it up
 t.tick()
 t.click(q, 4, 1) -- and tip it onto the deck beside us
@@ -214,5 +214,5 @@ assert(
 
 -- What left the deck went up, not sideways: the air over the tile the
 -- beaker was tipped onto is carrying it.
-local vapour = t.room_gas(4, 1).water
+local vapour = assert(t.room_gas(4, 1)).water
 assert(vapour ~= nil and vapour > 1e-3, "the tipped beaker dried into the room")

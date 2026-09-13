@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Building a pressure tank, and cutting one back open.
 --
 -- tg's chain, adapted only in its material (tank.dm:560-697, plus the
@@ -45,7 +47,7 @@ t.world([==[(
 
 local p = t.join()
 t.tick()
-local charged_start = t.tank_pressure(5, 2)
+local charged_start = assert(t.tank_pressure(5, 2))
 assert(math.abs(charged_start - 2000.0) < 20.0,
     "the map's tank opens holding what the map said: " .. charged_start)
 t.click(p, 2, 1, t.target_at(p, 2, 1, "metal")) -- a pile of thirty
@@ -93,12 +95,12 @@ assert(refused, "an unbolted frame takes no plating, and says so")
 t.swap_hands(p) -- the wrench
 t.click(p, 3, 2, t.target_at(p, 3, 2))
 t.run_seconds(1.0)
-assert(t.structure_at(3, 2).state == "anchored", "the wrench bolts it down")
+assert(assert(t.structure_at(3, 2)).state == "anchored", "the wrench bolts it down")
 
 t.swap_hands(p) -- the sheets
 t.click(p, 3, 2, t.target_at(p, 3, 2))
 t.run_seconds(3.5)
-assert(t.structure_at(3, 2).state == "plated", "twelve more sheets plate it")
+assert(assert(t.structure_at(3, 2)).state == "plated", "twelve more sheets plate it")
 
 t.swap_hands(p) -- put the wrench down and take the torch
 t.drop(p)
@@ -116,10 +118,10 @@ assert(tank and tank.id == "stationary_tank",
 -- is four open mouths, so it is part of the plumbing from the very
 -- next pass: whatever is in it a moment later came down the pipe, and
 -- the tank at the other end is a moment lighter for it.
-local sealed = t.tank_pressure(3, 2)
+local sealed = assert(t.tank_pressure(3, 2))
 assert(sealed < charged_start * 0.5,
     "a new vessel starts near enough empty: " .. sealed .. " kPa")
-assert(t.tank_pressure(5, 2) < charged_start,
+assert(assert(t.tank_pressure(5, 2)) < charged_start,
     "and every mole in it came out of the neighbour")
 
 -- ---------------------------------------------------------------
@@ -128,13 +130,13 @@ assert(t.tank_pressure(5, 2) < charged_start,
 -- cut the new one open, and the gas has to land on the deck.
 -- ---------------------------------------------------------------
 t.run_seconds(10)
-local held = t.tank_pressure(3, 2)
+local held = assert(t.tank_pressure(3, 2))
 assert(held > sealed + 100.0,
     "the new vessel goes on filling: " .. sealed .. " -> " .. held)
-assert(math.abs(held - t.tank_pressure(5, 2)) < 50.0,
+assert(math.abs(held - assert(t.tank_pressure(5, 2))) < 50.0,
     "two tanks on one run settle to one pressure: "
-        .. held .. " vs " .. t.tank_pressure(5, 2))
-local room_before = t.room_gas(3, 2).plasma or 0.0
+        .. held .. " vs " .. assert(t.tank_pressure(5, 2)))
+local room_before = assert(t.room_gas(3, 2)).plasma or 0.0
 
 t.click(p, 3, 2, t.target_at(p, 3, 2))
 t.run_seconds(4.5)
@@ -144,7 +146,7 @@ assert(left and left.id == "stationary_tank_frame",
 assert(t.tank_pressure(3, 2) == nil, "and no vessel at all")
 assert(t.count_items("metal") > 0, "the plating comes back as sheets")
 
-local room_after = t.room_gas(3, 2).plasma or 0.0
+local room_after = assert(t.room_gas(3, 2)).plasma or 0.0
 assert(room_after > room_before,
     "the contents landed on the deck: " .. room_before .. " -> " .. room_after)
 assert(t.ledger_has("StructureStep", "stationary_tank", "gone"),

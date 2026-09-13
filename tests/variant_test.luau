@@ -59,14 +59,14 @@ assert(math.abs(total(empty)) < 1e-9, ("the base ships empty: %g"):format(total(
 local reading = t.vessel(mixed)
 assert(reading ~= nil, "a vessel reads")
 assert(reading.contents["libital"] ~= nil, "and the drug is one of the things in it")
-assert(t.vessel(empty).contents["libital"] == nil, "the bare one carries none of it")
+assert(assert(t.vessel(empty)).contents["libital"] == nil, "the bare one carries none of it")
 
 -- Its own name and its own prose, both the variant's.
-local look = t.examine(p, 1, 1, mixed)
+local look = assert(t.examine(p, 1, 1, mixed))
 assert(look ~= nil, "a vessel in view answers")
 assert(look.title == "beaker (libital)", "the heading is the variant's name: " .. look.title)
 assert(look.sprite == "beaker", "wearing the picture it inherited")
-local bare = t.examine(p, 2, 1, empty)
+local bare = assert(t.examine(p, 2, 1, empty))
 assert(bare.title == "beaker", "and the base is still the base: " .. bare.title)
 assert(
     bare.lines[1] == look.lines[1],

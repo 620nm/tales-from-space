@@ -16,7 +16,7 @@
 -- The positive half is plasma: the one substance the station is built
 -- to keep away from itself, and the one a sign has to shout about.
 
-local function zeroes(what, summary)
+local function zeroes(what: string, summary: SpecHazard)
     assert(summary.health == 0, what .. ": health 0")
     assert(summary.fire == 0, what .. ": fire 0")
     assert(summary.instability == 0, what .. ": instability 0")

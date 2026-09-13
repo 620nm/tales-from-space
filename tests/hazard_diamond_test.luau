@@ -10,14 +10,14 @@
 -- -- an unfilled sign shows the placard only, because three zeroes
 -- would be a claim that the chamber is safe.
 
-local function worn(x, y, what)
+local function worn(x: number, y: number, what: string)
     local structure = t.structure_at(x, y)
     assert(structure ~= nil, what .. ": the map hung one here")
     assert(structure.id == "hazard_diamond", what .. ": and it is a placard")
     return structure.overlays
 end
 
-local function drew(overlays, sprite, what)
+local function drew(overlays: { string }, sprite: string, what: string)
     for _, name in ipairs(overlays) do
         if name == sprite then
             return true
@@ -26,7 +26,7 @@ local function drew(overlays, sprite, what)
     error(what .. ": expected " .. sprite .. " in the stack")
 end
 
-local function drew_nothing_like(overlays, prefix, what)
+local function drew_nothing_like(overlays: { string }, prefix: string, what: string)
     for _, name in ipairs(overlays) do
         assert(
             string.sub(name, 1, #prefix) ~= prefix,

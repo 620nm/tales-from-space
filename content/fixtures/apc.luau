@@ -1,3 +1,6 @@
+local netmsg = require("@lib/netmsg")
+local network = require("@lib/network")
+
 -- The APC, and the two things about it that are not mechanism.
 --
 -- Everything a player DOES to one is native: the battery, the three
@@ -51,12 +54,7 @@ if sim ~= nil then
             return
         end
         local said = network.line(ev.subject, NOUN, MEMBER)
-        if said == nil then
-            -- No address at all, which for a socketed box is one thing:
-            -- there is nothing in the socket to lend it one. The panel
-            -- is still bridging power; it is simply on no network.
-            said = sim.msg("lunatic/tfs:lib.network.no_card", {})
-        end
+            or sim.msg("lunatic/tfs:lib.network.no_card", {})
         sim.message.send({ recipient = ev.actor, message = said })
     end)
 

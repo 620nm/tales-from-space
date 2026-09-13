@@ -24,10 +24,22 @@
 -- (two of them had lost the sealed-vessel refusal); one implementation
 -- cannot drift from itself.
 --
--- This file is a `lib/` file: it publishes a table and declares nothing
+-- This module returns a table and declares nothing
 -- (docs/SCRIPTING.md 1.6). The `sim.define` that binds a behaviour to a
 -- prototype happens in the roster file that calls `attach`, so "which
 -- file declared this" still answers with a name off the shelf.
+local action_rules = require("@lib/action_rules")
+
+export type Spec = {
+    id: string, noun: string, phases: {string}?,
+    pour: { units: number | "all", message: string? }?,
+    sip: { units: number, message: string? }?,
+    spill: boolean | { message: string? }?,
+    soak: { message: string?, dry: string?, full: string? }?,
+}
+type Line = { key: string, args: { [string]: string | number | boolean | UnsafeMarkup } }
+type GestureResult = boolean | { replaced: boolean }
+
 local vessel = {}
 
 -- 1 u = 0.025 mol, the documented unit bridge (docs/CHEMISTRY.md 4).
@@ -77,14 +89,14 @@ local SOAK_DRY = "lunatic/tfs:lib.vessel.soak_dry"
 local SOAK_FULL = "lunatic/tfs:lib.vessel.soak_full"
 
 -- One line to say, as the key and the arguments its template asks for.
-local function line(named, shared, noun)
+local function line(named: string?, shared: string, noun: string): Line
     if named ~= nil then
         return { key = named, args = {} }
     end
     return { key = shared, args = { noun = noun } }
 end
 
-local function said(spoken)
+local function said(spoken: Line): Message
     return sim.msg(spoken.key, spoken.args)
 end
 
@@ -96,7 +108,7 @@ end
 -- How much is in it, in moles: the reading's own total, which is the
 -- same sum over the same mixture (sim/owner.rs, `reading`). `nil` for a
 -- thing with no inside at all.
-function vessel.moles(obj)
+function vessel.moles(obj: MatterOwner | Handle): number?
     local read = sim.matter_read(obj)
     return read and read.moles
 end
@@ -104,7 +116,7 @@ end
 -- How much room is left, in litres: the shell minus what the condensed
 -- phases actually take up, so "full" is a VOLUME fact and never a count
 -- of moles -- capacity is geometry.
-function vessel.headspace_l(obj)
+function vessel.headspace_l(obj: MatterOwner | Handle): number?
     local read = sim.matter_read(obj)
     return read and read.headspace_l
 end
@@ -115,21 +127,21 @@ local total = vessel.moles
 -- purpose: the engine is growing a verb per gesture over the generic
 -- `sim.matter.transfer`, and when it lands each of these becomes that
 -- verb without a roster file noticing.
-local function do_pour(self, target, amount, _phases)
+local function do_pour(self: Handle, target: Handle, amount: number | "all")
     -- A pour's overflow is the deck under the far vessel (docs/LUAU-API.md 8.2).
     sim.matter.pour({ from = self, to = target, amount = amount })
 end
 
-local function do_sip(self, drinker, amount, _phases)
+local function do_sip(self: Handle, drinker: Handle, amount: number)
     sim.matter.drink({ from = self, who = drinker, amount = amount })
 end
 
-local function do_spill(self, _at, _phases)
+local function do_spill(self: Handle)
     -- No `at`: a spill names the tile the gesture is happening on.
     sim.matter.spill({ from = self })
 end
 
-local function do_charge(self, source, amount)
+local function do_charge(self: Handle, source: Handle, amount: number)
     sim.matter.fill({ from = source, to = self, amount = amount })
 end
 
@@ -160,7 +172,7 @@ end
 -- dispenser uses over an open glass (docs/BENCH.md 4). The refusal
 -- belongs here rather than in each file precisely because half the
 -- files that needed it had not got it.
-local function charge(spec, self, user, source, at)
+local function charge(spec: Spec, self: Handle, user: Handle, source: Handle, at: TileAddress): GestureResult
     local line = sim.matter_read(source)
     local mine = sim.matter_read(self)
     if line == nil or mine == nil then
@@ -198,7 +210,7 @@ end
 
 -- Nothing left worth pouring. One sentence for all four gestures,
 -- because a vessel is empty or it is not.
-local function dregs(spec, self, user)
+local function dregs(spec: Spec, self: Handle, user: Handle): boolean
     if (total(self) or 0) >= DREGS_MOL then
         return false
     end
@@ -213,7 +225,7 @@ end
 -- the engine's -- the head takes what it takes and the rest stays on the
 -- deck -- so the two refusals here are the two states a stroke can find:
 -- a vessel with no room in it, and a deck with nothing on it.
-local function soak(spec, self, user, at, soak_line, dry_line, full_line)
+local function soak(self: Handle, user: Handle, at: TileAddress, soak_line: Line, dry_line: Line, full_line: Line): boolean
     if (vessel.headspace_l(self) or 0) <= HEADSPACE_L then
         sim.message.send({ recipient = user, message = said(full_line) })
         return true
@@ -258,8 +270,8 @@ end
 -- Every `message` is a catalog KEY, and every default is the shared
 -- sentence that takes this vessel's noun as its argument; a file names
 -- one only where it says something else.
-function vessel.actions(spec)
-    local actions = {}
+function vessel.actions(spec: Spec): {action_rules.Action}
+    local actions: {action_rules.Action} = {}
     if spec.pour ~= nil then
         table.insert(actions, action_rules.primary("charge_vessel", { all = {
             action_rules.kind("machine"), action_rules.fact("target.has_matter", true),
@@ -282,17 +294,20 @@ function vessel.actions(spec)
     return actions
 end
 
-function vessel.attach(spec)
+function vessel.attach(spec: Spec): Definition
     if spec.spill ~= nil and spec.soak ~= nil then
         error("vessel.attach: " .. tostring(spec.id)
             .. " declares both spill and soak -- a vessel tips the deck out or takes it up, never both")
     end
     local definition = sim.define("behavior", "lunatic/tfs:" .. spec.id, { prototype = spec.id })
-    local phases = spec.phases
     local pour_line = spec.pour and line(spec.pour.message, POUR, spec.noun)
     -- A dose in tg's units, or the lot: a mop wrung into a bucket has no
     -- measured stroke, it has a head that comes out.
-    local pour_amount = spec.pour and (spec.pour.units == "all" and "all" or spec.pour.units * U)
+    local pour_amount: (number | "all")? = nil
+    if spec.pour then
+        local units = spec.pour.units
+        pour_amount = if units == "all" then "all" else units * U
+    end
     local sip_line = spec.sip and line(spec.sip.message, SIP, spec.noun)
     local named = type(spec.spill) == "table" and spec.spill.message or nil
     local spill_line = line(named, SPILL, spec.noun)
@@ -300,7 +315,7 @@ function vessel.attach(spec)
     local dry_line = spec.soak and line(spec.soak.dry, SOAK_DRY, spec.noun)
     local full_line = spec.soak and line(spec.soak.full, SOAK_FULL, spec.noun)
 
-    definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
+    definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev: InteractionUsePayload)
         local self, user, at = ev.subject, ev.actor, ev.at
         local clicked = ev.claim
 
@@ -317,8 +332,8 @@ function vessel.attach(spec)
             if dregs(spec, self, user) then
                 return true
             end
-            do_pour(self, clicked.entity, pour_amount, phases)
-            sim.message.send({ recipient = user, message = said(pour_line) })
+            do_pour(self, clicked.entity, assert(pour_amount))
+            sim.message.send({ recipient = user, message = said(assert(pour_line)) })
             return true
         end
 
@@ -328,8 +343,8 @@ function vessel.attach(spec)
                 return true
             end
             sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = at })
-            do_sip(self, user, spec.sip.units * U, phases)
-            sim.message.send({ recipient = user, message = said(sip_line) })
+            do_sip(self, user, spec.sip.units * U)
+            sim.message.send({ recipient = user, message = said(assert(sip_line)) })
             return true
         end
 
@@ -344,12 +359,12 @@ function vessel.attach(spec)
             return { replaced = false }
         end
         if spec.soak ~= nil then
-            return soak(spec, self, user, at, soak_line, dry_line, full_line)
+            return soak(self, user, at, assert(soak_line), assert(dry_line), assert(full_line))
         end
         if dregs(spec, self, user) then
             return true
         end
-        do_spill(self, at, phases)
+        do_spill(self)
         sim.message.send({ recipient = user, message = said(spill_line) })
         return true
     end)
@@ -360,7 +375,7 @@ function vessel.attach(spec)
     -- the attributed `Spilled` row. Every landing is an impact for this
     -- purpose; sealing is the content-visible way to prevent it.
     if spec.spill ~= nil then
-        definition:handle("throw.land.done", { kind = "react", route = "land" }, function(ev)
+        definition:handle("throw.land.done", { kind = "react", route = "land" }, function(ev: ThrowLandDonePayload)
             local reading = sim.matter_read(ev.entity)
             if reading ~= nil and not reading.sealed then
                 sim.matter.spill({ from = ev.entity, at = ev.at })

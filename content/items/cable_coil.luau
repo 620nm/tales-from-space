@@ -1,3 +1,5 @@
+local action_rules = require("@lib/action_rules")
+
 -- Repairs what the wirecutters undo, on whichever of the station's
 -- three power lines you have the coil set to.
 --
@@ -58,7 +60,7 @@ if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self, user = ev.subject, ev.actor
-        local dial = sim.mode(self)
+        local dial = assert(sim.mode(self))
         local next_index = (dial.index + 1) % dial.count
         sim.set_mode(self, next_index)
         sim.message.send({
@@ -83,7 +85,7 @@ if sim ~= nil then
             })
             return true
         end
-        local line = LINES[sim.mode(self).index + 1]
+        local line = LINES[assert(sim.mode(self)).index + 1]
         if sim.cable(x, y) % (line.mask * 2) >= line.mask then
             return { replaced = false } -- this line already runs here
         end
@@ -103,7 +105,7 @@ if sim ~= nil then
             -- engineer may have cabled this very tile. The dial is asked
             -- again too -- a do_after is a whole second, and nothing stops
             -- you turning it mid-job.
-            line = LINES[sim.mode(self).index + 1]
+            line = LINES[assert(sim.mode(self)).index + 1]
             if sim.cable(x, y) % (line.mask * 2) >= line.mask then
                 sim.message.send({
                     recipient = user,

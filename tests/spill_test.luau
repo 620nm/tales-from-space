@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Spilling: a beaker tipped out onto the deck empties, and what was in
 -- it becomes matter standing in that tile — not vapour, and not a
 -- second system bolted beside the air.
@@ -20,7 +22,7 @@ t.world([==[(
 local p = t.join()
 t.tick()
 
-local beaker = t.target_at(p, 1, 1, "beaker.libital")
+local beaker = assert(t.target_at(p, 1, 1, "beaker.libital"))
 local function total(handle)
     local contents = t.contents(handle)
     assert(contents ~= nil, "that is a vessel")
@@ -38,7 +40,7 @@ assert(math.abs(total(beaker) - 0.35) < 1e-9, "a full beaker")
 -- What the room is breathing before anything is tipped into it.
 local before = t.room_gas(2, 1)
 local gas_before = 0
-for _, moles in pairs(before) do
+for _, moles in pairs(assert(before)) do
     gas_before = gas_before + moles
 end
 
@@ -50,7 +52,7 @@ assert(math.abs(total(beaker)) < 1e-9, ("the beaker is empty, got %g"):format(to
 -- exactly what it was, because nothing gasified.
 local after = t.room_gas(2, 1)
 local gas_after = 0
-for _, moles in pairs(after) do
+for _, moles in pairs(assert(after)) do
     gas_after = gas_after + moles
 end
 assert(
@@ -60,8 +62,8 @@ assert(
 
 local rows = t.ledger_rows("spilled")
 assert(#rows == 1, ("one spill on the record, got %d"):format(#rows))
-assert(math.abs(rows[1].moles - 0.35) < 1e-9, "the row names the whole beaker")
-assert(rows[1].at[1] == 2 and rows[1].at[2] == 1, "and the tile it landed on")
+assert(math.abs(ui_controls.number(rows[1].moles) - 0.35) < 1e-9, "the row names the whole beaker")
+assert(ui_controls.array(rows[1].at)[1] == 2 and ui_controls.array(rows[1].at)[2] == 1, "and the tile it landed on")
 assert(rows[1].actor.kind == "script", "attributed to the file that asked")
 
 -- An empty beaker has nothing left to tip out: the gesture is refused
@@ -85,7 +87,7 @@ assert(#t.ledger_rows("spilled") == 1, "the empty beaker spilled nothing")
 -- transition on, so it stays on the deck. Water dries; the drug it was
 -- carrying is still there when it has.
 -- ---------------------------------------------------------------
-local function vapour(key)
+local function vapour(key: string)
     local gases = t.room_gas(2, 1)
     return (gases and gases[key]) or 0
 end

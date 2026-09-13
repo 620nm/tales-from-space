@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Surgery on a body the map arrived holding.
 --
 -- Every other surgery spec operates on a joined player, who is alive.
@@ -48,26 +50,23 @@ t.run_ticks(3)
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
-local function word(label)
-    if type(label) ~= "table" then return label end
-    return label.id or label.text
-end
+local word = ui_controls.word
 
 local function said(who, needle)
     return (" " .. table.concat(t.messages(who), " || ") .. " "):find(needle, 1, true) ~= nil
 end
 -- The wearables panel is a row model of its own (docs/TGUI.md): one
 -- `labels` row per declared equipment slot, named by the slot's LABEL.
-local function slot_row(panel, label)
-    for _, r in ipairs(panel.labels or {}) do
+local function slot_row(panel: ui_controls.Record, label: string): ui_controls.Record?
+    for _, r in ipairs(ui_controls.rows(panel.labels or {})) do
         if word(r.label) == label then return r end
     end
     return nil
 end
 
 -- ...and the operating computer is the ordinary readout model.
-local function row(panel, label)
-    for _, r in ipairs(panel.readouts or {}) do
+local function row(panel: ui_controls.Record, label: string): ui_controls.Record?
+    for _, r in ipairs(ui_controls.rows(panel.readouts or {})) do
         if word(r.label) == label then return r end
     end
     return nil
@@ -100,10 +99,10 @@ local function on_table()
 end
 
 -- ---- onto the table ---------------------------------------------------
-local optable = t.target_at(surgeon, 3, 2, "optable")
+local optable = assert(t.target_at(surgeon, 3, 2, "optable"))
 -- Laying a body out TAKES TIME now (`lay_body_secs`,
 -- content/tuning.luau), so this waits the do_after out.
-t.drag(surgeon, 5, 1, t.target_at(surgeon, 5, 1, "name:" .. corpse_name), 3, 2, optable)
+t.drag(surgeon, 5, 1, assert(t.target_at(surgeon, 5, 1, "name:" .. corpse_name)), 3, 2, optable)
 t.run_ticks(2 * 20 + 2)
 assert(on_table() ~= nil, "the cadaver is on the table")
 assert(on_table().posture == "lying", "laid out on it")
@@ -114,10 +113,9 @@ assert(on_table().posture == "lying", "laid out on it")
 -- off (tests/strip_test.luau).
 t.drop(surgeon)
 t.run_ticks(2)
-t.drag(surgeon, 3, 2, t.target_at(surgeon, 3, 2, "name:" .. corpse_name), 4, 1, t.body_target(surgeon, surgeon))
+t.drag(surgeon, 3, 2, assert(t.target_at(surgeon, 3, 2, "name:" .. corpse_name)), 4, 1, t.body_target(surgeon, surgeon))
 t.run_ticks(2)
-local wardrobe = t.ui(surgeon)
-assert(wardrobe ~= nil, "the drag opened its wearables")
+local wardrobe = ui_controls.record(assert(t.ui(surgeon), "the drag opened its wearables"))
 local worn_row = slot_row(wardrobe, "Uniform")
 assert(worn_row ~= nil and worn_row.field == "strip", "it is wearing the jumpsuit")
 ui_controls.toggle(surgeon, "strip", "uniform")
@@ -139,8 +137,7 @@ assert(t.set_zone(surgeon, "chest"), "aiming at the chest")
 t.click(surgeon, 2, 2, t.target_at(surgeon, 2, 2))
 t.run_ticks(2)
 
-local console = t.ui(surgeon)
-assert(console ~= nil, "the console opened a window")
+local console = ui_controls.record(assert(t.ui(surgeon), "the console opened a window"))
 local aimed = row(console, "chest")
 assert(aimed ~= nil, "the part the next click lands on is on the panel")
 assert(word(aimed.value) == "\u{2014}", "with nothing holding it yet: " .. tostring(word(aimed.value)))
@@ -162,11 +159,11 @@ assert(t.hands(surgeon).held == "scalpel", "the scalpel is back in hand")
 assert(t.set_zone(surgeon, "chest"), "aiming at the chest")
 
 local parked = #t.ledger_rows("DoAfterStarted")
-t.click(surgeon, 3, 2, t.target_at(surgeon, 3, 2, "name:" .. corpse_name))
+t.click(surgeon, 3, 2, assert(t.target_at(surgeon, 3, 2, "name:" .. corpse_name)))
 t.run_ticks(2)
 assert(not said(surgeon, "nothing to do"), "a bare, laid-out cadaver has work in it")
 assert(#t.ledger_rows("DoAfterStarted") > parked, "the incision parked")
 t.run_ticks(100)
-assert(on_table().parts.chest.states.skin_cut == true, "and the chest is open")
+assert(assert(on_table().parts).chest.states.skin_cut == true, "and the chest is open")
 
 print("cadaver surgery: pulled, laid out, stripped and opened")

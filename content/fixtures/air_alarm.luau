@@ -1,3 +1,7 @@
+local controller = require("@lib/controller")
+local netmsg = require("@lib/netmsg")
+local network = require("@lib/network")
+
 -- The air alarm, and the one thing about it that is not mechanism.
 --
 -- Everything a player DOES to one is native: the `link` module draws
@@ -124,10 +128,11 @@ if sim ~= nil then
         local now = derive(self)
         local again = last.dirty == true
         for _, band in ipairs(BANDS) do
-            if again or (last[band] == true) ~= now[band] then
+            local active = if band == "deadly" then now.deadly else now.unbreathable
+            if again or (last[band] == true) ~= active then
                 sim.link.emit({
                     subject = self,
-                    payload = netmsg.light_flag(if now[band] then "set" else "clear", band),
+                    payload = netmsg.light_flag(if active then "set" else "clear", band),
                 })
             end
         end
@@ -168,10 +173,7 @@ if sim ~= nil then
             return
         end
         local said = network.line(ev.subject, NOUN, MEMBER)
-        if said == nil then
-            -- No address at all, which for a socketed box is one thing.
-            said = sim.msg("lunatic/tfs:lib.network.no_card", {})
-        end
+            or sim.msg("lunatic/tfs:lib.network.no_card", {})
         sim.message.send({ recipient = ev.actor, message = said })
     end)
 end

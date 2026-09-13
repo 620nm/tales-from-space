@@ -1,3 +1,5 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- IDENTITY: a still, built out of a hotplate and a closet.
 --
 -- Distillation is the oldest thing anybody does with two liquids, and
@@ -43,15 +45,15 @@ local R = 8.314462618
 -- (ethanol: boil 351.5, l_vap 38 560; water: boil 373.15, l_vap
 -- 40 660), inverted with Raoult exactly as `Line::t` does
 -- (lunatic-matter/src/registry.rs): 1/T = 1/T_a + ln(P/(x*p_a))/k.
-local function bubble_k(boil_k, l_vap, p_kpa, x)
+local function bubble_k(boil_k: number, l_vap: number, p_kpa: number, x: number)
     return 1.0 / (1.0 / boil_k + math.log(p_kpa * 1000.0 / (x * 101325.0)) / (-l_vap / R))
 end
 
-local function ethanol_boil_k(p_kpa, x)
+local function ethanol_boil_k(p_kpa: number, x: number)
     return bubble_k(351.5, 38560.0, p_kpa, x)
 end
 
-local function water_boil_k(p_kpa, x)
+local function water_boil_k(p_kpa: number, x: number)
     return bubble_k(373.15, 40660.0, p_kpa, x)
 end
 
@@ -92,7 +94,10 @@ for x = 1, 7 do
     end
 end
 
-local p, dispenser, boiler, pot
+local p: number
+local dispenser: SpecObservedTarget
+local boiler: SpecObservedTarget
+local pot: SpecObservedTarget
 
 local function bench()
     t.world(BENCH, 0)
@@ -103,20 +108,20 @@ local function bench()
     t.set_environment({ sink_k = 293.15, insolation = 0.0 })
     p = t.join()
     t.tick()
-    dispenser = t.target_at(p, 1, 2)
-    boiler = t.target_at(p, 3, 2)
-    pot = t.target_at(p, 3, 3, "beaker")
+    dispenser = assert(t.target_at(p, 1, 2), "the target is visible")
+    boiler = assert(t.target_at(p, 3, 2), "the target is visible")
+    pot = assert(t.target_at(p, 3, 3, "beaker"), "the target is visible")
     assert(dispenser ~= nil and boiler ~= nil and pot ~= nil, "the bench is set")
 end
 
-local function press(key, mol)
+local function press(key: string, mol: number)
     ui_controls.set(p, "amount", mol)
     t.run_ticks(2)
     ui_controls.toggle(p, "dispense", key)
     t.run_ticks(4)
 end
 
-local function charge(keys, mol)
+local function charge(keys: { string }, mol: number)
     t.click(p, 3, 3, pot)
     t.run_ticks(2)
     assert(t.hands(p).held == "beaker", "the beaker is in hand")
@@ -131,25 +136,26 @@ local function charge(keys, mol)
     t.run_ticks(2)
 end
 
-local function onto_the_element(target_k)
+local function onto_the_element(target_k: number)
     t.click(p, 3, 2, boiler)
     t.tick()
     t.click(p, 3, 2, boiler)
     t.tick()
     ui_controls.set(p, "temperature", target_k)
     t.run_ticks(2)
-    if t.ui(p).toggles[1].on ~= true then
+    if ui_controls.rows(ui_controls.state(p).toggles)[1].on ~= true then
         ui_controls.toggle(p, "power")
         t.run_ticks(2)
     end
-    assert(t.ui(p).toggles[1].on == true, "the element is on")
+    assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == true, "the element is on")
 end
 
-local function held(handle, key)
-    return (t.contents(handle) or {})[key] or 0.0
+local function held(handle: SpecObservedTarget, key: string)
+    local contents = t.contents(handle)
+    return if contents then contents[key] or 0.0 else 0.0
 end
 
-local function vapour(key)
+local function vapour(key: string)
     local n = 0.0
     for _, tile in ipairs(ROOM) do
         local gases = t.room_gas(tile[1], tile[2])
@@ -160,7 +166,7 @@ end
 
 -- The mole fraction of ethanol in a two-component mixture: what a
 -- still is measured in, on both sides of it.
-local function ethanol_share(spirit, wet)
+local function ethanol_share(spirit: number, wet: number)
     assert(spirit + wet > 0.0, "there is something to take a fraction of")
     return spirit / (spirit + wet)
 end
@@ -179,8 +185,8 @@ charge({ "ethanol" }, 0.4)
 onto_the_element(380)
 t.run_seconds(40)
 
-local plateau = t.holder_k(pot)
-local ambient = t.room_pressure(3, 2)
+local plateau = assert(t.holder_k(pot))
+local ambient = assert(t.room_pressure(3, 2))
 local onset = ethanol_boil_k(ambient, 1.0)
 assert(math.abs(onset - 351.5) < 0.5,
     "the closet is at one atmosphere, so the onset IS the authored boiling point: " .. onset)
@@ -206,7 +212,7 @@ bench()
 charge({ "ethanol" }, 0.4)
 onto_the_element(330)
 t.run_seconds(40)
-assert(t.holder_k(pot) < 335.0, "the cool bench never reaches the onset: " .. t.holder_k(pot))
+assert(assert(t.holder_k(pot)) < 335.0, "the cool bench never reaches the onset: " .. assert(t.holder_k(pot)))
 local seeped = 0.4 - held(pot, "ethanol")
 assert(seeped * 5.0 < boiled_off,
     "and it gives up a fraction of what the boiling one does: "
@@ -234,11 +240,11 @@ assert(math.abs(started - 0.5) < 0.01, "the wash starts half and half: " .. star
 -- would.
 onto_the_element(380)
 t.run_seconds(60)
-local pot_k = t.room_pressure(3, 2)
-assert(t.holder_k(pot) > ethanol_boil_k(pot_k, 1.0),
-    "a wash boils hotter than the spirit in it: " .. t.holder_k(pot))
-assert(t.holder_k(pot) < water_boil_k(pot_k, 1.0) + 3.0,
-    "and no hotter than the water in it: " .. t.holder_k(pot))
+local pot_k = assert(t.room_pressure(3, 2))
+assert(assert(t.holder_k(pot)) > ethanol_boil_k(pot_k, 1.0),
+    "a wash boils hotter than the spirit in it: " .. assert(t.holder_k(pot)))
+assert(assert(t.holder_k(pot)) < water_boil_k(pot_k, 1.0) + 3.0,
+    "and no hotter than the water in it: " .. assert(t.holder_k(pot)))
 
 local booked = t.matter_totals()
 
@@ -284,7 +290,7 @@ assert(held(pot, "ethanol") > 0.0, "with spirit still in it to take off")
 -- purpose (sim/virtual_bath.rs), which is what a heater IS.
 -- ---------------------------------------------------------------
 local closed = t.matter_totals()
-local function near(a, b, slack, what)
+local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 near(closed.substances.ethanol, booked.substances.ethanol, 1e-9,
