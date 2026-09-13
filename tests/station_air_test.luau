@@ -143,8 +143,8 @@ end
 -- the engineer standing on.
 walk("west", 12)   -- pins on the Commons' west wall, x = 15
 walk("south", 6)   -- and its south wall, y = 18
-walk("east", 12)   -- and its east wall, x = 24
-walk("west", 5)    -- ...so this lands on the door column, x = 19
+walk("east", 12)   -- pins beside the photocopier, x = 23
+walk("west", 4)    -- ...so this lands on the door column, x = 19
 -- ...and then south again, generously, because a leaf SWINGS: a press
 -- into a shut door starts the motion and the next press five ticks
 -- later still meets a moving door, so each of the two doors on this

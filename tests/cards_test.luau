@@ -103,8 +103,9 @@ local said = table.concat(t.messages(p), "\n")
 assert(said:find("You deal a card.", 1, true), "the deal reads out: " .. said)
 assert(table.concat(t.sounds(p), " "):find("card_flip", 1, true), "and is heard")
 
--- The deck's own bookkeeping is on the record, because the engine
--- cannot summarise a string it cannot read.
+-- The deck's own bookkeeping is on the record. String values are retained
+-- as bounded length/hash summaries so a diagnostic row cannot duplicate a
+-- complete sprite-body payload.
 local wrote = t.ledger_rows("VarSet")
 assert(#wrote >= 2, "the order and the picture beside it are two ledger rows")
 assert(wrote[#wrote - 1].key == "lunatic/tfs:order",
@@ -115,8 +116,8 @@ assert(wrote[#wrote - 1].key == "lunatic/tfs:order",
 -- everyone who can see the deck.
 assert(wrote[#wrote].key == "lunatic/tfs:picture",
     "and the repaint rides the same ledger: " .. tostring(wrote[#wrote].key))
-assert(wrote[#wrote].value == "card_deck_full",
-    "fifty-three left still looks full: " .. tostring(wrote[#wrote].value))
+assert(wrote[#wrote].value == "<string 14 bytes sha256=70e7e9b71d630ba138aacb67d2e77b308f98121e4ab51cafa3942200f534997f>",
+    "fifty-three left still looks full by its bounded value: " .. tostring(wrote[#wrote].value))
 
 -- ---- turning it over --------------------------------------------------
 t.drop(p)

@@ -140,6 +140,17 @@
     ],
     items: [
         (17, 16, "toolbox"),
+        // Writing supplies share the Commons and Medical work surfaces.
+        (23, 17, "paper_bin"),
+        (23, 17, "toner_cartridge"),
+        (23, 17, "four_color_pen"),
+        (23, 17, "crayon_box"),
+        (24, 17, "paper"),
+        (22, 6, "paper_bin"),
+        (22, 6, "toner_cartridge"),
+        (22, 6, "four_color_pen"),
+        (22, 6, "crayon_box"),
+        (22, 6, "paper"),
         // ---- the Commons -----------------------------------------
         // A shift is long, and this is the room everybody walks
         // through. There used to be two loose dice on the floor here --
@@ -332,6 +343,7 @@
         // which is what makes a hand of cards a hand rather than a
         // pile.
         (23, 17, "table"), (24, 17, "table"),
+        (22, 6, "table"),
         // The scrubber that makes the department a LOOP rather than a
         // supply: it stands on the Commons' own room circuit, on L1,
         // and takes the carbon dioxide the crew breathe out back to
@@ -683,7 +695,7 @@
         (18, 22, "apc", { "l1_emergency": true, "mount": "north" }),
         (28, 22, "apc", { "l1_emergency": true, "mount": "west" }),
         (4, 27, "apc", { "l1_emergency": true, "mount": "west" }),
-        // ---- THE ONE ACCESS POINT THE STATION SHIPS --------------
+        // ---- ACCESS POINTS ---------------------------------------
         // Engineering's own, on the wall of the tank rank one cell of
         // cord from the port at (9, 27). Its lock is keyed to the
         // department, and that is a fact about this PLACEMENT rather
@@ -691,6 +703,8 @@
         // one entry stands up a rack of nodes keyed to different claims
         // (docs/DEVICES.md SS8).
         (8, 27, "access_point", { "access": "engineering", "mount": "north" }),
+        (22, 18, "access_point", { "mount": "south" }),
+        (24, 6, "access_point", { "mount": "east" }),
         // ---- THE COMMONS DISPLAYS ---------------------------------
         // The shift clock and the board beside it share the north wall,
         // between the room's two light fittings, where everybody waking
@@ -808,6 +822,9 @@
     // unplug the room and shopping stops, which is the point of corded
     // appliances.
     machines: [
+        (23, 14, "fax"),
+        (24, 18, "photocopier"),
+        (21, 6, "fax"),
         (24, 13, "vendor"),
         (24, 15, "tool_vendor"),
         // The third crate against the same wall, on the same port.
@@ -886,6 +903,14 @@
         // is, and a disk somebody wrote at a terminal in a corridor
         // would have nowhere to be carried TO.
         (12, 27, "programming_terminal"),
+    ],
+    // The two document stations share the rack's connected device tree.
+    links: [
+        (7, 27, 8, 27),
+        (7, 27, 24, 6),
+        (7, 27, 22, 18),
+        (24, 6, 21, 6),
+        (22, 18, 23, 14),
     ],
     cables: [
         // ==== THE BACKBONE (L2, yellow) ===========================

@@ -88,6 +88,8 @@ export const surfaceRules: UiStyleRule[] = [
 
   // A file reader's lines: a heading's size follows its level inline.
   rule("reader-line", { whiteSpace: "pre-wrap", flexShrink: 0 }),
+  rule("reader-flow", { display: "block", whiteSpace: "pre-wrap" }),
+  rule("reader-inline", { display: "inline", whiteSpace: "pre-wrap" }),
   rule("reader-head", { fontWeight: 700 }),
   rule("reader-quote", { paddingLeft: 12 }),
 ];

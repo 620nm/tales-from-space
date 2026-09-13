@@ -94,11 +94,20 @@ t.run_ticks(2)
 t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.tick()
 
-local inserted = t.ledger_rows("media_inserted")
+local function audit_rows(kind)
+    local rows = {}
+    for _, row in ipairs(t.ledger_rows()) do
+        if row.audit and row.audit.audit == kind then table.insert(rows, row.audit) end
+    end
+    return rows
+end
+local inserted = audit_rows("media_inserted")
 assert(#inserted == 1, "fitting a disk is a row of its own: " .. #inserted)
 assert(inserted[1].item == "floppy disk", "the row names the medium: " .. tostring(inserted[1].item))
 assert(inserted[1].machine == "programming terminal",
     "and the machine: " .. tostring(inserted[1].machine))
+assert(type(inserted[1].owner) == "string" and #inserted[1].owner == 32,
+    "the media row carries the disk store identity")
 
 -- ---- a full slot refuses the second disk -----------------------------
 -- The click is SPENT on the refusal rather than falling through to
@@ -110,7 +119,7 @@ t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.tick()
 assert(said(p, "There is already"), "an occupied drive says so: "
     .. table.concat(t.messages(p), " | "))
-assert(#t.ledger_rows("media_inserted") == 1, "and nothing was fitted twice")
+assert(#audit_rows("media_inserted") == 1, "and nothing was fitted twice")
 t.drop(p)
 t.run_ticks(2)
 
@@ -158,7 +167,9 @@ assert(ui.open.name == "untitled" and ui.open.ext == "md", "named for nothing ye
 assert(ui.open.revision == 0, "and unedited")
 assert(ui.open.cap == BODY_CAP, "the panel publishes the byte cap a save is held to")
 local disk_file = addr(ui.open)
-assert(#t.ledger_rows("file_created") == 1, "made files are on the record")
+local created = audit_rows("baseline")
+assert(#created == 1 and created[1].state.name == "untitled" and created[1].state.ext == "md",
+    "made files are on the compact record")
 
 -- ---- type into it ------------------------------------------------------
 local other = t.join()
@@ -180,10 +191,9 @@ assert(ui.open.revision == 1, "and a save moves the revision")
 assert(ui.stores[2].used == #NOTE + #"untitled" + #"md",
     "the disk's used figure is what it holds: " .. ui.stores[2].used)
 
-local saved = t.ledger_rows("file_saved")
-assert(#saved == 1 and saved[1].body == NOTE,
-    "the save is on the record with the body VERBATIM -- the point of the whole ledger")
-assert(saved[1].revision == 1, "at the revision it became")
+local saved = audit_rows("save")
+assert(#saved == 1 and saved[1].result_revision == 1 and saved[1].splices,
+    "the save is on the compact record with deterministic splices")
 
 -- ---- the source control bounds a long paste ---------------------------
 t.run_ticks(10)
@@ -224,7 +234,8 @@ ui = t.ui(p)
 assert(ui.open.name == "tank_room", "renamed")
 assert(has(listing(ui), "media:tank_room.md"), "and the listing agrees: "
     .. table.concat(listing(ui), " "))
-assert(#t.ledger_rows("file_renamed") == 1, "renames are on the record too")
+local renamed = audit_rows("rename")
+assert(#renamed == 1 and renamed[1].to == "tank_room", "renames are on the compact record too")
 
 -- ---- disk -> terminal -------------------------------------------------
 -- Copy goes to the OTHER store, because there is only ever one other.
@@ -234,9 +245,9 @@ ui = t.ui(p)
 assert(has(listing(ui), "host:tank_room.md"),
     "the note is on the terminal now: " .. table.concat(listing(ui), " "))
 assert(has(listing(ui), "media:tank_room.md"), "and still on the disk -- copy, never move")
-local copied = t.ledger_rows("file_copied")
-assert(#copied == 1 and copied[1].body == NOTE,
-    "a copy carries the body into the record, which is the counterplay to copying a secret")
+local copied = audit_rows("copy")
+assert(#copied == 1 and copied[1].source and copied[1].destination and copied[1].destination_hash,
+    "a copy carries source and destination identities, never a body")
 
 -- ---- delete off the disk ----------------------------------------------
 ui_files.address(p, disk_file, "delete")
@@ -245,7 +256,8 @@ ui = t.ui(p)
 assert(not has(listing(ui), "media:tank_room.md"), "gone from the disk: "
     .. table.concat(listing(ui), " "))
 assert(not ui.open, "and the selection went with the file it named")
-assert(#t.ledger_rows("file_deleted") == 1, "deletions are on the record")
+local deleted = audit_rows("deleted")
+assert(#deleted == 1 and deleted[1].identity, "deletions are on the compact record")
 
 -- ---- terminal -> disk -------------------------------------------------
 -- The other direction, over the same one act: whichever side a file is
@@ -262,7 +274,7 @@ t.tick()
 ui = t.ui(p)
 assert(has(listing(ui), "media:tank_room.md"),
     "and back onto the disk: " .. table.concat(listing(ui), " "))
-assert(#t.ledger_rows("file_copied") == 2, "both crossings are attributed")
+assert(#audit_rows("copy") == 2, "both crossings are attributed")
 
 -- ---- take it back out -------------------------------------------------
 local eject_control = ui_controls.node(p, "/drive/media/eject").id
@@ -273,7 +285,7 @@ assert(ui.media_slot.id == "files.media.empty", "the slot is empty")
 assert(#ui.stores == 1, "and the disk's store left with it")
 assert(not has(listing(ui), "media:tank_room.md"),
     "so the note is somewhere in a pocket, which is the whole point of a disk")
-assert(#t.ledger_rows("media_ejected") == 1, "and taking one out is a row as well")
+assert(#audit_rows("media_ejected") == 1, "and taking one out is a row as well")
 local hands = t.hands(p)
 assert(hands[1] == "floppy_disk" or hands[2] == "floppy_disk",
     "it came back into a hand rather than onto the deck")
@@ -282,4 +294,4 @@ assert(hands[1] == "floppy_disk" or hands[2] == "floppy_disk",
 assert(not pcall(function() t.ui_press(p, eject_control) end), "an empty drive offers no eject")
 t.tick()
 assert(#t.ui(p).stores == 1, "the stale binding cannot restore access to the removed disk")
-assert(#t.ledger_rows("media_ejected") == 1, "and ejected nothing twice")
+assert(#audit_rows("media_ejected") == 1, "and ejected nothing twice")

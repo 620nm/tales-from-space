@@ -56,6 +56,28 @@ assert.match(pem[0].text, /Access material/);
 assert.equal(pem[2].text, "# literal text");
 assert.ok(pem.every((node) => node.type === "text" && !node.events));
 
+const rich = fileReader("reader", "md", "", 384, [
+  { text: "**red** and ", style: { color: "#bb2222", weight: 400 } },
+  { text: "*blue*", style: { color: "#2222bb", font_family: "kalam-bold" } },
+]);
+assert.equal(rich.length, 1);
+assert.equal(rich[0].class.includes("reader-flow"), true);
+const richRuns = rich[0].children[0].runs;
+assert.deepEqual(richRuns.map((run) => run.text), ["red", " and ", "blue"]);
+assert.equal(richRuns[0].fontWeight, 700);
+assert.equal(richRuns[0].color, "#bb2222");
+assert.equal(richRuns[2].fontStyle, "italic");
+assert.equal(richRuns[2].color, "#2222bb");
+assert.equal(richRuns[2].fontFamily, "kalam-bold");
+const largeRich = fileReader("large", "md", "", 384, [
+  { text: "a".repeat(4096), style: { color: "#111111" } },
+  { text: "b".repeat(4096), style: { color: "#222222" } },
+]);
+assert.equal(largeRich.length, 1);
+assert.equal(largeRich[0].children.length, 2);
+assert.ok(largeRich[0].children.every((node) => node.class.includes("reader-inline")));
+assert.equal(largeRich[0].children.map((node) => node.text).join(""), "a".repeat(4096) + "b".repeat(4096));
+
 const valid = read("atmo", atmo());
 assert.equal(valid.length, 4);
 assert.equal(valid[1].text, "Temperature: 293.15 K");

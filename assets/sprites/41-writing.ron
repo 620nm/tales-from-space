@@ -1,0 +1,51 @@
+// Writing supplies and the two machines that move paper. These rows keep
+// the source state names visible so content can select each authored picture.
+// Source paths and state choices are cited to the tg declarations below;
+// the baker reads the pinned checkout named by assets/tg-revision.
+(
+    sheets: [
+        ("bureaucracy", "obj/service/bureaucracy.dmi"),
+        ("crayons", "obj/art/crayons.dmi"),
+        ("library", "obj/service/library.dmi"),
+        ("fax", "obj/machines/fax.dmi"),
+        ("items_l", "mob/inhands/items_lefthand.dmi"),
+        ("items_r", "mob/inhands/items_righthand.dmi"),
+    ],
+    sprites: [
+        // paper.dm:13-18; paperbin.dm:3-8.
+        ("paper", Dmi("@bureaucracy", "paper", 0)),
+        ("paper_bin", Dmi("@bureaucracy", "paper_bin0", 0)),
+        // pen.dm:125-130; photocopier.dm:879-884.
+        ("four_color_pen", Dmi("@bureaucracy", "pen_4color", 0)),
+        ("toner_cartridge", Dmi("@bureaucracy", "tonercartridge", 0)),
+
+        // crayons.dm:636-690 and :730-734. The box is populated with these
+        // seven sticks in crayons.dm:739-746.
+        ("crayon_red", Dmi("@crayons", "crayonred", 0)),
+        ("crayon_orange", Dmi("@crayons", "crayonorange", 0)),
+        ("crayon_yellow", Dmi("@crayons", "crayonyellow", 0)),
+        ("crayon_green", Dmi("@crayons", "crayongreen", 0)),
+        ("crayon_blue", Dmi("@crayons", "crayonblue", 0)),
+        ("crayon_purple", Dmi("@crayons", "crayonpurple", 0)),
+        ("crayon_black", Dmi("@crayons", "crayonblack", 0)),
+        ("crayon_box", Dmi("@crayons", "crayonbox", 0)),
+
+        // photocopier.dm:60-65. The open-panel state is :663-665; its
+        // print animation is the authored `photocopier1` state.
+        ("photocopier", Dmi("@library", "photocopier", 0)),
+        ("photocopier_open", Dmi("@library", "photocopier2", 0)),
+        ("photocopier_printing", DmiAnim("@library", "photocopier1", 0)),
+
+        // fax.dm:4-8 and :439-445; paper travel overlays use these states
+        // (`find_overlay_state`, fax.dm:500-507).
+        ("fax", DmiAnim("@fax", "fax", 0)),
+        ("fax_send", DmiAnim("@fax", "fax_send", 0)),
+        ("fax_receive", DmiAnim("@fax", "fax_receive", 0)),
+        ("fax_contain_paper", Dmi("@fax", "contain_paper", 0)),
+    ],
+    groups: [
+        // paper.dm:18 uses the shared `paper` state in both hand sheets.
+        (sheet: "items_l", sprites: [Directions("held_paper_l", "paper")]),
+        (sheet: "items_r", sprites: [Directions("held_paper_r", "paper")]),
+    ],
+)

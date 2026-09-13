@@ -15,3 +15,10 @@ export function documentAction(
     payload,
   };
 }
+
+/** Script documents accept one bounded string value, including button acts. */
+export const scriptAction = (
+  doc: DocumentIdentity,
+  act: string,
+  value = "",
+): Command => documentAction(doc, act, { value });

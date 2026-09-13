@@ -1,0 +1,44 @@
+{
+  "note": "An online fax with no paper and no directory entries.",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": true,
+    "state": {},
+    "documents": {
+      "2": {
+        "id": 2,
+        "generation": 1,
+        "title": "Fax machine",
+        "state": {
+          "document": "script",
+          "status": 2,
+          "data": {
+            "kind": "fax",
+            "name": "Empty fax",
+            "address": "FAX-08",
+            "network": "station",
+            "powered": true,
+            "advertised": false,
+            "toner": 0,
+            "paper": 0,
+            "loadedpaper": [],
+            "directory": [],
+            "directory_page": 0,
+            "target": null,
+            "confirming": false,
+            "busy": false
+          },
+          "actions": [
+            { "id": "advertise", "input": 16 }, { "id": "name", "input": 64 },
+            { "id": "target", "input": 64 }, { "id": "page", "input": 8 },
+            { "id": "confirm", "input": 64 }, { "id": "cancel", "input": 1 },
+            { "id": "send", "input": 64 }, { "id": "eject", "input": 1 }
+          ]
+        }
+      }
+    },
+    "log": []
+  },
+  "viewport": { "width": 1366, "height": 768, "dpr": 1 }
+}

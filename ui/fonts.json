@@ -1,0 +1,13 @@
+[
+  {
+    "family": "patrick-hand",
+    "file": "assets/fonts/patrick-hand/PatrickHand-Regular.woff2",
+    "class": "sans"
+  },
+  {
+    "family": "kalam-bold",
+    "file": "assets/fonts/kalam/Kalam-Bold.woff2",
+    "weight": 700,
+    "class": "sans"
+  }
+]

@@ -1,0 +1,37 @@
+{
+  "note": "A copier with no original and empty consumable stock.",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": true,
+    "state": {},
+    "documents": {
+      "3": {
+        "id": 3,
+        "generation": 1,
+        "title": "Photocopier",
+        "state": {
+          "document": "script",
+          "status": 2,
+          "data": {
+            "kind": "copier",
+            "name": "Photocopier",
+            "powered": true,
+            "original": [],
+            "count": 1,
+            "mode": "bw",
+            "paper": 0,
+            "toner": 0,
+            "busy": false
+          },
+          "actions": [
+            { "id": "copy", "input": 1 }, { "id": "set_count", "input": 2 },
+            { "id": "set_color", "input": 8 }, { "id": "eject", "input": 1 }
+          ]
+        }
+      }
+    },
+    "log": []
+  },
+  "viewport": { "width": 1024, "height": 768, "dpr": 1 }
+}

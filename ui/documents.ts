@@ -10,10 +10,10 @@ import type {
   DocumentIdentity,
   DocumentState,
   ModuleState,
-  Presentation,
   ScriptState,
 } from "./document-model";
-import { documentAction } from "./document-action";
+import type { CopierState, FaxState, PaperState } from "./document-model";
+import { documentAction, scriptAction } from "./document-action";
 import { moduleBody } from "./documents-modules";
 import { shelfRows } from "./documents-shelf";
 import { computerPane, desktopPane, isDesktop, lockParts, programmingTool, programmingWallpaper } from "./documents-desktop";
@@ -23,14 +23,28 @@ import { bind, column, entry, icon, press, row, screen, some, text } from "./vie
 import * as S from "./strings";
 import { labelText } from "./labels";
 import { actionSurface } from "./actions";
+import { paperBody } from "./documents-paper";
+import { faxBody } from "./documents-fax";
+import { copierBody } from "./documents-copier";
 
-const WIDTH: Record<Presentation, number> = {
+const WIDTH: Record<string, number> = {
   modules: 420,
   choices: 460,
   visual_choices: 520,
   shelf: 460,
   panes: 640,
+  paper: 620,
+  fax: 760,
+  copier: 620,
 };
+
+type WritingScriptState = PaperState | FaxState | CopierState;
+function writingScript(data: Json | undefined): WritingScriptState | undefined {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return undefined;
+  const kind = (data as { kind?: unknown }).kind;
+  if (kind !== "paper" && kind !== "fax" && kind !== "copier") return undefined;
+  return { ...(data as Record<string, Json>), document: kind } as unknown as WritingScriptState;
+}
 
 export function documents(view: GameplayView): UiNode[] {
   const open = Object.values(view.documents ?? {}).filter((doc) => !actionSurface(doc));
@@ -57,26 +71,38 @@ export function documents(view: GameplayView): UiNode[] {
     if (state.document === "build") {
       body = buildRows(id, doc, state, view.state?.armed, active);
     } else if (state.document === "script") {
-      if (isDesktop(state.data)) return desktopPane(id, doc, state, active);
-      body = scriptRows(id, doc, state, active);
+      const writing = writingScript(state.data);
+      if (writing?.document === "paper") {
+        width = WIDTH.paper;
+        body = paperBody(id, doc, writing, active);
+      } else if (writing?.document === "fax") {
+        width = WIDTH.fax;
+        body = faxBody(id, doc, writing, active);
+      } else if (writing?.document === "copier") {
+        width = WIDTH.copier;
+        body = copierBody(id, doc, writing, active);
+      } else if (isDesktop(state.data)) return desktopPane(id, doc, state, active);
+      else body = scriptRows(id, doc, state, active);
     } else {
       // Anything a provider does not name is read as a module document,
       // which is what every field below is optional for.
       const module = state as Partial<ModuleState>;
       if (module.script && isDesktop(module.script.data))
         return desktopPane(id, doc, module.script, active, module);
-      // A contact's window is titled with the tool it is worked through
-      // (below); its workspace bar names the target it reaches.
-      const tool = programmingTool(module.script?.data);
-      if (module.contact_locked) return computerPane(id, lockParts(id, doc, module, active), programmingWallpaper(module.script?.data));
-      if (module.stores) return computerPane(id, filePanes(id, doc, module, active, [], tool), programmingWallpaper(module.script?.data));
-      width = WIDTH[module.presentation ?? "modules"] ?? WIDTH.modules;
-      body = [
-        ...moduleBody(id, doc, module, active, false, false),
-        ...(module.products !== undefined
-          ? shelfRows(id, doc, module.products, active)
-          : []),
-      ];
+      else {
+        // A contact's window is titled with the tool it is worked through
+        // (below); its workspace bar names the target it reaches.
+        const tool = programmingTool(module.script?.data);
+        if (module.contact_locked) return computerPane(id, lockParts(id, doc, module, active), programmingWallpaper(module.script?.data));
+        if (module.stores) return computerPane(id, filePanes(id, doc, module, active, [], tool), programmingWallpaper(module.script?.data));
+        width = WIDTH[module.presentation ?? "modules"] ?? WIDTH.modules;
+        body = [
+          ...moduleBody(id, doc, module, active, false, false),
+          ...(module.products !== undefined
+            ? shelfRows(id, doc, module.products, active)
+            : []),
+        ];
+      }
     }
     // The host window's body is bare: the padding a document reads at
     // belongs to the document, not to every surface the pack opens.
@@ -155,9 +181,9 @@ function scriptRows(
   return [
     ...(state.data == null ? [] : dataRows(`${id}/data`, state.data)),
     ...(state.actions ?? []).map((action, index) => {
-      const key = `${id}/action/${index}`;
+    const key = `${id}/action/${index}`;
       if (!action.input)
-        return press(key, action.id, documentAction(doc, action.id, {}), {
+        return press(key, action.id, scriptAction(doc, action.id), {
           disabled: !active,
         });
       const box = `${key}/value`;

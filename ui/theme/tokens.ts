@@ -32,6 +32,9 @@ export const redLine = "#8a5a50";
 export const skyFace = "#20394e";
 export const skyLine = "#5280ac";
 export const sky = "#a4c4df";
+// Physical writing surfaces and their ink (docs/art-reference/README.md).
+export const paper = "#f1ead4";
+export const paperInk = "#202c2d";
 
 /** A palette colour at a coverage, as the grammar's `#rrggbbaa`. */
 export const alpha = (hex: string, coverage: number): string =>

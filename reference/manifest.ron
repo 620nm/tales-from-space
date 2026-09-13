@@ -11,4 +11,10 @@
         ext: "md",
         path: "text/airlock.md",
     ),
+    (
+        id: "fax_controller",
+        name: "fax-demo",
+        ext: "disl",
+        path: "scripts/fax.luau",
+    ),
 ]

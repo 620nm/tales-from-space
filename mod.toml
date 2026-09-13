@@ -45,6 +45,9 @@ native_edges = [
     "door.operation",
     "flow.backup",
     "link.command",
+    "link.service",
+    "resources.transfer",
+    "documents.operation",
 ]
 
 [paths]

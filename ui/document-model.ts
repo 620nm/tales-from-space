@@ -17,6 +17,60 @@ export type PanelDocument = DocumentIdentity & {
 };
 export type DocumentState = BuildState | ScriptState | ModuleState;
 
+export interface WritingFragment {
+  text: string;
+  style?: { font_family?: string; color?: string; weight?: number };
+}
+export interface PaperState {
+  document: "paper";
+  status?: number;
+  revision?: number;
+  name?: string;
+  committed?: WritingFragment[];
+  draft?: string;
+}
+export interface FaxDirectoryEntry {
+  id?: string;
+  name?: string;
+  address?: string;
+  online?: boolean;
+}
+export interface FaxState {
+  document: "fax";
+  status?: number;
+  name?: string;
+  address?: string;
+  network?: string;
+  powered?: boolean;
+  advertised?: boolean;
+  toner?: number;
+  paper?: number;
+  loadedpaper?: WritingFragment[] | null;
+  directory?: FaxDirectoryEntry[];
+  directory_more?: boolean;
+  directory_page?: number;
+  target?: string | null;
+  confirming?: boolean;
+  refusal?: Label;
+  busy?: boolean;
+  progress?: number;
+}
+export interface CopierState {
+  document: "copier";
+  status?: number;
+  name?: string;
+  powered?: boolean;
+  original?: WritingFragment[] | null;
+  count?: number;
+  mode?: "bw" | "color" | string;
+  paper?: number;
+  toner?: number;
+  busy?: boolean;
+  progress?: number;
+  failed?: boolean;
+  reason?: string;
+}
+
 /** The LAYOUT a module list asks for; never a renderer, never an act. */
 export type Presentation =
   | "modules"
@@ -183,6 +237,7 @@ export interface StoreRow {
   capacity: number;
   count: number;
   count_cap: number;
+  append_only?: boolean;
 }
 export interface FileRow {
   binding: string;
@@ -203,6 +258,13 @@ export interface OpenFile {
   body: string;
   revision: number;
   cap?: number;
+  fragments?: FileFragment[];
+}
+export interface FileFragment {
+  start_byte?: number;
+  end_byte?: number;
+  text: string;
+  style?: { font_family?: string; color?: string; weight?: number };
 }
 /** The editing surface of the open source/text entry (engine `editor`
  *  module), a TOP-LEVEL document key beside `open`; absent means the

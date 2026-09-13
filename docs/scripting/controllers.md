@@ -6,15 +6,21 @@ sequencing and permission policy live in its own reference source.
 
 ## Inputs
 
-The guest receives `event`, `devices` and persistent `mem`. `devices` lists
-only live, reachable direct members with their address, kind, coordinates
-and native door or vent readouts. An address identifies a member; the host
-does not resolve arbitrary addresses into world capabilities.
+The guest receives `event`, `devices`, `directory` and persistent `mem`.
+`devices` lists only live, reachable direct members with their address, kind,
+coordinates and native door or vent readouts. `directory` is a separate,
+bounded whole-tree list of advertised `{ mac, service, name }` rows, so a
+service behind another member remains discoverable without becoming a guest
+handle. An address identifies a member; the host does not resolve arbitrary
+addresses into world capabilities.
 
-Events are button requests, door completions, pressure completions and
-bounded timeouts. A button supplies `engineering`, a verified access check
-on the clicking actor. Every admitted press reaches the guest's permission
-policy, including repeats and interruptions.
+Events are button requests, door completions, pressure completions, addressed
+service deliveries/replies, send outcomes and bounded timeouts. A button
+supplies `engineering`, a verified access check on the clicking actor. Every
+admitted press reaches the guest's permission policy, including repeats and
+interruptions. Service reply tokens remain native opaque values; guests use
+the authenticated event and their own bounded state rather than payload
+correlation fields.
 
 ## Who a door answers to
 
@@ -38,6 +44,7 @@ names `mac`, a bounded correlation `id`, and an operation:
 | `bolt` | `bolted` boolean |
 | `vent` | `on`; while on, `direction = "fill" \| "drain"`, `target` kPa |
 | `watch` | `target` kPa, `comparison = "at_least" \| "below"`, `ticks` |
+| `service` | `to` advertised MAC, `service`, portable `payload`, `request` boolean |
 
 `status` is `idle`, `working`, `denied` or `fault`. `timer = { id, ticks }`
 replaces the host deadline, `timer = false` cancels it, and omission leaves
@@ -53,11 +60,14 @@ to replace a deadline with an earlier one without polling.
 
 ## Delivery and limits
 
-Plans contain at most six commands. The bridge validates the complete plan
-before queuing it. Each device independently validates commands addressed
-to it and requires the emitter to be its current parent. Host fault-stop
-envelopes can address all 64 direct children; each device still validates
-at most six addressed commands.
+Plans contain at most six commands and at most one `service` command. The bridge validates the complete plan
+before queuing it. Ordinary device commands are sent to their direct member;
+`service` commands are sent by the controller host after the same whole-plan
+validation, while native link authorization rechecks the live tree and
+advertisement. Each device independently validates commands addressed to it
+and requires the emitter to be its current parent. Host fault-stop envelopes
+can address all 64 direct children; each device still validates at most six
+addressed commands.
 
 `content/lib/device_queue.luau` paces real messages with one task and at most
 four queued packets per sender. Button and completion packets batch up to

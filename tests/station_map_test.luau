@@ -34,6 +34,12 @@ assert(spawn_x == 18 and spawn_y == 16, "the crew reaches the Commons start")
 -- waking crew can see them.
 standing(21, 13, "digital_clock")
 standing(22, 13, "status_display")
+for _, device in ipairs({ { 23, 14, "fax" }, { 24, 18, "photocopier" }, { 21, 6, "fax" } }) do
+    local machine = t.machine_at(device[1], device[2])
+    assert(machine and machine.id == device[3], device[3] .. " stands at its document station")
+end
+standing(22, 18, "access_point")
+standing(24, 6, "access_point")
 
 -- Atmospherics is commissioned rather than merely drawn.
 for _, row in ipairs({

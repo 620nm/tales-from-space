@@ -60,7 +60,10 @@ test("name edits preserve typing and follow-up clicks through pending updates", 
     await lab?.close();
     await rm(scratch, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   });
-  lab = await startLab({ root: engine, pack, syntheticAssets: true });
+  // Use the baked atlas manifest so `/obj/<sha>.woff2` serves every font
+  // declared by the real package. Synthetic assets intentionally publish no
+  // font objects, which would turn valid Patrick/Kalam faces into faults.
+  lab = await startLab({ root: engine, pack });
   browser = await launchChrome({ profileDir: join(scratch, "profile") });
   cdp = await Cdp.tab(browser.endpoint, { timeout: 30000 });
 

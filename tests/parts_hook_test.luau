@@ -84,6 +84,12 @@ local function elements(machine)
     return out
 end
 
+-- Ledger strings are intentionally hashed by the bounded diagnostic
+-- projection (script/value_summary.rs); compare the two typed values by
+-- their stable summaries rather than expecting the private text back.
+local EXPOSED = "<string 7 bytes sha256=91562eb1c6671d2be439d3dbd30696fa54986432b4866e60dcdaaec90999d177>"
+local SHIELDED = "<string 8 bytes sha256=55f7054b32f91745b67dfff303b0412fa038441e728999ee76b9c448301f2ca7>"
+
 -- Two sealed benches and a generator in its own closet -- the closet
 -- because a running generator is a heat source and the west bench is
 -- meant to be at exactly twenty degrees. Cable runs under the dividing
@@ -153,9 +159,9 @@ local upgraded_hot = t.target_at(east, 10, 1)
 -- a mapped chamber is worth is part of the opening position rather
 -- than something the first tick discovers.
 -- ---------------------------------------------------------------
-assert(elements(plain_cold)[1] == "exposed",
+assert(elements(plain_cold)[1] == EXPOSED,
     "the plain chamber's element is out in the room")
-assert(elements(upgraded_cold)[1] == "shielded",
+assert(elements(upgraded_cold)[1] == SHIELDED,
     "and a rung three laser brings its own housing")
 assert(#elements(plain_hot) == 1 and #elements(upgraded_hot) == 1,
     "each of the four was asked exactly once, at boot")
@@ -268,9 +274,9 @@ assert(chamber_spoke() == spoke_before + 1,
 
 -- ...and answered what it answered before, which the record shows by
 -- keeping no second row: an unchanged var is not a mutation, so the
--- one "exposed" written at boot is still the only one.
+-- one bounded "exposed" value written at boot is still the only one.
 local asked = elements(plain_cold)
-assert(#asked == 1 and asked[1] == "exposed",
+assert(#asked == 1 and asked[1] == EXPOSED,
     "the answer did not move, so neither did the record: " .. #asked)
 
 -- The exchanger goes down first: a click with something in your hand

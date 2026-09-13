@@ -6,6 +6,7 @@ import type {
   StyleProps,
   StyleValue,
   UiEvent,
+  UiInlineRun,
   UiNode,
 } from "@lunatic/ui";
 import {
@@ -91,6 +92,7 @@ export function text(
   value: unknown,
   cls?: string[],
   style?: StyleProps,
+  runs?: UiInlineRun[],
 ): UiNode {
   return {
     id,
@@ -98,6 +100,7 @@ export function text(
     text: labelText(value as Json),
     ...(cls?.length ? { class: cls } : {}),
     ...(style ? { style: style as Record<string, StyleValue> } : {}),
+    ...(runs?.length ? { runs } : {}),
   };
 }
 

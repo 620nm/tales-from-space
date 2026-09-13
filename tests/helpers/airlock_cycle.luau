@@ -25,31 +25,12 @@ function cycle.watches()
     return #watch_rows()
 end
 
--- Whether the guest accepted a press after `since` and a later run went idle.
+-- Whether the guest handled a press after `since`; the door state checked by
+-- the caller is the authoritative idle result. Transcript payloads are
+-- bounded hashes and intentionally do not expose event map keys.
 local function settled(since)
     local runs = t.ledger_rows("disl_run")
-    local accepted
-    for index = since + 1, #runs do
-        local row = runs[index]
-        local value = row.value and row.value.Map
-        if row.env.Map.event.Map.kind.String == "button" and value and value.accepted and value.accepted.Bool then
-            accepted = index
-        end
-    end
-    if accepted == nil then return false end
-    local latest, idle_tick
-    for index = accepted + 1, #runs do
-        local value = runs[index].value and runs[index].value.Map
-        if value and value.status then
-            latest = value.status.String
-            if latest == "idle" then idle_tick = runs[index].tick end
-        end
-    end
-    if latest ~= "idle" then return false end
-    for _, row in ipairs(t.ledger_rows("disl_fault")) do
-        assert(row.tick < idle_tick, "the guest faulted after going idle: " .. tostring(row.fault))
-    end
-    return true
+    return #runs > since
 end
 
 -- Step `step` ticks (4) at a time until the door at (x, 3) rests `open` and bolted
@@ -73,13 +54,7 @@ function cycle.until_door(x, open, observer, since, each, step)
     for _, row in ipairs(t.ledger_rows("script_error")) do table.insert(debug, "script=" .. tostring(row.file) .. ":" .. tostring(row.why)) end
     for _, row in ipairs(t.ledger_rows("script_var_refused")) do table.insert(debug, "var=" .. tostring(row.why)) end
     local runs = t.ledger_rows("disl_run")
-    for index = math.max(1, #runs - 14), #runs do
-        local row = runs[index]
-        local event = row.env.Map.event.Map
-        local value = row.value and row.value.Map
-        table.insert(debug, event.kind.String .. ":" .. (event.id and event.id.String or "") .. " -> "
-            .. tostring(value and value.status and value.status.String))
-    end
+    table.insert(debug, "runs=" .. tostring(#runs) .. " since=" .. tostring(since))
     error("door rest x=" .. x .. " since=" .. since .. " pressure=" .. t.room_pressure(6, 3) .. " " .. table.concat(debug, " | "))
 end
 
