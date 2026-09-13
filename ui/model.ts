@@ -106,6 +106,7 @@ export interface GameplayView {
     round?: RoundStatus;
     preparation?: PreparationState;
     preparationPending?: boolean;
+    preparationCanQueue?: boolean;
     preparationStorage?: { available: boolean };
     jobs?: {
       jobs: {

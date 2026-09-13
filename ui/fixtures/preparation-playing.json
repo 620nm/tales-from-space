@@ -42,7 +42,7 @@
     "documents": {}
   },
   "steps": [
-    { "type": "fill", "id": "preparation/name", "value": "Rook", "expect": { "value": "Rook", "actionCount": 1 } },
+    { "type": "fill", "id": "preparation/name", "value": "Rook", "expect": { "value": "Rook", "focused": "preparation/name", "actionCount": 0 } },
     { "type": "click", "id": "job/assistant", "expect": { "visible": ["job/assistant"], "actionCount": 2 } }
   ]
 }

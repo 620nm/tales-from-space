@@ -43,7 +43,7 @@
     "documents": {}
   },
   "steps": [
-    { "type": "fill", "id": "preparation/name", "value": "Mira Pike", "expect": { "value": "Mira Pike", "actionCount": 1 } },
+    { "type": "fill", "id": "preparation/name", "value": "Mira Pike", "expect": { "value": "Mira Pike", "focused": "preparation/name", "actionCount": 0 } },
     { "type": "click", "id": "preparation/ranked/engineer/up", "expect": { "visible": ["preparation/ranked/engineer/up"], "actionCount": 2 } },
     { "type": "select", "id": "preparation/add", "value": "doctor", "expect": { "visible": ["preparation/add"], "actionCount": 3 } },
     { "type": "click", "id": "preparation/ready", "expect": { "visible": ["preparation/ready"], "actionCount": 4 } }

@@ -45,8 +45,8 @@ function starting(view: LobbyView): boolean {
     && !round.fault;
 }
 
-function setupLocked(view: LobbyView): boolean {
-  return preparationPending(view) || starting(view);
+function followOnLocked(view: LobbyView): boolean {
+  return (preparationPending(view) && !view.state.preparationCanQueue) || starting(view);
 }
 
 function draftOf(view: LobbyView): CharacterDraft {
@@ -106,16 +106,16 @@ function rankRows(view: LobbyView, editable: boolean): UiNode[] {
           const jobs = [...current.ranked_jobs];
           if (index > 0) [jobs[index - 1], jobs[index]] = [jobs[index], jobs[index - 1]];
           return { ...current, ranked_jobs: jobs };
-        }) ?? (() => undefined), { label: S.tfs("ui.lobby.rank_up"), disabled: !editable || setupLocked(view) || index === 0, cls: ["lobby-rank-button"] }),
+        }) ?? (() => undefined), { label: S.tfs("ui.lobby.rank_up"), disabled: !editable || followOnLocked(view) || index === 0, cls: ["lobby-rank-button"] }),
         press(`${id}/down`, S.tfs("ui.tray.mark_drop"), changeDraft(view, (current) => {
           const jobs = [...current.ranked_jobs];
           if (index + 1 < jobs.length) [jobs[index], jobs[index + 1]] = [jobs[index + 1], jobs[index]];
           return { ...current, ranked_jobs: jobs };
-        }) ?? (() => undefined), { label: S.tfs("ui.lobby.rank_down"), disabled: !editable || setupLocked(view) || index + 1 >= draft.ranked_jobs.length, cls: ["lobby-rank-button"] }),
+        }) ?? (() => undefined), { label: S.tfs("ui.lobby.rank_down"), disabled: !editable || followOnLocked(view) || index + 1 >= draft.ranked_jobs.length, cls: ["lobby-rank-button"] }),
         press(`${id}/remove`, S.CLOSE_MARK, changeDraft(view, (current) => ({
           ...current,
           ranked_jobs: current.ranked_jobs.filter((_, choice) => choice !== index),
-        })) ?? (() => undefined), { label: S.tfs("ui.lobby.rank_remove"), disabled: !editable || setupLocked(view), cls: ["lobby-rank-button"] }),
+        })) ?? (() => undefined), { label: S.tfs("ui.lobby.rank_remove"), disabled: !editable || followOnLocked(view), cls: ["lobby-rank-button"] }),
       ], { cls: ["lobby-rank-controls"] }),
     ], { cls: ["lobby-rank-row"] });
   });
@@ -145,10 +145,11 @@ function characterEditor(view: LobbyView): UiNode {
     text("preparation/editor/hint", S.tfs("ui.lobby.preparation.hint"), ["hint"]),
     row("preparation/name-row", [
       text("preparation/name-label", S.tfs("ui.lobby.preparation.name"), ["lobby-field-label"]),
-      entry("preparation/name", draft.name, (value) => changeDraft(view, (current) => ({ ...current, name: value })), {
+      entry("preparation/name", draft.name, (value) => value === draft.name
+        ? undefined
+        : changeDraft(view, (current) => ({ ...current, name: value })), {
         label: S.tfs("ui.lobby.preparation.name"),
-        disabled: !editable || setupLocked(view),
-        debounceMs: 120,
+        disabled: !editable || preparationPending(view),
         cls: ["lobby-name-entry"],
       }),
     ], { cls: ["lobby-field"] }),
@@ -165,14 +166,14 @@ function characterEditor(view: LobbyView): UiNode {
           ...current,
           ranked_jobs: [...current.ranked_jobs, value],
         }));
-      }, { disabled: !editable || setupLocked(view), cls: ["lobby-add-select"] }),
+      }, { disabled: !editable || followOnLocked(view), cls: ["lobby-add-select"] }),
     ], { cls: ["lobby-field"] }),
     text("preparation/fallback-title", S.tfs("ui.lobby.preparation.fallback"), ["lobby-section-title"]),
     row("preparation/fallback-row", [
       select("preparation/fallback", fallbackValue, fallbackChoices, (value) => changeDraft(view, (current) => ({
         ...current,
         fallback: value !== "__lobby__" && !!fallback,
-      })), { disabled: !editable || setupLocked(view), cls: ["lobby-fallback-select"] }),
+      })), { disabled: !editable || followOnLocked(view), cls: ["lobby-fallback-select"] }),
     ], { cls: ["lobby-field"] }),
     issueNotice(view),
     preparationPending(view)
@@ -230,10 +231,10 @@ function footer(view: LobbyView): UiNode[] {
       prep?.ready
         ? press("preparation/ready", S.tfs("ui.lobby.unready"), {
             kind: "ready", round: prep.round, revision: prep.revision, ready: false,
-        }, { variant: "selected", disabled: setupLocked(view), cls: ["lobby-ready-button"] })
+        }, { variant: "selected", disabled: !prep.can_ready || followOnLocked(view), cls: ["lobby-ready-button"] })
         : press("preparation/ready", S.tfs("ui.lobby.ready"), {
             kind: "ready", round: prep?.round ?? round.round, revision: prep?.revision ?? 0, ready: true,
-          }, { variant: "primary", disabled: !prep?.can_ready || setupLocked(view), cls: ["lobby-ready-button"] }),
+          }, { variant: "primary", disabled: !prep?.can_ready || followOnLocked(view), cls: ["lobby-ready-button"] }),
     ], { cls: ["lobby-readiness-footer"] }),
   ];
 }
