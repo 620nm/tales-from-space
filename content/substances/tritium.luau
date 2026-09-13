@@ -26,7 +26,7 @@ return {
     dangerous = true,
     -- Where this sits in a tool that offers every substance there is
     -- (docs/MAP-PROPERTIES.md, the recipe panel). Under the air a station is
-    -- made of, over every reagent that only ever lives in a beaker.
+    -- made of, over every substance that only ever lives in a beaker.
     relevance = 40,
     -- tg's `dangerous = TRUE` (gas_types.dm:175).
     group = "poison",

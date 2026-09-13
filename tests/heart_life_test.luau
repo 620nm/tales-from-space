@@ -3,7 +3,7 @@
 -- This pack's answer to "is this body alive" is one organ: the heart is
 -- `vital` (content/items/organ_heart.luau), so the engine's `viability`
 -- port reads 0 while it is missing or FAILING, the plan's `undone`
--- threshold reads that port, and the plan's hook turns `undone` into
+-- threshold reads that port, and the plan's handler turns `undone` into
 -- `animate = false` (content/bodies/human.luau).
 --
 -- The latch is the other half: crossing the plan's `dead` line calls

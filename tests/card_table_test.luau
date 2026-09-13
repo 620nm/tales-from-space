@@ -9,14 +9,14 @@
 --
 -- Three separate facts are being asserted, and they are easy to
 -- confuse:
---   * the deck's hook answers a click that named a structure at all
+--   * the deck's handler answers a click that named a structure at all
 --     (it used to decline every named click, which would have put the
 --     deck on the table instead of a card);
 --   * the card it mints is placed rather than scattered, which is
 --     `sim.spawn_item`'s trailing offset pair suppressing the
 --     prototype's own mint-time jitter;
 --   * a card ALREADY in a hand goes down through the engine's surface
---     placement instead, because the card's own hook declines
+--     placement instead, because the card's own handler declines
 --     everything that is not a deck -- one mechanism reached two ways,
 --     landing on the same pixel arithmetic (`pixel = base + click`).
 --
@@ -65,7 +65,7 @@ assert(dealt.offset.x == 4 and dealt.offset.y == -6,
         .. dealt.offset.x .. "," .. dealt.offset.y)
 
 -- ...and the DECK is still in the hand. This is the whole of tg's
--- `deck_act`: a click a hook answered never reaches the engine's
+-- `deck_act`: a click a handler answered never reaches the engine's
 -- generic placement, so pointing a deck at a table deals from it and
 -- putting the deck itself down stays the drop verb.
 assert(t.hands(p).held == "card_deck", "the deck did not leave the hand")

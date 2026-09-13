@@ -95,7 +95,7 @@ assert(t.count_items("pipe") == 1, "no length came up (only the mapped one)")
 
 -- The same click, one tile north where the deck is open, works. This is
 -- what makes the silence above a rule about the floor and not a broken
--- hook.
+-- handler.
 t.click_subfloor(p, 2, 1, "pipe", DISTRO)
 t.run_seconds(1.5)
 assert(t.pipe(2, 1) == 0, "open plating gives the length up")

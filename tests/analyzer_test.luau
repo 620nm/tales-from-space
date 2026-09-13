@@ -114,7 +114,7 @@ assert(matching(air, "Oxygen: ", " mol (21 %)"), "one fifth oxygen")
 -- ---- the runs ----
 --
 -- A click on the exact pixels of one run reads THAT run and no other
--- (the pipe wrench's own pixel hit-test, carried to the hook as the
+-- (the pipe wrench's own pixel hit-test, carried to the handler as the
 -- subfloor target). Two layers are laid on this tile so the precision
 -- is proved against a real ambiguity: each answers alone, by name.
 local _ = t.messages(p)

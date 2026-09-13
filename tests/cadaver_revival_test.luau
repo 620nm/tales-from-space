@@ -90,7 +90,7 @@ assert(#found == 1, "one body rolled out on the slab")
 local corpse_name = found[1].name
 
 -- The mint itself latched it. 200 brute crosses the plan's `dead` line
--- inside `stand_up_stock_body`, the plan's hook stops the heart on that
+-- inside `stand_up_stock_body`, the plan's handler stops the heart on that
 -- crossing, and the corpse therefore arrives with a heart at its
 -- maximum -- a stopped one -- and not merely with a lot of bruises.
 assert(found[1].animate == false, "it arrived dead")

@@ -21,7 +21,7 @@ t.world(ARENA, 0)
 local patient = t.join()
 t.run_ticks(3)
 
--- The pack's death hook stops the heart when the dead line is crossed.
+-- The pack's death handler stops the heart when the dead line is crossed.
 t.set_health(patient, { brute = 200, burn = 0, oxy = 0, tox = 0 })
 t.run_ticks(2)
 assert(not t.body(patient).animate, "the damaged human is a corpse")

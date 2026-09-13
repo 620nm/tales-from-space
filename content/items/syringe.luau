@@ -23,7 +23,7 @@
 -- content ONE click, so the direction is `modes = 2` -- the same
 -- anonymous dial the cable coil picks its layer with -- flipped by
 -- activating the syringe in hand, and said out loud when it flips. It
--- is not on the examine pane because there is no examine hook to put
+-- is not on the examine pane because there is no examine anchor to put
 -- it there (docs/WIKI.md 3.1); the sentence when you turn it is the
 -- whole announcement.
 --
@@ -80,7 +80,7 @@ local content = {
         { 66, "syringe_fill_10" },
         { 100, "syringe_fill_15" },
     },
-    -- Clicking another loose vessel has to reach this hook rather than
+    -- Clicking another loose vessel has to reach this handler rather than
     -- picking it up: drawing is a thing you do TO the thing you named.
     acts_on_items = true,
 }

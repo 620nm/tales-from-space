@@ -3,9 +3,9 @@
 --
 -- Like cable, this is not a structure transition: there is nothing
 -- standing on the tile that owns the answer, so it stays an interaction.use
--- hook. Also like cable, it needs the subfloor OPEN -- pipe lives under
+-- handler. Also like cable, it needs the subfloor OPEN -- pipe lives under
 -- the plating, so you pry the tile up, run the line, and put the floor
--- back. The engine refuses a finished floor; this hook says so first,
+-- back. The engine refuses a finished floor; this handler says so first,
 -- because a refusal with no explanation reads as a bug.
 --
 -- THE LAYERS. tg has five, PIPING_LAYER_MIN..MAX with

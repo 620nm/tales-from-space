@@ -12,7 +12,7 @@ local content = {
     metabolism_rate = 0.004,
     -- What it looks like through glass (tg: food_reagents.dm:313 (COLOR_WHITE)).
     color = "#FFFFFF",
-    -- `mob.life(ctx, self, user, moles)`: the hook hands the same mob
+    -- `mob.life(ctx, self, user, moles)`: the anchor hands the same mob
     -- twice -- as the thing it is on and as the body it is happening to
     -- -- and the moles burned this metabolism tick last.
     --

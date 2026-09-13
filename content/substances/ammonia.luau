@@ -1,7 +1,7 @@
 -- Ammonia: NH3, the molecule, and the bench's first real synthesis.
 --
 -- ONE ID PER MOLECULE. There used to be two files here -- an `ammonia`
--- reagent that was a room-temperature liquid because tg's is, and an
+-- substance that was a room-temperature liquid because tg's is, and an
 -- `nh3` beside it with the real curve, joined by a fictional 700 K
 -- rule -- and the pair is gone. A substance is a molecule; a phase is
 -- something it reaches. The recipes that stood on the liquid were
@@ -13,7 +13,7 @@
 -- of vaporization 23.35 kJ/mol at the boiling point, heat of fusion
 -- 5.65 kJ/mol, liquid density 0.682 g/mL at the boiling point, solid
 -- 0.817. Gas heat capacity 35.1 J/(mol*K); the condensed columns are
--- the 80.8 the old reagent carried, so a beaker of it costs what it
+-- the 80.8 the old substance carried, so a beaker of it costs what it
 -- always cost to heat.
 --
 -- WHERE A CHEMIST GETS IT. At 300 K and one atmosphere ammonia RESTS
@@ -45,7 +45,7 @@
 -- kills you (substances/chlorine.luau, 16 000 and inhale 0.9, crit in
 -- two minutes at the concentration ammonia shrugs off).
 --
--- MAX_SCRIPT_HIT caps any single hook at 40, so a genuinely thick
+-- MAX_SCRIPT_HIT caps any single handler at 40, so a genuinely thick
 -- cloud is lethal in about ten breaths and cannot run away faster than
 -- that however badly somebody misjudges a reaction.
 -- tg: /datum/reagent/ammonia (other_reagents.dm:1627).
@@ -68,7 +68,7 @@ local content = {
     -- (docs/MAP-PROPERTIES.md, the recipe panel). Reachable as room air, and
     -- rarely what a room is commissioned holding.
     relevance = 20,
-    -- A caustic cloud with a metabolism hook that burns eyes and throat;
+    -- A caustic cloud with a metabolism handler that burns eyes and throat;
     -- tg has no gas datum for it, so its own reagent decides.
     group = "poison",
     -- What a placard says about this substance alone
@@ -79,8 +79,8 @@ local content = {
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    -- `mob.life(ctx, self, user, moles)`: the metabolism hook hands
-    -- the same mob twice, as the thing the hook is on and as the body
+    -- `mob.life(ctx, self, user, moles)`: the metabolism anchor hands
+    -- the same mob twice, as the thing the handler is on and as the body
     -- it is happening to, and the moles metabolized this tick last.
     script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
         local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount

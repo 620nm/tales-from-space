@@ -19,7 +19,7 @@
 -- THE DIAL IS THE ENGINE'S, NOT THIS FILE'S. `modes = 5` mints an
 -- anonymous five-position selector per instance and `sim.set_mode`
 -- turns it; a number the prototype never declared is refused natively,
--- so the wrap below cannot walk off the end even if this hook is
+-- so the wrap below cannot walk off the end even if this handler is
 -- wrong. tg keeps the same state in `current_mode` and does its own
 -- bounds check in the hook (toys.dm:420-427) -- one of the two is
 -- load-bearing and it is not the one written in the toy.
@@ -41,7 +41,7 @@ local content = {
     mode = 0,
     -- One appearance state per dial position, named for tg's own mode
     -- words. The dial and the picture are separate mechanisms that the
-    -- hook below keeps in step -- which is deliberate: `modes` is what
+    -- handler below keeps in step -- which is deliberate: `modes` is what
     -- the item IS set to, `states` is what it LOOKS like, and an item
     -- whose look did not follow its setting would still be correctly
     -- set. tg conflates them by writing `icon_state` from the mode list

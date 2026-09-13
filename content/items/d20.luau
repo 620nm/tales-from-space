@@ -1,7 +1,7 @@
 -- Twenty sides: "the preferred die to throw at the GM" (tg's own desc,
 -- `/obj/item/dice/d20`, code/game/objects/items/dice.dm:227-231).
 --
--- The same two hooks as the d6 and one more remark: tg's `diceroll`
+-- The same two handlers as the d6 and one more remark: tg's `diceroll`
 -- special-cases a natural twenty (dice.dm:92-93), which is the only
 -- reason anybody keeps one of these in a pocket.
 --
@@ -16,7 +16,7 @@
 -- missing engine seam.
 --
 -- What is no longer a gap: the picture follows the roll. Twenty faces
--- are twenty declared appearance states, and both hooks put the die
+-- are twenty declared appearance states, and both handlers put the die
 -- into the one they rolled — so even where the SENTENCE reaches only
 -- one player, the die on the deck shows its number to anyone who walks
 -- past. See d6.luau for the whole of how, and tg's own

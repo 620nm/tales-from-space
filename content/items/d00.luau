@@ -23,7 +23,7 @@
 -- "Ouch, bad luck." -- which is correct, because rolling the bottom of
 -- a ten-sider is exactly the thing the remark is about.
 --
--- d6.luau is the family header: two hooks, one state per face, the
+-- d6.luau is the family header: two handlers, one state per face, the
 -- picture following the roll.
 local SIDES = 10
 

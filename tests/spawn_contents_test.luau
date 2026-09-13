@@ -1,4 +1,4 @@
--- A hook that mints a vessel says what is in it.
+-- A handler that mints a vessel says what is in it.
 --
 -- `sim.entity.spawn`'s `initial.contents` is the fill grammar spelled at
 -- the script boundary (docs/LUAU-API.md section 6), and the softdrinks
@@ -13,8 +13,8 @@
 --      iodine is `bottle.iodine`, a prototype of its own; the machine
 --      lists no variants and takes it anyway, because `Handle.base`
 --      answers what it was derived from.
---   2. What the hook named is what is in the glass, at the temperature
---      the hook named -- not at room temperature, and not the fill the
+--   2. What the handler named is what is in the glass, at the temperature
+--      the handler named -- not at room temperature, and not the fill the
 --      `bottle` prototype declares (which is none).
 --   3. Moles that appeared from nowhere are on the record, attributed
 --      to the machine's own script and to the crewman who asked.

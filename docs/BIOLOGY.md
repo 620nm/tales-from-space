@@ -38,7 +38,7 @@ across MASKINTERNALS and STOPSPRESSUREDAMAGE (__DEFINES/obj_flags.dm:80,84).
 
 **Thresholds.** `crit` at `health <= 0`, `dead` at `health <= -1`
 (combat.dm:88-90), `undone` at `viability <= 0`. The engine latches the
-crossing; `content/bodies/human.luau`'s own hook answers it.
+crossing; `content/bodies/human.luau`'s own handler answers it.
 
 **Parts** (declaration order is the ZONE order):
 
@@ -100,7 +100,7 @@ arrest's `when_zero` oxy 4/s + brute 1/s held unconscious
 **Not carried from tg**: the `BAD..SURVIVE` 7.5 %/s blackout roll
 (blood.dm:242-244) — the `blood` step holds the body under instead;
 `losebreath += 0.25` in soft crit (carbon/life.dm:89-90) — a per-tick roll
-is not a hook's to make; the liverless 0.5/s random organ damage
+is not a handler's to make; the liverless 0.5/s random organ damage
 (carbon/life.dm:746-747).
 
 ## Organs — `content/items/organ_*.luau`
@@ -179,7 +179,7 @@ clock — a coin flip, and this file would have to say so.
 
 The engine latches nothing. `organ_heart` is `vital`, so the `viability`
 port reads 0 the moment it is missing or failing; `human.luau`'s threshold
-hook calls `sim.fail_organ` on the heart when its own `dead` line is
+handler calls `sim.fail_organ` on the heart when its own `dead` line is
 crossed. Healing the parts clears the health line and leaves the heart
 stopped; the body returns only when a replacement is seated, a `repair`
 lands, or `content/items/defib.luau` heals it. The engine's account of why

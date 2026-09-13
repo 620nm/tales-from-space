@@ -77,7 +77,7 @@ assert(t.cable_at(3, 1) == YELLOW, "as the live one is on the yellow")
 
 -- ---- no line at all ---------------------------------------------------
 -- The probe declines: nil is the type test every other reader keeps, and
--- a hook that declines falls through to whatever the click would have
+-- a handler that declines falls through to whatever the click would have
 -- meant otherwise (docs/LUAU-API.md section 9).
 t.click(p, 3, 2)
 t.tick()

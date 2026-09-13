@@ -16,7 +16,7 @@
 -- `vital = true` is what makes this organ the body's LIFE. The engine's
 -- `viability` port reads 0 the moment a vital organ is missing or
 -- FAILING (docs/BIOLOGY.md §5.41), the plan's `undone` threshold reads
--- that port, and the plan's own hook turns `undone` into `animate =
+-- that port, and the plan's own handler turns `undone` into `animate =
 -- false`. So "the heart has stopped" and "this body is dead" are one
 -- fact with one storage location, and nothing else has to be latched.
 --

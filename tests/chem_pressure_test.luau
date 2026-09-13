@@ -125,7 +125,7 @@ near(held(5, "n2"), 80.0, 1e-6, "nor any of the nitrogen it has plenty of")
 --
 -- Space cleaner: 1 ammonia + 1 water -> 2 cleaner
 -- (recipes/others.dm:448-452), and the ammonia it names is the LIQUID.
--- There is one ammonia, so the liquid is not a second reagent with the
+-- There is one ammonia, so the liquid is not a second substance with the
 -- same name -- it is this one, standing under enough of its own vapour
 -- pressure to be a liquid, which is about 8.6 atm at room temperature.
 --

@@ -1,5 +1,5 @@
 -- Bromine: Br2, the only halogen that stands in a beaker without a lid
--- on it, and the reason this shelf has a phase diagram on a reagent
+-- on it, and the reason this shelf has a phase diagram on a substance
 -- nobody makes anything out of yet.
 --
 -- Chlorine boils at 239 K and is therefore a gas everywhere on this

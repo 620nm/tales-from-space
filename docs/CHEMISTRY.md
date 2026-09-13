@@ -104,7 +104,7 @@ names. Epinephrine reads the `crit` threshold declared in
 `content/bodies/human.luau` — a pack word, never an engine one.
 
 What did NOT port, said once rather than per file: multiver's stacking
-bonus (it reads the whole bloodstream per tick and the hook is handed one
+bonus (it reads the whole bloodstream per tick and the handler is handed one
 substance), salglu's blood-volume nudge (there is blood and no content call
 that moves it), and epinephrine's stun, stamina and `losebreath` half (no
 pool holds them).

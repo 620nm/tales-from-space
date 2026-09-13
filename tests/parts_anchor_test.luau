@@ -6,7 +6,7 @@
 -- degrees (machines/chem_heater.luau) -- and its own script takes that
 -- modifier away from a chamber whose laser is rung three or better
 -- (fixtures/chem_heater.luau). The engine does the arithmetic; the
--- hook only ever answers with data, at the four moments a roster is
+-- handler only ever answers with data, at the four moments a roster is
 -- settled and never per tick (docs/LUAU-API.md, `parts.refresh`).
 --
 -- Four chambers and two rooms, because the claim is a DIFFERENCE and
@@ -71,9 +71,9 @@ local function worth(row)
 end
 
 -- Every "element" a chamber's script has written since the shift began,
--- newest last, keyed by the machine it was written about. The hook is a
+-- newest last, keyed by the machine it was written about. The handler is a
 -- transform and may not write; the `.done` half keeps this word, so a
--- row here IS the hook having run (fixtures/chem_heater.luau).
+-- row here IS the handler having run (fixtures/chem_heater.luau).
 local function elements(machine)
     local out = {}
     for _, row in ipairs(t.ledger_rows("VarSet")) do
@@ -153,7 +153,7 @@ local plain_hot = t.target_at(east, 8, 1)
 local upgraded_hot = t.target_at(east, 10, 1)
 
 -- ---------------------------------------------------------------
--- ONE: THE HOOK RAN BEFORE THE ROUND OPENED.
+-- ONE: THE HANDLER RAN BEFORE THE ROUND OPENED.
 --
 -- A map's machines are asked at boot, before the genesis row, so what
 -- a mapped chamber is worth is part of the opening position rather
@@ -216,7 +216,7 @@ assert(math.abs(eff - expected_factor(hot_k)) < 0.01,
 -- ---------------------------------------------------------------
 -- FOUR: ...AND THE UPGRADED ONE IS NOT.
 --
--- The hook took `environment.temperature` away, so there is no
+-- The handler took `environment.temperature` away, so there is no
 -- modifier left to apply and the number is the part's file value to
 -- the last digit -- the same 2.00 the west bench reads.
 -- ---------------------------------------------------------------
@@ -233,14 +233,14 @@ assert(tier == 3 and math.abs(eff - 2.0) < 1e-9,
 -- every exchange whether or not a socket changed
 -- (`_machinery.dm:1172`, the end of `exchange_parts`).
 -- An EMPTY exchanger therefore buys a refresh and nothing else, which
--- is the cleanest way to ask a hook the same question twice.
+-- is the cleanest way to ask a handler the same question twice.
 --
 -- The answer must be the same, and that is a claim about the ENGINE as
 -- much as the handler: every refresh opens on the FILES rather than on
 -- the last answer, so a handler that read its own output could not
 -- drift a machine upward one swap at a time.
 --
--- What proves the hook ran is the provenance row: a script that emits
+-- What proves the handler ran is the provenance row: a script that emits
 -- anything is on the shift record under its own file, so a row naming
 -- `fixtures/chem_heater.luau` at this tick, triggered by the crewman
 -- who clicked, IS the chamber's handler having spoken.

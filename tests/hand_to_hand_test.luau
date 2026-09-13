@@ -19,7 +19,7 @@
 --     (singlecard.dm:150-158), which is items/card_deck.luau's.
 -- A player should never have to work out which of the two they are
 -- holding, so the two produce the same result. The engine no longer
--- needs both hooks for that: use on the other hand offers an unclaimed
+-- needs both handlers for that: use on the other hand offers an unclaimed
 -- pair again with the roles swapped (the lunatic engine's
 -- docs/luau-api/inventory-interactions.md). The deck keeps both only
 -- because tg does, and each one claims the pair before the reverse
@@ -147,7 +147,7 @@ assert(t.hud(p)[t.hands(p).active] == "card_deck_half",
     "and eleven is a half deck again: " .. tostring(t.hud(p)[t.hands(p).active]))
 
 -- ---- a full deck still refuses ----------------------------------------
--- The refusal both hooks keep, reached from the deck's side: an
+-- The refusal both handlers keep, reached from the deck's side: an
 -- untouched deck is already whole, so it has nowhere to put a
 -- fifty-fifth card. tg says "stacked too high" here
 -- (singlecard.dm:156); this pack says it the way items/card.luau

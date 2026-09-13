@@ -141,7 +141,7 @@ if sim ~= nil then
             -- nothing else. It does not heal a part, close a wound or
             -- clear a threshold -- if the body is otherwise fit to live,
             -- the engine's own `viability` says so on this write and the
-            -- plan's hook says the word.
+            -- plan's handler says the word.
             for _, part in pairs(sim.parts(patient)) do
                 if part.organs and part.organs.heart then
                     sim.heal_organ(patient, "heart", sim.organ(part.organs.heart).max)

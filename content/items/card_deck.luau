@@ -175,7 +175,7 @@ if sim ~= nil then
         -- clicking a table with a deck in hand draws the top card and
         -- puts it on the table (`deck_act` -> `table_place_act`,
         -- deck.dm via tables_racks.dm:375-384). It deals rather than
-        -- putting the deck down because a hook that answers a click
+        -- putting the deck down because a handler that answers a click
         -- keeps it -- the engine's surface placement is the LAST thing
         -- a click can mean (docs/LUAU-API.md), which is exactly tg's
         -- order. Putting the DECK itself down is the drop verb, as it
@@ -187,13 +187,13 @@ if sim ~= nil then
         -- is the same act items/card.luau performs from the card's
         -- side, and it exists so the gesture works whichever hand is
         -- holding which -- a deck in the active hand and a card in the
-        -- other reaches this hook, and the reverse reaches that one.
+        -- other reaches this handler, and the reverse reaches that one.
         if target ~= nil and target.kind == "item" then
             local card = target.entity
             if card.prototype ~= "card" then
                 return { replaced = false }
             end
-            -- The same two refusals the card's own hook keeps, for the
+            -- The same two refusals the card's own handler keeps, for the
             -- same reason: tg's `insert` returns null past `card_limit`
             -- rather than growing the list (cards.dm:76-77), a deck
             -- nobody has dealt from is already whole (`nil` order), and
@@ -230,7 +230,7 @@ if sim ~= nil then
             return { replaced = false }
         end
         -- Somewhere a card can lie. The engine refuses a spawn onto
-        -- anything else and refuses it SILENTLY, so this hook asks
+        -- anything else and refuses it SILENTLY, so this handler asks
         -- first: a deal that decremented the deck and produced no card
         -- would be a deck that eats itself against a wall. Same
         -- check-twice discipline as construction, one seam smaller.
@@ -254,7 +254,7 @@ if sim ~= nil then
         -- The top card is the first entry, and the rest of the string
         -- is the rest of the deck. One read, one write, no round trip:
         -- `sim.var` is a query and `sim.set_var` is an effect, so a
-        -- hook that wrote and then read would get the old value back.
+        -- handler that wrote and then read would get the old value back.
         local top, rest = order:match("^([^,]+),?(.*)$")
         self.vars["order"] = rest
         -- Face DOWN, which is how tg deals unless the dealer says

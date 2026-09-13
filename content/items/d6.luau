@@ -2,10 +2,10 @@
 -- somebody reads it. Ported from tg's `/obj/item/dice/d6`
 -- (code/game/objects/items/dice.dm:48-60, 156-157).
 --
--- Two hooks, because tg rolls at exactly two moments: `attack_self`
+-- Two handlers, because tg rolls at exactly two moments: `attack_self`
 -- rolls it in your hand (dice.dm:68-69), and `throw_impact` rolls it
 -- again where it lands (dice.dm:71-75). The second is the entire reason
--- the engine grew a landing hook — a die is a thing whose interesting
+-- the engine grew a landing anchor — a die is a thing whose interesting
 -- behaviour happens after it stops moving, and there was no seam for
 -- that until now.
 --
@@ -20,7 +20,7 @@
 -- weapon. `throw_range`/`throw_speed` are tg's defaults too, unstated.
 --
 -- THE PICTURE FOLLOWS THE ROLL. Each face is a declared appearance
--- state, and both hooks put the die into the one they rolled, so a die
+-- state, and both handlers put the die into the one they rolled, so a die
 -- lying on the deck shows what it came up. tg does this by pasting the
 -- number onto the icon state -- `update_overlays` appends
 -- `"[icon_state]-[result]"` (dice.dm:114-116) -- where a name it cannot
@@ -54,7 +54,7 @@ local content = {
     -- The resting picture, and the fallback for any state that named no
     -- cell of its own. Six faces name one each, so nothing falls back.
     sprite = "d6",
-    -- One state per face, named for the number so a hook can reach it
+    -- One state per face, named for the number so a handler can reach it
     -- with `tostring(result)` and nothing has to map between them.
     states = { "1", "2", "3", "4", "5", "6" },
     -- Minted on six, which is the face `sprite = "d6"` is baked showing:

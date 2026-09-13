@@ -21,9 +21,9 @@
 -- the machine's `construction_type` back onto the tile
 -- (atmosmachinery.dm:511-520). So there is exactly one state here.
 -- Everything a "displaced port" used to be is now an item in somebody's
--- hands (items/connector_port.luau), which is the whole point: you can
--- pick it up, carry it across the station, and put it down somewhere
--- better.
+-- hands (items/connector_port_fitting.luau), which is the whole
+-- point: you can pick it up, carry it across the station, and put it
+-- down somewhere better.
 --
 -- Two seconds each way, which is tg's atmospherics wrench (its
 -- `can_unwrench` path runs `use_tool(..., 2 SECONDS)`,

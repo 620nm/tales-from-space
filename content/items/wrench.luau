@@ -12,10 +12,10 @@
 --
 -- ONE PULL, ONE LENGTH -- the wirecutters' rule, for the same reason.
 -- The client alpha-tests the actual stacked pipe art and appends the
--- selected layer to this hook. The server validates that exact length
+-- selected layer to this handler. The server validates that exact length
 -- before dispatch and again when applying the cut.
 --
--- Structures claim a click before this hook ever runs, so a wrench on a
+-- Structures claim a click before this handler ever runs, so a wrench on a
 -- girder still bolts the girder; this only sees tiles nothing else
 -- wanted.
 --

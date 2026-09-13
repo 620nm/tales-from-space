@@ -4,7 +4,7 @@
 -- held laptop's contact workspace: the address, the derived state, the
 -- lock, the roster, the join candidates and the files are the target's
 -- own modules (docs/LAPTOP.md, the engine's docs/pack-ui/server.md).
--- There is deliberately no hook here that joins, releases or unlocks
+-- There is deliberately no handler here that joins, releases or unlocks
 -- anything -- a second path to those would be a second answer to who may.
 --
 -- What is left is a sentence: a click that nothing took -- a bare hand,

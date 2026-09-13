@@ -23,7 +23,7 @@
 -- medicines in the bloodstream and multiver always counts itself, so
 -- the floor is 1: half a point of toxin off per tick, and half a point
 -- onto the lungs for it. The stacking bonus is not ported -- it reads
--- the whole reagent list per tick and this engine's hook is handed one
+-- the whole reagent list per tick and this engine's handler is handed one
 -- substance -- so what ships is tg's floor, which is also tg's
 -- description of the chem: not great at healing, but it works when
 -- there is nothing else.
@@ -56,8 +56,8 @@ local content = {
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    -- `mob.life(ctx, self, user, moles)`: the metabolism hook hands
-    -- the same mob twice, as the thing the hook is on and as the body
+    -- `mob.life(ctx, self, user, moles)`: the metabolism anchor hands
+    -- the same mob twice, as the thing the handler is on and as the body
     -- it is happening to, and the moles metabolized this tick last.
     script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
         local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount

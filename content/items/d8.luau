@@ -2,7 +2,7 @@
 -- (`/obj/item/dice/d8`, code/game/objects/items/dice.dm:206-210) and
 -- that is the entire design document.
 --
--- d6.luau is this family's header -- two hooks, one appearance state
+-- d6.luau is this family's header -- two handlers, one appearance state
 -- per face, the picture following the roll. This file is that shape at
 -- eight, and the only thing worth reading here is that eight is over
 -- tg's `MIN_SIDES_ALERT`, so a 1 still earns the remark.

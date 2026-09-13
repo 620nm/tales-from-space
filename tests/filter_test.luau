@@ -143,7 +143,7 @@ near(ui.setpoints[1].max, 200.0, 0.001, "which is also the top of the dial")
 -- matter registry gives a GAS PHASE to, each naming its own option.
 -- Nothing selected out of the box, which is tg's empty `filter_type`.
 -- Water and chlorine are on it because both stand in a pipe as gas
--- whenever the run is hot or thin enough; only a reagent with no
+-- whenever the run is hot or thin enough; only a substance with no
 -- modelled gas phase at all is left off, because its button could
 -- never divert anything.
 local roster = {}

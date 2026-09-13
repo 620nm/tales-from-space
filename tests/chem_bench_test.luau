@@ -171,7 +171,7 @@ near(cooled.pressure_kpa,
 -- the spare sodium is there to be visible at the end.
 --
 -- WHAT ACTUALLY ENDS THE RUN is the better lesson, and it is one no
--- reagent economy could have taught. The recipe names
+-- substance economy could have taught. The recipe names
 -- `chlorine:liquid`. The reaction is exothermic -- 7530 J per extent,
 -- against a mixture whose whole heat capacity is about ten joules per
 -- kelvin -- so the bottle warms itself as it works, and a warmer bottle

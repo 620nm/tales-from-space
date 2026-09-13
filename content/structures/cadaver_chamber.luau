@@ -111,7 +111,7 @@ return {
     -- (content/items/human_chest.luau) — which is the `dead` line
     -- content/bodies/human.luau draws (docs/BIOLOGY.md §3.4). The
     -- engine never learns the word: it applies the number, the plan's
-    -- threshold hook decides what crossing it means.
+    -- threshold handler decides what crossing it means.
     variants = {
         cadaver = {
             -- Same name as the plain entry: tg calls every one of them

@@ -8,7 +8,7 @@
 --
 --   (16, 13, "light", { "color": "#FFD6AA" })
 --
--- `script` names the file whose hooks answer for this thing
+-- `script` names the file whose handlers answer for this thing
 -- (fixtures/light.luau) -- which is how a shattered tube can be swept
 -- up and a new one fitted without the engine learning what a light is.
 return {

@@ -1,6 +1,6 @@
 -- Saltpetre: potassium nitrate. tg feeds it to plants and puts it in
 -- gunpowder; hydroponics and explosives are both deferred, so what it
--- is here is a SHELF reagent -- one of tg's own upgrade-tier dispenser
+-- is here is a SHELF substance -- one of tg's own upgrade-tier dispenser
 -- buttons (chem_dispenser.dm:81-88), which is where it comes from now
 -- that no recipe makes it.
 --

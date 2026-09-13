@@ -16,7 +16,7 @@
 -- the hole rather than about the organ.
 --
 -- Read-only, the whole way down: nothing here is an effect, and the
--- surface is the same one a hook gets (`sim.sockets`,
+-- surface is the same one a handler gets (`sim.sockets`,
 -- docs/LUAU-API.md 7.1).
 
 local ARENA = [==[(
@@ -54,7 +54,7 @@ for _, id in ipairs({ "heart", "lungs", "liver", "brain", "eyes", "ears", "tongu
     assert(row.id == id, "the row names itself: " .. row.id)
 end
 assert(sockets.spleen == nil,
-    "a socket this plan does not declare is nil, which is how a hook asks")
+    "a socket this plan does not declare is nil, which is how a handler asks")
 
 -- The identity of the hole, not only of what is in it.
 assert(sockets.heart.zone == "chest", "the heart socket lives in the chest")

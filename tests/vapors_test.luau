@@ -10,7 +10,7 @@
 -- keeps nine tenths of it (sim/breathing.rs, `absorb_breath`).
 --
 -- ONE ID PER MOLECULE is what this spec is really about. There used to
--- be a `chlorine` reagent and a `cl2` gas beside it with a fictional
+-- be a `chlorine` substance and a `cl2` gas beside it with a fictional
 -- 420 K reaction as the door between them, and the way to gas a room
 -- was to heat a beaker until the door opened. There is no door now:
 -- `chlorine` IS Cl2, the dispenser hands it over as the liquid a
@@ -196,7 +196,7 @@ assert(partial() > 0.75,
 --
 -- The blood ledger itself is covered where it can be held still --
 -- crates/lunatic-server/src/sim/tests/vapors.rs, against a fixture
--- reagent that does not metabolize.
+-- substance that does not metabolize.
 -- ---------------------------------------------------------------
 for _ = 1, 10 do
     t.run_ticks(BREATH)
