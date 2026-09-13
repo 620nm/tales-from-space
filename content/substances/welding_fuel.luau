@@ -27,7 +27,7 @@ local content = {
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
-        local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount
+        local mob, _user, _moles = ev.entity, ev.entity, ev.amount
         sim.damage.apply({ target = mob, amounts = { brute = 1.0 } })
         if math.random(1, 8) == 1 then
             sim.message.send({

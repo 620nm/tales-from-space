@@ -16,25 +16,11 @@
 -- one block in the south-west; the Commons, the vents and the walked
 -- route are pinned below by coordinate, not by assumption.
 
-local L2 = 2 -- scrubbers
 local L3 = 4 -- the department's process line
-local L4 = 8 -- supply
-
-local function near(a: number, b: number, slack: number, what: string)
-    assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
-end
 
 local function room_of(x: number, y: number, which: string)
     local held = t.room_gas(x, y)
     return held and held[which] or 0.0
-end
-
-local function room_total(x, y)
-    local sum = 0.0
-    for _, moles in pairs(t.room_gas(x, y) or {}) do
-        sum = sum + moles
-    end
-    return sum
 end
 
 t.world_file("chillstation.ron", 7)

@@ -47,10 +47,8 @@ local patient = t.join("assistant")
 t.run_ticks(3)
 
 local full = t.target_at(medic, 1, 1, "beaker.libital")
-local empty = t.target_at(medic, 2, 1, "beaker")
 local jar = t.target_at(medic, 3, 1, "bottle")
 local syringe = t.target_at(medic, 4, 1, "syringe")
-local dose = t.target_at(medic, 4, 1, "beaker.libital")
 
 local function take(p, x, y, id)
     if t.hands(p).held ~= nil then
