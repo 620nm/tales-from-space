@@ -19,7 +19,7 @@ spells only `neutral`, and everything below is a name this pack invented.
 | Respawning | Returns to the lobby on a fresh Mind | Seats a new body at once |
 | Vending | Roundstart quantities deplete | Every shelf remains stocked forever |
 | Sky | Rolled (below) | Rolled (below) |
-| Playtesting | — | The mode a posted map boots into |
+| Playtesting | — | Default mode for a posted map |
 | Shift | One hour | One hour — the same hour |
 
 Space Station is the home for imported station systems and the station shift
@@ -172,11 +172,16 @@ air remains a tile-specific choice.
 
 ## Playtesting
 
-`free_build` sets `playtest = true`, so a map posted to `POST /maps/playtest`
-boots into it when the operator names no `--playtest-mode`. A mapper wants to
-walk the station they just drew with the tools to poke at it, not to queue at a
-job board for a shift they are not playing. At most one mode in the pack may
-claim the flag.
+`free_build` sets `playtest = true`, making it the default for
+`POST /maps/playtest` when the editor leaves the mode blank. Otherwise the
+posted map uses the editor's selected mode. At most one mode may claim the
+flag. The server's `--playtest` flag exposes this route; launcher startup
+still uses its ordinary mode.
+
+Posted rounds bypass preparation and offer every role in the crew job board,
+ignoring slot limits. The first successful choice creates the body and starts
+the round; unknown or unspawnable roles leave it waiting. Later connections
+keep this role board policy. Packs without body input or jobs start immediately.
 
 ## Both files are evaluated twice
 
