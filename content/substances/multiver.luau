@@ -23,8 +23,8 @@
 -- medicines in the bloodstream and multiver always counts itself, so
 -- the floor is 1: half a point of toxin off per tick, and half a point
 -- onto the lungs for it. The stacking bonus is not ported -- it reads
--- the whole reagent list per tick and this engine's handler is handed one
--- substance -- so what ships is tg's floor, which is also tg's
+-- tg's whole reagent list per tick and this engine's handler is handed
+-- one substance -- so what ships is tg's floor, which is also tg's
 -- description of the chem: not great at healing, but it works when
 -- there is nothing else.
 --

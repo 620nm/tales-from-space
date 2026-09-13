@@ -7,7 +7,7 @@
 -- nothing to port: `code/modules/plumbing/` is all machines that feed
 -- each other, none of which stands open to the room. What is borrowed
 -- is the PICTURE, from the one machine in that tree doing the same job
--- -- the chemical disposer, "Breaks down chemicals and annihilates
+-- -- tg's chemical disposer, "Breaks down chemicals and annihilates
 -- them" (plumbers/destroyer.dm:4-8) -- and nothing else. tg's disposer
 -- eats 5 u a second off a plumbing duct; this eats half a litre a
 -- second off the deck, and the two numbers have nothing to say to each

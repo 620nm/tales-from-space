@@ -15,12 +15,12 @@
 -- (../lunatic/docs/CONTENT-SCHEMA.md 1.1a). Two entries, four
 -- pictures each, one board apiece.
 --
--- ITS ALLOW-LIST IS A SIEVE RATHER THAN A SHUTDOWN. Bay's
--- `reagent_whitelist` is enforced by refusing to run at all -- one
--- unlisted reagent in the container and the machine "pings rapidly and
--- powers down" (`:134-140`) -- which means a beaker somebody rinsed
--- badly stops the machine. Here the roster is a filter on the mouth:
--- water crosses, everything else stays in the glass. Same promise
+-- ITS ALLOW-LIST IS A SIEVE RATHER THAN A SHUTDOWN.
+-- Bay's `reagent_whitelist` is enforced by refusing to run at all.
+-- One unlisted reagent in Bay's container and the machine "pings
+-- rapidly and powers down" (`:134-140`), which means a beaker somebody
+-- rinsed badly stops the machine. Here the roster is a filter on the
+-- mouth: water crosses, everything else stays in the glass. Same promise
 -- (nothing but steam reaches the line), no tantrum.
 --
 -- ITS DIAL OPENS WARM RATHER THAN BOILING. Bay hands its steam over at

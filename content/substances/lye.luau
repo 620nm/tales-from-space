@@ -5,7 +5,7 @@
 --
 -- Real molar mass and real molar heat capacity (NaOH), with an
 -- authored `unmodeled` rest phase for the same reason salt has one: it
--- melts at 596 K, well inside the heater's range, and a bench chemical
+-- melts at 596 K, well inside the heater's range, and a bench substance
 -- that puddles on the hotplate is a distraction from the chemistry.
 -- docs/CHEMISTRY.md, D2.
 -- tg: /datum/reagent/lye (other_reagents.dm:2552).

@@ -21,9 +21,9 @@
 --     a puddle displace air in a sealed vessel.
 --
 -- **tg's seventh gas, `water_vapor`, is not here: it IS this file's gas
--- row.** tg needs a separate id because its gas mixtures and its
--- reagents are two unrelated systems that cannot name the same
--- substance; here one substance carries all three phases, so a twin
+-- row.** tg needs a separate id: tg's gas mixtures and tg's reagents
+-- are two unrelated systems that cannot name the same substance.
+-- Here one substance carries all three phases, so a twin
 -- would be a second name for one molecule — two ids to filter for, two
 -- rows on an analyser, and a fire whose humidity could never rain out
 -- because the thing it made had no liquid phase.

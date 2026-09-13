@@ -1,5 +1,5 @@
--- The pill: one dose, once. tg's
--- `/obj/item/reagent_containers/applicator/pill`
+-- The pill: one dose, once.
+-- tg: `/obj/item/reagent_containers/applicator/pill`
 -- (code/modules/reagents/reagent_containers/pill.dm:1-11).
 --
 -- It arrives EMPTY off the shelf and empty out of the packager's

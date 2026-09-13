@@ -4,12 +4,12 @@
 -- optimal_temp 700, temp_exponent_factor 1.2 and thermic_constant 50
 -- from `/datum/chemical_reaction/medicine` (recipes/medicine.dm:2-11).
 --
--- THE DEPARTURE: the saltwater leg is spelled out. tg carries brine as
--- its own reagent and makes it out of one water and one salt
--- (recipes/others.dm:909-912); one id per molecule deleted that
--- substance and that recipe, because a solution is not a compound and
--- there was nothing for a third id to name (D3, and the negative
--- assertion in tests/chem_bench_test.luau). So the two units of
+-- THE DEPARTURE: the saltwater leg is spelled out.
+-- tg carries brine as its own reagent and makes it out of one water
+-- and one salt (recipes/others.dm:909-912); one id per molecule
+-- deleted that substance and that recipe, because a solution is not a
+-- compound and there was nothing for a third id to name (D3, and the
+-- negative assertion in tests/chem_bench_test.luau). So the two units of
 -- saltwater tg asks for are written as what they were made of -- one
 -- water and one salt -- and the product count stays at tg's three.
 --

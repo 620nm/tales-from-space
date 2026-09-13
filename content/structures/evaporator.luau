@@ -3,26 +3,26 @@
 --
 -- Ported from Baystation12
 -- (`Baystation12/code/modules/reagents/Chemistry-Sublimator.dm:34-48`)
--- -- "an advanced machine that converts liquid or solid reagents into
--- gasses". tgstation has no such machine at all: its chemistry and its
--- atmospherics never touch, and this is the one fixture that makes them
--- one system here.
+-- -- Bay: "an advanced machine that converts liquid or solid reagents
+-- into gasses". tgstation has no such machine at all: its chemistry and
+-- its atmospherics never touch, and this is the one fixture that makes
+-- them one system here.
 --
 -- THREE OF BAY'S NUMBERS ARE MISSING, AND THAT IS THE PORT. Bay boils a
--- flat twenty units a tick (`sublimated_units_per_tick = 20`, `:45`),
--- divides them by a hardcoded `REAGENT_GAS_EXCHANGE_FACTOR` to get
+-- flat twenty units a tick (`sublimated_units_per_tick = 20`, `:45`).
+-- Bay divides them by a hardcoded `REAGENT_GAS_EXCHANGE_FACTOR` to get
 -- moles (`:150`), and writes the result's temperature from an
--- `output_temperature` var (`:48`, `:155`) -- three constants it needs
--- because it keeps reagents and gases in two registries and has to
--- invent a gas for each reagent as it goes (`:1-32`). There is one
--- registry here and one Mixture (../lunatic/docs/MATTER.md): water in a
--- beaker and water in a pipe are the same substance on the same phase
--- curve. So the rate is the vessel's own boil, the moles are the moles,
--- and the gas leaves at the temperature it boiled at. What is left of
--- Bay is the SHAPE -- a docked vessel, a mouth on a run, a heater under
--- it -- and the mechanism is the stationary tank's: the vessel and the
--- net it reaches pool every atmos pass, split by volume, both ways
--- (../lunatic/docs/ATMOS.md §9).
+-- `output_temperature` var (`:48`, `:155`). Bay needs those three
+-- constants because Bay keeps reagents and gases in two registries,
+-- and Bay must invent a gas for each reagent as it goes (`:1-32`).
+-- There is one registry here and one Mixture (../lunatic/docs/MATTER.md):
+-- water in a beaker and water in a pipe are the same substance on the
+-- same phase curve. So the rate is the vessel's own boil, the moles are
+-- the moles, and the gas leaves at the temperature it boiled at.
+-- What is left of Bay is the SHAPE -- a docked vessel, a mouth on a
+-- run, a heater under it -- and the mechanism is the stationary tank's:
+-- the vessel and the net it reaches pool every atmos pass, split by
+-- volume, both ways (../lunatic/docs/ATMOS.md §9).
 --
 -- BOTH WAYS is the part Bay cannot do. Its machine merges into
 -- `air_contents` and never draws from it (`:156`). Here a cold line

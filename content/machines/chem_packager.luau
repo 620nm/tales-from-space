@@ -18,9 +18,10 @@
 -- that hands it back, and `package`.
 --
 -- WHAT TG'S WINDOW HAS THAT THIS ONE DOES NOT: tg's ChemMaster is
--- mostly a separator -- a buffer, a per-reagent transfer, a container
--- picker over pills, patches, bottles and condiment packs, a printed
--- name, and a pill-coating duration (chem_master.dm:283,473,507-539).
+-- mostly a separator. tg has a buffer, a per-reagent transfer, a
+-- container picker over pills, patches, bottles and condiment packs, a
+-- printed name, and a pill-coating duration
+-- (chem_master.dm:283,473,507-539).
 -- Each of those is another button and another number, and the number
 -- half needs a setpoint whose ends are native state; this machine has
 -- the one operation and takes the whole vessel, which is the shape the
