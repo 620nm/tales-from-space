@@ -15,7 +15,7 @@
 --
 -- `rest = true` marks the bucket everything untagged falls into. Without
 -- it the untagged tail would draw under no heading at all, which is
--- honest but says nothing; with it, a reagent nobody has thought about
+-- honest but says nothing; with it, a substance nobody has thought about
 -- yet still lands somewhere a player can find it.
 return {
     { key = "atmospheric", label = "Station atmosphere" },

@@ -109,7 +109,7 @@ assert(has(t.sounds(attendant), "cadaver_alert"),
 
 -- The one thing that stops it: they do. Four hundred brute is past the
 -- plan's dead line (content/bodies/human.luau), and the plan's own
--- threshold hook is what decides that -- the engine only applies the
+-- threshold handler is what decides that -- the engine only applies the
 -- number and repaints the drawer around the body.
 t.set_health(patient, { brute = 400 })
 t.tick()

@@ -3,7 +3,7 @@
 --
 -- tg rolls a die on `attack_self` and again on `throw_impact`
 -- (code/game/objects/items/dice.dm:68-75), which is exactly the pair
--- of hooks the prototypes carry. The second one is the point of the
+-- of handlers the prototypes carry. The second one is the point of the
 -- whole exercise: a thrown die comes to rest by itself, and the engine
 -- fires `throw.land.done` where it stopped.
 --

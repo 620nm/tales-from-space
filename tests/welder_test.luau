@@ -1,7 +1,7 @@
 -- The welder's deconstruction ladder, scenario 1: sealing a hull
 -- breach is a guarded do_after, attributed to the player who held the
 -- torch. Since the construction interpreter landed, the torch has no
--- hook at all -- vacuum's own file says a welder closes it. (Port of the Rust m5 seal test; the
+-- handler at all -- vacuum's own file says a welder closes it. (Port of the Rust m5 seal test; the
 -- repressurization tail stays native until t grows a pressure query.)
 t.world([==[(
     name: "weld",

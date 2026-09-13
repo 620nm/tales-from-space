@@ -6,7 +6,7 @@
 -- structure transition, and transitions spend stacks.
 --
 -- Laying cable is NOT a structure transition -- there is nothing on the
--- tile that owns the answer -- so it stays an interaction.use hook, which the
+-- tile that owns the answer -- so it stays an interaction.use handler, which the
 -- interpreter falls through to when no table names this item.
 --
 -- Cable goes UNDER the deck, so the tile has to be open -- the same rule

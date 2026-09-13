@@ -14,7 +14,7 @@
 --   * a click with something in hand puts that thing DOWN on it, at the
 --     pixel you pointed at (`table_place_act`, :387-402). Here that is
 --     `surface = true` and nothing else: the mechanism is the engine's
---     (sim/surface.rs), and it runs LAST, after every hook this pack
+--     (sim/surface.rs), and it runs LAST, after every handler this pack
 --     declares, which is what lets a deck of cards deal at a table
 --     instead of being put down on one.
 --

@@ -5,7 +5,7 @@
 --
 -- Everything a player DOES to a router is native panel work, and who
 -- hears whom is the shape of the forest and nothing else -- neither of
--- those is a hook's business (docs/DEVICES.md §5, §9).
+-- those is a handler's business (docs/DEVICES.md §5, §9).
 --
 -- A ROOT CARRIES HUBS. That is the whole of what this file knows that
 -- the access point's does not: a router accepts access points and never

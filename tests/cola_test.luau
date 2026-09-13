@@ -1,5 +1,5 @@
 -- Drinking: a swig moves 0.05 mol from the can to the bloodstream, and
--- metabolism burns the sugar whose hook heals oxygen damage. (Port of
+-- metabolism burns the sugar whose handler heals oxygen damage. (Port of
 -- the observable half of the Rust m7 test; exact conservation across
 -- the can stays native until t grows a container query.)
 t.world([==[(
@@ -44,12 +44,12 @@ local after = t.health(p).oxy
 assert(after < before, ("sugar healed oxy: %g -> %g"):format(before, after))
 assert(t.blood_moles(p) < swig, "metabolism removed moles from the blood")
 
--- THE HOOK IS HANDED A NUMBER.
+-- THE HANDLER IS HANDED A NUMBER.
 --
 -- `mob.life(ctx, self, user, moles)` takes four arguments and the
--- fourth is the moles this metabolism trip burned. A hook that names
+-- fourth is the moles this metabolism trip burned. A handler that names
 -- three parameters binds the BODY to `moles`; arithmetic on a handle
--- throws, and a hook that throws loses its whole effect buffer -- so
+-- throws, and a handler that throws loses its whole effect buffer -- so
 -- the heal would silently never land at all. Sugar's heal is written
 -- as `moles * 125`, which makes the arithmetic itself the proof.
 --
@@ -86,4 +86,4 @@ end
 assert(math.abs(trips[1] - full) < 1e-6, ("a full trip pays %g, got %g"):format(full, trips[1]))
 assert(tapered, "and the trip that burned the dregs paid proportionally less")
 assert(healed <= sugar * 125.0 + 1e-6, "no trip healed sugar it had not burned")
-assert(#t.ledger_rows("ScriptError") == 0, "and no metabolism hook threw")
+assert(#t.ledger_rows("ScriptError") == 0, "and no metabolism handler threw")

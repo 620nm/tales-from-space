@@ -41,7 +41,7 @@ local content = {
         { 80, "beaker_fill_80" },
         { 100, "beaker_fill_100" },
     },
-    -- Clicking another loose vessel has to reach the hook rather than
+    -- Clicking another loose vessel has to reach the handler rather than
     -- picking it up: pouring is a thing you do TO the thing you named.
     acts_on_items = true,
     -- What the infirmary keeps on the shelf, as a variant of the glass

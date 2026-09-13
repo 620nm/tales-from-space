@@ -43,7 +43,7 @@ local function shielded(slots)
 end
 
 if sim ~= nil then
-    -- Which way the last refresh went, in one word. The hook itself is
+    -- Which way the last refresh went, in one word. The handler itself is
     -- a transform and may not write; this is the fact a panel, an
     -- examine line or an admin reading the shift record wants, and the
     -- `.done` half is the half allowed to keep it.

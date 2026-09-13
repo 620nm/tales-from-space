@@ -55,7 +55,7 @@ assert(#found == 1, "one body rolled out with the slab")
 local corpse = found[1]
 assert(corpse.plan == "human", "minted from the plan the row named")
 assert(corpse.player == false, "nobody is at the wheel of it")
-assert(corpse.animate == false, "the plan's own hook stopped it")
+assert(corpse.animate == false, "the plan's own handler stopped it")
 assert(corpse.label == "Dead", "in the pack's own word for that")
 assert(corpse.posture == "lying", "and it is lying on the slab")
 assert(corpse.health <= -100, "200 brute is past the plan's dead line")

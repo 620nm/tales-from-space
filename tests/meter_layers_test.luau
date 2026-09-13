@@ -76,7 +76,7 @@ assert(
     "the alpha-tested pipe supplies the exact layer"
 )
 
--- Script hooks cannot move a held item, so Lunatic uses its ordinary
+-- Script handlers cannot move a held item, so Lunatic uses its ordinary
 -- drop key here; tg's pipe interaction performs this drop itself.
 t.move(p, "north")
 t.run_ticks(5)

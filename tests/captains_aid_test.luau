@@ -5,7 +5,7 @@
 -- it is that TWO pieces of per-instance state, the engine's anonymous
 -- dial (`modes`/`sim.set_mode`) and the appearance state
 -- (`states`/`sim.set_state`), stay in step over a full cycle and past
--- the wrap. They are separate mechanisms; a hook that advanced one and
+-- the wrap. They are separate mechanisms; a handler that advanced one and
 -- not the other would leave a toy that is set to "aft" and drawn
 -- pointing "fore", and only reading the SPRITE off the deck catches it.
 --

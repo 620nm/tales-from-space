@@ -39,5 +39,5 @@ runtime structures are invisible and never appear in a player's world view.
 `weight`. The number rows run from `0` through `1,000,000`; the words rows are
 comma-separated filters and default to empty. These editor defaults match the
 placement declarations in `content/structures/player_spawn.luau` and
-`content/structures/threat_spawn.luau`. Runtime selection and hook behavior
+`content/structures/threat_spawn.luau`. Runtime selection and handler behavior
 are documented in [`MAP-MARKERS.md`](MAP-MARKERS.md).

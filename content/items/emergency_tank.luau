@@ -101,7 +101,7 @@ local content = {
     -- body alive. Closing is never refused, and neither is looking.
     --
     -- What the station actually issues (docs/CONTENT-SCHEMA.md 1.1a).
-    -- A charge is a line of data, not a second file, and the hooks
+    -- A charge is a line of data, not a second file, and the handlers
     -- below are bound to this shell and govern every variant of it.
     variants = {
         -- tg's own: oxygen at 10*ONE_ATMOSPHERE in three litres

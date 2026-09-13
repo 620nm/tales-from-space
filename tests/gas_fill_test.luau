@@ -269,7 +269,7 @@ local function condensed(handle, key)
     return (entry.solid or 0.0) + (entry.liquid or 0.0)
 end
 
--- The bench run: charge off the line, press the reagent in, put it on
+-- The bench run: charge off the line, press the substance in, put it on
 -- the element. Answers the bottle, still docked and still hot.
 local function bake(bx, by, cx, key, mol, target_k, seconds)
     walk_to(bx, by)
@@ -286,7 +286,7 @@ local function bake(bx, by, cx, key, mol, target_k, seconds)
     local charge = gas(jar, "o2")
     assert(charge > 0.0, "the bottle came away with oxygen in it")
 
-    -- The reagent, through the dock, at the dial.
+    -- The substance, through the dock, at the dial.
     walk_to(2, 2)
     panel(1, 2, dispenser)
     panel(1, 2, dispenser)

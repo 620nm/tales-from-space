@@ -4,7 +4,7 @@
 -- channels, the ports and their reserve flags, and the `link` module's
 -- address, roster and candidates -- and a press on any of those rows
 -- goes through the same helper a script's gesture would
--- (docs/TGUI.md). There is deliberately no hook here that throws a
+-- (docs/TGUI.md). There is deliberately no handler here that throws a
 -- breaker, joins or releases anything; a second path to those would be
 -- a second answer to who may.
 --
@@ -29,7 +29,7 @@
 -- it is theirs (fixtures/light.luau); all this says is that it
 -- happened.
 --
--- The use hook rides `interaction.use.done` rather than
+-- The use handler rides `interaction.use.done` rather than
 -- `interaction.use` for the access point's reason: the decision anchor
 -- is where a handler REPLACES the click, and replacing this one would
 -- eat both the panel and the crowbar.

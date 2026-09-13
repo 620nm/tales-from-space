@@ -22,7 +22,7 @@
 -- The blood-volume half of tg's hook is not ported. Salglu there is a
 -- temporary blood substitute and nudges `adjust_blood_volume` every
 -- tick; this engine has blood and no content call that moves it, and
--- inventing one for a single reagent is the wrong shape (AGENTS.md's
+-- inventing one for a single substance is the wrong shape (AGENTS.md's
 -- boundary test). What ships is the healing.
 --
 -- Fiction-grade product -- it is a SOLUTION rather than a molecule, so
@@ -51,8 +51,8 @@ local content = {
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    -- `mob.life(ctx, self, user, moles)`: the metabolism hook hands
-    -- the same mob twice, as the thing the hook is on and as the body
+    -- `mob.life(ctx, self, user, moles)`: the metabolism anchor hands
+    -- the same mob twice, as the thing the handler is on and as the body
     -- it is happening to, and the moles metabolized this tick last.
     script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
         local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount

@@ -34,7 +34,7 @@ local content = {
     -- what is on the tile goes in until it is full, and the rest of the
     -- puddle stays where it is.
     volume_ml = 250,
-    -- Clicking the bucket has to reach the hook rather than picking it
+    -- Clicking the bucket has to reach the handler rather than picking it
     -- up: wringing out is a thing you do TO the thing you named.
     acts_on_items = true,
 }

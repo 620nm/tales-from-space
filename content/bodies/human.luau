@@ -39,7 +39,7 @@ local content = {
     max_health = 100,          -- MAX_LIVING_HEALTH, code/__DEFINES/mobs.dm:236
 
     -- The lines a crewman's numbers can be on either side of. The engine
-    -- latches which side and says so on `body.threshold.done`; the hook
+    -- latches which side and says so on `body.threshold.done`; the handler
     -- at the bottom of this file decides what any of it means, because
     -- "crit" and "dead" are Tales from Space's words and not the
     -- engine's (docs/BIOLOGY.md §3.4).
@@ -206,7 +206,7 @@ local content = {
         -- NOT PORTED: tg's `losebreath += 0.25` in SOFT crit (:89-90).
         -- A quarter of a missed breath is a per-tick roll, and the
         -- boundary that made this a role reading is the same one that
-        -- says a per-tick decision is not a hook's to make.
+        -- says a per-tick decision is not a handler's to make.
         breathing = { role = "breathing", awake_only = false,
             formula = { "product", { "tag", "lung", absent = 1 },
                                    { "step", "health", -0.3, below = 0 } } },
@@ -485,7 +485,7 @@ local content = {
 -- own processes still run (docs/BIOLOGY.md §3.4).
 --
 -- Settled from the SET of crossed thresholds and not from the one edge
--- that woke the hook: a crewman healed back over the `dead` line with
+-- that woke the handler: a crewman healed back over the `dead` line with
 -- their heart still out has cleared one and not the other, and reading
 -- the set is what keeps them on the deck.
 local STOP = { dead = true, undone = true }
@@ -513,7 +513,7 @@ if sim ~= nil then
         -- healed to full and this body stays exactly as dead as it was.
         --
         -- `sim.fail_organ` and not `sim.damage_organ`: the amount a
-        -- hook may claim in one event is capped, and "the heart has
+        -- handler may claim in one event is capped, and "the heart has
         -- stopped" is not an amount (docs/LUAU-API.md §8.1). A body
         -- with no heart in it is already dead of the missing organ, so
         -- the selector finding nothing is the right no-op.

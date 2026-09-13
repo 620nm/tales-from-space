@@ -1,4 +1,4 @@
--- Fax policy is a pack hook over generic document, slot, and link helpers.
+-- Fax policy is a pack handler over generic document, slot, and link helpers.
 -- The helpers own job admission, resources, timing, and private reply tokens;
 -- this file only translates fax messages and keeps no document body in vars.
 -- tg code/modules/paperwork/fax.dm:222-237, :294-351, :406-428.

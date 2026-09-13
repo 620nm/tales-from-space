@@ -3,7 +3,7 @@
 -- Everything a player DOES to one is native: the `link` module draws
 -- the address, the state, the lock, the roster and the candidates, and
 -- the `reach` module draws the settings of every machine joined to it
--- (docs/TGUI.md). There is deliberately no hook here that joins,
+-- (docs/TGUI.md). There is deliberately no handler here that joins,
 -- releases, unlocks or sets anything -- a second path to any of those
 -- would be a second answer to who may.
 --

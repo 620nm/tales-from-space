@@ -2,7 +2,7 @@
 
 Map markers are ordinary map structures that carry pack policy. They are
 invisible in play, remain in the authoritative world for trusted scripts
-until a hook consumes one, and are copied, pasted and moved by the same editor
+until a handler consumes one, and are copied, pasted and moved by the same editor
 operations as every other structure. The marker and placement contracts live
 in the engine's `docs/content-schema/placement.md`, `docs/luau-api/queries.md`
 and `docs/luau-api/lifecycle.md`.
@@ -55,19 +55,19 @@ validates the mob roster, tile and per-round spawn limit and records the
 result. The helper returns `false` when no location is available.
 
 Threat markers do not create encounters at map load. An actorless world
-handler, such as a round or clock hook, calls `spawn_threat` and chooses the
+handler, such as a round or clock handler, calls `spawn_threat` and chooses the
 mob definition. This keeps secluded points useful for dynamic threats without
 adding an automatic encounter schedule to the map format.
 
-## Initialization hooks
+## Initialization anchors
 
 The marker structures name their own script behavior and receive the ordinary
-`entity.initialize.done` completion hook. The hook runs once after the map
+`entity.initialize.done` completion anchor. The handler runs once after the map
 placement's properties have seeded the marker vars. A custom marker may use
 `sim.entity.spawn` at `ev.entity.tile` and
 `sim.entity.despawn({ entity = ev.entity })` to replace itself with generated
 contents. Initialization effects are buffered and bounded by the engine's
-lifecycle authority. A failed hook discards its effects and removes the failed
+lifecycle authority. A failed handler discards its effects and removes the failed
 entity.
 
 This is the same seam used by other map-authored structures, so future locker

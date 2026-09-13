@@ -1,7 +1,7 @@
 -- The atmos emergency-kit case, end to end: a room whose own authored
 -- mixture is already above plasma's ignition point catches fire; a
 -- player picks up the resin projector and sprays that room; the native
--- reaction pass stops firing and writes ExtinguishedAt. No hook is
+-- reaction pass stops firing and writes ExtinguishedAt. No handler is
 -- involved in ignition or extinguishing -- the item writes the column,
 -- the two TfS fire rules read it, and the engine records the edge.
 t.world([==[(

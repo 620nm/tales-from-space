@@ -330,12 +330,12 @@ put_down()
 -- and a medic's beaker is 0.20 water and 0.15 libital, so what crosses
 -- is three sevenths of the swig.
 --
--- What is asserted is the HOOK'S RATE. Libital's `mob.life` heals 1.5
+-- What is asserted is the HANDLER'S RATE. Libital's `mob.life` heals 1.5
 -- brute every metabolism tick for as long as there is any of it left,
 -- and the metabolism burns `metabolism_rate = 0.003` mol a tick
 -- (substances/libital.luau), so the dose decides how many ticks and the
--- hook decides what each one is worth. The dead giveaway that it is
--- the reagent doing it and not the body: when the libital runs out, the
+-- handler decides what each one is worth. The dead giveaway that it is
+-- the substance doing it and not the body: when the libital runs out, the
 -- healing stops dead.
 -- ---------------------------------------------------------------
 t.set_health(p, { brute = 30.0 })
@@ -350,7 +350,7 @@ assert(dose > 0.015, "the swig reached the bloodstream: " .. dose .. " mol")
 local hurt = t.health(p).brute
 
 -- One tick per 0.003 mol, and the last partial mouthful still fires the
--- hook -- the metabolism takes `min(present, rate)` and calls it
+-- handler -- the metabolism takes `min(present, rate)` and calls it
 -- (docs/BENCH.md 1).
 local ticks = math.ceil(dose / 0.003)
 t.run_seconds(60)

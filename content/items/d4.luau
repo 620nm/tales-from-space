@@ -2,10 +2,10 @@
 -- `/obj/item/dice/d4` fits a caltrop component that does 1-4 brute to
 -- anybody who walks over it (code/game/objects/items/dice.dm:132-142).
 -- Deliberately not ported -- a caltrop is a check on the MOVEMENT seam,
--- one rule for every sharp thing on the deck, not a hook a single die
+-- one rule for every sharp thing on the deck, not a handler a single die
 -- carries. The die ships; the tack in the carpet waits for the seam.
 --
--- The rest is d6.luau, which is this family's header: two hooks because
+-- The rest is d6.luau, which is this family's header: two handlers because
 -- tg rolls at exactly two moments (`attack_self` in the hand and
 -- `throw_impact` where it lands, dice.dm:68-75), one declared appearance
 -- state per face, and the picture following the roll rather than being

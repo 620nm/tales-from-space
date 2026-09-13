@@ -1,6 +1,6 @@
 -- The bag of dice, and the four solids that arrived with it.
 --
--- `dice_test.luau` is the one that proves a die ROLLS -- two hooks, the
+-- `dice_test.luau` is the one that proves a die ROLLS -- two handlers, the
 -- picture following the roll, the ledger row. This one proves the SET:
 -- that a container declared with `holds` ships stocked with exactly the
 -- roster its file names, that every new die is lying on the face its

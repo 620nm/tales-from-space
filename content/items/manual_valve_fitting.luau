@@ -8,7 +8,7 @@
 -- fitting and stands the machine up in its place. Taking one apart runs
 -- the trade backwards, which is the valve's own `yields`.
 --
--- No hooks, no tool class, no stack: this file is a NOUN. What a wrench
+-- No handlers, no tool class, no stack: this file is a NOUN. What a wrench
 -- does to it is written down in structures/manual_valve.luau, where the
 -- target is the expert.
 return {

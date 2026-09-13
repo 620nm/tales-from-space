@@ -18,7 +18,7 @@
 -- is `"connector"` -- the socket drawn with no stub running down into
 -- the run, because in your hands it is joined to nothing.
 --
--- No hooks, no tool class, no stack: this file is a NOUN. What a wrench
+-- No handlers, no tool class, no stack: this file is a NOUN. What a wrench
 -- does to it is the connector port's business, and it is written down
 -- in structures/connector_port.luau where the target is the expert.
 return {

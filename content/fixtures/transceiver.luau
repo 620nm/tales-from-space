@@ -1,7 +1,7 @@
 -- The transceiver's behaviors (machines/transceiver.luau): a sentence
 -- for whoever touches it, a lamp that follows its keys, and its three
 -- stages of the relay walk. WHO FINALLY HEARS is still the transmitting
--- item's `speech.radio` and never a hook here (lib/radio.luau) -- a
+-- item's `speech.radio` and never a handler here (lib/radio.luau) -- a
 -- second path to "who hears" would be a second answer to it. These
 -- stages settle which towers are speaking at all, and the answers
 -- themselves live in lib/radio_relay.luau.

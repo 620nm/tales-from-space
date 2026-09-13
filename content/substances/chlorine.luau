@@ -2,7 +2,7 @@
 -- can make.
 --
 -- ONE ID PER MOLECULE. There used to be two files here -- a `chlorine`
--- reagent that was a single atom so tg's 1:1 salt recipe kept its
+-- substance that was a single atom so tg's 1:1 salt recipe kept its
 -- arithmetic, and a `cl2` beside it that was the real gas -- with a
 -- fictional 420 K rule as the door between them. That is gone: a
 -- substance is a molecule, a PHASE is something it reaches by being
@@ -44,7 +44,7 @@
 -- obviously harming you the two minutes have started. Internals stop
 -- it dead, which is the answer the game wants a crewman to reach for.
 --
--- MAX_SCRIPT_HIT caps any one hook at 40, so a thick cloud kills in
+-- MAX_SCRIPT_HIT caps any one handler at 40, so a thick cloud kills in
 -- about ten breaths and no faster.
 -- tg: /datum/reagent/chlorine (other_reagents.dm:1087).
 local content = {
@@ -74,7 +74,7 @@ local content = {
     -- (docs/MAP-PROPERTIES.md, the recipe panel). Reachable as room air, and
     -- rarely what a room is commissioned holding.
     relevance = 10,
-    -- A caustic cloud with a metabolism hook that sets a chest on fire;
+    -- A caustic cloud with a metabolism handler that sets a chest on fire;
     -- tg has no gas datum for it, so its own reagent decides.
     group = "poison",
     -- What a placard says about this substance alone
@@ -85,8 +85,8 @@ local content = {
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    -- `mob.life(ctx, self, user, moles)`: the metabolism hook hands
-    -- the same mob twice, as the thing the hook is on and as the body
+    -- `mob.life(ctx, self, user, moles)`: the metabolism anchor hands
+    -- the same mob twice, as the thing the handler is on and as the body
     -- it is happening to, and the moles metabolized this tick last.
     script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
         local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount

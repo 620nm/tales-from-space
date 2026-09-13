@@ -98,8 +98,8 @@ function map_markers.threat_location()
     end, "map_markers.threat_spawn")
 end
 
--- A marker keeps its own entity so later round/gameplay hooks can enumerate
--- it. The hook is intentionally present: marker prototypes are scriptable
+-- A marker keeps its own entity so later round/gameplay handlers can enumerate
+-- it. The handler is intentionally present: marker prototypes are scriptable
 -- at map initialization even when their current policy needs no setup.
 function map_markers.initialize(_ev)
 end

@@ -71,7 +71,7 @@ local content = {
     states = cards.states,
     state_sprites = cards.state_sprites,
     -- A click that names the deck is this card's business rather than a
-    -- pickup of whatever is under the cursor (docs/LUAU-API.md). A hook
+    -- pickup of whatever is under the cursor (docs/LUAU-API.md). A handler
     -- that declines still falls through to the pickup, so a card
     -- clicked at anything else is picked up as usual.
     acts_on_items = true,
@@ -129,15 +129,15 @@ if sim ~= nil then
         local clicked, target = ev.claim, ev.claim
         local _x, _y, _choice = x, y, choice
         -- Only a deck takes a card back. Anything else -- the deck of
-        -- somebody's lunch, the floor, a crewman -- is not this hook's
+        -- somebody's lunch, the floor, a crewman -- is not this handler's
         -- business, and returning without an effect lets the click fall
         -- through to whatever it would ordinarily have been.
         --
         -- A TABLE is the case that makes the decline load-bearing: the
         -- engine puts a held thing down on a surface only after every
-        -- hook has declined (docs/LUAU-API.md, step 9), so a card
+        -- handler has declined (docs/LUAU-API.md, step 9), so a card
         -- clicked at a table lands on the table at the pixel the player
-        -- pointed at, and it does so because this hook says "pass"
+        -- pointed at, and it does so because this handler says "pass"
         -- rather than because anything here knows what a table is.
         if target == nil or target.kind ~= "item" then
             return { replaced = false }
@@ -185,7 +185,7 @@ if sim ~= nil then
         })
         -- The card itself is gone: it is in the deck now, and the deck
         -- is a string. `sim.entity.despawn` does the hand slots and removal
-        -- and the ledger row, so this hook can never leave a hand
+        -- and the ledger row, so this handler can never leave a hand
         -- holding a dead entity.
         sim.entity.despawn({ entity = self })
         return true

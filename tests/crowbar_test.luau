@@ -31,7 +31,7 @@ assert(t.hands(p).held == "crowbar", "in hand")
 t.move(p, "east")
 t.tick()
 
--- Powered: the crowbar hook passes, the native toggle opens it.
+-- Powered: the crowbar handler passes, the native toggle opens it.
 assert(t.door_at(3, 1).powered, "the shipped grid feeds this door")
 t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.tick()

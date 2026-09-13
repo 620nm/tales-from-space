@@ -15,7 +15,7 @@
 --
 -- What it does NOT do here is corrode: tg's acid eats armour, melts
 -- items and burns whoever it splashes, all of which is exposure
--- gameplay this pack has no seam for yet. It is a reagent leg until
+-- gameplay this pack has no seam for yet. It is a substance leg until
 -- then, and saying so is better than half a mechanism.
 -- tg: /datum/reagent/toxin/acid (toxin_reagents.dm:1255).
 return {

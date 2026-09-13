@@ -275,7 +275,7 @@ for _, must in ipairs({
 end
 
 -- ---- a deck will not swallow more than a deck -------------------------
--- Found by RUNNING it, not by the assertions above: the return hook
+-- Found by RUNNING it, not by the assertions above: the return handler
 -- refused only a deck nobody had dealt from, so a deck dealt from ONCE
 -- took cards forever. Deal from one deck, feed the card to another, and
 -- the second grows past fifty-four -- and since the order is a script

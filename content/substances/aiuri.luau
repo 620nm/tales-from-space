@@ -43,8 +43,8 @@ local content = {
 
 if sim ~= nil then
     local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    -- `mob.life(ctx, self, user, moles)`: the metabolism hook hands
-    -- the same mob twice, as the thing the hook is on and as the body
+    -- `mob.life(ctx, self, user, moles)`: the metabolism anchor hands
+    -- the same mob twice, as the thing the handler is on and as the body
     -- it is happening to, and the moles metabolized this tick last.
     script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
         local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount

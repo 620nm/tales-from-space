@@ -51,7 +51,7 @@ renders an ambiguous name. Discovery includes only online endpoints in the
 same connected device tree, with 32 rows per page. The service bridge uses
 the five messages `fax.print`, `fax.send`, `fax.printed`, `fax.sent`, and
 `fax.failed`, with Markdown chunks no larger than 4096 bytes and no more
-than 8192 bytes total. The delivery and reply hooks use the native
+than 8192 bytes total. The delivery and reply handlers use the native
 `link.service.delivery` and `link.service.reply` anchors. Replies remain
 private and correlated by native request tokens; no remote entity handle
 crosses the script boundary.

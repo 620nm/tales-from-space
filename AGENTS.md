@@ -79,7 +79,9 @@ This pack has no crates: measure depth from the repository root, and apply
 the directory rules to `content/`, `ui/`, `tests/` and `tools/`. Generated
 trees (`ui/fixtures/out/`, the `ui/*.json` build products) are outside the
 counts. The Rust rules bind the engine checkout, where the same section is
-its `docs/CODE-ORGANIZATION.md`.
+its `docs/CODE-ORGANIZATION.md`. A roster file is named for the id it
+declares (`items/<id>.luau`); a numeric ordering prefix `NN_` is the one
+allowance (`access/10_engineering.luau`).
 
 ## Content design rules
 

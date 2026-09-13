@@ -2,7 +2,7 @@
 --
 -- THE ACCIDENT ITSELF IS vapors_test.luau, in full: a press of the
 -- dispenser, a bottle tipped onto the deck, a closet that fills with
--- gas, a crewman without a mask who takes the hook's damage and one
+-- gas, a crewman without a mask who takes the handler's damage and one
 -- with a tank who does not, and a scrubber pointed at `chlorine` that
 -- takes it out of the air and puts it in the waste main. Nothing here
 -- repeats any of that.
@@ -12,7 +12,7 @@
 -- GAS in the room are the same registry row reached by state, and that
 -- the books close across the whole trip.
 --
--- There used to be a door. `chlorine` was a reagent you kept in a
+-- There used to be a door. `chlorine` was a substance you kept in a
 -- beaker and `cl2` was a gas that lived in the air, and the way to get
 -- from one to the other was a fictional reaction with a 420 K window
 -- -- so gassing a room meant HEATING a beaker until the recipe fired,

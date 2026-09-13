@@ -13,7 +13,7 @@
 -- Real molar mass (C3H6O) and real density -- the density is
 -- load-bearing, because geometry caps a reaction by the free shell
 -- volume (D16). `cv = 100` is the shelf's flat convention for a
--- reagent whose real heat capacity is not gameplay (D2,
+-- substance whose real heat capacity is not gameplay (D2,
 -- docs/CHEMISTRY.md), and the `unmodeled` rest phase is the same
 -- decision: acetone boils at 329 K, which the reaction chamber
 -- reaches, and a solvent that flashed off mid-synthesis is a mechanic

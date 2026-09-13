@@ -8,7 +8,7 @@
 -- room cell. Plasma fire's two content rules read the same column and
 -- stop, so the engine only owns the named scalar, its decay, and the
 -- reaction arithmetic. The `ExtinguishedAt` consequence stays a native
--- ledger edge and is not a hook.
+-- ledger edge and is not a handler.
 local content = {
     id = "atmos_resin_projector",
     name_label = "lunatic/tfs:entity.atmos_resin_projector.name",

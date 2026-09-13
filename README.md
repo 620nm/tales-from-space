@@ -26,6 +26,19 @@ This standalone repository is loaded by the lunatic engine through
 How many files and subdirectories a directory holds, and how deep a tree
 goes, is `AGENTS.md` §Code Organization.
 
+Directories over the 50-file ceiling, each with the change that retires its
+row:
+
+<!-- tree-debt-table -->
+| Directory | Files | Why |
+|---|---|---|
+| `tests/` | 227 | one spec per file; splits when the runner reads nested spec directories |
+| `content/items/` | 148 | flat roster; splits when the loader reads nested roster directories |
+| `content/structures/` | 68 | flat roster; splits when the loader reads nested roster directories |
+| `ui/fixtures/baselines/` | 54 | one baseline image per fixture state |
+| `ui/fixtures/` | 53 | one fixture per surface state |
+<!-- end -->
+
 ## Running
 
 This repository is content only; the engine is
@@ -65,7 +78,7 @@ Interaction cards and their presentation tokens are documented in
 Gameplay presentation and controls belong to `ui/`, including preparation,
 jobs, lobby, respawn, OOC/chat, HUD, build and device/file panels. The trusted
 host interprets the package through the restricted UI SDK; it supplies no
-browser globals or per-frame script hook. Native providers supply readouts and
+browser globals or per-frame script anchor. Native providers supply readouts and
 validate intents. Preparation reads `state.round` and `state.preparation`, and
 emits the typed `character_draft`, `ready` and `ooc` actions described in
 `docs/UI.md`.

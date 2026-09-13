@@ -1,5 +1,5 @@
 -- An invisible, map-authored candidate for a later threat encounter. The
--- marker is retained; gameplay hooks decide when and what to spawn there.
+-- marker is retained; gameplay handlers decide when and what to spawn there.
 return {
     id = "threat_spawn",
     name_label = "lunatic/tfs:entity.threat_spawn.name",
