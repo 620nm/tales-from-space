@@ -32,8 +32,6 @@ row:
 <!-- tree-debt-table -->
 | Directory | Files | Why |
 |---|---|---|
-| `ui/fixtures/baselines/` | 54 | one baseline image per fixture state |
-| `ui/fixtures/` | 53 | one fixture per surface state |
 <!-- end -->
 
 ## Running
