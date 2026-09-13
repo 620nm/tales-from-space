@@ -4,10 +4,11 @@ import type { GameplayView } from "../model";
 import { bind, entry, press, row, screen, text, type Command } from "../view";
 import * as S from "./strings";
 import {
-  bodyLimit, contactAction, readContact, refKey, resetContactRequests, selectedConversation,
+  bodyLimit, contactAction, readContact, resetContactRequests, selectedConversation,
   type ContactAction, type ContactConversation, type ContactLocalState, type ContactMessage,
   type StaffContactState,
 } from "./model";
+import { refKey } from "../refs";
 
 export interface ContactViewState {
   state: StaffContactState;

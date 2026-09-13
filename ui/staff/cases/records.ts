@@ -1,6 +1,7 @@
 import type { Json } from "@lunatic/ui";
 import type { StaffCase, StaffEntity, StaffEvent, StaffProfile, StaffRef, StaffSession } from "../model";
-import { isDecimalId, isProfileId, isStaffIdentifier, isStaffRefId, isStaffRound, refKey, staffRef } from "../model";
+import { isDecimalId, isProfileId, isStaffIdentifier, isStaffRefId, isStaffRound, staffRef } from "../model";
+import { refKey } from "../../refs";
 import { historicalEventPresentation } from "../shared/presentation";
 import { eventReference } from "../shared/records";
 
@@ -64,8 +65,8 @@ export function readRefs(value: unknown, round: string): StaffRef[] {
   return value.slice(0, MAX_CONTEXT_ROWS).map((item) => readRef(item, round)).filter((item): item is StaffRef => !!item);
 }
 
-// The one collision-proof key lives on `../model`; re-exported here so
-// every existing `from "../cases/records"` import keeps working.
+// The one collision-proof key lives in `../../refs`; re-exported here
+// so every existing `from "../cases/records"` import keeps working.
 export { refKey };
 
 export function uniqueRefs(refs: StaffRef[]): StaffRef[] {

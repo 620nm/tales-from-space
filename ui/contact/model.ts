@@ -1,5 +1,6 @@
 import type { Json } from "@lunatic/ui";
 import type { GameplayView } from "../model";
+import { refKey } from "../refs";
 
 export interface StaffRef {
   round: string;
@@ -79,8 +80,7 @@ const reference = (value: unknown, expectedKind?: string): StaffRef | null => {
     : null;
 };
 
-/** JSON keeps round, kind and id distinct even when an id contains `:`. */
-export const refKey = (ref: StaffRef): string => JSON.stringify([ref.round, ref.kind, ref.id]);
+export { refKey };
 
 const bodyBytes = (body: string): number => {
   let bytes = 0;
