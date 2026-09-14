@@ -66,8 +66,11 @@ if sim ~= nil then
         return map_markers.player_spawn(ev, "crew")
     end
 
-    behavior:handle("round.allocate", { kind = "transform", route = "lifecycle" },
-        preparation.allocate)
+    behavior:handle(
+        "round.allocate",
+        { kind = "transform", route = "lifecycle" },
+        preparation.allocate
+    )
     behavior:handle("round.spawn", { kind = "transform", route = "lifecycle" }, spawn_player)
 
     behavior:handle("clock.second", { kind = "react" }, function(ev)

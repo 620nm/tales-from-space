@@ -88,7 +88,8 @@ local function total(handle)
     return n
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "chem bench",
     legend: {
         ' ': (turf: Space),
@@ -108,7 +109,9 @@ t.world([==[(
     cables: [
         (1, 1, 1), (2, 1, 1), (3, 1, 1),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -124,7 +127,10 @@ t.tick()
 local ui = ui_controls.state(p)
 assert(ui, "an empty hand opens the panel")
 assert(ui.document == "modules", "which is a clean-room module document")
-assert(ui_controls.record(assert(row(ui, "dock.vessel")).value).id == "dock.vessel.empty", "and it says there is nothing in it")
+assert(
+    ui_controls.record(assert(row(ui, "dock.vessel")).value).id == "dock.vessel.empty",
+    "and it says there is nothing in it"
+)
 
 -- The measure is a DIAL, not a reading: a chemist who wants half a
 -- beaker turns it down rather than pressing and pouring back.
@@ -184,7 +190,12 @@ near(assert(t.holder_k(beaker)), NOZZLE_K, 0.1, "arriving at the nozzle's own te
 -- of a fifty millilitre beaker (docs/MATTER.md 5). Capacity is
 -- geometry, so what a crewman reads is the level against the shell.
 local glass = assert(block(ui_controls.state(p), "dock.contents"))
-near(ui_controls.number(assert(state(glass, "liquid")).measure), 0.0135, 1e-4, "the level in the vessel")
+near(
+    ui_controls.number(assert(state(glass, "liquid")).measure),
+    0.0135,
+    1e-4,
+    "the level in the vessel"
+)
 near(ui_controls.number(glass.volume_l), 0.05, 1e-9, "against the size of the glass")
 
 -- ---------------------------------------------------------------
@@ -211,8 +222,10 @@ near(total(beaker), BRIM, 1e-5, "nothing you could measure fits")
 local after = t.ledger_rows("minted")
 assert(#after <= before + 1, "at most one row, and it is not a press")
 if #after > before then
-    assert(ui_controls.number(after[#after].moles) < 1e-5,
-        "a rounding error, not a dose: " .. ui_controls.number(after[#after].moles))
+    assert(
+        ui_controls.number(after[#after].moles) < 1e-5,
+        "a rounding error, not a dose: " .. ui_controls.number(after[#after].moles)
+    )
 end
 
 -- ---------------------------------------------------------------
@@ -236,8 +249,7 @@ end
 -- hair MORE than the glass holds: an open beaker breathes its own
 -- vapour into the room (sim/holder/vent.rs), so what evaporated away
 -- is the difference and nothing else is.
-assert(minted >= total(beaker) - 1e-9,
-    "nothing is in the beaker that was not minted: " .. minted)
+assert(minted >= total(beaker) - 1e-9, "nothing is in the beaker that was not minted: " .. minted)
 near(minted, total(beaker), 1e-4, "every mole in the beaker has a row behind it")
 
 -- ---------------------------------------------------------------
@@ -248,7 +260,11 @@ t.run_ticks(2)
 assert(t.hands(p).held == "beaker", "the eject button hands it back")
 near(total(beaker), BRIM, 1e-5, "still holding what it was given")
 assert(t.ledger_has("Undocked", "beaker"), "and the eject is on the record too")
-assert(ui_controls.record(assert(row(ui_controls.state(p), "dock.vessel")).value).id == "dock.vessel.empty", "the panel agrees the slot is clear")
+assert(
+    ui_controls.record(assert(row(ui_controls.state(p), "dock.vessel")).value).id
+        == "dock.vessel.empty",
+    "the panel agrees the slot is clear"
+)
 
 -- A press with nothing in the slot mints nothing, anywhere: a
 -- dispenser that puddled on the floor instead would be a second
@@ -290,7 +306,10 @@ assert(t.hands(p).held == nil, "the vessel stays in the machine")
 local flushed = t.ledger_rows("Annihilated")
 assert(#flushed == 1, "one press is one row: " .. #flushed)
 near(ui_controls.number(flushed[1].moles), held, 1e-9, "carrying every mole that was destroyed")
-assert(flushed[1].owner == "beaker", "and naming the vessel: " .. ui_controls.text(flushed[1].owner))
+assert(
+    flushed[1].owner == "beaker",
+    "and naming the vessel: " .. ui_controls.text(flushed[1].owner)
+)
 assert(ui_controls.record(flushed[1].actor).kind == "player", "a window act is the crewman acting")
 
 -- Pressing it again is a refusal in silence: there is nothing to
@@ -305,7 +324,12 @@ assert(#t.ledger_rows("Annihilated") == 1, "an empty vessel flushes nothing")
 -- ---------------------------------------------------------------
 ui_controls.set(p, "amount", 0.25)
 t.run_ticks(2)
-near(ui_controls.number(assert(dial(ui_controls.state(p), "amount")).value), 0.25, 1e-9, "the dial took the number")
+near(
+    ui_controls.number(assert(dial(ui_controls.state(p), "amount")).value),
+    0.25,
+    1e-9,
+    "the dial took the number"
+)
 ui_controls.toggle(p, "dispense", "water")
 t.run_ticks(2)
 -- A tenth of a millimole of slack: the vessel settles as it fills
@@ -333,10 +357,20 @@ near(total_minted, BRIM + 0.25, 1e-4, "every mole ever minted has a row, flushed
 -- ---------------------------------------------------------------
 ui_controls.set(p, "amount", 99)
 t.run_ticks(2)
-near(ui_controls.number(assert(dial(ui_controls.state(p), "amount")).value), DIAL_MAX, 1e-9, "past the top is the top")
+near(
+    ui_controls.number(assert(dial(ui_controls.state(p), "amount")).value),
+    DIAL_MAX,
+    1e-9,
+    "past the top is the top"
+)
 ui_controls.set(p, "amount", -5)
 t.run_ticks(2)
-near(ui_controls.number(assert(dial(ui_controls.state(p), "amount")).value), NOTCH, 1e-9, "under the bottom is the bottom")
+near(
+    ui_controls.number(assert(dial(ui_controls.state(p), "amount")).value),
+    NOTCH,
+    1e-9,
+    "under the bottom is the bottom"
+)
 
 local knobs = t.ledger_rows("machine_setpoint")
 local turns = 0
@@ -344,7 +378,10 @@ for _, r in ipairs(knobs) do
     if r.field == "amount" then
         turns = turns + 1
         assert(r.unit == "mol", "the row says what the number is in")
-        assert(ui_controls.number(r.value) >= NOTCH and ui_controls.number(r.value) <= DIAL_MAX, "post-clamp: " .. ui_controls.number(r.value))
+        assert(
+            ui_controls.number(r.value) >= NOTCH and ui_controls.number(r.value) <= DIAL_MAX,
+            "post-clamp: " .. ui_controls.number(r.value)
+        )
     end
 end
 assert(turns == 3, "three turns of the dial are three rows: " .. turns)

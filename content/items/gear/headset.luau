@@ -23,7 +23,8 @@ if sim ~= nil then
     -- a signal like every other channel: a few rooms on its own, the
     -- station only where a powered, Common-keyed transceiver carries it
     -- (lib/radio.luau, machines/transceiver.luau).
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("speech.radio", { kind = "transform", route = "item" }, function(ev)
         return radio.deliver(ev)
     end)

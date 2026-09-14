@@ -188,17 +188,20 @@ t.run_seconds(40)
 local plateau = assert(t.holder_k(pot))
 local ambient = assert(t.room_pressure(3, 2))
 local onset = ethanol_boil_k(ambient, 1.0)
-assert(math.abs(onset - 351.5) < 0.5,
-    "the closet is at one atmosphere, so the onset IS the authored boiling point: " .. onset)
+assert(
+    math.abs(onset - 351.5) < 0.5,
+    "the closet is at one atmosphere, so the onset IS the authored boiling point: " .. onset
+)
 -- Three kelvin of slack, and the arithmetic says where it comes from:
 -- the element works four times for every once the phase sweep runs
 -- (ATMOS_EVERY = 10 ticks against METABOLISM_EVERY = 40,
 -- lunatic-core/src/lib.rs), so a reading taken between sweeps catches
 -- a beaker that has been warmed but not yet boiled back down. It is a
 -- plateau with a sawtooth on it, not a flat line.
-assert(math.abs(plateau - onset) < 3.0,
-    "and the beaker sits on it rather than climbing to the dial: "
-        .. plateau .. " vs " .. onset)
+assert(
+    math.abs(plateau - onset) < 3.0,
+    "and the beaker sits on it rather than climbing to the dial: " .. plateau .. " vs " .. onset
+)
 assert(plateau < 360.0, "twenty kelvin under the dial: " .. plateau)
 
 local boiled_off = 0.4 - held(pot, "ethanol")
@@ -212,11 +215,15 @@ bench()
 charge({ "ethanol" }, 0.4)
 onto_the_element(330)
 t.run_seconds(40)
-assert(assert(t.holder_k(pot)) < 335.0, "the cool bench never reaches the onset: " .. assert(t.holder_k(pot)))
+assert(
+    assert(t.holder_k(pot)) < 335.0,
+    "the cool bench never reaches the onset: " .. assert(t.holder_k(pot))
+)
 local seeped = 0.4 - held(pot, "ethanol")
-assert(seeped * 5.0 < boiled_off,
-    "and it gives up a fraction of what the boiling one does: "
-        .. seeped .. " vs " .. boiled_off)
+assert(
+    seeped * 5.0 < boiled_off,
+    "and it gives up a fraction of what the boiling one does: " .. seeped .. " vs " .. boiled_off
+)
 
 -- ---------------------------------------------------------------
 -- TWO: THE SEPARATION.
@@ -241,10 +248,14 @@ assert(math.abs(started - 0.5) < 0.01, "the wash starts half and half: " .. star
 onto_the_element(380)
 t.run_seconds(60)
 local pot_k = assert(t.room_pressure(3, 2))
-assert(assert(t.holder_k(pot)) > ethanol_boil_k(pot_k, 1.0),
-    "a wash boils hotter than the spirit in it: " .. assert(t.holder_k(pot)))
-assert(assert(t.holder_k(pot)) < water_boil_k(pot_k, 1.0) + 3.0,
-    "and no hotter than the water in it: " .. assert(t.holder_k(pot)))
+assert(
+    assert(t.holder_k(pot)) > ethanol_boil_k(pot_k, 1.0),
+    "a wash boils hotter than the spirit in it: " .. assert(t.holder_k(pot))
+)
+assert(
+    assert(t.holder_k(pot)) < water_boil_k(pot_k, 1.0) + 3.0,
+    "and no hotter than the water in it: " .. assert(t.holder_k(pot))
+)
 
 local booked = t.matter_totals()
 
@@ -258,8 +269,7 @@ for sample = 1, 4 do
     t.run_seconds(150)
     local take = ethanol_share(vapour("ethanol"), vapour("water"))
     local left = ethanol_share(held(pot, "ethanol"), held(pot, "water"))
-    assert(take > left + 0.05,
-        "the take-off is stronger than the pot: " .. take .. " vs " .. left)
+    assert(take > left + 0.05, "the take-off is stronger than the pot: " .. take .. " vs " .. left)
     if sample == 1 then
         first_take = take
     end
@@ -275,8 +285,10 @@ assert(first_take > 0.65, "the first cut is nearly two thirds spirit: " .. first
 assert(weakest_take > 0.53, "and even the last of it is over half: " .. weakest_take)
 
 local finished = ethanol_share(held(pot, "ethanol"), held(pot, "water"))
-assert(finished < started - 0.03,
-    "the pot was left weaker than it started: " .. started .. " -> " .. finished)
+assert(
+    finished < started - 0.03,
+    "the pot was left weaker than it started: " .. started .. " -> " .. finished
+)
 assert(held(pot, "ethanol") > 0.0, "with spirit still in it to take off")
 
 -- ---------------------------------------------------------------
@@ -293,8 +305,12 @@ local closed = t.matter_totals()
 local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
-near(closed.substances.ethanol, booked.substances.ethanol, 1e-9,
-    "every mole of spirit is still in the room somewhere")
+near(
+    closed.substances.ethanol,
+    booked.substances.ethanol,
+    1e-9,
+    "every mole of spirit is still in the room somewhere"
+)
 -- 1e-8 rather than the ethanol line's 1e-9, and the reason is arithmetic
 -- rather than a leak: `t.matter_totals` counts the settling sweep's
 -- register, and the sweep never takes vapour standing over its own

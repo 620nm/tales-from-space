@@ -90,7 +90,8 @@ if sim ~= nil then
     -- as light, and the shift record is where somebody asking why
     -- Medical was red goes looking.
     sim.define("script_var", "lunatic/tfs:light_flags", { replicate = "server" })
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
     -- WHAT A FITTING LISTENS TO: `parent` and `sibling`, and nothing
     -- else. That is the panel feeding it and everything else that
@@ -129,40 +130,44 @@ if sim ~= nil then
         relight(self, v.base, flags, v.base_power)
     end)
 
-    script_definition:handle("interaction.use", { kind = "replace", route = "interact" }, function(ev)
-        local self, user, x, y = ev.subject, ev.actor, ev.at.x, ev.at.y
-        local l = sim.light(self)
-        if l == nil then
+    script_definition:handle(
+        "interaction.use",
+        { kind = "replace", route = "interact" },
+        function(ev)
+            local self, user, x, y = ev.subject, ev.actor, ev.at.x, ev.at.y
+            local l = sim.light(self)
+            if l == nil then
+                return true
+            end
+            if l.status == "broken" then
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:fixtures.light.the_tube_is_shattered_in", {}),
+                })
+            elseif l.status == "empty" then
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:fixtures.light.the_fitting_is_empty", {}),
+                })
+            elseif l.status == "burned" then
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:fixtures.light.the_tube_is_burned_out", {}),
+                })
+            elseif l.lit then
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:fixtures.light.the_light_is_on", {}),
+                })
+            else
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:fixtures.light.the_light_is_dark_its", {}),
+                })
+            end
             return true
         end
-        if l.status == "broken" then
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:fixtures.light.the_tube_is_shattered_in", {}),
-            })
-        elseif l.status == "empty" then
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:fixtures.light.the_fitting_is_empty", {}),
-            })
-        elseif l.status == "burned" then
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:fixtures.light.the_tube_is_burned_out", {}),
-            })
-        elseif l.lit then
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:fixtures.light.the_light_is_on", {}),
-            })
-        else
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:fixtures.light.the_light_is_dark_its", {}),
-            })
-        end
-        return true
-    end)
+    )
     script_definition:handle("attack.swing", { kind = "replace", route = "attack" }, function(ev)
         local self, user = ev.implement, ev.actor
         local target, victim, item = ev.target, ev.target, ev.target

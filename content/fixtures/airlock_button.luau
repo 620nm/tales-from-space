@@ -11,9 +11,13 @@ if sim ~= nil then
     -- a screwdriver's removal resolves it and stays quiet.
     def:handle("interaction.use.refused", { kind = "react", route = "interact" }, function(ev)
         local r = ev.action_refusal
-        if r.action ~= "press" or r.fact ~= "held.present" or r.resolved then return end
-        sim.message.send({ recipient = ev.actor,
-            message = sim.msg("lunatic/tfs:entity.airlock_button.hand_full", {}) })
+        if r.action ~= "press" or r.fact ~= "held.present" or r.resolved then
+            return
+        end
+        sim.message.send({
+            recipient = ev.actor,
+            message = sim.msg("lunatic/tfs:entity.airlock_button.hand_full", {}),
+        })
     end)
 end
 return content

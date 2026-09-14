@@ -25,8 +25,12 @@ local function said(who, needle)
     return (" " .. table.concat(t.messages(who), " || ") .. " "):find(needle, 1, true) ~= nil
 end
 local function hold(id: string)
-    if t.hands(surgeon).held then t.drop(surgeon); t.tick() end
-    t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, id)); t.run_ticks(2)
+    if t.hands(surgeon).held then
+        t.drop(surgeon)
+        t.tick()
+    end
+    t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, id))
+    t.run_ticks(2)
 end
 
 -- ---- obstructed: lying, but the chest is covered ----------------------

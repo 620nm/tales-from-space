@@ -43,7 +43,8 @@ local function held_in(handle: SpecObservedTarget, key: string)
     return contents[key] or 0.0
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "evaporator bench",
     legend: {
         ' ': (turf: Space),
@@ -65,7 +66,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -94,8 +97,16 @@ assert(charged > 0.5, "with what it shipped with: " .. charged)
 t.click(p, 4, 1, machine)
 t.tick()
 local ui = ui_controls.record(assert(t.ui(p)))
-assert(ui_controls.record(row(ui, "dock.vessel").value).text == "beaker (ethanol)", "the panel names what is in it")
-near(ui_controls.number(ui_controls.rows(ui.setpoints)[1].value), 373.15, 1e-9, "and its dial opens at water's boil")
+assert(
+    ui_controls.record(row(ui, "dock.vessel").value).text == "beaker (ethanol)",
+    "the panel names what is in it"
+)
+near(
+    ui_controls.number(ui_controls.rows(ui.setpoints)[1].value),
+    373.15,
+    1e-9,
+    "and its dial opens at water's boil"
+)
 
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
@@ -123,7 +134,11 @@ t.run_ticks(2)
 assert(t.hands(p).held == "beaker.ethanol", "the eject button hands it back")
 assert(t.ledger_has("Undocked", "beaker"), "and the undock is on the record too")
 near(held_in(booze, "ethanol"), left, 1e-6, "carrying exactly what was left in it")
-assert(ui_controls.record(row(ui_controls.record(assert(t.ui(p))), "dock.vessel").value).id == "dock.vessel.empty", "the panel agrees the slot is bare")
+assert(
+    ui_controls.record(row(ui_controls.record(assert(t.ui(p))), "dock.vessel").value).id
+        == "dock.vessel.empty",
+    "the panel agrees the slot is bare"
+)
 
 -- ...and an empty dock has no reservoir behind its mouth, so the line
 -- keeps what it was given and nothing else arrives.

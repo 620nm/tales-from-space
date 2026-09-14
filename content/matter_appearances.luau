@@ -16,8 +16,11 @@ return {
                 {
                     at_ml = 1,
                     sprites = {
-                        "matter_liquid_1", "matter_liquid_2", "matter_liquid_3",
-                        "matter_liquid_5", "matter_liquid_6",
+                        "matter_liquid_1",
+                        "matter_liquid_2",
+                        "matter_liquid_3",
+                        "matter_liquid_5",
+                        "matter_liquid_6",
                     },
                 },
             },
@@ -44,8 +47,11 @@ return {
                 {
                     at_ml = 1,
                     sprites = {
-                        "matter_liquid_1", "matter_liquid_2", "matter_liquid_3",
-                        "matter_liquid_5", "matter_liquid_6",
+                        "matter_liquid_1",
+                        "matter_liquid_2",
+                        "matter_liquid_3",
+                        "matter_liquid_5",
+                        "matter_liquid_6",
                     },
                 },
                 { at_ml = 1000, sprites = { "matter_water" } },
@@ -85,8 +91,10 @@ return {
                 {
                     at_ml = 1,
                     sprites = {
-                        "matter_crystalline_1", "matter_crystalline_2",
-                        "matter_crystalline_3", "matter_crystalline_4",
+                        "matter_crystalline_1",
+                        "matter_crystalline_2",
+                        "matter_crystalline_3",
+                        "matter_crystalline_4",
                     },
                 },
                 { at_ml = 25, sprites = { "matter_crystalline_large" } },

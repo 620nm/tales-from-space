@@ -33,28 +33,36 @@ local content = {
         -- first trauma, so this holds full output to 60% damage and
         -- falls from there. tg has no such curve; it has traumas, which
         -- are their own segment.
-        curve = {{0, 1}, {0.6, 1}, {1, 0}},
+        curve = { { 0, 1 }, { 0.6, 1 }, { 1, 0 } },
         vital = true,
         mind_seat = true,
     },
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    script_definition:handle("body.threshold.done", { kind = "react", route = "threshold" }, function(ev)
-        local organ, body, edge = ev.part, ev.body, ev.edge
-        if edge == "low" then
-            sim.message.send({
-                recipient = body,
-                message = sim.msg("lunatic/tfs:items.organ_brain.your_head_swims", {}),
-            })
-        elseif edge == "high" then
-            sim.message.send({
-                recipient = body,
-                message = sim.msg("lunatic/tfs:items.organ_brain.you_cannot_hold_a_thought", {}),
-            })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle(
+        "body.threshold.done",
+        { kind = "react", route = "threshold" },
+        function(ev)
+            local organ, body, edge = ev.part, ev.body, ev.edge
+            if edge == "low" then
+                sim.message.send({
+                    recipient = body,
+                    message = sim.msg("lunatic/tfs:items.organ_brain.your_head_swims", {}),
+                })
+            elseif edge == "high" then
+                sim.message.send({
+                    recipient = body,
+                    message = sim.msg(
+                        "lunatic/tfs:items.organ_brain.you_cannot_hold_a_thought",
+                        {}
+                    ),
+                })
+            end
         end
-    end)
+    )
 end
 
 return content

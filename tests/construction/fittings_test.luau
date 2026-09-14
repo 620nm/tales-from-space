@@ -84,7 +84,8 @@ end
 -- Take the whole thing apart, carry the port across the room, put it
 -- back together somewhere else, and plug the bottle back in.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "fittings",
     legend: {
         ' ': (turf: Space),
@@ -120,7 +121,9 @@ t.world([==[(
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3),
         (1, 3, 3), (2, 3, 3), (3, 3, 3), (4, 3, 3), (5, 3, 3), (6, 3, 3), (7, 3, 3), (8, 3, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -140,7 +143,10 @@ local mapped_full = assert(t.canister_pressure(2, 1))
 t.run_seconds(10)
 assert(
     assert(t.canister_pressure(2, 1)) < mapped_full - 100.0,
-    "a fastened canister feeds the run: " .. mapped_full .. " -> " .. tostring(t.canister_pressure(2, 1))
+    "a fastened canister feeds the run: "
+        .. mapped_full
+        .. " -> "
+        .. tostring(t.canister_pressure(2, 1))
 )
 
 -- ---- you do not pull the socket out from under the bottle ----
@@ -182,18 +188,12 @@ assert(
     "one tick in, the port is still bolted down"
 )
 t.run_seconds(2.5)
-assert(
-    t.ledger_has("StructureStep", "connector_port", "gone"),
-    "and two seconds in, it is up"
-)
+assert(t.ledger_has("StructureStep", "connector_port", "gone"), "and two seconds in, it is up")
 assert(t.target_at(p, 2, 1, "connector_port") == nil, "there is no port here now")
 
 -- THE POINT. What came up is an ITEM, named the way tg names it
 -- (`name = "[initial(fakeA.name)] fitting"`, construction.dm:212).
-assert(
-    lying_at(2, 1, "connector_port_fitting"),
-    "what came up is a fitting lying on the deck"
-)
+assert(lying_at(2, 1, "connector_port_fitting"), "what came up is a fitting lying on the deck")
 
 -- The line is off the bottle and the vent has emptied it. From here to
 -- the far end of the round trip nothing is feeding anything, which is
@@ -323,11 +323,7 @@ assert(standing_on(p, 3, 1), "standing right on it")
 local closing = books(4, 1)
 assert(
     math.abs(closing - opening) < opening * 0.02,
-    "the round trip created and destroyed nothing: "
-        .. opening
-        .. " mol -> "
-        .. closing
-        .. " mol"
+    "the round trip created and destroyed nothing: " .. opening .. " mol -> " .. closing .. " mol"
 )
 
 -- ---- and it is real plumbing ----
@@ -370,6 +366,8 @@ assert(
 assert(
     math.abs(assert(t.pipe_pressure(5, 1)) - after) < assert(after) * 0.2 + 10.0,
     "the run reads the bottle it is coupled to: "
-        .. assert(t.pipe_pressure(5, 1)) .. " vs " .. after
+        .. assert(t.pipe_pressure(5, 1))
+        .. " vs "
+        .. after
 )
 assert(assert(t.room_pressure(4, 2)) > 90.0, "and the sealed room never noticed any of it")

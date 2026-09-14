@@ -33,7 +33,8 @@ end
 -- of pipe and the same branch cable pass under both. Every assertion
 -- below is that pair answering differently. (2, 3) is a bare covered
 -- tile, for the laying half.
-t.world([==[(
+t.world(
+    [==[(
     name: "subfloor",
     legend: {
         ' ': (turf: Space),
@@ -59,7 +60,9 @@ t.world([==[(
     ],
     pipes: [(2, 1, 4), (2, 2, 4)],
     cables: [(2, 1, 1), (2, 2, 1)],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -197,7 +200,8 @@ assert(#t.ledger_rows("PipePulled") == 2, "and the second pull is recorded")
 -- change the turf operation: floor tiles cover raw pipe and the
 -- component which replaced a length of it, without deleting either.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "cover subfloor",
     legend: {
         ' ': (turf: Space),
@@ -214,7 +218,9 @@ t.world([==[(
     items: [(2, 2, "floor_tile")],
     pipes: [(1, 1, 4), (3, 2, 4)],
     structures: [(2, 2, "player_spawn"), (2, 1, "manual_valve"), (3, 1, "connector_port")],
-)]==], 7)
+)]==],
+    7
+)
 
 local c = t.join()
 t.tick()
@@ -247,7 +253,8 @@ assert(t.pipe(3, 1) == 0, "the unary connector still replaces its centre length"
 -- its connector has transparent pixels around the bottle; those pixels name
 -- ground, not whichever structure happens to be topmost on the tile. The
 -- floor therefore slides over the port and under the still-fastened bottle.
-t.world([==[(
+t.world(
+    [==[(
     name: "tile under canister",
     legend: {
         ' ': (turf: Space),
@@ -271,7 +278,9 @@ t.world([==[(
         (2, 1, "connector_port"),
         (2, 1, "canister", { "blend": "canister_air", "open": true }),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local d = t.join()
 t.tick()
@@ -305,7 +314,8 @@ assert(assert(t.pipe_pressure(1, 1)) > 90.0, "the port remains plumbed to its ne
 -- floor and box the wiring in under bare plating (docs/MAPPING.md),
 -- and every rule above follows the panel rather than the turf.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "authored decks",
     legend: {
         ' ': (turf: Space),
@@ -323,7 +333,9 @@ t.world([==[(
     structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "wirecutters")],
     cables: [(2, 1, 1), (3, 1, 1)],
-)]==], 7)
+)]==],
+    7
+)
 
 local e = t.join()
 t.tick()
@@ -337,9 +349,13 @@ t.run_ticks(2)
 assert(t.hands(e).held == "wirecutters", "cutters in hand")
 _ = t.messages(e)
 
-local picked, why = pcall(function() t.click_subfloor(e, 3, 1, "cable", ROOM) end)
-assert(not picked and string.find(tostring(why), "no visible hittable pixel", 1, true),
-    "the concealed run cannot be selected through the picture")
+local picked, why = pcall(function()
+    t.click_subfloor(e, 3, 1, "cable", ROOM)
+end)
+assert(
+    not picked and string.find(tostring(why), "no visible hittable pixel", 1, true),
+    "the concealed run cannot be selected through the picture"
+)
 t.run_seconds(1.5)
 assert(t.cable_at(3, 1) == ROOM, "boxed-in plating keeps its run")
 assert(not said(e, "snipping"), "and the cutters never bit")

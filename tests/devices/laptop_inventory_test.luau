@@ -14,7 +14,9 @@ local ARENA = [==[(
 t.world(ARENA, 0)
 local p = t.join()
 t.run_ticks(3)
-local function step() t.run_ticks(2) end
+local function step()
+    t.run_ticks(2)
+end
 local function put_down()
     if t.hands(p).held == "floppy_disk" then
         t.move(p, "west")
@@ -32,9 +34,16 @@ local function put_down()
     end
 end
 local function take(id: string, x: number?)
-    local places: { [string]: { number } } = {["floppy_disk"] = {1, 3},["id_assistant"] = {1, 1},["id_captain"] = {3, 1},["screwdriver"] = {3, 3},["backpack"] = {2, 3},["laptop"] = {1, 2}}
+    local places: { [string]: { number } } = {
+        ["floppy_disk"] = { 1, 3 },
+        ["id_assistant"] = { 1, 1 },
+        ["id_captain"] = { 3, 1 },
+        ["screwdriver"] = { 3, 3 },
+        ["backpack"] = { 2, 3 },
+        ["laptop"] = { 1, 2 },
+    }
     local px, py = t.pos(p)
-    local at = if x then {x, 2} elseif t.target_at(p, px, py, id) then {px, py} else places[id]
+    local at = if x then { x, 2 } elseif t.target_at(p, px, py, id) then { px, py } else places[id]
     t.click(p, at[1], at[2], (assert(t.target_at(p, at[1], at[2], id), id .. " is visible")))
     step()
     assert(t.hands(p).held == id, "picked up " .. id)
@@ -50,12 +59,16 @@ end
 local function desktop()
     local ui = assert(t.ui(p), "desktop is open")
     local state = ui_controls.record(ui)
-    return ui_controls.record(if state.script then ui_controls.record(state.script).data else state.data)
+    return ui_controls.record(
+        if state.script then ui_controls.record(state.script).data else state.data
+    )
 end
 local function media_count(kind: string)
     local count = 0
     for _, row in ipairs(t.ledger_rows()) do
-        if row.audit and ui_controls.record(row.audit).audit == kind then count += 1 end
+        if row.audit and ui_controls.record(row.audit).audit == kind then
+            count += 1
+        end
     end
     return count
 end
@@ -77,13 +90,17 @@ assert(desktop().powered and desktop().cartridge, "held laptop powers and opens 
 take("floppy_disk")
 apply(held_laptop)
 assert(t.hands(p).held == "floppy_disk", "occupied cartridge slot swaps into the inserting hand")
-assert(media_count("media_inserted") == 2 and media_count("media_ejected") == 1,
-    "cartridge replacement records both the old cartridge leaving and the new one entering")
+assert(
+    media_count("media_inserted") == 2 and media_count("media_ejected") == 1,
+    "cartridge replacement records both the old cartridge leaving and the new one entering"
+)
 put_down()
 step()
 gesture(held_laptop, "shift_ctrl_primary")
-assert(t.hands(p).held == "floppy_disk" and not desktop().cartridge,
-    "declared modified click ejects from the other hand")
+assert(
+    t.hands(p).held == "floppy_disk" and not desktop().cartridge,
+    "declared modified click ejects from the other hand"
+)
 put_down()
 step()
 take("id_assistant")
@@ -95,7 +112,10 @@ assert(t.hands(p).held == "id_assistant", "ID replacement returns the original c
 put_down()
 step()
 gesture(held_laptop, "shift_ctrl_secondary")
-assert(t.hands(p).held == "id_captain" and not desktop().card, "modified right-click ejects the replacement ID")
+assert(
+    t.hands(p).held == "id_captain" and not desktop().card,
+    "modified right-click ejects the replacement ID"
+)
 put_down()
 step()
 
@@ -107,20 +127,26 @@ local inserted = media_count("media_inserted")
 take("floppy_disk")
 t.use_on_other(p)
 step()
-assert(t.hands(p).held == nil and t.hands(p)[laptop_hand + 1] == "laptop",
-    "forward use on the other hand inserts the disk into the laptop")
+assert(
+    t.hands(p).held == nil and t.hands(p)[laptop_hand + 1] == "laptop",
+    "forward use on the other hand inserts the disk into the laptop"
+)
 assert(media_count("media_inserted") == inserted + 1, "forward insertion is recorded")
 gesture(held_laptop, "shift_ctrl_primary")
 assert(t.hands(p).held == "floppy_disk", "the disk ejects back to the active hand")
 local disk_hand = t.hands(p).active - 1
 t.swap_hands(p)
 step()
-assert(t.hands(p).held == "laptop" and t.hands(p)[disk_hand + 1] == "floppy_disk",
-    "laptop active, disk in the other hand")
+assert(
+    t.hands(p).held == "laptop" and t.hands(p)[disk_hand + 1] == "floppy_disk",
+    "laptop active, disk in the other hand"
+)
 t.use_on_other(p)
 step()
-assert(t.hands(p).held == "laptop" and t.hands(p)[disk_hand + 1] == nil,
-    "reverse use on the other hand inserts the other hand's disk")
+assert(
+    t.hands(p).held == "laptop" and t.hands(p)[disk_hand + 1] == nil,
+    "reverse use on the other hand inserts the other hand's disk"
+)
 assert(media_count("media_inserted") == inserted + 2, "reverse insertion is recorded")
 for _, line in ipairs(t.messages(p)) do
     assert(not line:find("can't use those two together", 1, true), "no dead-end message: " .. line)
@@ -137,8 +163,10 @@ t.swap_hands(p)
 step()
 t.use_on_other(p)
 step()
-assert(t.hands(p).held == "laptop" and t.hands(p)[card_hand + 1] == nil,
-    "reverse use on the other hand inserts the other hand's ID card")
+assert(
+    t.hands(p).held == "laptop" and t.hands(p)[card_hand + 1] == nil,
+    "reverse use on the other hand inserts the other hand's ID card"
+)
 t.swap_hands(p)
 step()
 gesture(held_laptop, "shift_ctrl_secondary")
@@ -169,8 +197,10 @@ end
 t.swap_hands(p)
 step()
 apply({ Equipment = { slot = "back" } })
-assert(t.hands(p).held == nil and t.stored(p, "back")[1] == "laptop",
-    "a worn container stows the held laptop after handlers decline")
+assert(
+    t.hands(p).held == nil and t.stored(p, "back")[1] == "laptop",
+    "a worn container stows the held laptop after handlers decline"
+)
 
 local stored_laptop = { NestedEquipment = { slot = "back", path = { 0 } } }
 take("floppy_disk")
@@ -210,7 +240,10 @@ step()
 t.swap_hands(p)
 step()
 apply({ Equipment = { slot = "back" } })
-assert(t.hands(p).held == nil and t.stored(p, "back")[1] == "backpack", "inner bag nests in worn bag")
+assert(
+    t.hands(p).held == nil and t.stored(p, "back")[1] == "backpack",
+    "inner bag nests in worn bag"
+)
 local nested_laptop = { NestedEquipment = { slot = "back", path = { 0, 0 } } }
 take("floppy_disk")
 apply(nested_laptop)
@@ -218,8 +251,10 @@ assert(t.hands(p).held == nil, "cartridge inserts through the nested bag path")
 gesture(nested_laptop, "secondary")
 assert(desktop().cartridge, "nested laptop remains the same powered computer")
 gesture(nested_laptop, "shift_ctrl_primary")
-assert(t.hands(p).held == "floppy_disk" and not desktop().cartridge,
-    "nested cartridge ejection preserves the target and updates its desktop")
+assert(
+    t.hands(p).held == "floppy_disk" and not desktop().cartridge,
+    "nested cartridge ejection preserves the target and updates its desktop"
+)
 gesture(nested_laptop, "alt_primary")
 assert(t.ui(p) == nil, "Alt-click closes the nested laptop and dismisses its desktop")
 gesture(nested_laptop, "secondary")

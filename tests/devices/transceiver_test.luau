@@ -24,7 +24,8 @@ end
 -- The bench: power along the south wall, a plain transceiver a map
 -- stood up (its sockets on the plain rungs: a blank key says nothing),
 -- and every part of a keyed one lying at the builder's feet.
-t.world([==[(
+t.world(
+    [==[(
     name: "transceiver bench",
     legend: {
         ' ': (turf: Space),
@@ -56,19 +57,35 @@ t.world([==[(
         (4, 1, "transceiver"),
     ],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.run_ticks(20)
 
 local function take(x: number, y: number, id: string)
-    local places = {["metal"] = {4, 2},["cable_coil"] = {5, 2},["machine_board.transceiver"] = {6, 2},["network_card"] = {3, 3},["encryption_key.medical"] = {4, 3},["encryption_key"] = {5, 3},["screwdriver"] = {6, 3},["crowbar"] = {3, 2}}
-    local at = if t.target_at(p, x, y, id) then {x, y} else places[id]
+    local places = {
+        ["metal"] = { 4, 2 },
+        ["cable_coil"] = { 5, 2 },
+        ["machine_board.transceiver"] = { 6, 2 },
+        ["network_card"] = { 3, 3 },
+        ["encryption_key.medical"] = { 4, 3 },
+        ["encryption_key"] = { 5, 3 },
+        ["screwdriver"] = { 6, 3 },
+        ["crowbar"] = { 3, 2 },
+    }
+    local at = if t.target_at(p, x, y, id) then { x, y } else places[id]
     local home_x, home_y = t.pos(p)
     local px, py = home_x, home_y
     for _ = 1, 16 do
-        if math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1 then break end
-        local dir = if py == 1 and math.abs(px - at[1]) > 1 then "south" elseif math.abs(py - at[2]) > 1 then (if py < at[2] then "south" else "north") else (if px < at[1] then "east" else "west")
+        if math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1 then
+            break
+        end
+        local dir = if py == 1 and math.abs(px - at[1]) > 1
+            then "south"
+            elseif math.abs(py - at[2]) > 1 then (if py < at[2] then "south" else "north")
+            else (if px < at[1] then "east" else "west")
         t.move(p, dir)
         t.run_ticks(3)
         px, py = t.pos(p)
@@ -76,10 +93,20 @@ local function take(x: number, y: number, id: string)
     assert(math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1, "the supply is reachable")
     t.click(p, at[1], at[2], t.target_at(p, at[1], at[2], id))
     t.run_ticks(2)
-    assert(t.hands(p).held == id, "expected " .. id .. " in hand from " .. x .. "," .. y .. " via " .. at[1] .. "," .. at[2])
+    assert(
+        t.hands(p).held == id,
+        "expected " .. id .. " in hand from " .. x .. "," .. y .. " via " .. at[1] .. "," .. at[2]
+    )
     for _ = 1, 16 do
-        if px == home_x and py == home_y then break end
-        t.move(p, if px ~= home_x then (if px < home_x then "east" else "west") else (if py < home_y then "south" else "north"))
+        if px == home_x and py == home_y then
+            break
+        end
+        t.move(
+            p,
+            if px ~= home_x
+                then (if px < home_x then "east" else "west")
+                else (if py < home_y then "south" else "north")
+        )
         t.run_ticks(3)
         px, py = t.pos(p)
     end
@@ -195,15 +222,19 @@ take(5, 1, "crowbar")
 t.click(p, 6, 1, t.target_at(p, 6, 1))
 t.run_ticks(2)
 local frame = t.structure_at(6, 1)
-assert(frame ~= nil and frame.id == "machine_frame" and frame.state == "boarded",
-    "the assembly is what is left standing, holding its parts")
+assert(
+    frame ~= nil and frame.id == "machine_frame" and frame.state == "boarded",
+    "the assembly is what is left standing, holding its parts"
+)
 
 -- The frame's own crowbar is the one path the parts come back out by.
 t.click(p, 6, 1, t.target_at(p, 6, 1, "machine_frame"))
 t.run_ticks(2)
 put_down()
-assert(t.item_at(6, 1, "encryption_key.medical") ~= nil,
-    "the key that went in is the key that comes out")
+assert(
+    t.item_at(6, 1, "encryption_key.medical") ~= nil,
+    "the key that went in is the key that comes out"
+)
 assert(t.count_items("encryption_key.medical") == 1, "and no second one was invented")
 
 -- ---------------------------------------------------------------
@@ -211,8 +242,10 @@ assert(t.count_items("encryption_key.medical") == 1, "and no second one was inve
 --    channel rode the entity through the teardown, not the machine.
 -- ---------------------------------------------------------------
 local hands = t.hands(p)
-assert(hands[1] == "machine_board.transceiver" or hands[2] == "machine_board.transceiver",
-    "the board came back to a hand: " .. tostring(hands[1]) .. ", " .. tostring(hands[2]))
+assert(
+    hands[1] == "machine_board.transceiver" or hands[2] == "machine_board.transceiver",
+    "the board came back to a hand: " .. tostring(hands[1]) .. ", " .. tostring(hands[2])
+)
 -- The board landed in the free hand while the crowbar was working, so
 -- it may be the inactive one.
 if t.hands(p).held ~= "machine_board.transceiver" then

@@ -38,7 +38,8 @@ end
 
 -- The bench: a run reaching in from the west, a bare tile to build on,
 -- and the machine's parts laid out on the nearby floor.
-t.world([==[(
+t.world(
+    [==[(
     name: "assembly bench",
     legend: {
         ' ': (turf: Space),
@@ -66,7 +67,9 @@ t.world([==[(
         (5, 2, "crowbar"),
     ],
     pipes: [(1, 1, 4), (2, 1, 4)],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -75,13 +78,26 @@ t.tick()
 -- time and return to the workbench before using it.
 local function take(id: string)
     local x, y = 3, 2
-    local places = {["metal"] = {1, 3},["cable_coil"] = {2, 3},["machine_board.thermomachine"] = {3, 3},["matter_bin"] = {4, 3},["micro_laser"] = {5, 3},["glass"] = {6, 3},["screwdriver"] = {1, 2},["crowbar"] = {5, 2}}
-    local at = if t.target_at(p, x, y, id) then {x, y} else places[id]
+    local places = {
+        ["metal"] = { 1, 3 },
+        ["cable_coil"] = { 2, 3 },
+        ["machine_board.thermomachine"] = { 3, 3 },
+        ["matter_bin"] = { 4, 3 },
+        ["micro_laser"] = { 5, 3 },
+        ["glass"] = { 6, 3 },
+        ["screwdriver"] = { 1, 2 },
+        ["crowbar"] = { 5, 2 },
+    }
+    local at = if t.target_at(p, x, y, id) then { x, y } else places[id]
     local home_x, home_y = t.pos(p)
     local px, py = home_x, home_y
     for _ = 1, 16 do
-        if math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1 then break end
-        local dir = if math.abs(py - at[2]) > 1 then (if py < at[2] then "south" else "north") else (if px < at[1] then "east" else "west")
+        if math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1 then
+            break
+        end
+        local dir = if math.abs(py - at[2]) > 1
+            then (if py < at[2] then "south" else "north")
+            else (if px < at[1] then "east" else "west")
         t.move(p, dir)
         t.run_ticks(3)
         px, py = t.pos(p)
@@ -91,8 +107,15 @@ local function take(id: string)
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
     for _ = 1, 16 do
-        if px == home_x and py == home_y then break end
-        t.move(p, if px ~= home_x then (if px < home_x then "east" else "west") else (if py < home_y then "south" else "north"))
+        if px == home_x and py == home_y then
+            break
+        end
+        t.move(
+            p,
+            if px ~= home_x
+                then (if px < home_x then "east" else "west")
+                else (if py < home_y then "south" else "north")
+        )
         t.run_ticks(3)
         px, py = t.pos(p)
     end
@@ -225,7 +248,10 @@ take("screwdriver")
 t.click(p, 3, 1, t.target_at(p, 3, 1, "machine_frame"))
 t.run_seconds(4.5)
 local unit = t.structure_at(3, 1)
-assert(unit ~= nil and unit.id == "thermomachine", "the assembly becomes the machine its board named")
+assert(
+    unit ~= nil and unit.id == "thermomachine",
+    "the assembly becomes the machine its board named"
+)
 assert(unit.state == "off", "switched off, as anything fresh out of a frame is")
 assert(
     t.ledger_has("StructureStep", "machine_frame", "finished"),
@@ -240,8 +266,10 @@ t.tick()
 local panel = ui_controls.record(assert(t.ui(p), "a temperature control unit wears a panel"))
 local setpoint = ui_controls.rows(panel.setpoints)[1]
 assert(setpoint.field == "temperature", "with a thermostat on it")
-assert(readout(panel, "thermo.pipe") ~= "thermo.pipe.none",
-    "and its mouth found the run: " .. tostring(readout(panel, "thermo.pipe")))
+assert(
+    readout(panel, "thermo.pipe") ~= "thermo.pipe.none",
+    "and its mouth found the run: " .. tostring(readout(panel, "thermo.pipe"))
+)
 t.ui_close(p)
 t.tick()
 

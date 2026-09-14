@@ -25,7 +25,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- engine promises the boundary breathes (sim/breathing.rs, PP_SLACK).
 -- The diver rows below lean on that promise: suited and on internals,
 -- a breath of hard vacuum costs nothing, not "very nearly nothing".
-t.world([==[(
+t.world(
+    [==[(
     name: "the thin cells",
     legend: {
         ' ': (turf: Space),
@@ -44,7 +45,9 @@ t.world([==[(
     ],
     items: [(1, 1, "eva_suit"), (1, 1, "oxygen_tank")],
     room_gas: [(1, 1, "n2", 1.0), (3, 1, "n2", 1.0), (5, 1, "n2", 1.0)],
-)]==], 7)
+)]==],
+    7
+)
 
 -- One breath cycle, tg's SSmobs × next_breath (8 s at 20 Hz).
 local BREATH = 160
@@ -128,8 +131,10 @@ assert(
 -- only asked to be THERE, because opening the valve and looking at
 -- the bottle are one gesture.
 local panel = ui_controls.state(diver)
-assert(panel and panel.document == "modules" and panel.presentation == "modules",
-    "the tank reads itself out")
+assert(
+    panel and panel.document == "modules" and panel.presentation == "modules",
+    "the tank reads itself out"
+)
 
 -- ---------------------------------------------------------------
 -- FOUR: THE THREE-WAY.
@@ -154,30 +159,35 @@ assert(
 assert(
     oxy(tanked) > opening.tanked + 40.0,
     "a tank alone does not hold the vacuum off the skin -- oxygen in the "
-        .. "lungs, and the same crushing: " .. opening.tanked .. " -> " .. oxy(tanked)
+        .. "lungs, and the same crushing: "
+        .. opening.tanked
+        .. " -> "
+        .. oxy(tanked)
 )
 assert(
     oxy(tanked) < oxy(bare) - 5.0,
     "...though it is still strictly better than nothing, which is the "
-        .. "suffocating half it bought back: " .. oxy(tanked) .. " vs " .. oxy(bare)
+        .. "suffocating half it bought back: "
+        .. oxy(tanked)
+        .. " vs "
+        .. oxy(bare)
 )
 assert(
     oxy(diver) < oxy(tanked) / 5.0,
-    "and the suit is the whole of the difference: " .. oxy(diver)
-        .. " suited against " .. oxy(tanked) .. " not"
+    "and the suit is the whole of the difference: "
+        .. oxy(diver)
+        .. " suited against "
+        .. oxy(tanked)
+        .. " not"
 )
 assert(
     oxy(diver) <= opening.diver,
-    "-- four breaths of hard vacuum for free: "
-        .. opening.diver .. " -> " .. oxy(diver)
+    "-- four breaths of hard vacuum for free: " .. opening.diver .. " -> " .. oxy(diver)
 )
 
 -- ...and the bottle paid for those breaths.
 local gauge_1 = assert(t.vitals(diver)).tank
-assert(
-    gauge_1 < gauge_0,
-    "the gauge falls as it is breathed: " .. gauge_0 .. " -> " .. gauge_1
-)
+assert(gauge_1 < gauge_0, "the gauge falls as it is breathed: " .. gauge_0 .. " -> " .. gauge_1)
 
 -- ---------------------------------------------------------------
 -- FIVE: LETTING GO SHUTS THE VALVE.
@@ -222,7 +232,9 @@ assert(
 )
 assert(
     assert(t.vitals(diver)).tank < big,
-    "and the big gauge falls as the small one did: " .. big .. " -> "
+    "and the big gauge falls as the small one did: "
+        .. big
+        .. " -> "
         .. tostring(assert(t.vitals(diver)).tank)
 )
 

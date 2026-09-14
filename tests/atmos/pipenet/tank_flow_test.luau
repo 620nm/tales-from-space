@@ -41,7 +41,7 @@ local function near(a: number, b: number, slack: number, what: string)
 end
 
 -- Moles in an analyser's reading, off whichever holder.
-local function total(mix: {[string]: number}?)
+local function total(mix: { [string]: number }?)
     local sum = 0.0
     for _, moles in pairs(mix or {}) do
         sum = sum + moles
@@ -70,13 +70,16 @@ end
 -- of main, handed over at one atmosphere: both ends start somewhere, and
 -- the settled number is neither.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "one vessel, one run",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: ["#######", "#.....#", "#######"],
     structures: [(1, 1, "player_spawn"), (2, 1, "stationary_tank", "anchored", ("o2", 9000.0))],
     pipes: [(3, 1, 4), (4, 1, 4), (5, 1, 4)],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -93,8 +96,12 @@ local settled_kpa = pressure_of(tank_0 + run_0, TANK_M3 + RUN_M3, T20C)
 -- in a pass and so does this: a vessel is not a machine working towards a
 -- setpoint, it is a room with steel walls.
 t.run_ticks(10)
-near(assert(t.tank_pressure(2, 1)), settled_kpa, settled_kpa * 1e-9,
-    "one pass lands the vessel on the volume-weighted pressure")
+near(
+    assert(t.tank_pressure(2, 1)),
+    settled_kpa,
+    settled_kpa * 1e-9,
+    "one pass lands the vessel on the volume-weighted pressure"
+)
 near(assert(t.pipe_pressure(3, 1)), settled_kpa, settled_kpa * 1e-9, "and the run with it")
 
 -- What the run gained is what the vessel lost: a transfer, not two
@@ -102,13 +109,21 @@ near(assert(t.pipe_pressure(3, 1)), settled_kpa, settled_kpa * 1e-9, "and the ru
 local tank_1 = total(assert(t.tank_gas(2, 1)))
 local run_1 = total(assert(t.pipe_gas(3, 1)))
 near(tank_1 + run_1, tank_0 + run_0, (tank_0 + run_0) * 1e-12, "not a mole minted")
-near(tank_0 - tank_1, run_1 - run_0, (run_1 - run_0) * 1e-9,
-    "and the vessel is what paid for the run's gain")
+near(
+    tank_0 - tank_1,
+    run_1 - run_0,
+    (run_1 - run_0) * 1e-9,
+    "and the vessel is what paid for the run's gain"
+)
 assert(tank_1 < tank_0, "the vessel emptied INTO the run: " .. tank_0 .. " -> " .. tank_1)
 
 -- One body of gas is one molar density, split by volume.
-near(tank_1 / TANK_M3, run_1 / RUN_M3, (tank_1 / TANK_M3) * 1e-12,
-    "one density across both, which is what 'split by volume' means")
+near(
+    tank_1 / TANK_M3,
+    run_1 / RUN_M3,
+    (tank_1 / TANK_M3) * 1e-12,
+    "one density across both, which is what 'split by volume' means"
+)
 
 -- And it stays there. Nothing oscillates, nothing creeps.
 t.run_seconds(20)
@@ -134,8 +149,7 @@ local cv = assert(t.pipe_energy(3, 1)) / (run_n * rest_k)
 
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
-near(window_k(p), rest_k, 1e-6,
-    "the vessel's window agrees with an analyser held against the run")
+near(window_k(p), rest_k, 1e-6, "the vessel's window agrees with an analyser held against the run")
 
 local INJECTED = 10000000.0
 local energy_0 = assert(t.pipe_energy(3, 1)) + vessel_n * cv * rest_k
@@ -144,18 +158,30 @@ t.run_seconds(5)
 
 local hot_k = assert(t.pipe_temperature(3, 1))
 local energy_1 = assert(t.pipe_energy(3, 1)) + total(assert(t.tank_gas(2, 1))) * cv * hot_k
-near(energy_1, energy_0 + INJECTED, (energy_0 + INJECTED) * 1e-9,
-    "the joules that went in are the joules that are there")
-near(hot_k, (energy_0 + INJECTED) / ((vessel_n + run_n) * cv), 1e-6,
-    "and the temperature is that book divided through both holders")
+near(
+    energy_1,
+    energy_0 + INJECTED,
+    (energy_0 + INJECTED) * 1e-9,
+    "the joules that went in are the joules that are there"
+)
+near(
+    hot_k,
+    (energy_0 + INJECTED) / ((vessel_n + run_n) * cv),
+    1e-6,
+    "and the temperature is that book divided through both holders"
+)
 assert(hot_k > rest_k + 40.0, "warmer for it: " .. rest_k .. " -> " .. hot_k .. " K")
-near(window_k(p), hot_k, 1e-6,
-    "and the vessel came with it -- one body of gas, one temperature")
+near(window_k(p), hot_k, 1e-6, "and the vessel came with it -- one body of gas, one temperature")
 
 -- MASS did not move: the split is by volume and both holders were already
 -- at one density, so what crossed the mouth was energy on parcels that
 -- came straight back.
-near(total(assert(t.tank_gas(2, 1))), vessel_n, vessel_n * 1e-12, "the vessel's moles are untouched")
+near(
+    total(assert(t.tank_gas(2, 1))),
+    vessel_n,
+    vessel_n * 1e-12,
+    "the vessel's moles are untouched"
+)
 near(total(assert(t.pipe_gas(3, 1))), run_n, run_n * 1e-12, "and so are the run's")
 
 -- ---------------------------------------------------------------
@@ -170,7 +196,8 @@ near(total(assert(t.pipe_gas(3, 1))), run_n, run_n * 1e-12, "and so are the run'
 -- net with two converges over passes where tg's pipeline-wide pool lands
 -- in one. Same endpoint, which is what this asserts.)
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "two vessels, one run",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: ["#######", "#.....#", "#######"],
@@ -180,7 +207,9 @@ t.world([==[(
         (5, 1, "stationary_tank", "anchored", ("n2", 20000.0)),
     ],
     pipes: [(3, 1, 4), (4, 1, 4)],
-)]==], 7)
+)]==],
+    7
+)
 
 t.join()
 t.tick()
@@ -194,12 +223,19 @@ assert(assert(t.tank_gas(5, 1)).o2 == nil, "and so does the nitrogen one")
 
 t.run_seconds(60)
 
-local left, right, between = assert(t.tank_gas(2, 1)), assert(t.tank_gas(5, 1)), assert(t.pipe_gas(3, 1))
-local function oxygen_fraction(mix: {[string]: number})
+local left, right, between =
+    assert(t.tank_gas(2, 1)), assert(t.tank_gas(5, 1)), assert(t.pipe_gas(3, 1))
+local function oxygen_fraction(mix: { [string]: number })
     return mix.o2 / (mix.o2 + mix.n2)
 end
 
-assert(type(left.o2) == "number" and type(left.n2) == "number" and type(right.o2) == "number" and type(right.n2) == "number", "neither vessel kept a pure gas")
+assert(
+    type(left.o2) == "number"
+        and type(left.n2) == "number"
+        and type(right.o2) == "number"
+        and type(right.n2) == "number",
+    "neither vessel kept a pure gas"
+)
 near(oxygen_fraction(left), oxygen_fraction(right), 1e-9, "one mixture, both vessels")
 near(oxygen_fraction(between), oxygen_fraction(right), 1e-9, "and the run between them")
 near(oxygen_fraction(left), o2_0 / (o2_0 + n2_0), 1e-9, "the shift's own gas, stirred")
@@ -221,7 +257,8 @@ near(assert(t.pipe_pressure(3, 1)), shared_kpa, shared_kpa * 1e-9, "on the same 
 -- which way it went -- both ends converge either way -- so the direction
 -- is read off the mole count, here and above.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "an empty vessel on a charged main",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: ["##############", "#............#", "##############"],
@@ -230,7 +267,9 @@ t.world([==[(
         (2, 1, 4), (3, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4),
         (7, 1, 4), (8, 1, 4), (9, 1, 4), (10, 1, 4), (11, 1, 4),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 t.join()
 t.tick()
@@ -245,15 +284,26 @@ t.run_ticks(10)
 local main_1 = total(assert(t.pipe_gas(2, 1)))
 local vessel_1 = total(assert(t.tank_gas(12, 1)))
 assert(vessel_1 > 0.0, "the vessel filled from the main")
-near(main_0 - main_1, vessel_1, vessel_1 * 1e-9,
-    "every mole in it came out of the run -- THE MAIN PAYS")
+near(
+    main_0 - main_1,
+    vessel_1,
+    vessel_1 * 1e-9,
+    "every mole in it came out of the run -- THE MAIN PAYS"
+)
 near(main_1 + vessel_1, main_0, main_0 * 1e-12, "with the book balancing")
-near(assert(t.tank_pressure(12, 1)), drained_kpa, drained_kpa * 1e-9,
-    "and both settle on the volume-weighted pressure, from below")
+near(
+    assert(t.tank_pressure(12, 1)),
+    drained_kpa,
+    drained_kpa * 1e-9,
+    "and both settle on the volume-weighted pressure, from below"
+)
 near(assert(t.pipe_pressure(2, 1)), drained_kpa, drained_kpa * 1e-9, "the main with it")
-assert(assert(t.pipe_pressure(2, 1)) < 30.0,
+assert(
+    assert(t.pipe_pressure(2, 1)) < 30.0,
     "ten lengths against 2500 L is a main with nothing left: "
-        .. assert(t.pipe_pressure(2, 1)) .. " kPa")
+        .. assert(t.pipe_pressure(2, 1))
+        .. " kPa"
+)
 
 -- ---------------------------------------------------------------
 -- THE TORCH.
@@ -264,13 +314,16 @@ assert(assert(t.pipe_pressure(2, 1)) < 30.0,
 -- stationary_tank_build_test.luau proves the room's reading goes up; this
 -- weighs it, sealed, in a gas nobody breathes.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "the torch",
     legend: { '.': (turf: Floor), '#': (turf: Wall) },
     rows: ["#####", "#...#", "#...#", "#...#", "#####"],
     items: [(2, 2, "welder")],
     structures: [(2, 2, "player_spawn"), (3, 2, "stationary_tank", "anchored", ("n2", 3000.0))],
-)]==], 7)
+)]==],
+    7
+)
 
 local w = t.join()
 t.tick()
@@ -295,8 +348,12 @@ t.click(w, 3, 2, t.target_at(w, 3, 2))
 t.run_seconds(4.5)
 
 assert(t.tank_pressure(3, 2) == nil, "the vessel is gone")
-near(room_nitrogen() - room_0, held, held * 1e-9,
-    "every mole it held is on the deck: " .. held .. " mol")
+near(
+    room_nitrogen() - room_0,
+    held,
+    held * 1e-9,
+    "every mole it held is on the deck: " .. held .. " mol"
+)
 -- The frame it leaves is LOOSE, and a loose thing standing in its own
 -- vessel's decompression does not stay where it was put -- so look.
 local frame = nil
@@ -306,8 +363,14 @@ for y = 1, 3 do
         frame = (s and s.id == "stationary_tank_frame") and s or frame
     end
 end
-assert(frame and frame.state == "displaced",
-    "the re-platable frame is somewhere in the room: " .. tostring(frame and frame.state))
+assert(
+    frame and frame.state == "displaced",
+    "the re-platable frame is somewhere in the room: " .. tostring(frame and frame.state)
+)
 t.run_seconds(30)
-near(room_nitrogen() - room_0, held, held * 1e-9,
-    "and it is still there half a minute later, spread through the room")
+near(
+    room_nitrogen() - room_0,
+    held,
+    held * 1e-9,
+    "and it is still there half a minute later, spread through the room"
+)

@@ -8,9 +8,10 @@ local function standing(x: number, y: number, id: string, state: string?)
     assert(found ~= nil, "a structure stands at " .. x .. "," .. y)
     assert(found.id == id, "at " .. x .. "," .. y .. ": " .. tostring(found.id))
     if state ~= nil then
-        assert(found.state == state,
-            id .. " at " .. x .. "," .. y .. " ships " .. state
-                .. ", not " .. tostring(found.state))
+        assert(
+            found.state == state,
+            id .. " at " .. x .. "," .. y .. " ships " .. state .. ", not " .. tostring(found.state)
+        )
     end
 end
 
@@ -92,15 +93,19 @@ for _, row in ipairs({
     { 5, 27, 8, 30 },
 }) do
     assert(t.lit(row[1], row[2]), "the station grid lights " .. row[1] .. "," .. row[2])
-    assert(assert(t.room_pressure(row[3], row[4])) > 90.0,
-        "the room at " .. row[3] .. "," .. row[4] .. " holds air")
+    assert(
+        assert(t.room_pressure(row[3], row[4])) > 90.0,
+        "the room at " .. row[3] .. "," .. row[4] .. " holds air"
+    )
 end
 
 -- A closed door is the view boundary. The player starts in the Commons:
 -- an examine in the room succeeds and a forged claim through its west door
 -- is refused by the same FOV-filtered seam the browser uses.
 assert(t.examine(p, 17, 14) ~= nil, "the player sees their own room")
-assert(not pcall(function() t.examine(p, 13, 15) end), "the west hall stays behind the shut door")
+assert(not pcall(function()
+    t.examine(p, 13, 15)
+end), "the west hall stays behind the shut door")
 
 -- Both EVA exits are vestibules: outer door, three tiles of chamber, inner
 -- door, with vacuum beyond and air held between the leaves.
@@ -133,7 +138,8 @@ assert(assert(t.room_pressure(30, 6)) > 90.0, "the cargo bay holds air through i
 -- gate (fixtures/transceiver.luau). Without this tower the crew's
 -- shipped Common headsets make a ten-tile bubble
 -- (radio_coverage_test.luau owns that exact boundary).
-local route: { "east" | "north" | "south" | "west" } = { "east", "east", "east", "east", "north", "north" }
+local route: { "east" | "north" | "south" | "west" } =
+    { "east", "east", "east", "east", "north", "north" }
 for _, dir in ipairs(route) do
     t.move(p, dir)
     t.run_ticks(6)
@@ -152,5 +158,4 @@ for _, m in ipairs(heard) do
         on_air = true
     end
 end
-assert(on_air,
-    "the Commons tower ships powered and keyed: " .. table.concat(heard, " | "))
+assert(on_air, "the Commons tower ships powered and keyed: " .. table.concat(heard, " | "))

@@ -47,22 +47,62 @@ return {
     -- makes the shelf count display-only in every mode.
     vends = {
         { item = "pipe", name = "Pipe", category = "Pipes", amount = 999 },
-        { item = "layer_adapter_fitting", name = "Layer Adapter", category = "Pipes", amount = 999 },
-        { item = "color_adapter_fitting", name = "Color Adapter", category = "Pipes", amount = 999 },
+        {
+            item = "layer_adapter_fitting",
+            name = "Layer Adapter",
+            category = "Pipes",
+            amount = 999,
+        },
+        {
+            item = "color_adapter_fitting",
+            name = "Color Adapter",
+            category = "Pipes",
+            amount = 999,
+        },
 
         { item = "manual_valve_fitting", name = "Manual Valve", category = "Binary", amount = 999 },
-        { item = "digital_valve_fitting", name = "Digital Valve", category = "Binary", amount = 999 },
+        {
+            item = "digital_valve_fitting",
+            name = "Digital Valve",
+            category = "Binary",
+            amount = 999,
+        },
         { item = "pump_fitting", name = "Pump", category = "Binary", amount = 999 },
         { item = "volume_pump_fitting", name = "Volume Pump", category = "Binary", amount = 999 },
         { item = "passive_gate_fitting", name = "Passive Gate", category = "Binary", amount = 999 },
-        { item = "pressure_valve_fitting", name = "Pressure Valve", category = "Binary", amount = 999 },
-        { item = "temperature_gate_fitting", name = "Temperature Gate", category = "Binary", amount = 999 },
-        { item = "temperature_pump_fitting", name = "Temperature Pump", category = "Binary", amount = 999 },
+        {
+            item = "pressure_valve_fitting",
+            name = "Pressure Valve",
+            category = "Binary",
+            amount = 999,
+        },
+        {
+            item = "temperature_gate_fitting",
+            name = "Temperature Gate",
+            category = "Binary",
+            amount = 999,
+        },
+        {
+            item = "temperature_pump_fitting",
+            name = "Temperature Pump",
+            category = "Binary",
+            amount = 999,
+        },
 
         { item = "filter_fitting", name = "Filter", category = "Devices", amount = 999 },
-        { item = "filter_flipped_fitting", name = "Filter (flipped)", category = "Devices", amount = 999 },
+        {
+            item = "filter_flipped_fitting",
+            name = "Filter (flipped)",
+            category = "Devices",
+            amount = 999,
+        },
         { item = "mixer_fitting", name = "Mixer", category = "Devices", amount = 999 },
-        { item = "mixer_flipped_fitting", name = "Mixer (flipped)", category = "Devices", amount = 999 },
+        {
+            item = "mixer_flipped_fitting",
+            name = "Mixer (flipped)",
+            category = "Devices",
+            amount = 999,
+        },
         { item = "connector_port_fitting", name = "Connector", category = "Devices", amount = 999 },
         { item = "pipe_meter", name = "Meter", category = "Devices", amount = 999 },
         -- The two ends of the air loop: some take a room's air away,
@@ -73,11 +113,31 @@ return {
         -- a station has most of: a scrubber and an injector are
         -- department kit, and a vent is what every room with people in
         -- it needs one of.
-        { item = "air_scrubber_fitting", name = "Air Scrubber", category = "Devices", amount = 999 },
-        { item = "air_injector_fitting", name = "Air Injector", category = "Devices", amount = 999 },
-        { item = "airlock_pump_fitting", name = "External Airlock Pump", category = "Devices", amount = 999 },
+        {
+            item = "air_scrubber_fitting",
+            name = "Air Scrubber",
+            category = "Devices",
+            amount = 999,
+        },
+        {
+            item = "air_injector_fitting",
+            name = "Air Injector",
+            category = "Devices",
+            amount = 999,
+        },
+        {
+            item = "airlock_pump_fitting",
+            name = "External Airlock Pump",
+            category = "Devices",
+            amount = 999,
+        },
         { item = "vent_fitting", name = "Air Vent", category = "Devices", amount = 999 },
-        { item = "passive_vent_fitting", name = "Passive Vent", category = "Devices", amount = 999 },
+        {
+            item = "passive_vent_fitting",
+            name = "Passive Vent",
+            category = "Devices",
+            amount = 999,
+        },
 
         -- tg's own Heat Exchange shelf (`GLOB.atmos_pipe_recipes`,
         -- _globalvars/lists/pipe_recipes.dm:29-34). tg stocks "Pipe",
@@ -85,7 +145,17 @@ return {
         -- shape is derived from what it joins here, so all three are the
         -- one entry and a manifold is what a fourth length makes.
         { item = "he_pipe", name = "Pipe", category = "Heat Exchange", amount = 999 },
-        { item = "he_junction_fitting", name = "Junction", category = "Heat Exchange", amount = 999 },
-        { item = "heat_exchanger_fitting", name = "Heat Exchanger", category = "Heat Exchange", amount = 999 },
+        {
+            item = "he_junction_fitting",
+            name = "Junction",
+            category = "Heat Exchange",
+            amount = 999,
+        },
+        {
+            item = "heat_exchanger_fitting",
+            name = "Heat Exchanger",
+            category = "Heat Exchange",
+            amount = 999,
+        },
     },
 }

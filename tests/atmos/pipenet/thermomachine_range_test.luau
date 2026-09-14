@@ -70,7 +70,8 @@ end
 
 -- A short run, a unit standing at the end of it, and an engineer under
 -- the machine with their hands empty.
-t.world([==[(
+t.world(
+    [==[(
     name: "cold room",
     legend: {
         '.': (turf: Plating),
@@ -90,7 +91,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -100,7 +103,12 @@ t.tick()
 local charged = moles(1, 1)
 local opening_kpa = assert(t.pipe_pressure(1, 1))
 near(assert(t.pipe_temperature(1, 1)), T20C, 0.01, "the run opens at room temperature")
-near(ui_controls.number(ui_controls.state(p).gauge), needle(T20C), 1e-9, "and the needle opens at the default setpoint's place in the range")
+near(
+    ui_controls.number(ui_controls.state(p).gauge),
+    needle(T20C),
+    1e-9,
+    "and the needle opens at the default setpoint's place in the range"
+)
 
 -- ---------------------------------------------------------------
 -- THE COLD STOP, ASKED FOR THE WAY A PANICKING ENGINEER ASKS.
@@ -112,14 +120,29 @@ near(ui_controls.number(ui_controls.state(p).gauge), needle(T20C), 1e-9, "and th
 -- ---------------------------------------------------------------
 ui_controls.set(p, "temperature", 73.15)
 t.tick()
-near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value), FLOOR, 1e-12, "the stop itself is a settable number")
+near(
+    ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value),
+    FLOOR,
+    1e-12,
+    "the stop itself is a settable number"
+)
 
 for _, asked in ipairs({ 20, 0, -40, -1000 }) do
     ui_controls.set(p, "temperature", asked)
     t.tick()
-    near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value), FLOOR, 1e-9, asked .. " K is answered with the machine's floor")
+    near(
+        ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value),
+        FLOOR,
+        1e-9,
+        asked .. " K is answered with the machine's floor"
+    )
 end
-near(ui_controls.number(ui_controls.state(p).gauge), 0.0, 1e-9, "and the needle sits hard against the cold end")
+near(
+    ui_controls.number(ui_controls.state(p).gauge),
+    0.0,
+    1e-9,
+    "and the needle sits hard against the cold end"
+)
 
 -- ---------------------------------------------------------------
 -- ALL THE WAY DOWN, AND A STOP THAT IS A STOP.
@@ -139,7 +162,10 @@ local previous = assert(t.pipe_temperature(1, 1))
 for n = 1, 10 do
     pass()
     local now = assert(t.pipe_temperature(1, 1))
-    assert(now <= previous + 1e-9, "pass " .. n .. " never runs backwards: " .. previous .. " -> " .. now)
+    assert(
+        now <= previous + 1e-9,
+        "pass " .. n .. " never runs backwards: " .. previous .. " -> " .. now
+    )
     assert(now >= FLOOR - 1e-9, "and never dips under the floor: " .. now)
     previous = now
 end
@@ -158,7 +184,12 @@ end
 -- NOT ONE MOLE, and the pressure that fell is the gas law falling with
 -- the temperature -- the same moles in the same volume, colder.
 near(moles(1, 1), charged, charged * 1e-9, "no gas entered or left the run")
-near(assert(t.pipe_pressure(1, 1)) / opening_kpa, FLOOR / T20C, 1e-6, "and the pressure fell in the ratio the temperature did")
+near(
+    assert(t.pipe_pressure(1, 1)) / opening_kpa,
+    FLOOR / T20C,
+    1e-6,
+    "and the pressure fell in the ratio the temperature did"
+)
 
 -- ---------------------------------------------------------------
 -- AND ALL THE WAY UP, OFF THE SAME DIAL.
@@ -172,15 +203,28 @@ near(assert(t.pipe_pressure(1, 1)) / opening_kpa, FLOOR / T20C, 1e-6, "and the p
 for _, asked in ipairs({ 900, 5000 }) do
     ui_controls.set(p, "temperature", asked)
     t.tick()
-    near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value), CEILING, 1e-9, asked .. " K is answered with the machine's ceiling")
+    near(
+        ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value),
+        CEILING,
+        1e-9,
+        asked .. " K is answered with the machine's ceiling"
+    )
 end
-near(ui_controls.number(ui_controls.state(p).gauge), 100.0, 1e-9, "and the needle sits hard against the hot end")
+near(
+    ui_controls.number(ui_controls.state(p).gauge),
+    100.0,
+    1e-9,
+    "and the needle sits hard against the hot end"
+)
 
 previous = assert(t.pipe_temperature(1, 1))
 for n = 1, 10 do
     pass()
     local now = assert(t.pipe_temperature(1, 1))
-    assert(now >= previous - 1e-9, "pass " .. n .. " never runs backwards: " .. previous .. " -> " .. now)
+    assert(
+        now >= previous - 1e-9,
+        "pass " .. n .. " never runs backwards: " .. previous .. " -> " .. now
+    )
     assert(now <= CEILING + 1e-9, "and never overshoots the ceiling: " .. now)
     previous = now
 end
@@ -189,10 +233,20 @@ near(assert(t.pipe_temperature(1, 1)), CEILING, 1e-6, "the climb arrests ON the 
 local topped = assert(t.pipe_temperature(1, 1))
 for n = 1, 10 do
     t.run_seconds(5)
-    near(assert(t.pipe_temperature(1, 1)), topped, 1e-9, "hot sample " .. n .. " has not moved either")
+    near(
+        assert(t.pipe_temperature(1, 1)),
+        topped,
+        1e-9,
+        "hot sample " .. n .. " has not moved either"
+    )
 end
 near(moles(1, 1), charged, charged * 1e-9, "still not one mole in or out")
-near(assert(t.pipe_pressure(1, 1)) / opening_kpa, CEILING / T20C, 1e-6, "and the pressure climbed in that ratio too")
+near(
+    assert(t.pipe_pressure(1, 1)) / opening_kpa,
+    CEILING / T20C,
+    1e-6,
+    "and the pressure climbed in that ratio too"
+)
 near(
     assert(tonumber(readout(ui_controls.state(p), "thermo.pipe"):match("[%d%.]+"))),
     assert(t.pipe_temperature(1, 1)),
@@ -213,7 +267,8 @@ near(
 -- their mind halfway up it, which is the only way to ask what the
 -- machine does when the dial moves UNDER the gas it is holding.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "freezer bay",
     legend: {
         '.': (turf: Plating),
@@ -238,7 +293,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local e = t.join()
 t.tick()
@@ -247,7 +304,10 @@ assert(assert(t.structure_at(3, 1)).state == "shut", "the hand valve opens the s
 t.click(e, 3, 1, t.target_at(e, 3, 1, "manual_valve"))
 t.run_seconds(4)
 assert(assert(t.structure_at(3, 1)).state == "open", "and an engineer opens it onto the line")
-assert(assert(t.pipe_pressure(5, 1)) > 300.0, "which charges the run off the tank: " .. assert(t.pipe_pressure(5, 1)))
+assert(
+    assert(t.pipe_pressure(5, 1)) > 300.0,
+    "which charges the run off the tank: " .. assert(t.pipe_pressure(5, 1))
+)
 
 for _ = 1, 3 do
     t.move(e, "east")
@@ -260,7 +320,12 @@ assert(t.ui(e), "the unit at the far end of the line answers an empty hand")
 ui_controls.set(e, "temperature", 573.15)
 ui_controls.toggle(e, "power")
 t.run_ticks(2)
-near(ui_controls.number(ui_controls.rows(ui_controls.state(e).setpoints)[1].value), CEILING, 1e-9, "dialled to the top")
+near(
+    ui_controls.number(ui_controls.rows(ui_controls.state(e).setpoints)[1].value),
+    CEILING,
+    1e-9,
+    "dialled to the top"
+)
 near(ui_controls.number(ui_controls.state(e).gauge), 100.0, 1e-9, "and the needle says so")
 
 for _ = 1, 10 do
@@ -269,7 +334,10 @@ end
 local caught = assert(t.pipe_temperature(5, 1))
 assert(caught > T20C + 40.0, "ten passes in, the line is well up: " .. caught)
 assert(caught < CEILING - 20.0, "and still well short of the target it was given: " .. caught)
-assert(readout(ui_controls.state(e), "thermo.pipe"):find("K", 1, true), "the panel is reading the line all the way up")
+assert(
+    readout(ui_controls.state(e), "thermo.pipe"):find("K", 1, true),
+    "the panel is reading the line all the way up"
+)
 
 -- The dial goes UNDER the gas. tg's pass takes `target - T_port` fresh
 -- every time and has no memory of which way it was working last, so
@@ -277,12 +345,25 @@ assert(readout(ui_controls.state(e), "thermo.pipe"):find("K", 1, true), "the pan
 -- is a cooling pass.
 ui_controls.set(e, "temperature", 250)
 t.run_ticks(2)
-near(ui_controls.number(ui_controls.rows(ui_controls.state(e).setpoints)[1].value), 250.0, 1e-9, "the thermostat takes the new number")
-near(ui_controls.number(ui_controls.state(e).gauge), needle(250.0), 1e-9, "and the needle walks back down the range with it")
+near(
+    ui_controls.number(ui_controls.rows(ui_controls.state(e).setpoints)[1].value),
+    250.0,
+    1e-9,
+    "the thermostat takes the new number"
+)
+near(
+    ui_controls.number(ui_controls.state(e).gauge),
+    needle(250.0),
+    1e-9,
+    "and the needle walks back down the range with it"
+)
 
 pass()
 local turned = assert(t.pipe_temperature(5, 1))
-assert(turned < caught - 20.0, "and it turned round on the very next pass: " .. caught .. " -> " .. turned)
+assert(
+    turned < caught - 20.0,
+    "and it turned round on the very next pass: " .. caught .. " -> " .. turned
+)
 
 previous = turned
 for n = 1, 10 do
@@ -299,16 +380,39 @@ local mid = assert(t.pipe_temperature(5, 1))
 assert(mid > 250.0 + 5.0, "still on its way down when the dial moves again: " .. mid)
 ui_controls.set(e, "temperature", 300)
 t.run_ticks(2)
-near(ui_controls.number(ui_controls.rows(ui_controls.state(e).setpoints)[1].value), 300.0, 1e-9, "the third setting of the shift")
-near(ui_controls.number(ui_controls.state(e).gauge), needle(300.0), 1e-9, "with the needle back up the range")
+near(
+    ui_controls.number(ui_controls.rows(ui_controls.state(e).setpoints)[1].value),
+    300.0,
+    1e-9,
+    "the third setting of the shift"
+)
+near(
+    ui_controls.number(ui_controls.state(e).gauge),
+    needle(300.0),
+    1e-9,
+    "with the needle back up the range"
+)
 
 pass()
 assert(
     assert(t.pipe_temperature(5, 1)) > mid,
-    "and it is heating again, never switched off and on: " .. mid .. " -> " .. assert(t.pipe_temperature(5, 1))
+    "and it is heating again, never switched off and on: "
+        .. mid
+        .. " -> "
+        .. assert(t.pipe_temperature(5, 1))
 )
 
 t.run_seconds(90)
-near(assert(t.pipe_temperature(5, 1)), 300.0, 0.01, "the line settles on the last number it was given")
+near(
+    assert(t.pipe_temperature(5, 1)),
+    300.0,
+    0.01,
+    "the line settles on the last number it was given"
+)
 t.run_seconds(30)
-near(assert(t.pipe_temperature(5, 1)), 300.0, 0.01, "and holds it, with the reservoir behind it holding too")
+near(
+    assert(t.pipe_temperature(5, 1)),
+    300.0,
+    0.01,
+    "and holds it, with the reservoir behind it holding too"
+)

@@ -22,7 +22,9 @@ function controls.number(value: unknown): number
 end
 
 function controls.word(value: unknown): string
-    if type(value) == "string" then return value end
+    if type(value) == "string" then
+        return value
+    end
     local label = controls.record(value)
     return controls.text(label.id or label.text)
 end
@@ -32,8 +34,10 @@ function controls.array(value: unknown): { unknown }
     local source = value :: { [unknown]: unknown }
     local length = #source
     for key in pairs(source) do
-        assert(type(key) == "number" and key % 1 == 0 and key >= 1 and key <= length,
-            "expected contiguous disclosed array indices")
+        assert(
+            type(key) == "number" and key % 1 == 0 and key >= 1 and key <= length,
+            "expected contiguous disclosed array indices"
+        )
     end
     for index = 1, length do
         assert(source[index] ~= nil, "expected contiguous disclosed array indices")
@@ -44,7 +48,9 @@ end
 function controls.texts(value: unknown): { string }
     local values = controls.array(value)
     local texts = table.create(#values, "")
-    for index, value in ipairs(values) do texts[index] = controls.text(value) end
+    for index, value in ipairs(values) do
+        texts[index] = controls.text(value)
+    end
     return texts
 end
 
@@ -64,18 +70,24 @@ end
 function controls.find(p: number, suffix: string, scope: Scope?): Node?
     local found: Node? = nil
     local function visit(value: unknown): ()
-        if type(value) ~= "table" then return end
+        if type(value) ~= "table" then
+            return
+        end
         local node = controls.record(value)
         if scope and node.window then
             local window = controls.record(node.window)
-            if window.document ~= scope.document or window.generation ~= scope.generation then return end
+            if window.document ~= scope.document or window.generation ~= scope.generation then
+                return
+            end
         end
         if type(node.id) == "string" and node.id:sub(-#suffix) == suffix then
             assert(found == nil, "ambiguous rendered control: " .. suffix)
             found = node :: Node
         end
         for _, child in pairs(node) do
-            if type(child) == "table" then visit(child) end
+            if type(child) == "table" then
+                visit(child)
+            end
         end
     end
     visit(t.ui_tree(p))
@@ -105,9 +117,14 @@ function controls.toggle(p: number, field: string, option: Option?, channel: str
     local scope = assert(t.ui_document(p, channel), "no document observed")
     controls.details(p, scope)
     local suffix = "/toggle/" .. field .. "/" .. (option == nil and "switch" or tostring(option))
-    if controls.find(p, suffix, scope) then controls.press(p, suffix, nil, scope); return end
+    if controls.find(p, suffix, scope) then
+        controls.press(p, suffix, nil, scope)
+        return
+    end
     local selected: string? = nil
-    if option ~= nil then selected = tostring(option) end
+    if option ~= nil then
+        selected = tostring(option)
+    end
     for index, row in ipairs(controls.rows(controls.state(p, channel).toggles or {})) do
         if row.field == field and row.option == selected then
             controls.press(p, "/toggle-index/" .. (index - 1), nil, scope)

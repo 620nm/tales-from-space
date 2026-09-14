@@ -23,9 +23,15 @@ assert(t.turf(0, 0) == "ground", "absent turf inherits the selected terrain")
 assert(math.abs(assert(t.room_temperature(0, 0)) - 310.0) < 0.01)
 local outside = assert(t.room_gas(0, 0))
 assert(math.abs((outside.co2 or 0) - 35) < 1e-6)
-assert((outside.o2 or 0) == 0, "the profile cannot replace authored carbon dioxide with breathable air")
+assert(
+    (outside.o2 or 0) == 0,
+    "the profile cannot replace authored carbon dioxide with breathable air"
+)
 assert(math.abs(assert(t.room_temperature(2, 2)) - 280.0) < 0.01)
-assert(math.abs((assert(t.room_gas(2, 2)).n2 or 0) - 20) < 1e-6, "painted room air stays independent")
+assert(
+    math.abs((assert(t.room_gas(2, 2)).n2 or 0) - 20) < 1e-6,
+    "painted room air stays independent"
+)
 t.foul_room(0, 0, "n2", 10.0)
 local added = assert(t.room_gas(0, 0)).n2
 t.run_ticks(120)
@@ -40,7 +46,14 @@ assert(math.abs(assert(t.room_temperature(0, 0)) - 259.15) < 0.01)
 assert((assert(t.room_gas(0, 0)).o2 or 0) > 0, "the game fills an unspecified mix")
 
 t.world(string.format(MAP, "", "refrigerated_air"), 7, "free_build")
-assert((assert(t.room_gas(0, 0)).o2 or 0) > 0, "a local recipe is not ambient until explicitly selected")
-t.world(string.format(MAP, 'atmosphere_blend: Some("refrigerated_air")', "refrigerated_air"), 7, "free_build")
+assert(
+    (assert(t.room_gas(0, 0)).o2 or 0) > 0,
+    "a local recipe is not ambient until explicitly selected"
+)
+t.world(
+    string.format(MAP, 'atmosphere_blend: Some("refrigerated_air")', "refrigerated_air"),
+    7,
+    "free_build"
+)
 assert(math.abs(assert(t.room_temperature(0, 0)) - 310.0) < 0.01)
 assert((assert(t.room_gas(0, 0)).o2 or 0) == 0, "the selected map recipe wins a pack ID collision")

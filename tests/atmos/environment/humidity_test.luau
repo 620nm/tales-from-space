@@ -20,7 +20,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- `t.room_gas` reports the GAS phase only (sim/vents.rs), which is what
 -- makes the assertions below sharp: a puddle would read as zero.
 
-t.world([==[(
+t.world(
+    [==[(
     name: "the drying room",
     legend: {
         ' ': (turf: Space),
@@ -43,7 +44,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3),
         (1, 2, 3), (2, 2, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.run_ticks(2)

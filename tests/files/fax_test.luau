@@ -16,7 +16,10 @@ end
 local function assert_no_script_errors(label: string): ()
     local errors = t.ledger_rows("script_error")
     local first = errors[1]
-    assert(#errors == 0, label .. ": " .. tostring(first and (first.why or first.file) or "unknown script error"))
+    assert(
+        #errors == 0,
+        label .. ": " .. tostring(first and (first.why or first.file) or "unknown script error")
+    )
 end
 
 local function advertise(player: number, x: number, y: number, name: string): SpecObservedTarget
@@ -33,13 +36,20 @@ local function advertise(player: number, x: number, y: number, name: string): Sp
     assert(state.name == name, "advertisement commits its requested name")
     assert(state.advertised == true, "advertisement commits enabled state")
     assert(state.powered == true, "advertised fax is powered")
-    assert(type(state.address) == "string" and #state.address > 0, "advertised fax has a native address")
-    assert(type(state.network) == "string" and #state.network > 0, "advertised fax has a connected network")
+    assert(
+        type(state.address) == "string" and #state.address > 0,
+        "advertised fax has a native address"
+    )
+    assert(
+        type(state.network) == "string" and #state.network > 0,
+        "advertised fax has a connected network"
+    )
     assert_no_script_errors("advertisement")
     return fax
 end
 
-t.world([==[ (
+t.world(
+    [==[ (
     name: "fax network",
     legend: {
         '.': (turf: Floor), '#': (turf: Wall),
@@ -83,7 +93,9 @@ t.world([==[ (
         (13, 1, 1), (14, 1, 1), (15, 1, 1), (16, 1, 1),
         (17, 1, 1),
     ],
-) ]==], 0)
+) ]==],
+    0
+)
 
 local sender = t.join("assistant")
 local receiver = t.join("medic")
@@ -100,13 +112,25 @@ t.ui_close(sender)
 local pen = assert(t.target_at(sender, 2, 2, "four_color_pen"), "source pen is present")
 t.click(sender, 2, 2, pen)
 t.run_ticks(2)
-assert(t.hands(sender).held == "four_color_pen" or t.hands(sender)[1] == "four_color_pen" or t.hands(sender)[2] == "four_color_pen",
-    "source pen is held")
-if t.hands(sender).held ~= "four_color_pen" then t.swap_hands(sender); t.run_ticks(1) end
+assert(
+    t.hands(sender).held == "four_color_pen"
+        or t.hands(sender)[1] == "four_color_pen"
+        or t.hands(sender)[2] == "four_color_pen",
+    "source pen is held"
+)
+if t.hands(sender).held ~= "four_color_pen" then
+    t.swap_hands(sender)
+    t.run_ticks(1)
+end
 t.use_on_other(sender)
 t.run_ticks(2)
-local paper_document = assert(t.ui_document(sender, "writing"), "paper document address is available")
-local paper_prefix = "doc/" .. paper_document.document .. "/" .. paper_document.generation .. "/paper"
+local paper_document =
+    assert(t.ui_document(sender, "writing"), "paper document address is available")
+local paper_prefix = "doc/"
+    .. paper_document.document
+    .. "/"
+    .. paper_document.generation
+    .. "/paper"
 t.ui_edit(sender, paper_prefix .. "/draft", "hello from the shared fax tree")
 t.ui_press(sender, paper_prefix .. "/commit")
 t.run_ticks(2)
@@ -134,10 +158,16 @@ t.click(sender, 4, 2, sender_fax)
 t.run_ticks(2)
 assert(t.hands(sender).held == nil, "loading a fax consumes the held source sheet")
 local sender_data = data(sender, "fax")
-assert(sender_data.kind == "fax" and sender_data.directory ~= nil,
-    "the sender panel exposes its native directory")
-assert(#ui_controls.rows(sender_data.directory) == 1 and ui_controls.rows(sender_data.directory)[1].name == "Medical Fax",
-    "same-router discovery excludes the isolated fax; rows=" .. tostring(#ui_controls.rows(sender_data.directory)))
+assert(
+    sender_data.kind == "fax" and sender_data.directory ~= nil,
+    "the sender panel exposes its native directory"
+)
+assert(
+    #ui_controls.rows(sender_data.directory) == 1
+        and ui_controls.rows(sender_data.directory)[1].name == "Medical Fax",
+    "same-router discovery excludes the isolated fax; rows="
+        .. tostring(#ui_controls.rows(sender_data.directory))
+)
 
 -- Selection and send require the viewer-specific confirmation step.
 t.ui_press(sender, control(sender, "fax", "/directory/entry/0/target"))
@@ -162,11 +192,20 @@ assert(t.items_at(12, 2)[1] == "paper", "one fresh recipient sheet arrives at ti
 local output = assert(t.target_at(receiver, 12, 2, "paper"), "recipient output is readable")
 t.click(receiver, 12, 2, output)
 t.run_ticks(2)
-local output_window = ui_controls.record(assert(t.ui(receiver, "writing"), "recipient paper opens for reading"))
-local output_data = ui_controls.record(output_window.script and ui_controls.record(output_window.script).data or output_window.data)
+local output_window =
+    ui_controls.record(assert(t.ui(receiver, "writing"), "recipient paper opens for reading"))
+local output_data = ui_controls.record(
+    output_window.script and ui_controls.record(output_window.script).data or output_window.data
+)
 assert(#ui_controls.rows(output_data.committed) == 1, "recipient output has one committed fragment")
-assert(ui_controls.rows(output_data.committed)[1].text == "hello from the shared fax tree", "recipient output preserves the source text")
-assert(ui_controls.record(ui_controls.rows(output_data.committed)[1].style).color == "#000000", "recipient output is monochrome")
+assert(
+    ui_controls.rows(output_data.committed)[1].text == "hello from the shared fax tree",
+    "recipient output preserves the source text"
+)
+assert(
+    ui_controls.record(ui_controls.rows(output_data.committed)[1].style).color == "#000000",
+    "recipient output is monochrome"
+)
 
 -- The output is a real paper item, so put it down before inspecting the
 -- recipient machine's post-job stock.
@@ -177,8 +216,10 @@ local receiver_fax = assert(t.target_at(receiver, 12, 2, "fax"), "recipient fax 
 t.click(receiver, 12, 2, receiver_fax)
 t.run_ticks(2)
 local receiver_data = data(receiver, "fax")
-assert(receiver_data.paper == 29 and receiver_data.toner == 29,
-    "recipient stock charges one paper and toner for the received page")
+assert(
+    receiver_data.paper == 29 and receiver_data.toner == 29,
+    "recipient stock charges one paper and toner for the received page"
+)
 assert(receiver_data.busy ~= true, "the recipient reservation clears at the 40-tick deadline")
 
 -- Refill each stock through the player-facing containers. The machine starts
@@ -199,7 +240,8 @@ t.run_ticks(2)
 receiver_data = data(receiver, "fax")
 assert(receiver_data.paper == 30, "paper bin restores the missing sheet")
 
-local toner = assert(t.target_at(receiver, 12, 2, "toner_cartridge"), "toner cartridge is available")
+local toner =
+    assert(t.target_at(receiver, 12, 2, "toner_cartridge"), "toner cartridge is available")
 t.click(receiver, 12, 2, toner)
 t.run_ticks(1)
 assert(t.hands(receiver).held == "toner_cartridge", "toner cartridge is held")

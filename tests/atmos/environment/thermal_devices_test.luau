@@ -121,8 +121,7 @@ local function charge_gate_map(p)
     assert(supply > 90.0, "the supply is charged: " .. supply)
     assert(
         delivery < supply - 20.0,
-        "and the delivery main, diluted by two fresh lengths, is well"
-            .. " under it: " .. delivery
+        "and the delivery main, diluted by two fresh lengths, is well" .. " under it: " .. delivery
     )
     return supply, delivery
 end
@@ -243,13 +242,13 @@ t.run_seconds(60)
 local cold_out = assert(t.pipe_pressure(6, 1))
 assert(
     cold_out > cold_delivery_0 + 10.0,
-    "under the setting, the gas is 'cold' and flows: "
-        .. cold_delivery_0 .. " -> " .. cold_out
+    "under the setting, the gas is 'cold' and flows: " .. cold_delivery_0 .. " -> " .. cold_out
 )
 assert(
     cold_out < cold_supply_0,
     "and it stopped short of the supply -- a gate releases towards its"
-        .. " own input pressure and never past level: " .. cold_out
+        .. " own input pressure and never past level: "
+        .. cold_out
 )
 local cold_after = moles(assert(t.pipe_pressure(1, 1)), SUPPLY_M3) + moles(cold_out, DELIVERY_M3)
 assert(
@@ -280,8 +279,7 @@ local PUMP_ROWS = [==[
     structures: [(3, 2, "player_spawn"), (3, 1, "temperature_pump")],
 ]==]
 
-t.world(
-    [==[(
+t.world([==[(
     name: "heat pump",
     legend: {
         ' ': (turf: Space),
@@ -294,9 +292,7 @@ t.world(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3),
     ],
-]==] .. PUMP_ROWS .. ")",
-    7
-)
+]==] .. PUMP_ROWS .. ")", 7)
 
 local q = t.join()
 t.tick()
@@ -330,7 +326,12 @@ near(ui_controls.number(throttle.value), 0.0, 0.01, "and tg ships it shut at zer
 ui_controls.toggle(q, "power")
 t.run_seconds(20)
 assert(assert(t.structure_at(3, 1)).state == "running", "the pump is running")
-near(assert(t.pipe_temperature(1, 1)), hot_0, 0.5, "and moving no heat, because its throttle is shut")
+near(
+    assert(t.pipe_temperature(1, 1)),
+    hot_0,
+    0.5,
+    "and moving no heat, because its throttle is shut"
+)
 
 -- ---- open the throttle ----
 ui_controls.set(q, "share", 100)
@@ -376,8 +377,7 @@ near(
 -- The same room and the same panel, with nobody's cable under any of
 -- it: an unwired map is an unpowered map, so the pump has a switch and
 -- no mains behind it.
-t.world(
-    [==[(
+t.world([==[(
     name: "dead heat pump",
     legend: {
         ' ': (turf: Space),
@@ -386,9 +386,7 @@ t.world(
         'a': (turf: Plating, fixture: Some(Apc)),
         'g': (turf: Plating, fixture: Some(Generator)),
     },
-]==] .. PUMP_ROWS .. ")",
-    7
-)
+]==] .. PUMP_ROWS .. ")", 7)
 
 local d = t.join()
 t.tick()
@@ -400,8 +398,10 @@ local dead_cold = assert(t.pipe_temperature(5, 1))
 
 t.click(d, 3, 1, t.target_at(d, 3, 1, "temperature_pump"))
 t.tick()
-assert(readout(ui_controls.state(d), "flow.supply") == "flow.supply.dead",
-    "the panel says the mains are not behind it")
+assert(
+    readout(ui_controls.state(d), "flow.supply") == "flow.supply.dead",
+    "the panel says the mains are not behind it"
+)
 ui_controls.set(d, "share", 100)
 ui_controls.toggle(d, "power")
 t.run_seconds(60)
@@ -427,7 +427,8 @@ near(assert(t.pipe_temperature(5, 1)), dead_cold, 0.5, "in either direction")
 -- own run reaches away from its face, because a unary's mouth is BEHIND
 -- it (unary_devices.dm:14).
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "plates",
     legend: {
         ' ': (turf: Space),
@@ -451,7 +452,9 @@ t.world([==[(
         (4, 1, "heat_exchanger"),
         (9, 1, "heat_exchanger"),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local _r = t.join()
 t.tick()
@@ -515,7 +518,8 @@ near(assert(t.pipe_energy(11, 1)), lone_energy_0, 1.0, "and keeps every joule it
 -- is the GUARD -- the gate and the pump both refuse to come up while
 -- they are running, and the plate has nothing to be running.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "thermal fittings",
     legend: {
         ' ': (turf: Space),
@@ -541,7 +545,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local s = t.join()
 t.tick()
@@ -591,7 +597,9 @@ assert(t.structure_at(3, 1) == nil, "off, it comes up off the deck")
 assert(
     assert(t.room_pressure(3, 1)) > room_before,
     "the ports vented into the room when the machine left the run: "
-        .. room_before .. " -> " .. assert(t.room_pressure(3, 1))
+        .. room_before
+        .. " -> "
+        .. assert(t.room_pressure(3, 1))
 )
 -- -- and the fitting lands on the MACHINE's tile
 -- (docs/CONSTRUCTION.md), where the air it just let go of is moving,

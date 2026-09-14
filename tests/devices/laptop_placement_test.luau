@@ -5,7 +5,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- very first press on it is the screen, and B: is the disk's own store. Placed
 -- powered but closed, the lid comes up lit; placed open but dark, the power
 -- button comes before the screen.
-t.world([==[(
+t.world(
+    [==[(
     name: "laptop desk",
     legend: { '.': (turf: Floor), '#': (turf: Wall) },
     rows: ["#####", "#...#", "#...#", "#####"],
@@ -16,13 +17,17 @@ t.world([==[(
         (1, 2, "laptop", { "powered": true }),
         (3, 2, "laptop", { "open": true }),
     ],
-)]==], 0)
+)]==],
+    0
+)
 local p = t.join()
 t.run_ticks(20)
 
 local function file(ui: ui_controls.Record, side: string, name: string): ui_controls.Record?
     for _, row in ipairs(ui_controls.rows(ui.files or {})) do
-        if row.store == side and row.name == name then return row end
+        if row.store == side and row.name == name then
+            return row
+        end
     end
     return nil
 end
@@ -33,10 +38,14 @@ local placed = assert(t.target_at(p, 1, 1, "laptop"))
 t.use_item(p, placed, "secondary")
 t.run_ticks(2)
 local desktop = ui_controls.record(t.ui(p))
-assert(desktop and desktop.stores and #ui_controls.rows(desktop.stores) == 2,
-    "a laptop placed open and running shows its desktop on the first press")
-assert(file(desktop, "media", "airlock") and file(desktop, "media", "readme"),
-    "B: is the placed disk, holding its own files")
+assert(
+    desktop and desktop.stores and #ui_controls.rows(desktop.stores) == 2,
+    "a laptop placed open and running shows its desktop on the first press"
+)
+assert(
+    file(desktop, "media", "airlock") and file(desktop, "media", "readme"),
+    "B: is the placed disk, holding its own files"
+)
 t.ui_close(p)
 t.run_ticks(2)
 
@@ -45,13 +54,18 @@ local stock = assert(t.target_at(p, 3, 1, "laptop"))
 t.use_item(p, stock, "secondary")
 t.run_ticks(2)
 local after = t.ui(p)
-assert(after == nil or ui_controls.record(after).stores == nil, "a stock laptop raises its lid and opens nothing")
+assert(
+    after == nil or ui_controls.record(after).stores == nil,
+    "a stock laptop raises its lid and opens nothing"
+)
 
 -- The docked disk is disclosed as the eject hint; an empty drive has none.
 local EJECT = "lunatic/tfs:ui.affordance.eject_cartridge"
 local function offers_eject(target: SpecObservedTarget)
     for _, action in ipairs(t.action_hints(p, target)) do
-        if action.label and action.label.key == EJECT then return true end
+        if action.label and action.label.key == EJECT then
+            return true
+        end
     end
     return false
 end

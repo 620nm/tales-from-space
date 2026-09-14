@@ -114,18 +114,33 @@ return {
     -- (docs/content-schema/appearance.md).
     appearance = {
         device = {
-            online = { sprite = "air_alarm_lit", mounted = {
-                north = "air_alarm_lit_n", south = "air_alarm_lit_s",
-                east = "air_alarm_lit_e", west = "air_alarm_lit_w",
-            } },
-            offline = { sprite = "air_alarm", mounted = {
-                north = "air_alarm_n", south = "air_alarm_s",
-                east = "air_alarm_e", west = "air_alarm_w",
-            } },
-            unpowered = { sprite = "air_alarm", mounted = {
-                north = "air_alarm_n", south = "air_alarm_s",
-                east = "air_alarm_e", west = "air_alarm_w",
-            } },
+            online = {
+                sprite = "air_alarm_lit",
+                mounted = {
+                    north = "air_alarm_lit_n",
+                    south = "air_alarm_lit_s",
+                    east = "air_alarm_lit_e",
+                    west = "air_alarm_lit_w",
+                },
+            },
+            offline = {
+                sprite = "air_alarm",
+                mounted = {
+                    north = "air_alarm_n",
+                    south = "air_alarm_s",
+                    east = "air_alarm_e",
+                    west = "air_alarm_w",
+                },
+            },
+            unpowered = {
+                sprite = "air_alarm",
+                mounted = {
+                    north = "air_alarm_n",
+                    south = "air_alarm_s",
+                    east = "air_alarm_e",
+                    west = "air_alarm_w",
+                },
+            },
         },
     },
     category = "atmospherics",

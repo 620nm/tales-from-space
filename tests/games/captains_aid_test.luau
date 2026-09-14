@@ -15,7 +15,8 @@
 -- a position the prototype never declared -- so the last leg of this
 -- spec is the interesting one: after the fifth click the dial is back
 -- at off, having wrapped rather than run off the end.
-t.world([==[(
+t.world(
+    [==[(
     name: "bridge",
     legend: {
         ' ': (turf: Space),
@@ -29,7 +30,9 @@ t.world([==[(
     ],
     structures: [(1, 1, "player_spawn")],
     items: [(2, 1, "captains_aid")],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -38,8 +41,10 @@ t.tick()
 local resting = t.item_at(2, 1, "captains_aid")
 assert(resting ~= nil, "the Aid is on the deck")
 assert(resting.state == "off", "a fresh one is off: " .. tostring(resting.state))
-assert(resting.sprite == "captains_aid_off",
-    "and wears the off picture: " .. tostring(resting.sprite))
+assert(
+    resting.sprite == "captains_aid_off",
+    "and wears the off picture: " .. tostring(resting.sprite)
+)
 
 t.click(p, 2, 1, t.target_at(p, 2, 1, "captains_aid"))
 t.tick()
@@ -57,14 +62,20 @@ for _, direction in ipairs(CYCLE) do
     local said = t.messages(p)
     local last = said[#said]
     if direction == "off" then
-        assert(last:find("You switch the Captain's Aid off.", 1, true),
-            "the last click turns it off: " .. tostring(last))
+        assert(
+            last:find("You switch the Captain's Aid off.", 1, true),
+            "the last click turns it off: " .. tostring(last)
+        )
     else
-        assert(last:find("The Captain's Aid points " .. direction .. ".", 1, true),
-            "it says which way it points: " .. tostring(last))
+        assert(
+            last:find("The Captain's Aid points " .. direction .. ".", 1, true),
+            "it says which way it points: " .. tostring(last)
+        )
     end
-    assert(table.concat(t.sounds(p), " "):find("switch_click", 1, true),
-        "and the switch clicks (tg plays a screwdriver at it, toys.dm:421)")
+    assert(
+        table.concat(t.sounds(p), " "):find("switch_click", 1, true),
+        "and the switch clicks (tg plays a screwdriver at it, toys.dm:421)"
+    )
 
     -- THE HAND, first: the panel showing what you are holding is where
     -- a player looks while they are fiddling with the thing, and it is
@@ -72,8 +83,10 @@ for _, direction in ipairs(CYCLE) do
     -- PROTOTYPE once, so an Aid cycled through all five positions sat
     -- in the hand showing "off" the whole way round.
     local hud = t.hud(p)
-    assert(hud[1] == "captains_aid_" .. direction,
-        "the hand panel shows the position it was turned to: " .. tostring(hud[1]))
+    assert(
+        hud[1] == "captains_aid_" .. direction,
+        "the hand panel shows the position it was turned to: " .. tostring(hud[1])
+    )
 
     -- ...and then the deck, which is the other half a player sees.
     -- Read it off the floor, not out of the message just asserted.
@@ -81,10 +94,14 @@ for _, direction in ipairs(CYCLE) do
     t.tick()
     local down = t.item_at(1, 1, "captains_aid")
     assert(down ~= nil, "it is at the holder's feet")
-    assert(down.state == direction,
-        "the state is the position it was turned to: " .. tostring(down.state))
-    assert(down.sprite == "captains_aid_" .. direction,
-        "and the sprite is that position's cell: " .. tostring(down.sprite))
+    assert(
+        down.state == direction,
+        "the state is the position it was turned to: " .. tostring(down.state)
+    )
+    assert(
+        down.sprite == "captains_aid_" .. direction,
+        "and the sprite is that position's cell: " .. tostring(down.sprite)
+    )
     t.click(p, 1, 1, t.target_at(p, 1, 1, "captains_aid"))
     t.tick()
 end
@@ -98,8 +115,10 @@ local turns = t.ledger_rows("ModeSet")
 assert(#turns == #CYCLE, "one ModeSet per click, got " .. #turns)
 local repaints = t.ledger_rows("StateSet")
 assert(#repaints == #CYCLE, "one StateSet per click, got " .. #repaints)
-assert(repaints[#repaints].state == "off",
-    "and the last one put it back to off: " .. tostring(repaints[#repaints].state))
+assert(
+    repaints[#repaints].state == "off",
+    "and the last one put it back to off: " .. tostring(repaints[#repaints].state)
+)
 
 -- ---- round again, from off --------------------------------------------
 -- The wrap is only proved by what happens AFTER it: a dial that had
@@ -110,5 +129,7 @@ t.tick()
 t.drop(p)
 t.tick()
 local second_lap = assert(t.item_at(1, 1, "captains_aid"))
-assert(second_lap.state == "port",
-    "off + one is port again, not stuck at the end: " .. tostring(second_lap.state))
+assert(
+    second_lap.state == "port",
+    "off + one is port again, not stuck at the end: " .. tostring(second_lap.state)
+)

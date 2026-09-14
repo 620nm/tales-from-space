@@ -30,7 +30,8 @@ local ui_controls = require("@helpers/ui_controls")
 
 local BREATH = 160 -- one breath cycle, 8 s at 20 Hz
 
-t.world([==[(
+t.world(
+    [==[(
     name: "fume closet",
     legend: {
         ' ': (turf: Space),
@@ -65,7 +66,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local chemist = t.join("engineer")
 local diver = t.join("assistant")
@@ -80,8 +83,14 @@ local jar = t.target_at(chemist, 1, 2, "bottle")
 -- is there, so the room is the only place a gas can honestly be
 -- counted.
 local ROOM = {
-    { 1, 1 }, { 2, 1 }, { 3, 1 }, { 4, 1 },
-    { 1, 2 }, { 2, 2 }, { 3, 2 }, { 4, 2 },
+    { 1, 1 },
+    { 2, 1 },
+    { 3, 1 },
+    { 4, 1 },
+    { 1, 2 },
+    { 2, 2 },
+    { 3, 2 },
+    { 4, 2 },
 }
 local function room(key: string)
     local n = 0
@@ -179,8 +188,7 @@ assert(two > one, "and the second bottleful put more there: " .. two .. " mol")
 bottleful()
 local three = room("chlorine")
 assert(three > two, "and the third more again: " .. three .. " mol")
-assert(partial() > 0.75,
-    "which is a closet nobody should be standing in: " .. partial() .. " kPa")
+assert(partial() > 0.75, "which is a closet nobody should be standing in: " .. partial() .. " kPa")
 
 -- ---------------------------------------------------------------
 -- THREE: TEN BREATHS.
@@ -256,10 +264,13 @@ local before_n2 = room("n2")
 -- tank is the crewman who can still cross the room and press a switch.
 t.click(diver, 4, 1, assert(t.target_at(diver, 4, 1, scrubber)))
 t.tick()
-local roster: {[string]: boolean} = {}
+local roster: { [string]: boolean } = {}
 for _, sw in ipairs(ui_controls.rows(ui_controls.state(diver).toggles)) do
     if sw.field == "filter" then
-        assert(type(sw.option) == "string" and type(sw.on) == "boolean", "a filter has a named switch")
+        assert(
+            type(sw.option) == "string" and type(sw.on) == "boolean",
+            "a filter has a named switch"
+        )
         roster[sw.option] = sw.on
     end
 end
@@ -275,19 +286,27 @@ ui_controls.toggle(diver, "power")
 t.run_seconds(300)
 
 local moved = before_room - room("chlorine")
-assert(moved > 0.25 * before_room,
-    "a quarter of the cloud is out of the air the crew is in: " .. moved .. " mol")
+assert(
+    moved > 0.25 * before_room,
+    "a quarter of the cloud is out of the air the crew is in: " .. moved .. " mol"
+)
 -- A thousandth of slack rather than a billionth, because the main is
 -- not the only sink in the closet: there is a crewman standing in the
 -- cloud without a mask on, and every breath he takes keeps nine tenths
 -- of what was in it.
-assert(math.abs((pipe("chlorine") - before_pipe) - moved) < 5e-3,
+assert(
+    math.abs((pipe("chlorine") - before_pipe) - moved) < 5e-3,
     "and all but a breath of it is in the waste main, not lost: "
-        .. (pipe("chlorine") - before_pipe) .. " vs " .. moved)
+        .. (pipe("chlorine") - before_pipe)
+        .. " vs "
+        .. moved
+)
 
 -- ...and it took the chlorine and NOT the air, which is the whole
 -- difference between a scrubber and a siphon.
 assert(math.abs(room("o2") - before_o2) < 0.05 * before_o2, "the oxygen stayed")
 assert(math.abs(room("n2") - before_n2) < 0.05 * before_n2, "and so did the nitrogen")
-assert(assert(t.room_pressure(2, 2)) > 80.0,
-    "the closet still has its atmosphere: " .. assert(t.room_pressure(2, 2)) .. " kPa")
+assert(
+    assert(t.room_pressure(2, 2)) > 80.0,
+    "the closet still has its atmosphere: " .. assert(t.room_pressure(2, 2)) .. " kPa"
+)

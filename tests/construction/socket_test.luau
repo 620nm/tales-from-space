@@ -55,8 +55,10 @@ for _, id in ipairs({ "heart", "lungs", "liver", "brain", "eyes", "ears", "tongu
     assert(row.failing == false and row.decaying == false)
     assert(row.id == id, "the row names itself: " .. row.id)
 end
-assert(sockets.spleen == nil,
-    "a socket this plan does not declare is nil, which is how a handler asks")
+assert(
+    sockets.spleen == nil,
+    "a socket this plan does not declare is nil, which is how a handler asks"
+)
 
 -- The identity of the hole, not only of what is in it.
 assert(sockets.heart.zone == "chest", "the heart socket lives in the chest")
@@ -65,8 +67,10 @@ assert(sockets.brain.mind_seat == true, "and the brain socket is the seat (7)")
 assert(sockets.heart.mind_seat == false)
 assert(sockets.heart.organ == "organ_heart", "the prototype in there, by id")
 assert(sockets.heart.name == "heart", "and by the name a player would read")
-assert(sockets.heart.max == 100,
-    "STANDARD_ORGAN_THRESHOLD, DNA.dm:137: " .. tostring(sockets.heart.max))
+assert(
+    sockets.heart.max == 100,
+    "STANDARD_ORGAN_THRESHOLD, DNA.dm:137: " .. tostring(sockets.heart.max)
+)
 
 -- Vitality is the plan's, and the heart is this pack's answer to being
 -- alive (content/items/organ_heart.luau, heart_life_test.luau).
@@ -75,9 +79,11 @@ assert(sockets.lungs.vital == false, "losing the lungs is only suffocation")
 
 -- The tags are the socket's unioned with the organ's, which is the same
 -- set `parts.chest.socket_tags` answers one call over.
-assert(table.concat(sockets.heart.tags, ",")
-    == table.concat(assert(t.parts(patient)).chest.socket_tags.heart, ","),
-    "one union, two surfaces")
+assert(
+    table.concat(sockets.heart.tags, ",")
+        == table.concat(assert(t.parts(patient)).chest.socket_tags.heart, ","),
+    "one union, two surfaces"
+)
 
 -- =====================================================================
 -- DAMAGED. A damaged organ is still a WORKING organ: `ok` is about the
@@ -122,17 +128,24 @@ local PX, PY = 2, 1
 -- `procedure.on_organ` id carrying the two words as arguments; a plain
 -- one is content's own word (docs/tgui/labels.md).
 local function face(value: unknown): string
-    if type(value) ~= "table" then return tostring(value) end
+    if type(value) ~= "table" then
+        return tostring(value)
+    end
     local label = ui_controls.record(value)
     if label.args then
         local args = ui_controls.record(label.args)
-        if args.organ then return tostring(args.operation) .. " " .. tostring(args.organ) end
+        if args.organ then
+            return tostring(args.operation) .. " " .. tostring(args.organ)
+        end
     end
     return tostring(label.text or label.id)
 end
 
 local function hold(id: string)
-    if t.hands(surgeon).held ~= nil then t.drop(surgeon); t.tick() end
+    if t.hands(surgeon).held ~= nil then
+        t.drop(surgeon)
+        t.tick()
+    end
     t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, id))
     t.run_ticks(2)
     assert(t.hands(surgeon).held == id, "the surgeon holds the " .. id)
@@ -160,7 +173,9 @@ local win = ui_controls.record(t.ui(surgeon))
 assert(win ~= nil and win.presentation == "choices", "the choice document opened")
 local pick
 for _, toggle in ipairs(ui_controls.rows(win.toggles)) do
-    if face(toggle.label):find("lungs", 1, true) then pick = ui_controls.text(toggle.option) end
+    if face(toggle.label):find("lungs", 1, true) then
+        pick = ui_controls.text(toggle.option)
+    end
 end
 assert(pick, "the window lists the lungs among the organs to remove")
 ui_controls.toggle(surgeon, "operation", pick)
@@ -170,15 +185,20 @@ local hole = assert(t.sockets(patient)).lungs
 assert(hole ~= nil, "the socket is still declared")
 assert(hole.ok == false, "an empty socket is not in working order")
 assert(hole.seated == false, "and says so as `false`, never nil")
-assert(hole.organ == nil and hole.damage == nil and hole.max == nil,
-    "there is no organ to have a pool")
-assert(hole.failing == false and hole.decaying == false,
-    "nothing in there is failing, because nothing is in there")
+assert(
+    hole.organ == nil and hole.damage == nil and hole.max == nil,
+    "there is no organ to have a pool"
+)
+assert(
+    hole.failing == false and hole.decaying == false,
+    "nothing in there is failing, because nothing is in there"
+)
 assert(hole.zone == "chest", "the hole is still in the chest")
-assert(hole.vital == false,
-    "and the plan still knows what BELONGS here, and that it is not vital")
-assert(t.capacity(patient, "breathing") == 0,
-    "which is the reading everything downstream of the hole actually uses")
+assert(hole.vital == false, "and the plan still knows what BELONGS here, and that it is not vital")
+assert(
+    t.capacity(patient, "breathing") == 0,
+    "which is the reading everything downstream of the hole actually uses"
+)
 
 -- =====================================================================
 -- DECAYING. A corpse's organs go off, and the socket says which ones
@@ -188,13 +208,22 @@ t.set_health(patient, { brute = 200 })
 t.run_ticks(3)
 assert(assert(t.body(patient)).animate == false, "200 brute is past the dead line")
 local corpse = assert(t.sockets(patient))
-assert(corpse.brain.decaying == true,
-    "the brain is going off, which is the revival window (docs/BIOLOGY.md 5)")
-assert(corpse.brain.ok == true,
-    "...and is still in working order while it does: decay is not failure")
+assert(
+    corpse.brain.decaying == true,
+    "the brain is going off, which is the revival window (docs/BIOLOGY.md 5)"
+)
+assert(
+    corpse.brain.ok == true,
+    "...and is still in working order while it does: decay is not failure"
+)
 assert(corpse.lungs.decaying == false, "an empty socket decays nothing")
 t.run_seconds(30)
 local later = assert(t.sockets(patient)).brain
-assert(assert(later.damage) > assert(corpse.brain.damage),
-    "and the pool actually climbs: " .. assert(corpse.brain.damage) .. " -> " .. assert(later.damage))
+assert(
+    assert(later.damage) > assert(corpse.brain.damage),
+    "and the pool actually climbs: "
+        .. assert(corpse.brain.damage)
+        .. " -> "
+        .. assert(later.damage)
+)
 assert(later.decaying == true, "still going")

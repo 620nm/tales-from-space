@@ -20,7 +20,8 @@ local content = {
 content.actions = { action_rules.attack("strike") }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("attack.swing", { kind = "replace", route = "attack" }, function(ev)
         local self, user = ev.implement, ev.actor
         local target, victim, item = ev.target, ev.target, ev.target

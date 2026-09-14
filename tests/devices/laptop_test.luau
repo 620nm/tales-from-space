@@ -22,15 +22,22 @@ local ARENA = [==[(
 local function desktop(player: number)
     local state = ui_controls.record(t.ui(player))
     assert(state, "a desktop is open")
-    local data = ui_controls.record(if state.script then ui_controls.record(state.script).data else state.data)
+    local data = ui_controls.record(
+        if state.script then ui_controls.record(state.script).data else state.data
+    )
     assert(data.kind == "desktop", "the document is the laptop desktop")
     if data.powered then
         assert(state.script and state.stores, "powered desktop composes native files")
-        assert(ui_controls.rows(state.stores)[1].capacity == 65536 and ui_controls.rows(state.stores)[1].count_cap == 16,
-            "the laptop carries the terminal's local-store capacity")
+        assert(
+            ui_controls.rows(state.stores)[1].capacity == 65536
+                and ui_controls.rows(state.stores)[1].count_cap == 16,
+            "the laptop carries the terminal's local-store capacity"
+        )
     else
-        assert(state.document == "script" and state.stores == nil,
-            "power off revokes native storage disclosure")
+        assert(
+            state.document == "script" and state.stores == nil,
+            "power off revokes native storage disclosure"
+        )
     end
     return data
 end
@@ -38,7 +45,9 @@ end
 local function sound_count(player: number, needle: string)
     local count = 0
     for _, sound in ipairs(t.sounds(player)) do
-        if sound == needle then count += 1 end
+        if sound == needle then
+            count += 1
+        end
     end
     return count
 end
@@ -74,8 +83,10 @@ assert(t.hands(p).held == nil, "right-click leaves the laptop on the desk")
 t.use_item(p, assert(t.target_at(p, 2, 2, "laptop")), "secondary")
 t.run_ticks(2)
 local wallpaper = desktop(p).wallpaper
-assert(wallpaper == "wallpaper_bliss" or wallpaper == "wallpaper_moonlake",
-    "creation selects a declared wallpaper")
+assert(
+    wallpaper == "wallpaper_bliss" or wallpaper == "wallpaper_moonlake",
+    "creation selects a declared wallpaper"
+)
 assert(desktop(p).powered, "right-click on a booted laptop shows its desktop")
 
 t.use_item(q, assert(t.target_at(q, 2, 2, "laptop")), "secondary")
@@ -96,46 +107,72 @@ local host_binding = ui_controls.rows(ui_controls.state(p).stores)[1].binding
 ui_files.create(p, "host", "md", "shift_note")
 t.run_ticks(2)
 local saved_file = ui_controls.record(ui_controls.state(p).open)
-assert(saved_file and saved_file.name == "shift_note", "laptop creates a named local file atomically")
+assert(
+    saved_file and saved_file.name == "shift_note",
+    "laptop creates a named local file atomically"
+)
 local save_control = ui_controls.node(p, "/editor/save").id
 
 ui_controls.press(p, "/power")
 t.run_ticks(2)
-assert(not desktop(p).powered and not desktop(q).powered,
-    "power off refreshes every current reader")
+assert(
+    not desktop(p).powered and not desktop(q).powered,
+    "power off refreshes every current reader"
+)
 assert(sound_count(p, "computer_end") == 1, "shutdown sounds once")
 assert(desktop(p).wallpaper == wallpaper, "shutdown retains wallpaper")
-assert(not pcall(function() t.ui_press(p, save_control) end), "a powered-off desktop offers no save")
+assert(not pcall(function()
+    t.ui_press(p, save_control)
+end), "a powered-off desktop offers no save")
 t.run_ticks(2)
 assert(#t.ledger_rows("file_saved") == 0, "power off refuses stale native file actions")
 
 ui_controls.press(q, "/power")
 t.run_ticks(2)
 assert(desktop(p).powered and desktop(q).powered, "another reader can switch it on")
-assert(#ui_controls.rows(ui_controls.state(p).files) == 1 and ui_controls.rows(ui_controls.state(p).files)[1].name == "shift_note",
-    "saved local files survive a power cycle")
-assert(ui_controls.rows(ui_controls.state(p).stores)[1].binding ~= host_binding, "power cycling invalidates old store bindings")
+assert(
+    #ui_controls.rows(ui_controls.state(p).files) == 1
+        and ui_controls.rows(ui_controls.state(p).files)[1].name == "shift_note",
+    "saved local files survive a power cycle"
+)
+assert(
+    ui_controls.rows(ui_controls.state(p).stores)[1].binding ~= host_binding,
+    "power cycling invalidates old store bindings"
+)
 t.sounds(p)
 local power_control = ui_controls.node(q, "/power").id
 t.use_item(p, assert(t.target_at(p, 2, 2, "laptop")), "alt_primary")
-assert(not pcall(function() t.ui_press(q, power_control) end), "closed desktops expose no power control")
+assert(not pcall(function()
+    t.ui_press(q, power_control)
+end), "closed desktops expose no power control")
 t.run_ticks(2)
 assert(t.ui(p) == nil and t.ui(q) == nil, "lid close dismisses every desktop")
 assert(t.layers(p, laptop)[1] == "laptop_closed", "Alt-click closes a powered open lid")
-assert(sound_count(p, "computer_end") == 0, "the dismissed reader cannot switch off a closed laptop")
+assert(
+    sound_count(p, "computer_end") == 0,
+    "the dismissed reader cannot switch off a closed laptop"
+)
 
 t.use_item(p, assert(t.target_at(p, 2, 2, "laptop")), "secondary")
 t.run_ticks(2)
 assert(t.ui(p) == nil, "raising the lid does not restore a dismissed window")
 t.use_item(p, assert(t.target_at(p, 2, 2, "laptop")), "secondary")
 t.run_ticks(2)
-assert(desktop(p).powered and desktop(p).wallpaper == wallpaper,
-    "reopening keeps power and the assigned wallpaper")
+assert(
+    desktop(p).powered and desktop(p).wallpaper == wallpaper,
+    "reopening keeps power and the assigned wallpaper"
+)
 assert(sound_count(p, "computer_start") == 0, "closing the lid preserved power")
 
 local function take(id: string)
-    local places: { [string]: { number } } = {["floppy_disk"] = {1, 3},["id_assistant"] = {1, 1},["id_captain"] = {1, 2},["screwdriver"] = {3, 3},["backpack"] = {2, 3}}
-    local at = if t.target_at(p, 2, 2, id) then {2, 2} else places[id]
+    local places: { [string]: { number } } = {
+        ["floppy_disk"] = { 1, 3 },
+        ["id_assistant"] = { 1, 1 },
+        ["id_captain"] = { 1, 2 },
+        ["screwdriver"] = { 3, 3 },
+        ["backpack"] = { 2, 3 },
+    }
+    local at = if t.target_at(p, 2, 2, id) then { 2, 2 } else places[id]
     t.click(p, at[1], at[2], t.target_at(p, at[1], at[2], id))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "picked up " .. id .. "; hands=" .. tostring(t.hands(p).held))
@@ -197,8 +234,13 @@ t.run_ticks(5)
 take("screwdriver")
 local pickup = nil
 for _, action in ipairs(t.action_hints(p, laptop)) do
-    assert(action.id ~= "insert_disk" and action.id ~= "insert_id", "a screwdriver fits neither slot")
-    if action.id == "engine.action.take" then pickup = action end
+    assert(
+        action.id ~= "insert_disk" and action.id ~= "insert_id",
+        "a screwdriver fits neither slot"
+    )
+    if action.id == "engine.action.take" then
+        pickup = action
+    end
 end
 assert(pickup and pickup.implement == nil, "the incompatible tool leaves a key-only pickup action")
 t.click(p, 2, 2, t.target_at(p, 2, 2, "laptop"))
@@ -227,8 +269,10 @@ t.run_ticks(2)
 assert(t.ui(p) == nil, "the offhand lid rises without a window")
 t.use_item_site(p, { Held = { hand = 2 - t.hands(p).active } }, "secondary")
 t.run_ticks(2)
-assert(desktop(p).powered and desktop(p).wallpaper == wallpaper,
-    "right-click opens the offhand laptop while the active hand holds a tool")
+assert(
+    desktop(p).powered and desktop(p).wallpaper == wallpaper,
+    "right-click opens the offhand laptop while the active hand holds a tool"
+)
 assert(t.hands(p).held == "screwdriver", "opening the offhand laptop preserves the active tool")
 -- Eject onto clear floor, then inspect it from beside the tile.
 t.move(p, "south")
@@ -238,7 +282,10 @@ t.run_ticks(2)
 assert(not desktop(p).cartridge, "full hands do not prevent disk ejection")
 t.move(p, "north")
 t.run_ticks(5)
-assert(t.target_at(p, 2, 3, "floppy_disk") ~= nil, "ejection places the disk on the floor when both hands are full")
+assert(
+    t.target_at(p, 2, 3, "floppy_disk") ~= nil,
+    "ejection places the disk on the floor when both hands are full"
+)
 assert(t.hands(p).held == "screwdriver", "full-hands ejection preserves the active tool")
 t.drop(p)
 t.swap_hands(p)
@@ -254,8 +301,10 @@ t.run_ticks(2)
 assert(not desktop(p).powered, "desktop power shuts down the held laptop")
 t.use_self(p)
 t.run_ticks(2)
-assert(desktop(p).powered and desktop(p).wallpaper == wallpaper,
-    "self-use switches it back on and keeps the persistent desktop")
+assert(
+    desktop(p).powered and desktop(p).wallpaper == wallpaper,
+    "self-use switches it back on and keeps the persistent desktop"
+)
 t.drop(p)
 t.run_ticks(2)
 t.click(q, 2, 2, t.target_at(q, 2, 2, "laptop"))

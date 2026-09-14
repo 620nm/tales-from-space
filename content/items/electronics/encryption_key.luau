@@ -79,7 +79,8 @@ if sim ~= nil then
     -- scoped to the transmitting item's prototype, variants inherit
     -- the base's handler, and the policy itself lives in `lib/radio.luau`
     -- beside every number it reads (docs/luau-api/speech-radio.md).
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("speech.radio", { kind = "transform", route = "item" }, function(ev)
         return radio.deliver(ev)
     end)

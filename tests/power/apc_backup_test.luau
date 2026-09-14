@@ -42,7 +42,8 @@
 -- the whole point of the second circuit would be invisible. The panel
 -- is placed rather than laid in the legend because the reserve flag is
 -- a PLACEMENT property.
-t.world([==[(
+t.world(
+    [==[(
     name: "reserve",
     legend: {
         ' ': (turf: Space),
@@ -69,7 +70,9 @@ t.world([==[(
         (4, 1, 4), (5, 1, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4), (9, 1, 4), (10, 1, 4),
     ],
     labels: [(4, 1, "Engineering")],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()

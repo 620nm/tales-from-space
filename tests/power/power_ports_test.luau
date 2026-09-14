@@ -23,7 +23,8 @@ end
 -- from the panel to the near socket; the spare main drops south and
 -- runs west to a socket wired to nothing else at all. A fitting stands
 -- in cord reach of each (docs/POWER.md, "Outlets and cords").
-t.world([==[(
+t.world(
+    [==[(
     name: "ports",
     legend: {
         ' ': (turf: Space),
@@ -48,7 +49,9 @@ t.world([==[(
         (4, 1, 4), (4, 2, 4), (3, 2, 4), (2, 2, 4),
     ],
     labels: [(4, 1, "Engineering")],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -64,8 +67,7 @@ assert(t.segment_at(2, 2).lighting_feed == 4, "off the line it is standing on")
 assert(t.segment_at(2, 2).l1 == nil, "with no red under it at all")
 
 assert(t.lit(5, 2), "the east lamp is burning too")
-assert(t.segment_at(6, 1).lighting_feed == 2,
-    "its socket is on the backbone, which comes first")
+assert(t.segment_at(6, 1).lighting_feed == 2, "its socket is on the backbone, which comes first")
 assert(t.segment_at(6, 1).l1 ~= nil, "though the room circuit runs under it as well")
 
 -- ---------------------------------------------------------------
@@ -109,7 +111,12 @@ t.run_seconds(3)
 
 assert(t.lit(5, 2), "the lamp never went out")
 assert(t.segment_at(6, 1).lighting_feed == 1, "its socket is on the room circuit now")
-near(assert(assert(t.ports_at(4, 1)).l1).out_w, TUBE_W, 0.001, "and the panel's room circuit carries it")
+near(
+    assert(assert(t.ports_at(4, 1)).l1).out_w,
+    TUBE_W,
+    0.001,
+    "and the panel's room circuit carries it"
+)
 
 -- ---------------------------------------------------------------
 -- THE STATION BREAKER. An outage is every port at zero and every pool
@@ -122,7 +129,8 @@ assert(t.ledger_has("PowerOutage"), "the trip is on the record")
 
 local dead = assert(t.ports_at(4, 1))
 assert(not dead.energized, "the panel's pool is dark")
-local dead_ports: { [string]: SpecPort } = { l1 = assert(dead.l1), l2 = assert(dead.l2), l3 = assert(dead.l3) }
+local dead_ports: { [string]: SpecPort } =
+    { l1 = assert(dead.l1), l2 = assert(dead.l2), l3 = assert(dead.l3) }
 for line, port in pairs(dead_ports) do
     near(port.in_w, 0.0, 1e-9, line .. " draws nothing")
     near(port.out_w, 0.0, 1e-9, line .. " feeds nothing")

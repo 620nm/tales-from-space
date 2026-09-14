@@ -11,7 +11,7 @@ local printing = {
 
 -- Native document jobs multiply each listed cost by their batch count. Keep
 -- the per-output amount here so callers cannot accidentally charge count².
-function printing.costs(): {{resource: string, amount: number}}
+function printing.costs(): { { resource: string, amount: number } }
     return {
         { resource = printing.paper, amount = 1 },
         { resource = printing.toner, amount = 1 },

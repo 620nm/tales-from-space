@@ -15,7 +15,8 @@
 -- relation asserted over sixty rolls is a stronger statement than one
 -- roll asserted exactly. Seed 0 still fixes the sequence, so a failure
 -- here is reproducible; it is the assertion that is general, not the run.
-t.world([==[(
+t.world(
+    [==[(
     name: "rec room",
     legend: {
         ' ': (turf: Space),
@@ -29,7 +30,9 @@ t.world([==[(
     ],
     structures: [(1, 1, "player_spawn")],
     items: [(2, 1, "dice_bag")],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -63,12 +66,18 @@ for i = 1, #ROSTER do
     t.tick()
     t.swap_hands(p)
 end
-assert(table.concat(emptied, ",") == table.concat(ROSTER, ","),
-    "the bag ships with its declared roster, in order: " .. table.concat(emptied, ","))
+assert(
+    table.concat(emptied, ",") == table.concat(ROSTER, ","),
+    "the bag ships with its declared roster, in order: " .. table.concat(emptied, ",")
+)
 
-local unavailable_ok, unavailable_error = pcall(function() t.take_held(p, 0) end)
-assert(not unavailable_ok and tostring(unavailable_error):find("no observed item or slot", 1, true),
-    "an empty bag has no observed row to take")
+local unavailable_ok, unavailable_error = pcall(function()
+    t.take_held(p, 0)
+end)
+assert(
+    not unavailable_ok and tostring(unavailable_error):find("no observed item or slot", 1, true),
+    "an empty bag has no observed row to take"
+)
 t.tick()
 t.swap_hands(p)
 assert(t.hands(p).held == nil, "an empty bag offers no eighth die")
@@ -83,14 +92,16 @@ t.tick()
 -- half -- that the state a fresh die is MINTED in is the one whose
 -- picture the prototype's own `sprite` field was baked from, so a die
 -- straight out of the bag looks like a die and not like a blank body.
-local MINTED: { [string]: string } = { d4 = "4", d6 = "6", d8 = "8", d10 = "10", d12 = "12", d20 = "20", d00 = "10" }
+local MINTED: { [string]: string } =
+    { d4 = "4", d6 = "6", d8 = "8", d10 = "10", d12 = "12", d20 = "20", d00 = "10" }
 for id, face in pairs(MINTED) do
     local lying = t.item_at(1, 1, id)
     assert(lying ~= nil, id .. " is on the deck where the bag was emptied")
-    assert(lying.state == face,
-        id .. " rests on " .. face .. ", got " .. tostring(lying.state))
-    assert(lying.sprite == id .. "_" .. face,
-        id .. " wears that face's cell, got " .. tostring(lying.sprite))
+    assert(lying.state == face, id .. " rests on " .. face .. ", got " .. tostring(lying.state))
+    assert(
+        lying.sprite == id .. "_" .. face,
+        id .. " wears that face's cell, got " .. tostring(lying.sprite)
+    )
 end
 
 -- ---- the d00: the face and the reading are different numbers -----------
@@ -112,8 +123,10 @@ for _ = 1, 60 do
     local reading = last:match("It lands on (%d+)%.")
     assert(reading ~= nil, "the roll said a number: " .. tostring(last))
     reading = tonumber(reading)
-    assert(assert(reading) % 10 == 0 and assert(reading) >= 0 and assert(reading) <= 90,
-        "a d00 reads out in tens, 0 through 90, got " .. reading)
+    assert(
+        assert(reading) % 10 == 0 and assert(reading) >= 0 and assert(reading) <= 90,
+        "a d00 reads out in tens, 0 through 90, got " .. reading
+    )
     readings[reading] = true
     -- The tripwire. Put the die down, read the cell it is showing off
     -- the floor, and check it against the number that was SAID.
@@ -121,13 +134,19 @@ for _ = 1, 60 do
     t.tick()
     local down = t.item_at(1, 1, "d00")
     assert(down ~= nil, "the die is at the roller's feet")
-    assert(tonumber(down.state) == assert(reading) / 10 + 1,
-        "cell " .. tostring(down.state) .. " is the one that reads " .. reading)
-    assert(down.sprite == "d00_" .. assert(down.state),
-        "and it wears that cell's picture: " .. tostring(down.sprite))
+    assert(
+        tonumber(down.state) == assert(reading) / 10 + 1,
+        "cell " .. tostring(down.state) .. " is the one that reads " .. reading
+    )
+    assert(
+        down.sprite == "d00_" .. assert(down.state),
+        "and it wears that cell's picture: " .. tostring(down.sprite)
+    )
     if reading == 0 then
-        assert(last:find("It lands on 0. Ouch, bad luck.", 1, true),
-            "the bottom face reads 0 and still earns tg's remark: " .. last)
+        assert(
+            last:find("It lands on 0. Ouch, bad luck.", 1, true),
+            "the bottom face reads 0 and still earns tg's remark: " .. last
+        )
         seen_zero = true
     end
     t.click(p, 1, 1, t.target_at(p, 1, 1, "d00"))
@@ -195,10 +214,14 @@ for _ = 1, 40 do
     local said = t.messages(p)
     local last = said[#said]
     local face = tonumber(last:match("It lands on (%d+)%."))
-    assert(face ~= nil and face >= 1 and face <= 4,
-        "a d4 rolls 1 through 4, got " .. tostring(last))
-    assert(not last:find("bad luck", 1, true),
-        "and never earns the remark, whatever it rolls: " .. last)
+    assert(
+        face ~= nil and face >= 1 and face <= 4,
+        "a d4 rolls 1 through 4, got " .. tostring(last)
+    )
+    assert(
+        not last:find("bad luck", 1, true),
+        "and never earns the remark, whatever it rolls: " .. last
+    )
     if face == 1 then
         ones += 1
     end

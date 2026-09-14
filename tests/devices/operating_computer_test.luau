@@ -77,8 +77,12 @@ local function body_sections(ui: ui_controls.Record)
             order[#order + 1] = at
         end
     end
-    for _, r in ipairs(ui_controls.rows(ui.readouts)) do note(r) end
-    for _, r in ipairs(ui_controls.rows(ui.toggles)) do note(r) end
+    for _, r in ipairs(ui_controls.rows(ui.readouts)) do
+        note(r)
+    end
+    for _, r in ipairs(ui_controls.rows(ui.toggles)) do
+        note(r)
+    end
     return order
 end
 
@@ -88,8 +92,8 @@ end
 
 t.world(ARENA, 0)
 local surgeon = t.join("assistant")
-local near = t.join("medic")   -- (3, 2): the tile north of the console
-local other = t.join("engineer")  -- (2, 3): the tile west of it
+local near = t.join("medic") -- (3, 2): the tile north of the console
+local other = t.join("engineer") -- (2, 3): the tile west of it
 local corner = t.join("captain") -- (4, 2): a corner, and therefore nobody
 t.run_ticks(3)
 
@@ -140,14 +144,20 @@ local opened: ui_controls.Record? = nil
 local untouched: ui_controls.Record? = nil
 for _, r in ipairs(ui_controls.rows(ui.readouts)) do
     if word(r.label) == "chest" then
-        if has(word(r.value), "skin_cut") then opened = r else untouched = r end
+        if has(word(r.value), "skin_cut") then
+            opened = r
+        else
+            untouched = r
+        end
     end
 end
 assert(opened ~= nil, "one chest names the states it is holding")
 assert(has(word(opened.value), "vessels_unclamped"), "both of them: " .. word(opened.value))
 assert(has(word(opened.value), "/s"), "with what it is bleeding: " .. word(opened.value))
-assert(untouched ~= nil and word(untouched.value) == "\u{2014}",
-    "and the other is holding nothing: " .. tostring(untouched and word(untouched.value)))
+assert(
+    untouched ~= nil and word(untouched.value) == "\u{2014}",
+    "and the other is holding nothing: " .. tostring(untouched and word(untouched.value))
+)
 local blood = row(ui, "procedure.blood")
 assert(blood ~= nil, "and how much blood is left to lose")
 -- IN LITRES, and bleeding in millilitres a second. tg counts blood in
@@ -158,9 +168,10 @@ assert(blood ~= nil, "and how much blood is left to lose")
 -- the rate as arguments, and a body that is not losing any carries the
 -- volume alone.
 local blood_value = ui_controls.record(blood.value)
-local volume = ui_controls.text(if blood_value.args then ui_controls.record(blood_value.args).volume else blood_value.text)
-assert(volume:match("^%d+%.%d%d L") ~= nil,
-    "the blood row is in litres: " .. tostring(volume))
+local volume = ui_controls.text(
+    if blood_value.args then ui_controls.record(blood_value.args).volume else blood_value.text
+)
+assert(volume:match("^%d+%.%d%d L") ~= nil, "the blood row is in litres: " .. tostring(volume))
 -- Nothing is wrong with the head and nobody is aiming at it, so the head
 -- is not on the panel.
 assert(row(ui, "head") == nil, "a part with nothing wrong with it is not a row")

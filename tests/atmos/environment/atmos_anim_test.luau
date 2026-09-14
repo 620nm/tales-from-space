@@ -33,7 +33,8 @@ local ui_controls = require("@helpers/ui_controls")
 --
 -- One main, one valve, one crewman standing under it.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "a valve to watch",
     legend: {
         ' ': (turf: Space),
@@ -54,7 +55,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -91,8 +94,7 @@ local mid = assert(t.structure_at(3, 1))
 assert(mid.state == "open", "a second is a second, and then it is open")
 assert(
     mid.sprite == "valve_opening_ew",
-    "and the wheel is still turning after the gas is through: "
-        .. tostring(mid.sprite)
+    "and the wheel is still turning after the gas is through: " .. tostring(mid.sprite)
 )
 
 -- The rest of the art plays out and the valve comes to rest.
@@ -115,8 +117,7 @@ t.click(p, 3, 1, t.target_at(p, 3, 1, "manual_valve"))
 t.run_ticks(1)
 assert(
     assert(t.structure_at(3, 1)).sprite == "valve_closing_ew",
-    "the other direction is its own picture: "
-        .. tostring(assert(t.structure_at(3, 1)).sprite)
+    "the other direction is its own picture: " .. tostring(assert(t.structure_at(3, 1)).sprite)
 )
 
 -- And a second click during the turn is nothing at all -- not a cancel,
@@ -126,10 +127,7 @@ t.click(p, 3, 1, t.target_at(p, 3, 1, "manual_valve"))
 t.run_seconds(2.0)
 local shut = assert(t.structure_at(3, 1))
 assert(shut.state == "shut", "it shut once, and stayed shut")
-assert(
-    shut.sprite == "valve_shut_ew",
-    "resting again: " .. tostring(shut.sprite)
-)
+assert(shut.sprite == "valve_shut_ew", "resting again: " .. tostring(shut.sprite))
 
 -- ---------------------------------------------------------------
 -- A RUNNING PUMP IS A LOOP, AND A LOOP IS NOT AN EVENT.
@@ -141,7 +139,8 @@ assert(
 -- wearing it -- if a loop ever started needing an anchor, this is where
 -- it would show up as the name drifting.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "a pump to watch",
     legend: {
         ' ': (turf: Space),
@@ -162,7 +161,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local q = t.join()
 t.tick()
@@ -170,10 +171,7 @@ t.tick()
 local pump = assert(t.structure_at(3, 1))
 assert(pump.id == "pump", "the map stood a pump on the main")
 assert(pump.state == "off", "and tg's pump ships off")
-assert(
-    pump.sprite == "pump_off_e",
-    "dark: " .. tostring(pump.sprite)
-)
+assert(pump.sprite == "pump_off_e", "dark: " .. tostring(pump.sprite))
 
 -- The pump wears a panel rather than a wheel, so a hand on it opens the
 -- window instead of switching it (tg's `interact()` on a pump is

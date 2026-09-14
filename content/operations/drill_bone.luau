@@ -1,7 +1,9 @@
 -- Drill a hole through the bone (tg operation_generic.dm:427-477).
 return {
-    id = "drill_bone", name = "drill the bone",
-    requires = { "skin_open" }, blocked = { "bone_sawed", "bone_drilled" },
+    id = "drill_bone",
+    name = "drill the bone",
+    requires = { "skin_open" },
+    blocked = { "bone_sawed", "bone_drilled" },
     sets = { "bone_drilled" },
     time = 3,
     implements = {

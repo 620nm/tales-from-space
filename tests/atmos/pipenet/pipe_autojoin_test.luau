@@ -55,7 +55,8 @@ end
 -- Bare plating, because pipe goes under the deck; every tile of it is
 -- within one engineer's reach, so the run is laid without walking.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "a run being run",
     legend: {
         ' ': (turf: Space),
@@ -71,7 +72,9 @@ t.world([==[(
     ],
     structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "pipe"), (1, 1, "wrench")],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -175,7 +178,8 @@ assert(t.ledger_has("PipePulled"), "and pulling it is on the record")
 -- they must NOT intersect"). An engineer reading this floor can see
 -- that the north stub is not on the main.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "an aimed junction",
     legend: {
         ' ': (turf: Space),
@@ -192,22 +196,24 @@ t.world([==[(
     structures: [(1, 3, "player_spawn")],
     pipes: [(2, 1, 4), (1, 2, 4), (2, 2, 4), (3, 2, 4), (2, 3, 4)],
     pipe_facing: [(2, 2, 4, 12)],
-)]==], 7)
+)]==],
+    7
+)
 t.join()
 t.tick()
 
 assert(t.pipe_dirs(2, 2, DISTRO) == E + W, "the mapper aimed the centre across")
 assert(
     shape(2, 2, DISTRO) == E + W,
-    "so it draws as a straight line THROUGH the junction: "
-        .. tostring(shape(2, 2, DISTRO))
+    "so it draws as a straight line THROUGH the junction: " .. tostring(shape(2, 2, DISTRO))
 )
 assert(shape(1, 2, DISTRO) == E, "the west length joins it")
 assert(shape(3, 2, DISTRO) == W, "and so does the east one")
 assert(
     shape(2, 1, DISTRO) == 0,
     "but the length lying against it from the north joins nothing at all,"
-        .. " and is drawn as the stub it is: " .. tostring(shape(2, 1, DISTRO))
+        .. " and is drawn as the stub it is: "
+        .. tostring(shape(2, 1, DISTRO))
 )
 assert(shape(2, 3, DISTRO) == 0, "and the same from the south")
 
@@ -221,7 +227,8 @@ assert(shape(2, 3, DISTRO) == 0, "and the same from the south")
 -- the reason a station runs a supply main and a waste line down one
 -- corridor and stays readable.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "a crossing",
     legend: {
         ' ': (turf: Space),
@@ -238,7 +245,9 @@ t.world([==[(
     structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "pipe")],
     pipes: [(1, 2, 4), (2, 2, 4), (3, 2, 4)],
-)]==], 7)
+)]==],
+    7
+)
 
 local e = t.join()
 t.tick()

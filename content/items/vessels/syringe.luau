@@ -94,16 +94,23 @@ local content = {
 local STROKE = 5 * U
 
 content.actions = {
-    action_rules.primary("draw", action_rules.fact("target.has_matter", true),
-        action_rules.fact("held.mode", 0)),
-    action_rules.primary("inject", action_rules.fact("target.has_matter", true),
-        action_rules.fact("held.mode", 1)),
+    action_rules.primary(
+        "draw",
+        action_rules.fact("target.has_matter", true),
+        action_rules.fact("held.mode", 0)
+    ),
+    action_rules.primary(
+        "inject",
+        action_rules.fact("target.has_matter", true),
+        action_rules.fact("held.mode", 1)
+    ),
     action_rules.attack("draw_body", action_rules.fact("held.mode", 0), "draw"),
     action_rules.attack("inject_body", action_rules.fact("held.mode", 1), "inject"),
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
     -- Both questions come off the one reading every body of matter
     -- answers (docs/LUAU-API.md 7): how much is in it, and how much room

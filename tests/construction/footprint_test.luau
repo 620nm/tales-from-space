@@ -63,11 +63,11 @@ t.tick()
 -- ---------------------------------------------------------------
 for _, at in ipairs({ { 5, 6 }, { 4, 4 }, { 6, 4 }, { 4, 6 }, { 6, 6 }, { 5, 5 } }) do
     local it = t.structure_at(at[1], at[2])
-    assert(it and it.id == "gravity_generator",
-        "(" .. at[1] .. ", " .. at[2] .. ") is the generator, got "
-            .. tostring(it and it.id))
-    assert(it.state == "fix0", "and it is broken at the first rung, got "
-        .. tostring(it.state))
+    assert(
+        it and it.id == "gravity_generator",
+        "(" .. at[1] .. ", " .. at[2] .. ") is the generator, got " .. tostring(it and it.id)
+    )
+    assert(it.state == "fix0", "and it is broken at the first rung, got " .. tostring(it.state))
 end
 assert(t.structure_at(3, 6) == nil, "the tile beside it is bare floor")
 assert(t.structure_at(5, 3) == nil, "and so is the tile above its head")
@@ -84,15 +84,28 @@ end
 
 local function walk(dir, wx: number, wy: number, why: string)
     local x, y = step(dir)
-    assert(x == wx and y == wy,
-        why .. ": expected (" .. wx .. ", " .. wy .. "), got (" .. x .. ", " .. y .. ")")
+    assert(
+        x == wx and y == wy,
+        why .. ": expected (" .. wx .. ", " .. wy .. "), got (" .. x .. ", " .. y .. ")"
+    )
 end
 
 local function blocked(dir, wx: number, wy: number, cell: string)
     local x, y = step(dir)
-    assert(x == wx and y == wy,
-        "cell " .. cell .. " is solid: expected to stay at (" .. wx .. ", " .. wy
-            .. "), got (" .. x .. ", " .. y .. ")")
+    assert(
+        x == wx and y == wy,
+        "cell "
+            .. cell
+            .. " is solid: expected to stay at ("
+            .. wx
+            .. ", "
+            .. wy
+            .. "), got ("
+            .. x
+            .. ", "
+            .. y
+            .. ")"
+    )
 end
 
 walk("north", 5, 7, "the floor below the generator is floor")
@@ -128,17 +141,24 @@ walk("north", 7, 4, "and up beside the far corner of the head")
 -- ---------------------------------------------------------------
 local body = t.target_at(p, 5, 6, "gravity_generator")
 local cell1 = t.target_at(p, 6, 4, "gravity_generator")
-assert(body and cell1 and body ~= cell1,
-    "a corner has a wire id of its own, distinct from the body's")
+assert(
+    body and cell1 and body ~= cell1,
+    "a corner has a wire id of its own, distinct from the body's"
+)
 
 local head = t.seen(p, cell1)
-assert(head.kind == "overhead",
-    "the head draws over what stands on it, got " .. tostring(head.kind))
-assert(t.same_target(assert(head.extent_of), body),
-    "and names the body it belongs to, got " .. tostring(head.extent_of))
-assert(head.layers[1] and head.layers[1].sprite == "gravgen_fix0_1",
-    "wearing its own part's picture, got "
-        .. tostring(head.layers[1] and head.layers[1].sprite))
+assert(
+    head.kind == "overhead",
+    "the head draws over what stands on it, got " .. tostring(head.kind)
+)
+assert(
+    t.same_target(assert(head.extent_of), body),
+    "and names the body it belongs to, got " .. tostring(head.extent_of)
+)
+assert(
+    head.layers[1] and head.layers[1].sprite == "gravgen_fix0_1",
+    "wearing its own part's picture, got " .. tostring(head.layers[1] and head.layers[1].sprite)
+)
 
 local flank = t.seen(p, t.target_at(p, 6, 5, "gravity_generator"))
 assert(flank.kind ~= "overhead", "the solid rows are not overhead")
@@ -148,13 +168,18 @@ assert(t.same_target(assert(flank.extent_of), body), "but belong to the same bod
 -- Looking at a corner names the machine, not the tile.
 -- ---------------------------------------------------------------
 local look = t.examine(p, 6, 4, cell1)
-assert(look and look.title == "gravitational generator",
-    "a look at the corner names the machine, got "
-        .. tostring(look and look.title))
-assert(look.sprite == "gravgen_fix0_8",
-    "and shows the body's own picture, got " .. tostring(look.sprite))
-assert(line(look, "A device which produces a graviton field when set up."),
-    "with the body's flavor: " .. table.concat(look.lines, " | "))
+assert(
+    look and look.title == "gravitational generator",
+    "a look at the corner names the machine, got " .. tostring(look and look.title)
+)
+assert(
+    look.sprite == "gravgen_fix0_8",
+    "and shows the body's own picture, got " .. tostring(look.sprite)
+)
+assert(
+    line(look, "A device which produces a graviton field when set up."),
+    "with the body's flavor: " .. table.concat(look.lines, " | ")
+)
 
 -- ---------------------------------------------------------------
 -- The repair ladder, worked from the far corner of the head. Reach is
@@ -175,15 +200,22 @@ local function rung(tool: string, to: string, said: string)
     t.click(p, 6, 4, t.target_at(p, 6, 4, "gravity_generator"))
     t.run_seconds(1.0)
     local it = t.structure_at(5, 6)
-    assert(it and it.state == to,
-        "the " .. tool .. " takes it to " .. to .. ", got "
-            .. tostring(it and it.state))
+    assert(
+        it and it.state == to,
+        "the " .. tool .. " takes it to " .. to .. ", got " .. tostring(it and it.state)
+    )
     assert(has(t.messages(p), said), "and says so: " .. said)
-    assert(t.ledger_has("StructureStep", "gravity_generator", to),
-        "the shift ledger carries the rung to " .. to)
-    assert(t.seen(p, cell1).layers[1].sprite == "gravgen_" .. to .. "_1",
-        "and the corner re-derives its own picture for " .. to .. ", got "
-            .. tostring(t.seen(p, cell1).layers[1].sprite))
+    assert(
+        t.ledger_has("StructureStep", "gravity_generator", to),
+        "the shift ledger carries the rung to " .. to
+    )
+    assert(
+        t.seen(p, cell1).layers[1].sprite == "gravgen_" .. to .. "_1",
+        "and the corner re-derives its own picture for "
+            .. to
+            .. ", got "
+            .. tostring(t.seen(p, cell1).layers[1].sprite)
+    )
 end
 
 rung("screwdriver", "fix1", "You secure the screws of the framework.")
@@ -197,17 +229,19 @@ rung("welder", "fix2", "You mend the damaged framework.")
 grab("wrench")
 t.click(p, 6, 4, t.target_at(p, 6, 4, "gravity_generator"))
 t.run_seconds(1.0)
-assert(assert(t.structure_at(5, 6)).state == "fix2",
-    "the wrong tool leaves the ladder where it was")
-assert(#t.messages(p) == 0,
-    "and says nothing: " .. table.concat(t.messages(p), " | "))
+assert(
+    assert(t.structure_at(5, 6)).state == "fix2",
+    "the wrong tool leaves the ladder where it was"
+)
+assert(#t.messages(p) == 0, "and says nothing: " .. table.concat(t.messages(p), " | "))
 
 rung("plasteel", "fix3", "You add the plating to the framework.")
 rung("wrench", "off", "You secure the plating to the framework.")
 
-assert(assert(t.structure_at(5, 6)).sprite == "gravgen_off_8",
-    "a mended generator comes back shut down, got "
-        .. tostring(assert(t.structure_at(5, 6)).sprite))
+assert(
+    assert(t.structure_at(5, 6)).sprite == "gravgen_off_8",
+    "a mended generator comes back shut down, got " .. tostring(assert(t.structure_at(5, 6)).sprite)
+)
 
 -- ---------------------------------------------------------------
 -- A RUNNING generator: the same nine cells, and the charge overlay on
@@ -221,11 +255,13 @@ t.run_ticks(4)
 assert(assert(t.structure_at(5, 6)).sprite == "gravgen_on_8", "it is running")
 local centre = t.seen(q, t.target_at(q, 5, 5, "gravity_generator"))
 assert(#centre.layers == 2, "the centre wears two layers, got " .. #centre.layers)
-assert(centre.layers[1].sprite == "gravgen_on_5"
-    and centre.layers[2].sprite == "gravgen_activated",
+assert(
+    centre.layers[1].sprite == "gravgen_on_5" and centre.layers[2].sprite == "gravgen_activated",
     "its own part under the charge overlay, got "
-        .. centre.layers[1].sprite .. " + " .. tostring(centre.layers[2].sprite))
+        .. centre.layers[1].sprite
+        .. " + "
+        .. tostring(centre.layers[2].sprite)
+)
 
 local off_centre = t.seen(q, t.target_at(q, 4, 5, "gravity_generator"))
-assert(#off_centre.layers == 1,
-    "and no other cell wears it, got " .. #off_centre.layers)
+assert(#off_centre.layers == 1, "and no other cell wears it, got " .. #off_centre.layers)

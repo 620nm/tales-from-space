@@ -52,7 +52,8 @@ end
 -- the file is 100 in the bottle. HOT, because chlorine has a real
 -- phase curve: at 1000 K there is nothing to condense and the bottle
 -- holds gas, which is what this file is about.
-t.world([==[(
+t.world(
+    [==[(
     name: "three bays",
     legend: {
         '.': (turf: Plating),
@@ -88,7 +89,10 @@ t.world([==[(
         // exactly what tg's two independent couplings mean.
         (7, 1, "canister", { "blend": "hot_chlorine", "open": true }),
     ],
-)]==], 7, "free_build")
+)]==],
+    7,
+    "free_build"
+)
 
 t.tick()
 
@@ -99,10 +103,7 @@ t.run_seconds(20)
 
 local cloud = held(1, 1, "chlorine")
 assert(cloud > 0.0, "the bottle released into the room it stands in")
-assert(
-    cloud > VISIBLE_MOL,
-    "and there is enough of it in the cell to draw: " .. cloud .. " mol"
-)
+assert(cloud > VISIBLE_MOL, "and there is enough of it in the cell to draw: " .. cloud .. " mol")
 assert(held(2, 1, "chlorine") > VISIBLE_MOL, "the bay filled, not just the tile under it")
 assert(assert(t.room_pressure(1, 1)) > 1.0, "which reads on a gauge too")
 
@@ -116,7 +117,9 @@ assert(in_pipe(5, 1, "chlorine") > 0.0, "the port carried it into the main")
 assert(
     held(4, 1, "chlorine") < VISIBLE_MOL and held(5, 1, "chlorine") < VISIBLE_MOL,
     "and none of it was released onto the deck: "
-        .. held(4, 1, "chlorine") .. " / " .. held(5, 1, "chlorine")
+        .. held(4, 1, "chlorine")
+        .. " / "
+        .. held(5, 1, "chlorine")
 )
 assert(
     assert(t.room_pressure(4, 1)) < 1.0,
@@ -132,7 +135,4 @@ assert(
 -- tg's engineers leave a ported valve shut, and now ours have the same
 -- reason to.
 assert(in_pipe(8, 1, "chlorine") > 0.0, "the wrench coupled it to the run")
-assert(
-    held(7, 1, "chlorine") > 0.0,
-    "and the open valve gassed the deck it stands on"
-)
+assert(held(7, 1, "chlorine") > 0.0, "and the open valve gassed the deck it stands on")

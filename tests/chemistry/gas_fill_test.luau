@@ -54,7 +54,8 @@ end
 -- the bottle's own headspace standing at the line's pressure, and not
 -- one mole more.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "supply bay",
     legend: {
         '.': (turf: Floor),
@@ -74,7 +75,9 @@ t.world([==[(
         (2, 1, "player_spawn"),
         (2, 2, "canister"),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -104,10 +107,16 @@ near(vessel(jar).pressure_kpa, 2000.0, 20.0, "the bottle came up to the line")
 assert(gas(jar, "o2") > 0.0, "and what is in it is the line's oxygen")
 
 -- Nothing was made and nothing was lost: one transfer, two owners.
-near(gas(can, "o2") + gas(jar, "o2"), can_before, 1e-9,
-    "every mole that left the canister is in the bottle")
-assert(said(p, "You hold the bottle to the valve until it stops hissing."),
-    "and the gesture says what it did")
+near(
+    gas(can, "o2") + gas(jar, "o2"),
+    can_before,
+    1e-9,
+    "every mole that left the canister is in the bottle"
+)
+assert(
+    said(p, "You hold the bottle to the valve until it stops hissing."),
+    "and the gesture says what it did"
+)
 
 -- A second click moves nothing: the two are level, and the file says so
 -- rather than transferring a silent zero.
@@ -129,8 +138,10 @@ t.messages(p)
 t.click(p, 2, 2, t.target_at(p, 2, 2))
 t.run_ticks(2)
 near(gas(glass, "o2"), 0.0, 1e-12, "an open beaker takes none of it")
-assert(said(p, "That would only escape: seal a vessel first."),
-    "and it is refused in the dispenser's own words")
+assert(
+    said(p, "That would only escape: seal a vessel first."),
+    "and it is refused in the dispenser's own words"
+)
 
 -- ...AND EVERY OTHER OPEN VESSEL, which is why the refusal is one
 -- implementation. It used to be pasted into whichever file thought of
@@ -152,8 +163,10 @@ for _, open in ipairs({ "beaker.libital", "dropper" }) do
     t.click(p, 2, 2, t.target_at(p, 2, 2))
     t.run_ticks(2)
     near(gas(glassware, "o2"), 0.0, 1e-12, "an open " .. open .. " takes none of it")
-    assert(said(p, "That would only escape: seal a vessel first."),
-        open .. " is refused in the same words")
+    assert(
+        said(p, "That would only escape: seal a vessel first."),
+        open .. " is refused in the same words"
+    )
 end
 
 -- ---------------------------------------------------------------
@@ -179,7 +192,8 @@ end
 -- glass is empty and cold, which is also the order a chemist would
 -- work out in about ten seconds.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "chem bench and its supply",
     legend: {
         '.': (turf: Floor),
@@ -206,7 +220,9 @@ t.world([==[(
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3),
         (1, 3, 3), (2, 3, 3), (3, 3, 3), (4, 3, 3), (5, 3, 3), (6, 3, 3), (7, 3, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 p = t.join()
 t.tick()
@@ -273,7 +289,15 @@ end
 
 -- The bench run: charge off the line, press the substance in, put it on
 -- the element. Answers the bottle, still docked and still hot.
-local function bake(bx: number, by: number, cx: number, key: string, mol: number, target_k: number, seconds: number)
+local function bake(
+    bx: number,
+    by: number,
+    cx: number,
+    key: string,
+    mol: number,
+    target_k: number,
+    seconds: number
+)
     walk_to(bx, by)
     local jar = t.target_at(p, bx, by, "bottle")
     assert(jar ~= nil, "there is a bottle at " .. bx .. ", " .. by)
@@ -299,8 +323,12 @@ local function bake(bx: number, by: number, cx: number, key: string, mol: number
     ui_controls.toggle(p, "eject")
     t.run_ticks(2)
     assert(t.hands(p).held == "bottle", "the bottle comes back out")
-    near(condensed(jar, key) + gas(jar, key), mol, 1e-9,
-        "carrying the " .. key .. " the dial asked for")
+    near(
+        condensed(jar, key) + gas(jar, key),
+        mol,
+        1e-9,
+        "carrying the " .. key .. " the dial asked for"
+    )
 
     -- Onto the element, and up to the window.
     walk_to(5, 2)
@@ -343,7 +371,10 @@ unload()
 
 -- ---- CARBON DIOXIDE, THIN ----
 local thin = bake(2, 3, 4, "carbon", 0.1, 800, 240)
-assert(assert(t.holder_k(thin)) > 770.0, "the same chamber, the same dial: " .. assert(t.holder_k(thin)))
+assert(
+    assert(t.holder_k(thin)) > 770.0,
+    "the same chamber, the same dial: " .. assert(t.holder_k(thin))
+)
 near(gas(thin, "co2"), 0.0, 1e-12, "and a thin charge makes nothing at all")
 near(condensed(thin, "carbon"), 0.1, 1e-9, "spending none of its carbon")
 unload()
@@ -356,10 +387,14 @@ unload()
 -- heat is why the glass arrives at the element hot rather than cold,
 -- and why the dial below is a CEILING the chamber pulls it down to.
 local sweet, sweet_o2 = bake(4, 3, 2, "ammonia", 1.0, 530, 600)
-assert(assert(t.holder_k(sweet)) > 520.0 and assert(t.holder_k(sweet)) < 610.0,
-    "the chamber holds it in tg's window: " .. assert(t.holder_k(sweet)))
-assert(vessel(sweet).contents.ammonia.liquid ~= nil,
-    "and there is still LIQUID ammonia in it, which is the phase the recipe names")
+assert(
+    assert(t.holder_k(sweet)) > 520.0 and assert(t.holder_k(sweet)) < 610.0,
+    "the chamber holds it in tg's window: " .. assert(t.holder_k(sweet))
+)
+assert(
+    vessel(sweet).contents.ammonia.liquid ~= nil,
+    "and there is still LIQUID ammonia in it, which is the phase the recipe names"
+)
 local sleepy = gas(sweet, "n2o")
 assert(sleepy > 1e-6, "the charged bottle made nitrous oxide: " .. sleepy .. " mol")
 -- Two oxygen per molecule of it, and nothing else in this bottle
@@ -374,8 +409,10 @@ near((sweet_o2 - gas(sweet, "o2")) / 2.0, sleepy, 1e-6, "two oxygen per molecule
 -- actually ends up holding is cleaner. That is one id per molecule
 -- doing what it was folded for -- nothing here is a second ammonia
 -- that only some recipes can see.
-assert(condensed(sweet, "space_cleaner") > 0.0,
-    "and the water it made went straight on into cleaner")
+assert(
+    condensed(sweet, "space_cleaner") > 0.0,
+    "and the water it made went straight on into cleaner"
+)
 unload()
 
 -- ---- NITROUS OXIDE, THIN ----
@@ -386,7 +423,9 @@ unload()
 -- a smaller bottle would pass. That is the gate a mole count cannot
 -- express (docs/CHEMISTRY.md 5).
 local flat = bake(5, 3, 4, "ammonia", 1.0, 530, 600)
-assert(assert(t.holder_k(flat)) > 520.0 and assert(t.holder_k(flat)) < 610.0,
-    "the same chamber, the same dial: " .. assert(t.holder_k(flat)))
+assert(
+    assert(t.holder_k(flat)) > 520.0 and assert(t.holder_k(flat)) < 610.0,
+    "the same chamber, the same dial: " .. assert(t.holder_k(flat))
+)
 near(gas(flat, "n2o"), 0.0, 1e-12, "a thin oxygen share makes none of it")
 assert(gas(flat, "o2") > 0.0, "and spends none of the oxygen it does have")

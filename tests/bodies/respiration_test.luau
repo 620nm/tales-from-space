@@ -73,12 +73,15 @@ assert(o2_0 > 0.0, "the closet is commissioned with air in it")
 -- with, which is nothing: the room has lost oxygen and gained no waste.
 t.run_ticks(BREATH + 4)
 assert(gas("o2") < o2_0, "the first stroke took air out of the room")
-assert(gas("co2") - co2_0 < 1e-9,
-    "and put none back yet: the waste is still inside")
-assert(inside(crew, "co2") > 0.0,
-    "...which is exactly where it is: " .. inside(crew, "co2") .. " mol in the lungs")
-assert(inside(crew, "o2") < 1e-9,
-    "and the oxygen the stroke drew is gone, every mole of it converted")
+assert(gas("co2") - co2_0 < 1e-9, "and put none back yet: the waste is still inside")
+assert(
+    inside(crew, "co2") > 0.0,
+    "...which is exactly where it is: " .. inside(crew, "co2") .. " mol in the lungs"
+)
+assert(
+    inside(crew, "o2") < 1e-9,
+    "and the oxygen the stroke drew is gone, every mole of it converted"
+)
 
 -- Ten more. Now the room is visibly worse: the crewman is a slow leak
 -- of carbon dioxide and a slow drain of oxygen, and the two are the
@@ -87,19 +90,27 @@ t.run_ticks(BREATH * 10)
 local burned = o2_0 - gas("o2")
 local made = gas("co2") - co2_0
 assert(made > 0.0, "the room is filling with waste: " .. made .. " mol")
-assert(burned > made,
+assert(
+    burned > made,
     "and losing more air than it gained, because a lungful is still held: "
-        .. burned .. " vs " .. made)
-assert(burned - made < 0.30,
-    "the gap is one crewman's worth of lungs and no more: " .. (burned - made))
+        .. burned
+        .. " vs "
+        .. made
+)
+assert(
+    burned - made < 0.30,
+    "the gap is one crewman's worth of lungs and no more: " .. (burned - made)
+)
 
 -- ONE TRANSACTION, weighed. Every mole of oxygen that left the room is
 -- either standing in a pair of lungs or has become a mole of carbon
 -- dioxide -- there is no third place for it to be.
 local waste = made + inside(crew, "co2")
 local air = inside(crew, "o2")
-assert(math.abs((waste + air) - burned) < 1e-6,
-    "the books close: " .. (waste + air) .. " vs " .. burned)
+assert(
+    math.abs((waste + air) - burned) < 1e-6,
+    "the books close: " .. (waste + air) .. " vs " .. burned
+)
 
 -- =====================================================================
 -- A CORPSE NEITHER BREATHES NOR CONVERTS.
@@ -111,12 +122,15 @@ assert(assert(t.sockets(crew)).heart.failing, "and it stopped the heart")
 
 local o2_dead, co2_dead = gas("o2"), gas("co2")
 t.run_ticks(BREATH * 4)
-assert(math.abs(gas("o2") - o2_dead) < 1e-9,
-    "a corpse takes nothing out of the room: " .. gas("o2") .. " vs " .. o2_dead)
-assert(math.abs(gas("co2") - co2_dead) < 1e-9,
-    "and puts nothing back into it: " .. gas("co2") .. " vs " .. co2_dead)
-assert(inside(crew, "co2") > 0.0,
-    "the last breath is still in there, unexhaled and unconverted")
+assert(
+    math.abs(gas("o2") - o2_dead) < 1e-9,
+    "a corpse takes nothing out of the room: " .. gas("o2") .. " vs " .. o2_dead
+)
+assert(
+    math.abs(gas("co2") - co2_dead) < 1e-9,
+    "and puts nothing back into it: " .. gas("co2") .. " vs " .. co2_dead
+)
+assert(inside(crew, "co2") > 0.0, "the last breath is still in there, unexhaled and unconverted")
 
 -- =====================================================================
 -- VACUUM CYCLES NOTHING.
@@ -137,8 +151,10 @@ assert(gas("o2") < 1e-6, "the tile is vacuum: " .. gas("o2") .. " mol of air")
 -- Every stroke sheds the swept share into the vacuum and draws nothing
 -- in behind it, so the lungs empty and stay empty.
 t.run_ticks(BREATH * 12)
-assert(inside(spacer, "o2") < 1e-9 and inside(spacer, "co2") < 1e-9,
-    "a pair of lungs cycling vacuum is empty")
+assert(
+    inside(spacer, "o2") < 1e-9 and inside(spacer, "co2") < 1e-9,
+    "a pair of lungs cycling vacuum is empty"
+)
 assert(ui_controls.number(t.health(spacer).oxy) > 0, "and the crewman is suffocating in it")
 
 -- =====================================================================
@@ -173,7 +189,9 @@ local PX, PY = 2, 1
 -- `procedure.on_organ` id carrying the two words as arguments; a plain
 -- one is content's own word (docs/tgui/labels.md).
 local function face(label: unknown): string
-    if type(label) ~= "table" then return tostring(label) end
+    if type(label) ~= "table" then
+        return tostring(label)
+    end
     local row = ui_controls.record(label)
     if row.args then
         local args = ui_controls.record(row.args)
@@ -185,7 +203,10 @@ local function face(label: unknown): string
 end
 
 local function hold(id: string)
-    if t.hands(surgeon).held ~= nil then t.drop(surgeon); t.tick() end
+    if t.hands(surgeon).held ~= nil then
+        t.drop(surgeon)
+        t.tick()
+    end
     t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, id))
     t.run_ticks(2)
     assert(t.hands(surgeon).held == id, "the surgeon holds the " .. id)
@@ -210,21 +231,29 @@ t.run_ticks(2)
 local win = ui_controls.state(surgeon)
 local pick
 for _, toggle in ipairs(ui_controls.rows(win.toggles)) do
-    if face(toggle.label):find("lungs", 1, true) then pick = ui_controls.text(toggle.option) end
+    if face(toggle.label):find("lungs", 1, true) then
+        pick = ui_controls.text(toggle.option)
+    end
 end
 assert(pick, "the window offers the lungs")
 ui_controls.toggle(surgeon, "operation", pick)
 t.run_ticks(23)
 
 assert(assert(t.sockets(patient)).lungs.seated == false, "the lungs are out")
-assert(assert(t.body(patient)).animate == true,
-    "and the patient is ALIVE, because in this pack life is the heart")
+assert(
+    assert(t.body(patient)).animate == true,
+    "and the patient is ALIVE, because in this pack life is the heart"
+)
 assert(t.capacity(patient, "breathing") == 0, "but breathes nothing at all")
 
 -- The room is perfectly good air; the only thing wrong is the hole.
 local hurt_0 = ui_controls.number(t.health(patient).oxy)
 t.run_ticks(BREATH * 3)
-assert(ui_controls.number(t.health(patient).oxy) > hurt_0,
+assert(
+    ui_controls.number(t.health(patient).oxy) > hurt_0,
     "a body with no lungs drowns in breathable air: "
-        .. hurt_0 .. " -> " .. ui_controls.number(t.health(patient).oxy))
+        .. hurt_0
+        .. " -> "
+        .. ui_controls.number(t.health(patient).oxy)
+)
 assert(assert(t.body(patient)).animate == true, "still alive while it happens")

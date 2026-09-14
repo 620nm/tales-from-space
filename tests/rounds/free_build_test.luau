@@ -5,7 +5,8 @@
 -- the GEAR, not the role: no slot is taken and no crew manifest
 -- changes. A body that spawns bare has to walk to a vendor before it
 -- can do the one thing the mode exists for.
-t.world([==[(
+t.world(
+    [==[(
     name: "build site",
     legend: {
         ' ': (turf: Space),
@@ -18,7 +19,10 @@ t.world([==[(
         "#####",
     ],
     structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn")],
-)]==], 7, "free_build")
+)]==],
+    7,
+    "free_build"
+)
 
 -- No job argument: this mode seats the body on connection, and there is
 -- no board to pick from.
@@ -35,12 +39,14 @@ assert(worn.mask == "breath_mask", "and apparatus on the face, as every outfit h
 -- The belt arrives stocked from its own roster, exactly as it would at
 -- the job board: the sandbox spawn is not a second, thinner outfit.
 local belt = t.stored(builder, "belt")
-assert(table.concat(belt, ",")
-    == "screwdriver,wrench,welder,crowbar,wirecutters,multitool,cable_coil",
-    "the whole tool suite: " .. table.concat(belt, ","))
-assert(table.concat(t.stored(builder, "back"), ",")
-    == "metal,floor_tile,emergency_tank.oxygen,headset",
-    "and the survival bottle and the building stock ride the pack")
+assert(
+    table.concat(belt, ",") == "screwdriver,wrench,welder,crowbar,wirecutters,multitool,cable_coil",
+    "the whole tool suite: " .. table.concat(belt, ",")
+)
+assert(
+    table.concat(t.stored(builder, "back"), ",") == "metal,floor_tile,emergency_tank.oxygen,headset",
+    "and the survival bottle and the building stock ride the pack"
+)
 
 -- Player-observable, because that is the point: the tools work from the
 -- moment you arrive. Pull the wrench and it is in hand this tick.

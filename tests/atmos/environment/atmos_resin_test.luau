@@ -6,7 +6,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- reaction pass stops firing and writes ExtinguishedAt. No handler is
 -- involved in ignition or extinguishing -- the item writes the column,
 -- the two TfS fire rules read it, and the engine records the edge.
-t.world([==[(
+t.world(
+    [==[(
     name: "resin fire bench",
     legend: {
         '.': (turf: Floor),
@@ -27,7 +28,9 @@ t.world([==[(
         ),
     },
     painted: [(1, 1, "burning_mix")],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -42,7 +45,10 @@ assert(t.hands(p).held == "atmos_resin_projector", "the player picked the projec
 t.run_seconds(1)
 local ignitions = t.ledger_rows("IgnitionAt")
 assert(#ignitions == 1, ("the room caught fire once, got %d ignitions"):format(#ignitions))
-assert(ui_controls.array(ignitions[1].at)[1] == 1 and ui_controls.array(ignitions[1].at)[2] == 1, "the fire is in this room")
+assert(
+    ui_controls.array(ignitions[1].at)[1] == 1 and ui_controls.array(ignitions[1].at)[2] == 1,
+    "the fire is in this room"
+)
 
 -- A ground click on the room is the projector's authored gesture.
 t.click_turf(p, 1, 1)

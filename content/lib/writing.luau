@@ -6,8 +6,11 @@ export type Fragment = {
     style: { font_family: string, color: string, weight: number },
 }
 export type PaperView = {
-    kind: string, name: string, revision: number,
-    committed: {Fragment}, draft: string,
+    kind: string,
+    name: string,
+    revision: number,
+    committed: { Fragment },
+    draft: string,
 }
 
 local writing = {}
@@ -19,16 +22,22 @@ writing.max_body = 8192
 writing.max_fragments = 64
 
 local function read(paper: Handle?): DocumentView?
-    if sim == nil or paper == nil then return nil end
+    if sim == nil or paper == nil then
+        return nil
+    end
     local ok, document = pcall(sim.documents.read, paper, writing.file_uid)
-    if not ok or document == nil then return nil end
+    if not ok or document == nil then
+        return nil
+    end
     return document
 end
 
-function writing.fragments(document: DocumentView): {Fragment}
-    local out: {Fragment} = {}
+function writing.fragments(document: DocumentView): { Fragment }
+    local out: { Fragment } = {}
     for index, fragment in ipairs(document.fragments or {}) do
-        if index > writing.max_fragments then break end
+        if index > writing.max_fragments then
+            break
+        end
         -- Do not send `document.body` alongside these texts: fragments are
         -- the styled committed projection and duplicate body bytes.
         out[index] = {
@@ -45,19 +54,24 @@ end
 
 function writing.view(paper: Handle?, draft: unknown): (PaperView?, DocumentView?)
     local document = read(paper)
-    if document == nil then return nil, nil end
+    if document == nil then
+        return nil, nil
+    end
     return {
         kind = "paper",
         name = document.name,
         revision = document.revision,
         committed = writing.fragments(document),
         draft = if type(draft) == "string" then draft else "",
-    }, document
+    },
+        document
 end
 
 function writing.open(actor: Handle, paper: Handle, draft: unknown, implement: Handle?): boolean
     local view = writing.view(paper, draft)
-    if view == nil then return false end
+    if view == nil then
+        return false
+    end
     local data = view
     local request: UiOpenCommand = {
         viewer = actor,
@@ -69,14 +83,18 @@ function writing.open(actor: Handle, paper: Handle, draft: unknown, implement: H
     }
     -- The native writer binding retains this exact held item and validates
     -- its state for every later act; it is omitted for read-only opening.
-    if implement ~= nil then request.implement = implement end
+    if implement ~= nil then
+        request.implement = implement
+    end
     ui.open(request)
     return true
 end
 
 function writing.update(actor: Handle, paper: Handle, draft: unknown): boolean
     local view = writing.view(paper, draft)
-    if view == nil then return false end
+    if view == nil then
+        return false
+    end
     ui.update({
         viewer = actor,
         owner = paper,
@@ -91,15 +109,23 @@ end
 -- native proposed-writer/contact binding; no client style or entity id is
 -- accepted from the script document.
 function writing.append(paper: Handle?, writer: Handle?, text: unknown): boolean
-    if paper == nil or writer == nil or type(text) ~= "string"
-        or text == "" or #text > writing.max_append then
+    if
+        paper == nil
+        or writer == nil
+        or type(text) ~= "string"
+        or text == ""
+        or #text > writing.max_append
+    then
         return false
     end
     local document = read(paper)
-    if document == nil or document.append_only ~= true
+    if
+        document == nil
+        or document.append_only ~= true
         or type(document.body) ~= "string"
         or #document.body + #text > writing.max_body
-        or #(document.fragments or {}) >= writing.max_fragments then
+        or #(document.fragments or {}) >= writing.max_fragments
+    then
         return false
     end
     sim.documents.append({
@@ -115,13 +141,17 @@ end
 -- Every held writing item opens the same paper document. Keep this route in
 -- the shared library so crayons and the pen cannot drift apart.
 function writing.attach(definition: Definition)
-    definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev: InteractionUsePayload)
-        local target = ev.claim and ev.claim.entity
-        if target == nil or target.prototype ~= writing.paper then
-            return { replaced = false }
+    definition:handle(
+        "interaction.use",
+        { kind = "replace", route = "use" },
+        function(ev: InteractionUsePayload)
+            local target = ev.claim and ev.claim.entity
+            if target == nil or target.prototype ~= writing.paper then
+                return { replaced = false }
+            end
+            return writing.open(ev.actor, target, "", ev.implement)
         end
-        return writing.open(ev.actor, target, "", ev.implement)
-    end)
+    )
 end
 
 return writing

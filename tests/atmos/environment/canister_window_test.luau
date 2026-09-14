@@ -16,7 +16,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- the room is already at target and nothing moves, so any gas that
 -- flows later flowed because a player dialled it up.
 
-t.world([==[(
+t.world(
+    [==[(
     name: "canister bay",
     legend: {
         ' ': (turf: Space),
@@ -38,7 +39,9 @@ t.world([==[(
         "#...#",
         "#####",
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -58,8 +61,7 @@ t.click(p, 2, 2, t.target_at(p, 2, 2))
 t.tick()
 local ui = ui_controls.record(assert(t.ui(p)))
 assert(ui, "clicking a canister opens its window")
-assert(ui.document == "modules" and ui.presentation == "modules",
-    "the generic module document")
+assert(ui.document == "modules" and ui.presentation == "modules", "the generic module document")
 
 local valve = ui_controls.rows(ui.toggles)[1]
 assert(valve.field == "valve", "the one switch is the release valve")
@@ -67,11 +69,19 @@ assert(valve.on == true, "which starts open")
 
 local reg = ui_controls.rows(ui.setpoints)[1]
 assert(reg.field == "release", "the one knob is the regulator")
-assert(math.abs(ui_controls.number(reg.value) - 101.325) < 0.001,
-    "at tg's CAN_DEFAULT_RELEASE_PRESSURE: " .. ui_controls.number(reg.value))
+assert(
+    math.abs(ui_controls.number(reg.value) - 101.325) < 0.001,
+    "at tg's CAN_DEFAULT_RELEASE_PRESSURE: " .. ui_controls.number(reg.value)
+)
 -- tg's CAN_MIN/MAX_RELEASE_PRESSURE, in kPa.
-assert(math.abs(ui_controls.number(reg.min) - 10.1325) < 0.001, "min: " .. ui_controls.number(reg.min))
-assert(math.abs(ui_controls.number(reg.max) - 2533.125) < 0.001, "max: " .. ui_controls.number(reg.max))
+assert(
+    math.abs(ui_controls.number(reg.min) - 10.1325) < 0.001,
+    "min: " .. ui_controls.number(reg.min)
+)
+assert(
+    math.abs(ui_controls.number(reg.max) - 2533.125) < 0.001,
+    "max: " .. ui_controls.number(reg.max)
+)
 
 -- The bottle is not plumbed into anything, and the panel says so
 -- rather than leaving it to be inferred from a sprite.
@@ -92,20 +102,28 @@ assert(port == "canister.port.loose", "an unfastened canister reads loose: " .. 
 -- regulator up and the same bottle starts pouring into the same room.
 -- ---------------------------------------------------------------
 t.run_seconds(10)
-assert(math.abs(assert(t.room_pressure(1, 1)) - room_start) < 2.0,
-    "at the default setpoint nothing moves: " .. assert(t.room_pressure(1, 1)))
+assert(
+    math.abs(assert(t.room_pressure(1, 1)) - room_start) < 2.0,
+    "at the default setpoint nothing moves: " .. assert(t.room_pressure(1, 1))
+)
 
 ui_controls.set(p, "release", 400)
 t.tick()
-assert(math.abs(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value) - 400.0) < 0.001,
-    "the panel reports the new setting: " .. ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value))
+assert(
+    math.abs(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value) - 400.0)
+        < 0.001,
+    "the panel reports the new setting: "
+        .. ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value)
+)
 
 t.run_seconds(60)
 local room_up = assert(t.room_pressure(1, 1))
 local can_down = assert(t.canister_pressure(2, 2))
 assert(room_up > 200.0, "the room came up with the regulator: " .. room_up)
-assert(can_down < can_start - 50.0,
-    "and the canister is what paid: " .. can_start .. " -> " .. can_down)
+assert(
+    can_down < can_start - 50.0,
+    "and the canister is what paid: " .. can_start .. " -> " .. can_down
+)
 
 -- ---------------------------------------------------------------
 -- The switch. Shut the valve and the same over-pressure demand buys
@@ -113,7 +131,10 @@ assert(can_down < can_start - 50.0,
 -- ---------------------------------------------------------------
 ui_controls.toggle(p, "valve")
 t.tick()
-assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == false, "the panel reports the valve shut")
+assert(
+    ui_controls.rows(ui_controls.state(p).toggles)[1].on == false,
+    "the panel reports the valve shut"
+)
 
 local held = assert(t.canister_pressure(2, 2))
 local room_held = assert(t.room_pressure(1, 1))
@@ -123,28 +144,37 @@ local room_held = assert(t.room_pressure(1, 1))
 -- still moves nothing through a closed valve.
 ui_controls.set(p, "release", "max")
 t.run_seconds(30)
-assert(math.abs(assert(t.canister_pressure(2, 2)) - held) < 1.0,
-    "a shut valve moves nothing: " .. held .. " -> " .. assert(t.canister_pressure(2, 2)))
-assert(math.abs(assert(t.room_pressure(1, 1)) - room_held) < 1.0,
-    "and the room is untouched: " .. assert(t.room_pressure(1, 1)))
+assert(
+    math.abs(assert(t.canister_pressure(2, 2)) - held) < 1.0,
+    "a shut valve moves nothing: " .. held .. " -> " .. assert(t.canister_pressure(2, 2))
+)
+assert(
+    math.abs(assert(t.room_pressure(1, 1)) - room_held) < 1.0,
+    "and the room is untouched: " .. assert(t.room_pressure(1, 1))
+)
 
 -- Open it, and now both move at once.
 ui_controls.toggle(p, "valve")
 t.run_seconds(20)
-assert(assert(t.canister_pressure(2, 2)) < held - 50.0,
-    "reopened, the bottle empties into the room: " .. assert(t.canister_pressure(2, 2)))
-assert(assert(t.room_pressure(1, 1)) > room_held + 50.0,
-    "which is where the gas went: " .. assert(t.room_pressure(1, 1)))
+assert(
+    assert(t.canister_pressure(2, 2)) < held - 50.0,
+    "reopened, the bottle empties into the room: " .. assert(t.canister_pressure(2, 2))
+)
+assert(
+    assert(t.room_pressure(1, 1)) > room_held + 50.0,
+    "which is where the gas went: " .. assert(t.room_pressure(1, 1))
+)
 
 -- ---------------------------------------------------------------
 -- Both verbs are on the record, against the PLAYER. A release valve
 -- is how a bottle of gas gets into a room somebody is standing in, so
 -- this is the accountability the ledger exists for.
 -- ---------------------------------------------------------------
-assert(t.ledger_has("MachineSetpoint", "release", "Player"),
-    "re-dialling the regulator is an attributed act")
-assert(t.ledger_has("MachineToggled", "valve", "Player"),
-    "so is throwing the valve")
+assert(
+    t.ledger_has("MachineSetpoint", "release", "Player"),
+    "re-dialling the regulator is an attributed act"
+)
+assert(t.ledger_has("MachineToggled", "valve", "Player"), "so is throwing the valve")
 
 -- ---------------------------------------------------------------
 -- Out-of-range typed numbers clamp to the published range.
@@ -152,20 +182,33 @@ assert(t.ledger_has("MachineToggled", "valve", "Player"),
 -- ---------------------------------------------------------------
 ui_controls.set(p, "release", -1000)
 t.tick()
-assert(math.abs(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value) - 10.1325) < 0.001,
-    "a client cannot dial below CAN_MIN_RELEASE_PRESSURE: " .. ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value))
+assert(
+    math.abs(
+        ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value) - 10.1325
+    ) < 0.001,
+    "a client cannot dial below CAN_MIN_RELEASE_PRESSURE: "
+        .. ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value)
+)
 
 ui_controls.set(p, "release", 999999)
 t.tick()
-assert(math.abs(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value) - 2533.125) < 0.001,
-    "nor past CAN_MAX_RELEASE_PRESSURE: " .. ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value))
+assert(
+    math.abs(
+        ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value) - 2533.125
+    ) < 0.001,
+    "nor past CAN_MAX_RELEASE_PRESSURE: "
+        .. ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value)
+)
 
 -- The pump's rate and an invented action have no rendered controls.
 local before = ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value)
 assert(ui_controls.find(p, "/set/rate/value") == nil, "no pump dial is rendered")
 assert(ui_controls.find(p, "/detonate") == nil, "no invented action is rendered")
 t.tick()
-assert(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value) == before, "an invented knob turns nothing")
+assert(
+    ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value) == before,
+    "an invented knob turns nothing"
+)
 
 -- NEGATIVE: no window, no verbs -- the same rule the vendor follows.
 local valve_before = ui_controls.rows(ui_controls.state(p).toggles)[1].on
@@ -174,5 +217,7 @@ assert(ui_controls.find(p, "/toggle/valve/switch") == nil, "closing removes the 
 t.run_ticks(2)
 t.click(p, 2, 2, t.target_at(p, 2, 2))
 t.tick()
-assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == valve_before,
-    "a closed window cannot throw a valve")
+assert(
+    ui_controls.rows(ui_controls.state(p).toggles)[1].on == valve_before,
+    "a closed window cannot throw a valve"
+)

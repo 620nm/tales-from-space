@@ -4,18 +4,22 @@
 -- allocator returns one row per candidate (`docs/GAMEMODES.md`).
 local preparation = {}
 
-local function has_capacity(known: {[string]: boolean}, remaining: {[string]: number}, key: string): boolean
+local function has_capacity(
+    known: { [string]: boolean },
+    remaining: { [string]: number },
+    key: string
+): boolean
     return known[key] == true and (remaining[key] == nil or remaining[key] > 0)
 end
 
-local function use_capacity(remaining: {[string]: number}, key: string): ()
+local function use_capacity(remaining: { [string]: number }, key: string): ()
     if remaining[key] ~= nil then
         remaining[key] -= 1
     end
 end
 
-local function shuffled_order(count: number): {number}
-    local order: {number} = {}
+local function shuffled_order(count: number): { number }
+    local order: { number } = {}
     for index = 1, count do
         order[index] = index
     end
@@ -26,19 +30,19 @@ local function shuffled_order(count: number): {number}
     return order
 end
 
-local function ranked_jobs(candidate: AllocationCandidate): {string}
+local function ranked_jobs(candidate: AllocationCandidate): { string }
     return candidate.ranked_jobs
 end
 
 -- Allocate only declared preferences. The fallback is a separate pass and
 -- requires the player's explicit consent, like tg's overflow job
 -- (`code/controllers/subsystem/job.dm:557`).
-function preparation.allocate(ev: RoundAllocatePayload): {assignments: {AllocationAssignment}}
+function preparation.allocate(ev: RoundAllocatePayload): { assignments: { AllocationAssignment } }
     local candidates = ev.candidates
     local jobs = ev.jobs
-    local assignments: {AllocationAssignment} = {}
-    local known: {[string]: boolean} = {}
-    local remaining: {[string]: number} = {}
+    local assignments: { AllocationAssignment } = {}
+    local known: { [string]: boolean } = {}
+    local remaining: { [string]: number } = {}
     local max_rank = 0
 
     for index = 1, #candidates do
@@ -69,7 +73,11 @@ function preparation.allocate(ev: RoundAllocatePayload): {assignments: {Allocati
     local fallback = ev.fallback_job
     if fallback ~= nil and has_capacity(known, remaining, fallback) then
         for _, index in ipairs(order) do
-            if assignments[index].job == nil and candidates[index].fallback and has_capacity(known, remaining, fallback) then
+            if
+                assignments[index].job == nil
+                and candidates[index].fallback
+                and has_capacity(known, remaining, fallback)
+            then
                 assignments[index] = { job = fallback }
                 use_capacity(remaining, fallback)
             end

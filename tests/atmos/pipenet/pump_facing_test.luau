@@ -19,8 +19,9 @@
 
 local ui_controls = require("@helpers/ui_controls")
 
-local function build(rotations: number, want_sprite: string, drained: {number}, fed: {number})
-    t.world([==[(
+local function build(rotations: number, want_sprite: string, drained: { number }, fed: { number })
+    t.world(
+        [==[(
         name: "pump sign",
         legend: { '.': (turf: Plating), '#': (turf: Wall) },
         rows: [
@@ -33,7 +34,9 @@ local function build(rotations: number, want_sprite: string, drained: {number}, 
         structures: [(1, 1, "player_spawn")],
         pipes: [(1, 2, 4), (3, 2, 4), (2, 1, 4), (2, 3, 4)],
         items: [(1, 1, "wrench"), (2, 2, "volume_pump_fitting")],
-    )]==], 7)
+    )]==],
+        7
+    )
     local q = t.join()
     t.tick()
     local fitting = assert(t.target_at(q, 2, 2, "volume_pump_fitting"))
@@ -46,18 +49,24 @@ local function build(rotations: number, want_sprite: string, drained: {number}, 
     t.run_seconds(2.5)
     local raised = t.structure_at(2, 2)
     assert(raised ~= nil and raised.id == "volume_pump", "fastened")
-    assert(raised.sprite == want_sprite,
-        rotations .. " turns: " .. tostring(raised.sprite) .. " is not " .. want_sprite)
+    assert(
+        raised.sprite == want_sprite,
+        rotations .. " turns: " .. tostring(raised.sprite) .. " is not " .. want_sprite
+    )
     -- An empty hand on the panel; the wrench would unbolt it.
     t.swap_hands(q)
     t.click(q, 2, 2, t.target_at(q, 2, 2, "volume_pump"))
     t.tick()
     ui_controls.toggle(q, "power")
     t.run_seconds(20)
-    assert(assert(t.pipe_pressure(drained[1], drained[2])) < 1.0,
-        want_sprite .. ": the input net should have emptied")
-    assert(assert(t.pipe_pressure(fed[1], fed[2])) > 40.0,
-        want_sprite .. ": the output net should hold the gas")
+    assert(
+        assert(t.pipe_pressure(drained[1], drained[2])) < 1.0,
+        want_sprite .. ": the input net should have emptied"
+    )
+    assert(
+        assert(t.pipe_pressure(fed[1], fed[2])) > 40.0,
+        want_sprite .. ": the output net should hold the gas"
+    )
 end
 
 -- Alt+left from rest walks south -> west -> north -> east.

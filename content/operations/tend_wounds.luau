@@ -28,7 +28,8 @@
 -- (tests/cadaver_revival_test.luau).
 
 return {
-    id = "tend_wounds", name = "tend the wounds",
+    id = "tend_wounds",
+    name = "tend the wounds",
     blocked = { "skin_cut", "skin_open" },
     ignore_clothes = true,
     heal = { brute = 5, burn = 5 },

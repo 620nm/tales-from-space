@@ -14,10 +14,15 @@ local content = {
     state = "closed",
     states = { "closed", "off", "on" },
     state_sprites = {
-        closed = "laptop_closed", off = "laptop_off", on = "laptop_on",
+        closed = "laptop_closed",
+        off = "laptop_off",
+        on = "laptop_on",
     },
     gestures = {
-        "secondary", "alt_primary", "shift_ctrl_primary", "shift_ctrl_secondary",
+        "secondary",
+        "alt_primary",
+        "shift_ctrl_primary",
+        "shift_ctrl_secondary",
     },
     -- What is in the two slots, so an eject row is offered only when
     -- there is something to eject.
@@ -25,23 +30,35 @@ local content = {
     interaction_labels = {
         -- A hand holding something the laptop takes is there to put it
         -- in, not to pick the laptop up.
-        primary = { label = "lunatic/tfs:ui.affordance.take", held = {
-            floppy = "lunatic/tfs:ui.affordance.insert_disk",
-            card = "lunatic/tfs:ui.affordance.insert_id",
-        } },
+        primary = {
+            label = "lunatic/tfs:ui.affordance.take",
+            held = {
+                floppy = "lunatic/tfs:ui.affordance.insert_disk",
+                card = "lunatic/tfs:ui.affordance.insert_id",
+            },
+        },
         -- One press, one step: the lid, then the power button, then the
         -- screen. Each state says which step this gesture is now.
-        self = { label = "lunatic/tfs:ui.affordance.view_interface", states = {
-            closed = "lunatic/tfs:ui.affordance.open_lid",
-            off = "lunatic/tfs:ui.affordance.power_on",
-        } },
-        secondary = { label = "lunatic/tfs:ui.affordance.view_interface", states = {
-            closed = "lunatic/tfs:ui.affordance.open_lid",
-            off = "lunatic/tfs:ui.affordance.power_on",
-        } },
-        alt_primary = { label = "lunatic/tfs:ui.desktop.close_lid", states = {
-            closed = false,
-        } },
+        self = {
+            label = "lunatic/tfs:ui.affordance.view_interface",
+            states = {
+                closed = "lunatic/tfs:ui.affordance.open_lid",
+                off = "lunatic/tfs:ui.affordance.power_on",
+            },
+        },
+        secondary = {
+            label = "lunatic/tfs:ui.affordance.view_interface",
+            states = {
+                closed = "lunatic/tfs:ui.affordance.open_lid",
+                off = "lunatic/tfs:ui.affordance.power_on",
+            },
+        },
+        alt_primary = {
+            label = "lunatic/tfs:ui.desktop.close_lid",
+            states = {
+                closed = false,
+            },
+        },
         shift_ctrl_primary = {
             label = "lunatic/tfs:ui.affordance.eject_cartridge",
             only_when = { "media" },
@@ -60,33 +77,53 @@ local content = {
     -- engine's docs/content-schema/placement.md). A mapped disk rides
     -- the engine's own `media` row.
     placement = {
-        open = { var = "lunatic/tfs:laptop_open", kind = "flag", default = false,
-            label = "lunatic/tfs:editor.laptop.open" },
-        powered = { var = "lunatic/tfs:laptop_powered", kind = "flag", default = false,
-            label = "lunatic/tfs:editor.laptop.powered" },
+        open = {
+            var = "lunatic/tfs:laptop_open",
+            kind = "flag",
+            default = false,
+            label = "lunatic/tfs:editor.laptop.open",
+        },
+        powered = {
+            var = "lunatic/tfs:laptop_powered",
+            kind = "flag",
+            default = false,
+            label = "lunatic/tfs:editor.laptop.powered",
+        },
     },
 }
 
 content.actions = {
-    action_rules.primary("connect", action_rules.fact("target.has_programming_interface", true),
-        action_rules.fact("held.state", "on")),
+    action_rules.primary(
+        "connect",
+        action_rules.fact("target.has_programming_interface", true),
+        action_rules.fact("held.state", "on")
+    ),
     -- The hint alone: shown while the laptop is not on and never ready, so it
     -- authorizes nothing; `connect` above is the row such a click is refused by.
     {
-        id = "connect_not_ready", gesture = "primary", route = "held",
+        id = "connect_not_ready",
+        gesture = "primary",
+        route = "held",
         label = "lunatic/tfs:ui.affordance.connect_not_ready",
         visible = { ["not"] = action_rules.fact("held.state", "on") },
         target = action_rules.fact("target.has_programming_interface", true),
-        held = false, suggest = true,
+        held = false,
+        suggest = true,
         suggest_implement = { item = "laptop", state = "on" },
     },
     {
-        id = "insert_disk", gesture = "primary", route = "receiver", uses_held = true,
+        id = "insert_disk",
+        gesture = "primary",
+        route = "receiver",
+        uses_held = true,
         label = "lunatic/tfs:ui.affordance.insert_disk",
         held = action_rules.fact("held.tag", "floppy"),
     },
     {
-        id = "insert_id", gesture = "primary", route = "receiver", uses_held = true,
+        id = "insert_id",
+        gesture = "primary",
+        route = "receiver",
+        uses_held = true,
         label = "lunatic/tfs:ui.affordance.insert_id",
         held = action_rules.fact("held.tag", "card"),
     },
@@ -112,9 +149,13 @@ if sim ~= nil then
             card = card,
             cartridge = cartridge,
         }
-        local actions: {[string]: number} = { power = 0, close = 0 }
-        if card then actions.eject_id = 0 end
-        if cartridge then actions.eject_cartridge = 0 end
+        local actions: { [string]: number } = { power = 0, close = 0 }
+        if card then
+            actions.eject_id = 0
+        end
+        if cartridge then
+            actions.eject_cartridge = 0
+        end
         return view, actions
     end
 
@@ -150,7 +191,10 @@ if sim ~= nil then
         local powered = self.vars.laptop_powered == true
         local view, actions = document(self, powered)
         ui.open({
-            viewer = user, owner = self, view = view, actions = actions,
+            viewer = user,
+            owner = self,
+            view = view,
+            actions = actions,
             include_native = powered,
         })
     end
@@ -172,7 +216,9 @@ if sim ~= nil then
     behavior:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self = ev.subject
         if ev.gesture == "alt_primary" then
-            if self.state ~= "closed" then close(self) end
+            if self.state ~= "closed" then
+                close(self)
+            end
         elseif ev.gesture == "shift_ctrl_primary" then
             if self:item_slot("media") ~= nil then
                 sim.item_slot.eject({ subject = self, slot = "media" })
@@ -193,7 +239,9 @@ if sim ~= nil then
 
     behavior:handle("interaction.use", { kind = "replace", route = "interact" }, function(ev)
         local self, held = ev.subject, ev.implement
-        if held == nil then return { replaced = false } end
+        if held == nil then
+            return { replaced = false }
+        end
         for _, slot in ipairs({ "card", "media" }) do
             if self:item_slot_accepts(slot, held) then
                 sim.item_slot.insert({ subject = self, item = held, slot = slot })
@@ -204,7 +252,9 @@ if sim ~= nil then
     end)
 
     behavior:handle("item_slot.changed.done", { kind = "react" }, function(ev)
-        if ev.outcome ~= "completed" then return end
+        if ev.outcome ~= "completed" then
+            return
+        end
         sound(if ev.slot == "card" then "terminal_insert_disc" else "card_slide", ev.at)
         -- The eject rows are offered off what is in the slots, so the
         -- flags follow every insertion and every ejection.
@@ -220,8 +270,12 @@ if sim ~= nil then
 
     -- The step a laptop is missing before it can connect: the lid, then power.
     local function unready(self: Handle): string?
-        if self.state == "closed" then return "lunatic/tfs:entity.laptop.lid_closed" end
-        if self.vars.laptop_powered ~= true then return "lunatic/tfs:entity.laptop.powered_off" end
+        if self.state == "closed" then
+            return "lunatic/tfs:entity.laptop.lid_closed"
+        end
+        if self.vars.laptop_powered ~= true then
+            return "lunatic/tfs:entity.laptop.powered_off"
+        end
         return nil
     end
 
@@ -242,15 +296,22 @@ if sim ~= nil then
         -- The host's half of the engine's contact check (sim/ui/contact.rs), said
         -- here because a refused `ui.open` closes without a word.
         if not sim.is_powered(target) then
-            sim.message.send({ recipient = ev.actor, message = sim.msg("lunatic/tfs:entity.laptop.contact_unpowered", {}) })
+            sim.message.send({
+                recipient = ev.actor,
+                message = sim.msg("lunatic/tfs:entity.laptop.contact_unpowered", {}),
+            })
             return true
         end
         ui.open({
-            viewer = ev.actor, owner = target, contact = self, contact_state = "on",
+            viewer = ev.actor,
+            owner = target,
+            contact = self,
+            contact_state = "on",
             channel = "programming",
             -- The laptop titles the window; the workspace bar names the target.
             view = {
-                kind = "programming", wallpaper = self.vars.laptop_wallpaper,
+                kind = "programming",
+                wallpaper = self.vars.laptop_wallpaper,
                 tool = { name = self.name, sprite = content.state_sprites[self.state] },
             },
             actions = {},
@@ -262,7 +323,9 @@ if sim ~= nil then
     -- `connect` refused a laptop that is not on: say which step is missing.
     behavior:handle("interaction.use.refused", { kind = "react", route = "use" }, function(ev)
         local r = ev.action_refusal
-        if r.action ~= "connect" or r.fact ~= "held.state" or r.resolved then return end
+        if r.action ~= "connect" or r.fact ~= "held.state" or r.resolved then
+            return
+        end
         local missing = unready(ev.subject)
         if missing then
             sim.message.send({ recipient = ev.actor, message = sim.msg(missing, {}) })
@@ -271,7 +334,9 @@ if sim ~= nil then
 
     behavior:handle("interaction.act", { kind = "replace", route = "act" }, function(ev)
         local self = ev.subject
-        if self.state == "closed" then return true end
+        if self.state == "closed" then
+            return true
+        end
         if ev.action == "close" then
             close(self)
         elseif ev.action == "power" then

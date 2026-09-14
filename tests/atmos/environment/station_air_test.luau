@@ -74,10 +74,7 @@ assert(fouled > 3.0, "the Commons has carbon dioxide in it now: " .. fouled)
 
 t.run_seconds(240)
 local left = room_of(16, 17, "co2")
-assert(
-    left < fouled * 0.5,
-    "the scrubber took most of it back: " .. fouled .. " -> " .. left
-)
+assert(left < fouled * 0.5, "the scrubber took most of it back: " .. fouled .. " -> " .. left)
 -- DESIGN GAP (strict-tg coupling): the caught carbon moves off the
 -- deck and through the waste lift, but the process loop it lands in
 -- runs fat -- forty-five hundred kilopascals of mostly air -- and a
@@ -127,10 +124,10 @@ end
 -- column, no detours. Every leg but one is PINNED against something
 -- solid, so the count cannot drift with whatever the last scenario left
 -- the engineer standing on.
-walk("west", 12)   -- pins on the Commons' west wall, x = 15
-walk("south", 6)   -- and its south wall, y = 18
-walk("east", 12)   -- pins beside the photocopier, x = 23
-walk("west", 4)    -- ...so this lands on the door column, x = 19
+walk("west", 12) -- pins on the Commons' west wall, x = 15
+walk("south", 6) -- and its south wall, y = 18
+walk("east", 12) -- pins beside the photocopier, x = 23
+walk("west", 4) -- ...so this lands on the door column, x = 19
 -- ...and then south again, generously, because a leaf SWINGS: a press
 -- into a shut door starts the motion and the next press five ticks
 -- later still meets a moving door, so each of the two doors on this
@@ -138,9 +135,9 @@ walk("west", 4)    -- ...so this lands on the door column, x = 19
 -- breaks when the swing is retuned; over-pressing and letting the
 -- department's own bottled nitrogen at (19, 25) stop the engineer dead
 -- is a spec that does not.
-walk("south", 16)   -- pins against the bottle, at (19, 24)
-walk("west", 8)     -- pins on the machine hall's west wall, x = 14
-walk("south", 10)   -- pins on the south hull, y = 29
+walk("south", 16) -- pins against the bottle, at (19, 24)
+walk("west", 8) -- pins on the machine hall's west wall, x = 14
+walk("south", 10) -- pins on the south hull, y = 29
 local px, py = t.pos(p)
 assert(px == 14 and py == 29, "standing at the wheel, at " .. px .. "," .. py)
 
@@ -166,12 +163,11 @@ local below_1 = assert(t.pipe_pressure(14, 29, L3))
 assert(
     below_1 < 5.0,
     "the isolated side empties into the chambers and cannot refill: "
-        .. below_0 .. " -> " .. below_1
+        .. below_0
+        .. " -> "
+        .. below_1
 )
-assert(
-    above_1 > 20.0,
-    "while the department side carries on: " .. above_1
-)
+assert(above_1 > 20.0, "while the department side carries on: " .. above_1)
 
 -- ---------------------------------------------------------------
 -- FOUR: A BREACHED ROOM, RESEALED, REFILLS FROM DISTRO.
@@ -207,8 +203,7 @@ t.run_seconds(90)
 local breached = assert(t.room_pressure(COMMONS[1], COMMONS[2]))
 assert(
     breached < before_breach * 0.7,
-    "opening the hull costs the room most of its air: "
-        .. before_breach .. " -> " .. breached
+    "opening the hull costs the room most of its air: " .. before_breach .. " -> " .. breached
 )
 assert(breached > 5.0, "and the supply is still fighting it: " .. breached)
 
@@ -219,6 +214,5 @@ t.run_seconds(600)
 local recovered = assert(t.room_pressure(COMMONS[1], COMMONS[2]))
 assert(
     recovered > breached + 10.0,
-    "and sealed, the station puts the air back: "
-        .. breached .. " -> " .. recovered .. " kPa"
+    "and sealed, the station puts the air back: " .. breached .. " -> " .. recovered .. " kPa"
 )

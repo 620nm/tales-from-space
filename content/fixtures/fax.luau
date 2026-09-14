@@ -19,12 +19,18 @@ local viewer_machines: { [string]: Handle } = {}
 local pending: { [string]: Pending } = {}
 
 local function body(payload: unknown): string?
-    if type(payload) ~= "table" or type(payload.chunks) ~= "table" then return nil end
+    if type(payload) ~= "table" or type(payload.chunks) ~= "table" then
+        return nil
+    end
     local text = ""
-    for _, chunk in ipairs(payload.chunks :: {unknown}) do
-        if type(chunk) ~= "string" or #chunk > service.max_chunk then return nil end
+    for _, chunk in ipairs(payload.chunks :: { unknown }) do
+        if type(chunk) ~= "string" or #chunk > service.max_chunk then
+            return nil
+        end
         text ..= chunk
-        if #text > service.max_payload then return nil end
+        if #text > service.max_payload then
+            return nil
+        end
     end
     return text
 end
@@ -36,7 +42,9 @@ local function reply(ev: LinkServiceDeliveryPayload, payload: unknown)
 end
 
 local function reply_token(subject: Handle, token: LinkReplyToken?, payload: unknown)
-    if token ~= nil then sim.link.reply({ subject = subject, token = token, payload = payload }) end
+    if token ~= nil then
+        sim.link.reply({ subject = subject, token = token, payload = payload })
+    end
 end
 
 if sim ~= nil then
@@ -44,30 +52,36 @@ if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:fax_advertised", { replicate = "server" })
     local function resource(machine: Handle, id: string)
         for _, row in ipairs(sim.resources.read(machine)) do
-            if row.id == id then return row.current end
+            if row.id == id then
+                return row.current
+            end
         end
         return 0
     end
     local function loaded(machine: Handle)
         local source = machine:item_slot("media")
-        if source == nil then return {} end
+        if source == nil then
+            return {}
+        end
         local ok, document = pcall(sim.documents.read, source, 0)
-        if not ok or document == nil then return {} end
+        if not ok or document == nil then
+            return {}
+        end
         return writing.fragments(document)
     end
     local function directory(machine: Handle, page_index: number)
-        local rows: {DirectoryRow} = {}
+        local rows: { DirectoryRow } = {}
         local names: { [string]: number } = {}
-        local page = sim.query.link_directory(
-            machine, service.send, (page_index or 0) * 32
-        )
+        local page = sim.query.link_directory(machine, service.send, (page_index or 0) * 32)
         for _, row in ipairs(page.rows or {}) do
             local name = row.name or row.mac
             names[name] = (names[name] or 0) + 1
             table.insert(rows, { id = row.mac, address = row.mac, name = name, online = true })
         end
         for _, row in ipairs(rows) do
-            if names[row.name] > 1 then row.name = row.name .. " [" .. row.address .. "]" end
+            if names[row.name] > 1 then
+                row.name = row.name .. " [" .. row.address .. "]"
+            end
         end
         return rows, page.next ~= nil
     end
@@ -83,7 +97,9 @@ if sim ~= nil then
         return viewer_state[key]
     end
     local function remember_viewer(machine: Handle, viewer: Handle?)
-        if viewer == nil then return end
+        if viewer == nil then
+            return
+        end
         local key = tostring(machine)
         viewer_machines[key] = machine
         viewers[key] = viewers[key] or {}
@@ -94,45 +110,85 @@ if sim ~= nil then
         local state = sim.link_state(machine)
         local directory_rows, directory_more = directory(machine, selected.page or 0)
         return {
-            kind = "fax", name = machine.vars.fax_name or "", powered = sim.is_powered(machine),
-            address = state and state.mac, network = state and state.parent,
+            kind = "fax",
+            name = machine.vars.fax_name or "",
+            powered = sim.is_powered(machine),
+            address = state and state.mac,
+            network = state and state.parent,
             advertised = machine.vars.fax_advertised == true,
-            loadedpaper = loaded(machine), paper = resource(machine, "paper"),
-            toner = resource(machine, "toner"), busy = sim.documents.status(machine) ~= nil,
-            directory = directory_rows, directory_more = directory_more,
+            loadedpaper = loaded(machine),
+            paper = resource(machine, "paper"),
+            toner = resource(machine, "toner"),
+            busy = sim.documents.status(machine) ~= nil,
+            directory = directory_rows,
+            directory_more = directory_more,
             directory_page = selected.page or 0,
-            target = selected.target, confirming = selected.confirming == true,
+            target = selected.target,
+            confirming = selected.confirming == true,
         }
     end
     local function open(machine: Handle, viewer: Handle)
         remember_viewer(machine, viewer)
-        ui.open({ viewer = viewer, owner = machine, channel = "fax", view = view(machine, viewer), actions = {
-            advertise = 8, name = 64, target = 64, page = 8,
-            confirm = 64, cancel = 8, send = 64, eject = 8,
-        }, presentation_key = "writing/fax" })
+        ui.open({
+            viewer = viewer,
+            owner = machine,
+            channel = "fax",
+            view = view(machine, viewer),
+            actions = {
+                advertise = 8,
+                name = 64,
+                target = 64,
+                page = 8,
+                confirm = 64,
+                cancel = 8,
+                send = 64,
+                eject = 8,
+            },
+            presentation_key = "writing/fax",
+        })
     end
     local function update(machine: Handle, viewer: Handle)
-        ui.update({ viewer = viewer, owner = machine, channel = "fax", view = view(machine, viewer), actions = {
-            advertise = 8, name = 64, target = 64, page = 8,
-            confirm = 64, cancel = 8, send = 64, eject = 8,
-        } })
+        ui.update({
+            viewer = viewer,
+            owner = machine,
+            channel = "fax",
+            view = view(machine, viewer),
+            actions = {
+                advertise = 8,
+                name = 64,
+                target = 64,
+                page = 8,
+                confirm = 64,
+                cancel = 8,
+                send = 64,
+                eject = 8,
+            },
+        })
     end
     local function refresh(machine: Handle): ()
         local rows = viewers[tostring(machine)] or {}
         for key, viewer in pairs(rows) do
             local ok = pcall(update, machine, viewer)
-            if not ok then rows[key] = nil end
+            if not ok then
+                rows[key] = nil
+            end
         end
     end
 
     local function start_local_print(ev: LinkServiceDeliveryPayload, text: string)
-        if sim.documents.status(ev.self) ~= nil then return false end
+        if sim.documents.status(ev.self) ~= nil then
+            return false
+        end
         local accepted = pcall(function()
             sim.documents.start({
                 machine = ev.self,
                 source = { chunks = service.chunks(text) },
-                output = "paper", ext = "md", stem = "fax",
-                duration_ticks = printing.fax_ticks, count = 1, eject_input = false,
+                output = "paper",
+                ext = "md",
+                stem = "fax",
+                duration_ticks = printing.fax_ticks,
+                count = 1,
+                eject_input = false,
                 color = "monochrome",
                 costs = printing.costs(),
             })
@@ -146,27 +202,47 @@ if sim ~= nil then
         return accepted
     end
 
-    local function start_loaded_send(machine: Handle, destination: string, actor: Handle?, token: LinkReplyToken?, correlation: unknown)
-        if sim.documents.status(machine) ~= nil then return false end
+    local function start_loaded_send(
+        machine: Handle,
+        destination: string,
+        actor: Handle?,
+        token: LinkReplyToken?,
+        correlation: unknown
+    )
+        if sim.documents.status(machine) ~= nil then
+            return false
+        end
         local source = machine:item_slot("media")
-        if source == nil then return false end
+        if source == nil then
+            return false
+        end
         local readable, document = pcall(sim.documents.read, source, 0)
-        if not readable or document == nil then return false end
-        local file: DocumentFileSource = { store = source, uid = 0, expected_revision = document.revision }
+        if not readable or document == nil then
+            return false
+        end
+        local file: DocumentFileSource =
+            { store = source, uid = 0, expected_revision = document.revision }
         local accepted = pcall(function()
             sim.documents.start({
                 machine = machine,
                 source = file,
-                to = destination, service = service.send,
-                output = "paper", ext = "md", stem = "fax",
-                duration_ticks = printing.fax_ticks, count = 1, eject_input = true,
+                to = destination,
+                service = service.send,
+                output = "paper",
+                ext = "md",
+                stem = "fax",
+                duration_ticks = printing.fax_ticks,
+                count = 1,
+                eject_input = true,
                 color = "monochrome",
                 costs = printing.costs(),
             })
         end)
         if accepted then
             pending[tostring(machine)] = {
-                actor = actor, token = token, success = service.sent,
+                actor = actor,
+                token = token,
+                success = service.sent,
                 correlation = correlation,
             }
             sim.spawn_task(machine, function()
@@ -193,14 +269,16 @@ if sim ~= nil then
                 return
             end
             pending[tostring(ev.self)] = {
-                token = ev.reply, success = service.printed,
+                token = ev.reply,
+                success = service.printed,
                 correlation = correlation,
             }
             return
         end
         -- A controller may ask a named fax to originate a loaded sheet. The
         -- destination is data; native document admission validates its route.
-        if type(destination) ~= "string"
+        if
+            type(destination) ~= "string"
             or not start_loaded_send(ev.self, destination, nil, ev.reply, correlation)
         then
             reply(ev, { kind = service.failed, correlation = correlation })
@@ -217,7 +295,9 @@ if sim ~= nil then
             local machine = viewer_machines[key]
             if machine ~= nil then
                 for viewer_key, viewer in pairs(rows) do
-                    if not pcall(update, machine, viewer) then rows[viewer_key] = nil end
+                    if not pcall(update, machine, viewer) then
+                        rows[viewer_key] = nil
+                    end
                 end
             end
         end
@@ -226,7 +306,9 @@ if sim ~= nil then
         refresh_all_faxes()
     end)
     sim.handle("link.service.advertise.done", { kind = "react" }, function(ev)
-        if ev.self == nil or ev.self.prototype ~= content.id then return end
+        if ev.self == nil or ev.self.prototype ~= content.id then
+            return
+        end
         if ev.outcome ~= "completed" or ev.service == nil then
             ev.self.vars.fax_advertised = false
         else
@@ -239,7 +321,9 @@ if sim ~= nil then
     -- result. It distinguishes a preflight refusal from a late failure while
     -- keeping the private reply token in this endpoint's own request table.
     sim.handle("documents.operation.done", { kind = "react" }, function(ev)
-        if ev.self.prototype ~= content.id then return end
+        if ev.self.prototype ~= content.id then
+            return
+        end
         -- The terminal event has no remote entity handle. Reproject every
         -- remembered fax panel so a recipient's reservation and output clear
         -- at the same deadline as the sender's source ejection.
@@ -265,7 +349,9 @@ if sim ~= nil then
     -- Refreshing from those edges keeps loaded paper and stock truthful for
     -- every viewer, including a refill or eject performed by another player.
     local function refresh_machine(machine: Handle?)
-        if machine == nil or machine.prototype ~= content.id then return end
+        if machine == nil or machine.prototype ~= content.id then
+            return
+        end
         refresh(machine)
     end
     sim.handle("item_slot.changed.done", { kind = "react" }, function(ev)
@@ -279,8 +365,16 @@ if sim ~= nil then
     behavior:handle("interaction.use", { kind = "replace", route = "interact" }, function(ev)
         local target = ev.claim and ev.claim.entity
         local held = ev.implement
-        if held == nil and (target == nil or target == ev.subject or (target ~= nil and target.prototype == content.id)) then
-            open(ev.subject, ev.actor); return true
+        if
+            held == nil
+            and (
+                target == nil
+                or target == ev.subject
+                or (target ~= nil and target.prototype == content.id)
+            )
+        then
+            open(ev.subject, ev.actor)
+            return true
         end
         if held ~= nil and held.prototype == "toner_cartridge" then
             sim.resources.transfer({ from = held, to = ev.subject, resource = printing.toner })
@@ -292,8 +386,12 @@ if sim ~= nil then
             update(ev.subject, ev.actor)
             return true
         end
-        if held == nil or held.prototype ~= "paper" then return { replaced = false } end
-        if sim.documents.status(ev.subject) ~= nil then return true end
+        if held == nil or held.prototype ~= "paper" then
+            return { replaced = false }
+        end
+        if sim.documents.status(ev.subject) ~= nil then
+            return true
+        end
         sim.item_slot.insert({ subject = ev.subject, item = held, slot = "media" })
         open(ev.subject, ev.actor)
         sim.spawn_task(ev.subject, function()
@@ -311,10 +409,20 @@ if sim ~= nil then
                 machine.vars.fax_name = name
                 if machine.vars.fax_advertised then
                     local ok = pcall(function()
-                        sim.link.advertise({ subject = machine, service = service.print, name = name })
-                        sim.link.advertise({ subject = machine, service = service.send, name = name })
+                        sim.link.advertise({
+                            subject = machine,
+                            service = service.print,
+                            name = name,
+                        })
+                        sim.link.advertise({
+                            subject = machine,
+                            service = service.send,
+                            name = name,
+                        })
                     end)
-                    if not ok then machine.vars.fax_advertised = false end
+                    if not ok then
+                        machine.vars.fax_advertised = false
+                    end
                 end
             end
             update(machine, ev.actor)
@@ -325,8 +433,16 @@ if sim ~= nil then
                 local name = machine.vars.fax_name
                 if type(name) == "string" and #name > 0 then
                     local ok = pcall(function()
-                        sim.link.advertise({ subject = machine, service = service.print, name = name })
-                        sim.link.advertise({ subject = machine, service = service.send, name = name })
+                        sim.link.advertise({
+                            subject = machine,
+                            service = service.print,
+                            name = name,
+                        })
+                        sim.link.advertise({
+                            subject = machine,
+                            service = service.send,
+                            name = name,
+                        })
                     end)
                     machine.vars.fax_advertised = ok
                 end
@@ -339,7 +455,9 @@ if sim ~= nil then
         end
         if ev.action == "target" then
             local selected = state_for(machine, ev.actor)
-            if type(ev.value) == "string" then selected.target = ev.value end
+            if type(ev.value) == "string" then
+                selected.target = ev.value
+            end
             selected.confirming = false
             update(machine, ev.actor)
             return true
@@ -354,7 +472,9 @@ if sim ~= nil then
         end
         if ev.action == "confirm" then
             local selected = state_for(machine, ev.actor)
-            if type(ev.value) == "string" and #ev.value > 0 then selected.target = ev.value end
+            if type(ev.value) == "string" and #ev.value > 0 then
+                selected.target = ev.value
+            end
             selected.confirming = selected.target ~= nil
             update(machine, ev.actor)
             return true
@@ -365,21 +485,33 @@ if sim ~= nil then
             return true
         end
         if ev.action == "eject" then
-            if sim.documents.status(machine) ~= nil then return true end
+            if sim.documents.status(machine) ~= nil then
+                return true
+            end
             sim.item_slot.eject({ subject = machine, slot = "media" })
             update(machine, ev.actor)
             return true
         end
-        if ev.action ~= "send" then return { replaced = false } end
+        if ev.action ~= "send" then
+            return { replaced = false }
+        end
         local source = machine:item_slot("media")
         local selected = state_for(machine, ev.actor)
         local destination = selected.target
-        if not selected.confirming or type(ev.value) ~= "string"
-            or ev.value ~= destination or source == nil
+        if
+            not selected.confirming
+            or type(ev.value) ~= "string"
+            or ev.value ~= destination
+            or source == nil
             or type(destination) ~= "string"
-            or sim.documents.status(machine) ~= nil then return true end
+            or sim.documents.status(machine) ~= nil
+        then
+            return true
+        end
         local correlation = tostring(sim.tick()) .. ":" .. tostring(machine)
-        if not start_loaded_send(machine, destination, ev.actor, nil, correlation) then return true end
+        if not start_loaded_send(machine, destination, ev.actor, nil, correlation) then
+            return true
+        end
         selected.confirming = false
         selected.target = nil
         update(machine, ev.actor)
@@ -389,7 +521,9 @@ if sim ~= nil then
     -- Addressed traffic re-enters after the link batch. Native delivery keeps
     -- `ev.reply` opaque; only this endpoint may spend it in a reply.
     behavior:handle("link.service.delivery", { kind = "react" }, function(ev)
-        if ev.service == service.print or ev.service == service.send then receive(ev) end
+        if ev.service == service.print or ev.service == service.send then
+            receive(ev)
+        end
     end)
 end
 

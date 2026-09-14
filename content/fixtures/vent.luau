@@ -27,7 +27,8 @@ local content = {
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
     -- NO `route`. A completion the engine queues re-enters on its own
     -- route, and a handler that names one is only offered occurrences

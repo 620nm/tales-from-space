@@ -32,7 +32,8 @@ end
 
 -- The bench: two Lifeline-variant towers on live cord, one of them
 -- with its key socket overridden by the placement.
-t.world([==[(
+t.world(
+    [==[(
     name: "variant bench",
     legend: {
         ' ': (turf: Space),
@@ -57,7 +58,9 @@ t.world([==[(
         (1, 2, 2), (2, 2, 3), (3, 2, 1), (4, 2, 1), (5, 2, 1),
         (6, 2, 1), (7, 2, 1), (8, 2, 1),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.run_ticks(20)
@@ -79,16 +82,14 @@ assert(
 )
 local panel = t.ui(p)
 assert(panel ~= nil, "the tower wears a panel")
-assert(part_row(panel, "encryption key (Lifeline)") ~= nil,
-    "the parts roster names the seated key")
-assert(part_row(panel, "network card") ~= nil,
-    "beside the derived network socket's plain rung")
+assert(part_row(panel, "encryption key (Lifeline)") ~= nil, "the parts roster names the seated key")
+assert(part_row(panel, "network card") ~= nil, "beside the derived network socket's plain rung")
 t.ui_close(p)
 t.tick()
 
 -- Walk around the dense tower, along the cord row, to stand beside
 -- the overridden one at (8, 1).
-local route: {"north" | "east" | "south" | "west"} = { "south", "east", "east", "east", "north" }
+local route: { "north" | "east" | "south" | "west" } = { "south", "east", "east", "east", "north" }
 for _, dir in ipairs(route) do
     t.move(p, dir)
     t.run_ticks(6)
@@ -108,10 +109,11 @@ assert(
     "the placement's socket row wins, got: " .. table.concat(t.messages(p), " | ")
 )
 panel = t.ui(p)
-assert(part_row(panel, "encryption key (Wrench)") ~= nil,
-    "the parts roster shows the override")
-assert(part_row(panel, "encryption key (Lifeline)") == nil,
-    "and no Lifeline key was seated beside it")
+assert(part_row(panel, "encryption key (Wrench)") ~= nil, "the parts roster shows the override")
+assert(
+    part_row(panel, "encryption key (Lifeline)") == nil,
+    "and no Lifeline key was seated beside it"
+)
 t.ui_close(p)
 t.tick()
 

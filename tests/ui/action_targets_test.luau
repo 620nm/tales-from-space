@@ -1,7 +1,8 @@
 local ui_controls = require("@helpers/ui_controls")
 
 -- The viewer's action rows describe the same exact targets that clicks use.
-t.world([==[(
+t.world(
+    [==[(
     name: "action targets",
     legend: { '.': (turf: Plating), 'f': (turf: Floor), '#': (turf: Wall) },
     rows: ["########", "#......#", "#......#", "#..f...#", "#......#", "########"],
@@ -11,12 +12,15 @@ t.world([==[(
     structures: [(2, 2, "player_spawn"), (3, 2, "player_spawn"), (2, 1, "airlock_button")],
     pipes: [(3, 2, 31), (3, 3, 8)],
     cables: [(3, 2, 7)],
-)]==], 0)
+)]==],
+    0
+)
 local actor, patient = t.join(), t.join()
 t.run_ticks(3)
 
 -- Each tool is exposed from the aisle beside the rack.
-local tool_x = { wrench = 1, wirecutters = 2, toolbox = 3, laptop = 4, floppy_disk = 5, ["beaker.water"] = 6 }
+local tool_x =
+    { wrench = 1, wirecutters = 2, toolbox = 3, laptop = 4, floppy_disk = 5, ["beaker.water"] = 6 }
 local function walk(dir)
     t.move(actor, dir)
     t.run_ticks(5)
@@ -28,12 +32,24 @@ local function take(id: string)
     end
     walk("south")
     local x = t.pos(actor)
-    while x < tool_x[id] do walk("east"); x = t.pos(actor) end
-    while x > tool_x[id] do walk("west"); x = t.pos(actor) end
+    while x < tool_x[id] do
+        walk("east")
+        x = t.pos(actor)
+    end
+    while x > tool_x[id] do
+        walk("west")
+        x = t.pos(actor)
+    end
     t.click(actor, x, 4, assert(t.target_at(actor, x, 4, id)))
     t.run_ticks(2)
-    while x < 2 do walk("east"); x = t.pos(actor) end
-    while x > 2 do walk("west"); x = t.pos(actor) end
+    while x < 2 do
+        walk("east")
+        x = t.pos(actor)
+    end
+    while x > 2 do
+        walk("west")
+        x = t.pos(actor)
+    end
     walk("north")
     t.run_ticks(2)
     assert(t.hands(actor).held == id, "picked up " .. id)
@@ -41,7 +57,9 @@ end
 
 local function entity_action(entity: SpecObservedTarget, id: string): SpecActionDescriptor?
     for _, action in ipairs(t.action_hints(actor, { Entity = entity })) do
-        if action.id == id then return action end
+        if action.id == id then
+            return action
+        end
     end
     return nil
 end
@@ -52,7 +70,10 @@ local covered = assert(t.target_at(actor, 3, 3, "pipe"))
 take("wrench")
 assert(entity_action(loose, "fasten_pipe"), "a wrench can fasten the exact exposed loose pipe")
 assert(entity_action(covered, "fasten_pipe") == nil, "finished flooring hides fastening")
-assert(entity_action(metal, "fasten_pipe") == nil, "a wrench is not compatible with arbitrary items")
+assert(
+    entity_action(metal, "fasten_pipe") == nil,
+    "a wrench is not compatible with arbitrary items"
+)
 local pipe_layers = {}
 for _, view in ipairs(t.actions(actor)) do
     local disclosed = ui_controls.record(view.target).Subfloor
@@ -62,7 +83,9 @@ for _, view in ipairs(t.actions(actor)) do
         assert(pos.x ~= 3 or pos.y ~= 3, "covered infrastructure has no action target")
         if subfloor.kind == "Pipe" and pos.x == 3 and pos.y == 2 then
             for _, action in ipairs(view.actions) do
-                if action.id == "unfasten_pipe" then pipe_layers[ui_controls.number(subfloor.layer)] = true end
+                if action.id == "unfasten_pipe" then
+                    pipe_layers[ui_controls.number(subfloor.layer)] = true
+                end
             end
         end
     end
@@ -75,19 +98,33 @@ take("wirecutters")
 local kinds: { "Cable" | "Pipe" } = { "Cable", "Pipe" }
 for _, kind in ipairs(kinds) do
     local offered = false
-    for _, action in ipairs(t.action_hints(actor,
-        { Subfloor = { pos = { x = 3, y = 2 }, kind = kind, layer = 2 } })) do
-        if action.id == "cut_cable" then offered = true end
+    for _, action in
+        ipairs(
+            t.action_hints(actor, { Subfloor = { pos = { x = 3, y = 2 }, kind = kind, layer = 2 } })
+        )
+    do
+        if action.id == "cut_cable" then
+            offered = true
+        end
     end
     assert(offered == (kind == "Cable"), "cutters match cable and never pipe")
 end
 
 take("beaker.water")
-assert(entity_action(assert(t.target_at(actor, 1, 2, "beaker")), "pour"), "a vessel can pour into a vessel")
+assert(
+    entity_action(assert(t.target_at(actor, 1, 2, "beaker")), "pour"),
+    "a vessel can pour into a vessel"
+)
 assert(entity_action(metal, "pour") == nil, "a vessel does not pour into arbitrary items")
-assert(entity_action(t.body_target(actor, patient), "pour") == nil, "a body's bloodstream is not a pouring target")
+assert(
+    entity_action(t.body_target(actor, patient), "pour") == nil,
+    "a body's bloodstream is not a pouring target"
+)
 local at_feet = t.action_hints(actor, { Turf = { x = 2, y = 2 } })
-assert(#at_feet > 0 and at_feet[1].id == "drink", "the shared vessel's own-tile gesture is drinking")
+assert(
+    #at_feet > 0 and at_feet[1].id == "drink",
+    "the shared vessel's own-tile gesture is drinking"
+)
 
 take("toolbox")
 local body = t.body_target(actor, patient)
@@ -98,7 +135,10 @@ t.run_ticks(3)
 assert(t.health(patient).brute == health, "projecting the strike never executes damage")
 t.click(actor, 3, 2, t.body_target(actor, patient))
 t.run_ticks(2)
-assert(ui_controls.number(t.health(patient).brute) > health, "the advertised strike executes through a player click")
+assert(
+    ui_controls.number(t.health(patient).brute) > health,
+    "the advertised strike executes through a player click"
+)
 
 take("laptop")
 local function laptop_gesture_ids(label: string)
@@ -108,7 +148,9 @@ local function laptop_gesture_ids(label: string)
         for _, action in ipairs(view.actions) do
             assert(not ids[action.id], "each hover row has a unique ID: " .. action.id)
             ids[action.id] = true
-            if action.label.key == label then gestures[action.gesture] = action.id end
+            if action.label.key == label then
+                gestures[action.gesture] = action.id
+            end
         end
         if gestures.self then
             assert(gestures.secondary, "the held laptop exposes both equivalent controls")
@@ -124,15 +166,23 @@ assert(entity_action(network, "connect") == nil, "a closed laptop does not offer
 t.use_self(actor)
 t.run_ticks(2)
 local off_self, off_secondary = laptop_gesture_ids("lunatic/tfs:ui.affordance.power_on")
-assert(off_self == self_id and off_secondary == secondary_id, "lid state does not change gesture IDs")
+assert(
+    off_self == self_id and off_secondary == secondary_id,
+    "lid state does not change gesture IDs"
+)
 t.use_self(actor)
 t.run_ticks(2)
 local on_self, on_secondary = laptop_gesture_ids("lunatic/tfs:ui.affordance.view_interface")
-assert(on_self == self_id and on_secondary == secondary_id, "power state does not change gesture IDs")
+assert(
+    on_self == self_id and on_secondary == secondary_id,
+    "power state does not change gesture IDs"
+)
 t.use_self(actor)
 t.run_ticks(2)
 local desktop = ui_controls.record(assert(t.ui(actor), "the laptop screen opens"))
-local data = ui_controls.record(if desktop.script then ui_controls.record(desktop.script).data else desktop.data)
+local data = ui_controls.record(
+    if desktop.script then ui_controls.record(desktop.script).data else desktop.data
+)
 assert(data.powered, "the laptop is powered before projecting its network action")
 local network_action = entity_action(network, "connect")
 t.sounds(actor)
@@ -140,9 +190,14 @@ t.click(actor, 2, 1, assert(t.target_at(actor, 2, 1, network)))
 t.run_ticks(2)
 local typing = false
 for _, sound in ipairs(t.sounds(actor)) do
-    if string.sub(sound, 1, 16) == "keyboard_clicks_" then typing = true end
+    if string.sub(sound, 1, 16) == "keyboard_clicks_" then
+        typing = true
+    end
 end
-assert(network_action == nil, "a network endpoint without a programming interface offers no connection")
+assert(
+    network_action == nil,
+    "a network endpoint without a programming interface offers no connection"
+)
 assert(not typing, "an unsupported endpoint produces no dummy typing")
 assert(entity_action(metal, "connect") == nil, "a connection is absent on a nonnetworked item")
 t.drop(actor)
@@ -150,8 +205,12 @@ t.run_ticks(2)
 local laptop = assert(t.target_at(actor, 2, 2, "laptop"))
 assert(entity_action(laptop, "engine.action.take"), "empty hands get the ordinary pickup action")
 take("floppy_disk")
-local insertion = assert(entity_action(laptop, "insert_disk"), "the matching media selects the receiver action")
-assert(insertion.label.key == "lunatic/tfs:ui.affordance.insert_disk", "the receiver supplies its catalog label")
+local insertion =
+    assert(entity_action(laptop, "insert_disk"), "the matching media selects the receiver action")
+assert(
+    insertion.label.key == "lunatic/tfs:ui.affordance.insert_disk",
+    "the receiver supplies its catalog label"
+)
 assert(entity_action(laptop, "insert_id") == nil, "a cartridge is not an ID card")
 t.click(actor, 2, 2, assert(t.target_at(actor, 2, 2, laptop)))
 t.run_ticks(2)

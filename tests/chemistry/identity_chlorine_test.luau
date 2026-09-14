@@ -47,7 +47,8 @@ local function has_text(lines: { string }, needle: string)
     return false
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "fume closet",
     legend: {
         ' ': (turf: Space),
@@ -72,7 +73,9 @@ t.world([==[(
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3),
         (1, 3, 3), (2, 3, 3), (3, 3, 3), (4, 3, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 t.set_environment({ sink_k = 293.15, insolation = 0.0 })
 local chemist = t.join("engineer")
@@ -146,12 +149,20 @@ assert(t.hands(chemist).held == "bottle", "the vessel comes back out")
 
 local inside = assert(t.vessel(jar), "the vessel has a reading")
 assert(inside.contents.chlorine.liquid ~= nil, "the bottle holds liquid chlorine")
-near(inside.contents.chlorine.liquid + (inside.contents.chlorine.gas or 0.0), PRESS, 1e-9,
-    "the whole press landed, because there is a lid")
-assert(inside.contents.chlorine.liquid > 0.5 * PRESS,
-    "and most of it is standing as LIQUID: " .. inside.contents.chlorine.liquid .. " mol")
-assert(inside.pressure_kpa > 400.0,
-    "under several atmospheres of its own vapour: " .. inside.pressure_kpa .. " kPa")
+near(
+    inside.contents.chlorine.liquid + (inside.contents.chlorine.gas or 0.0),
+    PRESS,
+    1e-9,
+    "the whole press landed, because there is a lid"
+)
+assert(
+    inside.contents.chlorine.liquid > 0.5 * PRESS,
+    "and most of it is standing as LIQUID: " .. inside.contents.chlorine.liquid .. " mol"
+)
+assert(
+    inside.pressure_kpa > 400.0,
+    "under several atmospheres of its own vapour: " .. inside.pressure_kpa .. " kPa"
+)
 
 -- The examine pane names it out of the registry (sim/examine.rs,
 -- `matter_lines`), and there is one name because there is one row.
@@ -169,16 +180,24 @@ assert(has_text(look.lines, "chlorine"), "and it is chlorine: " .. table.concat(
 -- ---------------------------------------------------------------
 near(room("chlorine"), 0.0, 1e-12, "the closet is clean to start with")
 local booked = t.matter_totals()
-near(booked.substances.chlorine, PRESS, 1e-9,
-    "and the books hold exactly the press: " .. booked.substances.chlorine .. " mol")
+near(
+    booked.substances.chlorine,
+    PRESS,
+    1e-9,
+    "and the books hold exactly the press: " .. booked.substances.chlorine .. " mol"
+)
 
 t.click(chemist, 3, 2)
 t.run_seconds(20)
 
 local loose = room("chlorine")
 assert(loose > 0.5 * PRESS, "it boiled off into the room: " .. loose .. " mol")
-near(assert(t.contents(jar)).chlorine or 0.0, PRESS - loose, 1e-6,
-    "and what is left in the bottle is the saturated vapour it kept")
+near(
+    assert(t.contents(jar)).chlorine or 0.0,
+    PRESS - loose,
+    1e-6,
+    "and what is left in the bottle is the saturated vapour it kept"
+)
 
 -- ---------------------------------------------------------------
 -- THREE: THE BOOKS CLOSE.
@@ -189,6 +208,10 @@ near(assert(t.contents(jar)).chlorine or 0.0, PRESS - loose, 1e-6,
 -- ---------------------------------------------------------------
 t.run_seconds(60)
 local closed = t.matter_totals()
-near(closed.substances.chlorine, PRESS, 1e-9,
-    "not one mole of it was made or lost: " .. closed.substances.chlorine)
+near(
+    closed.substances.chlorine,
+    PRESS,
+    1e-9,
+    "not one mole of it was made or lost: " .. closed.substances.chlorine
+)
 near(closed.moles, booked.moles, 1e-9, "nor of anything else in the closet")

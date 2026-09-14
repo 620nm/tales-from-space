@@ -93,14 +93,13 @@ assert(
 -- no excess and a drain may not take it -- a tile pulled drier than any
 -- neighbour could make it would pull forever.
 t.run_ticks(2000)
-assert(
-    litres(1) > FILM_L * 0.95,
-    ("the film is still there: %.4f L"):format(litres(1))
-)
+assert(litres(1) > FILM_L * 0.95, ("the film is still there: %.4f L"):format(litres(1)))
 assert(
     math.abs(t.matter_totals().substances.water - POURED) < 1e-6,
-    ("and every mole is accounted for: %.6f vs %.6f mol")
-        :format(t.matter_totals().substances.water, POURED)
+    ("and every mole is accounted for: %.6f vs %.6f mol"):format(
+        t.matter_totals().substances.water,
+        POURED
+    )
 )
 
 -- Accounted for WHERE. The books balance because the drain's register
@@ -174,6 +173,8 @@ assert(litres(2) > FILM_L * 0.95, ("the grating is damp, not dry: %.4f L"):forma
 assert(litres(3) < 6.0, ("the spill went down it: %.4f L"):format(litres(3)))
 assert(
     math.abs(t.matter_totals().substances.water - CORRIDOR_POURED) < 1e-6,
-    ("with the books still balanced: %.6f vs %.6f mol")
-        :format(t.matter_totals().substances.water, CORRIDOR_POURED)
+    ("with the books still balanced: %.6f vs %.6f mol"):format(
+        t.matter_totals().substances.water,
+        CORRIDOR_POURED
+    )
 )

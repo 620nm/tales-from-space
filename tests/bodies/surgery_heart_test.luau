@@ -25,8 +25,10 @@ t.run_ticks(3)
 t.rest(patient, true)
 t.unequip(patient, "uniform") -- bare the chest (Strip is B3)
 t.run_ticks(2)
-assert(assert(t.body(patient)).posture == "lying" and assert(t.body(patient)).conscious,
-    "the patient is on the table, awake for now")
+assert(
+    assert(t.body(patient)).posture == "lying" and assert(t.body(patient)).conscious,
+    "the patient is on the table, awake for now"
+)
 assert(t.worn(patient).uniform == nil, "the chest is bared")
 
 local PX, PY = 2, 1
@@ -39,17 +41,23 @@ local TOOL_X = {
 }
 local moved_to = {}
 
-local function has(states, name) return states[name] == true end
+local function has(states, name)
+    return states[name] == true
+end
 
 -- What a candidate button says. An operation ON AN ORGAN is the
 -- `procedure.on_organ` id carrying the two words as arguments; a plain
 -- one is content's own word (docs/tgui/labels.md).
 local function face(value: unknown): string
-    if type(value) ~= "table" then return tostring(value) end
+    if type(value) ~= "table" then
+        return tostring(value)
+    end
     local label = ui_controls.record(value)
     if label.args then
         local args = ui_controls.record(label.args)
-        if args.organ then return tostring(args.operation) .. " " .. tostring(args.organ) end
+        if args.organ then
+            return tostring(args.operation) .. " " .. tostring(args.organ)
+        end
     end
     return tostring(label.text or label.id)
 end
@@ -100,11 +108,21 @@ local function step(tool: string, secs: number, done: () -> boolean, why: string
 end
 
 -- The open-up sequence, each step nothing can fail on the table.
-step("scalpel", 1.6, function() return has(assert(t.parts(patient)).chest.states, "skin_cut") end, "incised")
-step("retractor", 2.4, function() return has(assert(t.parts(patient)).chest.states, "skin_open") end, "retracted")
-step("hemostat", 2.4, function() return has(assert(t.parts(patient)).chest.states, "vessels_clamped") end, "clamped")
-step("circular_saw", 5.4, function() return has(assert(t.parts(patient)).chest.states, "bone_sawed") end, "sawed")
-step("scalpel", 2.4, function() return has(assert(t.parts(patient)).chest.states, "organs_cut") end, "organs cut")
+step("scalpel", 1.6, function()
+    return has(assert(t.parts(patient)).chest.states, "skin_cut")
+end, "incised")
+step("retractor", 2.4, function()
+    return has(assert(t.parts(patient)).chest.states, "skin_open")
+end, "retracted")
+step("hemostat", 2.4, function()
+    return has(assert(t.parts(patient)).chest.states, "vessels_clamped")
+end, "clamped")
+step("circular_saw", 5.4, function()
+    return has(assert(t.parts(patient)).chest.states, "bone_sawed")
+end, "sawed")
+step("scalpel", 2.4, function()
+    return has(assert(t.parts(patient)).chest.states, "organs_cut")
+end, "organs cut")
 
 -- The heart is whole and beating, so the socket is reachable and the
 -- removal is offered — but so are the other chest organs, so a hemostat
@@ -113,11 +131,15 @@ hold("hemostat")
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(2)
 local win = ui_controls.record(t.ui(surgeon))
-assert(win ~= nil and win.document == "modules" and win.presentation == "choices",
-    "several organs to reach: the choice document opened")
+assert(
+    win ~= nil and win.document == "modules" and win.presentation == "choices",
+    "several organs to reach: the choice document opened"
+)
 local pick
 for _, toggle in ipairs(ui_controls.rows(win.toggles)) do
-    if face(toggle.label):find("heart", 1, true) then pick = ui_controls.text(toggle.option) end
+    if face(toggle.label):find("heart", 1, true) then
+        pick = ui_controls.text(toggle.option)
+    end
 end
 assert(pick, "the window lists the heart among the organs to remove")
 
@@ -143,7 +165,9 @@ assert(not assert(t.body(patient)).animate, "and dead of the missing heart, not 
 -- fires on the `dead` HEALTH line (content/bodies/human.luau), and this
 -- patient's health never moved. So the donor heart will take.
 local past: { [string]: boolean } = {}
-for _, id in ipairs(assert(t.body(patient)).thresholds) do past[id] = true end
+for _, id in ipairs(assert(t.body(patient)).thresholds) do
+    past[id] = true
+end
 assert(past.undone and not past.dead, "dead of viability alone")
 assert(t.count_items("organ_heart") >= 2, "the old heart is on the deck beside the donor")
 
@@ -157,8 +181,10 @@ t.run_ticks(23) -- the 1 s insertion
 assert(t.organ_damage(patient, "heart") ~= nil, "a heart is seated in the socket")
 assert(assert(t.organ_damage(patient, "heart")) < 40, "and it is in good order")
 assert(assert(t.body(patient)).conscious, "the heart beats again and the patient comes to")
-assert(assert(t.body(patient)).animate and assert(t.body(patient)).controllable,
-    "ALIVE AGAIN: a living heart in the socket clears the viability line")
+assert(
+    assert(t.body(patient)).animate and assert(t.body(patient)).controllable,
+    "ALIVE AGAIN: a living heart in the socket clears the viability line"
+)
 
 -- Close up. The bone states and the incision clear, and 40 of the saw's
 -- 50 brute is mended on the way out.

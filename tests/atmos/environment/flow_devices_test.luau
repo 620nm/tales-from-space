@@ -51,7 +51,8 @@ end
 -- ends with twice the pressure it started with. That is the machine you
 -- transfer a tankful with, and this is why it is not simply "a pump".
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "two pumps",
     legend: {
         ' ': (turf: Space),
@@ -78,7 +79,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3), (11, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -113,7 +116,12 @@ local panel = ui_controls.record(assert(t.ui(p)))
 assert(panel, "a volume pump wears the same panel")
 assert(ui_controls.rows(panel.setpoints)[1].field == "rate", "with a rate knob, not a pressure one")
 assert(ui_controls.rows(panel.setpoints)[1].unit == "L/s")
-near(ui_controls.number(ui_controls.rows(panel.setpoints)[1].value), 200.0, 0.001, "MAX_TRANSFER_RATE out of the box")
+near(
+    ui_controls.number(ui_controls.rows(panel.setpoints)[1].value),
+    200.0,
+    0.001,
+    "MAX_TRANSFER_RATE out of the box"
+)
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(assert(t.structure_at(9, 2)).state == "running", "and it is on")
@@ -135,11 +143,15 @@ assert(
     assert(t.pipe_pressure(7, 2)) < 10.0,
     "and it did it by emptying its own supply: " .. assert(t.pipe_pressure(7, 2))
 )
-local after = moles(assert(t.pipe_pressure(7, 2)), IN_M3) + moles(assert(t.pipe_pressure(11, 2)), OUT_M3)
+local after = moles(assert(t.pipe_pressure(7, 2)), IN_M3)
+    + moles(assert(t.pipe_pressure(11, 2)), OUT_M3)
 assert(
     math.abs(after - books) < books * 0.02,
     "every mole came out of the supply main, not out of nowhere: "
-        .. books .. " mol -> " .. after .. " mol"
+        .. books
+        .. " mol -> "
+        .. after
+        .. " mol"
 )
 
 -- ---------------------------------------------------------------
@@ -156,7 +168,8 @@ assert(
 -- in the room -- which is exactly the sentence an engineer standing
 -- next to one needs to understand about it.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "overclocked",
     legend: {
         ' ': (turf: Space),
@@ -178,7 +191,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local q = t.join()
 t.tick()
@@ -231,7 +246,10 @@ near(lost / moved, 0.1, 0.01, "a tenth of every transfer leaks")
 assert(
     assert(t.room_pressure(4, 2)) > room_before,
     "and the room the pump is standing in is where it went: "
-        .. room_before .. " -> " .. assert(t.room_pressure(4, 2)) .. " kPa"
+        .. room_before
+        .. " -> "
+        .. assert(t.room_pressure(4, 2))
+        .. " kPa"
 )
 
 -- ---------------------------------------------------------------
@@ -248,7 +266,8 @@ assert(
 -- one -- but only to where the two come level by VOLUME, never to the
 -- setpoint above that, and never one kPa past its own supply.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "passive gate",
     legend: {
         ' ': (turf: Space),
@@ -270,7 +289,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local g = t.join()
 t.tick()
@@ -323,7 +344,8 @@ near(assert(t.pipe_pressure(5, 1)), charged, 0.5, "and its supply never notices"
 -- A gate is not a pump: the setpoint is a ceiling it may never reach,
 -- not a promise.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "downhill gate",
     legend: {
         ' ': (turf: Space),
@@ -345,7 +367,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local d = t.join()
 t.tick()
@@ -364,7 +388,8 @@ assert(supply > 90.0, "the supply main is the charged one: " .. supply)
 assert(
     assert(delivery) < supply - 20.0,
     "and the delivery main, diluted by the pipe just laid onto it, is"
-        .. " well below it: " .. delivery
+        .. " well below it: "
+        .. delivery
 )
 local downhill_books = moles(supply, SUPPLY_M3) + moles(delivery, DELIVERY_M3)
 -- Where the two would sit if they simply became one body of gas: the
@@ -394,7 +419,9 @@ assert(
     assert(settled_out) <= settled_in + 0.001,
     "and never once got above its own supply, which is the whole of"
         .. " 'can not transfer low pressure to higher pressure': "
-        .. settled_in .. " / " .. settled_out
+        .. settled_in
+        .. " / "
+        .. settled_out
 )
 -- It stops ON level, which is tg's rule read carefully: half the
 -- pressure gap across two EQUAL 200 L ports is exactly the amount that
@@ -406,13 +433,17 @@ near(settled_in, level, 1.0, "from both sides at once")
 assert(
     assert(settled_out) < 101.325,
     "and stopped BELOW the gate's own setpoint: a target is a ceiling"
-        .. " here, never a promise: " .. settled_out
+        .. " here, never a promise: "
+        .. settled_out
 )
 local downhill_after = moles(settled_in, SUPPLY_M3) + moles(settled_out, DELIVERY_M3)
 assert(
     math.abs(downhill_after - downhill_books) < downhill_books * 0.02,
     "and the books balance across the gate: "
-        .. downhill_books .. " mol -> " .. downhill_after .. " mol"
+        .. downhill_books
+        .. " mol -> "
+        .. downhill_after
+        .. " mol"
 )
 assert(gate_books > 0.0, "the uphill books were readable too")
 
@@ -428,7 +459,8 @@ assert(gate_books > 0.0, "the uphill books were readable too")
 -- like. Wind the trip pressure down under it from the panel and the
 -- same valve, in the same position, starts passing gas.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "relief",
     legend: {
         ' ': (turf: Space),
@@ -450,7 +482,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local v = t.join()
 t.tick()
@@ -473,15 +507,23 @@ assert(relief_in > 90.0, "the supply is charged: " .. relief_in)
 assert(
     assert(relief_out) < relief_in - 20.0,
     "and the delivery main, diluted by the pipe just laid onto it, is"
-        .. " well below it: " .. relief_out
+        .. " well below it: "
+        .. relief_out
 )
 
 t.click(v, 3, 1, t.target_at(v, 3, 1, "pressure_valve"))
 t.tick()
 local relief_panel = ui_controls.record(assert(t.ui(v)))
-assert(ui_controls.word(ui_controls.rows(relief_panel.setpoints)[1].label) == "flow.trip_pressure",
-    tostring(word(ui_controls.rows(relief_panel.setpoints)[1].label)))
-near(ui_controls.number(ui_controls.rows(relief_panel.setpoints)[1].max), 10132.5, 0.001, "tg's ONE_ATMOSPHERE * 100")
+assert(
+    ui_controls.word(ui_controls.rows(relief_panel.setpoints)[1].label) == "flow.trip_pressure",
+    tostring(word(ui_controls.rows(relief_panel.setpoints)[1].label))
+)
+near(
+    ui_controls.number(ui_controls.rows(relief_panel.setpoints)[1].max),
+    10132.5,
+    0.001,
+    "tg's ONE_ATMOSPHERE * 100"
+)
 
 -- Arm it, trip pressure well above the supply. Nothing crosses, because
 -- nothing upstream is over the line.

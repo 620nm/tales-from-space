@@ -33,7 +33,8 @@ end
 --   tower -> l_rim   (31,1)        = 29    f > 0.75: garbled
 --   tower -> l_edge  (32,1)        = 30    f = 1: heard
 --   tower -> l_out   (33,1)        = 31    f > 1: silence
-t.world([==[(
+t.world(
+    [==[(
     name: "radio corridor",
     legend: {
         ' ': (turf: Space),
@@ -69,7 +70,10 @@ t.world([==[(
     cables: [
         (1, 2, 2), (2, 2, 3), (3, 2, 1),
     ],
-)]==], 0, "space_station")
+)]==],
+    0,
+    "space_station"
+)
 
 local speaker = t.join("assistant")
 local l_clear = t.join("medic")
@@ -108,10 +112,14 @@ end
 drain_all()
 t.say(speaker, ";anyone copy, the lab is out of iodine")
 t.run_ticks(2)
-assert(said(speaker, "anyone copy, the lab is out of iodine"),
-    "the speaker's own copy is always clean")
-assert(said(l_clear, "anyone copy, the lab is out of iodine"),
-    "inside the clear band the words arrive whole")
+assert(
+    said(speaker, "anyone copy, the lab is out of iodine"),
+    "the speaker's own copy is always clean"
+)
+assert(
+    said(l_clear, "anyone copy, the lab is out of iodine"),
+    "inside the clear band the words arrive whole"
+)
 local rim_heard = t.messages(l_rim)
 local rim_ok = false
 for _, m in ipairs(rim_heard) do
@@ -119,9 +127,10 @@ for _, m in ipairs(rim_heard) do
         rim_ok = true
     end
 end
-assert(rim_ok,
-    "near the rim, exactly the static the hash decides: "
-        .. table.concat(rim_heard, " | "))
+assert(
+    rim_ok,
+    "near the rim, exactly the static the hash decides: " .. table.concat(rim_heard, " | ")
+)
 local edge_heard = t.messages(l_edge)
 local edge_ok = false
 for _, m in ipairs(edge_heard) do
@@ -129,10 +138,8 @@ for _, m in ipairs(edge_heard) do
         edge_ok = true
     end
 end
-assert(edge_ok, "f == 1 exactly is heard at the tower rim: "
-    .. table.concat(edge_heard, " | "))
-assert(#t.messages(l_out) == 0,
-    "one tile past the circle there is nothing at all")
+assert(edge_ok, "f == 1 exactly is heard at the tower rim: " .. table.concat(edge_heard, " | "))
+assert(#t.messages(l_out) == 0, "one tile past the circle there is nothing at all")
 
 -- ---------------------------------------------------------------
 -- 2. THE BREAKER TRIPS. A dead tower is no tower
@@ -160,7 +167,8 @@ assert(#t.messages(l_out) == 0, "and past it stays past it")
 --    contract: the rim itself is inside);
 --    -> far (12,1) = 11, outside LOCAL_RADIUS entirely.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "wrong key",
     legend: {
         ' ': (turf: Space),
@@ -196,7 +204,10 @@ t.world([==[(
     cables: [
         (1, 2, 2), (2, 2, 3), (3, 2, 1),
     ],
-)]==], 0, "space_station")
+)]==],
+    0,
+    "space_station"
+)
 
 speaker = t.join("assistant")
 local l_near = t.join("medic")
@@ -217,25 +228,30 @@ local _ = t.messages(l_local_edge)
 local _ = t.messages(l_far)
 t.say(speaker, ";local radius boundary check")
 t.run_ticks(2)
-assert(said(l_near, "local radius boundary check"),
-    "inside the local circle a handheld needs no tower")
+assert(
+    said(l_near, "local radius boundary check"),
+    "inside the local circle a handheld needs no tower"
+)
 local quarter_heard = t.messages(l_quarter)
-assert(quarter_heard[1] == "loc~l r~~ius ~oun~ary check",
-    "the outer quarter of the local circle garbles too: "
-        .. table.concat(quarter_heard, " | "))
+assert(
+    quarter_heard[1] == "loc~l r~~ius ~oun~ary check",
+    "the outer quarter of the local circle garbles too: " .. table.concat(quarter_heard, " | ")
+)
 local local_edge_heard = t.messages(l_local_edge)
-assert(local_edge_heard[1] == "~~~~~ ~~~~~~ ~~~~~~~~ ~~~~~",
+assert(
+    local_edge_heard[1] == "~~~~~ ~~~~~~ ~~~~~~~~ ~~~~~",
     "f == 1 exactly is HEARD -- the rim is inside -- as pure static: "
-        .. table.concat(local_edge_heard, " | "))
-assert(#t.messages(l_far) == 0,
-    "past it, a tower keyed to another word carries nothing")
+        .. table.concat(local_edge_heard, " | ")
+)
+assert(#t.messages(l_far) == 0, "past it, a tower keyed to another word carries nothing")
 
 -- ---------------------------------------------------------------
 -- 4. THE COMMON HEADSET. It registers its own `speech.radio` handler,
 --    separate from the loose department keys used above. With no tower,
 --    a listener at 10 tiles hears the exact rim and one at 11 does not.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "headset boundary",
     legend: {
         ' ': (turf: Space),
@@ -258,7 +274,10 @@ t.world([==[(
         (11, 1, "headset"),
         (12, 1, "headset"),
     ],
-)]==], 0, "space_station")
+)]==],
+    0,
+    "space_station"
+)
 
 speaker = t.join("assistant")
 local headset_edge = t.join("medic")
@@ -282,8 +301,8 @@ t.say(speaker, ";headset boundary")
 t.run_ticks(2)
 assert(said(speaker, "headset boundary"), "the headset speaker hears themself")
 local headset_edge_heard = t.messages(headset_edge)
-assert(headset_edge_heard[1] == "~~~~~~~ ~~~~~~~~",
-    "the Common headset reaches its exact ten-tile rim: "
-        .. table.concat(headset_edge_heard, " | "))
-assert(#t.messages(headset_out) == 0,
-    "the Common headset reaches no listener eleven tiles away")
+assert(
+    headset_edge_heard[1] == "~~~~~~~ ~~~~~~~~",
+    "the Common headset reaches its exact ten-tile rim: " .. table.concat(headset_edge_heard, " | ")
+)
+assert(#t.messages(headset_out) == 0, "the Common headset reaches no listener eleven tiles away")

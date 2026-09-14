@@ -137,7 +137,10 @@ assert(#order == #DECLARED, "one block per declared group: " .. #order)
 for index, heading in ipairs(DECLARED) do
     assert(
         order[index] == heading,
-        "declaration order is display order: wanted " .. heading .. ", got " .. tostring(order[index])
+        "declaration order is display order: wanted "
+            .. heading
+            .. ", got "
+            .. tostring(order[index])
     )
 end
 

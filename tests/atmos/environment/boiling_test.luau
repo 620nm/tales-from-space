@@ -37,7 +37,8 @@ local function room_gas(key: string)
     return n
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "boiling bench",
     legend: {
         ' ': (turf: Space),
@@ -60,7 +61,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()

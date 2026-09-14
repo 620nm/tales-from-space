@@ -64,7 +64,8 @@ end
 -- east -- back to the nitrogen line, side dropping south to the
 -- oxygen one, outlet east -- so the engine aims it there.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "air mixer",
     legend: {
         ' ': (turf: Space),
@@ -101,7 +102,9 @@ t.world([==[(
         (5, 3, 3),
         (5, 4, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -136,11 +139,26 @@ assert(side_pure > 0.97, "and the side intake oxygen: " .. side_pure)
 t.click(p, 5, 1, t.target_at(p, 5, 1, "mixer.airmix"))
 t.tick()
 local ui = ui_controls.state(p)
-assert(ui and ui.document == "modules" and ui.presentation == "modules",
-    "an air mixer is an ordinary module document")
-assert(ui_controls.rows(ui.toggles)[1].field == "power" and ui_controls.rows(ui.toggles)[1].on == true, "shipped switched on")
-near(ui_controls.number(ui_controls.rows(ui.setpoints)[1].value), 4500.0, 0.001, "its dial wound to MAX_OUTPUT_PRESSURE")
-near(ui_controls.number(ui_controls.rows(ui.setpoints)[2].value), 79.0, 0.001, "and the split at tg's N2STANDARD")
+assert(
+    ui and ui.document == "modules" and ui.presentation == "modules",
+    "an air mixer is an ordinary module document"
+)
+assert(
+    ui_controls.rows(ui.toggles)[1].field == "power" and ui_controls.rows(ui.toggles)[1].on == true,
+    "shipped switched on"
+)
+near(
+    ui_controls.number(ui_controls.rows(ui.setpoints)[1].value),
+    4500.0,
+    0.001,
+    "its dial wound to MAX_OUTPUT_PRESSURE"
+)
+near(
+    ui_controls.number(ui_controls.rows(ui.setpoints)[2].value),
+    79.0,
+    0.001,
+    "and the split at tg's N2STANDARD"
+)
 local mix: ui_controls.Record? = nil
 for _, r in ipairs(ui_controls.rows(ui.readouts)) do
     if word(r.label) == "mixer.mix" then
@@ -149,8 +167,10 @@ for _, r in ipairs(ui_controls.rows(ui.readouts)) do
 end
 assert(mix, "the mixer reports its split")
 local mix_args = ui_controls.record(mix.args)
-assert(mix.id == "mixer.mix.split" and mix_args.back == "79%" and mix_args.side == "21%",
-    "which the panel says in both halves: " .. tostring(mix_args.back))
+assert(
+    mix.id == "mixer.mix.split" and mix_args.back == "79%" and mix_args.side == "21%",
+    "which the panel says in both halves: " .. tostring(mix_args.back)
+)
 t.ui_close(p)
 
 -- ---- and what it made ----
@@ -163,7 +183,10 @@ near(
     1.0,
     "and the mixer filled it to the setpoint with nobody touching it"
 )
-assert(assert(t.pipe_pressure(7, 1)) <= 4500.0, "and not one kPa past it: " .. assert(t.pipe_pressure(7, 1)))
+assert(
+    assert(t.pipe_pressure(7, 1)) <= 4500.0,
+    "and not one kPa past it: " .. assert(t.pipe_pressure(7, 1))
+)
 
 local out_n2, out_o2, out_all = gas(7, 1, "n2"), gas(7, 1, "o2"), moles(7, 1)
 near(out_n2 / out_all, 0.79, 0.02, "and what stands in it is 79% nitrogen")
@@ -183,7 +206,8 @@ near(out_n2 + out_o2, out_all, 1e-9, "with nothing else in it at all")
 -- three-gas line and "the co2 went to the side port" cannot be read
 -- off a pressure.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "co2 filter",
     legend: {
         ' ': (turf: Space),
@@ -205,7 +229,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3),
         (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local q = t.join()
 t.tick()
@@ -252,10 +278,21 @@ local books_co2, books_o2, books_n2 = books("co2"), books("o2"), books("n2")
 t.click(q, 4, 1, t.target_at(q, 4, 1, "filter.co2"))
 t.tick()
 local panel = ui_controls.state(q)
-assert(panel and panel.document == "modules" and panel.presentation == "modules",
-    "the filter's declared module document")
-assert(ui_controls.rows(panel.toggles)[1].field == "power" and ui_controls.rows(panel.toggles)[1].on == true, "shipped switched on")
-near(ui_controls.number(ui_controls.rows(panel.setpoints)[1].value), 200.0, 0.001, "at tg's MAX_TRANSFER_RATE")
+assert(
+    panel and panel.document == "modules" and panel.presentation == "modules",
+    "the filter's declared module document"
+)
+assert(
+    ui_controls.rows(panel.toggles)[1].field == "power"
+        and ui_controls.rows(panel.toggles)[1].on == true,
+    "shipped switched on"
+)
+near(
+    ui_controls.number(ui_controls.rows(panel.setpoints)[1].value),
+    200.0,
+    0.001,
+    "at tg's MAX_TRANSFER_RATE"
+)
 local roster = 0
 for _, sw in ipairs(ui_controls.rows(panel.toggles)) do
     if sw.field == "filter" then
@@ -272,10 +309,7 @@ t.ui_close(q)
 -- ---- and what it did ----
 t.run_seconds(12)
 
-assert(
-    gas(4, 2, "co2") > 1.0,
-    "the side port collected the carbon dioxide: " .. gas(4, 2, "co2")
-)
+assert(gas(4, 2, "co2") > 1.0, "the side port collected the carbon dioxide: " .. gas(4, 2, "co2"))
 assert(
     gas(5, 1, "o2") > main_o2 + 0.5 and gas(5, 1, "n2") > main_n2 + 1.0,
     "and the breathable half carried straight on"

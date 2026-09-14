@@ -3,7 +3,6 @@ local ui_files = require("@helpers/ui_files")
 local record, rows = ui_controls.record, ui_controls.rows
 local text, number = ui_controls.text, ui_controls.number
 
-
 -- A disk, a terminal, and everything a crewman can do to a file.
 --
 -- The whole of this feature is two prototypes and one panel: the
@@ -55,14 +54,19 @@ end
 
 local function addr(value: unknown): string
     local row = record(value)
-    return text(row.store) .. ":" .. string.format("%d", number(row.uid)) .. ":" .. text(row.binding)
+    return text(row.store)
+        .. ":"
+        .. string.format("%d", number(row.uid))
+        .. ":"
+        .. text(row.binding)
 end
 
 -- A wired closet: generator, panel, port, and the terminal standing
 -- on the port's cord. The terminal is `corded`, so the map owes it a
 -- port it can path to (docs/POWER.md, "Outlets and cords") -- a spec
 -- that skipped the wiring would be asserting against a boot warning.
-t.world([==[(
+t.world(
+    [==[(
     name: "terminal closet",
     legend: {
         ' ': (turf: Space),
@@ -85,7 +89,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -106,18 +112,27 @@ local function audit_rows(kind: string): { ui_controls.Record }
     for _, row in ipairs(t.ledger_rows()) do
         if row.audit then
             local audit = record(row.audit)
-            if audit.audit == kind then table.insert(found, audit) end
+            if audit.audit == kind then
+                table.insert(found, audit)
+            end
         end
     end
     return found
 end
 local inserted = audit_rows("media_inserted")
 assert(#inserted == 1, "fitting a disk is a row of its own: " .. #inserted)
-assert(inserted[1].item == "floppy disk", "the row names the medium: " .. tostring(inserted[1].item))
-assert(inserted[1].machine == "programming terminal",
-    "and the machine: " .. tostring(inserted[1].machine))
-assert(type(inserted[1].owner) == "string" and #text(inserted[1].owner) == 32,
-    "the media row carries the disk store identity")
+assert(
+    inserted[1].item == "floppy disk",
+    "the row names the medium: " .. tostring(inserted[1].item)
+)
+assert(
+    inserted[1].machine == "programming terminal",
+    "and the machine: " .. tostring(inserted[1].machine)
+)
+assert(
+    type(inserted[1].owner) == "string" and #text(inserted[1].owner) == 32,
+    "the media row carries the disk store identity"
+)
 
 -- ---- a full slot refuses the second disk -----------------------------
 -- The click is SPENT on the refusal rather than falling through to
@@ -127,8 +142,10 @@ t.click(p, 2, 2, t.target_at(p, 2, 2, "floppy_disk"))
 t.run_ticks(2)
 t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.tick()
-assert(said(p, "There is already"), "an occupied drive says so: "
-    .. table.concat(t.messages(p), " | "))
+assert(
+    said(p, "There is already"),
+    "an occupied drive says so: " .. table.concat(t.messages(p), " | ")
+)
 assert(#audit_rows("media_inserted") == 1, "and nothing was fitted twice")
 t.drop(p)
 t.run_ticks(2)
@@ -142,12 +159,18 @@ assert(record(ui.media_slot).id == "files.media.loaded", "and it knows there is 
 
 local stores = rows(ui.stores)
 assert(#stores == 2, "two stores in reach: " .. #stores)
-assert(stores[1].key == "host" and record(stores[1].label).text == "programming terminal",
-    "the host store comes first, under the machine's own name")
-assert(stores[1].capacity == HOST_BYTES and stores[1].count_cap == HOST_FILES,
-    "the terminal is scratch space: " .. number(stores[1].capacity))
-assert(stores[2].key == "media" and record(stores[2].label).text == "floppy disk",
-    "the medium is the second store, under its own name")
+assert(
+    stores[1].key == "host" and record(stores[1].label).text == "programming terminal",
+    "the host store comes first, under the machine's own name"
+)
+assert(
+    stores[1].capacity == HOST_BYTES and stores[1].count_cap == HOST_FILES,
+    "the terminal is scratch space: " .. number(stores[1].capacity)
+)
+assert(
+    stores[2].key == "media" and record(stores[2].label).text == "floppy disk",
+    "the medium is the second store, under its own name"
+)
 -- The two numbers this pack's fiction is actually about: a
 -- double-density 3.5" floppy and FAT12's root directory.
 assert(stores[2].capacity == DISK_BYTES, "720 KiB: " .. number(stores[2].capacity))
@@ -160,12 +183,22 @@ assert(#rows(ui.files) == 0, "both stores start bare")
 -- (docs/files/scriptable-machine.md §2).
 local host_formats = ui_controls.texts(record(ui.create).host)
 local media_formats = ui_controls.texts(record(ui.create).media)
-assert(#host_formats == 4 and host_formats[1] == "md" and host_formats[2] == "disl"
-    and host_formats[3] == "atmo" and host_formats[4] == "pem",
-    "the pack's four formats reach the host side: " .. table.concat(host_formats, ","))
-assert(#media_formats == 4 and media_formats[1] == "md" and media_formats[2] == "disl"
-    and media_formats[3] == "atmo" and media_formats[4] == "pem",
-    "and the disk side: " .. table.concat(media_formats, ","))
+assert(
+    #host_formats == 4
+        and host_formats[1] == "md"
+        and host_formats[2] == "disl"
+        and host_formats[3] == "atmo"
+        and host_formats[4] == "pem",
+    "the pack's four formats reach the host side: " .. table.concat(host_formats, ",")
+)
+assert(
+    #media_formats == 4
+        and media_formats[1] == "md"
+        and media_formats[2] == "disl"
+        and media_formats[3] == "atmo"
+        and media_formats[4] == "pem",
+    "and the disk side: " .. table.concat(media_formats, ",")
+)
 
 -- ---- make one ---------------------------------------------------------
 -- Create lands on the MEDIUM, because a crewman who put a disk in came
@@ -180,8 +213,12 @@ assert(record(ui.open).revision == 0, "and unedited")
 assert(record(ui.open).cap == BODY_CAP, "the panel publishes the byte cap a save is held to")
 local disk_file = addr(ui.open)
 local created = audit_rows("baseline")
-assert(#created == 1 and record(created[1].state).name == "untitled" and record(created[1].state).ext == "md",
-    "made files are on the compact record")
+assert(
+    #created == 1
+        and record(created[1].state).name == "untitled"
+        and record(created[1].state).ext == "md",
+    "made files are on the compact record"
+)
 
 -- ---- type into it ------------------------------------------------------
 local other = t.join()
@@ -200,12 +237,16 @@ assert(record(ui.open).body == NOTE, "the body comes back whole")
 assert(record(ui.open).revision == 1, "and a save moves the revision")
 -- The store readout weighs stem, extension and body rather than
 -- counting entries.
-assert(rows(ui.stores)[2].used == #NOTE + #"untitled" + #"md",
-    "the disk's used figure is what it holds: " .. number(rows(ui.stores)[2].used))
+assert(
+    rows(ui.stores)[2].used == #NOTE + #"untitled" + #"md",
+    "the disk's used figure is what it holds: " .. number(rows(ui.stores)[2].used)
+)
 
 local saved = audit_rows("save")
-assert(#saved == 1 and saved[1].result_revision == 1 and saved[1].splices,
-    "the save is on the compact record with deterministic splices")
+assert(
+    #saved == 1 and saved[1].result_revision == 1 and saved[1].splices,
+    "the save is on the compact record with deterministic splices"
+)
 
 -- ---- the source control bounds a long paste ---------------------------
 t.run_ticks(10)
@@ -227,7 +268,9 @@ t.run_ticks(20)
 local stale_save = ui_controls.node(other, "/editor/save")
 assert(stale_save.disabled, "a conflicting draft disables Save")
 assert(ui_controls.find(other, "/editor/conflict"), "the editor explains the conflict")
-assert(not pcall(function() t.ui_press(other, stale_save.id) end), "a disabled Save cannot overwrite newer text")
+assert(not pcall(function()
+    t.ui_press(other, stale_save.id)
+end), "a disabled Save cannot overwrite newer text")
 ui = ui_controls.state(p)
 assert(record(ui.open).body == NOTE, "and the first hand's work is still there")
 
@@ -244,8 +287,10 @@ ui_files.rename(p, "tank_room")
 t.tick()
 ui = ui_controls.state(p)
 assert(record(ui.open).name == "tank_room", "renamed")
-assert(has(listing(ui), "media:tank_room.md"), "and the listing agrees: "
-    .. table.concat(listing(ui), " "))
+assert(
+    has(listing(ui), "media:tank_room.md"),
+    "and the listing agrees: " .. table.concat(listing(ui), " ")
+)
 local renamed = audit_rows("rename")
 assert(#renamed == 1 and renamed[1].to == "tank_room", "renames are on the compact record too")
 
@@ -254,19 +299,25 @@ assert(#renamed == 1 and renamed[1].to == "tank_room", "renames are on the compa
 ui_files.address(p, disk_file, "copy")
 t.tick()
 ui = ui_controls.state(p)
-assert(has(listing(ui), "host:tank_room.md"),
-    "the note is on the terminal now: " .. table.concat(listing(ui), " "))
+assert(
+    has(listing(ui), "host:tank_room.md"),
+    "the note is on the terminal now: " .. table.concat(listing(ui), " ")
+)
 assert(has(listing(ui), "media:tank_room.md"), "and still on the disk -- copy, never move")
 local copied = audit_rows("copy")
-assert(#copied == 1 and copied[1].source and copied[1].destination and copied[1].destination_hash,
-    "a copy carries source and destination identities, never a body")
+assert(
+    #copied == 1 and copied[1].source and copied[1].destination and copied[1].destination_hash,
+    "a copy carries source and destination identities, never a body"
+)
 
 -- ---- delete off the disk ----------------------------------------------
 ui_files.address(p, disk_file, "delete")
 t.tick()
 ui = ui_controls.state(p)
-assert(not has(listing(ui), "media:tank_room.md"), "gone from the disk: "
-    .. table.concat(listing(ui), " "))
+assert(
+    not has(listing(ui), "media:tank_room.md"),
+    "gone from the disk: " .. table.concat(listing(ui), " ")
+)
 assert(not ui.open, "and the selection went with the file it named")
 local deleted = audit_rows("deleted")
 assert(#deleted == 1 and deleted[1].identity, "deletions are on the compact record")
@@ -284,8 +335,10 @@ assert(host_file, "the terminal kept its copy")
 ui_files.address(p, host_file, "copy")
 t.tick()
 ui = ui_controls.state(p)
-assert(has(listing(ui), "media:tank_room.md"),
-    "and back onto the disk: " .. table.concat(listing(ui), " "))
+assert(
+    has(listing(ui), "media:tank_room.md"),
+    "and back onto the disk: " .. table.concat(listing(ui), " ")
+)
 assert(#audit_rows("copy") == 2, "both crossings are attributed")
 
 -- ---- take it back out -------------------------------------------------
@@ -295,15 +348,24 @@ t.tick()
 ui = ui_controls.state(p)
 assert(record(ui.media_slot).id == "files.media.empty", "the slot is empty")
 assert(#rows(ui.stores) == 1, "and the disk's store left with it")
-assert(not has(listing(ui), "media:tank_room.md"),
-    "so the note is somewhere in a pocket, which is the whole point of a disk")
+assert(
+    not has(listing(ui), "media:tank_room.md"),
+    "so the note is somewhere in a pocket, which is the whole point of a disk"
+)
 assert(#audit_rows("media_ejected") == 1, "and taking one out is a row as well")
 local hands = t.hands(p)
-assert(hands[1] == "floppy_disk" or hands[2] == "floppy_disk",
-    "it came back into a hand rather than onto the deck")
+assert(
+    hands[1] == "floppy_disk" or hands[2] == "floppy_disk",
+    "it came back into a hand rather than onto the deck"
+)
 
 -- A delayed second press no longer has authority over a mounted store.
-assert(not pcall(function() t.ui_press(p, eject_control) end), "an empty drive offers no eject")
+assert(not pcall(function()
+    t.ui_press(p, eject_control)
+end), "an empty drive offers no eject")
 t.tick()
-assert(#rows(ui_controls.state(p).stores) == 1, "the stale binding cannot restore access to the removed disk")
+assert(
+    #rows(ui_controls.state(p).stores) == 1,
+    "the stale binding cannot restore access to the removed disk"
+)
 assert(#audit_rows("media_ejected") == 1, "and ejected nothing twice")

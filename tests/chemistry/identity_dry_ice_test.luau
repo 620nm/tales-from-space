@@ -59,7 +59,8 @@ local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "the cold bench",
     legend: {
         ' ': (turf: Space),
@@ -82,7 +83,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 -- An INERT SKY. The roster's default parks this station under a star
 -- pouring 2.7 kW/m2 into the hull, which warms a sealed room by seven
@@ -185,8 +188,12 @@ end
 assert(t.charge_vessel(2, 1, "co2", 9000.0), "ninety atmospheres of carbon dioxide")
 t.run_seconds(5)
 local bottle_line = assert(t.vessel(can), "the vessel has a reading")
-near(bottle_line.temp_k, CRITICAL_K, 0.01,
-    "the canister settled on the critical isotherm: " .. bottle_line.temp_k .. " K")
+near(
+    bottle_line.temp_k,
+    CRITICAL_K,
+    0.01,
+    "the canister settled on the critical isotherm: " .. bottle_line.temp_k .. " K"
+)
 assert(liquid(can) > 100.0, "with liquid carbon dioxide in it: " .. liquid(can) .. " mol")
 
 local booked = t.matter_totals()
@@ -215,8 +222,12 @@ near(gas(jar), drawn, 1e-12, "all of it is gas")
 
 condition(293.15, 300)
 assert(liquid(jar) > 0.05, "at station temperature it is a LIQUID: " .. liquid(jar) .. " mol")
-near(assert(t.holder_kpa(jar)), vapour_kpa(assert(t.holder_k(jar))), 0.01 * vapour_kpa(assert(t.holder_k(jar))),
-    "standing at its own vapour pressure")
+near(
+    assert(t.holder_kpa(jar)),
+    vapour_kpa(assert(t.holder_k(jar))),
+    0.01 * vapour_kpa(assert(t.holder_k(jar))),
+    "standing at its own vapour pressure"
+)
 near(solid(jar), 0.0, 1e-12, "and no solid, because 293 K is well over the triple point")
 undock()
 
@@ -238,15 +249,20 @@ t.click(p, 1, 2)
 t.run_ticks(4)
 near(liquid(jar), 0.0, 1e-12, "the liquid all went")
 near(tile_co2(1, 2), flashed, 1e-9, "and it is standing on the tile as GAS: " .. tile_co2(1, 2))
-assert(assert(t.room_temperature(1, 2)) < floor_k - 0.5,
-    "which cost the deck it landed on: " .. floor_k .. " -> " .. assert(t.room_temperature(1, 2)))
+assert(
+    assert(t.room_temperature(1, 2)) < floor_k - 0.5,
+    "which cost the deck it landed on: " .. floor_k .. " -> " .. assert(t.room_temperature(1, 2))
+)
 -- The bottle's gauge falls, and the reason is geometry rather than
 -- cold: the same vapour now has the whole shell to be spread through
 -- instead of the sliver over the liquid. Its TEMPERATURE does not
 -- move at all -- a parcel leaves carrying its own energy, always
 -- (`Mixture::draw`, lunatic-matter/src/mixture.rs) -- which is why the
 -- kelvin that went missing turned up in the room and not in the glass.
-assert(assert(t.holder_kpa(jar)) < gauge, "the bottle's gauge fell: " .. gauge .. " -> " .. assert(t.holder_kpa(jar)))
+assert(
+    assert(t.holder_kpa(jar)) < gauge,
+    "the bottle's gauge fell: " .. gauge .. " -> " .. assert(t.holder_kpa(jar))
+)
 
 -- ---------------------------------------------------------------
 -- FOUR: THE SAME BOTTLE, THIRTY KELVIN UNDER THE TRIPLE POINT.
@@ -268,9 +284,16 @@ assert(recharged > 0.15, "recharged off the same line: " .. recharged .. " mol")
 condition(180.0, 300)
 assert(solid(jar) > 0.15, "the bottle is holding DRY ICE: " .. solid(jar) .. " mol")
 near(liquid(jar), 0.0, 1e-12, "and not one mole of liquid, under the triple point")
-near(assert(t.holder_kpa(jar)), sublimation_kpa(assert(t.holder_k(jar))), 0.02 * sublimation_kpa(180.0),
-    "its gauge reads the sublimation line: " .. assert(t.holder_kpa(jar)) .. " kPa")
-assert(assert(t.holder_kpa(jar)) < 50.0, "which is under half an atmosphere: " .. assert(t.holder_kpa(jar)))
+near(
+    assert(t.holder_kpa(jar)),
+    sublimation_kpa(assert(t.holder_k(jar))),
+    0.02 * sublimation_kpa(180.0),
+    "its gauge reads the sublimation line: " .. assert(t.holder_kpa(jar)) .. " kPa"
+)
+assert(
+    assert(t.holder_kpa(jar)) < 50.0,
+    "which is under half an atmosphere: " .. assert(t.holder_kpa(jar))
+)
 undock()
 
 -- ---------------------------------------------------------------
@@ -299,10 +322,15 @@ t.run_ticks(4)
 assert(
     tile_co2(1, 3) < ice * 0.15,
     "the moment it lands it is still ICE on the deck: "
-        .. tile_co2(1, 3) .. " gas of " .. ice .. " mol"
+        .. tile_co2(1, 3)
+        .. " gas of "
+        .. ice
+        .. " mol"
 )
-assert(assert(t.room_temperature(1, 3)) < deck_k - 0.5,
-    "and it is already cooling the tile: " .. deck_k .. " -> " .. assert(t.room_temperature(1, 3)))
+assert(
+    assert(t.room_temperature(1, 3)) < deck_k - 0.5,
+    "and it is already cooling the tile: " .. deck_k .. " -> " .. assert(t.room_temperature(1, 3))
+)
 
 t.run_seconds(30)
 -- Weighed over the room. The ice's whole mass is gas half a minute
@@ -328,9 +356,13 @@ near(control, 293.15, 0.5, "the far side of the room hardly moved")
 -- A quarter of a kelvin, and the margin is narrow BECAUSE the crew are
 -- switched off above: nothing else in this room stirs the air, so the
 -- gap half a minute on is the ice's alone and no larger.
-assert(assert(t.room_temperature(1, 3)) < control - 0.25,
+assert(
+    assert(t.room_temperature(1, 3)) < control - 0.25,
     "and the tile the ice was on is still the cold one: "
-        .. assert(t.room_temperature(1, 3)) .. " vs " .. control)
+        .. assert(t.room_temperature(1, 3))
+        .. " vs "
+        .. control
+)
 
 -- ---------------------------------------------------------------
 -- SIX: THE BOOKS.
@@ -343,6 +375,10 @@ assert(assert(t.room_temperature(1, 3)) < control - 0.25,
 -- two vessels, two tiles and a canister.
 -- ---------------------------------------------------------------
 local closed = t.matter_totals()
-near(closed.substances.co2, charged_co2, 1e-9,
-    "not one mole of it was made or lost: " .. closed.substances.co2 .. " vs " .. charged_co2)
+near(
+    closed.substances.co2,
+    charged_co2,
+    1e-9,
+    "not one mole of it was made or lost: " .. closed.substances.co2 .. " vs " .. charged_co2
+)
 near(closed.moles, booked.moles, 1e-9, "nor of anything else in the room")

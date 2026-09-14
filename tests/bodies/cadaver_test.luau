@@ -9,7 +9,8 @@
 -- Wired, because a chamber's lamp reads its own power: the plant, the
 -- controller and the socket sit behind the rank, within cord reach of
 -- both drawers (docs/POWER.md, "Outlets and cords").
-t.world([==[(
+t.world(
+    [==[(
     name: "cadaver bench",
     legend: {
         ' ': (turf: Space),
@@ -33,7 +34,9 @@ t.world([==[(
         (2, 2, "cadaver_chamber", { "dir": "east" }),
     ],
     cables: [(1, 3, 2), (2, 3, 3), (3, 3, 1)],
-)]==], 0)
+)]==],
+    0
+)
 
 local attendant = t.join()
 t.tick()
@@ -42,8 +45,10 @@ t.tick()
 -- nobody in the room can see what is in it.
 assert(t.structure_at(3, 1) == nil, "a shut drawer's tray is nowhere")
 assert(#t.bodies_at(3, 1) == 0, "and neither is what it is holding")
-assert(assert(t.structure_at(2, 1)).overlays[1] == "morgue2_e",
-    "the occupied lamp is lit from the moment the map stands it up")
+assert(
+    assert(t.structure_at(2, 1)).overlays[1] == "morgue2_e",
+    "the occupied lamp is lit from the moment the map stands it up"
+)
 
 local occupied = t.target_at(attendant, 2, 1, "cadaver_chamber.cadaver")
 assert(occupied ~= nil, "the variant is a real prototype a click can name")
@@ -61,8 +66,7 @@ assert(corpse.posture == "lying", "and it is lying on the slab")
 assert(corpse.health <= -100, "200 brute is past the plan's dead line")
 
 assert(corpse.name ~= "", "and it has a name, which is all it kept")
-assert(corpse.worn.uniform == "uniform_grey",
-    "wearing the jumpsuit the outfit row named")
+assert(corpse.worn.uniform == "uniform_grey", "wearing the jumpsuit the outfit row named")
 assert(corpse.worn.id == nil, "and no ID: an unidentified body is the point")
 
 -- It goes back in when the drawer shuts, like anything else on a slab.
@@ -70,8 +74,7 @@ t.click(attendant, 2, 1, occupied)
 t.tick()
 assert(t.structure_at(3, 1) == nil, "the slab goes back in")
 assert(#t.bodies_at(3, 1) == 0, "with the body on it")
-assert(assert(t.structure_at(2, 1)).overlays[1] == "morgue2_e",
-    "and the lamp says so again")
+assert(assert(t.structure_at(2, 1)).overlays[1] == "morgue2_e", "and the lamp says so again")
 
 -- The plain entry beside it declares no stock at all.
 local plain = t.target_at(attendant, 2, 2, "cadaver_chamber")
@@ -91,7 +94,8 @@ assert(#t.ledger_rows("body_spawned") == 1, "exactly one body was stood up")
 -- `corded fixture has no outlet within cord range` warnings drowning
 -- out the one bench that means to trip it.
 local function rolled_name(seed)
-    t.world([==[(
+    t.world(
+        [==[(
         name: "cadaver bench",
         legend: {
             ' ': (turf: Space),
@@ -110,7 +114,9 @@ local function rolled_name(seed)
         items: [],
         structures: [(1, 1, "player_spawn"), (2, 1, "cadaver_chamber.cadaver", { "dir": "east" })],
         cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
-    )]==], seed)
+    )]==],
+        seed
+    )
     local crew = t.join()
     t.tick()
     local drawer = t.target_at(crew, 2, 1, "cadaver_chamber.cadaver")

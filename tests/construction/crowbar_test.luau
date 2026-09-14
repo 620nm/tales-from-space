@@ -4,7 +4,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- door opens on a click like any other, a dark one takes work and then
 -- stays open, because an unpowered door has nothing to close itself
 -- with. (Port of the Rust m4 crowbar test.)
-t.world([==[(
+t.world(
+    [==[(
     name: "pry",
     legend: {
         ' ': (turf: Space),
@@ -23,7 +24,9 @@ t.world([==[(
     cables: [
         (1, 1, 1), (2, 1, 1), (3, 1, 1),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -53,12 +56,15 @@ assert(not assert(t.door_at(3, 1)).open, "prying takes time")
 t.run_ticks(60)
 assert(assert(t.door_at(3, 1)).open, "pried open")
 t.run_ticks(65)
-assert(assert(t.door_at(3, 1)).open,
-    "an unpowered door has no motors to autoclose with")
+assert(assert(t.door_at(3, 1)).open, "an unpowered door has no motors to autoclose with")
 
 assert(#t.ledger_rows("PowerOutage") == 1, "the outage is on the record")
 local pried = t.ledger_rows("DoorPried")
-assert(#pried == 1 and ui_controls.array(pried[1].at)[1] == 3 and ui_controls.array(pried[1].at)[2] == 1,
-    "the pry names the door it opened")
+assert(
+    #pried == 1
+        and ui_controls.array(pried[1].at)[1] == 3
+        and ui_controls.array(pried[1].at)[2] == 1,
+    "the pry names the door it opened"
+)
 local msgs = table.concat(t.messages(p), "\n")
 assert(msgs:find("gives way", 1, true), "the door gave way: " .. msgs)

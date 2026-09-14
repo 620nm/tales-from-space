@@ -21,7 +21,6 @@ return {
         out = { north = "morguet_n", south = "morguet_s", east = "morguet_e", west = "morguet_w" },
     },
     examine = {
-        flavor = "A cold steel slab on runners. Apply corpse before "
-            .. "closing.",
+        flavor = "A cold steel slab on runners. Apply corpse before " .. "closing.",
     },
 }

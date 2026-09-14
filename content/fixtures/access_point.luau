@@ -25,7 +25,8 @@ if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:device_sending", { replicate = "server" })
     sim.define("script_var", "lunatic/tfs:controller_status", { replicate = "server" })
     sim.define("script_var", "lunatic/tfs:controller_timer", { replicate = "server" })
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("link.message.done", { kind = "react" }, controller.message)
     script_definition:handle("link.service.delivery", { kind = "react" }, controller.message)
     script_definition:handle("link.service.reply", { kind = "react" }, controller.message)
@@ -33,14 +34,20 @@ if sim ~= nil then
     -- install it globally and let the controller verify the live slot.
     sim.handle("link.service.send.done", { kind = "react" }, controller.service_send_done)
 
-    script_definition:handle("interaction.use.refused", { kind = "react", route = "interact" }, function(ev)
-        local r = ev.action_refusal
-        if r.action ~= "needs_laptop" or r.resolved then return end
-        sim.message.send({
-            recipient = ev.actor,
-            message = sim.msg("lunatic/tfs:entity.access_point.needs_laptop", {}),
-        })
-    end)
+    script_definition:handle(
+        "interaction.use.refused",
+        { kind = "react", route = "interact" },
+        function(ev)
+            local r = ev.action_refusal
+            if r.action ~= "needs_laptop" or r.resolved then
+                return
+            end
+            sim.message.send({
+                recipient = ev.actor,
+                message = sim.msg("lunatic/tfs:entity.access_point.needs_laptop", {}),
+            })
+        end
+    )
 
     -- The two stages a hub stands on, the router's exactly
     -- (fixtures/network_router.luau): the key check for a tree this box
@@ -48,7 +55,11 @@ if sim ~= nil then
     -- router is never asked to read -- the top is -- and still holds
     -- the words on their way up (lib/radio_relay.luau).
     script_definition:handle("radio.read", { kind = "transform", route = "read" }, radio_relay.read)
-    script_definition:handle("radio.carry", { kind = "transform", route = "carry" }, radio_relay.carry)
+    script_definition:handle(
+        "radio.carry",
+        { kind = "transform", route = "carry" },
+        radio_relay.carry
+    )
 end
 
 return content

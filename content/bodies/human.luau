@@ -28,15 +28,27 @@ local content = {
     staff_body = {
         restore = true,
         remains = {
-            "human_head", "human_chest", "human_pelvis",
-            "human_l_arm", "human_r_arm", "human_l_leg", "human_r_leg",
-            "organ_brain", "organ_eyes", "organ_ears", "organ_tongue",
-            "organ_heart", "organ_lungs", "organ_liver", "organ_stomach",
-            "organ_appendix", "staff_remains",
+            "human_head",
+            "human_chest",
+            "human_pelvis",
+            "human_l_arm",
+            "human_r_arm",
+            "human_l_leg",
+            "human_r_leg",
+            "organ_brain",
+            "organ_eyes",
+            "organ_ears",
+            "organ_tongue",
+            "organ_heart",
+            "organ_lungs",
+            "organ_liver",
+            "organ_stomach",
+            "organ_appendix",
+            "staff_remains",
         },
     },
 
-    max_health = 100,          -- MAX_LIVING_HEALTH, code/__DEFINES/mobs.dm:236
+    max_health = 100, -- MAX_LIVING_HEALTH, code/__DEFINES/mobs.dm:236
 
     -- The lines a crewman's numbers can be on either side of. The engine
     -- latches which side and says so on `body.threshold.done`; the handler
@@ -55,7 +67,7 @@ local content = {
         -- `dead_below`. Losing the head is dying of it.
         { id = "undone", port = "viability", at_most = 0 },
     },
-    hands = 2,                 -- default_num_hands, living_defines.dm:120
+    hands = 2, -- default_num_hands, living_defines.dm:120
     default_zone = "chest",
     -- The selector's own figure, off tg's default HUD style
     -- (icons/hud/screen_midnight.dmi, `ui_style`); the per-part
@@ -63,7 +75,7 @@ local content = {
     -- over it (screen_objects.dm:817-821).
     doll_sprite = "target_doll",
     knockdown = true,
-    pool_coeff = { brute = 1, burn = 1, oxy = 1, tox = 1 },   -- pool_coeff, basic.dm:51
+    pool_coeff = { brute = 1, burn = 1, oxy = 1, tox = 1 }, -- pool_coeff, basic.dm:51
 
     -- Hit weights are tg's own walk over the parts a body actually
     -- has: 1 for the chest and the head, 4 for everything else
@@ -111,13 +123,73 @@ local content = {
     -- Several parts may share a slot; the key then cycles them, which is
     -- how tg's 8 walks head -> eyes -> mouth and how it would here.
     parts = {
-        { id = "head",  label = "head",      doll = { 0.34375, 0.06250, 0.28125, 0.25000 }, doll_sprite = "target_head",  target_slot = 8, default = "human_head",  hit_weight = 1, vital = true },
-        { id = "chest", label = "chest",     doll = { 0.34375, 0.31250, 0.28125, 0.28125 }, doll_sprite = "target_chest", target_slot = 5, default = "human_chest", hit_weight = 1, vital = true },
-        { id = "pelvis", label = "pelvis",   doll = { 0.34375, 0.59375, 0.28125, 0.12500 }, doll_sprite = "target_pelvis", target_slot = 2, default = "human_pelvis", hit_weight = 4 },
-        { id = "l_arm", label = "left arm",  doll = { 0.62500, 0.31250, 0.12500, 0.40625 }, doll_sprite = "target_l_arm", target_slot = 6, default = "human_l_arm", hit_weight = 4, hand = 1 },
-        { id = "r_arm", label = "right arm", doll = { 0.21875, 0.31250, 0.12500, 0.40625 }, doll_sprite = "target_r_arm", target_slot = 4, default = "human_r_arm", hit_weight = 4, hand = 2 },
-        { id = "l_leg", label = "left leg",  doll = { 0.50000, 0.71875, 0.18750, 0.28125 }, doll_sprite = "target_l_leg", target_slot = 3, default = "human_l_leg", hit_weight = 4 },
-        { id = "r_leg", label = "right leg", doll = { 0.28125, 0.71875, 0.18750, 0.28125 }, doll_sprite = "target_r_leg", target_slot = 1, default = "human_r_leg", hit_weight = 4 },
+        {
+            id = "head",
+            label = "head",
+            doll = { 0.34375, 0.06250, 0.28125, 0.25000 },
+            doll_sprite = "target_head",
+            target_slot = 8,
+            default = "human_head",
+            hit_weight = 1,
+            vital = true,
+        },
+        {
+            id = "chest",
+            label = "chest",
+            doll = { 0.34375, 0.31250, 0.28125, 0.28125 },
+            doll_sprite = "target_chest",
+            target_slot = 5,
+            default = "human_chest",
+            hit_weight = 1,
+            vital = true,
+        },
+        {
+            id = "pelvis",
+            label = "pelvis",
+            doll = { 0.34375, 0.59375, 0.28125, 0.12500 },
+            doll_sprite = "target_pelvis",
+            target_slot = 2,
+            default = "human_pelvis",
+            hit_weight = 4,
+        },
+        {
+            id = "l_arm",
+            label = "left arm",
+            doll = { 0.62500, 0.31250, 0.12500, 0.40625 },
+            doll_sprite = "target_l_arm",
+            target_slot = 6,
+            default = "human_l_arm",
+            hit_weight = 4,
+            hand = 1,
+        },
+        {
+            id = "r_arm",
+            label = "right arm",
+            doll = { 0.21875, 0.31250, 0.12500, 0.40625 },
+            doll_sprite = "target_r_arm",
+            target_slot = 4,
+            default = "human_r_arm",
+            hit_weight = 4,
+            hand = 2,
+        },
+        {
+            id = "l_leg",
+            label = "left leg",
+            doll = { 0.50000, 0.71875, 0.18750, 0.28125 },
+            doll_sprite = "target_l_leg",
+            target_slot = 3,
+            default = "human_l_leg",
+            hit_weight = 4,
+        },
+        {
+            id = "r_leg",
+            label = "right leg",
+            doll = { 0.28125, 0.71875, 0.18750, 0.28125 },
+            doll_sprite = "target_r_leg",
+            target_slot = 1,
+            default = "human_r_leg",
+            hit_weight = 4,
+        },
     },
 
     -- The socket carries the zone and the tags; the organ carries its
@@ -127,20 +199,31 @@ local content = {
     -- the socket — tg's per-organ `organ_check`
     -- (operation_organ_manip.dm:279-284).
     sockets = {
-        brain    = { zone = "head",  tags = { "brain" }, mind_seat = true, requires = { "bone_sawed" } },
-        eyes     = { zone = "head",  tags = { "eye" } },
-        ears     = { zone = "head",  tags = { "ear" } },
-        tongue   = { zone = "head",  tags = { "tongue" } },
-        heart    = { zone = "chest", tags = { "heart" },   requires = { "bone_sawed" } },
-        lungs    = { zone = "chest", tags = { "lung" },    requires = { "bone_sawed" } },
-        liver    = { zone = "chest", tags = { "liver" },   requires = { "bone_sawed" } },
-        stomach  = { zone = "chest", tags = { "stomach" }, requires = { "bone_sawed" } },
-        appendix = { zone = "chest", tags = {},            requires = { "bone_sawed" } },
+        brain = {
+            zone = "head",
+            tags = { "brain" },
+            mind_seat = true,
+            requires = { "bone_sawed" },
+        },
+        eyes = { zone = "head", tags = { "eye" } },
+        ears = { zone = "head", tags = { "ear" } },
+        tongue = { zone = "head", tags = { "tongue" } },
+        heart = { zone = "chest", tags = { "heart" }, requires = { "bone_sawed" } },
+        lungs = { zone = "chest", tags = { "lung" }, requires = { "bone_sawed" } },
+        liver = { zone = "chest", tags = { "liver" }, requires = { "bone_sawed" } },
+        stomach = { zone = "chest", tags = { "stomach" }, requires = { "bone_sawed" } },
+        appendix = { zone = "chest", tags = {}, requires = { "bone_sawed" } },
     },
     organs = {
-        brain = "organ_brain", eyes = "organ_eyes", ears = "organ_ears",
-        tongue = "organ_tongue", heart = "organ_heart", lungs = "organ_lungs",
-        liver = "organ_liver", stomach = "organ_stomach", appendix = "organ_appendix",
+        brain = "organ_brain",
+        eyes = "organ_eyes",
+        ears = "organ_ears",
+        tongue = "organ_tongue",
+        heart = "organ_heart",
+        lungs = "organ_lungs",
+        liver = "organ_liver",
+        stomach = "organ_stomach",
+        appendix = "organ_appendix",
     },
 
     -- The capacity graph. `awake_below`, `min_capable` and the `lerp1`
@@ -153,48 +236,71 @@ local content = {
         -- is under — being asleep is not the same as having no brain.
         brain = { lethal = true, awake_only = false, formula = { "tag", "brain", absent = 1 } },
 
-        consciousness = { role = "consciousness", awake_below = 0.30,
-            formula = { "product", { "cap", "brain" },
-                                   { "lerp1", { "cap", "blood",     max = 1 }, 0.2 },
-                                   { "lerp1", { "cap", "breathing", max = 1 }, 0.2 },
-                                   -- OXYLOSS_PASSOUT_THRESHOLD, mobs.dm:14:
-                                   -- a knockout, never a death.
-                                   { "step", "oxy", 50 },
-                                   -- BLOOD_VOLUME_BAD 224/560: tg rolls
-                                   -- blackouts through this band
-                                   -- (blood.dm:242-244); TfS holds the
-                                   -- body under instead.
-                                   { "step", "blood", 0.4, below = 0 },
-                                   -- HEALTH_THRESHOLD_FULLCRIT /
-                                   -- MAX_LIVING_HEALTH = -0.3
-                                   -- (combat.dm:89; mobs.dm:236): tg's
-                                   -- HARD_CRIT, which is out cold rather
-                                   -- than merely in crit. It is a term of
-                                   -- this formula and not a threshold
-                                   -- because being under is a fact the
-                                   -- capacities decide, not a verdict
-                                   -- anybody reaches.
-                                   { "step", "health", -0.3, below = 0 } } },
+        consciousness = {
+            role = "consciousness",
+            awake_below = 0.30,
+            formula = {
+                "product",
+                { "cap", "brain" },
+                { "lerp1", { "cap", "blood", max = 1 }, 0.2 },
+                { "lerp1", { "cap", "breathing", max = 1 }, 0.2 },
+                -- OXYLOSS_PASSOUT_THRESHOLD, mobs.dm:14:
+                -- a knockout, never a death.
+                { "step", "oxy", 50 },
+                -- BLOOD_VOLUME_BAD 224/560: tg rolls
+                -- blackouts through this band
+                -- (blood.dm:242-244); TfS holds the
+                -- body under instead.
+                { "step", "blood", 0.4, below = 0 },
+                -- HEALTH_THRESHOLD_FULLCRIT /
+                -- MAX_LIVING_HEALTH = -0.3
+                -- (combat.dm:89; mobs.dm:236): tg's
+                -- HARD_CRIT, which is out cold rather
+                -- than merely in crit. It is a term of
+                -- this formula and not a threshold
+                -- because being under is a fact the
+                -- capacities decide, not a verdict
+                -- anybody reaches.
+                { "step", "health", -0.3, below = 0 },
+            },
+        },
 
-        moving = { role = "moving", min_capable = 0.15,
-            formula = { "product", { "tag", "leg", absent = 1 },
-                                   { "cap", "consciousness", max = 1 },
-                                   { "lerp1", { "cap", "blood" }, 0.2 },
-                                   { "lerp1", { "cap", "breathing" }, 0.2 } } },
+        moving = {
+            role = "moving",
+            min_capable = 0.15,
+            formula = {
+                "product",
+                { "tag", "leg", absent = 1 },
+                { "cap", "consciousness", max = 1 },
+                { "lerp1", { "cap", "blood" }, 0.2 },
+                { "lerp1", { "cap", "breathing" }, 0.2 },
+            },
+        },
 
-        manipulation = { role = "manipulation",
-            formula = { "product", { "tag", "arm", absent = 1 }, { "cap", "consciousness" } } },
+        manipulation = {
+            role = "manipulation",
+            formula = { "product", { "tag", "arm", absent = 1 }, { "cap", "consciousness" } },
+        },
 
-        sight = { role = "sight",
-            formula = { "product", { "tag", "eye", absent = 1 }, { "cap", "consciousness" } } },
+        sight = {
+            role = "sight",
+            formula = { "product", { "tag", "eye", absent = 1 }, { "cap", "consciousness" } },
+        },
 
-        hearing = { role = "hearing",
-            formula = { "product", { "tag", "ear", absent = 1 }, { "cap", "consciousness" } } },
+        hearing = {
+            role = "hearing",
+            formula = { "product", { "tag", "ear", absent = 1 }, { "cap", "consciousness" } },
+        },
 
-        speech = { role = "speech",
-            formula = { "product", { "tag", "tongue", absent = 1 },
-                                   { "tag", "lung", absent = 1 },
-                                   { "cap", "consciousness" } } },
+        speech = {
+            role = "speech",
+            formula = {
+                "product",
+                { "tag", "tongue", absent = 1 },
+                { "tag", "lung", absent = 1 },
+                { "cap", "consciousness" },
+            },
+        },
 
         -- Lungs, and the depth past which a crewman stops using them.
         -- tg raises `losebreath` for exactly two reasons — lungs that
@@ -207,37 +313,65 @@ local content = {
         -- A quarter of a missed breath is a per-tick roll, and the
         -- boundary that made this a role reading is the same one that
         -- says a per-tick decision is not a handler's to make.
-        breathing = { role = "breathing", awake_only = false,
-            formula = { "product", { "tag", "lung", absent = 1 },
-                                   { "step", "health", -0.3, below = 0 } } },
+        breathing = {
+            role = "breathing",
+            awake_only = false,
+            formula = {
+                "product",
+                { "tag", "lung", absent = 1 },
+                { "step", "health", -0.3, below = 0 },
+            },
+        },
 
         -- Cardiac arrest, as data: oxy 4/s and brute 1/s spread over
         -- whatever parts are left, and the body held under for as long
         -- as it lasts (code/modules/mob/living/carbon/human/life.dm:292-295).
-        blood = { role = "blood", awake_only = false,
+        blood = {
+            role = "blood",
+            awake_only = false,
             formula = { "tag", "heart", absent = 1 },
-            when_zero = { pools = { oxy = 4, brute = 1 }, unconscious = true } },
+            when_zero = { pools = { oxy = 4, brute = 1 }, unconscious = true },
+        },
 
         -- ...and liverlessness: tox 0.6/s (carbon/life.dm:746). NOT
         -- CARRIED from tg: the companion 0.5/s random organ damage
         -- (carbon/life.dm:746-747).
-        metabolism = { role = "metabolism", awake_only = false,
+        metabolism = {
+            role = "metabolism",
+            awake_only = false,
             formula = { "tag", "liver", absent = 1 },
-            when_zero = { pools = { tox = 0.6 } } },
+            when_zero = { pools = { tox = 0.6 } },
+        },
     },
 
     -- The surgical states this species has (docs/SURGERY.md §6.1).
     -- Interned per plan and stored per part as a bitset; the operations
     -- that move between them are B2's.
     surgery = {
-        states = { "skin_cut", "skin_open", "vessels_unclamped", "vessels_clamped",
-                   "organs_cut", "bone_drilled", "bone_sawed", "cavity_open" },
+        states = {
+            "skin_cut",
+            "skin_open",
+            "vessels_unclamped",
+            "vessels_clamped",
+            "organs_cut",
+            "bone_drilled",
+            "bone_sawed",
+            "cavity_open",
+        },
         -- Per second. UNCLAMPED_VESSELS_BLEEDING / CLAMPED_VESSELS_BLEEDING,
         -- code/__DEFINES/surgery.dm (bodyparts.dm:217-219); precedence is
         -- the highest value the part holds (_bodyparts.dm:1634-1638).
         bleeds = { vessels_unclamped = 1.5, vessels_clamped = 0.2, organs_cut = 0.2 },
-        clears_on_close = { "skin_cut", "skin_open", "vessels_unclamped", "vessels_clamped",
-                            "organs_cut", "bone_drilled", "bone_sawed", "cavity_open" },
+        clears_on_close = {
+            "skin_cut",
+            "skin_open",
+            "vessels_unclamped",
+            "vessels_clamped",
+            "organs_cut",
+            "bone_drilled",
+            "bone_sawed",
+            "cavity_open",
+        },
     },
 
     -- What a bystander is told about a body, in whole sentences
@@ -288,7 +422,7 @@ local content = {
         -- for a part that is already in the picture.
         parts = {
             chest = { m = "body_chest_m", f = "body_chest_f" },
-            head  = { m = "body_head_m",  f = "body_head_f" },
+            head = { m = "body_head_m", f = "body_head_f" },
             l_arm = "body_l_arm",
             r_arm = "body_r_arm",
             l_leg = "body_l_leg",
@@ -335,12 +469,42 @@ local content = {
         -- in source order (mobs.dm:57-69). The roll gives the beard
         -- the same one (create_mob.dm:37-39), which the engine does.
         hair_colors = {
-            "#111111", "#362925", "#3B3831", "#41250C", "#412922", "#544C49",
-            "#583322", "#593029", "#703b30", "#714721", "#744729", "#74482a",
-            "#7b746e", "#855832", "#863019", "#8c4734", "#9F550E", "#A29A96",
-            "#A4381C", "#B17B41", "#C0BAB7", "#EFE5E4", "#F7F3F1", "#FFF2D6",
-            "#a15537", "#a17e61", "#b38b67", "#ba673c", "#c89f73", "#d9b380",
-            "#dbc9b8", "#e1621d", "#e17d17", "#e1af93", "#f1cc8f", "#fbe7a1",
+            "#111111",
+            "#362925",
+            "#3B3831",
+            "#41250C",
+            "#412922",
+            "#544C49",
+            "#583322",
+            "#593029",
+            "#703b30",
+            "#714721",
+            "#744729",
+            "#74482a",
+            "#7b746e",
+            "#855832",
+            "#863019",
+            "#8c4734",
+            "#9F550E",
+            "#A29A96",
+            "#A4381C",
+            "#B17B41",
+            "#C0BAB7",
+            "#EFE5E4",
+            "#F7F3F1",
+            "#FFF2D6",
+            "#a15537",
+            "#a17e61",
+            "#b38b67",
+            "#ba673c",
+            "#c89f73",
+            "#d9b380",
+            "#dbc9b8",
+            "#e1621d",
+            "#e17d17",
+            "#e1af93",
+            "#f1cc8f",
+            "#fbe7a1",
         },
 
         -- `random_eye_color()` (mobs.dm:38-55): weighted buckets. The
@@ -353,8 +517,8 @@ local content = {
         -- (mobs.dm:53). A fixed table cannot hold a generator, and one
         -- representative hex would be a different number.
         eye_colors = {
-            { color = "#663300", weight = 20 },   -- COLOR_BROWNER_BROWN, colors.dm:161
-            { color = "#554422", weight = 20 },   -- hazel
+            { color = "#663300", weight = 20 }, -- COLOR_BROWNER_BROWN, colors.dm:161
+            { color = "#554422", weight = 20 }, -- hazel
             { color = "#666666", weight = 20 / 7 },
             { color = "#777777", weight = 20 / 7 },
             { color = "#888888", weight = 20 / 7 },
@@ -362,9 +526,9 @@ local content = {
             { color = "#aaaaaa", weight = 20 / 7 },
             { color = "#bbbbbb", weight = 20 / 7 },
             { color = "#cccccc", weight = 20 / 7 },
-            { color = "#3366cc", weight = 15 },   -- blue
-            { color = "#006600", weight = 15 },   -- green
-            { color = "#ffcc00", weight = 1 },    -- amber
+            { color = "#3366cc", weight = 15 }, -- blue
+            { color = "#006600", weight = 15 }, -- green
+            { color = "#ffcc00", weight = 1 }, -- amber
         },
 
         -- Two eye cells, so two eye colours are drawable
@@ -467,7 +631,11 @@ local content = {
             { id = "five_oclock", sprite = "facial_five_oclock", gender = "m" },
             { id = "five_oclock_moustache", sprite = "facial_five_oclock_moustache", gender = "m" },
             { id = "seven_oclock", sprite = "facial_seven_oclock", gender = "m" },
-            { id = "seven_oclock_moustache", sprite = "facial_seven_oclock_moustache", gender = "m" },
+            {
+                id = "seven_oclock_moustache",
+                sprite = "facial_seven_oclock_moustache",
+                gender = "m",
+            },
             { id = "moustache", sprite = "facial_moustache", gender = "m" },
             { id = "pencilstache", sprite = "facial_pencilstache", gender = "m" },
         },
@@ -492,65 +660,78 @@ local STOP = { dead = true, undone = true }
 local HOLD = { crit = true }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    script_definition:handle("body.threshold.done", { kind = "react", route = "threshold" }, function(ev)
-        local body = ev.body
-        local stop, hold, dead = false, false, false
-        local snapshot = sim.body(body)
-        if snapshot == nil then return end
-        for _, id in ipairs(snapshot.thresholds) do
-            if STOP[id] then stop = true end
-            if HOLD[id] then hold = true end
-            if id == "dead" then dead = true end
-        end
-        -- DYING STOPS THE HEART, and that is the whole latch.
-        --
-        -- Without it, death is a line the numbers are on one side of,
-        -- so tending a corpse's bruises walks it back over and stands
-        -- it up -- no operation, no defibrillator, no decision. With
-        -- it, crossing the line drives the heart to `max_health`, where
-        -- it is FAILING and never heals on its own (_organ.dm:296-299);
-        -- `vital` on content/items/organ_heart.luau turns that into
-        -- `undone`, and `undone` is in STOP above. The parts may then be
-        -- healed to full and this body stays exactly as dead as it was.
-        --
-        -- `sim.fail_organ` and not `sim.damage_organ`: the amount a
-        -- handler may claim in one event is capped, and "the heart has
-        -- stopped" is not an amount (docs/LUAU-API.md §8.1). A body
-        -- with no heart in it is already dead of the missing organ, so
-        -- the selector finding nothing is the right no-op.
-        --
-        -- Only on the DOWNWARD crossing, and only while the line is
-        -- still crossed: clearing `dead` must not re-stop a heart
-        -- somebody has just restarted. Re-entry is harmless anyway --
-        -- a failed organ is already at its maximum, so a second pass
-        -- moves nothing and fires no further edge.
-        if ev.edge == "dead" and dead then
-            sim.fail_organ(body, { tag = "heart" })
-        end
-        sim.set_body_facts(body, {
-            animate = not stop,
-            controllable = not (stop or hold),
-            label = stop and "Dead" or (hold and "Critical" or ""),
-        })
-        -- ...and then the crewman is told, once per crossing.
-        if ev.edge == "dead" or ev.edge == "undone" then
-            sim.message.send({
-                recipient = body,
-                message = sim.msg("lunatic/tfs:bodies.human.you_have_died", {}),
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle(
+        "body.threshold.done",
+        { kind = "react", route = "threshold" },
+        function(ev)
+            local body = ev.body
+            local stop, hold, dead = false, false, false
+            local snapshot = sim.body(body)
+            if snapshot == nil then
+                return
+            end
+            for _, id in ipairs(snapshot.thresholds) do
+                if STOP[id] then
+                    stop = true
+                end
+                if HOLD[id] then
+                    hold = true
+                end
+                if id == "dead" then
+                    dead = true
+                end
+            end
+            -- DYING STOPS THE HEART, and that is the whole latch.
+            --
+            -- Without it, death is a line the numbers are on one side of,
+            -- so tending a corpse's bruises walks it back over and stands
+            -- it up -- no operation, no defibrillator, no decision. With
+            -- it, crossing the line drives the heart to `max_health`, where
+            -- it is FAILING and never heals on its own (_organ.dm:296-299);
+            -- `vital` on content/items/organ_heart.luau turns that into
+            -- `undone`, and `undone` is in STOP above. The parts may then be
+            -- healed to full and this body stays exactly as dead as it was.
+            --
+            -- `sim.fail_organ` and not `sim.damage_organ`: the amount a
+            -- handler may claim in one event is capped, and "the heart has
+            -- stopped" is not an amount (docs/LUAU-API.md §8.1). A body
+            -- with no heart in it is already dead of the missing organ, so
+            -- the selector finding nothing is the right no-op.
+            --
+            -- Only on the DOWNWARD crossing, and only while the line is
+            -- still crossed: clearing `dead` must not re-stop a heart
+            -- somebody has just restarted. Re-entry is harmless anyway --
+            -- a failed organ is already at its maximum, so a second pass
+            -- moves nothing and fires no further edge.
+            if ev.edge == "dead" and dead then
+                sim.fail_organ(body, { tag = "heart" })
+            end
+            sim.set_body_facts(body, {
+                animate = not stop,
+                controllable = not (stop or hold),
+                label = stop and "Dead" or (hold and "Critical" or ""),
             })
-        elseif ev.edge == "crit" then
-            sim.message.send({
-                recipient = body,
-                message = sim.msg("lunatic/tfs:bodies.human.you_black_out", {}),
-            })
-        elseif not stop and not hold then
-            sim.message.send({
-                recipient = body,
-                message = sim.msg("lunatic/tfs:bodies.human.you_come_to", {}),
-            })
+            -- ...and then the crewman is told, once per crossing.
+            if ev.edge == "dead" or ev.edge == "undone" then
+                sim.message.send({
+                    recipient = body,
+                    message = sim.msg("lunatic/tfs:bodies.human.you_have_died", {}),
+                })
+            elseif ev.edge == "crit" then
+                sim.message.send({
+                    recipient = body,
+                    message = sim.msg("lunatic/tfs:bodies.human.you_black_out", {}),
+                })
+            elseif not stop and not hold then
+                sim.message.send({
+                    recipient = body,
+                    message = sim.msg("lunatic/tfs:bodies.human.you_come_to", {}),
+                })
+            end
         end
-    end)
+    )
 end
 
 return content

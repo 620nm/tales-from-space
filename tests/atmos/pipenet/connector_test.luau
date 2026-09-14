@@ -66,7 +66,8 @@ local RECIPE = "dial1"
 -- middle of it and NOT ONE LENGTH OF PIPE ANYWHERE. Every socket below
 -- is bolted to deck that has nothing under it.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "dry socket",
     legend: {
         ' ': (turf: Space),
@@ -93,7 +94,9 @@ t.world([==[(
         (1, 2, "connector_port_fitting"),
         (1, 2, "rpd"),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -198,7 +201,9 @@ local room_after = t.room_pressure(1, 1)
 assert(
     assert(room_after) > assert(room_before) + 80.0,
     "an unplumbed socket puts the bottle's air in the ROOM: "
-        .. assert(room_before) .. " -> " .. room_after
+        .. assert(room_before)
+        .. " -> "
+        .. room_after
 )
 assert(
     assert(t.canister_pressure(2, 2)) < assert(can_before) - 50.0,
@@ -236,5 +241,7 @@ assert(
 assert(
     math.abs(assert(t.room_pressure(1, 1)) - room_at_lay) < 5.0,
     "and the room stopped being the thing it fed: "
-        .. room_at_lay .. " -> " .. assert(t.room_pressure(1, 1))
+        .. room_at_lay
+        .. " -> "
+        .. assert(t.room_pressure(1, 1))
 )

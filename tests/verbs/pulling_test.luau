@@ -5,7 +5,8 @@
 -- fastened to a socket at roundstart and bolted things do not drag, so
 -- moving one is two decisions -- unfasten it, then take hold -- which
 -- is exactly what plumbing a spare supply into a breached room costs.
-t.world([==[(
+t.world(
+    [==[(
     name: "haulage",
     legend: {
         ' ': (turf: Space),
@@ -30,7 +31,9 @@ t.world([==[(
         (4, 1, "connector_port"),
         (4, 1, "canister", { "blend": "canister_air", "open": true }),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -65,7 +68,10 @@ t.move(p, "west")
 t.run_ticks(6)
 local x, y = t.pos(p)
 assert(x == 2 and y == 1, "the player walked west")
-assert(t.same_target(assert(t.target_at(p, 3, 1, "canister")), canister), "the bottle followed into the vacated tile")
+assert(
+    t.same_target(assert(t.target_at(p, 3, 1, "canister")), canister),
+    "the bottle followed into the vacated tile"
+)
 assert(t.target_at(p, 4, 1, "canister") == nil, "and is off the socket tile")
 
 -- Letting go has its own key. Ctrl+clicking the bottle again does the
@@ -79,4 +85,7 @@ t.move(p, "west")
 t.run_ticks(6)
 x, y = t.pos(p)
 assert(x == 1 and y == 1, "the player walks on")
-assert(t.same_target(assert(t.target_at(p, 3, 1, "canister")), canister), "the bottle stays where it was let go")
+assert(
+    t.same_target(assert(t.target_at(p, 3, 1, "canister")), canister),
+    "the bottle stays where it was let go"
+)

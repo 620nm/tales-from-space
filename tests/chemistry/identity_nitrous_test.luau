@@ -59,7 +59,8 @@ end
 -- lid still on: a vessel window and an examine pane, both naming one
 -- substance.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "chem bench",
     legend: {
         '.': (turf: Floor),
@@ -82,7 +83,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 t.set_environment({ sink_k = 293.15, insolation = 0.0 })
 local chemist = t.join()
@@ -135,8 +138,10 @@ assert(ui_controls.rows(ui_controls.state(chemist).toggles)[1].on == true, "the 
 t.run_seconds(600)
 
 local made = assert(t.vessel(jar)).contents.n2o
-assert(made ~= nil and (made.gas or 0.0) > 1e-6,
-    "the bench made nitrous oxide: " .. tostring(made and made.gas))
+assert(
+    made ~= nil and (made.gas or 0.0) > 1e-6,
+    "the bench made nitrous oxide: " .. tostring(made and made.gas)
+)
 local BENCH_MADE = assert(made.gas, "the bench made nitrous gas")
 assert(assert(t.vessel(jar)).contents.ammonia ~= nil, "out of the liquid ammonia the recipe names")
 
@@ -156,8 +161,10 @@ t.run_ticks(2)
 assert(t.hands(chemist).held == "bottle", "the bottle comes back out")
 local look = t.examine_held(chemist)
 assert(look ~= nil, "a crewman can look at what is in their hand")
-assert(has_text(look.lines, "nitrous oxide") ~= nil,
-    "and the pane calls it by its name: " .. table.concat(look.lines, " / "))
+assert(
+    has_text(look.lines, "nitrous oxide") ~= nil,
+    "and the pane calls it by its name: " .. table.concat(look.lines, " / ")
+)
 
 -- ---------------------------------------------------------------
 -- TWO: THE MAP ROUTE, AND THE FOUR MACHINE-SIDE SURFACES.
@@ -167,7 +174,8 @@ assert(has_text(look.lines, "nitrous oxide") ~= nil,
 -- Every reading below is a machine or a body reading the gas, and none
 -- of them has to be told which nitrous oxide is meant.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "the sleeping chamber",
     legend: {
         ' ': (turf: Space),
@@ -211,7 +219,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 t.set_environment({ sink_k = 293.15, insolation = 0.0 })
 local reader = t.join("engineer")
@@ -266,10 +276,13 @@ end
 local bottle = assert(t.vessel(can), "the vessel has a reading")
 assert(bottle.contents.n2o ~= nil, "the canister is holding `n2o`")
 assert(bottle.contents.n2o.gas ~= nil, "the canister holds nitrous gas")
-assert(bottle.contents.n2o.gas > 1000.0,
-    "and a lot of it: " .. bottle.contents.n2o.gas .. " mol")
-near(assert(t.canister_pressure(5, 1)), bottle.pressure_kpa, 1e-9,
-    "the tile's gauge and the vessel reading are one number")
+assert(bottle.contents.n2o.gas > 1000.0, "and a lot of it: " .. bottle.contents.n2o.gas .. " mol")
+near(
+    assert(t.canister_pressure(5, 1)),
+    bottle.pressure_kpa,
+    1e-9,
+    "the tile's gauge and the vessel reading are one number"
+)
 local MAPPED = bottle.contents.n2o.gas
 
 -- SURFACE 2 -- THE ANALYZER, which prints the registry's display name
@@ -286,8 +299,10 @@ local printed = t.messages(reader)
 assert(has_text(printed, "Results of analysis") ~= nil, "it read the canister")
 local named = has_text(printed, "Nitrous oxide:")
 assert(named ~= nil, "and named it: " .. table.concat(printed, " / "))
-assert(string.find(named, "(100 %)", 1, true) ~= nil,
-    "the whole of what is in there is the one substance: " .. named)
+assert(
+    string.find(named, "(100 %)", 1, true) ~= nil,
+    "the whole of what is in there is the one substance: " .. named
+)
 
 -- ...and the chamber the same map PAINTED, which is the other half of
 -- the map route: one atmosphere of `n2o` over every tile and nothing
@@ -296,9 +311,12 @@ assert(string.find(named, "(100 %)", 1, true) ~= nil,
 local loose = room("n2o")
 assert(loose > 400.0, "the chamber is standing in it: " .. loose .. " mol")
 near(room("o2"), 0.0, 1e-9, "and there is no oxygen in here whatsoever")
-assert(assert(t.room_pressure(2, 2)) > 95.0,
+assert(
+    assert(t.room_pressure(2, 2)) > 95.0,
     "at an ordinary pressure, which is what makes it a trap rather than a vacuum: "
-        .. assert(t.room_pressure(2, 2)) .. " kPa")
+        .. assert(t.room_pressure(2, 2))
+        .. " kPa"
+)
 local LOADED = loose + MAPPED
 
 -- The analyzer over a TILE of it prints the same three words it
@@ -313,8 +331,10 @@ local air = t.messages(reader)
 assert(has_text(air, "Results of analysis of the air.") ~= nil, "it read the air")
 local air_named = has_text(air, "Nitrous oxide:")
 assert(air_named ~= nil, "and named it the same way: " .. table.concat(air, " / "))
-assert(string.find(air_named, "(100 %)", 1, true) ~= nil,
-    "and it is the whole of what a crewman in here is breathing: " .. air_named)
+assert(
+    string.find(air_named, "(100 %)", 1, true) ~= nil,
+    "and it is the whole of what a crewman in here is breathing: " .. air_named
+)
 
 -- SURFACE 3 -- A PAIR OF LUNGS. Two crewmen, differing in one thing:
 -- one of them opened a tank.
@@ -343,11 +363,18 @@ assert(supply_open ~= nil and supply_open.tank ~= nil, "and the valve is open")
 for _ = 1, 8 do
     t.run_ticks(BREATH)
 end
-assert(ui_controls.number(t.health(reader).oxy) > 10,
-    "the one breathing the chamber is drowning in it: " .. ui_controls.number(t.health(reader).oxy))
-assert((t.blood(reader).n2o or 0) == 0,
-    "and keeping none of it, because the file authors no `inhale`")
-assert(ui_controls.number(t.health(diver).oxy) == 0, "the one on a tank is fine: " .. ui_controls.number(t.health(diver).oxy))
+assert(
+    ui_controls.number(t.health(reader).oxy) > 10,
+    "the one breathing the chamber is drowning in it: " .. ui_controls.number(t.health(reader).oxy)
+)
+assert(
+    (t.blood(reader).n2o or 0) == 0,
+    "and keeping none of it, because the file authors no `inhale`"
+)
+assert(
+    ui_controls.number(t.health(diver).oxy) == 0,
+    "the one on a tank is fine: " .. ui_controls.number(t.health(diver).oxy)
+)
 assert((t.blood(diver).n2o or 0) == 0, "and keeps none of it either")
 
 -- SURFACE 4 -- THE SCRUBBER, and the roster it offers. The roster is
@@ -391,9 +418,16 @@ t.run_seconds(120)
 local moved = before_room - room("n2o")
 assert(moved > 0.5, "the scrubber cleared it out of the air: " .. moved .. " mol")
 local landed = (pipe("n2o") - before_pipe) + (lungs("n2o") - before_lungs)
-near(landed, moved, 1e-6,
+near(
+    landed,
+    moved,
+    1e-6,
     "and every mole of it is in the waste main or in a pair of lungs, "
-        .. "not lost: " .. landed .. " vs " .. moved)
+        .. "not lost: "
+        .. landed
+        .. " vs "
+        .. moved
+)
 
 -- ---------------------------------------------------------------
 -- THREE: ONE ID, SAID ONCE.
@@ -415,5 +449,9 @@ assert(assert(t.room_gas(2, 2)).n2o ~= nil, "the room reads the same key the ben
 -- chamber holds -- a relative 1e-10, which is float summation over a
 -- hundred thousand transfers and not a leak.
 local closed = t.matter_totals()
-near(closed.substances.n2o, LOADED, 1e-6,
-    "not one mole of it was made or lost: " .. closed.substances.n2o .. " vs " .. LOADED)
+near(
+    closed.substances.n2o,
+    LOADED,
+    1e-6,
+    "not one mole of it was made or lost: " .. closed.substances.n2o .. " vs " .. LOADED
+)

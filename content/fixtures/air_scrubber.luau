@@ -17,7 +17,8 @@ local content = {
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
     -- No `route`, for the vent's reason (fixtures/vent.luau).
     script_definition:handle("atmos.hazard.done", { kind = "react" }, netmsg.report_hazard)

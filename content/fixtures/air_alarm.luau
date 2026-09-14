@@ -91,7 +91,8 @@ if sim ~= nil then
     -- Bounded by construction rather than by a roster's length, which
     -- is the other reason not to keep one (docs/luau-api/script-vars.md).
     sim.define("script_var", "lunatic/tfs:alarm_flags", { replicate = "server" })
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("link.message.done", { kind = "react" }, controller.message)
 
     -- WHO IT BELIEVES: `child` and `sibling`. A child is a fan joined
@@ -165,17 +166,21 @@ if sim ~= nil then
         ev.self.vars["alarm_flags"] = v
     end)
 
-    script_definition:handle("interaction.use.done", { kind = "react", route = "interact" }, function(ev)
-        -- An empty hand, and a use that actually resolved: `implement`
-        -- is absent for the crewman reading the box and present for the
-        -- one taking it off the wall, and both arrive here.
-        if ev.implement ~= nil or ev.outcome ~= "completed" then
-            return
+    script_definition:handle(
+        "interaction.use.done",
+        { kind = "react", route = "interact" },
+        function(ev)
+            -- An empty hand, and a use that actually resolved: `implement`
+            -- is absent for the crewman reading the box and present for the
+            -- one taking it off the wall, and both arrive here.
+            if ev.implement ~= nil or ev.outcome ~= "completed" then
+                return
+            end
+            local said = network.line(ev.subject, NOUN, MEMBER)
+                or sim.msg("lunatic/tfs:lib.network.no_card", {})
+            sim.message.send({ recipient = ev.actor, message = said })
         end
-        local said = network.line(ev.subject, NOUN, MEMBER)
-            or sim.msg("lunatic/tfs:lib.network.no_card", {})
-        sim.message.send({ recipient = ev.actor, message = said })
-    end)
+    )
 end
 
 return content

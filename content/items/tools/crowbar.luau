@@ -23,14 +23,18 @@ local content = {
 
 content.actions = {
     action_rules.primary("pry_floor", action_rules.deck("floor")),
-    action_rules.primary("pry_door", { all = {
-        action_rules.kind("door"), action_rules.fact("target.door_open", false),
-        action_rules.fact("target.door_powered", false),
-    } }),
+    action_rules.primary("pry_door", {
+        all = {
+            action_rules.kind("door"),
+            action_rules.fact("target.door_open", false),
+            action_rules.fact("target.door_powered", false),
+        },
+    }),
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
         local clicked, target = ev.claim, ev.claim

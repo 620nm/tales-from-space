@@ -35,7 +35,7 @@ local content = {
     name_label = "lunatic/tfs:entity.defib.name",
     name = "defibrillator",
     sprite = "defib",
-    force = 5,             -- defib.dm:16
+    force = 5, -- defib.dm:16
     -- Not `surgical`: this is not an operation and must not be caught by
     -- the surgical-tool refusal (docs/SURGERY.md §6.3). A defibrillator
     -- with nothing to do is a swing, exactly as tg's is.
@@ -58,7 +58,7 @@ local function refusal(patient: Handle): Message?
         return nil -- not a body at all; the swing is somebody else's business
     end
     if body.animate then
-        return sim.msg("lunatic/tfs:items.defib.beating", {})      -- tg refuses the living
+        return sim.msg("lunatic/tfs:items.defib.beating", {}) -- tg refuses the living
     end
     for _, id in ipairs(body.thresholds) do
         if id == "dead" then
@@ -71,10 +71,10 @@ local function refusal(patient: Handle): Message?
         brain = brain or (part.organs and part.organs.brain or nil)
     end
     if not heart then
-        return sim.msg("lunatic/tfs:items.defib.no_heart", {})             -- DEFIB_FAIL_NO_HEART
+        return sim.msg("lunatic/tfs:items.defib.no_heart", {}) -- DEFIB_FAIL_NO_HEART
     end
     if not brain then
-        return sim.msg("lunatic/tfs:items.defib.no_brain", {})       -- DEFIB_FAIL_NO_BRAIN
+        return sim.msg("lunatic/tfs:items.defib.no_brain", {}) -- DEFIB_FAIL_NO_BRAIN
     end
     -- DEFIB_FAIL_FAILING_BRAIN (carbon.dm:830-831), and the reason the
     -- cadaver chamber matters: a brain in a corpse DECAYS
@@ -91,7 +91,8 @@ end
 content.actions = { action_rules.attack("defibrillate") }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("attack.swing", { kind = "replace", route = "attack" }, function(ev)
         local user, patient = ev.actor, ev.target
         if sim.body(patient) == nil then

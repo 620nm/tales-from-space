@@ -35,10 +35,11 @@ local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. tostring(a) .. " vs " .. tostring(b))
 end
 
-
 -- The document's own node on its network: `address` or `state`.
 local function link(ui: ui_controls.Record, key: string): string?
-    if ui.link == nil then return nil end
+    if ui.link == nil then
+        return nil
+    end
     return word(ui_controls.record(ui.link)[key])
 end
 
@@ -70,7 +71,12 @@ end
 local function sections(ui: ui_controls.Record)
     local seen: { [string]: boolean } = {}
     local out: { string } = {}
-    local lists = { ui_controls.rows(ui.readouts or {}), ui_controls.rows(ui.toggles or {}), ui_controls.rows(ui.setpoints or {}), ui_controls.rows(ui.labels or {}) }
+    local lists = {
+        ui_controls.rows(ui.readouts or {}),
+        ui_controls.rows(ui.toggles or {}),
+        ui_controls.rows(ui.setpoints or {}),
+        ui_controls.rows(ui.labels or {}),
+    }
     for _, list in ipairs(lists) do
         for _, row in ipairs(ui_controls.rows(list)) do
             local section = row.section
@@ -108,7 +114,11 @@ end
 -- scopes what the machine already had.
 local function scoped(ui: ui_controls.Record)
     local out: { ui_controls.Record } = {}
-    for _, list in ipairs({ ui_controls.rows(ui.toggles or {}), ui_controls.rows(ui.setpoints or {}), ui_controls.rows(ui.offers or {}) }) do
+    for _, list in ipairs({
+        ui_controls.rows(ui.toggles or {}),
+        ui_controls.rows(ui.setpoints or {}),
+        ui_controls.rows(ui.offers or {}),
+    }) do
         for _, row in ipairs(ui_controls.rows(list)) do
             if type(row.field) == "string" and row.field:find("/", 1, true) then
                 out[#out + 1] = row
@@ -127,7 +137,8 @@ end
 -- rather than in a second bench because "in range and refused anyway"
 -- is the only thing worth asserting about them.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "air alarm bench",
     legend: {
         ' ': (turf: Space),
@@ -178,7 +189,9 @@ t.world([==[(
         (7, 2, 1), (8, 2, 1), (9, 2, 1), (10, 2, 1), (11, 2, 1), (12, 2, 1),
         (12, 3, 1), (13, 3, 1),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 t.set_environment({ sink_k = 293.15, insolation = 0 })
 local p = t.join()
@@ -209,7 +222,10 @@ local function open(x, y, id)
     t.click(p, x, y, t.target_at(p, x, y, id))
     t.tick()
     local panel = ui_controls.state(p)
-    assert(panel ~= nil, tostring(id or "the machine") .. " at " .. x .. "," .. y .. " wears a panel")
+    assert(
+        panel ~= nil,
+        tostring(id or "the machine") .. " at " .. x .. "," .. y .. " wears a panel"
+    )
     return panel
 end
 
@@ -224,7 +240,8 @@ end
 -- prints the address.
 walk_to(9)
 laptop.ready(p, 9, 2)
-local point = link(assert(laptop.connect(p, 9, 1, "access_point"), "the laptop connects"), "address")
+local point =
+    link(assert(laptop.connect(p, 9, 1, "access_point"), "the laptop connects"), "address")
 laptop.close(p)
 t.drop(p)
 t.run_ticks(2)
@@ -285,17 +302,23 @@ assert(#candidates == 3, "the vent, the pump and the scrubber, and nothing else:
 
 -- Undisclosed rows cannot generate a player gesture.
 local before = #t.ledger_rows("link_denied")
-assert(not pcall(function() ui_controls.toggle(p, "link_join", point) end), "access point has no rendered join control")
+assert(not pcall(function()
+    ui_controls.toggle(p, "link_join", point)
+end), "access point has no rendered join control")
 t.tick()
-assert(not pcall(function() ui_controls.toggle(p, "link_join", relay) end), "transceiver has no rendered join control")
+assert(not pcall(function()
+    ui_controls.toggle(p, "link_join", relay)
+end), "transceiver has no rendered join control")
 t.tick()
 panel = ui_controls.state(p)
 assert(#rows(panel, "link_drop") == 0, "neither box is on the alarm")
 for _, row in ipairs(rows(panel, "link_join")) do
     assert(row.option ~= point and row.option ~= relay, "and neither is on offer after the press")
 end
-assert(#t.ledger_rows("link_denied") == before,
-    "a press no row owns is not a gesture, so there was nothing to refuse")
+assert(
+    #t.ledger_rows("link_denied") == before,
+    "a press no row owns is not a gesture, so there was nothing to refuse"
+)
 
 -- ---------------------------------------------------------------
 -- 4. THE JOIN, AND THE ROOM APPEARS ON THE CONSOLE.
@@ -326,14 +349,24 @@ assert(proxied(panel, "radio transceiver") == nil, "the transceiver is in nobody
 -- invents no vocabulary: `setpoint` here is `setpoint` there.
 -- ---------------------------------------------------------------
 local key = vent .. "/setpoint"
-near(ui_controls.number(assert(dial(panel, key)).value), ONE_ATM, 0.001, "the vent opens on tg's external_pressure_bound")
+near(
+    ui_controls.number(assert(dial(panel, key)).value),
+    ONE_ATM,
+    0.001,
+    "the vent opens on tg's external_pressure_bound"
+)
 
 ui_controls.set(p, vent .. "/siphon", 200.0)
 t.run_ticks(2)
 ui_controls.set(p, key, TUNED)
 t.run_ticks(2)
 panel = ui_controls.state(p)
-near(ui_controls.number(assert(dial(panel, key)).value), TUNED, 0.001, "and the alarm moved it to a hundred and fifty")
+near(
+    ui_controls.number(assert(dial(panel, key)).value),
+    TUNED,
+    0.001,
+    "and the alarm moved it to a hundred and fifty"
+)
 -- The proxy reuses the vent module's own `apply`, so the row is the
 -- one a hand on the casing would have left and names the MACHINE
 -- rather than the console (sim/ui/settings/vent.rs).
@@ -344,7 +377,10 @@ for _, row in ipairs(turned) do
         moved = true
     end
 end
-assert(moved, "a press through the proxy lands on the record like any other: " .. #turned .. " rows")
+assert(
+    moved,
+    "a press through the proxy lands on the record like any other: " .. #turned .. " rows"
+)
 
 -- ---------------------------------------------------------------
 -- 6. AND THE VENT'S OWN CASING IS READ-ONLY.
@@ -358,8 +394,11 @@ local casing = open(2, 1, "vent")
 assert(#ui_controls.rows(casing.setpoints or {}) == 0, "a paired vent offers no dial at its casing")
 assert(#ui_controls.rows(casing.toggles or {}) == 0, "and no switch either")
 local notice = ui_controls.record(assert(casing.notice, "it says why instead"))
-assert(notice.id == "proxy.controlled_from" and ui_controls.record(notice.args).address == alarm,
-    "and names the box that has it: " .. tostring(notice.args and ui_controls.record(notice.args).address))
+assert(
+    notice.id == "proxy.controlled_from" and ui_controls.record(notice.args).address == alarm,
+    "and names the box that has it: "
+        .. tostring(notice.args and ui_controls.record(notice.args).address)
+)
 
 -- ---------------------------------------------------------------
 -- 7. LOCK IT AGAIN AND THE ROOM GOES AWAY WITH THE ROSTER.
@@ -395,17 +434,25 @@ assert(link(panel, "address") == alarm, "the address stays: it was never the sec
 -- ---------------------------------------------------------------
 t.ui_close(p)
 t.tick()
-assert(assert(t.structure_at(6, 1)).sprite == "air_alarm_lit_n",
-    "fed and on the air, so the lamp is on: " .. tostring(assert(t.structure_at(6, 1)).sprite))
-assert(assert(t.structure_at(9, 1)).sprite == "access_point_n",
-    "and the comms box beside it draws standby: " .. tostring(assert(t.structure_at(9, 1)).sprite))
+assert(
+    assert(t.structure_at(6, 1)).sprite == "air_alarm_lit_n",
+    "fed and on the air, so the lamp is on: " .. tostring(assert(t.structure_at(6, 1)).sprite)
+)
+assert(
+    assert(t.structure_at(9, 1)).sprite == "access_point_n",
+    "and the comms box beside it draws standby: " .. tostring(assert(t.structure_at(9, 1)).sprite)
+)
 
 -- Pull the breaker. Both boxes hang on cords off the one socket in the
 -- middle of the room, so both go dark together -- and they go dark by
 -- two different pictures, because each names its own art.
 t.outage()
 t.run_ticks(80)
-assert(assert(t.structure_at(6, 1)).sprite == "air_alarm_n",
-    "a dead cord is tg's no-lamp face: " .. tostring(assert(t.structure_at(6, 1)).sprite))
-assert(assert(t.structure_at(9, 1)).sprite == "access_point_off_n",
-    "and the comms box wears its own: " .. tostring(assert(t.structure_at(9, 1)).sprite))
+assert(
+    assert(t.structure_at(6, 1)).sprite == "air_alarm_n",
+    "a dead cord is tg's no-lamp face: " .. tostring(assert(t.structure_at(6, 1)).sprite)
+)
+assert(
+    assert(t.structure_at(9, 1)).sprite == "access_point_off_n",
+    "and the comms box wears its own: " .. tostring(assert(t.structure_at(9, 1)).sprite)
+)

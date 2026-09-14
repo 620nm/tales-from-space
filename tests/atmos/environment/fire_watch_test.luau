@@ -3,7 +3,8 @@
 -- starts or stops: the authored plasma rules and the physics do, and
 -- `matter.ignition.done` / `matter.extinguished.done` are how content
 -- hears about it after the fact.
-t.world([==[(
+t.world(
+    [==[(
     name: "fire watch bench",
     legend: {
         '.': (turf: Floor),
@@ -24,7 +25,9 @@ t.world([==[(
         ),
     },
     painted: [(1, 1, "burning_mix")],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()

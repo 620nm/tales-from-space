@@ -10,8 +10,13 @@ local content = {
     storage = 7,
     show_contents = true,
     holds = {
-        "crayon_red", "crayon_orange", "crayon_yellow", "crayon_green",
-        "crayon_blue", "crayon_purple", "crayon_black",
+        "crayon_red",
+        "crayon_orange",
+        "crayon_yellow",
+        "crayon_green",
+        "crayon_blue",
+        "crayon_purple",
+        "crayon_black",
     },
 }
 

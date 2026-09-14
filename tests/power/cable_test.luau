@@ -22,7 +22,8 @@ end
 -- A bare-plating bench, every tile of it within arm's reach of the
 -- spawn: cable is subfloor work, so there is no finished floor here,
 -- and an engineer standing still can wire the whole thing.
-t.world([==[(
+t.world(
+    [==[(
     name: "wiring",
     legend: {
         ' ': (turf: Space),
@@ -45,7 +46,9 @@ t.world([==[(
     // One mapped stub in the corner, on the blue line and touching
     // nothing this spec lays: the length a fresh coil is asked to join.
     cables: [(3, 3, 4)],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -83,10 +86,7 @@ assert(said(p, "You set the coil to the red power line."), "blue -> red")
 -- tile, and neither noticed the other.
 t.click(p, 2, 1, nil, -14, 14)
 t.run_seconds(1.5)
-assert(
-    t.cable_at(2, 1) == YELLOW + RED,
-    "two lines share the tile: " .. t.cable_at(2, 1)
-)
+assert(t.cable_at(2, 1) == YELLOW + RED, "two lines share the tile: " .. t.cable_at(2, 1))
 assert(t.cable_at(1, 1) == YELLOW, "and the neighbours are untouched")
 
 -- ---------------------------------------------------------------
@@ -100,14 +100,8 @@ t.run_seconds(1.5)
 local crossing = t.segment_at(2, 1)
 assert(crossing.l2 ~= nil, "the yellow run reaches the crossing")
 assert(crossing.l1 ~= nil, "so does the red one")
-assert(
-    crossing.l2 ~= crossing.l1,
-    "but they are two circuits, not one: " .. crossing.l2
-)
-assert(
-    t.segment_at(2, 3).l1 == crossing.l1,
-    "the red run is continuous down the column"
-)
+assert(crossing.l2 ~= crossing.l1, "but they are two circuits, not one: " .. crossing.l2)
+assert(t.segment_at(2, 3).l1 == crossing.l1, "the red run is continuous down the column")
 assert(t.segment_at(2, 3).l2 == nil, "and the yellow line never went there")
 
 -- ---------------------------------------------------------------
@@ -126,10 +120,7 @@ t.swap_hands(p)
 t.run_ticks(2)
 t.click(p, 1, 2, nil, -14, 14)
 t.run_seconds(1.5)
-assert(
-    t.cable_at(1, 2) == RED,
-    "and the first coil is still where it was left, ticks later"
-)
+assert(t.cable_at(1, 2) == RED, "and the first coil is still where it was left, ticks later")
 
 -- ---------------------------------------------------------------
 -- One snip, one cable. tg's wirecutters deconstruct the single cable
@@ -151,10 +142,7 @@ assert(t.ledger_has("CableCut"), "sabotage is attributable")
 
 -- Cutting the yellow line at the crossing really did sever that
 -- circuit: the two halves are no longer one segment.
-assert(
-    t.segment_at(1, 1).l2 ~= t.segment_at(3, 1).l2,
-    "the yellow run is in two pieces now"
-)
+assert(t.segment_at(1, 1).l2 ~= t.segment_at(3, 1).l2, "the yellow run is in two pieces now")
 
 t.click_subfloor(p, 2, 1, "cable", RED)
 t.run_seconds(1.5)

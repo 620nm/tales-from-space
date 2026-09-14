@@ -15,7 +15,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- beaker into it are both vessel to vessel. Inferring the row from the
 -- pair of owners could not tell either apart. Naming the verb can, and
 -- these six rows are that claim in one bench.
-t.world([==[(
+t.world(
+    [==[(
     name: "verb bench",
     legend: {
         ' ': (turf: Space),
@@ -40,7 +41,9 @@ t.world([==[(
         (5, 1, "player_spawn", { "jobs": "assistant" }),
         (3, 2, "canister"),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local medic = t.join("medic")
 local patient = t.join("assistant")

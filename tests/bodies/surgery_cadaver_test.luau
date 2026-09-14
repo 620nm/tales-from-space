@@ -59,7 +59,9 @@ end
 -- `labels` row per declared equipment slot, named by the slot's LABEL.
 local function slot_row(panel: ui_controls.Record, label: string): ui_controls.Record?
     for _, r in ipairs(ui_controls.rows(panel.labels or {})) do
-        if word(r.label) == label then return r end
+        if word(r.label) == label then
+            return r
+        end
     end
     return nil
 end
@@ -67,7 +69,9 @@ end
 -- ...and the operating computer is the ordinary readout model.
 local function row(panel: ui_controls.Record, label: string): ui_controls.Record?
     for _, r in ipairs(ui_controls.rows(panel.readouts or {})) do
-        if word(r.label) == label then return r end
+        if word(r.label) == label then
+            return r
+        end
     end
     return nil
 end
@@ -113,7 +117,15 @@ assert(on_table().posture == "lying", "laid out on it")
 -- off (tests/strip_test.luau).
 t.drop(surgeon)
 t.run_ticks(2)
-t.drag(surgeon, 3, 2, assert(t.target_at(surgeon, 3, 2, "name:" .. corpse_name)), 4, 1, t.body_target(surgeon, surgeon))
+t.drag(
+    surgeon,
+    3,
+    2,
+    assert(t.target_at(surgeon, 3, 2, "name:" .. corpse_name)),
+    4,
+    1,
+    t.body_target(surgeon, surgeon)
+)
 t.run_ticks(2)
 local wardrobe = ui_controls.record(assert(t.ui(surgeon), "the drag opened its wearables"))
 local worn_row = slot_row(wardrobe, "Uniform")
@@ -140,7 +152,10 @@ t.run_ticks(2)
 local console = ui_controls.record(assert(t.ui(surgeon), "the console opened a window"))
 local aimed = row(console, "chest")
 assert(aimed ~= nil, "the part the next click lands on is on the panel")
-assert(word(aimed.value) == "\u{2014}", "with nothing holding it yet: " .. tostring(word(aimed.value)))
+assert(
+    word(aimed.value) == "\u{2014}",
+    "with nothing holding it yet: " .. tostring(word(aimed.value))
+)
 local first = row(console, "make an incision")
 assert(first ~= nil, "and the console says how to begin")
 assert(word(first.value) == "scalpel", "naming the tool: " .. tostring(word(first.value)))

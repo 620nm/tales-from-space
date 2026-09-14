@@ -57,8 +57,8 @@ local VESTIBULE = [==[(
 -- partner lies in, and the link resolves only because both of them do
 -- (airlock.dm:235 throws away a door that does not point back).
 local LINKED = VESTIBULE:gsub(
-    "structures: %[%(%s*1, 2, \"player_spawn\"%), %(2, 2, \"player_spawn\"%)%],",
-    "structures: [(1, 2, \"player_spawn\"), (2, 2, \"player_spawn\")],\n    cycle_links: [(5, 2, East), (7, 2, West)],"
+    'structures: %[%(%s*1, 2, "player_spawn"%), %(2, 2, "player_spawn"%)%],',
+    'structures: [(1, 2, "player_spawn"), (2, 2, "player_spawn")],\n    cycle_links: [(5, 2, East), (7, 2, West)],'
 )
 
 -- Walk east out of the room, through the inner airlock (bump opens it),
@@ -91,11 +91,15 @@ t.tick()
 
 assert(t.turf(6, 2) == "plating", "the vestibule deck is bare, as tg's is")
 assert(t.turf(8, 2) == "space", "and the outer airlock opens onto space")
-assert(not assert(t.door_at(5, 2)).open and not assert(t.door_at(7, 2)).open,
-    "both airlocks start shut")
+assert(
+    not assert(t.door_at(5, 2)).open and not assert(t.door_at(7, 2)).open,
+    "both airlocks start shut"
+)
 assert(assert(t.room_pressure(2, 2)) > 90.0, "the station starts breathable")
-assert(assert(t.room_pressure(6, 2)) > 90.0,
-    "and so does the vestibule -- it is a room that holds air, not a hole")
+assert(
+    assert(t.room_pressure(6, 2)) > 90.0,
+    "and so does the vestibule -- it is a room that holds air, not a hole"
+)
 
 step_into_the_chamber(p)
 
@@ -124,10 +128,14 @@ assert(assert(t.door_at(7, 2)).open, "the outer airlock opened")
 t.outage()
 t.run_ticks(2400)
 
-assert(assert(t.room_pressure(6, 2)) < 25.0,
-    "the vestibule blew out to space: " .. tostring(t.room_pressure(6, 2)))
-assert(assert(t.room_pressure(2, 2)) > 90.0,
-    "and THE STATION DID NOT VENT: " .. tostring(t.room_pressure(2, 2)))
+assert(
+    assert(t.room_pressure(6, 2)) < 25.0,
+    "the vestibule blew out to space: " .. tostring(t.room_pressure(6, 2))
+)
+assert(
+    assert(t.room_pressure(2, 2)) > 90.0,
+    "and THE STATION DID NOT VENT: " .. tostring(t.room_pressure(2, 2))
+)
 assert(assert(t.room_pressure(1, 1)) > 90.0, "not in any corner of it")
 
 -- ---------------------------------------------------------------
@@ -156,13 +164,19 @@ assert(assert(t.door_at(7, 2)).open, "and the outer one opens anyway")
 -- the point of the assertion.)
 t.outage()
 t.run_ticks(2400)
-assert(assert(t.door_at(5, 2)).open and assert(t.door_at(7, 2)).open,
-    "unpowered airlocks have no motors to shut themselves with")
+assert(
+    assert(t.door_at(5, 2)).open and assert(t.door_at(7, 2)).open,
+    "unpowered airlocks have no motors to shut themselves with"
+)
 
 local after = t.room_pressure(2, 2)
-assert(assert(after) < assert(before) - 10.0,
+assert(
+    assert(after) < assert(before) - 10.0,
     "with both airlocks open the station vents through the vestibule: "
-        .. assert(before) .. " -> " .. after)
+        .. assert(before)
+        .. " -> "
+        .. after
+)
 
 -- ---------------------------------------------------------------
 -- The same chamber, cycle-linked: the discipline becomes machinery.
@@ -179,18 +193,21 @@ assert(assert(t.door_at(5, 2)).open, "bumping the inner airlock still opens it")
 walk_east(r, 2)
 local rx, ry = t.pos(r)
 assert(rx == 6 and ry == 2, "standing in the vestibule, not " .. rx .. "," .. ry)
-assert(assert(t.door_at(5, 2)).open,
-    "and the inner airlock is still open behind us -- nothing has asked "
-        .. "it to shut yet")
+assert(
+    assert(t.door_at(5, 2)).open,
+    "and the inner airlock is still open behind us -- nothing has asked " .. "it to shut yet"
+)
 
 -- Here is the whole feature. Opening the outer airlock CLOSES the inner
 -- one, without anybody deciding to be careful (airlock.dm:1357).
 t.click(r, 7, 2, t.target_at(r, 7, 2))
 t.run_ticks(15) -- both leaves swing: this one open, its partner shut
 assert(assert(t.door_at(7, 2)).open, "the outer airlock opened")
-assert(not assert(t.door_at(5, 2)).open,
+assert(
+    not assert(t.door_at(5, 2)).open,
     "AND THE INNER ONE SHUT ITSELF: opening one end of a cycle-linked "
-        .. "airlock closes the other")
+        .. "airlock closes the other"
+)
 
 -- Now do exactly what vented the station in the control run: leave the
 -- outer door open, with the breaker pulled so nothing can tidy up after
@@ -198,13 +215,19 @@ assert(not assert(t.door_at(5, 2)).open,
 t.outage()
 t.run_ticks(2400)
 
-assert(assert(t.room_pressure(6, 2)) < 25.0,
-    "the chamber still empties -- an interlock is not a plug: "
-        .. tostring(t.room_pressure(6, 2)))
+assert(
+    assert(t.room_pressure(6, 2)) < 25.0,
+    "the chamber still empties -- an interlock is not a plug: " .. tostring(t.room_pressure(6, 2))
+)
 local linked_after = t.room_pressure(2, 2)
-assert(assert(linked_after) > 90.0,
+assert(
+    assert(linked_after) > 90.0,
     "and the station never lost its air, because the two doors were "
-        .. "never open together: " .. assert(linked_before) .. " -> " .. linked_after)
+        .. "never open together: "
+        .. assert(linked_before)
+        .. " -> "
+        .. linked_after
+)
 
 -- ---------------------------------------------------------------
 -- A window is a barrier. Glass in a hull holds an atmosphere back,
@@ -255,12 +278,15 @@ local w = t.join()
 t.tick()
 
 local pane = t.structure_at(2, 2)
-assert(pane and pane.id == "grille",
-    "the map stood a grille in the hull gap")
-assert(pane.state == "glazed",
+assert(pane and pane.id == "grille", "the map stood a grille in the hull gap")
+assert(
+    pane.state == "glazed",
     "AND IT SHIPPED GLAZED: a map may place a structure in a named "
         .. "state, so a station can boot with windows in it "
-        .. "(got " .. tostring(pane and pane.state) .. ")")
+        .. "(got "
+        .. tostring(pane and pane.state)
+        .. ")"
+)
 assert(t.turf(2, 2) == "plating", "a window stands on deck, not on wall")
 assert(t.turf(2, 1) == "space", "with vacuum on the far side of it")
 
@@ -268,8 +294,7 @@ assert(t.turf(2, 1) == "space", "with vacuum on the far side of it")
 -- open to space through a tile that merely looked solid.
 t.run_ticks(600)
 local sealed = t.room_pressure(2, 3)
-assert(assert(sealed) > 90.0,
-    "A WINDOW IN A HULL HOLDS PRESSURE: " .. sealed)
+assert(assert(sealed) > 90.0, "A WINDOW IN A HULL HOLDS PRESSURE: " .. sealed)
 
 -- Take it out, the long way, with the tools tg asks for: four seconds
 -- of screwdriver to unseal the pane, ten of crowbar to lever it free.
@@ -279,12 +304,13 @@ t.tick()
 assert(t.hands(w).held == "screwdriver", "screwdriver in hand")
 t.click(w, 2, 2, t.target_at(w, 2, 2))
 t.run_ticks(100)
-assert(assert(t.structure_at(2, 2)).state == "unsealed",
-    "the pane is loose in its frame")
+assert(assert(t.structure_at(2, 2)).state == "unsealed", "the pane is loose in its frame")
 -- Loose is still glass in a frame, and tg agrees: the room is not open
 -- to space until the pane actually comes out.
-assert(assert(t.room_pressure(2, 3)) > 90.0,
-    "an unscrewed pane is still a pane: " .. tostring(t.room_pressure(2, 3)))
+assert(
+    assert(t.room_pressure(2, 3)) > 90.0,
+    "an unscrewed pane is still a pane: " .. tostring(t.room_pressure(2, 3))
+)
 
 t.swap_hands(w) -- the screwdriver stays in the other hand
 t.click(w, 3, 4, t.target_at(w, 3, 4, "crowbar")) -- and now the crowbar
@@ -292,16 +318,20 @@ t.tick()
 assert(t.hands(w).held == "crowbar", "crowbar in hand")
 t.click(w, 2, 2, t.target_at(w, 2, 2))
 t.run_ticks(240)
-assert(assert(t.structure_at(2, 2)).state == "bolted",
-    "the pane came free and left the bare grille standing")
+assert(
+    assert(t.structure_at(2, 2)).state == "bolted",
+    "the pane came free and left the bare grille standing"
+)
 
 -- And THAT is a breach -- computed, not declared. Nothing anywhere
 -- stores "broken window"; a barrier simply stopped sealing, and the
 -- matter engine did the rest.
 t.run_ticks(1200)
 local vented = t.room_pressure(2, 3)
-assert(assert(vented) < 25.0,
-    "PULLING THE PANE VENTS THE ROOM: " .. assert(sealed) .. " -> " .. vented)
+assert(
+    assert(vented) < 25.0,
+    "PULLING THE PANE VENTS THE ROOM: " .. assert(sealed) .. " -> " .. vented
+)
 
 -- (Chillstation's own vestibule and its viewports are pinned in
 -- crates/lunatic-server/src/sim/tests/chill.rs, where the rest of that

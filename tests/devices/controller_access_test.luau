@@ -34,7 +34,8 @@ local PROGRAM = "if event.kind ~= 'button' then return { commands = {} } end "
     .. "end "
     .. "return { commands = c, accepted = true, status = 'idle' }"
 
-t.world([==[(
+t.world(
+    [==[(
     name: "keyed doorway",
     legend: {
         ' ': (turf: Space),
@@ -61,7 +62,9 @@ t.world([==[(
         (1, 2, 2), (2, 2, 3), (3, 2, 1), (4, 2, 1), (5, 2, 1), (6, 2, 1),
         (6, 1, 1),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local crew = t.join()
 t.run_ticks(20)
@@ -69,10 +72,12 @@ t.run_ticks(20)
 local function ui()
     return laptop.ui(crew)
 end
-local function rows(doc: ui_controls.Record, field: string): {ui_controls.Record}
-    local out: {ui_controls.Record} = {}
+local function rows(doc: ui_controls.Record, field: string): { ui_controls.Record }
+    local out: { ui_controls.Record } = {}
     for _, row in ipairs(ui_controls.rows(doc.toggles or {})) do
-        if row.field == field then table.insert(out, row) end
+        if row.field == field then
+            table.insert(out, row)
+        end
     end
     return out
 end
@@ -89,7 +94,10 @@ t.run_ticks(4)
 assert(not assert(t.door_at(6, 1)).open, "an empty-handed crewman does not get it open")
 local denied = t.ledger_rows("door_denied")
 assert(#denied == 1, "and the refusal is on the record: " .. #denied)
-assert(ui_controls.array(denied[1].at)[1] == 6 and ui_controls.array(denied[1].at)[2] == 1, "at the leaf's own tile")
+assert(
+    ui_controls.array(denied[1].at)[1] == 6 and ui_controls.array(denied[1].at)[2] == 1,
+    "at the leaf's own tile"
+)
 assert(#t.ledger_rows("script_error") == 0, "answering a hand is not a fault")
 
 -- ---- install policy on the host ------------------------------------------
@@ -110,7 +118,9 @@ while true do
             break
         end
     end
-    if not candidate then break end
+    if not candidate then
+        break
+    end
     laptop.toggle(crew, "link_join", candidate)
     t.run_ticks(2)
     joined += 1
@@ -125,10 +135,16 @@ local uid = string.format("%d", ui_controls.number(ui_controls.record(ui().open)
 t.run_ticks(10) -- the pacing window on text acts (docs/TGUI.md)
 ui_files.save(crew, PROGRAM)
 t.run_ticks(2)
-assert(ui_controls.record(ui().open).body == PROGRAM, "the guest's source is on the host's own disk")
+assert(
+    ui_controls.record(ui().open).body == PROGRAM,
+    "the guest's source is on the host's own disk"
+)
 ui_files.program(crew, "controller", uid)
 t.run_ticks(2)
-assert(ui_controls.word(ui_controls.rows(ui().program_slots)[1].state) == "program_slots.state.loaded", "and the controller slot runs it")
+assert(
+    ui_controls.word(ui_controls.rows(ui().program_slots)[1].state) == "program_slots.state.loaded",
+    "and the controller slot runs it"
+)
 laptop.close(crew)
 -- A button is pressed with an empty hand.
 t.drop(crew)
@@ -137,7 +153,10 @@ t.run_ticks(2)
 -- ---- through the host: opened --------------------------------------------
 t.click(crew, 6, 2, assert(t.target_at(crew, 6, 2, "airlock_button")))
 t.run_ticks(20)
-assert(assert(t.door_at(6, 1)).open, "the program opened the tagged door for the hand it just refused")
+assert(
+    assert(t.door_at(6, 1)).open,
+    "the program opened the tagged door for the hand it just refused"
+)
 assert(#t.ledger_rows("door_denied") == 1, "and refused nothing on the way")
 
 -- The presser carried no claim and the guest was told so: the leaf opened
@@ -147,16 +166,24 @@ assert(#t.ledger_rows("door_denied") == 1, "and refused nothing on the way")
 local loaded = t.ledger_rows("disl_program_loaded")
 local installed = false
 for _, row in ipairs(loaded) do
-    if row.slot == "controller" and tostring(row.uid) == uid then installed = true end
+    if row.slot == "controller" and tostring(row.uid) == uid then
+        installed = true
+    end
 end
 assert(installed, "the run is joined to its installed program slot")
 local runs = t.ledger_rows("disl_run")
 assert(#runs > 0, "the press reached the guest")
 local function contains_raw(value: unknown, marker: string): boolean
-    if type(value) == "string" then return value:find(marker, 1, true) ~= nil end
-    if type(value) ~= "table" then return false end
+    if type(value) == "string" then
+        return value:find(marker, 1, true) ~= nil
+    end
+    if type(value) ~= "table" then
+        return false
+    end
     for key, child in pairs(value) do
-        if contains_raw(assert(key), marker) or contains_raw(child, marker) then return true end
+        if contains_raw(assert(key), marker) or contains_raw(child, marker) then
+            return true
+        end
     end
     return false
 end

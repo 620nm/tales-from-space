@@ -49,10 +49,8 @@ local UNRESTRICTED_MAP = [==[(
     structures: [(1, 1, "player_spawn")],
 )]==]
 
-local TERRESTRIAL_MAP = UNRESTRICTED_MAP:gsub(
-    'name: "unrestricted",',
-    'name: "terrestrial", tags: ["terrestrial"],'
-)
+local TERRESTRIAL_MAP =
+    UNRESTRICTED_MAP:gsub('name: "unrestricted",', 'name: "terrestrial", tags: ["terrestrial"],')
 
 local ZERO_GRAVITY_MAP = [==[(
     name: "zero gravity",
@@ -147,7 +145,10 @@ for seed = 1, 40 do
     t.world(MAP, seed)
     local id = t.environment().id
     assert(ROSTER[id] ~= nil, "every seed lands on the roster: " .. id)
-    assert(assert(t.environment().profile).gravity_m_s2 == STANDARD_GRAVITY, "the fixture filters zero gravity")
+    assert(
+        assert(t.environment().profile).gravity_m_s2 == STANDARD_GRAVITY,
+        "the fixture filters zero gravity"
+    )
     if not seen[id] then
         seen[id] = true
         distinct = distinct + 1
@@ -167,7 +168,10 @@ for _, mode in ipairs({ "space_station", "free_build" }) do
             selected_profile.gravity_m_s2 == STANDARD_GRAVITY or selected_profile.gravity_m_s2 == 0,
             "the unrestricted map selects a declared gravity"
         )
-        assert(selected_profile.background == "space_backdrop", "the selected space backdrop is valid")
+        assert(
+            selected_profile.background == "space_backdrop",
+            "the selected space backdrop is valid"
+        )
     end
 end
 

@@ -6,7 +6,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- laptop pair either way round (items/laptop.luau's `insert_disk` receiver
 -- row, judged with the floppy as `held`); a crowbar has nothing to do with a
 -- laptop in either direction.
-t.world([==[(
+t.world(
+    [==[(
     name: "other hand agreement",
     legend: {
         '.': (turf: Floor),
@@ -20,12 +21,16 @@ t.world([==[(
     structures: [(1, 1, "player_spawn")],
     // All within reach of the spawn: `t.target_at` picks by prototype.
     items: [(2, 1, "laptop"), (2, 1, "floppy_disk"), (2, 1, "crowbar")],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
 
-local function step() t.run_ticks(2) end
+local function step()
+    t.run_ticks(2)
+end
 
 local function take(id: string)
     t.click(p, 2, 1, (assert(t.target_at(p, 2, 1, id), id .. " is visible")))
@@ -57,7 +62,9 @@ end
 local function media_count(kind)
     local count = 0
     for _, row in ipairs(t.ledger_rows()) do
-        if row.audit and ui_controls.record(row.audit).audit == kind then count += 1 end
+        if row.audit and ui_controls.record(row.audit).audit == kind then
+            count += 1
+        end
     end
     return count
 end
@@ -85,8 +92,10 @@ take("floppy_disk")
 assert_insert_row("floppy active, laptop other")
 local inserted = media_count("media_inserted")
 assert(not use_other(), "floppy active: the key is not a dead end")
-assert(t.hands(p).held == nil and t.hands(p)[laptop_hand + 1] == "laptop",
-    "floppy active: the key inserted the disk the row named")
+assert(
+    t.hands(p).held == nil and t.hands(p)[laptop_hand + 1] == "laptop",
+    "floppy active: the key inserted the disk the row named"
+)
 assert(media_count("media_inserted") == inserted + 1, "forward insertion is recorded")
 
 t.use_item_site(p, held_laptop, "shift_ctrl_primary")
@@ -97,12 +106,16 @@ local disk_hand = t.hands(p).active - 1
 -- ---- laptop active, floppy other: the reverse pair ------------------------
 t.swap_hands(p)
 step()
-assert(t.hands(p).held == "laptop" and t.hands(p)[disk_hand + 1] == "floppy_disk",
-    "laptop active, disk in the other hand")
+assert(
+    t.hands(p).held == "laptop" and t.hands(p)[disk_hand + 1] == "floppy_disk",
+    "laptop active, disk in the other hand"
+)
 assert_insert_row("laptop active, floppy other")
 assert(not use_other(), "laptop active: the key is not a dead end")
-assert(t.hands(p).held == "laptop" and t.hands(p)[disk_hand + 1] == nil,
-    "laptop active: the key inserted the other hand's disk")
+assert(
+    t.hands(p).held == "laptop" and t.hands(p)[disk_hand + 1] == nil,
+    "laptop active: the key inserted the other hand's disk"
+)
 assert(media_count("media_inserted") == inserted + 2, "reverse insertion is recorded")
 
 -- ---- laptop and a crowbar: no combination --------------------------------

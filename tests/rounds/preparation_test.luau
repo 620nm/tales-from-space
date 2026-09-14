@@ -58,7 +58,10 @@ assert(first.revision == 1, "accepting a draft advances its revision")
 first = assert(t.ready(idle))
 assert(first.ready and first.can_edit == false, "ready locks the accepted draft")
 local started = status()
-assert(started.ready == 1 and started.remaining_seconds == COUNTDOWN, "the first ready player starts at 120")
+assert(
+    started.ready == 1 and started.remaining_seconds == COUNTDOWN,
+    "the first ready player starts at 120"
+)
 
 t.preparation_steps(COUNTDOWN * TICKS_PER_SECOND - 1)
 local before_cutover = status()

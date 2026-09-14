@@ -3,7 +3,8 @@
 -- whose second line reads "In other hand". Either way round, a floppy and a
 -- laptop offer the laptop's `insert_disk` (items/laptop.luau, a receiver row
 -- judged with the floppy as `held`).
-t.world([==[(
+t.world(
+    [==[(
     name: "other hand desk",
     legend: {
         '.': (turf: Floor),
@@ -17,7 +18,9 @@ t.world([==[(
     structures: [(1, 1, "player_spawn")],
     // Both within reach of the spawn: `t.target_at` picks by prototype.
     items: [(2, 1, "laptop"), (2, 1, "floppy_disk")],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -54,8 +57,10 @@ local function assert_insert(rows: { SpecActionDescriptor }, partner: string, wh
     assert(row.detail and row.detail.key == "engine.action.other_hand", why .. ": detail line")
     assert(row.implement ~= nil, why .. ": the partner is pictured")
     local sprite = tostring(row.implement.sprite)
-    assert(string.find(sprite, partner, 1, true) ~= nil,
-        why .. ": pictures the other hand's " .. partner .. ", got " .. sprite)
+    assert(
+        string.find(sprite, partner, 1, true) ~= nil,
+        why .. ": pictures the other hand's " .. partner .. ", got " .. sprite
+    )
 end
 
 take(2, "floppy_disk")

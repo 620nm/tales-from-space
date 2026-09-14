@@ -9,9 +9,12 @@ local item_actions = require("@lib/item_actions")
 local content = {
     id = "welder",
     interaction_labels = {
-        self = { label = "lunatic/tfs:ui.affordance.ignite", states = {
-            lit = "lunatic/tfs:ui.affordance.extinguish",
-        } },
+        self = {
+            label = "lunatic/tfs:ui.affordance.ignite",
+            states = {
+                lit = "lunatic/tfs:ui.affordance.extinguish",
+            },
+        },
     },
     name_label = "lunatic/tfs:entity.welder.name",
     name = "welding tool",
@@ -52,7 +55,8 @@ local content = {
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     local function use(ev)
         local self, user = ev.subject, ev.actor
         if self.state == "lit" then
@@ -72,7 +76,9 @@ if sim ~= nil then
     end
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, use)
     item_actions.attach(script_definition, {
-        id = content.id, sprite = content.sprite, state = "flame",
+        id = content.id,
+        sprite = content.sprite,
+        state = "flame",
         label = "lunatic/tfs:ui.actions.welder",
     }, use)
 end

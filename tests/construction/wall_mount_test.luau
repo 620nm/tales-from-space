@@ -16,7 +16,8 @@ end
 -- A room with a corner in it: the builder stands at (1, 1) with a wall
 -- to the north at (1, 0) and another to the west at (0, 1), which lets
 -- the same tile carry independent brackets on two faces.
-t.world([==[(
+t.world(
+    [==[(
     name: "mount bench",
     legend: {
         ' ': (turf: Space),
@@ -36,7 +37,9 @@ t.world([==[(
         (1, 1, "wirecutters"),
         (1, 1, "welder"),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -110,8 +113,10 @@ take("cable_coil")
 t.click(p, 1, 1, t.target_at(p, 1, 1, "wall_frame"))
 t.run_seconds(2.5)
 assert(assert(t.structure_at(1, 1)).state == "wired", "five lengths of cable wire it")
-assert(assert(t.structure_at(1, 1)).sprite == "wall_frame_wired_n",
-    "and the new picture is still the one that faces the wall")
+assert(
+    assert(t.structure_at(1, 1)).sprite == "wall_frame_wired_n",
+    "and the new picture is still the one that faces the wall"
+)
 
 -- ...and backwards, because every rung of this ladder runs both ways.
 put_down()
@@ -131,8 +136,7 @@ take("welder")
 local _ = t.messages(p)
 t.click_turf(p, 1, 0)
 t.run_seconds(10.5)
-assert(said(p, "Take the wall frame off the wall first."),
-    "the wall names what is hanging on it")
+assert(said(p, "Take the wall frame off the wall first."), "the wall names what is hanging on it")
 assert(t.turf(1, 0) == "wall", "and stays a wall")
 
 -- Take the box off and the same torch goes through. The frame is bare

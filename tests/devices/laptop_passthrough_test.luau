@@ -3,7 +3,8 @@
 local LID = "The laptop's lid is closed. Open it first."
 local OFF = "The laptop is off. Turn it on first."
 
-t.world([==[(
+t.world(
+    [==[(
     name: "laptop passthrough",
     legend: {
         '.': (turf: Plating), '#': (turf: Wall),
@@ -21,14 +22,18 @@ t.world([==[(
         (3, 1, 1), (4, 1, 1), (5, 1, 1)],
     links: [(4, 1, 5, 1)],
     items: [(4, 1, "laptop")],
-)]==], 0)
+)]==],
+    0
+)
 local p = t.join()
 t.run_ticks(20)
 
 local function heard_any(lines: { string }, ...: string)
     for _, line in ipairs(lines) do
         for _, needle in ipairs({ ... }) do
-            if line:find(needle, 1, true) then return true end
+            if line:find(needle, 1, true) then
+                return true
+            end
         end
     end
     return false
@@ -45,5 +50,8 @@ t.click(p, 5, 1, t.target_at(p, 5, 1))
 t.run_ticks(20)
 local lines = t.messages(p)
 assert(assert(t.door_at(5, 1)).open, "a click with a closed laptop still opens the door")
-assert(not heard_any(lines, LID, OFF), "and the laptop says nothing: " .. table.concat(lines, " | "))
+assert(
+    not heard_any(lines, LID, OFF),
+    "and the laptop says nothing: " .. table.concat(lines, " | ")
+)
 assert(t.ui(p, "programming") == nil, "nothing connects to a door")

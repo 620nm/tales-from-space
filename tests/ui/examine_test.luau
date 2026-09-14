@@ -25,7 +25,8 @@ local function dump(look)
     return table.concat(look.lines, " | ")
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "examine bench",
     legend: {
         ' ': (turf: Space),
@@ -47,7 +48,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
         (6, 1, 3), (7, 1, 3), (8, 1, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -127,11 +130,15 @@ t.tick()
 -- does not, and the refusal is nothing at all -- no message, no error
 -- shape a client could count.
 -- ---------------------------------------------------------------
-assert(not pcall(function() t.examine(p, 6, 1) end), "nor about a tile nobody can see")
+assert(not pcall(function()
+    t.examine(p, 6, 1)
+end), "nor about a tile nobody can see")
 assert(t.examine(p, 4, 1, beaker) ~= nil, "but three tiles of clear floor is a look")
 
 -- A claim naming the wrong tile is the same silence a wall gets.
-assert(not pcall(function() t.examine(p, 3, 1, beaker) end), "a lie buys no look")
+assert(not pcall(function()
+    t.examine(p, 3, 1, beaker)
+end), "a lie buys no look")
 
 -- ---------------------------------------------------------------
 -- FOUR: THE GROUND, AND THE MACHINE.
@@ -143,7 +150,10 @@ assert(#deck.lines == 0, "and states nothing else: " .. dump(deck))
 local dispenser = t.examine(p, 3, 0, taps)
 assert(dispenser ~= nil, "the machine answers")
 assert(dispenser.title == "chem dispenser", "by its own name: " .. dispenser.title)
-assert(dispenser.lines[1]:find("shelf of taps") ~= nil, "with its file's prose: " .. dump(dispenser))
+assert(
+    dispenser.lines[1]:find("shelf of taps") ~= nil,
+    "with its file's prose: " .. dump(dispenser)
+)
 
 -- ---------------------------------------------------------------
 -- FIVE: WHAT STATE IT IS IN, AND WHAT COLOUR IT IS.

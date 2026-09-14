@@ -2,7 +2,8 @@
 -- patient's tile. The chest organs and the brain need the bone sawed
 -- first, which the socket enforces.
 return {
-    id = "remove_organ", name = "remove an organ",
+    id = "remove_organ",
+    name = "remove an organ",
     organ = "remove",
     requires = { "skin_open", "organs_cut" },
     time = 1,

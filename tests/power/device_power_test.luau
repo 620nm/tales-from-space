@@ -73,8 +73,8 @@ end
 -- Every gas on every one of a machine's mouths, in moles: the reading
 -- an engineer would take with an analyser at each port in turn, and the
 -- only thing that can tell a stopped trinary from a running one.
-local function books(ports: {{number}}): {{[string]: number}}
-    local snap: {{[string]: number}} = {}
+local function books(ports: { { number } }): { { [string]: number } }
+    local snap: { { [string]: number } } = {}
     for i, port in ipairs(ports) do
         snap[i] = {}
         for key, amount in pairs(t.pipe_gas(port[1], port[2]) or {}) do
@@ -84,7 +84,7 @@ local function books(ports: {{number}}): {{[string]: number}}
     return snap
 end
 
-local function frozen(ports: {{number}}, snap: {{[string]: number}}, what: string)
+local function frozen(ports: { { number } }, snap: { { [string]: number } }, what: string)
     for i, port in ipairs(ports) do
         local at = " at " .. port[1] .. "," .. port[2]
         local now = t.pipe_gas(port[1], port[2]) or {}
@@ -202,11 +202,14 @@ local TRINARIES = {
             ui_controls.toggle(p, "filter", "o2")
             ui_controls.toggle(p, "power")
         end,
-        moved = function(was: {[string]: number})
+        moved = function(was: { [string]: number })
             assert(
                 gas(SIDE[1], SIDE[2], "o2") > was.side_o2 + 1.0,
                 "the side port collected oxygen: "
-                    .. was.side_o2 .. " -> " .. gas(SIDE[1], SIDE[2], "o2") .. " mol"
+                    .. was.side_o2
+                    .. " -> "
+                    .. gas(SIDE[1], SIDE[2], "o2")
+                    .. " mol"
             )
             near(
                 gas(SIDE[1], SIDE[2], "n2"),
@@ -219,7 +222,8 @@ local TRINARIES = {
             assert(
                 total(IN[1], IN[2]) > 2.0,
                 "it still had a charged input main in front of it: "
-                    .. total(IN[1], IN[2]) .. " mol"
+                    .. total(IN[1], IN[2])
+                    .. " mol"
             )
         end,
     },
@@ -233,11 +237,14 @@ local TRINARIES = {
             ui_controls.set(p, "pressure", 250)
             ui_controls.toggle(p, "power")
         end,
-        moved = function(was: {[string]: number})
+        moved = function(was: { [string]: number })
             assert(
                 assert(t.pipe_pressure(OUT[1], OUT[2])) > was.out_kpa + 10.0,
                 "the outlet main filled: "
-                    .. was.out_kpa .. " -> " .. assert(t.pipe_pressure(OUT[1], OUT[2])) .. " kPa"
+                    .. was.out_kpa
+                    .. " -> "
+                    .. assert(t.pipe_pressure(OUT[1], OUT[2]))
+                    .. " kPa"
             )
             assert(
                 assert(t.pipe_pressure(SIDE[1], SIDE[2])) < was.side_kpa - 1.0,
@@ -249,7 +256,9 @@ local TRINARIES = {
                 assert(t.pipe_pressure(OUT[1], OUT[2])) < 240.0,
                 "it was still short of its own setpoint, so it stopped"
                     .. " because it was switched off and not because it had"
-                    .. " arrived: " .. assert(t.pipe_pressure(OUT[1], OUT[2])) .. " kPa of 250"
+                    .. " arrived: "
+                    .. assert(t.pipe_pressure(OUT[1], OUT[2]))
+                    .. " kPa of 250"
             )
         end,
     },
@@ -313,10 +322,14 @@ for _, job in ipairs(TRINARIES) do
     open_panel(p, job.id)
     ui_controls.toggle(p, "power")
     t.run_ticks(2)
-    assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == true, "the switch is thrown all the same")
+    assert(
+        ui_controls.rows(ui_controls.state(p).toggles)[1].on == true,
+        "the switch is thrown all the same"
+    )
     assert(
         assert(t.structure_at(5, 1)).state == "off",
-        job.id .. " is drawn stopped -- the picture asks `working()`,"
+        job.id
+            .. " is drawn stopped -- the picture asks `working()`,"
             .. " and the gas below must ask the same question"
     )
     t.ui_close(p)
@@ -368,8 +381,12 @@ end
 local function has_work(what: string)
     assert(
         head() > 10.0,
-        assert(what) .. ": " .. assert(t.pipe_pressure(IN[1], IN[2]))
-            .. " / " .. assert(t.pipe_pressure(OUT[1], OUT[2])) .. " kPa"
+        assert(what)
+            .. ": "
+            .. assert(t.pipe_pressure(IN[1], IN[2]))
+            .. " / "
+            .. assert(t.pipe_pressure(OUT[1], OUT[2]))
+            .. " kPa"
     )
 end
 
@@ -395,10 +412,7 @@ assert(t.cable_at(4, 2) == 0, "the room circuit is parted")
 assert(t.ledger_has("CableCut"), "and cutting a department's feed is attributable")
 t.drop(p)
 t.run_seconds(3)
-assert(
-    t.segment_at(5, 1).feed == nil,
-    "nothing on this side of the cut reaches an APC any more"
-)
+assert(t.segment_at(5, 1).feed == nil, "nothing on this side of the cut reaches an APC any more")
 
 -- The machine takes its orders perfectly happily while dead. A dead
 -- machine is not a broken one, and its panel is fed by nothing but the
@@ -408,8 +422,16 @@ panel_says(p, "flow.supply.dead", "the gate's panel says the mains are not behin
 ui_controls.set(p, "temperature", 500)
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
-assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == true, "the switch is on all the same")
-near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value), 500.0, 0.01, "and the dial took the setting")
+assert(
+    ui_controls.rows(ui_controls.state(p).toggles)[1].on == true,
+    "the switch is on all the same"
+)
+near(
+    ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value),
+    500.0,
+    0.01,
+    "and the dial took the setting"
+)
 assert(
     assert(t.structure_at(5, 1)).state == "shut",
     "but it is still drawn shut, which is tg's `on && is_operational`"
@@ -429,7 +451,10 @@ has_work("and the job is still sitting there untouched")
 -- reopened, the switch is not thrown again, and the 500 K setting is
 -- never re-entered. What the machine was told while it was dead is what
 -- it does the moment it wakes.
-local was = { out_kpa = assert(t.pipe_pressure(OUT[1], OUT[2])), in_kpa = assert(t.pipe_pressure(IN[1], IN[2])) }
+local was = {
+    out_kpa = assert(t.pipe_pressure(OUT[1], OUT[2])),
+    in_kpa = assert(t.pipe_pressure(IN[1], IN[2])),
+}
 
 t.click(p, 6, 2, t.target_at(p, 6, 2, "cable_coil"))
 t.run_ticks(2)
@@ -442,10 +467,7 @@ t.use_self(p)
 t.run_ticks(2)
 t.click(p, 4, 2)
 t.run_seconds(1.5)
-assert(
-    t.cable_at(4, 2) == ROOM,
-    "and the coil lays the red line, which is the one this APC feeds"
-)
+assert(t.cable_at(4, 2) == ROOM, "and the coil lays the red line, which is the one this APC feeds")
 t.drop(p)
 t.run_seconds(3)
 assert(t.segment_at(5, 1).feed == ROOM, "the machine is back on an APC")
@@ -458,7 +480,10 @@ t.run_seconds(10)
 assert(
     assert(t.pipe_pressure(OUT[1], OUT[2])) > was.out_kpa + 5.0,
     "the delivery main took gas the moment the power came back: "
-        .. was.out_kpa .. " -> " .. assert(t.pipe_pressure(OUT[1], OUT[2])) .. " kPa"
+        .. was.out_kpa
+        .. " -> "
+        .. assert(t.pipe_pressure(OUT[1], OUT[2]))
+        .. " kPa"
 )
 assert(assert(t.pipe_pressure(IN[1], IN[2])) < was.in_kpa, "and the supply is what paid for it")
 near(

@@ -20,7 +20,8 @@ local function has(list, want)
 end
 
 -- Scenario 1: the deck. Bare plating, two rods, and a wrench.
-t.world([==[(
+t.world(
+    [==[(
     name: "engine deck",
     legend: {
         ' ': (turf: Space),
@@ -35,7 +36,9 @@ t.world([==[(
     ],
     structures: [(2, 1, "player_spawn")],
     items: [(2, 1, "rod"), (2, 1, "crowbar"), (2, 1, "wrench")],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -51,10 +54,14 @@ end
 take("rod")
 t.click(p, 1, 1) -- the plating beside the player
 t.run_seconds(3.5)
-assert(t.turf(1, 1) == "reinforced_floor",
-    "two rods reinforce the deck, got " .. tostring(t.turf(1, 1)))
-assert(has(t.messages(p), "The rods are wrenched down flush with the deck."),
-    "and the work narrated itself")
+assert(
+    t.turf(1, 1) == "reinforced_floor",
+    "two rods reinforce the deck, got " .. tostring(t.turf(1, 1))
+)
+assert(
+    has(t.messages(p), "The rods are wrenched down flush with the deck."),
+    "and the work narrated itself"
+)
 
 -- A crowbar finds nothing to lift. tg's override is literally a bare
 -- `return`, so the right shape of "no" is silence and an unchanged
@@ -71,14 +78,16 @@ assert(#t.items_at(1, 1) == 0, "nothing came up off the deck")
 take("wrench")
 t.click(p, 1, 1)
 t.run_seconds(3.5)
-assert(t.turf(1, 1) == "plating",
-    "the rods come out, got " .. tostring(t.turf(1, 1)))
+assert(t.turf(1, 1) == "plating", "the rods come out, got " .. tostring(t.turf(1, 1)))
 assert(has(t.items_at(1, 1), "rod"), "and are lying where they were fitted")
-assert(has(t.messages(p), "The rods come up, leaving bare plating."),
-    "the second half of the trade narrated too")
+assert(
+    has(t.messages(p), "The rods come up, leaving bare plating."),
+    "the second half of the trade narrated too"
+)
 
 -- Scenario 2: the wall, and the ladder back down out of it.
-t.world([==[(
+t.world(
+    [==[(
     name: "hull site",
     legend: {
         ' ': (turf: Space),
@@ -97,7 +106,9 @@ t.world([==[(
         (2, 2, "crowbar"), (2, 2, "welder"), (2, 2, "wrench"),
     ],
     structures: [(2, 2, "player_spawn"), (1, 2, "girder")],
-)]==], 7)
+)]==],
+    7
+)
 
 p = t.join()
 t.tick()
@@ -119,13 +130,14 @@ grab("plasteel")
 t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.run_seconds(5.5)
 local girder = t.structure_at(1, 2)
-assert(girder ~= nil and girder.id == "reinforced_girder",
-    "one sheet struts the frame")
+assert(girder ~= nil and girder.id == "reinforced_girder", "one sheet struts the frame")
 
 t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.run_seconds(5.5)
-assert(t.turf(1, 2) == "reinforced_wall",
-    "one more plates it into hull, got " .. tostring(t.turf(1, 2)))
+assert(
+    t.turf(1, 2) == "reinforced_wall",
+    "one more plates it into hull, got " .. tostring(t.turf(1, 2))
+)
 assert(t.structure_at(1, 2) == nil, "and the girder is consumed into it")
 
 -- A torch never opens one: tg overrides try_decon and there is no
@@ -179,10 +191,14 @@ grab("crowbar")
 t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.run_seconds(10.5)
 local left = t.structure_at(1, 2)
-assert(left ~= nil and left.id == "reinforced_girder",
-    "the sheath comes off and the girder is what is left standing")
-assert(has(t.items_at(1, 2), "plasteel"),
-    "with the sheet refunded, exactly as dismantle_wall hands it back")
+assert(
+    left ~= nil and left.id == "reinforced_girder",
+    "the sheath comes off and the girder is what is left standing"
+)
+assert(
+    has(t.items_at(1, 2), "plasteel"),
+    "with the sheet refunded, exactly as dismantle_wall hands it back"
+)
 
 -- Scenario 3: what the deck under a burn chamber is worth.
 --
@@ -190,7 +206,8 @@ assert(has(t.items_at(1, 2), "plasteel"),
 -- tg's INFINITY, atmos/thermal.rs), and it leans on the walls beside
 -- it: a reinforced wall is 312 500 J/K (reinf_walls.dm:20) shared among
 -- the open tiles that touch it, and this one touches exactly one.
-t.world([==[(
+t.world(
+    [==[(
     name: "burn chamber corner",
     legend: {
         ' ': (turf: Space),
@@ -207,11 +224,15 @@ t.world([==[(
         "#####",
     ],
     structures: [(3, 2, "player_spawn")],
-)]==], 7)
+)]==],
+    7
+)
 
 t.join()
 t.tick()
 local deck = t.deck(2, 2)
 assert(deck ~= nil, "the reinforced deck is a finite reservoir, not a bath")
-assert(math.abs(deck.capacity - 375000.0) < 1.0,
-    "62 500 of deck plus one reinforced wall's 312 500, got " .. deck.capacity)
+assert(
+    math.abs(deck.capacity - 375000.0) < 1.0,
+    "62 500 of deck plus one reinforced wall's 312 500, got " .. deck.capacity
+)

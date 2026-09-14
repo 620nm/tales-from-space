@@ -28,7 +28,8 @@ local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "the burn chamber",
     legend: {
         ' ': (turf: Space),
@@ -53,7 +54,10 @@ t.world([==[(
         ),
     },
     painted: [(1, 1, "burning_mix"), (2, 1, "burning_mix"), (1, 2, "burning_mix"), (2, 2, "burning_mix")],
-)]==], 0, "free_build")
+)]==],
+    0,
+    "free_build"
+)
 
 -- A sky at absolute zero with no star in it: the hull radiates and
 -- nothing comes back, which is how a chamber that has just been on
@@ -116,9 +120,10 @@ t.run_seconds(1800)
 assert(warmth() < 310.0, "the chamber cooled: " .. warmth() .. " K")
 
 local left_in_the_air = room("water")
-assert(left_in_the_air < 0.25 * steam,
-    "and most of the water came out of the air: "
-        .. steam .. " -> " .. left_in_the_air .. " mol")
+assert(
+    left_in_the_air < 0.25 * steam,
+    "and most of the water came out of the air: " .. steam .. " -> " .. left_in_the_air .. " mol"
+)
 
 -- ...and what is LEFT in it is exactly what a chamber that warm is
 -- entitled to hold: the dew-point load, `P_vap(T)*V/(R*T)` over four
@@ -132,17 +137,30 @@ local R = 8.314462618
 local warm = warmth()
 local dew_kpa = 101.325 * math.exp((-40660.0 / R) * (1.0 / warm - 1.0 / 373.15))
 local dew_mol = dew_kpa * 1000.0 * 4.0 / (R * warm)
-assert(math.abs(left_in_the_air - dew_mol) < 0.25 * dew_mol,
+assert(
+    math.abs(left_in_the_air - dew_mol) < 0.25 * dew_mol,
     "the air is holding its dew point and no more: "
-        .. left_in_the_air .. " vs " .. dew_mol .. " mol at " .. warm .. " K")
+        .. left_in_the_air
+        .. " vs "
+        .. dew_mol
+        .. " mol at "
+        .. warm
+        .. " K"
+)
 
 -- ...ONTO THE DECK, not out of existence. Cells hold condensed matter
 -- exactly as vessels do, so a puddle is a liquid row in the tile's own
 -- mixture and the station's water total never moved.
 local closed = t.matter_totals()
-near(closed.substances.water, made, 1e-9,
+near(
+    closed.substances.water,
+    made,
+    1e-9,
     "every mole of it is still in the chamber, as a puddle: "
-        .. closed.substances.water .. " vs " .. made)
+        .. closed.substances.water
+        .. " vs "
+        .. made
+)
 
 -- ...and the OTHER gas the same fire made, in the same air, at the
 -- same temperature, did not rain -- because carbon dioxide's diagram
@@ -150,7 +168,5 @@ near(closed.substances.water, made, 1e-9,
 -- hundred kelvin below this room (substances/co2.luau). One phase
 -- step, two substances, two different answers, and the difference is
 -- entirely in what the two files authored.
-assert(room("co2") > 1.0,
-    "the carbon dioxide is still in the air: " .. room("co2") .. " mol")
-near(closed.substances.co2, booked.substances.co2, 1e-9,
-    "and its book closes too")
+assert(room("co2") > 1.0, "the carbon dioxide is still in the air: " .. room("co2") .. " mol")
+near(closed.substances.co2, booked.substances.co2, 1e-9, "and its book closes too")

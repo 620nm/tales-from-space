@@ -42,7 +42,8 @@ end
 -- meter fitting lying on the pipe waiting to be wrenched down, and a
 -- second one out on bare plating that never can be.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "meter",
     legend: {
         ' ': (turf: Space),
@@ -72,7 +73,9 @@ t.world([==[(
         (1, 1, "connector_port"),
         (1, 1, "canister", { "blend": "canister_air", "open": true }),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -192,14 +195,22 @@ t.click(p, 2, 1, t.target_at(p, 2, 1, "meter"))
 t.run_ticks(2)
 local panel = ui_controls.record(t.ui(p))
 assert(panel ~= nil, "an attached gauge answers an empty hand with a panel")
-assert(panel.document == "modules" and panel.presentation == "modules",
-    "its declared module document")
-assert(#ui_controls.rows(panel.toggles) == 0 and #ui_controls.rows(panel.setpoints) == 0, "and nothing on it to turn")
+assert(
+    panel.document == "modules" and panel.presentation == "modules",
+    "its declared module document"
+)
+assert(
+    #ui_controls.rows(panel.toggles) == 0 and #ui_controls.rows(panel.setpoints) == 0,
+    "and nothing on it to turn"
+)
 
 -- What is in the run, itemised: one block under the LINE heading —
 -- the composition tg's chat line cannot give (docs/tgui/matter-block.md).
 local line = ui_controls.rows(panel.matter or {})[1]
-assert(line and ui_controls.record(line.section).id == "meter.line", "the panel draws the run it is reading")
+assert(
+    line and ui_controls.record(line.section).id == "meter.line",
+    "the panel draws the run it is reading"
+)
 local gas: ui_controls.Record? = nil
 for _, st in ipairs(ui_controls.rows(line.states or {})) do
     if st.phase == "gas" then
@@ -207,11 +218,15 @@ for _, st in ipairs(ui_controls.rows(line.states or {})) do
     end
 end
 assert(gas, "a charged run holds a gas")
-assert(math.abs(ui_controls.number(gas.measure) - assert(t.pipe_pressure(2, 1))) < 1e-9,
-    "the panel reads the run: " .. tostring(gas.measure))
-assert(math.abs(ui_controls.number(line.temperature_k) - 293.15) < 0.05,
-    "and how warm it is: " .. tostring(line.temperature_k))
-local seen: {[string]: unknown} = {}
+assert(
+    math.abs(ui_controls.number(gas.measure) - assert(t.pipe_pressure(2, 1))) < 1e-9,
+    "the panel reads the run: " .. tostring(gas.measure)
+)
+assert(
+    math.abs(ui_controls.number(line.temperature_k) - 293.15) < 0.05,
+    "and how warm it is: " .. tostring(line.temperature_k)
+)
+local seen: { [string]: unknown } = {}
 for _, row in ipairs(ui_controls.rows(gas.rows)) do
     seen[ui_controls.text(row.key)] = row.moles
 end
@@ -249,7 +264,8 @@ assert(
 -- that stopped existing half a second ago -- and this is a dial whose
 -- entire job is to be believed.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "extended main",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: [
@@ -260,7 +276,9 @@ t.world([==[(
     items: [(3, 1, "pipe")],
     pipes: [(1, 1, 4), (2, 1, 4)],
     structures: [(3, 1, "player_spawn"), (1, 1, "meter")],
-)]==], 7)
+)]==],
+    7
+)
 
 local m = t.join()
 t.tick()
@@ -312,13 +330,12 @@ local widened = needle()
 assert(
     widened ~= commissioned,
     "and the dial already reads the longer main: "
-        .. tostring(commissioned) .. " -> " .. tostring(widened)
+        .. tostring(commissioned)
+        .. " -> "
+        .. tostring(widened)
 )
 
-assert(
-    lamp() == band_of(widened),
-    "and the lamp moved with it: " .. tostring(lamp())
-)
+assert(lamp() == band_of(widened), "and the lamp moved with it: " .. tostring(lamp()))
 
 -- Which is where it stays: nothing was waiting for an atmos pass to
 -- catch the picture up with the world.

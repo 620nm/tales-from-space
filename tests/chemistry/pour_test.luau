@@ -13,7 +13,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- up the whole gesture and the deck under the far vessel takes the
 -- rest, as its own `spilled` row. A generic transfer would have kept
 -- it; a pour is not a generic transfer.
-t.world([==[(
+t.world(
+    [==[(
     name: "chem bench",
     legend: {
         ' ': (turf: Space),
@@ -32,7 +33,9 @@ t.world([==[(
         (3, 1, "beaker"),
         (4, 1, "beaker.libital"),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -71,8 +74,7 @@ local function litres_of(water: number, libital: number)
 end
 -- The share of a 0.25 mol parcel of that mix which fits in what a full
 -- beaker.libital leaves free.
-local FIT = 0.25
-    * ((GLASS_ML - litres_of(0.20, 0.15)) / litres_of(0.25 * 4 / 7, 0.25 * 3 / 7))
+local FIT = 0.25 * ((GLASS_ML - litres_of(0.20, 0.15)) / litres_of(0.25 * 4 / 7, 0.25 * 3 / 7))
 
 -- An empty beaker off the shelf is still a vessel: it holds nothing and
 -- has fifty millilitres of room (volume_ml on the prototype).

@@ -3,7 +3,8 @@
 -- window disarms acts. (Port of the Rust m4 vendor test.)
 local ui_controls = require("@helpers/ui_controls")
 
-t.world([==[(
+t.world(
+    [==[(
     name: "canteen",
     legend: {
         ' ': (turf: Space),
@@ -25,7 +26,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -49,13 +52,13 @@ t.tick()
 local raw, pushes = t.last_ui(p)
 assert(raw, "clicking the machine opens its window")
 local ui = ui_controls.record(t.ui(p))
-assert(ui.document == "modules" and ui.presentation == "shelf",
-    "the clean-room shelf document")
-assert(ui_controls.record(ui.notice).text == "Robust! Refreshing! Occasionally fermented!",
-    "the shelf wears the content-authored notice")
+assert(ui.document == "modules" and ui.presentation == "shelf", "the clean-room shelf document")
+assert(
+    ui_controls.record(ui.notice).text == "Robust! Refreshing! Occasionally fermented!",
+    "the shelf wears the content-authored notice"
+)
 local product = ui_controls.rows(ui.products)[1]
-assert(ui_controls.record(product.payload).product == "cola",
-    "cola heads the product list")
+assert(ui_controls.record(product.payload).product == "cola", "cola heads the product list")
 assert(product.sprite == "cola", "the shelf names cola's atlas sprite")
 assert(product.stock == 99, "the product row carries its live stock")
 
@@ -73,9 +76,12 @@ assert(after > pushes, "the window got fresh state")
 -- A UI act is a DIRECT player action: the row names the crewman, not
 -- the file that ran on their behalf.
 local spawned = t.ledger_rows("ItemSpawned")
-assert(#spawned == spawned_before + 1 and spawned[spawned_before + 1].proto == "cola"
-    and spawned[spawned_before + 1].actor.kind == "player",
-    "UI acts are player-attributed")
+assert(
+    #spawned == spawned_before + 1
+        and spawned[spawned_before + 1].proto == "cola"
+        and spawned[spawned_before + 1].actor.kind == "player",
+    "UI acts are player-attributed"
+)
 assert(t.ledger_has("ItemSpawned", "cola", "Player"), "and grep finds it too")
 
 -- Closing the window disarms acts.

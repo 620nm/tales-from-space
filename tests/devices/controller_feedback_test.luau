@@ -11,17 +11,25 @@ local OFF = "The laptop is off. Turn it on first."
 local function count(lines: { string }, text: string)
     local n = 0
     for _, line in ipairs(lines) do
-        if line:find(text, 1, true) then n += 1 end
+        if line:find(text, 1, true) then
+            n += 1
+        end
     end
     return n
 end
-local function said(lines: { string }, text: string) return count(lines, text) > 0 end
-local function once(lines: { string }, text: string) return count(lines, text) == 1 end
+local function said(lines: { string }, text: string)
+    return count(lines, text) > 0
+end
+local function once(lines: { string }, text: string)
+    return count(lines, text) == 1
+end
 -- Ledgered script-var writes whose key contains `fragment`.
 local function rows_like(fragment: string)
     local n = 0
     for _, row in ipairs(t.ledger_rows("var_set")) do
-        if tostring(row.key):find(fragment, 1, true) then n += 1 end
+        if tostring(row.key):find(fragment, 1, true) then
+            n += 1
+        end
     end
     return n
 end
@@ -30,13 +38,16 @@ local function press(p, x, y)
 end
 
 -- A button joined to nothing clicks and says nobody answered.
-t.world([==[(
+t.world(
+    [==[(
     name: "lone button",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: ["######", "#....#", "######"],
     structures: [(3, 1, "player_spawn"), (2, 1, "airlock_button", { "mount": "north" })],
     items: [(4, 1, "cola"), (4, 1, "screwdriver")],
-)]==], 0)
+)]==],
+    0
+)
 local p = t.join()
 t.run_ticks(2)
 local _ = t.messages(p)
@@ -44,8 +55,14 @@ local numbered, queued = rows_like("button_sequence"), rows_like("device_outbox"
 press(p, 2, 1)
 t.run_ticks(10)
 local lines = t.messages(p)
-assert(once(lines, UNANSWERED), "an orphan button answers the presser once, got: " .. table.concat(lines, " | "))
-assert(rows_like("lunatic/tfs:button_sequence") == numbered + 1, "a hostless press still takes a sequence number")
+assert(
+    once(lines, UNANSWERED),
+    "an orphan button answers the presser once, got: " .. table.concat(lines, " | ")
+)
+assert(
+    rows_like("lunatic/tfs:button_sequence") == numbered + 1,
+    "a hostless press still takes a sequence number"
+)
 assert(rows_like("device_outbox") == queued, "a hostless press queues nothing")
 assert(table.concat(t.sounds(p), ","):find("click", 1, true), "the press still clicks")
 
@@ -57,8 +74,10 @@ local _ = t.messages(p)
 press(p, 2, 1)
 t.run_ticks(10)
 lines = t.messages(p)
-assert(once(lines, HAND_FULL) and not said(lines, UNANSWERED),
-    "a full hand is told to empty it, got: " .. table.concat(lines, " | "))
+assert(
+    once(lines, HAND_FULL) and not said(lines, UNANSWERED),
+    "a full hand is told to empty it, got: " .. table.concat(lines, " | ")
+)
 
 -- The screwdriver still takes the button off the wall, without the refusal.
 t.drop(p)
@@ -70,12 +89,18 @@ local _ = t.messages(p)
 press(p, 2, 1)
 t.run_ticks(45)
 lines = t.messages(p)
-assert(t.structure_at(2, 1) == nil and t.count_items("airlock_button_fitting") == 1,
-    "the mounted button comes back as its fitting")
-assert(not said(lines, HAND_FULL), "a resolved tool use is not refused: " .. table.concat(lines, " | "))
+assert(
+    t.structure_at(2, 1) == nil and t.count_items("airlock_button_fitting") == 1,
+    "the mounted button comes back as its fitting"
+)
+assert(
+    not said(lines, HAND_FULL),
+    "a resolved tool use is not refused: " .. table.concat(lines, " | ")
+)
 
 -- A powered, linked access point with no program says so instead of faulting.
-t.world([==[(
+t.world(
+    [==[(
     name: "unprogrammed host",
     legend: {
         '.': (turf: Plating), '#': (turf: Wall),
@@ -94,7 +119,9 @@ t.world([==[(
         (2, 1, 1), (3, 1, 1), (4, 1, 1), (5, 1, 1)],
     links: [(4, 1, 2, 1), (4, 1, 5, 1)],
     items: [(3, 1, "laptop")],
-)]==], 0)
+)]==],
+    0
+)
 p = t.join()
 t.run_ticks(20)
 local before = assert(t.door_at(5, 1))
@@ -104,21 +131,31 @@ for round = 1, 2 do
     press(p, 2, 1)
     t.run_ticks(20)
     lines = t.messages(p)
-    assert(once(lines, UNPROGRAMMED) and not said(lines, FAULT) and not said(lines, UNANSWERED),
-        "press " .. round .. " hears the empty slot once, got: " .. table.concat(lines, " | "))
+    assert(
+        once(lines, UNPROGRAMMED) and not said(lines, FAULT) and not said(lines, UNANSWERED),
+        "press " .. round .. " hears the empty slot once, got: " .. table.concat(lines, " | ")
+    )
 end
 local after = assert(t.door_at(5, 1))
-assert(rows_like("device_outbox") > outbox_before, "a joined button does queue its press, so the outbox check has teeth")
+assert(
+    rows_like("device_outbox") > outbox_before,
+    "a joined button does queue its press, so the outbox check has teeth"
+)
 assert(after.open == before.open and after.bolted == before.bolted, "the door is left alone")
 
 -- A burst batched into one packet hears the empty slot once per packet, not per press.
 local _ = t.messages(p)
 press(p, 2, 1)
 t.run_ticks(2) -- The first packet leaves; its sender sleeps out the pacing.
-for _ = 1, 5 do press(p, 2, 1) end
+for _ = 1, 5 do
+    press(p, 2, 1)
+end
 t.run_ticks(30)
 lines = t.messages(p)
-assert(count(lines, UNPROGRAMMED) == 2, "six presses in two packets hear two lines, got: " .. table.concat(lines, " | "))
+assert(
+    count(lines, UNPROGRAMMED) == 2,
+    "six presses in two packets hear two lines, got: " .. table.concat(lines, " | ")
+)
 
 -- A laptop held against the host names the one step it is missing:
 -- the lid while shut, the power while dark. Running, it connects.
@@ -126,14 +163,23 @@ t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "laptop")))
 t.run_ticks(2)
 assert(t.hands(p).held == "laptop", "the closed laptop is in hand")
 local function offers(id: string): SpecActionDescriptor?
-    for _, action in ipairs(t.action_hints(p, { Entity = assert(t.target_at(p, 4, 1, "access_point")) })) do
-        if action.id == id then return action end
+    for _, action in
+        ipairs(t.action_hints(p, { Entity = assert(t.target_at(p, 4, 1, "access_point")) }))
+    do
+        if action.id == id then
+            return action
+        end
     end
     return nil
 end
-assert(offers("connect_not_ready") and not offers("connect"), "the hint names the laptop as not ready")
-assert(assert(assert(offers("connect_not_ready")).implement).sprite == "laptop_on",
-    "and pictures the laptop as it must be: open and powered")
+assert(
+    offers("connect_not_ready") and not offers("connect"),
+    "the hint names the laptop as not ready"
+)
+assert(
+    assert(assert(offers("connect_not_ready")).implement).sprite == "laptop_on",
+    "and pictures the laptop as it must be: open and powered"
+)
 assert(not offers("needs_laptop"), "a held laptop is not told to fetch one")
 local function refused_with(line: string, why: string)
     local _ = t.messages(p)
@@ -161,8 +207,14 @@ step()
 lines = refused_with(OFF, "an open, dark laptop names its power once")
 assert(not said(lines, LID), "and not its lid")
 step()
-assert(offers("connect") and not offers("connect_not_ready"), "a running laptop offers the real connection")
-assert(assert(assert(offers("connect")).implement).sprite == "laptop_on", "pictured as the running laptop in hand")
+assert(
+    offers("connect") and not offers("connect_not_ready"),
+    "a running laptop offers the real connection"
+)
+assert(
+    assert(assert(offers("connect")).implement).sprite == "laptop_on",
+    "pictured as the running laptop in hand"
+)
 
 -- The box ships locked: the running laptop opens on its lock screen, and
 -- the lock row's own press lets it straight into the workspace.
@@ -170,7 +222,10 @@ local _ = t.messages(p)
 local ui = laptop.connect(p, 4, 1, "access_point")
 lines = t.messages(p)
 assert(ui and ui.contact_locked, "a locked box shows the laptop its lock screen")
-assert(not said(lines, LID) and not said(lines, OFF), "a running laptop is not refused: " .. table.concat(lines, " | "))
+assert(
+    not said(lines, LID) and not said(lines, OFF),
+    "a running laptop is not refused: " .. table.concat(lines, " | ")
+)
 laptop.unlock(p)
 t.run_ticks(2)
 ui = laptop.ui(p)

@@ -15,7 +15,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- The three shelves are tg's, and the twenty-one products tg stocks
 -- that are absent are absent for reasons written down in
 -- content/machines/games_vendor.luau rather than here.
-t.world([==[(
+t.world(
+    [==[(
     name: "rec room",
     legend: {
         ' ': (turf: Space),
@@ -37,7 +38,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -46,10 +49,11 @@ t.tick()
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 local ui = ui_controls.state(p)
-assert(ui.document == "modules" and ui.presentation == "shelf",
-    "the clean-room shelf document")
-assert(ui_controls.record(ui.notice).text == "Roll for initiative!",
-    "the content-authored slogan across the top: " .. tostring(ui_controls.record(ui.notice).text))
+assert(ui.document == "modules" and ui.presentation == "shelf", "the clean-room shelf document")
+assert(
+    ui_controls.record(ui.notice).text == "Roll for initiative!",
+    "the content-authored slogan across the top: " .. tostring(ui_controls.record(ui.notice).text)
+)
 
 -- Every declared product is on the window, in its declared category,
 -- with an atlas sprite the client can actually resolve and the stock the
@@ -69,14 +73,19 @@ for _, row in ipairs(products) do
     assert(row.label == want.name, product .. " is called " .. want.name)
     assert(row.category == want.category, product .. " is on the " .. want.category .. " shelf")
     assert(row.sprite ~= "missing", product .. " resolves to atlas art")
-    assert(row.stock == want.amount,
-        product .. " stocks " .. want.amount .. ", got " .. tostring(row.stock))
+    assert(
+        row.stock == want.amount,
+        product .. " stocks " .. want.amount .. ", got " .. tostring(row.stock)
+    )
     found += 1
 end
 assert(found == 3, "three products, got " .. found)
-assert(products[1].category == "Cards" and products[2].category == "Toys"
+assert(
+    products[1].category == "Cards"
+        and products[2].category == "Toys"
         and products[3].category == "Other",
-    "content owns the shelf-group order")
+    "content owns the shelf-group order"
+)
 
 -- ---- a bag of dice, and the dice really in it -------------------------
 ui_controls.vend(p, "dice_bag")
@@ -99,8 +108,10 @@ for i = 1, #ROSTER do
     t.take_held(p, 0)
     t.tick()
     t.swap_hands(p)
-    assert(t.hands(p).held == ROSTER[i],
-        "slot " .. i .. " is the " .. ROSTER[i] .. ", got " .. tostring(t.hands(p).held))
+    assert(
+        t.hands(p).held == ROSTER[i],
+        "slot " .. i .. " is the " .. ROSTER[i] .. ", got " .. tostring(t.hands(p).held)
+    )
     t.drop(p)
     t.tick()
     t.swap_hands(p)
@@ -115,8 +126,7 @@ t.tick()
 t.use_self(p)
 t.tick()
 local said = table.concat(t.messages(p), "\n")
-assert(said:find("You roll the d20. It lands on", 1, true),
-    "a vended die rolls: " .. said)
+assert(said:find("You roll the d20. It lands on", 1, true), "a vended die rolls: " .. said)
 t.drop(p)
 t.tick()
 
@@ -136,15 +146,22 @@ t.click(p, 1, 2)
 t.tick()
 local card = t.item_at(1, 2, "card")
 assert(card ~= nil, "a vended deck deals a card")
-assert(assert(card.state, "the card has a face state"):sub(1, 5) == "down_", "face down: " .. tostring(card.state))
+assert(
+    assert(card.state, "the card has a face state"):sub(1, 5) == "down_",
+    "face down: " .. tostring(card.state)
+)
 assert(card.sprite == "card_back", "showing its back: " .. tostring(card.sprite))
 -- The deck's shuffle is written on the record the moment it is dealt
 -- from, which is the only trace a string in `ScriptVars` leaves.
 local wrote = t.ledger_rows("VarSet")
-assert(#wrote >= 2 and wrote[#wrote - 1].key == "lunatic/tfs:order",
-    "the vended deck kept its own order")
-assert(wrote[#wrote].key == "lunatic/tfs:picture",
-    "and repainted itself beside it: " .. tostring(wrote[#wrote].key))
+assert(
+    #wrote >= 2 and wrote[#wrote - 1].key == "lunatic/tfs:order",
+    "the vended deck kept its own order"
+)
+assert(
+    wrote[#wrote].key == "lunatic/tfs:picture",
+    "and repainted itself beside it: " .. tostring(wrote[#wrote].key)
+)
 
 -- ---- the Captain's Aid, which the machine is stingy with --------------
 t.drop(p)
@@ -159,8 +176,7 @@ assert(t.count_items("captains_aid") == 1, "the one Aid came out")
 local empty = ui_controls.product(p, "captains_aid")
 assert(empty.disabled, "the exhausted product button is disabled")
 t.tick()
-assert(t.count_items("captains_aid") == 1,
-    "and the shelf is empty: a second buy mints nothing")
+assert(t.count_items("captains_aid") == 1, "and the shelf is empty: a second buy mints nothing")
 
 -- ---- nothing else is for sale here ------------------------------------
 -- The negative half, and the one that matters: a payload naming a
@@ -171,8 +187,7 @@ for _, ref in ipairs({ "cola", "d20", "card", "id_captain", "toolbox" }) do
     local before = t.count_items(ref)
     assert(not ui_controls.has_product(p, ref), "excluded product has no rendered control")
     t.tick()
-    assert(t.count_items(ref) == before,
-        "Good Clean Fun does not deal in " .. ref)
+    assert(t.count_items(ref) == before, "Good Clean Fun does not deal in " .. ref)
 end
 
 -- ---- and it is plugged in on the real station -------------------------
@@ -187,8 +202,10 @@ t.world_file("chillstation.ron", 7)
 local crew = t.join()
 t.run_ticks(20)
 
-assert(t.count_items("d6") == 0 and t.count_items("d20") == 0,
-    "the two loose dice are off the Commons floor")
+assert(
+    t.count_items("d6") == 0 and t.count_items("d20") == 0,
+    "the two loose dice are off the Commons floor"
+)
 
 -- Walk to it and open it. The window opening at all IS the power
 -- assertion: the fixture script refuses with "dark and silent" when
@@ -221,10 +238,13 @@ assert(x == 23 and y == 16, "standing beside it: " .. x .. "," .. y)
 t.click(crew, 24, 16, t.target_at(crew, 24, 16))
 t.tick()
 local disclosed_shelf = t.ui(crew)
-assert(disclosed_shelf ~= nil, "the machine has power and opens: "
-    .. table.concat(t.messages(crew), " "))
+assert(
+    disclosed_shelf ~= nil,
+    "the machine has power and opens: " .. table.concat(t.messages(crew), " ")
+)
 local shelf = ui_controls.record(disclosed_shelf)
-assert(shelf.document == "modules" and shelf.presentation == "shelf",
-    "the shelf document")
-assert(ui_controls.record(shelf.notice).text == "Roll for initiative!",
-    "and it is the right machine, not one of its two neighbours")
+assert(shelf.document == "modules" and shelf.presentation == "shelf", "the shelf document")
+assert(
+    ui_controls.record(shelf.notice).text == "Roll for initiative!",
+    "and it is the right machine, not one of its two neighbours"
+)

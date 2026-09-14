@@ -124,14 +124,25 @@ local content = {
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    script_definition:handle("matter.rupture.done", { kind = "react", route = "rupture" }, function(ev)
-        local self, user, x, y = ev.owner, ev.actor, ev.at.x, ev.at.y
-        sim.sound.play({ asset = "lunatic/tfs:sound/spray", at = ev.at })
-    end)
-    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, item_actions.internals)
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle(
+        "matter.rupture.done",
+        { kind = "react", route = "rupture" },
+        function(ev)
+            local self, user, x, y = ev.owner, ev.actor, ev.at.x, ev.at.y
+            sim.sound.play({ asset = "lunatic/tfs:sound/spray", at = ev.at })
+        end
+    )
+    script_definition:handle(
+        "interaction.use",
+        { kind = "replace", route = "self" },
+        item_actions.internals
+    )
     item_actions.attach(script_definition, {
-        id = content.id, sprite = content.sprite, state = "supply",
+        id = content.id,
+        sprite = content.sprite,
+        state = "supply",
         label = "lunatic/tfs:ui.actions.internals",
     }, item_actions.internals)
 end

@@ -18,7 +18,9 @@ local content = {
 
 content.actions = {
     {
-        id = "write", gesture = "primary", route = "held",
+        id = "write",
+        gesture = "primary",
+        route = "held",
         label = "lunatic/tfs:action.crayon.write",
         target = { fact = "target.proto", value = "paper" },
     },

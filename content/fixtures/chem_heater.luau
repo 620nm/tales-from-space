@@ -48,7 +48,8 @@ if sim ~= nil then
     -- examine line or an admin reading the shift record wants, and the
     -- `.done` half is the half allowed to keep it.
     sim.define("script_var", "lunatic/tfs:element", { replicate = "server" })
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
     -- Return what you changed: a transform works on its own copy and
     -- only the table it RETURNS is merged. Nothing here touches

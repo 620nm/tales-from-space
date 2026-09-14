@@ -18,7 +18,8 @@ local function has(list, want)
     return false
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "workshop",
     legend: {
         ' ': (turf: Space),
@@ -33,7 +34,9 @@ t.world([==[(
     ],
     structures: [(1, 1, "player_spawn")],
     items: [(1, 1, "crowbar"), (2, 2, "metal")],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()

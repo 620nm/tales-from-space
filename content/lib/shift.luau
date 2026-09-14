@@ -20,7 +20,7 @@
 export type Rules = {
     shift_minutes: number,
     grace_seconds: number,
-    warnings: {number},
+    warnings: { number },
     announcer: string,
     channel: string,
 }
@@ -82,7 +82,7 @@ function shift.validate(mode: string, rules: Rules): ()
         fail(mode, "warnings must be a dense list, with no gaps and no named keys")
     end
     local total = rules.shift_minutes * MINUTE
-    local seen: {[number]: boolean} = {}
+    local seen: { [number]: boolean } = {}
     for _, mark in ipairs(rules.warnings) do
         -- A mark is a whole minute of REMAINING time, so the crew hears
         -- a round number and the sentence needs no fractions.

@@ -5,7 +5,8 @@
 -- alone; belt.dm:24-28 keeps the content overlays on the object) —
 -- Josh ruled the tools show. Inventory rows still track every stored
 -- tool, and the row LIST is still nobody else's business.
-t.world([==[(
+t.world(
+    [==[(
     name: "locker room",
     legend: {
         ' ': (turf: Space),
@@ -19,7 +20,9 @@ t.world([==[(
     ],
     structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn")],
     items: [(3, 1, "toolbelt")],
-)]==], 7)
+)]==],
+    7
+)
 
 local eng = t.join("engineer")
 t.tick()
@@ -35,17 +38,20 @@ assert(worn.id == "id_engineering", "and the ID is still clipped on")
 -- Stocked from the belt's own roster, in order (tg belt.dm:119).
 local belt = t.stored(eng, "belt")
 assert(#belt == 7, "seven tools on the belt, got " .. #belt)
-assert(table.concat(belt, ",")
-    == "screwdriver,wrench,welder,crowbar,wirecutters,multitool,cable_coil",
-    "the engineering tool suite, in order: " .. table.concat(belt, ","))
+assert(
+    table.concat(belt, ",") == "screwdriver,wrench,welder,crowbar,wirecutters,multitool,cable_coil",
+    "the engineering tool suite, in order: " .. table.concat(belt, ",")
+)
 
 -- The bulky stock rides the pack instead, the headset with it, and the
 -- pocket oxygen bottle every outfit carries in front of both.
 local pack = t.stored(eng, "back")
-assert(table.concat(pack, ",") == "metal,floor_tile,emergency_tank.oxygen,headset",
-    "the pack keeps what a belt cannot: " .. table.concat(pack, ","))
+assert(
+    table.concat(pack, ",") == "metal,floor_tile,emergency_tank.oxygen,headset",
+    "the pack keeps what a belt cannot: " .. table.concat(pack, ",")
+)
 
-local function index_of(layers: {string}, name: string): number?
+local function index_of(layers: { string }, name: string): number?
     for n, layer in ipairs(layers) do
         if layer == name then
             return n
@@ -58,7 +64,7 @@ local function drawn(name: string, viewer: number?, who: (number | SpecObservedT
     return index_of(t.layers(viewer or eng, who), name) ~= nil
 end
 
-local function belt_art(layers: {string})
+local function belt_art(layers: { string })
     local found = {}
     for _, layer in ipairs(layers) do
         if string.sub(layer, 1, 5) == "belt_" then
@@ -75,8 +81,11 @@ local waist = index_of(mine, "worn_toolbelt")
 assert(waist, "the worn belt reached the wire")
 local previous = waist
 for _, sprite in ipairs({
-    "belt_screwdriver", "belt_wrench", "belt_crowbar",
-    "belt_cutters", "belt_multitool",
+    "belt_screwdriver",
+    "belt_wrench",
+    "belt_crowbar",
+    "belt_cutters",
+    "belt_multitool",
 }) do
     local at = index_of(mine, sprite)
     assert(at, sprite .. " is drawn on the wearer")
@@ -97,9 +106,11 @@ local floor_belt = assert(t.target_at(eng, 3, 1, "toolbelt"))
 assert(floor_belt, "a stocked belt lies on the deck")
 local loose = t.layers(eng, floor_belt)
 assert(loose[1] == "toolbelt", "the object's own picture is the base")
-assert(table.concat(belt_art(loose), ",")
-    == "belt_screwdriver,belt_wrench,belt_crowbar,belt_cutters,belt_multitool",
-    "the object view still lists its tools in storage order")
+assert(
+    table.concat(belt_art(loose), ",")
+        == "belt_screwdriver,belt_wrench,belt_crowbar,belt_cutters,belt_multitool",
+    "the object view still lists its tools in storage order"
+)
 
 -- Pull the wrench (row 2) into a hand: the belt loses that picture in
 -- the SAME tick the inventory changes.
@@ -129,9 +140,13 @@ assert(#t.stored(eng, "belt") == 7, "the belt was not touched")
 -- NEGATIVE: a row that does not exist changes nothing (a stale click
 -- from a client whose panel is a tick behind).
 t.swap_hands(eng)
-local unavailable_ok, unavailable_error = pcall(function() t.take_from(eng, "belt", 99) end)
-assert(not unavailable_ok and tostring(unavailable_error):find("no observed item or slot", 1, true),
-    "the disclosed belt has no ninety-ninth row to select")
+local unavailable_ok, unavailable_error = pcall(function()
+    t.take_from(eng, "belt", 99)
+end)
+assert(
+    not unavailable_ok and tostring(unavailable_error):find("no observed item or slot", 1, true),
+    "the disclosed belt has no ninety-ninth row to select"
+)
 t.tick()
 assert(t.hands(eng).held == nil, "no such row, nothing taken")
 assert(#t.stored(eng, "belt") == 7, "and nothing left the belt")

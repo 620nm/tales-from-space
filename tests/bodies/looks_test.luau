@@ -30,13 +30,18 @@ t.tick()
 
 local look = t.look(p)
 assert(look ~= nil, "a plan that declares `looks` mints one on every body")
-assert(look.physique == "m" or look.physique == "f", "a physique this file named: " .. tostring(look.physique))
+assert(
+    look.physique == "m" or look.physique == "f",
+    "a physique this file named: " .. tostring(look.physique)
+)
 assert(look.skin_tone ~= nil and #look.skin_tone > 0, "a skin tone this file named")
 assert(look.hair ~= nil, "a hairstyle, `bald` included")
 assert(look.facial_hair ~= nil, "and a beard, `shaved` included")
 assert(look.hair_color:match("^#%x%x%x%x%x%x$") ~= nil, "colours are hexes: " .. look.hair_color)
-assert(look.facial_hair_color == look.hair_color,
-    "the beard takes the hair's colour, as tg's randomiser does")
+assert(
+    look.facial_hair_color == look.hair_color,
+    "the beard takes the hair's colour, as tg's randomiser does"
+)
 assert(look.eye_color == look.eye_color_right, "and one roll colours both eyes")
 -- A body that is not `m` can only be shaved: every beard in the roster
 -- names `gender = "m"` because tg's base facial datum is MALE.
@@ -49,9 +54,13 @@ t.world(WARD, 0)
 local again = t.join()
 t.tick()
 local twice = assert(t.look(again))
-assert(twice.physique == look.physique and twice.skin_tone == look.skin_tone
-    and twice.hair == look.hair and twice.hair_color == look.hair_color,
-    "the same seed rolls the same crewman")
+assert(
+    twice.physique == look.physique
+        and twice.skin_tone == look.skin_tone
+        and twice.hair == look.hair
+        and twice.hair_color == look.hair_color,
+    "the same seed rolls the same crewman"
+)
 
 -- ...and a different one does not. Comparing the whole face rather
 -- than one field: any single roster can land on the same row twice.
@@ -59,9 +68,12 @@ t.world(WARD, 99)
 local other = t.join()
 t.tick()
 local elsewhere = assert(t.look(other))
-local same = elsewhere.physique == look.physique and elsewhere.skin_tone == look.skin_tone
-    and elsewhere.hair == look.hair and elsewhere.facial_hair == look.facial_hair
-    and elsewhere.hair_color == look.hair_color and elsewhere.eye_color == look.eye_color
+local same = elsewhere.physique == look.physique
+    and elsewhere.skin_tone == look.skin_tone
+    and elsewhere.hair == look.hair
+    and elsewhere.facial_hair == look.facial_hair
+    and elsewhere.hair_color == look.hair_color
+    and elsewhere.eye_color == look.eye_color
 assert(not same, "another seed rolls another crewman")
 
 -- ---------------------------------------------------------------
@@ -85,14 +97,21 @@ for index, layer in ipairs(seen.layers) do
     names[index] = layer.sprite
 end
 
-assert(names[1] == "body_chest_" .. mine.physique,
-    "the chest is the bottom layer, because the plan declares that slot first: " .. names[1])
+assert(
+    names[1] == "body_chest_" .. mine.physique,
+    "the chest is the bottom layer, because the plan declares that slot first: " .. names[1]
+)
 assert(names[2] == "body_head_" .. mine.physique, "then the head")
-assert(names[3] == "body_l_arm" and names[4] == "body_r_arm", "then the arms, which are not dimorphic")
+assert(
+    names[3] == "body_l_arm" and names[4] == "body_r_arm",
+    "then the arms, which are not dimorphic"
+)
 assert(names[5] == "body_l_leg" and names[6] == "body_r_leg", "then the legs")
 for index = 1, 6 do
-    assert(seen.layers[index].color == seen.layers[1].color,
-        "and every one of them takes the single skin tone")
+    assert(
+        seen.layers[index].color == seen.layers[1].color,
+        "and every one of them takes the single skin tone"
+    )
 end
 
 assert(names[7] == "eye_l" and names[8] == "eye_r", "the two eyes sit over the body")
@@ -124,10 +143,11 @@ assert(#names == next_layer + 2, "only visible body and worn layers: " .. table.
 t.rest(subject, true)
 t.run_ticks(2)
 assert(assert(t.body(subject)).posture == "lying", "the body went down")
-assert(t.seen(watcher, subject).posture == "lying",
-    "and the man standing next to him was told")
-assert(#t.seen(watcher, subject).layers == #names,
-    "without one layer changing: a crewman lying down is the same picture, turned")
+assert(t.seen(watcher, subject).posture == "lying", "and the man standing next to him was told")
+assert(
+    #t.seen(watcher, subject).layers == #names,
+    "without one layer changing: a crewman lying down is the same picture, turned"
+)
 
 t.rest(subject, false)
 t.run_ticks(2)

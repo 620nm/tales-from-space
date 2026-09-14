@@ -32,7 +32,7 @@ local function said(p, line)
 end
 
 local function rows(ui: unknown, field: string)
-    local out: {ui_controls.Record} = {}
+    local out: { ui_controls.Record } = {}
     for _, row in ipairs(ui_controls.rows(ui_controls.record(ui).toggles or {})) do
         if row.field == field then
             out[#out + 1] = row
@@ -128,7 +128,11 @@ local function join_all(p: number, x: number, y: number, id: string?)
         local px, py = t.pos(p)
         t.swap_hands(p)
         t.tick()
-        if booted[p] then laptop.take(p, px, py) else laptop.ready(p, px, py) end
+        if booted[p] then
+            laptop.take(p, px, py)
+        else
+            laptop.ready(p, px, py)
+        end
         booted[p] = true
         local ui = laptop.connect(p, x, y, id)
         assert(ui ~= nil and ui.contact_locked, "the box shows the laptop its lock screen")
@@ -209,14 +213,15 @@ local function two_roots(near)
     -- (../lunatic/docs/devices/joining.md), so it stands on the wall
     -- box's list like anything else in range.
     speaker_to_boxes()
-    assert(join_all(speaker, 6, 1, "access_point") == 2,
-        "the near box offers its tower and the panel feeding the island")
+    assert(
+        join_all(speaker, 6, 1, "access_point") == 2,
+        "the near box offers its tower and the panel feeding the island"
+    )
     speaker_to_mark()
     listener_to_box()
     -- The far box offers its tower alone: the island's panel is eight
     -- tiles off, outside a wall box's five.
-    assert(join_all(listener, 49, 1, "access_point") == 1,
-        "the far one offers its tower alone")
+    assert(join_all(listener, 49, 1, "access_point") == 1, "the far one offers its tower alone")
     listener_to_mark()
 end
 
@@ -229,8 +234,7 @@ local function bridge()
     -- A panel that carries a card is a hub in its own right
     -- (../lunatic/docs/devices/joining.md), and a root reaches
     -- station-wide, so distance hides neither of them from it.
-    assert(join_all(speaker, 9, 1) == 4,
-        "a root takes hubs, and there are four of them")
+    assert(join_all(speaker, 9, 1) == 4, "a root takes hubs, and there are four of them")
     walk(speaker, "west", 3)
     speaker_to_mark()
 end
@@ -243,8 +247,7 @@ end
 --    of "relay only through the network" (docs/luau-api/radio-relay.md).
 -- ---------------------------------------------------------------
 two_roots("transceiver.medical")
-assert(#say_and_read("far side, do you copy") == 0,
-    "two networks in one room stay two networks")
+assert(#say_and_read("far side, do you copy") == 0, "two networks in one room stay two networks")
 
 -- ---------------------------------------------------------------
 -- 2. ONE ROUTER, ONE NETWORK. Under a root the two islands are one
@@ -254,8 +257,10 @@ assert(#say_and_read("far side, do you copy") == 0,
 bridge()
 local before = #t.ledger_rows("radio_relayed")
 local heard = say_and_read("far side, do you copy")
-assert(heard[1] == "far side, do you copy",
-    "bridged, the far tower speaks for the near one: " .. table.concat(heard, " | "))
+assert(
+    heard[1] == "far side, do you copy",
+    "bridged, the far tower speaks for the near one: " .. table.concat(heard, " | ")
+)
 
 -- ---------------------------------------------------------------
 -- 3. WHAT THE SHIFT RECORD KEEPS. One row per CARRYING TREE, naming
@@ -267,12 +272,16 @@ assert(heard[1] == "far side, do you copy",
 local relayed = t.ledger_rows("radio_relayed")
 assert(#relayed - before == 1, "one tree carried, one row: " .. (#relayed - before))
 local last = relayed[#relayed]
-assert(last.channel == "Lifeline" and last.text == "far side, do you copy",
-    "the row holds the settled words: " .. tostring(last.channel) .. " / " .. tostring(last.text))
+assert(
+    last.channel == "Lifeline" and last.text == "far side, do you copy",
+    "the row holds the settled words: " .. tostring(last.channel) .. " / " .. tostring(last.text)
+)
 assert(last.sources == 2, "both keyed towers were mouths: " .. tostring(last.sources))
 assert(t.ledger_has("SaidRadio"), "what the human said is on the record first")
-assert(#t.ledger_rows("radio_intercepted") == 0,
-    "a silent refusal leaves no row: " .. #t.ledger_rows("radio_intercepted"))
+assert(
+    #t.ledger_rows("radio_intercepted") == 0,
+    "a silent refusal leaves no row: " .. #t.ledger_rows("radio_intercepted")
+)
 
 -- ---------------------------------------------------------------
 -- 4. A SUSPENDED TOWER CARRIES NOTHING. One snip on the far wall
@@ -305,16 +314,20 @@ t.run_ticks(2)
 local _ = t.messages(listener)
 t.click(listener, 45, 1, t.target_at(listener, 45, 1))
 t.tick()
-assert(said(listener, "The transceiver is on the air, carrying Lifeline."),
+assert(
+    said(listener, "The transceiver is on the air, carrying Lifeline."),
     "the far tower is lit and keyed and no longer relayed: "
-        .. table.concat(t.messages(listener), " | "))
+        .. table.concat(t.messages(listener), " | ")
+)
 t.ui_close(listener)
 t.tick()
 walk(listener, "east", 4)
 listener_to_mark()
 
-assert(#say_and_read("say again, the far end went quiet") == 0,
-    "a tower whose box went dark is off the air, cord or no cord")
+assert(
+    #say_and_read("say again, the far end went quiet") == 0,
+    "a tower whose box went dark is off the air, cord or no cord"
+)
 
 -- ---------------------------------------------------------------
 -- 5. A BLANK TOWER IS A DOOR. The near tower carries no channel at
@@ -323,8 +336,10 @@ assert(#say_and_read("say again, the far end went quiet") == 0,
 --    nothing and the far tree cannot hear him.
 -- ---------------------------------------------------------------
 two_roots("transceiver")
-assert(#say_and_read("anyone on the far island") == 0,
-    "a keyless tower on its own network is a dead end")
+assert(
+    #say_and_read("anyone on the far island") == 0,
+    "a keyless tower on its own network is a dead end"
+)
 
 -- ---------------------------------------------------------------
 -- 6. ...AND THE DOOR OPENS ON A NETWORK. Bridged, the blank tower
@@ -335,10 +350,13 @@ assert(#say_and_read("anyone on the far island") == 0,
 -- ---------------------------------------------------------------
 bridge()
 local through_blank = say_and_read("anyone on the far island")
-assert(through_blank[1] == "anyone on the far island",
-    "a blank tower is a way onto its network: " .. table.concat(through_blank, " | "))
+assert(
+    through_blank[1] == "anyone on the far island",
+    "a blank tower is a way onto its network: " .. table.concat(through_blank, " | ")
+)
 local blanked = t.ledger_rows("radio_relayed")
-assert(blanked[#blanked].sources == 1,
-    "and only the keyed tower is a mouth: " .. tostring(blanked[#blanked].sources))
-assert(#t.ledger_rows("radio_intercepted") == 0,
-    "still nothing worth writing down")
+assert(
+    blanked[#blanked].sources == 1,
+    "and only the keyed tower is a mouth: " .. tostring(blanked[#blanked].sources)
+)
+assert(#t.ledger_rows("radio_intercepted") == 0, "still nothing worth writing down")

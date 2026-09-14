@@ -40,7 +40,11 @@ local function said(who, needle)
     return (" " .. table.concat(t.messages(who), " || ") .. " "):find(needle, 1, true) ~= nil
 end
 local function has(list, id)
-    for _, v in ipairs(list) do if v == id then return true end end
+    for _, v in ipairs(list) do
+        if v == id then
+            return true
+        end
+    end
     return false
 end
 -- One panel row, by the slot LABEL on its left -- which is the only
@@ -49,14 +53,18 @@ end
 -- ask what the slot currently holds to find it.
 local function row(panel: ui_controls.Record, label: string): ui_controls.Record?
     for _, r in ipairs(ui_controls.rows(panel.labels or {})) do
-        if word(r.label) == label then return r end
+        if word(r.label) == label then
+            return r
+        end
     end
     return nil
 end
 
 local function row_labels(panel: ui_controls.Record): string
     local out = {}
-    for _, r in ipairs(ui_controls.rows(panel.labels or {})) do table.insert(out, word(r.label)) end
+    for _, r in ipairs(ui_controls.rows(panel.labels or {})) do
+        table.insert(out, word(r.label))
+    end
     return table.concat(out, ",")
 end
 
@@ -64,7 +72,8 @@ end
 assert(t.worn(cadaver).uniform ~= nil, "roundstart puts them in a jumpsuit")
 t.drag(crewman, CX, CY, t.body_target(crewman, cadaver), AX, AY, t.body_target(crewman, crewman))
 t.run_ticks(2)
-local panel = ui_controls.record(assert(t.ui(crewman), "dragging a body onto yourself opens its wearables"))
+local panel =
+    ui_controls.record(assert(t.ui(crewman), "dragging a body onto yourself opens its wearables"))
 assert(panel.presentation == "choices", "a slot grid is a list of choices")
 local order = row_labels(panel)
 local uniform = row(panel, "Uniform")
@@ -73,8 +82,10 @@ assert(word(uniform.text) == "grey jumpsuit", "and the button IS the garment")
 -- An empty slot the crewman is not holding anything for is a row that
 -- says so, and carries no button at all.
 local suit = row(panel, "Suit")
-assert(suit ~= nil and suit.row == "word" and word(suit.text) == "wearables.empty",
-    "the empty suit slot is still named, and says it is bare")
+assert(
+    suit ~= nil and suit.row == "word" and word(suit.text) == "wearables.empty",
+    "the empty suit slot is still named, and says it is bare"
+)
 
 -- ---- the strip: parked, then landed -----------------------------------
 ui_controls.toggle(crewman, "strip", "uniform")
@@ -119,14 +130,18 @@ assert(t.hands(crewman).held == "uniform_grey", "the jumpsuit is back in hand")
 t.drag(crewman, CX, CY, t.body_target(crewman, cadaver), AX, AY, t.body_target(crewman, crewman))
 t.run_ticks(2)
 local after = ui_controls.record(t.ui(crewman))
-assert(row_labels(after) == order,
-    "the rows did not move when the jumpsuit came off: " .. row_labels(after) .. " vs " .. order)
+assert(
+    row_labels(after) == order,
+    "the rows did not move when the jumpsuit came off: " .. row_labels(after) .. " vs " .. order
+)
 local refill = row(after, "Uniform")
 assert(refill ~= nil and refill.field == "dress", "the empty slot offers to be filled")
 local refill_text = ui_controls.record(refill.text)
 local refill_args = ui_controls.record(refill_text.args)
-assert(refill_text.id == "wearables.put_on" and refill_args.item == "grey jumpsuit",
-    "and a dress button can never be misread as a strip one: " .. tostring(word(refill.text)))
+assert(
+    refill_text.id == "wearables.put_on" and refill_args.item == "grey jumpsuit",
+    "and a dress button can never be misread as a strip one: " .. tostring(word(refill.text))
+)
 
 local dressed = #t.ledger_rows("Dressed")
 ui_controls.toggle(crewman, "dress", "uniform")
@@ -138,4 +153,6 @@ assert(t.hands(crewman).held == nil, "out of the hand that carried it")
 assert(#t.ledger_rows("Dressed") > dressed, "the record names who dressed whom")
 assert(said(cadaver, "puts"), "and the wearer is told it happened to them")
 
-print("strip: drag opens the wardrobe, the garment hits the deck, surgery follows; and dressing puts it back")
+print(
+    "strip: drag opens the wardrobe, the garment hits the deck, surgery follows; and dressing puts it back"
+)

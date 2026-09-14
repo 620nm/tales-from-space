@@ -106,9 +106,10 @@ assert(said(surgeon, "operating table"), "and the surgeon is told so")
 
 -- ...facing the way the table does, not the way they walked in. The
 -- assertion is on what the WIRE carried, which is what a viewer draws.
-assert(t.seen(surgeon, patient).facing == "east",
-    "the patient takes the table's own facing: "
-        .. t.seen(surgeon, patient).facing)
+assert(
+    t.seen(surgeon, patient).facing == "east",
+    "the patient takes the table's own facing: " .. t.seen(surgeon, patient).facing
+)
 
 -- ---- and that is what surgery wanted --------------------------------
 -- The standing patient was refused with not_lying; laid out here, the

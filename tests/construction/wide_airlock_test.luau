@@ -37,7 +37,8 @@ end
 --   y4  # .  .  .  .  .  .  .  . #
 --   y5  # .  .  .  .  .  .  .  . #
 -- ===============================================================
-t.world([==[(
+t.world(
+    [==[(
     name: "wide doorway",
     legend: {
         ' ': (turf: Space),
@@ -68,7 +69,9 @@ t.world([==[(
         (3, 2, 3), (7, 2, 3),
         (3, 3, 3), (7, 3, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 local p = t.join()
 t.run_ticks(4)
 
@@ -78,8 +81,10 @@ t.run_ticks(4)
 -- ---------------------------------------------------------------
 for _, at in ipairs({ { 3, 3 }, { 4, 3 } }) do
     local it = t.structure_at(at[1], at[2])
-    assert(it and it.id == "airlock_wide",
-        ("(%d, %d) is the wide leaf, got %s"):format(at[1], at[2], tostring(it and it.id)))
+    assert(
+        it and it.id == "airlock_wide",
+        ("(%d, %d) is the wide leaf, got %s"):format(at[1], at[2], tostring(it and it.id))
+    )
 end
 assert(t.structure_at(4, 4) == nil, "the tile south of it is bare floor")
 
@@ -91,13 +96,22 @@ assert(body and east and body ~= east, "the east tile is a cell with a wire id o
 
 local west_seen = t.seen(p, body)
 local east_seen = t.seen(p, east)
-assert(west_seen.layers[1].sprite == "door_wide_w",
-    "the west half wears the west picture, got " .. tostring(west_seen.layers[1].sprite))
-assert(east_seen.layers[1].sprite == "door_wide_e",
-    "and the east half the east one, got " .. tostring(east_seen.layers[1].sprite))
-assert(t.same_target(assert(east_seen.extent_of), body), "which belongs to the leaf standing west of it")
-assert(east_seen.kind == "door",
-    "and streams as a DOOR, so the client predicts it like one: " .. tostring(east_seen.kind))
+assert(
+    west_seen.layers[1].sprite == "door_wide_w",
+    "the west half wears the west picture, got " .. tostring(west_seen.layers[1].sprite)
+)
+assert(
+    east_seen.layers[1].sprite == "door_wide_e",
+    "and the east half the east one, got " .. tostring(east_seen.layers[1].sprite)
+)
+assert(
+    t.same_target(assert(east_seen.extent_of), body),
+    "which belongs to the leaf standing west of it"
+)
+assert(
+    east_seen.kind == "door",
+    "and streams as a DOOR, so the client predicts it like one: " .. tostring(east_seen.kind)
+)
 
 -- ---------------------------------------------------------------
 -- Both tiles are the same door, shut and live.
@@ -117,10 +131,11 @@ end
 -- same distance, and nothing to see.
 -- ---------------------------------------------------------------
 step(p, "north") -- (4, 4), square on the east half of the wide leaf
-assert(t.seen(p, t.target_at(p, 4, 1, "locker")).kind ~= "unseen",
-    "the locker beyond the shut glazed leaf is in sight")
-assert(t.target_at(p, 7, 1, "locker") == nil,
-    "and the one behind the shut solid leaf is not")
+assert(
+    t.seen(p, t.target_at(p, 4, 1, "locker")).kind ~= "unseen",
+    "the locker beyond the shut glazed leaf is in sight"
+)
+assert(t.target_at(p, 7, 1, "locker") == nil, "and the one behind the shut solid leaf is not")
 
 -- ---------------------------------------------------------------
 -- Bumping the EAST tile works the door -- the whole door.
@@ -160,7 +175,8 @@ assert(not assert(t.door_at(4, 3)).open, "both halves of it")
 --   y3  # .  .  S  .  L  #      S = the anchor, L = a locker
 --   y4  # g  .  #  .  .  #
 -- ===============================================================
-t.world([==[(
+t.world(
+    [==[(
     name: "upright doorway",
     legend: {
         ' ': (turf: Space),
@@ -186,14 +202,18 @@ t.world([==[(
         (1, 1, 3), (1, 2, 3), (1, 3, 3), (1, 4, 3),
         (2, 3, 3), (3, 3, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 local q = t.join()
 t.run_ticks(4)
 
 for _, at in ipairs({ { 3, 3 }, { 3, 2 } }) do
     local it = t.structure_at(at[1], at[2])
-    assert(it and it.id == "airlock_wide",
-        ("(%d, %d) is the upright leaf, got %s"):format(at[1], at[2], tostring(it and it.id)))
+    assert(
+        it and it.id == "airlock_wide",
+        ("(%d, %d) is the upright leaf, got %s"):format(at[1], at[2], tostring(it and it.id))
+    )
 end
 
 -- The turn moves the PICTURES too, and they are not the resting ones
@@ -202,24 +222,33 @@ end
 -- the entry says which cell wears which per facing.
 local anchor = t.target_at(q, 3, 3, "airlock_wide")
 local north = t.target_at(q, 3, 2, "airlock_wide")
-assert(t.seen(q, anchor).layers[1].sprite == "door_wide_s",
-    "the south half wears the south picture, got "
-        .. tostring(t.seen(q, anchor).layers[1].sprite))
-assert(t.seen(q, north).layers[1].sprite == "door_wide_n",
-    "and the north half the north one, got "
-        .. tostring(t.seen(q, north).layers[1].sprite))
-assert(t.same_target(assert(t.seen(q, north).extent_of), assert(anchor)), "one body, laid from its south tile")
+assert(
+    t.seen(q, anchor).layers[1].sprite == "door_wide_s",
+    "the south half wears the south picture, got " .. tostring(t.seen(q, anchor).layers[1].sprite)
+)
+assert(
+    t.seen(q, north).layers[1].sprite == "door_wide_n",
+    "and the north half the north one, got " .. tostring(t.seen(q, north).layers[1].sprite)
+)
+assert(
+    t.same_target(assert(t.seen(q, north).extent_of), assert(anchor)),
+    "one body, laid from its south tile"
+)
 
 for _, at in ipairs({ { 3, 3 }, { 3, 2 } }) do
     local d = assert(t.door_at(at[1], at[2]))
-    assert(d ~= nil and not d.open and d.powered,
-        ("(%d, %d) is the same shut, live door"):format(at[1], at[2]))
+    assert(
+        d ~= nil and not d.open and d.powered,
+        ("(%d, %d) is the same shut, live door"):format(at[1], at[2])
+    )
 end
 
 -- Glazed the same way round: the locker across the shut leaf is in
 -- sight from the corridor west of it.
-assert(t.seen(q, t.target_at(q, 5, 3, "locker")).kind ~= "unseen",
-    "the upright leaf sees through too")
+assert(
+    t.seen(q, t.target_at(q, 5, 3, "locker")).kind ~= "unseen",
+    "the upright leaf sees through too"
+)
 
 -- ...and bumping its NORTH half opens the whole thing.
 local qx, qy = step(q, "north")

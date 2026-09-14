@@ -21,7 +21,8 @@
 -- refuse the other two.
 local ui_controls = require("@helpers/ui_controls")
 
-t.world([==[(
+t.world(
+    [==[(
     name: "power windows",
     legend: {
         ' ': (turf: Space),
@@ -45,7 +46,9 @@ t.world([==[(
         (1, 2, 1), (2, 2, 1), (3, 2, 1), (4, 2, 1), (5, 2, 1), (6, 2, 1),
     ],
     labels: [(1, 2, "Engineering")],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -95,8 +98,10 @@ t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.tick()
 local apc = ui_controls.state(p)
 assert(apc, "clicking the panel opens its window")
-assert(apc.document == "modules" and apc.presentation == "modules",
-    "the shared module document, not a device-specific kind")
+assert(
+    apc.document == "modules" and apc.presentation == "modules",
+    "the shared module document, not a device-specific kind"
+)
 
 assert(word(readout(apc, "battery.stored").section) == "battery.battery", "the store is a module")
 assert(word(readout(apc, "battery.capacity").value) == "1.00 MJ", "tg's 1 MJ cell")
@@ -112,7 +117,10 @@ assert(#ui_controls.rows(apc.setpoints) == 0, "an APC has no dial: the ladder is
 -- ladder does not own -- so it IS a control, unlike the channels
 -- themselves, and it takes the room with it.
 assert(assert(toggle(apc, "breaker")).on, "the main breaker ships closed")
-assert(word(assert(toggle(apc, "breaker")).section) == "channels.channels", "beside the lamps it gates")
+assert(
+    word(assert(toggle(apc, "breaker")).section) == "channels.channels",
+    "beside the lamps it gates"
+)
 ui_controls.toggle(p, "breaker")
 t.run_seconds(3)
 assert(not assert(t.apc_at(1, 2)).operating, "the breaker opened")
@@ -168,8 +176,7 @@ t.click(p, 4, 1, t.target_at(p, 4, 1))
 t.tick()
 local smes = ui_controls.state(p)
 assert(smes, "clicking the bank opens its window")
-assert(smes.document == "modules" and smes.presentation == "modules",
-    "the same module document")
+assert(smes.document == "modules" and smes.presentation == "modules", "the same module document")
 assert(word(readout(smes, "battery.stored").section) == "battery.battery", "the same store module")
 assert(word(readout(smes, "battery.capacity").value) == "5.00 MJ", "five standard cells")
 assert(assert(toggle(smes, "input_breaker")).on, "both breakers closed out of the box")
@@ -185,10 +192,15 @@ t.tick()
 assert(setpoint(t.ui(p), "output_w").value == 0.0, "the throttle went to nothing")
 ui_controls.set(p, "output_w", 1e+30)
 t.tick()
-assert(setpoint(t.ui(p), "output_w").value == 200000.0,
-    "and a client cannot dial past the unit's rate")
+assert(
+    setpoint(t.ui(p), "output_w").value == 200000.0,
+    "and a client cannot dial past the unit's rate"
+)
 ui_controls.toggle(p, "output_breaker")
 t.tick()
 assert(not assert(toggle(t.ui(p), "output_breaker")).on, "the breaker opened")
-assert(word(readout(t.ui(p), "throttles.output").value) == "throttles.line.breaker_open", "and the lamp says so")
+assert(
+    word(readout(t.ui(p), "throttles.output").value) == "throttles.line.breaker_open",
+    "and the lamp says so"
+)
 assert(t.ledger_has("MachineSetpoint"), "re-dialling a throttle is on the record")

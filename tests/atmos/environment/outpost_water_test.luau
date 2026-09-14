@@ -59,10 +59,14 @@ end
 -- deck are two different things to step in -- and it leads with the
 -- volume, because a depth is what a crewman is deciding about.
 -- ---------------------------------------------------------------
-assert(look_at(DEEP) == "A puddle: 50.00 L · 2775.50 mol of liquid water.",
-    "the deep end reads as fifty litres: " .. look_at(DEEP))
-assert(look_at(SHALLOW) == "A puddle: 1.00 L · 55.51 mol of liquid water.",
-    "and the shallow end as one: " .. look_at(SHALLOW))
+assert(
+    look_at(DEEP) == "A puddle: 50.00 L · 2775.50 mol of liquid water.",
+    "the deep end reads as fifty litres: " .. look_at(DEEP)
+)
+assert(
+    look_at(SHALLOW) == "A puddle: 1.00 L · 55.51 mol of liquid water.",
+    "and the shallow end as one: " .. look_at(SHALLOW)
+)
 
 -- ---------------------------------------------------------------
 -- The dry tile beside it says nothing at all. The threshold is the
@@ -79,8 +83,10 @@ assert(look_at(DRY) == "", "a dry deck is a deck: " .. look_at(DRY))
 -- ---------------------------------------------------------------
 local deep_kpa = assert(t.room_pressure(DEEP[1], DEEP[2]))
 local dry_kpa = assert(t.room_pressure(DRY[1], DRY[2]))
-assert(deep_kpa > dry_kpa + 1.0,
-    ("the slug displaces the air over it: %.2f vs %.2f"):format(deep_kpa, dry_kpa))
+assert(
+    deep_kpa > dry_kpa + 1.0,
+    ("the slug displaces the air over it: %.2f vs %.2f"):format(deep_kpa, dry_kpa)
+)
 
 -- ---------------------------------------------------------------
 -- THE SILL IS WHAT HOLDS IT.
@@ -175,6 +181,8 @@ assert(standing(DRY) > FILM_L, ("and the dry tile is standing water: %.4f L"):fo
 -- is a decal with extra steps.
 assert(
     math.abs(t.matter_totals().substances.water - WATER_START) < 1e-6,
-    ("the flood made and lost nothing: %.6f vs %.6f mol")
-        :format(t.matter_totals().substances.water, WATER_START)
+    ("the flood made and lost nothing: %.6f vs %.6f mol"):format(
+        t.matter_totals().substances.water,
+        WATER_START
+    )
 )

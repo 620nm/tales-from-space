@@ -27,7 +27,8 @@ local function on_tile(x, y, id)
     return false
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "atmos annex",
     legend: {
         ' ': (turf: Space),
@@ -50,7 +51,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -60,8 +63,7 @@ t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 local ui = ui_controls.state(p)
 assert(ui, "clicking the dispenser opens its window")
-assert(ui.document == "modules" and ui.presentation == "shelf",
-    "the shared shelf document")
+assert(ui.document == "modules" and ui.presentation == "shelf", "the shared shelf document")
 
 -- tg's recipe categories, by tg's own names
 -- (code/_globalvars/lists/pipe_recipes.dm). All four are stocked now
@@ -97,8 +99,7 @@ ui_controls.vend(p, "pump_fitting")
 t.tick()
 assert(t.count_items("pump_fitting") == 1, "the named fitting dispensed")
 assert(on_tile(2, 1, "pump_fitting"), "onto the dispenser's tile, not the buyer's")
-assert(t.ledger_has("ItemSpawned", "pump_fitting", "Player"),
-    "a UI act is a direct player action")
+assert(t.ledger_has("ItemSpawned", "pump_fitting", "Player"), "a UI act is a direct player action")
 
 -- ---- and then it waits ----
 --
@@ -151,12 +152,16 @@ t.run_ticks(2)
 assert(t.hands(p).held == nil, "the dispenser swallowed what was in the working hand")
 assert(t.hands(p)[2] == "pump_fitting", "and left the other hand alone")
 assert(#t.items_at(2, 1) == 0, "nothing was refunded onto the deck")
-assert(said(p, "You put the manual valve fitting back into the dispenser."),
-    "and said so, in the fitting's own name")
+assert(
+    said(p, "You put the manual valve fitting back into the dispenser."),
+    "and said so, in the fitting's own name"
+)
 -- On the record, and the record names both halves: the machine's own
 -- file did it, at the request of the crewman standing there.
-assert(t.ledger_has("ItemConsumed", "manual_valve_fitting", "pipe_dispenser"),
-    "a thing that stopped existing is on the record")
+assert(
+    t.ledger_has("ItemConsumed", "manual_valve_fitting", "pipe_dispenser"),
+    "a thing that stopped existing is on the record"
+)
 local eaten = t.ledger_rows("item_consumed")
 assert(#eaten == 1, "one row, attributed to the machine")
 local actor = eaten[1].actor

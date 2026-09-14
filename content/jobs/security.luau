@@ -15,8 +15,14 @@ return {
         { slot = "uniform", item = "uniform_sec" },
         { slot = "id", item = "id_security" },
         { slot = "mask", item = "breath_mask" },
-        { slot = "back", item = "backpack", contents = {
-            "toolbox", "emergency_tank.oxygen", "headset",
-        } },
+        {
+            slot = "back",
+            item = "backpack",
+            contents = {
+                "toolbox",
+                "emergency_tank.oxygen",
+                "headset",
+            },
+        },
     },
 }

@@ -59,7 +59,6 @@ local function row(panel: ui_controls.Record, label: string): ui_controls.Record
     return nil
 end
 
-
 -- The contents block: what the vessel is HOLDING, by state, in the
 -- units each state is read in (docs/tgui/matter-block.md).
 local function block(panel: ui_controls.Record, section: string): ui_controls.Record?
@@ -125,7 +124,8 @@ end
 -- say (tg warns and carries on: `return_pressure() > max_pressure`,
 -- tank.dm:165) and which the gauge has to survive.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "filling floor",
     legend: {
         ' ': (turf: Space),
@@ -146,7 +146,9 @@ t.world([==[(
         (8, 1, "stationary_tank", "anchored", ("n2", 9200.0)),
         (10, 1, "stationary_tank", "anchored", ("co2", 60000.0)),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -205,8 +207,10 @@ near(
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 local half = ui_controls.state(p)
-assert(half and half.document == "modules" and half.presentation == "modules",
-    "the vessel opens its contents document")
+assert(
+    half and half.document == "modules" and half.presentation == "modules",
+    "the vessel opens its contents document"
+)
 
 -- The gauge is a PERCENTAGE of the sticker, not of anything else. Half
 -- the rating, on the nose: tg's own `starting_pressure_percent = 0.5`.
@@ -224,18 +228,36 @@ local half_gas = state(block(half, "holder.contents"), "gas")
 assert(half_gas, "a charged vessel holds a gas")
 local gas_row = named(half_gas, "oxygen")
 assert(gas_row, "a row for the substance that is in there, by its own name")
-near(ui_controls.number(gas_row.moles), assert(t.tank_gas(2, 1)).o2, 1e-6,
-    "carrying the moles the vessel holds")
+near(
+    ui_controls.number(gas_row.moles),
+    assert(t.tank_gas(2, 1)).o2,
+    1e-6,
+    "carrying the moles the vessel holds"
+)
 assert(named(half_gas, "nitrogen") == nil, "and no row for one that is not")
 
 near(ui_controls.number(half_gas.measure), 23000.0, 0.5, "the state's own reading is the pressure")
-near(ui_controls.number(assert(block(half, "holder.contents")).temperature_k), T20C, 1e-6,
-    "and the temperature it was filled at -- a pressure alone is not an amount of gas")
-near(ui_controls.number(assert(block(half, "holder.contents")).volume_l), 2500.0, 1e-9, "the size of the thing")
-assert(ui_controls.record(assert(row(half, "holder.rating")).value).text == "46000 kPa",
+near(
+    ui_controls.number(assert(block(half, "holder.contents")).temperature_k),
+    T20C,
+    1e-6,
+    "and the temperature it was filled at -- a pressure alone is not an amount of gas"
+)
+near(
+    ui_controls.number(assert(block(half, "holder.contents")).volume_l),
+    2500.0,
+    1e-9,
+    "the size of the thing"
+)
+assert(
+    ui_controls.record(assert(row(half, "holder.rating")).value).text == "46000 kPa",
     "and its sticker, which the block cannot say: "
-        .. tostring(word(assert(row(half, "holder.rating")).value)))
-assert(#ui_controls.rows(half.toggles) == 0 and #ui_controls.rows(half.setpoints) == 0, "no controls, because there are none")
+        .. tostring(word(assert(row(half, "holder.rating")).value))
+)
+assert(
+    #ui_controls.rows(half.toggles) == 0 and #ui_controls.rows(half.setpoints) == 0,
+    "no controls, because there are none"
+)
 
 -- ---------------------------------------------------------------
 -- Past the sticker. A map may author more than the vessel is rated for
@@ -251,12 +273,21 @@ end
 t.click(p, 10, 1, t.target_at(p, 10, 1))
 t.tick()
 local over = ui_controls.state(p)
-assert(over and over.document == "modules" and over.presentation == "modules",
-    "the over-filled vessel opens its document too")
+assert(
+    over and over.document == "modules" and over.presentation == "modules",
+    "the over-filled vessel opens its document too"
+)
 assert(assert(t.tank_pressure(10, 1)) > RATED_KPA * 1.3, "it is a third past its rating")
-near(ui_controls.number(over.gauge), 100.0, 1e-9, "and the gauge pins at full: " .. ui_controls.number(over.gauge))
-assert(assert(row(over, "holder.rating")).tone == "off",
-    "with the sticker flagged: " .. tostring(assert(row(over, "holder.rating")).tone))
+near(
+    ui_controls.number(over.gauge),
+    100.0,
+    1e-9,
+    "and the gauge pins at full: " .. ui_controls.number(over.gauge)
+)
+assert(
+    assert(row(over, "holder.rating")).tone == "off",
+    "with the sticker flagged: " .. tostring(assert(row(over, "holder.rating")).tone)
+)
 local over_block = block(over, "holder.contents")
 local co2_row = named_any(over_block, "carbon dioxide")
 assert(co2_row, "the row names the substance as a reader would say it, not by its key")
@@ -265,8 +296,7 @@ assert(named_any(over_block, "co2") == nil, "the key is not a label")
 -- Summed across the states: six hundred atmospheres is past carbon
 -- dioxide's own line, so some of the fill is lying in the bottom of it
 -- and the BOOK is what the fill authored.
-near(total_of(over_block, "co2"), filled_moles(60000.0), 1e-6,
-    "and it is the fill, weighed")
+near(total_of(over_block, "co2"), filled_moles(60000.0), 1e-6, "and it is the fill, weighed")
 
 -- ---------------------------------------------------------------
 -- Every shape a placement can take, in one world, because the shapes
@@ -275,7 +305,8 @@ near(total_of(over_block, "co2"), filled_moles(60000.0), 1e-6,
 -- either may be missing (`PlacedTail`, lunatic-core map.rs). A vessel
 -- filled but left in its opening state has to read as itself.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "four shapes",
     legend: {
         ' ': (turf: Space),
@@ -296,12 +327,14 @@ t.world([==[(
         (1, 3, "stationary_tank", ("n2", 5000.0)),
         (3, 3, "stationary_tank", "anchored", ("o2", 23000.0)),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local q = t.join()
 t.tick()
 
-local shapes: {{x: number, y: number, form: string, fill: {gas: string, kpa: number}?}} = {
+local shapes: { { x: number, y: number, form: string, fill: { gas: string, kpa: number }? } } = {
     { x = 1, y = 1, form = "(x, y, id)", fill = nil },
     { x = 3, y = 1, form = "(x, y, id, state)", fill = nil },
     { x = 1, y = 3, form = "(x, y, id, fill)", fill = { gas = "n2", kpa = 5000.0 } },
@@ -311,8 +344,10 @@ local shapes: {{x: number, y: number, form: string, fill: {gas: string, kpa: num
 for _, shape in ipairs(shapes) do
     local x, y, form, fill = shape.x, shape.y, shape.form, shape.fill
     local standing = t.structure_at(x, y)
-    assert(standing and standing.id == "stationary_tank",
-        form .. " stands a vessel up: " .. tostring(standing and standing.id))
+    assert(
+        standing and standing.id == "stationary_tank",
+        form .. " stands a vessel up: " .. tostring(standing and standing.id)
+    )
     -- A sealed vessel has exactly one assembly state, so every form
     -- lands in it -- named or not, the picture and the plumbing agree.
     assert(standing.state == "anchored", form .. " is anchored: " .. tostring(standing.state))
@@ -329,8 +364,10 @@ for _, shape in ipairs(shapes) do
             keys = keys + 1
         end
         assert(keys == 0, form .. " brings no gas of its own, and brought " .. keys)
-        assert(assert(t.tank_pressure(x, y)) == 0.0,
-            form .. " reads empty: " .. assert(t.tank_pressure(x, y)))
+        assert(
+            assert(t.tank_pressure(x, y)) == 0.0,
+            form .. " reads empty: " .. assert(t.tank_pressure(x, y))
+        )
     end
 end
 
@@ -341,20 +378,35 @@ end
 t.click(q, 3, 1, t.target_at(q, 3, 1))
 t.tick()
 local empty = ui_controls.state(q)
-assert(empty and empty.document == "modules" and empty.presentation == "modules",
-    "an empty vessel opens a document like any other")
-near(ui_controls.number(empty.gauge), 0.0, 1e-12, "the gauge is at rest: " .. ui_controls.number(empty.gauge))
+assert(
+    empty and empty.document == "modules" and empty.presentation == "modules",
+    "an empty vessel opens a document like any other"
+)
+near(
+    ui_controls.number(empty.gauge),
+    0.0,
+    1e-12,
+    "the gauge is at rest: " .. ui_controls.number(empty.gauge)
+)
 local nothing = block(empty, "holder.contents")
 assert(nothing, "an empty vessel still has a block")
-assert(nothing.states == nil or #ui_controls.rows(nothing.states) == 0,
-    "and it says empty ONCE, with no state at all, phantom or otherwise")
+assert(
+    nothing.states == nil or #ui_controls.rows(nothing.states) == 0,
+    "and it says empty ONCE, with no state at all, phantom or otherwise"
+)
 assert(state(nothing, "gas") == nil, "nothing to read")
 -- Nothing in it has no temperature, so the mixture answers with the
 -- floor the matter world clamps to (TCMB, invariant I2) rather than
 -- with a room-temperature fiction. An empty vessel is cold.
-near(ui_controls.number(nothing.temperature_k), 2.7, 0.05,
-    "and it reads the cosmic background rather than a comfortable lie")
+near(
+    ui_controls.number(nothing.temperature_k),
+    2.7,
+    0.05,
+    "and it reads the cosmic background rather than a comfortable lie"
+)
 near(ui_controls.number(nothing.volume_l), 2500.0, 1e-9, "while it is the size it always was")
 near(ui_controls.number(nothing.headspace_l), 2500.0, 1e-9, "all of it headspace")
-assert(ui_controls.record(assert(row(empty, "holder.rating")).value).text == "46000 kPa",
-    "and the sticker says what it always said")
+assert(
+    ui_controls.record(assert(row(empty, "holder.rating")).value).text == "46000 kPa",
+    "and the sticker says what it always said"
+)

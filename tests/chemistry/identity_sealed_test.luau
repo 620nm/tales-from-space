@@ -60,7 +60,8 @@ local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "the pressure bench",
     legend: {
         ' ': (turf: Space),
@@ -83,7 +84,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -128,8 +131,10 @@ t.run_ticks(2)
 
 -- A mole is 18 mL of the bottle's fifty, so there is headspace over it
 -- and the gauge below is reading a real one.
-assert(assert(t.vessel(jar)).headspace_l > 0.02, "and there is room over it: "
-    .. assert(t.vessel(jar)).headspace_l .. " L")
+assert(
+    assert(t.vessel(jar)).headspace_l > 0.02,
+    "and there is room over it: " .. assert(t.vessel(jar)).headspace_l .. " L"
+)
 
 -- ---------------------------------------------------------------
 -- TWO: ON THE ELEMENT, AND TWENTY SWEEPS OF THE GAUGE.
@@ -160,10 +165,14 @@ for sweep = 1, 20 do
     local now_steam = gas_in(jar, "water")
     -- A kilopascal in ten thousand is under the resolution of any
     -- gauge; a CHATTERING bottle fell by whole atmospheres a pass.
-    assert(now_kpa >= kpa - 1e-6,
-        "sweep " .. sweep .. ": the gauge went DOWN, " .. kpa .. " -> " .. now_kpa)
-    assert(now_steam >= steam - 1e-12,
-        "sweep " .. sweep .. ": the steam RAINED, " .. steam .. " -> " .. now_steam)
+    assert(
+        now_kpa >= kpa - 1e-6,
+        "sweep " .. sweep .. ": the gauge went DOWN, " .. kpa .. " -> " .. now_kpa
+    )
+    assert(
+        now_steam >= steam - 1e-12,
+        "sweep " .. sweep .. ": the steam RAINED, " .. steam .. " -> " .. now_steam
+    )
     if now_kpa > kpa then
         climbed = climbed + 1
     end
@@ -183,9 +192,15 @@ assert(gas_in(jar, "water") > 0.0, "with its own vapour over it")
 -- behind the bottle.
 local warmth = assert(t.holder_k(jar))
 local want = vapour_kpa(warmth)
-assert(math.abs(assert(t.holder_kpa(jar)) - want) < 0.02 * want,
-    "the gauge is water's own vapour pressure at " .. warmth .. " K: "
-        .. assert(t.holder_kpa(jar)) .. " vs " .. want)
+assert(
+    math.abs(assert(t.holder_kpa(jar)) - want) < 0.02 * want,
+    "the gauge is water's own vapour pressure at "
+        .. warmth
+        .. " K: "
+        .. assert(t.holder_kpa(jar))
+        .. " vs "
+        .. want
+)
 
 -- ---------------------------------------------------------------
 -- THREE: THE BOOKS.

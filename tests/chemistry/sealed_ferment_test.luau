@@ -89,10 +89,7 @@ local STEPS = 10 -- watched steps, with sugar to spare
 
 local function near(got: number?, want: number, slack: number, what: string)
     assert(got ~= nil, what .. ": nothing was answered")
-    assert(
-        math.abs(got - want) < slack,
-        ("%s: wanted %g, got %g"):format(what, want, got)
-    )
+    assert(math.abs(got - want) < slack, ("%s: wanted %g, got %g"):format(what, want, got))
 end
 
 local function says(look: SpecExamine?, needle: string)
@@ -105,7 +102,8 @@ local function says(look: SpecExamine?, needle: string)
     return false
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "ferment bench",
     legend: {
         ' ': (turf: Space),
@@ -128,7 +126,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -215,10 +215,7 @@ near(started.temp_k, 300.0, 0.5, "at the nozzle's temperature, on the bell's pla
 near(started.volume_l, 0.05, 1e-9, "fifty millilitres of glass")
 near(started.headspace_l, 0.05 - 0.004053 - 0.005382, 1e-4, "and 40.6 mL of room over it")
 near(started.pressure_kpa, 0, 1e-9, "nothing pressing on the cork yet")
-assert(
-    not says(t.examine(p, 3, 1, bottle), "strains"),
-    "and nothing to say about a lid"
-)
+assert(not says(t.examine(p, 3, 1, bottle), "strains"), "and nothing to say about a lid")
 
 -- Ten steps of two seconds, watched one at a time: the gas is made
 -- inside the glass and has nowhere to go.
@@ -231,10 +228,7 @@ for step = 1, STEPS do
     if step == 1 then
         near(co2, FIRST_CO2, 1e-6, "the first step is base_rate times 2.650 M")
     end
-    assert(
-        co2 > last_co2,
-        ("the CO2 grows every step: %g then %g"):format(last_co2, co2)
-    )
+    assert(co2 > last_co2, ("the CO2 grows every step: %g then %g"):format(last_co2, co2))
     -- THE decay: every step makes less than the one before it, because
     -- the sugar it reads is thinner. Under the old law that read a bare
     -- mole count these ten helpings were identical.
@@ -336,10 +330,7 @@ near(
 local kept = co2_in(bottle)
 assert(kept < 2 * SUGAR, "still short of what its sugar could make: " .. kept)
 assert(kept > TEN_STEPS_CO2, "and it never stopped while the beaker ran: " .. kept)
-assert(
-    co2_in(bottle) > room_co2(),
-    "and it is still holding more than the room ever gathered"
-)
+assert(co2_in(bottle) > room_co2(), "and it is still holding more than the room ever gathered")
 assert(
     says(t.examine(p, 3, 1, bottle), "It strains against its lid."),
     "still straining, with the room around it at a comfortable pressure"

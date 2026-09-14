@@ -17,7 +17,8 @@
 -- always zero, and two things do not share one -- and pinning an exact
 -- jitter would break on any change to how many numbers the engine
 -- draws, which is a thing that has already happened once (dice_test).
-t.world([==[(
+t.world(
+    [==[(
     name: "workshop",
     legend: {
         ' ': (turf: Space),
@@ -33,7 +34,9 @@ t.world([==[(
     ],
     structures: [(1, 2, "player_spawn")],
     items: [(1, 2, "crowbar"), (4, 2, "d6"), (5, 2, "d20")],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -42,10 +45,12 @@ t.tick()
 -- Nothing has touched these; they are jittered because the PROTOTYPE
 -- asks to be, the moment it exists.
 local SPREAD = 3
-local function within(off: {x: number, y: number}?, spread: number, what: string)
+local function within(off: { x: number, y: number }?, spread: number, what: string)
     assert(off ~= nil, what .. " has an offset at all")
-    assert(math.abs(off.x) <= spread and math.abs(off.y) <= spread,
-        what .. " is inside its declared spread: " .. off.x .. "," .. off.y)
+    assert(
+        math.abs(off.x) <= spread and math.abs(off.y) <= spread,
+        what .. " is inside its declared spread: " .. off.x .. "," .. off.y
+    )
 end
 
 t.click(p, 1, 2, t.target_at(p, 1, 2, "crowbar"))
@@ -75,8 +80,7 @@ for x = 1, 4 do
     end
     seen[#seen + 1] = tile.offset.x .. "," .. tile.offset.y
 end
-assert(crooked > 0,
-    "a pried-up tile lands crooked rather than square: " .. table.concat(seen, " "))
+assert(crooked > 0, "a pried-up tile lands crooked rather than square: " .. table.concat(seen, " "))
 
 -- ...and they are not all crooked the SAME way, which is what tells a
 -- per-instance jitter from a constant baked into the prototype.
@@ -138,8 +142,10 @@ within(landed.offset, 8, "a thrown die")
 -- The whole mechanism is cosmetic. A crooked thing is still ON its
 -- tile: it is picked up by clicking that tile, and every server-side
 -- answer is computed from the tile rather than from the picture.
-assert(landed.offset.x ~= 0 or landed.offset.y ~= 0,
-    "the thrown die really is off centre: " .. landed.offset.x .. "," .. landed.offset.y)
+assert(
+    landed.offset.x ~= 0 or landed.offset.y ~= 0,
+    "the thrown die really is off centre: " .. landed.offset.x .. "," .. landed.offset.y
+)
 t.move(p, "east")
 t.run_ticks(5)
 t.move(p, "east")

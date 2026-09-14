@@ -67,7 +67,8 @@ local function worth(row: ui_controls.Record): (number, number)
     local value = ui_controls.record(row.value)
     assert(value.id == "parts.tier", "the row reads as a rung and a worth: " .. word(value))
     local args = ui_controls.record(value.args)
-    return assert(tonumber(ui_controls.text(args.tier))), assert(tonumber(ui_controls.text(args.efficiency)))
+    return assert(tonumber(ui_controls.text(args.tier))),
+        assert(tonumber(ui_controls.text(args.efficiency)))
 end
 
 -- Every "element" a chamber's script has written since the shift began,
@@ -77,7 +78,10 @@ end
 local function elements(machine: SpecObservedTarget)
     local out = {}
     for _, row in ipairs(t.ledger_rows("VarSet")) do
-        if row.key == "lunatic/tfs:element" and t.same_target(ui_controls.number(row.entity), machine) then
+        if
+            row.key == "lunatic/tfs:element"
+            and t.same_target(ui_controls.number(row.entity), machine)
+        then
             table.insert(out, word(row.value))
         end
     end
@@ -87,15 +91,18 @@ end
 -- Ledger strings are intentionally hashed by the bounded diagnostic
 -- projection (script/value_summary.rs); compare the two typed values by
 -- their stable summaries rather than expecting the private text back.
-local EXPOSED = "<string 7 bytes sha256=91562eb1c6671d2be439d3dbd30696fa54986432b4866e60dcdaaec90999d177>"
-local SHIELDED = "<string 8 bytes sha256=55f7054b32f91745b67dfff303b0412fa038441e728999ee76b9c448301f2ca7>"
+local EXPOSED =
+    "<string 7 bytes sha256=91562eb1c6671d2be439d3dbd30696fa54986432b4866e60dcdaaec90999d177>"
+local SHIELDED =
+    "<string 8 bytes sha256=55f7054b32f91745b67dfff303b0412fa038441e728999ee76b9c448301f2ca7>"
 
 -- Two sealed benches and a generator in its own closet -- the closet
 -- because a running generator is a heat source and the west bench is
 -- meant to be at exactly twenty degrees. Cable runs under the dividing
 -- walls; a CORD does not (a cord's reach is a walk, power_pass.rs), so
 -- each bench has an outlet of its own.
-t.world([==[(
+t.world(
+    [==[(
     name: "two benches",
     legend: {
         ' ': (turf: Space),
@@ -139,7 +146,9 @@ t.world([==[(
         (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3), (12, 2, 3),
         (13, 2, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local west = t.join("assistant")
 local east = t.join("engineer")
@@ -159,12 +168,12 @@ local upgraded_hot = assert(t.target_at(east, 10, 1))
 -- a mapped chamber is worth is part of the opening position rather
 -- than something the first tick discovers.
 -- ---------------------------------------------------------------
-assert(elements(plain_cold)[1] == EXPOSED,
-    "the plain chamber's element is out in the room")
-assert(elements(upgraded_cold)[1] == SHIELDED,
-    "and a rung three laser brings its own housing")
-assert(#elements(plain_hot) == 1 and #elements(upgraded_hot) == 1,
-    "each of the four was asked exactly once, at boot")
+assert(elements(plain_cold)[1] == EXPOSED, "the plain chamber's element is out in the room")
+assert(elements(upgraded_cold)[1] == SHIELDED, "and a rung three laser brings its own housing")
+assert(
+    #elements(plain_hot) == 1 and #elements(upgraded_hot) == 1,
+    "each of the four was asked exactly once, at boot"
+)
 
 -- ---------------------------------------------------------------
 -- TWO: AT TWENTY DEGREES THE MODIFIER IS NOTHING AT ALL.
@@ -179,15 +188,19 @@ assert(math.abs(cold_k - T20C) < 0.5, "the west bench is at twenty degrees: " ..
 local row = socket(west, 2, 1)
 assert(word(row.label) == "micro-laser", "the plain part, by its own name: " .. word(row.label))
 local tier, eff = worth(row)
-assert(tier == 1 and math.abs(eff - 1.0) < 1e-9,
-    "worth exactly what its file says: " .. word(row.value))
+assert(
+    tier == 1 and math.abs(eff - 1.0) < 1e-9,
+    "worth exactly what its file says: " .. word(row.value)
+)
 assert(row.tone == "idle", "a neutral part reads neutral: " .. tostring(row.tone))
 
 row = socket(west, 4, 1)
 assert(word(row.label) == "ultra-high-power micro-laser", "the better part: " .. word(row.label))
 tier, eff = worth(row)
-assert(tier == 3 and math.abs(eff - 2.0) < 1e-9,
-    "and the ladder's own 2.00 (lib/stock_parts.luau): " .. word(row.value))
+assert(
+    tier == 3 and math.abs(eff - 2.0) < 1e-9,
+    "and the ladder's own 2.00 (lib/stock_parts.luau): " .. word(row.value)
+)
 
 -- ---------------------------------------------------------------
 -- THREE: IN A HOT ROOM THE PLAIN CHAMBER IS WORSE, BY THE ROOM.
@@ -209,9 +222,10 @@ assert(row.tone == "off", "which the panel says in its own three tones")
 -- heat since the first pass and the panel is a rounded printout: a
 -- hundredth of efficiency is five kelvin of room, far more than the
 -- couple of passes between the thermometer and the click.
-assert(math.abs(eff - expected_factor(hot_k)) < 0.01,
-    "and worth exactly the room's distance from ideal: "
-        .. eff .. " vs " .. expected_factor(hot_k))
+assert(
+    math.abs(eff - expected_factor(hot_k)) < 0.01,
+    "and worth exactly the room's distance from ideal: " .. eff .. " vs " .. expected_factor(hot_k)
+)
 
 -- ---------------------------------------------------------------
 -- FOUR: ...AND THE UPGRADED ONE IS NOT.
@@ -222,8 +236,10 @@ assert(math.abs(eff - expected_factor(hot_k)) < 0.01,
 -- ---------------------------------------------------------------
 row = socket(east, 10, 1)
 tier, eff = worth(row)
-assert(tier == 3 and math.abs(eff - 2.0) < 1e-9,
-    "a shielded chamber does not care what the corridor is doing: " .. word(row.value))
+assert(
+    tier == 3 and math.abs(eff - 2.0) < 1e-9,
+    "a shielded chamber does not care what the corridor is doing: " .. word(row.value)
+)
 
 -- ---------------------------------------------------------------
 -- FIVE: ASKING AGAIN IS ASKING ONCE.
@@ -266,18 +282,20 @@ t.click(west, 2, 1, t.target_at(west, 2, 1))
 t.run_ticks(2)
 
 assert(#t.ledger_rows("part_swapped") == swaps_before, "an empty bag fits nothing")
-assert(table.concat(t.messages(west), " | "):find("any better", 1, true) ~= nil,
-    "and says so")
-assert(chamber_spoke() == spoke_before + 1,
-    "but the chamber was asked again all the same: "
-        .. spoke_before .. " -> " .. chamber_spoke())
+assert(table.concat(t.messages(west), " | "):find("any better", 1, true) ~= nil, "and says so")
+assert(
+    chamber_spoke() == spoke_before + 1,
+    "but the chamber was asked again all the same: " .. spoke_before .. " -> " .. chamber_spoke()
+)
 
 -- ...and answered what it answered before, which the record shows by
 -- keeping no second row: an unchanged var is not a mutation, so the
 -- one bounded "exposed" value written at boot is still the only one.
 local asked = elements(plain_cold)
-assert(#asked == 1 and asked[1] == EXPOSED,
-    "the answer did not move, so neither did the record: " .. #asked)
+assert(
+    #asked == 1 and asked[1] == EXPOSED,
+    "the answer did not move, so neither did the record: " .. #asked
+)
 
 -- The exchanger goes down first: a click with something in your hand
 -- is that thing being used, and the panel is what a BARE hand opens.
@@ -285,5 +303,7 @@ t.drop(west)
 t.run_ticks(2)
 row = socket(west, 2, 1)
 tier, eff = worth(row)
-assert(tier == 1 and math.abs(eff - 1.0) < 1e-9,
-    "and the panel reads exactly what it read the first time: " .. word(row.value))
+assert(
+    tier == 1 and math.abs(eff - 1.0) < 1e-9,
+    "and the panel reads exactly what it read the first time: " .. word(row.value)
+)

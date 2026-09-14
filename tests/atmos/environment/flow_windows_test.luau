@@ -61,7 +61,8 @@ local PORT_M3 = 0.200
 -- tg: `interact()` on a valve starts the wheel turning (valve.dm:63),
 -- `interact()` on a machine with an interface opens it (pump.dm:68).
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "two valves",
     legend: {
         ' ': (turf: Space),
@@ -89,7 +90,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3), (11, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -139,11 +142,19 @@ t.click(p, 9, 2, t.target_at(p, 9, 2, "digital_valve"))
 t.tick()
 local panel = ui_controls.record(assert(t.ui(p)))
 assert(panel, "a digital valve answers an empty hand with a panel")
-assert(panel.document == "modules" and panel.presentation == "modules",
-    "the document the whole roster shares")
-assert(ui_controls.word(ui_controls.rows(panel.toggles)[1].on_text) == "open", ui_controls.word(ui_controls.rows(panel.toggles)[1].on_text))
+assert(
+    panel.document == "modules" and panel.presentation == "modules",
+    "the document the whole roster shares"
+)
+assert(
+    ui_controls.word(ui_controls.rows(panel.toggles)[1].on_text) == "open",
+    ui_controls.word(ui_controls.rows(panel.toggles)[1].on_text)
+)
 assert(ui_controls.word(ui_controls.rows(panel.toggles)[1].off_text) == "shut")
-assert(ui_controls.word(ui_controls.rows(panel.toggles)[1].label) == "flow.switch.valve", "and it is a valve, not a pump")
+assert(
+    ui_controls.word(ui_controls.rows(panel.toggles)[1].label) == "flow.switch.valve",
+    "and it is a valve, not a pump"
+)
 
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
@@ -156,7 +167,12 @@ assert(
 -- It is still a VALVE: open, it does not pump, it fuses. The two mains
 -- become one body of gas and settle where their volumes say.
 t.run_seconds(2)
-near(assert(t.pipe_pressure(7, 2)), assert(t.pipe_pressure(11, 2)), 0.5, "both ends of one net read alike")
+near(
+    assert(t.pipe_pressure(7, 2)),
+    assert(t.pipe_pressure(11, 2)),
+    0.5,
+    "both ends of one net read alike"
+)
 near(assert(t.pipe_pressure(7, 2)), level, 2.0, "and read what the volumes say they should")
 
 -- ---------------------------------------------------------------
@@ -171,7 +187,8 @@ near(assert(t.pipe_pressure(7, 2)), level, 2.0, "and read what the volumes say t
 -- mid-job and the pump picking the line back up when the power returns,
 -- is sim/tests/flow.rs -- it needs a wired grid to shed.)
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "dead branch",
     legend: {
         ' ': (turf: Space),
@@ -186,7 +203,9 @@ t.world([==[(
     ],
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4)],
     structures: [(4, 2, "player_spawn"), (3, 1, "pump")],
-)]==], 7)
+)]==],
+    7
+)
 
 local d = t.join()
 t.tick()
@@ -200,7 +219,10 @@ for _, r in ipairs(ui_controls.rows(ui_controls.state(d).readouts)) do
         supply = word(r.value)
     end
 end
-assert(supply == "flow.supply.dead", "the panel says the mains are not behind it: " .. tostring(supply))
+assert(
+    supply == "flow.supply.dead",
+    "the panel says the mains are not behind it: " .. tostring(supply)
+)
 
 -- Wind the setpoint up so a working pump would have plenty to do, and
 -- throw the switch.
@@ -234,7 +256,8 @@ near(assert(t.pipe_pressure(1, 1)), dead_in, 0.5, "out of either end")
 -- comes up as a fitting, the run it was interrupting becomes whole
 -- again, and bolting the fitting back down parts the run once more.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "unbolting",
     legend: {
         ' ': (turf: Space),
@@ -258,7 +281,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local w = t.join()
 t.tick()
@@ -278,10 +303,7 @@ assert(t.hands(w).held == "wrench", "wrench in hand")
 local _ = t.messages(w)
 t.click(w, 3, 1, t.target_at(w, 3, 1, "pump"))
 t.run_seconds(2.5)
-assert(
-    said(w, "The pump must be off first."),
-    "the refusal names the state the job wants"
-)
+assert(said(w, "The pump must be off first."), "the refusal names the state the job wants")
 assert(assert(t.structure_at(3, 1)).id == "pump", "and the pump is still bolted down")
 
 -- The panel is still open and still in reach, so the switch is right
@@ -339,7 +361,4 @@ assert(t.structure_at(3, 1) ~= nil, "the machine is standing again")
 assert(assert(t.structure_at(3, 1)).id == "pump", "and it is the same machine")
 assert(assert(t.structure_at(3, 1)).state == "off", "a machine you just bolted down is off")
 t.run_seconds(1)
-assert(
-    t.pipe_pressure(3, 1) == nil,
-    "and the run is parted again: the tile belongs to the machine"
-)
+assert(t.pipe_pressure(3, 1) == nil, "and the run is parted again: the tile belongs to the machine")

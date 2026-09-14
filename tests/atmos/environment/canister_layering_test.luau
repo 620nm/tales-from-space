@@ -47,7 +47,9 @@ t.click_turf(p, 3, 1)
 t.run_seconds(1)
 assert(t.turf(3, 1) == "floor", "the transparent click reached the deck")
 local standing = t.structure_at(3, 1)
-assert(standing and standing.id == "canister" and standing.state == "anchored",
-    "the vessel remains fastened above the new floor")
+assert(
+    standing and standing.id == "canister" and standing.state == "anchored",
+    "the vessel remains fastened above the new floor"
+)
 assert(t.pipe(3, 1) == 0, "tiling invented no raw pipe under the socket")
 assert(t.pipe_pressure(2, 1) ~= nil, "the neighbouring run remains connected")

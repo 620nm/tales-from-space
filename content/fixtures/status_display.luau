@@ -14,11 +14,8 @@ if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:display_line1", { replicate = "sight" })
     sim.define("script_var", "lunatic/tfs:display_line2", { replicate = "sight" })
 
-    local behavior = sim.define(
-        "behavior",
-        "lunatic/tfs:" .. content.id,
-        { prototype = content.id }
-    )
+    local behavior =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
     local function display_text(value: string?): string?
         if value == nil or string.match(value, "%S") == nil then
@@ -26,9 +23,7 @@ if sim ~= nil then
         end
         for index = 1, #value do
             local byte = string.byte(value, index)
-            if byte < 32 or byte > 126
-                or byte == 47 or byte == 60 or byte == 62 or byte == 92
-            then
+            if byte < 32 or byte > 126 or byte == 47 or byte == 60 or byte == 62 or byte == 92 then
                 return nil
             end
         end

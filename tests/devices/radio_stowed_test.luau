@@ -27,7 +27,8 @@ end
 -- the tray tile, and two more listeners staked out on the corridor.
 -- Distances from the speaker at (1,1): near (8,1) = 7, f = 0.7,
 -- whole; far (12,1) = 11, outside LOCAL_RADIUS -- no tower here.
-t.world([==[(
+t.world(
+    [==[(
     name: "stowed listener",
     legend: {
         ' ': (turf: Space),
@@ -57,7 +58,9 @@ t.world([==[(
         (2, 1, "cadaver_chamber", { "dir": "east" }),
     ],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
-)]==], 0)
+)]==],
+    0
+)
 
 local speaker = t.join("assistant")
 local patient = t.join("engineer")
@@ -107,9 +110,9 @@ local _ = t.messages(l_far)
 t.say(speaker, ";sound off if you can hear me")
 t.run_ticks(2)
 assert(said(speaker, "sound off if you can hear me"), "the speaker hears themself")
-assert(said(l_near, "sound off if you can hear me"),
-    "the aisle listener reads the line whole")
-assert(#t.messages(l_far) == 0,
-    "the far listener is past the circle -- the policy still ran")
-assert(#t.messages(patient) == 0,
-    "a carrier with no tile is not heard, and costs nobody else anything")
+assert(said(l_near, "sound off if you can hear me"), "the aisle listener reads the line whole")
+assert(#t.messages(l_far) == 0, "the far listener is past the circle -- the policy still ran")
+assert(
+    #t.messages(patient) == 0,
+    "a carrier with no tile is not heard, and costs nobody else anything"
+)

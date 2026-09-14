@@ -53,7 +53,8 @@ end
 
 -- Five lengths west, one east, a wheel between them, and an engineer
 -- standing under it with their hands empty.
-t.world([==[(
+t.world(
+    [==[(
     name: "lopsided runs",
     legend: {
         '.': (turf: Plating),
@@ -67,7 +68,9 @@ t.world([==[(
     ],
     pipes: [(1, 1, 4), (2, 1, 4), (3, 1, 4), (4, 1, 4), (5, 1, 4), (7, 1, 4)],
     structures: [(6, 2, "player_spawn"), (6, 1, "manual_valve")],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -130,7 +133,12 @@ local west_energy_0 = assert(t.pipe_energy(1, 1))
 t.run_seconds(30)
 near(assert(t.pipe_temperature(7, 1)), hot_k, 0.5, "the hot run stayed hot behind the wheel")
 near(assert(t.pipe_temperature(1, 1)), cold_k, 0.5, "and the cold run stayed cold")
-near(assert(t.pipe_energy(1, 1)) + assert(t.pipe_energy(7, 1)), energy_0, 1.0, "with the books untouched")
+near(
+    assert(t.pipe_energy(1, 1)) + assert(t.pipe_energy(7, 1)),
+    energy_0,
+    1.0,
+    "with the books untouched"
+)
 
 -- ---------------------------------------------------------------
 -- OPEN, IT IS ONE NET, AND ITS TEMPERATURE IS THE JOULES DIVIDED OUT.
@@ -151,7 +159,9 @@ t.run_seconds(2)
 assert(
     assert(t.pipe_energy(1, 1)) == assert(t.pipe_energy(7, 1)),
     "both ends report one net's joules, to the bit: "
-        .. assert(t.pipe_energy(1, 1)) .. " vs " .. assert(t.pipe_energy(7, 1))
+        .. assert(t.pipe_energy(1, 1))
+        .. " vs "
+        .. assert(t.pipe_energy(7, 1))
 )
 local fused_energy = assert(t.pipe_energy(1, 1))
 local fused_moles = moles_in(1, 1)
@@ -163,24 +173,14 @@ near(
     energy_0 * 1e-6,
     "NOT A JOULE WAS MINTED: " .. energy_0 .. " J -> " .. fused_energy .. " J"
 )
-near(
-    fused_moles,
-    moles_0,
-    moles_0 * 1e-9,
-    "and not a mole: " .. moles_0 .. " -> " .. fused_moles
-)
+near(fused_moles, moles_0, moles_0 * 1e-9, "and not a mole: " .. moles_0 .. " -> " .. fused_moles)
 near(assert(t.pipe_temperature(7, 1)), fused_k, 1e-9, "one net, one temperature, both ends")
 
 -- The temperature is not a separate fact. It is what those joules,
 -- spread through those moles, come to -- which is the same number as
 -- the MOLE-weighted mean of the two runs, and is emphatically not the
 -- average of the two temperatures.
-near(
-    fused_k,
-    fused_energy / (fused_moles * cv),
-    1e-6,
-    "the blend is the energy book divided out"
-)
+near(fused_k, fused_energy / (fused_moles * cv), 1e-6, "the blend is the energy book divided out")
 near(
     fused_k,
     (west_n_0 * cold_k + east_n_0 * hot_k) / moles_0,
@@ -192,7 +192,9 @@ assert(
     math.abs(fused_k - (cold_k + hot_k) / 2.0) > 100.0,
     "NOT the average of the two temperatures, which on lopsided runs is "
         .. "a different answer by a hundred kelvin and more: "
-        .. (cold_k + hot_k) / 2.0 .. " vs " .. fused_k
+        .. (cold_k + hot_k) / 2.0
+        .. " vs "
+        .. fused_k
 )
 
 -- ---------------------------------------------------------------
@@ -233,12 +235,18 @@ near(
 assert(
     assert(t.pipe_energy(7, 1)) < east_energy_0 * 0.6,
     "the short run gave up most of its heat for good: "
-        .. east_energy_0 .. " J -> " .. assert(t.pipe_energy(7, 1)) .. " J"
+        .. east_energy_0
+        .. " J -> "
+        .. assert(t.pipe_energy(7, 1))
+        .. " J"
 )
 assert(
     assert(t.pipe_temperature(7, 1)) < hot_k - 400.0,
-    "and it is nowhere near as hot as it was: " .. hot_k .. " K -> "
-        .. assert(t.pipe_temperature(7, 1)) .. " K"
+    "and it is nowhere near as hot as it was: "
+        .. hot_k
+        .. " K -> "
+        .. assert(t.pipe_temperature(7, 1))
+        .. " K"
 )
 near(
     assert(t.pipe_energy(1, 1)) - west_energy_0,

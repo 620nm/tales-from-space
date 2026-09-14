@@ -19,7 +19,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- SEED-PINNED so the die's face is a fact rather than a range; the
 -- assertion below matches whichever line that face earns, because a
 -- bad roll is its own sentence and not a clause glued onto this one.
-t.world([==[(
+t.world(
+    [==[(
     name: "phrasebook",
     legend: {
         ' ': (turf: Space),
@@ -42,7 +43,9 @@ t.world([==[(
         "######",
     ],
     items: [(1, 1, "d6")],
-)]==], 2)
+)]==],
+    2
+)
 
 local p = t.join()
 t.tick()
@@ -81,14 +84,18 @@ local _ = t.messages(p)
 t.use_self(p)
 t.run_ticks(2)
 local rolled = heard(p, "You roll the d6. It lands on ")
-assert(rolled ~= nil,
-    "the roller is told what it landed on: " .. table.concat(t.messages(p), " | "))
+assert(
+    rolled ~= nil,
+    "the roller is told what it landed on: " .. table.concat(t.messages(p), " | ")
+)
 -- The face is an ARGUMENT, so the number is in the sentence rather than
 -- the sentence being built around it.
 local face = rolled:match("It lands on (%d+)%.")
 local face_number = if face then tonumber(face) else nil
-assert(face_number ~= nil and face_number >= 1 and face_number <= 6,
-    "with the face substituted into it: " .. rolled)
+assert(
+    face_number ~= nil and face_number >= 1 and face_number <= 6,
+    "with the face substituted into it: " .. rolled
+)
 t.drop(p)
 t.run_ticks(2)
 
@@ -104,24 +111,37 @@ assert(ui ~= nil and ui.document == "modules", "the canister opens its window")
 
 local port = readout(ui, "canister.port")
 assert(port ~= nil, "the panel says whether it is plumbed in")
-assert(ui_controls.record(port.label).id == "canister.port",
-    "and it says so as an id, not as a word: " .. tostring(word(port.label)))
-assert(ui_controls.record(port.value).id == "canister.port.loose",
-    "a bottle standing on the deck is loose: " .. tostring(word(port.value)))
+assert(
+    ui_controls.record(port.label).id == "canister.port",
+    "and it says so as an id, not as a word: " .. tostring(word(port.label))
+)
+assert(
+    ui_controls.record(port.value).id == "canister.port.loose",
+    "a bottle standing on the deck is loose: " .. tostring(word(port.value))
+)
 
 local valve = ui_controls.rows(ui.toggles or {})[1]
-assert(valve ~= nil and ui_controls.record(valve.label).id == "canister.valve",
-    "the release valve is a switch, named by id")
-assert(ui_controls.record(valve.on_text).id == "canister.valve.open" and ui_controls.record(valve.off_text).id == "canister.valve.shut",
-    "with both of its positions named the same way")
+assert(
+    valve ~= nil and ui_controls.record(valve.label).id == "canister.valve",
+    "the release valve is a switch, named by id"
+)
+assert(
+    ui_controls.record(valve.on_text).id == "canister.valve.open"
+        and ui_controls.record(valve.off_text).id == "canister.valve.shut",
+    "with both of its positions named the same way"
+)
 
 local dial = ui_controls.rows(ui.setpoints or {})[1]
-assert(dial ~= nil and ui_controls.record(dial.label).id == "canister.release",
-    "the regulator's dial carries an id and a number, never a caption")
+assert(
+    dial ~= nil and ui_controls.record(dial.label).id == "canister.release",
+    "the regulator's dial carries an id and a number, never a caption"
+)
 
 local block = ui_controls.rows(ui.matter or {})[1]
-assert(block ~= nil and ui_controls.record(block.section).id == "holder.contents",
-    "and the contents block's heading is one too: " .. tostring(block and word(block.section)))
+assert(
+    block ~= nil and ui_controls.record(block.section).id == "holder.contents",
+    "and the contents block's heading is one too: " .. tostring(block and word(block.section))
+)
 -- What a substance is CALLED is the pack's own word and travels as
 -- itself: content wrote it, so nothing looks it up.
 local named = false
@@ -150,9 +170,15 @@ t.run_ticks(5)
 t.move(p, "east")
 t.run_ticks(5)
 assert(not assert(t.door_at(4, 2)).open, "an airlock with no mains behind it stays shut")
-assert(heard(p, "The airlock's motors are dead.") ~= nil,
-    "and it is refused in the pack's words: " .. table.concat(t.messages(p), " | "))
-assert(heard(p, "It has no power to move.") == nil,
-    "never in the engine's, which the override replaced")
+assert(
+    heard(p, "The airlock's motors are dead.") ~= nil,
+    "and it is refused in the pack's words: " .. table.concat(t.messages(p), " | ")
+)
+assert(
+    heard(p, "It has no power to move.") == nil,
+    "never in the engine's, which the override replaced"
+)
 
-print("localization: a keyed line, a document of ids, and the engine's own key said in the pack's words")
+print(
+    "localization: a keyed line, a document of ids, and the engine's own key said in the pack's words"
+)

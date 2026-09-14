@@ -15,7 +15,8 @@
 -- is the spec that would go red: the pack's claim is that half a mole
 -- STAYS a gas, and only the engine can say whether it does.
 
-t.world([==[(
+t.world(
+    [==[(
     name: "steam bench",
     legend: {
         ' ': (turf: Space),
@@ -35,7 +36,9 @@ t.world([==[(
     ],
     structures: [(1, 1, "player_spawn")],
     painted: [(1, 1, "humid_air"), (2, 1, "humid_air"), (3, 1, "humid_air")],
-)]==], 0)
+)]==],
+    0
+)
 
 t.join()
 t.tick()
@@ -58,10 +61,11 @@ end
 -- amount standing in it.
 -- ---------------------------------------------------------------
 local wet = room_water()
-assert(math.abs(wet - PER_TILE * TILES) < 1e-6,
-    "half a mole a tile, three tiles: " .. wet)
-assert(assert(t.room_gas(2, 1)).water > VISIBLE_MOLES,
-    "and over the line water is visible from, so the room reads as fogged")
+assert(math.abs(wet - PER_TILE * TILES) < 1e-6, "half a mole a tile, three tiles: " .. wet)
+assert(
+    assert(t.room_gas(2, 1)).water > VISIBLE_MOLES,
+    "and over the line water is visible from, so the room reads as fogged"
+)
 
 -- ---------------------------------------------------------------
 -- Leave it. Nothing rains out. The engine's own saturation curve is
@@ -72,10 +76,11 @@ assert(assert(t.room_gas(2, 1)).water > VISIBLE_MOLES,
 t.run_ticks(700)
 
 local later = room_water()
-assert(later > wet * 0.99,
-    ("the fog did not rain out: %g -> %g"):format(wet, later))
-assert(assert(t.room_temperature(2, 1)) > 290.0,
-    "and the room is still the room it was: " .. assert(t.room_temperature(2, 1)))
+assert(later > wet * 0.99, ("the fog did not rain out: %g -> %g"):format(wet, later))
+assert(
+    assert(t.room_temperature(2, 1)) > 290.0,
+    "and the room is still the room it was: " .. assert(t.room_temperature(2, 1))
+)
 
 -- ---------------------------------------------------------------
 -- The station ships one: the chem bench, under a burner that has
@@ -86,5 +91,7 @@ t.join()
 t.tick()
 
 local bench = assert(t.room_gas(19, 5)).water
-assert(bench ~= nil and bench > VISIBLE_MOLES,
-    "the air over the chem bench is damp: " .. tostring(bench))
+assert(
+    bench ~= nil and bench > VISIBLE_MOLES,
+    "the air over the chem bench is damp: " .. tostring(bench)
+)

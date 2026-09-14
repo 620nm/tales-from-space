@@ -159,11 +159,21 @@ for n = 1, 6 do
     local now_k = assert(t.pipe_temperature(MOUTH_X, MOUTH_Y))
     local now_j = assert(t.pipe_energy(MOUTH_X, MOUTH_Y))
 
-    near(now_k, TARGET + (start_k - TARGET) * r ^ n, 1e-6, "pass " .. n .. " lands where r^" .. n .. " says")
+    near(
+        now_k,
+        TARGET + (start_k - TARGET) * r ^ n,
+        1e-6,
+        "pass " .. n .. " lands where r^" .. n .. " says"
+    )
     -- THE GAS BOOK MOVED BY EXACTLY Q. The joules came out of nowhere
     -- (that is the mains' problem), but HOW MANY is not a free
     -- parameter.
-    near(now_j - previous_j, q, math.abs(q) * 1e-9, "and by exactly the joules the formula asked for")
+    near(
+        now_j - previous_j,
+        q,
+        math.abs(q) * 1e-9,
+        "and by exactly the joules the formula asked for"
+    )
     assert(q < 0.0, "which on a cooling pass is joules leaving the gas: " .. q)
     -- ...and the capacity never moved, which is the same statement as
     -- "not one mole was transferred" -- a machine venting a little gas
@@ -181,15 +191,30 @@ local gap = assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)) - TARGET
 for n = 1, 4 do
     pass()
     local left = assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)) - TARGET
-    near(left, gap * r, math.abs(gap * r) * 1e-6, "gap " .. n .. " closes by the same fraction as the last")
+    near(
+        left,
+        gap * r,
+        math.abs(gap * r) * 1e-6,
+        "gap " .. n .. " closes by the same fraction as the last"
+    )
     gap = left
 end
 
 t.run_seconds(30)
-near(assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)), TARGET, 1e-6, "and the line arrests on the setpoint")
+near(
+    assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)),
+    TARGET,
+    1e-6,
+    "and the line arrests on the setpoint"
+)
 local n2_settled_j = assert(t.pipe_energy(MOUTH_X, MOUTH_Y))
 t.run_seconds(20)
-near(assert(t.pipe_energy(MOUTH_X, MOUTH_Y)), n2_settled_j, 1e-6, "with the book flat once it is there")
+near(
+    assert(t.pipe_energy(MOUTH_X, MOUTH_Y)),
+    n2_settled_j,
+    1e-6,
+    "with the book flat once it is there"
+)
 
 -- ---------------------------------------------------------------
 -- THE SAME MACHINE IS SLOWER THROUGH A HEAVIER GAS.
@@ -225,7 +250,10 @@ local light_gap = (T20C - TARGET) * r ^ 3
 assert(
     heavy_gap > light_gap * 2.5,
     "three passes in, the heavy line is still miles off what the light one had closed: "
-        .. heavy_gap .. " K left against " .. light_gap .. " K"
+        .. heavy_gap
+        .. " K left against "
+        .. light_gap
+        .. " K"
 )
 near(
     assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)),
@@ -235,7 +263,12 @@ near(
 )
 
 t.run_seconds(60)
-near(assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)), TARGET, 1e-6, "it gets there in the end, on the same setpoint")
+near(
+    assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)),
+    TARGET,
+    1e-6,
+    "it gets there in the end, on the same setpoint"
+)
 
 -- ---------------------------------------------------------------
 -- AND NOTHING AT ALL, FOREVER, INTO AN EMPTY LINE.
@@ -251,7 +284,8 @@ near(assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)), TARGET, 1e-6, "it gets there 
 -- An empty run is a run somebody laid this shift (fittings_test.luau):
 -- the mapped length comes up on a wrench and goes straight back down.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "dry line",
     legend: {
         '.': (turf: Plating),
@@ -272,7 +306,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local d = t.join()
 t.tick()
@@ -303,7 +339,10 @@ ui_controls.set(d, "temperature", 500)
 ui_controls.toggle(d, "power")
 t.run_seconds(60)
 
-assert(assert(t.structure_at(3, 1)).state == "running", "it is switched on and fed -- there is simply nothing to condition")
+assert(
+    assert(t.structure_at(3, 1)).state == "running",
+    "it is switched on and fed -- there is simply nothing to condition"
+)
 near(assert(t.pipe_energy(2, 1)), 0.0, 1e-9, "and a minute later the line still holds no joules")
 near(moles(2, 1), 0.0, 1e-9, "and no moles")
 local dry_k = assert(t.pipe_temperature(2, 1))

@@ -76,7 +76,9 @@ end
 
 local function slot_row(panel: ui_controls.Record, label): ui_controls.Record?
     for _, r in ipairs(ui_controls.rows(panel.labels or {})) do
-        if word(r.label) == label then return r end
+        if word(r.label) == label then
+            return r
+        end
     end
     return nil
 end
@@ -113,7 +115,15 @@ local function corpse()
 end
 assert(corpse() ~= nil and corpse().posture == "lying", "laid out on the table")
 
-t.drag(surgeon, 3, 2, assert(t.target_at(surgeon, 3, 2, "name:" .. corpse_name)), 4, 1, t.body_target(surgeon, surgeon))
+t.drag(
+    surgeon,
+    3,
+    2,
+    assert(t.target_at(surgeon, 3, 2, "name:" .. corpse_name)),
+    4,
+    1,
+    t.body_target(surgeon, surgeon)
+)
 t.run_ticks(2)
 assert(slot_row(ui_controls.state(surgeon), "Uniform") ~= nil, "the wardrobe opened")
 ui_controls.toggle(surgeon, "strip", "uniform")
@@ -121,7 +131,10 @@ t.run_ticks(90)
 assert(corpse().worn.uniform == nil, "the jumpsuit is off")
 
 local function hold(id: string)
-    if t.hands(surgeon).held ~= nil then t.drop(surgeon); t.tick() end
+    if t.hands(surgeon).held ~= nil then
+        t.drop(surgeon)
+        t.tick()
+    end
     t.click(surgeon, 4, 1, t.target_at(surgeon, 4, 1, id))
     t.run_ticks(2)
     assert(t.hands(surgeon).held == id, "the surgeon holds the " .. id)
@@ -143,19 +156,33 @@ assert(t.set_zone(surgeon, "chest"), "aiming at the chest")
 -- exactly ON the dead line (200 brute of a 200-brute chest), and
 -- `tend_wounds` takes five off it. Under the old model that alone stood
 -- the corpse up. Now it clears one line of two.
-step("hemostat", 130, function() return ui_controls.number(assert(corpse().parts).chest.brute) < 200 end, "tended")
+step("hemostat", 130, function()
+    return ui_controls.number(assert(corpse().parts).chest.brute) < 200
+end, "tended")
 local past: { [string]: boolean } = {}
-for _, id in ipairs(corpse().thresholds) do past[id] = true end
+for _, id in ipairs(corpse().thresholds) do
+    past[id] = true
+end
 assert(not past.dead, "the dead line is clear")
 assert(past.undone, "and the stopped heart is not")
 assert(corpse().animate == false, "STILL DEAD, and that is the point of the whole model")
 
 -- ---- 2. open the chest ------------------------------------------------
-step("scalpel", 40, function() return states().skin_cut end, "incised")
-step("retractor", 55, function() return states().skin_open end, "retracted")
-step("hemostat", 55, function() return states().vessels_clamped end, "clamped")
-step("circular_saw", 115, function() return states().bone_sawed end, "sawed")
-step("scalpel", 55, function() return states().organs_cut end, "organs cut")
+step("scalpel", 40, function()
+    return states().skin_cut
+end, "incised")
+step("retractor", 55, function()
+    return states().skin_open
+end, "retracted")
+step("hemostat", 55, function()
+    return states().vessels_clamped
+end, "clamped")
+step("circular_saw", 115, function()
+    return states().bone_sawed
+end, "sawed")
+step("scalpel", 55, function()
+    return states().organs_cut
+end, "organs cut")
 
 -- ---- 3. take the stopped heart out ------------------------------------
 hold("hemostat")
@@ -169,8 +196,10 @@ assert(win ~= nil and win.presentation == "choices", "several organs to reach")
 -- option is `<operation>|<socket>`.
 local pick: string? = nil
 for _, toggle in ipairs(ui_controls.rows(win.toggles)) do
-    if ui_controls.text(toggle.option):find("remove_organ", 1, true) == 1
-        and face(toggle.label):find("heart", 1, true) then
+    if
+        ui_controls.text(toggle.option):find("remove_organ", 1, true) == 1
+        and face(toggle.label):find("heart", 1, true)
+    then
         pick = ui_controls.text(toggle.option)
     end
 end
@@ -185,12 +214,16 @@ hold("organ_heart")
 t.click(surgeon, 3, 2, t.target_at(surgeon, 3, 2, "name:" .. corpse_name))
 t.run_ticks(60)
 assert(assert(corpse().parts).chest.organs.heart ~= false, "a heart is seated")
-assert(corpse().animate == true,
-    "AND THE CADAVER IS ALIVE: a living heart clears the viability line, " ..
-    "and the dead line was cleared before the first cut")
-assert(corpse().label == "Critical",
-    "in crit, not on its feet -- it is still carrying the wound that killed it: " ..
-    tostring(corpse().label))
+assert(
+    corpse().animate == true,
+    "AND THE CADAVER IS ALIVE: a living heart clears the viability line, "
+        .. "and the dead line was cleared before the first cut"
+)
+assert(
+    corpse().label == "Critical",
+    "in crit, not on its feet -- it is still carrying the wound that killed it: "
+        .. tostring(corpse().label)
+)
 
 -- ---- 5. close up ------------------------------------------------------
 step("cautery", 55, function()

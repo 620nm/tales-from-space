@@ -47,7 +47,8 @@ end
 -- you cannot paint what you cannot see) except at (6, 1), which is
 -- tiled — that one is here to be refused.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "painter",
     legend: {
         ' ': (turf: Space),
@@ -86,7 +87,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -105,10 +108,7 @@ t.run_seconds(10)
 -- cell. That equality is what the rest of this spec breaks.
 local west = assert(t.pipe_pressure(2, 1))
 local east = assert(t.pipe_pressure(7, 1))
-assert(
-    math.abs(west - east) < 0.01,
-    "one painted run is one pipenet: " .. west .. " vs " .. east
-)
+assert(math.abs(west - east) < 0.01, "one painted run is one pipenet: " .. west .. " vs " .. east)
 
 -- And the bottle is paying for the vent at the far end of it.
 local opening = assert(t.canister_pressure(1, 1))

@@ -22,7 +22,9 @@ local ARENA = [==[(
     items: [ (1, 1, "scalpel"), (1, 1, "retractor") ],
 )]==]
 
-local function has(states, name) return states[name] == true end
+local function has(states, name)
+    return states[name] == true
+end
 
 t.world(ARENA, 0)
 local surgeon = t.join("assistant")
@@ -83,8 +85,10 @@ t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(math.ceil(2.4 * 20) + 3)
 
 parts = assert(t.parts(patient))
-assert(has(parts.l_arm.states, "skin_open"),
-    "the aim stayed on the arm: a refused claim moves nothing, not even to the default")
+assert(
+    has(parts.l_arm.states, "skin_open"),
+    "the aim stayed on the arm: a refused claim moves nothing, not even to the default"
+)
 assert(not has(parts.chest.states, "skin_cut"), "the default zone was never fallen back to")
 
 -- =====================================================================
@@ -101,7 +105,9 @@ assert(not has(parts.chest.states, "skin_cut"), "the default zone was never fall
 -- =====================================================================
 local function zone_for_slot(who: number, slot: number): string?
     for _, row in ipairs(assert(t.doll(who))) do
-        if row.slot == slot then return row.id end
+        if row.slot == slot then
+            return row.id
+        end
     end
     return nil
 end
@@ -115,10 +121,11 @@ assert(zone_for_slot(surgeon, 7) == nil, "7 is tg's eyes and this plan has none"
 -- a click in the middle of it is what a mouse does with that number.
 for _, row in ipairs(assert(t.doll(surgeon))) do
     if row.id == "pelvis" then
-        assert(math.abs(row.rect[2] - 19 / 32) < 1e-6,
-            "the band starts where tg's does: " .. row.rect[2])
-        assert(math.abs(row.rect[4] - 4 / 32) < 1e-6,
-            "and is four pixels deep: " .. row.rect[4])
+        assert(
+            math.abs(row.rect[2] - 19 / 32) < 1e-6,
+            "the band starts where tg's does: " .. row.rect[2]
+        )
+        assert(math.abs(row.rect[4] - 4 / 32) < 1e-6, "and is four pixels deep: " .. row.rect[4])
     end
 end
 
@@ -178,7 +185,9 @@ end
 -- what the seed above produces; it is above the 5 a hit-weight-only
 -- roll would give the head (weight 1 of 15), which is the whole point.
 assert(t.set_zone(attacker, "head"), "the plan declares a head")
-for _ = 1, 10 do swing() end
+for _ = 1, 10 do
+    swing()
+end
 local head, elsewhere = brute("head"), 0
 for _, zone in ipairs({ "chest", "pelvis", "l_arm", "r_arm", "l_leg", "r_leg" }) do
     elsewhere = elsewhere + brute(zone)
@@ -194,10 +203,14 @@ assert(head >= 70, "the aimed zone took the bulk of it, not a hit-weight share: 
 -- each zone gained, which is what "the aim moved" actually means.
 local ZONES = { "head", "chest", "pelvis", "l_arm", "r_arm", "l_leg", "r_leg" }
 local before = {}
-for _, zone in ipairs(ZONES) do before[zone] = brute(zone) end
+for _, zone in ipairs(ZONES) do
+    before[zone] = brute(zone)
+end
 
 assert(t.set_zone(attacker, "l_arm"), "the plan declares a left arm")
-for _ = 1, 4 do swing() end
+for _ = 1, 4 do
+    swing()
+end
 
 local gained, worst, worst_zone = {}, -1, nil
 for _, zone in ipairs(ZONES) do
@@ -206,7 +219,8 @@ for _, zone in ipairs(ZONES) do
         worst, worst_zone = gained[zone], zone
     end
 end
-assert(gained.l_arm >= 30,
-    "the second volley followed the aim to the arm: " .. gained.l_arm)
-assert(gained.l_arm > worst,
-    "and the arm took more than any other zone (" .. assert(worst_zone) .. " took " .. worst .. ")")
+assert(gained.l_arm >= 30, "the second volley followed the aim to the arm: " .. gained.l_arm)
+assert(
+    gained.l_arm > worst,
+    "and the arm took more than any other zone (" .. assert(worst_zone) .. " took " .. worst .. ")"
+)

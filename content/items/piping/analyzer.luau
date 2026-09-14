@@ -63,13 +63,15 @@ end
 -- nothing is standing in is absent from the reading rather than zero,
 -- so an absence here is an absence there.
 local function collect(sample: MatterRead, phase: "gas" | "liquid_ml" | "solid_ml")
-    local rows: {[string]: number} = {}
-    local names: {[string]: string} = {}
-    local order: {[string]: number} = {}
+    local rows: { [string]: number } = {}
+    local names: { [string]: string } = {}
+    local order: { [string]: number } = {}
     local total = 0
     for id, entry in pairs(sample.contents) do
-        local amount = if phase == "gas" then entry.gas
-            elseif phase == "liquid_ml" then entry.liquid_ml else entry.solid_ml
+        local amount = if phase == "gas"
+            then entry.gas
+            elseif phase == "liquid_ml" then entry.liquid_ml
+            else entry.solid_ml
         if amount ~= nil and amount > 0 then
             rows[id] = amount
             names[id] = entry.name
@@ -91,9 +93,15 @@ end
 -- station's own: the substance groups this pack declared first, the id
 -- inside each block. A printout that listed the air in a different
 -- order from every panel would be one more thing to hold in your head.
-local function print_rows(user: Handle, rows: {[string]: number}, names: {[string]: string},
-    order: {[string]: number}, total: number, unit: string)
-    local ids: {string} = {}
+local function print_rows(
+    user: Handle,
+    rows: { [string]: number },
+    names: { [string]: string },
+    order: { [string]: number },
+    total: number,
+    unit: string
+)
+    local ids: { string } = {}
     for id in pairs(rows) do
         table.insert(ids, id)
     end
@@ -209,13 +217,20 @@ local content = {
     drop_sound = "analyzer_drop",
 }
 
-content.actions = { action_rules.primary("analyze", { any = {
-    action_rules.kind("turf"), action_rules.kind("pipe"), action_rules.kind("cable"),
-    action_rules.kind("machine"),
-} }) }
+content.actions = {
+    action_rules.primary("analyze", {
+        any = {
+            action_rules.kind("turf"),
+            action_rules.kind("pipe"),
+            action_rules.kind("cable"),
+            action_rules.kind("machine"),
+        },
+    }),
+}
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local user, target = ev.actor, ev.claim
         -- The thing you pointed at, if it holds gas of its own. tg's
