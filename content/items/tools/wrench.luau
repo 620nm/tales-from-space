@@ -54,7 +54,7 @@ content.actions = {
         all = {
             action_rules.kind("item"),
             action_rules.fact("target.proto", "pipe"),
-            action_rules.fact("target.subfloor_exposed", true),
+            action_rules.fact("target.subfloor_pipe_exposed", true),
         },
     }),
 }
@@ -69,7 +69,7 @@ if sim ~= nil then
         -- Asked before the pipe question, so a covered tile answers the
         -- same whether or not anything runs under it. The deck being
         -- OPEN is the question, not the turf's name.
-        if not sim.subfloor_exposed(x, y) then
+        if not sim.subfloor_exposed(x, y, "pipe") then
             return { replaced = false }
         end
         if target ~= nil and target.kind == "item" then

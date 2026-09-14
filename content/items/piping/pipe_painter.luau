@@ -71,7 +71,7 @@ if sim ~= nil then
         -- run you cannot see -- and painting by memory is how a
         -- technician cuts the wrong main. Asked first, so every covered
         -- tile answers the same way.
-        if not sim.subfloor_exposed(x, y) then
+        if not sim.subfloor_exposed(x, y, "pipe") then
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:lib.subfloor.covered", {}),

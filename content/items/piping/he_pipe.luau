@@ -55,7 +55,7 @@ local content = {
     mode = 2,
 }
 
-content.actions = { action_rules.primary("lay_pipe", action_rules.exposed_deck()) }
+content.actions = { action_rules.primary("lay_pipe", action_rules.exposed_deck("pipe")) }
 
 if sim ~= nil then
     local script_definition =
@@ -84,7 +84,7 @@ if sim ~= nil then
         local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
         local clicked, target = ev.claim, ev.claim
         local _x, _y, _choice = x, y, choice
-        if not sim.subfloor_exposed(x, y) then
+        if not sim.subfloor_exposed(x, y, "pipe") then
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:lib.subfloor.covered", {}),

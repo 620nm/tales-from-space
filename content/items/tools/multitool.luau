@@ -51,7 +51,7 @@ if sim ~= nil then
         if clicked ~= nil and clicked.entity ~= nil then
             return { replaced = false }
         end
-        if not sim.subfloor_exposed(x, y) then
+        if not sim.subfloor_exposed(x, y, "cable") then
             return { replaced = false }
         end
         local live = sim.segment_live(x, y)

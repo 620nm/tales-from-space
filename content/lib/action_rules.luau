@@ -33,8 +33,11 @@ function rules.deck(...: string): Selector
     return { all = { rules.kind("turf"), { any = turfs } } }
 end
 
-function rules.exposed_deck(): Selector
-    return { all = { rules.kind("turf"), rules.fact("target.subfloor_exposed", true) } }
+function rules.exposed_deck(carrier: string): Selector
+    if carrier ~= "cable" and carrier ~= "pipe" then
+        error("exposed_deck: carrier must be \"cable\" or \"pipe\"", 2)
+    end
+    return { all = { rules.kind("turf"), rules.fact("target.subfloor_" .. carrier .. "_exposed", true) } }
 end
 
 function rules.network(kind: string): Selector

@@ -54,7 +54,7 @@ local content = {
     -- which is the same information in one keypress instead of two.
 }
 
-content.actions = { action_rules.primary("lay_cable", action_rules.exposed_deck()) }
+content.actions = { action_rules.primary("lay_cable", action_rules.exposed_deck("cable")) }
 
 if sim ~= nil then
     local script_definition =
@@ -79,7 +79,7 @@ if sim ~= nil then
         -- Asked first, so every covered tile answers the same way and
         -- the reply is not a probe for what is already buried. Open
         -- deck, not "plating": the map decides per tile.
-        if not sim.subfloor_exposed(x, y) then
+        if not sim.subfloor_exposed(x, y, "cable") then
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:lib.subfloor.covered", {}),
