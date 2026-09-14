@@ -1,9 +1,12 @@
 # Tales from Space — content rules
 
+The engine API you may call is `../lunatic/idl/generated/lunatic-v1.d.luau` (content) and `../lunatic/idl/generated/lunatic-spec.d.luau` (spec); read the generated signatures first.
+
 This repository is the standalone game content pack for Tales from Space.
 Read `README.md` before editing: it owns the repository layout, authoring
 references, run commands, and spec-runner surface. Keep this file focused on
 agent decisions rather than duplicating those details.
+Read `docs/LUAU-DIALECT.md` before writing Luau.
 
 ## Where to work
 
@@ -14,7 +17,7 @@ agent decisions rather than duplicating those details.
   establish pack-wide policy; roster directories under `content/` declare the
   game's prototypes and handlers.
 - `content/lib/` contains shared Luau tables; see the rules below before adding
-  or moving code there.
+  or moving code there. Assign shared-module file ownership with `docs/LIB-CONTRACT.md`.
 - `reference/manifest.ron` catalogs preset files by ID. Its raw bodies stay
   outside trusted content; guest programs are standalone `.luau` sources.
   See `docs/scripting/reference-files.md` for authoring and disk seeding.
@@ -42,11 +45,9 @@ mechanism, this pack the numbers it chose. Run the engine with
 `LUNATIC_PACK` pointing here.
 
 Run engine commands from the engine checkout and set `LUNATIC_PACK` to this
-pack's absolute path. A worktree under this repository's `.worktrees/` is not
-a sibling of the engine, so do not derive the engine path with `..` there.
-Use the narrowest filename-filtered spec while iterating, then the full pack
-suite before completion; exact commands and filter semantics are in
-`README.md`.
+pack's absolute path. A worktree is not necessarily a sibling of the engine;
+resolve the engine checkout explicitly instead of deriving it with `..` there.
+Iterate with `cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" <name>` (name substring), then `--load-only`, then the full suite once before completion.
 
 ## Code Organization
 
