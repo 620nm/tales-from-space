@@ -50,7 +50,7 @@ if sim ~= nil then
         local _x, _y, _choice = x, y, choice
         -- Asked before the cable question, so a covered tile answers
         -- the same whether or not anything runs under it.
-        if not sim.subfloor_exposed(x, y) then
+        if not sim.subfloor_exposed(x, y, "cable") then
             return { replaced = false }
         end
         if target == nil or target.kind ~= "cable" then

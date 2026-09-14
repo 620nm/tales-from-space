@@ -271,7 +271,7 @@ local function lay_run(
     y: number,
     at: TileAddress
 )
-    if not sim.subfloor_exposed(x, y) then
+    if not sim.subfloor_exposed(x, y, "pipe") then
         sim.message.send({
             recipient = user,
             message = sim.msg("lunatic/tfs:lib.subfloor.covered", {}),
@@ -445,7 +445,7 @@ content.actions = {
     ),
     action_rules.primary(
         "build_pipe",
-        action_rules.exposed_deck(),
+        action_rules.exposed_deck("pipe"),
         action_rules.fact("held.dial", "mode=Build")
     ),
 }
@@ -516,7 +516,7 @@ if sim ~= nil then
             -- them off the DEVICE; we read them off the run, which is
             -- the only thing that carries either — and a run you have
             -- not opened the deck over is one you cannot see.
-            if not sim.subfloor_exposed(x, y) then
+            if not sim.subfloor_exposed(x, y, "pipe") then
                 sim.message.send({
                     recipient = user,
                     message = sim.msg("lunatic/tfs:lib.subfloor.covered", {}),
