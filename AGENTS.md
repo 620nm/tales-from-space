@@ -93,6 +93,11 @@ allowance (`access/10_engineering.luau`).
   An idea that seems to need per-tick native execution becomes a native
   system with data-driven knobs — never a faster handler.
 - Game fiction never says "lunatic"; engine words stay out of content.
+- Wrap reusable domain concepts in typed records instead of loose
+  primitives; reuse existing types and keep their operations together.
+- Use distinct, descriptive names for types and shared helpers across the
+  repository. Avoid generic names (`Data`, `State`) so agents can grep
+  definitions and uses.
 - Shared code lives in `content/lib/`; import its returned table with
   `local vessel = require("@lib/vessel")`. Dependencies are explicit in
   libraries too. Prototype sandboxes have imports but no `sim`; library
