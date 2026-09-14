@@ -10,9 +10,11 @@ end
 return {
     pipe_paints = paints,
     pipe_defaults = pipe_paints.defaults,
-    -- Pictures a mapper may lay over a turf, above the runs under it.
+    -- Pictures a mapper may lay over a turf, above the runs under it, or
+    -- a claim opening those runs on a turf whose default hides them.
     -- Editor-only: no shipped map places one yet.
     turf_overlays = {
-        { id = "open_floor", name = "open grid floor", sprite = "open_floor", on = "plating" },
+        { id = "open_floor", name = "open grid floor", sprite = "open_floor", on = "floor" },
+        { id = "reinforced_floor_open", name = "reinforced floor, open", on = "reinforced_floor", subfloor = "exposed" },
     },
 }
