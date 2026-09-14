@@ -170,6 +170,24 @@ gateway; running a game server alone does not host its executable bootstrap.
   station's own network — the two payload kinds a station sends, and
   what each named light flag does to a tube.
 
+### Luau formatting
+
+Use [StyLua](https://github.com/JohnnyMorganz/StyLua) 2.5.2 with the pack's
+`stylua.toml` (Luau syntax, 100 columns, four spaces). From the pack root:
+
+```sh
+stylua content tests
+stylua --check content tests
+```
+
+Strict checking stays with the engine's `node tools/luau.mjs check "$LUNATIC_PACK"`;
+do not add Selene or a second linter configuration.
+
+Engine handoff (L2, pending in the engine repo): add a `luau-fmt` gate to the
+scripts lane in `tools/check.sh`, running
+`stylua --check "$LUNATIC_PACK/content" "$LUNATIC_PACK/tests"`, and a post-write
+hook formatting changed pack content/spec Luau files with this pack's config.
+
 ### Palette categories
 
 `category = "..."` on an item or structure table is the group a palette —
