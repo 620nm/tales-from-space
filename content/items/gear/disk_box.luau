@@ -9,8 +9,13 @@ return {
     inhand_sprite = { "held_disk_box_l", "held_disk_box_r" },
     storage = 8,
     holds = {
-        "floppy_disk.red", "floppy_disk.yellow", "floppy_disk.green",
-        "floppy_disk.light_blue", "floppy_disk.dark_blue",
-        "floppy_disk.purple", "floppy_disk.grey", "floppy_disk",
+        "floppy_disk.red",
+        "floppy_disk.yellow",
+        "floppy_disk.green",
+        "floppy_disk.light_blue",
+        "floppy_disk.dark_blue",
+        "floppy_disk.purple",
+        "floppy_disk.grey",
+        "floppy_disk",
     },
 }

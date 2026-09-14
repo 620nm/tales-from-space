@@ -31,7 +31,9 @@
 local action_rules = require("@lib/action_rules")
 
 export type Spec = {
-    id: string, noun: string, phases: {string}?,
+    id: string,
+    noun: string,
+    phases: { string }?,
     pour: { units: number | "all", message: string? }?,
     sip: { units: number, message: string? }?,
     spill: boolean | { message: string? }?,
@@ -172,7 +174,13 @@ end
 -- dispenser uses over an open glass (docs/BENCH.md 4). The refusal
 -- belongs here rather than in each file precisely because half the
 -- files that needed it had not got it.
-local function charge(spec: Spec, self: Handle, user: Handle, source: Handle, at: TileAddress): GestureResult
+local function charge(
+    spec: Spec,
+    self: Handle,
+    user: Handle,
+    source: Handle,
+    at: TileAddress
+): GestureResult
     local line = sim.matter_read(source)
     local mine = sim.matter_read(self)
     if line == nil or mine == nil then
@@ -225,7 +233,14 @@ end
 -- the engine's -- the head takes what it takes and the rest stays on the
 -- deck -- so the two refusals here are the two states a stroke can find:
 -- a vessel with no room in it, and a deck with nothing on it.
-local function soak(self: Handle, user: Handle, at: TileAddress, soak_line: Line, dry_line: Line, full_line: Line): boolean
+local function soak(
+    self: Handle,
+    user: Handle,
+    at: TileAddress,
+    soak_line: Line,
+    dry_line: Line,
+    full_line: Line
+): boolean
     if (vessel.headspace_l(self) or 0) <= HEADSPACE_L then
         sim.message.send({ recipient = user, message = said(full_line) })
         return true
@@ -270,34 +285,59 @@ end
 -- Every `message` is a catalog KEY, and every default is the shared
 -- sentence that takes this vessel's noun as its argument; a file names
 -- one only where it says something else.
-function vessel.actions(spec: Spec): {action_rules.Action}
-    local actions: {action_rules.Action} = {}
+function vessel.actions(spec: Spec): { action_rules.Action }
+    local actions: { action_rules.Action } = {}
     if spec.pour ~= nil then
-        table.insert(actions, action_rules.primary("charge_vessel", { all = {
-            action_rules.kind("machine"), action_rules.fact("target.has_matter", true),
-        } }))
-        table.insert(actions, action_rules.primary("pour", { all = {
-            { ["not"] = action_rules.kind("machine") },
-            { ["not"] = action_rules.kind("player") },
-            action_rules.fact("target.has_matter", true),
-        } }))
+        table.insert(
+            actions,
+            action_rules.primary("charge_vessel", {
+                all = {
+                    action_rules.kind("machine"),
+                    action_rules.fact("target.has_matter", true),
+                },
+            })
+        )
+        table.insert(
+            actions,
+            action_rules.primary("pour", {
+                all = {
+                    { ["not"] = action_rules.kind("machine") },
+                    { ["not"] = action_rules.kind("player") },
+                    action_rules.fact("target.has_matter", true),
+                },
+            })
+        )
     end
     if spec.sip ~= nil then
-        table.insert(actions, action_rules.primary("drink", { all = {
-            action_rules.kind("turf"), action_rules.fact("target.is_actor_tile", true),
-        } }))
+        table.insert(
+            actions,
+            action_rules.primary("drink", {
+                all = {
+                    action_rules.kind("turf"),
+                    action_rules.fact("target.is_actor_tile", true),
+                },
+            })
+        )
     end
     if spec.spill ~= nil or spec.soak ~= nil then
-        table.insert(actions, action_rules.primary(if spec.soak then "soak" else "spill",
-            action_rules.deck("floor", "plating")))
+        table.insert(
+            actions,
+            action_rules.primary(
+                if spec.soak then "soak" else "spill",
+                action_rules.deck("floor", "plating")
+            )
+        )
     end
     return actions
 end
 
 function vessel.attach(spec: Spec): Definition
     if spec.spill ~= nil and spec.soak ~= nil then
-        error("vessel.attach: " .. tostring(spec.id)
-            .. " declares both spill and soak -- a vessel tips the deck out or takes it up, never both")
+        error(
+            "vessel.attach: "
+                .. tostring(spec.id)
+                .. " declares both spill and soak -- a vessel tips the deck out or takes it up, never both"
+        )
     end
     local definition = sim.define("behavior", "lunatic/tfs:" .. spec.id, { prototype = spec.id })
     local pour_line = spec.pour and line(spec.pour.message, POUR, spec.noun)
@@ -315,59 +355,63 @@ function vessel.attach(spec: Spec): Definition
     local dry_line = spec.soak and line(spec.soak.dry, SOAK_DRY, spec.noun)
     local full_line = spec.soak and line(spec.soak.full, SOAK_FULL, spec.noun)
 
-    definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev: InteractionUsePayload)
-        local self, user, at = ev.subject, ev.actor, ev.at
-        local clicked = ev.claim
+    definition:handle(
+        "interaction.use",
+        { kind = "replace", route = "use" },
+        function(ev: InteractionUsePayload)
+            local self, user, at = ev.subject, ev.actor, ev.at
+            local clicked = ev.claim
 
-        -- 1 and 2. Something you pointed at.
-        if spec.pour ~= nil and clicked ~= nil and clicked.entity ~= nil then
-            if total(clicked.entity) == nil then
-                return { replaced = false } -- not something that holds anything
+            -- 1 and 2. Something you pointed at.
+            if spec.pour ~= nil and clicked ~= nil and clicked.entity ~= nil then
+                if total(clicked.entity) == nil then
+                    return { replaced = false } -- not something that holds anything
+                end
+                -- A FIXTURE with an inside is a charge and not a pour: you
+                -- do not tip a vessel into the station's plumbing.
+                if clicked.kind == "machine" then
+                    return charge(spec, self, user, clicked.entity, at)
+                end
+                if dregs(spec, self, user) then
+                    return true
+                end
+                do_pour(self, clicked.entity, assert(pour_amount))
+                sim.message.send({ recipient = user, message = said(assert(pour_line)) })
+                return true
             end
-            -- A FIXTURE with an inside is a charge and not a pour: you
-            -- do not tip a vessel into the station's plumbing.
-            if clicked.kind == "machine" then
-                return charge(spec, self, user, clicked.entity, at)
+
+            -- 3. Your own tile: a swig.
+            if spec.sip ~= nil and at.x == user.tile.x and at.y == user.tile.y then
+                if dregs(spec, self, user) then
+                    return true
+                end
+                sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = at })
+                do_sip(self, user, spec.sip.units * U)
+                sim.message.send({ recipient = user, message = said(assert(sip_line)) })
+                return true
+            end
+
+            -- 4. The deck beside you, in whichever direction this vessel
+            -- goes: a mop takes the puddle up, everything else tips out.
+            -- Never both -- `attach` refused that at declaration time.
+            if spec.spill == nil and spec.soak == nil then
+                return { replaced = false }
+            end
+            local turf = sim.turf(at.x, at.y)
+            if turf ~= "floor" and turf ~= "plating" then
+                return { replaced = false }
+            end
+            if spec.soak ~= nil then
+                return soak(self, user, at, assert(soak_line), assert(dry_line), assert(full_line))
             end
             if dregs(spec, self, user) then
                 return true
             end
-            do_pour(self, clicked.entity, assert(pour_amount))
-            sim.message.send({ recipient = user, message = said(assert(pour_line)) })
+            do_spill(self)
+            sim.message.send({ recipient = user, message = said(spill_line) })
             return true
         end
-
-        -- 3. Your own tile: a swig.
-        if spec.sip ~= nil and at.x == user.tile.x and at.y == user.tile.y then
-            if dregs(spec, self, user) then
-                return true
-            end
-            sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = at })
-            do_sip(self, user, spec.sip.units * U)
-            sim.message.send({ recipient = user, message = said(assert(sip_line)) })
-            return true
-        end
-
-        -- 4. The deck beside you, in whichever direction this vessel
-        -- goes: a mop takes the puddle up, everything else tips out.
-        -- Never both -- `attach` refused that at declaration time.
-        if spec.spill == nil and spec.soak == nil then
-            return { replaced = false }
-        end
-        local turf = sim.turf(at.x, at.y)
-        if turf ~= "floor" and turf ~= "plating" then
-            return { replaced = false }
-        end
-        if spec.soak ~= nil then
-            return soak(self, user, at, assert(soak_line), assert(dry_line), assert(full_line))
-        end
-        if dregs(spec, self, user) then
-            return true
-        end
-        do_spill(self)
-        sim.message.send({ recipient = user, message = said(spill_line) })
-        return true
-    end)
+    )
 
     -- A thrown open vessel tips itself out wherever it comes to rest.
     -- The native verb moves all and only condensed phases, conserves
@@ -375,12 +419,16 @@ function vessel.attach(spec: Spec): Definition
     -- the attributed `Spilled` row. Every landing is an impact for this
     -- purpose; sealing is the content-visible way to prevent it.
     if spec.spill ~= nil then
-        definition:handle("throw.land.done", { kind = "react", route = "land" }, function(ev: ThrowLandDonePayload)
-            local reading = sim.matter_read(ev.entity)
-            if reading ~= nil and not reading.sealed then
-                sim.matter.spill({ from = ev.entity, at = ev.at })
+        definition:handle(
+            "throw.land.done",
+            { kind = "react", route = "land" },
+            function(ev: ThrowLandDonePayload)
+                local reading = sim.matter_read(ev.entity)
+                if reading ~= nil and not reading.sealed then
+                    sim.matter.spill({ from = ev.entity, at = ev.at })
+                end
             end
-        end)
+        )
     end
 
     return definition

@@ -9,7 +9,8 @@
 -- units an instrument prints: kPa and litres, never the sim's own
 -- pascals and cubic metres. A crowbar is here to be told nothing about.
 
-t.world([==[(
+t.world(
+    [==[(
     name: "vessel bench",
     legend: {
         ' ': (turf: Space),
@@ -36,7 +37,9 @@ t.world([==[(
         (4, 1, "crowbar"),
         (5, 1, "beaker"),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -44,8 +47,7 @@ t.tick()
 local function near(got: number?, want: number?, tol: number, what: string)
     assert(got ~= nil and want ~= nil, what .. ": both readings are present")
     assert(got ~= nil, what .. ": nothing was answered")
-    assert(math.abs(got - want) <= tol,
-        ("%s: wanted %g, got %g"):format(what, want, got))
+    assert(math.abs(got - want) <= tol, ("%s: wanted %g, got %g"):format(what, want, got))
 end
 
 -- ---------------------------------------------------------------
@@ -76,12 +78,15 @@ local beaker = t.vessel(assert(t.target_at(p, 3, 1, "beaker.libital")))
 assert(beaker ~= nil, "a beaker has an inside too")
 assert(not beaker.sealed, "an open glass breathes, and says so")
 assert(beaker.contents.water ~= nil, "there is water in it")
-assert(assert(beaker.contents.water.liquid) > 0,
-    "standing as liquid: " .. tostring(beaker.contents.water.liquid))
+assert(
+    assert(beaker.contents.water.liquid) > 0,
+    "standing as liquid: " .. tostring(beaker.contents.water.liquid)
+)
 assert(beaker.contents.water.solid == nil, "nothing in it is frozen")
-assert(beaker.headspace_l < beaker.volume_l,
-    ("what is in it takes room: %g of %g litres left"):format(
-        beaker.headspace_l, beaker.volume_l))
+assert(
+    beaker.headspace_l < beaker.volume_l,
+    ("what is in it takes room: %g of %g litres left"):format(beaker.headspace_l, beaker.volume_l)
+)
 assert(beaker.headspace_l > 0, "but never all of it -- a full glass still has a top")
 
 -- The shell is the fifty millilitres the prototype authors and the
@@ -89,8 +94,12 @@ assert(beaker.headspace_l > 0, "but never all of it -- a full glass still has a 
 -- 0.15 mol of libital is 27.0 mL, so 19.4 of the 50 are still air. The
 -- glass does not grow to fit what is poured into it (docs/MATTER.md 5).
 near(beaker.volume_l, 0.05, 1e-9, "fifty millilitres of glass, as authored")
-near(beaker.headspace_l, 0.05 - 0.0306, 1e-4,
-    "and the headspace is the shell less what is standing in it")
+near(
+    beaker.headspace_l,
+    0.05 - 0.0306,
+    1e-4,
+    "and the headspace is the shell less what is standing in it"
+)
 
 -- The empty beaker on the end of the bench is the other half of that
 -- contract: fifty millilitres of authored glass, every drop of it free.
@@ -104,11 +113,18 @@ assert(empty.pressure_kpa == 0, "and nothing pressing on anything")
 -- The collapsed reading is still there and still agrees: `t.contents`
 -- is the same water, summed over its phases.
 local collapsed = assert(t.contents(assert(t.target_at(p, 3, 1, "beaker.libital"))))
-near(collapsed.water,
+near(
+    collapsed.water,
     assert(beaker.contents.water.liquid) + (beaker.contents.water.gas or 0.0),
-    1e-12, "one substance, two ways of counting it")
-near(t.holder_kpa(assert(t.target_at(p, 3, 1, "beaker.libital"))), beaker.pressure_kpa,
-    1e-12, "and one pressure, two ways of asking")
+    1e-12,
+    "one substance, two ways of counting it"
+)
+near(
+    t.holder_kpa(assert(t.target_at(p, 3, 1, "beaker.libital"))),
+    beaker.pressure_kpa,
+    1e-12,
+    "and one pressure, two ways of asking"
+)
 
 -- ---------------------------------------------------------------
 -- The canister in the corner: the vessel a station's air comes out
@@ -116,14 +132,22 @@ near(t.holder_kpa(assert(t.target_at(p, 3, 1, "beaker.libital"))), beaker.pressu
 -- ---------------------------------------------------------------
 local canister = t.vessel(assert(t.target_at(p, 5, 2)))
 assert(canister ~= nil, "a canister has an inside")
-near(canister.pressure_kpa, assert(t.canister_pressure(5, 2)), 1e-12,
-    "one gauge, whichever way you ask for it")
+near(
+    canister.pressure_kpa,
+    assert(t.canister_pressure(5, 2)),
+    1e-12,
+    "one gauge, whichever way you ask for it"
+)
 assert(canister.sealed, "a canister keeps its pressure")
-assert(assert(canister.contents.o2.gas) > 0 and assert(canister.contents.n2.gas) > 0,
-    "and it is premixed air, itemised")
+assert(
+    assert(canister.contents.o2.gas) > 0 and assert(canister.contents.n2.gas) > 0,
+    "and it is premixed air, itemised"
+)
 
 -- ---------------------------------------------------------------
 -- And the refusal: nil is the type test, here as everywhere.
 -- ---------------------------------------------------------------
-assert(t.vessel(assert(t.target_at(p, 4, 1, "crowbar"))) == nil,
-    "a crowbar has no inside, and answering nothing is how it says so")
+assert(
+    t.vessel(assert(t.target_at(p, 4, 1, "crowbar"))) == nil,
+    "a crowbar has no inside, and answering nothing is how it says so"
+)

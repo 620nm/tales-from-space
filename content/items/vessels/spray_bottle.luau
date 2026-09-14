@@ -2,8 +2,14 @@ local action_rules = require("@lib/action_rules")
 
 local SPRAY, STREAM = 0, 1
 local content = {
-    id = "spray_bottle", name_label = "lunatic/tfs:entity.spray_bottle.name", name = "spray bottle", sprite = "spray_bottle",
-    volume_ml = 250, modes = 2, mode = SPRAY, acts_on_items = true,
+    id = "spray_bottle",
+    name_label = "lunatic/tfs:entity.spray_bottle.name",
+    name = "spray bottle",
+    sprite = "spray_bottle",
+    volume_ml = 250,
+    modes = 2,
+    mode = SPRAY,
+    acts_on_items = true,
     ranged_use = { range = 5, effect = "spray_puff", sound = "spray" },
 }
 content.actions = { action_rules.primary("spray", true) }
@@ -15,17 +21,24 @@ if sim ~= nil then
         sim.set_mode(ev.subject, next_mode)
         sim.message.send({
             recipient = ev.actor,
-            message = sim.msg(next_mode == STREAM
-                and "lunatic/tfs:items.spray_bottle.stream"
-                or "lunatic/tfs:items.spray_bottle.spray", {}),
+            message = sim.msg(
+                next_mode == STREAM and "lunatic/tfs:items.spray_bottle.stream"
+                    or "lunatic/tfs:items.spray_bottle.spray",
+                {}
+            ),
         })
         return true
     end)
     d:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local target = ev.at
-        if ev.claim ~= nil and ev.claim.entity ~= nil then target = ev.claim.entity end
-        sim.matter.spray({ from = ev.subject, target = target,
-            mode = assert(sim.mode(ev.subject)).index == STREAM and "stream" or "spray" })
+        if ev.claim ~= nil and ev.claim.entity ~= nil then
+            target = ev.claim.entity
+        end
+        sim.matter.spray({
+            from = ev.subject,
+            target = target,
+            mode = assert(sim.mode(ev.subject)).index == STREAM and "stream" or "spray",
+        })
         return true
     end)
 end

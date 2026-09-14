@@ -26,7 +26,9 @@ local DISTRO = 4
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
 local function word(label: unknown): unknown
-    if type(label) ~= "table" then return label end
+    if type(label) ~= "table" then
+        return label
+    end
     local record = ui_controls.record(label)
     return record.id or record.text
 end
@@ -95,7 +97,8 @@ end
 -- was conjured out of a hand tool bring its own tile back to one
 -- atmosphere out of the bottle and nowhere else.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "vent bench",
     legend: {
         ' ': (turf: Space),
@@ -130,7 +133,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -156,10 +161,7 @@ t.click(p, 4, 1, nil, -14, 14)
 work()
 assert(t.structure_at(4, 1) == nil, "a vent did not cover its centre run")
 assert(t.pipe(4, 1) == DISTRO, "and the raw run is intact")
-assert(
-    said(p, "Something is already under the floor here."),
-    "the refusal names the occupancy"
-)
+assert(said(p, "Something is already under the floor here."), "the refusal names the occupancy")
 
 -- ---- and then the machine ----
 walk(p, "west") -- back to (3, 2)
@@ -195,7 +197,8 @@ t.run_seconds(40)
 assert(
     assert(t.room_pressure(3, 1)) > SUPPLIES_UNDER,
     "the built vent worked its own tile back to one atmosphere: "
-        .. assert(t.room_pressure(3, 1)) .. " kPa"
+        .. assert(t.room_pressure(3, 1))
+        .. " kPa"
 )
 assert(
     assert(t.room_pressure(3, 1)) <= ONE_ATM + 0.5,
@@ -204,7 +207,10 @@ assert(
 assert(
     assert(t.canister_pressure(6, 1)) < spent_before,
     "every mole of it came out of the bottle: "
-        .. spent_before .. " -> " .. assert(t.canister_pressure(6, 1)) .. " kPa"
+        .. spent_before
+        .. " -> "
+        .. assert(t.canister_pressure(6, 1))
+        .. " kPa"
 )
 
 -- ---------------------------------------------------------------
@@ -218,7 +224,8 @@ assert(
 -- The bind is proved the only way a passive vent can be: it is a hole,
 -- so foul the room and the surplus turns up in the run behind it.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "passive vent bench",
     legend: {
         ' ': (turf: Space),
@@ -240,7 +247,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local q = t.join()
 t.tick()
@@ -268,7 +277,10 @@ t.run_seconds(20)
 assert(
     pipe_moles(4, 1) > net_before + 1.0,
     "a fouled room pushes back INTO the line: "
-        .. net_before .. " -> " .. pipe_moles(4, 1) .. " mol"
+        .. net_before
+        .. " -> "
+        .. pipe_moles(4, 1)
+        .. " mol"
 )
 
 -- ---- and it comes up again ----
@@ -276,15 +288,9 @@ local _ = t.messages(q)
 t.click(q, 3, 1, t.target_at(q, 3, 1, "passive_vent"))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "the passive vent came up off the deck")
-assert(
-    said(q, "The passive vent comes up off the deck."),
-    "narrated in the file's own words"
-)
+assert(said(q, "The passive vent comes up off the deck."), "narrated in the file's own words")
 assert(
     t.count_items("passive_vent_fitting") == 1,
     "and it is a fitting you can bolt down somewhere else"
 )
-assert(
-    t.ledger_has("StructureStep", "passive_vent", "gone"),
-    "taking one up is on the record too"
-)
+assert(t.ledger_has("StructureStep", "passive_vent", "gone"), "taking one up is on the record too")

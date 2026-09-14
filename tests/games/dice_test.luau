@@ -20,7 +20,8 @@
 -- change to how many numbers the engine draws before these will move
 -- them, and the fix is to read the new ones off a failing run -- and
 -- to keep the landing off six -- rather than to loosen the assertion.
-t.world([==[(
+t.world(
+    [==[(
     name: "rec room",
     legend: {
         ' ': (turf: Space),
@@ -34,7 +35,9 @@ t.world([==[(
     ],
     structures: [(1, 1, "player_spawn")],
     items: [(2, 1, "d6"), (2, 1, "d20")],
-)]==], 2)
+)]==],
+    2
+)
 
 local p = t.join()
 t.tick()
@@ -57,10 +60,14 @@ assert(t.hands(p).held == "d6", "the die is in hand")
 t.use_self(p)
 t.tick()
 local msgs = table.concat(t.messages(p), "\n")
-assert(msgs:find("You roll the d6. It lands on 1.", 1, true),
-    "a roll in the hand reads out, seed-pinned: " .. msgs)
-assert(table.concat(t.sounds(p), " "):find("dice_roll", 1, true),
-    "and it is heard tumbling (tg plays the sound from diceroll itself)")
+assert(
+    msgs:find("You roll the d6. It lands on 1.", 1, true),
+    "a roll in the hand reads out, seed-pinned: " .. msgs
+)
+assert(
+    table.concat(t.sounds(p), " "):find("dice_roll", 1, true),
+    "and it is heard tumbling (tg plays the sound from diceroll itself)"
+)
 
 -- ---- and where it lands (tg's throw_impact) ----------------------------
 t.throw(p, 5, 1)
@@ -70,12 +77,16 @@ assert(t.hands(p).held == nil, "it left the hand at once")
 t.run_ticks(8)
 assert(#t.items_at(5, 1) == 1, "it flew four tiles and stopped there")
 msgs = table.concat(t.messages(p), "\n")
-assert(msgs:find("The d6 rolls to a stop, landing on 2.", 1, true),
-    "landing rolls it again: " .. msgs)
+assert(
+    msgs:find("The d6 rolls to a stop, landing on 2.", 1, true),
+    "landing rolls it again: " .. msgs
+)
 
 local threw = t.ledger_rows("Threw")
-assert(#threw == 1 and threw[1].item == "d6",
-    "the throw is on the record, once, naming what was thrown")
+assert(
+    #threw == 1 and threw[1].item == "d6",
+    "the throw is on the record, once, naming what was thrown"
+)
 
 -- ---- THE TRIPWIRE: the picture follows the roll ------------------------
 -- tg's whole dice appearance is `"[icon_state]-[result]"`
@@ -85,23 +96,27 @@ assert(#threw == 1 and threw[1].item == "d6",
 -- so the state really moved.
 local landed = t.item_at(5, 1, "d6")
 assert(landed ~= nil, "the die is where it stopped")
-assert(landed.state == "2",
-    "it is in the state it rolled, seed-pinned: " .. tostring(landed.state))
-assert(landed.sprite == "d6_" .. landed.state,
-    "and the sprite is that state's picture, not the resting one: " .. tostring(landed.sprite))
-assert(landed.sprite ~= resting.sprite,
-    "which is a different picture from the one it was minted wearing")
+assert(landed.state == "2", "it is in the state it rolled, seed-pinned: " .. tostring(landed.state))
+assert(
+    landed.sprite == "d6_" .. landed.state,
+    "and the sprite is that state's picture, not the resting one: " .. tostring(landed.sprite)
+)
+assert(
+    landed.sprite ~= resting.sprite,
+    "which is a different picture from the one it was minted wearing"
+)
 
 local set = t.ledger_rows("StateSet")
-assert(#set >= 1 and set[#set].state == "2",
-    "and the face it came to rest on is on the record")
+assert(#set >= 1 and set[#set].state == "2", "and the face it came to rest on is on the record")
 
 -- ...and it REACHED the player. A repaint can be right in the world and
 -- never reach the wire, and only `t.layers` would notice: this is what
 -- the client was actually told to draw.
 local drawn = t.layers(p, t.target_at(p, 5, 1, "d6"))
-assert(table.concat(drawn, " "):find("d6_2", 1, true),
-    "the client was sent the rolled face: " .. table.concat(drawn, " "))
+assert(
+    table.concat(drawn, " "):find("d6_2", 1, true),
+    "the client was sent the rolled face: " .. table.concat(drawn, " ")
+)
 
 -- ---- twenty sides, and the one number anybody remembers ----------------
 t.click(p, 2, 1, t.target_at(p, 2, 1, "d20"))
@@ -140,8 +155,10 @@ assert(rolled ~= nil, "the roll said a number: " .. tostring(said[#said]))
 -- has no tile to be repainted at -- and it used to read the PROTOTYPE,
 -- so a die rolled in the hand went on showing the face it was minted
 -- wearing until somebody dropped it.
-assert(t.hud(p)[1] == "d20_" .. rolled,
-    "the hand shows the face it just rolled: " .. tostring(t.hud(p)[1]))
+assert(
+    t.hud(p)[1] == "d20_" .. rolled,
+    "the hand shows the face it just rolled: " .. tostring(t.hud(p)[1])
+)
 
 t.drop(p)
 t.tick()
@@ -149,11 +166,17 @@ assert(t.hands(p).held == nil, "it left the hand")
 
 local down = t.item_at(1, 1, "d20")
 assert(down ~= nil, "the good one is on the deck where its holder stood")
-assert(down.state == rolled,
+assert(
+    down.state == rolled,
     "the face it is showing is the number it rolled in the hand: "
-        .. tostring(down.state) .. " vs " .. rolled)
-assert(down.sprite == "d20_" .. rolled,
-    "and the picture is that face's cell: " .. tostring(down.sprite))
+        .. tostring(down.state)
+        .. " vs "
+        .. rolled
+)
+assert(
+    down.sprite == "d20_" .. rolled,
+    "and the picture is that face's cell: " .. tostring(down.sprite)
+)
 -- Seed-pinned like every other number in this file: the sixty-first roll
 -- of this die is an 8, so the face on the floor is eight and the die
 -- was minted on twenty — the state really moved, and it moved to the

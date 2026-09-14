@@ -21,7 +21,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- docked vessel is where a lump of ice is a WEIGHT rather than a
 -- volume, and grams are what a crewman would guess at.
 
-t.world([==[(
+t.world(
+    [==[(
     name: "ice bench",
     legend: {
         ' ': (turf: Space),
@@ -50,7 +51,9 @@ t.world([==[(
     // through it.
     machines: [(5, 1, "chem_dispenser")],
     cables: [(1, 1, 1), (2, 1, 1), (3, 1, 1), (4, 1, 1), (5, 1, 1)],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -65,8 +68,7 @@ local word = ui_controls.word
 
 local function near(got: number, want: number, tol: number, what: string)
     assert(got ~= nil, what .. ": nothing was answered")
-    assert(math.abs(got - want) <= tol,
-        ("%s: wanted %g, got %g"):format(what, want, got))
+    assert(math.abs(got - want) <= tol, ("%s: wanted %g, got %g"):format(what, want, got))
 end
 
 local glass = assert(t.target_at(p, 3, 1, "beaker"), "the target is visible")
@@ -77,7 +79,12 @@ local glass = assert(t.target_at(p, 3, 1, "beaker"), "the target is visible")
 local cold = t.vessel(glass)
 assert(cold ~= nil, "a beaker has an inside")
 assert(cold.contents.water ~= nil, "the map put water in it")
-near(assert(cold.contents.water.solid, "the water is solid"), LUMP_MOL, 1e-9, "two moles of it, frozen")
+near(
+    assert(cold.contents.water.solid, "the water is solid"),
+    LUMP_MOL,
+    1e-9,
+    "two moles of it, frozen"
+)
 assert(cold.contents.water.liquid == nil, "and not a drop of liquid yet")
 near(cold.temp_k, FROZEN_K, 0.5, "at the temperature the blend names")
 assert(cold.temp_k < MELT_K, "which is under the melt, or it would not be ice")
@@ -92,10 +99,14 @@ t.run_ticks(700)
 local thawing = assert(t.vessel(glass), "the vessel has a reading")
 local w = thawing.contents.water
 assert(w ~= nil, "the water did not go anywhere")
-assert(w.liquid ~= nil and w.liquid > 0.0,
-    "there is meltwater in the glass: " .. tostring(w.liquid))
-assert(w.solid ~= nil and w.solid < LUMP_MOL,
-    "and the lump is smaller than it was: " .. tostring(w.solid))
+assert(
+    w.liquid ~= nil and w.liquid > 0.0,
+    "there is meltwater in the glass: " .. tostring(w.liquid)
+)
+assert(
+    w.solid ~= nil and w.solid < LUMP_MOL,
+    "and the lump is smaller than it was: " .. tostring(w.solid)
+)
 assert(thawing.temp_k > cold.temp_k, "because the room warmed it")
 
 -- ---------------------------------------------------------------
@@ -117,8 +128,12 @@ end
 assert(in_room > 0.0, "and the room over the bench is where it went: " .. in_room)
 
 local swept = t.nullified().water or 0.0
-near(in_glass + in_room + swept, LUMP_MOL, 1e-6,
-    "glass plus room plus sweep is the lump that was set down")
+near(
+    in_glass + in_room + swept,
+    LUMP_MOL,
+    1e-6,
+    "glass plus room plus sweep is the lump that was set down"
+)
 
 -- ---------------------------------------------------------------
 -- AND WHAT IT WEIGHS.
@@ -183,25 +198,37 @@ assert(contents ~= nil, "the panel draws what the docked glass is holding")
 
 local lump = phase_of(contents, "solid")
 assert(lump ~= nil, "there is still a lump of it in there")
-assert(type(lump.moles) == "number" and type(lump.mass_g) == "number", "matter readout has moles and mass")
+assert(
+    type(lump.moles) == "number" and type(lump.mass_g) == "number",
+    "matter readout has moles and mass"
+)
 assert(lump.moles > 0.0, "with moles on the state: " .. tostring(lump.moles))
-near(lump.mass_g, lump.moles * MOLAR_MASS_G, 1e-6,
-    "the lump weighs water's own molar mass a mole")
+near(lump.mass_g, lump.moles * MOLAR_MASS_G, 1e-6, "the lump weighs water's own molar mass a mole")
 local ice_row = named(lump, "water")
 assert(ice_row ~= nil, "and the one row in it is the water")
-assert(type(ice_row.moles) == "number" and type(ice_row.mass_g) == "number", "matter readout has moles and mass")
+assert(
+    type(ice_row.moles) == "number" and type(ice_row.mass_g) == "number",
+    "matter readout has moles and mass"
+)
 near(ice_row.mass_g, ice_row.moles * MOLAR_MASS_G, 1e-6, "which weighs the same way")
 
 local melt = phase_of(contents, "liquid")
 assert(melt ~= nil, "the meltwater is a state of its own")
-assert(type(melt.moles) == "number" and type(melt.mass_g) == "number", "matter readout has moles and mass")
+assert(
+    type(melt.moles) == "number" and type(melt.mass_g) == "number",
+    "matter readout has moles and mass"
+)
 near(melt.mass_g, melt.moles * MOLAR_MASS_G, 1e-6, "and it weighs what it is")
 
 -- Both states together are the lump that was set down, minus what the
 -- open glass exhaled: an absolute anchor, so a mass that agreed with
 -- its own wrong moles could not pass either.
 local weighed = lump.mass_g + melt.mass_g
-assert(weighed < LUMP_MOL * MOLAR_MASS_G,
-    ("under the 36.03 g that was set down: %g g"):format(weighed))
-assert(weighed > LUMP_MOL * MOLAR_MASS_G * 0.95,
-    ("and all but a breath of it: %g g"):format(weighed))
+assert(
+    weighed < LUMP_MOL * MOLAR_MASS_G,
+    ("under the 36.03 g that was set down: %g g"):format(weighed)
+)
+assert(
+    weighed > LUMP_MOL * MOLAR_MASS_G * 0.95,
+    ("and all but a breath of it: %g g"):format(weighed)
+)

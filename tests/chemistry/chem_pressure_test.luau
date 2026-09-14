@@ -42,7 +42,8 @@ end
 -- nitrogen, and 240 mol of hydrogen is 698 kPa. Bay C gets a sixth of
 -- the hydrogen, 116 kPa, which is under the gate and over nothing.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "three pressure bays",
     legend: {
         '.': (turf: Plating),
@@ -64,7 +65,10 @@ t.world([==[(
         (3, 1, "canister", { "blend": "cold_haber" }),
         (5, 1, "canister", { "blend": "thin_haber" }),
     ],
-)]==], 7, "free_build")
+)]==],
+    7,
+    "free_build"
+)
 
 t.tick()
 
@@ -136,7 +140,8 @@ near(held(5, "n2"), 80.0, 1e-6, "nor any of the nitrogen it has plenty of")
 -- press over an open beaker is refused and says why (D19), so the
 -- bottle is not a convenience.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "janitor's bench",
     legend: {
         ' ': (turf: Space),
@@ -159,7 +164,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -213,8 +220,10 @@ dial_to(0.1)
 local _ = t.messages(p)
 press("ammonia")
 near(amount(glass, "ammonia"), 0.0, 1e-12, "an open glass takes none of it")
-assert(said("That would only escape: seal a vessel first."),
-    "and the machine says why rather than doing nothing in silence")
+assert(
+    said("That would only escape: seal a vessel first."),
+    "and the machine says why rather than doing nothing in silence"
+)
 eject()
 t.drop(p)
 t.tick()
@@ -231,8 +240,7 @@ press("ammonia")
 t.run_seconds(20)
 near(amount(jar, "ammonia"), LEG, 1e-9, "the whole press landed, because there is a lid")
 local charged = assert(t.vessel(jar))
-assert((charged.contents.ammonia.liquid or 0) > 0.0,
-    "and most of it is standing as LIQUID ammonia")
+assert((charged.contents.ammonia.liquid or 0) > 0.0, "and most of it is standing as LIQUID ammonia")
 
 -- The deck takes the condensation heat back (sim/holder/heat.rs); a
 -- docked or carried vessel is insulated and this one has to cool

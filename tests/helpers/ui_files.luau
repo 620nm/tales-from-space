@@ -3,10 +3,18 @@ local ui_controls = require("@helpers/ui_controls")
 local files = {}
 
 export type FileRow = { store: string, uid: string | number }
-local function scope(p: number): ui_controls.Scope? return t.ui_document(p, "programming") or t.ui_document(p) end
-local function node(p: number, suffix: string): ui_controls.Node return ui_controls.node(p, suffix, scope(p)) end
-local function find(p: number, suffix: string): ui_controls.Node? return ui_controls.find(p, suffix, scope(p)) end
-local function press(p: number, suffix: string): () return ui_controls.press(p, suffix, nil, scope(p)) end
+local function scope(p: number): ui_controls.Scope?
+    return t.ui_document(p, "programming") or t.ui_document(p)
+end
+local function node(p: number, suffix: string): ui_controls.Node
+    return ui_controls.node(p, suffix, scope(p))
+end
+local function find(p: number, suffix: string): ui_controls.Node?
+    return ui_controls.find(p, suffix, scope(p))
+end
+local function press(p: number, suffix: string): ()
+    return ui_controls.press(p, suffix, nil, scope(p))
+end
 local function state(p: number): ui_controls.Record
     return ui_controls.record(t.ui(p, "programming") or t.ui(p))
 end
@@ -14,7 +22,9 @@ end
 -- rendered switch names it.
 local function show(p: number, side: string): ()
     local switch = find(p, "/show/" .. side)
-    if switch then t.ui_press(p, switch.id) end
+    if switch then
+        t.ui_press(p, switch.id)
+    end
 end
 files.show = show
 function files.create(p: number, side: string, ext: string, name: string): ()
@@ -48,14 +58,25 @@ function files.address(p: number, address: string, action: string): ()
     t.ui_press(p, files.row(p, side, uid, action).id)
 end
 function files.edit(p: number, text: string): string
-    if find(p, "/editor/mode/edit") then press(p, "/editor/mode/edit") end
+    if find(p, "/editor/mode/edit") then
+        press(p, "/editor/mode/edit")
+    end
     local root = node(p, "/editor")
     local function find(value: unknown): ui_controls.Node?
-        if type(value) ~= "table" then return nil end
+        if type(value) ~= "table" then
+            return nil
+        end
         local node = ui_controls.record(value)
-        if type(node.id) == "string" and node.id:find("/editor/body/", 1, true) then return node :: ui_controls.Node end
+        if type(node.id) == "string" and node.id:find("/editor/body/", 1, true) then
+            return node :: ui_controls.Node
+        end
         for _, child in pairs(node) do
-            if type(child) == "table" then local found = find(child); if found then return found end end
+            if type(child) == "table" then
+                local found = find(child)
+                if found then
+                    return found
+                end
+            end
         end
         return nil
     end
@@ -74,7 +95,10 @@ end
 function files.program(p: number, slot: string, uid: (string | number)?): ()
     for index, row in ipairs(ui_controls.rows(state(p).program_slots or {})) do
         if row.id == slot then
-            if uid == nil then press(p, "/program/" .. (index - 1) .. "/unload"); return end
+            if uid == nil then
+                press(p, "/program/" .. (index - 1) .. "/unload")
+                return
+            end
             local load = 0
             for _, file in ipairs(ui_controls.rows(state(p).files or {})) do
                 if file.store == "host" and file.ext == "disl" then

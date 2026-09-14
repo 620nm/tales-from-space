@@ -80,10 +80,7 @@ for _, m in ipairs(t.messages(p)) do
         unscrewed = true
     end
 end
-assert(
-    unsealed and unscrewed,
-    "a crowbar on a sealed pane is told both rungs it needs"
-)
+assert(unsealed and unscrewed, "a crowbar on a sealed pane is told both rungs it needs")
 
 t.swap_hands(p) -- screwdriver
 t.run_ticks(2)
@@ -109,7 +106,8 @@ assert(t.ledger_has("StructureStep", "grille", "unbolted"), "it came loose")
 -- Reinforced: five tools and thirty seconds, against two to fit it.
 -- Each tool is used exactly once, in order, so a plain drop suffices.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "reinforced",
     legend: {
         ' ': (turf: Space),
@@ -133,7 +131,9 @@ t.world([==[(
         (2, 3, "wirecutters"),
         (3, 3, "wrench"),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 p = t.join()
 t.tick()

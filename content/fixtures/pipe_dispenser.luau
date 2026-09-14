@@ -27,19 +27,27 @@ local content = {
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    script_definition:handle("interaction.use", { kind = "replace", route = "interact" }, function(ev)
-        local self, user, x, y = ev.subject, ev.actor, ev.at.x, ev.at.y
-        if not sim.is_powered(self) then
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:fixtures.pipe_dispenser.the_dispenser_is_dark_and", {}),
-            })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle(
+        "interaction.use",
+        { kind = "replace", route = "interact" },
+        function(ev)
+            local self, user, x, y = ev.subject, ev.actor, ev.at.x, ev.at.y
+            if not sim.is_powered(self) then
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg(
+                        "lunatic/tfs:fixtures.pipe_dispenser.the_dispenser_is_dark_and",
+                        {}
+                    ),
+                })
+                return true
+            end
+            ui.open({ viewer = user, owner = self })
             return true
         end
-        ui.open({ viewer = user, owner = self })
-        return true
-    end)
+    )
     script_definition:handle("attack.swing", { kind = "replace", route = "attack" }, function(ev)
         local self, user = ev.implement, ev.actor
         local target, victim, item = ev.target, ev.target, ev.target
@@ -52,7 +60,10 @@ if sim ~= nil then
         if not sim.is_powered(self) then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:fixtures.pipe_dispenser.the_dispenser_is_dark_and", {}),
+                message = sim.msg(
+                    "lunatic/tfs:fixtures.pipe_dispenser.the_dispenser_is_dark_and",
+                    {}
+                ),
             })
             return true
         end

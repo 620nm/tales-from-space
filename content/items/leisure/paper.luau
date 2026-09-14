@@ -27,11 +27,16 @@ if sim ~= nil then
     -- failed append leaves the browser's draft intact and reports refusal.
     sim.handle("documents.append.done", { kind = "react" }, function(ev)
         local paper = ev.target
-        if paper == nil or paper.prototype ~= content.id or ev.actor == nil then return end
+        if paper == nil or paper.prototype ~= content.id or ev.actor == nil then
+            return
+        end
         if ev.outcome == "completed" then
             writing.update(ev.actor, paper, "")
         else
-            sim.message.send({ recipient = ev.actor, message = sim.msg("lunatic/tfs:items.writing.failed", {}) })
+            sim.message.send({
+                recipient = ev.actor,
+                message = sim.msg("lunatic/tfs:items.writing.failed", {}),
+            })
         end
     end)
 
@@ -48,9 +53,13 @@ if sim ~= nil then
     end)
 
     behavior:handle("interaction.act", { kind = "replace", route = "act" }, function(ev)
-        if ev.channel ~= "writing" then return { replaced = false } end
+        if ev.channel ~= "writing" then
+            return { replaced = false }
+        end
         local value = ev.value or ""
-        if ev.action ~= "write" or value == "" then return true end
+        if ev.action ~= "write" or value == "" then
+            return true
+        end
 
         -- `implement` is the exact proposed/contact-bound held tool. Native
         -- admission freezes its style and Mind and consumes a charge only

@@ -49,7 +49,8 @@ local content = {
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     -- `mob.life(ctx, self, user, moles)`: the metabolism anchor hands
     -- the same mob twice, as the thing the handler is on and as the body
     -- it is happening to, and the moles metabolized this tick last.
@@ -57,7 +58,9 @@ if sim ~= nil then
         local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount
         local down = false
         local snapshot = sim.body(mob)
-        if snapshot == nil then return end
+        if snapshot == nil then
+            return
+        end
         for _, id in ipairs(snapshot.thresholds) do
             if id == "crit" then
                 down = true
@@ -66,7 +69,10 @@ if sim ~= nil then
         if not down then
             return
         end
-        sim.healing.apply({ target = mob, amounts = { brute = 0.5, burn = 0.5, oxy = 0.5, tox = 0.5 } })
+        sim.healing.apply({
+            target = mob,
+            amounts = { brute = 0.5, burn = 0.5, oxy = 0.5, tox = 0.5 },
+        })
         if math.random(1, 10) == 1 then
             sim.message.send({
                 recipient = mob,

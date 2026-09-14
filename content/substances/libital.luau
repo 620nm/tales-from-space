@@ -25,7 +25,8 @@ local content = {
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
         local mob, _user, _moles = ev.entity, ev.entity, ev.amount
         sim.healing.apply({ target = mob, amounts = { brute = 1.5 } })

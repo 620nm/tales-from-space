@@ -14,7 +14,8 @@
 -- takes. tg meters its own by time instead (mop.dm:20-22, a fifteen-unit
 -- head on a second-and-a-half swing); there is no timed action here to
 -- hang that on, so a click is a stroke.
-t.world([==[(
+t.world(
+    [==[(
     name: "wet deck",
     legend: {
         ' ': (turf: Space),
@@ -39,7 +40,9 @@ t.world([==[(
         (1, 1, "mop"),
         (1, 1, "beaker_bluespace"),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -89,8 +92,10 @@ assert(
     ("the puddle is a head lighter, got %g L"):format(puddle())
 )
 local in_the_head = held(mop)
-assert(in_the_head > 13.0 and in_the_head < 14.5,
-    ("and the head is holding it: %g mol"):format(in_the_head))
+assert(
+    in_the_head > 13.0 and in_the_head < 14.5,
+    ("and the head is holding it: %g mol"):format(in_the_head)
+)
 assert(assert(t.vessel(mop)).headspace_l < 0.01, "with no room left in it")
 
 -- ---------------------------------------------------------------
@@ -114,8 +119,10 @@ t.tick()
 local wring = said()
 assert(wring == "You wring the mop out.", "the wring is reported: " .. wring)
 assert(held(mop) < 1e-6, ("the head is empty, got %g mol"):format(held(mop)))
-assert(math.abs(held(beaker) - in_the_head) < 1e-6,
-    ("and the beaker has all of it: %g mol"):format(held(beaker)))
+assert(
+    math.abs(held(beaker) - in_the_head) < 1e-6,
+    ("and the beaker has all of it: %g mol"):format(held(beaker))
+)
 
 -- And an empty mop has nothing to wring, in the words every empty
 -- vessel uses.
@@ -151,5 +158,7 @@ local water_at_the_end = t.matter_totals().substances.water
 assert(
     math.abs(water_at_the_end - water_at_the_start) < 1e-6,
     ("the station is holding what it started with: %.6f -> %.6f"):format(
-        water_at_the_start, water_at_the_end)
+        water_at_the_start,
+        water_at_the_end
+    )
 )

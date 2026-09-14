@@ -35,7 +35,11 @@ return {
         {
             at = "empty",
             tool = "welder",
-            hint = { id = "dismantle", label = "lunatic/tfs:ui.affordance.dismantle_frame", suggest = true },
+            hint = {
+                id = "dismantle",
+                label = "lunatic/tfs:ui.affordance.dismantle_frame",
+                suggest = true,
+            },
             secs = 4.0,
             fuel = 2.0,
             yields = { metal = 5 },

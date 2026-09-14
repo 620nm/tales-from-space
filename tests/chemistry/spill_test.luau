@@ -3,7 +3,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- Spilling: a beaker tipped out onto the deck empties, and what was in
 -- it becomes matter standing in that tile — not vapour, and not a
 -- second system bolted beside the air.
-t.world([==[(
+t.world(
+    [==[(
     name: "spill room",
     legend: {
         ' ': (turf: Space),
@@ -17,7 +18,9 @@ t.world([==[(
     ],
     structures: [(1, 1, "player_spawn")],
     items: [(1, 1, "beaker.libital")],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -63,7 +66,10 @@ assert(
 local rows = t.ledger_rows("spilled")
 assert(#rows == 1, ("one spill on the record, got %d"):format(#rows))
 assert(math.abs(ui_controls.number(rows[1].moles) - 0.35) < 1e-9, "the row names the whole beaker")
-assert(ui_controls.array(rows[1].at)[1] == 2 and ui_controls.array(rows[1].at)[2] == 1, "and the tile it landed on")
+assert(
+    ui_controls.array(rows[1].at)[1] == 2 and ui_controls.array(rows[1].at)[2] == 1,
+    "and the tile it landed on"
+)
 assert(rows[1].actor.kind == "script", "attributed to the file that asked")
 
 -- An empty beaker has nothing left to tip out: the gesture is refused

@@ -29,7 +29,8 @@ local function fill_of(handle: (SpecObservedTarget | number)?)
     return worn[1]
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "fill bench",
     legend: {
         ' ': (turf: Space),
@@ -56,7 +57,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -178,4 +181,7 @@ assert(
         .. amount(beaker, "water")
         .. " mol"
 )
-assert(assert(t.holder_k(assert(beaker))) > 373.0, "the chamber held it over the boil the whole time")
+assert(
+    assert(t.holder_k(assert(beaker))) > 373.0,
+    "the chamber held it over the boil the whole time"
+)

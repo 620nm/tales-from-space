@@ -12,12 +12,12 @@ return {
     -- keeps a vacuum off skin (:80). Here they are properties of the
     -- PLACE, so the engine never has to know a face from a torso.
     equipment = {
-        { id = "id",      label = "ID" },
+        { id = "id", label = "ID" },
         { id = "uniform", label = "Uniform" },
-        { id = "suit",    label = "Suit", seals = true },
-        { id = "belt",    label = "Belt" },
-        { id = "back",    label = "Back", quick_store = true },
-        { id = "mask",    label = "Mask", breathes = true },
+        { id = "suit", label = "Suit", seals = true },
+        { id = "belt", label = "Belt" },
+        { id = "back", label = "Back", quick_store = true },
+        { id = "mask", label = "Mask", breathes = true },
     },
 
     -- TfS names the derived capacities; `port` only opts one into a
@@ -28,25 +28,25 @@ return {
     -- code/modules/mob/living/carbon/carbon.dm:675-692).
     capacity_roles = {
         { id = "consciousness", port = "consciousness" },
-        { id = "moving",        port = "movement" },
-        { id = "manipulation",  port = "manipulation" },
-        { id = "sight",         port = "vision" },
-        { id = "hearing",       port = "hearing" },
-        { id = "speech",        port = "speech" },
-        { id = "breathing",     port = "breathing" },
-        { id = "blood",         port = "circulation" },
-        { id = "metabolism",    port = "metabolism" },
+        { id = "moving", port = "movement" },
+        { id = "manipulation", port = "manipulation" },
+        { id = "sight", port = "vision" },
+        { id = "hearing", port = "hearing" },
+        { id = "speech", port = "speech" },
+        { id = "breathing", port = "breathing" },
+        { id = "blood", port = "circulation" },
+        { id = "metabolism", port = "metabolism" },
     },
 
     -- Formula names are content ids. Sources are engine bookkeeping ports;
     -- tg's carbon health update sums brute, burn, toxin and oxygen loss at
     -- code/modules/mob/living/carbon/carbon.dm:424-433.
     properties = {
-        { id = "health",      expr = "health_fraction" },
-        { id = "damage",      expr = "damage_fraction" },
-        { id = "oxy",         expr = { pool = "oxy" } },
-        { id = "tox",         expr = { pool = "tox" } },
-        { id = "blood",       expr = "blood_fraction" },
+        { id = "health", expr = "health_fraction" },
+        { id = "damage", expr = "damage_fraction" },
+        { id = "oxy", expr = { pool = "oxy" } },
+        { id = "tox", expr = { pool = "tox" } },
+        { id = "blood", expr = "blood_fraction" },
     },
 
     -- The private HUD is a pack-owned list too. Pools/properties are generic
@@ -57,8 +57,12 @@ return {
         { id = "oxy", label = "Oxygen loss", pool = "oxy" },
         { id = "tox", label = "Toxin load", pool = "tox" },
         { id = "pressure", label = "Pressure", port = "ambient_pressure" },
-        { id = "temperature", label = "Temperature", suffix = "C",
-            port = "ambient_temperature_c" },
+        {
+            id = "temperature",
+            label = "Temperature",
+            suffix = "C",
+            port = "ambient_temperature_c",
+        },
         { id = "tank", label = "Tank", port = "supply_pressure" },
     },
 
@@ -69,9 +73,9 @@ return {
     -- code/modules/mob/living/carbon/carbon.dm:424-433).
     pools = {
         { id = "brute", label = "Brute", storage = "attachment", port = "impact" },
-        { id = "burn",  label = "Burn", storage = "attachment", port = "heat" },
-        { id = "oxy",   label = "Oxygen loss", storage = "owner", port = "oxygen_loss" },
-        { id = "tox",   label = "Toxin load", storage = "owner", port = "toxin_load" },
+        { id = "burn", label = "Burn", storage = "attachment", port = "heat" },
+        { id = "oxy", label = "Oxygen loss", storage = "owner", port = "oxygen_loss" },
+        { id = "tox", label = "Toxin load", storage = "owner", port = "toxin_load" },
     },
     -- get_random_valid_zone uses 80% for aimed/default melee, +10 while
     -- lying, and 65% for thrown hits (code/_onclick/item_attack.dm:321-326;

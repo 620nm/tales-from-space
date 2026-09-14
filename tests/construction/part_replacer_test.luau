@@ -45,7 +45,8 @@ local function worth(raw: unknown): (number, number)
     local value = ui_controls.record(raw)
     assert(value.id == "parts.tier", "the numbers ride a label id: " .. word(value))
     local args = ui_controls.record(value.args)
-    return assert(tonumber(ui_controls.text(args.tier))), assert(tonumber(ui_controls.text(args.efficiency)))
+    return assert(tonumber(ui_controls.text(args.tier))),
+        assert(tonumber(ui_controls.text(args.efficiency)))
 end
 
 -- The chamber's one part row, read off a panel opened with a BARE hand
@@ -61,7 +62,8 @@ end
 
 -- The same bench the reaction chamber's own spec uses, with the tool
 -- and its cargo on the deck beside the crewman.
-t.world([==[(
+t.world(
+    [==[(
     name: "exchange bench",
     legend: {
         ' ': (turf: Space),
@@ -86,11 +88,12 @@ t.world([==[(
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.run_seconds(1)
-
 
 -- ---------------------------------------------------------------
 -- ONE: LOADING THE BAG IS THE ORDINARY GESTURE.
@@ -113,8 +116,10 @@ t.run_ticks(2)
 assert(t.hands(p).held == nil, "putting one into the other empties the working hand")
 t.swap_hands(p)
 assert(t.hands(p).held == "part_replacer", "the bag is the thing still held")
-assert(assert(t.examine_held_stored(p, 0)).title == "ultra-high-power micro-laser",
-    "and it is what is in the bag")
+assert(
+    assert(t.examine_held_stored(p, 0)).title == "ultra-high-power micro-laser",
+    "and it is what is in the bag"
+)
 
 -- ---------------------------------------------------------------
 -- TWO: THE CHAMBER, BEFORE ANYBODY TOUCHED IT.
@@ -135,8 +140,10 @@ assert(t.hands(p).held == nil, "and clicking the chamber with it puts it in")
 local before = socket(p, 2, 1)
 assert(word(before.label) == "micro-laser", "nobody has upgraded it: " .. word(before.label))
 local tier, eff = worth(before.value)
-assert(tier == 1 and math.abs(eff - 1.0) < 1e-9,
-    "the plain rung, worth the plain part: " .. tier .. " " .. eff)
+assert(
+    tier == 1 and math.abs(eff - 1.0) < 1e-9,
+    "the plain rung, worth the plain part: " .. tier .. " " .. eff
+)
 
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
@@ -160,8 +167,10 @@ local WINDOW_S = 6
 local plain_open = gap()
 t.run_seconds(WINDOW_S)
 local plain_shut = gap()
-assert(plain_shut < plain_open,
-    "the plain chamber is climbing: " .. plain_open .. " -> " .. plain_shut)
+assert(
+    plain_shut < plain_open,
+    "the plain chamber is climbing: " .. plain_open .. " -> " .. plain_shut
+)
 
 -- ---------------------------------------------------------------
 -- THREE: ONE CLICK, AND THE SOCKET IS SOMEBODY ELSE'S PART.
@@ -171,27 +180,38 @@ assert(t.hands(p).held == "part_replacer", "the exchanger comes back out")
 local _ = t.messages(p)
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.run_ticks(2)
-assert(table.concat(t.messages(p), " | "):find("swap out 1", 1, true) ~= nil,
-    "the tool says what it did: " .. table.concat(t.messages(p), " | "))
+assert(
+    table.concat(t.messages(p), " | "):find("swap out 1", 1, true) ~= nil,
+    "the tool says what it did: " .. table.concat(t.messages(p), " | ")
+)
 
 local swaps = t.ledger_rows("part_swapped")
 assert(#swaps == 1, "one socket changed, so one row: " .. #swaps)
-assert(swaps[1].slot == 1, "and it names the socket, counting from one: " .. tostring(swaps[1].slot))
+assert(
+    swaps[1].slot == 1,
+    "and it names the socket, counting from one: " .. tostring(swaps[1].slot)
+)
 assert(swaps[1].from == "micro_laser", "what came out: " .. tostring(swaps[1].from))
 assert(swaps[1].to == "micro_laser.tier3", "and what went in: " .. tostring(swaps[1].to))
 
 -- What came out went back into the bag it came out of, which is what
 -- makes one pass leave a tech carrying what they set out with.
-assert(assert(t.examine_held_stored(p, 0)).title == "micro-laser",
-    "the displaced part is in the bag now")
+assert(
+    assert(t.examine_held_stored(p, 0)).title == "micro-laser",
+    "the displaced part is in the bag now"
+)
 
 t.swap_hands(p)
 local after = socket(p, 2, 1)
-assert(word(after.label) == "ultra-high-power micro-laser",
-    "and the panel names what is in there now: " .. word(after.label))
+assert(
+    word(after.label) == "ultra-high-power micro-laser",
+    "and the panel names what is in there now: " .. word(after.label)
+)
 local after_tier, after_eff = worth(after.value)
-assert(after_tier == 3 and math.abs(after_eff - 2.0) < 1e-9,
-    "against its rung and what it is worth: " .. after_tier .. " " .. after_eff)
+assert(
+    after_tier == 3 and math.abs(after_eff - 2.0) < 1e-9,
+    "against its rung and what it is worth: " .. after_tier .. " " .. after_eff
+)
 
 -- ---------------------------------------------------------------
 -- FOUR: AND A SECOND CLICK IS NOTHING AT ALL.
@@ -205,8 +225,10 @@ local _ = t.messages(p)
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.run_ticks(2)
 assert(#t.ledger_rows("part_swapped") == 1, "still one swap on the record")
-assert(table.concat(t.messages(p), " | "):find("any better", 1, true) ~= nil,
-    "and the refusal is the tool's own line")
+assert(
+    table.concat(t.messages(p), " | "):find("any better", 1, true) ~= nil,
+    "and the refusal is the tool's own line"
+)
 t.swap_hands(p)
 local still_tier, still_eff = worth(socket(p, 2, 1).value)
 assert(still_tier == 3 and math.abs(still_eff - 2.0) < 1e-9, "the socket is where it was")
@@ -232,9 +254,13 @@ assert(still_tier == 3 and math.abs(still_eff - 2.0) < 1e-9, "the socket is wher
 local upgraded_open = gap()
 t.run_seconds(WINDOW_S)
 local upgraded_shut = gap()
-assert(upgraded_shut < upgraded_open,
-    "the upgraded chamber is still climbing: " .. upgraded_open .. " -> " .. upgraded_shut)
+assert(
+    upgraded_shut < upgraded_open,
+    "the upgraded chamber is still climbing: " .. upgraded_open .. " -> " .. upgraded_shut
+)
 
 local ratio = math.log(upgraded_shut / upgraded_open) / math.log(plain_shut / plain_open)
-assert(math.abs(ratio - 2.0) < 0.15,
-    "a rung three laser closes the gap at twice the plain rate: " .. ratio)
+assert(
+    math.abs(ratio - 2.0) < 0.15,
+    "a rung three laser closes the gap at twice the plain rate: " .. ratio
+)

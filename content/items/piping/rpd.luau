@@ -42,29 +42,138 @@ local pipe_paints = require("@lib/pipe_paints")
 -- one is pipe itself, which is not a structure at all but a length in
 -- the grid under the deck.
 type Recipe = {
-    label: string, item: string, icon: string, group: string,
-    structure: string?, fixed_layer: boolean?, paints: boolean?,
+    label: string,
+    item: string,
+    icon: string,
+    group: string,
+    structure: string?,
+    fixed_layer: boolean?,
+    paints: boolean?,
 }
 
-local RECIPES: {Recipe} = {
+local RECIPES: { Recipe } = {
     { label = "Pipe", item = "pipe", icon = "pipe", group = "Pipes" },
-    { label = "Manual Valve", item = "manual_valve_fitting", structure = "manual_valve", icon = "manual_valve_loose", group = "Binary Devices" },
-    { label = "Digital Valve", item = "digital_valve_fitting", structure = "digital_valve", icon = "digital_valve_loose", group = "Binary Devices" },
-    { label = "Pump", item = "pump_fitting", structure = "pump", icon = "pump_loose", group = "Binary Devices" },
-    { label = "Volume Pump", item = "volume_pump_fitting", structure = "volume_pump", icon = "volume_pump_loose", group = "Binary Devices" },
-    { label = "Passive Gate", item = "passive_gate_fitting", structure = "passive_gate", icon = "passive_gate_loose", group = "Binary Devices" },
-    { label = "Pressure Valve", item = "pressure_valve_fitting", structure = "pressure_valve", icon = "pressure_valve_loose", group = "Binary Devices" },
-    { label = "Filter", item = "filter_fitting", structure = "filter", icon = "filter_fitting", group = "Trinary Devices" },
-    { label = "Filter (flipped)", item = "filter_flipped_fitting", structure = "filter.flipped", icon = "filter_fitting", group = "Trinary Devices" },
-    { label = "Mixer", item = "mixer_fitting", structure = "mixer", icon = "mixer_fitting", group = "Trinary Devices" },
-    { label = "Mixer (flipped)", item = "mixer_flipped_fitting", structure = "mixer.flipped", icon = "mixer_fitting", group = "Trinary Devices" },
-    { label = "Connector", item = "connector_port_fitting", structure = "connector_port", icon = "connector_port_loose", group = "Fittings & Adapters", fixed_layer = true },
-    { label = "Meter", item = "pipe_meter", structure = "meter", icon = "pipe_meter", group = "Fittings & Adapters" },
-    { label = "Layer Adapter", item = "layer_adapter_fitting", structure = "layer_adapter", icon = "layer_adapter_loose", group = "Fittings & Adapters", fixed_layer = true },
-    { label = "Color Adapter", item = "color_adapter_fitting", structure = "color_adapter", icon = "color_adapter_loose", group = "Fittings & Adapters" },
-    { label = "Temperature Gate", item = "temperature_gate_fitting", structure = "temperature_gate", icon = "temperature_gate_loose", group = "Thermal Devices" },
-    { label = "Temperature Pump", item = "temperature_pump_fitting", structure = "temperature_pump", icon = "temperature_pump_loose", group = "Thermal Devices" },
-    { label = "Heat Exchanger", item = "heat_exchanger_fitting", structure = "heat_exchanger", icon = "heat_exchanger_loose", group = "Thermal Devices" },
+    {
+        label = "Manual Valve",
+        item = "manual_valve_fitting",
+        structure = "manual_valve",
+        icon = "manual_valve_loose",
+        group = "Binary Devices",
+    },
+    {
+        label = "Digital Valve",
+        item = "digital_valve_fitting",
+        structure = "digital_valve",
+        icon = "digital_valve_loose",
+        group = "Binary Devices",
+    },
+    {
+        label = "Pump",
+        item = "pump_fitting",
+        structure = "pump",
+        icon = "pump_loose",
+        group = "Binary Devices",
+    },
+    {
+        label = "Volume Pump",
+        item = "volume_pump_fitting",
+        structure = "volume_pump",
+        icon = "volume_pump_loose",
+        group = "Binary Devices",
+    },
+    {
+        label = "Passive Gate",
+        item = "passive_gate_fitting",
+        structure = "passive_gate",
+        icon = "passive_gate_loose",
+        group = "Binary Devices",
+    },
+    {
+        label = "Pressure Valve",
+        item = "pressure_valve_fitting",
+        structure = "pressure_valve",
+        icon = "pressure_valve_loose",
+        group = "Binary Devices",
+    },
+    {
+        label = "Filter",
+        item = "filter_fitting",
+        structure = "filter",
+        icon = "filter_fitting",
+        group = "Trinary Devices",
+    },
+    {
+        label = "Filter (flipped)",
+        item = "filter_flipped_fitting",
+        structure = "filter.flipped",
+        icon = "filter_fitting",
+        group = "Trinary Devices",
+    },
+    {
+        label = "Mixer",
+        item = "mixer_fitting",
+        structure = "mixer",
+        icon = "mixer_fitting",
+        group = "Trinary Devices",
+    },
+    {
+        label = "Mixer (flipped)",
+        item = "mixer_flipped_fitting",
+        structure = "mixer.flipped",
+        icon = "mixer_fitting",
+        group = "Trinary Devices",
+    },
+    {
+        label = "Connector",
+        item = "connector_port_fitting",
+        structure = "connector_port",
+        icon = "connector_port_loose",
+        group = "Fittings & Adapters",
+        fixed_layer = true,
+    },
+    {
+        label = "Meter",
+        item = "pipe_meter",
+        structure = "meter",
+        icon = "pipe_meter",
+        group = "Fittings & Adapters",
+    },
+    {
+        label = "Layer Adapter",
+        item = "layer_adapter_fitting",
+        structure = "layer_adapter",
+        icon = "layer_adapter_loose",
+        group = "Fittings & Adapters",
+        fixed_layer = true,
+    },
+    {
+        label = "Color Adapter",
+        item = "color_adapter_fitting",
+        structure = "color_adapter",
+        icon = "color_adapter_loose",
+        group = "Fittings & Adapters",
+    },
+    {
+        label = "Temperature Gate",
+        item = "temperature_gate_fitting",
+        structure = "temperature_gate",
+        icon = "temperature_gate_loose",
+        group = "Thermal Devices",
+    },
+    {
+        label = "Temperature Pump",
+        item = "temperature_pump_fitting",
+        structure = "temperature_pump",
+        icon = "temperature_pump_loose",
+        group = "Thermal Devices",
+    },
+    {
+        label = "Heat Exchanger",
+        item = "heat_exchanger_fitting",
+        structure = "heat_exchanger",
+        icon = "heat_exchanger_loose",
+        group = "Thermal Devices",
+    },
     -- tg's "Heat Exchange" category, in tg's own words
     -- (`GLOB.atmos_pipe_recipes`, _globalvars/lists/pipe_recipes.dm:29-34).
     -- tg lists "Pipe", "Manifold" and "4-Way Manifold" separately because
@@ -74,12 +183,49 @@ local RECIPES: {Recipe} = {
     -- lists last is already on the shelf above, with the rest of the
     -- thermal kit.
     { label = "Pipe", item = "he_pipe", icon = "he_pipe", group = "Heat Exchange", paints = false },
-    { label = "Junction", item = "he_junction_fitting", structure = "he_junction", icon = "he_junction_loose", group = "Heat Exchange" },
-    { label = "Air Scrubber", item = "air_scrubber_fitting", structure = "air_scrubber", icon = "air_scrubber_loose", group = "Room Devices" },
-    { label = "Air Injector", item = "air_injector_fitting", structure = "air_injector", icon = "air_injector_loose", group = "Room Devices" },
-    { label = "External Airlock Pump", item = "airlock_pump_fitting", structure = "airlock_pump", icon = "airlock_pump_loose", group = "Room Devices", fixed_layer = true },
-    { label = "Air Vent", item = "vent_fitting", structure = "vent", icon = "vent_loose", group = "Room Devices" },
-    { label = "Passive Vent", item = "passive_vent_fitting", structure = "passive_vent", icon = "passive_vent_loose", group = "Room Devices" },
+    {
+        label = "Junction",
+        item = "he_junction_fitting",
+        structure = "he_junction",
+        icon = "he_junction_loose",
+        group = "Heat Exchange",
+    },
+    {
+        label = "Air Scrubber",
+        item = "air_scrubber_fitting",
+        structure = "air_scrubber",
+        icon = "air_scrubber_loose",
+        group = "Room Devices",
+    },
+    {
+        label = "Air Injector",
+        item = "air_injector_fitting",
+        structure = "air_injector",
+        icon = "air_injector_loose",
+        group = "Room Devices",
+    },
+    {
+        label = "External Airlock Pump",
+        item = "airlock_pump_fitting",
+        structure = "airlock_pump",
+        icon = "airlock_pump_loose",
+        group = "Room Devices",
+        fixed_layer = true,
+    },
+    {
+        label = "Air Vent",
+        item = "vent_fitting",
+        structure = "vent",
+        icon = "vent_loose",
+        group = "Room Devices",
+    },
+    {
+        label = "Passive Vent",
+        item = "passive_vent_fitting",
+        structure = "passive_vent",
+        icon = "passive_vent_loose",
+        group = "Room Devices",
+    },
 }
 
 -- tg's destroy mode accepts `/obj/item/pipe` and pipe meters, not an
@@ -117,7 +263,14 @@ end
 -- and put the floor back over it. The engine refuses a covered deck
 -- silently, so this says why first — a refusal with no explanation
 -- reads as a dropped click.
-local function lay_run(self: Handle, recipe: Recipe, user: Handle, x: number, y: number, at: TileAddress)
+local function lay_run(
+    self: Handle,
+    recipe: Recipe,
+    user: Handle,
+    x: number,
+    y: number,
+    at: TileAddress
+)
     if not sim.subfloor_exposed(x, y) then
         sim.message.send({
             recipient = user,
@@ -206,25 +359,31 @@ local content = {
             -- since we have no secondary-click channel.
             options = { "Build", "Destroy", "Copy" },
         },
-        { key = "recipe", label = "Fitting", options = (function()
-            local names = {}
-            for i, r in ipairs(RECIPES) do
-                names[i] = r.label
-            end
-            return names
-        end)(), icons = (function()
-            local icons = {}
-            for i, r in ipairs(RECIPES) do
-                icons[i] = r.icon
-            end
-            return icons
-        end)(), groups = (function()
-            local groups = {}
-            for i, r in ipairs(RECIPES) do
-                groups[i] = r.group
-            end
-            return groups
-        end)() },
+        {
+            key = "recipe",
+            label = "Fitting",
+            options = (function()
+                local names = {}
+                for i, r in ipairs(RECIPES) do
+                    names[i] = r.label
+                end
+                return names
+            end)(),
+            icons = (function()
+                local icons = {}
+                for i, r in ipairs(RECIPES) do
+                    icons[i] = r.icon
+                end
+                return icons
+            end)(),
+            groups = (function()
+                local groups = {}
+                for i, r in ipairs(RECIPES) do
+                    groups[i] = r.group
+                end
+                return groups
+            end)(),
+        },
         {
             key = "layer",
             label = "Piping layer",
@@ -259,37 +418,54 @@ local content = {
     -- in-hand key or tg-style pickup double-click opens its window.
 }
 
-local breakdown_groups: {action_rules.Selector} = {}
+local breakdown_groups: { action_rules.Selector } = {}
 for first = 1, #RECIPES, 8 do
-    local group: {action_rules.Selector} = {}
+    local group: { action_rules.Selector } = {}
     for index = first, math.min(first + 7, #RECIPES) do
         table.insert(group, action_rules.fact("target.proto", RECIPES[index].item))
     end
     table.insert(breakdown_groups, { any = group })
 end
 content.actions = {
-    action_rules.primary("disassemble", { all = {
-        action_rules.kind("item"), { any = breakdown_groups },
-    } }, { any = {
-        action_rules.fact("held.dial", "mode=Build"),
-        action_rules.fact("held.dial", "mode=Destroy"),
-    } }),
-    action_rules.primary("copy_pipe", action_rules.network("pipe"),
-        action_rules.fact("held.dial", "mode=Copy")),
-    action_rules.primary("build_pipe", action_rules.exposed_deck(),
-        action_rules.fact("held.dial", "mode=Build")),
+    action_rules.primary("disassemble", {
+        all = {
+            action_rules.kind("item"),
+            { any = breakdown_groups },
+        },
+    }, {
+        any = {
+            action_rules.fact("held.dial", "mode=Build"),
+            action_rules.fact("held.dial", "mode=Destroy"),
+        },
+    }),
+    action_rules.primary(
+        "copy_pipe",
+        action_rules.network("pipe"),
+        action_rules.fact("held.dial", "mode=Copy")
+    ),
+    action_rules.primary(
+        "build_pipe",
+        action_rules.exposed_deck(),
+        action_rules.fact("held.dial", "mode=Build")
+    ),
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     local function open_interface(ev)
         local self, user = ev.subject, ev.actor
         ui.open({ viewer = user, owner = self })
         return true
     end
-    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, open_interface)
+    script_definition:handle(
+        "interaction.use",
+        { kind = "replace", route = "self" },
+        open_interface
+    )
     item_actions.attach(script_definition, {
-        id = content.id, sprite = content.sprite,
+        id = content.id,
+        sprite = content.sprite,
         label = "lunatic/tfs:ui.actions.rpd",
     }, open_interface)
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)

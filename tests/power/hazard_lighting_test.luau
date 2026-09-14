@@ -30,7 +30,8 @@
 -- and there is nothing in it to breathe, which is the cheapest way to
 -- stand a room in one band and walk it out again without freezing it
 -- to get there.
-t.world([==[(
+t.world(
+    [==[(
     name: "hazard lighting",
     legend: {
         ' ': (turf: Space),
@@ -69,14 +70,15 @@ t.world([==[(
         (8, 1, 1), (7, 1, 1), (6, 1, 1), (5, 1, 1), (4, 1, 1), (3, 1, 1), (2, 1, 1),
     ],
     labels: [(8, 1, "Engineering")],
-)]==], 0)
+)]==],
+    0
+)
 
 t.set_environment({ sink_k = 293.15, insolation = 0 })
 local p = t.join()
 t.tick()
 t.run_seconds(3)
 t.run_ticks(60)
-
 
 local DEADLY = "#FF2020"
 local UNBREATHABLE = "#3060FF"
@@ -89,15 +91,22 @@ local UNBREATHABLE = "#3060FF"
 --    through the door should be able to tell an airless room from a
 --    lethal one before they take their helmet off.
 -- ---------------------------------------------------------------
-assert(assert(t.room_pressure(3, 2)) > 90.0, "the room is at pressure: " .. assert(t.room_pressure(3, 2)))
-assert(t.hazard_level(4, 1) == "unbreathable",
-    "the fan has sorted its own tile: " .. tostring(t.hazard_level(4, 1)))
+assert(
+    assert(t.room_pressure(3, 2)) > 90.0,
+    "the room is at pressure: " .. assert(t.room_pressure(3, 2))
+)
+assert(
+    t.hazard_level(4, 1) == "unbreathable",
+    "the fan has sorted its own tile: " .. tostring(t.hazard_level(4, 1))
+)
 local lamp = assert(t.light_at(1, 2))
 assert(lamp ~= nil and lamp.lit, "the fitting is burning")
 assert(lamp.color == UNBREATHABLE, "and it has gone blue: " .. lamp.color)
 assert(math.abs(lamp.power - 1.2) < 1e-6, "a touch harder: " .. lamp.power)
-assert(math.abs(lamp.range - 6.0) < 1e-6,
-    "and reaching exactly as far: a warned room is not a smaller one")
+assert(
+    math.abs(lamp.range - 6.0) < 1e-6,
+    "and reaching exactly as far: a warned room is not a smaller one"
+)
 
 -- ---------------------------------------------------------------
 -- 2. A SECOND FLAG UNDERNEATH IT. Part the backbone and the panel
@@ -180,8 +189,10 @@ assert(t.foul_room(3, 2, "plasma", 30.0), "plasma into the room")
 t.run_seconds(6)
 t.run_ticks(60)
 
-assert(t.hazard_level(4, 1) == "deadly",
-    "the fan calls it lethal: " .. tostring(t.hazard_level(4, 1)))
+assert(
+    t.hazard_level(4, 1) == "deadly",
+    "the fan calls it lethal: " .. tostring(t.hazard_level(4, 1))
+)
 lamp = assert(t.light_at(1, 2))
 assert(lamp.color == DEADLY, "the room is red: " .. lamp.color)
 assert(math.abs(lamp.power - 1.5) < 1e-6, "and harder still: " .. lamp.power)
@@ -203,7 +214,8 @@ assert(math.abs(lamp.range - 6.0) < 1e-6, "reach untouched by any of it")
 -- other one and so out of reach of it, which is the only way to take
 -- one voice off the air without taking the other with it.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "two alarms",
     legend: {
         ' ': (turf: Space),
@@ -253,7 +265,9 @@ t.world([==[(
         (10, 2, 1),
     ],
     labels: [(17, 1, "Engineering")],
-)]==], 0)
+)]==],
+    0
+)
 
 t.set_environment({ sink_k = 293.15, insolation = 0 })
 local q = t.join()
@@ -304,8 +318,10 @@ t.run_seconds(6)
 t.run_ticks(60)
 
 lamp = assert(t.light_at(1, 2))
-assert(lamp.color == UNBREATHABLE,
-    "one alarm let go, the other never did, and the flag stands: " .. lamp.color)
+assert(
+    lamp.color == UNBREATHABLE,
+    "one alarm let go, the other never did, and the flag stands: " .. lamp.color
+)
 assert(math.abs(lamp.power - 1.2) < 1e-6, "at the flag's own power: " .. lamp.power)
 
 -- ---------------------------------------------------------------
@@ -355,8 +371,10 @@ t.run_ticks(5)
 lamp = assert(t.light_at(1, 2))
 assert(lamp.status == "ok", "the tube goes in")
 assert(lamp.emits, "and the room is lit again")
-assert(lamp.color == DEADLY,
-    "burning the flag that never went away, not the tube's own white: " .. lamp.color)
+assert(
+    lamp.color == DEADLY,
+    "burning the flag that never went away, not the tube's own white: " .. lamp.color
+)
 assert(math.abs(lamp.power - 1.5) < 1e-6, "at the flag's power: " .. lamp.power)
 
 -- ---------------------------------------------------------------
@@ -399,12 +417,13 @@ t.run_ticks(60)
 assert(t.set_turf(13, 2, "space"), "and the far room opens to space")
 t.run_seconds(20)
 t.run_ticks(60)
-assert(t.hazard_level(15, 1) == "unbreathable",
-    "the far fan crosses: " .. tostring(t.hazard_level(15, 1)))
+assert(
+    t.hazard_level(15, 1) == "unbreathable",
+    "the far fan crosses: " .. tostring(t.hazard_level(15, 1))
+)
 
 lamp = assert(t.light_at(1, 2))
-assert(lamp.color == UNBREATHABLE,
-    "the red went with the fan that reported it: " .. lamp.color)
+assert(lamp.color == UNBREATHABLE, "the red went with the fan that reported it: " .. lamp.color)
 assert(math.abs(lamp.power - 1.2) < 1e-6, "and the blue nobody can withdraw stands")
 -- ---------------------------------------------------------------
 -- AND NOT ONE HANDLER RAISED. Everything above is a chain of react

@@ -42,7 +42,8 @@ local content = {
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
     -- Everything that is actually IN a vessel, condensed phases only:
     -- what a pill can carry is a liquid or a powder, and a vapour over
@@ -90,7 +91,10 @@ if sim ~= nil then
         if not sim.is_powered(self) then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:fixtures.chem_packager.the_packager_is_dark_and", {}),
+                message = sim.msg(
+                    "lunatic/tfs:fixtures.chem_packager.the_packager_is_dark_and",
+                    {}
+                ),
             })
             return true
         end
@@ -106,7 +110,10 @@ if sim ~= nil then
         local share = held / PILLS
         sim.message.send({
             recipient = user,
-            message = sim.msg("lunatic/tfs:fixtures.chem_packager.the_extruder_starts_printing", {}),
+            message = sim.msg(
+                "lunatic/tfs:fixtures.chem_packager.the_extruder_starts_printing",
+                {}
+            ),
         })
         sim.spawn_task(user, function()
             for _ = 1, PILLS do
@@ -116,14 +123,20 @@ if sim ~= nil then
                 if sim.do_after(user, sim.ticks(0.75), {}) == "interrupted" then
                     sim.message.send({
                         recipient = user,
-                        message = sim.msg("lunatic/tfs:fixtures.chem_packager.the_extruder_stops", {}),
+                        message = sim.msg(
+                            "lunatic/tfs:fixtures.chem_packager.the_extruder_stops",
+                            {}
+                        ),
                     })
                     return true
                 end
                 if not sim.is_powered(self) then
                     sim.message.send({
                         recipient = user,
-                        message = sim.msg("lunatic/tfs:fixtures.chem_packager.the_packager_goes_dark", {}),
+                        message = sim.msg(
+                            "lunatic/tfs:fixtures.chem_packager.the_packager_goes_dark",
+                            {}
+                        ),
                     })
                     return true
                 end
@@ -136,7 +149,10 @@ if sim ~= nil then
             sim.sound.play({ asset = "lunatic/tfs:sound/vend", at = self.tile })
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:fixtures.chem_packager.the_extruder_clicks_and_stops", {}),
+                message = sim.msg(
+                    "lunatic/tfs:fixtures.chem_packager.the_extruder_clicks_and_stops",
+                    {}
+                ),
             })
             return true
         end)

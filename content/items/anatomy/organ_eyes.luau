@@ -29,21 +29,29 @@ local content = {
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    script_definition:handle("body.threshold.done", { kind = "react", route = "threshold" }, function(ev)
-        local organ, body, edge = ev.part, ev.body, ev.edge
-        if edge == "high" then
-            sim.message.send({
-                recipient = body,
-                message = sim.msg("lunatic/tfs:items.organ_eyes.your_vision_blurs_and_swims", {}),
-            })
-        elseif edge == "fail" then
-            sim.message.send({
-                recipient = body,
-                message = sim.msg("lunatic/tfs:items.organ_eyes.everything_goes_dark", {}),
-            })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle(
+        "body.threshold.done",
+        { kind = "react", route = "threshold" },
+        function(ev)
+            local organ, body, edge = ev.part, ev.body, ev.edge
+            if edge == "high" then
+                sim.message.send({
+                    recipient = body,
+                    message = sim.msg(
+                        "lunatic/tfs:items.organ_eyes.your_vision_blurs_and_swims",
+                        {}
+                    ),
+                })
+            elseif edge == "fail" then
+                sim.message.send({
+                    recipient = body,
+                    message = sim.msg("lunatic/tfs:items.organ_eyes.everything_goes_dark", {}),
+                })
+            end
         end
-    end)
+    )
 end
 
 return content

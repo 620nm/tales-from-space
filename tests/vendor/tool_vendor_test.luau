@@ -4,7 +4,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- different shelf. It proves the mechanism is generic — the engine
 -- has no word for either machine, so a second one costs two content
 -- files and nothing else.
-t.world([==[(
+t.world(
+    [==[(
     name: "tool room",
     legend: {
         ' ': (turf: Space),
@@ -26,7 +27,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -36,17 +39,15 @@ t.move(p, "east")
 t.tick()
 local x, y = t.pos(p)
 assert(x == 1 and y == 1, "tool vendors are solid too")
-assert(table.concat(t.messages(p), "\n"):find("wobbles", 1, true),
-    "the shared move.bump fired")
+assert(table.concat(t.messages(p), "\n"):find("wobbles", 1, true), "the shared move.bump fired")
 
 -- Its clean-room shelf document is stocked from ITS OWN list.
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 local ui = ui_controls.record(assert(t.ui(p), "clicking the tool vendor opens its window"))
-assert(ui.document == "modules" and ui.presentation == "shelf",
-    "the generic shelf document")
+assert(ui.document == "modules" and ui.presentation == "shelf", "the generic shelf document")
 assert(ui_controls.record(ui.notice).text == "Tools for tools.", "and its own ad copy")
-local shelf: {[string]: ui_controls.Record} = {}
+local shelf: { [string]: ui_controls.Record } = {}
 for _, rec in ipairs(ui_controls.rows(ui.products)) do
     shelf[ui_controls.text(ui_controls.record(rec.payload).product)] = rec
 end
@@ -124,28 +125,29 @@ local media = {
 for _, item in ipairs(tools) do
     assert(shelf[item], item .. " is missing from the tool vendor")
     assert(shelf[item].category == "Tools", item .. " is not under Tools")
-    assert(shelf[item].sprite ~= "missing",
-        item .. " does not resolve to atlas art")
+    assert(shelf[item].sprite ~= "missing", item .. " does not resolve to atlas art")
     assert(ui_controls.number(shelf[item].stock) > 0, item .. " has no displayed stock")
 end
 for _, item in ipairs(parts) do
     assert(shelf[item], item .. " is missing from the tool vendor")
     assert(shelf[item].category == "Parts", item .. " is not under Parts")
-    assert(shelf[item].sprite ~= "missing",
-        item .. " does not resolve to atlas art")
+    assert(shelf[item].sprite ~= "missing", item .. " does not resolve to atlas art")
     assert(ui_controls.number(shelf[item].stock) > 0, item .. " has no displayed stock")
 end
 for _, item in ipairs(media) do
     assert(shelf[item], item .. " is missing from the tool vendor")
     assert(shelf[item].category == "Media", item .. " is not under Media")
-    assert(shelf[item].sprite ~= "missing",
-        item .. " does not resolve to atlas art")
+    assert(shelf[item].sprite ~= "missing", item .. " does not resolve to atlas art")
     assert(ui_controls.number(shelf[item].stock) > 0, item .. " has no displayed stock")
 end
-assert(#ui_controls.rows(ui.products) == #tools + #parts + #media,
-    "the tool shelf and its asserted roster drifted apart")
-assert(shelf.cable_coil.sprite == "coil",
-    "item ids that differ from their sprite still select their atlas art")
+assert(
+    #ui_controls.rows(ui.products) == #tools + #parts + #media,
+    "the tool shelf and its asserted roster drifted apart"
+)
+assert(
+    shelf.cable_coil.sprite == "coil",
+    "item ids that differ from their sprite still select their atlas art"
+)
 assert(shelf.cola == nil, "the tool vendor does not sell cola")
 
 -- The additions are not merely rows in a window: each row resolves to
@@ -176,8 +178,7 @@ for _, item in ipairs(additions) do
     ui_controls.vend(p, item)
     t.tick()
     assert(t.count_items(item) == 1, item .. " did not dispense")
-    assert(t.ledger_has("ItemSpawned", item, "Player"),
-        item .. " was not attributed to the buyer")
+    assert(t.ledger_has("ItemSpawned", item, "Player"), item .. " was not attributed to the buyer")
 end
 
 -- act('vend') names WHICH shelf; the item lands at the buyer's feet
@@ -189,8 +190,7 @@ t.tick()
 assert(t.count_items("wrench") == 1, "the named product dispensed")
 assert(t.count_items("crowbar") == 0, "and only that one")
 assert(table.concat(t.sounds(p), "\n"):find("vend", 1, true), "the vend clunk played")
-assert(t.ledger_has("ItemSpawned", "wrench", "Player"),
-    "a UI act is a direct player action")
+assert(t.ledger_has("ItemSpawned", "wrench", "Player"), "a UI act is a direct player action")
 
 -- NEGATIVE: the client is hostile. A product this machine does not stock
 -- mints nothing at all — not the first product, not a fallback, and
@@ -213,8 +213,7 @@ t.click(p, 2, 2, t.target_at(p, 2, 2))
 t.tick()
 local cola_ui = ui_controls.record(t.ui(p))
 local cola_product = ui_controls.record(ui_controls.rows(cola_ui.products)[1].payload)
-assert(cola_product.product == "cola",
-    "the softdrinks machine still sells softdrinks")
+assert(cola_product.product == "cola", "the softdrinks machine still sells softdrinks")
 ui_controls.vend(p, "cola")
 t.tick()
 assert(t.count_items("cola") == 1, "and dispenses them")

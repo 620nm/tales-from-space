@@ -50,14 +50,18 @@ local content = {
 
 content.actions = {
     action_rules.primary("unfasten_pipe", action_rules.kind("pipe")),
-    action_rules.primary("fasten_pipe", { all = {
-        action_rules.kind("item"), action_rules.fact("target.proto", "pipe"),
-        action_rules.fact("target.subfloor_exposed", true),
-    } }),
+    action_rules.primary("fasten_pipe", {
+        all = {
+            action_rules.kind("item"),
+            action_rules.fact("target.proto", "pipe"),
+            action_rules.fact("target.subfloor_exposed", true),
+        },
+    }),
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
         local clicked, target = ev.claim, ev.claim
@@ -100,7 +104,10 @@ if sim ~= nil then
                 if sim.do_after(user, sim.ticks(1.0), {}) == "interrupted" then
                     sim.message.send({
                         recipient = user,
-                        message = sim.msg("lunatic/tfs:items.wrench.you_stop_fastening_the_pipe", {}),
+                        message = sim.msg(
+                            "lunatic/tfs:items.wrench.you_stop_fastening_the_pipe",
+                            {}
+                        ),
                     })
                     return true
                 end
@@ -120,7 +127,8 @@ if sim ~= nil then
                     return true
                 end
                 pipe_layer = 2 ^ mode.index
-                if sim.pipe_occupancy(x, y) % (pipe_layer * 2) >= pipe_layer
+                if
+                    sim.pipe_occupancy(x, y) % (pipe_layer * 2) >= pipe_layer
                     or sim.pipe(x, y) % (pipe_layer * 2) >= pipe_layer
                 then
                     return true

@@ -59,7 +59,8 @@ end
 -- space, while the east main — three tiles away, on the same layer,
 -- on what a mapper drew as one line — never loses a mole.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "shut valve",
     legend: {
         ' ': (turf: Space),
@@ -82,7 +83,9 @@ t.world([==[(
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
         (1, 3, 3), (2, 3, 3), (3, 3, 3), (4, 3, 3), (5, 3, 3), (6, 3, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local _p = t.join()
 t.tick()
@@ -93,10 +96,7 @@ assert(assert(t.structure_at(3, 2)).state == "shut", "and it opens the shift shu
 -- Both atmos fixtures replace their centre lengths.
 assert(t.pipe(1, 2) == 0, "there is no hidden pipe under the vent")
 assert(t.pipe(3, 2) == 0, "there is no hidden pipe under the valve")
-assert(
-    t.pipe_pressure(3, 2) == nil,
-    "but no net claims it: a run does not pass through a machine"
-)
+assert(t.pipe_pressure(3, 2) == nil, "but no net claims it: a run does not pass through a machine")
 
 -- Each side is a net of its own, and each is 200 L bigger than its
 -- lengths because the port in the valve's mouth belongs to it.
@@ -105,7 +105,8 @@ assert(assert(t.pipe_pressure(5, 2)) > 90.0, "and so is the east one")
 
 local west_m3 = net_m3(1, 2) -- (2,2), plus vent and valve ports
 local east_m3 = net_m3(3, 1) -- (4,2) (5,2) (6,2) plus its front port
-local held = moles(assert(t.pipe_pressure(2, 2)), west_m3) + moles(assert(t.pipe_pressure(5, 2)), east_m3)
+local held = moles(assert(t.pipe_pressure(2, 2)), west_m3)
+    + moles(assert(t.pipe_pressure(5, 2)), east_m3)
 
 -- Open the hull. Whatever is on the west main goes out with the room.
 t.fault(1, 1, t.now() + 4)
@@ -134,7 +135,8 @@ assert(held > 0.0, "the books were readable to begin with")
 -- laid by hand during the shift, so it is empty. A valve between them
 -- is the only thing keeping those two facts apart.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "open valve",
     legend: {
         ' ': (turf: Space),
@@ -156,7 +158,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local q = t.join()
 t.tick()
@@ -175,7 +179,8 @@ local WEST_M3 = net_m3(2, 1)
 local EAST_M3 = net_m3(3, 1)
 assert(assert(t.pipe_pressure(2, 1)) < 1.0, "a run you built yourself starts empty")
 assert(assert(t.pipe_pressure(5, 1)) > 90.0, "the mapped run beside it did not")
-local before = moles(assert(t.pipe_pressure(2, 1)), WEST_M3) + moles(assert(t.pipe_pressure(5, 1)), EAST_M3)
+local before = moles(assert(t.pipe_pressure(2, 1)), WEST_M3)
+    + moles(assert(t.pipe_pressure(5, 1)), EAST_M3)
 
 -- Walk over to it, empty-handed. A wheel is a thing you put a HAND on:
 -- with a coil of pipe in it you are laying pipe, exactly as tg's
@@ -225,16 +230,19 @@ t.click(q, 3, 1, t.target_at(q, 3, 1, "manual_valve"))
 t.run_seconds(2)
 assert(assert(t.structure_at(3, 1)).state == "shut", "shut again")
 t.run_seconds(1)
-local after = moles(assert(t.pipe_pressure(2, 1)), WEST_M3) + moles(assert(t.pipe_pressure(5, 1)), EAST_M3)
+local after = moles(assert(t.pipe_pressure(2, 1)), WEST_M3)
+    + moles(assert(t.pipe_pressure(5, 1)), EAST_M3)
 assert(
     math.abs(after - before) < before * 0.02,
     "opening and shutting a valve makes and loses nothing: "
-        .. before .. " mol -> " .. after .. " mol"
+        .. before
+        .. " mol -> "
+        .. after
+        .. " mol"
 )
 assert(
     assert(t.pipe_pressure(2, 1)) > 40.0,
-    "and the west main, which nobody ever filled, is charged: "
-        .. assert(t.pipe_pressure(2, 1))
+    "and the west main, which nobody ever filled, is charged: " .. assert(t.pipe_pressure(2, 1))
 )
 
 -- ---------------------------------------------------------------
@@ -252,7 +260,8 @@ assert(
 -- through a bigger volume and drops it below an atmosphere. That is
 -- the difference the pump then works against.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "pump",
     legend: {
         ' ': (turf: Space),
@@ -274,7 +283,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local r = t.join()
 t.tick()
@@ -323,11 +334,16 @@ t.click(r, 5, 1, t.target_at(r, 5, 1, "pump"))
 t.tick()
 local panel = ui_controls.record(assert(t.ui(r)))
 assert(panel, "a pump answers an empty hand with a panel")
-assert(panel.document == "modules" and panel.presentation == "modules",
-    "the module document every in-line machine shares")
+assert(
+    panel.document == "modules" and panel.presentation == "modules",
+    "the module document every in-line machine shares"
+)
 -- The words on the button are the machine's own states, out of
 -- tfs/content/structures/pump.luau.
-assert(ui_controls.word(ui_controls.rows(panel.toggles)[1].on_text) == "running", ui_controls.word(ui_controls.rows(panel.toggles)[1].on_text))
+assert(
+    ui_controls.word(ui_controls.rows(panel.toggles)[1].on_text) == "running",
+    ui_controls.word(ui_controls.rows(panel.toggles)[1].on_text)
+)
 assert(ui_controls.word(ui_controls.rows(panel.toggles)[1].off_text) == "off")
 assert(ui_controls.rows(panel.setpoints)[1].field == "target", "and one dial, in kPa")
 assert(math.abs(ui_controls.number(ui_controls.rows(panel.setpoints)[1].value) - 101.325) < 0.001)
@@ -373,7 +389,8 @@ assert(
 -- and nothing crosses — where anything that merely EQUALISED would
 -- have emptied one into the other.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "backwards pump",
     legend: {
         ' ': (turf: Space),
@@ -395,7 +412,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local s = t.join()
 t.tick()
@@ -435,7 +454,8 @@ near(assert(t.pipe_pressure(5, 1)), charged, 0.5, "nor let its output down the p
 -- layer-1 line takes nothing: the length under it is still part of
 -- that run, and turning the wheel does not move a mole.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "wrong layer",
     legend: {
         ' ': (turf: Space),
@@ -456,16 +476,15 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local u = t.join()
 t.tick()
 assert(assert(t.structure_at(3, 1)).id == "manual_valve", "the valve is on the line")
 assert(t.pipe(3, 1) == 1, "which is a LAYER 1 line")
-assert(
-    t.pipe_pressure(3, 1, 4) == nil,
-    "there is no distribution run here at all"
-)
+assert(t.pipe_pressure(3, 1, 4) == nil, "there is no distribution run here at all")
 assert(
     assert(t.pipe_pressure(3, 1, 1)) > 90.0,
     "and the length under the valve is still part of the layer-1 run"
@@ -477,7 +496,4 @@ t.run_seconds(2)
 assert(assert(t.structure_at(3, 1)).state == "open", "the wheel still turns")
 t.run_seconds(2)
 near(assert(t.pipe_pressure(5, 1, 1)), layer1, 0.5, "and the line it is not on never noticed")
-assert(
-    t.pipe_pressure(3, 1, 1) ~= nil,
-    "the length under it still belongs to that run"
-)
+assert(t.pipe_pressure(3, 1, 1) ~= nil, "the length under it still belongs to that run")

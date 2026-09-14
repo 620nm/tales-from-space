@@ -14,7 +14,8 @@
 -- drop sound through `throw_drop_sound_chain` (items.dm:661-666) -- and
 -- the LAUNCH is silent, because a throw takes the item out of the hand
 -- with `silent = TRUE` (items.dm:1340).
-t.world([==[(
+t.world(
+    [==[(
     name: "workshop",
     legend: {
         ' ': (turf: Space),
@@ -28,7 +29,9 @@ t.world([==[(
     ],
     structures: [(1, 1, "player_spawn")],
     items: [(2, 1, "wrench"), (2, 1, "headset")],
-)]==], 7)
+)]==],
+    7
+)
 
 local function heard(p: number)
     return " " .. table.concat(t.sounds(p), " ") .. " "
@@ -41,15 +44,19 @@ t.tick()
 t.click(p, 2, 1, t.target_at(p, 2, 1, "wrench"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wrench", "the wrench is in hand")
-assert(heard(p):find(" wrench_pickup ", 1, true),
-    "picking it up is the wrench's own noise, not a generic one")
+assert(
+    heard(p):find(" wrench_pickup ", 1, true),
+    "picking it up is the wrench's own noise, not a generic one"
+)
 
 -- ---- and back onto the deck --------------------------------------------
 t.drop(p)
 t.run_ticks(1)
 assert(t.hands(p).held == nil, "the hand is empty again")
-assert(heard(p):find(" wrench_drop ", 1, true),
-    "and putting it down is a different noise from picking it up")
+assert(
+    heard(p):find(" wrench_drop ", 1, true),
+    "and putting it down is a different noise from picking it up"
+)
 
 -- ---- thrown: nothing leaving the hand, something where it stops --------
 t.click(p, 1, 1, t.target_at(p, 1, 1, "wrench"))
@@ -63,8 +70,10 @@ assert(heard(p) == "  ", "the launch itself says nothing")
 
 t.run_ticks(8)
 assert(#t.items_at(5, 1) == 1, "it flew and came to rest")
-assert(heard(p):find(" wrench_drop ", 1, true),
-    "the wrench names no throw sound, so tg's chain lands on its drop sound")
+assert(
+    heard(p):find(" wrench_drop ", 1, true),
+    "the wrench names no throw sound, so tg's chain lands on its drop sound"
+)
 
 -- ---- and the thing that named nothing ----------------------------------
 -- The negative that keeps the boundary honest. Silence here is content's

@@ -83,7 +83,10 @@ local function run(key: string, moles: number)
     end
 
     assert(crossed > 0, ("%s never reached the far end of the corridor"):format(key))
-    assert(levelled > 0, ("%s never levelled: %.4f L still on the source"):format(key, held(key, 1)))
+    assert(
+        levelled > 0,
+        ("%s never levelled: %.4f L still on the source"):format(key, held(key, 1))
+    )
     -- Sixty litres over six tiles, wherever the clock got to.
     for x = 1, TILES do
         assert(

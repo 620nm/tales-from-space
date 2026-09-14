@@ -18,13 +18,21 @@ end
 function laptop.ready(p: number, x: number, y: number): SpecObservedTarget
     local item = t.target_at(p, x, y, "laptop")
     assert(item ~= nil, "a laptop to hand")
-    for _ = 1, 2 do t.use_item(p, item, "secondary"); t.run_ticks(2) end
+    for _ = 1, 2 do
+        t.use_item(p, item, "secondary")
+        t.run_ticks(2)
+    end
     return laptop.take(p, x, y)
 end
 
 -- Click the device at (x, y) with the held laptop; returns the contact
 -- workspace document, or nil when none opened.
-function laptop.connect(p: number, x: number, y: number, id: string | SpecObservedTarget): ui_controls.Record?
+function laptop.connect(
+    p: number,
+    x: number,
+    y: number,
+    id: string | SpecObservedTarget
+): ui_controls.Record?
     local target = t.target_at(p, x, y, id)
     assert(target ~= nil, "the device is in view")
     t.click(p, x, y, target)

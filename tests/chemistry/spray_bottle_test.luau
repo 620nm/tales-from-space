@@ -9,7 +9,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- a wall doses the open tile before it and ends at the wall's face,
 -- with the share that had nowhere to land on the record and off the
 -- books, exactly as the record says.
-t.world([==[(
+t.world(
+    [==[(
     name: "spray hall",
     legend: {
         ' ': (turf: Space),
@@ -27,7 +28,9 @@ t.world([==[(
         (3, 1, "spray_bottle"),
         (1, 1, "water_bottle_large"),
     ],
-)]==], 19)
+)]==],
+    19
+)
 
 local p = t.join()
 t.tick()
@@ -38,8 +41,10 @@ t.tick()
 -- the parcel a draw lands on is exact to about a part in a million
 -- rather than to the last bit.
 local function near(got: number, want: number, what: string, slack: number?)
-    assert(math.abs(got - want) < (slack or 1e-8),
-        ("%s: wanted %g, got %g"):format(what, want, got))
+    assert(
+        math.abs(got - want) < (slack or 1e-8),
+        ("%s: wanted %g, got %g"):format(what, want, got)
+    )
 end
 
 -- Charge the sprayer the way a janitor does: uncap the bottle, set it
@@ -95,8 +100,7 @@ assert(#launched == 1 and launched[1] == "spray", "an accepted launch is heard o
 assert(#t.ledger_rows("MatterSprayed") == 1, "and is on the record")
 t.run_ticks(20)
 near(assert(t.contents(spray)).water, 1.125, "one launch draws a 5 u parcel", 1e-5)
-assert(#t.ledger_rows("ParcelLost") == 0,
-    "three open tiles take three shares: nothing was lost")
+assert(#t.ledger_rows("ParcelLost") == 0, "three open tiles take three shares: nothing was lost")
 
 -- INTO THE WALL. Two tiles west is the hull. The puff doses the open
 -- tile in between and ends where its move fails; the share it was
@@ -113,5 +117,8 @@ assert(lost[1].why == "blocked", "and it says why: " .. tostring(lost[1].why))
 near(ui_controls.number(lost[1].moles), 0.125 / 2, "half the parcel: one share of two")
 assert(lost[1].cause ~= nil, "caused by the launch")
 local after = t.matter_totals()
-near(before.moles - after.moles, ui_controls.number(lost[1].moles),
-    "what the world is short is what the record says left it")
+near(
+    before.moles - after.moles,
+    ui_controls.number(lost[1].moles),
+    "what the world is short is what the record says left it"
+)

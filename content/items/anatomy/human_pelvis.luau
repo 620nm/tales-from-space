@@ -39,7 +39,7 @@ return {
         -- (code/__DEFINES/bodyparts.dm:71) means a mangled arm is still
         -- an arm right up to the moment it comes off. A cybernetic one
         -- would name a falling curve here instead.
-        efficiency = {{0, 1}, {1, 1}},
+        efficiency = { { 0, 1 }, { 1, 1 } },
         pool_mod = { brute = 1, burn = 1 },
     },
 }

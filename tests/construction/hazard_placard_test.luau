@@ -23,7 +23,8 @@ local function zeroes(what: string, summary: SpecHazard)
     assert(#summary.specials == 0, what .. ": no special symbol")
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "placard",
     legend: {
         ' ': (turf: Space),
@@ -36,7 +37,9 @@ t.world([==[(
         "###",
     ],
     structures: [(1, 1, "player_spawn")],
-)]==], 0)
+)]==],
+    0
+)
 
 t.join()
 t.tick()

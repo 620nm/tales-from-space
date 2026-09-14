@@ -62,8 +62,10 @@ return {
     mount = true,
     appearance = {
         mounted = {
-            north = "apc_n", south = "apc_s",
-            east = "apc_e", west = "apc_w",
+            north = "apc_n",
+            south = "apc_s",
+            east = "apc_e",
+            west = "apc_w",
         },
         states = {
             lock = "apcov_lock",

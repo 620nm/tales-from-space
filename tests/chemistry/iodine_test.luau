@@ -29,7 +29,8 @@ local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "the iodine bench",
     legend: {
         ' ': (turf: Space),
@@ -43,7 +44,9 @@ t.world([==[(
     ],
     structures: [(1, 1, "player_spawn")],
     items: [(1, 1, "bottle.iodine")],
-)]==], 0)
+)]==],
+    0
+)
 
 t.set_environment({ sink_k = 293.15, insolation = 0.0 })
 
@@ -81,11 +84,20 @@ assert((before.liquid or 0) < 1e-9, "and not a drop of liquid: it never melts do
 assert((before.gas or 0) > 0, "and a violet haze over them: " .. tostring(before.gas))
 
 local line_kpa = sublimation_pa(reading.temp_k) / 1000.0
-near(reading.pressure_kpa, line_kpa, line_kpa * 0.05,
-    "the gauge reads the sublimation line at " .. reading.temp_k .. " K")
+near(
+    reading.pressure_kpa,
+    line_kpa,
+    line_kpa * 0.05,
+    "the gauge reads the sublimation line at " .. reading.temp_k .. " K"
+)
 local headspace_m3 = reading.headspace_l / 1000.0
 local n_line = sublimation_pa(reading.temp_k) * headspace_m3 / (R * reading.temp_k)
-near(assert(before.gas, "the bottle contains iodine vapour"), n_line, n_line * 0.05, "the haze is the line's worth of vapour, no more")
+near(
+    assert(before.gas, "the bottle contains iodine vapour"),
+    n_line,
+    n_line * 0.05,
+    "the haze is the line's worth of vapour, no more"
+)
 
 local booked = t.matter_totals()
 
@@ -105,27 +117,45 @@ local deck_k = assert(t.room_temperature(2, 1))
 t.click(p, 2, 1) -- the deck beside you, with the bottle in hand
 t.run_ticks(4)
 
-assert(assert(t.vessel(bottle)).moles < 1e-6, "the bottle is empty now: " .. assert(t.vessel(bottle)).moles)
+assert(
+    assert(t.vessel(bottle)).moles < 1e-6,
+    "the bottle is empty now: " .. assert(t.vessel(bottle)).moles
+)
 local rows = t.ledger_rows("spilled")
 assert(#rows == 1, "one spill on the record, got " .. #rows)
 local landed = tile_iodine(2, 1)
-assert(landed < charge * 0.05,
-    "what landed is a crystal, not a cloud -- the tile holds only a trace of gas yet: " .. landed)
+assert(
+    landed < charge * 0.05,
+    "what landed is a crystal, not a cloud -- the tile holds only a trace of gas yet: " .. landed
+)
 
 t.run_seconds(120)
 local plume = tile_iodine(2, 1) + tile_iodine(1, 1) + tile_iodine(3, 1) + tile_iodine(4, 1)
-assert(plume > landed + 1e-4,
-    "two minutes later the crystal is going up as vapour: " .. landed .. " -> " .. plume)
+assert(
+    plume > landed + 1e-4,
+    "two minutes later the crystal is going up as vapour: " .. landed .. " -> " .. plume
+)
 local control = assert(t.room_temperature(4, 1))
-assert(assert(t.room_temperature(2, 1)) < deck_k - 0.05,
-    "and the tile it lay on paid the latent heat: " .. deck_k .. " -> " .. assert(t.room_temperature(2, 1)))
-assert(assert(t.room_temperature(2, 1)) < control,
-    "colder than the far end of the room: " .. assert(t.room_temperature(2, 1)) .. " vs " .. control)
+assert(
+    assert(t.room_temperature(2, 1)) < deck_k - 0.05,
+    "and the tile it lay on paid the latent heat: "
+        .. deck_k
+        .. " -> "
+        .. assert(t.room_temperature(2, 1))
+)
+assert(
+    assert(t.room_temperature(2, 1)) < control,
+    "colder than the far end of the room: " .. assert(t.room_temperature(2, 1)) .. " vs " .. control
+)
 
 -- ---------------------------------------------------------------
 -- THREE: THE BOOKS CLOSE.
 -- ---------------------------------------------------------------
 local closed = t.matter_totals()
-near(closed.substances.iodine, booked.substances.iodine, 1e-9,
-    "not one mole of iodine was made or lost")
+near(
+    closed.substances.iodine,
+    booked.substances.iodine,
+    1e-9,
+    "not one mole of iodine was made or lost"
+)
 near(closed.moles, booked.moles, 1e-9, "nor of anything else in the room")

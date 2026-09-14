@@ -31,8 +31,10 @@ return {
     category = "decals/signs",
     appearance = {
         mounted = {
-            north = "nfpa_704_placard_n", south = "nfpa_704_placard_s",
-            east = "nfpa_704_placard_e", west = "nfpa_704_placard_w",
+            north = "nfpa_704_placard_n",
+            south = "nfpa_704_placard_s",
+            east = "nfpa_704_placard_e",
+            west = "nfpa_704_placard_w",
         },
     },
     build = {
@@ -61,24 +63,30 @@ return {
                 {
                     scale = "health",
                     sprites = {
-                        "nfpa_704_health_0", "nfpa_704_health_1",
-                        "nfpa_704_health_2", "nfpa_704_health_3",
+                        "nfpa_704_health_0",
+                        "nfpa_704_health_1",
+                        "nfpa_704_health_2",
+                        "nfpa_704_health_3",
                         "nfpa_704_health_4",
                     },
                 },
                 {
                     scale = "fire",
                     sprites = {
-                        "nfpa_704_fire_0", "nfpa_704_fire_1",
-                        "nfpa_704_fire_2", "nfpa_704_fire_3",
+                        "nfpa_704_fire_0",
+                        "nfpa_704_fire_1",
+                        "nfpa_704_fire_2",
+                        "nfpa_704_fire_3",
                         "nfpa_704_fire_4",
                     },
                 },
                 {
                     scale = "instability",
                     sprites = {
-                        "nfpa_704_reactivity_0", "nfpa_704_reactivity_1",
-                        "nfpa_704_reactivity_2", "nfpa_704_reactivity_3",
+                        "nfpa_704_reactivity_0",
+                        "nfpa_704_reactivity_1",
+                        "nfpa_704_reactivity_2",
+                        "nfpa_704_reactivity_3",
                         "nfpa_704_reactivity_4",
                     },
                 },

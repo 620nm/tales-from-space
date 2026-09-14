@@ -17,7 +17,8 @@ local function has(list, want)
     return false
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "fixture row",
     legend: {
         ' ': (turf: Space),
@@ -34,13 +35,15 @@ t.world([==[(
     ],
     items: [(1, 2, "crowbar")],
     structures: [(1, 2, "player_spawn"), (4, 1, "vent")],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
 t.click(p, 1, 2, t.target_at(p, 1, 2, "crowbar")) -- the crowbar is underfoot
 t.tick()
-t.sounds(p)      -- clear the pickup traffic
+t.sounds(p) -- clear the pickup traffic
 t.messages(p)
 
 -- The APC's tile, from the walkway below it.
@@ -49,8 +52,7 @@ t.click(p, 2, 1, nil, -14, 14)
 t.tick()
 assert(t.turf(2, 1) == "plating", "the tile under the APC comes up")
 assert(has(t.items_at(2, 1), "floor_tile"), "and is refunded where it lay")
-assert(has(t.messages(p), "You pry up the floor tile."),
-    "the narration was not a lie")
+assert(has(t.messages(p), "You pry up the floor tile."), "the narration was not a lie")
 
 -- The quick pop, not the sustained heave: tg's pry_tile plays
 -- `usesound` (crowbar.ogg) via play_tool_sound, never `operating_sound`.
@@ -77,7 +79,7 @@ assert(t.turf(5, 1) == "plating", "and the one under the light")
 
 -- Back the other way: a tile goes down on plating a fixture stands on.
 walk("west", 3)
-t.drop(p)      -- put the crowbar down; the hand is for the tile
+t.drop(p) -- put the crowbar down; the hand is for the tile
 t.tick()
 t.click(p, 2, 1, t.target_at(p, 2, 1, "floor_tile")) -- pick the pried tile back up
 t.tick()
@@ -88,7 +90,8 @@ assert(t.turf(2, 1) == "floor", "the tile goes back down under the APC")
 assert(has(t.messages(p), "The floor is tiled."), "and says so")
 
 -- Scenario 2: forcing a dead airlock is the OTHER crowbar sound.
-t.world([==[(
+t.world(
+    [==[(
     name: "dead airlock",
     legend: {
         ' ': (turf: Space),
@@ -106,7 +109,9 @@ t.world([==[(
     // One length of backbone with no generator behind it, which is a
     // station with the lights off: the airlock's motors never wake.
     cables: [(1, 1, 2)],
-)]==], 7)
+)]==],
+    7
+)
 
 p = t.join()
 t.run_ticks(30) -- let a power pass settle the dead motors
@@ -118,8 +123,9 @@ t.sounds(p)
 t.click(p, 3, 1, t.target_at(p, 3, 1)) -- heave the unpowered airlock open
 t.run_seconds(3.0)
 local door_sounds = t.sounds(p)
-assert(has(door_sounds, "crowbar_pry"),
-    "forcing a door plays tg's operating_sound, the sustained heave")
-assert(not has(door_sounds, "crowbar"),
-    "and not the quick tile pop")
+assert(
+    has(door_sounds, "crowbar_pry"),
+    "forcing a door plays tg's operating_sound, the sustained heave"
+)
+assert(not has(door_sounds, "crowbar"), "and not the quick tile pop")
 assert(has(t.messages(p), "The door gives way."), "the airlock opens")

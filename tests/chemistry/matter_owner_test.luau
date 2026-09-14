@@ -19,7 +19,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- is a body of matter like any other. What lands there is ordinary
 -- matter from the instant it exists — so the last leg of this spec
 -- waits, and watches the puddle dry into the air above it.
-t.world([==[(
+t.world(
+    [==[(
     name: "owner bench",
     legend: {
         ' ': (turf: Space),
@@ -37,7 +38,9 @@ t.world([==[(
         (1, 1, "beaker.libital"),
         (3, 1, "beaker"),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()

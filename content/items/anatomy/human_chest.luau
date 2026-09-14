@@ -23,17 +23,17 @@ return {
         -- (code/__DEFINES/bodyparts.dm:71) means a mangled arm is still
         -- an arm right up to the moment it comes off. A cybernetic one
         -- would name a falling curve here instead.
-        efficiency = {{0, 1}, {1, 1}},
+        efficiency = { { 0, 1 }, { 1, 1 } },
         pool_mod = { brute = 1, burn = 1 },
         -- Circulation belongs to the part that physically hosts it. tg's
         -- carbon bloodstream is carried with the torso organs and losing
         -- bodyparts routes through their owner
         -- (code/modules/surgery/bodyparts/_bodyparts.dm:947-969).
         blood = {
-            normal = 560,            -- BLOOD_VOLUME_NORMAL, code/__DEFINES/mobs.dm:20
-            dead_below = 112,        -- BLOOD_VOLUME_SURVIVE, code/__DEFINES/mobs.dm:25
-            regen_per_s = 0.25,      -- BLOOD_REGEN_FACTOR, code/__DEFINES/mobs.dm:28
-            oxy_per_missing = 0.01,  -- code/modules/mob/living/blood.dm:256-262
+            normal = 560, -- BLOOD_VOLUME_NORMAL, code/__DEFINES/mobs.dm:20
+            dead_below = 112, -- BLOOD_VOLUME_SURVIVE, code/__DEFINES/mobs.dm:25
+            regen_per_s = 0.25, -- BLOOD_REGEN_FACTOR, code/__DEFINES/mobs.dm:28
+            oxy_per_missing = 0.01, -- code/modules/mob/living/blood.dm:256-262
         },
         bloodstream = {
             -- The dissolved-matter holder is the same body of blood the

@@ -213,7 +213,13 @@ function radio.deliver(ev: SpeechRadioPayload): { listeners: { SpeechListenerRow
     end
     circle(ev.channel, ev.at.x, ev.at.y, radio.LOCAL_RADIUS, ev.text)
     for _, source in ipairs(ev.sources) do
-        circle(source.channel, source.at.x, source.at.y, radio.radius_for(source.peers), source.text)
+        circle(
+            source.channel,
+            source.at.x,
+            source.at.y,
+            radio.radius_for(source.peers),
+            source.text
+        )
     end
 
     -- One djb2 per CIRCLE and one garble per distinct fraction of it --

@@ -18,7 +18,7 @@ local MAP = [==[(
     structures: [(1, 1, "player_spawn"), (4, 1, "player_spawn")],
 )]==]
 
-local function count(messages: {string}, needle: string)
+local function count(messages: { string }, needle: string)
     local n = 0
     for _, line in ipairs(messages) do
         if line:find(needle, 1, true) ~= nil then
@@ -32,7 +32,7 @@ end
 -- fact about the shift is a fact for whoever is still watching it, so
 -- the dead spectator is held to the same expectation as the crewman
 -- with a pulse (content/audiences.luau).
-local function heard(sessions: {number}, needle: string)
+local function heard(sessions: { number }, needle: string)
     local seen = nil
     for _, p in ipairs(sessions) do
         local n = count(t.messages(p), needle)
@@ -90,7 +90,10 @@ end
 for _, line in ipairs(t.messages(ghost)) do
     table.insert(ghost_ending, line)
 end
-assert(count(ending, "The shift is over.") == 1, "the end of the shift is announced once, at 3600 s")
+assert(
+    count(ending, "The shift is over.") == 1,
+    "the end of the shift is announced once, at 3600 s"
+)
 assert(count(ghost_ending, "The shift is over.") == 1, "and the dead spectator hears that too")
 assert(count(ending, "The shift ends") == 0, "no warning rides along with the ending")
 

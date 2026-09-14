@@ -8,7 +8,8 @@
 -- and no timer that switches the wind off: the corridor vents, the
 -- pressure that was driving it is gone, and the field decays on its own
 -- time constant. That is the whole assertion.
-t.world([==[(
+t.world(
+    [==[(
     name: "windward",
     legend: {
         ' ': (turf: Space),
@@ -21,7 +22,9 @@ t.world([==[(
         "#########",
     ],
     structures: [(6, 1, "player_spawn")],
-)]==], 7)
+)]==],
+    7
+)
 
 t.join()
 t.tick()

@@ -44,19 +44,24 @@ local NOUN = "APC"
 local MEMBER = "fitting"
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
-    script_definition:handle("interaction.use.done", { kind = "react", route = "interact" }, function(ev)
-        -- An empty hand, and a use that actually resolved: `implement`
-        -- is absent for the crewman reading the box and present for the
-        -- one taking it off the wall, and both arrive here.
-        if ev.implement ~= nil or ev.outcome ~= "completed" then
-            return
+    script_definition:handle(
+        "interaction.use.done",
+        { kind = "react", route = "interact" },
+        function(ev)
+            -- An empty hand, and a use that actually resolved: `implement`
+            -- is absent for the crewman reading the box and present for the
+            -- one taking it off the wall, and both arrive here.
+            if ev.implement ~= nil or ev.outcome ~= "completed" then
+                return
+            end
+            local said = network.line(ev.subject, NOUN, MEMBER)
+                or sim.msg("lunatic/tfs:lib.network.no_card", {})
+            sim.message.send({ recipient = ev.actor, message = said })
         end
-        local said = network.line(ev.subject, NOUN, MEMBER)
-            or sim.msg("lunatic/tfs:lib.network.no_card", {})
-        sim.message.send({ recipient = ev.actor, message = said })
-    end)
+    )
 
     -- ON AND OFF THE RESERVE. `ev.controller` is the panel that
     -- crossed, and it is the panel that has to be the subject of the

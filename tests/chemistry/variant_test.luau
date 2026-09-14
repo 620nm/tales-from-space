@@ -13,7 +13,8 @@
 --      bound to the base governs everything derived from it.
 --   3. What it IS stays its own. The thing in your hand reports
 --      `beaker.libital`, never `beaker`.
-t.world([==[(
+t.world(
+    [==[(
     name: "variant bench",
     legend: {
         ' ': (turf: Space),
@@ -27,7 +28,9 @@ t.world([==[(
     ],
     structures: [(1, 1, "player_spawn")],
     items: [(1, 1, "beaker.libital"), (2, 1, "beaker")],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -68,10 +71,7 @@ assert(look.title == "beaker (libital)", "the heading is the variant's name: " .
 assert(look.sprite == "beaker", "wearing the picture it inherited")
 local bare = assert(t.examine(p, 2, 1, empty))
 assert(bare.title == "beaker", "and the base is still the base: " .. bare.title)
-assert(
-    bare.lines[1] == look.lines[1],
-    "prose the variant did not override is the base's own"
-)
+assert(bare.lines[1] == look.lines[1], "prose the variant did not override is the base's own")
 
 -- 2. THE BASE'S GESTURES ARE ITS GESTURES.
 --

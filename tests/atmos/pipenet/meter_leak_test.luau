@@ -63,7 +63,8 @@ end
 -- ---------------------------------------------------------------
 -- Two mains, two bottles, one gauge.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "matched mains",
     legend: {
         '.': (turf: Plating),
@@ -92,7 +93,9 @@ t.world([==[(
         (1, 3, "connector_port"),
         (1, 3, "canister", { "blend": "canister_air", "open": true }),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -137,7 +140,9 @@ assert(
 assert(
     math.abs(assert(t.room_pressure(3, 1)) - assert(t.room_pressure(3, 3))) < 1e-9,
     "the deck over the gauge is the deck over the bare main: "
-        .. assert(t.room_pressure(3, 1)) .. " vs " .. assert(t.room_pressure(3, 3))
+        .. assert(t.room_pressure(3, 1))
+        .. " vs "
+        .. assert(t.room_pressure(3, 3))
 )
 
 -- And the bottles paid the same price, which is where a leak into the
@@ -155,7 +160,8 @@ assert(
 -- door into construction from the wrench above, and it is the one a
 -- player actually uses.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "sealed main",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: [
@@ -167,7 +173,9 @@ t.world([==[(
     structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "rpd")],
     pipes: [(1, 1, 4), (2, 1, 4), (3, 1, 4), (4, 1, 4)],
-)]==], 7)
+)]==],
+    7
+)
 
 local r = t.join()
 t.tick()

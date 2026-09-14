@@ -15,7 +15,8 @@
 -- (glass.dm:173), and structures/reinforced_table.luau says so.
 local ui_controls = require("@helpers/ui_controls")
 
-t.world([==[(
+t.world(
+    [==[(
     name: "glazier's corner",
     legend: {
         ' ': (turf: Space),
@@ -36,7 +37,9 @@ t.world([==[(
         (1, 1, "wrench"),
         (1, 1, "welder"),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -56,12 +59,15 @@ assert(t.hands(p).held == "rglass", "reinforced glass in hand")
 t.click(p, 2, 2, t.target_at(p, 2, 2, "table_frame"))
 t.run_seconds(2.5)
 local hard = t.structure_at(2, 2)
-assert(hard ~= nil and hard.id == "reinforced_table",
-    "the frame took the reinforced pane: " .. tostring(hard and hard.id))
-assert(hard.state == "welded",
-    "and arrives with its cover welded on: " .. tostring(hard.state))
-assert(hard.sprite == "reinforced_table-0",
-    "wearing its own family's isolated frame: " .. tostring(hard.sprite))
+assert(
+    hard ~= nil and hard.id == "reinforced_table",
+    "the frame took the reinforced pane: " .. tostring(hard and hard.id)
+)
+assert(hard.state == "welded", "and arrives with its cover welded on: " .. tostring(hard.state))
+assert(
+    hard.sprite == "reinforced_table-0",
+    "wearing its own family's isolated frame: " .. tostring(hard.sprite)
+)
 
 -- The ratchet declines, and says which state it wants. A silent no-op
 -- would read as a dropped click.
@@ -91,9 +97,10 @@ t.run_ticks(2)
 assert(t.hands(p).held == "welder", "a torch in hand")
 t.click(p, 2, 2, t.target_at(p, 2, 2, "reinforced_table"))
 t.run_seconds(5.5)
-assert(assert(t.structure_at(2, 2)).state == "loosened",
-    "five seconds of welding weakened the cover: "
-        .. tostring(assert(t.structure_at(2, 2)).state))
+assert(
+    assert(t.structure_at(2, 2)).state == "loosened",
+    "five seconds of welding weakened the cover: " .. tostring(assert(t.structure_at(2, 2)).state)
+)
 
 t.swap_hands(p)
 assert(t.hands(p).held == "wrench", "the ratchet is back in the active hand")

@@ -9,7 +9,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- squeeze out of it is a tenth of what a beaker's gesture moves. A
 -- vessel that could not be overfilled, or could not be emptied slowly,
 -- would pass every assertion about capacity alone.
-t.world([==[(
+t.world(
+    [==[(
     name: "chem bench",
     legend: {
         ' ': (turf: Space),
@@ -29,7 +30,9 @@ t.world([==[(
         (4, 1, "bottle"),
         (5, 1, "test_tube"),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local U = 0.025
 

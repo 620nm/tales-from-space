@@ -56,7 +56,8 @@ local function total(handle)
     return n
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "chem bench",
     legend: {
         ' ': (turf: Space),
@@ -79,7 +80,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -144,8 +147,10 @@ t.run_seconds(20)
 near(amount(jar, "chlorine"), CHLORINE, 1e-9, "the whole press landed, because there is a lid")
 local charged = assert(t.vessel(jar))
 assert((charged.contents.chlorine.liquid or 0) > 0.0, "most of it standing as liquid")
-assert(charged.temp_k > NOZZLE_K + 80.0,
-    "and the latent heat is where the temperature went: " .. charged.temp_k)
+assert(
+    charged.temp_k > NOZZLE_K + 80.0,
+    "and the latent heat is where the temperature went: " .. charged.temp_k
+)
 
 -- ...so put it on the deck and let the room have it back. A container
 -- LYING ON THE FLOOR trades heat with its tile every atmos pass
@@ -156,14 +161,19 @@ t.drop(p)
 t.run_seconds(600)
 local cooled = assert(t.vessel(jar))
 near(cooled.temp_k, 303.0, 5.0, "the deck took the heat back: " .. cooled.temp_k)
-assert((cooled.contents.chlorine.liquid or 0) > 0.8 * CHLORINE,
-    "and most of it is liquid now: " .. tostring(cooled.contents.chlorine.liquid))
+assert(
+    (cooled.contents.chlorine.liquid or 0) > 0.8 * CHLORINE,
+    "and most of it is liquid now: " .. tostring(cooled.contents.chlorine.liquid)
+)
 -- The gauge and the temperature are ONE statement: 892 kPa is
 -- chlorine's own vapour pressure at 303 K, off the Clausius-Clapeyron
 -- line anchored at its 239.1 K boiling point (docs/MATTER.md 5).
-near(cooled.pressure_kpa,
+near(
+    cooled.pressure_kpa,
     101.325 * math.exp((-20410.0 / 8.314) * (1.0 / cooled.temp_k - 1.0 / 239.1)),
-    60.0, "and the gauge is that temperature's own vapour pressure")
+    60.0,
+    "and the gauge is that temperature's own vapour pressure"
+)
 
 -- ---------------------------------------------------------------
 -- TWO: AND THEN THE SODIUM -- AND THE RUN STOPS WHERE THE LIQUID DOES.
@@ -214,20 +224,29 @@ assert(spent > 0.8 * CHLORINE, "most of the press was spent: " .. spent)
 -- Moles are not conserved and never were: 2 Na + Cl2 -> 2 NaCl is
 -- three in for two out, so every extent takes one mole out of the
 -- bottle. Mass is what conserves, and the ledger is what audits.
-near(total(jar), SODIUM + CHLORINE - spent, 1e-9,
-    "three moles in make two out, exactly and no more")
+near(
+    total(jar),
+    SODIUM + CHLORINE - spent,
+    1e-9,
+    "three moles in make two out, exactly and no more"
+)
 
 -- ...and what is LEFT is the whole explanation: not a mole of it is
 -- liquid any more, so there is nothing for the rule to read.
-assert(done.contents.chlorine.liquid == nil,
-    "the run ended because the liquid did, not because the chlorine did")
+assert(
+    done.contents.chlorine.liquid == nil,
+    "the run ended because the liquid did, not because the chlorine did"
+)
 assert((done.contents.chlorine.gas or 0) > 0.0, "there is chlorine in the bottle still")
 assert(done.temp_k > 300.0, "which is standing over a bottle the exotherm warmed: " .. done.temp_k)
 -- The gauge and the temperature are ONE statement again: a saturated
 -- headspace reads its own vapour pressure and nothing else.
-near(done.pressure_kpa,
+near(
+    done.pressure_kpa,
     101.325 * math.exp((-20410.0 / 8.314) * (1.0 / done.temp_k - 1.0 / 239.1)),
-    60.0, "and the gauge is that temperature's own vapour pressure")
+    60.0,
+    "and the gauge is that temperature's own vapour pressure"
+)
 
 -- ...and then it stays there, because nothing in the bottle can move.
 local settled = amount(jar, "salt")

@@ -19,7 +19,8 @@ return {
     -- modules remain available to the generic machine contract without
     -- stealing the click from the provider.
     ui = {
-        modules = { "link", "actions" }, opens_on_click = false,
+        modules = { "link", "actions" },
+        opens_on_click = false,
         actions = {
             { key = "advertise", label = "lunatic/tfs:action.fax.advertise" },
             { key = "name", label = "lunatic/tfs:action.fax.name" },

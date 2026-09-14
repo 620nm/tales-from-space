@@ -20,7 +20,8 @@ local STROKE = 0.125 -- tg's 5 u at 1 u = 0.025 mol (syringes.dm:11)
 local SHIPS = 0.35 -- what a beaker.libital arrives holding
 local PILLS = 5 -- what the packager prints in one gesture
 
-t.world([==[(
+t.world(
+    [==[(
     name: "ward",
     legend: {
         ' ': (turf: Space),
@@ -52,7 +53,9 @@ t.world([==[(
         (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3),
         (11, 1, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local medic = t.join("medic")
 local patient = t.join("assistant")
@@ -271,8 +274,12 @@ t.click_turf(medic, 3, 1)
 t.run_ticks(2)
 assert(said(medic, "You swallow the pill."), "down it goes")
 assert(t.count_items("pill") == PILLS - 1, "and the pill is gone with it")
-near((t.blood(medic).libital or 0) - mine, 0.15 * (dose / SHIPS), 5e-3,
-    "a fifth of the beaker landed in the medic")
+near(
+    (t.blood(medic).libital or 0) - mine,
+    0.15 * (dose / SHIPS),
+    5e-3,
+    "a fifth of the beaker landed in the medic"
+)
 
 -- ---------------------------------------------------------------
 -- THE OTHER REFUSAL: a barrel with no room left in it. Capacity is

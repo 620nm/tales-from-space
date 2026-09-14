@@ -29,7 +29,7 @@ local function said(p, line)
 end
 
 local function rows(ui: unknown, field: string)
-    local out: {ui_controls.Record} = {}
+    local out: { ui_controls.Record } = {}
     for _, row in ipairs(ui_controls.rows(ui_controls.record(ui).toggles or {})) do
         if row.field == field then
             out[#out + 1] = row
@@ -51,7 +51,8 @@ end
 -- is seven tiles from it -- past cord range -- and hangs off its own
 -- port at (9,2), fed through the l1 run, so one snip at (7,2) kills
 -- the blank tower and nothing else.
-t.world([==[(
+t.world(
+    [==[(
     name: "tower chain",
     legend: {
         ' ': (turf: Space),
@@ -86,7 +87,9 @@ t.world([==[(
         (1, 2, 2), (2, 2, 3), (3, 2, 1), (4, 2, 1), (5, 2, 1),
         (6, 2, 1), (7, 2, 1), (8, 2, 1), (9, 2, 1),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local speaker = t.join("assistant")
 local listener = t.join("medic")
@@ -131,7 +134,11 @@ local booted = false
 local function at_box(body: (ui_controls.Record) -> ())
     t.swap_hands(speaker)
     t.tick()
-    if booted then laptop.take(speaker, 7, 1) else laptop.ready(speaker, 7, 1) end
+    if booted then
+        laptop.take(speaker, 7, 1)
+    else
+        laptop.ready(speaker, 7, 1)
+    end
     booted = true
     local ui = laptop.connect(speaker, 8, 1, "access_point")
     assert(ui ~= nil, "the access point opens to the laptop")
@@ -167,8 +174,10 @@ end
 --    room's circuit are one tree before anybody joins anything, and
 --    the listener at 36 is inside the arms that buys.
 -- ---------------------------------------------------------------
-assert(#say_and_read("the tower chain is up, check your bands") > 0,
-    "two towers on one panel are one tree, and 36 is inside its reach")
+assert(
+    #say_and_read("the tower chain is up, check your bands") > 0,
+    "two towers on one panel are one tree, and 36 is inside its reach"
+)
 
 -- ---------------------------------------------------------------
 -- 2. THE JOIN. The access point's workspace offers both unjoined towers
@@ -260,8 +269,10 @@ end
 assert(cuts == 1, "the cut is on the record: " .. cuts)
 to_mark()
 
-assert(#say_and_read("still with me on the long band") == 1,
-    "released onto the panel's own tree, the rim still hears")
+assert(
+    #say_and_read("still with me on the long band") == 1,
+    "released onto the panel's own tree, the rim still hears"
+)
 
 -- Rejoin whichever tower came off, so the roster is whole again.
 to_panel()
@@ -272,8 +283,10 @@ at_box(function(panel)
     t.tick()
 end)
 to_mark()
-assert(#say_and_read("the tower chain is up, check your bands") == 1,
-    "rejoined, the pair reaches the rim again")
+assert(
+    #say_and_read("the tower chain is up, check your bands") == 1,
+    "rejoined, the pair reaches the rim again"
+)
 
 -- ---------------------------------------------------------------
 -- 5. UNPOWER THE BLANK TOWER and the arms shorten the same way: a
@@ -292,5 +305,7 @@ assert(t.cable_at(7, 2) == 0, "the spur is parted")
 assert(t.ledger_has("CableCut"), "sabotage is attributable")
 t.run_ticks(60)
 
-assert(#say_and_read("say again, the band went short") == 0,
-    "an unpowered tower amplifies nothing, and the reach falls back to 30")
+assert(
+    #say_and_read("say again, the band went short") == 0,
+    "an unpowered tower amplifies nothing, and the reach falls back to 30"
+)

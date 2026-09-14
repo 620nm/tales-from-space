@@ -24,7 +24,8 @@ local function amount(handle, key: string)
     return contents[key] or 0
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "cold bench",
     legend: {
         ' ': (turf: Space),
@@ -52,7 +53,9 @@ t.world([==[(
         (1, 2, 3), (2, 2, 3), (3, 2, 3),
         (1, 3, 3), (2, 3, 3), (3, 3, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -110,6 +113,8 @@ near(amount(warm, "silicon"), 0.0, 1e-5, "and spent the silicon")
 -- bounded, because an open vessel breathes with the room for five
 -- minutes and a run would have taken a whole SAND of it.
 near(amount(cold, "lube"), 0.0, 1e-12, "no lube in a vessel that will not react")
-assert(amount(cold, "water") > WET - SAND / 2,
-    "the water is still standing: " .. amount(cold, "water"))
+assert(
+    amount(cold, "water") > WET - SAND / 2,
+    "the water is still standing: " .. amount(cold, "water")
+)
 near(amount(cold, "silicon"), SAND, 1e-9, "and every mole of silicon")

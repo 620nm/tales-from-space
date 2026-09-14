@@ -13,7 +13,8 @@
 -- The plant, the controller and the socket sit in the row behind the
 -- rank, two cells of cord away (docs/POWER.md, "Outlets and cords").
 -- `cadaver_power_test.luau` is the one that pulls the plug.
-t.world([==[(
+t.world(
+    [==[(
     name: "cadaver chamber bench",
     legend: {
         ' ': (turf: Space),
@@ -32,11 +33,15 @@ t.world([==[(
     items: [(3, 1, "headset")],
     structures: [(1, 1, "player_spawn"), (3, 1, "player_spawn"), (2, 1, "cadaver_chamber", { "dir": "east" })],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
-)]==], 7)
+)]==],
+    7
+)
 
 local function has(rows, wanted)
     for _, row in ipairs(rows) do
-        if row == wanted then return true end
+        if row == wanted then
+            return true
+        end
     end
     return false
 end
@@ -55,8 +60,10 @@ assert(px == 3 and py == 1, "the patient stands where the tray will be")
 local drawer = t.target_at(attendant, 2, 1, "cadaver_chamber")
 assert(drawer ~= nil, "one targetable drawer")
 local shut = assert(t.structure_at(2, 1))
-assert(shut.state == "closed" and shut.sprite == "morgue1_e",
-    "it starts shut, wearing the empty face")
+assert(
+    shut.state == "closed" and shut.sprite == "morgue1_e",
+    "it starts shut, wearing the empty face"
+)
 assert(#shut.overlays == 0, "an empty drawer wears no lamp")
 assert(t.structure_at(3, 1) == nil, "a shut drawer's tray is nowhere")
 
@@ -71,12 +78,16 @@ t.sounds(attendant)
 t.click(attendant, 2, 1, drawer)
 t.tick()
 local open = assert(t.structure_at(2, 1))
-assert(open.state == "open" and open.sprite == "morgue0_e",
-    "opening selects the authored state and art")
+assert(
+    open.state == "open" and open.sprite == "morgue0_e",
+    "opening selects the authored state and art"
+)
 assert(has(t.sounds(attendant), "morgue_clank"), "the tray is heard rolling")
 local tray = t.structure_at(3, 1)
-assert(tray ~= nil and tray.id == "cadaver_drawer" and tray.sprite == "morguet_e",
-    "the slab lands on the tile the drawer faces")
+assert(
+    tray ~= nil and tray.id == "cadaver_drawer" and tray.sprite == "morguet_e",
+    "the slab lands on the tile the drawer faces"
+)
 px, py = t.pos(patient)
 assert(px == 3 and py == 1, "the tray arrives under whoever is standing there")
 
@@ -96,8 +107,10 @@ assert(t.body_id(patient) ~= nil, "the body still exists; it simply has no tile"
 -- one: tg lights it for an occupant a defibrillator could bring back
 -- (morgue.dm:303-321, :384-403), and "has not stopped" is what that
 -- reads as here. `cadaver_test.luau` is where a corpse lights the other.
-assert(assert(t.structure_at(2, 1)).overlays[1] == "morgue4_e",
-    "a drawer with somebody alive in it wears the living lamp")
+assert(
+    assert(t.structure_at(2, 1)).overlays[1] == "morgue4_e",
+    "a drawer with somebody alive in it wears the living lamp"
+)
 
 -- tg's relaymove: a conscious body inside pushing any direction slides
 -- it back out (morgue.dm:75-83).
@@ -123,8 +136,10 @@ assert(px == 4 and py == 1, "and cannot step back onto it: an open tray is dense
 t.click(attendant, 2, 1, drawer)
 t.tick()
 assert(#t.items_at(3, 1) == 0, "the dropped thing is inside")
-assert(assert(t.structure_at(2, 1)).overlays[1] == "morgue3_e",
-    "things but nobody is the other lamp")
+assert(
+    assert(t.structure_at(2, 1)).overlays[1] == "morgue3_e",
+    "things but nobody is the other lamp"
+)
 
 assert(#t.ledger_rows("drawer_opened") == 2, "both opens are attributed")
 assert(#t.ledger_rows("drawer_closed") == 2, "both closes are attributed")
@@ -137,7 +152,8 @@ assert(t.ledger_has("DrawerClosed", "cadaver chamber"), "the row names the thing
 -- refusal, not about power, and an unfed chamber here would be a true
 -- `corded fixture has no outlet within cord range` warning drowning out
 -- the one bench that means to trip it.
-t.world([==[(
+t.world(
+    [==[(
     name: "walled cadaver chamber bench",
     legend: {
         ' ': (turf: Space),
@@ -156,7 +172,9 @@ t.world([==[(
     items: [],
     structures: [(1, 1, "player_spawn"), (2, 1, "cadaver_chamber", { "dir": "east" })],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
-)]==], 7)
+)]==],
+    7
+)
 
 local crew = t.join()
 t.tick()
@@ -183,7 +201,8 @@ assert(crew_x == 1 and crew_y == 1, "a refused drawer is still an obstacle")
 -- obstacle you cannot walk onto (the assertion further up says so), and
 -- the thing you are being laid ONTO is the one thing that never blocks
 -- the drop.
-t.world([==[(
+t.world(
+    [==[(
     name: "cadaver chamber aisle",
     legend: {
         ' ': (turf: Space),
@@ -202,7 +221,9 @@ t.world([==[(
     ],
     structures: [(3, 2, "player_spawn"), (4, 1, "player_spawn"), (2, 1, "cadaver_chamber", { "dir": "east" })],
     cables: [(1, 3, 2), (2, 3, 3), (3, 3, 1)],
-)]==], 7)
+)]==],
+    7
+)
 
 local LAY_TICKS = 2 * 20 + 2
 
@@ -237,11 +258,17 @@ t.click(orderly, 2, 1, bay)
 t.tick()
 assert(assert(t.structure_at(2, 1)).state == "closed", "the drawer shuts on them")
 assert(t.structure_at(3, 1) == nil, "the slab went back in")
-assert(t.target_at(orderly, 3, 1) == nil,
-    "a stowed body has no tile at all: there is nothing left to click")
+assert(
+    t.target_at(orderly, 3, 1) == nil,
+    "a stowed body has no tile at all: there is nothing left to click"
+)
 assert(t.body_id(corpse) ~= nil, "the body still exists")
-assert(assert(t.structure_at(2, 1)).overlays[1] == "morgue4_e",
-    "and the drawer wears the lamp for somebody still going")
+assert(
+    assert(t.structure_at(2, 1)).overlays[1] == "morgue4_e",
+    "and the drawer wears the lamp for somebody still going"
+)
 
-print("cadaver chamber: obstacle, slab, concealment, lamps, the push out, "
-    .. "and a body dragged onto the slab")
+print(
+    "cadaver chamber: obstacle, slab, concealment, lamps, the push out, "
+        .. "and a body dragged onto the slab"
+)

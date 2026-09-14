@@ -22,8 +22,7 @@ local FILTERED = [==[(
 -- Space Station's default role is crew. The medic therefore lands at the
 -- crew point, not at the same-job point reserved for another role.
 t.world(FILTERED, 0, "space_station")
-assert(#t.ledger_rows("mob_spawned") == 0,
-    "threat markers do not spawn mobs during map boot")
+assert(#t.ledger_rows("mob_spawned") == 0, "threat markers do not spawn mobs during map boot")
 local medic = t.join("medic")
 local x, y = t.pos(medic)
 assert(x == 2 and y == 1, "the medic uses the matching job and role marker")
@@ -94,5 +93,7 @@ for _ = 1, sample do
         favoured += 1
     end
 end
-assert(favoured >= 24,
-    "relative weights favour the 99-point marker (" .. favoured .. "/" .. sample .. ")")
+assert(
+    favoured >= 24,
+    "relative weights favour the 99-point marker (" .. favoured .. "/" .. sample .. ")"
+)

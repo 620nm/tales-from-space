@@ -33,8 +33,10 @@ assert(t.organ_damage(patient, "heart") == 100, "death stopped the heart")
 -- latch, while keeping the same session and body handle.
 assert(t.staff_restore(patient), "the human plan permits restoration")
 local restored = assert(t.body(patient))
-assert(restored.animate and restored.controllable and restored.conscious,
-    "a fully restored human runs again")
+assert(
+    restored.animate and restored.controllable and restored.conscious,
+    "a fully restored human runs again"
+)
 assert(math.abs(restored.health - 100) < 0.01, "all body pools are clear")
 assert(math.abs(assert(restored.blood) - 560) < 0.01, "blood returns to the plan normal")
 assert(t.organ_damage(patient, "heart") == 0, "the failed heart is repaired")
@@ -58,22 +60,37 @@ assert(t.staff_restore(patient), "the same body can be restored again")
 assert(t.staff_gib(patient), "the human plan permits gibbing")
 assert(t.bodies_at(1, 1)[1] == nil, "the body is gone")
 local pile = t.items_at(1, 1)
-local declared: {[string]: boolean} = {
-    human_head = true, human_chest = true, human_pelvis = true,
-    human_l_arm = true, human_r_arm = true, human_l_leg = true,
-    human_r_leg = true, organ_brain = true, organ_eyes = true,
-    organ_ears = true, organ_tongue = true, organ_heart = true,
-    organ_lungs = true, organ_liver = true, organ_stomach = true,
-    organ_appendix = true, staff_remains = true,
+local declared: { [string]: boolean } = {
+    human_head = true,
+    human_chest = true,
+    human_pelvis = true,
+    human_l_arm = true,
+    human_r_arm = true,
+    human_l_leg = true,
+    human_r_leg = true,
+    organ_brain = true,
+    organ_eyes = true,
+    organ_ears = true,
+    organ_tongue = true,
+    organ_heart = true,
+    organ_lungs = true,
+    organ_liver = true,
+    organ_stomach = true,
+    organ_appendix = true,
+    staff_remains = true,
 }
-local expected: {[string]: boolean?} = {}
-for id in pairs(declared) do expected[id] = true end
-for _, id in ipairs(pile) do expected[id] = nil end
+local expected: { [string]: boolean? } = {}
+for id in pairs(declared) do
+    expected[id] = true
+end
+for _, id in ipairs(pile) do
+    expected[id] = nil
+end
 for id in pairs(expected) do
     error("gib left no declared remain: " .. id)
 end
 local spawned = t.ledger_rows("ItemSpawned")
-local audited: {[string]: number} = {}
+local audited: { [string]: number } = {}
 for _, row in ipairs(spawned) do
     local proto = ui_controls.text(row.proto)
     if declared[proto] then
@@ -81,8 +98,6 @@ for _, row in ipairs(spawned) do
     end
 end
 for id in pairs(declared) do
-    assert(audited[id] == 1,
-        "every declared remain was initialized and audited: " .. id)
+    assert(audited[id] == 1, "every declared remain was initialized and audited: " .. id)
 end
-assert(t.ledger_has("ItemSpawned", "Operator"),
-    "gib material is attributed to staff")
+assert(t.ledger_has("ItemSpawned", "Operator"), "gib material is attributed to staff")

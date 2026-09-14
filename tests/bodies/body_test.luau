@@ -35,13 +35,13 @@ t.tick()
 
 local body = assert(t.body(p))
 assert(body.plan == "human", "the shift's crew are humans: " .. body.plan)
-assert(body.controllable and body.animate and body.conscious,
-    "and steerable, running and awake")
+assert(body.controllable and body.animate and body.conscious, "and steerable, running and awake")
 assert(body.posture == "standing", "and on their feet")
-assert(math.abs(body.health - 100) < 0.01,
-    "MAX_LIVING_HEALTH, mobs.dm:236: " .. body.health)
-assert(math.abs(assert(body.blood) - 560) < 0.01,
-    "BLOOD_VOLUME_NORMAL, mobs.dm:20: " .. tostring(body.blood))
+assert(math.abs(body.health - 100) < 0.01, "MAX_LIVING_HEALTH, mobs.dm:236: " .. body.health)
+assert(
+    math.abs(assert(body.blood) - 560) < 0.01,
+    "BLOOD_VOLUME_NORMAL, mobs.dm:20: " .. tostring(body.blood)
+)
 
 local parts = assert(t.parts(p))
 for _, zone in ipairs({ "head", "chest", "l_arm", "r_arm", "l_leg", "r_leg" }) do
@@ -49,10 +49,14 @@ for _, zone in ipairs({ "head", "chest", "l_arm", "r_arm", "l_leg", "r_leg" }) d
     assert(parts[zone].present, "and arrives with it attached")
     assert(parts[zone].brute == 0 and parts[zone].burn == 0, "and unhurt")
 end
-assert(math.abs(parts.chest.max - 200) < 0.01,
-    "LIMB_MAX_HP_CORE, bodyparts.dm:11: " .. parts.chest.max)
-assert(math.abs(parts.l_arm.max - 50) < 0.01,
-    "LIMB_MAX_HP_DEFAULT, bodyparts.dm:9: " .. parts.l_arm.max)
+assert(
+    math.abs(parts.chest.max - 200) < 0.01,
+    "LIMB_MAX_HP_CORE, bodyparts.dm:11: " .. parts.chest.max
+)
+assert(
+    math.abs(parts.l_arm.max - 50) < 0.01,
+    "LIMB_MAX_HP_DEFAULT, bodyparts.dm:9: " .. parts.l_arm.max
+)
 
 -- The sockets are in the parts that host them, and every one of them
 -- arrives seated.
@@ -64,8 +68,10 @@ assert(t.organ_damage(p, "heart") == 0, "all of them whole")
 assert(t.organ_damage(p, "brain") == 0)
 
 -- The tags a capacity reads are on the socket, not on the engine.
-assert(table.concat(parts.chest.socket_tags.heart, ",") == "heart",
-    "the heart socket carries the tag `blood` reads")
+assert(
+    table.concat(parts.chest.socket_tags.heart, ",") == "heart",
+    "the heart socket carries the tag `blood` reads"
+)
 assert(table.concat(parts.head.socket_tags.brain, ",") == "brain")
 
 -- A limb carries the tags the movement and grip capacities read.
@@ -74,15 +80,25 @@ assert(leg_tags:find("leg", 1, true), "a leg is tagged a leg: " .. leg_tags)
 
 -- Every role the engine can consume is bound, and every one of them
 -- reads 1 on a body nothing has happened to yet.
-for _, id in ipairs({ "consciousness", "moving", "manipulation", "sight",
-                      "hearing", "speech", "breathing", "blood", "metabolism" }) do
+for _, id in ipairs({
+    "consciousness",
+    "moving",
+    "manipulation",
+    "sight",
+    "hearing",
+    "speech",
+    "breathing",
+    "blood",
+    "metabolism",
+}) do
     local level = t.capacity(p, id)
     assert(level ~= nil, "the human plan declares " .. id)
-    assert(math.abs(level - 1.0) < 0.01,
-        id .. " reads 1 on a whole body, not " .. level)
+    assert(math.abs(level - 1.0) < 0.01, id .. " reads 1 on a whole body, not " .. level)
 end
-assert(t.capacity(p, "no_such_capacity") == nil,
-    "and nothing else: a capacity the plan lacks is nil, not 1")
+assert(
+    t.capacity(p, "no_such_capacity") == nil,
+    "and nothing else: a capacity the plan lacks is nil, not 1"
+)
 
 -- ---------------------------------------------------------------
 -- Damage lands on a PART, and what it costs the body is that part's
@@ -97,12 +113,18 @@ t.tick()
 -- that named no zone lands on the plan's `default_zone`.
 t.set_health(q, { brute = 20 })
 local hurt = assert(t.parts(q))
-assert(math.abs(ui_controls.number(hurt.chest.brute) - 20) < 0.01,
-    "a zone-less blow lands on the default zone: " .. ui_controls.number(hurt.chest.brute))
-assert(math.abs(assert(t.body(q)).health - 80) < 0.01,
-    "and twenty on the chest is twenty off the body: " .. assert(t.body(q)).health)
-assert(math.abs(ui_controls.number(t.health(q).brute) - 20) < 0.01,
-    "the old three-number readout still sums the parts")
+assert(
+    math.abs(ui_controls.number(hurt.chest.brute) - 20) < 0.01,
+    "a zone-less blow lands on the default zone: " .. ui_controls.number(hurt.chest.brute)
+)
+assert(
+    math.abs(assert(t.body(q)).health - 80) < 0.01,
+    "and twenty on the chest is twenty off the body: " .. assert(t.body(q)).health
+)
+assert(
+    math.abs(ui_controls.number(t.health(q).brute) - 20) < 0.01,
+    "the old three-number readout still sums the parts"
+)
 
 -- A part's ceiling discards the overflow rather than spilling it
 -- (tg `can_inflict`, _bodyparts.dm:780-786). Four hundred brute at a
@@ -110,9 +132,14 @@ assert(math.abs(ui_controls.number(t.health(q).brute) - 20) < 0.01,
 -- puts more into any one part than that part's own file allows.
 t.set_health(q, { brute = 400 })
 for zone, part in pairs(assert(t.parts(q))) do
-    assert(ui_controls.number(part.brute) + ui_controls.number(part.burn) <= part.max + 0.01,
-        zone .. " holds no more than its own ceiling: "
-            .. (ui_controls.number(part.brute) + ui_controls.number(part.burn)) .. " of " .. part.max)
+    assert(
+        ui_controls.number(part.brute) + ui_controls.number(part.burn) <= part.max + 0.01,
+        zone
+            .. " holds no more than its own ceiling: "
+            .. (ui_controls.number(part.brute) + ui_controls.number(part.burn))
+            .. " of "
+            .. part.max
+    )
 end
 assert(not assert(t.body(q)).animate, "and four hundred brute is a body")
 
@@ -131,16 +158,22 @@ assert(assert(t.body(r)).animate and assert(t.body(r)).controllable)
 
 t.set_health(r, { oxy = 60 })
 assert(not assert(t.body(r)).conscious, "past fifty you are out cold")
-assert(assert(t.body(r)).animate and assert(t.body(r)).controllable,
+assert(
+    assert(t.body(r)).animate and assert(t.body(r)).controllable,
     "but NO declared line was crossed — a faint is not a crit (§3.4), and \
-     the pack was never asked about this one")
+     the pack was never asked about this one"
+)
 assert(#assert(t.body(r)).thresholds == 0, "nothing is latched")
 assert(assert(t.body(r)).posture == "lying", "and you are on the deck")
-assert(math.abs(assert(t.capacity(r, "sight"))) < 0.01,
-    "an unconscious body sees nothing (awake_only)")
+assert(
+    math.abs(assert(t.capacity(r, "sight"))) < 0.01,
+    "an unconscious body sees nothing (awake_only)"
+)
 assert(math.abs(assert(t.capacity(r, "hearing"))) < 0.01, "and hears nothing")
-assert(math.abs(assert(t.capacity(r, "breathing")) - 1.0) < 0.01,
-    "but it still breathes: the vital capacities opt out")
+assert(
+    math.abs(assert(t.capacity(r, "breathing")) - 1.0) < 0.01,
+    "but it still breathes: the vital capacities opt out"
+)
 
 -- Coming back up is the same rule read the other way.
 t.set_health(r, { oxy = 10 })
@@ -161,11 +194,14 @@ t.run_ticks(2)
 assert(#t.ledger_rows("said") == 1, "a conscious crewman is heard")
 
 t.set_health(a, { oxy = 60 })
-assert(math.abs(assert(t.capacity(a, "speech"))) < 0.01,
-    "no consciousness, no speech: " .. tostring(t.capacity(a, "speech")))
+assert(
+    math.abs(assert(t.capacity(a, "speech"))) < 0.01,
+    "no consciousness, no speech: " .. tostring(t.capacity(a, "speech"))
+)
 t.say(a, "help")
 t.run_ticks(2)
-assert(#t.ledger_rows("said") == 1,
-    "and an unconscious one is not: " .. #t.ledger_rows("said"))
-assert(table.concat(t.messages(b), "\n"):find("help", 1, true) == nil,
-    "nothing reached the crewman standing next to them")
+assert(#t.ledger_rows("said") == 1, "and an unconscious one is not: " .. #t.ledger_rows("said"))
+assert(
+    table.concat(t.messages(b), "\n"):find("help", 1, true) == nil,
+    "nothing reached the crewman standing next to them"
+)

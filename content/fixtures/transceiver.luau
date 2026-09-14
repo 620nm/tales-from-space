@@ -18,17 +18,22 @@ if sim ~= nil then
     -- dark base by itself whenever the cord dies, so this is only ever
     -- "keyed" or nothing (docs/content-schema/appearance.md).
     sim.define("script_var", "lunatic/tfs:transceiver_look", { replicate = "sight" })
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
     -- AN EMPTY HAND, and a use that actually resolved: the panel and
     -- the crowbar both arrive here too, and both already did their own
     -- work on the way past.
-    script_definition:handle("interaction.use.done", { kind = "react", route = "interact" }, function(ev)
-        if ev.implement ~= nil or ev.outcome ~= "completed" then
-            return
+    script_definition:handle(
+        "interaction.use.done",
+        { kind = "react", route = "interact" },
+        function(ev)
+            if ev.implement ~= nil or ev.outcome ~= "completed" then
+                return
+            end
+            sim.message.send({ recipient = ev.actor, message = radio.status_line(ev.subject) })
         end
-        sim.message.send({ recipient = ev.actor, message = radio.status_line(ev.subject) })
-    end)
+    )
 
     -- The lamp follows the SETTLED sockets: `parts.refresh.done` fires
     -- whenever a roster settles -- boot, a finished frame, a swap --
@@ -50,9 +55,17 @@ if sim ~= nil then
     -- reads nothing and carries nothing. Without it the engine's
     -- fail-open default hands a blank tower the words of every line
     -- spoken beside it.
-    script_definition:handle("radio.receive", { kind = "transform", route = "receive" }, radio_relay.receive)
+    script_definition:handle(
+        "radio.receive",
+        { kind = "transform", route = "receive" },
+        radio_relay.receive
+    )
     script_definition:handle("radio.read", { kind = "transform", route = "read" }, radio_relay.read)
-    script_definition:handle("radio.carry", { kind = "transform", route = "carry" }, radio_relay.carry)
+    script_definition:handle(
+        "radio.carry",
+        { kind = "transform", route = "carry" },
+        radio_relay.carry
+    )
     script_definition:handle("radio.send", { kind = "transform", route = "send" }, radio_relay.send)
 end
 

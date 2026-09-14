@@ -52,7 +52,9 @@ return {
     -- `connect` row is the one that answers it (items/laptop.luau).
     actions = {
         {
-            id = "needs_laptop", gesture = "primary", route = "receiver",
+            id = "needs_laptop",
+            gesture = "primary",
+            route = "receiver",
             label = "lunatic/tfs:ui.affordance.needs_laptop",
             visible = { ["not"] = { fact = "held.proto", value = "laptop" } },
             permission = { ["not"] = { fact = "held.proto", value = "laptop" } },
@@ -74,18 +76,33 @@ return {
     -- losing the wall it hangs on (docs/content-schema/appearance.md).
     appearance = {
         device = {
-            online = { sprite = "access_point", mounted = {
-                north = "access_point_n", south = "access_point_s",
-                east = "access_point_e", west = "access_point_w",
-            } },
-            offline = { sprite = "access_point_off", mounted = {
-                north = "access_point_off_n", south = "access_point_off_s",
-                east = "access_point_off_e", west = "access_point_off_w",
-            } },
-            unpowered = { sprite = "access_point_off", mounted = {
-                north = "access_point_off_n", south = "access_point_off_s",
-                east = "access_point_off_e", west = "access_point_off_w",
-            } },
+            online = {
+                sprite = "access_point",
+                mounted = {
+                    north = "access_point_n",
+                    south = "access_point_s",
+                    east = "access_point_e",
+                    west = "access_point_w",
+                },
+            },
+            offline = {
+                sprite = "access_point_off",
+                mounted = {
+                    north = "access_point_off_n",
+                    south = "access_point_off_s",
+                    east = "access_point_off_e",
+                    west = "access_point_off_w",
+                },
+            },
+            unpowered = {
+                sprite = "access_point_off",
+                mounted = {
+                    north = "access_point_off_n",
+                    south = "access_point_off_s",
+                    east = "access_point_off_e",
+                    west = "access_point_off_w",
+                },
+            },
         },
     },
     -- No `category`: the group derives from the `link` block below.

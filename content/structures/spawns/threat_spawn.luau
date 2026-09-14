@@ -9,8 +9,15 @@ return {
     dense = false,
     category = "map markers",
     placement = {
-        weight = { var = "lunatic/tfs:marker_weight", kind = "number", default = 1,
-            min = 0, max = 1000000, step = 1, label = "lunatic/tfs:editor.threat_spawn.weight" },
+        weight = {
+            var = "lunatic/tfs:marker_weight",
+            kind = "number",
+            default = 1,
+            min = 0,
+            max = 1000000,
+            step = 1,
+            label = "lunatic/tfs:editor.threat_spawn.weight",
+        },
     },
     script = "threat_spawn",
 }

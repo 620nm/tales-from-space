@@ -20,7 +20,8 @@ local ui_controls = require("@helpers/ui_controls")
 --      `bottle` prototype declares (which is none).
 --   3. Moles that appeared from nowhere are on the record, attributed
 --      to the machine's own script and to the crewman who asked.
-t.world([==[(
+t.world(
+    [==[(
     name: "canteen",
     legend: {
         ' ': (turf: Space),
@@ -43,7 +44,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.run_seconds(1)
@@ -70,8 +73,10 @@ assert(t.hands(p).held == "bottle.iodine", "the bottle is in the working hand")
 local _ = t.messages(p)
 t.click(p, 2, 1, t.target_at(p, 2, 1)) -- swing it at the machine
 t.run_ticks(2)
-assert(said("only takes empties"),
-    "the machine knows a bottle when it sees one, and this one is full")
+assert(
+    said("only takes empties"),
+    "the machine knows a bottle when it sees one, and this one is full"
+)
 assert(t.hands(p).held == "bottle.iodine", "and it is still in your hand")
 
 -- ---------------------------------------------------------------
@@ -96,14 +101,16 @@ local served = assert(t.target_at(p, 2, 1, "bottle"))
 assert(served ~= nil, "a plain bottle is standing at the machine's feet")
 local reading = t.vessel(served)
 assert(reading ~= nil, "and it is a vessel")
-assert(math.abs(reading.moles - 2.5) < 1e-6,
-    "holding the machine's own measure: " .. reading.moles)
-assert((reading.contents.water.liquid or 0) > 2.4,
-    "and it is water, in the liquid it is at this temperature")
-assert(reading.temp_k < 285.0,
-    "cold, the way a chiller leaves it -- not room temperature: " .. reading.temp_k)
-assert(reading.temp_k > 270.0,
-    "cold, not frozen: " .. reading.temp_k)
+assert(math.abs(reading.moles - 2.5) < 1e-6, "holding the machine's own measure: " .. reading.moles)
+assert(
+    (reading.contents.water.liquid or 0) > 2.4,
+    "and it is water, in the liquid it is at this temperature"
+)
+assert(
+    reading.temp_k < 285.0,
+    "cold, the way a chiller leaves it -- not room temperature: " .. reading.temp_k
+)
+assert(reading.temp_k > 270.0, "cold, not frozen: " .. reading.temp_k)
 
 -- ---------------------------------------------------------------
 -- THREE: THE BOOKS SAY WHERE IT CAME FROM.
@@ -114,9 +121,14 @@ assert(reading.temp_k > 270.0,
 -- ---------------------------------------------------------------
 local mints = t.ledger_rows("minted")
 assert(#mints == 1, "one charge was named, one row: " .. #mints)
-assert(mints[1].substance == "water", "and it names what appeared: " .. tostring(mints[1].substance))
-assert(math.abs(ui_controls.number(mints[1].moles) - 2.5) < 1e-6,
-    "and how much: " .. ui_controls.number(mints[1].moles))
+assert(
+    mints[1].substance == "water",
+    "and it names what appeared: " .. tostring(mints[1].substance)
+)
+assert(
+    math.abs(ui_controls.number(mints[1].moles) - 2.5) < 1e-6,
+    "and how much: " .. ui_controls.number(mints[1].moles)
+)
 local actor = mints[1].actor
 assert(actor.kind == "script", "the machine's own file did it")
 assert(actor.triggered_by, "at the request of the crewman standing there")

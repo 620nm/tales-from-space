@@ -29,12 +29,14 @@ local ARENA = [==[(
 -- The two organ_eyes above are donor eyes, one within reach of each
 -- surgeon; the patient's own eyes come out during the spec.
 
-local function has(states, name) return states[name] == true end
+local function has(states, name)
+    return states[name] == true
+end
 
 t.world(ARENA, 0)
-local left = t.join("assistant")       -- (1,1): opens the patient, then races
-local patient = t.join("medic")    -- (2,1): on the optable
-local right = t.join("security")      -- (3,1): the rival surgeon
+local left = t.join("assistant") -- (1,1): opens the patient, then races
+local patient = t.join("medic") -- (2,1): on the optable
+local right = t.join("security") -- (3,1): the rival surgeon
 t.run_ticks(3)
 t.rest(patient, true)
 t.run_ticks(2)
@@ -49,17 +51,24 @@ t.set_zone(right, "head")
 -- `procedure.on_organ` id carrying the two words as arguments; a plain
 -- one is content's own word (docs/tgui/labels.md).
 local function face(value: unknown): string
-    if type(value) ~= "table" then return tostring(value) end
+    if type(value) ~= "table" then
+        return tostring(value)
+    end
     local label = ui_controls.record(value)
     if label.args then
         local args = ui_controls.record(label.args)
-        if args.organ then return tostring(args.operation) .. " " .. tostring(args.organ) end
+        if args.organ then
+            return tostring(args.operation) .. " " .. tostring(args.organ)
+        end
     end
     return tostring(label.text or label.id)
 end
 
 local function left_holds(id: string)
-    if t.hands(left).held then t.drop(left); t.tick() end
+    if t.hands(left).held then
+        t.drop(left)
+        t.tick()
+    end
     t.click(left, 1, 1, t.target_at(left, 1, 1, id))
     t.run_ticks(2)
     assert(t.hands(left).held == id, "left holds the " .. id)
@@ -75,9 +84,15 @@ end
 -- bone-locked). A shard, not the scalpel, incises the organs -- a scalpel
 -- is edged AND force 10, so it would also offer saw_bone and open the
 -- choice window (see surgery_sockets_test).
-step("scalpel", 1.6, function() return has(assert(t.parts(patient)).head.states, "skin_cut") end, "incised")
-step("retractor", 2.4, function() return has(assert(t.parts(patient)).head.states, "skin_open") end, "retracted")
-step("shard", 5.4, function() return has(assert(t.parts(patient)).head.states, "organs_cut") end, "organs cut")
+step("scalpel", 1.6, function()
+    return has(assert(t.parts(patient)).head.states, "skin_cut")
+end, "incised")
+step("retractor", 2.4, function()
+    return has(assert(t.parts(patient)).head.states, "skin_open")
+end, "retracted")
+step("shard", 5.4, function()
+    return has(assert(t.parts(patient)).head.states, "organs_cut")
+end, "organs cut")
 
 -- A whole body: every organ seated, nothing stranded.
 local whole = t.organ_census()
@@ -90,11 +105,15 @@ left_holds("hemostat")
 t.click(left, PX, PY, t.body_target(left, patient))
 t.run_ticks(2)
 local win = ui_controls.record(t.ui(left))
-assert(win and win.document == "modules" and win.presentation == "choices",
-    "the head's organs open a choice document")
+assert(
+    win and win.document == "modules" and win.presentation == "choices",
+    "the head's organs open a choice document"
+)
 local pick
 for _, tg in ipairs(ui_controls.rows(win.toggles)) do
-    if face(tg.label):find("eyes", 1, true) then pick = ui_controls.text(tg.option) end
+    if face(tg.label):find("eyes", 1, true) then
+        pick = ui_controls.text(tg.option)
+    end
 end
 assert(pick, "the eyes are among the organs to remove")
 ui_controls.toggle(left, "operation", pick)
@@ -102,13 +121,16 @@ t.run_ticks(23) -- the 1 s removal
 assert(t.organ_damage(patient, "eyes") == nil, "the eyes socket is empty")
 
 -- Both surgeons pick up a donor eye (left's by its feet, right's by its).
-t.drop(left); t.tick() -- drop the hemostat first
+t.drop(left)
+t.tick() -- drop the hemostat first
 t.click(left, 1, 1, t.target_at(left, 1, 1, "organ_eyes"))
 t.run_ticks(2)
 t.click(right, 3, 1, t.target_at(right, 3, 1, "organ_eyes"))
 t.run_ticks(2)
-assert(t.hands(left).held == "organ_eyes" and t.hands(right).held == "organ_eyes",
-    "both surgeons hold an eye")
+assert(
+    t.hands(left).held == "organ_eyes" and t.hands(right).held == "organ_eyes",
+    "both surgeons hold an eye"
+)
 
 -- The census just before the race: the socket empty, both eyes in hand
 -- (held organs read as loose -- no host until seated), the patient's own
@@ -131,8 +153,17 @@ assert(t.organ_damage(patient, "eyes") ~= nil, "an eye is seated in the socket")
 local after = t.organ_census()
 assert(after.orphan == 0, "no organ is stranded with an owner but no socket")
 assert(after.total == before.total, "no organ was created or destroyed")
-assert(after.seated == before.seated + 1, "exactly one eye was seated -- the loser did not also land")
+assert(
+    after.seated == before.seated + 1,
+    "exactly one eye was seated -- the loser did not also land"
+)
 
-print(string.format(
-    "double-seat: one socket, two surgeons -- total %d conserved, seated %d->%d, orphan %d",
-    after.total, before.seated, after.seated, after.orphan))
+print(
+    string.format(
+        "double-seat: one socket, two surgeons -- total %d conserved, seated %d->%d, orphan %d",
+        after.total,
+        before.seated,
+        after.seated,
+        after.orphan
+    )
+)

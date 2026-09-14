@@ -82,7 +82,9 @@ return {
         },
         {
             item = "airlock_button_fitting",
-            name = "Airlock Button Fitting", category = "Parts", amount = 6,
+            name = "Airlock Button Fitting",
+            category = "Parts",
+            amount = 6,
         },
         {
             item = "machine_board.access_point",
@@ -117,12 +119,42 @@ return {
         -- fiction rather than a credential -- what the word is worth
         -- is decided by who carries radios on it, not by who may buy
         -- the key (the network card's own argument, one shelf up).
-        { item = "encryption_key", name = "Encryption Key (blank)", category = "Parts", amount = 5 },
-        { item = "encryption_key.common", name = "Encryption Key (Common)", category = "Parts", amount = 3 },
-        { item = "encryption_key.engineering", name = "Encryption Key (Wrench)", category = "Parts", amount = 2 },
-        { item = "encryption_key.medical", name = "Encryption Key (Lifeline)", category = "Parts", amount = 2 },
-        { item = "encryption_key.security", name = "Encryption Key (Watchline)", category = "Parts", amount = 2 },
-        { item = "encryption_key.command", name = "Encryption Key (Charter)", category = "Parts", amount = 2 },
+        {
+            item = "encryption_key",
+            name = "Encryption Key (blank)",
+            category = "Parts",
+            amount = 5,
+        },
+        {
+            item = "encryption_key.common",
+            name = "Encryption Key (Common)",
+            category = "Parts",
+            amount = 3,
+        },
+        {
+            item = "encryption_key.engineering",
+            name = "Encryption Key (Wrench)",
+            category = "Parts",
+            amount = 2,
+        },
+        {
+            item = "encryption_key.medical",
+            name = "Encryption Key (Lifeline)",
+            category = "Parts",
+            amount = 2,
+        },
+        {
+            item = "encryption_key.security",
+            name = "Encryption Key (Watchline)",
+            category = "Parts",
+            amount = 2,
+        },
+        {
+            item = "encryption_key.command",
+            name = "Encryption Key (Charter)",
+            category = "Parts",
+            amount = 2,
+        },
         {
             item = "machine_board.programming_terminal",
             name = "Machine Board (Programming Terminal)",

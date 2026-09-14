@@ -84,7 +84,7 @@ local CROSSING = [==[(
 -- One placed valve, proved against the two layers it is not on.
 -- `layer` is the number a mapper writes; `mine` is the bit it stands
 -- for, which is what the pipe masks are spelled in.
-local function pinned(layer: number, mine: number, others: {number}, heat: number)
+local function pinned(layer: number, mine: number, others: { number }, heat: number)
     t.world(CROSSING:format(14 - mine, layer), 7)
     local p = t.join()
     t.tick()
@@ -101,13 +101,19 @@ local function pinned(layer: number, mine: number, others: {number}, heat: numbe
     t.tick()
     local west_k = assert(t.pipe_temperature(1, 1, mine))
     local east_k = assert(t.pipe_temperature(5, 1, mine))
-    assert(west_k > east_k + 80.0, "a shut valve is a wall to heat too: " .. west_k .. " / " .. east_k)
+    assert(
+        west_k > east_k + 80.0,
+        "a shut valve is a wall to heat too: " .. west_k .. " / " .. east_k
+    )
 
     -- What the crossing mains read while all this is going on. Each is
     -- one net from end to end, straight under the machine.
     local was = {}
     for _, layer in ipairs(others) do
-        assert(assert(t.pipe_pressure(3, 1, layer)) > 90.0, "the crossing main runs under the valve")
+        assert(
+            assert(t.pipe_pressure(3, 1, layer)) > 90.0,
+            "the crossing main runs under the valve"
+        )
         was[layer] = {
             kpa = assert(t.pipe_pressure(1, 1, layer)),
             k = assert(t.pipe_temperature(1, 1, layer)),
@@ -131,15 +137,33 @@ local function pinned(layer: number, mine: number, others: {number}, heat: numbe
     )
     assert(
         assert(t.pipe_temperature(5, 1, mine)) > east_k + 20.0,
-        "and the cold half got the warmth: " .. east_k .. " -> " .. assert(t.pipe_temperature(5, 1, mine))
+        "and the cold half got the warmth: "
+            .. east_k
+            .. " -> "
+            .. assert(t.pipe_temperature(5, 1, mine))
     )
 
     -- And the mains it is NOT on never noticed a thing.
     for _, layer in ipairs(others) do
         local before = was[layer]
-        near(assert(t.pipe_pressure(1, 1, layer)), before.kpa, 1e-9, "layer " .. layer .. " kept its pressure")
-        near(assert(t.pipe_temperature(1, 1, layer)), before.k, 1e-9, "layer " .. layer .. " kept its temperature")
-        near(assert(t.pipe_energy(1, 1, layer)), before.j, 1e-9, "layer " .. layer .. " kept every joule")
+        near(
+            assert(t.pipe_pressure(1, 1, layer)),
+            before.kpa,
+            1e-9,
+            "layer " .. layer .. " kept its pressure"
+        )
+        near(
+            assert(t.pipe_temperature(1, 1, layer)),
+            before.k,
+            1e-9,
+            "layer " .. layer .. " kept its temperature"
+        )
+        near(
+            assert(t.pipe_energy(1, 1, layer)),
+            before.j,
+            1e-9,
+            "layer " .. layer .. " kept every joule"
+        )
         near(moles(5, 1, layer), before.n, 1e-9, "layer " .. layer .. " kept every mole")
     end
 end
@@ -165,7 +189,8 @@ pinned(4, 8, { 2, 4 }, 40000.0)
 -- subtype in tg; here they are two content files, and the only thing
 -- that may differ between them is the surface a player touches.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "two valves, one law",
     legend: {
         ' ': (turf: Space),
@@ -186,7 +211,9 @@ t.world([==[(
         (1, 3, 4), (2, 3, 4), (3, 3, 4), (5, 3, 4), (6, 3, 4), (7, 3, 4), (8, 3, 4),
     ],
     structures: [(4, 2, "player_spawn"), (4, 1, "manual_valve"), (4, 3, "digital_valve")],
-)]==], 7)
+)]==],
+    7
+)
 
 local v = t.join()
 t.tick()
@@ -204,9 +231,13 @@ t.tick()
 local function main_reading(y: number, name: string)
     local west_n, east_n = moles(1, y), moles(8, y)
     return {
-        y = y, name = name,
-        west_k = assert(t.pipe_temperature(1, y)), east_k = assert(t.pipe_temperature(8, y)),
-        west_n = west_n, east_n = east_n, books = west_n + east_n,
+        y = y,
+        name = name,
+        west_k = assert(t.pipe_temperature(1, y)),
+        east_k = assert(t.pipe_temperature(8, y)),
+        west_n = west_n,
+        east_n = east_n,
+        books = west_n + east_n,
         energy = assert(t.pipe_energy(1, y)) + assert(t.pipe_energy(8, y)),
     }
 end
@@ -226,8 +257,10 @@ assert(assert(t.structure_at(4, 1)).state == "open", "the wheel is over")
 t.click(v, 4, 3, t.target_at(v, 4, 3, "digital_valve"))
 t.tick()
 local panel = ui_controls.record(t.ui(v))
-assert(ui_controls.record(ui_controls.rows(panel.toggles)[1].label).id == "flow.switch.valve",
-    "the digital valve answers with a panel")
+assert(
+    ui_controls.record(ui_controls.rows(panel.toggles)[1].label).id == "flow.switch.valve",
+    "the digital valve answers with a panel"
+)
 ui_controls.toggle(v, "power")
 t.run_ticks(2)
 assert(assert(t.structure_at(4, 3)).state == "open", "which throws on the command, with no wheel")

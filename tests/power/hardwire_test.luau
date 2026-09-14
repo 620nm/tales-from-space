@@ -82,7 +82,8 @@ end
 -- routes -- a fitting on a cord, a fan on a cord, a fan standing on
 -- the cable itself, and an air alarm with a card of its own. Nobody
 -- joins anything; the wire does all of it.
-t.world([==[(
+t.world(
+    [==[(
     name: "hardwire",
     legend: {
         ' ': (turf: Space),
@@ -111,7 +112,9 @@ t.world([==[(
         (4, 1, 1), (3, 1, 1), (2, 1, 1),
     ],
     labels: [(9, 1, "Engineering")],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -135,15 +138,17 @@ panel = ui_controls.state(p)
 
 local members = hardwired(panel)
 assert(#members == 4, "the whole room hangs off the panel: " .. #members)
-assert(#rows(panel, "link_drop") == 0,
-    "and not one of them is the panel's to let go of")
+assert(#rows(panel, "link_drop") == 0, "and not one of them is the panel's to let go of")
 
 -- ---------------------------------------------------------------
 -- 2. AND WILL NOT LET GO. Hardwired membership has no rendered
 -- release control. The edge and ledger stay unchanged.
 -- ---------------------------------------------------------------
 local victim = members[1]
-assert(ui_controls.find(p, "/toggle/link_drop/" .. victim) == nil, "hardwired member has no release control")
+assert(
+    ui_controls.find(p, "/toggle/link_drop/" .. victim) == nil,
+    "hardwired member has no release control"
+)
 t.tick()
 t.run_seconds(3)
 t.run_ticks(40)

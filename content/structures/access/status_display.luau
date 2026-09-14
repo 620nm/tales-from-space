@@ -16,8 +16,10 @@ return {
     mount = true,
     appearance = {
         mounted = {
-            north = "status_display_n", south = "status_display_s",
-            east = "status_display_e", west = "status_display_w",
+            north = "status_display_n",
+            south = "status_display_s",
+            east = "status_display_e",
+            west = "status_display_w",
         },
     },
     ui = {

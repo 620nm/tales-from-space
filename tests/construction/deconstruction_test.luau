@@ -33,7 +33,8 @@ end
 -- The bench: a build site at the west end, an upgraded temperature
 -- control unit standing at the east, and every part of a reaction
 -- chamber lying at the builder's feet.
-t.world([==[(
+t.world(
+    [==[(
     name: "deconstruction bench",
     legend: {
         ' ': (turf: Space),
@@ -59,7 +60,9 @@ t.world([==[(
         (2, 2, "screwdriver"),
         (2, 2, "crowbar"),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -161,16 +164,20 @@ assert(
 t.click(p, 2, 1, t.target_at(p, 2, 1, "machine_frame"))
 t.run_ticks(2)
 local left = t.items_at(2, 1)
-assert(count(left, "micro_laser.tier3") == 1,
+assert(
+    count(left, "micro_laser.tier3") == 1,
     "the laser that went in is the laser that comes out, not a tier one: "
-        .. table.concat(left, ", "))
+        .. table.concat(left, ", ")
+)
 assert(count(left, "micro_laser") == 0, "and no plain rung was invented")
 assert(count(left, "glass") == 1, "with the pane the board asked for")
 -- The board goes to the free hand rather than the deck, exactly as it
 -- has always done when an assembly is pried open.
 local hands = t.hands(p)
-assert(hands[1] == "machine_board.chem_heater" or hands[2] == "machine_board.chem_heater",
-    "and the board is back in a hand: " .. tostring(hands[1]) .. ", " .. tostring(hands[2]))
+assert(
+    hands[1] == "machine_board.chem_heater" or hands[2] == "machine_board.chem_heater",
+    "and the board is back in a hand: " .. tostring(hands[1]) .. ", " .. tostring(hands[2])
+)
 
 -- ---------------------------------------------------------------
 -- TWO: AN UPGRADED UNIT PRISED APART HANDS BACK ITS UPGRADE.
@@ -188,10 +195,14 @@ t.run_seconds(4.5)
 assert(assert(t.structure_at(7, 1)).id == "machine_frame", "a frame is what is left standing")
 
 local apart = t.items_at(7, 1)
-assert(count(apart, "matter_bin.tier4") == 2,
-    "both bins come back at the rung they were: " .. table.concat(apart, ", "))
+assert(
+    count(apart, "matter_bin.tier4") == 2,
+    "both bins come back at the rung they were: " .. table.concat(apart, ", ")
+)
 assert(count(apart, "micro_laser.tier4") == 2, "and both lasers")
-assert(count(apart, "matter_bin") == 0 and count(apart, "micro_laser") == 0,
-    "with no plain rung anywhere in the pile")
+assert(
+    count(apart, "matter_bin") == 0 and count(apart, "micro_laser") == 0,
+    "with no plain rung anywhere in the pile"
+)
 assert(count(apart, "machine_board.thermomachine") == 1, "the board its file still spells")
 assert(count(apart, "glass") == 1, "and the pane")

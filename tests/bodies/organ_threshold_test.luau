@@ -43,10 +43,8 @@ assert(not assert(t.body(p)).animate, "four hundred brute is a body")
 -- own (120).
 t.run_seconds(420)
 local said = table.concat(t.messages(p), "\n")
-assert(said:find("Your head swims.", 1, true),
-    "the brain's low edge reached its handler: " .. said)
-assert(not said:find("You cannot hold a thought.", 1, true),
-    "and only that edge: " .. said)
+assert(said:find("Your head swims.", 1, true), "the brain's low edge reached its handler: " .. said)
+assert(not said:find("You cannot hold a thought.", 1, true), "and only that edge: " .. said)
 
 -- Far enough for the eyes to blur, then fail, and for the brain to
 -- cross its own high edge.
@@ -55,12 +53,12 @@ assert(not said:find("You cannot hold a thought.", 1, true),
 local first = said
 t.run_seconds(700)
 said = table.concat(t.messages(p), "\n")
-assert(said:find("Your vision blurs and swims.", 1, true),
-    "the eyes' high edge reached its handler: " .. said)
-assert(said:find("Everything goes dark.", 1, true),
-    "and so did their failure: " .. said)
-assert(said:find("You cannot hold a thought.", 1, true),
-    "and the brain's high edge: " .. said)
+assert(
+    said:find("Your vision blurs and swims.", 1, true),
+    "the eyes' high edge reached its handler: " .. said
+)
+assert(said:find("Everything goes dark.", 1, true), "and so did their failure: " .. said)
+assert(said:find("You cannot hold a thought.", 1, true), "and the brain's high edge: " .. said)
 
 -- An edge fires ONCE per crossing (§5): the pool keeps climbing past
 -- 45 for another eleven hundred seconds and says nothing more about it.

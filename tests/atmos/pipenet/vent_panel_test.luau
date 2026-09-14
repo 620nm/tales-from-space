@@ -34,7 +34,9 @@ local EMPTIES_OVER = 109.431
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
 local function word(label: unknown): unknown
-    if type(label) ~= "table" then return label end
+    if type(label) ~= "table" then
+        return label
+    end
     local record = ui_controls.record(label)
     return record.id or record.text
 end
@@ -62,12 +64,19 @@ local function toggle(p: number, field: string): ui_controls.Record
     error("missing toggle " .. field)
 end
 
-local function dial(p: number, field: string): {unit: unknown, value: number, min: number, max: number}
+local function dial(
+    p: number,
+    field: string
+): { unit: unknown, value: number, min: number, max: number }
     for _, row in ipairs(ui_controls.rows(ui_controls.state(p).setpoints)) do
         if row.field == field then
-            assert(type(row.value) == "number" and type(row.min) == "number" and type(row.max) == "number",
-                "a pressure dial discloses a numeric value and bounds")
-            return {unit = row.unit, value = row.value, min = row.min, max = row.max}
+            assert(
+                type(row.value) == "number"
+                    and type(row.min) == "number"
+                    and type(row.max) == "number",
+                "a pressure dial discloses a numeric value and bounds"
+            )
+            return { unit = row.unit, value = row.value, min = row.min, max = row.max }
         end
     end
     error("missing dial " .. field)
@@ -260,12 +269,16 @@ assert(
     peak <= TUNED + 0.5,
     "the fan never blew its own tile past the setpoint it was given -- the"
         .. " release arithmetic is demand-limited, so overshoot is not"
-        .. " clamped away, it is unrepresentable: " .. peak .. " kPa"
+        .. " clamped away, it is unrepresentable: "
+        .. peak
+        .. " kPa"
 )
 assert(
     assert(t.room_pressure(5, 1)) > TUNED - 1.0,
     "and the corridor came up to the line it was told to hold, which is"
-        .. " not one it could have reached before: " .. assert(t.room_pressure(5, 1)) .. " kPa"
+        .. " not one it could have reached before: "
+        .. assert(t.room_pressure(5, 1))
+        .. " kPa"
 )
 
 -- It STAYS there, which is the half of "arrest" a single reading cannot

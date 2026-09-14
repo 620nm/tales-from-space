@@ -48,7 +48,12 @@ return {
     -- The sheet's every state has four faces; the drawer wears the one
     -- its placement aimed, and the tray rolls out that way.
     facing_sprites = {
-        closed = { north = "morgue1_n", south = "morgue1_s", east = "morgue1_e", west = "morgue1_w" },
+        closed = {
+            north = "morgue1_n",
+            south = "morgue1_s",
+            east = "morgue1_e",
+            west = "morgue1_w",
+        },
         open = { north = "morgue0_n", south = "morgue0_s", east = "morgue0_e", west = "morgue0_w" },
     },
     drawer = {
@@ -58,9 +63,24 @@ return {
         open_sound = "morgue_clank",
         close_sound = "morgue_clank",
         lights = {
-            items = { north = "morgue3_n", south = "morgue3_s", east = "morgue3_e", west = "morgue3_w" },
-            bodies = { north = "morgue2_n", south = "morgue2_s", east = "morgue2_e", west = "morgue2_w" },
-            living = { north = "morgue4_n", south = "morgue4_s", east = "morgue4_e", west = "morgue4_w" },
+            items = {
+                north = "morgue3_n",
+                south = "morgue3_s",
+                east = "morgue3_e",
+                west = "morgue3_w",
+            },
+            bodies = {
+                north = "morgue2_n",
+                south = "morgue2_s",
+                east = "morgue2_e",
+                west = "morgue2_w",
+            },
+            living = {
+                north = "morgue4_n",
+                south = "morgue4_s",
+                east = "morgue4_e",
+                west = "morgue4_w",
+            },
             -- No `unpowered` picture, because the sheet ships none:
             -- `morgue0` through `morgue4` are all lit states and there
             -- is no dark one (icons/obj/structures.dmi). A chamber with

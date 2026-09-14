@@ -21,7 +21,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- Five tables in a row, mapped, so the junctions are the ones a station
 -- comes up wearing. Left to right: two steel, one reinforced, two
 -- wooden.
-t.world([==[(
+t.world(
+    [==[(
     name: "furniture showroom",
     legend: {
         ' ': (turf: Space),
@@ -39,7 +40,9 @@ t.world([==[(
         (1, 1, "table"), (2, 1, "table"), (3, 1, "reinforced_table"),
         (4, 1, "wood_table"), (5, 1, "wood_table"),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 t.join()
 t.tick()
@@ -52,22 +55,27 @@ t.tick()
 -- vertical neighbours at all.
 local west_end = assert(t.structure_at(1, 1))
 assert(west_end.id == "table", "a steel table stands at the west end")
-assert(west_end.sprite == "table-4",
-    "with one neighbour, to its east: " .. tostring(west_end.sprite))
+assert(
+    west_end.sprite == "table-4",
+    "with one neighbour, to its east: " .. tostring(west_end.sprite)
+)
 
 -- The middle steel table has a table on either side -- and one of them
 -- is reinforced. It counts, because both files said "tables".
 local middle = assert(t.structure_at(2, 1))
-assert(middle.sprite == "table-12",
-    "joined both ways, steel to reinforced: " .. tostring(middle.sprite))
+assert(
+    middle.sprite == "table-12",
+    "joined both ways, steel to reinforced: " .. tostring(middle.sprite)
+)
 
 -- The reinforced table joins back, and its OTHER neighbour is wood,
 -- which it does not see at all.
 local reinforced = assert(t.structure_at(3, 1))
 assert(reinforced.id == "reinforced_table", "a reinforced table stands beside it")
-assert(reinforced.sprite == "reinforced_table-8",
-    "joined west to the steel run, and not east to the wood: "
-        .. tostring(reinforced.sprite))
+assert(
+    reinforced.sprite == "reinforced_table-8",
+    "joined west to the steel run, and not east to the wood: " .. tostring(reinforced.sprite)
+)
 
 -- And the wood. It ignores the reinforced table on its west and joins
 -- the wooden one on its east, which is the asymmetry stated from the
@@ -75,15 +83,20 @@ assert(reinforced.sprite == "reinforced_table-8",
 -- mechanism, different word.
 local wood = assert(t.structure_at(4, 1))
 assert(wood.id == "wood_table", "a wooden table stands beside the reinforced one")
-assert(wood.sprite == "wood_table-4",
-    "wood joins wood eastward and refuses steel westward: " .. tostring(wood.sprite))
-assert(assert(t.structure_at(5, 1)).sprite == "wood_table-8",
-    "and the far wooden one joins back: " .. tostring(assert(t.structure_at(5, 1)).sprite))
+assert(
+    wood.sprite == "wood_table-4",
+    "wood joins wood eastward and refuses steel westward: " .. tostring(wood.sprite)
+)
+assert(
+    assert(t.structure_at(5, 1)).sprite == "wood_table-8",
+    "and the far wooden one joins back: " .. tostring(assert(t.structure_at(5, 1)).sprite)
+)
 
 -- ---- two rods to a table, and back ----------------------------------
 -- Everything within arm's reach of one tile, because the point is the
 -- ladder and not the walking. The build site is the diagonal (2, 2).
-t.world([==[(
+t.world(
+    [==[(
     name: "workshop corner",
     legend: {
         ' ': (turf: Space),
@@ -105,7 +118,9 @@ t.world([==[(
         (1, 1, "screwdriver"),
         (1, 1, "light_bulb"),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -120,8 +135,10 @@ assert(t.hands(p).held == "rod", "rods in hand")
 ui_controls.build(p, "rod", "table_frame", 2, 2)
 t.run_seconds(1.5)
 local frame = t.structure_at(2, 2)
-assert(frame ~= nil and frame.id == "table_frame",
-    "two rods and a second stand the frame up: " .. tostring(frame and frame.id))
+assert(
+    frame ~= nil and frame.id == "table_frame",
+    "two rods and a second stand the frame up: " .. tostring(frame and frame.id)
+)
 assert(frame.sprite == "table_frame", "and it wears its own picture, not a junction")
 
 -- A sheet over the frame is a table. tg picks WHICH table off the
@@ -133,10 +150,14 @@ assert(t.hands(p).held == "metal", "sheets in the other hand")
 t.click(p, 2, 2, t.target_at(p, 2, 2, "table_frame"))
 t.run_seconds(2.5)
 local built = t.structure_at(2, 2)
-assert(built ~= nil and built.id == "table",
-    "the frame took the sheet: " .. tostring(built and built.id))
-assert(built.sprite == "table-0",
-    "and stands alone, so it wears the isolated frame: " .. tostring(built.sprite))
+assert(
+    built ~= nil and built.id == "table",
+    "the frame took the sheet: " .. tostring(built and built.id)
+)
+assert(
+    built.sprite == "table-0",
+    "and stands alone, so it wears the isolated frame: " .. tostring(built.sprite)
+)
 
 -- ---- what a table is FOR --------------------------------------------
 -- A held thing clicked onto it lands on the pixel that was clicked, and
@@ -158,9 +179,10 @@ t.run_ticks(2)
 assert(t.hands(p).held == nil, "the bulb left the hand for the table")
 local laid = t.item_at(2, 2, "light_bulb")
 assert(laid ~= nil, "and it is lying on the table's tile")
-assert(laid.offset.x == 7 and laid.offset.y == -11,
-    "at the pixel that was clicked, with nothing added: "
-        .. laid.offset.x .. "," .. laid.offset.y)
+assert(
+    laid.offset.x == 7 and laid.offset.y == -11,
+    "at the pixel that was clicked, with nothing added: " .. laid.offset.x .. "," .. laid.offset.y
+)
 
 -- Put down again three pixels the other way: tg ASSIGNS the offset, so
 -- the second placement is the second pixel and never the sum of both.
@@ -170,8 +192,10 @@ assert(t.hands(p).held == "light_bulb", "picked back up off the table")
 t.click(p, 2, 2, t.target_at(p, 2, 2, "table"), -3, -4)
 t.run_ticks(2)
 local moved = assert(t.item_at(2, 2, "light_bulb"))
-assert(moved.offset.x == -3 and moved.offset.y == -4,
-    "moved, not accumulated: " .. moved.offset.x .. "," .. moved.offset.y)
+assert(
+    moved.offset.x == -3 and moved.offset.y == -4,
+    "moved, not accumulated: " .. moved.offset.x .. "," .. moved.offset.y
+)
 
 -- The floor is not a table, which is the negative the whole flag exists
 -- for: tg's turfs have no generic place branch, so a held thing clicked
@@ -196,9 +220,10 @@ assert(t.hands(p).held == "screwdriver", "a driver in hand")
 t.click(p, 2, 2, t.target_at(p, 2, 2, "table"))
 t.run_seconds(2.5)
 local stripped = t.structure_at(2, 2)
-assert(stripped ~= nil and stripped.id == "table_frame",
-    "the top came off and the frame is still standing: "
-        .. tostring(stripped and stripped.id))
+assert(
+    stripped ~= nil and stripped.id == "table_frame",
+    "the top came off and the frame is still standing: " .. tostring(stripped and stripped.id)
+)
 assert(t.item_at(2, 2, "metal") ~= nil, "and the sheet is back on the deck")
 
 -- Rebuild it, so the ratchet has something to take apart.
@@ -218,5 +243,4 @@ t.run_seconds(4.5)
 assert(t.structure_at(2, 2) == nil, "the table came apart entirely")
 assert(t.item_at(2, 2, "metal") ~= nil, "the sheet is on the deck")
 assert(t.item_at(2, 2, "rod") ~= nil, "and so are the legs it stood on")
-assert(t.hands(p).held == "wrench",
-    "the ratchet is still a ratchet, not a thing left on a table")
+assert(t.hands(p).held == "wrench", "the ratchet is still a ratchet, not a thing left on a table")

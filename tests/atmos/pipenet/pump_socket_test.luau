@@ -32,7 +32,8 @@ end
 -- back at it, and no other plumbing on the map. Nothing else can decide
 -- the pump's axis, and nothing else can be where the gas went.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "pump to socket",
     legend: {
         ' ': (turf: Space),
@@ -59,7 +60,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -96,8 +99,7 @@ t.run_seconds(60)
 local settled = assert(t.pipe_pressure(1, 2))
 assert(
     settled < charged * 0.05,
-    "the main emptied itself through the pump into the socket: "
-        .. charged .. " -> " .. settled
+    "the main emptied itself through the pump into the socket: " .. charged .. " -> " .. settled
 )
 
 -- ---------------------------------------------------------------
@@ -108,7 +110,8 @@ assert(
 -- a tile whose only plumbing runs the other way -- which is the whole
 -- complaint the fit exists to avoid making worse.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "chosen over fitted",
     legend: {
         ' ': (turf: Space),
@@ -127,7 +130,9 @@ t.world([==[(
     // has exactly one axis to offer, and it is not the one chosen.
     pipes: [(1, 2, 4), (3, 2, 4)],
     items: [(2, 3, "wrench"), (2, 2, "volume_pump_fitting")],
-)]==], 7)
+)]==],
+    7
+)
 
 local q = t.join()
 t.tick()
@@ -149,6 +154,5 @@ local raised = t.structure_at(2, 2)
 assert(raised ~= nil and raised.id == "volume_pump", "the pump was fastened")
 assert(
     raised.sprite == "volpump_off_n",
-    "the chosen facing survived, with the run lying east-west: "
-        .. tostring(raised.sprite)
+    "the chosen facing survived, with the run lying east-west: " .. tostring(raised.sprite)
 )

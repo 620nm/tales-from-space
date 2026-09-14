@@ -16,7 +16,8 @@
 -- tg's ladder this replaces: /obj/machinery/door/airlock/engineering
 -- beside /glass beside /glass/engineering (airlock.dm) -- three objects
 -- for two facts about one doorway.
-t.world([==[(
+t.world(
+    [==[(
     name: "doorways",
     legend: {
         ' ': (turf: Space),
@@ -43,7 +44,9 @@ t.world([==[(
         (1, 1, 1), (2, 1, 1), (3, 1, 1), (4, 1, 1), (5, 1, 1),
         (1, 1, 2), (1, 2, 1), (2, 2, 1), (3, 2, 1), (4, 2, 1), (5, 2, 1),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 t.tick()
 
@@ -53,8 +56,7 @@ assert(glazed ~= nil, "the map stood a leaf there")
 assert(glazed.id == "airlock.engineering_glass", "by its own id")
 assert(
     glazed.sprite == "door_eng_glass",
-    "and it arrived striped and glazed, from the variant's defaults: " ..
-        tostring(glazed.sprite)
+    "and it arrived striped and glazed, from the variant's defaults: " .. tostring(glazed.sprite)
 )
 
 -- ...and a placement outranks it. Same variant, one property said
@@ -63,8 +65,7 @@ local solid = assert(t.structure_at(3, 2))
 assert(solid.id == "airlock.engineering_glass", "the same variant")
 assert(
     solid.sprite == "door_eng",
-    "with the window taken out by the placement, and the livery kept: " ..
-        tostring(solid.sprite)
+    "with the window taken out by the placement, and the livery kept: " .. tostring(solid.sprite)
 )
 
 -- The base is untouched by either of them: a variant defaults a

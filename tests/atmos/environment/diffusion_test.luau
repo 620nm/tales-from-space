@@ -51,7 +51,11 @@ local function total(x, y)
     return sum
 end
 
-local function sum_over(tiles: { { number } }, f: (number, number, string?) -> number, which: string?): number
+local function sum_over(
+    tiles: { { number } },
+    f: (number, number, string?) -> number,
+    which: string?
+): number
     local s = 0.0
     for _, tile in ipairs(tiles) do
         s = s + f(tile[1], tile[2], which)
@@ -74,7 +78,8 @@ end
 -- merely the pressure -- a far room that came up to the same kPa on
 -- nitrogen alone would pass a gauge test and kill somebody.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "doorway",
     legend: {
         '.': (turf: Floor),
@@ -95,7 +100,9 @@ t.world([==[(
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
         (1, 3, 3), (2, 3, 3), (4, 3, 3), (5, 3, 3), (6, 3, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 -- An INERT SKY, and every map in this file gets one. A hull radiating
 -- against a sink at its own temperature emits exactly what it absorbs,
@@ -114,9 +121,15 @@ t.tick()
 local WEST = { { 1, 1 }, { 2, 1 }, { 1, 2 }, { 2, 2 }, { 1, 3 }, { 2, 3 } }
 local GAP = { { 3, 2 } }
 local EAST = {
-    { 4, 1 }, { 5, 1 }, { 6, 1 },
-    { 4, 2 }, { 5, 2 }, { 6, 2 },
-    { 4, 3 }, { 5, 3 }, { 6, 3 },
+    { 4, 1 },
+    { 5, 1 },
+    { 6, 1 },
+    { 4, 2 },
+    { 5, 2 },
+    { 6, 2 },
+    { 4, 3 },
+    { 5, 3 },
+    { 6, 3 },
 }
 local EVERY: { { number } } = {}
 for _, room in ipairs({ WEST, GAP, EAST }) do
@@ -186,7 +199,8 @@ assert(assert(west_kpa) > 101.5, "which is above where they started: " .. west_k
 -- no cell on the far side of a wall to be linked to, so there is no
 -- arithmetic here to be nearly right.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "party wall",
     legend: {
         '.': (turf: Floor),
@@ -205,7 +219,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (4, 1, 3), (5, 1, 3),
         (1, 2, 3), (2, 2, 3), (4, 2, 3), (5, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 t.set_environment({ sink_k = 293.15, insolation = 0 }) -- inert sky, as above
 
@@ -232,12 +248,7 @@ t.run_seconds(120)
 -- The fouled side did everything a fouled side does.
 near(sum_over(FOULED, held, "co2"), 12.0, 1e-6, "the fouled room kept all twelve moles")
 for _, tile in ipairs(FOULED) do
-    near(
-        held(tile[1], tile[2], "co2"),
-        3.0,
-        1e-6,
-        "spread evenly across its own four tiles"
-    )
+    near(held(tile[1], tile[2], "co2"), 3.0, 1e-6, "spread evenly across its own four tiles")
 end
 assert(
     assert(t.room_pressure(1, 1)) > 106.0,
@@ -247,14 +258,13 @@ assert(
 -- The sealed side did nothing whatsoever.
 for n, tile in ipairs(SEALED) do
     local x, y = tile[1], tile[2]
-    assert(
-        held(x, y, "co2") == 0.0,
-        "NOT ONE MOLE crossed the wall onto " .. x .. "," .. y
-    )
+    assert(held(x, y, "co2") == 0.0, "NOT ONE MOLE crossed the wall onto " .. x .. "," .. y)
     assert(
         held(x, y, "o2") == opening[n].o2,
         "and its oxygen is the same number, exactly: "
-            .. held(x, y, "o2") .. " vs " .. opening[n].o2
+            .. held(x, y, "o2")
+            .. " vs "
+            .. opening[n].o2
     )
     assert(held(x, y, "n2") == opening[n].n2, "and its nitrogen")
     assert(t.room_pressure(x, y) == opening[n].kpa, "and its gauge never twitched")
@@ -272,7 +282,8 @@ end
 -- breaker goes once the leaf is open, so what is watched is gas through
 -- a doorway rather than autoclose timing (airlock_test.luau owns that).
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "airlock between",
     legend: {
         '.': (turf: Floor),
@@ -290,7 +301,9 @@ t.world([==[(
     cables: [
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 t.set_environment({ sink_k = 293.15, insolation = 0 }) -- inert sky, as above
 
@@ -338,9 +351,16 @@ for _, room in ipairs({ NEAR, LEAF, FAR }) do
 end
 local crossed = sum_over(NEAR, held, "co2") + sum_over(LEAF, held, "co2")
 near(crossed + sum_over(FAR, held, "co2"), 10.0, 1e-6, "still the ten that went in")
-near(assert(t.room_pressure(1, 1)), assert(t.room_pressure(5, 1)), 0.01, "both rooms at one pressure")
+near(
+    assert(t.room_pressure(1, 1)),
+    assert(t.room_pressure(5, 1)),
+    0.01,
+    "both rooms at one pressure"
+)
 assert(
     assert(t.room_pressure(5, 1)) > far_kpa_0,
     "the far room, which a shut door left untouched for a minute, is up: "
-        .. far_kpa_0 .. " -> " .. tostring(t.room_pressure(5, 1))
+        .. far_kpa_0
+        .. " -> "
+        .. tostring(t.room_pressure(5, 1))
 )

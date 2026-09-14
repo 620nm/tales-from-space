@@ -58,7 +58,8 @@ local content = {
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self, user = ev.subject, ev.actor
         local dial = assert(sim.mode(self))
@@ -78,10 +79,7 @@ if sim ~= nil then
         else
             sim.message.send({
                 recipient = user,
-                message = sim.msg(
-                    "lunatic/tfs:items.captains_aid.points_" .. direction,
-                    {}
-                ),
+                message = sim.msg("lunatic/tfs:items.captains_aid.points_" .. direction, {}),
             })
         end
         return true

@@ -12,7 +12,7 @@ local cards = {}
 -- tg's own generator, in tg's own order: two jokers, then Hearts,
 -- Spades, Clubs, Diamonds, each Ace, 2..10, Jack, Queen, King
 -- (`initialize_cards`, deck.dm:44-53). Fifty-four.
-local FACES: {string} = {}
+local FACES: { string } = {}
 FACES[1] = "Joker Clown"
 FACES[2] = "Joker Mime"
 for _, suit in ipairs({ "Hearts", "Spades", "Clubs", "Diamonds" }) do
@@ -43,8 +43,8 @@ end
 -- the SAME cell, `card_back`, and that is the whole trick: the state
 -- carries the card's identity, the picture carries only what a
 -- bystander is allowed to see.
-local states: {string} = {}
-local state_sprites: {[string]: string} = {}
+local states: { string } = {}
+local state_sprites: { [string]: string } = {}
 for _, face in ipairs(FACES) do
     local key = cards.slug(face)
     -- Face down first, so a card whose state was somehow never set
@@ -61,7 +61,7 @@ cards.state_sprites = state_sprites
 -- The English name of a slug, for the sentence a player reads when they
 -- turn one over. Built from the roster rather than by un-slugging, so
 -- the two can never disagree.
-local NAMES: {[string]: string} = {}
+local NAMES: { [string]: string } = {}
 for _, face in ipairs(FACES) do
     NAMES[cards.slug(face)] = face
 end

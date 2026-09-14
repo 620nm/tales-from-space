@@ -18,7 +18,8 @@ end
 -- Laying and pulling. The room is bare plating, because pipe goes
 -- UNDER the deck and a finished floor is refused.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "plumbing",
     legend: {
         ' ': (turf: Space),
@@ -38,7 +39,9 @@ t.world([==[(
         (1, 1, "pipe"),
         (3, 3, "wrench"),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -88,7 +91,8 @@ assert(t.ledger_has("PipePulled"), "pulling a line is on the record too")
 -- thing lying on the tile. The pulled east-west layer crosses a north-south
 -- length on another piping layer, so this also pins both per-item state and
 -- the valid different-layer coexistence.
-t.world([==[(
+t.world(
+    [==[(
     name: "fasten exact loose pipe",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: [
@@ -102,7 +106,9 @@ t.world([==[(
     pipes: [(1, 1, 2), (2, 1, 6), (3, 1, 2), (2, 2, 4)],
     pipe_facing: [(1, 1, 2, 4), (2, 1, 2, 12), (3, 1, 2, 8),
                   (2, 1, 4, 3), (2, 2, 4, 1)],
-)]==], 7)
+)]==],
+    7
+)
 
 local f = t.join()
 t.tick()
@@ -131,7 +137,8 @@ assert(t.ledger_has("ItemConsumed", "pipe"), "the conversion is on the record")
 -- the same simulation tick. Script continuations are collected before their
 -- effects land, so the success sound/message must be part of the atomic
 -- effect: one layer wins, one unit is spent, and only that winner reports it.
-t.world([==[(
+t.world(
+    [==[(
     name: "one winning pipe wrench",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: [
@@ -142,7 +149,9 @@ t.world([==[(
     ],
     structures: [(2, 2, "player_spawn"), (2, 2, "player_spawn")],
     items: [(1, 2, "wrench"), (3, 2, "wrench"), (2, 1, "pipe")],
-)]==], 11)
+)]==],
+    11
+)
 
 local a = t.join()
 local b = t.join()
@@ -181,8 +190,7 @@ assert(count(t.sounds(b), "ratchet") == 1, "every listener hears that same one r
 assert(t.pipe(2, 1) == DISTRO, "one distribution length landed")
 assert(#t.ledger_rows("PipeLaid") == 1, "one topology mutation was recorded")
 assert(#t.ledger_rows("ItemConsumed") == 1, "only one stack unit was spent")
-assert(t.hands(a).held == "wrench" and t.hands(b).held == "wrench",
-    "both active tools remain held")
+assert(t.hands(a).held == "wrench" and t.hands(b).held == "wrench", "both active tools remain held")
 
 -- ---------------------------------------------------------------
 -- What the plumbing is FOR. A hall and a sealed closet with no door
@@ -195,7 +203,8 @@ assert(t.hands(a).held == "wrench" and t.hands(b).held == "wrench",
 -- gas goes where the pressure says. Nothing here can MAKE air: if
 -- the closet comes back to life, the hall paid for it.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "transfer",
     legend: {
         ' ': (turf: Space),
@@ -215,7 +224,9 @@ t.world([==[(
         (9, 3, 4), (10, 3, 4), (11, 3, 4),
     ],
     structures: [(12, 2, "player_spawn"), (5, 2, "passive_vent"), (12, 2, "passive_vent")],
-)]==], 7)
+)]==],
+    7
+)
 local q = t.join()
 t.tick()
 
@@ -274,10 +285,7 @@ t.run_seconds(60)
 local west_end = assert(t.room_pressure(2, 1))
 local east_end = assert(t.room_pressure(12, 3))
 assert(east_end > 40.0, "the line repressurised the closet: " .. east_end)
-assert(
-    west_end < 100.0,
-    "and it came out of the hall, not from nowhere: " .. west_end
-)
+assert(west_end < 100.0, "and it came out of the hall, not from nowhere: " .. west_end)
 assert(
     math.abs(west_end - east_end) < 20.0,
     "the two settle near each other: " .. west_end .. " vs " .. east_end
@@ -301,7 +309,8 @@ assert(t.turf(11, 3) == "wall")
 -- Lay a fresh length straight through a charged main on a DIFFERENT
 -- layer: if the two joined, the new one would come up pressurised.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "crossing",
     legend: {
         ' ': (turf: Space),
@@ -317,7 +326,9 @@ t.world([==[(
     structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "pipe"), (1, 2, "wrench")],
     pipes: [(1, 1, 4), (2, 1, 4), (3, 1, 4)],
-)]==], 7)
+)]==],
+    7
+)
 
 local e = t.join()
 t.tick()
@@ -374,7 +385,8 @@ assert(t.pipe(1, 1) == DISTRO, "and the rest of the main is untouched")
 -- and the vented main empties into the vacuum while its neighbour, one
 -- tile away on the same layer, stays exactly as charged as it started.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "parallel mains",
     legend: {
         ' ': (turf: Space),
@@ -397,7 +409,9 @@ t.world([==[(
         (4, 1, 4, 3), (4, 2, 4, 3), (4, 3, 4, 3),
     ],
     structures: [(1, 1, "player_spawn"), (2, 2, "passive_vent")],
-)]==], 7)
+)]==],
+    7
+)
 t.join()
 t.tick()
 
@@ -416,14 +430,16 @@ assert(vented < 25.0, "the vented main emptied: " .. vented)
 assert(
     neighbour > 90.0,
     "and its parallel neighbour, one tile away on the same layer, never "
-        .. "lost a mole: " .. neighbour
+        .. "lost a mole: "
+        .. neighbour
 )
 
 -- The control. The identical map with NO facings authored is the old
 -- rule: every length reaches every way, the two columns are one slab
 -- of pipe, and the vent drains both. That is the topology plain
 -- adjacency could not stop expressing, and the reason for the field.
-t.world([==[(
+t.world(
+    [==[(
     name: "parallel mains, unaimed",
     legend: {
         ' ': (turf: Space),
@@ -442,7 +458,9 @@ t.world([==[(
         (4, 1, 4), (4, 2, 4), (4, 3, 4),
     ],
     structures: [(1, 1, "player_spawn"), (2, 2, "passive_vent")],
-)]==], 7)
+)]==],
+    7
+)
 t.join()
 t.tick()
 t.fault(1, 1, 6)
@@ -450,8 +468,7 @@ t.run_seconds(6)
 t.run_seconds(40)
 assert(
     assert(t.pipe_pressure(4, 2)) < 25.0,
-    "unaimed, the second column is the same net and drains too: "
-        .. assert(t.pipe_pressure(4, 2))
+    "unaimed, the second column is the same net and drains too: " .. assert(t.pipe_pressure(4, 2))
 )
 
 -- ---------------------------------------------------------------
@@ -459,7 +476,8 @@ assert(
 -- atmos component owns its centre on its own layer; a component on
 -- another layer is still a valid crossing.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "hand-laid component occupancy",
     legend: {
         ' ': (turf: Space),
@@ -479,7 +497,9 @@ t.world([==[(
         (2, 1, "manual_valve"),
         (3, 1, "manual_valve", { "layer": 2 }),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local h = t.join()
 t.tick()

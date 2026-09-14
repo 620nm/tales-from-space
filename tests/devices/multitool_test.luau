@@ -27,7 +27,8 @@ end
 -- is a deck the probe cannot read through. The generator in the corner
 -- feeds the yellow line beside it; the red stub in the second row is
 -- wired to nothing at all.
-t.world([==[(
+t.world(
+    [==[(
     name: "junction",
     legend: {
         ' ': (turf: Space),
@@ -44,7 +45,9 @@ t.world([==[(
     structures: [(2, 1, "player_spawn")],
     items: [(2, 1, "multitool")],
     cables: [(1, 1, 2), (2, 1, 2), (3, 1, 2), (2, 2, 1)],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()

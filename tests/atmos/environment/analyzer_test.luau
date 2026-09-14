@@ -41,7 +41,8 @@ end
 -- plumbed into it, and a stretch of bare plating out east with nothing
 -- buried under it yet.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "analyzer",
     legend: {
         ' ': (turf: Space),
@@ -74,7 +75,9 @@ t.world([==[(
         (1, 1, "connector_port"),
         (1, 1, "canister", { "blend": "canister_air", "open": true }),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -148,7 +151,10 @@ t.click_turf(p, 2, 1)
 t.run_ticks(2)
 local ground = t.messages(p)
 assert(has(ground, "Results of analysis of the air."), "a miss means the air")
-assert(not has(ground, "Results of analysis of the layer 3 pipe."), "and never a run nobody touched")
+assert(
+    not has(ground, "Results of analysis of the layer 3 pipe."),
+    "and never a run nobody touched"
+)
 
 -- ---- and what is lying on it ----
 --

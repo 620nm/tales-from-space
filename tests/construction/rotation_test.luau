@@ -2,7 +2,8 @@
 -- Alt+right is counter-clockwise in the browser; this spec enters the
 -- same server commands directly and proves the direction survives the
 -- fitting-to-machine construction round trip.
-t.world([==[(
+t.world(
+    [==[(
     name: "rotation",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: [
@@ -20,7 +21,9 @@ t.world([==[(
     // North is the engine's old automatic choice. West is also valid,
     // so a player-selected west can be distinguished from that fallback.
     pipes: [(2, 1, 4), (1, 2, 4)],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -28,7 +31,9 @@ local fitting = t.target_at(p, 2, 2, "connector_port_fitting")
 assert(fitting ~= nil, "the streamed loose fitting is targetable")
 
 -- The browser Alt gesture turns clockwise: three turns reach east.
-for _ = 1, 3 do t.rotate(p, 2, 2, fitting, true) end
+for _ = 1, 3 do
+    t.rotate(p, 2, 2, fitting, true)
+end
 t.rotate(p, 2, 2, fitting, true)
 t.rotate(p, 2, 2, fitting, true)
 assert(#t.ledger_rows("Rotated") == 5, "every accepted quarter-turn is recorded")
@@ -67,7 +72,8 @@ assert(#t.ledger_rows("Rotated") == 5, "a refused turn creates no ledger row")
 -- A connector carries a Stub, but ordinary binary and trinary devices
 -- do not. Their loose fitting's Facing must survive the same boundary:
 -- it decides both the anchored sprite and which mouths join the grid.
-t.world([==[(
+t.world(
+    [==[(
     name: "rotated device topology",
     legend: {
         ' ': (turf: Space),
@@ -87,13 +93,17 @@ t.world([==[(
     // valve may join the west/east pair instead.
     pipes: [(3, 1, 4), (2, 2, 4), (4, 2, 4), (3, 3, 4)],
     structures: [(4, 3, "player_spawn"), (1, 2, "passive_vent")],
-)]==], 7)
+)]==],
+    7
+)
 
 local q = t.join()
 t.tick()
 local valve_fitting = t.target_at(q, 3, 2, "manual_valve_fitting")
 assert(valve_fitting ~= nil, "the valve fitting is targetable")
-for _ = 1, 3 do t.rotate(q, 3, 2, valve_fitting, true) end -- south -> east
+for _ = 1, 3 do
+    t.rotate(q, 3, 2, valve_fitting, true)
+end -- south -> east
 
 t.click(q, 4, 3, t.target_at(q, 4, 3, "wrench"))
 t.run_ticks(2)

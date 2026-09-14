@@ -62,7 +62,8 @@ end
 -- The bench: a plant, a controller and a port along the back wall, an
 -- access point already bolted up by whoever built the place, and a crate
 -- of parts for the router that is going next to it.
-t.world([==[(
+t.world(
+    [==[(
     name: "network bench",
     legend: {
         ' ': (turf: Space),
@@ -90,20 +91,33 @@ t.world([==[(
     ],
     structures: [(5, 1, "player_spawn"), (4, 1, "access_point", { "access": "engineering", "mount": "north" })],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.run_ticks(20)
 
 local function take(id: string)
     local x, y = 5, 1
-    local places = {["metal"] = {4, 2},["cable_coil"] = {5, 2},["machine_board.network_router"] = {6, 2},["network_card"] = {4, 3},["screwdriver"] = {5, 3},["id_engineering"] = {6, 3}}
-    local at = if t.target_at(p, x, y, id) then {x, y} else places[id]
+    local places = {
+        ["metal"] = { 4, 2 },
+        ["cable_coil"] = { 5, 2 },
+        ["machine_board.network_router"] = { 6, 2 },
+        ["network_card"] = { 4, 3 },
+        ["screwdriver"] = { 5, 3 },
+        ["id_engineering"] = { 6, 3 },
+    }
+    local at = if t.target_at(p, x, y, id) then { x, y } else places[id]
     local home_x, home_y = t.pos(p)
     local px, py = home_x, home_y
     for _ = 1, 16 do
-        if math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1 then break end
-        local dir = if math.abs(py - at[2]) > 1 then (if py < at[2] then "south" else "north") else (if px < at[1] then "east" else "west")
+        if math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1 then
+            break
+        end
+        local dir = if math.abs(py - at[2]) > 1
+            then (if py < at[2] then "south" else "north")
+            else (if px < at[1] then "east" else "west")
         t.move(p, dir)
         t.run_ticks(3)
         px, py = t.pos(p)
@@ -113,8 +127,15 @@ local function take(id: string)
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
     for _ = 1, 16 do
-        if px == home_x and py == home_y then break end
-        t.move(p, if px ~= home_x then (if px < home_x then "east" else "west") else (if py < home_y then "south" else "north"))
+        if px == home_x and py == home_y then
+            break
+        end
+        t.move(
+            p,
+            if px ~= home_x
+                then (if px < home_x then "east" else "west")
+                else (if py < home_y then "south" else "north")
+        )
         t.run_ticks(3)
         px, py = t.pos(p)
     end
@@ -149,9 +170,14 @@ assert(point ~= nil and #point == 17, "with an address in it: " .. tostring(poin
 -- there never will be, because needing a router above it would make
 -- the smallest useful thing in the system impossible to build
 -- (docs/DEVICES.md §4).
-assert(link(panel, "state") == "link.state.online", "a hub tops its own tree, got: " .. tostring(link(panel, "state")))
-assert(#rows(panel, "link_join") == 0 and #rows(panel, "link_drop") == 0,
-    "and a shut panel offers neither a roster nor a candidate")
+assert(
+    link(panel, "state") == "link.state.online",
+    "a hub tops its own tree, got: " .. tostring(link(panel, "state"))
+)
+assert(
+    #rows(panel, "link_join") == 0 and #rows(panel, "link_drop") == 0,
+    "and a shut panel offers neither a roster nor a candidate"
+)
 laptop.close(p)
 put_down()
 
@@ -237,7 +263,10 @@ assert(rows(panel, "link_lock")[1].on, "it opens for whoever is standing at it")
 -- router.
 local offer = row_for(panel, "link_join", point)
 assert(offer ~= nil, "the access point is on offer: " .. #rows(panel, "link_join") .. " candidates")
-assert(ui_controls.record(offer.label).id == "link.candidate.hub", "named by what it is: " .. word(offer.label))
+assert(
+    ui_controls.record(offer.label).id == "link.candidate.hub",
+    "named by what it is: " .. word(offer.label)
+)
 
 -- ---------------------------------------------------------------
 -- 4. THE JOIN. One press, one edge, one row on the record -- and the
@@ -248,8 +277,10 @@ t.tick()
 panel = ui_controls.record(assert(t.ui(p), "the device panel is open"))
 local held = row_for(panel, "link_drop", point)
 assert(held ~= nil, "the panel now holds it")
-assert(roster_state(held) == "link.state.online",
-    "saying what it is doing: " .. tostring(roster_state(held)))
+assert(
+    roster_state(held) == "link.state.online",
+    "saying what it is doing: " .. tostring(roster_state(held))
+)
 
 -- One edge, one row -- counting the edges somebody MADE. The
 -- electrical pass sews its own under every device a panel feeds and
@@ -311,7 +342,11 @@ assert(cuts == 1, "with the cut on the record: " .. cuts)
 
 ui_controls.toggle(p, "link_join", point)
 t.tick()
-assert(row_for(ui_controls.record(assert(t.ui(p), "the device panel is open")), "link_drop", point) ~= nil, "joined again")
+assert(
+    row_for(ui_controls.record(assert(t.ui(p), "the device panel is open")), "link_drop", point)
+        ~= nil,
+    "joined again"
+)
 
 -- ---------------------------------------------------------------
 -- 6. THE ACCESS POINT'S OWN VIEW, which needs the claim its placement
@@ -342,7 +377,10 @@ laptop.connect(p, 4, 1, "access_point")
 laptop.unlock(p)
 t.tick()
 panel = laptop.ui(p)
-assert(not panel.contact_locked and rows(panel, "link_lock")[1].on, "the claim does, straight into the workspace")
+assert(
+    not panel.contact_locked and rows(panel, "link_lock")[1].on,
+    "the claim does, straight into the workspace"
+)
 assert(link(panel, "state") == "link.state.online", "and it is on the air under the router now")
 laptop.close(p)
 
@@ -357,15 +395,23 @@ t.ui_close(p)
 t.tick()
 t.click(p, 6, 1, t.target_at(p, 6, 1))
 t.tick()
-assert(roster_state(assert(row_for(ui_controls.record(assert(t.ui(p))), "link_drop", point))) == "link.state.online",
-    "on the air while the breaker is in")
+assert(
+    roster_state(assert(row_for(ui_controls.record(assert(t.ui(p))), "link_drop", point)))
+        == "link.state.online",
+    "on the air while the breaker is in"
+)
 
 t.outage()
 t.run_ticks(60)
 panel = ui_controls.record(assert(t.ui(p), "the device panel is open"))
 assert(panel ~= nil, "the panel keeps reporting")
-assert(link(panel, "state") == "link.state.unpowered", "the router itself has stopped carrying traffic")
+assert(
+    link(panel, "state") == "link.state.unpowered",
+    "the router itself has stopped carrying traffic"
+)
 local dark = row_for(panel, "link_drop", point)
 assert(dark ~= nil, "the edge survives the outage: a bond is not a signal")
-assert(roster_state(dark) == "link.state.unpowered",
-    "and the roster says why it went quiet: " .. tostring(roster_state(dark)))
+assert(
+    roster_state(dark) == "link.state.unpowered",
+    "and the roster says why it went quiet: " .. tostring(roster_state(dark))
+)

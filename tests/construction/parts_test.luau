@@ -27,7 +27,8 @@ local function worth(raw: unknown): (number, number)
     local value = ui_controls.record(raw)
     assert(value.id == "parts.tier", "the numbers ride a label id: " .. word(value))
     local args = ui_controls.record(value.args)
-    return assert(tonumber(ui_controls.text(args.tier))), assert(tonumber(ui_controls.text(args.efficiency)))
+    return assert(tonumber(ui_controls.text(args.tier))),
+        assert(tonumber(ui_controls.text(args.efficiency)))
 end
 
 local function rows_in(ui: unknown, section: string)
@@ -52,7 +53,8 @@ end
 -- The bench: mains down the west end, two chambers a map stood up, a
 -- build site at the east end with a socket of its own -- a cord only
 -- reaches so far -- and two temperature control units beyond it.
-t.world([==[(
+t.world(
+    [==[(
     name: "parts bench",
     legend: {
         ' ': (turf: Space),
@@ -95,19 +97,34 @@ t.world([==[(
         (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3),
         (8, 1, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
 
 local function take(x: number, y: number, id: string)
-    local places = {["beaker.libital"] = {10, 2},["metal"] = {7, 3},["cable_coil"] = {8, 3},["machine_board.chem_heater"] = {9, 3},["glass"] = {10, 3},["micro_laser.tier3"] = {7, 2},["screwdriver"] = {9, 2}}
-    local at = if x ~= 8 or y ~= 2 or t.target_at(p, x, y, id) then {x, y} else places[id]
+    local places = {
+        ["beaker.libital"] = { 10, 2 },
+        ["metal"] = { 7, 3 },
+        ["cable_coil"] = { 8, 3 },
+        ["machine_board.chem_heater"] = { 9, 3 },
+        ["glass"] = { 10, 3 },
+        ["micro_laser.tier3"] = { 7, 2 },
+        ["screwdriver"] = { 9, 2 },
+    }
+    local at = if x ~= 8 or y ~= 2 or t.target_at(p, x, y, id) then { x, y } else places[id]
     local home_x, home_y = t.pos(p)
     local px, py = home_x, home_y
     for _ = 1, 16 do
-        if math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1 then break end
-        local dir = if py == 1 and math.abs(px - at[1]) > 1 then "south" elseif math.abs(py - at[2]) > 1 then (if py < at[2] then "south" else "north") else (if px < at[1] then "east" else "west")
+        if math.abs(px - at[1]) <= 1 and math.abs(py - at[2]) <= 1 then
+            break
+        end
+        local dir = if py == 1 and math.abs(px - at[1]) > 1
+            then "south"
+            elseif math.abs(py - at[2]) > 1 then (if py < at[2] then "south" else "north")
+            else (if px < at[1] then "east" else "west")
         t.move(p, dir)
         t.run_ticks(3)
         px, py = t.pos(p)
@@ -117,8 +134,15 @@ local function take(x: number, y: number, id: string)
     t.run_ticks(2)
     assert(t.hands(p).held == id, "expected " .. id .. " in hand")
     for _ = 1, 16 do
-        if px == home_x and py == home_y then break end
-        t.move(p, if px ~= home_x then (if px < home_x then "east" else "west") else (if py < home_y then "south" else "north"))
+        if px == home_x and py == home_y then
+            break
+        end
+        t.move(
+            p,
+            if px ~= home_x
+                then (if px < home_x then "east" else "west")
+                else (if py < home_y then "south" else "north")
+        )
         t.run_ticks(3)
         px, py = t.pos(p)
     end
@@ -215,15 +239,24 @@ t.tick()
 local ui = ui_controls.state(p)
 local parts = rows_in(ui, "parts.parts")
 assert(#parts == 1, "one socket, one row: got " .. #parts)
-assert(word(parts[1].label) == "ultra-high-power micro-laser",
-    "the row is the part's own name: " .. word(parts[1].label))
+assert(
+    word(parts[1].label) == "ultra-high-power micro-laser",
+    "the row is the part's own name: " .. word(parts[1].label)
+)
 local built_tier, built_eff = worth(parts[1].value)
-assert(built_tier == 3 and math.abs(built_eff - 2.0) < 1e-9,
-    "against its rung and what it is worth: " .. built_tier .. " " .. built_eff)
-assert(word(row(ui, "dock.vessel").value) == "beaker (libital)",
-    "a machine out of a frame docks like any other: " .. tostring(word(row(ui, "dock.vessel").value)))
-assert(word(row(ui, "dock.supply").value) == "dock.supply.fed",
-    "and the frame it came out of was wired: " .. tostring(word(row(ui, "dock.supply").value)))
+assert(
+    built_tier == 3 and math.abs(built_eff - 2.0) < 1e-9,
+    "against its rung and what it is worth: " .. built_tier .. " " .. built_eff
+)
+assert(
+    word(row(ui, "dock.vessel").value) == "beaker (libital)",
+    "a machine out of a frame docks like any other: "
+        .. tostring(word(row(ui, "dock.vessel").value))
+)
+assert(
+    word(row(ui, "dock.supply").value) == "dock.supply.fed",
+    "and the frame it came out of was wired: " .. tostring(word(row(ui, "dock.supply").value))
+)
 ui_controls.set(p, "temperature", 400)
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
@@ -238,11 +271,15 @@ t.run_ticks(2)
 t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.tick()
 parts = rows_in(t.ui(p), "parts.parts")
-assert(#parts == 1 and word(parts[1].label) == "quad-ultra micro-laser",
-    "a placement that named tier four got tier four")
+assert(
+    #parts == 1 and word(parts[1].label) == "quad-ultra micro-laser",
+    "a placement that named tier four got tier four"
+)
 local four_tier, four_eff = worth(parts[1].value)
-assert(four_tier == 4 and math.abs(four_eff - 3.0) < 1e-9,
-    "worth three plain lasers: " .. four_tier .. " " .. four_eff)
+assert(
+    four_tier == 4 and math.abs(four_eff - 3.0) < 1e-9,
+    "worth three plain lasers: " .. four_tier .. " " .. four_eff
+)
 ui_controls.set(p, "temperature", 400)
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
@@ -258,11 +295,15 @@ t.run_ticks(2)
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 parts = rows_in(t.ui(p), "parts.parts")
-assert(#parts == 1 and word(parts[1].label) == "micro-laser",
-    "silence in a placement is the plain rung")
+assert(
+    #parts == 1 and word(parts[1].label) == "micro-laser",
+    "silence in a placement is the plain rung"
+)
 local plain_tier, plain_eff = worth(parts[1].value)
-assert(plain_tier == 1 and math.abs(plain_eff - 1.0) < 1e-9,
-    "and the neutral part: " .. plain_tier .. " " .. plain_eff)
+assert(
+    plain_tier == 1 and math.abs(plain_eff - 1.0) < 1e-9,
+    "and the neutral part: " .. plain_tier .. " " .. plain_eff
+)
 assert(word(row(t.ui(p), "dock.vessel").value) == "beaker (libital)", "with a beaker in it")
 ui_controls.set(p, "temperature", 400)
 ui_controls.toggle(p, "power")
@@ -282,10 +323,8 @@ t.run_seconds(30)
 local plain = assert(t.holder_k(plain_beaker))
 local middle = assert(t.holder_k(warm_beaker))
 local best = assert(t.holder_k(best_beaker))
-assert(plain < middle,
-    "a rung three laser beats the plain one: " .. plain .. " vs " .. middle)
-assert(middle < best,
-    "and rung four beats rung three: " .. middle .. " vs " .. best)
+assert(plain < middle, "a rung three laser beats the plain one: " .. plain .. " vs " .. middle)
+assert(middle < best, "and rung four beats rung three: " .. middle .. " vs " .. best)
 assert(best <= 400.0 + 1e-9, "none of them crosses the dial: " .. best)
 
 -- ---------------------------------------------------------------
@@ -304,10 +343,14 @@ t.tick()
 ui = ui_controls.state(p)
 local dial = ui_controls.rows(ui.setpoints)[1]
 assert(dial.field == "temperature", "a temperature control unit wears a thermostat")
-assert(math.abs(ui_controls.number(dial.min) - 73.15) < 1e-6,
-    "two plain lasers are tg's own cold end: " .. ui_controls.number(dial.min))
-assert(math.abs(ui_controls.number(dial.max) - 573.15) < 1e-6,
-    "and tg's own hot end: " .. ui_controls.number(dial.max))
+assert(
+    math.abs(ui_controls.number(dial.min) - 73.15) < 1e-6,
+    "two plain lasers are tg's own cold end: " .. ui_controls.number(dial.min)
+)
+assert(
+    math.abs(ui_controls.number(dial.max) - 573.15) < 1e-6,
+    "and tg's own hot end: " .. ui_controls.number(dial.max)
+)
 assert(#rows_in(ui, "parts.parts") == 4, "four sockets: two bins and two lasers")
 t.ui_close(p)
 
@@ -316,14 +359,23 @@ t.click(p, 10, 1, t.target_at(p, 10, 1))
 t.tick()
 ui = ui_controls.state(p)
 local upgraded = ui_controls.rows(ui.setpoints)[1]
-assert(ui_controls.number(upgraded.min) < ui_controls.number(dial.min) - 50.0,
-    "the upgraded unit reaches far colder: " .. ui_controls.number(upgraded.min) .. " vs " .. ui_controls.number(dial.min))
-assert(ui_controls.number(upgraded.max) > ui_controls.number(dial.max) + 500.0,
-    "and far hotter: " .. ui_controls.number(upgraded.max) .. " vs " .. ui_controls.number(dial.max))
+assert(
+    ui_controls.number(upgraded.min) < ui_controls.number(dial.min) - 50.0,
+    "the upgraded unit reaches far colder: "
+        .. ui_controls.number(upgraded.min)
+        .. " vs "
+        .. ui_controls.number(dial.min)
+)
+assert(
+    ui_controls.number(upgraded.max) > ui_controls.number(dial.max) + 500.0,
+    "and far hotter: " .. ui_controls.number(upgraded.max) .. " vs " .. ui_controls.number(dial.max)
+)
 local four = rows_in(ui, "parts.parts")
 assert(#four == 4, "still four sockets")
 for _, r in ipairs(four) do
     local r_tier, r_eff = worth(r.value)
-    assert(r_tier == 4 and math.abs(r_eff - 3.0) < 1e-9,
-        "every one of them is a tier four: " .. r_tier .. " " .. r_eff)
+    assert(
+        r_tier == 4 and math.abs(r_eff - 3.0) < 1e-9,
+        "every one of them is a tier four: " .. r_tier .. " " .. r_eff
+    )
 end

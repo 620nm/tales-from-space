@@ -22,7 +22,7 @@ local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-local function total(mix: {[string]: number}?)
+local function total(mix: { [string]: number }?)
     local sum = 0.0
     for _, moles in pairs(mix or {}) do
         sum = sum + moles
@@ -30,7 +30,8 @@ local function total(mix: {[string]: number}?)
     return sum
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "four mouths",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: [
@@ -51,7 +52,9 @@ t.world([==[(
         (5, 4, 4),
         (3, 4, 4), (2, 4, 4), (1, 4, 4), (1, 5, 4),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -81,12 +84,14 @@ end
 -- (pipe_blend_test.luau), so four different books at four tiles one
 -- step from the same machine is the proof that the vessel is the only
 -- thing they have in common -- there is no pipe path between them.
-local energies: {[string]: number} = {}
+local energies: { [string]: number } = {}
 for _, run in ipairs(runs) do
     local joules = assert(t.pipe_energy(run.x, run.y))
     for other, seen in pairs(energies) do
-        assert(math.abs(joules - seen) > 1.0,
-            run.side .. " and " .. other .. " are the same net: " .. joules)
+        assert(
+            math.abs(joules - seen) > 1.0,
+            run.side .. " and " .. other .. " are the same net: " .. joules
+        )
     end
     energies[run.side] = joules
 end
@@ -112,27 +117,43 @@ local holder_kpa = assert(t.tank_pressure(4, 4))
 local pooled = total(assert(t.tank_gas(4, 4)))
 for _, run in ipairs(runs) do
     local x, y, volume, side = run.x, run.y, run.volume, run.side
-    near(total(assert(t.pipe_gas(x, y))) / volume, density, density * 1e-9,
-        side .. " sits at the vessel's own density")
-    near(assert(t.pipe_pressure(x, y)), holder_kpa, holder_kpa * 1e-9,
-        side .. " is at the vessel's own pressure")
+    near(
+        total(assert(t.pipe_gas(x, y))) / volume,
+        density,
+        density * 1e-9,
+        side .. " sits at the vessel's own density"
+    )
+    near(
+        assert(t.pipe_pressure(x, y)),
+        holder_kpa,
+        holder_kpa * 1e-9,
+        side .. " is at the vessel's own pressure"
+    )
     pooled = pooled + total(assert(t.pipe_gas(x, y)))
 end
-near(pooled, start_moles, start_moles * 1e-12,
-    "five holders, one pot: nothing was minted pooling them and nothing lost")
+near(
+    pooled,
+    start_moles,
+    start_moles * 1e-12,
+    "five holders, one pot: nothing was minted pooling them and nothing lost"
+)
 
 -- And the same MIXTURE, which a density cannot say. The runs opened the
 -- shift on station air and the vessel on pure oxygen; one pass later
 -- every holder carries the same admixture of the two, because there was
 -- only ever one pot.
-local function oxygen_fraction(mix: {[string]: number})
+local function oxygen_fraction(mix: { [string]: number })
     return mix.o2 / total(mix)
 end
 local blend = oxygen_fraction(assert(t.tank_gas(4, 4)))
 assert(blend > 0.9, "overwhelmingly the vessel's oxygen, by weight: " .. blend)
 for _, run in ipairs(runs) do
-    near(oxygen_fraction(assert(t.pipe_gas(run.x, run.y))), blend, 1e-9,
-        run.side .. " carries the vessel's mixture, not its own")
+    near(
+        oxygen_fraction(assert(t.pipe_gas(run.x, run.y))),
+        blend,
+        1e-9,
+        run.side .. " carries the vessel's mixture, not its own"
+    )
 end
 
 -- What differs is the lengths, and they differ in the right direction:
@@ -144,8 +165,10 @@ near(
     1e-9,
     "west outweighs east exactly in proportion to volume"
 )
-assert(total(assert(t.pipe_gas(5, 4))) < total(assert(t.pipe_gas(4, 5))),
-    "and the single length east holds the least of the four")
+assert(
+    total(assert(t.pipe_gas(5, 4))) < total(assert(t.pipe_gas(4, 5))),
+    "and the single length east holds the least of the four"
+)
 
 -- ---------------------------------------------------------------
 -- CUT ONE, AND THE OTHER THREE DO NOT NOTICE.
@@ -170,16 +193,24 @@ t.run_seconds(2)
 assert(t.pipe(4, 3) == 0, "the length in the north mouth came up")
 assert(t.pipe_pressure(4, 3) == nil, "and there is no net under that tile at all")
 assert(t.count_items("pipe") > 0, "it is a length you could lay again")
-near(assert(t.pipe_pressure(4, 2)), severed_kpa, severed_kpa * 1e-9,
-    "the remnant kept the pressure it had -- the pull divides by volume too")
+near(
+    assert(t.pipe_pressure(4, 2)),
+    severed_kpa,
+    severed_kpa * 1e-9,
+    "the remnant kept the pressure it had -- the pull divides by volume too"
+)
 
 -- The other three are still the same body of gas as the vessel.
 t.run_seconds(2)
 local bound_kpa = assert(t.tank_pressure(4, 4))
 local bound_moles = total(assert(t.tank_gas(4, 4)))
 for _, run in ipairs({ runs[2], runs[3], runs[4] }) do
-    near(assert(t.pipe_pressure(run.x, run.y)), bound_kpa, bound_kpa * 1e-9,
-        run.side .. " is still bolted to the vessel")
+    near(
+        assert(t.pipe_pressure(run.x, run.y)),
+        bound_kpa,
+        bound_kpa * 1e-9,
+        run.side .. " is still bolted to the vessel"
+    )
     bound_moles = bound_moles + total(assert(t.pipe_gas(run.x, run.y)))
 end
 
@@ -206,27 +237,43 @@ local warmed_k = assert(t.pipe_temperature(5, 4))
 assert(warmed_k > rest_k + 3.0, "the east run took the heat: " .. warmed_k .. " K")
 near(assert(t.pipe_temperature(4, 5)), warmed_k, 1e-6, "south came with it, through the vessel")
 near(assert(t.pipe_temperature(3, 4)), warmed_k, 1e-6, "and west, which is two mouths away")
-near(assert(t.pipe_temperature(4, 2)), cold_k, 1e-9,
-    "while the severed run stayed exactly as cold as it was left")
-near(total(assert(t.pipe_gas(4, 2))), severed_moles, severed_moles * 1e-12,
-    "with its mole book untouched -- nothing crosses a mouth that is not there")
+near(
+    assert(t.pipe_temperature(4, 2)),
+    cold_k,
+    1e-9,
+    "while the severed run stayed exactly as cold as it was left"
+)
+near(
+    total(assert(t.pipe_gas(4, 2))),
+    severed_moles,
+    severed_moles * 1e-12,
+    "with its mole book untouched -- nothing crosses a mouth that is not there"
+)
 
 -- The three that answered are still one pressure with the vessel, and
 -- it is a HIGHER one than before: same moles, same volumes, more heat.
 local hot_kpa = assert(t.tank_pressure(4, 4))
 assert(hot_kpa > bound_kpa, "the bound family rose together: " .. hot_kpa .. " kPa")
 for _, run in ipairs({ runs[2], runs[3], runs[4] }) do
-    near(assert(t.pipe_pressure(run.x, run.y)), hot_kpa, hot_kpa * 1e-9,
-        run.side .. " rose with the vessel")
+    near(
+        assert(t.pipe_pressure(run.x, run.y)),
+        hot_kpa,
+        hot_kpa * 1e-9,
+        run.side .. " rose with the vessel"
+    )
 end
-assert(math.abs(assert(t.pipe_pressure(4, 2)) - hot_kpa) > 100.0,
-    "and the severed run did not: " .. assert(t.pipe_pressure(4, 2)) .. " vs " .. hot_kpa)
+assert(
+    math.abs(assert(t.pipe_pressure(4, 2)) - hot_kpa) > 100.0,
+    "and the severed run did not: " .. assert(t.pipe_pressure(4, 2)) .. " vs " .. hot_kpa
+)
 
 -- And the pool the three still share is the pool they shared before the
 -- heat, to the mole: what went through the mouths was joules.
 near(
-    total(assert(t.tank_gas(4, 4))) + total(assert(t.pipe_gas(4, 5)))
-        + total(assert(t.pipe_gas(5, 4))) + total(assert(t.pipe_gas(3, 4))),
+    total(assert(t.tank_gas(4, 4)))
+        + total(assert(t.pipe_gas(4, 5)))
+        + total(assert(t.pipe_gas(5, 4)))
+        + total(assert(t.pipe_gas(3, 4))),
     bound_moles,
     bound_moles * 1e-12,
     "the bound holders carry exactly what they were left with"

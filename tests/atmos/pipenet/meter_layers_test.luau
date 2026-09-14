@@ -38,7 +38,8 @@ end
 -- that has only layers 2 and 4. Clicking the exact layer-2 pipe changes
 -- that one fitting, after which ordinary wrench construction binds it
 -- to layer 2 and ignores layer 4 disappearing.
-t.world([==[(
+t.world(
+    [==[(
     name: "meter layers by hand",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: [
@@ -50,7 +51,9 @@ t.world([==[(
     structures: [(2, 2, "player_spawn")],
     items: [(2, 1, "wrench"), (2, 1, "pipe_meter")],
     pipes: [(2, 1, 2), (2, 1, 8)],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -116,7 +119,8 @@ assert(t.structure_at(2, 1) == nil and lying_at(2, 1, "pipe_meter"), "it remains
 -- The RPD's selected layer is applied to the generated pipe_meter item
 -- before the ordinary construction refusal runs. A wrong layer refuses;
 -- a right layer builds; and a crossing still binds the selected one.
-t.world([==[(
+t.world(
+    [==[(
     name: "meter layers by RPD",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: [
@@ -128,7 +132,9 @@ t.world([==[(
     structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "rpd"), (2, 2, "wrench")],
     pipes: [(2, 1, 2), (3, 1, 2), (3, 1, 8)],
-)]==], 7)
+)]==],
+    7
+)
 
 local r = t.join()
 t.tick()
@@ -177,7 +183,10 @@ t.click(r, 2, 2, t.target_at(r, 2, 2, "wrench"))
 t.run_ticks(2)
 t.click_subfloor(r, 3, 1, "pipe", L2)
 t.run_seconds(2.5)
-assert(assert(t.structure_at(3, 1)).id == "meter", "the RPD meter did not bind the other crossing layer")
+assert(
+    assert(t.structure_at(3, 1)).id == "meter",
+    "the RPD meter did not bind the other crossing layer"
+)
 t.click_subfloor(r, 3, 1, "pipe", L4)
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "it drops when the RPD-selected layer is removed")

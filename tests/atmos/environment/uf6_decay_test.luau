@@ -40,7 +40,8 @@ local CV_SOLID = 166.0
 local GAS_FILL = 3.0 -- mol/tile: 7.3 kPa at deck temperature, under the 11.5 kPa vapour pressure
 local SOLID_FILL = 30.0
 
-t.world([==[(
+t.world(
+    [==[(
     name: "the cylinder cell",
     legend: {
         ' ': (turf: Space),
@@ -80,7 +81,10 @@ t.world([==[(
         (1, 1, "hot_hex"), (2, 1, "hot_hex"), (1, 2, "hot_hex"), (2, 2, "hot_hex"),
         (4, 1, "cold_hex"), (5, 1, "cold_hex"), (4, 2, "cold_hex"), (5, 2, "cold_hex"),
     ],
-)]==], 0, "free_build")
+)]==],
+    0,
+    "free_build"
+)
 
 -- A sky at the deck's own temperature with no star in it: the hull
 -- starts radiating nothing, and what it picks up as the rooms warm past
@@ -90,7 +94,7 @@ t.set_environment({ sink_k = 293.15, insolation = 0.0 })
 local ROOM_A = { { 1, 1 }, { 2, 1 }, { 1, 2 }, { 2, 2 } }
 local ROOM_B = { { 4, 1 }, { 5, 1 }, { 4, 2 }, { 5, 2 } }
 
-local function room_sum(room: {{number}}, f: (number, number) -> number?)
+local function room_sum(room: { { number } }, f: (number, number) -> number?)
     local sum = 0.0
     for _, tile in ipairs(room) do
         sum = sum + assert(f(tile[1], tile[2]), "the room tile has a reading")
@@ -98,14 +102,14 @@ local function room_sum(room: {{number}}, f: (number, number) -> number?)
     return sum
 end
 
-local function gas_moles(room: {{number}})
+local function gas_moles(room: { { number } })
     return room_sum(room, function(x, y)
         local gases = t.room_gas(x, y)
         return (gases and gases.uf6) or 0.0
     end)
 end
 
-local function liquid_litres(room: {{number}})
+local function liquid_litres(room: { { number } })
     return room_sum(room, function(x, y)
         local litres = t.room_liquid(x, y)
         return (litres and litres.uf6) or 0.0
@@ -114,7 +118,7 @@ end
 
 -- The room's whole energy book: what stands in the air plus what the
 -- deck under it holds.
-local function room_book(room: {{number}})
+local function room_book(room: { { number } })
     return room_sum(room, function(x, y)
         return assert(t.room_energy(x, y)) + assert(t.deck(x, y)).energy
     end)
@@ -128,12 +132,15 @@ local MEASURE_S = 600
 -- ---------------------------------------------------------------
 local fill_a = GAS_FILL * 4.0
 local fill_b = SOLID_FILL * 4.0
-near(gas_moles(ROOM_A), fill_a, 0.05 * fill_a,
-    "the thin fill is all gas: " .. gas_moles(ROOM_A) .. " mol")
+near(
+    gas_moles(ROOM_A),
+    fill_a,
+    0.05 * fill_a,
+    "the thin fill is all gas: " .. gas_moles(ROOM_A) .. " mol"
+)
 
 local booked = t.matter_totals()
-near(booked.substances.uf6, fill_a + fill_b, 1e-9,
-    "both rooms' fill is on the books")
+near(booked.substances.uf6, fill_a + fill_b, 1e-9, "both rooms' fill is on the books")
 
 -- ---------------------------------------------------------------
 -- SETTLE. The hot paint's excess drains into the deck, the cold
@@ -147,18 +154,26 @@ t.run_seconds(SETTLE_S)
 -- not take it: below the triple point UF6 rests as a SOLID, with only
 -- its vapour pressure's worth in the air and no liquid anywhere.
 local gas_b = gas_moles(ROOM_B)
-assert(gas_b < 0.25 * fill_b,
+assert(
+    gas_b < 0.25 * fill_b,
     "below the triple point the fill rests as a solid: "
-        .. gas_b .. " of " .. fill_b .. " mol in the air")
-near(liquid_litres(ROOM_B), 0.0, 1e-12,
-    "and nothing melted: there is no liquid at one atmosphere")
+        .. gas_b
+        .. " of "
+        .. fill_b
+        .. " mol in the air"
+)
+near(liquid_litres(ROOM_B), 0.0, 1e-12, "and nothing melted: there is no liquid at one atmosphere")
 
 local book_a0 = room_book(ROOM_A)
 local book_b0 = room_book(ROOM_B)
 local air_a0 = room_sum(ROOM_A, t.room_temperature) / 4.0
 local air_b0 = room_sum(ROOM_B, t.room_temperature) / 4.0
-local deck_a = room_sum(ROOM_A, function(x, y) return assert(t.deck(x, y)).capacity end)
-local deck_b = room_sum(ROOM_B, function(x, y) return assert(t.deck(x, y)).capacity end)
+local deck_a = room_sum(ROOM_A, function(x, y)
+    return assert(t.deck(x, y)).capacity
+end)
+local deck_b = room_sum(ROOM_B, function(x, y)
+    return assert(t.deck(x, y)).capacity
+end)
 
 -- ---------------------------------------------------------------
 -- MEASURE. Each room's book must grow by exactly the decay joules;
@@ -169,12 +184,26 @@ t.run_seconds(MEASURE_S)
 
 local expected_a = DECAY_W_PER_MOL * fill_a * MEASURE_S
 local expected_b = DECAY_W_PER_MOL * fill_b * MEASURE_S
-near(room_book(ROOM_A) - book_a0, expected_a, 0.25 * expected_a,
+near(
+    room_book(ROOM_A) - book_a0,
+    expected_a,
+    0.25 * expected_a,
     "the gas room's book grows by the decay joules: "
-        .. (room_book(ROOM_A) - book_a0) .. " J vs " .. expected_a .. " J")
-near(room_book(ROOM_B) - book_b0, expected_b, 0.25 * expected_b,
+        .. (room_book(ROOM_A) - book_a0)
+        .. " J vs "
+        .. expected_a
+        .. " J"
+)
+near(
+    room_book(ROOM_B) - book_b0,
+    expected_b,
+    0.25 * expected_b,
     "the solid room's book grows by the same joules per mole: "
-        .. (room_book(ROOM_B) - book_b0) .. " J vs " .. expected_b .. " J")
+        .. (room_book(ROOM_B) - book_b0)
+        .. " J vs "
+        .. expected_b
+        .. " J"
+)
 
 -- ...and as TEMPERATURE the same joules read as dT = E / C_total over
 -- air and deck together, the mixture's capacity summed over the phase
@@ -186,17 +215,37 @@ local c_mix_a = gas_moles(ROOM_A) * CV_GAS + (fill_a - gas_moles(ROOM_A)) * CV_S
 local c_mix_b = gas_moles(ROOM_B) * CV_GAS + (fill_b - gas_moles(ROOM_B)) * CV_SOLID
 local predicted_a = expected_a / (c_mix_a + deck_a)
 local predicted_b = expected_b / (c_mix_b + deck_b)
-near(air_a1 - air_a0, predicted_a, 0.5 * predicted_a,
+near(
+    air_a1 - air_a0,
+    predicted_a,
+    0.5 * predicted_a,
     "the gas room warms by the decay law: "
-        .. (air_a1 - air_a0) .. " K vs " .. predicted_a .. " K predicted")
-near(air_b1 - air_b0, predicted_b, 0.5 * predicted_b,
+        .. (air_a1 - air_a0)
+        .. " K vs "
+        .. predicted_a
+        .. " K predicted"
+)
+near(
+    air_b1 - air_b0,
+    predicted_b,
+    0.5 * predicted_b,
     "the solid-resting room warms by the same law: "
-        .. (air_b1 - air_b0) .. " K vs " .. predicted_b .. " K predicted")
+        .. (air_b1 - air_b0)
+        .. " K vs "
+        .. predicted_b
+        .. " K predicted"
+)
 
 -- ---------------------------------------------------------------
 -- CONSERVED. Decay ADDS joules; it does not spend moles.
 -- ---------------------------------------------------------------
 local closed = t.matter_totals()
-near(closed.substances.uf6, booked.substances.uf6, 1e-9,
+near(
+    closed.substances.uf6,
+    booked.substances.uf6,
+    1e-9,
     "every mole of UF6 is still somewhere: "
-        .. closed.substances.uf6 .. " vs " .. booked.substances.uf6)
+        .. closed.substances.uf6
+        .. " vs "
+        .. booked.substances.uf6
+)

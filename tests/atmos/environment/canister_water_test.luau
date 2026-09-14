@@ -26,7 +26,8 @@ local ui_controls = require("@helpers/ui_controls")
 --     its container, and a liquid is not that (the engine marks the gap
 --     itself)
 
-t.world([==[(
+t.world(
+    [==[(
     name: "water bottle",
     legend: {
         ' ': (turf: Space),
@@ -56,7 +57,9 @@ t.world([==[(
         (1, 1, "player_spawn"),
         (2, 1, "canister", { "blend": "wet_air" }),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -67,8 +70,7 @@ local SLUG_L = 10.0
 
 local function near(got: number?, want: number, tol: number, what: string)
     assert(got ~= nil, what .. ": nothing was answered")
-    assert(math.abs(got - want) <= tol,
-        ("%s: wanted %g, got %g"):format(what, want, got))
+    assert(math.abs(got - want) <= tol, ("%s: wanted %g, got %g"):format(what, want, got))
 end
 
 local can = assert(t.target_at(p, 2, 1, "canister"))
@@ -84,8 +86,7 @@ near(shut.contents.water.liquid, CHARGE_MOL, 1e-6, "ten litres of water, as liqu
 assert(shut.contents.water.gas == nil, "and none of it arrived as steam")
 assert(shut.contents.o2 ~= nil and shut.contents.n2 ~= nil, "with air over it")
 near(shut.volume_l, SHELL_L, 1e-6, "the shell is still the canister's own")
-near(shut.headspace_l, SHELL_L - SLUG_L, 0.1,
-    "the slug takes its ten litres out of the headspace")
+near(shut.headspace_l, SHELL_L - SLUG_L, 0.1, "the slug takes its ten litres out of the headspace")
 
 -- ---------------------------------------------------------------
 -- Leave it standing SHUT. The headspace does not stay dry: the
@@ -102,22 +103,27 @@ t.run_ticks(200)
 local settled = assert(t.vessel(can))
 local s = settled.contents.water
 assert(s ~= nil, "the water is still in there")
-assert(s.gas ~= nil and s.gas > 0.0,
-    "a shut bottle of water stands over its own vapour")
+assert(s.gas ~= nil and s.gas > 0.0, "a shut bottle of water stands over its own vapour")
 
 -- Water's share of the headspace, said out loud: nRT/V over the room
 -- the air left it, which is the partial pressure a technician's
 -- analyzer would print beside the air's.
 local R = 8.314
 local water_kpa = s.gas * R * settled.temp_k / (settled.headspace_l / 1000.0) / 1000.0
-assert(water_kpa >= 1.0 and water_kpa <= 10.0,
-    "vapour pressure, not a pressure: " .. water_kpa)
-near(t.canister_pressure(2, 1), settled.pressure_kpa, 1e-6,
-    "the gauge on the bottle and the reading in the panel are one number")
-assert(settled.temp_k < 293.15,
-    "boiling off the vapour cost the slug its heat: " .. settled.temp_k)
-near((s.liquid or 0.0) + (s.gas or 0.0) + (s.solid or 0.0), CHARGE_MOL, 1e-6,
-    "and nothing was made or lost getting there")
+assert(water_kpa >= 1.0 and water_kpa <= 10.0, "vapour pressure, not a pressure: " .. water_kpa)
+near(
+    t.canister_pressure(2, 1),
+    settled.pressure_kpa,
+    1e-6,
+    "the gauge on the bottle and the reading in the panel are one number"
+)
+assert(settled.temp_k < 293.15, "boiling off the vapour cost the slug its heat: " .. settled.temp_k)
+near(
+    (s.liquid or 0.0) + (s.gas or 0.0) + (s.solid or 0.0),
+    CHARGE_MOL,
+    1e-6,
+    "and nothing was made or lost getting there"
+)
 
 -- ---------------------------------------------------------------
 -- Now make the valve DO something. The bottle stands loose on the
@@ -133,8 +139,10 @@ t.click(p, 2, 1, can)
 t.tick()
 local ui = ui_controls.record(t.ui(p))
 assert(ui ~= nil, "clicking a bottle opens its panel")
-assert(ui_controls.rows(ui.toggles)[1].field == "valve" and ui_controls.rows(ui.toggles)[1].on == false,
-    "it arrives shut, because a map that said nothing said nothing")
+assert(
+    ui_controls.rows(ui.toggles)[1].field == "valve" and ui_controls.rows(ui.toggles)[1].on == false,
+    "it arrives shut, because a map that said nothing said nothing"
+)
 ui_controls.set(p, "release", 400)
 ui_controls.toggle(p, "valve")
 t.run_ticks(200)
@@ -155,15 +163,22 @@ local w = open.contents.water
 assert(w ~= nil, "the water did not leave through the valve")
 
 local air_after = assert(open.contents.o2.gas) + assert(open.contents.n2.gas)
-assert(air_after < assert(air_before) * 0.7,
-    ("the air emptied into the room: %g -> %g"):format(assert(air_before), air_after))
-assert(assert(t.room_pressure(3, 1)) > assert(room_before) + 100.0,
-    "and the room's own gauge went up with it: " .. assert(t.room_pressure(3, 1)))
+assert(
+    air_after < assert(air_before) * 0.7,
+    ("the air emptied into the room: %g -> %g"):format(assert(air_before), air_after)
+)
+assert(
+    assert(t.room_pressure(3, 1)) > assert(room_before) + 100.0,
+    "and the room's own gauge went up with it: " .. assert(t.room_pressure(3, 1))
+)
 
 local water_after = (w.liquid or 0.0) + (w.gas or 0.0)
-assert(water_after > water_before * 0.99,
-    ("while the water hardly moved: %g -> %g"):format(water_before, water_after))
-assert(assert(w.liquid) > CHARGE_MOL * 0.99,
-    "and the slug is still the slug: " .. w.liquid)
-assert(water_before - water_after < (w.gas or 0.0) * 2.0,
-    "what left it was vapour, and not much more than a headspace of that")
+assert(
+    water_after > water_before * 0.99,
+    ("while the water hardly moved: %g -> %g"):format(water_before, water_after)
+)
+assert(assert(w.liquid) > CHARGE_MOL * 0.99, "and the slug is still the slug: " .. w.liquid)
+assert(
+    water_before - water_after < (w.gas or 0.0) * 2.0,
+    "what left it was vapour, and not much more than a headspace of that"
+)

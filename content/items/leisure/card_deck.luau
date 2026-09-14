@@ -84,7 +84,9 @@ end
 -- which for a deck means "still in the box".
 local function order_of(self: Handle): string
     local order = self.vars["order"]
-    if order == nil then return shuffled() end
+    if order == nil then
+        return shuffled()
+    end
     assert(type(order) == "string", "deck order must be a string")
     return order
 end
@@ -118,11 +120,13 @@ local content = {
     acts_on_items = true,
 }
 
-local deal_kinds: {action_rules.Selector} = { action_rules.kind("turf"), action_rules.kind("machine") }
-local deal_turfs: {action_rules.Selector} = {
-    action_rules.fact("target.turf", "floor"), action_rules.fact("target.turf", "plating"),
+local deal_kinds: { action_rules.Selector } =
+    { action_rules.kind("turf"), action_rules.kind("machine") }
+local deal_turfs: { action_rules.Selector } = {
+    action_rules.fact("target.turf", "floor"),
+    action_rules.fact("target.turf", "plating"),
 }
-local deal_conditions: {action_rules.Selector} = { { any = deal_kinds }, { any = deal_turfs } }
+local deal_conditions: { action_rules.Selector } = { { any = deal_kinds }, { any = deal_turfs } }
 local deal_target: action_rules.Selector = { all = deal_conditions }
 
 content.actions = {
@@ -138,7 +142,8 @@ if sim ~= nil then
     -- nothing out of it -- it checks the string against the roster
     -- above and hands it to the viewers.
     sim.define("script_var", "lunatic/tfs:picture", { replicate = "sight" })
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self, user = ev.subject, ev.actor
         -- Shuffling an EMPTY deck is not magic and must not look like

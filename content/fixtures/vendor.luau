@@ -21,21 +21,26 @@ local content = {
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    script_definition:handle("interaction.use", { kind = "replace", route = "interact" }, function(ev)
-        local self, user = ev.subject, ev.actor
-        if not sim.is_powered(self) then
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:fixtures.vendor.the_machine_is_dark_and", {}),
-            })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle(
+        "interaction.use",
+        { kind = "replace", route = "interact" },
+        function(ev)
+            local self, user = ev.subject, ev.actor
+            if not sim.is_powered(self) then
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:fixtures.vendor.the_machine_is_dark_and", {}),
+                })
+                return true
+            end
+            -- Clicking the machine opens its content-declared clean-room
+            -- shelf; dispensing happens through its exact action envelopes.
+            ui.open({ viewer = user, owner = self })
             return true
         end
-        -- Clicking the machine opens its content-declared clean-room
-        -- shelf; dispensing happens through its exact action envelopes.
-        ui.open({ viewer = user, owner = self })
-        return true
-    end)
+    )
     -- THE EMPTIES. Hand the machine a bottle and it gives you a cold one
     -- back. A drinks machine with nowhere to put the glass is furniture
     -- with a hole in it, and tg's own vendors stock bottled water
@@ -106,7 +111,10 @@ if sim ~= nil then
         local self, user = ev.target, ev.mover
         sim.message.send({
             recipient = user,
-            message = sim.msg("lunatic/tfs:fixtures.vendor.the_vending_machine_wobbles_nothing", {}),
+            message = sim.msg(
+                "lunatic/tfs:fixtures.vendor.the_vending_machine_wobbles_nothing",
+                {}
+            ),
         })
         return true
     end)

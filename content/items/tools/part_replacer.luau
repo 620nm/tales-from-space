@@ -35,33 +35,42 @@ local content = {
 }
 
 content.actions = {
-    action_rules.primary("replace_parts", { all = {
-        action_rules.kind("machine"), action_rules.fact("target.has_components", true),
-    } }),
+    action_rules.primary("replace_parts", {
+        all = {
+            action_rules.kind("machine"),
+            action_rules.fact("target.has_components", true),
+        },
+    }),
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local claim = ev.claim
         if not claim or claim.kind ~= "machine" or not claim.entity then
             return { replaced = false } -- not a machine; let the click mean whatever else it means
         end
-        local sockets: {PartSlotView}? = claim.entity.components
+        local sockets: { PartSlotView }? = claim.entity.components
         if not sockets then
             return { replaced = false } -- nothing this one is built out of
         end
-        local bag: {Handle} = ev.subject.contents or {}
+        local bag: { Handle } = ev.subject.contents or {}
         -- One part fits one socket: a bag holding a single better laser
         -- upgrades the first laser socket and not both of them.
-        local spent: {[number]: boolean} = {}
+        local spent: { [number]: boolean } = {}
         local fitted = 0
         for index, socket in ipairs(sockets) do
             local best, best_tier = nil, socket.tier
             for slot, held in ipairs(bag) do
                 local part = held.component
-                if not spent[slot] and part and part.kind == socket.kind and part.tier > best_tier then
+                if
+                    not spent[slot]
+                    and part
+                    and part.kind == socket.kind
+                    and part.tier > best_tier
+                then
                     best, best_tier = slot, part.tier
                 end
             end
@@ -82,7 +91,10 @@ if sim ~= nil then
         if fitted == 0 then
             sim.message.send({
                 recipient = ev.actor,
-                message = sim.msg("lunatic/tfs:items.part_replacer.nothing_in_the_exchanger_is", {}),
+                message = sim.msg(
+                    "lunatic/tfs:items.part_replacer.nothing_in_the_exchanger_is",
+                    {}
+                ),
             })
         else
             sim.sound.play({ asset = "lunatic/tfs:sound/part_swap", at = ev.at })

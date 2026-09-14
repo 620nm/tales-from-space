@@ -138,8 +138,7 @@ assert(machine ~= nil and machine.id == "air_scrubber", "the map stood one there
 assert(machine.state == "scrubbing", "running, and wearing the ordinary picture")
 assert(
     machine.sprite ~= nil and string.find(machine.sprite, "purge") == nil,
-    "a return grille must never be drawn as a room being emptied: "
-        .. tostring(machine.sprite)
+    "a return grille must never be drawn as a room being emptied: " .. tostring(machine.sprite)
 )
 
 -- What a silent placement actually got, read off the machine's own
@@ -157,7 +156,9 @@ assert(
     ui_controls.number(setpoints[2].value) < SUPPLIES_UNDER,
     "which is the circulation: the room sits below the line the vent"
         .. " works to, so the vent is always feeding -- "
-        .. ui_controls.number(setpoints[2].value) .. " against " .. SUPPLIES_UNDER
+        .. ui_controls.number(setpoints[2].value)
+        .. " against "
+        .. SUPPLIES_UNDER
 )
 local shape = nil
 for _, sw in ipairs(ui_controls.rows(panel.toggles)) do
@@ -198,7 +199,9 @@ assert(held > 90.0, "a cold room, never an empty one: " .. held .. " kPa")
 assert(
     pipe_moles(1, 1, 2) > 100.0,
     "and the surplus is in the waste main, where the plant would find"
-        .. " it: " .. pipe_moles(1, 1, 2) .. " mol"
+        .. " it: "
+        .. pipe_moles(1, 1, 2)
+        .. " mol"
 )
 
 -- ---------------------------------------------------------------
@@ -267,13 +270,20 @@ assert(mid > early + 1.0, "moles keep arriving in the waste main: " .. early .. 
 assert(
     late > mid + 1.0,
     "and are still arriving two minutes later, which is a CURRENT and"
-        .. " not a reservoir emptying: " .. mid .. " -> " .. late
+        .. " not a reservoir emptying: "
+        .. mid
+        .. " -> "
+        .. late
 )
 local room_late = room_kpa()
 assert(
     room_late > PLACED_FLOOR - 2.0 and room_late < SUPPLIES_UNDER + 2.0,
     "while the room holds in the band between the floor and the vent's"
-        .. " release line: " .. room_early .. " -> " .. room_late .. " kPa"
+        .. " release line: "
+        .. room_early
+        .. " -> "
+        .. room_late
+        .. " kPa"
 )
 assert(
     assert(t.structure_at(2, 1)).state == "scrubbing",
@@ -330,7 +340,10 @@ local purged = room_kpa()
 assert(
     purged < 20.0,
     "whole air with no floor takes the room toward vacuum: "
-        .. before_purge .. " -> " .. purged .. " kPa"
+        .. before_purge
+        .. " -> "
+        .. purged
+        .. " kPa"
 )
 
 -- ---------------------------------------------------------------
@@ -401,7 +414,9 @@ assert(came_down <= PLACED_FLOOR + 2.0, "the room came down to the floor: " .. c
 assert(
     came_down > 90.0,
     "in a room still holding an atmosphere, because the floor is a"
-        .. " floor: " .. came_down .. " kPa"
+        .. " floor: "
+        .. came_down
+        .. " kPa"
 )
 assert(
     room_moles("o2") + room_moles("n2") < air_0,

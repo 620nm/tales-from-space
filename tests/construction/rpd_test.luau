@@ -74,7 +74,8 @@ end
 -- atmospherics technician does happens on bare plating, because pipe
 -- lives under the deck.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "rpd bench",
     legend: {
         ' ': (turf: Space),
@@ -95,7 +96,9 @@ t.world([==[(
         (2, 1, "manual_valve_fitting"),
         (2, 1, "manual_valve_fitting"),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -113,12 +116,14 @@ t.use_self(p)
 t.tick()
 local ui = ui_controls.state(p)
 assert(ui, "the in-hand key opens the RPD's window")
-assert(ui.document == "modules" and ui.presentation == "visual_choices",
-    "the generic visual-choice document")
+assert(
+    ui.document == "modules" and ui.presentation == "visual_choices",
+    "the generic visual-choice document"
+)
 assert(ui.name == "rapid pipe dispenser", "wearing the device's own name")
 
-local captions: {[string]: string} = {}
-local options: {[string]: number} = {}
+local captions: { [string]: string } = {}
+local options: { [string]: number } = {}
 local manual_presentation = nil
 local green_swatch = nil
 for _, tog in ipairs(ui_controls.rows(ui.toggles)) do
@@ -171,16 +176,26 @@ local wrench = assert(t.target_at(p, 1, 1, "wrench"))
 local pickup = nil
 for _, action in ipairs(t.action_hints(p, wrench)) do
     assert(action.id ~= "disassemble", "the dispenser cannot break down a wrench")
-    if action.id == "engine.action.take" then pickup = action end
+    if action.id == "engine.action.take" then
+        pickup = action
+    end
 end
-assert(pickup and pickup.implement == nil, "the free hand offers ordinary pickup without a tool label")
+assert(
+    pickup and pickup.implement == nil,
+    "the free hand offers ordinary pickup without a tool label"
+)
 t.click(p, 1, 1, wrench)
 work(p)
 local hands = t.hands(p)
-assert(hands.held == "rpd" and hands[3 - hands.active] == "wrench",
-    "an incompatible item is picked up intact into the free hand")
+assert(
+    hands.held == "rpd" and hands[3 - hands.active] == "wrench",
+    "an incompatible item is picked up intact into the free hand"
+)
 assert(t.pipe(1, 1) == 0, "an ordinary item click is not retargeted to turf")
-assert(not said(p, "That loose item is not atmospherics construction."), "pickup does not invoke breakdown")
+assert(
+    not said(p, "That loose item is not atmospherics construction."),
+    "pickup does not invoke breakdown"
+)
 t.swap_hands(p)
 t.drop(p)
 t.swap_hands(p)
@@ -303,7 +318,10 @@ end
 t.click(p, 5, 1, anchored_valve)
 work(p)
 assert(assert(t.structure_at(5, 1)).id == "manual_valve", "a bolted-down valve is not loose")
-assert(not said(p, "There is nothing loose there to break down."), "the incompatible breakdown handler stays uncalled")
+assert(
+    not said(p, "There is nothing loose there to break down."),
+    "the incompatible breakdown handler stays uncalled"
+)
 
 -- The loose fitting the map put down, on the other hand, goes.
 walk(p, "west")
@@ -328,9 +346,14 @@ end
 t.click(p, 1, 2, ordinary)
 work(p)
 local carrying = t.hands(p)
-assert(carrying.held == "rpd" and carrying[3 - carrying.active] == "wrench",
-    "destroy mode leaves ordinary pickup intact")
-assert(not said(p, "There is nothing loose there to break down."), "pickup does not invoke the breakdown refusal")
+assert(
+    carrying.held == "rpd" and carrying[3 - carrying.active] == "wrench",
+    "destroy mode leaves ordinary pickup intact"
+)
+assert(
+    not said(p, "There is nothing loose there to break down."),
+    "pickup does not invoke the breakdown refusal"
+)
 t.swap_hands(p)
 t.drop(p)
 t.swap_hands(p)
@@ -365,7 +388,10 @@ for _, action in ipairs(t.action_hints(p, { Turf = { x = 1, y = 1 } })) do
 end
 t.click(p, 1, 1, nil, -14, 14) -- the technician's own tile, bare deck
 t.run_ticks(2)
-assert(not said(p, "There is no pipe under the floor here."), "the unavailable copy handler does not run")
+assert(
+    not said(p, "There is no pipe under the floor here."),
+    "the unavailable copy handler does not run"
+)
 
 -- NEGATIVE, build mode: pipe is subfloor infrastructure. A run you
 -- have not opened the deck over is one you cannot fit, however fast
@@ -413,7 +439,8 @@ assert(shows(p, MODE) == before, "no window, no acts")
 -- connector that bypasses ordinary on-deck occupancy. Different layers
 -- remain valid crossings.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "rpd occupancy",
     legend: {
         ' ': (turf: Space),
@@ -435,7 +462,9 @@ t.world([==[(
         (2, 1, "connector_port"),
         (3, 1, "manual_valve", { "layer": 2 }),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local o = t.join()
 t.tick()
@@ -459,10 +488,7 @@ end
 -- A layer-3 length may cross a layer-2 valve.
 t.click(o, 3, 1, nil, -14, 14)
 work(o)
-assert(
-    t.pipe(3, 1) == 4,
-    "another-layer crossing remains legal: mask " .. tostring(t.pipe(3, 1))
-)
+assert(t.pipe(3, 1) == 4, "another-layer crossing remains legal: mask " .. tostring(t.pipe(3, 1)))
 
 -- Connector over valve, then valve over connector: neither fitting's
 -- special under-deck placement nor ordinary occupancy may erase the
@@ -499,7 +525,8 @@ end
 -- aimed at an adjacent run. Their own tile is the machine centre: it
 -- neither needs nor permits a raw length on the same layer.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "rpd unary occupancy",
     legend: {
         ' ': (turf: Space),
@@ -518,7 +545,9 @@ t.world([==[(
     // The positive connector reaches west from (2,1). The southern
     // three entries are the layer each refusal below dials up to.
     pipes: [(1, 1, 4), (2, 3, 4), (1, 3, 4), (4, 3, 2), (6, 3, 4)],
-)]==], 7)
+)]==],
+    7
+)
 
 local u = t.join()
 t.tick()
@@ -546,7 +575,10 @@ walk(u, "east") -- (6,2)
 set(u, RECIPE, pick(u, RECIPE, "Air Injector"))
 t.click(u, 6, 1, nil, -14, 14)
 work(u)
-assert(assert(t.structure_at(6, 1)).id == "air_injector", "an injector needs no underlying raw pipe")
+assert(
+    assert(t.structure_at(6, 1)).id == "air_injector",
+    "an injector needs no underlying raw pipe"
+)
 assert(t.pipe(6, 1) == 0, "the injector centre is raw-pipe-free")
 
 -- The reverse direction is refused without consuming the run. `dial`

@@ -50,7 +50,8 @@ end
 -- A wired bay: a two-length distribution main with the generator on its
 -- east end and an injector on its west, so the steam has somewhere to
 -- be made and somewhere to go.
-t.world([==[(
+t.world(
+    [==[(
     name: "steam bay",
     legend: {
         ' ': (turf: Space),
@@ -76,7 +77,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -97,9 +100,17 @@ t.click(p, 4, 1, t.target_at(p, 4, 1, "steam_generator"))
 t.tick()
 local ui = ui_controls.state(p)
 assert(ui, "an empty hand opens the panel")
-assert(ui_controls.record(row(ui, "dock.vessel").value).id == "dock.vessel.empty", "it says there is nothing in it")
+assert(
+    ui_controls.record(row(ui, "dock.vessel").value).id == "dock.vessel.empty",
+    "it says there is nothing in it"
+)
 assert(row(ui, "line_dock.line") ~= nil, "and it reads the run behind the machine")
-near(ui_controls.number(ui_controls.rows(ui.setpoints)[1].value), 313.15, 1e-9, "the dial opens at Bay's T0C+40")
+near(
+    ui_controls.number(ui_controls.rows(ui.setpoints)[1].value),
+    313.15,
+    1e-9,
+    "the dial opens at Bay's T0C+40"
+)
 t.ui_close(p)
 
 -- ---------------------------------------------------------------
@@ -120,8 +131,14 @@ near(pipe_of(3, 1, "water"), 0.0, 1e-9, "the run opens dry")
 
 t.click(p, 4, 1, t.target_at(p, 4, 1, "steam_generator"))
 t.tick()
-assert(ui_controls.record(row(ui_controls.state(p), "dock.vessel").value).text == "beaker (water)", "the panel names what is in it")
-assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == false, "and nothing ships switched on")
+assert(
+    ui_controls.record(row(ui_controls.state(p), "dock.vessel").value).text == "beaker (water)",
+    "the panel names what is in it"
+)
+assert(
+    ui_controls.rows(ui_controls.state(p).toggles)[1].on == false,
+    "and nothing ships switched on"
+)
 
 -- Dialled over water's boiling point, because the dial it opens at is
 -- Bay's warm-room number and this spec is about steam.

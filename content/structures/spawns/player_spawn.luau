@@ -9,12 +9,27 @@ return {
     dense = false,
     category = "map markers",
     placement = {
-        weight = { var = "lunatic/tfs:marker_weight", kind = "number", default = 1,
-            min = 0, max = 1000000, step = 1, label = "lunatic/tfs:editor.player_spawn.weight" },
-        jobs = { var = "lunatic/tfs:marker_jobs", kind = "text", default = "",
-            label = "lunatic/tfs:editor.player_spawn.jobs" },
-        roles = { var = "lunatic/tfs:marker_roles", kind = "text", default = "",
-            label = "lunatic/tfs:editor.player_spawn.roles" },
+        weight = {
+            var = "lunatic/tfs:marker_weight",
+            kind = "number",
+            default = 1,
+            min = 0,
+            max = 1000000,
+            step = 1,
+            label = "lunatic/tfs:editor.player_spawn.weight",
+        },
+        jobs = {
+            var = "lunatic/tfs:marker_jobs",
+            kind = "text",
+            default = "",
+            label = "lunatic/tfs:editor.player_spawn.jobs",
+        },
+        roles = {
+            var = "lunatic/tfs:marker_roles",
+            kind = "text",
+            default = "",
+            label = "lunatic/tfs:editor.player_spawn.roles",
+        },
     },
     script = "player_spawn",
 }

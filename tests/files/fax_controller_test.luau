@@ -19,7 +19,8 @@ local PROGRAM = "if event.kind == 'button' then "
     .. "return { commands = c, status = 'idle' } "
     .. "end return { commands = {} }"
 
-t.world([==[ (
+t.world(
+    [==[ (
     name: "fax controller",
     legend: {
         '.': (turf: Floor), '#': (turf: Wall),
@@ -51,7 +52,9 @@ t.world([==[ (
         (9, 1, 1), (10, 1, 1), (11, 1, 1),
         (3, 2, 1), (4, 2, 1), (5, 2, 1), (8, 2, 1),
     ],
-) ]==], 0)
+) ]==],
+    0
+)
 
 local crew = t.join()
 t.run_ticks(10)
@@ -76,7 +79,9 @@ while true do
             break
         end
     end
-    if candidate == nil then break end
+    if candidate == nil then
+        break
+    end
     laptop.toggle(crew, "link_join", candidate)
     t.run_ticks(2)
     joined += 1
@@ -93,16 +98,22 @@ t.run_ticks(2)
 assert(ui_controls.record(laptop.ui(crew).open).body == PROGRAM, "the source is saved on the AP")
 ui_files.program(crew, "controller", uid)
 t.run_ticks(2)
-assert(ui_controls.record(ui_controls.rows(laptop.ui(crew).program_slots)[1].state).id == "program_slots.state.loaded",
-    "the controller slot accepts the player-authored guest")
+assert(
+    ui_controls.record(ui_controls.rows(laptop.ui(crew).program_slots)[1].state).id
+        == "program_slots.state.loaded",
+    "the controller slot accepts the player-authored guest"
+)
 laptop.close(crew)
 t.drop(crew)
 t.run_ticks(2)
 
 -- Advertise the reachable fax through its player UI before pressing.
-t.move(crew, "west"); t.run_ticks(2)
-t.move(crew, "west"); t.run_ticks(2)
-t.move(crew, "south"); t.run_ticks(2)
+t.move(crew, "west")
+t.run_ticks(2)
+t.move(crew, "west")
+t.run_ticks(2)
+t.move(crew, "south")
+t.run_ticks(2)
 local remote_fax = assert(t.target_at(crew, 1, 2, "fax"))
 t.click(crew, 1, 2, remote_fax)
 t.run_ticks(2)
@@ -112,9 +123,12 @@ t.run_ticks(2)
 t.ui_press(crew, node(crew, "/controls/advertise").id)
 t.run_ticks(4)
 t.ui_close(crew, "fax")
-t.move(crew, "north"); t.run_ticks(2)
-t.move(crew, "east"); t.run_ticks(2)
-t.move(crew, "east"); t.run_ticks(2)
+t.move(crew, "north")
+t.run_ticks(2)
+t.move(crew, "east")
+t.run_ticks(2)
+t.move(crew, "east")
+t.run_ticks(2)
 
 -- One player press starts the addressed fax.print job.
 t.click(crew, 3, 1, assert(t.target_at(crew, 3, 1, "airlock_button")))
@@ -128,26 +142,43 @@ t.run_ticks(1)
 assert(t.items_at(1, 2)[1] == "paper", "the fax ejects fresh paper at tick 40")
 t.run_ticks(10) -- delivery, command completion, then the door animation
 local replying_door = assert(t.door_at(6, 1))
-assert(replying_door.moving and not replying_door.open,
-    "the correlated fax.printed callback starts the joined door")
+assert(
+    replying_door.moving and not replying_door.open,
+    "the correlated fax.printed callback starts the joined door"
+)
 t.run_ticks(12)
 assert(assert(t.door_at(6, 1)).open, "the door becomes passable after its swing")
 
 -- The input crosses the 4096-byte boundary with a three-byte codepoint. The
 -- received paper proves the service chunker retained the complete character.
-t.move(crew, "west"); t.run_ticks(2)
-t.move(crew, "west"); t.run_ticks(2)
-t.move(crew, "south"); t.run_ticks(2)
+t.move(crew, "west")
+t.run_ticks(2)
+t.move(crew, "west")
+t.run_ticks(2)
+t.move(crew, "south")
+t.run_ticks(2)
 local printed = assert(t.target_at(crew, 1, 2, "paper"), "printed paper is readable")
 t.click(crew, 1, 2, printed)
 t.run_ticks(2)
 local printed_window = ui_controls.record(assert(t.ui(crew, "writing"), "printed paper opens"))
-local printed_data = ui_controls.record(printed_window.script and ui_controls.record(printed_window.script).data or printed_window.data)
+local printed_data = ui_controls.record(
+    printed_window.script and ui_controls.record(printed_window.script).data or printed_window.data
+)
 local expected = string.rep("a", 4093) .. "€" .. "tail"
 local received = {}
-for _, fragment in ipairs(ui_controls.rows(printed_data.committed or {})) do table.insert(received, ui_controls.text(fragment.text)) end
+for _, fragment in ipairs(ui_controls.rows(printed_data.committed or {})) do
+    table.insert(received, ui_controls.text(fragment.text))
+end
 local actual = table.concat(received)
-assert(actual == expected, "multibyte fax text survives service chunking: bytes=" .. #actual .. ", expected=" .. #expected .. ", tail=" .. actual:sub(-16))
+assert(
+    actual == expected,
+    "multibyte fax text survives service chunking: bytes="
+        .. #actual
+        .. ", expected="
+        .. #expected
+        .. ", tail="
+        .. actual:sub(-16)
+)
 t.ui_close(crew, "writing")
 t.drop(crew)
 t.run_ticks(1)
@@ -156,5 +187,6 @@ local fax = assert(t.target_at(crew, 1, 2, "fax"))
 t.click(crew, 1, 2, fax)
 t.run_ticks(2)
 local panel = ui_controls.record(t.ui(crew, "fax"))
-local data = ui_controls.record(panel.script and ui_controls.record(panel.script).data or panel.data)
+local data =
+    ui_controls.record(panel.script and ui_controls.record(panel.script).data or panel.data)
 assert(data.paper == 29 and data.toner == 29, "printing debits one paper and one toner")

@@ -17,7 +17,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- 23 000 kPa is tg's own `starting_pressure_percent = 0.5` of the
 -- 46 000 kPa rating.
 
-t.world([==[(
+t.world(
+    [==[(
     name: "tank bay",
     legend: {
         ' ': (turf: Space),
@@ -36,7 +37,9 @@ t.world([==[(
         (3, 2, "stationary_tank", "anchored", ("o2", 23000.0)),
     ],
     pipes: [(4, 2, 4), (5, 2, 4), (6, 2, 4)],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 
@@ -92,8 +95,10 @@ end
 -- pass has had a chance to move it.
 -- ---------------------------------------------------------------
 local filled = assert(t.tank_pressure(3, 2), "a tank stands where the map placed one")
-assert(math.abs(filled - 23000.0) < 50.0,
-    "filled to the authored pressure by the ideal gas law: " .. filled)
+assert(
+    math.abs(filled - 23000.0) < 50.0,
+    "filled to the authored pressure by the ideal gas law: " .. filled
+)
 
 local standing = assert(t.structure_at(3, 2))
 assert(standing.id == "stationary_tank", "and it is the tank: " .. standing.id)
@@ -110,12 +115,13 @@ t.click(p, 3, 2, t.target_at(p, 3, 2))
 t.tick()
 local ui = ui_controls.state(p)
 assert(ui, "clicking the tank opens its window")
-assert(ui.document == "modules" and ui.presentation == "modules",
-    "the generic module document")
+assert(ui.document == "modules" and ui.presentation == "modules", "the generic module document")
 assert(#ui_controls.rows(ui.toggles) == 0, "a tank has no switch")
 assert(#ui_controls.rows(ui.setpoints) == 0, "and no dial -- its ports are its valves")
-assert(ui_controls.number(ui.gauge) > 0.0 and ui_controls.number(ui.gauge) < 100.0,
-    "the gauge reads against the 46 000 kPa sticker: " .. tostring(ui.gauge))
+assert(
+    ui_controls.number(ui.gauge) > 0.0 and ui_controls.number(ui.gauge) < 100.0,
+    "the gauge reads against the 46 000 kPa sticker: " .. tostring(ui.gauge)
+)
 
 local contents = block(ui, "holder.contents")
 assert(contents, "the vessel's contents block")
@@ -144,32 +150,39 @@ t.run_seconds(5)
 local piped = t.pipe_gas(5, 2)
 assert(piped, "the run under the deck is bound to the tank")
 assert(piped.o2 > pipe_o2 + 1000.0, "and it is now full of the tank's gas: " .. piped.o2)
-assert(piped.o2 > 100.0 * (piped.n2 or 0.0),
-    "overwhelmingly the tank's gas, not the air it started with")
+assert(
+    piped.o2 > 100.0 * (piped.n2 or 0.0),
+    "overwhelmingly the tank's gas, not the air it started with"
+)
 
 local settled = assert(t.tank_pressure(3, 2))
 local pipe_kpa = assert(t.pipe_pressure(5, 2))
-assert(settled < filled - 500.0,
-    "the tank is what paid for it: " .. filled .. " -> " .. settled)
+assert(settled < filled - 500.0, "the tank is what paid for it: " .. filled .. " -> " .. settled)
 -- One body of gas, split by volume, means one PRESSURE. tg equalises
 -- completely in a pass and so does this; if the two ever disagreed the
 -- tank would be acting like a pump, which it is not.
-assert(math.abs(settled - pipe_kpa) < 50.0,
-    "vessel and run settle to one pressure: " .. settled .. " vs " .. pipe_kpa)
+assert(
+    math.abs(settled - pipe_kpa) < 50.0,
+    "vessel and run settle to one pressure: " .. settled .. " vs " .. pipe_kpa
+)
 
 -- The window is LIVE, not a snapshot taken when it opened: the same
 -- panel, re-read after the gas moved, reports the vessel it is
 -- standing in front of.
 local tank_now = moles(ui_controls.state(p), "oxygen")
-assert(tank_now < tank_o2 - 1000.0,
-    "the window tracks the vessel: " .. tank_o2 .. " -> " .. tank_now)
+assert(
+    tank_now < tank_o2 - 1000.0,
+    "the window tracks the vessel: " .. tank_o2 .. " -> " .. tank_now
+)
 
 -- Nothing was conjured and nothing was destroyed. This is the whole
 -- point of the transfer being a draw rather than a written pressure.
 local before_total = tank_o2 + pipe_o2
 local after_total = tank_now + piped.o2
-assert(math.abs(after_total - before_total) < before_total * 0.001,
-    "the books balance: " .. before_total .. " -> " .. after_total)
+assert(
+    math.abs(after_total - before_total) < before_total * 0.001,
+    "the books balance: " .. before_total .. " -> " .. after_total
+)
 
 -- ---------------------------------------------------------------
 -- This read-only window renders neither the canister's valve nor
@@ -179,5 +192,8 @@ assert(ui_controls.find(p, "/toggle/valve/switch") == nil, "no valve control")
 assert(ui_controls.find(p, "/set/target/value") == nil, "no target dial")
 assert(ui_controls.find(p, "/set/release/value") == nil, "no release dial")
 t.run_ticks(2)
-assert(#ui_controls.rows(ui_controls.state(p).toggles) == 0 and #ui_controls.rows(ui_controls.state(p).setpoints) == 0,
-    "no invented control appears on the panel")
+assert(
+    #ui_controls.rows(ui_controls.state(p).toggles) == 0
+        and #ui_controls.rows(ui_controls.state(p).setpoints) == 0,
+    "no invented control appears on the panel"
+)

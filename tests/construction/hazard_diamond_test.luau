@@ -35,7 +35,8 @@ local function drew_nothing_like(overlays: { string }, prefix: string, what: str
     end
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "diamonds",
     legend: {
         ' ': (turf: Space),
@@ -58,7 +59,9 @@ t.world([==[(
         (1, 1, "hazard_diamond", { "blend": "store", "mount": "west" }),
         (3, 1, "hazard_diamond", { "mount": "east" }),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 -- The filled one. Plasma rates 4 on fire and carries `skull`
 -- (content/substances/plasma.luau), and it is nine tenths of the

@@ -12,8 +12,10 @@ return {
     mount = true,
     appearance = {
         mounted = {
-            north = "digital_clock_n", south = "digital_clock_s",
-            east = "digital_clock_e", west = "digital_clock_w",
+            north = "digital_clock_n",
+            south = "digital_clock_s",
+            east = "digital_clock_e",
+            west = "digital_clock_w",
         },
     },
     examine = {

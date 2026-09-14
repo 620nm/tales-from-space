@@ -12,7 +12,8 @@
 local TUNGSTEN = "#FFD6AA"
 local TUBE = "#F3FFFA"
 
-t.world([==[(
+t.world(
+    [==[(
     name: "corridor",
     legend: {
         ' ': (turf: Space),
@@ -35,7 +36,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -60,8 +63,10 @@ local function told_about_the_lamp()
     return lamp_colour_on_the_wire() ~= nil
 end
 assert(told_about_the_lamp(), "the burning lamp is disclosed to the viewer")
-assert(lamp_colour_on_the_wire() == TUNGSTEN,
-    "and disclosed in its own colour, so the client lights the corridor warm")
+assert(
+    lamp_colour_on_the_wire() == TUNGSTEN,
+    "and disclosed in its own colour, so the client lights the corridor warm"
+)
 
 -- One swing with something heavy.
 t.click(p, 1, 1, t.target_at(p, 1, 1, "toolbox"))
@@ -72,8 +77,7 @@ t.tick()
 assert(assert(t.light_at(2, 1)).status == "broken", "the tube shattered")
 assert(not assert(t.light_at(2, 1)).emits, "and throws no light")
 assert(assert(t.light_at(2, 1)).lit, "though the branch still feeds the fitting")
-assert(not told_about_the_lamp(),
-    "a dead fixture is a source the viewer is no longer told about")
+assert(not told_about_the_lamp(), "a dead fixture is a source the viewer is no longer told about")
 assert(table.concat(t.sounds(p), "\n"):find("glass_break", 1, true), "glass")
 
 -- Vandalism is on the record, both ends of it, attributed to the file
@@ -82,9 +86,10 @@ local changed = t.ledger_rows("LightChanged")
 assert(#changed == 1, "one socket change so far, got " .. #changed)
 assert(changed[1].from == "ok" and changed[1].to == "broken", "from ok to broken")
 local actor = changed[1].actor
-assert(actor.kind == "script"
-    and actor.file == "fixtures/light.luau",
-    "the fixture's own file decided it")
+assert(
+    actor.kind == "script" and actor.file == "fixtures/light.luau",
+    "the fixture's own file decided it"
+)
 
 -- The janitor's device, one click.
 t.swap_hands(p)
@@ -99,12 +104,16 @@ assert(told_about_the_lamp(), "the viewer is told about the source again")
 assert(#t.ledger_rows("ItemConsumed") == 1, "one charge spent, on the record")
 -- A tube is a tube: the warm fitting comes back fluorescent, and the
 -- viewer is told the corridor changed colour.
-assert(assert(t.light_at(2, 1)).color == TUBE,
-    "a fitted tube burns what a tube burns, got " .. assert(t.light_at(2, 1)).color)
+assert(
+    assert(t.light_at(2, 1)).color == TUBE,
+    "a fitted tube burns what a tube burns, got " .. assert(t.light_at(2, 1)).color
+)
 assert(lamp_colour_on_the_wire() == TUBE, "and the wire carries the new colour")
 local repaint = t.ledger_rows("LightChanged")
-assert(repaint[#repaint].color == TUBE,
-    "the record says what went into the socket, not just that something did")
+assert(
+    repaint[#repaint].color == TUBE,
+    "the record says what went into the socket, not just that something did"
+)
 
 -- tg's replacer holds ten. Break and fix until it is dry.
 for _ = 1, 9 do
@@ -143,8 +152,7 @@ assert(t.hands(p).held == "box_lights", "picked the box up")
 t.take_held(p, 0)
 t.tick()
 local hands = t.hands(p)
-assert(hands[1] == "light_tube" or hands[2] == "light_tube",
-    "the box dispenses a tube")
+assert(hands[1] == "light_tube" or hands[2] == "light_tube", "the box dispenses a tube")
 t.swap_hands(p)
 assert(t.hands(p).held == "light_tube", "a tube in the working hand")
 

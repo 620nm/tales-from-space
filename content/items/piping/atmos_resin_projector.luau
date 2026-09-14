@@ -28,7 +28,8 @@ content.actions = {
 }
 
 if sim ~= nil then
-    local script_definition = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    local script_definition =
+        sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
         local clicked, target = ev.claim, ev.claim
@@ -43,7 +44,10 @@ if sim ~= nil then
         if (self.uses or 0) <= 0 then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:items.atmos_resin_projector.the_resin_projector_is_empty", {}),
+                message = sim.msg(
+                    "lunatic/tfs:items.atmos_resin_projector.the_resin_projector_is_empty",
+                    {}
+                ),
             })
             return true
         end
@@ -57,7 +61,10 @@ if sim ~= nil then
         if resin >= 1.0 then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:items.atmos_resin_projector.the_deck_is_already_sealed", {}),
+                message = sim.msg(
+                    "lunatic/tfs:items.atmos_resin_projector.the_deck_is_already_sealed",
+                    {}
+                ),
             })
             return true
         end

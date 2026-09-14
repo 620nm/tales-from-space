@@ -20,8 +20,15 @@ return {
         { slot = "id", item = "id_engineering" },
         { slot = "belt", item = "toolbelt" },
         { slot = "mask", item = "breath_mask" },
-        { slot = "back", item = "backpack", contents = {
-            "metal", "floor_tile", "emergency_tank.oxygen", "headset",
-        } },
+        {
+            slot = "back",
+            item = "backpack",
+            contents = {
+                "metal",
+                "floor_tile",
+                "emergency_tank.oxygen",
+                "headset",
+            },
+        },
     },
 }

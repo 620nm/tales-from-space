@@ -45,16 +45,22 @@ return {
     -- screwed to.
     facing_sprites = {
         empty = {
-            north = "wall_frame_n", south = "wall_frame_s",
-            east = "wall_frame_e", west = "wall_frame_w",
+            north = "wall_frame_n",
+            south = "wall_frame_s",
+            east = "wall_frame_e",
+            west = "wall_frame_w",
         },
         wired = {
-            north = "wall_frame_wired_n", south = "wall_frame_wired_s",
-            east = "wall_frame_wired_e", west = "wall_frame_wired_w",
+            north = "wall_frame_wired_n",
+            south = "wall_frame_wired_s",
+            east = "wall_frame_wired_e",
+            west = "wall_frame_wired_w",
         },
         boarded = {
-            north = "wall_frame_boarded_n", south = "wall_frame_boarded_s",
-            east = "wall_frame_boarded_e", west = "wall_frame_boarded_w",
+            north = "wall_frame_boarded_n",
+            south = "wall_frame_boarded_s",
+            east = "wall_frame_boarded_e",
+            west = "wall_frame_boarded_w",
         },
     },
     build = {

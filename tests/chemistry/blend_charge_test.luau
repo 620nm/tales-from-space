@@ -13,7 +13,8 @@
 --   * a charge REPLACES a variant's own fill rather than joining it
 --   * a beaker nobody charged still holds what its file says
 
-t.world([==[(
+t.world(
+    [==[(
     name: "charge bench",
     legend: {
         ' ': (turf: Space),
@@ -34,15 +35,16 @@ t.world([==[(
         (3, 1, "beaker.libital", { "blend": "rinse" }),
         (4, 1, "beaker.libital"),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
 
 local function near(got: number?, want: number, tol: number, what: string)
     assert(got ~= nil, what .. ": nothing was answered")
-    assert(math.abs(got - want) <= tol,
-        ("%s: wanted %g, got %g"):format(what, want, got))
+    assert(math.abs(got - want) <= tol, ("%s: wanted %g, got %g"):format(what, want, got))
 end
 
 -- ---------------------------------------------------------------
@@ -64,10 +66,16 @@ near(charged.temp_k, 293.15, 0.5, "at the temperature the charge names")
 -- ---------------------------------------------------------------
 local overruled = t.vessel(assert(t.target_at(p, 3, 1, "beaker.libital")))
 assert(overruled ~= nil, "a variant is a beaker like any other")
-near(overruled.contents.water.liquid, 0.20, 1e-9,
-    "the map's amount, not the variant's 0.20 plus it")
-assert(overruled.contents.libital == nil,
-    "and the variant's own drug is gone, because the charge replaced the fill")
+near(
+    overruled.contents.water.liquid,
+    0.20,
+    1e-9,
+    "the map's amount, not the variant's 0.20 plus it"
+)
+assert(
+    overruled.contents.libital == nil,
+    "and the variant's own drug is gone, because the charge replaced the fill"
+)
 
 -- ---------------------------------------------------------------
 -- ...and the one nobody said anything about is untouched by all of
@@ -75,7 +83,11 @@ assert(overruled.contents.libital == nil,
 -- ---------------------------------------------------------------
 local untouched = assert(t.vessel(assert(t.target_at(p, 4, 1, "beaker.libital"))))
 assert(untouched ~= nil, "the third glass has an inside too")
-assert(untouched.contents.libital ~= nil,
-    "a placement that says nothing gets the prototype's own fill")
-assert(assert(untouched.contents.libital.liquid) > 0,
-    "standing as liquid: " .. tostring(untouched.contents.libital.liquid))
+assert(
+    untouched.contents.libital ~= nil,
+    "a placement that says nothing gets the prototype's own fill"
+)
+assert(
+    assert(untouched.contents.libital.liquid) > 0,
+    "standing as liquid: " .. tostring(untouched.contents.libital.liquid)
+)

@@ -68,7 +68,8 @@ end
 -- sim/atmos_machines/mod.rs), so one drawing from a west main wears the
 -- east picture.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "a scrubber to watch",
     legend: {
         ' ': (turf: Space),
@@ -89,7 +90,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -168,8 +171,7 @@ local emptying = assert(t.structure_at(2, 1))
 assert(toggle(p, "roster").on == true, "the panel says whole air")
 assert(
     emptying.sprite == "scrubber_on_e",
-    "and the corridor is told nothing it does not need to know yet: "
-        .. tostring(emptying.sprite)
+    "and the corridor is told nothing it does not need to know yet: " .. tostring(emptying.sprite)
 )
 
 -- ---- and then the room goes ----
@@ -188,12 +190,14 @@ assert(purging.state == "siphoning", "NOW it is an emergency")
 assert(
     assert(t.room_pressure(2, 1)) < 85.0,
     "and it waited for the air at the grille to go under the line: "
-        .. assert(t.room_pressure(2, 1)) .. " kPa"
+        .. assert(t.room_pressure(2, 1))
+        .. " kPa"
 )
 assert(
     purging.sprite == "scrubber_purge_e",
     "and says so in art of its own, which is the whole reason the third"
-        .. " position exists: " .. tostring(purging.sprite)
+        .. " position exists: "
+        .. tostring(purging.sprite)
 )
 assert(
     purging.sprite ~= running.sprite,
@@ -220,7 +224,8 @@ assert(
 -- you go to find out that the switch is still thrown. tg would draw
 -- this one running.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "a scrubber joined to nothing",
     legend: {
         ' ': (turf: Space),
@@ -240,7 +245,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local lone = t.join()
 t.tick()
@@ -314,7 +321,10 @@ for _, machine in ipairs({ "filter", "mixer" }) do
     local cold = assert(t.structure_at(3, 1))
     assert(cold.id == machine, machine .. " is where the map put it")
     assert(cold.state == "off", machine .. " ships off")
-    assert(cold.sprite == machine .. "_off_e", machine .. " is dark, aimed east: " .. assert(cold.sprite))
+    assert(
+        cold.sprite == machine .. "_off_e",
+        machine .. " is dark, aimed east: " .. assert(cold.sprite)
+    )
 
     t.click(q, 3, 1, t.target_at(q, 3, 1, machine))
     t.tick()
@@ -325,16 +335,20 @@ for _, machine in ipairs({ "filter", "mixer" }) do
 
     local hot = assert(t.structure_at(3, 1))
     assert(hot.state == "running", machine .. " is running")
-    assert(hot.sprite == machine .. "_on_e",
-        machine .. " swapped picture, not facing: " .. assert(hot.sprite))
+    assert(
+        hot.sprite == machine .. "_on_e",
+        machine .. " swapped picture, not facing: " .. assert(hot.sprite)
+    )
     -- The running bodies of both trinaries are four-frame loops
     -- (assets/sprites/20-atmos-inline-devices.ron). A loop is the
     -- client's own clock and costs the wire nothing, so the NAME is the
     -- whole of what the sim has to get right -- and it must not drift
     -- while the machine keeps working.
     t.run_seconds(3)
-    assert(assert(t.structure_at(3, 1)).sprite == machine .. "_on_e",
-        machine .. " keeps one name while it keeps working")
+    assert(
+        assert(t.structure_at(3, 1)).sprite == machine .. "_on_e",
+        machine .. " keeps one name while it keeps working"
+    )
 
     -- ...and off again. A one-way picture change would pass every
     -- assertion above.
@@ -356,7 +370,8 @@ end
 --
 -- Nothing about the panel changes: the switch is thrown throughout.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "one intake short",
     legend: {
         ' ': (turf: Space),
@@ -377,7 +392,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local m = t.join()
 t.tick()
@@ -390,8 +407,7 @@ local starved = assert(t.structure_at(3, 1))
 assert(toggle(m, "power").on == true, "the switch is thrown and stays thrown")
 assert(
     starved.state == "off",
-    "a mixer that cannot reach one of its two supplies is drawn off: "
-        .. tostring(starved.state)
+    "a mixer that cannot reach one of its two supplies is drawn off: " .. tostring(starved.state)
 )
 
 -- ---------------------------------------------------------------
@@ -407,7 +423,8 @@ assert(
 -- Nobody touches the panel between the two: a machine that needed
 -- switching back on after a blackout would be a different machine.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "a scrubber on the grid",
     legend: {
         ' ': (turf: Space),
@@ -429,7 +446,9 @@ t.world([==[(
     ],
     pipes: [(5, 2, 2), (6, 2, 2)],
     structures: [(4, 1, "player_spawn"), (4, 2, "air_scrubber")],
-)]==], 7)
+)]==],
+    7
+)
 
 local e = t.join()
 t.tick()
@@ -468,8 +487,10 @@ assert(t.ledger_has("CableCut"), "and cutting it is attributable")
 t.run_seconds(2.5)
 local dark = assert(t.structure_at(4, 2))
 assert(dark.state == "off", "the machine is drawn dead: " .. tostring(dark.state))
-assert(dark.sprite == "scrubber_off_w",
-    "the picture it wore before anyone switched it on: " .. assert(dark.sprite))
+assert(
+    dark.sprite == "scrubber_off_w",
+    "the picture it wore before anyone switched it on: " .. assert(dark.sprite)
+)
 
 -- But NOT switched off. The two are different facts and the panel keeps
 -- them apart: the switch is where the engineer left it, and the supply
@@ -477,7 +498,10 @@ assert(dark.sprite == "scrubber_off_w",
 t.click(e, 4, 2, t.target_at(e, 4, 2, "air_scrubber"))
 t.tick()
 assert(toggle(e, "power").on == true, "the switch is still thrown")
-assert(readout(e, "room.supply") == "room.supply.dead", "and the panel names what is actually wrong")
+assert(
+    readout(e, "room.supply") == "room.supply.dead",
+    "and the panel names what is actually wrong"
+)
 t.ui_close(e)
 t.tick()
 
@@ -500,5 +524,7 @@ assert(t.segment_at(4, 2).feed == 1, "and the machine is back on the panel")
 t.run_seconds(2.5)
 local revived = assert(t.structure_at(4, 2))
 assert(revived.state == "scrubbing", "it started again on its own: " .. assert(revived.state))
-assert(revived.sprite == "scrubber_on_w",
-    "and the picture came back with the power: " .. assert(revived.sprite))
+assert(
+    revived.sprite == "scrubber_on_w",
+    "and the picture came back with the power: " .. assert(revived.sprite)
+)

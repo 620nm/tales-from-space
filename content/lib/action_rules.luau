@@ -1,9 +1,18 @@
 -- Declarative primary gestures share selectors with the content that owns them.
-export type Selector = boolean | { fact: string, value: string }
-    | { all: {Selector} } | { any: {Selector} } | { ["not"]: Selector }
+export type Selector =
+    boolean
+    | { fact: string, value: string }
+    | { all: { Selector } }
+    | { any: { Selector } }
+    | { ["not"]: Selector }
 export type Action = {
-    id: string, gesture: string, route: string, label: string,
-    target: Selector, held: Selector?, uses_held: boolean?,
+    id: string,
+    gesture: string,
+    route: string,
+    label: string,
+    target: Selector,
+    held: Selector?,
+    uses_held: boolean?,
 }
 
 local rules = {}
@@ -17,7 +26,7 @@ function rules.kind(kind: string): Selector
 end
 
 function rules.deck(...: string): Selector
-    local turfs: {Selector} = {}
+    local turfs: { Selector } = {}
     for _, id in ipairs({ ... }) do
         table.insert(turfs, rules.fact("target.turf", id))
     end
@@ -29,17 +38,22 @@ function rules.exposed_deck(): Selector
 end
 
 function rules.network(kind: string): Selector
-    return { any = {
-        rules.kind(kind),
-        { all = { rules.kind("turf"), rules.fact("target.has_" .. kind, true) } },
-    } }
+    return {
+        any = {
+            rules.kind(kind),
+            { all = { rules.kind("turf"), rules.fact("target.has_" .. kind, true) } },
+        },
+    }
 end
 
 function rules.primary(id: string, target: Selector, held: Selector?): Action
     return {
-        id = id, gesture = "primary", route = "held",
+        id = id,
+        gesture = "primary",
+        route = "held",
         label = "lunatic/tfs:ui.affordance." .. id,
-        target = target, held = held,
+        target = target,
+        held = held,
     }
 end
 
@@ -47,7 +61,9 @@ function rules.attack(id: string, held: Selector?, label: string?): Action
     local action = rules.primary(id, rules.kind("player"), held)
     action.route = "attack"
     action.uses_held = true
-    if label then action.label = "lunatic/tfs:ui.affordance." .. label end
+    if label then
+        action.label = "lunatic/tfs:ui.affordance." .. label
+    end
     return action
 end
 

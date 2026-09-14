@@ -10,8 +10,8 @@ service.failed = "fax.failed"
 service.max_chunk = 4096
 service.max_payload = 8192
 
-function service.chunks(text: string): {string}
-    local out: {string} = {}
+function service.chunks(text: string): { string }
+    local out: { string } = {}
     local at = 1
     while at <= #text do
         local finish = math.min(#text, at + service.max_chunk - 1)
@@ -23,7 +23,9 @@ function service.chunks(text: string): {string}
             local candidate = finish
             while candidate >= at do
                 local byte = string.byte(text, candidate)
-                if byte < 128 or byte >= 192 then break end
+                if byte < 128 or byte >= 192 then
+                    break
+                end
                 candidate -= 1
             end
             local lead = string.byte(text, candidate)

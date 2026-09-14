@@ -2,7 +2,8 @@
 -- twice. Scenario 1 walks the chain (girder, then wall). Scenario 2 is
 -- the point of the second check: a build the tile cannot take is
 -- refused BEFORE the do_after, so nobody spends four seconds on it.
-t.world([==[(
+t.world(
+    [==[(
     name: "site",
     legend: {
         ' ': (turf: Space),
@@ -17,7 +18,9 @@ t.world([==[(
     ],
     structures: [(1, 1, "player_spawn")],
     items: [(2, 1, "metal")],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -44,7 +47,6 @@ for _, m in ipairs(said) do
     if m == "Something is in the way." then
         refused = true
     end
-    assert(m ~= "You start assembling a girder.",
-        "the work never started")
+    assert(m ~= "You start assembling a girder.", "the work never started")
 end
 assert(refused, "the precheck said why")

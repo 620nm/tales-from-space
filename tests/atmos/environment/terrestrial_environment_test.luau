@@ -26,19 +26,25 @@ t.run_ticks(60)
 assert(assert(t.room_temperature(4, 3)) < 293.15, "outside air cools the opened room")
 
 -- Building a deck on land uses the ordinary material construction path.
-t.world([==[(
+t.world(
+    [==[(
     name: "ground construction", tags: ["terrestrial"],
     legend: { '#': (turf: Wall), '.': (turf: Floor), 'g': (turf: Ground, outdoors: true) },
     rows: ["###", "#.g", "###"], structures: [(1, 1, "player_spawn")],
     items: [(1, 1, "floor_tile")],
-)]==], 7)
+)]==],
+    7
+)
 local builder = t.join("assistant")
 t.run_ticks(2)
 t.click(builder, 1, 1, t.target_at(builder, 1, 1, "floor_tile"))
 t.run_ticks(2)
 ui_controls.build(builder, "floor_tile", "ground", 2, 1)
 t.run_ticks(40)
-assert(t.turf(2, 1) == "plating", "a new deck can be laid on ground: " .. table.concat(t.messages(builder), " | "))
+assert(
+    t.turf(2, 1) == "plating",
+    "a new deck can be laid on ground: " .. table.concat(t.messages(builder), " | ")
+)
 ui_controls.build(builder, "floor_tile", "plating", 2, 1)
 t.run_ticks(15)
 assert(t.turf(2, 1) == "floor", "the deck can be tiled normally")

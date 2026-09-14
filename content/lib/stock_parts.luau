@@ -33,7 +33,7 @@ return {
     -- single answer, and a variant inherits it (docs/CONTENT-SCHEMA.md
     -- §1.1a, the nested-field form) so no rung of a ladder can quietly
     -- become a different part.
-    rung = function(tier: number): {tier: number, efficiency: number}
+    rung = function(tier: number): { tier: number, efficiency: number }
         return { tier = tier, efficiency = EFFICIENCY[tier] }
     end,
 }

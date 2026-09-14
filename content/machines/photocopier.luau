@@ -16,7 +16,8 @@ return {
         toner = { capacity = 30, initial = 30 },
     },
     ui = {
-        modules = { "actions" }, opens_on_click = false,
+        modules = { "actions" },
+        opens_on_click = false,
         actions = {
             { key = "copy", label = "lunatic/tfs:action.photocopier.copy" },
             { key = "eject", label = "lunatic/tfs:action.photocopier.eject" },

@@ -40,7 +40,8 @@ end
 -- and a length of empty pipe in front. The only thing that differs
 -- between the two is how far they are from the socket -- three cells,
 -- and eight.
-t.world([==[(
+t.world(
+    [==[(
     name: "a pump on a cord",
     legend: {
         ' ': (turf: Space),
@@ -69,7 +70,9 @@ t.world([==[(
         (1, 1, 2), (1, 2, 2),
         (1, 2, 1), (2, 2, 1), (3, 2, 1),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -108,8 +111,7 @@ t.run_seconds(60)
 local drained = assert(t.pipe_pressure(4, 2))
 assert(
     drained < charged * 0.05,
-    "the corded pump emptied its main into the run in front of it: "
-        .. charged .. " -> " .. drained
+    "the corded pump emptied its main into the run in front of it: " .. charged .. " -> " .. drained
 )
 assert(assert(t.pipe_pressure(7, 2)) > charged, "which is where it went")
 

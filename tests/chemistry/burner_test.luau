@@ -16,7 +16,8 @@ local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "chem bench",
     legend: {
         ' ': (turf: Space),
@@ -33,7 +34,9 @@ t.world([==[(
         (1, 1, "burner"),
         (2, 1, "beaker.libital"),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -95,7 +98,10 @@ for _ = 1, 200 do
     t.tick()
 end
 assert(assert(t.holder_k(beaker)) < ETHANOL_K, "no number of clicks reaches the flame itself")
-assert(assert(t.holder_k(beaker)) > 1000.0, "though it gets seriously hot: " .. tostring(t.holder_k(beaker)))
+assert(
+    assert(t.holder_k(beaker)) > 1000.0,
+    "though it gets seriously hot: " .. tostring(t.holder_k(beaker))
+)
 
 -- ---------------------------------------------------------------
 -- AND IT BURNS ITSELF OUT.

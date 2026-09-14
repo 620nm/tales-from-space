@@ -4,7 +4,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- metabolism burns the sugar whose handler heals oxygen damage. (Port of
 -- the observable half of the Rust m7 test; exact conservation across
 -- the can stays native until t grows a container query.)
-t.world([==[(
+t.world(
+    [==[(
     name: "canteen floor",
     legend: {
         ' ': (turf: Space),
@@ -18,7 +19,9 @@ t.world([==[(
     ],
     structures: [(2, 1, "player_spawn")],
     items: [(1, 1, "cola")],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -74,7 +77,7 @@ local function pool_amount(row: SpecLedgerRow, id: string): number
     end
     return 0
 end
-local trips: {number} = {}
+local trips: { number } = {}
 for _, row in ipairs(t.ledger_rows("Healed")) do
     trips[#trips + 1] = pool_amount(assert(row), "oxy")
 end
@@ -82,7 +85,10 @@ assert(#trips >= 2, "the swig was burned over several trips: " .. #trips)
 local healed = 0
 local tapered = false
 for _, oxy in ipairs(trips) do
-    assert(oxy > 0 and oxy <= full + 1e-6, ("a trip paid %g, over the %g a full one is worth"):format(oxy, full))
+    assert(
+        oxy > 0 and oxy <= full + 1e-6,
+        ("a trip paid %g, over the %g a full one is worth"):format(oxy, full)
+    )
     tapered = tapered or oxy < full - 1e-6
     healed = healed + oxy
 end

@@ -1,17 +1,30 @@
 local vessel = require("@lib/vessel")
 
 local content = {
-    id = "beaker_plastic", name_label = "lunatic/tfs:entity.beaker_plastic.name", name = "x-large beaker", sprite = "beaker_plastic",
-    volume_ml = 120, acts_on_items = true,
+    id = "beaker_plastic",
+    name_label = "lunatic/tfs:entity.beaker_plastic.name",
+    name = "x-large beaker",
+    sprite = "beaker_plastic",
+    volume_ml = 120,
+    acts_on_items = true,
     fill_sprites = {
-        { 1, "beaker_plastic_fill_1" }, { 10, "beaker_plastic_fill_10" },
-        { 20, "beaker_plastic_fill_20" }, { 40, "beaker_plastic_fill_40" },
-        { 60, "beaker_plastic_fill_60" }, { 80, "beaker_plastic_fill_80" },
+        { 1, "beaker_plastic_fill_1" },
+        { 10, "beaker_plastic_fill_10" },
+        { 20, "beaker_plastic_fill_20" },
+        { 40, "beaker_plastic_fill_40" },
+        { 60, "beaker_plastic_fill_60" },
+        { 80, "beaker_plastic_fill_80" },
         { 100, "beaker_plastic_fill_100" },
     },
 }
-local vessel_spec: vessel.Spec = { id = content.id, noun = "beaker", phases = { "liquid", "solid" },
-    pour = { units = 10 }, sip = { units = 2 }, spill = true }
+local vessel_spec: vessel.Spec = {
+    id = content.id,
+    noun = "beaker",
+    phases = { "liquid", "solid" },
+    pour = { units = 10 },
+    sip = { units = 2 },
+    spill = true,
+}
 content.actions = vessel.actions(vessel_spec)
 
 if sim ~= nil then

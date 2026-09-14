@@ -80,7 +80,7 @@ local function pipe_total(x, y)
     return sum
 end
 
-local function room_moles(tiles: {{number}})
+local function room_moles(tiles: { { number } })
     local sum = 0.0
     for _, tile in ipairs(tiles) do
         sum = sum + total(tile[1], tile[2])
@@ -93,7 +93,7 @@ end
 -- included -- it is the hull plate, massed as the slab it is
 -- (docs/MATTER-WORLD.md §5) -- but the maps in this file are laid in floor
 -- so that one deck capacity serves every tile in the arithmetic.
-local function deck_energy(tiles: {{number}})
+local function deck_energy(tiles: { { number } })
     local sum = 0.0
     for _, tile in ipairs(tiles) do
         local deck = t.deck(tile[1], tile[2])
@@ -103,7 +103,7 @@ local function deck_energy(tiles: {{number}})
     return sum
 end
 
-local function deck_capacity(tiles: {{number}})
+local function deck_capacity(tiles: { { number } })
     local sum = 0.0
     for _, tile in ipairs(tiles) do
         sum = sum + assert(t.deck(tile[1], tile[2])).capacity
@@ -155,7 +155,8 @@ end
 -- Anything later in this file that wants hot gas has to get it from a
 -- pipe, and this is why.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "sealed room",
     legend: {
         '.': (turf: Floor),
@@ -175,7 +176,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 t.set_environment({ sink_k = T20C, insolation = 0 })
 
@@ -217,7 +220,10 @@ assert(
     fouled == opening,
     "AND IT IS NO WARMER: fouling deposits at room temperature, so the "
         .. "scaffolding cannot be mistaken for a heater ("
-        .. opening .. " -> " .. fouled .. ")"
+        .. opening
+        .. " -> "
+        .. fouled
+        .. ")"
 )
 
 -- ---------------------------------------------------------------
@@ -242,7 +248,8 @@ assert(
 -- degree. That is the shape of a station: a lot of steel and not much
 -- air, and it is the steel that decides.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "hot injection",
     legend: {
         '.': (turf: Floor),
@@ -263,7 +270,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3),
         (1, 2, 3), (2, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 -- Inert sky again, and for the same reason: this block weighs an energy
 -- book to four hundred joules over three and a half minutes, and a hull
@@ -292,7 +301,7 @@ assert(cv > 1.0, "the run's molar heat capacity is readable: " .. cv)
 near(assert(t.pipe_temperature(5, 1)), T20C, 0.01, "and it opens at room temperature")
 
 local n_room_0 = room_moles(ROOM)
-local function o2_share(gas: {[string]: number}?, n: number)
+local function o2_share(gas: { [string]: number }?, n: number)
     return assert(gas).o2 / n
 end
 near(
@@ -309,7 +318,9 @@ local deck_e0 = deck_energy(ROOM)
 assert(
     c_deck > c_air_0 * 100.0,
     "the deck outweighs the air it holds up by two orders of magnitude: "
-        .. c_deck .. " vs " .. c_air_0
+        .. c_deck
+        .. " vs "
+        .. c_air_0
 )
 
 -- ---- the gradient ----
@@ -342,7 +353,10 @@ t.run_ticks(2)
 t.swap_hands(q)
 t.click(q, 2, 1, t.target_at(q, 2, 1, "air_injector"))
 t.tick()
-assert(ui_controls.rows(ui_controls.state(q).setpoints)[1].field == "rate", "the injector's dial is a volume rate")
+assert(
+    ui_controls.rows(ui_controls.state(q).setpoints)[1].field == "rate",
+    "the injector's dial is a volume rate"
+)
 ui_controls.set(q, "rate", 200)
 ui_controls.toggle(q, "power")
 t.run_ticks(2)
@@ -412,15 +426,15 @@ assert(
 -- a bottle of gas, it is a bottle of gas bolted to a tonne of hull.
 local air_only = (pipe_e0 + n_room_0 * cv * T20C) / (n_room_1 * cv)
 assert(air_only > T20C + 50.0, "gas alone would have been scalding: " .. air_only)
-assert(
-    blended < T20C + 5.0,
-    "and the room is barely warm instead: " .. T20C .. " -> " .. blended
-)
+assert(blended < T20C + 5.0, "and the room is barely warm instead: " .. T20C .. " -> " .. blended)
 assert(blended > T20C, "warmer, though -- the joules did arrive: " .. blended)
 assert(
     blended < hot_k - 400.0,
     "and nothing like as hot as what arrived -- it is not the pipe's "
-        .. "temperature: " .. hot_k .. " vs " .. blended
+        .. "temperature: "
+        .. hot_k
+        .. " vs "
+        .. blended
 )
 
 -- The last cross-check, between the two readouts a room actually has:
@@ -460,7 +474,8 @@ near(
 -- fall by about a hundredth of a kelvin and no more. Anything larger
 -- than that is the engine, not the air.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "one cold tile",
     legend: {
         '.': (turf: Floor),
@@ -476,7 +491,10 @@ t.world([==[(
     cables: [
         (1, 1, 1),
     ],
-)]==], 7, "free_build")
+)]==],
+    7,
+    "free_build"
+)
 
 t.set_environment({ sink_k = 2.7, insolation = 0 })
 t.tick()
@@ -530,7 +548,8 @@ assert(
 -- weighing anything: a room bleeding into space grows a temperature map
 -- across its own floor, and gas drifts towards the cold end of it.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "cold room",
     legend: {
         '.': (turf: Floor),
@@ -553,7 +572,10 @@ t.world([==[(
         (1, 3, 3), (2, 3, 3), (3, 3, 3), (4, 3, 3),
         (1, 4, 3), (2, 4, 3), (3, 4, 3), (4, 4, 3),
     ],
-)]==], 7, "free_build")
+)]==],
+    7,
+    "free_build"
+)
 
 t.set_environment({ sink_k = 2.7, insolation = 0 })
 t.tick()
@@ -568,7 +590,9 @@ assert(T20C - corner_k >= 1.0, "the corner cooled: " .. corner_k)
 assert(
     corner_k - middle_k >= 2.0,
     "and the middle of the room cooled further, standing on less steel: "
-        .. middle_k .. " vs " .. corner_k
+        .. middle_k
+        .. " vs "
+        .. corner_k
 )
 
 -- ---------------------------------------------------------------
@@ -583,7 +607,8 @@ assert(
 -- instead of falling, and the net register runs NEGATIVE: sunlight is
 -- energy arriving from outside the world's own books.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "one hot tile",
     legend: {
         '.': (turf: Floor),
@@ -599,7 +624,10 @@ t.world([==[(
     cables: [
         (1, 1, 1),
     ],
-)]==], 7, "free_build")
+)]==],
+    7,
+    "free_build"
+)
 
 t.set_environment({ sink_k = 2.7, insolation = 2700 })
 t.tick()
@@ -618,7 +646,4 @@ assert(
 local sky = t.environment()
 assert(sky.sink_k == 2.7, "the sink is the one that was set: " .. sky.sink_k)
 assert(sky.insolation == 2700, "and so is the sunlight: " .. sky.insolation)
-assert(
-    sky.id == "custom",
-    "a hand-set sky stops being the roster's roll and says so: " .. sky.id
-)
+assert(sky.id == "custom", "a hand-set sky stops being the roster's roll and says so: " .. sky.id)

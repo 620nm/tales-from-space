@@ -106,7 +106,12 @@ local p = t.join()
 t.tick()
 assert(assert(t.structure_at(9, 1)).id == "mixer", "the mixer is where the map put it")
 
-near(assert(t.pipe_temperature(BACK_X, BACK_Y)), 293.15, 0.5, "every mapped run opens at room temperature")
+near(
+    assert(t.pipe_temperature(BACK_X, BACK_Y)),
+    293.15,
+    0.5,
+    "every mapped run opens at room temperature"
+)
 near(assert(t.pipe_temperature(SIDE_X, SIDE_Y)), 293.15, 0.5, "the side stub too")
 near(assert(t.pipe_temperature(OUT_X, OUT_Y)), 293.15, 0.5, "and the outlet main")
 
@@ -130,9 +135,16 @@ local energy0 = assert(t.pipe_energy(BACK_X, BACK_Y))
 
 t.click(p, 9, 1, t.target_at(p, 9, 1, "mixer"))
 t.tick()
-assert(ui_controls.state(p).document == "modules" and ui_controls.state(p).presentation == "modules",
-    "the mixer's declared document")
-near(ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[2].value), 50.0, 0.001, "half and half out of the box")
+assert(
+    ui_controls.state(p).document == "modules" and ui_controls.state(p).presentation == "modules",
+    "the mixer's declared document"
+)
+near(
+    ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[2].value),
+    50.0,
+    0.001,
+    "half and half out of the box"
+)
 ui_controls.set(p, "pressure", 200)
 ui_controls.toggle(p, "power")
 t.run_seconds(30)
@@ -153,7 +165,12 @@ assert(gave_side > 1.0, "and so did the hot side: " .. gave_side)
 -- onto the parcel and never writes it back (gas_mixture.dm:215). This
 -- is the assertion a mixer that "equalised" its intakes would fail
 -- while still reading plausibly on every pressure gauge on the line.
-near(assert(t.pipe_temperature(BACK_X, BACK_Y)), back_k, 0.001, "the back main is exactly as cold as it was")
+near(
+    assert(t.pipe_temperature(BACK_X, BACK_Y)),
+    back_k,
+    0.001,
+    "the back main is exactly as cold as it was"
+)
 near(assert(t.pipe_temperature(SIDE_X, SIDE_Y)), side_k, 0.001, "and the side stub exactly as hot")
 
 -- THE BLEND. What reached the outlet is the two parcels at their own
@@ -162,10 +179,18 @@ near(assert(t.pipe_temperature(SIDE_X, SIDE_Y)), side_k, 0.001, "and the side st
 -- mole-weighted average of the three.
 local blend = (out0 * out_k + gave_back * back_k + gave_side * side_k)
     / (out0 + gave_back + gave_side)
-near(assert(t.pipe_temperature(OUT_X, OUT_Y)), blend, 0.5, "the outlet reads the blend of what it was given")
+near(
+    assert(t.pipe_temperature(OUT_X, OUT_Y)),
+    blend,
+    0.5,
+    "the outlet reads the blend of what it was given"
+)
 assert(
     assert(t.pipe_temperature(OUT_X, OUT_Y)) > out_k + 20.0,
-    "which is warmer than the main started: " .. out_k .. " -> " .. assert(t.pipe_temperature(OUT_X, OUT_Y))
+    "which is warmer than the main started: "
+        .. out_k
+        .. " -> "
+        .. assert(t.pipe_temperature(OUT_X, OUT_Y))
 )
 
 -- The stream the machine actually delivered, by itself: equal shares
@@ -177,7 +202,9 @@ near(stream_50, (back_k + side_k) / 2.0, 1.0, "a 50/50 stream is the midpoint of
 -- cannot catch a machine that moved heat and made some on the trip;
 -- the conserved quantity can.
 near(
-    assert(t.pipe_energy(BACK_X, BACK_Y)) + assert(t.pipe_energy(SIDE_X, SIDE_Y)) + assert(t.pipe_energy(OUT_X, OUT_Y)),
+    assert(t.pipe_energy(BACK_X, BACK_Y))
+        + assert(t.pipe_energy(SIDE_X, SIDE_Y))
+        + assert(t.pipe_energy(OUT_X, OUT_Y)),
     energy0,
     1.0,
     "every joule the outlet gained came off an intake"
@@ -233,7 +260,10 @@ near(
 assert(
     stream_80 < stream_50 - 50.0,
     "so leaning on the cold intake delivers a cooler mix: "
-        .. stream_50 .. " K at 50/50, " .. stream_80 .. " K at 80/20"
+        .. stream_50
+        .. " K at 50/50, "
+        .. stream_80
+        .. " K at 80/20"
 )
 
 near(
@@ -242,9 +272,16 @@ near(
     0.5,
     "and the outlet again reads the blend of exactly what it was given"
 )
-near(assert(t.pipe_temperature(SIDE_X, SIDE_Y)), hot_k, 0.001, "the hot stub is still as hot as it was")
 near(
-    assert(t.pipe_energy(BACK_X, BACK_Y)) + assert(t.pipe_energy(SIDE_X, SIDE_Y)) + assert(t.pipe_energy(OUT_X, OUT_Y)),
+    assert(t.pipe_temperature(SIDE_X, SIDE_Y)),
+    hot_k,
+    0.001,
+    "the hot stub is still as hot as it was"
+)
+near(
+    assert(t.pipe_energy(BACK_X, BACK_Y))
+        + assert(t.pipe_energy(SIDE_X, SIDE_Y))
+        + assert(t.pipe_energy(OUT_X, OUT_Y)),
     energy0,
     1.0,
     "and the books balance at a lopsided ratio too"

@@ -38,11 +38,17 @@
 -- repair.
 local ORDER = {
     -- Top row, walk-under: tg's parts 1, 2, 3.
-    { 1, -2 }, { 0, -2 }, { -1, -2 },
+    { 1, -2 },
+    { 0, -2 },
+    { -1, -2 },
     -- Middle row: 4, 5 (the centre, which wears the charge overlay), 6.
-    { 1, -1 }, { 0, -1 }, { -1, -1 },
+    { 1, -1 },
+    { 0, -1 },
+    { -1, -1 },
     -- Bottom row: 7, then 8 — the mapper's tile — then 9.
-    { 1, 0 }, { 0, 0 }, { -1, 0 },
+    { 1, 0 },
+    { 0, 0 },
+    { -1, 0 },
 }
 
 local STATUSES = { "off", "on", "fix0", "fix1", "fix2", "fix3" }
@@ -50,9 +56,7 @@ local STATUSES = { "off", "on", "fix0", "fix1", "fix2", "fix3" }
 local footprint = {}
 for n, at in ipairs(ORDER) do
     -- Everything but the head takes the entry's own density.
-    footprint[n] = n <= 3
-        and { at = at, dense = false, layer = "overhead" }
-        or { at = at }
+    footprint[n] = n <= 3 and { at = at, dense = false, layer = "overhead" } or { at = at }
 end
 
 -- Fifty-four pictures is a loop, not fifty-four lines: the sheet is

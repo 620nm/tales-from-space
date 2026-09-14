@@ -13,7 +13,6 @@ return {
     category = "power",
     dense = true,
     examine = {
-        flavor = "A dark panel on a short mast, angled at nothing in "
-            .. "particular.",
+        flavor = "A dark panel on a short mast, angled at nothing in " .. "particular.",
     },
 }

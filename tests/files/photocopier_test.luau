@@ -12,7 +12,8 @@ local function control(player: number, channel: string, suffix: string)
     return "doc/" .. address.document .. "/" .. address.generation .. suffix
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "copy room",
     legend: { '.': (turf: Floor), '#': (turf: Wall), 'G': (turf: Floor, fixture: Some(Generator)), 'a': (turf: Floor, fixture: Some(Apc)), 'o': (turf: Floor, fixture: Some(Outlet)) },
     rows: ["#######", "#Gao..#", "#.....#", "#.....#", "#######"],
@@ -23,7 +24,9 @@ t.world([==[(
         (4, 3, "paper_bin"), (3, 3, "toner_cartridge"),
     ],
     cables: [(1, 1, 2), (2, 1, 3), (3, 1, 1), (4, 1, 1)],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.run_ticks(3)
@@ -35,7 +38,10 @@ t.ui_close(p, "writing")
 local pen = assert(t.target_at(p, 3, 2, "four_color_pen"), "a writer is available")
 t.click(p, 3, 2, pen)
 t.run_ticks(2)
-if t.hands(p).held ~= "four_color_pen" then t.swap_hands(p); t.run_ticks(1) end
+if t.hands(p).held ~= "four_color_pen" then
+    t.swap_hands(p)
+    t.run_ticks(1)
+end
 assert(t.hands(p).held == "four_color_pen", "the writer is held")
 t.use_self(p)
 t.run_ticks(1)
@@ -45,12 +51,18 @@ local draft = control(p, "writing", "/paper/draft")
 t.ui_edit(p, draft, "copy this")
 t.ui_press(p, control(p, "writing", "/paper/commit"))
 t.run_ticks(2)
-local written_panel = ui_controls.record(assert(t.ui(p, "writing"), "the source writer remains open after commit"))
+local written_panel =
+    ui_controls.record(assert(t.ui(p, "writing"), "the source writer remains open after commit"))
 local written_data = script_data(written_panel)
 local committed = ui_controls.rows(written_data.committed)
-assert(#committed == 1 and committed[1].text == "copy this",
-    "the copier source contains the committed text")
-assert(ui_controls.record(committed[1].style).color == "#FF0000", "the source keeps the pen's selected color")
+assert(
+    #committed == 1 and committed[1].text == "copy this",
+    "the copier source contains the committed text"
+)
+assert(
+    ui_controls.record(committed[1].style).color == "#FF0000",
+    "the source keeps the pen's selected color"
+)
 t.drop(p)
 t.run_ticks(1)
 t.swap_hands(p)
@@ -73,15 +85,20 @@ assert(t.hands(p).held == "paper", "the source sheet is picked up before loading
 t.click(p, 4, 1, copier)
 t.run_ticks(2)
 assert(t.hands(p).held == nil, "the source sheet is docked")
-local panel = ui_controls.record(assert(t.ui(p, "copier"), "the copier panel refreshes after loading"))
+local panel =
+    ui_controls.record(assert(t.ui(p, "copier"), "the copier panel refreshes after loading"))
 local data = script_data(panel)
-assert(data.kind == "copier" and data.count == 1 and data.mode == "bw",
-    "the copier exposes one BW copy as its default")
+assert(
+    data.kind == "copier" and data.count == 1 and data.mode == "bw",
+    "the copier exposes one BW copy as its default"
+)
 assert(data.paper == 30 and data.toner == 30, "the copier starts with counted supplies")
-assert(#ui_controls.rows(data.original) > 0,
-    "the copier previews the written source")
+assert(#ui_controls.rows(data.original) > 0, "the copier previews the written source")
 assert(data.busy ~= true, "the copier is idle before the copy")
-assert(panel.status == nil or ui_controls.number(panel.status) >= 2, "the copier provider is actionable")
+assert(
+    panel.status == nil or ui_controls.number(panel.status) >= 2,
+    "the copier provider is actionable"
+)
 local papers_before = t.count_items("paper")
 
 -- Loading consumes the hand-held sheet; copying is a native 80-tick job.
@@ -94,11 +111,12 @@ assert(started_data.busy == true, "the copier enters its native job")
 t.run_ticks(77)
 assert(t.count_items("paper") == papers_before, "no output appears before the 80-tick page")
 t.run_ticks(1)
-assert(t.count_items("paper") == papers_before + 1,
-    "one completed copy lands on the machine tile")
+assert(t.count_items("paper") == papers_before + 1, "one completed copy lands on the machine tile")
 data = script_data(ui_controls.state(p, "copier"))
-assert(data.paper == 29 and data.toner == 29,
-    "one paper and one toner are charged per completed copy batch")
+assert(
+    data.paper == 29 and data.toner == 29,
+    "one paper and one toner are charged per completed copy batch"
+)
 
 -- A color batch preserves the source presentation and charges once per
 -- output page. The source stays docked between batches.
@@ -114,20 +132,30 @@ assert(data.count == 2 and data.mode == "color", "the copier accepts a two-page 
 local batch_before = t.count_items("paper")
 t.ui_press(p, control(p, "copier", "/copy"))
 t.run_ticks(160)
-assert(t.count_items("paper") == batch_before + 2, "a two-page batch completes one page per 80 ticks")
+assert(
+    t.count_items("paper") == batch_before + 2,
+    "a two-page batch completes one page per 80 ticks"
+)
 t.ui_close(p, "copier")
-copier = assert(t.target_at(p, 4, 1, "photocopier"), "the copier remains reachable after a color batch")
+copier =
+    assert(t.target_at(p, 4, 1, "photocopier"), "the copier remains reachable after a color batch")
 t.click(p, 4, 1, copier)
 t.run_ticks(2)
 data = script_data(ui_controls.state(p, "copier"))
-assert(data.paper == 27 and data.toner == 27 and data.busy ~= true,
-    "a two-page batch charges one paper and toner per output")
+assert(
+    data.paper == 27 and data.toner == 27 and data.busy ~= true,
+    "a two-page batch charges one paper and toner per output"
+)
 local color_output = assert(t.target_at(p, 4, 1, "paper"), "a color output is readable")
 t.click(p, 4, 1, color_output)
 t.run_ticks(2)
-local color_window = ui_controls.record(assert(t.ui(p, "writing"), "the color output opens as paper"))
+local color_window =
+    ui_controls.record(assert(t.ui(p, "writing"), "the color output opens as paper"))
 local color_data = script_data(color_window)
-assert(ui_controls.record(ui_controls.rows(color_data.committed)[1].style).color == "#FF0000", "color output preserves the source style")
+assert(
+    ui_controls.record(ui_controls.rows(color_data.committed)[1].style).color == "#FF0000",
+    "color output preserves the source style"
+)
 t.ui_close(p, "writing")
 t.drop(p)
 t.run_ticks(1)

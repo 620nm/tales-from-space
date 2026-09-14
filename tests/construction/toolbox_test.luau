@@ -4,7 +4,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- more kill him, every swing is a Script-attributed ledger row naming
 -- the file that decided the damage and the player who swung, and both
 -- parties hear the thud. (Port of the Rust m4 melee test.)
-t.world([==[(
+t.world(
+    [==[(
     name: "arena",
     legend: {
         ' ': (turf: Space),
@@ -18,7 +19,9 @@ t.world([==[(
     ],
     structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn")],
     items: [(1, 1, "toolbox")],
-)]==], 7)
+)]==],
+    7
+)
 
 local attacker = t.join()
 local victim = t.join()
@@ -29,7 +32,10 @@ t.tick()
 local joins = t.ledger_rows("joined_job")
 assert(#joins == 2, "two crewmen signed on")
 local attacker_actor, victim_actor = joins[1].actor, joins[2].actor
-assert(attacker_actor.kind == "player" and victim_actor.kind == "player", "the join rows name their players")
+assert(
+    attacker_actor.kind == "player" and victim_actor.kind == "player",
+    "the join rows name their players"
+)
 local attacker_id, victim_id = attacker_actor.id, victim_actor.id
 assert(attacker_id ~= victim_id)
 
@@ -46,14 +52,19 @@ for _ = 1, 10 do
     t.tick()
 end
 local h = t.health(victim)
-assert(math.abs(ui_controls.number(h.brute) - 100) < 0.01, "10 hits x 10 brute: " .. tostring(h.brute))
+assert(
+    math.abs(ui_controls.number(h.brute) - 100) < 0.01,
+    "10 hits x 10 brute: " .. tostring(h.brute)
+)
 -- What a hundred brute COSTS depends on where it landed. A blow that
 -- named no zone rolls (docs/BIOLOGY.md §3.2), and each part weighs its
 -- own damage into the body's health -- the chest at 1, a limb at 0.75
 -- (LIMB_BODY_DAMAGE_COEFFICIENT, bodyparts.dm:23-26). So the pools say
 -- a hundred and the health says somewhere between 0 and 25.
-assert(h.health <= 25.0 and h.health >= 0.0,
-    "a hundred brute weighted by where it landed: " .. h.health)
+assert(
+    h.health <= 25.0 and h.health >= 0.0,
+    "a hundred brute weighted by where it landed: " .. h.health
+)
 local pushed = t.vitals(victim)
 assert(pushed and pushed.brute > 0, "damage pushes vitals immediately")
 
@@ -97,7 +108,8 @@ local function pool_amount(row: SpecLedgerRow, id: string): number
 end
 local hits = 0
 for _, row in ipairs(t.ledger_rows("Damaged")) do
-    if math.abs(pool_amount(row, "brute") - 10) < 0.01
+    if
+        math.abs(pool_amount(row, "brute") - 10) < 0.01
         and row.target == victim_id
         and row.actor.kind == "script"
         and row.actor.file == "items/gear/toolbox.luau"
@@ -106,8 +118,7 @@ for _, row in ipairs(t.ledger_rows("Damaged")) do
         hits += 1
     end
 end
-assert(hits == 10 + swings,
-    "every hit is a Script-attributed ledger row, got " .. hits)
+assert(hits == 10 + swings, "every hit is a Script-attributed ledger row, got " .. hits)
 -- One crossing of the line this pack calls `dead`, and it is on the
 -- record naming the line and the pool: the engine names neither, so the
 -- spec reads the ids `content/bodies/human.luau` declared.

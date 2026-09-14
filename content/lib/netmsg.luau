@@ -66,7 +66,7 @@ netmsg.flags = {
     deadly = { color = "#FF2020", power = 1.5, importance = 100 },
     unbreathable = { color = "#3060FF", power = 1.2, importance = 50 },
     low_power = { power = 0.5, importance = 10 },
-} :: {[string]: Flag}
+} :: { [string]: Flag }
 
 -- One flag, set or cleared. The name is checked by the listener rather
 -- than here: a sender is entitled to be wrong and a fitting is not
@@ -90,8 +90,10 @@ end
 -- an operation from the closed pair, and a flag name this file has an
 -- answer for.
 function netmsg.is_light_flag(payload: unknown): boolean
-    if type(payload) ~= "table" then return false end
-    local value = payload :: {[string]: unknown}
+    if type(payload) ~= "table" then
+        return false
+    end
+    local value = payload :: { [string]: unknown }
     if value.kind ~= netmsg.LIGHT_FLAG then
         return false
     end
@@ -136,10 +138,13 @@ function netmsg.winner(flags: unknown): (Flag?, string?)
     local best: Flag? = nil
     local best_name: string? = nil
     for name, held in pairs(flags) do
-        if type(name) ~= "string" then continue end
+        if type(name) ~= "string" then
+            continue
+        end
         local spec = standing(held) and netmsg.flags[name] or nil
         if spec ~= nil then
-            if best == nil
+            if
+                best == nil
                 or spec.importance > best.importance
                 or (spec.importance == best.importance and best_name ~= nil and name < best_name)
             then

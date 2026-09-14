@@ -50,7 +50,8 @@ local function amount(handle, key: string)
     return contents[key] or 0
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "chem bench",
     legend: {
         ' ': (turf: Space),
@@ -73,7 +74,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -217,7 +220,10 @@ panel(heater, 3, 1)
 dial(960)
 ui_controls.toggle(p, "power")
 t.run_seconds(150)
-assert(assert(t.holder_k(hot)) > 940.0, "the chamber overshot the window on purpose: " .. tostring(t.holder_k(hot)))
+assert(
+    assert(t.holder_k(hot)) > 940.0,
+    "the chamber overshot the window on purpose: " .. tostring(t.holder_k(hot))
+)
 
 eject()
 dock(dispenser, 1, 1)
@@ -225,7 +231,10 @@ panel(dispenser, 1, 1)
 dial_to(NOTCH)
 press("welding_fuel")
 dial_to(PRESS)
-assert(assert(t.holder_k(hot)) > 920.0, "and the mixture is still over the window: " .. tostring(t.holder_k(hot)))
+assert(
+    assert(t.holder_k(hot)) > 920.0,
+    "and the mixture is still over the window: " .. tostring(t.holder_k(hot))
+)
 
 -- Five minutes, because the oil rule is running at a QUARTER of its
 -- plateau up here -- 950 K is most of the way down the far shoulder of

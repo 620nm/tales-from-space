@@ -73,7 +73,9 @@ end
 -- matters more than the script, and the fault is on the record either
 -- way (docs/diegetic-scripting/attribution.md §10). The stage
 -- re-sanitizes whatever this answers, so nothing here sanitizes.
-function radio_relay.carry(ev: RadioCarryPayload): { cancelled: boolean } | { text: string, channel: string }
+function radio_relay.carry(
+    ev: RadioCarryPayload
+): { cancelled: boolean } | { text: string, channel: string }
     local answer = program_slot.run(ev.self, "carry", {
         content = ev.text,
         channel = ev.channel,

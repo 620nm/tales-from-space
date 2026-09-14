@@ -21,8 +21,15 @@ return {
         -- from under them. tg's medical kit carries one too
         -- (`/obj/item/storage/backpack/duffelbag/med`, and the syringe
         -- is what makes the libital beaker a DOSE rather than a drink).
-        { slot = "back", item = "backpack", contents = {
-            "beaker.libital", "emergency_tank.oxygen", "headset", "syringe",
-        } },
+        {
+            slot = "back",
+            item = "backpack",
+            contents = {
+                "beaker.libital",
+                "emergency_tank.oxygen",
+                "headset",
+                "syringe",
+            },
+        },
     },
 }

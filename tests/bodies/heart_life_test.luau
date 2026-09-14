@@ -46,7 +46,7 @@ end
 t.world(ARENA, 0)
 local medic = t.join("medic")
 local patient = t.join("assistant")
-local attendant = t.join("engineer")   -- somebody with a free hand for the drawer
+local attendant = t.join("engineer") -- somebody with a free hand for the drawer
 t.run_ticks(3)
 
 assert(assert(t.body(patient)).animate == true, "they start out alive")
@@ -59,8 +59,10 @@ t.set_health(patient, { brute = 200 })
 t.run_ticks(2)
 assert(assert(t.body(patient)).animate == false, "200 brute is past the dead line")
 assert(assert(t.body(patient)).label == "Dead", "and the plan says the word")
-assert(assert(t.organ_damage(patient, "heart")) == 100,
-    "...and the crossing STOPPED THE HEART: " .. assert(t.organ_damage(patient, "heart")))
+assert(
+    assert(t.organ_damage(patient, "heart")) == 100,
+    "...and the crossing STOPPED THE HEART: " .. assert(t.organ_damage(patient, "heart"))
+)
 assert(assert(t.capacity(patient, "blood")) == 0, "a failing heart circulates nothing")
 
 -- Now heal every part back to nothing. Under the old model this alone
@@ -68,8 +70,10 @@ assert(assert(t.capacity(patient, "blood")) == 0, "a failing heart circulates no
 t.set_health(patient, { brute = 0, burn = 0, oxy = 0, tox = 0 })
 t.run_ticks(2)
 assert(assert(t.parts(patient)).chest.brute == 0, "the parts are whole again")
-assert(assert(t.body(patient)).animate == false,
-    "PARTS HEALED, STILL DEAD: the dead line cleared and the heart did not")
+assert(
+    assert(t.body(patient)).animate == false,
+    "PARTS HEALED, STILL DEAD: the dead line cleared and the heart did not"
+)
 assert(assert(t.organ_damage(patient, "heart")) == 100, "the heart is where the death left it")
 
 -- =====================================================================

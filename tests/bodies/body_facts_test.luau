@@ -44,8 +44,7 @@ assert(crit.label == "Critical", "and the pack, not the engine, named it")
 assert(crit.posture == "lying", "a body nobody is steering is on the deck")
 
 local said = table.concat(t.messages(p), "\n")
-assert(said:find("You black out", 1, true),
-    "and the plan's own sentence reached them: " .. said)
+assert(said:find("You black out", 1, true), "and the plan's own sentence reached them: " .. said)
 
 -- An unsteerable body cannot pick anything up: `controllable` is what
 -- every interaction gate asks.
@@ -109,8 +108,10 @@ t.tick()
 t.set_health(r, { oxy = 60 })
 local out = assert(t.body(r))
 assert(not out.conscious, "past fifty they are out cold")
-assert(out.controllable and out.animate,
-    "but no declared line was crossed, so the pack was never asked")
+assert(
+    out.controllable and out.animate,
+    "but no declared line was crossed, so the pack was never asked"
+)
 assert(#out.thresholds == 0, "and nothing is latched")
 assert(out.label == "", "and nothing calls them anything")
 
@@ -119,8 +120,7 @@ assert(out.label == "", "and nothing calls them anything")
 local before = ui_controls.number(t.health(r).oxy)
 t.run_seconds(60)
 local after = ui_controls.number(t.health(r).oxy)
-assert(after < before,
-    "a faint in good air recovers its breaths: " .. before .. " -> " .. after)
+assert(after < before, "a faint in good air recovers its breaths: " .. before .. " -> " .. after)
 assert(assert(t.body(r)).animate, "and never suffocates to death")
 assert(assert(t.body(r)).conscious, "and comes round on its own")
 assert(assert(t.body(r)).posture == "standing", "and gets up")

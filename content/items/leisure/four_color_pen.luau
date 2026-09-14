@@ -25,18 +25,23 @@ local content = {
 
 content.actions = {
     {
-        id = "cycle_color", gesture = "self", route = "self_use",
+        id = "cycle_color",
+        gesture = "self",
+        route = "self_use",
         label = "lunatic/tfs:action.four_color_pen.cycle",
     },
     {
-        id = "write", gesture = "primary", route = "held",
+        id = "write",
+        gesture = "primary",
+        route = "held",
         label = "lunatic/tfs:action.four_color_pen.write",
         target = { fact = "target.proto", value = "paper" },
     },
 }
 
 if sim ~= nil then
-    local behavior = sim.define("behavior", "lunatic/tfs:four_color_pen", { prototype = content.id })
+    local behavior =
+        sim.define("behavior", "lunatic/tfs:four_color_pen", { prototype = content.id })
     local colors = { "black", "red", "green", "blue" }
 
     behavior:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)

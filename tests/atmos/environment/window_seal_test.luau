@@ -21,7 +21,8 @@
 -- never matter. The spec pins that too, so the fix for the leak can
 -- never quietly become "windows are adiabatic".
 
-local CHAMBER = { { 1, 1 }, { 2, 1 }, { 3, 1 }, { 1, 2 }, { 2, 2 }, { 3, 2 }, { 1, 3 }, { 2, 3 }, { 3, 3 } }
+local CHAMBER =
+    { { 1, 1 }, { 2, 1 }, { 3, 1 }, { 1, 2 }, { 2, 2 }, { 3, 2 }, { 1, 3 }, { 2, 3 }, { 3, 3 } }
 local OUTSIDE = { { 4, 1 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 6, 2 } }
 local SEEDED = 9 * 250.0
 
@@ -40,8 +41,10 @@ local function check(order)
     -- Not one molecule outside: the pane holds, the pane's own tile
     -- holds, and the corridor past it holds.
     for _, at in ipairs(OUTSIDE) do
-        assert(chlorine_at(at[1], at[2]) == 0.0, string.format(
-            "%s: chlorine escaped to (%d,%d)", order, at[1], at[2]))
+        assert(
+            chlorine_at(at[1], at[2]) == 0.0,
+            string.format("%s: chlorine escaped to (%d,%d)", order, at[1], at[2])
+        )
     end
     -- Every mole accounted for: what the chamber kept plus what the
     -- room traded into the run under it (the meter's stub holds the
@@ -51,19 +54,23 @@ local function check(order)
         held += chlorine_at(at[1], at[2])
     end
     held += pipe_chlorine(3, 2)
-    assert(math.abs(held - SEEDED) < 1e-6, string.format(
-        "%s: %.6f of %.1f mol accounted for", order, held, SEEDED))
+    assert(
+        math.abs(held - SEEDED) < 1e-6,
+        string.format("%s: %.6f of %.1f mol accounted for", order, held, SEEDED)
+    )
     -- The window is a window, not a vacuum flask: the far side warms.
-    assert((t.room_temperature(4, 2) or 0) > 350.0,
-        order .. ": heat still conducts through the pane")
-    assert((t.room_temperature(5, 2) or 0) > 300.0,
-        order .. ": and past it")
+    assert(
+        (t.room_temperature(4, 2) or 0) > 350.0,
+        order .. ": heat still conducts through the pane"
+    )
+    assert((t.room_temperature(5, 2) or 0) > 300.0, order .. ": and past it")
 end
 
 -- ---------------------------------------------------------------
 -- Windows first, neighbour after: the order that leaked.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "windows first",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: [
@@ -90,14 +97,18 @@ t.world([==[(
         (1, 2, "hot_chlorine"), (2, 2, "hot_chlorine"), (3, 2, "hot_chlorine"),
         (1, 3, "hot_chlorine"), (2, 3, "hot_chlorine"), (3, 3, "hot_chlorine"),
     ],
-)]==], nil, "free_build")
+)]==],
+    nil,
+    "free_build"
+)
 check("windows-first")
 
 -- ---------------------------------------------------------------
 -- Neighbour first, windows after: the order that happened to work,
 -- kept so the contract is the pair and not one lucky listing.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "neighbour first",
     legend: { '.': (turf: Plating), '#': (turf: Wall) },
     rows: [
@@ -124,5 +135,8 @@ t.world([==[(
         (1, 2, "hot_chlorine"), (2, 2, "hot_chlorine"), (3, 2, "hot_chlorine"),
         (1, 3, "hot_chlorine"), (2, 3, "hot_chlorine"), (3, 3, "hot_chlorine"),
     ],
-)]==], nil, "free_build")
+)]==],
+    nil,
+    "free_build"
+)
 check("neighbour-first")

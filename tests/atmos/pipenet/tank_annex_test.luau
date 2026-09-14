@@ -49,7 +49,7 @@ t.run_seconds(5)
 
 -- The store, as the map authored it: (x, y) -> the one substance in it,
 -- and, for the tank whose reading is moles, how many the fill comes to.
-local store: {{x: number, y: number, gas: string, moles: number?, condenses: boolean?}} = {
+local store: { { x: number, y: number, gas: string, moles: number?, condenses: boolean? } } = {
     { x = 4, y = 28, gas = "o2" },
     { x = 6, y = 28, gas = "n2" },
     { x = 8, y = 28, gas = "co2", condenses = true },
@@ -66,8 +66,10 @@ for _, row in ipairs(store) do
     local x, y = row.x, row.y
     local where = "(" .. x .. ", " .. y .. ")"
     local standing = t.structure_at(x, y)
-    assert(standing and standing.id == "stationary_tank",
-        "a tank stands at " .. where .. ": " .. tostring(standing and standing.id))
+    assert(
+        standing and standing.id == "stationary_tank",
+        "a tank stands at " .. where .. ": " .. tostring(standing and standing.id)
+    )
 
     -- tg's `starting_pressure_percent = 0.5` of the 46 000 kPa rating,
     -- and it has not drifted: nothing is plumbed into these, so five
@@ -76,8 +78,7 @@ for _, row in ipairs(store) do
     -- charge (see the header).
     if row.moles == nil and row.condenses == nil then
         local kpa = assert(t.tank_pressure(x, y))
-        assert(math.abs(kpa - 23000.0) < 50.0,
-            where .. " opens at half its rating: " .. kpa)
+        assert(math.abs(kpa - 23000.0) < 50.0, where .. " opens at half its rating: " .. kpa)
     end
 end
 
@@ -91,18 +92,29 @@ do
     assert(co2 ~= nil, "the carbon dioxide tank reads")
     local entry = co2.contents.co2
     assert(entry ~= nil, "and it is carbon dioxide")
-    assert((entry.liquid or 0) > 0.0,
-        "part of a 23 MPa charge condensed: " .. tostring(entry.liquid))
-    assert((entry.gas or 0) > (entry.liquid or 0),
-        "most of it is still gas over the top")
-    assert(math.abs(co2.temp_k - CO2_CRITICAL_K) < 0.5,
+    assert(
+        (entry.liquid or 0) > 0.0,
+        "part of a 23 MPa charge condensed: " .. tostring(entry.liquid)
+    )
+    assert((entry.gas or 0) > (entry.liquid or 0), "most of it is still gas over the top")
+    assert(
+        math.abs(co2.temp_k - CO2_CRITICAL_K) < 0.5,
         "and the latent heat drove it to the critical temperature, where "
-            .. "condensing stops: " .. co2.temp_k)
-    assert(co2.pressure_kpa > 23000.0,
-        "the gauge reads over the charge, not under it: " .. co2.pressure_kpa)
-    assert(co2.headspace_l < co2.volume_l,
+            .. "condensing stops: "
+            .. co2.temp_k
+    )
+    assert(
+        co2.pressure_kpa > 23000.0,
+        "the gauge reads over the charge, not under it: " .. co2.pressure_kpa
+    )
+    assert(
+        co2.headspace_l < co2.volume_l,
         "because the liquid took room out of the shell: "
-            .. co2.headspace_l .. " of " .. co2.volume_l .. " L")
+            .. co2.headspace_l
+            .. " of "
+            .. co2.volume_l
+            .. " L"
+    )
 end
 
 -- ...and each holds a DIFFERENT substance, which is the assertion the
@@ -116,8 +128,10 @@ for _, row in ipairs(store) do
     local kinds = 0
     for key, moles in pairs(held) do
         kinds = kinds + 1
-        assert(key == held_key,
-            where .. " holds " .. held_key .. ", not " .. key .. " (" .. moles .. " mol)")
+        assert(
+            key == held_key,
+            where .. " holds " .. held_key .. ", not " .. key .. " (" .. moles .. " mol)"
+        )
     end
     assert(kinds == 1, where .. " holds ONE substance, not " .. kinds)
 
@@ -127,16 +141,20 @@ for _, row in ipairs(store) do
     -- with damp air over it.
     if want_moles then
         local n = held[held_key]
-        assert(math.abs(n - want_moles) < want_moles * 0.01,
-            where .. " is half full of water: " .. n .. " mol")
+        assert(
+            math.abs(n - want_moles) < want_moles * 0.01,
+            where .. " is half full of water: " .. n .. " mol"
+        )
     end
 end
 
 -- The room itself: sealed, breathable, named, and reachable from the
 -- department through its own door. A store nobody can walk into is a
 -- wall with tanks behind it.
-assert(assert(t.room_pressure(8, 30)) > 90.0,
-    "the annex holds its air: " .. assert(t.room_pressure(8, 30)) .. " kPa")
+assert(
+    assert(t.room_pressure(8, 30)) > 90.0,
+    "the annex holds its air: " .. assert(t.room_pressure(8, 30)) .. " kPa"
+)
 assert(t.turf(10, 31) == "plating", "bare plating, like the rest of the station")
 assert(t.door_at(13, 31), "and a door into the machine hall's corridor")
 
@@ -145,8 +163,9 @@ assert(t.door_at(13, 31), "and a door into the machine hall's corridor")
 -- T20C default like the rest of the commissioned department, with
 -- room circuit power under it and the bench run stopping either side.
 local unit = t.structure_at(10, 31)
-assert(unit ~= nil and unit.id == "thermomachine",
-    "the temperature control unit stands on the machine tile")
+assert(
+    unit ~= nil and unit.id == "thermomachine",
+    "the temperature control unit stands on the machine tile"
+)
 assert(unit.state == "running", "and ships running: " .. tostring(unit.state))
-assert(t.pipe(9, 31) ~= 0 and t.pipe(11, 31) ~= 0,
-    "with the bench run stopping either side of it")
+assert(t.pipe(9, 31) ~= 0 and t.pipe(11, 31) ~= 0, "with the bench run stopping either side of it")

@@ -58,7 +58,7 @@ end
 -- cell per TILE and a vent only ever works the tile it stands on, so
 -- anything asserted about a room filling, emptying or holding still is
 -- asserted on the whole room's conserved quantity.
-local function room_moles(tiles: {{number}})
+local function room_moles(tiles: { { number } })
     local n = 0.0
     for _, tile in ipairs(tiles) do
         for _, amount in pairs(t.room_gas(tile[1], tile[2]) or {}) do
@@ -73,7 +73,7 @@ end
 -- violent happens to a room -- gas crosses tile to tile at its own pace
 -- -- so a room that is meant to be holding STILL is read this way, on
 -- the conserved quantity, and never off one tile.
-local function room_kpa(tiles: {{number}})
+local function room_kpa(tiles: { { number } })
     return room_moles(tiles) * R * T20C / (#tiles * 1000.0)
 end
 
@@ -159,7 +159,10 @@ local apc = assert(t.apc_at(7, 1))
 assert(apc ~= nil, "the map wired an APC")
 assert(apc.equipment == true, "and the generator behind it is feeding the equipment channel")
 assert(assert(t.canister_pressure(4, 1)) > 4000.0, "a fresh canister is at 45 atm")
-assert(assert(t.room_pressure(2, 1)) > 90.0, "and the corridor opens breathable off the regulated feed")
+assert(
+    assert(t.room_pressure(2, 1)) > 90.0,
+    "and the corridor opens breathable off the regulated feed"
+)
 
 -- Tear the deck open beside the vent. There is no breach STATE anywhere
 -- (CLAUDE.md): a hull breach is a floor that became space, so that is
@@ -198,7 +201,12 @@ local settled_room = assert(t.room_pressure(5, 1))
 local settled_can = assert(t.canister_pressure(4, 1))
 t.run_seconds(60)
 near(assert(t.room_pressure(5, 1)), settled_room, 0.5, "a minute later the room has not moved")
-near(assert(t.canister_pressure(4, 1)), settled_can, 1.0, "and a settled room costs the bottle nothing")
+near(
+    assert(t.canister_pressure(4, 1)),
+    settled_can,
+    1.0,
+    "and a settled room costs the bottle nothing"
+)
 
 -- ---------------------------------------------------------------
 -- WITH THE BREAKER OUT, IT IS A GRILLE.
@@ -303,7 +311,9 @@ local fouled_room = room_moles(ROOM)
 near(fouled_room, idle_room + 210.0, 0.001, "two hundred and ten moles went in")
 assert(
     assert(t.room_pressure(1, 1)) > SIPHONS_OVER,
-    "which puts the vent's own tile over its siphon line: " .. assert(t.room_pressure(1, 1)) .. " kPa"
+    "which puts the vent's own tile over its siphon line: "
+        .. assert(t.room_pressure(1, 1))
+        .. " kPa"
 )
 local fouled_far = assert(t.room_pressure(7, 1))
 local books = fouled_room + pipe_moles(2, 1)
@@ -313,30 +323,31 @@ t.run_seconds(120)
 assert(
     assert(t.room_pressure(1, 1)) <= SIPHONS_OVER + 0.05,
     "the tile the fan stands on is back inside its dead band: "
-        .. assert(t.room_pressure(1, 1)) .. " kPa, the line being " .. SIPHONS_OVER
+        .. assert(t.room_pressure(1, 1))
+        .. " kPa, the line being "
+        .. SIPHONS_OVER
 )
 assert(
     assert(t.room_pressure(1, 1)) > ONE_ATM,
     "and it stopped THERE rather than emptying the room -- a vent has a"
         .. " floor as well as a ceiling, which is the whole difference"
-        .. " between it and a scrubber set to siphon: " .. assert(t.room_pressure(1, 1))
+        .. " between it and a scrubber set to siphon: "
+        .. assert(t.room_pressure(1, 1))
 )
 assert(
     assert(t.room_pressure(7, 1)) < fouled_far - 40.0,
     "the far end of the corridor came down with it, at the pace gas"
         .. " crosses tiles rather than the pace the fan works: "
-        .. fouled_far .. " -> " .. assert(t.room_pressure(7, 1)) .. " kPa"
+        .. fouled_far
+        .. " -> "
+        .. assert(t.room_pressure(7, 1))
+        .. " kPa"
 )
 assert(
     pipe_moles(2, 1) > idle_net + 5.0,
     "and the surplus went down the main: " .. idle_net .. " -> " .. pipe_moles(2, 1) .. " mol"
 )
-near(
-    room_moles(ROOM) + pipe_moles(2, 1),
-    books,
-    0.001,
-    "with every mole of it still somewhere"
-)
+near(room_moles(ROOM) + pipe_moles(2, 1), books, 0.001, "with every mole of it still somewhere")
 
 -- ---------------------------------------------------------------
 -- A PASSIVE VENT IS A HOLE, AND A HOLE WORKS BOTH WAYS.
@@ -410,7 +421,10 @@ assert(
 assert(
     assert(t.canister_pressure(5, 1)) < before_hole - 50.0,
     "and the bottle paid for every second of it: "
-        .. before_hole .. " -> " .. assert(t.canister_pressure(5, 1)) .. " kPa"
+        .. before_hole
+        .. " -> "
+        .. assert(t.canister_pressure(5, 1))
+        .. " kPa"
 )
 assert(t.set_turf(1, 1, "plating"), "and is sealed again")
 t.tick()
@@ -469,8 +483,7 @@ t.run_seconds(120)
 
 assert(
     pipe_moles(3, 1) > base_net + 5.0,
-    "a fouled room pushes back INTO the line: "
-        .. base_net .. " -> " .. pipe_moles(3, 1) .. " mol"
+    "a fouled room pushes back INTO the line: " .. base_net .. " -> " .. pipe_moles(3, 1) .. " mol"
 )
 assert(
     room_moles(BAY) < base_bay + 210.0 - 5.0,
@@ -479,7 +492,10 @@ assert(
 assert(
     assert(t.canister_pressure(5, 1)) > base_can + 0.5,
     "the bottle took its share of what was pushed back: "
-        .. base_can .. " -> " .. assert(t.canister_pressure(5, 1)) .. " kPa"
+        .. base_can
+        .. " -> "
+        .. assert(t.canister_pressure(5, 1))
+        .. " kPa"
 )
 near(
     room_moles(BAY) + pipe_moles(3, 1) + moles(assert(t.canister_pressure(5, 1)), CAN_M3),

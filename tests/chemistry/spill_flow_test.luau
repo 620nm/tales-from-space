@@ -92,7 +92,10 @@ assert(litres(1) > 59.9, ("and it is standing on one tile: %.4f L"):format(litre
 -- ---------------------------------------------------------------
 t.run_ticks(20)
 assert(litres(1) > litres(2), ("the source is deeper: %.4f vs %.4f"):format(litres(1), litres(2)))
-assert(litres(2) > litres(3), ("and the frontier shallower still: %.4f vs %.4f"):format(litres(2), litres(3)))
+assert(
+    litres(2) > litres(3),
+    ("and the frontier shallower still: %.4f vs %.4f"):format(litres(2), litres(3))
+)
 dry(4, "the shut leaf has not been crossed")
 
 -- ---------------------------------------------------------------
@@ -166,7 +169,8 @@ assert(
 -- hundred films thinner -- and what takes it off the deck is not a
 -- neighbouring tile but the air over it (tests/spill_test.luau).
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "under the film",
     legend: {
         ' ': (turf: Space),
@@ -184,7 +188,9 @@ t.world([==[(
         "film_3l": (rows: [("water", 166.53), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
     },
     painted: [(1, 1, "film_3l")],
-)]==], 0)
+)]==],
+    0
+)
 
 local q = t.join()
 t.tick()
@@ -196,7 +202,10 @@ t.click(q, 4, 1) -- and tip it onto the deck beside us
 t.tick()
 
 local painted = litres(1)
-assert(painted > 2.95 and painted < FILM_L, ("three litres is under the film: %.4f L"):format(painted))
+assert(
+    painted > 2.95 and painted < FILM_L,
+    ("three litres is under the film: %.4f L"):format(painted)
+)
 local tipped = litres(4)
 assert(tipped > 0.010 and tipped < 0.011, ("and 10.8 mL is on the deck: %.6f L"):format(tipped))
 

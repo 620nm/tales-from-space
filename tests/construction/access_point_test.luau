@@ -65,7 +65,8 @@ end
 -- 1. THE LADDER, on a wall, with everything it needs at the
 --    builder's feet.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "mount bench",
     legend: {
         ' ': (turf: Space),
@@ -92,7 +93,9 @@ t.world([==[(
         (5, 1, "laptop"),
     ],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.run_ticks(10)
@@ -166,10 +169,7 @@ assert(box ~= nil and box.id == "access_point", "the assembly becomes what its b
 -- power is in the stem, and both are being asserted here.
 assert(box.sprite == "access_point_off_n", "bolted to its wall and drawn dead")
 assert(t.structure_at(4, 0) == nil, "and still nothing standing on the wall")
-assert(
-    t.ledger_has("StructureStep", "wall_frame", "finished"),
-    "and the assembly is on the record"
-)
+assert(t.ledger_has("StructureStep", "wall_frame", "finished"), "and the assembly is on the record")
 
 -- ---------------------------------------------------------------
 -- 2. THE LAPTOP, AND A LOCK WITH NO KEY.
@@ -189,22 +189,30 @@ local hinted = false
 for _, action in ipairs(t.action_hints(p, { Entity = hinted_box })) do
     if action.id == "needs_laptop" then
         hinted = true
-        assert(action.implement and action.implement.sprite == "laptop_on",
-            "the hint pictures an open, powered laptop")
+        assert(
+            action.implement and action.implement.sprite == "laptop_on",
+            "the hint pictures an open, powered laptop"
+        )
     end
 end
 assert(hinted, "a bare hand reads that the box wants a laptop")
 local _ = t.messages(p)
 t.click(p, 4, 1, hinted_box)
 t.tick()
-assert(t.ui(p) == nil and t.ui(p, "programming") == nil, "an access point opens nothing for a bare hand")
+assert(
+    t.ui(p) == nil and t.ui(p, "programming") == nil,
+    "an access point opens nothing for a bare hand"
+)
 assert(said(p, NEEDS_LAPTOP), "and says what it wants: " .. table.concat(t.messages(p), " | "))
 
 laptop.ready(p, 5, 1)
 local panel = laptop.connect(p, 4, 1, "access_point")
 assert(panel and panel.contact_locked, "the laptop meets the lock screen first")
 assert(panel.stores == nil and panel.program_slots == nil, "with no file or program slot behind it")
-assert(panel.link and #ui_controls.text(ui_controls.record(panel.link).address) == 17, "with the address a shift log will name")
+assert(
+    panel.link and #ui_controls.text(ui_controls.record(panel.link).address) == 17,
+    "with the address a shift log will name"
+)
 local lock = rows(panel, "link_lock")
 assert(#lock == 1 and not lock[1].on, "a lock row, shut, because a fresh boot finds them all shut")
 assert(#rows(panel, "link_join") == 0, "and a shut lock offers nothing to join")
@@ -223,10 +231,15 @@ assert(#t.ledger_rows("link_locked") == 1, "and the lock is on the record either
 assert(#rows(panel, "link_drop") == 0, "nothing has joined it")
 local candidates = rows(panel, "link_join")
 assert(#candidates == 1, "the room's own panel, and nothing else: " .. #candidates)
-assert(ui_controls.record(candidates[1].label).id == "link.candidate.hub", "offered as the hub it is")
+assert(
+    ui_controls.record(candidates[1].label).id == "link.candidate.hub",
+    "offered as the hub it is"
+)
 local parts = false
 for _, r in ipairs(ui_controls.rows(panel.readouts or {})) do
-    if (r.section and word(r.section) == "parts.parts") or word(r.label) == "parts.tier" then parts = true end
+    if (r.section and word(r.section) == "parts.parts") or word(r.label) == "parts.tier" then
+        parts = true
+    end
 end
 assert(parts, "and the parts it was built from ride beside them")
 assert(panel.media_slot == nil, "the box has no disk slot")
@@ -255,10 +268,11 @@ local _ = t.messages(p)
 work("access_point", 4.5)
 local during = t.messages(p)
 local said_during = table.concat(during, " | ")
-assert(among(during, "You start prying the access point apart."),
-    "the crowbar step ran: " .. said_during)
-assert(not among(during, NEEDS_LAPTOP),
-    "and the box asked for no laptop: " .. said_during)
+assert(
+    among(during, "You start prying the access point apart."),
+    "the crowbar step ran: " .. said_during
+)
+assert(not among(during, NEEDS_LAPTOP), "and the box asked for no laptop: " .. said_during)
 local left = t.structure_at(4, 1)
 assert(left ~= nil and left.id == "wall_frame", "a frame is what is left on the wall")
 assert(left.state == "empty", "standing in its first state, as anything a step leaves does")
@@ -272,7 +286,8 @@ assert(t.count_items("cable_coil") == coil_before + 1, "with the wiring as its o
 --    claim for it -- which is where a lock's key comes from and the
 --    only place it can (docs/DEVICES.md §8).
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "keyed bench",
     legend: {
         ' ': (turf: Space),
@@ -291,7 +306,9 @@ t.world([==[(
     items: [(5, 1, "id_engineering"), (5, 1, "laptop")],
     structures: [(5, 1, "player_spawn"), (4, 1, "access_point", { "access": "engineering", "mount": "north" })],
     cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
-)]==], 7)
+)]==],
+    7
+)
 
 local eng = t.join()
 t.run_ticks(10)
@@ -306,13 +323,24 @@ assert(not rows(panel, "link_lock")[1].on, "shut, as every lock is at boot")
 laptop.unlock(eng)
 t.tick()
 panel = laptop.ui(eng)
-assert(panel.contact_locked and not rows(panel, "link_lock")[1].on, "and it does not open without the claim")
+assert(
+    panel.contact_locked and not rows(panel, "link_lock")[1].on,
+    "and it does not open without the claim"
+)
 local denials = t.ledger_rows("link_denied")
 assert(#denials == 1 and denials[1].why == "access", "the refusal names the rule it broke")
 -- ...and the presser is told, in a modal over the lock screen, until OK.
-assert(panel.refusal and ui_controls.record(ui_controls.record(panel.refusal).text).id == "link.access_denied", "the refusal rides the presser's window")
+assert(
+    panel.refusal
+        and ui_controls.record(ui_controls.record(panel.refusal).text).id
+            == "link.access_denied",
+    "the refusal rides the presser's window"
+)
 local scope = t.ui_document(eng, "programming")
-assert(ui_controls.find(eng, "/refusal/ok", scope), "an Access denied dialog stands over the lock screen")
+assert(
+    ui_controls.find(eng, "/refusal/ok", scope),
+    "an Access denied dialog stands over the lock screen"
+)
 ui_controls.press(eng, "/refusal/ok", nil, scope)
 assert(ui_controls.find(eng, "/refusal/ok", scope) == nil, "OK puts it away")
 
@@ -324,7 +352,10 @@ assert(t.hands(eng).held == "laptop", "the card went into the other hand")
 laptop.unlock(eng)
 t.tick()
 panel = laptop.ui(eng)
-assert(not panel.contact_locked and rows(panel, "link_lock")[1].on, "the claim opens it, straight into the workspace")
+assert(
+    not panel.contact_locked and rows(panel, "link_lock")[1].on,
+    "the claim opens it, straight into the workspace"
+)
 assert(panel.refusal == nil, "and the press that landed retires the refusal")
 laptop.close(eng)
 

@@ -59,8 +59,10 @@ assert(t.hands(crewman).held == nil, "the active hand is the empty one now")
 
 t.equip(crewman)
 t.run_ticks(2)
-assert(t.worn(crewman).suit == "eva_suit",
-    "an empty active hand defers to the hand actually holding the suit")
+assert(
+    t.worn(crewman).suit == "eva_suit",
+    "an empty active hand defers to the hand actually holding the suit"
+)
 
 -- ---- and reaching for nothing says so ---------------------------------
 -- A gesture that does nothing in silence cannot be told from one the

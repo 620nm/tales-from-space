@@ -84,7 +84,8 @@ end
 -- lengths -- and one body of gas, because of the thing standing at
 -- (3, 1).
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "layer adapter",
     legend: {
         ' ': (turf: Space),
@@ -106,7 +107,9 @@ t.world([==[(
         (2, 1, 8), (2, 2, 8), (4, 1, 8), (4, 2, 8),
     ],
     structures: [(6, 2, "player_spawn"), (3, 1, "layer_adapter")],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -134,10 +137,7 @@ local expect = {
 }
 assert(#drawn == #expect, "four arms and a centre band, and nothing else: " .. #drawn)
 for i, name in ipairs(expect) do
-    assert(
-        drawn[i] == name,
-        "layer " .. i .. " is " .. tostring(drawn[i]) .. ", wanted " .. name
-    )
+    assert(drawn[i] == name, "layer " .. i .. " is " .. tostring(drawn[i]) .. ", wanted " .. name)
 end
 
 -- Nine lengths and four mouths -- two layers x two ends of the machine,
@@ -206,7 +206,8 @@ assert(
 --
 -- Same instrument, same two questions.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "color adapter",
     legend: {
         ' ': (turf: Space),
@@ -227,7 +228,9 @@ t.world([==[(
         (4, 1, 4, "#5491E8"), (5, 1, 4, "#5491E8"), (6, 1, 4, "#5491E8"),
     ],
     structures: [(6, 2, "player_spawn"), (3, 1, "color_adapter")],
-)]==], 7)
+)]==],
+    7
+)
 
 local c = t.join()
 t.tick()

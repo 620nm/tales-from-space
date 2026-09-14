@@ -27,7 +27,8 @@
 --
 -- Seed 0 pins the shuffle; nothing here asserts WHICH card, only that
 -- the deck's count and its picture follow the cards.
-t.world([==[(
+t.world(
+    [==[(
     name: "card room",
     legend: {
         ' ': (turf: Space),
@@ -42,7 +43,9 @@ t.world([==[(
     ],
     structures: [(1, 1, "player_spawn")],
     items: [(2, 1, "card_deck"), (3, 1, "card_deck")],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -83,11 +86,12 @@ t.tick()
 hands = t.hands(p)
 assert(hands.held == nil, "the card left the hand: " .. tostring(hands.held))
 assert(idle(hands) == "card_deck", "the deck did not")
-assert(t.item_at(1, 2, "card") == nil and t.item_at(1, 1, "card") == nil,
-    "and the card is nowhere on the floor either: it went into the deck")
+assert(
+    t.item_at(1, 2, "card") == nil and t.item_at(1, 1, "card") == nil,
+    "and the card is nowhere on the floor either: it went into the deck"
+)
 local said = table.concat(t.messages(p), "\n")
-assert(said:find("You slide the card into the deck.", 1, true),
-    "and the player was told: " .. said)
+assert(said:find("You slide the card into the deck.", 1, true), "and the player was told: " .. said)
 
 -- ---- deck onto card ---------------------------------------------------
 -- The same act, the hands the other way round -- tg's own second
@@ -117,8 +121,10 @@ assert(hands.held == "card_deck", "the deck stays in hand")
 assert(idle(hands) == nil, "the card is gone from the other hand: " .. tostring(idle(hands)))
 assert(t.item_at(1, 2, "card") == nil, "and it did not fall on the floor")
 said = table.concat(t.messages(p), "\n")
-assert(said:find("You slide the card into the deck.", 1, true),
-    "one act, one sentence, whichever hand held which: " .. said)
+assert(
+    said:find("You slide the card into the deck.", 1, true),
+    "one act, one sentence, whichever hand held which: " .. said
+)
 
 -- ---- and the deck's PICTURE follows ------------------------------------
 -- A deck in a hand has no tile to be repainted at; its only view is the
@@ -131,8 +137,10 @@ for _ = 1, 44 do
     t.tick()
 end
 assert(#t.items_at(2, 2) == 44, "forty-four cards dealt onto one tile")
-assert(t.hud(p)[t.hands(p).active] == "card_deck_low",
-    "ten left is a thin deck: " .. tostring(t.hud(p)[t.hands(p).active]))
+assert(
+    t.hud(p)[t.hands(p).active] == "card_deck_low",
+    "ten left is a thin deck: " .. tostring(t.hud(p)[t.hands(p).active])
+)
 
 t.swap_hands(p)
 t.tick()
@@ -143,8 +151,10 @@ t.tick()
 t.use_on_other(p)
 t.tick()
 assert(idle(t.hands(p)) == nil, "the eleventh card went back in")
-assert(t.hud(p)[t.hands(p).active] == "card_deck_half",
-    "and eleven is a half deck again: " .. tostring(t.hud(p)[t.hands(p).active]))
+assert(
+    t.hud(p)[t.hands(p).active] == "card_deck_half",
+    "and eleven is a half deck again: " .. tostring(t.hud(p)[t.hands(p).active])
+)
 
 -- ---- a full deck still refuses ----------------------------------------
 -- The refusal both handlers keep, reached from the deck's side: an

@@ -20,7 +20,8 @@
 -- of them, the face on the floor is the face that was named) so that a
 -- change to how many numbers the engine draws before these moves the
 -- ORDER without breaking the meaning.
-t.world([==[(
+t.world(
+    [==[(
     name: "rec room",
     legend: {
         ' ': (turf: Space),
@@ -35,7 +36,9 @@ t.world([==[(
     ],
     structures: [(1, 1, "player_spawn")],
     items: [(2, 1, "card_deck"), (3, 1, "card_deck")],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -50,18 +53,24 @@ assert(boxed ~= nil, "the deck is on the table")
 -- The swap itself happens in the client's own atlas
 -- (`Ent::repaint_from_var`), which is why `sprite` below stays the base
 -- the entity stream carries.
-assert(boxed.var == "lunatic/tfs:picture",
-    "the deck hangs its picture on the mod's own key: " .. tostring(boxed.var))
-local DECLARED: {[string]: boolean} = {}
+assert(
+    boxed.var == "lunatic/tfs:picture",
+    "the deck hangs its picture on the mod's own key: " .. tostring(boxed.var)
+)
+local DECLARED: { [string]: boolean } = {}
 local var_states = assert(boxed.var_states, "the deck declares its picture roster")
 for _, cell in ipairs(var_states) do
     DECLARED[cell] = true
 end
 assert(#var_states == 4, "four thicknesses are declared, got " .. #var_states)
-assert(boxed.var_state == nil,
-    "an unopened deck has had nothing written: " .. tostring(boxed.var_state))
-assert(boxed.sprite == "card_deck_full",
-    "so every viewer draws the base the wire sent: " .. tostring(boxed.sprite))
+assert(
+    boxed.var_state == nil,
+    "an unopened deck has had nothing written: " .. tostring(boxed.var_state)
+)
+assert(
+    boxed.sprite == "card_deck_full",
+    "so every viewer draws the base the wire sent: " .. tostring(boxed.sprite)
+)
 
 t.click(p, 2, 1, t.target_at(p, 2, 1, "card_deck"))
 t.tick()
@@ -76,10 +85,11 @@ t.tick()
 local first = assert(t.item_at(1, 2, "card"))
 assert(first ~= nil, "a card is on the tile that was clicked")
 assert(first.state ~= nil, "a dealt card has its hidden state")
-assert(first.state:sub(1, 5) == "down_",
-    "dealt face down, as tg deals: " .. tostring(first.state))
-assert(first.sprite == "card_back",
-    "and the picture is the back, not the face: " .. tostring(first.sprite))
+assert(first.state:sub(1, 5) == "down_", "dealt face down, as tg deals: " .. tostring(first.state))
+assert(
+    first.sprite == "card_back",
+    "and the picture is the back, not the face: " .. tostring(first.sprite)
+)
 
 -- THE SECRET. The state says which card it is and the wire must not.
 -- A card face down on the deck is the eight of clubs and the client is
@@ -90,16 +100,18 @@ assert(first.sprite == "card_back",
 -- offset around the type's anchor, so a hand dealt onto a tile reads
 -- as several cards rather than as one.
 assert(first.offset ~= nil, "a dealt card has a sub-tile position")
-assert(math.abs(first.offset.x + 5) <= 6 and math.abs(first.offset.y) <= 6,
-    "and it is scattered around the -5 anchor: "
-        .. first.offset.x .. "," .. first.offset.y)
+assert(
+    math.abs(first.offset.x + 5) <= 6 and math.abs(first.offset.y) <= 6,
+    "and it is scattered around the -5 anchor: " .. first.offset.x .. "," .. first.offset.y
+)
 
 local drawn = table.concat(t.layers(p, t.target_at(p, 1, 2, "card")), " ")
-assert(drawn:find("card_back", 1, true),
-    "the client was sent the back: " .. drawn)
+assert(drawn:find("card_back", 1, true), "the client was sent the back: " .. drawn)
 local secret = first.state:sub(6)
-assert(not drawn:find(secret, 1, true),
-    "and NOT the face it is hiding (" .. secret .. "): " .. drawn)
+assert(
+    not drawn:find(secret, 1, true),
+    "and NOT the face it is hiding (" .. secret .. "): " .. drawn
+)
 
 local said = table.concat(t.messages(p), "\n")
 assert(said:find("You deal a card.", 1, true), "the deal reads out: " .. said)
@@ -110,16 +122,23 @@ assert(table.concat(t.sounds(p), " "):find("card_flip", 1, true), "and is heard"
 -- complete sprite-body payload.
 local wrote = t.ledger_rows("VarSet")
 assert(#wrote >= 2, "the order and the picture beside it are two ledger rows")
-assert(wrote[#wrote - 1].key == "lunatic/tfs:order",
-    "naming the key: " .. tostring(wrote[#wrote - 1].key))
+assert(
+    wrote[#wrote - 1].key == "lunatic/tfs:order",
+    "naming the key: " .. tostring(wrote[#wrote - 1].key)
+)
 -- The picture is a script var too, so it is on the record exactly like
 -- the order is -- and it is a REPLICATED one, which is the whole
 -- difference: the row above stays on the server, this one is handed to
 -- everyone who can see the deck.
-assert(wrote[#wrote].key == "lunatic/tfs:picture",
-    "and the repaint rides the same ledger: " .. tostring(wrote[#wrote].key))
-assert(wrote[#wrote].value == "<string 14 bytes sha256=70e7e9b71d630ba138aacb67d2e77b308f98121e4ab51cafa3942200f534997f>",
-    "fifty-three left still looks full by its bounded value: " .. tostring(wrote[#wrote].value))
+assert(
+    wrote[#wrote].key == "lunatic/tfs:picture",
+    "and the repaint rides the same ledger: " .. tostring(wrote[#wrote].key)
+)
+assert(
+    wrote[#wrote].value
+        == "<string 14 bytes sha256=70e7e9b71d630ba138aacb67d2e77b308f98121e4ab51cafa3942200f534997f>",
+    "fifty-three left still looks full by its bounded value: " .. tostring(wrote[#wrote].value)
+)
 
 -- ---- turning it over --------------------------------------------------
 t.drop(p)
@@ -134,21 +153,22 @@ t.tick()
 -- immediately, and the panel is where they read it. This is a second
 -- code path from the world sprite below, and it used to show the
 -- prototype's picture -- a card back -- however the card was turned.
-assert(t.hud(p)[1] == "card_" .. secret,
-    "the hand shows the face that was turned up: " .. tostring(t.hud(p)[1]))
+assert(
+    t.hud(p)[1] == "card_" .. secret,
+    "the hand shows the face that was turned up: " .. tostring(t.hud(p)[1])
+)
 
 t.drop(p)
 t.tick()
 local faceup = t.item_at(1, 1, "card")
 assert(faceup ~= nil, "the card is at the reader's feet")
-assert(faceup.state == "up_" .. secret,
-    "it is now face up, and it is the same card it always was: "
-        .. tostring(faceup.state))
-assert(faceup.sprite == "card_" .. secret,
-    "wearing that face's cell: " .. tostring(faceup.sprite))
+assert(
+    faceup.state == "up_" .. secret,
+    "it is now face up, and it is the same card it always was: " .. tostring(faceup.state)
+)
+assert(faceup.sprite == "card_" .. secret, "wearing that face's cell: " .. tostring(faceup.sprite))
 local shown = table.concat(t.layers(p, t.target_at(p, 1, 1, "card")), " ")
-assert(shown:find("card_" .. secret, 1, true),
-    "and NOW the room can see it: " .. shown)
+assert(shown:find("card_" .. secret, 1, true), "and NOW the room can see it: " .. shown)
 
 -- ...and back over again, which is what needed `sim.state`: a thing
 -- that toggles has to ask what it is currently showing.
@@ -156,8 +176,10 @@ t.click(p, 1, 1, t.target_at(p, 1, 1, "card"))
 t.tick()
 t.use_self(p)
 t.tick()
-assert(t.hud(p)[1] == "card_back",
-    "and turning it back down shows a back again: " .. tostring(t.hud(p)[1]))
+assert(
+    t.hud(p)[1] == "card_back",
+    "and turning it back down shows a back again: " .. tostring(t.hud(p)[1])
+)
 t.drop(p)
 t.tick()
 local facedown = assert(t.item_at(1, 1, "card"))
@@ -176,11 +198,15 @@ assert(t.hands(p).held == "card", "the card is in hand again")
 t.click(p, 1, 1, t.target_at(p, 1, 1, "card_deck"))
 t.tick()
 assert(t.hands(p).held == nil, "the card left the hand")
-assert(t.item_at(1, 1, "card") == nil and t.item_at(1, 2, "card") == nil,
-    "and is not lying anywhere: it is in the deck")
+assert(
+    t.item_at(1, 1, "card") == nil and t.item_at(1, 2, "card") == nil,
+    "and is not lying anywhere: it is in the deck"
+)
 local back = assert(t.item_at(1, 1, "card_deck"))
-assert(back.var_state == "card_deck_full",
-    "a deck with all fifty-four back in it is drawn full again: " .. tostring(back.var_state))
+assert(
+    back.var_state == "card_deck_full",
+    "a deck with all fifty-four back in it is drawn full again: " .. tostring(back.var_state)
+)
 assert(DECLARED[back.var_state], "and it is one of the pictures the prototype declared")
 
 -- ---- deal the whole thing ---------------------------------------------
@@ -202,8 +228,10 @@ local FLIPS = { [28] = "card_deck_half", [44] = "card_deck_low" }
 for deal = 1, 54 do
     t.click_turf(p, 2, 2)
     t.tick()
-    assert(#t.items_at(2, 2) == deal,
-        "deal " .. deal .. " put a card on the pile, got " .. #t.items_at(2, 2))
+    assert(
+        #t.items_at(2, 2) == deal,
+        "deal " .. deal .. " put a card on the pile, got " .. #t.items_at(2, 2)
+    )
     local wanted = FLIPS[deal]
     if wanted ~= nil then
         -- Read it off the floor, where a viewer would see it: the var
@@ -213,13 +241,18 @@ for deal = 1, 54 do
         t.tick()
         local mid = assert(t.item_at(1, 1, "card_deck"))
         assert(mid ~= nil, "the deck is at the dealer's feet")
-        assert(mid.var_state == wanted,
-            "after " .. deal .. " deals the row names " .. wanted .. ": "
-                .. tostring(mid.var_state))
-        assert(DECLARED[assert(mid.var_state)],
-            "and it is a picture the prototype declared: " .. tostring(mid.var_state))
-        assert(mid.sprite == "card_deck_full",
-            "while the base the server sent never moved: " .. tostring(mid.sprite))
+        assert(
+            mid.var_state == wanted,
+            "after " .. deal .. " deals the row names " .. wanted .. ": " .. tostring(mid.var_state)
+        )
+        assert(
+            DECLARED[assert(mid.var_state)],
+            "and it is a picture the prototype declared: " .. tostring(mid.var_state)
+        )
+        assert(
+            mid.sprite == "card_deck_full",
+            "while the base the server sent never moved: " .. tostring(mid.sprite)
+        )
         t.click(p, 1, 1, t.target_at(p, 1, 1, "card_deck"))
         t.tick()
         assert(t.hands(p).held == "card_deck", "the deck is back in hand")
@@ -234,8 +267,10 @@ t.drop(p)
 t.tick()
 local emptied = t.item_at(1, 2, "card_deck")
 assert(emptied ~= nil, "the deck is at the dealer's feet")
-assert(emptied.var_state == "card_deck_empty",
-    "and it is drawn empty: " .. tostring(emptied.var_state))
+assert(
+    emptied.var_state == "card_deck_empty",
+    "and it is drawn empty: " .. tostring(emptied.var_state)
+)
 assert(DECLARED[emptied.var_state], "which is a picture the prototype declared")
 t.move(p, "north")
 t.run_ticks(5)
@@ -269,9 +304,15 @@ assert(#names == 54, "fifty-four cards, all told: " .. #names)
 -- four aces are in a standard deck and nowhere else in it
 -- (`initialize_cards`, deck.dm:44-53).
 for _, must in ipairs({
-    "Joker Clown", "Joker Mime",
-    "Ace of Hearts", "Ace of Spades", "Ace of Clubs", "Ace of Diamonds",
-    "King of Spades", "2 of Diamonds", "10 of Hearts",
+    "Joker Clown",
+    "Joker Mime",
+    "Ace of Hearts",
+    "Ace of Spades",
+    "Ace of Clubs",
+    "Ace of Diamonds",
+    "King of Spades",
+    "2 of Diamonds",
+    "10 of Hearts",
 }) do
     assert(seen[must], "a standard deck contains the " .. must)
 end
@@ -334,11 +375,9 @@ t.tick()
 assert(t.hands(p).held == "card", "and one more card is in hand")
 t.click(p, 2, 1, t.target_at(p, 2, 1, "card_deck"))
 t.tick()
-assert(t.hands(p).held == "card",
-    "a deck already holding fifty-four refuses the next one")
+assert(t.hands(p).held == "card", "a deck already holding fifty-four refuses the next one")
 refused = table.concat(t.messages(p), "\n")
-assert(refused:find("The deck is already full.", 1, true),
-    "rather than eating it: " .. refused)
+assert(refused:find("The deck is already full.", 1, true), "rather than eating it: " .. refused)
 t.drop(p)
 t.tick()
 
@@ -386,5 +425,7 @@ assert(told:find("The deck is empty.", 1, true), "and says so: " .. told)
 t.use_self(p)
 t.tick()
 told = table.concat(t.messages(p), "\n")
-assert(told:find("There is nothing left in the deck to shuffle.", 1, true),
-    "an empty deck cannot be shuffled back into existence: " .. told)
+assert(
+    told:find("There is nothing left in the deck to shuffle.", 1, true),
+    "an empty deck cannot be shuffled back into existence: " .. told
+)

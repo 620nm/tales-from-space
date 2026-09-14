@@ -36,7 +36,8 @@
 -- it at all.
 local ui_controls = require("@helpers/ui_controls")
 
-t.world([==[(
+t.world(
+    [==[(
     name: "ports and lamps",
     legend: {
         ' ': (turf: Space),
@@ -61,7 +62,9 @@ t.world([==[(
         (8, 2, 4),
     ],
     labels: [(4, 1, "Engineering")],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -90,8 +93,7 @@ assert(bare.feeder == nil, "and no panel to name")
 -- ---------------------------------------------------------------
 local stub = assert(t.outlet_at(8, 2))
 assert(stub.l3 == "inactive", "blue cable on a run with no supply: " .. stub.l3)
-assert(stub.l1 == "disconnected" and stub.l2 == "disconnected",
-    "and nothing else under it")
+assert(stub.l1 == "disconnected" and stub.l2 == "disconnected", "and nothing else under it")
 assert(stub.feed == nil, "an unsupplied layer is not something to bind to")
 
 -- ---------------------------------------------------------------

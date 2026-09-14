@@ -13,42 +13,79 @@ if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:photocopier_reason", { replicate = "server" })
     local function resource(machine: Handle, id: string): number
         for _, row in ipairs(sim.resources.read(machine)) do
-            if row.id == id then return row.current end
+            if row.id == id then
+                return row.current
+            end
         end
         return 0
     end
     local function preview(machine: Handle)
         local source = machine:item_slot("media")
-        if source == nil then return {} end
+        if source == nil then
+            return {}
+        end
         local ok, document = pcall(sim.documents.read, source, 0)
-        if not ok or document == nil then return {} end
+        if not ok or document == nil then
+            return {}
+        end
         return writing.fragments(document)
     end
     local function view(machine: Handle)
         return {
-            kind = "copier", name = machine.name, powered = sim.is_powered(machine),
-            original = preview(machine), count = machine.vars.photocopier_count or 1,
+            kind = "copier",
+            name = machine.name,
+            powered = sim.is_powered(machine),
+            original = preview(machine),
+            count = machine.vars.photocopier_count or 1,
             mode = machine.vars.photocopier_color or "bw",
             busy = sim.documents.status(machine) ~= nil,
-            paper = resource(machine, "paper"), toner = resource(machine, "toner"),
+            paper = resource(machine, "paper"),
+            toner = resource(machine, "toner"),
             failed = machine.vars.photocopier_failed == true,
             reason = machine.vars.photocopier_reason,
         }
     end
     local function open(machine: Handle, viewer: Handle)
-        ui.open({ viewer = viewer, owner = machine, channel = "copier", view = view(machine), actions = {
-            set_count = 8, set_color = 8, copy = 16, eject = 8,
-        }, presentation_key = "writing/copier" })
+        ui.open({
+            viewer = viewer,
+            owner = machine,
+            channel = "copier",
+            view = view(machine),
+            actions = {
+                set_count = 8,
+                set_color = 8,
+                copy = 16,
+                eject = 8,
+            },
+            presentation_key = "writing/copier",
+        })
     end
     local function update(machine: Handle, viewer: Handle)
-        ui.update({ viewer = viewer, owner = machine, channel = "copier", view = view(machine), actions = {
-            set_count = 8, set_color = 8, copy = 16, eject = 8,
-        } })
+        ui.update({
+            viewer = viewer,
+            owner = machine,
+            channel = "copier",
+            view = view(machine),
+            actions = {
+                set_count = 8,
+                set_color = 8,
+                copy = 16,
+                eject = 8,
+            },
+        })
     end
     local function update_all(machine: Handle)
-        ui.update_all({ owner = machine, channel = "copier", view = view(machine), actions = {
-            set_count = 8, set_color = 8, copy = 16, eject = 8,
-        } })
+        ui.update_all({
+            owner = machine,
+            channel = "copier",
+            view = view(machine),
+            actions = {
+                set_count = 8,
+                set_color = 8,
+                copy = 16,
+                eject = 8,
+            },
+        })
     end
     local function refresh_after_admission(machine: Handle)
         -- Admission reserves stock and marks the endpoint busy in the native
@@ -64,7 +101,14 @@ if sim ~= nil then
     behavior:handle("interaction.use", { kind = "replace", route = "interact" }, function(ev)
         local target = ev.claim and ev.claim.entity
         local held = ev.implement
-        if held == nil and (target == nil or target == ev.subject or (target ~= nil and target.prototype == content.id)) then
+        if
+            held == nil
+            and (
+                target == nil
+                or target == ev.subject
+                or (target ~= nil and target.prototype == content.id)
+            )
+        then
             open(ev.subject, ev.actor)
             return true
         end
@@ -78,7 +122,9 @@ if sim ~= nil then
             update(ev.subject, ev.actor)
             return true
         end
-        if held == nil or held.prototype ~= "paper" then return { replaced = false } end
+        if held == nil or held.prototype ~= "paper" then
+            return { replaced = false }
+        end
         sim.item_slot.insert({ subject = ev.subject, item = held, slot = "media" })
         open(ev.subject, ev.actor)
         refresh_after_admission(ev.subject)
@@ -97,7 +143,9 @@ if sim ~= nil then
         end
         if ev.action == "set_color" then
             local mode = ev.value
-            if mode == "bw" or mode == "color" then machine.vars.photocopier_color = mode end
+            if mode == "bw" or mode == "color" then
+                machine.vars.photocopier_color = mode
+            end
             update(machine, ev.actor)
             return true
         end
@@ -117,17 +165,28 @@ if sim ~= nil then
                 return true
             end
             local count = machine.vars.photocopier_count or 1
-            if type(count) ~= "number" or count % 1 ~= 0
-                or count < 1 or count > printing.max_copies then return true end
+            if
+                type(count) ~= "number"
+                or count % 1 ~= 0
+                or count < 1
+                or count > printing.max_copies
+            then
+                return true
+            end
             machine.vars.photocopier_failed = nil
             machine.vars.photocopier_reason = nil
-            local document_source: DocumentFileSource = { store = source, uid = 0, expected_revision = snapshot.revision }
-            local color: DocumentColor = if machine.vars.photocopier_color == "color" then "preserve" else "monochrome"
+            local document_source: DocumentFileSource =
+                { store = source, uid = 0, expected_revision = snapshot.revision }
+            local color: DocumentColor = if machine.vars.photocopier_color == "color"
+                then "preserve"
+                else "monochrome"
             local accepted = pcall(function()
                 sim.documents.start({
                     machine = machine,
                     source = document_source,
-                    output = "paper", ext = "md", stem = "paper1",
+                    output = "paper",
+                    ext = "md",
+                    stem = "paper1",
                     duration_ticks = printing.copy_ticks,
                     count = count,
                     eject_input = false,
@@ -140,7 +199,9 @@ if sim ~= nil then
                 machine.vars.photocopier_reason = "admission_failed"
             end
             update(machine, ev.actor)
-            if accepted then refresh_after_admission(machine) end
+            if accepted then
+                refresh_after_admission(machine)
+            end
             return true
         end
         if ev.action == "eject" then
@@ -154,7 +215,9 @@ if sim ~= nil then
     -- Native jobs publish one private completion for every batch. Refreshing
     -- from that fact keeps the UI honest through partial late failures.
     sim.handle("documents.operation.done", { kind = "react" }, function(ev)
-        if ev.self.prototype ~= content.id then return end
+        if ev.self.prototype ~= content.id then
+            return
+        end
         if ev.outcome == "completed" then
             ev.self.vars.photocopier_failed = nil
             ev.self.vars.photocopier_reason = nil
@@ -168,7 +231,9 @@ if sim ~= nil then
     -- Slot and stock commands commit after the interaction handler returns.
     -- These global edges refresh every open panel from committed native state.
     local function refresh_machine(machine)
-        if machine == nil or machine.prototype ~= content.id then return end
+        if machine == nil or machine.prototype ~= content.id then
+            return
+        end
         update_all(machine)
     end
     sim.handle("item_slot.changed.done", { kind = "react" }, function(ev)

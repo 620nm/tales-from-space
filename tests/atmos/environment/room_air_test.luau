@@ -71,7 +71,12 @@ local a, b = total(1, 1), total(2, 1)
 near(a, b, 1e-6, "two tiles of one recipe hold the same air")
 near(a, cold, 0.01, "and it is the quantity the recipe named")
 near(assert(t.room_temperature(1, 1)), COLD_K, 0.01, "the walk-in opens cold")
-near(assert(t.room_pressure(1, 1)), 101.325, 0.05, "at one atmosphere, because that is what those moles are")
+near(
+    assert(t.room_pressure(1, 1)),
+    101.325,
+    0.05,
+    "at one atmosphere, because that is what those moles are"
+)
 
 -- The tiles nobody painted opened on standard air, at room temperature
 -- -- so "ordinary air, but cold" cost the map a temperature and nothing
@@ -83,7 +88,10 @@ near(assert(t.room_temperature(4, 1)), T20C, 0.5, "at room temperature")
 -- beside it flows in, which is exactly what a hole in the hull would
 -- not let it do.
 near(total(3, 1), 0.0, 1e-6, "a recipe with no gases holds nothing")
-assert(assert(t.room_pressure(3, 1)) < 0.001, "and reads as vacuum: " .. assert(t.room_pressure(3, 1)))
+assert(
+    assert(t.room_pressure(3, 1)) < 0.001,
+    "and reads as vacuum: " .. assert(t.room_pressure(3, 1))
+)
 
 t.run_seconds(60)
 

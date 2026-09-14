@@ -83,7 +83,8 @@ end
 -- the station has says they are one net: same layer, both reaching, no
 -- paint on either. They are not, and the mole counts say so.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "heat exchange seam",
     legend: {
         ' ': (turf: Space),
@@ -99,7 +100,9 @@ t.world([==[(
     items: [(6, 1, "pipe_painter")],
     pipes: [(1, 1, 4), (2, 1, 4), (3, 1, 4), (4, 1, 4), (5, 1, 4)],
     pipe_kind: [(1, 1, 4, "he_pipe"), (2, 1, 4, "he_pipe"), (3, 1, 4, "he_pipe")],
-)]==], 7)
+)]==],
+    7
+)
 
 local p = t.join()
 t.tick()
@@ -159,7 +162,8 @@ assert(t.ledger_has("PipePainted"), "ordinary pipe still paints")
 -- Asked twice -- bolted down, then in the engineer's hands -- because a
 -- test that only ever sees the joined case is testing the flood.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "junction",
     legend: {
         ' ': (turf: Space),
@@ -176,7 +180,9 @@ t.world([==[(
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4)],
     pipe_kind: [(1, 1, 4, "he_pipe"), (2, 1, 4, "he_pipe")],
     structures: [(6, 2, "player_spawn"), (3, 1, "he_junction")],
-)]==], 7)
+)]==],
+    7
+)
 
 local j = t.join()
 t.tick()
@@ -228,7 +234,8 @@ assert(plain_side > he_side + 0.5, "and they are two bodies of gas again")
 -- with only one end bound welds nothing. Two mains touching a junction
 -- are still two mains, and the mole counts say so.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "junction on plain pipe",
     legend: {
         ' ': (turf: Space),
@@ -242,7 +249,9 @@ t.world([==[(
     ],
     pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4)],
     structures: [(6, 1, "player_spawn"), (3, 1, "he_junction")],
-)]==], 7)
+)]==],
+    7
+)
 
 t.join()
 t.tick()
@@ -279,7 +288,8 @@ assert(
 -- one of them.
 -- ---------------------------------------------------------------
 local L2 = 2
-t.world([==[(
+t.world(
+    [==[(
     name: "heat exchange room",
     legend: {
         ' ': (turf: Space),
@@ -294,12 +304,19 @@ t.world([==[(
     structures: [(2, 1, "player_spawn")],
     pipes: [(1, 1, 6), (2, 1, 6), (3, 1, 6)],
     pipe_kind: [(1, 1, 4, "he_pipe"), (2, 1, 4, "he_pipe"), (3, 1, 4, "he_pipe")],
-)]==], 7)
+)]==],
+    7
+)
 
 t.join()
 t.tick()
 
-near(assert(t.pipe_temperature(1, 1, DISTRO)), T20C, 0.5, "the exchange run opens at room temperature")
+near(
+    assert(t.pipe_temperature(1, 1, DISTRO)),
+    T20C,
+    0.5,
+    "the exchange run opens at room temperature"
+)
 near(assert(t.pipe_temperature(1, 1, L2)), T20C, 0.5, "and so does the ordinary one over it")
 near(assert(t.room_temperature(2, 1)), T20C, 0.5, "as does the air")
 
@@ -335,8 +352,11 @@ assert(
 -- matter world's audit (`sim/tests/conduction.rs`).
 assert(
     assert(t.pipe_energy(1, 1, DISTRO)) < pipe_0,
-    "the run is poorer by what it gave: " .. pipe_0 .. " J -> "
-        .. assert(t.pipe_energy(1, 1, DISTRO)) .. " J"
+    "the run is poorer by what it gave: "
+        .. pipe_0
+        .. " J -> "
+        .. assert(t.pipe_energy(1, 1, DISTRO))
+        .. " J"
 )
 
 -- ---- the deadband ----
@@ -366,8 +386,11 @@ t.run_seconds(120)
 local drift = math.abs(assert(t.pipe_temperature(1, 1, DISTRO)) - parked_pipe)
 assert(
     drift < shed_fast / 10.0,
-    "the run has all but stopped: " .. drift .. " K in 120 s against "
-        .. shed_fast .. " K in the first 30"
+    "the run has all but stopped: "
+        .. drift
+        .. " K in 120 s against "
+        .. shed_fast
+        .. " K in the first 30"
 )
 
 -- The run came down to the band's edge and stopped THERE: it is still
@@ -393,7 +416,8 @@ assert(
 -- Two identical hot runs, one inside and one outside, and only one of
 -- them has anywhere to put its heat.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "radiator",
     legend: {
         ' ': (turf: Space),
@@ -412,7 +436,9 @@ t.world([==[(
         (1, 1, 4, "he_pipe"), (2, 1, 4, "he_pipe"),
         (1, 3, 4, "he_pipe"), (2, 3, 4, "he_pipe"),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 t.join()
 t.tick()
@@ -435,16 +461,16 @@ assert(outside_1 < outside_0 - 20.0, "the exposed run sheds: " .. outside_1)
 assert(
     outside_1 < inside_1 - 5.0,
     "and sheds faster than the one indoors, which can only warm the air"
-        .. " it is under: " .. outside_1 .. " vs " .. inside_1
+        .. " it is under: "
+        .. outside_1
+        .. " vs "
+        .. inside_1
 )
 -- Space is a SINK, not a partner: it never warms, so an exposed run
 -- does not meet the void half way -- it goes all the way down to the
 -- band above TCMB and parks there. Nothing inside the hull can take a
 -- run below the air it is under, which is the difference.
-assert(
-    outside_1 < T20C,
-    "past room temperature already: " .. outside_1
-)
+assert(outside_1 < T20C, "past room temperature already: " .. outside_1)
 t.run_seconds(240)
 local floored = assert(t.pipe_temperature(1, 3, DISTRO))
 assert(floored < TCMB + 20.0, "it comes to rest just above TCMB: " .. floored)
@@ -461,7 +487,8 @@ near(assert(t.pipe_temperature(1, 3, DISTRO)), floored, 0.001, "and stays there"
 -- what it joins here, so one "Pipe" entry covers all three, and the
 -- plate tg lists last was already on the shelf.
 -- ---------------------------------------------------------------
-t.world([==[(
+t.world(
+    [==[(
     name: "heat exchange shelf",
     legend: {
         ' ': (turf: Space),
@@ -484,7 +511,9 @@ t.world([==[(
         (1, 1, 3), (2, 1, 3), (3, 1, 3),
         (1, 2, 3), (2, 2, 3), (3, 2, 3),
     ],
-)]==], 7)
+)]==],
+    7
+)
 
 local e = t.join()
 t.tick()

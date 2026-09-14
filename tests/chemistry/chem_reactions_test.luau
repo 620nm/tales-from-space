@@ -51,7 +51,8 @@ local function amount(handle, key: string)
     return contents[key] or 0
 end
 
-t.world([==[(
+t.world(
+    [==[(
     name: "chem bench",
     legend: {
         ' ': (turf: Space),
@@ -81,7 +82,9 @@ t.world([==[(
         (1, 2, 3), (2, 2, 3), (3, 2, 3),
         (1, 3, 3), (2, 3, 3), (3, 3, 3),
     ],
-)]==], 0)
+)]==],
+    0
+)
 
 local p = t.join()
 t.tick()
@@ -198,8 +201,12 @@ dial_to(PRESS)
 t.run_seconds(300)
 near(amount(a, "thermite"), 3.0 * RUST, 1e-5, "three of thermite for one of the oxide")
 near(amount(a, "iron_oxide"), 0.0, 1e-5, "which spent every mole of it")
-near(amount(a, "aluminium"), ALU - 0.25 - 2.0 * RUST, 1e-5,
-    "and the aluminium that had no partner is still there")
+near(
+    amount(a, "aluminium"),
+    ALU - 0.25 - 2.0 * RUST,
+    1e-5,
+    "and the aluminium that had no partner is still there"
+)
 
 eject()
 t.drop(p)
@@ -251,7 +258,10 @@ panel(heater, 3, 1)
 ui_controls.set(p, "temperature", 500)
 ui_controls.toggle(p, "power")
 t.run_seconds(120)
-assert(assert(t.holder_k(d)) > 480.0, "the chamber crossed the threshold: " .. tostring(t.holder_k(d)))
+assert(
+    assert(t.holder_k(d)) > 480.0,
+    "the chamber crossed the threshold: " .. tostring(t.holder_k(d))
+)
 near(amount(d, "ash"), 2.0 * LEG, 1e-6, "every mole of oil became a mole of ash")
 near(amount(d, "oil"), 0.0, 1e-6, "and there is none of it left")
 

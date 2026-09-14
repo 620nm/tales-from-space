@@ -1,7 +1,9 @@
 -- Open the organ cavity (tg operation_generic.dm:479-531): 10 brute.
 return {
-    id = "incise_organs", name = "incise the organs",
-    requires = { "skin_open" }, blocked = { "organs_cut" },
+    id = "incise_organs",
+    name = "incise the organs",
+    requires = { "skin_open" },
+    blocked = { "organs_cut" },
     sets = { "organs_cut" },
     damage = { brute = 10 }, -- operation_generic.dm:524
     time = 2.4,
