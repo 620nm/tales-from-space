@@ -119,6 +119,10 @@
         },
         {
           "kind": "structure",
+          "id": "lattice"
+        },
+        {
+          "kind": "structure",
           "id": "player_spawn",
           "section": "Map Markers",
           "category": "",
@@ -251,6 +255,10 @@
             {"when": {"paint": "public", "glass": true}, "layers": ["door_glass"]},
             {"when": {"paint": "public"}, "layers": ["door"]}
           ]
+        },
+        {
+          "kind": "structure",
+          "id": "lattice"
         },
         {
           "kind": "structure",

@@ -27,6 +27,10 @@ Keep the sprite names aligned with the runtime prototype and run
 `node tools/test-editor-previews.mjs`; the matrix checks defaults and explicit
 overrides across the shipped paints and variants.
 
+`lattice` is declared in both modes with no properties or previews: the
+bare entry admits it to each mode's placement and clone checks while the
+roster supplies its art (`content/structures/construction/lattice.luau`).
+
 ## Map markers
 
 `player_spawn` and `threat_spawn` are structures under the top-level
