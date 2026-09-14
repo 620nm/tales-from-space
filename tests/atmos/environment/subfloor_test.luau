@@ -310,9 +310,10 @@ assert(assert(t.pipe_pressure(1, 1)) > 90.0, "the port remains plumbed to its ne
 
 -- ---------------------------------------------------------------
 -- The open deck is a fact about the TILE, not about the letter its
--- turf is spelled with. A map may leave a panel open in a finished
--- floor and box the wiring in under bare plating (docs/MAPPING.md),
--- and every rule above follows the panel rather than the turf.
+-- turf is spelled with -- and a fact per CARRIER. A map may leave a
+-- panel open in a finished floor, box the wiring in under bare
+-- plating (docs/MAPPING.md), or hide one run and not the other;
+-- every rule above follows the claim rather than the turf.
 -- ---------------------------------------------------------------
 t.world(
     [==[(
@@ -320,19 +321,23 @@ t.world(
     legend: {
         ' ': (turf: Space),
         '.': (turf: Plating),
-        'o': (turf: Floor, subfloor: Some(Exposed)),
-        'c': (turf: Plating, subfloor: Some(Concealed)),
+        'o': (turf: Floor, subfloor: Some((cable: Exposed, pipe: Exposed))),
+        'c': (turf: Plating, subfloor: Some((cable: Concealed, pipe: Concealed))),
+        'p': (turf: Plating, subfloor: Some((pipe: Concealed))),
+        'w': (turf: Floor, subfloor: Some((cable: Exposed))),
         '#': (turf: Wall),
     },
     rows: [
         "#####",
-        "#.oc#",
+        "#poc#",
+        "#w..#",
         "#...#",
         "#####",
     ],
     structures: [(2, 2, "player_spawn")],
-    items: [(2, 2, "wirecutters")],
-    cables: [(2, 1, 1), (3, 1, 1)],
+    items: [(2, 2, "wirecutters"), (3, 2, "wrench"), (1, 3, "cable_coil"), (3, 3, "pipe")],
+    cables: [(2, 1, 1), (3, 1, 1), (1, 1, 1), (1, 2, 1)],
+    pipes: [(1, 1, 4)],
 )]==],
     7
 )
@@ -340,9 +345,20 @@ t.world(
 local e = t.join()
 t.tick()
 assert(t.turf(2, 1) == "floor", "the panel is a finished floor")
-assert(t.subfloor_exposed(2, 1), "and its deck is open anyway")
+assert(t.subfloor_exposed(2, 1, "cable"), "and its deck is open anyway")
+assert(t.subfloor_exposed(2, 1, "pipe"), "to both runs")
 assert(t.turf(3, 1) == "plating", "its neighbour is bare plating")
-assert(not t.subfloor_exposed(3, 1), "with its wiring boxed in")
+assert(not t.subfloor_exposed(3, 1, "cable"), "with its wiring boxed in")
+assert(not t.subfloor_exposed(3, 1, "pipe"), "and its plumbing too")
+
+-- The split claim: 'p' boxes in only the pipe under open plating,
+-- 'w' hides only the pipe under a finished floor.
+assert(t.turf(1, 1) == "plating", "the corner panel is bare plating")
+assert(t.subfloor_exposed(1, 1, "cable"), "open to cable")
+assert(not t.subfloor_exposed(1, 1, "pipe"), "but not to pipe")
+assert(t.turf(1, 2) == "floor", "the side tile is a finished floor")
+assert(t.subfloor_exposed(1, 2, "cable"), "with its cable claim open")
+assert(not t.subfloor_exposed(1, 2, "pipe"), "and its pipe claim shut")
 
 t.click(e, 2, 2, t.target_at(e, 2, 2, "wirecutters"))
 t.run_ticks(2)
@@ -364,3 +380,91 @@ t.click_subfloor(e, 2, 1, "cable", ROOM)
 t.run_seconds(1.5)
 assert(t.cable_at(2, 1) == 0, "the open panel gives its run up")
 assert(t.turf(2, 1) == "floor", "without becoming a different deck")
+
+-- A claim that hides only the pipe still parts for the cutters.
+t.click_subfloor(e, 1, 1, "cable", ROOM)
+t.run_seconds(1.5)
+assert(t.cable_at(1, 1) == 0, "the pipe-only cover gives its cable up")
+t.click_subfloor(e, 1, 2, "cable", ROOM)
+t.run_seconds(1.5)
+assert(t.cable_at(1, 2) == 0, "and so does the floor with its cable claim open")
+assert(t.turf(1, 2) == "floor", "which stays a finished floor")
+
+-- The wrench reads the OTHER claim. The boxed-in pipe under open
+-- plating is unselectable through the picture, and a ground click
+-- answers with silence.
+t.drop(e)
+t.run_ticks(2)
+t.click(e, 3, 2, t.target_at(e, 3, 2, "wrench"))
+t.run_ticks(2)
+assert(t.hands(e).held == "wrench", "wrench in hand")
+_ = t.messages(e)
+
+local plumbed, plumb_why = pcall(function()
+    t.click_subfloor(e, 1, 1, "pipe", DISTRO)
+end)
+assert(
+    not plumbed and string.find(tostring(plumb_why), "no visible hittable pixel", 1, true),
+    "the boxed-in pipe cannot be selected through the open plating"
+)
+t.click(e, 1, 1, nil, -14, 14)
+t.run_seconds(1.5)
+assert(t.pipe(1, 1) == DISTRO, "the pipe-only cover keeps its run")
+assert(not said(e, "unwrenching"), "and the wrench never started on it")
+
+-- Laying follows the same split: the length of pipe is refused by
+-- each split-claim tile, the coil works both. Pipe first, while no
+-- fresh cable pixel is there to take the click.
+t.drop(e)
+t.run_ticks(2)
+t.click(e, 3, 3, t.target_at(e, 3, 3, "pipe"))
+t.run_ticks(2)
+assert(t.hands(e).held == "pipe", "the length of pipe in hand")
+_ = t.messages(e)
+
+local function offers(id, x, y)
+    for _, action in ipairs(t.action_hints(e, { Turf = { x = x, y = y } })) do
+        if action.id == id then
+            return true
+        end
+    end
+    return false
+end
+
+assert(not offers("lay_pipe", 1, 1), "the pipe-only cover offers no pipe laying")
+t.click(e, 1, 1, nil, -14, 14)
+t.run_seconds(1.5)
+assert(t.pipe(1, 1) == DISTRO, "no length goes down beside the boxed-in run")
+assert(
+    not said(e, "The floor is in the way. Pry the tile up first."),
+    "the inapplicable pipe handler does not execute"
+)
+assert(not offers("lay_pipe", 1, 2), "the open cable claim offers no pipe laying")
+t.click(e, 1, 2, nil, -14, 14)
+t.run_seconds(1.5)
+assert(t.pipe(1, 2) == 0, "and no length goes down over the finished floor")
+assert(
+    not said(e, "The floor is in the way. Pry the tile up first."),
+    "the inapplicable pipe handler does not execute there either"
+)
+
+-- Control: the panel open to BOTH runs takes the length.
+assert(offers("lay_pipe", 2, 1), "the open panel still offers pipe laying")
+t.click(e, 2, 1, nil, -14, 14)
+t.run_seconds(1.5)
+assert(t.pipe(2, 1) == DISTRO, "and the length goes down")
+
+-- The length is spent, so the hand is free for the coil.
+t.click(e, 1, 3, t.target_at(e, 1, 3, "cable_coil"))
+t.run_ticks(2)
+assert(t.hands(e).held == "cable_coil", "coil in hand")
+_ = t.messages(e)
+
+assert(offers("lay_cable", 1, 1), "the pipe-only cover still offers cable laying")
+t.click(e, 1, 1, nil, -14, 14)
+t.run_seconds(1.5)
+assert(t.cable_at(1, 1) == 2, "and the line goes down on the coil's layer")
+assert(offers("lay_cable", 1, 2), "the open cable claim offers laying over a finished floor")
+t.click(e, 1, 2, nil, -14, 14)
+t.run_seconds(1.5)
+assert(t.cable_at(1, 2) == 2, "and cable goes down over the finished floor")
