@@ -33,9 +33,9 @@
             size: (15, 15),
             dmi: "effects/parallax.dmi",
             layers: [
-                ("layer1", Over, false),
-                ("layer2", Add, false),
-                ("layer3", Add, false),
+                (state: "layer1", blend: Over, takes_paint: false),
+                (state: "layer2", blend: Add, takes_paint: false),
+                (state: "layer3", blend: Add, takes_paint: false),
             ],
             dir: 0,
             paint: (255, 255, 255),

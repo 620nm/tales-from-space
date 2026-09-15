@@ -61,8 +61,8 @@
         ("stationary_tank_window", Tinted(DmiBlend(
             dmi: "@tank_misc",
             layers: [
-                ("window-bg", Over, true),
-                ("window-fg", Over, true),
+                (state: "window-bg", blend: Over, takes_paint: true),
+                (state: "window-fg", blend: Over, takes_paint: true),
             ],
             dir: 0,
             paint: (255, 255, 255),

@@ -34,28 +34,28 @@
         ("he_pipe_l2_5", Dmi("@he_simple", "pipe11-2", 6)),
         ("he_pipe_l2_6", Dmi("@he_simple", "pipe11-2", 4)),
         ("he_pipe_l2_7", DmiCellsAt([
-            ("@he_manifold", "manifold-2", 3, 0, 0),
-            ("@he_manifold", "manifold_center", 3, -5, 5),
+            (dmi: "@he_manifold", state: "manifold-2", dir: 3, dx: 0, dy: 0),
+            (dmi: "@he_manifold", state: "manifold_center", dir: 3, dx: -5, dy: 5),
         ])),
         ("he_pipe_l2_8", Dmi("@he_simple", "pipe01-2", 2)),
         ("he_pipe_l2_9", Dmi("@he_simple", "pipe11-2", 7)),
         ("he_pipe_l2_10", Dmi("@he_simple", "pipe11-2", 5)),
         ("he_pipe_l2_11", DmiCellsAt([
-            ("@he_manifold", "manifold-2", 2, 0, 0),
-            ("@he_manifold", "manifold_center", 2, -5, 5),
+            (dmi: "@he_manifold", state: "manifold-2", dir: 2, dx: 0, dy: 0),
+            (dmi: "@he_manifold", state: "manifold_center", dir: 2, dx: -5, dy: 5),
         ])),
         ("he_pipe_l2_12", Dmi("@he_simple", "pipe11-2", 2)),
         ("he_pipe_l2_13", DmiCellsAt([
-            ("@he_manifold", "manifold-2", 0, 0, 0),
-            ("@he_manifold", "manifold_center", 0, -5, 5),
+            (dmi: "@he_manifold", state: "manifold-2", dir: 0, dx: 0, dy: 0),
+            (dmi: "@he_manifold", state: "manifold_center", dir: 0, dx: -5, dy: 5),
         ])),
         ("he_pipe_l2_14", DmiCellsAt([
-            ("@he_manifold", "manifold-2", 1, 0, 0),
-            ("@he_manifold", "manifold_center", 1, -5, 5),
+            (dmi: "@he_manifold", state: "manifold-2", dir: 1, dx: 0, dy: 0),
+            (dmi: "@he_manifold", state: "manifold_center", dir: 1, dx: -5, dy: 5),
         ])),
         ("he_pipe_l2_15", DmiCellsAt([
-            ("@he_manifold", "manifold4w-2", 0, 0, 0),
-            ("@he_manifold", "manifold4w_center", 0, -5, 5),
+            (dmi: "@he_manifold", state: "manifold4w-2", dir: 0, dx: 0, dy: 0),
+            (dmi: "@he_manifold", state: "manifold4w_center", dir: 0, dx: -5, dy: 5),
         ])),
 
         // Piping layer 3. tg ships the run and the arms pre-shifted per
@@ -68,28 +68,28 @@
         ("he_pipe_l3_5", Dmi("@he_simple", "pipe11-3", 6)),
         ("he_pipe_l3_6", Dmi("@he_simple", "pipe11-3", 4)),
         ("he_pipe_l3_7", DmiCellsAt([
-            ("@he_manifold", "manifold-3", 3, 0, 0),
-            ("@he_manifold", "manifold_center", 3, 0, 0),
+            (dmi: "@he_manifold", state: "manifold-3", dir: 3, dx: 0, dy: 0),
+            (dmi: "@he_manifold", state: "manifold_center", dir: 3, dx: 0, dy: 0),
         ])),
         ("he_pipe_l3_8", Dmi("@he_simple", "pipe01-3", 2)),
         ("he_pipe_l3_9", Dmi("@he_simple", "pipe11-3", 7)),
         ("he_pipe_l3_10", Dmi("@he_simple", "pipe11-3", 5)),
         ("he_pipe_l3_11", DmiCellsAt([
-            ("@he_manifold", "manifold-3", 2, 0, 0),
-            ("@he_manifold", "manifold_center", 2, 0, 0),
+            (dmi: "@he_manifold", state: "manifold-3", dir: 2, dx: 0, dy: 0),
+            (dmi: "@he_manifold", state: "manifold_center", dir: 2, dx: 0, dy: 0),
         ])),
         ("he_pipe_l3_12", Dmi("@he_simple", "pipe11-3", 2)),
         ("he_pipe_l3_13", DmiCellsAt([
-            ("@he_manifold", "manifold-3", 0, 0, 0),
-            ("@he_manifold", "manifold_center", 0, 0, 0),
+            (dmi: "@he_manifold", state: "manifold-3", dir: 0, dx: 0, dy: 0),
+            (dmi: "@he_manifold", state: "manifold_center", dir: 0, dx: 0, dy: 0),
         ])),
         ("he_pipe_l3_14", DmiCellsAt([
-            ("@he_manifold", "manifold-3", 1, 0, 0),
-            ("@he_manifold", "manifold_center", 1, 0, 0),
+            (dmi: "@he_manifold", state: "manifold-3", dir: 1, dx: 0, dy: 0),
+            (dmi: "@he_manifold", state: "manifold_center", dir: 1, dx: 0, dy: 0),
         ])),
         ("he_pipe_l3_15", DmiCellsAt([
-            ("@he_manifold", "manifold4w-3", 0, 0, 0),
-            ("@he_manifold", "manifold4w_center", 0, 0, 0),
+            (dmi: "@he_manifold", state: "manifold4w-3", dir: 0, dx: 0, dy: 0),
+            (dmi: "@he_manifold", state: "manifold4w_center", dir: 0, dx: 0, dy: 0),
         ])),
 
         // Piping layer 4. tg ships the run and the arms pre-shifted per
@@ -102,28 +102,28 @@
         ("he_pipe_l4_5", Dmi("@he_simple", "pipe11-4", 6)),
         ("he_pipe_l4_6", Dmi("@he_simple", "pipe11-4", 4)),
         ("he_pipe_l4_7", DmiCellsAt([
-            ("@he_manifold", "manifold-4", 3, 0, 0),
-            ("@he_manifold", "manifold_center", 3, 5, -5),
+            (dmi: "@he_manifold", state: "manifold-4", dir: 3, dx: 0, dy: 0),
+            (dmi: "@he_manifold", state: "manifold_center", dir: 3, dx: 5, dy: -5),
         ])),
         ("he_pipe_l4_8", Dmi("@he_simple", "pipe01-4", 2)),
         ("he_pipe_l4_9", Dmi("@he_simple", "pipe11-4", 7)),
         ("he_pipe_l4_10", Dmi("@he_simple", "pipe11-4", 5)),
         ("he_pipe_l4_11", DmiCellsAt([
-            ("@he_manifold", "manifold-4", 2, 0, 0),
-            ("@he_manifold", "manifold_center", 2, 5, -5),
+            (dmi: "@he_manifold", state: "manifold-4", dir: 2, dx: 0, dy: 0),
+            (dmi: "@he_manifold", state: "manifold_center", dir: 2, dx: 5, dy: -5),
         ])),
         ("he_pipe_l4_12", Dmi("@he_simple", "pipe11-4", 2)),
         ("he_pipe_l4_13", DmiCellsAt([
-            ("@he_manifold", "manifold-4", 0, 0, 0),
-            ("@he_manifold", "manifold_center", 0, 5, -5),
+            (dmi: "@he_manifold", state: "manifold-4", dir: 0, dx: 0, dy: 0),
+            (dmi: "@he_manifold", state: "manifold_center", dir: 0, dx: 5, dy: -5),
         ])),
         ("he_pipe_l4_14", DmiCellsAt([
-            ("@he_manifold", "manifold-4", 1, 0, 0),
-            ("@he_manifold", "manifold_center", 1, 5, -5),
+            (dmi: "@he_manifold", state: "manifold-4", dir: 1, dx: 0, dy: 0),
+            (dmi: "@he_manifold", state: "manifold_center", dir: 1, dx: 5, dy: -5),
         ])),
         ("he_pipe_l4_15", DmiCellsAt([
-            ("@he_manifold", "manifold4w-4", 0, 0, 0),
-            ("@he_manifold", "manifold4w_center", 0, 5, -5),
+            (dmi: "@he_manifold", state: "manifold4w-4", dir: 0, dx: 0, dy: 0),
+            (dmi: "@he_manifold", state: "manifold4w_center", dir: 0, dx: 5, dy: -5),
         ])),
         // The junction, which is a length of pipe with an attribute: one
         // end takes ordinary pipe and the other takes this family
