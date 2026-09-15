@@ -229,10 +229,10 @@
         ("canister", Tinted(DmiBlend(
             dmi: "@canisters",
             layers: [
-                ("base", Over, true),
-                ("add_shader", Add, false),
-                ("multi_shader", Multiply, false),
-                ("outline", Over, true),
+                (state: "base", blend: Over, takes_paint: true),
+                (state: "add_shader", blend: Add, takes_paint: false),
+                (state: "multi_shader", blend: Multiply, takes_paint: false),
+                (state: "outline", blend: Over, takes_paint: true),
             ],
             dir: 0,
             paint: (255, 255, 255),
@@ -250,11 +250,11 @@
         ("canister_connected", Tinted(DmiBlend(
             dmi: "@canisters",
             layers: [
-                ("base", Over, true),
-                ("add_shader", Add, false),
-                ("multi_shader", Multiply, false),
-                ("outline", Over, true),
-                ("can-connector", Over, false),
+                (state: "base", blend: Over, takes_paint: true),
+                (state: "add_shader", blend: Add, takes_paint: false),
+                (state: "multi_shader", blend: Multiply, takes_paint: false),
+                (state: "outline", blend: Over, takes_paint: true),
+                (state: "can-connector", blend: Over, takes_paint: false),
             ],
             dir: 0,
             paint: (255, 255, 255),
@@ -274,11 +274,11 @@
         ("canister_broken", Tinted(DmiBlend(
             dmi: "@canisters",
             layers: [
-                ("base", Over, true),
-                ("add_shader", Add, false),
-                ("multi_shader", Multiply, false),
-                ("outline", Over, true),
-                ("broken", Over, false),
+                (state: "base", blend: Over, takes_paint: true),
+                (state: "add_shader", blend: Add, takes_paint: false),
+                (state: "multi_shader", blend: Multiply, takes_paint: false),
+                (state: "outline", blend: Over, takes_paint: true),
+                (state: "broken", blend: Over, takes_paint: false),
             ],
             dir: 0,
             paint: (255, 255, 255),

@@ -51,13 +51,13 @@
         // rather than tg's screwdriver-then-crowbar pair.
         ("thermo_off", DmiBlend(
             dmi: "@thermomachine",
-            layers: [("temp_meter", Over, true), ("thermo_base", Over, false)],
+            layers: [(state: "temp_meter", blend: Over, takes_paint: true), (state: "thermo_base", blend: Over, takes_paint: false)],
             dir: 0,
             paint: (0, 255, 0),
         )),
         ("thermo_on", DmiBlend(
             dmi: "@thermomachine",
-            layers: [("temp_meter_1", Over, true), ("thermo_base_1", Over, false)],
+            layers: [(state: "temp_meter_1", blend: Over, takes_paint: true), (state: "thermo_base_1", blend: Over, takes_paint: false)],
             dir: 0,
             paint: (0, 255, 0),
         )),

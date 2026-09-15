@@ -374,7 +374,7 @@
         // one quad cannot carry two colours; COLOR_TOOL_RED is tg's.
         ("screwdriver", DmiBlend(
             dmi: "@tools",
-            layers: [("screwdriver", Over, true), ("screwdriver_screwybits", Over, false)],
+            layers: [(state: "screwdriver", blend: Over, takes_paint: true), (state: "screwdriver_screwybits", blend: Over, takes_paint: false)],
             dir: 0,
             paint: (149, 23, 16),
         )),
@@ -466,7 +466,7 @@
         // (wirecutters.json). tg colours these COLOR_RED.
         ("wirecutters", DmiBlend(
             dmi: "@tools",
-            layers: [("cutters", Over, true), ("cutters_cutty_thingy", Over, false)],
+            layers: [(state: "cutters", blend: Over, takes_paint: true), (state: "cutters_cutty_thingy", blend: Over, takes_paint: false)],
             dir: 0,
             paint: (255, 0, 0),
         )),
