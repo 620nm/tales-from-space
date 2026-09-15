@@ -15,3 +15,6 @@ ui/fixtures/baselines/*.diff.png
 ui/staff/fixtures/out/
 ui/staff/fixtures/baselines/*.new.png
 ui/staff/fixtures/baselines/*.diff.png
+
+# Local Trufflepig state
+.trufflepig/
