@@ -1,5 +1,8 @@
 return {
     id = "uniform_sec",
+    visual_layer = "entities",
+    held_visual_layer = "held",
+    worn_visual_layer = "equipment_uniform",
     name_label = "lunatic/tfs:entity.uniform_sec.name",
     name = "security jumpsuit",
     sprite = "uniform_sec",

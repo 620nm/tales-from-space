@@ -64,7 +64,7 @@ local content = {
     -- floor the engine refuses under — the quantity a room that has
     -- gone quiet may have swept off it (lunatic docs/MATTER-WORLD.md §3
     -- step 8).
-    visible = { moles = 0.15, factor = 20, tint = "#C4D64A" },
+    visible = { moles = 0.15, factor = 20, tint = "#C4D64A", visual_layer = "gas_haze" },
     -- Through glass, the colour tg's reagent wears
     -- (tg: other_reagents.dm:1090).
     color = "#FFFB89",

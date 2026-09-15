@@ -13,7 +13,7 @@ Read `docs/LUAU-DIALECT.md` before writing Luau.
 - The two fixed-name entrypoints are both optional and load in order:
   `content/audiences.luau` declares named delivery rosters, then
   `content/main.luau` makes every other top-level declaration. Files such as
-  `capabilities.luau`, `part_tree.luau`, `palette.luau`, and `tuning.luau`
+  `capabilities.luau`, `part_tree.luau`, `compositions.luau`, and `tuning.luau`
   establish pack-wide policy; roster directories under `content/` declare the
   game's prototypes and handlers.
 - `content/lib/` contains shared Luau tables; see the rules below before adding

@@ -8,11 +8,11 @@ t.world(
     [==[(
     name: "pry",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        '+': (turf: Floor, fixture: Some(Door)),
-        'a': (turf: Floor, fixture: Some(Apc)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '+': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Door)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
     },
     rows: [
         "#####",
@@ -21,8 +21,10 @@ t.world(
     ],
     structures: [(1, 1, "player_spawn")],
     items: [(2, 1, "crowbar")],
-    cables: [
-        (1, 1, 1), (2, 1, 1), (3, 1, 1),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
     ],
 )]==],
     7

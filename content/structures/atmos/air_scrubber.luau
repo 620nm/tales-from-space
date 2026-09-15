@@ -51,6 +51,8 @@
 -- whole kit exists for survivable by accident.
 return {
     id = "air_scrubber",
+    visual_layer = "entities",
+    energy_network = "power",
     -- The one thing this machine says that is not mechanism: it
     -- repeats onto the network what the engine just decided about the
     -- air on its own tile (fixtures/air_scrubber.luau).
@@ -100,6 +102,7 @@ return {
         },
     },
     atmos = {
+        network = "pipe",
         device = "scrubber",
         -- LAYER 2, which is where tg puts scrubbers and very nearly
         -- only where: counted across every map file it ships,
@@ -109,7 +112,7 @@ return {
         -- main share a corridor without becoming one body of gas. A
         -- scrubber on the default layer would join the distro it is
         -- supposed to be the return half of.
-        layer = 2,
+        channel = "l2",
         -- Off, running, and the judged emergency. The third slot is
         -- what tg's `scrub_purge` is for -- and naming it on a
         -- placement means "whole air, no floor" from the first tick.
@@ -142,7 +145,8 @@ return {
         service = 1,
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "air_scrubber_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -151,6 +155,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             -- Only while it is off. tg's scrubber inherits the family
             -- `can_unwrench`, and a running one is drawing a room's air
             -- into a charged main -- not something to interrupt with a

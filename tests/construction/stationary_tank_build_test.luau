@@ -23,9 +23,9 @@ t.world(
     [==[(
     name: "fabrication bay",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "########",
@@ -43,7 +43,9 @@ t.world(
         (2, 2, "player_spawn"),
         (5, 2, "stationary_tank", "anchored", ("plasma", 2000.0)),
     ],
-    pipes: [(4, 2, 4)],
+    networks: [
+        (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
 )]==],
     7
 )

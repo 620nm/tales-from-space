@@ -1,3 +1,5 @@
+local composition = require("@helpers/composition")
+
 -- Free gas, moving by itself. No pipe anywhere on any map below, no
 -- machine, no vent, nobody switching anything on: just rooms, the walls
 -- between them, and what the air does about it.
@@ -82,10 +84,10 @@ t.world(
     [==[(
     name: "doorway",
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'g': (turf: Floor, fixture: Some(Generator)),
-        'a': (turf: Floor, fixture: Some(Apc)),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
     },
     rows: [
         "########",
@@ -95,10 +97,39 @@ t.world(
         "########",
     ],
     structures: [(6, 3, "player_spawn")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
-        (1, 3, 3), (2, 3, 3), (4, 3, 3), (5, 3, 3), (6, 3, 3),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
 )]==],
     7
@@ -138,8 +169,8 @@ for _, room in ipairs({ WEST, GAP, EAST }) do
     end
 end
 assert(#EVERY == 16, "sixteen tiles of station, and " .. #EVERY .. " counted")
-assert(t.turf(3, 1) == "wall" and t.turf(3, 3) == "wall", "the dividing wall is a wall")
-assert(t.turf(3, 2) == "floor", "with one tile of floor through it")
+assert(composition.matches(3, 1, { "station_base", "wall" }) and composition.matches(3, 3, { "station_base", "wall" }), "the dividing wall is a wall")
+assert(composition.matches(3, 2, { "station_base", "floor_tiles" }), "with one tile of floor through it")
 
 local air_0 = sum_over(EVERY, total)
 near(assert(t.room_pressure(2, 2)), 101.325, 0.01, "the west room opens at one atmosphere")
@@ -203,10 +234,10 @@ t.world(
     [==[(
     name: "party wall",
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'g': (turf: Floor, fixture: Some(Generator)),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
         "#######",
@@ -215,9 +246,23 @@ t.world(
         "#######",
     ],
     structures: [(1, 1, "player_spawn")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (4, 1, 3), (5, 1, 3),
-        (1, 2, 3), (2, 2, 3), (4, 2, 3), (5, 2, 3),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
 )]==],
     7
@@ -286,11 +331,11 @@ t.world(
     [==[(
     name: "airlock between",
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'D': (turf: Floor, fixture: Some(Door)),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'g': (turf: Floor, fixture: Some(Generator)),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'D': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Door)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
         "#######",
@@ -298,8 +343,17 @@ t.world(
         "#######",
     ],
     structures: [(2, 1, "player_spawn")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
 )]==],
     7

@@ -22,8 +22,8 @@ local MAP = [==[(
     // of the older test while the real map contract grows new choices.
     environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "###",
@@ -38,8 +38,8 @@ local MAP = [==[(
 local UNRESTRICTED_MAP = [==[(
     name: "unrestricted",
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "###",
@@ -56,8 +56,8 @@ local ZERO_GRAVITY_MAP = [==[(
     name: "zero gravity",
     environment: (gravity_m_s2: Exact(0.0)),
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "###",
@@ -74,8 +74,8 @@ local MICROGRAVITY_FILTER_MAP = [==[(
         background: Exact(Some("space_backdrop")),
     ),
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "###",

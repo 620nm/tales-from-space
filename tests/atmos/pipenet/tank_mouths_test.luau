@@ -1,3 +1,6 @@
+local network_matter = require("@helpers/network_matter")
+local network_channels = require("@helpers/network_channels")
+
 -- Four mouths, four pipelines, one reservoir.
 --
 -- tg's tank is QUATERNARY (tank.dm:21): a port on every cardinal, and
@@ -33,7 +36,7 @@ end
 t.world(
     [==[(
     name: "four mouths",
-    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [
         "#########",
         "#.......#",
@@ -46,11 +49,17 @@ t.world(
     ],
     items: [(3, 3, "wrench")],
     structures: [(3, 3, "player_spawn"), (4, 4, "stationary_tank", "anchored", ("o2", 20000.0))],
-    pipes: [
-        (4, 3, 4), (4, 2, 4), (4, 1, 4),
-        (4, 5, 4), (4, 6, 4),
-        (5, 4, 4),
-        (3, 4, 4), (2, 4, 4), (1, 4, 4), (1, 5, 4),
+    networks: [
+        (x: 4, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 5, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 6, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 4, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 4, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 4, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 4, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 5, network: "pipe", channel: "l3", kind: "standard", facing: 15),
     ],
 )]==],
     7
@@ -75,9 +84,9 @@ local runs = {
     { x = 3, y = 4, volume = WEST_M3, side = "west" },
 }
 
-assert(t.pipe(4, 4) == 0, "no length runs under the machine itself")
+assert(network_channels.at(4, 4, "pipe") == "", "no length runs under the machine itself")
 for _, run in ipairs(runs) do
-    assert(assert(t.pipe_pressure(run.x, run.y)) ~= nil, run.side .. " is a real net")
+    assert(assert(network_matter.pressure(run.x, run.y)) ~= nil, run.side .. " is a real net")
 end
 
 -- FOUR NETS, not one. A net reports one energy from any tile in it
@@ -86,7 +95,7 @@ end
 -- thing they have in common -- there is no pipe path between them.
 local energies: { [string]: number } = {}
 for _, run in ipairs(runs) do
-    local joules = assert(t.pipe_energy(run.x, run.y))
+    local joules = assert(network_matter.energy(run.x, run.y))
     for other, seen in pairs(energies) do
         assert(
             math.abs(joules - seen) > 1.0,
@@ -108,7 +117,7 @@ end
 -- ---------------------------------------------------------------
 local start_moles = total(assert(t.tank_gas(4, 4)))
 for _, run in ipairs(runs) do
-    start_moles = start_moles + total(assert(t.pipe_gas(run.x, run.y)))
+    start_moles = start_moles + total(assert(network_matter.gas(run.x, run.y)))
 end
 t.run_ticks(10)
 
@@ -118,18 +127,18 @@ local pooled = total(assert(t.tank_gas(4, 4)))
 for _, run in ipairs(runs) do
     local x, y, volume, side = run.x, run.y, run.volume, run.side
     near(
-        total(assert(t.pipe_gas(x, y))) / volume,
+        total(assert(network_matter.gas(x, y))) / volume,
         density,
         density * 1e-9,
         side .. " sits at the vessel's own density"
     )
     near(
-        assert(t.pipe_pressure(x, y)),
+        assert(network_matter.pressure(x, y)),
         holder_kpa,
         holder_kpa * 1e-9,
         side .. " is at the vessel's own pressure"
     )
-    pooled = pooled + total(assert(t.pipe_gas(x, y)))
+    pooled = pooled + total(assert(network_matter.gas(x, y)))
 end
 near(
     pooled,
@@ -149,7 +158,7 @@ local blend = oxygen_fraction(assert(t.tank_gas(4, 4)))
 assert(blend > 0.9, "overwhelmingly the vessel's oxygen, by weight: " .. blend)
 for _, run in ipairs(runs) do
     near(
-        oxygen_fraction(assert(t.pipe_gas(run.x, run.y))),
+        oxygen_fraction(assert(network_matter.gas(run.x, run.y))),
         blend,
         1e-9,
         run.side .. " carries the vessel's mixture, not its own"
@@ -160,13 +169,13 @@ end
 -- the four-length west run outweighs the single length east exactly in
 -- proportion to the volume, and the shortest run holds the least.
 near(
-    total(assert(t.pipe_gas(3, 4))) / total(assert(t.pipe_gas(5, 4))),
+    total(assert(network_matter.gas(3, 4))) / total(assert(network_matter.gas(5, 4))),
     WEST_M3 / EAST_M3,
     1e-9,
     "west outweighs east exactly in proportion to volume"
 )
 assert(
-    total(assert(t.pipe_gas(5, 4))) < total(assert(t.pipe_gas(4, 5))),
+    total(assert(network_matter.gas(5, 4))) < total(assert(network_matter.gas(4, 5))),
     "and the single length east holds the least of the four"
 )
 
@@ -187,14 +196,14 @@ t.click(p, 3, 3, t.target_at(p, 3, 3, "wrench"))
 t.run_ticks(3)
 assert(t.hands(p).held == "wrench", "wrench in hand")
 
-local severed_kpa = assert(t.pipe_pressure(4, 2))
-t.click_subfloor(p, 4, 3, "pipe", 4)
+local severed_kpa = assert(network_matter.pressure(4, 2))
+t.click_network(p, 4, 3, assert(t.network_instance(4, 3, "pipe", "l3")))
 t.run_seconds(2)
-assert(t.pipe(4, 3) == 0, "the length in the north mouth came up")
-assert(t.pipe_pressure(4, 3) == nil, "and there is no net under that tile at all")
+assert(network_channels.at(4, 3, "pipe") == "", "the length in the north mouth came up")
+assert(network_matter.pressure(4, 3) == nil, "and there is no net under that tile at all")
 assert(t.count_items("pipe") > 0, "it is a length you could lay again")
 near(
-    assert(t.pipe_pressure(4, 2)),
+    assert(network_matter.pressure(4, 2)),
     severed_kpa,
     severed_kpa * 1e-9,
     "the remnant kept the pressure it had -- the pull divides by volume too"
@@ -206,12 +215,12 @@ local bound_kpa = assert(t.tank_pressure(4, 4))
 local bound_moles = total(assert(t.tank_gas(4, 4)))
 for _, run in ipairs({ runs[2], runs[3], runs[4] }) do
     near(
-        assert(t.pipe_pressure(run.x, run.y)),
+        assert(network_matter.pressure(run.x, run.y)),
         bound_kpa,
         bound_kpa * 1e-9,
         run.side .. " is still bolted to the vessel"
     )
-    bound_moles = bound_moles + total(assert(t.pipe_gas(run.x, run.y)))
+    bound_moles = bound_moles + total(assert(network_matter.gas(run.x, run.y)))
 end
 
 -- ---------------------------------------------------------------
@@ -224,27 +233,27 @@ end
 -- carries its own energy through the mouths; the severed remnant, one
 -- tile from the machine, sits exactly where it was left.
 --
--- (`t.heat_pipe` is precondition scaffolding, as ever -- never an
+-- (`network_matter.heat` is precondition scaffolding, as ever -- never an
 -- assertion, and gone the day a burn chamber exists.)
 -- ---------------------------------------------------------------
-local cold_k = assert(t.pipe_temperature(4, 2))
-local rest_k = assert(t.pipe_temperature(5, 4))
-local severed_moles = total(assert(t.pipe_gas(4, 2)))
-t.heat_pipe(5, 4, 2000000.0)
+local cold_k = assert(network_matter.temperature(4, 2))
+local rest_k = assert(network_matter.temperature(5, 4))
+local severed_moles = total(assert(network_matter.gas(4, 2)))
+network_matter.heat(5, 4, 2000000.0)
 t.run_seconds(5)
 
-local warmed_k = assert(t.pipe_temperature(5, 4))
+local warmed_k = assert(network_matter.temperature(5, 4))
 assert(warmed_k > rest_k + 3.0, "the east run took the heat: " .. warmed_k .. " K")
-near(assert(t.pipe_temperature(4, 5)), warmed_k, 1e-6, "south came with it, through the vessel")
-near(assert(t.pipe_temperature(3, 4)), warmed_k, 1e-6, "and west, which is two mouths away")
+near(assert(network_matter.temperature(4, 5)), warmed_k, 1e-6, "south came with it, through the vessel")
+near(assert(network_matter.temperature(3, 4)), warmed_k, 1e-6, "and west, which is two mouths away")
 near(
-    assert(t.pipe_temperature(4, 2)),
+    assert(network_matter.temperature(4, 2)),
     cold_k,
     1e-9,
     "while the severed run stayed exactly as cold as it was left"
 )
 near(
-    total(assert(t.pipe_gas(4, 2))),
+    total(assert(network_matter.gas(4, 2))),
     severed_moles,
     severed_moles * 1e-12,
     "with its mole book untouched -- nothing crosses a mouth that is not there"
@@ -256,24 +265,24 @@ local hot_kpa = assert(t.tank_pressure(4, 4))
 assert(hot_kpa > bound_kpa, "the bound family rose together: " .. hot_kpa .. " kPa")
 for _, run in ipairs({ runs[2], runs[3], runs[4] }) do
     near(
-        assert(t.pipe_pressure(run.x, run.y)),
+        assert(network_matter.pressure(run.x, run.y)),
         hot_kpa,
         hot_kpa * 1e-9,
         run.side .. " rose with the vessel"
     )
 end
 assert(
-    math.abs(assert(t.pipe_pressure(4, 2)) - hot_kpa) > 100.0,
-    "and the severed run did not: " .. assert(t.pipe_pressure(4, 2)) .. " vs " .. hot_kpa
+    math.abs(assert(network_matter.pressure(4, 2)) - hot_kpa) > 100.0,
+    "and the severed run did not: " .. assert(network_matter.pressure(4, 2)) .. " vs " .. hot_kpa
 )
 
 -- And the pool the three still share is the pool they shared before the
 -- heat, to the mole: what went through the mouths was joules.
 near(
     total(assert(t.tank_gas(4, 4)))
-        + total(assert(t.pipe_gas(4, 5)))
-        + total(assert(t.pipe_gas(5, 4)))
-        + total(assert(t.pipe_gas(3, 4))),
+        + total(assert(network_matter.gas(4, 5)))
+        + total(assert(network_matter.gas(5, 4)))
+        + total(assert(network_matter.gas(3, 4))),
     bound_moles,
     bound_moles * 1e-12,
     "the bound holders carry exactly what they were left with"

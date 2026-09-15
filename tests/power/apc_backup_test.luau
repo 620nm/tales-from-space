@@ -1,3 +1,5 @@
+local network_channels = require("@helpers/network_channels")
+
 -- A station down to its cells, and the two things it does about it.
 --
 -- An APC that has lost its mains runs the room off the cell in its own
@@ -46,12 +48,12 @@ t.world(
     [==[(
     name: "reserve",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'G': (turf: Plating, fixture: Some(Generator)),
-        'o': (turf: Plating, fixture: Some(Outlet)),
-        'l': (turf: Plating, fixture: Some(Light)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
+        'l': (composition: (components: [(component: "station_base")]), fixture: Some(Light)),
     },
     rows: [
         "############",
@@ -64,10 +66,21 @@ t.world(
         (4, 1, "apc", { "l1_emergency": true }),
     ],
     items: [(3, 2, "wirecutters"), (3, 2, "cable_coil")],
-    cables: [
-        (1, 1, 2), (2, 1, 2), (3, 1, 2), (4, 1, 2),
-        (4, 1, 1), (5, 1, 1), (6, 1, 1),
-        (4, 1, 4), (5, 1, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4), (9, 1, 4), (10, 1, 4),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
+        (x: 10, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
     ],
     labels: [(4, 1, "Engineering")],
 )]==],
@@ -86,12 +99,12 @@ t.run_ticks(40) -- and the device pass, which is what sews the fittings
 -- ---------------------------------------------------------------
 local both = assert(t.outlet_at(6, 1))
 assert(both ~= nil, "the port on the room circuit answers")
-assert(both.l1 == "nominal", "the room circuit is carrying: " .. both.l1)
-assert(both.l3 == "nominal", "so is the spare main: " .. both.l3)
-assert(both.feed == 1, "and it draws off the room circuit: " .. tostring(both.feed))
+assert(both.channels["l1"] == "nominal", "the room circuit is carrying: " .. both.channels["l1"])
+assert(both.channels["l3"] == "nominal", "so is the spare main: " .. both.channels["l3"])
+assert(both.feed == "l1", "and it draws off the room circuit: " .. tostring(both.feed))
 
 local blue = assert(t.outlet_at(10, 1))
-assert(blue.l3 == "nominal", "the far port is carrying too: " .. blue.l3)
+assert(blue.channels["l3"] == "nominal", "the far port is carrying too: " .. blue.channels["l3"])
 
 local near = assert(t.light_at(5, 2))
 local far = assert(t.light_at(10, 2))
@@ -109,9 +122,9 @@ local TUBE = near.color
 t.click(p, 3, 2, t.target_at(p, 3, 2, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
-t.click_subfloor(p, 3, 1, "cable", 2)
+t.click_network(p, 3, 1, assert(t.network_instance(3, 1, "power", "l2")))
 t.run_seconds(1.5)
-assert(t.cable_at(3, 1) == 0, "the backbone is parted")
+assert(network_channels.at(3, 1, "power") == "", "the backbone is parted")
 t.run_seconds(3)
 t.run_ticks(40)
 
@@ -119,12 +132,12 @@ assert(assert(t.apc_at(4, 1)).charging == "not_charging", "nothing is topping th
 assert(assert(t.apc_at(4, 1)).charge > 0.0, "and it still has a cell to run on")
 
 both = assert(t.outlet_at(6, 1))
-assert(both.l1 == "emergency", "the flagged layer is carrying off the reserve: " .. both.l1)
-assert(both.l3 == "starved", "the unflagged one has a source that stopped: " .. both.l3)
-assert(both.feed == 1, "so the port draws off the flagged layer alone")
+assert(both.channels["l1"] == "emergency", "the flagged layer is carrying off the reserve: " .. both.channels["l1"])
+assert(both.channels["l3"] == "starved", "the unflagged one has a source that stopped: " .. both.channels["l3"])
+assert(both.feed == "l1", "so the port draws off the flagged layer alone")
 
 blue = assert(t.outlet_at(10, 1))
-assert(blue.l3 == "starved", "the far port's only layer went with it: " .. blue.l3)
+assert(blue.channels["l3"] == "starved", "the far port's only layer went with it: " .. blue.channels["l3"])
 assert(not blue.powered, "so the far port is dead")
 
 -- ---------------------------------------------------------------
@@ -155,13 +168,13 @@ t.click(p, 3, 2, t.target_at(p, 3, 2, "cable_coil"))
 t.run_ticks(2)
 t.click(p, 3, 1)
 t.run_seconds(1.5)
-assert(t.cable_at(3, 1) == 2, "the backbone is whole again")
+assert(network_channels.at(3, 1, "power") == "l2", "the backbone is whole again")
 t.run_seconds(3)
 t.run_ticks(40)
 
 both = assert(t.outlet_at(6, 1))
-assert(both.l1 == "nominal", "the room circuit is off the mains again: " .. both.l1)
-assert(both.l3 == "nominal", "and so is the spare main: " .. both.l3)
+assert(both.channels["l1"] == "nominal", "the room circuit is off the mains again: " .. both.channels["l1"])
+assert(both.channels["l3"] == "nominal", "and so is the spare main: " .. both.channels["l3"])
 
 near = assert(t.light_at(5, 2))
 assert(math.abs(near.power - 1.0) < 1e-6, "the fitting is back up: " .. near.power)

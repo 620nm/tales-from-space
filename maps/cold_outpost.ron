@@ -4,11 +4,11 @@
     tags: ["space", "terrestrial", "no_gravity_generator"],
     environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
-        ' ': (turf: Environment, outdoors: true),
-        '#': (turf: Wall),
-        '.': (turf: Floor),
-        'g': (turf: Ground, outdoors: true),
-        'v': (turf: Space),
+        ' ': (composition: (), outdoors: true),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        'g': (composition: (substrate: Some("ground")), outdoors: true),
+        'v': (composition: (substrate: Some("space"))),
     },
     rows: [
         "           ",
@@ -20,6 +20,7 @@
         "           ",
     ],
     structures: [(4, 3, "player_spawn"), (6, 3, "airlock"), (5, 3, "apc", { "l1_emergency": true, "l2": "input" }), (4, 2, "light"), (4, 3, "utility_outlet_port"), (8, 3, "generator")],
-    cables: [(4, 3, 1), (5, 3, 3), (6, 3, 3), (7, 3, 2), (8, 3, 2)],
+    networks: [(x: 4, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15), (x: 5, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15), (x: 5, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15), (x: 6, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15), (x: 6, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15), (x: 7, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15), (x: 8, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15)
+    ],
     items: [(4, 3, "analyzer")],
 )

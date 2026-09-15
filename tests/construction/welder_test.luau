@@ -7,9 +7,9 @@ t.world(
     [==[(
     name: "weld",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "############",
@@ -36,11 +36,11 @@ t.run_seconds(4.5)
 assert(not t.is_breached(1, 1), "welded shut")
 assert(t.ledger_has("DoAfterStarted", "space"), "the work starting is on the record")
 assert(
-    t.ledger_has("TurfChanged", "Plating", "Player"),
+    t.ledger_has("TurfChanged", "station_base", "Player"),
     "the seal is attributed to the player who held the torch"
 )
 assert(
-    t.ledger_has("StructureStep", "space", "turf:Plating"),
+    t.ledger_has("StructureStep", "space", "add_component:station_base"),
     "and the step names what the vacuum became"
 )
 
@@ -49,9 +49,9 @@ t.world(
     [==[(
     name: "interrupt",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",

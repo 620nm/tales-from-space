@@ -5,12 +5,14 @@
 --
 -- The room is deliberately 3x3 with the builder in the middle, so all
 -- eight neighbours are within REACH and nobody has to walk.
+local ui_controls = require("@helpers/ui_controls")
+
 local ROOM = [==[(
     name: "glazing",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -45,7 +47,7 @@ t.tick()
 -- Two rods weave a grille, fastened to the deck as tg's is.
 t.click(p, 1, 1, t.target_at(p, 1, 1, "rod"))
 t.run_ticks(2)
-t.click(p, 2, 1)
+ui_controls.build(p, "rod", "grille", 2, 1)
 t.run_seconds(1.5)
 assert(t.ledger_has("StructureStep", "grille", "built"), "the grille stands")
 
@@ -110,9 +112,9 @@ t.world(
     [==[(
     name: "reinforced",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -139,7 +141,7 @@ p = t.join()
 t.tick()
 t.click(p, 1, 1, t.target_at(p, 1, 1, "rod"))
 t.run_ticks(2)
-t.click(p, 2, 1)
+ui_controls.build(p, "rod", "grille", 2, 1)
 t.run_seconds(1.5)
 
 take(p, 3, 1) -- reinforced sheets

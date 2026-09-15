@@ -29,6 +29,8 @@
 -- engineer who screwed it together is exactly that somebody.
 return {
     id = "access_point",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.access_point.name",
     name = "access point",
     sprite = "access_point",
@@ -129,6 +131,7 @@ return {
         -- reason worth wanting -- the card that comes back out is the
         -- card that was in it, address and joins and all.
         {
+            sound = "smash",
             tool = "crowbar",
             secs = 4.0,
             gone = true,

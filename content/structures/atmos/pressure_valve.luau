@@ -26,6 +26,7 @@
 -- not a safety device.
 return {
     id = "pressure_valve",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.pressure_valve.name",
     name = "pressure valve",
     sprite = "pvalve_off_n",
@@ -62,13 +63,16 @@ return {
         },
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "pressure_valve",
         positions = { "shut", "armed" },
         target_kpa = 101.325,
         max_kpa = 10132.5,
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "pressure_valve_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -77,6 +81,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             -- tg's `can_unwrench` (pressure_valve.dm:229-233).
             at = "shut",
             tool = "wrench",

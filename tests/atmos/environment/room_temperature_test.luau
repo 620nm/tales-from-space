@@ -1,8 +1,10 @@
+local network_matter = require("@helpers/network_matter")
+local composition = require("@helpers/composition")
 -- How hot the air in a ROOM is, and what happens to that when somebody
 -- lets a hot pipe into it.
 --
 -- WHAT IS READABLE HERE, because it shapes every assertion below. A run
--- of pipe hands out three numbers, and `t.pipe_energy` is the conserved
+-- of pipe hands out three numbers, and `network_matter.energy` is the conserved
 -- one -- which is why the thermal machines can be weighed directly
 -- (thermal_devices_test.luau). A ROOM hands out `t.room_pressure` and
 -- `t.room_gas`, and NEITHER is temperature. The one thermometer a
@@ -28,7 +30,7 @@
 -- read a warm floor as a leak.
 --
 -- The gradient itself is scaffolding: `t.foul_room` deposits at T20C by
--- construction and `t.heat_pipe` is the only heat source a spec has
+-- construction and `network_matter.heat` is the only heat source a spec has
 -- until a burn chamber exists. Both are preconditions, never assertions.
 --
 -- AND THERE IS A FOURTH COLUMN, outside the room entirely: the sky. A
@@ -74,7 +76,7 @@ end
 
 local function pipe_total(x, y)
     local sum = 0.0
-    for _, moles in pairs(t.pipe_gas(x, y) or {}) do
+    for _, moles in pairs(network_matter.gas(x, y) or {}) do
         sum = sum + moles
     end
     return sum
@@ -159,22 +161,33 @@ t.world(
     [==[(
     name: "sealed room",
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'g': (turf: Floor, fixture: Some(Generator)),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
+        'u': (composition: (substrate: Some("ground"))),
     },
     rows: [
         "#####",
         "#...#",
-        "#.ag#",
+        "#.ug#",
         "#####",
     ],
     structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "analyzer")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
 )]==],
     7
@@ -252,24 +265,37 @@ t.world(
     [==[(
     name: "hot injection",
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'g': (turf: Floor, fixture: Some(Generator)),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
+        'u': (composition: (substrate: Some("ground"))),
     },
     rows: [
         "##########",
-        "#..#######",
+        "#u.#######",
         "#ag#######",
         "##########",
     ],
     items: [(1, 2, "analyzer")],
-    pipes: [(3, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4)],
-    structures: [(1, 2, "player_spawn"), (2, 1, "air_injector")],
-    cables: [
-        (1, 1, 3), (2, 1, 3),
-        (1, 2, 3), (2, 2, 3),
+    networks: [
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 7, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 8, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
+    structures: [(1, 2, "player_spawn"), (2, 1, "air_injector")],
+
 )]==],
     7
 )
@@ -286,7 +312,7 @@ local ROOM = { { 1, 1 }, { 2, 1 }, { 1, 2 }, { 2, 2 } }
 
 assert(assert(t.structure_at(2, 1)).id == "air_injector", "an injector in the corner")
 assert(assert(t.structure_at(2, 1)).state == "off", "off out of the crate")
-assert(t.turf(4, 1) == "wall", "its run is buried under the hull")
+assert(composition.matches(4, 1, { "station_base", "wall" }), "its run is buried under the hull")
 assert(t.room_pressure(4, 1) == nil, "where there is no room for it to be part of")
 
 -- ---- the one heat capacity, taken off the run's own three numbers ----
@@ -296,16 +322,16 @@ assert(t.room_pressure(4, 1) == nil, "where there is no room for it to be part o
 -- They are, and it is checked rather than assumed: both are tg's
 -- standard 21/79, so one molar capacity serves the whole book.
 local n_pipe_0 = pipe_total(5, 1)
-local cv = assert(t.pipe_energy(5, 1)) / (n_pipe_0 * assert(t.pipe_temperature(5, 1)))
+local cv = assert(network_matter.energy(5, 1)) / (n_pipe_0 * assert(network_matter.temperature(5, 1)))
 assert(cv > 1.0, "the run's molar heat capacity is readable: " .. cv)
-near(assert(t.pipe_temperature(5, 1)), T20C, 0.01, "and it opens at room temperature")
+near(assert(network_matter.temperature(5, 1)), T20C, 0.01, "and it opens at room temperature")
 
 local n_room_0 = room_moles(ROOM)
 local function o2_share(gas: { [string]: number }?, n: number)
     return assert(gas).o2 / n
 end
 near(
-    o2_share(t.pipe_gas(5, 1), n_pipe_0),
+    o2_share(network_matter.gas(5, 1), n_pipe_0),
     o2_share(t.room_gas(1, 2), total(1, 2)),
     1e-9,
     "the run and the room are the SAME admixture, so one capacity serves both"
@@ -324,10 +350,10 @@ assert(
 )
 
 -- ---- the gradient ----
-t.heat_pipe(5, 1, 300000.0)
+network_matter.heat(5, 1, 300000.0)
 t.tick()
-local hot_k = assert(t.pipe_temperature(5, 1))
-local pipe_e0 = assert(t.pipe_energy(5, 1))
+local hot_k = assert(network_matter.temperature(5, 1))
+local pipe_e0 = assert(network_matter.energy(5, 1))
 local energy_0 = pipe_e0 + n_room_0 * cv * T20C + deck_e0
 -- The book's fourth column: what leaves through the hull. The sky here
 -- is at the station's OPENING temperature, so it is inert until the
@@ -387,15 +413,15 @@ t.run_seconds(180)
 
 -- ---- what the thermometer says ----
 t.swap_hands(q)
-local px, py = t.pos(q)
+local px, py = 1, 1
 local blended = analyzed(q, px, py)
 local n_room_1 = room_moles(ROOM)
 local air_1 = n_room_1 * cv * blended
 local deck_1 = deck_energy(ROOM)
 
 assert(
-    assert(t.pipe_energy(5, 1)) < pipe_e0 * 1e-6,
-    "the run kept nothing back: " .. assert(t.pipe_energy(5, 1))
+    assert(network_matter.energy(5, 1)) < pipe_e0 * 1e-6,
+    "the run kept nothing back: " .. assert(network_matter.energy(5, 1))
 )
 local radiated_1 = t.space_radiated() - radiated_0
 assert(radiated_1 > 0.0, "the warmed hull did radiate: " .. radiated_1)
@@ -478,9 +504,9 @@ t.world(
     [==[(
     name: "one cold tile",
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'a': (turf: Floor, fixture: Some(Apc)),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
     },
     rows: [
         "###",
@@ -488,8 +514,8 @@ t.world(
         "###",
     ],
     structures: [(1, 1, "player_spawn")],
-    cables: [
-        (1, 1, 1),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
     ],
 )]==],
     7,
@@ -552,10 +578,10 @@ t.world(
     [==[(
     name: "cold room",
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'g': (turf: Floor, fixture: Some(Generator)),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
         "######",
@@ -566,11 +592,39 @@ t.world(
         "######",
     ],
     structures: [(2, 2, "player_spawn")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3),
-        (1, 3, 3), (2, 3, 3), (3, 3, 3), (4, 3, 3),
-        (1, 4, 3), (2, 4, 3), (3, 4, 3), (4, 4, 3),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 4, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 4, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 4, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 4, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 4, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 4, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 4, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 4, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
 )]==],
     7,
@@ -611,9 +665,9 @@ t.world(
     [==[(
     name: "one hot tile",
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'a': (turf: Floor, fixture: Some(Apc)),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
     },
     rows: [
         "###",
@@ -621,8 +675,8 @@ t.world(
         "###",
     ],
     structures: [(1, 1, "player_spawn")],
-    cables: [
-        (1, 1, 1),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
     ],
 )]==],
     7,

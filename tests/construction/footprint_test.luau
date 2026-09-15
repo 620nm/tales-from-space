@@ -30,9 +30,9 @@ end
 local ROOM = [==[(
     name: "generator bay",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "###########",
@@ -148,8 +148,8 @@ assert(
 
 local head = t.seen(p, cell1)
 assert(
-    head.kind == "overhead",
-    "the head draws over what stands on it, got " .. tostring(head.kind)
+    head.kind == "machine",
+    "the head keeps machine identity while drawing over what stands on it, got " .. tostring(head.kind)
 )
 assert(
     t.same_target(assert(head.extent_of), body),

@@ -15,6 +15,9 @@
 -- without a noise in tg too (the rule the headset already keeps).
 return {
     id = "breath_mask",
+    visual_layer = "entities",
+    held_visual_layer = "held",
+    worn_visual_layer = "equipment_mask",
     name_label = "lunatic/tfs:entity.breath_mask.name",
     name = "breath mask",
     sprite = "breath_mask",

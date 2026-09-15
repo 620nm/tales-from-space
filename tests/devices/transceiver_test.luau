@@ -28,12 +28,12 @@ t.world(
     [==[(
     name: "transceiver bench",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'G': (turf: Floor, fixture: Some(Generator)),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'o': (turf: Floor, fixture: Some(Outlet)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: [
         "########",
@@ -52,11 +52,18 @@ t.world(
         (5, 3, "encryption_key"),
         (6, 3, "screwdriver"),
         (3, 2, "crowbar"),
+        (1, 3, "wirecutters"),
+        (2, 3, "welder"),
     ],
     machines: [
         (4, 1, "transceiver"),
     ],
-    cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1)],
+    networks: [
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+    ],
 )]==],
     0
 )
@@ -74,6 +81,8 @@ local function take(x: number, y: number, id: string)
         ["encryption_key"] = { 5, 3 },
         ["screwdriver"] = { 6, 3 },
         ["crowbar"] = { 3, 2 },
+        ["wirecutters"] = { 1, 3 },
+        ["welder"] = { 2, 3 },
     }
     local at = if t.target_at(p, x, y, id) then { x, y } else places[id]
     local home_x, home_y = t.pos(p)
@@ -246,6 +255,66 @@ assert(
     hands[1] == "machine_board.transceiver" or hands[2] == "machine_board.transceiver",
     "the board came back to a hand: " .. tostring(hands[1]) .. ", " .. tostring(hands[2])
 )
+
+-- A returned part is physically on the frame tile. The frame's opaque
+-- picture hides the small loose parts from the same FOV hit-test a player
+-- uses, so finish the generic frame teardown before gathering them.
+take(1, 3, "wirecutters")
+t.click(p, 6, 1, t.target_at(p, 6, 1, "machine_frame"))
+t.run_seconds(2.5)
+assert(assert(t.structure_at(6, 1)).state == "empty", "cutting frees the frame wiring")
+put_down()
+take(2, 3, "welder")
+t.click(p, 6, 1, t.target_at(p, 6, 1, "machine_frame"))
+t.run_seconds(4.5)
+assert(t.structure_at(6, 1) == nil, "the empty frame comes apart")
+put_down()
+
+local cable_destination = 0
+local function returned_destination(id: string): (number, number)
+    if id == "metal" then
+        return 4, 2
+    elseif id == "network_card" then
+        return 3, 3
+    elseif id == "encryption_key" then
+        return 5, 3
+    elseif id == "encryption_key.medical" then
+        return 4, 3
+    elseif id == "cable_coil" then
+        if cable_destination == 0 then
+            return 5, 2
+        end
+        return 1, 3
+    end
+    error("unexpected returned part: " .. id)
+end
+
+local function clear_returned()
+    while #t.items_at(6, 1) > 0 do
+        local target = assert(t.target_at(p, 6, 1), "a returned part is disclosed on the cleared tile")
+        t.click(p, 6, 1, target)
+        t.run_ticks(2)
+        local id = assert(t.hands(p).held, "the disclosed returned part is picked up")
+        local x, y = returned_destination(id)
+        cable_destination += if id == "cable_coil" then 1 else 0
+        t.throw(p, x, y)
+        t.run_ticks(30)
+    end
+end
+
+clear_returned()
+
+-- Rebuild the frame around the returned board and the same returned parts.
+-- Their authored supply tiles remain visible once the frame is standing.
+take(4, 2, "metal")
+ui_controls.build(p, "metal", "machine_frame", 6, 1)
+t.run_seconds(8.5)
+assert(assert(t.structure_at(6, 1)).state == "empty", "the frame is rebuilt")
+put_down()
+take(5, 2, "cable_coil")
+work(2.5)
+put_down()
+
 -- The board landed in the free hand while the crowbar was working, so
 -- it may be the inactive one.
 if t.hands(p).held ~= "machine_board.transceiver" then
@@ -253,13 +322,13 @@ if t.hands(p).held ~= "machine_board.transceiver" then
     t.tick()
 end
 work(0.5)
-take(6, 1, "network_card")
+take(3, 3, "network_card")
 work(0.5)
-take(6, 1, "encryption_key")
+take(5, 3, "encryption_key")
 work(0.5)
-take(6, 1, "encryption_key.medical")
+take(4, 3, "encryption_key.medical")
 work(0.5)
-take(6, 1, "cable_coil")
+take(1, 3, "cable_coil")
 work(0.5)
 put_down()
 take(5, 1, "screwdriver")

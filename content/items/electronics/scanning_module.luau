@@ -16,6 +16,8 @@ local stock_parts = require("@lib/stock_parts")
 -- second shelf rather than being invented alongside it.
 return {
     id = "scanning_module",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.scanning_module.name",
     name = "scanning module",
     sprite = "scan_module",

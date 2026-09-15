@@ -2,6 +2,8 @@
 -- here rather than tg's stack -- the count is not what B2 needs.
 return {
     id = "bone_gel",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.bone_gel.name",
     name = "bone gel",
     sprite = "bone_gel",

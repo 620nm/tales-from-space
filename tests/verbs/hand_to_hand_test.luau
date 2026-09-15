@@ -1,3 +1,5 @@
+local composition = require("@helpers/composition")
+
 -- One hand acting on the other: a card and the deck it came out of,
 -- held at the same time.
 --
@@ -31,9 +33,9 @@ t.world(
     [==[(
     name: "card room",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -63,7 +65,7 @@ t.click(p, 2, 1, t.target_at(p, 2, 1, "card_deck"))
 t.tick()
 assert(t.hands(p).held == "card_deck", "the deck is in hand")
 
-t.click_turf(p, 1, 2)
+composition.click_deck(p, 1, 2)
 t.tick()
 assert(t.item_at(1, 2, "card") ~= nil, "and it dealt one card onto the floor")
 
@@ -100,7 +102,7 @@ assert(said:find("You slide the card into the deck.", 1, true), "and the player 
 t.swap_hands(p)
 t.tick()
 assert(t.hands(p).held == "card_deck", "the deck is active again")
-t.click_turf(p, 1, 2)
+composition.click_deck(p, 1, 2)
 t.tick()
 assert(t.item_at(1, 2, "card") ~= nil, "one card back on the floor")
 
@@ -133,7 +135,7 @@ assert(
 -- (deck.dm:171-181) -- and the eleventh card back must move it up a
 -- step, through the hand-to-hand channel.
 for _ = 1, 44 do
-    t.click_turf(p, 2, 2)
+    composition.click_deck(p, 2, 2)
     t.tick()
 end
 assert(#t.items_at(2, 2) == 44, "forty-four cards dealt onto one tile")

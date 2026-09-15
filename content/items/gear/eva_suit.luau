@@ -24,6 +24,9 @@
 -- cloth pair its plain-suit parent uses.
 return {
     id = "eva_suit",
+    visual_layer = "entities",
+    held_visual_layer = "held",
+    worn_visual_layer = "equipment_suit",
     name_label = "lunatic/tfs:entity.eva_suit.name",
     name = "EVA suit",
     sprite = "eva_suit",

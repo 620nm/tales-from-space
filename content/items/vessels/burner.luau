@@ -24,6 +24,8 @@ local U = 0.025
 
 local content = {
     id = "burner",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.burner.name",
     name = "burner",
     sprite = "burner",

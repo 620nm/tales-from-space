@@ -2,7 +2,7 @@ return {
     id = "cold_outdoors",
     name = "Cold outdoors",
     kind = "terrestrial",
-    terrain = "Ground",
+    substrate = "ground",
     gravity_m_s2 = 9.80665,
     sink_k = 259.15,
     insolation = 0,

@@ -6,6 +6,8 @@
 -- items/filter_fitting.luau for why the pair are two items.
 return {
     id = "mixer_flipped_fitting",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.mixer_flipped_fitting.name",
     name = "flipped mixer fitting",
     sprite = "mixer_fitting",

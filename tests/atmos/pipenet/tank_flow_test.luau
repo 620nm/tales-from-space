@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
 -- A reservoir with the books open.
@@ -73,10 +74,14 @@ end
 t.world(
     [==[(
     name: "one vessel, one run",
-    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: ["#######", "#.....#", "#######"],
     structures: [(1, 1, "player_spawn"), (2, 1, "stationary_tank", "anchored", ("o2", 9000.0))],
-    pipes: [(3, 1, 4), (4, 1, 4), (5, 1, 4)],
+    networks: [
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
 )]==],
     7
 )
@@ -86,9 +91,9 @@ t.tick()
 
 local RUN_M3 = 3.0 * PIPE_M3 + PORT_M3
 local tank_0 = total(assert(t.tank_gas(2, 1)))
-local run_0 = total(assert(t.pipe_gas(3, 1)))
+local run_0 = total(assert(network_matter.gas(3, 1)))
 near(assert(t.tank_pressure(2, 1)), 9000.0, 0.01, "the vessel as authored")
-near(assert(t.pipe_pressure(3, 1)), 101.325, 0.01, "the run at one atmosphere")
+near(assert(network_matter.pressure(3, 1)), 101.325, 0.01, "the run at one atmosphere")
 
 local settled_kpa = pressure_of(tank_0 + run_0, TANK_M3 + RUN_M3, T20C)
 
@@ -102,12 +107,12 @@ near(
     settled_kpa * 1e-9,
     "one pass lands the vessel on the volume-weighted pressure"
 )
-near(assert(t.pipe_pressure(3, 1)), settled_kpa, settled_kpa * 1e-9, "and the run with it")
+near(assert(network_matter.pressure(3, 1)), settled_kpa, settled_kpa * 1e-9, "and the run with it")
 
 -- What the run gained is what the vessel lost: a transfer, not two
 -- agreeable gauges.
 local tank_1 = total(assert(t.tank_gas(2, 1)))
-local run_1 = total(assert(t.pipe_gas(3, 1)))
+local run_1 = total(assert(network_matter.gas(3, 1)))
 near(tank_1 + run_1, tank_0 + run_0, (tank_0 + run_0) * 1e-12, "not a mole minted")
 near(
     tank_0 - tank_1,
@@ -137,27 +142,27 @@ near(total(assert(t.tank_gas(2, 1))), tank_1, 1e-9, "the vessel's book unmoved 2
 -- DRAWS, never temperatures: a parcel carries its own energy, so a
 -- vessel's temperature is never assigned -- it is what the joules in it
 -- come to. (Nothing a player can reach makes one pipe hotter than another
--- yet, so the gradient is `t.heat_pipe`: precondition scaffolding with
+-- yet, so the gradient is `network_matter.heat`: precondition scaffolding with
 -- `t.set_health`'s standing, never an assertion.)
 -- ---------------------------------------------------------------
 local vessel_n = total(assert(t.tank_gas(2, 1)))
-local run_n = total(assert(t.pipe_gas(3, 1)))
-local rest_k = assert(t.pipe_temperature(3, 1))
+local run_n = total(assert(network_matter.gas(3, 1)))
+local rest_k = assert(network_matter.temperature(3, 1))
 -- One molar heat capacity, taken off the world rather than written down.
 -- The vessel answers to it too: the two are one body of gas.
-local cv = assert(t.pipe_energy(3, 1)) / (run_n * rest_k)
+local cv = assert(network_matter.energy(3, 1)) / (run_n * rest_k)
 
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.tick()
 near(window_k(p), rest_k, 1e-6, "the vessel's window agrees with an analyser held against the run")
 
 local INJECTED = 10000000.0
-local energy_0 = assert(t.pipe_energy(3, 1)) + vessel_n * cv * rest_k
-t.heat_pipe(3, 1, INJECTED)
+local energy_0 = assert(network_matter.energy(3, 1)) + vessel_n * cv * rest_k
+network_matter.heat(3, 1, INJECTED)
 t.run_seconds(5)
 
-local hot_k = assert(t.pipe_temperature(3, 1))
-local energy_1 = assert(t.pipe_energy(3, 1)) + total(assert(t.tank_gas(2, 1))) * cv * hot_k
+local hot_k = assert(network_matter.temperature(3, 1))
+local energy_1 = assert(network_matter.energy(3, 1)) + total(assert(t.tank_gas(2, 1))) * cv * hot_k
 near(
     energy_1,
     energy_0 + INJECTED,
@@ -182,7 +187,7 @@ near(
     vessel_n * 1e-12,
     "the vessel's moles are untouched"
 )
-near(total(assert(t.pipe_gas(3, 1))), run_n, run_n * 1e-12, "and so are the run's")
+near(total(assert(network_matter.gas(3, 1))), run_n, run_n * 1e-12, "and so are the run's")
 
 -- ---------------------------------------------------------------
 -- TWO VESSELS, TWO GASES, ONE RUN.
@@ -199,14 +204,17 @@ near(total(assert(t.pipe_gas(3, 1))), run_n, run_n * 1e-12, "and so are the run'
 t.world(
     [==[(
     name: "two vessels, one run",
-    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: ["#######", "#.....#", "#######"],
     structures: [
         (1, 1, "player_spawn"),
         (2, 1, "stationary_tank", "anchored", ("o2", 10000.0)),
         (5, 1, "stationary_tank", "anchored", ("n2", 20000.0)),
     ],
-    pipes: [(3, 1, 4), (4, 1, 4)],
+    networks: [
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
 )]==],
     7
 )
@@ -216,15 +224,15 @@ t.tick()
 
 -- Two lengths, and a mouth from each vessel folded in.
 local SHARED_M3 = 2.0 * PIPE_M3 + 2.0 * PORT_M3
-local o2_0 = assert(t.tank_gas(2, 1)).o2 + assert(t.pipe_gas(3, 1)).o2
-local n2_0 = assert(t.tank_gas(5, 1)).n2 + assert(t.pipe_gas(3, 1)).n2
+local o2_0 = assert(t.tank_gas(2, 1)).o2 + assert(network_matter.gas(3, 1)).o2
+local n2_0 = assert(t.tank_gas(5, 1)).n2 + assert(network_matter.gas(3, 1)).n2
 assert(assert(t.tank_gas(2, 1)).n2 == nil, "the oxygen vessel starts pure")
 assert(assert(t.tank_gas(5, 1)).o2 == nil, "and so does the nitrogen one")
 
 t.run_seconds(60)
 
 local left, right, between =
-    assert(t.tank_gas(2, 1)), assert(t.tank_gas(5, 1)), assert(t.pipe_gas(3, 1))
+    assert(t.tank_gas(2, 1)), assert(t.tank_gas(5, 1)), assert(network_matter.gas(3, 1))
 local function oxygen_fraction(mix: { [string]: number })
     return mix.o2 / (mix.o2 + mix.n2)
 end
@@ -247,7 +255,7 @@ near(left.n2 + right.n2 + between.n2, n2_0, n2_0 * 1e-12, "the nitrogen book")
 local shared_kpa = pressure_of(o2_0 + n2_0, 2.0 * TANK_M3 + SHARED_M3, T20C)
 near(assert(t.tank_pressure(2, 1)), shared_kpa, shared_kpa * 1e-9, "one pressure, both vessels")
 near(assert(t.tank_pressure(5, 1)), shared_kpa, shared_kpa * 1e-9, "and the run between them")
-near(assert(t.pipe_pressure(3, 1)), shared_kpa, shared_kpa * 1e-9, "on the same number")
+near(assert(network_matter.pressure(3, 1)), shared_kpa, shared_kpa * 1e-9, "on the same number")
 
 -- ---------------------------------------------------------------
 -- THE OTHER DIRECTION: AN EMPTY VESSEL ON A CHARGED MAIN.
@@ -260,12 +268,20 @@ near(assert(t.pipe_pressure(3, 1)), shared_kpa, shared_kpa * 1e-9, "on the same 
 t.world(
     [==[(
     name: "an empty vessel on a charged main",
-    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: ["##############", "#............#", "##############"],
     structures: [(1, 1, "player_spawn"), (12, 1, "stationary_tank", "anchored")],
-    pipes: [
-        (2, 1, 4), (3, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4),
-        (7, 1, 4), (8, 1, 4), (9, 1, 4), (10, 1, 4), (11, 1, 4),
+    networks: [
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 7, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 8, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 9, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 10, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 11, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
     ],
 )]==],
     7
@@ -275,13 +291,13 @@ t.join()
 t.tick()
 
 local MAIN_M3 = 10.0 * PIPE_M3 + PORT_M3
-local main_0 = total(assert(t.pipe_gas(2, 1)))
+local main_0 = total(assert(network_matter.gas(2, 1)))
 local drained_kpa = pressure_of(main_0, MAIN_M3 + TANK_M3, T20C)
 assert(assert(t.tank_pressure(12, 1)) == 0.0, "the vessel opens the shift empty")
 assert(total(assert(t.tank_gas(12, 1))) == 0.0, "with nothing in its book at all")
 t.run_ticks(10)
 
-local main_1 = total(assert(t.pipe_gas(2, 1)))
+local main_1 = total(assert(network_matter.gas(2, 1)))
 local vessel_1 = total(assert(t.tank_gas(12, 1)))
 assert(vessel_1 > 0.0, "the vessel filled from the main")
 near(
@@ -297,11 +313,11 @@ near(
     drained_kpa * 1e-9,
     "and both settle on the volume-weighted pressure, from below"
 )
-near(assert(t.pipe_pressure(2, 1)), drained_kpa, drained_kpa * 1e-9, "the main with it")
+near(assert(network_matter.pressure(2, 1)), drained_kpa, drained_kpa * 1e-9, "the main with it")
 assert(
-    assert(t.pipe_pressure(2, 1)) < 30.0,
+    assert(network_matter.pressure(2, 1)) < 30.0,
     "ten lengths against 2500 L is a main with nothing left: "
-        .. assert(t.pipe_pressure(2, 1))
+        .. assert(network_matter.pressure(2, 1))
         .. " kPa"
 )
 
@@ -317,7 +333,7 @@ assert(
 t.world(
     [==[(
     name: "the torch",
-    legend: { '.': (turf: Floor), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: ["#####", "#...#", "#...#", "#...#", "#####"],
     items: [(2, 2, "welder")],
     structures: [(2, 2, "player_spawn"), (3, 2, "stationary_tank", "anchored", ("n2", 3000.0))],

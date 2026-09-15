@@ -13,6 +13,9 @@
 -- ever surprised by a meter that will not move.
 return {
     id = "smes",
+    visual_layer = "entities",
+    energy_network = "power",
+    default_props = { l1 = "output", l2 = "input", l3 = "output" },
     name_label = "lunatic/tfs:entity.smes.name",
     name = "power storage unit",
     sprite = "smes",

@@ -6,6 +6,8 @@
 -- source.
 return {
     id = "solar",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.solar.name",
     name = "solar panel",
     sprite = "solar",

@@ -61,7 +61,7 @@ local content = {
     -- Faintly yellow-green and thin: tg's MOLES_GAS_VISIBLE threshold
     -- and FACTOR_GAS_VISIBLE_MAX, so a room has to hold a quarter of a
     -- mole of it before there is anything to see at all.
-    visible = { moles = 0.25, factor = 20, tint = "#DFE8C0" },
+    visible = { moles = 0.25, factor = 20, tint = "#DFE8C0", visual_layer = "gas_haze" },
     -- What it looks like through glass (tg: other_reagents.dm:1630).
     color = "#404030",
     -- Where this sits in a tool that offers every substance there is

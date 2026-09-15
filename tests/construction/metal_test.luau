@@ -1,3 +1,6 @@
+local composition = require("@helpers/composition")
+local ui_controls = require("@helpers/ui_controls")
+
 -- Metal sheets: the two-stage wall, and the sanity check that runs
 -- twice. Scenario 1 walks the chain (girder, then wall). Scenario 2 is
 -- the point of the second check: a build the tile cannot take is
@@ -6,9 +9,9 @@ t.world(
     [==[(
     name: "site",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "######",
@@ -27,13 +30,13 @@ t.tick()
 t.click(p, 2, 1, t.target_at(p, 2, 1, "metal")) -- pick up the sheets
 t.run_ticks(2)
 
-t.click(p, 2, 2) -- raise a girder on the neighbouring floor
+ui_controls.build(p, "metal", "girder", 2, 2) -- raise a girder on the neighbouring floor
 t.run_seconds(4.5)
 assert(t.ledger_has("StructureStep", "girder", "built"), "the girder rose")
 
 t.click(p, 2, 2, t.target_at(p, 2, 2)) -- plate the standing girder into a wall
 t.run_seconds(4.5)
-assert(t.turf(2, 2) == "wall", "the wall closed, got " .. tostring(t.turf(2, 2)))
+assert(composition.matches(2, 2, { "station_base", "floor_tiles", "wall" }), "the wall closed, got " .. composition.describe(2, 2))
 
 -- Scenario 2: the precheck. You are standing on this tile, so no
 -- girder can rise here — and the refusal comes at once, not after a

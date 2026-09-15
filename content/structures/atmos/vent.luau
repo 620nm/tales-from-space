@@ -42,6 +42,8 @@
 -- station with if you would rather not have it.
 return {
     id = "vent",
+    visual_layer = "entities",
+    energy_network = "power",
     -- The one thing this machine says that is not mechanism: it
     -- repeats onto the network what the engine just decided about the
     -- air on its own tile (fixtures/vent.luau).
@@ -134,6 +136,8 @@ return {
         },
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "vent",
         -- LAYER 3, the distribution layer, which is where tg puts
         -- supply vents and where every dispenser hands out plain pipe.
@@ -173,7 +177,8 @@ return {
         siphon_above_kpa = 109.431,
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "vent_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -182,6 +187,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             -- No state guard. tg's vent inherits the family's flat
             -- `can_unwrench`, and unlike the scrubber there is no
             -- position it could be in that makes coming up dangerous:

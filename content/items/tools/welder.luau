@@ -8,6 +8,8 @@ local item_actions = require("@lib/item_actions")
 -- tfs/content/structures/.
 local content = {
     id = "welder",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     interaction_labels = {
         self = {
             label = "lunatic/tfs:ui.affordance.ignite",

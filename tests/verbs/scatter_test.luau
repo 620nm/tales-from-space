@@ -21,10 +21,10 @@ t.world(
     [==[(
     name: "workshop",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '_': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '_': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "########",

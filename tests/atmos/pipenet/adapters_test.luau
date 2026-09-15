@@ -1,3 +1,8 @@
+local composition = require("@helpers/composition")
+
+local network_matter = require("@helpers/network_matter")
+local network_channels = require("@helpers/network_channels")
+
 -- The two lengths of pipe that break the rules the rest of the plumbing
 -- is built on.
 --
@@ -27,9 +32,9 @@
 -- with it in the engineer's hands -- because a test that only ever sees
 -- the joined case is not testing the adapter, it is testing the flood.
 
-local L2 = 2
-local L4 = 8
-local DISTRO = 4
+local L2 = "l2"
+local L4 = "l4"
+local DISTRO = "l3"
 
 local PIPE_M3 = 0.070
 -- A manifold's mouth is a tenth of the 200 L its own file declares
@@ -64,7 +69,7 @@ end
 -- How much gas is standing in the run under a tile. The reading an
 -- analyser gives, and the one that can tell one net from two.
 local function net_moles(x, y, layer)
-    local gas = t.pipe_gas(x, y, layer)
+    local gas = network_matter.gas(x, y, layer)
     assert(gas ~= nil, "there is a run under (" .. x .. ", " .. y .. ")")
     return (gas.n2 or 0.0) + (gas.o2 or 0.0)
 end
@@ -88,9 +93,9 @@ t.world(
     [==[(
     name: "layer adapter",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "########",
@@ -99,12 +104,16 @@ t.world(
         "########",
     ],
     items: [(6, 2, "wrench")],
-    pipes: [
-        // Layer 2 along the top row: two lengths west of the adapter,
-        // THREE east of it. The asymmetry is the whole instrument.
-        (1, 1, 2), (2, 1, 2), (4, 1, 2), (5, 1, 2), (6, 1, 2),
-        // Layer 4, dropping south out of the same two tiles.
-        (2, 1, 8), (2, 2, 8), (4, 1, 8), (4, 2, 8),
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+        (x: 2, y: 2, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+        (x: 4, y: 2, network: "pipe", channel: "l4", kind: "standard", facing: 15),
     ],
     structures: [(6, 2, "player_spawn"), (3, 1, "layer_adapter")],
 )]==],
@@ -115,8 +124,8 @@ local p = t.join()
 t.tick()
 
 assert(assert(t.structure_at(3, 1)).id == "layer_adapter", "the map stood one there")
-assert(t.pipe(2, 1) == L2 + L4, "the tile west of it carries both layers")
-assert(t.pipe(2, 2) == L4, "and the tile below carries only layer 4")
+assert(network_channels.at(2, 1, "pipe") == "l2,l4", "the tile west of it carries both layers")
+assert(network_channels.at(2, 2, "pipe") == "l4", "and the tile below carries only layer 4")
 
 -- ---- and it LOOKS like what it is joined to ----
 --
@@ -145,7 +154,7 @@ end
 -- to reach, so those six mouths bind to nothing and pay in nothing.
 local FUSED_M3 = 9 * PIPE_M3 + 4 * MANIFOLD_PORT_M3
 
-local start_kpa = t.pipe_pressure(1, 1, L2)
+local start_kpa = network_matter.pressure(1, 1, L2)
 assert(assert(start_kpa) > 90.0, "the runs open the shift charged: " .. start_kpa)
 
 -- Every one of the four tiles reports the SAME gas, and it is the whole
@@ -210,9 +219,9 @@ t.world(
     [==[(
     name: "color adapter",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "########",
@@ -222,11 +231,14 @@ t.world(
     ],
     items: [(6, 2, "wrench"), (6, 2, "pipe_painter")],
     // Two lengths of red, three of blue, meeting at the adapter.
-    pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4)],
-    pipe_paint: [
-        (1, 1, 4, "#F04137"), (2, 1, 4, "#F04137"),
-        (4, 1, 4, "#5491E8"), (5, 1, 4, "#5491E8"), (6, 1, 4, "#5491E8"),
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("red")),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("red")),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("blue")),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("blue")),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("blue")),
     ],
+
     structures: [(6, 2, "player_spawn"), (3, 1, "color_adapter")],
 )]==],
     7
@@ -238,7 +250,7 @@ t.tick()
 assert(assert(t.structure_at(3, 1)).id == "color_adapter", "a colour adapter between them")
 
 local ADAPTER_M3 = 5 * PIPE_M3 + 2 * ADAPTER_PORT_M3
-local paint_kpa = t.pipe_pressure(1, 1)
+local paint_kpa = network_matter.pressure(1, 1)
 assert(assert(paint_kpa) > 90.0, "both runs are charged: " .. paint_kpa)
 
 local joined = net_moles(1, 1, DISTRO)
@@ -256,7 +268,7 @@ for _ = 1, 3 do
     walk(c, "west")
 end
 local _ = t.messages(c)
-for _, action in ipairs(t.action_hints(c, { Turf = { x = 3, y = 1 } })) do
+for _, action in ipairs(t.action_hints(c, composition.deck_target(3, 1))) do
     assert(action.id ~= "paint_pipe", "a nonpaintable adapter offers no painting action")
 end
 t.click(c, 3, 1)
@@ -266,7 +278,7 @@ assert(
     "an inapplicable target does not invoke the painter"
 )
 assert(
-    not t.ledger_has("PipePainted"),
+    not t.ledger_has("NetworkPainted"),
     "and nothing was painted, so there is nothing on the record"
 )
 near(net_moles(1, 1, DISTRO), joined, 0.001, "and the net is exactly as it was")
@@ -294,8 +306,8 @@ local blue = net_moles(6, 1, DISTRO)
 near(red, moles(assert(paint_kpa), 2 * PIPE_M3), 0.05, "two lengths of red, on their own")
 near(blue, moles(assert(paint_kpa), 3 * PIPE_M3), 0.05, "three of blue, on theirs")
 assert(blue > red + 0.5, "and they are no longer the same body of gas")
-assert(t.pipe(2, 1) == DISTRO, "both runs are still where they always were")
-assert(t.pipe(4, 1) == DISTRO)
+assert(network_channels.at(2, 1, "pipe") == "l3", "both runs are still where they always were")
+assert(network_channels.at(4, 1, "pipe") == "l3")
 
 local paint_parted = red + blue + moles(assert(t.room_pressure(3, 2)), ROOM_M3)
 assert(

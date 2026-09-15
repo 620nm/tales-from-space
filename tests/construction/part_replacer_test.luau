@@ -66,12 +66,12 @@ t.world(
     [==[(
     name: "exchange bench",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'o': (turf: Floor, fixture: Some(Outlet)),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'g': (turf: Floor, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
         "#######",
@@ -85,8 +85,17 @@ t.world(
         (1, 1, "part_replacer"),
         (1, 1, "micro_laser.tier3"),
     ],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
 )]==],
     0

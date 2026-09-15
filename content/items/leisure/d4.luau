@@ -20,6 +20,8 @@ local SIDES = 4
 
 local content = {
     id = "d4",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.d4.name",
     name = "d4",
     sprite = "d4",

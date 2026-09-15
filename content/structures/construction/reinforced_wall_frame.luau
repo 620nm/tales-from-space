@@ -27,6 +27,7 @@
 -- station.
 return {
     id = "reinforced_wall_frame",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.reinforced_wall_frame.name",
     name = "reinforced wall frame",
     sprite = "reinforced_wall_1",
@@ -60,13 +61,15 @@ return {
         -- The way back to hull. tg repairs the grille with the same
         -- snip that cut it and no delay at all (reinf_walls.dm:72-77).
         {
+            sound = "smash",
             at = "support_lines",
             tool = "cutters",
-            into = "turf:reinforced_wall",
+            into = "add_component:reinforced_wall",
             start = "You start weaving the outer grille back together.",
             done = "The grille closes, and the wall is whole.",
         },
         {
+            sound = "smash",
             at = "support_lines",
             tool = "screwdriver",
             secs = 4.0,
@@ -75,6 +78,7 @@ return {
             done = "The support lines come unsecured.",
         },
         {
+            sound = "smash",
             at = "cover",
             tool = "screwdriver",
             secs = 4.0,
@@ -83,6 +87,7 @@ return {
             done = "The support lines are secured.",
         },
         {
+            sound = "smash",
             at = "cover",
             tool = "welder",
             secs = 6.0,
@@ -92,6 +97,7 @@ return {
             done = "The cover dislodges under your hand.",
         },
         {
+            sound = "smash",
             at = "cut_cover",
             tool = "welder",
             secs = 6.0,
@@ -101,6 +107,7 @@ return {
             done = "The cover is welded securely to the frame.",
         },
         {
+            sound = "smash",
             at = "cut_cover",
             tool = "crowbar",
             secs = 10.0,
@@ -109,6 +116,7 @@ return {
             done = "The cover comes away.",
         },
         {
+            sound = "smash",
             at = "anchor_bolts",
             tool = "crowbar",
             secs = 2.0,
@@ -117,6 +125,7 @@ return {
             done = "The cover is pried back into place.",
         },
         {
+            sound = "smash",
             at = "anchor_bolts",
             tool = "wrench",
             secs = 4.0,
@@ -125,6 +134,7 @@ return {
             done = "The anchoring bolts come out.",
         },
         {
+            sound = "smash",
             at = "support_rods",
             tool = "wrench",
             secs = 4.0,
@@ -133,6 +143,7 @@ return {
             done = "The anchoring bolts are tight.",
         },
         {
+            sound = "smash",
             at = "support_rods",
             tool = "welder",
             secs = 10.0,
@@ -144,6 +155,7 @@ return {
         -- Welding the rods back together costs no fuel in tg either:
         -- `tool_start_check(user, amount = 0)` (reinf_walls.dm:181).
         {
+            sound = "smash",
             at = "sheath",
             tool = "welder",
             secs = 10.0,
@@ -153,6 +165,7 @@ return {
             done = "The support rods are whole again.",
         },
         {
+            sound = "smash",
             at = "sheath",
             tool = "crowbar",
             secs = 10.0,

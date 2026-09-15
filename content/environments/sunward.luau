@@ -2,7 +2,7 @@ return {
     id = "sunward",
     name = "close solar orbit",
     kind = "space",
-    terrain = "Space",
+    substrate = "space",
     gravity_m_s2 = 9.80665,
     background = "space_backdrop",
     sink_k = 2.7,

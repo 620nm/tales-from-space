@@ -8,16 +8,18 @@
 -- material would make it something you carry in a pocket.
 return {
     id = "wall",
+    visual_layer = "cover",
     name_label = "lunatic/tfs:entity.wall.name",
     name = "wall",
     sprite = "wall",
-    turf = "wall",
+    turf = "component:wall",
     transitions = {
         {
+            sound = "smash",
             tool = "welder",
             secs = 10.0,
             fuel = 2.0,
-            into = "turf:plating",
+            into = "remove_component",
             leaves = "girder",
             yields = { metal = 2 },
             start = "You start slicing the wall apart.",

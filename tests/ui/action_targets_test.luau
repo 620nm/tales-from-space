@@ -1,17 +1,29 @@
+local network_channels = require("@helpers/network_channels")
+
 local ui_controls = require("@helpers/ui_controls")
 
 -- The viewer's action rows describe the same exact targets that clicks use.
 t.world(
     [==[(
     name: "action targets",
-    legend: { '.': (turf: Plating), 'f': (turf: Floor), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base")])), 'f': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: ["########", "#......#", "#......#", "#..f...#", "#......#", "########"],
     items: [(1, 4, "wrench"), (2, 4, "wirecutters"), (3, 4, "toolbox"),
         (4, 4, "laptop"), (5, 4, "floppy_disk"), (6, 4, "beaker.water"), (1, 2, "beaker"),
         (3, 1, "pipe"), (3, 3, "pipe"), (2, 3, "metal")],
     structures: [(2, 2, "player_spawn"), (3, 2, "player_spawn"), (2, 1, "airlock_button")],
-    pipes: [(3, 2, 31), (3, 3, 8)],
-    cables: [(3, 2, 7)],
+    networks: [
+        (x: 3, y: 2, network: "pipe", channel: "l1", kind: "standard", facing: 15),
+        (x: 3, y: 2, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 2, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+        (x: 3, y: 2, network: "pipe", channel: "l5", kind: "standard", facing: 15),
+        (x: 3, y: 3, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l3", kind: "cable", facing: 15),
+    ],
+
 )]==],
     0
 )
@@ -74,40 +86,44 @@ assert(
     entity_action(metal, "fasten_pipe") == nil,
     "a wrench is not compatible with arbitrary items"
 )
-local pipe_layers = {}
+local pipe_instances = {}
 for _, view in ipairs(t.actions(actor)) do
-    local disclosed = ui_controls.record(view.target).Subfloor
+    local disclosed = ui_controls.record(view.target).Network
     if disclosed then
-        local subfloor = ui_controls.record(disclosed)
-        local pos = ui_controls.record(subfloor.pos)
+        local network = ui_controls.record(disclosed)
+        local pos = ui_controls.record(network.tile)
         assert(pos.x ~= 3 or pos.y ~= 3, "covered infrastructure has no action target")
-        if subfloor.kind == "Pipe" and pos.x == 3 and pos.y == 2 then
+        if pos.x == 3 and pos.y == 2 then
             for _, action in ipairs(view.actions) do
                 if action.id == "unfasten_pipe" then
-                    pipe_layers[ui_controls.number(subfloor.layer)] = true
+                    pipe_instances[ui_controls.number(network.instance)] = true
                 end
             end
         end
     end
 end
-for _, layer in ipairs({ 1, 2, 4, 8, 16 }) do
-    assert(pipe_layers[layer], "every visible pipe layer has its own wrench action: " .. layer)
+for _, channel in ipairs({ "l1", "l2", "l3", "l4", "l5" }) do
+    local instance = assert(t.network_instance(3, 2, "pipe", channel))
+    assert(pipe_instances[instance], "every visible pipe has its own wrench action: " .. channel)
 end
 
 take("wirecutters")
-local kinds: { "Cable" | "Pipe" } = { "Cable", "Pipe" }
+local kinds = { "power", "pipe" }
 for _, kind in ipairs(kinds) do
     local offered = false
     for _, action in
         ipairs(
-            t.action_hints(actor, { Subfloor = { pos = { x = 3, y = 2 }, kind = kind, layer = 2 } })
+            t.action_hints(
+                actor,
+                network_channels.target(3, 2, kind, "l2", assert(t.network_instance(3, 2, kind, "l2")))
+            )
         )
     do
         if action.id == "cut_cable" then
             offered = true
         end
     end
-    assert(offered == (kind == "Cable"), "cutters match cable and never pipe")
+    assert(offered == (kind == "power"), "cutters match cable and never pipe")
 end
 
 take("beaker.water")

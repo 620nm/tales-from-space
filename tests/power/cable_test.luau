@@ -1,3 +1,5 @@
+local network_channels = require("@helpers/network_channels")
+
 -- Wiring, on the line you chose.
 --
 -- tg has three power lines and they are the real thing: connection is
@@ -7,8 +9,6 @@
 -- mechanism; tg's own defines call them the "Red/Yellow/Blue Power
 -- Line" (__DEFINES/power.dm:5,8,11).
 --
--- The masks: 1 = red, 2 = yellow, 4 = blue.
-local RED, YELLOW, BLUE = 1, 2, 4
 
 local function said(p, want)
     for _, m in ipairs(t.messages(p)) do
@@ -26,9 +26,9 @@ t.world(
     [==[(
     name: "wiring",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -45,7 +45,9 @@ t.world(
     ],
     // One mapped stub in the corner, on the blue line and touching
     // nothing this spec lays: the length a fresh coil is asked to join.
-    cables: [(3, 3, 4)],
+    networks: [
+        (x: 3, y: 3, network: "power", channel: "l3", kind: "cable", facing: 15),
+    ],
 )]==],
     7
 )
@@ -63,10 +65,10 @@ for _, x in ipairs({ 1, 2, 3 }) do
     t.click(p, x, 1, nil, -14, 14)
     t.run_seconds(1.5)
 end
-assert(t.cable_at(1, 1) == YELLOW, "a fresh coil lays the yellow line")
-assert(t.cable_at(2, 1) == YELLOW, "and keeps laying it")
-assert(t.cable_at(3, 1) == YELLOW)
-assert(t.ledger_has("CableLaid"), "every length is on the record")
+assert(network_channels.at(1, 1, "power") == "l2", "a fresh coil lays the yellow line")
+assert(network_channels.at(2, 1, "power") == "l2", "and keeps laying it")
+assert(network_channels.at(3, 1, "power") == "l2")
+assert(t.ledger_has("NetworkPlaced"), "every length is on the record")
 
 -- ---------------------------------------------------------------
 -- The dial. Using the coil in hand cycles the line it lays -- tg's
@@ -86,8 +88,8 @@ assert(said(p, "You set the coil to the red power line."), "blue -> red")
 -- tile, and neither noticed the other.
 t.click(p, 2, 1, nil, -14, 14)
 t.run_seconds(1.5)
-assert(t.cable_at(2, 1) == YELLOW + RED, "two lines share the tile: " .. t.cable_at(2, 1))
-assert(t.cable_at(1, 1) == YELLOW, "and the neighbours are untouched")
+assert(network_channels.at(2, 1, "power") == "l1,l2", "two lines share the tile: " .. network_channels.at(2, 1, "power"))
+assert(network_channels.at(1, 1, "power") == "l2", "and the neighbours are untouched")
 
 -- ---------------------------------------------------------------
 -- Sharing a tile is not sharing a circuit. This is the whole point
@@ -97,12 +99,13 @@ t.click(p, 2, 2, nil, -14, 14)
 t.run_seconds(1.5)
 t.click(p, 2, 3, nil, -14, 14)
 t.run_seconds(1.5)
-local crossing = t.segment_at(2, 1)
-assert(crossing.l2 ~= nil, "the yellow run reaches the crossing")
-assert(crossing.l1 ~= nil, "so does the red one")
-assert(crossing.l2 ~= crossing.l1, "but they are two circuits, not one: " .. crossing.l2)
-assert(t.segment_at(2, 3).l1 == crossing.l1, "the red run is continuous down the column")
-assert(t.segment_at(2, 3).l2 == nil, "and the yellow line never went there")
+local crossing_red = t.network_segment(2, 1, "power", "l1").segment
+local crossing_yellow = t.network_segment(2, 1, "power", "l2").segment
+assert(crossing_yellow ~= nil, "the yellow run reaches the crossing")
+assert(crossing_red ~= nil, "so does the red one")
+assert(crossing_yellow ~= crossing_red, "but they are two circuits, not one: " .. crossing_yellow)
+assert(t.network_segment(2, 3, "power", "l1").segment == crossing_red, "the red run is continuous down the column")
+assert(t.network_segment(2, 3, "power", "l2").segment == nil, "and the yellow line never went there")
 
 -- ---------------------------------------------------------------
 -- The dial is PER COIL. Park the red-set coil in the other hand and
@@ -115,12 +118,12 @@ t.click(p, 3, 3, t.target_at(p, 3, 3, "cable_coil")) -- the second coil
 t.run_ticks(2)
 t.click(p, 3, 2, nil, -14, 14)
 t.run_seconds(1.5)
-assert(t.cable_at(3, 2) == YELLOW, "a second coil is a second dial")
+assert(network_channels.at(3, 2, "power") == "l2", "a second coil is a second dial")
 t.swap_hands(p)
 t.run_ticks(2)
 t.click(p, 1, 2, nil, -14, 14)
 t.run_seconds(1.5)
-assert(t.cable_at(1, 2) == RED, "and the first coil is still where it was left, ticks later")
+assert(network_channels.at(1, 2, "power") == "l1", "and the first coil is still where it was left, ticks later")
 
 -- ---------------------------------------------------------------
 -- One snip, one cable. tg's wirecutters deconstruct the single cable
@@ -132,20 +135,20 @@ t.drop(p)
 t.run_ticks(2)
 t.click(p, 1, 3, t.target_at(p, 1, 3, "wirecutters")) -- the cutters
 t.run_ticks(2)
-t.click_subfloor(p, 2, 1, "cable", YELLOW)
+t.click_network(p, 2, 1, assert(t.network_instance(2, 1, "power", "l2")))
 t.run_seconds(1.5)
 assert(
-    t.cable_at(2, 1) == RED,
-    "the yellow line parted and the red one under it did not: " .. t.cable_at(2, 1)
+    network_channels.at(2, 1, "power") == "l1",
+    "the yellow line parted and the red one under it did not: " .. network_channels.at(2, 1, "power")
 )
-assert(t.ledger_has("CableCut"), "sabotage is attributable")
+assert(t.ledger_has("NetworkRemoved"), "sabotage is attributable")
 
 -- Cutting the yellow line at the crossing really did sever that
 -- circuit: the two halves are no longer one segment.
-assert(t.segment_at(1, 1).l2 ~= t.segment_at(3, 1).l2, "the yellow run is in two pieces now")
+assert(t.network_segment(1, 1, "power", "l2").segment ~= t.network_segment(3, 1, "power", "l2").segment, "the yellow run is in two pieces now")
 
-t.click_subfloor(p, 2, 1, "cable", RED)
+t.click_network(p, 2, 1, assert(t.network_instance(2, 1, "power", "l1")))
 t.run_seconds(1.5)
-assert(t.cable_at(2, 1) == 0, "a second snip takes the line beneath")
-assert(BLUE == 4, "the third line is a real layer, mapped in the corner")
-assert(t.cable_at(3, 3) == BLUE + YELLOW or t.cable_at(3, 3) == BLUE)
+assert(network_channels.at(2, 1, "power") == "", "a second snip takes the line beneath")
+assert(t.network_instance(3, 3, "power", "l3") ~= nil, "the third line is mapped in the corner")
+assert(network_channels.at(3, 3, "power") == "l2,l3" or network_channels.at(3, 3, "power") == "l3")

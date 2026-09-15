@@ -18,6 +18,7 @@
 -- (reinf_walls.dm:16), because the wall is what the step is building.
 return {
     id = "reinforced_girder",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.reinforced_girder.name",
     name = "reinforced girder",
     sprite = "girder_reinforced",
@@ -28,14 +29,16 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             at = "reinforced",
             with = { plasteel = 1 },
             secs = 5.0,
-            into = "turf:reinforced_wall",
+            into = "add_component:reinforced_wall",
             start = "You start plating the girder into a reinforced wall.",
             done = "The reinforced wall stands.",
         },
         {
+            sound = "smash",
             at = "reinforced",
             tool = "screwdriver",
             secs = 4.0,
@@ -44,6 +47,7 @@ return {
             done = "The support struts come loose.",
         },
         {
+            sound = "smash",
             at = "struts",
             tool = "screwdriver",
             secs = 4.0,
@@ -52,6 +56,7 @@ return {
             done = "The support struts are screwed down.",
         },
         {
+            sound = "smash",
             at = "struts",
             tool = "cutters",
             secs = 4.0,

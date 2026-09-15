@@ -16,13 +16,13 @@ t.world(
     [==[(
     name: "corridor",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'l': (turf: Floor, fixture: Some(Light), light: Some("#FFD6AA")),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'o': (turf: Floor, fixture: Some(Outlet)),
-        'g': (turf: Floor, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'l': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Light), light: Some("#FFD6AA")),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
         "#####",
@@ -32,9 +32,19 @@ t.world(
     ],
     structures: [(1, 1, "player_spawn")],
     items: [(1, 1, "toolbox"), (1, 2, "light_replacer"), (2, 2, "box_lights")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
 )]==],
     7

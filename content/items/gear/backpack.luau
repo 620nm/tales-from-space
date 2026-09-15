@@ -1,6 +1,9 @@
 -- The humble backpack: seven slots of anything, worn on the back.
 return {
     id = "backpack",
+    visual_layer = "entities",
+    held_visual_layer = "held",
+    worn_visual_layer = "equipment_back",
     name_label = "lunatic/tfs:entity.backpack.name",
     name = "backpack",
     sprite = "backpack",

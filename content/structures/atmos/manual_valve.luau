@@ -26,6 +26,7 @@
 -- frame; every noun in it is from this file.
 return {
     id = "manual_valve",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.manual_valve.name",
     name = "manual valve",
     sprite = "valve_shut_ns",
@@ -84,6 +85,8 @@ return {
         },
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "valve",
         positions = { "shut", "open" },
         switch_secs = 1.0,
@@ -101,7 +104,8 @@ return {
     -- on the turf and at nothing else (construction.dm:276-296), so a
     -- valve goes down on bare deck and the pipe is run up to it.
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "manual_valve_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -110,6 +114,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             -- No state guard, and that is tg: the valve is the one
             -- machine in the family with no `can_unwrench` override
             -- (the base var is a flat TRUE, valve.dm:11), so an open

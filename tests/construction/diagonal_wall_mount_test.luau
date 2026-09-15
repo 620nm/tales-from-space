@@ -1,3 +1,5 @@
+local composition = require("@helpers/composition")
+
 local ui_controls = require("@helpers/ui_controls")
 
 -- Diagonal wall mounts remain ordinary structures on their room tile. The
@@ -21,8 +23,8 @@ t.world(
     [==[(
     name: "south-east button room",
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -44,7 +46,7 @@ t.run_ticks(4)
 local se = t.structure_at(2, 2)
 assert(se and se.id == "airlock_button", "the south-east button is on the room tile")
 assert(se.sprite == "airlock_button_s", "south-east uses the south cardinal face")
-assert(t.turf(2, 2) == "floor", "the mounted button does not replace the floor")
+assert(composition.matches(2, 2, { "station_base", "floor_tiles" }), "the mounted button does not replace the floor")
 
 local target = assert(
     t.target_at(p, 2, 2, "airlock_button"),
@@ -115,8 +117,8 @@ t.world(
     [==[(
     name: "diagonal construction room",
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",

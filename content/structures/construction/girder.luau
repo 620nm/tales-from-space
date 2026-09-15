@@ -12,6 +12,7 @@
 -- (tg's wall recipes all demand GIRDER_NORMAL).
 return {
     id = "girder",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.girder.name",
     name = "girder",
     sprite = "girder",
@@ -22,7 +23,8 @@ return {
     -- shove it and a decompression can drag it.
     loose = { "displaced" },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         with = { metal = 2 },
         secs = 4.0,
         start = "You start assembling a girder.",
@@ -34,10 +36,11 @@ return {
         -- from the bolted state -- you cannot plate hull onto something
         -- that slides when you lean on it.
         {
+            sound = "smash",
             at = "anchored",
             with = { metal = 2 },
             secs = 4.0,
-            into = "turf:wall",
+            into = "add_component:wall",
             start = "You start plating the girder into a wall.",
             done = "The wall stands.",
         },
@@ -50,6 +53,7 @@ return {
         -- one object for another, so this row does too -- the girder
         -- goes and the reinforced one is what stands there.
         {
+            sound = "smash",
             at = "anchored",
             with = { plasteel = 1 },
             secs = 5.0,
@@ -59,6 +63,7 @@ return {
             done = "The plasteel struts into the frame.",
         },
         {
+            sound = "smash",
             at = "anchored",
             tool = "wrench",
             secs = 4.0,
@@ -67,6 +72,7 @@ return {
             done = "The girder shifts loose of its bolts.",
         },
         {
+            sound = "smash",
             at = "displaced",
             tool = "wrench",
             secs = 4.0,
@@ -77,6 +83,7 @@ return {
         -- No `at`: a torch cuts one apart bolted or not (tg's
         -- welder_act asks no state at all).
         {
+            sound = "smash",
             tool = "welder",
             secs = 4.0,
             fuel = 2.0,

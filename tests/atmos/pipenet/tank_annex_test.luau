@@ -1,3 +1,7 @@
+local network_channels = require("@helpers/network_channels")
+
+local composition = require("@helpers/composition")
+
 -- Chillstation's tank annex: seven stationary reservoirs off the west
 -- side of Atmospherics, one per substance atmospherics runs on.
 -- (The whole department moved south-west when the station was redrawn
@@ -155,7 +159,7 @@ assert(
     assert(t.room_pressure(8, 30)) > 90.0,
     "the annex holds its air: " .. assert(t.room_pressure(8, 30)) .. " kPa"
 )
-assert(t.turf(10, 31) == "plating", "bare plating, like the rest of the station")
+assert(composition.matches(10, 31, { "station_base" }), "bare plating, like the rest of the station")
 assert(t.door_at(13, 31), "and a door into the machine hall's corridor")
 
 -- The machine tile the annex was laid out around, and the machine now
@@ -168,4 +172,4 @@ assert(
     "the temperature control unit stands on the machine tile"
 )
 assert(unit.state == "running", "and ships running: " .. tostring(unit.state))
-assert(t.pipe(9, 31) ~= 0 and t.pipe(11, 31) ~= 0, "with the bench run stopping either side of it")
+assert(network_channels.at(9, 31, "pipe") ~= "" and network_channels.at(11, 31, "pipe") ~= "", "with the bench run stopping either side of it")

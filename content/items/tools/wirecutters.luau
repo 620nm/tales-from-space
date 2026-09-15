@@ -26,6 +26,9 @@ local action_rules = require("@lib/action_rules")
 
 local content = {
     id = "wirecutters",
+    visual_layer = "entities",
+    stowed_visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.wirecutters.name",
     name = "wirecutters",
     sprite = "wirecutters",
@@ -39,25 +42,21 @@ local content = {
     tool = "cutters",
 }
 
-content.actions = { action_rules.primary("cut_cable", action_rules.kind("cable")) }
+content.actions = { action_rules.primary("cut_cable", action_rules.network("power")) }
 
 if sim ~= nil then
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
-        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
-        local clicked, target = ev.claim, ev.claim
+        local user, x, y, choice = ev.actor, ev.at.x, ev.at.y, ev.choice
+        local target = ev.claim
         local _x, _y, _choice = x, y, choice
-        -- Asked before the cable question, so a covered tile answers
-        -- the same whether or not anything runs under it.
-        if not sim.subfloor_exposed(x, y, "cable") then
+        if target == nil or target.kind ~= "network" then
             return { replaced = false }
         end
-        if target == nil or target.kind ~= "cable" then
-            return { replaced = false }
-        end
-        local line = target.layer
-        if sim.cable(x, y) % (line * 2) < line then
+        local instance = target.instance
+        local network = sim.network(x, y, instance)
+        if network == nil or network.network ~= "power" or not sim.network_accessible(x, y, instance) then
             return { replaced = false }
         end
         sim.message.send({
@@ -74,11 +73,11 @@ if sim ~= nil then
             end
             -- Asked again at the end, not remembered from the start: the
             -- line you were cutting may already be gone.
-            if sim.cable(x, y) % (line * 2) < line then
+            if not sim.network_accessible(x, y, instance) then
                 return true
             end
             sim.sound.play({ asset = "lunatic/tfs:sound/wirecutter", at = ev.at })
-            sim.cut_cable(x, y, line)
+            sim.remove_network(x, y, instance, "cable_coil")
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:items.wirecutters.the_cable_parts_with_a", {}),

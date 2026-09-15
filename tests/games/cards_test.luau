@@ -1,3 +1,5 @@
+local composition = require("@helpers/composition")
+
 -- A deck of cards: the first thing in this pack that remembers
 -- something across invocations.
 --
@@ -24,9 +26,9 @@ t.world(
     [==[(
     name: "rec room",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -80,7 +82,7 @@ assert(t.hands(p).held == "card_deck", "the deck is in hand")
 -- Dealing is a click on a TILE with the deck in hand (this pack's
 -- `interaction.use`), which is tg's deal pointed at the table instead of at a
 -- hand -- see items/card_deck.luau for why the bindings differ.
-t.click_turf(p, 1, 2)
+composition.click_deck(p, 1, 2)
 t.tick()
 local first = assert(t.item_at(1, 2, "card"))
 assert(first ~= nil, "a card is on the tile that was clicked")
@@ -226,7 +228,7 @@ assert(t.hands(p).held == "card_deck", "the deck is in hand again")
 -- would pass a check at each end and be wrong the whole way through.
 local FLIPS = { [28] = "card_deck_half", [44] = "card_deck_low" }
 for deal = 1, 54 do
-    t.click_turf(p, 2, 2)
+    composition.click_deck(p, 2, 2)
     t.tick()
     assert(
         #t.items_at(2, 2) == deal,
@@ -355,7 +357,7 @@ t.tick()
 t.click(p, 3, 1, t.target_at(p, 3, 1, "card_deck"))
 t.tick()
 assert(t.hands(p).held == "card_deck", "the second deck is in hand")
-t.click_turf(p, 3, 2)
+composition.click_deck(p, 3, 2)
 t.tick()
 assert(t.item_at(3, 2, "card") ~= nil, "it dealt one, so it has room for one")
 t.drop(p)
@@ -413,7 +415,7 @@ assert(dealt ~= table.concat(reversed, ","), "and not read out backwards either"
 t.click(p, 1, 2, t.target_at(p, 1, 2, "card_deck"))
 t.tick()
 assert(t.hands(p).held == "card_deck", "the empty deck is in hand")
-t.click_turf(p, 2, 2)
+composition.click_deck(p, 2, 2)
 t.tick()
 assert(#t.items_at(2, 2) == 0, "an empty deck deals nothing")
 local told = table.concat(t.messages(p), "\n")

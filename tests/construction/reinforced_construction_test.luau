@@ -1,3 +1,5 @@
+local composition = require("@helpers/composition")
+
 -- The reinforced pair, built and taken apart the way a player would.
 --
 -- Two rods reinforce plating and a wrench takes them back out
@@ -24,9 +26,9 @@ t.world(
     [==[(
     name: "engine deck",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -55,8 +57,8 @@ take("rod")
 t.click(p, 1, 1) -- the plating beside the player
 t.run_seconds(3.5)
 assert(
-    t.turf(1, 1) == "reinforced_floor",
-    "two rods reinforce the deck, got " .. tostring(t.turf(1, 1))
+    composition.matches(1, 1, { "station_base", "reinforcement" }),
+    "two rods reinforce the deck, got " .. composition.describe(1, 1)
 )
 assert(
     has(t.messages(p), "The rods are wrenched down flush with the deck."),
@@ -69,7 +71,7 @@ assert(
 take("crowbar")
 t.click(p, 1, 1)
 t.run_seconds(1.0)
-assert(t.turf(1, 1) == "reinforced_floor", "the crowbar changed nothing")
+assert(composition.matches(1, 1, { "station_base", "reinforcement" }), "the crowbar changed nothing")
 local said = t.messages(p)
 assert(not has(said, "You pry up the floor tile."), "and lifted no tile")
 assert(#t.items_at(1, 1) == 0, "nothing came up off the deck")
@@ -78,7 +80,7 @@ assert(#t.items_at(1, 1) == 0, "nothing came up off the deck")
 take("wrench")
 t.click(p, 1, 1)
 t.run_seconds(3.5)
-assert(t.turf(1, 1) == "plating", "the rods come out, got " .. tostring(t.turf(1, 1)))
+assert(composition.matches(1, 1, { "station_base" }), "the rods come out, got " .. composition.describe(1, 1))
 assert(has(t.items_at(1, 1), "rod"), "and are lying where they were fitted")
 assert(
     has(t.messages(p), "The rods come up, leaving bare plating."),
@@ -90,9 +92,9 @@ t.world(
     [==[(
     name: "hull site",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -135,8 +137,8 @@ assert(girder ~= nil and girder.id == "reinforced_girder", "one sheet struts the
 t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.run_seconds(5.5)
 assert(
-    t.turf(1, 2) == "reinforced_wall",
-    "one more plates it into hull, got " .. tostring(t.turf(1, 2))
+    composition.matches(1, 2, { "station_base", "floor_tiles", "reinforced_wall" }),
+    "one more plates it into hull, got " .. composition.describe(1, 2)
 )
 assert(t.structure_at(1, 2) == nil, "and the girder is consumed into it")
 
@@ -145,19 +147,19 @@ assert(t.structure_at(1, 2) == nil, "and the girder is consumed into it")
 grab("welder")
 t.click(p, 1, 2)
 t.run_seconds(10.5)
-assert(t.turf(1, 2) == "reinforced_wall", "the torch got nowhere")
+assert(composition.matches(1, 2, { "station_base", "floor_tiles", "reinforced_wall" }), "the torch got nowhere")
 
 grab("wirecutters")
 t.click(p, 1, 2)
 t.run_ticks(4)
-assert(t.turf(1, 2) == "plating", "the grille parts and the hull is open")
+assert(composition.matches(1, 2, { "station_base", "floor_tiles" }), "the grille parts and the hull is open")
 assert(frame_state() == "support_lines", "the frame is standing in it")
 
 -- The first rung repairs: tg's INTACT/SUPPORT_LINES pair is a snip
 -- either way, and going back up is a wall again.
 t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.run_ticks(4)
-assert(t.turf(1, 2) == "reinforced_wall", "the grille is woven shut")
+assert(composition.matches(1, 2, { "station_base", "floor_tiles", "reinforced_wall" }), "the grille is woven shut")
 t.click(p, 1, 2)
 t.run_ticks(4)
 assert(frame_state() == "support_lines", "and open again for the ladder")
@@ -210,11 +212,11 @@ t.world(
     [==[(
     name: "burn chamber corner",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'R': (turf: ReinforcedWall),
-        'r': (turf: ReinforcedFloor),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'R': (composition: (components: [(component: "station_base"), (component: "reinforced_wall")])),
+        'r': (composition: (components: [(component: "station_base"), (component: "reinforcement")])),
     },
     rows: [
         "#####",

@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 -- The vents: the two machines that reach out of the plumbing and into
 -- a ROOM, and between them the entire reason a distribution main is
 -- worth laying.
@@ -48,7 +49,7 @@ end
 -- Everything standing in the run under a tile, in moles.
 local function pipe_moles(x: number, y: number)
     local n = 0.0
-    for _, amount in pairs(t.pipe_gas(x, y) or {}) do
+    for _, amount in pairs(network_matter.gas(x, y) or {}) do
         n = n + amount
     end
     return n
@@ -110,12 +111,12 @@ end
 local SUPPLY_MAP = [==[(
     name: "supply vent",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'c': (turf: Plating),
-        'g': (turf: Plating, fixture: Some(Generator)),
-        'a': (turf: Plating, fixture: Some(Apc)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'c': (composition: (components: [(component: "station_base")])),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
     },
     rows: [
         "#########",
@@ -126,7 +127,16 @@ local SUPPLY_MAP = [==[(
     // bottle's forty -- tg's own station shape, because a fastened
     // bottle IS its line and a vent on a forty-atmosphere main would
     // out-blow the very breach this file is about.
-    pipes: [],
+    networks: [
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+    ],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
@@ -139,10 +149,7 @@ local SUPPLY_MAP = [==[(
     ],
     // Backbone (L2) under the generator and the APC; room circuit (L1) from the
     // APC's own tile west along the corridor to the vent.
-    cables: [
-        (6, 1, 3), (7, 1, 3),
-        (5, 1, 1), (4, 1, 1), (3, 1, 1), (2, 1, 1),
-    ],
+
 )]==]
 
 t.world(SUPPLY_MAP, 7, "free_build")
@@ -167,14 +174,14 @@ assert(
 -- Tear the deck open beside the vent. There is no breach STATE anywhere
 -- (CLAUDE.md): a hull breach is a floor that became space, so that is
 -- literally what this is, through the one geometry seam.
-assert(t.set_turf(1, 1, "space"), "the deck beside the vent opens")
+assert(t.set_composition(1, 1, "bare"), "the deck beside the vent opens")
 t.run_seconds(20)
 local emptied = assert(t.room_pressure(2, 1))
 assert(
     emptied < SUPPLIES_UNDER,
     "the corridor blew down past the vent's release line: " .. emptied .. " kPa"
 )
-assert(t.set_turf(1, 1, "plating"), "and the deck goes back")
+assert(t.set_composition(1, 1, "plating"), "and the deck goes back")
 t.tick()
 
 -- Two and a half minutes, sampled every second of them. The peak is
@@ -231,9 +238,9 @@ assert(dark.alarmed == true, "and the APC is calling it")
 
 local dark_net = pipe_moles(3, 1)
 local dark_can = assert(t.canister_pressure(4, 1))
-assert(t.set_turf(1, 1, "space"), "the deck opens again")
+assert(t.set_composition(1, 1, "bare"), "the deck opens again")
 t.run_seconds(45)
-assert(t.set_turf(1, 1, "plating"), "and is sealed again")
+assert(t.set_composition(1, 1, "plating"), "and is sealed again")
 t.tick()
 
 local CORRIDOR = row(1, 7, 1)
@@ -263,23 +270,32 @@ near(
 local RELIEF_MAP = [==[(
     name: "relief vent",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'g': (turf: Plating, fixture: Some(Generator)),
-        'a': (turf: Plating, fixture: Some(Apc)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
     },
     rows: [
         "#########",
         "#....ga.#",
         "#########",
     ],
-    pipes: [(2, 1, 4), (3, 1, 4), (4, 1, 4)],
-    structures: [(4, 1, "player_spawn"), (1, 1, "vent")],
-    cables: [
-        (5, 1, 3), (6, 1, 3),
-        (4, 1, 1), (3, 1, 1), (2, 1, 1), (1, 1, 1),
+    networks: [
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
     ],
+    structures: [(4, 1, "player_spawn"), (1, 1, "vent")],
+
 )]==]
 
 t.world(RELIEF_MAP, 7, "free_build")
@@ -365,17 +381,20 @@ near(room_moles(ROOM) + pipe_moles(2, 1), books, 0.001, "with every mole of it s
 local PASSIVE_MAP = [==[(
     name: "passive vent",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'c': (turf: Plating),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'c': (composition: (components: [(component: "station_base")])),
     },
     rows: [
         "#########",
         "#....c..#",
         "#########",
     ],
-    pipes: [(3, 1, 4), (4, 1, 4)],
+    networks: [
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
@@ -397,7 +416,7 @@ local BAY = row(1, 7, 1)
 -- breathable. An unpowered bay off a fat bottle is a pressure chamber;
 -- a breathable one needs the powered vent's setpoint, which is the
 -- other half of this file.
-assert(assert(t.pipe_pressure(3, 1)) > 90.0, "the bottle charged the run through its socket")
+assert(assert(network_matter.pressure(3, 1)) > 90.0, "the bottle charged the run through its socket")
 t.run_seconds(20)
 local settled_bay = assert(t.room_pressure(2, 1))
 assert(settled_bay > 300.0, "the bay runs far past an atmosphere: " .. settled_bay)
@@ -412,7 +431,7 @@ assert(settled_bay > 300.0, "the bay runs far past an atmosphere: " .. settled_b
 -- than at a valve's metered trickle -- leave it open half a minute and
 -- there is nothing left to refill the bay WITH.
 local before_hole = assert(t.canister_pressure(5, 1))
-assert(t.set_turf(1, 1, "space"), "the deck opens")
+assert(t.set_composition(1, 1, "bare"), "the deck opens")
 t.run_seconds(10)
 assert(
     assert(t.room_pressure(2, 1)) < settled_bay * 0.5,
@@ -426,7 +445,7 @@ assert(
         .. assert(t.canister_pressure(5, 1))
         .. " kPa"
 )
-assert(t.set_turf(1, 1, "plating"), "and is sealed again")
+assert(t.set_composition(1, 1, "plating"), "and is sealed again")
 t.tick()
 
 -- ---- sealed again: the whole system comes level ----
@@ -446,7 +465,7 @@ local net_1 = pipe_moles(3, 1)
 local can_1 = moles(assert(t.canister_pressure(5, 1)), CAN_M3)
 
 near(
-    assert(t.pipe_pressure(3, 1)),
+    assert(network_matter.pressure(3, 1)),
     assert(t.room_pressure(2, 1)),
     1.0,
     "run and bay came level -- at one temperature, equal pressure IS"
@@ -504,7 +523,7 @@ near(
     "and the books balance to the mole across all three holders"
 )
 near(
-    assert(t.pipe_pressure(3, 1)),
+    assert(network_matter.pressure(3, 1)),
     assert(t.room_pressure(2, 1)),
     1.0,
     "level again, from the other side"

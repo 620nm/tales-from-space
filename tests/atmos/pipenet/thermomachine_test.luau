@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
 -- The temperature control unit: the machine that makes a pipe colder
@@ -47,6 +48,11 @@ local function pass()
     t.run_ticks(10)
 end
 
+local PIPE_NETWORKS = [==[
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+]==]
+
 local ROWS = [==[
     rows: [
         "########",
@@ -54,22 +60,44 @@ local ROWS = [==[
         "#a....g#",
         "########",
     ],
-    pipes: [(1, 1, 4), (2, 1, 4)],
     structures: [(3, 2, "player_spawn"), (3, 1, "thermomachine")],
 ]==]
 
 t.world([==[(
     name: "cold room",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+]==] .. PIPE_NETWORKS .. [==[
     ],
 ]==] .. ROWS .. ")", 7)
 
@@ -79,7 +107,7 @@ t.tick()
 assert(assert(t.structure_at(3, 1)).id == "thermomachine", "a unit stands on the line")
 assert(assert(t.structure_at(3, 1)).state == "off", "off out of the crate")
 near(
-    assert(t.pipe_temperature(1, 1)),
+    assert(network_matter.temperature(1, 1)),
     T20C,
     0.5,
     "and the run it is plumbed into opens at room temperature"
@@ -104,7 +132,7 @@ near(ui_controls.number(setpoint.value), T20C, 0.01, "tg's T20C out of the crate
 near(ui_controls.number(setpoint.min), 73.15, 0.01, "two tier-1 lasers at the cold end")
 near(ui_controls.number(setpoint.max), 573.15, 0.01, "and at the hot end")
 near(
-    assert(t.pipe_pressure(1, 1)),
+    assert(network_matter.pressure(1, 1)),
     assert(tonumber(readout(panel, "thermo.pressure"):match("[%d%.]+"))),
     0.2,
     "the panel reads the run it is actually plumbed into"
@@ -136,11 +164,11 @@ ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "running", "the unit is running")
 
-local moles_0 = assert(t.pipe_gas(1, 1)).n2
-local previous = assert(t.pipe_temperature(1, 1))
+local moles_0 = assert(network_matter.gas(1, 1)).n2
+local previous = assert(network_matter.temperature(1, 1))
 for _ = 1, 12 do
     pass()
-    local now = assert(t.pipe_temperature(1, 1))
+    local now = assert(network_matter.temperature(1, 1))
     assert(
         now >= previous - 0.01,
         "the approach never runs backwards: " .. previous .. " -> " .. now
@@ -148,20 +176,20 @@ for _ = 1, 12 do
     assert(now <= 400.0 + 0.01, "and never overshoots the dial: " .. now)
     previous = now
 end
-near(assert(t.pipe_temperature(1, 1)), 400.0, 0.5, "it arrests on the setpoint")
+near(assert(network_matter.temperature(1, 1)), 400.0, 0.5, "it arrests on the setpoint")
 
 -- Long after it has arrived, it is still sitting there. A machine that
 -- kept adding heat would have run away by now.
 t.run_seconds(60)
-near(assert(t.pipe_temperature(1, 1)), 400.0, 0.5, "and holds there for as long as you like")
+near(assert(network_matter.temperature(1, 1)), 400.0, 0.5, "and holds there for as long as you like")
 
 -- NOT ONE MOLE. It conditions the gas standing in its mouth; it does
 -- not move any. The pressure rose because the gas got hotter, which is
 -- the gas law and not a transfer.
-near(assert(t.pipe_gas(1, 1)).n2, moles_0, moles_0 * 0.0001, "no gas entered or left the run")
+near(assert(network_matter.gas(1, 1)).n2, moles_0, moles_0 * 0.0001, "no gas entered or left the run")
 assert(
-    assert(t.pipe_pressure(1, 1)) > 101.0,
-    "and the hotter gas pushes harder: " .. assert(t.pipe_pressure(1, 1))
+    assert(network_matter.pressure(1, 1)) > 101.0,
+    "and the hotter gas pushes harder: " .. assert(network_matter.pressure(1, 1))
 )
 
 -- The panel tracks the run live rather than reporting the moment it
@@ -172,7 +200,7 @@ near(
     assert(
         tonumber(word(ui_controls.rows(ui_controls.state(p).readouts)[1].value):match("[%d%.]+"))
     ),
-    assert(t.pipe_temperature(1, 1)),
+    assert(network_matter.temperature(1, 1)),
     0.5,
     "the thermometer on the panel is the run's own"
 )
@@ -186,15 +214,15 @@ near(
 -- ---------------------------------------------------------------
 ui_controls.set(p, "temperature", 150)
 pass()
-local cooling = assert(t.pipe_temperature(1, 1))
+local cooling = assert(network_matter.temperature(1, 1))
 assert(cooling < 400.0 - 5.0, "the same machine cools: 400 -> " .. cooling)
 
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "off", "switched off mid-job")
-local frozen = assert(t.pipe_temperature(1, 1))
+local frozen = assert(network_matter.temperature(1, 1))
 t.run_seconds(30)
-near(assert(t.pipe_temperature(1, 1)), frozen, 0.5, "and the gas is left exactly where it was")
+near(assert(network_matter.temperature(1, 1)), frozen, 0.5, "and the gas is left exactly where it was")
 
 -- ---------------------------------------------------------------
 -- A DEAD GRID IS THE SAME ANSWER, ASKED IN BOTH PLACES.
@@ -207,18 +235,21 @@ near(assert(t.pipe_temperature(1, 1)), frozen, 0.5, "and the gas is left exactly
 t.world([==[(
     name: "dark cold room",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
+    networks: [
+]==] .. PIPE_NETWORKS .. [==[
+    ],
 ]==] .. ROWS .. ")", 7)
 
 local d = t.join()
 t.tick()
 t.run_seconds(3)
-local dead_0 = assert(t.pipe_temperature(1, 1))
+local dead_0 = assert(network_matter.temperature(1, 1))
 
 t.click(d, 3, 1, t.target_at(d, 3, 1, "thermomachine"))
 t.tick()
@@ -236,4 +267,4 @@ assert(
     "and the machine is still drawn dead, which is tg's `on && is_operational`"
         .. " picking the picture"
 )
-near(assert(t.pipe_temperature(1, 1)), dead_0, 0.5, "an unpowered unit conditions nothing")
+near(assert(network_matter.temperature(1, 1)), dead_0, 0.5, "an unpowered unit conditions nothing")

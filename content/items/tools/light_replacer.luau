@@ -7,6 +7,8 @@
 -- refill (tubes and glass back into the device) is not written yet.
 return {
     id = "light_replacer",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.light_replacer.name",
     name = "light replacer",
     sprite = "light_replacer",

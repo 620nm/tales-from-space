@@ -4,7 +4,7 @@ local ui_controls = require("@helpers/ui_controls")
 t.world(
     [==[(
     name: "laptop network bench",
-    legend: { '.': (turf: Floor), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: ["#######", "#.....#", "#.....#", "#.....#", "#######"],
     items: [(2, 2, "laptop"), (2, 2, "screwdriver")],
     structures: [(2, 2, "player_spawn"), (3, 2, "airlock_button"), (5, 2, "airlock_button")],

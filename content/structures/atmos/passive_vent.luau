@@ -25,6 +25,7 @@
 -- deliberately; the answer is a manual valve upstream, not a dial here.
 return {
     id = "passive_vent",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.passive_vent.name",
     name = "passive vent",
     sprite = "vent_passive",
@@ -33,6 +34,8 @@ return {
     -- with a position is a machine somebody could have set wrongly, and
     -- the point of this one is that nobody can.
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "passive_vent",
         -- Layer 3, the distribution layer -- the same run a supply vent
         -- draws from, because that is the line this thing exists to
@@ -45,7 +48,8 @@ return {
         powered = false,
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "passive_vent_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -54,6 +58,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             -- Coming up is the only control this machine has, which is
             -- worth remembering before unbolting one on a charged main.
             tool = "wrench",

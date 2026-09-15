@@ -1,3 +1,6 @@
+local network_matter = require("@helpers/network_matter")
+local network_channels = require("@helpers/network_channels")
+
 -- Loose atmos fittings rotate in place: Alt+left is clockwise and
 -- Alt+right is counter-clockwise in the browser; this spec enters the
 -- same server commands directly and proves the direction survives the
@@ -5,7 +8,7 @@
 t.world(
     [==[(
     name: "rotation",
-    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [
         "#####",
         "#...#",
@@ -20,7 +23,10 @@ t.world(
     ],
     // North is the engine's old automatic choice. West is also valid,
     // so a player-selected west can be distinguished from that fallback.
-    pipes: [(2, 1, 4), (1, 2, 4)],
+    networks: [
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
 )]==],
     7
 )
@@ -76,9 +82,9 @@ t.world(
     [==[(
     name: "rotated device topology",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#######",
@@ -91,7 +97,12 @@ t.world(
     // Both axes are completely plumbed. Automatic alignment therefore
     // chooses north first; an explicit east is the only reason this
     // valve may join the west/east pair instead.
-    pipes: [(3, 1, 4), (2, 2, 4), (4, 2, 4), (3, 3, 4)],
+    networks: [
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
     structures: [(4, 3, "player_spawn"), (1, 2, "passive_vent")],
 )]==],
     7
@@ -113,7 +124,7 @@ t.run_seconds(2.5)
 local valve = t.structure_at(3, 2)
 assert(valve ~= nil and valve.id == "manual_valve", "the rotated valve was fastened")
 assert(valve.sprite == "valve_shut_ew", "a non-stub device keeps the fitting's facing")
-assert(t.pipe(3, 2) == 0, "the valve replaces its centre length")
+assert(network_channels.at(3, 2, "pipe") == "", "the valve replaces its centre length")
 
 -- Open it, then vent the room. The passive vent is attached to the
 -- west run. East drains only if the valve's actual topology is EW;
@@ -127,10 +138,10 @@ t.fault(5, 1, t.now() + 4)
 t.run_seconds(80)
 assert(t.is_breached(5, 1), "the room opened to space")
 assert(
-    assert(t.pipe_pressure(4, 2)) < 25.0,
-    "the selected east mouth joined the vented west run: " .. assert(t.pipe_pressure(4, 2))
+    assert(network_matter.pressure(4, 2)) < 25.0,
+    "the selected east mouth joined the vented west run: " .. assert(network_matter.pressure(4, 2))
 )
 assert(
-    assert(t.pipe_pressure(3, 1)) > 90.0,
-    "the unselected north run stayed sealed: " .. assert(t.pipe_pressure(3, 1))
+    assert(network_matter.pressure(3, 1)) > 90.0,
+    "the unselected north run stayed sealed: " .. assert(network_matter.pressure(3, 1))
 )

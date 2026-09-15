@@ -1,3 +1,6 @@
+local network_matter = require("@helpers/network_matter")
+local network_channels = require("@helpers/network_channels")
+
 local ui_controls = require("@helpers/ui_controls")
 
 -- The rest of tg's in-line roster, by what each one does to the gas.
@@ -10,7 +13,6 @@ local ui_controls = require("@helpers/ui_controls")
 -- itself, and a limiter you can defeat with a multitool and then
 -- breathe the consequences of.
 
-local DISTRO = 4
 
 -- The two volumes everything here is priced in: a length of pipe is
 -- tg's 70 L, a device port its 200 L component mixture.
@@ -55,11 +57,11 @@ t.world(
     [==[(
     name: "two pumps",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "#############",
@@ -70,15 +72,62 @@ t.world(
     // Two mains that never touch: the pressure pump's on row 1, the
     // volumetric one's on row 2, with the x ranges disjoint so no
     // length of one is ever adjacent to a length of the other.
-    pipes: [
-        (1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4),
-        (7, 2, 4), (8, 2, 4), (10, 2, 4), (11, 2, 4),
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 7, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 8, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 10, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 11, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 10, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 10, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 11, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 9, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 9, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 10, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 10, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 11, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
     structures: [(3, 2, "player_spawn"), (3, 1, "pump"), (9, 2, "volume_pump")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3), (11, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3),
-    ],
+
 )]==],
     7
 )
@@ -91,10 +140,10 @@ assert(assert(t.structure_at(9, 2)).state == "off", "and tg's ships off")
 
 local IN_M3 = net_m3(2, 1)
 local OUT_M3 = net_m3(2, 1)
-local pressure_in = assert(t.pipe_pressure(1, 1))
-local pressure_out = assert(t.pipe_pressure(5, 1))
-local volume_in = assert(t.pipe_pressure(7, 2))
-local volume_out = assert(t.pipe_pressure(11, 2))
+local pressure_in = assert(network_matter.pressure(1, 1))
+local pressure_out = assert(network_matter.pressure(5, 1))
+local volume_in = assert(network_matter.pressure(7, 2))
+local volume_out = assert(network_matter.pressure(11, 2))
 assert(pressure_in > 90.0, "all four mains open the shift charged")
 assert(volume_out > 90.0)
 local books = moles(volume_in, IN_M3) + moles(volume_out, OUT_M3)
@@ -130,21 +179,21 @@ t.run_seconds(60)
 
 -- The pressure pump: nothing, in either direction, forever. It is not
 -- broken and it is not off -- it has arrived.
-near(assert(t.pipe_pressure(5, 1)), pressure_out, 1.0, "a pump at its setpoint has finished")
-near(assert(t.pipe_pressure(1, 1)), pressure_in, 1.0, "and takes nothing from its supply")
+near(assert(network_matter.pressure(5, 1)), pressure_out, 1.0, "a pump at its setpoint has finished")
+near(assert(network_matter.pressure(1, 1)), pressure_in, 1.0, "and takes nothing from its supply")
 
 -- The volume pump: its supply is empty and its delivery main is at
 -- twice an atmosphere, because nothing in this machine ever said stop.
 assert(
-    assert(t.pipe_pressure(11, 2)) > 180.0,
-    "the volumetric pump kept going past one atmosphere: " .. assert(t.pipe_pressure(11, 2))
+    assert(network_matter.pressure(11, 2)) > 180.0,
+    "the volumetric pump kept going past one atmosphere: " .. assert(network_matter.pressure(11, 2))
 )
 assert(
-    assert(t.pipe_pressure(7, 2)) < 10.0,
-    "and it did it by emptying its own supply: " .. assert(t.pipe_pressure(7, 2))
+    assert(network_matter.pressure(7, 2)) < 10.0,
+    "and it did it by emptying its own supply: " .. assert(network_matter.pressure(7, 2))
 )
-local after = moles(assert(t.pipe_pressure(7, 2)), IN_M3)
-    + moles(assert(t.pipe_pressure(11, 2)), OUT_M3)
+local after = moles(assert(network_matter.pressure(7, 2)), IN_M3)
+    + moles(assert(network_matter.pressure(11, 2)), OUT_M3)
 assert(
     math.abs(after - books) < books * 0.02,
     "every mole came out of the supply main, not out of nowhere: "
@@ -172,11 +221,11 @@ t.world(
     [==[(
     name: "overclocked",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "########",
@@ -185,12 +234,39 @@ t.world(
         "########",
     ],
     items: [(4, 2, "multitool")],
-    pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4)],
-    structures: [(4, 2, "player_spawn"), (3, 1, "volume_pump")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
+    structures: [(4, 2, "player_spawn"), (3, 1, "volume_pump")],
+
 )]==],
     7
 )
@@ -202,8 +278,8 @@ t.run_seconds(2)
 local LEAK_IN_M3 = net_m3(2, 1)
 local LEAK_OUT_M3 = net_m3(3, 1)
 local room_before = assert(t.room_pressure(4, 2))
-local supply_before = moles(assert(t.pipe_pressure(1, 1)), LEAK_IN_M3)
-local held = supply_before + moles(assert(t.pipe_pressure(5, 1)), LEAK_OUT_M3)
+local supply_before = moles(assert(network_matter.pressure(1, 1)), LEAK_IN_M3)
+local held = supply_before + moles(assert(network_matter.pressure(5, 1)), LEAK_OUT_M3)
 
 -- Defeat the limiters. A multitool in hand and a click on the machine:
 -- tg makes this a TOOL act rather than a button on the panel, because
@@ -234,8 +310,8 @@ assert(limits == "flow.limiters.defeated", "and the panel says so: " .. tostring
 ui_controls.toggle(q, "power")
 t.run_seconds(60)
 
-local supply_after = moles(assert(t.pipe_pressure(1, 1)), LEAK_IN_M3)
-local left = supply_after + moles(assert(t.pipe_pressure(5, 1)), LEAK_OUT_M3)
+local supply_after = moles(assert(network_matter.pressure(1, 1)), LEAK_IN_M3)
+local left = supply_after + moles(assert(network_matter.pressure(5, 1)), LEAK_OUT_M3)
 local moved = supply_before - supply_after
 local lost = held - left
 assert(moved > 1.0, "the pump moved something to leak out of: " .. moved .. " mol")
@@ -270,11 +346,11 @@ t.world(
     [==[(
     name: "passive gate",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "########",
@@ -283,12 +359,37 @@ t.world(
         "########",
     ],
     items: [(1, 2, "pipe")],
-    pipes: [(4, 1, 4), (5, 1, 4), (6, 1, 4)],
-    structures: [(1, 2, "player_spawn"), (3, 1, "passive_gate")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    networks: [
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
+    structures: [(1, 2, "player_spawn"), (3, 1, "passive_gate")],
+
 )]==],
     7
 )
@@ -306,12 +407,12 @@ for _, x in ipairs({ 1, 2 }) do
     t.click(g, x, 1)
     t.run_seconds(1.5)
 end
-assert(t.pipe(2, 1) == DISTRO, "the west main went down")
+assert(network_channels.at(2, 1, "pipe") == "l3", "the west main went down")
 
 local WEST_M3 = net_m3(2, 1)
 local EAST_M3 = net_m3(3, 1)
-local empty = assert(t.pipe_pressure(2, 1))
-local charged = assert(t.pipe_pressure(5, 1))
+local empty = assert(network_matter.pressure(2, 1))
+local charged = assert(network_matter.pressure(5, 1))
 assert(empty < 1.0, "a run you laid yourself starts empty")
 assert(charged > 90.0, "the mapped one beside it did not")
 local gate_books = moles(empty, WEST_M3) + moles(charged, EAST_M3)
@@ -332,8 +433,8 @@ ui_controls.toggle(g, "power")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "open", "the gate is open")
 t.run_seconds(30)
-near(assert(t.pipe_pressure(2, 1)), empty, 0.5, "an open gate pointed uphill moves nothing")
-near(assert(t.pipe_pressure(5, 1)), charged, 0.5, "and its supply never notices")
+near(assert(network_matter.pressure(2, 1)), empty, 0.5, "an open gate pointed uphill moves nothing")
+near(assert(network_matter.pressure(5, 1)), charged, 0.5, "and its supply never notices")
 
 -- ---------------------------------------------------------------
 -- ...AND DOWNHILL, IT STOPS AT LEVEL.
@@ -348,11 +449,11 @@ t.world(
     [==[(
     name: "downhill gate",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'g': (turf: Plating, fixture: Some(Generator)),
-        'a': (turf: Plating, fixture: Some(Apc)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
     },
     rows: [
         "########",
@@ -361,12 +462,37 @@ t.world(
         "########",
     ],
     items: [(6, 2, "pipe")],
-    pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4)],
-    structures: [(6, 2, "player_spawn"), (3, 1, "passive_gate")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
+    structures: [(6, 2, "player_spawn"), (3, 1, "passive_gate")],
+
 )]==],
     7
 )
@@ -382,8 +508,8 @@ end
 
 local SUPPLY_M3 = net_m3(2, 1)
 local DELIVERY_M3 = net_m3(3, 1)
-local supply = assert(t.pipe_pressure(1, 1))
-local delivery = assert(t.pipe_pressure(5, 1))
+local supply = assert(network_matter.pressure(1, 1))
+local delivery = assert(network_matter.pressure(5, 1))
 assert(supply > 90.0, "the supply main is the charged one: " .. supply)
 assert(
     assert(delivery) < supply - 20.0,
@@ -412,8 +538,8 @@ t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "open", "the gate is open")
 t.run_seconds(60)
 
-local settled_out = assert(t.pipe_pressure(5, 1))
-local settled_in = assert(t.pipe_pressure(1, 1))
+local settled_out = assert(network_matter.pressure(5, 1))
+local settled_in = assert(network_matter.pressure(1, 1))
 assert(settled_out > delivery + 10.0, "gas ran downhill through the gate: " .. settled_out)
 assert(
     assert(settled_out) <= settled_in + 0.001,
@@ -463,11 +589,11 @@ t.world(
     [==[(
     name: "relief",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'g': (turf: Plating, fixture: Some(Generator)),
-        'a': (turf: Plating, fixture: Some(Apc)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
     },
     rows: [
         "########",
@@ -476,12 +602,37 @@ t.world(
         "########",
     ],
     items: [(6, 2, "pipe")],
-    pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4)],
-    structures: [(6, 2, "player_spawn"), (3, 1, "pressure_valve")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
+    structures: [(6, 2, "player_spawn"), (3, 1, "pressure_valve")],
+
 )]==],
     7
 )
@@ -501,8 +652,8 @@ for _ = 1, 2 do
     t.run_ticks(5)
 end
 
-local relief_in = assert(t.pipe_pressure(1, 1))
-local relief_out = assert(t.pipe_pressure(5, 1))
+local relief_in = assert(network_matter.pressure(1, 1))
+local relief_out = assert(network_matter.pressure(5, 1))
 assert(relief_in > 90.0, "the supply is charged: " .. relief_in)
 assert(
     assert(relief_out) < relief_in - 20.0,
@@ -532,20 +683,20 @@ ui_controls.toggle(v, "power")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "armed", "the valve is armed")
 t.run_seconds(30)
-near(assert(t.pipe_pressure(5, 1)), relief_out, 0.5, "armed above its input, it passes nothing")
-near(assert(t.pipe_pressure(1, 1)), relief_in, 0.5, "and holds the supply where it was")
+near(assert(network_matter.pressure(5, 1)), relief_out, 0.5, "armed above its input, it passes nothing")
+near(assert(network_matter.pressure(1, 1)), relief_in, 0.5, "and holds the supply where it was")
 
 -- Wind the trip pressure under the supply. Same valve, same position,
 -- and now it relieves.
 ui_controls.set(v, "target", 50)
 t.run_seconds(60)
 assert(
-    assert(t.pipe_pressure(5, 1)) > relief_out + 10.0,
-    "under its input, the same valve opens: " .. assert(t.pipe_pressure(5, 1))
+    assert(network_matter.pressure(5, 1)) > relief_out + 10.0,
+    "under its input, the same valve opens: " .. assert(network_matter.pressure(5, 1))
 )
 assert(
-    assert(t.pipe_pressure(1, 1)) < relief_in,
-    "and the supply is what paid for it: " .. assert(t.pipe_pressure(1, 1))
+    assert(network_matter.pressure(1, 1)) < relief_in,
+    "and the supply is what paid for it: " .. assert(network_matter.pressure(1, 1))
 )
 assert(
     t.ledger_has("MachineSetpoint", "target", "Player"),

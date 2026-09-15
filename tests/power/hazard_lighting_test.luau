@@ -1,3 +1,5 @@
+local network_channels = require("@helpers/network_channels")
+
 -- A room that tells its own lights what the air in it is doing.
 --
 -- Three parties, and none of them knows more than its own job
@@ -34,12 +36,12 @@ t.world(
     [==[(
     name: "hazard lighting",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'o': (turf: Plating, fixture: Some(Outlet)),
-        'l': (turf: Plating, fixture: Some(Light)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
+        'l': (composition: (components: [(component: "station_base")]), fixture: Some(Light)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "###########",
@@ -65,9 +67,17 @@ t.world(
         (4, 2, "thin_nitrogen"), (5, 2, "thin_nitrogen"), (6, 2, "thin_nitrogen"),
         (7, 2, "thin_nitrogen"), (8, 2, "thin_nitrogen"), (9, 2, "thin_nitrogen"),
     ],
-    cables: [
-        (9, 2, 2), (8, 2, 2), (8, 1, 2),
-        (8, 1, 1), (7, 1, 1), (6, 1, 1), (5, 1, 1), (4, 1, 1), (3, 1, 1), (2, 1, 1),
+    networks: [
+        (x: 9, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
     ],
     labels: [(8, 1, "Engineering")],
 )]==],
@@ -128,9 +138,9 @@ t.run_ticks(2)
 t.click(p, 7, 2, t.target_at(p, 7, 2, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in the other")
-t.click_subfloor(p, 8, 2, "cable", 2)
+t.click_network(p, 8, 2, assert(t.network_instance(8, 2, "power", "l2")))
 t.run_seconds(1.5)
-assert(t.cable_at(8, 2) == 0, "the backbone is parted")
+assert(network_channels.at(8, 2, "power") == "", "the backbone is parted")
 t.run_seconds(3)
 t.run_ticks(60)
 
@@ -170,7 +180,7 @@ t.run_ticks(2)
 assert(t.hands(p).held == "cable_coil", "the coil comes back to the working hand")
 t.click(p, 8, 2, nil, -14, 14)
 t.run_seconds(1.5)
-assert(t.cable_at(8, 2) == 2, "the backbone is whole again")
+assert(network_channels.at(8, 2, "power") == "l2", "the backbone is whole again")
 t.run_seconds(3)
 t.run_ticks(60)
 
@@ -218,12 +228,12 @@ t.world(
     [==[(
     name: "two alarms",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'o': (turf: Plating, fixture: Some(Outlet)),
-        'l': (turf: Plating, fixture: Some(Light)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
+        'l': (composition: (components: [(component: "station_base")]), fixture: Some(Light)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "####################",
@@ -257,12 +267,26 @@ t.world(
         (13, 2, "thin_nitrogen"), (14, 2, "thin_nitrogen"), (15, 2, "thin_nitrogen"),
         (16, 2, "thin_nitrogen"), (17, 2, "thin_nitrogen"), (18, 2, "thin_nitrogen"),
     ],
-    cables: [
-        (18, 1, 2), (17, 1, 2),
-        (17, 1, 1), (16, 1, 1), (15, 1, 1), (14, 1, 1), (13, 1, 1), (12, 1, 1),
-        (11, 1, 1), (10, 1, 1), (9, 1, 1), (8, 1, 1), (7, 1, 1), (6, 1, 1),
-        (5, 1, 1), (4, 1, 1), (3, 1, 1), (2, 1, 1),
-        (10, 2, 1),
+    networks: [
+        (x: 18, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 17, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 17, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 16, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 15, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 14, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 13, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 12, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 10, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 10, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
     ],
     labels: [(17, 1, "Engineering")],
 )]==],
@@ -296,9 +320,9 @@ assert(lamp.color == UNBREATHABLE, "and both alarms have it blue: " .. lamp.colo
 t.click(q, 9, 2, t.target_at(q, 9, 2, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(q).held == "wirecutters", "cutters in hand")
-t.click_subfloor(q, 10, 2, "cable", 1)
+t.click_network(q, 10, 2, assert(t.network_instance(10, 2, "power", "l1")))
 t.run_seconds(1.5)
-assert(t.cable_at(10, 2) == 0, "the spur is parted")
+assert(network_channels.at(10, 2, "power") == "", "the spur is parted")
 t.drop(q)
 t.run_seconds(3)
 t.run_ticks(40)
@@ -414,7 +438,7 @@ t.run_ticks(60)
 
 -- The far room crossing a band is the whole nudge. Nothing about the
 -- fan that left happens again.
-assert(t.set_turf(13, 2, "space"), "and the far room opens to space")
+assert(t.set_composition(13, 2, "bare"), "and the far room opens to space")
 t.run_seconds(20)
 t.run_ticks(60)
 assert(

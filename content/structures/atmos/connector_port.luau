@@ -58,10 +58,13 @@
 -- which way the pipe is coming from.
 return {
     id = "connector_port",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.connector_port.name",
     name = "connector port",
     sprite = "connector_port_s",
     fitting = true,
+    matter_network = "pipe",
+    matter_channel = "l3",
     stub = true,
     facing_sprites = {
         anchored = {
@@ -78,7 +81,8 @@ return {
     -- lying on the floor, it is a fitting in your hands.
     states = { "anchored" },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "connector_port_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -90,6 +94,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             at = "anchored",
             tool = "wrench",
             secs = 2.0,

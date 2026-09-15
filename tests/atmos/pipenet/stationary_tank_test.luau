@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
 -- The stationary pressure tank: what a map put in one, where it goes,
@@ -21,9 +22,9 @@ t.world(
     [==[(
     name: "tank bay",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "########",
@@ -36,7 +37,11 @@ t.world(
         (2, 2, "player_spawn"),
         (3, 2, "stationary_tank", "anchored", ("o2", 23000.0)),
     ],
-    pipes: [(4, 2, 4), (5, 2, 4), (6, 2, 4)],
+    networks: [
+        (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
 )]==],
     7
 )
@@ -135,7 +140,7 @@ assert(readout(ui, "holder.rating") == "46000 kPa", "with the sticker beside it"
 
 local tank_o2 = moles(ui, "oxygen")
 assert(tank_o2 > 20000.0, "a full 2500 L vessel is tens of thousands of moles: " .. tank_o2)
-local pipe_o2 = assert(t.pipe_gas(5, 2)).o2
+local pipe_o2 = assert(network_matter.gas(5, 2)).o2
 
 -- ---------------------------------------------------------------
 -- It free-flows into the run its east mouth reaches, and the books
@@ -147,7 +152,7 @@ local pipe_o2 = assert(t.pipe_gas(5, 2)).o2
 -- ---------------------------------------------------------------
 t.run_seconds(5)
 
-local piped = t.pipe_gas(5, 2)
+local piped = network_matter.gas(5, 2)
 assert(piped, "the run under the deck is bound to the tank")
 assert(piped.o2 > pipe_o2 + 1000.0, "and it is now full of the tank's gas: " .. piped.o2)
 assert(
@@ -156,7 +161,7 @@ assert(
 )
 
 local settled = assert(t.tank_pressure(3, 2))
-local pipe_kpa = assert(t.pipe_pressure(5, 2))
+local pipe_kpa = assert(network_matter.pressure(5, 2))
 assert(settled < filled - 500.0, "the tank is what paid for it: " .. filled .. " -> " .. settled)
 -- One body of gas, split by volume, means one PRESSURE. tg equalises
 -- completely in a pass and so does this; if the two ever disagreed the

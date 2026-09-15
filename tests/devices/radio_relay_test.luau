@@ -1,3 +1,5 @@
+local network_channels = require("@helpers/network_channels")
+
 -- WHAT THE NETWORK DOES TO A LINE, from the crew's side of it.
 --
 -- Coverage geometry is radio_coverage_test.luau's and the amplifier
@@ -56,12 +58,12 @@ end
 local BENCH = [==[(
     name: "relay bench",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'G': (turf: Plating, fixture: Some(Generator)),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'o': (turf: Plating, fixture: Some(Outlet)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
     },
     rows: [
         "####################################################",
@@ -86,11 +88,27 @@ local BENCH = [==[(
         (50, 2, "player_spawn", { "jobs": "medic" }),
         (6, 1, "access_point", { "mount": "north" }), (49, 1, "access_point", { "mount": "north" }),
     ],
-    cables: [
-        (1, 2, 2), (2, 2, 3), (3, 2, 1), (4, 2, 1), (5, 2, 1),
-        (6, 2, 1), (7, 2, 1), (8, 2, 1),
-        (40, 2, 2), (41, 2, 3), (42, 2, 1), (43, 2, 1), (44, 2, 1),
-        (45, 2, 1), (46, 2, 1), (47, 2, 1), (48, 2, 1), (49, 2, 1),
+    networks: [
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 40, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 41, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 41, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 42, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 43, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 44, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 45, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 46, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 47, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 48, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 49, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
     ],
 )]==]
 
@@ -297,10 +315,10 @@ t.run_ticks(2)
 assert(t.hands(listener).held == "wirecutters", "the cutters are in hand")
 listener_to_box()
 walk(listener, "west", 2)
-t.click_subfloor(listener, 48, 2, "cable", 1)
+t.click_network(listener, 48, 2, assert(t.network_instance(48, 2, "power", "l1")))
 t.run_seconds(1.5)
-assert(t.cable_at(48, 2) == 0, "the spur is parted")
-assert(t.ledger_has("CableCut"), "sabotage is attributable")
+assert(network_channels.at(48, 2, "power") == "", "the spur is parted")
+assert(t.ledger_has("NetworkRemoved"), "sabotage is attributable")
 t.run_ticks(60)
 
 -- The tower's own sentence, from an empty hand, is what tells the two

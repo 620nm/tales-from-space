@@ -8,6 +8,8 @@ local WALLPAPERS = { "wallpaper_bliss", "wallpaper_moonlake" }
 
 local content = {
     id = "laptop",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.laptop.name",
     name = "laptop",
     sprite = "laptop_closed",

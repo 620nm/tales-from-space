@@ -5,6 +5,8 @@
 -- `pipe_state`, `"pvalve"` (pressure_valve.dm:129).
 return {
     id = "pressure_valve_fitting",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.pressure_valve_fitting.name",
     name = "pressure valve fitting",
     sprite = "pressure_valve_loose",

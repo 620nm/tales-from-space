@@ -9,10 +9,10 @@ t.world(
     [==[(
     name: "haulage",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'c': (turf: Plating),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'c': (composition: (components: [(component: "station_base")])),
     },
     rows: [
         "######",
@@ -20,7 +20,9 @@ t.world(
         "######",
     ],
     items: [(3, 1, "wrench")],
-    pipes: [(3, 1, 4)],
+    networks: [
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
     // Without the socket the bottle is furniture; with it, the bottle
     // starts fastened, which is the state that refuses a grab.
     blends: {

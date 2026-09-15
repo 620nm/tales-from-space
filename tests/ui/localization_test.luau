@@ -23,10 +23,10 @@ t.world(
     [==[(
     name: "phrasebook",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'E': (turf: Floor, fixture: Some(Door)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'E': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Door)),
     },
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),

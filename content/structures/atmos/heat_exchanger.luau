@@ -28,6 +28,7 @@
 -- operational. It exchanges heat in the dark.
 return {
     id = "heat_exchanger",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.heat_exchanger.name",
     name = "heat exchanger",
     sprite = "he_plate_n",
@@ -47,10 +48,13 @@ return {
         },
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "heat_exchanger",
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "heat_exchanger_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -59,6 +63,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             -- `can_unwrench = TRUE` with no further guard
             -- (heat_exchanger.dm:8): there is no position to be in and
             -- nothing to turn off first.

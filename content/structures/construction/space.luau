@@ -4,28 +4,28 @@
 -- that already exists, never floating alone in the dark.
 return {
     id = "space",
+    visual_layer = "substrate",
     name_label = "lunatic/tfs:entity.space.name",
     name = "space",
     sprite = "plating", -- turf entries never spawn; this is the finish it lays
-    turf = "space",
+    turf = "substrate:space",
     transitions = {
         {
+            sound = "smash",
             with = { floor_tile = 1 },
             secs = 1.5,
-            into = "turf:plating",
+            into = "add_component:station_base",
             anchored = true,
             start = "You start laying plating.",
             done = "The plating settles into place.",
         },
-        -- A hull breach is not a state, it is a Floor that became
-        -- Space (sim/geometry.rs). So welding one shut is the same
-        -- step as any other: vacuum, next to something solid, becomes
-        -- plating again. `anchored` is why you cannot weld the void.
+        -- Welding restores the station base over the retained space substrate.
         {
+            sound = "smash",
             tool = "welder",
             secs = 4.0,
             fuel = 2.0,
-            into = "turf:plating",
+            into = "add_component:station_base",
             anchored = true,
             start = "You start welding the breach shut.",
             done = "You weld the breach shut.",

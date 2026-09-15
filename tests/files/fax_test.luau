@@ -52,10 +52,10 @@ t.world(
     [==[ (
     name: "fax network",
     legend: {
-        '.': (turf: Floor), '#': (turf: Wall),
-        'G': (turf: Floor, fixture: Some(Generator)),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'o': (turf: Floor, fixture: Some(Outlet)),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: [
         "#######################",
@@ -85,13 +85,26 @@ t.world(
         (15, 1, 16, 1), (16, 1, 18, 2),
     ],
     items: [(3, 2, "paper"), (2, 2, "four_color_pen"),
-        (12, 2, "paper_bin"), (12, 2, "toner_cartridge")],
-    cables: [
-        (1, 1, 2), (2, 1, 3), (3, 1, 1), (4, 1, 1),
-        (5, 1, 1), (6, 1, 1), (7, 1, 1), (8, 1, 1),
-        (9, 1, 1), (10, 1, 1), (11, 1, 1), (12, 1, 1),
-        (13, 1, 1), (14, 1, 1), (15, 1, 1), (16, 1, 1),
-        (17, 1, 1),
+        (12, 2, "paper_bin"), (13, 3, "toner_cartridge")],
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 10, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 12, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 13, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 14, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 15, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 16, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 17, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
     ],
 ) ]==],
     0
@@ -241,8 +254,8 @@ receiver_data = data(receiver, "fax")
 assert(receiver_data.paper == 30, "paper bin restores the missing sheet")
 
 local toner =
-    assert(t.target_at(receiver, 12, 2, "toner_cartridge"), "toner cartridge is available")
-t.click(receiver, 12, 2, toner)
+    assert(t.target_at(receiver, 13, 3, "toner_cartridge"), "toner cartridge is available")
+t.click(receiver, 13, 3, toner)
 t.run_ticks(1)
 assert(t.hands(receiver).held == "toner_cartridge", "toner cartridge is held")
 t.click(receiver, 12, 2, receiver_fax)

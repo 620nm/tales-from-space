@@ -1,3 +1,6 @@
+local network_matter = require("@helpers/network_matter")
+local network_channels = require("@helpers/network_channels")
+
 local ui_controls = require("@helpers/ui_controls")
 
 -- Off is off, and dead is dead -- on the three machines you cannot
@@ -24,9 +27,6 @@ local ui_controls = require("@helpers/ui_controls")
 -- machine off would assert nothing at all, so each scenario below
 -- records the work the machine still had in front of it at the moment
 -- it was stopped.
-
-local ROOM = 1 -- the red line the bench's panel outputs onto
-local DISTRO = 4 -- piping layer 3, where a distribution main lives
 
 local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
@@ -58,13 +58,13 @@ local function panel_says(p: number, want: string, what: string)
 end
 
 local function gas(x: number, y: number, which: string)
-    local held = t.pipe_gas(x, y)
+    local held = network_matter.gas(x, y)
     return (held and held[which]) or 0.0
 end
 
 local function total(x, y)
     local n = 0.0
-    for _, amount in pairs(t.pipe_gas(x, y) or {}) do
+    for _, amount in pairs(network_matter.gas(x, y) or {}) do
         n = n + amount
     end
     return n
@@ -77,7 +77,7 @@ local function books(ports: { { number } }): { { [string]: number } }
     local snap: { { [string]: number } } = {}
     for i, port in ipairs(ports) do
         snap[i] = {}
-        for key, amount in pairs(t.pipe_gas(port[1], port[2]) or {}) do
+        for key, amount in pairs(network_matter.gas(port[1], port[2]) or {}) do
             snap[i][key] = amount
         end
     end
@@ -87,7 +87,7 @@ end
 local function frozen(ports: { { number } }, snap: { { [string]: number } }, what: string)
     for i, port in ipairs(ports) do
         local at = " at " .. port[1] .. "," .. port[2]
-        local now = t.pipe_gas(port[1], port[2]) or {}
+        local now = network_matter.gas(port[1], port[2]) or {}
         for key, amount in pairs(snap[i]) do
             near(now[key] or 0.0, amount, 1e-9, what .. at .. " (" .. key .. ")")
         end
@@ -120,11 +120,11 @@ end
 local BENCH = [==[(
     name: "%s bench",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'g': (turf: Plating, fixture: Some(Generator)),
-        'a': (turf: Plating, fixture: Some(Apc)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
     },
     rows: [
         "############",
@@ -133,19 +133,25 @@ local BENCH = [==[(
         "############",
     ],
     items: [(5, 2, "wirecutters"), (5, 2, "pipe"), (6, 2, "cable_coil")],
-    pipes: [%s],
-    structures: [(5, 2, "player_spawn"), (5, 1, "%s")],
-    cables: [
-        (1, 2, 2), (2, 2, 3),
-        (3, 2, 1), (4, 2, 1), (4, 1, 1), (5, 1, 1),
+    networks: [
+        %s,
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
     ],
+    structures: [(5, 2, "player_spawn"), (5, 1, "%s")],
+
 )]==]
 
 -- A trinary wants a junction: a main running west to east with the
 -- machine standing in a gap in it, and a one-length stub dropping south
 -- for the third mouth. A binary wants the main and nothing else.
-local TEE = "(3, 1, 4), (4, 1, 4), (6, 1, 4), (7, 1, 4), (5, 2, 4)"
-local LINE = "(3, 1, 4), (4, 1, 4), (6, 1, 4), (7, 1, 4)"
+local TEE = [==[(x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15), (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15), (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15), (x: 7, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15), (x: 5, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15)]==]
+local LINE = [==[(x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15), (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15), (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15), (x: 7, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15)]==]
 
 local IN = { 3, 1 }
 local OUT = { 6, 1 }
@@ -160,7 +166,7 @@ local function bench(id: string, pipes: string, off: string)
     assert(assert(t.structure_at(5, 1)).id == id, "the map stood a " .. id .. " there")
     assert(assert(t.structure_at(5, 1)).state == off, id .. " ships switched off")
     assert(assert(t.apc_at(2, 2)).equipment == true, "and the bench's APC is feeding its circuit")
-    assert(t.segment_at(5, 1).feed == ROOM, "which reaches the machine's own tile")
+    assert(t.network_feed(5, 1, "power", "equipment") == "l1", "which reaches the machine's own tile")
     return p
 end
 
@@ -239,25 +245,25 @@ local TRINARIES = {
         end,
         moved = function(was: { [string]: number })
             assert(
-                assert(t.pipe_pressure(OUT[1], OUT[2])) > was.out_kpa + 10.0,
+                assert(network_matter.pressure(OUT[1], OUT[2])) > was.out_kpa + 10.0,
                 "the outlet main filled: "
                     .. was.out_kpa
                     .. " -> "
-                    .. assert(t.pipe_pressure(OUT[1], OUT[2]))
+                    .. assert(network_matter.pressure(OUT[1], OUT[2]))
                     .. " kPa"
             )
             assert(
-                assert(t.pipe_pressure(SIDE[1], SIDE[2])) < was.side_kpa - 1.0,
+                assert(network_matter.pressure(SIDE[1], SIDE[2])) < was.side_kpa - 1.0,
                 "and both intakes paid for it"
             )
         end,
         unfinished = function()
             assert(
-                assert(t.pipe_pressure(OUT[1], OUT[2])) < 240.0,
+                assert(network_matter.pressure(OUT[1], OUT[2])) < 240.0,
                 "it was still short of its own setpoint, so it stopped"
                     .. " because it was switched off and not because it had"
                     .. " arrived: "
-                    .. assert(t.pipe_pressure(OUT[1], OUT[2]))
+                    .. assert(network_matter.pressure(OUT[1], OUT[2]))
                     .. " kPa of 250"
             )
         end,
@@ -278,8 +284,8 @@ for _, job in ipairs(TRINARIES) do
     local was = {
         side_o2 = gas(SIDE[1], SIDE[2], "o2"),
         side_n2 = gas(SIDE[1], SIDE[2], "n2"),
-        side_kpa = assert(t.pipe_pressure(SIDE[1], SIDE[2])),
-        out_kpa = assert(t.pipe_pressure(OUT[1], OUT[2])),
+        side_kpa = assert(network_matter.pressure(SIDE[1], SIDE[2])),
+        out_kpa = assert(network_matter.pressure(OUT[1], OUT[2])),
     }
     t.run_seconds(10)
     job.moved(was)
@@ -309,13 +315,13 @@ for _, job in ipairs(TRINARIES) do
     t.click(p, 5, 2, t.target_at(p, 5, 2, "wirecutters"))
     t.run_ticks(2)
     assert(t.hands(p).held == "wirecutters", "cutters in hand")
-    t.click_subfloor(p, 4, 2, "cable", ROOM)
+    t.click_network(p, 4, 2, assert(t.network_instance(4, 2, "power", "l1")))
     t.run_seconds(1.5)
-    assert(t.cable_at(4, 2) == 0, "the room circuit is parted")
+    assert(network_channels.at(4, 2, "power") == "", "the room circuit is parted")
     t.drop(p)
     t.run_seconds(3)
     assert(
-        t.segment_at(5, 1).feed == nil,
+        t.network_feed(5, 1, "power", "equipment") == nil,
         "nothing on the machine's side of the cut reaches an APC"
     )
 
@@ -372,10 +378,10 @@ t.run_ticks(2)
 assert(t.hands(p).held == "pipe", "a coil of pipe in hand")
 t.click(p, 6, 2)
 t.run_seconds(1.5)
-assert(t.pipe(6, 2) == DISTRO, "a fresh length went onto the delivery main")
+assert(network_channels.at(6, 2, "pipe") == "l3", "a fresh length went onto the delivery main")
 
 local function head()
-    return assert(t.pipe_pressure(IN[1], IN[2])) - assert(t.pipe_pressure(OUT[1], OUT[2]))
+    return assert(network_matter.pressure(IN[1], IN[2])) - assert(network_matter.pressure(OUT[1], OUT[2]))
 end
 
 local function has_work(what: string)
@@ -383,9 +389,9 @@ local function has_work(what: string)
         head() > 10.0,
         assert(what)
             .. ": "
-            .. assert(t.pipe_pressure(IN[1], IN[2]))
+            .. assert(network_matter.pressure(IN[1], IN[2]))
             .. " / "
-            .. assert(t.pipe_pressure(OUT[1], OUT[2]))
+            .. assert(network_matter.pressure(OUT[1], OUT[2]))
             .. " kPa"
     )
 end
@@ -406,13 +412,13 @@ t.run_ticks(2)
 t.click(p, 5, 2, t.target_at(p, 5, 2, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
-t.click_subfloor(p, 4, 2, "cable", ROOM)
+t.click_network(p, 4, 2, assert(t.network_instance(4, 2, "power", "l1")))
 t.run_seconds(1.5)
-assert(t.cable_at(4, 2) == 0, "the room circuit is parted")
-assert(t.ledger_has("CableCut"), "and cutting a department's feed is attributable")
+assert(network_channels.at(4, 2, "power") == "", "the room circuit is parted")
+assert(t.ledger_has("NetworkRemoved"), "and cutting a department's feed is attributable")
 t.drop(p)
 t.run_seconds(3)
-assert(t.segment_at(5, 1).feed == nil, "nothing on this side of the cut reaches an APC any more")
+assert(t.network_feed(5, 1, "power", "equipment") == nil, "nothing on this side of the cut reaches an APC any more")
 
 -- The machine takes its orders perfectly happily while dead. A dead
 -- machine is not a broken one, and its panel is fed by nothing but the
@@ -452,8 +458,8 @@ has_work("and the job is still sitting there untouched")
 -- never re-entered. What the machine was told while it was dead is what
 -- it does the moment it wakes.
 local was = {
-    out_kpa = assert(t.pipe_pressure(OUT[1], OUT[2])),
-    in_kpa = assert(t.pipe_pressure(IN[1], IN[2])),
+    out_kpa = assert(network_matter.pressure(OUT[1], OUT[2])),
+    in_kpa = assert(network_matter.pressure(IN[1], IN[2])),
 }
 
 t.click(p, 6, 2, t.target_at(p, 6, 2, "cable_coil"))
@@ -467,10 +473,10 @@ t.use_self(p)
 t.run_ticks(2)
 t.click(p, 4, 2)
 t.run_seconds(1.5)
-assert(t.cable_at(4, 2) == ROOM, "and the coil lays the red line, which is the one this APC feeds")
+assert(network_channels.at(4, 2, "power") == "l1", "and the coil lays the red line, which is the one this APC feeds")
 t.drop(p)
 t.run_seconds(3)
-assert(t.segment_at(5, 1).feed == ROOM, "the machine is back on an APC")
+assert(t.network_feed(5, 1, "power", "equipment") == "l1", "the machine is back on an APC")
 assert(
     assert(t.structure_at(5, 1)).state == "armed",
     "and it armed ITSELF: " .. assert(assert(t.structure_at(5, 1)).state)
@@ -478,17 +484,17 @@ assert(
 
 t.run_seconds(10)
 assert(
-    assert(t.pipe_pressure(OUT[1], OUT[2])) > was.out_kpa + 5.0,
+    assert(network_matter.pressure(OUT[1], OUT[2])) > was.out_kpa + 5.0,
     "the delivery main took gas the moment the power came back: "
         .. was.out_kpa
         .. " -> "
-        .. assert(t.pipe_pressure(OUT[1], OUT[2]))
+        .. assert(network_matter.pressure(OUT[1], OUT[2]))
         .. " kPa"
 )
-assert(assert(t.pipe_pressure(IN[1], IN[2])) < was.in_kpa, "and the supply is what paid for it")
+assert(assert(network_matter.pressure(IN[1], IN[2])) < was.in_kpa, "and the supply is what paid for it")
 near(
-    assert(t.pipe_pressure(IN[1], IN[2])),
-    assert(t.pipe_pressure(OUT[1], OUT[2])),
+    assert(network_matter.pressure(IN[1], IN[2])),
+    assert(network_matter.pressure(OUT[1], OUT[2])),
     1.0,
     "the two mains came level, which is where a release machine stops"
 )
@@ -513,7 +519,7 @@ t.run_ticks(2)
 assert(t.hands(p).held == "pipe", "the coil of pipe is where it was parked")
 t.click(p, 7, 2)
 t.run_seconds(1.5)
-assert(t.pipe(7, 2) == DISTRO, "a second fresh length onto the delivery main")
+assert(network_channels.at(7, 2, "pipe") == "l3", "a second fresh length onto the delivery main")
 has_work("which is a second real job, over the friction floor again")
 
 local switched = books({ IN, OUT })

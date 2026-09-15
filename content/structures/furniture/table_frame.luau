@@ -15,6 +15,7 @@
 -- not a surface. Nothing rests on four legs and a hole.
 return {
     id = "table_frame",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.table_frame.name",
     name = "table frame",
     sprite = "table_frame",
@@ -25,7 +26,8 @@ return {
     -- Two rods, one second: tg's stack recipe, which is the only way to
     -- get one (`/obj/item/stack/rods`, rods.dm:3).
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         with = { rod = 2 },
         secs = 1.0,
         start = "You start bending the rods into a table frame.",
@@ -38,6 +40,7 @@ return {
         -- answer here, because a stack in this pack is a noun and does
         -- not carry a roster of what it can become.
         {
+            sound = "smash",
             with = { metal = 1 },
             secs = 2.0,
             leaves = "table",
@@ -52,6 +55,7 @@ return {
         -- other. This pack has rglass and no plasteel, so the reinforced
         -- table it can build is the one it has the sheets for.
         {
+            sound = "smash",
             with = { rglass = 1 },
             secs = 2.0,
             leaves = "reinforced_table",
@@ -63,6 +67,7 @@ return {
         -- `wrench_act` (:41-48) and the framestack it hands back
         -- (`atom_deconstruct`, :97-98).
         {
+            sound = "smash",
             tool = "wrench",
             secs = 3.0,
             yields = { rod = 2 },

@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
 -- The mixer: the filter run backwards.
@@ -37,7 +38,7 @@ end
 
 -- Everything standing in the run under a tile, in moles.
 local function moles(x: number, y: number): number
-    local held = t.pipe_gas(x, y)
+    local held = network_matter.gas(x, y)
     if not held then
         return 0.0
     end
@@ -58,11 +59,11 @@ local OUT_X, OUT_Y = 11, 1
 local THREE_WAY = [==[(
     name: "mixer",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "##############",
@@ -70,17 +71,70 @@ local THREE_WAY = [==[(
         "#........a..g#",
         "##############",
     ],
-    pipes: [
-        (1, 1, 4), (2, 1, 4), (3, 1, 4), (4, 1, 4),
-        (5, 1, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4),
-        (10, 1, 4), (11, 1, 4), (12, 1, 4),
-        (9, 2, 4),
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 7, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 8, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 10, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 11, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 12, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 9, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 10, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 10, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 11, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 12, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 12, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 9, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 9, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 10, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 10, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 11, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 12, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 12, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
     structures: [(9, 2, "player_spawn"), (9, 1, "mixer")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3), (11, 1, 3), (12, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3), (12, 2, 3),
-    ],
+
 )]==]
 
 t.world(THREE_WAY, 7)
@@ -91,7 +145,7 @@ t.tick()
 local m = t.structure_at(9, 1)
 assert(m ~= nil and m.id == "mixer", "the mixer is where the map put it")
 assert(m.state == "off", "and it ships off")
-assert(t.pipe_pressure(9, 1) == nil, "the run does not pass through it")
+assert(network_matter.pressure(9, 1) == nil, "the run does not pass through it")
 
 -- ---------------------------------------------------------------
 -- THE 300 L OUTLET, PROVED BY WHAT IT HOLDS.
@@ -194,14 +248,14 @@ local gave_back = back0 - moles(BACK_X, BACK_Y)
 local gave_side = side0 - moles(SIDE_X, SIDE_Y)
 assert(gave_back > 1.0, "the back intake paid: " .. gave_back)
 near(gave_back, gave_side, 0.02, "and the side paid exactly as much")
-near(assert(t.pipe_pressure(OUT_X, OUT_Y)), 150.0, 1.0, "the outlet came up to the setpoint")
+near(assert(network_matter.pressure(OUT_X, OUT_Y)), 150.0, 1.0, "the outlet came up to the setpoint")
 
 -- ...and stopped there. tg's `output_starting_pressure >= target_pressure`
 -- ends the pass before a mole is drawn (mixer.dm:80-82).
 local held_back = moles(BACK_X, BACK_Y)
 t.run_seconds(20)
 near(moles(BACK_X, BACK_Y), held_back, 1e-6, "a mixer at its setpoint draws nothing more")
-assert(assert(t.pipe_pressure(OUT_X, OUT_Y)) < 151.0, "and never one kPa past it")
+assert(assert(network_matter.pressure(OUT_X, OUT_Y)) < 151.0, "and never one kPa past it")
 
 near(
     moles(BACK_X, BACK_Y) + moles(SIDE_X, SIDE_Y) + moles(OUT_X, OUT_Y),
@@ -288,8 +342,8 @@ near(
     "it gave up exactly what the short side could match"
 )
 assert(
-    assert(t.pipe_pressure(OUT_X, OUT_Y)) < 4000.0,
-    "so the outlet never reached its target: " .. assert(t.pipe_pressure(OUT_X, OUT_Y))
+    assert(network_matter.pressure(OUT_X, OUT_Y)) < 4000.0,
+    "so the outlet never reached its target: " .. assert(network_matter.pressure(OUT_X, OUT_Y))
 )
 near(
     moles(BACK_X, BACK_Y) + moles(SIDE_X, SIDE_Y) + moles(OUT_X, OUT_Y),
@@ -357,11 +411,11 @@ t.world(
     [==[(
     name: "flipped mixer",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "##############",
@@ -369,17 +423,70 @@ t.world(
         "#........a..g#",
         "##############",
     ],
-    pipes: [
-        (1, 1, 4), (2, 1, 4), (3, 1, 4), (4, 1, 4),
-        (5, 1, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4),
-        (10, 1, 4), (11, 1, 4), (12, 1, 4),
-        (9, 2, 4),
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 7, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 8, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 10, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 11, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 12, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 9, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 10, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 10, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 11, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 12, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 12, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 9, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 9, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 10, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 10, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 11, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 12, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 12, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
     structures: [(9, 2, "player_spawn"), (9, 1, "mixer.flipped")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3), (11, 1, 3), (12, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3), (12, 2, 3),
-    ],
+
 )]==],
     7
 )

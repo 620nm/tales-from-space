@@ -13,6 +13,8 @@ local action_rules = require("@lib/action_rules")
 -- ledger edge and is not a handler.
 local content = {
     id = "atmos_resin_projector",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.atmos_resin_projector.name",
     name = "atmos resin projector",
     -- Reuse the rapid pipe dispenser silhouette until the next asset
@@ -24,7 +26,7 @@ local content = {
 }
 
 content.actions = {
-    action_rules.primary("seal_deck", action_rules.deck("floor", "plating", "reinforced_floor")),
+    action_rules.primary("seal_deck", action_rules.deck("floor_tiles", "grid_cover", "station_base", "reinforcement")),
 }
 
 if sim ~= nil then
@@ -37,8 +39,9 @@ if sim ~= nil then
         if clicked ~= nil and clicked.entity ~= nil then
             return { replaced = false }
         end
-        local turf = sim.turf(x, y)
-        if turf ~= "floor" and turf ~= "plating" and turf ~= "reinforced_floor" then
+        if not sim.has_component(x, y, "station_base")
+            or sim.has_component(x, y, "wall")
+            or sim.has_component(x, y, "reinforced_wall") then
             return { replaced = false }
         end
         if (self.uses or 0) <= 0 then

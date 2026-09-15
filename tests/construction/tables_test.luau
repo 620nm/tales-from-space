@@ -25,9 +25,9 @@ t.world(
     [==[(
     name: "furniture showroom",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "########",
@@ -99,9 +99,9 @@ t.world(
     [==[(
     name: "workshop corner",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -229,6 +229,9 @@ assert(t.item_at(2, 2, "metal") ~= nil, "and the sheet is back on the deck")
 -- Rebuild it, so the ratchet has something to take apart.
 t.swap_hands(p)
 assert(t.hands(p).held == "metal", "the rest of the stack is still in hand")
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "metal")))
+t.run_ticks(2)
+assert(t.hands(p).held == "metal", "the loose sheet merged into the held stack")
 t.click(p, 2, 2, t.target_at(p, 2, 2, "table_frame"))
 t.run_seconds(2.5)
 assert(assert(t.structure_at(2, 2)).id == "table", "a table again")

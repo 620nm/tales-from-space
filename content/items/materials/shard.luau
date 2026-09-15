@@ -4,6 +4,8 @@
 -- sheet's picture until a shard sprite is baked.
 return {
     id = "shard",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.shard.name",
     name = "shard",
     sprite = "glass",

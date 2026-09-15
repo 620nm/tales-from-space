@@ -1,3 +1,5 @@
+local composition = require("@helpers/composition")
+
 -- Floor tiles come up and go back down under fixtures.
 --
 -- tg puts exactly one condition on prying a tile: the turf has to be a
@@ -21,11 +23,11 @@ t.world(
     [==[(
     name: "fixture row",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'l': (turf: Floor, fixture: Some(Light)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'l': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Light)),
     },
     rows: [
         "#######",
@@ -47,10 +49,10 @@ t.sounds(p) -- clear the pickup traffic
 t.messages(p)
 
 -- The APC's tile, from the walkway below it.
-assert(t.turf(2, 1) == "floor", "the APC stands on a tiled floor")
+assert(composition.matches(2, 1, { "station_base", "floor_tiles" }), "the APC stands on a tiled floor")
 t.click(p, 2, 1, nil, -14, 14)
 t.tick()
-assert(t.turf(2, 1) == "plating", "the tile under the APC comes up")
+assert(composition.matches(2, 1, { "station_base" }), "the tile under the APC comes up")
 assert(has(t.items_at(2, 1), "floor_tile"), "and is refunded where it lay")
 assert(has(t.messages(p), "You pry up the floor tile."), "the narration was not a lie")
 
@@ -72,10 +74,10 @@ walk("east", 3)
 assert(t.pos(p) == 4, "walked under the vent row")
 t.click(p, 4, 1, nil, -14, 14)
 t.tick()
-assert(t.turf(4, 1) == "plating", "the tile under the vent comes up")
+assert(composition.matches(4, 1, { "station_base" }), "the tile under the vent comes up")
 t.click(p, 5, 1, nil, -14, 14)
 t.tick()
-assert(t.turf(5, 1) == "plating", "and the one under the light")
+assert(composition.matches(5, 1, { "station_base" }), "and the one under the light")
 
 -- Back the other way: a tile goes down on plating a fixture stands on.
 walk("west", 3)
@@ -86,7 +88,7 @@ t.tick()
 t.messages(p)
 t.click(p, 2, 1, nil, -14, 14) -- and lay it
 t.run_seconds(1.0)
-assert(t.turf(2, 1) == "floor", "the tile goes back down under the APC")
+assert(composition.matches(2, 1, { "station_base", "floor_tiles" }), "the tile goes back down under the APC")
 assert(has(t.messages(p), "The floor is tiled."), "and says so")
 
 -- Scenario 2: forcing a dead airlock is the OTHER crowbar sound.
@@ -94,10 +96,10 @@ t.world(
     [==[(
     name: "dead airlock",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        '+': (turf: Floor, fixture: Some(Door)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '+': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Door)),
     },
     rows: [
         "#####",
@@ -108,7 +110,9 @@ t.world(
     items: [(1, 1, "crowbar")],
     // One length of backbone with no generator behind it, which is a
     // station with the lights off: the airlock's motors never wake.
-    cables: [(1, 1, 2)],
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+    ],
 )]==],
     7
 )

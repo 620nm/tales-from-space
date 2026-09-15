@@ -9,6 +9,7 @@ return {
     profiles = {
         {
             key = "liquid",
+            visual_layer = "matter_ground",
             phase = "liquid",
             full_volume_ml = 50,
             alpha = { min = 0.15, max = 0.80 },
@@ -40,6 +41,7 @@ return {
         -- above it is depth rather than opacity.
         {
             key = "flowing",
+            visual_layer = "matter_ground",
             phase = "liquid",
             full_volume_ml = 1000,
             alpha = { min = 0.15, max = 1.0 },
@@ -60,6 +62,7 @@ return {
         },
         {
             key = "powder",
+            visual_layer = "matter_ground",
             phase = "solid",
             full_volume_ml = 50,
             alpha = { min = 0.25, max = 1.0 },
@@ -67,6 +70,7 @@ return {
         },
         {
             key = "granular",
+            visual_layer = "matter_ground",
             phase = "solid",
             full_volume_ml = 50,
             tiers = {
@@ -76,6 +80,7 @@ return {
         },
         {
             key = "amorphous",
+            visual_layer = "matter_ground",
             phase = "solid",
             full_volume_ml = 50,
             tiers = {
@@ -85,6 +90,7 @@ return {
         },
         {
             key = "crystalline",
+            visual_layer = "matter_ground",
             phase = "solid",
             full_volume_ml = 50,
             tiers = {
@@ -102,6 +108,7 @@ return {
         },
         {
             key = "chunks",
+            visual_layer = "matter_ground",
             phase = "solid",
             full_volume_ml = 50,
             tiers = { { at_ml = 1, sprites = { "matter_chunks" } } },

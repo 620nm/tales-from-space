@@ -1,3 +1,5 @@
+local composition = require("@helpers/composition")
+
 local ui_controls = require("@helpers/ui_controls")
 
 -- Delivery: how a finished solution gets out of the beaker and into
@@ -24,12 +26,12 @@ t.world(
     [==[(
     name: "ward",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'o': (turf: Floor, fixture: Some(Outlet)),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'g': (turf: Floor, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
         "#############",
@@ -48,10 +50,29 @@ t.world(
         (6, 1, "beaker.libital"),
     ],
     machines: [(2, 1, "chem_packager")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
-        (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3),
-        (11, 1, 3),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 10, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 10, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 11, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
 )]==],
     0
@@ -270,7 +291,7 @@ assert(last ~= nil, "the pills are stacked on the next tile")
 local mine = t.blood(medic).libital or 0
 take(medic, 4, 1, last)
 assert(t.hands(medic).held == "pill", "the pill is in hand")
-t.click_turf(medic, 3, 1)
+composition.click_deck(medic, 3, 1)
 t.run_ticks(2)
 assert(said(medic, "You swallow the pill."), "down it goes")
 assert(t.count_items("pill") == PILLS - 1, "and the pill is gone with it")

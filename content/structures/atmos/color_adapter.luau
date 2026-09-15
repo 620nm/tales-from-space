@@ -29,6 +29,7 @@
 -- ends has two axes and not four facings.
 return {
     id = "color_adapter",
+    visual_layer = "pipe",
     name_label = "lunatic/tfs:entity.color_adapter.name",
     name = "color adapter",
     sprite = "color_adapter_ns",
@@ -43,10 +44,13 @@ return {
         },
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "color_adapter",
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "color_adapter_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -55,6 +59,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             at = "anchored",
             tool = "wrench",
             secs = 2.0,

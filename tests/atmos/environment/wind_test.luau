@@ -12,9 +12,9 @@ t.world(
     [==[(
     name: "windward",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#########",
@@ -44,7 +44,7 @@ assert(speed(0, 0) == 0, "a wall answers nothing")
 
 -- The hull fails at the west end. Nothing in this file says "breach":
 -- the turf IS space now, and everything that follows is physics.
-t.set_turf(1, 1, "space")
+t.set_composition(1, 1, "bare")
 t.run_seconds(20)
 
 local s2, east2 = speed(2, 1)

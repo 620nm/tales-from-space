@@ -18,6 +18,7 @@
 -- is most of what makes it worth putting up.
 return {
     id = "grille",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.grille.name",
     name = "grille",
     sprite = "grille",
@@ -81,7 +82,8 @@ return {
         cut = { "grille", "rwindow" },
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         with = { rod = 2 },
         secs = 1.0,
         start = "You start weaving the rods into a grille.",
@@ -92,18 +94,21 @@ return {
         -- (grille.dm: "needs to be fastened to the floor first!"), and
         -- a screwdriver toggles that at no delay.
         {
+            sound = "smash",
             at = "bolted",
             tool = "screwdriver",
             to = "unbolted",
             done = "You unfasten the grille from the floor.",
         },
         {
+            sound = "smash",
             at = "unbolted",
             tool = "screwdriver",
             to = "bolted",
             done = "You fasten the grille to the floor.",
         },
         {
+            sound = "smash",
             at = "unbolted",
             tool = "cutters",
             secs = 1.0,
@@ -115,6 +120,7 @@ return {
         -- Only an empty grille comes apart: the glass goes first, or
         -- the rods would come out from under a standing pane.
         {
+            sound = "smash",
             at = "bolted",
             tool = "cutters",
             secs = 1.0,
@@ -126,6 +132,7 @@ return {
 
         -- ---- plain glass: two seconds in, fourteen out ----
         {
+            sound = "smash",
             at = "bolted",
             with = { glass = 2 },
             secs = 2.0,
@@ -134,6 +141,7 @@ return {
             done = "The window settles into its frame.",
         },
         {
+            sound = "smash",
             at = "glazed",
             tool = "screwdriver",
             secs = 4.0,
@@ -142,6 +150,7 @@ return {
             done = "The pane sits loose in the frame.",
         },
         {
+            sound = "smash",
             at = "unsealed",
             tool = "screwdriver",
             secs = 4.0,
@@ -150,6 +159,7 @@ return {
             done = "The pane is secure again.",
         },
         {
+            sound = "smash",
             at = "unsealed",
             tool = "crowbar",
             secs = 10.0,
@@ -163,6 +173,7 @@ return {
         -- welder 15 s, screwdriver 5 s, crowbar 4 s, cutters 2 s,
         -- wrench 4 s (window.dm's *_act_secondary chain).
         {
+            sound = "smash",
             at = "bolted",
             with = { rglass = 2 },
             secs = 2.0,
@@ -171,6 +182,7 @@ return {
             done = "The reinforced window settles into its frame.",
         },
         {
+            sound = "smash",
             at = "reinforced",
             tool = "welder",
             secs = 15.0,
@@ -180,6 +192,7 @@ return {
             done = "The security screws glow white hot.",
         },
         {
+            sound = "smash",
             at = "heated",
             tool = "screwdriver",
             secs = 5.0,
@@ -188,6 +201,7 @@ return {
             done = "The screws come out, and a gap opens around the pane.",
         },
         {
+            sound = "smash",
             at = "unscrewed",
             tool = "crowbar",
             secs = 4.0,
@@ -196,6 +210,7 @@ return {
             done = "The panel pops out, exposing thin metal bars.",
         },
         {
+            sound = "smash",
             at = "popped",
             tool = "cutters",
             secs = 2.0,
@@ -204,6 +219,7 @@ return {
             done = "The panel falls away, exposing the frame bolts.",
         },
         {
+            sound = "smash",
             at = "cut",
             tool = "wrench",
             secs = 4.0,

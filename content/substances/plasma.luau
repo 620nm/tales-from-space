@@ -23,7 +23,7 @@ return {
     molar_mass = 120.0,
     cv = 200.0,
     phase = "gas_only",
-    visible = { moles = 0.25, factor = 20, tint = "#BF59F2" },
+    visible = { moles = 0.25, factor = 20, tint = "#BF59F2", visual_layer = "gas_haze" },
     -- Poison to breathe: past the engine's line every breath costs TOX
     -- in proportion to how thick it is, with no clock (tg's
     -- `safe_plasma_max`).

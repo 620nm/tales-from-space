@@ -1,3 +1,6 @@
+local network_matter = require("@helpers/network_matter")
+local network_channels = require("@helpers/network_channels")
+
 local ui_controls = require("@helpers/ui_controls")
 
 -- Heat-exchanging pipe: the run that is SUPPOSED to leak heat.
@@ -5,7 +8,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- Every other length on the station is a sealed tube. This one trades
 -- with the air of the tile above it every pass, at the coefficient and
 -- behind the deadband its kind declares -- both `content/lib/thermal.luau`,
--- and read back here through `t.pipe_law`. Two facts
+-- and read back here through `t.network_law`. Two facts
 -- make it a piece of kit rather than a leak:
 --
 --   * it joins only itself (tg's `HE_type_check`, he_pipes.dm:18-21),
@@ -32,7 +35,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- panel is: mode, fitting, piping layer, paint.
 local RECIPE = "dial1"
 
-local DISTRO = 4
+local DISTRO = "l3"
 local PIPE_M3 = 0.070
 -- A colour adapter's mouth is tg's UNARY_PIPE_VOLUME, half of the 70 L
 -- length of pipe it is (pipes.dm:27-28); the junction is the same
@@ -69,8 +72,8 @@ local function walk(p: number, dir: "east" | "west" | "north" | "south")
     t.run_ticks(5)
 end
 
-local function net_moles(x: number, y: number, layer: number)
-    local gas = t.pipe_gas(x, y, layer)
+local function net_moles(x: number, y: number, layer: string)
+    local gas = network_matter.gas(x, y, layer)
     assert(gas ~= nil, "there is a run under (" .. x .. ", " .. y .. ")")
     return (gas.n2 or 0.0) + (gas.o2 or 0.0)
 end
@@ -87,9 +90,9 @@ t.world(
     [==[(
     name: "heat exchange seam",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "########",
@@ -98,8 +101,14 @@ t.world(
     ],
     structures: [(6, 1, "player_spawn")],
     items: [(6, 1, "pipe_painter")],
-    pipes: [(1, 1, 4), (2, 1, 4), (3, 1, 4), (4, 1, 4), (5, 1, 4)],
-    pipe_kind: [(1, 1, 4, "he_pipe"), (2, 1, 4, "he_pipe"), (3, 1, 4, "he_pipe")],
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
+
 )]==],
     7
 )
@@ -107,10 +116,10 @@ t.world(
 local p = t.join()
 t.tick()
 
-assert(t.pipe(3, 1) == DISTRO, "the last heat-exchange length is laid")
-assert(t.pipe(4, 1) == DISTRO, "and the first ordinary one is right beside it")
+assert(network_channels.at(3, 1, "pipe") == "l3", "the last heat-exchange length is laid")
+assert(network_channels.at(4, 1, "pipe") == "l3", "and the first ordinary one is right beside it")
 
-local seam_kpa = assert(t.pipe_pressure(1, 1))
+local seam_kpa = assert(network_matter.pressure(1, 1))
 assert(seam_kpa > 90.0, "both runs open the shift charged: " .. seam_kpa)
 
 local exchange = net_moles(1, 1, DISTRO)
@@ -135,10 +144,10 @@ assert(t.hands(p).held == "pipe_painter", "painter in hand")
 walk(p, "west")
 walk(p, "west")
 t.messages(p)
-t.click_subfloor(p, 3, 1, "pipe", DISTRO)
+t.click_network(p, 3, 1, assert(t.network_instance(3, 1, "pipe", "l3")))
 t.run_ticks(4)
 assert(said(p, "That pipe has a colour of its own."), "the painter says why")
-assert(not t.ledger_has("PipePainted"), "and nothing reached the record")
+assert(not t.ledger_has("NetworkPainted"), "and nothing reached the record")
 near(net_moles(1, 1, DISTRO), exchange, 0.001, "the run is exactly as it was")
 
 -- The ordinary run beside it still takes paint like any other, which is
@@ -147,9 +156,9 @@ near(net_moles(1, 1, DISTRO), exchange, 0.001, "the run is exactly as it was")
 -- wears, so it is stepped once first.
 t.use_self(p)
 t.run_ticks(2)
-t.click_subfloor(p, 4, 1, "pipe", DISTRO)
+t.click_network(p, 4, 1, assert(t.network_instance(4, 1, "pipe", "l3")))
 t.run_ticks(4)
-assert(t.ledger_has("PipePainted"), "ordinary pipe still paints")
+assert(t.ledger_has("NetworkPainted"), "ordinary pipe still paints")
 
 -- ---------------------------------------------------------------
 -- A JUNCTION WELDS THEM INTO ONE.
@@ -166,9 +175,9 @@ t.world(
     [==[(
     name: "junction",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "########",
@@ -177,8 +186,14 @@ t.world(
         "########",
     ],
     items: [(6, 2, "wrench")],
-    pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4)],
-    pipe_kind: [(1, 1, 4, "he_pipe"), (2, 1, 4, "he_pipe")],
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
+
     structures: [(6, 2, "player_spawn"), (3, 1, "he_junction")],
 )]==],
     7
@@ -201,7 +216,7 @@ assert(
     "it faces its heat-exchange side: " .. tostring(assert(t.structure_at(3, 1)).sprite)
 )
 
-local junction_kpa = assert(t.pipe_pressure(1, 1))
+local junction_kpa = assert(network_matter.pressure(1, 1))
 local FUSED_M3 = 5 * PIPE_M3 + 2 * ADAPTER_PORT_M3
 local joined = net_moles(1, 1, DISTRO)
 near(joined, moles(junction_kpa, FUSED_M3), 0.05, "both kinds are one body of gas")
@@ -238,16 +253,22 @@ t.world(
     [==[(
     name: "junction on plain pipe",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "########",
         "#......#",
         "########",
     ],
-    pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4), (6, 1, 4)],
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
     structures: [(6, 1, "player_spawn"), (3, 1, "he_junction")],
 )]==],
     7
@@ -257,7 +278,7 @@ t.join()
 t.tick()
 
 assert(assert(t.structure_at(3, 1)).id == "he_junction", "a junction between two plain mains")
-local plain_kpa = assert(t.pipe_pressure(1, 1))
+local plain_kpa = assert(network_matter.pressure(1, 1))
 local west = net_moles(1, 1, DISTRO)
 local east = net_moles(6, 1, DISTRO)
 -- Whichever way it seated itself, exactly one end could bind: the one
@@ -280,21 +301,21 @@ assert(
 --
 -- One sealed room with two runs under it on different layers: three
 -- lengths of heat-exchanging pipe on layer 3 and three of ordinary pipe
--- on layer 2. Heat goes into BOTH -- `t.heat_pipe` is a precondition
+-- on layer 2. Heat goes into BOTH -- `network_matter.heat` is a precondition
 -- setter, not the mechanism -- and only one of them gives any of it up.
 --
 -- Read on both thermometers and on the run's own energy, because a
 -- length that cooled without anything warming would read the same on
 -- one of them.
 -- ---------------------------------------------------------------
-local L2 = 2
+local L2 = "l2"
 t.world(
     [==[(
     name: "heat exchange room",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -302,8 +323,15 @@ t.world(
         "#####",
     ],
     structures: [(2, 1, "player_spawn")],
-    pipes: [(1, 1, 6), (2, 1, 6), (3, 1, 6)],
-    pipe_kind: [(1, 1, 4, "he_pipe"), (2, 1, 4, "he_pipe"), (3, 1, 4, "he_pipe")],
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
+        (x: 3, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
+    ],
+
 )]==],
     7
 )
@@ -312,31 +340,31 @@ t.join()
 t.tick()
 
 near(
-    assert(t.pipe_temperature(1, 1, DISTRO)),
+    assert(network_matter.temperature(1, 1, DISTRO)),
     T20C,
     0.5,
     "the exchange run opens at room temperature"
 )
-near(assert(t.pipe_temperature(1, 1, L2)), T20C, 0.5, "and so does the ordinary one over it")
+near(assert(network_matter.temperature(1, 1, L2)), T20C, 0.5, "and so does the ordinary one over it")
 near(assert(t.room_temperature(2, 1)), T20C, 0.5, "as does the air")
 
 -- Enough to matter, and far outside any deadband a kind could sensibly
 -- declare, but nowhere near the 673 K where superconduction joins in.
-t.heat_pipe(1, 1, 12000.0, DISTRO)
-t.heat_pipe(1, 1, 12000.0, L2)
+network_matter.heat(1, 1, 12000.0, DISTRO)
+network_matter.heat(1, 1, 12000.0, L2)
 t.tick()
-local hot_he = assert(t.pipe_temperature(1, 1, DISTRO))
-local hot_plain = assert(t.pipe_temperature(1, 1, L2))
+local hot_he = assert(network_matter.temperature(1, 1, DISTRO))
+local hot_plain = assert(network_matter.temperature(1, 1, L2))
 assert(hot_he > T20C + 50.0, "the exchange run is hot: " .. hot_he)
 near(hot_plain, hot_he, 1.0, "and the ordinary run is exactly as hot")
 
 local room_0 = assert(t.room_temperature(2, 1))
-local pipe_0 = assert(t.pipe_energy(1, 1, DISTRO))
+local pipe_0 = assert(network_matter.energy(1, 1, DISTRO))
 
 t.run_seconds(30)
 
-local settled_he = assert(t.pipe_temperature(1, 1, DISTRO))
-local settled_plain = assert(t.pipe_temperature(1, 1, L2))
+local settled_he = assert(network_matter.temperature(1, 1, DISTRO))
+local settled_plain = assert(network_matter.temperature(1, 1, L2))
 assert(settled_he < hot_he - 20.0, "the exchange run gave heat up: " .. settled_he)
 near(settled_plain, hot_plain, 1.0, "the ordinary run gave up none of its own")
 assert(
@@ -351,11 +379,11 @@ assert(
 -- are exactly the joules the room takes is pinned in Rust, against the
 -- matter world's audit (`sim/tests/conduction.rs`).
 assert(
-    assert(t.pipe_energy(1, 1, DISTRO)) < pipe_0,
+    assert(network_matter.energy(1, 1, DISTRO)) < pipe_0,
     "the run is poorer by what it gave: "
         .. pipe_0
         .. " J -> "
-        .. assert(t.pipe_energy(1, 1, DISTRO))
+        .. assert(network_matter.energy(1, 1, DISTRO))
         .. " J"
 )
 
@@ -366,12 +394,12 @@ assert(
 -- is the pack's own tuning and belongs to `content/lib/thermal.luau`,
 -- so this asks the engine what was declared rather than spelling a
 -- number that the tuning would then have to keep in step.
-local BAND = assert(t.pipe_law("he_pipe")).min_delta_k
+local BAND = assert(t.network_law("pipe", "he_pipe")).min_delta_k
 assert(BAND ~= nil and BAND > 0.0, "the exchange pipe declares a band: " .. tostring(BAND))
 
 local shed_fast = hot_he - settled_he
 t.run_seconds(60)
-local parked_pipe = assert(t.pipe_temperature(1, 1, DISTRO))
+local parked_pipe = assert(network_matter.temperature(1, 1, DISTRO))
 local parked_room = assert(t.room_temperature(2, 1))
 assert(
     math.abs(parked_pipe - parked_room) <= BAND,
@@ -383,7 +411,7 @@ assert(
 -- fractions -- but the run tracks it at a crawl instead of chasing the
 -- air to equality, which is the whole of what a deadband buys.
 t.run_seconds(120)
-local drift = math.abs(assert(t.pipe_temperature(1, 1, DISTRO)) - parked_pipe)
+local drift = math.abs(assert(network_matter.temperature(1, 1, DISTRO)) - parked_pipe)
 assert(
     drift < shed_fast / 10.0,
     "the run has all but stopped: "
@@ -397,7 +425,7 @@ assert(
 -- the warmer of the two, by most of a band, however narrow the band is.
 -- A run that crossed its room would be a deadband that had stopped
 -- holding, which is the failure this catches whatever the number is.
-local gap = assert(t.pipe_temperature(1, 1, DISTRO)) - assert(t.room_temperature(2, 1))
+local gap = assert(network_matter.temperature(1, 1, DISTRO)) - assert(t.room_temperature(2, 1))
 assert(
     gap >= BAND / 2.0,
     "and the two never meet: " .. gap .. " K still between them, band " .. BAND
@@ -420,9 +448,9 @@ t.world(
     [==[(
     name: "radiator",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -431,11 +459,13 @@ t.world(
         "     ",
     ],
     structures: [(1, 1, "player_spawn")],
-    pipes: [(1, 1, 4), (2, 1, 4), (1, 3, 4), (2, 3, 4)],
-    pipe_kind: [
-        (1, 1, 4, "he_pipe"), (2, 1, 4, "he_pipe"),
-        (1, 3, 4, "he_pipe"), (2, 3, 4, "he_pipe"),
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
+        (x: 1, y: 3, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
+        (x: 2, y: 3, network: "pipe", channel: "l3", kind: "he_pipe", facing: 15),
     ],
+
 )]==],
     7
 )
@@ -443,20 +473,20 @@ t.world(
 t.join()
 t.tick()
 
-assert(t.pipe(1, 3) == DISTRO, "a length runs out over the hull")
-t.heat_pipe(1, 1, 12000.0, DISTRO)
-t.heat_pipe(1, 3, 12000.0, DISTRO)
+assert(network_channels.at(1, 3, "pipe") == "l3", "a length runs out over the hull")
+network_matter.heat(1, 1, 12000.0, DISTRO)
+network_matter.heat(1, 3, 12000.0, DISTRO)
 t.tick()
 
-local inside_0 = assert(t.pipe_temperature(1, 1, DISTRO))
-local outside_0 = assert(t.pipe_temperature(1, 3, DISTRO))
+local inside_0 = assert(network_matter.temperature(1, 1, DISTRO))
+local outside_0 = assert(network_matter.temperature(1, 3, DISTRO))
 near(outside_0, inside_0, 1.0, "both runs start equally hot")
 assert(outside_0 > T20C + 50.0, "and hot enough to clear the band")
 
 t.run_seconds(30)
 
-local inside_1 = assert(t.pipe_temperature(1, 1, DISTRO))
-local outside_1 = assert(t.pipe_temperature(1, 3, DISTRO))
+local inside_1 = assert(network_matter.temperature(1, 1, DISTRO))
+local outside_1 = assert(network_matter.temperature(1, 3, DISTRO))
 assert(outside_1 < outside_0 - 20.0, "the exposed run sheds: " .. outside_1)
 assert(
     outside_1 < inside_1 - 5.0,
@@ -472,11 +502,11 @@ assert(
 -- run below the air it is under, which is the difference.
 assert(outside_1 < T20C, "past room temperature already: " .. outside_1)
 t.run_seconds(240)
-local floored = assert(t.pipe_temperature(1, 3, DISTRO))
+local floored = assert(network_matter.temperature(1, 3, DISTRO))
 assert(floored < TCMB + 20.0, "it comes to rest just above TCMB: " .. floored)
 assert(floored >= TCMB, "and never below it")
 t.run_seconds(240)
-near(assert(t.pipe_temperature(1, 3, DISTRO)), floored, 0.001, "and stays there")
+near(assert(network_matter.temperature(1, 3, DISTRO)), floored, 0.001, "and stays there")
 
 -- ---------------------------------------------------------------
 -- THE SHELF AND THE DISPENSER OFFER IT.
@@ -491,12 +521,12 @@ t.world(
     [==[(
     name: "heat exchange shelf",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'o': (turf: Floor, fixture: Some(Outlet)),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'g': (turf: Floor, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
         "#####",
@@ -507,9 +537,19 @@ t.world(
     structures: [(3, 1, "player_spawn")],
     items: [(3, 1, "rpd")],
     machines: [(2, 1, "pipe_dispenser")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
 )]==],
     7

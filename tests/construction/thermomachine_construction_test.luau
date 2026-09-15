@@ -42,9 +42,9 @@ t.world(
     [==[(
     name: "assembly bench",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "########",
@@ -66,7 +66,10 @@ t.world(
         (1, 2, "screwdriver"),
         (5, 2, "crowbar"),
     ],
-    pipes: [(1, 1, 4), (2, 1, 4)],
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
 )]==],
     7
 )

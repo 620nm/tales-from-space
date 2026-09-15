@@ -23,6 +23,7 @@
 -- steps.
 return {
     id = "passive_gate",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.passive_gate.name",
     name = "passive gate",
     sprite = "passgate_off_n",
@@ -56,6 +57,8 @@ return {
         },
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "passive_gate",
         positions = { "shut", "open" },
         -- tg's `target_pressure = ONE_ATMOSPHERE` and its dial's
@@ -64,7 +67,8 @@ return {
         max_kpa = 4500.0,
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "passive_gate_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -73,6 +77,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             -- tg's `can_unwrench` again, and note that this one has no
             -- `is_operational` in it (passive_gate.dm:108-112): an
             -- unpowered machine is open or shut on its own account, so

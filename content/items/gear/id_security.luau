@@ -1,5 +1,8 @@
 return {
     id = "id_security",
+    visual_layer = "entities",
+    held_visual_layer = "held",
+    worn_visual_layer = "equipment_id",
     name_label = "lunatic/tfs:entity.id_security.name",
     name = "security ID card",
     sprite = "id",

@@ -5,6 +5,8 @@
 -- (components/unary_devices/passive_vent.dm:12).
 return {
     id = "passive_vent_fitting",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.passive_vent_fitting.name",
     name = "passive vent fitting",
     sprite = "passive_vent_loose",

@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 -- "The chlorine seems to immediately bleed through the reinforced
 -- glass."
 --
@@ -32,7 +33,7 @@ local function chlorine_at(x: number, y: number)
 end
 
 local function pipe_chlorine(x: number, y: number)
-    local g = t.pipe_gas(x, y)
+    local g = network_matter.gas(x, y)
     return (g and g.chlorine) or 0.0
 end
 
@@ -72,7 +73,7 @@ end
 t.world(
     [==[(
     name: "windows first",
-    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [
         "#########",
         "#.......#",
@@ -87,7 +88,11 @@ t.world(
         (4, 3, "grille", "reinforced"),
         (3, 2, "meter"),
     ],
-    pipes: [ (3, 1, 4), (3, 2, 4), (3, 3, 4) ],
+    networks: [
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
     blends: {
         "hot_chlorine": (rows: [("chlorine", 250.0)], temperature_k: 1000.0, amount: per_tile),
         "standard_air": (rows: [("o2", 8.73), ("n2", 32.84)], temperature_k: 293.15, amount: per_tile),
@@ -110,7 +115,7 @@ check("windows-first")
 t.world(
     [==[(
     name: "neighbour first",
-    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [
         "#########",
         "#.......#",
@@ -125,7 +130,11 @@ t.world(
         (4, 2, "grille", "reinforced"),
         (4, 3, "grille", "reinforced"),
     ],
-    pipes: [ (3, 1, 4), (3, 2, 4), (3, 3, 4) ],
+    networks: [
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
     blends: {
         "hot_chlorine": (rows: [("chlorine", 250.0)], temperature_k: 1000.0, amount: per_tile),
         "standard_air": (rows: [("o2", 8.73), ("n2", 32.84)], temperature_k: 293.15, amount: per_tile),

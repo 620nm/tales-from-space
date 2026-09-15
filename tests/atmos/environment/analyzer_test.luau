@@ -1,3 +1,6 @@
+local network_matter = require("@helpers/network_matter")
+local network_channels = require("@helpers/network_channels")
+
 -- The analyzer, and the three things worth pointing it at.
 --
 -- tg's `atmos_scan` (code/game/objects/items/devices/scanners/
@@ -45,20 +48,25 @@ t.world(
     [==[(
     name: "analyzer",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        'o': (turf: Floor),
-        '#': (turf: Wall),
-        'c': (turf: Plating),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'c': (composition: (components: [(component: "station_base")])),
+        'g': (composition: (substrate: Some("ground"))),
     },
     rows: [
         "#######",
-        "#c..###",
-        "#oo...#",
+        "#cg.###",
+        "#og..g#",
         "#######",
     ],
     items: [(1, 2, "analyzer"), (2, 2, "pipe")],
-    pipes: [(2, 1, 5), (3, 1, 4)],
+    networks: [
+        (x: 2, y: 1, network: "pipe", channel: "l1", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
         // A litre of oil on the deck between the two runs, with the
@@ -121,14 +129,14 @@ assert(matching(air, "Oxygen: ", " mol (21 %)"), "one fifth oxygen")
 -- subfloor target). Two layers are laid on this tile so the precision
 -- is proved against a real ambiguity: each answers alone, by name.
 local _ = t.messages(p)
-t.click_subfloor(p, 2, 1, "pipe", 4)
+t.click_network(p, 2, 1, assert(t.network_instance(2, 1, "pipe", "l3")))
 t.run_ticks(2)
 local pipe = t.messages(p)
 assert(has(pipe, "Results of analysis of the layer 3 pipe."), "the run touched, by name")
 assert(not has(pipe, "Results of analysis of the air."), "and nothing that was not touched")
 assert(not has(pipe, "Results of analysis of the layer 1 pipe."), "not even its neighbour")
 assert(
-    has(pipe, "Pressure: " .. r2(assert(t.pipe_pressure(2, 1))) .. " kPa"),
+    has(pipe, "Pressure: " .. r2(assert(network_matter.pressure(2, 1))) .. " kPa"),
     "and the number an engineer would read off a meter there"
 )
 -- Two lengths of tg's UNARY_PIPE_VOLUME * 2, which is 70 L each.
@@ -137,7 +145,7 @@ assert(has(pipe, "Volume: 140 L"), "two lengths of pipe, and not the room")
 -- The other layer, touched instead: its own body of gas -- one lone
 -- length holding boot air, 70 L, not the canister-fed run beside it.
 local _ = t.messages(p)
-t.click_subfloor(p, 2, 1, "pipe", 1)
+t.click_network(p, 2, 1, assert(t.network_instance(2, 1, "pipe", "l1")))
 t.run_ticks(2)
 local other = t.messages(p)
 assert(has(other, "Results of analysis of the layer 1 pipe."), "the other run, by name")
@@ -208,11 +216,11 @@ walk(p, "east")
 walk(p, "east")
 t.click_turf(p, 5, 2)
 t.run_seconds(1.5)
-assert(t.pipe(5, 2) == 4, "a fresh length on the distribution layer")
+assert(network_channels.at(5, 2, "pipe") == "l3", "a fresh length on the distribution layer")
 
 t.swap_hands(p)
 local _ = t.messages(p)
-t.click_subfloor(p, 5, 2, "pipe", 4)
+t.click_network(p, 5, 2, assert(t.network_instance(5, 2, "pipe", "l3")))
 t.run_ticks(2)
 local fresh = t.messages(p)
 assert(has(fresh, "Results of analysis of the layer 3 pipe."), "it is a pipe, named by layer")
@@ -225,6 +233,6 @@ assert(not has(fresh, "Results of analysis of the air."), "the run was touched, 
 -- Everything above is a query. The analyzer moved no gas, so the run it
 -- read is at the pressure it was, and the ledger has nothing to say
 -- about any of it.
-assert(t.pipe_pressure(5, 2) == 0.0, "reading an empty pipe leaves it empty")
-assert(not t.ledger_has("PipePainted"), "an analyzer paints nothing")
+assert(network_matter.pressure(5, 2) == 0.0, "reading an empty pipe leaves it empty")
+assert(not t.ledger_has("NetworkPainted"), "an analyzer paints nothing")
 assert(not t.ledger_has("ScriptError"), "and asked the engine nothing it refused")

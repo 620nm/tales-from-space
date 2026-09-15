@@ -110,11 +110,11 @@ end
 local BENCH = [==[(
     name: "vent panel",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'g': (turf: Plating, fixture: Some(Generator)),
-        'a': (turf: Plating, fixture: Some(Apc)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
     },
     rows: [
         "#########",
@@ -138,9 +138,15 @@ local BENCH = [==[(
     ],
     // Backbone (L2) under the generator and the APC; room circuit (L1)
     // from the APC's tile west along the corridor to the vent.
-    cables: [
-        (6, 1, 3), (7, 1, 3),
-        (5, 1, 1), (4, 1, 1), (3, 1, 1), (2, 1, 1),
+    networks: [
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
     ],
 )]==]
 

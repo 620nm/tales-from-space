@@ -6,6 +6,9 @@ local action_rules = require("@lib/action_rules")
 -- toggle).
 local content = {
     id = "crowbar",
+    visual_layer = "entities",
+    stowed_visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.crowbar.name",
     name = "crowbar",
     sprite = "crowbar",
@@ -22,7 +25,7 @@ local content = {
 }
 
 content.actions = {
-    action_rules.primary("pry_floor", action_rules.deck("floor")),
+    action_rules.primary("pry_floor", action_rules.deck("floor_tiles", "grid_cover")),
     action_rules.primary("pry_door", {
         all = {
             action_rules.kind("door"),
@@ -46,17 +49,6 @@ if sim ~= nil then
         local door = nil
         if target ~= nil and target.kind == "door" then
             door = sim.door.at(x, y)
-        end
-        if target == nil and sim.turf(x, y) == "floor" then
-            -- The quick pop, not the heave: tg's pry_tile calls
-            -- play_tool_sound, which is `usesound` (crowbar.ogg).
-            sim.sound.play({ asset = "lunatic/tfs:sound/crowbar", at = ev.at })
-            sim.pry_tile(x, y)
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:items.crowbar.you_pry_up_the_floor", {}),
-            })
-            return true
         end
         if door == nil or door.open or door.powered then
             return { replaced = false }

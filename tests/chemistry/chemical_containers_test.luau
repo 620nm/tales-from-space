@@ -1,3 +1,5 @@
+local composition = require("@helpers/composition")
+
 -- The lab shelf is content, while closure and ranged parcel travel are
 -- native mechanisms. This spec pins the shipped shells and exercises the
 -- player gestures that cross that boundary.
@@ -5,9 +7,9 @@ t.world(
     [==[(
     name: "chemical containers",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "########",
@@ -94,7 +96,7 @@ local spray = assert(t.target_at(p, 3, 1, "spray_bottle"))
 t.click(p, 3, 1, assert(t.target_at(p, 3, 1, spray)))
 t.tick()
 assert(#t.sounds(p) == 0, "picking up the empty sprayer is silent")
-t.click_turf(p, 6, 1)
+composition.click_deck(p, 6, 1)
 t.tick()
 assert(#t.sounds(p) == 0, "an empty sprayer emits no launch sound")
 assert(#t.ledger_rows("MatterSprayed") == 0, "an empty sprayer launches nothing")
@@ -139,14 +141,14 @@ near(assert(t.contents(reservoir)).water, 1.25, "out of the open bottle")
 assert(#t.sounds(p) == 0, "refilling emits no launch sound")
 
 local before = t.matter_totals()
-t.click_turf(p, 6, 1)
+composition.click_deck(p, 6, 1)
 t.tick()
 local launched = t.sounds(p)
 assert(
     #launched == 1 and launched[1] == "spray",
     "an accepted launch emits its declared sound once"
 )
-t.click_turf(p, 6, 1)
+composition.click_deck(p, 6, 1)
 t.tick()
 assert(#t.sounds(p) == 0, "a cooldown refusal emits no launch sound")
 assert(#t.ledger_rows("MatterSprayed") == 1, "cooldown refuses a second launch")

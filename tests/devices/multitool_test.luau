@@ -1,3 +1,5 @@
+local network_channels = require("@helpers/network_channels")
+
 -- What a wire is doing, before you cut it.
 --
 -- `sim.segment_live(x, y)` is the read half of the power boundary: the
@@ -12,7 +14,6 @@
 -- declines rather than reporting as dead. "There is no cable here" and
 -- "there is a dead cable here" are the two facts an engineer is
 -- actually choosing between at a junction box.
-local RED, YELLOW = 1, 2
 
 local function said(p: number, want: string): boolean
     for _, m in ipairs(t.messages(p)) do
@@ -31,10 +32,10 @@ t.world(
     [==[(
     name: "junction",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'G': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "#####",
@@ -44,7 +45,12 @@ t.world(
     ],
     structures: [(2, 1, "player_spawn")],
     items: [(2, 1, "multitool")],
-    cables: [(1, 1, 2), (2, 1, 2), (3, 1, 2), (2, 2, 1)],
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+    ],
 )]==],
     7
 )
@@ -57,7 +63,7 @@ t.click(p, 2, 1, t.target_at(p, 2, 1, "multitool")) -- pick the probe up
 t.run_ticks(2)
 
 -- ---- a line with something pushing into it ----------------------------
-t.click(p, 3, 1)
+t.click_network(p, 3, 1, assert(t.network_instance(3, 1, "power", "l2")))
 t.tick()
 assert(
     said(p, "The cable here is carrying equipment and lighting."),
@@ -69,14 +75,14 @@ assert(
 -- no source, so it is a cable and it is dead. The tool says so rather
 -- than saying nothing, because "dead" is the answer that stops an
 -- engineer looking for a break that is not there.
-t.click(p, 2, 2)
+t.click_network(p, 2, 2, assert(t.network_instance(2, 2, "power", "l1")))
 t.tick()
 assert(
     said(p, "The cable here is dead."),
     "the orphan stub reads dead: " .. table.concat(t.messages(p), " | ")
 )
-assert(t.cable_at(2, 2) == RED, "and it really is a cable, on the red line")
-assert(t.cable_at(3, 1) == YELLOW, "as the live one is on the yellow")
+assert(network_channels.at(2, 2, "power") == "l1", "and it really is a cable, on the red line")
+assert(network_channels.at(3, 1, "power") == "l2", "as the live one is on the yellow")
 
 -- ---- no line at all ---------------------------------------------------
 -- The probe declines: nil is the type test every other reader keeps, and

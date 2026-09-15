@@ -1,3 +1,5 @@
+local network_channels = require("@helpers/network_channels")
+
 -- Two towers are worth more joined than standing side by side -- and
 -- the HARDWARE is the amplifier.
 --
@@ -55,12 +57,12 @@ t.world(
     [==[(
     name: "tower chain",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'G': (turf: Plating, fixture: Some(Generator)),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'o': (turf: Plating, fixture: Some(Outlet)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
     },
     rows: [
         "###########################################",
@@ -83,9 +85,17 @@ t.world(
         (41, 2, "player_spawn", { "jobs": "medic" }),
         (8, 1, "access_point", { "mount": "north" }),
     ],
-    cables: [
-        (1, 2, 2), (2, 2, 3), (3, 2, 1), (4, 2, 1), (5, 2, 1),
-        (6, 2, 1), (7, 2, 1), (8, 2, 1), (9, 2, 1),
+    networks: [
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 9, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
     ],
 )]==],
     0
@@ -299,10 +309,10 @@ t.tick()
 t.click(speaker, 6, 2, t.target_at(speaker, 6, 2, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(speaker).held == "wirecutters", "the cutters are in hand")
-t.click_subfloor(speaker, 7, 2, "cable", 1)
+t.click_network(speaker, 7, 2, assert(t.network_instance(7, 2, "power", "l1")))
 t.run_seconds(1.5)
-assert(t.cable_at(7, 2) == 0, "the spur is parted")
-assert(t.ledger_has("CableCut"), "sabotage is attributable")
+assert(network_channels.at(7, 2, "power") == "", "the spur is parted")
+assert(t.ledger_has("NetworkRemoved"), "sabotage is attributable")
 t.run_ticks(60)
 
 assert(

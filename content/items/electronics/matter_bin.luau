@@ -16,6 +16,8 @@ local stock_parts = require("@lib/stock_parts")
 -- wants (docs/MAP-PROPERTIES.md).
 return {
     id = "matter_bin",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.matter_bin.name",
     name = "matter bin",
     sprite = "matter_bin",

@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 -- The two machines that reach out of the plumbing and into a ROOM.
 --
 -- Every other device in the atmospherics kit moves gas between two
@@ -10,7 +11,7 @@
 -- gas out of a room and leaves the rest, so its correctness is a
 -- question about WHICH gas — exactly as the filter's was
 -- (filter_test.luau). Every scrubbing assertion below is therefore
--- in moles, read off `t.room_gas` and `t.pipe_gas` the way an analyser
+-- in moles, read off `t.room_gas` and `network_matter.gas` the way an analyser
 -- reads them, and the books are balanced across the room/net boundary
 -- rather than trusted to a direction.
 
@@ -51,8 +52,8 @@ local function walk(p, dir)
 end
 
 -- Moles of one gas in the run under a tile, or in the room over it.
-local function pipe_of(x: number, y: number, which: string, layer: number?)
-    local held = t.pipe_gas(x, y, layer)
+local function pipe_of(x: number, y: number, which: string, layer: string?)
+    local held = network_matter.gas(x, y, layer)
     return held and held[which] or 0.0
 end
 
@@ -111,11 +112,11 @@ local ROOM_AT_ONE_ATM = 101325.0 * 12.0 / (8.314 * 293.15)
 local SCRUB_MAP = [==[(
     name: "scrubbed room",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "########",
@@ -127,17 +128,41 @@ local SCRUB_MAP = [==[(
     // has somewhere to go that is not the room.
     // Layer 2, because that is where a scrubber lives (tg's
     // `vent_scrubber/on/layer2`, and see the structure's own file).
-    pipes: [(0, 1, 2), (1, 1, 2)],
+    networks: [
+        (x: 0, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+    ],
     // Spelled out, because a placement that says nothing is a RETURN
     // GRILLE -- whole air, gently, down to a floor -- and this file is
     // about the other machine: tg's scrubber, pointed at one gas with
     // the dial wide open and nothing under it. scrubber_floor_test.luau
     // is the grille's.
     structures: [(5, 2, "player_spawn"), (2, 1, "air_scrubber", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 })],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
-    ],
+
 )]==]
 
 t.world(SCRUB_MAP, 7)
@@ -153,8 +178,8 @@ local WASTE_M3 = 2 * PIPE_M3 + PORT_M3
 
 local room_o2_0 = room_total("o2")
 local room_n2_0 = room_total("n2")
-local waste_o2_0 = pipe_of(1, 1, "o2", 2)
-local waste_n2_0 = pipe_of(1, 1, "n2", 2)
+local waste_o2_0 = pipe_of(1, 1, "o2", "l2")
+local waste_n2_0 = pipe_of(1, 1, "n2", "l2")
 assert(room_o2_0 > 0.0 and room_n2_0 > 0.0, "the room holds standard air, which is two gases")
 
 -- ---- switched on, set to carbon dioxide, in a room that has none ----
@@ -228,15 +253,15 @@ local room_n2_1 = room_total("n2")
 assert(room_o2_1 < room_o2_0 - 0.5, "the room lost oxygen: " .. room_o2_0 .. " -> " .. room_o2_1)
 near(room_n2_1, room_n2_0, 0.05, "and kept every mole of its nitrogen")
 assert(
-    pipe_of(1, 1, "o2", 2) > waste_o2_0 + 0.5,
-    "which turned up in the waste main: " .. waste_o2_0 .. " -> " .. pipe_of(1, 1, "o2", 2)
+    pipe_of(1, 1, "o2", "l2") > waste_o2_0 + 0.5,
+    "which turned up in the waste main: " .. waste_o2_0 .. " -> " .. pipe_of(1, 1, "o2", "l2")
 )
-near(pipe_of(1, 1, "n2", 2), waste_n2_0, 0.05, "and no nitrogen followed it")
+near(pipe_of(1, 1, "n2", "l2"), waste_n2_0, 0.05, "and no nitrogen followed it")
 
 -- The books, across the room/net boundary. Nothing else in this map
 -- moves gas, so what left one side is on the other.
 near(
-    room_o2_1 + pipe_of(1, 1, "o2", 2),
+    room_o2_1 + pipe_of(1, 1, "o2", "l2"),
     room_o2_0 + waste_o2_0,
     0.05,
     "every mole of oxygen is accounted for"
@@ -270,7 +295,7 @@ assert(
     "siphoning takes the nitrogen too: " .. n2_before_siphon .. " -> " .. room_total("n2")
 )
 assert(
-    pipe_of(1, 1, "n2", 2) > waste_n2_0 + 0.5,
+    pipe_of(1, 1, "n2", "l2") > waste_n2_0 + 0.5,
     "and it is in the waste main, where the oxygen already was"
 )
 assert(WASTE_M3 > 0.0, "the waste main is a real net")
@@ -304,12 +329,12 @@ t.world(
     [==[(
     name: "injected room",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'c': (turf: Plating),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'c': (composition: (components: [(component: "station_base")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "########",
@@ -327,9 +352,31 @@ t.world(
         (2, 1, "pump", "running", { "dir": "east" }),
         (3, 1, "air_injector"),
     ],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
 )]==],
     7
@@ -445,9 +492,9 @@ t.world(
     [==[(
     name: "dark room",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "########",
@@ -457,7 +504,12 @@ t.world(
     ],
     // The scrubber's waste line is layer 2, the injector's supply is
     // the default 3 -- which is exactly how the two are mapped.
-    pipes: [(0, 1, 2), (1, 1, 2), (5, 1, 4), (6, 1, 4)],
+    networks: [
+        (x: 0, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
     structures: [(5, 2, "player_spawn"), (2, 1, "air_scrubber"), (4, 1, "air_injector")],
 )]==],
     7
@@ -510,11 +562,11 @@ t.world(
     [==[(
     name: "unary fittings",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "########",
@@ -528,11 +580,35 @@ t.world(
         (3, 2, "air_scrubber_fitting"),
         (4, 2, "air_injector_fitting"),
     ],
-    pipes: [(1, 1, 4), (2, 1, 4)],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
+
 )]==],
     7
 )

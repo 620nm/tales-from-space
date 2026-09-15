@@ -1,3 +1,6 @@
+local composition = require("@helpers/composition")
+local ui_controls = require("@helpers/ui_controls")
+
 -- The girder's bolts, driven the way a player would drive them.
 --
 -- What tg actually does (checked against girders.dm and the
@@ -11,9 +14,9 @@ t.world(
     [==[(
     name: "site",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "######",
@@ -38,7 +41,7 @@ t.run_ticks(2)
 
 -- A girder rises bolted down: no wrench step, exactly as tg builds one.
 t.swap_hands(p)
-t.click(p, 1, 2)
+ui_controls.build(p, "metal", "girder", 1, 2)
 t.run_seconds(4.5)
 assert(t.ledger_has("StructureStep", "girder", "built"), "the girder rose")
 
@@ -85,7 +88,7 @@ assert(t.ledger_has("StructureStep", "girder", "anchored"), "the wrench turns bo
 t.swap_hands(p)
 t.click(p, 1, 3, t.target_at(p, 1, 3))
 t.run_seconds(4.5)
-assert(t.turf(1, 3) == "wall", "the wall stands, got " .. tostring(t.turf(1, 3)))
+assert(composition.matches(1, 3, { "station_base", "floor_tiles", "wall" }), "the wall stands, got " .. composition.describe(1, 3))
 
 -- Four seconds of work is four seconds of STANDING THERE: the do_after
 -- guard revalidates reach every tick, so walking away mid-wrench takes
@@ -97,9 +100,9 @@ t.world(
     [==[(
     name: "walkaway",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "######",
@@ -122,7 +125,7 @@ t.swap_hands(p)
 t.click(p, 2, 2, t.target_at(p, 2, 2, "wrench")) -- wrench
 t.run_ticks(2)
 t.swap_hands(p)
-t.click(p, 1, 2) -- raise a girder to work on
+ui_controls.build(p, "metal", "girder", 1, 2) -- raise a girder to work on
 t.run_seconds(4.5)
 assert(t.ledger_has("StructureStep", "girder", "built"), "the girder rose")
 

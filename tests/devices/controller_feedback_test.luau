@@ -41,7 +41,7 @@ end
 t.world(
     [==[(
     name: "lone button",
-    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: ["######", "#....#", "######"],
     structures: [(3, 1, "player_spawn"), (2, 1, "airlock_button", { "mount": "north" })],
     items: [(4, 1, "cola"), (4, 1, "screwdriver")],
@@ -103,10 +103,10 @@ t.world(
     [==[(
     name: "unprogrammed host",
     legend: {
-        '.': (turf: Plating), '#': (turf: Wall),
-        'G': (turf: Plating, fixture: Some(Generator)),
-        'A': (turf: Plating, fixture: Some(Apc)),
-        'o': (turf: Plating, fixture: Some(Outlet)),
+        '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        'A': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
     },
     rows: ["#######", "#.....#", "#GA.o##", "#######"],
     structures: [
@@ -115,8 +115,17 @@ t.world(
         (2, 1, "airlock_button", { "mount": "north" }),
         (5, 1, "airlock"),
     ],
-    cables: [(1, 2, 2), (2, 2, 3), (3, 2, 1), (4, 2, 1),
-        (2, 1, 1), (3, 1, 1), (4, 1, 1), (5, 1, 1)],
+    networks: [
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+    ],
     links: [(4, 1, 2, 1), (4, 1, 5, 1)],
     items: [(3, 1, "laptop")],
 )]==],

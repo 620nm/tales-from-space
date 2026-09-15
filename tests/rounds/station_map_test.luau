@@ -1,3 +1,8 @@
+local network_matter = require("@helpers/network_matter")
+local network_channels = require("@helpers/network_channels")
+
+local composition = require("@helpers/composition")
+
 -- The shipped station as content: commissioned machinery, powered rooms,
 -- bounded sight, hull windows, and a real vestibule at either way out.
 -- Mechanism benches belong in Rust; every noun and coordinate here belongs
@@ -79,10 +84,10 @@ for _, row in ipairs({
 end
 
 -- Supply and process mains share a shaft without becoming one run.
-local shaft = t.pipe(18, 25)
-assert(shaft == 12, "the process and supply layers alone cross the shaft: " .. tostring(shaft))
-assert(t.pipe_pressure(18, 25, 4) ~= nil, "the process layer has its own gas")
-assert(t.pipe_pressure(18, 25, 8) ~= nil, "the supply layer has its own gas")
+local shaft = network_channels.at(18, 25, "pipe")
+assert(shaft == "l3,l4", "the process and supply layers alone cross the shaft: " .. tostring(shaft))
+assert(network_matter.pressure(18, 25, "l3") ~= nil, "the process layer has its own gas")
+assert(network_matter.pressure(18, 25, "l4") ~= nil, "the supply layer has its own gas")
 
 -- Representative rooms are live on the station grid, including both ends
 -- of the corridor ring rather than only the spawn room.
@@ -115,8 +120,8 @@ for _, row in ipairs({
 }) do
     assert(t.door_at(row[1], row[2]), "the outer vestibule leaf exists")
     assert(t.door_at(row[3], row[4]), "the inner vestibule leaf exists")
-    assert(t.turf(row[5], row[6]) == "space", "the outer leaf opens to space")
-    assert(t.turf(row[7], row[8]) == "plating", "the chamber is bare deck")
+    assert(composition.bare(row[5], row[6], "space"), "the outer leaf opens to space")
+    assert(composition.matches(row[7], row[8], { "station_base" }), "the chamber is bare deck")
     assert(assert(t.room_pressure(row[7], row[8])) > 90.0, "the shut vestibule holds air")
 end
 
@@ -124,9 +129,9 @@ end
 -- room behind it holds pressure on the live map.
 for _, at in ipairs({ { 29, 3 }, { 30, 3 }, { 31, 3 }, { 3, 23 }, { 36, 25 } }) do
     standing(at[1], at[2], "grille", "reinforced")
-    assert(t.turf(at[1], at[2]) == "plating", "the pane replaces the hull on deck")
+    assert(composition.matches(at[1], at[2], { "station_base" }), "the pane replaces the hull on deck")
 end
-assert(t.turf(30, 2) == "space", "the north gallery looks into vacuum")
+assert(composition.bare(30, 2, "space"), "the north gallery looks into vacuum")
 assert(assert(t.room_pressure(30, 6)) > 90.0, "the cargo bay holds air through its panes")
 
 -- The Common transceiver is commissioned, not merely drawn: it stands

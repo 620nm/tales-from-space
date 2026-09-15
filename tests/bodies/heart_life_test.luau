@@ -25,7 +25,7 @@
 -- this spec needs is a drawer that opens and shuts, not a lamp.
 local ARENA = [==[(
     name: "theatre",
-    legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
+    legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [ "######", "#....#", "#....#", "######" ],
     items: [ (1, 1, "hemostat"), (1, 1, "defib") ],
     structures: [

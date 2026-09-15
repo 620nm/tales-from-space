@@ -3,6 +3,8 @@
 -- rainbow; ordinary storage owns all handling.
 return {
     id = "disk_box",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.disk_box.name",
     name = "box of disks",
     sprite = "disk_box",

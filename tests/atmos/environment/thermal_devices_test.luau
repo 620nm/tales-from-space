@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
 -- The three machines that care how HOT the gas is.
@@ -12,8 +13,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- ENERGY IS WHAT IS BEING ASSERTED HERE, not temperature. A machine
 -- that warmed a pipe by exactly the right number of degrees while
 -- quietly minting the joules would read perfectly on a thermometer, so
--- every heat transfer below is weighed on `t.pipe_energy` -- the
--- conserved quantity -- as well as on `t.pipe_temperature`. tg's own
+-- every heat transfer below is weighed on `network_matter.energy` -- the
+-- conserved quantity -- as well as on `network_matter.temperature`. tg's own
 -- temperature pump would fail that at the bottom of the range: it
 -- floors both sides at TCMB independently, crediting the output for
 -- heat the input never gave up.
@@ -78,11 +79,11 @@ end
 local GATE_MAP = [==[(
     name: "temperature gate",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "##########",
@@ -91,12 +92,45 @@ local GATE_MAP = [==[(
         "##########",
     ],
     items: [(5, 2, "pipe"), (3, 2, "multitool")],
-    pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4)],
-    structures: [(5, 2, "player_spawn"), (3, 1, "temperature_gate")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3),
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
+    structures: [(5, 2, "player_spawn"), (3, 1, "temperature_gate")],
+
 )]==]
 
 local SUPPLY_M3 = net_m3(2, 1)
@@ -116,8 +150,8 @@ local function charge_gate_map(p)
     walk(p, "west")
     walk(p, "west")
 
-    local supply = assert(t.pipe_pressure(1, 1))
-    local delivery = assert(t.pipe_pressure(6, 1))
+    local supply = assert(network_matter.pressure(1, 1))
+    local delivery = assert(network_matter.pressure(6, 1))
     assert(supply > 90.0, "the supply is charged: " .. supply)
     assert(
         delivery < supply - 20.0,
@@ -147,7 +181,7 @@ t.tick()
 
 assert(assert(t.structure_at(3, 1)).id == "temperature_gate", "the map stood one there")
 assert(assert(t.structure_at(3, 1)).state == "shut", "and tg's ships shut")
-near(assert(t.pipe_temperature(1, 1)), T20C, 0.5, "a mapped run opens at room temperature")
+near(assert(network_matter.temperature(1, 1)), T20C, 0.5, "a mapped run opens at room temperature")
 
 local supply_0, delivery_0 = charge_gate_map(p)
 local books = moles(supply_0, SUPPLY_M3) + moles(delivery_0, DELIVERY_M3)
@@ -171,8 +205,8 @@ t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "armed", "the gate is armed")
 
 t.run_seconds(30)
-near(assert(t.pipe_pressure(6, 1)), delivery_0, 0.5, "nothing crossed: the gas is too warm")
-near(assert(t.pipe_pressure(1, 1)), supply_0, 0.5, "and the supply is untouched")
+near(assert(network_matter.pressure(6, 1)), delivery_0, 0.5, "nothing crossed: the gas is too warm")
+near(assert(network_matter.pressure(1, 1)), supply_0, 0.5, "and the supply is untouched")
 
 -- ---- a multitool on the sensor, and the test reverses ----
 t.click(p, 3, 2, t.target_at(p, 3, 2, "multitool"))
@@ -195,13 +229,13 @@ assert(
 )
 
 t.run_seconds(60)
-local inverted_out = assert(t.pipe_pressure(6, 1))
+local inverted_out = assert(network_matter.pressure(6, 1))
 assert(
     inverted_out > delivery_0 + 10.0,
     "inverted, the same warm gas passes: " .. delivery_0 .. " -> " .. inverted_out
 )
-assert(assert(t.pipe_pressure(1, 1)) < supply_0, "and the supply is what paid for it")
-local after = moles(assert(t.pipe_pressure(1, 1)), SUPPLY_M3) + moles(inverted_out, DELIVERY_M3)
+assert(assert(network_matter.pressure(1, 1)) < supply_0, "and the supply is what paid for it")
+local after = moles(assert(network_matter.pressure(1, 1)), SUPPLY_M3) + moles(inverted_out, DELIVERY_M3)
 assert(
     math.abs(after - books) < books * 0.02,
     "the books balance across the gate: " .. books .. " mol -> " .. after .. " mol"
@@ -239,7 +273,7 @@ ui_controls.set(c, "temperature", 400)
 ui_controls.toggle(c, "power")
 t.run_seconds(60)
 
-local cold_out = assert(t.pipe_pressure(6, 1))
+local cold_out = assert(network_matter.pressure(6, 1))
 assert(
     cold_out > cold_delivery_0 + 10.0,
     "under the setting, the gas is 'cold' and flows: " .. cold_delivery_0 .. " -> " .. cold_out
@@ -250,7 +284,7 @@ assert(
         .. " own input pressure and never past level: "
         .. cold_out
 )
-local cold_after = moles(assert(t.pipe_pressure(1, 1)), SUPPLY_M3) + moles(cold_out, DELIVERY_M3)
+local cold_after = moles(assert(network_matter.pressure(1, 1)), SUPPLY_M3) + moles(cold_out, DELIVERY_M3)
 assert(
     math.abs(cold_after - cold_books) < cold_books * 0.02,
     "and these books balance too: " .. cold_books .. " -> " .. cold_after
@@ -265,9 +299,16 @@ assert(
 --
 -- Nothing a player can reach makes one pipe hotter than another yet --
 -- the burn chamber and the thermomachine are still ahead -- so the
--- gradient is set up with `t.heat_pipe`, which is scaffolding and
+-- gradient is set up with `network_matter.heat`, which is scaffolding and
 -- says so.
 -- ---------------------------------------------------------------
+local PUMP_NETWORKS = [==[
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+]==]
+
 local PUMP_ROWS = [==[
     rows: [
         "#########",
@@ -275,22 +316,48 @@ local PUMP_ROWS = [==[
         "#a.....g#",
         "#########",
     ],
-    pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4)],
     structures: [(3, 2, "player_spawn"), (3, 1, "temperature_pump")],
 ]==]
 
 t.world([==[(
     name: "heat pump",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+]==] .. PUMP_NETWORKS .. [==[
     ],
 ]==] .. PUMP_ROWS .. ")", 7)
 
@@ -299,15 +366,15 @@ t.tick()
 assert(assert(t.structure_at(3, 1)).id == "temperature_pump", "a heat pump")
 assert(assert(t.structure_at(3, 1)).state == "off", "off out of the crate")
 
-t.heat_pipe(1, 1, 40000.0)
+network_matter.heat(1, 1, 40000.0)
 t.tick()
-local hot_0 = assert(t.pipe_temperature(1, 1))
-local cold_0 = assert(t.pipe_temperature(5, 1))
+local hot_0 = assert(network_matter.temperature(1, 1))
+local cold_0 = assert(network_matter.temperature(5, 1))
 assert(hot_0 > cold_0 + 50.0, "the input side is hot: " .. hot_0 .. " vs " .. cold_0)
 
-local energy_0 = assert(t.pipe_energy(1, 1)) + assert(t.pipe_energy(5, 1))
-local hot_moles_0 = assert(t.pipe_gas(1, 1)).n2
-local cold_moles_0 = assert(t.pipe_gas(5, 1)).n2
+local energy_0 = assert(network_matter.energy(1, 1)) + assert(network_matter.energy(5, 1))
+local hot_moles_0 = assert(network_matter.gas(1, 1)).n2
+local cold_moles_0 = assert(network_matter.gas(5, 1)).n2
 assert(hot_moles_0 > 0.0 and cold_moles_0 > 0.0, "both sides hold gas")
 
 t.click(q, 3, 1, t.target_at(q, 3, 1, "temperature_pump"))
@@ -327,7 +394,7 @@ ui_controls.toggle(q, "power")
 t.run_seconds(20)
 assert(assert(t.structure_at(3, 1)).state == "running", "the pump is running")
 near(
-    assert(t.pipe_temperature(1, 1)),
+    assert(network_matter.temperature(1, 1)),
     hot_0,
     0.5,
     "and moving no heat, because its throttle is shut"
@@ -336,23 +403,23 @@ near(
 -- ---- open the throttle ----
 ui_controls.set(q, "share", 100)
 t.run_seconds(30)
-local hot_1 = assert(t.pipe_temperature(1, 1))
-local cold_1 = assert(t.pipe_temperature(5, 1))
+local hot_1 = assert(network_matter.temperature(1, 1))
+local cold_1 = assert(network_matter.temperature(5, 1))
 assert(hot_1 < hot_0 - 5.0, "the input got cooler: " .. hot_0 .. " -> " .. hot_1)
 assert(cold_1 > cold_0 + 5.0, "and the output hotter: " .. cold_0 .. " -> " .. cold_1)
 
 -- NOT ONE MOLE. The assertion the machine exists for, and the one a
 -- pressure gauge would never catch on its own.
-near(assert(t.pipe_gas(1, 1)).n2, hot_moles_0, hot_moles_0 * 0.0001, "no moles left the input")
+near(assert(network_matter.gas(1, 1)).n2, hot_moles_0, hot_moles_0 * 0.0001, "no moles left the input")
 near(
-    assert(t.pipe_gas(5, 1)).n2,
+    assert(network_matter.gas(5, 1)).n2,
     cold_moles_0,
     cold_moles_0 * 0.0001,
     "and none arrived at the output"
 )
 
 -- And the books: every joule the output gained came off the input.
-local energy_1 = assert(t.pipe_energy(1, 1)) + assert(t.pipe_energy(5, 1))
+local energy_1 = assert(network_matter.energy(1, 1)) + assert(network_matter.energy(5, 1))
 near(energy_1, energy_0, 1.0, "thermal energy is conserved across the pump")
 
 -- ---- and it never pushes uphill ----
@@ -362,11 +429,11 @@ near(energy_1, energy_0, 1.0, "thermal energy is conserved across the pump")
 -- refrigerator: run it as long as you like and the two converge and
 -- stop, and no setting carries it past level.
 t.run_seconds(240)
-local hot_2 = assert(t.pipe_temperature(1, 1))
-local cold_2 = assert(t.pipe_temperature(5, 1))
+local hot_2 = assert(network_matter.temperature(1, 1))
+local cold_2 = assert(network_matter.temperature(5, 1))
 assert(hot_2 >= cold_2 - 0.5, "it approaches level and stops: " .. hot_2 .. " vs " .. cold_2)
 near(
-    assert(t.pipe_energy(1, 1)) + assert(t.pipe_energy(5, 1)),
+    assert(network_matter.energy(1, 1)) + assert(network_matter.energy(5, 1)),
     energy_0,
     1.0,
     "and the books still balance at the end of it"
@@ -380,21 +447,24 @@ near(
 t.world([==[(
     name: "dead heat pump",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
+    networks: [
+]==] .. PUMP_NETWORKS .. [==[
+    ],
 ]==] .. PUMP_ROWS .. ")", 7)
 
 local d = t.join()
 t.tick()
 t.run_seconds(3)
-t.heat_pipe(1, 1, 40000.0)
+network_matter.heat(1, 1, 40000.0)
 t.tick()
-local dead_hot = assert(t.pipe_temperature(1, 1))
-local dead_cold = assert(t.pipe_temperature(5, 1))
+local dead_hot = assert(network_matter.temperature(1, 1))
+local dead_cold = assert(network_matter.temperature(5, 1))
 
 t.click(d, 3, 1, t.target_at(d, 3, 1, "temperature_pump"))
 t.tick()
@@ -411,8 +481,8 @@ assert(
     "and the machine is still drawn dead, which is tg's `on &&"
         .. " is_operational` picking the picture"
 )
-near(assert(t.pipe_temperature(1, 1)), dead_hot, 0.5, "an unpowered heat pump moves nothing")
-near(assert(t.pipe_temperature(5, 1)), dead_cold, 0.5, "in either direction")
+near(assert(network_matter.temperature(1, 1)), dead_hot, 0.5, "an unpowered heat pump moves nothing")
+near(assert(network_matter.temperature(5, 1)), dead_cold, 0.5, "in either direction")
 
 -- ---------------------------------------------------------------
 -- A PLATE HEAT EXCHANGER IS HALF A MACHINE.
@@ -431,9 +501,9 @@ t.world(
     [==[(
     name: "plates",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "##############",
@@ -441,10 +511,13 @@ t.world(
         "#............#",
         "##############",
     ],
-    pipes: [
-        (1, 1, 4), (2, 1, 4),
-        (5, 1, 4), (6, 1, 4),
-        (10, 1, 4), (11, 1, 4),
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 10, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 11, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
     ],
     structures: [
         (6, 2, "player_spawn"),
@@ -463,27 +536,27 @@ assert(assert(t.structure_at(3, 1)).id == "heat_exchanger", "two plates meet on 
 assert(assert(t.structure_at(4, 1)).id == "heat_exchanger")
 assert(assert(t.structure_at(9, 1)).id == "heat_exchanger", "and one stands on its own")
 
-near(assert(t.pipe_temperature(1, 1)), T20C, 0.5, "every run opens at room temperature")
-near(assert(t.pipe_temperature(6, 1)), T20C, 0.5, "the far side of the pair too")
-near(assert(t.pipe_temperature(11, 1)), T20C, 0.5, "and the lone plate's own run")
+near(assert(network_matter.temperature(1, 1)), T20C, 0.5, "every run opens at room temperature")
+near(assert(network_matter.temperature(6, 1)), T20C, 0.5, "the far side of the pair too")
+near(assert(network_matter.temperature(11, 1)), T20C, 0.5, "and the lone plate's own run")
 
 -- Heat one side of the pair, and the lone plate's run by the same
 -- amount, so the two cases are compared like for like.
-t.heat_pipe(1, 1, 30000.0)
-t.heat_pipe(11, 1, 30000.0)
+network_matter.heat(1, 1, 30000.0)
+network_matter.heat(11, 1, 30000.0)
 t.tick()
-local pair_energy_0 = assert(t.pipe_energy(1, 1)) + assert(t.pipe_energy(6, 1))
-local lone_energy_0 = assert(t.pipe_energy(11, 1))
-local hot_side_0 = assert(t.pipe_temperature(1, 1))
-local lone_hot_0 = assert(t.pipe_temperature(11, 1))
+local pair_energy_0 = assert(network_matter.energy(1, 1)) + assert(network_matter.energy(6, 1))
+local lone_energy_0 = assert(network_matter.energy(11, 1))
+local hot_side_0 = assert(network_matter.temperature(1, 1))
+local lone_hot_0 = assert(network_matter.temperature(11, 1))
 assert(hot_side_0 > T20C + 50.0, "one side of the pair is hot: " .. hot_side_0)
 near(lone_hot_0, hot_side_0, 1.0, "and the lone plate's run is heated the same")
 
 t.run_seconds(10)
 
 -- ---- the pair: complete equalisation, and quickly ----
-local settled_a = assert(t.pipe_temperature(1, 1))
-local settled_b = assert(t.pipe_temperature(6, 1))
+local settled_a = assert(network_matter.temperature(1, 1))
+local settled_b = assert(network_matter.temperature(6, 1))
 near(settled_a, settled_b, 0.5, "two facing plates equalise the runs behind them")
 assert(
     settled_a < hot_side_0 - 20.0,
@@ -491,7 +564,7 @@ assert(
 )
 assert(settled_b > T20C + 5.0, "and the cold side came up: " .. settled_b)
 near(
-    assert(t.pipe_energy(1, 1)) + assert(t.pipe_energy(6, 1)),
+    assert(network_matter.energy(1, 1)) + assert(network_matter.energy(6, 1)),
     pair_energy_0,
     1.0,
     "and not a joule was made or lost doing it"
@@ -499,15 +572,15 @@ near(
 
 -- The gas did NOT mix, which is the whole reason to plumb two loops
 -- through plates rather than through a valve.
-assert(t.pipe_pressure(1, 1) ~= nil and t.pipe_pressure(6, 1) ~= nil, "both runs still exist")
+assert(network_matter.pressure(1, 1) ~= nil and network_matter.pressure(6, 1) ~= nil, "both runs still exist")
 
 -- ---- the lone plate: nothing, for as long as you like ----
 --
 -- tg's `atmos_init` finds no partner and gives up quietly
 -- (heat_exchanger.dm:52-55). A single plate is not broken; it is half
 -- of a machine.
-near(assert(t.pipe_temperature(11, 1)), lone_hot_0, 1.0, "a plate with nobody to face does nothing")
-near(assert(t.pipe_energy(11, 1)), lone_energy_0, 1.0, "and keeps every joule it was given")
+near(assert(network_matter.temperature(11, 1)), lone_hot_0, 1.0, "a plate with nobody to face does nothing")
+near(assert(network_matter.energy(11, 1)), lone_energy_0, 1.0, "and keeps every joule it was given")
 
 -- ---------------------------------------------------------------
 -- THE ROUND TRIP, and the refusal each of the three carries.
@@ -522,11 +595,11 @@ t.world(
     [==[(
     name: "thermal fittings",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "##########",
@@ -539,12 +612,46 @@ t.world(
         (6, 2, "temperature_gate_fitting"),
         (7, 2, "heat_exchanger_fitting"),
     ],
-    pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4)],
-    structures: [(3, 2, "player_spawn"), (3, 1, "temperature_pump")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3),
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
+    structures: [(3, 2, "player_spawn"), (3, 1, "temperature_pump")],
+
 )]==],
     7
 )

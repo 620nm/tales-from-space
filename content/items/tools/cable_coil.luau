@@ -26,23 +26,20 @@ local action_rules = require("@lib/action_rules")
 -- Line" (__DEFINES/power.dm:5,8,11), and its coil recolours itself to
 -- match whichever layer you picked (cable.dm:596,602,608).
 local LINES = {
-    { mask = 1, name = "the red power line" },
-    { mask = 2, name = "the yellow power line" },
-    { mask = 4, name = "the blue power line" },
+    { channel = "l1", name = "the red power line" },
+    { channel = "l2", name = "the yellow power line" },
+    { channel = "l3", name = "the blue power line" },
 }
 
 local content = {
     id = "cable_coil",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.cable_coil.name",
     name = "cable coil",
     sprite = "coil",
     inhand_sprite = { "held_coil_l", "held_coil_r" },
     stack = 30,
-    -- This IS the station's cable: what a run under the deck is made
-    -- of, and therefore what cutting one hands back. One field, both
-    -- directions -- the engine floods the powernet and never learns
-    -- that the thing you lay it with is called a coil.
-    subfloor = "cable",
     -- Three settings, minted on the second: tg's coil defaults to
     -- CABLE_LAYER_2 (cable.dm:513), which is the line the shipped
     -- station runs its backbone on.
@@ -54,7 +51,7 @@ local content = {
     -- which is the same information in one keypress instead of two.
 }
 
-content.actions = { action_rules.primary("lay_cable", action_rules.exposed_deck("cable")) }
+content.actions = { action_rules.primary("lay_cable", action_rules.exposed_deck("power")) }
 
 if sim ~= nil then
     local script_definition =
@@ -74,21 +71,10 @@ if sim ~= nil then
     end)
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
-        local clicked, target = ev.claim, ev.claim
         local _x, _y, _choice = x, y, choice
-        -- Asked first, so every covered tile answers the same way and
-        -- the reply is not a probe for what is already buried. Open
-        -- deck, not "plating": the map decides per tile.
-        if not sim.subfloor_exposed(x, y, "cable") then
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:lib.subfloor.covered", {}),
-            })
-            return true
-        end
         local line = LINES[assert(sim.mode(self)).index + 1]
-        if sim.cable(x, y) % (line.mask * 2) >= line.mask then
-            return { replaced = false } -- this line already runs here
+        if not sim.network_installable(x, y, "power", line.channel, "cable") then
+            return { replaced = false }
         end
         sim.message.send({
             recipient = user,
@@ -107,7 +93,7 @@ if sim ~= nil then
             -- again too -- a do_after is a whole second, and nothing stops
             -- you turning it mid-job.
             line = LINES[assert(sim.mode(self)).index + 1]
-            if sim.cable(x, y) % (line.mask * 2) >= line.mask then
+            if not sim.network_installable(x, y, "power", line.channel, "cable") then
                 sim.message.send({
                     recipient = user,
                     message = sim.msg("lunatic/tfs:items.cable_coil.taken", {
@@ -116,7 +102,7 @@ if sim ~= nil then
                 })
                 return true
             end
-            sim.lay_cable(x, y, line.mask)
+            sim.place_network(x, y, "power", line.channel, "cable", 15, nil, self, 1)
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:items.cable_coil.laid", {

@@ -1,3 +1,6 @@
+local network_matter = require("@helpers/network_matter")
+local network_channels = require("@helpers/network_channels")
+
 -- A pump standing beside a bare socket, and the fit that used to look
 -- straight past it.
 --
@@ -36,11 +39,11 @@ t.world(
     [==[(
     name: "pump to socket",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "########",
@@ -50,16 +53,40 @@ t.world(
     ],
     // The whole of the plumbing: two lengths, and nothing anywhere near
     // the socket at (4, 2).
-    pipes: [(1, 2, 4), (2, 2, 4)],
+    networks: [
+        (x: 1, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+    ],
     structures: [
         (3, 1, "player_spawn"),
         (3, 2, "volume_pump"),
         (4, 2, "connector_port", { "pipe": "west" }),
     ],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
-    ],
+
 )]==],
     7
 )
@@ -71,15 +98,15 @@ local pump = t.structure_at(3, 2)
 assert(pump ~= nil and pump.id == "volume_pump", "the map stood one there")
 assert(pump.state == "off", "and tg's ships off")
 assert(assert(t.structure_at(4, 2)).sprite == "connector_port_w", "the socket reaches the pump")
-assert(t.pipe(4, 2) == 0, "with no length of pipe under it or beside it")
+assert(network_channels.at(4, 2, "pipe") == "", "with no length of pipe under it or beside it")
 
-local charged = assert(t.pipe_pressure(1, 2))
+local charged = assert(network_matter.pressure(1, 2))
 assert(charged > 90.0, "the mapped main opened the shift commissioned: " .. charged)
 
 -- Nothing moves while it is off, which is what makes the next number
 -- mean something.
 t.run_seconds(5)
-near(assert(t.pipe_pressure(1, 2)), charged, 0.001, "a pump that is off is a wall")
+near(assert(network_matter.pressure(1, 2)), charged, 0.001, "a pump that is off is a wall")
 
 t.click(p, 3, 2, t.target_at(p, 3, 2, "volume_pump"))
 t.tick()
@@ -96,7 +123,7 @@ assert(assert(t.structure_at(3, 2)).state == "running", "it is on")
 -- only place on this map the gas can be, and the main can only have
 -- paid it if the fit found a mouth where there was no length of pipe.
 t.run_seconds(60)
-local settled = assert(t.pipe_pressure(1, 2))
+local settled = assert(network_matter.pressure(1, 2))
 assert(
     settled < charged * 0.05,
     "the main emptied itself through the pump into the socket: " .. charged .. " -> " .. settled
@@ -114,9 +141,9 @@ t.world(
     [==[(
     name: "chosen over fitted",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -128,7 +155,10 @@ t.world(
     structures: [(2, 3, "player_spawn")],
     // East and west of (2, 2) and nothing north or south of it: the fit
     // has exactly one axis to offer, and it is not the one chosen.
-    pipes: [(1, 2, 4), (3, 2, 4)],
+    networks: [
+        (x: 1, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
     items: [(2, 3, "wrench"), (2, 2, "volume_pump_fitting")],
 )]==],
     7

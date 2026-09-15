@@ -34,6 +34,8 @@
 -- gets switched on. No power hookup yet, as with the rest of the kit.
 return {
     id = "mixer",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.mixer.name",
     name = "mixer",
     sprite = "mixer_off_n",
@@ -67,6 +69,8 @@ return {
         },
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "mixer",
         positions = { "off", "running" },
         -- tg's ONE_ATMOSPHERE default and its MAX_OUTPUT_PRESSURE
@@ -76,7 +80,8 @@ return {
         ratio = 0.5,
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "mixer_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -85,6 +90,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             -- tg's `can_unwrench`: "You cannot unwrench [src], turn it
             -- off first!" (mixer.dm:186-190). Expressed as the state
             -- the row belongs to rather than as a refusal in Rust.
@@ -140,7 +146,8 @@ return {
                 },
             },
             build = {
-                on = { "floor", "plating" },
+                sound = "smash",
+                on = { "component:station_base" },
                 from_item = "mixer_flipped_fitting",
                 tool = "wrench",
                 secs = 2.0,
@@ -149,6 +156,7 @@ return {
             },
             transitions = {
                 {
+                    sound = "smash",
                     at = "off",
                     tool = "wrench",
                     secs = 2.0,

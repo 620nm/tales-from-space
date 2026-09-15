@@ -4,6 +4,9 @@
 -- to a frame.
 return {
     id = "screwdriver",
+    visual_layer = "entities",
+    stowed_visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.screwdriver.name",
     name = "screwdriver",
     sprite = "screwdriver",

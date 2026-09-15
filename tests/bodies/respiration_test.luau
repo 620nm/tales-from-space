@@ -33,7 +33,7 @@ local ui_controls = require("@helpers/ui_controls")
 
 local ARENA = [==[(
     name: "closet",
-    legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
+    legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [ "###", "#.#", "###" ],
     structures: [(1, 1, "player_spawn")],
 )]==]
@@ -137,7 +137,7 @@ assert(inside(crew, "co2") > 0.0, "the last breath is still in there, unexhaled 
 -- =====================================================================
 local VOID = [==[(
     name: "the void",
-    legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
+    legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [ "###", "#. ", "###" ],
     structures: [(1, 1, "player_spawn")],
 )]==]
@@ -162,7 +162,7 @@ assert(ui_controls.number(t.health(spacer).oxy) > 0, "and the crewman is suffoca
 -- =====================================================================
 local THEATRE = [==[(
     name: "theatre",
-    legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
+    legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [ "#####", "#...#", "#####" ],
     structures: [
         (1, 1, "player_spawn", { "jobs": "assistant" }),

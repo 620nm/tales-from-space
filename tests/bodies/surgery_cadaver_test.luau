@@ -20,12 +20,12 @@ local ui_controls = require("@helpers/ui_controls")
 local ARENA = [==[(
     name: "morgue theatre",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'G': (turf: Floor, fixture: Some(Generator)),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'o': (turf: Floor, fixture: Some(Outlet)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: [
         "#######",
@@ -41,7 +41,12 @@ local ARENA = [==[(
         (5, 2, "cadaver_chamber.cadaver", { "dir": "north" }),
     ],
     machines: [(2, 2, "operating_computer")],
-    cables: [(1, 3, 2), (2, 3, 3), (3, 3, 1)],
+    networks: [
+        (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+    ],
 )]==]
 
 t.world(ARENA, 0)

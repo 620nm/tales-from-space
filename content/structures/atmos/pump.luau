@@ -31,6 +31,8 @@
 -- (pump.dm:68), where the manual valve's starts the wheel turning.
 return {
     id = "pump",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.pump.name",
     name = "pump",
     sprite = "pump_off_n",
@@ -77,13 +79,16 @@ return {
         },
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "pump",
         positions = { "off", "running" },
         target_kpa = 101.325,
         max_kpa = 4500.0,
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "pump_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -92,6 +97,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             -- Only while it is OFF -- tg's `can_unwrench`: "You cannot
             -- unwrench [src], turn it off first!" (pump.dm:103-107).
             -- The guard is the state itself, so a wrench swung at a

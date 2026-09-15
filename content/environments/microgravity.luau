@@ -2,7 +2,7 @@ return {
     id = "microgravity",
     name = "microgravity",
     kind = "space",
-    terrain = "Space",
+    substrate = "space",
     gravity_m_s2 = 0,
     background = "space_backdrop",
     sink_k = 2.7,

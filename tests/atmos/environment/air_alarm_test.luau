@@ -141,12 +141,12 @@ t.world(
     [==[(
     name: "air alarm bench",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
-        'o': (turf: Plating, fixture: Some(Outlet)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
     },
     // One socket in the middle of the room, because three of the five
     // devices here hang on a CORD rather than on the cable under them
@@ -165,7 +165,38 @@ t.world(
     items: [(7, 2, "id_engineering"), (9, 2, "laptop")],
     // The waste main runs out under the west wall, so the scrubber has
     // somewhere to put what it takes (tests/room_devices_test.luau).
-    pipes: [(0, 2, 2), (1, 2, 2)],
+    networks: [
+        (x: 0, y: 2, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 1, y: 2, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 13, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 14, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 10, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 12, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 9, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 10, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 12, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 12, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 13, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+    ],
     structures: [
         (7, 2, "player_spawn"),
         (2, 1, "vent"),
@@ -181,14 +212,7 @@ t.world(
         (9, 1, "access_point", { "mount": "north" }),
     ],
     machines: [(11, 1, "transceiver")],
-    cables: [
-        (13, 3, 3), (14, 3, 2),
-        (1, 1, 1), (2, 1, 1), (3, 1, 1), (4, 1, 1), (5, 1, 1), (6, 1, 1),
-        (7, 1, 1), (8, 1, 1), (9, 1, 1), (10, 1, 1), (11, 1, 1), (12, 1, 1),
-        (1, 2, 1), (2, 2, 1), (3, 2, 1), (4, 2, 1), (5, 2, 1), (6, 2, 1),
-        (7, 2, 1), (8, 2, 1), (9, 2, 1), (10, 2, 1), (11, 2, 1), (12, 2, 1),
-        (12, 3, 1), (13, 3, 1),
-    ],
+
 )]==],
     7
 )

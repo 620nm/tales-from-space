@@ -17,9 +17,9 @@ t.world(
     [==[(
     name: "charge bench",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     blends: {
         "rinse": (rows: [("water", 0.20)], temperature_k: 293.15, amount: total),

@@ -1,3 +1,5 @@
+local composition = require("@helpers/composition")
+
 local ui_controls = require("@helpers/ui_controls")
 
 -- The atmos emergency-kit case, end to end: a room whose own authored
@@ -10,8 +12,8 @@ t.world(
     [==[(
     name: "resin fire bench",
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "###",
@@ -51,7 +53,7 @@ assert(
 )
 
 -- A ground click on the room is the projector's authored gesture.
-t.click_turf(p, 1, 1)
+composition.click_deck(p, 1, 1)
 t.tick()
 assert(t.hands(p).held == "atmos_resin_projector", "a spent charge leaves the device")
 

@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 -- Where the station's air comes from.
 --
 -- The chain is canister -> distribution run -> vent -> room, and it is
@@ -36,12 +37,12 @@ t.world(
     [==[(
     name: "air supply",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'c': (turf: Plating),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'c': (composition: (components: [(component: "station_base")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "#####",
@@ -51,7 +52,25 @@ t.world(
         "#####",
     ],
     items: [(2, 2, "welder")],
-    pipes: [(2, 2, 4)],
+    networks: [
+        (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+    ],
     // The vent, and the socket under the canister. Without the socket
     // the bottle is furniture.
     blends: {
@@ -62,11 +81,7 @@ t.world(
         (1, 2, "vent"), (3, 2, "connector_port"),
         (3, 2, "canister", { "blend": "canister_air", "open": true }),
     ],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3),
-        (1, 3, 3), (2, 3, 3), (3, 3, 3),
-    ],
+
 )]==],
     7
 )
@@ -83,7 +98,7 @@ local CAN_M3 = 2.0
 local full = assert(t.canister_pressure(3, 2))
 assert(full ~= nil, "the canister is where the map put it")
 assert(full > 4000.0, "a fresh canister is at 45 atm: " .. full)
-assert(assert(t.pipe_pressure(2, 2)) > 90.0, "and it has charged the run to one atmosphere")
+assert(assert(network_matter.pressure(2, 2)) > 90.0, "and it has charged the run to one atmosphere")
 assert(assert(t.room_pressure(2, 2)) > 90.0, "so the room is breathable from the start")
 
 -- The bottle IS the network while it is fastened (tg's connector
@@ -94,11 +109,11 @@ assert(assert(t.room_pressure(2, 2)) > 90.0, "so the room is breathable from the
 t.run_seconds(10)
 local settled = assert(t.canister_pressure(3, 2))
 assert(
-    math.abs(assert(settled) - assert(t.pipe_pressure(2, 2))) < 5.0,
+    math.abs(assert(settled) - assert(network_matter.pressure(2, 2))) < 5.0,
     "bottle and run are one body of gas: "
         .. assert(settled)
         .. " / "
-        .. assert(t.pipe_pressure(2, 2))
+        .. assert(network_matter.pressure(2, 2))
 )
 assert(assert(settled) > 3500.0, "and the reserve still reads as a reserve: " .. settled)
 t.run_seconds(5)
@@ -181,12 +196,12 @@ t.world(
     [==[(
     name: "spent",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'c': (turf: Plating),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'c': (composition: (components: [(component: "station_base")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "#####                   ",
@@ -196,11 +211,75 @@ t.world(
         "#####                   ",
     ],
     items: [(2, 2, "welder")],
-    pipes: [
-        (2, 2, 4), (3, 2, 4), (4, 2, 4), (5, 2, 4), (6, 2, 4),
-        (7, 2, 4), (8, 2, 4), (9, 2, 4), (10, 2, 4), (11, 2, 4), (12, 2, 4),
-        (13, 2, 4), (14, 2, 4), (15, 2, 4), (16, 2, 4), (17, 2, 4),
-        (18, 2, 4), (21, 2, 4),
+    networks: [
+        (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 7, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 8, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 9, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 10, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 11, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 12, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 13, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 14, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 15, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 16, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 17, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 18, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 21, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 9, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 9, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 11, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 12, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 12, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 13, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 13, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 14, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 14, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 15, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 15, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 16, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 16, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 17, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 17, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 18, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 18, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 19, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 19, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 20, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 20, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 21, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 21, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 22, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 22, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
@@ -212,11 +291,7 @@ t.world(
         (22, 2, "connector_port"),
         (22, 2, "canister", { "blend": "canister_air", "open": true }),
     ],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3), (9, 2, 3), (10, 2, 3), (11, 2, 3), (12, 2, 3), (13, 2, 3), (14, 2, 3), (15, 2, 3), (16, 2, 3), (17, 2, 3), (18, 2, 3), (19, 2, 3), (20, 2, 3), (21, 2, 3), (22, 2, 3),
-        (1, 3, 3), (2, 3, 3), (3, 3, 3),
-    ],
+
 )]==],
     7
 )
@@ -235,7 +310,7 @@ t.fault(10, 2, t.now() + 4)
 t.run_seconds(300)
 local left = assert(t.canister_pressure(22, 2))
 assert(assert(left) < 100.0, "the canister blew itself empty: " .. left)
-assert(assert(t.pipe_pressure(21, 2)) < 10.0, "and the bottle's outlet run is dead with it")
+assert(assert(network_matter.pressure(21, 2)) < 10.0, "and the bottle's outlet run is dead with it")
 
 -- The crew room never noticed: it was already at one atmosphere, so
 -- its vent had no reason to run.
@@ -285,13 +360,13 @@ t.world(
     [==[(
     name: "portable",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        '_': (turf: Plating),
-        'c': (turf: Floor),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'g': (turf: Floor, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '_': (composition: (components: [(component: "station_base")])),
+        'c': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
         "######### ",
@@ -303,10 +378,49 @@ t.world(
     // The run reaches the vent by going AROUND (3, 1): that tile is
     // bare deck with nothing under it, so the canister can be stood
     // somewhere unplumbed without the net being cut in two.
-    pipes: [
-        (1, 2, 4), (2, 2, 4), (3, 2, 4), (4, 2, 4),
-        (5, 2, 4), (6, 2, 4),
-        (4, 1, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4),
+    networks: [
+        (x: 1, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 7, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 8, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
     // Three sockets beside the run, plus the vent on the scrap of deck
     // outside. (4, 1) is deliberately NOT a socket: it is charged main
@@ -322,10 +436,7 @@ t.world(
         (9, 1, "vent"),
         (2, 1, "canister", { "blend": "canister_air", "open": true }),
     ],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3),
-    ],
+
 )]==],
     7
 )
@@ -403,8 +514,8 @@ assert(
     "off the port, it feeds nothing: " .. assert(off) .. " -> " .. loose
 )
 assert(
-    assert(t.pipe_pressure(2, 2)) < 20.0,
-    "and the adjacent run it left is emptying into space: " .. assert(t.pipe_pressure(2, 2))
+    assert(network_matter.pressure(2, 2)) < 20.0,
+    "and the adjacent run it left is emptying into space: " .. assert(network_matter.pressure(2, 2))
 )
 
 -- Loose means loose. Walk into it and it gives way (see
@@ -446,7 +557,7 @@ assert(
 t.move(w, "east")
 t.run_ticks(3)
 assert(t.canister_pressure(4, 1) ~= nil, "it is over the run now")
-assert(t.pipe_pressure(4, 1) ~= nil, "on live pipe, at that")
+assert(network_matter.pressure(4, 1) ~= nil, "on live pipe, at that")
 local _ = t.messages(w)
 t.click(w, 4, 1, t.target_at(w, 4, 1))
 t.run_ticks(2)
@@ -493,13 +604,13 @@ t.world(
     [==[(
     name: "across the kit",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'v': (turf: Plating),
-        'c': (turf: Floor),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'g': (turf: Floor, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'v': (composition: (components: [(component: "station_base")])),
+        'c': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
         "######### ",
@@ -511,9 +622,47 @@ t.world(
     // One run along the second row, out under the east wall to the
     // vent hanging over open space -- so anything in the line goes
     // straight off the station and the gauge is a proof.
-    pipes: [
-        (2, 2, 4), (3, 2, 4), (4, 2, 4), (5, 2, 4), (6, 2, 4),
-        (6, 1, 4), (7, 1, 4), (8, 1, 4),
+    networks: [
+        (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 7, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 8, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
     // Two sockets, the injector standing between them, and the vent
     // (a structure since the constructible-vents cutover) hanging
@@ -529,10 +678,7 @@ t.world(
         (9, 1, "vent"),
         (2, 1, "canister", { "blend": "canister_air", "open": true }),
     ],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3),
-    ],
+
 )]==],
     7
 )
