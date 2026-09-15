@@ -1,6 +1,8 @@
 -- Cuts through bone (tg surgery_tools.dm:268-290): force 15, edged.
 return {
     id = "circular_saw",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.circular_saw.name",
     name = "circular saw",
     sprite = "circular_saw",

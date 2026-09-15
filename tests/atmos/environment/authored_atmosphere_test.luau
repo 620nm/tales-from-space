@@ -1,8 +1,10 @@
+local composition = require("@helpers/composition")
+
 -- Map air fixes the outdoor mix; an omitted mix leaves the cold profile free.
 local MAP = [==[(
     name: "Authored surroundings", tags: ["terrestrial"],
     environment: (atmosphere: Exact(true), %s),
-    legend: { 'e': (turf: Empty), '#': (turf: Wall), '.': (turf: Floor) },
+    legend: { 'e': (composition: (substrate: Some("ground")), outdoors: true), '#': (composition: (components: [(component: "station_base"), (component: "wall")])), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])) },
     rows: ["eeeee", "e###e", "e#.#e", "e###e", "eeeee"],
     structures: [(2, 2, "player_spawn")],
     blends: { "%s": (
@@ -19,7 +21,7 @@ assert(fixed.id == "cold_outdoors", "the map mix does not reject the cold profil
 assert(assert(assert(fixed.profile).atmosphere).blend == "map_air")
 assert(assert(assert(fixed.profile).atmosphere).air_half_life_s == 60)
 assert(assert(assert(fixed.profile).atmosphere).heat_half_life_s == 120)
-assert(t.turf(0, 0) == "ground", "absent turf inherits the selected terrain")
+assert(composition.bare(0, 0, "ground"), "absent turf inherits the selected terrain")
 assert(math.abs(assert(t.room_temperature(0, 0)) - 310.0) < 0.01)
 local outside = assert(t.room_gas(0, 0))
 assert(math.abs((outside.co2 or 0) - 35) < 1e-6)

@@ -36,6 +36,8 @@
 -- the kit.
 return {
     id = "filter",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.filter.name",
     name = "filter",
     sprite = "filter_off_n",
@@ -72,6 +74,8 @@ return {
         },
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "filter",
         positions = { "off", "running" },
         rate_lps = 200.0,
@@ -82,7 +86,8 @@ return {
     -- section between the neighbouring runs
     -- (docs/CONSTRUCTION.md, "Fittings, portables, and the round trip").
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "filter_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -91,6 +96,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             -- Only while it is OFF. tg's `can_unwrench` refuses a
             -- running filter outright ("turn off!", filter.dm:176-180),
             -- and here that is not a special case in the engine: the
@@ -162,7 +168,8 @@ return {
                 },
             },
             build = {
-                on = { "floor", "plating" },
+                sound = "smash",
+                on = { "component:station_base" },
                 from_item = "filter_flipped_fitting",
                 tool = "wrench",
                 secs = 2.0,
@@ -171,6 +178,7 @@ return {
             },
             transitions = {
                 {
+                    sound = "smash",
                     at = "off",
                     tool = "wrench",
                     secs = 2.0,

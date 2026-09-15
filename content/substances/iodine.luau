@@ -27,7 +27,7 @@ return {
     cv = { solid = 54.4, liquid = 80.7, gas = 36.9 },
     phase = { melt = 386.75, boil = 457.4, l_fus = 15520, l_vap = 41570 },
     density = { solid = 4.93, liquid = 3.96 },
-    visible = { moles = 0.02, factor = 20, tint = "#7B2CBF" },
+    visible = { moles = 0.02, factor = 20, tint = "#7B2CBF", visual_layer = "gas_haze" },
     -- What it looks like through glass (tg: other_reagents.dm:1998).
     color = "#BC8A00",
     relevance = 5,

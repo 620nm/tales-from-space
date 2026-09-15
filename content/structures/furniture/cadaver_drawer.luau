@@ -9,6 +9,7 @@
 -- general structures sheet the drawer's does (:608-621).
 return {
     id = "cadaver_drawer",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.cadaver_drawer.name",
     name = "cadaver drawer",
     sprite = "morguet_s",

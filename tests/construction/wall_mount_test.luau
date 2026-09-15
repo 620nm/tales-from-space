@@ -1,3 +1,5 @@
+local composition = require("@helpers/composition")
+
 -- Wall-frame construction, refusal, transitions, and supporting-wall teardown.
 -- Contract: the engine's docs/construction/mounts.md; diagonal placement and
 -- button interactions are covered in diagonal_wall_mount_test.luau.
@@ -20,9 +22,9 @@ t.world(
     [==[(
     name: "mount bench",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -134,10 +136,10 @@ assert(t.count_items("cable_coil") > 0, "and hand the cable back")
 put_down()
 take("welder")
 local _ = t.messages(p)
-t.click_turf(p, 1, 0)
+t.click_component(p, 1, 0, assert(t.component_instance(1, 0, "wall")))
 t.run_seconds(10.5)
 assert(said(p, "Take the wall frame off the wall first."), "the wall names what is hanging on it")
-assert(t.turf(1, 0) == "wall", "and stays a wall")
+assert(composition.matches(1, 0, { "station_base", "wall" }), "and stays a wall")
 
 -- Take the box off and the same torch goes through. The frame is bare
 -- again by now, which is the only state a torch will cut one off in.
@@ -145,6 +147,6 @@ t.click(p, 1, 1, t.target_at(p, 1, 1, "wall_frame"))
 t.run_seconds(4.5)
 assert(t.structure_at(1, 1) == nil, "the torch takes a bare frame off the wall")
 
-t.click_turf(p, 1, 0)
+t.click_component(p, 1, 0, assert(t.component_instance(1, 0, "wall")))
 t.run_seconds(10.5)
-assert(t.turf(1, 0) ~= "wall", "and now the wall itself comes apart")
+assert(not composition.matches(1, 0, { "station_base", "wall" }), "and now the wall itself comes apart")

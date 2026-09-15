@@ -2,6 +2,8 @@
 -- the process fills and siphons its turf and every atmos-adjacent one (:199-254).
 return {
     id = "airlock_pump",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.airlock_pump.name",
     name = "external airlock pump",
     sprite = "airlock_pump_off",
@@ -12,9 +14,11 @@ return {
     states = { "off", "blowing", "siphoning" },
     state_sprites = { blowing = "airlock_pump_blowing", siphoning = "airlock_pump_siphoning" },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "vent",
         port_layout = "stacked",
-        port_layers = { 4, 2 },
+        port_channels = { "l4", "l2" },
         on = false,
         positions = { "off", "blowing", "siphoning" },
         target_kpa = 101.325,
@@ -29,7 +33,8 @@ return {
         max_rate_lps = 800,
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "airlock_pump_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -38,6 +43,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             tool = "wrench",
             secs = 2.0,
             gone = true,

@@ -31,6 +31,8 @@
 -- and warm rather than to boil a beaker dry.
 return {
     id = "steam_generator",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.steam_generator.name",
     name = "steam generator",
     sprite = "steam_generator",
@@ -56,9 +58,10 @@ return {
         sprite_running_loaded = "steam_generator_on_loaded",
     },
     atmos = {
+        network = "pipe",
         device = "line_dock",
         -- The distribution main, like the vent it is meant to feed.
-        layer = 3,
+        channel = "l3",
     },
     parts = {
         slots = { "laser", "capacitor", "bin" },
@@ -68,6 +71,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             tool = "crowbar",
             secs = 4.0,
             gone = true,

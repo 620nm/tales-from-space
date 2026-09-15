@@ -37,6 +37,8 @@
 -- part of the deck, laid with the cable.
 return {
     id = "utility_outlet_port",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.utility_outlet_port.name",
     name = "utility outlet port",
     -- The housing on its own. The three lamps are overlays the engine
@@ -45,22 +47,28 @@ return {
     sprite = "utility_outlet_port",
     fixture = "Outlet",
     appearance = {
-        states = {
-            wire_1_disconnected = "uop_wire_1_disconnected",
-            wire_1_inactive = "uop_wire_1_inactive",
-            wire_1_starved = "uop_wire_1_starved",
-            wire_1_emergency = "uop_wire_1_emergency",
-            wire_1_nominal = "uop_wire_1_nominal",
-            wire_2_disconnected = "uop_wire_2_disconnected",
-            wire_2_inactive = "uop_wire_2_inactive",
-            wire_2_starved = "uop_wire_2_starved",
-            wire_2_emergency = "uop_wire_2_emergency",
-            wire_2_nominal = "uop_wire_2_nominal",
-            wire_3_disconnected = "uop_wire_3_disconnected",
-            wire_3_inactive = "uop_wire_3_inactive",
-            wire_3_starved = "uop_wire_3_starved",
-            wire_3_emergency = "uop_wire_3_emergency",
-            wire_3_nominal = "uop_wire_3_nominal",
+        channels = {
+            l1 = {
+                disconnected = "uop_wire_1_disconnected",
+                inactive = "uop_wire_1_inactive",
+                starved = "uop_wire_1_starved",
+                emergency = "uop_wire_1_emergency",
+                nominal = "uop_wire_1_nominal",
+            },
+            l2 = {
+                disconnected = "uop_wire_2_disconnected",
+                inactive = "uop_wire_2_inactive",
+                starved = "uop_wire_2_starved",
+                emergency = "uop_wire_2_emergency",
+                nominal = "uop_wire_2_nominal",
+            },
+            l3 = {
+                disconnected = "uop_wire_3_disconnected",
+                inactive = "uop_wire_3_inactive",
+                starved = "uop_wire_3_starved",
+                emergency = "uop_wire_3_emergency",
+                nominal = "uop_wire_3_nominal",
+            },
         },
     },
     category = "power",

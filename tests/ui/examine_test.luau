@@ -1,3 +1,5 @@
+local composition = require("@helpers/composition")
+
 local ui_controls = require("@helpers/ui_controls")
 
 -- Looking at the bench: what a crewman is told about a vessel, and
@@ -29,24 +31,38 @@ t.world(
     [==[(
     name: "examine bench",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'o': (turf: Floor, fixture: Some(Outlet)),
-        'g': (turf: Floor, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
         "##########",
         "#.a.o#a#g#",
         "##########",
     ],
-    structures: [(1, 1, "player_spawn")],
-    items: [(2, 1, "burner"), (3, 1, "beaker.libital"), (4, 1, "beaker"), (6, 1, "bottle")],
+    structures: [(2, 1, "player_spawn")],
+    items: [(1, 1, "burner"), (3, 1, "beaker.libital"), (4, 1, "beaker"), (6, 1, "bottle")],
     machines: [(3, 0, "chem_dispenser")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
-        (6, 1, 3), (7, 1, 3), (8, 1, 3),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
 )]==],
     0
@@ -55,7 +71,7 @@ t.world(
 local p = t.join()
 t.tick()
 
-local burner = t.target_at(p, 2, 1, "burner")
+local burner = assert(t.target_at(p, 1, 1, "burner"), "the burner is visible")
 local mixed = t.target_at(p, 3, 1, "beaker.libital")
 local taps = t.target_at(p, 3, 0)
 local beaker = t.target_at(p, 4, 1, "beaker")
@@ -99,7 +115,7 @@ assert(has(look, "It is empty."), "and an empty beaker says so: " .. dump(look))
 -- A condensed row leads with the VOLUME and keeps the moles behind
 -- it: what a crewman is deciding about is how much is in there, and
 -- millilitres are the unit the vessel was authored in.
-local lamp = t.examine(p, 2, 1, burner)
+local lamp = t.examine(p, 1, 1, burner)
 assert(lamp ~= nil, "the burner answers")
 assert(
     has(lamp, "21.9 mL · 0.38 mol of liquid ethanol."),
@@ -110,7 +126,7 @@ assert(not has(lamp, "It is lit."), "and it is not burning yet: " .. dump(lamp))
 -- ---------------------------------------------------------------
 -- TWO: A LIT FLAME IS A THING ANYONE CAN SEE.
 -- ---------------------------------------------------------------
-t.click(p, 2, 1, assert(t.target_at(p, 2, 1, burner)))
+t.click(p, 1, 1, assert(t.target_at(p, 1, 1, burner)))
 t.tick()
 t.use_self(p)
 t.tick()
@@ -143,9 +159,10 @@ end), "a lie buys no look")
 -- ---------------------------------------------------------------
 -- FOUR: THE GROUND, AND THE MACHINE.
 -- ---------------------------------------------------------------
-local deck = t.examine_turf(p, 1, 1)
+local deck = composition.examine_deck(p, 1, 1)
 assert(deck ~= nil and deck.title == "floor", "the deck names its turf")
-assert(#deck.lines == 0, "and states nothing else: " .. dump(deck))
+assert(#deck.lines == 1, "and carries its authored description: " .. dump(deck))
+assert(deck.lines[1] == "Standard station tiling, laid over the deck plating.", "the floor's authored description")
 
 local dispenser = t.examine(p, 3, 0, taps)
 assert(dispenser ~= nil, "the machine answers")
@@ -197,8 +214,6 @@ assert(color == "#AAAAAA", "and it is water's own colour: " .. tostring(color))
 -- ---------------------------------------------------------------
 t.move(p, "east")
 t.run_ticks(4)
-t.move(p, "east")
-t.run_ticks(4)
 
 t.click(p, 4, 1, assert(t.target_at(p, 4, 1, beaker))) -- into the hand
 t.tick()
@@ -218,14 +233,18 @@ t.run_ticks(2)
 assert(t.hands(p).held == "beaker", "the beaker comes back out full")
 
 -- Tip it onto the deck beside us.
-t.click_turf(p, 4, 1)
+composition.click_deck(p, 4, 1)
 t.tick()
 
-local spill = t.examine_turf(p, 4, 1)
+local spill = composition.examine_deck(p, 4, 1)
 assert(spill ~= nil, "the deck answers")
 assert(spill.title == "floor", "still by its turf word: " .. spill.title)
 assert(#spill.lines > 0, "and now it has something to say")
-local puddle = spill.lines[1]
+local puddle: string? = nil
+for _, line in ipairs(spill.lines) do
+    if line:find("^A puddle: ") ~= nil then puddle = line end
+end
+assert(puddle ~= nil, "the spill carries its puddle line: " .. dump(spill))
 assert(puddle:find("^A puddle: ") ~= nil, "which is that there is a puddle: " .. dump(spill))
 assert(puddle:find(" of liquid water%.$") ~= nil, "of liquid water: " .. dump(spill))
 local pw, pc = tinted(spill, puddle)
@@ -233,5 +252,6 @@ assert(pw == "water" and pc == "#AAAAAA", "in water's colour, as through glass")
 
 -- A dry tile a stride away says nothing at all, which is the negative
 -- that makes the positive mean something.
-local dry = t.examine_turf(p, 2, 1)
-assert(dry ~= nil and #dry.lines == 0, "a dry deck states nothing: " .. dump(assert(dry)))
+local dry = composition.examine_deck(p, 2, 1)
+assert(dry ~= nil and #dry.lines == 1, "a dry deck has only its authored description: " .. dump(assert(dry)))
+assert(dry.lines[1] == "Standard station tiling, laid over the deck plating.", "the dry floor's authored description")

@@ -14,6 +14,9 @@ local action_rules = require("@lib/action_rules")
 -- tg: /obj/item/multitool (multitool.dm:14).
 local content = {
     id = "multitool",
+    visual_layer = "entities",
+    stowed_visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.multitool.name",
     name = "multitool",
     sprite = "multitool",
@@ -39,22 +42,23 @@ local content = {
     -- keeps the rungs below it reachable.
 }
 
-content.actions = { action_rules.primary("analyze", action_rules.network("cable")) }
+content.actions = { action_rules.primary("analyze", action_rules.network("power")) }
 
 if sim ~= nil then
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
-        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
-        local clicked, target = ev.claim, ev.claim
+        local user, x, y, choice = ev.actor, ev.at.x, ev.at.y, ev.choice
+        local target = ev.claim
         local _x, _y, _choice = x, y, choice
-        if clicked ~= nil and clicked.entity ~= nil then
+        if target == nil or target.kind ~= "network" then
             return { replaced = false }
         end
-        if not sim.subfloor_exposed(x, y, "cable") then
+        local network = sim.network(x, y, target.instance)
+        if network == nil or network.network ~= "power" or not sim.network_accessible(x, y, target.instance) then
             return { replaced = false }
         end
-        local live = sim.segment_live(x, y)
+        local live = sim.segment_live(x, y, target.instance)
         if live == nil then
             return { replaced = false }
         end

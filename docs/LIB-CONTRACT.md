@@ -23,7 +23,7 @@ The source owns exact signatures; this table records responsibility and shape.
 
 | Module file | Responsibility and public surface shape | Caller files or groups to resolve |
 | --- | --- | --- |
-| `action_rules.luau` | Gesture selectors; `Selector`/`Action` types; `fact`, `kind`, `deck`, `exposed_deck(carrier)`, `network`, `primary`, `attack` return declarative records. | `lib/vessel.luau`; importing files in `items/{electronics,gear,leisure,piping,surgery,tools,vessels}/` |
+| `action_rules.luau` | Gesture selectors; `Selector`/`Action` types; `fact`, `kind`, `deck`, `exposed_deck(network)`, `network(network)`, `primary`, `attack` return declarative records. | `lib/vessel.luau`; importing files in `items/{electronics,gear,leisure,piping,surgery,tools,vessels}/` |
 | `cards.luau` | Deck vocabulary; `FACES`, `NAMES`, `states`, `state_sprites` tables; `slug`, `read`, `count`, `picture` helpers. | `items/leisure/{card,card_deck}.luau` |
 | `controller.luau` | Guest controller execution and completions; `Voice`/`Event` types; `run` returns boolean; `device`, `message`, `service_send_done`, `door`, `pressure`, `button` handlers. | `fixtures/{access_point,air_alarm,airlock,airlock_button,airlock_pump}.luau` |
 | `device_queue.luau` | Bounded paced device packets; `Packet` type; `clear`, boolean `send`, `button`, `completion`. | `lib/controller.luau` |
@@ -31,7 +31,7 @@ The source owns exact signatures; this table records responsibility and shape.
 | `map_markers.luau` | Spawn-marker selection; `player_spawn` returns `{at}`; `threat_location` returns optional tile; `initialize`, boolean `spawn_threat`. | `fixtures/{player_spawn,threat_spawn}.luau`; `gamemodes/{free_build,space_station}.luau` |
 | `netmsg.luau` | Device payload vocabulary and light priority; `Flag`/`LightFlag`/`Hazard` types, kind constants, `flags`, `standing`; constructors, validator, `winner`, `report_hazard`. | `fixtures/{air_alarm,air_scrubber,apc,light,vent}.luau` |
 | `network.luau` | Device-network examine wording; `line(node, noun, member)` returns optional `Message`. | `fixtures/{air_alarm,apc,network_router}.luau` |
-| `pipe_paints.luau` | Paint vocabulary; `colors` array of `{name, hex}`, `defaults` array of names. | `palette.luau`; `items/piping/{pipe_painter,rpd}.luau` |
+| `pipe_paints.luau` | Paint vocabulary; `colors` array of `{name, hex}`, `defaults` array of names. | `compositions.luau`; `items/piping/{pipe_painter,rpd}.luau` |
 | `preparation.luau` | Fair role allocation; `allocate(ev)` returns `{assignments: {AllocationAssignment}}`. | `gamemodes/space_station.luau` |
 | `printing.luau` | Printer resources, batch/tick limits; scalar constants and `costs()` returning per-output `{resource, amount}` rows. | `fixtures/{fax,photocopier}.luau` |
 | `program_slot.luau` | Live guest binding, persistence and attribution; `run(machine, id, env)` returns unknown result or nil and adds `env.mem`. | `lib/{controller,radio_relay}.luau` |

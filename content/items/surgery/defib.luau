@@ -32,6 +32,8 @@ local action_rules = require("@lib/action_rules")
 -- three clips that say which of the three things happened.
 local content = {
     id = "defib",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.defib.name",
     name = "defibrillator",
     sprite = "defib",

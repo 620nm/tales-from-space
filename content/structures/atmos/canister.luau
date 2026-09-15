@@ -26,6 +26,7 @@
 -- shoving a live one somewhere it should not be is a decision.
 return {
     id = "canister",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.canister.name",
     name = "canister",
     sprite = "canister",
@@ -123,12 +124,14 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             at = "anchored",
             tool = "wrench",
             to = "displaced",
             done = "You unfasten the canister from the port.",
         },
         {
+            sound = "smash",
             at = "displaced",
             tool = "wrench",
             -- The socket, and nothing else.

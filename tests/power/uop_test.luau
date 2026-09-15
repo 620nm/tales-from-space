@@ -40,12 +40,12 @@ t.world(
     [==[(
     name: "ports and lamps",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'G': (turf: Plating, fixture: Some(Generator)),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'o': (turf: Plating, fixture: Some(Outlet)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
     },
     rows: [
         "##########",
@@ -55,11 +55,24 @@ t.world(
     ],
     structures: [(6, 2, "player_spawn")],
     items: [(6, 2, "wirecutters")],
-    cables: [
-        (1, 1, 2), (2, 1, 2), (3, 1, 2), (4, 1, 2), (5, 1, 2), (6, 1, 2), (7, 1, 2),
-        (4, 1, 1), (5, 1, 1), (6, 1, 1), (7, 1, 1), (5, 2, 1),
-        (4, 1, 4), (5, 1, 4), (6, 1, 4), (7, 1, 4),
-        (8, 2, 4),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l3", kind: "cable", facing: 15),
     ],
     labels: [(4, 1, "Engineering")],
 )]==],
@@ -77,9 +90,9 @@ t.run_seconds(3) -- the electrical pass is 0.5 Hz; let one land
 -- ---------------------------------------------------------------
 local bare = assert(t.outlet_at(2, 2))
 assert(bare ~= nil, "the port on bare plating answers")
-assert(bare.l1 == "disconnected", "no red under it: " .. bare.l1)
-assert(bare.l2 == "disconnected", "no yellow under it: " .. bare.l2)
-assert(bare.l3 == "disconnected", "no blue under it: " .. bare.l3)
+assert(bare.channels["l1"] == "disconnected", "no red under it: " .. bare.channels["l1"])
+assert(bare.channels["l2"] == "disconnected", "no yellow under it: " .. bare.channels["l2"])
+assert(bare.channels["l3"] == "disconnected", "no blue under it: " .. bare.channels["l3"])
 assert(bare.feed == nil, "so there is nothing to bind to")
 assert(not bare.powered, "and nothing to draw")
 assert(bare.feeder == nil, "and no panel to name")
@@ -92,8 +105,8 @@ assert(bare.feeder == nil, "and no panel to name")
 --    reading the two knows whether to lay cable or to find the panel.
 -- ---------------------------------------------------------------
 local stub = assert(t.outlet_at(8, 2))
-assert(stub.l3 == "inactive", "blue cable on a run with no supply: " .. stub.l3)
-assert(stub.l1 == "disconnected" and stub.l2 == "disconnected", "and nothing else under it")
+assert(stub.channels["l3"] == "inactive", "blue cable on a run with no supply: " .. stub.channels["l3"])
+assert(stub.channels["l1"] == "disconnected" and stub.channels["l2"] == "disconnected", "and nothing else under it")
 assert(stub.feed == nil, "an unsupplied layer is not something to bind to")
 
 -- ---------------------------------------------------------------
@@ -102,18 +115,18 @@ assert(stub.feed == nil, "an unsupplied layer is not something to bind to")
 --    the other two says otherwise.
 -- ---------------------------------------------------------------
 local all = assert(t.outlet_at(7, 1))
-assert(all.l1 == "nominal", "the room circuit is carrying: " .. all.l1)
-assert(all.l2 == "nominal", "so is the backbone: " .. all.l2)
-assert(all.l3 == "nominal", "and so is the spare main: " .. all.l3)
+assert(all.channels["l1"] == "nominal", "the room circuit is carrying: " .. all.channels["l1"])
+assert(all.channels["l2"] == "nominal", "so is the backbone: " .. all.channels["l2"])
+assert(all.channels["l3"] == "nominal", "and so is the spare main: " .. all.channels["l3"])
 assert(all.powered, "so the port is live")
-assert(all.feed == 2, "and it draws off the backbone: " .. tostring(all.feed))
+assert(all.feed == "l2", "and it draws off the backbone: " .. tostring(all.feed))
 
 -- The port on the red spur alone reaches the same power by the only
 -- layer it has, and names the panel that opened that circuit.
 local spur = assert(t.outlet_at(5, 2))
-assert(spur.l1 == "nominal", "the spur is carrying: " .. spur.l1)
-assert(spur.l2 == "disconnected" and spur.l3 == "disconnected", "and stands on nothing else")
-assert(spur.feed == 1, "so it binds to the one layer it has")
+assert(spur.channels["l1"] == "nominal", "the spur is carrying: " .. spur.channels["l1"])
+assert(spur.channels["l2"] == "disconnected" and spur.channels["l3"] == "disconnected", "and stands on nothing else")
+assert(spur.feed == "l1", "so it binds to the one layer it has")
 assert(spur.feeder ~= nil, "with a panel behind it")
 
 -- ---------------------------------------------------------------
@@ -128,23 +141,23 @@ t.click(p, 6, 2, t.target_at(p, 6, 2, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
 
-t.click_subfloor(p, 6, 1, "cable", 2)
+t.click_network(p, 6, 1, assert(t.network_instance(6, 1, "power", "l2")))
 t.run_seconds(1.5)
 t.run_seconds(3)
 all = assert(t.outlet_at(7, 1))
-assert(all.l2 == "inactive", "the parted backbone has no supply behind it: " .. all.l2)
-assert(all.l1 == "nominal", "the room circuit never noticed")
-assert(all.feed == 1, "so the port draws off it instead: " .. tostring(all.feed))
+assert(all.channels["l2"] == "inactive", "the parted backbone has no supply behind it: " .. all.channels["l2"])
+assert(all.channels["l1"] == "nominal", "the room circuit never noticed")
+assert(all.feed == "l1", "so the port draws off it instead: " .. tostring(all.feed))
 
 -- ...and again, onto the spare main, which is last only because the
 -- list says so.
-t.click_subfloor(p, 6, 1, "cable", 1)
+t.click_network(p, 6, 1, assert(t.network_instance(6, 1, "power", "l1")))
 t.run_seconds(1.5)
 t.run_seconds(3)
 all = assert(t.outlet_at(7, 1))
-assert(all.l1 == "inactive", "the room circuit is parted too: " .. all.l1)
-assert(all.l3 == "nominal", "the spare main is still carrying")
-assert(all.feed == 4, "so the port ends up on blue: " .. tostring(all.feed))
+assert(all.channels["l1"] == "inactive", "the room circuit is parted too: " .. all.channels["l1"])
+assert(all.channels["l3"] == "nominal", "the spare main is still carrying")
+assert(all.feed == "l3", "so the port ends up on blue: " .. tostring(all.feed))
 
 -- ---------------------------------------------------------------
 -- 5. STARVED IS NOT INACTIVE. Throw the panel's main breaker and the
@@ -168,19 +181,19 @@ t.run_seconds(3)
 assert(not assert(t.apc_at(4, 1)).operating, "the breaker is open")
 
 local starved = assert(t.outlet_at(5, 2))
-assert(starved.l1 == "starved", "the run is fed by a panel that stopped: " .. starved.l1)
+assert(starved.channels["l1"] == "starved", "the run is fed by a panel that stopped: " .. starved.channels["l1"])
 assert(not starved.powered, "so the port is dead")
 assert(starved.feed == nil, "with nothing live to bind to")
 
 all = assert(t.outlet_at(7, 1))
-assert(all.l3 == "starved", "the spare main is starved for the same reason: " .. all.l3)
-assert(all.l2 == "inactive", "where the parted backbone still has no source at all")
+assert(all.channels["l3"] == "starved", "the spare main is starved for the same reason: " .. all.channels["l3"])
+assert(all.channels["l2"] == "inactive", "where the parted backbone still has no source at all")
 
 -- Close it again and the room comes back exactly as it was.
 ui_controls.toggle(p, "breaker")
 t.run_seconds(3)
-assert(assert(t.outlet_at(5, 2)).l1 == "nominal", "the spur is carrying again")
-assert(assert(t.outlet_at(7, 1)).feed == 4, "and the port is back on blue")
+assert(assert(t.outlet_at(5, 2)).channels["l1"] == "nominal", "the spur is carrying again")
+assert(assert(t.outlet_at(7, 1)).feed == "l3", "and the port is back on blue")
 
 -- ---------------------------------------------------------------
 -- 6. THE PANEL BEHIND IT. A port names the panel feeding the layer it

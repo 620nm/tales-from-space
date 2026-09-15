@@ -1,3 +1,5 @@
+local composition = require("@helpers/composition")
+
 -- Mopping: the one gesture on the station that takes a liquid OFF a
 -- deck. Everything else a crewman can do with a puddle puts one there.
 --
@@ -18,9 +20,9 @@ t.world(
     [==[(
     name: "wet deck",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -83,7 +85,7 @@ assert(held(mop) == 0, "and a dry mop in hand")
 -- transfer against what is there and what fits, so the deck keeps the
 -- rest: a mop is not a drain.
 -- ---------------------------------------------------------------
-t.click_turf(p, 2, 1)
+composition.click_deck(p, 2, 1)
 t.tick()
 local stroke = said()
 assert(stroke == "You run the mop over the deck.", "the stroke is reported: " .. stroke)
@@ -103,7 +105,7 @@ assert(assert(t.vessel(mop)).headspace_l < 0.01, "with no room left in it")
 -- rather than silently doing nothing.
 -- ---------------------------------------------------------------
 local before = puddle()
-t.click_turf(p, 2, 1)
+composition.click_deck(p, 2, 1)
 t.tick()
 local refusal = said()
 assert(refusal == "The mop is soaked through.", "a full mop refuses: " .. refusal)
@@ -133,7 +135,7 @@ assert(spent == "The mop is empty.", "a dry mop refuses: " .. spent)
 
 -- A dry deck is a dry deck: the tile the crewman is standing on never
 -- had anything on it.
-t.click_turf(p, 1, 1)
+composition.click_deck(p, 1, 1)
 t.tick()
 local dry = said()
 assert(dry == "The deck here is dry.", "nothing to take up: " .. dry)
@@ -142,7 +144,7 @@ assert(dry == "The deck here is dry.", "nothing to take up: " .. dry)
 -- AND AGAIN: a wrung-out mop takes another head off the same puddle,
 -- which is what makes a flood a chore rather than one click.
 -- ---------------------------------------------------------------
-t.click_turf(p, 2, 1)
+composition.click_deck(p, 2, 1)
 t.tick()
 assert(
     math.abs(puddle() - (3.0 - 2 * HEAD_L)) < 0.02,

@@ -25,6 +25,7 @@
 -- step and not a way of taking the bolts back out.
 return {
     id = "stationary_tank_frame",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.stationary_tank_frame.name",
     name = "tank frame",
     sprite = "stationary_tank_frame",
@@ -41,7 +42,8 @@ return {
     -- aside, and tg will not let you unwrench one either.
     loose = { "displaced" },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         with = { metal = 4 },
         -- tg's `time = 1 SECONDS` on the stack recipe.
         secs = 1.0,
@@ -52,6 +54,7 @@ return {
         -- tg's `default_unfasten_wrench(user, tool, time = 0.5 SECONDS)`
         -- (tank.dm:610-613), both ways.
         {
+            sound = "smash",
             at = "displaced",
             tool = "wrench",
             secs = 0.5,
@@ -60,6 +63,7 @@ return {
             done = "The frame is bolted to the deck.",
         },
         {
+            sound = "smash",
             at = "anchored",
             tool = "wrench",
             secs = 0.5,
@@ -71,6 +75,7 @@ return {
         -- frame comes apart into what it cost (tank.dm:615-624, and
         -- `atom_deconstruct` at :588-591 drops the four sheets).
         {
+            sound = "smash",
             at = "displaced",
             tool = "screwdriver",
             secs = 1.0,
@@ -84,6 +89,7 @@ return {
         -- check further down makes an unbolted plated frame a dead end,
         -- and refusing it here says so a step earlier.
         {
+            sound = "smash",
             at = "anchored",
             with = { metal = 12 },
             secs = 3.0,
@@ -94,6 +100,7 @@ return {
         -- tg's `crowbar_act_secondary`: 2 seconds, and every sheet of
         -- the plating comes back (tank.dm:662-673).
         {
+            sound = "smash",
             at = "plated",
             tool = "crowbar",
             secs = 2.0,
@@ -109,6 +116,7 @@ return {
         -- not. That is the same shape a sliced wall uses to leave a
         -- girder standing.
         {
+            sound = "smash",
             at = "plated",
             tool = "welder",
             secs = 2.0,

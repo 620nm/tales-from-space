@@ -45,6 +45,8 @@
 -- chamber: how hard the element drives.
 return {
     id = "evaporator",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.evaporator.name",
     name = "evaporator",
     sprite = "evaporator",
@@ -76,11 +78,12 @@ return {
         sprite_running_loaded = "evaporator_on_loaded",
     },
     atmos = {
+        network = "pipe",
         device = "line_dock",
         -- The distribution main, because what comes out of this machine
         -- is meant to be delivered somewhere. A mapper who wants it on
         -- the waste line says so on the placement.
-        layer = 3,
+        channel = "l3",
     },
     parts = {
         slots = { "laser", "capacitor", "bin" },
@@ -97,6 +100,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             tool = "crowbar",
             secs = 4.0,
             gone = true,

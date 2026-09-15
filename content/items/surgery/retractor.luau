@@ -1,6 +1,8 @@
 -- Holds an incision open (tg surgery_tools.dm:1-16).
 local content = {
     id = "retractor",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.retractor.name",
     name = "retractor",
     sprite = "retractor",

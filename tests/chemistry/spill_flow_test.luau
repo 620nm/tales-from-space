@@ -28,10 +28,10 @@ local FILM_L = 3.32 -- 2*sqrt(sigma/rho g)*sin(theta/2), water on painted deck
 local CORRIDOR = [==[(
     name: "spill corridor",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        '+': (turf: Floor, fixture: Some(Door)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '+': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Door)),
     },
     rows: [
         "#######",
@@ -173,9 +173,9 @@ t.world(
     [==[(
     name: "under the film",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#######",

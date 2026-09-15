@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 -- What a bottle of gas does when you open it, and the way a station
 -- operator can watch nothing happen instead.
 --
@@ -38,7 +39,7 @@ local function held(x, y, key: string): number
 end
 
 local function in_pipe(x, y, key: string): number
-    return (t.pipe_gas(x, y) or {})[key] or 0.0
+    return (network_matter.gas(x, y) or {})[key] or 0.0
 end
 
 -- Three bays behind three walls, each pumped down to nothing so a
@@ -56,15 +57,18 @@ t.world(
     [==[(
     name: "three bays",
     legend: {
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "##########",
         "#..#..#..#",
         "##########",
     ],
-    pipes: [(5, 1, 4), (8, 1, 4)],
+    networks: [
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 8, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
     blends: {
         "pumped_down": (temperature_k: 293.15, amount: per_tile),
         "hot_chlorine": (rows: [("chlorine", 50.0)], temperature_k: 1000.0, amount: per_tile),

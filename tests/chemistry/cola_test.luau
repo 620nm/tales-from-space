@@ -1,4 +1,5 @@
 local ui_controls = require("@helpers/ui_controls")
+local composition = require("@helpers/composition")
 
 -- Drinking: a swig moves 0.05 mol from the can to the bloodstream, and
 -- metabolism burns the sugar whose handler heals oxygen damage. (Port of
@@ -8,9 +9,9 @@ t.world(
     [==[(
     name: "canteen floor",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -34,7 +35,7 @@ t.tick()
 assert(t.hands(p).held == "cola", "the can is held")
 assert(t.blood_moles(p) == 0, "nothing in the blood yet")
 
-t.click_turf(p, 2, 1) -- drink from the held can
+composition.click_deck(p, 2, 1) -- drink from the held can
 t.tick()
 local swig = t.blood_moles(p)
 assert(math.abs(swig - 0.05) < 1e-9, ("one 0.05 mol gulp, got %g"):format(swig))

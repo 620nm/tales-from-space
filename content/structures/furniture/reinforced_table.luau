@@ -33,6 +33,7 @@
 -- other needs a cable under a table to mean something.
 return {
     id = "reinforced_table",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.reinforced_table.name",
     name = "reinforced table",
     sprite = "reinforced_table-0",
@@ -56,6 +57,7 @@ return {
         -- torch is lit for it and spends nothing. Copied rather than
         -- tidied.
         {
+            sound = "smash",
             at = "welded",
             tool = "welder",
             secs = 5.0,
@@ -64,6 +66,7 @@ return {
             done = "The top cover is welded loose.",
         },
         {
+            sound = "smash",
             at = "loosened",
             tool = "welder",
             secs = 5.0,
@@ -76,6 +79,7 @@ return {
         -- `if(!deconstruction_ready) return NONE`, which is what makes a
         -- reinforced table worth reinforcing.
         {
+            sound = "smash",
             at = "loosened",
             tool = "screwdriver",
             secs = 2.0,
@@ -86,6 +90,7 @@ return {
             done = "The top comes off, and the frame is left standing.",
         },
         {
+            sound = "smash",
             at = "loosened",
             tool = "wrench",
             secs = 4.0,

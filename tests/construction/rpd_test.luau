@@ -1,3 +1,7 @@
+local composition = require("@helpers/composition")
+
+local network_channels = require("@helpers/network_channels")
+
 -- The rapid pipe dispenser: three questions, one window, and a fitting
 -- that goes down and fastens in one motion.
 --
@@ -78,10 +82,10 @@ t.world(
     [==[(
     name: "rpd bench",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        'o': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#########",
@@ -164,7 +168,7 @@ local _ = t.messages(p)
 t.click(p, 2, 1, t.target_at(p, 2, 1, "manual_valve_fitting"))
 work(p)
 assert(t.count_items("manual_valve_fitting") == 1, "build mode consumed exactly one named fitting")
-assert(t.pipe(2, 1) == 0, "and does not reinterpret the item click as turf")
+assert(network_channels.at(2, 1, "pipe") == "", "and does not reinterpret the item click as turf")
 assert(
     said(p, "You break down the manual valve fitting."),
     "the tg-ordered breakdown branch ran before construction"
@@ -191,7 +195,7 @@ assert(
     hands.held == "rpd" and hands[3 - hands.active] == "wrench",
     "an incompatible item is picked up intact into the free hand"
 )
-assert(t.pipe(1, 1) == 0, "an ordinary item click is not retargeted to turf")
+assert(network_channels.at(1, 1, "pipe") == "", "an ordinary item click is not retargeted to turf")
 assert(
     not said(p, "That loose item is not atmospherics construction."),
     "pickup does not invoke breakdown"
@@ -208,31 +212,33 @@ assert(t.count_items("wrench") == 1, "putting it down preserves the ordinary ite
 -- layers are a bitmask under the deck). Three runs crossing one tile
 -- without joining is the whole reason layers exist.
 walk(p, "north")
-assert(t.pipe(2, 1) == 0, "nothing laid yet")
+assert(network_channels.at(2, 1, "pipe") == "", "nothing laid yet")
 t.click(p, 2, 1, nil, -14, 14)
 work(p)
-assert(t.pipe(2, 1) == 4, "one length on the distribution layer: " .. t.pipe(2, 1))
+assert(network_channels.at(2, 1, "pipe") == "l3", "one length on the distribution layer: " .. network_channels.at(2, 1, "pipe"))
 
 set(p, LAYER, pick(p, LAYER, "2"))
 set(p, PAINT, pick(p, PAINT, "red"))
 assert(shows(p, LAYER) == "2" and shows(p, PAINT) == "red", "the dials moved")
 t.click(p, 2, 1, nil, -14, 14)
 work(p)
-assert(t.pipe(2, 1) == 6, "a second run crosses the first: " .. t.pipe(2, 1))
+assert(network_channels.at(2, 1, "pipe") == "l2,l3", "a second run crosses the first: " .. network_channels.at(2, 1, "pipe"))
 
 set(p, LAYER, pick(p, LAYER, "4"))
 set(p, PAINT, pick(p, PAINT, "blue"))
 t.click(p, 2, 1, nil, -14, 14)
 work(p)
-assert(t.pipe(2, 1) == 14, "and a third: " .. t.pipe(2, 1))
+assert(network_channels.at(2, 1, "pipe") == "l2,l3,l4", "and a third: " .. network_channels.at(2, 1, "pipe"))
 
 -- Each one came out the colour the dial was on, which is the record an
 -- investigator reads (paint is topology here, not decoration).
-local painted = t.ledger_rows("pipe_painted")
-assert(#painted == 3, "three lengths, three paint rows: " .. #painted)
-assert(painted[1].layers == 4 and painted[1].color == "#50BE5F", "layer 3 green")
-assert(painted[2].layers == 2 and painted[2].color == "#F04137", "layer 2 red")
-assert(painted[3].layers == 8 and painted[3].color == "#5491E8", "layer 4 blue")
+local placed = t.ledger_rows("network_placed")
+assert(#placed == 3, "three lengths, three placement rows: " .. #placed)
+for index, expected in ipairs({ { "l3", "green" }, { "l2", "red" }, { "l4", "blue" } }) do
+    local instance = assert(t.network_instance(2, 1, "pipe", expected[1]))
+    assert(ui_controls.record(placed[index].target).instance == instance, "the placement names its run")
+    assert(t.network_paint(2, 1, instance) == expected[2], "the run retains its chosen paint")
+end
 
 -- And the dial turns are on the record too, by name.
 assert(t.ledger_has("DialSet", "layer"), "which layer it was set to")
@@ -273,7 +279,7 @@ local socket = t.structure_at(4, 1)
 assert(socket and socket.id == "connector_port", "a port stands on bare deck, in one action")
 assert(socket.state == "anchored", "bolted down, the only state a port has")
 assert(#t.items_at(4, 1) == 0, "and no fitting was left lying about")
-assert(t.pipe(4, 1) == 0, "with no run under it or beside it")
+assert(network_channels.at(4, 1, "pipe") == "", "with no run under it or beside it")
 assert(
     not said(p, "There is no pipe under the floor here."),
     "the old refusal is gone from the dispenser path too"
@@ -369,7 +375,7 @@ set(p, PAINT, pick(p, PAINT, "omni")) -- deliberately wrong
 set(p, MODE, 2)
 assert(shows(p, MODE) == "Copy", "copy mode")
 local _ = t.messages(p)
-t.click_subfloor(p, 2, 1, "pipe", 2)
+t.click_network(p, 2, 1, assert(t.network_instance(2, 1, "pipe", "l2")))
 -- A second, because a copy turns the dials without anyone pressing a
 -- button on the panel: the window catches up on its own refresh
 -- cadence (tg's SStgui `UI_STATUS_EVERY`), which is what makes a live
@@ -383,7 +389,7 @@ assert(said(p, "Layer 2, red."), "and told the technician what it read")
 
 -- No visible run means no copy action.
 local _ = t.messages(p)
-for _, action in ipairs(t.action_hints(p, { Turf = { x = 1, y = 1 } })) do
+for _, action in ipairs(t.action_hints(p, composition.deck_target(1, 1))) do
     assert(action.id ~= "copy_pipe", "empty deck offers no pipe settings to copy")
 end
 t.click(p, 1, 1, nil, -14, 14) -- the technician's own tile, bare deck
@@ -399,12 +405,12 @@ assert(
 set(p, MODE, pick(p, MODE, "Build"))
 set(p, RECIPE, pick(p, RECIPE, "Pipe"))
 local _ = t.messages(p)
-for _, action in ipairs(t.action_hints(p, { Turf = { x = 1, y = 2 } })) do
+for _, action in ipairs(t.action_hints(p, composition.deck_target(1, 2))) do
     assert(action.id ~= "build_pipe", "covered deck offers no pipe construction")
 end
 t.click(p, 1, 2, nil, -14, 14) -- finished floor, one tile south
 work(p)
-assert(t.pipe(1, 2) == 0, "nothing was laid under a tiled floor")
+assert(network_channels.at(1, 2, "pipe") == "", "nothing was laid under a tiled floor")
 assert(
     not said(p, "The floor is in the way. Pry the tile up first."),
     "the unavailable construction handler does not run"
@@ -443,9 +449,9 @@ t.world(
     [==[(
     name: "rpd occupancy",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -455,12 +461,18 @@ t.world(
         "#####",
     ],
     items: [(1, 2, "rpd"), (1, 1, "wrench")],
-    pipes: [(1, 2, 4), (2, 2, 4), (3, 2, 4), (1, 3, 4), (3, 3, 4)],
+    networks: [
+        (x: 1, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
     structures: [
         (2, 2, "player_spawn"),
         (1, 1, "manual_valve"),
         (2, 1, "connector_port"),
-        (3, 1, "manual_valve", { "layer": 2 }),
+        (3, 1, "manual_valve", { "channel": "l2" }),
     ],
 )]==],
     7
@@ -476,19 +488,20 @@ t.tick()
 -- Raw pipe cannot be laid under either component shape.
 for _, x in ipairs({ 1, 2 }) do
     local _ = t.messages(o)
-    t.click(o, x, 1, nil, -14, 14)
+    t.click_component(o, x, 1, assert(t.component_instance(x, 1, "station_base")))
     work(o)
-    assert(t.pipe(x, 1) == 0, "no hidden pipe appeared at " .. x)
+    assert(network_channels.at(x, 1, "pipe") == "", "no hidden pipe appeared at " .. x)
     assert(
-        said(o, "An atmospherics component already occupies that pipe layer."),
-        "the RPD names the occupied layer at " .. x
+        said(o, "You cannot install that here."),
+        "the RPD gives a generic refusal at " .. x
     )
 end
+assert(t.hands(o).held == "rpd", "a rejected run consumes no RPD material")
 
 -- A layer-3 length may cross a layer-2 valve.
 t.click(o, 3, 1, nil, -14, 14)
 work(o)
-assert(t.pipe(3, 1) == 4, "another-layer crossing remains legal: mask " .. tostring(t.pipe(3, 1)))
+assert(network_channels.at(3, 1, "pipe") == "l3", "another-layer crossing remains legal: mask " .. tostring(network_channels.at(3, 1, "pipe")))
 
 -- Connector over valve, then valve over connector: neither fitting's
 -- special under-deck placement nor ordinary occupancy may erase the
@@ -529,9 +542,9 @@ t.world(
     [==[(
     name: "rpd unary occupancy",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#########",
@@ -544,7 +557,13 @@ t.world(
     items: [(2, 2, "rpd")],
     // The positive connector reaches west from (2,1). The southern
     // three entries are the layer each refusal below dials up to.
-    pipes: [(1, 1, 4), (2, 3, 4), (1, 3, 4), (4, 3, 2), (6, 3, 4)],
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 3, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 6, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
 )]==],
     7
 )
@@ -560,7 +579,7 @@ set(u, RECIPE, pick(u, RECIPE, "Connector"))
 t.click(u, 2, 1, nil, -14, 14)
 work(u)
 assert(assert(t.structure_at(2, 1)).id == "connector_port", "a connector builds beside its run")
-assert(t.pipe(2, 1) == 0, "the connector has no raw centre length")
+assert(network_channels.at(2, 1, "pipe") == "", "the connector has no raw centre length")
 
 walk(u, "east")
 walk(u, "east") -- (4,2)
@@ -568,7 +587,7 @@ set(u, RECIPE, pick(u, RECIPE, "Air Scrubber"))
 t.click(u, 4, 1, nil, -14, 14)
 work(u)
 assert(assert(t.structure_at(4, 1)).id == "air_scrubber", "a scrubber needs no underlying raw pipe")
-assert(t.pipe(4, 1) == 0, "the scrubber is a unary component, not pipe-over-pipe")
+assert(network_channels.at(4, 1, "pipe") == "", "the scrubber is a unary component, not pipe-over-pipe")
 
 walk(u, "east")
 walk(u, "east") -- (6,2)
@@ -579,7 +598,7 @@ assert(
     assert(t.structure_at(6, 1)).id == "air_injector",
     "an injector needs no underlying raw pipe"
 )
-assert(t.pipe(6, 1) == 0, "the injector centre is raw-pipe-free")
+assert(network_channels.at(6, 1, "pipe") == "", "the injector centre is raw-pipe-free")
 
 -- The reverse direction is refused without consuming the run. `dial`
 -- is the main each device is asked for, because the dial travels with
@@ -602,7 +621,7 @@ for _, case in ipairs({
     t.click(u, case.x, 3, nil, -14, 14)
     work(u)
     assert(t.structure_at(case.x, 3) == nil, case.recipe .. " did not cover its centre run")
-    assert(t.pipe(case.x, 3) == case.layer, case.recipe .. " left the raw run intact")
+    assert(network_channels.at(case.x, 3, "pipe") == "l" .. case.dial, case.recipe .. " left the raw run intact")
     assert(said(u, "Something is already under the floor here."), case.recipe .. " names occupancy")
 end
 
@@ -622,4 +641,4 @@ assert(
     crossing ~= nil and crossing.id == "manual_valve",
     "a wheel dialled to layer 2 stands over a layer-3 run"
 )
-assert(t.pipe(2, 3) == 4, "and the run it crosses is untouched: " .. tostring(t.pipe(2, 3)))
+assert(network_channels.at(2, 3, "pipe") == "l3", "and the run it crosses is untouched: " .. tostring(network_channels.at(2, 3, "pipe")))

@@ -3,6 +3,8 @@
 -- tg paperbin.dm:3-18, :42-77, :91-141.
 local content = {
     id = "paper_bin",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.paper_bin.name",
     name = "paper bin",
     sprite = "paper_bin",

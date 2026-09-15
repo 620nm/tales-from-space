@@ -26,6 +26,8 @@ local vessel = require("@lib/vessel")
 -- that says `sealed`, so the bottle is the one that can.
 local content = {
     id = "bottle",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.bottle.name",
     name = "bottle",
     sprite = "bottle",

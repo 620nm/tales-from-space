@@ -1,13 +1,18 @@
+local ui_controls = require("@helpers/ui_controls")
+
 -- Both reusable components are constructed through the ordinary player seam.
 t.world(
     [==[(
     name: "controller fittings bench",
-    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: ["#######", "#.....#", "#.....#", "#######"],
     structures: [(2, 1, "player_spawn")],
     items: [(1, 1, "airlock_button_fitting"), (1, 2, "screwdriver"),
         (2, 2, "wrench"), (3, 1, "airlock_pump_fitting")],
-    pipes: [(3, 0, 2), (3, 2, 8)],
+    networks: [
+        (x: 3, y: 0, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 3, y: 2, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+    ],
 )]==],
     0
 )
@@ -16,7 +21,7 @@ t.run_ticks(2)
 t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "airlock_button_fitting")))
 t.run_ticks(2)
 assert(t.hands(p).held == "airlock_button_fitting", "the fitting is in hand before building")
-t.click(p, 2, 0)
+ui_controls.build(p, "airlock_button_fitting", "airlock_button", 2, 0)
 t.run_ticks(45)
 assert(
     t.structure_at(2, 1) and assert(t.structure_at(2, 1)).id == "airlock_button",

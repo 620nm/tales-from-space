@@ -1,3 +1,5 @@
+local composition = require("@helpers/composition")
+
 -- The vending machine: dense on bump, opens its shelf document on click,
 -- dispenses on act('vend') as a PLAYER-attributed action, and a closed
 -- window disarms acts. (Port of the Rust m4 vendor test.)
@@ -7,12 +9,12 @@ t.world(
     [==[(
     name: "canteen",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'o': (turf: Floor, fixture: Some(Outlet)),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'g': (turf: Floor, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
         "#####",
@@ -22,9 +24,19 @@ t.world(
     ],
     structures: [(1, 1, "player_spawn")],
     machines: [(2, 1, "vendor")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
 )]==],
     7
@@ -42,7 +54,7 @@ local msgs = table.concat(t.messages(p), "\n")
 assert(msgs:find("wobbles", 1, true), "move.bump fired: " .. msgs)
 
 -- Click it: the machine's content-authored clean-room shelf opens.
-t.click_turf(p, 2, 1)
+composition.click_deck(p, 2, 1)
 t.tick()
 local missed = t.last_ui(p)
 assert(missed == nil, "a target-less transparent-pixel click is only ground")

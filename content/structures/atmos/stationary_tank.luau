@@ -66,6 +66,7 @@
 -- stack recipe on the frame beside this file is its only route here.
 return {
     id = "stationary_tank",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.stationary_tank.name",
     name = "pressure tank",
     sprite = "stationary_tank",
@@ -100,9 +101,10 @@ return {
         },
     },
     atmos = {
+        network = "pipe",
         device = "tank",
         -- tg's PIPING_LAYER_DEFAULT, the run every dispenser hands out.
-        layer = 3,
+        channel = "l3",
         -- tg's `volume = 2500` and `max_pressure = 46000` (tank.dm:37,
         -- 39). The rating is the number on its holographic sticker
         -- (tank.dm:140) and the denominator of the contents gauge.
@@ -158,6 +160,7 @@ return {
         -- books, one tool step shorter, and the frame that stands is
         -- the re-platable one either way.
         {
+            sound = "smash",
             tool = "welder",
             secs = 4.0,
             fuel = 2.0,

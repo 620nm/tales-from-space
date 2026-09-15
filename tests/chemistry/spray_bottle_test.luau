@@ -1,4 +1,5 @@
 local ui_controls = require("@helpers/ui_controls")
+local composition = require("@helpers/composition")
 
 -- The sprayer's ranged claim, refused. Sight, range, line, the active
 -- hand and the click window are native facts (the engine's
@@ -13,9 +14,9 @@ t.world(
     [==[(
     name: "spray hall",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "############",
@@ -73,7 +74,7 @@ assert(t.hands(p).held == "spray_bottle", "and it is in the active hand")
 -- OUT OF RANGE. Six tiles is inside what the crewman can see and one
 -- past the bottle's declared five: the click is refused before any
 -- handler runs, so nothing is drawn and nothing is heard.
-t.click_turf(p, 8, 1)
+composition.click_deck(p, 8, 1)
 t.tick()
 assert(#t.sounds(p) == 0, "a click past the range is silent")
 assert(#t.ledger_rows("MatterSprayed") == 0, "and launches nothing")
@@ -85,7 +86,7 @@ near(assert(t.contents(spray)).water, 1.25, "and draws nothing")
 t.swap_hands(p)
 t.tick()
 assert(t.hands(p).held == nil, "the active hand is empty")
-t.click_turf(p, 5, 1)
+composition.click_deck(p, 5, 1)
 t.tick()
 assert(#t.sounds(p) == 0, "the off hand makes no ranged claim")
 assert(#t.ledger_rows("MatterSprayed") == 0, "and launches nothing")
@@ -93,7 +94,7 @@ t.swap_hands(p)
 t.tick()
 
 -- ...and the same click with the bottle back in the active hand.
-t.click_turf(p, 5, 1)
+composition.click_deck(p, 5, 1)
 t.tick()
 local launched = t.sounds(p)
 assert(#launched == 1 and launched[1] == "spray", "an accepted launch is heard once")
@@ -107,7 +108,7 @@ assert(#t.ledger_rows("ParcelLost") == 0, "three open tiles take three shares: n
 -- carrying for the wall's tile is lost, and the record says so: one
 -- row, caused by the launch, for exactly the moles the world is short.
 local before = t.matter_totals()
-t.click_turf(p, 0, 1)
+t.click_component(p, 0, 1, assert(t.component_instance(0, 1, "wall")))
 t.tick()
 assert(#t.ledger_rows("MatterSprayed") == 2, "aimed at a wall still launches")
 t.run_ticks(20)

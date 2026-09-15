@@ -1,6 +1,6 @@
 (
     name: "Mounted pointer browser regression",
-    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [
         "#######",
         "#..#..#",

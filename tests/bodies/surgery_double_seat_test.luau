@@ -12,7 +12,7 @@ local ui_controls = require("@helpers/ui_controls")
 
 local ARENA = [==[(
     name: "double theatre",
-    legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
+    legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [ "#####", "#...#", "#####" ],
     structures: [
         (1, 1, "player_spawn", { "jobs": "assistant" }),

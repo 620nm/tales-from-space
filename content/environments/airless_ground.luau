@@ -2,7 +2,7 @@ return {
     id = "airless_ground",
     name = "Airless ground",
     kind = "terrestrial",
-    terrain = "Ground",
+    substrate = "ground",
     gravity_m_s2 = 9.80665,
     sink_k = 2.7,
     insolation = 0,

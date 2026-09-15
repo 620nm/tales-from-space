@@ -1,3 +1,6 @@
+local composition = require("@helpers/composition")
+
+local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
 -- The pipe painter, and what a stripe of the wrong colour costs.
@@ -51,14 +54,14 @@ t.world(
     [==[(
     name: "painter",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        'o': (turf: Floor),
-        'F': (turf: Floor),
-        '#': (turf: Wall),
-        'c': (turf: Plating),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        'F': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'c': (composition: (components: [(component: "station_base")])),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "########  ",
@@ -67,14 +70,43 @@ t.world(
         "########  ",
     ],
     items: [(1, 2, "pipe_painter")],
-    pipes: [
-        (2, 1, 4), (3, 1, 4), (4, 1, 4), (5, 1, 4),
-        (6, 1, 4), (7, 1, 4),
+    networks: [
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("blue")),
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("blue")),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("blue")),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("blue")),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("blue")),
+        (x: 7, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("blue")),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
-    pipe_paint: [
-        (2, 1, 4, "#5491E8"), (3, 1, 4, "#5491E8"), (4, 1, 4, "#5491E8"),
-        (5, 1, 4, "#5491E8"), (6, 1, 4, "#5491E8"), (7, 1, 4, "#5491E8"),
-    ],
+
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
@@ -83,10 +115,7 @@ t.world(
         (1, 1, "connector_port"), (8, 1, "vent"),
         (1, 1, "canister", { "blend": "canister_air", "open": true }),
     ],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
-    ],
+
 )]==],
     7
 )
@@ -106,8 +135,8 @@ t.run_seconds(10)
 -- Six lengths in one blue line are ONE body of gas, so both ends read
 -- the same number to the last decimal: they are literally the same
 -- cell. That equality is what the rest of this spec breaks.
-local west = assert(t.pipe_pressure(2, 1))
-local east = assert(t.pipe_pressure(7, 1))
+local west = assert(network_matter.pressure(2, 1))
+local east = assert(network_matter.pressure(7, 1))
 assert(math.abs(west - east) < 0.01, "one painted run is one pipenet: " .. west .. " vs " .. east)
 
 -- And the bottle is paying for the vent at the far end of it.
@@ -135,7 +164,7 @@ walk(p, "east")
 walk(p, "east")
 local _ = t.messages(p)
 for _, y in ipairs({ 1, 2 }) do
-    for _, action in ipairs(t.action_hints(p, { Turf = { x = 6, y = y } })) do
+    for _, action in ipairs(t.action_hints(p, composition.deck_target(6, y))) do
         assert(action.id ~= "paint_pipe", "painting needs a visible run")
     end
 end
@@ -145,7 +174,7 @@ assert(
     not said(p, "There is no pipe under the floor here."),
     "bare deck does not invoke the painter"
 )
-assert(not t.ledger_has("PipePainted"), "and writes no row")
+assert(not t.ledger_has("NetworkPainted"), "and writes no row")
 
 -- ...and neither is painting through a floor you have not opened.
 t.click(p, 6, 1) -- tiled, with the run buried under it
@@ -154,8 +183,8 @@ assert(
     not said(p, "The floor is in the way. Pry the tile up first."),
     "you cannot paint a run you cannot see"
 )
-assert(not t.ledger_has("PipePainted"), "still no row")
-assert(t.pipe_pressure(2, 1) == assert(t.pipe_pressure(7, 1)), "and still one net")
+assert(not t.ledger_has("NetworkPainted"), "still no row")
+assert(network_matter.pressure(2, 1) == assert(network_matter.pressure(7, 1)), "and still one net")
 
 -- ---- **the headline**: a brush cuts the main ----
 t.click(p, 5, 1)
@@ -163,18 +192,19 @@ t.run_ticks(2)
 assert(said(p, "You paint the pipe red."), "one length changes colour")
 assert(heard(p, "click"), "and the room hears it happen")
 
-local rows = t.ledger_rows("pipe_painted")
+local rows = t.ledger_rows("network_painted")
 assert(#rows == 1, "one act, one row: " .. #rows)
-local at = ui_controls.array(rows[1].at)
-assert(at[1] == 5 and at[2] == 1, "which tile")
-assert(rows[1].layers == 4, "which piping layer")
-assert(rows[1].color == "#F04137", "and which colour, so the record can say")
+local painted_target = ui_controls.record(rows[1].target)
+local at = ui_controls.record(painted_target.tile)
+assert(at.x == 5 and at.y == 1, "which tile")
+assert(painted_target.instance == t.network_instance(5, 1, "pipe", "l3"), "which retained pipe")
+assert(rows[1].paint == "red", "and which authored colour, so the record can say")
 
 -- The line is intact. Nothing was cut, nothing was welded, the deck is
 -- exactly as it was — and the two ends of it are now two networks.
 t.run_seconds(10)
-local fed = assert(t.pipe_pressure(2, 1))
-local starved = assert(t.pipe_pressure(7, 1))
+local fed = assert(network_matter.pressure(2, 1))
+local starved = assert(network_matter.pressure(7, 1))
 assert(fed > 90.0, "the bottle's half filled to its setpoint: " .. fed)
 assert(starved < 10.0, "and the vent's half emptied into space: " .. starved)
 
@@ -212,8 +242,8 @@ t.run_ticks(2)
 assert(said(p, "You paint the pipe blue."), "the stripe comes out")
 t.run_seconds(10)
 
-local rejoined_west = assert(t.pipe_pressure(2, 1))
-local rejoined_east = assert(t.pipe_pressure(7, 1))
+local rejoined_west = assert(network_matter.pressure(2, 1))
+local rejoined_east = assert(network_matter.pressure(7, 1))
 assert(
     math.abs(rejoined_west - rejoined_east) < 0.01,
     "one line again: " .. rejoined_west .. " vs " .. rejoined_east
@@ -226,4 +256,4 @@ assert(paying > 100.0, "and the bottle is paying for the hole again: " .. paying
 
 -- Two acts, two rows. The record can name who cut the main and who put
 -- it back, which is the whole reason paint earns rows at all.
-assert(#t.ledger_rows("pipe_painted") == 2, "both acts on the record")
+assert(#t.ledger_rows("network_painted") == 2, "both acts on the record")

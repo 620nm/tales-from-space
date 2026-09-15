@@ -28,6 +28,8 @@
 -- pack wants and not a limit it ran into.
 return {
     id = "chem_packager",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.chem_packager.name",
     name = "chem packager",
     sprite = "chem_packager",

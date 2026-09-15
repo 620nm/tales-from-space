@@ -1,3 +1,6 @@
+local network_matter = require("@helpers/network_matter")
+local network_channels = require("@helpers/network_channels")
+
 local ui_controls = require("@helpers/ui_controls")
 
 -- The shape of the approach, worked out on paper and then checked
@@ -53,7 +56,7 @@ end
 
 local function moles(x, y)
     local n = 0.0
-    for _, amount in pairs(t.pipe_gas(x, y) or {}) do
+    for _, amount in pairs(network_matter.gas(x, y) or {}) do
         n = n + amount
     end
     return n
@@ -62,10 +65,10 @@ end
 local BENCH = [==[(
     name: "charging bench",
     legend: {
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "##########",
@@ -73,17 +76,50 @@ local BENCH = [==[(
         "#..a....g#",
         "##########",
     ],
-    pipes: [(2, 1, 4), (4, 1, 4), (5, 1, 4)],
+    networks: [
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+    ],
     structures: [
         (3, 2, "player_spawn"),
         (1, 1, "stationary_tank", "anchored", ("%s", 400.0)),
         (3, 1, "manual_valve"),
         (6, 1, "thermomachine"),
     ],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3),
-    ],
+
 )]==]
 
 local MOUTH_X, MOUTH_Y = 5, 1
@@ -103,10 +139,10 @@ local function bench(gas)
     t.run_seconds(3)
     assert(assert(t.structure_at(3, 1)).state == "shut", "and shut again behind the charge")
     assert(
-        assert(t.pipe_pressure(MOUTH_X, MOUTH_Y)) > 300.0,
-        "the run is charged: " .. assert(t.pipe_pressure(MOUTH_X, MOUTH_Y)) .. " kPa"
+        assert(network_matter.pressure(MOUTH_X, MOUTH_Y)) > 300.0,
+        "the run is charged: " .. assert(network_matter.pressure(MOUTH_X, MOUTH_Y)) .. " kPa"
     )
-    near(assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)), T20C, 0.01, "and still at room temperature")
+    near(assert(network_matter.temperature(MOUTH_X, MOUTH_Y)), T20C, 0.01, "and still at room temperature")
 
     for _ = 1, 3 do
         t.move(p, "east")
@@ -123,7 +159,7 @@ end
 -- down from the gas roster, so a station that recharges its lines with
 -- something else does not silently invalidate the arithmetic.
 local function capacity()
-    return assert(t.pipe_energy(MOUTH_X, MOUTH_Y)) / assert(t.pipe_temperature(MOUTH_X, MOUTH_Y))
+    return assert(network_matter.energy(MOUTH_X, MOUTH_Y)) / assert(network_matter.temperature(MOUTH_X, MOUTH_Y))
 end
 
 -- ---------------------------------------------------------------
@@ -147,17 +183,17 @@ ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(assert(t.structure_at(6, 1)).state == "running", "the unit is running")
 
-local start_k = assert(t.pipe_temperature(MOUTH_X, MOUTH_Y))
+local start_k = assert(network_matter.temperature(MOUTH_X, MOUTH_Y))
 local previous_k = start_k
-local previous_j = assert(t.pipe_energy(MOUTH_X, MOUTH_Y))
+local previous_j = assert(network_matter.energy(MOUTH_X, MOUTH_Y))
 for n = 1, 6 do
     -- What the formula says this pass will do, from where the gas is:
     -- the energy first, because Q is the quantity the machine computes
     -- and the temperature is only Q divided out.
     local q = (TARGET - previous_k) * (n2_c * (C_BATH / (n2_c + C_BATH)))
     pass()
-    local now_k = assert(t.pipe_temperature(MOUTH_X, MOUTH_Y))
-    local now_j = assert(t.pipe_energy(MOUTH_X, MOUTH_Y))
+    local now_k = assert(network_matter.temperature(MOUTH_X, MOUTH_Y))
+    local now_j = assert(network_matter.energy(MOUTH_X, MOUTH_Y))
 
     near(
         now_k,
@@ -187,10 +223,10 @@ near(moles(MOUTH_X, MOUTH_Y), n2_moles, n2_moles * 1e-9, "and the mole book neve
 -- The same six numbers said the other way round: the gap left after
 -- each pass is r times the gap before it, forever, which is the whole
 -- content of "asymptotic rather than a snap".
-local gap = assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)) - TARGET
+local gap = assert(network_matter.temperature(MOUTH_X, MOUTH_Y)) - TARGET
 for n = 1, 4 do
     pass()
-    local left = assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)) - TARGET
+    local left = assert(network_matter.temperature(MOUTH_X, MOUTH_Y)) - TARGET
     near(
         left,
         gap * r,
@@ -202,15 +238,15 @@ end
 
 t.run_seconds(30)
 near(
-    assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)),
+    assert(network_matter.temperature(MOUTH_X, MOUTH_Y)),
     TARGET,
     1e-6,
     "and the line arrests on the setpoint"
 )
-local n2_settled_j = assert(t.pipe_energy(MOUTH_X, MOUTH_Y))
+local n2_settled_j = assert(network_matter.energy(MOUTH_X, MOUTH_Y))
 t.run_seconds(20)
 near(
-    assert(t.pipe_energy(MOUTH_X, MOUTH_Y)),
+    assert(network_matter.energy(MOUTH_X, MOUTH_Y)),
     n2_settled_j,
     1e-6,
     "with the book flat once it is there"
@@ -245,7 +281,7 @@ t.run_ticks(2)
 for _ = 1, 3 do
     pass()
 end
-local heavy_gap = assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)) - TARGET
+local heavy_gap = assert(network_matter.temperature(MOUTH_X, MOUTH_Y)) - TARGET
 local light_gap = (T20C - TARGET) * r ^ 3
 assert(
     heavy_gap > light_gap * 2.5,
@@ -256,7 +292,7 @@ assert(
         .. " K"
 )
 near(
-    assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)),
+    assert(network_matter.temperature(MOUTH_X, MOUTH_Y)),
     TARGET + (T20C - TARGET) * (n2o_c / (n2o_c + C_BATH)) ^ 3,
     1e-6,
     "and it is exactly where ITS own r puts it -- same formula, heavier gas"
@@ -264,7 +300,7 @@ near(
 
 t.run_seconds(60)
 near(
-    assert(t.pipe_temperature(MOUTH_X, MOUTH_Y)),
+    assert(network_matter.temperature(MOUTH_X, MOUTH_Y)),
     TARGET,
     1e-6,
     "it gets there in the end, on the same setpoint"
@@ -288,10 +324,10 @@ t.world(
     [==[(
     name: "dry line",
     legend: {
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "########",
@@ -300,12 +336,35 @@ t.world(
         "########",
     ],
     items: [(3, 2, "wrench")],
-    pipes: [(2, 1, 4)],
-    structures: [(3, 2, "player_spawn"), (3, 1, "thermomachine")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    networks: [
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
+    structures: [(3, 2, "player_spawn"), (3, 1, "thermomachine")],
+
 )]==],
     7
 )
@@ -314,9 +373,9 @@ local d = t.join()
 t.tick()
 t.click(d, 3, 2, t.target_at(d, 3, 2, "wrench"))
 t.run_ticks(2)
-t.click_subfloor(d, 2, 1, "pipe", 4)
+t.click_network(d, 2, 1, assert(t.network_instance(2, 1, "pipe", "l3")))
 t.run_seconds(1.5)
-assert(t.pipe(2, 1) == 0, "the mapped length came up")
+assert(network_channels.at(2, 1, "pipe") == "", "the mapped length came up")
 t.drop(d)
 t.run_ticks(2)
 t.click(d, 2, 1, t.target_at(d, 2, 1, "pipe"))
@@ -326,9 +385,9 @@ t.click(d, 2, 1)
 t.run_seconds(1.5)
 t.drop(d)
 t.run_ticks(2)
-assert(t.pipe(2, 1) == 4, "so it goes straight back down")
-near(assert(t.pipe_pressure(2, 1)), 0.0, 1e-9, "empty, because nobody filled it")
-near(assert(t.pipe_energy(2, 1)), 0.0, 1e-9, "with no joules in it either")
+assert(network_channels.at(2, 1, "pipe") == "l3", "so it goes straight back down")
+near(assert(network_matter.pressure(2, 1)), 0.0, 1e-9, "empty, because nobody filled it")
+near(assert(network_matter.energy(2, 1)), 0.0, 1e-9, "with no joules in it either")
 
 t.click(d, 3, 1, t.target_at(d, 3, 1, "thermomachine"))
 t.tick()
@@ -343,8 +402,8 @@ assert(
     assert(t.structure_at(3, 1)).state == "running",
     "it is switched on and fed -- there is simply nothing to condition"
 )
-near(assert(t.pipe_energy(2, 1)), 0.0, 1e-9, "and a minute later the line still holds no joules")
+near(assert(network_matter.energy(2, 1)), 0.0, 1e-9, "and a minute later the line still holds no joules")
 near(moles(2, 1), 0.0, 1e-9, "and no moles")
-local dry_k = assert(t.pipe_temperature(2, 1))
+local dry_k = assert(network_matter.temperature(2, 1))
 assert(dry_k == dry_k, "the empty line's temperature is a number, not a NaN: " .. dry_k)
 near(dry_k, 2.7, 1e-9, "and it is TCMB, where an empty mixture sits")

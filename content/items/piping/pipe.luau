@@ -18,21 +18,16 @@ local action_rules = require("@lib/action_rules")
 -- numbers here. Layer 3 is the distribution run every dispenser hands
 -- you; the others exist so a second run can CROSS the first without
 -- joining it.
-local LAYERS = { 1, 2, 4, 8, 16 }
 
 local content = {
     id = "pipe",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.pipe.name",
     name = "pipe",
     sprite = "pipe",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
     stack = 25,
-    -- This IS the station's piping: what a run under the deck is made
-    -- of, what a wrench may fasten into one, and what pulling one hands
-    -- back. The native fasten verb used to recognise this length by its
-    -- id; it reads this instead, so a pack with two kinds of pipe gets
-    -- both and a pack with none gets a refusal.
-    subfloor = "pipe",
     -- Five settings, minted on the third: PIPING_LAYER_DEFAULT.
     modes = 5,
     mode = 2,
@@ -63,28 +58,13 @@ if sim ~= nil then
     end)
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
-        local clicked, target = ev.claim, ev.claim
         local _x, _y, _choice = x, y, choice
         -- Asked first, so every covered tile answers the same way and
         -- the reply is not a probe for what is already buried. Open
         -- deck, not "plating": the map decides per tile.
-        if not sim.subfloor_exposed(x, y, "pipe") then
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:lib.subfloor.covered", {}),
-            })
-            return true
-        end
-        local mask = LAYERS[assert(sim.mode(self)).index + 1]
-        if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:lib.pipe.layer_taken", {}),
-            })
-            return true
-        end
-        if sim.pipe(x, y) % (mask * 2) >= mask then
-            return { replaced = false } -- a length already runs here on this layer
+        local channel = "l" .. tostring(assert(sim.mode(self)).index + 1)
+        if not sim.network_installable(x, y, "pipe", channel, "standard") then
+            return { replaced = false }
         end
         sim.message.send({
             recipient = user,
@@ -98,28 +78,12 @@ if sim ~= nil then
                 })
                 return true
             end
-            -- The same question again at the end: while you worked, another
-            -- engineer may have run the line through this very tile -- and
-            -- you may have turned the dial yourself.
-            mask = LAYERS[assert(sim.mode(self)).index + 1]
-            if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
-                sim.message.send({
-                    recipient = user,
-                    message = sim.msg("lunatic/tfs:lib.pipe.layer_taken", {}),
-                })
+            channel = "l" .. tostring(assert(sim.mode(self)).index + 1)
+            if not sim.network_installable(x, y, "pipe", channel, "standard") then
                 return true
             end
-            if sim.pipe(x, y) % (mask * 2) >= mask then
-                sim.message.send({
-                    recipient = user,
-                    message = sim.msg("lunatic/tfs:lib.pipe.occupied", {}),
-                })
-                return true
-            end
-            -- One exact item becomes one exact length. Native code derives the
-            -- layer again, preserves a pulled length's directional mask and
-            -- spends this stack only if the topology actually lands.
-            sim.fasten_pipe(self, x, y, "ratchet", "You wrench the pipe into place.")
+            sim.place_network(x, y, "pipe", channel, "standard", 15, nil, self, 1)
+            sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = ev.at })
         end)
         return true
     end)

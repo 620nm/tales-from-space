@@ -30,6 +30,8 @@
 -- dial goes to two hundred.
 return {
     id = "air_injector",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.air_injector.name",
     name = "air injector",
     sprite = "injector_off_n",
@@ -63,6 +65,8 @@ return {
         },
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "injector",
         positions = { "off", "injecting" },
         -- tg's `volume_rate = 50` (outlet_injector.dm:19), and the
@@ -71,7 +75,8 @@ return {
         max_rate_lps = 200.0,
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "air_injector_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -80,6 +85,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             -- Off first. An injector running into the room you are
             -- kneeling in is not one to unbolt.
             at = "off",

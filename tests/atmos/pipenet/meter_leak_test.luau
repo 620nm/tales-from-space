@@ -1,3 +1,6 @@
+local network_matter = require("@helpers/network_matter")
+local network_channels = require("@helpers/network_channels")
+
 local ui_controls = require("@helpers/ui_controls")
 
 -- "Gas meters leak air from pipes."
@@ -54,7 +57,7 @@ end
 
 local function moles(x, y)
     local total = 0.0
-    for _, n in pairs(t.pipe_gas(x, y) or {}) do
+    for _, n in pairs(network_matter.gas(x, y) or {}) do
         total += n
     end
     return total
@@ -67,9 +70,9 @@ t.world(
     [==[(
     name: "matched mains",
     legend: {
-        '.': (turf: Plating),
-        'o': (turf: Floor),
-        '#': (turf: Wall),
+        '.': (composition: (components: [(component: "station_base")])),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "########",
@@ -79,9 +82,15 @@ t.world(
         "########",
     ],
     items: [(3, 2, "wrench"), (3, 1, "pipe_meter")],
-    pipes: [
-        (2, 1, 4), (3, 1, 4), (4, 1, 4), (5, 1, 4),
-        (2, 3, 4), (3, 3, 4), (4, 3, 4), (5, 3, 4),
+    networks: [
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
     ],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
@@ -130,7 +139,7 @@ assert(
 )
 assert(gauged > 0.0, "and both mains are actually carrying something")
 assert(
-    math.abs(assert(t.pipe_pressure(3, 1)) - assert(t.pipe_pressure(3, 3))) < 1e-9,
+    math.abs(assert(network_matter.pressure(3, 1)) - assert(network_matter.pressure(3, 3))) < 1e-9,
     "which is the same statement on a gauge"
 )
 
@@ -163,7 +172,7 @@ assert(
 t.world(
     [==[(
     name: "sealed main",
-    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [
         "######",
         "#....#",
@@ -172,7 +181,12 @@ t.world(
     ],
     structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "rpd")],
-    pipes: [(1, 1, 4), (2, 1, 4), (3, 1, 4), (4, 1, 4)],
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
 )]==],
     7
 )
@@ -219,5 +233,5 @@ assert(
     math.abs(moles(2, 1) - sealed) < 1e-9,
     "still, a minute later: " .. moles(2, 1) .. " vs " .. sealed
 )
-assert(t.pipe(2, 1) == 4, "the run it stands on was never cut")
+assert(network_channels.at(2, 1, "pipe") == "l3", "the run it stands on was never cut")
 assert(assert(t.structure_at(2, 1)).id == "meter", "and it is still standing on it")

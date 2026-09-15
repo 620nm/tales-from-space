@@ -52,7 +52,7 @@ return {
     phase = { triple = { t = 337.2, kpa = 151.7 }, l_fus = 19.2e3, l_vap = 29.5e3 },
     decay_heat = 25.0,
     density = { solid = 5.09 },
-    visible = { moles = 0.25, factor = 20, tint = "#E9F2E4" },
+    visible = { moles = 0.25, factor = 20, tint = "#E9F2E4", visual_layer = "gas_haze" },
     -- Where this sits in a tool that offers every substance there is
     -- (docs/MAP-PROPERTIES.md, the recipe panel). With the other poisons,
     -- between nitrous oxide (60) and tritium (40).

@@ -2,6 +2,9 @@
 -- (`/obj/item/storage/backpack/chemistry`, backpack.dm:182-186).
 return {
     id = "chemistry_backpack",
+    visual_layer = "entities",
+    held_visual_layer = "held",
+    worn_visual_layer = "equipment_back",
     name_label = "lunatic/tfs:entity.chemistry_backpack.name",
     name = "chemistry backpack",
     sprite = "chemistry_backpack",

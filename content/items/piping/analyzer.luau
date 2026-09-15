@@ -209,6 +209,8 @@ end
 
 local content = {
     id = "analyzer",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.analyzer.name",
     name = "analyzer",
     sprite = "analyzer",
@@ -221,8 +223,7 @@ content.actions = {
     action_rules.primary("analyze", {
         any = {
             action_rules.kind("turf"),
-            action_rules.kind("pipe"),
-            action_rules.kind("cable"),
+            action_rules.kind("network"),
             action_rules.kind("machine"),
         },
     }),
@@ -252,16 +253,15 @@ if sim ~= nil then
         -- the deck is open and that run exists -- so a click on the
         -- pixels of one pipe out of five reads that one and no other,
         -- named by its layer.
-        if target and target.kind == "pipe" then
-            local layer = 1
-            while 2 ^ (layer - 1) < target.layer do
-                layer += 1
-            end
-            local pipe = sim.matter_read(ev.at:network(target.layer))
-            if pipe then
-                sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })
-                report(user, "the layer " .. layer .. " pipe", pipe)
-                return true
+        if target and target.kind == "network" then
+            local network = sim.network(ev.at.x, ev.at.y, target.instance)
+            if network and network.network == "pipe" then
+                local pipe = sim.matter_read(ev.at:network(target.instance))
+                if pipe then
+                    sim.sound.play({ asset = "lunatic/tfs:sound/click", at = ev.at })
+                    report(user, "the layer " .. string.sub(network.channel, 2) .. " pipe", pipe)
+                    return true
+                end
             end
         end
         -- ...and any click that touched no container -- bare deck,

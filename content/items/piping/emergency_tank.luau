@@ -34,6 +34,8 @@ local content = {
         self = { label = "lunatic/tfs:ui.affordance.toggle_internals" },
     },
     id = "emergency_tank",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.emergency_tank.name",
     name = "emergency tank",
     sprite = "emergency_tank",

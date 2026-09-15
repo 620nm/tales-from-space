@@ -19,8 +19,8 @@ t.world(
     [==[(
     name: "the locker room",
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",

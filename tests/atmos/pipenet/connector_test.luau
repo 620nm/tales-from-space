@@ -1,3 +1,6 @@
+local network_matter = require("@helpers/network_matter")
+local network_channels = require("@helpers/network_channels")
+
 local ui_controls = require("@helpers/ui_controls")
 
 -- A connector port needs nothing under it, and that is safe because
@@ -70,10 +73,10 @@ t.world(
     [==[(
     name: "dry socket",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'c': (turf: Plating),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'c': (composition: (components: [(component: "station_base")])),
     },
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
@@ -160,7 +163,7 @@ assert(
 -- `fitting = true` buys.
 assert(t.target_at(p, 2, 2, "connector_port") ~= nil, "a second port, in one action")
 assert(#t.items_at(2, 2) == 0, "and no fitting was left lying about")
-assert(t.pipe(2, 2) == 0 and t.pipe(2, 1) == 0, "with no run under it or beside it")
+assert(network_channels.at(2, 2, "pipe") == "" and network_channels.at(2, 1, "pipe") == "", "with no run under it or beside it")
 
 -- ---- an unplumbed socket is a socket, and it feeds the ROOM ----
 --
@@ -209,7 +212,7 @@ assert(
     assert(t.canister_pressure(2, 2)) < assert(can_before) - 50.0,
     "and the bottle is what paid: " .. assert(t.canister_pressure(2, 2))
 )
-assert(t.pipe_pressure(2, 1) == nil, "there is still no run anywhere to have fed")
+assert(network_matter.pressure(2, 1) == nil, "there is still no run anywhere to have fed")
 
 -- ---- and then the plumbing arrives ----
 --
@@ -229,14 +232,14 @@ t.tick()
 set(p, RECIPE, pick(p, RECIPE, "Pipe"))
 t.click(p, 2, 1, nil, -14, 14) -- one north of the port: the tile its stub reaches
 work(p)
-assert(t.pipe(2, 1) == 4, "a length on the distribution layer: " .. t.pipe(2, 1))
+assert(network_channels.at(2, 1, "pipe") == "l3", "a length on the distribution layer: " .. network_channels.at(2, 1, "pipe"))
 
 local room_at_lay = assert(t.room_pressure(1, 1))
 t.run_seconds(20)
 assert(
-    assert(t.pipe_pressure(2, 1)) > 150.0,
+    assert(network_matter.pressure(2, 1)) > 150.0,
     "the port bound itself to the new run and the bottle charged it: "
-        .. tostring(t.pipe_pressure(2, 1))
+        .. tostring(network_matter.pressure(2, 1))
 )
 assert(
     math.abs(assert(t.room_pressure(1, 1)) - room_at_lay) < 5.0,

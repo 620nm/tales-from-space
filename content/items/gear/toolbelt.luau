@@ -9,6 +9,9 @@
 -- seven things it arrives with.
 return {
     id = "toolbelt",
+    visual_layer = "entities",
+    held_visual_layer = "held",
+    worn_visual_layer = "equipment_belt",
     name_label = "lunatic/tfs:entity.toolbelt.name",
     name = "toolbelt",
     sprite = "toolbelt",

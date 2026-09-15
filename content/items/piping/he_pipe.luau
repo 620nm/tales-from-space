@@ -1,5 +1,4 @@
 local action_rules = require("@lib/action_rules")
-local thermal = require("@lib/thermal")
 
 -- A length of heat-exchanging pipe: the run you lay when you WANT the
 -- room to feel what is inside it.
@@ -30,24 +29,13 @@ local LAYERS = { 2, 3, 4 }
 
 local content = {
     id = "he_pipe",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.he_pipe.name",
     name = "heat-exchanging pipe",
     sprite = "he_pipe",
     inhand_sprite = { "held_pipe_l", "held_pipe_r" },
     stack = 25,
-    subfloor = "pipe",
-    -- What makes this a KIND rather than a second id for the same thing
-    -- (../lunatic/docs/content-schema/subfloor.md): its own art family,
-    -- its own colour, the layers it fits, and the law it conducts by.
-    pipe = {
-        sprite = "he_pipe",
-        color = "#404040",
-        layers = LAYERS,
-        conducts = {
-            coefficient = thermal.he_coefficient,
-            min_delta_k = thermal.he_deadband_k,
-        },
-    },
     -- The engine's dial is the piping layer, 1..5, and this fits three
     -- of them; the cycle below walks those three. Minted on layer 3,
     -- PIPING_LAYER_DEFAULT, like everything else off the shelf.
@@ -82,26 +70,10 @@ if sim ~= nil then
     end)
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
-        local clicked, target = ev.claim, ev.claim
         local _x, _y, _choice = x, y, choice
-        if not sim.subfloor_exposed(x, y, "pipe") then
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:lib.subfloor.covered", {}),
-            })
-            return true
-        end
-        local layer = assert(sim.mode(self)).index + 1
-        local mask = 2 ^ (layer - 1)
-        if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:lib.pipe.layer_taken", {}),
-            })
-            return true
-        end
-        if sim.pipe(x, y) % (mask * 2) >= mask then
-            return { replaced = false } -- a length already runs here on this layer
+        local channel = "l" .. tostring(assert(sim.mode(self)).index + 1)
+        if not sim.network_installable(x, y, "pipe", channel, "he_pipe") then
+            return { replaced = false }
         end
         sim.message.send({
             recipient = user,
@@ -115,31 +87,12 @@ if sim ~= nil then
                 })
                 return true
             end
-            layer = assert(sim.mode(self)).index + 1
-            mask = 2 ^ (layer - 1)
-            if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
-                sim.message.send({
-                    recipient = user,
-                    message = sim.msg("lunatic/tfs:lib.pipe.layer_taken", {}),
-                })
+            channel = "l" .. tostring(assert(sim.mode(self)).index + 1)
+            if not sim.network_installable(x, y, "pipe", channel, "he_pipe") then
                 return true
             end
-            if sim.pipe(x, y) % (mask * 2) >= mask then
-                sim.message.send({
-                    recipient = user,
-                    message = sim.msg("lunatic/tfs:lib.pipe.occupied", {}),
-                })
-                return true
-            end
-            -- The native verb reads the KIND off this very item, the same
-            -- field read the other way when a length is pulled back up.
-            sim.fasten_pipe(
-                self,
-                x,
-                y,
-                "ratchet",
-                "You wrench the heat-exchanging pipe into place."
-            )
+            sim.place_network(x, y, "pipe", channel, "he_pipe", 15, nil, self, 1)
+            sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = ev.at })
         end)
         return true
     end)

@@ -23,6 +23,8 @@
 -- maximal stores in one window is a lot of paper for one console.
 return {
     id = "programming_terminal",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.programming_terminal.name",
     name = "programming terminal",
     -- tg's R&D console, composited the way tg draws every console: the

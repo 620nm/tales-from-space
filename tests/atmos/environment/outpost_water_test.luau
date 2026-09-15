@@ -48,7 +48,8 @@ local SHALLOW = { 13, 7 }
 local DRY = { 14, 7 }
 
 local function look_at(xy)
-    local seen = t.examine(p, xy[1], xy[2])
+    local floor = assert(t.component_instance(xy[1], xy[2], "floor_tiles"))
+    local seen = t.examine_component(p, xy[1], xy[2], floor)
     assert(seen ~= nil, ("(%d,%d) is not in sight"):format(xy[1], xy[2]))
     return table.concat(seen.lines, "\n")
 end
@@ -60,11 +61,11 @@ end
 -- volume, because a depth is what a crewman is deciding about.
 -- ---------------------------------------------------------------
 assert(
-    look_at(DEEP) == "A puddle: 50.00 L · 2775.50 mol of liquid water.",
+    look_at(DEEP) == "Standard station tiling, laid over the deck plating.\nA puddle: 50.00 L · 2775.50 mol of liquid water.",
     "the deep end reads as fifty litres: " .. look_at(DEEP)
 )
 assert(
-    look_at(SHALLOW) == "A puddle: 1.00 L · 55.51 mol of liquid water.",
+    look_at(SHALLOW) == "Standard station tiling, laid over the deck plating.\nA puddle: 1.00 L · 55.51 mol of liquid water.",
     "and the shallow end as one: " .. look_at(SHALLOW)
 )
 
@@ -73,7 +74,10 @@ assert(
 -- picture's own, so there is no such thing as a puddle a look
 -- reports and the deck does not draw.
 -- ---------------------------------------------------------------
-assert(look_at(DRY) == "", "a dry deck is a deck: " .. look_at(DRY))
+assert(
+    look_at(DRY) == "Standard station tiling, laid over the deck plating.",
+    "a dry deck names its authored floor but has no puddle: " .. look_at(DRY)
+)
 
 -- ---------------------------------------------------------------
 -- And the water is REAL, not a decal: fifty litres out of a cubic
@@ -109,7 +113,10 @@ local still = look_at(DEEP)
 local litres = tonumber(string.match(still, "A puddle: ([%d%.]+) L"))
 assert(litres ~= nil, "the pool is still a pool: " .. still)
 assert(litres > 50.0 * 0.99, "and still fifty litres of one: " .. still)
-assert(look_at(DRY) == "", "and it never reached the tile beside it")
+assert(
+    look_at(DRY) == "Standard station tiling, laid over the deck plating.",
+    "and it never reached the tile beside it"
+)
 
 -- ---------------------------------------------------------------
 -- OPEN THE LEAF AND IT IS EVERYBODY'S PROBLEM.

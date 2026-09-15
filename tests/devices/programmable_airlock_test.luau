@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 -- Rebuild the commissioned bench by hand: release, rejoin, reinstall, then operate it.
 -- Keep this test's map local so its two candidate points can be assigned to
 -- distinct jobs without changing the shipped map's weighted pool.
@@ -11,10 +12,10 @@ local AIRLOCK = [==[
     name: "Programmable Exterior Airlock",
     environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
-        ' ': (turf: Space), '.': (turf: Plating), '#': (turf: Wall),
-        'G': (turf: Plating, fixture: Some(Generator)),
-        'A': (turf: Plating, fixture: Some(Apc)),
-        'o': (turf: Plating, fixture: Some(Outlet)),
+        ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        'A': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
     },
     rows: [
         "#############", "######.#.####", "#############",
@@ -39,17 +40,32 @@ local AIRLOCK = [==[
         (5, 3, "airlock", { "bolted": true }),
         (8, 3, "airlock", { "open": true, "bolted": false }),
         (6, 3, "airlock_pump", { "dir": "north" }),
-        (6, 1, "passive_vent", { "layer": 4, "pipe": "south" }),
-        (8, 1, "passive_vent", { "layer": 2, "pipe": "south" }),
+        (6, 1, "passive_vent", { "channel": "l4", "pipe": "south" }),
+        (8, 1, "passive_vent", { "channel": "l2", "pipe": "south" }),
     ],
     links: [
         (4, 3, 2, 3), (4, 3, 5, 3), (4, 3, 6, 3),
         (4, 3, 8, 3), (4, 3, 7, 4),
     ],
-    pipes: [(6, 2, 8), (6, 2, 2), (7, 2, 2), (8, 2, 2)],
-    cables: [(1, 4, 2), (2, 4, 3), (3, 4, 1), (4, 4, 1),
-        (2, 3, 1), (3, 3, 1), (4, 3, 1), (5, 3, 1),
-        (6, 3, 1), (7, 3, 1), (8, 3, 1)],
+    networks: [
+        (x: 6, y: 2, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+        (x: 6, y: 2, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 7, y: 2, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 8, y: 2, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 1, y: 4, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 4, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 4, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 4, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 4, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+    ],
+
     items: [(3, 3, "laptop"), (3, 3, "floppy_disk.atmos_stock"),
         (2, 4, "disk_box"), (3, 4, "screwdriver"), (3, 4, "wrench"),
         (3, 4, "airlock_button_fitting"), (3, 4, "airlock_pump_fitting")],
@@ -318,7 +334,7 @@ assert(
 )
 assert(pressure_result() < 10, "the distinct effluent main evacuates below 10 kPa before opening")
 assert(
-    (t.pipe_pressure(6, 2, 8) or 0) > (t.pipe_pressure(6, 2, 2) or 0),
+    (network_matter.pressure(6, 2, "l4") or 0) > (network_matter.pressure(6, 2, "l2") or 0),
     "intake and effluent remain distinct mains"
 )
 

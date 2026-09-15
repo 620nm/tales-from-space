@@ -110,11 +110,7 @@ function encodeEdit(edit: StaffAction): Record<string, Json> {
     return { Spawn: spawn };
   }
   if (kind === "property") return { Property: body };
-  if (kind === "turf") {
-    const turf = { ...body, kind: body.turfKind };
-    delete turf.turfKind;
-    return { Turf: turf };
-  }
+  if (kind === "turf") return { Turf: body };
   return {};
 }
 

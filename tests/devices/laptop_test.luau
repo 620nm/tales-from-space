@@ -6,7 +6,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- docs/LAPTOP.md owns the gestures; no test mutates entity components.
 local ARENA = [==[(
     name: "laptop desk",
-    legend: { '.': (turf: Floor), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: ["#######", "#.....#", "#.....#", "#.....#", "#######"],
     structures: [
         (2, 2, "player_spawn", { "jobs": "assistant" }),

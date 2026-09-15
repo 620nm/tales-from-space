@@ -1,4 +1,5 @@
 local action_rules = require("@lib/action_rules")
+local RETURN_ITEMS: { [string]: string } = { standard = "pipe", he_pipe = "he_pipe" }
 
 -- Anchors and unanchors. A girder bolts to the deck under it (4 s,
 -- tg's rate) and comes loose the same way -- and a loose girder is one
@@ -33,6 +34,9 @@ local action_rules = require("@lib/action_rules")
 -- tile up and the same click works.
 local content = {
     id = "wrench",
+    visual_layer = "entities",
+    stowed_visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.wrench.name",
     name = "wrench",
     sprite = "wrench",
@@ -49,12 +53,12 @@ local content = {
 }
 
 content.actions = {
-    action_rules.primary("unfasten_pipe", action_rules.kind("pipe")),
+    action_rules.primary("unfasten_pipe", action_rules.network("pipe")),
     action_rules.primary("fasten_pipe", {
         all = {
             action_rules.kind("item"),
             action_rules.fact("target.proto", "pipe"),
-            action_rules.fact("target.subfloor_pipe_exposed", true),
+            action_rules.fact("target.network_installable", "pipe"),
         },
     }),
 }
@@ -63,15 +67,9 @@ if sim ~= nil then
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
-        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
-        local clicked, target = ev.claim, ev.claim
+        local user, x, y, choice = ev.actor, ev.at.x, ev.at.y, ev.choice
+        local target = ev.claim
         local _x, _y, _choice = x, y, choice
-        -- Asked before the pipe question, so a covered tile answers the
-        -- same whether or not anything runs under it. The deck being
-        -- OPEN is the question, not the turf's name.
-        if not sim.subfloor_exposed(x, y, "pipe") then
-            return { replaced = false }
-        end
         if target ~= nil and target.kind == "item" then
             local pipe = target.entity
             if pipe.prototype ~= "pipe" then
@@ -85,15 +83,8 @@ if sim ~= nil then
             if mode == nil then
                 return { replaced = false }
             end
-            local pipe_layer = 2 ^ mode.index
-            if sim.pipe_occupancy(x, y) % (pipe_layer * 2) >= pipe_layer then
-                sim.message.send({
-                    recipient = user,
-                    message = sim.msg("lunatic/tfs:lib.pipe.layer_taken", {}),
-                })
-                return true
-            end
-            if sim.pipe(x, y) % (pipe_layer * 2) >= pipe_layer then
+            local channel = "l" .. tostring(mode.index + 1)
+            if not sim.network_installable(x, y, "pipe", channel, "standard") then
                 return { replaced = false }
             end
             sim.message.send({
@@ -126,22 +117,29 @@ if sim ~= nil then
                 if mode == nil then
                     return true
                 end
-                pipe_layer = 2 ^ mode.index
-                if
-                    sim.pipe_occupancy(x, y) % (pipe_layer * 2) >= pipe_layer
-                    or sim.pipe(x, y) % (pipe_layer * 2) >= pipe_layer
-                then
+                channel = "l" .. tostring(mode.index + 1)
+                if not sim.network_installable(x, y, "pipe", channel, "standard") then
                     return true
                 end
-                sim.fasten_pipe(pipe, x, y, "ratchet", "You fasten the pipe into place.")
+                sim.place_network(x, y, "pipe", channel, "standard", 15, nil, pipe, 1)
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.wrench.you_fasten_the_pipe", {}),
+                })
+                sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = ev.at })
             end)
             return true
         end
-        if target == nil or target.kind ~= "pipe" then
+        if target == nil or target.kind ~= "network" then
             return { replaced = false }
         end
-        local layer = target.layer
-        if sim.pipe(x, y) % (layer * 2) < layer then
+        local instance = target.instance
+        local network = sim.network(x, y, instance)
+        if network == nil or network.network ~= "pipe" or not sim.network_accessible(x, y, instance) then
+            return { replaced = false }
+        end
+        local returned_item = RETURN_ITEMS[network.kind]
+        if returned_item == nil then
             return { replaced = false }
         end
         sim.message.send({
@@ -156,11 +154,11 @@ if sim ~= nil then
                 })
                 return true
             end
-            if sim.pipe(x, y) % (layer * 2) < layer then
+            if not sim.network_accessible(x, y, instance) then
                 return true
             end
             sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = ev.at })
-            sim.cut_pipe(x, y, layer)
+            sim.remove_network(x, y, instance, returned_item)
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:items.wrench.the_pipe_comes_free", {}),

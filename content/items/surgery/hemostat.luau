@@ -1,6 +1,8 @@
 -- Clamps a bleeder and lifts an organ out (tg surgery_tools.dm:32-49).
 return {
     id = "hemostat",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.hemostat.name",
     name = "hemostat",
     sprite = "hemostat",

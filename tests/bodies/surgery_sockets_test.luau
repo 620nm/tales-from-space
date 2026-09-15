@@ -8,7 +8,7 @@ local ui_controls = require("@helpers/ui_controls")
 
 local ARENA = [==[(
     name: "ward",
-    legend: { ' ': (turf: Space), '.': (turf: Floor), '#': (turf: Wall) },
+    legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [ "#####", "#...#", "#####" ],
     structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn"), (2, 1, "optable")],
     items: [ (1, 1, "scalpel"), (1, 1, "shard"), (1, 1, "retractor"), (1, 1, "hemostat"), (1, 1, "welder") ],

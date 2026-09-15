@@ -3,6 +3,8 @@
 -- tg code/modules/paperwork/photocopier.dm:60-65, :140-152, :281-379.
 return {
     id = "photocopier",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.photocopier.name",
     name = "photocopier",
     sprite = "photocopier",

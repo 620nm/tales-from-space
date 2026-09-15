@@ -29,6 +29,7 @@
 -- nothing can reach, which is a leftover rather than a rule.
 return {
     id = "digital_valve",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.digital_valve.name",
     name = "digital valve",
     sprite = "dvalve_shut_ns",
@@ -97,12 +98,15 @@ return {
         },
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "valve",
         positions = { "shut", "open" },
         switch_secs = 0.0,
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "digital_valve_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -111,6 +115,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             -- A valve has no `can_unwrench` override in tg at all --
             -- the base one is a flat TRUE (valve.dm:11) -- so an open
             -- one comes up if you insist. The gush of air that follows

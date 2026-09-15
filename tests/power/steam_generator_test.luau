@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
 -- The steam generator: put water in it, switch it on, and the pipe
@@ -11,7 +12,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- it and a mouth on a run (../lunatic/docs/ATMOS.md §9).
 --
 -- Everything below is a click or a window act, and every reading is
--- `t.pipe_gas` / `t.room_gas` in MOLES. A pressure cannot say WHICH gas
+-- `network_matter.gas` / `t.room_gas` in MOLES. A pressure cannot say WHICH gas
 -- it is, and this whole machine is a claim about which one crosses.
 
 -- A document's words are labels: `{id=…}` for one the engine names,
@@ -32,7 +33,7 @@ local function row(ui: ui_controls.Record, label: string): ui_controls.Record
 end
 
 local function pipe_of(x: number, y: number, which: string)
-    local held = t.pipe_gas(x, y)
+    local held = network_matter.gas(x, y)
     return held and held[which] or 0.0
 end
 
@@ -54,11 +55,11 @@ t.world(
     [==[(
     name: "steam bay",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "#######",
@@ -67,16 +68,36 @@ t.world(
         "#######",
     ],
     items: [(3, 2, "beaker.water"), (2, 2, "beaker.ethanol")],
-    pipes: [(2, 1, 4), (3, 1, 4)],
+    networks: [
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+    ],
     structures: [
         (3, 1, "player_spawn"),
         (1, 1, "air_injector", { "pipe": "east" }),
         (4, 1, "steam_generator", { "pipe": "west" }),
     ],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3),
-    ],
+
 )]==],
     7
 )

@@ -1,3 +1,5 @@
+local composition = require("@helpers/composition")
+
 local ui_controls = require("@helpers/ui_controls")
 
 -- SIX WORDS FOR ONE TRANSFER, and the six rows they leave behind.
@@ -19,9 +21,9 @@ t.world(
     [==[(
     name: "verb bench",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "########",
@@ -79,7 +81,7 @@ assert(rows("poured") == 1, ("one pour, got %d"):format(rows("poured")))
 -- A click on your own tile with a beaker in hand. The word is `drink`
 -- and not `transfer`, so the vessel has to be in the DRINKER's own
 -- hands -- which it is, because they are holding it.
-t.click_turf(medic, 1, 1)
+composition.click_deck(medic, 1, 1)
 t.run_ticks(2)
 assert(rows("drank") == 1, ("one swig, got %d"):format(rows("drank")))
 

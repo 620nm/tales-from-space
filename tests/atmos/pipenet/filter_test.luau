@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
 -- The filter: the first machine with THREE mouths, and the first
@@ -39,7 +40,7 @@ end
 
 -- Moles of one gas standing in the run under a tile, or 0.
 local function gas(x: number, y: number, which: string): number
-    local held = t.pipe_gas(x, y)
+    local held = network_matter.gas(x, y)
     return (held and held[which]) or 0.0
 end
 
@@ -52,11 +53,11 @@ local OUT_X, OUT_Y = 4, 1
 local JUNCTION = [==[(
     name: "filter",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "########",
@@ -65,12 +66,39 @@ local JUNCTION = [==[(
         "########",
     ],
     items: [(3, 2, "wrench")],
-    pipes: [(1, 1, 4), (2, 1, 4), (4, 1, 4), (5, 1, 4), (3, 2, 4)],
-    structures: [(3, 2, "player_spawn"), (3, 1, "%s")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
+    structures: [(3, 2, "player_spawn"), (3, 1, "%s")],
+
 )]==]
 
 -- ---------------------------------------------------------------
@@ -95,10 +123,10 @@ assert(m.state == "off", "and tg's filter ships off")
 
 -- The run does not pass through the machine: its own length is nobody's
 -- and each mouth opens onto a net of its own.
-assert(t.pipe_pressure(3, 1) == nil, "no net claims the machine's tile")
-assert(assert(t.pipe_pressure(IN_X, IN_Y)) > 90.0, "the input main is charged")
-assert(assert(t.pipe_pressure(OUT_X, OUT_Y)) > 90.0, "so is the pass-through main")
-assert(assert(t.pipe_pressure(SIDE_X, SIDE_Y)) > 90.0, "and so is the side stub")
+assert(network_matter.pressure(3, 1) == nil, "no net claims the machine's tile")
+assert(assert(network_matter.pressure(IN_X, IN_Y)) > 90.0, "the input main is charged")
+assert(assert(network_matter.pressure(OUT_X, OUT_Y)) > 90.0, "so is the pass-through main")
+assert(assert(network_matter.pressure(SIDE_X, SIDE_Y)) > 90.0, "and so is the side stub")
 
 -- Each net is 200 L bigger than its lengths, because the mouth in the
 -- machine's face belongs to it: two lengths either side, one below.
@@ -210,8 +238,8 @@ near(gas(OUT_X, OUT_Y, "o2"), main_o2, 1e-9, "no oxygen ever reached the pass-th
 
 -- The input paid for all of it, and the books balance to the mole.
 assert(
-    assert(assert(t.pipe_pressure(IN_X, IN_Y))) < 5.0,
-    "the input main is drained: " .. assert(t.pipe_pressure(IN_X, IN_Y))
+    assert(assert(network_matter.pressure(IN_X, IN_Y))) < 5.0,
+    "the input main is drained: " .. assert(network_matter.pressure(IN_X, IN_Y))
 )
 -- `t.nullified` is part of "somewhere". A run the filter has separated
 -- is left with a few micromoles of the gas it no longer carries, under
@@ -315,7 +343,7 @@ assert(
 )
 near(gas(SIDE_X, SIDE_Y, "o2"), was_side_o2, 1e-9, "and the side port took no oxygen")
 near(gas(SIDE_X, SIDE_Y, "n2"), was_side_n2, 1e-9, "and no nitrogen either")
-assert(assert(t.pipe_pressure(IN_X, IN_Y)) < 5.0, "the input still emptied: nothing was lost")
+assert(assert(network_matter.pressure(IN_X, IN_Y)) < 5.0, "the input still emptied: nothing was lost")
 
 -- ---------------------------------------------------------------
 -- THE ROUND TRIP, AND THE REFUSAL IN FRONT OF IT.
@@ -410,7 +438,7 @@ assert(
 )
 near(gas(SIDE_X, SIDE_Y, "o2"), pre_side_o2, 1e-9, "and only nitrogen")
 near(gas(OUT_X, OUT_Y, "n2"), pre_main_n2, 1e-9, "none of which reached the pass-through")
-assert(assert(t.pipe_pressure(IN_X, IN_Y)) < 5.0, "and the input emptied into the pair")
+assert(assert(network_matter.pressure(IN_X, IN_Y)) < 5.0, "and the input emptied into the pair")
 
 -- ---------------------------------------------------------------
 -- ...AND THE PRESET IS ONLY A SHORTHAND.

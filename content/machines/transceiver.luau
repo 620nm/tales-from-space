@@ -20,6 +20,8 @@
 -- subspace plumbing.
 return {
     id = "transceiver",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.transceiver.name",
     name = "radio transceiver",
     script = "transceiver",

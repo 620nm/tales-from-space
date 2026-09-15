@@ -3,6 +3,8 @@ local action_rules = require("@lib/action_rules")
 local SPRAY, STREAM = 0, 1
 local content = {
     id = "spray_bottle",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.spray_bottle.name",
     name = "spray bottle",
     sprite = "spray_bottle",
@@ -10,7 +12,7 @@ local content = {
     modes = 2,
     mode = SPRAY,
     acts_on_items = true,
-    ranged_use = { range = 5, effect = "spray_puff", sound = "spray" },
+    ranged_use = { visual_layer = "effects", range = 5, effect = "spray_puff", sound = "spray" },
 }
 content.actions = { action_rules.primary("spray", true) }
 

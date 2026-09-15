@@ -15,6 +15,8 @@
 -- because getting it wrong costs nothing but blood.
 return {
     id = "organ_appendix",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.organ_appendix.name",
     name = "appendix",
     sprite = "organ_appendix",

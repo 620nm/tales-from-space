@@ -34,6 +34,7 @@
 --     north and west onto east.
 return {
     id = "layer_adapter",
+    visual_layer = "pipe",
     name_label = "lunatic/tfs:entity.layer_adapter.name",
     name = "layer adapter",
     sprite = "layer_adapter_ns",
@@ -50,10 +51,13 @@ return {
         },
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "layer_adapter",
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "layer_adapter_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -62,6 +66,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             -- `can_unwrench` on the pipe base, unguarded: an adapter has
             -- no position to be in. Pulling it up splits the ten runs
             -- back into whatever they were, and the gas divides by

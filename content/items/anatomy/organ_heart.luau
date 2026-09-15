@@ -39,6 +39,8 @@
 --     exactly the latch this needs.
 return {
     id = "organ_heart",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.organ_heart.name",
     name = "heart",
     sprite = "organ_heart",

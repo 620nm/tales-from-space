@@ -30,6 +30,7 @@
 -- zero edits here.
 return {
     id = "wall_frame",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.wall_frame.name",
     name = "wall frame",
     sprite = "wall_frame",
@@ -64,7 +65,8 @@ return {
         },
     },
     build = {
-        on = { "wall", "reinforced_wall" },
+        sound = "smash",
+        on = { "component:wall", "component:reinforced_wall" },
         with = { metal = 2 },
         secs = 4.0,
         start = "You start bolting a frame to the wall.",
@@ -76,6 +78,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             at = "empty",
             with = { cable_coil = 5 },
             secs = 2.0,
@@ -89,6 +92,7 @@ return {
         -- was (apc_tool_act.dm:384); there is no frame ITEM here -- the
         -- sheets are the recipe -- so what comes back is the sheets.
         {
+            sound = "smash",
             at = "empty",
             tool = "welder",
             secs = 4.0,
@@ -99,6 +103,7 @@ return {
             done = "The frame comes off the wall.",
         },
         {
+            sound = "smash",
             at = "wired",
             tool = "cutters",
             secs = 2.0,
@@ -110,6 +115,7 @@ return {
         -- Any item with a board table fits; what it makes is the
         -- board's business and not the frame's.
         {
+            sound = "smash",
             at = "wired",
             slot = "board",
             to = "boarded",
@@ -119,6 +125,7 @@ return {
         -- unit at a time. The refusal reads the list out when something
         -- is missing or unwanted, so the frame still learns nothing.
         {
+            sound = "smash",
             at = "boarded",
             slot = "part",
             done = "It clicks into the assembly.",
@@ -126,6 +133,7 @@ return {
         -- The crowbar takes the board AND everything fitted after it:
         -- one assembly coming apart rather than two steps.
         {
+            sound = "smash",
             at = "boarded",
             tool = "crowbar",
             eject = "board",
@@ -133,6 +141,7 @@ return {
             done = "You pry the board back out.",
         },
         {
+            sound = "smash",
             at = "boarded",
             tool = "screwdriver",
             secs = 4.0,

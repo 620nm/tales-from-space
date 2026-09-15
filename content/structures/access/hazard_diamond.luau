@@ -17,6 +17,7 @@
 -- (content/substances/*.luau, `hazard.special`).
 return {
     id = "hazard_diamond",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.hazard_diamond.name",
     name = "hazard diamond",
     sprite = "nfpa_704_placard",
@@ -38,7 +39,8 @@ return {
         },
     },
     build = {
-        on = { "wall", "reinforced_wall" },
+        sound = "smash",
+        on = { "component:wall", "component:reinforced_wall" },
         with = { metal = 1 },
         secs = 2.0,
         start = "You start bolting the placard to the wall.",
@@ -49,6 +51,7 @@ return {
     -- the rest of the shift.
     transitions = {
         {
+            sound = "smash",
             tool = "screwdriver",
             secs = 2.0,
             gone = true,

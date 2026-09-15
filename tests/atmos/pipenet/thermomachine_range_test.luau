@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
 -- The dial taken to both of its stops, and then changed in the middle
@@ -55,7 +56,7 @@ end
 
 local function moles(x, y)
     local n = 0.0
-    for _, amount in pairs(t.pipe_gas(x, y) or {}) do
+    for _, amount in pairs(network_matter.gas(x, y) or {}) do
         n = n + amount
     end
     return n
@@ -74,10 +75,10 @@ t.world(
     [==[(
     name: "cold room",
     legend: {
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "########",
@@ -85,12 +86,36 @@ t.world(
         "#..a..g#",
         "########",
     ],
-    pipes: [(1, 1, 4), (2, 1, 4)],
-    structures: [(3, 2, "player_spawn"), (3, 1, "thermomachine")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
+    structures: [(3, 2, "player_spawn"), (3, 1, "thermomachine")],
+
 )]==],
     7
 )
@@ -101,8 +126,8 @@ t.click(p, 3, 1, t.target_at(p, 3, 1, "thermomachine"))
 t.tick()
 
 local charged = moles(1, 1)
-local opening_kpa = assert(t.pipe_pressure(1, 1))
-near(assert(t.pipe_temperature(1, 1)), T20C, 0.01, "the run opens at room temperature")
+local opening_kpa = assert(network_matter.pressure(1, 1))
+near(assert(network_matter.temperature(1, 1)), T20C, 0.01, "the run opens at room temperature")
 near(
     ui_controls.number(ui_controls.state(p).gauge),
     needle(T20C),
@@ -158,10 +183,10 @@ ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(assert(t.structure_at(3, 1)).state == "running", "the unit is running")
 
-local previous = assert(t.pipe_temperature(1, 1))
+local previous = assert(network_matter.temperature(1, 1))
 for n = 1, 10 do
     pass()
-    local now = assert(t.pipe_temperature(1, 1))
+    local now = assert(network_matter.temperature(1, 1))
     assert(
         now <= previous + 1e-9,
         "pass " .. n .. " never runs backwards: " .. previous .. " -> " .. now
@@ -169,23 +194,23 @@ for n = 1, 10 do
     assert(now >= FLOOR - 1e-9, "and never dips under the floor: " .. now)
     previous = now
 end
-near(assert(t.pipe_temperature(1, 1)), FLOOR, 1e-6, "the descent arrests ON the stop")
+near(assert(network_matter.temperature(1, 1)), FLOOR, 1e-6, "the descent arrests ON the stop")
 
 -- Sampled again and again, long after it arrived. tg's pass computes
 -- `delta = target - T` and returns on a zero, so a unit sitting on its
 -- setpoint does nothing at all -- and "nothing" has to mean nothing,
 -- not a hunt either side of the number.
-local arrested = assert(t.pipe_temperature(1, 1))
+local arrested = assert(network_matter.temperature(1, 1))
 for n = 1, 10 do
     t.run_seconds(5)
-    near(assert(t.pipe_temperature(1, 1)), arrested, 1e-9, "sample " .. n .. " has not moved a bit")
+    near(assert(network_matter.temperature(1, 1)), arrested, 1e-9, "sample " .. n .. " has not moved a bit")
 end
 
 -- NOT ONE MOLE, and the pressure that fell is the gas law falling with
 -- the temperature -- the same moles in the same volume, colder.
 near(moles(1, 1), charged, charged * 1e-9, "no gas entered or left the run")
 near(
-    assert(t.pipe_pressure(1, 1)) / opening_kpa,
+    assert(network_matter.pressure(1, 1)) / opening_kpa,
     FLOOR / T20C,
     1e-6,
     "and the pressure fell in the ratio the temperature did"
@@ -217,10 +242,10 @@ near(
     "and the needle sits hard against the hot end"
 )
 
-previous = assert(t.pipe_temperature(1, 1))
+previous = assert(network_matter.temperature(1, 1))
 for n = 1, 10 do
     pass()
-    local now = assert(t.pipe_temperature(1, 1))
+    local now = assert(network_matter.temperature(1, 1))
     assert(
         now >= previous - 1e-9,
         "pass " .. n .. " never runs backwards: " .. previous .. " -> " .. now
@@ -228,13 +253,13 @@ for n = 1, 10 do
     assert(now <= CEILING + 1e-9, "and never overshoots the ceiling: " .. now)
     previous = now
 end
-near(assert(t.pipe_temperature(1, 1)), CEILING, 1e-6, "the climb arrests ON the stop")
+near(assert(network_matter.temperature(1, 1)), CEILING, 1e-6, "the climb arrests ON the stop")
 
-local topped = assert(t.pipe_temperature(1, 1))
+local topped = assert(network_matter.temperature(1, 1))
 for n = 1, 10 do
     t.run_seconds(5)
     near(
-        assert(t.pipe_temperature(1, 1)),
+        assert(network_matter.temperature(1, 1)),
         topped,
         1e-9,
         "hot sample " .. n .. " has not moved either"
@@ -242,14 +267,14 @@ for n = 1, 10 do
 end
 near(moles(1, 1), charged, charged * 1e-9, "still not one mole in or out")
 near(
-    assert(t.pipe_pressure(1, 1)) / opening_kpa,
+    assert(network_matter.pressure(1, 1)) / opening_kpa,
     CEILING / T20C,
     1e-6,
     "and the pressure climbed in that ratio too"
 )
 near(
     assert(tonumber(readout(ui_controls.state(p), "thermo.pipe"):match("[%d%.]+"))),
-    assert(t.pipe_temperature(1, 1)),
+    assert(network_matter.temperature(1, 1)),
     0.1,
     "with the panel's thermometer reading the run it is plumbed into"
 )
@@ -271,10 +296,10 @@ t.world(
     [==[(
     name: "freezer bay",
     legend: {
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "##########",
@@ -282,17 +307,50 @@ t.world(
         "#..a....g#",
         "##########",
     ],
-    pipes: [(2, 1, 4), (4, 1, 4), (5, 1, 4)],
+    networks: [
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+    ],
     structures: [
         (3, 2, "player_spawn"),
         (1, 1, "stationary_tank", "anchored", ("n2", 400.0)),
         (3, 1, "manual_valve"),
         (6, 1, "thermomachine"),
     ],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3),
-    ],
+
 )]==],
     7
 )
@@ -305,8 +363,8 @@ t.click(e, 3, 1, t.target_at(e, 3, 1, "manual_valve"))
 t.run_seconds(4)
 assert(assert(t.structure_at(3, 1)).state == "open", "and an engineer opens it onto the line")
 assert(
-    assert(t.pipe_pressure(5, 1)) > 300.0,
-    "which charges the run off the tank: " .. assert(t.pipe_pressure(5, 1))
+    assert(network_matter.pressure(5, 1)) > 300.0,
+    "which charges the run off the tank: " .. assert(network_matter.pressure(5, 1))
 )
 
 for _ = 1, 3 do
@@ -331,7 +389,7 @@ near(ui_controls.number(ui_controls.state(e).gauge), 100.0, 1e-9, "and the needl
 for _ = 1, 10 do
     pass()
 end
-local caught = assert(t.pipe_temperature(5, 1))
+local caught = assert(network_matter.temperature(5, 1))
 assert(caught > T20C + 40.0, "ten passes in, the line is well up: " .. caught)
 assert(caught < CEILING - 20.0, "and still well short of the target it was given: " .. caught)
 assert(
@@ -359,7 +417,7 @@ near(
 )
 
 pass()
-local turned = assert(t.pipe_temperature(5, 1))
+local turned = assert(network_matter.temperature(5, 1))
 assert(
     turned < caught - 20.0,
     "and it turned round on the very next pass: " .. caught .. " -> " .. turned
@@ -368,7 +426,7 @@ assert(
 previous = turned
 for n = 1, 10 do
     pass()
-    local now = assert(t.pipe_temperature(5, 1))
+    local now = assert(network_matter.temperature(5, 1))
     assert(now <= previous + 1e-9, "the descent is monotone too, pass " .. n .. ": " .. now)
     assert(now >= 250.0 - 1e-9, "and it does not undershoot the new target: " .. now)
     previous = now
@@ -376,7 +434,7 @@ end
 
 -- ...and once more, back the other way, before it ever arrives. Three
 -- settings in one job, and the panel tracked every one of them.
-local mid = assert(t.pipe_temperature(5, 1))
+local mid = assert(network_matter.temperature(5, 1))
 assert(mid > 250.0 + 5.0, "still on its way down when the dial moves again: " .. mid)
 ui_controls.set(e, "temperature", 300)
 t.run_ticks(2)
@@ -395,23 +453,23 @@ near(
 
 pass()
 assert(
-    assert(t.pipe_temperature(5, 1)) > mid,
+    assert(network_matter.temperature(5, 1)) > mid,
     "and it is heating again, never switched off and on: "
         .. mid
         .. " -> "
-        .. assert(t.pipe_temperature(5, 1))
+        .. assert(network_matter.temperature(5, 1))
 )
 
 t.run_seconds(90)
 near(
-    assert(t.pipe_temperature(5, 1)),
+    assert(network_matter.temperature(5, 1)),
     300.0,
     0.01,
     "the line settles on the last number it was given"
 )
 t.run_seconds(30)
 near(
-    assert(t.pipe_temperature(5, 1)),
+    assert(network_matter.temperature(5, 1)),
     300.0,
     0.01,
     "and holds it, with the reservoir behind it holding too"

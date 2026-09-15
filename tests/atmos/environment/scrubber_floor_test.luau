@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
 -- The scrubber's FLOOR: the one thing about this machine that is not
@@ -72,7 +73,7 @@ end
 
 local function pipe_moles(x, y, layer)
     local n = 0.0
-    for _, amount in pairs(t.pipe_gas(x, y, layer) or {}) do
+    for _, amount in pairs(network_matter.gas(x, y, layer) or {}) do
         n = n + amount
     end
     return n
@@ -95,11 +96,11 @@ end
 local DEAD_SUPPLY = [==[(
     name: "return grille, no supply",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "########",
@@ -110,16 +111,40 @@ local DEAD_SUPPLY = [==[(
     // The waste main runs out under the west wall, so the room's air
     // has somewhere to go that is not the room. Layer 2, where a
     // scrubber lives.
-    pipes: [(0, 1, 2), (1, 1, 2)],
+    networks: [
+        (x: 0, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+    ],
     // Placed and SILENT, which is the whole point: a placement that
     // says nothing is a return grille, and this file is what that
     // means. It is put down running, the way a commissioned station's
     // machines are.
     structures: [(3, 1, "player_spawn"), (2, 1, "air_scrubber", "scrubbing")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
-    ],
+
 )]==]
 
 t.world(DEAD_SUPPLY, 7)
@@ -197,10 +222,10 @@ assert(held > 90.0, "a cold room, never an empty one: " .. held .. " kPa")
 -- The books, across the room/net boundary. Nothing else on this map
 -- moves gas, so what left one side is standing on the other.
 assert(
-    pipe_moles(1, 1, 2) > 100.0,
+    pipe_moles(1, 1, "l2") > 100.0,
     "and the surplus is in the waste main, where the plant would find"
         .. " it: "
-        .. pipe_moles(1, 1, 2)
+        .. pipe_moles(1, 1, "l2")
         .. " mol"
 )
 
@@ -219,11 +244,11 @@ assert(
 local LIVE_SUPPLY = [==[(
     name: "return grille, live supply",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "########",
@@ -234,7 +259,35 @@ local LIVE_SUPPLY = [==[(
     // Two runs sharing one corridor and never meeting, which is what
     // the layer convention is for: the waste main on L2 under the
     // grille, the supply on L4 between the bottle and the vent.
-    pipes: [(0, 1, 2), (1, 1, 2), (4, 1, 8)],
+    networks: [
+        (x: 0, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+    ],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
@@ -245,10 +298,7 @@ local LIVE_SUPPLY = [==[(
         (3, 1, "connector_port"),
         (3, 1, "canister", { "blend": "canister_air", "open": true }),
     ],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
-    ],
+
 )]==]
 
 t.world(LIVE_SUPPLY, 7, "free_build")
@@ -259,12 +309,12 @@ assert(assert(t.structure_at(5, 1)).id == "vent", "a supply vent at the far end"
 assert(assert(t.canister_pressure(3, 1)) > 4000.0, "on a full bottle")
 
 t.run_seconds(30)
-local early = pipe_moles(1, 1, 2)
+local early = pipe_moles(1, 1, "l2")
 local room_early = room_kpa()
 t.run_seconds(120)
-local mid = pipe_moles(1, 1, 2)
+local mid = pipe_moles(1, 1, "l2")
 t.run_seconds(120)
-local late = pipe_moles(1, 1, 2)
+local late = pipe_moles(1, 1, "l2")
 
 assert(mid > early + 1.0, "moles keep arriving in the waste main: " .. early .. " -> " .. mid)
 assert(
@@ -360,11 +410,11 @@ assert(
 local NAMED = [==[(
     name: "named roster, floor over zero",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "########",
@@ -372,7 +422,34 @@ local NAMED = [==[(
         "#....ag#",
         "########",
     ],
-    pipes: [(0, 1, 2), (1, 1, 2)],
+    networks: [
+        (x: 0, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+    ],
     // Sieving, dial wide open so the section is short, and the floor
     // the machine ships with.
     structures: [
@@ -380,10 +457,7 @@ local NAMED = [==[(
         (2, 1, "air_scrubber", "scrubbing",
             { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 100.0 }),
     ],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
-    ],
+
 )]==]
 
 t.world(NAMED, 7, "free_build")

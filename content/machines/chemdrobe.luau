@@ -15,6 +15,8 @@
 -- than becoming decorative or mechanically dishonest rows.
 return {
     id = "chemdrobe",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.chemdrobe.name",
     name = "ChemDrobe",
     sprite = "chemdrobe",

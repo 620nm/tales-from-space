@@ -17,10 +17,12 @@ local action_rules = require("@lib/action_rules")
 -- Lunatic has no scripted drop-item effect, so the ordinary drop key is
 -- one extra input before wrenching; the layer selection itself remains
 -- exact and server-validated.
-local LAYERS = { 1, 2, 4, 8, 16 }
+local CHANNELS = { "l1", "l2", "l3", "l4", "l5" }
 
 local content = {
     id = "pipe_meter",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.pipe_meter.name",
     name = "meter",
     -- tg's `icon_state = "meter"` off the fittings sheet: the gauge
@@ -34,20 +36,24 @@ local content = {
     mode = 2,
 }
 
-content.actions = { action_rules.primary("set_layer", action_rules.kind("pipe")) }
+content.actions = { action_rules.primary("set_layer", action_rules.network("pipe")) }
 
 if sim ~= nil then
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
-        local clicked, target = ev.claim, ev.claim
+        local target = ev.claim
         local _x, _y, _choice = x, y, choice
-        if target == nil or target.kind ~= "pipe" then
+        if target == nil or target.kind ~= "network" then
             return { replaced = false }
         end
-        for index, layer in ipairs(LAYERS) do
-            if target.layer == layer then
+        local network = sim.network(x, y, target.instance)
+        if network == nil or network.network ~= "pipe" then
+            return { replaced = false }
+        end
+        for index, channel in ipairs(CHANNELS) do
+            if network.channel == channel then
                 sim.set_mode(self, index - 1)
                 sim.message.send({
                     recipient = user,

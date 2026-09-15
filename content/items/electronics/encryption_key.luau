@@ -25,6 +25,8 @@ local stock_parts = require("@lib/stock_parts")
 -- items/network_card.luau).
 local content = {
     id = "encryption_key",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.encryption_key.name",
     name = "encryption key",
     sprite = "encryption_key",

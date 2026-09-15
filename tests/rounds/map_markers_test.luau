@@ -3,8 +3,8 @@
 local FILTERED = [==[(
     name: "marker filters",
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "######",
@@ -42,7 +42,7 @@ assert(not ok, "a job with no matching marker is refused")
 -- marker schema with a different mode policy.
 local FREE_BUILD = [==[(
     name: "builder markers",
-    legend: { '.': (turf: Floor), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: ["#####", "#...#", "#####"],
     structures: [
         (1, 1, "player_spawn", { "roles": "builder" }),
@@ -58,7 +58,7 @@ assert(x == 1 and y == 1, "Free Build uses its builder role marker")
 -- Zero disables a point. A positive point remains usable beside it.
 local DISABLED = [==[(
     name: "disabled marker",
-    legend: { '.': (turf: Floor), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: ["#####", "#...#", "#####"],
     structures: [
         (1, 1, "player_spawn", { "weight": 0 }),
@@ -75,7 +75,7 @@ assert(x == 2 and y == 1, "a zero-weight marker is never selected")
 -- sample of late joins. The fixed seed makes this regression reproducible.
 local WEIGHTED = [==[(
     name: "weighted markers",
-    legend: { '.': (turf: Floor), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: ["#####", "#...#", "#####"],
     structures: [
         (1, 1, "player_spawn", { "weight": 99 }),

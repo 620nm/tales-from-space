@@ -28,6 +28,7 @@
 -- does not exist here; none of them changes what a table IS.
 return {
     id = "table",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.table.name",
     name = "table",
     -- The isolated frame. Everything else it can wear is derived from
@@ -53,6 +54,7 @@ return {
         -- spells by clearing `frame` first so the framestack drops
         -- instead (:332-341).
         {
+            sound = "smash",
             tool = "screwdriver",
             secs = 2.0,
             yields = { metal = 1 },
@@ -62,6 +64,7 @@ return {
             done = "The top comes off, and the frame is left standing.",
         },
         {
+            sound = "smash",
             tool = "wrench",
             secs = 4.0,
             yields = { metal = 1, rod = 2 },

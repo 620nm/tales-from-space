@@ -80,6 +80,8 @@
 -- is written here and neither can be.
 return {
     id = "air_alarm",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.air_alarm.name",
     name = "air alarm",
     sprite = "air_alarm",
@@ -168,6 +170,7 @@ return {
         -- comes back out is the card that went in -- address, joins and
         -- every vent in the room still bound to it.
         {
+            sound = "smash",
             tool = "crowbar",
             secs = 4.0,
             gone = true,

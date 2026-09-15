@@ -35,6 +35,8 @@
 -- `w_class` in the same breath), not bolted on for a toy.
 return {
     id = "dice_bag",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.dice_bag.name",
     name = "bag of dice",
     sprite = "dice_bag",

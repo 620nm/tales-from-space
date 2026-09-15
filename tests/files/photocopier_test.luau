@@ -15,7 +15,7 @@ end
 t.world(
     [==[(
     name: "copy room",
-    legend: { '.': (turf: Floor), '#': (turf: Wall), 'G': (turf: Floor, fixture: Some(Generator)), 'a': (turf: Floor, fixture: Some(Apc)), 'o': (turf: Floor, fixture: Some(Outlet)) },
+    legend: { '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])), 'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)), 'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)), 'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)) },
     rows: ["#######", "#Gao..#", "#.....#", "#.....#", "#######"],
     structures: [(4, 2, "player_spawn")],
     machines: [(4, 1, "photocopier")],
@@ -23,7 +23,13 @@ t.world(
         (4, 2, "paper"), (3, 2, "four_color_pen"),
         (4, 3, "paper_bin"), (3, 3, "toner_cartridge"),
     ],
-    cables: [(1, 1, 2), (2, 1, 3), (3, 1, 1), (4, 1, 1)],
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+    ],
 )]==],
     0
 )

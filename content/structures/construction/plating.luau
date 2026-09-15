@@ -8,22 +8,33 @@
 -- (`:57`, "You need two rods to make a reinforced floor!").
 return {
     id = "plating",
+    visual_layer = "support",
     name_label = "lunatic/tfs:entity.plating.name",
     name = "plating",
     sprite = "plating",
-    turf = "plating",
+    turf = "component:station_base",
     transitions = {
+        -- The reverse of space.luau's welded deck, with the same tool cost.
         {
+            sound = "smash",
+            tool = "welder",
+            secs = 4.0,
+            fuel = 2.0,
+            into = "remove_component",
+        },
+        {
+            sound = "smash",
             with = { floor_tile = 1 },
             secs = 0.5,
-            into = "turf:floor",
+            into = "add_component:floor_tiles",
             start = "You start tiling the floor.",
             done = "The floor is tiled.",
         },
         {
+            sound = "smash",
             with = { rod = 2 },
             secs = 3.0,
-            into = "turf:reinforced_floor",
+            into = "add_component:reinforcement",
             start = "You start reinforcing the floor.",
             done = "The rods are wrenched down flush with the deck.",
         },

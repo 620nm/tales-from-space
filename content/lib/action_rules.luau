@@ -28,25 +28,24 @@ end
 function rules.deck(...: string): Selector
     local turfs: { Selector } = {}
     for _, id in ipairs({ ... }) do
-        table.insert(turfs, rules.fact("target.turf", id))
+        table.insert(turfs, rules.fact("target.has_component", id))
     end
-    return { all = { rules.kind("turf"), { any = turfs } } }
+    local target_kind: Selector = { any = { rules.kind("turf"), rules.kind("component") } }
+    local prototype: Selector = { any = turfs }
+    return { all = { target_kind, prototype,
+        { ["not"] = rules.fact("target.has_component", "wall") },
+        { ["not"] = rules.fact("target.has_component", "reinforced_wall") } } }
 end
 
-function rules.exposed_deck(carrier: string): Selector
-    if carrier ~= "cable" and carrier ~= "pipe" then
-        error("exposed_deck: carrier must be \"cable\" or \"pipe\"", 2)
-    end
-    return { all = { rules.kind("turf"), rules.fact("target.subfloor_" .. carrier .. "_exposed", true) } }
-end
-
-function rules.network(kind: string): Selector
+function rules.exposed_deck(network: string): Selector
     return {
-        any = {
-            rules.kind(kind),
-            { all = { rules.kind("turf"), rules.fact("target.has_" .. kind, true) } },
-        },
+        all = { { any = { rules.kind("turf"), rules.kind("component") } },
+            rules.fact("target.network_installable", network) },
     }
+end
+
+function rules.network(network: string): Selector
+    return { all = { rules.kind("network"), rules.fact("target.network", network) } }
 end
 
 function rules.primary(id: string, target: Selector, held: Selector?): Action

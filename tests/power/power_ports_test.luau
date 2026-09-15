@@ -1,3 +1,5 @@
+local network_channels = require("@helpers/network_channels")
+
 -- Three lines, and a panel with a port on each of them.
 --
 -- The engine holds no opinion about what a cable layer is for: a bridge
@@ -27,13 +29,13 @@ t.world(
     [==[(
     name: "ports",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'G': (turf: Plating, fixture: Some(Generator)),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'o': (turf: Plating, fixture: Some(Outlet)),
-        'l': (turf: Plating, fixture: Some(Light)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
+        'l': (composition: (components: [(component: "station_base")]), fixture: Some(Light)),
     },
     rows: [
         "########",
@@ -43,10 +45,20 @@ t.world(
     ],
     structures: [(6, 2, "player_spawn")],
     items: [(6, 2, "wirecutters")],
-    cables: [
-        (1, 1, 2), (2, 1, 2), (3, 1, 2), (4, 1, 2), (5, 1, 2), (6, 1, 2),
-        (4, 1, 1), (5, 1, 1), (6, 1, 1),
-        (4, 1, 4), (4, 2, 4), (3, 2, 4), (2, 2, 4),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l3", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l3", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l3", kind: "cable", facing: 15),
     ],
     labels: [(4, 1, "Engineering")],
 )]==],
@@ -61,27 +73,29 @@ t.run_seconds(3) -- the electrical pass is 0.5 Hz; let one land
 -- EVERY LINE IS A LINE. The spare main is not a reserved layer any
 -- more: a lamp wired to nothing but blue burns off it.
 -- ---------------------------------------------------------------
-assert(t.cable_at(2, 2) == 4, "the west socket is on the blue main alone")
+assert(network_channels.at(2, 2, "power") == "l3", "the west socket is on the blue main alone")
 assert(t.lit(1, 2), "and the lamp on its cord is burning")
-assert(t.segment_at(2, 2).lighting_feed == 4, "off the line it is standing on")
-assert(t.segment_at(2, 2).l1 == nil, "with no red under it at all")
+assert(t.network_feed(2, 2, "power", "lighting") == "l3", "off the line it is standing on")
+assert(t.network_segment(2, 2, "power", "l1").segment == nil, "with no red under it at all")
 
 assert(t.lit(5, 2), "the east lamp is burning too")
-assert(t.segment_at(6, 1).lighting_feed == 2, "its socket is on the backbone, which comes first")
-assert(t.segment_at(6, 1).l1 ~= nil, "though the room circuit runs under it as well")
+assert(t.network_feed(6, 1, "power", "lighting") == "l2", "its socket is on the backbone, which comes first")
+assert(t.network_segment(6, 1, "power", "l1").segment ~= nil, "though the room circuit runs under it as well")
 
 -- ---------------------------------------------------------------
 -- THE PANEL, PORT BY PORT. Three ports, four possible modes, and the watts
 -- each one carried on the last pass.
 -- ---------------------------------------------------------------
-local ports = t.ports_at(4, 1)
+local ports = t.ports_at(4, 1, "power")
 assert(ports ~= nil, "the panel answers for its ports")
 assert(ports.kind == "apc", "and says what it is: " .. ports.kind)
-assert(ports.l1 and ports.l2 and ports.l3, "the panel exposes all three ports")
+local room_port: SpecPort = assert(ports.channels["l1"])
+local backbone_port: SpecPort = assert(ports.channels["l2"])
+local spare_port: SpecPort = assert(ports.channels["l3"])
 assert(ports.energized, "its own pool is carrying")
-assert(ports.l1.mode == "output", "L1 feeds the room: " .. ports.l1.mode)
-assert(ports.l2.mode == "input", "L2 is where it takes from: " .. ports.l2.mode)
-assert(ports.l3.mode == "output", "L3 feeds the spare main: " .. ports.l3.mode)
+assert(room_port.mode == "output", "L1 feeds the room: " .. room_port.mode)
+assert(backbone_port.mode == "input", "L2 is where it takes from: " .. backbone_port.mode)
+assert(spare_port.mode == "output", "L3 feeds the spare main: " .. spare_port.mode)
 
 -- Two lamps, and only one of them on the panel's books: the east
 -- socket is wired to the backbone as well, so it prefers that and
@@ -90,11 +104,11 @@ assert(ports.l3.mode == "output", "L3 feeds the spare main: " .. ports.l3.mode)
 -- A lit fitting bills range x power x the rate (tg light.dm:307): a
 -- stock tube at 6 and 1.0 draws 120 W.
 local TUBE_W = 120.0
-near(ports.l1.out_w, 0.0, 1e-9, "the room circuit carries nobody yet")
-near(ports.l3.out_w, TUBE_W, 0.001, "the spare main carries its lamp")
-near(ports.l2.in_w, TUBE_W, 0.001, "and the input port carries that one alone")
-near(ports.l1.in_w, 0.0, 1e-9, "an output port draws nothing in")
-assert(t.ports_at(1, 1) == nil, "a generator is not a bridge")
+near(room_port.out_w, 0.0, 1e-9, "the room circuit carries nobody yet")
+near(spare_port.out_w, TUBE_W, 0.001, "the spare main carries its lamp")
+near(backbone_port.in_w, TUBE_W, 0.001, "and the input port carries that one alone")
+near(room_port.in_w, 0.0, 1e-9, "an output port draws nothing in")
+assert(t.ports_at(1, 1, "power") == nil, "a generator is not a bridge")
 
 -- ---------------------------------------------------------------
 -- THE FALL-THROUGH. Part the backbone under the east socket and it
@@ -104,15 +118,15 @@ assert(t.ports_at(1, 1) == nil, "a generator is not a bridge")
 t.click(p, 6, 2, t.target_at(p, 6, 2, "wirecutters"))
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
-t.click_subfloor(p, 6, 1, "cable", 2)
+t.click_network(p, 6, 1, assert(t.network_instance(6, 1, "power", "l2")))
 t.run_seconds(1.5)
-assert(t.cable_at(6, 1) == 1, "the yellow line parted, the red one under it did not")
+assert(network_channels.at(6, 1, "power") == "l1", "the yellow line parted, the red one under it did not")
 t.run_seconds(3)
 
 assert(t.lit(5, 2), "the lamp never went out")
-assert(t.segment_at(6, 1).lighting_feed == 1, "its socket is on the room circuit now")
+assert(t.network_feed(6, 1, "power", "lighting") == "l1", "its socket is on the room circuit now")
 near(
-    assert(assert(t.ports_at(4, 1)).l1).out_w,
+    assert(assert(t.ports_at(4, 1, "power")).channels["l1"]).out_w,
     TUBE_W,
     0.001,
     "and the panel's room circuit carries it"
@@ -127,15 +141,16 @@ t.outage()
 t.run_seconds(3)
 assert(t.ledger_has("PowerOutage"), "the trip is on the record")
 
-local dead = assert(t.ports_at(4, 1))
+local dead = assert(t.ports_at(4, 1, "power"))
 assert(not dead.energized, "the panel's pool is dark")
 local dead_ports: { [string]: SpecPort } =
-    { l1 = assert(dead.l1), l2 = assert(dead.l2), l3 = assert(dead.l3) }
+    { l1 = assert(dead.channels["l1"]), l2 = assert(dead.channels["l2"]), l3 = assert(dead.channels["l3"]) }
 for line, port in pairs(dead_ports) do
     near(port.in_w, 0.0, 1e-9, line .. " draws nothing")
     near(port.out_w, 0.0, 1e-9, line .. " feeds nothing")
 end
 assert(not t.lit(1, 2), "the lamp off the spare main is out")
 assert(not t.lit(5, 2), "and so is the one off the room circuit")
-assert(t.segment_at(2, 2).live == false, "no line anywhere is carrying")
-assert(t.cable_at(2, 2) == 4, "the cable is all still there, of course")
+local spare = t.network_segment(2, 2, "power", "l3")
+assert(not spare.equipment and not spare.lighting, "the spare main is carrying no power")
+assert(network_channels.at(2, 2, "power") == "l3", "the cable is all still there, of course")

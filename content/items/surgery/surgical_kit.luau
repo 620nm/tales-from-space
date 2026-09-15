@@ -2,6 +2,9 @@
 -- container, filled at spawn. Reuses the toolbelt picture for now.
 return {
     id = "surgical_kit",
+    visual_layer = "entities",
+    held_visual_layer = "held",
+    worn_visual_layer = "equipment_belt",
     name_label = "lunatic/tfs:entity.surgical_kit.name",
     name = "surgical kit",
     sprite = "toolbelt",

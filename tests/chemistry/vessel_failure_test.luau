@@ -10,7 +10,7 @@
 -- Filling one past its rating is not something a crewman can do -- the
 -- station's pumps top out three orders of magnitude below it -- so the
 -- charge comes from `t.charge_vessel`, a precondition setter with the
--- standing of `t.heat_pipe`. Everything asserted afterwards is what a
+-- standing of `network_matter.heat`. Everything asserted afterwards is what a
 -- crewman sees: a pressure, a picture, a look, and the room.
 
 -- ---------------------------------------------------------------
@@ -24,10 +24,10 @@ t.world(
     [==[(
     name: "canister bay",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'c': (turf: Floor),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'c': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
@@ -98,9 +98,9 @@ t.world(
     [==[(
     name: "tank room",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",

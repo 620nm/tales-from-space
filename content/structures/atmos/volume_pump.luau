@@ -28,6 +28,8 @@
 -- over it, like the pipe either side.
 return {
     id = "volume_pump",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.volume_pump.name",
     name = "volumetric pump",
     sprite = "volpump_off_n",
@@ -65,6 +67,8 @@ return {
         },
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "volume_pump",
         alternate_tool = "multitool",
         positions = { "off", "running" },
@@ -73,7 +77,8 @@ return {
         max_kpa = 9000.0,
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "volume_pump_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -82,6 +87,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             -- Only while it is OFF. tg's `can_unwrench`: "You cannot
             -- unwrench [src], turn it off first!" (volume_pump.dm:156-160)
             -- -- said here by the state guard, which answers a wrench

@@ -5,6 +5,8 @@ local action_rules = require("@lib/action_rules")
 -- with the engineering loop (open it from your hand to get at them).
 local content = {
     id = "toolbox",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.toolbox.name",
     name = "mechanical toolbox",
     sprite = "toolbox",

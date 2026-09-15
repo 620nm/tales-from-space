@@ -28,6 +28,8 @@
 -- (temperature_pump.dm:70-76). A dead equipment channel stops it.
 return {
     id = "temperature_pump",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.temperature_pump.name",
     name = "temperature pump",
     sprite = "tpump_off_n",
@@ -61,6 +63,8 @@ return {
         },
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "temperature_pump",
         positions = { "off", "running" },
         -- tg's `heat_transfer_rate = 0` out of the crate, as the share
@@ -69,7 +73,8 @@ return {
         ratio = 0.0,
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "temperature_pump_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -78,6 +83,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             -- tg's temperature pump overrides no `can_unwrench` of its
             -- own, so the family default applies and a running one is
             -- not to be pulled out of the line. The guard is the state,

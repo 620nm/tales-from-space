@@ -62,6 +62,8 @@
 -- see tfs/assets/sprites/71-thermomachine.ron.
 return {
     id = "thermomachine",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.thermomachine.name",
     name = "temperature control unit",
     sprite = "thermo_off",
@@ -87,6 +89,8 @@ return {
         running = "thermo_on",
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "thermomachine",
         positions = { "off", "running" },
         -- tg's `target_temperature = T20C` out of the crate
@@ -142,6 +146,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             -- tg refuses the screwdriver on a running unit ("turn
             -- off!", thermomachine.dm:200-203) before it will open the
             -- panel, and the panel has to be open before anything comes

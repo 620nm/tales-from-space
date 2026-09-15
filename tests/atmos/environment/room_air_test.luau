@@ -46,8 +46,8 @@ local MAP = [==[
 (
     name: "painted air",
     legend: {
-        '#': (turf: Wall),
-        '.': (turf: Floor),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
     rows: [
         "#######",

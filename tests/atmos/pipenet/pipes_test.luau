@@ -1,9 +1,14 @@
+local network_matter = require("@helpers/network_matter")
+local network_channels = require("@helpers/network_channels")
+
+local composition = require("@helpers/composition")
+
 -- Plumbing, from both ends: a player runs a line and pulls it up, and
 -- gas crosses a station through the line somebody else already ran.
 --
 -- Layer masks are tg's five piping layers; 4 is layer 3, the
 -- distribution run.
-local DISTRO = 4
+local DISTRO = "l3"
 
 local function said(p, want)
     for _, m in ipairs(t.messages(p)) do
@@ -22,10 +27,10 @@ t.world(
     [==[(
     name: "plumbing",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        'o': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -53,38 +58,38 @@ for _, x in ipairs({ 1, 2, 3 }) do
     t.click(p, x, 1, nil, -14, 14)
     t.run_seconds(1.5)
 end
-assert(t.pipe(1, 1) == DISTRO, "a length went down at the west end")
-assert(t.pipe(2, 1) == DISTRO, "and through the middle")
-assert(t.pipe(3, 1) == DISTRO, "and out the east end")
-assert(t.ledger_has("PipeLaid"), "every length is on the record")
+assert(network_channels.at(1, 1, "pipe") == "l3", "a length went down at the west end")
+assert(network_channels.at(2, 1, "pipe") == "l3", "and through the middle")
+assert(network_channels.at(3, 1, "pipe") == "l3", "and out the east end")
+assert(t.ledger_has("NetworkPlaced"), "every length is on the record")
 
 -- The finished floor in the middle of the room refuses a length: pipe
 -- is subfloor work and the tile has to be open.
 local _ = t.messages(p)
 t.click(p, 2, 2, nil, -14, 14)
 t.run_ticks(4)
-assert(t.pipe(2, 2) == 0, "no length under a finished floor")
+assert(network_channels.at(2, 2, "pipe") == "", "no length under a finished floor")
 assert(
     not said(p, "The floor is in the way. Pry the tile up first."),
     "an inapplicable target does not invoke the held pipe handler"
 )
 
 -- A run a player builds starts empty -- nobody filled it.
-assert(t.pipe_pressure(2, 1) ~= nil, "the run is a real net")
-assert(assert(t.pipe_pressure(2, 1)) < 1.0, "and it is empty until something fills it")
+assert(network_matter.pressure(2, 1) ~= nil, "the run is a real net")
+assert(assert(network_matter.pressure(2, 1)) < 1.0, "and it is empty until something fills it")
 
 -- Unwrench the middle: the run parts in two and gives back a length.
 t.drop(p)
 t.run_ticks(2)
 t.click(p, 3, 3, t.target_at(p, 3, 3, "wrench")) -- wrench
 t.run_ticks(2)
-t.click_subfloor(p, 2, 1, "pipe", DISTRO)
+t.click_network(p, 2, 1, assert(t.network_instance(2, 1, "pipe", "l3")))
 t.run_seconds(1.5)
-assert(t.pipe(2, 1) == 0, "the middle length came up")
-assert(t.pipe(1, 1) == DISTRO, "the ends stayed")
-assert(t.pipe(3, 1) == DISTRO)
+assert(network_channels.at(2, 1, "pipe") == "", "the middle length came up")
+assert(network_channels.at(1, 1, "pipe") == "l3", "the ends stayed")
+assert(network_channels.at(3, 1, "pipe") == "l3")
 assert(t.count_items("pipe") > 0, "and it is a length you can lay again")
-assert(t.ledger_has("PipePulled"), "pulling a line is on the record too")
+assert(t.ledger_has("NetworkRemoved"), "pulling a line is on the record too")
 
 -- A wrench used on the exact loose pipe atom fastens that item; it does not
 -- try to pick it up into the already occupied hand, nor choose some other
@@ -94,7 +99,7 @@ assert(t.ledger_has("PipePulled"), "pulling a line is on the record too")
 t.world(
     [==[(
     name: "fasten exact loose pipe",
-    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [
         "#####",
         "#...#",
@@ -103,9 +108,14 @@ t.world(
     ],
     structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "wrench"), (2, 1, "screwdriver")],
-    pipes: [(1, 1, 2), (2, 1, 6), (3, 1, 2), (2, 2, 4)],
-    pipe_facing: [(1, 1, 2, 4), (2, 1, 2, 12), (3, 1, 2, 8),
-                  (2, 1, 4, 3), (2, 2, 4, 1)],
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 4),
+        (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 12),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 3),
+        (x: 3, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 8),
+        (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 1),
+    ],
+
 )]==],
     7
 )
@@ -114,19 +124,19 @@ local f = t.join()
 t.tick()
 t.click(f, 2, 2, t.target_at(f, 2, 2, "wrench"))
 t.run_ticks(2)
-t.click_subfloor(f, 2, 1, "pipe", 2)
+t.click_network(f, 2, 1, assert(t.network_instance(2, 1, "pipe", "l2")))
 t.run_seconds(1.5)
-assert(t.pipe(2, 1) == 4, "only the named layer came out")
-assert(t.pipe_dirs(2, 1, 4) == 3, "the crossing layer kept its own facing")
+assert(network_channels.at(2, 1, "pipe") == "l3", "only the named layer came out")
+assert(t.network_dirs(2, 1, "pipe", "l3") == 3, "the crossing layer kept its own facing")
 assert(t.count_items("pipe") == 1, "one exact loose length was returned")
 
 local loose = t.target_at(f, 2, 1, "pipe")
 assert(loose ~= nil, "the returned length has a clickable identity")
 t.click(f, 2, 1, loose)
 t.run_seconds(1.5)
-assert(t.pipe(2, 1) == 6, "the loose layer was fastened beside the crossing")
-assert(t.pipe_dirs(2, 1, 2) == 12, "its east-west directional mask survived")
-assert(t.pipe_dirs(2, 1, 4) == 3, "the other layer was not rewritten")
+assert(network_channels.at(2, 1, "pipe") == "l2,l3", "the loose layer was fastened beside the crossing")
+assert(t.network_dirs(2, 1, "pipe", "l2") == 12, "its east-west directional mask survived")
+assert(t.network_dirs(2, 1, "pipe", "l3") == 3, "the other layer was not rewritten")
 assert(t.count_items("pipe") == 0, "that exact one-piece item was consumed")
 assert(t.hands(f).held == "wrench", "the active wrench remains in hand")
 local lying = t.items_at(2, 1)
@@ -140,7 +150,7 @@ assert(t.ledger_has("ItemConsumed", "pipe"), "the conversion is on the record")
 t.world(
     [==[(
     name: "one winning pipe wrench",
-    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [
         "#####",
         "#...#",
@@ -184,11 +194,21 @@ end
 
 local successes = count(t.messages(a), "You fasten the pipe into place.")
     + count(t.messages(b), "You fasten the pipe into place.")
-assert(successes == 1, "only the topology winner narrates success")
+assert(
+    successes == 1,
+    "only the topology winner narrates success: "
+        .. table.concat(t.messages(a), " | ")
+        .. " / "
+        .. table.concat(t.messages(b), " | ")
+        .. " channels="
+        .. network_channels.at(2, 1, "pipe")
+        .. " items="
+        .. t.count_items("pipe")
+)
 assert(count(t.sounds(a), "ratchet") == 1, "the room hears one winning ratchet")
 assert(count(t.sounds(b), "ratchet") == 1, "every listener hears that same one ratchet")
-assert(t.pipe(2, 1) == DISTRO, "one distribution length landed")
-assert(#t.ledger_rows("PipeLaid") == 1, "one topology mutation was recorded")
+assert(network_channels.at(2, 1, "pipe") == "l3", "one distribution length landed")
+assert(#t.ledger_rows("NetworkPlaced") == 1, "one topology mutation was recorded")
 assert(#t.ledger_rows("ItemConsumed") == 1, "only one stack unit was spent")
 assert(t.hands(a).held == "wrench" and t.hands(b).held == "wrench", "both active tools remain held")
 
@@ -207,9 +227,9 @@ t.world(
     [==[(
     name: "transfer",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "##############",
@@ -219,9 +239,14 @@ t.world(
         "##############",
     ],
     items: [(12, 2, "welder"), (12, 3, "pipe")],
-    pipes: [
-        (6, 2, 4), (6, 3, 4), (7, 3, 4), (8, 3, 4),
-        (9, 3, 4), (10, 3, 4), (11, 3, 4),
+    networks: [
+        (x: 6, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 7, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 8, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 9, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 10, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 11, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
     ],
     structures: [(12, 2, "player_spawn"), (5, 2, "passive_vent"), (12, 2, "passive_vent")],
 )]==],
@@ -233,10 +258,10 @@ t.tick()
 -- The mapped run is commissioned, unlike the one built above, and it
 -- runs toward the wall between the two rooms. It stops one tile short
 -- of that wall: the closet's vent has nothing to draw from yet.
-assert(assert(t.pipe_pressure(8, 3)) > 90.0, "a mapped line is handed over charged")
+assert(assert(network_matter.pressure(8, 3)) > 90.0, "a mapped line is handed over charged")
 assert(assert(t.room_pressure(12, 1)) > 90.0, "and both rooms start breathable")
-assert(t.turf(11, 3) == "wall", "the line runs under a wall")
-assert(t.pipe_pressure(12, 3) == nil, "but stops short of the closet")
+assert(composition.matches(11, 3, { "station_base", "wall" }), "the line runs under a wall")
+assert(network_matter.pressure(12, 3) == nil, "but stops short of the closet")
 
 -- Take the length of pipe FIRST and park it in the other hand. Loose
 -- things do not survive a decompression: what is not in your hands
@@ -278,8 +303,8 @@ t.move(q, "south")
 t.run_ticks(5)
 t.click(q, 12, 3, nil, -14, 14)
 t.run_seconds(1.5)
-assert(t.pipe(12, 3) == DISTRO, "the last length went down")
-assert(t.pipe_pressure(12, 3) ~= nil, "and the vent has a run to draw on")
+assert(network_channels.at(12, 3, "pipe") == "l3", "the last length went down")
+assert(network_matter.pressure(12, 3) ~= nil, "and the vent has a run to draw on")
 
 t.run_seconds(60)
 local west_end = assert(t.room_pressure(2, 1))
@@ -293,8 +318,8 @@ assert(
 
 -- The rooms never touched. Gas crossed because a pipe crosses, and for
 -- no other reason.
-assert(t.turf(11, 1) == "wall", "the rooms are sealed from each other")
-assert(t.turf(11, 3) == "wall")
+assert(composition.matches(11, 1, { "station_base", "wall" }), "the rooms are sealed from each other")
+assert(composition.matches(11, 3, { "station_base", "wall" }))
 
 -- ---------------------------------------------------------------
 -- ---------------------------------------------------------------
@@ -313,9 +338,9 @@ t.world(
     [==[(
     name: "crossing",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -325,14 +350,18 @@ t.world(
     ],
     structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "pipe"), (1, 2, "wrench")],
-    pipes: [(1, 1, 4), (2, 1, 4), (3, 1, 4)],
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
 )]==],
     7
 )
 
 local e = t.join()
 t.tick()
-assert(assert(t.pipe_pressure(2, 1, DISTRO)) > 90.0, "the mapped main is charged")
+assert(assert(network_matter.pressure(2, 1, DISTRO)) > 90.0, "the mapped main is charged")
 
 -- Pick the pipe up and walk the dial round from 3 to 1, tg's
 -- 1->2->3->4->5->1 cycle (construction.dm:438-445).
@@ -353,12 +382,12 @@ assert(t.ledger_has("ModeSet"), "which layer you chose is on the record")
 -- A length on layer 1, straight through the charged layer-3 main.
 t.click(e, 2, 1, nil, -14, 14)
 t.run_seconds(1.5)
-assert(t.pipe(2, 1) == DISTRO + 1, "both layers are under the tile: " .. t.pipe(2, 1))
-assert(assert(t.pipe_pressure(2, 1, DISTRO)) > 90.0, "the main is still charged")
-assert(t.pipe_pressure(2, 1, 1) ~= nil, "and the new length is a real net")
+assert(network_channels.at(2, 1, "pipe") == "l1,l3", "both layers are under the tile: " .. network_channels.at(2, 1, "pipe"))
+assert(assert(network_matter.pressure(2, 1, DISTRO)) > 90.0, "the main is still charged")
+assert(network_matter.pressure(2, 1, "l1") ~= nil, "and the new length is a real net")
 assert(
-    assert(t.pipe_pressure(2, 1, 1)) < 1.0,
-    "which is empty, because it never touched the main: " .. assert(t.pipe_pressure(2, 1, 1))
+    assert(network_matter.pressure(2, 1, "l1")) < 1.0,
+    "which is empty, because it never touched the main: " .. assert(network_matter.pressure(2, 1, "l1"))
 )
 
 -- One pull, one length: the wrench takes the layer the alpha-tested
@@ -367,10 +396,10 @@ t.drop(e)
 t.run_ticks(2)
 t.click(e, 1, 2, t.target_at(e, 1, 2, "wrench")) -- the wrench
 t.run_ticks(2)
-t.click_subfloor(e, 2, 1, "pipe", DISTRO)
+t.click_network(e, 2, 1, assert(t.network_instance(2, 1, "pipe", "l3")))
 t.run_seconds(1.5)
-assert(t.pipe(2, 1) == 1, "the main came up and layer 1 stayed: " .. t.pipe(2, 1))
-assert(t.pipe(1, 1) == DISTRO, "and the rest of the main is untouched")
+assert(network_channels.at(2, 1, "pipe") == "l1", "the main came up and layer 1 stayed: " .. network_channels.at(2, 1, "pipe"))
+assert(network_channels.at(1, 1, "pipe") == "l3", "and the rest of the main is untouched")
 
 -- ---------------------------------------------------------------
 -- Josh's ruling: "two pipes can carry poison and oxygen and run
@@ -389,9 +418,9 @@ t.world(
     [==[(
     name: "parallel mains",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#######",
@@ -400,14 +429,15 @@ t.world(
         "#.....#",
         "#######",
     ],
-    pipes: [
-        (3, 1, 4), (3, 2, 4), (3, 3, 4),
-        (4, 1, 4), (4, 2, 4), (4, 3, 4),
+    networks: [
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 3),
+        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 11),
+        (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 3),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 3),
+        (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 3),
+        (x: 4, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 3),
     ],
-    pipe_facing: [
-        (3, 1, 4, 3), (3, 2, 4, 11), (3, 3, 4, 3),
-        (4, 1, 4, 3), (4, 2, 4, 3), (4, 3, 4, 3),
-    ],
+
     structures: [(1, 1, "player_spawn"), (2, 2, "passive_vent")],
 )]==],
     7
@@ -415,8 +445,8 @@ t.world(
 t.join()
 t.tick()
 
-assert(assert(t.pipe_pressure(3, 2)) > 90.0, "both mains are handed over charged")
-assert(assert(t.pipe_pressure(4, 2)) > 90.0)
+assert(assert(network_matter.pressure(3, 2)) > 90.0, "both mains are handed over charged")
+assert(assert(network_matter.pressure(4, 2)) > 90.0)
 
 -- Open the room to space. The vented main drains through its hole.
 t.fault(1, 1, 6)
@@ -424,8 +454,8 @@ t.run_seconds(6)
 assert(t.is_breached(1, 1), "the room is open to space")
 t.run_seconds(40)
 
-local vented = assert(t.pipe_pressure(3, 2))
-local neighbour = assert(t.pipe_pressure(4, 2))
+local vented = assert(network_matter.pressure(3, 2))
+local neighbour = assert(network_matter.pressure(4, 2))
 assert(vented < 25.0, "the vented main emptied: " .. vented)
 assert(
     neighbour > 90.0,
@@ -442,9 +472,9 @@ t.world(
     [==[(
     name: "parallel mains, unaimed",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#######",
@@ -453,9 +483,13 @@ t.world(
         "#.....#",
         "#######",
     ],
-    pipes: [
-        (3, 1, 4), (3, 2, 4), (3, 3, 4),
-        (4, 1, 4), (4, 2, 4), (4, 3, 4),
+    networks: [
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
     ],
     structures: [(1, 1, "player_spawn"), (2, 2, "passive_vent")],
 )]==],
@@ -467,8 +501,8 @@ t.fault(1, 1, 6)
 t.run_seconds(6)
 t.run_seconds(40)
 assert(
-    assert(t.pipe_pressure(4, 2)) < 25.0,
-    "unaimed, the second column is the same net and drains too: " .. assert(t.pipe_pressure(4, 2))
+    assert(network_matter.pressure(4, 2)) < 25.0,
+    "unaimed, the second column is the same net and drains too: " .. assert(network_matter.pressure(4, 2))
 )
 
 -- ---------------------------------------------------------------
@@ -480,9 +514,9 @@ t.world(
     [==[(
     name: "hand-laid component occupancy",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "#####",
@@ -495,7 +529,7 @@ t.world(
         (2, 2, "player_spawn"),
         (1, 1, "vent"),
         (2, 1, "manual_valve"),
-        (3, 1, "manual_valve", { "layer": 2 }),
+        (3, 1, "manual_valve", { "channel": "l2" }),
     ],
 )]==],
     7
@@ -510,13 +544,14 @@ for _, x in ipairs({ 1, 2 }) do
     local _ = t.messages(h)
     t.click(h, x, 1, nil, -14, 14)
     t.run_seconds(1.5)
-    assert(t.pipe(x, 1) == 0, "no raw pipe appeared under the component at " .. x)
+    assert(network_channels.at(x, 1, "pipe") == "", "no raw pipe appeared under the component at " .. x)
+    local messages = t.messages(h)
     assert(
-        said(h, "An atmospherics component already occupies that pipe layer."),
-        "the hand-laid length names the occupied layer at " .. x
+        #messages == 0,
+        "the blocked layer stays undisclosed at " .. x .. "; got " .. table.concat(messages, " | ")
     )
 end
 
 t.click(h, 3, 1, nil, -14, 14)
 t.run_seconds(1.5)
-assert(t.pipe(3, 1) == DISTRO, "layer 3 crosses a layer-2 component")
+assert(network_channels.at(3, 1, "pipe") == "l3", "layer 3 crosses a layer-2 component")

@@ -13,6 +13,8 @@
 -- (code/modules/surgery/organs/internal/stomach/_stomach.dm:16).
 return {
     id = "organ_stomach",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.organ_stomach.name",
     name = "stomach",
     sprite = "organ_stomach",

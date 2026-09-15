@@ -74,7 +74,7 @@ return {
         liquid = { profile = "flowing", tint = "#FFFFFF" },
         solid = "crystalline",
     },
-    visible = { moles = 0.25, factor = 20, tint = "#E6EDF7" },
+    visible = { moles = 0.25, factor = 20, tint = "#E6EDF7", visual_layer = "gas_haze" },
     -- Where this sits in a tool that offers every substance there is
     -- (docs/MAP-PROPERTIES.md, the recipe panel). Authored as vapour: a humid
     -- room, which condenses out on the first atmos pass exactly as it

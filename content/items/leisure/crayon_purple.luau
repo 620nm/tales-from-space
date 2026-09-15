@@ -4,6 +4,8 @@ local writing = require("@lib/writing")
 -- tg crayons.dm:636-690.
 local content = {
     id = "crayon_purple",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.crayon_purple.name",
     name = "purple crayon",
     sprite = "crayon_purple",

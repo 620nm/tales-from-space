@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
 -- The machines a MAP lays already set up.
@@ -35,12 +36,12 @@ end
 
 -- Moles of one gas standing in the run under a tile, or 0.
 local function gas(x: number, y: number, which: string): number
-    local held = t.pipe_gas(x, y)
+    local held = network_matter.gas(x, y)
     return (held and held[which]) or 0.0
 end
 
 local function moles(x, y)
-    local held = t.pipe_gas(x, y)
+    local held = network_matter.gas(x, y)
     if not held then
         return 0.0
     end
@@ -68,11 +69,11 @@ t.world(
     [==[(
     name: "air mixer",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "##########",
@@ -85,10 +86,47 @@ t.world(
     // Fifty atmospheres of one gas apiece, which is what a tg gas
     // storage chamber holds.
     room_gas: [(1, 1, "n2", 5000.0), (5, 4, "o2", 5000.0)],
-    pipes: [
-        (2, 1, 4), (3, 1, 4), (4, 1, 4),
-        (6, 1, 4), (7, 1, 4), (8, 1, 4),
-        (5, 2, 4), (5, 3, 4),
+    networks: [
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 7, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 8, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 4, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 4, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
     structures: [
         (5, 2, "player_spawn"),
@@ -96,12 +134,7 @@ t.world(
         (5, 4, "passive_vent"),
         (5, 1, "mixer.airmix"),
     ],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3),
-        (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3),
-        (5, 3, 3),
-        (5, 4, 3),
-    ],
+
 )]==],
     7
 )
@@ -111,7 +144,7 @@ t.tick()
 -- The outlet main before the machine has had a pass at it, kept for the
 -- end: what a running air mixer does is only visible against where it
 -- started.
-local early = assert(t.pipe_pressure(7, 1))
+local early = assert(network_matter.pressure(7, 1))
 
 local m = t.structure_at(5, 1)
 assert(m ~= nil and m.id == "mixer.airmix", "the air mixer is where the map put it")
@@ -178,14 +211,14 @@ near(early, 101.325, 0.001, "the outlet main opened the shift at one atmosphere"
 t.run_seconds(8)
 
 near(
-    assert(t.pipe_pressure(7, 1)),
+    assert(network_matter.pressure(7, 1)),
     4500.0,
     1.0,
     "and the mixer filled it to the setpoint with nobody touching it"
 )
 assert(
-    assert(t.pipe_pressure(7, 1)) <= 4500.0,
-    "and not one kPa past it: " .. assert(t.pipe_pressure(7, 1))
+    assert(network_matter.pressure(7, 1)) <= 4500.0,
+    "and not one kPa past it: " .. assert(network_matter.pressure(7, 1))
 )
 
 local out_n2, out_o2, out_all = gas(7, 1, "n2"), gas(7, 1, "o2"), moles(7, 1)
@@ -210,11 +243,11 @@ t.world(
     [==[(
     name: "co2 filter",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "#########",
@@ -223,12 +256,39 @@ t.world(
         "#########",
     ],
     room_gas: [(1, 1, "co2", 100.0)],
-    pipes: [(2, 1, 4), (3, 1, 4), (5, 1, 4), (6, 1, 4), (4, 2, 4)],
-    structures: [(4, 2, "player_spawn"), (1, 1, "passive_vent"), (4, 1, "filter.co2")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3),
-        (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3),
+    networks: [
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
+    structures: [(4, 2, "player_spawn"), (1, 1, "passive_vent"), (4, 1, "filter.co2")],
+
 )]==],
     7
 )

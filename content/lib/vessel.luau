@@ -313,7 +313,7 @@ function vessel.actions(spec: Spec): { action_rules.Action }
             actions,
             action_rules.primary("drink", {
                 all = {
-                    action_rules.kind("turf"),
+                    { any = { action_rules.kind("turf"), action_rules.kind("component") } },
                     action_rules.fact("target.is_actor_tile", true),
                 },
             })
@@ -324,7 +324,7 @@ function vessel.actions(spec: Spec): { action_rules.Action }
             actions,
             action_rules.primary(
                 if spec.soak then "soak" else "spill",
-                action_rules.deck("floor", "plating")
+                action_rules.deck("floor_tiles", "grid_cover", "station_base")
             )
         )
     end
@@ -397,8 +397,10 @@ function vessel.attach(spec: Spec): Definition
             if spec.spill == nil and spec.soak == nil then
                 return { replaced = false }
             end
-            local turf = sim.turf(at.x, at.y)
-            if turf ~= "floor" and turf ~= "plating" then
+            if not sim.has_component(at.x, at.y, "station_base")
+                or sim.has_component(at.x, at.y, "wall")
+                or sim.has_component(at.x, at.y, "reinforced_wall")
+                or sim.has_component(at.x, at.y, "reinforcement") then
                 return { replaced = false }
             end
             if spec.soak ~= nil then

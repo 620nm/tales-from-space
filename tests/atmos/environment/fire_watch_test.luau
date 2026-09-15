@@ -1,3 +1,5 @@
+local composition = require("@helpers/composition")
+
 -- The station's own count of the fires it had, driven entirely by the
 -- matter kernel's edges. Nothing in `main.luau` decides that a fire
 -- starts or stops: the authored plasma rules and the physics do, and
@@ -7,8 +9,8 @@ t.world(
     [==[(
     name: "fire watch bench",
     legend: {
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "###",
@@ -62,7 +64,7 @@ assert(#tallies("fires_out") == 0, "and it has not gone out")
 local projector = t.target_at(p, 1, 1, "atmos_resin_projector")
 t.click(p, 1, 1, projector)
 t.tick()
-t.click_turf(p, 1, 1)
+composition.click_deck(p, 1, 1)
 t.tick()
 t.run_seconds(1)
 assert(#t.ledger_rows("ExtinguishedAt") == 1, "the spray put it out")

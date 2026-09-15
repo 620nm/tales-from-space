@@ -1,3 +1,6 @@
+local network_matter = require("@helpers/network_matter")
+local network_channels = require("@helpers/network_channels")
+
 local ui_controls = require("@helpers/ui_controls")
 
 -- The flow meter: a dial bolted onto a run.
@@ -46,11 +49,11 @@ t.world(
     [==[(
     name: "meter",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        'o': (turf: Floor),
-        '#': (turf: Wall),
-        'c': (turf: Plating),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'c': (composition: (components: [(component: "station_base")])),
     },
     rows: [
         "######",
@@ -59,7 +62,10 @@ t.world(
         "######",
     ],
     items: [(1, 2, "wrench"), (2, 1, "pipe_meter"), (3, 2, "pipe_meter")],
-    pipes: [(2, 1, 4), (3, 1, 4)],
+    networks: [
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
     blends: {
         // Standard air, deliberately: a recipe is moles PER TILE and the
         // shell is 2 m3, so this fills the bottle to exactly one
@@ -86,7 +92,7 @@ assert(t.hands(p).held == "wrench", "wrench in hand")
 
 -- Let the bottle and the run settle into one body of gas.
 t.run_seconds(10)
-local charged = assert(t.pipe_pressure(2, 1))
+local charged = assert(network_matter.pressure(2, 1))
 assert(charged > 90.0, "the run is live: " .. charged .. " kPa")
 
 -- ---- a gauge needs something to gauge ----
@@ -96,12 +102,11 @@ assert(charged > 90.0, "the run is live: " .. charged .. " kPa")
 -- that, and it is the same `over = "pipe"` rule a connector port takes.
 walk(p, "east")
 local _ = t.messages(p)
-t.click(p, 3, 2, t.target_at(p, 3, 2, "pipe_meter"))
+local bare_meter = t.target_at(p, 3, 2, "pipe_meter")
+assert(bare_meter ~= nil, "the loose meter is targetable")
+t.click(p, 3, 2, bare_meter)
 t.run_ticks(2)
-assert(
-    said(p, "There is no pipe under the floor here."),
-    "the refusal names the rule that stopped it"
-)
+assert(said(p, "You can't build that there."), "the installation refusal answers")
 assert(t.structure_at(3, 2) == nil, "nothing was bolted to nothing")
 assert(lying_at(3, 2, "pipe_meter"), "and the fitting survived the attempt")
 
@@ -126,12 +131,12 @@ assert(not lying_at(2, 1, "pipe_meter"), "the fitting was spent into it")
 -- to it.
 t.run_seconds(5)
 assert(
-    assert(t.pipe_pressure(2, 1)) == assert(t.pipe_pressure(3, 1)),
+    assert(network_matter.pressure(2, 1)) == assert(network_matter.pressure(3, 1)),
     "the meter did not split the run it is measuring"
 )
 assert(
-    math.abs(assert(t.pipe_pressure(2, 1)) - charged) < 1.0,
-    "nor change what it reads: " .. charged .. " -> " .. assert(t.pipe_pressure(2, 1))
+    math.abs(assert(network_matter.pressure(2, 1)) - charged) < 1.0,
+    "nor change what it reads: " .. charged .. " -> " .. assert(network_matter.pressure(2, 1))
 )
 
 -- ---- the needle reaches the wire ----
@@ -158,7 +163,7 @@ assert(#drawn == 3, "and nothing else")
 -- reading it without walking over. Two tiles east is past arm's length
 -- and well inside the room.
 local reading = "The pressure gauge reads "
-    .. r2(assert(t.pipe_pressure(2, 1)))
+    .. r2(assert(network_matter.pressure(2, 1)))
     .. " kPa; 293.15 K (20°C)."
 
 walk(p, "east")
@@ -219,7 +224,7 @@ for _, st in ipairs(ui_controls.rows(line.states or {})) do
 end
 assert(gas, "a charged run holds a gas")
 assert(
-    math.abs(ui_controls.number(gas.measure) - assert(t.pipe_pressure(2, 1))) < 1e-9,
+    math.abs(ui_controls.number(gas.measure) - assert(network_matter.pressure(2, 1))) < 1e-9,
     "the panel reads the run: " .. tostring(gas.measure)
 )
 assert(
@@ -247,10 +252,10 @@ assert(t.structure_at(2, 1) == nil, "no meter here now")
 assert(lying_at(2, 1, "pipe_meter"), "and what came up is the fitting it was built from")
 
 -- The line never noticed any of it.
-assert(t.pipe(2, 1) == 4, "the run it was bolted to is untouched")
+assert(network_channels.at(2, 1, "pipe") == "l3", "the run it was bolted to is untouched")
 assert(
-    math.abs(assert(t.pipe_pressure(2, 1)) - charged) < 1.0,
-    "and still at the pressure it was: " .. assert(t.pipe_pressure(2, 1))
+    math.abs(assert(network_matter.pressure(2, 1)) - charged) < 1.0,
+    "and still at the pressure it was: " .. assert(network_matter.pressure(2, 1))
 )
 
 -- ---------------------------------------------------------------
@@ -267,14 +272,17 @@ assert(
 t.world(
     [==[(
     name: "extended main",
-    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [
         "######",
         "#....#",
         "######",
     ],
     items: [(3, 1, "pipe")],
-    pipes: [(1, 1, 4), (2, 1, 4)],
+    networks: [
+        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    ],
     structures: [(3, 1, "player_spawn"), (1, 1, "meter")],
 )]==],
     7
@@ -320,7 +328,7 @@ t.click(m, 3, 1, nil, -14, 14)
 local laid = false
 for _ = 1, 60 do
     t.tick()
-    if t.pipe(3, 1) ~= 0 then
+    if network_channels.at(3, 1, "pipe") ~= "" then
         laid = true
         break
     end

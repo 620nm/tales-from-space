@@ -17,7 +17,7 @@
 -- THE TOP ROW IS WALK-UNDER. tg drops the density of the three parts it
 -- numbered 1-3 and lifts them to `WALL_OBJ_LAYER` (`:191-193`), so a
 -- player walks behind the machine's head and is drawn under it. That is
--- `dense = false, layer = "overhead"` here, per cell; the six cells
+-- `dense = false, visual_layer = "overhead_entities"` here, per cell; the six cells
 -- below stay solid.
 --
 -- NOT OPAQUE. tg's generator never sets `opacity`, so it defaults to 0
@@ -56,7 +56,7 @@ local STATUSES = { "off", "on", "fix0", "fix1", "fix2", "fix3" }
 local footprint = {}
 for n, at in ipairs(ORDER) do
     -- Everything but the head takes the entry's own density.
-    footprint[n] = n <= 3 and { at = at, dense = false, layer = "overhead" } or { at = at }
+    footprint[n] = n <= 3 and { at = at, dense = false, visual_layer = "overhead_entities" } or { at = at }
 end
 
 -- Fifty-four pictures is a loop, not fifty-four lines: the sheet is
@@ -77,6 +77,7 @@ state_sprites.on[5] = { "gravgen_on_5", "gravgen_activated" }
 
 return {
     id = "gravity_generator",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.gravity_generator.name",
     name = "gravitational generator",
     sprite = "gravgen_off_8",
@@ -98,6 +99,7 @@ return {
         -- "The entire frame is barely holding together, the screws need
         -- to be refastened." (`:224`, `screwdriver_act` :272-278)
         {
+            sound = "smash",
             at = "fix0",
             tool = "screwdriver",
             to = "fix1",
@@ -107,6 +109,7 @@ return {
         -- "There's lots of broken seals on the framework, it could use
         -- some welding." (`:226`, `welder_act` :254-262)
         {
+            sound = "smash",
             at = "fix1",
             tool = "welder",
             to = "fix2",
@@ -117,6 +120,7 @@ return {
         -- plasteel should be enough." (`:228`, `item_interaction`
         -- :238-252, which takes exactly ten sheets)
         {
+            sound = "smash",
             at = "fix2",
             with = { plasteel = 10 },
             to = "fix3",
@@ -128,6 +132,7 @@ return {
         -- break outright — the generator comes back shut down, and
         -- somebody has to throw its breaker.)
         {
+            sound = "smash",
             at = "fix3",
             tool = "wrench",
             to = "off",

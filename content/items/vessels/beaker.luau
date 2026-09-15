@@ -15,6 +15,8 @@ local vessel = require("@lib/vessel")
 -- nouns that make it a beaker.
 local content = {
     id = "beaker",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.beaker.name",
     name = "beaker",
     sprite = "beaker",

@@ -9,6 +9,8 @@
 -- is stocked, not made.
 return {
     id = "rglass",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.rglass.name",
     name = "reinforced glass sheets",
     sprite = "rglass",

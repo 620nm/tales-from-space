@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 -- How every atmospherics device in the game is placed and taken away.
 --
 -- tg has ONE pattern for this and no exceptions: you never put a machine
@@ -88,13 +89,13 @@ t.world(
     [==[(
     name: "fittings",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        '_': (turf: Plating),
-        'c': (turf: Floor),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'g': (turf: Floor, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '_': (composition: (components: [(component: "station_base")])),
+        'c': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
         "##########  ",
@@ -104,9 +105,68 @@ t.world(
         "##########  ",
     ],
     items: [(1, 1, "wrench")],
-    pipes: [
-        (2, 2, 4), (3, 2, 4), (4, 2, 4), (5, 2, 4),
-        (5, 1, 4), (6, 1, 4), (7, 1, 4), (8, 1, 4), (9, 1, 4),
+    networks: [
+        (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 7, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 8, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 9, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 9, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 10, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 10, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 8, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 8, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
@@ -116,11 +176,7 @@ t.world(
         (2, 1, "connector_port"), (10, 1, "vent"),
         (2, 1, "canister", { "blend": "canister_air", "open": true }),
     ],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3), (7, 1, 3), (8, 1, 3), (9, 1, 3), (10, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3), (8, 2, 3),
-        (1, 3, 3), (2, 3, 3), (3, 3, 3), (4, 3, 3), (5, 3, 3), (6, 3, 3), (7, 3, 3), (8, 3, 3),
-    ],
+
 )]==],
     7
 )
@@ -199,7 +255,7 @@ assert(lying_at(2, 1, "connector_port_fitting"), "what came up is a fitting lyin
 -- the far end of the round trip nothing is feeding anything, which is
 -- what makes the books below worth taking.
 t.run_seconds(15)
-assert(assert(t.pipe_pressure(5, 1)) < 5.0, "the run the port left is spent")
+assert(assert(network_matter.pressure(5, 1)) < 5.0, "the run the port left is spent")
 
 -- The books, taken with everything static. The room is 8x3 tiles of
 -- 1 m³, the run is nine lengths of 70 L plus the vent's 200 L mouth,
@@ -210,7 +266,7 @@ local CAN_M3 = 2.0
 
 local function books(can_x, can_y)
     return moles(assert(t.canister_pressure(can_x, can_y)), CAN_M3)
-        + moles(assert(t.pipe_pressure(5, 1)), RUN_M3)
+        + moles(assert(network_matter.pressure(5, 1)), RUN_M3)
         + moles(assert(t.room_pressure(4, 2)), ROOM_M3)
 end
 
@@ -364,9 +420,9 @@ assert(
 -- and both of them are paying the hole together. That is what makes a
 -- breach expensive.
 assert(
-    math.abs(assert(t.pipe_pressure(5, 1)) - after) < assert(after) * 0.2 + 10.0,
+    math.abs(assert(network_matter.pressure(5, 1)) - after) < assert(after) * 0.2 + 10.0,
     "the run reads the bottle it is coupled to: "
-        .. assert(t.pipe_pressure(5, 1))
+        .. assert(network_matter.pressure(5, 1))
         .. " vs "
         .. after
 )

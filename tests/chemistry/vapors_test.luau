@@ -1,3 +1,6 @@
+local network_matter = require("@helpers/network_matter")
+local composition = require("@helpers/composition")
+
 -- Caustic vapours, end to end: press a button, tip the bottle out, and
 -- the room fills with something that gets into people.
 --
@@ -34,12 +37,12 @@ t.world(
     [==[(
     name: "fume closet",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        'o': (turf: Floor, fixture: Some(Outlet)),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'g': (turf: Floor, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
         "#######",
@@ -52,7 +55,26 @@ t.world(
     // The waste main runs out under the east wall, so what the scrubber
     // takes has somewhere to go that is not the room. Layer 2, where a
     // scrubber lives.
-    pipes: [(5, 1, 2), (6, 1, 2)],
+    networks: [
+        (x: 5, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+    ],
     // tg's scrubber, spelled out: pointed at a roster with the dial
     // wide open and no floor under it. A placement that SAYS nothing
     // is a return grille instead (scrubber_floor_test.luau).
@@ -62,10 +84,7 @@ t.world(
         (4, 1, "player_spawn", { "jobs": "assistant" }),
         (4, 1, "air_scrubber", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 }),
     ],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3),
-    ],
+
 )]==],
     0
 )
@@ -102,7 +121,7 @@ local function room(key: string)
 end
 
 local function pipe(key: string)
-    local held = t.pipe_gas(5, 1, 2)
+    local held = network_matter.gas(5, 1, "l2")
     return (held and held[key]) or 0.0
 end
 
@@ -164,7 +183,7 @@ local function bottleful()
 
     -- ...and the gesture that costs a shift: a click on the deck tips a
     -- vessel's whole condensed content onto it (items/bottle.luau).
-    t.click_turf(chemist, 2, 1)
+    composition.click_deck(chemist, 2, 1)
     t.run_seconds(20)
     t.drop(chemist)
     t.tick()

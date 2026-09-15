@@ -8,13 +8,15 @@
 -- adding a machine costs zero edits here.
 return {
     id = "machine_frame",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.machine_frame.name",
     name = "machine frame",
     sprite = "frame",
     dense = true,
     states = { "empty", "wired", "boarded" },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         with = { metal = 5 },
         secs = 8.0,
         start = "You start assembling a machine frame.",
@@ -22,6 +24,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             at = "empty",
             with = { cable_coil = 5 },
             hint = { id = "wire", label = "lunatic/tfs:ui.affordance.wire_frame", suggest = true },
@@ -33,6 +36,7 @@ return {
         -- Only a bare frame comes apart under a torch: wiring first, as
         -- tg does, so nobody burns a coil's worth of cable by accident.
         {
+            sound = "smash",
             at = "empty",
             tool = "welder",
             hint = {
@@ -48,6 +52,7 @@ return {
             done = "The frame comes apart.",
         },
         {
+            sound = "smash",
             at = "wired",
             tool = "cutters",
             secs = 2.0,
@@ -59,6 +64,7 @@ return {
         -- Any item with a board table fits; which machine it makes is
         -- the board's business, not the frame's.
         {
+            sound = "smash",
             at = "wired",
             slot = "board",
             to = "boarded",
@@ -70,6 +76,7 @@ return {
         -- board's list, and the refusal reads it out when something is
         -- missing or unwanted.
         {
+            sound = "smash",
             at = "boarded",
             slot = "part",
             done = "It clicks into the assembly.",
@@ -78,6 +85,7 @@ return {
         -- which is one assembly coming apart rather than two steps
         -- (tg's `default_deconstruction_crowbar`).
         {
+            sound = "smash",
             at = "boarded",
             tool = "crowbar",
             eject = "board",
@@ -85,6 +93,7 @@ return {
             done = "You pry the board back out.",
         },
         {
+            sound = "smash",
             at = "boarded",
             tool = "screwdriver",
             secs = 4.0,

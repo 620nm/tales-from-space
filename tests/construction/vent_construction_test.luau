@@ -1,3 +1,6 @@
+local network_matter = require("@helpers/network_matter")
+local network_channels = require("@helpers/network_channels")
+
 -- Building a vent, which until now was the one machine in the
 -- atmospherics kit nobody could build.
 --
@@ -21,7 +24,6 @@ local ONE_ATM = 101.325
 -- The release line the powered vent works to (vents.rs SUPPLY_BELOW).
 local SUPPLIES_UNDER = ONE_ATM * 0.99
 -- tg's five piping layers as a bitmask; 4 is layer 3, the distro run.
-local DISTRO = 4
 
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
@@ -77,7 +79,7 @@ end
 -- Everything standing in the run under a tile, in moles.
 local function pipe_moles(x: number, y: number)
     local n = 0.0
-    for _, amount in pairs(t.pipe_gas(x, y) or {}) do
+    for _, amount in pairs(network_matter.gas(x, y) or {}) do
         n = n + amount
     end
     return n
@@ -101,12 +103,12 @@ t.world(
     [==[(
     name: "vent bench",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'c': (turf: Plating),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'c': (composition: (components: [(component: "station_base")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "########",
@@ -119,7 +121,31 @@ t.world(
     // the main at one atmosphere off the bottle's forty -- tg's own
     // shape, since a fastened bottle IS its line and a vent on a
     // forty-atmosphere main would out-blow the breach below.
-    pipes: [(4, 1, 4)],
+    networks: [
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+    ],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
@@ -129,10 +155,7 @@ t.world(
         (6, 1, "connector_port", { "pipe": "west" }),
         (6, 1, "canister", { "blend": "canister_air" }),
     ],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
-    ],
+
 )]==],
     7
 )
@@ -146,7 +169,7 @@ assert(t.hands(p).held == "rpd", "the RPD is in hand")
 t.use_self(p)
 t.tick()
 
-assert(assert(t.pipe_pressure(4, 1)) > 90.0, "the mapped main opens the shift charged")
+assert(assert(network_matter.pressure(4, 1)) > 90.0, "the mapped main opens the shift charged")
 assert(t.structure_at(3, 1) == nil, "and nothing stands where the vent will go")
 
 -- ---- the refusal comes first ----
@@ -160,7 +183,7 @@ local _ = t.messages(p)
 t.click(p, 4, 1, nil, -14, 14)
 work()
 assert(t.structure_at(4, 1) == nil, "a vent did not cover its centre run")
-assert(t.pipe(4, 1) == DISTRO, "and the raw run is intact")
+assert(network_channels.at(4, 1, "pipe") == "l3", "and the raw run is intact")
 assert(said(p, "Something is already under the floor here."), "the refusal names the occupancy")
 
 -- ---- and then the machine ----
@@ -169,8 +192,8 @@ t.click(p, 3, 1, nil, -14, 14)
 work()
 local vent = t.structure_at(3, 1)
 assert(vent ~= nil and vent.id == "vent", "one click of the RPD built a vent")
-assert(t.pipe(3, 1) == 0, "a unary component is not pipe-over-pipe")
-assert(t.pipe_pressure(3, 1) == nil, "its own tile carries no run at all")
+assert(network_channels.at(3, 1, "pipe") == "", "a unary component is not pipe-over-pipe")
+assert(network_matter.pressure(3, 1) == nil, "its own tile carries no run at all")
 assert(
     t.ledger_has("StructureStep", "vent"),
     "and raising one is an attributed act, like every other machine"
@@ -183,13 +206,13 @@ assert(vent.state == "blowing", "a vent with power is a vent that runs")
 -- Tear the deck open beside the fan. There is no breach state anywhere
 -- (CLAUDE.md): a hull breach is a floor that became space.
 walk(p, "east") -- out of the way of the wind
-assert(t.set_turf(2, 1, "space"), "the deck opens")
+assert(t.set_composition(2, 1, "bare"), "the deck opens")
 t.run_seconds(20)
 assert(
     assert(t.room_pressure(3, 1)) < SUPPLIES_UNDER,
     "the bay blew down past the vent's release line: " .. assert(t.room_pressure(3, 1))
 )
-assert(t.set_turf(2, 1, "plating"), "and the deck goes back")
+assert(t.set_composition(2, 1, "plating"), "and the deck goes back")
 t.tick()
 
 local spent_before = assert(t.canister_pressure(6, 1))
@@ -228,11 +251,11 @@ t.world(
     [==[(
     name: "passive vent bench",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'g': (turf: Plating, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
         "########",
@@ -242,11 +265,36 @@ t.world(
     ],
     structures: [(3, 2, "player_spawn")],
     items: [(3, 2, "wrench"), (3, 1, "passive_vent_fitting")],
-    pipes: [(4, 1, 4), (5, 1, 4), (6, 1, 4)],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (5, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3),
+    networks: [
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
+
 )]==],
     7
 )
@@ -265,7 +313,7 @@ t.run_seconds(2.5)
 local hole = t.structure_at(3, 1)
 assert(hole ~= nil and hole.id == "passive_vent", "the fitting became the machine")
 assert(t.count_items("passive_vent_fitting") == 0, "and the fitting is spent")
-assert(t.pipe(3, 1) == 0, "the passive vent owns its centre, like every unary")
+assert(network_channels.at(3, 1, "pipe") == "", "the passive vent owns its centre, like every unary")
 
 -- It reaches the main beside it through one mouth, and it is a hole
 -- both ways: over-pressure the tile it stands on and the surplus goes

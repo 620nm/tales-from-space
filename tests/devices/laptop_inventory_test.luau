@@ -3,7 +3,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- Inventory interactions use the same player commands as the slot UI.
 local ARENA = [==[(
     name: "inventory laptop",
-    legend: { '.': (turf: Floor), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: ["#####", "#...#", "#...#", "#...#", "#####"],
     structures: [(2, 2, "player_spawn")],
     items: [(1, 2, "laptop"), (1, 3, "floppy_disk"),

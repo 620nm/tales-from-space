@@ -11,18 +11,20 @@
 -- one, so the trade closes with nothing minted or eaten.
 return {
     id = "reinforced_floor",
+    visual_layer = "cover",
     name_label = "lunatic/tfs:entity.reinforced_floor.name",
     name = "reinforced floor",
     sprite = "reinforced_floor",
-    turf = "reinforced_floor",
+    turf = "component:reinforcement",
     examine = {
         flavor = "Deck plating with reinforcement rods wrenched firmly in place.",
     },
     transitions = {
         {
+            sound = "smash",
             tool = "wrench",
             secs = 3.0,
-            into = "turf:plating",
+            into = "remove_component",
             yields = { rod = 2 },
             start = "You start removing the reinforcement rods.",
             done = "The rods come up, leaving bare plating.",

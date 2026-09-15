@@ -35,6 +35,7 @@
 -- built with one.
 return {
     id = "floor_drain",
+    visual_layer = "entities",
     name_label = "lunatic/tfs:entity.floor_drain.name",
     name = "floor drain",
     sprite = "floor_drain",
@@ -46,9 +47,11 @@ return {
         flavor = "A grated hole in the deck. Whatever is spilled goes down it, eventually.",
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         -- The mechanism with no mouth: a drain stands ON the deck
-        -- rather than in a run, so it names no layer, no facing and no
-        -- switch (../lunatic/docs/content-schema/structures.md, `sink`).
+        -- rather than in a run; its binding selects the matter solver,
+        -- with no connected mouth, facing or switch (../lunatic/docs/content-schema/structures.md, `sink`).
         device = "sink",
         -- Litres a second, off the tile it stands on: the atmos
         -- block's own spelling for a rate.

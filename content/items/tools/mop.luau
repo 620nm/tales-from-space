@@ -24,6 +24,8 @@ local vessel = require("@lib/vessel")
 -- a player's arm rather than a timer.
 local content = {
     id = "mop",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.mop.name",
     name = "mop",
     sprite = "mop",

@@ -58,6 +58,8 @@ local cards = require("@lib/cards")
 
 local content = {
     id = "card",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.card.name",
     name = "card",
     -- The resting picture is the back: an item's base `sprite` is the

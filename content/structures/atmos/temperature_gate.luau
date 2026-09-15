@@ -34,6 +34,8 @@
 -- lights on.
 return {
     id = "temperature_gate",
+    visual_layer = "entities",
+    energy_network = "power",
     name_label = "lunatic/tfs:entity.temperature_gate.name",
     name = "temperature gate",
     sprite = "tgate_off_n",
@@ -70,6 +72,8 @@ return {
         },
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         device = "temperature_gate",
         alternate_tool = "multitool",
         positions = { "shut", "armed" },
@@ -81,7 +85,8 @@ return {
         max_k = 4500.0,
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "temperature_gate_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -90,6 +95,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             -- tg's `can_unwrench`: "You cannot unwrench [src], turn it
             -- off first!" (temperature_gate.dm:131-135).
             at = "shut",

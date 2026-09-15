@@ -19,17 +19,19 @@
 -- back and puts the wall back.
 return {
     id = "reinforced_wall",
+    visual_layer = "cover",
     name_label = "lunatic/tfs:entity.reinforced_wall.name",
     name = "reinforced wall",
     sprite = "reinforced_wall",
-    turf = "reinforced_wall",
+    turf = "component:reinforced_wall",
     examine = {
         flavor = "A huge chunk of reinforced metal used to separate rooms.",
     },
     transitions = {
         {
+            sound = "smash",
             tool = "cutters",
-            into = "turf:plating",
+            into = "remove_component",
             leaves = "reinforced_wall_frame",
             start = "You start cutting the outer grille.",
             done = "The outer grille parts, baring the frame beneath.",

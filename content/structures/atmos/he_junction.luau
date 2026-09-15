@@ -21,9 +21,9 @@
 -- normal pipe instead" -- and the end at `dir` as this family. The
 -- engine numbers the same two mouths back then front, back being the
 -- one behind the facing, so the list below reads plain first and
--- heat-exchange second. `"pipe"` is the engine's own word for the
--- unauthored length every map is made of; the second is this pack's own
--- kind, named by the item that lays it.
+-- heat-exchange second. `"standard"` is the composition's ordinary
+-- pipe kind; the second is this pack's own kind, named by the item that
+-- lays it.
 --
 -- SO IT HAS FOUR FACINGS where the colour adapter has two axes. Turn a
 -- colour adapter around and it does exactly what it did; turn this
@@ -43,6 +43,7 @@
 -- (pipes.dm:27-28).
 return {
     id = "he_junction",
+    visual_layer = "pipe",
     name_label = "lunatic/tfs:entity.he_junction.name",
     name = "junction",
     sprite = "he_junction_s",
@@ -57,6 +58,8 @@ return {
         },
     },
     atmos = {
+        channel = "l3",
+        network = "pipe",
         -- The engine's word for the mechanism, not for this fitting: an
         -- adapter whose two ends admit different KINDS, sibling of the
         -- one whose ends admit different colours.
@@ -64,10 +67,11 @@ return {
         -- Back mouth, then front. Back is behind the facing, which is
         -- tg's `REVERSE_DIR(dir)`: ordinary pipe. Front is the facing:
         -- heat-exchanging pipe.
-        joins = { "pipe", "he_pipe" },
+        joins = { "standard", "he_pipe" },
     },
     build = {
-        on = { "floor", "plating" },
+        sound = "smash",
+        on = { "component:station_base" },
         from_item = "he_junction_fitting",
         tool = "wrench",
         secs = 2.0,
@@ -76,6 +80,7 @@ return {
     },
     transitions = {
         {
+            sound = "smash",
             at = "anchored",
             tool = "wrench",
             secs = 2.0,

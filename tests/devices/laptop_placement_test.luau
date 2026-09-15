@@ -8,7 +8,7 @@ local ui_controls = require("@helpers/ui_controls")
 t.world(
     [==[(
     name: "laptop desk",
-    legend: { '.': (turf: Floor), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: ["#####", "#...#", "#...#", "#####"],
     structures: [(2, 1, "player_spawn")],
     items: [

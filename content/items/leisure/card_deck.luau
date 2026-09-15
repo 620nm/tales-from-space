@@ -93,6 +93,8 @@ end
 
 local content = {
     id = "card_deck",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.card_deck.name",
     name = "deck of cards",
     -- THE PICTURE FOLLOWS THE STRING, not a roster the engine keeps.
@@ -121,12 +123,15 @@ local content = {
 }
 
 local deal_kinds: { action_rules.Selector } =
-    { action_rules.kind("turf"), action_rules.kind("machine") }
+    { action_rules.kind("turf"), action_rules.kind("component"), action_rules.kind("machine") }
 local deal_turfs: { action_rules.Selector } = {
-    action_rules.fact("target.turf", "floor"),
-    action_rules.fact("target.turf", "plating"),
+    action_rules.fact("target.has_component", "floor_tiles"),
+    action_rules.fact("target.has_component", "grid_cover"),
+    action_rules.fact("target.has_component", "station_base"),
 }
-local deal_conditions: { action_rules.Selector } = { { any = deal_kinds }, { any = deal_turfs } }
+local deal_conditions: { action_rules.Selector } = { { any = deal_kinds }, { any = deal_turfs },
+    { ["not"] = action_rules.fact("target.has_component", "wall") },
+    { ["not"] = action_rules.fact("target.has_component", "reinforced_wall") } }
 local deal_target: action_rules.Selector = { all = deal_conditions }
 
 content.actions = {
@@ -240,7 +245,7 @@ if sim ~= nil then
             sim.entity.despawn({ entity = card })
             return true
         end
-        if target ~= nil and target.kind ~= "machine" then
+        if target ~= nil and target.kind ~= "machine" and target.kind ~= "component" then
             return { replaced = false }
         end
         -- Somewhere a card can lie. The engine refuses a spawn onto
@@ -248,8 +253,10 @@ if sim ~= nil then
         -- first: a deal that decremented the deck and produced no card
         -- would be a deck that eats itself against a wall. Same
         -- check-twice discipline as construction, one seam smaller.
-        local turf = sim.turf(x, y)
-        if turf ~= "floor" and turf ~= "plating" then
+        if not sim.has_component(x, y, "station_base")
+            or sim.has_component(x, y, "wall")
+            or sim.has_component(x, y, "reinforced_wall")
+            or sim.has_component(x, y, "reinforcement") then
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:items.card_deck.there_is_nowhere_there_to", {}),

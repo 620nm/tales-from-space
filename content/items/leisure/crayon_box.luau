@@ -4,6 +4,8 @@
 -- tg crayons.dm:24-74, :628-634, :726-752.
 local content = {
     id = "crayon_box",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.crayon_box.name",
     name = "box of crayons",
     sprite = "crayon_box",

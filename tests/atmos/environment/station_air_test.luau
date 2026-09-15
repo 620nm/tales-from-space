@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 -- Shift zero on the REAL station: does Chillstation breathe?
 --
 -- Every other spec builds the smallest map that makes one assertion
@@ -16,7 +17,7 @@
 -- one block in the south-west; the Commons, the vents and the walked
 -- route are pinned below by coordinate, not by assumption.
 
-local L3 = 4 -- the department's process line
+local L3 = "l3" -- the department's process line
 
 local function room_of(x: number, y: number, which: string)
     local held = t.room_gas(x, y)
@@ -106,8 +107,8 @@ assert(
 local valve = t.structure_at(14, 28)
 assert(valve ~= nil and valve.id == "manual_valve", "the wheel is where the map put it")
 assert(valve.state == "open", "and it ships open: " .. tostring(valve.state))
-assert(t.pipe_pressure(14, 27, L3) ~= nil, "there is feed above it")
-assert(t.pipe_pressure(14, 29, L3) ~= nil, "and feed below it")
+assert(network_matter.pressure(14, 27, L3) ~= nil, "there is feed above it")
+assert(network_matter.pressure(14, 29, L3) ~= nil, "and feed below it")
 
 -- Walk an engineer to it. A manual valve has no panel by design (tg
 -- gives it none: "Intentionally no allow_silicon flag") -- the wheel is
@@ -155,11 +156,11 @@ assert(
 -- nothing; above it the department carries on. One wheel, two fates --
 -- which is the difference between cutting a leg out and stopping the
 -- station.
-local below_0 = assert(t.pipe_pressure(14, 29, L3))
+local below_0 = assert(network_matter.pressure(14, 29, L3))
 assert(below_0 > 20.0, "the chamber feed was charged when it was shut: " .. below_0)
 t.run_seconds(180)
-local above_1 = assert(t.pipe_pressure(14, 27, L3))
-local below_1 = assert(t.pipe_pressure(14, 29, L3))
+local above_1 = assert(network_matter.pressure(14, 27, L3))
+local below_1 = assert(network_matter.pressure(14, 29, L3))
 assert(
     below_1 < 5.0,
     "the isolated side empties into the chambers and cannot refill: "
@@ -191,7 +192,7 @@ assert(before_breach > 80.0, "the Commons is pressurised: " .. before_breach)
 -- rather than hull: the Commons has no hull, which is the whole point
 -- of putting the crew in the middle of the station.
 for _, x in ipairs({ 22, 23, 24 }) do
-    t.set_turf(x, 16, "space")
+    t.set_composition(x, 16, "bare")
 end
 t.run_seconds(90)
 -- Note what this number is NOT. Three tiles open to space and ninety
@@ -208,7 +209,7 @@ assert(
 assert(breached > 5.0, "and the supply is still fighting it: " .. breached)
 
 for _, x in ipairs({ 22, 23, 24 }) do
-    t.set_turf(x, 16, "floor")
+    t.set_composition(x, 16, "floor")
 end
 t.run_seconds(600)
 local recovered = assert(t.room_pressure(COMMONS[1], COMMONS[2]))

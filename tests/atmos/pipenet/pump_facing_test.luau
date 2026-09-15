@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 -- A wrenched pump keeps the SIGN of its facing -- and shows it.
 --
 -- The report was "it will not wrench in facing west or south", and the
@@ -23,7 +24,7 @@ local function build(rotations: number, want_sprite: string, drained: { number }
     t.world(
         [==[(
         name: "pump sign",
-        legend: { '.': (turf: Plating), '#': (turf: Wall) },
+        legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
         rows: [
             "#####",
             "#...#",
@@ -32,7 +33,12 @@ local function build(rotations: number, want_sprite: string, drained: { number }
             "#####",
         ],
         structures: [(1, 1, "player_spawn")],
-        pipes: [(1, 2, 4), (3, 2, 4), (2, 1, 4), (2, 3, 4)],
+        networks: [
+            (x: 1, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            (x: 2, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        ],
         items: [(1, 1, "wrench"), (2, 2, "volume_pump_fitting")],
     )]==],
         7
@@ -60,11 +66,11 @@ local function build(rotations: number, want_sprite: string, drained: { number }
     ui_controls.toggle(q, "power")
     t.run_seconds(20)
     assert(
-        assert(t.pipe_pressure(drained[1], drained[2])) < 1.0,
+        assert(network_matter.pressure(drained[1], drained[2])) < 1.0,
         want_sprite .. ": the input net should have emptied"
     )
     assert(
-        assert(t.pipe_pressure(fed[1], fed[2])) > 40.0,
+        assert(network_matter.pressure(fed[1], fed[2])) > 40.0,
         want_sprite .. ": the output net should hold the gas"
     )
 end

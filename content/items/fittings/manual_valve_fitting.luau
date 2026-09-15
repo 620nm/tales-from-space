@@ -13,6 +13,8 @@
 -- target is the expert.
 return {
     id = "manual_valve_fitting",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.manual_valve_fitting.name",
     name = "manual valve fitting",
     sprite = "manual_valve_loose",

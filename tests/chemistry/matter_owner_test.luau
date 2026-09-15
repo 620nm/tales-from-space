@@ -1,3 +1,5 @@
+local composition = require("@helpers/composition")
+
 local ui_controls = require("@helpers/ui_controls")
 
 -- One transfer, three far ends: a beaker poured into another vessel,
@@ -23,9 +25,9 @@ t.world(
     [==[(
     name: "owner bench",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
         "######",
@@ -83,7 +85,7 @@ assert(poured[1].actor.kind == "script", "attributed to the file that asked")
 -- The same call with the far end named as a MOB: liquid out of a held
 -- vessel into a bloodstream is drinking, and the ledger says so without
 -- the content file ever spelling the word.
-t.click_turf(p, 2, 1)
+composition.click_deck(p, 2, 1)
 t.tick()
 close(total(full), 0.05, "a swig takes 0.05 mol")
 local drank = t.ledger_rows("drank")

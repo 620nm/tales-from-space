@@ -1,3 +1,5 @@
+local network_channels = require("@helpers/network_channels")
+
 local ui_controls = require("@helpers/ui_controls")
 
 -- Pipe meters bind to one exact piping layer, even where several runs
@@ -5,9 +7,6 @@ local ui_controls = require("@helpers/ui_controls")
 -- a loose meter defaults to layer 3, using it on a raw pipe programs it
 -- to that pipe's layer, and an RPD programs its generated meter before
 -- immediately wrenching it down.
-
-local L2, L4 = 2, 8
-
 -- A document's words are labels: `{id=…}` for one the engine names,
 -- `{text=…}` for one content wrote (docs/tgui/labels.md).
 local word = ui_controls.word
@@ -41,7 +40,7 @@ end
 t.world(
     [==[(
     name: "meter layers by hand",
-    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [
         "#####",
         "#...#",
@@ -50,7 +49,10 @@ t.world(
     ],
     structures: [(2, 2, "player_spawn")],
     items: [(2, 1, "wrench"), (2, 1, "pipe_meter")],
-    pipes: [(2, 1, 2), (2, 1, 8)],
+    networks: [
+        (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 2, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+    ],
 )]==],
     7
 )
@@ -61,9 +63,11 @@ t.click(p, 2, 1, t.target_at(p, 2, 1, "wrench"))
 t.run_ticks(2)
 
 local _ = t.messages(p)
-t.click(p, 2, 1, t.target_at(p, 2, 1, "pipe_meter"))
+local first_meter = t.target_at(p, 2, 1, "pipe_meter")
+assert(first_meter ~= nil, "the loose meter is targetable")
+t.click(p, 2, 1, first_meter)
 t.run_ticks(2)
-assert(said(p, "There is no pipe under the floor here."), "default layer 3 needs a layer-3 pipe")
+assert(said(p, "You can't build that there."), "default layer 3 refuses installation")
 assert(t.structure_at(2, 1) == nil and lying_at(2, 1, "pipe_meter"), "a refusal spends nothing")
 
 t.drop(p)
@@ -71,7 +75,7 @@ t.run_ticks(2)
 t.click(p, 2, 1, t.target_at(p, 2, 1, "pipe_meter"))
 t.run_ticks(2)
 local _ = t.messages(p)
-t.click_subfloor(p, 2, 1, "pipe", L2)
+t.click_network(p, 2, 1, assert(t.network_instance(2, 1, "pipe", "l2")))
 t.run_ticks(2)
 assert(
     said(p, "Meter layer set to 2. Drop it before fastening."),
@@ -92,13 +96,13 @@ t.click(p, 2, 1, t.target_at(p, 2, 1, "pipe_meter"))
 work()
 assert(assert(t.structure_at(2, 1)).id == "meter", "the programmed meter fastens to layer 2")
 
-t.click_subfloor(p, 2, 1, "pipe", L4)
+t.click_network(p, 2, 1, assert(t.network_instance(2, 1, "pipe", "l4")))
 t.run_seconds(1.5)
 t.run_seconds(1.0)
-assert(t.pipe(2, 1) == L2, "only layer 4 came up")
+assert(network_channels.at(2, 1, "pipe") == "l2", "only layer 4 came up")
 assert(assert(t.structure_at(2, 1)).id == "meter", "another layer disappearing does not drop it")
 
-t.click_subfloor(p, 2, 1, "pipe", L2)
+t.click_network(p, 2, 1, assert(t.network_instance(2, 1, "pipe", "l2")))
 t.run_seconds(1.5)
 t.run_seconds(1.0)
 assert(t.structure_at(2, 1) == nil, "its attached layer disappearing drops it")
@@ -113,7 +117,7 @@ t.run_ticks(2)
 -- was the last one pulled and is the topmost fitting selected above.
 t.click(p, 2, 1, nil, -14, 14)
 t.run_seconds(1.5)
-assert(t.pipe(2, 1) == L2, "the same layer was laid again")
+assert(network_channels.at(2, 1, "pipe") == "l2", "the same layer was laid again")
 assert(t.structure_at(2, 1) == nil and lying_at(2, 1, "pipe_meter"), "it remains unfastened")
 
 -- The RPD's selected layer is applied to the generated pipe_meter item
@@ -122,7 +126,7 @@ assert(t.structure_at(2, 1) == nil and lying_at(2, 1, "pipe_meter"), "it remains
 t.world(
     [==[(
     name: "meter layers by RPD",
-    legend: { '.': (turf: Plating), '#': (turf: Wall) },
+    legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [
         "######",
         "#....#",
@@ -131,7 +135,11 @@ t.world(
     ],
     structures: [(2, 2, "player_spawn")],
     items: [(2, 2, "rpd"), (2, 2, "wrench")],
-    pipes: [(2, 1, 2), (3, 1, 2), (3, 1, 8)],
+    networks: [
+        (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 3, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+        (x: 3, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+    ],
 )]==],
     7
 )
@@ -165,7 +173,7 @@ local _ = t.messages(r)
 t.click(r, 2, 1, nil, -14, 14)
 t.run_seconds(1.0)
 assert(t.structure_at(2, 1) == nil, "RPD layer 4 refuses a layer-2-only tile")
-assert(said(r, "There is no pipe under the floor here."), "the ordinary same-layer refusal answers")
+assert(said(r, "You can't build that there."), "the ordinary same-layer installation refuses")
 
 set(LAYER, "2")
 t.click(r, 2, 1, nil, -14, 14)
@@ -181,12 +189,12 @@ t.drop(r)
 t.run_ticks(2)
 t.click(r, 2, 2, t.target_at(r, 2, 2, "wrench"))
 t.run_ticks(2)
-t.click_subfloor(r, 3, 1, "pipe", L2)
+t.click_network(r, 3, 1, assert(t.network_instance(3, 1, "pipe", "l2")))
 t.run_seconds(2.5)
 assert(
     assert(t.structure_at(3, 1)).id == "meter",
     "the RPD meter did not bind the other crossing layer"
 )
-t.click_subfloor(r, 3, 1, "pipe", L4)
+t.click_network(r, 3, 1, assert(t.network_instance(3, 1, "pipe", "l4")))
 t.run_seconds(2.5)
 assert(t.structure_at(3, 1) == nil, "it drops when the RPD-selected layer is removed")

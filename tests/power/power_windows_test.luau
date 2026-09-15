@@ -25,14 +25,14 @@ t.world(
     [==[(
     name: "power windows",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'G': (turf: Plating, fixture: Some(Generator)),
-        'S': (turf: Plating, fixture: Some(Smes)),
-        'a': (turf: Plating, fixture: Some(Apc)),
-        'o': (turf: Plating, fixture: Some(Outlet)),
-        'l': (turf: Plating, fixture: Some(Light)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        'S': (composition: (components: [(component: "station_base")]), fixture: Some(Smes)),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
+        'l': (composition: (components: [(component: "station_base")]), fixture: Some(Light)),
     },
     rows: [
         "########",
@@ -41,9 +41,18 @@ t.world(
         "########",
     ],
     structures: [(2, 2, "player_spawn")],
-    cables: [
-        (1, 1, 2), (2, 1, 2), (3, 1, 2), (4, 1, 2), (1, 2, 2),
-        (1, 2, 1), (2, 2, 1), (3, 2, 1), (4, 2, 1), (5, 2, 1), (6, 2, 1),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
     ],
     labels: [(1, 2, "Engineering")],
 )]==],
@@ -132,19 +141,28 @@ ui_controls.toggle(p, "breaker")
 t.run_seconds(3)
 assert(assert(t.apc_at(1, 2)).operating and t.lit(6, 2), "and closing it brings the room back")
 
-assert(assert(toggle(apc, "l1", "output")).on, "L1 feeds the room")
-assert(word(assert(toggle(apc, "l1", "output")).section) == "ports.l1", "under its own heading")
-assert(assert(toggle(apc, "l2", "input")).on, "L2 is where it takes from")
-assert(toggle(apc, "l3", "output") == nil, "and there is no blue main under it")
+assert(
+    assert(toggle(apc, "ports.mode", "l1:output")).on,
+    "L1 feeds the room"
+)
+assert(
+    word(assert(toggle(apc, "ports.mode", "l1:output")).section) == "l1",
+    "under its own heading"
+)
+assert(assert(toggle(apc, "ports.mode", "l2:input")).on, "L2 is where it takes from")
+assert(toggle(apc, "ports.mode", "l3:output") == nil, "and there is no blue main under it")
 assert(word(readout(apc, "ports.out").value):find("W", 1, true), "a port says what it carried")
 
 -- The one control the panel publishes answers, and lands on the record.
-ui_controls.toggle(p, "l1", "bidirectional")
+ui_controls.toggle(p, "ports.mode", "l1:bidirectional")
 t.tick()
-assert(assert(assert(t.ports_at(1, 2)).l1).mode == "bidirectional", "the port turned round")
-assert(assert(toggle(t.ui(p), "l1", "bidirectional")).on, "and the panel says so")
+assert(
+    assert(assert(t.ports_at(1, 2, "power")).channels["l1"]).mode == "bidirectional",
+    "the port turned round"
+)
+assert(assert(toggle(t.ui(p), "ports.mode", "l1:bidirectional")).on, "and the panel says so")
 assert(t.ledger_has("MachineToggled"), "turning a port is on the record")
-ui_controls.toggle(p, "l1", "output")
+ui_controls.toggle(p, "ports.mode", "l1:output")
 t.run_seconds(3)
 assert(t.lit(6, 2), "the room circuit is feeding its lamp again")
 
@@ -160,11 +178,11 @@ t.tick()
 assert(assert(t.apc_at(1, 2)).equipment, "a channel nobody offered stays where it was")
 assert(assert(t.apc_at(1, 2)).lighting, "both of them")
 
-assert(ui_controls.find(p, "/toggle/l3/input") == nil, "unoffered control is absent")
-assert(ui_controls.find(p, "/toggle/l1/sideways") == nil, "unoffered control is absent")
+assert(ui_controls.find(p, "/toggle/ports.mode/l3:input") == nil, "unoffered control is absent")
+assert(ui_controls.find(p, "/toggle/ports.mode/l1:sideways") == nil, "unoffered control is absent")
 t.tick()
-assert(assert(t.ports_at(1, 2)).l3 == nil, "there is no third port to have moved")
-assert(assert(assert(t.ports_at(1, 2)).l1).mode == "output", "and no mode nobody named")
+assert(assert(t.ports_at(1, 2, "power")).channels["l3"] == nil, "there is no third port to have moved")
+assert(assert(assert(t.ports_at(1, 2, "power")).channels["l1"]).mode == "output", "and no mode nobody named")
 
 -- ---------------------------------------------------------------
 -- THE BANK. The same store module, its own two breakers and two
@@ -183,8 +201,8 @@ assert(assert(toggle(smes, "input_breaker")).on, "both breakers closed out of th
 assert(assert(toggle(smes, "output_breaker")).on)
 assert(setpoint(smes, "input_w").max == 200000.0, "tg's 200 kW rate")
 assert(setpoint(smes, "output_w").value == 200000.0, "and both dials wide open")
-assert(assert(toggle(smes, "l2", "input")).on, "it takes from the backbone")
-assert(toggle(smes, "l1", "output") == nil, "and stands on no other line")
+assert(assert(toggle(smes, "ports.mode", "l2:input")).on, "it takes from the backbone")
+assert(toggle(smes, "ports.mode", "l1:output") == nil, "and stands on no other line")
 
 -- The four things it does, in the framework's two verbs.
 ui_controls.set(p, "output_w", "min")

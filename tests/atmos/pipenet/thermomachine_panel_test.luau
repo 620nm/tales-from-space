@@ -1,3 +1,4 @@
+local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
 -- What the panel says while the machine works, and what it says when
@@ -62,10 +63,10 @@ t.world(
     [==[(
     name: "freezer bench",
     legend: {
-        '.': (turf: Plating),
-        '#': (turf: Wall),
-        'g': (turf: Plating, fixture: Some(Generator)),
-        'a': (turf: Plating, fixture: Some(Apc)),
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
+        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
     },
     rows: [
         "############",
@@ -73,12 +74,19 @@ t.world(
         "#ga........#",
         "############",
     ],
-    pipes: [(3, 1, 4), (4, 1, 4)],
-    structures: [(5, 2, "player_spawn"), (5, 1, "thermomachine")],
-    cables: [
-        (1, 2, 2), (2, 2, 3),
-        (3, 2, 1), (4, 2, 1), (4, 1, 1), (5, 1, 1),
+    networks: [
+        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
     ],
+    structures: [(5, 2, "player_spawn"), (5, 1, "thermomachine")],
+
 )]==],
     7
 )
@@ -90,7 +98,7 @@ t.run_seconds(3) -- the electrical pass is 0.5 Hz; let one land
 assert(assert(t.structure_at(5, 1)).id == "thermomachine", "a unit stands on the bench")
 assert(assert(t.structure_at(5, 1)).state == "off", "switched off out of the crate")
 assert(assert(t.apc_at(2, 2)).equipment == true, "with the bench's APC feeding its circuit")
-assert(t.segment_at(5, 1).feed == 1, "which reaches the machine's own tile")
+assert(t.network_feed(5, 1, "power", "equipment") == "l1", "which reaches the machine's own tile")
 
 t.click(p, 5, 1, t.target_at(p, 5, 1, "thermomachine"))
 t.tick()
@@ -109,7 +117,7 @@ near(
     0.01,
     "the thermostat opens at tg's T20C"
 )
-near(assert(t.pipe_temperature(3, 1)), T20C, 0.5, "and the run opens there too")
+near(assert(network_matter.temperature(3, 1)), T20C, 0.5, "and the run opens there too")
 assert(
     row(ui_controls.state(p), "thermo.pipe").tone == "idle",
     "so the panel says the gas is on the dial"
@@ -128,14 +136,14 @@ assert(
     row(ui_controls.state(p), "thermo.pipe").tone == "off",
     "the gas is under the dial, and the panel says so"
 )
-near(assert(t.pipe_temperature(3, 1)), T20C, 0.5, "with nothing switched on and nothing moved")
+near(assert(network_matter.temperature(3, 1)), T20C, 0.5, "with nothing switched on and nothing moved")
 
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(assert(t.structure_at(5, 1)).state == "running", "now it is running")
 
 pass()
-local climbed = assert(t.pipe_temperature(3, 1))
+local climbed = assert(network_matter.temperature(3, 1))
 assert(climbed > T20C + 100.0, "and one pass takes this short run most of the way: " .. climbed)
 assert(climbed < 500.0 - 5.0, "though not all of it -- the job is not finished: " .. climbed)
 assert(row(ui_controls.state(p), "thermo.pipe").tone == "off", "so the gas is still under the dial")
@@ -165,8 +173,8 @@ near(
 -- agree in the same tick -- and the ONE of them that must not change is
 -- the switch, because nobody threw it.
 -- ---------------------------------------------------------------
-local caught_k = assert(t.pipe_temperature(3, 1))
-local caught_j = assert(t.pipe_energy(3, 1))
+local caught_k = assert(network_matter.temperature(3, 1))
+local caught_j = assert(network_matter.energy(3, 1))
 assert(
     caught_k > 300.0 + 100.0,
     "there is a real job in front of it: " .. caught_k .. " K, dialled to 300"
@@ -180,8 +188,8 @@ assert(
     assert(t.apc_at(2, 2)).equipment == false,
     "the APC has nothing to hand the equipment channel"
 )
-assert(t.segment_at(5, 1).l1 ~= nil, "the cable under the machine is still cable")
-assert(t.segment_at(5, 1).feed == nil, "but nothing on it is carrying")
+assert(t.network_segment(5, 1, "power", "l1").segment ~= nil, "the cable under the machine is still cable")
+assert(t.network_feed(5, 1, "power", "equipment") == nil, "but nothing on it is carrying")
 assert(
     assert(t.structure_at(5, 1)).state == "off",
     "and the unit is drawn stopped, which is `on && is_operational` picking the picture"
@@ -208,16 +216,16 @@ near(
 for n = 1, 6 do
     t.run_seconds(10)
     near(
-        assert(t.pipe_temperature(3, 1)),
+        assert(network_matter.temperature(3, 1)),
         caught_k,
         1e-9,
         "sample " .. n .. ": the gas has not moved"
     )
-    near(assert(t.pipe_energy(3, 1)), caught_j, 1e-6, "and neither has its joule book")
+    near(assert(network_matter.energy(3, 1)), caught_j, 1e-6, "and neither has its joule book")
 end
 assert(
-    assert(t.pipe_temperature(3, 1)) > 300.0 + 100.0,
-    "the job it was doing is still sitting there untouched: " .. assert(t.pipe_temperature(3, 1))
+    assert(network_matter.temperature(3, 1)) > 300.0 + 100.0,
+    "the job it was doing is still sitting there untouched: " .. assert(network_matter.temperature(3, 1))
 )
 
 -- A dead machine takes orders perfectly happily -- the panel is fed by
@@ -237,7 +245,7 @@ assert(
     "the tone still reads the two numbers it is given"
 )
 t.run_seconds(30)
-near(assert(t.pipe_temperature(3, 1)), caught_k, 1e-9, "and not one joule followed the order")
+near(assert(network_matter.temperature(3, 1)), caught_k, 1e-9, "and not one joule followed the order")
 
 -- The switch survives being thrown while dead, too: off is a position
 -- somebody chose, and a machine that came back up on its own would be
@@ -254,7 +262,7 @@ assert(
 )
 t.run_seconds(20)
 near(
-    assert(t.pipe_temperature(3, 1)),
+    assert(network_matter.temperature(3, 1)),
     caught_k,
     1e-9,
     "with the gas still exactly where the blackout left it"

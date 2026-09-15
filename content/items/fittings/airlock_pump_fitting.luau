@@ -1,5 +1,7 @@
 return {
     id = "airlock_pump_fitting",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.airlock_pump_fitting.name",
     name = "external airlock pump fitting",
     sprite = "airlock_pump_loose",

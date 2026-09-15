@@ -1,3 +1,5 @@
+local composition = require("@helpers/composition")
+
 -- The EVA vestibule: two airlocks with three tiles of plating between
 -- them, so the way out to space is a chamber you empty rather than a
 -- hole you open.
@@ -30,13 +32,13 @@
 local VESTIBULE = [==[(
     name: "eva vestibule",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        '_': (turf: Plating),
-        'E': (turf: Plating, fixture: Some(Door)),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'g': (turf: Floor, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '_': (composition: (components: [(component: "station_base")])),
+        'E': (composition: (components: [(component: "station_base")]), fixture: Some(Door)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
         "######## ",
@@ -46,10 +48,41 @@ local VESTIBULE = [==[(
         "######## ",
     ],
     structures: [(1, 2, "player_spawn"), (2, 2, "player_spawn")],
-    cables: [
-        (1, 1, 3), (2, 1, 3), (3, 1, 3), (4, 1, 3), (6, 1, 3),
-        (1, 2, 3), (2, 2, 3), (3, 2, 3), (4, 2, 3), (5, 2, 3), (6, 2, 3), (7, 2, 3),
-        (1, 3, 3), (2, 3, 3), (3, 3, 3), (4, 3, 3), (6, 3, 3),
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 7, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 6, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 6, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
 )]==]
 
@@ -89,8 +122,8 @@ t.world(VESTIBULE, 7)
 local p = t.join()
 t.tick()
 
-assert(t.turf(6, 2) == "plating", "the vestibule deck is bare, as tg's is")
-assert(t.turf(8, 2) == "space", "and the outer airlock opens onto space")
+assert(composition.matches(6, 2, { "station_base" }), "the vestibule deck is bare, as tg's is")
+assert(composition.bare(8, 2, "space"), "and the outer airlock opens onto space")
 assert(
     not assert(t.door_at(5, 2)).open and not assert(t.door_at(7, 2)).open,
     "both airlocks start shut"
@@ -246,12 +279,12 @@ assert(
 local VIEWPORT = [==[(
     name: "viewport",
     legend: {
-        ' ': (turf: Space),
-        '.': (turf: Floor),
-        '#': (turf: Wall),
-        '_': (turf: Plating),
-        'a': (turf: Floor, fixture: Some(Apc)),
-        'g': (turf: Floor, fixture: Some(Generator)),
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '_': (composition: (components: [(component: "station_base")])),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
         "     ",
@@ -266,10 +299,21 @@ local VIEWPORT = [==[(
         (3, 4, "crowbar"),
     ],
     structures: [(2, 3, "player_spawn"), (1, 3, "player_spawn"), (2, 2, "grille", "glazed")],
-    cables: [
-        (2, 2, 3),
-        (1, 3, 3), (2, 3, 3), (3, 3, 3),
-        (1, 4, 3), (2, 4, 3), (3, 4, 3),
+    networks: [
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 4, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 4, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 4, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 4, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 4, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 4, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
 )]==]
 
@@ -287,8 +331,8 @@ assert(
         .. tostring(pane and pane.state)
         .. ")"
 )
-assert(t.turf(2, 2) == "plating", "a window stands on deck, not on wall")
-assert(t.turf(2, 1) == "space", "with vacuum on the far side of it")
+assert(composition.matches(2, 2, { "station_base" }), "a window stands on deck, not on wall")
+assert(composition.bare(2, 1, "space"), "with vacuum on the far side of it")
 
 -- One atmosphere, and it stays there. Before `airtight` this room was
 -- open to space through a tile that merely looked solid.

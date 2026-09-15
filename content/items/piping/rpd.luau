@@ -47,12 +47,13 @@ type Recipe = {
     icon: string,
     group: string,
     structure: string?,
+    network_kind: string?,
     fixed_layer: boolean?,
     paints: boolean?,
 }
 
 local RECIPES: { Recipe } = {
-    { label = "Pipe", item = "pipe", icon = "pipe", group = "Pipes" },
+    { label = "Pipe", item = "pipe", icon = "pipe", group = "Pipes", network_kind = "standard" },
     {
         label = "Manual Valve",
         item = "manual_valve_fitting",
@@ -182,7 +183,7 @@ local RECIPES: { Recipe } = {
     -- what you get by running a fourth length into a tee. The plate tg
     -- lists last is already on the shelf above, with the rest of the
     -- thermal kit.
-    { label = "Pipe", item = "he_pipe", icon = "he_pipe", group = "Heat Exchange", paints = false },
+    { label = "Pipe", item = "he_pipe", network_kind = "he_pipe", icon = "he_pipe", group = "Heat Exchange", paints = false },
     {
         label = "Junction",
         item = "he_junction_fitting",
@@ -243,7 +244,7 @@ local COLORS = pipe_paints.colors
 -- The five piping layers as bitmasks, the same list the length of pipe
 -- carries (items/pipe.luau; PIPING_LAYER_MIN..MAX,
 -- __DEFINES/atmospherics/atmos_piping.dm:78-80).
-local LAYERS = { 1, 2, 4, 8, 16 }
+local CHANNELS = { "l1", "l2", "l3", "l4", "l5" }
 
 local BUILD, DESTROY, COPY = 0, 1, 2
 
@@ -251,8 +252,8 @@ local function recipe_of(self: Handle): Recipe
     return RECIPES[assert(sim.dial(self, "recipe")).index + 1]
 end
 
-local function layer_of(self: Handle): number
-    return LAYERS[assert(sim.dial(self, "layer")).index + 1]
+local function channel_of(self: Handle): string
+    return CHANNELS[assert(sim.dial(self, "layer")).index + 1]
 end
 
 local function paint_of(self: Handle)
@@ -271,25 +272,15 @@ local function lay_run(
     y: number,
     at: TileAddress
 )
-    if not sim.subfloor_exposed(x, y, "pipe") then
-        sim.message.send({
-            recipient = user,
-            message = sim.msg("lunatic/tfs:lib.subfloor.covered", {}),
-        })
+    local channel = channel_of(self)
+    local kind = recipe.network_kind
+    if kind == nil then
         return
     end
-    local mask = layer_of(self)
-    if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
+    if not sim.network_installable(x, y, "pipe", channel, kind) then
         sim.message.send({
             recipient = user,
-            message = sim.msg("lunatic/tfs:lib.pipe.layer_taken", {}),
-        })
-        return
-    end
-    if sim.pipe(x, y) % (mask * 2) >= mask then
-        sim.message.send({
-            recipient = user,
-            message = sim.msg("lunatic/tfs:lib.pipe.occupied", {}),
+            message = sim.msg("lunatic/tfs:lib.pipe.install_refused", {}),
         })
         return
     end
@@ -299,30 +290,16 @@ local function lay_run(
         if sim.do_after(user, sim.ticks(0.4), {}) == "interrupted" then
             return
         end
-        -- The same question at the end: while you worked, another engineer
-        -- may have run the line through this very tile.
-        mask = layer_of(self)
-        if sim.pipe_occupancy(x, y) % (mask * 2) >= mask then
+        channel = channel_of(self)
+        if not sim.network_installable(x, y, "pipe", channel, kind) then
             sim.message.send({
                 recipient = user,
-                message = sim.msg("lunatic/tfs:lib.pipe.layer_taken", {}),
+                message = sim.msg("lunatic/tfs:lib.pipe.install_refused", {}),
             })
             return
         end
-        if sim.pipe(x, y) % (mask * 2) >= mask then
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:lib.pipe.occupied", {}),
-            })
-            return
-        end
-        -- WHICH kind of length, as the item it comes on. A kind with a
-        -- colour of its own takes no paint at all (the engine refuses
-        -- it), so the paint dial simply does not reach that row.
-        sim.lay_pipe(x, y, mask, recipe.item)
-        if recipe.paints ~= false then
-            sim.paint_pipe(x, y, mask, paint_of(self).hex)
-        end
+        local paint = if recipe.paints ~= false then paint_of(self).name else nil
+        sim.place_network(x, y, "pipe", channel, kind, 15, paint)
         sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = at })
     end)
 end
@@ -332,6 +309,8 @@ local content = {
         self = { label = "lunatic/tfs:ui.affordance.view_interface" },
     },
     id = "rpd",
+    visual_layer = "entities",
+    held_visual_layer = "held",
     name_label = "lunatic/tfs:entity.rpd.name",
     name = "rapid pipe dispenser",
     -- tg's own art off the tool sheet (`icon_state = "rpd"`, RPD.dm:26).
@@ -510,25 +489,18 @@ if sim ~= nil then
         end
 
         if mode == COPY then
-            -- tg's eyedropper: point it at something already down and
-            -- the RPD takes that thing's colour and layer
-            -- (`interact_with_atom_secondary`, RPD.dm:481-491). tg reads
-            -- them off the DEVICE; we read them off the run, which is
-            -- the only thing that carries either — and a run you have
-            -- not opened the deck over is one you cannot see.
-            if not sim.subfloor_exposed(x, y, "pipe") then
-                sim.message.send({
-                    recipient = user,
-                    message = sim.msg("lunatic/tfs:lib.subfloor.covered", {}),
-                })
-                return true
+            if target == nil or target.kind ~= "network" then
+                return { replaced = false }
             end
-            for index, mask in ipairs(LAYERS) do
-                local hex = sim.pipe_paint(x, y, mask)
-                if hex then
+            local network = sim.network(x, y, target.instance)
+            if network == nil or network.network ~= "pipe" then
+                return { replaced = false }
+            end
+            for index, channel in ipairs(CHANNELS) do
+                if channel == network.channel then
                     sim.set_dial(self, "layer", index - 1)
                     for c, color in ipairs(COLORS) do
-                        if color.hex == hex then
+                        if color.name == network.paint then
                             sim.set_dial(self, "paint", c - 1)
                             sim.message.send({
                                 recipient = user,
@@ -540,13 +512,9 @@ if sim ~= nil then
                             return true
                         end
                     end
-                    -- A colour off the roster: the layer is still worth
-                    -- taking, and saying so beats silence.
                     sim.message.send({
                         recipient = user,
-                        message = sim.msg("lunatic/tfs:items.rpd.copied_unnamed", {
-                            layer = index,
-                        }),
+                        message = sim.msg("lunatic/tfs:items.rpd.copied_unnamed", { layer = index }),
                     })
                     return true
                 end
