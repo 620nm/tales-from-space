@@ -5,7 +5,7 @@ import { test } from "node:test";
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
 const manifest = JSON.parse(await read("../editor/manifest.json"));
 const editor = await read("../docs/EDITOR.md");
-const standard = await read("../content/blends/standard_air.luau");
+const breathable = await read("../content/blends/ideal_air.luau");
 const compositions = await read("../content/compositions.luau");
 
 test("both modes offer the blend lens turf paint breathes under", () => {
@@ -26,17 +26,28 @@ test("lattice is turf, not a placement prototype", () => {
   assert.doesNotMatch(editor, /bare entry admits it/);
 });
 
-test("fresh turf opens breathable on the pack default", () => {
-  assert.match(standard, /id = "standard_air"/);
-  assert.match(standard, /default = true/);
-  assert.match(editor, /`standard_air`/);
-  assert.match(editor, /never touches `painted`/);
+test("fresh turf auto-paints the breathable pack default", () => {
+  assert.match(breathable, /id = "ideal_air"/);
+  assert.match(breathable, /default = true/);
+  assert.match(editor, /`ideal_air`/);
+  assert.match(editor, /auto-paint/);
+  assert.match(editor, /fill-if-blank/);
+  assert.doesNotMatch(editor, /never touches `painted`/);
+  assert.doesNotMatch(editor, /standard_air/);
 });
 
-test("the lens table covers walls and explicit override", () => {
+test("wall and space strokes clear entries; the lens tints walls", () => {
   assert.match(compositions, /gas_blocking = true/);
-  assert.match(editor, /Walls read as nothing/);
-  assert.match(editor, /explicit override/);
+  assert.match(editor, /clears the entry/);
+  assert.match(editor, /walls the layer tint/);
+  assert.doesNotMatch(editor, /Walls read as nothing/);
+});
+
+test("map atmosphere eraser restores inherit; refrigerated folds under the default", () => {
+  assert.match(editor, /[Mm]ap atmosphere/);
   assert.match(editor, /atmosphere_blend/);
   assert.match(editor, /eraser is the inherit/);
+  assert.match(editor, /explicit override/);
+  assert.match(editor, /`refrigerated_air`/);
+  assert.match(editor, /foldout/);
 });
