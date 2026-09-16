@@ -1,4 +1,4 @@
--- Ordinary air with the shower running: standard air plus half a mole
+-- Ordinary air with the shower running: ideal air plus half a mole
 -- of water vapour per tile.
 --
 -- `water:gas` is spelled out because water rests LIQUID at 20 C, so an
