@@ -28,7 +28,7 @@
 -- operational. It exchanges heat in the dark.
 return {
     id = "heat_exchanger",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.heat_exchanger.name",
     name = "heat exchanger",
     sprite = "he_plate_n",

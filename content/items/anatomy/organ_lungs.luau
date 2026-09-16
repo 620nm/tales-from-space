@@ -47,8 +47,7 @@
 -- with the `breathing` capacity, so damaged lungs turn over less air.
 return {
     id = "organ_lungs",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.organ_lungs.name",
     name = "lungs",
     sprite = "organ_lungs",

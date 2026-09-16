@@ -16,8 +16,7 @@ local stock_parts = require("@lib/stock_parts")
 -- called what tg calls it.
 return {
     id = "servo",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.servo.name",
     name = "micro-servo",
     sprite = "micro_servo",

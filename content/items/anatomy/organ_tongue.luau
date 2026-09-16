@@ -14,8 +14,7 @@
 -- thing a tongue on the deck does.
 return {
     id = "organ_tongue",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.organ_tongue.name",
     name = "tongue",
     sprite = "organ_tongue",

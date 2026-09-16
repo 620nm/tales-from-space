@@ -62,7 +62,7 @@
 -- see tfs/assets/sprites/71-thermomachine.ron.
 return {
     id = "thermomachine",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.thermomachine.name",
     name = "temperature control unit",

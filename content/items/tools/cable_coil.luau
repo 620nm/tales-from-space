@@ -33,8 +33,7 @@ local LINES = {
 
 local content = {
     id = "cable_coil",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.cable_coil.name",
     name = "cable coil",
     sprite = "coil",

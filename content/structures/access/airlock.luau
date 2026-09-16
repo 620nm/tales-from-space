@@ -29,7 +29,7 @@
 -- station came with.
 return {
     id = "airlock",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.airlock.name",
     name = "airlock",

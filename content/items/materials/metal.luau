@@ -5,8 +5,7 @@
 -- know about itself.
 return {
     id = "metal",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.metal.name",
     name = "metal sheets",
     sprite = "metal",

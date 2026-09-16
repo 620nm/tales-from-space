@@ -13,7 +13,7 @@
 -- up and a new one fitted without the engine learning what a light is.
 return {
     id = "light",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.light.name",
     name = "light fixture",

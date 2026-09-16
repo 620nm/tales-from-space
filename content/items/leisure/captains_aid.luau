@@ -32,8 +32,7 @@ local DIRECTIONS = { "off", "port", "starboard", "fore", "aft" }
 
 local content = {
     id = "captains_aid",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.captains_aid.name",
     name = "Captain's Aid",
     -- The resting picture is the off one, which is also the state a

@@ -30,7 +30,7 @@
 -- dial goes to two hundred.
 return {
     id = "air_injector",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.air_injector.name",
     name = "air injector",

@@ -7,8 +7,7 @@
 -- creation, one level deep.
 return {
     id = "box_lights",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.box_lights.name",
     name = "box of replacement lights",
     sprite = "box_lights",

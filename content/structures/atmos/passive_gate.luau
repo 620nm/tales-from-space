@@ -23,7 +23,7 @@
 -- steps.
 return {
     id = "passive_gate",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.passive_gate.name",
     name = "passive gate",
     sprite = "passgate_off_n",

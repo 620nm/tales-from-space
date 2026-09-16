@@ -29,8 +29,7 @@ local LAYERS = { 2, 3, 4 }
 
 local content = {
     id = "he_pipe",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.he_pipe.name",
     name = "heat-exchanging pipe",
     sprite = "he_pipe",

@@ -1,8 +1,7 @@
 -- Stitches an incision shut (tg stacks/medical.dm:582).
 return {
     id = "suture",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.suture.name",
     name = "suture",
     sprite = "suture",

@@ -2,8 +2,7 @@ local vessel = require("@lib/vessel")
 
 local content = {
     id = "water_bottle",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.water_bottle.name",
     name = "bottle of water",
     sprite = "water_bottle_small",

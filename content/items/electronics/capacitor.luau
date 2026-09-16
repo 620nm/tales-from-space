@@ -17,8 +17,7 @@ local stock_parts = require("@lib/stock_parts")
 -- economy exists it becomes a row rather than a file.
 return {
     id = "capacitor",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.capacitor.name",
     name = "capacitor",
     sprite = "capacitor",

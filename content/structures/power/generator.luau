@@ -5,7 +5,7 @@
 -- exactly the per-tick arithmetic the engine keeps.
 return {
     id = "generator",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.generator.name",
     name = "portable generator",

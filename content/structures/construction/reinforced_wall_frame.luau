@@ -27,7 +27,7 @@
 -- station.
 return {
     id = "reinforced_wall_frame",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.reinforced_wall_frame.name",
     name = "reinforced wall frame",
     sprite = "reinforced_wall_1",

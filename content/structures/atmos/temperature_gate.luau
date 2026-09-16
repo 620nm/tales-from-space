@@ -34,7 +34,7 @@
 -- lights on.
 return {
     id = "temperature_gate",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.temperature_gate.name",
     name = "temperature gate",

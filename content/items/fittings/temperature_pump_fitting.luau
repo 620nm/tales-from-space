@@ -5,8 +5,7 @@
 -- `"tpump"` here (components/binary_devices/temperature_pump.dm:8).
 return {
     id = "temperature_pump_fitting",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.temperature_pump_fitting.name",
     name = "temperature pump fitting",
     sprite = "temperature_pump_loose",

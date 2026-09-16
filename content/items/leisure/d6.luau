@@ -49,8 +49,7 @@ end
 
 local content = {
     id = "d6",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.d6.name",
     name = "d6",
     -- The resting picture, and the fallback for any state that named no

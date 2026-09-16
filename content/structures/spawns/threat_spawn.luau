@@ -2,7 +2,7 @@
 -- marker is retained; gameplay handlers decide when and what to spawn there.
 return {
     id = "threat_spawn",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.threat_spawn.name",
     name = "Threat Spawn",
     sprite = "marker_threat_spawn",

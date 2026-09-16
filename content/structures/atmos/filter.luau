@@ -36,7 +36,7 @@
 -- the kit.
 return {
     id = "filter",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.filter.name",
     name = "filter",

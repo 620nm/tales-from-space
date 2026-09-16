@@ -5,8 +5,7 @@
 -- `"heunary"` here (components/unary_devices/heat_exchanger.dm:16).
 return {
     id = "heat_exchanger_fitting",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.heat_exchanger_fitting.name",
     name = "heat exchanger fitting",
     sprite = "heat_exchanger_loose",

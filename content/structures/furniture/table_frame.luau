@@ -15,7 +15,7 @@
 -- not a surface. Nothing rests on four legs and a hole.
 return {
     id = "table_frame",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.table_frame.name",
     name = "table frame",
     sprite = "table_frame",

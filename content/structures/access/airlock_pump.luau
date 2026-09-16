@@ -2,7 +2,7 @@
 -- the process fills and siphons its turf and every atmos-adjacent one (:199-254).
 return {
     id = "airlock_pump",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.airlock_pump.name",
     name = "external airlock pump",

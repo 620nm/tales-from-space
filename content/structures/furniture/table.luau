@@ -28,7 +28,7 @@
 -- does not exist here; none of them changes what a table IS.
 return {
     id = "table",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.table.name",
     name = "table",
     -- The isolated frame. Everything else it can wear is derived from

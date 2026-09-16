@@ -23,8 +23,7 @@
 -- in structures/connector_port.luau where the target is the expert.
 return {
     id = "connector_port_fitting",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.connector_port_fitting.name",
     name = "connector port fitting",
     sprite = "connector_port_loose",

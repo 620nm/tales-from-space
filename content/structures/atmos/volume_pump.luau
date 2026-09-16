@@ -28,7 +28,7 @@
 -- over it, like the pipe either side.
 return {
     id = "volume_pump",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.volume_pump.name",
     name = "volumetric pump",

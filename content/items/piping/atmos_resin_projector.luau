@@ -13,8 +13,7 @@ local action_rules = require("@lib/action_rules")
 -- ledger edge and is not a handler.
 local content = {
     id = "atmos_resin_projector",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.atmos_resin_projector.name",
     name = "atmos resin projector",
     -- Reuse the rapid pipe dispenser silhouette until the next asset

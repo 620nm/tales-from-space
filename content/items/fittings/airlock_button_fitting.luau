@@ -1,7 +1,6 @@
 return {
     id = "airlock_button_fitting",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.airlock_button_fitting.name",
     name = "button fitting",
     sprite = "airlock_button",

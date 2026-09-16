@@ -7,8 +7,7 @@
 -- the two in tg as well.
 return {
     id = "digital_valve_fitting",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.digital_valve_fitting.name",
     name = "digital valve fitting",
     sprite = "digital_valve_loose",

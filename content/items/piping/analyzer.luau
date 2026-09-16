@@ -209,8 +209,7 @@ end
 
 local content = {
     id = "analyzer",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.analyzer.name",
     name = "analyzer",
     sprite = "analyzer",

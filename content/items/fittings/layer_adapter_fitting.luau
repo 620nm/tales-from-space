@@ -5,8 +5,7 @@
 -- `"manifoldlayer"` here (pipes/layermanifold.dm:13).
 return {
     id = "layer_adapter_fitting",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.layer_adapter_fitting.name",
     name = "layer adapter fitting",
     sprite = "layer_adapter_loose",

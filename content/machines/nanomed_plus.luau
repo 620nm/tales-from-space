@@ -22,7 +22,7 @@
 -- ordinary free row would discard the lock rather than port it.
 return {
     id = "nanomed_plus",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.nanomed_plus.name",
     name = "NanoMed Plus",

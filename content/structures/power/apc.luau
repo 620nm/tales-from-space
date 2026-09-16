@@ -47,7 +47,7 @@
 --   labels: [(12, 5, "The Commons")]
 return {
     id = "apc",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     default_props = { l1 = "output", l2 = "input", l3 = "output" },
     name_label = "lunatic/tfs:entity.apc.name",

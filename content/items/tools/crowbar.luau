@@ -6,9 +6,7 @@ local action_rules = require("@lib/action_rules")
 -- toggle).
 local content = {
     id = "crowbar",
-    visual_layer = "entities",
-    stowed_visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.crowbar.name",
     name = "crowbar",
     sprite = "crowbar",

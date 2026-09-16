@@ -93,8 +93,7 @@ end
 
 local content = {
     id = "card_deck",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.card_deck.name",
     name = "deck of cards",
     -- THE PICTURE FOLLOWS THE STRING, not a roster the engine keeps.

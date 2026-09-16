@@ -58,7 +58,7 @@
 -- which way the pipe is coming from.
 return {
     id = "connector_port",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.connector_port.name",
     name = "connector port",
     sprite = "connector_port_s",

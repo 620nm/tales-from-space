@@ -25,7 +25,7 @@
 -- deliberately; the answer is a manual valve upstream, not a dial here.
 return {
     id = "passive_vent",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.passive_vent.name",
     name = "passive vent",
     sprite = "vent_passive",

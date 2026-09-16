@@ -48,8 +48,7 @@ local DRAW, INJECT = 0, 1
 
 local content = {
     id = "syringe",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.syringe.name",
     name = "syringe",
     sprite = "syringe",

@@ -29,7 +29,7 @@
 -- nothing can reach, which is a leftover rather than a rule.
 return {
     id = "digital_valve",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.digital_valve.name",
     name = "digital valve",
     sprite = "dvalve_shut_ns",

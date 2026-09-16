@@ -10,8 +10,7 @@ local vessel = require("@lib/vessel")
 -- your own feet falls through to whatever it would otherwise have been.
 local content = {
     id = "cola",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.cola.name",
     name = "can of Space Cola",
     sprite = "cola",

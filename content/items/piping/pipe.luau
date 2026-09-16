@@ -21,8 +21,7 @@ local action_rules = require("@lib/action_rules")
 
 local content = {
     id = "pipe",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.pipe.name",
     name = "pipe",
     sprite = "pipe",

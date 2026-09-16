@@ -1,8 +1,6 @@
 return {
     id = "uniform_med",
-    visual_layer = "entities",
-    held_visual_layer = "held",
-    worn_visual_layer = "equipment_uniform",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.uniform_med.name",
     name = "medical scrubs",
     sprite = "uniform_med",

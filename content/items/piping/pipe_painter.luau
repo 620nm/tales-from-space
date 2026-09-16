@@ -25,8 +25,7 @@ local FIXED_COLOUR = { he_pipe = true }
 
 local content = {
     id = "pipe_painter",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.pipe_painter.name",
     name = "pipe painter",
     -- tg's own art: the label gun off the bureaucracy sheet
