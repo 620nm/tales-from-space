@@ -12,7 +12,7 @@ machines, `docs/atmos/vessels-and-meter.md` for bottles and ports). This
 file owns only what THIS pack chose.
 
 Sources: `maps/chillstation.ron`, `content/blends/canister_air.luau`,
-`content/blends/ideal_air.luau`, `content/blends/refrigerated_air.luau`,
+`content/blends/breathable_air.luau`, `content/blends/refrigerated_air.luau`,
 `content/environments/cold_outdoors.luau`,
 `content/structures/atmos/air_scrubber.luau`, `content/tuning.luau`,
 `tests/atmos/environment/station_air_test.luau`,
@@ -20,7 +20,7 @@ Sources: `maps/chillstation.ron`, `content/blends/canister_air.luau`,
 
 ## The airs
 
-Three blends are what tiles breathe. `ideal_air` is 21/79 at 20 C and
+Three blends are what tiles breathe. `breathable_air` is 21/79 at 20 C and
 one atmosphere — tg's `OPENTURF_DEFAULT_ATMOS`
 (`code/__DEFINES/atmospherics/atmos_mapping_helpers.dm:7`), and
 `default = true`: what an unpainted indoor tile opens with, and what a
@@ -163,7 +163,7 @@ passes while the station is broken, which is the one thing the file
 exists to prevent. Rooms, vents and the walked route are pinned by
 coordinate.
 
-1. **The rooms hold ideal air, and keep holding it** — over
+1. **The rooms hold breathable air, and keep holding it** — over
    minutes, not at tick zero. A station that starts at an atmosphere and
    slowly loses it is invisible to any test that only looks at boot.
 2. **A fouled room comes clean and the carbon dioxide lands in the tank
