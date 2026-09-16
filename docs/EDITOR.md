@@ -35,12 +35,12 @@ their art, and no `prototypes` entry admits them to placement checks.
 
 A turf brush auto-paints air as well as substrate: painting an indoor holds-air
 composition (floor, plating) over a blank tile fill-if-blanks it with the
-breathable pack default `ideal_air` (`content/blends/ideal_air.luau`,
+breathable pack default `breathable_air` (`content/blends/breathable_air.luau`,
 `default = true`, 21/79 at 293.15 K), so fresh indoor turf opens breathable
 with an explicit entry rather than by inheritance. Blank is the only thing a
 turf stroke fills: painting floor over a painted tile keeps its entry, while a
 `wall`, `reinforced_wall` or bare `space` stroke clears the entry outright
-(the engine's reconcile in `doc.rs`) — a wall holds no cell and Space is
+(`seat_default_air` in the engine's `doc/placed.rs`) — a wall holds no cell and Space is
 boundary vacuum, so the claim cannot legally stay. The engine's
 `docs/map-properties/blends.md` owns the lens and `docs/atmos/blends.md` owns
 what an unpainted tile opens holding.
@@ -49,8 +49,8 @@ The Matter Blend lens (Q, `blend` in both modes) tints every tile over a dimmed
 station: painted floor its id-hashed hue with alpha by gas moles, unpainted
 floor the default's faint blue, rowless blends and `Space` near-black vacuum —
 and walls the layer tint of the room air they seal, so a sealed room's
-atmosphere reads from its perimeter as well as its floors. The sim's answers
-and no others (`Atmos::build_with`).
+atmosphere reads from its perimeter as well as its floors — the one place
+the lens shows the map's layer instead of the sim's cell.
 
 The palette's Matter Blends section folds temperature variants under their
 base: `refrigerated_air` — the same 21/79 mixture held at 259.15 K — is
@@ -60,13 +60,13 @@ protocol 107).
 
 An entry is an explicit override: `painted: [(x, y, id)]` replaces inheritance
 for that tile, and the eraser (unpainted swatch, right button, Delete) removes
-the entry to restore it. Explicit `ideal_air` breathes like unpainted but is
+the entry to restore it. Explicit `breathable_air` breathes like unpainted but is
 map data: it survives a default change and counts in `tiles_with`. A placement
 `blend` likewise replaces prototype contents (precedence placement, variant,
 base); a canister ships empty and its `{ "blend": "canister_air", "open": true }`
 is per-map authorship (`content/structures/atmos/canister.luau`).
 
-Map atmosphere is the eraser's answer outdoors: clearing an entry restores
+Map atmosphere is the eraser: clearing an entry restores
 inherit, which indoors is the pack default, outdoors the map's fixed
 `environment.atmosphere_blend` or the selected profile's ambient, and on Space
 boundary vacuum. The environment panel offers `Game chooses` or one fixed

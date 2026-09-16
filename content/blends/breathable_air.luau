@@ -7,8 +7,7 @@
 -- (the engine's `docs/atmos/blends.md`).
 --
 -- Named for what it is: the air every room is commissioned full of,
--- at the mixture its crew breathes. (Previously `ideal_air`, before
--- that `standard_air`.)
+-- at the mixture its crew breathes. (Previously `standard_air`.)
 --
 -- This file also exists so a mapper can PAINT that same air back onto a
 -- room they emptied by accident, and so the editor has something to
