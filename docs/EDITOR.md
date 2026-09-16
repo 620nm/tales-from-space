@@ -33,37 +33,47 @@ their art, and no `prototypes` entry admits them to placement checks.
 
 ## Air in the editor
 
-Turf paint never touches `painted`: a composition brush lays substrate and
-components only, so fresh indoor turf opens breathable on the pack default
-`standard_air` (`content/blends/standard_air.luau`, `default = true`, 21/79 at
-293.15 K). Painting a gas-blocking (`wall`, `reinforced_wall`) or
-vacuum-boundary (bare `space`) composition over a painted tile drops its entry
-(the engine's reconcile in `doc.rs`); painting floor over vacuum keeps vacuum
-until erased. The engine's `docs/map-properties/blends.md` owns the lens and
-`docs/atmos/blends.md` owns what an unpainted tile opens holding.
+A turf brush auto-paints air as well as substrate: painting an indoor holds-air
+composition (floor, plating) over a blank tile fill-if-blanks it with the
+breathable pack default `ideal_air` (`content/blends/ideal_air.luau`,
+`default = true`, 21/79 at 293.15 K), so fresh indoor turf opens breathable
+with an explicit entry rather than by inheritance. Blank is the only thing a
+turf stroke fills: painting floor over a painted tile keeps its entry, while a
+`wall`, `reinforced_wall` or bare `space` stroke clears the entry outright
+(the engine's reconcile in `doc.rs`) — a wall holds no cell and Space is
+boundary vacuum, so the claim cannot legally stay. The engine's
+`docs/map-properties/blends.md` owns the lens and `docs/atmos/blends.md` owns
+what an unpainted tile opens holding.
 
 The Matter Blend lens (Q, `blend` in both modes) tints every tile over a dimmed
-station: unpainted floor the default's faint blue, painted floor its id-hashed
-hue with alpha by gas moles, rowless blends and `Space` near-black vacuum.
-Walls read as nothing — a gas-blocking tile holds no cell — so a sealed room's
-air is judged from its floors, never its perimeter. The sim's answers and no
-others (`Atmos::build_with`).
+station: painted floor its id-hashed hue with alpha by gas moles, unpainted
+floor the default's faint blue, rowless blends and `Space` near-black vacuum —
+and walls the layer tint of the room air they seal, so a sealed room's
+atmosphere reads from its perimeter as well as its floors. The sim's answers
+and no others (`Atmos::build_with`).
+
+The palette's Matter Blends section folds temperature variants under their
+base: `refrigerated_air` — the same 21/79 mixture held at 259.15 K — is
+offered under the breathable default's foldout rather than as a lone swatch,
+so a walk-in is one gesture from the room it chills (roster `variant_of`,
+protocol 107).
 
 An entry is an explicit override: `painted: [(x, y, id)]` replaces inheritance
 for that tile, and the eraser (unpainted swatch, right button, Delete) removes
-the entry to restore it. Explicit `standard_air` breathes like unpainted but is
+the entry to restore it. Explicit `ideal_air` breathes like unpainted but is
 map data: it survives a default change and counts in `tiles_with`. A placement
 `blend` likewise replaces prototype contents (precedence placement, variant,
 base); a canister ships empty and its `{ "blend": "canister_air", "open": true }`
 is per-map authorship (`content/structures/atmos/canister.luau`).
 
-Outdoors inherits map atmos: an unpainted outdoor tile opens on the map's fixed
-`environment.atmosphere_blend` or the selected profile's ambient, and recovery
-tends there afterward; indoor inherits the pack default. The environment panel
-offers `Game chooses` or one fixed recipe, and renaming a blend updates the
-saved reference (the engine's `docs/mapping/environment.md`). There is no
-inherit swatch to paint — the eraser is the inherit: clear the entry and the
-tile breathes whatever its exposure inherits.
+Map atmosphere is the eraser's answer outdoors: clearing an entry restores
+inherit, which indoors is the pack default, outdoors the map's fixed
+`environment.atmosphere_blend` or the selected profile's ambient, and on Space
+boundary vacuum. The environment panel offers `Game chooses` or one fixed
+recipe, and renaming a blend updates the saved reference (the engine's
+`docs/mapping/environment.md`). There is no inherit swatch to paint — the
+eraser is the inherit: clear the entry and the tile breathes whatever its
+exposure inherits.
 
 ## Map markers
 
