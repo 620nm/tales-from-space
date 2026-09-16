@@ -23,5 +23,5 @@ local colors = {
 return {
     colors = colors,
     -- The five map-editor base swatches, L1 through L5.
-    defaults = { "yellow", "blue", "white", "red", "dark" },
+    defaults = { "yellow", "red", "white", "blue", "dark" },
 }
