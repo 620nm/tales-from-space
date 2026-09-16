@@ -24,7 +24,7 @@ local FILM_L = 3.32 -- 2*sqrt(sigma/rho g)*sin(theta/2), water on painted deck
 -- IS the tile's whole contents: water on its own would open the
 -- corridor airless. They are ordinary 21/79 at 20 C over a cubic metre
 -- (41.573 mol = 101.325 kPa), the arithmetic
--- content/blends/standard_air.luau spells out.
+-- content/blends/ideal_air.luau spells out.
 local CORRIDOR = [==[(
     name: "spill corridor",
     legend: {
