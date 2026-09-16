@@ -38,7 +38,7 @@
     // blend says and NOTHING else: water on its own would open this
     // alcove airless, and a compartment that flooded is not a
     // compartment that decompressed. They are ordinary 21/79 at 20 C,
-    // the same arithmetic content/blends/ideal_air.luau spells out.
+    // the same arithmetic content/blends/breathable_air.luau spells out.
     //
     // WHAT HOLDS IT UP is the sill, and that is why the deep pair is a
     // compartment rather than two tiles in the open. Five centimetres of

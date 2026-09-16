@@ -1,4 +1,4 @@
--- The ideal room air: 21% oxygen, 79% nitrogen, at 20 C and one
+-- The breathable room air: 21% oxygen, 79% nitrogen, at 20 C and one
 -- atmosphere. What a room opens with when nobody has painted it.
 --
 -- `default = true` is what makes that sentence true. The engine ships
@@ -6,8 +6,9 @@
 -- tile opens with, and a pack that says nothing opens its rooms empty
 -- (the engine's `docs/atmos/blends.md`).
 --
--- Named for what it is: the mixture, temperature and pressure every
--- room is commissioned to. (Previously `standard_air`.)
+-- Named for what it is: the air every room is commissioned full of,
+-- at the mixture its crew breathes. (Previously `ideal_air`, before
+-- that `standard_air`.)
 --
 -- This file also exists so a mapper can PAINT that same air back onto a
 -- room they emptied by accident, and so the editor has something to
@@ -15,7 +16,7 @@
 --
 -- The numbers are not typed out; they are the arithmetic spelled again.
 -- One tile is 1 m3 and pV/RT at one atmosphere and 293.15 K is what a
--- room full of ideal air holds.
+-- room full of breathable air holds.
 --
 -- tg's own default open turf is the same mixture:
 -- OPENTURF_DEFAULT_ATMOS = "o2=22;n2=82;TEMP=293.15"
@@ -28,8 +29,8 @@ local T = 293.15
 local n = ONE_ATMOSPHERE_PA * TILE_VOLUME_M3 / (R * T)
 
 return {
-    id = "ideal_air",
-    name = "Ideal air",
+    id = "breathable_air",
+    name = "Breathable air",
     default = true,
     rows = {
         { "o2", n * 0.21 },

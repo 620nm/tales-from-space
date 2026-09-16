@@ -2,12 +2,12 @@
 -- refusal when a map names air it never declared (docs/ATMOS.md).
 --
 -- `cold_outpost.ron` paints nothing, so every tile breathes what its
--- exposure inherits: indoors the ideal default, outdoors the map's cold
+-- exposure inherits: indoors the breathable default, outdoors the map's cold
 -- sky. Both are 21/79 at one atmosphere, told apart by temperature.
 
 t.world_file("cold_outpost.ron", 7, "free_build")
 
-local IDEAL_K = 293.15
+local BREATHABLE_K = 293.15
 local COLD_K = 259.15
 local ONE_ATM_KPA = 101.325
 
@@ -23,8 +23,8 @@ local function o2_share(x: number, y: number): number
     return o2 / (o2 + n2)
 end
 
--- Indoors, unpainted: the ideal default.
-near(assert(t.room_temperature(4, 3)), IDEAL_K, 0.01, "a room opens at 20 C")
+-- Indoors, unpainted: the breathable default.
+near(assert(t.room_temperature(4, 3)), BREATHABLE_K, 0.01, "a room opens at 20 C")
 near(assert(t.room_pressure(4, 3)), ONE_ATM_KPA, 0.5, "at one atmosphere")
 near(o2_share(4, 3), 0.21, 1e-6, "21% of it oxygen")
 
