@@ -20,7 +20,7 @@ local RATE_LPS = 0.5 -- content/structures/floor_drain.luau
 -- Ten litres, which is 555.10 mol: 18.015 g/mol over 1.0 g/mL is 55.51
 -- mol/L. The air rows ride along because a `total` blend is the tile's
 -- whole contents -- 41.573 mol over a cubic metre is 101.325 kPa at
--- 20 C, the arithmetic content/blends/ideal_air.luau spells out.
+-- 20 C, the arithmetic content/blends/breathable_air.luau spells out.
 local SPILL = [==[
     blends: {
         "spill_10l": (rows: [("water", 555.10), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
