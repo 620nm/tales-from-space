@@ -44,7 +44,7 @@ t.world(
 t.join()
 t.tick()
 
--- The air a station is commissioned full of (content/air/standard_air.luau).
+-- The air a station is commissioned full of (content/blends/ideal_air.luau).
 zeroes("station air", t.hazard({ o2 = 21.0, n2 = 79.0 }))
 
 -- And the same mixture at any amount: a placard reads a RATIO.
