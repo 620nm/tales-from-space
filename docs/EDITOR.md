@@ -27,9 +27,43 @@ Keep the sprite names aligned with the runtime prototype and run
 `node tools/test-editor-previews.mjs`; the matrix checks defaults and explicit
 overrides across the shipped paints and variants.
 
-`lattice` is declared in both modes with no properties or previews: the
-bare entry admits it to each mode's placement and clone checks while the
-roster supplies its art (`content/structures/construction/lattice.luau`).
+`lattice` and `catwalk` are composition presets (`content/compositions.luau`),
+not manifest prototypes: the palette offers them as turf, the roster supplies
+their art, and no `prototypes` entry admits them to placement checks.
+
+## Air in the editor
+
+Turf paint never touches `painted`: a composition brush lays substrate and
+components only, so fresh indoor turf opens breathable on the pack default
+`standard_air` (`content/blends/standard_air.luau`, `default = true`, 21/79 at
+293.15 K). Painting a gas-blocking (`wall`, `reinforced_wall`) or
+vacuum-boundary (bare `space`) composition over a painted tile drops its entry
+(the engine's reconcile in `doc.rs`); painting floor over vacuum keeps vacuum
+until erased. The engine's `docs/map-properties/blends.md` owns the lens and
+`docs/atmos/blends.md` owns what an unpainted tile opens holding.
+
+The Matter Blend lens (Q, `blend` in both modes) tints every tile over a dimmed
+station: unpainted floor the default's faint blue, painted floor its id-hashed
+hue with alpha by gas moles, rowless blends and `Space` near-black vacuum.
+Walls read as nothing — a gas-blocking tile holds no cell — so a sealed room's
+air is judged from its floors, never its perimeter. The sim's answers and no
+others (`Atmos::build_with`).
+
+An entry is an explicit override: `painted: [(x, y, id)]` replaces inheritance
+for that tile, and the eraser (unpainted swatch, right button, Delete) removes
+the entry to restore it. Explicit `standard_air` breathes like unpainted but is
+map data: it survives a default change and counts in `tiles_with`. A placement
+`blend` likewise replaces prototype contents (precedence placement, variant,
+base); a canister ships empty and its `{ "blend": "canister_air", "open": true }`
+is per-map authorship (`content/structures/atmos/canister.luau`).
+
+Outdoors inherits map atmos: an unpainted outdoor tile opens on the map's fixed
+`environment.atmosphere_blend` or the selected profile's ambient, and recovery
+tends there afterward; indoor inherits the pack default. The environment panel
+offers `Game chooses` or one fixed recipe, and renaming a blend updates the
+saved reference (the engine's `docs/mapping/environment.md`). There is no
+inherit swatch to paint — the eraser is the inherit: clear the entry and the
+tile breathes whatever its exposure inherits.
 
 ## Map markers
 
