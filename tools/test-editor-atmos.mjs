@@ -5,7 +5,7 @@ import { test } from "node:test";
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
 const manifest = JSON.parse(await read("../editor/manifest.json"));
 const editor = await read("../docs/EDITOR.md");
-const breathable = await read("../content/blends/ideal_air.luau");
+const breathable = await read("../content/blends/breathable_air.luau");
 const compositions = await read("../content/compositions.luau");
 
 test("both modes offer the blend lens turf paint breathes under", () => {
@@ -27,13 +27,14 @@ test("lattice is turf, not a placement prototype", () => {
 });
 
 test("fresh turf auto-paints the breathable pack default", () => {
-  assert.match(breathable, /id = "ideal_air"/);
+  assert.match(breathable, /id = "breathable_air"/);
   assert.match(breathable, /default = true/);
-  assert.match(editor, /`ideal_air`/);
+  assert.match(editor, /`breathable_air`/);
   assert.match(editor, /auto-paint/);
   assert.match(editor, /fill-if-blank/);
   assert.doesNotMatch(editor, /never touches `painted`/);
   assert.doesNotMatch(editor, /standard_air/);
+  assert.doesNotMatch(editor, /ideal_air/);
 });
 
 test("wall and space strokes clear entries; the lens tints walls", () => {
