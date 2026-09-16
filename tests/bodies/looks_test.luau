@@ -146,7 +146,7 @@ assert(assert(t.body(subject)).posture == "lying", "the body went down")
 assert(t.seen(watcher, subject).posture == "lying", "and the man standing next to him was told")
 assert(
     #t.seen(watcher, subject).layers == #names,
-    "without one layer changing: a crewman lying down is the same picture, turned"
+    "the same layers, re-ranked: a crewman lying down is the same picture, turned"
 )
 
 t.rest(subject, false)
