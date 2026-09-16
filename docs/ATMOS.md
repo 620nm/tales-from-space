@@ -12,8 +12,36 @@ machines, `docs/atmos/vessels-and-meter.md` for bottles and ports). This
 file owns only what THIS pack chose.
 
 Sources: `maps/chillstation.ron`, `content/blends/canister_air.luau`,
+`content/blends/ideal_air.luau`, `content/blends/refrigerated_air.luau`,
+`content/environments/cold_outdoors.luau`,
 `content/structures/atmos/air_scrubber.luau`, `content/tuning.luau`,
-`tests/atmos/environment/station_air_test.luau`.
+`tests/atmos/environment/station_air_test.luau`,
+`tests/atmos/environment/tile_air_test.luau`.
+
+## The airs
+
+Three blends are what tiles breathe. `ideal_air` is 21/79 at 20 C and
+one atmosphere — tg's `OPENTURF_DEFAULT_ATMOS`
+(`code/__DEFINES/atmospherics/atmos_mapping_helpers.dm:7`), and
+`default = true`: what an unpainted indoor tile opens with, and what a
+mapper paints back onto a room they emptied. `refrigerated_air` is the
+same mixture at `COLD_ROOM_TEMP` (259.15 K,
+`code/__DEFINES/atmospherics/atmos_core.dm:33`), topped up to one
+atmosphere by tg's kitchen rule (`KITCHEN_COLDROOM_ATMOS`,
+`atmos_mapping_helpers.dm:21`): painted, a walk-in; named by the
+`cold_outdoors` profile, the cold sky. `vacuum` is nothing at 2.7 K: a
+pumped-down room, which its neighbours flow into — space is a boundary
+they drain through instead, and a wall holds no cell at all (the
+engine's `docs/atmos/blends.md`).
+
+The map-atmosphere tile is the unpainted outdoor one: it opens on the
+map's fixed `environment.atmosphere_blend` or the selected profile's
+ambient, and recovery tends back toward that recipe afterward (the
+engine's `docs/mapping/environment.md` and
+`docs/matter-world/environment.md`). Painted air stays an explicit
+per-tile choice, and a tile naming a blend the map never declared
+refuses the world at parse — content fails closed before a single tick
+(the engine's `docs/map-properties/blends.md`).
 
 ## The loop, by coordinate
 
@@ -128,14 +156,14 @@ this file's numbers.
 
 ## The spec
 
-`tests/station_air_test.luau` loads `maps/chillstation.ron` — the map
+`tests/atmos/environment/station_air_test.luau` loads `maps/chillstation.ron` — the map
 players actually get — and asks the four questions a crew would ask on
 the way to work. A compact mirror of the station would be a spec that
 passes while the station is broken, which is the one thing the file
 exists to prevent. Rooms, vents and the walked route are pinned by
 coordinate.
 
-1. **The rooms hold breathable air, and keep holding it** — over
+1. **The rooms hold ideal air, and keep holding it** — over
    minutes, not at tick zero. A station that starts at an atmosphere and
    slowly loses it is invisible to any test that only looks at boot.
 2. **A fouled room comes clean and the carbon dioxide lands in the tank
@@ -162,6 +190,6 @@ dioxide takes nothing and a pump set to one atmosphere feeding a main
 that opens at one atmosphere has arrived before it started. What proves
 the plumbing is turning a scrubber round.
 
-Related pack specs: `tests/adapters_test.luau` (pull the layer adapter
+Related pack specs: `tests/atmos/pipenet/adapters_test.luau` (pull the layer adapter
 with a wrench and the ring parts from the department, conserving every
 mole).
