@@ -8,7 +8,7 @@
 -- adding a machine costs zero edits here.
 return {
     id = "machine_frame",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.machine_frame.name",
     name = "machine frame",
     sprite = "frame",

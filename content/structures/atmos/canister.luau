@@ -26,7 +26,7 @@
 -- shoving a live one somewhere it should not be is a decision.
 return {
     id = "canister",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.canister.name",
     name = "canister",
     sprite = "canister",

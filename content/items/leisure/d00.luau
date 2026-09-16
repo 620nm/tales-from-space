@@ -47,8 +47,7 @@ end
 
 local content = {
     id = "d00",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.d00.name",
     name = "d00",
     sprite = "d00",

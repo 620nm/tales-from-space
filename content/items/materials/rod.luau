@@ -2,8 +2,7 @@
 -- window hangs in.
 return {
     id = "rod",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.rod.name",
     name = "metal rods",
     sprite = "rods",

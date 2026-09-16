@@ -5,8 +5,7 @@ local writing = require("@lib/writing")
 -- tg paper.dm:13-31 and :182-190.
 local content = {
     id = "paper",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.paper.name",
     name = "paper",
     sprite = "paper",

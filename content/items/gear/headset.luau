@@ -10,8 +10,7 @@ local radio = require("@lib/radio")
 -- and stamps the line with whatever the item answered.
 local content = {
     id = "headset",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.headset.name",
     name = "radio headset",
     sprite = "headset",

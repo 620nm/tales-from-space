@@ -5,8 +5,7 @@
 -- `"tgate"` here (components/binary_devices/temperature_gate.dm:8).
 return {
     id = "temperature_gate_fitting",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.temperature_gate_fitting.name",
     name = "temperature gate fitting",
     sprite = "temperature_gate_loose",

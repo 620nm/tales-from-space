@@ -16,8 +16,7 @@
 -- (code/__DEFINES/bodyparts.dm:11, :25).
 return {
     id = "human_pelvis",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.human_pelvis.name",
     name = "pelvis",
     -- The greyscale sheet has no groin cell -- tg's `human_chest_m`

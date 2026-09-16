@@ -42,7 +42,7 @@
 -- station with if you would rather not have it.
 return {
     id = "vent",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     -- The one thing this machine says that is not mechanism: it
     -- repeats onto the network what the engine just decided about the

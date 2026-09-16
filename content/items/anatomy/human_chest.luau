@@ -11,8 +11,7 @@
 -- (code/modules/surgery/bodyparts/_bodyparts.dm:1641-1644).
 return {
     id = "human_chest",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.human_chest.name",
     name = "chest",
     sprite = "part_chest",

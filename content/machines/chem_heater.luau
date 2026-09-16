@@ -26,7 +26,7 @@
 -- for the last rung of the ladder is the trade that ladder is tuned for.
 return {
     id = "chem_heater",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.chem_heater.name",
     name = "reaction chamber",

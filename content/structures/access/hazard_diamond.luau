@@ -17,7 +17,7 @@
 -- (content/substances/*.luau, `hazard.special`).
 return {
     id = "hazard_diamond",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.hazard_diamond.name",
     name = "hazard diamond",
     sprite = "nfpa_704_placard",

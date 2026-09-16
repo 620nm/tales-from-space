@@ -3,7 +3,7 @@
 -- tg code/modules/paperwork/fax.dm:222-237, :294-351, :406-428.
 return {
     id = "fax",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.fax.name",
     name = "fax machine",

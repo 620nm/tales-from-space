@@ -22,8 +22,7 @@ local action_rules = require("@lib/action_rules")
 -- `ItemConsumed` rather than as the LOSS `entity.despawn` would write.
 local content = {
     id = "pill",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.pill.name",
     name = "pill",
     sprite = "pill",

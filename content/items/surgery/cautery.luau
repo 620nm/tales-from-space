@@ -1,8 +1,7 @@
 -- Seals a wound with heat (tg surgery_tools.dm:65-83).
 return {
     id = "cautery",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.cautery.name",
     name = "cautery",
     sprite = "cautery",

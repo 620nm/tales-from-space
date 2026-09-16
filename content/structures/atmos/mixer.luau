@@ -34,7 +34,7 @@
 -- gets switched on. No power hookup yet, as with the rest of the kit.
 return {
     id = "mixer",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.mixer.name",
     name = "mixer",

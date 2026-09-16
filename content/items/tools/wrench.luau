@@ -34,9 +34,7 @@ local RETURN_ITEMS: { [string]: string } = { standard = "pipe", he_pipe = "he_pi
 -- tile up and the same click works.
 local content = {
     id = "wrench",
-    visual_layer = "entities",
-    stowed_visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.wrench.name",
     name = "wrench",
     sprite = "wrench",

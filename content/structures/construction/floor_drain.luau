@@ -35,7 +35,7 @@
 -- built with one.
 return {
     id = "floor_drain",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.floor_drain.name",
     name = "floor drain",
     sprite = "floor_drain",

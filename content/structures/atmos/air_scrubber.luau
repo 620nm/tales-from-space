@@ -51,7 +51,7 @@
 -- whole kit exists for survivable by accident.
 return {
     id = "air_scrubber",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     -- The one thing this machine says that is not mechanism: it
     -- repeats onto the network what the engine just decided about the

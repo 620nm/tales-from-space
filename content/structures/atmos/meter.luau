@@ -50,7 +50,7 @@ table.insert(lamps, "meter_l4")
 
 return {
     id = "meter",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.meter.name",
     name = "flow meter",
     -- The housing, which is never tinted: tg's greyscale config paints

@@ -6,7 +6,7 @@
 -- name of nothing on it.
 return {
     id = "vendor",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.vendor.name",
     name = "Robust Softdrinks vending machine",

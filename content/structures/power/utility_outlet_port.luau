@@ -37,7 +37,7 @@
 -- part of the deck, laid with the cable.
 return {
     id = "utility_outlet_port",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.utility_outlet_port.name",
     name = "utility outlet port",

@@ -34,7 +34,7 @@
 -- the nearest truthful reading is "still going".
 return {
     id = "cadaver_chamber",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.cadaver_chamber.name",
     name = "cadaver chamber",

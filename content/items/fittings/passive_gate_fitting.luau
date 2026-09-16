@@ -5,8 +5,7 @@
 -- `"passivegate"` (passive_gate.dm:18).
 return {
     id = "passive_gate_fitting",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.passive_gate_fitting.name",
     name = "passive gate fitting",
     sprite = "passive_gate_loose",

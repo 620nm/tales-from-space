@@ -99,7 +99,7 @@
 -- station has.
 return {
     id = "chem_dispenser",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.chem_dispenser.name",
     name = "chem dispenser",

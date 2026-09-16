@@ -3,8 +3,7 @@
 -- through still stops you walking through it.
 return {
     id = "glass",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.glass.name",
     name = "glass sheets",
     sprite = "glass",

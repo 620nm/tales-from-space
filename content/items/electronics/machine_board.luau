@@ -9,8 +9,7 @@
 -- which have no socket of their own.
 return {
     id = "machine_board",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.machine_board.name",
     name = "unprogrammed machine board",
     sprite = "board",

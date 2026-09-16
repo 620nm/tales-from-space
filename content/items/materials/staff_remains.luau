@@ -2,8 +2,7 @@
 -- only sees an item prototype and mints it through the normal item path.
 return {
     id = "staff_remains",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.staff_remains.name",
     name = "remains",
     sprite = "bottle",

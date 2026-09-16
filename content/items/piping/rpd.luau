@@ -309,8 +309,7 @@ local content = {
         self = { label = "lunatic/tfs:ui.affordance.view_interface" },
     },
     id = "rpd",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.rpd.name",
     name = "rapid pipe dispenser",
     -- tg's own art off the tool sheet (`icon_state = "rpd"`, RPD.dm:26).

@@ -1,7 +1,7 @@
 -- A mounted request endpoint; the joined host's guest decides what a press means.
 return {
     id = "airlock_button",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.airlock_button.name",
     name = "button",
     sprite = "airlock_button",

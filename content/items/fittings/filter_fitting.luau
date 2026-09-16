@@ -22,8 +22,7 @@
 -- recipes still represent the honest two layouts.
 return {
     id = "filter_fitting",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.filter_fitting.name",
     name = "filter fitting",
     sprite = "filter_fitting",

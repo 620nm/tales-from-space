@@ -21,8 +21,7 @@ local action_rules = require("@lib/action_rules")
 -- (part_replacer.dm:70-74).
 local content = {
     id = "part_replacer",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.part_replacer.name",
     name = "rapid part exchange device",
     examine = {

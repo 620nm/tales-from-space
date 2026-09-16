@@ -22,7 +22,7 @@
 -- screen (tg closes the window outright on `!is_operational`, :112-114).
 return {
     id = "operating_computer",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.operating_computer.name",
     name = "operating computer",

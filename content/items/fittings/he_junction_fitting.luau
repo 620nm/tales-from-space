@@ -5,8 +5,7 @@
 -- (heat_exchange/junction.dm:16).
 return {
     id = "he_junction_fitting",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.he_junction_fitting.name",
     name = "junction fitting",
     sprite = "he_junction_loose",

@@ -12,8 +12,7 @@
 -- (code/modules/surgery/organs/internal/ears/_ears.dm).
 return {
     id = "organ_ears",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.organ_ears.name",
     name = "ears",
     sprite = "organ_ears",

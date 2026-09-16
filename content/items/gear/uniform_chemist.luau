@@ -3,9 +3,7 @@
 -- yet model its fire and acid armour, so this file claims no protection.
 return {
     id = "uniform_chemist",
-    visual_layer = "entities",
-    held_visual_layer = "held",
-    worn_visual_layer = "equipment_uniform",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.uniform_chemist.name",
     name = "chemist's jumpsuit",
     sprite = "uniform_chemist",

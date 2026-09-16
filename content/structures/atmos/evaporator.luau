@@ -45,7 +45,7 @@
 -- chamber: how hard the element drives.
 return {
     id = "evaporator",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.evaporator.name",
     name = "evaporator",

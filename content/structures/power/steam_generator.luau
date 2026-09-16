@@ -31,7 +31,7 @@
 -- and warm rather than to boil a beaker dry.
 return {
     id = "steam_generator",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.steam_generator.name",
     name = "steam generator",

@@ -80,7 +80,7 @@
 -- is written here and neither can be.
 return {
     id = "air_alarm",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.air_alarm.name",
     name = "air alarm",

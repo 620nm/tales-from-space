@@ -1,8 +1,7 @@
 -- Drills a hole in bone (tg surgery_tools.dm:158-178): force 15, pointy.
 return {
     id = "surgical_drill",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.surgical_drill.name",
     name = "surgical drill",
     sprite = "surgical_drill",

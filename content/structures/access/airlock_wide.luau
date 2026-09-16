@@ -40,7 +40,7 @@
 -- draws no department stripes on this sheet.
 return {
     id = "airlock_wide",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.airlock_wide.name",
     name = "wide airlock",

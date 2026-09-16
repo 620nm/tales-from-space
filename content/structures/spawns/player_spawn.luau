@@ -2,7 +2,7 @@
 -- retained in the live world so the mode's round.spawn policy can choose it.
 return {
     id = "player_spawn",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.player_spawn.name",
     name = "Player Spawn",
     sprite = "marker_player_spawn",

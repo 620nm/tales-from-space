@@ -19,8 +19,7 @@
 -- there is nothing in a hand to read it WITH.
 return {
     id = "floppy_disk",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.floppy_disk.name",
     name = "floppy disk",
     -- tg's `/obj/item/disk` off `icons/obj/devices/floppy_disks.dmi`,

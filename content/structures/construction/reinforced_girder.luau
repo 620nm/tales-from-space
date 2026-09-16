@@ -18,7 +18,7 @@
 -- (reinf_walls.dm:16), because the wall is what the step is building.
 return {
     id = "reinforced_girder",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.reinforced_girder.name",
     name = "reinforced girder",
     sprite = "girder_reinforced",

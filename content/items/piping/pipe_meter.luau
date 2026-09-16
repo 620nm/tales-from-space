@@ -21,8 +21,7 @@ local CHANNELS = { "l1", "l2", "l3", "l4", "l5" }
 
 local content = {
     id = "pipe_meter",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.pipe_meter.name",
     name = "meter",
     -- tg's `icon_state = "meter"` off the fittings sheet: the gauge

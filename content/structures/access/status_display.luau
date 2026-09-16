@@ -10,7 +10,7 @@
 -- become bounded, scrolling pixels. An empty pair is the blank mode.
 return {
     id = "status_display",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.status_display.name",
     name = "status display",
     sprite = "status_display",

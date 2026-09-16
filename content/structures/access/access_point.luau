@@ -29,7 +29,7 @@
 -- engineer who screwed it together is exactly that somebody.
 return {
     id = "access_point",
-    visual_layer = "entities",
+    visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.access_point.name",
     name = "access point",

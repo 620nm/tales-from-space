@@ -14,9 +14,7 @@ local action_rules = require("@lib/action_rules")
 -- tg: /obj/item/multitool (multitool.dm:14).
 local content = {
     id = "multitool",
-    visual_layer = "entities",
-    stowed_visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.multitool.name",
     name = "multitool",
     sprite = "multitool",

@@ -1,8 +1,7 @@
 -- The first thing a surgeon reaches for (tg surgery_tools.dm:208-231).
 local content = {
     id = "scalpel",
-    visual_layer = "entities",
-    held_visual_layer = "held",
+    visual_layer = "item",
     name_label = "lunatic/tfs:entity.scalpel.name",
     name = "scalpel",
     sprite = "scalpel",
