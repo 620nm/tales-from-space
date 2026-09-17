@@ -14,9 +14,11 @@ export type Event = {
     service: string?,
     payload: unknown,
     request_id: string?,
+    origin: string?,
 }
 type DoorCommand = { op: "open" | "close", mac: string, id: string }
 type BoltCommand = { op: "bolt", mac: string, id: string, bolted: boolean }
+type EmergencyCommand = { op: "emergency", mac: string, id: string, emergency: boolean }
 type VentCommand = { op: "vent", mac: string, id: string } & (
     { on: false, target: unknown, direction: unknown }
     | { on: true, target: number, direction: "fill" | "drain" }
@@ -40,7 +42,7 @@ type ServiceCommand = {
     abandoned: boolean?,
     token: LinkReplyToken?,
 }
-type DeviceCommand = DoorCommand | BoltCommand | VentCommand | WatchCommand
+type DeviceCommand = DoorCommand | BoltCommand | EmergencyCommand | VentCommand | WatchCommand
 type Command = DeviceCommand | ServiceCommand
 type PendingService = { host: Handle, active: ServiceCommand? }
 type Timer = { id: string, ticks: number }
@@ -88,17 +90,26 @@ local function members(host: Handle)
         if state and not state.suspended and reach[state.mac] then
             local door = sim.door.state(obj)
             local vent = sim.atmos.read(obj)
+            local air = sim.sense.read(obj)
             local kind = door and "door"
-                or (vent and "vent" or (state.class == "control_button" and "button"))
+                or (
+                    vent and "vent"
+                    or (
+                        state.class == "control_button" and "button"
+                        or (state.class == "sensor" and "sensor" or nil)
+                    )
+                )
             if kind then
                 handles[state.mac] = obj
                 table.insert(rows, {
                     mac = state.mac,
                     kind = kind,
+                    class = state.class,
                     x = obj.tile.x,
                     y = obj.tile.y,
                     door = door,
                     vent = vent,
+                    air = air,
                 })
             end
         end
@@ -139,6 +150,7 @@ local STATUS_LINES: { [string]: string } = {
     fault = "lunatic/tfs:lib.controller.fault",
     denied = "lunatic/tfs:lib.controller.denied",
     unprogrammed = "lunatic/tfs:lib.controller.unprogrammed",
+    failsafe = "lunatic/tfs:lib.controller.failsafe",
 }
 local function status(host: Handle, value: string, voice: Voice?): ()
     local line = STATUS_LINES[value]
@@ -194,6 +206,7 @@ local COMMAND_FIELDS: { [string]: { [string]: boolean } } = {
     open = { mac = true, op = true, id = true },
     close = { mac = true, op = true, id = true },
     bolt = { mac = true, op = true, id = true, bolted = true },
+    emergency = { mac = true, op = true, id = true, emergency = true },
     vent = { mac = true, op = true, id = true, on = true, direction = true, target = true },
     watch = { mac = true, op = true, id = true, target = true, comparison = true, ticks = true },
     -- The controller host originates an addressed service request. `to` is
@@ -237,6 +250,7 @@ local function valid(candidate: unknown, handles: { [string]: Handle }): boolean
         and result.status ~= "working"
         and result.status ~= "denied"
         and result.status ~= "fault"
+        and result.status ~= "failsafe"
     then
         return false
     end
@@ -285,6 +299,14 @@ local function valid(candidate: unknown, handles: { [string]: Handle }): boolean
             end
         elseif command.op == "bolt" then
             if obj == nil or sim.door.state(obj) == nil or type(command.bolted) ~= "boolean" then
+                return false
+            end
+        elseif command.op == "emergency" then
+            if
+                obj == nil
+                or sim.door.state(obj) == nil
+                or type(command.emergency) ~= "boolean"
+            then
                 return false
             end
         elseif command.op == "vent" then
@@ -438,6 +460,20 @@ function controller.run(host: Handle, event: Event, voice: Voice?): boolean
             fail(host, handles, "fault", voice)
         end
     end
+    -- A latched seal stops the fans from the bridge: the guest's six
+    -- slots are already full of leaves, and a sealed room must not keep
+    -- pumping. Queued behind the leaves, never instead of them.
+    if answer.status == "failsafe" then
+        local halts = {}
+        for mac, obj in pairs(handles) do
+            if sim.atmos.read(obj) then
+                table.insert(halts, { mac = mac, op = "vent", id = "failsafe", on = false })
+            end
+        end
+        if #halts > 0 then
+            device_queue.send(host, { kind = "device.commands", commands = halts })
+        end
+    end
     return answer.accepted == true
 end
 
@@ -476,6 +512,12 @@ function controller.device(ev: LinkMessageDonePayload): ()
             sim.door.close({ subject = obj, request_id = command.id })
         elseif command.op == "bolt" then
             sim.door.set_bolted({ subject = obj, request_id = command.id, bolted = command.bolted })
+        elseif command.op == "emergency" then
+            sim.door.set_emergency({
+                subject = obj,
+                request_id = command.id,
+                emergency = command.emergency,
+            })
         elseif command.op == "vent" then
             local args: AtmosConfigureCommand = { entity = obj, on = command.on }
             if command.on then
@@ -533,7 +575,12 @@ local function receive_one(ev: MessageEvent, payload: unknown, said: { [string]:
             not sim.door.state(sender)
             or not token(p.id)
             or type(p.success) ~= "boolean"
-            or (p.operation ~= "open" and p.operation ~= "close" and p.operation ~= "set_bolted")
+            or (
+                p.operation ~= "open"
+                and p.operation ~= "close"
+                and p.operation ~= "set_bolted"
+                and p.operation ~= "set_emergency"
+            )
         then
             return
         end

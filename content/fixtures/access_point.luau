@@ -33,6 +33,21 @@ if sim ~= nil then
     -- Addressed completion is submitter delivered and therefore mod scoped;
     -- install it globally and let the controller verify the live slot.
     sim.handle("link.service.send.done", { kind = "react" }, controller.service_send_done)
+    -- The boot knock: a fresh host introduces its guest to the network
+    -- once, whether the map placed it or an engineer built it. `origin`
+    -- is the engine's own word for which (`map` before genesis, `built`
+    -- after); the guest probes the air on it and latches what it found.
+    -- A map's edges are sewn after this runs, so a commissioned host
+    -- meets an empty room and waits for its first press to look again.
+    -- No guest, no knock: the bridge's unprogrammed line is a voice and
+    -- a voice needs a live actor, which boot has none of -- and a
+    -- failed initializer drops the host with it.
+    script_definition:handle("entity.initialize.done", { kind = "react" }, function(ev)
+        if sim.disl.slot_program(ev.entity, "controller") == nil then
+            return
+        end
+        controller.run(ev.entity, { kind = "boot", origin = ev.origin })
+    end)
 
     script_definition:handle(
         "interaction.use.refused",

@@ -94,6 +94,18 @@ if sim ~= nil then
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("link.message.done", { kind = "react" }, controller.message)
+    -- The boot knock, the access point's exactly: a fresh host runs its
+    -- guest once with the engine's own `map`/`built` word, so a program
+    -- an engineer loads later still meets the network it woke on.
+    -- No guest, no knock: the bridge's unprogrammed line is a voice and
+    -- a voice needs a live actor, which boot has none of -- and a
+    -- failed initializer drops the host with it.
+    script_definition:handle("entity.initialize.done", { kind = "react" }, function(ev)
+        if sim.disl.slot_program(ev.entity, "controller") == nil then
+            return
+        end
+        controller.run(ev.entity, { kind = "boot", origin = ev.origin })
+    end)
 
     -- WHO IT BELIEVES: `child` and `sibling`. A child is a fan joined
     -- to this alarm by hand, which is the pairing the whole box exists
