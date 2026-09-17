@@ -1,183 +1,314 @@
--- AIRLOCK: west is the station, east is space. Either button changes direction.
--- This program runs again for each button press, door report, or pressure report.
--- event describes that report; devices lists the equipment joined to this box.
--- local gives a value a name. A table, written { ... }, groups related values.
-
--- A function is a named set of instructions. Change this one to control access.
+-- AIRLOCK: learns home by tasting air, never by place.
+-- Runs per knock, press, door or pressure report.
+-- event is the report; devices the joined gear.
+-- local names a value. A table, { ... }, groups them.
 local function permitted(request)
-    -- Replace the next line with: return request.engineering
-    -- to require engineering access. true allows a press; false refuses it.
-    return true
+ -- Next line to: return request.engineering
+ return true
 end
-
-local commands = {}
-local result = { commands = commands }
--- mem remembers values between reports: one argument reads, two arguments save.
-local state = mem("cycle")
-
--- Add an instruction to the outgoing list. mac is the equipment's address.
--- Each instruction carries a cycle number and step so old replies are ignored.
-local function command(mac, operation, settings)
-    local instruction = settings or {}
-    instruction.mac = mac
-    instruction.op = operation
-    instruction.id = state.id .. ":" .. state.phase
-    table.insert(commands, instruction)
+local cmds = {}
+local result = { commands = cmds }
+-- mem keeps values: one arg reads, two save.
+local st = mem("cy")
+local sv = mem("sv")
+-- Queue one instruction. mac is the address.
+local function send(mac, op, settings)
+ local ins = settings or {}
+ ins.mac, ins.op, ins.id = mac, op, st.id .. ":" .. st.phase
+ table.insert(cmds, ins)
 end
-
-local function remember()
-    mem("cycle", state)
-    return result
+local function save()
+ mem("cy", st)
+ return result
 end
-
--- Stop pumping on trouble. Never assume a stuck door has shut safely.
+-- Halt the fan. Never trust a stuck leaf shut.
 local function fault()
-    for _, device in ipairs(devices) do
-        if device.kind == "vent" then
-            command(device.mac, "vent", { on = false })
-        end
-    end
-    state.phase = "fault"
-    result.status = "fault"
-    result.timer = false
-    return remember()
+ for _, d in ipairs(devices) do
+  if d.kind == "vent" then
+   send(d.mac, "vent", { on = false })
+  end
+ end
+ st.phase = "fault"
+ result.status = "fault"
+ result.timer = false
+ return save()
 end
-
--- BUTTON PRESS: choose a destination and close the door on the other side.
+-- Home: calm, heavy, rich, kind.
+local function home(r)
+ return type(r) == "table" and r.hazard == "none" and (r.kpa or 0) >= 85
+  and (r.breathKpa or 0) >= 16 and (r.tempK or 0) >= 253.15 and (r.tempK or 0) <= 323.15
+end
+-- Leaf: 0 lost, 1 out, 2 home. Deadly reads out.
+local function side(leaf)
+ if type(leaf) ~= "table" or type(leaf.air) ~= "table" then
+  return 0
+ end
+ local a, live, found = leaf.air, false, false
+ for _, k in ipairs({ "n", "s", "e", "w" }) do
+  local s = a[k]
+  if s ~= nil then
+   live = true
+   if home(s) then
+    found = true
+   end
+  end
+ end
+ if not live then
+  return 0
+ end
+ return found and 2 or 1
+end
+-- Read the room. ipairs walks; #counts. Poison seals via out.
+local function look(btn)
+ local v, ds, bs, hit = nil, {}, 0, btn == nil
+ for _, d in ipairs(devices) do
+  if d.kind == "vent" then
+   if v ~= nil or d.class ~= "atmos" then
+    return nil
+   end
+   v = d
+  elseif d.kind == "door" then
+   if d.class ~= "atmos" or type(d.door) ~= "table" then
+    return nil
+   end
+   table.insert(ds, d)
+  elseif d.kind == "button" then
+   if d.class ~= "control_button" then
+    return nil
+   end
+   bs += 1
+   if d.mac == btn then
+    hit = true
+   end
+  else
+   return nil
+  end
+ end
+ if v == nil or #ds ~= 2 or bs ~= 2 or not hit then
+  return nil
+ end
+ local x, y = side(ds[1]), side(ds[2])
+ if x == 0 or y == 0 then
+  return nil
+ end
+ if x == 1 and y == 1 then
+  return { mode = "sealed" }
+ end
+ if x == 2 and y == 2 then
+  table.sort(ds, function(p, q)
+   return p.mac < q.mac
+  end)
+  return { mode = "interlock", vent = v, a = ds[1], b = ds[2] }
+ end
+ if x == 2 then
+  return { mode = "pump", vent = v, station = ds[1], other = ds[2] }
+ end
+ return { mode = "pump", vent = v, station = ds[2], other = ds[1] }
+end
+-- Seal both, latch for engineers. Unbolt first.
+local function seal()
+ for _, d in ipairs(devices) do
+  if d.kind == "door" then
+   send(d.mac, "bolt", { bolted = false })
+   send(d.mac, "close")
+   send(d.mac, "emergency", { emergency = true })
+  end
+ end
+ sv = { mode = "sealed" }
+ mem("sv", sv)
+ st.phase = "sealed"
+ result.status = "failsafe"
+ result.replace = true
+ result.timer = false
+ return save()
+end
+-- FIRST KNOCK: with station or made later.
+if event.kind == "boot" then
+ if event.origin ~= "map" and event.origin ~= "built" then
+  return result
+ end
+ st = st or { id = "boot", phase = "idle" }
+ local f = look()
+ if f == nil then
+  return result
+ end
+ if f.mode == "sealed" then
+  return seal()
+ end
+ sv = f.mode == "pump" and { mode = "pump", station = f.station.mac, other = f.other.mac }
+  or { mode = "interlock", a = f.a.mac, b = f.b.mac }
+ mem("sv", sv)
+ st.phase = "idle"
+ result.status = "idle"
+ result.timer = false
+ return save()
+end
+-- Sealed hears engineers only.
+if sv ~= nil and sv.mode == "sealed" then
+ if event.kind ~= "button" then
+  return result
+ end
+ if look(event.mac) == nil then
+  return result
+ end
+ if not event.engineering or not permitted(event) then
+  return { commands = {}, status = "denied", accepted = false }
+ end
+ st = { id = "reset", phase = "reset" }
+ for _, d in ipairs(devices) do
+  if d.kind == "door" then
+   send(d.mac, "emergency", { emergency = false })
+  end
+ end
+ mem("sv", nil)
+ sv = nil
+ result.status = "working"
+ result.replace = true
+ result.accepted = true
+ result.timer = { id = st.id, ticks = 600 }
+ return save()
+end
+-- BUTTON PRESS: shut far leaf, open near.
 if event.kind == "button" then
-    if not permitted(event) then
-        return { commands = {}, status = "denied", accepted = false }
-    end
-
-    local vent = nil
-    local doors = {}
-    local button = nil
-    -- ipairs visits each entry in a list; table.insert adds an entry to a list.
-    for _, device in ipairs(devices) do
-        if device.kind == "vent" then vent = device end
-        if device.kind == "door" then table.insert(doors, device) end
-        if device.kind == "button" and device.mac == event.mac then
-            button = device
-        end
-    end
-
-    local cycle_number = (mem("generation") or 0) + 1
-    mem("generation", cycle_number)
-    state = { id = tostring(cycle_number), phase = "close" }
-    -- #doors counts the doors. We need exactly two and a working button and vent.
-    if not vent or #doors ~= 2 or not button then return fault() end
-
-    table.sort(doors, function(a, b) return a.x < b.x end)
-    local interior = doors[1]
-    local exterior = doors[2]
-    -- The first accepted press requests entry. Every later press reverses it.
-    local inward = mem("last_inward") ~= true
-    mem("last_inward", inward)
-    local closing = interior
-    local opening = exterior
-    if inward then
-        closing = exterior
-        opening = interior
-    end
-    state.vent = vent.mac
-    state.close = closing.mac
-    state.open = opening.mac
-    state.inward = inward
-
-    command(state.vent, "vent", { on = false })
-    if closing.door.moving then
-        state.phase = "wait_close"
-    else
-        command(state.close, "bolt", { bolted = false })
-        command(state.close, "close")
-    end
-    result.status = "working"
-    result.replace = true
-    result.accepted = true
-    result.timer = { id = state.id, ticks = 600 }
-    return remember()
+ if not permitted(event) then
+  return { commands = {}, status = "denied", accepted = false }
+ end
+ local n = (mem("gen") or 0) + 1
+ mem("gen", n)
+ st = { id = tostring(n), phase = "close" }
+ local f = look(event.mac)
+ if f == nil then
+  return fault()
+ end
+ if f.mode == "sealed" then
+  return seal()
+ end
+ if sv == nil then
+  sv = f.mode == "pump" and { mode = "pump", station = f.station.mac, other = f.other.mac }
+   or { mode = "interlock", a = f.a.mac, b = f.b.mac }
+  mem("sv", sv)
+ end
+ -- First asks in; next asks the other way.
+ local inward = mem("last") ~= true
+ mem("last", inward)
+ local cm, om = sv.station, sv.other
+ if sv.mode ~= "pump" then
+  cm, om = sv.a, sv.b
+ end
+ if inward then
+  cm, om = om, cm
+ end
+ local closing = (f.mode == "pump" and ((cm == f.station.mac) and f.station or f.other))
+  or ((cm == f.a.mac) and f.a or f.b)
+ st.vent, st.close, st.open = f.vent.mac, cm, om
+ st.inward, st.mode = inward, sv.mode
+ send(st.vent, "vent", { on = false })
+ if closing.door.moving then
+  st.phase = "wait_close"
+ else
+  send(st.close, "bolt", { bolted = false })
+  send(st.close, "close")
+ end
+ result.status = "working"
+ result.replace = true
+ result.accepted = true
+ result.timer = { id = st.id, ticks = 600 }
+ return save()
 end
-
--- Without a previous button press there is no cycle to continue.
-if not state then return result end
+if not st then
+ return result
+end
 if event.kind == "timeout" then
-    if event.id == state.id then return fault() end
-    return result
+ if event.id == st.id then
+  return fault()
+ end
+ return result
 end
-
--- A second press may catch a door in motion. Wait for it to stop, then close it.
-if state.phase == "wait_close" and event.kind == "door" and event.mac == state.close then
-    for _, device in ipairs(devices) do
-        if device.mac == state.close and not device.door.moving then
-            state.phase = "close"
-            command(state.close, "bolt", { bolted = false })
-            command(state.close, "close")
-            return remember()
-        end
-    end
-    return result
+-- Press mid-swing waits, then shuts.
+if st.phase == "wait_close" and event.kind == "door" and event.mac == st.close then
+ for _, d in ipairs(devices) do
+  if d.mac == st.close and not d.door.moving then
+   st.phase = "close"
+   send(st.close, "bolt", { bolted = false })
+   send(st.close, "close")
+   return save()
+  end
+ end
+ return result
 end
-
--- Only the report for the current cycle and step may move us forward.
-if event.id ~= state.id .. ":" .. state.phase then return result end
-if state.phase == "fault" or state.phase == "idle" then return result end
+-- Current cycle and step only. Unknown senders fault.
+if event.kind == "door" or event.kind == "pressure" then
+ local known = false
+ for _, d in ipairs(devices) do
+  if d.mac == event.mac then
+   known = true
+  end
+ end
+ if not known then
+  return fault()
+ end
+end
+if event.id ~= st.id .. ":" .. st.phase then
+ return result
+end
+if st.phase == "fault" or st.phase == "idle" or st.phase == "sealed" then
+ return result
+end
 if event.kind == "door" then
-    local operation = "set_bolted"
-    if state.phase == "close" or state.phase == "open" then
-        operation = state.phase
-    end
-    if event.operation ~= operation then return result end
+ local want = "set_bolted"
+ if st.phase == "close" or st.phase == "open" then
+  want = st.phase
+  if event.operation == "set_bolted" then
+   return result
+  end
+ end
+ if event.operation ~= want then
+  return fault()
+ end
 end
-if not event.success then return fault() end
-
-local expected_address = state.close
-if state.phase == "pressure" then
-    expected_address = state.vent
-elseif state.phase == "open" or state.phase == "bolt_open" then
-    expected_address = state.open
+if not event.success then
+ return fault()
 end
-if event.mac ~= expected_address then return result end
-
--- CYCLE STEPS: shut, secure, change pressure, open, secure again.
--- elseif chooses the first matching step; it does not run every step at once.
-if state.phase == "close" then
-    state.phase = "bolt_close"
-    command(state.close, "bolt", { bolted = true })
-
-elseif state.phase == "bolt_close" then
-    state.phase = "pressure"
-    local direction = "drain"
-    local pump_target = 0
-    local safe_pressure = 10
-    local comparison = "below"
-    if state.inward then
-        direction = "fill"
-        pump_target = 101.325
-        safe_pressure = 100
-        comparison = "at_least"
-    end
-    -- Pressures are in kPa. The watch reports when it is safe to open.
-    command(state.vent, "vent", {
-        on = true, direction = direction, target = pump_target,
-    })
-    command(state.vent, "watch", {
-        target = safe_pressure, comparison = comparison, ticks = 500,
-    })
-
-elseif state.phase == "pressure" then
-    state.phase = "open"
-    command(state.vent, "vent", { on = false })
-    command(state.open, "bolt", { bolted = false })
-    command(state.open, "open")
-
-elseif state.phase == "open" then
-    state.phase = "bolt_open"
-    command(state.open, "bolt", { bolted = true })
-
-elseif state.phase == "bolt_open" then
-    state.phase = "idle"
-    result.status = "idle"
-    result.timer = false
+local want_mac = st.close
+if st.phase == "pressure" then
+ want_mac = st.vent
+elseif st.phase == "open" or st.phase == "bolt_open" then
+ want_mac = st.open
 end
-
-return remember()
+if event.mac ~= want_mac then
+ return fault()
+end
+-- STEPS: shut, secure, fill or drain, open, secure.
+-- elseif takes first true. Both-breathing skips pumping.
+if st.phase == "close" then
+ st.phase = "bolt_close"
+ send(st.close, "bolt", { bolted = true })
+elseif st.phase == "bolt_close" then
+ if st.mode == "interlock" then
+  st.phase = "open"
+  send(st.open, "bolt", { bolted = false })
+  send(st.open, "open")
+ else
+  st.phase = "pressure"
+  local dir, tgt, safe, cmp = "drain", 0, 10, "below"
+  if st.inward then
+   dir, tgt, safe, cmp = "fill", 101.325, 100, "at_least"
+  end
+  -- kPa. The watch calls when safe.
+  send(st.vent, "vent", { on = true, direction = dir, target = tgt })
+  send(st.vent, "watch", { target = safe, comparison = cmp, ticks = 500 })
+ end
+elseif st.phase == "pressure" then
+ st.phase = "open"
+ send(st.vent, "vent", { on = false })
+ send(st.open, "bolt", { bolted = false })
+ send(st.open, "open")
+elseif st.phase == "open" then
+ st.phase = "bolt_open"
+ send(st.open, "bolt", { bolted = true })
+elseif st.phase == "bolt_open" then
+ st.phase = "idle"
+ result.status = "idle"
+ result.timer = false
+end
+return save()
