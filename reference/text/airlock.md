@@ -1,9 +1,9 @@
 # Airlock controller
 
 Join two doors, two wall buttons and a external airlock pump to one powered access
-point or air alarm. The default program expects the interior door west of
-the exterior door. Connect the vent's intake to pipe layer 2 and its effluent
-to layer 4.
+point or air alarm. The default program learns which leaf is home by tasting
+the air on each side; either leaf may face the station. Connect the vent's
+intake to pipe layer 2 and its effluent to layer 4.
 
 Insert this disk into the access point or air alarm. Open and power on the
 laptop, then hold it and click that host. Drive A is the host's internal
