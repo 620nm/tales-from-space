@@ -157,7 +157,9 @@ assert(sequence_rows() == before + #diagonal_corners, "each diagonal answers on 
 
 -- The southwest face admits its own tile and its west and south neighbours,
 -- and bars its north: one button bolted to a pillar corner, three stands,
--- two answers and a silence.
+-- two answers and a silence. The press wants an empty hand, so the north
+-- tile is pressed twice: bare for the face gate itself, then holding the
+-- spray bottle, which the shut face bars like any other touch.
 t.world(
     [==[(
     name: "southwest face reach",
@@ -176,6 +178,7 @@ t.world(
         (2, 1, "player_spawn"),
         (2, 2, "airlock_button", { "mount": "southwest" }),
     ],
+    items: [(2, 1, "spray_bottle")],
 )]==],
     0
 )
@@ -188,6 +191,14 @@ before = sequence_rows()
 t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "airlock_button")))
 t.run_ticks(2)
 assert(sequence_rows() == before, "the southwest button ignores a press from its north tile")
+
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "spray_bottle")))
+t.run_ticks(2)
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "airlock_button")))
+t.run_ticks(2)
+assert(sequence_rows() == before, "the shut face bars a ranged tool in reach")
+t.drop(p)
+t.run_ticks(2)
 
 walk("west")
 walk("south")
