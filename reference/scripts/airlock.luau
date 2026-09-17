@@ -38,27 +38,29 @@ local function home(r)
  return type(r) == "table" and r.hazard == "none" and (r.kpa or 0) >= 85
   and (r.breathKpa or 0) >= 16 and (r.tempK or 0) >= 253.15 and (r.tempK or 0) <= 323.15
 end
--- Leaf: 0 lost, 1 out, 2 home. Thin, foul, cold read out.
+-- Leaf: home, wild, or lost. Thin, foul, cold read wild.
 local function side(leaf)
  if type(leaf) ~= "table" or type(leaf.air) ~= "table" then
-  return 0
+  return nil
  end
- local a, live, found = leaf.air, false, false
+ local a, live, found, wild = leaf.air, false, false, false
  for _, k in ipairs({ "n", "s", "e", "w" }) do
   local s = a[k]
   if s ~= nil then
    live = true
    if home(s) then
     found = true
+   else
+    wild = true
    end
   end
  end
  if not live then
-  return 0
+  return nil
  end
- return found and 2 or 1
+ return found, wild
 end
--- Read the room. ipairs walks; #counts. Both out seals.
+-- Read the room. #counts; two buttons or more. Both out seals.
 local function look(btn)
  local v, ds, bs, hit = nil, {}, 0, btn == nil
  for _, d in ipairs(devices) do
@@ -84,26 +86,31 @@ local function look(btn)
    return nil
   end
  end
- if v == nil or #ds ~= 2 or bs ~= 2 or not hit then
+ if v == nil or #ds ~= 2 or bs < 2 or not hit then
   return nil
  end
- local x, y = side(ds[1]), side(ds[2])
- if x == 0 or y == 0 then
+ table.sort(ds, function(p, q)
+  return p.mac < q.mac
+ end)
+ local xh, xo = side(ds[1])
+ local yh, yo = side(ds[2])
+ if xh == nil or yh == nil then
   return nil
  end
- if x == 1 and y == 1 then
+ if not xh and not yh then
   return { mode = "sealed" }
  end
- if x == 2 and y == 2 then
-  table.sort(ds, function(p, q)
-   return p.mac < q.mac
-  end)
-  return { mode = "interlock", vent = v, a = ds[1], b = ds[2] }
+ -- Disagreement pumps: one home leaf, or two with one wild side.
+ -- Agreement trades leaves; two dead leaves seal.
+ if xh ~= yh or xo ~= yo then
+  local st = (xh and not yh) and ds[1]
+   or (yh and not xh) and ds[2]
+   or (xo and not yo) and ds[2]
+   or ds[1]
+  local ot = st == ds[1] and ds[2] or ds[1]
+  return { mode = "pump", vent = v, station = st, other = ot }
  end
- if x == 2 then
-  return { mode = "pump", vent = v, station = ds[1], other = ds[2] }
- end
- return { mode = "pump", vent = v, station = ds[2], other = ds[1] }
+ return { mode = "interlock", vent = v, a = ds[1], b = ds[2] }
 end
 -- Bid both shut and latch; the latch is the failsafe.
 local function seal()
@@ -135,9 +142,6 @@ if event.kind == "boot" then
  if f.mode == "sealed" then
   return seal()
  end
- sv = f.mode == "pump" and { mode = "pump", station = f.station.mac, other = f.other.mac }
-  or { mode = "interlock", a = f.a.mac, b = f.b.mac }
- mem("sv", sv)
  st.phase = "idle"
  result.status = "idle"
  result.timer = false
@@ -184,26 +188,19 @@ if event.kind == "button" then
  if f.mode == "sealed" then
   return seal()
  end
- -- Kept: a full room tastes home. Seal reads fresh.
- if sv == nil then
-  sv = f.mode == "pump" and { mode = "pump", station = f.station.mac, other = f.other.mac }
-   or { mode = "interlock", a = f.a.mac, b = f.b.mac }
-  mem("sv", sv)
- end
- -- First in; next the other way.
+ -- First in; next the other way. Fresh read every press: a room
+ -- that tasted home at knock may vent before the press lands.
  local inward = mem("last") ~= true
  mem("last", inward)
- local cm, om = sv.station, sv.other
- if sv.mode ~= "pump" then
-  cm, om = sv.a, sv.b
- end
+ local pm = f.mode == "pump"
+ local cm, om = pm and f.station.mac or f.a.mac, pm and f.other.mac or f.b.mac
  if inward then
   cm, om = om, cm
  end
- local closing = (f.mode == "pump" and ((cm == f.station.mac) and f.station or f.other))
+ local closing = pm and ((cm == f.station.mac) and f.station or f.other)
   or ((cm == f.a.mac) and f.a or f.b)
  st.vent, st.close, st.open = f.vent.mac, cm, om
- st.inward, st.mode = inward, sv.mode
+ st.inward, st.mode = inward, f.mode
  send(st.vent, "vent", { on = false })
  if closing.door.moving then
   st.phase = "wait_close"
