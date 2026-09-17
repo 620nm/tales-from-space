@@ -1,17 +1,17 @@
 -- AIRLOCK: learns home by tasting air, never by place.
--- Runs per knock, press, door or pressure report.
+-- Runs per knock, press, door, pressure.
 -- event is the report; devices the joined gear.
--- local names a value. A table, { ... }, groups them.
+-- local names a value; { ... } groups them.
 local function permitted(request)
  -- Next line to: return request.engineering
  return true
 end
 local cmds = {}
 local result = { commands = cmds }
--- mem keeps values: one arg reads, two save.
+-- mem: one arg reads, two save.
 local st = mem("cy")
 local sv = mem("sv")
--- Queue one instruction. mac is the address.
+-- Queue one bid. mac is the address.
 local function send(mac, op, settings)
  local ins = settings or {}
  ins.mac, ins.op, ins.id = mac, op, st.id .. ":" .. st.phase
@@ -21,7 +21,7 @@ local function save()
  mem("cy", st)
  return result
 end
--- Halt the fan. Never trust a stuck leaf shut.
+-- Halt the fan; never trust a stuck leaf.
 local function fault()
  for _, d in ipairs(devices) do
   if d.kind == "vent" then
@@ -33,12 +33,12 @@ local function fault()
  result.timer = false
  return save()
 end
--- Home: calm, heavy, rich, kind.
+-- Home: 85 heavy, 16 rich, 253-323 warm, no harm.
 local function home(r)
  return type(r) == "table" and r.hazard == "none" and (r.kpa or 0) >= 85
   and (r.breathKpa or 0) >= 16 and (r.tempK or 0) >= 253.15 and (r.tempK or 0) <= 323.15
 end
--- Leaf: 0 lost, 1 out, 2 home. Deadly reads out.
+-- Leaf: 0 lost, 1 out, 2 home. Thin, foul, cold read out.
 local function side(leaf)
  if type(leaf) ~= "table" or type(leaf.air) ~= "table" then
   return 0
@@ -58,7 +58,7 @@ local function side(leaf)
  end
  return found and 2 or 1
 end
--- Read the room. ipairs walks; #counts. Poison seals via out.
+-- Read the room. ipairs walks; #counts. Both out seals.
 local function look(btn)
  local v, ds, bs, hit = nil, {}, 0, btn == nil
  for _, d in ipairs(devices) do
@@ -105,7 +105,7 @@ local function look(btn)
  end
  return { mode = "pump", vent = v, station = ds[2], other = ds[1] }
 end
--- Seal both, latch for engineers. Unbolt first.
+-- Bid both shut and latch; the latch is the failsafe.
 local function seal()
  for _, d in ipairs(devices) do
   if d.kind == "door" then
@@ -122,7 +122,7 @@ local function seal()
  result.timer = false
  return save()
 end
--- FIRST KNOCK: with station or made later.
+-- FIRST KNOCK: learn now, or on first press.
 if event.kind == "boot" then
  if event.origin ~= "map" and event.origin ~= "built" then
   return result
@@ -143,7 +143,7 @@ if event.kind == "boot" then
  result.timer = false
  return save()
 end
--- Sealed hears engineers only.
+-- Sealed hears engineers.
 if sv ~= nil and sv.mode == "sealed" then
  if event.kind ~= "button" then
   return result
@@ -154,7 +154,8 @@ if sv ~= nil and sv.mode == "sealed" then
  if not event.engineering or not permitted(event) then
   return { commands = {}, status = "denied", accepted = false }
  end
- st = { id = "reset", phase = "reset" }
+ -- Idle, timerless: stray reports answer nothing.
+ st = { id = "reset", phase = "idle" }
  for _, d in ipairs(devices) do
   if d.kind == "door" then
    send(d.mac, "emergency", { emergency = false })
@@ -165,10 +166,10 @@ if sv ~= nil and sv.mode == "sealed" then
  result.status = "working"
  result.replace = true
  result.accepted = true
- result.timer = { id = st.id, ticks = 600 }
+ result.timer = false
  return save()
 end
--- BUTTON PRESS: shut far leaf, open near.
+-- BUTTON PRESS: shut far, open near.
 if event.kind == "button" then
  if not permitted(event) then
   return { commands = {}, status = "denied", accepted = false }
@@ -183,12 +184,13 @@ if event.kind == "button" then
  if f.mode == "sealed" then
   return seal()
  end
+ -- Kept: a full room tastes home. Seal reads fresh.
  if sv == nil then
   sv = f.mode == "pump" and { mode = "pump", station = f.station.mac, other = f.other.mac }
    or { mode = "interlock", a = f.a.mac, b = f.b.mac }
   mem("sv", sv)
  end
- -- First asks in; next asks the other way.
+ -- First in; next the other way.
  local inward = mem("last") ~= true
  mem("last", inward)
  local cm, om = sv.station, sv.other
@@ -236,7 +238,7 @@ if st.phase == "wait_close" and event.kind == "door" and event.mac == st.close t
  end
  return result
 end
--- Current cycle and step only. Unknown senders fault.
+-- This cycle and step only; strangers fault.
 if event.kind == "door" or event.kind == "pressure" then
  local known = false
  for _, d in ipairs(devices) do
