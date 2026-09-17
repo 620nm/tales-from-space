@@ -89,6 +89,12 @@ return {
             amount = 6,
         },
         {
+            item = "air_sensor_fitting",
+            name = "Air Sensor Fitting",
+            category = "Parts",
+            amount = 6,
+        },
+        {
             item = "machine_board.access_point",
             name = "Machine Board (Access Point)",
             category = "Parts",
