@@ -110,7 +110,9 @@ return {
             physical = { thermal = thermal(20000, 0.02, 0.5) } },
         { id = "grid_cover", label = "open grid floor", layer = "cover", sprite = "open_floor", cover = controls(true),
             physical = { thermal = thermal(20000, 0.02, 0.5) } },
-        { id = "reinforcement", label = "reinforced floor", layer = "cover", sprite = "reinforced_floor", cover = controls(false, "open_floor"),
+        -- No open occupant art: the rods stay in place when exposed, so the
+        -- cover keeps its own sprite with the runs disclosed over it.
+        { id = "reinforcement", label = "reinforced floor", layer = "cover", sprite = "reinforced_floor", cover = controls(false),
             physical = { thermal = thermal(62500, 0.01, 0.03) } },
         { id = "lattice", label = "lattice", layer = "support", sprite = "lattice-0", physical = { support = true } },
         { id = "catwalk", label = "catwalk", layer = "support", sprite = "catwalk-0", physical = { support = true } },
@@ -137,10 +139,12 @@ return {
     presets = {
         { id = "bare", label = "Bare Substrate", replace_components = construction_components, components = {} },
         { id = "plating", label = "Station Base", replace_components = construction_components, components = { { component = "station_base" } } },
-        { id = "floor", label = "Ordinary Floor", replace_components = construction_components, components = { { component = "station_base" }, { component = "floor_tiles" } } },
+        { id = "floor", label = "Tiled Floor", replace_components = construction_components, components = { { component = "station_base" }, { component = "floor_tiles" } } },
+        { id = "floor_exposed", label = "Tiled Floor, Exposed", variant_of = "floor", replace_components = construction_components, components = { { component = "station_base" },
+            { component = "floor_tiles", controls = { power = "open", pipe = "open" } } } },
         { id = "grid", label = "Grid Floor", replace_components = construction_components, components = { { component = "station_base" }, { component = "grid_cover" } } },
         { id = "reinforced_floor", label = "Reinforced Floor", replace_components = construction_components, components = { { component = "station_base" }, { component = "reinforcement" } } },
-        { id = "reinforced_floor_exposed", label = "Reinforced Floor, Exposed", replace_components = construction_components, components = { { component = "station_base" },
+        { id = "reinforced_floor_exposed", label = "Reinforced Floor, Exposed", variant_of = "reinforced_floor", replace_components = construction_components, components = { { component = "station_base" },
             { component = "reinforcement", controls = { power = "open", pipe = "open" } } } },
         { id = "lattice", label = "Lattice", replace_components = construction_components, components = { { component = "lattice" } } },
         { id = "catwalk", label = "Catwalk", replace_components = construction_components, components = { { component = "catwalk" } } },

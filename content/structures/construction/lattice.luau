@@ -17,6 +17,9 @@ return {
     smooth = {
         group = "lattice",
         with = { "lattice", "catwalk" },
+        -- tg joins open floors too (lattice.dm:16); ours have no group to
+        -- name, so the flow list joins them by component instead.
+        flow = { "station_base", "floor_tiles" },
         sprites = "lattice",
     },
     build = {

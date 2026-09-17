@@ -10,8 +10,10 @@ local function has(messages, wanted)
 end
 
 -- Mapped supports smooth on load. The lattice sees the catwalk east of
--- it, while the first catwalk ignores that lattice and sees only the
--- second catwalk. East is junction bit 4 and west is bit 8.
+-- it and the floor south of it, while the first catwalk ignores that
+-- lattice and sees only the second catwalk and the floor. East is
+-- junction bit 4, west bit 8, south bit 2, southeast bit 32 and
+-- southwest bit 64.
 t.world(
     [==[(
     name: "EVA bridge pictures",
@@ -35,17 +37,17 @@ t.world(
 local viewer = t.join()
 t.tick()
 local lattice_look = assert(t.examine_component(viewer, 0, 0, assert(t.component_instance(0, 0, "lattice"))))
-assert(lattice_look.sprite == "lattice-4", "the mapped lattice joins the catwalk eastward")
+assert(lattice_look.sprite == "lattice-38", "the mapped lattice joins the catwalk east and the floor south")
 assert(
     lattice_look.lines[1] == "A lightweight support lattice. These hold our station together.",
     "the lattice keeps tg's description"
 )
 t.run_ticks(10)
 local west_catwalk = assert(t.examine_component(viewer, 1, 0, assert(t.component_instance(1, 0, "catwalk"))))
-assert(west_catwalk.sprite == "catwalk-4", "the catwalk ignores lattice west and joins catwalk east")
+assert(west_catwalk.sprite == "catwalk-38", "the catwalk ignores lattice west and joins catwalk east and floor south")
 t.run_ticks(10)
 local east_catwalk = assert(t.examine_component(viewer, 2, 0, assert(t.component_instance(2, 0, "catwalk"))))
-assert(east_catwalk.sprite == "catwalk-8", "the second catwalk joins the first westward")
+assert(east_catwalk.sprite == "catwalk-74", "the second catwalk joins the first west and the floor south")
 
 -- One rod on Space raises a lattice; one more replaces it with a
 -- catwalk. Build two sites so the cutter refunds can be walked back
