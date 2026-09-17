@@ -2,9 +2,11 @@ local composition = require("@helpers/composition")
 
 local ui_controls = require("@helpers/ui_controls")
 
--- Diagonal wall mounts remain ordinary structures on their room tile. The
--- wallward direction changes their support and overhang; visibility and reach
--- are checked against the room tile.
+-- Diagonal wall mounts remain ordinary structures on their room tile: support
+-- and overhang follow the wallward direction, and visibility and examine
+-- still resolve on that tile. Touch follows the mounted face instead: a
+-- cardinal mount bars its wallward half-plane, while a diagonal mount
+-- answers only its own tile and its two wallward neighbours.
 
 local function sequence_rows()
     local count = 0
@@ -101,15 +103,106 @@ for _, row in ipairs(mounts) do
     assert(examined.sprite == row.sprite, "examine sees the mounted art")
 end
 
--- Clicking all eight is also the reach check: each observed target must make it
--- through the same player command seam, including the four diagonal corners.
+-- Reach follows the mounted face, not the room tile. From the center the
+-- four cardinals stand open while the four diagonal corners hang shut: the
+-- corner overhang leans out past the touching face.
+local cardinals = {
+    { x = 2, y = 1 },
+    { x = 1, y = 2 },
+    { x = 3, y = 2 },
+    { x = 2, y = 3 },
+}
+type Step = "east" | "north" | "south" | "west"
+type CornerRoute = { x: number, y: number, route: { Step } }
+local diagonal_corners: { CornerRoute } = {
+    { x = 1, y = 1, route = { "north", "west" } },
+    { x = 3, y = 1, route = { "east", "east" } },
+    { x = 3, y = 3, route = { "south", "south" } },
+    { x = 1, y = 3, route = { "west", "west" } },
+}
+
+local function walk(dir: Step)
+    t.move(p, dir)
+    t.run_ticks(5)
+end
+
+local px, py = t.pos(p)
+assert(px == 2 and py == 2, "the player presses the ring from its center")
 before = sequence_rows()
-for _, row in ipairs(mounts) do
+for _, corner in ipairs(diagonal_corners) do
+    local shut = assert(t.target_at(p, corner.x, corner.y, "airlock_button"))
+    t.click(p, corner.x, corner.y, shut)
+    t.run_ticks(2)
+end
+assert(sequence_rows() == before, "the diagonal corners ignore presses from the center")
+for _, row in ipairs(cardinals) do
     local observed = assert(t.target_at(p, row.x, row.y, "airlock_button"))
     t.click(p, row.x, row.y, observed)
     t.run_ticks(2)
 end
-assert(sequence_rows() == before + #mounts, "all eight mounted buttons are reachable")
+assert(sequence_rows() == before + #cardinals, "the four cardinals answer from the center")
+
+-- Each diagonal answers on its own tile: walk the ring and press each corner.
+before = sequence_rows()
+for _, corner in ipairs(diagonal_corners) do
+    for _, dir in ipairs(corner.route) do
+        walk(dir)
+    end
+    local cx, cy = t.pos(p)
+    assert(cx == corner.x and cy == corner.y, "the player stands on the corner tile")
+    t.click(p, corner.x, corner.y, assert(t.target_at(p, corner.x, corner.y, "airlock_button")))
+    t.run_ticks(2)
+end
+assert(sequence_rows() == before + #diagonal_corners, "each diagonal answers on its own tile")
+
+-- The southwest face admits its own tile and its west and south neighbours,
+-- and bars its north: one button bolted to a pillar corner, three stands,
+-- two answers and a silence.
+t.world(
+    [==[(
+    name: "southwest face reach",
+    legend: {
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+    },
+    rows: [
+        "#####",
+        "#...#",
+        "#...#",
+        "##..#",
+        "#####",
+    ],
+    structures: [
+        (2, 1, "player_spawn"),
+        (2, 2, "airlock_button", { "mount": "southwest" }),
+    ],
+)]==],
+    0
+)
+p = t.join()
+t.run_ticks(4)
+
+px, py = t.pos(p)
+assert(px == 2 and py == 1, "the player starts north of the southwest button")
+before = sequence_rows()
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "airlock_button")))
+t.run_ticks(2)
+assert(sequence_rows() == before, "the southwest button ignores a press from its north tile")
+
+walk("west")
+walk("south")
+px, py = t.pos(p)
+assert(px == 1 and py == 2, "the player stands west of the southwest button")
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "airlock_button")))
+t.run_ticks(2)
+assert(sequence_rows() == before + 1, "the southwest button answers from its west tile")
+
+walk("east")
+px, py = t.pos(p)
+assert(px == 2 and py == 2, "the player stands on the southwest button's own tile")
+t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "airlock_button")))
+t.run_ticks(2)
+assert(sequence_rows() == before + 2, "the southwest button answers on its own tile")
 
 -- Construct each diagonal on an actual 1x1 room. A frame is removed between
 -- attempts so the one-bracket-per-tile rule remains part of the fixture.
