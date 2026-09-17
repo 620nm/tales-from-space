@@ -471,7 +471,25 @@ function controller.run(host: Handle, event: Event, voice: Voice?): boolean
             end
         end
         if #halts > 0 then
-            device_queue.send(host, { kind = "device.commands", commands = halts })
+            if not device_queue.send(host, { kind = "device.commands", commands = halts }) then
+                -- A full outbox drops the halt; retry behind the drain so a
+                -- sealed room never keeps pumping on a missed send.
+                local tries = 0
+                sim.spawn_task(host, function()
+                    while host.alive and tries < 5 do
+                        sim.sleep(sim.ticks(0.3))
+                        tries += 1
+                        if
+                            device_queue.send(
+                                host,
+                                { kind = "device.commands", commands = halts }
+                            )
+                        then
+                            break
+                        end
+                    end
+                end)
+            end
         end
     end
     return answer.accepted == true
