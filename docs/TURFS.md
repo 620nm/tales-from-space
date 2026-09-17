@@ -7,13 +7,18 @@ list. An omitted substrate inherits the selected environment. Installing or
 removing deck components preserves that choice and the independently authored
 outdoor flag.
 
-Ordinary flooring consists of station base and opaque removable floor tiles.
+Tiled flooring consists of station base and opaque removable floor tiles.
 Grid flooring uses the same base with a transparent protective cover. Each
 cover independently controls power and pipe disclosure and tool access. A
 closed grid permits seeing and examining the runs beneath it, but prevents
 tooling or installing them. Removing either cover leaves the base and opens
 access. Reinforcement has the same physical properties in its closed and open
 cover states. Bare space, ground, and station base have no cover controls.
+
+The tiled and reinforced floor presets each ship an `, Exposed` variant that
+is the same preset with the power and pipe controls opened; the palette folds
+each under its base. An exposed tiled floor shows the pried-up subfloor art,
+while exposed reinforcement keeps its own sprite with the runs over it.
 
 Removing bare base with a welder exposes the retained substrate. The action
 uses the existing four-second, two-fuel welding step and returns no material.
@@ -24,7 +29,9 @@ Lattice and catwalk supply support without sealing the substrate or changing
 outdoors. Catwalk support is integrated. A power cable requires supporting
 ground, station base, or catwalk; lattice alone does not permit it. Explicit
 catwalk removal declares removal of power cables that lose support. Pipes
-have no corresponding support requirement and remain installed.
+have no corresponding support requirement and remain installed. Both smooth
+with each other and flow into adjacent floor and base tiles, joining them by
+component though those tiles smooth nothing back.
 
 The power network declares three channels and the pipe network five. Their
 channel identities, preferences, kind connectivity, paints, and shape artwork
