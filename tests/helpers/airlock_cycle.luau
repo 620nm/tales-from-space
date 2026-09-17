@@ -41,18 +41,21 @@ local function settled(since: number): boolean
     return #runs > since
 end
 
--- Step `step` ticks (4) at a time until the door at (x, 3) rests `open` and bolted
--- once the press marked `since` settled; `each` runs before every step. Fails as soon
--- as `observer` hears the controller stop the cycle; returns all `observer` heard.
+-- Step `step` ticks (4) at a time until the door at (x, y or 3) rests `open`
+-- and bolted once the press marked `since` settled; `each` runs before
+-- every step. Fails as soon as `observer` hears the controller stop the
+-- cycle; returns all `observer` heard.
 function cycle.until_door(
     x: number,
     open: boolean,
     observer: number,
     since: number,
     each: (() -> ())?,
-    step: number?
+    step: number?,
+    y: number?
 ): { string }
     step = step or 4
+    y = y or 3
     local heard: { string } = {}
     for _ = 1, math.ceil(640 / step) do
         if each then
@@ -65,7 +68,7 @@ function cycle.until_door(
                 "the controller stopped the cycle: " .. table.concat(heard, " | ")
             )
         end
-        local d = assert(t.door_at(x, 3), "the watched door exists")
+        local d = assert(t.door_at(x, y), "the watched door exists")
         if d.open == open and d.bolted and not d.moving and settled(since) then
             return heard
         end
@@ -92,7 +95,7 @@ function cycle.until_door(
             .. " since="
             .. since
             .. " pressure="
-            .. tostring(t.room_pressure(6, 3))
+            .. tostring(t.room_pressure(x, y))
             .. " "
             .. table.concat(debug, " | ")
     )
