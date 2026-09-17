@@ -8,14 +8,21 @@ sequencing and permission policy live in its own reference source.
 
 The guest receives `event`, `devices`, `directory` and persistent `mem`.
 `devices` lists only live, reachable direct members with their address, kind,
-coordinates and native door or vent readouts. `directory` is a separate,
+class, coordinates, native door or vent readouts, and directional `air`
+sense samples. Kind is `door`, `vent`, `button` or `sensor`: doors and vents
+self-sense through `air` and need no sensing fittings, while a bare
+air-sensor endpoint arrives as `sensor`. `directory` is a separate,
 bounded whole-tree list of advertised `{ mac, service, name }` rows, so a
 service behind another member remains discoverable without becoming a guest
 handle. An address identifies a member; the host does not resolve arbitrary
 addresses into world capabilities.
 
-Events are button requests, door completions, pressure completions, addressed
-service deliveries/replies, send outcomes and bounded timeouts. A button
+Events are boot knocks, button requests, door completions, pressure completions,
+addressed service deliveries/replies, send outcomes and bounded timeouts.
+A fresh host knocks once with `kind = "boot"` and the engine's own `origin`
+(`map` for a placed host, `built` for an assembled one). A map's edges are
+sewn after the knock, so a commissioned host meets an empty room and probes
+again on its first press. A button
 supplies `engineering`, a verified access check on the clicking actor. Every
 admitted press reaches the guest's permission policy, including repeats and
 interruptions. Service reply tokens remain native opaque values; guests use
@@ -42,11 +49,12 @@ names `mac`, a bounded correlation `id`, and an operation:
 | --- | --- |
 | `open`, `close` | no extra fields |
 | `bolt` | `bolted` boolean |
+| `emergency` | `emergency` boolean |
 | `vent` | `on`; while on, `direction = "fill" \| "drain"`, `target` kPa |
 | `watch` | `target` kPa, `comparison = "at_least" \| "below"`, `ticks` |
 | `service` | `to` advertised MAC, `service`, portable `payload`, `request` boolean |
 
-`status` is `idle`, `working`, `denied` or `fault`. `timer = { id, ticks }`
+`status` is `idle`, `working`, `denied`, `fault` or `failsafe`. `timer = { id, ticks }`
 replaces the host deadline, `timer = false` cancels it, and omission leaves
 it alone. Ticks must be integers from 1 to 1200. Correlation IDs are nonempty
 strings of at most 64 bytes.

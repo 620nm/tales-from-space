@@ -49,13 +49,22 @@ are fixed (tg `unary_devices/airlock_pump.dm:114-120`). Wire the vent and doors
 to a powered room circuit and plug the hub into a live outlet.
 
 The tool vendor supplies `airlock_button_fitting`; hold the fitting and
-click an adjacent wall. Build the hub through the existing wall-frame,
+click an adjacent wall. It also supplies `air_sensor_fitting`, the wall
+mount for the standalone air-sensor endpoint: a `sensor`-class instrument
+that reads its own tile, reports the band onto its network, and joins an
+access point's open roster. An air alarm refuses it; its roster is plumbing
+and buttons. Build the hub through the existing wall-frame,
 board and network-card assembly path.
 
 ## Default cycle
 
 `reference/scripts/airlock.luau` owns sequencing and permission policy.
-It identifies the doors by west-to-east position and the vent by kind.
+It learns home by tasting air, never by place. Each door reports
+directional samples from its own tile, and a side counts as station air
+when some kept sample reads hazard `none` at or above 85 kPa, breath at or
+above 16 kPa, and 253.15–323.15 K. The host knocks once at boot, map- and
+player-built alike, and the program latches what it found; a commissioned
+host meets an empty room, so the first press probes again.
 Both buttons advance the same sequence: the first accepted press requests
 entry, the next exit, then entry again. Each accepted press advances it,
 including during a cycle and when the same button is pressed repeatedly.
@@ -74,6 +83,13 @@ air joins to it (tg `unary_devices/airlock_pump.dm:207-254` over `check_turfs`,
 `volume_rate` 2000 (`:55`) takes of its 2500 L turf, so every chamber tile
 stays level with the sensor and both thresholds hold for all four tiles.
 
+One station side names the pump cycle's home leaf. Both station sides run
+interlock-only: the far leaf closes and bolts, the near leaf opens, and no
+pressure watch ever fires. Neither side breathing seals both leaves: unbolt
+and close each, raise door emergency mode, halt the fan, sound the failsafe
+line, and latch until an engineer presses a joined button. Every press
+re-reads the air, and a wrong roster, a stranger's completion, a dead
+sample or a silent watch faults instead of guessing.
 If the closing leaf is moving, a new request waits for its actual rest
 before restarting. Old completions cannot advance later phases. Pressure
 watches and the host deadline bound stalled cycles. A disconnected or
@@ -84,11 +100,18 @@ The default `permitted(request)` accepts everyone. Returning
 `request.engineering` restricts each press to engineering access. A denial
 leaves the previous accepted request alone.
 
-`tests/programmable_airlock_ready_test.luau` cycles the bench exactly as
-shipped. `tests/programmable_airlock_test.luau` releases, rejoins and
-reinstalls it through player commands, edits its program through laptop
+`tests/devices/programmable_airlock_ready_test.luau` cycles the bench exactly
+as shipped. `tests/devices/programmable_airlock_test.luau` releases, rejoins
+and reinstalls it through player commands, edits its program through laptop
 contact, and checks real pressure and door completions. The companion
 construction spec assembles and removes its fittings.
+`tests/devices/airlock_autodetect_vacuum_test.luau` and
+`airlock_autodetect_terrestrial_test.luau` prove the layout learns home from
+the air on each side, `airlock_autodetect_both_air_test.luau` proves both
+sides breathing runs interlock-only, `airlock_autodetect_neither_test.luau`
+proves neither side seals until an engineer resets it, and
+`airlock_autodetect_faults_test.luau` proves a short roster refuses aloud
+and cycles again after rejoining.
 
 ## tgstation reference
 
