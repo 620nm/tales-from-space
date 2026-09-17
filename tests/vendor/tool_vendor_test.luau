@@ -123,6 +123,10 @@ local parts = {
     "encryption_key.security",
     "encryption_key.command",
     "machine_board.programming_terminal",
+    -- The air sensor's fitting hangs on the same shelf as the boards: a
+    -- shipped world must be able to mount the instrument its scripts
+    -- read the air through (machines/tool_vendor.luau).
+    "air_sensor_fitting",
 }
 -- The third shelf, and the only row here that is neither a tool nor
 -- something a frame is built out of: blank media. A disk is how work
