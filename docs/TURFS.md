@@ -47,3 +47,22 @@ emissivities. The last installed component declaring a profile supplies it;
 otherwise the substrate does. Substrate vacuum boundaries are independent of
 support, horizontal gas blocking, and outdoor forcing. Station base seals the
 boundary; an exposed space substrate remains a boundary below a catwalk.
+
+## Decals
+
+`content/compositions.luau` declares eleven floor decals on a `decal` visual
+layer between the deck and everything lying on it. A trim decal names no shape:
+it names one sprite per seam piece, and the seam is derived from which
+neighbouring tiles hold the same decal in the same colour. A mark decal names
+one sprite per facing, or one sprite and no facing at all. Decals paint onto
+station base, floor tiles and reinforcement; gratings and walls are not decks.
+
+`content/lib/decal_paints.luau` owns the twelve paints and their order. Trim and
+tiling are greyscale art tinted at runtime and drawn at opacity 110; hazard
+stripes and painted marks carry their own colours and take no paint. The map and
+the editor may name a raw `#RRGGBB`; an in-game tool may not.
+
+A decal belongs to the deck component under it and goes with it: prying the
+floor takes the paint. Decals are cosmetic and never cleanable — space cleaner
+and the mop are for spills, and paint that is supposed to be there is not a
+spill.
