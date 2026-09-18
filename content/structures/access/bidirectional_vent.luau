@@ -1,18 +1,19 @@
 -- tg unary_devices/airlock_pump.dm: distro L4 and waste L2 share dir (:114-120);
 -- the process fills and siphons its turf and every atmos-adjacent one (:199-254).
+-- Station crews also call it the 'dual-port vent' or 'equalization port'.
 return {
-    id = "airlock_pump",
+    id = "bidirectional_vent",
     visual_layer = "fixture",
     energy_network = "power",
-    name_label = "lunatic/tfs:entity.airlock_pump.name",
-    name = "external airlock pump",
-    sprite = "airlock_pump_off",
-    script = "airlock_pump",
+    name_label = "lunatic/tfs:entity.bidirectional_vent.name",
+    name = "bidirectional vent",
+    sprite = "bidirectional_vent_off",
+    script = "bidirectional_vent",
     ui = { modules = { "vent" } },
     link = { network_interface = true, role = "endpoint", class = "atmos" },
     dense = false,
     states = { "off", "blowing", "siphoning" },
-    state_sprites = { blowing = "airlock_pump_blowing", siphoning = "airlock_pump_siphoning" },
+    state_sprites = { blowing = "bidirectional_vent_blowing", siphoning = "bidirectional_vent_siphoning" },
     atmos = {
         channel = "l3",
         network = "pipe",
@@ -35,11 +36,11 @@ return {
     build = {
         sound = "smash",
         on = { "component:station_base" },
-        from_item = "airlock_pump_fitting",
+        from_item = "bidirectional_vent_fitting",
         tool = "wrench",
         secs = 2.0,
-        start = "lunatic/tfs:entity.airlock_pump.build.start",
-        done = "lunatic/tfs:entity.airlock_pump.build.done",
+        start = "lunatic/tfs:entity.bidirectional_vent.build.start",
+        done = "lunatic/tfs:entity.bidirectional_vent.build.done",
     },
     transitions = {
         {
@@ -47,9 +48,9 @@ return {
             tool = "wrench",
             secs = 2.0,
             gone = true,
-            yields = { airlock_pump_fitting = 1 },
-            start = "lunatic/tfs:entity.airlock_pump.remove.start",
-            done = "lunatic/tfs:entity.airlock_pump.remove.done",
+            yields = { bidirectional_vent_fitting = 1 },
+            start = "lunatic/tfs:entity.bidirectional_vent.remove.start",
+            done = "lunatic/tfs:entity.bidirectional_vent.remove.done",
         },
     },
 }

@@ -9,10 +9,10 @@
         ("wide", "obj/doors/airlocks/multi_tile/public/overlays.dmi"),
     ],
     sprites: [
-        ("airlock_pump_off", Dmi("@vents", "vent_off", 0)),
-        ("airlock_pump_blowing", DmiAnim("@vents", "vent_out", 0)),
-        ("airlock_pump_siphoning", DmiAnim("@vents", "vent_in", 0)),
-        ("airlock_pump_loose", Dmi("@vents", "airlock_pump", 0)),
+        ("bidirectional_vent_off", Dmi("@vents", "vent_off", 0)),
+        ("bidirectional_vent_blowing", DmiAnim("@vents", "vent_out", 0)),
+        ("bidirectional_vent_siphoning", DmiAnim("@vents", "vent_in", 0)),
+        ("bidirectional_vent_loose", Dmi("@vents", "airlock_pump", 0)),
         // tg airlock.dm:565-600 selects lights_bolts while closed.
         ("door_bolt_lights", Dmi("@station", "lights_bolts", 0)),
         ("door_int_bolt_lights", Dmi("@interior", "lights_bolts", 0)),
@@ -23,7 +23,7 @@
     ],
     groups: [
         (sheet: "vents", sprites: [
-            Directions("airlock_pump_loose", "airlock_pump"),
+            Directions("bidirectional_vent_loose", "airlock_pump"),
         ]),
         (sheet: "buttons", sprites: [
             Faces(25, Sprite("airlock_button", "access_button_standby", s)),

@@ -1,12 +1,12 @@
 # Programmable exterior airlocks
 
 `maps/programmable_airlock.ron` assembles ordinary networked doors, two wall
-buttons, an airlock pump and an access point. The interior opens west and
+buttons, a bidirectional vent and an access point. The interior opens west and
 space is east. Initially the interior is closed and bolted, the exterior is
 open and unbolted, and the chamber is empty.
 
 The map opens commissioned. Its `links` table joins both doors, both buttons
-and the pump to the access point. The access point's
+and the vent to the access point. The access point's
 `"file.airlock_controller": true` row puts an editable copy of that reference,
 `airlock.disl`, on its store, and `"program.controller": "airlock_controller"`
 binds that copy to `controller` at boot (the engine's
@@ -42,7 +42,7 @@ Its ordinary storage holds the disks loose, without tgstation's individual
 wrappers. The atmos stock disk uses the orange `datadisk12` shell
 from tgstation's floppy sheet, preserving its gray metal shutter.
 
-The RPD and pipe dispenser supply `airlock_pump_fitting`; wrench it onto
+The RPD and pipe dispenser supply `bidirectional_vent_fitting`; wrench it onto
 plating or floor. Its supply is port 0 on layer 4 and its waste
 is port 1 on layer 2. Both mouths face the declared direction and these layers
 are fixed (tg `unary_devices/airlock_pump.dm:114-120`). Wire the vent and doors
@@ -76,14 +76,14 @@ actual motor completion, bolts it, fills through the intake to at least
 100 kPa, then stops the vent, unbolts and opens the interior, waits, and
 bolts it open. Exit reverses this sequence, draining through the effluent
 main below 10 kPa before opening space. A bolted-open door resists autoclose.
-The sensor is the pump's own tile, and the pump works the whole chamber
+The sensor is the vent's own tile, and the vent works the whole chamber
 evenly: `spread = "adjacent"` fills and siphons its tile and every tile open
 air joins to it (tg `unary_devices/airlock_pump.dm:207-254` over `check_turfs`,
 `:472-476`). It meters 800 L/s of each 1000 L tile, the fraction tg's
 `volume_rate` 2000 (`:55`) takes of its 2500 L turf, so every chamber tile
 stays level with the sensor and both thresholds hold for all four tiles.
 
-One station side names the pump cycle's home leaf. Both station sides run
+One station side names the vent cycle's home leaf. Both station sides run
 interlock-only: the far leaf closes and bolts, the near leaf opens, and no
 pressure watch ever fires. Neither side breathing seals both leaves: unbolt
 and close each, raise door emergency mode, halt the fan, sound the failsafe
