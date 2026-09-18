@@ -23,11 +23,6 @@ local action_rules = require("@lib/action_rules")
 -- decal_painter.dm:141-143): the same tool family, visibly not the same
 -- tool, and nothing here ports the debug item it belongs to.
 
--- The decks a decal may sit on, duplicated from
--- `content/compositions.luau`'s `decal_decks` because a top-level
--- declaration file exports nothing. Keep the two lists together.
-local DECKS = { "station_base", "floor_tiles", "reinforcement" }
-
 local content = {
     id = "decal_eraser",
     visual_layer = "item",
@@ -37,7 +32,9 @@ local content = {
     inhand_sprite = { "held_decal_painter_l", "held_decal_painter_r" },
 }
 
-content.actions = { action_rules.primary("erase_decal", action_rules.deck(table.unpack(DECKS))) }
+-- Every deck, the same as the painter: a grating carries no marking,
+-- and says so, instead of swallowing the click.
+content.actions = { action_rules.primary("erase_decal", action_rules.any_deck()) }
 
 if sim ~= nil then
     local script_definition =

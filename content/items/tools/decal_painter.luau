@@ -54,10 +54,10 @@ local DECALS: { DecalChoice } = {
 local FACING_WORDS = { "South", "North", "East", "West" }
 local FACING_LETTERS = { "s", "n", "e", "w" }
 
--- The decks a decal may be painted on, duplicated from
--- `content/compositions.luau`'s `decal_decks` because a top-level
--- declaration file exports nothing. Keep the two lists together.
-local DECKS = { "station_base", "floor_tiles", "reinforcement" }
+-- The engine's own ceiling on one tile (`MAX_DECALS_PER_TILE`, the
+-- engine's `docs/content-schema/decals.md`), read here only to tell a
+-- full tile from a deck that never takes paint.
+local DECAL_CAP = 4
 
 local content = {
     interaction_labels = {
@@ -119,7 +119,9 @@ local content = {
     },
 }
 
-content.actions = { action_rules.primary("paint_decal", action_rules.deck(table.unpack(DECKS))) }
+-- Every deck, not just the ones a decal sits on: a grating refuses in
+-- words rather than offering nothing at all.
+content.actions = { action_rules.primary("paint_decal", action_rules.any_deck()) }
 
 if sim ~= nil then
     local script_definition =
@@ -163,10 +165,14 @@ if sim ~= nil then
         -- One authority on whether this lands: the engine's own
         -- compile-and-probe. The handler never second-guesses it.
         if not sim.decal_installable(x, y, decal.id, paint) then
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:items.decal_painter.nothing_to_paint_on", {}),
-            })
+            -- A full tile and a deck that holds nothing are the same
+            -- refusal to the engine and two different sentences to the
+            -- crewman; the count is what tells them apart.
+            local full = #sim.decals_at(x, y) >= DECAL_CAP
+            local key = if full
+                then "lunatic/tfs:items.decal_painter.nothing_to_paint_on"
+                else "lunatic/tfs:items.decal_painter.no_deck_for_paint"
+            sim.message.send({ recipient = user, message = sim.msg(key, {}) })
             return true
         end
         sim.place_decal(x, y, decal.id, paint, facing)
