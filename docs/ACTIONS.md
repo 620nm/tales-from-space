@@ -39,3 +39,17 @@ long chords. It contains no interactive folds.
 `tools/test-hover-actions.mjs` checks descriptor rendering, ordering, mixed
 same-button rows, long bindings, semantic presentation and partial-catalog
 fallback. The engine's browser regression runs the actual guest renderer.
+
+## Equipment action bar
+
+Possession-scoped action documents supply equipment groups and actions.
+Their qualified catalog IDs resolve directly; bare native document IDs
+resolve under `module.`. Explicitly tagged nested labels follow the same
+rule. Captions and accessibility labels use the same resolved text.
+
+The welder uses distinct lit world and in-hand sprites and plays the
+activation or deactivation sound when its self, secondary, or HUD action
+toggles it. Ignition requires its declared fuel; an empty tank emits no
+activation sound. Its visible state follows the engine's fuel activity state.
+Art and sound selection follow tgstation's
+`code/game/objects/items/tools/engineering/weldingtool.dm:49-50,77-92,250-267`.

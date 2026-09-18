@@ -34,25 +34,26 @@ function nested(names: unknown): Set<string> {
   );
 }
 
-/** `lunatic/tfs:module.<id>` with the facts the engine composed for it.
- *  An argument the label named in `arg_ids` is an id in its own right
- *  and is rendered before it is substituted. A key nothing renders
- *  answers with itself, which is on screen and cannot be read as a
- *  dropped row (docs/localization/catalogs.md §4). */
+/** Resolve either a fully-qualified catalog id or a bare native module id. */
+function moduleWord(id: string, args?: Record<string, string>): string {
+  return id.includes(":") ? t(id, args) : tfs(`module.${id}`, args);
+}
+
+/** Resolve a label and render the ids named by its `arg_ids` first. */
 function moduleLabel(
   id: string,
   args?: Record<string, Json> | null,
   argIds?: unknown,
 ): string {
-  if (!args) return tfs(`module.${id}`);
+  if (!args) return moduleWord(id);
   const ids = nested(argIds);
   const values: Record<string, string> = {};
   for (const [name, value] of Object.entries(args)) {
     if (value === null || value === undefined) continue;
     const word = String(value);
-    values[name] = ids.has(name) ? tfs(`module.${word}`) : word;
+    values[name] = ids.has(name) ? moduleWord(word) : word;
   }
-  return tfs(`module.${id}`, values);
+  return moduleWord(id, values);
 }
 
 export function labelText(label: Label | undefined | Json): string {

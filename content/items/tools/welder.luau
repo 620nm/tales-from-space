@@ -42,9 +42,17 @@ local content = {
     -- convention, leaving headspace in this 550 mL tank.
     volume_ml = 550,
     -- The lit state is the heat signal used by surgery and construction;
-    -- both states share the base picture.
+    -- tg gives it a separate animated picture on every visible surface.
     flame = true,
     states = { "unlit", "lit" },
+    -- tg weldingtool.dm:77-92 switches hands to welder1 and overlays
+    -- welder-on over the base welder while the tool is lit.
+    state_sprites = {
+        lit = {
+            world = "welder_lit",
+            inhand = { "held_welder_lit_l", "held_welder_lit_r" },
+        },
+    },
     -- It is a closed reservoir refilled from a tank, not an open cup.
     sealed = true,
 }
@@ -53,15 +61,28 @@ if sim ~= nil then
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     local function use(ev)
-        local self, user = ev.subject, ev.actor
+        local self: Handle = ev.subject
+        local user: Handle = ev.actor
         if self.state == "lit" then
             sim.set_flame(self, false)
+            sim.sound.play({ asset = "lunatic/tfs:sound/welder_deactivate", at = ev.at })
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:items.welder.you_extinguish_the_welder", {}),
             })
         else
+            local contents = assert(sim.matter_read(self)).contents
+            local fuel = contents[content.fuel.substance]
+            local available = if fuel then (fuel.liquid or 0) + (fuel.gas or 0) + (fuel.solid or 0) else 0
+            if available <= 0 then
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.welder.no_fuel", {}),
+                })
+                return true
+            end
             sim.set_flame(self, true)
+            sim.sound.play({ asset = "lunatic/tfs:sound/welder_activate", at = ev.at })
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:items.welder.you_flip_the_welder_on", {}),
