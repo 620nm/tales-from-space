@@ -26,7 +26,9 @@
 -- shoving a live one somewhere it should not be is a decision.
 return {
     id = "canister",
-    visual_layer = "fixture",
+    -- Large and portable, so it draws over items: tg's own layer for
+    -- one, ABOVE_OBJ_LAYER (portable_atmospherics.dm:10).
+    visual_layer = "large_object",
     name_label = "lunatic/tfs:entity.canister.name",
     name = "canister",
     sprite = "canister",

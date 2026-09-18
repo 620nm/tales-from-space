@@ -12,7 +12,8 @@
 -- (tg's wall recipes all demand GIRDER_NORMAL).
 return {
     id = "girder",
-    visual_layer = "fixture",
+    -- Large and loose, so it draws over items (large_object in content/compositions.luau).
+    visual_layer = "large_object",
     name_label = "lunatic/tfs:entity.girder.name",
     name = "girder",
     sprite = "girder",

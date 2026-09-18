@@ -18,7 +18,8 @@
 -- is most of what makes it worth putting up.
 return {
     id = "grille",
-    visual_layer = "fixture",
+    -- Large and loose, so it draws over items (large_object in content/compositions.luau).
+    visual_layer = "large_object",
     name_label = "lunatic/tfs:entity.grille.name",
     name = "grille",
     sprite = "grille",

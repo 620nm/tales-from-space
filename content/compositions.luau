@@ -173,6 +173,12 @@ return {
         { id = "matter_ground", parent = "world" },
         { id = "fixture", parent = "world" },
         { id = "item", parent = "world" },
+        -- Large loose things -- vessels, lockers, unbolted frames --
+        -- draw over items. tg's own seat for a canister is above items
+        -- (ABOVE_OBJ_LAYER over OBJ_LAYER over BELOW_OBJ_LAYER,
+        -- layers.dm:239-244, portable_atmospherics.dm:10); the uniform
+        -- rule for the whole class is this station's own.
+        { id = "large_object", parent = "world" },
         { id = "lying_mob", parent = "world" },
         { id = "standing_mob", parent = "world" },
         { id = "overhead_entities", parent = "world" },

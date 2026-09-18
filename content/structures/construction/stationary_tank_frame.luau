@@ -25,7 +25,8 @@
 -- step and not a way of taking the bolts back out.
 return {
     id = "stationary_tank_frame",
-    visual_layer = "fixture",
+    -- Large and loose, so it draws over items (large_object in content/compositions.luau).
+    visual_layer = "large_object",
     name_label = "lunatic/tfs:entity.stationary_tank_frame.name",
     name = "tank frame",
     sprite = "stationary_tank_frame",

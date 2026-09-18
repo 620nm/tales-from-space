@@ -20,7 +20,8 @@
 -- prototype id rather than a structure plus an out-of-band loot table.
 return {
     id = "locker",
-    visual_layer = "fixture",
+    -- Large and loose, so it draws over items (large_object in content/compositions.luau).
+    visual_layer = "large_object",
     name_label = "lunatic/tfs:entity.locker.name",
     name = "locker",
     sprite = "locker",
