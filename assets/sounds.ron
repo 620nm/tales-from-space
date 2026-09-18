@@ -30,6 +30,9 @@
     ("keyboard_clicks_6", "originals/sound/computer/keyboard_clicks_6.ogg"),
     ("keyboard_clicks_7", "originals/sound/computer/keyboard_clicks_7.ogg"),
     ("weld", "items/tools/welder.ogg"),
+    // tg code/game/objects/items/tools/engineering/weldingtool.dm:49-50,256,266.
+    ("welder_activate", "items/tools/welderactivate.ogg"),
+    ("welder_deactivate", "items/tools/welderdeactivate.ogg"),
     // tg splits these: `usesound` is the quick pop a crowbar makes
     // doing a job (pry_tile calls play_tool_sound), `operating_sound`
     // is the sustained heave used while forcing something open.

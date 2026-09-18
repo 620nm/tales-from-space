@@ -42,6 +42,21 @@
         (sheet: "tools_r", sprites: [Directions("held_crowbar_r", "crowbar")]),
         (sheet: "tools_l", sprites: [Directions("held_welder_l", "welder")]),
         (sheet: "tools_r", sprites: [Directions("held_welder_r", "welder")]),
+        // tg weldingtool.dm:77-82 changes inhand_icon_state to welder1
+        // while lit. The four Anim rows retain its three-frame animation
+        // and use the same s/n/e/w names as the hand-pair bases above.
+        (sheet: "tools_l", sprites: [
+            Anim("held_welder_lit_l_s", "welder1", s),
+            Anim("held_welder_lit_l_n", "welder1", n),
+            Anim("held_welder_lit_l_e", "welder1", e),
+            Anim("held_welder_lit_l_w", "welder1", w),
+        ]),
+        (sheet: "tools_r", sprites: [
+            Anim("held_welder_lit_r_s", "welder1", s),
+            Anim("held_welder_lit_r_n", "welder1", n),
+            Anim("held_welder_lit_r_e", "welder1", e),
+            Anim("held_welder_lit_r_w", "welder1", w),
+        ]),
         (sheet: "tools_l", sprites: [BlendDirections(
             name: "held_screwdriver_l",
             layers: [("screwdriver", Over, true), ("screwdriver_head", Over, false)],

@@ -365,6 +365,13 @@
         ("chemistry_backpack", Dmi("@backpack", "backpack-chemistry", 0)),
         ("headset", Dmi("@headsets", "headset", 0)),
         ("welder", Dmi("@tools", "welder", 0)),
+        // tg weldingtool.dm:85-92 keeps the base welder and overlays the
+        // two-frame welder-on flame while welding; DmiAnimLayers repeats
+        // the still base over the overlay's authored timing.
+        ("welder_lit", DmiAnimLayers([
+            ("@tools", "welder"),
+            ("@tools", "welder-on"),
+        ], 0)),
         ("id", Dmi("@card", "card_grey", 0)),
         ("crowbar", Dmi("@tools", "crowbar", 0)),
         // tg's screwdriver is a COLOURED handle plus a steel shaft that

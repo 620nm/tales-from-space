@@ -36,6 +36,8 @@ local sounds = {
     "smash",
     "spray",
     "switch_click",
+    "welder_activate",
+    "welder_deactivate",
     "vend",
     "wirecutter",
 }

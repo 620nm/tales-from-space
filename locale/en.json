@@ -1309,5 +1309,6 @@
   "lunatic/tfs:fixtures.chem_packager.the_toner_cartridge_drops": "A filled toner cartridge drops onto the tray.",
   "lunatic/tfs:fixtures.chem_packager.the_batch_is_not_pure_enough": "The batch needs enough of the selected product and no other solids.",
   "lunatic/tfs:ui.affordance.toggle_flask_valve": "Open/close flask valve",
-  "lunatic/tfs:lib.vessel.open_before_pouring": "Open the vessel before pouring."
+  "lunatic/tfs:lib.vessel.open_before_pouring": "Open the vessel before pouring.",
+  "lunatic/tfs:items.welder.no_fuel": "The welder has no fuel."
 }
