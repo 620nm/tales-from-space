@@ -1,0 +1,143 @@
+// Floor decals: the trim, tiling, hazard stripes and painted marks a
+// station is laid out with. All of it is tg's own art off
+// icons/turf/decals.dmi, referenced state by state -- nothing redrawn.
+//
+// TWO DIR CONVENTIONS live in that sheet and the difference is not
+// documented anywhere in tg; it was measured cell by cell. Edge, bend
+// and end states are geometric (an `e` cell draws on the east side; an
+// end cell's dir names the CLOSED end). Every `*_corner` state and
+// `tile_anticorner` are rotated instead: s is the SOUTH-EAST piece, n
+// the north-west, e the north-east, w the south-west. The rotated rows
+// are therefore spelled out; the geometric ones use `Directions`.
+//
+// The trim and tile families are pure greyscale (#FFFFFF over #CBCBCB),
+// so they take a runtime multiply and declare the identity white as
+// their baked default. The warning stripes and the painted marks carry
+// tg's own colours -- yellow-on-black hatching, and a flat #DCDC4B that
+// already has alpha 215 in the pixels -- so they are declared
+// uncoloured content-side and must never be tinted.
+//
+// Diagonals are raw DMI dir indices 4..7 because the grouped form's
+// `Direction` only names s/n/e/w; those rows use the legacy tuple.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then entry order,
+// so the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+(
+    // Sheet aliases are local to this family; @names below resolve here.
+    sheets: [
+        ("decals", "turf/decals.dmi"),
+    ],
+    sprites: [
+        // Pre-mitred two-side pieces, DMI dirs se/sw/ne/nw = 4/5/6/7.
+        ("decal_trim_bend_se", Tinted(Dmi("@decals", "trimline", 4), (255, 255, 255))),
+        ("decal_trim_bend_sw", Tinted(Dmi("@decals", "trimline", 5), (255, 255, 255))),
+        ("decal_trim_bend_ne", Tinted(Dmi("@decals", "trimline", 6), (255, 255, 255))),
+        ("decal_trim_bend_nw", Tinted(Dmi("@decals", "trimline", 7), (255, 255, 255))),
+        ("decal_trim_fill_bend_se", Tinted(Dmi("@decals", "trimline_fill", 4), (255, 255, 255))),
+        ("decal_trim_fill_bend_sw", Tinted(Dmi("@decals", "trimline_fill", 5), (255, 255, 255))),
+        ("decal_trim_fill_bend_ne", Tinted(Dmi("@decals", "trimline_fill", 6), (255, 255, 255))),
+        ("decal_trim_fill_bend_nw", Tinted(Dmi("@decals", "trimline_fill", 7), (255, 255, 255))),
+        // The stripes keep tg's colours: no tint, no white default.
+        ("decal_hazard_bend_se", Dmi("@decals", "warningline", 4)),
+        ("decal_hazard_bend_sw", Dmi("@decals", "warningline", 5)),
+        ("decal_hazard_bend_ne", Dmi("@decals", "warningline", 6)),
+        ("decal_hazard_bend_nw", Dmi("@decals", "warningline", 7)),
+        ("decal_hazard_red_bend_se", Dmi("@decals", "warningline_red", 4)),
+        ("decal_hazard_red_bend_sw", Dmi("@decals", "warningline_red", 5)),
+        ("decal_hazard_red_bend_ne", Dmi("@decals", "warningline_red", 6)),
+        ("decal_hazard_red_bend_nw", Dmi("@decals", "warningline_red", 7)),
+        ("decal_hazard_white_bend_se", Dmi("@decals", "warningline_white", 4)),
+        ("decal_hazard_white_bend_sw", Dmi("@decals", "warningline_white", 5)),
+        ("decal_hazard_white_bend_ne", Dmi("@decals", "warningline_white", 6)),
+        ("decal_hazard_white_bend_nw", Dmi("@decals", "warningline_white", 7)),
+    ],
+    groups: [
+        // TRIM -- tg's /obj/effect/turf_decal/trimline, alpha 110
+        // (tilecoloring.dm:169). Greyscale, so white is the identity
+        // multiply and the paint arrives at runtime.
+        (sheet: "decals", tint: Some((255, 255, 255)), sprites: [
+            Directions("decal_trim_edge", "trimline"),
+            // `trimline_end` dir names the end that is CLOSED: the `s`
+            // cell draws north, east and south and runs off the north
+            // edge. That is the schema's cap key exactly.
+            Directions("decal_trim_cap", "trimline_end"),
+            Sprite("decal_trim_box", "trimline_box", s),
+            Sprite("decal_trim_corner_se", "trimline_corner", s),
+            Sprite("decal_trim_corner_nw", "trimline_corner", n),
+            Sprite("decal_trim_corner_ne", "trimline_corner", e),
+            Sprite("decal_trim_corner_sw", "trimline_corner", w),
+
+            // TRIM, FILLED -- the same run with the outside of the line
+            // flooded to the tile edge.
+            Directions("decal_trim_fill_edge", "trimline_fill"),
+            Directions("decal_trim_fill_cap", "trimline_end_fill"),
+            Sprite("decal_trim_fill_box", "trimline_box_fill", s),
+            Sprite("decal_trim_fill_corner_se", "trimline_corner_fill", s),
+            Sprite("decal_trim_fill_corner_nw", "trimline_corner_fill", n),
+            Sprite("decal_trim_fill_corner_ne", "trimline_corner_fill", e),
+            Sprite("decal_trim_fill_corner_sw", "trimline_corner_fill", w),
+
+            // TILING -- tg's /obj/effect/turf_decal/tile, alpha 110
+            // (tilecoloring.dm:1-6). Half tiles, so a border reads as a
+            // 16px band rather than a line. `tile_anticorner` is the
+            // union of two halves and `tile_full` the union of any
+            // three, which is why one sprite serves all four caps AND
+            // the box: three sides of half-tile IS the whole tile.
+            Directions("decal_tile_edge", "tile_half"),
+            Sprite("decal_tile_bend_se", "tile_anticorner", s),
+            Sprite("decal_tile_bend_nw", "tile_anticorner", n),
+            Sprite("decal_tile_bend_ne", "tile_anticorner", e),
+            Sprite("decal_tile_bend_sw", "tile_anticorner", w),
+            Sprite("decal_tile_full", "tile_full", s),
+            Sprite("decal_tile_corner_se", "tile_corner", s),
+            Sprite("decal_tile_corner_nw", "tile_corner", n),
+            Sprite("decal_tile_corner_ne", "tile_corner", e),
+            Sprite("decal_tile_corner_sw", "tile_corner", w),
+        ]),
+
+        // HAZARD STRIPES -- /obj/effect/turf_decal/stripes
+        // (markings.dm:1-59). The base is yellow-on-black hatching and
+        // the red and white sets are flat solids; none is greyscale, so
+        // no group tint and no content colour. tg leaves them at the
+        // base alpha 255 (decal.dm:54-59).
+        (sheet: "decals", sprites: [
+            Directions("decal_hazard_edge", "warningline"),
+            Directions("decal_hazard_cap", "warn_end"),
+            Sprite("decal_hazard_box", "warn_box", s),
+            Sprite("decal_hazard_corner_se", "warninglinecorner", s),
+            Sprite("decal_hazard_corner_nw", "warninglinecorner", n),
+            Sprite("decal_hazard_corner_ne", "warninglinecorner", e),
+            Sprite("decal_hazard_corner_sw", "warninglinecorner", w),
+
+            Directions("decal_hazard_red_edge", "warningline_red"),
+            Directions("decal_hazard_red_cap", "warn_end_red"),
+            Sprite("decal_hazard_red_box", "warn_box_red", s),
+            Sprite("decal_hazard_red_corner_se", "warninglinecorner_red", s),
+            Sprite("decal_hazard_red_corner_nw", "warninglinecorner_red", n),
+            Sprite("decal_hazard_red_corner_ne", "warninglinecorner_red", e),
+            Sprite("decal_hazard_red_corner_sw", "warninglinecorner_red", w),
+
+            Directions("decal_hazard_white_edge", "warningline_white"),
+            Directions("decal_hazard_white_cap", "warn_end_white"),
+            Sprite("decal_hazard_white_box", "warn_box_white", s),
+            Sprite("decal_hazard_white_corner_se", "warninglinecorner_white", s),
+            Sprite("decal_hazard_white_corner_nw", "warninglinecorner_white", n),
+            Sprite("decal_hazard_white_corner_ne", "warninglinecorner_white", e),
+            Sprite("decal_hazard_white_corner_sw", "warninglinecorner_white", w),
+
+            // PAINTED MARKS -- markings.dm:61-103. One flat #DCDC4B
+            // whose alpha 215 is already IN the pixels, which is why
+            // every mark decal declares opacity 255: the art is the
+            // fade. Their dirs stay tg's: an arrow's dir is where it
+            // points, a legend's dir is the side it reads from.
+            Sprite("decal_mark_delivery", "delivery", s),
+            Sprite("decal_mark_bot", "bot", s),
+            Directions("decal_mark_loading", "loadingarea"),
+            Directions("decal_mark_arrow", "arrows"),
+            Directions("decal_mark_caution", "caution"),
+            Directions("decal_mark_stand_clear", "stand_clear"),
+        ]),
+    ],
+)
