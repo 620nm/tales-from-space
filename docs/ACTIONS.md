@@ -15,7 +15,9 @@ Each action owns its implement sprite, accessible name, requirements and
 unavailable reason. A row without an implement stays key-only, even when
 another row on the same mouse button uses the held tool. Suggested tools
 are representative sprites; available rows use the actual held sprite.
-Requirements use catalog templates and explicit quantities.
+Requirement labels name the item, including a required condition such as
+lit, and carry an explicit quantity. The overlay adds the Requires sentence
+once; the server does not include that sentence inside the item label.
 
 The empty machine frame opts into wiring and dismantling previews on its
 real transitions. The wiring requirement derives five cable-coil units;

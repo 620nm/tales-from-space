@@ -1,4 +1,4 @@
--- Ash. tg: `/datum/chemical_reaction/ash`, 1 ash from 1 oil,
+-- Ash. tg: `/datum/chemical_reaction/ash`, 1 ash from 1 naphtha,
 -- `required_temp = 480`, no thermic_constant (recipes/others.dm:589-593).
 --
 -- The first recipe on this shelf that a cold beaker cannot run, and
@@ -12,7 +12,7 @@
 -- exponent is tg's `temp_exponent_factor` default of 2 (recipes.dm:44).
 return {
     id = "ash",
-    reactants = { oil = 1.0 },
+    reactants = { ["naphtha:liquid"] = 1.0 },
     products = { ["ash:solid"] = 1.0 },
     energy = 0.0,
     rate = {

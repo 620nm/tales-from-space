@@ -249,6 +249,7 @@ local function take(id: string)
     t.click(p, 2, 2, assert(t.target_at(p, 2, 2, id)))
     t.run_ticks(2)
 end
+local welder_lit = false
 local function put_down()
     t.drop(p)
     t.run_ticks(2)
@@ -266,6 +267,11 @@ for _, corner in ipairs(corners) do
 
     put_down()
     take("welder")
+    if not welder_lit then
+        t.use_self(p)
+        t.run_ticks(2)
+        welder_lit = true
+    end
     t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "wall_frame")))
     t.run_seconds(4.5)
     assert(t.structure_at(2, 2) == nil, "the diagonal frame can be removed")

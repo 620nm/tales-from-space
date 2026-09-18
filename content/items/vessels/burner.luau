@@ -7,7 +7,7 @@ local action_rules = require("@lib/action_rules")
 -- The tank is an ordinary Holder, so the fuel is ordinary matter: it
 -- pours, it mixes, and a burner filled with something else burns at
 -- whatever that something else burns at. tg ships three variants of
--- this object for exactly that reason (ethanol, oil, welding fuel);
+-- this object for exactly that reason (ethanol, naphtha, acetone);
 -- here there is one burner and you fill it with what you like.
 --
 -- Two gestures, and they are both clicks, which is why they are here

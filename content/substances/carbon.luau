@@ -1,5 +1,5 @@
 -- Carbon: what a grinder gets out of anything burnt, and one leg of
--- three recipes (oil, lye, carbon dioxide). Graphite's specific heat,
+-- three recipes (toner, lye, carbon dioxide). Graphite's specific heat,
 -- which is the one element on this shelf where the real number is
 -- memorable and well under Dulong-Petit.
 -- tg: /datum/reagent/carbon (other_reagents.dm:1071).

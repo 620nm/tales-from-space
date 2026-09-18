@@ -10,10 +10,10 @@
 -- every rung, including the first one back into solid hull.
 --
 -- Every step is verbatim (`use_tool` deciseconds, reinf_walls.dm):
--- screwdriver 40 either way on the support lines, welder 60 and two
+-- screwdriver 40 either way on the support lines, welder 60 and 0.3
 -- moles of fuel to slice the cover or weld it back, crowbar 100 to pry
 -- the cover off and 20 to press it back, wrench 40 either way on the
--- anchor bolts, welder 100 and two moles through the support rods and
+-- anchor bolts, welder 100 and 0.3 moles through the support rods and
 -- 100 with NO fuel cost to weld them together again (`:181`, tg's
 -- `amount = 0`), crowbar 100 to lift the outer sheath off. Prying the
 -- sheath is `dismantle_wall`: one sheet of plasteel back (`sheet_type`
@@ -91,7 +91,7 @@ return {
             at = "cover",
             tool = "welder",
             secs = 6.0,
-            fuel = 2.0,
+            fuel = 0.3,
             to = "cut_cover",
             start = "You start slicing through the metal cover.",
             done = "The cover dislodges under your hand.",
@@ -101,7 +101,7 @@ return {
             at = "cut_cover",
             tool = "welder",
             secs = 6.0,
-            fuel = 2.0,
+            fuel = 0.3,
             to = "cover",
             start = "You start welding the metal cover back to the frame.",
             done = "The cover is welded securely to the frame.",
@@ -147,7 +147,7 @@ return {
             at = "support_rods",
             tool = "welder",
             secs = 10.0,
-            fuel = 2.0,
+            fuel = 0.3,
             to = "sheath",
             start = "You start slicing through the support rods.",
             done = "The support rods part.",

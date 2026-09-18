@@ -9,8 +9,18 @@ local item_actions = require("@lib/item_actions")
 local content = {
     id = "welder",
     visual_layer = "item",
+    -- The ordinary self-use key remains available through `self`; the
+    -- secondary pointer gesture makes the same toggle discoverable on a
+    -- reachable tool lying in the world or held in either hand.
+    gestures = { "secondary" },
     interaction_labels = {
         self = {
+            label = "lunatic/tfs:ui.affordance.ignite",
+            states = {
+                lit = "lunatic/tfs:ui.affordance.extinguish",
+            },
+        },
+        secondary = {
             label = "lunatic/tfs:ui.affordance.ignite",
             states = {
                 lit = "lunatic/tfs:ui.affordance.extinguish",
@@ -24,34 +34,18 @@ local content = {
     -- tg weldingtool.dm:16-17.
     pickup_sound = "welder_pickup",
     drop_sound = "welder_drop",
-    -- The whole of what a torch knows about itself: its equipment class
-    -- and its tank. What a torch DOES lives on the things it is used on
-    -- (docs/CONSTRUCTION.md). tg's max_fuel is 20.
+    -- The torch supplies one capability and a naphtha reservoir;
+    -- construction targets own the actions (docs/CONSTRUCTION.md).
     tool = "welder",
-    fuel = { substance = "welding_fuel", capacity = 20.0 },
-    -- The reservoir, sized to the charge above: tg's torch carries 20
-    -- units (weldingtool.dm:39), and 20 mol of acetylene at 1 g/mL is
-    -- 521 mL, so 550 mL is that tank with a working headspace. A
-    -- welder is the one vessel here whose contents are authored in
-    -- moles rather than dispensed by the millilitre.
+    fuel = { substance = "naphtha", capacity = 3.0 },
+    -- Three moles occupy 449 mL at the pack's 112.22 g/mol and 0.75 g/mL
+    -- convention, leaving headspace in this 550 mL tank.
     volume_ml = 550,
-    -- It can carry an open flame (tg's `welding = TRUE` while struck).
-    -- Two appearance states, unlit first, both drawing the base picture
-    -- (no lit sprite is baked): the flame is a fact the surgery close and
-    -- `expose_heat` read off `FuelBurn`, and the state only mirrors it.
+    -- The lit state is the heat signal used by surgery and construction;
+    -- both states share the base picture.
     flame = true,
     states = { "unlit", "lit" },
-    -- Strike it on, or snuff it (tg's `attack_self`, weldingtool.dm). A
-    -- lit welder is "hot" for surgery's close operation (docs/SURGERY.md
-    -- §6.2), which is what lets the improvised floor rescue seal a wound.
-    -- A CLOSED tank. tg's welder holds its fuel in a sealed reservoir
-    -- you refill from a tank rather than an open cup (welding_tool.dm's
-    -- `/obj/item/weldingtool` carries no OPENCONTAINER flag, and
-    -- refuelling goes through `refill_from`), and a welder that
-    -- breathed its contents into the room would be a welder that
-    -- emptied itself in a corridor. welding_fuel is unmodeled today, so
-    -- nothing would actually evaporate; the flag says what the object
-    -- IS rather than waiting for the day the fuel gets a curve.
+    -- It is a closed reservoir refilled from a tank, not an open cup.
     sealed = true,
 }
 

@@ -130,6 +130,8 @@ assert(
 -- decompression, and a welder dragged into space is a welder lost.
 t.click(p, 2, 2, t.target_at(p, 2, 2, "welder"))
 t.run_ticks(2)
+t.use_self(p)
+t.tick()
 
 -- Open the hull. The room empties, and the vent fights the hole and
 -- loses -- which is correct, and which is what makes breaches cost
@@ -321,6 +323,8 @@ assert(assert(t.room_pressure(2, 2)) > 80.0, "the sealed room is still fine")
 -- not handed.
 t.click(q, 2, 2, t.target_at(q, 2, 2, "welder"))
 t.run_ticks(2)
+t.use_self(q)
+t.tick()
 t.fault(2, 1, t.now() + 4)
 t.run_seconds(8)
 assert(t.is_breached(2, 1), "the crew room opened")

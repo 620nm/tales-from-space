@@ -2,7 +2,7 @@
 -- oxygen, recipes/others.dm:781-785) and `lye2` (from ash, water and
 -- carbon, recipes/others.dm:786-789). This pack ports the SECOND,
 -- because it is the one that consumes something the bench had to make
--- -- the third link in oil -> ash -> lye, and the only recipe on the
+-- the third link in naphtha -> ash -> lye, and the only recipe on the
 -- shelf that a dispenser alone cannot reach.
 --
 -- 2 lye from 1 ash + 1 water + 1 carbon, no thermic_constant. Shared

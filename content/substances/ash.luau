@@ -1,4 +1,4 @@
--- Ash: what is left when oil has been cooked. The one product on this
+-- Ash: what is left when naphtha has been cooked. The one product on this
 -- shelf that a room-temperature bench cannot reach -- its recipe wants
 -- 480 K, which is what the reaction chamber is FOR.
 --

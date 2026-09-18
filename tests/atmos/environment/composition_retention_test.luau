@@ -125,6 +125,8 @@ local function exercise(map: string, expected_kind: string, substrate: string, r
     t.move(player, "east")
     t.run_ticks(5)
     take(player, "welder")
+    t.use_self(player)
+    t.tick()
     t.move(player, "north")
     t.run_ticks(5)
     t.move(player, "east")

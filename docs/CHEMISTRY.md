@@ -22,7 +22,7 @@ This pack's figures:
 
 | what | figure | where it applies |
 |---|---|---|
-| `cv` | `100.0` J/(mol·K), written explicitly | fictional and mixture-shaped leftovers: `phenol`, `diethylamine`, `ash`, `oil`, `lube`, `thermite`, `space_cleaner`, `salglu` |
+| `cv` | `100.0` J/(mol·K), written explicitly | fictional and mixture-shaped leftovers: `phenol`, `diethylamine`, `ash`, `naphtha`, `lube`, `thermite`, `space_cleaner`, `salglu` |
 | `cv` | Dulong–Petit, `3R ≈ 24.9` | elements without a measured figure: `radium`, `lithium` |
 | `cv` | measured, cited in the file | everything with real physics: `water` 75.3 liquid, `chlorine` 33.9, `iodine`/`ammonia`/`co2`/`uf6` per phase |
 | `molar_mass` | a plausible round number | same set as the flat `cv` |
@@ -42,21 +42,24 @@ plus a bottle and the reaction chamber:
 | salt | sodium + chlorine | under a lid (`chlorine:liquid`, D3) |
 | space cleaner | ammonia + water | under a lid |
 | lube | water + silicon | — |
-| oil | welding fuel + carbon | — |
-| ash | oil | 480 K |
+| naphtha | carbon dioxide + hydrogen + synthesis catalyst | sealed lab flask, 450–470 K |
+| ash | naphtha | 480 K |
 | lye | ash + water + carbon | — |
 | thermite | aluminium + iron oxide | the oxide replaced tg's loose oxygen leg |
-| acetone | oil + welding fuel | — |
+| acetone | naphtha + oxygen, salt catalyst | sealed bottle, 280–315 K |
 | ammonia | nitrogen + hydrogen | off canisters, in a bottle |
 | carbon dioxide | carbon + an oxygen share | 777 K, o2 ≥ 50 kPa, in a bottle |
 | nitrous oxide | ammonia + an oxygen share | 525–575 K, o2 ≥ 100 kPa, in a bottle |
 | diethylamine | ammonia + ethanol | under a lid |
-| phenol | water + chlorine + oil | under a lid |
+| phenol | water + chlorine + naphtha | under a lid |
+
+The naphtha-to-resin, wax and toner recipes, catalyst selectors, quantities,
+and lab equipment are specified in [PETROCHEMISTRY.md](PETROCHEMISTRY.md).
 
 ## The dispenser shelf
 
-The shelf is tg's own (`default_dispensable_reagents`,
-`chem_dispenser.dm:54-79`; `default_upgrade_reagents` at `:81-88`), trimmed
+The shelf is tg's own (`default_dispensable_substances`,
+`chem_dispenser.dm:54-79`; `default_upgrade_substances` at `:81-88`), trimmed
 to what this pack has substances for and to what a source can honestly hand
 over. The whole argument lives in the file's own comment; the summary:
 
@@ -71,7 +74,7 @@ over. The whole argument lives in the file's own comment; the summary:
   that half behind a servo above tier three (`chem_dispenser.dm:467-471`),
   but a shelf is a ROSTER and `parts.scale` moves numbers, not rosters. A
   machine that ships with a locked half ships mis-configured.
-- **Off, because they have recipes.** Acetone, diethylamine and oil are on
+- **Off, because they have recipes.** Acetone and diethylamine are on
   tg's upgrade tier and stay off: a bench where the first medicine is two
   presses and a stir has nothing to learn in it.
 - **Off, because a tap should not pour it into an open glass.** Radium.
@@ -81,6 +84,10 @@ over. The whole argument lives in the file's own comment; the summary:
   a bottle of liquid chlorine) and iron oxide (thermite's oxidiser).
 - **Off the shelf and out of the registry entirely.** Stable plasma: tg's
   twin of the atmos gas, and there is one id per molecule here (D3).
+
+Naphtha replaces the former oil and welding-fuel substances. It and the two
+liquid process catalysts are dispenser shortcuts as well as inputs to the
+[petrochemical lab](PETROCHEMISTRY.md).
 
 Everything off the shelf arrives in a bottle or off a canister.
 
@@ -97,8 +104,8 @@ diethylamine) and tg's base element shelf:
 | aiuri | ammonia + sulphuric acid, warm | 0.0025 | 2 burn | 0.25 onto the eyes |
 | epinephrine | phenol + acetone + diethylamine + chlorine | 0.00125 | 0.5 of each of the four pools, **only past `crit`** | — |
 
-Multiver and aiuri are `/datum/reagent/medicine/c2`, tg's medicine that
-costs you something whatever the dose (`cat2_medicine_reagents.dm:1`), and
+Multiver and aiuri are `/datum/substance/medicine/c2`, tg's medicine that
+costs you something whatever the dose (`cat2_medicine_substances.dm:1`), and
 both halves ship: the organ damage is `sim.damage_organ` on the socket tg
 names. Epinephrine reads the `crit` threshold declared in
 `content/bodies/human.luau` — a pack word, never an engine one.
@@ -110,7 +117,7 @@ that moves it), and epinephrine's stun, stamina and `losebreath` half (no
 pool holds them).
 
 **The trunk is not a tree.** The schema is proven at every rung and the
-rest of tg's ~40–50 medical reagents are data entry, as are its labelled
+rest of tg's ~40–50 medical substances are data entry, as are its labelled
 bottle variants and the beaker's large/gold/bluespace siblings. What the
 trunk does NOT have is a branch: no chem that converts one damage type into
 another, no addiction or overdose (no per-holder reaction state to hang a
@@ -160,8 +167,8 @@ The gas-share recipes stand on the sealed-vessel charge
 
 | spec | what it drives |
 |---|---|
-| `tests/gas_fill_test.luau` | the charge off a canister, and both gas-share recipes firing behind their partial-pressure gates |
-| `tests/vessel_failure_test.luau` | the pressure and failure pass a charged shell runs under |
-| `tests/chem_trunk_test.luau` | the medicine ladder end to end |
-| `tests/chem_reactions_test.luau` | the recipe ladder |
-| `tests/chem_dispenser_test.luau` | the shelf and the dial |
+| `tests/chemistry/gas_fill_test.luau` | the charge off a canister, and both gas-share recipes firing behind their partial-pressure gates |
+| `tests/chemistry/vessel_failure_test.luau` | the pressure and failure pass a charged shell runs under |
+| `tests/chemistry/chem_trunk_test.luau` | the medicine ladder end to end |
+| `tests/chemistry/chem_reactions_test.luau` | the recipe ladder |
+| `tests/chemistry/chem_dispenser_test.luau` | the shelf and the dial |

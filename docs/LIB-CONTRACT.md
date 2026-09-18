@@ -41,7 +41,7 @@ The source owns exact signatures; this table records responsibility and shape.
 | `shift.luau` | Shift validation, warnings and finish request; `Rules` type; `validate`, `announce`, `on_second`, `on_end`. | `gamemodes/{free_build,space_station}.luau` |
 | `stock_parts.luau` | Component efficiency ladder; `efficiency` indexed by tier; `rung(tier)` returns `{tier, efficiency}`. | `items/electronics/{capacitor,encryption_key,matter_bin,micro_laser,network_card,scanning_module,servo}.luau` |
 | `thermal.luau` | Pipe heat-exchange tuning; numeric `he_coefficient`, `he_deadband_k`. | `items/piping/he_pipe.luau` |
-| `vessel.luau` | Shared vessel actions and transfers; `Spec` type; optional-number `moles`/`headspace_l`, `actions(spec)` returns action array, `attach` returns `Definition`. | Importing `items/vessels/*.luau`; `items/tools/mop.luau` |
+| `vessel.luau` | Shared vessel actions and transfers; `Spec.open_to_pour` requires an open seal for condensed pours; optional-number `moles`/`headspace_l`, `actions(spec)` returns action array, `attach` returns `Definition`. | Importing `items/vessels/*.luau`; `items/tools/mop.luau`; `items/materials/resin_pellet.luau` |
 | `writing.luau` | Bounded paper projection and append; `Fragment`/`PaperView` types, limits, `fragments`, `view`, boolean `open`/`update`/`append`, `attach`. | `fixtures/{fax,photocopier}.luau`; `items/leisure/{paper,four_color_pen,crayon_*}.luau` |
 
 ## Parallel-agent contract

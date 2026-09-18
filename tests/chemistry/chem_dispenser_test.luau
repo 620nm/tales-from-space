@@ -156,6 +156,9 @@ for _, toggle in ipairs(ui_controls.rows(ui.toggles)) do
 end
 assert(buttons.sodium ~= nil, "sodium is on the shelf")
 assert(buttons.chlorine ~= nil, "and so is chlorine, which needs a lid")
+assert(buttons.naphtha ~= nil, "naphtha supplies fuel and petrochemical feedstock")
+assert(buttons.polymer_catalyst ~= nil, "the basic shelf supports resin production")
+assert(buttons.welding_fuel == nil and buttons.oil == nil, "retired fuel reagents are absent")
 assert(buttons.o2 == nil, "the permanent gases are not: they come off canisters (D19)")
 assert(buttons.n2 == nil, "neither of them")
 assert(buttons.hydrogen == nil, "nor hydrogen")

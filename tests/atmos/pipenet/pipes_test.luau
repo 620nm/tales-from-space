@@ -273,7 +273,9 @@ t.run_ticks(2)
 
 -- Open the closet to space. Nothing feeds it, so it empties.
 t.click(q, 12, 2, t.target_at(q, 12, 2, "welder")) -- the welder, underfoot
-t.fault(12, 1, 6)
+t.use_self(q)
+t.tick()
+t.fault(12, 1, t.now() + 1)
 t.run_seconds(6)
 assert(t.is_breached(12, 1), "the fault opened the closet")
 local emptied = assert(t.room_pressure(12, 3))

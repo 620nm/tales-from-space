@@ -24,7 +24,7 @@ return {
             sound = "smash",
             tool = "welder",
             secs = 4.0,
-            fuel = 2.0,
+            fuel = 0.3,
             into = "add_component:station_base",
             anchored = true,
             start = "You start welding the breach shut.",

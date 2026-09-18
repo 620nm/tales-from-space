@@ -153,6 +153,8 @@ assert(t.ledger_has("StructureStep", "grille", "reinforced"), "bolted in")
 -- cutters 2 s, wrench 4 s. Thirty seconds, against two to put it in --
 -- which is the entire reason to spend the extra sheet.
 take(p, 1, 2) -- welder: heat the security screws
+t.use_self(p)
+t.tick()
 t.click(p, 2, 1, t.target_at(p, 2, 1))
 t.run_seconds(15.5)
 assert(t.ledger_has("StructureStep", "grille", "heated"), "screws glowing")

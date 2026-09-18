@@ -1,7 +1,7 @@
 -- Multiver: the chem purger. Two presses and a hotplate at 400 K
 -- (reactions/multiver.luau) make the cheapest medicine on the bench,
 -- and the only one whose legs are both already products of something
--- else -- ash out of oil, salt out of sodium and liquid chlorine.
+-- else -- ash out of naphtha, salt out of sodium and liquid chlorine.
 --
 -- WHERE THE NUMBERS COME FROM. tg's Life tick is two seconds and so is
 -- this engine's metabolism (`METABOLISM_EVERY = 40`,

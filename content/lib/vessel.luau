@@ -34,6 +34,7 @@ export type Spec = {
     id: string,
     noun: string,
     phases: { string }?,
+    open_to_pour: boolean?,
     pour: { units: number | "all", message: string? }?,
     sip: { units: number, message: string? }?,
     spill: boolean | { message: string? }?,
@@ -371,6 +372,13 @@ function vessel.attach(spec: Spec): Definition
                 -- do not tip a vessel into the station's plumbing.
                 if clicked.kind == "machine" then
                     return charge(spec, self, user, clicked.entity, at)
+                end
+                if spec.open_to_pour and assert(sim.matter_read(self)).sealed then
+                    sim.message.send({
+                        recipient = user,
+                        message = sim.msg("lunatic/tfs:lib.vessel.open_before_pouring", {}),
+                    })
+                    return true
                 end
                 if dregs(spec, self, user) then
                     return true

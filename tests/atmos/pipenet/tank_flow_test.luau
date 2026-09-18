@@ -360,6 +360,8 @@ local room_0 = room_nitrogen()
 assert(held > 3000.0, "a vessel with real weight in it: " .. held .. " mol")
 t.click(w, 2, 2, t.target_at(w, 2, 2, "welder"))
 t.run_ticks(3)
+t.use_self(w)
+t.tick()
 t.click(w, 3, 2, t.target_at(w, 3, 2))
 t.run_seconds(4.5)
 

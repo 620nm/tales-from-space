@@ -145,6 +145,8 @@ assert(t.structure_at(1, 2) == nil, "and the girder is consumed into it")
 -- A torch never opens one: tg overrides try_decon and there is no
 -- welder branch in it. The cutters are the whole door.
 grab("welder")
+t.use_self(p)
+t.run_ticks(2)
 t.click(p, 1, 2)
 t.run_seconds(10.5)
 assert(composition.matches(1, 2, { "station_base", "floor_tiles", "reinforced_wall" }), "the torch got nowhere")

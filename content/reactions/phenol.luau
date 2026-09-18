@@ -1,5 +1,6 @@
 -- Phenol. tg: `/datum/chemical_reaction/phenol`, 3 phenol from 1 water
--- + 1 chlorine + 1 oil, thermic_constant 50 (recipes/others.dm:584-588).
+-- + 1 chlorine + 1 hydrocarbon feed (recipes/others.dm:584-588). The
+-- pack uses naphtha now that the old fuel vocabulary is retired.
 --
 -- The ratio and the product count are tg's, unchanged. THE DEPARTURE is
 -- one word: the chlorine leg names its LIQUID. There is one id per
@@ -7,7 +8,7 @@
 -- phase this recipe means exists in a sealed bottle under about eight
 -- atmospheres of its own vapour and nowhere else. Press the chlorine
 -- into a bottle, put the bottle on the deck until the condensation heat
--- is gone, then pour the oil in and press the water: that is the first
+-- is gone, then pour the naphtha in and press the water: that is the first
 -- rung of the medicine trunk, and the stopper is not optional.
 --
 -- tg states no temperature, so this gets the shared MIXING BELL:
@@ -23,7 +24,7 @@
 -- (tests/chem_bench_test.luau).
 return {
     id = "phenol",
-    reactants = { ["water:liquid"] = 1.0, ["chlorine:liquid"] = 1.0, ["oil:liquid"] = 1.0 },
+    reactants = { ["water:liquid"] = 1.0, ["chlorine:liquid"] = 1.0, ["naphtha:liquid"] = 1.0 },
     products = { ["phenol:liquid"] = 3.0 },
     energy = 11295.0,
     rate = {
