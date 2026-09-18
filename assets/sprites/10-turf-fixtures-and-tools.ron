@@ -23,6 +23,7 @@
         ("uniform_medical", "obj/clothing/under/medical.dmi"),
         ("uniform_security", "obj/clothing/under/security.dmi"),
         ("circuitry", "obj/devices/circuitry_n_data.dmi"),
+        ("device_tool", "obj/devices/tool.dmi"),
         ("stock_parts", "obj/devices/stock_parts.dmi"),
         ("airlock_engineering", "obj/doors/airlocks/station/engineering.dmi"),
         ("airlock_public", "obj/doors/airlocks/station/public.dmi"),
@@ -386,6 +387,14 @@
             paint: (149, 23, 16),
         )),
         ("wrench", Dmi("@tools", "wrench", 0)),
+        // The two decal tools, off tg's device sheet. The painter is
+        // tg's own (`icon_state = "decal_sprayer"`, decal_painter.dm:7);
+        // the eraser wears the third cell of the same family, the debug
+        // painter's (`decal_sprayer_ex`, decal_painter.dm:141-143) --
+        // the same tool, visibly not the same tool, and nothing here
+        // ports the debug item it belongs to.
+        ("decal_painter", Dmi("@device_tool", "decal_sprayer", 0)),
+        ("decal_eraser", Dmi("@device_tool", "decal_sprayer_ex", 0)),
         ("vendor", Dmi("@vending", "Cola_Machine", 0)),
         // tg's YouTool, off the same vending sheet (vending/youtool.dm).
         ("tool_vendor", Dmi("@vending", "tool", 0)),

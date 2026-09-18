@@ -31,6 +31,8 @@ local sounds = {
     "dice_roll",
     "drink",
     "glass_break",
+    -- The nozzle on both decal tools (content/items/tools/decal_painter.luau).
+    "paint_spray",
     "part_swap",
     "ratchet",
     "smash",
