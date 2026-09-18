@@ -16,9 +16,9 @@ local vessel = require("@lib/vessel")
 -- The SHAPE is tg's: one head, holding a fixed amount, filled a stroke
 -- at a time off the floor. The numbers are not, and cannot be. A tg unit is a
 -- millilitre of nothing in particular, so tg's head holds fifteen of
--- them and its floors hold a decal; here a spill is real litres of a
--- real substance and a fifteen-millilitre head would be a teaspoon
--- against a flood. A quarter of a litre is a real mop head. tg's
+-- them and its floors hold a puddle the size of a sprite; here a spill
+-- is real litres of a real substance and a fifteen-millilitre head would
+-- be a teaspoon against a flood. A quarter of a litre is a real mop head. tg's
 -- second-and-a-half stroke has no seam to hang on either: there is no
 -- timed action here yet, so one click is one stroke, and the cadence is
 -- a player's arm rather than a timer.

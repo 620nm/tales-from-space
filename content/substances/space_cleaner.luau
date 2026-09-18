@@ -1,6 +1,7 @@
 -- Space cleaner: ammonia and water, and the reason a janitor talks to
--- a chemist. What it DOES to a dirty floor waits on decals; what it is
--- is here, and it is two buttons and a beaker.
+-- a chemist. It takes spills off a deck; it does NOT take decals off
+-- one, because a decal is paint that is supposed to be there. What it
+-- is, here, is two buttons and a beaker.
 --
 -- Fictional, so the numbers are the shelf's convention (docs/CHEMISTRY.md,
 -- D2): a plausible mass for a detergent and the flat 100 J/mol/K.

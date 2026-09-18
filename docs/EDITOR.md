@@ -75,6 +75,20 @@ recipe, and renaming a blend updates the saved reference (the engine's
 eraser is the inherit: clear the entry and the tile breathes whatever its
 exposure inherits.
 
+## Decals in the editor
+
+The Decal brush paints one of the roster's decals onto a tile; the seam pieces
+are derived from the neighbours it now has, so a room is trimmed by painting the
+room and never by choosing corners. The palette drawer offers the twelve paints
+of `content/lib/decal_paints.luau` in that file's `defaults` order, then the
+rest, and — because `decal_colors.free.map` is true — a free colour widget
+beside them. An in-game painter has no such widget: `free.play` is false and a
+raw colour from a script effect is refused.
+
+Right-click or the erase modifier removes the decal under the cursor. A decal is
+pickable in the editor and not in play, which is the one place the two pictures
+of a tile deliberately differ.
+
 ## Map markers
 
 `player_spawn` and `threat_spawn` are structures under the top-level
