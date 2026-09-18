@@ -74,6 +74,14 @@
     // open (canister.dm:488), which are the same noise for the same
     // reason.
     ("spray", "effects/spray.ogg"),
+    // A nozzle with paint in it, which is a different noise from the
+    // leak above and earns its own id. tg plays it from `use_paint` and
+    // declares it the painter's `usesound` (airlock_painter.dm:16,
+    // 52-55); `spray.ogg` and `spray3.ogg` are the other two variants
+    // of the same key, and one manifest id is one file, as with every
+    // other random tg key in this roster. tg's volume 50 is NOT
+    // PORTED -- this roster carries no per-clip gain.
+    ("paint_spray", "effects/spray2.ogg"),
     // A tube going through: tg's break_light_tube plays glasshit.ogg,
     // and the light replacer clicks (lightreplacer.dm:263).
     ("glass_break", "effects/glass/glasshit.ogg"),

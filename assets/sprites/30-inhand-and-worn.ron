@@ -69,6 +69,14 @@
         )]),
         (sheet: "tools_l", sprites: [Directions("held_wrench_l", "wrench")]),
         (sheet: "tools_r", sprites: [Directions("held_wrench_r", "wrench")]),
+        // Both decal tools share one pair of hands: tg declares
+        // `inhand_icon_state = "decal_sprayer"` on the painter
+        // (decal_painter.dm:7) and its debug subtype inherits it, so a
+        // painter and an eraser look the same in a fist. They live on
+        // the GENERAL items sheets rather than the equipment tool
+        // sheets, which is where tg draws them.
+        (sheet: "items_l", sprites: [Directions("held_decal_painter_l", "decal_sprayer")]),
+        (sheet: "items_r", sprites: [Directions("held_decal_painter_r", "decal_sprayer")]),
         (sheet: "tools_l", sprites: [BlendDirections(
             name: "held_wirecutters_l",
             layers: [("cutters", Over, true), ("cutters_cutty_thingy", Over, false)],
