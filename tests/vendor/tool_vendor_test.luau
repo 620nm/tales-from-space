@@ -76,6 +76,8 @@ local tools = {
     "multitool",
     "rpd",
     "pipe_painter",
+    "decal_painter",
+    "decal_eraser",
     "light_replacer",
     "light_bulb",
     "light_tube",
@@ -171,6 +173,8 @@ assert(shelf.cola == nil, "the tool vendor does not sell cola")
 local additions = {
     "rpd",
     "pipe_painter",
+    "decal_painter",
+    "decal_eraser",
     "light_replacer",
     "light_bulb",
     "light_tube",
