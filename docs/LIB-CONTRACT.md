@@ -25,8 +25,8 @@ The source owns exact signatures; this table records responsibility and shape.
 | --- | --- | --- |
 | `action_rules.luau` | Gesture selectors; `Selector`/`Action` types; `fact`, `kind`, `deck`, `exposed_deck(network)`, `network(network)`, `primary`, `attack` return declarative records. | `lib/vessel.luau`; importing files in `items/{electronics,gear,leisure,piping,surgery,tools,vessels}/` |
 | `cards.luau` | Deck vocabulary; `FACES`, `NAMES`, `states`, `state_sprites` tables; `slug`, `read`, `count`, `picture` helpers. | `items/leisure/{card,card_deck}.luau` |
-| `decal_paints.luau` | Floor-decal paint vocabulary and decal opacity; `colors` array of `{id, hex}`, `defaults` array of ids, numeric `trim_opacity`/`mark_opacity`. | `compositions.luau`; `items/tools/decal_painter.luau` |
 | `controller.luau` | Guest controller execution and completions; `Voice`/`Event` types; `run` returns boolean; `device`, `message`, `service_send_done`, `door`, `pressure`, `button` handlers. | `fixtures/{access_point,air_alarm,airlock,airlock_button,bidirectional_vent}.luau` |
+| `decal_paints.luau` | Floor-decal paint vocabulary and decal opacity; `colors` array of `{id, hex}`, `defaults` array of ids, numeric `trim_opacity`/`mark_opacity`. | `compositions.luau`; `items/tools/decal_painter.luau` |
 | `device_queue.luau` | Bounded paced device packets; `Packet` type; `clear`, boolean `send`, `button`, `completion`. | `lib/controller.luau` |
 | `item_actions.luau` | Possession action presentation; `Spec` type; `attach(definition, spec, use)` and boolean `internals(ev)`. | `items/tools/welder.luau`; `items/piping/{emergency_tank,oxygen_tank,rpd}.luau` |
 | `map_markers.luau` | Spawn-marker selection; `player_spawn` returns `{at}`; `threat_location` returns optional tile; `initialize`, boolean `spawn_threat`. | `fixtures/{player_spawn,threat_spawn}.luau`; `gamemodes/{free_build,space_station}.luau` |
