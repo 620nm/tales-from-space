@@ -37,6 +37,20 @@ function rules.deck(...: string): Selector
         { ["not"] = rules.fact("target.has_component", "reinforced_wall") } } }
 end
 
+-- Any floor a crewman can stand a tool on: gratings and lattices
+-- included, walls excluded. A tool whose work only some decks support
+-- aims here and refuses out loud, rather than going quiet on the rest.
+function rules.any_deck(): Selector
+    return rules.deck(
+        "station_base",
+        "floor_tiles",
+        "reinforcement",
+        "grid_cover",
+        "lattice",
+        "catwalk"
+    )
+end
+
 function rules.exposed_deck(network: string): Selector
     return {
         all = { { any = { rules.kind("turf"), rules.kind("component") } },

@@ -761,6 +761,7 @@
   "lunatic/tfs:items.crowbar.you_lose_your_grip_on": "You lose your grip on the crowbar.",
   "lunatic/tfs:items.decal_eraser.erased": "You scrub the marking off the deck.",
   "lunatic/tfs:items.decal_eraser.nothing_here": "There is no marking here to scrub off.",
+  "lunatic/tfs:items.decal_painter.no_deck_for_paint": "This deck cannot hold a marking.",
   "lunatic/tfs:items.decal_painter.nothing_to_paint_on": "There is no room left for another marking here.",
   "lunatic/tfs:items.defib.beating": "They do not need it: their heart is beating.",
   "lunatic/tfs:items.defib.too_severe": "Their injuries are too severe to shock through. Treat them first.",

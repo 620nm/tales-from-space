@@ -318,19 +318,42 @@ assert(lost[1] == 5 and lost[2] == 3, "naming the tile whose deck was taken")
 -- ---- and a grating is not a deck ----
 --
 -- A lattice is a floor you see the subfloor through; paint has nothing
--- to sit on. The selector never offers the gesture there, so the tool
--- is not refused so much as never aimed.
+-- to sit on. The tool is still AIMED there, because a press that does
+-- nothing and says nothing is the one thing it may not do: the painter
+-- takes the click and spends it on a sentence.
 t.swap_hands(p)
 assert(t.hands(p).held == "decal_painter", "painter in hand again")
 walk(p, "south")
+local offered = false
 for _, action in ipairs(t.action_hints(p, composition.deck_target(6, 3))) do
-    assert(action.id ~= "paint_decal", "a lattice offers no painting")
+    if action.id == "paint_decal" then
+        offered = true
+    end
 end
+assert(offered, "a lattice is still something the painter is aimed at")
+local before_rows = #t.ledger_rows("decal_placed")
 local _ = t.messages(p)
 composition.click_deck(p, 6, 3)
 t.run_ticks(2)
 assert(#t.decals_at(6, 3) == 0, "and nothing lands on it")
+assert(said(p, "This deck cannot hold a marking."), "but the crewman is told why")
 assert(
     not said(p, "There is no room left for another marking here."),
-    "the painter was never invoked at all"
+    "an empty grating is not a full tile, and does not borrow its sentence"
 )
+assert(#t.ledger_rows("decal_placed") == before_rows, "a refusal writes no row")
+
+-- The eraser answers the same deck the same way: nothing to scrub.
+-- It was put down for the crowbar, so it is picked back up first.
+t.swap_hands(p)
+t.drop(p) -- the crowbar, to free the hand the eraser was put down for
+t.run_ticks(2)
+t.click(p, 5, 2, t.target_at(p, 5, 2, "decal_eraser"))
+t.run_ticks(2)
+assert(t.hands(p).held == "decal_eraser", "eraser in hand")
+local erasures = #t.ledger_rows("decal_removed")
+local _ = t.messages(p)
+composition.click_deck(p, 6, 3)
+t.run_ticks(2)
+assert(said(p, "There is no marking here to scrub off."), "a grating says so too")
+assert(#t.ledger_rows("decal_removed") == erasures, "and writes no row")
