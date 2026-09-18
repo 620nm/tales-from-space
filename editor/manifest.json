@@ -124,8 +124,8 @@
           "category": "",
           "properties": [
             {"key": "weight", "kind": "number", "label": "lunatic/tfs:editor.player_spawn.weight", "default": 1, "min": 0, "max": 1000000, "step": 1},
-            {"key": "jobs", "kind": "words", "label": "lunatic/tfs:editor.player_spawn.jobs", "default": ""},
-            {"key": "roles", "kind": "words", "label": "lunatic/tfs:editor.player_spawn.roles", "default": ""}
+            {"key": "jobs", "kind": "words", "label": "lunatic/tfs:editor.player_spawn.jobs", "default": "", "options": ["assistant", "captain", "engineer", "medic", "security"]},
+            {"key": "roles", "kind": "words", "label": "lunatic/tfs:editor.player_spawn.roles", "default": "", "options": ["builder", "crew"]}
           ]
         },
         {
@@ -259,8 +259,8 @@
           "category": "",
           "properties": [
             {"key": "weight", "kind": "number", "label": "lunatic/tfs:editor.player_spawn.weight", "default": 1, "min": 0, "max": 1000000, "step": 1},
-            {"key": "jobs", "kind": "words", "label": "lunatic/tfs:editor.player_spawn.jobs", "default": ""},
-            {"key": "roles", "kind": "words", "label": "lunatic/tfs:editor.player_spawn.roles", "default": ""}
+            {"key": "jobs", "kind": "words", "label": "lunatic/tfs:editor.player_spawn.jobs", "default": "", "options": ["assistant", "captain", "engineer", "medic", "security"]},
+            {"key": "roles", "kind": "words", "label": "lunatic/tfs:editor.player_spawn.roles", "default": "", "options": ["builder", "crew"]}
           ]
         },
         {

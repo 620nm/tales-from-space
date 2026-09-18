@@ -29,7 +29,11 @@ stable, so a fixed map and seed replay the same result.
 placement schema cap it at `1,000,000`. An empty `jobs` or `roles` list means
 any value. Lists are comma separated, trimmed, lowercase tokens. A malformed
 list or an unknown job makes that marker ineligible, which keeps a typo from
-silently widening the spawn pool.
+silently widening the spawn pool. The editor suggests the known jobs and
+roles as chips; a well-formed token it does not know renders with the row
+error style. The value still saves, but an unknown job makes the marker
+ineligible and an unknown role matches no spawn the modes supply — the
+style is the typo warning.
 
 The Space Station mode supplies the default role `crew`; Free Build supplies
 `builder`. A mode or another pack policy may store a role on the Mind's
