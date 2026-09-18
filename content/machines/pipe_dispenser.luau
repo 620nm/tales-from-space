@@ -128,8 +128,8 @@ return {
             amount = 999,
         },
         {
-            item = "airlock_pump_fitting",
-            name = "External Airlock Pump",
+            item = "bidirectional_vent_fitting",
+            name = "Bidirectional Vent",
             category = "Devices",
             amount = 999,
         },

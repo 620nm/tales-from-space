@@ -8,7 +8,7 @@ t.world(
     rows: ["#######", "#.....#", "#.....#", "#######"],
     structures: [(2, 1, "player_spawn")],
     items: [(1, 1, "airlock_button_fitting"), (1, 2, "screwdriver"),
-        (2, 2, "wrench"), (3, 1, "airlock_pump_fitting")],
+        (2, 2, "wrench"), (3, 1, "bidirectional_vent_fitting")],
     networks: [
         (x: 3, y: 0, network: "pipe", channel: "l2", kind: "standard", facing: 15),
         (x: 3, y: 2, network: "pipe", channel: "l4", kind: "standard", facing: 15),
@@ -30,17 +30,17 @@ assert(
 assert(t.count_items("airlock_button_fitting") == 0, "assembly consumes its fitting")
 t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "wrench")))
 t.run_ticks(2)
-t.click(p, 3, 1, t.target_at(p, 3, 1, "airlock_pump_fitting"))
+t.click(p, 3, 1, t.target_at(p, 3, 1, "bidirectional_vent_fitting"))
 t.run_ticks(45)
 assert(
-    assert(t.structure_at(3, 1)).id == "airlock_pump",
+    assert(t.structure_at(3, 1)).id == "bidirectional_vent",
     "the floor fitting becomes the two-port machine"
 )
-assert(t.count_items("airlock_pump_fitting") == 0, "the vent fitting is consumed")
-t.click(p, 3, 1, t.target_at(p, 3, 1, "airlock_pump"))
+assert(t.count_items("bidirectional_vent_fitting") == 0, "the vent fitting is consumed")
+t.click(p, 3, 1, t.target_at(p, 3, 1, "bidirectional_vent"))
 t.run_ticks(45)
 assert(
-    t.structure_at(3, 1) == nil and t.count_items("airlock_pump_fitting") == 1,
+    t.structure_at(3, 1) == nil and t.count_items("bidirectional_vent_fitting") == 1,
     "the reusable vent comes back off the deck as its fitting"
 )
 t.drop(p)

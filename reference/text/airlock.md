@@ -1,6 +1,6 @@
 # Airlock controller
 
-Join two doors, two wall buttons and a external airlock pump to one powered access
+Join two doors, two wall buttons and a bidirectional vent to one powered access
 point or air alarm. The default program learns which leaf is home by tasting
 the air on each side; either leaf may face the station. Connect the vent's
 intake to pipe layer 2 and its effluent to layer 4.

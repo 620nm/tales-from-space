@@ -39,7 +39,7 @@ local AIRLOCK = [==[
         (2, 3, "airlock_button", { "mount": "north" }), (7, 4, "airlock_button", { "mount": "south" }),
         (5, 3, "airlock", { "bolted": true }),
         (8, 3, "airlock", { "open": true, "bolted": false }),
-        (6, 3, "airlock_pump", { "dir": "north" }),
+        (6, 3, "bidirectional_vent", { "dir": "north" }),
         (6, 1, "passive_vent", { "channel": "l4", "pipe": "south" }),
         (8, 1, "passive_vent", { "channel": "l2", "pipe": "south" }),
     ],
@@ -68,7 +68,7 @@ local AIRLOCK = [==[
 
     items: [(3, 3, "laptop"), (3, 3, "floppy_disk.atmos_stock"),
         (2, 4, "disk_box"), (3, 4, "screwdriver"), (3, 4, "wrench"),
-        (3, 4, "airlock_button_fitting"), (3, 4, "airlock_pump_fitting")],
+        (3, 4, "airlock_button_fitting"), (3, 4, "bidirectional_vent_fitting")],
 )
 ]==]
 t.set_breathing(false)

@@ -33,7 +33,7 @@ local AIRLOCK = [==[
         (2, 3, "airlock_button", { "mount": "north" }), (7, 4, "airlock_button", { "mount": "south" }),
         (5, 3, "airlock", { "bolted": true }),
         (8, 3, "airlock", { "open": true, "bolted": false }),
-        (6, 3, "airlock_pump", { "dir": "north" }),
+        (6, 3, "bidirectional_vent", { "dir": "north" }),
         (6, 1, "passive_vent", { "channel": "l4", "pipe": "south" }),
         (8, 1, "passive_vent", { "channel": "l2", "pipe": "south" }),
     ],
