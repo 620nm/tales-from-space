@@ -6,14 +6,15 @@ local function policy(visible: boolean, accessible: boolean)
         access = accessible, installation = accessible }
 end
 
-local function controls(visible: boolean, open_occupant_sprite: string?)
+local function controls(visible: boolean, open_occupant_sprite: string?, open_occupant_layer: string?)
     local result = { { id = "support", descendant = "support", default = "closed",
         states = { { id = "closed", policy = policy(visible, false) } } } }
     for _, network in ipairs({ "power", "pipe" }) do
         table.insert(result, { id = network, descendant = network, default = "closed",
             states = {
                 { id = "closed", policy = policy(visible, false) },
-                { id = "open", policy = policy(true, not visible), occupant_sprite = open_occupant_sprite },
+                { id = "open", policy = policy(true, not visible), occupant_sprite = open_occupant_sprite,
+                    occupant_layer = open_occupant_layer },
             } })
     end
     return result
@@ -88,6 +89,7 @@ return {
         { id = "substrate", parent = "world" },
         { id = "support", parent = "cover" },
         { id = "cover", parent = "world" },
+        { id = "exposed_cover", parent = "cover" },
         { id = "infrastructure", parent = "cover" },
         { id = "pipe", parent = "infrastructure" },
         { id = "power", parent = "infrastructure" },
@@ -106,13 +108,13 @@ return {
             physical = { ambient = 0, support = true, thermal = thermal(20000, 0.02, 0.5) } },
         { id = "station_base", occludes_substrate = true, label = "plating", layer = "support", sprite = "plating",
             physical = { ambient = 0.10, support = true, substrate_seal = true, thermal = thermal(62500, 0.025, 0.5) } },
-        { id = "floor_tiles", label = "floor", layer = "cover", sprite = "floor", cover = controls(false, "open_floor"),
+        { id = "floor_tiles", label = "floor", layer = "cover", sprite = "floor", cover = controls(false, "open_floor", "exposed_cover"),
             physical = { thermal = thermal(20000, 0.02, 0.5) } },
         { id = "grid_cover", label = "open grid floor", layer = "cover", sprite = "open_floor", cover = controls(true),
             physical = { thermal = thermal(20000, 0.02, 0.5) } },
         -- No open occupant art: the rods stay in place when exposed, so the
         -- cover keeps its own sprite with the runs disclosed over it.
-        { id = "reinforcement", label = "reinforced floor", layer = "cover", sprite = "reinforced_floor", cover = controls(false),
+        { id = "reinforcement", label = "reinforced floor", layer = "cover", sprite = "reinforced_floor", cover = controls(false, nil, "exposed_cover"),
             physical = { thermal = thermal(62500, 0.01, 0.03) } },
         { id = "lattice", label = "lattice", layer = "support", sprite = "lattice-0", physical = { support = true } },
         { id = "catwalk", label = "catwalk", layer = "support", sprite = "catwalk-0", physical = { support = true } },
