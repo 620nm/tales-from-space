@@ -66,3 +66,9 @@ A decal belongs to the deck component under it and goes with it: prying the
 floor takes the paint. Decals are cosmetic and never cleanable — space cleaner
 and the mop are for spills, and paint that is supposed to be there is not a
 spill.
+
+`content/items/tools/decal_painter.luau` is how a crewman lays one down: three
+dials (decal, paint, facing), free and unlimited, palette only. Its counterpart
+`decal_eraser.luau` takes one back off, newest first, and is the only thing that
+removes a decal from a deck that still exists. Both are stocked by the tool
+vendor and both stand on the atmospherics bench of `maps/chillstation.ron`.
