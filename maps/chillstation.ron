@@ -81,6 +81,15 @@
 // scrubbers main comes home from the Commons instead of from the only
 // other room on the station.
 //
+// THE COMMONS IS TRIMMED. It is the only finished deck on the station
+// and now the only trimmed one: a blue line inside its perimeter,
+// painted tile by tile, with the shape of the room worked out from which
+// neighbours share it rather than authored corner by corner. The lab's
+// north band and the cargo marks are the same mechanism said in the
+// quadrant family and in facing marks; the two interlock chambers wear
+// an uncoloured hazard box, because the one tile you should not be
+// standing in when a door cycles is worth a frame of paint.
+//
 // Demo: docs/chillstation-v2.png.
 (
     name: "Chillstation 13",
@@ -1212,6 +1221,105 @@
         // main yet.
         (x: 12, y: 31, network: "pipe", channel: "l3", kind: "standard", facing: 15), (x: 11, y: 31, network: "pipe", channel: "l3", kind: "standard", facing: 15), (x: 9, y: 31, network: "pipe", channel: "l3", kind: "standard", facing: 15), (x: 8, y: 31, network: "pipe", channel: "l3", kind: "standard", facing: 15),
 
+    ],
+
+    // PAINT. Every row here names one tile and one decal; the SHAPE is
+    // worked out from which neighbours share it, so a room is trimmed by
+    // painting the room rather than by authoring a corner. Sorted (y, x),
+    // the order the writer keeps.
+    decals: [
+        // The lab's north band, in the quadrant family: a one-tile-deep
+        // strip has its north and south edges both set on every tile, so
+        // the halves union to the whole tile and the band reads solid
+        // with a mitred cap at each end.
+        (x: 14, y: 4, decal: "tile", paint: Some("green")),
+        (x: 15, y: 4, decal: "tile", paint: Some("green")),
+        (x: 16, y: 4, decal: "tile", paint: Some("green")),
+        (x: 17, y: 4, decal: "tile", paint: Some("green")),
+        (x: 18, y: 4, decal: "tile", paint: Some("green")),
+        (x: 19, y: 4, decal: "tile", paint: Some("green")),
+        (x: 20, y: 4, decal: "tile", paint: Some("green")),
+        (x: 21, y: 4, decal: "tile", paint: Some("green")),
+        (x: 22, y: 4, decal: "tile", paint: Some("green")),
+        (x: 23, y: 4, decal: "tile", paint: Some("green")),
+        (x: 24, y: 4, decal: "tile", paint: Some("green")),
+        // The Cargo Bay's floor legend, in front of the wide airlock at
+        // (30, 10). These carry tg's own colours in their pixels, so
+        // they name no paint at all. Facing 2 is south, the side the
+        // legend is read from.
+        (x: 30, y: 8, decal: "mark_bot"),
+        (x: 29, y: 9, decal: "mark_loading", facing: Some(2)),
+        (x: 30, y: 9, decal: "mark_loading", facing: Some(2)),
+        (x: 31, y: 9, decal: "mark_loading", facing: Some(2)),
+        // THE COMMONS IS TRIMMED, all sixty tiles of it. The forty
+        // interior tiles draw nothing and the twenty round the edge draw
+        // the run, the four bends and the door-gap caps by themselves.
+        (x: 15, y: 13, decal: "trim", paint: Some("blue")),
+        (x: 16, y: 13, decal: "trim", paint: Some("blue")),
+        (x: 17, y: 13, decal: "trim", paint: Some("blue")),
+        (x: 18, y: 13, decal: "trim", paint: Some("blue")),
+        (x: 19, y: 13, decal: "trim", paint: Some("blue")),
+        (x: 20, y: 13, decal: "trim", paint: Some("blue")),
+        (x: 21, y: 13, decal: "trim", paint: Some("blue")),
+        (x: 22, y: 13, decal: "trim", paint: Some("blue")),
+        (x: 23, y: 13, decal: "trim", paint: Some("blue")),
+        (x: 24, y: 13, decal: "trim", paint: Some("blue")),
+        (x: 15, y: 14, decal: "trim", paint: Some("blue")),
+        (x: 16, y: 14, decal: "trim", paint: Some("blue")),
+        (x: 17, y: 14, decal: "trim", paint: Some("blue")),
+        (x: 18, y: 14, decal: "trim", paint: Some("blue")),
+        (x: 19, y: 14, decal: "trim", paint: Some("blue")),
+        (x: 20, y: 14, decal: "trim", paint: Some("blue")),
+        (x: 21, y: 14, decal: "trim", paint: Some("blue")),
+        (x: 22, y: 14, decal: "trim", paint: Some("blue")),
+        (x: 23, y: 14, decal: "trim", paint: Some("blue")),
+        (x: 24, y: 14, decal: "trim", paint: Some("blue")),
+        // The west vestibule's interlock chamber: isolated, so it draws
+        // the box piece -- a stripe frame round the one tile you do not
+        // want to be standing on when a door cycles. Its twin is at
+        // (35, 15).
+        (x: 4, y: 15, decal: "hazard_line"),
+        (x: 15, y: 15, decal: "trim", paint: Some("blue")),
+        (x: 16, y: 15, decal: "trim", paint: Some("blue")),
+        (x: 17, y: 15, decal: "trim", paint: Some("blue")),
+        (x: 18, y: 15, decal: "trim", paint: Some("blue")),
+        (x: 19, y: 15, decal: "trim", paint: Some("blue")),
+        (x: 20, y: 15, decal: "trim", paint: Some("blue")),
+        (x: 21, y: 15, decal: "trim", paint: Some("blue")),
+        (x: 22, y: 15, decal: "trim", paint: Some("blue")),
+        (x: 23, y: 15, decal: "trim", paint: Some("blue")),
+        (x: 24, y: 15, decal: "trim", paint: Some("blue")),
+        (x: 35, y: 15, decal: "hazard_line"),
+        (x: 15, y: 16, decal: "trim", paint: Some("blue")),
+        (x: 16, y: 16, decal: "trim", paint: Some("blue")),
+        (x: 17, y: 16, decal: "trim", paint: Some("blue")),
+        (x: 18, y: 16, decal: "trim", paint: Some("blue")),
+        (x: 19, y: 16, decal: "trim", paint: Some("blue")),
+        (x: 20, y: 16, decal: "trim", paint: Some("blue")),
+        (x: 21, y: 16, decal: "trim", paint: Some("blue")),
+        (x: 22, y: 16, decal: "trim", paint: Some("blue")),
+        (x: 23, y: 16, decal: "trim", paint: Some("blue")),
+        (x: 24, y: 16, decal: "trim", paint: Some("blue")),
+        (x: 15, y: 17, decal: "trim", paint: Some("blue")),
+        (x: 16, y: 17, decal: "trim", paint: Some("blue")),
+        (x: 17, y: 17, decal: "trim", paint: Some("blue")),
+        (x: 18, y: 17, decal: "trim", paint: Some("blue")),
+        (x: 19, y: 17, decal: "trim", paint: Some("blue")),
+        (x: 20, y: 17, decal: "trim", paint: Some("blue")),
+        (x: 21, y: 17, decal: "trim", paint: Some("blue")),
+        (x: 22, y: 17, decal: "trim", paint: Some("blue")),
+        (x: 23, y: 17, decal: "trim", paint: Some("blue")),
+        (x: 24, y: 17, decal: "trim", paint: Some("blue")),
+        (x: 15, y: 18, decal: "trim", paint: Some("blue")),
+        (x: 16, y: 18, decal: "trim", paint: Some("blue")),
+        (x: 17, y: 18, decal: "trim", paint: Some("blue")),
+        (x: 18, y: 18, decal: "trim", paint: Some("blue")),
+        (x: 19, y: 18, decal: "trim", paint: Some("blue")),
+        (x: 20, y: 18, decal: "trim", paint: Some("blue")),
+        (x: 21, y: 18, decal: "trim", paint: Some("blue")),
+        (x: 22, y: 18, decal: "trim", paint: Some("blue")),
+        (x: 23, y: 18, decal: "trim", paint: Some("blue")),
+        (x: 24, y: 18, decal: "trim", paint: Some("blue")),
     ],
 
 
