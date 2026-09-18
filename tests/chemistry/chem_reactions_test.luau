@@ -16,11 +16,12 @@ local ui_controls = require("@helpers/ui_controls")
 -- Everything is pressed out of the dispenser and poured with the hands.
 --
 -- WHAT IS NOT HERE, and where it went. Two of these recipes used to
--- take a permanent gas -- thermite's third leg was oxygen and oil's was
--- hydrogen -- and a source deposits what a substance IS, so a gas over
+-- take a permanent gas -- thermite's third leg was oxygen and the old
+-- fuel chain's was hydrogen -- and a source deposits what a substance IS,
+-- so a gas over
 -- an open beaker is refused rather than obeyed (D19). Thermite takes an
--- OXIDE now, which is what real thermite has always taken; oil dropped
--- its atomic hydrogen and its product count with it. The recipes that
+-- OXIDE now, which is what real thermite has always taken; the old fuel
+-- chain dropped its atomic hydrogen and its product count with it. The recipes that
 -- genuinely need an atmosphere over a liquid -- carbon dioxide, nitrous
 -- oxide, ammonia -- are not bench work at all and live in
 -- chem_pressure_test.luau.
@@ -228,34 +229,23 @@ t.drop(p)
 t.tick()
 
 -- ---------------------------------------------------------------
--- THREE: OIL, AND THEN ASH AT 480 K.
+-- THREE: NAPHTHA, AND THEN ASH AT 480 K.
 --
--- The chain the reaction chamber exists for. tg: 1 welding fuel +
--- 1 carbon + 1 hydrogen -> 3 oil (recipes/others.dm:579-582) without
--- its hydrogen, which is H2 here and therefore not something a beaker
--- holds; then 1 oil -> 1 ash at `required_temp = 480`
--- (recipes/others.dm:592-596). Oil is the first thing on this bench
--- that is made out of something a welder carries; ash is the first
--- thing that cannot be made at all without a hotplate.
+-- Naphtha is the shared fuel and petrochemical feedstock; it is already
+-- a dispenser liquid so a basic lab can reach the ash branch without a
+-- refinery. One naphtha becomes one ash at the reaction chamber's
+-- 480 K window. Ash is the first thing on this bench that cannot be
+-- made at all without a hotplate.
 -- ---------------------------------------------------------------
--- A twentieth of a press each, and the amount is GEOMETRY talking
--- (docs/CHEMISTRY.md 5, D16). Oil is 170 g/mol at 0.9 g/mL and TWO
--- come out for one of each leg, so a whole extent swells the contents
--- by 347 mL against the 31 the two legs occupied. A 50 mL beaker has
--- room for about a seventh of an extent, and the engine caps a
--- reaction by the free shell volume rather than growing the glass. A
--- twentieth of a press of each is what this beaker can actually make,
--- and it fits with two thirds to spare.
+-- A twentieth of a press is enough: naphtha is 112.22 g/mol at
+-- 0.75 g/mL, so it fits comfortably in a 50 mL beaker and this test is
+-- about the temperature window rather than the vessel clamp.
 local LEG = 0.05
 take(d, 3, 3)
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
 dial_to(LEG)
-press("welding_fuel")
-t.run_seconds(30)
-near(amount(d, "oil"), 0.0, 1e-12, "fuel without carbon is fuel")
-
-press("carbon")
+press("naphtha")
 dial_to(PRESS)
 -- Ten seconds, not sixty: neat legs in 2 mL of liquid are a 25-molar
 -- solution, so the rate the activity law asks for is far more extent
@@ -263,8 +253,7 @@ dial_to(PRESS)
 -- clamp is what answers. This one goes in a pass. The DECAY tail is
 -- the ash step below, where the product dilutes what is left.
 t.run_seconds(10)
-near(amount(d, "oil"), 2.0 * LEG, 1e-6, "two of oil for one of each")
-near(amount(d, "welding_fuel"), 0.0, 1e-6, "and every leg of it was spent")
+near(amount(d, "naphtha"), LEG, 1e-6, "the press of naphtha landed")
 near(amount(d, "ash"), 0.0, 1e-12, "and no ash at all, because the beaker is cold")
 
 eject()
@@ -277,8 +266,8 @@ assert(
     assert(t.holder_k(d)) > 480.0,
     "the chamber crossed the threshold: " .. tostring(t.holder_k(d))
 )
-near(amount(d, "ash"), 2.0 * LEG, 1e-6, "every mole of oil became a mole of ash")
-near(amount(d, "oil"), 0.0, 1e-6, "and there is none of it left")
+near(amount(d, "ash"), LEG, 1e-6, "every mole of naphtha became a mole of ash")
+near(amount(d, "naphtha"), 0.0, 1e-6, "and there is none of it left")
 
 -- ---------------------------------------------------------------
 -- FOUR: AND ONE THAT REFUSES AT NEITHER END.

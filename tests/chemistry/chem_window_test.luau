@@ -11,12 +11,12 @@ local ui_controls = require("@helpers/ui_controls")
 -- chemist never guesses.
 --
 -- THE SECOND REFUSAL IS HARD TO STAGE, and the staging is the
--- interesting part. A heater ramps, so a beaker of oil cannot get from
+-- interesting part. A heater ramps, so a beaker of naphtha cannot get from
 -- room temperature to 960 K without crossing the window on the way up
 -- and turning into ash in the middle of it. The second beaker
--- therefore gets the LAST of oil's two reactants pressed in while the
--- vessel is already too hot: the oil is made ABOVE the ash window's
--- ceiling and stays oil, which is a thing a chemist can actually do,
+-- therefore gets naphtha pressed in while the vessel is already too hot:
+-- it is made ABOVE the ash window's ceiling and stays naphtha, which is
+-- a thing a chemist can actually do,
 -- and the only honest way to ask "what happens at 960 K" of a rule that
 -- would otherwise have fired at 500.
 --
@@ -27,18 +27,13 @@ local ui_controls = require("@helpers/ui_controls")
 -- back to chemistry from a canister into a sealed vessel, and the N2O
 -- recipe is written around that share.
 local PRESS = 0.75
--- A twentieth of a press of each of oil's two reactants, and the
--- amount is GEOMETRY talking (docs/CHEMISTRY.md 5, D16). Oil is
--- 170 g/mol at 0.9 g/mL and TWO come out for one of each leg, so a
--- whole extent swells the contents by 347 mL against the 31 the legs
--- occupied: a 50 mL beaker has room for about a seventh of an extent,
--- and the engine caps a reaction by the free shell volume rather than
--- growing the glass. A twentieth of a press of each fits with two
--- thirds to spare.
+-- A twentieth of a press of naphtha, and the amount is GEOMETRY talking
+-- (docs/CHEMISTRY.md 5, D16). Naphtha is 112.22 g/mol at 0.75 g/mL, so
+-- a small press fits comfortably in a 50 mL beaker and the ash
+-- conversion is not geometry-limited.
 local LEG = 0.05
--- ...and two of oil come out of it, which is what the ash window is
--- then asked about.
-local MADE = 2.0 * LEG
+-- ...and that naphtha is what the ash window is then asked about.
+local MADE = LEG
 
 local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
@@ -137,29 +132,24 @@ local function dial(kelvin)
     t.run_ticks(2)
 end
 
--- Oil first: one of welding fuel and one of carbon for two of oil
--- (recipes/others.dm:579-582 without its hydrogen leg -- hydrogen is
--- H2 here and no source hands a permanent gas to an open beaker), which
--- the shelf makes in one cold vessel with two presses and no help at
--- all. The carbon arrives as a POWDER, because that is what carbon is
--- at the nozzle's 300 K and a source names no phase (D11).
-local function brew_oil(beaker)
+-- Naphtha is the shared fuel and petrochemical feedstock. It is a
+-- dispenser liquid, so a basic lab can make the ash precursor without
+-- a separate refinery or a gas supply.
+local function brew_naphtha(beaker)
     dock(dispenser, 1, 1)
     panel(dispenser, 1, 1)
     dial_to(LEG)
-    press("welding_fuel")
-    press("carbon")
+    press("naphtha")
     dial_to(PRESS)
     t.run_seconds(30)
-    near(amount(beaker, "oil"), MADE, 1e-6, "one of each made two of oil")
-    near(amount(beaker, "carbon"), 0.0, 1e-6, "and nothing is left over")
+    near(amount(beaker, "naphtha"), MADE, 1e-6, "a press of naphtha landed")
 end
 
 -- ---------------------------------------------------------------
 -- ONE: BELOW THE WINDOW, NOTHING.
 -- ---------------------------------------------------------------
 take(cold, 1, 2)
-brew_oil(cold)
+brew_naphtha(cold)
 
 eject()
 dock(heater, 3, 1)
@@ -169,20 +159,20 @@ ui_controls.toggle(p, "power")
 t.run_seconds(120)
 near(assert(t.holder_k(cold)), 400.0, 1.0, "the chamber holds it at 400 K")
 near(amount(cold, "ash"), 0.0, 1e-12, "eighty kelvin short is short")
-near(amount(cold, "oil"), MADE, 1e-6, "and every mole of oil is still oil")
+near(amount(cold, "naphtha"), MADE, 1e-6, "and every mole of naphtha is still naphtha")
 
 -- ---------------------------------------------------------------
 -- TWO: INSIDE IT, IT GOES.
 --
 -- Three hundred kelvin up the dial and the same beaker runs dry: one
--- of ash for one of oil (recipes/others.dm:589-593), and the ash is a
+-- of ash for one naphtha, and the ash is a
 -- POWDER standing in the glass rather than a second liquid.
 -- ---------------------------------------------------------------
 dial(700)
 t.run_seconds(120)
 near(assert(t.holder_k(cold)), 700.0, 25.0, "the chamber took it up into the window")
-near(amount(cold, "ash"), MADE, 1e-6, "every mole of oil became a mole of ash")
-near(amount(cold, "oil"), 0.0, 1e-6, "and there is none of it left")
+near(amount(cold, "ash"), MADE, 1e-6, "every mole of naphtha became a mole of ash")
+near(amount(cold, "naphtha"), 0.0, 1e-6, "and there is none of it left")
 
 ui_controls.toggle(p, "power")
 eject()
@@ -192,23 +182,9 @@ t.tick()
 -- ---------------------------------------------------------------
 -- THREE: ABOVE IT, NOTHING AGAIN.
 --
--- The second beaker is brought to 960 K holding one of oil's two and a
--- lump of ballast, and the welding fuel is pressed in hot. THE BALLAST
--- IS THE STAGING: the second leg arrives at the nozzle's 300 K and
--- something has to shrug it off. A notch of fuel against a full press
--- of iron and a full press of carbon is twenty kelvin; against the
--- carbon notch alone it would be hundreds, and the beaker would fall
--- back through the window it is supposed to be over.
---
--- WHICH LEG GOES IN LAST IS NOT ARBITRARY. Welding fuel is the second
--- leg here, and carbon is the ballast, because oil and welding fuel
--- standing together in one vessel are ACETONE
--- (reactions/acetone.luau, tg's others.dm:477 without its oxygen leg).
--- Fuel in excess would eat the oil this spec is about as fast as it
--- was made, and would still be there at 700 K to eat it again instead
--- of letting it become ash. Fuel as the LIMITING leg is spent by the
--- time the run ends, so what stands in the beaker at 960 K is oil, a
--- share of acetone, and nothing that can touch either.
+-- The second beaker is brought to 960 K holding a little ballast, and
+-- naphtha is pressed in hot. The ballast absorbs the nozzle's 300 K
+-- addition so the beaker remains above the ash window's ceiling.
 --
 -- The iron is there for its 25 J/(mol*K) and nothing else: no rule in
 -- this pack's roster names it, so it is heat capacity with no opinions.
@@ -221,6 +197,8 @@ take(hot, 3, 2)
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
 dial_to(PRESS)
+press("iron")
+press("carbon")
 press("iron")
 press("carbon")
 
@@ -239,27 +217,25 @@ eject()
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
 dial_to(NOTCH)
-press("welding_fuel")
+press("naphtha")
 dial_to(PRESS)
 assert(
     assert(t.holder_k(hot)) > 920.0,
     "and the mixture is still over the window: " .. tostring(t.holder_k(hot))
 )
 
--- Five minutes, because the oil rule is running at a QUARTER of its
--- plateau up here -- 950 K is most of the way down the far shoulder of
--- 100/280/900/1000 (reactions/oil.luau) -- and a rate that reads
+-- Five minutes, because the ash rule is running at a QUARTER of its
+-- plateau up here and a rate that reads
 -- concentration is a decay besides (docs/CHEMISTRY.md 5).
 t.run_seconds(320)
-local made = amount(hot, "oil")
-assert(made > 0.0, "the oil rule ran up here: " .. made .. " mol")
-near(amount(hot, "welding_fuel"), 0.0, 1e-4, "and it spent the notch of fuel doing it")
+local made = amount(hot, "naphtha")
+assert(made > 0.0, "the naphtha stayed above the ash window: " .. made .. " mol")
 near(amount(hot, "ash"), 0.0, 1e-12, "over the window is as shut as under it")
 
 -- ...and the proof that it was the TEMPERATURE and not the mixture:
--- put the same beaker back on the dial at 700 and every mole of the oil
+-- put the same beaker back on the dial at 700 and every mole of naphtha
 -- standing in it converts, coming down into the window from above.
--- Four minutes rather than two and a half: the oil here is a couple of
+-- Four minutes rather than two and a half: the naphtha here is a couple of
 -- notches in a beaker of ballast rather than a neat batch, and a decay
 -- in a dilute solution has the longer tail.
 eject()
@@ -268,4 +244,4 @@ panel(heater, 3, 1)
 dial(700)
 t.run_seconds(240)
 near(amount(hot, "ash"), made, 1e-3, "coming down into the window works as well as up")
-near(amount(hot, "oil"), 0.0, 1e-3, "and it spends the oil it would not touch at 960")
+near(amount(hot, "naphtha"), 0.0, 1e-3, "and it spends the naphtha it would not touch at 960")

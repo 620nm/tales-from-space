@@ -135,6 +135,8 @@ assert(t.count_items("cable_coil") > 0, "and hand the cable back")
 -- ---------------------------------------------------------------
 put_down()
 take("welder")
+t.use_self(p)
+t.run_ticks(2)
 local _ = t.messages(p)
 t.click_component(p, 1, 0, assert(t.component_instance(1, 0, "wall")))
 t.run_seconds(10.5)

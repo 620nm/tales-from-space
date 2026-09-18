@@ -13,8 +13,8 @@
 -- chain on the bench is still bottle work.
 --
 -- It is the longest chain: phenol comes off water, liquid chlorine and
--- oil; acetone off oil and welding fuel; diethylamine off liquid
--- ammonia and ethanol. Three intermediates and two condensed gases, to
+-- naphtha; acetone off naphtha, water and a salt catalyst; diethylamine
+-- off liquid ammonia and ethanol. Three intermediates and two condensed gases, to
 -- make the one medicine that does nothing at all until somebody is
 -- already on the deck (substances/epinephrine.luau).
 --

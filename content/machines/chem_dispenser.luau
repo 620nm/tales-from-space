@@ -17,16 +17,19 @@
 --   salt          sodium + chlorine, under a lid
 --   cleaner       ammonia + water, under a lid
 --   lube          water + silicon
---   oil           welding fuel + carbon
---   ash           oil, at 480 K
+--   naphtha       carbon dioxide + hydrogen, at 450–470 K, in a bottle
+--   ash           naphtha, at 480 K
 --   lye           ash + water + carbon
 --   thermite      aluminium + iron oxide
---   acetone       oil + welding fuel
+--   acetone       naphtha + oxygen, salt catalyst, sealed below 315 K
 --   ammonia       nitrogen + hydrogen, off canisters, in a bottle
 --   CO2           carbon + an oxygen share, at 777 K, in a bottle
 --   N2O           ammonia + an oxygen share, at 525-575 K, in a bottle
 --   diethylamine  ammonia + ethanol, under a lid
---   phenol        water + chlorine + oil, under a lid
+--   phenol        water + chlorine + naphtha, under a lid
+--   resin         naphtha, with polymer catalyst, at 360–380 K
+--   wax           naphtha, with sulphuric acid, at 370–400 K
+--   toner         resin + carbon + wax, warm mixed below those windows
 --
 -- ...and the medicine trunk that stands on top of them:
 --
@@ -84,11 +87,10 @@
 -- radioactive metal into an open beaker is not a thing a chemistry
 -- bench should offer and nothing here names iodine -- both come in a
 -- bottle. Stable plasma is tg's twin of the atmos gas and there is one
--- id per molecule here (D3), so it does not exist. Acetone,
--- diethylamine and oil are on tg's UPGRADE tier and stay off this
--- shelf on purpose, unlike ammonia, ash and saltpetre above: all three
--- have recipes, and a bench where the first medicine is two presses
--- and a stir is a bench with nothing to learn in it.
+-- id per molecule here (D3), so it does not exist. Acetone and
+-- diethylamine stay off the shelf as recipe products, while naphtha and
+-- its process catalysts are on it by this pack's pacing choice: fuel and
+-- feedstock should be available before a chemist builds the first batch.
 --
 -- WHAT TG'S WINDOW HAS THAT THIS ONE CANNOT SAY: a power-cell gauge (a
 -- corded appliance here draws flat off the mains, and tg's per-unit
@@ -164,7 +166,12 @@ return {
             { key = "water", name = "water" },
             { key = "ethanol", name = "ethanol" },
             { key = "sugar", name = "sugar" },
-            { key = "welding_fuel", name = "welding fuel" },
+            -- Naphtha is the pack's liquid fuel/feedstock. The process
+            -- catalysts are also stock liquids so a basic lab can start
+            -- each route without a separate industrial supply chain.
+            { key = "naphtha", name = "naphtha" },
+            { key = "polymer_catalyst", name = "polymer catalyst" },
+            { key = "synthesis_catalyst", name = "synthesis catalyst" },
             -- The rest of tg's base shelf, the day this pack got
             -- substance files for them (chem_dispenser.dm:54-79). None
             -- of them is a leg of anything here yet except the acid,

@@ -95,6 +95,8 @@ t.run_ticks(2)
 t.click(p, 1, 1, t.target_at(p, 1, 1, "welder"))
 t.run_ticks(2)
 assert(t.hands(p).held == "welder", "a torch in hand")
+t.use_self(p)
+t.run_ticks(2)
 t.click(p, 2, 2, t.target_at(p, 2, 2, "reinforced_table"))
 t.run_seconds(5.5)
 assert(

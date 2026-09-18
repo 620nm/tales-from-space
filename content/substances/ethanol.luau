@@ -2,8 +2,8 @@
 -- but it metabolizes, and the ledger knows you had some.
 --
 -- Its phase curve is REAL, unlike ammonia's and chlorine's, and it can
--- be: ethanol is a product and nothing on this shelf consumes it as a
--- reactant, so a curve costs no recipe anything. NIST: boiling 351.5 K,
+-- be: ethanol is a fermentation product and the diethylamine recipe
+-- consumes it as a reactant. NIST: boiling 351.5 K,
 -- melting 159.0 K, heat of vaporization 38.56 kJ/mol, heat of fusion
 -- 4.90 kJ/mol, liquid density 0.789 g/mL. Gas heat capacity is 65.4
 -- J/(mol*K); the condensed columns keep tg's 112.

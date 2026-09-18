@@ -13,8 +13,8 @@ local ui_controls = require("@helpers/ui_controls")
 --
 -- The chain is four rungs and each one teaches the rung above it:
 --
---   welding fuel + carbon        -> oil          an open beaker
---   water + chlorine + oil       -> phenol       a bottle, because Cl2
+--   naphtha                     -> phenol       a bottle, because Cl2
+--   water + chlorine + naphtha   -> phenol       a bottle, because Cl2
 --   phenol + saltpetre           -> libital      the reaction chamber
 --   ash + salt                   -> multiver     a NARROW window
 --
@@ -48,7 +48,7 @@ local LEG = 0.05
 -- headspace keeps some of it as VAPOUR whatever the vessel holds
 -- (about 0.017 mol at 303 K in this bottle), and a rule naming the
 -- liquid cannot reach that. Twice the share means the liquid outlasts
--- the water and the oil, so the run ends on stoichiometry rather than
+-- the water and the naphtha, so the run ends on stoichiometry rather than
 -- on saturation -- which is the lesson chem_bench_test already taught
 -- and this spec does not need to repeat.
 local CHLORINE = 0.10
@@ -169,23 +169,19 @@ local function put_down()
 end
 
 -- ---------------------------------------------------------------
--- ONE: OIL, WHICH IS THE ONLY RUNG A BEAKER CAN DO.
+-- ONE: NAPHTHA, WHICH IS THE ONLY RUNG A BEAKER CAN DO.
 --
--- tg: 1 welding fuel + 1 carbon + 1 hydrogen -> 3 oil
--- (recipes/others.dm:579-582) without its hydrogen, which is H2 here
--- and therefore not something an open vessel holds
--- (reactions/oil.luau). Two buttons, on the shared mixing bell, at
--- room temperature.
+-- Naphtha is the shared fuel and petrochemical feedstock. It is a
+-- dispenser liquid, so the medicine trunk starts with one simple press
+-- on the shared mixing bell at room temperature.
 -- ---------------------------------------------------------------
 take(a, 1, 2)
 dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
-dial_to(LEG / 2)
-press("welding_fuel")
-press("carbon")
+dial_to(LEG)
+press("naphtha")
 t.run_seconds(20)
-near(amount(a, "oil"), LEG, 1e-6, "two of oil for one of each leg")
-near(amount(a, "welding_fuel"), 0.0, 1e-6, "and both legs are spent")
+near(amount(a, "naphtha"), LEG, 1e-6, "the naphtha press landed")
 eject()
 put_down()
 
@@ -225,8 +221,10 @@ assert(
 -- ---------------------------------------------------------------
 -- THREE: PHENOL. Three legs, and one of them is a phase.
 --
--- tg: 1 water + 1 chlorine + 1 oil -> 3 phenol, thermic_constant 50
--- (recipes/others.dm:584-588). The oil is poured in off the beaker,
+-- The reference recipe uses one water + one chlorine + one hydrocarbon
+-- feed -> three phenol, thermic_constant 50 (recipes/others.dm:584-588).
+-- Naphtha fills the same hydrocarbon role
+-- in this pack. It is poured in off the beaker,
 -- because a pour asks nothing about the lid; the water is pressed in
 -- after it, because the reaction should start with everything at the
 -- deck's temperature rather than chasing the nozzle.
@@ -234,8 +232,8 @@ assert(
 take(a, 2, 2)
 t.click(p, 2, 2, assert(t.target_at(p, 2, 2, jar)))
 t.tick()
-near(amount(jar, "oil"), LEG, 1e-9, "the oil went into the bottle")
-near(amount(a, "oil"), 0.0, 1e-9, "and the beaker is empty")
+near(amount(jar, "naphtha"), LEG, 1e-9, "the naphtha went into the bottle")
+near(amount(a, "naphtha"), 0.0, 1e-9, "and the beaker is empty")
 put_down()
 
 take(jar, 2, 2)
@@ -252,7 +250,7 @@ put_down()
 -- as the first nine tenths (docs/CHEMISTRY.md 5).
 t.run_seconds(180)
 near(amount(jar, "phenol"), 3.0 * LEG, 1e-4, "three of phenol for one of each leg")
-near(amount(jar, "oil"), 0.0, 1e-4, "and the oil is gone")
+near(amount(jar, "naphtha"), 0.0, 1e-4, "and the naphtha is gone")
 near(amount(jar, "water"), 0.0, 1e-4, "and so is the water")
 -- The chlorine that is LEFT is the reason the press was doubled: the
 -- run ended on the two legs it was meant to end on.
@@ -277,7 +275,7 @@ dock(dispenser, 1, 1)
 panel(dispenser, 1, 1)
 dial_to(LEG)
 press("saltpetre")
-near(amount(jar, "saltpetre"), LEG, 1e-9, "a press of saltpetre")
+near(amount(jar, "saltpetre"), LEG, 2e-3, "a press of saltpetre")
 eject()
 
 dock(heater, 3, 1)

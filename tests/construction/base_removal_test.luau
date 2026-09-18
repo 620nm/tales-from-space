@@ -36,6 +36,8 @@ end
 for _, substrate in ipairs({ "space", "ground" }) do
     local player = bench(substrate, nil, false)
     take(player, 1, 2, "welder")
+    t.use_self(player)
+    t.run_ticks(2)
     assert(composition.matches(2, 1, { "station_base" }), "the base starts over the authored substrate")
     assert(assert(t.composition(2, 1)).substrate == substrate, "the explicit substrate stays authored")
     local before = t.count_items("metal")
@@ -54,6 +56,8 @@ end
 local inherited = bench(nil, nil, false)
 assert(assert(t.composition(2, 1)).substrate == nil, "the default substrate is inherited")
 take(inherited, 1, 2, "welder")
+t.use_self(inherited)
+t.run_ticks(2)
 t.click_component(inherited, 2, 1, assert(t.component_instance(2, 1, "station_base")))
 t.run_seconds(4.5)
 assert(composition.bare(2, 1, "space"), "the map inherits its environment's space substrate")
@@ -63,6 +67,8 @@ for _, cover in ipairs({ "floor_tiles", "grid_cover" }) do
     local player = bench("ground", cover, false)
     local base = assert(t.component_instance(2, 1, "station_base"))
     take(player, 1, 2, "welder")
+    t.use_self(player)
+    t.run_ticks(2)
     for _, hint in ipairs(t.action_hints(player, {
         Component = { tile = { x = 2, y = 1 }, instance = base },
     })) do
@@ -94,6 +100,8 @@ end
 local player = bench("space", nil, true)
 local cable = assert(t.network_instance(2, 1, "power", "l1"))
 take(player, 1, 2, "welder")
+t.use_self(player)
+t.run_ticks(2)
 t.click_component(player, 2, 1, assert(t.component_instance(2, 1, "station_base")))
 t.run_seconds(4.5)
 assert(composition.matches(2, 1, { "station_base" }), "a base supporting cable cannot be removed")

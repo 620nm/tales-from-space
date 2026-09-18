@@ -120,7 +120,7 @@ return {
             at = "plated",
             tool = "welder",
             secs = 2.0,
-            fuel = 2.0,
+            fuel = 0.3,
             gone = true,
             leaves = "stationary_tank",
             start = "You start sealing the plating with the welder.",

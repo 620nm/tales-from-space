@@ -1,41 +1,20 @@
--- What the chem packager DOES, as opposed to what it IS
--- (machines/chem_packager.luau).
---
--- One operation: dock a vessel, press `package`, and the machine prints
--- five pills onto its own tray, each carrying a fifth of what was in
--- the vessel. tg's ChemMaster splits its buffer the same way --
--- tg: `volume_in_each = min(round(reagents.total_volume / item_count), ...)`
--- computed once and then N containers filled on a timer
--- (chem_master.dm:514,552-580, `printing_speed = 0.75 SECONDS`).
---
--- THE BUTTON IS THE INTERFACE. `ui.actions` on the machine's file
--- declares it and `interaction.act` delivers the press (docs/TGUI.md,
--- "Content declaration"), so the count is the only thing tg asks for
--- that this machine still does not: five is this file's choice rather
--- than tg's, because tg has no default at all -- `itemCount` is typed
--- and only its CEILING is a constant (`MAX_CONTAINER_PRINT_AMOUNT 50`,
--- chem_master.dm:1). Five is one full beaker's worth of doses at the
--- pack's own numbers and it divides evenly. A typed count wants a
--- setpoint whose ends are native state, which is a machine knob and not
--- a button.
---
--- WHY THE VESSEL GOES IN. The dispenser and the reaction chamber take
--- one into a `HolderSlot` because both work over TIME; this one takes
--- it for the plainer reason tg does -- a print is four seconds long and
--- the machine, not the chemist's arm, is what holds the source steady.
--- The dock is also what makes the pour reachable: a vessel standing in
--- a machine is in reach of whoever can reach the machine (sim/owner.rs).
---
--- HOW A PILL GETS ITS DOSE. `sim.entity.spawn` is an EFFECT: it is
--- buffered and applied when the segment commits, so there is no handle
--- to fill in the same breath (docs/LUAU-API.md 6 and 8). The loop
--- therefore extrudes a blank, waits out one pill's print time -- which
--- is the transaction boundary that makes the blank real -- and then
--- fills the one blank standing on its tray. A pill that has been filled
--- is no longer blank, so the next pass finds only the next one; a blank
--- somebody LEFT on the tray gets filled too, which is what a tray is
--- for.
+-- Bounded packaging operations; docs/CHEMISTRY.md and PETROCHEMISTRY.md.
+-- Pills split a docked solution into five doses; solid products extract
+-- measured, phase-pure batches while leaving liquid carriers behind.
+-- Pill timing follows tg chemistry/machinery/chem_master.dm:32,514,552-580.
 local PILLS = 5
+local RESIN_PELLET_MOL = 0.1
+local PLASTIC_SHEET_MOL = 0.1
+local TONER_BATCH_MOL = 0.025
+local DREGS_MOL = 1e-9
+
+type ProductRequest = {
+    amount: number,
+    substance: string,
+    definition: string,
+    message: string,
+    contents: { FillRow }?,
+}
 
 local content = {
     id = "chem_packager",
@@ -72,7 +51,107 @@ if sim ~= nil then
         return nil
     end
 
+    -- Product buttons only consume the requested solid. Liquid catalyst or
+    -- water may remain in the docked vessel, but another solid makes the
+    -- batch contaminated and refuses the operation.
+    local function pure_solid(read: MatterRead, substance: string, amount: number): boolean
+        local wanted = read.contents[substance]
+        if wanted == nil or (wanted.solid or 0) + DREGS_MOL < amount then
+            return false
+        end
+        for id, phases in pairs(read.contents) do
+            if id ~= substance and (phases.solid or 0) > DREGS_MOL then
+                return false
+            end
+        end
+        return true
+    end
+
+    local function product_request(action: string): ProductRequest?
+        if action == "make_resin_pellet" then
+            return {
+                amount = RESIN_PELLET_MOL,
+                substance = "polymer_resin",
+                definition = "resin_pellet",
+                message = "lunatic/tfs:fixtures.chem_packager.the_resin_pellet_drops",
+                contents = { { substance = "polymer_resin", mol = RESIN_PELLET_MOL } },
+            }
+        end
+        if action == "mold_plastic_sheet" then
+            return {
+                amount = PLASTIC_SHEET_MOL,
+                substance = "polymer_resin",
+                definition = "plastic_sheet",
+                message = "lunatic/tfs:fixtures.chem_packager.the_plastic_sheet_drops",
+                contents = nil,
+            }
+        end
+        if action == "make_toner_cartridge" then
+            return {
+                amount = TONER_BATCH_MOL,
+                substance = "toner",
+                definition = "toner_cartridge",
+                message = "lunatic/tfs:fixtures.chem_packager.the_toner_cartridge_drops",
+                contents = nil,
+            }
+        end
+        return nil
+    end
+
+    local function make_product(
+        self: Handle,
+        user: Handle,
+        vessel: Handle,
+        request: ProductRequest
+    ): boolean
+        if not sim.is_powered(self) then
+            sim.message.send({
+                recipient = user,
+                message = sim.msg(
+                    "lunatic/tfs:fixtures.chem_packager.the_packager_is_dark_and",
+                    {}
+                ),
+            })
+            return true
+        end
+        local read = sim.matter_read(vessel)
+        if read == nil or not pure_solid(read, request.substance, request.amount) then
+            sim.message.send({
+                recipient = user,
+                message = sim.msg(
+                    "lunatic/tfs:fixtures.chem_packager.the_batch_is_not_pure_enough",
+                    {}
+                ),
+            })
+            return true
+        end
+
+        -- Both effects are queued in this one occurrence after the same
+        -- reach, power and composition checks. There is no yield that could
+        -- leave an extraction without its product or admit a stale source.
+        sim.matter.extract({ owner = vessel, amount = request.amount, phases = { "solid" } })
+        sim.entity.spawn({
+            definition = request.definition,
+            at = self.tile,
+            initial = if request.contents ~= nil then { contents = request.contents } else nil,
+        })
+        sim.message.send({ recipient = user, message = sim.msg(request.message, {}) })
+        return true
+    end
+
     script_definition:handle("interaction.act", { kind = "replace", route = "act" }, function(ev)
+        local product = product_request(ev.action)
+        if product ~= nil then
+            local vessel = ev.docked
+            if vessel == nil then
+                sim.message.send({
+                    recipient = ev.actor,
+                    message = sim.msg("lunatic/tfs:fixtures.chem_packager.there_is_nothing_in_the", {}),
+                })
+                return true
+            end
+            return make_product(ev.subject, ev.actor, vessel, product)
+        end
         if ev.action ~= "package" then
             return { replaced = false }
         end

@@ -86,7 +86,7 @@ return {
             sound = "smash",
             tool = "welder",
             secs = 4.0,
-            fuel = 2.0,
+            fuel = 0.3,
             yields = { metal = 2 },
             gone = true,
             start = "You start cutting the girder apart.",

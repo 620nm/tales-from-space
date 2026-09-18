@@ -177,6 +177,12 @@
         // touching it, on the bench where somebody would notice.
         (19, 5, "beaker", { "blend": "ice_block" }),
         (20, 5, "burner"),
+        // A two-litre pressure flask and its adjacent syngas canister. The
+        // flask is reachable from the medical-side spawn and can be held
+        // against the canister for direct gas charging.
+        (17, 6, "lab_flask"),
+        (18, 5, "resin_pellet", { "blend": "resin_pellet_charge" }),
+        (18, 5, "resin_pellet", { "blend": "resin_pellet_charge" }),
         // The small glass, on the tile beside them. A dropper for
         // moving one unit at a time, two tubes to keep a batch in while
         // the beaker is needed for the next one, and a bottle to put
@@ -264,6 +270,9 @@
         // Medical-side Chemistry Lab floor, beside the operating computer
         // and table at (23, 5) and (24, 5).
         (23, 6, "player_spawn", { "weight": 99, "jobs": "medic" }),
+        // The lab's portable syngas supply: loose on open floor, so a
+        // chemist can hold the flask at its valve without a pipe connector.
+        (16, 6, "canister", { "blend": "syngas_6000kpa" }),
         // Commons floor is the station's unrestricted social spawn area.
         (18, 16, "player_spawn", { "weight": 1 }),
         (19, 16, "player_spawn"),
@@ -840,9 +849,9 @@
         // own port at (21, 4) -- one and two tiles of cord, well inside
         // the six a corded appliance gets (docs/POWER.md). The port
         // stands on the north rank's own deck, on the L1 loop that runs
-        // under it, which is where the bench's cords can reach. A dispenser
-        // and a reaction chamber standing together is the whole of what
-        // a chemist needs: press, pour, heat, watch.
+        // under it, which is where the bench's cords can reach. A dispenser,
+        // reaction chamber and packager standing together are the whole of
+        // what a chemist needs: press, pour, heat, and make portable goods.
         //
         // In this lab rather than the Commons because the first draft
         // put it on the card tables, and a rec room whose tables are
@@ -853,6 +862,7 @@
         // door off the Concourse.
         (19, 4, "chem_dispenser"),
         (20, 4, "chem_heater"),
+        (21, 4, "chem_packager"),
         // Medical equipment and chemistry clothing stand beside the
         // bench, matching tg's medbay-storage and chemistry placement.
         // Both are within three tiles of the lab port at (21, 4).
@@ -1229,6 +1239,11 @@
         // (content/blends/canister_air.luau, which declares the same
         // blend as the pack's default so a mapper can copy it).
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
+        "resin_pellet_charge": (rows: [("polymer_resin:solid", 0.1)], temperature_k: 293.15, amount: total),
+        // A 1:3 carbon-dioxide/hydrogen charge at about 6 MPa in the
+        // canister's 2 000 L shell. At 300 K this is about 2 400 mol of
+        // syngas, enough for more than 0.1 mol of naphtha.
+        "syngas_6000kpa": (rows: [("co2", 600.0), ("hydrogen", 1800.0)], temperature_k: 300.0, amount: per_tile),
         "co2_300kpa": (rows: [("co2", 123.0895930990394)], temperature_k: 293.15, amount: per_tile),
         // The tank annex's seven stores. One blend per store, named
         // after the pressure a 2 500 L shell of it reads at 20 C -- so

@@ -163,7 +163,7 @@ return {
             sound = "smash",
             tool = "welder",
             secs = 4.0,
-            fuel = 2.0,
+            fuel = 0.3,
             gone = true,
             leaves = "stationary_tank_frame",
             yields = { metal = 12 },

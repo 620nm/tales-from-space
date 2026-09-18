@@ -197,6 +197,10 @@ end
 
 local function rung(tool: string, to: string, said: string)
     grab(tool)
+    if tool == "welder" then
+        t.use_self(p)
+        t.run_ticks(2)
+    end
     t.click(p, 6, 4, t.target_at(p, 6, 4, "gravity_generator"))
     t.run_seconds(1.0)
     local it = t.structure_at(5, 6)

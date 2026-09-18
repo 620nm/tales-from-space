@@ -91,6 +91,28 @@ test("disabled role actions render their authoritative reason", () => {
   assert.equal(nodes.find((node) => node.id === "hover/detail/role").text, "Permission needed");
   assert(!nodes.some((node) => node.text?.includes("out_of_range")));
 });
+test("tool requirements receive one Requires prefix and one quantity", async () => {
+  const catalog = JSON.parse(await readFile(new URL("../locale/en.json", import.meta.url)));
+  globalThis.__lunaticLocale = { tag: "en", catalog };
+  try {
+    const nodes = render([descriptor("weld", {
+      requirements: [
+        { label: { key: "", text: "lit welding tool" }, count: 1 },
+        { label: { key: "", text: "glass sheet" }, count: 2 },
+      ],
+    })]);
+    const requirements = nodes.filter((node) => node.id.startsWith("hover/requirement/weld/"));
+    assert.deepEqual(requirements.map((node) => node.text), [
+      catalog["lunatic/tfs:ui.look.requires"].replace("{item}", "lit welding tool"),
+      catalog["lunatic/tfs:ui.look.requires_quantity"]
+        .replace("{quantity}", "2").replace("{item}", "glass sheet"),
+    ]);
+    for (const requirement of requirements)
+      assert.equal(requirement.text.match(/Requires/g)?.length, 1);
+  } finally {
+    delete globalThis.__lunaticLocale;
+  }
+});
 test("representative catalogs preserve variables and fall back to English", async () => {
   const catalog = async (tag) => JSON.parse(await readFile(new URL(`../locale/${tag}.json`, import.meta.url)));
   const en = await catalog("en");

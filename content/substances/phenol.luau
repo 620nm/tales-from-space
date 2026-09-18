@@ -9,7 +9,7 @@
 -- by the free shell volume (D16, docs/MATTER.md 5), so what a product
 -- WEIGHS decides how much of it a bottle can make. `cv = 100` is the
 -- shelf's flat convention for a substance whose real heat capacity is
--- not gameplay (D2, docs/CHEMISTRY.md), the same figure oil and ash
+-- not gameplay (D2, docs/CHEMISTRY.md), the same figure naphtha and ash
 -- carry.
 --
 -- An authored `unmodeled` rest phase, and it is a DEPARTURE worth
