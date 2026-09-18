@@ -19,6 +19,9 @@ The tiled and reinforced floor presets each ship an `, Exposed` variant that
 is the same preset with the power and pipe controls opened; the palette folds
 each under its base. An exposed tiled floor shows the pried-up subfloor art,
 while exposed reinforcement keeps its own sprite with the runs over it.
+Either open network control moves the whole cover artwork below infrastructure;
+each network retains its independent disclosure and access policy. Grid covers
+keep their original draw layer in every control state.
 
 Removing bare base with a welder exposes the retained substrate. The action
 uses the existing four-second, two-fuel welding step and returns no material.
