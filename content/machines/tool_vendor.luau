@@ -39,6 +39,13 @@ return {
         { item = "multitool", name = "Multitool", category = "Tools", amount = 4 },
         { item = "rpd", name = "Rapid Pipe Dispenser", category = "Tools", amount = 2 },
         { item = "pipe_painter", name = "Pipe Painter", category = "Tools", amount = 2 },
+        -- tg keeps its decal painter in engineering lockers rather than
+        -- a vendor; this shelf is the same fold-in the tubes and the
+        -- replacer already got. The eraser has no tg counterpart at
+        -- all, and a station that can paint a wrong arrow has to be
+        -- able to unpaint one.
+        { item = "decal_painter", name = "Decal Painter", category = "Tools", amount = 2 },
+        { item = "decal_eraser", name = "Decal Eraser", category = "Tools", amount = 2 },
         { item = "light_replacer", name = "Light Replacer", category = "Tools", amount = 2 },
         { item = "light_bulb", name = "Light Bulb", category = "Tools", amount = 10 },
         { item = "light_tube", name = "Light Tube", category = "Tools", amount = 10 },

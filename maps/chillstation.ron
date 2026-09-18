@@ -250,6 +250,13 @@
         (17, 29, "pipe_painter"),
         (18, 29, "pipe_meter"),
         (19, 29, "wrench"),
+        // And the other painter on the same bench: the deck's livery
+        // rather than the main's. The station ships already trimmed, so
+        // these two are for changing somebody's mind about it -- the
+        // eraser beside the painter, because the tool that makes a
+        // marking and the only tool that unmakes one belong together.
+        (20, 29, "decal_painter"),
+        (21, 29, "decal_eraser"),
         // ---- the west EVA vestibule ------------------------------
         // The suit and the bottle, standing in the chamber they are
         // for. Everybody wakes up with a breath mask and three litres
