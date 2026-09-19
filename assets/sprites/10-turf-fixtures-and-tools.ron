@@ -449,10 +449,10 @@
         ("light_off_n", Dmi("@lighting", "tube", 1)),
         ("light_off_e", Dmi("@lighting", "tube", 2)),
         ("light_off_w", Dmi("@lighting", "tube", 3)),
-        // `light_on*`'s overlay layer alone, greyed: stacked over the
-        // matching `light_off*` it redraws `light_on*` in whatever colour
-        // multiplies it, so the tube shows the colour it emits. The tint
-        // is only the default a preview draws.
+        // `light_on*`'s overlay layer alone, greyed: opaque on exactly the
+        // pixels where `light_on*` differs from `light_off*`, so stacked
+        // over the matching `light_on*` it redraws that tube in whatever
+        // colour multiplies it. The tint is only the default a preview draws.
         ("light_glow", Tinted(Luminance(Dmi("@lighting_overlay", "tube", 0)), (243, 255, 250))),
         ("light_glow_s", Tinted(Luminance(Dmi("@lighting_overlay", "tube", 0)), (243, 255, 250))),
         ("light_glow_n", Tinted(Luminance(Dmi("@lighting_overlay", "tube", 1)), (243, 255, 250))),

@@ -91,6 +91,12 @@ assert(
     tube_colour_on_the_wall() == TUNGSTEN,
     "the tube on the wall burns the colour of its pool, got " .. tostring(tube_colour_on_the_wall())
 )
+-- Under it the fitting still wears its whole lit picture, so whatever
+-- reads that alone (an examine icon, a replay) shows it lit.
+local function fitting_picture(): string
+    return t.seen(p, assert(light_target)).layers[1].sprite
+end
+assert(string.find(fitting_picture(), "light_on", 1, true) == 1, "lit, got " .. fitting_picture())
 
 -- One swing with something heavy.
 t.click(p, 1, 1, t.target_at(p, 1, 1, "toolbox"))

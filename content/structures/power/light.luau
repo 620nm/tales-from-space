@@ -54,11 +54,13 @@ return {
         class = "light",
         hardwired_only = true,
     },
-    -- A lit fitting is its housing with the tube drawn over it: the
-    -- `light_layer` is greyscale, and the engine multiplies it by the
-    -- colour the fitting burns, so the tube on the wall is the colour of
-    -- the pool on the floor (the engine's docs/power/lit-face.md, which
-    -- also records why tg draws its tube untinted instead).
+    -- A lit fitting keeps its whole lit picture, `light_on`, so an
+    -- examine icon or a replay still shows it lit. The `light_layer` is
+    -- that tube alone, greyscale and opaque on exactly its pixels: the
+    -- engine multiplies it by the colour the fitting burns and draws it
+    -- over, so the tube on the wall is the colour of the pool on the
+    -- floor (the engine's docs/content-schema/fixture-states.md, and
+    -- docs/power/lit-face.md for why tg draws its tube untinted).
     appearance = {
         light_layer = {
             sprite = "light_glow",
@@ -71,12 +73,12 @@ return {
         },
         states = {
             on = {
-                sprite = "light_off",
+                sprite = "light_on",
                 mounted = {
-                    north = "light_off_n",
-                    south = "light_off_s",
-                    east = "light_off_e",
-                    west = "light_off_w",
+                    north = "light_on_n",
+                    south = "light_on_s",
+                    east = "light_on_e",
+                    west = "light_on_w",
                 },
             },
             off = {
