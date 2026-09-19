@@ -30,6 +30,10 @@ local sounds = {
     "defib_zap",
     "dice_roll",
     "drink",
+    -- The grenade's arm click and the near-field blast
+    -- (content/items/weapons/frag_grenade.luau, content/lib/blast.luau).
+    "grenade_arm",
+    "explosion",
     "glass_break",
     -- The nozzle on both decal tools (content/items/tools/decal_painter.luau).
     "paint_spray",

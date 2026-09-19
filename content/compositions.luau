@@ -170,6 +170,10 @@ return {
         -- can reach it, which is what we want: prying a tile destroys
         -- the paint on it rather than hiding it.
         { id = "decal", parent = "world" },
+        -- Settled dust: over the paint and under the spills, so a blast
+        -- marks the deck without hiding what is standing on it (the
+        -- engine's docs/physics/residue.md; content/residue_appearances.luau).
+        { id = "residue", parent = "world" },
         { id = "matter_ground", parent = "world" },
         { id = "fixture", parent = "world" },
         { id = "item", parent = "world" },

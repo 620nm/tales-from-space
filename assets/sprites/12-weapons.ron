@@ -1,0 +1,29 @@
+// Weapons: the grenades a round can arm and throw.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then entry order,
+// so the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+(
+    // Sheet aliases are local to this family; @names below resolve here.
+    sheets: [
+        ("grenade", "obj/weapons/grenade.dmi"),
+        ("debris", "obj/debris.dmi"),
+    ],
+    sprites: [
+        // tg's frag grenade (`/obj/item/grenade/frag`,
+        // code/game/objects/items/grenades/syndieminibomb.dm:29-32) off
+        // the base grenade sheet (`_grenade.dm:8`). Arming swaps the
+        // icon to the initial state plus `"_active"` (`_grenade.dm:167`),
+        // which is the second cell. Both states are single-frame,
+        // single-dir; ART ONLY, no arming or shrapnel behavior is ported.
+        ("frag", Dmi("@grenade", "frag", 0)),
+        ("frag_active", Dmi("@grenade", "frag_active", 0)),
+        // The flying fragment's cell: tg's frag shrapnel
+        // (`/obj/item/shrapnel`, code/game/objects/items/shrapnel.dm:1-7)
+        // wears debris.dmi's `large`, single-frame, single-dir. The
+        // engine's flight asks for this name (its FRAGMENT_SPRITE); the
+        // pack owns the cell it means.
+        ("shrapnel", Dmi("@debris", "large", 0)),
+    ],
+)

@@ -170,6 +170,10 @@
     // (code/modules/clothing/spacesuits/_spacesuits.dm:33-34).
     ("helmet_pickup", "items/handling/helmet/helmet_pickup1.ogg"),
     ("helmet_drop", "items/handling/helmet/helmet_drop1.ogg"),
+    // A grenade changing hands: /obj/item/grenade names its own pair
+    // (code/game/objects/items/grenades/_grenade.dm:20-21).
+    ("grenade_pickup", "items/handling/grenade/grenade_pick_up.ogg"),
+    ("grenade_drop", "items/handling/grenade/grenade_drop.ogg"),
     // The defibrillator's three outcomes, off tg's own clips
     // (code/game/objects/items/tools/medical/defib.dm:543, :631, :539).
     // Three and not seven: `defib_ready`, `defib_charge` and the two
@@ -179,4 +183,14 @@
     ("defib_zap", "machines/defib/defib_zap.ogg"),
     ("defib_success", "machines/defib/defib_success.ogg"),
     ("defib_failed", "machines/defib/defib_failed.ogg"),
+    // The grenade arming click: /obj/item/grenade declares it as
+    // `grenade_arm_sound` (code/game/objects/items/grenades/_grenade.dm:29)
+    // and plays it when the pin comes out (:163).
+    ("grenade_arm", "items/weapons/armbomb.ogg"),
+    // The near-field blast: the first clip of tg's SFX_EXPLOSION key
+    // (code/game/sound/sound_keys/sound_keys.dm:25-29), played for
+    // listeners close enough to see the blast
+    // (code/controllers/subsystem/explosions.dm:522,544). One id backed
+    // by the first clip, as with every other random tg key here.
+    ("explosion", "effects/explosion/explosion1.ogg"),
 ]

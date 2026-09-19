@@ -12,6 +12,10 @@ local vessel = require("@lib/vessel")
 -- here -- `lib/vessel.luau` owns both -- and this file is the numbers
 -- and the nouns that make them a mop.
 --
+-- Every stroke also sweeps the tile's settled dust
+-- (lib/residue_kinds.luau), which rests on the deck rather than in the
+-- head and so answers to a full mop and a dry one alike.
+--
 -- WHAT CAME FROM TG AND WHAT DID NOT. tg declares
 -- `max_reagent_volume = 15` and `mopspeed = 1.5 SECONDS` (mop.dm:20-22).
 -- The SHAPE is tg's: one head, holding a fixed amount, filled a stroke

@@ -86,3 +86,13 @@ dials (decal, paint, facing), free and unlimited, palette only. Its counterpart
 `decal_eraser.luau` takes one back off, newest first, and is the only thing that
 removes a decal from a deck that still exists. Both are stocked by the tool
 vendor and both stand on the atmospherics bench of `maps/chillstation.ron`.
+
+## Residue
+
+A blast leaves two things that are not decals: settled dust, which is
+engine residue as counts on tiles (the engine's `docs/physics/residue.md`),
+and ash, which is ordinary solid matter. `content/residue_appearances.luau`
+dresses the dust kinds `content/lib/residue_kinds.luau` declares, drawn on
+the `residue` layer between paint and spills. Dust is never pickable and
+never covered by the eraser; every mop stroke sweeps its tile's dust as
+the stroke's silent half, whether or not the head lifts anything.

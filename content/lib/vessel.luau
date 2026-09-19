@@ -255,6 +255,12 @@ local function soak(
     dry_line: Line,
     full_line: Line
 ): boolean
+    -- A stroke sweeps settled dust whether or not it lifts anything:
+    -- dust rests on the deck, not in the head, so a full mop still
+    -- sweeps and a dry one still sweeps. The sentence below describes
+    -- the liquid, which is what the head answers for; the sweep is the
+    -- stroke's silent half.
+    sim.volley_residue_clear(at.x, at.y)
     if (vessel.headspace_l(self) or 0) <= HEADSPACE_L then
         sim.message.send({ recipient = user, message = said(full_line) })
         return true
