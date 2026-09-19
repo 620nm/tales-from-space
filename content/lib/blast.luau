@@ -4,13 +4,14 @@
 -- body within a tile and a half that the blast can see, in two
 -- Chebyshev bands off the blast tile -- the tile itself and the ring
 -- round it -- with no aimed part, so each blow falls toward its
--- victim's own default zone. `ground` is the dirt: one blast's worth
--- of settled fragments over the same nine tiles, center-weighted, at
+-- victim's own default zone. `ground` is the fallout: one blast's
+-- worth of cloudy dirt over the same nine tiles, center-weighted, at
 -- detonate time. `cast` is the part the room sees and hears: flash,
 -- ring, sparks, shake, glow, one fire on the blast tile and the blast
 -- itself, every one of them on the FOV-filtered lanes. `burst` throws
--- the volley whose fragments the tick flies home; they rest nowhere,
--- the blast area already wears their dirt.
+-- the volley whose fragments the tick flies home; their own dirt --
+-- shards -- lands later, a landing tile at a time off the settle
+-- signals (items/weapons/frag_grenade.luau).
 --
 -- The bands are the pack's own numbers, not tg's: tg's frag grenade
 -- speaks in explosion radii (ex_heavy 1, ex_light 3, ex_flame 4,
@@ -52,25 +53,27 @@ function blast.apply(at: TileAddress): ()
     end
 end
 
--- The volley: what flies is what the blast area wears
--- (lib/residue_kinds.luau), grounded below before the pellets leave.
+-- The volley: fifteen pellets the tick flies home, their shards laid
+-- down where they land off the settle signals. The blast area wears
+-- its own cloudy dirt instead (ground below), never shards.
 function blast.burst(at: TileAddress): ()
-    sim.volley_discharge(at.x, at.y, VOLLEY_RADIUS, VOLLEY_DAMAGE, residue_kinds.dust_per_blast)
+    sim.volley_discharge(at.x, at.y, VOLLEY_RADIUS, VOLLEY_DAMAGE, residue_kinds.pellets_per_volley)
 end
 
--- The dirt, grounded where the blast went off: one blast's worth over
--- the nine tiles, the ring dusted a fragment each and the rest heaped
--- on the center (7 with the reference 15). The center is the tile the
--- ash already sits on, so dust and ash agree about where the blast
--- was. A blast on the map's edge ring refuses its off-map tiles with
--- the engine's force sentence; the rest still land.
+-- The fallout, grounded where the blast went off: one blast's worth
+-- of cloudy dirt over the nine tiles, the ring dusted a fragment each
+-- and the rest heaped on the center (7 with the reference 15). The
+-- center is the tile the ash already sits on, so fallout and ash
+-- agree about where the blast was. Wall tiles in the nine refuse with
+-- the engine's force sentence -- dirt rests where a thing can lie --
+-- and the rest still land.
 local RING_SHARE = 1
 function blast.ground(at: TileAddress): ()
-    local center_share = residue_kinds.dust_per_blast - 8 * RING_SHARE
+    local center_share = residue_kinds.cloudy_per_blast - 8 * RING_SHARE
     for dy = -1, 1 do
         for dx = -1, 1 do
             local share = if dx == 0 and dy == 0 then center_share else RING_SHARE
-            sim.volley_residue_deposit(at.x + dx, at.y + dy, share)
+            sim.volley_fallout_deposit(at.x + dx, at.y + dy, share)
         end
     end
 end

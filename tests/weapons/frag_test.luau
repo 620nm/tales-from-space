@@ -97,12 +97,23 @@ local function at(x: number, y: number): boolean
 end
 
 -- One blast's aftermath on the record: the discharge names the
--- reference params and the settle closes it, but the dirt is already
--- down -- grounded over the nine blast tiles at detonate time, the
--- ring dusted one each and seven heaped on the center, every row
--- between the ash and the volley.
+-- reference params and the settle closes it, and the dirt lands in
+-- two halves. The cloudy half grounds at detonate time over the blast
+-- area's floor tiles -- kind 1, between the ash and the volley, the
+-- ring dusted one each and seven heaped on the center, never past the
+-- 3x3 and never on a wall. The shard half lands later where pellets
+-- came down -- kind 0, after the settle, floor tiles only, none where
+-- a pellet struck a body and none in the blast-by-default window.
 local dirt_seen = 0
 local blast_centers = { { 1, 5 }, { 4, 2 }, { 5, 5 }, { 8, 2 } }
+local blast_floors = { 6, 9, 9, 7 }
+local blast_shards = { 12, 5, 5, 6 }
+local function is_wall(x: number, y: number): boolean
+    if x <= 0 or x >= 10 or y <= 0 or y >= 7 then
+        return true
+    end
+    return (x == 9 and y == 2) or (x == 8 and y == 3)
+end
 local function blast_dirt(n: number): ()
     local discharged = t.ledger_rows("volley_discharged")[n]
     local settled = t.ledger_rows("volley_settled")[n]
@@ -113,33 +124,42 @@ local function blast_dirt(n: number): ()
     assert(settled.fragments == 15, ("blast %d settles fifteen"):format(n))
     assert(discharged.seq < settled.seq, ("blast %d brackets its flight"):format(n))
     local dirt = t.ledger_rows("residue_settled")
-    local fresh = #dirt - dirt_seen
-    assert(fresh == 9, ("blast %d grounds nine tiles, got %d"):format(n, fresh))
     local center = blast_centers[n]
+    local cloudy = 0
     local heaped = 0
-    local resting = 0
+    local shards = 0
     for index, row in ipairs(dirt) do
-        assert(row.kind == 0, "every grounding rests kind 0")
-        resting += ui_controls.number(row.fragments)
         if index > dirt_seen then
-            assert(row.seq > minted.seq, "the dirt grounds after its ash")
-            assert(row.seq < discharged.seq, "and before its volley")
-            local share = ui_controls.number(row.fragments)
             local at = ui_controls.array(row.at)
-            if share == 7 then
-                heaped += 1
-                local ax, ay = ui_controls.number(at[1]), ui_controls.number(at[2])
-                assert(
-                    ax == center[1] and ay == center[2],
-                    ("blast %d heaps its center, not (%d, %d)"):format(n, ax, ay)
-                )
+            local ax, ay = ui_controls.number(at[1]), ui_controls.number(at[2])
+            local share = ui_controls.number(row.fragments)
+            if row.kind == 1 then
+                assert(row.seq > minted.seq, "the fallout grounds after its ash")
+                assert(row.seq < discharged.seq, "and before its volley")
+                local reach = math.max(math.abs(ax - center[1]), math.abs(ay - center[2]))
+                assert(reach <= 1, ("blast %d keeps its fallout in the 3x3, not (%d, %d)"):format(n, ax, ay))
+                assert(not is_wall(ax, ay), ("blast %d grounds no wall (%d, %d)"):format(n, ax, ay))
+                if share == 7 then
+                    heaped += 1
+                    assert(
+                        ax == center[1] and ay == center[2],
+                        ("blast %d heaps its center, not (%d, %d)"):format(n, ax, ay)
+                    )
+                else
+                    assert(share == 1, "the ring dusts one each")
+                end
+                cloudy += 1
             else
-                assert(share == 1, "the ring dusts one each")
+                assert(row.kind == 0, "two kinds rest, no third")
+                assert(row.seq > settled.seq, "shards land after the settle")
+                assert(not is_wall(ax, ay), ("no shard on a wall (%d, %d)"):format(ax, ay))
+                shards += share
             end
         end
     end
+    assert(cloudy == blast_floors[n], ("blast %d grounds %d floor tiles, got %d"):format(n, blast_floors[n], cloudy))
     assert(heaped == 1, ("blast %d heaps one center"):format(n))
-    assert(resting == 15 * n, ("the blasts ground %d pellets' dust, got %d"):format(15 * n, resting))
+    assert(shards == blast_shards[n], ("blast %d settles %d shards, got %d"):format(n, blast_shards[n], shards))
     dirt_seen = #dirt
 end
 

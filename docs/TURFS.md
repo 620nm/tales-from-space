@@ -89,10 +89,11 @@ vendor and both stand on the atmospherics bench of `maps/chillstation.ron`.
 
 ## Residue
 
-A blast leaves two things that are not decals: settled dust, which is
-engine residue as counts on tiles (the engine's `docs/physics/residue.md`),
-and ash, which is ordinary solid matter. `content/residue_appearances.luau`
-dresses the dust kinds `content/lib/residue_kinds.luau` declares, drawn on
-the `residue` layer between paint and spills. Dust is never pickable and
-never covered by the eraser; every mop stroke sweeps its tile's dust as
-the stroke's silent half, whether or not the head lifts anything.
+A blast leaves three things that are not decals: shards where pellets
+landed and cloudy fallout over the blast area, both engine residue as
+counts on tiles (the engine's `docs/physics/residue.md`), and ash, which
+is ordinary solid matter. `content/residue_appearances.luau` dresses the
+two kinds `content/lib/residue_kinds.luau` declares, drawn on the
+`residue` layer between paint and spills. Residue is never pickable and
+never covered by the eraser; every mop stroke sweeps its tile's every
+kind as the stroke's silent half, whether or not the head lifts anything.
