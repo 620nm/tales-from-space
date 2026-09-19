@@ -179,4 +179,14 @@
     ("defib_zap", "machines/defib/defib_zap.ogg"),
     ("defib_success", "machines/defib/defib_success.ogg"),
     ("defib_failed", "machines/defib/defib_failed.ogg"),
+    // The grenade arming click: /obj/item/grenade declares it as
+    // `grenade_arm_sound` (code/game/objects/items/grenades/_grenade.dm:29)
+    // and plays it when the pin comes out (:163).
+    ("grenade_arm", "items/weapons/armbomb.ogg"),
+    // The near-field blast: the first clip of tg's SFX_EXPLOSION key
+    // (code/game/sound/sound_keys/sound_keys.dm:25-29), played for
+    // listeners close enough to see the blast
+    // (code/controllers/subsystem/explosions.dm:522,544). One id backed
+    // by the first clip, as with every other random tg key here.
+    ("explosion", "effects/explosion/explosion1.ogg"),
 ]

@@ -1,0 +1,59 @@
+// Dirt, dust and blast marks: what the deck wears after a round has
+// happened to it. Everything here is tg's own art, referenced state
+// by state -- nothing redrawn.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then entry order,
+// so the atlas layout is a function of the manifest and not of the
+// filesystem. Two files claiming one sprite name is a bake error.
+(
+    // Sheet aliases are local to this family; @names below resolve here.
+    sheets: [
+        ("dirt", "effects/dirt.dmi"),
+        ("dirt_misc", "effects/dirt_misc.dmi"),
+        ("effects", "effects/effects.dmi"),
+    ],
+    groups: [
+        // tg's cleanable dirt (`/obj/effect/decal/cleanable/dirt`,
+        // code/game/objects/effects/decals/cleanable/mess.dm:66-95): one
+        // of four flat variants off dirt_misc, switching to the
+        // bitmask-smoothed dirt.dmi family below on tiled turf. The dust
+        // puff beside them is the same sheet's short-lived mark; the
+        // matter roster's `matter_dust` bakes the same state under its
+        // own name, which is allowed -- only a shared NAME is an error.
+        (
+            sheet: "dirt_misc",
+            sprites: [
+                Sprite("dust", "dust", s),
+                Sprite("dirt_flat_0", "dirt-flat-0", s),
+                Sprite("dirt_flat_1", "dirt-flat-1", s),
+                Sprite("dirt_flat_2", "dirt-flat-2", s),
+                Sprite("dirt_flat_3", "dirt-flat-3", s),
+            ],
+        ),
+        // The smoothed family: `dirt-0` .. `dirt-255` over the 47
+        // junction values tg's corner rule can reach (mess.dm:89-93),
+        // one row rather than 47 chances to typo a number nobody reads
+        // (the engine's docs/assets/rosters.md).
+        (
+            sheet: "dirt",
+            sprites: [
+                Junctions("dirt", "dirt"),
+            ],
+        ),
+        // Scorch is tg's burn mark off effects.dmi, worn in a random
+        // cardinal dir (code/game/objects/items/shooting_range.dm:54-62),
+        // hence the four faces. The blast fire is tg's "fire blast"
+        // visual (`/obj/effect/temp_visual/fire_blast_bonus`,
+        // code/modules/antagonists/heretic/magic/fire_blast.dm:201-206):
+        // the sheet's 9-frame `explosion`, played ONCE over a second
+        // rather than looped, so `AnimOnce` and not `Anim`.
+        (
+            sheet: "effects",
+            sprites: [
+                Directions("scorch", "scorch"),
+                AnimOnce("blast_fire", "explosion", s),
+            ],
+        ),
+    ],
+)
