@@ -147,17 +147,16 @@ t.click(p, 7, 2, t.target_at(p, 7, 2))
 t.run_ticks(15) -- the leaf swings; it is not open on the click tick
 assert(assert(t.door_at(7, 2)).open, "the outer airlock opened")
 -- Held open past its autoclose while the chamber empties. Three tiles
--- of one atmosphere take a while to leave through one doorway, which
--- is itself the reason a vestibule works.
+-- of one atmosphere leave through one doorway in about three seconds,
+-- down near 6 kPa when the leaf would swing shut on its own.
 --
--- Nobody holds a door open in hard vacuum by hand any more: a lungful
--- of nothing is 20 oxy a breath and a body is out cold at 50
--- (OXYLOSS_PASSOUT_THRESHOLD, docs/BIOLOGY.md §2), so a crewman
--- clicking an airlock in a venting chamber blacks out before it is
--- empty. Pull the breaker instead — dead motors hold the position they
--- had, so the outer door stays open, the inner one stays shut, and the
--- chamber finishes emptying with nobody's hand on it. The claim is
--- unchanged: this end vents, that end does not.
+-- Nobody holds a door open in hard vacuum by hand: a lungful of
+-- nothing is 20 oxy a breath and a body is out cold at 50
+-- (OXYLOSS_PASSOUT_THRESHOLD, docs/BIOLOGY.md §2). Pull the breaker
+-- instead — dead motors hold the position they had, so the outer door
+-- stays open, the inner one stays shut, and the chamber finishes
+-- emptying with nobody's hand on it. The claim: this end vents, that
+-- end does not.
 t.outage()
 t.run_ticks(2400)
 

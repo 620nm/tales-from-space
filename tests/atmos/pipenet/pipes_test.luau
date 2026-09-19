@@ -263,9 +263,8 @@ assert(assert(t.room_pressure(12, 1)) > 90.0, "and both rooms start breathable")
 assert(composition.matches(11, 3, { "station_base", "wall" }), "the line runs under a wall")
 assert(network_matter.pressure(12, 3) == nil, "but stops short of the closet")
 
--- Take the length of pipe FIRST and park it in the other hand. Loose
--- things do not survive a decompression: what is not in your hands
--- when the hull opens gets dragged wherever the air goes.
+-- Take the length of pipe FIRST and park it in the other hand: a hand
+-- is the one place a decompression cannot take it from.
 t.click(q, 12, 3, t.target_at(q, 12, 3, "pipe"))
 t.run_ticks(2)
 t.swap_hands(q)
@@ -295,14 +294,12 @@ assert(
 -- the mapped main stops on the far side of the bulkhead, and the closet
 -- is on the distribution line through the vent's own mouth.
 --
--- The walk back is not ceremony. The decompression dragged the engineer
--- to the north end of the closet ("The rushing air drags you north!"),
--- and reach is reach: a job interrupted by the hull opening is a job you
--- have to walk back to.
+-- The engineer lays it from where they stood through the breach. Three
+-- tiles of air empty in about two seconds, too little to build a wind
+-- that drags: dynamic pressure at the lip of the hole peaks near
+-- 0.016 Pa, under `wind_drag_pa` (content/tuning.luau).
 t.swap_hands(q)
 t.run_ticks(2)
-t.move(q, "south")
-t.run_ticks(5)
 t.click(q, 12, 3, nil, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(12, 3, "pipe") == "l3", "the last length went down")
