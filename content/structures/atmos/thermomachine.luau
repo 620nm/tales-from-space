@@ -64,6 +64,8 @@ return {
     id = "thermomachine",
     visual_layer = "fixture",
     energy_network = "power",
+    -- tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18 (docs/POWER.md).
+    load_class = "environment",
     name_label = "lunatic/tfs:entity.thermomachine.name",
     name = "temperature control unit",
     sprite = "thermo_off",

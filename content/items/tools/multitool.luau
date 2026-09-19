@@ -1,5 +1,6 @@
 local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
+local load_classes = require("@lib/load_classes")
 
 -- Reads what a wire is doing before you cut it, and defeats a safety
 -- interlock if you would rather it did that.
@@ -28,7 +29,7 @@ local content = {
     drop_sound = "multitool_drop",
     -- The first half of the sentence at the top of this file: hold it
     -- against an open deck and it says what the cable under there is
-    -- carrying, per channel (`sim.segment_live`). A READ and nothing
+    -- carrying, per load class (`sim.segment_live`). A READ and nothing
     -- else -- what a machine draws, what a breaker is set to and what a
     -- bank has left are the grid's business and a window's, not a
     -- probe's (docs/POWER.md).
@@ -62,29 +63,23 @@ if sim ~= nil then
         if live == nil then
             return { replaced = false }
         end
-        -- One authored line per state of the pair: "equipment and
-        -- lighting" is two words and a conjunction, and joining those
-        -- three is the composition rule's third clause
-        -- (docs/LOCALIZATION.md 5).
-        local carrying = nil
-        if live.equipment and live.lighting then
-            carrying = "carrying_both"
-        elseif live.equipment then
-            carrying = "carrying_equipment"
-        elseif live.lighting then
-            carrying = "carrying_lighting"
+        -- One authored line per set of load classes carried, named in
+        -- the network's own order: "equipment and lighting" is two
+        -- words and a conjunction, and joining those is the composition
+        -- rule's third clause (docs/LOCALIZATION.md 5).
+        local carried: { string } = {}
+        for _, class in ipairs(load_classes.power) do
+            if live.classes[class] then
+                table.insert(carried, class)
+            end
         end
-        if carrying == nil then
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:items.multitool.the_cable_here_is_dead", {}),
-            })
-        else
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:items.multitool." .. carrying, {}),
-            })
-        end
+        local key = if #carried == 0
+            then "the_cable_here_is_dead"
+            else "carrying_" .. table.concat(carried, "_")
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.multitool." .. key, {}),
+        })
         return true
     end)
 end

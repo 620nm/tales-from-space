@@ -1,4 +1,5 @@
 local decal_paints = require("@lib/decal_paints")
+local load_classes = require("@lib/load_classes")
 local pipe_paints = require("@lib/pipe_paints")
 local pipe_thermal = require("@lib/thermal")
 
@@ -215,6 +216,8 @@ return {
     networks = {
         { id = "power", label = "power cable", layer = "power", channels = power_channels, channel_preferences = { "l2", "l1", "l3" },
             solver = "energy", placement = supported, continuing = supported,
+            -- What a panel switches whole (lib/load_classes.luau).
+            load_classes = load_classes.power, default_load_class = load_classes.power_default,
             kinds = { { id = "cable", paintable = true, allowed_channels = power_channels, connects_to_kinds = { "cable" }, connectivity = 15, shapes = {}, shapes_by_channel = shapes("cable", power_channels, true) } } },
         { id = "pipe", label = "pipe", layer = "pipe", channels = pipe_channels, channel_preferences = { "l3", "l2", "l4", "l1", "l5" },
             solver = "matter", paints = paints, port_shapes = port_shapes(pipe_channels),

@@ -39,8 +39,8 @@ engine is the sibling checkout `../lunatic`. A bare `docs/…` names a file
 HERE; an engine contract is always written "the engine's `docs/…`". The
 engine's `docs/SCRIPTING.md` is the v1 design, the engine's
 `docs/LUAU-API.md` the surface these files CALL, the engine's
-`docs/CONTENT-SCHEMA.md` the fields they DECLARE. Four names sit on both
-sides (`ATMOS`, `BIOLOGY`, `CHEMISTRY`, `GAMEMODES`): the engine owns the
+`docs/CONTENT-SCHEMA.md` the fields they DECLARE. Five names sit on both
+sides (`ATMOS`, `BIOLOGY`, `CHEMISTRY`, `GAMEMODES`, `POWER`): the engine owns the
 mechanism, this pack the numbers it chose. Run the engine with
 `LUNATIC_PACK` pointing here.
 

@@ -19,8 +19,30 @@ return {
     name_label = "lunatic/tfs:entity.smes.name",
     name = "power storage unit",
     sprite = "smes",
-    ui = { modules = { "battery", "throttles", "ports" } },
-    fixture = "Smes",
+    ui = { modules = { "store", "throttles", "ports" } },
+    -- FIVE STANDARD BATTERIES, 1 MJ each (tg machine_circuitboards.dm:374,
+    -- power.dm:32), in and out at tg's 200 kW caps (smes.dm:26, :37).
+    -- The breakers start at those caps rather than tg's 50 kW
+    -- (smes.dm:24, :35): the engine sets a throttle's level at its
+    -- store's own cap (the engine's docs/power/panels.md).
+    store = { capacity_j = 5000000, charge_w = 200000, discharge_w = 200000 },
+    bridge = { throttles = true },
+    -- tg's front panel (smes.dm:144-150): the output lamp, the input
+    -- lamp, and a five-segment charge bar that shows nothing below a
+    -- fifth and its last segment only when full (smes.dm:344-346).
+    appearance = {
+        states = {
+            output_off = "smes_out0",
+            output_on = "smes_out1",
+            input_off = "smes_in0",
+            input_on = "smes_in1",
+            level_1 = "smes_chg1",
+            level_2 = "smes_chg2",
+            level_3 = "smes_chg3",
+            level_4 = "smes_chg4",
+            level_5 = "smes_chg5",
+        },
+    },
     category = "power",
     dense = true,
     examine = {

@@ -38,6 +38,8 @@ return {
     id = "filter",
     visual_layer = "fixture",
     energy_network = "power",
+    -- tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18 (docs/POWER.md).
+    load_class = "environment",
     name_label = "lunatic/tfs:entity.filter.name",
     name = "filter",
     sprite = "filter_off_n",

@@ -33,6 +33,15 @@ return {
     -- makes it cheaper as well as darker, which is most of the point
     -- of a station running off its cells.
     light = { range = 6, power = 1.0 },
+    -- tg's AREA_USAGE_LIGHT (light.dm:12): a panel running down sheds
+    -- this before it sheds the room's air (fixtures/apc.luau).
+    load_class = "lighting",
+    -- THE EMERGENCY CELL, tg's cell/emergency_light: 1.2 kJ
+    -- (STANDARD_CELL_CHARGE × 0.12, cell.dm:237, power.dm:25), charged
+    -- and drained at LIGHT_EMERGENCY_POWER_USE, 2 W (lights.dm:2,
+    -- power.dm:27; light.dm:335, :339) -- ten minutes of light with no
+    -- panel feeding it. What it looks like then is fixtures/light.luau.
+    store = { capacity_j = 1200, charge_w = 2, draw_w = 2 },
     -- ON THE ROOM'S NETWORK, and never by anybody's hand. A fitting is
     -- a device with nothing to set and no panel to open: what it is
     -- FOR on a network is HEARING -- the room's alarm saying the air

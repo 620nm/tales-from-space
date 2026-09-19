@@ -82,6 +82,8 @@ return {
     id = "air_alarm",
     visual_layer = "fixture",
     energy_network = "power",
+    -- tg's AREA_USAGE_ENVIRON, _air_alarm.dm:10 (docs/POWER.md).
+    load_class = "environment",
     name_label = "lunatic/tfs:entity.air_alarm.name",
     name = "air alarm",
     sprite = "air_alarm",

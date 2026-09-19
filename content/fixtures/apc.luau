@@ -1,17 +1,18 @@
+local load_classes = require("@lib/load_classes")
 local netmsg = require("@lib/netmsg")
 local network = require("@lib/network")
 
--- The APC, and the two things about it that are not mechanism.
+-- The APC, and the three things about it that are not mechanism.
 --
--- Everything a player DOES to one is native: the battery, the three
--- channels, the ports and their reserve flags, and the `link` module's
+-- Everything a player DOES to one is native: the store, the master
+-- breaker, the ports and their reserve flags, and the `link` module's
 -- address, roster and candidates -- and a press on any of those rows
 -- goes through the same helper a script's gesture would
--- (docs/TGUI.md). There is deliberately no handler here that throws a
--- breaker, joins or releases anything; a second path to those would be
+-- (docs/TGUI.md). There is deliberately no handler here that throws the
+-- master, joins or releases anything; a second path to those would be
 -- a second answer to who may.
 --
--- What is left is a SENTENCE and a FLAG.
+-- What is left is a SENTENCE, a LADDER and a FLAG.
 --
 -- The sentence is `lib/network.luau`'s, said with this box's nouns. A
 -- crewman who touches a panel gets its window and one line about what
@@ -24,9 +25,14 @@ local network = require("@lib/network")
 -- crewman reading the line knows what is plugged in without being told
 -- there is a network at all.
 --
+-- The ladder is tg's autoset (docs/POWER.md): the engine hands this
+-- file the cell's charge every pass, and this file alone throws the
+-- panel's load-class gates. The window shows them and never throws
+-- one, so the ladder is the only answer to which classes a room gets.
+--
 -- The flag is the one thing a panel knows that nothing else on the
 -- station does: whether the room is running off its own cell. The
--- engine raises `flow.backup.done` on the crossing and only on the
+-- engine raises `flow.reserve.done` on the crossing and only on the
 -- crossing, so this is one emission when the mains die and one when
 -- they come back, never a per-pass drumbeat. What the lights do with
 -- it is theirs (fixtures/light.luau); all this says is that it
@@ -43,7 +49,31 @@ local content = {
 local NOUN = "APC"
 local MEMBER = "fitting"
 
+-- tg's autoset thresholds, percent of the cell: equipment goes below
+-- 30, lighting below 15, and the room's air only when the cell is
+-- empty (apc_main.dm:11, :13, :637-664). The power alarm goes up with
+-- the first shed and clears only above 75 (:15, :672-673).
+local LADDER = { equipment_below = 30, lighting_below = 15, alarm_clear_above = 75 }
+-- On the panel, in the shift record: `sight` so what a crewman at the
+-- box could be shown is what a spec can read (t.structure_at).
+local ALARM = "lunatic/tfs:power_alarm"
+
+-- Which classes a cell at this charge keeps delivering.
+local function wanted(charge_j: number, percent: number): { [string]: boolean }
+    if charge_j <= 0 then
+        return { equipment = false, lighting = false, environment = false }
+    end
+    if percent < LADDER.lighting_below then
+        return { equipment = false, lighting = false, environment = true }
+    end
+    if percent < LADDER.equipment_below then
+        return { equipment = false, lighting = true, environment = true }
+    end
+    return { equipment = true, lighting = true, environment = true }
+end
+
 if sim ~= nil then
+    sim.define("script_var", ALARM, { replicate = "sight" })
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
 
@@ -63,15 +93,50 @@ if sim ~= nil then
         end
     )
 
-    -- ON AND OFF THE RESERVE. `ev.controller` is the panel that
-    -- crossed, and it is the panel that has to be the subject of the
-    -- emission -- a message put on the network by anything else would
-    -- reach the wrong half of the forest. `ev.on` is which way it
-    -- crossed, and the two directions are one set and one clear of the
-    -- same named flag.
-    script_definition:handle("flow.backup.done", { kind = "react" }, function(ev)
+    -- THE LADDER, once a pass per panel. Completions reach every
+    -- handler of the anchor, so a bank's report is somebody else's. A
+    -- gate is thrown only when it disagrees with the ladder, class by
+    -- class in the network's own order, so a steady cell writes
+    -- nothing and a falling one writes the same rows every shift.
+    script_definition:handle("flow.store.done", { kind = "react" }, function(ev: FlowStoreDonePayload)
+        if ev.subject.prototype ~= content.id then
+            return
+        end
+        local store = sim.flow.store(ev.subject)
+        local gates = store and store.gates
+        if gates == nil then
+            return
+        end
+        local percent = 100 * ev.level
+        local want = wanted(ev.charge_j, percent)
+        for _, class in ipairs(load_classes.power) do
+            if gates[class] ~= want[class] then
+                sim.flow.set_gate({ subject = ev.subject, class = class, on = want[class] })
+            end
+        end
+        -- A tripped network delivers nothing whatever the cell holds,
+        -- so the panel calls that too, and keeps calling it until the
+        -- breaker is back and the cell is above the clear line.
+        local alarmed = ev.subject.vars[ALARM] == true
+        if not alarmed and (ev.tripped or percent < LADDER.equipment_below) then
+            ev.subject.vars[ALARM] = true
+        elseif alarmed and not ev.tripped and percent > LADDER.alarm_clear_above then
+            ev.subject.vars[ALARM] = nil
+        end
+    end)
+
+    -- ON AND OFF THE RESERVE. `ev.subject` is the panel that crossed,
+    -- and it is the panel that has to be the subject of the emission --
+    -- a message put on the network by anything else would reach the
+    -- wrong half of the forest. `ev.on` is which way it crossed, and
+    -- the two directions are one set and one clear of the same named
+    -- flag.
+    script_definition:handle("flow.reserve.done", { kind = "react" }, function(ev: FlowReserveDonePayload)
+        if ev.subject.prototype ~= content.id then
+            return
+        end
         sim.link.emit({
-            subject = ev.controller,
+            subject = ev.subject,
             payload = netmsg.light_flag(ev.on and "set" or "clear", "low_power"),
         })
     end)

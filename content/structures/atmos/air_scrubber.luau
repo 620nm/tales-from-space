@@ -53,6 +53,8 @@ return {
     id = "air_scrubber",
     visual_layer = "fixture",
     energy_network = "power",
+    -- tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18 (docs/POWER.md).
+    load_class = "environment",
     -- The one thing this machine says that is not mechanism: it
     -- repeats onto the network what the engine just decided about the
     -- air on its own tile (fixtures/air_scrubber.luau).

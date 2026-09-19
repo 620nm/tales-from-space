@@ -30,6 +30,7 @@ The source owns exact signatures; this table records responsibility and shape.
 | `decal_paints.luau` | Floor-decal paint vocabulary and decal opacity; `colors` array of `{id, hex}`, `defaults` array of ids, numeric `trim_opacity`/`mark_opacity`. | `compositions.luau`; `items/tools/decal_painter.luau` |
 | `device_queue.luau` | Bounded paced device packets; `Packet` type; `clear`, boolean `send`, `button`, `completion`. | `lib/controller.luau` |
 | `item_actions.luau` | Possession action presentation; `Spec` type; `attach(definition, spec, use)` and boolean `internals(ev)`. | `items/tools/welder.luau`; `items/piping/{emergency_tank,oxygen_tank,rpd}.luau` |
+| `load_classes.luau` | Power load-class vocabulary in declaration order; `power` array of class ids, `power_default` id. | `compositions.luau`; `fixtures/apc.luau`; `items/tools/multitool.luau` |
 | `map_markers.luau` | Spawn-marker selection; `player_spawn` returns `{at}`; `threat_location` returns optional tile; `initialize`, boolean `spawn_threat`. | `fixtures/{player_spawn,threat_spawn}.luau`; `gamemodes/{free_build,space_station}.luau` |
 | `netmsg.luau` | Device payload vocabulary and light priority; `Flag`/`LightFlag`/`Hazard` types, kind constants, `flags`, `standing`; constructors, validator, `winner`, `report_hazard`. | `fixtures/{air_alarm,air_scrubber,apc,light,vent}.luau` |
 | `network.luau` | Device-network examine wording; `line(node, noun, member)` returns optional `Message`. | `fixtures/{air_alarm,apc,network_router}.luau` |

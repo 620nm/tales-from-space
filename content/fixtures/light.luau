@@ -21,9 +21,24 @@ local netmsg = require("@lib/netmsg")
 -- because the FITTING is what knows what went into it — the engine
 -- ships no colour but white, and a tube is a game word.
 local TUBE_COLOR = "#F3FFFA"
+-- What a fitting burns off its own emergency cell: tg's low-power look,
+-- a quarter of the tube's reach in vivid red at three quarters of the
+-- cell's fraction, never under half (light.dm:67-73, applied at
+-- :536-538; COLOR_VIVID_RED, colors.dm:64).
+local ON_STORE = { color = "#FF3232", range_mul = 0.25, power_mul = 0.75, power_min = 0.5 }
 
 type LightFlags = { [string]: { [string]: boolean? }? }
-type LightState = { base: string?, base_power: number?, flags: LightFlags? }
+-- Where the fitting last heard it is drawing from (`flow.source.done`:
+-- "grid", "store" or "none") and its cell's level at that edge.
+type LightFeed = { source: string, level: number }
+type LightState = {
+    base: string?,
+    base_power: number?,
+    base_range: number?,
+    flags: LightFlags?,
+    source: string?,
+    level: number?,
+}
 
 local content = {
     id = "light",
@@ -43,9 +58,10 @@ local content = {
 -- the last one clears is the colour of the tube somebody screwed in.
 --
 -- So a fitting remembers three things and none of them is a picture:
--- `base` and `base_power`, which are the tube it has in it, and
--- `flags`, one row per condition holding the set of ADDRESSES that
--- raised it. Colours and brightnesses are looked up fresh every time,
+-- `base`, `base_power` and `base_range`, which are the tube it has in
+-- it; `flags`, one row per condition holding the set of ADDRESSES that
+-- raised it; and `source` and `level`, where it last heard it draws
+-- from. Colours and brightnesses are looked up fresh every time,
 -- which is what makes a retune in `lib/netmsg.luau` reach every
 -- fitting already burning one -- and what stops a light that has been
 -- red since before somebody's edit from staying a shade nothing names
@@ -56,23 +72,56 @@ local content = {
 -- take the other's word off the ceiling. It also bounds what a hostile
 -- sibling can do to exactly the row it holds.
 --
--- `base_power` is captured rather than assumed: a fitting's own power
--- is what its prototype declares, a mapper may one day vary it, and a
--- flag clearing back to a literal 1.0 would quietly re-tune every
--- fitting that was not 1.0 to begin with.
-local function relight(self: Handle, base: string?, flags: LightFlags?, base_power: number?)
+-- `base_power` and `base_range` are captured rather than assumed: a
+-- fitting's own power and reach are what its prototype declares, a
+-- mapper may one day vary them, and a flag clearing back to a literal
+-- 1.0 would quietly re-tune every fitting that was not 1.0 to begin
+-- with.
+--
+-- ON ITS OWN CELL the fitting burns tg's emergency look instead of the
+-- stack, as tg's low-power branch supersedes every area effect
+-- (light.dm:282-289), and goes back to the stack the moment it hears
+-- the grid again. The record is written whole every time, each field
+-- nobody handed in carried over, so a flag arriving, a tube being
+-- fitted and a source edge never drop one another's state.
+local function relight(
+    self: Handle,
+    base: string?,
+    flags: LightFlags?,
+    base_power: number?,
+    feed: LightFeed?
+)
     local v: LightState = self.vars["light_flags"] or {}
     base = base or v.base
     base_power = base_power or v.base_power
+    local base_range = v.base_range
     flags = flags or v.flags or {}
-    if base == nil or base_power == nil then
-        -- The first flag on a fitting nobody has flagged yet: what it
+    local source = if feed then feed.source else v.source
+    local level = if feed then feed.level else v.level
+    if base == nil or base_power == nil or base_range == nil then
+        -- The first word to a fitting nobody has spoken to yet: what it
         -- is burning NOW is the tube, because nothing has replaced it.
         local l = sim.light(self)
         base = base or (l and l.color)
         base_power = base_power or (l and l.power)
+        base_range = base_range or (l and l.range)
     end
-    self.vars["light_flags"] = { base = base, base_power = base_power, flags = flags }
+    self.vars["light_flags"] = {
+        base = base,
+        base_power = base_power,
+        base_range = base_range,
+        flags = flags,
+        source = source,
+        level = level,
+    }
+    if source == "store" then
+        sim.set_light(self, {
+            color = ON_STORE.color,
+            range = base_range and base_range * ON_STORE.range_mul,
+            power = math.max(ON_STORE.power_min, ON_STORE.power_mul * (level or 1)),
+        })
+        return
+    end
     -- `status` is deliberately absent from the set: what is in the
     -- socket is the fitting's own business and a flag has no opinion
     -- about it. A shattered tube under a standing flag stays shattered
@@ -80,6 +129,7 @@ local function relight(self: Handle, base: string?, flags: LightFlags?, base_pow
     local worst = netmsg.winner(flags)
     sim.set_light(self, {
         color = worst and worst.color or base,
+        range = base_range,
         power = worst and worst.power or base_power,
     })
 end
@@ -128,6 +178,18 @@ if sim ~= nil then
         held[ev.from] = on or nil
         flags[name] = if next(held) ~= nil then held else nil
         relight(self, v.base, flags, v.base_power)
+    end)
+
+    -- OFF THE GRID AND BACK. The engine decides where a fitting draws
+    -- from -- the grid, its own cell, or nothing -- and says so on the
+    -- edge; what it looks like on its cell is this file's. Completions
+    -- reach every handler of the anchor, so another prototype's cell is
+    -- somebody else's.
+    script_definition:handle("flow.source.done", { kind = "react" }, function(ev: FlowSourceDonePayload)
+        if ev.subject.prototype ~= content.id then
+            return
+        end
+        relight(ev.subject, nil, nil, nil, { source = ev.source, level = ev.level })
     end)
 
     script_definition:handle(

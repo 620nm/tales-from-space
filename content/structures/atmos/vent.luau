@@ -44,6 +44,8 @@ return {
     id = "vent",
     visual_layer = "fixture",
     energy_network = "power",
+    -- tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18 (docs/POWER.md).
+    load_class = "environment",
     -- The one thing this machine says that is not mechanism: it
     -- repeats onto the network what the engine just decided about the
     -- air on its own tile (fixtures/vent.luau).

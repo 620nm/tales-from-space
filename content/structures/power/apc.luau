@@ -2,10 +2,12 @@
 -- room it serves is allowed to draw, and the only thing bridging the
 -- backbone to a room's own branch (docs/POWER.md).
 --
--- What the engine owns is the bridge itself -- charge, budget, the
--- three channels and their LEDs -- because that is per-tick arithmetic
--- on a graph. What lives here is what a player sees and can be told: a
--- name, a picture, and the fact that it hangs on a wall.
+-- The engine owns the store, the gates and the ports, because moving
+-- charge through a graph is per-tick arithmetic; the `store` and
+-- `bridge` blocks below are what make this box one. This file and
+-- fixtures/apc.luau own the ladder: how full the cell is when a room
+-- loses equipment, then lighting, then everything, and when the alarm
+-- goes up. The station's numbers, not the engine's.
 --
 -- IT IS ALSO THE ROOM'S HUB, and that is the second thing it is. A
 -- device drawing power through this panel is a device this panel
@@ -43,7 +45,7 @@
 -- output layers it keeps fed off its own cell in a blackout, and label
 -- it with the room it serves:
 --
---   (12, 5, "apc", { "l2": "input", "l1_emergency": true }),
+--   (12, 5, "apc", { "l2": "input", "l1_reserve": true }),
 --   labels: [(12, 5, "The Commons")]
 return {
     id = "apc",
@@ -53,15 +55,25 @@ return {
     name_label = "lunatic/tfs:entity.apc.name",
     name = "APC",
     sprite = "apc",
-    -- The bridge's own four modules, then the network half: the
+    -- The bridge's own three modules, then the network half: the
     -- address, the roster and the candidates, and the socket the card
     -- sits in.
-    ui = { modules = { "battery", "channels", "ports", "link", "parts" } },
-    -- The one thing about this box that is a sentence rather than
-    -- mechanism, plus the flag it raises when it drops to its reserve
-    -- (fixtures/apc.luau).
+    ui = { modules = { "store", "gates", "ports", "link", "parts" } },
+    -- The sentence a crewman is told, the ladder, the alarm, and the
+    -- flag it raises when it drops to its reserve (fixtures/apc.luau).
     script = "apc",
-    fixture = "Apc",
+    -- THE CELL. STANDARD_BATTERY_CHARGE, 1 MJ (tg power.dm:32,
+    -- battery.dm:17): tg's own APC ships the 2.5 MJ upgraded cell
+    -- (battery.dm:29, apc_main.dm:43); this station fits the plain
+    -- one. It charges at 1% of itself a second (CHARGELEVEL,
+    -- apc_main.dm:9, :708), and `report` is what hands the ladder its
+    -- charge every pass.
+    store = { capacity_j = 1000000, charge_w = 10000, report = true },
+    -- Gated: a master switch and one gate per load class
+    -- (compositions.luau), which is what the ladder throws.
+    bridge = { gates = true },
+    -- The label a map gives it is the name of the room it stands in.
+    names_room = true,
     mount = true,
     appearance = {
         mounted = {
@@ -70,11 +82,17 @@ return {
             east = "apc_e",
             west = "apc_w",
         },
+        -- tg's overlay stack, bottom first (apc_appearance.dm:49-61):
+        -- the cover lock, the charge screen, then one lamp per load
+        -- class, which the engine hides whole while the master is off.
+        -- One lock picture for both states: the atlas has only tg's
+        -- `apcox-0` (assets/sprites/10-turf-fixtures-and-tools.ron).
         states = {
-            lock = "apcov_lock",
-            charge_idle = "apcov_chg0",
-            charge_active = "apcov_chg1",
-            charge_full = "apcov_chg2",
+            locked = "apcov_lock",
+            unlocked = "apcov_lock",
+            store_idle = "apcov_chg0",
+            store_charging = "apcov_chg1",
+            store_full = "apcov_chg2",
             equipment_on = "apcov_eq_on",
             equipment_off = "apcov_eq_off",
             lighting_on = "apcov_lt_on",

@@ -5,6 +5,8 @@ return {
     id = "bidirectional_vent",
     visual_layer = "fixture",
     energy_network = "power",
+    -- tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18 (docs/POWER.md).
+    load_class = "environment",
     name_label = "lunatic/tfs:entity.bidirectional_vent.name",
     name = "bidirectional vent",
     sprite = "bidirectional_vent_off",

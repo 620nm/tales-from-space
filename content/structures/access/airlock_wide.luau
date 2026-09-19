@@ -42,6 +42,8 @@ return {
     id = "airlock_wide",
     visual_layer = "fixture",
     energy_network = "power",
+    -- tg's AREA_USAGE_ENVIRON, door.dm:16 (docs/POWER.md).
+    load_class = "environment",
     name_label = "lunatic/tfs:entity.airlock_wide.name",
     name = "wide airlock",
     sprite = "door_wide_w",

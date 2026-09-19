@@ -36,6 +36,8 @@ return {
     id = "mixer",
     visual_layer = "fixture",
     energy_network = "power",
+    -- tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18 (docs/POWER.md).
+    load_class = "environment",
     name_label = "lunatic/tfs:entity.mixer.name",
     name = "mixer",
     sprite = "mixer_off_n",

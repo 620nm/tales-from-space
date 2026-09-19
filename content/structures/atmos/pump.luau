@@ -33,6 +33,8 @@ return {
     id = "pump",
     visual_layer = "fixture",
     energy_network = "power",
+    -- tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18 (docs/POWER.md).
+    load_class = "environment",
     name_label = "lunatic/tfs:entity.pump.name",
     name = "pump",
     sprite = "pump_off_n",

@@ -30,6 +30,8 @@ return {
     id = "temperature_pump",
     visual_layer = "fixture",
     energy_network = "power",
+    -- tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18 (docs/POWER.md).
+    load_class = "environment",
     name_label = "lunatic/tfs:entity.temperature_pump.name",
     name = "temperature pump",
     sprite = "tpump_off_n",

@@ -30,6 +30,8 @@ return {
     id = "volume_pump",
     visual_layer = "fixture",
     energy_network = "power",
+    -- tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18 (docs/POWER.md).
+    load_class = "environment",
     name_label = "lunatic/tfs:entity.volume_pump.name",
     name = "volumetric pump",
     sprite = "volpump_off_n",
