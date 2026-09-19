@@ -157,9 +157,9 @@ assert(cloudy_resting == 10, ("the blast grounds ten, got %d"):format(cloudy_res
 assert(shards == 13, ("thirteen pellets settle, got %d"):format(shards))
 assert(shards_far == 6, ("six landings past the blast floors, got %d"):format(shards_far))
 
--- The blast tile keeps the heap, and the deck shows it: the dominant
--- kind's tier-one sprite, drawn but never pickable, so a click lands
--- on the turf.
+-- The blast tile keeps the heap, and the deck shows it whole: one
+-- composite of both resting kinds -- shards over the cloudy heap --
+-- every part drawn but never pickable, so a click lands on the turf.
 local function shows(x: number, y: number, sprite: string): boolean
     for _, seen in ipairs(t.seen_composition(p, x, y)) do
         if seen.sprite == sprite and not seen.pickable then
@@ -171,7 +171,8 @@ end
 local function shows_dirt(x: number, y: number): boolean
     return shows(x, y, "blast_shards") or shows(x, y, "dust")
 end
-assert(shows_dirt(1, 1), "the blast tile wears its dirt")
+assert(shows(1, 1, "blast_shards"), "the blast tile wears its shards")
+assert(shows(1, 1, "dust"), "over its cloudy heap")
 assert(shows_dirt(2, 2), "diagonal to it, the ring keeps its one")
 
 -- ---------------------------------------------------------------

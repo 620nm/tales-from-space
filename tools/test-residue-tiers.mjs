@@ -1,8 +1,9 @@
 // The residue ladder: what settled dirt draws at one blast and past two.
-// The engine discloses the dominant kind per tile off this file, so these
-// rows pin the numbers the specs assert by ledger and by sight -- the
-// kinds, the per-blast counts, the tiers, and the layer order that puts
-// dirt over paint and under spills.
+// The engine discloses one composite per tile off this file -- a part
+// per resting kind, each on its own tier -- so these rows pin the
+// numbers the specs assert by ledger and by sight: the kinds, the
+// per-blast counts, the tiers, and the layer order that puts dirt
+// over paint and under spills.
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { test } from "node:test";
