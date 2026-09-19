@@ -43,7 +43,7 @@ A prototype under `structures/` spells its own class word, because
 
 | prototype | declares | tg |
 |---|---|---|
-| `apc` | `store` 1 MJ, charging at 10 kW, `report`; `bridge.gates`; `names_room` | STANDARD_BATTERY_CHARGE (`power.dm:32`, `battery.dm:17`); 1% of the cell a second (CHARGELEVEL, `apc_main.dm:9`, `:708`) |
+| `apc` | `store` 1 MJ, charging at 10 kW, `report`; `bridge.gates` | STANDARD_BATTERY_CHARGE (`power.dm:32`, `battery.dm:17`); 1% of the cell a second (CHARGELEVEL, `apc_main.dm:9`, `:708`) |
 | `smes` | `store` 5 MJ, 200 kW in and out; `bridge.throttles` | five batteries (`machine_circuitboards.dm:374`), each STANDARD_BATTERY_CHARGE (`battery.dm:17`); `smes.dm:26`, `:37` |
 | `light` | `load_class = "lighting"`; `store` 1.2 kJ, charged and drained at 2 W | cell/emergency_light (`cell.dm:237`); LIGHT_EMERGENCY_POWER_USE (`lights.dm:2`, `power.dm:27`) |
 

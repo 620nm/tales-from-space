@@ -284,8 +284,8 @@ use the explicit `t.connect`, `t.prepare`, `t.ready` and
 
 `t.ledger_rows` hands back rows in the shift JSONL's own shape — `tick`,
 `event` (snake_case), the event's own fields alongside it, `actor`
-(`{kind = "player" | "system" | "script", ...}`), and `pos`/`room` where
-the sim knew them. The optional argument filters by event name in either
+(`{kind = "player" | "system" | "script", ...}`), and `pos` where the
+sim knew it. The optional argument filters by event name in either
 spelling (`"TurfChanged"` or `"turf_changed"`). `t.ledger_has` is the
 blunt grep against a Debug flatten, kept for one-line "did this happen
 at all" assertions.

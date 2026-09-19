@@ -72,8 +72,6 @@ return {
     -- Gated: a master switch and one gate per load class
     -- (compositions.luau), which is what the ladder throws.
     bridge = { gates = true },
-    -- The label a map gives it is the name of the room it stands in.
-    names_room = true,
     mount = true,
     appearance = {
         mounted = {

@@ -598,10 +598,7 @@
         // two in the wall it shares with the machine hall, so the tank
         // row can be read from the department. Glass stands in a HOLE in
         // the wall and never on it, which is why the four tiles under
-        // these are plating -- and because the flood that names rooms
-        // crosses a pane and not a door, Engineering, the annex and the
-        // machine hall are ONE named region on the ledger. They are one
-        // room; you can see across all of it.
+        // these are plating.
         (6, 26, "grille", "reinforced"),
         (10, 26, "grille", "reinforced"),
         (13, 28, "grille", "reinforced"),
@@ -701,9 +698,8 @@
         (35, 28, "light", { "color": "#F3FFFA", "mount": "east" }),
         // ---- THE NINE APCs ---------------------------------------
         // One per room the station lights, each on the wall it is
-        // mounted with its placement's `mount` property and each labelled with the room
-        // it serves (`labels` below) -- an APC's label IS the room's
-        // name (docs/POWER.md, "rooms are names").
+        // mounted with its placement's `mount` property and each labelled
+        // with the room it serves (`labels` below).
         //
         // EVERY ONE KEEPS L1 ON ITS RESERVE. A panel running off its
         // own cell feeds only the output layers flagged here and lets
@@ -1419,8 +1415,8 @@
         (24, 34, "co2_300kpa"),
         (25, 34, "co2_300kpa"),
     ],
-    // On the APC, because that is what a label names: an APC's label IS
-    // the room's name (sim/mod.rs, "APC labels become room names").
+    // On the APC, because a label names the topmost thing on its tile:
+    // each panel wears the name of the room it serves.
     labels: [
         (4, 5, "Workshop"),
         (14, 5, "Chemistry Lab"),
