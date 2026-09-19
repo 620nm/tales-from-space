@@ -1,15 +1,16 @@
 -- THE BLAST, written once: what a detonation does to bodies and to the room.
 --
--- Three halves, called in detonation order. `apply` is the hurt: every
+-- Four quarters, called in detonation order. `apply` is the hurt: every
 -- body within a tile and a half that the blast can see, in two
 -- Chebyshev bands off the blast tile -- the tile itself and the ring
 -- round it -- with no aimed part, so each blow falls toward its
--- victim's own default zone. `cast` is the part the room sees and
--- hears: flash, ring, sparks, shake, glow, two fires and the blast
+-- victim's own default zone. `ground` is the dirt: one blast's worth
+-- of settled fragments over the same nine tiles, center-weighted, at
+-- detonate time. `cast` is the part the room sees and hears: flash,
+-- ring, sparks, shake, glow, one fire on the blast tile and the blast
 -- itself, every one of them on the FOV-filtered lanes. `burst` throws
--- the volley whose fragments the tick flies home; their dirt lands
--- later, a landing tile at a time off the settle handler
--- (items/weapons/frag_grenade.luau).
+-- the volley whose fragments the tick flies home; they rest nowhere,
+-- the blast area already wears their dirt.
 --
 -- The bands are the pack's own numbers, not tg's: tg's frag grenade
 -- speaks in explosion radii (ex_heavy 1, ex_light 3, ex_flame 4,
@@ -51,17 +52,34 @@ function blast.apply(at: TileAddress): ()
     end
 end
 
--- The volley: what flies is what rests (lib/residue_kinds.luau), laid
--- down where the pellets land off the settle handler.
+-- The volley: what flies is what the blast area wears
+-- (lib/residue_kinds.luau), grounded below before the pellets leave.
 function blast.burst(at: TileAddress): ()
     sim.volley_discharge(at.x, at.y, VOLLEY_RADIUS, VOLLEY_DAMAGE, residue_kinds.dust_per_blast)
+end
+
+-- The dirt, grounded where the blast went off: one blast's worth over
+-- the nine tiles, the ring dusted a fragment each and the rest heaped
+-- on the center (7 with the reference 15). The center is the tile the
+-- ash already sits on, so dust and ash agree about where the blast
+-- was. A blast on the map's edge ring refuses its off-map tiles with
+-- the engine's force sentence; the rest still land.
+local RING_SHARE = 1
+function blast.ground(at: TileAddress): ()
+    local center_share = residue_kinds.dust_per_blast - 8 * RING_SHARE
+    for dy = -1, 1 do
+        for dx = -1, 1 do
+            local share = if dx == 0 and dy == 0 then center_share else RING_SHARE
+            sim.volley_residue_deposit(at.x + dx, at.y + dy, share)
+        end
+    end
 end
 
 -- The part the room sees. Strengths and durations are the choreography:
 -- flash peaks first and shortest, the ring and sparks follow, shake and
 -- glow decay together. The jolt is the pack's own feel, well under the
--- 32 px ceiling. The two fires are the sheet's nine-frame explosion
--- played once, the second offset half a cell so the blast has width.
+-- 32 px ceiling. The fire is the sheet's nine-frame explosion played
+-- once, on the blast tile and nowhere else: one blast, one cloud.
 function blast.cast(at: TileAddress): ()
     sim.visual.flash({ at = at, strength = 0.7, duration = 0.25 })
     sim.visual.ring({ at = at, strength = 1.5, duration = 0.4 })
@@ -69,14 +87,6 @@ function blast.cast(at: TileAddress): ()
     sim.visual.shake({ at = at, strength = 8, duration = 0.6 })
     sim.visual.glow({ at = at, strength = 2, duration = 0.6 })
     sim.visual.spawn({ visual_layer = "effects", at = at, sprite = "blast_fire", duration = 1.0 })
-    sim.visual.spawn({
-        visual_layer = "effects",
-        at = at,
-        sprite = "blast_fire",
-        duration = 0.8,
-        offset_x = 8,
-        offset_y = -8,
-    })
     sim.sound.play({ asset = "lunatic/tfs:sound/explosion", at = at })
 end
 

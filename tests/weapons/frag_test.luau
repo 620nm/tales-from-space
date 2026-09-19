@@ -97,28 +97,49 @@ local function at(x: number, y: number): boolean
 end
 
 -- One blast's aftermath on the record: the discharge names the
--- reference params, the settle closes it, and the settle handler lays one
--- blast's worth of kind-0 dust across the landing tiles, each row after
--- the settle that caused it.
+-- reference params and the settle closes it, but the dirt is already
+-- down -- grounded over the nine blast tiles at detonate time, the
+-- ring dusted one each and seven heaped on the center, every row
+-- between the ash and the volley.
 local dirt_seen = 0
+local blast_centers = { { 1, 5 }, { 4, 2 }, { 5, 5 }, { 8, 2 } }
 local function blast_dirt(n: number): ()
     local discharged = t.ledger_rows("volley_discharged")[n]
     local settled = t.ledger_rows("volley_settled")[n]
+    local minted = t.ledger_rows("minted")[n]
     assert(discharged.radius == 10, ("blast %d is thrown to ten tiles"):format(n))
     assert(discharged.fragments == 15, ("blast %d throws fifteen"):format(n))
     assert(discharged.damage == 14, ("blast %d flies at tg's force"):format(n))
     assert(settled.fragments == 15, ("blast %d settles fifteen"):format(n))
     assert(discharged.seq < settled.seq, ("blast %d brackets its flight"):format(n))
     local dirt = t.ledger_rows("residue_settled")
+    local fresh = #dirt - dirt_seen
+    assert(fresh == 9, ("blast %d grounds nine tiles, got %d"):format(n, fresh))
+    local center = blast_centers[n]
+    local heaped = 0
     local resting = 0
     for index, row in ipairs(dirt) do
-        assert(row.kind == 0, "every landing rests kind 0")
-        if index > dirt_seen then
-            assert(row.seq > settled.seq, "the dirt lands after its settle")
-        end
+        assert(row.kind == 0, "every grounding rests kind 0")
         resting += ui_controls.number(row.fragments)
+        if index > dirt_seen then
+            assert(row.seq > minted.seq, "the dirt grounds after its ash")
+            assert(row.seq < discharged.seq, "and before its volley")
+            local share = ui_controls.number(row.fragments)
+            local at = ui_controls.array(row.at)
+            if share == 7 then
+                heaped += 1
+                local ax, ay = ui_controls.number(at[1]), ui_controls.number(at[2])
+                assert(
+                    ax == center[1] and ay == center[2],
+                    ("blast %d heaps its center, not (%d, %d)"):format(n, ax, ay)
+                )
+            else
+                assert(share == 1, "the ring dusts one each")
+            end
+        end
     end
-    assert(resting == 15 * n, ("the blasts rest %d pellets' dust, got %d"):format(15 * n, resting))
+    assert(heaped == 1, ("blast %d heaps one center"):format(n))
+    assert(resting == 15 * n, ("the blasts ground %d pellets' dust, got %d"):format(15 * n, resting))
     dirt_seen = #dirt
 end
 
@@ -151,10 +172,12 @@ assert(math.abs(burn(p0) - 20) < 0.01, ("the holder takes the center: %g burn"):
 assert(brute(p0) >= 40, ("and the center's brute: %g"):format(brute(p0)))
 assert(burn(v1) == 0, "four tiles off, the spawn stack feels nothing")
 
--- THE ORDER: gone, ash, blast, volley, settle, dirt. The direct blast's
--- own hurt is the damage already on the record ahead of the discharge
--- -- no strike can precede the volley that threw it -- and it lands
--- between the ash and the volley on the detonation tick.
+-- THE ORDER: gone, ash, blast, dirt, volley, settle. The direct
+-- blast's own hurt is the damage already on the record ahead of the
+-- discharge -- no strike can precede the volley that threw it -- and
+-- it lands between the ash and the volley on the detonation tick,
+-- with the grounded dirt beside it (`blast_dirt` pins the dirt's own
+-- rows between the same two).
 local gone = t.ledger_rows("item_destroyed")
 local minted = t.ledger_rows("minted")
 assert(#gone == 1 and #minted == 1, "one detonation, one mint")

@@ -8,7 +8,7 @@
     // Sheet aliases are local to this family; @names below resolve here.
     sheets: [
         ("grenade", "obj/weapons/grenade.dmi"),
-        ("debris", "obj/debris.dmi"),
+        ("projectiles", "obj/weapons/guns/projectiles.dmi"),
     ],
     sprites: [
         // tg's frag grenade (`/obj/item/grenade/frag`,
@@ -19,11 +19,22 @@
         // single-dir; ART ONLY, no arming or shrapnel behavior is ported.
         ("frag", Dmi("@grenade", "frag", 0)),
         ("frag_active", Dmi("@grenade", "frag_active", 0)),
-        // The flying fragment's cell: tg's frag shrapnel
-        // (`/obj/item/shrapnel`, code/game/objects/items/shrapnel.dm:1-7)
-        // wears debris.dmi's `large`, single-frame, single-dir. The
-        // engine's flight asks for this name (its FRAGMENT_SPRITE); the
-        // pack owns the cell it means.
-        ("shrapnel", Dmi("@debris", "large", 0)),
+        // The flying fragment's cells: tg's shotgun pellet
+        // (`projectiles.dmi` state `pellet`, single-frame,
+        // single-dir, NORTH-oriented; the base projectile's sheet at
+        // code/modules/projectiles/projectile.dm:9, the beanbag's
+        // state at
+        // code/modules/projectiles/projectile/bullets/shotgun.dm:26).
+        // The engine's flight asks for the flat name (its
+        // FRAGMENT_SPRITE) and faces it at the heading; the pack owns
+        // the cells it means. The flat cell is the unfaced fallback;
+        // the four quarter-turns of the one north-drawn frame are what
+        // a heading selects (0/1/2/3 clockwise from north). ART ONLY,
+        // no projectile behavior ported.
+        ("shrapnel", Dmi("@projectiles", "pellet", 0)),
+        ("shrapnel_s", Rotated(Dmi("@projectiles", "pellet", 0), 2)),
+        ("shrapnel_n", Rotated(Dmi("@projectiles", "pellet", 0), 0)),
+        ("shrapnel_e", Rotated(Dmi("@projectiles", "pellet", 0), 1)),
+        ("shrapnel_w", Rotated(Dmi("@projectiles", "pellet", 0), 3)),
     ],
 )

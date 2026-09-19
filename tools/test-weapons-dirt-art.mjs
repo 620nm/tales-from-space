@@ -16,22 +16,24 @@ test("weapons family declares the frag grenade's rest and armed cells", async ()
   assert.match(ron, /\("frag_active", Dmi\("@grenade", "frag_active", 0\)\)/);
 });
 
-test("weapons family declares the flying fragment's shrapnel cell", async () => {
+test("weapons family declares the flying fragment's pellet cell", async () => {
   const ron = await read("assets/sprites/12-weapons.ron");
-  assert.match(ron, /\("debris", "obj\/debris\.dmi"\)/);
-  assert.match(ron, /\("shrapnel", Dmi\("@debris", "large", 0\)\)/);
+  assert.match(ron, /\("projectiles", "obj\/weapons\/guns\/projectiles\.dmi"\)/);
+  assert.match(ron, /\("shrapnel", Dmi\("@projectiles", "pellet", 0\)\)/);
 });
 
-test("dirt family declares junctions, flats, dust, scorch and blast fire", async () => {
+test("dirt family declares junctions, flats, dust, shards, scorch and blast fire", async () => {
   const ron = await read("assets/sprites/13-dirt.ron");
   assert.match(ron, /\("dirt", "effects\/dirt\.dmi"\)/);
   assert.match(ron, /\("dirt_misc", "effects\/dirt_misc\.dmi"\)/);
   assert.match(ron, /\("effects", "effects\/effects\.dmi"\)/);
+  assert.match(ron, /\("debris", "obj\/debris\.dmi"\)/);
   assert.match(ron, /Junctions\("dirt", "dirt"\)/);
   for (const flat of [0, 1, 2, 3]) {
     assert.match(ron, new RegExp(`Sprite\\("dirt_flat_${flat}", "dirt-flat-${flat}", s\\)`));
   }
   assert.match(ron, /Sprite\("dust", "dust", s\)/);
+  assert.match(ron, /Sprite\("blast_shards", "shards", s\)/);
   assert.match(ron, /Directions\("scorch", "scorch"\)/);
   assert.match(ron, /AnimOnce\("blast_fire", "explosion", s\)/);
 });

@@ -12,6 +12,7 @@
         ("dirt", "effects/dirt.dmi"),
         ("dirt_misc", "effects/dirt_misc.dmi"),
         ("effects", "effects/effects.dmi"),
+        ("debris", "obj/debris.dmi"),
     ],
     groups: [
         // tg's cleanable dirt (`/obj/effect/decal/cleanable/dirt`,
@@ -39,6 +40,19 @@
             sheet: "dirt",
             sprites: [
                 Junctions("dirt", "dirt"),
+            ],
+        ),
+        // What a blast grounds: tg's generic clutter
+        // (`/obj/effect/decal/cleanable/generic`,
+        // code/game/objects/effects/decals/cleanable/mess.dm:4-5) wears
+        // debris.dmi's `shards`, single-frame, single-dir. It dresses
+        // the settled kind's first tier (lib/residue_kinds.luau); the
+        // heavy tier cakes to the flats above. ART ONLY, no decal
+        // behavior is ported.
+        (
+            sheet: "debris",
+            sprites: [
+                Sprite("blast_shards", "shards", s),
             ],
         ),
         // Scorch is tg's burn mark off effects.dmi, worn in a random
