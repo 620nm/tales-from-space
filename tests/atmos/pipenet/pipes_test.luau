@@ -294,12 +294,16 @@ assert(
 -- the mapped main stops on the far side of the bulkhead, and the closet
 -- is on the distribution line through the vent's own mouth.
 --
--- The engineer lays it from where they stood through the breach. Three
--- tiles of air empty in about two seconds, too little to build a wind
--- that drags: dynamic pressure at the lip of the hole peaks near
--- 0.016 Pa, under `wind_drag_pa` (content/tuning.luau).
+-- The walk back is not ceremony. The decompression dragged the engineer
+-- north onto the hole's own tile ("The rushing air drags you north!"):
+-- one tile in, the wind peaks near 0.35 Pa, over `wind_drag_pa`
+-- (content/tuning.luau), and reach is reach -- a job interrupted by the
+-- hull opening is a job you have to walk back to. Two tiles in, where
+-- the pipe lay, the wind peaks near 0.09 Pa.
 t.swap_hands(q)
 t.run_ticks(2)
+t.move(q, "south")
+t.run_ticks(5)
 t.click(q, 12, 3, nil, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(12, 3, "pipe") == "l3", "the last length went down")

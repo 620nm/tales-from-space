@@ -458,7 +458,7 @@ near(room_air(), settled, 0.5, "a stopped injector injects nothing")
 -- Two hundred litres a second into an already overfull room, and the
 -- engineer at the panel stays where they stand. A machine's own
 -- draught does not drag: bulk flow spreads the output over the room,
--- and the wind on the engineer's tile peaks near 1e-3 Pa, far under
+-- and the wind on the engineer's tile peaks near 2e-3 Pa, far under
 -- `wind_drag_pa` (content/tuning.luau). The machine stays in reach
 -- while it runs, and the same hand switches it off.
 ui_controls.set(q, "rate", 200)

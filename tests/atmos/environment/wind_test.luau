@@ -55,12 +55,18 @@ local s2, east2 = speed(2, 1)
 assert(s2 > 0.05, "the air by the hole is running, got " .. s2)
 assert(east2 < 0, "and it is running WEST, toward the hole: " .. east2)
 
--- It reaches back along the corridor: the tile beyond the one at the
--- hole is moving too, and always more slowly than the one in front of
--- it. A jet loses itself as it spreads (momentum transport, §9 5c).
+-- It reaches back along the corridor, never faster than the tile in
+-- front of it: a jet loses itself as it spreads (momentum transport,
+-- §9 5c). The two tiles nearest the hole both run at the field's cap,
+-- 2 m/s (lunatic docs/matter-world/momentum.md, `V_CAP`); from the
+-- third tile back the speed falls tile by tile, 1.8 to 0.4 m/s.
 local s3 = speed(3, 1)
 assert(s3 > 0, "the corridor behind it is moving too, got " .. s3)
-assert(s3 < s2, "and less than the tile at the hole: " .. s3 .. " vs " .. s2)
+assert(s3 <= s2, "and no faster than the tile at the hole: " .. s3 .. " vs " .. s2)
+for x = 4, 7 do
+    local nearer, here = speed(x - 1, 1), speed(x, 1)
+    assert(here > 0 and here < nearer, "slower again at " .. x .. ": " .. here .. " vs " .. nearer)
+end
 
 -- The room has nothing left to give. No script ends this; the pressure
 -- ran out, the forcing went with it, and the field fell under its own
