@@ -198,6 +198,8 @@
         ("light_on_s", 14),
         ("light_off_n", 14),
         ("light_off_s", 14),
+        ("light_glow_n", 14),
+        ("light_glow_s", 14),
         ("light_broken_n", 14),
         ("light_broken_s", 14),
         ("light_empty_n", 14),
@@ -245,5 +247,12 @@
         "apcov_lt_off",
         "apcov_env_on",
         "apcov_env_off",
+        // A lit tube is the light's own source, so its glow layer reads
+        // through the dark (assets/sprites/10-turf-fixtures-and-tools.ron).
+        "light_glow",
+        "light_glow_s",
+        "light_glow_n",
+        "light_glow_e",
+        "light_glow_w",
     ],
 )

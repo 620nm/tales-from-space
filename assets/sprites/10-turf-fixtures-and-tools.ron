@@ -449,6 +449,15 @@
         ("light_off_n", Dmi("@lighting", "tube", 1)),
         ("light_off_e", Dmi("@lighting", "tube", 2)),
         ("light_off_w", Dmi("@lighting", "tube", 3)),
+        // `light_on*`'s overlay layer alone, greyed: stacked over the
+        // matching `light_off*` it redraws `light_on*` in whatever colour
+        // multiplies it, so the tube shows the colour it emits. The tint
+        // is only the default a preview draws.
+        ("light_glow", Tinted(Luminance(Dmi("@lighting_overlay", "tube", 0)), (243, 255, 250))),
+        ("light_glow_s", Tinted(Luminance(Dmi("@lighting_overlay", "tube", 0)), (243, 255, 250))),
+        ("light_glow_n", Tinted(Luminance(Dmi("@lighting_overlay", "tube", 1)), (243, 255, 250))),
+        ("light_glow_e", Tinted(Luminance(Dmi("@lighting_overlay", "tube", 2)), (243, 255, 250))),
+        ("light_glow_w", Tinted(Luminance(Dmi("@lighting_overlay", "tube", 3)), (243, 255, 250))),
         // The other three sockets tg draws (light.dm's update_icon_state
         // switch): shattered glass, an empty fitting, a burned-out tube.
         // None of them glow, so none of them wear the emissive overlay.
