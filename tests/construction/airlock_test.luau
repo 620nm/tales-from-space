@@ -90,8 +90,8 @@ local VESTIBULE = [==[(
 -- partner lies in, and the link resolves only because both of them do
 -- (airlock.dm:235 throws away a door that does not point back).
 local LINKED = VESTIBULE:gsub(
-    'structures: %[%(%s*1, 2, "player_spawn"%), %(2, 2, "player_spawn"%)%],',
-    'structures: [(1, 2, "player_spawn"), (2, 2, "player_spawn")],\n    cycle_links: [(5, 2, East), (7, 2, West)],'
+    'structures: %[%(%s*1, 2, "player_spawn"%), %(2, 2, "player_spawn"%), %(4, 1, "apc"%)%],',
+    'structures: [(1, 2, "player_spawn"), (2, 2, "player_spawn"), (4, 1, "apc")],\n    cycle_links: [(5, 2, East), (7, 2, West)],'
 )
 
 -- Walk east out of the room, through the inner airlock (bump opens it),
