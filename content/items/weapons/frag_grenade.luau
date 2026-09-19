@@ -16,7 +16,7 @@ local residue_kinds = require("@lib/residue_kinds")
 -- answers a second pin-pull with a refusal, and the only thing that
 -- stops the fuse is the grenade coming apart first. The blast is the
 -- pack's own two bands plus an engine volley (lib/blast.luau), not
--- tg's explosion radii, and the residue is dust and ash
+-- tg's explosion radii, and the residue is shards and fallout and ash
 -- (lib/residue_kinds.luau).
 local FUSE_SECONDS = 5
 
@@ -73,14 +73,13 @@ if sim ~= nil then
     end
 
     -- In order: the grenade is gone first, then the ash on its tile,
-    -- the direct blast over the nine tiles round it, the dirt over the
-    -- same nine, the part the room sees, and the volley the tick flies
-    -- home. Every mutation but the fifth is an attributed ledger row;
-    -- the fifth rides the FOV-filtered lanes. The dirt grounds at
-    -- detonate time -- the detonation anchors where the grenade sits,
-    -- so all nine tiles are in reach -- and the engine's
-    -- `volley_settled` signals go unheard: nothing here reads where
-    -- the pellets came down.
+    -- the direct blast over the nine tiles round it, the fallout over
+    -- the same nine, the part the room sees, and the volley the tick
+    -- flies home. Every mutation but the fifth is an attributed ledger
+    -- row; the fifth rides the FOV-filtered lanes. The fallout grounds
+    -- at detonate time -- the detonation anchors where the grenade
+    -- sits, so all nine tiles are in reach -- and the shards land
+    -- later, a landing tile at a time off the settle signals below.
     local function detonate(self: Handle, user: Handle): ()
         local at = live_tile(self, user)
         if at == nil then
@@ -99,6 +98,20 @@ if sim ~= nil then
         blast.cast(at)
         blast.burst(at)
     end
+
+    -- Where the fragments came DOWN. The engine fires one
+    -- `lunatic/tfs:volley_settled` per landing tile when a volley
+    -- settles -- strikes keep no landing, so struck tiles hear
+    -- nothing -- and each signal anchors on its own tile, so this
+    -- deposit lands in reach however far the pellet flew. Shards at
+    -- landings only; the blast area wears fallout, never these.
+    sim.event("lunatic/tfs:volley_settled", {
+        family = "notification",
+        payload = { at = "TileAddress", fragments = "u32" },
+    })
+    sim.handle("lunatic/tfs:volley_settled", { kind = "react" }, function(ev)
+        sim.volley_residue_deposit(ev.at.x, ev.at.y, ev.fragments)
+    end)
 
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self, user = ev.subject, ev.actor

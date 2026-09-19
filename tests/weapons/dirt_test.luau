@@ -2,16 +2,18 @@ local composition = require("@helpers/composition")
 local ui_controls = require("@helpers/ui_controls")
 
 -- What a blast leaves on the deck: a quarter mole of ash as ordinary
--- solid matter, and a blast's worth of dust as engine residue. The ash
--- half is minted on the blast tile, rests solid, and is not something
--- a mop lifts. The dust half rides the volley residue verbs: the
--- detonation grounds one blast's worth over the nine blast tiles
--- (`sim.volley_residue_deposit` per tile, seven on the center and one
--- on each ring tile) and every mop stroke sweeps its tile clean
--- (`sim.volley_residue_clear`). Both halves are asserted here -- the
--- ash by matter and mint, the dust by ledger rows and by sight -- with
--- tools/test-residue-tiers.mjs pinning the file's own numbers beside
--- them.
+-- solid matter, cloudy fallout over the blast area's floor tiles, and
+-- shards where the pellets came down. The ash half is minted on the
+-- blast tile, rests solid, and is not something a mop lifts. The
+-- cloudy half rides the fallout verb at detonate time
+-- (`sim.volley_fallout_deposit` per floor tile, seven on the center
+-- and one on each ring tile, walls refused); the shard half rides the
+-- landing verb off the settle signals (`sim.volley_residue_deposit`
+-- per landing, none where a pellet struck). Every mop stroke sweeps
+-- its tile's every kind clean (`sim.volley_residue_clear`). All three
+-- halves are asserted here -- the ash by matter and mint, the dirt by
+-- ledger rows and by sight -- with tools/test-residue-tiers.mjs
+-- pinning the file's own numbers beside them.
 t.world(
     [==[(
     name: "blast floor",
@@ -86,11 +88,12 @@ local liquids = assert(t.room_liquid(1, 1), "the blast tile breathes")
 assert((liquids.ash or 0) == 0, "ash rests solid, not liquid")
 
 -- ---------------------------------------------------------------
--- DUST: the burst whose fragments it is. One discharge, one settle,
--- and one blast's worth of dust across the nine blast tiles. The
--- order is the detonation's: gone, ash, blast, dirt, volley, settle --
--- the dirt grounds before the pellets leave, so the settle closes a
--- flight whose dirt is already down.
+-- DIRT: the burst whose fragments they are. One discharge, one
+-- settle, and two halves of dirt. The cloudy half grounds at
+-- detonate time over the blast area's four floor tiles -- the order
+-- is the detonation's: gone, ash, blast, fallout, volley, settle.
+-- The shard half lands later where the pellets came down, after the
+-- settle, none where a pellet struck the armer down the row.
 -- ---------------------------------------------------------------
 local discharged = t.ledger_rows("volley_discharged")
 local settled = t.ledger_rows("volley_settled")
@@ -107,37 +110,69 @@ assert(#gone == 1, "one fuse, one detonation")
 assert(gone[1].seq < minted[1].seq, "gone before the ash")
 assert(minted[1].seq < discharged[1].seq, "ash before the volley")
 
-local dirt = t.ledger_rows("residue_settled")
-assert(#dirt == 9, ("one row per blast tile, got %d"):format(#dirt))
-local resting = 0
-for _, row in ipairs(dirt) do
-    assert(row.kind == 0, "every grounding rests kind 0")
-    assert(row.seq > minted[1].seq, "every grounding rests after the ash")
-    assert(row.seq < discharged[1].seq, "and before the volley")
-    resting += ui_controls.number(row.fragments)
-end
-assert(resting == 15, ("what flies is what the blast area wears, got %d"):format(resting))
-
--- The blast tile keeps the heap, and the deck shows it: tier one's
--- debris shards, drawn but never pickable, so a click lands on the
--- turf.
-local blast_share = 0
-for _, row in ipairs(dirt) do
-    local at = ui_controls.array(row.at)
-    if at[1] == 1 and at[2] == 1 then
-        blast_share = ui_controls.number(row.total)
-    end
-end
-assert(blast_share == 7, ("the blast tile keeps its seven, got %d"):format(blast_share))
-local function shows_shards(x: number, y: number): boolean
-    for _, seen in ipairs(t.seen_composition(p, x, y)) do
-        if seen.sprite == "blast_shards" and not seen.pickable then
+-- The blast area's four floor tiles: the 3x3 round (1, 1) minus its
+-- five walls. Every cloudy row names one of them.
+local blast_floors = { "1,1", "1,2", "2,1", "2,2" }
+local function is_blast_floor(x: number, y: number): boolean
+    for _, floor in ipairs(blast_floors) do
+        if floor == ("%d,%d"):format(x, y) then
             return true
         end
     end
     return false
 end
-assert(shows_shards(1, 1), "the blast tile wears its shards")
+
+local dirt = t.ledger_rows("residue_settled")
+local cloudy = 0
+local cloudy_resting = 0
+local shards = 0
+local shards_far = 0
+for _, row in ipairs(dirt) do
+    local at = ui_controls.array(row.at)
+    local ax, ay = ui_controls.number(at[1]), ui_controls.number(at[2])
+    local share = ui_controls.number(row.fragments)
+    if row.kind == 1 then
+        assert(row.seq > minted[1].seq, "every fallout grounds after the ash")
+        assert(row.seq < discharged[1].seq, "and before the volley")
+        assert(is_blast_floor(ax, ay), ("fallout stays on the blast floors, not (%d, %d)"):format(ax, ay))
+        if ax == 1 and ay == 1 then
+            assert(share == 7, ("the center heaps seven, got %d"):format(share))
+        else
+            assert(share == 1, "the ring dusts one each")
+        end
+        cloudy += 1
+        cloudy_resting += share
+    else
+        assert(row.kind == 0, "two kinds rest, no third")
+        assert(row.seq > settled[1].seq, "shards land after the settle")
+        assert(ax >= 1 and ax <= 5 and ay >= 1 and ay <= 3, ("no shard on a wall (%d, %d)"):format(ax, ay))
+        if not is_blast_floor(ax, ay) then
+            shards_far += 1
+        end
+        shards += share
+    end
+end
+assert(cloudy == 4, ("four floor tiles wear fallout, got %d"):format(cloudy))
+assert(cloudy_resting == 10, ("the blast grounds ten, got %d"):format(cloudy_resting))
+assert(shards == 13, ("thirteen pellets settle, got %d"):format(shards))
+assert(shards_far == 6, ("six landings past the blast floors, got %d"):format(shards_far))
+
+-- The blast tile keeps the heap, and the deck shows it: the dominant
+-- kind's tier-one sprite, drawn but never pickable, so a click lands
+-- on the turf.
+local function shows(x: number, y: number, sprite: string): boolean
+    for _, seen in ipairs(t.seen_composition(p, x, y)) do
+        if seen.sprite == sprite and not seen.pickable then
+            return true
+        end
+    end
+    return false
+end
+local function shows_dirt(x: number, y: number): boolean
+    return shows(x, y, "blast_shards") or shows(x, y, "dust")
+end
+assert(shows_dirt(1, 1), "the blast tile wears its dirt")
+assert(shows_dirt(2, 2), "diagonal to it, the ring keeps its one")
 
 -- ---------------------------------------------------------------
 -- MOP: a stroke on the ashy tile finds no liquid to lift. Ash is a
@@ -164,13 +199,25 @@ assert(
 )
 
 -- The stroke's silent half: the blast tile's whole heap lifts in one
--- row, and only that tile's -- the ring tile diagonal to it keeps its
--- one.
+-- row -- cloudy and shards together -- and only that tile's. The ring
+-- tile diagonal to it keeps its dirt.
+local blast_total = 0
+local blast_kinds = 0
+for _, row in ipairs(dirt) do
+    local at = ui_controls.array(row.at)
+    if at[1] == 1 and at[2] == 1 then
+        blast_total += ui_controls.number(row.fragments)
+        blast_kinds += 1
+    end
+end
 local swept = t.ledger_rows("residue_cleared")
 assert(#swept == 1, ("one sweep, one lifting, got %d"):format(#swept))
 local swept_at = ui_controls.array(swept[1].at)
 assert(swept_at[1] == 1 and swept_at[2] == 1, "naming the stroked tile")
-assert(swept[1].kinds == 1, "lifting the one kind that rested there")
-assert(swept[1].fragments == blast_share, "lifting the tile's whole heap")
-assert(not shows_shards(1, 1), "the blast tile is swept clean")
-assert(shows_shards(2, 2), "diagonal to it, the ring keeps its one")
+assert(swept[1].kinds == blast_kinds, "lifting every kind that rested there")
+assert(
+    ui_controls.number(swept[1].fragments) == blast_total,
+    "lifting the tile's whole heap"
+)
+assert(not shows_dirt(1, 1), "the blast tile is swept clean")
+assert(shows_dirt(2, 2), "diagonal to it, the ring keeps its dirt")
