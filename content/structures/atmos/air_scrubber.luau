@@ -139,9 +139,9 @@ return {
         -- whole air at all.
         target_kpa = 100.0,
         -- The SERVICE FACTOR ships at 1 -- one grille, its own tile,
-        -- tg's machine. The panel offers 4 (the cardinals too) and 8
-        -- (the whole ring, tg's widenet), each billed at that many
-        -- times the idle draw.
+        -- tg's machine. The panel offers 5 (its own tile plus the
+        -- four cardinals) and 9 (the whole 3x3 ring, tg's widenet),
+        -- each serviced tile billed at the idle draw.
         service = 1,
     },
     build = {

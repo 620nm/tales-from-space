@@ -231,7 +231,7 @@ assert(roster.n2 == false)
 -- and the two dials above already spell it. What no other device has
 -- is the SERVICE FACTOR -- how far the draw reaches, priced in power.
 assert(
-    service["1"] == true and service["4"] == false and service["8"] == false,
+    service["1"] == true and service["5"] == false and service["9"] == false,
     "one tile of reach out of the box"
 )
 

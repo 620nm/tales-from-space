@@ -236,7 +236,7 @@ function propertyAction(reply) {
 test("live numeric enum choices preserve primitive values and object labels", () => {
   const view = cloneView();
   liveProperties(view, [
-    { path: "service", label: "Service", type: "enum", value: 1, options: [1, 4, 8], editable: true },
+    { path: "service", label: "Service", type: "enum", value: 1, options: [1, 5, 9], editable: true },
     { path: "dial.speed", label: "Speed", type: "enum", value: 4, options: [
       { value: 1, label: "Low" }, { value: 4, label: "Medium" }, { value: 8, label: "High" },
     ], editable: true },
@@ -251,7 +251,7 @@ test("live numeric enum choices preserve primitive values and object labels", ()
   assert(dial);
   assert(mixedNumber);
   assert(mixedBoolean);
-  assert.deepEqual(service.children?.map((option) => [option.value, option.text]), [["staff-option:1", "1"], ["staff-option:4", "4"], ["staff-option:8", "8"]]);
+  assert.deepEqual(service.children?.map((option) => [option.value, option.text]), [["staff-option:1", "1"], ["staff-option:5", "5"], ["staff-option:9", "9"]]);
   assert.deepEqual(dial.children?.map((option) => [option.value, option.text]), [["staff-option:1", "Low"], ["staff-option:4", "Medium"], ["staff-option:8", "High"]]);
   assert.deepEqual(mixedNumber.children?.map((option) => [option.value, option.text]), [["staff-option:1", "1"], ["staff-option:\"1\"", "1"]]);
   assert.deepEqual(mixedBoolean.children?.map((option) => [option.value, option.text]), [["staff-option:true", "true"], ["staff-option:\"true\"", "true"]]);
@@ -259,7 +259,7 @@ test("live numeric enum choices preserve primitive values and object labels", ()
   ui.onEvent({ id: service.id, type: "change", value: service.children[1].value }, view);
   assert(node(view, "staff/live/edit/property/0/apply"));
   const serviceReply = ui.onEvent({ id: "staff/live/edit/property/0/apply", type: "activate" }, view);
-  assert.equal(propertyAction(serviceReply), 4);
+  assert.equal(propertyAction(serviceReply), 5);
   ui.onEvent({ id: dial.id, type: "change", value: dial.children[2].value }, view);
   assert(node(view, "staff/live/edit/property/1/apply"));
   const dialReply = ui.onEvent({ id: "staff/live/edit/property/1/apply", type: "activate" }, view);

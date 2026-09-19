@@ -36,7 +36,7 @@ const panel = (address, name, extra = {}) => ({
   toggles: [
     { section: label("Power"), field: `${address}/power`, label: label("Power"), on: true, on_text: label("On"), off_text: label("Off") },
     { section: label("Reach"), field: `${address}/service`, option: "1", group: `${address}/service`, label: label("Tile (1×)"), on: true, on_text: label("Selected"), off_text: label("Select") },
-    { section: label("Reach"), field: `${address}/service`, option: "4", group: `${address}/service`, label: label("Cardinals (4×)"), on: false, on_text: label("Selected"), off_text: label("Select") },
+    { section: label("Reach"), field: `${address}/service`, option: "5", group: `${address}/service`, label: label("Cardinals (5×)"), on: false, on_text: label("Selected"), off_text: label("Select") },
     { section: label("Gas"), field: `${address}/filter`, option: "carbon_dioxide", label: label("Carbon dioxide"), on: true, on_text: label("Selected"), off_text: label("Select") },
     { section: label("Gas"), field: `${address}/filter`, option: "plasma", label: label("Plasma"), on: false, on_text: label("Selected"), off_text: label("Select") },
   ],
@@ -90,7 +90,7 @@ test("inactive documents disclose sections but expose no active controls", () =>
 
 test("panel sections retain readouts, choice groups, setpoints, notice and matter", () => {
   const nodes = render({ document: "modules", control_panels: [panel("scr-02", "Air scrubber")] });
-  for (const word of ["Power", "Reach", "Gas", "Room pressure", "Cardinals (4×)", "Hold at", "Provider notice", "Oxygen"]) {
+  for (const word of ["Power", "Reach", "Gas", "Room pressure", "Cardinals (5×)", "Hold at", "Provider notice", "Oxygen"]) {
     assert(nodes.some((node) => node.text === word), `missing ${word}`);
   }
   const selection = nodes.find((node) => node.type === "button" && command(node.id)?.payload?.option === "carbon_dioxide");
