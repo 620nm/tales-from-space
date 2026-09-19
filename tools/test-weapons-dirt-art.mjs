@@ -35,3 +35,9 @@ test("sound roster configures the grenade arm click and the blast", async () => 
   assert.match(ron, /\("grenade_arm", "items\/weapons\/armbomb\.ogg"\)/);
   assert.match(ron, /\("explosion", "effects\/explosion\/explosion1\.ogg"\)/);
 });
+
+test("sound roster configures the grenade handling pair", async () => {
+  const ron = await read("assets/sounds.ron");
+  assert.match(ron, /\("grenade_pickup", "items\/handling\/grenade\/grenade_pick_up\.ogg"\)/);
+  assert.match(ron, /\("grenade_drop", "items\/handling\/grenade\/grenade_drop\.ogg"\)/);
+});

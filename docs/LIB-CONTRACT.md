@@ -24,6 +24,7 @@ The source owns exact signatures; this table records responsibility and shape.
 | Module file | Responsibility and public surface shape | Caller files or groups to resolve |
 | --- | --- | --- |
 | `action_rules.luau` | Gesture selectors; `Selector`/`Action` types; `fact`, `kind`, `deck`, `exposed_deck(network)`, `network(network)`, `primary`, `attack` return declarative records. | `lib/vessel.luau`; importing files in `items/{electronics,gear,leisure,piping,surgery,tools,vessels}/` |
+| `blast.luau` | Detonation effects; `apply(at)` deals the two-band blast damage, `burst(at)` throws the fragment volley, `cast(at)` plays the flash choreography and blast sound. | `items/weapons/frag_grenade.luau` |
 | `cards.luau` | Deck vocabulary; `FACES`, `NAMES`, `states`, `state_sprites` tables; `slug`, `read`, `count`, `picture` helpers. | `items/leisure/{card,card_deck}.luau` |
 | `controller.luau` | Guest controller execution and completions; `Voice`/`Event` types; `run` returns boolean; `device`, `message`, `service_send_done`, `door`, `pressure`, `button` handlers. | `fixtures/{access_point,air_alarm,airlock,airlock_button,bidirectional_vent}.luau` |
 | `decal_paints.luau` | Floor-decal paint vocabulary and decal opacity; `colors` array of `{id, hex}`, `defaults` array of ids, numeric `trim_opacity`/`mark_opacity`. | `compositions.luau`; `items/tools/decal_painter.luau` |
@@ -39,6 +40,7 @@ The source owns exact signatures; this table records responsibility and shape.
 | `program_slot.luau` | Live guest binding, persistence and attribution; `run(machine, id, env)` returns unknown result or nil and adds `env.mem`. | `lib/{controller,radio_relay}.luau` |
 | `radio.luau` | All radio numbers and final listener policy; channel/key tables, range constants, `radius_for`, `garble`, `keyed_words`, `status_line`, `deliver` returning `{listeners}`. | `lib/radio_relay.luau`; `fixtures/transceiver.luau`; `items/{electronics/encryption_key,gear/headset}.luau` |
 | `radio_relay.luau` | Relay receive/read/carry/send policy; `keyed_to` predicate and four handlers returning stage-specific records. | `fixtures/{access_point,network_router,transceiver}.luau` |
+| `residue_kinds.luau` | Blast residue vocabulary; `dust_kind`/`dust_per_blast` numbers, `tiers` appearance ladder, `ash_moles`/`ash_temp_k` matter spec. | `residue_appearances.luau`; `items/weapons/frag_grenade.luau`; `lib/blast.luau` |
 | `service.luau` | Fax service names and payload bounds; string/number constants, `chunks(text)` returning string array. | `fixtures/fax.luau` |
 | `shift.luau` | Shift validation, warnings and finish request; `Rules` type; `validate`, `announce`, `on_second`, `on_end`. | `gamemodes/{free_build,space_station}.luau` |
 | `stock_parts.luau` | Component efficiency ladder; `efficiency` indexed by tier; `rung(tier)` returns `{tier, efficiency}`. | `items/electronics/{capacitor,encryption_key,matter_bin,micro_laser,network_card,scanning_module,servo}.luau` |
