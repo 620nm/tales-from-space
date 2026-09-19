@@ -1,6 +1,7 @@
 -- Gameplay-feel constants, tunable to taste (docs/POWER.md). Missing
--- fields fall back to the engine's hard-coded defaults — and the test
--- suite pins THOSE defaults, so tuning here never breaks tests.
+-- fields fall back to the engine's hard-coded defaults, which the
+-- engine's own tests pin. This pack's specs boot with THESE values, so
+-- a change here can move what they measure.
 return {
     -- How far an appliance's power cord reaches, in path cells (never
     -- through walls; closed doors count as walls). Engine default: 6.
