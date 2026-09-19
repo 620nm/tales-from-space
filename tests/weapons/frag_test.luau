@@ -96,6 +96,32 @@ local function at(x: number, y: number): boolean
     return t.item_at(x, y, "frag_grenade") ~= nil
 end
 
+-- One blast's aftermath on the record: the discharge names the
+-- reference params, the settle closes it, and the settle hook lays one
+-- blast's worth of kind-0 dust across the landing tiles, each row after
+-- the settle that caused it.
+local dirt_seen = 0
+local function blast_dirt(n: number): ()
+    local discharged = t.ledger_rows("volley_discharged")[n]
+    local settled = t.ledger_rows("volley_settled")[n]
+    assert(discharged.radius == 10, ("blast %d is thrown to ten tiles"):format(n))
+    assert(discharged.fragments == 15, ("blast %d throws fifteen"):format(n))
+    assert(discharged.damage == 14, ("blast %d flies at tg's force"):format(n))
+    assert(settled.fragments == 15, ("blast %d settles fifteen"):format(n))
+    assert(discharged.seq < settled.seq, ("blast %d brackets its flight"):format(n))
+    local dirt = t.ledger_rows("residue_settled")
+    local resting = 0
+    for index, row in ipairs(dirt) do
+        assert(row.kind == 0, "every landing rests kind 0")
+        if index > dirt_seen then
+            assert(row.seq > settled.seq, "the dirt lands after its settle")
+        end
+        resting += row.fragments
+    end
+    assert(resting == 15 * n, ("the blasts rest %d pellets' dust, got %d"):format(15 * n, resting))
+    dirt_seen = #dirt
+end
+
 -- ---------------------------------------------------------------
 -- HELD: primed and never let go. A grenade in a hand carries no tile
 -- of its own, so this is the nested-position edge: it bursts where
@@ -124,6 +150,27 @@ assert(has(t.sounds(p0), "explosion"), "the room hears the blast")
 assert(math.abs(burn(p0) - 20) < 0.01, ("the holder takes the center: %g burn"):format(burn(p0)))
 assert(brute(p0) >= 40, ("and the center's brute: %g"):format(brute(p0)))
 assert(burn(v1) == 0, "four tiles off, the spawn stack feels nothing")
+
+-- THE ORDER: gone, ash, blast, volley, settle, dirt. The direct blast's
+-- own hurt is the damage already on the record ahead of the discharge
+-- -- no strike can precede the volley that threw it -- and it lands
+-- between the ash and the volley on the detonation tick.
+local gone = t.ledger_rows("item_destroyed")
+local minted = t.ledger_rows("minted")
+assert(#gone == 1 and #minted == 1, "one detonation, one mint")
+assert(gone[1].seq < minted[1].seq, "gone before the ash")
+local first_discharge = t.ledger_rows("volley_discharged")[1]
+assert(minted[1].seq < first_discharge.seq, "ash before the volley")
+local direct = 0
+for _, row in ipairs(t.ledger_rows("Damaged")) do
+    if row.seq < first_discharge.seq then
+        direct += 1
+        assert(row.tick == first_discharge.tick, "the blast lands on the detonation tick")
+        assert(minted[1].seq < row.seq, "after the ash")
+    end
+end
+assert(direct > 0, "the direct blast is on the record")
+blast_dirt(1)
 
 -- ---------------------------------------------------------------
 -- STATIONS: everyone walks out before the next three go off.
@@ -220,6 +267,13 @@ assert(math.abs(burn(p0) - 20) < 0.01, "and the first blast's victim is untouche
 -- aggregate there.
 assert(#t.ledger_rows("volley_discharged") == 2, "two blasts, two volleys")
 assert(#t.ledger_rows("volley_settled") == 2, "both settled")
+blast_dirt(2)
+
+-- The deck blast's volley shredded its own armer: ten tiles of
+-- fragments cut everyone standing, and the throw below needs hands,
+-- not history. The armer's brute is set back to zero -- the burn pool
+-- keeps its twenty, and the next half proves its own.
+t.set_health(p1, { brute = 0 })
 
 -- ---------------------------------------------------------------
 -- THROWN: primed, then thrown. The fuse outlives the flight and the
@@ -257,6 +311,7 @@ assert(brute(vl) >= 40, "with the center's brute")
 assert(math.abs(burn(p1) - 20) < 0.01, "three tiles back, the thrower is untouched")
 assert(#t.ledger_rows("volley_discharged") == 3, "the thrown blast threw too")
 assert(#t.ledger_rows("volley_settled") == 3, "and settled")
+blast_dirt(3)
 
 -- ---------------------------------------------------------------
 -- DIAGONAL: both orthogonal corners are wall, and the ring takes its
@@ -264,6 +319,10 @@ assert(#t.ledger_rows("volley_settled") == 3, "and settled")
 -- strictly between the ends, and adjacent tiles have none -- so this
 -- pins the corner rule rather than the wall.
 -- ---------------------------------------------------------------
+-- Three volleys have cut the second armer standing idle; the priming
+-- below needs hands, so the brute is set back to zero like the first
+-- armer's was. The burn pool is still empty and stays the proof.
+t.set_health(p2, { brute = 0 })
 t.click(p2, 8, 2, t.target_at(p2, 8, 2, "frag_grenade"))
 t.tick()
 t.use_self(p2)
@@ -277,3 +336,4 @@ assert(math.abs(burn(v3) - 10) < 0.01, ("past corner walls, the full ring: %g"):
 assert(burn(v2) == 0, "four tiles down, still no burn")
 assert(#t.ledger_rows("volley_discharged") == 4, "four blasts, four volleys")
 assert(#t.ledger_rows("volley_settled") == 4, "four settles")
+blast_dirt(4)

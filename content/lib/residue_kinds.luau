@@ -3,17 +3,19 @@
 -- Dust is engine residue: spent fragments at rest as counts on tiles,
 -- not things (the engine's docs/physics/residue.md). Kind 0 is the
 -- engine's settled number; this pack dresses it as dust and lays one
--- blast's worth down per detonation. Ash is matter: the ash substance
--- minted onto the blast tile, riding the ordinary matter ledger and
--- the powder art. One file owns both so the grenade, the appearances
--- roster and the mop cannot disagree about what a blast left.
+-- blast's worth down per detonation, a landing tile at a time off the
+-- settle hook (items/weapons/frag_grenade.luau). Ash is matter: the
+-- ash substance minted onto the blast tile, riding the ordinary matter
+-- ledger and the powder art. One file owns both so the grenade, the
+-- appearances roster and the mop cannot disagree about what a blast
+-- left.
 --
 -- DUST_PER_BLAST is also the volley count (lib/blast.luau): what flies
--- is what rests. The heavy tier sits past one blast, so a single
--- detonation dusts and a second one on the same tile cakes.
+-- is what rests. The heavy tier sits past two blasts, so one
+-- detonation dusts and only repeated pounding of the same tiles cakes.
 local residue_kinds = {
     dust_kind = 0,
-    dust_per_blast = 16,
+    dust_per_blast = 15,
     tiers = {
         { at = 1, sprites = { "dust" } },
         {

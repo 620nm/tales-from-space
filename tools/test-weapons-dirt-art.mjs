@@ -16,6 +16,12 @@ test("weapons family declares the frag grenade's rest and armed cells", async ()
   assert.match(ron, /\("frag_active", Dmi\("@grenade", "frag_active", 0\)\)/);
 });
 
+test("weapons family declares the flying fragment's shrapnel cell", async () => {
+  const ron = await read("assets/sprites/12-weapons.ron");
+  assert.match(ron, /\("debris", "obj\/debris\.dmi"\)/);
+  assert.match(ron, /\("shrapnel", Dmi\("@debris", "large", 0\)\)/);
+});
+
 test("dirt family declares junctions, flats, dust, scorch and blast fire", async () => {
   const ron = await read("assets/sprites/13-dirt.ron");
   assert.match(ron, /\("dirt", "effects\/dirt\.dmi"\)/);

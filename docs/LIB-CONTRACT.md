@@ -24,7 +24,7 @@ The source owns exact signatures; this table records responsibility and shape.
 | Module file | Responsibility and public surface shape | Caller files or groups to resolve |
 | --- | --- | --- |
 | `action_rules.luau` | Gesture selectors; `Selector`/`Action` types; `fact`, `kind`, `deck`, `exposed_deck(network)`, `network(network)`, `primary`, `attack` return declarative records. | `lib/vessel.luau`; importing files in `items/{electronics,gear,leisure,piping,surgery,tools,vessels}/` |
-| `blast.luau` | Detonation effects; `apply(at)` deals the two-band blast damage, `burst(at)` throws the fragment volley, `cast(at)` plays the flash choreography and blast sound. | `items/weapons/frag_grenade.luau` |
+| `blast.luau` | Detonation effects, in call order; `apply(at)` deals the two-band blast damage, `cast(at)` plays the flash choreography and blast sound, `burst(at)` throws the fragment volley. | `items/weapons/frag_grenade.luau` |
 | `cards.luau` | Deck vocabulary; `FACES`, `NAMES`, `states`, `state_sprites` tables; `slug`, `read`, `count`, `picture` helpers. | `items/leisure/{card,card_deck}.luau` |
 | `controller.luau` | Guest controller execution and completions; `Voice`/`Event` types; `run` returns boolean; `device`, `message`, `service_send_done`, `door`, `pressure`, `button` handlers. | `fixtures/{access_point,air_alarm,airlock,airlock_button,bidirectional_vent}.luau` |
 | `decal_paints.luau` | Floor-decal paint vocabulary and decal opacity; `colors` array of `{id, hex}`, `defaults` array of ids, numeric `trim_opacity`/`mark_opacity`. | `compositions.luau`; `items/tools/decal_painter.luau` |

@@ -72,10 +72,12 @@ if sim ~= nil then
         return nil
     end
 
-    -- In order: the grenade is gone first, then what it leaves -- ash
-    -- and dust on the tile, the direct blast, the volley, and the part
-    -- the room sees. Every mutation but the last is an attributed
-    -- ledger row; the last rides the FOV-filtered lanes.
+    -- In order: the grenade is gone first, then the ash on its tile,
+    -- the direct blast over the nine tiles round it, the part the room
+    -- sees, and the volley the tick flies home. Every mutation but the
+    -- fourth is an attributed ledger row; the fourth rides the
+    -- FOV-filtered lanes. The dust lands later, a landing tile at a
+    -- time off the settle hook below.
     local function detonate(self: Handle, user: Handle): ()
         local at = live_tile(self, user)
         if at == nil then
@@ -89,11 +91,24 @@ if sim ~= nil then
             moles = residue_kinds.ash_moles,
             temp_k = residue_kinds.ash_temp_k,
         })
-        sim.volley_residue_deposit(at.x, at.y, residue_kinds.dust_per_blast)
         blast.apply(at)
-        blast.burst(at)
         blast.cast(at)
+        blast.burst(at)
     end
+
+    -- Where the fragments came DOWN. The engine fires one
+    -- `lunatic/tfs:volley_settled` per landing tile when a volley
+    -- settles, and each signal anchors on its own tile, so this
+    -- deposit lands in reach however far the pellet flew. The pack
+    -- declares only what it reads: the landing tile and the pellets
+    -- that came down on it.
+    sim.event("lunatic/tfs:volley_settled", {
+        family = "notification",
+        payload = { at = "TileAddress", fragments = "u32" },
+    })
+    sim.handle("lunatic/tfs:volley_settled", { kind = "react" }, function(ev)
+        sim.volley_residue_deposit(ev.at.x, ev.at.y, ev.fragments)
+    end)
 
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self, user = ev.subject, ev.actor

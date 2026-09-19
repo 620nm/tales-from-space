@@ -1,17 +1,18 @@
-// The residue ladder: what settled dust draws at one blast and at two.
+// The residue ladder: what settled dust draws at one blast and past two.
 // The engine discloses the dominant kind per tile off this file, so these
-// rows pin the numbers the specs cannot see yet -- the kind, the tiers,
-// and the layer order that puts dirt over paint and under spills.
+// rows pin the numbers the specs assert by ledger and by sight -- the
+// kind, the per-blast count, the tiers, and the layer order that puts
+// dirt over paint and under spills.
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
-test("residue kinds rest one blast of dust and cake at two", async () => {
+test("residue kinds rest one blast of dust and cake past two", async () => {
   const kinds = await read("content/lib/residue_kinds.luau");
   assert.match(kinds, /dust_kind = 0/);
-  assert.match(kinds, /dust_per_blast = 16/);
+  assert.match(kinds, /dust_per_blast = 15/);
   assert.match(kinds, /\{ at = 1, sprites = \{ "dust" \} \}/);
   assert.match(kinds, /at = 32/);
   for (const flat of [0, 1, 2, 3]) {

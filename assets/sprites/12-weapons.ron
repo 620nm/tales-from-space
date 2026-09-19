@@ -8,6 +8,7 @@
     // Sheet aliases are local to this family; @names below resolve here.
     sheets: [
         ("grenade", "obj/weapons/grenade.dmi"),
+        ("debris", "obj/debris.dmi"),
     ],
     sprites: [
         // tg's frag grenade (`/obj/item/grenade/frag`,
@@ -18,5 +19,11 @@
         // single-dir; ART ONLY, no arming or shrapnel behavior is ported.
         ("frag", Dmi("@grenade", "frag", 0)),
         ("frag_active", Dmi("@grenade", "frag_active", 0)),
+        // The flying fragment's cell: tg's frag shrapnel
+        // (`/obj/item/shrapnel`, code/game/objects/items/shrapnel.dm:1-7)
+        // wears debris.dmi's `large`, single-frame, single-dir. The
+        // engine's flight asks for this name (its FRAGMENT_SPRITE); the
+        // pack owns the cell it means.
+        ("shrapnel", Dmi("@debris", "large", 0)),
     ],
 )
