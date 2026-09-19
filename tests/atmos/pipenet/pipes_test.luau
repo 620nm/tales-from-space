@@ -296,10 +296,10 @@ assert(
 --
 -- The walk back is not ceremony. The decompression dragged the engineer
 -- north onto the hole's own tile ("The rushing air drags you north!"):
--- one tile in, the wind peaks near 0.35 Pa, over `wind_drag_pa`
+-- one tile in, the wind peaks near 0.54 Pa, over `wind_drag_pa`
 -- (content/tuning.luau), and reach is reach -- a job interrupted by the
 -- hull opening is a job you have to walk back to. Two tiles in, where
--- the pipe lay, the wind peaks near 0.09 Pa.
+-- the pipe lay, the wind peaks near 0.23 Pa, under `wind_slide_pa`.
 t.swap_hands(q)
 t.run_ticks(2)
 t.move(q, "south")

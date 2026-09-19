@@ -59,7 +59,7 @@ assert(east2 < 0, "and it is running WEST, toward the hole: " .. east2)
 -- front of it: a jet loses itself as it spreads (momentum transport,
 -- §9 5c). The two tiles nearest the hole both run at the field's cap,
 -- 2 m/s (lunatic docs/matter-world/momentum.md, `V_CAP`); from the
--- third tile back the speed falls tile by tile, 1.8 to 0.4 m/s.
+-- third tile back the speed falls tile by tile, 1.9 to 0.5 m/s.
 local s3 = speed(3, 1)
 assert(s3 > 0, "the corridor behind it is moving too, got " .. s3)
 assert(s3 <= s2, "and no faster than the tile at the hole: " .. s3 .. " vs " .. s2)
