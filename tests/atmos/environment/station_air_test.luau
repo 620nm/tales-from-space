@@ -62,8 +62,20 @@ assert(room_of(COMMONS[1], COMMONS[2], "o2") > 0.0, "still with oxygen in it")
 -- `t.foul_room` standing in for lungs the station does not have enough
 -- of to do this in a test's worth of ticks.
 -- ---------------------------------------------------------------
-local CO2_CHAMBER = { 24, 33 }
-local chamber_0 = room_of(CO2_CHAMBER[1], CO2_CHAMBER[2], "co2")
+-- The chamber is weighed whole, all six tiles. A sealed room on a
+-- radiating hull cools unevenly and bulk flow evens its pressure across
+-- that temperature map, so one tile's share drifts by a hundredth of a
+-- mole while the chamber's own book does not move.
+local function co2_chamber(): number
+    local sum = 0.0
+    for y = 33, 34 do
+        for x = 23, 25 do
+            sum = sum + room_of(x, y, "co2")
+        end
+    end
+    return sum
+end
+local chamber_0 = co2_chamber()
 assert(chamber_0 > 0.0, "the CO2 chamber opens holding carbon dioxide: " .. chamber_0)
 
 -- Foul the tile the scrubber stands on, which is how a real one would
@@ -86,9 +98,9 @@ assert(left < fouled * 0.5, "the scrubber took most of it back: " .. fouled .. "
 -- number this file can assert its way past. Until that pass, the
 -- claim stops at the loop's edge: the room is clean and the carbon
 -- is IN the loop, not lost.
-local chamber_1 = room_of(CO2_CHAMBER[1], CO2_CHAMBER[2], "co2")
+local chamber_1 = co2_chamber()
 assert(
-    chamber_1 >= chamber_0,
+    chamber_1 >= chamber_0 - 1e-9,
     "the chamber never leaks what it holds: " .. chamber_0 .. " -> " .. chamber_1
 )
 
@@ -195,12 +207,12 @@ for _, x in ipairs({ 22, 23, 24 }) do
     t.set_composition(x, 16, "bare")
 end
 t.run_seconds(90)
--- Note what this number is NOT. Three tiles open to space and ninety
--- seconds later the Commons is at about half an atmosphere and holding
--- -- not at zero. The vents are fighting the hole and roughly matching
--- it, which is the department doing its job under the worst condition
--- it has, and it is only possible because the supply main has a whole
--- gas storage behind it instead of one bottle.
+-- Note what this number is NOT. Three tiles open to space and the
+-- Commons falls to about 14 kPa in twenty seconds and holds there for
+-- the rest of the ninety -- not zero. The vents are fighting the hole
+-- and matching it, which is the department doing its job under the
+-- worst condition it has, and it is only possible because the supply
+-- main has a whole gas storage behind it instead of one bottle.
 local breached = assert(t.room_pressure(COMMONS[1], COMMONS[2]))
 assert(
     breached < before_breach * 0.7,
@@ -211,9 +223,11 @@ assert(breached > 5.0, "and the supply is still fighting it: " .. breached)
 for _, x in ipairs({ 22, 23, 24 }) do
     t.set_composition(x, 16, "floor")
 end
-t.run_seconds(600)
+-- Two minutes: the Commons is back near 87 kPa at thirty seconds and
+-- near 100 by ninety.
+t.run_seconds(120)
 local recovered = assert(t.room_pressure(COMMONS[1], COMMONS[2]))
 assert(
-    recovered > breached + 10.0,
+    recovered > 90.0,
     "and sealed, the station puts the air back: " .. breached .. " -> " .. recovered .. " kPa"
 )

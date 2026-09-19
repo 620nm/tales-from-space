@@ -182,18 +182,17 @@ near(held(2, 2, "co2"), 16.0, 1e-9, "all of it is standing on one tile")
 assert(sum_over(EAST, held, "co2") == 0.0, "and none of it is next door yet")
 near(assert(t.room_pressure(6, 3)), 101.325, 0.01, "which the far room's gauge agrees about")
 
--- A minute, which is what it takes. Nobody does anything.
+-- A minute and a half, which is what it takes. Nobody does anything.
 --
--- It used to be thirty-five seconds, and the difference is the share
--- gate (lunatic docs/MATTER-WORLD.md §3 step 4). A link now moves gas
--- whenever the RAW imbalance across it is worth chasing, so the frontier
--- keeps recruiting tiles and merging their excited groups -- and every
--- merge resets the group's quiet clock. The old gate let the near room
--- fall quiet early and reach uniformity through one breakdown AVERAGE,
--- which is a bookkeeping shortcut rather than transport; now the same
--- sixteen tiles get there by diffusing, which is slower and is the thing
--- being tested. It is exact at a minute and stays exact.
-t.run_seconds(60)
+-- The PRESSURE is even within ten seconds: bulk flow relaxes the
+-- fouled tile's surplus into the rooms, pushing air before it (lunatic
+-- docs/matter-world/bulk-flow.md). The carbon dioxide itself then
+-- spreads only by step 4's share toward equal partial pressure, which is
+-- diffusion and slow: at a minute the fouled tile still holds about 1.35
+-- moles and the far corner about 0.74. Once those moves fall under the
+-- quantum the rooms go quiet and their group breaks down flat (lunatic
+-- docs/matter-world/groups.md), exact by about 66 s and exact after.
+t.run_seconds(90)
 
 for _, tile in ipairs(EVERY) do
     near(

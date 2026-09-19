@@ -480,13 +480,15 @@ assert(
 )
 -- Whole air stops at the floor; the carbon dioxide does not, and on a
 -- bench with no vent nothing puts back what it took -- so the room
--- ends a little UNDER the floor, by about the carbon dioxide that was
--- still in it when whole air stopped. With a supply vent behind it,
--- that gap is what the vent fills.
+-- ends UNDER the floor, by about the carbon dioxide that was still in
+-- it when whole air stopped. The room evens out under the grille, so
+-- whole air stops within twenty seconds with some 13 kPa of carbon
+-- dioxide left, and the room ends near 87.7 kPa. With a supply vent
+-- behind it, that gap is what the vent fills.
 local came_down = room_kpa()
 assert(came_down <= PLACED_FLOOR + 2.0, "the room came down to the floor: " .. came_down)
 assert(
-    came_down > 90.0,
+    came_down > 85.0,
     "in a room still holding an atmosphere, because the floor is a"
         .. " floor: "
         .. came_down

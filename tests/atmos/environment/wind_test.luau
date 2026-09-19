@@ -45,7 +45,11 @@ assert(speed(0, 0) == 0, "a wall answers nothing")
 -- The hull fails at the west end. Nothing in this file says "breach":
 -- the turf IS space now, and everything that follows is physics.
 t.set_composition(1, 1, "bare")
-t.run_seconds(20)
+-- Three seconds in: the corridor is still emptying (about 29 kPa at its
+-- middle), and it is all but empty in ten. Read later, the field is a
+-- remnant decaying over bare deck.
+t.run_seconds(3)
+assert(assert(t.room_pressure(4, 1)) > 5, "the corridor still has air to give")
 
 local s2, east2 = speed(2, 1)
 assert(s2 > 0.05, "the air by the hole is running, got " .. s2)
