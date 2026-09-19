@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local vessel = require("@lib/vessel")
 
 -- A measured pellet of polymer resin. It is the short route around a
@@ -6,6 +7,7 @@ local vessel = require("@lib/vessel")
 local content = {
     id = "resin_pellet",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.resin_pellet.name",
     name = "resin pellet",
     sprite = "plasteel",

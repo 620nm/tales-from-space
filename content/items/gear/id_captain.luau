@@ -1,6 +1,8 @@
+local physical_profiles = require("@lib/physical_profiles")
 return {
     id = "id_captain",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.id_captain.name",
     name = "captain's ID card",
     sprite = "id",

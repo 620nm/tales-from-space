@@ -365,6 +365,10 @@
         ("backpack", Dmi("@backpack", "backpack", 0)),
         ("chemistry_backpack", Dmi("@backpack", "backpack-chemistry", 0)),
         ("headset", Dmi("@headsets", "headset", 0)),
+        // tg code/game/objects/items/tools/extinguisher.dm:1-7 uses the
+        // tools sheet's fire_extinguisher0/1 states for the safety latch.
+        ("fire_extinguisher", Dmi("@tools", "fire_extinguisher0", 0)),
+        ("fire_extinguisher_ready", Dmi("@tools", "fire_extinguisher1", 0)),
         ("welder", Dmi("@tools", "welder", 0)),
         // tg weldingtool.dm:85-92 keeps the base welder and overlays the
         // two-frame welder-on flame while welding; DmiAnimLayers repeats

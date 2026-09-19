@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- Six sides, and the whole of what a die does: it is rolled, and then
 -- somebody reads it. Ported from tg's `/obj/item/dice/d6`
 -- (code/game/objects/items/dice.dm:48-60, 156-157).
@@ -50,6 +51,7 @@ end
 local content = {
     id = "d6",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.d6.name",
     name = "d6",
     -- The resting picture, and the fallback for any state that named no

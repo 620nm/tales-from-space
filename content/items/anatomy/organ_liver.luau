@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- The liver (docs/BIOLOGY.md §1.2). An organ is an ITEM with an `organ`
 -- block: it fits a socket, carries its own pool, and adds its tags to
 -- that socket while it is seated. Take it out and the hole it leaves is
@@ -14,6 +15,7 @@
 return {
     id = "organ_liver",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.organ_liver.name",
     name = "liver",
     sprite = "organ_liver",

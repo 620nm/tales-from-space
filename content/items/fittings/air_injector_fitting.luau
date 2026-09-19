@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- An air injector, in your hands.
 --
 -- tg draws every `/obj/item/pipe` from its machine's own
@@ -6,6 +7,7 @@
 return {
     id = "air_injector_fitting",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.air_injector_fitting.name",
     name = "air injector fitting",
     sprite = "air_injector_loose",

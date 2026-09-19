@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 local RETURN_ITEMS: { [string]: string } = { standard = "pipe", he_pipe = "he_pipe" }
 
@@ -35,6 +36,7 @@ local RETURN_ITEMS: { [string]: string } = { standard = "pipe", he_pipe = "he_pi
 local content = {
     id = "wrench",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.wrench.name",
     name = "wrench",
     sprite = "wrench",

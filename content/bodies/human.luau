@@ -23,6 +23,15 @@ local content = {
     -- client-side, so there is no second whole-body picture to swap to.
     sprite = "human",
     playable = true,
+    -- TfS's adult body mass for impulse exchange. The engine never infers
+    -- mass from a body roster or from worn items.
+    motion_response = {
+        mass = 80.0,
+        restitution = 0.1,
+        friction = 0.8,
+        half_extent = 0.25,
+        public_contacts = true,
+    },
 
     -- Staff body actions are engine mechanisms selected by this pack's
     -- recipe. Gib mints every declared remain through the ordinary item

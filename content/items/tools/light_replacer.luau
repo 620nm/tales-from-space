@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- The janitor's device: one click puts a fresh tube in a dead fitting.
 --
 -- It is pure data, and that is the point. The replacer does not know
@@ -8,6 +9,7 @@
 return {
     id = "light_replacer",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.light_replacer.name",
     name = "light replacer",
     sprite = "light_replacer",

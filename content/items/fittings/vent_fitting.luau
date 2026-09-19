@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- An air vent, in your hands.
 --
 -- tg draws every `/obj/item/pipe` from its machine's own `pipe_state`
@@ -7,6 +8,7 @@
 return {
     id = "vent_fitting",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.vent_fitting.name",
     name = "air vent fitting",
     sprite = "vent_loose",

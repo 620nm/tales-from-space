@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- Plasteel: iron and plasma alloyed into the sheet a station's hard
 -- parts are made of (tg sheet_types.dm:309-312, "an alloy of iron and
 -- plasma"). What it BUILDS is written where it is built, the same as
@@ -12,6 +13,7 @@
 return {
     id = "plasteel",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.plasteel.name",
     name = "plasteel sheets",
     sprite = "plasteel",

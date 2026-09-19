@@ -41,7 +41,7 @@ export type Spec = {
     soak: { message: string?, dry: string?, full: string? }?,
 }
 type Line = { key: string, args: { [string]: string | number | boolean | UnsafeMarkup } }
-type GestureResult = boolean | { replaced: boolean }
+export type GestureResult = boolean | { replaced: boolean }
 
 local vessel = {}
 
@@ -215,6 +215,19 @@ local function charge(
         message = sim.msg(CHARGED, { noun = spec.noun }),
     })
     return true
+end
+
+-- A specialized pressurized tool can keep this same valve stroke while
+-- owning a different primary gesture. The source remains a machine and
+-- the vessel remains sealed; only the caller's target behavior changes.
+function vessel.charge(
+    spec: Spec,
+    self: Handle,
+    user: Handle,
+    source: Handle,
+    at: TileAddress
+): GestureResult
+    return charge(spec, self, user, source, at)
 end
 
 -- Nothing left worth pouring. One sentence for all four gestures,

@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- A layer adapter, in your hands.
 --
 -- tg draws every `/obj/item/pipe` from its machine's own
@@ -6,6 +7,7 @@
 return {
     id = "layer_adapter_fitting",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.layer_adapter_fitting.name",
     name = "layer adapter fitting",
     sprite = "layer_adapter_loose",

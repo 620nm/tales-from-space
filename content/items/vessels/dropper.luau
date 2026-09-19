@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local vessel = require("@lib/vessel")
 
 -- The dropper: five units of anything, moved a unit at a time. The
@@ -20,6 +21,7 @@ local vessel = require("@lib/vessel")
 local content = {
     id = "dropper",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.dropper.name",
     name = "dropper",
     sprite = "dropper",

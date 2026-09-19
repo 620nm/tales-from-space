@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 
 -- Repairs what the wirecutters undo, on whichever of the station's
@@ -34,6 +35,7 @@ local LINES = {
 local content = {
     id = "cable_coil",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.cable_coil.name",
     name = "cable coil",
     sprite = "coil",

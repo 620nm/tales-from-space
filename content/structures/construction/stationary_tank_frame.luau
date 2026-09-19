@@ -31,6 +31,13 @@ return {
     name = "tank frame",
     sprite = "stationary_tank_frame",
     dense = true,
+    motion_response = {
+        mass = 50.0,
+        restitution = 0.1,
+        friction = 0.8,
+        half_extent = 0.45,
+        public_contacts = true,
+    },
     states = { "displaced", "anchored", "plated" },
     state_sprites = {
         displaced = "stationary_tank_frame",

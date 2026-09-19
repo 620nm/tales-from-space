@@ -26,6 +26,13 @@ return {
     name = "locker",
     sprite = "locker",
     dense = true,
+    motion_response = {
+        mass = 50.0,
+        restitution = 0.1,
+        friction = 0.8,
+        half_extent = 0.45,
+        public_contacts = true,
+    },
     opaque = false,
     states = { "closed", "open" },
     state_sprites = { open = "locker_open" },

@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- A pressure valve, in your hands.
 --
 -- tg's `/obj/item/pipe/directional` pointed at
@@ -6,6 +7,7 @@
 return {
     id = "pressure_valve_fitting",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.pressure_valve_fitting.name",
     name = "pressure valve fitting",
     sprite = "pressure_valve_loose",

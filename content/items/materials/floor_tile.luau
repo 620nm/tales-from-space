@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- Floor tiles. Space knows a tile lays plating over it (and only next
 -- to something solid — the station grows outward, never floats);
 -- plating knows a tile finishes it into floor. Both statements live
@@ -5,6 +6,7 @@
 return {
     id = "floor_tile",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.floor_tile.name",
     name = "floor tiles",
     sprite = "floor_tile",

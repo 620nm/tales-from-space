@@ -48,6 +48,20 @@ otherwise the substrate does. Substrate vacuum boundaries are independent of
 support, horizontal gas blocking, and outdoor forcing. Station base seals the
 boundary; an exposed space substrate remains a boundary below a catwalk.
 
+## Gravity and handholds
+
+Station base and walls receive the station gravity field. Uncovered space,
+lattice, and catwalk do not. Terrestrial environments have gravity everywhere,
+including authored vacuum tiles; an explicit microgravity space environment
+disables gravity throughout. The station field is assumed enabled until
+generator control is implemented.
+
+In zero gravity, a body can brace against a wall, lattice, catwalk, or blocking
+object on its tile or any of its eight neighbours. A bare floor supplies no
+handhold. Pushing off a movable blocking object sends that object oppositely.
+Structural support, handholds, gravity reception, and atmosphere sealing are
+independent composition properties.
+
 ## Decals
 
 `content/compositions.luau` declares eleven floor decals on a `decal` visual

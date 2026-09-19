@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- tg's chemistry bag is a belt container for pills, patches and vessels
 -- (code/game/objects/items/storage/bags.dm:429-436; its accepted roster
 -- is code/datums/storage/subtypes/bags.dm:142-158). TfS containers do
@@ -6,6 +7,7 @@
 return {
     id = "chemistry_bag",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.chemistry_bag.name",
     name = "chemistry bag",
     sprite = "chemistry_bag",

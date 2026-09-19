@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- A junction, in your hands.
 --
 -- tg draws every `/obj/item/pipe` from its machine's own `pipe_state`
@@ -6,6 +7,7 @@
 return {
     id = "he_junction_fitting",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.he_junction_fitting.name",
     name = "junction fitting",
     sprite = "he_junction_loose",

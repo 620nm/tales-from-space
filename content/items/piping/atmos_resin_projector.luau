@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 
 -- The hand-held half of tg's atmospherics emergency resin kit. tg's
@@ -14,6 +15,7 @@ local action_rules = require("@lib/action_rules")
 local content = {
     id = "atmos_resin_projector",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.atmos_resin_projector.name",
     name = "atmos resin projector",
     -- Reuse the rapid pipe dispenser silhouette until the next asset

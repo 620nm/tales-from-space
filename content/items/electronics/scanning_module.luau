@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local stock_parts = require("@lib/stock_parts")
 
 -- A scanning module: the stock part that decides how WELL a machine
@@ -17,6 +18,7 @@ local stock_parts = require("@lib/stock_parts")
 return {
     id = "scanning_module",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.scanning_module.name",
     name = "scanning module",
     sprite = "scan_module",

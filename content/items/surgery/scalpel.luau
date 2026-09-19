@@ -1,7 +1,9 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- The first thing a surgeon reaches for (tg surgery_tools.dm:208-231).
 local content = {
     id = "scalpel",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.scalpel.name",
     name = "scalpel",
     sprite = "scalpel",

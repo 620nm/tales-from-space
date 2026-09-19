@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local radio = require("@lib/radio")
 local stock_parts = require("@lib/stock_parts")
 
@@ -26,6 +27,7 @@ local stock_parts = require("@lib/stock_parts")
 local content = {
     id = "encryption_key",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.encryption_key.name",
     name = "encryption key",
     sprite = "encryption_key",

@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 
 -- A meter, in your hands rather than on a run.
@@ -22,6 +23,7 @@ local CHANNELS = { "l1", "l2", "l3", "l4", "l5" }
 local content = {
     id = "pipe_meter",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.pipe_meter.name",
     name = "meter",
     -- tg's `icon_state = "meter"` off the fittings sheet: the gauge

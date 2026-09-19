@@ -18,6 +18,13 @@ return {
     name = "girder",
     sprite = "girder",
     dense = true,
+    motion_response = {
+        mass = 50.0,
+        restitution = 0.1,
+        friction = 0.8,
+        half_extent = 0.45,
+        public_contacts = true,
+    },
     states = { "anchored", "displaced" },
     state_sprites = { displaced = "girder_displaced" },
     -- Nothing holds a displaced girder to the deck, so a walker can

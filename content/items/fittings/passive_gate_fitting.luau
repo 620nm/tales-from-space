@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- A passive gate, in your hands.
 --
 -- tg's `/obj/item/pipe/directional` pointed at `.../binary/passive_gate`
@@ -6,6 +7,7 @@
 return {
     id = "passive_gate_fitting",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.passive_gate_fitting.name",
     name = "passive gate fitting",
     sprite = "passive_gate_loose",

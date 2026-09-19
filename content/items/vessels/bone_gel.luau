@@ -1,8 +1,10 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- Sets a bone back together (tg stacks/medical.dm:753). A single tube
 -- here rather than tg's stack -- the count is not what B2 needs.
 return {
     id = "bone_gel",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.bone_gel.name",
     name = "bone gel",
     sprite = "bone_gel",

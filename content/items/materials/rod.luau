@@ -1,8 +1,10 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- Metal rods. Two of them weave a grille, which is the skeleton every
 -- window hangs in.
 return {
     id = "rod",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.rod.name",
     name = "metal rods",
     sprite = "rods",

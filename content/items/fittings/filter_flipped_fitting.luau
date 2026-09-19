@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- The mirrored filter, as a fitting. tg's
 -- `/obj/item/pipe/trinary/flippable/filter` with its `flipped` var
 -- turned over (construction.dm; the machine is filter.dm:202-204).
@@ -10,6 +11,7 @@
 return {
     id = "filter_flipped_fitting",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.filter_flipped_fitting.name",
     name = "flipped filter fitting",
     sprite = "filter_fitting",

@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local stock_parts = require("@lib/stock_parts")
 
 -- A network interface card: the stock part that gives a device its
@@ -25,6 +26,7 @@ local stock_parts = require("@lib/stock_parts")
 return {
     id = "network_card",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.network_card.name",
     name = "network card",
     sprite = "network_card",

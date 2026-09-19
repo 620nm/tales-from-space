@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- Reinforced glass: the same pane with rods run through it. Set into a
 -- grille it makes a window that takes real work to get back out --
 -- unscrewed before it can be pried, which is the whole point of putting
@@ -10,6 +11,7 @@
 return {
     id = "rglass",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.rglass.name",
     name = "reinforced glass sheets",
     sprite = "rglass",

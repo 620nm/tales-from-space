@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- Screws an assembly together, which is the step that turns a boarded
 -- frame into whatever its board said it was. Like every tool, this file
 -- says only what the thing IS; the frame knows what a screwdriver does
@@ -5,6 +6,7 @@
 return {
     id = "screwdriver",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.screwdriver.name",
     name = "screwdriver",
     sprite = "screwdriver",

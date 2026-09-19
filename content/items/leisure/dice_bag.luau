@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- The bag of dice: "Contains all the luck you'll ever need."
 -- tg's `/obj/item/storage/dice` (code/game/objects/items/dice.dm:6-31).
 --
@@ -36,6 +37,7 @@
 return {
     id = "dice_bag",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.dice_bag.name",
     name = "bag of dice",
     sprite = "dice_bag",

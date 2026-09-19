@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local stock_parts = require("@lib/stock_parts")
 
 -- A matter bin: the stock part that decides how MUCH a machine holds.
@@ -17,6 +18,7 @@ local stock_parts = require("@lib/stock_parts")
 return {
     id = "matter_bin",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.matter_bin.name",
     name = "matter bin",
     sprite = "matter_bin",

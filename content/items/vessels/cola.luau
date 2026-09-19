@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local vessel = require("@lib/vessel")
 
 -- Dispensed by the vending machine; drinkable since M7. Clicking your
@@ -11,6 +12,7 @@ local vessel = require("@lib/vessel")
 local content = {
     id = "cola",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.cola.name",
     name = "can of Space Cola",
     sprite = "cola",

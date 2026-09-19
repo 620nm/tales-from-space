@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local vessel = require("@lib/vessel")
 
 -- The bare beaker: empty off the shelf, and the vessel everything else
@@ -16,6 +17,7 @@ local vessel = require("@lib/vessel")
 local content = {
     id = "beaker",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.beaker.name",
     name = "beaker",
     sprite = "beaker",

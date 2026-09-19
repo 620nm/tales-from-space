@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local stock_parts = require("@lib/stock_parts")
 
 -- A micro-servo: the stock part that decides how FINE a machine's hand
@@ -17,6 +18,7 @@ local stock_parts = require("@lib/stock_parts")
 return {
     id = "servo",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.servo.name",
     name = "micro-servo",
     sprite = "micro_servo",

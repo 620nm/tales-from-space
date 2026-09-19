@@ -1,8 +1,10 @@
+local physical_profiles = require("@lib/physical_profiles")
 local vessel = require("@lib/vessel")
 
 local content = {
     id = "beaker_plastic",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.beaker_plastic.name",
     name = "x-large beaker",
     sprite = "beaker_plastic",

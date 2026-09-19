@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 
 -- Lid, power and cartridge gestures: tg laptop.dm:68-105 (a closed lid
@@ -9,6 +10,7 @@ local WALLPAPERS = { "wallpaper_bliss", "wallpaper_moonlake" }
 local content = {
     id = "laptop",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.laptop.name",
     name = "laptop",
     sprite = "laptop_closed",

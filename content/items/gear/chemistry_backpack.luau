@@ -1,8 +1,10 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- tg's chemistry backpack: the stain-resistant seven-pocket back slot
 -- (`/obj/item/storage/backpack/chemistry`, backpack.dm:182-186).
 return {
     id = "chemistry_backpack",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.chemistry_backpack.name",
     name = "chemistry backpack",
     sprite = "chemistry_backpack",

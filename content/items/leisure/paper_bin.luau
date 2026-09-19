@@ -1,9 +1,11 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- Thirty blank-sheet units. Native resource conversion materializes a paper
 -- item on draw and reclaims only a blank paper on return.
 -- tg paperbin.dm:3-18, :42-77, :91-141.
 local content = {
     id = "paper_bin",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.paper_bin.name",
     name = "paper bin",
     sprite = "paper_bin",

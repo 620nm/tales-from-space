@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- A manual valve, in your hands rather than in the run.
 --
 -- tg's `/obj/item/pipe/binary` carrying `pipe_type = .../binary/valve`
@@ -14,6 +15,7 @@
 return {
     id = "manual_valve_fitting",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.manual_valve_fitting.name",
     name = "manual valve fitting",
     sprite = "manual_valve_loose",

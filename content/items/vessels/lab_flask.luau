@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local vessel = require("@lib/vessel")
 
 -- A two-litre pressure flask for gas synthesis. It keeps the bottle's
@@ -6,6 +7,7 @@ local vessel = require("@lib/vessel")
 local content = {
     id = "lab_flask",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.lab_flask.name",
     name = "lab pressure flask",
     sprite = "bottle",

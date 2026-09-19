@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- An air scrubber, in your hands.
 --
 -- tg draws every `/obj/item/pipe` from its machine's own
@@ -6,6 +7,7 @@
 return {
     id = "air_scrubber_fitting",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.air_scrubber_fitting.name",
     name = "air scrubber fitting",
     sprite = "air_scrubber_loose",

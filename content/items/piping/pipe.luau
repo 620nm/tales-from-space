@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 
 -- A length of pipe, wrenched down under the deck on whichever of the
@@ -22,6 +23,7 @@ local action_rules = require("@lib/action_rules")
 local content = {
     id = "pipe",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.pipe.name",
     name = "pipe",
     sprite = "pipe",

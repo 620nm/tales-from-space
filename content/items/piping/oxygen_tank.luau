@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local item_actions = require("@lib/item_actions")
 
 -- The blue bottle: seventy litres at six atmospheres, worn on the back
@@ -25,6 +26,7 @@ local content = {
     },
     id = "oxygen_tank",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.oxygen_tank.name",
     name = "oxygen tank",
     sprite = "oxygen_tank",

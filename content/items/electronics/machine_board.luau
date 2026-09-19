@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- One physical machine-board shell, programmed for the machine or
 -- structure it will make a frame become. The variants are identities,
 -- not procedures: the generic frame reads the installed board's target
@@ -10,6 +11,7 @@
 return {
     id = "machine_board",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.machine_board.name",
     name = "unprogrammed machine board",
     sprite = "board",

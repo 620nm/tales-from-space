@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local vessel = require("@lib/vessel")
 
 -- The bottle: fifty units with a neck on it. Same size as the beaker
@@ -27,6 +28,7 @@ local vessel = require("@lib/vessel")
 local content = {
     id = "bottle",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.bottle.name",
     name = "bottle",
     sprite = "bottle",

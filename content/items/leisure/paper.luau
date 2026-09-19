@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local writing = require("@lib/writing")
 
 -- A single writable sheet. The file store is the paper's authoritative
@@ -6,6 +7,7 @@ local writing = require("@lib/writing")
 local content = {
     id = "paper",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.paper.name",
     name = "paper",
     sprite = "paper",

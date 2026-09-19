@@ -1,9 +1,11 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- tg storage/boxes/science_boxes.dm:27-34 supplies eight floppy disks,
 -- one of each sleeve colour. The pack supplies them unpackaged, in a
 -- rainbow; ordinary storage owns all handling.
 return {
     id = "disk_box",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.disk_box.name",
     name = "box of disks",
     sprite = "disk_box",

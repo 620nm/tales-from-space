@@ -58,6 +58,14 @@ return {
     -- twenty pre-charged subtypes.
     fixture = "Canister",
     dense = true,
+    -- A loose canister is a 50 kg brace-sized object for impulse exchange.
+    motion_response = {
+        mass = 50.0,
+        restitution = 0.1,
+        friction = 0.8,
+        half_extent = 0.45,
+        public_contacts = true,
+    },
     -- Fastened first, so a mapper who draws a canister on a port gets
     -- one that is feeding the run at roundstart.
     states = { "anchored", "displaced", "broken" },

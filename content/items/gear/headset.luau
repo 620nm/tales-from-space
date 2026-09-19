@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local radio = require("@lib/radio")
 
 -- Common-channel radio headset: carrying one anywhere on you is what
@@ -11,6 +12,7 @@ local radio = require("@lib/radio")
 local content = {
     id = "headset",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.headset.name",
     name = "radio headset",
     sprite = "headset",

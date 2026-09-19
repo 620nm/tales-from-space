@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local item_actions = require("@lib/item_actions")
 
 -- A torch does not understand every single thing it is capable of
@@ -9,6 +10,7 @@ local item_actions = require("@lib/item_actions")
 local content = {
     id = "welder",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     -- The ordinary self-use key remains available through `self`; the
     -- secondary pointer gesture makes the same toggle discoverable on a
     -- reachable tool lying in the world or held in either hand.

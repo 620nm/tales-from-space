@@ -1,4 +1,5 @@
 local action_rules = require("@lib/action_rules")
+local physical_profiles = require("@lib/physical_profiles")
 
 local SPRAY, STREAM = 0, 1
 local content = {
@@ -11,7 +12,15 @@ local content = {
     modes = 2,
     mode = SPRAY,
     acts_on_items = true,
-    ranged_use = { visual_layer = "effects", range = 5, effect = "spray_puff", sound = "spray" },
+    -- Ordinary loose items use the pack's 1 kg physical scale.
+    motion_response = physical_profiles.loose_item1kg,
+    ranged_use = {
+        visual_layer = "effects",
+        range = 5,
+        effect = "spray_puff",
+        sound = "spray",
+        recoil_per_kg = 100,
+    },
 }
 content.actions = { action_rules.primary("spray", true) }
 

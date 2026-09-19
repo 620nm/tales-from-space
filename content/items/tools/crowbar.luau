@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 
 -- The classic, both jobs: pry a floor tile off its plating (instant,
@@ -7,6 +8,7 @@ local action_rules = require("@lib/action_rules")
 local content = {
     id = "crowbar",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.crowbar.name",
     name = "crowbar",
     sprite = "crowbar",

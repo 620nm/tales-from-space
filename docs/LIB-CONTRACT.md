@@ -33,6 +33,7 @@ The source owns exact signatures; this table records responsibility and shape.
 | `netmsg.luau` | Device payload vocabulary and light priority; `Flag`/`LightFlag`/`Hazard` types, kind constants, `flags`, `standing`; constructors, validator, `winner`, `report_hazard`. | `fixtures/{air_alarm,air_scrubber,apc,light,vent}.luau` |
 | `network.luau` | Device-network examine wording; `line(node, noun, member)` returns optional `Message`. | `fixtures/{air_alarm,apc,network_router}.luau` |
 | `pipe_paints.luau` | Paint vocabulary; `colors` array of `{name, hex}`, `defaults` array of names. | `compositions.luau`; `items/piping/{pipe_painter,rpd}.luau` |
+| `physical_profiles.luau` | Pack-owned loose-body motion records; `loose_item1kg` supplies mass, collision, and public-contact defaults for throwable items. | Every prototype under `items/`; heavier bodies and fixtures declare explicit overrides. |
 | `preparation.luau` | Fair role allocation; `allocate(ev)` returns `{assignments: {AllocationAssignment}}`. | `gamemodes/space_station.luau` |
 | `printing.luau` | Printer resources, batch/tick limits; scalar constants and `costs()` returning per-output `{resource, amount}` rows. | `fixtures/{fax,photocopier}.luau` |
 | `program_slot.luau` | Live guest binding, persistence and attribution; `run(machine, id, env)` returns unknown result or nil and adds `env.mem`. | `lib/{controller,radio_relay}.luau` |
@@ -42,7 +43,7 @@ The source owns exact signatures; this table records responsibility and shape.
 | `shift.luau` | Shift validation, warnings and finish request; `Rules` type; `validate`, `announce`, `on_second`, `on_end`. | `gamemodes/{free_build,space_station}.luau` |
 | `stock_parts.luau` | Component efficiency ladder; `efficiency` indexed by tier; `rung(tier)` returns `{tier, efficiency}`. | `items/electronics/{capacitor,encryption_key,matter_bin,micro_laser,network_card,scanning_module,servo}.luau` |
 | `thermal.luau` | Pipe heat-exchange tuning; numeric `he_coefficient`, `he_deadband_k`. | `items/piping/he_pipe.luau` |
-| `vessel.luau` | Shared vessel actions and transfers; `Spec.open_to_pour` requires an open seal for condensed pours; optional-number `moles`/`headspace_l`, `actions(spec)` returns action array, `attach` returns `Definition`. | Importing `items/vessels/*.luau`; `items/tools/mop.luau`; `items/materials/resin_pellet.luau` |
+| `vessel.luau` | Shared vessel actions and transfers; `Spec.open_to_pour` requires an open seal for condensed pours; optional-number `moles`/`headspace_l`, `actions(spec)` returns action array, `attach` returns `Definition`, and `charge(spec,self,user,source,at)` reuses the sealed gas-valve stroke. | Importing `items/vessels/*.luau`; `items/tools/{fire_extinguisher,mop}.luau`; `items/materials/resin_pellet.luau` |
 | `writing.luau` | Bounded paper projection and append; `Fragment`/`PaperView` types, limits, `fragments`, `view`, boolean `open`/`update`/`append`, `attach`. | `fixtures/{fax,photocopier}.luau`; `items/leisure/{paper,four_color_pen,crayon_*}.luau` |
 
 ## Parallel-agent contract

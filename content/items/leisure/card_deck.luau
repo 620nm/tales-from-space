@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 local cards = require("@lib/cards")
 
@@ -94,6 +95,7 @@ end
 local content = {
     id = "card_deck",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.card_deck.name",
     name = "deck of cards",
     -- THE PICTURE FOLLOWS THE STRING, not a roster the engine keeps.

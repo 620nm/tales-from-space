@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 local item_actions = require("@lib/item_actions")
 local pipe_paints = require("@lib/pipe_paints")
@@ -310,6 +311,7 @@ local content = {
     },
     id = "rpd",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.rpd.name",
     name = "rapid pipe dispenser",
     -- tg's own art off the tool sheet (`icon_state = "rpd"`, RPD.dm:26).

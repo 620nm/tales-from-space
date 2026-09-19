@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 
 -- A length of heat-exchanging pipe: the run you lay when you WANT the
@@ -30,6 +31,7 @@ local LAYERS = { 2, 3, 4 }
 local content = {
     id = "he_pipe",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.he_pipe.name",
     name = "heat-exchanging pipe",
     sprite = "he_pipe",

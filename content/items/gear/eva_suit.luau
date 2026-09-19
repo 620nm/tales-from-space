@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- The suit the station keeps by the way out: sealed, unglamorous, and
 -- the only thing on board that lets a crewman work outside the hull.
 -- Pair it with a tank and the two halves of surviving vacuum are
@@ -25,6 +26,7 @@
 return {
     id = "eva_suit",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.eva_suit.name",
     name = "EVA suit",
     sprite = "eva_suit",

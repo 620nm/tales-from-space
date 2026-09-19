@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 local pipe_paints = require("@lib/pipe_paints")
 
@@ -26,6 +27,7 @@ local FIXED_COLOUR = { he_pipe = true }
 local content = {
     id = "pipe_painter",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.pipe_painter.name",
     name = "pipe painter",
     -- tg's own art: the label gun off the bureaucracy sheet

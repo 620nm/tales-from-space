@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 
 -- The defibrillator: the other way a stopped heart starts again
@@ -33,6 +34,7 @@ local action_rules = require("@lib/action_rules")
 local content = {
     id = "defib",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.defib.name",
     name = "defibrillator",
     sprite = "defib",

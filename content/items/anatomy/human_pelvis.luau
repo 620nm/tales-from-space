@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- One of the seven parts a human plan names (docs/BIOLOGY.md §1.1).
 -- A part is an ITEM, so it is held, dropped, stored, thrown and
 -- examined by every path an item has, and a dismembered limb is simply
@@ -17,6 +18,7 @@
 return {
     id = "human_pelvis",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.human_pelvis.name",
     name = "pelvis",
     -- The greyscale sheet has no groin cell -- tg's `human_chest_m`

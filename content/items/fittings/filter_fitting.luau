@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- A filter fitting: the machine before anyone has bolted it down.
 --
 -- tg's `/obj/item/pipe/trinary/flippable/filter`
@@ -23,6 +24,7 @@
 return {
     id = "filter_fitting",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.filter_fitting.name",
     name = "filter fitting",
     sprite = "filter_fitting",

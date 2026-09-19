@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local vessel = require("@lib/vessel")
 
 -- The mop: the one thing on the station that takes a puddle OFF the
@@ -25,6 +26,7 @@ local vessel = require("@lib/vessel")
 local content = {
     id = "mop",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.mop.name",
     name = "mop",
     sprite = "mop",

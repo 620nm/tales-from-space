@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- The engineer's toolbelt: seven slots at the waist. `show_contents`
 -- composes each tool's `stowed_sprite` into the belt object's ordinary
 -- appearance (on the floor and in object views); a mob instead wears
@@ -10,6 +11,7 @@
 return {
     id = "toolbelt",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.toolbelt.name",
     name = "toolbelt",
     sprite = "toolbelt",

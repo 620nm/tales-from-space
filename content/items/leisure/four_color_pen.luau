@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local writing = require("@lib/writing")
 
 -- Unlimited black, red, green, blue writing. The native writer snapshots
@@ -6,6 +7,7 @@ local writing = require("@lib/writing")
 local content = {
     id = "four_color_pen",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.four_color_pen.name",
     name = "four-color pen",
     sprite = "four_color_pen",

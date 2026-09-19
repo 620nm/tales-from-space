@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- Ten sides. tg: "Useful for percentages."
 -- (`/obj/item/dice/d10`, code/game/objects/items/dice.dm:212-216) --
 -- which is true only in the pair it is half of, since a percentile roll
@@ -24,6 +25,7 @@ end
 local content = {
     id = "d10",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.d10.name",
     name = "d10",
     sprite = "d10",

@@ -1,7 +1,9 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- Holds an incision open (tg surgery_tools.dm:1-16).
 local content = {
     id = "retractor",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.retractor.name",
     name = "retractor",
     sprite = "retractor",

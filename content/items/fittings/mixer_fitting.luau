@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- A mixer fitting. tg's `/obj/item/pipe/trinary/flippable`
 -- (mixer.dm:9, `construction_type`), drawn from that machine's own
 -- `pipe_state` "mixer" in pipe_item.dmi.
@@ -8,6 +9,7 @@
 return {
     id = "mixer_fitting",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.mixer_fitting.name",
     name = "mixer fitting",
     sprite = "mixer_fitting",

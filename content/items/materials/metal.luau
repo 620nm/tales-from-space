@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- Metal sheets, the structural material. What they BUILD is no longer
 -- written here: a girder knows two sheets raise it, a machine frame
 -- knows five box it up, and both live in tfs/content/structures/. This
@@ -6,6 +7,7 @@
 return {
     id = "metal",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.metal.name",
     name = "metal sheets",
     sprite = "metal",

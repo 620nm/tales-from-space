@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 local item_actions = require("@lib/item_actions")
 local decal_paints = require("@lib/decal_paints")
@@ -65,6 +66,7 @@ local content = {
     },
     id = "decal_painter",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.decal_painter.name",
     name = "decal painter",
     -- tg's own art off the device sheet (`icon = 'icons/obj/devices/tool.dmi'`,

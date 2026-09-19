@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local writing = require("@lib/writing")
 
 -- One black crayon stick. Thirty successful commits consume its uses.
@@ -5,6 +6,7 @@ local writing = require("@lib/writing")
 local content = {
     id = "crayon_black",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.crayon_black.name",
     name = "black crayon",
     sprite = "crayon_black",

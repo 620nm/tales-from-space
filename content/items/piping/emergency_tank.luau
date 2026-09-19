@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local item_actions = require("@lib/item_actions")
 
 -- The pocket bottle: three litres, small enough to live in a bag, and
@@ -35,6 +36,7 @@ local content = {
     },
     id = "emergency_tank",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.emergency_tank.name",
     name = "emergency tank",
     sprite = "emergency_tank",

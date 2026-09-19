@@ -23,6 +23,13 @@ return {
     -- tg's `anchored = FALSE` (table_frames.dm:17), said in this pack's
     -- own vocabulary: there is one state and nothing holds it down.
     loose = true,
+    motion_response = {
+        mass = 50.0,
+        restitution = 0.1,
+        friction = 0.8,
+        half_extent = 0.45,
+        public_contacts = true,
+    },
     -- Two rods, one second: tg's stack recipe, which is the only way to
     -- get one (`/obj/item/stack/rods`, rods.dm:3).
     build = {

@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- A heat exchanger, in your hands.
 --
 -- tg draws every `/obj/item/pipe` from its machine's own
@@ -6,6 +7,7 @@
 return {
     id = "heat_exchanger_fitting",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.heat_exchanger_fitting.name",
     name = "heat exchanger fitting",
     sprite = "heat_exchanger_loose",

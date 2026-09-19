@@ -270,6 +270,7 @@
   "lunatic/tfs:entity.solar.name": "solar panel",
   "lunatic/tfs:entity.space.name": "space",
   "lunatic/tfs:entity.spray_bottle.name": "spray bottle",
+  "lunatic/tfs:entity.fire_extinguisher.name": "fire extinguisher",
   "lunatic/tfs:entity.stationary_tank_frame.name": "tank frame",
   "lunatic/tfs:entity.stationary_tank.name": "pressure tank",
   "lunatic/tfs:entity.status_display.name": "status display",
@@ -325,6 +326,8 @@
   "lunatic/tfs:ui.actions.internals": "Internals",
   "lunatic/tfs:ui.actions.rpd": "Piping settings",
   "lunatic/tfs:ui.actions.decal_painter": "Decal settings",
+  "lunatic/tfs:ui.affordance.charge_vessel": "Refill extinguisher",
+  "lunatic/tfs:ui.affordance.discharge": "Discharge extinguisher",
   "lunatic/tfs:ui.look.pin": "Pin",
   "lunatic/tfs:ui.look.unpin": "Unpin",
   "lunatic/tfs:ui.look.history": "Inspection history",
@@ -770,6 +773,10 @@
   "lunatic/tfs:items.defib.brain_gone": "Their brain is too far gone. There is nothing to shock back.",
   "lunatic/tfs:items.spray_bottle.stream": "You set the nozzle to stream.",
   "lunatic/tfs:items.spray_bottle.spray": "You set the nozzle to spray.",
+  "lunatic/tfs:items.fire_extinguisher.ready": "You release the extinguisher safety.",
+  "lunatic/tfs:items.fire_extinguisher.safe": "You engage the extinguisher safety.",
+  "lunatic/tfs:items.fire_extinguisher.safety": "The extinguisher safety is engaged.",
+  "lunatic/tfs:items.fire_extinguisher.not_co2": "That valve does not supply carbon dioxide.",
   "lunatic/tfs:items.toolbox.rob": "You rob {name} with the toolbox!",
   "lunatic/tfs:items.toolbox.robbed": "{name} robs you with a toolbox!",
   "lunatic/tfs:fixtures.network_router.no_card": "There is no card in it. Until there is, it tops nothing.",
@@ -1320,5 +1327,6 @@
   "lunatic/tfs:fixtures.chem_packager.the_batch_is_not_pure_enough": "The batch needs enough of the selected product and no other solids.",
   "lunatic/tfs:ui.affordance.toggle_flask_valve": "Open/close flask valve",
   "lunatic/tfs:lib.vessel.open_before_pouring": "Open the vessel before pouring.",
-  "lunatic/tfs:items.welder.no_fuel": "The welder has no fuel."
+  "lunatic/tfs:items.welder.no_fuel": "The welder has no fuel.",
+  "lunatic/tfs:items.fire_extinguisher.pressure_leak": "The fire extinguisher springs a leak."
 }

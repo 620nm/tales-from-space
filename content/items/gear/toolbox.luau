@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 
 -- The first item to cross the content boundary. Robust — and, since
@@ -6,6 +7,7 @@ local action_rules = require("@lib/action_rules")
 local content = {
     id = "toolbox",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.toolbox.name",
     name = "mechanical toolbox",
     sprite = "toolbox",

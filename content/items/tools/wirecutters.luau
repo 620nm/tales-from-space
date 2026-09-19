@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 
 -- Sabotage, attributable: cutting a cable is a Script-actor ledger row
@@ -27,6 +28,7 @@ local action_rules = require("@lib/action_rules")
 local content = {
     id = "wirecutters",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.wirecutters.name",
     name = "wirecutters",
     sprite = "wirecutters",

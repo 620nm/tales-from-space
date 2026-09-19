@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 
 -- The analyzer: tg's `/obj/item/analyzer`
@@ -210,6 +211,7 @@ end
 local content = {
     id = "analyzer",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.analyzer.name",
     name = "analyzer",
     sprite = "analyzer",

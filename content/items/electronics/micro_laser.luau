@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local stock_parts = require("@lib/stock_parts")
 
 -- A micro-laser: the stock part that decides how HARD a machine works.
@@ -17,6 +18,7 @@ local stock_parts = require("@lib/stock_parts")
 return {
     id = "micro_laser",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.micro_laser.name",
     name = "micro-laser",
     sprite = "micro_laser",

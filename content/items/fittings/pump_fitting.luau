@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- A pump, in your hands.
 --
 -- tg's `/obj/item/pipe/directional` pointed at `.../binary/pump`
@@ -8,6 +9,7 @@
 return {
     id = "pump_fitting",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.pump_fitting.name",
     name = "pump fitting",
     sprite = "pump_loose",

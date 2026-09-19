@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- The connector port fitting: a socket in your hands rather than in the
 -- deck.
 --
@@ -24,6 +25,7 @@
 return {
     id = "connector_port_fitting",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.connector_port_fitting.name",
     name = "connector port fitting",
     sprite = "connector_port_loose",

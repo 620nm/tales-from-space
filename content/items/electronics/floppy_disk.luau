@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- A 3.5-inch diskette: a sleeve of plastic with a store of named text
 -- inside it, and no way to read one in your hand. It is the whole of
 -- what this station has for carrying a file from one machine to
@@ -20,6 +21,7 @@
 return {
     id = "floppy_disk",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.floppy_disk.name",
     name = "floppy disk",
     -- tg's `/obj/item/disk` off `icons/obj/devices/floppy_disks.dmi`,

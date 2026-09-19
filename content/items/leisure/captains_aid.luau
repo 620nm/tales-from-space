@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- The Captain's Aid: "Every captain's greatest ally when exploring the
 -- vast emptiness of space, now with a color display!" -- tg's
 -- `/obj/item/toy/captainsaid` (code/game/objects/items/toys.dm:398-428).
@@ -33,6 +34,7 @@ local DIRECTIONS = { "off", "port", "starboard", "fore", "aft" }
 local content = {
     id = "captains_aid",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.captains_aid.name",
     name = "Captain's Aid",
     -- The resting picture is the off one, which is also the state a

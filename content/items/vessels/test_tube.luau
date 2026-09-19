@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local vessel = require("@lib/vessel")
 
 -- The test tube: thirty units, and the vessel you keep a batch in once
@@ -18,6 +19,7 @@ local vessel = require("@lib/vessel")
 local content = {
     id = "test_tube",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.test_tube.name",
     name = "test tube",
     sprite = "test_tube",

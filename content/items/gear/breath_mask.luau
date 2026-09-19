@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- The apparatus: a close-fitting mask with a coupling on it, and the
 -- one thing that makes a bottle of oxygen worth carrying. It does
 -- nothing on its own -- it is the half of internals that has no gas in
@@ -16,6 +17,7 @@
 return {
     id = "breath_mask",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.breath_mask.name",
     name = "breath mask",
     sprite = "breath_mask",

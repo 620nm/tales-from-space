@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 local stock_parts = require("@lib/stock_parts")
 
 -- A capacitor: the stock part that stores a charge.
@@ -18,6 +19,7 @@ local stock_parts = require("@lib/stock_parts")
 return {
     id = "capacitor",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.capacitor.name",
     name = "capacitor",
     sprite = "capacitor",

@@ -24,6 +24,13 @@ return {
     name = "grille",
     sprite = "grille",
     dense = true,
+    motion_response = {
+        mass = 50.0,
+        restitution = 0.1,
+        friction = 0.8,
+        half_extent = 0.45,
+        public_contacts = true,
+    },
     opaque = false,
     -- States are adjectives because the engine composes refusals out of
     -- them: "The grille must be bolted first." reads as English only if

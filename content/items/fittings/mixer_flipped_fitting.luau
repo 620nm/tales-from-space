@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- The mirrored mixer, as a fitting. tg's flipped mixer subtype
 -- (mixer.dm:212-214) reached through the same flippable item.
 --
@@ -7,6 +8,7 @@
 return {
     id = "mixer_flipped_fitting",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.mixer_flipped_fitting.name",
     name = "flipped mixer fitting",
     sprite = "mixer_fitting",

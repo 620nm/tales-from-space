@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- The box is native storage stocked with one thirty-use stick of each
 -- colour. The sticks are ordinary items, so taking and returning them uses
 -- the same capacity and custody rules as every other container.
@@ -5,6 +6,7 @@
 local content = {
     id = "crayon_box",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.crayon_box.name",
     name = "box of crayons",
     sprite = "crayon_box",

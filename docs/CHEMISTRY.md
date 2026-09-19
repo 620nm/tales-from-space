@@ -91,6 +91,17 @@ liquid process catalysts are dispenser shortcuts as well as inputs to the
 
 Everything off the shelf arrives in a bottle or off a canister.
 
+## The CO2 extinguisher
+
+`content/items/tools/fire_extinguisher.luau` is a sealed, refillable 4 L
+pressure vessel seeded with 2 kg of `co2:liquid`. The phase-qualified fill is
+intentional: `content/substances/co2.luau` supplies the liquid-to-gas
+equilibrium and latent heat, so a burst can cool the receiving air while its
+0.2 kg parcel expands. Five fan particles reach five tiles every 24 ticks and
+apply 100 N·s/kg of recoil; the safety mode changes readiness and never opens
+the vessel. Fire reaction and any extinguishing edge remain native outcomes of
+the receiving mixture, so a burst does not promise to end a fire.
+
 ## The medicine trunk
 
 Five medicines ship, over three intermediates (phenol, acetone,

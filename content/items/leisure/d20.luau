@@ -1,3 +1,4 @@
+local physical_profiles = require("@lib/physical_profiles")
 -- Twenty sides: "the preferred die to throw at the GM" (tg's own desc,
 -- `/obj/item/dice/d20`, code/game/objects/items/dice.dm:227-231).
 --
@@ -43,6 +44,7 @@ end
 local content = {
     id = "d20",
     visual_layer = "item",
+    motion_response = physical_profiles.loose_item1kg,
     name_label = "lunatic/tfs:entity.d20.name",
     name = "d20",
     sprite = "d20",
