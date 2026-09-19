@@ -5,7 +5,7 @@ local network_channels = require("@helpers/network_channels")
 -- An APC that has lost its mains runs the room off the cell in its own
 -- casing. It cannot run the WHOLE room off it -- that is the point of
 -- a reserve -- so the map says which of the panel's output layers are
--- worth the charge (`l1_emergency` and its two siblings,
+-- worth the charge (`l1_reserve` and its two siblings,
 -- docs/power/map-format.md) and the panel feeds those and lets the
 -- rest go dark. Both shipped stations flag L1, because L1 is the room
 -- circuit on both.
@@ -21,8 +21,10 @@ local network_channels = require("@helpers/network_channels")
 --     and this is where they live.
 --
 --   * THE FITTINGS follow the lamps, and then some. The one on the
---     layer the panel let go is dark, with nothing touched but the
---     wire under it. The one on the flagged layer is still burning
+--     layer the panel let go drops to the emergency cell in its own
+--     casing and burns tg's dim red (content/fixtures/light.luau), with
+--     nothing touched but the wire under it. The one on the flagged
+--     layer is still burning
 --     AND is dimmer: the panel puts a `low_power` flag on its own
 --     network as it crosses, and every fitting it feeds is a
 --     hardwired child of it and hears the flag as coming from its
@@ -128,8 +130,8 @@ assert(network_channels.at(3, 1, "power") == "", "the backbone is parted")
 t.run_seconds(3)
 t.run_ticks(40)
 
-assert(assert(t.apc_at(4, 1)).charging == "not_charging", "nothing is topping the panel up")
-assert(assert(t.apc_at(4, 1)).charge > 0.0, "and it still has a cell to run on")
+assert(assert(t.store_at(4, 1)).charging == "idle", "nothing is topping the panel up")
+assert(assert(t.store_at(4, 1)).level > 0.0, "and it still has a cell to run on")
 
 both = assert(t.outlet_at(6, 1))
 assert(both.channels["l1"] == "emergency", "the flagged layer is carrying off the reserve: " .. both.channels["l1"])
@@ -143,10 +145,11 @@ assert(not blue.powered, "so the far port is dead")
 -- ---------------------------------------------------------------
 -- 3. THE ROOM GOES DOWN, NOT OUT. The fitting on the flagged layer is
 --    still burning and is dimmer, and the one on the unflagged layer
---    is dark. That is the whole point of flagging a layer: a blackout
---    leaves a room a person can walk out of. The dimming is content:
---    a flag from the panel, read by the fitting, looked up in the
---    pack's own table.
+--    is on its own cell in tg's emergency red at a quarter of its
+--    reach (light.dm:67-73). That is the whole point of flagging a
+--    layer: a blackout leaves a room a person can walk out of. Both
+--    looks are content: a flag from the panel, or the fitting's own
+--    source edge, looked up in the pack's own table.
 -- ---------------------------------------------------------------
 near = assert(t.light_at(5, 2))
 far = assert(t.light_at(10, 2))
@@ -154,7 +157,10 @@ assert(near.lit and near.emits, "the fitting on the reserve is still burning")
 assert(math.abs(near.power - 0.5) < 1e-6, "turned down: " .. near.power)
 assert(near.color == TUBE, "still the colour of its own tube: " .. near.color)
 assert(math.abs(near.range - 6.0) < 1e-6, "reach is untouched: a dim room is not a smaller one")
-assert(not far.emits, "the fitting on the dark layer throws nothing")
+assert(far.lit and far.emits, "the fitting on the dark layer runs off its own cell")
+assert(far.color == "#FF3232", "in tg's emergency red: " .. far.color)
+assert(math.abs(far.range - 1.5) < 1e-6, "at a quarter of its reach: " .. far.range)
+assert(math.abs(far.power - 0.75) < 0.01, "and three quarters of its power: " .. far.power)
 
 -- ---------------------------------------------------------------
 -- 4. THE MAINS COME BACK. Lay the parted length again and everything
@@ -179,4 +185,5 @@ assert(both.channels["l3"] == "nominal", "and so is the spare main: " .. both.ch
 near = assert(t.light_at(5, 2))
 assert(math.abs(near.power - 1.0) < 1e-6, "the fitting is back up: " .. near.power)
 assert(near.color == TUBE, "the fitting kept the tube it always had")
-assert(assert(t.light_at(10, 2)).emits, "and the dark one is burning again")
+far = assert(t.light_at(10, 2))
+assert(far.emits and far.color == TUBE, "and the far one is back on the mains in its own colour")

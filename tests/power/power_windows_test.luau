@@ -100,8 +100,8 @@ local function walk(dir)
 end
 
 -- ---------------------------------------------------------------
--- THE AREA PANEL. Three modules: the cell it keeps, the channels only
--- it has, and a block for each of the two lines under it.
+-- THE AREA PANEL. Three modules: the cell it keeps, the class gates
+-- only it has, and a block for each of the two lines under it.
 -- ---------------------------------------------------------------
 t.click(p, 1, 2, t.target_at(p, 1, 2))
 t.tick()
@@ -112,34 +112,42 @@ assert(
     "the shared module document, not a device-specific kind"
 )
 
-assert(word(readout(apc, "battery.stored").section) == "battery.battery", "the store is a module")
-assert(word(readout(apc, "battery.capacity").value) == "1.00 MJ", "tg's 1 MJ cell")
+assert(word(readout(apc, "store.stored").section) == "store.store", "the store is a module")
+assert(word(readout(apc, "store.capacity").value) == "1.00 MJ", "tg's 1 MJ cell")
 assert(ui_controls.number(apc.gauge) > 0.0, "and the gauge reads it")
-for _, channel in ipairs({ "channels.equipment", "channels.lighting", "channels.environment" }) do
-    assert(word(readout(apc, channel).section) == "channels.channels", channel .. " is a channel")
-    assert(word(readout(apc, channel).value) == "channels.channel.fed", "a fed panel sheds nothing")
+-- A class row's label is the network's own word for it (content/compositions.luau).
+for _, class in ipairs({ "equipment", "lighting", "environment" }) do
+    assert(word(readout(apc, class).section) == "gates.gates", class .. " is a gated class")
+    assert(word(readout(apc, class).value) == "gates.class.fed", "a fed panel sheds nothing")
 end
-assert(word(readout(apc, "channels.alarm").value) == "channels.alarm.clear", "and calls no alarm")
-assert(#ui_controls.rows(apc.setpoints) == 0, "an APC has no dial: the ladder is the pass's")
+assert(assert(t.structure_at(1, 2)).vars["lunatic/tfs:power_alarm"] == nil, "and calls no alarm")
+assert(#ui_controls.rows(apc.setpoints) == 0, "an APC has no dial: the ladder is the pack's")
 
--- The master breaker is the one switch over the three channels that the
--- ladder does not own -- so it IS a control, unlike the channels
+-- The master breaker is the one switch over the three classes that the
+-- ladder does not own -- so it IS a control, unlike the classes
 -- themselves, and it takes the room with it.
-assert(assert(toggle(apc, "breaker")).on, "the main breaker ships closed")
+local function delivering(class: string): boolean
+    return assert(assert(t.store_at(1, 2)).delivering)[class] == true
+end
+local TUBE = assert(t.light_at(6, 2)).color
+assert(assert(toggle(apc, "master")).on, "the main breaker ships closed")
 assert(
-    word(assert(toggle(apc, "breaker")).section) == "channels.channels",
+    word(assert(toggle(apc, "master")).section) == "gates.gates",
     "beside the lamps it gates"
 )
-ui_controls.toggle(p, "breaker")
+ui_controls.toggle(p, "master")
 t.run_seconds(3)
-assert(not assert(t.apc_at(1, 2)).operating, "the breaker opened")
-assert(not assert(toggle(t.ui(p), "breaker")).on, "and the panel says so")
-assert(not assert(t.apc_at(1, 2)).lighting, "a panel that is not operating feeds nothing")
-assert(not t.lit(6, 2), "so its room is dark on a full cell")
-assert(t.ledger_has("MachineToggled"), "throwing it is on the record")
-ui_controls.toggle(p, "breaker")
+assert(assert(t.store_at(1, 2)).master == false, "the breaker opened")
+assert(not assert(toggle(t.ui(p), "master")).on, "and the panel says so")
+assert(not delivering("lighting"), "a panel with its breaker open feeds nothing")
+local lamp = assert(t.light_at(6, 2))
+assert(lamp.color == "#FF3232", "so its room drops to the fittings' own red cells on a full panel")
+assert(t.ledger_has("DeliveryGateSet"), "throwing it is on the record")
+ui_controls.toggle(p, "master")
 t.run_seconds(3)
-assert(assert(t.apc_at(1, 2)).operating and t.lit(6, 2), "and closing it brings the room back")
+lamp = assert(t.light_at(6, 2))
+assert(assert(t.store_at(1, 2)).master == true, "the breaker closed")
+assert(lamp.lit and lamp.color == TUBE, "and closing it brings the room back: " .. lamp.color)
 
 assert(
     assert(toggle(apc, "ports.mode", "l1:output")).on,
@@ -167,7 +175,7 @@ t.run_seconds(3)
 assert(t.lit(6, 2), "the room circuit is feeding its lamp again")
 
 -- ---------------------------------------------------------------
--- A channel is not a switch on this panel and a
+-- A load class is not a switch on this panel and a
 -- port on a layer with no cable is not a control at all -- the window
 -- in front of the player IS the whitelist, so neither is refused
 -- politely, they are simply not there.
@@ -175,8 +183,8 @@ assert(t.lit(6, 2), "the room circuit is feeding its lamp again")
 assert(ui_controls.find(p, "/toggle/equipment/switch") == nil, "unoffered control is absent")
 assert(ui_controls.find(p, "/toggle/lighting/switch") == nil, "unoffered control is absent")
 t.tick()
-assert(assert(t.apc_at(1, 2)).equipment, "a channel nobody offered stays where it was")
-assert(assert(t.apc_at(1, 2)).lighting, "both of them")
+assert(delivering("equipment"), "a class nobody offered stays where it was")
+assert(delivering("lighting"), "both of them")
 
 assert(ui_controls.find(p, "/toggle/ports.mode/l3:input") == nil, "unoffered control is absent")
 assert(ui_controls.find(p, "/toggle/ports.mode/l1:sideways") == nil, "unoffered control is absent")
@@ -195,8 +203,8 @@ t.tick()
 local smes = ui_controls.state(p)
 assert(smes, "clicking the bank opens its window")
 assert(smes.document == "modules" and smes.presentation == "modules", "the same module document")
-assert(word(readout(smes, "battery.stored").section) == "battery.battery", "the same store module")
-assert(word(readout(smes, "battery.capacity").value) == "5.00 MJ", "five standard cells")
+assert(word(readout(smes, "store.stored").section) == "store.store", "the same store module")
+assert(word(readout(smes, "store.capacity").value) == "5.00 MJ", "five standard cells")
 assert(assert(toggle(smes, "input_breaker")).on, "both breakers closed out of the box")
 assert(assert(toggle(smes, "output_breaker")).on)
 assert(setpoint(smes, "input_w").max == 200000.0, "tg's 200 kW rate")

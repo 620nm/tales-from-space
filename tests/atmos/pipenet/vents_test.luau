@@ -163,9 +163,12 @@ t.world(SUPPLY_MAP, 7, "free_build")
 t.set_environment({ sink_k = 293.15, insolation = 0 })
 t.tick()
 
-local apc = assert(t.apc_at(7, 1))
+local apc = assert(t.store_at(7, 1))
 assert(apc ~= nil, "the map wired an APC")
-assert(apc.equipment == true, "and the generator behind it is feeding the equipment channel")
+assert(
+    assert(apc.delivering).environment == true,
+    "and the generator behind it feeds the class a vent draws (atmosmachinery.dm:18)"
+)
 assert(assert(t.canister_pressure(4, 1)) > 4000.0, "a fresh canister is at 45 atm")
 assert(
     assert(t.room_pressure(2, 1)) > 90.0,
@@ -233,9 +236,12 @@ near(
 -- ---------------------------------------------------------------
 t.outage()
 t.run_seconds(3)
-local dark = assert(t.apc_at(7, 1))
-assert(dark.equipment == false, "the breaker took the equipment channel down")
-assert(dark.alarmed == true, "and the APC is calling it")
+local dark = assert(t.store_at(7, 1))
+assert(assert(dark.delivering).environment == false, "the breaker took the environment class down")
+assert(
+    assert(t.structure_at(7, 1)).vars["lunatic/tfs:power_alarm"] == true,
+    "and the APC is calling it"
+)
 
 local dark_net = pipe_moles(3, 1)
 local dark_can = assert(t.canister_pressure(4, 1))
@@ -304,7 +310,7 @@ t.set_environment({ sink_k = 293.15, insolation = 0 }) -- inert sky, as above
 t.tick()
 
 local ROOM = row(1, 7, 1)
-assert(assert(t.apc_at(6, 1)).equipment == true, "this bench is wired too")
+assert(assert(assert(t.store_at(6, 1)).delivering).environment == true, "this bench is wired too")
 
 -- A room already inside the band is a room the vent has nothing to say
 -- to, in EITHER direction. The negative comes first because it is the

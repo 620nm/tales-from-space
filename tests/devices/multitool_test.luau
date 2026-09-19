@@ -3,7 +3,7 @@ local network_channels = require("@helpers/network_channels")
 -- What a wire is doing, before you cut it.
 --
 -- `sim.segment_live(x, y)` is the read half of the power boundary: the
--- liveness the last electrical pass settled on, per channel, for the
+-- liveness the last electrical pass settled on, per load class, for the
 -- cable under a tile. It is the same answer every consumer binds
 -- against (power/grid.rs), so a probe and a light fixture cannot
 -- disagree about whether a circuit is up.
@@ -66,7 +66,7 @@ t.run_ticks(2)
 t.click_network(p, 3, 1, assert(t.network_instance(3, 1, "power", "l2")))
 t.tick()
 assert(
-    said(p, "The cable here is carrying equipment and lighting."),
+    said(p, "The cable here is carrying equipment, lighting and environment."),
     "the generator's line reads live: " .. table.concat(t.messages(p), " | ")
 )
 

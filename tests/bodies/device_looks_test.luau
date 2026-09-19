@@ -610,7 +610,7 @@ t.run_ticks(2)
 t.click(e, 3, 2)
 t.run_seconds(1.5)
 assert(network_channels.at(3, 2, "power") == "l1", "the coil lays the red line back")
-assert(t.network_feed(4, 2, "power", "equipment") == "l1", "and the machine is back on the panel")
+assert(t.network_feed(4, 2, "power", "environment") == "l1", "and the machine is back on the panel")
 
 t.run_seconds(2.5)
 local revived = assert(t.structure_at(4, 2))

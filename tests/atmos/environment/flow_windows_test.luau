@@ -233,7 +233,7 @@ near(assert(network_matter.pressure(7, 2)), level, 2.0, "and read what the volum
 -- !is_operational) return`. Nobody ran cable into this room, so the
 -- pump is a length of pipe with a switch on it.
 --
--- (The other half of this, an APC shedding its equipment channel
+-- (The other half of this, a panel gating the pump's load class off
 -- mid-job and the pump picking the line back up when the power returns,
 -- is sim/tests/flow.rs -- it needs a wired grid to shed.)
 -- ---------------------------------------------------------------

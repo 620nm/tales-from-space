@@ -56,9 +56,10 @@ end
 -- uses: a generator and an APC in the west corner, a branch circuit
 -- running east and up under the machine's own tile, and the unit
 -- standing at the end of a short run. Every powered atmospherics device
--- takes its supply from the branch under its own tile (tg's
--- AREA_USAGE_EQUIP), so this is the wiring that makes "fed" a fact
--- about a graph rather than about a default.
+-- takes its supply from the branch under its own tile, on the panel's
+-- `environment` class (tg's AREA_USAGE_ENVIRON, atmosmachinery.dm:18),
+-- so this is the wiring that makes "fed" a fact about a graph rather
+-- than about a default.
 t.world(
     [==[(
     name: "freezer bench",
@@ -97,8 +98,12 @@ t.run_seconds(3) -- the electrical pass is 0.5 Hz; let one land
 
 assert(assert(t.structure_at(5, 1)).id == "thermomachine", "a unit stands on the bench")
 assert(assert(t.structure_at(5, 1)).state == "off", "switched off out of the crate")
-assert(assert(t.apc_at(2, 2)).equipment == true, "with the bench's APC feeding its circuit")
-assert(t.network_feed(5, 1, "power", "equipment") == "l1", "which reaches the machine's own tile")
+-- Whether the bench's APC is delivering the class the unit draws.
+local function feeding(): boolean
+    return assert(assert(t.store_at(2, 2)).delivering).environment == true
+end
+assert(feeding(), "with the bench's APC feeding its circuit")
+assert(t.network_feed(5, 1, "power", "environment") == "l1", "which reaches the machine's own tile")
 
 t.click(p, 5, 1, t.target_at(p, 5, 1, "thermomachine"))
 t.tick()
@@ -184,12 +189,9 @@ t.outage()
 t.run_seconds(3)
 
 assert(t.ledger_has("PowerOutage"), "the fault is on the record")
-assert(
-    assert(t.apc_at(2, 2)).equipment == false,
-    "the APC has nothing to hand the equipment channel"
-)
+assert(not feeding(), "the APC has nothing to hand the environment class")
 assert(t.network_segment(5, 1, "power", "l1").segment ~= nil, "the cable under the machine is still cable")
-assert(t.network_feed(5, 1, "power", "equipment") == nil, "but nothing on it is carrying")
+assert(t.network_feed(5, 1, "power", "environment") == nil, "but nothing on it is carrying")
 assert(
     assert(t.structure_at(5, 1)).state == "off",
     "and the unit is drawn stopped, which is `on && is_operational` picking the picture"

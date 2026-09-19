@@ -176,9 +176,9 @@ t.run_ticks(5)
 t.click(p, 4, 1, t.target_at(p, 4, 1))
 t.tick()
 assert(t.ui(p) ~= nil, "the panel opens")
-ui_controls.toggle(p, "breaker")
+ui_controls.toggle(p, "master")
 t.run_seconds(3)
-assert(not assert(t.apc_at(4, 1)).operating, "the breaker is open")
+assert(assert(t.store_at(4, 1)).master == false, "the breaker is open")
 
 local starved = assert(t.outlet_at(5, 2))
 assert(starved.channels["l1"] == "starved", "the run is fed by a panel that stopped: " .. starved.channels["l1"])
@@ -190,7 +190,7 @@ assert(all.channels["l3"] == "starved", "the spare main is starved for the same 
 assert(all.channels["l2"] == "inactive", "where the parted backbone still has no source at all")
 
 -- Close it again and the room comes back exactly as it was.
-ui_controls.toggle(p, "breaker")
+ui_controls.toggle(p, "master")
 t.run_seconds(3)
 assert(assert(t.outlet_at(5, 2)).channels["l1"] == "nominal", "the spur is carrying again")
 assert(assert(t.outlet_at(7, 1)).feed == "l3", "and the port is back on blue")

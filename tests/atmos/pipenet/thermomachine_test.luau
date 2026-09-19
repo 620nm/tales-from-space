@@ -60,7 +60,7 @@ local ROWS = [==[
         "#a....g#",
         "########",
     ],
-    structures: [(3, 2, "player_spawn"), (3, 1, "thermomachine")],
+    structures: [(3, 2, "player_spawn"), (3, 1, "thermomachine"), (1, 2, "apc")],
 ]==]
 
 t.world([==[(
@@ -69,7 +69,7 @@ t.world([==[(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     networks: [
@@ -238,7 +238,7 @@ t.world([==[(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     networks: [

@@ -144,7 +144,7 @@ assert(network_channels.at(8, 2, "power") == "", "the backbone is parted")
 t.run_seconds(3)
 t.run_ticks(60)
 
-assert(assert(t.apc_at(8, 1)).charging == "not_charging", "the panel is on its own cell")
+assert(assert(t.store_at(8, 1)).charging == "idle", "the panel is on its own cell")
 lamp = assert(t.light_at(1, 2))
 assert(lamp.color == UNBREATHABLE, "the air still outranks the batteries: " .. lamp.color)
 assert(math.abs(lamp.power - 1.2) < 1e-6, "at the air's own power: " .. lamp.power)

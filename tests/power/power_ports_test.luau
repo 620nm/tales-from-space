@@ -88,7 +88,7 @@ assert(t.network_segment(6, 1, "power", "l1").segment ~= nil, "though the room c
 -- ---------------------------------------------------------------
 local ports = t.ports_at(4, 1, "power")
 assert(ports ~= nil, "the panel answers for its ports")
-assert(ports.kind == "apc", "and says what it is: " .. ports.kind)
+assert(ports.id == "apc", "and says what it is: " .. ports.id)
 local room_port: SpecPort = assert(ports.channels["l1"])
 local backbone_port: SpecPort = assert(ports.channels["l2"])
 local spare_port: SpecPort = assert(ports.channels["l3"])
@@ -149,8 +149,11 @@ for line, port in pairs(dead_ports) do
     near(port.in_w, 0.0, 1e-9, line .. " draws nothing")
     near(port.out_w, 0.0, 1e-9, line .. " feeds nothing")
 end
-assert(not t.lit(1, 2), "the lamp off the spare main is out")
-assert(not t.lit(5, 2), "and so is the one off the room circuit")
-local spare = t.network_segment(2, 2, "power", "l3")
+-- The fittings are not the grid's to put out: each drops to the
+-- emergency cell in its own casing (content/fixtures/light.luau).
+local EMERGENCY_RED = "#FF3232"
+assert(assert(t.light_at(1, 2)).color == EMERGENCY_RED, "the spare main's lamp is on its own cell")
+assert(assert(t.light_at(5, 2)).color == EMERGENCY_RED, "and so is the one off the room circuit")
+local spare = t.network_segment(2, 2, "power", "l3").classes
 assert(not spare.equipment and not spare.lighting, "the spare main is carrying no power")
 assert(network_channels.at(2, 2, "power") == "l3", "the cable is all still there, of course")

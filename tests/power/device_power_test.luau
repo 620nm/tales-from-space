@@ -109,8 +109,9 @@ end
 -- generator and an APC in the west corner, a backbone pair under them,
 -- and a room circuit circuit running east and then up under the machine's own
 -- tile -- which is where every powered atmospherics device takes its
--- supply from (tg's AREA_USAGE_EQUIP; sim/powerops.rs hands it off the
--- room circuit under the tile, exactly as it does to a vent).
+-- supply from, on the panel's `environment` class (tg's AREA_USAGE_ENVIRON,
+-- atmosmachinery.dm:18; sim/powerops.rs hands it off the room circuit
+-- under the tile, exactly as it does to a vent).
 --
 -- (4, 2) is the whole point of the shape: bare plating, no pipe, no
 -- structure, and the ONLY length of room circuit between the APC and the
@@ -157,6 +158,11 @@ local IN = { 3, 1 }
 local OUT = { 6, 1 }
 local SIDE = { 5, 2 }
 
+-- Whether the bench's APC is delivering the class these machines draw.
+local function feeding(): boolean
+    return assert(assert(t.store_at(2, 2)).delivering).environment == true
+end
+
 local function bench(id: string, pipes: string, off: string)
     t.world(BENCH:format(id, pipes, id), 7)
     local p = t.join()
@@ -165,8 +171,8 @@ local function bench(id: string, pipes: string, off: string)
 
     assert(assert(t.structure_at(5, 1)).id == id, "the map stood a " .. id .. " there")
     assert(assert(t.structure_at(5, 1)).state == off, id .. " ships switched off")
-    assert(assert(t.apc_at(2, 2)).equipment == true, "and the bench's APC is feeding its circuit")
-    assert(t.network_feed(5, 1, "power", "equipment") == "l1", "which reaches the machine's own tile")
+    assert(feeding(), "and the bench's APC is feeding its circuit")
+    assert(t.network_feed(5, 1, "power", "environment") == "l1", "which reaches the machine's own tile")
     return p
 end
 
@@ -296,7 +302,7 @@ for _, job in ipairs(TRINARIES) do
     t.run_ticks(2)
     assert(assert(t.structure_at(5, 1)).state == "off", job.id .. " is switched off")
     assert(
-        assert(t.apc_at(2, 2)).equipment == true,
+        feeding(),
         "with the APC still feeding it, which is the whole point: this one"
             .. " stopped because of the switch and nothing else"
     )
@@ -321,7 +327,7 @@ for _, job in ipairs(TRINARIES) do
     t.drop(p)
     t.run_seconds(3)
     assert(
-        t.network_feed(5, 1, "power", "equipment") == nil,
+        t.network_feed(5, 1, "power", "environment") == nil,
         "nothing on the machine's side of the cut reaches an APC"
     )
 
@@ -418,7 +424,7 @@ assert(network_channels.at(4, 2, "power") == "", "the room circuit is parted")
 assert(t.ledger_has("NetworkRemoved"), "and cutting a department's feed is attributable")
 t.drop(p)
 t.run_seconds(3)
-assert(t.network_feed(5, 1, "power", "equipment") == nil, "nothing on this side of the cut reaches an APC any more")
+assert(t.network_feed(5, 1, "power", "environment") == nil, "nothing on this side of the cut reaches an APC any more")
 
 -- The machine takes its orders perfectly happily while dead. A dead
 -- machine is not a broken one, and its panel is fed by nothing but the
@@ -476,7 +482,7 @@ t.run_seconds(1.5)
 assert(network_channels.at(4, 2, "power") == "l1", "and the coil lays the red line, which is the one this APC feeds")
 t.drop(p)
 t.run_seconds(3)
-assert(t.network_feed(5, 1, "power", "equipment") == "l1", "the machine is back on an APC")
+assert(t.network_feed(5, 1, "power", "environment") == "l1", "the machine is back on an APC")
 assert(
     assert(t.structure_at(5, 1)).state == "armed",
     "and it armed ITSELF: " .. assert(assert(t.structure_at(5, 1)).state)
@@ -509,7 +515,7 @@ panel_says(p, "flow.supply.fed", "the mains are behind it again")
 ui_controls.toggle(p, "power")
 t.run_ticks(2)
 assert(assert(t.structure_at(5, 1)).state == "shut", "the gate is shut")
-assert(assert(t.apc_at(2, 2)).equipment == true, "with the APC feeding it the whole time")
+assert(feeding(), "with the APC feeding it the whole time")
 t.ui_close(p)
 t.tick()
 
