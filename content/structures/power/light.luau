@@ -54,15 +54,29 @@ return {
         class = "light",
         hardwired_only = true,
     },
+    -- A lit fitting is its housing with the tube drawn over it: the
+    -- `light_layer` is greyscale, and the engine multiplies it by the
+    -- colour the fitting burns, so the tube on the wall is the colour of
+    -- the pool on the floor (the engine's docs/power/lit-face.md, which
+    -- also records why tg draws its tube untinted instead).
     appearance = {
+        light_layer = {
+            sprite = "light_glow",
+            mounted = {
+                north = "light_glow_n",
+                south = "light_glow_s",
+                east = "light_glow_e",
+                west = "light_glow_w",
+            },
+        },
         states = {
             on = {
-                sprite = "light_on",
+                sprite = "light_off",
                 mounted = {
-                    north = "light_on_n",
-                    south = "light_on_s",
-                    east = "light_on_e",
-                    west = "light_on_w",
+                    north = "light_off_n",
+                    south = "light_off_s",
+                    east = "light_off_e",
+                    west = "light_off_w",
                 },
             },
             off = {
