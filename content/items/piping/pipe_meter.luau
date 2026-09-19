@@ -18,6 +18,13 @@ local action_rules = require("@lib/action_rules")
 -- Lunatic has no scripted drop-item effect, so the ordinary drop key is
 -- one extra input before wrenching; the layer selection itself remains
 -- exact and server-validated.
+--
+-- The in-hand key turns the same dial one layer at a time, 1-2-3-4-5-1:
+-- tg's `/obj/item/pipe/attack_hand_secondary` cycle
+-- (construction.dm:438-445), which its own `/obj/item/pipe_meter`
+-- never inherits, moved to the key since there is no secondary-click
+-- channel. Same wrap, same balloon-alert-sized message, and the row
+-- sits on the held meter's own card.
 local CHANNELS = { "l1", "l2", "l3", "l4", "l5" }
 
 local content = {
@@ -37,7 +44,15 @@ local content = {
     mode = 2,
 }
 
-content.actions = { action_rules.primary("set_layer", action_rules.network("pipe")) }
+content.actions = {
+    action_rules.primary("set_layer", action_rules.network("pipe")),
+    {
+        id = "cycle_layer",
+        gesture = "self",
+        route = "self_use",
+        label = "lunatic/tfs:ui.affordance.set_layer",
+    },
+}
 
 if sim ~= nil then
     local script_definition =
@@ -64,6 +79,17 @@ if sim ~= nil then
             end
         end
         return { replaced = false }
+    end)
+    script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
+        local self, user = ev.subject, ev.actor
+        local dial = assert(sim.mode(self))
+        local next_index = (dial.index + 1) % dial.count
+        sim.set_mode(self, next_index)
+        sim.message.send({
+            recipient = user,
+            message = sim.msg("lunatic/tfs:items.pipe_meter.layer", { layer = next_index + 1 }),
+        })
+        return true
     end)
 end
 
