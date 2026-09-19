@@ -154,6 +154,9 @@ end
 local EMERGENCY_RED = "#FF3232"
 assert(assert(t.light_at(1, 2)).color == EMERGENCY_RED, "the spare main's lamp is on its own cell")
 assert(assert(t.light_at(5, 2)).color == EMERGENCY_RED, "and so is the one off the room circuit")
-local spare = t.network_segment(2, 2, "power", "l3").classes
-assert(not spare.equipment and not spare.lighting, "the spare main is carrying no power")
+local spare = t.network_segment(2, 2, "power", "l3")
+assert(not spare.carrying, "the spare main is carrying no power")
+for _, class in ipairs({ "equipment", "lighting", "environment" }) do
+    assert(spare.classes[class] == false, "and serving no class: " .. class)
+end
 assert(network_channels.at(2, 2, "power") == "l3", "the cable is all still there, of course")

@@ -148,6 +148,18 @@ t.run_seconds(3)
 lamp = assert(t.light_at(6, 2))
 assert(assert(t.store_at(1, 2)).master == true, "the breaker closed")
 assert(lamp.lit and lamp.color == TUBE, "and closing it brings the room back: " .. lamp.color)
+-- Both throws are the master's -- a row naming no class -- and the
+-- crewman's who pressed it, not the ladder's.
+local presser = assert(t.ledger_rows("joined_job")[1], "the join is on the record").actor
+assert(presser.kind == "player", "the join row names the crewman")
+local thrown = t.ledger_rows("DeliveryGateSet")
+assert(#thrown == 2, "two throws, open then closed: " .. #thrown)
+for index, row in ipairs(thrown) do
+    assert(row.class == nil, "throw " .. index .. " is the master: " .. tostring(row.class))
+    assert(row.on == (index == 2), "throw " .. index .. " opened, then closed")
+    local by = row.actor
+    assert(by.kind == "player" and by.id == presser.id, "throw " .. index .. " is the presser's: " .. by.kind)
+end
 
 assert(
     assert(toggle(apc, "ports.mode", "l1:output")).on,
