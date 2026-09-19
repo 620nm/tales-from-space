@@ -20,8 +20,11 @@ return {
     name = "power storage unit",
     sprite = "smes",
     ui = { modules = { "store", "throttles", "ports" } },
-    -- FIVE STANDARD BATTERIES, 1 MJ each (tg machine_circuitboards.dm:374,
-    -- power.dm:32), in and out at tg's 200 kW caps (smes.dm:26, :37).
+    -- FIVE PLAIN BATTERIES, 1 MJ each (power.dm:32, battery.dm:17),
+    -- spawning full. tg's board takes five (machine_circuitboards.dm:374)
+    -- but ships them high-capacity and empty, 50 MJ holding nothing
+    -- (:376, battery.dm:35): a declared divergence (docs/POWER.md). In
+    -- and out at tg's 200 kW caps (smes.dm:26, :37).
     -- The breakers start at those caps rather than tg's 50 kW
     -- (smes.dm:24, :35): the engine sets a throttle's level at its
     -- store's own cap (the engine's docs/power/panels.md).

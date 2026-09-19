@@ -49,27 +49,46 @@ local content = {
 local NOUN = "APC"
 local MEMBER = "fitting"
 
--- tg's autoset thresholds, percent of the cell: equipment goes below
--- 30, lighting below 15, and the room's air only when the cell is
--- empty (apc_main.dm:11, :13, :637-664). The power alarm goes up with
--- the first shed and clears only above 75 (:15, :672-673).
-local LADDER = { equipment_below = 30, lighting_below = 15, alarm_clear_above = 75 }
+-- tg's autoset, one rung per load class in percent of the cell: a
+-- class keeps delivering while the cell is at or over its rung and
+-- holds anything at all -- equipment to 30, lighting to 15, the room's
+-- air until it is empty (apc_main.dm:11, :13, :637-664).
+local RUNGS: { [string]: number } = { equipment = 30, lighting = 15, environment = 0 }
+-- The power alarm goes up with the first shed and clears only above 75
+-- (:15, :672-673).
+local ALARM_CLEAR_ABOVE = 75
 -- On the panel, in the shift record: `sight` so what a crewman at the
 -- box could be shown is what a spec can read (t.structure_at).
 local ALARM = "lunatic/tfs:power_alarm"
 
+-- The rungs against lib/load_classes.luau, once at load: a class with
+-- no rung would never be thrown and a rung naming no class is a line
+-- nothing reads, so either refuses the file. Returns the first shed.
+local function checked_first_shed(): number
+    local first = 0
+    for _, class in ipairs(load_classes.power) do
+        local rung = RUNGS[class]
+        if rung == nil then
+            error("fixtures/apc.luau: load class " .. class .. " has no ladder rung")
+        end
+        first = math.max(first, rung)
+    end
+    for class in pairs(RUNGS) do
+        if table.find(load_classes.power, class) == nil then
+            error("fixtures/apc.luau: ladder rung " .. class .. " names no load class")
+        end
+    end
+    return first
+end
+local FIRST_SHED = checked_first_shed()
+
 -- Which classes a cell at this charge keeps delivering.
 local function wanted(charge_j: number, percent: number): { [string]: boolean }
-    if charge_j <= 0 then
-        return { equipment = false, lighting = false, environment = false }
+    local want = {}
+    for _, class in ipairs(load_classes.power) do
+        want[class] = charge_j > 0 and percent >= RUNGS[class]
     end
-    if percent < LADDER.lighting_below then
-        return { equipment = false, lighting = false, environment = true }
-    end
-    if percent < LADDER.equipment_below then
-        return { equipment = false, lighting = true, environment = true }
-    end
-    return { equipment = true, lighting = true, environment = true }
+    return want
 end
 
 if sim ~= nil then
@@ -118,9 +137,9 @@ if sim ~= nil then
         -- so the panel calls that too, and keeps calling it until the
         -- breaker is back and the cell is above the clear line.
         local alarmed = ev.subject.vars[ALARM] == true
-        if not alarmed and (ev.tripped or percent < LADDER.equipment_below) then
+        if not alarmed and (ev.tripped or percent < FIRST_SHED) then
             ev.subject.vars[ALARM] = true
-        elseif alarmed and not ev.tripped and percent > LADDER.alarm_clear_above then
+        elseif alarmed and not ev.tripped and percent > ALARM_CLEAR_ABOVE then
             ev.subject.vars[ALARM] = nil
         end
     end)

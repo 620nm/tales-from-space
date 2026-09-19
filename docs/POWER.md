@@ -44,13 +44,16 @@ A prototype under `structures/` spells its own class word, because
 | prototype | declares | tg |
 |---|---|---|
 | `apc` | `store` 1 MJ, charging at 10 kW, `report`; `bridge.gates`; `names_room` | STANDARD_BATTERY_CHARGE (`power.dm:32`, `battery.dm:17`); 1% of the cell a second (CHARGELEVEL, `apc_main.dm:9`, `:708`) |
-| `smes` | `store` 5 MJ, 200 kW in and out; `bridge.throttles` | five batteries (`machine_circuitboards.dm:374`); `smes.dm:26`, `:37` |
+| `smes` | `store` 5 MJ, 200 kW in and out; `bridge.throttles` | five batteries (`machine_circuitboards.dm:374`), each STANDARD_BATTERY_CHARGE (`battery.dm:17`); `smes.dm:26`, `:37` |
 | `light` | `load_class = "lighting"`; `store` 1.2 kJ, charged and drained at 2 W | cell/emergency_light (`cell.dm:237`); LIGHT_EMERGENCY_POWER_USE (`lights.dm:2`, `power.dm:27`) |
 
-Three choices differ from tg on purpose. The panel fits the plain 1 MJ
+Four choices differ from tg on purpose. The panel fits the plain 1 MJ
 battery where tg's APC ships the 2.5 MJ upgraded one (`battery.dm:29`,
 `apc_main.dm:43`), and starts full where tg's starts at 90%
-(`apc_main.dm:41`). The bank's throttles start at their 200 kW caps
+(`apc_main.dm:41`). The bank holds five plain batteries, 5 MJ, and
+starts full, where tg's board ships five high-capacity ones empty
+(`machine_circuitboards.dm:376`; `battery.dm:35`, 50 MJ;
+`power_store.dm:53`). The bank's throttles start at their 200 kW caps
 where tg's start at 50 kW (`smes.dm:24`, `:35`); the engine sets a level
 at its store's own cap.
 
@@ -66,7 +69,9 @@ five-segment bar (`smes.dm:144-150`, `:344-346`).
 for every `report` store on every real pass (every two seconds; the
 boot pass is quiet, so a panel booting low sheds on the first). It runs tg's autoset (`apc_main.dm:637-664`, thresholds
 `:11`, `:13`) and throws each class gate that disagrees, in class
-order, with `sim.flow.set_gate`:
+order, with `sim.flow.set_gate`. The ladder is one rung per class of
+`lib/load_classes.luau`, and the file refuses to load when a class has
+no rung or a rung names no class:
 
 | cell | `equipment` | `lighting` | `environment` |
 |---|---|---|---|
@@ -81,8 +86,13 @@ machines drop at 30% and lights at 15%. Each write is a `DeliveryGateSet`
 row under the script. The ladder never throws the master: that switch is
 the player's, in the panel's window, where the class rows are read-only.
 
-Not yet ported: tg's charge-mode toggle (`apc_main.dm:61`, `:499-503`)
-and its manual per-channel override (`apc_power_proc.dm:118-123`).
+Not yet ported: tg's charge-mode toggle (`apc_main.dm:61`, `:499-503`),
+its manual per-channel override (`apc_power_proc.dm:118-123`), and its
+emergency-lighting toggle, which keeps a room's fittings off their
+cells (`apc_main.dm:537-543`, `light.dm:517`). With no override, a
+quarantined `fixtures/apc.luau` (the engine's
+`docs/luau-api/runtime.md`) leaves every panel's class gates where they
+stand for the rest of the shift.
 
 ## The power alarm
 
