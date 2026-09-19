@@ -13,7 +13,7 @@ test("residue kinds rest one blast of dust and cake past two", async () => {
   const kinds = await read("content/lib/residue_kinds.luau");
   assert.match(kinds, /dust_kind = 0/);
   assert.match(kinds, /dust_per_blast = 15/);
-  assert.match(kinds, /\{ at = 1, sprites = \{ "dust" \} \}/);
+  assert.match(kinds, /\{ at = 1, sprites = \{ "blast_shards" \} \}/);
   assert.match(kinds, /at = 32/);
   for (const flat of [0, 1, 2, 3]) {
     assert.match(kinds, new RegExp(`"dirt_flat_${flat}"`));
@@ -28,7 +28,7 @@ test("residue appearances dress the settled kind on the residue layer", async ()
 
 test("every tier sprite is baked by the dirt family", async () => {
   const ron = await read("assets/sprites/13-dirt.ron");
-  assert.match(ron, /Sprite\("dust", "dust", s\)/);
+  assert.match(ron, /Sprite\("blast_shards", "shards", s\)/);
   for (const flat of [0, 1, 2, 3]) {
     assert.match(ron, new RegExp(`Sprite\\("dirt_flat_${flat}", "dirt-flat-${flat}", s\\)`));
   }
