@@ -75,7 +75,9 @@ end
 -- A room with a three-by-three block of floor tiles in the middle of
 -- it, plating around that, and one lattice square at the east end --
 -- a grating you see the subfloor through, which is not a deck and
--- takes no paint.
+-- takes no paint. It stands on ground, not space: a lattice over space
+-- inside the room is a hole in it, and the room would empty through
+-- it in seconds and drag the crewman east.
 -- ---------------------------------------------------------------
 t.world(
     [==[(
@@ -84,7 +86,7 @@ t.world(
         ' ': (composition: (substrate: Some("space"))),
         '_': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
-        'l': (composition: (substrate: Some("space"), components: [(component: "lattice")])),
+        'l': (composition: (substrate: Some("ground"), components: [(component: "lattice")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     rows: [
@@ -324,6 +326,7 @@ assert(lost[1] == 5 and lost[2] == 3, "naming the tile whose deck was taken")
 t.swap_hands(p)
 assert(t.hands(p).held == "decal_painter", "painter in hand again")
 walk(p, "south")
+walk(p, "east") -- onto the bared plating, beside the lattice
 local offered = false
 for _, action in ipairs(t.action_hints(p, composition.deck_target(6, 3))) do
     if action.id == "paint_decal" then
@@ -348,7 +351,7 @@ assert(#t.ledger_rows("decal_placed") == before_rows, "a refusal writes no row")
 t.swap_hands(p)
 t.drop(p) -- the crowbar, to free the hand the eraser was put down for
 t.run_ticks(2)
-t.click(p, 5, 2, t.target_at(p, 5, 2, "decal_eraser"))
+t.click(p, 4, 2, t.target_at(p, 4, 2, "decal_eraser"))
 t.run_ticks(2)
 assert(t.hands(p).held == "decal_eraser", "eraser in hand")
 local erasures = #t.ledger_rows("decal_removed")
