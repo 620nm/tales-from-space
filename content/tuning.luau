@@ -13,13 +13,14 @@ return {
     -- vented room stops pushing on its own -- nothing switches the wind
     -- off, it runs out. Drag sits UNDER slide: a body standing up in
     -- the airstream is a sail, a toolbox on the deck is a brick. A
-    -- breach at the end of a long corridor peaks near 0.23 two tiles in
-    -- and holds over 0.05 some eight tiles back; a door onto a vacuumed
-    -- room peaks near 0.36. A door evening out 10 kPa (~4e-3), a
-    -- scrubber (~2.3e-2), a vent (~9e-3) and a crewman's own wake
-    -- (~2.4e-4) take neither. Engine defaults: 0.1 and 0.05.
-    wind_slide_pa = 0.1,
-    wind_drag_pa = 0.05,
+    -- breach at the end of a long corridor peaks near 0.75 beside the
+    -- hole, drags seven tiles back and slides four; a three-tile closet
+    -- peaks near 0.35 one tile in and 0.09 two in; a door onto a vacuumed
+    -- room peaks near 1.1. A vent (~0.08), a scrubber (~0.05), a door
+    -- evening out 10 kPa (~0.02) and a crewman's own wake (~2.4e-4)
+    -- take neither. Engine defaults: 0.3 and 0.15.
+    wind_slide_pa = 0.3,
+    wind_drag_pa = 0.15,
 
     -- How much air (m/s) a body pushes ahead of it per step it walks,
     -- and the fraction of that a thrown thing pushes. This is what
