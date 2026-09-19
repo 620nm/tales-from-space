@@ -77,7 +77,7 @@ if sim ~= nil then
     -- sees, and the volley the tick flies home. Every mutation but the
     -- fourth is an attributed ledger row; the fourth rides the
     -- FOV-filtered lanes. The dust lands later, a landing tile at a
-    -- time off the settle hook below.
+    -- time off the settle handler below.
     local function detonate(self: Handle, user: Handle): ()
         local at = live_tile(self, user)
         if at == nil then

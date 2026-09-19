@@ -8,7 +8,7 @@
 -- hears: flash, ring, sparks, shake, glow, two fires and the blast
 -- itself, every one of them on the FOV-filtered lanes. `burst` throws
 -- the volley whose fragments the tick flies home; their dirt lands
--- later, a landing tile at a time off the settle hook
+-- later, a landing tile at a time off the settle handler
 -- (items/weapons/frag_grenade.luau).
 --
 -- The bands are the pack's own numbers, not tg's: tg's frag grenade
@@ -52,7 +52,7 @@ function blast.apply(at: TileAddress): ()
 end
 
 -- The volley: what flies is what rests (lib/residue_kinds.luau), laid
--- down where the pellets land off the settle hook.
+-- down where the pellets land off the settle handler.
 function blast.burst(at: TileAddress): ()
     sim.volley_discharge(at.x, at.y, VOLLEY_RADIUS, VOLLEY_DAMAGE, residue_kinds.dust_per_blast)
 end

@@ -5,7 +5,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- solid matter, and a blast's worth of dust as engine residue. The ash
 -- half is minted on the blast tile, rests solid, and is not something
 -- a mop lifts. The dust half rides the volley residue verbs: the
--- settle hook lays one blast's worth down where the pellets landed
+-- settle handler lays one blast's worth down where the pellets landed
 -- (`sim.volley_residue_deposit` per landing tile) and every mop stroke
 -- sweeps its tile clean (`sim.volley_residue_clear`). Both halves are
 -- asserted here -- the ash by matter and mint, the dust by ledger rows
@@ -88,7 +88,7 @@ assert((liquids.ash or 0) == 0, "ash rests solid, not liquid")
 -- DUST: the burst whose fragments it is. One discharge, one settle,
 -- and one blast's worth of dust across the landing tiles. The order
 -- is the detonation's: gone, ash, blast, volley, settle, and only
--- then the dirt the settle hook laid.
+-- then the dirt the settle handler laid.
 -- ---------------------------------------------------------------
 local discharged = t.ledger_rows("volley_discharged")
 local settled = t.ledger_rows("volley_settled")
@@ -111,7 +111,7 @@ local resting = 0
 for _, row in ipairs(dirt) do
     assert(row.kind == 0, "every landing rests kind 0")
     assert(row.seq > settled[1].seq, "every landing rests after the settle")
-    resting += row.fragments
+    resting += ui_controls.number(row.fragments)
 end
 assert(resting == 15, ("what flies is what rests, got %d"):format(resting))
 
@@ -119,8 +119,9 @@ assert(resting == 15, ("what flies is what rests, got %d"):format(resting))
 -- dust, drawn but never pickable, so a click lands on the turf.
 local blast_share = 0
 for _, row in ipairs(dirt) do
-    if row.at[1] == 1 and row.at[2] == 1 then
-        blast_share = row.total
+    local at = ui_controls.array(row.at)
+    if at[1] == 1 and at[2] == 1 then
+        blast_share = ui_controls.number(row.total)
     end
 end
 assert(blast_share > 0, "the blast tile keeps its share")
@@ -162,7 +163,8 @@ assert(
 -- row, and only that tile's -- a landing two tiles down keeps its dust.
 local swept = t.ledger_rows("residue_cleared")
 assert(#swept == 1, ("one sweep, one lifting, got %d"):format(#swept))
-assert(swept[1].at[1] == 1 and swept[1].at[2] == 1, "naming the stroked tile")
+local swept_at = ui_controls.array(swept[1].at)
+assert(swept_at[1] == 1 and swept_at[2] == 1, "naming the stroked tile")
 assert(swept[1].kinds == 1, "lifting the one kind that rested there")
 assert(swept[1].fragments == blast_share, "lifting the tile's whole share")
 assert(not shows_dust(1, 1), "the blast tile is swept clean")

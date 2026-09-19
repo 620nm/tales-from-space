@@ -97,7 +97,7 @@ local function at(x: number, y: number): boolean
 end
 
 -- One blast's aftermath on the record: the discharge names the
--- reference params, the settle closes it, and the settle hook lays one
+-- reference params, the settle closes it, and the settle handler lays one
 -- blast's worth of kind-0 dust across the landing tiles, each row after
 -- the settle that caused it.
 local dirt_seen = 0
@@ -116,7 +116,7 @@ local function blast_dirt(n: number): ()
         if index > dirt_seen then
             assert(row.seq > settled.seq, "the dirt lands after its settle")
         end
-        resting += row.fragments
+        resting += ui_controls.number(row.fragments)
     end
     assert(resting == 15 * n, ("the blasts rest %d pellets' dust, got %d"):format(15 * n, resting))
     dirt_seen = #dirt

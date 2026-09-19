@@ -4,7 +4,7 @@
 -- not things (the engine's docs/physics/residue.md). Kind 0 is the
 -- engine's settled number; this pack dresses it as dust and lays one
 -- blast's worth down per detonation, a landing tile at a time off the
--- settle hook (items/weapons/frag_grenade.luau). Ash is matter: the
+-- settle handler (items/weapons/frag_grenade.luau). Ash is matter: the
 -- ash substance minted onto the blast tile, riding the ordinary matter
 -- ledger and the powder art. One file owns both so the grenade, the
 -- appearances roster and the mop cannot disagree about what a blast
