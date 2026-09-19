@@ -66,8 +66,10 @@ five-segment bar (`smes.dm:144-150`, `:344-346`).
 ## The panel ladder
 
 `fixtures/apc.luau` answers `flow.store.done`, which the engine raises
-for every `report` store on every real pass (every two seconds; the
-boot pass is quiet, so a panel booting low sheds on the first). It runs tg's autoset (`apc_main.dm:637-664`, thresholds
+for a `report` store on a real pass whose report changed (charge, feed,
+reserve or trip): at most every two seconds and never at equilibrium,
+so a full or empty cell is heard once. The boot pass is quiet, so a
+panel booting low sheds on the first. It runs tg's autoset (`apc_main.dm:637-664`, thresholds
 `:11`, `:13`) and throws each class gate that disagrees, in class
 order, with `sim.flow.set_gate`. The ladder is one rung per class of
 `lib/load_classes.luau`, and the file refuses to load when a class has

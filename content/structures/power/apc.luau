@@ -67,7 +67,7 @@ return {
     -- (battery.dm:29, apc_main.dm:43); this station fits the plain
     -- one. It charges at 1% of itself a second (CHARGELEVEL,
     -- apc_main.dm:9, :708), and `report` is what hands the ladder its
-    -- charge every pass.
+    -- charge whenever it moves.
     store = { capacity_j = 1000000, charge_w = 10000, report = true },
     -- Gated: a master switch and one gate per load class
     -- (compositions.luau), which is what the ladder throws.

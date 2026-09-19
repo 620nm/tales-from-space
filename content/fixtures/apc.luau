@@ -26,8 +26,8 @@ local network = require("@lib/network")
 -- there is a network at all.
 --
 -- The ladder is tg's autoset (docs/POWER.md): the engine hands this
--- file the cell's charge every pass, and this file alone throws the
--- panel's load-class gates. The window shows them and never throws
+-- file the cell's charge whenever it moves, and this file alone throws
+-- the panel's load-class gates. The window shows them and never throws
 -- one, so the ladder is the only answer to which classes a room gets.
 --
 -- The flag is the one thing a panel knows that nothing else on the
@@ -112,8 +112,9 @@ if sim ~= nil then
         end
     )
 
-    -- THE LADDER, once a pass per panel. Completions reach every
-    -- handler of the anchor, so a bank's report is somebody else's. A
+    -- THE LADDER, per panel on each pass its report changed.
+    -- Completions reach every handler of the anchor, so a bank's
+    -- report is somebody else's. A
     -- gate is thrown only when it disagrees with the ladder, class by
     -- class in the network's own order, so a steady cell writes
     -- nothing and a falling one writes the same rows every shift.
