@@ -263,7 +263,7 @@
   "steps": [
     {
       "type": "click",
-      "id": "doc/1/1/details",
+      "id": "doc/1/1/workspace/details",
       "expect": {
         "visible": [
           "doc/1/1/details-body"
@@ -277,7 +277,7 @@
       "deltaY": 400,
       "expect": {
         "visible": [
-          "doc/1/1/information/part/2/toggle/link_join/02-4a-1f-00-3c-20"
+          "doc/1/1/information/part/1/toggle/link_join/02-4a-1f-00-3c-20"
         ]
       }
     }

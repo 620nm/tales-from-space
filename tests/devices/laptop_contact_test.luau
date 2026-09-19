@@ -243,7 +243,7 @@ assert(
     "the target workspace uses the held laptop's wallpaper"
 )
 -- The window is titled with the laptop in hand; the workspace's own bar
--- names the target, and its panel rows wait under a shut Details.
+-- names the target, and Details is the first explicit workspace tab.
 local scope = assert(t.ui_document(p, "programming"))
 local function window()
     local found: ui_controls.Record? = nil
@@ -277,8 +277,8 @@ assert(
 local bar = ui_controls.node(p, "/machine-name", scope)
 assert(bar.text == ui.name, "the bar names the target, got: " .. tostring(bar.text))
 assert(
-    ui_controls.find(p, "/details", scope) and ui_controls.find(p, "/details-body", scope) == nil,
-    "the target's own rows start behind Details"
+    ui_controls.find(p, "/workspace/details", scope) and ui_controls.find(p, "/details-body", scope) == nil,
+    "the target's own rows start behind the Details tab"
 )
 assert(ui_controls.find(p, "/program-summary", scope), "its program summary stays in view")
 assert(ui_controls.find(p, "/programs-body", scope) == nil, "full program rows wait for Programs")

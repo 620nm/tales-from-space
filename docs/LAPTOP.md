@@ -90,7 +90,7 @@ reader; malformed or empty records stay editable. PEM files are ordinary
 text: writing one grants no credentials or authentication authority.
 
 Save/Discard/Cancel protects unsaved work when changing files, workspace pages,
-opening Details or dismissing the workspace. Navigation captures the mounted
+locking the device or dismissing the workspace. Navigation captures the mounted
 editor's latest text; hidden editors do not advertise Save shortcuts.
 Save waits for a matching accepted revision before continuing.
 Create retains its filename and extension while the unsaved-work guard
@@ -109,8 +109,9 @@ title shows the laptop it is worked through; the workspace's bar names the
 device with its address and link state, and says Connected. Devices declaring
 reachable controls open on Controls; other contacts open on Files. Programs
 opens the native slot controls, while a compact slot summary stays under the
-workspace tabs. The device's own panel rows — roster, join candidates, lock
-and parts — occupy the body through Details; members and candidates read as cards naming each device,
+workspace tabs. Lock/Unlock stays in the device bar with its lock-state icon.
+Details, the first workspace tab, holds the device's roster, join candidates
+and fitted parts; members and candidates read as cards naming each device,
 its address (a candidate's with its kind of node) and its link state, a
 wired-in member saying so. In Files, the device's side
 stands on the left and the laptop's on the right, each switching between its

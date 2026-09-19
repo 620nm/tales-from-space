@@ -110,12 +110,12 @@ function controls.press(p: number, suffix: string, gesture: string?, scope: Scop
     t.ui_press(p, node.id, gesture)
 end
 
--- A workspace draws its own device rows under a Details press. The body
--- wrapper is the open marker; the old `/information` module id is absent
--- from the workspace tree (ui/files.ts).
+-- Details is an explicit workspace page. Its body wrapper is the open
+-- marker; the old `/information` module id is absent from the workspace
+-- tree (ui/files.ts).
 function controls.details(p: number, scope: Scope?): ()
-    if controls.find(p, "/details", scope) and not controls.find(p, "/details-body", scope) then
-        controls.press(p, "/details", nil, scope)
+    if controls.find(p, "/workspace/details", scope) and not controls.find(p, "/details-body", scope) then
+        controls.press(p, "/workspace/details", nil, scope)
     end
 end
 
@@ -213,6 +213,15 @@ function controls.toggle(p: number, field: string, option: Option?, channel: str
     local scope = assert(t.ui_document(p, channel), "no document observed")
     local state = controls.state(p, channel)
     local target = assert(toggle_target(state, field, option), "missing disclosed switch: " .. field)
+    -- The link lock stays in the workspace heading across every page. Use it
+    -- directly when present, so toggling the lock never opens Details first.
+    if field == "link_lock" then
+        local heading = controls.find(p, "/toggle/link_lock/switch", scope)
+        if heading then
+            controls.press(p, heading.id, nil, scope)
+            return
+        end
+    end
     if target.child then
         controls.controls_page(p, scope)
     else

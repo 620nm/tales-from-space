@@ -52,7 +52,6 @@ export const workspaceRules: UiStyleRule[] = [
   rule("workspace-machine-link", { fontSize: 11, color: dim, whiteSpace: "nowrap" }),
   // The link state beside it keeps its reading's tone: no colour here.
   rule("workspace-machine-state", { fontSize: 11, whiteSpace: "nowrap" }),
-  rule("workspace-details", { flexShrink: 0, whiteSpace: "nowrap" }),
   rule("workspace-drive-title", { fontSize: 15, fontWeight: "bold" }),
   // A file's two lines wear classes rather than an inline style: two
   // full drives stand at the tree's byte budget (ui/files-drive.ts).

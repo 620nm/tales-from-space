@@ -11,6 +11,7 @@ import { programSlotRows, programSummary } from "./files-programs";
 import { moduleBody } from "./documents-modules";
 import { controlWorkspace } from "./documents-controls";
 import { linkMeta, refusalDialog } from "./documents-device";
+import { documentAction } from "./document-action";
 import { labelText } from "./labels";
 import { tfs } from "./strings";
 import { bodyId, localGuard, retainOpenFileBuffers, pollContinuation, guard } from "./files-buffer";
@@ -31,16 +32,13 @@ type Owner = "tool" | "target";
 /** Which drive each contact side shows, keyed `<doc>/<generation>/<owner>`;
  *  never sent. */
 const shown = new Map<string, string>();
-/** The documents (`<doc>/<generation>`) whose device details are open. */
-const expanded = new Set<string>();
 /** The selected workspace page for each live document identity. */
-type WorkspacePage = "controls" | "programs" | "files";
+type WorkspacePage = "details" | "controls" | "programs" | "files";
 const selected = new Map<string, WorkspacePage>();
 
-/** Forget drive and Details choices for documents no longer open. */
+/** Forget drive and page choices for documents no longer open. */
 export function retainWorkspaces(open: DocumentIdentity[]): void {
   const live = new Set(open.map((doc) => `${doc.id}/${doc.generation}`));
-  for (const key of expanded) if (!live.has(key)) expanded.delete(key);
   for (const key of selected.keys()) if (!live.has(key)) selected.delete(key);
   for (const key of shown.keys()) if (!live.has(key.slice(0, key.lastIndexOf("/")))) shown.delete(key);
 }
@@ -51,17 +49,32 @@ interface Side { key: string; node: UiNode }
  *  wherever the owner has a slot, loaded or not. */
 interface Shown { owner: Owner; drives: string[]; selected: string; store?: StoreRow }
 
-/** The workspace's own bar: the device, its link, a Details press over
- *  its panel rows where it has any, and the machine's controls. */
+/** The workspace's own bar: the device, its link, native lock action and the
+ * machine's controls. */
 export function workspaceHeading(id: string, doc: DocumentIdentity, state: Partial<ModuleState>, status: string | undefined,
-  controls: UiNode[] = [], details: UiNode | null = null): UiNode {
+  active: boolean, controls: UiNode[] = []): UiNode {
   const device = state.name ?? doc.title;
+  const lock = state.toggles?.find((row) => row.field === "link_lock");
+  const lockAction = lock ? documentAction(doc, "toggle", {
+    field: "link_lock",
+    ...(lock.option == null ? {} : { option: lock.option }),
+  }) : undefined;
+  const lockButton = lock && lockAction ? (() => {
+    const button = press(`${id}/toggle/link_lock/switch`,
+      tfs(lock.on ? "ui.workspace.lock" : "ui.workspace.unlock"),
+      guard(id, lockAction), {
+        icon: lock.on ? "ui_lock_open" : "ui_lock_closed",
+        disabled: !active,
+        cls: ["workspace-link-lock"],
+      });
+    return { ...button, class: [...(button.class ?? []), "workspace-lock"] };
+  })() : null;
   return Stack(`${id}/heading`, some(
     icon(`${id}/machine-icon`, state.owner_sprite ?? doc.owner_sprite, device),
     text(`${id}/machine-name`, device, ["workspace-machine-name", ...(state.link ? [] : ["grow"])]),
     linkMeta(id, state, ["workspace-machine-link"], ["workspace-machine-state"], true),
     status ? text(`${id}/machine-status`, status, ["hint"]) : null,
-    details,
+    lockButton,
     controls.length ? Stack(`${id}/machine-controls`, controls, { gap: 4, align: "center" }) : null,
   ), { align: "center", gap: 6, cls: ["workspace-frame", "workspace-heading"], style: { width: "100%" } });
 }
@@ -73,40 +86,31 @@ export function filePanes(id: string, doc: DocumentIdentity, state: Partial<Modu
   const memory = `${doc.id}/${doc.generation}`;
   const hasControls = state.control_panels !== undefined;
   const hasPrograms = state.program_slots !== undefined;
-  const remembered = selected.get(memory);
-  const page: WorkspacePage = remembered === "controls" && hasControls
-    ? "controls"
-    : remembered === "programs" && hasPrograms
-      ? "programs"
-      : remembered === "files" || !hasControls
-        ? "files"
-        : "controls";
-  selected.set(memory, page);
-  const open = expanded.has(memory);
-
-  // Details is the device's own management view. The root arrays are copied
-  // explicitly without reached control panels; those belong to Controls.
   const detailsState = ownState(state);
   const readings = moduleBody(`${id}/information`, doc, detailsState, active, false, false);
-  const details = readings.length ? press(`${id}/details`,
-    tfs(open ? "ui.workspace.details_hide" : "ui.workspace.details_show"), localGuard(id, () => {
-      if (open) expanded.delete(memory); else expanded.add(memory);
-    }), {
-      variant: "ghost",
-      cls: ["workspace-details"],
-    }) : null;
+  const hasDetails = readings.length > 0;
+  const remembered = selected.get(memory);
+  const page: WorkspacePage = remembered === "details" && hasDetails
+    ? "details"
+    : remembered === "controls" && hasControls
+      ? "controls"
+      : remembered === "programs" && hasPrograms
+        ? "programs"
+        : remembered === "files" || !hasControls
+          ? "files"
+          : "controls";
+  selected.set(memory, page);
   const heading = workspaceHeading(id, doc, state,
-    tool ? tfs("ui.workspace.connected") : state.link ? undefined : tfs("ui.workspace.ready"), controls, details);
-  const tabs = workspaceTabs(id, doc, state, page, hasControls, hasPrograms);
+    tool ? tfs("ui.workspace.connected") : state.link ? undefined : tfs("ui.workspace.ready"), active, controls);
+  const tabs = workspaceTabs(id, doc, state, page, hasDetails, hasControls, hasPrograms);
   const summary = hasPrograms
     ? programSummary(id, doc, state, active, localGuard(id, () => {
         selected.set(memory, "programs");
-        expanded.delete(memory);
     }))
     : null;
   let toolbar = some(heading, tabs, summary);
   let body: UiNode[];
-  if (open) {
+  if (page === "details") {
     body = [panel(`${id}/details-body`, readings, {
       cls: ["workspace-details-body"],
       style: { width: "100%" },
@@ -145,7 +149,7 @@ export function filePanes(id: string, doc: DocumentIdentity, state: Partial<Modu
   const refusal = refusalDialog(id, doc, state);
   const confirmation = editorGuard(id, doc, state, active);
   return {
-    bodyAxis: !open && page === "files" ? "x" : "y",
+    bodyAxis: page === "files" ? "x" : "y",
     toolbar,
     body,
     ...(state.notice ? { footer: [text(`${id}/notice`, labelText(state.notice), ["mod-foot"])] } : {}),
@@ -160,7 +164,11 @@ type WorkspaceState = Partial<ModuleState> & { control_panels?: ControlPanel[] }
 function ownState(state: Partial<ModuleState>): WorkspaceState {
   // A details renderer may support nested panels, but Details is always the
   // device's own management view and must never draw them a second time.
-  return { ...state, control_panels: undefined };
+  return {
+    ...state,
+    control_panels: undefined,
+    toggles: state.toggles?.filter((toggle) => toggle.field !== "link_lock"),
+  };
 }
 
 function workspaceTabs(
@@ -168,11 +176,13 @@ function workspaceTabs(
   doc: DocumentIdentity,
   state: Partial<ModuleState>,
   page: WorkspacePage,
+  hasDetails: boolean,
   hasControls: boolean,
   hasPrograms: boolean,
 ): UiNode {
   const memory = `${doc.id}/${doc.generation}`;
   const options = [
+    ...(hasDetails ? [{ key: "details", label: tfs("ui.workspace.details") }] : []),
     ...(hasControls ? [{ key: "controls", label: tfs("ui.workspace.controls") }] : []),
     ...(hasPrograms ? [{ key: "programs", label: tfs("ui.workspace.programs", { count: state.program_slots?.length ?? 0 }) }] : []),
     { key: "files", label: tfs("ui.workspace.files", { count: storageCount(state) }) },
@@ -182,9 +192,8 @@ function workspaceTabs(
     return {
       ...tab,
       selected: tab.key === page,
-      event: bind(eventId, tab.key === page && !expanded.has(memory) ? () => undefined : localGuard(id, () => {
+      event: bind(eventId, tab.key === page ? () => undefined : localGuard(id, () => {
         selected.set(memory, tab.key as WorkspacePage);
-        expanded.delete(memory);
       })),
     };
   }), { cls: ["workspace-tabs"] });
@@ -211,7 +220,7 @@ function attachSourceSubmit(nodes: UiNode[], id: string, submitBody: string | un
 function attachSourceSubmitNode(node: UiNode, id: string, submitBody: string): UiNode {
   const workspaceTab = node.id?.startsWith(`${id}/workspace/`) && node.id !== `${id}/workspace/files`;
   const programOpen = node.id?.startsWith(`${id}/program-summary/`) && node.id.endsWith("/open");
-  const target = node.id === `${id}/details` || workspaceTab || programOpen;
+  const target = node.id === `${id}/toggle/link_lock/switch` || workspaceTab || programOpen;
   const children = node.children?.map((child) => attachSourceSubmitNode(child, id, submitBody));
   return {
     ...node,

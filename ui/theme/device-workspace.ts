@@ -19,6 +19,15 @@ export const deviceWorkspaceStyles: UiStyleRule[] = [
     color: bright, backgroundColor: alpha(surface, 0.6),
     borderBottom: edge(teal, 2), outline: none, outlineOffset: 0,
   }),
+  rule("workspace-lock", { position: "relative", height: 32, flexShrink: 0 }, { within: "workspace-heading" }),
+  rule("btn-icon", {
+    position: "absolute", left: 0, top: 0, width: 32, height: 32,
+    pointerEvents: "none", zIndex: 1,
+  }, { within: "workspace-lock" }),
+  rule("workspace-link-lock", {
+    minWidth: 64, minHeight: 28, paddingLeft: 30, paddingRight: 8,
+    whiteSpace: "nowrap",
+  }, { within: "workspace-heading" }),
   rule("workspace-program-strip", {
     width: "100%", minWidth: 0, minHeight: 34, alignItems: "center", gap: 8,
     paddingTop: 5, paddingBottom: 5, paddingLeft: 9, paddingRight: 9,

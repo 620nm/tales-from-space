@@ -43,7 +43,7 @@ try {
   ({ browserSession, delay } = await import(pathToFileURL(join(engine, "tools/workspace-ui-browser.mjs")).href));
   launcher = spawn(process.execPath, [
     "tools/dev.mjs", "--no-build", "--bind", "127.0.0.1:0", "--mode", "free_build",
-    "--no-playtest", "--map", scene,
+    "--no-playtest", "--map", scene, "--audit-dir", join(scratch, "audit"),
   ], { cwd: engine, env: { ...process.env, LUNATIC_PACK: pack }, stdio: ["ignore", "pipe", "pipe"] });
   launcher.stdout.on("data", record);
   launcher.stderr.on("data", record);
@@ -132,37 +132,46 @@ try {
   await delay(700);
   // North-mounted art is picked on the wall above the fixture's owning tile.
   await tile(6, 0);
-  await waitFor(visible(suffix("/details")));
-  assert.equal(await evaluate(visible(suffix("/lock"))), false, "direct alarm opens through Details, not the contact lock screen");
+  await waitWorkspace("controls");
+  assert.equal(await evaluate(visible(suffix("/lock"))), false, "direct alarm opens through Controls, not the contact lock screen");
 
-  // A direct alarm owns the lock row in Details. Exercise both native
-  // transitions, then leave it unlocked before joining its candidates.
+  // Details is the first tab, but Controls remains the initial page. The
+  // native lock action stays in the heading, so unlocking does not navigate.
   const lockSelector = suffix("/toggle/link_lock/switch");
-  const lockState = () => evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(lockSelector)});return e?{text:e.textContent,selected:e.classList.contains('pc-btn-selected'),disabled:e.disabled}:null})()`);
-  await click(suffix("/details"));
-  await waitFor(visible(suffix("/details-body")));
+  const lockIconSelector = suffix("/toggle/link_lock/switch/icon");
+  const lockState = () => evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(lockSelector)}),i=document.querySelector(${JSON.stringify(lockIconSelector)}),s=i&&getComputedStyle(i);return e?{text:e.textContent.trim(),disabled:e.disabled,icon:s?[s.backgroundImage,s.backgroundPosition].join(" "):null}:null})()`);
   const beforeLock = await lockState();
-  assert.ok(beforeLock, "Details exposes the native link lock action");
-  await capture("locked", ["/details-body"]);
-  await recordFixture("fixture-locked.json");
+  assert.ok(beforeLock, "Controls heading exposes the native link lock action");
+  assert.equal(beforeLock.text, "Unlock", "the initial native lock action says Unlock");
+  assert.equal(beforeLock.disabled, false, "the initial native lock action is usable");
+  assert.equal(await evaluate(visible(lockIconSelector)), true, "the initial lock action shows its icon");
+  const tabOrder = await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(suffix("/workspace-tabs"))});return e?[...e.children].map(child=>child.dataset.packNode??""):[]})()`);
+  const detailsTab = tabOrder.findIndex(id => id.endsWith("/workspace/details"));
+  const controlsTab = tabOrder.findIndex(id => id.endsWith("/workspace/controls"));
+  assert.ok(detailsTab === 0 && controlsTab === 1, "Details tab precedes Controls");
+  await capture("locked", ["/controls-body", "/toggle/link_lock/switch", "/toggle/link_lock/switch/icon"]);
+  const lockedFixture = await recordFixture("fixture-locked.json");
+  const lockedState = stateFromFixture(lockedFixture);
+  assert.equal(lockedState?.toggles?.find(toggle => toggle.field === "link_lock")?.on, false,
+    "the trusted initial fixture reports the link as locked");
+
   await click(lockSelector);
-  await waitFor(`(()=>{const e=document.querySelector(${JSON.stringify(lockSelector)});return !!e && e.classList.contains('pc-btn-selected') !== ${beforeLock.selected}})()`);
+  await waitFor(`(()=>{const e=document.querySelector(${JSON.stringify(lockSelector)});return !!e && e.textContent.trim() !== ${JSON.stringify(beforeLock.text)}})()`);
   const afterLock = await lockState();
-  assert.notEqual(afterLock.selected, beforeLock.selected, "native Details lock toggle updates its rendered state");
-  await click(suffix("/details"));
+  assert.equal(afterLock.text, "Lock", "the native heading action now says Lock");
+  assert.equal(await evaluate(visible(lockIconSelector)), true, "the unlocked action shows its icon");
+  assert.ok(afterLock.icon && afterLock.icon !== beforeLock.icon, "the rendered lock icon changes after native unlock");
+  assert.equal(await evaluate(visible(suffix("/details-body"))), false, "unlocking does not open Details");
   await waitWorkspace("controls");
-  await click(suffix("/details"));
-  await waitFor(visible(suffix("/details-body")));
-  if (!(await lockState()).selected) {
-    await click(lockSelector);
-    await waitFor(`document.querySelector(${JSON.stringify(lockSelector)})?.classList.contains('pc-btn-selected') === true`);
-  }
-  await click(suffix("/details"));
-  await waitWorkspace("controls");
+  const unlockedFixture = await recordFixture();
+  const unlockedState = stateFromFixture(unlockedFixture);
+  assert.equal(unlockedState?.toggles?.find(toggle => toggle.field === "link_lock")?.on, true,
+    "the trusted fixture reports on=true for the unlocked link");
 
   // Re-query after every native response. Each accepted candidate disappears
   // and becomes a member row; a cached button would press stale state.
-  await click(suffix("/details"));
+  await click(suffix("/workspace/details"));
+  await waitWorkspace("details");
   const joinable = () => evaluate(`(()=>[...document.querySelectorAll('button[data-pack-node]')].filter(e=>{const p=e.dataset.packNode;const r=e.getBoundingClientRect(),s=getComputedStyle(e);return p.includes('/toggle/link_join/')&&!e.disabled&&r.width>0&&r.height>0&&s.visibility!=='hidden'}).map(e=>({id:e.dataset.packNode,text:e.textContent})).sort((a,b)=>Number(a.text.includes('pump'))-Number(b.text.includes('pump'))))()`);
   const memberCount = () => evaluate(`document.querySelectorAll('button[data-pack-node*="/toggle/link_drop/"]').length`);
   for (let joined = 0; joined < 2; joined++) {
@@ -174,7 +183,7 @@ try {
   assert.equal(await memberCount(), 2, "native member rows retain both accepted devices");
   await click(suffix("/workspace/controls"));
   await waitFor('document.querySelectorAll("[data-pack-node*=" + JSON.stringify("/controls/") + "][data-pack-node$=" + JSON.stringify("/name") + "]").length === 2');
-  await capture("controls", ["/controls-body"]);
+  await capture("controls", ["/controls-body", "/toggle/link_lock/switch", "/toggle/link_lock/switch/icon"]);
   const controlsFixture = await recordFixture("fixture-controls.json");
   assert.equal(stateFromFixture(controlsFixture)?.control_panels?.length, 2, "trusted fixture captures both disclosed control cards");
   const bodyBox = await evaluate(`(()=>{const r=document.querySelector(${JSON.stringify(suffix("/workspace/body"))}).getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2}})()`);
@@ -218,9 +227,10 @@ try {
   reports.push({ action: "power", field: power.field, before: power.on, after: switched.on });
   await click(suffix(`/toggle/${power.field}/switch/press`));
 
-  await click(suffix("/details"));
+  await click(suffix("/workspace/details"));
+  await waitWorkspace("details");
   await waitFor(visible(suffix("/details-body")));
-  await capture("details", ["/details", "/details-body"]);
+  await capture("details", ["/workspace/details", "/details-body"]);
   await click(suffix("/workspace/programs"));
   await waitWorkspace("programs");
   await capture("programs", ["/workspace/programs"]);

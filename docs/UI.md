@@ -51,8 +51,10 @@ The computer and file workflow lives in [LAPTOP.md](LAPTOP.md). File workspace
 modal ownership, readers and buffering use the engine's
 `docs/pack-ui/components.md` and `docs/pack-ui/authoring.md` contracts.
 
-Devices declaring reachable control panels open on Controls. Each disclosed
-endpoint has its own identity, measurements and compact native controls;
+Devices declaring reachable control panels open on Controls. Details is the
+first workspace tab, to the left of Controls. The device bar keeps the native
+Lock/Unlock action and its lock-state icon visible across workspace pages.
+Each disclosed endpoint has its own identity, measurements and compact native controls;
 the body scrolls vertically. Programs and Files occupy that same body when
 selected. A compact program summary remains above it. Details opens the
 owner's connection management and fitted parts in the body. An empty or

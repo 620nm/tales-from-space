@@ -38,14 +38,11 @@ export function programmingTool(data: Json | undefined): Identity | undefined {
  *  checked natively, success widens this same document and a refusal
  *  comes back as its `refusal` modal. */
 export function lockParts(id: string, doc: DocumentIdentity, state: Partial<ModuleState>, active: boolean): ScreenParts {
-  const lock = state.toggles?.find((row) => row.field === "link_lock");
   const refusal = refusalDialog(id, doc, state);
   return {
-    toolbar: [workspaceHeading(id, doc, state, tfs("ui.workspace.locked"))],
+    toolbar: [workspaceHeading(id, doc, state, tfs("ui.workspace.locked"), active)],
     body: [Stack(`${id}/lock`, some(
       text(`${id}/lock/hint`, tfs("ui.workspace.locked_hint"), ["workspace-offline"]),
-      lock ? press(`${id}/toggle/link_lock/switch`, tfs("ui.workspace.unlock"),
-        documentAction(doc, "toggle", { field: "link_lock" }), { disabled: !active }) : null,
     ), { dir: "column", gap: 8, align: "center", cls: ["workspace-frame"] })],
     ...(refusal ? { overlay: [refusal] } : {}),
   };
