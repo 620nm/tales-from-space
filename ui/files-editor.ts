@@ -86,7 +86,7 @@ export function editorPane(
       : [column(`${id}/reader`, reader ?? [])],
     ...(foot.length ? { footer: foot } : {}),
   }, { cls: FRAME });
-  return { ...pane, ...(!readOnly ? { primarySave: `${id}/editor/save` } : {}) };
+  return { ...pane, ...(showSource && !locked ? { primarySave: `${id}/editor/save` } : {}) };
 }
 
 /** View or Edit (View or Source when read-only). The View tab submits
@@ -132,7 +132,7 @@ function sourceArea(
 /** The workspace's sole modal while a draft guards a pending operation. */
 export function editorGuard(id: string, doc: DocumentIdentity, state: Partial<ModuleState>, active: boolean): UiNode | null {
   const current = editorBuffer(id, doc, state);
-  if (!current?.guard) return null;
+  if (!current?.guard && !current?.guardLocal) return null;
   const submitBody = current.sourceVisible ? `${id}/editor/body/${current.key}` : undefined;
   const locked = !active || current.revision !== current.open.revision || state.editor?.read_only || !!current.pending;
   const key = `${id}/editor/guard`;

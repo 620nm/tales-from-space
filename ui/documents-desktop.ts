@@ -4,7 +4,7 @@ import { Pane, Stack } from "@lunatic/ui";
 import type { DocumentIdentity, ModuleState, ScriptState } from "./document-model";
 import { documentAction } from "./document-action";
 import { bodyId } from "./files-buffer";
-import { filePanes, guard, workspaceHeading, type Identity } from "./files";
+import { filePanes, guard, workspaceHeading, type Identity, type WorkspaceParts } from "./files";
 import { refusalDialog } from "./documents-device";
 import { icon, press, screen, some, text } from "./view";
 import { tfs } from "./strings";
@@ -65,7 +65,7 @@ export function desktopPane(id: string, doc: DocumentIdentity, state: Partial<Sc
     ...(data.cartridge && !data.powered ? [action("eject_cartridge", "ui.desktop.eject_cartridge")] : []),
     action("power", data.powered ? "ui.desktop.power_off" : "ui.desktop.power_on", POWER_GLYPH),
   ];
-  const parts: ScreenParts = data.powered && native?.stores
+  const parts: WorkspaceParts = data.powered && native?.stores
     ? filePanes(id, doc, native, active, controls)
     : { toolbar: [Stack(`${id}/heading`, some(
       icon(`${id}/machine-icon`, native?.owner_sprite ?? doc.owner_sprite, doc.title),
@@ -76,11 +76,10 @@ export function desktopPane(id: string, doc: DocumentIdentity, state: Partial<Sc
   return computerPane(id, parts, data.powered ? wallpaper : undefined, !data.powered);
 }
 const POWER_GLYPH = "⏻";
-/** The glass: the wallpaper beneath, and the workspace screen over it,
- *  which scrolls sideways when a window is narrower than its panes. */
-export function computerPane(id: string, parts: ScreenParts, wallpaper?: string, off = false): UiNode {
+/** The glass and its page's scroller; Files yields sideways around its panes. */
+export function computerPane(id: string, parts: WorkspaceParts, wallpaper?: string, off = false): UiNode {
   return Pane(id, [
     ...(wallpaper ? [{ id: `${id}/wallpaper`, type: "image" as const, asset: wallpaper, class: ["desktop-wallpaper"] }] : []),
-    screen(`${id}/workspace`, parts, { cls: ["computer-workspace", ...(off ? ["computer-off"] : [])], axis: "x" }),
+    screen(`${id}/workspace`, parts, { cls: ["computer-workspace", ...(off ? ["computer-off"] : [])], axis: parts.bodyAxis ?? "y" }),
   ], { cls: ["computer-screen"], style: { width: 1120, maxWidth: "100%" } });
 }

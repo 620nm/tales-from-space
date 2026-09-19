@@ -18,9 +18,15 @@ end
 local function state(p: number): ui_controls.Record
     return ui_controls.record(t.ui(p, "programming") or t.ui(p))
 end
+local function workspace(p: number, page: "files" | "programs"): ()
+    local current = assert(scope(p), "no document observed")
+    local tab = assert(ui_controls.find(p, "/workspace/" .. page, current), "missing workspace tab: " .. page)
+    t.ui_press(p, tab.id)
+end
 -- A contact side draws one drive at a time: bring `side` up where a
 -- rendered switch names it.
 local function show(p: number, side: string): ()
+    workspace(p, "files")
     local switch = find(p, "/show/" .. side)
     if switch then
         t.ui_press(p, switch.id)
@@ -58,6 +64,7 @@ function files.address(p: number, address: string, action: string): ()
     t.ui_press(p, files.row(p, side, uid, action).id)
 end
 function files.edit(p: number, text: string): string
+    workspace(p, "files")
     if find(p, "/editor/mode/edit") then
         press(p, "/editor/mode/edit")
     end
@@ -89,10 +96,12 @@ function files.save(p: number, text: string): ()
     press(p, "/editor/save")
 end
 function files.rename(p: number, name: string): ()
+    workspace(p, "files")
     t.ui_edit(p, node(p, "/editor/name").id, name)
     press(p, "/editor/rename-button")
 end
 function files.program(p: number, slot: string, uid: (string | number)?): ()
+    workspace(p, "programs")
     for index, row in ipairs(ui_controls.rows(state(p).program_slots or {})) do
         if row.id == slot then
             if uid == nil then

@@ -9,7 +9,7 @@ Production images stay under `assets/` and ship through the asset manifests.
 | Skin | Composition |
 |---|---|
 | Gameplay | translucent communication and control regions over the station; restrained document cards; existing TG inventory frames and 32px artwork |
-| Computers | square phosphor screen; device identity and artwork above structured drives, readers and diagnostics; physical controls stay separate from viewer close |
+| Computers | square phosphor screen; device identity above Controls, Programs and Files workspaces; physical controls stay separate from viewer close |
 | Staff | BWOINK live canvas and case desk; shared account cards, target inspector and audit ledger |
 | Trusted shell/editor | stock engine surfaces; engine documentation owns their styling and interaction |
 
@@ -50,6 +50,15 @@ power, access or proximity diagnosis that the provider did not disclose.
 The computer and file workflow lives in [LAPTOP.md](LAPTOP.md). File workspace
 modal ownership, readers and buffering use the engine's
 `docs/pack-ui/components.md` and `docs/pack-ui/authoring.md` contracts.
+
+Devices declaring reachable control panels open on Controls. Each disclosed
+endpoint has its own identity, measurements and compact native controls;
+the body scrolls vertically. Programs and Files occupy that same body when
+selected. A compact program summary remains above it. Details opens the
+owner's connection management and fitted parts in the body. An empty or
+locked reach never invents devices, counts or a diagnosis. Plain file
+workspaces open on Files. Workspace selection belongs to the open document
+generation; native providers retain authority over every device operation.
 
 ## Staff workspaces and contact
 
@@ -104,7 +113,7 @@ The engine kit class vocabulary is reserved. Pack classes are grouped by
 surface: `hud-*`, inventory/body classes and matter `m*` in `theme/hud.ts`;
 `inspect-*`, chat and reader classes in `theme/surfaces.ts`; `doc-*`, `mod-*`,
 `action-*` and `window-*` in `theme/documents.ts`; `workspace-*`, `computer-*`
-and `desktop-*` in `theme/workspace.ts`; `hover-*`, `mouse-*` and `overlay`
+and `desktop-*` in `theme/workspace.ts` and `theme/device-workspace.ts`; `hover-*`, `mouse-*` and `overlay`
 in `theme/overlay.ts`. Common fields and text roles live in `theme/kit.ts`.
 
 Interactive IDs survive restyling. The engine's provider/file desktop tests
@@ -136,3 +145,10 @@ The engine's `docs/pack-ui/lab.md` owns fixture syntax and screenshot environmen
 
 From this checkout, `node tools/test.mjs <engine>` checks theme rules,
 localization and behavior. The engine gate runs the integrated pack checks.
+
+`LUNATIC_PACK=$PWD node tools/review-device-workspace.mjs <engine> --out <dir>`
+starts an isolated free-build bench using the built engine and pack. Trusted
+browser input opens an Air Alarm, joins devices, changes a setpoint, toggles
+power, and saves then reopens a file. Screenshots cover all three acceptance viewports;
+downloaded provider fixtures verify native results. The tool stops its own
+server and browser and leaves existing development instances running.

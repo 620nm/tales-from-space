@@ -5,6 +5,13 @@ export type Record = { [string]: unknown }
 export type Node = { [string]: unknown, id: string }
 export type Scope = { document: number, generation: number }
 export type Option = string | number | boolean
+type TargetKind = "toggle" | "label" | "setpoint"
+type Target = {
+    kind: TargetKind,
+    row: Record,
+    index: number,
+    child: boolean,
+}
 
 function controls.record(value: unknown): Record
     assert(type(value) == "table", "expected a disclosed record")
@@ -103,54 +110,137 @@ function controls.press(p: number, suffix: string, gesture: string?, scope: Scop
     t.ui_press(p, node.id, gesture)
 end
 
--- A workspace draws its device rows under a Details press: open it where
--- it stands shut (ui/files.ts).
+-- A workspace draws its own device rows under a Details press. The body
+-- wrapper is the open marker; the old `/information` module id is absent
+-- from the workspace tree (ui/files.ts).
 function controls.details(p: number, scope: Scope?): ()
-    if controls.find(p, "/details", scope) and not controls.find(p, "/information", scope) then
+    if controls.find(p, "/details", scope) and not controls.find(p, "/details-body", scope) then
         controls.press(p, "/details", nil, scope)
     end
+end
+
+-- Child rows are visible only on the workspace's Controls tab. Selecting the
+-- tab also folds an open Details body (ui/files.ts).
+function controls.controls_page(p: number, scope: Scope?): ()
+    if not controls.find(p, "/controls-body", scope) then
+        controls.press(p, "/workspace/controls", nil, scope)
+    end
+end
+
+local function option_matches(row: Record, option: Option?): boolean
+    if option == nil then
+        return row.option == nil
+    end
+    return row.option == tostring(option)
+end
+
+local function target_in_rows(
+    value: unknown,
+    field: string,
+    option: Option?,
+    kind: TargetKind,
+    child: boolean
+): Target?
+    for index, row in ipairs(controls.rows(value or {})) do
+        if row.field == field and option_matches(row, option) then
+            return { kind = kind, row = row, index = index, child = child }
+        end
+    end
+    return nil
+end
+
+local function toggle_target(state: Record, field: string, option: Option?): Target?
+    local target = target_in_rows(state.toggles, field, option, "toggle", false)
+    if target then
+        return target
+    end
+    target = target_in_rows(state.labels, field, option, "label", false)
+    if target then
+        return target
+    end
+    for _, panel in ipairs(controls.rows(state.control_panels or {})) do
+        target = target_in_rows(panel.toggles, field, option, "toggle", true)
+        if target then
+            return target
+        end
+        target = target_in_rows(panel.labels, field, option, "label", true)
+        if target then
+            return target
+        end
+    end
+    return nil
+end
+
+local function setpoint_target(state: Record, field: string): Target?
+    local target = target_in_rows(state.setpoints, field, nil, "setpoint", false)
+    if target then
+        return target
+    end
+    for _, panel in ipairs(controls.rows(state.control_panels or {})) do
+        target = target_in_rows(panel.setpoints, field, nil, "setpoint", true)
+        if target then
+            return target
+        end
+    end
+    return nil
+end
+
+local function target_suffix(target: Target): string
+    if target.kind == "label" then
+        local label = if target.child then "press-" .. (target.index - 1) else tostring(target.index - 1)
+        return "/label/" .. label .. "/press"
+    end
+    if target.kind == "setpoint" then
+        return "/set/" .. controls.text(target.row.field) .. "/value"
+    end
+    local option = target.row.option
+    local suffix = "/toggle/" .. controls.text(target.row.field) .. "/" .. (option == nil and "switch" or tostring(option))
+    return if target.child and option == nil then suffix .. "/press" else suffix
+end
+
+local function fallback_suffix(target: Target): string
+    if target.kind == "label" then
+        local label = if target.child then "press-" .. (target.index - 1) else tostring(target.index - 1)
+        return "/label/" .. label .. "/press"
+    end
+    local suffix = "/toggle-index/" .. (target.index - 1)
+    return if target.child and target.row.option == nil then suffix .. "/press" else suffix
 end
 
 -- `channel` names a script channel's document ("programming" for a laptop
 -- contact); nil is the default document.
 function controls.toggle(p: number, field: string, option: Option?, channel: string?): ()
     local scope = assert(t.ui_document(p, channel), "no document observed")
-    controls.details(p, scope)
-    local suffix = "/toggle/" .. field .. "/" .. (option == nil and "switch" or tostring(option))
-    if controls.find(p, suffix, scope) then
-        controls.press(p, suffix, nil, scope)
-        return
+    local state = controls.state(p, channel)
+    local target = assert(toggle_target(state, field, option), "missing disclosed switch: " .. field)
+    if target.child then
+        controls.controls_page(p, scope)
+    else
+        controls.details(p, scope)
     end
-    local selected: string? = nil
-    if option ~= nil then
-        selected = tostring(option)
+    local suffix = target_suffix(target)
+    local node = controls.find(p, suffix, scope)
+    if not node and target.kind ~= "setpoint" then
+        node = controls.find(p, fallback_suffix(target), scope)
     end
-    for index, row in ipairs(controls.rows(controls.state(p, channel).toggles or {})) do
-        if row.field == field and row.option == selected then
-            controls.press(p, "/toggle-index/" .. (index - 1), nil, scope)
-            return
-        end
-    end
-    for index, row in ipairs(controls.rows(controls.state(p, channel).labels or {})) do
-        if row.row == "press" and row.field == field and row.option == selected then
-            controls.press(p, "/label/" .. (index - 1) .. "/press", nil, scope)
-            return
-        end
-    end
-    error("missing rendered switch: " .. suffix)
+    controls.press(p, assert(node, "missing rendered switch: " .. suffix).id, nil, scope)
 end
 
-function controls.set(p: number, field: string, value: number | "min" | "max"): ()
-    local node = controls.node(p, "/set/" .. field .. "/value", t.ui_document(p))
+function controls.set(p: number, field: string, value: number | "min" | "max", channel: string?): ()
+    local scope = assert(t.ui_document(p, channel), "no document observed")
+    local state = controls.state(p, channel)
+    local target = assert(setpoint_target(state, field), "missing disclosed setpoint: " .. field)
+    if target.child then
+        controls.controls_page(p, scope)
+    else
+        controls.details(p, scope)
+    end
+    local suffix = target_suffix(target)
+    local node = controls.node(p, suffix, scope)
     if value == "min" or value == "max" then
-        for _, point in ipairs(controls.rows(controls.state(p).setpoints or {})) do
-            if point.field == field then
-                local bound = point[value]
-                assert(type(bound) == "number", "the setpoint bound is numeric")
-                value = bound
-                break
-            end
-        end
+        local bound = target.row[value]
+        assert(type(bound) == "number", "the setpoint bound is numeric")
+        value = bound
     end
     t.ui_edit(p, node.id, tostring(value))
     t.ui_press(p, node.id, "change")

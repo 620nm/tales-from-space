@@ -277,12 +277,16 @@ assert(
 local bar = ui_controls.node(p, "/machine-name", scope)
 assert(bar.text == ui.name, "the bar names the target, got: " .. tostring(bar.text))
 assert(
-    ui_controls.find(p, "/details", scope) and ui_controls.find(p, "/information", scope) == nil,
+    ui_controls.find(p, "/details", scope) and ui_controls.find(p, "/details-body", scope) == nil,
     "the target's own rows start behind Details"
 )
-assert(ui_controls.find(p, "/programs", scope), "while its program slots stand in view")
+assert(ui_controls.find(p, "/program-summary", scope), "its program summary stays in view")
+assert(ui_controls.find(p, "/programs-body", scope) == nil, "full program rows wait for Programs")
 ui_controls.details(p, scope)
-assert(ui_controls.find(p, "/information", scope), "and Details opens them")
+assert(ui_controls.find(p, "/details-body", scope), "and Details opens them")
+ui_controls.press(p, "/workspace/programs", nil, scope)
+assert(ui_controls.find(p, "/programs-body", scope), "Programs opens full program rows")
+ui_controls.press(p, "/workspace/files", nil, scope)
 local panes = rows(ui_controls.node(p, "/panes", scope).children)
 assert(
     text(panes[1].id):sub(-#"/side/target") == "/side/target"

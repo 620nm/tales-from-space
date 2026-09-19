@@ -15,7 +15,7 @@ local ui_controls = require("@helpers/ui_controls")
 --
 --   * an alarm holding nothing proxies nothing;
 --   * a joined machine's whole settings pane appears under the alarm,
---     in a section named for the machine and its address;
+--     in an explicit control panel named for the machine and its address;
 --   * a dial turned on the ALARM is the machine's dial;
 --   * the machine's own casing goes read-only and says who has it;
 --   * a lock over the alarm takes every one of those away again;
@@ -54,74 +54,42 @@ local function rows(ui: ui_controls.Record, field)
 end
 
 local function dial(ui: ui_controls.Record, field): ui_controls.Record?
-    for _, row in ipairs(ui_controls.rows(ui.setpoints or {})) do
-        if row.field == field then
-            return row
+    for _, panel in ipairs(ui_controls.rows(ui.control_panels or {})) do
+        for _, row in ipairs(ui_controls.rows(panel.setpoints or {})) do
+            if row.field == field then
+                return row
+            end
         end
     end
     return nil
 end
 
--- Every section heading the document draws, in the order the rows
--- carry them. The `link` module's two are ids ("link.members",
--- "link.joinable"); the `reach` module's name one proxied machine
--- each -- the machine and its address, which is how a reader tells two
--- vents in one room apart -- either alone or as the `block` argument
--- of a composed `proxy.section` heading (docs/tgui/labels.md).
-local function sections(ui: ui_controls.Record)
-    local seen: { [string]: boolean } = {}
-    local out: { string } = {}
-    local lists = {
-        ui_controls.rows(ui.readouts or {}),
-        ui_controls.rows(ui.toggles or {}),
-        ui_controls.rows(ui.setpoints or {}),
-        ui_controls.rows(ui.labels or {}),
-    }
-    for _, list in ipairs(lists) do
-        for _, row in ipairs(ui_controls.rows(list)) do
-            local section = row.section
-            local name: string? = nil
-            if type(section) == "table" then
-                local label = ui_controls.record(section)
-                if label.id == "proxy.section" then
-                    name = ui_controls.text(ui_controls.record(label.args).block)
-                else
-                    name = word(label)
-                end
-            end
-            if name ~= nil and not seen[name] then
-                seen[name] = true
-                out[#out + 1] = name
-            end
-        end
-    end
-    return out
-end
-
--- The section a named machine was drawn under, and the address in it.
+-- The explicit identity of a named machine's control panel.
 local function proxied(ui: ui_controls.Record, name: string): (string?, string?)
-    for _, label in ipairs(sections(ui)) do
-        if label:sub(1, #name + 1) == name .. " " then
-            return label, label:sub(#name + 2)
+    for _, panel in ipairs(ui_controls.rows(ui.control_panels or {})) do
+        local panel_name = ui_controls.text(panel.name)
+        if panel_name == name then
+            return panel_name, ui_controls.text(panel.address)
         end
     end
     return nil, nil
 end
 
--- Every row on this document that belongs to some OTHER machine. Its
--- key is "<address>/<that machine's own field>", which is the one shape
--- no local module ever produces -- the alarm invents no vocabulary, it
--- scopes what the machine already had.
+-- Every row in a child control panel that belongs to some OTHER machine.
+-- Its key is "<address>/<that machine's own field>", which is the one
+-- shape no local module ever produces -- the alarm invents no vocabulary,
+-- it scopes what the machine already had.
 local function scoped(ui: ui_controls.Record)
     local out: { ui_controls.Record } = {}
-    for _, list in ipairs({
-        ui_controls.rows(ui.toggles or {}),
-        ui_controls.rows(ui.setpoints or {}),
-        ui_controls.rows(ui.offers or {}),
-    }) do
-        for _, row in ipairs(ui_controls.rows(list)) do
-            if type(row.field) == "string" and row.field:find("/", 1, true) then
-                out[#out + 1] = row
+    for _, panel in ipairs(ui_controls.rows(ui.control_panels or {})) do
+        for _, list in ipairs({
+            ui_controls.rows(panel.toggles or {}),
+            ui_controls.rows(panel.setpoints or {}),
+        }) do
+            for _, row in ipairs(ui_controls.rows(list)) do
+                if type(row.field) == "string" and row.field:find("/", 1, true) then
+                    out[#out + 1] = row
+                end
             end
         end
     end
@@ -347,9 +315,9 @@ assert(
 -- ---------------------------------------------------------------
 -- 4. THE JOIN, AND THE ROOM APPEARS ON THE CONSOLE.
 --
--- One section per machine, named for the machine AND its address,
--- because two vents in one room are told apart by the second half and
--- a shift log names only that half.
+-- One explicit control panel per machine, carrying the machine name AND
+-- its address, because two vents in one room are told apart by that pair
+-- and a shift log names only the address.
 -- ---------------------------------------------------------------
 for _, mac in ipairs(candidates) do
     ui_controls.toggle(p, "link_join", mac)
@@ -358,11 +326,13 @@ end
 panel = ui_controls.state(p)
 assert(#rows(panel, "link_drop") == 3, "the alarm holds all three")
 
-local vent_section, vent = proxied(panel, "air vent")
-assert(vent_section ~= nil and vent ~= nil, "the vent is drawn under its own heading")
-assert(#vent == 17, "the heading carries its address: " .. vent_section)
-assert(proxied(panel, "air scrubber") ~= nil, "and the scrubber under its")
-assert(proxied(panel, "pump") ~= nil, "and the pump under its")
+local vent_name, vent = proxied(panel, "air vent")
+assert(vent_name == "air vent" and vent ~= nil, "the vent carries its explicit identity")
+assert(#vent == 17, "the control panel carries its address: " .. vent)
+local scrubber_name = proxied(panel, "air scrubber")
+assert(scrubber_name == "air scrubber", "and the scrubber carries its explicit identity")
+local pump_name = proxied(panel, "pump")
+assert(pump_name == "pump", "and the pump carries its explicit identity")
 assert(proxied(panel, "radio transceiver") == nil, "the transceiver is in nobody's reach")
 
 -- ---------------------------------------------------------------

@@ -10,6 +10,7 @@ import { hudRules } from "./theme/hud";
 import { surfaceRules } from "./theme/surfaces";
 import { documentRules } from "./theme/documents";
 import { workspaceRules } from "./theme/workspace";
+import { deviceWorkspaceStyles } from "./theme/device-workspace";
 import { lobbyRules } from "./theme/lobby";
 import { contactRules } from "./theme/contact";
 
@@ -19,6 +20,7 @@ export default defineStyles([
   ...surfaceRules,
   ...documentRules,
   ...workspaceRules,
+  ...deviceWorkspaceStyles,
   ...lobbyRules,
   ...contactRules,
 ] as UiStyleRule[]);

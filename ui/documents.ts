@@ -15,6 +15,7 @@ import type {
 import type { CopierState, FaxState, PaperState } from "./document-model";
 import { documentAction, scriptAction } from "./document-action";
 import { moduleBody } from "./documents-modules";
+import { controlWorkspace } from "./documents-controls";
 import { shelfRows } from "./documents-shelf";
 import { computerPane, desktopPane, isDesktop, lockParts, programmingTool, programmingWallpaper } from "./documents-desktop";
 import { filePanes, guard, retainOpenFileBuffers, retainWorkspaces } from "./files";
@@ -95,9 +96,10 @@ export function documents(view: GameplayView): UiNode[] {
         const tool = programmingTool(module.script?.data);
         if (module.contact_locked) return computerPane(id, lockParts(id, doc, module, active), programmingWallpaper(module.script?.data));
         if (module.stores) return computerPane(id, filePanes(id, doc, module, active, [], tool), programmingWallpaper(module.script?.data));
-        width = WIDTH[module.presentation ?? "modules"] ?? WIDTH.modules;
+        width = module.control_panels !== undefined ? 920 : WIDTH[module.presentation ?? "modules"] ?? WIDTH.modules;
         body = [
           ...moduleBody(id, doc, module, active, false, false),
+          ...(module.control_panels !== undefined ? controlWorkspace(id, doc, module, active) : []),
           ...(module.products !== undefined
             ? shelfRows(id, doc, module.products, active)
             : []),
@@ -126,12 +128,21 @@ export function documents(view: GameplayView): UiNode[] {
     // the device (ui/files.ts `workspaceHeading`).
     const tool = programmingTool(module?.script?.data);
     const titleAsset = tool?.sprite ?? doc.owner_sprite ?? module?.owner_sprite;
-    return { ...node, ...(module?.open && !module.editor?.read_only ? { primarySave: `doc/${doc.id}/${doc.generation}/editor/save` } : {}), window: {
+    const save = `doc/${doc.id}/${doc.generation}/editor/save`;
+    return { ...node, ...(module.editor?.bound === true && mountedSave(node, save)
+      ? { primarySave: save }
+      : {}), window: {
       ...(node.class?.includes("computer-screen") ? { contentAspectRatio: 16 / 9, minWidth: 740, maximizable: true, titleAsset } : {}),
       key: `document/${doc.id}/${doc.generation}`, title: tool?.name ?? doc.title, source: "status",
       close: `doc/${doc.id}/${doc.generation}/close`,
       document: doc.id, generation: doc.generation, height: 520, width: Number(node.style?.width) || 520 } };
   });
+}
+
+/** Save shortcuts address only a live source editor's enabled save press. */
+function mountedSave(node: UiNode, id: string): boolean {
+  return (node.id === id && !!node.submit && !node.disabled)
+    || (node.children?.some((child) => mountedSave(child, id)) ?? false);
 }
 
 /** The construction roster: what a recipe costs, and which one is armed. */

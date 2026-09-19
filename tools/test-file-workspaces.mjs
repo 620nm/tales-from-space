@@ -27,7 +27,7 @@ const flatten = (node) => [node, ...(node.children ?? []).flatMap(flatten)];
 function render(s) {
   U.begin();
   const p = U.filePanes(id, doc, s, true);
-  return Object.values(p).flat().flatMap(flatten);
+  return Object.values(p).filter(Array.isArray).flat().flatMap(flatten);
 }
 const act = (suffix, extra = {}) => U.event({ id: `${id}/${suffix}`, ...extra }).action;
 const get = (nodes, suffix) => nodes.find((node) => node.id === `${id}/${suffix}`);
@@ -135,6 +135,34 @@ test("an unanswered save can be cancelled, preserving Create for retry or discar
   s.open = { ...s.open, revision: 4, body: "Draft" };
   s.save_ack = { request: save.payload.request, binding: "disk", uid: 1, revision: 4 };
   assert.equal(U.pollContinuation([{ ...doc, state: s }]), undefined);
+});
+test("a retried save continues only after its own receipt", () => {
+  const s = createGuard(); render(s);
+  const first = act("editor/guard/save"); render(s);
+  act("editor/guard/cancel"); render(s);
+  act("drive/host/create/confirm", { values: { stem: { value: "Air notes" }, ext: { value: "atmo" } } });
+  render(s);
+  const retry = act("editor/guard/save");
+  assert.notEqual(retry.payload.request, first.payload.request);
+  s.open = { ...s.open, revision: 4, body: "Draft" };
+  s.save_ack = { request: retry.payload.request, binding: "disk", uid: 1, revision: 4 };
+  assert.equal(U.pollContinuation([{ ...doc, state: s }]).payload.field, "file_create");
+  assert.equal(U.pollContinuation([{ ...doc, state: s }]), undefined);
+});
+
+test("a cancelled receipt cannot release a newer pending guard", () => {
+  const s = createGuard(); render(s);
+  const first = act("editor/guard/save"); render(s);
+  act("editor/guard/cancel"); render(s);
+  act("drive/host/create/confirm", { values: { stem: { value: "Air notes" }, ext: { value: "atmo" } } });
+  render(s);
+  act("editor/guard/save");
+  s.open = { ...s.open, revision: 4, body: "Draft" };
+  s.save_ack = { request: first.payload.request, binding: "disk", uid: 1, revision: 4 };
+  assert.equal(U.pollContinuation([{ ...doc, state: s }]), undefined);
+  const nodes = render(s);
+  assert(!get(nodes, "editor/guard/discard").disabled);
+  assert(!get(nodes, "editor/guard/save").disabled);
 });
 
 test("Copy retains the source filename without a destination input", () => {

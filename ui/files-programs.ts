@@ -3,9 +3,32 @@ import { Stack } from "@lunatic/ui";
 import type { DocumentIdentity, ModuleState, ProgramSlotRowState } from "./document-model";
 import { documentAction } from "./document-action";
 import { labelText } from "./labels";
-import { column, press, row, some, text } from "./view";
+import { column, press, row, some, text, type Handler } from "./view";
 import * as S from "./strings";
 const SOURCE_EXTS = new Set(["disl"]);
+
+/** A read-only native summary that remains visible above every workspace page. */
+export function programSummary(
+  id: string,
+  doc: DocumentIdentity,
+  state: Partial<ModuleState>,
+  _active: boolean,
+  openPrograms: Handler,
+  submit?: string,
+): UiNode | null {
+  const slots = state.program_slots;
+  if (!slots?.length) return null;
+  return Stack(`${id}/program-summary`, slots.map((slot: ProgramSlotRowState, index) => {
+    const key = `${id}/program-summary/${index}`;
+    const detail = slot.file ?? labelText(slot.state);
+    return row(key, some(
+      press(`${key}/open`, slot.id, openPrograms, { variant: "ghost", ...(submit ? { submit } : {}) }),
+      text(`${key}/state`, detail, ["hint", "grow"]),
+      text(`${key}/stats`, S.programStats(slot.runs ?? 0, slot.faults ?? 0), ["fsize"]),
+    ), { cls: ["workspace-program-summary"] });
+  }), { gap: 4, align: "center", cls: ["workspace-program-strip"] });
+}
+
 export function programSlotRows(
   id: string,
   doc: DocumentIdentity,

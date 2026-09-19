@@ -89,8 +89,10 @@ Valid ATMO JSON has a pack
 reader; malformed or empty records stay editable. PEM files are ordinary
 text: writing one grants no credentials or authentication authority.
 
-Save/Discard/Cancel protects unsaved work when changing files or dismissing
-the workspace. Save waits for a matching accepted revision before continuing.
+Save/Discard/Cancel protects unsaved work when changing files, workspace pages,
+opening Details or dismissing the workspace. Navigation captures the mounted
+editor's latest text; hidden editors do not advertise Save shortcuts.
+Save waits for a matching accepted revision before continuing.
 Create retains its filename and extension while the unsaved-work guard
 owns the workspace. Cancel restores Create with that naming draft; Save
 keeps the guard open until its receipt; Discard continues once. Cancel also
@@ -104,12 +106,13 @@ closed documents cancel pending continuations.
 Use an open, powered laptop on a reachable device with a configured programming
 interface to open its workspace over the laptop's wallpaper. The window's
 title shows the laptop it is worked through; the workspace's bar names the
-device with its address and link state, and says Connected. Its program
-slots stand in view directly under the bar. The device's own panel rows —
-roster, join candidates, lock and parts — sit under the bar's Details press,
-shut until opened; members and candidates read as cards naming each device,
+device with its address and link state, and says Connected. Devices declaring
+reachable controls open on Controls; other contacts open on Files. Programs
+opens the native slot controls, while a compact slot summary stays under the
+workspace tabs. The device's own panel rows — roster, join candidates, lock
+and parts — occupy the body through Details; members and candidates read as cards naming each device,
 its address (a candidate's with its kind of node) and its link state, a
-wired-in member saying so. The device's side
+wired-in member saying so. In Files, the device's side
 stands on the left and the laptop's on the right, each switching between its
 own drives: the device's A: and, where it has a disk slot, B:, and the
 laptop's A: (its storage) and B: (its disk slot). Each file has one Copy

@@ -1,0 +1,151 @@
+{
+  "note": "Native provider capture from tools/review-device-workspace.mjs; document identity rebased for fixture interactions.",
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 6,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "generation": 1,
+        "id": 1,
+        "state": {
+          "control_panels": [
+            {
+              "address": "1a-78-5a-97-fe-13",
+              "gauge": 1.9999999999999565,
+              "labels": [],
+              "name": "air vent",
+              "notice": null,
+              "online": true,
+              "readouts": [
+                {"label": {"id": "vent.supply_line"}, "section": null, "tone": "on", "value": {"text": "101 kPa"}},
+                {"label": {"id": "room.room"}, "section": null, "tone": "on", "value": {"text": "101.3 kPa"}},
+                {"label": {"id": "room.supply"}, "section": null, "tone": "on", "value": {"id": "room.supply.fed"}}
+              ],
+              "setpoints": [
+                {"decimals": 2, "field": "1a-78-5a-97-fe-13/setpoint", "label": {"id": "vent.hold_at"}, "max": 109.431, "min": 101.325, "section": null, "step": 10.1325, "unit": "kPa", "value": 101.325},
+                {"decimals": 2, "field": "1a-78-5a-97-fe-13/release", "label": {"id": "vent.feed_under"}, "max": 101.325, "min": 0, "section": null, "step": 10.1325, "unit": "kPa", "value": 101.325},
+                {"decimals": 2, "field": "1a-78-5a-97-fe-13/siphon", "label": {"id": "vent.empty_over"}, "max": 4500, "min": 101.325, "section": null, "step": 10.1325, "unit": "kPa", "value": 109.431}
+              ],
+              "sprite": "vent_off",
+              "toggles": [
+                {"color": null, "field": "1a-78-5a-97-fe-13/power", "group": null, "icon": null, "label": {"id": "room.power"}, "off_text": {"id": "switch.off"}, "on": true, "on_text": {"id": "switch.on"}, "option": null, "section": null}
+              ]
+            },
+            {
+              "address": "4a-20-05-b2-8c-aa",
+              "gauge": 2,
+              "labels": [],
+              "name": "air scrubber",
+              "notice": null,
+              "online": true,
+              "readouts": [
+                {"label": {"id": "scrubber.waste"}, "section": null, "tone": "on", "value": {"text": "101 kPa"}},
+                {"label": {"id": "room.room"}, "section": null, "tone": "on", "value": {"text": "101.3 kPa"}},
+                {"label": {"id": "room.supply"}, "section": null, "tone": "on", "value": {"id": "room.supply.fed"}}
+              ],
+              "setpoints": [
+                {"decimals": 0, "field": "4a-20-05-b2-8c-aa/rate", "label": {"id": "scrubber.rate"}, "max": 200, "min": 0, "section": null, "step": 10, "unit": "L/s", "value": 5},
+                {"decimals": 1, "field": "4a-20-05-b2-8c-aa/floor", "label": {"id": "scrubber.stop_at"}, "max": 4500, "min": 0, "section": null, "step": 10.1325, "unit": "kPa", "value": 100}
+              ],
+              "sprite": "scrubber_off_n",
+              "toggles": [
+                {"color": null, "field": "4a-20-05-b2-8c-aa/power", "group": null, "icon": null, "label": {"id": "room.power"}, "off_text": {"id": "switch.off"}, "on": false, "on_text": {"id": "switch.on"}, "option": null, "section": null},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/service", "group": null, "icon": null, "label": {"args": {"factor": "1×"}, "id": "scrubber.reach.tile"}, "off_text": {"args": {"factor": "1×"}, "id": "scrubber.reach.tile"}, "on": true, "on_text": {"args": {"factor": "1×"}, "id": "scrubber.reach.tile"}, "option": "1", "section": null},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/service", "group": null, "icon": null, "label": {"args": {"factor": "4×"}, "id": "scrubber.reach.cardinals"}, "off_text": {"args": {"factor": "4×"}, "id": "scrubber.reach.cardinals"}, "on": false, "on_text": {"args": {"factor": "4×"}, "id": "scrubber.reach.cardinals"}, "option": "4", "section": null},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/service", "group": null, "icon": null, "label": {"args": {"factor": "8×"}, "id": "scrubber.reach.ring"}, "off_text": {"args": {"factor": "8×"}, "id": "scrubber.reach.ring"}, "on": false, "on_text": {"args": {"factor": "8×"}, "id": "scrubber.reach.ring"}, "option": "8", "section": null},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/roster", "group": null, "icon": null, "label": {"id": "scrubber.roster"}, "off_text": {"id": "scrubber.roster.selected"}, "on": false, "on_text": {"id": "scrubber.roster.all"}, "option": null, "section": null},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/filter", "group": null, "icon": null, "label": {"text": "oxygen"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "o2", "section": {"text": "Station atmosphere"}},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/filter", "group": null, "icon": null, "label": {"text": "nitrogen"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "n2", "section": {"text": "Station atmosphere"}},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/filter", "group": null, "icon": null, "label": {"text": "carbon dioxide"}, "off_text": {"id": "scrubber.gas.left"}, "on": true, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "co2", "section": {"text": "Station atmosphere"}},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/filter", "group": null, "icon": null, "label": {"text": "plasma"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "plasma", "section": {"text": "Atmospheric poisons"}},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/filter", "group": null, "icon": null, "label": {"text": "nitrous oxide"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "n2o", "section": {"text": "Atmospheric poisons"}},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/filter", "group": null, "icon": null, "label": {"text": "uranium hexafluoride"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "uf6", "section": {"text": "Atmospheric poisons"}},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/filter", "group": null, "icon": null, "label": {"text": "tritium"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "tritium", "section": {"text": "Atmospheric poisons"}},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/filter", "group": null, "icon": null, "label": {"text": "hydrogen"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "hydrogen", "section": {"text": "Atmospheric poisons"}},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/filter", "group": null, "icon": null, "label": {"text": "ammonia"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "ammonia", "section": {"text": "Atmospheric poisons"}},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/filter", "group": null, "icon": null, "label": {"text": "chlorine"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "chlorine", "section": {"text": "Atmospheric poisons"}},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/filter", "group": null, "icon": null, "label": {"text": "fluorine"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "fluorine", "section": {"text": "Atmospheric poisons"}},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/filter", "group": null, "icon": null, "label": {"text": "water"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "water", "section": {"text": "Volatiles"}},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/filter", "group": null, "icon": null, "label": {"text": "iodine"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "iodine", "section": {"text": "Volatiles"}},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/filter", "group": null, "icon": null, "label": {"text": "bromine"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "bromine", "section": {"text": "Volatiles"}},
+                {"color": null, "field": "4a-20-05-b2-8c-aa/filter", "group": null, "icon": null, "label": {"text": "ethanol"}, "off_text": {"id": "scrubber.gas.left"}, "on": false, "on_text": {"id": "scrubber.gas.scrubbed"}, "option": "ethanol", "section": {"text": "Volatiles"}}
+              ]
+            },
+            {
+              "address": "b6-8c-03-db-e1-1f",
+              "gauge": 2.2516666666666176,
+              "labels": [],
+              "name": "pump",
+              "notice": null,
+              "online": true,
+              "readouts": [
+                {"label": {"id": "flow.input"}, "section": null, "tone": "off", "value": {"id": "port.none"}},
+                {"label": {"id": "flow.output"}, "section": null, "tone": "on", "value": {"text": "101.3 kPa"}},
+                {"label": {"id": "flow.supply"}, "section": null, "tone": "on", "value": {"id": "flow.supply.fed"}}
+              ],
+              "setpoints": [
+                {"decimals": 1, "field": "b6-8c-03-db-e1-1f/target", "label": {"id": "flow.target_pressure"}, "max": 4500, "min": 0, "section": null, "step": 10.1325, "unit": "kPa", "value": 900}
+              ],
+              "sprite": "pump_off_n",
+              "toggles": [
+                {"color": null, "field": "b6-8c-03-db-e1-1f/power", "group": null, "icon": null, "label": {"id": "flow.switch.power"}, "off_text": {"text": "off"}, "on": true, "on_text": {"text": "running"}, "option": null, "section": null}
+              ]
+            }
+          ],
+          "create": {
+            "host": [
+              "disl"
+            ]
+          },
+          "document": "modules",
+          "files": [],
+          "gauge": null,
+          "labels": [],
+          "link": {
+            "address": "2a-b2-88-e1-7c-b1",
+            "online": true,
+            "state": {
+              "id": "link.state.online"
+            }
+          },
+          "media_slot": {
+            "id": "files.media.empty"
+          },
+          "name": "air alarm",
+          "notice": null,
+          "open": null,
+          "owner_sprite": "air_alarm_lit_n",
+          "presentation": "panes",
+          "program_slots": [
+            {"faults": 0, "file": null, "id": "controller", "runs": 0, "state": {"id": "program_slots.state.empty"}, "uid": null}
+          ],
+          "readouts": [
+            {"label": {"text": "network card"}, "section": {"id": "parts.parts"}, "tone": "idle", "value": {"args": {"efficiency": "1.00", "tier": "1"}, "id": "parts.tier"}}
+          ],
+          "save_ack": null,
+          "setpoints": [],
+          "status": 2,
+          "stores": [
+            {"append_only": false, "binding": "XAiEW0GDD4yuVhDMTIKnDC", "capacity": 65536, "count": 0, "count_cap": 16, "drive": "host", "key": "host", "label": {"text": "air alarm"}, "owner": "target", "used": 0}
+          ],
+          "toggles": [
+            {"color": null, "field": "link_lock", "group": null, "icon": null, "label": {"id": "link.lock"}, "off_text": {"id": "link.lock.locked"}, "on": true, "on_text": {"id": "link.lock.unlocked"}, "option": null, "section": null},
+            {"color": null, "field": "link_drop", "group": null, "icon": null, "label": {"arg_ids": ["state"], "args": {"address": "1a-78-5a-97-fe-13", "state": "link.state.online"}, "id": "link.member"}, "off_text": {"id": "link.release.act"}, "on": false, "on_text": {"id": "link.release.act"}, "option": "1a-78-5a-97-fe-13", "section": {"id": "link.members"}, "subject": {"address": "1a-78-5a-97-fe-13", "name": "air vent", "online": true, "sprite": "vent_on", "state": {"id": "link.state.online"}}},
+            {"color": null, "field": "link_drop", "group": null, "icon": null, "label": {"arg_ids": ["state"], "args": {"address": "4a-20-05-b2-8c-aa", "state": "link.state.online"}, "id": "link.member"}, "off_text": {"id": "link.release.act"}, "on": false, "on_text": {"id": "link.release.act"}, "option": "4a-20-05-b2-8c-aa", "section": {"id": "link.members"}, "subject": {"address": "4a-20-05-b2-8c-aa", "name": "air scrubber", "online": true, "sprite": "scrubber_off_e", "state": {"id": "link.state.online"}}},
+            {"color": null, "field": "link_drop", "group": null, "icon": null, "label": {"arg_ids": ["state"], "args": {"address": "b6-8c-03-db-e1-1f", "state": "link.state.online"}, "id": "link.member"}, "off_text": {"id": "link.release.act"}, "on": false, "on_text": {"id": "link.release.act"}, "option": "b6-8c-03-db-e1-1f", "section": {"id": "link.members"}, "subject": {"address": "b6-8c-03-db-e1-1f", "name": "pump", "online": true, "sprite": "pump_on_w", "state": {"id": "link.state.online"}}}
+          ]
+        },
+        "title": "air alarm"
+      }
+    }
+  }
+}

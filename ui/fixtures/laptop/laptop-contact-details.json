@@ -266,13 +266,13 @@
       "id": "doc/1/1/details",
       "expect": {
         "visible": [
-          "doc/1/1/information"
+          "doc/1/1/details-body"
         ]
       }
     },
     {
       "type": "scroll",
-      "id": "doc/1/1/information",
+      "id": "doc/1/1/workspace/body",
       "deltaX": 0,
       "deltaY": 400,
       "expect": {

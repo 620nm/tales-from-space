@@ -103,6 +103,7 @@ export interface Subject {
   address: string;
   online?: boolean | null;
   sprite?: string | null;
+  state?: Label;
 }
 export interface Readout {
   section?: Label;
@@ -178,6 +179,10 @@ export interface ModuleState {
   link?: LinkIdentity | null;
   refusal?: Refusal | null;
   gauge?: number | null;
+  /** Structured panels for devices this document can reach. The engine
+   * keeps each panel's rows together; absent means the reach module is not
+   * declared, while an empty array means it is declared with no target. */
+  control_panels?: ControlPanel[];
   readouts?: Readout[];
   toggles?: Toggle[];
   labels?: LabelRow[];
@@ -200,6 +205,22 @@ export interface ModuleState {
   open?: OpenFile | null;
   editor?: EditorState | null;
 }
+
+/** One reachable device's disclosed controls, scoped to its address by the
+ * native serializer. Rows retain their provider-owned section labels. */
+export interface ControlPanel {
+  address: string;
+  name: string;
+  sprite?: string | null;
+  online?: boolean | null;
+  gauge?: number | null;
+  notice?: Label | null;
+  readouts: Readout[];
+  toggles: Toggle[];
+  labels: LabelRow[];
+  setpoints: Setpoint[];
+  matter?: MatterBlock[];
+}
 export type MatterPhase = "gas" | "liquid" | "solid";
 export interface MatterRow {
   key: string;
@@ -217,7 +238,7 @@ export interface MatterStateBlock {
   rows?: MatterRow[];
 }
 export interface MatterBlock {
-  section: string;
+  section: Label;
   volume_l: number;
   headspace_l: number;
   temperature_k: number;

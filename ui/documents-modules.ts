@@ -28,7 +28,7 @@ const toneOf = (tone: string | null | undefined): Tone | undefined =>
   TONES.find((known) => known === tone);
 
 /** A label on the left and one thing on the right, in the order sent. */
-function labelRow(
+export function moduleLabelRow(
   id: string,
   doc: DocumentIdentity,
   entryRow: LabelRow,
@@ -89,7 +89,7 @@ function labelRow(
  * send `min`/`max`, and `Setpoint::resolve` decides what that comes to
  * (docs/tgui/action-boundary.md).
  */
-function setpointRow(
+export function moduleSetpointRow(
   id: string,
   doc: DocumentIdentity,
   point: Setpoint,
@@ -145,14 +145,14 @@ function setpointRow(
   );
 }
 
-/** Every generic row of a module document, grouped under its headings. */
-export function moduleBody(
+/** The provider's sections, without the document identity or footer. This is
+ * shared by the normal module body and each nested control card, so local
+ * section labels and row order keep one renderer. */
+export function moduleSections(
   id: string,
   doc: DocumentIdentity,
   state: Partial<ModuleState>,
   active: boolean,
-  heading = true,
-  footer = true,
 ): UiNode[] {
   const readouts = state.readouts ?? [];
   const toggles = state.toggles ?? [];
@@ -172,15 +172,7 @@ export function moduleBody(
   for (const point of setpoints) see(labelText(point.section));
   for (const block of blocks) see(labelText(block.section));
 
-  // The demo's hierarchy: the document names itself small, the machine
-  // names itself large, and its leading readings are the block a reader
-  // takes in from across the room.
-  const out: UiNode[] = heading ? [
-    row(`${id}/eyebrow`, [text(`${id}/eyebrow/title`, doc.title)], { cls: ["mod-eyebrow"] }),
-  ] : [];
-  if (heading && state.name) out.push(text(`${id}/heading`, state.name, ["mod-head"]));
-  if (state.gauge !== null && state.gauge !== undefined)
-    out.push(Gauge(`${id}/gauge`, state.gauge));
+  const out: UiNode[] = [];
   for (const [place, section] of order.entries()) {
     const key = `${id}/part/${place}`;
     const here = readouts.filter((reading) => labelText(reading.section) === section);
@@ -219,10 +211,10 @@ export function moduleBody(
     );
     for (const [index, entryRow] of labels.entries())
       if (labelText(entryRow.section) === section)
-        children.push(labelRow(`${id}/label/${entryRow.row === "input" ? entryRow.action : index}`, doc, entryRow, active));
+        children.push(moduleLabelRow(`${id}/label/${entryRow.row === "input" ? entryRow.action : index}`, doc, entryRow, active));
     for (const point of setpoints)
       if (labelText(point.section) === section)
-        children.push(setpointRow(`${id}/set/${point.field}`, doc, point, active));
+        children.push(moduleSetpointRow(`${id}/set/${point.field}`, doc, point, active));
     for (const [index, block] of blocks.entries())
       if (labelText(block.section) === section)
         children.push(matterBlock(`${id}/matter/${index}`, block));
@@ -233,8 +225,25 @@ export function moduleBody(
         : Stack(key, children, { dir: "column", gap: 4 }),
     );
   }
-  // What the machine is saying about itself, under a rule: the demo's
-  // footer, and the only document-wide line a provider writes.
+  return out;
+}
+
+/** Every generic row of a module document, grouped under its headings. */
+export function moduleBody(
+  id: string,
+  doc: DocumentIdentity,
+  state: Partial<ModuleState>,
+  active: boolean,
+  heading = true,
+  footer = true,
+): UiNode[] {
+  const out: UiNode[] = heading ? [
+    row(`${id}/eyebrow`, [text(`${id}/eyebrow/title`, doc.title)], { cls: ["mod-eyebrow"] }),
+  ] : [];
+  if (heading && state.name) out.push(text(`${id}/heading`, state.name, ["mod-head"]));
+  if (state.gauge !== null && state.gauge !== undefined)
+    out.push(Gauge(`${id}/gauge`, state.gauge));
+  out.push(...moduleSections(id, doc, state, active));
   if (footer && state.notice)
     out.push(row(`${id}/foot`, [text(`${id}/foot/word`, labelText(state.notice))], {
       cls: ["mod-foot"],

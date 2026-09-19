@@ -1,0 +1,65 @@
+{
+  "note": "Native provider capture from tools/review-device-workspace.mjs; document identity rebased for fixture interactions.",
+  "viewport": {
+    "width": 1366,
+    "height": 768,
+    "dpr": 1
+  },
+  "locale": "en",
+  "view": {
+    "version": 6,
+    "revision": 1,
+    "body": false,
+    "state": {},
+    "log": [],
+    "documents": {
+      "1": {
+        "generation": 1,
+        "id": 1,
+        "state": {
+          "control_panels": [],
+          "create": {
+            "host": [
+              "disl"
+            ]
+          },
+          "document": "modules",
+          "files": [],
+          "gauge": null,
+          "labels": [],
+          "link": {
+            "address": "7a-36-bf-a2-af-60",
+            "online": true,
+            "state": {
+              "id": "link.state.online"
+            }
+          },
+          "media_slot": {
+            "id": "files.media.empty"
+          },
+          "name": "air alarm",
+          "notice": null,
+          "open": null,
+          "owner_sprite": "air_alarm_lit_n",
+          "presentation": "panes",
+          "program_slots": [
+            {"faults": 0, "file": null, "id": "controller", "runs": 0, "state": {"id": "program_slots.state.empty"}, "uid": null}
+          ],
+          "readouts": [
+            {"label": {"text": "network card"}, "section": {"id": "parts.parts"}, "tone": "idle", "value": {"args": {"efficiency": "1.00", "tier": "1"}, "id": "parts.tier"}}
+          ],
+          "save_ack": null,
+          "setpoints": [],
+          "status": 2,
+          "stores": [
+            {"append_only": false, "binding": "Kc5mRWjih2mepHVS0dJogB", "capacity": 65536, "count": 0, "count_cap": 16, "drive": "host", "key": "host", "label": {"text": "air alarm"}, "owner": "target", "used": 0}
+          ],
+          "toggles": [
+            {"color": null, "field": "link_lock", "group": null, "icon": null, "label": {"id": "link.lock"}, "off_text": {"id": "link.lock.locked"}, "on": false, "on_text": {"id": "link.lock.unlocked"}, "option": null, "section": null}
+          ]
+        },
+        "title": "air alarm"
+      }
+    }
+  }
+}

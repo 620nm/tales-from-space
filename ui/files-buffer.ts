@@ -10,8 +10,14 @@ export interface FileBuffer {
   dirty: boolean;
   sourceView?: boolean;
   sourceVisible?: boolean;
-  pending?: { text: string; revision: number; request: string };
+  pending?: SaveReceipt;
+  /** A cancelled native save whose acknowledgement can still reconcile the draft. */
+  cancelledSave?: SaveReceipt;
   continuation?: Command;
+  /** A local workspace change waiting behind the same dirty guard. */
+  guardLocal?: () => void;
+  continuationLocal?: () => void;
+  confirmedLocal?: () => void;
   confirmed?: Command;
   guard?: Command;
   released?: () => void;
@@ -19,6 +25,7 @@ export interface FileBuffer {
   open: OpenFile;
   bindings: string;
 }
+interface SaveReceipt { text: string; revision: number; request: string; binding: string; uid: number }
 const buffers = new Map<string, FileBuffer>();
 let nextEditor = 0;
 let nextSave = 0;
@@ -43,30 +50,61 @@ export function editorBuffer(id: string, doc: DocumentIdentity, state: Partial<M
   }
   if (buffer.bindings !== bindings(state)) {
     buffer.continuation = undefined;
+    buffer.continuationLocal = undefined;
     buffer.guard = undefined;
+    buffer.guardLocal = undefined;
     buffer.confirmed = undefined;
+    buffer.confirmedLocal = undefined;
     buffer.bindings = bindings(state);
   }
   const ack = state.save_ack;
-  if (buffer.pending && ack?.request === buffer.pending.request &&
-      ack.binding === open.binding && ack.uid === open.uid &&
-      ack.revision === buffer.pending.revision + 1 && open.revision === ack.revision &&
-      open.body === buffer.pending.text) {
+  const matchesNative = (receipt: SaveReceipt | undefined): boolean => !!receipt &&
+    receipt.binding === open.binding && receipt.uid === open.uid &&
+    open.revision === receipt.revision + 1 && open.body === receipt.text;
+  const matches = (receipt: SaveReceipt | undefined): boolean => !!receipt &&
+    ack?.request === receipt.request && ack.binding === receipt.binding && ack.uid === receipt.uid &&
+    matchesNative(receipt) && ack.revision === open.revision;
+  if (buffer.pending && matches(buffer.pending)) {
     if (buffer.text === buffer.pending.text) {
       buffer.dirty = false;
       buffer.confirmed = buffer.continuation;
-      if (buffer.confirmed) { buffer.released?.(); buffer.released = undefined; buffer.guard = undefined; }
+      buffer.confirmedLocal = buffer.continuationLocal;
+      if (buffer.confirmed || buffer.confirmedLocal) {
+        buffer.released?.();
+        buffer.released = undefined;
+        buffer.guard = undefined;
+        buffer.guardLocal = undefined;
+      }
     }
     buffer.pending = undefined;
     buffer.continuation = undefined;
+    buffer.continuationLocal = undefined;
   }
   if (buffer.pending && buffer.pending.revision !== open.revision) {
     buffer.pending = undefined;
     buffer.continuation = undefined;
+    buffer.continuationLocal = undefined;
+    buffer.confirmed = undefined;
+    buffer.confirmedLocal = undefined;
+  }
+  // A cancelled save has no continuation to release. Its request may be
+  // hidden by a newer cancelled retry, so the accepted native snapshot is
+  // the only receipt available for this bounded reconciliation marker.
+  if (buffer.cancelledSave && matchesNative(buffer.cancelledSave)) {
+    if (buffer.text === buffer.cancelledSave.text) buffer.dirty = false;
+    buffer.cancelledSave = undefined;
+  }
+  if (buffer.cancelledSave && buffer.cancelledSave.revision !== open.revision) {
+    buffer.cancelledSave = undefined;
   }
   if (!buffer.dirty) { buffer.text = open.body; buffer.revision = open.revision; }
   buffer.open = open;
   return buffer;
+}
+
+/** Read the retained buffer without remounting its provider state. */
+export function currentBuffer(id: string): FileBuffer | undefined {
+  return buffers.get(id);
 }
 
 export function bodyId(id: string): string | undefined {
@@ -82,15 +120,19 @@ export function editBuffer(current: FileBuffer, value: string, revision?: number
   if (current.pending?.text !== value) {
     current.pending = undefined;
     current.continuation = undefined;
+    current.continuationLocal = undefined;
     current.confirmed = undefined;
+    current.confirmedLocal = undefined;
   }
 }
 
 export function saveBuffer(current: FileBuffer, event: UiEvent, continueGuard = false): Command {
   editBuffer(current, event.value ?? current.text, event.revision);
-  current.pending = { text: current.text, revision: current.revision, request: `${current.key}/${nextSave++}` };
+  current.pending = { text: current.text, revision: current.revision, request: `${current.key}/${nextSave++}`,
+    binding: current.open.binding, uid: current.open.uid };
   current.continuation = continueGuard ? current.guard : undefined;
-  if (!continueGuard) current.guard = undefined;
+  current.continuationLocal = continueGuard ? current.guardLocal : undefined;
+  if (!continueGuard) { current.guard = undefined; current.guardLocal = undefined; }
   if (!continueGuard) current.released = undefined;
   return documentAction(current.doc, "text", { field: "file_save", option: fileOption(current.open),
     text: current.text, revision: current.revision, request: current.pending.request });
@@ -106,27 +148,62 @@ export function guard(id: string, command: Command, affectedSide?: string, relea
     if (event.value !== undefined) editBuffer(current, event.value, event.revision);
     if (!current.dirty && !current.pending) { released?.(); return command; }
     current.guard = command;
+    current.guardLocal = undefined;
     current.released = released;
     current.continuation = undefined;
+    current.continuationLocal = undefined;
     current.confirmed = undefined;
+    current.confirmedLocal = undefined;
     return undefined;
   };
 }
 
 export function discardGuard(current: FileBuffer): Command | undefined {
   const command = current.guard;
-  if (!command) return undefined;
+  const local = current.guardLocal;
+  if (!command && !local) return undefined;
   current.guard = undefined;
+  current.guardLocal = undefined;
   current.continuation = undefined;
+  current.continuationLocal = undefined;
   current.confirmed = undefined;
+  current.confirmedLocal = undefined;
   current.released?.();
   current.released = undefined;
+  local?.();
   buffers.delete(scope(current.doc));
   return command;
 }
 export function cancelGuard(current: FileBuffer): void {
-  current.guard = undefined; current.continuation = undefined; current.pending = undefined;
-  current.confirmed = undefined; current.released = undefined;
+  if (current.pending) current.cancelledSave = current.pending;
+  current.guard = undefined; current.guardLocal = undefined;
+  current.continuation = undefined; current.continuationLocal = undefined;
+  current.pending = undefined;
+  current.confirmed = undefined; current.confirmedLocal = undefined;
+  current.released = undefined;
+}
+
+/** Guard a local workspace transition without ever returning a sim command. */
+export function localGuard(id: string, continuation: () => void): Handler {
+  return (event) => {
+    const current = buffers.get(id);
+    if (!current) { continuation(); return undefined; }
+    if (event.value !== undefined) editBuffer(current, event.value, event.revision);
+    // The editor is leaving the tree. Future native actions must not submit
+    // an input node that the selected workspace no longer mounts.
+    current.sourceVisible = false;
+    if (!current.dirty && !current.pending) {
+      continuation();
+      return undefined;
+    }
+    current.guard = undefined;
+    current.guardLocal = continuation;
+    current.continuation = undefined;
+    current.continuationLocal = undefined;
+    current.confirmed = undefined;
+    current.confirmedLocal = undefined;
+    return undefined;
+  };
 }
 export function discardBuffer(id: string): void { buffers.delete(id); }
 
@@ -157,6 +234,11 @@ export function retainOpenFileBuffers(documents: PanelDocument[]): void {
 export function pollContinuation(documents: PanelDocument[]): Command | undefined {
   retainOpenFileBuffers(documents);
   for (const current of buffers.values()) {
+    if (current.confirmedLocal) {
+      const continuation = current.confirmedLocal;
+      current.confirmedLocal = undefined;
+      continuation();
+    }
     if (!current.confirmed) continue;
     const command = current.confirmed;
     current.confirmed = undefined;

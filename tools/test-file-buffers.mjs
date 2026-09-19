@@ -34,6 +34,13 @@ function pending() {
   assert.equal(action.payload.request, b.pending.request);
   return b;
 }
+function localPending(continued = () => {}) {
+  const b = dirty();
+  B.localGuard(id, continued)({});
+  const action = B.saveBuffer(b, { value: "draft", revision: 3 }, true);
+  assert.equal(action.payload.request, b.pending.request);
+  return b;
+}
 
 test("B ejection does not guard dirty A work", () => {
   const b = dirty("host");
@@ -130,11 +137,56 @@ test("Discard and release cannot execute twice", () => {
   assert.equal(B.discardGuard(b), undefined);
   assert.equal(released, 1);
 });
-test("Cancel while saving cancels only the continuation", () => {
+test("Cancel while saving retains the receipt and cancels a command continuation", () => {
   const b = pending(); const request = b.pending.request;
   B.cancelGuard(b);
-  assert.equal(b.pending, undefined, "Cancel releases a refused or unanswered save");
-  assert.equal(B.pollContinuation(documents(acknowledged(state("old", 4, "draft"), request))), undefined);
+  assert.equal(b.pending, undefined, "Cancel releases the active save lock");
+  assert.equal(b.cancelledSave.request, request, "Cancel keeps the native receipt for reconciliation");
+  const next = documents(acknowledged(state("old", 4, "draft"), request));
+  assert.equal(B.pollContinuation(next), undefined, "Cancel must not run the command continuation");
+  assert.equal(b.dirty, false);
+  assert.equal(b.revision, 4);
+  assert.equal(b.pending, undefined);
+});
+test("Cancel while saving retains the receipt and cancels a local continuation", () => {
+  let continued = 0;
+  const b = localPending(() => continued++); const request = b.pending.request;
+  B.cancelGuard(b);
+  assert.equal(b.pending, undefined, "Cancel releases the active save lock");
+  assert.equal(b.cancelledSave.request, request, "Cancel keeps the native receipt for reconciliation");
+  const next = documents(acknowledged(state("old", 4, "draft"), request));
+  assert.equal(B.pollContinuation(next), undefined, "Cancel must not run the local continuation");
+  assert.equal(continued, 0);
+  assert.equal(b.dirty, false);
+  assert.equal(b.revision, 4);
+  assert.equal(b.pending, undefined);
+});
+test("an older accepted save reconciles a later cancelled retry", () => {
+  const b = pending(); const first = b.pending.request;
+  B.cancelGuard(b);
+  B.guard(id, command)({});
+  B.saveBuffer(b, { value: "draft", revision: 3 }, true);
+  B.cancelGuard(b);
+  assert.equal(b.cancelledSave.request === first, false);
+  const next = documents(acknowledged(state("old", 4, "draft"), first));
+  assert.equal(B.pollContinuation(next), undefined, "an older receipt must not revive a cancelled retry");
+  assert.equal(b.dirty, false);
+  assert.equal(b.text, "draft");
+  assert.equal(b.revision, 4);
+});
+test("an accepted different draft does not reconcile the cancelled retry", () => {
+  const b = dirty();
+  B.guard(id, command)({});
+  const first = B.saveBuffer(b, { value: "draft A", revision: 3 }, true).payload.request;
+  B.cancelGuard(b);
+  B.guard(id, command)({});
+  B.saveBuffer(b, { value: "draft B", revision: 3 }, true);
+  B.cancelGuard(b);
+  const next = documents(acknowledged(state("old", 4, "draft A"), first));
+  assert.equal(B.pollContinuation(next), undefined);
+  assert.equal(b.dirty, true);
+  assert.equal(b.text, "draft B");
+  assert.equal(b.revision, 3);
 });
 test("create naming draft survives extension changes with one owner", () => {
   B.retainOpenFileBuffers([]);
@@ -153,4 +205,22 @@ test("conflicting receipt releases pending lock while retaining guard and draft"
   assert.deepEqual(b.guard, command);
   assert.equal(b.text, "draft");
   assert.equal(b.continuation, undefined);
+});
+test("conflicting receipt clears a local continuation while retaining its guard", () => {
+  let continued = 0;
+  const b = localPending(() => continued++);
+  B.editorBuffer(id, doc, state("old", 4, "Other writer"));
+  assert.equal(b.pending, undefined);
+  assert(b.guardLocal);
+  assert.equal(b.continuationLocal, undefined);
+  assert.equal(b.dirty, true);
+  assert.equal(continued, 0);
+});
+test("command guard supersession clears a stale local continuation", () => {
+  const b = dirty();
+  B.localGuard(id, () => {})({});
+  assert(B.guard(id, command)({}) === undefined);
+  assert.deepEqual(b.guard, command);
+  assert.equal(b.guardLocal, undefined);
+  assert.equal(b.continuationLocal, undefined);
 });
