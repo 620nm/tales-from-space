@@ -1,0 +1,8 @@
+{
+  "map": "push-motion.ron",
+  "mode": "free_build",
+  "key": { "key": "d", "code": "KeyD", "vk": 68 },
+  "holdMs": 5000,
+  "spawn": { "x": 1, "y": 1 },
+  "pushed": { "x": 2, "y": 1 }
+}

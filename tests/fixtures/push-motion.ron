@@ -1,0 +1,17 @@
+(
+    name: "Push motion browser measurement",
+    legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
+    rows: [
+        "##########################################",
+        "#........................................#",
+        "##########################################",
+    ],
+    // Exact gravity: without it a shove is a zero-g push-off, not a walk.
+    environment: (gravity_m_s2: Exact(9.80665)),
+    // No port under the canister, so it opens the shift loose and a
+    // walker east of the spawn shoves it down the hall.
+    structures: [
+        (1, 1, "player_spawn"),
+        (2, 1, "canister"),
+    ],
+)
