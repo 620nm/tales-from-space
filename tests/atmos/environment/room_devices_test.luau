@@ -453,16 +453,14 @@ local settled = room_air()
 t.run_seconds(30)
 near(room_air(), settled, 0.5, "a stopped injector injects nothing")
 
--- ---- and now wide open, which is a different experience ----
+-- ---- and now wide open ----
 --
--- Two hundred litres a second into an already overfull room is a real
--- gust, and a gust drags whoever is standing in it (sim/wind.rs). So
--- the machine's own output pushes the engineer off its own panel and
--- keeps them there — reach is re-derived on every act rather than
--- trusted from when the window opened, which is why the switch above
--- was thrown while it was still calm. Asserted rather than worked
--- around: a machine you cannot walk back to while it runs is a real
--- property of a machine this strong.
+-- Two hundred litres a second into an already overfull room, and the
+-- engineer at the panel stays where they stand. A machine's own
+-- draught does not drag: bulk flow spreads the output over the room,
+-- and the wind on the engineer's tile peaks near 1e-3 Pa, far under
+-- `wind_drag_pa` (content/tuning.luau). The machine stays in reach
+-- while it runs, and the same hand switches it off.
 ui_controls.set(q, "rate", 200)
 ui_controls.toggle(q, "power")
 t.run_ticks(2)
@@ -470,8 +468,8 @@ local before_x, before_y = t.pos(q)
 t.run_seconds(30)
 local after_x, after_y = t.pos(q)
 assert(
-    after_x ~= before_x or after_y ~= before_y,
-    "the injector's own draught moved the engineer: "
+    after_x == before_x and after_y == before_y,
+    "the injector's own draught leaves the engineer standing: "
         .. before_x
         .. ","
         .. before_y
@@ -480,7 +478,10 @@ assert(
         .. ","
         .. after_y
 )
-assert(room_air() > settled, "and it is still climbing, with nothing in the machine to stop it")
+assert(room_air() > settled, "and the room is still climbing, with nothing in the machine to stop it")
+ui_controls.toggle(q, "power")
+t.run_ticks(2)
+assert(assert(t.structure_at(3, 1)).state == "off", "and the engineer switches it off from the panel")
 
 -- ---------------------------------------------------------------
 -- NEITHER OF THEM WORKS ON A DEAD GRID.
