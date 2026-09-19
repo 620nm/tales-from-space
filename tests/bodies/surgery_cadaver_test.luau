@@ -24,7 +24,7 @@ local ARENA = [==[(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -39,6 +39,7 @@ local ARENA = [==[(
         (1, 1, "player_spawn"),
         (3, 2, "optable"),
         (5, 2, "cadaver_chamber.cadaver", { "dir": "north" }),
+        (2, 3, "apc"),
     ],
     machines: [(2, 2, "operating_computer")],
     networks: [

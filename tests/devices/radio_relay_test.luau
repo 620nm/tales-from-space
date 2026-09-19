@@ -62,7 +62,7 @@ local BENCH = [==[(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -87,6 +87,8 @@ local BENCH = [==[(
         (5, 2, "player_spawn", { "jobs": "assistant" }),
         (50, 2, "player_spawn", { "jobs": "medic" }),
         (6, 1, "access_point", { "mount": "north" }), (49, 1, "access_point", { "mount": "north" }),
+        (2, 2, "apc"),
+        (41, 2, "apc"),
     ],
     networks: [
         (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),

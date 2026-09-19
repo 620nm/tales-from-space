@@ -42,7 +42,7 @@ t.world(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -85,6 +85,7 @@ t.world(
         (3, 1, "player_spawn"),
         (3, 2, "volume_pump"),
         (4, 2, "connector_port", { "pipe": "west" }),
+        (1, 1, "apc"),
     ],
 
 )]==],

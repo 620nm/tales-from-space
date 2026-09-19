@@ -41,7 +41,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -56,6 +56,7 @@ t.world(
         (31, 1, "player_spawn", { "jobs": "captain" }),
         (32, 1, "player_spawn", { "jobs": "engineer" }),
         (33, 1, "player_spawn", { "jobs": "security" }),
+        (2, 2, "apc"),
     ],
     items: [
         (1, 1, "encryption_key.medical"),
@@ -178,7 +179,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -193,6 +194,7 @@ t.world(
         (9, 1, "player_spawn", { "jobs": "captain" }),
         (11, 1, "player_spawn", { "jobs": "engineer" }),
         (12, 1, "player_spawn", { "jobs": "security" }),
+        (2, 2, "apc"),
     ],
     items: [
         (1, 1, "encryption_key.medical"),

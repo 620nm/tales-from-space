@@ -7,7 +7,7 @@ local AIRLOCK = [==[
     legend: {
         ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
-        'A': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'A': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -37,6 +37,7 @@ local AIRLOCK = [==[
         (6, 3, "bidirectional_vent", { "dir": "north" }),
         (6, 1, "passive_vent", { "channel": "l4", "pipe": "south" }),
         (8, 1, "passive_vent", { "channel": "l2", "pipe": "south" }),
+        (2, 4, "apc"),
     ],
     links: [
         (4, 3, 2, 3), (4, 3, 5, 3), (4, 3, 6, 3),

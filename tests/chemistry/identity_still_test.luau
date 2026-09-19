@@ -64,7 +64,7 @@ local BENCH = [==[(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -74,7 +74,7 @@ local BENCH = [==[(
         "#ga.o...#",
         "#########",
     ],
-    structures: [(2, 2, "player_spawn")],
+    structures: [(2, 2, "player_spawn"), (2, 3, "apc")],
     items: [(3, 3, "beaker")],
     machines: [(1, 2, "chem_dispenser"), (3, 2, "chem_heater")],
     networks: [

@@ -54,7 +54,7 @@ t.world(
     legend: {
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -71,6 +71,7 @@ t.world(
         (5, 1, "access_point", { "network_1": "network_card", "mount": "north" }),
         (10, 1, "access_point", { "network_1": "network_card", "mount": "north" }),
         (16, 1, "access_point", { "network_1": "network_card", "mount": "north" }),
+        (2, 1, "apc"),
     ],
     machines: [
         (4, 1, "network_router", { "network_1": "network_card" }),

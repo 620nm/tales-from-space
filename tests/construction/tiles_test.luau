@@ -26,7 +26,7 @@ t.world(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'l': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Light)),
     },
     rows: [
@@ -36,7 +36,7 @@ t.world(
         "#######",
     ],
     items: [(1, 2, "crowbar")],
-    structures: [(1, 2, "player_spawn"), (4, 1, "vent")],
+    structures: [(1, 2, "player_spawn"), (4, 1, "vent"), (2, 1, "apc")],
 )]==],
     7
 )

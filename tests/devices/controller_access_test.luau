@@ -42,7 +42,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'A': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'A': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -57,6 +57,7 @@ t.world(
         (4, 2, "access_point", { "network_1": "network_card", "mount": "south" }),
         (6, 2, "airlock_button", { "mount": "south" }),
         (6, 1, "airlock.engineering"),
+        (2, 2, "apc"),
     ],
     networks: [
         (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),

@@ -41,7 +41,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -83,6 +83,7 @@ t.world(
         (4, 2, "player_spawn", { "weight": 0, "jobs": "assistant" }),
         (4, 1, "player_spawn", { "jobs": "assistant" }),
         (4, 1, "air_scrubber", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 }),
+        (2, 2, "apc"),
     ],
 
 )]==],

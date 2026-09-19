@@ -44,7 +44,7 @@ t.world(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -62,6 +62,7 @@ t.world(
         (7, 3, "airlock"),
         (4, 1, "locker"),
         (7, 1, "locker"),
+        (1, 1, "apc"),
     ],
     networks: [
         (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
@@ -202,7 +203,7 @@ t.world(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -217,6 +218,7 @@ t.world(
         (1, 3, "player_spawn"),
         (3, 3, "airlock_wide", { "dir": "east" }),
         (5, 3, "locker"),
+        (1, 1, "apc"),
     ],
     networks: [
         (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),

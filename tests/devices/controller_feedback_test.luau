@@ -105,7 +105,7 @@ t.world(
     legend: {
         '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
-        'A': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'A': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
     },
     rows: ["#######", "#.....#", "#GA.o##", "#######"],
@@ -114,6 +114,7 @@ t.world(
         (4, 1, "access_point", { "network_1": "network_card", "mount": "north" }),
         (2, 1, "airlock_button", { "mount": "north" }),
         (5, 1, "airlock"),
+        (2, 2, "apc"),
     ],
     networks: [
         (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),

@@ -199,7 +199,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -214,7 +214,7 @@ t.world(
         (4, 3, "bottle"), (5, 3, "bottle"),
     ],
     machines: [(1, 2, "chem_dispenser"), (6, 2, "chem_heater")],
-    structures: [(3, 2, "player_spawn"), (2, 1, "canister"), (4, 1, "canister")],
+    structures: [(3, 2, "player_spawn"), (2, 1, "canister"), (4, 1, "canister"), (3, 3, "apc")],
     networks: [
         (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
         (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),

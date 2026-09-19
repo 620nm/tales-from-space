@@ -67,7 +67,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -79,7 +79,7 @@ t.world(
     ],
     items: [(2, 3, "bottle")],
     machines: [(1, 2, "chem_dispenser"), (3, 2, "chem_heater")],
-    structures: [(2, 2, "player_spawn"), (2, 1, "canister")],
+    structures: [(2, 2, "player_spawn"), (2, 1, "canister"), (3, 1, "apc")],
     networks: [
         (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
         (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
@@ -201,7 +201,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'r': (composition: (substrate: Some("ground"))),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -257,6 +257,7 @@ t.world(
         (4, 2, "player_spawn"),
         (5, 1, "canister", { "blend": "n2o_23000kpa" }),
         (5, 2, "air_scrubber", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 }),
+        (1, 2, "apc"),
     ],
 
 )]==],

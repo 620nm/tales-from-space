@@ -116,7 +116,7 @@ local SUPPLY_MAP = [==[(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'c': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
     },
     rows: [
         "#########",
@@ -146,6 +146,7 @@ local SUPPLY_MAP = [==[(
         (3, 1, "pump", "running", { "dir": "west" }),
         (4, 1, "connector_port", { "pipe": "west" }),
         (4, 1, "canister", { "blend": "canister_air" }),
+        (7, 1, "apc"),
     ],
     // Backbone (L2) under the generator and the APC; room circuit (L1) from the
     // APC's own tile west along the corridor to the vent.
@@ -274,7 +275,7 @@ local RELIEF_MAP = [==[(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
     },
     rows: [
         "#########",
@@ -294,7 +295,7 @@ local RELIEF_MAP = [==[(
         (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
         (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
     ],
-    structures: [(4, 1, "player_spawn"), (1, 1, "vent")],
+    structures: [(4, 1, "player_spawn"), (1, 1, "vent"), (6, 1, "apc")],
 
 )]==]
 

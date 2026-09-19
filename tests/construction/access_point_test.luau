@@ -73,7 +73,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -82,7 +82,7 @@ t.world(
         "#Gao..#",
         "#######",
     ],
-    structures: [(4, 1, "player_spawn")],
+    structures: [(4, 1, "player_spawn"), (2, 2, "apc")],
     items: [
         (4, 1, "metal"),
         (4, 1, "cable_coil"),
@@ -299,7 +299,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -309,7 +309,7 @@ t.world(
         "#######",
     ],
     items: [(5, 1, "id_engineering"), (5, 1, "laptop")],
-    structures: [(5, 1, "player_spawn"), (4, 1, "access_point", { "access": "engineering", "mount": "north" })],
+    structures: [(5, 1, "player_spawn"), (4, 1, "access_point", { "access": "engineering", "mount": "north" }), (2, 2, "apc")],
     networks: [
         (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
         (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),

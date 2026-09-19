@@ -25,7 +25,7 @@ t.world(
     legend: {
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -39,6 +39,7 @@ t.world(
         (3, 2, "access_point", { "network_1": "network_card", "mount": "south" }),
         (3, 1, "airlock_button", { "mount": "north" }),
         (6, 1, "airlock"),
+        (2, 1, "apc"),
     ],
     machines: [
         (4, 1, "network_router", { "network_1": "network_card" }),

@@ -20,7 +20,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'l': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Light), light: Some("#FFD6AA")),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
@@ -30,7 +30,7 @@ t.world(
         "#..g#",
         "#####",
     ],
-    structures: [(1, 1, "player_spawn")],
+    structures: [(1, 1, "player_spawn"), (1, 1, "apc")],
     items: [(1, 1, "toolbox"), (1, 2, "light_replacer"), (2, 2, "box_lights")],
     networks: [
         (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),

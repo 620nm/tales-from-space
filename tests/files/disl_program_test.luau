@@ -55,7 +55,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -68,6 +68,7 @@ t.world(
         (1, 1, "player_spawn", { "jobs": "assistant" }),
         (3, 1, "player_spawn", { "jobs": "engineer" }),
         (20, 1, "player_spawn", { "jobs": "medic" }),
+        (2, 2, "apc"),
     ],
     items: [
         (1, 1, "encryption_key.medical"),

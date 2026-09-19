@@ -11,11 +11,11 @@ t.world(
     legend: {
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: ["#######", "#.....#", "#.aoG.#", "#######"],
-    structures: [(2, 2, "player_spawn")],
+    structures: [(2, 2, "player_spawn"), (2, 2, "apc")],
     items: [(1, 1, "laptop"), (1, 2, "floppy_disk.atmos_stock"),
         (3, 1, "floppy_disk")],
     machines: [(2, 1, "transceiver", { "encryption_1": "encryption_key.medical" })],

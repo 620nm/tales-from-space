@@ -37,7 +37,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -46,7 +46,7 @@ t.world(
         "#......#",
         "########",
     ],
-    structures: [(2, 1, "player_spawn")],
+    structures: [(2, 1, "player_spawn"), (6, 1, "apc")],
     items: [
         (1, 1, "beaker.water"),
         (2, 1, "beaker"),

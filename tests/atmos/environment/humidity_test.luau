@@ -27,7 +27,7 @@ t.world(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
@@ -37,7 +37,7 @@ t.world(
         "#ao###",
         "######",
     ],
-    structures: [(1, 2, "player_spawn")],
+    structures: [(1, 2, "player_spawn"), (1, 2, "apc")],
     items: [(2, 2, "beaker")],
     machines: [(1, 1, "chem_dispenser"), (2, 1, "chem_heater")],
     networks: [

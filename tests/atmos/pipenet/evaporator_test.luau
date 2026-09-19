@@ -51,7 +51,7 @@ t.world(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -85,7 +85,7 @@ t.world(
         (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
         (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
-    structures: [(3, 1, "player_spawn"), (4, 1, "evaporator", { "pipe": "west" })],
+    structures: [(3, 1, "player_spawn"), (4, 1, "evaporator", { "pipe": "west" }), (4, 2, "apc")],
 
 )]==],
     7

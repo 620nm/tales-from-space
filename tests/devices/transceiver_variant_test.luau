@@ -40,7 +40,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -49,7 +49,7 @@ t.world(
         "#Gao....o..#",
         "############",
     ],
-    structures: [(5, 1, "player_spawn")],
+    structures: [(5, 1, "player_spawn"), (2, 2, "apc")],
     machines: [
         (6, 1, "transceiver.medical"),
         (9, 1, "transceiver.medical", { "encryption_1": "encryption_key.engineering" }),

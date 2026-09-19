@@ -719,15 +719,15 @@
         // (docs/map-properties/placements.md). That is what gives every
         // APC an address, and every room's plant and fittings a hub to
         // hang off without an engineer joining a single one of them.
-        (4, 5, "apc", { "l1_emergency": true, "mount": "west" }),
-        (14, 5, "apc", { "l1_emergency": true, "mount": "west" }),
-        (26, 5, "apc", { "l1_emergency": true, "mount": "west" }),
-        (18, 11, "apc", { "l1_emergency": true, "mount": "north" }),
-        (15, 14, "apc", { "l1_emergency": true, "mount": "west" }),
-        (4, 22, "apc", { "l1_emergency": true, "mount": "west" }),
-        (18, 22, "apc", { "l1_emergency": true, "mount": "north" }),
-        (28, 22, "apc", { "l1_emergency": true, "mount": "west" }),
-        (4, 27, "apc", { "l1_emergency": true, "mount": "west" }),
+        (4, 5, "apc", { "l1_reserve": true, "mount": "west" }),
+        (14, 5, "apc", { "l1_reserve": true, "mount": "west" }),
+        (26, 5, "apc", { "l1_reserve": true, "mount": "west" }),
+        (18, 11, "apc", { "l1_reserve": true, "mount": "north" }),
+        (15, 14, "apc", { "l1_reserve": true, "mount": "west" }),
+        (4, 22, "apc", { "l1_reserve": true, "mount": "west" }),
+        (18, 22, "apc", { "l1_reserve": true, "mount": "north" }),
+        (28, 22, "apc", { "l1_reserve": true, "mount": "west" }),
+        (4, 27, "apc", { "l1_reserve": true, "mount": "west" }),
         // ---- ACCESS POINTS ---------------------------------------
         // Engineering's own, on the wall of the tank rank one cell of
         // cord from the port at (9, 27). Its lock is keyed to the

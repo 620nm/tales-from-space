@@ -63,7 +63,7 @@ t.world(
     ],
     structures: [
         (3, 2, "player_spawn"),
-        (4, 1, "apc", { "l1_emergency": true }),
+        (4, 1, "apc", { "l1_reserve": true }),
     ],
     items: [(3, 2, "wirecutters"), (3, 2, "cable_coil")],
     networks: [

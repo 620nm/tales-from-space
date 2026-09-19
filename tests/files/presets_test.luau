@@ -72,7 +72,7 @@ t.world(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -133,6 +133,7 @@ t.world(
         (1, 1, "passive_vent"),
         (5, 4, "passive_vent"),
         (5, 1, "mixer.airmix"),
+        (5, 2, "apc"),
     ],
 
 )]==],
@@ -246,7 +247,7 @@ t.world(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -287,7 +288,7 @@ t.world(
         (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
         (x: 7, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
-    structures: [(4, 2, "player_spawn"), (1, 1, "passive_vent"), (4, 1, "filter.co2")],
+    structures: [(4, 2, "player_spawn"), (1, 1, "passive_vent"), (4, 1, "filter.co2"), (4, 2, "apc")],
 
 )]==],
     7

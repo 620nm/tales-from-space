@@ -112,7 +112,7 @@ t.world(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
         'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
     },
@@ -178,6 +178,7 @@ t.world(
         // "Sockets").
         (6, 1, "air_alarm", { "access": "engineering", "network_1": "network_card", "mount": "north" }),
         (9, 1, "access_point", { "mount": "north" }),
+        (13, 3, "apc"),
     ],
     machines: [(11, 1, "transceiver")],
 

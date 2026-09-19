@@ -61,7 +61,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -79,6 +79,7 @@ t.world(
         (8, 2, "player_spawn"),
         (9, 1, "thermomachine", "off"),
         (10, 1, "thermomachine.fullupgrade", "off"),
+        (4, 1, "apc"),
     ],
     items: [
         (2, 2, "beaker.libital"),

@@ -30,7 +30,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -41,6 +41,7 @@ t.world(
     structures: [
         (3, 1, "player_spawn", { "jobs": "medic" }),
         (7, 1, "player_spawn", { "jobs": "assistant" }),
+        (9, 1, "apc"),
     ],
     items: [
         (3, 1, "syringe"),

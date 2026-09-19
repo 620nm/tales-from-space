@@ -82,7 +82,7 @@ local GATE_MAP = [==[(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -129,7 +129,7 @@ local GATE_MAP = [==[(
         (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
         (x: 8, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
-    structures: [(5, 2, "player_spawn"), (3, 1, "temperature_gate")],
+    structures: [(5, 2, "player_spawn"), (3, 1, "temperature_gate"), (3, 2, "apc")],
 
 )]==]
 
@@ -598,7 +598,7 @@ t.world(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -650,7 +650,7 @@ t.world(
         (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
         (x: 8, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
-    structures: [(3, 2, "player_spawn"), (3, 1, "temperature_pump")],
+    structures: [(3, 2, "player_spawn"), (3, 1, "temperature_pump"), (3, 2, "apc")],
 
 )]==],
     7

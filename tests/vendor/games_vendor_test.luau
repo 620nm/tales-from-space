@@ -23,7 +23,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -32,7 +32,7 @@ t.world(
         "#a.g#",
         "#####",
     ],
-    structures: [(1, 1, "player_spawn")],
+    structures: [(1, 1, "player_spawn"), (1, 2, "apc")],
     machines: [(2, 1, "games_vendor")],
     networks: [
         (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),

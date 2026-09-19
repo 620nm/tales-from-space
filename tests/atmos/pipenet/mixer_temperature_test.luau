@@ -63,7 +63,7 @@ local JUNCTION = [==[(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -134,7 +134,7 @@ local JUNCTION = [==[(
         (x: 12, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
         (x: 12, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
-    structures: [(9, 2, "player_spawn"), (9, 1, "mixer")],
+    structures: [(9, 2, "player_spawn"), (9, 1, "mixer"), (9, 2, "apc")],
 
 )]==]
 

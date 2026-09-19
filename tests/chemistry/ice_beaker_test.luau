@@ -29,7 +29,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
     blends: {
         // Two moles, frozen, ten degrees under melting -- the `:solid`
@@ -41,7 +41,7 @@ t.world(
         "#o..a.#",
         "#######",
     ],
-    structures: [(1, 1, "player_spawn")],
+    structures: [(1, 1, "player_spawn"), (4, 1, "apc")],
     items: [
         (3, 1, "beaker", { "blend": "ice_block" }),
     ],

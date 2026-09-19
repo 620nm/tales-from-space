@@ -107,7 +107,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'c': (composition: (components: [(component: "station_base")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -154,6 +154,7 @@ t.world(
         (5, 1, "pump", "running", { "dir": "west" }),
         (6, 1, "connector_port", { "pipe": "west" }),
         (6, 1, "canister", { "blend": "canister_air" }),
+        (3, 2, "apc"),
     ],
 
 )]==],
@@ -254,7 +255,7 @@ t.world(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -263,7 +264,7 @@ t.world(
         "#.....g#",
         "########",
     ],
-    structures: [(3, 2, "player_spawn")],
+    structures: [(3, 2, "player_spawn"), (1, 1, "apc")],
     items: [(3, 2, "wrench"), (3, 1, "passive_vent_fitting")],
     networks: [
         (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),

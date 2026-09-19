@@ -44,7 +44,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -53,7 +53,7 @@ t.world(
         "#.o..o..o#",
         "##########",
     ],
-    structures: [(6, 2, "player_spawn")],
+    structures: [(6, 2, "player_spawn"), (4, 1, "apc")],
     items: [(6, 2, "wirecutters")],
     networks: [
         (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),

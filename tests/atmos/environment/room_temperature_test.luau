@@ -163,7 +163,7 @@ t.world(
     legend: {
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
         'u': (composition: (substrate: Some("ground"))),
     },
@@ -267,7 +267,7 @@ t.world(
     legend: {
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
         'u': (composition: (substrate: Some("ground"))),
     },
@@ -294,7 +294,7 @@ t.world(
         (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
         (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
-    structures: [(1, 2, "player_spawn"), (2, 1, "air_injector")],
+    structures: [(1, 2, "player_spawn"), (2, 1, "air_injector"), (1, 2, "apc")],
 
 )]==],
     7
@@ -506,14 +506,14 @@ t.world(
     legend: {
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
     rows: [
         "###",
         "#a#",
         "###",
     ],
-    structures: [(1, 1, "player_spawn")],
+    structures: [(1, 1, "player_spawn"), (1, 1, "apc")],
     networks: [
         (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
     ],
@@ -580,7 +580,7 @@ t.world(
     legend: {
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -591,7 +591,7 @@ t.world(
         "#...g#",
         "######",
     ],
-    structures: [(2, 2, "player_spawn")],
+    structures: [(2, 2, "player_spawn"), (2, 2, "apc")],
     networks: [
         (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
         (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
@@ -667,14 +667,14 @@ t.world(
     legend: {
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
     rows: [
         "###",
         "#a#",
         "###",
     ],
-    structures: [(1, 1, "player_spawn")],
+    structures: [(1, 1, "player_spawn"), (1, 1, "apc")],
     networks: [
         (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
     ],

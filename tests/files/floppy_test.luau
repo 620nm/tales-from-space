@@ -73,7 +73,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -82,7 +82,7 @@ t.world(
         "#a..g#",
         "######",
     ],
-    structures: [(2, 1, "player_spawn")],
+    structures: [(2, 1, "player_spawn"), (1, 2, "apc")],
     machines: [(3, 1, "programming_terminal")],
     items: [(2, 1, "floppy_disk"), (2, 2, "floppy_disk")],
     networks: [

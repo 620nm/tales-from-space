@@ -37,7 +37,7 @@ local VESTIBULE = [==[(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '_': (composition: (components: [(component: "station_base")])),
         'E': (composition: (components: [(component: "station_base")]), fixture: Some(Door)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -47,7 +47,7 @@ local VESTIBULE = [==[(
         "#...g#_# ",
         "######## ",
     ],
-    structures: [(1, 2, "player_spawn"), (2, 2, "player_spawn")],
+    structures: [(1, 2, "player_spawn"), (2, 2, "player_spawn"), (4, 1, "apc")],
     networks: [
         (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
         (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
@@ -282,7 +282,7 @@ local VIEWPORT = [==[(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '_': (composition: (components: [(component: "station_base")])),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -297,7 +297,7 @@ local VIEWPORT = [==[(
         (2, 4, "screwdriver"),
         (3, 4, "crowbar"),
     ],
-    structures: [(2, 3, "player_spawn"), (1, 3, "player_spawn"), (2, 2, "grille", "glazed")],
+    structures: [(2, 3, "player_spawn"), (1, 3, "player_spawn"), (2, 2, "grille", "glazed"), (2, 4, "apc")],
     networks: [
         (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
         (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),

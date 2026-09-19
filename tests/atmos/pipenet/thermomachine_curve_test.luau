@@ -67,7 +67,7 @@ local BENCH = [==[(
     legend: {
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -118,6 +118,7 @@ local BENCH = [==[(
         (1, 1, "stationary_tank", "anchored", ("%s", 400.0)),
         (3, 1, "manual_valve"),
         (6, 1, "thermomachine"),
+        (3, 2, "apc"),
     ],
 
 )]==]
@@ -326,7 +327,7 @@ t.world(
     legend: {
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -363,7 +364,7 @@ t.world(
         (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
         (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
     ],
-    structures: [(3, 2, "player_spawn"), (3, 1, "thermomachine")],
+    structures: [(3, 2, "player_spawn"), (3, 1, "thermomachine"), (3, 2, "apc")],
 
 )]==],
     7

@@ -35,7 +35,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -56,6 +56,7 @@ t.world(
         (8, 1, "player_spawn", { "jobs": "medic" }),
         (12, 1, "player_spawn", { "jobs": "captain" }),
         (2, 1, "cadaver_chamber", { "dir": "east" }),
+        (2, 2, "apc"),
     ],
     networks: [
         (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),

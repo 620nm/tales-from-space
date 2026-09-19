@@ -94,7 +94,7 @@ t.world(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '_': (composition: (components: [(component: "station_base")])),
         'c': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -175,6 +175,7 @@ t.world(
         (1, 1, "player_spawn"),
         (2, 1, "connector_port"), (10, 1, "vent"),
         (2, 1, "canister", { "blend": "canister_air", "open": true }),
+        (1, 1, "apc"),
     ],
 
 )]==],

@@ -70,7 +70,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -89,7 +89,7 @@ t.world(
         (6, 3, "id_engineering"),
         (5, 1, "laptop"),
     ],
-    structures: [(5, 1, "player_spawn"), (4, 1, "access_point", { "access": "engineering", "mount": "north" })],
+    structures: [(5, 1, "player_spawn"), (4, 1, "access_point", { "access": "engineering", "mount": "north" }), (2, 2, "apc")],
     networks: [
         (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
         (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),

@@ -114,7 +114,7 @@ local BENCH = [==[(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
     },
     rows: [
         "#########",
@@ -135,6 +135,7 @@ local BENCH = [==[(
         (3, 1, "pump", "running", { "dir": "west", "target_kpa": 900.0 }),
         (4, 1, "connector_port", { "dir": "west" }),
         (4, 1, "canister", { "blend": "canister_air" }),
+        (7, 1, "apc"),
     ],
     // Backbone (L2) under the generator and the APC; room circuit (L1)
     // from the APC's tile west along the corridor to the vent.

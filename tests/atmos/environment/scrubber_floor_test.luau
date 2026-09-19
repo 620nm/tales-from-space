@@ -99,7 +99,7 @@ local DEAD_SUPPLY = [==[(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -143,7 +143,7 @@ local DEAD_SUPPLY = [==[(
     // says nothing is a return grille, and this file is what that
     // means. It is put down running, the way a commissioned station's
     // machines are.
-    structures: [(3, 1, "player_spawn"), (2, 1, "air_scrubber", "scrubbing")],
+    structures: [(3, 1, "player_spawn"), (2, 1, "air_scrubber", "scrubbing"), (5, 2, "apc")],
 
 )]==]
 
@@ -247,7 +247,7 @@ local LIVE_SUPPLY = [==[(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -297,6 +297,7 @@ local LIVE_SUPPLY = [==[(
         (5, 1, "vent"),
         (3, 1, "connector_port"),
         (3, 1, "canister", { "blend": "canister_air", "open": true }),
+        (5, 2, "apc"),
     ],
 
 )]==]
@@ -413,7 +414,7 @@ local NAMED = [==[(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -456,6 +457,7 @@ local NAMED = [==[(
         (5, 2, "player_spawn"),
         (2, 1, "air_scrubber", "scrubbing",
             { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 100.0 }),
+            (5, 2, "apc"),
     ],
 
 )]==]

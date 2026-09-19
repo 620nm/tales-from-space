@@ -18,7 +18,7 @@ local ARENA = [==[(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
     rows: [
         "#######",
@@ -33,6 +33,7 @@ local ARENA = [==[(
         (3, 2, "player_spawn", { "jobs": "medic" }),
         (2, 3, "player_spawn", { "jobs": "engineer" }),
         (4, 2, "player_spawn", { "jobs": "captain" }),
+        (5, 1, "apc"),
     ],
     items: [(2, 2, "scalpel")],
     machines: [(3, 3, "operating_computer")],

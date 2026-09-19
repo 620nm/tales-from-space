@@ -124,7 +124,7 @@ local BENCH = [==[(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
     },
     rows: [
         "############",
@@ -143,7 +143,7 @@ local BENCH = [==[(
         (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
         (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
     ],
-    structures: [(5, 2, "player_spawn"), (5, 1, "%s")],
+    structures: [(5, 2, "player_spawn"), (5, 1, "%s"), (2, 2, "apc")],
 
 )]==]
 

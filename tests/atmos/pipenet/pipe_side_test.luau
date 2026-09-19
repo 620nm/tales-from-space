@@ -24,7 +24,7 @@ local function bench(side)
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -66,6 +66,7 @@ local function bench(side)
     structures: [
         (5, 2, "player_spawn"),
         (2, 1, "air_scrubber", "siphoning", { "pipe": "SIDE", "whole_air": true, "rate_lps": 200.0, "floor_kpa": 0.0 }),
+        (5, 2, "apc"),
     ],
 
 )]==]):gsub("SIDE", side)

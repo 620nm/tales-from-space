@@ -17,7 +17,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -32,6 +32,7 @@ t.world(
         (1, 1, "player_spawn"),
         (2, 1, "cadaver_chamber.cadaver", { "dir": "east" }),
         (2, 2, "cadaver_chamber", { "dir": "east" }),
+        (2, 3, "apc"),
     ],
     networks: [
         (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
@@ -107,7 +108,7 @@ local function rolled_name(seed)
             '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
             '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
             'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-            'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+            'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
             'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
         },
         rows: [
@@ -117,7 +118,7 @@ local function rolled_name(seed)
             "#####",
         ],
         items: [],
-        structures: [(1, 1, "player_spawn"), (2, 1, "cadaver_chamber.cadaver", { "dir": "east" })],
+        structures: [(1, 1, "player_spawn"), (2, 1, "cadaver_chamber.cadaver", { "dir": "east" }), (2, 2, "apc")],
         networks: [
             (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
             (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),

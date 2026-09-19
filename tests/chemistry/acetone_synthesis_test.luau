@@ -30,7 +30,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -46,6 +46,7 @@ t.world(
     structures: [
         (2, 1, "player_spawn"),
         (2, 2, "canister", { "blend": "oxygen_supply" }),
+        (1, 3, "apc"),
     ],
     items: [(1, 2, "bottle"), (3, 2, "bottle")],
     machines: [(3, 1, "chem_dispenser")],

@@ -51,7 +51,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -77,6 +77,7 @@ t.world(
         (6, 1, "player_spawn"),
         (6, 2, "volume_pump", "running", { "dir": "east" }),
         (11, 2, "volume_pump", "running", { "dir": "east" }),
+        (1, 2, "apc"),
     ],
 
 )]==],

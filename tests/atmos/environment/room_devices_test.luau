@@ -115,7 +115,7 @@ local SCRUB_MAP = [==[(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -161,7 +161,7 @@ local SCRUB_MAP = [==[(
     // about the other machine: tg's scrubber, pointed at one gas with
     // the dial wide open and nothing under it. scrubber_floor_test.luau
     // is the grille's.
-    structures: [(5, 2, "player_spawn"), (2, 1, "air_scrubber", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 })],
+    structures: [(5, 2, "player_spawn"), (2, 1, "air_scrubber", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 }), (5, 2, "apc")],
 
 )]==]
 
@@ -333,7 +333,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'c': (composition: (components: [(component: "station_base")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -351,6 +351,7 @@ t.world(
         (1, 1, "canister", { "blend": "canister_air" }),
         (2, 1, "pump", "running", { "dir": "east" }),
         (3, 1, "air_injector"),
+        (4, 2, "apc"),
     ],
     networks: [
         (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
@@ -566,7 +567,7 @@ t.world(
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -575,7 +576,7 @@ t.world(
         "#a....g#",
         "########",
     ],
-    structures: [(1, 2, "player_spawn")],
+    structures: [(1, 2, "player_spawn"), (1, 2, "apc")],
     items: [
         (1, 2, "wrench"),
         (3, 2, "air_scrubber_fitting"),

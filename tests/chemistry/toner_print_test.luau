@@ -24,7 +24,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -34,7 +34,7 @@ t.world(
         "#..........#",
         "############",
     ],
-    structures: [(8, 2, "player_spawn")],
+    structures: [(8, 2, "player_spawn"), (2, 1, "apc")],
     machines: [(4, 1, "chem_packager"), (5, 1, "chem_heater"), (9, 1, "photocopier")],
     items: [
         (5, 2, "beaker", { "blend": "toner_batch" }),

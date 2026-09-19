@@ -41,7 +41,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'c': (composition: (components: [(component: "station_base")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -80,6 +80,7 @@ t.world(
         (2, 2, "player_spawn"),
         (1, 2, "vent"), (3, 2, "connector_port"),
         (3, 2, "canister", { "blend": "canister_air", "open": true }),
+        (2, 2, "apc"),
     ],
 
 )]==],
@@ -203,7 +204,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'c': (composition: (components: [(component: "station_base")])),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     rows: [
@@ -293,6 +294,8 @@ t.world(
         (20, 2, "passive_vent"),
         (22, 2, "connector_port"),
         (22, 2, "canister", { "blend": "canister_air", "open": true }),
+        (2, 2, "apc"),
+        (19, 2, "apc"),
     ],
 
 )]==],
@@ -370,7 +373,7 @@ t.world(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '_': (composition: (components: [(component: "station_base")])),
         'c': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -440,6 +443,7 @@ t.world(
         (5, 1, "connector_port"),
         (9, 1, "vent"),
         (2, 1, "canister", { "blend": "canister_air", "open": true }),
+        (1, 2, "apc"),
     ],
 
 )]==],
@@ -614,7 +618,7 @@ t.world(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'v': (composition: (components: [(component: "station_base")])),
         'c': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
-        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
     rows: [
@@ -682,6 +686,7 @@ t.world(
         (3, 1, "air_injector"),
         (9, 1, "vent"),
         (2, 1, "canister", { "blend": "canister_air", "open": true }),
+        (1, 1, "apc"),
     ],
 
 )]==],

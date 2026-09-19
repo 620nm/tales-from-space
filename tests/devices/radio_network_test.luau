@@ -61,7 +61,7 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
-        'a': (composition: (components: [(component: "station_base")]), fixture: Some(Apc)),
+        'a': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
     },
     rows: [
@@ -84,6 +84,7 @@ t.world(
         (6, 2, "player_spawn", { "jobs": "assistant" }),
         (41, 2, "player_spawn", { "jobs": "medic" }),
         (8, 1, "access_point", { "mount": "north" }),
+        (2, 2, "apc"),
     ],
     networks: [
         (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
