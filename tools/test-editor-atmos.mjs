@@ -37,11 +37,11 @@ test("fresh turf auto-paints the breathable pack default", () => {
   assert.doesNotMatch(editor, /ideal_air/);
 });
 
-test("wall and space strokes clear entries; the lens tints walls", () => {
+test("wall and space strokes clear entries; the lens skips walls", () => {
   assert.match(compositions, /gas_blocking = true/);
   assert.match(editor, /clears the entry/);
-  assert.match(editor, /walls the layer tint/);
-  assert.doesNotMatch(editor, /Walls read as nothing/);
+  assert.match(editor, /Walls read as nothing/);
+  assert.doesNotMatch(editor, /walls the layer tint/);
 });
 
 test("map atmosphere eraser restores inherit; refrigerated folds under the default", () => {
