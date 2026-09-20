@@ -45,12 +45,12 @@ boundary vacuum, so the claim cannot legally stay. The engine's
 `docs/map-properties/blends.md` owns the lens and `docs/atmos/blends.md` owns
 what an unpainted tile opens holding.
 
-The Matter Blend lens (Q, `blend` in both modes) tints every tile over a dimmed
-station: painted floor its id-hashed hue with alpha by gas moles, unpainted
-floor the default's faint blue, rowless blends and `Space` near-black vacuum —
-and walls the layer tint of the room air they seal, so a sealed room's
-atmosphere reads from its perimeter as well as its floors — the one place
-the lens shows the map's layer instead of the sim's cell.
+The Matter Blend lens (Q, `blend` in both modes) tints every tile that holds a
+cell, over a dimmed station: painted floor its id-hashed hue with alpha by gas
+moles, unpainted floor the default's faint blue, rowless blends and `Space`
+near-black vacuum. Walls read as nothing — a gas-blocking tile opens with no
+cell, so the lens leaves the dimmed station showing and a sealed room's
+atmosphere reads from its floors alone.
 
 The palette's Matter Blends section folds temperature variants under their
 base: `refrigerated_air` — the same 21/79 mixture held at 259.15 K — is
