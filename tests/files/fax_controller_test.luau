@@ -83,18 +83,18 @@ assert(connected ~= nil, "the laptop reaches the access point")
 laptop.unlock(crew)
 t.run_ticks(2)
 
+-- The first row A PRESS CAN TAKE, each time round. This selector reads
+-- no label, so it is the one place a candidate listed greyed -- drawn,
+-- inert, carrying the reason the forest's shape refuses it
+-- (../lunatic/docs/devices/joining.md) -- would be picked over and over
+-- and never joined.
 local joined = 0
 while true do
-    local candidate
-    for _, row in ipairs(ui_controls.rows(laptop.ui(crew).toggles or {})) do
-        if row.field == "link_join" then
-            candidate = ui_controls.text(row.option)
-            break
-        end
-    end
-    if candidate == nil then
+    local offer = ui_controls.pressable(laptop.ui(crew), "link_join")[1]
+    if offer == nil then
         break
     end
+    local candidate = ui_controls.text(offer.option)
     laptop.toggle(crew, "link_join", candidate)
     t.run_ticks(2)
     joined += 1
