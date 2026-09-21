@@ -1,5 +1,5 @@
 {
-  "note": "Laptop contact: the window title wears the laptop, the workspace bar names the device with its link and a shut Details, the device's side left and the laptop's right, each switching A:/B: with one Copy per file. One candidate is listed greyed with the reason it cannot be taken.",
+  "note": "Laptop contact: the window title wears the laptop, the workspace bar names the device with its link and a shut Details, the device's side left and the laptop's right, each switching A:/B: with one Copy per file.",
   "viewport": {
     "width": 1024,
     "height": 768,
@@ -50,14 +50,6 @@
               "on": false, "on_text": { "id": "link.join.act" }, "off_text": { "id": "link.join.act" },
               "icon": null, "group": null, "color": null, "section": { "id": "link.joinable" },
               "subject": { "name": "access point", "address": "02-4a-1f-00-3c-20", "online": false, "state": { "id": "link.state.unbound" }, "sprite": "access_point_off" }
-            },
-            {
-              "field": "link_join", "option": "02-4a-1f-00-3c-01",
-              "label": { "id": "link.candidate.hub", "args": { "address": "02-4a-1f-00-3c-01" } },
-              "on": false, "on_text": { "id": "link.join.act" }, "off_text": { "id": "link.join.act" },
-              "icon": null, "group": null, "color": null, "section": { "id": "link.joinable" },
-              "subject": { "name": "corridor access node", "address": "02-4a-1f-00-3c-01", "online": true, "state": { "id": "link.state.unbound" }, "sprite": "access_point" },
-              "unavailable": "link.unavailable.would_cycle"
             }
           ],
           "labels": [],

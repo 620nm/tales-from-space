@@ -1,5 +1,5 @@
 {
-  "note": "Laptop contact with Details open and scrolled to the joinable node: the lock, members and candidates as two-line cards (name, address or address and role, state), the wired-in member a disabled card.",
+  "note": "Laptop contact with Details open and scrolled to the joinable node: the lock, members and candidates as two-line cards (name, address or address and role, state), the wired-in member a disabled card, and the candidate the shape refuses listed greyed with the reason where its state would read.",
   "viewport": {
     "width": 1024,
     "height": 768,
@@ -142,6 +142,39 @@
                 },
                 "sprite": "access_point_off"
               }
+            },
+            {
+              "field": "link_join",
+              "option": "02-4a-1f-00-3c-01",
+              "label": {
+                "id": "link.candidate.hub",
+                "args": {
+                  "address": "02-4a-1f-00-3c-01"
+                }
+              },
+              "on": false,
+              "on_text": {
+                "id": "link.join.act"
+              },
+              "off_text": {
+                "id": "link.join.act"
+              },
+              "icon": null,
+              "group": null,
+              "color": null,
+              "section": {
+                "id": "link.joinable"
+              },
+              "subject": {
+                "name": "APC",
+                "address": "02-4a-1f-00-3c-01",
+                "online": true,
+                "state": {
+                  "id": "link.state.unbound"
+                },
+                "sprite": "apc"
+              },
+              "unavailable": "link.unavailable.would_cycle"
             }
           ],
           "labels": [],
