@@ -266,14 +266,15 @@ function controls.press_inert(p: number, field: string, option: Option?, channel
     local scope = assert(t.ui_document(p, channel), "no document observed")
     local state = controls.state(p, channel)
     local target = assert(toggle_target(state, field, option), "missing disclosed row: " .. field)
-    local reason = assert(controls.unavailable(target.row), "the row is a control, not a greyed one")
+    local reason = assert(controls.unavailable(target.row), "the row is a control, not greyed")
     if target.child then
         controls.controls_page(p, scope)
     else
         controls.details(p, scope)
     end
     local suffix = target_suffix(target)
-    local drawn = controls.find(p, suffix, scope) or controls.find(p, fallback_suffix(target), scope)
+    local fallback = fallback_suffix(target)
+    local drawn = controls.find(p, suffix, scope) or controls.find(p, fallback, scope)
     local node = assert(drawn, "a greyed row is drawn, not hidden: " .. suffix)
     local pressed = pcall(function()
         t.ui_press(p, node.id)

@@ -181,7 +181,7 @@ local function join_all(p: number, x: number, y: number, id: string?, greyed: st
         assert(offered - takeable == 1, "one listed row is greyed: " .. (offered - takeable))
         for _, row in ipairs(listed) do
             local why = ui_controls.unavailable(row)
-            assert(why == nil or why == greyed, "and greyed for the reason given: " .. tostring(why))
+            assert(why == nil or why == greyed, "greyed for the reason given: " .. tostring(why))
         end
     end
     for _ = 1, offered do
