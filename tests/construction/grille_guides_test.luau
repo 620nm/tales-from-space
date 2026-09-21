@@ -53,7 +53,14 @@ local function take_at(x: number, y: number, id: string)
         t.drop(p)
         t.run_ticks(2)
     end
-    t.click(p, x, y, assert(t.target_at(p, x, y, id), "no " .. id .. " to point at in " .. x .. "," .. y))
+    -- Bound to a local first, deliberately: `assert` hands BACK its
+    -- message, so asserting inline in the last argument would pass that
+    -- message on as the click's pixel offset.
+    local thing = assert(
+        t.target_at(p, x, y, id),
+        "no " .. id .. " to point at in " .. x .. "," .. y
+    )
+    t.click(p, x, y, thing)
     t.run_ticks(2)
     assert(t.hands(p).held == id, "picked up " .. id)
 end
