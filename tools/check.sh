@@ -83,13 +83,15 @@ ONLY=$*
 # repository, never the engine's. Read back by every headless
 # subcommand and by both live browser runners as `--web`.
 PACK_WEB=$PACK/target/web
-# The roster the `roster` lane writes, read by `placeable` and by the
-# pack's own node checks over the served roster document.
+# The roster document the `roster` lane writes -- stdout only, since
+# that lane's stderr carries an unbaked NOTE. Read by `placeable`
+# (crates/lunatic-client/tests/placeable.rs) and by the pack's own node
+# checks over the served roster, which fail hard when it is unreadable.
 ROSTER=$GATE/roster.json
 export LUNATIC_ROSTER=$ROSTER
 # The web root holding this pack's bake, for the node checks that read
-# the baked atlas (tools/test-bake-art.mjs).
-export LUNATIC_WEB=$PACK_WEB
+# it back: tools/test-bake-art.mjs and tools/test-roster-facts.mjs.
+export LUNATIC_PACK_WEB=$PACK_WEB
 
 # `mkdir` is the atomic claim on every shell this runs under, Git Bash
 # included; `kill -0` then tells a live holder from a lock some killed
@@ -297,6 +299,9 @@ build_check() {
     -p lunatic-server -p lunatic-gateway -p xtask
 }
 
+# One roster run serves both readers. Only stdout is the document: the
+# subcommand writes an unbaked-atlas NOTE to stderr, which stays in this
+# lane's log rather than in the JSON.
 roster_check() {
   server roster "$PACK" --web "$PACK_WEB" > "$ROSTER"
 }

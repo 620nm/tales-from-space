@@ -94,6 +94,13 @@ cannot run says so by name, both in place and in the closing
 | `ui-shots` | Pack UI fixtures against their baselines. Skipped by name until the engine's `tools/ui-lab.mjs` takes `--web <root>`. |
 | `world-pointer`, `push-motion` | The fixtures in `tests/fixtures/`, driven in the real client against this pack's bake. |
 
+Two variables carry what the earlier lanes produced to the node checks that
+read it, so no `tools/test-*.mjs` recomputes a path: `LUNATIC_PACK_WEB` is the
+absolute web root the `bake` lane wrote, and `LUNATIC_ROSTER` the roster
+document the `roster` lane wrote — its stdout only, since that subcommand's
+stderr carries an unbaked-atlas note. A test that finds either unreadable
+fails rather than skipping.
+
 The gate's scratch — the bake, its state directory and the browser lanes'
 recordings — is `target/`, which is gitignored. Cargo builds in the engine's
 own target directory, whose exclusive lock serializes this gate against an
