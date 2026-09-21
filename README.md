@@ -96,10 +96,20 @@ cannot run says so by name, both in place and in the closing
 
 Two variables carry what the earlier lanes produced to the node checks that
 read it, so no `tools/test-*.mjs` recomputes a path: `LUNATIC_PACK_WEB` is the
-absolute web root the `bake` lane wrote, and `LUNATIC_ROSTER` the roster
-document the `roster` lane wrote — its stdout only, since that subcommand's
-stderr carries an unbaked-atlas note. A test that finds either unreadable
-fails rather than skipping.
+absolute web root holding the bake, and `LUNATIC_ROSTER` the roster document
+the `roster` lane wrote — its stdout only, since that subcommand's stderr
+carries an unbaked-atlas note. Each is exported only where THIS run produced
+what it names, so a check handed one is handed a promise: a filtered run that
+skipped `roster` leaves `LUNATIC_ROSTER` unset and the check that wants a
+roster fetches its own, rather than reading the last run's. An earlier run's
+`roster.json` is deleted at the start of every run for the same reason.
+
+A filtered run may reuse the last `bake` — the fast path while iterating on
+one lane — and says so in place, with its date: `note bake (reusing the bake
+of …)`. With no bake at all, every lane that reads one is `BLOCKED` by name.
+A run in which nothing executed prints `NOTHING RAN` and exits 1 rather than
+a green banner, so a mistyped lane name and a wholly blocked selection are
+both visible.
 
 The gate's scratch — the bake, its state directory and the browser lanes'
 recordings — is `target/`, which is gitignored. Cargo builds in the engine's

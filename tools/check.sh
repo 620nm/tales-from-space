@@ -81,17 +81,29 @@ VERBOSE=${VERBOSE:-0}
 ONLY=$*
 # This pack's served document root: the whole bake, inside this
 # repository, never the engine's. Read back by every headless
-# subcommand and by both live browser runners as `--web`.
-PACK_WEB=$PACK/target/web
+# subcommand and by both live browser runners as `--web`. Overridable
+# so a check of this gate can point it at a scratch root, and REFUSED
+# inside the engine, which makes the promise above enforced rather
+# than merely written down.
+PACK_WEB=${PACK_WEB:-$PACK/target/web}
+case $PACK_WEB in
+  "$ENGINE" | "$ENGINE"/*)
+    echo "PACK_WEB=$PACK_WEB is inside the engine checkout: that root is the engine gate's" >&2
+    exit 1
+    ;;
+esac
+BAKED_ATLAS=$PACK_WEB/assets/atlas.ron
 # The roster document the `roster` lane writes -- stdout only, since
 # that lane's stderr carries an unbaked NOTE. Read by `placeable`
 # (crates/lunatic-client/tests/placeable.rs) and by the pack's own node
 # checks over the served roster, which fail hard when it is unreadable.
 ROSTER=$GATE/roster.json
-export LUNATIC_ROSTER=$ROSTER
-# The web root holding this pack's bake, for the node checks that read
-# it back: tools/test-bake-art.mjs and tools/test-roster-facts.mjs.
-export LUNATIC_PACK_WEB=$PACK_WEB
+# Both are this gate's OUTPUTS, never its inputs, and each is exported
+# only once THIS run has produced what it names: a reader handed a path
+# is handed a promise, and a promise kept by an earlier run's leftovers
+# is how a filtered run reads yesterday's content as today's.
+unset LUNATIC_ROSTER
+unset LUNATIC_PACK_WEB
 
 # `mkdir` is the atomic claim on every shell this runs under, Git Bash
 # included; `kill -0` then tells a live holder from a lock some killed
@@ -154,7 +166,14 @@ RUN_DIR=$GATE/run.$$
 FAILED=$RUN_DIR/failed
 BLOCKED=$RUN_DIR/blocked
 SKIPPED=$RUN_DIR/skipped
+# The lanes that actually executed and passed. The closing banner names
+# these and nothing else: a selection is not a verdict, and a run whose
+# every selected lane was blocked or skipped verified nothing at all.
+RAN=$RUN_DIR/ran
 rm -rf "$LOGS" "$RUN_DIR"
+# An earlier run's roster document describes an earlier tree. Nothing
+# may read one, so it goes before any lane can be tempted by it.
+rm -f "$ROSTER"
 for dir in "$GATE"/run.*; do
   [ -d "$dir" ] || continue
   alive "${dir##*/run.}" || rm -rf "$dir"
@@ -162,6 +181,7 @@ done
 mkdir -p "$LOGS" "$RUN_DIR"
 : > "$FAILED"
 : > "$BLOCKED"
+: > "$RAN"
 
 # Sub-second timings need GNU date; a shell without %N still gets whole
 # seconds rather than nothing.
@@ -203,6 +223,7 @@ run() {
   elapsed=$(took "$(( $(now_ms) - start ))")
   if [ "$rc" -eq 0 ]; then
     printf 'ok    %-22s %8s\n' "$name" "$elapsed"
+    printf '%s\n' "$name" >> "$RAN"
   else
     printf 'FAIL  %-22s %8s\n' "$name" "$elapsed"
     printf '%s\n' "$name" >> "$FAILED"
@@ -217,6 +238,12 @@ skip() {
   want "$1" || return 0
   printf 'skip  %-22s %8s  (%s)\n' "$1" - "$2"
   printf '%s\n' "$3" >> "$SKIPPED"
+}
+
+# note NAME WHAT -- something a lane is doing that a reader would not
+# assume from a green line, such as reading art this run did not bake.
+note() {
+  printf 'note  %-22s %8s  (%s)\n' "$1" - "$2"
 }
 
 # blocked NAME REASON -- a prerequisite failed before this lane ran. It
@@ -306,23 +333,34 @@ roster_check() {
   server roster "$PACK" --web "$PACK_WEB" > "$ROSTER"
 }
 
+# Whether the engine's palette test can be pointed at a web root. Until
+# it can, its ART half reads `Atlas::baked()`, which resolves the ENGINE
+# checkout's own served root at COMPILE time
+# (crates/lunatic-client/src/delivery.rs, `repo_web_root`) -- the wrong
+# pack's bake here. The probe reads the file that would read the
+# variable, so this arms itself with the engine change and needs no
+# edit here.
+placeable_reads_a_web_root() {
+  grep -q LUNATIC_WEB_ROOT "$ENGINE/crates/lunatic-client/tests/placeable.rs" 2>/dev/null
+}
+
 # Is what this pack declares actually offered in the map editor? The
 # server dumps the roster it would serve and a client test builds the
-# palette the browser builds. Its ART half reads `Atlas::baked()`, which
-# is the ENGINE checkout's `web/assets` at compile time
-# (crates/lunatic-client/src/delivery.rs, `repo_web_root`) -- the wrong
-# pack's bake here, so the runner declares that skip by name and the
-# shape rules over this pack's roster still run.
+# palette the browser builds. Where the art half cannot reach this
+# pack's bake, the RUNNER declares that skip by name and the shape
+# rules over this pack's roster still run.
 placeable_check() {
-  if [ ! -f "$ROSTER" ]; then
-    echo "no $ROSTER: run the roster lane first (sh tools/check.sh roster placeable)" >&2
-    return 1
+  if placeable_reads_a_web_root; then
+    (cd "$ENGINE" && env LUNATIC_ROSTER="$ROSTER" LUNATIC_WEB_ROOT="$PACK_WEB" \
+      cargo nextest run --cargo-quiet --manifest-path "$ENGINE/Cargo.toml" \
+      -p lunatic-client --test placeable)
+  else
+    echo "placeable art rule (the test reads the engine checkout's own bake, not --web)" \
+      >> "$SKIPPED"
+    (cd "$ENGINE" && env LUNATIC_ROSTER="$ROSTER" LUNATIC_PLACEABLE_NO_ATLAS=1 \
+      cargo nextest run --cargo-quiet --manifest-path "$ENGINE/Cargo.toml" \
+      -p lunatic-client --test placeable)
   fi
-  echo "placeable art rule (the test reads the engine checkout's web/assets, not --web)" \
-    >> "$SKIPPED"
-  (cd "$ENGINE" && env LUNATIC_ROSTER="$ROSTER" LUNATIC_PLACEABLE_NO_ATLAS=1 \
-    cargo nextest run --cargo-quiet --manifest-path "$ENGINE/Cargo.toml" \
-    -p lunatic-client --test placeable)
 }
 
 # ---------------------------------------------------- browser lanes
@@ -410,21 +448,73 @@ lane_luau
 lane_lints
 
 run build build_check || BUILD="build failed"
-gated "$BUILD" bake bake_check || BAKE="bake failed"
-BAKE=${BAKE:-$BUILD}
+
+# The bake this run's content lanes read. A filtered run that did not
+# select `bake` may legitimately reuse the last one -- that is the fast
+# path while iterating on one lane -- but it says so and dates it, so a
+# green line is never mistaken for art this run produced. With no bake
+# at all, every lane that reads one BLOCKS by name.
+BAKE=$BUILD
+# Every lane that reads the bake, so the reuse note is told to a run
+# that cares and withheld from one that does not.
+wants_the_bake() {
+  for reader in content maps lint-assets roster placeable pack-node specs \
+    ui-shots world-pointer push-motion; do
+    want "$reader" && return 0
+  done
+  return 1
+}
+if want bake; then
+  if [ -n "$BUILD" ]; then
+    blocked bake "$BUILD"
+  elif run bake bake_check; then
+    BAKE=
+    BAKE_FRESH=1
+  else
+    BAKE="bake failed"
+  fi
+fi
+if [ -z "$BAKE" ]; then
+  if [ ! -f "$BAKED_ATLAS" ]; then
+    BAKE="nothing baked in $PACK_WEB (sh tools/check.sh bake)"
+  else
+    if [ -z "$BAKE_FRESH" ] && wants_the_bake; then
+      note bake "reusing the bake of $(date -r "$BAKED_ATLAS" '+%Y-%m-%d %H:%M' \
+        2>/dev/null || echo 'an earlier run')"
+    fi
+    export LUNATIC_PACK_WEB=$PACK_WEB
+  fi
+fi
 
 # Content, then every map, then the sprite names, all read back out of
 # this pack's own bake.
 gated "$BAKE" content server test "$PACK" --load-only --web "$PACK_WEB"
 gated "$BAKE" maps server maps "$PACK" --web "$PACK_WEB"
 gated "$BAKE" lint-assets server lint-assets "$PACK" --web "$PACK_WEB"
-gated "$BAKE" roster roster_check || ROSTER_FAILED="roster failed"
 
-if ! command -v cargo-nextest > /dev/null 2>&1; then
-  skip placeable "cargo install cargo-nextest --locked" \
-    "editor palette rules (no cargo-nextest)"
-else
-  gated "${ROSTER_FAILED:-$BAKE}" placeable placeable_check
+# The roster document is promised to its readers only once THIS run has
+# written it: a reader handed the path must never be handed a file an
+# earlier run left behind.
+if want roster; then
+  if [ -n "$BAKE" ]; then
+    blocked roster "$BAKE"
+  elif run roster roster_check; then
+    export LUNATIC_ROSTER=$ROSTER
+  else
+    ROSTER_FAILED="roster failed"
+  fi
+fi
+
+if want placeable; then
+  if ! command -v cargo-nextest > /dev/null 2>&1; then
+    skip placeable "cargo install cargo-nextest --locked" \
+      "editor palette rules (no cargo-nextest)"
+  elif [ ! -f "$ROSTER" ]; then
+    blocked placeable \
+      "${ROSTER_FAILED:-${BAKE:-no roster in this run (sh tools/check.sh roster placeable)}}"
+  else
+    run placeable placeable_check
+  fi
 fi
 
 # The interface, compiled before anything reads it: tools/test-ui-*.mjs
@@ -436,8 +526,12 @@ UI_BUILT=${UI_BUILT:-$BUILD}
 
 # Every node check this pack owns, against that engine's SDK: the theme
 # and message lints, the UI runtime tests, the baked-art lints and the
-# checks over the served roster document.
-gated "$UI_BUILT" pack-node node "$PACK/tools/test.mjs" "$ENGINE"
+# checks over the served roster document. The last two read what the
+# `bake` and `roster` lanes produced, through LUNATIC_PACK_WEB and
+# LUNATIC_ROSTER -- each exported only where this run produced it, so a
+# check this run cannot supply takes its own fallback rather than
+# reading an earlier run's leavings.
+gated "${UI_BUILT:-$BAKE}" pack-node node "$PACK/tools/test.mjs" "$ENGINE"
 
 gated "$BAKE" specs server test "$PACK" --web "$PACK_WEB"
 
@@ -445,8 +539,8 @@ if want ui-shots; then
   if ! ui_lab_takes_web; then
     skip ui-shots "ui-lab has no --web: it reads the engine's own bake" \
       "pack UI shots (ui-lab reads the engine checkout's bake; it needs --web <root>)"
-  elif [ -n "$UI_BUILT" ]; then
-    blocked ui-shots "$UI_BUILT"
+  elif [ -n "${UI_BUILT:-$BAKE}" ]; then
+    blocked ui-shots "${UI_BUILT:-$BAKE}"
   else
     reason=$(browser_skip)
     if [ -n "$reason" ]; then
@@ -509,8 +603,24 @@ if [ -s "$FAILED" ]; then
 fi
 
 printf 'total %-22s %8s\n' '' "$total"
+# A blocked lane is unverified whichever way the run ended, so it is
+# reported beside a green banner exactly as it is beside a red one.
+if [ -s "$BLOCKED" ]; then
+  printf 'BLOCKED, SO UNVERIFIED: %s\n' "$(tr '\n' ' ' < "$BLOCKED")" >&2
+fi
+# Nothing executed: every selected lane was blocked or skipped, or the
+# words named no lane at all. Either way this run is evidence of
+# nothing, and it says so rather than printing a banner over it.
+if [ ! -s "$RAN" ]; then
+  printf 'NOTHING RAN%s\n' "${ONLY:+: $ONLY matched no lane that could run}" >&2
+  if [ -s "$SKIPPED" ]; then
+    printf 'SKIPPED, SO UNVERIFIED: %s\n' \
+      "$(tr '\n' ';' < "$SKIPPED" | sed 's/;$//; s/;/, /g')" >&2
+  fi
+  exit 1
+fi
 if [ -n "$ONLY" ]; then
-  echo "SELECTED PACK GATES GREEN: $ONLY"
+  echo "SELECTED PACK GATES GREEN: $(tr '\n' ' ' < "$RAN")"
 else
   echo "ALL PACK GATES GREEN"
 fi
