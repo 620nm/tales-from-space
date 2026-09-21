@@ -181,23 +181,26 @@ assert(assert(t.body(r)).conscious, "and you come round when it clears")
 assert(assert(t.body(r)).posture == "standing", "and get up by yourself")
 
 -- ---------------------------------------------------------------
--- ONE capacity in the human plan is LETHAL, and it is the brain
--- (content/bodies/human.luau, `brain = { lethal = true, ... }` -- the
--- comment above it says it is "the only capacity allowed to say so").
--- The flag itself is not a reading a spec can take, so what is pinned
--- here is the consequence it buys, and the pair is the whole claim:
--- empty the brain capacity and the crewman is dead; empty a capacity
--- the plan did NOT mark lethal and they are maimed and alive.
+-- WHICH ORGAN A CREWMAN CAN LOSE AND STILL BE ALIVE.
+--
+-- Ruin the brain and they are dead; ruin the eyes and they are blind
+-- and alive. That pair is the whole of what is asserted below, and it
+-- is asserted as an outcome a player could cause and then see.
+--
+-- It does NOT say WHICH declaration delivered the death: the plan
+-- makes the brain capacity lethal (content/bodies/human.luau:248) and
+-- the brain organ vital (content/items/anatomy/organ_brain.luau:40),
+-- and either one alone already crosses `undone` (human.luau:79).
 -- ---------------------------------------------------------------
 t.world(ARENA, 0)
 local s = t.join()
 t.tick()
 
--- ---- the negative: a capacity carrying no `lethal` ----
+-- ---- blind, and alive ----
 --
 -- `sight` reads the `eye` tag, and the eyes are the plan's only carrier
--- of it. `organ_eyes` holds 50 and is not `vital`, so ruining it takes
--- the capacity to nothing and touches no other line the plan drew.
+-- of it. `organ_eyes` holds 50 and is marked neither vital nor lethal,
+-- so ruining it takes the capacity to nothing and crosses no line.
 assert(math.abs(assert(t.capacity(s, "sight")) - 1.0) < 0.01, "a crewman arrives seeing")
 t.set_organ_damage(s, "eyes", 50)
 t.run_ticks(2)
@@ -215,23 +218,23 @@ assert(
 t.run_seconds(5)
 assert(assert(t.body(s)).animate, "five seconds blind and still alive")
 
--- ---- the positive: the one capacity that is ----
+-- ---- and the organ nobody survives losing ----
 --
 -- BRAIN_DAMAGE_DEATH is 200 (content/items/anatomy/organ_brain.luau,
--- brain_item.dm:18-20) and the organ's curve reaches zero output there,
--- which is the capacity at zero -- the state the plan calls lethal.
+-- brain_item.dm:18-20). At that pool the organ's curve gives nothing
+-- and the organ is failing, and that is the end of the crewman.
 assert(math.abs(assert(t.capacity(s, "brain")) - 1.0) < 0.01, "the brain capacity reads whole")
 t.set_organ_damage(s, "brain", 200)
 t.run_ticks(2)
 assert(
     math.abs(assert(t.capacity(s, "brain"))) < 0.01,
-    "a brain at BRAIN_DAMAGE_DEATH reads zero: " .. tostring(t.capacity(s, "brain"))
+    "a brain at BRAIN_DAMAGE_DEATH gives nothing: " .. tostring(t.capacity(s, "brain"))
 )
 local undone = assert(t.body(s))
-assert(not undone.animate, "and a body whose lethal capacity reads zero is a dead body")
+assert(not undone.animate, "and a crewman with no brain left is a dead crewman")
 local latched = table.concat(undone.thresholds, ",")
-assert(latched:find("undone", 1, true), "it died on the viability line: " .. latched)
-assert(latched:find("dead", 1, true) == nil, "not on the health one, which it never crossed")
+assert(latched:find("undone", 1, true), "they died on the viability line: " .. latched)
+assert(latched:find("dead", 1, true) == nil, "not on the health one, which they never crossed")
 assert(math.abs(undone.health - 100) < 0.01, "unmarked, at " .. undone.health .. " health")
 
 -- ---------------------------------------------------------------
