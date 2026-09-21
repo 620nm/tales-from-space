@@ -24,10 +24,15 @@ t.world(
         "#...#",
         "#####",
     ],
-    structures: [(2, 2, "player_spawn"), (3, 2, "grille", "reinforced")],
+    structures: [
+        (2, 2, "player_spawn"),
+        (3, 2, "grille", "reinforced"),
+        (1, 2, "grille", "bolted"),
+    ],
     items: [
         (2, 2, "welder"), (2, 2, "screwdriver"), (2, 2, "crowbar"),
         (2, 2, "wirecutters"), (2, 2, "wrench"), (2, 2, "rglass"),
+        (2, 2, "glass"),
     ],
 )]==],
     7
@@ -47,6 +52,41 @@ local function take(id: string)
     assert(t.hands(p).held == id, "picked up " .. id)
 end
 
+-- What a thing in the bay is DRAWN as, bottom-first and exactly as the
+-- wire carried it (tests/atmos/pipenet/meter_test.luau:151-155 reads a
+-- dial the same way).
+local function looks_like(what: SpecObservedTarget, want: { string }, whose: string)
+    local drawn = t.layers(p, what)
+    assert(#drawn == #want, whose .. " is drawn in " .. #drawn .. " layers, wanted " .. #want)
+    for i, sprite in ipairs(want) do
+        assert(drawn[i] == sprite, whose .. "'s layer " .. i .. " is " .. tostring(drawn[i]))
+    end
+end
+
+-- Every rung of the reinforced ladder is drawn the same, and the
+-- content file says so in words (content/structures/access/grille.luau:
+-- 83-90): all five states resolve to { "grille", "rwindow" }. You
+-- cannot tell from across the room that somebody is half a minute into
+-- taking your window out. Bare mesh wears nothing at all, and plain
+-- glass is its own pane -- the mesh shows THROUGH either one, which is
+-- why the base sprite is underneath rather than replaced.
+local SECURE = { "grille", "rwindow" }
+local LOOKS: { [string]: { string } } = {
+    bolted = { "grille" },
+    glazed = { "grille", "window" },
+    reinforced = SECURE,
+    heated = SECURE,
+    unscrewed = SECURE,
+    popped = SECURE,
+    cut = SECURE,
+}
+
+-- What the ladder CHARGES, keyed by the rung and filled in as the walk
+-- actually times each one.
+local charged: { [string]: number } = {}
+
+looks_like(target, LOOKS.reinforced, "the secure pane")
+
 -- The next step is advertised before the tool is held.
 local heat = assert(hint(p, target, "heat_reinforced_glass"))
 assert(not heat.available, "the suggested welder is not in hand")
@@ -64,6 +104,7 @@ assert(heat.available, "a lit welder can begin reinforced-glass deconstruction")
 t.click(p, 3, 2, target)
 t.run_seconds(15.5)
 assert(assert(t.structure_at(3, 2)).state == "heated", "the first rung is heated")
+looks_like(target, LOOKS.heated, "a pane somebody has started on")
 
 -- A player can either continue or repair from the first intermediate rung.
 t.drop(p)
@@ -89,27 +130,24 @@ t.click(p, 3, 2, target)
 t.run_seconds(15.5)
 assert(assert(t.structure_at(3, 2)).state == "reinforced", "the repair returns the secure pane")
 
--- The repaired pane can start the same ladder again, and the next rung
--- remains discoverable after a screwdriver advances it.
-t.click(p, 3, 2, target)
-t.run_seconds(15.5)
-take("screwdriver")
-t.click(p, 3, 2, target)
-t.run_seconds(5.5)
-assert(assert(t.structure_at(3, 2)).state == "unscrewed", "the screws come out")
-t.drop(p)
-t.run_ticks(2)
-assert(hint(p, target, "pry_reinforced_glass") ~= nil, "the crowbar continues the ladder")
-assert(
-    hint(p, target, "replace_reinforced_glass_screws") ~= nil,
-    "the screwdriver repairs the screw rung"
-)
-
+-- One rung of the ladder, walked in the world: not finished a breath
+-- early, finished a breath later, and wearing the picture its state is
+-- supposed to wear the moment it lands. Each rung's cost is banked, so
+-- the asymmetry at the bottom of this file is added up from durations
+-- this walk proved rather than read off the content file.
 local function step(tool: string, seconds: number, state: string)
     take(tool)
+    local was = assert(assert(t.structure_at(3, 2)).state, "a rung knows which one it is")
     t.click(p, 3, 2, target)
-    t.run_seconds(seconds + 0.5)
+    t.run_seconds(seconds - 0.2)
+    assert(
+        assert(t.structure_at(3, 2)).state == was,
+        tool .. " is still working a breath short of " .. seconds .. " seconds"
+    )
+    t.run_seconds(0.7)
     assert(assert(t.structure_at(3, 2)).state == state, tool .. " reaches " .. state)
+    looks_like(target, assert(LOOKS[state], "a state this file knows the picture of"), state)
+    charged[was .. ">" .. state] = seconds
 end
 
 local function choices(forward: string, reverse: string)
@@ -118,6 +156,18 @@ local function choices(forward: string, reverse: string)
     assert(hint(p, target, forward) ~= nil, "next deconstruction tool: " .. forward)
     assert(hint(p, target, reverse) ~= nil, "next repair tool: " .. reverse)
 end
+
+-- The repaired pane can start the same ladder again, and the next rung
+-- remains discoverable after a screwdriver advances it.
+step("welder", 15, "heated")
+step("screwdriver", 5, "unscrewed")
+t.drop(p)
+t.run_ticks(2)
+assert(hint(p, target, "pry_reinforced_glass") ~= nil, "the crowbar continues the ladder")
+assert(
+    hint(p, target, "replace_reinforced_glass_screws") ~= nil,
+    "the screwdriver repairs the screw rung"
+)
 
 step("crowbar", 4, "popped")
 choices("cut_reinforced_glass_bars", "reseat_reinforced_glass")
@@ -137,3 +187,35 @@ step("wrench", 4, "bolted")
 assert(t.item_at(3, 2, "rglass") ~= nil, "finishing recovers reinforced glass")
 assert(hint(p, target, "rebuild_reinforced_glass") ~= nil, "the empty frame explains how to rebuild")
 step("rglass", 2, "reinforced")
+
+-- The asymmetry, added up out of rungs this walk timed itself: fifteen
+-- seconds of welding, five of unscrewing, four of prying, two of
+-- cutting and four of unbolting to get a reinforced pane out (tg's
+-- window.dm:577, 591, 604, 617 and 630 -- the `*_act_secondary` chain),
+-- against two seconds to fit one (grille.dm:267). Thirty out, two in.
+-- A window is cheap to put up and expensive to take down, which is
+-- most of what makes one worth putting up.
+local out = charged["reinforced>heated"]
+    + charged["heated>unscrewed"]
+    + charged["unscrewed>popped"]
+    + charged["popped>cut"]
+    + charged["cut>bolted"]
+local fit = charged["bolted>reinforced"]
+assert(out == 30, "five tools and thirty seconds get a reinforced pane out, got " .. out)
+assert(fit == 2, "two seconds fit one, got " .. fit)
+assert(out >= 10 * fit, "taking one out costs ten times fitting it: " .. out .. " against " .. fit)
+
+-- The bay's other grille is bolted-down mesh with nothing in it, and
+-- bare mesh is ONE picture: the same probe that has read two layers off
+-- every rung above reads one off this. Plain glass then hangs a
+-- different pane on the same mesh -- two seconds, and the grille is
+-- still underneath it.
+local bare = assert(t.target_at(p, 1, 2, "grille"))
+looks_like(bare, LOOKS.bolted, "an empty grille")
+take("glass")
+t.click(p, 1, 2, bare)
+t.run_seconds(1.8)
+assert(assert(t.structure_at(1, 2)).state == "bolted", "two seconds of fitting is two seconds")
+t.run_seconds(0.7)
+assert(assert(t.structure_at(1, 2)).state == "glazed", "the pane settles into the frame")
+looks_like(bare, LOOKS.glazed, "a glazed grille")
