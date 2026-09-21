@@ -17,7 +17,11 @@ local ui_controls = require("@helpers/ui_controls")
 local function sheets_held(player: number): number
     local look = assert(t.examine_held(player), "the sheets answer a look")
     local written: string? = string.match(look.title, "%((%d+)%)$")
-    return assert(tonumber(written or ""), "a stack names its count, got " .. look.title)
+    -- Bound before returning: `assert` hands its message back beside
+    -- the value, so a bare `return assert(...)` would pass that message
+    -- on to whatever this call is the last argument of.
+    local count = assert(tonumber(written or ""), "a stack names its count, got " .. look.title)
+    return count
 end
 
 t.world(
