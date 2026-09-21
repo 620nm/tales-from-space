@@ -124,6 +124,9 @@ export interface Toggle {
   color?: string | null;
   section?: Label;
   subject?: Subject | null;
+  /** Listed, but no press to take: the label id of the reason. Absent on
+   *  every ordinary row (engine `docs/tgui/documents.md`). */
+  unavailable?: string;
 }
 /** The document's own node on its network (engine `link` key). */
 export interface LinkIdentity {

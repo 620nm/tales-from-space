@@ -41,6 +41,14 @@ export function subjectCard(subject: Subject, fallback: Label, detail?: string,
 const cardDetail = (toggle: Toggle): string | undefined =>
   labelId(toggle.label)?.startsWith("link.candidate.") ? labelText(toggle.label) : undefined;
 
+/** A row the server drew without a press to take: the reason it names,
+ *  in the badge, toned off. Undefined for an ordinary control, and the
+ *  bare id for a reason this pack has no word for. */
+export function unavailableBadge(toggle: Toggle): Badge | undefined {
+  if (!toggle.unavailable) return undefined;
+  return { text: labelText({ id: toggle.unavailable }), tone: "off" };
+}
+
 const toggleAction = (doc: DocumentIdentity, toggle: Toggle) =>
   documentAction(doc, "toggle", {
     field: toggle.field,
@@ -55,17 +63,19 @@ function switchRow(
   active: boolean,
 ): UiNode {
   const word = labelText(toggle.on ? toggle.on_text : toggle.off_text);
+  const blocked = unavailableBadge(toggle);
   return row(
     `${id}/box`,
     [
       text(`${id}/label`, labelText(toggle.label), ["grow", "list-label"]),
+      ...(blocked ? [text(`${id}/unavailable`, blocked.text, ["hint"])] : []),
       {
         id,
         type: "button",
         text: word,
         class: ["btn", toggle.on ? "btn-selected" : "btn-default"],
-        event: bind(id, toggleAction(doc, toggle)),
-        ...(active ? {} : { disabled: true }),
+        ...(blocked ? {} : { event: bind(id, toggleAction(doc, toggle)) }),
+        ...(active && !blocked ? {} : { disabled: true }),
       },
     ],
     { cls: ["list-row"] },
@@ -109,15 +119,18 @@ export function toggleRows(
       if (toggle.subject) pending = [];
       out.push(ChoiceGrid(`${key}/grid`, open.choices, toggle.subject ? { min: CARD_MIN } : {}));
     }
+    const blocked = unavailableBadge(toggle);
     open.choices.push(
       Choice(key, {
         label: labelText(toggle.label),
         ...(toggle.icon ? { sprite: toggle.icon } : {}),
         ...(toggle.color ? { color: toggle.color } : {}),
-        ...(toggle.subject ? subjectCard(toggle.subject, toggle.label, cardDetail(toggle)) : {}),
+        ...(toggle.subject
+          ? subjectCard(toggle.subject, toggle.label, cardDetail(toggle), blocked)
+          : blocked ? { detail: blocked.text } : {}),
         selected: toggle.on,
-        event: bind(key, toggleAction(doc, toggle)),
-        disabled: !active,
+        ...(blocked ? {} : { event: bind(key, toggleAction(doc, toggle)) }),
+        disabled: !active || blocked != null,
       }),
     );
   }

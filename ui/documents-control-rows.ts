@@ -14,7 +14,7 @@ import type {
 import { documentAction } from "./document-action";
 import { labelId, labelText, type Label } from "./labels";
 import { matterBlock } from "./matter-block";
-import { subjectBadge, subjectCard } from "./documents-choices";
+import { subjectBadge, subjectCard, unavailableBadge } from "./documents-choices";
 import { bind, column, entry, press, row, text } from "./view";
 import * as S from "./strings";
 
@@ -133,14 +133,16 @@ function toggleKey(
 
 function switchRow(id: string, doc: DocumentIdentity, toggle: Toggle, active: boolean): UiNode {
   const swatch = toggle.color ? Swatch(`${id}/swatch`, toggle.color) : null;
+  const blocked = unavailableBadge(toggle);
   return row(id, [
     ...(swatch ? [swatch] : []),
     text(`${id}/label`, labelText(toggle.label), ["workspace-control-label", "grow"]),
+    ...(blocked ? [text(`${id}/unavailable`, blocked.text, ["workspace-control-value", "tone-off"])] : []),
     press(`${id}/press`, labelText(toggle.on ? toggle.on_text : toggle.off_text), documentAction(doc, "toggle", {
       field: toggle.field,
       ...(toggle.option == null ? {} : { option: toggle.option }),
     }), {
-      disabled: !active,
+      disabled: !active || blocked != null,
       variant: toggle.on ? "selected" : "default",
       ...(toggle.icon ? { icon: toggle.icon } : {}),
       cls: ["workspace-control-action"],
@@ -161,19 +163,22 @@ function choiceGroup(
   const firstId = toggleKey(base, first.value, first.index, all);
   const choices = toggles.map(({ value, index: sourceIndex }) => {
     const id = toggleKey(base, value, sourceIndex, all);
-    const metadata = value.subject ? subjectCard(value.subject, value.label) : {};
+    const blocked = unavailableBadge(value);
+    const metadata = value.subject ? subjectCard(value.subject, value.label, undefined, blocked) : {};
     return Choice(id, {
       label: metadata.label ?? labelText(value.label),
       ...(metadata.sprite ? { sprite: metadata.sprite } : value.icon ? { sprite: value.icon } : {}),
       ...(value.color ? { color: value.color } : {}),
-      ...(metadata.detail ? { detail: metadata.detail } : {}),
+      ...(metadata.detail ? { detail: metadata.detail } : blocked ? { detail: blocked.text } : {}),
       ...(metadata.badge ? { badge: metadata.badge } : {}),
       selected: value.on,
-      event: bind(id, documentAction(doc, "toggle", {
-        field: value.field,
-        ...(value.option == null ? {} : { option: value.option }),
-      })),
-      disabled: !active,
+      ...(blocked ? {} : {
+        event: bind(id, documentAction(doc, "toggle", {
+          field: value.field,
+          ...(value.option == null ? {} : { option: value.option }),
+        })),
+      }),
+      disabled: !active || blocked != null,
     });
   });
   const strip = choices.length <= 3
