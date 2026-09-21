@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
-import { access } from "node:fs/promises";
-import { constants } from "node:fs";
+import { access, readFile } from "node:fs/promises";
+import { constants, existsSync } from "node:fs";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
@@ -17,7 +17,31 @@ const available = await Promise.all([
   access(resolve(engine, "web/dist/style.css"), constants.R_OK),
   access(resolve(engine, "web/dist/pack-ui/worker.js"), constants.R_OK),
 ]).then(() => true, () => false);
-const skip = !chrome ? "Chromium unavailable" : !available ? "generated UI lab bundle is unavailable" : false;
+// The faces this package declares are published as objects by THIS
+// pack's bake, which $LUNATIC_PACK_WEB names (tools/check.sh). The
+// engine checkout's own bake is never a fallback: it belongs to
+// whichever pack that checkout last baked, publishes none of these
+// faces, and the lab then reports a FAULTED PACKAGE rather than wrong
+// art -- a red that says nothing about this pack. Same rule, and the
+// same reason, as tools/test-bake-art.mjs.
+const web = process.env.LUNATIC_PACK_WEB;
+const webAssets = web ? resolve(web, "assets") : null;
+// An older engine drops an unknown option silently, so the lab is
+// asked in source whether it can be pointed at a bake at all.
+const labTakesWeb = /function startLab\(\{[^}]*\bweb\b/.test(
+  await readFile(resolve(engine, "tools/ui-lab/serve.mjs"), "utf8"),
+);
+const skip = !chrome
+  ? "Chromium unavailable"
+  : !available
+    ? "generated UI lab bundle is unavailable"
+    : !web
+      ? "LUNATIC_PACK_WEB names no bake to draw against"
+      : !existsSync(join(webAssets, "atlas.ron"))
+        ? `no bake at ${webAssets}; bake-atlas --content assets --web ${web}`
+        : !labTakesWeb
+          ? "this engine's lab takes no web root, so it would draw the engine checkout's bake"
+          : false;
 if (skip) console.log(`SKIP preparation UI browser: ${skip}`);
 
 const sleep = (ms) => new Promise((done) => setTimeout(done, ms));
@@ -60,10 +84,11 @@ test("name edits preserve typing and follow-up clicks through pending updates", 
     await lab?.close();
     await rm(scratch, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   });
-  // Use the baked atlas manifest so `/obj/<sha>.woff2` serves every font
-  // declared by the real package. Synthetic assets intentionally publish no
-  // font objects, which would turn valid Patrick/Kalam faces into faults.
-  lab = await startLab({ root: engine, pack });
+  // Use this pack's baked atlas manifest so `/obj/<sha>.woff2` serves every
+  // font the real package declares. Synthetic assets intentionally publish no
+  // font objects, which would turn valid Patrick/Kalam faces into faults, and
+  // so does another pack's bake -- hence `web`, the skip guarding it above.
+  lab = await startLab({ root: engine, pack, web });
   browser = await launchChrome({ profileDir: join(scratch, "profile") });
   cdp = await Cdp.tab(browser.endpoint, { timeout: 30000 });
 
