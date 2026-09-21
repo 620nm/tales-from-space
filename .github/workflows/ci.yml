@@ -1,0 +1,106 @@
+# This pack's gate, on a runner. Dormant until the repo grows a GitHub
+# remote; `tools/check.sh` is the gate either way and this workflow only
+# supplies it with an engine.
+#
+# THE MIRROR IMAGE of the engine's own `pack` job (lunatic's
+# .github/workflows/ci.yml): there the engine is the subject and this
+# pack is fetched beside it; here this pack is the subject and the
+# engine is fetched beside it. Both check out SIBLINGS under the
+# workspace rather than nesting one in the other -- tools/check.sh
+# refuses to bake into a served root inside the engine checkout, and a
+# pack checked out under the engine's own workspace would put its
+# target/web exactly there.
+#
+# THE ENGINE REVISION is read from `assets/lunatic-revision`, the way
+# the bake's tgstation checkout is read from `assets/tg-revision`. Until
+# that file is tracked this workflow checks this pack against the
+# engine's default branch and says so in the run's annotations: a green
+# run then means "this pack is sound against whatever the engine is
+# today", which is weaker than a pin and must not be mistaken for it.
+#
+# WHAT THE OWNER MUST SUPPLY. Both checkouts below use the token-less
+# `actions/checkout@v4` form the engine's workflows already use for this
+# repository, which works only while both repositories are readable by
+# the run's default token -- that is, public, or the same repository's
+# own. If either is private, every `actions/checkout` naming the OTHER
+# repository needs `token: ${{ secrets.<NAME> }}` with a PAT (or a GitHub
+# App token) that can read it. No such secret is invented here.
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  gate:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: lunatic
+    env:
+      LUNATIC_ENGINE: ${{ github.workspace }}/lunatic
+      # Absolute, because a cargo test binary runs with its PACKAGE as
+      # the working directory, not the workspace.
+      LUNATIC_TG: ${{ github.workspace }}/tgstation
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: tales-from-space
+      - id: engine-revision
+        working-directory: ${{ github.workspace }}
+        run: |
+          set -eu
+          pin=tales-from-space/assets/lunatic-revision
+          if [ -f "$pin" ]; then
+            echo "revision=$(tr -d '\r\n' < "$pin")" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::no assets/lunatic-revision: this run checks this pack against the engine's default branch, not a pinned one"
+            echo "revision=" >> "$GITHUB_OUTPUT"
+          fi
+      # The engine under test. An empty ref is the default branch.
+      - uses: actions/checkout@v4
+        with:
+          repository: 620nm/lunatic
+          path: lunatic
+          ref: ${{ steps.engine-revision.outputs.revision }}
+      # The reference art this pack's bake reads, at the revision this
+      # pack tracks.
+      - id: art-revision
+        working-directory: ${{ github.workspace }}
+        run: echo "revision=$(tr -d '\r\n' < tales-from-space/assets/tg-revision)" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        with:
+          repository: tgstation/tgstation
+          path: tgstation
+          ref: ${{ steps.art-revision.outputs.revision }}
+      # rust-toolchain.toml in the engine pins the channel; this action
+      # honors it. wasm32 is for the client the live browser lanes drive.
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: lunatic
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # Everything tools/check.sh refuses to start without, or would
+      # otherwise skip by name: the engine's node tooling (refused), the
+      # Luau CLI, cargo-nextest for the palette rule, and a compiled
+      # client plus built web shell for the two live browser lanes.
+      - run: npm --prefix web ci
+      - run: node tools/luau.mjs install
+      - run: cargo install cargo-nextest --locked
+      - run: rustup target add wasm32-unknown-unknown
+      # MUST match the engine workspace's pinned `wasm-bindgen`; a looser
+      # pin resolves an ancient js-sys and wgpu explodes.
+      - run: cargo install wasm-bindgen-cli --version 0.2.128 --locked
+      - run: sh tools/build-web.sh
+      # A skip must never read as a pass, and this job supplies every
+      # prerequisite a lane names -- so a lane that skipped here is a
+      # broken workflow, not a tolerable gap, and fails the run.
+      - name: this pack's gate, against that engine
+        run: |
+          set -o pipefail
+          sh ../tales-from-space/tools/check.sh 2>&1 | tee "$RUNNER_TEMP/pack-gate.log"
+          if grep -q 'SKIPPED, SO UNVERIFIED' "$RUNNER_TEMP/pack-gate.log"; then
+            echo "::error::a gate lane skipped; this job supplies every prerequisite it names"
+            exit 1
+          fi
