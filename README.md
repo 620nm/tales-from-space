@@ -129,6 +129,13 @@ own target directory, whose exclusive lock serializes this gate against an
 engine gate in the same checkout; point `LUNATIC_ENGINE` at a second engine
 worktree to run both at once.
 
+`.github/workflows/ci.yml` runs this same gate on a runner and installs every
+prerequisite a lane names, so a skip there is a broken workflow rather than a
+tolerated absence. It pins the engine to a tracked `assets/lunatic-revision`,
+the way the bake's reference art is pinned by `assets/tg-revision`; with no
+such file the run says in an annotation that it checked this pack against the
+engine's default branch.
+
 ## Authoring
 
 Deck composition, covers, and infrastructure policy are in [TURFS.md](docs/TURFS.md).
