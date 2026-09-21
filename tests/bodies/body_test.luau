@@ -181,6 +181,60 @@ assert(assert(t.body(r)).conscious, "and you come round when it clears")
 assert(assert(t.body(r)).posture == "standing", "and get up by yourself")
 
 -- ---------------------------------------------------------------
+-- ONE capacity in the human plan is LETHAL, and it is the brain
+-- (content/bodies/human.luau, `brain = { lethal = true, ... }` -- the
+-- comment above it says it is "the only capacity allowed to say so").
+-- The flag itself is not a reading a spec can take, so what is pinned
+-- here is the consequence it buys, and the pair is the whole claim:
+-- empty the brain capacity and the crewman is dead; empty a capacity
+-- the plan did NOT mark lethal and they are maimed and alive.
+-- ---------------------------------------------------------------
+t.world(ARENA, 0)
+local s = t.join()
+t.tick()
+
+-- ---- the negative: a capacity carrying no `lethal` ----
+--
+-- `sight` reads the `eye` tag, and the eyes are the plan's only carrier
+-- of it. `organ_eyes` holds 50 and is not `vital`, so ruining it takes
+-- the capacity to nothing and touches no other line the plan drew.
+assert(math.abs(assert(t.capacity(s, "sight")) - 1.0) < 0.01, "a crewman arrives seeing")
+t.set_organ_damage(s, "eyes", 50)
+t.run_ticks(2)
+assert(
+    math.abs(assert(t.capacity(s, "sight"))) < 0.01,
+    "ruined eyes see nothing: " .. tostring(t.capacity(s, "sight"))
+)
+assert(assert(t.body(s)).animate, "but a blind crewman is a LIVING crewman")
+assert(
+    #assert(t.body(s)).thresholds == 0,
+    "and no line was crossed: " .. table.concat(assert(t.body(s)).thresholds, ",")
+)
+-- Nor does it turn fatal while you wait: `sight` pools nothing on the
+-- way down, so there is no clock running on a blinded body.
+t.run_seconds(5)
+assert(assert(t.body(s)).animate, "five seconds blind and still alive")
+
+-- ---- the positive: the one capacity that is ----
+--
+-- BRAIN_DAMAGE_DEATH is 200 (content/items/anatomy/organ_brain.luau,
+-- brain_item.dm:18-20) and the organ's curve reaches zero output there,
+-- which is the capacity at zero -- the state the plan calls lethal.
+assert(math.abs(assert(t.capacity(s, "brain")) - 1.0) < 0.01, "the brain capacity reads whole")
+t.set_organ_damage(s, "brain", 200)
+t.run_ticks(2)
+assert(
+    math.abs(assert(t.capacity(s, "brain"))) < 0.01,
+    "a brain at BRAIN_DAMAGE_DEATH reads zero: " .. tostring(t.capacity(s, "brain"))
+)
+local undone = assert(t.body(s))
+assert(not undone.animate, "and a body whose lethal capacity reads zero is a dead body")
+local latched = table.concat(undone.thresholds, ",")
+assert(latched:find("undone", 1, true), "it died on the viability line: " .. latched)
+assert(latched:find("dead", 1, true) == nil, "not on the health one, which it never crossed")
+assert(math.abs(undone.health - 100) < 0.01, "unmarked, at " .. undone.health .. " health")
+
+-- ---------------------------------------------------------------
 -- An unconscious crewman says nothing, and nobody hears them: no
 -- tongue, no lungs and no consciousness are all one gate (§3.4).
 -- ---------------------------------------------------------------
