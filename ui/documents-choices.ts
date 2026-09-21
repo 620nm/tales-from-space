@@ -49,6 +49,14 @@ export function unavailableBadge(toggle: Toggle): Badge | undefined {
   return { text: labelText({ id: toggle.unavailable }), tone: "off" };
 }
 
+/** Such a card also LOOKS unavailable, which its own class paints: a
+ *  `disabled` row node reaches the `disabled` state of no rule, since
+ *  that state is a form control's (ui/theme/kit.ts). */
+export function greyedCard(card: UiNode, blocked: Badge | undefined): UiNode {
+  if (!blocked) return card;
+  return { ...card, class: [...(card.class ?? []), "choice-unavailable"] };
+}
+
 const toggleAction = (doc: DocumentIdentity, toggle: Toggle) =>
   documentAction(doc, "toggle", {
     field: toggle.field,
@@ -120,7 +128,7 @@ export function toggleRows(
       out.push(ChoiceGrid(`${key}/grid`, open.choices, toggle.subject ? { min: CARD_MIN } : {}));
     }
     const blocked = unavailableBadge(toggle);
-    open.choices.push(
+    open.choices.push(greyedCard(
       Choice(key, {
         label: labelText(toggle.label),
         ...(toggle.icon ? { sprite: toggle.icon } : {}),
@@ -132,7 +140,8 @@ export function toggleRows(
         ...(blocked ? {} : { event: bind(key, toggleAction(doc, toggle)) }),
         disabled: !active || blocked != null,
       }),
-    );
+      blocked,
+    ));
   }
   if (pending.length) out.unshift(ChoiceGrid(`${id}/cards`, pending, { min: CARD_MIN }));
   return out;

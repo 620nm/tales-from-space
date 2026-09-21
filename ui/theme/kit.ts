@@ -40,6 +40,14 @@ export const kitRules: UiStyleRule[] = [
   // through hands every click to the floor unless it says otherwise.
   rule("choice", { minHeight: 30 }),
   rule("choice-hit", press),
+  // A card listed with no press to take: its name, picture and address
+  // step back to the contrast a disabled press wears, while the badge
+  // saying why keeps its own; nothing lights under the pointer.
+  rule("choice-label", { opacity: 0.45 }, { within: "choice-unavailable" }),
+  rule("choice-icon", { opacity: 0.45 }, { within: "choice-unavailable" }),
+  rule("choice-detail", { opacity: 0.6 }, { within: "choice-unavailable" }),
+  rule("choice-unavailable", { backgroundColor: field }, "hover"),
+  rule("choice-hit", { cursor: "not-allowed" }, { state: "disabled", within: "choice-unavailable" }),
 
   // Typed fields: a well with the pane's frame colour.
   rule("entry", {
