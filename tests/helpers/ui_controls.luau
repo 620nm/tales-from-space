@@ -70,6 +70,28 @@ function controls.rows(value: unknown): { Record }
     return rows
 end
 
+-- The label id saying why a listed row would not take a press, or nil
+-- for an ordinary control. The key is ABSENT on ordinary rows
+-- (../lunatic/docs/tgui/documents.md).
+function controls.unavailable(row: Record): string?
+    local reason = row.unavailable
+    return if reason == nil then nil else controls.text(reason)
+end
+
+-- Every toggle row on one field a press can actually land on, in the
+-- order the document drew them. A greyed row is listed, inert and
+-- skipped here, so a caller that walks a list never hammers one
+-- (../lunatic/docs/devices/joining.md).
+function controls.pressable(state: Record, field: string): { Record }
+    local out: { Record } = {}
+    for _, row in ipairs(controls.rows(state.toggles or {})) do
+        if row.field == field and controls.unavailable(row) == nil then
+            out[#out + 1] = row
+        end
+    end
+    return out
+end
+
 function controls.state(p: number, channel: string?): Record
     return controls.record(t.ui(p, channel) or {})
 end
@@ -233,6 +255,31 @@ function controls.toggle(p: number, field: string, option: Option?, channel: str
         node = controls.find(p, fallback_suffix(target), scope)
     end
     controls.press(p, assert(node, "missing rendered switch: " .. suffix).id, nil, scope)
+end
+
+-- Press a greyed row the way a client that ignored the greying would.
+-- The row is DRAWN, so the press is aimed at a node that is really
+-- there -- and that node carries no gesture at all, so the press raises
+-- instead of landing. Answers the reason, for a caller going on to
+-- assert nothing moved.
+function controls.press_inert(p: number, field: string, option: Option?, channel: string?): string
+    local scope = assert(t.ui_document(p, channel), "no document observed")
+    local state = controls.state(p, channel)
+    local target = assert(toggle_target(state, field, option), "missing disclosed row: " .. field)
+    local reason = assert(controls.unavailable(target.row), "the row is a control, not a greyed one")
+    if target.child then
+        controls.controls_page(p, scope)
+    else
+        controls.details(p, scope)
+    end
+    local suffix = target_suffix(target)
+    local drawn = controls.find(p, suffix, scope) or controls.find(p, fallback_suffix(target), scope)
+    local node = assert(drawn, "a greyed row is drawn, not hidden: " .. suffix)
+    local pressed = pcall(function()
+        t.ui_press(p, node.id)
+    end)
+    assert(not pressed, "and it carries no gesture: " .. suffix)
+    return reason
 end
 
 function controls.set(p: number, field: string, value: number | "min" | "max", channel: string?): ()
