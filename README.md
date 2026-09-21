@@ -87,11 +87,11 @@ cannot run says so by name, both in place and in the closing
 | `maps` | Every map in `maps/` parses, preflights, writes and reads back unchanged. |
 | `lint-assets` | Every sprite name content says is in the bake. |
 | `roster` | The roster a server would serve builds; `target/gate/roster.json` is what the next lanes read. |
-| `placeable` | Everything declared is offered in the map editor. Its art half skips by name: the engine's test reads the engine checkout's bake. |
+| `placeable` | Everything declared is offered in the map editor, and its art is in this pack's bake (`LUNATIC_WEB_ROOT`). |
 | `pack-ui-build` | `ui/` compiles against that engine's SDK. |
 | `pack-node` | `tools/test.mjs`: the theme and message lints and every `tools/test-*.mjs`. |
 | `specs` | `tests/*_test.luau` through the engine's spec runner. |
-| `ui-shots` | Pack UI fixtures against their baselines. Skipped by name until the engine's `tools/ui-lab.mjs` takes `--web <root>`. |
+| `ui-shots` | Every `ui/fixtures` and `ui/staff/fixtures` baseline, drawn through the real host against this pack's bake (`--web`). |
 | `world-pointer`, `push-motion` | The fixtures in `tests/fixtures/`, driven in the real client against this pack's bake. |
 
 Two variables carry what the earlier lanes produced to the node checks that
@@ -110,6 +110,12 @@ of …)`. With no bake at all, every lane that reads one is `BLOCKED` by name.
 A run in which nothing executed prints `NOTHING RAN` and exits 1 rather than
 a green banner, so a mistyped lane name and a wholly blocked selection are
 both visible.
+
+Two lanes need an engine new enough to be pointed at a served root — the lab's
+`--web` and the palette test's `LUNATIC_WEB_ROOT`. Each is probed rather than
+assumed, because an older engine ignores both silently and would draw another
+pack's art under a green line; against one, `ui-shots` skips by name and
+`placeable` keeps its shape rules and skips its art half.
 
 The gate's scratch — the bake, its state directory and the browser lanes'
 recordings — is `target/`, which is gitignored. Cargo builds in the engine's
