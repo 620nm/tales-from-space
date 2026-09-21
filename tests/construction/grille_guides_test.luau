@@ -32,7 +32,7 @@ t.world(
     items: [
         (2, 2, "welder"), (2, 2, "screwdriver"), (2, 2, "crowbar"),
         (2, 2, "wirecutters"), (2, 2, "wrench"), (2, 2, "rglass"),
-        (2, 2, "glass"),
+        (2, 1, "glass"),
     ],
 )]==],
     7
@@ -42,14 +42,24 @@ local p = t.join()
 t.tick()
 local target = assert(t.target_at(p, 3, 2, "grille"))
 
-local function take(id: string)
+-- Picking something up off a named tile. A thing is targetable only
+-- where a pixel of it is the topmost thing drawn, exactly as a pointer
+-- finds it, and items that declare no scatter all land on the same
+-- offset -- so a tile's items are one stacked pile and the bottom of a
+-- deep one is unclickable. Six is what the pile under the player holds;
+-- the glass sheets wait on their own tile rather than make it seven.
+local function take_at(x: number, y: number, id: string)
     if t.hands(p).held ~= nil then
         t.drop(p)
         t.run_ticks(2)
     end
-    t.click(p, 2, 2, assert(t.target_at(p, 2, 2, id)))
+    t.click(p, x, y, assert(t.target_at(p, x, y, id), "no " .. id .. " to point at in " .. x .. "," .. y))
     t.run_ticks(2)
     assert(t.hands(p).held == id, "picked up " .. id)
+end
+
+local function take(id: string)
+    take_at(2, 2, id)
 end
 
 -- What a thing in the bay is DRAWN as, bottom-first and exactly as the
@@ -212,7 +222,7 @@ assert(out >= 10 * fit, "taking one out costs ten times fitting it: " .. out .. 
 -- still underneath it.
 local bare = assert(t.target_at(p, 1, 2, "grille"))
 looks_like(bare, LOOKS.bolted, "an empty grille")
-take("glass")
+take_at(2, 1, "glass")
 t.click(p, 1, 2, bare)
 t.run_seconds(1.8)
 assert(assert(t.structure_at(1, 2)).state == "bolted", "two seconds of fitting is two seconds")
