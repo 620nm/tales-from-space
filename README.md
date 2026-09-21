@@ -47,8 +47,13 @@ anywhere it was not told):
 export LUNATIC_PACK=/absolute/path/to/tales-from-space
 export LUNATIC_TG=/absolute/path/to/tgstation
 cargo run -p xtask -- bake-atlas            # reads $LUNATIC_PACK/assets and $LUNATIC_TG
-cargo run -p xtask -- build-ui              # compiles the optional pack frontend
+cargo run -p xtask -- build-ui --pack "$LUNATIC_PACK"   # the optional pack frontend
 ```
+
+That bake lands in the engine checkout's own served root, which its gate
+overwrites with the engine demo on every run (the engine's `docs/gates.md`):
+re-bake before serving this pack again, or name a root of your own with
+`--web`. This pack's gate always bakes into `target/web` here instead.
 
 Follow the engine's `docs/UI-PRIVACY.md` local setup to stage the snapshot and
 start the authenticated game server and browser gateway. Open the gateway on
@@ -60,8 +65,9 @@ add `--mode free_build` or use `"$LUNATIC_PACK/maps/outpost.ron"` as the map.
 `tools/check.sh` is this pack's gate, run from HERE. It finds the engine
 through `LUNATIC_ENGINE` (else the checkout beside this one) and refuses to
 start when that checkout is absent or its node tooling is not installed. The
-engine's own `tools/check.sh` checks the ENGINE, over its own demo and fixture
-packs; it needs no content and asserts nothing about this pack.
+engine's own `tools/check.sh` is the other of two gates and asserts nothing
+about this pack; what each one proves, and why an ENGINE change runs both, is
+the engine's `docs/gates.md`.
 
 ```sh
 export LUNATIC_ENGINE=/absolute/path/to/lunatic

@@ -55,10 +55,10 @@ the shared lints, the bake, content, maps, sprite names, the roster and the
 editor palette, `ui/`, the node checks, the specs and the two live browser
 fixtures). `README.md` §The gate lists every lane and what it proves. Run it
 before every commit; run one lane by name while iterating. The engine's own
-`tools/check.sh` checks the ENGINE over its demo and fixture packs and asserts
-nothing about this pack, so a green engine gate is not evidence here. The gate
-writes only this repository's gitignored `target/`, never the engine's served
-root.
+`tools/check.sh` is the other subject and asserts nothing about this pack, so
+a green engine gate is not evidence here; the boundary between the two, and
+what each proves, is the engine's `docs/gates.md`. The gate writes only this
+repository's gitignored `target/`, never the engine's served root.
 
 ## Code Organization
 
