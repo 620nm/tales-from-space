@@ -88,13 +88,13 @@ cannot run says so by name, both in place and in the closing
 | `luau` | Every trusted source passes strict checking. |
 | `lint-units`, `tree-shape`, `terms` | One spelling per unit here; every directory within the ceilings of this file's tree-debt table; the canonical vocabulary in the `pack:` rows of the engine's `docs/architecture/vocabulary.md`. |
 | `build` | The engine binaries the later lanes run. |
-| `bake` | `assets/*.ron` and the pinned tg revision bake, into `target/web` — never the engine checkout's own served root. |
+| `bake` | `assets/*.ron`, `assets/fonts/` and the pinned tg revision bake, into `target/web` — never the engine checkout's own served root. |
 | `content` | Every content file loads: the lint a spec run skips. |
 | `maps` | Every map in `maps/` parses, preflights, writes and reads back unchanged. |
 | `lint-assets` | Every sprite name content says is in the bake. |
 | `roster` | The roster a server would serve builds; `target/gate/roster.json` is what the next lanes read. |
 | `placeable` | Everything declared is offered in the map editor, and its art is in this pack's bake (`LUNATIC_WEB_ROOT`). |
-| `pack-ui-build` | `ui/` compiles against that engine's SDK. |
+| `pack-ui-build` | `ui/` compiles against that engine's SDK, and every font `ui/fonts.json` declares is published in this pack's bake (`--web`). |
 | `pack-node` | `tools/test.mjs`: the theme and message lints and every `tools/test-*.mjs`. |
 | `specs` | `tests/*_test.luau` through the engine's spec runner. |
 | `ui-shots` | Every `ui/fixtures` and `ui/staff/fixtures` baseline, drawn through the real host against this pack's bake (`--web`). |
@@ -117,11 +117,13 @@ A run in which nothing executed prints `NOTHING RAN` and exits 1 rather than
 a green banner, so a mistyped lane name and a wholly blocked selection are
 both visible.
 
-Two lanes need an engine new enough to be pointed at a served root — the lab's
-`--web` and the palette test's `LUNATIC_WEB_ROOT`. Each is probed rather than
-assumed, because an older engine ignores both silently and would draw another
-pack's art under a green line; against one, `ui-shots` skips by name and
-`placeable` keeps its shape rules and skips its art half.
+Three lanes need an engine new enough to be pointed at a served root — the
+lab's `--web`, `build-ui`'s `--web` and the palette test's `LUNATIC_WEB_ROOT`.
+Each is probed rather than assumed, because an older engine ignores all three
+silently and would then judge this pack against whichever pack that checkout
+last baked. Against one, `ui-shots` skips by name, `placeable` keeps its shape
+rules and skips its art half, and `pack-ui-build` still compiles but says in
+the closing line that it matched this pack's fonts against the engine's bake.
 
 The gate's scratch — the bake, its state directory and the browser lanes'
 recordings — is `target/`, which is gitignored. Cargo builds in the engine's

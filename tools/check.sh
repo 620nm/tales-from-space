@@ -313,10 +313,40 @@ lane_lints() {
 }
 
 # This pack's art, baked into this repository's own served root. Needs
-# LUNATIC_TG for the tg-sourced sheets `assets/tg-revision` pins.
+# LUNATIC_TG for the tg-sourced sheets `assets/tg-revision` pins. One
+# bake covers every domain this pack publishes, fonts included
+# (crates/xtask/src/pipeline.rs, `Domain::ALL`), so `assets/fonts/`
+# needs no verb of its own.
 bake_check() {
   engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p xtask -- \
     bake-atlas --content "$PACK/assets" --web "$PACK_WEB"
+}
+
+# Whether this engine's `build-ui` can be pointed at a served root. The
+# binary's own usage line answers it, in the `build-ui` clause alone:
+# the `--web` earlier in that line is the baker's, which every engine
+# has had for as long as this gate has existed.
+build_ui_takes_web() {
+  engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p xtask -- 2>&1 \
+    | grep -q 'build-ui[^|]*--web'
+}
+
+# This pack's interface, compiled against that engine's SDK. It reads
+# the bake: a declared font must already be published as an object, so
+# an engine that cannot be pointed at this pack's served root looks for
+# this pack's fonts in the object store of whichever pack the engine
+# checkout last baked (web/scripts/build-pack-ui.mjs, `packFonts`,
+# which resolves `assets/obj` against its own working directory).
+pack_ui_build_check() {
+  if build_ui_takes_web; then
+    engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p xtask -- \
+      build-ui --pack "$PACK" --web "$PACK_WEB"
+  else
+    echo "pack interface fonts (matched against the engine checkout's bake, not --web)" \
+      >> "$SKIPPED"
+    engine_cargo run -q --manifest-path "$ENGINE/Cargo.toml" -p xtask -- \
+      build-ui --pack "$PACK"
+  fi
 }
 
 # The binaries the live browser runners launch with `--no-build`, and
@@ -528,12 +558,13 @@ if want placeable; then
   fi
 fi
 
-# The interface, compiled before anything reads it: tools/test-ui-*.mjs
-# hard-fail on an unbuilt ui/bundle.json.
-gated "$BUILD" pack-ui-build engine_cargo run -q \
-  --manifest-path "$ENGINE/Cargo.toml" -p xtask -- build-ui --pack "$PACK" \
+# The interface, compiled after the bake it reads and before anything
+# reads IT: tools/test-ui-*.mjs hard-fail on an unbuilt ui/bundle.json.
+gated "$BAKE" pack-ui-build pack_ui_build_check \
   || UI_BUILT="pack-ui-build failed"
-UI_BUILT=${UI_BUILT:-$BUILD}
+# Whatever stopped the bake stopped this too, so one reason carries
+# both to every lane downstream.
+UI_BUILT=${UI_BUILT:-$BAKE}
 
 # Every node check this pack owns, against that engine's SDK: the theme
 # and message lints, the UI runtime tests, the baked-art lints and the
@@ -542,13 +573,13 @@ UI_BUILT=${UI_BUILT:-$BUILD}
 # LUNATIC_ROSTER -- each exported only where this run produced it, so a
 # check this run cannot supply takes its own fallback rather than
 # reading an earlier run's leavings.
-gated "${UI_BUILT:-$BAKE}" pack-node node "$PACK/tools/test.mjs" "$ENGINE"
+gated "$UI_BUILT" pack-node node "$PACK/tools/test.mjs" "$ENGINE"
 
 gated "$BAKE" specs server test "$PACK" --web "$PACK_WEB"
 
 if want ui-shots; then
-  if [ -n "${UI_BUILT:-$BAKE}" ]; then
-    blocked ui-shots "${UI_BUILT:-$BAKE}"
+  if [ -n "$UI_BUILT" ]; then
+    blocked ui-shots "$UI_BUILT"
   elif ! ui_lab_takes_web; then
     skip ui-shots "ui-lab has no --web: it reads the engine's own bake" \
       "pack UI shots (ui-lab reads the engine checkout's bake; it needs --web <root>)"
@@ -581,8 +612,8 @@ for lane in world-pointer push-motion; do
     printf '%s\n' "$lane" >> "$FAILED"
     continue
   fi
-  if [ -n "$BAKE" ] || [ -n "$UI_BUILT" ]; then
-    blocked "$lane" "${BAKE:-$UI_BUILT}"
+  if [ -n "$UI_BUILT" ]; then
+    blocked "$lane" "$UI_BUILT"
     continue
   fi
   reason=$(live_pair_skip)
