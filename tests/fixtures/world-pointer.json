@@ -4,6 +4,10 @@
   "action": "press",
   "label": "Press button",
   "ledgerKey": "lunatic/tfs:button_sequence",
+  "hoverLabelNode": "hover/label/{action}",
+  "hoverPrimaryNode": "hover/key/{action}/mouse/left",
+  "hoverReadyClass": "pc-mouse-key-on",
+  "hoverBlockedClass": "pc-hover-unavailable",
   "storage": {
     "slot": "back",
     "label": "backpack",
