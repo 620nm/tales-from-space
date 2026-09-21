@@ -136,12 +136,21 @@ end
 local booted = {}
 
 -- Unlock a box -- a lock placed with no access word opens for whoever
--- is standing at it (network_test.luau) -- and accept every candidate it
--- offers. Answers how many it took. An access point (`id` given) answers
--- only a held laptop, which waits on the player's own tile: the empty
--- hand takes it, and it goes back down with the key in hand again. The
--- router (no id, a machine on its tile) wears its own panel.
-local function join_all(p: number, x: number, y: number, id: string?)
+-- is standing at it (network_test.luau) -- and accept every candidate a
+-- press can take. Answers how many it LISTED, which is not always the
+-- same number: a candidate the forest's shape refuses stands on the
+-- list greyed and inert, so walking the rows by index would hammer that
+-- one forever and never reach the tower
+-- (../lunatic/docs/devices/joining.md).
+--
+-- `greyed` names the reason exactly one listed row must carry, for the
+-- benches where the panel feeding the box is in range of it.
+--
+-- An access point (`id` given) answers only a held laptop, which waits
+-- on the player's own tile: the empty hand takes it, and it goes back
+-- down with the key in hand again. The router (no id, a machine on its
+-- tile) wears its own panel.
+local function join_all(p: number, x: number, y: number, id: string?, greyed: string?)
     local channel = nil
     if id ~= nil then
         channel = "programming"
@@ -165,12 +174,28 @@ local function join_all(p: number, x: number, y: number, id: string?)
     end
     t.tick()
     assert(rows(t.ui(p, channel), "link_lock")[1].on, "the lock opens for whoever stands at it")
-    local offered = #rows(t.ui(p, channel), "link_join")
+    local listed = rows(t.ui(p, channel), "link_join")
+    local offered = #listed
+    if greyed ~= nil then
+        local takeable = #ui_controls.pressable(ui_controls.record(t.ui(p, channel)), "link_join")
+        assert(offered - takeable == 1, "one listed row is greyed: " .. (offered - takeable))
+        for _, row in ipairs(listed) do
+            local why = ui_controls.unavailable(row)
+            assert(why == nil or why == greyed, "and greyed for the reason given: " .. tostring(why))
+        end
+    end
     for _ = 1, offered do
-        local offer = rows(t.ui(p, channel), "link_join")[1]
+        local offer = ui_controls.pressable(ui_controls.record(t.ui(p, channel)), "link_join")[1]
+        if offer == nil then
+            break
+        end
         ui_controls.toggle(p, "link_join", ui_controls.text(offer.option), channel)
         t.tick()
     end
+    assert(
+        #ui_controls.pressable(ui_controls.record(t.ui(p, channel)), "link_join") == 0,
+        "every row a press could take was taken"
+    )
     t.ui_close(p, channel)
     t.tick()
     if id ~= nil then
@@ -231,11 +256,13 @@ local function two_roots(near)
     -- island. A panel that carries a card is a hub in its own right
     -- and every device it powers is hardwired under it
     -- (../lunatic/docs/devices/joining.md), so it stands on the wall
-    -- box's list like anything else in range.
+    -- box's list like anything else in range -- GREYED, because it is
+    -- already the box's parent and a press taking it would close a
+    -- loop. The tower beside it is the one the box actually takes.
     speaker_to_boxes()
     assert(
-        join_all(speaker, 6, 1, "access_point") == 2,
-        "the near box offers its tower and the panel feeding the island"
+        join_all(speaker, 6, 1, "access_point", "link.unavailable.would_cycle") == 2,
+        "the near box lists its tower and the panel feeding the island"
     )
     speaker_to_mark()
     listener_to_box()
@@ -254,6 +281,11 @@ local function bridge()
     -- A panel that carries a card is a hub in its own right
     -- (../lunatic/docs/devices/joining.md), and a root reaches
     -- station-wide, so distance hides neither of them from it.
+    --
+    -- Still four after the wall boxes did their joining, because a box
+    -- never took the panel above it: that press was refused before the
+    -- ruling and is greyed after it, so both panels are exactly where
+    -- they were -- unheld, and hubs -- when the router asks.
     assert(join_all(speaker, 9, 1) == 4, "a root takes hubs, and there are four of them")
     walk(speaker, "west", 3)
     speaker_to_mark()
