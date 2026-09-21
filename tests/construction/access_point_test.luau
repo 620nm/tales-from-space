@@ -231,14 +231,51 @@ assert(#t.ledger_rows("link_locked") == 1, "and the lock is on the record either
 
 -- An unlocked box is an operable box: the roster and the candidates
 -- ride the workspace beside the files. Nothing has joined this box,
--- and the one thing in range to join is the PANEL feeding the bench --
--- a hub in its own right the moment it carries a card.
+-- and the one thing in range is the PANEL feeding the bench -- a hub
+-- in its own right the moment it carries a card.
+--
+-- It is LISTED, and GREYED: the wire already hung this box under that
+-- panel, so taking it would close a loop, and what the forest's SHAPE
+-- refuses is drawn carrying its reason rather than hidden
+-- (../lunatic/docs/devices/joining.md). A box whose one candidate is
+-- hidden reads as a box standing alone, which is the thing the ruling
+-- is against.
 assert(#rows(panel, "link_drop") == 0, "nothing has joined it")
 local candidates = rows(panel, "link_join")
 assert(#candidates == 1, "the room's own panel, and nothing else: " .. #candidates)
 assert(
     ui_controls.record(candidates[1].label).id == "link.candidate.hub",
-    "offered as the hub it is"
+    "listed as the hub it is"
+)
+local why = ui_controls.unavailable(candidates[1])
+assert(
+    why == "link.unavailable.would_cycle",
+    "greyed, because it already feeds this box: " .. tostring(why)
+)
+assert(#ui_controls.pressable(panel, "link_join") == 0, "and no press on this list would land")
+
+-- ...AND THE ROW IS INERT. A client that ignores the greying finds a
+-- node that is really there and carries no gesture at all, and the
+-- forest does not move for it. There is no pressable candidate on this
+-- bench to control against, so the probes are the record and the
+-- roster: the electrical pass's own sew of this box under that panel
+-- is already a `link_accepted` row, which is what says the ledger
+-- probe can see joins at all.
+local panel_mac = ui_controls.text(candidates[1].option)
+local sewn = #t.ledger_rows("link_accepted")
+local refused = #t.ledger_rows("link_denied")
+assert(sewn > 0, "the wire's own sew is on the record: " .. sewn)
+assert(
+    ui_controls.press_inert(p, "link_join", panel_mac, "programming") == why,
+    "the drawn row answers with the reason and no control"
+)
+t.tick()
+panel = laptop.ui(p)
+assert(#rows(panel, "link_drop") == 0, "the box took nothing")
+assert(#t.ledger_rows("link_accepted") == sewn, "and wrote no join of its own")
+assert(
+    #t.ledger_rows("link_denied") == refused,
+    "nor a refusal: a row nobody can press is not a gesture"
 )
 local parts = false
 for _, r in ipairs(ui_controls.rows(panel.readouts or {})) do
