@@ -345,3 +345,158 @@ assert(
     says(t.examine(p, 3, 1, bottle), "It strains against its lid."),
     "still straining, with the room around it at a comfortable pressure"
 )
+
+-- ---------------------------------------------------------------
+-- THREE: THE SAME BREW, ON A HOTPLATE.
+--
+-- The bell has two ends and only one of them has been asked about so
+-- far. `BellCurve` is exactly ZERO outside its own ends
+-- (docs/CHEMISTRY.md 7), and fermentation's upper one is
+-- `temp_max = 315` (reactions/fermentation.luau) -- so a brew held over
+-- it is not slower, it is stopped, and a bottle that went on quietly
+-- making gas over a flame would be the failure nothing above would
+-- catch: both bottles so far stood on a deck at the plateau.
+--
+-- The positive control is the whole of section ONE. Same recipe off the
+-- same taps into the same corked fifty millilitres, watched for the same
+-- ten steps: down there the first step alone was worth FIRST_CO2 and
+-- ten were worth TEN_STEPS_CO2. Here ten steps are worth nothing, and
+-- "nothing" is measured against that first step.
+--
+-- A bench of its own, because the one above has no hotplate on it and
+-- no tile left to stand one on.
+-- ---------------------------------------------------------------
+t.world(
+    [==[(
+    name: "hot bench",
+    legend: {
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+    },
+    rows: [
+        "#####",
+        "#.g.#",
+        "#o..#",
+        "#a..#",
+        "#####",
+    ],
+    structures: [(2, 2, "player_spawn"), (1, 3, "apc")],
+    items: [(3, 2, "bottle")],
+    machines: [(1, 1, "chem_dispenser"), (3, 1, "chem_heater")],
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+    ],
+)]==],
+    0
+)
+
+-- The same crewman, at the same two arms' length from both machines, so
+-- `dial` and `press` above go on working: they name nobody but `p`.
+p = t.join()
+t.tick()
+
+local hot_taps = assert(t.target_at(p, 1, 1))
+local oven = assert(t.target_at(p, 3, 1))
+local flask = assert(t.target_at(p, 3, 2, "bottle"))
+
+-- Straight off the taps this time. The mixing glass in section ONE was
+-- there to keep a second open vessel of brew out of the room; nothing
+-- here is counting the room.
+t.click(p, 3, 2, flask)
+t.tick()
+assert(t.hands(p).held == "bottle", "the bottle is in hand")
+t.click(p, 1, 1, hot_taps)
+t.tick()
+assert(t.hands(p).held == nil, "and docked under the nozzle")
+t.click(p, 1, 1, hot_taps)
+t.tick()
+dial(WATER)
+press("water")
+dial(SUGAR)
+press("sugar")
+ui_controls.toggle(p, "eject")
+t.run_ticks(2)
+assert(t.hands(p).held == "bottle", "and comes back out with the brew in it")
+
+local filled = assert(t.vessel(flask))
+assert(filled.sealed, "corked, like the bottle in section ONE")
+near(filled.contents.water.liquid, WATER, 2e-3, "nine units of water")
+near(filled.contents.sugar.solid, SUGAR, 2e-3, "and one of sugar")
+
+-- Onto the hotplate at 340 K. Well over the 315 the bell dies at, and
+-- well under water's boiling point, so what stops the brewing is the
+-- rule and not a bottle that boiled its own reactant away. The
+-- thermostat closes a twentieth of its gap an atmos pass and never
+-- crosses its setpoint (sim/virtual_bath.rs), so a minute is the
+-- plateau and then some.
+t.click(p, 3, 1, oven)
+t.tick()
+assert(t.hands(p).held == nil, "into the chamber")
+t.click(p, 3, 1, oven)
+t.tick()
+ui_controls.set(p, "temperature", 340)
+ui_controls.toggle(p, "power")
+t.run_seconds(60)
+
+local warmed = assert(t.holder_k(flask))
+assert(warmed > 320.0, "the chamber is past the bell's ceiling: " .. warmed)
+
+-- It brewed on the way up -- the climb crosses the window -- and that
+-- is what makes the rest a measurement rather than an empty bottle:
+-- there is sugar in here, and water with it, and a rule that read them
+-- would have something to read.
+local standing = assert(t.vessel(flask))
+local sugar_left = (standing.contents.sugar and standing.contents.sugar.solid) or 0
+assert(sugar_left > 0.5 * SUGAR, "with most of its sugar still unspent: " .. sugar_left)
+assert(
+    (standing.contents.water and standing.contents.water.liquid or 0) > 0.5 * WATER,
+    "and its water still liquid, not boiled off"
+)
+
+local function spirit_in(vessel): number
+    local entry = assert(t.vessel(vessel)).contents.ethanol
+    return entry and ((entry.liquid or 0) + (entry.gas or 0)) or 0
+end
+
+local hot_co2, hot_spirit = co2_in(flask), spirit_in(flask)
+for step = 1, STEPS do
+    t.run_seconds(2)
+    local made = co2_in(flask) - hot_co2
+    local distilled = spirit_in(flask) - hot_spirit
+    -- A thousandth of ONE room-temperature step, over ten of them. The
+    -- bottle is corked, so neither number has anywhere to go but a
+    -- reaction: what is not being made is not being made.
+    assert(
+        made < FIRST_CO2 * 1e-3,
+        ("step %d made carbon dioxide over temp_max: %g"):format(step, made)
+    )
+    assert(
+        distilled < FIRST_CO2 * 1e-3,
+        ("step %d made ethanol over temp_max: %g"):format(step, distilled)
+    )
+end
+assert(
+    assert(t.holder_k(flask)) > 315.0,
+    "and it was over 315 K the whole way: " .. tostring(t.holder_k(flask))
+)

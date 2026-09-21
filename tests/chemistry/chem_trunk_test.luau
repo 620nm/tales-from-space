@@ -389,6 +389,34 @@ near(
     "and it healed 1.5 a tick while it lasted, " .. ticks .. " times over"
 )
 
+-- AND THE RECORD NAMES THE MEDICINE. A heal is a mutation like every
+-- other one and lands attributed in the shift ledger; what it is
+-- attributed TO is the file that decided it, which is the substance's
+-- own and never the body's (`actor.file`, the idiom at
+-- tests/power/lights_test.luau:121). A log that only said "the crewman
+-- got better" would answer none of the questions asked of one
+-- afterwards -- which bottle, whose bottle, and what was in it.
+local function pool_amount(row: SpecLedgerRow, id: string): number
+    for _, value in ipairs(ui_controls.array(row.pools or {})) do
+        local entry = ui_controls.array(value)
+        if entry[1] == id then
+            return ui_controls.number(entry[2])
+        end
+    end
+    return 0
+end
+local dosed = 0
+for _, row in ipairs(t.ledger_rows("Healed")) do
+    if row.actor.kind == "script" and row.actor.file == "substances/libital.luau" then
+        dosed += 1
+        near(pool_amount(row, "brute"), 1.5, 1e-6, "a dosed tick is worth 1.5 brute")
+    end
+end
+assert(
+    dosed >= ticks - 1,
+    ("every tick of it is a row of its own: %d rows for %d ticks"):format(dosed, ticks)
+)
+
 -- ...and then it stops, because there is nothing left to burn.
 local settled = ui_controls.number(t.health(p).brute)
 t.run_seconds(60)

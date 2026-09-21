@@ -87,7 +87,12 @@ t.click(p, 2, 1, t.target_at(p, 2, 1, "floor_tile")) -- pick the pried tile back
 t.tick()
 t.messages(p)
 t.click(p, 2, 1, nil, -14, 14) -- and lay it
-t.run_seconds(1.0)
+-- Half a second, pinned from both sides: plating already did the
+-- structural work, so the finish on top is the quick half
+-- (content/structures/construction/plating.luau:28).
+t.run_seconds(0.3)
+assert(composition.matches(2, 1, { "station_base" }), "half a second of tiling is half a second")
+t.run_seconds(0.7)
 assert(composition.matches(2, 1, { "station_base", "floor_tiles" }), "the tile goes back down under the APC")
 assert(has(t.messages(p), "The floor is tiled."), "and says so")
 
@@ -133,3 +138,55 @@ assert(
 )
 assert(not has(door_sounds, "crowbar"), "and not the quick tile pop")
 assert(has(t.messages(p), "The door gives way."), "the airlock opens")
+
+-- Scenario 3: the same sheet, the other job. Laid on plating a tile is
+-- the half-second finish above; laid on VACUUM it is a second and a
+-- half of deck-laying, and what it leaves is bare plating, not a
+-- finished floor (content/structures/construction/space.luau:12-21 --
+-- the floor-tile row, the one that also says `anchored`).
+--
+-- This number is this pack's own and is cited to the file that chose
+-- it. tg has no analogue to copy: getting a floor over vacuum there is
+-- rods into a lattice and then a sheet on top (space.dm:212, :312),
+-- and neither step is timed at all.
+t.world(
+    [==[(
+    name: "breach",
+    legend: {
+        ' ': (composition: (substrate: Some("space"))),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+    },
+    rows: [
+        "############",
+        "#..........#",
+        "#..........#",
+        "#..........#",
+        "############",
+    ],
+    structures: [(2, 1, "player_spawn")],
+    items: [(2, 1, "floor_tile")],
+)]==],
+    7
+)
+
+p = t.join()
+t.tick()
+t.click(p, 2, 1, t.target_at(p, 2, 1, "floor_tile")) -- the tiles are underfoot
+t.run_ticks(2)
+assert(t.hands(p).held == "floor_tile", "a stack of tiles in hand")
+t.fault(1, 1, t.now() + 1) -- the hull fails next door
+t.run_ticks(40) -- a couple of atmos ticks of venting
+assert(t.is_breached(1, 1), "the fault breached the corner")
+
+t.messages(p)
+t.click(p, 1, 1, nil, -14, 14) -- start laying deck over the vacuum
+t.run_seconds(1.3)
+assert(t.is_breached(1, 1), "a second and a half is not a second and a bit")
+t.run_seconds(0.4)
+assert(not t.is_breached(1, 1), "the plating closes the breach")
+assert(
+    composition.matches(1, 1, { "station_base" }),
+    "and what a tile lays over vacuum is plating: " .. composition.describe(1, 1)
+)
+assert(has(t.messages(p), "The plating settles into place."), "and says so")

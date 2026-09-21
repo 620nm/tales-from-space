@@ -350,3 +350,160 @@ assert(lamp() == band_of(widened), "and the lamp moved with it: " .. tostring(la
 t.run_seconds(2.0)
 assert(needle() == widened, "the needle settled there and stayed: " .. tostring(needle()))
 assert(lamp() == band_of(widened), "and so did its lamp: " .. tostring(lamp()))
+
+-- ---------------------------------------------------------------
+-- THE WHOLE DIAL, END TO END.
+--
+-- The face list is built rather than typed out, and it is TWENTY long:
+-- the peg, then three scales of six stops each, then one off the top
+-- (content/structures/atmos/meter.luau, `faces`). Nothing a spec may
+-- call reads that list, so this bench reads it the way a crewman does
+-- -- by putting a pressure on the run and looking at what the needle
+-- does about it.
+--
+-- The bottle is the lever. A canister fastened to a port trades gas
+-- with the run under it until both stand at the same density, and it
+-- trades BOTH WAYS: an empty 2000 L shell pulls a commissioned length
+-- down to nothing, and charging that same shell afterwards walks the
+-- same length up through four decades of pressure. Its release valve
+-- stays shut the whole way, so the room this stands in is no part of
+-- any of it.
+-- ---------------------------------------------------------------
+t.world(
+    [==[(
+    name: "dial bench",
+    legend: {
+        '.': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+    },
+    rows: [
+        "#####",
+        "#...#",
+        "#####",
+    ],
+    networks: [(x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15)],
+    structures: [
+        (3, 1, "player_spawn"),
+        (1, 1, "connector_port"),
+        (1, 1, "canister"),
+        (2, 1, "meter"),
+    ],
+)]==],
+    7
+)
+
+local w = t.join()
+t.tick()
+-- Long enough for the gauge to bind its run and for the empty bottle to
+-- take that run down.
+t.run_seconds(2.0)
+
+local dial = assert(t.target_at(w, 2, 1, "meter"), "the bench gauge is there to be read")
+local function needle_face(): string
+    return t.layers(w, dial)[2]
+end
+local function needle_lamp(): string
+    return t.layers(w, dial)[3]
+end
+
+-- Where a face sits in the list content built, 0 through 19: the peg is
+-- 0, `meter_p<scale>_<stop>` is the stop'th of six on that scale, and
+-- the face off the top is the last. That is `meter.luau`'s own build
+-- order, read back one face at a time off the wire -- and a name that
+-- fits none of those shapes is not a face this dial draws at all.
+local function stop_of(name: string): number
+    if name == "meter_p0" then
+        return 0
+    end
+    if name == "meter_p4" then
+        return 19
+    end
+    assert(
+        #name == 10 and string.sub(name, 1, 7) == "meter_p" and string.sub(name, 9, 9) == "_",
+        "a needle face this dial does not draw: " .. name
+    )
+    local scale = assert(tonumber(string.sub(name, 8, 8)), "a face names its scale: " .. name)
+    local stop = assert(tonumber(string.sub(name, 10, 10)), "and its stop: " .. name)
+    assert(scale >= 1 and scale <= 3, "three scales between the ends: " .. name)
+    assert(stop >= 1 and stop <= 6, "six stops to a scale: " .. name)
+    return (scale - 1) * 6 + stop
+end
+
+local ONE_ATM = 101.325
+
+-- ---- the peg ----
+--
+-- tg's first stop is everything at or under 0.15 atmospheres
+-- (meter.dm:82), and a 2000 L bottle with nothing in it leaves a single
+-- length of pipe far under that.
+local pegged = assert(network_matter.pressure(2, 1))
+assert(pegged < 0.15 * ONE_ATM, "the empty bottle pumped the run down: " .. pegged .. " kPa")
+assert(needle_face() == "meter_p0", "so the needle is at the peg: " .. needle_face())
+assert(needle_lamp() == "meter_l0", "wearing the peg's own lamp: " .. needle_lamp())
+
+-- ---- one known charge, to measure the lever ----
+--
+-- The bottle's shell and the run's bore are both fixed and the gas is
+-- all at one temperature, so the share of a charge that ends up in the
+-- run is a constant. Measuring it once is what lets every rung below
+-- be aimed at a pressure rather than at a guess.
+assert(t.charge_vessel(1, 1, "o2", 20.0), "the bottle takes a charge")
+t.run_seconds(1.5)
+local calibrated = assert(network_matter.pressure(2, 1))
+local share = (calibrated - pegged) / 20.0
+assert(share > 0.5, "a charge into the bottle reaches the run it feeds: " .. share)
+assert(needle_face() == "meter_p1_1", "and the needle is off the peg: " .. needle_face())
+
+-- ---- and then all the way up ----
+--
+-- tg's boundaries, in atmospheres (meter.dm:82-94): the peg to 0.15,
+-- the low scale to 1.8, the middle to 30, the top to 59, and past 59
+-- the needle is off the end. Every rung below sits well inside a scale
+-- rather than on one of those edges, and names the part of the face
+-- name that scale owns.
+local ladder = {
+    { kpa = 0.5 * ONE_ATM, scale = "meter_p1_" },
+    { kpa = 1.0 * ONE_ATM, scale = "meter_p1_" },
+    { kpa = 1.5 * ONE_ATM, scale = "meter_p1_" },
+    { kpa = 3.0 * ONE_ATM, scale = "meter_p2_" },
+    { kpa = 10.0 * ONE_ATM, scale = "meter_p2_" },
+    { kpa = 25.0 * ONE_ATM, scale = "meter_p2_" },
+    { kpa = 35.0 * ONE_ATM, scale = "meter_p3_" },
+    { kpa = 50.0 * ONE_ATM, scale = "meter_p3_" },
+    { kpa = 70.0 * ONE_ATM, scale = "meter_p4" },
+}
+
+local climbed = stop_of(needle_face())
+local low_faces: { [string]: boolean } = {}
+for _, rung in ipairs(ladder) do
+    local standing = assert(network_matter.pressure(2, 1))
+    assert(t.charge_vessel(1, 1, "o2", (rung.kpa - standing) / share), "the bottle takes more")
+    t.run_seconds(1.5)
+    local reached = assert(network_matter.pressure(2, 1))
+    assert(
+        math.abs(reached - rung.kpa) < 0.05 * rung.kpa,
+        "the run went where it was sent: " .. reached .. " of " .. rung.kpa .. " kPa"
+    )
+    local drawn_face = needle_face()
+    assert(
+        string.sub(drawn_face, 1, #rung.scale) == rung.scale,
+        reached .. " kPa reads on " .. rung.scale .. ", not on " .. drawn_face
+    )
+    local stop = stop_of(drawn_face)
+    assert(stop > climbed, "and a rising pressure only ever climbs the dial: " .. drawn_face)
+    climbed = stop
+    assert(needle_lamp() == band_of(drawn_face), "its lamp rode with it: " .. needle_lamp())
+    if string.sub(drawn_face, 1, 9) == "meter_p1_" then
+        low_faces[drawn_face] = true
+    end
+end
+assert(climbed == 19, "and the last rung is the far end of the list: " .. needle_face())
+
+-- Three rungs on the low scale drew three DIFFERENT faces, which is
+-- what having six stops on a scale means: the range a station actually
+-- runs at gets half the dial, not one picture stretched across it.
+local low = 0
+for _ in pairs(low_faces) do
+    low += 1
+end
+assert(low == 3, "the low scale drew a face per rung, not one for all three: " .. low)
