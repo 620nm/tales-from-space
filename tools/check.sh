@@ -381,33 +381,44 @@ live_pair_skip() {
   browser_skip
 }
 
-# `shot` reads the atlas out of the engine checkout's own `web/assets`
-# (tools/ui-lab/routes.mjs, `atlasManifest`), which after the gate split
-# holds the engine's demo bake -- this pack's fixtures would be drawn
-# against another pack's art. The lane activates itself the day
-# `tools/ui-lab.mjs` learns `--web <root>`, the same flag bake-atlas,
-# lunatic-server and dev.mjs already take.
+# Without `--web`, `shot` reads the atlas out of the engine checkout's
+# own served root (tools/ui-lab/routes.mjs, `bakeRoot`), which after the
+# gate split holds the engine's demo bake -- this pack's fixtures would
+# be drawn against another pack's art. An engine that cannot be pointed
+# at this pack's bake does not draw it at all.
 ui_lab_takes_web() {
   node "$ENGINE/tools/ui-lab.mjs" --help 2>/dev/null | grep -q -- '--web'
 }
 UI_SHOTS_RUNNER=host
+# The lab's own words, either straight or through the pinned image. The
+# wrapper reads `--pack` and `--web` out of these and mounts both at
+# their canonical paths, rewriting the command to match -- which it does
+# only for the `shot ...` form, not for `--run`.
 ui_shots_run() {
   if [ "$UI_SHOTS_RUNNER" = reference ]; then
-    node tools/ui-lab/reference.mjs --run "$@"
+    node tools/ui-lab/reference.mjs "$@"
   else
-    "$@"
+    node tools/ui-lab.mjs "$@"
   fi
 }
+# The lab draws through the engine's compiled shell and worker whichever
+# runner shoots, and the pinned image carries its own browser -- so a
+# host Chromium is wanted only where the host is the runner.
+ui_shots_skip() {
+  [ -f "$ENGINE/web/dist/pack-ui/worker.js" ] \
+    || { echo "no built worker (npm --prefix $ENGINE/web run build)"; return; }
+  [ "$UI_SHOTS_RUNNER" = host ] || return 0
+  browser_skip
+}
 ui_shots_shoot() (
-  # A subshell: the pinned-image wrapper and the lab both address the
-  # engine's own files relatively, and this gate's cwd stays the pack.
+  # A subshell: the wrapper and the lab both address the engine's own
+  # files relatively, and this gate's cwd stays the pack.
   cd "$ENGINE" || exit 1
-  UI_SHOTS_RUNNER=$(node tools/ui-lab/reference.mjs --runner) || exit 1
-  ui_shots_run node tools/ui-lab.mjs shot all --check --lint \
+  ui_shots_run shot all --check --lint \
     --pack "$PACK" --web "$PACK_WEB" > "$GATE/ui-shots.out" 2>&1
   rc=$?
   if node tools/staff-ui-status.mjs; then
-    ui_shots_run node tools/ui-lab.mjs shot all --check --lint \
+    ui_shots_run shot all --check --lint \
       --pack "$PACK" --web "$PACK_WEB" --audience staff >> "$GATE/ui-shots.out" 2>&1 || rc=1
   else
     status=$?
@@ -536,13 +547,16 @@ gated "${UI_BUILT:-$BAKE}" pack-node node "$PACK/tools/test.mjs" "$ENGINE"
 gated "$BAKE" specs server test "$PACK" --web "$PACK_WEB"
 
 if want ui-shots; then
-  if ! ui_lab_takes_web; then
+  if [ -n "${UI_BUILT:-$BAKE}" ]; then
+    blocked ui-shots "${UI_BUILT:-$BAKE}"
+  elif ! ui_lab_takes_web; then
     skip ui-shots "ui-lab has no --web: it reads the engine's own bake" \
       "pack UI shots (ui-lab reads the engine checkout's bake; it needs --web <root>)"
-  elif [ -n "${UI_BUILT:-$BAKE}" ]; then
-    blocked ui-shots "${UI_BUILT:-$BAKE}"
+  elif ! UI_SHOTS_RUNNER=$(cd "$ENGINE" && node tools/ui-lab/reference.mjs --runner 2>&1); then
+    skip ui-shots "no ui-lab runner: $UI_SHOTS_RUNNER" \
+      "pack UI shots (no ui-lab runner)"
   else
-    reason=$(browser_skip)
+    reason=$(ui_shots_skip)
     if [ -n "$reason" ]; then
       skip ui-shots "$reason" "pack UI shots ($reason)"
     else
