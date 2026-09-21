@@ -131,10 +131,10 @@ worktree to run both at once.
 
 `.github/workflows/ci.yml` runs this same gate on a runner and installs every
 prerequisite a lane names, so a skip there is a broken workflow rather than a
-tolerated absence. It pins the engine to a tracked `assets/lunatic-revision`,
-the way the bake's reference art is pinned by `assets/tg-revision`; with no
-such file the run says in an annotation that it checked this pack against the
-engine's default branch.
+tolerated absence. The engine it checks this pack against is the one commit
+sha `assets/lunatic-revision` holds, read the way `assets/tg-revision` is read
+for the reference art. That file is untracked, so a run takes the engine's
+default branch and says so in an annotation.
 
 ## Authoring
 
