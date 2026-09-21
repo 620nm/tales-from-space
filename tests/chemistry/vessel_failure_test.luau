@@ -88,6 +88,35 @@ assert(
     "and the look says so: " .. table.concat(look.lines, " | ")
 )
 
+-- ...AND IT NEVER GOES AGAIN. Breaking is an EDGE and it is crossed
+-- once: what it was holding is in the room, so there is nothing left
+-- inside to press on anything, and the pass that reads an empty vessel
+-- finds nothing to take off it. The two counts below are the whole
+-- claim -- a canister that ruptured on every pass would be the largest
+-- mutation this model can make, on a loop, for the rest of the shift.
+local ruptures = #t.ledger_rows("pressure_ruptured")
+local damages = #t.ledger_rows("pressure_damaged")
+assert(ruptures == 1, "it went exactly once, got " .. ruptures)
+assert(damages > 0, "after the passes that chewed through it: " .. damages)
+
+t.run_seconds(12) -- three times the four passes the break itself took
+
+local later_ruptures = #t.ledger_rows("pressure_ruptured")
+local later_damages = #t.ledger_rows("pressure_damaged")
+assert(later_ruptures == ruptures, "and not a second time: " .. later_ruptures)
+assert(later_damages == damages, "nor is it still being damaged: " .. later_damages)
+
+-- Still furniture, a dozen seconds on: a thing on that tile, with a
+-- pressure to read and a look to take, and the look still says what
+-- happened to it.
+assert(t.canister_pressure(2, 2) ~= nil, "still a canister standing where it broke")
+local since = t.examine(p, 2, 2, t.target_at(p, 2, 2))
+assert(since ~= nil, "still a thing you can look at")
+assert(
+    table.concat(since.lines, " | "):find("broken"),
+    "and still says broken: " .. table.concat(since.lines, " | ")
+)
+
 -- ---------------------------------------------------------------
 -- THE RESERVOIR. Same pass, other rule: one rating, a flat 0.1 a
 -- pass past it, and 800 integrity to chew through -- so what a spec
