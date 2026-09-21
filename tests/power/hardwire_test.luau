@@ -143,6 +143,7 @@ ui_controls.toggle(p, "link_lock")
 t.tick()
 panel = ui_controls.state(p)
 
+local panel_mac = ui_controls.text(ui_controls.record(panel.link).address)
 local members = hardwired(panel)
 assert(#members == 4, "the whole room hangs off the panel: " .. #members)
 assert(#rows(panel, "link_drop") == 0, "and not one of them is the panel's to let go of")
@@ -184,6 +185,19 @@ alarm = ui_controls.state(p)
 
 local offers = rows(alarm, "link_join")
 assert(#offers > 0, "the alarm has something to take")
+-- AND EVERY ROW IS A CONTROL. The panel above this alarm is the one
+-- thing in the room a press could never take -- it is already the
+-- alarm's parent -- and it is not drawn greyed here, it is not drawn
+-- at all: `accepts = { "atmos", ... }` refuses a panel by CLASS
+-- (content/structures/atmos/air_alarm.luau), and a class refusal hides
+-- the row where the forest's shape only greys it
+-- (../lunatic/docs/devices/joining.md). What a greyed feeder looks
+-- like on a box that takes anything is access_point_test.luau's.
+assert(row_for(alarm, "link_join", panel_mac) == nil, "the panel above it is on no list")
+assert(
+    #ui_controls.pressable(alarm, "link_join") == #offers,
+    "and every row it does list is one a press takes: " .. #offers
+)
 local fitting = nil
 for _, held in ipairs(members) do
     if row_for(alarm, "link_join", held) == nil then
