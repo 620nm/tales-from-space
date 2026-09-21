@@ -21,7 +21,7 @@ This standalone repository is loaded by the lunatic engine through
 | `tests/`         | Luau specs (`*_test.luau`) run by the engine's spec runner, with focused RON fixtures embedded inline where needed. |
 | `locale/`        | One flat catalog per language, `<tag>.json`, holding every word this pack writes: its interface, its key bindings, a rendering for every settings-module label id, its own message keys, and its wording for the engine keys it overrides (`docs/WORDS.md`). |
 | `docs/`          | This pack's own contracts — what it ships and the numbers it chose: `ATMOS.md` (the station loop), `BIOLOGY.md` (body and surgery tuning), `CHEMISTRY.md` (the shelf), `GAMEMODES.md` (the two modes and preparation policy), `POWER.md` (load classes, the panel ladder and emergency cells), `UI.md` (gameplay surfaces), plus controls, terminology and `scripting/` for guest controllers and reference files. A bare `docs/…` citation names a file HERE; an engine contract is always written "the engine's `docs/…`". |
-| `tools/`         | `node tools/test.mjs <engine>` runs every node check: `theme-lint.mjs` (colours only in `ui/theme/tokens.ts`, inline style is placement only), `keyed-messages.mjs --check`, and the `test-*.mjs` tests over `ui/`. To preview a surface, run the engine's lab from the engine checkout, `node tools/ui-lab.mjs serve --watch` or `shot <fixture>` (the engine's `docs/pack-ui/lab.md`). |
+| `tools/`         | `sh tools/check.sh` is this pack's gate (§Running). `node tools/test.mjs <engine>` is its `pack-node` lane and runs every node check: `theme-lint.mjs` (colours only in `ui/theme/tokens.ts`, inline style is placement only), `keyed-messages.mjs --check`, and the `test-*.mjs` tests over `ui/`. To preview a surface, run the engine's lab from the engine checkout, `node tools/ui-lab.mjs serve --watch` or `shot <fixture>` (the engine's `docs/pack-ui/lab.md`). |
 
 How many files and subdirectories a directory holds, and how deep a tree
 goes, is `AGENTS.md` §Code Organization.
@@ -54,6 +54,51 @@ Follow the engine's `docs/UI-PRIVACY.md` local setup to stage the snapshot and
 start the authenticated game server and browser gateway. Open the gateway on
 port 8081. The server defaults to the map in `mod.toml`; its launch command can
 add `--mode free_build` or use `"$LUNATIC_PACK/maps/outpost.ron"` as the map.
+
+### The gate
+
+`tools/check.sh` is this pack's gate, run from HERE. It finds the engine
+through `LUNATIC_ENGINE` (else the checkout beside this one) and refuses to
+start when that checkout is absent or its node tooling is not installed. The
+engine's own `tools/check.sh` checks the ENGINE, over its own demo and fixture
+packs; it needs no content and asserts nothing about this pack.
+
+```sh
+export LUNATIC_ENGINE=/absolute/path/to/lunatic
+export LUNATIC_TG=/absolute/path/to/tgstation   # the bake lane reads it
+sh tools/check.sh                # everything; one line per lane
+sh tools/check.sh maps specs     # only the lanes whose names contain these
+VERBOSE=1 sh tools/check.sh      # stream every lane's output live
+```
+
+Quiet is the default: a green lane prints one `ok` line and a failing one its
+whole log at the end. Logs land in `target/gate/log/<lane>.log`. A lane that
+cannot run says so by name, both in place and in the closing
+`SKIPPED, SO UNVERIFIED` line; a lane whose prerequisite failed reads
+`BLOCKED`, which is unverified rather than green.
+
+| Lane | What it proves |
+| --- | --- |
+| `luau` | Every trusted source passes strict checking. |
+| `lint-units`, `tree-shape`, `terms` | One spelling per unit here; every directory within the ceilings of this file's tree-debt table; the canonical vocabulary in the `pack:` rows of the engine's `docs/architecture/vocabulary.md`. |
+| `build` | The engine binaries the later lanes run. |
+| `bake` | `assets/*.ron` and the pinned tg revision bake, into `target/web` — never the engine checkout's own served root. |
+| `content` | Every content file loads: the lint a spec run skips. |
+| `maps` | Every map in `maps/` parses, preflights, writes and reads back unchanged. |
+| `lint-assets` | Every sprite name content says is in the bake. |
+| `roster` | The roster a server would serve builds; `target/gate/roster.json` is what the next lanes read. |
+| `placeable` | Everything declared is offered in the map editor. Its art half skips by name: the engine's test reads the engine checkout's bake. |
+| `pack-ui-build` | `ui/` compiles against that engine's SDK. |
+| `pack-node` | `tools/test.mjs`: the theme and message lints and every `tools/test-*.mjs`. |
+| `specs` | `tests/*_test.luau` through the engine's spec runner. |
+| `ui-shots` | Pack UI fixtures against their baselines. Skipped by name until the engine's `tools/ui-lab.mjs` takes `--web <root>`. |
+| `world-pointer`, `push-motion` | The fixtures in `tests/fixtures/`, driven in the real client against this pack's bake. |
+
+The gate's scratch — the bake, its state directory and the browser lanes'
+recordings — is `target/`, which is gitignored. Cargo builds in the engine's
+own target directory, whose exclusive lock serializes this gate against an
+engine gate in the same checkout; point `LUNATIC_ENGINE` at a second engine
+worktree to run both at once.
 
 ## Authoring
 

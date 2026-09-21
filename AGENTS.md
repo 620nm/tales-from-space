@@ -49,6 +49,17 @@ pack's absolute path. A worktree is not necessarily a sibling of the engine;
 resolve the engine checkout explicitly instead of deriving it with `..` there.
 Iterate with `cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" <name>` (name substring), then `--load-only`, then the full suite once before completion.
 
+`sh tools/check.sh` is THE GATE for this pack and runs from HERE: it finds the
+engine through `LUNATIC_ENGINE` and checks this pack end to end (strict Luau,
+the shared lints, the bake, content, maps, sprite names, the roster and the
+editor palette, `ui/`, the node checks, the specs and the two live browser
+fixtures). `README.md` §The gate lists every lane and what it proves. Run it
+before every commit; run one lane by name while iterating. The engine's own
+`tools/check.sh` checks the ENGINE over its demo and fixture packs and asserts
+nothing about this pack, so a green engine gate is not evidence here. The gate
+writes only this repository's gitignored `target/`, never the engine's served
+root.
+
 ## Code Organization
 
 **Files per directory**

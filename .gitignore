@@ -3,6 +3,10 @@
 /.codex
 /lunatic.code-workspace
 
+# The gate's scratch: this pack's bake (target/web), its state directory
+# and logs (target/gate), and the browser lanes' recordings
+/target
+
 # Restricted frontend build products
 ui/bundle.json
 ui/overlay.json
