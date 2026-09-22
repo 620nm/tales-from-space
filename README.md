@@ -18,9 +18,9 @@ This standalone repository is loaded by the lunatic engine through
 | `maps/`          | Shipped station maps as RON; this pack currently ships none. Focused map fixtures live under `tests/maps/`. |
 | `reference/`     | ID catalog and raw preset file bodies; guest programs in `scripts/` are standalone Luau sources, separate from trusted content. |
 | `assets/`        | Sprite, sound and whole-picture source manifests plus the tracked `tg-revision` consumed and verified by `cargo run -p xtask -- bake-atlas`. |
-| `tests/`         | Luau specs (`*_test.luau`) run by the engine's spec runner, with focused RON fixtures in `tests/maps/` or embedded inline where needed. |
+| `tests/`         | Luau specs (`tests/**/*_test.luau`) run by the engine's spec runner, with focused RON fixtures in `tests/maps/` or embedded inline where needed. |
 | `locale/`        | One flat catalog per language, `<tag>.json`, holding every word this pack writes: its interface, its key bindings, a rendering for every settings-module label id, its own message keys, and its wording for the engine keys it overrides (`docs/WORDS.md`). |
-| `docs/`          | This pack's own contracts — what it ships and the numbers it chose: `ATMOS.md` (the station loop), `BIOLOGY.md` (body and surgery tuning), `CHEMISTRY.md` (the shelf), `GAMEMODES.md` (the two modes and preparation policy), `POWER.md` (load classes, the panel ladder and emergency cells), `UI.md` (gameplay surfaces), plus controls, terminology and `scripting/` for guest controllers and reference files. A bare `docs/…` citation names a file HERE; an engine contract is always written "the engine's `docs/…`". |
+| `docs/`          | This pack's own contracts — what it ships and the numbers it chose: `ATMOS.md` (airs, atmos components and their focused specs), `BIOLOGY.md` (body and surgery tuning), `CHEMISTRY.md` (the shelf), `GAMEMODES.md` (the two modes and preparation policy), `POWER.md` (load classes, the panel ladder and emergency cells), `UI.md` (gameplay surfaces), plus controls, terminology and `scripting/` for guest controllers and reference files. A bare `docs/…` citation names a file HERE; an engine contract is always written "the engine's `docs/…`". |
 | `tools/`         | `sh tools/check.sh` is this pack's gate (§Running). `node tools/test.mjs <engine>` is its `pack-node` lane and runs every node check: `theme-lint.mjs` (colours only in `ui/theme/tokens.ts`, inline style is placement only), `keyed-messages.mjs --check`, and the `test-*.mjs` tests over `ui/`. To preview a surface, run the engine's lab from the engine checkout, `node tools/ui-lab.mjs serve --watch` or `shot <fixture>` (the engine's `docs/pack-ui/lab.md`). |
 
 How many files and subdirectories a directory holds, and how deep a tree
@@ -91,13 +91,13 @@ cannot run says so by name, both in place and in the closing
 | `build` | The engine binaries the later lanes run. |
 | `bake` | `assets/*.ron`, `assets/fonts/` and the pinned tg revision bake, into `target/web` — never the engine checkout's own served root. |
 | `content` | Every content file loads: the lint a spec run skips. |
-| `maps` | Every file in both `maps/` (shipped) and `tests/maps/` (focused fixtures) parses, preflights, writes and reads back unchanged; the lane reports separate counts, including zero. It does not boot or step a world. |
+| `maps` | Every file in both `maps/` (shipped) and `tests/maps/` (focused fixtures) parses, preflights, writes and reads back unchanged; the lane reports separate counts, including zero, and fails unless every `tests/maps/` file is named with specs that call `t.world_file` on it (`tools/map-fixture-coverage.mjs`). It does not boot or step a world. |
 | `lint-assets` | Every sprite name content says is in the bake. |
 | `roster` | The roster a server would serve builds; `target/gate/roster.json` is what the next lanes read. |
 | `placeable` | Everything declared is offered in the map editor, and its art is in this pack's bake (`LUNATIC_WEB_ROOT`). |
 | `pack-ui-build` | `ui/` compiles against that engine's SDK, and every font `ui/fonts.json` declares is published in this pack's bake (`--web`). |
 | `pack-node` | `tools/test.mjs`: the theme and message lints and every `tools/test-*.mjs`. |
-| `specs` | `tests/*_test.luau` through the engine's spec runner, including the actual boot/step assertions for focused map fixtures. |
+| `specs` | `tests/**/*_test.luau` through the engine's spec runner, including the actual boot/step assertions for focused map fixtures; its `--json` report must show each named fixture spec run once and passed. |
 | `ui-shots` | Every `ui/fixtures` and `ui/staff/fixtures` baseline, drawn through the real host against this pack's bake (`--web`). |
 | `world-pointer`, `push-motion` | The fixtures in `tests/fixtures/`, driven in the real client against this pack's bake. |
 
@@ -302,7 +302,7 @@ something any field they set can say.
 ## Specs
 
 ```sh
-cargo run -q -p lunatic-server -- test "$LUNATIC_PACK"             # every tests/*_test.luau
+cargo run -q -p lunatic-server -- test "$LUNATIC_PACK"             # every tests/**/*_test.luau
 cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" vendor      # only files whose NAME contains "vendor"
 cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" --json out.json    # CI result document
 cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" --load-only # content lint, no Sim
