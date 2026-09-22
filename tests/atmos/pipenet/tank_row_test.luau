@@ -47,15 +47,17 @@ t.join()
 t.run_seconds(5)
 
 -- The store, as the map authored it: (x, y) -> the one substance in it,
--- and, for the tank whose reading is moles, how many the fill comes to.
-local store: { { x: number, y: number, gas: string, moles: number?, condenses: boolean? } } = {
-    { x = 1, y = 3, gas = "o2" },
-    { x = 3, y = 3, gas = "n2" },
-    { x = 5, y = 3, gas = "co2", condenses = true },
-    { x = 7, y = 3, gas = "plasma" },
-    { x = 9, y = 3, gas = "water", moles = 69000.0 },
-    { x = 11, y = 3, gas = "tritium" },
-    { x = 13, y = 3, gas = "n2o" },
+-- and its total charge over every phase in the 2 500 L reservoir (the
+-- map's per-tile blend times the tank's 2.5 tiles of volume).
+local gas_charge = 9436.868804259688 * 2.5
+local store: { { x: number, y: number, gas: string, moles: number, condenses: boolean? } } = {
+    { x = 1, y = 3, gas = "o2", moles = gas_charge },
+    { x = 3, y = 3, gas = "n2", moles = gas_charge },
+    { x = 5, y = 3, gas = "co2", moles = gas_charge, condenses = true },
+    { x = 7, y = 3, gas = "plasma", moles = gas_charge },
+    { x = 9, y = 3, gas = "water", moles = 27599.96916195394 * 2.5, condenses = true },
+    { x = 11, y = 3, gas = "tritium", moles = gas_charge },
+    { x = 13, y = 3, gas = "n2o", moles = gas_charge },
 }
 
 -- CO2's own critical temperature, out of substances/co2.luau.
@@ -75,7 +77,7 @@ for _, row in ipairs(store) do
     -- seconds of atmos has had nowhere to move a mole to. Skipped for
     -- the water tank, whose gauge is a phase reading rather than a
     -- charge (see the header).
-    if row.moles == nil and row.condenses == nil then
+    if not row.condenses then
         local kpa = assert(t.tank_pressure(x, y))
         assert(math.abs(kpa - 23000.0) < 50.0, where .. " opens at half its rating: " .. kpa)
     end
@@ -134,17 +136,14 @@ for _, row in ipairs(store) do
     end
     assert(kinds == 1, where .. " holds ONE substance, not " .. kinds)
 
-    -- The water tank, by the reading that survives condensing: the map
-    -- authored 67 268 kPa of water at T20C, which is 69 000 mol, which
-    -- is 1 243 L of liquid in a 2 500 L shell -- a bit under half full,
-    -- with damp air over it.
-    if want_moles then
-        local n = held[held_key]
-        assert(
-            math.abs(n - want_moles) < want_moles * 0.01,
-            where .. " is half full of water: " .. n .. " mol"
-        )
-    end
+    -- Every vessel keeps its whole charge, summed over every phase it is
+    -- in: the water tank's 69 000 mol is 1 243 L of liquid in a 2 500 L
+    -- shell, and nothing crossed from one tank to another.
+    local n = held[held_key]
+    assert(
+        math.abs(n - want_moles) < want_moles * 0.000001,
+        where .. " preserves its total charge across phases: " .. n .. " of " .. want_moles .. " mol"
+    )
 end
 
 -- The room itself: sealed, breathable, and named. A store with no air
