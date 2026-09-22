@@ -67,9 +67,10 @@ the rest of a machine's state.
 `content/blends/canister_air.luau` declares the pack's premixed canister
 charge once, rather than creating a gas-specific canister roster. Tg's
 90-atmosphere maximum and `filled = 0.5` give a 45-atmosphere 21/79 mixture
-at 293.15 K. At one tile, `n = P·V/(R·T)` gives 3741.6 mol, split into
+at 293.15 K. At one 1 m³ tile, `n = P·V/(R·T)` gives 1870.8 mol, split into
 392.87 mol `o2` and 1477.94 mol `n2`. The blend is authored as a density with
-`amount = "per_tile"`; its 2 m³ vessel reads 4559.6 kPa at that charge.
+`amount = "per_tile"`, so the 2 m³ vessel holds 3741.6 mol and reads the same
+4559.6 kPa.
 
 Other blends such as `co2_23000kpa` and `n2_5000kpa` are independent authored
 recipes. Their pressure and phase behavior belongs to the substance and matter
@@ -110,4 +111,6 @@ are not a claim that one map assembles a station-scale department:
   map fixtures whose specs assert authored ambient air and liquid containment.
 
 The maps lane only parses, preflights and round-trips these documents. Actual
-boot and tick/step behavior is asserted by the named specs.
+boot and tick/step behavior is asserted by the named specs, and
+`tools/map-fixture-coverage.mjs` fails the gate when a `tests/maps/` fixture
+is not loaded by its named spec or that spec did not pass.
