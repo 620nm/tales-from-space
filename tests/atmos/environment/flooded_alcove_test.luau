@@ -21,27 +21,7 @@ t.world_file("flooded_alcove.ron", 7)
 local p = t.join()
 t.tick()
 local spawn_x, spawn_y = t.pos(p)
-while spawn_y > 3 do
-    t.move(p, "north")
-    t.run_ticks(6)
-    spawn_x, spawn_y = t.pos(p)
-end
-while spawn_y < 3 do
-    t.move(p, "south")
-    t.run_ticks(6)
-    spawn_x, spawn_y = t.pos(p)
-end
-while spawn_x > 11 do
-    t.move(p, "west")
-    t.run_ticks(6)
-    spawn_x, spawn_y = t.pos(p)
-end
-while spawn_x < 11 do
-    t.move(p, "east")
-    t.run_ticks(6)
-    spawn_x, spawn_y = t.pos(p)
-end
-assert(spawn_x == 11 and spawn_y == 3, "the crew reaches the corridor start")
+assert(spawn_x == 11 and spawn_y == 3, "the crew starts at the corridor head")
 
 local DEEP = { 11, 8 }
 local SHALLOW = { 13, 7 }
@@ -127,11 +107,11 @@ assert(
 -- is being watched is water through a doorway, not the autoclose
 -- timer.
 --
--- A hundred litres then finds every tile the middle of the station can
--- reach it from. The claim is the COLLAPSE of the picture the shift
--- opened with: a fifty-to-one difference between the deep end and the
--- alcove becomes a difference of a few percent, and the tile that was
--- dry is standing in water deeper than the film.
+-- A hundred litres then finds every tile of the corridor it can reach.
+-- The claim is the COLLAPSE of the picture the shift opened with: a
+-- fifty-to-one difference between the deep end and the alcove becomes a
+-- difference of a few percent, and the tile that was dry is standing in
+-- water deeper than the film.
 -- ---------------------------------------------------------------
 local function standing(xy)
     local liquid = t.room_liquid(xy[1], xy[2])
