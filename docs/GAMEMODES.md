@@ -105,10 +105,8 @@ is a `--load-only` failure rather than a shift that quietly never ends. It
 refuses a non-whole `shift_minutes` outside 1..1440, a `grace_seconds` outside
 0..120, a sparse or repeating `warnings` list, a mark that is not a whole minute
 of remaining time inside the shift, and an empty `announcer` or `channel`.
-
-`grace_seconds` runs from 0 to 120 — the pack's ceiling is the engine's
-`MAX_ROUND_END_GRACE_SECS` exactly, refused here rather than clamped there, so a
-mode asking for more would otherwise be shortened without being told.
+The 120 is the engine's `MAX_ROUND_END_GRACE_SECS` exactly, refused here rather
+than clamped there, so a mode asking for more is never silently shortened.
 
 Nothing in `shift.luau` may raise: a handler that throws is disabled for the
 rest of the shift, and one runtime error before the last second would be a round
@@ -156,10 +154,9 @@ when no ordinary entry passes; it is unconditional for tags but still must
 satisfy the map's physical preferences. If no candidate survives, the map is
 rejected before the round starts.
 
-This pack currently ships no maps under `maps/`; focused fixtures under
-`tests/maps/` author their own physical preferences. A new map omits
-`environment` by default; that leaves its physical preferences unconstrained
-and allows the mode to choose microgravity. These preferences filter profiles.
+This pack ships no maps under `maps/`; focused fixtures under `tests/maps/`
+author their own physical preferences. A new map omits `environment` by
+default, leaving them unconstrained so the mode may choose microgravity.
 
 An optional `atmosphere_blend: Some("map_air")` instead fixes the ambient recipe.
 The map's own blend definition takes precedence over a pack blend with the same

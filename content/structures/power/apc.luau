@@ -21,7 +21,7 @@
 --
 -- SEVENTEEN TILES, which is the air alarm's number and its argument
 -- exactly (structures/air_alarm.luau): a Chebyshev seventeen covers
--- the shipped station from anywhere near the middle of it, so the
+-- a commissioned hull from anywhere near the middle of it, so the
 -- radius is a ceiling rather than a room measurement. It matters less
 -- here than there, because the edges this box makes are made by the
 -- cable and skip the radius outright; what it bounds is the joins an

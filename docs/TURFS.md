@@ -85,7 +85,7 @@ spill.
 dials (decal, paint, facing), free and unlimited, palette only. Its counterpart
 `decal_eraser.luau` takes one back off, newest first, and is the only thing that
 removes a decal from a deck that still exists. Both are stocked by the tool
-vendor; focused vendor specs cover their placement and use.
+vendor (`tests/vendor/tool_vendor_test.luau`); `tests/decals/` covers their use.
 
 ## Residue
 

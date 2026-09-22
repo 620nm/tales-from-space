@@ -1,5 +1,79 @@
--- Wall-mounted endpoint hub; membership is explicit, not proximity-derived.
--- Endpoint classes and the join action constrain its roster (docs/ATMOS.md).
+-- The air alarm: the box on the wall that a room's plumbing answers to.
+--
+-- tg's `/obj/machinery/airalarm` is the console every vent and scrubber
+-- on a station is actually set from: a vent pump carries a direction, a
+-- pressure check and two bounds, and an area's alarm writes all four
+-- (`vent_pump.dm:24-30`). It finds the machines it drives by AREA and by
+-- nothing else -- `my_area.air_vents` and `my_area.air_scrubbers`
+-- (code/modules/atmospherics/machinery/air_alarm/_air_alarm.dm:119,
+-- 315, 332) -- so there is no distance in tg to copy here.
+--
+-- This engine has no areas. What it has is a device forest, so an alarm
+-- is a HUB: the vents and scrubbers of the room JOIN it, and the `reach`
+-- module draws the settings of everything it holds (docs/TGUI.md). A
+-- machine paired to one goes read-only at its own casing, which is the
+-- same fact tg states by giving a vent no window of its own at all.
+--
+-- SEVENTEEN TILES, and the number is this pack's own rather than a
+-- port, because the thing being replaced is an area. A Chebyshev
+-- seventeen is a thirty-five by thirty-five square. It is a pack-wide
+-- ceiling for a commissioned hull, so an alarm near its middle reaches
+-- every ordinary room and one near an outer wall still reaches most of
+-- the far side.
+--
+-- That is deliberate, and it says what the radius IS: a ceiling and
+-- nothing more, never a room measurement, and WHICH machines an alarm holds is
+-- decided by the two things below it -- `accepts = { "atmos", "control_button" }`, which
+-- refuses everything that is not plumbing, and the join gesture itself,
+-- which an engineer makes one machine at a time. A room's alarm is the
+-- one somebody joined its vents to, not the one that happens to be
+-- within reach of them.
+--
+-- The access point's five is a different claim and stays five: a comms
+-- box covers the room it is in and the doorway out, where an alarm has
+-- to reach a whole room's plant.
+--
+-- WHAT IT WILL TAKE, and the word it takes it by. `accepts` is the one
+-- thing that makes this box different from an access point standing in
+-- the same bracket: it holds atmospherics and refuses everything else,
+-- so an alarm bolted up next to a transceiver never adopts it and never
+-- lists it. "atmos" is this pack's word and the engine knows nothing
+-- about it -- it compares opaque strings, which is what keeps a class
+-- from becoming a permission (docs/content-schema/link.md).
+--
+-- It is SPELLED OUT here and in every endpoint that wears it, which is
+-- the one place this pack repeats itself on purpose. `content/lib/` is
+-- published into the item sandbox and not into the structure
+-- registry's, so a structure reading a shared table reads nil at
+-- prototype time (crates/lunatic-server/src/structures/registry.rs).
+--
+-- WHAT DOES NOT WEAR IT, and why, since three machines in the kit have
+-- a window and are still not on any alarm:
+--
+--   * the MANUAL VALVE has no window at all and is meant not to. It is
+--     the one component nobody operates from a chair -- somebody walks
+--     to it and puts a hand on the wheel -- and the digital valve
+--     beside it exists precisely to be the remote one
+--     (structures/manual_valve.luau, structures/digital_valve.luau).
+--   * the CANISTER has a window, and it is a bottle on wheels: it is
+--     unanchored until a wrench fastens it to a port, and a crewman
+--     rolls it out of the room mid-shift. A radius join would bind a
+--     moving target and suspend itself the moment it left, and tg's
+--     alarm never drove a portable device either
+--     (structures/canister.luau).
+--   * the STATIONARY TANK has a window with nothing in it to turn. It
+--     is a holder table -- what is inside and what it is rated to --
+--     and its valves are its ports, worked with a wrench and a pipe
+--     (sim/ui/settings/tank.rs). Proxying it would put a page of
+--     readouts on the console and hand a crewman nothing to press.
+--
+-- The meters and the passive vent are the same argument as the tank:
+-- gauges, and a hole in a wall.
+--
+-- WHERE ITS ADDRESS COMES FROM, and what its lock is keyed to, are the
+-- access point's answers exactly (structures/access_point.luau): a card
+-- in the network socket, and the placement's own `access` word. Neither
+-- is written here and neither can be.
 return {
     id = "air_alarm",
     visual_layer = "fixture",
@@ -73,6 +147,7 @@ return {
     parts = { slots = { "network" } },
     link = {
         role = "hub",
+        -- Joins are made by hand; this only refuses or suspends past 17.
         radius = 17,
         socket = "network",
         locked = true,

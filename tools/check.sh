@@ -393,6 +393,33 @@ placeable_check() {
   fi
 }
 
+# Every map round-trips, and every `tests/maps/` fixture is named with
+# the specs that boot it (tools/map-fixture-coverage.mjs). An engine
+# whose `maps` never walks `tests/maps/` is a failure, not a pass: its
+# count must be printed and must be every fixture on disk.
+map_fixture_check() {
+  node "$PACK/tools/map-fixture-coverage.mjs" || return $?
+  server maps "$PACK" --web "$PACK_WEB" > "$GATE/maps.out" 2>&1
+  rc=$?
+  cat "$GATE/maps.out"
+  [ "$rc" -eq 0 ] || return "$rc"
+  want_fixtures=$(find "$PACK/tests/maps" -maxdepth 1 -name '*.ron' 2>/dev/null | wc -l)
+  got_fixtures=$(sed -n 's/.*tests\/maps: \([0-9][0-9]*\) checked.*/\1/p' "$GATE/maps.out")
+  if [ "$got_fixtures" != "$((want_fixtures))" ]; then
+    echo "maps checked ${got_fixtures:-no} tests/maps/ fixtures; $((want_fixtures)) are on disk" >&2
+    return 1
+  fi
+}
+
+# The whole spec run, then its `--json` report read back: each named
+# fixture spec ran exactly once and passed.
+spec_fixture_check() {
+  report=$GATE/spec-results.json
+  rm -f "$report"
+  server test "$PACK" --web "$PACK_WEB" --json "$report" || return $?
+  node "$PACK/tools/map-fixture-coverage.mjs" "$report"
+}
+
 # ---------------------------------------------------- browser lanes
 
 browser_skip() {
@@ -530,7 +557,7 @@ fi
 # Content, then every map, then the sprite names, all read back out of
 # this pack's own bake.
 gated "$BAKE" content server test "$PACK" --load-only --web "$PACK_WEB"
-gated "$BAKE" maps server maps "$PACK" --web "$PACK_WEB"
+gated "$BAKE" maps map_fixture_check
 gated "$BAKE" lint-assets server lint-assets "$PACK" --web "$PACK_WEB"
 
 # The roster document is promised to its readers only once THIS run has
@@ -575,7 +602,7 @@ UI_BUILT=${UI_BUILT:-$BAKE}
 # reading an earlier run's leavings.
 gated "$UI_BUILT" pack-node node "$PACK/tools/test.mjs" "$ENGINE"
 
-gated "$BAKE" specs server test "$PACK" --web "$PACK_WEB"
+gated "$BAKE" specs spec_fixture_check
 
 if want ui-shots; then
   if [ -n "$UI_BUILT" ]; then

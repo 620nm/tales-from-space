@@ -101,7 +101,7 @@ The default `permitted(request)` accepts everyone. Returning
 leaves the previous accepted request alone.
 
 `tests/devices/programmable_airlock_ready_test.luau` cycles the bench exactly
-as shipped. `tests/devices/programmable_airlock_test.luau` releases, rejoins
+as its fixture authors it. `tests/devices/programmable_airlock_test.luau` releases, rejoins
 and reinstalls it through player commands, edits its program through laptop
 contact, and checks real pressure and door completions. The companion
 construction spec assembles and removes its fittings.

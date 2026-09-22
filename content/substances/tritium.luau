@@ -13,8 +13,8 @@
 -- is both visible and tinted, and nothing else). The day somebody wants
 -- to see it, one line here is the whole change.
 --
--- It also earns a file because a mapper reaches for it: the station
--- ships a tank of it standing in the annex, and a chamber authored to
+-- It also earns a file because a mapper reaches for it: a stationary
+-- tank of it is a placement any map can make, and a chamber authored to
 -- hold it is a thing somebody will want to draw.
 return {
     id = "tritium",
