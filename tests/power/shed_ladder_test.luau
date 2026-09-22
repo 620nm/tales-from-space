@@ -34,7 +34,7 @@ local DARK = "The transceiver is dark. Check what is feeding it."
 
 -- One room behind a panel: the panel takes the backbone off the
 -- generator (L2) and feeds the room circuit (L1), flagged for its
--- reserve as both shipped stations flag it. On the circuit: a socket,
+-- reserve as commissioned room circuits flag it. On the circuit: a socket,
 -- a corded transceiver and a fitting in cord reach of it, and an
 -- airlock fed straight off the cable under its own tile. `%s` is the
 -- generator's glyph -- `.` is a room whose mains are already gone.

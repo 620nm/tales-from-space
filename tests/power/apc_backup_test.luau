@@ -7,7 +7,7 @@ local network_channels = require("@helpers/network_channels")
 -- a reserve -- so the map says which of the panel's output layers are
 -- worth the charge (`l1_reserve` and its two siblings,
 -- docs/power/map-format.md) and the panel feeds those and lets the
--- rest go dark. Both shipped stations flag L1, because L1 is the room
+-- rest go dark. Commissioned room circuits flag L1, because L1 is the room
 -- circuit on both.
 --
 -- What a crewman sees is two things at once, and this spec asserts

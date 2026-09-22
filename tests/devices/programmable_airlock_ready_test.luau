@@ -1,4 +1,4 @@
--- The bench exactly as shipped: joined and programmed at boot, cycled from its buttons.
+-- The authored fixture bench: joined and programmed at boot, cycled from its buttons.
 -- Nobody breathes here: the visitor arrives through vacuum without internals.
 local airlock_cycle = require("@helpers/airlock_cycle")
 

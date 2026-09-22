@@ -17,8 +17,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- Here they are one id. The bench route below makes `n2o` out of
 -- ammonia and oxygen (reactions/nitrous_oxide.luau), the map route
 -- pours `n2o` out of an air preset (the same grammar
--- tests/maps/tank_row.ron uses for its fixture tank, and every surface
--- that reads either of them reads the same
+-- tests/maps/tank_row.ron uses for its tank row), and every surface that
+-- reads either of them reads the same
 -- registry row: the vessel window, the examine pane, the gas
 -- analyzer's printout, the canister's gauge, the scrubber's filter
 -- roster, and a body's lungs.
@@ -212,8 +212,8 @@ t.world(
     ],
     items: [(4, 1, "analyzer"), (4, 2, "oxygen_tank")],
     blends: {
-        // The tank-row fixture's own recipe, to the digit: a tank of
-        // it at 23 MPa, spread over a canister's two cubic metres.
+        // The tank-row fixture's recipe, to the digit: a tank of it at
+        // 23 MPa, spread over a canister's two cubic metres.
         "n2o_23000kpa": (rows: [("n2o", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
         // ...and the chamber a mapper fills on purpose
         // (substances/n2o.luau). One atmosphere of it and nothing

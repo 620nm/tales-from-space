@@ -375,7 +375,3 @@ assert(
     assert(vented) < 25.0,
     "PULLING THE PANE VENTS THE ROOM: " .. assert(sealed) .. " -> " .. vented
 )
-
--- (Chillstation's own vestibule and its viewports are pinned in
--- crates/lunatic-server/src/sim/tests/chill.rs, where the rest of that
--- map's roundstart assertions already live.)
