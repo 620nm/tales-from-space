@@ -1,0 +1,59 @@
+// A compact liquid-flow bench: the deep pair is held between two doors,
+// with a shallow tile and a dry tile beyond its internal wall.
+(
+    name: "Flooded Alcove",
+    tags: ["space"],
+    environment: (gravity_m_s2: Exact(9.80665)),
+    legend: {
+        ' ': (composition: (), outdoors: true),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+    },
+    rows: [
+        "                ",
+        "                ",
+        "        ########",
+        "        #......#",
+        "        #......#",
+        "        #....###",
+        "        #......#",
+        "        ###.#..#",
+        "        ###..###",
+        "        ###.####",
+        "                ",
+    ],
+    // A side puddle at the east bend is isolated from the deep pair by
+    // the shut sill and joins the corridor's spill only after it opens.
+    blends: {
+        "water_1l": (rows: [("water", 55.51), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
+        "water_4_5l": (rows: [("water", 249.79500000000002), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
+        "water_50l": (rows: [("water", 2775.5), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
+    },
+    painted: [
+        (11, 8, "water_50l"),
+        (12, 8, "water_50l"),
+        (14, 6, "water_4_5l"),
+        (13, 7, "water_1l"),
+    ],
+    structures: [
+        (11, 3, "player_spawn"),
+        (11, 7, "airlock", { "glass": true }),
+        (11, 9, "airlock"),
+        (9, 3, "generator"),
+        (10, 3, "apc", { "l1_reserve": true, "l2": "input" }),
+    ],
+    networks: [
+        (x: 9, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 9, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 10, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 10, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 11, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 11, y: 4, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 5, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 6, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 7, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 8, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 11, y: 9, network: "power", channel: "l1", kind: "cable", facing: 15),
+    ],
+)

@@ -324,7 +324,7 @@ near(pipe_moles(2, 1), idle_net, 0.001, "and neither is the run behind the vent"
 
 -- Foul it well past the siphon line. Thirty moles a tile is what a
 -- runaway would put in a corridor; `t.foul_room` is the same
--- precondition setter station_air_test.luau uses for a crew's exhaust.
+-- precondition setter the atmos bench uses for a crew's exhaust.
 for x = 1, 7 do
     assert(t.foul_room(x, 1, "n2", 30.0), "gas goes into every tile of the room")
 end

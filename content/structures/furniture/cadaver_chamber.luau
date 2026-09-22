@@ -41,9 +41,8 @@ return {
     sprite = "morgue1_s",
     dense = true,
     opaque = false,
-    -- Plugged into the nearest socket in the room (docs/POWER.md,
-    -- "Outlets and cords"); the chillstation bay has one on the south
-    -- wall at (15, 9) for exactly this rank.
+    -- Corded furniture: each placement must have a powered socket
+    -- (`docs/POWER.md`, "Outlets and cords").
     corded = true,
     states = { "closed", "open" },
     state_sprites = { open = "morgue0_s" },

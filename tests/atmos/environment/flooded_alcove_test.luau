@@ -1,4 +1,4 @@
--- The flooded alcove on Outpost Zero.
+-- A flooded alcove fixture: two deep tiles held behind powered doors.
 --
 -- A map paints a tile with a Matter Blend and the tile opens the shift
 -- holding it (docs/map-properties/blends.md). Nothing says a blend has
@@ -17,7 +17,7 @@
 -- profile names (content/matter_appearances.luau, tools/check.sh
 -- lint-assets).
 
-t.world_file("outpost.ron", 7)
+t.world_file("flooded_alcove.ron", 7)
 local p = t.join()
 t.tick()
 local spawn_x, spawn_y = t.pos(p)

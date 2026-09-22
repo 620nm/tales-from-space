@@ -81,17 +81,3 @@ assert(
     assert(t.room_temperature(2, 1)) > 290.0,
     "and the room is still the room it was: " .. assert(t.room_temperature(2, 1))
 )
-
--- ---------------------------------------------------------------
--- The station ships one: the chem bench, under a burner that has
--- been going. Same blend, same claim, on the map a shift opens on.
--- ---------------------------------------------------------------
-t.world_file("chillstation.ron", 0)
-t.join()
-t.tick()
-
-local bench = assert(t.room_gas(19, 5)).water
-assert(
-    bench ~= nil and bench > VISIBLE_MOLES,
-    "the air over the chem bench is damp: " .. tostring(bench)
-)

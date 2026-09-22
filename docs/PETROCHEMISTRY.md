@@ -51,16 +51,15 @@ select acetone on their own.
 
 ## Equipment and products
 
-The Chemistry Lab on Chillstation supplies the dispenser, reaction chamber,
-chem packager, beakers, two filled resin pellets, and a sealed lab flask
-with a gas supply. Use the
-large 2 L flask for synthesis; an ordinary beaker is sufficient downstream.
-A valve stroke transfers at most 2 mol of gas. Charge the flask three times
-from the CO2/hydrogen supply to obtain a useful batch, then add 0.025 mol
-synthesis catalyst and set the reaction chamber to 460 K. Keep the valve
-closed while charging and heating; open it after cooling to pour. For resin,
-leave the batch in the flask, add 0.05 mol polymer catalyst, heat to 370 K,
-and dock the flask in the packager to recover the solid product.
+These are content concepts, not a promise about a shipped lab layout or
+loadout. A focused world can place the `chem_dispenser`, `chem_heater`,
+`chem_packager`, vessels and catalysts needed for one route. The large 2 L
+flask is the useful synthesis vessel; an ordinary beaker is sufficient
+downstream. Charge the vessel with the dispenser, add 0.025 mol synthesis
+catalyst, and set the reaction chamber to 460 K. Keep the valve closed while
+charging and heating; open it after cooling to pour. For resin, leave the
+batch in the vessel, add 0.05 mol polymer catalyst, heat to 370 K, and dock
+the vessel in the packager to recover the solid product.
 
 The packager recovers pure solid products while leaving liquid catalysts
 and water in the vessel. A resin pellet contains 0.1 mol of polymer resin;

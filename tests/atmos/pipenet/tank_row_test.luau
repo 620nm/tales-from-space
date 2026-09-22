@@ -1,13 +1,8 @@
-local network_channels = require("@helpers/network_channels")
-
 local composition = require("@helpers/composition")
 
--- Chillstation's tank annex: seven stationary reservoirs off the west
--- side of Atmospherics, one per substance atmospherics runs on.
--- (The whole department moved south-west when the station was redrawn
--- around a central Commons; the annex came with it as one block, so
--- every coordinate here is (x - 1, y + 9) of the one it replaced and
--- nothing inside the room changed.)
+-- A small tank row fixture: seven stationary reservoirs, one per
+-- substance the atmosphere bench runs on. The row is deliberately
+-- unplumbed so each placement owns exactly one substance.
 --
 -- The point of the room is that each tank holds ITS OWN substance, and
 -- the point of the map format change is that it says so per placement --
@@ -21,7 +16,7 @@ local composition = require("@helpers/composition")
 -- and 23 000 kPa is a pressure no real gas stands at without giving
 -- some of itself up.
 --
--- WATER is the plainest case. At annex temperature most of that fill
+-- WATER is the plainest case. At room temperature most of that fill
 -- belongs in the bottom of the tank, and the gauge falls to the dew
 -- point the first time the vessel takes a phase step. `t.tank_gas`
 -- sums a substance over every phase it is in, so the moles it reports
@@ -47,20 +42,20 @@ local composition = require("@helpers/composition")
 -- seven into one mixture inside a pass -- which is exactly what this
 -- spec proves does NOT happen.
 
-t.world_file("chillstation.ron", 7)
+t.world_file("tank_row.ron", 7)
 t.join()
 t.run_seconds(5)
 
 -- The store, as the map authored it: (x, y) -> the one substance in it,
 -- and, for the tank whose reading is moles, how many the fill comes to.
 local store: { { x: number, y: number, gas: string, moles: number?, condenses: boolean? } } = {
-    { x = 4, y = 28, gas = "o2" },
-    { x = 6, y = 28, gas = "n2" },
-    { x = 8, y = 28, gas = "co2", condenses = true },
-    { x = 10, y = 28, gas = "plasma" },
-    { x = 12, y = 28, gas = "water", moles = 69000.0 },
-    { x = 5, y = 33, gas = "tritium" },
-    { x = 7, y = 33, gas = "n2o" },
+    { x = 1, y = 3, gas = "o2" },
+    { x = 3, y = 3, gas = "n2" },
+    { x = 5, y = 3, gas = "co2", condenses = true },
+    { x = 7, y = 3, gas = "plasma" },
+    { x = 9, y = 3, gas = "water", moles = 69000.0 },
+    { x = 11, y = 3, gas = "tritium" },
+    { x = 13, y = 3, gas = "n2o" },
 }
 
 -- CO2's own critical temperature, out of substances/co2.luau.
@@ -92,7 +87,7 @@ end
 -- bottom, and the mixture is exactly at the temperature above which
 -- there could not be.
 do
-    local co2 = t.vessel_at(8, 28, "stationary_tank")
+    local co2 = t.vessel_at(5, 3, "stationary_tank")
     assert(co2 ~= nil, "the carbon dioxide tank reads")
     local entry = co2.contents.co2
     assert(entry ~= nil, "and it is carbon dioxide")
@@ -152,24 +147,10 @@ for _, row in ipairs(store) do
     end
 end
 
--- The room itself: sealed, breathable, named, and reachable from the
--- department through its own door. A store nobody can walk into is a
--- wall with tanks behind it.
+-- The room itself: sealed, breathable, and named. A store with no air
+-- around it is a wall with tanks behind it.
 assert(
-    assert(t.room_pressure(8, 30)) > 90.0,
-    "the annex holds its air: " .. assert(t.room_pressure(8, 30)) .. " kPa"
+    assert(t.room_pressure(7, 4)) > 90.0,
+    "the tank row holds its air: " .. assert(t.room_pressure(7, 4)) .. " kPa"
 )
-assert(composition.matches(10, 31, { "station_base" }), "bare plating, like the rest of the station")
-assert(t.door_at(13, 31), "and a door into the machine hall's corridor")
-
--- The machine tile the annex was laid out around, and the machine now
--- standing on it: the temperature control unit, shipped running at its
--- T20C default like the rest of the commissioned department, with
--- room circuit power under it and the bench run stopping either side.
-local unit = t.structure_at(10, 31)
-assert(
-    unit ~= nil and unit.id == "thermomachine",
-    "the temperature control unit stands on the machine tile"
-)
-assert(unit.state == "running", "and ships running: " .. tostring(unit.state))
-assert(network_channels.at(9, 31, "pipe") ~= "" and network_channels.at(11, 31, "pipe") ~= "", "with the bench run stopping either side of it")
+assert(composition.matches(7, 4, { "station_base" }), "the row has a bare deck")

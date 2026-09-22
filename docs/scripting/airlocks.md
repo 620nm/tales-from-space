@@ -1,6 +1,6 @@
 # Programmable exterior airlocks
 
-`maps/programmable_airlock.ron` assembles ordinary networked doors, two wall
+`tests/maps/programmable_airlock.ron` assembles ordinary networked doors, two wall
 buttons, a bidirectional vent and an access point. The interior opens west and
 space is east. Initially the interior is closed and bolted, the exterior is
 open and unbolted, and the chamber is empty.

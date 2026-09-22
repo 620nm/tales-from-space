@@ -21,8 +21,9 @@ Read `docs/LUAU-DIALECT.md` before writing Luau.
 - `reference/manifest.ron` catalogs preset files by ID. Its raw bodies stay
   outside trusted content; guest programs are standalone `.luau` sources.
   See `docs/scripting/reference-files.md` for authoring and disk seeding.
-- `maps/` contains shipped RON maps. `tests/` contains player-facing Luau
-  specs, including any inline RON fixtures they need.
+- `maps/` contains shipped RON maps (and may be empty). `tests/` contains
+  player-facing Luau specs and `tests/maps/` contains their focused RON
+  fixtures.
 - `assets/*.ron` are source manifests. `assets/tg-revision` pins the read-only
   `tgstation` source used by atlas baking; generated atlas output does not
   belong in this repository. Treat that checkout as reference only: never

@@ -1,0 +1,38 @@
+// Seven unplumbed pressure vessels, each charged by its placement.
+(
+    name: "Tank Row",
+    tags: ["space"],
+    environment: (gravity_m_s2: Exact(9.80665)),
+    legend: {
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '.': (composition: (components: [(component: "station_base")])),
+    },
+    rows: [
+        "###############",
+        "#.............#",
+        "#.............#",
+        "#.............#",
+        "#.............#",
+        "#.............#",
+        "###############",
+    ],
+    blends: {
+        "co2_23000kpa": (rows: [("co2", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
+        "n2_23000kpa": (rows: [("n2", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
+        "n2o_23000kpa": (rows: [("n2o", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
+        "o2_23000kpa": (rows: [("o2", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
+        "plasma_23000kpa": (rows: [("plasma", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
+        "tritium_23000kpa": (rows: [("tritium", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
+        "water_67268kpa": (rows: [("water:gas", 27599.96916195394)], temperature_k: 293.15, amount: per_tile),
+    },
+    structures: [
+        (1, 1, "player_spawn"),
+        (1, 3, "stationary_tank", "anchored", { "blend": "o2_23000kpa" }),
+        (3, 3, "stationary_tank", "anchored", { "blend": "n2_23000kpa" }),
+        (5, 3, "stationary_tank", "anchored", { "blend": "co2_23000kpa" }),
+        (7, 3, "stationary_tank", "anchored", { "blend": "plasma_23000kpa" }),
+        (9, 3, "stationary_tank", "anchored", { "blend": "water_67268kpa" }),
+        (11, 3, "stationary_tank", "anchored", { "blend": "tritium_23000kpa" }),
+        (13, 3, "stationary_tank", "anchored", { "blend": "n2o_23000kpa" }),
+    ],
+)

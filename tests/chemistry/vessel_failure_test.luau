@@ -68,9 +68,18 @@ assert(ui_controls.rows(ui_controls.state(p).toggles)[1].on == false, "the valve
 -- rating, clamped to 5..50 a pass, so this is the ceiling: 300
 -- integrity, breaking at 40% of it, is four passes.
 assert(t.charge_vessel(2, 2, "n2", 30000000.0), "a canister takes a charge")
+-- Open immediately before rupture. The room is already at the valve's
+-- release setpoint, so this tick must not drain the charged vessel first.
+ui_controls.toggle(p, "valve")
+t.tick()
+local opened_rows = ui_controls.rows(ui_controls.state(p).toggles)
+assert(opened_rows[1].field == "valve", "the canister valve row should remain visible")
+assert(opened_rows[1].on == true, "the canister must be open immediately before rupture")
 t.run_seconds(4)
 
-assert(#t.ledger_rows("pressure_ruptured") > 0, "the record says a vessel went")
+local rupture_rows = t.ledger_rows("pressure_ruptured")
+assert(#rupture_rows == 1, "the canister should rupture exactly once")
+assert(rupture_rows[1].fragment == false, "a canister rupture must not create a fragment")
 assert(
     assert(t.canister_pressure(2, 2)) < 1.0,
     "and the canister is empty: " .. assert(t.canister_pressure(2, 2))
@@ -81,7 +90,37 @@ assert(
 )
 
 -- It is still there, and it looks like what happened to it.
-local look = t.examine(p, 2, 2, t.target_at(p, 2, 2))
+local broken_target = assert(t.target_at(p, 2, 2), "the broken canister should remain disclosed")
+local broken_layers = t.layers(p, broken_target)
+local has_broken_sprite = false
+for _, sprite in ipairs(broken_layers) do
+    if sprite == "canister_broken" then
+        has_broken_sprite = true
+    end
+end
+assert(has_broken_sprite, "the disclosed canister should use its broken sprite")
+
+local broken_seen = t.seen(p, broken_target)
+local seen_broken_sprite = false
+for _, layer in ipairs(broken_seen.layers) do
+    if layer.sprite == "canister_broken" then
+        seen_broken_sprite = true
+    end
+end
+assert(seen_broken_sprite, "the disclosed canister appearance should include its broken sprite")
+
+local closed_rows = ui_controls.rows(ui_controls.state(p).toggles)
+assert(closed_rows[1].field == "valve", "the canister valve row should remain visible after rupture")
+assert(closed_rows[1].on == false, "rupture must force the canister valve closed")
+
+-- A broken canister is no longer dense: the player must be able to enter its
+-- tile, while the vessel entity itself remains present for inspection.
+t.move(p, "south")
+t.tick()
+local player_x, player_y = t.pos(p)
+assert(player_x == 2 and player_y == 2, "the player should walk through a broken canister")
+
+local look = t.examine(p, 2, 2, broken_target)
 assert(look ~= nil, "a broken canister is still a thing you can look at")
 assert(
     table.concat(look.lines, " | "):find("broken"),
@@ -94,28 +133,19 @@ assert(
 -- finds nothing to take off it. The two counts below are the whole
 -- claim -- a canister that ruptured on every pass would be the largest
 -- mutation this model can make, on a loop, for the rest of the shift.
-local ruptures = #t.ledger_rows("pressure_ruptured")
+local ruptures = #rupture_rows
 local damages = #t.ledger_rows("pressure_damaged")
 assert(ruptures == 1, "it went exactly once, got " .. ruptures)
 assert(damages > 0, "after the passes that chewed through it: " .. damages)
 
+-- The broken shell is loose, so decompression wind may move it after the
+-- immediate appearance, inspection, and walk-through assertions above.
 t.run_seconds(12) -- three times the four passes the break itself took
 
 local later_ruptures = #t.ledger_rows("pressure_ruptured")
 local later_damages = #t.ledger_rows("pressure_damaged")
 assert(later_ruptures == ruptures, "and not a second time: " .. later_ruptures)
 assert(later_damages == damages, "nor is it still being damaged: " .. later_damages)
-
--- Still furniture, a dozen seconds on: a thing on that tile, with a
--- pressure to read and a look to take, and the look still says what
--- happened to it.
-assert(t.canister_pressure(2, 2) ~= nil, "still a canister standing where it broke")
-local since = t.examine(p, 2, 2, t.target_at(p, 2, 2))
-assert(since ~= nil, "still a thing you can look at")
-assert(
-    table.concat(since.lines, " | "):find("broken"),
-    "and still says broken: " .. table.concat(since.lines, " | ")
-)
 
 -- ---------------------------------------------------------------
 -- THE RESERVOIR. Same pass, other rule: one rating, a flat 0.1 a

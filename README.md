@@ -15,10 +15,10 @@ This standalone repository is loaded by the lunatic engine through
 | `content/`       | The mod itself: the two optional fixed-name entrypoints (`audiences.luau` for delivery rosters, then `main.luau` for other top-level declarations), `capabilities.luau`, `part_tree.luau`, `lib/` (shared tables the rosters read), pack rosters (`items/`, `jobs/`, `bodies/`, `gamemodes/`, `fixtures/`, `substances/`, `reactions/`, `air/`) whose `.luau` files return prototype data and register behavior through explicit `Definition:handle` calls, plus `tuning.luau` feel knobs. |
 | `ui/`           | Restricted TypeScript/TSX gameplay presentation and semantic bindings, delivered separately from client wasm. |
 | `editor/`       | Versioned pack/mode editor palettes, schemas, declarative previews and composed native tools. |
-| `maps/`          | Station maps as RON (`chillstation.ron` is the default; `outpost.ron` is the test/demo map). |
+| `maps/`          | Shipped station maps as RON; this pack currently ships none. Focused map fixtures live under `tests/maps/`. |
 | `reference/`     | ID catalog and raw preset file bodies; guest programs in `scripts/` are standalone Luau sources, separate from trusted content. |
 | `assets/`        | Sprite, sound and whole-picture source manifests plus the tracked `tg-revision` consumed and verified by `cargo run -p xtask -- bake-atlas`. |
-| `tests/`         | Luau specs (`*_test.luau`) run by the engine's spec runner, with focused RON fixtures embedded inline where needed. |
+| `tests/`         | Luau specs (`*_test.luau`) run by the engine's spec runner, with focused RON fixtures in `tests/maps/` or embedded inline where needed. |
 | `locale/`        | One flat catalog per language, `<tag>.json`, holding every word this pack writes: its interface, its key bindings, a rendering for every settings-module label id, its own message keys, and its wording for the engine keys it overrides (`docs/WORDS.md`). |
 | `docs/`          | This pack's own contracts — what it ships and the numbers it chose: `ATMOS.md` (the station loop), `BIOLOGY.md` (body and surgery tuning), `CHEMISTRY.md` (the shelf), `GAMEMODES.md` (the two modes and preparation policy), `POWER.md` (load classes, the panel ladder and emergency cells), `UI.md` (gameplay surfaces), plus controls, terminology and `scripting/` for guest controllers and reference files. A bare `docs/…` citation names a file HERE; an engine contract is always written "the engine's `docs/…`". |
 | `tools/`         | `sh tools/check.sh` is this pack's gate (§Running). `node tools/test.mjs <engine>` is its `pack-node` lane and runs every node check: `theme-lint.mjs` (colours only in `ui/theme/tokens.ts`, inline style is placement only), `keyed-messages.mjs --check`, and the `test-*.mjs` tests over `ui/`. To preview a surface, run the engine's lab from the engine checkout, `node tools/ui-lab.mjs serve --watch` or `shot <fixture>` (the engine's `docs/pack-ui/lab.md`). |
@@ -57,8 +57,9 @@ re-bake before serving this pack again, or name a root of your own with
 
 Follow the engine's `docs/UI-PRIVACY.md` local setup to stage the snapshot and
 start the authenticated game server and browser gateway. Open the gateway on
-port 8081. The server defaults to the map in `mod.toml`; its launch command can
-add `--mode free_build` or use `"$LUNATIC_PACK/maps/outpost.ron"` as the map.
+port 8081. The raw server has no pack map default: its map is positional, for
+example `cargo run -p lunatic-server -- "$LUNATIC_MAP" --mode free_build`.
+The development launcher accepts the equivalent `--map "$LUNATIC_MAP"`.
 
 ### The gate
 
@@ -90,15 +91,21 @@ cannot run says so by name, both in place and in the closing
 | `build` | The engine binaries the later lanes run. |
 | `bake` | `assets/*.ron`, `assets/fonts/` and the pinned tg revision bake, into `target/web` — never the engine checkout's own served root. |
 | `content` | Every content file loads: the lint a spec run skips. |
-| `maps` | Every map in `maps/` parses, preflights, writes and reads back unchanged. |
+| `maps` | Every file in both `maps/` (shipped) and `tests/maps/` (focused fixtures) parses, preflights, writes and reads back unchanged; the lane reports separate counts, including zero. It does not boot or step a world. |
 | `lint-assets` | Every sprite name content says is in the bake. |
 | `roster` | The roster a server would serve builds; `target/gate/roster.json` is what the next lanes read. |
 | `placeable` | Everything declared is offered in the map editor, and its art is in this pack's bake (`LUNATIC_WEB_ROOT`). |
 | `pack-ui-build` | `ui/` compiles against that engine's SDK, and every font `ui/fonts.json` declares is published in this pack's bake (`--web`). |
 | `pack-node` | `tools/test.mjs`: the theme and message lints and every `tools/test-*.mjs`. |
-| `specs` | `tests/*_test.luau` through the engine's spec runner. |
+| `specs` | `tests/*_test.luau` through the engine's spec runner, including the actual boot/step assertions for focused map fixtures. |
 | `ui-shots` | Every `ui/fixtures` and `ui/staff/fixtures` baseline, drawn through the real host against this pack's bake (`--web`). |
 | `world-pointer`, `push-motion` | The fixtures in `tests/fixtures/`, driven in the real client against this pack's bake. |
+
+The `maps` command checks both roots independently and prints their separate
+counts (`maps: N checked; tests/maps: M checked`); zero shipped maps is legal.
+It proves parsing, preflight and lossless writer round-trips only. Specs prove
+that a focused fixture can actually boot and step through the player-facing
+world seam.
 
 Two variables carry what the earlier lanes produced to the node checks that
 read it, so no `tools/test-*.mjs` recomputes a path: `LUNATIC_PACK_WEB` is the

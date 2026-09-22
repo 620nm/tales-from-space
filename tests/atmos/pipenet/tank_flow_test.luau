@@ -192,7 +192,7 @@ near(total(assert(network_matter.gas(3, 1))), run_n, run_n * 1e-12, "and so are 
 -- ---------------------------------------------------------------
 -- TWO VESSELS, TWO GASES, ONE RUN.
 --
--- The consequence the tank annex is laid out to avoid, proved so that
+-- The consequence a separated tank row is laid out to avoid, proved so that
 -- room's seven UNPLUMBED vessels read as a decision and not an accident:
 -- bolt an oxygen tank and a nitrogen tank to one length of pipe and you
 -- no longer own an oxygen tank. Free flow has no direction and no valve,

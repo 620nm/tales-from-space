@@ -156,10 +156,10 @@ when no ordinary entry passes; it is unconditional for tags but still must
 satisfy the map's physical preferences. If no candidate survives, the map is
 rejected before the round starts.
 
-The four shipped maps save `gravity_m_s2: Exact(9.80665)` so their existing
-stations continue to use walking movement. A new map omits `environment` by
-default; that leaves its physical preferences unconstrained and allows the
-mode to choose microgravity. These preferences filter profiles.
+This pack currently ships no maps under `maps/`; focused fixtures under
+`tests/maps/` author their own physical preferences. A new map omits
+`environment` by default; that leaves its physical preferences unconstrained
+and allows the mode to choose microgravity. These preferences filter profiles.
 
 An optional `atmosphere_blend: Some("map_air")` instead fixes the ambient recipe.
 The map's own blend definition takes precedence over a pack blend with the same

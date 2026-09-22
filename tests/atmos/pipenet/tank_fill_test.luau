@@ -6,7 +6,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- saying what is in THIS vessel, and it is the whole of tg's twenty
 -- /tank/<gas> subtypes (tank.dm:477-555) said as a fact about a map
 -- instead of as twenty prototypes. stationary_tank_test.luau settles
--- that the mechanism works and tank_annex_test.luau that seven of them
+-- that the mechanism works and tank_row_test.luau that seven of them
 -- keep seven different gases; neither weighs the fill.
 --
 -- This file weighs it. A pressure is not an amount of gas -- a

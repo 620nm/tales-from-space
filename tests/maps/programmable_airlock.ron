@@ -26,8 +26,8 @@
         (9, 3, "vacuum"), (10, 3, "vacuum"), (11, 3, "vacuum"),
         (9, 4, "vacuum"), (10, 4, "vacuum"), (11, 4, "vacuum"), (8, 1, "vacuum")],
     structures: [
-        (3, 3, "player_spawn"),
-        (9, 3, "player_spawn"),
+        (3, 3, "player_spawn", { "jobs": "assistant" }),
+        (9, 3, "player_spawn", { "jobs": "engineer" }),
         (4, 3, "access_point", { "network_1": "network_card", "file.airlock_controller": true, "program.controller": "airlock_controller", "mount": "north" }),
         (2, 3, "airlock_button", { "mount": "north" }), (7, 4, "airlock_button", { "mount": "south" }),
         (5, 3, "airlock", { "bolted": true }),

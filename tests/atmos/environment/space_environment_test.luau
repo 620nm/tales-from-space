@@ -111,21 +111,6 @@ assert(sky_profile.gravity_m_s2 == STANDARD_GRAVITY, "the profile carries standa
 assert(sky_profile.background == "space_backdrop", "the profile carries the backdrop")
 assert(#sky.name > 0, "a sky has something to call it: " .. tostring(sky.name))
 
--- Shipped stations retain their commissioned walking contract even though
--- newly authored maps may leave gravity unconstrained.
-for _, map in ipairs({
-    "chillstation.ron",
-    "outpost.ron",
-    "cold_outpost.ron",
-    "programmable_airlock.ron",
-}) do
-    t.world_file(map, 7)
-    assert(
-        assert(t.environment().profile).gravity_m_s2 == STANDARD_GRAVITY,
-        map .. " keeps standard gravity"
-    )
-end
-
 -- ---------------------------------------------------------------
 -- ONE SEED, ONE SKY -- AND DIFFERENT SEEDS REALLY DO DIFFER.
 --

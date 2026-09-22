@@ -55,7 +55,7 @@ structures: [
 ],
 ```
 
-`maps/programmable_airlock.ron` opens its access point this way. A copy the
+`tests/maps/programmable_airlock.ron` opens its access point this way. A copy the
 round edits or renames is the round's: the map export writes back only copies
 still exactly as the map made them.
 

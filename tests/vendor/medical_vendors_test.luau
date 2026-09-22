@@ -221,14 +221,3 @@ local pills = t.count_items("pill")
 assert(not ui_controls.has_product(p, "pill"), "excluded product has no rendered control")
 t.tick()
 assert(t.count_items("pill") == pills, "ChemDrobe cannot be talked into excluded medicine stock")
-
--- The shipped station carries both machines in the Chemistry Lab and
--- their construction boards in the Workshop. The focused room above
--- proves their power behavior; these assertions pin live-map placement.
-t.world_file("chillstation.ron", 7)
-t.join()
-t.run_ticks(20)
-assert(assert(t.machine_at(23, 4)).id == "nanomed_plus", "NanoMed stands in the lab")
-assert(assert(t.machine_at(24, 4)).id == "chemdrobe", "ChemDrobe stands in the lab")
-assert(t.item_at(11, 7, "machine_board.nanomed_plus") ~= nil, "NanoMed has a spare board")
-assert(t.item_at(12, 7, "machine_board.chemdrobe") ~= nil, "ChemDrobe has a spare board")
