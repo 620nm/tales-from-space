@@ -8,7 +8,7 @@ local network_channels = require("@helpers/network_channels")
 -- worth the charge (`l1_reserve` and its two siblings,
 -- docs/power/map-format.md) and the panel feeds those and lets the
 -- rest go dark. Commissioned room circuits flag L1, because L1 is the room
--- circuit on both.
+-- circuit.
 --
 -- What a crewman sees is two things at once, and this spec asserts
 -- both:

@@ -160,7 +160,8 @@ for y = 1, 3 do
     end
 end
 assert(shell_x ~= nil and shell_y ~= nil, "the broken shell is still in the room")
-assert(t.canister_pressure(shell_x, shell_y) ~= nil, "still a canister where it came to rest")
+local shell_kpa = assert(t.canister_pressure(shell_x, shell_y), "still a canister where it came to rest")
+assert(shell_kpa < 1.0, "and still empty: " .. shell_kpa)
 local since = assert(t.examine(p, shell_x, shell_y, broken_target), "still a thing you can look at")
 assert(
     table.concat(since.lines, " | "):find("broken"),

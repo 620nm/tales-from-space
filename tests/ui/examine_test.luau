@@ -259,9 +259,10 @@ assert(dry.lines[1] == "Standard station tiling, laid over the deck plating.", "
 -- ---------------------------------------------------------------
 -- SEVEN: A SHUT DOOR IS THE VIEW BOUNDARY.
 --
--- The same seam as the sealed cell, drawn by a door instead of a wall:
--- a forged look at the far side of a shut leaf is silence, and the
--- same look through the open leaf is an answer.
+-- Drawn by a door instead of a wall: past a shut leaf nothing is in the
+-- player's observed picture, so the harness refuses to aim a look there
+-- (its client-side refusal; the server's FOV gate is the engine's to
+-- test). Through the open leaf the same look is an answer.
 -- ---------------------------------------------------------------
 t.world(
     [==[(
@@ -294,9 +295,14 @@ local q = t.join()
 t.tick()
 assert(not assert(t.door_at(3, 1)).open, "the door opens the shift shut")
 assert(t.target_at(q, 5, 1, "beaker") == nil, "nothing past it is disclosed")
-assert(not pcall(function()
+local aimed, refusal = pcall(function()
     t.examine(q, 5, 1)
-end), "and a claim through the shut leaf buys no look")
+end)
+assert(not aimed, "a look through the shut leaf is refused")
+assert(
+    tostring(refusal):find("outside the observed picture", 1, true),
+    "because the far side is not in the picture: " .. tostring(refusal)
+)
 
 t.click(q, 3, 1, t.target_at(q, 3, 1))
 t.run_ticks(15)
