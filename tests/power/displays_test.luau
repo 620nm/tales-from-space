@@ -1,6 +1,6 @@
 local ui_controls = require("@helpers/ui_controls")
 
--- The two Commons displays at their player seam: both arrive on their
+-- The two wall displays at their player seam: both arrive on their
 -- wall brackets, the status board starts blank, its two bounded fields
 -- become uppercase ScriptVars, bad text changes nothing, and Clear
 -- returns it to the blank state. Clock digit composition, status line
