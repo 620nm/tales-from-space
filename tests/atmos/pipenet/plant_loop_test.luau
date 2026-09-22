@@ -1,15 +1,16 @@
 local network_matter = require("@helpers/network_matter")
--- The whole atmospherics loop on one small plant: stores -> mixer ->
--- supply main -> vent -> ward, and ward -> scrubber -> layer-2 waste
--- main -> layer adapter -> CO2 filter -> the tank labelled for it.
+-- Two legs of a station's air plant, composed on one small fixture.
+-- Supply: stores -> mixer -> supply main -> vent -> ward. Capture:
+-- ward -> scrubber -> layer-2 waste main -> layer adapter -> CO2
+-- filter -> the tank labelled for it. The filter's remainder dead-ends,
+-- so nothing returns to storage; chamber injectors, a filter row and
+-- isolation valves are other specs' (docs/ATMOS.md).
 --
--- Every other atmos spec proves one machine. This one proves they
--- compose into a loop a crew relies on: the ward keeps breathable air
--- over minutes, the carbon dioxide it is fouled with ends up in the
--- CO2 tank and nowhere else, and the ward torn open to space is held
--- off by the vent and refilled once it is sealed. The loop's shape is
--- the engine's `docs/atmos/station-loop.md`; fixture:
--- `tests/maps/plant_loop.ron`.
+-- The claims: the supply leg lifts a thin ward to breathable and holds
+-- it there, the CO2 it is fouled with ends up in the CO2 tank and
+-- nowhere else, and the ward torn open to space is held off by the vent
+-- and refilled once sealed. Loop shape: the engine's
+-- `docs/atmos/station-loop.md`; fixture: `tests/maps/plant_loop.ron`.
 
 -- Nobody here breathes: the books below are the plumbing's own, and a
 -- crewman's lungs would be a CO2 source in the middle of them.
@@ -60,22 +61,23 @@ local function co2_everywhere(): number
 end
 
 -- ---------------------------------------------------------------
--- ONE: THE WARD HOLDS BREATHABLE AIR, AND KEEPS HOLDING IT.
+-- ONE: THE SUPPLY LEG BRINGS THE WARD UP, AND KEEPS IT THERE.
 --
--- Not at roundstart: over three minutes, with the plant commissioned
--- and running. A loop that starts at an atmosphere and slowly loses it
--- is invisible to any spec that only looks at tick zero.
+-- The ward opens at half an atmosphere, so a sealed room alone cannot
+-- pass: only the stores, the mixer and the vent lift it to breathable,
+-- and it must still be there three minutes later.
 -- ---------------------------------------------------------------
 local opening = assert(t.room_pressure(WARD.x, WARD.y))
-assert(opening > 90.0 and opening < 115.0, "the ward opens breathable: " .. opening)
-t.run_seconds(180)
+assert(opening < 60.0, "the ward opens thin: " .. opening)
+t.run_seconds(60)
+local lifted = assert(t.room_pressure(WARD.x, WARD.y))
+assert(lifted > 90.0 and lifted < 115.0, "the vent lifts it to breathable: " .. opening .. " -> " .. lifted)
+t.run_seconds(120)
 local held = assert(t.room_pressure(WARD.x, WARD.y))
 assert(
     held > 90.0 and held < 115.0,
-    "and three minutes later it is still breathable: " .. opening .. " -> " .. held
+    "and two minutes later it is still breathable: " .. lifted .. " -> " .. held
 )
-local o2_share = ward_total("o2") / (ward_total("o2") + ward_total("n2"))
-assert(o2_share > 0.19 and o2_share < 0.23, "still a fifth oxygen: " .. o2_share)
 assert(
     assert(network_matter.pressure(SUPPLY_MAIN.x, SUPPLY_MAIN.y)) > 4000.0,
     "because the mixer holds the supply main charged behind the vent"
@@ -149,6 +151,9 @@ assert(
     recovered > 90.0,
     "and sealed, the plant puts the air back: " .. breached .. " -> " .. recovered .. " kPa"
 )
+-- The air that came back is the mixer's, so its share is the mixer's.
+local o2_share = ward_total("o2") / (ward_total("o2") + ward_total("n2"))
+assert(o2_share > 0.19 and o2_share < 0.23, "a fifth oxygen, as the mixer blends it: " .. o2_share)
 assert(stores() < stores_before - 100.0, "out of the stores: " .. stores_before .. " -> " .. stores())
 assert(
     co2_tank_holds("co2") >= in_tank - 1e-9,

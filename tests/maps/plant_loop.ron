@@ -1,6 +1,7 @@
-// A compact atmospherics plant feeding one ward: two stores through an
-// air mixer onto a supply main and vent, and a scrubber whose layer-2
-// waste main crosses a layer adapter into a CO2 filter and its own tank.
+// Two legs of an air plant feeding one thin ward. Supply: two stores
+// through an air mixer onto a supply main and vent. Capture: a scrubber
+// whose layer-2 waste main crosses a layer adapter into a CO2 filter
+// and its own tank; the filter's remainder dead-ends in a stub.
 (
     name: "Plant Loop",
     tags: ["space"],
@@ -22,7 +23,30 @@
     blends: {
         "n2_23000kpa": (rows: [("n2", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
         "o2_23000kpa": (rows: [("o2", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
+        // Standard air at half an atmosphere: the ward opens thin, so only a
+        // working supply leg brings it to its setpoint.
+        "air_50kpa": (rows: [("o2", 4.365218557066058), ("n2", 16.42153647733422)], temperature_k: 293.15, amount: per_tile),
     },
+    painted: [
+        (1, 1, "air_50kpa"),
+        (2, 1, "air_50kpa"),
+        (3, 1, "air_50kpa"),
+        (4, 1, "air_50kpa"),
+        (5, 1, "air_50kpa"),
+        (6, 1, "air_50kpa"),
+        (1, 2, "air_50kpa"),
+        (2, 2, "air_50kpa"),
+        (3, 2, "air_50kpa"),
+        (4, 2, "air_50kpa"),
+        (5, 2, "air_50kpa"),
+        (6, 2, "air_50kpa"),
+        (1, 3, "air_50kpa"),
+        (2, 3, "air_50kpa"),
+        (3, 3, "air_50kpa"),
+        (4, 3, "air_50kpa"),
+        (5, 3, "air_50kpa"),
+        (6, 3, "air_50kpa"),
+    ],
     structures: [
         (15, 3, "player_spawn"),
         (17, 1, "generator"),
