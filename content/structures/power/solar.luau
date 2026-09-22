@@ -1,9 +1,8 @@
 -- A photovoltaic panel, standing in vacuum where the sun is.
 --
 -- Quiet, modest watts, no moving parts, and happy outside the hull --
--- which is why chillstation's array is north of the rank rather than
--- in a room. There is no day/night cycle yet, so a panel is simply a
--- source.
+-- which is why an array stands outside rather than in a room. There
+-- is no day/night cycle yet, so a panel is simply a source.
 return {
     id = "solar",
     visual_layer = "fixture",

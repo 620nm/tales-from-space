@@ -156,7 +156,7 @@ when no ordinary entry passes; it is unconditional for tags but still must
 satisfy the map's physical preferences. If no candidate survives, the map is
 rejected before the round starts.
 
-This pack currently ships no maps under `maps/`; focused fixtures under
+This pack ships no maps under `maps/`; focused fixtures under
 `tests/maps/` author their own physical preferences. A new map omits
 `environment` by default; that leaves its physical preferences unconstrained
 and allows the mode to choose microgravity. These preferences filter profiles.

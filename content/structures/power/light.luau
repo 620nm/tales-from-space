@@ -3,10 +3,7 @@
 --
 -- The colour is per PLACEMENT, because a colour is a property of the
 -- tube somebody screwed in rather than of the fitting on the wall:
--- cool white in the corridors, a tungsten bulb over the middle of the
--- Commons that nobody has replaced.
---
---   (16, 13, "light", { "color": "#FFD6AA" })
+-- each placement chooses it through its `color` property.
 --
 -- `script` names the file whose handlers answer for this thing
 -- (fixtures/light.luau) -- which is how a shattered tube can be swept
@@ -24,7 +21,7 @@ return {
     -- `brightness` 8 and `bulb_power` 1 (light.dm:24-26), and the
     -- second is copied verbatim. The first is not: the falloff these
     -- tiles are lit by is this engine's own, and 6 is the radius every
-    -- pool on the shipped station was tuned against -- so taking tg's
+    -- pool in this pack was tuned against -- so taking tg's
     -- 8 would move the light in every room for no reason anybody asked
     -- for. Six here, and tg's curve nowhere.
     --

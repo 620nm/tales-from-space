@@ -3,13 +3,10 @@
 -- your job..." — tg's `/obj/machinery/vending/games`
 -- (code/modules/vending/games.dm:1-8).
 --
--- It stands in the Commons because that is the room a shift walks
--- through, and it replaces the two dice somebody left on the table
--- there: a die on a table is one die, and a machine that hands out dice
--- is a rec room. The two crates beside it are the softdrinks machine
--- and the YouTool, and it shares their script — opening a window on
--- click and wobbling when bumped is the behaviour of a vending machine,
--- not of any particular one.
+-- A die on a table is one die; a machine that hands out dice is a rec
+-- room. It shares the softdrinks machine's and the YouTool's script:
+-- opening a window on click and wobbling when bumped is the behaviour
+-- of a vending machine, not of any particular one.
 --
 -- THREE OF TG'S SIX SHELVES, and the ruling behind the three that are
 -- missing is the same one every time: a product is here when it needs

@@ -1,9 +1,9 @@
 local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 
--- The first item to cross the content boundary. Robust — and, since
--- the chillstation redirect, an actual container: it ships stocked
--- with the engineering loop (open it from your hand to get at them).
+-- The first item to cross the content boundary. Robust, and an actual
+-- container: it ships stocked with the engineering loop (open it from
+-- your hand to get at them).
 local content = {
     id = "toolbox",
     visual_layer = "item",
