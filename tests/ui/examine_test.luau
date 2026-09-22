@@ -255,3 +255,51 @@ assert(pw == "water" and pc == "#AAAAAA", "in water's colour, as through glass")
 local dry = composition.examine_deck(p, 2, 1)
 assert(dry ~= nil and #dry.lines == 1, "a dry deck has only its authored description: " .. dump(assert(dry)))
 assert(dry.lines[1] == "Standard station tiling, laid over the deck plating.", "the dry floor's authored description")
+
+-- ---------------------------------------------------------------
+-- SEVEN: A SHUT DOOR IS THE VIEW BOUNDARY.
+--
+-- The same seam as the sealed cell, drawn by a door instead of a wall:
+-- a forged look at the far side of a shut leaf is silence, and the
+-- same look through the open leaf is an answer.
+-- ---------------------------------------------------------------
+t.world(
+    [==[(
+    name: "examine door",
+    legend: {
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
+    },
+    rows: [
+        "#######",
+        "#g....#",
+        "#######",
+    ],
+    structures: [(2, 1, "player_spawn"), (2, 1, "apc"), (3, 1, "airlock")],
+    items: [(5, 1, "beaker")],
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+    ],
+)]==],
+    0
+)
+
+local q = t.join()
+t.tick()
+assert(not assert(t.door_at(3, 1)).open, "the door opens the shift shut")
+assert(t.target_at(q, 5, 1, "beaker") == nil, "nothing past it is disclosed")
+assert(not pcall(function()
+    t.examine(q, 5, 1)
+end), "and a claim through the shut leaf buys no look")
+
+t.click(q, 3, 1, t.target_at(q, 3, 1))
+t.run_ticks(15)
+assert(assert(t.door_at(3, 1)).open, "the leaf opens to an empty hand")
+local through = assert(t.target_at(q, 5, 1, "beaker"), "the far side is in view now")
+assert(t.examine(q, 5, 1, through) ~= nil, "and the same look is an answer")
