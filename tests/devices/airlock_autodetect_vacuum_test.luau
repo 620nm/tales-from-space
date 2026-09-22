@@ -1,7 +1,7 @@
 -- Vacuum outside, station east: the lock learns home by air alone.
--- Mirrored from the shipped map (station west there): space presses
--- west, the chamber fills, and the east leaf opens. A program that
--- trusted place would open the wrong leaf here.
+-- Space presses west, the chamber fills, and the east leaf opens. A
+-- program that trusted which side it was built facing would open the
+-- wrong leaf here.
 local AIRLOCK = [==[
 (
     name: "Mirrored Airlock",

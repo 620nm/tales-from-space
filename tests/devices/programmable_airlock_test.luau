@@ -37,7 +37,7 @@ local function members()
 end
 laptop.ready(operator, 3, 3)
 local locked = laptop.connect(operator, 4, 3, host)
-assert(locked and locked.contact_locked, "the shipped host shows a laptop its lock screen first")
+assert(locked and locked.contact_locked, "the fixture host shows a laptop its lock screen first")
 assert(locked.stores == nil and #members() == 0, "with nothing behind the lock")
 laptop.unlock(operator)
 t.run_ticks(2)

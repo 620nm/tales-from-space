@@ -147,6 +147,27 @@ local later_damages = #t.ledger_rows("pressure_damaged")
 assert(later_ruptures == ruptures, "and not a second time: " .. later_ruptures)
 assert(later_damages == damages, "nor is it still being damaged: " .. later_damages)
 
+-- Still furniture, a dozen seconds on, wherever the wind left it: the
+-- same shell, with a pressure to read and a look to take, and the look
+-- still says what happened. Found by the target, over the room's floor.
+local shell_x, shell_y = nil, nil
+for y = 1, 3 do
+    for x = 1, 3 do
+        local here = t.target_at(p, x, y, broken_target)
+        if here ~= nil and t.same_target(here, broken_target) then
+            shell_x, shell_y = x, y
+        end
+    end
+end
+assert(shell_x ~= nil and shell_y ~= nil, "the broken shell is still in the room")
+local shell_kpa = assert(t.canister_pressure(shell_x, shell_y), "still a canister where it came to rest")
+assert(shell_kpa < 1.0, "and still empty: " .. shell_kpa)
+local since = assert(t.examine(p, shell_x, shell_y, broken_target), "still a thing you can look at")
+assert(
+    table.concat(since.lines, " | "):find("broken"),
+    "and still says broken: " .. table.concat(since.lines, " | ")
+)
+
 -- ---------------------------------------------------------------
 -- THE RESERVOIR. Same pass, other rule: one rating, a flat 0.1 a
 -- pass past it, and 800 integrity to chew through -- so what a spec

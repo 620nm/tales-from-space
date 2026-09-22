@@ -111,6 +111,22 @@ assert(sky_profile.gravity_m_s2 == STANDARD_GRAVITY, "the profile carries standa
 assert(sky_profile.background == "space_backdrop", "the profile carries the backdrop")
 assert(#sky.name > 0, "a sky has something to call it: " .. tostring(sky.name))
 
+-- Each focused fixture that pins standard gravity walks under it; a map
+-- that says nothing about gravity stays unconstrained and is not listed.
+for _, map in ipairs({
+    "cold_outpost.ron",
+    "flooded_alcove.ron",
+    "plant_loop.ron",
+    "programmable_airlock.ron",
+    "tank_row.ron",
+}) do
+    t.world_file(map, 7)
+    assert(
+        assert(t.environment().profile).gravity_m_s2 == STANDARD_GRAVITY,
+        map .. " keeps standard gravity"
+    )
+end
+
 -- ---------------------------------------------------------------
 -- ONE SEED, ONE SKY -- AND DIFFERENT SEEDS REALLY DO DIFFER.
 --

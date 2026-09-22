@@ -199,3 +199,72 @@ for _, ref in ipairs({ "cola", "d20", "card", "id_captain", "toolbox" }) do
     t.tick()
     assert(t.count_items(ref) == before, "Good Clean Fun does not deal in " .. ref)
 end
+
+-- ---- out of reach, and out of power -----------------------------------
+-- Two refusals the shelf above never meets. A shop is an arm's-length
+-- click: across a room the window stays shut. And a corded machine whose
+-- mains are gone is a dark box that says so instead of opening
+-- (fixtures/vendor.luau, the script every vendor here shares).
+t.world(
+    [==[(
+    name: "rec room corridor",
+    legend: {
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
+        'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
+    },
+    rows: [
+        "#######",
+        "#o....#",
+        "#....g#",
+        "#######",
+    ],
+    structures: [(5, 1, "player_spawn"), (1, 2, "apc")],
+    machines: [(2, 1, "games_vendor")],
+    networks: [
+        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+    ],
+)]==],
+    0
+)
+
+local crew = t.join()
+t.tick()
+local far_x, far_y = t.pos(crew)
+assert(far_x == 5 and far_y == 1, "the crewman starts three tiles down the corridor")
+local shelf_target = assert(t.target_at(crew, 2, 1), "the machine is in plain view")
+t.click(crew, 2, 1, shelf_target)
+t.tick()
+assert(t.ui(crew) == nil, "and cannot shop from across the room")
+
+for _ = 1, 2 do
+    t.move(crew, "west")
+    t.run_ticks(5)
+end
+local near_x, near_y = t.pos(crew)
+assert(near_x == 3 and near_y == 1, "standing beside it: " .. near_x .. "," .. near_y)
+t.click(crew, 2, 1, t.target_at(crew, 2, 1))
+t.tick()
+assert(t.ui(crew) ~= nil, "beside it, with power, the shelf opens")
+t.ui_close(crew)
+t.tick()
+
+t.outage()
+t.run_ticks(5)
+t.click(crew, 2, 1, t.target_at(crew, 2, 1))
+t.tick()
+assert(t.ui(crew) == nil, "with the mains gone the shelf stays shut")
+local heard = table.concat(t.messages(crew), "\n")
+assert(heard:find("The machine is dark and silent.", 1, true), "and the machine says why: " .. heard)

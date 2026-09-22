@@ -22,7 +22,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- Which needs pure gas, and there is exactly one way to author it: a
 -- sealed chamber holding one gas as room air, with a passive vent
 -- opening it onto the run. That is tg's own gas storage -- chambers,
--- not bottles -- and it is what a commissioned atmosphere map does either side of
+-- not bottles -- and it is what a commissioned map does either side of
 -- its own air mixer. The pipe under the chamber wall is the whole
 -- trick: a run is subfloor and does not care what turf stands over it.
 

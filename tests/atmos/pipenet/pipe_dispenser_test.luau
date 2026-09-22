@@ -29,7 +29,7 @@ end
 
 t.world(
     [==[(
-    name: "atmos annex",
+    name: "atmos bench",
     legend: {
         ' ': (composition: (substrate: Some("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
