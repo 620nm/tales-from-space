@@ -109,8 +109,24 @@ are not a claim that one map assembles a station-scale department:
   cross-talk.
 - `tests/maps/cold_outpost.ron` and `tests/maps/flooded_alcove.ron` are focused
   map fixtures whose specs assert authored ambient air and liquid containment.
+- `tests/maps/plant_loop.ron` and `tests/atmos/pipenet/plant_loop_test.luau`
+  compose two legs of an air plant on one ward: stores→mixer→supply main→vent
+  lifts a thin ward to breathable and holds it; scrubber→waste main→layer
+  adapter→CO2 filter puts fouled CO2 in its own tank and nowhere else; a
+  breached ward is held off by the vent and refills once resealed.
+
+Not covered by any spec: a station-scale, multi-room plant staying stable; a
+filter→injector→sealed-chamber path (filters and injectors are each checked
+alone); and a valve isolating one leg of a RUNNING plant. For that last one,
+`tests/atmos/environment/atmos_devices_test.luau` shows a shut manual valve
+isolates a still main and `tests/atmos/pipenet/valve_variants_test.luau` its
+layer and the digital valve's topology, both without a plant running.
 
 The maps lane only parses, preflights and round-trips these documents. Actual
-boot and tick/step behavior is asserted by the named specs, and
+boot and tick/step behavior is asserted by the named specs.
 `tools/map-fixture-coverage.mjs` fails the gate when a `tests/maps/` fixture
-is not loaded by its named spec or that spec did not pass.
+has no named spec whose code (comments dropped) holds a literal
+`t.world_file("<fixture>")` call, or when a named spec did not run once and
+pass. That is a source check, not proof the call executed. It also requires
+`space_environment_test.luau`'s table of fixtures to be exactly those pinning
+standard gravity.
