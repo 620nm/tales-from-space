@@ -9,6 +9,8 @@ import {
   checkFixtureFiles,
   checkFixtureResults,
   checkGravityRoll,
+  gravityRollFixtures,
+  gravityRollSpec,
   mapFixtures,
   worldFileNames,
 } from "./map-fixture-coverage.mjs";
@@ -79,8 +81,17 @@ test("an unnamed fixture and a dangling world_file fail", () => {
     (root) => checkFixtureFiles(root, fixtures));
 });
 
+// One passing report row per named spec, booting every fixture it is named for.
+function passingRows(list = fixtures) {
+  const booted = new Map();
+  for (const fixture of list) {
+    for (const spec of fixture.specs) booted.set(spec, [...(booted.get(spec) ?? []), fixture.map]);
+  }
+  return [...booted].map(([name, maps]) => ({ name, status: "ok", maps_loaded: maps, maps_loaded_truncated: false }));
+}
+
 test("missing, failed and duplicate runs cannot claim coverage", () => {
-  const specs = fixtures.flatMap((fixture) => fixture.specs.map((name) => ({ name, status: "ok" })));
+  const specs = passingRows();
   checkFixtureResults({ specs }, fixtures);
   assert.throws(() => checkFixtureResults({}, fixtures), /must contain results/);
   assert.throws(() => checkFixtureResults({ specs: [] }, fixtures), /must run exactly once/);
@@ -88,6 +99,22 @@ test("missing, failed and duplicate runs cannot claim coverage", () => {
   assert.throws(() => checkFixtureResults({ specs: [...specs, specs[0]] }, fixtures), /must run exactly once/);
   assert.throws(() => checkFixtureResults({ specs: [{ ...specs[0], status: "fail" }, ...specs.slice(1)] }, fixtures),
     /fixture spec failed/);
+});
+
+test("only a report row that booted the fixture proves coverage", () => {
+  const specs = passingRows();
+  const withRow = (change) => ({ specs: specs.map((row) => (row.name === "row_test.luau" ? change(row) : row)) });
+  checkFixtureResults(withRow((row) => ({ ...row, maps_loaded: ["bench.ron", "row.ron"] })), fixtures);
+  // The source names row.ron, so the pre-check passes; the run never booted it.
+  withPack(covered, (root) => checkFixtureFiles(root, fixtures));
+  assert.throws(() => checkFixtureResults(withRow((row) => ({ ...row, maps_loaded: [] })), fixtures),
+    /row_test\.luau passed without booting row\.ron/);
+  assert.throws(() => checkFixtureResults(withRow((row) => ({ ...row, maps_loaded_truncated: true })), fixtures),
+    /maps_loaded is truncated: row_test\.luau/);
+  assert.throws(() => checkFixtureResults(withRow(({ maps_loaded_truncated: _, ...row }) => row), fixtures),
+    /maps_loaded is truncated/);
+  assert.throws(() => checkFixtureResults(withRow(({ maps_loaded: _, ...row }) => row), fixtures),
+    /no maps_loaded list: row_test\.luau/);
 });
 
 test("world_file names are read from code, not comments", () => {
@@ -106,6 +133,10 @@ test("the gravity roll walks exactly the fixtures pinning standard gravity", () 
   const roll = (names) => `for _, map in ipairs({ ${names} }) do\n    t.world_file(map, 7)\nend\n`;
   withPack({ ...maps, "tests/roll_test.luau": roll('"a.ron", "b.ron"') }, (root) =>
     assert.equal(checkGravityRoll(root, "roll_test.luau"), 2));
+  withPack(maps, (root) => assert.deepEqual(gravityRollFixtures(root), [
+    { map: "a.ron", specs: [gravityRollSpec] },
+    { map: "b.ron", specs: [gravityRollSpec] },
+  ]));
   const wrong = {
     "a pinned fixture left out": roll('"a.ron"'),
     "an unpinned fixture listed": roll('"a.ron", "b.ron", "zero.ron"'),

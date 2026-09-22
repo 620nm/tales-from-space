@@ -123,10 +123,11 @@ isolates a still main and `tests/atmos/pipenet/valve_variants_test.luau` its
 layer and the digital valve's topology, both without a plant running.
 
 The maps lane only parses, preflights and round-trips these documents. Actual
-boot and tick/step behavior is asserted by the named specs.
-`tools/map-fixture-coverage.mjs` fails the gate when a `tests/maps/` fixture
-has no named spec whose code (comments dropped) holds a literal
-`t.world_file("<fixture>")` call, or when a named spec did not run once and
-pass. That is a source check, not proof the call executed. It also requires
-`space_environment_test.luau`'s table of fixtures to be exactly those pinning
-standard gravity.
+boot and tick/step behavior is asserted by the named specs, and the gate
+proves each `tests/maps/` fixture was booted: `tools/map-fixture-coverage.mjs`
+reads the spec run's `--json` report and fails unless every named spec ran
+once, passed, and lists the fixture in its `maps_loaded` (a truncated list
+fails; the engine's `docs/scripting/determinism-and-testing.md`). Every
+fixture pinning standard gravity is also required in
+`space_environment_test.luau`'s row. Before any spec runs, a source check
+fails fast on a fixture no named spec's code names in `t.world_file`.

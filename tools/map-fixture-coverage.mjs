@@ -1,9 +1,10 @@
 // Named map-fixture coverage. The `maps` lane only round-trips a map, so
 // a fixture no spec boots would pass on parsing alone: every
-// `tests/maps/*.ron` is named here with the specs that load it through
-// `t.world_file`, and the `specs` lane's `--json` report proves each
-// named spec ran once and passed. Zero shipped `maps/` is legal. The
-// gravity roll's fixture list is derived-and-compared, not trusted.
+// `tests/maps/*.ron` is named here with the specs that boot it. The
+// authority is the `specs` lane's `--json` report: each named spec ran
+// once, passed, and lists the fixture in `maps_loaded` (the engine's
+// `docs/scripting/determinism-and-testing.md`). Without a report, the
+// source check is a fast pre-check only. Zero shipped `maps/` is legal.
 //
 //   node tools/map-fixture-coverage.mjs [spec-report.json]
 import assert from "node:assert/strict";
@@ -58,13 +59,18 @@ export function worldFileNames(source) {
   return new Set([...luauCode(source).matchAll(/\bworld_file\(\s*(["'])([^"'\n]+)\1/g)].map((m) => m[2]));
 }
 
-// The gravity roll's `.ron` string literals are exactly the
-// `tests/maps/` files whose own lines pin standard gravity.
-export function checkGravityRoll(pack, spec = gravityRollSpec) {
+// The `tests/maps/` files whose own lines pin standard gravity.
+export function gravityPinnedFixtures(pack) {
   const maps = join(pack, "tests", "maps");
-  const pinned = ronFiles(maps).filter((map) =>
+  return ronFiles(maps).filter((map) =>
     readFileSync(join(maps, map), "utf8").split("\n").some((line) =>
       STANDARD_GRAVITY.test(line.replace(/\/\/.*/, ""))));
+}
+
+// The gravity roll's `.ron` string literals are exactly the pinned
+// fixtures; `gravityRollFixtures` makes its report row prove the boots.
+export function checkGravityRoll(pack, spec = gravityRollSpec) {
+  const pinned = gravityPinnedFixtures(pack);
   const path = join(pack, "tests", spec);
   assert.ok(existsSync(path), `gravity roll spec missing: tests/${spec}`);
   const source = luauCode(readFileSync(path, "utf8"));
@@ -107,14 +113,25 @@ export function checkFixtureFiles(pack, fixtures = mapFixtures) {
   return { shipped: shipped.length, fixtures: onDisk.length };
 }
 
-// The spec runner's `--json` document (`{ specs: [{ name, status }] }`).
+// The gravity roll as fixture rows: each pinned fixture, booted by it.
+export function gravityRollFixtures(pack) {
+  return gravityPinnedFixtures(pack).map((map) => ({ map, specs: [gravityRollSpec] }));
+}
+
+// The spec runner's `--json` document (`{ specs: [{ name, status,
+// maps_loaded, maps_loaded_truncated }] }`). A truncated or absent list
+// proves nothing, so it fails.
 export function checkFixtureResults(report, fixtures = mapFixtures) {
   assert.ok(Array.isArray(report?.specs), "spec runner report must contain results");
   for (const fixture of fixtures) {
     for (const spec of fixture.specs) {
       const rows = report.specs.filter((row) => row.name === spec);
       assert.equal(rows.length, 1, `required fixture spec must run exactly once: ${spec}`);
-      assert.equal(rows[0].status, "ok", `required fixture spec failed: ${spec}`);
+      const [row] = rows;
+      assert.equal(row.status, "ok", `required fixture spec failed: ${spec}`);
+      assert.ok(Array.isArray(row.maps_loaded), `spec report row has no maps_loaded list: ${spec}`);
+      assert.equal(row.maps_loaded_truncated, false, `spec report row's maps_loaded is truncated: ${spec}`);
+      assert.ok(row.maps_loaded.includes(fixture.map), `${spec} passed without booting ${fixture.map}`);
     }
   }
 }
@@ -124,8 +141,10 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   const counts = checkFixtureFiles(pack);
   const gravity = checkGravityRoll(pack);
   const reportPath = process.argv[2];
-  if (reportPath) checkFixtureResults(JSON.parse(readFileSync(reportPath, "utf8")));
-  const verdict = reportPath ? "each exercised by its passing named specs" : "each loaded by its named specs";
+  if (reportPath) {
+    checkFixtureResults(JSON.parse(readFileSync(reportPath, "utf8")), [...mapFixtures, ...gravityRollFixtures(pack)]);
+  }
+  const verdict = reportPath ? "each booted by its passing named specs" : "each named in its specs' source";
   console.log(`maps/: ${counts.shipped} shipped; tests/maps/: ${counts.fixtures} fixtures, ${verdict}; ` +
     `${gravity} pinning standard gravity, each walked by ${gravityRollSpec}`);
 }

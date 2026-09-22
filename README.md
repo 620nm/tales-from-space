@@ -91,13 +91,13 @@ cannot run says so by name, both in place and in the closing
 | `build` | The engine binaries the later lanes run. |
 | `bake` | `assets/*.ron`, `assets/fonts/` and the pinned tg revision bake, into `target/web` — never the engine checkout's own served root. |
 | `content` | Every content file loads: the lint a spec run skips. |
-| `maps` | Every file in both `maps/` (shipped) and `tests/maps/` (focused fixtures) parses, preflights, writes and reads back unchanged; the lane reports separate counts, including zero, and fails unless every `tests/maps/` file is named with specs whose code holds a literal `t.world_file` call naming it (`tools/map-fixture-coverage.mjs`; a source check, not proof the call runs). It does not boot or step a world. |
+| `maps` | Every file in both `maps/` (shipped) and `tests/maps/` (focused fixtures) parses, preflights, writes and reads back unchanged; the lane reports separate counts, including zero, and fails fast unless every `tests/maps/` file is named with specs whose code holds a literal `t.world_file` call naming it (`tools/map-fixture-coverage.mjs`; `specs` proves the boot). It does not boot or step a world. |
 | `lint-assets` | Every sprite name content says is in the bake. |
 | `roster` | The roster a server would serve builds; `target/gate/roster.json` is what the next lanes read. |
 | `placeable` | Everything declared is offered in the map editor, and its art is in this pack's bake (`LUNATIC_WEB_ROOT`). |
 | `pack-ui-build` | `ui/` compiles against that engine's SDK, and every font `ui/fonts.json` declares is published in this pack's bake (`--web`). |
 | `pack-node` | `tools/test.mjs`: the theme and message lints and every `tools/test-*.mjs`. |
-| `specs` | `tests/**/*_test.luau` through the engine's spec runner, including the actual boot/step assertions for focused map fixtures; its `--json` report must show each named fixture spec run once and passed. |
+| `specs` | `tests/**/*_test.luau` through the engine's spec runner, including the actual boot/step assertions for focused map fixtures; its `--json` report proves each fixture was booted: every named spec ran once, passed, and lists the fixture in an untruncated `maps_loaded` (`tools/map-fixture-coverage.mjs`). |
 | `ui-shots` | Every `ui/fixtures` and `ui/staff/fixtures` baseline, drawn through the real host against this pack's bake (`--web`). |
 | `world-pointer`, `push-motion` | The fixtures in `tests/fixtures/`, driven in the real client against this pack's bake. |
 

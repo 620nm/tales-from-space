@@ -412,7 +412,8 @@ map_fixture_check() {
 }
 
 # The whole spec run, then its `--json` report read back: each named
-# fixture spec ran exactly once and passed.
+# fixture spec ran exactly once, passed, and booted its fixture (an
+# untruncated `maps_loaded`).
 spec_fixture_check() {
   report=$GATE/spec-results.json
   rm -f "$report"
