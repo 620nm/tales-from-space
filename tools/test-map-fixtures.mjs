@@ -5,7 +5,13 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
-import { checkFixtureFiles, checkFixtureResults, mapFixtures, worldFileNames } from "./map-fixture-coverage.mjs";
+import {
+  checkFixtureFiles,
+  checkFixtureResults,
+  checkGravityRoll,
+  mapFixtures,
+  worldFileNames,
+} from "./map-fixture-coverage.mjs";
 
 const pack = fileURLToPath(new URL("..", import.meta.url));
 const scratchRoot = join(pack, "target");
@@ -89,7 +95,31 @@ test("world_file names are read from code, not comments", () => {
   assert.deepEqual([...worldFileNames('--[==[\nt.world_file("c.ron")\n]==]\nt.world_file("d.ron")')], ["d.ron"]);
 });
 
+test("the gravity roll walks exactly the fixtures pinning standard gravity", () => {
+  const pinned = "(\n    environment: (gravity_m_s2: Exact(9.80665)),\n)";
+  const maps = {
+    "tests/maps/a.ron": pinned,
+    "tests/maps/b.ron": pinned,
+    "tests/maps/zero.ron": "(environment: (gravity_m_s2: Exact(0.0)))",
+    "tests/maps/silent.ron": "// gravity_m_s2: Exact(9.80665)\n()",
+  };
+  const roll = (names) => `for _, map in ipairs({ ${names} }) do\n    t.world_file(map, 7)\nend\n`;
+  withPack({ ...maps, "tests/roll_test.luau": roll('"a.ron", "b.ron"') }, (root) =>
+    assert.equal(checkGravityRoll(root, "roll_test.luau"), 2));
+  const wrong = {
+    "a pinned fixture left out": roll('"a.ron"'),
+    "an unpinned fixture listed": roll('"a.ron", "b.ron", "zero.ron"'),
+    "a listed name only in a comment": `${roll('"a.ron"')}-- "b.ron"\n`,
+  };
+  for (const [label, source] of Object.entries(wrong)) {
+    withPack({ ...maps, "tests/roll_test.luau": source }, (root) =>
+      assert.throws(() => checkGravityRoll(root, "roll_test.luau"), /must walk exactly/, label));
+  }
+  withPack(maps, (root) => assert.throws(() => checkGravityRoll(root, "roll_test.luau"), /gravity roll spec missing/));
+});
+
 test("this pack's fixtures are each loaded by their named specs", () => {
   const counts = checkFixtureFiles(pack);
   assert.equal(counts.fixtures, mapFixtures.length);
+  checkGravityRoll(pack);
 });

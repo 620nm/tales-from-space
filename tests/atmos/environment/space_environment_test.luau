@@ -113,6 +113,7 @@ assert(#sky.name > 0, "a sky has something to call it: " .. tostring(sky.name))
 
 -- Each focused fixture that pins standard gravity walks under it; a map
 -- that says nothing about gravity stays unconstrained and is not listed.
+-- The list is exactly those fixtures (tools/map-fixture-coverage.mjs).
 for _, map in ipairs({
     "cold_outpost.ron",
     "flooded_alcove.ron",

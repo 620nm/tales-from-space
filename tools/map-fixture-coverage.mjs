@@ -2,7 +2,8 @@
 // a fixture no spec boots would pass on parsing alone: every
 // `tests/maps/*.ron` is named here with the specs that load it through
 // `t.world_file`, and the `specs` lane's `--json` report proves each
-// named spec ran once and passed. Zero shipped `maps/` is legal.
+// named spec ran once and passed. Zero shipped `maps/` is legal. The
+// gravity roll's fixture list is derived-and-compared, not trusted.
 //
 //   node tools/map-fixture-coverage.mjs [spec-report.json]
 import assert from "node:assert/strict";
@@ -17,12 +18,18 @@ export const mapFixtures = [
   },
   { map: "diagonal_wall_mount.ron", specs: ["construction/diagonal_wall_mount_test.luau"] },
   { map: "flooded_alcove.ron", specs: ["atmos/environment/flooded_alcove_test.luau"] },
+  { map: "plant_loop.ron", specs: ["atmos/pipenet/plant_loop_test.luau"] },
   {
     map: "programmable_airlock.ron",
     specs: ["devices/programmable_airlock_test.luau", "devices/programmable_airlock_ready_test.luau"],
   },
   { map: "tank_row.ron", specs: ["atmos/pipenet/tank_row_test.luau"] },
 ];
+
+// The spec that walks every fixture pinning standard gravity from a
+// table of names, so no literal `t.world_file` names them.
+export const gravityRollSpec = "atmos/environment/space_environment_test.luau";
+const STANDARD_GRAVITY = /\bgravity_m_s2\s*:\s*Exact\(\s*9\.80665\s*\)/;
 
 function ronFiles(dir) {
   if (!existsSync(dir)) return [];
@@ -40,11 +47,31 @@ function specFiles(tests, dir = tests) {
   });
 }
 
+// A Luau source with its comments dropped.
+function luauCode(source) {
+  return source.replace(/--\[(=*)\[[\s\S]*?\]\1\]/g, "").replace(/--[^\n]*/g, "");
+}
+
 // The maps a spec source boots by literal name. Comments are dropped
 // first, so a commented-out call or a mention in prose loads nothing.
 export function worldFileNames(source) {
-  const code = source.replace(/--\[(=*)\[[\s\S]*?\]\1\]/g, "").replace(/--[^\n]*/g, "");
-  return new Set([...code.matchAll(/\bworld_file\(\s*(["'])([^"'\n]+)\1/g)].map((m) => m[2]));
+  return new Set([...luauCode(source).matchAll(/\bworld_file\(\s*(["'])([^"'\n]+)\1/g)].map((m) => m[2]));
+}
+
+// The gravity roll's `.ron` string literals are exactly the
+// `tests/maps/` files whose own lines pin standard gravity.
+export function checkGravityRoll(pack, spec = gravityRollSpec) {
+  const maps = join(pack, "tests", "maps");
+  const pinned = ronFiles(maps).filter((map) =>
+    readFileSync(join(maps, map), "utf8").split("\n").some((line) =>
+      STANDARD_GRAVITY.test(line.replace(/\/\/.*/, ""))));
+  const path = join(pack, "tests", spec);
+  assert.ok(existsSync(path), `gravity roll spec missing: tests/${spec}`);
+  const source = luauCode(readFileSync(path, "utf8"));
+  const listed = [...new Set([...source.matchAll(/(["'])([^"'\n]+\.ron)\1/g)].map((m) => m[2]))].sort();
+  assert.deepEqual(listed, pinned,
+    `tests/${spec} must walk exactly the tests/maps/ fixtures pinning standard gravity`);
+  return pinned.length;
 }
 
 export function checkFixtureFiles(pack, fixtures = mapFixtures) {
@@ -95,8 +122,10 @@ export function checkFixtureResults(report, fixtures = mapFixtures) {
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const pack = fileURLToPath(new URL("..", import.meta.url));
   const counts = checkFixtureFiles(pack);
+  const gravity = checkGravityRoll(pack);
   const reportPath = process.argv[2];
   if (reportPath) checkFixtureResults(JSON.parse(readFileSync(reportPath, "utf8")));
   const verdict = reportPath ? "each exercised by its passing named specs" : "each loaded by its named specs";
-  console.log(`maps/: ${counts.shipped} shipped; tests/maps/: ${counts.fixtures} fixtures, ${verdict}`);
+  console.log(`maps/: ${counts.shipped} shipped; tests/maps/: ${counts.fixtures} fixtures, ${verdict}; ` +
+    `${gravity} pinning standard gravity, each walked by ${gravityRollSpec}`);
 }
