@@ -115,6 +115,8 @@ test("only a report row that booted the fixture proves coverage", () => {
     /maps_loaded is truncated/);
   assert.throws(() => checkFixtureResults(withRow(({ maps_loaded: _, ...row }) => row), fixtures),
     /no maps_loaded list: row_test\.luau/);
+  assert.throws(() => checkFixtureResults({ specs: specs.filter((row) => row.name !== "row_test.luau") }, fixtures),
+    /must run exactly once: row_test\.luau/);
 });
 
 test("world_file names are read from code, not comments", () => {
