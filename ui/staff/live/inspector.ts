@@ -220,7 +220,9 @@ function auditInspector(session: StaffSession, entity: StaffEntity, inspection: 
           textNode(`staff/live/audit/${event.id}/result`, label(event.result, S.RESULT), "staff-muted"),
           textNode(`staff/live/audit/${event.id}/delta`, `${label(event.before)} → ${label(event.after)}`, "staff-mono"),
         ]), { header: [S.TIME, S.ACTION_TARGET, S.RESULT, S.CURRENT] })
-        : textNode("staff/live/audit/empty", S.NO_HISTORY, "staff-muted"),
+        : inspection && !inspection.historyRecorded
+          ? textNode("staff/live/audit/not-recorded", S.HISTORY_NOT_RECORDED, "staff-warning")
+          : textNode("staff/live/audit/empty", S.NO_HISTORY, "staff-muted"),
       openCasesButton(session, entity),
       ...(context.length || contextPage.error || contextPage.next
         ? [Section("staff/live/audit/context", S.HISTORY, [

@@ -155,5 +155,7 @@ export const REVIEW_DELETE = tfs("ui.staff.review_delete");
 export const REVIEW_GIB = tfs("ui.staff.review_gib");
 
 export const REQUEST_FAILED = (reason: string): string => tfs("ui.staff.request_failed", { reason });
+export const HISTORY_NOT_RECORDED = tfs("ui.staff.history_not_recorded");
+export const STORAGE_FAILED = tfs("ui.staff.storage_failed");
 export const RESTORE_APPLIED = tfs("ui.staff.restore_applied");
 export const RESTORE_PARTIAL = (reason: string): string => tfs("ui.staff.restore_partial", { reason });

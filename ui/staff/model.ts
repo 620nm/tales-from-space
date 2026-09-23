@@ -161,6 +161,9 @@ export interface StaffInspection {
   payload: Record<string, unknown> | null;
   related: StaffRef[];
   audit: StaffEvent[];
+  /** False when no ledger stream keeps this target's history: an empty
+   *  `audit` is then "not recorded", never "nothing happened". */
+  historyRecorded: boolean;
 }
 
 /** The pack-owned payload emitted by the native staff adapter. */
@@ -524,11 +527,11 @@ function decodePayload(value: unknown): StaffPayload | null {
   try { return object(JSON.parse(value)) as StaffPayload | null; } catch { return null; }
 }
 
-function inspectionValue(value: unknown, round: string): StaffInspection | null {
+export function inspectionValue(value: unknown, round: string): StaffInspection | null {
   const raw = object(value);
   const target = refValue(raw?.target);
   if (!raw || !target || typeof raw.found !== "boolean" || typeof raw.tombstone !== "boolean") return null;
-  return { target, found: raw.found, tombstone: raw.tombstone, payload: object(raw.payload), related: refs(raw.related), audit: Array.isArray(raw.audit) ? raw.audit.map((item) => eventValue(item, round)).filter((item): item is StaffEvent => !!item) : [] };
+  return { target, found: raw.found, tombstone: raw.tombstone, payload: object(raw.payload), related: refs(raw.related), audit: Array.isArray(raw.audit) ? raw.audit.map((item) => eventValue(item, round)).filter((item): item is StaffEvent => !!item) : [], historyRecorded: raw.history !== "not_recorded" };
 }
 
 /** Build the only accepted reference shape for a staff action or row. */
