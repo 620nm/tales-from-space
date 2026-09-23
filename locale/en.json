@@ -1310,6 +1310,8 @@
   "lunatic/tfs:ui.contact.not_found": "That staff conversation is no longer available.",
   "lunatic/tfs:ui.contact.stamp": "Shift second {second}",
   "lunatic/tfs:ui.staff.request_failed": "Request failed: {reason}",
+  "lunatic/tfs:ui.staff.history_not_recorded": "History is not recorded: no ledger stream on this server keeps it.",
+  "lunatic/tfs:ui.staff.storage_failed": "Staff storage has failed; staff tools are unavailable until an operator repairs it.",
   "lunatic/tfs:ui.staff.restore_applied": "Restore applied.",
   "lunatic/tfs:ui.staff.restore_partial": "Restore applied; revival did not complete: {reason}",
   "lunatic/tfs:ui.affordance.rebuild_reinforced_glass": "Fit reinforced glass",

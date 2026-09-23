@@ -2,6 +2,7 @@ import type { StaffProfile, StaffRef, StaffSession } from "../model";
 import { isDecimalId, isProfileId } from "../model";
 import { objectValue, readRef, refKey, sameRef, stringValue } from "../cases/records";
 import { admitStaffReadResponse, resetReadIntents } from "./read-intents";
+import { compareDecimalIds } from "../shared/records";
 
 type ObjectValue = Record<string, unknown>;
 
@@ -336,7 +337,7 @@ function referenceOrder(left: StaffRef | null, right: StaffRef | null): number {
   if (!left || !right) return (left ? 1 : 0) - (right ? 1 : 0);
   const leftKey = refKey(left);
   const rightKey = refKey(right);
-  if (left.round !== right.round) return left.round.localeCompare(right.round);
+  if (left.round !== right.round) return compareDecimalIds(left.round, right.round);
   if (left.kind !== right.kind) return left.kind.localeCompare(right.kind);
   if (/^\d+$/.test(left.id) && /^\d+$/.test(right.id)) {
     const leftId = left.id.replace(/^0+(?=\d)/, "");

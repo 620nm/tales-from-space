@@ -1,7 +1,7 @@
 import type { StaffCase, StaffEvent, StaffRef, StaffSession } from "../model";
 import { accountRef, recordRef, refKey, staffRef } from "../model";
 
-/** Event rows are addressed by durable SQLite cursor, never source sequence. */
+/** A ledger row is addressed by its round and `seq` together; `seq` alone repeats across rounds. */
 export function eventReference(event: StaffEvent): StaffRef {
   return { round: event.reference.round, kind: "event", id: event.reference.id };
 }
@@ -35,10 +35,21 @@ export function caseAddressedEvents(item: StaffCase): StaffRef[] {
 
 export function eventsForCase(session: StaffSession, item: StaffCase | null): StaffEvent[] {
   if (!item) return [];
-  const ids = new Set(caseAddressedEvents(item).map((ref) => ref.id));
-  return session.events.filter((event) => ids.has(event.reference.id) || event.caseId === item.id);
+  const keys = new Set(caseAddressedEvents(item).map(refKey));
+  return session.events.filter((event) => keys.has(refKey(event.reference)) || event.caseId === item.id);
 }
 
-export function rowReference(round: string, cursor: string): StaffRef {
-  return recordRef(round, cursor);
+export function rowReference(round: string, seq: string): StaffRef {
+  return recordRef(round, seq);
+}
+
+/** Decimal id text in numeric order: shorter is smaller, then digit by digit. */
+export function compareDecimalIds(left: string, right: string): number {
+  return left.length - right.length || (left < right ? -1 : left > right ? 1 : 0);
+}
+
+/** Rows in ledger order: by round, then by `seq`, both numeric. */
+export function compareEventOrder(left: StaffEvent, right: StaffEvent): number {
+  return compareDecimalIds(left.reference.round, right.reference.round)
+    || compareDecimalIds(left.reference.id, right.reference.id);
 }

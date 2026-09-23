@@ -3,7 +3,7 @@ import type { StaffCase, StaffEntity, StaffEvent, StaffProfile, StaffRef, StaffS
 import { isDecimalId, isProfileId, isStaffIdentifier, isStaffRefId, isStaffRound, staffRef } from "../model";
 import { refKey } from "../../refs";
 import { historicalEventPresentation } from "../shared/presentation";
-import { eventReference } from "../shared/records";
+import { compareEventOrder, eventReference } from "../shared/records";
 
 type ObjectValue = Record<string, unknown>;
 
@@ -102,7 +102,7 @@ export function caseFromRaw(value: unknown, round: string): StaffCase | null {
   const refs = uniqueRefs([...anchors, ...attachments]);
   const accounts = refs.filter((ref) => ref.kind === "account").map((ref) => ref.id).filter(isProfileId);
   const minds = refs.filter((ref) => ref.kind === "mind").map((ref) => ref.id).filter(isDecimalId);
-  const events = addressed.map((ref) => ref.id).filter(isDecimalId);
+  const events = addressed.filter((ref) => isDecimalId(ref.id) && ref.round !== "");
   const latest = outcomes.at(-1);
   const outcome = latest && typeof latest.value === "string"
     ? {
@@ -127,7 +127,7 @@ export function caseFromRaw(value: unknown, round: string): StaffCase | null {
     ...(refs.length ? { entityRefs: refs } : {}),
     ...(accounts.length ? { accountIds: accounts } : {}),
     ...(minds.length ? { mindIds: minds } : {}),
-    ...(events.length ? { eventIds: events } : {}),
+    ...(events.length ? { eventRefs: events } : {}),
     ...(outcome ? { outcome } : {}),
   };
 }
@@ -154,7 +154,7 @@ export function caseEventRefs(session: StaffSession, item: StaffCase): StaffRef[
 }
 
 export function eventRef(session: StaffSession, event: StaffEvent): StaffRef | null {
-  // Event ids come from the server cursor. Never derive one from a row index.
+  // An event's address is its server `{round, event, seq}`. Never derive one from a row index.
   return event.id ? eventReference(event) : null;
 }
 
@@ -286,11 +286,11 @@ export function localCaseEvents(session: StaffSession, item: StaffCase): StaffEv
     .filter((event) => event.caseId === id
       || eventRefs.some((ref) => eventMatchesRef(event, ref, session.roundId))
       || contextIds.has(refKey(event.reference)))
-    .sort((left, right) => left.time.localeCompare(right.time) || left.id.localeCompare(right.id));
+    .sort((left, right) => left.time.localeCompare(right.time) || compareEventOrder(left, right));
 }
 
 /**
- * Context pages are durable cursors, so retain each loaded page by its exact
+ * Context pages follow opaque index cursors, so retain each loaded page by its exact
  * anchor. The native bridge keeps only the latest response; this cache lets a
  * case show all pages the operator has explicitly opened without deriving rows
  * from an anchor or collapsing rows from another anchor.
@@ -443,11 +443,11 @@ function mergeCases(left: StaffCase, right: StaffCase): StaffCase {
   const entityRefs = refs(left.entityRefs ?? [], right.entityRefs ?? []);
   const accountIds = [...new Set([...(left.accountIds ?? []), ...(right.accountIds ?? [])])];
   const mindIds = [...new Set([...(left.mindIds ?? []), ...(right.mindIds ?? [])])];
-  const eventIds = [...new Set([...(left.eventIds ?? []), ...(right.eventIds ?? [])])];
+  const eventRefs = refs(left.eventRefs ?? [], right.eventRefs ?? []);
   if (entityRefs.length) merged.entityRefs = entityRefs;
   if (accountIds.length) merged.accountIds = accountIds;
   if (mindIds.length) merged.mindIds = mindIds;
-  if (eventIds.length) merged.eventIds = eventIds;
+  if (eventRefs.length) merged.eventRefs = eventRefs;
   return merged;
 }
 
@@ -687,7 +687,7 @@ export function allCaseEvents(session: StaffSession, item: StaffCase): StaffEven
   const pageRows = pageEvents(session, "case");
   const localRows = localCaseEvents(session, item);
   return [...new Map([...pageRows, ...localRows].map((row) => [refKey(row.reference), row])).values()]
-    .sort((left, right) => left.time.localeCompare(right.time) || left.id.localeCompare(right.id));
+    .sort((left, right) => left.time.localeCompare(right.time) || compareEventOrder(left, right));
 }
 
 export function queryJson(op: string, body: ObjectValue): string {
