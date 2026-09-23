@@ -7,6 +7,7 @@ import { label, profileFor, propertyValue } from "../model";
 import { caseAnchorRefs, caseId, contextQuery, contextQueryAnchor, contextRows, pageFor, responseProfileFor } from "../cases/records";
 import { createCasePress, profileActionCard, staffLocal } from "../actions";
 import * as S from "../strings";
+import { refKey } from "../../refs";
 import { rememberReviewTarget } from "./review";
 import { liveState } from "./state";
 import { propertyDraftJson, propertyOptionChoices, propertyOptionDraft } from "../shared/property-values";
@@ -200,7 +201,7 @@ function readRows(entity: StaffEntity, inspection: StaffInspection | null): { la
 function auditInspector(session: StaffSession, entity: StaffEntity, inspection: StaffInspection | null): UiNode {
   const state = liveState(session);
   const all = [...(entity.history ?? []), ...(inspection?.audit ?? []), ...(session.audit ?? []), ...(session.events ?? [])];
-  const rows = [...new Map(all.filter((event) => eventMatchesEntity(event, entity.ref)).map((event) => [event.id, event])).values()]
+  const rows = [...new Map(all.filter((event) => eventMatchesEntity(event, entity.ref)).map((event) => [refKey(event.reference), event])).values()]
     .filter((event) => !state.query || `${event.action} ${event.target} ${event.actor}`.toLowerCase().includes(state.query.toLowerCase()));
   const anchor = contextQueryAnchor(session);
   const context = anchor && sameRef(anchor, entity.ref) ? contextRows(session, anchor) : [];

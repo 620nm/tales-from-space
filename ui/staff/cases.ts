@@ -202,7 +202,7 @@ function evidenceInspector(session: StaffSession, item: StaffCase | null): UiNod
   if (ref?.kind === "account") return profileDrill(session, ref.id);
   const entity = ref?.kind === "entity" || ref?.kind === "body" ? entityFor(session, ref.id) : null;
   const profile = entity?.accountId ? accountProfile(session, entity.accountId) : null;
-  const event = ref?.kind === "event" && item ? allCaseEvents(session, item).find((row) => row.id === ref.id) : null;
+  const event = ref?.kind === "event" && item ? allCaseEvents(session, item).find((row) => row.reference.round === ref.round && row.id === ref.id) : null;
   const target = item ? caseRef(session, item) : null;
   return Card("staff/cases/evidence", [
     textNode("staff/cases/evidence/kicker", S.INSPECTOR, "staff-eyebrow"),

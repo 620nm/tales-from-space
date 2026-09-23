@@ -49,7 +49,7 @@ export type StaffCapability =
   | "inspect" | "freeze" | "restore" | "drive" | "kill" | "delete"
   | "gib" | "move" | "duplicate" | "property";
 
-/** One source row. `id` is the durable database cursor; `sourceSeq` is separate. */
+/** One ledger row, addressed by `reference`: its round and its `seq` (`id`). */
 export interface StaffEvent {
   reference: StaffRef;
   id: DecimalId;
@@ -150,7 +150,7 @@ export interface StaffCase {
   entityRefs?: StaffRef[];
   accountIds?: ProfileId[];
   mindIds?: DecimalId[];
-  eventIds?: DecimalId[];
+  eventRefs?: StaffRef[];
   outcome?: { label: string; duration?: string; accountIds?: ProfileId[]; reason?: string };
 }
 
@@ -359,7 +359,7 @@ const optionalRef = (value: unknown, round: string): StaffRef | null => {
   return reference;
 };
 
-/** Parse the native HistoricalRow shape; its cursor remains distinct from source seq. */
+/** Parse the native HistoricalRow shape: `reference` is `{round, event, seq}`. */
 function eventValue(value: unknown, round: string): StaffEvent | null {
   const raw = object(value);
   const reference = refValue(raw?.reference);
@@ -501,7 +501,7 @@ function caseValue(value: unknown, round: string): StaffCase | null {
   const entityRefs = [...anchorHistory, ...attachments].filter((ref) => ref.kind !== "event");
   const accountIds = attachments.filter((ref) => ref.kind === "account").map((ref) => ref.id).filter(isProfileId);
   const mindIds = attachments.filter((ref) => ref.kind === "mind").map((ref) => ref.id).filter(isDecimalId);
-  const eventIds = addressedEvents.map((ref) => ref.id).filter(isDecimalId);
+  const eventRefs = addressedEvents.filter((ref) => isDecimalId(ref.id) && ref.round !== "");
   const statuses = Array.isArray(raw.statuses) ? raw.statuses.filter((item): item is Record<string, unknown> => !!object(item)) : [];
   const outcomes = Array.isArray(raw.outcomes) ? raw.outcomes.filter((item): item is Record<string, unknown> => !!object(item)) : [];
   const latest = outcomes.length ? outcomes[outcomes.length - 1] : undefined;
@@ -514,7 +514,7 @@ function caseValue(value: unknown, round: string): StaffCase | null {
     notes: Array.isArray(raw.notes) ? raw.notes.filter((item): item is Record<string, unknown> => !!object(item)) : [],
     statuses, outcomes,
     ...(entityRefs.length ? { entityRefs } : {}), ...(accountIds.length ? { accountIds } : {}),
-    ...(mindIds.length ? { mindIds } : {}), ...(eventIds.length ? { eventIds } : {}), ...(outcome ? { outcome } : {}),
+    ...(mindIds.length ? { mindIds } : {}), ...(eventRefs.length ? { eventRefs } : {}), ...(outcome ? { outcome } : {}),
   };
 }
 
