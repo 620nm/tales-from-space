@@ -414,10 +414,14 @@ map_fixture_check() {
 # The whole spec run, then its `--json` report read back: each named
 # fixture spec ran exactly once, passed, and booted its fixture (an
 # untruncated `maps_loaded`).
+# The specs run on the engine's debug build (`server` is a plain `cargo
+# run`), so every tick checks the custody invariant: each announced item
+# holder is the world's (the engine's docs/ledger/items.md §Custody).
 spec_fixture_check() {
   report=$GATE/spec-results.json
   rm -f "$report"
-  server test "$PACK" --web "$PACK_WEB" --json "$report" || return $?
+  (export LUNATIC_CUSTODY_INVARIANT=1; server test "$PACK" --web "$PACK_WEB" --json "$report") ||
+    return $?
   node "$PACK/tools/map-fixture-coverage.mjs" "$report"
 }
 
