@@ -26,6 +26,13 @@ Open conversations refresh after committed player replies and delivery
 receipts. The newest 16 messages appear first, with older history available
 through pagination. Refresh messages rereads history without resending text.
 
+Every round keeps one durable log of every row the engine announces:
+`content/ledger.luau` declares the `audit` stream (`scope = "round"`, the
+`all` group), so each round's segment is the whole audit and replay record
+of that round, genesis included. Nothing else is declared durable. The
+engine's `docs/ledger/streams.md` owns the roster, segment and retention
+contracts.
+
 The engine's `docs/STAFF.md` owns authority, control and audit contracts.
 This pack owns workspace composition, labels and content-specific behavior.
 Director and punishment enforcement have no interface here.
