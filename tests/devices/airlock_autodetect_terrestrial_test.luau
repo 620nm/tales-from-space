@@ -1,5 +1,8 @@
 -- Cold air outside, warm air in: both ends breathe, so no pumping.
 -- The lock only guards passage: one leaf shuts, the other opens.
+-- The cold end is a walled room and the chamber, open to it, holds
+-- the same cold air: matter moves from the first tick, so a vacuum
+-- chamber or a space edge would drain it and make the lock pump.
 local AIRLOCK = [==[
 (
     name: "Cold Outdoors Airlock",
@@ -12,7 +15,7 @@ local AIRLOCK = [==[
     },
     rows: [
         "#############", "######.#.####", "#############",
-        "#........... ", "#GA.o#..#... ", "############ ",
+        "#...........#", "#GA.o#..#...#", "#############",
         "             ",
     ],
     blends: {
@@ -22,8 +25,8 @@ local AIRLOCK = [==[
         "cold_air": (rows: [("o2", 9.9), ("n2", 37.1)],
             temperature_k: 259.15, amount: per_tile),
     },
-    painted: [(6, 1, "supply"), (6, 3, "vacuum"), (7, 3, "vacuum"),
-        (6, 4, "vacuum"), (7, 4, "vacuum"), (8, 3, "vacuum"),
+    painted: [(6, 1, "supply"), (6, 3, "cold_air"), (7, 3, "cold_air"),
+        (6, 4, "cold_air"), (7, 4, "cold_air"), (8, 3, "cold_air"),
         (9, 3, "cold_air"), (10, 3, "cold_air"), (11, 3, "cold_air"),
         (9, 4, "cold_air"), (10, 4, "cold_air"), (11, 4, "cold_air"),
         (8, 1, "vacuum")],
@@ -70,6 +73,13 @@ t.world(AIRLOCK, 0)
 local operator0 = t.join("assistant")
 t.join("engineer")
 t.run_ticks(20)
+
+-- The premise, read after the world has run: both ends, and the
+-- chamber open to the east leaf, still hold breathable air.
+for _, x in ipairs({ 3, 6, 8, 9, 11 }) do
+    local kpa = assert(t.room_pressure(x, 3))
+    assert(kpa >= 85, "(" .. x .. ",3) holds breathable pressure: " .. kpa)
+end
 
 -- Both ends breathe: the west leaf opens with no pumping at all.
 local operator = operator0

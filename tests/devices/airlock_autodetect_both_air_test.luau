@@ -1,5 +1,8 @@
 -- Warm air on both ends: an inside lock, so no pumping either.
 -- Same guard as the cold world: one leaf shuts, the other opens.
+-- Both ends are walled rooms and the chamber, open east, holds the
+-- same air: matter moves from the first tick, so a vacuum chamber or
+-- a space edge would drain an end and make the lock pump.
 local AIRLOCK = [==[
 (
     name: "Inside Airlock",
@@ -12,7 +15,7 @@ local AIRLOCK = [==[
     },
     rows: [
         "#############", "######.#.####", "#############",
-        "#........... ", "#GA.o#..#... ", "############ ",
+        "#...........#", "#GA.o#..#...#", "#############",
         "             ",
     ],
     blends: {
@@ -20,9 +23,7 @@ local AIRLOCK = [==[
         "supply": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)],
             temperature_k: 293.15, amount: per_tile),
     },
-    painted: [(6, 1, "supply"), (6, 3, "vacuum"), (7, 3, "vacuum"),
-        (6, 4, "vacuum"), (7, 4, "vacuum"), (8, 3, "vacuum"),
-        (8, 1, "vacuum")],
+    painted: [(6, 1, "supply"), (8, 1, "vacuum")],
     structures: [
         (3, 3, "player_spawn", { "jobs": "assistant" }),
         (9, 3, "player_spawn", { "jobs": "engineer" }),
@@ -66,6 +67,13 @@ t.world(AIRLOCK, 0)
 local operator0 = t.join("assistant")
 t.join("engineer")
 t.run_ticks(20)
+
+-- The premise, read after the world has run: both ends, and the
+-- chamber open to the east leaf, still hold warm air.
+for _, x in ipairs({ 3, 6, 8, 9, 11 }) do
+    local kpa = assert(t.room_pressure(x, 3))
+    assert(kpa >= 85, "(" .. x .. ",3) holds breathable pressure: " .. kpa)
+end
 
 -- Both ends breathe: the west leaf opens with no pumping at all.
 local operator = operator0
