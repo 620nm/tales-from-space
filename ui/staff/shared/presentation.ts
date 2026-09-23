@@ -61,6 +61,18 @@ function identifier(value: unknown): string | undefined {
   return typeof value === "number" && Number.isSafeInteger(value) && value >= 0 ? String(value) : undefined;
 }
 
+/** The field naming the item a lifecycle row speaks for (the engine's docs/ledger/items.md). */
+const ITEM_LIFECYCLE_SUBJECT: ReadonlyMap<string, string> = new Map([
+  ["item_spawned", "item_id"],
+  ["item_split", "item_id"],
+  ["item_merged", "item_id"],
+  ["stack_merged", "destination_id"],
+  ["item_consumed", "item_id"],
+  ["item_refilled", "item_id"],
+  ["item_transformed", "item_id"],
+  ["item_destroyed", "item_id"],
+]);
+
 /** Resolve only an exact historical ref; unrelated refs never become targets. */
 export function historicalEventPresentation(
   eventType: string,
@@ -72,7 +84,8 @@ export function historicalEventPresentation(
   const explicitTargetRef = readRef(payload?.target_ref);
   const payloadTarget = identifier(payload?.target);
   const eventName = typeof payload?.event === "string" ? payload.event : eventType;
-  const itemTarget = eventName === "item_spawned" ? identifier(payload?.item_id) : undefined;
+  const subjectField = ITEM_LIFECYCLE_SUBJECT.get(eventName);
+  const itemTarget = subjectField ? identifier(payload?.[subjectField]) : undefined;
   const targetId = payloadTarget ?? itemTarget;
   const targetRef = explicitTargetRef
     ?? (targetId ? refs.find((ref) => ref.id === targetId) : undefined);

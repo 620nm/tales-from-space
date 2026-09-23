@@ -57,6 +57,9 @@ assert(t.staff_restore(patient), "the same body can be restored again")
 -- The declared gib recipe mints each remain through item initialization,
 -- then destroys the body and its stowed anatomy. The Mind/session survives
 -- without a body, and the pile is visible at the body's former tile.
+-- Bodies announce their own parts and organs when minted (the engine's
+-- docs/ledger/items.md), so only the gib's own spawn rows are counted.
+local spawned_before_gib = #t.ledger_rows("ItemSpawned")
 assert(t.staff_gib(patient), "the human plan permits gibbing")
 assert(t.bodies_at(1, 1)[1] == nil, "the body is gone")
 local pile = t.items_at(1, 1)
@@ -91,8 +94,8 @@ for id in pairs(expected) do
 end
 local spawned = t.ledger_rows("ItemSpawned")
 local audited: { [string]: number } = {}
-for _, row in ipairs(spawned) do
-    local proto = ui_controls.text(row.proto)
+for index = spawned_before_gib + 1, #spawned do
+    local proto = ui_controls.text(spawned[index].proto)
     if declared[proto] then
         audited[proto] = (audited[proto] or 0) + 1
     end

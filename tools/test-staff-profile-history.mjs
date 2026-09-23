@@ -89,6 +89,34 @@ test("historical case, context and conversation references survive a new round",
   assert.deepEqual(conversation.reference, { round: "84", kind: "conversation", id: "7001" });
 });
 
+test("every item lifecycle row targets the item it speaks for", () => {
+  const cases = [
+    ["item_destroyed", { item_id: 4294965701 }, "4294965701"],
+    ["item_consumed", { item_id: 4294965702 }, "4294965702"],
+    ["item_transformed", { item_id: 4294965703 }, "4294965703"],
+    ["item_split", { item_id: 4294965704, source_id: 4294965705 }, "4294965704"],
+    ["item_merged", { item_id: 4294965706, destination_id: 4294965707 }, "4294965706"],
+    ["stack_merged", { source_id: 4294965708, destination_id: 4294965709 }, "4294965709"],
+  ];
+  for (const [event, fields, target] of cases) {
+    const refs = Object.values(fields).map((id) => ({ round: "2", kind: "entity", id: String(id) }));
+    const row = {
+      reference: { round: "2", kind: "event", id: "200" },
+      event_type: event,
+      server_id: "history-server",
+      created_at_ms: 1789251650531,
+      payload: { event, ...fields, seq: 199 },
+      refs,
+      tick: 199,
+      deleted: false,
+    };
+    const source = eventFrom(row, "3");
+    assert(source, event);
+    assert.equal(source.target, target, event);
+    assert.equal(source.targetRef?.id, target, event);
+  }
+});
+
 test("historical item spawns keep their root target, timestamp and cursors", () => {
   const timestamp = 1789251650531;
   const refs = [
