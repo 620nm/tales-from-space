@@ -441,11 +441,26 @@ map_fixture_check() {
 # The specs run on the engine's debug build (`server` is a plain `cargo
 # run`), so every tick checks the custody invariant: each announced item
 # holder is the world's (the engine's docs/ledger/items.md §Custody).
+#
+# The last run's report is kept as `spec-order.json` and schedules the
+# next run slowest file first (the engine's `test --order-by`), so the
+# longest spec never starts last. It is a scheduling hint only: never a
+# verdict, and an engine without the flag runs in path order.
+spec_takes_order() {
+  grep -q -- '"--order-by"' "$ENGINE/crates/lunatic-server/src/main.rs" 2>/dev/null
+}
 spec_fixture_check() {
   report=$GATE/spec-results.json
+  order=$GATE/spec-order.json
   rm -f "$report"
-  (export LUNATIC_CUSTODY_INVARIANT=1; server test "$PACK" --web "$PACK_WEB" --json "$report") ||
-    return $?
+  set -- --web "$PACK_WEB" --json "$report"
+  if spec_takes_order && [ -f "$order" ]; then
+    set -- "$@" --order-by "$order"
+  fi
+  (export LUNATIC_CUSTODY_INVARIANT=1; server test "$PACK" "$@")
+  rc=$?
+  [ -f "$report" ] && cp "$report" "$order"
+  [ "$rc" -eq 0 ] || return "$rc"
   node "$PACK/tools/map-fixture-coverage.mjs" "$report"
 }
 
@@ -631,26 +646,32 @@ UI_BUILT=${UI_BUILT:-$BAKE}
 # reading an earlier run's leavings.
 gated "$UI_BUILT" pack-node node "$PACK/tools/test.mjs" "$ENGINE"
 
-gated "$BAKE" specs spec_fixture_check
-
-if want ui-shots; then
-  if [ -n "$UI_BUILT" ]; then
-    blocked ui-shots "$UI_BUILT"
-  elif ! ui_lab_takes_web; then
-    skip ui-shots "ui-lab has no --web: it reads the engine's own bake" \
-      "pack UI shots (ui-lab reads the engine checkout's bake; it needs --web <root>)"
-  elif ! UI_SHOTS_RUNNER=$(cd "$ENGINE" && node tools/ui-lab/reference.mjs --runner 2>&1); then
-    skip ui-shots "no ui-lab runner: $UI_SHOTS_RUNNER" \
-      "pack UI shots (no ui-lab runner)"
-  else
-    reason=$(ui_shots_skip)
-    if [ -n "$reason" ]; then
-      skip ui-shots "$reason" "pack UI shots ($reason)"
+# The pack's shots read the bake and the built interface, never the spec
+# run, so they shoot while the specs run: one Chrome beside the spec
+# pool. The live pair below still runs alone, after both.
+ui_shots_lane() {
+  if want ui-shots; then
+    if [ -n "$UI_BUILT" ]; then
+      blocked ui-shots "$UI_BUILT"
+    elif ! ui_lab_takes_web; then
+      skip ui-shots "ui-lab has no --web: it reads the engine's own bake" \
+        "pack UI shots (ui-lab reads the engine checkout's bake; it needs --web <root>)"
+    elif ! UI_SHOTS_RUNNER=$(cd "$ENGINE" && node tools/ui-lab/reference.mjs --runner 2>&1); then
+      skip ui-shots "no ui-lab runner: $UI_SHOTS_RUNNER" \
+        "pack UI shots (no ui-lab runner)"
     else
-      run ui-shots ui_shots_check
+      reason=$(ui_shots_skip)
+      if [ -n "$reason" ]; then
+        skip ui-shots "$reason" "pack UI shots ($reason)"
+      else
+        run ui-shots ui_shots_check
+      fi
     fi
   fi
-fi
+}
+ui_shots_lane & p_shots=$!
+gated "$BAKE" specs spec_fixture_check
+wait "$p_shots"
 
 # Serial, and after the builders: several headless Chrome/SwiftShader
 # instances at once flaked a pixel-diff baseline on the engine's gate.
