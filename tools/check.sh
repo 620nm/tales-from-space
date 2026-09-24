@@ -14,9 +14,8 @@
 # TWO GATES, ONE ENGINE. This gate NEVER writes the engine checkout's
 # own served root: that one is the engine gate's demo bake. This pack's bake goes to
 # `target/web` HERE and every headless subcommand reads it back with
-# `--web`. Cargo's per-layout lock still serializes this gate against an
-# engine gate running in the same checkout; point `LUNATIC_ENGINE` at a
-# second engine worktree to run both at once.
+# `--web`. Both gates also take the engine's machine gate lock (below),
+# so on one box they run one after the other, never side by side.
 #
 # QUIET. One line per lane; a failing lane's whole log is printed at the
 # end, and nothing else is. Logs land in target/gate/log/<lane>.log.
@@ -31,8 +30,14 @@
 # ONE AT A TIME. A run claims $GATE.lock for its whole life and a second
 # invocation sharing that state dir is REFUSED (exit 2): the two reset
 # each other's bookkeeping, and a wiped failure is the same sin as a
-# skip that reads as a pass. Give a second run its own state dir:
-# `GATE=$PWD/target/gate2 sh tools/check.sh ...`.
+# skip that reads as a pass. A second run with its own state dir
+# (`GATE=$PWD/target/gate2 sh tools/check.sh ...`) queues instead.
+#
+# ONE PER MACHINE. Past its own state dir, a run waits for the engine's
+# machine gate lock (its tools/gate/machine-lock.sh and docs/gates.md),
+# shared with the engine gate, then runs at full width, dropping any
+# throttle it inherited. The wait is bounded by GATE_WAIT seconds
+# (default 240, 0 = forever); past it the run exits 75 as BUSY.
 set -e
 cd "$(dirname "$0")/.."
 PACK=$PWD
@@ -126,7 +131,7 @@ take_lock() {
 
 refuse_second_run() {
   echo "a gate is already running here: pid $lock_pid, started $lock_started, lanes: $lock_lanes" >&2
-  echo "  wait for it, or give this run its own state dir: GATE=\$PWD/target/gate2 sh tools/check.sh" >&2
+  echo "  wait for it; a run with its own state dir (GATE=\$PWD/target/gate2) queues behind it" >&2
   exit 2
 }
 
@@ -158,6 +163,20 @@ release_lock() {
 trap release_lock EXIT
 trap 'release_lock; exit 130' INT
 trap 'release_lock; exit 143' TERM
+
+# See ONE PER MACHINE above. An engine older than the lock has none to
+# take; the run says so and goes ahead, since the lock guards the box's
+# load, not what any lane proves.
+if [ -f "$ENGINE/tools/gate/machine-lock.sh" ]; then
+  . "$ENGINE/tools/gate/machine-lock.sh"
+  trap 'machine_lock_release; release_lock' EXIT
+  trap 'machine_lock_release; release_lock; exit 130' INT
+  trap 'machine_lock_release; release_lock; exit 143' TERM
+  machine_lock_acquire "pack gate in $PACK (engine $ENGINE): ${ONLY:-all lanes}"
+  gate_full_width
+else
+  echo "note  $ENGINE has no tools/gate/machine-lock.sh: no machine gate lock taken"
+fi
 
 # The verdict counts THIS run's failures out of THIS run's files, so
 # nothing reaching into a shared $GATE can turn a red run green by

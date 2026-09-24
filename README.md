@@ -134,9 +134,10 @@ the closing line that it matched this pack's fonts against the engine's bake.
 
 The gate's scratch — the bake, its state directory and the browser lanes'
 recordings — is `target/`, which is gitignored. Cargo builds in the engine's
-own target directory, whose exclusive lock serializes this gate against an
-engine gate in the same checkout; point `LUNATIC_ENGINE` at a second engine
-worktree to run both at once.
+own target directory. This gate and the engine's take one machine-wide lock
+(the engine's `tools/gate/machine-lock.sh`), so a second gate anywhere on the
+box waits its turn — at most `GATE_WAIT` seconds, 240 by default — and then
+runs at full width.
 
 `.github/workflows/ci.yml` runs this same gate on a runner and installs every
 prerequisite a lane names, so a skip there is a broken workflow rather than a
