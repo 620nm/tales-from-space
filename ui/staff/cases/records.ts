@@ -632,6 +632,28 @@ export function responseProfileFor(session: StaffSession, id: string): StaffProf
   return null;
 }
 
+/** The engine's refusal of a page cursor it did not issue to this session for this query. */
+export const CURSOR_NOT_ISSUED = "staff.cursor_not_issued";
+
+let reopenedResponseKey = "";
+
+/**
+ * Page cursors die with the session and the round, so a refused "load more"
+ * reopens its query from the first page (engine docs/staff/history.md), once
+ * per response envelope; an opening page is never refused this way.
+ */
+export function cursorReopenQuery(session: StaffSession): Record<string, Json> | null {
+  const response = recordResponse(session);
+  if (!response || stringValue(response.error) !== CURSOR_NOT_ISSUED) return null;
+  const query = objectValue(response.query);
+  if (!query || nextCursor(query.after) === null) return null;
+  const key = rememberedKey(response);
+  if (key === reopenedResponseKey) return null;
+  reopenedResponseKey = key;
+  const { after: _after, ...opening } = query;
+  return { kind: "query", query: JSON.stringify(opening) };
+}
+
 function nextCursor(value: unknown): string | null {
   if (typeof value === "string" || typeof value === "number") return String(value);
   return null;

@@ -8,7 +8,9 @@ import { localPress, request, profileCard, staffLocal } from "./actions";
 import { readStaff, type StaffSession } from "./model";
 import * as S from "./strings";
 import { staffNotice } from "./notice";
-import { applyFlowLocal, staffViewAction } from "./flows";
+import { applyFlowLocal, caseFlowPending, staffViewAction } from "./flows";
+import { cursorReopenQuery } from "./cases/records";
+import { staffRequest } from "./shared/actions";
 import { beginProfileRender, profileViewAction } from "./profile/flows";
 
 /** Staff package entry; the ordinary gameplay package never renders this. */
@@ -75,6 +77,13 @@ function headerProfile(session: StaffSession): UiNode {
   return { ...card, class: [...(card.class ?? []), "staff-header-profile"] };
 }
 
+/** A refused page cursor reopens its query once no response chain is in flight. */
+function cursorReopenAction(session: StaffSession | null) {
+  if (!session || !session.allowed || caseFlowPending(session)) return undefined;
+  const reopen = cursorReopenQuery(session);
+  return reopen ? staffRequest(session, reopen) : undefined;
+}
+
 const ui: GuestUi = {
   onView(raw) {
     const view = raw as unknown as GameplayView;
@@ -84,7 +93,7 @@ const ui: GuestUi = {
     // gets to overtake a case read.
     const caseAction = staffViewAction(session);
     const profileAction = profileViewAction(session);
-    return { action: caseAction ?? profileAction };
+    return { action: caseAction ?? profileAction ?? cursorReopenAction(session) };
   },
   render(raw) {
     begin();
