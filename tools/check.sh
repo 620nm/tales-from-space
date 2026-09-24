@@ -398,17 +398,22 @@ placeable_reads_a_web_root() {
 # palette the browser builds. Where the art half cannot reach this
 # pack's bake, the RUNNER declares that skip by name and the shape
 # rules over this pack's roster still run.
+#
+# The test is named across the engine's WORKSPACE, never with
+# `-p lunatic-client`: that selection resolves the client's dependencies
+# differently and rewrites its unhashed cdylib rlib in the engine's
+# target/, so the engine's next build recompiles lunatic-server.
 placeable_check() {
   if placeable_reads_a_web_root; then
     (cd "$ENGINE" && env LUNATIC_ROSTER="$ROSTER" LUNATIC_WEB_ROOT="$PACK_WEB" \
       cargo nextest run --cargo-quiet --manifest-path "$ENGINE/Cargo.toml" \
-      -p lunatic-client --test placeable)
+      --workspace --test placeable)
   else
     echo "placeable art rule (the test reads the engine checkout's own bake, not --web)" \
       >> "$SKIPPED"
     (cd "$ENGINE" && env LUNATIC_ROSTER="$ROSTER" LUNATIC_PLACEABLE_NO_ATLAS=1 \
       cargo nextest run --cargo-quiet --manifest-path "$ENGINE/Cargo.toml" \
-      -p lunatic-client --test placeable)
+      --workspace --test placeable)
   fi
 }
 
