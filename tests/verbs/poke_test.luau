@@ -24,10 +24,12 @@ t.world(ARENA, 0)
 local poker = t.join("assistant")
 local crewman = t.join("engineer")
 t.run_ticks(3)
-while t.hands(poker).held ~= nil do
+-- One drop empties the working hand, whatever a job started it with.
+if t.hands(poker).held ~= nil then
     t.drop(poker)
     t.tick()
 end
+assert(t.hands(poker).held == nil, "the poker's working hand is empty")
 t.messages(poker)
 local before = #t.ledger_rows("poked")
 
