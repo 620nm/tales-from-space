@@ -72,10 +72,18 @@ for index = 1, 30 do
 end
 
 -- A depleted writer closes its bound window when the inventory snapshot
--- reaches zero. Try the empty writer while it is still paired with the
--- sheet, then reopen the sheet read-only and prove no thirty-first fragment.
+-- reaches zero. Trying the empty writer on the sheet it was paired with is
+-- refused out loud and opens nothing; then reopen the sheet read-only and
+-- prove no thirty-first fragment.
+t.messages(p)
 t.use_on_other(p)
 t.tick()
+local refused = false
+for _, line in ipairs(t.messages(p)) do
+    refused = refused or string.find(line, "red crayon is empty", 1, true) ~= nil
+end
+assert(refused, "the spent crayon says it is empty")
+assert(t.ui(p, "writing") == nil, "and no writing window opens for it")
 t.drop(p)
 t.tick()
 t.swap_hands(p)

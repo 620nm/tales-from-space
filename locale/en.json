@@ -848,6 +848,7 @@
   "lunatic/tfs:lib.vessel.soak_dry": "There is nothing on the deck here.",
   "lunatic/tfs:lib.vessel.soak_full": "The {noun} will hold no more.",
   "lunatic/tfs:lib.vessel.tank_leak": "The tank springs a leak!",
+  "lunatic/tfs:lib.writing.spent": "The {writer} is empty!",
   "lunatic/tfs:structures.canister.split": "The canister splits open!",
   "lunatic/tfs:structures.stationary_tank.split": "The pressure tank splits along a weld!",
   "lunatic/tfs:lib.subfloor.covered": "The floor is in the way. Pry the tile up first.",
