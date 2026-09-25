@@ -18,11 +18,12 @@ capacity model, so RimWorld's shape carries our constants.
 
 | Roster | Rows |
 |---|---|
-| `equipment` | `id`, `uniform`, `suit` (`seals`), `belt`, `back` (`quick_store`), `mask` (`breathes`) |
+| `equipment` | `id`, `uniform`, `suit` (`seals`), `eyes`, `belt`, `back` (`quick_store`), `mask` (`breathes`) |
 | `pools` | `brute`/`burn` — attachment storage, ports `impact`/`heat`; `oxy`/`tox` — owner storage, ports `oxygen_loss`/`toxin_load` (carbon.dm:424-433; _bodyparts.dm:780-803) |
 | `properties` | `health` = `health_fraction`, `damage` = `damage_fraction`, `oxy`/`tox` = `{ pool = … }`, `blood` = `blood_fraction` |
 | `capacity_roles` | `consciousness moving manipulation sight hearing speech breathing blood metabolism`, each bound to the same-meaning native port |
 | `readouts` | `brute burn oxy tox` off pools; `pressure`/`temperature` (suffix `C`)/`tank` off the telemetry ports |
+| `status_displays` | `medhud` off `health`: RoundHealth's 20 steps, `dead` or `undone` forces step 20 and lights `huddead` (else `hudhealthy`); audience `revealed` (the `health_hud` glasses) and `ghosts` (data_huds.dm:107-186) |
 | `aim` | `aimed = 80`, `lying_bonus = 10`, `thrown = 65` (item_attack.dm:321-326; living_defense.dm:263-264) |
 
 The ids are ours; the ports are the only thing the engine reads. Slot

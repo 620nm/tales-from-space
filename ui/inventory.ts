@@ -78,8 +78,10 @@ function openers(current: InventoryState): UiNode | null {
 }
 
 let wornVisible = true;
+// Eyes share the top-left cell with ears: tg's ui_glasses is the left
+// column's top row (code/__DEFINES/hud.dm:272), and no pack roster wears both.
 const anatomy: Record<string, [number, number]> = {
-  ears: [0, 0], head: [1, 0], lamp: [1, 0], mask: [2, 0],
+  ears: [0, 0], eyes: [0, 0], head: [1, 0], lamp: [1, 0], mask: [2, 0],
   gloves: [0, 1], uniform: [1, 1], suit: [2, 1],
   shoes: [1, 2], id: [2, 2],
 };

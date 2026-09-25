@@ -3,7 +3,7 @@ import { Slot } from "@lunatic/ui";
 
 // tgstation code/_onclick/hud/human.dm:85-142 supplies the empty silhouettes
 // and occupied template variants; inventory_slot.dm:19-21 owns the layering.
-const silhouettes = new Set(["uniform", "suit", "id", "mask", "back", "belt", "gloves", "shoes", "ears", "head"]);
+const silhouettes = new Set(["uniform", "suit", "id", "mask", "back", "belt", "gloves", "shoes", "ears", "head", "eyes"]);
 const small = new Set(["id", "back", "belt"]);
 
 // A hand cell names itself in its top-left corner. The caption is the

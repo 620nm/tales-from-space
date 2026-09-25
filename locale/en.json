@@ -149,6 +149,7 @@
   "lunatic/tfs:entity.he_junction.name": "junction",
   "lunatic/tfs:entity.he_pipe.name": "heat-exchanging pipe",
   "lunatic/tfs:entity.headset.name": "radio headset",
+  "lunatic/tfs:entity.health_hud.name": "health scanner HUD",
   "lunatic/tfs:entity.heat_exchanger_fitting.name": "heat exchanger fitting",
   "lunatic/tfs:entity.heat_exchanger.name": "heat exchanger",
   "lunatic/tfs:entity.hemostat.name": "hemostat",

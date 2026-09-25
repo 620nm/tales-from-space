@@ -18,5 +18,7 @@
         ("hud_shoes", Dmi("@hud", "shoes", 0)),
         ("hud_ears", Dmi("@hud", "ears", 0)),
         ("hud_head", Dmi("@hud", "head", 0)),
+        // The eyes slot wears tg's "glasses" silhouette (human.dm:161-167).
+        ("hud_eyes", Dmi("@hud", "glasses", 0)),
     ],
 )

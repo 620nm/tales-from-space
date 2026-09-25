@@ -1,0 +1,53 @@
+// The medical HUD: the health and status images it hangs over a body,
+// and the glasses that let their wearer see them.
+//
+// The images are tg's icons/mob/huds/hud.dmi (DEFAULT_HUDS_DMI,
+// code/__DEFINES/atom_hud.dm:75), under RoundHealth's state names
+// (code/game/data_huds.dm:107-153) and med_hud_set_status's
+// (:179-186). hudhealth0, -50 and -85 animate in tg (two frames each);
+// a status display draws one still cell, so all three show frame 0.
+//
+// One family of `tfs/assets/sprites.ron`'s roster. Every .ron in
+// this directory is baked, in FILE-NAME order and then entry order.
+(
+    sheets: [
+        ("medhud", "mob/huds/hud.dmi"),
+        ("glasses", "obj/clothing/glasses.dmi"),
+        ("worn_eyes", "mob/clothing/eyes.dmi"),
+    ],
+    sprites: [
+        ("medhud_100", Dmi("@medhud", "hudhealth100", 0)),
+        ("medhud_93_75", Dmi("@medhud", "hudhealth93.75", 0)),
+        ("medhud_87_5", Dmi("@medhud", "hudhealth87.5", 0)),
+        ("medhud_81_25", Dmi("@medhud", "hudhealth81.25", 0)),
+        ("medhud_75", Dmi("@medhud", "hudhealth75", 0)),
+        ("medhud_68_75", Dmi("@medhud", "hudhealth68.75", 0)),
+        ("medhud_62_5", Dmi("@medhud", "hudhealth62.5", 0)),
+        ("medhud_56_25", Dmi("@medhud", "hudhealth56.25", 0)),
+        ("medhud_50", Dmi("@medhud", "hudhealth50", 0)),
+        ("medhud_43_75", Dmi("@medhud", "hudhealth43.75", 0)),
+        ("medhud_37_5", Dmi("@medhud", "hudhealth37.5", 0)),
+        ("medhud_31_25", Dmi("@medhud", "hudhealth31.25", 0)),
+        ("medhud_25", Dmi("@medhud", "hudhealth25", 0)),
+        ("medhud_18_75", Dmi("@medhud", "hudhealth18.75", 0)),
+        ("medhud_12_5", Dmi("@medhud", "hudhealth12.5", 0)),
+        ("medhud_6_25", Dmi("@medhud", "hudhealth6.25", 0)),
+        ("medhud_0", Dmi("@medhud", "hudhealth0", 0)),
+        ("medhud_m50", Dmi("@medhud", "hudhealth-50", 0)),
+        ("medhud_m85", Dmi("@medhud", "hudhealth-85", 0)),
+        ("medhud_m100", Dmi("@medhud", "hudhealth-100", 0)),
+        ("medhud_healthy", Dmi("@medhud", "hudhealthy", 0)),
+        ("medhud_dead", Dmi("@medhud", "huddead", 0)),
+    ],
+    groups: [
+        // The glasses: /obj/item/clothing/glasses/hud/health, icon_state
+        // "healthhud" (code/modules/clothing/glasses/hud.dm:57-61), on
+        // the glasses sheet its parent names (_glasses.dm:4). Its worn
+        // sheet is the eyes slot's default (`get_default_icon_by_slot`,
+        // code/modules/mob/living/carbon/carbon_update_icons.dm:550,554-555).
+        // No hand pair: it sets no inhand_icon_state and
+        // glasses_lefthand.dmi has no "healthhud", so tg draws none.
+        (sheet: "glasses", sprites: [Sprite("health_hud", "healthhud", s)]),
+        (sheet: "worn_eyes", sprites: [Directions("worn_health_hud", "healthhud")]),
+    ],
+)

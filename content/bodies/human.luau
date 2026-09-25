@@ -78,6 +78,9 @@ local content = {
         -- `dead_below`. Losing the head is dying of it.
         { id = "undone", port = "viability", at_most = 0 },
     },
+    -- The medical HUD reads this body (content/part_tree.luau); its force
+    -- and its icons name the `dead` and `undone` lines above.
+    status_displays = { "medhud" },
     hands = 2, -- default_num_hands, living_defines.dm:120
     default_zone = "chest",
     -- The selector's own figure, off tg's default HUD style
