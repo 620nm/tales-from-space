@@ -103,13 +103,15 @@ assert(row.level == 19, "dead is health-100: " .. row.level)
 -- `undone` latches beside it: both light the huddead picture.
 assert(icons(row) == "dead,undone", "and huddead: " .. icons(row))
 
--- Healed back over the line, `dead` clears but the stopped heart keeps
--- `undone`: the body is as dead as it was, and the HUD still says so.
-t.set_health(patient, { brute = 50, burn = 0, oxy = 0, tox = 0 })
+-- Healed to full, `dead` clears but the stopped heart keeps `undone`:
+-- the body is as dead as it was, and the HUD still says so.
+t.set_health(patient, { brute = 0, burn = 0, oxy = 0, tox = 0 })
 t.run_ticks(1)
-assert(not assert(t.body(patient)).animate, "a tended corpse stays a corpse")
+local tended = assert(t.body(patient))
+assert(tended.health == tended.max_health, "every point of damage is healed: " .. tended.health)
+assert(not tended.animate, "and a tended corpse stays a corpse")
 row = assert(medhud(medic), "a tended corpse is still read")
-assert(row.level == 19, "health-100 whatever fifty brute would read: " .. row.level)
+assert(row.level == 19, "health-100 whatever a full bar would read: " .. row.level)
 assert(icons(row) == "undone", "and huddead for the stopped heart: " .. icons(row))
 
 -- ---- off come the glasses ----------------------------------------------
