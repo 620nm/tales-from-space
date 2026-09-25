@@ -55,6 +55,11 @@ native_edges = [
 [paths]
 content = "content"
 
+# tg's 15x15 world view (tgstation code/world.dm:15), radius 7; the
+# engine's `docs/sim/view-radius.md` owns what derives from it.
+[view]
+radius = 7
+
 [ui]
 entry = "ui/main.tsx"
 bundle = "ui/bundle.json"
