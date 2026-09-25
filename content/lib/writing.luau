@@ -21,6 +21,14 @@ writing.max_append = 4096
 writing.max_body = 8192
 writing.max_fragments = 64
 
+-- A spent writer refuses before the sheet opens: the engine binds only a
+-- held writer with uses left (`ui.open` raises otherwise). A TfS
+-- divergence: tg's paper never spends crayon charges (crayons.dm:628,
+-- paper.dm:425-438) and an empty crayon is self-contained and deleted
+-- silently (crayons.dm:71, :305-307). A spent writer here stays in hand,
+-- so it says so in the spray can's words (crayons.dm:308, :791).
+local SPENT = "lunatic/tfs:lib.writing.spent"
+
 local function read(paper: Handle?): DocumentView?
     if sim == nil or paper == nil then
         return nil
@@ -71,6 +79,13 @@ function writing.open(actor: Handle, paper: Handle, draft: unknown, implement: H
     local view = writing.view(paper, draft)
     if view == nil then
         return false
+    end
+    if implement ~= nil and implement.uses == 0 then
+        sim.message.send({
+            recipient = actor,
+            message = sim.msg(SPENT, { writer = implement.name or "" }),
+        })
+        return true
     end
     local data = view
     local request: UiOpenCommand = {
