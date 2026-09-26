@@ -8,6 +8,37 @@ references, run commands, and spec-runner surface. Keep this file focused on
 agent decisions rather than duplicating those details.
 Read `docs/LUAU-DIALECT.md` before writing Luau.
 
+Pre-alpha: broad, coordinated breaking changes are welcome. Migrate callers
+and remove obsolete APIs/endpoints in the same change; do not add compatibility
+aliases, shims or backports to preserve an old surface.
+
+## Working together
+
+- Use discovery agents to identify scope and exact files, confirm findings,
+  then plan. Give fresh implementation agents small, nonoverlapping tasks with
+  explicit file/function references and request terse, dense findings. Specify
+  interfaces and asset art separately. Finish with an independent antagonistic
+  review and resolve its findings. Shared-library ownership and atomic caller
+  migrations follow `docs/LIB-CONTRACT.md`.
+- Use isolated worktrees; preserve parallel agents' edits. The default location
+  is `.worktrees/`; on this host use
+  `/home/josh/.cache/codex-tmp/worktrees/<repo>-<branch>`. Keep git metadata
+  writable. Other scratch belongs under `/home/josh/.cache/codex-tmp/`, never
+  RAM-backed `/tmp`; build outputs keep their documented `target/` locations.
+  Merge into clean `master`, then remove only your worktree, branch and scratch.
+  If `master` is dirty, retain your work and report the blocked integration.
+- Commit validated work incrementally with `type(scope): subject` (Conventional
+  Commits): imperative, no period, subject at most 50 characters; put rationale
+  in the body. Add `Co-authored-by: Name <email>` trailers identifying actual
+  contributing humans or agents. Do not link session pages or use `gh` to
+  create issues or PRs.
+- Keep investigation narrow: targeted searches, line ranges and filtered logs.
+  Ask about genuine ambiguity; do not dump entire files or unfiltered logs.
+- `docs/*.md` is authoritative: fix stale contracts with the change, use present
+  tense, and keep one home per fact with references elsewhere. Comments are
+  concise contract/reference notes, not another policy source. Never read
+  `docs/reports/` unless explicitly directed.
+
 ## Where to work
 
 - The two fixed-name entrypoints are both optional and load in order:
@@ -48,14 +79,18 @@ mechanism, this pack the numbers it chose. Run the engine with
 Run engine commands from the engine checkout and set `LUNATIC_PACK` to this
 pack's absolute path. A worktree is not necessarily a sibling of the engine;
 resolve the engine checkout explicitly instead of deriving it with `..` there.
-Iterate with `cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" <name>` (name substring), then `--load-only`, then the full suite once before completion.
+Iterate with `cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" <name>`
+(name substring), `--load-only`, and the relevant named gate lanes.
 
 `sh tools/check.sh` is THE GATE for this pack and runs from HERE: it finds the
 engine through `LUNATIC_ENGINE` and checks this pack end to end (strict Luau,
 the shared lints, the bake, content, maps, sprite names, the roster and the
 editor palette, `ui/`, the node checks, the specs and the two live browser
-fixtures). `README.md` §The gate lists every lane and what it proves. Run it
-before every commit; run one lane by name while iterating. The engine's own
+fixtures). `README.md` §The gate lists every lane and what it proves. Validate
+each commit with the checks covering its change; run the full gate once before
+completion for runtime/content changes. Documentation-only changes need the
+relevant documentation checks. Broaden or repeat checks when changes or failures
+justify it. The engine's own
 `tools/check.sh` is the other subject and asserts nothing about this pack, so
 a green engine gate is not evidence here; the boundary between the two, and
 what each proves, is the engine's `docs/gates.md`. The gate writes only this
@@ -63,52 +98,40 @@ repository's gitignored `target/`, never the engine's served root.
 
 ## Code Organization
 
-**Files per directory**
-- Target: 5–15
-- Split at: 20–30 (split by feature or layer)
-- Never exceed: 50
-
-**Subdirectories per directory**
-- Target: 3–10
-- Rationale: a reader opening a directory should grasp its partitioning without re-reading names.
-
-**Directory depth**
-- Measured from the crate root (e.g. `crates/lunatic-module/`).
-- Target: 3–5 levels for hand-written source
-- Never exceed: 7
-
-**Rust module layout**
-- Use `xyz.rs` + `xyz/` for modules with children.
-- Do not create `mod.rs` files.
-- Enforce with `#![warn(clippy::mod_module_files)]`.
-
-**Rust unit tests**
-- Default: inline `#[cfg(test)] mod tests { ... }` at the bottom of the file.
-- When the file exceeds the length threshold, move the test body to `file/tests.rs` and leave `#[cfg(test)] mod tests;` in `file.rs`.
-- Never use `#[path]` for test modules.
-- Never place unit tests in the crate-root `tests/` directory; that directory is for integration tests only.
-
-This pack has no crates: measure depth from the repository root, and apply
-the directory rules to `content/`, `ui/`, `tests/` and `tools/`. Generated
-trees (`ui/fixtures/out/`, the `ui/*.json` build products) are outside the
-counts. The Rust rules bind the engine checkout, where the same section is
-its `docs/CODE-ORGANIZATION.md`. A roster file is named for the id it
-declares (`items/<id>.luau`); a numeric ordering prefix `NN_` is the one
-allowance (`access/10_engineering.luau`).
+- Target 5–15 files and 3–10 subdirectories per directory; split by feature or
+  layer at 20–30 files, never exceed 50. Measure depth from the repository root:
+  target 3–5 levels of handwritten source, at most 7.
+- Apply those counts to `content/`, `ui/`, `tests/` and `tools/`. Generated
+  trees (`ui/fixtures/out/`, the `ui/*.json` build products) are excluded.
+- Target files below 300 lines; split before exceeding 1000. Keep this guide
+  and `docs/**/*.md` at most 200 lines. Partition by feature and responsibility;
+  shared typed modules belong in `content/lib/`, declarations in roster files.
+- Name a roster file for its declared id (`items/<id>.luau`); the only allowance
+  is numeric ordering prefix `NN_` (`access/10_engineering.luau`).
+- Keep player-facing specs in `tests/**/*_test.luau`, shared spec helpers under
+  `tests/helpers/`, and focused map fixtures under `tests/maps/`. Luau modules
+  return explicit export tables; Rust crate/module/test conventions do not apply.
 
 ## Content design rules
 
 - Content is the default home for game ideas: nouns (prototypes, rosters,
   constants, ids, maps, manifests) are data here; verbs at discrete event
   boundaries are Luau anchor handlers. The engine's `docs/LUAU-API.md` §4
-  is the as-built list of record and `idl/v1.json` freezes their names.
+  is the as-built list of record and `idl/v1.json` declares their names.
   An idea that seems to need per-tick native execution becomes a native
   system with data-driven knobs — never a faster handler.
 - Game fiction never says "lunatic"; engine words stay out of content.
-- Wrap reusable domain concepts in typed records instead of loose
-  primitives; reuse existing types and keep their operations together.
-- Use distinct, descriptive names for types and shared helpers across the
-  repository. Avoid generic names (`Data`, `State`) so agents can grep
+- Reuse existing domain records, primitives and helpers before adding new ones.
+  Wrap reusable concepts in typed records instead of loose primitives and keep
+  their operations together; coordinate exports through `docs/LIB-CONTRACT.md`.
+- Avoid transient tables, closures and string churn in hot event handlers.
+  Preallocate dense arrays with `table.create` when capacity is known; batch or
+  chunk unavoidable growth where practical. Reuse or `table.clear` only buffers
+  whose ownership excludes retained aliases and reentrant or yielding users;
+  release stale references. These reduce garbage-collection pressure rather
+  than guarantee allocation-free execution.
+- Keep code human-readable; use distinct, descriptive names for types and shared
+  helpers. Avoid generic names (`Data`, `State`) so agents can grep
   definitions and uses.
 - Shared code lives in `content/lib/`; import its returned table with
   `local vessel = require("@lib/vessel")`. Dependencies are explicit in
