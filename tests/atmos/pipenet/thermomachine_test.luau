@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
@@ -45,7 +46,7 @@ end
 -- (SSair's cadence), so a spec that wants to watch the approach steps
 -- in passes rather than in ticks.
 local function pass()
-    t.run_ticks(10)
+    t.run_ticks(clock.deadline_ticks(0.5))
 end
 
 local PIPE_NETWORKS = [==[

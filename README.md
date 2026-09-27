@@ -227,7 +227,14 @@ gateway; running a game server alone does not host its executable bootstrap.
   compiled defaults are the values its tests pin.
 - `content/capabilities.luau` opts into optional client grammars. TfS
   explicitly enables `interactions.body`; body-plan definitions alone do not
-  expose hands, jobs, vitals or respawn to a player.
+  expose hands, jobs, vitals or respawn to a player. It also declares the
+  pack-selected simulation rate, `simulation.tick_hz = 20` — tg's own tick
+  (TICKLAG 0.5 ds, fps 20), so every source-tuned second converts exactly.
+  Author durations in seconds (`printing.copy_seconds`, extinguisher
+  `cooldown_seconds`); handlers convert with `sim.ticks` at the call.
+  Validate clock-adjacent edits narrowly first: the engine's
+  `node tools/luau.mjs check "$LUNATIC_PACK"` (§Specs) plus the named specs
+  covering the touched content, before the full gate.
 - `content/blends/*.luau` are the Matter Blends a mapper paints rooms and
   fills holders with
   (`{ id, name, rows = { {key, moles} }, temperature_k, amount }`,

@@ -104,7 +104,7 @@ t.world(
 
 local speaker = t.join("assistant")
 local listener = t.join("medic")
-t.run_ticks(20)
+t.run_seconds(1.0)
 
 local function pocket(p)
     local x, y = t.pos(p)
@@ -328,7 +328,7 @@ t.click_network(speaker, 7, 2, assert(t.network_instance(7, 2, "power", "l1")))
 t.run_seconds(1.5)
 assert(network_channels.at(7, 2, "power") == "", "the spur is parted")
 assert(t.ledger_has("NetworkRemoved"), "sabotage is attributable")
-t.run_ticks(60)
+t.run_seconds(3.0) -- a power pass plus the suspension pass behind it
 
 assert(
     #say_and_read("say again, the band went short") == 0,

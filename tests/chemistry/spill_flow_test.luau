@@ -86,11 +86,11 @@ assert(litres(1) > 59.9, ("and it is standing on one tile: %.4f L"):format(litre
 -- ---------------------------------------------------------------
 -- IT SPREADS FROM WHERE IT FELL.
 --
--- Twenty ticks in, the tile it landed on is still the deepest, the
+-- One second in, the tile it landed on is still the deepest, the
 -- one beside it is shallower, and the third has not been reached.
 -- A puddle crosses tiles; it does not appear in a room.
 -- ---------------------------------------------------------------
-t.run_ticks(20)
+t.run_seconds(1)
 assert(litres(1) > litres(2), ("the source is deeper: %.4f vs %.4f"):format(litres(1), litres(2)))
 assert(
     litres(2) > litres(3),
@@ -101,12 +101,12 @@ dry(4, "the shut leaf has not been crossed")
 -- ---------------------------------------------------------------
 -- AND THEN IT IS LEVEL, AND THE DOOR IS A WALL.
 --
--- Three tiles, one depth, in a hundred ticks. The fourth tile is the
+-- Three tiles, one depth, in five seconds. The fourth tile is the
 -- one under the leaf -- its own sealed pocket while the door is shut,
 -- exactly as a gas cannot reach it (tests/diffusion_test.luau) -- and
 -- the fifth is behind it.
 -- ---------------------------------------------------------------
-t.run_ticks(80)
+t.run_seconds(4)
 level(1, 2, "the corridor levelled")
 level(2, 3, "the corridor levelled")
 assert(litres(1) > 3.0 * FILM_L, ("and it is deep water: %.4f L"):format(litres(1)))
@@ -126,8 +126,8 @@ assert(litres(1) + litres(2) + litres(3) < 60.1, "and no tile invented any")
 -- ---------------------------------------------------------------
 -- OPEN IT, AND THE SAME WATER GOES THROUGH.
 --
--- A crowbar on a dark leaf: sixty ticks of prying, and then it stays
--- open. Two hundred ticks later the flood has found the two tiles it
+-- A crowbar on a dark leaf: seconds of prying, and then it stays
+-- open. Ten seconds later the flood has found the two tiles it
 -- could not reach and all five stand at one depth -- twelve litres
 -- apiece, because sixty litres over five tiles is what levelling MEANS.
 -- ---------------------------------------------------------------
@@ -140,10 +140,10 @@ t.move(p, "east")
 t.run_ticks(4)
 assert(not assert(t.door_at(4, 1)).powered, "the leaf is dark, so it will not shut itself again")
 t.click(p, 4, 1, t.target_at(p, 4, 1))
-t.run_ticks(80)
+t.run_seconds(4)
 assert(assert(t.door_at(4, 1)).open, "pried open")
 
-t.run_ticks(200)
+t.run_seconds(10)
 level(1, 2, "the whole corridor levelled")
 level(2, 3, "the whole corridor levelled")
 level(3, 4, "the whole corridor levelled")
@@ -210,7 +210,7 @@ local tipped = litres(4)
 assert(tipped > 0.010 and tipped < 0.011, ("and 10.8 mL is on the deck: %.6f L"):format(tipped))
 
 local WATER_START = water_everywhere()
-t.run_ticks(200)
+t.run_seconds(10)
 
 assert(litres(1) > 2.9, ("the film stayed where it was painted: %.4f L"):format(litres(1)))
 dry(2, "and its neighbour was never wet")

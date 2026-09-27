@@ -195,7 +195,7 @@ assert(
 -- close its window.
 -- ---------------------------------------------------------------
 t.equip(p)
-t.run_ticks(30)
+t.run_seconds(1.5)
 assert(t.worn(p).back == "oxygen_tank", "the bottle is on the back now")
 assert(t.hands(p)[1] == nil and t.hands(p)[2] == nil, "and out of both hands")
 local worn = ui_controls.state(p)

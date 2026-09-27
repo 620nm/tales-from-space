@@ -29,6 +29,7 @@
 -- The room is one tile and sealed, so nothing that leaves a pair of
 -- lungs can wander off before it is weighed.
 
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
 local ARENA = [==[(
@@ -38,7 +39,7 @@ local ARENA = [==[(
     structures: [(1, 1, "player_spawn")],
 )]==]
 
-local BREATH = 160 -- one breath cycle, 8 s at 20 Hz
+local BREATH_SECS = 8 -- one breath cycle
 
 local function gas(key: string)
     local held = t.room_gas(1, 1)
@@ -71,7 +72,7 @@ assert(o2_0 > 0.0, "the closet is commissioned with air in it")
 
 -- One stroke. It fills the lungs and exhales the residual they arrived
 -- with, which is nothing: the room has lost oxygen and gained no waste.
-t.run_ticks(BREATH + 4)
+t.run_ticks(clock.deadline_ticks(BREATH_SECS) + 4)
 assert(gas("o2") < o2_0, "the first stroke took air out of the room")
 assert(gas("co2") - co2_0 < 1e-9, "and put none back yet: the waste is still inside")
 assert(
@@ -86,7 +87,7 @@ assert(
 -- Ten more. Now the room is visibly worse: the crewman is a slow leak
 -- of carbon dioxide and a slow drain of oxygen, and the two are the
 -- same transaction.
-t.run_ticks(BREATH * 10)
+t.run_seconds(BREATH_SECS * 10)
 local burned = o2_0 - gas("o2")
 local made = gas("co2") - co2_0
 assert(made > 0.0, "the room is filling with waste: " .. made .. " mol")
@@ -121,7 +122,7 @@ assert(assert(t.body(crew)).animate == false, "200 brute is past the dead line")
 assert(assert(t.sockets(crew)).heart.failing, "and it stopped the heart")
 
 local o2_dead, co2_dead = gas("o2"), gas("co2")
-t.run_ticks(BREATH * 4)
+t.run_seconds(BREATH_SECS * 4)
 assert(
     math.abs(gas("o2") - o2_dead) < 1e-9,
     "a corpse takes nothing out of the room: " .. gas("o2") .. " vs " .. o2_dead
@@ -150,7 +151,7 @@ assert(gas("o2") < 1e-6, "the tile is vacuum: " .. gas("o2") .. " mol of air")
 
 -- Every stroke sheds the swept share into the vacuum and draws nothing
 -- in behind it, so the lungs empty and stay empty.
-t.run_ticks(BREATH * 12)
+t.run_seconds(BREATH_SECS * 12)
 assert(
     inside(spacer, "o2") < 1e-9 and inside(spacer, "co2") < 1e-9,
     "a pair of lungs cycling vacuum is empty"
@@ -215,7 +216,7 @@ end
 local function step(tool: string, secs: number, state: string)
     hold(tool)
     t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
-    t.run_ticks(math.ceil(secs * 20) + 3)
+    t.run_ticks(clock.deadline_ticks(secs) + 3)
     assert(assert(t.parts(patient)).chest.states[state] == true, "the chest is " .. state)
 end
 
@@ -237,7 +238,7 @@ for _, toggle in ipairs(ui_controls.rows(win.toggles)) do
 end
 assert(pick, "the window offers the lungs")
 ui_controls.toggle(surgeon, "operation", pick)
-t.run_ticks(23)
+t.run_ticks(clock.deadline_ticks(1.0) + 3) -- the 1 s removal
 
 assert(assert(t.sockets(patient)).lungs.seated == false, "the lungs are out")
 assert(
@@ -248,7 +249,7 @@ assert(t.capacity(patient, "breathing") == 0, "but breathes nothing at all")
 
 -- The room is perfectly good air; the only thing wrong is the hole.
 local hurt_0 = ui_controls.number(t.health(patient).oxy)
-t.run_ticks(BREATH * 3)
+t.run_seconds(BREATH_SECS * 3)
 assert(
     ui_controls.number(t.health(patient).oxy) > hurt_0,
     "a body with no lungs drowns in breathable air: "

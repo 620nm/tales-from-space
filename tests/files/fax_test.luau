@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
 -- End-to-end fax coverage through the player, UI, and native network seams.
@@ -114,7 +115,7 @@ t.world(
 local sender = t.join("assistant")
 local receiver = t.join("medic")
 local isolated = t.join("engineer")
-t.run_ticks(10)
+t.run_seconds(0.5)
 
 -- Write one source sheet through the actual writer binding.
 local paper = assert(t.target_at(sender, 3, 2, "paper"), "source paper is present")
@@ -192,13 +193,14 @@ assert_no_script_errors("directory selection and confirmation")
 local sending_data = data(sender, "fax")
 assert(sending_data.busy == true, "the fax exposes its native busy reservation after admission")
 
--- The source remains in the machine until the native 40-tick deadline.
+-- The source remains in the machine until the native 2 s deadline
+-- (content/lib/printing.luau `fax_seconds`, exact at every integer rate).
 assert(#t.items_at(4, 2) == 0, "the source is held during the fax scan")
-t.run_ticks(37)
-assert(#t.items_at(4, 2) == 0, "the source remains held before the 40-tick deadline")
+t.run_ticks(clock.deadline_ticks(2.0) - 3)
+assert(#t.items_at(4, 2) == 0, "the source remains held before the 2 s deadline")
 t.run_ticks(1)
-assert(t.items_at(4, 2)[1] == "paper", "the source sheet ejects onto sender ground at tick 40")
-assert(t.items_at(12, 2)[1] == "paper", "one fresh recipient sheet arrives at tick 40")
+assert(t.items_at(4, 2)[1] == "paper", "the source sheet ejects onto sender ground at the deadline")
+assert(t.items_at(12, 2)[1] == "paper", "one fresh recipient sheet arrives at the deadline")
 
 -- Read the received sheet through the ordinary paper window. The native
 -- monochrome transform changes the copied fragment colour while preserving
@@ -234,7 +236,7 @@ assert(
     receiver_data.paper == 29 and receiver_data.toner == 29,
     "recipient stock charges one paper and toner for the received page"
 )
-assert(receiver_data.busy ~= true, "the recipient reservation clears at the 40-tick deadline")
+assert(receiver_data.busy ~= true, "the recipient reservation clears at the 2 s deadline")
 
 -- Refill each stock through the player-facing containers. The machine starts
 -- one unit short, while each container retains the unused remainder.

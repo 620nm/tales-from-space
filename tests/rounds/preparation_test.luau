@@ -16,8 +16,14 @@ local MAP = [==[(
     structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn"), (3, 1, "player_spawn")],
 )]==]
 
-local TICKS_PER_SECOND = 20
 local COUNTDOWN = 120
+
+-- Preparation pulses are host ticks: derive the count from the booted
+-- round's rate rather than a literal 20. Read live -- `t.tick_hz`
+-- needs a booted world, and every use below follows one.
+local function ticks_per_second(): number
+    return t.tick_hz()
+end
 
 local function status()
     return t.round_status()
@@ -41,7 +47,7 @@ local idle_status = status()
 assert(idle_status.phase == "preparing", "the station opens at the preparation board")
 assert(idle_status.remaining_seconds == COUNTDOWN, "the board starts at 120 seconds")
 assert(idle_status.ready == 0 and idle_status.waiting, "an empty board waits")
-t.preparation_steps(10 * TICKS_PER_SECOND)
+t.preparation_steps(10 * ticks_per_second())
 idle_status = status()
 assert(idle_status.phase == "preparing", "no ready player leaves the station preparing")
 assert(idle_status.remaining_seconds == COUNTDOWN, "no ready player does not spend the countdown")
@@ -63,7 +69,7 @@ assert(
     "the first ready player starts at 120"
 )
 
-t.preparation_steps(COUNTDOWN * TICKS_PER_SECOND - 1)
+t.preparation_steps(COUNTDOWN * ticks_per_second() - 1)
 local before_cutover = status()
 assert(before_cutover.phase == "preparing", "the cohort stays in preparation until zero")
 assert(before_cutover.remaining_seconds == 1, "one second remains before cutover")
@@ -93,7 +99,7 @@ empty = assert(t.prepare(fallback, {
 assert(empty.issue == nil and empty.draft.fallback, "fallback consent is part of the draft")
 empty = assert(t.ready(fallback))
 assert(empty.ready, "a consented fallback draft can ready")
-t.preparation_steps(COUNTDOWN * TICKS_PER_SECOND)
+t.preparation_steps(COUNTDOWN * ticks_per_second())
 assert(status().phase == "playing", "a consented fallback cohort starts")
 assert(job_rows().assistant == 1, "consent selects the mode fallback job")
 
@@ -112,7 +118,7 @@ t.ready(b)
 t.ready(c)
 local cohort = status()
 assert(cohort.ready == 3, "all three drafts are in the ready cohort")
-t.preparation_steps(COUNTDOWN * TICKS_PER_SECOND)
+t.preparation_steps(COUNTDOWN * ticks_per_second())
 assert(status().phase == "playing", "the competing cohort starts")
 local jobs = job_rows()
 assert(jobs.captain == 1, "the single captain slot is allocated once")

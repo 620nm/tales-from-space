@@ -118,7 +118,7 @@ t.click(surgeon, 2, 2, t.target_at(surgeon, 2, 2, "scalpel"))
 t.run_ticks(2)
 assert(t.hands(surgeon).held ~= nil, "the scalpel is in hand")
 t.click(surgeon, 3, 2, t.body_target(surgeon, near))
-t.run_ticks(100)
+t.run_seconds(5.0) -- the incise do_after, generously
 assert(assert(t.parts(near)).chest.states.skin_cut == true, "the chest is open")
 
 -- ---- the console, read by a surgeon standing beside it ----------------
@@ -218,7 +218,7 @@ t.run_ticks(2)
 t.click(surgeon, 2, 2, t.target_at(surgeon, 2, 2, "scalpel"))
 t.run_ticks(2)
 t.click(surgeon, 3, 2, t.body_target(surgeon, near))
-t.run_ticks(100)
+t.run_seconds(5.0) -- the incise do_after, generously
 assert(assert(t.parts(near)).head.states.skin_cut == true, "the head is where the cut landed")
 
 print("operating computer: four tiles, the state that is there, the next step, and the aim")

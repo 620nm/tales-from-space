@@ -30,7 +30,7 @@ t.click(p, 2, 2, t.target_at(p, 2, 2, "welder")) -- grab the welder underfoot-ad
 t.use_self(p)
 t.run_ticks(2)
 t.fault(1, 1, 5) -- the hull fails next door
-t.run_ticks(40) -- a couple of atmos ticks of venting
+t.run_seconds(2.0) -- a couple of atmos ticks of venting
 assert(t.is_breached(1, 1), "the fault breached the corner")
 
 t.click(p, 1, 1) -- start the weld (a 4 s do_after)
@@ -72,9 +72,9 @@ t.click(p, 3, 1, t.target_at(p, 3, 1, "welder")) -- grab the welder
 t.use_self(p)
 t.run_ticks(2)
 t.fault(1, 1, t.now() + 1)
-t.run_ticks(10)
+t.run_seconds(0.5)
 t.click(p, 1, 1) -- start the weld
-t.run_ticks(10)
+t.run_seconds(0.5)
 t.drop(p) -- drop the torch mid-count
 t.run_seconds(4.5)
 assert(t.is_breached(1, 1), "no welder, no seal")

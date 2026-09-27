@@ -68,7 +68,7 @@ t.tick()
 assert(t.hands(p).held == nil, "it left the hand at once")
 assert(heard(p) == "  ", "the launch itself says nothing")
 
-t.run_ticks(8)
+t.run_seconds(0.4) -- the flight out and the landing
 assert(#t.items_at(5, 1) == 1, "it flew and came to rest")
 assert(
     heard(p):find(" wrench_drop ", 1, true),

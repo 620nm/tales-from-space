@@ -72,7 +72,7 @@ local speaker = t.join("assistant")
 local patient = t.join("engineer")
 local l_near = t.join("medic")
 local l_far = t.join("captain")
-t.run_ticks(20)
+t.run_seconds(1.0)
 
 local function pocket(p)
     local x, y = t.pos(p)

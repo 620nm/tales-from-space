@@ -65,7 +65,7 @@ local content = {
     },
     pressure_discharge = {
         mass_kg = 0.2,
-        cooldown_ticks = 24,
+        cooldown_seconds = 1.2,
         particles = 5,
         recoil_per_kg = 100,
     },

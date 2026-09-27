@@ -90,7 +90,7 @@ t.world(
 local speaker = t.join("assistant")
 local operator = t.join("engineer")
 local listener = t.join("medic")
-t.run_ticks(20)
+t.run_seconds(1.0)
 
 -- The speaker and the listener carry the Lifeline key; the operator's
 -- hands stay EMPTY, because a held key clicked on the tower is a part
@@ -243,7 +243,7 @@ assert(has_string_leaf(runs[1].value), "the answer remains a typed bounded strin
 -- ---- a drop suppresses the line ------------------------------------------
 -- Editing the RUNNING program is editing the file: the save recompiles
 -- in place, and the next line meets the new program (atomic recompile).
-t.run_ticks(10) -- the pacing window on text acts (docs/TGUI.md)
+t.run_seconds(0.5) -- the pacing window on text acts (docs/TGUI.md)
 local DROP = "return { pass = false }"
 ui_files.save(operator, DROP)
 t.tick()
@@ -262,7 +262,7 @@ for _, child in pairs(record(record(runs[2].value).Map or {})) do
 end
 assert(#runs == 2 and dropped, "the drop is a run like any other")
 assert(#t.ledger_rows("disl_fault") == 0, "a drop is not a fault")
-t.run_ticks(20) -- the pane republishes on the window cadence, not per line
+t.run_seconds(1.0) -- the pane republishes on the window cadence, not per line
 ui = ui_controls.state(operator)
 assert(
     rows(ui.program_slots)[1].runs == 2 and rows(ui.program_slots)[1].faults == 0,
@@ -276,7 +276,7 @@ assert(
 -- Fail-open: a broken script must not silence the radio, and the fault
 -- is attack evidence on the record (docs/diegetic-scripting/
 -- attribution.md §10).
-t.run_ticks(10)
+t.run_seconds(0.5)
 local BROKEN = "error('boom')"
 ui_files.save(operator, BROKEN)
 t.tick()
@@ -293,7 +293,7 @@ assert(
     faults[1].slot == "carry" and faults[1].hosting == "radio transceiver",
     "attributed to the slot that ran it"
 )
-t.run_ticks(20) -- the window cadence again
+t.run_seconds(1.0) -- the window cadence again
 ui = ui_controls.state(operator)
 assert(
     rows(ui.program_slots)[1].runs == 3 and rows(ui.program_slots)[1].faults == 1,
@@ -301,7 +301,7 @@ assert(
 )
 
 -- ---- the edit of a running program takes ----------------------------------
-t.run_ticks(10)
+t.run_seconds(0.5)
 local PREFIX = "return { text = 'filtered: ' .. content }"
 ui_files.save(operator, PREFIX)
 t.tick()

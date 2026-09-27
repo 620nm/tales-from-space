@@ -84,7 +84,7 @@ local l_clear = t.join("medic")
 local l_rim = t.join("captain")
 local l_edge = t.join("engineer")
 local l_out = t.join("security")
-t.run_ticks(20)
+t.run_seconds(1.0)
 
 -- Everyone pockets the key at their feet: a carried key IS a Lifeline
 -- radio, transmit and receive both (items/encryption_key.luau).
@@ -151,7 +151,7 @@ assert(#t.messages(l_out) == 0, "one tile past the circle there is nothing at al
 --    LOCAL_RADIUS of the speaker.
 -- ---------------------------------------------------------------
 t.outage()
-t.run_ticks(60)
+t.run_seconds(3.0) -- a power pass plus the suspension pass behind it
 drain_all()
 t.say(speaker, ";say again, say again")
 t.run_ticks(2)
@@ -222,7 +222,7 @@ local l_near = t.join("medic")
 local l_quarter = t.join("captain")
 local l_local_edge = t.join("engineer")
 local l_far = t.join("security")
-t.run_ticks(20)
+t.run_seconds(1.0)
 pocket(speaker)
 pocket(l_near)
 pocket(l_quarter)
@@ -290,7 +290,7 @@ t.world(
 speaker = t.join("assistant")
 local headset_edge = t.join("medic")
 local headset_out = t.join("captain")
-t.run_ticks(20)
+t.run_seconds(1.0)
 
 local function take_headset(p)
     local x, y = t.pos(p)

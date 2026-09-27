@@ -189,7 +189,7 @@ t.world(
 t.set_environment({ sink_k = 293.15, insolation = 0 })
 local p = t.join()
 t.tick()
-t.run_ticks(20)
+t.run_seconds(1)
 
 -- Every machine on this bench stands on the north row and every walk
 -- is along the south one, so the crewman is always a step away from
@@ -442,7 +442,7 @@ assert(
 -- middle of the room, so both go dark together -- and they go dark by
 -- two different pictures, because each names its own art.
 t.outage()
-t.run_ticks(80)
+t.run_seconds(4)
 assert(
     assert(t.structure_at(6, 1)).sprite == "air_alarm_n",
     "a dead cord is tg's no-lamp face: " .. tostring(assert(t.structure_at(6, 1)).sprite)

@@ -29,9 +29,9 @@ local ui_controls = require("@helpers/ui_controls")
 -- matters: an open beaker with brew in it would be a second CO2 source
 -- in the room while the bottle is being watched.
 --
--- Every vessel on the station takes one chemistry step every
--- METABOLISM_EVERY = 40 ticks at 20 Hz, so a step is 2 s (sim/life.rs).
--- Fermentation's bell is flat between 293 and 303 K and the nozzle
+-- Every vessel on the station takes one chemistry step every 2 s
+-- (lunatic_core::METABOLISM_PERIOD). Fermentation's bell is flat
+-- between 293 and 303 K and the nozzle
 -- pours at 300 K, so the bell factor is 1 and the rate is `base_rate`
 -- times the ACTIVITY of the scarcest reactant (docs/CHEMISTRY.md 5).
 --

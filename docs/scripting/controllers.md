@@ -51,13 +51,15 @@ names `mac`, a bounded correlation `id`, and an operation:
 | `bolt` | `bolted` boolean |
 | `emergency` | `emergency` boolean |
 | `vent` | `on`; while on, `direction = "fill" \| "drain"`, `target` kPa |
-| `watch` | `target` kPa, `comparison = "at_least" \| "below"`, `ticks` |
+| `watch` | `target` kPa, `comparison = "at_least" \| "below"`, `seconds` |
 | `service` | `to` advertised MAC, `service`, portable `payload`, `request` boolean |
 
-`status` is `idle`, `working`, `denied`, `fault` or `failsafe`. `timer = { id, ticks }`
+`status` is `idle`, `working`, `denied`, `fault` or `failsafe`. `timer = { id, seconds }`
 replaces the host deadline, `timer = false` cancels it, and omission leaves
-it alone. Ticks must be integers from 1 to 1200. Correlation IDs are nonempty
-strings of at most 64 bytes.
+it alone. Guest durations are seconds, above zero through 60; the bridge
+ceiling-converts each once at the trusted boundary, so a deadline never
+fires early at any tick rate, and keeps absolute due ticks in tick units.
+Correlation IDs are nonempty strings of at most 64 bytes.
 
 `replace = true` discards unsent plans from an earlier request.
 `accepted = true` advances the host's duplicate watermark for that button.

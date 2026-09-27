@@ -211,7 +211,7 @@ if event.kind == "button" then
  result.status = "working"
  result.replace = true
  result.accepted = true
- result.timer = { id = st.id, ticks = 600 }
+ result.timer = { id = st.id, seconds = 30 }
  return save()
 end
 if not st then
@@ -295,7 +295,7 @@ elseif st.phase == "bolt_close" then
   end
   -- kPa. The watch calls when safe.
   send(st.vent, "vent", { on = true, direction = dir, target = tgt })
-  send(st.vent, "watch", { target = safe, comparison = cmp, ticks = 500 })
+  send(st.vent, "watch", { target = safe, comparison = cmp, seconds = 25 })
  end
 elseif st.phase == "pressure" then
  st.phase = "open"

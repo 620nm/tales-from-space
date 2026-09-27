@@ -31,7 +31,7 @@ t.world(
     0
 )
 local p = t.join()
-t.run_ticks(20)
+t.run_seconds(1.0)
 local laptop = assert(t.target_at(p, 1, 1, "laptop"))
 local target = assert(t.target_at(p, 2, 1))
 
@@ -87,14 +87,14 @@ local function copy(
     name: string
 )
     assert(row and destination, "both copy endpoints are disclosed")
-    t.run_ticks(10)
+    t.run_seconds(0.5) -- the pacing window on text acts (docs/TGUI.md)
     ui_files.show(p, destination.key)
     ui_files.press(p, row, "copy-" .. destination.key)
     t.run_ticks(2)
     if name ~= row.name then
         local copied = assert(file(workspace(), destination.key, row.name))
         ui_files.press(p, copied, "open")
-        t.run_ticks(10)
+        t.run_seconds(0.5) -- the pacing window on text acts
         ui_files.rename(p, name)
         t.run_ticks(2)
     end
@@ -128,7 +128,7 @@ assert(
     instructions_text:find("# Airlock controller", 1, true),
     "the reference body is readable text"
 )
-t.run_ticks(10)
+t.run_seconds(0.5) -- the pacing window on text acts
 ui_files.press(p, instructions, "copy")
 t.run_ticks(2)
 local manual = file(record(t.ui(p)), "host", "readme")
@@ -142,7 +142,7 @@ assert(
     record(ui_controls.state(p).open).body == instructions_text,
     "copy preserves the complete reference text"
 )
-t.run_ticks(10)
+t.run_seconds(0.5) -- the pacing window on text acts
 desktop = record(t.ui(p))
 ui_files.create(p, "host", "disl", "local_program")
 t.run_ticks(2)
@@ -177,7 +177,7 @@ assert(
 -- A file opens by the drive on its own side: the laptop reads Markdown
 -- though the target's drive reads only `disl`.
 local function press_open(row: ui_files.FileRow)
-    t.run_ticks(10)
+    t.run_seconds(0.5) -- the pacing window on text acts
     local _ = t.messages(p)
     ui_files.press(p, row, "open")
     t.run_ticks(2)
@@ -216,7 +216,7 @@ assert(
     "the target's disl-only A: offers no Markdown create"
 )
 assert(offers(creates.tool_host, "md"), "the laptop's A: offers Markdown")
-t.run_ticks(10)
+t.run_seconds(0.5) -- the pacing window on text acts
 ui_files.create(p, "tool_host", "md", "notes")
 t.run_ticks(2)
 local notes =
@@ -330,7 +330,7 @@ ui_files.show(p, "tool_media")
 assert(copies("host", shared.uid) == "tool_media", "a device file copies to the laptop's shown B:")
 ui_files.show(p, "tool_host")
 assert(copies("host", shared.uid) == "tool_host", "and to its A: once A: is shown")
-t.run_ticks(10)
+t.run_seconds(0.5) -- the pacing window on text acts
 ui_files.create(p, "media", "disl", "disk_program")
 t.run_ticks(2)
 ui_files.save(p, "return { pass = true }")
@@ -348,14 +348,14 @@ assert(record(workspace().open).body == "return { pass = true }", "the copied by
 ui_files.program(p, "carry", target_file.uid)
 t.run_ticks(2)
 assert(rows(workspace().program_slots)[1].uid == target_file.uid, "target slot loads its host copy")
-t.run_ticks(10)
+t.run_seconds(0.5) -- the pacing window on text acts
 ui_files.save(p, "return { pass = false }")
 t.run_ticks(2)
 assert(
     record(workspace().open).body == "return { pass = false }",
     "contact edits a running target file"
 )
-t.run_ticks(10)
+t.run_seconds(0.5) -- the pacing window on text acts
 local draft = ui_files.edit(p, "return {}")
 t.ui_press(p, draft, "change")
 t.run_ticks(2)
@@ -390,13 +390,13 @@ assert(
 )
 
 t.swap_hands(p)
-t.run_ticks(20)
+t.run_seconds(1.0) -- the pane republishes on the window cadence
 assert(t.ui(p, "programming") == nil, "switching the active hand revokes contact")
 t.swap_hands(p)
 t.run_ticks(2)
 contact()
 t.use_item_site(p, { Held = { hand = t.hands(p).active - 1 } }, "alt_primary")
-t.run_ticks(20)
+t.run_seconds(1.0) -- the pane republishes on the window cadence
 assert(t.ui(p, "programming") == nil, "closing the held laptop revokes contact")
 t.use_self(p)
 t.run_ticks(2)
@@ -405,11 +405,11 @@ contact()
 t.use_self(p)
 t.run_ticks(2)
 ui_controls.press(p, "/power")
-t.run_ticks(20)
+t.run_seconds(1.0) -- the pane republishes on the window cadence
 assert(t.ui(p, "programming") == nil, "switching the laptop off revokes contact")
 t.use_self(p)
 t.run_ticks(2)
 contact()
 t.outage()
-t.run_ticks(20)
+t.run_seconds(1.0) -- the pane republishes on the window cadence
 assert(t.ui(p, "programming") == nil, "target power loss revokes contact")

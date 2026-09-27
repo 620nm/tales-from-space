@@ -92,7 +92,7 @@ t.world(
 local p = t.join()
 t.tick()
 t.run_seconds(3) -- the electrical pass is 0.5 Hz; let one land
-t.run_ticks(40) -- and the device pass, which is what sews the fittings
+t.run_seconds(2) -- and the device pass, which is what sews the fittings
 
 -- ---------------------------------------------------------------
 -- 1. THE MAINS ARE UP. Both lamps green on the port that stands on
@@ -128,7 +128,7 @@ t.click_network(p, 3, 1, assert(t.network_instance(3, 1, "power", "l2")))
 t.run_seconds(1.5)
 assert(network_channels.at(3, 1, "power") == "", "the backbone is parted")
 t.run_seconds(3)
-t.run_ticks(40)
+t.run_seconds(2)
 
 assert(assert(t.store_at(4, 1)).charging == "idle", "nothing is topping the panel up")
 assert(assert(t.store_at(4, 1)).level > 0.0, "and it still has a cell to run on")
@@ -176,7 +176,7 @@ t.click(p, 3, 1)
 t.run_seconds(1.5)
 assert(network_channels.at(3, 1, "power") == "l2", "the backbone is whole again")
 t.run_seconds(3)
-t.run_ticks(40)
+t.run_seconds(2)
 
 both = assert(t.outlet_at(6, 1))
 assert(both.channels["l1"] == "nominal", "the room circuit is off the mains again: " .. both.channels["l1"])

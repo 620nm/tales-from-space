@@ -23,6 +23,7 @@
 -- The chamber is here for one assertion at the very bottom -- a patient
 -- shut in a drawer mid-charge -- and it is unpowered on purpose: what
 -- this spec needs is a drawer that opens and shuts, not a lamp.
+local clock = require("@helpers/clock")
 local ARENA = [==[(
     name: "theatre",
     legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
@@ -89,7 +90,7 @@ assert(said(medic, "charge the defibrillator"), "it charges")
 -- tg's five seconds end to end (defib.dm:564-568), and the shock lands
 -- at the end of it and not before.
 assert(assert(t.body(patient)).animate == false, "still dead half way through")
-t.run_ticks(110)
+t.run_ticks(clock.deadline_ticks(5.0) + 10)
 assert(said(medic, "heart restarts"), "the shock landed")
 assert(assert(t.organ_damage(patient, "heart")) < 100, "the heart is out of failure")
 assert(assert(t.body(patient)).animate == true, "AND THE BODY IS ALIVE AGAIN")
@@ -157,7 +158,7 @@ for _ = 1, 3 do
     t.run_ticks(10)
 end
 assert(t.pos(medic) == 4, "two tiles clear of the patient: " .. t.pos(medic))
-t.run_ticks(120)
+t.run_seconds(6.0)
 assert(not said(medic, "heart restarts"), "a medic who walked off shocked nobody")
 assert(assert(t.body(patient)).animate == false, "still dead")
 for _ = 1, 3 do
@@ -183,7 +184,7 @@ assert(said(medic, "charge the defibrillator"), "the charge started again")
 t.click(attendant, 2, 2, chamber)
 t.run_ticks(2)
 assert(t.structure_at(2, 1) == nil, "the slab went back in")
-t.run_ticks(140)
+t.run_seconds(7.0)
 assert(not said(medic, "heart restarts"), "a stowed patient is not shocked")
 assert(assert(t.body(patient)).animate == false, "still dead in the drawer")
 

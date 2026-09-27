@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
@@ -32,8 +33,6 @@ local ui_controls = require("@helpers/ui_controls")
 -- read off the map route. The claim is that both name the same thing,
 -- which is exactly what a translator between two ids could never make
 -- true.
-
-local BREATH = 160 -- one breath cycle, 8 s at 20 Hz
 
 local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
@@ -109,6 +108,10 @@ t.world(
 t.set_environment({ sink_k = 293.15, insolation = 0.0 })
 local chemist = t.join()
 t.tick()
+
+-- One breath cycle, 8 s (lunatic_core::BREATH_PERIOD). Read here and
+-- not at the top: the rate exists only once a world is booted.
+local BREATH = clock.deadline_ticks(8)
 
 local dispenser = assert(t.target_at(chemist, 1, 2), "the target is visible")
 local heater = assert(t.target_at(chemist, 3, 2), "the target is visible")

@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
 -- Two surgeons racing to seat an organ into ONE empty socket
@@ -76,7 +77,7 @@ end
 local function step(id: string, secs: number, done: () -> boolean, why: string)
     left_holds(id)
     t.click(left, PX, PY, t.body_target(left, patient))
-    t.run_ticks(math.ceil(secs * 20) + 3)
+    t.run_ticks(clock.deadline_ticks(secs) + 3)
     assert(done(), why)
 end
 
@@ -117,7 +118,7 @@ for _, tg in ipairs(ui_controls.rows(win.toggles)) do
 end
 assert(pick, "the eyes are among the organs to remove")
 ui_controls.toggle(left, "operation", pick)
-t.run_ticks(23) -- the 1 s removal
+t.run_ticks(clock.deadline_ticks(1.0) + 3) -- the 1 s removal
 assert(t.organ_damage(patient, "eyes") == nil, "the eyes socket is empty")
 
 -- Both surgeons pick up a donor eye (left's by its feet, right's by its).
@@ -143,7 +144,7 @@ assert(before.orphan == 0, "still nothing orphaned going in")
 -- One seats; the other's completion must find the socket full.
 t.click(left, PX, PY, t.body_target(left, patient))
 t.click(right, PX, PY, t.body_target(right, patient))
-t.run_ticks(23)
+t.run_ticks(clock.deadline_ticks(1.0) + 3) -- the 1 s insert both parked
 
 -- The socket is seated exactly once, and the census is conserved with
 -- nothing orphaned -- the leak the completion re-check forbids. (Without

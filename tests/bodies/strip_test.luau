@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
 -- Undressing somebody else, and what it unblocks.
@@ -96,7 +97,7 @@ assert(said(cadaver, "starts taking your"), "the victim is told it is happening"
 
 -- The jumpsuit declares no `strip_secs`, so it takes the engine default
 -- of four seconds (tg's own `strip_delay` default, items.dm:164).
-t.run_ticks(85)
+t.run_ticks(clock.deadline_ticks(4.0) + 5)
 assert(t.worn(cadaver).uniform == nil, "the slot is empty")
 assert(has(t.items_at(CX, CY), "uniform_grey"), "and it landed at their feet")
 assert(#t.ledger_rows("Stripped") > 0, "the record names both people")
@@ -147,7 +148,7 @@ local dressed = #t.ledger_rows("Dressed")
 ui_controls.toggle(crewman, "dress", "uniform")
 t.run_ticks(2)
 assert(t.worn(cadaver).uniform == nil, "still in hand while the do_after runs")
-t.run_ticks(85)
+t.run_ticks(clock.deadline_ticks(4.0) + 5) -- the 4 s dress default, like the strip
 assert(t.worn(cadaver).uniform ~= nil, "and worn again at the end of it")
 assert(t.hands(crewman).held == nil, "out of the hand that carried it")
 assert(#t.ledger_rows("Dressed") > dressed, "the record names who dressed whom")

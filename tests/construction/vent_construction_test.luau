@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local network_matter = require("@helpers/network_matter")
 local network_channels = require("@helpers/network_channels")
 
@@ -47,7 +48,7 @@ end
 -- 0.4 s of tg's `atmos_build_speed` (RPD.dm:53), plus slack for the
 -- tick the effect lands on.
 local function work()
-    t.run_ticks(12)
+    t.run_ticks(clock.deadline_ticks(0.4) + 4)
 end
 
 -- One step, plus the move cooldown, so two calls are two steps.

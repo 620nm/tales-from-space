@@ -101,7 +101,7 @@ t.set_breathing(false)
 t.world(AIRLOCK, 0)
 t.join("assistant")
 local visitor = t.join("engineer")
-t.run_ticks(20)
+t.run_seconds(1.0)
 
 local CHAMBER = { { 5, 4 }, { 5, 5 }, { 5, 6 } }
 local function chamber()
@@ -119,7 +119,7 @@ for _ = 1, 150 do
         vented = true
         break
     end
-    t.run_ticks(10)
+    t.run_seconds(0.5)
 end
 assert(vented, "the chamber vents through the open leaf: " .. chamber())
 

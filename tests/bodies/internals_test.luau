@@ -49,8 +49,8 @@ t.world(
     7
 )
 
--- One breath cycle, tg's SSmobs × next_breath (8 s at 20 Hz).
-local BREATH = 160
+-- One breath cycle, tg's SSmobs × next_breath (8 s).
+local BREATH_SECS = 8
 
 local function oxy(p: number)
     return ui_controls.number(t.health(p).oxy)
@@ -150,7 +150,7 @@ local gauge_0 = assert(t.vitals(diver)).tank
 -- Four, not more: past this the unprotected pair start dropping, and a
 -- body that falls over is a body whose valve the sim shuts for it --
 -- which would be a different assertion wearing this one's clothes.
-t.run_ticks(BREATH * 4)
+t.run_seconds(BREATH_SECS * 4)
 
 assert(
     oxy(bare) > opening.bare + 60.0,
@@ -225,7 +225,7 @@ assert(
 -- breaths cost this body nothing either -- which is the pairing the EVA
 -- vestibule stocks, spelled out.
 local settled = oxy(diver)
-t.run_ticks(BREATH * 4)
+t.run_seconds(BREATH_SECS * 4)
 assert(
     oxy(diver) <= settled,
     "suit and bottle together are a shift outside: " .. settled .. " -> " .. oxy(diver)

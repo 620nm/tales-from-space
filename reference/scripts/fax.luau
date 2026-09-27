@@ -38,7 +38,7 @@ local function send_print()
         service = "fax.print", request = true,
         payload = { chunks = chunks("Printed by an AP-hosted DiSL controller.\n") },
     })
-    result.timer = { id = id, ticks = 120 }
+    result.timer = { id = id, seconds = 6 }
 end
 
 local function send_loaded()
@@ -55,7 +55,7 @@ local function send_loaded()
         service = "fax.send", request = true,
         payload = { to = targets[2].mac },
     })
-    result.timer = { id = id, ticks = 120 }
+    result.timer = { id = id, seconds = 6 }
 end
 
 if event.kind == "button" and event.engineering then

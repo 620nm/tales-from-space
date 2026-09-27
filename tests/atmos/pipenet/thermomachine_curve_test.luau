@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local network_matter = require("@helpers/network_matter")
 local network_channels = require("@helpers/network_channels")
 
@@ -50,8 +51,9 @@ local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
+-- One atmos pass: the machine works its port once every half second.
 local function pass()
-    t.run_ticks(10)
+    t.run_ticks(clock.deadline_ticks(0.5))
 end
 
 local function moles(x, y)

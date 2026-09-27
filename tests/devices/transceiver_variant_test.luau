@@ -70,7 +70,7 @@ t.world(
 )
 
 local p = t.join()
-t.run_ticks(20)
+t.run_seconds(1.0)
 
 -- ---------------------------------------------------------------
 -- 1. THE VARIANT'S KEY IS SEATED AT BOOT. The panel's parts roster
@@ -131,7 +131,7 @@ t.tick()
 --    its dark base picture (docs/CONTENT-SCHEMA.md par.1.3).
 -- ---------------------------------------------------------------
 t.outage()
-t.run_ticks(60)
+t.run_seconds(3.0) -- a power pass plus the suspension pass behind it
 local _ = t.messages(p)
 t.click(p, 9, 1, t.target_at(p, 9, 1))
 t.tick()

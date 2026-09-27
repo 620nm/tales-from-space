@@ -24,7 +24,7 @@ assert(
 
 local operator = t.join("assistant")
 local visitor = t.join("engineer")
-t.run_ticks(20)
+t.run_seconds(1.0)
 assert(
     assert(t.door_at(5, 3)).bolted and not assert(t.door_at(5, 3)).open,
     "interior starts closed and bolted"

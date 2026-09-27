@@ -19,13 +19,18 @@ local function near(got: number, want: number, tol: number, why: string)
     assert(math.abs(got - want) <= tol, why .. ": " .. got .. " vs " .. want)
 end
 
--- The electrical pass runs on every multiple of this many ticks (0.5 Hz,
+-- The electrical pass runs every 2 s (0.5 Hz, lunatic_core::POWER_PERIOD,
 -- the engine's docs/power/pass.md); `pass()` runs through the next one
--- and one tick past it.
-local POWER_EVERY = 40
-local TICK_HZ = 20
+-- and one tick past it. Two seconds is exactly 2*rate ticks at every
+-- integer rate, so this modulo alignment is the scheduler's own
+-- boundary and cannot drift the way a rounded sub-second period would.
+-- Read at call time: the rate exists only once a world is booted.
+local function power_every(): number
+    return 2 * t.tick_hz()
+end
 local function pass()
-    t.run_ticks(POWER_EVERY - t.now() % POWER_EVERY + 1)
+    local every = power_every()
+    t.run_ticks(every - t.now() % every + 1)
 end
 
 local EMERGENCY_RED = "#FF3232"
@@ -120,7 +125,7 @@ near(lamp.range, 1.5, 1e-6, "at a quarter of its reach")
 near(lamp.power, 0.75, 0.01, "and three quarters of its power")
 
 -- It drains at 2 W: four joules a pass, and `switched` was its first.
-local PASS_J = POWER_EVERY / TICK_HZ * CELL_W
+local PASS_J = power_every() / t.tick_hz() * CELL_W
 local c0 = cell.charge_j
 near(c0, CELL_J - PASS_J, 1e-6, "one pass on the cell so far")
 for _ = 1, 50 do
@@ -129,10 +134,10 @@ end
 near(assert(t.store_at(5, 2)).charge_j, c0 - 50 * PASS_J, 1e-6, "the cell drains at 2 W")
 
 -- 1.2 kJ at 2 W is ten minutes of light, and not a pass more.
-t.run_ticks(switched + 600 * TICK_HZ - POWER_EVERY + 1 - t.now())
+t.run_ticks(switched + 600 * t.tick_hz() - power_every() + 1 - t.now())
 lamp = assert(t.light_at(5, 2))
 assert(lamp.lit and lamp.color == EMERGENCY_RED, "the last pass of the cell still burns red")
-t.run_ticks(POWER_EVERY)
+t.run_ticks(power_every())
 lamp = assert(t.light_at(5, 2))
 assert(not lamp.lit and not lamp.emits, "ten minutes on, the cell is flat and the fitting dark")
 cell = assert(t.store_at(5, 2))

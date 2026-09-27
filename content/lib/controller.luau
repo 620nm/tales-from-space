@@ -29,7 +29,7 @@ type WatchCommand = {
     id: string,
     target: number,
     comparison: "at_least" | "below",
-    ticks: number,
+    seconds: number,
 }
 type ServiceCommand = {
     op: "service",
@@ -45,7 +45,7 @@ type ServiceCommand = {
 type DeviceCommand = DoorCommand | BoltCommand | EmergencyCommand | VentCommand | WatchCommand
 type Command = DeviceCommand | ServiceCommand
 type PendingService = { host: Handle, active: ServiceCommand? }
-type Timer = { id: string, ticks: number }
+type Timer = { id: string, seconds: number }
 type Plan = {
     commands: { Command },
     status: string?,
@@ -134,6 +134,16 @@ end
 local function finite(n: unknown, low: number, high: number): boolean
     return type(n) == "number" and n == n and n >= low and n <= high
 end
+-- Guest deadlines arrive in seconds: above zero through 60, the same
+-- maximum `sim.sleep` documents. Nonfinite and negative fail here.
+local function duration(s: unknown): boolean
+    return type(s) == "number" and s == s and s > 0 and s <= 60
+end
+-- The one guest-to-tick conversion: a ceiling at the round's rate, so a
+-- deadline never fires early. `sim.ticks` rounds to nearest instead.
+local function deadline_ticks(seconds: number): number
+    return math.ceil(seconds * sim.tick_hz())
+end
 local function token(s: unknown): boolean
     return type(s) == "string" and #s > 0 and #s <= 64 and not s:find("%c")
 end
@@ -208,7 +218,7 @@ local COMMAND_FIELDS: { [string]: { [string]: boolean } } = {
     bolt = { mac = true, op = true, id = true, bolted = true },
     emergency = { mac = true, op = true, id = true, emergency = true },
     vent = { mac = true, op = true, id = true, on = true, direction = true, target = true },
-    watch = { mac = true, op = true, id = true, target = true, comparison = true, ticks = true },
+    watch = { mac = true, op = true, id = true, target = true, comparison = true, seconds = true },
     -- The controller host originates an addressed service request. `to` is
     -- data and native link.send checks the live tree and advertisement again.
     service = {
@@ -260,10 +270,9 @@ local function valid(candidate: unknown, handles: { [string]: Handle }): boolean
         end
         local timer = result.timer :: { [string]: unknown }
         if
-            not fields(timer, { id = true, ticks = true })
+            not fields(timer, { id = true, seconds = true })
             or not token(timer.id)
-            or not finite(timer.ticks, 1, 1200)
-            or (timer.ticks :: number) % 1 ~= 0
+            or not duration(timer.seconds)
         then
             return false
         end
@@ -328,8 +337,7 @@ local function valid(candidate: unknown, handles: { [string]: Handle }): boolean
                 or sim.atmos.read(obj) == nil
                 or not finite(command.target, 0, 1000)
                 or (command.comparison ~= "at_least" and command.comparison ~= "below")
-                or not finite(command.ticks, 1, 1200)
-                or (command.ticks :: number) % 1 ~= 0
+                or not duration(command.seconds)
             then
                 return false
             end
@@ -371,7 +379,7 @@ local function schedule(host: Handle, timer: (Timer | false)?): ()
         host.vars["controller_timer"] = nil
         return
     end
-    local due = sim.tick() + timer.ticks
+    local due = sim.tick() + deadline_ticks(timer.seconds)
     host.vars["controller_timer"] = { id = timer.id, due = due }
     local task = sim.spawn_task(host, function()
         sim.sleep(math.max(1, due - sim.tick()))
@@ -550,7 +558,7 @@ function controller.device(ev: LinkMessageDonePayload): ()
                 request_id = command.id,
                 target_kpa = command.target,
                 comparison = command.comparison,
-                timeout_ticks = command.ticks,
+                timeout_ticks = deadline_ticks(command.seconds),
             })
         end
     end

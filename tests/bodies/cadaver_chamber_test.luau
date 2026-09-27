@@ -13,6 +13,7 @@
 -- The plant, the controller and the socket sit in the row behind the
 -- rank, two cells of cord away (docs/POWER.md, "Outlets and cords").
 -- `cadaver_power_test.luau` is the one that pulls the plug.
+local clock = require("@helpers/clock")
 t.world(
     [==[(
     name: "cadaver chamber bench",
@@ -240,7 +241,7 @@ t.world(
     7
 )
 
-local LAY_TICKS = 2 * 20 + 2
+local LAY_TICKS = clock.deadline_ticks(2.0) + 2
 
 local orderly = t.join()
 local corpse = t.join()

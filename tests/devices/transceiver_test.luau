@@ -69,7 +69,7 @@ t.world(
 )
 
 local p = t.join()
-t.run_ticks(20)
+t.run_seconds(1.0)
 
 local function take(x: number, y: number, id: string)
     local places = {
@@ -184,7 +184,7 @@ take(5, 1, "screwdriver")
 work(4.5)
 assert(t.structure_at(6, 1) == nil, "the frame is spent into the tower")
 put_down()
-t.run_ticks(40)
+t.run_seconds(2.0)
 
 -- ---------------------------------------------------------------
 -- 2. THE SENTENCE. An empty hand on the tower gets this pack's own
@@ -300,7 +300,7 @@ local function clear_returned()
         local x, y = returned_destination(id)
         cable_destination += if id == "cable_coil" then 1 else 0
         t.throw(p, x, y)
-        t.run_ticks(30)
+        t.run_seconds(1.5) -- the flight out and the landing
     end
 end
 
@@ -337,7 +337,7 @@ take(5, 1, "screwdriver")
 work(4.5)
 assert(t.structure_at(6, 1) == nil, "rebuilt")
 put_down()
-t.run_ticks(40)
+t.run_seconds(2.0)
 
 local _ = t.messages(p)
 t.click(p, 6, 1, t.target_at(p, 6, 1))

@@ -68,7 +68,7 @@ assert(assert(t.parts(patient)).chest.states.skin_cut ~= true, "a refusal is not
 -- way through, the patient gets up and the attempt ends with no cut.
 hold("scalpel")
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
-t.run_ticks(20) -- the incise do_after is 80 ticks; interrupt it early
+t.run_seconds(1.0) -- the deck incise do_after is 4 s; interrupt it early
 local parked = #t.ledger_rows("DoAfterStarted")
 assert(parked > 0, "the incision parked")
 -- One operation in flight per surgeon (tg DOAFTER_SOURCE_SURGERY): a
@@ -87,7 +87,7 @@ t.rest(patient, true)
 t.run_ticks(2)
 local before = #t.ledger_rows("DoAfterInterrupted")
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
-t.run_ticks(20)
+t.run_seconds(1.0)
 t.drop(surgeon) -- the scalpel leaves the hand
 t.run_ticks(3)
 assert(#t.ledger_rows("DoAfterInterrupted") > before, "the tool left the hand: interrupted")

@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local network_matter = require("@helpers/network_matter")
 local network_channels = require("@helpers/network_channels")
 
@@ -461,7 +462,7 @@ assert(t.ledger_has("AtmosDeviceSet", "pump"), "switching it is on the record")
 -- One atmos pass moves what is standing in the 200 L input port and no
 -- more (tg drains `airs[1]` and stops). So it starts, and it is
 -- nowhere near finished.
-t.run_ticks(11)
+t.run_ticks(clock.deadline_ticks(0.5) + 1)
 local first = assert(network_matter.pressure(7, 1))
 assert(first > delivery + 1.0, "the first pass moved something: " .. first)
 assert(

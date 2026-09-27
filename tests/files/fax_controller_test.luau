@@ -1,10 +1,11 @@
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
 local laptop = require("@helpers/laptop")
 local ui_files = require("@helpers/ui_files")
 
 -- A player installs an AP guest that prints through a reachable fax service.
--- The press, addressed request, native 40-tick job, and reply all cross the
+-- The press, addressed request, native 2 s job, and reply all cross the
 -- player-facing seams; no script handle is supplied by the fixture.
 local PROGRAM = "if event.kind == 'button' then "
     .. "local d = directory[1] local print_ad = false local send_ad = false "
@@ -70,7 +71,7 @@ t.world(
 )
 
 local crew = t.join()
-t.run_ticks(10)
+t.run_seconds(0.5)
 
 local function node(player: number, suffix: string): ui_controls.Node
     return ui_controls.node(player, suffix)
@@ -105,7 +106,7 @@ assert(joined > 0, "the laptop joins the controller button")
 ui_files.create(crew, "host", "disl", "fax_controller")
 t.run_ticks(2)
 local uid = string.format("%d", ui_controls.number(ui_controls.record(laptop.ui(crew).open).uid))
-t.run_ticks(10)
+t.run_seconds(0.5) -- the pacing window on text acts (docs/TGUI.md)
 ui_files.save(crew, PROGRAM)
 t.run_ticks(2)
 assert(ui_controls.record(laptop.ui(crew).open).body == PROGRAM, "the source is saved on the AP")
@@ -149,17 +150,17 @@ t.run_ticks(1)
 local heard = table.concat(t.messages(crew), " | ")
 assert(heard == "", "button routing: " .. heard)
 assert(#t.items_at(1, 2) == 0, "the fax has no output before its job completes")
-t.run_ticks(39)
-assert(#t.items_at(1, 2) == 0, "the print job still runs through tick 39")
+t.run_ticks(clock.deadline_ticks(2.0) - 1)
+assert(#t.items_at(1, 2) == 0, "the print job still runs a tick short of its 2 s deadline")
 t.run_ticks(1)
-assert(t.items_at(1, 2)[1] == "paper", "the fax ejects fresh paper at tick 40")
-t.run_ticks(10) -- delivery, command completion, then the door animation
+assert(t.items_at(1, 2)[1] == "paper", "the fax ejects fresh paper at the 2 s deadline")
+t.run_ticks(clock.deadline_ticks(0.5)) -- delivery, command completion, then the door animation
 local replying_door = assert(t.door_at(6, 1))
 assert(
     replying_door.moving and not replying_door.open,
     "the correlated fax.printed callback starts the joined door"
 )
-t.run_ticks(12)
+t.run_ticks(clock.deadline_ticks(0.6) + 2) -- the 0.6 s leaf swing
 assert(assert(t.door_at(6, 1)).open, "the door becomes passable after its swing")
 
 -- The input crosses the 4096-byte boundary with a three-byte codepoint. The

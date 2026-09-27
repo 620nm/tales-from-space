@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
 -- WHAT IS IN THAT SOCKET, and the one-word answer for everyone who
@@ -154,7 +155,7 @@ end
 local function step(tool: string, secs: number, state: string)
     hold(tool)
     t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
-    t.run_ticks(math.ceil(secs * 20) + 3)
+    t.run_ticks(clock.deadline_ticks(secs) + 3)
     assert(assert(t.parts(patient)).chest.states[state] == true, "the chest is " .. state)
 end
 
@@ -179,7 +180,7 @@ for _, toggle in ipairs(ui_controls.rows(win.toggles)) do
 end
 assert(pick, "the window lists the lungs among the organs to remove")
 ui_controls.toggle(surgeon, "operation", pick)
-t.run_ticks(23)
+t.run_ticks(clock.deadline_ticks(1.0) + 3) -- the 1 s removal
 
 local hole = assert(t.sockets(patient)).lungs
 assert(hole ~= nil, "the socket is still declared")

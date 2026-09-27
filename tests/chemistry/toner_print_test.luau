@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
 local function amount(handle, key: string): number
@@ -70,6 +71,13 @@ t.world(
 )]==],
     0
 )
+
+-- A copy job runs `printing.copy_seconds` = 4 s (content/lib/printing.luau),
+-- converted at the documents.start call. The busy check below already
+-- spends two of those ticks, so the boundary-minus-one sample waits the
+-- full run minus those two and one more. Read here and not at the top:
+-- the rate exists only once a world is booted.
+local COPY_TICKS = clock.deadline_ticks(4)
 
 local p = t.join()
 t.run_ticks(3)
@@ -181,7 +189,7 @@ t.ui_press(p, control(p, "copier", "/copy"))
 t.run_ticks(2)
 local started = script_data(ui_controls.state(p, "copier"))
 assert(started.busy == true, "the copier starts the print job")
-t.run_ticks(77)
+t.run_ticks(COPY_TICKS - 3)
 assert(t.count_items("paper") == papers_before, "the page is not printed before the job completes")
 t.run_ticks(1)
 assert(t.count_items("paper") == papers_before + 1, "one printed page lands on the copier")
@@ -233,7 +241,7 @@ t.ui_press(p, control(p, "copier", "/copy"))
 t.run_ticks(2)
 local refilled_started = script_data(ui_controls.state(p, "copier"))
 assert(refilled_started.busy == true, "the copier starts a post-refill print job")
-t.run_ticks(77)
+t.run_ticks(COPY_TICKS - 3)
 assert(
     t.count_items("paper") == pages_before_refilled_print,
     "the refilled page is not printed before the job completes"

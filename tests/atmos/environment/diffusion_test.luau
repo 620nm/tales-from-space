@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local composition = require("@helpers/composition")
 
 -- Free gas, moving by itself. No pipe anywhere on any map below, no
@@ -383,10 +384,10 @@ assert(t.room_pressure(4, 1) == far_kpa_0, "its gauge did not move at all")
 -- breaker goes so nothing tidies up after us -- a dead motor holds
 -- whatever position it had.
 t.click(p, 3, 1, t.target_at(p, 3, 1))
-t.run_ticks(15)
+t.run_ticks(clock.deadline_ticks(0.6) + 3) -- tg's 0.6 s swing, plus observation
 assert(assert(t.door_at(3, 1)).open, "the airlock opened")
 t.outage()
-t.run_ticks(20)
+t.run_seconds(1)
 assert(assert(t.door_at(3, 1)).open, "and an unpowered leaf stays where it was left")
 
 t.run_seconds(35)

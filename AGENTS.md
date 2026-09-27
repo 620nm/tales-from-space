@@ -158,8 +158,12 @@ repository's gitignored `target/`, never the engine's served root.
 - Specs (`tests/*_test.luau`) assert what a PLAYER could cause, through
   `t` — the same SimCommand seam the Rust harness uses. No raw entity
   handles, no component access, no direct spawn, and none should ever be
-  added. Seed 0, `Tuning::default()` pinned, ticks-not-time, drain after
-  step. Budget output (load ms, spec ms) is advisory wall clock; the
+  added. Seed 0, this pack's `content/tuning.luau` values pinned, drain
+  after step. Elapsed waits use `t.run_seconds`; tick steps sequence
+  events (`t.tick_hz` names the rate). Conversions follow the engine's
+  `sim.ticks`/`sim.tick_hz` clock contract (the generated
+  `lunatic-v1.d.luau` signatures, the engine's `docs/luau-api/runtime.md`).
+  Budget output (load ms, spec ms) is advisory wall clock; the
   hard budget is the host's fuel, counted per invocation and per mod
   per tick (lunatic's `crates/lunatic-server/src/fuel.rs`).
 - Map RON inside Luau specs goes in `[==[ ... ]==]` long strings, not

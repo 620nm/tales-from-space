@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
 -- Surgery on a body the map arrived holding.
@@ -113,7 +114,7 @@ local optable = assert(t.target_at(surgeon, 3, 2, "optable"))
 -- Laying a body out TAKES TIME now (`lay_body_secs`,
 -- content/tuning.luau), so this waits the do_after out.
 t.drag(surgeon, 5, 1, assert(t.target_at(surgeon, 5, 1, "name:" .. corpse_name)), 3, 2, optable)
-t.run_ticks(2 * 20 + 2)
+t.run_ticks(clock.deadline_ticks(2.0) + 2)
 assert(on_table() ~= nil, "the cadaver is on the table")
 assert(on_table().posture == "lying", "laid out on it")
 
@@ -137,7 +138,7 @@ local wardrobe = ui_controls.record(assert(t.ui(surgeon), "the drag opened its w
 local worn_row = slot_row(wardrobe, "Uniform")
 assert(worn_row ~= nil and worn_row.field == "strip", "it is wearing the jumpsuit")
 ui_controls.toggle(surgeon, "strip", "uniform")
-t.run_ticks(90)
+t.run_ticks(clock.deadline_ticks(4.0) + 10)
 assert(on_table().worn.uniform == nil, "the jumpsuit is off")
 
 -- ---- what the console says BEFORE the first cut -----------------------
@@ -184,7 +185,7 @@ t.click(surgeon, 3, 2, assert(t.target_at(surgeon, 3, 2, "name:" .. corpse_name)
 t.run_ticks(2)
 assert(not said(surgeon, "nothing to do"), "a bare, laid-out cadaver has work in it")
 assert(#t.ledger_rows("DoAfterStarted") > parked, "the incision parked")
-t.run_ticks(100)
+t.run_ticks(clock.deadline_ticks(5.0))
 assert(assert(on_table().parts).chest.states.skin_cut == true, "and the chest is open")
 
 print("cadaver surgery: pulled, laid out, stripped and opened")

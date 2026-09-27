@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
@@ -51,7 +52,7 @@ end
 -- One atmos pass: SSair's cadence, and the unit works its port once per
 -- pass. A spec that wants to watch the approach counts in these.
 local function pass()
-    t.run_ticks(10)
+    t.run_ticks(clock.deadline_ticks(0.5))
 end
 
 local function moles(x, y)

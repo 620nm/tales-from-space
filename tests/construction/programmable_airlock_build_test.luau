@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
 -- Both reusable components are constructed through the ordinary player seam.
@@ -22,7 +23,7 @@ t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "airlock_button_fitting")))
 t.run_ticks(2)
 assert(t.hands(p).held == "airlock_button_fitting", "the fitting is in hand before building")
 ui_controls.build(p, "airlock_button_fitting", "airlock_button", 2, 0)
-t.run_ticks(45)
+t.run_ticks(clock.deadline_ticks(2.0) + 5)
 assert(
     t.structure_at(2, 1) and assert(t.structure_at(2, 1)).id == "airlock_button",
     "button build: " .. table.concat(t.messages(p), " | ")
@@ -31,14 +32,14 @@ assert(t.count_items("airlock_button_fitting") == 0, "assembly consumes its fitt
 t.click(p, 2, 2, assert(t.target_at(p, 2, 2, "wrench")))
 t.run_ticks(2)
 t.click(p, 3, 1, t.target_at(p, 3, 1, "bidirectional_vent_fitting"))
-t.run_ticks(45)
+t.run_ticks(clock.deadline_ticks(2.0) + 5)
 assert(
     assert(t.structure_at(3, 1)).id == "bidirectional_vent",
     "the floor fitting becomes the two-port machine"
 )
 assert(t.count_items("bidirectional_vent_fitting") == 0, "the vent fitting is consumed")
 t.click(p, 3, 1, t.target_at(p, 3, 1, "bidirectional_vent"))
-t.run_ticks(45)
+t.run_ticks(clock.deadline_ticks(2.0) + 5)
 assert(
     t.structure_at(3, 1) == nil and t.count_items("bidirectional_vent_fitting") == 1,
     "the reusable vent comes back off the deck as its fitting"
@@ -48,7 +49,7 @@ t.run_ticks(2)
 t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "screwdriver")))
 t.run_ticks(2)
 t.click(p, 2, 1, t.target_at(p, 2, 1, "airlock_button"))
-t.run_ticks(45)
+t.run_ticks(clock.deadline_ticks(2.0) + 5)
 assert(
     t.structure_at(2, 1) == nil and t.count_items("airlock_button_fitting") == 1,
     "the mounted button comes back as its fitting"

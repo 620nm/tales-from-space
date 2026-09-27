@@ -1,3 +1,5 @@
+local clock = require("@helpers/clock")
+
 -- How fast a puddle levels, and what actually sets that.
 --
 -- The rate is the thin-film gravity law: a link carries
@@ -39,8 +41,7 @@ local CORRIDOR = [==[(
 )]==]
 
 local TILES = 6
-local STEP = 10 -- ticks between readings
-local PATIENCE = 6000 -- ticks: past this a regression fails rather than hangs
+local PATIENCE = 600 -- steps: past this a regression fails rather than hangs
 
 local function held(key: string, x: number)
     local standing = t.room_liquid(x, 1)
@@ -60,13 +61,20 @@ local function run(key: string, moles: number)
     t.join()
     t.tick()
 
+    -- One atmos pass between readings: the flow links move on the 0.5 s
+    -- matter pass (lunatic_core::ATMOS_PERIOD), so sampling in passes
+    -- watches each surge exactly once. Read here and not at the top:
+    -- the rate exists only once a world is booted.
+    local STEP = clock.deadline_ticks(0.5)
+
     local poured = t.matter_totals().substances[key]
     assert(math.abs(poured - moles) < 1e-6, ("%s: the blend is what was painted"):format(key))
     assert(held(key, 1) > 59.0, ("%s: sixty litres on one tile"):format(key))
 
     local crossed, levelled = -1, -1
-    for elapsed = STEP, PATIENCE, STEP do
+    for step = 1, PATIENCE do
         t.run_ticks(STEP)
+        local elapsed = step * STEP
         local shallow, deep = math.huge, 0.0
         for x = 1, TILES do
             local depth = held(key, x)

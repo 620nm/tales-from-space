@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 local laptop = require("@helpers/laptop")
 local ui_files = require("@helpers/ui_files")
@@ -74,7 +75,7 @@ t.world(
 )
 
 local crew = t.join()
-t.run_ticks(20)
+t.run_seconds(1.0)
 
 local function ui()
     return laptop.ui(crew)
@@ -139,7 +140,7 @@ local _store = ui_controls.rows(ui().stores)[1].binding
 ui_files.create(crew, "host", "disl", "opener")
 t.run_ticks(2)
 local uid = string.format("%d", ui_controls.number(ui_controls.record(ui().open).uid))
-t.run_ticks(10) -- the pacing window on text acts (docs/TGUI.md)
+t.run_seconds(0.5) -- the pacing window on text acts (docs/TGUI.md)
 ui_files.save(crew, PROGRAM)
 t.run_ticks(2)
 assert(
@@ -159,7 +160,7 @@ t.run_ticks(2)
 
 -- ---- through the host: opened --------------------------------------------
 t.click(crew, 6, 2, assert(t.target_at(crew, 6, 2, "airlock_button")))
-t.run_ticks(20)
+t.run_ticks(clock.deadline_ticks(0.6) + 8) -- the guest run plus the 0.6 s leaf swing
 assert(
     assert(t.door_at(6, 1)).open,
     "the program opened the tagged door for the hand it just refused"

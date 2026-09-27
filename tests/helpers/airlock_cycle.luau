@@ -1,7 +1,9 @@
 -- One airlock cycle as a spec watches it: a press the guest accepted, then a
 -- leaf at rest and bolted with the guest idle and the controller unfaulted.
+local clock = require("@helpers/clock")
 local cycle = {}
 local FAULT = "The controller has stopped the airlock cycle."
+local TIMEOUT_SECS = 32
 
 -- A press mark: how many guest runs the ledger holds just before a press.
 function cycle.mark(): number
@@ -43,8 +45,9 @@ end
 
 -- Step `step` ticks (4) at a time until the door at (x, y or 3) rests `open`
 -- and bolted once the press marked `since` settled; `each` runs before
--- every step. Fails as soon as `observer` hears the controller stop the
--- cycle; returns all `observer` heard.
+-- every step. The poll step is ticks; the give-up is 32 seconds under
+-- the booted round's rate. Fails as soon as `observer` hears the
+-- controller stop the cycle; returns all `observer` heard.
 function cycle.until_door(
     x: number,
     open: boolean,
@@ -57,7 +60,7 @@ function cycle.until_door(
     step = step or 4
     y = y or 3
     local heard: { string } = {}
-    for _ = 1, math.ceil(640 / step) do
+    for _ = 1, math.ceil(clock.deadline_ticks(TIMEOUT_SECS) / step) do
         if each then
             each()
         end

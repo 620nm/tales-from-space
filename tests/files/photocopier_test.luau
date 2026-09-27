@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
 local function script_data(panel: ui_controls.Record): ui_controls.Record
@@ -107,15 +108,16 @@ assert(
 )
 local papers_before = t.count_items("paper")
 
--- Loading consumes the hand-held sheet; copying is a native 80-tick job.
+-- Loading consumes the hand-held sheet; copying is a native 4 s job
+-- (content/lib/printing.luau `copy_seconds`, exact at every integer rate).
 local copy_control = control(p, "copier", "/copy")
 t.ui_press(p, copy_control)
 t.run_ticks(2)
 local started = ui_controls.state(p, "copier")
 local started_data = script_data(started)
 assert(started_data.busy == true, "the copier enters its native job")
-t.run_ticks(77)
-assert(t.count_items("paper") == papers_before, "no output appears before the 80-tick page")
+t.run_ticks(clock.deadline_ticks(4.0) - 3)
+assert(t.count_items("paper") == papers_before, "no output appears before the 4 s page")
 t.run_ticks(1)
 assert(t.count_items("paper") == papers_before + 1, "one completed copy lands on the machine tile")
 data = script_data(ui_controls.state(p, "copier"))
@@ -137,10 +139,10 @@ data = script_data(ui_controls.state(p, "copier"))
 assert(data.count == 2 and data.mode == "color", "the copier accepts a two-page color batch")
 local batch_before = t.count_items("paper")
 t.ui_press(p, control(p, "copier", "/copy"))
-t.run_ticks(160)
+t.run_ticks(clock.deadline_ticks(8.0))
 assert(
     t.count_items("paper") == batch_before + 2,
-    "a two-page batch completes one page per 80 ticks"
+    "a two-page batch completes one page per 4 s"
 )
 t.ui_close(p, "copier")
 copier =

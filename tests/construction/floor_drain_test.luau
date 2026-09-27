@@ -70,9 +70,9 @@ assert(spilled > 9.99 and spilled < 10.01, ("ten litres on the grating: %.4f L")
 -- Five seconds of draining, then five more: a straight line, not a
 -- curve. A sink that emptied proportionally would fall fastest while
 -- it was fullest and never reach the film at all.
-t.run_ticks(100)
+t.run_seconds(5)
 local at_five = litres(1)
-t.run_ticks(100)
+t.run_seconds(5)
 local at_ten = litres(1)
 local measured = (at_five - at_ten) / 5.0
 assert(
@@ -80,19 +80,19 @@ assert(
     ("it drains at half a litre a second: %.4f L/s"):format(measured)
 )
 
--- And two hundred more ticks finds the film, which is where it stops.
-t.run_ticks(200)
+-- And ten more seconds finds the film, which is where it stops.
+t.run_seconds(10)
 local left = litres(1)
 assert(
     math.abs(left - FILM_L) < 0.05,
     ("it stops at the film: %.4f L against %.3f"):format(left, FILM_L)
 )
 
--- No further, ever. Two thousand ticks later the grating is standing in
+-- No further, ever. A hundred seconds later the grating is standing in
 -- the same three and a bit litres, because what is under the film has
 -- no excess and a drain may not take it -- a tile pulled drier than any
 -- neighbour could make it would pull forever.
-t.run_ticks(2000)
+t.run_seconds(100)
 assert(litres(1) > FILM_L * 0.95, ("the film is still there: %.4f L"):format(litres(1)))
 assert(
     math.abs(t.matter_totals().substances.water - POURED) < 1e-6,
@@ -158,7 +158,7 @@ assert(litres(1) < 1e-6, "the west tile starts dry")
 assert(litres(2) < 1e-6, "and so does the grating")
 
 for _ = 1, 8 do
-    t.run_ticks(200)
+    t.run_seconds(10)
     -- Checked every step rather than once at the end: a drain that
     -- overshot its tile for one pass and refilled it would be invisible
     -- to a single reading at the finish.

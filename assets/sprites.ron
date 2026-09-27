@@ -59,7 +59,7 @@
     // Display composition is atlas data rather than a game-named
     // renderer. The clock advances at tg's one-second processing
     // cadence (`code/controllers/subsystem/processing/digital_clock.dm:1-5`),
-    // which is 20 ticks at this engine's frozen tick rate. The status
+    // sampled every 1000 ms whatever the simulation rate. The status
     // display keeps tg's two 22px rows, 25px/s marquee, four-space
     // repeat gap with a 2px-trimmed loop, and purple `-...-` headers
     // (`code/game/machinery/status_display.dm:3-10,35-38,311-347`;
@@ -71,7 +71,7 @@
                 "digital_clock_e", "digital_clock_w",
             ],
             content: Clock((
-                period_ticks: 20,
+                period_ms: 1000,
                 digits: [
                     "digital_clock_0", "digital_clock_1", "digital_clock_2",
                     "digital_clock_3", "digital_clock_4", "digital_clock_5",

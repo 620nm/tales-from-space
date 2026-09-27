@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local network_matter = require("@helpers/network_matter")
 local composition = require("@helpers/composition")
 
@@ -30,8 +31,6 @@ local composition = require("@helpers/composition")
 -- at chlorine takes chlorine out of the room and leaves the air, which
 -- is a question about WHICH gas and therefore asserted in moles.
 local ui_controls = require("@helpers/ui_controls")
-
-local BREATH = 160 -- one breath cycle, 8 s at 20 Hz
 
 t.world(
     [==[(
@@ -93,6 +92,10 @@ t.world(
 local chemist = t.join("engineer")
 local diver = t.join("assistant")
 t.run_ticks(2)
+
+-- One breath cycle, 8 s (lunatic_core::BREATH_PERIOD). Read here and
+-- not at the top: the rate exists only once a world is booted.
+local BREATH = clock.deadline_ticks(8)
 
 local dispenser = t.target_at(chemist, 1, 1)
 local scrubber = t.target_at(diver, 4, 1, "air_scrubber")
@@ -219,8 +222,8 @@ assert(partial() > 0.75, "which is a closet nobody should be standing in: " .. p
 -- `t.blood(chemist).chlorine` is zero here and that is correct rather
 -- than disappointing. A breath in this room delivers well under a
 -- millimole; metabolism takes up to 0.02 mol a trip, and it runs in the
--- SAME TICK as the breath and immediately after it (sim/tick.rs:
--- BREATH_EVERY is a multiple of METABOLISM_EVERY). So what arrives has
+-- SAME TICK as the breath and immediately after it (sim/tick.rs: the
+-- 8 s breath is a multiple of the 2 s metabolism pass). So what arrives has
 -- been spent before any tick a spec could sample between. The reading a
 -- player has is the one asserted instead: their own oxy, climbing.
 --

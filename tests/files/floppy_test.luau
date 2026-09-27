@@ -261,13 +261,13 @@ assert(
 )
 
 -- ---- the source control bounds a long paste ---------------------------
-t.run_ticks(10)
+t.run_seconds(0.5) -- the pacing window on text acts (docs/TGUI.md)
 ui_files.save(p, string.rep("x", BODY_CAP + 1))
 t.tick()
 ui = ui_controls.state(p)
 assert(#text(record(ui.open).body) == BODY_CAP, "the rendered editor caps the submitted text")
 assert(record(ui.open).revision == 2, "the bounded text is a normal save")
-t.run_ticks(10)
+t.run_seconds(0.5) -- the pacing window again
 ui_files.save(p, NOTE)
 t.tick()
 assert(record(ui_controls.state(p).open).body == NOTE, "the first reader restores the note")
@@ -276,7 +276,7 @@ assert(record(ui_controls.state(p).open).body == NOTE, "the first reader restore
 -- Two crew at one terminal. The first save moved the file; the second
 -- names the revision it was seeded from, and that number is stale, so
 -- it is refused rather than allowed to clobber the faster hand.
-t.run_ticks(20)
+t.run_seconds(1.0) -- the pane republishes on the window cadence
 local stale_save = ui_controls.node(other, "/editor/save")
 assert(stale_save.disabled, "a conflicting draft disables Save")
 assert(ui_controls.find(other, "/editor/conflict"), "the editor explains the conflict")
@@ -294,7 +294,7 @@ t.ui_press(p, restored, "change")
 -- accepted text act inside the pacing window is dropped on purpose
 -- (docs/TGUI.md: refusals speak, successes wait). A person renaming a
 -- file they just saved has this half-second without noticing it.
-t.run_ticks(10)
+t.run_seconds(0.5)
 ui_files.rename(p, "tank_room")
 t.tick()
 ui = ui_controls.state(p)

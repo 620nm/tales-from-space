@@ -68,7 +68,7 @@ t.set_breathing(false)
 t.world(AIRLOCK, 0)
 t.join("assistant")
 local visitor = t.join("engineer")
-t.run_ticks(20)
+t.run_seconds(1.0)
 
 local CHAMBER = { { 6, 3 }, { 7, 3 }, { 6, 4 }, { 7, 4 } }
 local function chamber()

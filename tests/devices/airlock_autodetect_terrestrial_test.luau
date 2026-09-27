@@ -72,7 +72,7 @@ t.set_breathing(false)
 t.world(AIRLOCK, 0)
 local operator0 = t.join("assistant")
 t.join("engineer")
-t.run_ticks(20)
+t.run_seconds(1.0)
 
 -- The premise, read after the world has run: both ends, and the
 -- chamber open to the east leaf, still hold breathable air.

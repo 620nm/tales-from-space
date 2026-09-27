@@ -123,7 +123,7 @@ t.world(
 )
 
 p = t.join()
-t.run_ticks(30) -- let a power pass settle the dead motors
+t.run_seconds(1.5) -- let a power pass settle the dead motors
 t.click(p, 1, 1, t.target_at(p, 1, 1, "crowbar")) -- the crowbar
 t.tick()
 t.move(p, "east")
@@ -176,7 +176,7 @@ t.click(p, 2, 1, t.target_at(p, 2, 1, "floor_tile")) -- the tiles are underfoot
 t.run_ticks(2)
 assert(t.hands(p).held == "floor_tile", "a stack of tiles in hand")
 t.fault(1, 1, t.now() + 1) -- the hull fails next door
-t.run_ticks(40) -- a couple of atmos ticks of venting
+t.run_seconds(2.0) -- a couple of atmos ticks of venting
 assert(t.is_breached(1, 1), "the fault breached the corner")
 
 t.messages(p)

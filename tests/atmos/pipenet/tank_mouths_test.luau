@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local network_matter = require("@helpers/network_matter")
 local network_channels = require("@helpers/network_channels")
 
@@ -119,7 +120,7 @@ local start_moles = total(assert(t.tank_gas(4, 4)))
 for _, run in ipairs(runs) do
     start_moles = start_moles + total(assert(network_matter.gas(run.x, run.y)))
 end
-t.run_ticks(10)
+t.run_ticks(clock.deadline_ticks(0.5)) -- one atmos pass
 
 local density = total(assert(t.tank_gas(4, 4))) / TANK_M3
 local holder_kpa = assert(t.tank_pressure(4, 4))

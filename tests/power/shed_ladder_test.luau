@@ -19,12 +19,16 @@ local function near(got: number, want: number, tol: number, why: string)
     assert(math.abs(got - want) <= tol, why .. ": " .. got .. " vs " .. want)
 end
 
--- The electrical pass runs on every multiple of this many ticks (0.5 Hz,
+-- The electrical pass runs every 2 s (0.5 Hz, lunatic_core::POWER_PERIOD,
 -- the engine's docs/power/pass.md). `pass()` runs through the next one
 -- and one tick past it, by when its handlers have thrown their gates.
-local POWER_EVERY = 40
+-- Two seconds is exactly 2*rate ticks at every integer rate, so this
+-- modulo alignment is the scheduler's own boundary and cannot drift
+-- the way a rounded sub-second period would. Read at call time: the
+-- rate exists only once a world is booted.
 local function pass()
-    t.run_ticks(POWER_EVERY - t.now() % POWER_EVERY + 1)
+    local every = 2 * t.tick_hz()
+    t.run_ticks(every - t.now() % every + 1)
 end
 
 local CLASSES = { "equipment", "lighting", "environment" }

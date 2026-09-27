@@ -38,7 +38,7 @@ local function pipe_chlorine(x: number, y: number)
 end
 
 local function check(order)
-    t.run_ticks(200)
+    t.run_seconds(10)
     -- Not one molecule outside: the pane holds, the pane's own tile
     -- holds, and the corridor past it holds.
     for _, at in ipairs(OUTSIDE) do

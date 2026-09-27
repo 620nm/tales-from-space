@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
@@ -97,10 +98,10 @@ near(assert(network_matter.pressure(3, 1)), 101.325, 0.01, "the run at one atmos
 
 local settled_kpa = pressure_of(tank_0 + run_0, TANK_M3 + RUN_M3, T20C)
 
--- ONE atmos pass -- ten ticks -- and it is over. tg equalises completely
--- in a pass and so does this: a vessel is not a machine working towards a
--- setpoint, it is a room with steel walls.
-t.run_ticks(10)
+-- ONE atmos pass -- half a second -- and it is over. tg equalises
+-- completely in a pass and so does this: a vessel is not a machine
+-- working towards a setpoint, it is a room with steel walls.
+t.run_ticks(clock.deadline_ticks(0.5))
 near(
     assert(t.tank_pressure(2, 1)),
     settled_kpa,
@@ -295,7 +296,7 @@ local main_0 = total(assert(network_matter.gas(2, 1)))
 local drained_kpa = pressure_of(main_0, MAIN_M3 + TANK_M3, T20C)
 assert(assert(t.tank_pressure(12, 1)) == 0.0, "the vessel opens the shift empty")
 assert(total(assert(t.tank_gas(12, 1))) == 0.0, "with nothing in its book at all")
-t.run_ticks(10)
+t.run_ticks(clock.deadline_ticks(0.5))
 
 local main_1 = total(assert(network_matter.gas(2, 1)))
 local vessel_1 = total(assert(t.tank_gas(12, 1)))

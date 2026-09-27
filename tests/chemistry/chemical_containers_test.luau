@@ -101,9 +101,9 @@ t.tick()
 assert(#t.sounds(p) == 0, "an empty sprayer emits no launch sound")
 assert(#t.ledger_rows("MatterSprayed") == 0, "an empty sprayer launches nothing")
 -- A ranged claim costs its click window whether or not anything came
--- of it (CLICK_CD_RANGE * 2, sixteen ticks): let it pass before the
+-- of it (tg's CLICK_CD_RANGE * 2, 0.8 s): let it pass before the
 -- next one.
-t.run_ticks(16)
+t.run_seconds(0.8)
 t.move(p, "east")
 t.tick()
 
@@ -156,7 +156,7 @@ assert(#t.ledger_rows("MatterSprayed") == 1, "cooldown refuses a second launch")
 -- breathes with the room once an atmos pass, and that trade is not
 -- what this line is about.
 near(assert(t.contents(spray)).water, 1.125, "one spray draws a 5 u parcel")
-t.run_ticks(20)
+t.run_seconds(1)
 assert(#t.ledger_rows("MatterSprayed") == 1, "one launch is on the ledger")
 local after = t.matter_totals()
 near(after.moles, before.moles, "spray travel conserves matter")

@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local composition = require("@helpers/composition")
 
 local network_channels = require("@helpers/network_channels")
@@ -29,7 +30,7 @@ end
 -- 0.4 s of tg's `atmos_build_speed` (RPD.dm:53), plus slack for the
 -- tick the effect lands on.
 local function work(p)
-    t.run_ticks(12)
+    t.run_ticks(clock.deadline_ticks(0.4) + 4)
 end
 
 -- One step, plus the move cooldown (lunatic_core::MOVE_COOLDOWN_TICKS

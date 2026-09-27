@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
 -- IDENTITY: a sealed bottle of water, heated, and the gauge that only
@@ -26,13 +27,13 @@ local ui_controls = require("@helpers/ui_controls")
 -- design (the virtual bath, sim/virtual_bath.rs), so the energy book
 -- is asserted with the power OFF.
 
--- ONE PHASE SWEEP, in ticks. Every holder on the station settles its
--- phases on the metabolism cadence (METABOLISM_EVERY = 40 ticks,
--- lunatic-core/src/lib.rs; sim/tick.rs runs `resolve_metabolism`
--- there), which is the clock a gauge over a vessel actually moves on
--- -- the element under it works four times as often, at the atmos
--- cadence, so a sample taken between sweeps catches a bottle that has
--- been warmed but not yet relaxed.
+-- ONE PHASE SWEEP. Every holder on the station settles its phases
+-- on the 2 s metabolism cadence (lunatic_core::METABOLISM_PERIOD;
+-- sim/tick.rs runs `resolve_metabolism` there), which is the clock a
+-- gauge over a vessel actually moves on -- the element under it works
+-- four times as often, at the 0.5 s atmos cadence, so a sample taken
+-- between sweeps catches a bottle that has been warmed but not yet
+-- relaxed.
 -- NOBODY IN HERE IS BREATHING. A crewman with lungs is a chemical
 -- plant standing in the room: his lungs are a driven vessel that holds
 -- several litres of the air inside itself and turns what it takes in
@@ -41,8 +42,6 @@ local ui_controls = require("@helpers/ui_controls")
 -- engine's -- so the crew are switched off as scaffolding, the same
 -- standing `t.set_health` has.
 t.set_breathing(false)
-
-local SWEEP = 40
 
 -- Clausius-Clapeyron for water, off the substance file's own numbers
 -- (substances/water.luau: boil 373.15 K, l_vap 40 660 J/mol), so the
@@ -100,6 +99,10 @@ t.world(
 
 local p = t.join()
 t.tick()
+
+-- One phase sweep: the 2 s metabolism cadence. Read here and not at
+-- the top: the rate exists only once a world is booted.
+local SWEEP = clock.deadline_ticks(2)
 
 local dispenser = assert(t.target_at(p, 1, 2), "the target is visible")
 local heater = assert(t.target_at(p, 3, 2), "the target is visible")

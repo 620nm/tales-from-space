@@ -1,3 +1,5 @@
+local clock = require("@helpers/clock")
+
 -- A flooded alcove fixture: two deep tiles held behind powered doors.
 --
 -- A map paints a tile with a Matter Blend and the tile opens the shift
@@ -88,7 +90,7 @@ assert(
 -- metre is a millimetre deep, under the film, and a puddle under the
 -- film has no excess for a link to take.
 -- ---------------------------------------------------------------
-t.run_ticks(600)
+t.run_seconds(30)
 local still = look_at(DEEP)
 local litres = tonumber(string.match(still, "A puddle: ([%d%.]+) L"))
 assert(litres ~= nil, "the pool is still a pool: " .. still)
@@ -133,13 +135,13 @@ end
 local x, y = t.pos(p)
 assert(x == 11 and y == 6, ("at the sill, got (%d,%d)"):format(x, y))
 t.click(p, 11, 7, t.target_at(p, 11, 7))
-t.run_ticks(15)
+t.run_ticks(clock.deadline_ticks(0.6) + 3) -- tg's 0.6 s swing, plus observation
 assert(assert(t.door_at(11, 7)).open, "the glazed sill is open")
 t.outage()
 t.run_ticks(5)
 assert(assert(t.door_at(11, 7)).open, "and a dead leaf stays where it was left")
 
-t.run_ticks(10000)
+t.run_seconds(500)
 
 -- The pair let go of most of what it was holding -- a fraction of what
 -- was painted there, not a depth: where the frontier stops is the

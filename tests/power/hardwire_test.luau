@@ -126,7 +126,7 @@ t.world(
 local p = t.join()
 t.tick()
 t.run_seconds(3)
-t.run_ticks(60)
+t.run_seconds(3)
 
 -- ---------------------------------------------------------------
 -- 1. THE PANEL HOLDS THE ROOM, and nobody put it there. The fitting
@@ -159,7 +159,7 @@ assert(
 )
 t.tick()
 t.run_seconds(3)
-t.run_ticks(40)
+t.run_seconds(2)
 assert(holds(hardwired(ui_controls.state(p)), victim), "the edge is still there")
 assert(#t.ledger_rows("link_released") == 0, "and nothing was cut")
 t.ui_close(p)
@@ -216,7 +216,7 @@ assert(row_for(alarm, "link_join", fan) == nil, "and no longer offers it")
 t.ui_close(p)
 t.tick()
 t.run_seconds(3)
-t.run_ticks(60)
+t.run_seconds(3)
 
 -- The panel has lost it: an explicit join severs the wire's edge
 -- rather than standing beside it, because a device has one parent.
@@ -251,7 +251,7 @@ assert(row_for(ui_controls.state(p), "link_drop", fan) == nil, "the console let 
 t.ui_close(p)
 t.tick()
 t.run_seconds(3)
-t.run_ticks(60)
+t.run_seconds(3)
 
 t.move(p, "east")
 t.run_ticks(5)

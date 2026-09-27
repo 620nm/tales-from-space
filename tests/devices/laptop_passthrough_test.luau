@@ -1,5 +1,6 @@
 -- A laptop only claims clicks on what it could program: a networked door
 -- keeps its ordinary click, whatever state the held laptop is in.
+local clock = require("@helpers/clock")
 local LID = "The laptop's lid is closed. Open it first."
 local OFF = "The laptop is off. Turn it on first."
 
@@ -35,7 +36,7 @@ t.world(
     0
 )
 local p = t.join()
-t.run_ticks(20)
+t.run_seconds(1.0)
 
 local function heard_any(lines: { string }, ...: string)
     for _, line in ipairs(lines) do
@@ -56,7 +57,7 @@ assert(door.powered and not door.open and not door.bolted, "a powered, shut, pub
 
 local _ = t.messages(p)
 t.click(p, 5, 1, t.target_at(p, 5, 1))
-t.run_ticks(20)
+t.run_ticks(clock.deadline_ticks(0.6) + 8) -- the 0.6 s leaf swing
 local lines = t.messages(p)
 assert(assert(t.door_at(5, 1)).open, "a click with a closed laptop still opens the door")
 assert(

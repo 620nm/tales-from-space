@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local composition = require("@helpers/composition")
 
 local ui_controls = require("@helpers/ui_controls")
@@ -191,7 +192,7 @@ assert(said(medic, "You line the needle up"), "the gesture parks rather than lan
 close(total(syringe), STROKE, "and nothing has moved yet")
 assert(#t.ledger_rows("DoAfterStarted") > 0, "it parked as a do_after")
 
-t.run_ticks(62) -- tg's three seconds, at twenty ticks to the second
+t.run_ticks(clock.deadline_ticks(3) + 2) -- tg's three seconds, plus two observation ticks
 assert(said(medic, "You inject"), "the needle goes in")
 -- A stroke pushes the CONDENSED phases, so what stays behind is the
 -- vapour that saturated the barrel's own headspace while it was full --
@@ -241,7 +242,7 @@ t.run_ticks(2)
 ui_controls.toggle(medic, "action", "package")
 t.run_ticks(2)
 assert(said(medic, "The extruder starts printing."), "the print is ordered")
-t.run_ticks(90) -- five pills at tg's 0.75 s each, plus slack
+t.run_seconds(4.5) -- five pills at tg's 0.75 s each, plus slack
 assert(said(medic, "The extruder clicks and stops."), "and it finishes")
 
 assert(t.count_items("pill") == PILLS, "five pills, no more and no less")

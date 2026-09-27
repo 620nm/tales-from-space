@@ -60,7 +60,7 @@ t.tick()
 assert(t.hands(p).held == "fire_extinguisher", "the player holds the extinguisher")
 t.use_self(p)
 t.tick()
-t.run_ticks(16)
+t.run_seconds(0.8)
 t.set_health(p, { brute = 0, burn = 0, oxy = 0, tox = 0 })
 
 assert(#t.ledger_rows("ExtinguishedAt") == 0, "neither fire has extinguished before spraying")
@@ -72,7 +72,7 @@ t.tick()
 assert(#t.ledger_rows("MatterSprayed") == 1, "CO2 discharge is recorded")
 local before_temperature = assert(t.room_temperature(2, 1))
 for _ = 1, 9 do
-    t.run_ticks(24)
+    t.run_seconds(1.2) -- the pressure-discharge cooldown
     t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "canister")))
     t.tick()
 end

@@ -11,6 +11,8 @@
 -- out of `m = tool x location x patient`, and the total is the sum of
 -- the attempts the seeded RNG actually took.
 
+local clock = require("@helpers/clock")
+
 local ARENA = [==[(
     name: "shaft",
     legend: {
@@ -43,7 +45,6 @@ assert(assert(t.body(patient)).posture == "lying", "the patient is on the deck")
 assert(t.worn(patient).uniform == nil, "the chest is bared")
 
 local PX, PY = 2, 1
-local TICK_HZ = 20
 
 -- A part's `states` is a SET keyed by name (`states.skin_open == true`),
 -- so membership is a lookup, never a loop.
@@ -65,7 +66,7 @@ end
 -- Click the patient until the targeted part reaches `done`, one attempt
 -- per do_after. Returns attempts and the ticks they cost.
 local function operate(done: ({ [string]: boolean }) -> boolean, step_secs: number)
-    local step_ticks = math.ceil(step_secs * TICK_HZ) + 2
+    local step_ticks = clock.deadline_ticks(step_secs) + 2
     local attempts, ticks = 0, 0
     for _ = 1, 40 do
         if done(assert(t.parts(patient)).chest.states) then
@@ -155,7 +156,7 @@ print(
     string.format(
         "shaft: %d ticks (%.1f s); failures incise=%d retract=%d clamp=%d close=%d",
         total_ticks,
-        total_ticks / TICK_HZ,
+        total_ticks / t.tick_hz(),
         failures.incise,
         failures.retract,
         failures.clamp,

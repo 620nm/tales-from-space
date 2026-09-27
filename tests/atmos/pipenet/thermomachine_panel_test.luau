@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
 
@@ -48,8 +49,9 @@ local function row(value: unknown, label: string): ui_controls.Record
     error("missing readout: " .. label)
 end
 
+-- One atmos pass: the machine works its port once every half second.
 local function pass()
-    t.run_ticks(10)
+    t.run_ticks(clock.deadline_ticks(0.5))
 end
 
 -- A wired department in miniature, the same shape device_power_test

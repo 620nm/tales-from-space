@@ -92,7 +92,8 @@ re-reads the air, and a wrong roster, a stranger's completion, a dead
 sample or a silent watch faults instead of guessing.
 If the closing leaf is moving, a new request waits for its actual rest
 before restarting. Old completions cannot advance later phases. Pressure
-watches and the host deadline bound stalled cycles. A disconnected or
+watches (25 s per pump) and the host deadline (30 s per press) bound
+stalled cycles. A disconnected or
 unpowered device cannot authorize progression. A fault can leave a door
 where it stopped; the source reports the fault instead of assuming success.
 

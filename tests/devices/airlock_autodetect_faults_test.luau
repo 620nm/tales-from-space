@@ -70,7 +70,7 @@ t.set_breathing(false)
 t.world(AIRLOCK, 0)
 local operator = t.join("assistant")
 t.join("engineer")
-t.run_ticks(20)
+t.run_seconds(1.0)
 
 local host = assert(t.target_at(operator, 4, 3, "access_point"))
 local function members()
@@ -95,7 +95,7 @@ t.drop(operator)
 t.run_ticks(2)
 local _ = t.messages(operator)
 t.click(operator, 2, 3, assert(t.target_at(operator, 2, 3, "airlock_button")))
-t.run_ticks(10)
+t.run_seconds(0.5)
 local heard = table.concat(t.messages(operator), " | ")
 local drops = 0
 for _, row in ipairs(t.ledger_rows("link_released")) do

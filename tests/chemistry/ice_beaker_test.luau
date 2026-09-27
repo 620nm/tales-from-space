@@ -100,7 +100,7 @@ assert(cold.temp_k < MELT_K, "which is under the melt, or it would not be ice")
 -- lump has nowhere to be but warmer, so it crosses the melt and
 -- starts going. Half a minute of shift, and nobody touched it.
 -- ---------------------------------------------------------------
-t.run_ticks(700)
+t.run_seconds(35)
 
 local thawing = assert(t.vessel(glass), "the vessel has a reading")
 local w = thawing.contents.water

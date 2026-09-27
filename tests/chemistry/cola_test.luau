@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 local composition = require("@helpers/composition")
 
@@ -75,7 +76,7 @@ local sugar = t.blood(p).sugar
 assert(sugar ~= nil and sugar > 0, "the swig carried sugar into the blood")
 
 local before = ui_controls.number(t.health(p).oxy)
-t.run_ticks(400)
+t.run_seconds(20)
 local after = ui_controls.number(t.health(p).oxy)
 assert(after < before, ("sugar healed oxy: %g -> %g"):format(before, after))
 assert(t.blood_moles(p) < swig, "metabolism removed moles from the blood")
@@ -174,7 +175,7 @@ assert(
 -- rest of the shift, without any single swig ever looking wrong.
 --
 -- A fresh canteen: the can above has been drunk from and left to brew
--- for four hundred ticks, and six more mouthfuls is most of what it
+-- for twenty seconds, and six more mouthfuls is most of what it
 -- shipped with.
 -- ---------------------------------------------------------------
 t.world(CANTEEN, 7)
@@ -189,9 +190,10 @@ assert(t.hands(probe).held == "cola", "a fresh can, in hand")
 local worked = 0
 for round = 1, 6 do
     composition.click_deck(probe, 2, 1)
-    -- A metabolism trip is every 40 ticks (sim/life.rs), so 45 buys at
-    -- least one between this swig and the next.
-    t.run_ticks(45)
+    -- A metabolism trip runs every 2 s (lunatic_core::METABOLISM_PERIOD),
+    -- so one pass plus five observation ticks buys at least one trip
+    -- between this swig and the next.
+    t.run_ticks(clock.deadline_ticks(2) + 5)
 
     -- The POSITIVE CONTROL for the two negatives under it, and the
     -- reason they are asked in this order: `t.ledger_rows` answers a

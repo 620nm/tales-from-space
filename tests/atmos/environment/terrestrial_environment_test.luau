@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local composition = require("@helpers/composition")
 
 local ui_controls = require("@helpers/ui_controls")
@@ -18,13 +19,13 @@ assert(assert(t.room_pressure(0, 0)) > 100)
 assert(not assert(t.door_at(6, 3)).open)
 
 local p = t.join()
-t.run_ticks(10)
+t.run_seconds(0.5)
 t.move(p, "east")
 t.run_ticks(5)
 t.click(p, 6, 3, t.target_at(p, 6, 3))
-t.run_ticks(15)
+t.run_ticks(clock.deadline_ticks(0.6) + 3) -- tg's 0.6 s swing, plus observation
 assert(assert(t.door_at(6, 3)).open, "the fixture's APC supplies its door")
-t.run_ticks(60)
+t.run_seconds(3)
 assert(assert(t.room_temperature(4, 3)) < 293.15, "outside air cools the opened room")
 
 -- Building a deck on land uses the ordinary material construction path.
@@ -42,13 +43,13 @@ t.run_ticks(2)
 t.click(builder, 1, 1, t.target_at(builder, 1, 1, "floor_tile"))
 t.run_ticks(2)
 ui_controls.build(builder, "floor_tile", "ground", 2, 1)
-t.run_ticks(40)
+t.run_seconds(2)
 assert(
     composition.matches(2, 1, { "station_base" }),
     "a new deck can be laid on ground: " .. table.concat(t.messages(builder), " | ")
 )
 ui_controls.build(builder, "floor_tile", "plating", 2, 1)
-t.run_ticks(15)
+t.run_seconds(0.75)
 assert(composition.matches(2, 1, { "station_base", "floor_tiles" }), "the deck can be tiled normally")
 
 assert(t.set_composition(2, 1, "bare"))

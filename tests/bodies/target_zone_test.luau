@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
 -- The target selector: what the HUD doll and the numbered target keys
@@ -53,7 +54,7 @@ assert(not t.set_zone(surgeon, ""), "and the empty word names nothing")
 t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, "scalpel"))
 t.run_ticks(2)
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
-t.run_ticks(math.ceil(1.6 * 20) + 3)
+t.run_ticks(clock.deadline_ticks(1.6) + 3)
 
 local parts = assert(t.parts(patient))
 assert(has(parts.head.states, "skin_cut"), "the head was cut: that is where the aim was")
@@ -65,7 +66,7 @@ assert(not has(parts.chest.states, "skin_cut"), "and nowhere else was")
 -- =====================================================================
 assert(t.set_zone(surgeon, "l_arm"), "the plan declares a left arm")
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
-t.run_ticks(math.ceil(1.6 * 20) + 3)
+t.run_ticks(clock.deadline_ticks(1.6) + 3)
 
 parts = assert(t.parts(patient))
 assert(has(parts.l_arm.states, "skin_cut"), "the arm was cut once the aim moved there")
@@ -82,7 +83,7 @@ t.tick()
 t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, "retractor"))
 t.run_ticks(2)
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
-t.run_ticks(math.ceil(2.4 * 20) + 3)
+t.run_ticks(clock.deadline_ticks(2.4) + 3)
 
 parts = assert(t.parts(patient))
 assert(
@@ -139,7 +140,7 @@ t.tick()
 t.click(surgeon, 1, 1, t.target_at(surgeon, 1, 1, "scalpel"))
 t.run_ticks(2)
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
-t.run_ticks(math.ceil(1.6 * 20) + 3)
+t.run_ticks(clock.deadline_ticks(1.6) + 3)
 
 parts = assert(t.parts(patient))
 assert(has(parts.pelvis.states, "skin_cut"), "the pelvis was cut: that is where the aim was")

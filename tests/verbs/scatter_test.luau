@@ -133,7 +133,7 @@ t.click(p, 5, 2, t.target_at(p, 5, 2, "d20"))
 t.tick()
 assert(t.hands(p).held == "d20", "the good one is in hand")
 t.throw(p, 6, 2)
-t.run_ticks(10)
+t.run_seconds(0.5) -- the flight out and the landing
 local landed = t.item_at(6, 2, "d20")
 assert(landed ~= nil, "it flew and stopped")
 within(landed.offset, 8, "a thrown die")

@@ -73,7 +73,7 @@ assert(
 -- vapour half a minute later -- the pack picked the number, the
 -- engine is what agrees with it.
 -- ---------------------------------------------------------------
-t.run_ticks(700)
+t.run_seconds(35)
 
 local later = room_water()
 assert(later > wet * 0.99, ("the fog did not rain out: %g -> %g"):format(wet, later))

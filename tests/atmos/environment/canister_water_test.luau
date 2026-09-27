@@ -98,7 +98,7 @@ near(shut.headspace_l, SHELL_L - SLUG_L, 0.1, "the slug takes its ten litres out
 -- The slug pays for it in latent heat, so the bottle ends up a
 -- couple of degrees under the room it was filled in.
 -- ---------------------------------------------------------------
-t.run_ticks(200)
+t.run_seconds(10)
 
 local settled = assert(t.vessel(can))
 local s = settled.contents.water
@@ -145,7 +145,7 @@ assert(
 )
 ui_controls.set(p, "release", 400)
 ui_controls.toggle(p, "valve")
-t.run_ticks(200)
+t.run_seconds(10)
 
 -- ---------------------------------------------------------------
 -- The air went. The water stayed. Nearly half the air in the

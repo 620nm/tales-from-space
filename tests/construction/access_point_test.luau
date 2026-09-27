@@ -188,7 +188,7 @@ assert(t.ledger_has("StructureStep", "wall_frame", "finished"), "and the assembl
 put_down()
 -- Long enough for the box to find the socket behind it and start
 -- drawing: no panel on a dead cord takes a press.
-t.run_ticks(40)
+t.run_seconds(2.0)
 local hinted_box = assert(t.target_at(p, 4, 1, "access_point"))
 local hinted = false
 for _, action in ipairs(t.action_hints(p, { Entity = hinted_box })) do

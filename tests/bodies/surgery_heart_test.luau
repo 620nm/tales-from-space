@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
 -- The heart swap the charter promises on a proper table (docs/SURGERY.md
@@ -103,7 +104,7 @@ end
 local function step(tool: string, secs: number, done: () -> boolean, why: string)
     hold(tool)
     t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
-    t.run_ticks(math.ceil(secs * 20) + 3)
+    t.run_ticks(clock.deadline_ticks(secs) + 3)
     assert(done(), why)
 end
 
@@ -157,7 +158,7 @@ assert(pick, "the window lists the heart among the organs to remove")
 -- `animate` is false, so an interrupted swap leaves a corpse that keeps
 -- indefinitely rather than one that spoils.
 ui_controls.toggle(surgeon, "operation", pick)
-t.run_ticks(23) -- the 1 s removal
+t.run_ticks(clock.deadline_ticks(1.0) + 3) -- the 1 s removal
 assert(t.organ_damage(patient, "heart") == nil, "the heart socket is empty")
 assert(not assert(t.body(patient)).conscious, "the heart is out and the patient is under")
 assert(not assert(t.body(patient)).animate, "and dead of the missing heart, not of any wound")
@@ -175,7 +176,7 @@ assert(t.count_items("organ_heart") >= 2, "the old heart is on the deck beside t
 -- the body comes back to the state its numbers say.
 hold("organ_heart")
 t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
-t.run_ticks(23) -- the 1 s insertion
+t.run_ticks(clock.deadline_ticks(1.0) + 3) -- the 1 s insertion
 -- Seated (the donor picked up a little decay lying on the deck, which is
 -- why a spare organ is kept cold in tg); what matters is that it beats.
 assert(t.organ_damage(patient, "heart") ~= nil, "a heart is seated in the socket")

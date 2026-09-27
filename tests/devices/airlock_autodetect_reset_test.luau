@@ -68,7 +68,7 @@ t.set_breathing(false)
 t.world(AIRLOCK, 0)
 local operator0 = t.join("assistant")
 local visitor0 = t.join("engineer")
-t.run_ticks(20)
+t.run_seconds(1.0)
 
 -- Any press seals: the chamber button from inside does it.
 local operator = operator0
@@ -78,7 +78,7 @@ t.run_ticks(4)
 t.move(operator, "west")
 t.run_ticks(4)
 t.click(operator, 7, 4, assert(t.target_at(operator, 7, 4, "airlock_button")))
-t.run_ticks(60)
+t.run_seconds(3.0)
 assert(not assert(t.door_at(5, 3)).open, "the west leaf seals shut")
 assert(not assert(t.door_at(8, 3)).open, "the east leaf seals shut")
 local _ = t.messages(operator)
@@ -86,7 +86,7 @@ local _ = t.messages(visitor)
 -- The west engineer clears the latch from its own button.
 t.click(visitor, 2, 3, assert(t.target_at(visitor, 2, 3, "airlock_button")))
 -- The release reports land within ticks; a fault would sound at once.
-t.run_ticks(60)
+t.run_seconds(3.0)
 local heard = table.concat(t.messages(operator), " | ")
     .. " | "
     .. table.concat(t.messages(visitor), " | ")
@@ -97,7 +97,7 @@ assert(
 assert(not assert(t.door_at(5, 3)).open, "the west leaf rests shut")
 assert(not assert(t.door_at(8, 3)).open, "the east leaf rests shut")
 -- No timer rides behind the release: past twice its old reach, still hush.
-t.run_ticks(700)
+t.run_seconds(35.0)
 local heard2 = table.concat(t.messages(operator), " | ")
     .. " | "
     .. table.concat(t.messages(visitor), " | ")
@@ -107,7 +107,7 @@ assert(
 )
 -- Nowhere seals again on the next press.
 t.click(operator, 7, 4, assert(t.target_at(operator, 7, 4, "airlock_button")))
-t.run_ticks(60)
+t.run_seconds(3.0)
 assert(not assert(t.door_at(5, 3)).open, "the west leaf seals again")
 assert(not assert(t.door_at(8, 3)).open, "the east leaf seals again")
 local heard3 = table.concat(t.messages(operator), " | ")

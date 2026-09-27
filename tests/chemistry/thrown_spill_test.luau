@@ -42,7 +42,7 @@ assert(t.hands(p).held == "beaker.salt", "the beaker is held")
 -- tile, then `throw.land.done` lets the vessel issue the spill there.
 t.throw(p, 10, 1)
 t.tick()
-t.run_ticks(10)
+t.run_seconds(0.5)
 
 local landed = t.item_at(9, 1, "beaker.salt")
 assert(landed ~= nil, "the beaker stopped before the wall")
@@ -79,7 +79,7 @@ t.tick()
 assert(t.hands(p).held == "bottle.iodine", "the bottle is held")
 t.throw(p, 0, 1)
 t.tick()
-t.run_ticks(10)
+t.run_seconds(0.5)
 
 local sealed = t.vessel(bottle)
 assert(

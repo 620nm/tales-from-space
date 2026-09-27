@@ -18,7 +18,7 @@ local function phase(item: SpecObservedTarget, name: string): number
 end
 
 local function wait_for_next_burst()
-    t.run_ticks(24)
+    t.run_seconds(1.2) -- the 1.2 s pressure-discharge cooldown
 end
 
 t.world(
@@ -74,7 +74,7 @@ t.tick()
 assert(#t.ledger_rows("MatterSprayed") == 0, "the safety refuses the burst")
 assert(vessel(extinguisher).sealed, "the safety keeps the shell sealed")
 assert(math.abs(vessel(extinguisher).moles - safe_moles) < 1e-9, "the safety draws nothing")
-t.run_ticks(16)
+t.run_seconds(0.8) -- the ordinary ranged-use window
 
 -- A ranged claim from an empty active hand is refused before it can draw
 -- matter or add recoil. The item remains in the other hand.
@@ -89,7 +89,7 @@ assert(#t.ledger_rows("MatterSprayed") == 0, "an inactive hand cannot discharge"
 assert(math.abs(vessel(extinguisher).moles - offhand_moles) < 1e-9, "an inactive hand draws nothing")
 t.swap_hands(p)
 t.tick()
-t.run_ticks(16)
+t.run_seconds(0.8)
 
 -- One accepted burst uses the active hand, records a pressure discharge,
 -- and puts CO2 into the aimed tile.
@@ -100,7 +100,7 @@ t.tick()
 assert(#t.ledger_rows("MatterSprayed") == 1, "a ready burst is recorded")
 assert(t.ledger_rows("MatterSprayed")[1].mode == "discharge", "the row names a pressure discharge")
 assert(vessel(extinguisher).moles < before_burst, "the burst draws a finite parcel")
-t.run_ticks(20)
+t.run_seconds(1)
 assert((assert(t.room_gas(3, 1)).co2 or 0.0) > before_room, "CO2 reaches the aimed tile")
 assert(vessel(extinguisher).sealed, "discharge leaves the vessel sealed")
 
@@ -131,12 +131,12 @@ assert(phase(extinguisher, "liquid") < 1e-6 and phase(extinguisher, "gas") < 1e-
 -- refused before the transfer, even though it contains plenty of CO2.
 t.use_self(p)
 t.tick()
-t.run_ticks(24)
+t.run_seconds(1.2)
 local before_refill = vessel(extinguisher).moles
 t.click(p, 3, 1, assert(t.target_at(p, 3, 1, "canister")))
 t.tick()
 assert(vessel(extinguisher).moles > before_refill, "a compatible pure CO2 source refills it")
-t.run_ticks(16)
+t.run_seconds(0.8)
 local after_pure = vessel(extinguisher).moles
 t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "canister")))
 t.tick()

@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local composition = require("@helpers/composition")
 
 -- The EVA vestibule: two airlocks with three tiles of plating between
@@ -108,7 +109,7 @@ local function step_into_the_chamber(p)
     -- A door SWINGS now (tg's airlock takes 0.6s to cycle): the bump
     -- starts the motion, it does not finish it. Give the leaf its swing
     -- before asking whether it is open.
-    t.run_ticks(15)
+    t.run_ticks(clock.deadline_ticks(0.6) + 3)
     assert(assert(t.door_at(5, 2)).open, "bumping the inner airlock opened it")
     walk_east(p, 2) -- through the doorway into the vestibule
     local x, y = t.pos(p)
@@ -138,13 +139,13 @@ step_into_the_chamber(p)
 
 -- Let the inner airlock shut behind us. Nobody is standing in the
 -- doorway, so the autoclose takes.
-t.run_ticks(65)
+t.run_ticks(clock.deadline_ticks(3.0) + 5) -- the 3 s autoclose
 assert(not assert(t.door_at(5, 2)).open, "the inner airlock shut behind us")
 assert(assert(t.room_pressure(6, 2)) > 90.0, "the sealed chamber kept its air")
 
 -- Now open the outer airlock, with the inner one shut.
 t.click(p, 7, 2, t.target_at(p, 7, 2))
-t.run_ticks(15) -- the leaf swings; it is not open on the click tick
+t.run_ticks(clock.deadline_ticks(0.6) + 3) -- the leaf swings; it is not open on the click tick
 assert(assert(t.door_at(7, 2)).open, "the outer airlock opened")
 -- Held open past its autoclose while the chamber empties. Three tiles
 -- of one atmosphere leave through one doorway in about three seconds,
@@ -158,7 +159,7 @@ assert(assert(t.door_at(7, 2)).open, "the outer airlock opened")
 -- emptying with nobody's hand on it. The claim: this end vents, that
 -- end does not.
 t.outage()
-t.run_ticks(2400)
+t.run_seconds(120)
 
 assert(
     assert(t.room_pressure(6, 2)) < 25.0,
@@ -186,7 +187,7 @@ step_into_the_chamber(q)
 -- on top of that and the station is a straight line to vacuum.
 assert(assert(t.door_at(5, 2)).open, "the inner airlock is still open behind us")
 t.click(q, 7, 2, t.target_at(q, 7, 2))
-t.run_ticks(15) -- again, the leaf needs its swing
+t.run_ticks(clock.deadline_ticks(0.6) + 3) -- again, the leaf needs its swing
 assert(assert(t.door_at(7, 2)).open, "and the outer one opens anyway")
 
 -- Trip the breaker so both stay where they are: dead motors hold
@@ -195,7 +196,7 @@ assert(assert(t.door_at(7, 2)).open, "and the outer one opens anyway")
 -- be dragged out by the wind long before it settles, which is rather
 -- the point of the assertion.)
 t.outage()
-t.run_ticks(2400)
+t.run_seconds(120)
 assert(
     assert(t.door_at(5, 2)).open and assert(t.door_at(7, 2)).open,
     "unpowered airlocks have no motors to shut themselves with"
@@ -220,7 +221,7 @@ local linked_before = t.room_pressure(2, 2)
 assert(assert(linked_before) > 90.0, "same station, same starting atmosphere")
 
 walk_east(r, 4)
-t.run_ticks(15) -- the leaf swings before it is open
+t.run_ticks(clock.deadline_ticks(0.6) + 3) -- the leaf swings before it is open
 assert(assert(t.door_at(5, 2)).open, "bumping the inner airlock still opens it")
 walk_east(r, 2)
 local rx, ry = t.pos(r)
@@ -233,7 +234,7 @@ assert(
 -- Here is the whole feature. Opening the outer airlock CLOSES the inner
 -- one, without anybody deciding to be careful (airlock.dm:1357).
 t.click(r, 7, 2, t.target_at(r, 7, 2))
-t.run_ticks(15) -- both leaves swing: this one open, its partner shut
+t.run_ticks(clock.deadline_ticks(0.6) + 3) -- both leaves swing: this one open, its partner shut
 assert(assert(t.door_at(7, 2)).open, "the outer airlock opened")
 assert(
     not assert(t.door_at(5, 2)).open,
@@ -245,7 +246,7 @@ assert(
 -- outer door open, with the breaker pulled so nothing can tidy up after
 -- us, and watch the chamber empty on its own.
 t.outage()
-t.run_ticks(2400)
+t.run_seconds(120)
 
 assert(
     assert(t.room_pressure(6, 2)) < 25.0,
@@ -335,7 +336,7 @@ assert(composition.bare(2, 1, "space"), "with vacuum on the far side of it")
 
 -- One atmosphere, and it stays there. Before `airtight` this room was
 -- open to space through a tile that merely looked solid.
-t.run_ticks(600)
+t.run_seconds(30)
 local sealed = t.room_pressure(2, 3)
 assert(assert(sealed) > 90.0, "A WINDOW IN A HULL HOLDS PRESSURE: " .. sealed)
 
@@ -346,7 +347,7 @@ t.click(w, 2, 4, t.target_at(w, 2, 4, "screwdriver")) -- pick up the screwdriver
 t.tick()
 assert(t.hands(w).held == "screwdriver", "screwdriver in hand")
 t.click(w, 2, 2, t.target_at(w, 2, 2))
-t.run_ticks(100)
+t.run_ticks(clock.deadline_ticks(4.0) + 20)
 assert(assert(t.structure_at(2, 2)).state == "unsealed", "the pane is loose in its frame")
 -- Loose is still glass in a frame, and tg agrees: the room is not open
 -- to space until the pane actually comes out.
@@ -360,7 +361,7 @@ t.click(w, 3, 4, t.target_at(w, 3, 4, "crowbar")) -- and now the crowbar
 t.tick()
 assert(t.hands(w).held == "crowbar", "crowbar in hand")
 t.click(w, 2, 2, t.target_at(w, 2, 2))
-t.run_ticks(240)
+t.run_ticks(clock.deadline_ticks(10.0) + 40)
 assert(
     assert(t.structure_at(2, 2)).state == "bolted",
     "the pane came free and left the bare grille standing"
@@ -369,7 +370,7 @@ assert(
 -- And THAT is a breach -- computed, not declared. Nothing anywhere
 -- stores "broken window"; a barrier simply stopped sealing, and the
 -- matter engine did the rest.
-t.run_ticks(1200)
+t.run_seconds(60)
 local vented = t.room_pressure(2, 3)
 assert(
     assert(vented) < 25.0,

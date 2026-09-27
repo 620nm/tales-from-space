@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
 -- The crowbar pries only what the motors have let go of: a powered
@@ -43,9 +44,9 @@ assert(assert(t.door_at(3, 1)).powered, "the shipped grid feeds this door")
 t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.tick()
 assert(not assert(t.door_at(3, 1)).open, "the airlock is still swinging")
-t.run_ticks(12) -- the swing: tg's 0.6 seconds
+t.run_seconds(0.6) -- the swing: tg's 0.6 seconds
 assert(assert(t.door_at(3, 1)).open, "powered doors ignore the crowbar")
-t.run_ticks(90) -- the swing + DOOR_AUTOCLOSE_TICKS + change
+t.run_seconds(4.5) -- the 0.6 s swing + the 3 s autoclose + change
 assert(not assert(t.door_at(3, 1)).open, "autoclosed")
 
 -- Kill the power: the same click starts a pry do_after instead.
@@ -55,9 +56,9 @@ assert(not assert(t.door_at(3, 1)).powered, "the breaker tripped")
 t.click(p, 3, 1, t.target_at(p, 3, 1))
 t.tick()
 assert(not assert(t.door_at(3, 1)).open, "prying takes time")
-t.run_ticks(60)
+t.run_ticks(clock.deadline_ticks(2.5) + 10) -- the 2.5 s pry
 assert(assert(t.door_at(3, 1)).open, "pried open")
-t.run_ticks(65)
+t.run_seconds(3.25)
 assert(assert(t.door_at(3, 1)).open, "an unpowered door has no motors to autoclose with")
 
 assert(#t.ledger_rows("PowerOutage") == 1, "the outage is on the record")

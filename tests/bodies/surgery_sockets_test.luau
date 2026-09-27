@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
 -- Which organs a surgeon can reach, and self-surgery (docs/SURGERY.md
@@ -61,7 +62,7 @@ end
 local function step(tool: string, secs: number, done: () -> boolean, why: string)
     hold(tool)
     t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
-    t.run_ticks(math.ceil(secs * 20) + 3)
+    t.run_ticks(clock.deadline_ticks(secs) + 3)
     assert(done(), why)
 end
 
@@ -118,7 +119,7 @@ for _ = 1, 30 do
         break
     end
     t.click(doc, 2, 1, t.body_target(doc, pat))
-    t.run_ticks(85)
+    t.run_seconds(4.25)
 end
 assert(has(assert(t.parts(pat)).chest.states, "skin_cut"), "the doctor opened the chest")
 
@@ -138,7 +139,7 @@ for _ = 1, 40 do
         break
     end
     t.click(pat, ppx, ppy, t.body_target(pat, pat)) -- click YOURSELF
-    t.run_ticks(math.ceil(4.8 * 20) + 3)
+    t.run_ticks(clock.deadline_ticks(4.8) + 3)
 end
 local s = assert(t.parts(pat)).chest.states
 assert(not has(s, "skin_cut") and not has(s, "skin_open"), "the patient sealed their own wound")

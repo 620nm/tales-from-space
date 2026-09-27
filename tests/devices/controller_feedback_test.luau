@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local laptop = require("@helpers/laptop")
 
 -- A press that cannot act still tells the presser why, exactly once.
@@ -53,7 +54,7 @@ t.run_ticks(2)
 local _ = t.messages(p)
 local numbered, queued = rows_like("button_sequence"), rows_like("device_outbox")
 press(p, 2, 1)
-t.run_ticks(10)
+t.run_seconds(0.5)
 local lines = t.messages(p)
 assert(
     once(lines, UNANSWERED),
@@ -72,7 +73,7 @@ t.run_ticks(2)
 assert(t.hands(p).held == "cola", "the can is in hand")
 local _ = t.messages(p)
 press(p, 2, 1)
-t.run_ticks(10)
+t.run_seconds(0.5)
 lines = t.messages(p)
 assert(
     once(lines, HAND_FULL) and not said(lines, UNANSWERED),
@@ -87,7 +88,7 @@ t.run_ticks(2)
 assert(t.hands(p).held == "screwdriver", "the screwdriver is in hand")
 local _ = t.messages(p)
 press(p, 2, 1)
-t.run_ticks(45)
+t.run_ticks(clock.deadline_ticks(2.0) + 5) -- the 2 s screwdriver deconstruction
 lines = t.messages(p)
 assert(
     t.structure_at(2, 1) == nil and t.count_items("airlock_button_fitting") == 1,
@@ -133,13 +134,13 @@ t.world(
     0
 )
 p = t.join()
-t.run_ticks(20)
+t.run_seconds(1.0)
 local before = assert(t.door_at(5, 1))
 local outbox_before = rows_like("device_outbox")
 for round = 1, 2 do
     local _ = t.messages(p)
     press(p, 2, 1)
-    t.run_ticks(20)
+    t.run_seconds(1.0)
     lines = t.messages(p)
     assert(
         once(lines, UNPROGRAMMED) and not said(lines, FAULT) and not said(lines, UNANSWERED),
@@ -160,7 +161,7 @@ t.run_ticks(2) -- The first packet leaves; its sender sleeps out the pacing.
 for _ = 1, 5 do
     press(p, 2, 1)
 end
-t.run_ticks(30)
+t.run_seconds(1.5) -- the second packet leaves after the sender's pacing sleep
 lines = t.messages(p)
 assert(
     count(lines, UNPROGRAMMED) == 2,

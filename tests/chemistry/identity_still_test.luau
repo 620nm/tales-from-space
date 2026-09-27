@@ -211,7 +211,7 @@ assert(
 )
 -- Three kelvin of slack, and the arithmetic says where it comes from:
 -- the element works four times for every once the phase sweep runs
--- (ATMOS_EVERY = 10 ticks against METABOLISM_EVERY = 40,
+-- (the 0.5 s atmos pass against the 2 s metabolism pass,
 -- lunatic-core/src/lib.rs), so a reading taken between sweeps catches
 -- a beaker that has been warmed but not yet boiled back down. It is a
 -- plateau with a sawtooth on it, not a flat line.

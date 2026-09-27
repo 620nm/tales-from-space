@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local composition = require("@helpers/composition")
 
 local ui_controls = require("@helpers/ui_controls")
@@ -134,7 +135,7 @@ t.run_ticks(2)
 t.click(medic, 5, 1, t.body_target(medic, patient))
 t.run_ticks(2)
 assert(rows("injected") == 0, "the needle parks before it lands")
-t.run_ticks(62) -- tg's CHEM_INTERACT_DELAY, three seconds
+t.run_ticks(clock.deadline_ticks(3) + 2) -- tg's CHEM_INTERACT_DELAY, three seconds, plus two observation ticks
 assert(rows("injected") == 1, ("one injection, got %d"):format(rows("injected")))
 assert(rows("drank") == 1, "a needle is not a mouthful")
 

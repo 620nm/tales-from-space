@@ -101,7 +101,7 @@ t.world(
 )
 
 local p = t.join()
-t.run_ticks(20)
+t.run_seconds(1.0)
 
 local function take(id: string)
     local x, y = 5, 1
@@ -226,7 +226,7 @@ take("screwdriver")
 work(4.5)
 assert(t.structure_at(6, 1) == nil, "the frame is gone")
 put_down()
-t.run_ticks(40)
+t.run_seconds(2.0)
 
 -- ---------------------------------------------------------------
 -- 3. UNLOCK, AND SEE WHAT THERE IS TO JOIN.
@@ -417,7 +417,7 @@ assert(
 )
 
 t.outage()
-t.run_ticks(60)
+t.run_seconds(3.0) -- a power pass plus the suspension pass behind it
 panel = ui_controls.record(assert(t.ui(p), "the device panel is open"))
 assert(panel ~= nil, "the panel keeps reporting")
 assert(

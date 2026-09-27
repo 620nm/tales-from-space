@@ -20,6 +20,8 @@
 -- code/game/objects/buckling.dm:119-121), so a rank of tables shows
 -- its patients the same way up whichever way the surgeon walked in.
 
+local clock = require("@helpers/clock")
+
 local ARENA = [==[(
     name: "theatre",
     legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
@@ -33,8 +35,8 @@ local surgeon = t.join()
 local patient = t.join()
 t.run_ticks(3)
 
--- The whole lay delay and a tick over, in ticks (20 Hz).
-local LAY_TICKS = 2 * 20 + 2
+-- The whole two-second lay delay and two ticks over.
+local LAY_TICKS = clock.deadline_ticks(2.0) + 2
 
 local table_id = t.target_at(surgeon, 2, 2, "optable")
 assert(table_id ~= nil, "the map stood one there")

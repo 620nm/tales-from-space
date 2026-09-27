@@ -248,7 +248,7 @@ local function two_roots(near)
     booted = {}
     speaker = t.join("assistant")
     listener = t.join("medic")
-    t.run_ticks(20)
+    t.run_seconds(1.0)
     pocket(speaker)
     pocket(listener)
 
@@ -353,7 +353,7 @@ t.click_network(listener, 48, 2, assert(t.network_instance(48, 2, "power", "l1")
 t.run_seconds(1.5)
 assert(network_channels.at(48, 2, "power") == "", "the spur is parted")
 assert(t.ledger_has("NetworkRemoved"), "sabotage is attributable")
-t.run_ticks(60)
+t.run_seconds(3.0) -- a power pass plus the suspension pass behind it
 
 -- The tower's own sentence, from an empty hand, is what tells the two
 -- failures apart: a dark tower says so, and this one does not. It is

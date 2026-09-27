@@ -42,7 +42,7 @@ t.set_breathing(false)
 t.world(MAP, 0)
 local operator = t.join("assistant")
 local engineer = t.join("engineer")
-t.run_ticks(20)
+t.run_seconds(1.0)
 
 -- The hub takes the instrument: at least one acceptance, no refusal.
 -- (The lock's own program faults here on purpose: one sensor is not

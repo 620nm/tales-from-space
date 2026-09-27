@@ -371,7 +371,7 @@ if event.kind == "button" then
     local n = (mem("timer_test") or 0) + 1
     mem("timer_test", n)
     return { commands = {}, accepted = true,
-        timer = { id = "timer-" .. tostring(n), ticks = n == 1 and 100 or 5 } }
+        timer = { id = "timer-" .. tostring(n), seconds = n == 1 and 5 or 0.25 } }
 end
 if event.kind == "timeout" then return { commands = {}, status = "fault" } end
 return { commands = {} }
@@ -384,6 +384,107 @@ local after_short = #t.ledger_rows("disl_run")
 assert(after_short >= timer_start + 3, "the shorter replacement fires: " .. after_short)
 t.run_ticks(100)
 assert(#t.ledger_rows("disl_run") == after_short, "the canceled timer never returns")
+
+-- A deadline fires no earlier than requested: silent one tick short, waking on time.
+edit_program([==[
+if event.kind == "button" then
+    return { commands = {}, accepted = true, timer = { id = "edge", seconds = 0.5 } }
+end
+if event.kind == "timeout" then return { commands = {}, status = "fault" } end
+return { commands = {} }
+]==])
+local edge_ticks = math.ceil(0.5 * t.tick_hz())
+local edge_mark = #t.ledger_rows("disl_run")
+t.click(operator, 2, 3, assert(t.target_at(operator, 2, 3, "airlock_button")))
+local armed = edge_mark
+for _ = 1, 10 do
+    t.run_ticks(1)
+    armed = #t.ledger_rows("disl_run")
+    if armed > edge_mark then
+        break
+    end
+end
+assert(armed >= edge_mark + 1, "the arming press reached the guest")
+-- The guest ran during tick N with due N + edge, and the loop stopped at
+-- N + 1; stepping to N + edge - 1 stays silent.
+t.run_ticks(edge_ticks - 2)
+assert(#t.ledger_rows("disl_run") == armed, "no timeout before the deadline")
+t.run_ticks(2)
+assert(#t.ledger_rows("disl_run") == armed + 1, "the deadline fires on time")
+
+-- A deadline past the 60 s guest maximum faults instead of arming.
+edit_program([==[
+if event.kind == "button" then
+    return { commands = {}, accepted = true, timer = { id = "too-long", seconds = 61 } }
+end
+return { commands = {} }
+]==])
+local _ = t.messages(operator)
+press_inside()
+t.run_ticks(30)
+local too_long = table.concat(t.messages(operator), " | ")
+assert(
+    too_long:find("The controller has stopped the airlock cycle.", 1, true),
+    "an over-long deadline faults: " .. too_long
+)
+
+-- Nonfinite and negative deadlines fault instead of arming.
+edit_program([==[
+if event.kind == "button" then
+    local n = (mem("bad") or 0) + 1
+    mem("bad", n)
+    local seconds = if n == 1 then 0 / 0 else -5
+    return { commands = {}, accepted = true, timer = { id = "bad-" .. tostring(n), seconds = seconds } }
+end
+return { commands = {} }
+]==])
+local _ = t.messages(operator)
+press_inside()
+t.run_ticks(30)
+local bad_first = table.concat(t.messages(operator), " | ")
+assert(
+    bad_first:find("The controller has stopped the airlock cycle.", 1, true),
+    "a NaN deadline faults: " .. bad_first
+)
+local _ = t.messages(operator)
+press_inside()
+t.run_ticks(30)
+local bad_second = table.concat(t.messages(operator), " | ")
+assert(
+    bad_second:find("The controller has stopped the airlock cycle.", 1, true),
+    "a negative deadline faults: " .. bad_second
+)
+
+-- Exactly 60 s is the maximum, not one past it: the press is accepted
+-- with no fault, and an explicit cancel drops the armed deadline.
+edit_program([==[
+if event.kind == "button" then
+    return { commands = {}, accepted = true, timer = { id = "max", seconds = 60 } }
+end
+return { commands = {} }
+]==])
+local _ = t.messages(operator)
+press_inside()
+t.run_ticks(30)
+local max_heard = table.concat(t.messages(operator), " | ")
+assert(
+    not max_heard:find("The controller has stopped the airlock cycle.", 1, true),
+    "a 60 s deadline arms: " .. max_heard
+)
+edit_program([==[
+if event.kind == "button" then
+    return { commands = {}, accepted = true, timer = false }
+end
+return { commands = {} }
+]==])
+local _ = t.messages(operator)
+press_inside()
+t.run_ticks(30)
+local canceled = table.concat(t.messages(operator), " | ")
+assert(
+    not canceled:find("The controller has stopped the airlock cycle.", 1, true),
+    "canceling the deadline is accepted: " .. canceled
+)
 
 -- An editable guest cannot turn an arbitrary address into a device capability.
 edit_program('return { commands = {{ mac = "ff-ff-ff-ff-ff-ff", op = "open", id = "foreign" }} }')

@@ -36,7 +36,7 @@ assert(
 )
 t.foul_room(0, 0, "n2", 10.0)
 local added = assert(t.room_gas(0, 0)).n2
-t.run_ticks(120)
+t.run_seconds(6)
 outside = assert(t.room_gas(0, 0))
 assert((outside.co2 or 0) > 0)
 assert((outside.n2 or 0) < added, "outdoor air clears the added nitrogen")

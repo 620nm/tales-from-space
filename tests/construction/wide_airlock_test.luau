@@ -22,6 +22,8 @@
 -- solid version at all (multi_tile/public/glass.dmi ships no `fill_`
 -- states), so the wide leaf is glazed by construction.
 
+local clock = require("@helpers/clock")
+
 local function step(p, dir)
     t.move(p, dir)
     t.run_ticks(5) -- a step is rate-limited; give the cooldown room
@@ -163,7 +165,7 @@ assert(t.target_at(p, 7, 1, "locker") == nil, "and the one behind the shut solid
 -- ---------------------------------------------------------------
 local x, y = step(p, "north")
 assert(x == 4 and y == 4, "a shut leaf is a shut leaf from either half")
-t.run_ticks(15) -- tg's airlock takes 0.6 s to swing; let it finish
+t.run_ticks(clock.deadline_ticks(0.6) + 3) -- tg's airlock takes 0.6 s to swing; let it finish
 assert(assert(t.door_at(3, 3)).open, "bumping the east tile opened the whole leaf")
 assert(assert(t.door_at(4, 3)).open, "including the tile that was bumped")
 
@@ -175,12 +177,12 @@ assert(x == 4 and y == 3, "and you walk through the half you opened")
 -- checks every turf the leaf covers (`for(var/turf/checked_turf in
 -- locs)`, airlock.dm:1420-1430) and so does this.
 -- ---------------------------------------------------------------
-t.run_ticks(90) -- well past the autoclose delay
+t.run_seconds(4.5) -- well past the autoclose delay
 assert(assert(t.door_at(3, 3)).open, "the leaf stayed open with a man in its east half")
 
 x, y = step(p, "north")
 assert(x == 4 and y == 2, "step clear of the doorway")
-t.run_ticks(90)
+t.run_seconds(4.5)
 assert(not assert(t.door_at(3, 3)).open, "and once the doorway is empty it shuts itself")
 assert(not assert(t.door_at(4, 3)).open, "both halves of it")
 
@@ -289,7 +291,7 @@ qx, qy = step(q, "east")
 assert(qx == 2 and qy == 2, "beside the north half")
 qx, qy = step(q, "east")
 assert(qx == 2 and qy == 2, "which is shut")
-t.run_ticks(15)
+t.run_ticks(clock.deadline_ticks(0.6) + 3)
 assert(assert(t.door_at(3, 3)).open, "and bumping it opened the leaf its body stands south of")
 qx, qy = step(q, "east")
 assert(qx == 3 and qy == 2, "so you walk through the half you bumped")

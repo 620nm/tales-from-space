@@ -26,7 +26,7 @@ function device_queue.send(device: Handle, payload: Packet): boolean
             if first then
                 sim.link.emit({ subject = device, payload = first })
             end
-            -- Six ticks leaves headroom below the four-per-second native cap.
+            -- A 0.3 s pace leaves headroom below the four-per-second native cap.
             sim.sleep(sim.ticks(0.3))
         end
         if device.alive then

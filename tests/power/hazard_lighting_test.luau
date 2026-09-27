@@ -88,7 +88,7 @@ t.set_environment({ sink_k = 293.15, insolation = 0 })
 local p = t.join()
 t.tick()
 t.run_seconds(3)
-t.run_ticks(60)
+t.run_seconds(3)
 
 local DEADLY = "#FF2020"
 local UNBREATHABLE = "#3060FF"
@@ -142,7 +142,7 @@ t.click_network(p, 8, 2, assert(t.network_instance(8, 2, "power", "l2")))
 t.run_seconds(1.5)
 assert(network_channels.at(8, 2, "power") == "", "the backbone is parted")
 t.run_seconds(3)
-t.run_ticks(60)
+t.run_seconds(3)
 
 assert(assert(t.store_at(8, 1)).charging == "idle", "the panel is on its own cell")
 lamp = assert(t.light_at(1, 2))
@@ -162,7 +162,7 @@ assert(math.abs(lamp.power - 1.2) < 1e-6, "at the air's own power: " .. lamp.pow
 -- ---------------------------------------------------------------
 assert(t.foul_room(3, 2, "o2", 320.0), "oxygen into the room")
 t.run_seconds(6)
-t.run_ticks(60)
+t.run_seconds(3)
 
 lamp = assert(t.light_at(1, 2))
 local TUBE = lamp.color
@@ -182,7 +182,7 @@ t.click(p, 8, 2, nil, -14, 14)
 t.run_seconds(1.5)
 assert(network_channels.at(8, 2, "power") == "l2", "the backbone is whole again")
 t.run_seconds(3)
-t.run_ticks(60)
+t.run_seconds(3)
 
 lamp = assert(t.light_at(1, 2))
 assert(lamp.color == TUBE, "still its own colour: " .. lamp.color)
@@ -197,7 +197,7 @@ assert(math.abs(lamp.power - 1.0) < 1e-6, "and back at its own power: " .. lamp.
 -- ---------------------------------------------------------------
 assert(t.foul_room(3, 2, "plasma", 30.0), "plasma into the room")
 t.run_seconds(6)
-t.run_ticks(60)
+t.run_seconds(3)
 
 assert(
     t.hazard_level(4, 1) == "deadly",
@@ -297,7 +297,7 @@ t.set_environment({ sink_k = 293.15, insolation = 0 })
 local q = t.join()
 t.tick()
 t.run_seconds(3)
-t.run_ticks(60)
+t.run_seconds(3)
 
 -- ---------------------------------------------------------------
 -- 6. TWO VOICES SAYING THE SAME THING. Neither room has anything to
@@ -325,7 +325,7 @@ t.run_seconds(1.5)
 assert(network_channels.at(10, 2, "power") == "", "the spur is parted")
 t.drop(q)
 t.run_seconds(3)
-t.run_ticks(40)
+t.run_seconds(2)
 
 -- Gently, and spread out: a single dump of four hundred moles onto
 -- one tile is a pressure spike, and a spike is a wind that slides
@@ -339,7 +339,7 @@ for _, at in ipairs({ { 14, 1 }, { 16, 1 }, { 18, 1 } }) do
     t.run_seconds(2)
 end
 t.run_seconds(6)
-t.run_ticks(60)
+t.run_seconds(3)
 
 lamp = assert(t.light_at(1, 2))
 assert(
@@ -355,7 +355,7 @@ assert(math.abs(lamp.power - 1.2) < 1e-6, "at the flag's own power: " .. lamp.po
 -- ---------------------------------------------------------------
 assert(t.foul_room(3, 1, "plasma", 30.0), "plasma into the west room")
 t.run_seconds(6)
-t.run_ticks(60)
+t.run_seconds(3)
 
 lamp = assert(t.light_at(1, 2))
 assert(lamp.color == DEADLY, "deadly outranks the standing blue: " .. lamp.color)
@@ -434,13 +434,13 @@ t.run_seconds(6)
 assert(t.structure_at(4, 1) == nil, "the fan is off the deck")
 assert(t.hazard_level(4, 1) == nil, "and nothing on that tile senses anything")
 t.run_seconds(3)
-t.run_ticks(60)
+t.run_seconds(3)
 
 -- The far room crossing a band is the whole nudge. Nothing about the
 -- fan that left happens again.
 assert(t.set_composition(13, 2, "bare"), "and the far room opens to space")
 t.run_seconds(20)
-t.run_ticks(60)
+t.run_seconds(3)
 assert(
     t.hazard_level(15, 1) == "unbreathable",
     "the far fan crosses: " .. tostring(t.hazard_level(15, 1))

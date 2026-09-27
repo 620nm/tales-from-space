@@ -1,3 +1,4 @@
+local clock = require("@helpers/clock")
 local ui_controls = require("@helpers/ui_controls")
 
 -- Bringing back the body the map arrived holding, the surgical way.
@@ -115,7 +116,7 @@ local optable = assert(t.target_at(surgeon, 3, 2, "optable"))
 -- Laying a body out TAKES TIME now (`lay_body_secs`,
 -- content/tuning.luau), so this waits the do_after out.
 t.drag(surgeon, 5, 1, assert(t.target_at(surgeon, 5, 1, "name:" .. corpse_name)), 3, 2, optable)
-t.run_ticks(2 * 20 + 2)
+t.run_ticks(clock.deadline_ticks(2.0) + 2)
 local function corpse()
     return t.bodies_at(3, 2)[1]
 end
@@ -133,7 +134,7 @@ t.drag(
 t.run_ticks(2)
 assert(slot_row(ui_controls.state(surgeon), "Uniform") ~= nil, "the wardrobe opened")
 ui_controls.toggle(surgeon, "strip", "uniform")
-t.run_ticks(90)
+t.run_ticks(clock.deadline_ticks(4.0) + 10)
 assert(corpse().worn.uniform == nil, "the jumpsuit is off")
 
 local function hold(id: string)
@@ -162,7 +163,7 @@ assert(t.set_zone(surgeon, "chest"), "aiming at the chest")
 -- exactly ON the dead line (200 brute of a 200-brute chest), and
 -- `tend_wounds` takes five off it. Under the old model that alone stood
 -- the corpse up. Now it clears one line of two.
-step("hemostat", 130, function()
+step("hemostat", clock.deadline_ticks(6.5), function()
     return ui_controls.number(assert(corpse().parts).chest.brute) < 200
 end, "tended")
 local past: { [string]: boolean } = {}
@@ -174,19 +175,19 @@ assert(past.undone, "and the stopped heart is not")
 assert(corpse().animate == false, "STILL DEAD, and that is the point of the whole model")
 
 -- ---- 2. open the chest ------------------------------------------------
-step("scalpel", 40, function()
+step("scalpel", clock.deadline_ticks(1.6) + 8, function()
     return states().skin_cut
 end, "incised")
-step("retractor", 55, function()
+step("retractor", clock.deadline_ticks(2.4) + 7, function()
     return states().skin_open
 end, "retracted")
-step("hemostat", 55, function()
+step("hemostat", clock.deadline_ticks(2.4) + 7, function()
     return states().vessels_clamped
 end, "clamped")
-step("circular_saw", 115, function()
+step("circular_saw", clock.deadline_ticks(5.4) + 7, function()
     return states().bone_sawed
 end, "sawed")
-step("scalpel", 55, function()
+step("scalpel", clock.deadline_ticks(2.4) + 7, function()
     return states().organs_cut
 end, "organs cut")
 
@@ -211,14 +212,14 @@ for _, toggle in ipairs(ui_controls.rows(win.toggles)) do
 end
 assert(pick, "the window offers to take the heart out: " .. tostring(pick))
 ui_controls.toggle(surgeon, "operation", pick)
-t.run_ticks(60)
+t.run_ticks(clock.deadline_ticks(3.0))
 assert(assert(corpse().parts).chest.organs.heart == false, "the socket is empty")
 assert(corpse().animate == false, "no heart at all is no more alive than a stopped one")
 
 -- ---- 4. ...and put a living one in ------------------------------------
 hold("organ_heart")
 t.click(surgeon, 3, 2, t.target_at(surgeon, 3, 2, "name:" .. corpse_name))
-t.run_ticks(60)
+t.run_ticks(clock.deadline_ticks(3.0))
 assert(assert(corpse().parts).chest.organs.heart ~= false, "a heart is seated")
 assert(
     corpse().animate == true,
@@ -232,7 +233,7 @@ assert(
 )
 
 -- ---- 5. close up ------------------------------------------------------
-step("cautery", 55, function()
+step("cautery", clock.deadline_ticks(2.4) + 7, function()
     return not states().skin_open and not states().skin_cut
 end, "closed")
 assert(corpse().animate == true, "and it is still alive at the end of it")

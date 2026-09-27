@@ -21,7 +21,7 @@ t.world(
     0
 )
 local p = t.join()
-t.run_ticks(20)
+t.run_seconds(1.0)
 
 local function file(ui: ui_controls.Record, side: string, name: string): ui_controls.Record?
     for _, row in ipairs(ui_controls.rows(ui.files or {})) do
