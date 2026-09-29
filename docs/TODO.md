@@ -1,0 +1,104 @@
+# Tales from Space — owed work
+
+Work this pack still owes, one `##` entry per item: the problem with code
+pointers, then a `Done:` paragraph that is the acceptance criterion. Finished
+work is deleted, not archived. Entries that wait on the engine say "once the
+engine offers X"; engine contracts are the engine's `docs/…`.
+
+## Declare atmosphere, power and wind
+
+`content/capabilities.luau` sets only `simulation.tick_hz`. Atmosphere, power
+and wind are simulated because the engine defaults them on; a pack that uses
+them should say so.
+
+Done: once the engine flips those defaults to off, `content/capabilities.luau`
+declares `simulation = { tick_hz = 20, atmosphere = true, power = true,
+wind = true }`, and every spec still passes.
+
+## Hover highlight treatment
+
+`ui/overlay/main.tsx` draws the hover card and the pixel-perfect highlight
+because the engine highlights by default.
+
+Done: once `interactions.hover` exists, `content/capabilities.luau` declares
+the treatment `"lift"`, and the pixel-perfect highlight and the hover card in
+`ui/overlay/main.tsx` look and behave as they do now.
+
+## Body-plan walk pace and posture adds
+
+Movement pace is an engine default, not pack data. `content/bodies/human.luau`
+declares no pace.
+
+Done: once the engine reads a body-plan `pace`, the human plan declares a
+200 ms base (tg's RUN base). The crawl add (`CRAWLING_ADD_SLOWDOWN`, 4 ds) and
+the soft-crit add (`SOFTCRIT_ADD_SLOWDOWN`, 2 ds; tg `combat.dm:131-133`) are
+pack data beside it. Soft-crit crawl remains a pack-declared posture gate,
+not an engine rule.
+
+## Explicit launch interval on sprayers
+
+`content/items/vessels/spray_bottle.luau` and
+`content/items/tools/fire_extinguisher.luau` rely on the engine's default
+launch interval.
+
+Done: once the launch interval is a required pack field, both declare 0.8 s
+explicitly (tg `spray.dm:78`, `CLICK_CD_RANGE*2`).
+
+## Vital organs: heart failure and brain removal
+
+`content/operations/repair_heart.luau`, `content/items/anatomy/organ_heart.luau`,
+`content/items/surgery/defib.luau` and `content/bodies/human.luau` treat a
+missing heart as death.
+
+Done: a missing heart is total heart failure. Oxygen damage accrues over time
+and the body dies only if the operator is too slow; paddles are needed only
+then (tg `life.dm:789-796`, `heart/_heart.dm:113-160`). The grace is an
+`arrest_grace_s` knob on the heart, once the engine offers it. Removing the
+brain is instant death that severs mind from body, and always needs paddles.
+
+## Aim groupings and absent parts
+
+`content/part_tree.luau` and `content/bodies/human.luau` (`target_slot`) lay
+out the numbered target keys, but the engine assumes an aimed part exists.
+
+Done: the pack defines its target groupings and declares what happens when
+an aimed part is absent on the target's body plan, with a spec for a target
+that lacks the aimed part.
+
+## Printing owned by the pack
+
+`content/fixtures/fax.luau` and `content/fixtures/photocopier.luau` read
+`sim.documents.status` for their busy state and start jobs with
+`sim.documents.start`; `content/lib/printing.luau` holds only constants.
+
+Done: once the engine offers `documents.materialize` and removes
+`documents.start` and `status`, `content/lib/printing.luau` owns the print,
+fax and copy queue (`spawn_task` plus sleep) with its own busy flag, and both
+fixtures call it in place of `documents.status`.
+
+## Air alarm modes and thresholds
+
+`content/fixtures/air_alarm.luau` and `content/structures/atmos/air_alarm.luau`
+read joined machines through the reach proxy but carry no tg modes or
+thresholds.
+
+Done: tg's air alarm modes and threshold tables run as pack Luau over the
+reach proxy, cited `file:line` against the tg checkout, with specs in
+`tests/atmos/environment/air_alarm_test.luau`.
+
+## Speech stacking
+
+`ui/voice.ts` draws each speech bubble alone, so overlapping speakers
+overprint.
+
+Done: `ui/voice.ts` stacks bubbles over the engine's bounded per-speaker
+queue, newest nearest the speaker, with a UI acceptance capture.
+
+## Pin the engine revision
+
+`assets/tg-revision` pins the tg checkout; nothing pins the engine
+(`.github/workflows/ci.yml` checks out the engine at its head).
+
+Done: `assets/lunatic-revision` holds an engine sha, `.github/workflows/ci.yml`
+checks that sha out, and a lint in `tools/` fails when the pinned sha is not
+reachable in the engine. It mirrors `assets/tg-revision`.
