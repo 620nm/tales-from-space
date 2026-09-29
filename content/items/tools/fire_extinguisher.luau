@@ -59,6 +59,10 @@ local content = {
     ranged_use = {
         visual_layer = "effects",
         range = 5,
+        -- tg spray.dm:78 CLICK_CD_RANGE * 2: the claim window and the
+        -- least wait between parcel launches.
+        cooldown_seconds = 0.8,
+        launch_interval_seconds = 0.8,
         effect = "spray_puff",
         sound = "spray",
         recoil_per_kg = 100,
