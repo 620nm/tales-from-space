@@ -12,6 +12,9 @@ return {
         poke = true,
     },
     simulation = {
+        atmosphere = true,
+        power = true,
+        wind = true,
         tick_hz = 20,
     },
 }
