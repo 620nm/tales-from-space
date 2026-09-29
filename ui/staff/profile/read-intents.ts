@@ -1,7 +1,7 @@
 import { readRef, refKey } from "../cases/records";
 
 type ObjectValue = Record<string, unknown>;
-export type StaffReadKind = "profile" | "conversation";
+export type StaffReadKind = "profile" | "conversation" | "economy";
 
 /** Keep one latest read for each profile/conversation in the current round. */
 export const MAX_READ_INTENTS = 128;
@@ -23,7 +23,9 @@ export function resetReadIntents(): void {
 export function rememberStaffRead(round: string, requestId: string, action: unknown): void {
   const query = queryFromAction(action);
   if (!query) return;
-  const kind = query.op === "profile" || query.op === "conversation" ? query.op : null;
+  const kind = query.op === "profile" || query.op === "conversation"
+    ? query.op
+    : query.op === "economy" ? "economy" : null;
   if (!kind) return;
   const identity = readIdentity(kind, query, round);
   if (!identity) return;
@@ -72,6 +74,9 @@ function queryFromAction(action: unknown): ObjectValue | null {
 }
 
 function readIdentity(kind: StaffReadKind, query: ObjectValue, round: string): string | null {
+  if (kind === "economy") return typeof query.source_db === "string" && query.selector && typeof query.selector === "object"
+    ? `${query.source_db}\u0000${canonical(query.selector)}`
+    : null;
   const field = kind === "profile" ? query.target : query.conversation;
   const reference = readRef(field, round);
   if (!reference || reference.kind !== (kind === "profile" ? "account" : "conversation")) return null;

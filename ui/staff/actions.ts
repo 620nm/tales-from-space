@@ -10,7 +10,7 @@ import { identityCard } from "./shared/identity-card";
 import * as S from "./strings";
 
 export interface StaffLocalState {
-  workspace: "live" | "cases";
+  workspace: "live" | "cases" | "economy";
   selectedId: string | null;
   selectedCaseId: string | null;
   selectedRef: StaffRef | null;
@@ -30,13 +30,22 @@ export interface StaffLocalState {
   inspectorOpen: boolean;
   drafts: Record<string, string>;
   roundId: string;
+  economy: {
+    sourceDb: string;
+    subjectKind: "item_uuid" | "lot" | "balance" | "entitlement" | "source_event" | "transaction" | "player_time";
+    subject: string;
+    playerFrom: string;
+    playerTo: string;
+    after: string | null;
+  };
 }
 
-const fresh = (roundId = "", workspace: "live" | "cases" = "live"): StaffLocalState => ({
+const fresh = (roundId = "", workspace: "live" | "cases" | "economy" = "live"): StaffLocalState => ({
   workspace, selectedId: null, selectedCaseId: null, selectedRef: null,
   inspector: "read", query: "", recordFilter: null, review: null,
   spawnOpen: false, spawnPrototype: "", spawnKind: "entity", spawnX: "0", spawnY: "0", spawnZ: "0", spawnProperties: "{}", spawnPreview: false,
   inspectorOpen: true, drafts: {}, roundId,
+  economy: { sourceDb: "", subjectKind: "item_uuid", subject: "", playerFrom: "", playerTo: "", after: null },
 });
 let local = fresh();
 

@@ -3,6 +3,7 @@ import { Stack } from "@lunatic/ui";
 import type { GameplayView } from "../model";
 import { begin, bind, event, screen, text } from "../view";
 import { casesWorkspace } from "./cases";
+import { economyViewAction, economyWorkspace } from "./economy";
 import { liveOverlay, liveWorkspace } from "./live";
 import { localPress, request, profileCard, staffLocal } from "./actions";
 import { readStaff, type StaffSession } from "./model";
@@ -21,7 +22,11 @@ export function staffScreen(view: GameplayView): UiNode | null {
   const state = staffLocal(session);
   applyFlowLocal(session, state);
   bind("staff/exit", () => request(session, { kind: "exit" }));
-  const body = state.workspace === "cases" ? casesWorkspace(session) : liveWorkspace(session);
+  const body = state.workspace === "cases"
+    ? casesWorkspace(session)
+    : state.workspace === "economy"
+    ? economyWorkspace(session)
+    : liveWorkspace(session);
   const notice = staffNotice(session);
   const overlay = state.workspace === "live" ? liveOverlay(session) : null;
   const root = screen("staff/shell", {
@@ -64,6 +69,7 @@ function workspaceTabs(session: StaffSession): UiNode {
     id: "staff/workspace-nav", type: "row", class: ["staff-workspace-nav"], children: [
       { id: "staff/workspace-nav/live", type: "button", class: ["btn", "btn-ghost", "staff-workspace-tab", ...(state.workspace === "live" ? ["staff-workspace-tab-selected"] : [])], text: S.LIVE, event: bind("staff/workspace/live", () => { state.workspace = "live"; return undefined; }) },
       { id: "staff/workspace-nav/cases", type: "button", class: ["btn", "btn-ghost", "staff-workspace-tab", ...(state.workspace === "cases" ? ["staff-workspace-tab-selected"] : [])], text: S.CASES, event: bind("staff/workspace/cases", () => { state.workspace = "cases"; return undefined; }) },
+      { id: "staff/workspace-nav/economy", type: "button", class: ["btn", "btn-ghost", "staff-workspace-tab", ...(state.workspace === "economy" ? ["staff-workspace-tab-selected"] : [])], text: S.ECONOMY, event: bind("staff/workspace/economy", () => { state.workspace = "economy"; return undefined; }) },
     ],
   };
 }
@@ -92,8 +98,9 @@ const ui: GuestUi = {
     // still records its own response while that chain is queued, but it never
     // gets to overtake a case read.
     const caseAction = staffViewAction(session);
+    const economyAction = economyViewAction(session);
     const profileAction = profileViewAction(session);
-    return { action: caseAction ?? profileAction ?? cursorReopenAction(session) };
+    return { action: caseAction ?? economyAction ?? profileAction ?? cursorReopenAction(session) };
   },
   render(raw) {
     begin();

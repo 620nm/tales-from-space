@@ -186,7 +186,7 @@ export interface StaffPayload {
     mobs?: StaffCatalogEntry[];
     bodies?: StaffCatalogEntry[];
   };
-  workspace?: "live" | "cases";
+  workspace?: "live" | "cases" | "economy";
   station?: { name?: string; shift?: string; clock?: string; status?: string };
   error?: string;
 }
