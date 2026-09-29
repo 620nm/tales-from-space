@@ -139,10 +139,10 @@ end
 local function duration(s: unknown): boolean
     return type(s) == "number" and s == s and s > 0 and s <= 60
 end
--- The one guest-to-tick conversion: a ceiling at the round's rate, so a
--- deadline never fires early. `sim.ticks` rounds to nearest instead.
+-- The one guest-to-tick conversion: `sim.ticks` ceilings at the round's
+-- rate, so a deadline never fires early.
 local function deadline_ticks(seconds: number): number
-    return math.ceil(seconds * sim.tick_hz())
+    return sim.ticks(seconds)
 end
 local function token(s: unknown): boolean
     return type(s) == "string" and #s > 0 and #s <= 64 and not s:find("%c")
