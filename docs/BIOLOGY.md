@@ -40,6 +40,8 @@ across MASKINTERNALS and STOPSPRESSUREDAMAGE (__DEFINES/obj_flags.dm:80,84).
 **Thresholds.** `crit` at `health <= 0`, `dead` at `health <= -1`
 (combat.dm:88-90), `undone` at `viability <= 0`. The engine latches the
 crossing; `content/bodies/human.luau`'s own handler answers it.
+`incapacitated_while = { "crit" }` leaves a crit body crawling, unsteerable
+and unfrozen (tg's soft crit, carbon.dm:682-683); `dead`, `undone` freeze it.
 
 **Parts** (declaration order is the ZONE order):
 
@@ -87,6 +89,7 @@ RimWorld's; the numbers are not reconstructed from anywhere.
 | every `lerp1` weight | 0.2 |
 | limb `efficiency` curve | `{{0,1},{1,1}}` (tg's flesh rule, not a curve tg has) |
 | brain `curve` | `{{0,1},{0.6,1},{1,0}}` — a linear brain would slow every `do_after` from the first trauma |
+| `pace` `base_ms` 200 | tg's run step is 150 ms (game_options.txt:36); the 400 lying and 200 `crit` adds are tg's crawl and soft-crit slowdowns (combat.dm:131-133) |
 | cybernetic `efficiency` 1.25 | one output multiplier abstracting tg's per-organ tiers (liver x1.2/x1.5, _liver.dm:266-280) |
 
 `best` is declared on no capacity in this pack.

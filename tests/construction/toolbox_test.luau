@@ -77,16 +77,25 @@ for _, row in ipairs(t.ledger_rows("Damaged")) do
 end
 assert(zoned == 10, "every blow named the part it landed on: " .. zoned)
 
--- Keep swinging. The crewman stops being steerable when the weighted
--- damage crosses the plan's `crit` line and stops entirely at `dead`,
--- however the rolls fell.
+-- Keep swinging. The crewman is held down when the weighted damage
+-- crosses the plan's `crit` line and stops entirely at `dead`, however
+-- the rolls fell.
+local function past(line: string): boolean
+    for _, id in ipairs(assert(t.body(victim)).thresholds) do
+        if id == line then
+            return true
+        end
+    end
+    return false
+end
 local swings = 0
-while t.health(victim).controllable and swings < 40 do
+while not past("crit") and swings < 40 do
     t.click(attacker, 2, 1, t.body_target(attacker, victim))
     t.tick()
     swings = swings + 1
 end
-assert(not t.health(victim).controllable, "the weighted damage crossed `crit`")
+assert(past("crit"), "the weighted damage crossed `crit`")
+assert(t.health(victim).label == "Critical", "and the pack called it so")
 while t.health(victim).animate and swings < 120 do
     t.click(attacker, 2, 1, t.body_target(attacker, victim))
     t.tick()
