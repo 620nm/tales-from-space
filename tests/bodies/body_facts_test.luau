@@ -2,12 +2,13 @@ local ui_controls = require("@helpers/ui_controls")
 
 -- The two facts, and who decides them (docs/BIOLOGY.md §3.4).
 --
--- The engine holds `controllable` and `animate` and reaches neither: it
--- latches which side of each line `content/bodies/human.luau` declared
--- the body is on, and that file's own handler answers. Everything below
--- is read through the seam a client uses, so what it pins is what a
--- player would see — and every word in it is Tales from Space's, because
--- there is no other kind left.
+-- The engine holds `controllable` (false is a freeze) and `animate` and
+-- reaches neither: it latches which side of each line
+-- `content/bodies/human.luau` declared the body is on, and that file's
+-- own handler answers. Everything below is read through the seam a
+-- client uses, so what it pins is what a player would see — and every
+-- word in it is Tales from Space's, because there is no other kind left.
+-- How a body held down by `crit` moves is tests/bodies/pace_test.luau.
 local WARD = [==[(
     name: "ward",
     legend: {
@@ -25,9 +26,11 @@ local WARD = [==[(
 )]==]
 
 -- ---------------------------------------------------------------
--- The `crit` line: the pack takes the wheel away and leaves the body
--- running. Nothing about that is an engine verdict — the line is
--- declared in `human.luau` and its handler is what answers.
+-- The `crit` line: the plan holds the body down and leaves it running.
+-- Nothing about that is an engine verdict — the line is declared in
+-- `human.luau` (`incapacitated_while`) and its handler only names it.
+-- The pack's `controllable` stays true, because false would freeze the
+-- body and a crit body crawls.
 -- ---------------------------------------------------------------
 t.world(WARD, 0)
 local p = t.join()
@@ -38,21 +41,21 @@ local _ = t.messages(p)
 -- puts a crewman exactly on the line and no further.
 t.set_health(p, { brute = 100 })
 local crit = assert(t.body(p))
-assert(not crit.controllable, "past `crit` the session no longer steers it")
-assert(crit.animate, "but the body itself is still running")
+assert(crit.controllable, "past `crit` the pack has not frozen it: it crawls")
+assert(crit.animate, "and the body itself is still running")
 assert(crit.label == "Critical", "and the pack, not the engine, named it")
 assert(crit.posture == "lying", "a body nobody is steering is on the deck")
 
 local said = table.concat(t.messages(p), "\n")
 assert(said:find("You black out", 1, true), "and the plan's own sentence reached them: " .. said)
 
--- An unsteerable body cannot pick anything up: `controllable` is what
--- every interaction gate asks.
+-- An unsteerable body cannot pick anything up: the steerability `crit`
+-- takes away is what every interaction gate asks.
 t.click(p, 3, 1, t.target_at(p, 3, 1, "toolbox"))
 t.tick()
 assert(t.hands(p).held == nil, "and it cannot reach for anything")
 
--- ...and back over the line, the pack hands the wheel back.
+-- ...and back over the line, the plan lets go with nothing written.
 t.set_health(p, { brute = 0 })
 local up = assert(t.body(p))
 assert(up.controllable and up.animate, "healed back over it, they are theirs again")

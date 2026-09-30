@@ -14,17 +14,6 @@ Done: once `interactions.hover` exists, `content/capabilities.luau` declares
 the treatment `"lift"`, and the pixel-perfect highlight and the hover card in
 `ui/overlay/main.tsx` look and behave as they do now.
 
-## Body-plan walk pace and posture adds
-
-Movement pace is an engine default, not pack data. `content/bodies/human.luau`
-declares no pace.
-
-Done: once the engine reads a body-plan `pace`, the human plan declares a
-200 ms base (tg's RUN base). The crawl add (`CRAWLING_ADD_SLOWDOWN`, 4 ds) and
-the soft-crit add (`SOFTCRIT_ADD_SLOWDOWN`, 2 ds; tg `combat.dm:131-133`) are
-pack data beside it. Soft-crit crawl remains a pack-declared posture gate,
-not an engine rule.
-
 ## Vital organs: heart failure and brain removal
 
 `content/operations/repair_heart.luau`, `content/items/anatomy/organ_heart.luau`,

@@ -78,6 +78,33 @@ local content = {
         -- `dead_below`. Losing the head is dying of it.
         { id = "undone", port = "viability", at_most = 0 },
     },
+    -- The line that holds a body down and still lets it crawl. The engine
+    -- derives that from the latch, so a body healed back over `crit` is
+    -- steerable again and the handler at the bottom writes nothing for
+    -- it. tg's soft crit is this state (`stat == SOFT_CRIT`,
+    -- carbon/carbon.dm:682-683); its hard crit is the `consciousness`
+    -- term below.
+    incapacitated_while = { "crit" },
+    -- One step costs `base_ms`, plus `lying_add_ms` while the body lies
+    -- and `incapacitated_add_ms` while `crit` holds it. tg sums the same
+    -- modifiers into one delay (movespeed/_movespeed_modifier.dm:185-194)
+    -- and spends it per step (mob/mob_movement.dm:101,134), in
+    -- deciseconds:
+    --   * `lying_add_ms` 400: CRAWLING_ADD_SLOWDOWN 4
+    --     (__DEFINES/combat.dm:133), added on going prone
+    --     (carbon/carbon.dm:411-418; movespeed/modifiers/mobs.dm:130-132).
+    --   * `incapacitated_add_ms` 200: SOFTCRIT_ADD_SLOWDOWN 2
+    --     (__DEFINES/combat.dm:131), added while crawling, which "will
+    --     also apply at the same time" (:130; carbon/carbon.dm:440-443;
+    --     movespeed/modifiers/mobs.dm:126-128). A crit body crawls
+    --     200 + 400 + 200 = 800 ms.
+    --   * `base_ms` 200 is NOT PORTED: tg's run modifier is RUN_DELAY 1.5
+    --     (movespeed/modifiers/mobs.dm:66-68; config/game_options.txt:36),
+    --     150 ms on a 20 Hz world (config/config.txt:270). Tales from
+    --     Space keeps the 200 ms step its crew have always walked.
+    -- No `speed` curve: the engine's default, the `moving` capacity level
+    -- itself, is the crippled-leg slowdown this pack already means.
+    pace = { base_ms = 200, lying_add_ms = 400, incapacitated_add_ms = 200 },
     -- The medical HUD reads this body (content/part_tree.luau); its force
     -- and its icons name the `dead` and `undone` lines above.
     status_displays = { "medhud" },
@@ -662,9 +689,12 @@ local content = {
 }
 
 -- What the lines MEAN. This is the whole of being alive in Tales from
--- Space, and it is five lines because the engine holds exactly two
--- facts about a body: whether its session may steer it, and whether its
--- own processes still run (docs/BIOLOGY.md §3.4).
+-- Space, and it is a handful of lines because the engine holds exactly
+-- two facts about a body: whether it is frozen, and whether its own
+-- processes still run (docs/BIOLOGY.md §3.4). Only a STOP freezes and
+-- stops them. `crit` writes neither: `incapacitated_while` above holds
+-- the body down and crawling, and HOLD only names it for the label and
+-- the crewman's message.
 --
 -- Settled from the SET of crossed thresholds and not from the one edge
 -- that woke the handler: a crewman healed back over the `dead` line with
@@ -724,7 +754,7 @@ if sim ~= nil then
             end
             sim.set_body_facts(body, {
                 animate = not stop,
-                controllable = not (stop or hold),
+                controllable = not stop,
                 label = stop and "Dead" or (hold and "Critical" or ""),
             })
             -- ...and then the crewman is told, once per crossing.
