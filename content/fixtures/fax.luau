@@ -16,8 +16,8 @@ type Pending = {
     token: LinkReplyToken?,
     success: string,
     correlation: unknown,
+    expires: number,
     exchange: string?,
-    rejected: boolean?,
 }
 type DirectoryRow = { id: string, address: string, name: string, online: boolean }
 local viewer_state: { [string]: ViewerState } = {}
@@ -69,6 +69,24 @@ if sim ~= nil then
         end
         return 0
     end
+    -- A request is unsettled from acceptance until its verdict, a little
+    -- past the job itself; its `expires` tick frees an endpoint whose settling
+    -- task the host killed.
+    local function occupied(machine: Handle): boolean
+        if printing.busy(machine, BUSY) then
+            return true
+        end
+        local request = pending[tostring(machine)]
+        return request ~= nil and sim.tick() <= request.expires
+    end
+
+    local function request_expiry(): number
+        return sim.tick()
+            + sim.ticks(
+                printing.fax_seconds + service.max_reply_seconds + printing.stale_grace_seconds
+            )
+    end
+
     local function loaded(machine: Handle)
         local source = machine:item_slot("media")
         if source == nil then
@@ -130,7 +148,7 @@ if sim ~= nil then
             loadedpaper = loaded(machine),
             paper = resource(machine, "paper"),
             toner = resource(machine, "toner"),
-            busy = printing.busy(machine, BUSY),
+            busy = occupied(machine),
             directory = directory_rows,
             directory_more = directory_more,
             directory_page = selected.page or 0,
@@ -211,15 +229,27 @@ if sim ~= nil then
         refresh(machine)
     end
 
-    -- A scan that ran its course succeeds unless the recipient already
-    -- refused the sheet.
+    -- The sheet has left, but the send's verdict is the recipient's page
+    -- result. It arrives as a reply a hop after the scan; a bounded wait fails
+    -- the send when none does, so a lost reply cannot leave the request open.
     local function scanned(machine: Handle)
         local request = pending[tostring(machine)]
-        settle(machine, request ~= nil and request.rejected ~= true)
+        if request ~= nil then
+            sim.spawn_task(machine, function()
+                sim.sleep(sim.ticks(service.max_reply_seconds))
+                if pending[tostring(machine)] == request then
+                    settle(machine, false)
+                    refresh(machine)
+                end
+            end)
+        end
         refresh(machine)
     end
 
     local function start_local_print(ev: LinkServiceDeliveryPayload, text: string)
+        if occupied(ev.self) then
+            return false
+        end
         local refusal = printing.start(ev.self, {
             busy_key = BUSY,
             source = { chunks = service.chunks(text) },
@@ -227,7 +257,7 @@ if sim ~= nil then
             color = "monochrome",
             pages = 1,
             seconds = printing.fax_seconds,
-            began = service.began(ev.payload),
+            began_tick = service.began(ev.payload),
             stopped = stopped,
         })
         if refusal == nil then
@@ -238,20 +268,27 @@ if sim ~= nil then
 
     -- The loaded sheet is held for the scan and its text streams to the
     -- destination's `fax.print` service; the recipient's own queue prints it.
+    -- Returns why nothing started, or nil.
     local function start_loaded_send(
         machine: Handle,
         destination: string,
         actor: Handle?,
         token: LinkReplyToken?,
         correlation: unknown
-    )
+    ): string?
+        if occupied(machine) then
+            return "busy"
+        end
         local source = machine:item_slot("media")
         if source == nil then
-            return false
+            return "no_sheet"
         end
         local readable, document = pcall(sim.documents.read, source, 0)
-        if not readable or document == nil or #document.body > service.max_payload then
-            return false
+        if not readable or document == nil then
+            return "unreadable"
+        end
+        if #document.body > service.max_payload then
+            return "too_long"
         end
         local refusal = printing.scan(machine, {
             busy_key = BUSY,
@@ -261,7 +298,7 @@ if sim ~= nil then
             stopped = stopped,
         })
         if refusal ~= nil then
-            return false
+            return refusal
         end
         local exchange = tostring(sim.tick()) .. ":" .. tostring(machine)
         pending[tostring(machine)] = {
@@ -270,6 +307,7 @@ if sim ~= nil then
             success = service.sent,
             correlation = correlation,
             exchange = exchange,
+            expires = request_expiry(),
         }
         sim.link.send({
             subject = machine,
@@ -282,7 +320,7 @@ if sim ~= nil then
             },
             request = true,
         })
-        return true
+        return nil
     end
 
     local function receive(ev: LinkServiceDeliveryPayload)
@@ -304,6 +342,7 @@ if sim ~= nil then
                 token = ev.reply,
                 success = service.printed,
                 correlation = correlation,
+                expires = request_expiry(),
             }
             return
         end
@@ -311,7 +350,7 @@ if sim ~= nil then
         -- destination is data; native link routing validates it.
         if
             type(destination) ~= "string"
-            or not start_loaded_send(ev.self, destination, nil, ev.reply, correlation)
+            or start_loaded_send(ev.self, destination, nil, ev.reply, correlation) ~= nil
         then
             reply(ev, { kind = service.failed, correlation = correlation })
         end
@@ -357,8 +396,9 @@ if sim ~= nil then
         refresh(ev.self)
     end)
 
-    -- The recipient's refusal, or a send that never left, spoils the scan's
-    -- verdict; the sheet still stays held until the scan ends.
+    -- The recipient's page result is the send's verdict: printed succeeds,
+    -- failed fails, and either settles the request at once. A send the link
+    -- refused never reaches a recipient and fails the same way.
     behavior:handle("link.service.reply", { kind = "react" }, function(ev)
         local request = pending[tostring(ev.self)]
         local payload: unknown = ev.payload
@@ -366,19 +406,22 @@ if sim ~= nil then
             return
         end
         local fields = payload :: { [unknown]: unknown }
-        if fields.kind == service.failed and fields.correlation == request.exchange then
-            request.rejected = true
+        if
+            fields.correlation == request.exchange
+            and (fields.kind == service.printed or fields.kind == service.failed)
+        then
+            settle(ev.self, fields.kind == service.printed)
+            refresh(ev.self)
         end
     end)
     sim.handle("link.service.send.done", { kind = "react" }, function(ev)
-        local request = pending[tostring(ev.self)]
         if
-            request ~= nil
-            and ev.self.prototype == content.id
+            ev.self.prototype == content.id
             and ev.service == service.print
             and ev.outcome ~= "completed"
         then
-            request.rejected = true
+            settle(ev.self, false)
+            refresh(ev.self)
         end
     end)
 
@@ -426,7 +469,8 @@ if sim ~= nil then
         if held == nil or held.prototype ~= "paper" then
             return { replaced = false }
         end
-        if printing.busy(ev.subject, BUSY) then
+        printing.recover(ev.subject, BUSY, "media")
+        if occupied(ev.subject) then
             return true
         end
         sim.item_slot.insert({ subject = ev.subject, item = held, slot = "media" })
@@ -518,7 +562,8 @@ if sim ~= nil then
             return true
         end
         if ev.action == "eject" then
-            if printing.busy(machine, BUSY) then
+            printing.recover(machine, BUSY, "media")
+            if occupied(machine) then
                 return true
             end
             sim.item_slot.eject({ subject = machine, slot = "media" })
@@ -537,12 +582,19 @@ if sim ~= nil then
             or ev.value ~= destination
             or source == nil
             or type(destination) ~= "string"
-            or printing.busy(machine, BUSY)
+            or occupied(machine)
         then
             return true
         end
         local correlation = tostring(sim.tick()) .. ":" .. tostring(machine)
-        if not start_loaded_send(machine, destination, ev.actor, nil, correlation) then
+        local refusal = start_loaded_send(machine, destination, ev.actor, nil, correlation)
+        if refusal ~= nil then
+            if refusal == "too_long" then
+                sim.message.send({
+                    recipient = ev.actor,
+                    message = sim.msg("lunatic/tfs:items.fax.too_long", {}),
+                })
+            end
             return true
         end
         selected.confirming = false

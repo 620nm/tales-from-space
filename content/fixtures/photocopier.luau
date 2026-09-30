@@ -126,6 +126,7 @@ if sim ~= nil then
         if held == nil or held.prototype ~= "paper" then
             return { replaced = false }
         end
+        printing.recover(ev.subject, BUSY, "media")
         sim.item_slot.insert({ subject = ev.subject, item = held, slot = "media" })
         open(ev.subject, ev.actor)
         return true
@@ -198,6 +199,7 @@ if sim ~= nil then
             return true
         end
         if ev.action == "eject" then
+            printing.recover(machine, BUSY, "media")
             sim.item_slot.eject({ subject = machine, slot = "media" })
             update(machine, ev.actor)
             return true

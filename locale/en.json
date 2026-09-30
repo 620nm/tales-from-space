@@ -1090,6 +1090,7 @@
   "lunatic/tfs:items.fax.printed": "A fax arrives with a fresh monochrome copy.",
   "lunatic/tfs:items.fax.sent": "The fax is sent.",
   "lunatic/tfs:items.fax.failed": "The fax could not be sent.",
+  "lunatic/tfs:items.fax.too_long": "The sheet is too long to fax.",
   "lunatic/tfs:items.writing.failed": "The sheet could not accept that mark.",
   "lunatic/tfs:ui.writing.empty": "The sheet is blank.",
   "lunatic/tfs:ui.writing.fragments": "{count} committed marks",
