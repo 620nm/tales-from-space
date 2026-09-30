@@ -73,10 +73,10 @@ t.world(
 )
 
 -- A copy job runs `printing.copy_seconds` = 4 s (content/lib/printing.luau),
--- converted at the documents.start call. The busy check below already
--- spends two of those ticks, so the boundary-minus-one sample waits the
--- full run minus those two and one more. Read here and not at the top:
--- the rate exists only once a world is booted.
+-- converted by the print queue when it accepts the job. The busy check
+-- below already spends two of those ticks, so the boundary-minus-one
+-- sample waits the full run minus those two and one more. Read here and
+-- not at the top: the rate exists only once a world is booted.
 local COPY_TICKS = clock.deadline_ticks(4)
 
 local p = t.join()
