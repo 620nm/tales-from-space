@@ -29,6 +29,8 @@
         ("medical_r", "mob/inhands/equipment/medical_righthand.dmi"),
         ("devices_l", "mob/inhands/items/devices_lefthand.dmi"),
         ("devices_r", "mob/inhands/items/devices_righthand.dmi"),
+        ("guns_l", "mob/inhands/weapons/guns_lefthand.dmi"),
+        ("guns_r", "mob/inhands/weapons/guns_righthand.dmi"),
     ],
     groups: [
         // What a carried item looks like ON the mob. tg keeps these
@@ -122,5 +124,9 @@
         (sheet: "medical_r", sprites: [Directions("held_pill_r", "pill")]),
         (sheet: "devices_l", sprites: [Directions("held_board_l", "electronic")]),
         (sheet: "devices_r", sprites: [Directions("held_board_r", "electronic")]),
+        // The C-20r in a fist: tg's own `inhand_icon_state`
+        // (automatic.dm:41) off the gun pair (gun.dm:101-102).
+        (sheet: "guns_l", sprites: [Directions("held_smg_l", "c20r")]),
+        (sheet: "guns_r", sprites: [Directions("held_smg_r", "c20r")]),
     ],
 )

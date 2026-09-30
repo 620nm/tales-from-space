@@ -198,4 +198,12 @@
     // an unarmed hit landing. The wound handler plays it for every
     // wounding blow, under whatever the weapon itself played.
     ("punch", "items/weapons/punch1.ogg"),
+    // The C-20r's voice: tg's SMG fire and rack clips
+    // (code/modules/projectiles/guns/ballistic/automatic.dm:10-12) and
+    // its pickup/drop handling (:15-16). The shot rides the ranged
+    // claim's native delivery; the rack is the reload stroke.
+    ("smg_shot", "items/weapons/gun/smg/shot.ogg"),
+    ("smg_rack", "items/weapons/gun/smg/smgrack.ogg"),
+    ("smg_pickup", "items/handling/gun/ballistics/smg/smg_pickup1.ogg"),
+    ("smg_drop", "items/handling/gun/ballistics/smg/smg_drop1.ogg"),
 ]

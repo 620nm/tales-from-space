@@ -9,6 +9,9 @@
     sheets: [
         ("grenade", "obj/weapons/grenade.dmi"),
         ("projectiles", "obj/weapons/guns/projectiles.dmi"),
+        ("ballistic", "obj/weapons/guns/ballistic.dmi"),
+        ("ammo", "obj/weapons/guns/ammo.dmi"),
+        ("muzzle", "obj/weapons/guns/projectiles_muzzle.dmi"),
     ],
     sprites: [
         // tg's frag grenade (`/obj/item/grenade/frag`,
@@ -36,5 +39,22 @@
         ("shrapnel_n", Rotated(Dmi("@projectiles", "pellet", 0), 0)),
         ("shrapnel_e", Rotated(Dmi("@projectiles", "pellet", 0), 1)),
         ("shrapnel_w", Rotated(Dmi("@projectiles", "pellet", 0), 3)),
+        // The C-20r SMG (`/obj/item/gun/ballistic/automatic/c20r`,
+        // code/modules/projectiles/guns/ballistic/automatic.dm:37-51)
+        // off the ballistic sheet (gun.dm:8) at its own state (:40).
+        // ART ONLY, no burst or pin behavior is ported.
+        ("smg", Dmi("@ballistic", "c20r", 0)),
+        // Its magazine (`/obj/item/ammo_box/magazine/smgm45`, 24 rounds,
+        // code/modules/projectiles/boxes_magazines/external/smg.dm:77-86)
+        // off the ammo sheet (_box_magazine.dm:5) at its state (:80).
+        ("smg_mag", Dmi("@ammo", "c20r45", 0)),
+        // A live round: the base casing's loaded state
+        // (`s-casing-live`, _ammunition.dm:4-5,112-113), shared by
+        // every caliber the pack loads.
+        ("live_casing", Dmi("@ammo", "s-casing-live", 0)),
+        // The muzzle flash a committed shot draws
+        // (`/obj/effect/projectile/muzzle/bullet`,
+        // code/game/objects/effects/temporary_visuals/projectiles/muzzle.dm:62-63).
+        ("muzzle_bullet", Dmi("@muzzle", "muzzle_bullet", 0)),
     ],
 )
