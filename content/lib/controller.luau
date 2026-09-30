@@ -139,7 +139,7 @@ end
 local function duration(s: unknown): boolean
     return type(s) == "number" and s == s and s > 0 and s <= 60
 end
--- Controller timers use `sim.ticks` nearest rounding at the round's rate.
+-- Controller timers use `sim.ticks` ceiling rounding at the round's rate.
 local function deadline_ticks(seconds: number): number
     return sim.ticks(seconds)
 end
