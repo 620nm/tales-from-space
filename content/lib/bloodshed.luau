@@ -11,23 +11,86 @@
 -- What a wound then does, in order: bleed stacks on the worst-hurt
 -- part while the victim is still alive on the receipt, the
 -- flesh-impact sound on the victim's tile, the spilled blood as
--- matter on that tile, and the splatter mark over it. One instance
--- per (tile, decal), so repeated hits repaint rather than stack.
+-- matter on that tile, and the splatter mark over it, aimed along
+-- the spray. One instance per (tile, decal), so repeated hits
+-- repaint rather than stack.
 --
 -- The receipt names no ZONE and no ATTACKER — target, pools and
 -- outcome only — so both are derived. The zone is the part carrying
 -- the most brute, ties broken toward the alphabetically first zone so
--- the choice is stable whatever order the rows arrive in. There is no
--- direction at all: the one anchor that carries an attacker,
--- `attack.hit.done`, fires only for thrown impacts (throwing.rs), and
--- pack melee goes straight to `sim.damage.apply`. The splatter lands
--- on the victim's tile until the receipt grows a `from`.
+-- the choice is stable whatever order the rows arrive in. Direction
+-- is correlated, not carried: `lib/blast.luau` notes each epicenter
+-- here, and a wound landing within a tick of one aims its mark
+-- along the away sign, falling back to un-aimed north when no blast
+-- is recent or the victim stands on the epicenter. The mark stays
+-- on the victim's tile either way: a decal answers to the actor's
+-- strict reach, and the tile past them is one further from it.
 --
 -- The knobs are module locals (the `blast.luau` precedent), not
 -- `content/tuning.luau`: that file is the engine's native-knob schema
 -- and no script can read it, so blood numbers there would be dead
 -- text that looks live.
 local bloodshed = {}
+
+-- Recent blast epicenters, oldest first, each `{ tick, x, y }`. A
+-- wound within the window of the newest sprays away from it; the
+-- bound is memory hygiene, the window the correlation.
+local EPICENTER_WINDOW_TICKS = 1
+local EPICENTER_KEEP = 8
+local epicenters: { { tick: number, x: number, y: number } } = {}
+
+-- Note where a blast went off. `blast.apply` and `blast.cast` both
+-- call this on the same tick and tile; the second call is a no-op.
+function bloodshed.note_blast(at: TileAddress): ()
+    local tick = sim.tick()
+    local last = epicenters[#epicenters]
+    if last ~= nil and last.tick == tick and last.x == at.x and last.y == at.y then
+        return
+    end
+    table.insert(epicenters, { tick = tick, x = at.x, y = at.y })
+    while #epicenters > EPICENTER_KEEP do
+        table.remove(epicenters, 1)
+    end
+end
+
+local function sign(n: number): number
+    if n > 0 then
+        return 1
+    elseif n < 0 then
+        return -1
+    else
+        return 0
+    end
+end
+
+-- Which way this victim's mark aims: the away sign off the newest
+-- recent epicenter as a cardinal word, or nil when no blast is
+-- recent or the victim stands on it. A diagonal resolves east-west:
+-- the words name one cardinal bit. Ticks only move forward, so the
+-- first stale entry ends the scan.
+local function spray_facing(victim_at: TileAddress): string?
+    local now = sim.tick()
+    for i = #epicenters, 1, -1 do
+        local e = epicenters[i]
+        if now - e.tick > EPICENTER_WINDOW_TICKS then
+            break
+        end
+        local dx = sign(victim_at.x - e.x)
+        if dx > 0 then
+            return "e"
+        elseif dx < 0 then
+            return "w"
+        end
+        local dy = sign(victim_at.y - e.y)
+        if dy > 0 then
+            return "s"
+        elseif dy < 0 then
+            return "n"
+        end
+        return nil
+    end
+    return nil
+end
 
 -- One stack per point of brute: a stack is one 2 s pass of bleeding
 -- at 0.5 units/s, so a toolbox hit (10) costs 10 units over 20 s on
@@ -94,7 +157,7 @@ function bloodshed.shed(target: Handle, brute: number, audible: boolean, animate
         moles = brute * SPLATTER_UNITS_PER_BRUTE * U,
         temp_k = SPILL_TEMP_K,
     })
-    sim.place_decal(at.x, at.y, "blood", "blood", nil)
+    sim.place_decal(at.x, at.y, "blood", "blood", spray_facing(at))
 end
 
 -- The receipt subscriber. `applied` is the whole-body pool map the

@@ -117,12 +117,14 @@ local decals: {any} = {
     mark_decal("mark_stand_clear", nil, cardinal_art("decal_mark_stand_clear", "")),
     -- What a wound leaves: tg's splatter art (blood.dmi `gibbl1`, the
     -- first of /obj/effect/decal/cleanable/blood/splatter's five,
-    -- blood.dm:271-272) in tg's deck-pool red. Colored, because the
-    -- art is a greyscale mask and the red arrives as paint — and the
-    -- paint is the `blood` entry below, since a script may only place
-    -- a DECLARED paint (`free.play` is false). No crew tool offers
-    -- this decal: blood on the deck means a wound, never a dial.
-    mark_decal("blood", "blood_splatter", nil, true),
+    -- blood.dm:271-272) in tg's deck-pool red, drawn four ways round
+    -- so the wound handler can aim the spray off a blast. Colored,
+    -- because the art is a greyscale mask and the red arrives as
+    -- paint — and the paint is the `blood` entry below, since a
+    -- script may only place a DECLARED paint (`free.play` is false).
+    -- No crew tool offers this decal: blood on the deck means a
+    -- wound, never a dial.
+    mark_decal("blood", nil, cardinal_art("blood_splatter", ""), true),
 }
 
 -- The quadrant family paints halves rather than lines, so three sides of

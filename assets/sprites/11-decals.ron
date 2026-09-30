@@ -32,9 +32,15 @@
     ],
     sprites: [
         // What a wound leaves: the first of tg's five splatter states
-        // (`gibbl1`, blood.dm:271-272). Greyscale mask, so the red
-        // arrives as paint at runtime like the trim above.
-        ("blood_splatter", Tinted(Dmi("@blood", "gibbl1", 0), (255, 255, 255))),
+        // (`gibbl1`, blood.dm:271-272), drawn four ways round so the
+        // wound handler can aim the spray off a blast. Greyscale mask,
+        // so the red arrives as paint at runtime like the trim above;
+        // the turns are quarter-turns clockwise from north, the
+        // shrapnel precedent in 12-weapons.ron.
+        ("blood_splatter_n", Tinted(Dmi("@blood", "gibbl1", 0), (255, 255, 255))),
+        ("blood_splatter_e", Tinted(Rotated(Dmi("@blood", "gibbl1", 0), 1), (255, 255, 255))),
+        ("blood_splatter_s", Tinted(Rotated(Dmi("@blood", "gibbl1", 0), 2), (255, 255, 255))),
+        ("blood_splatter_w", Tinted(Rotated(Dmi("@blood", "gibbl1", 0), 3), (255, 255, 255))),
         // Pre-mitred two-side pieces, DMI dirs se/sw/ne/nw = 4/5/6/7.
         ("decal_trim_bend_se", Tinted(Dmi("@decals", "trimline", 4), (255, 255, 255))),
         ("decal_trim_bend_sw", Tinted(Dmi("@decals", "trimline", 5), (255, 255, 255))),

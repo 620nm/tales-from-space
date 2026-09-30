@@ -23,6 +23,7 @@
 -- adjudicated ten tiles at less than a fifth of tg's ring count -- a
 -- radius-10 ring is 80 turfs (pellet_cloud.dm:171-174) -- keeping the
 -- ledger readable while the direct blast carries the kill.
+local bloodshed = require("@lib/bloodshed")
 local residue_kinds = require("@lib/residue_kinds")
 
 local RADIUS = 1.5
@@ -39,6 +40,7 @@ local blast = {}
 -- everything else the ring. `sim.body` is the filter: items, machines
 -- and ghosts on those tiles are not bodies and take nothing.
 function blast.apply(at: TileAddress): ()
+    bloodshed.note_blast(at)
     for _, target in ipairs(sim.query.range(at, RADIUS, {})) do
         if sim.body(target) ~= nil then
             local tile = target.tile
@@ -84,6 +86,7 @@ end
 -- 32 px ceiling. The fire is the sheet's nine-frame explosion played
 -- once, on the blast tile and nowhere else: one blast, one cloud.
 function blast.cast(at: TileAddress): ()
+    bloodshed.note_blast(at)
     sim.visual.flash({ at = at, strength = 0.7, duration = 0.25 })
     sim.visual.ring({ at = at, strength = 1.5, duration = 0.4 })
     sim.visual.sparks({ at = at, strength = 14, duration = 0.5 })
