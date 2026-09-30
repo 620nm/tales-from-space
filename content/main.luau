@@ -44,6 +44,10 @@ local sounds = {
     -- wounding blow (content/lib/bloodshed.luau).
     "punch",
     "ratchet",
+    -- The reload stroke, played by the firearm handler after a
+    -- successful top-up (content/lib/firearm.luau). The shot itself
+    -- rides the ranged claim's native delivery, not this registry.
+    "smg_rack",
     "smash",
     "spray",
     "switch_click",
