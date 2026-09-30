@@ -2,6 +2,8 @@
 -- capability; `asset` is the logical delivery key baked from assets/sounds.ron.
 -- Keeping the mapping in content means Rust validates ownership without
 -- learning any Tales from Space vocabulary.
+local bloodshed = require("@lib/bloodshed")
+
 local sounds = {
     "computer_start",
     "computer_end",
@@ -38,6 +40,9 @@ local sounds = {
     -- The nozzle on both decal tools (content/items/tools/decal_painter.luau).
     "paint_spray",
     "part_swap",
+    -- Flesh hitting flesh, played by the wound handler under every
+    -- wounding blow (content/lib/bloodshed.luau).
+    "punch",
     "ratchet",
     "smash",
     "spray",
@@ -79,6 +84,14 @@ end
 
 sim.handle("matter.ignition.done", { kind = "react" }, tally("fires_lit"))
 sim.handle("matter.extinguished.done", { kind = "react" }, tally("fires_out"))
+
+-- Every wound, one answer: bleed stacks on the worst-hurt part, the
+-- flesh-impact sound, the spilled blood as matter and the splatter
+-- mark (`content/lib/bloodshed.luau`, which owns the gates and the
+-- numbers). Subscribed here because a wound belongs to no prototype —
+-- the same reason the fire tallies above live here rather than on a
+-- thing that burns.
+sim.handle("damage.resolved.done", { kind = "react" }, bloodshed.on_wound)
 
 -- The shift clock's own words. `content/lib/shift.luau` is the policy
 -- and every `gamemodes/` file declares the numbers; what lives here is

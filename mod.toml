@@ -50,6 +50,7 @@ native_edges = [
     "link.service",
     "resources.transfer",
     "documents.operation",
+    "bookkeeping.damage",
 ]
 
 [paths]
