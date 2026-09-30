@@ -35,17 +35,42 @@ resourced, nothing is consumed. A failure after work begins keeps the
 completed prefix and its charges. A page takes 4 s. The source sheet stays in
 the scanner until the operator ejects it manually; the queue locks the slot
 for the whole batch and its busy var refuses every competing action. A player
-leaving the area does not cancel an accepted job.
+leaving the area does not cancel an accepted job. If the power fails mid-batch
+the next page finds the copier dark: the job stops, the slot opens and the
+panel shows the failure, with the finished pages kept and charged.
+
+A machine's busy var holds the sim second its job is due to end. A task the
+host kills without cleanup (fuel, watchdog, quarantine) leaves the var and the
+slot lock behind; a var more than one second past its deadline is stale, so the
+machine reads idle, and the next job, insert or eject clears it and opens the
+slot. A task that raises is caught, cleaned up after, and recorded as a
+`lunatic/tfs:print_job_failed` row (`content/ledger.luau`) naming the machine
+and the error text; the panel or reply says the job failed.
 
 The fax holds one paper sheet. A scan takes 2 s. A send locks the sheet in its
 slot, streams its text to the recipient's `fax.print` service, and ejects the
 sheet onto the sender's ground tile when the scan ends. The recipient's own
-queue prints one fresh monochrome sheet, spending its own paper and toner; the
-message carries the sender's start stamp, so the sheet lands on both machines
-at the same deadline. It never teleports a sheet. A known preflight failure
-starts no job. A recipient that refuses (busy, offline, out of stock) fails the
-send: the source still ejects when the scan ends, and nothing is charged to
-the sender. The fax has no queue and remains busy until its job settles.
+queue prints one fresh monochrome sheet, spending its own paper and toner. The
+message carries the sender's start stamp in sim-clock seconds, so the sheet
+lands on both machines at the same deadline; a receiver honours a stamp only
+within a quarter second of transit and never from the future, so a peer's
+stamp shifts timing and nothing else. It never teleports a sheet. A known
+preflight failure starts no job. A blank sheet faxes as a blank page.
+
+The send's verdict is the recipient's page result, not the scan: the
+recipient replies `fax.printed` when its page lands and `fax.failed` on a
+refusal (busy, offline, out of stock, a payload over the bound) or a late
+failure. The sender reports the verdict when the reply arrives, a hop after the
+sheet ejects, and reports failure when no reply comes within one second. A
+refused send still ejects the source when the scan ends, and nothing is charged
+to the sender. The fax has no queue: it stays busy until its job settles and
+refuses another request until its verdict is in.
+
+A sheet's body is at most 8192 bytes, the paper's write bound, and a fax
+payload carries at most 8192 bytes in chunks of at most 4096. A body over that
+is refused before the scan starts, with the message "The sheet is too long to
+fax." for the operator; no paper can reach it, so the refusal guards a future
+larger sheet.
 
 Fax endpoints advertise no service by default. A player enables a trimmed,
 control-free name of at most 64 bytes. Duplicate display names remain plain in
