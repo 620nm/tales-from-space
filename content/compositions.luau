@@ -95,8 +95,8 @@ local function trim_decal(id: string, prefix: string, colored: boolean, opacity:
         corner = diagonal_art(prefix, "_corner") }
 end
 
-local function mark_decal(id: string, sprite: string?, facing: CardinalArt?)
-    return { id = id, layer = "decal", form = "mark", colored = false,
+local function mark_decal(id: string, sprite: string?, facing: CardinalArt?, colored: boolean?)
+    return { id = id, layer = "decal", form = "mark", colored = colored or false,
         opacity = decal_paints.mark_opacity, on = decal_decks,
         sprite = sprite, facing = facing }
 end
@@ -115,6 +115,14 @@ local decals: {any} = {
     mark_decal("mark_arrow", nil, cardinal_art("decal_mark_arrow", "")),
     mark_decal("mark_caution", nil, cardinal_art("decal_mark_caution", "")),
     mark_decal("mark_stand_clear", nil, cardinal_art("decal_mark_stand_clear", "")),
+    -- What a wound leaves: tg's splatter art (blood.dmi `gibbl1`, the
+    -- first of /obj/effect/decal/cleanable/blood/splatter's five,
+    -- blood.dm:271-272) in tg's deck-pool red. Colored, because the
+    -- art is a greyscale mask and the red arrives as paint — and the
+    -- paint is the `blood` entry below, since a script may only place
+    -- a DECLARED paint (`free.play` is false). No crew tool offers
+    -- this decal: blood on the deck means a wound, never a dial.
+    mark_decal("blood", "blood_splatter", nil, true),
 }
 
 -- The quadrant family paints halves rather than lines, so three sides of
@@ -129,6 +137,14 @@ local decal_palette = {}
 for _, paint in ipairs(decal_paints.colors) do
     table.insert(decal_palette, { id = paint.id, color = paint.hex })
 end
+-- tg's deck-pool red, BLOOD_COLOR_RED (code/__DEFINES/colors.dm:225,
+-- worn by /obj/effect/decal/cleanable/blood, blood.dm:9). Declared
+-- HERE rather than in `lib/decal_paints.luau`: that roster is tg's
+-- twelve tile paints verbatim and the painter's dial enumerates every
+-- one of them (tests/decals/decal_painter_test.luau pins twelve), so a
+-- thirteenth would hand the crew a blood-red paint. This one is the
+-- wound handler's alone.
+table.insert(decal_palette, { id = "blood", color = "#AA1010" })
 
 local paints = {}
 for _, paint in ipairs(pipe_paints.colors) do

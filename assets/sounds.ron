@@ -193,4 +193,9 @@
     // (code/controllers/subsystem/explosions.dm:522,544). One id backed
     // by the first clip, as with every other random tg key here.
     ("explosion", "effects/explosion/explosion1.ogg"),
+    // Flesh hitting flesh: the first clip of tg's SFX_PUNCH key
+    // (code/game/sound/sound_keys/sound_keys.dm:74-81), the sound of
+    // an unarmed hit landing. The wound handler plays it for every
+    // wounding blow, under whatever the weapon itself played.
+    ("punch", "items/weapons/punch1.ogg"),
 ]

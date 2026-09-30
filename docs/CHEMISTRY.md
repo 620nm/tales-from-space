@@ -22,7 +22,7 @@ This pack's figures:
 
 | what | figure | where it applies |
 |---|---|---|
-| `cv` | `100.0` J/(mol·K), written explicitly | fictional and mixture-shaped leftovers: `phenol`, `diethylamine`, `ash`, `naphtha`, `lube`, `thermite`, `space_cleaner`, `salglu` |
+| `cv` | `100.0` J/(mol·K), written explicitly | fictional and mixture-shaped leftovers: `phenol`, `diethylamine`, `ash`, `naphtha`, `lube`, `thermite`, `space_cleaner`, `salglu`, `blood` |
 | `cv` | Dulong–Petit, `3R ≈ 24.9` | elements without a measured figure: `radium`, `lithium` |
 | `cv` | measured, cited in the file | everything with real physics: `water` 75.3 liquid, `chlorine` 33.9, `iodine`/`ammonia`/`co2`/`uf6` per phase |
 | `molar_mass` | a plausible round number | same set as the flat `cv` |
