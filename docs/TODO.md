@@ -5,16 +5,6 @@ pointers, then a `Done:` paragraph that is the acceptance criterion. Finished
 work is deleted, not archived. Entries that wait on the engine say "once the
 engine offers X"; engine contracts are the engine's `docs/…`.
 
-## Declare atmosphere, power and wind
-
-`content/capabilities.luau` sets only `simulation.tick_hz`. Atmosphere, power
-and wind are simulated because the engine defaults them on; a pack that uses
-them should say so.
-
-Done: once the engine flips those defaults to off, `content/capabilities.luau`
-declares `simulation = { tick_hz = 20, atmosphere = true, power = true,
-wind = true }`, and every spec still passes.
-
 ## Hover highlight treatment
 
 `ui/overlay/main.tsx` draws the hover card and the pixel-perfect highlight
@@ -34,15 +24,6 @@ Done: once the engine reads a body-plan `pace`, the human plan declares a
 the soft-crit add (`SOFTCRIT_ADD_SLOWDOWN`, 2 ds; tg `combat.dm:131-133`) are
 pack data beside it. Soft-crit crawl remains a pack-declared posture gate,
 not an engine rule.
-
-## Explicit launch interval on sprayers
-
-`content/items/vessels/spray_bottle.luau` and
-`content/items/tools/fire_extinguisher.luau` rely on the engine's default
-launch interval.
-
-Done: once the launch interval is a required pack field, both declare 0.8 s
-explicitly (tg `spray.dm:78`, `CLICK_CD_RANGE*2`).
 
 ## Vital organs: heart failure and brain removal
 
@@ -64,17 +45,6 @@ out the numbered target keys, but the engine assumes an aimed part exists.
 Done: the pack defines its target groupings and declares what happens when
 an aimed part is absent on the target's body plan, with a spec for a target
 that lacks the aimed part.
-
-## Printing owned by the pack
-
-`content/fixtures/fax.luau` and `content/fixtures/photocopier.luau` read
-`sim.documents.status` for their busy state and start jobs with
-`sim.documents.start`; `content/lib/printing.luau` holds only constants.
-
-Done: once the engine offers `documents.materialize` and removes
-`documents.start` and `status`, `content/lib/printing.luau` owns the print,
-fax and copy queue (`spawn_task` plus sleep) with its own busy flag, and both
-fixtures call it in place of `documents.status`.
 
 ## Air alarm modes and thresholds
 
