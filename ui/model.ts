@@ -150,6 +150,8 @@ export interface GameplayView {
      *  minted for it; a thing in a slot has only its own sprite. */
     effectiveBindings?: Record<string, readonly string[]>;
     hover?: {
+      /** The hovered world entity's id; null over an inventory slot. */
+      entity?: number | null;
       kind: string;
       name: string;
       name_label?: ActionLabel | null;
