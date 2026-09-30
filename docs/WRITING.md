@@ -29,20 +29,23 @@ The photocopier starts with 30 paper units and 30 toner units. It scans paper
 without charge. The operator chooses one to ten copies, with one and
 black-and-white as defaults. Every completed output consumes exactly one
 paper unit and one toner unit, including color output. Before a batch starts,
-the native job preflights the complete requested batch. If the batch cannot
-be fully resourced, nothing is consumed. A failure after work begins keeps
-the completed prefix and its charges. A page takes 80 ticks. The source sheet
-stays in the scanner until the operator ejects it manually, and busy state
-locks every competing action. A player leaving the area does not cancel an
-admitted job.
+the print queue (`content/lib/printing.luau`) preflights the complete requested
+batch: a powered machine holding enough of both. If the batch cannot be fully
+resourced, nothing is consumed. A failure after work begins keeps the
+completed prefix and its charges. A page takes 4 s. The source sheet stays in
+the scanner until the operator ejects it manually; the queue locks the slot
+for the whole batch and its busy var refuses every competing action. A player
+leaving the area does not cancel an accepted job.
 
-The fax holds one paper sheet. Scanning takes 40 ticks. A successful send
-ejects the source sheet onto the sender's ground tile and creates a fresh
-monochrome sheet at the same 40-tick deadline. It never teleports a sheet or
-waits for a second receive operation. A known preflight
-failure creates no job. A late failure ejects the source at tick 40 without
-charging paper or toner. The fax has no queue and remains busy until its
-operation settles.
+The fax holds one paper sheet. A scan takes 2 s. A send locks the sheet in its
+slot, streams its text to the recipient's `fax.print` service, and ejects the
+sheet onto the sender's ground tile when the scan ends. The recipient's own
+queue prints one fresh monochrome sheet, spending its own paper and toner; the
+message carries the sender's start stamp, so the sheet lands on both machines
+at the same deadline. It never teleports a sheet. A known preflight failure
+starts no job. A recipient that refuses (busy, offline, out of stock) fails the
+send: the source still ejects when the scan ends, and nothing is charged to
+the sender. The fax has no queue and remains busy until its job settles.
 
 Fax endpoints advertise no service by default. A player enables a trimmed,
 control-free name of at most 64 bytes. Duplicate display names remain plain in
@@ -68,11 +71,11 @@ selects it and opens a viewer-specific confirmation; only its confirm/send
 action submits the selected MAC. The UI reads native resource, busy, source, and directory
 state; content handlers only translate the pack's action keys into generic
 writing, resource, printing, and addressed-service helpers. Writing appends
-through `sim.documents.append`; copier/fax pages use `sim.documents.start`
-with `duration_ticks` and one paper and one toner cost per output. Fax input
-uses a `source.chunks` table capped at 4096 bytes per chunk and 8192 total.
-The private
-`documents.operation.done` completion refreshes machine panels and settles a
+through `sim.documents.append`; copier/fax pages run on the print queue, a
+machine task that sleeps out each page and lands it with one
+`sim.documents.materialize` costing one paper and one toner. Fax input uses a
+`source.chunks` table capped at 4096 bytes per chunk and 8192 total. Each
+page's `documents.materialize.done` refreshes machine panels and settles a
 received fax. Stock moves use
 `sim.resources.transfer` with the amount omitted to transfer the available
 missing quantity.

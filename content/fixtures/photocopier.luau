@@ -1,16 +1,19 @@
 local printing = require("@lib/printing")
 local writing = require("@lib/writing")
 
--- The copier's player actions are native jobs. This fixture only translates
--- the pack's button vocabulary into those generic helpers.
+-- The copier's player actions are jobs on the shared print queue
+-- (lib/printing.luau). This fixture only translates the pack's button
+-- vocabulary into it.
 -- tg code/modules/paperwork/photocopier.dm:281-379, :386-464, :548-619.
 local content = { id = "photocopier" }
+local BUSY = "photocopier_busy"
 
 if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:photocopier_count", { replicate = "server" })
     sim.define("script_var", "lunatic/tfs:photocopier_color", { replicate = "server" })
     sim.define("script_var", "lunatic/tfs:photocopier_failed", { replicate = "server" })
     sim.define("script_var", "lunatic/tfs:photocopier_reason", { replicate = "server" })
+    sim.define("script_var", "lunatic/tfs:photocopier_busy", { replicate = "server" })
     local function resource(machine: Handle, id: string): number
         for _, row in ipairs(sim.resources.read(machine)) do
             if row.id == id then
@@ -38,7 +41,7 @@ if sim ~= nil then
             original = preview(machine),
             count = machine.vars.photocopier_count or 1,
             mode = machine.vars.photocopier_color or "bw",
-            busy = sim.documents.status(machine) ~= nil,
+            busy = printing.busy(machine, BUSY),
             paper = resource(machine, "paper"),
             toner = resource(machine, "toner"),
             failed = machine.vars.photocopier_failed == true,
@@ -87,14 +90,12 @@ if sim ~= nil then
             },
         })
     end
-    local function refresh_after_admission(machine: Handle)
-        -- Admission reserves stock and marks the endpoint busy in the native
-        -- job transaction. Reproject once after that commit so the panel does
-        -- not show the pre-admission idle snapshot.
-        sim.spawn_task(machine, function()
-            sim.sleep(1)
-            update_all(machine)
-        end)
+    -- A job that ends before its last page (power lost, stock gone, a raise
+    -- in the task) leaves its reason on the panel.
+    local function stopped(machine: Handle, reason: string)
+        machine.vars.photocopier_failed = true
+        machine.vars.photocopier_reason = reason
+        update_all(machine)
     end
     local behavior = sim.define("behavior", "lunatic/tfs:photocopier", { prototype = content.id })
 
@@ -127,7 +128,6 @@ if sim ~= nil then
         end
         sim.item_slot.insert({ subject = ev.subject, item = held, slot = "media" })
         open(ev.subject, ev.actor)
-        refresh_after_admission(ev.subject)
         return true
     end)
 
@@ -180,28 +180,21 @@ if sim ~= nil then
             local color: DocumentColor = if machine.vars.photocopier_color == "color"
                 then "preserve"
                 else "monochrome"
-            local accepted = pcall(function()
-                sim.documents.start({
-                    machine = machine,
-                    source = document_source,
-                    output = "paper",
-                    ext = "md",
-                    stem = "paper1",
-                    duration_ticks = sim.ticks(printing.copy_seconds),
-                    count = count,
-                    eject_input = false,
-                    color = color,
-                    costs = printing.costs(),
-                })
-            end)
-            if not accepted then
+            local refusal = printing.start(machine, {
+                busy_key = BUSY,
+                source = document_source,
+                stem = "paper1",
+                color = color,
+                pages = count,
+                seconds = printing.copy_seconds,
+                slot = "media",
+                stopped = stopped,
+            })
+            if refusal ~= nil then
                 machine.vars.photocopier_failed = true
-                machine.vars.photocopier_reason = "admission_failed"
+                machine.vars.photocopier_reason = refusal
             end
             update(machine, ev.actor)
-            if accepted then
-                refresh_after_admission(machine)
-            end
             return true
         end
         if ev.action == "eject" then
@@ -212,12 +205,9 @@ if sim ~= nil then
         return { replaced = false }
     end)
 
-    -- Native jobs publish one private completion for every batch. Refreshing
-    -- from that fact keeps the UI honest through partial late failures.
-    sim.handle("documents.operation.done", { kind = "react" }, function(ev)
-        if ev.self.prototype ~= content.id then
-            return
-        end
+    -- Every page answers with its own completion. Refreshing from that fact
+    -- keeps the panel honest through a late failure on any page of a batch.
+    behavior:handle("documents.materialize.done", { kind = "react" }, function(ev)
         if ev.outcome == "completed" then
             ev.self.vars.photocopier_failed = nil
             ev.self.vars.photocopier_reason = nil

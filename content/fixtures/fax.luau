@@ -2,20 +2,30 @@ local printing = require("@lib/printing")
 local service = require("@lib/service")
 local writing = require("@lib/writing")
 
--- Fax policy is a pack handler over generic document, slot, and link helpers.
--- The helpers own job admission, resources, timing, and private reply tokens;
--- this file only translates fax messages and keeps no document body in vars.
+-- Fax policy is a pack handler over the shared print queue (lib/printing.luau)
+-- and the addressed link services. A received sheet is printed by the
+-- recipient's own queue, spending its own paper and toner; a sent sheet is
+-- scanned in the sender's queue while its text travels as `fax.print` chunks.
+-- This file keeps no document body in vars.
 -- tg code/modules/paperwork/fax.dm:222-237, :294-351, :406-428.
 local content = { id = "fax" }
+local BUSY = "fax_busy"
 type ViewerState = { page: number, target: string?, confirming: boolean? }
-type Pending = { actor: Handle?, token: LinkReplyToken?, success: string, correlation: unknown }
+type Pending = {
+    actor: Handle?,
+    token: LinkReplyToken?,
+    success: string,
+    correlation: unknown,
+    exchange: string?,
+    rejected: boolean?,
+}
 type DirectoryRow = { id: string, address: string, name: string, online: boolean }
 local viewer_state: { [string]: ViewerState } = {}
 local viewers: { [string]: { [string]: Handle } } = {}
 local viewer_machines: { [string]: Handle } = {}
--- One native operation owns each endpoint. These maps retain only the
--- private reply/actor context needed when its completion arrives; the native
--- job retains the source file and all machine reservations.
+-- One job owns each endpoint. This map retains only the private reply/actor
+-- context needed when the job settles; the queue retains nothing of the
+-- source, and the slot lock holds the sheet itself.
 local pending: { [string]: Pending } = {}
 
 local function body(payload: unknown): string?
@@ -50,6 +60,7 @@ end
 if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:fax_name", { replicate = "server" })
     sim.define("script_var", "lunatic/tfs:fax_advertised", { replicate = "server" })
+    sim.define("script_var", "lunatic/tfs:fax_busy", { replicate = "server" })
     local function resource(machine: Handle, id: string)
         for _, row in ipairs(sim.resources.read(machine)) do
             if row.id == id then
@@ -119,7 +130,7 @@ if sim ~= nil then
             loadedpaper = loaded(machine),
             paper = resource(machine, "paper"),
             toner = resource(machine, "toner"),
-            busy = sim.documents.status(machine) ~= nil,
+            busy = printing.busy(machine, BUSY),
             directory = directory_rows,
             directory_more = directory_more,
             directory_page = selected.page or 0,
@@ -175,33 +186,58 @@ if sim ~= nil then
         end
     end
 
-    local function start_local_print(ev: LinkServiceDeliveryPayload, text: string)
-        if sim.documents.status(ev.self) ~= nil then
-            return false
+    -- Answers whoever asked for the job: the link reply token and, for a
+    -- panel send, the pressing player's message.
+    local function settle(machine: Handle, succeeded: boolean)
+        local key = tostring(machine)
+        local request = pending[key]
+        if request == nil then
+            return
         end
-        local accepted = pcall(function()
-            sim.documents.start({
-                machine = ev.self,
-                source = { chunks = service.chunks(text) },
-                output = "paper",
-                ext = "md",
-                stem = "fax",
-                duration_ticks = sim.ticks(printing.fax_seconds),
-                count = 1,
-                eject_input = false,
-                color = "monochrome",
-                costs = printing.costs(),
-            })
-        end)
-        if accepted then
-            sim.spawn_task(ev.self, function()
-                sim.sleep(1)
-                refresh(ev.self)
-            end)
+        pending[key] = nil
+        local message = if succeeded then request.success else service.failed
+        reply_token(machine, request.token, { kind = message, correlation = request.correlation })
+        if request.actor ~= nil then
+            local text = message == service.printed and "lunatic/tfs:items.fax.printed"
+                or message == service.sent and "lunatic/tfs:items.fax.sent"
+                or "lunatic/tfs:items.fax.failed"
+            sim.message.send({ recipient = request.actor, message = sim.msg(text, {}) })
         end
-        return accepted
     end
 
+    -- A job that ends before its last page or scan fails its request.
+    local function stopped(machine: Handle, _reason: string)
+        settle(machine, false)
+        refresh(machine)
+    end
+
+    -- A scan that ran its course succeeds unless the recipient already
+    -- refused the sheet.
+    local function scanned(machine: Handle)
+        local request = pending[tostring(machine)]
+        settle(machine, request ~= nil and request.rejected ~= true)
+        refresh(machine)
+    end
+
+    local function start_local_print(ev: LinkServiceDeliveryPayload, text: string)
+        local refusal = printing.start(ev.self, {
+            busy_key = BUSY,
+            source = { chunks = service.chunks(text) },
+            stem = "fax",
+            color = "monochrome",
+            pages = 1,
+            seconds = printing.fax_seconds,
+            began = service.began(ev.payload),
+            stopped = stopped,
+        })
+        if refusal == nil then
+            refresh(ev.self)
+        end
+        return refusal == nil
+    end
+
+    -- The loaded sheet is held for the scan and its text streams to the
+    -- destination's `fax.print` service; the recipient's own queue prints it.
     local function start_loaded_send(
         machine: Handle,
         destination: string,
@@ -209,48 +245,44 @@ if sim ~= nil then
         token: LinkReplyToken?,
         correlation: unknown
     )
-        if sim.documents.status(machine) ~= nil then
-            return false
-        end
         local source = machine:item_slot("media")
         if source == nil then
             return false
         end
         local readable, document = pcall(sim.documents.read, source, 0)
-        if not readable or document == nil then
+        if not readable or document == nil or #document.body > service.max_payload then
             return false
         end
-        local file: DocumentFileSource =
-            { store = source, uid = 0, expected_revision = document.revision }
-        local accepted = pcall(function()
-            sim.documents.start({
-                machine = machine,
-                source = file,
-                to = destination,
-                service = service.send,
-                output = "paper",
-                ext = "md",
-                stem = "fax",
-                duration_ticks = sim.ticks(printing.fax_seconds),
-                count = 1,
-                eject_input = true,
-                color = "monochrome",
-                costs = printing.costs(),
-            })
-        end)
-        if accepted then
-            pending[tostring(machine)] = {
-                actor = actor,
-                token = token,
-                success = service.sent,
-                correlation = correlation,
-            }
-            sim.spawn_task(machine, function()
-                sim.sleep(1)
-                refresh(machine)
-            end)
+        local refusal = printing.scan(machine, {
+            busy_key = BUSY,
+            seconds = printing.fax_seconds,
+            slot = "media",
+            finished = scanned,
+            stopped = stopped,
+        })
+        if refusal ~= nil then
+            return false
         end
-        return accepted
+        local exchange = tostring(sim.tick()) .. ":" .. tostring(machine)
+        pending[tostring(machine)] = {
+            actor = actor,
+            token = token,
+            success = service.sent,
+            correlation = correlation,
+            exchange = exchange,
+        }
+        sim.link.send({
+            subject = machine,
+            to = destination,
+            service = service.print,
+            payload = {
+                chunks = service.chunks(document.body),
+                correlation = exchange,
+                began = service.stamp(),
+            },
+            request = true,
+        })
+        return true
     end
 
     local function receive(ev: LinkServiceDeliveryPayload)
@@ -276,7 +308,7 @@ if sim ~= nil then
             return
         end
         -- A controller may ask a named fax to originate a loaded sheet. The
-        -- destination is data; native document admission validates its route.
+        -- destination is data; native link routing validates it.
         if
             type(destination) ~= "string"
             or not start_loaded_send(ev.self, destination, nil, ev.reply, correlation)
@@ -317,31 +349,36 @@ if sim ~= nil then
         refresh(ev.self)
     end)
 
-    -- The native operation completion is the only authoritative receive
-    -- result. It distinguishes a preflight refusal from a late failure while
-    -- keeping the private reply token in this endpoint's own request table.
-    sim.handle("documents.operation.done", { kind = "react" }, function(ev)
-        if ev.self.prototype ~= content.id then
+    -- Each page's completion is the authoritative receive result. It
+    -- distinguishes a refused page from a printed one while the private reply
+    -- token stays in this endpoint's own request table.
+    behavior:handle("documents.materialize.done", { kind = "react" }, function(ev)
+        settle(ev.self, ev.outcome == "completed")
+        refresh(ev.self)
+    end)
+
+    -- The recipient's refusal, or a send that never left, spoils the scan's
+    -- verdict; the sheet still stays held until the scan ends.
+    behavior:handle("link.service.reply", { kind = "react" }, function(ev)
+        local request = pending[tostring(ev.self)]
+        local payload: unknown = ev.payload
+        if request == nil or type(payload) ~= "table" then
             return
         end
-        -- The terminal event has no remote entity handle. Reproject every
-        -- remembered fax panel so a recipient's reservation and output clear
-        -- at the same deadline as the sender's source ejection.
-        refresh_all_faxes()
+        local fields = payload :: { [unknown]: unknown }
+        if fields.kind == service.failed and fields.correlation == request.exchange then
+            request.rejected = true
+        end
+    end)
+    sim.handle("link.service.send.done", { kind = "react" }, function(ev)
         local request = pending[tostring(ev.self)]
-        if request ~= nil then
-            pending[tostring(ev.self)] = nil
-            reply_token(ev.self, request.token, {
-                kind = ev.outcome == "completed" and request.success or service.failed,
-                correlation = request.correlation,
-            })
-            if request.actor ~= nil then
-                local message = ev.outcome == "completed" and request.success or service.failed
-                local key = message == service.printed and "lunatic/tfs:items.fax.printed"
-                    or message == service.sent and "lunatic/tfs:items.fax.sent"
-                    or "lunatic/tfs:items.fax.failed"
-                sim.message.send({ recipient = request.actor, message = sim.msg(key, {}) })
-            end
+        if
+            request ~= nil
+            and ev.self.prototype == content.id
+            and ev.service == service.print
+            and ev.outcome ~= "completed"
+        then
+            request.rejected = true
         end
     end)
 
@@ -389,15 +426,11 @@ if sim ~= nil then
         if held == nil or held.prototype ~= "paper" then
             return { replaced = false }
         end
-        if sim.documents.status(ev.subject) ~= nil then
+        if printing.busy(ev.subject, BUSY) then
             return true
         end
         sim.item_slot.insert({ subject = ev.subject, item = held, slot = "media" })
         open(ev.subject, ev.actor)
-        sim.spawn_task(ev.subject, function()
-            sim.sleep(1)
-            refresh(ev.subject)
-        end)
         return true
     end)
 
@@ -485,7 +518,7 @@ if sim ~= nil then
             return true
         end
         if ev.action == "eject" then
-            if sim.documents.status(machine) ~= nil then
+            if printing.busy(machine, BUSY) then
                 return true
             end
             sim.item_slot.eject({ subject = machine, slot = "media" })
@@ -504,7 +537,7 @@ if sim ~= nil then
             or ev.value ~= destination
             or source == nil
             or type(destination) ~= "string"
-            or sim.documents.status(machine) ~= nil
+            or printing.busy(machine, BUSY)
         then
             return true
         end

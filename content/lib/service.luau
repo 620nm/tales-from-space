@@ -9,6 +9,36 @@ service.sent = "fax.sent"
 service.failed = "fax.failed"
 service.max_chunk = 4096
 service.max_payload = 8192
+-- A sheet scanned and printed in lockstep lands on both machines together, so
+-- a `fax.print` may carry the sim-clock second its sender began transmitting.
+-- A receiver honours a stamp no older than this and never a future one.
+service.max_transit_seconds = 1
+
+-- The sender's stamp for a transmission beginning now, in sim-clock seconds.
+function service.stamp(): number
+    return sim.seconds(sim.tick())
+end
+
+-- The tick `payload.began` names when it is a plausible stamp, else nil and
+-- the receiver times the page from its own delivery.
+function service.began(payload: unknown): number?
+    if type(payload) ~= "table" then
+        return nil
+    end
+    local stamp = (payload :: { [unknown]: unknown }).began
+    if type(stamp) ~= "number" then
+        return nil
+    end
+    local counted, began = pcall(sim.ticks, stamp)
+    if not counted then
+        return nil
+    end
+    local now = sim.tick()
+    if began > now or now - began > sim.ticks(service.max_transit_seconds) then
+        return nil
+    end
+    return began
+end
 
 function service.chunks(text: string): { string }
     local out: { string } = {}
