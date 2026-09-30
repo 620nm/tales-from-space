@@ -231,7 +231,8 @@ gateway; running a game server alone does not host its executable bootstrap.
   pack-selected simulation rate, `simulation.tick_hz = 20` — tg's own tick
   (TICKLAG 0.5 ds, fps 20), so every source-tuned second converts exactly.
   Author durations in seconds (`printing.copy_seconds`, extinguisher
-  `cooldown_seconds`); handlers convert with `sim.ticks` at the call.
+  `cooldown_seconds`). Pass seconds directly to seconds-valued native APIs;
+  use `sim.ticks` only when an API takes ticks.
   Validate clock-adjacent edits narrowly first: the engine's
   `node tools/luau.mjs check "$LUNATIC_PACK"` (§Specs) plus the named specs
   covering the touched content, before the full gate.
