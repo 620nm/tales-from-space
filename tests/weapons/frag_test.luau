@@ -114,10 +114,48 @@ local function is_wall(x: number, y: number): boolean
     end
     return (x == 9 and y == 2) or (x == 8 and y == 3)
 end
+-- Mint ledger partitioned: the Nth detonation mints the Nth ash, and
+-- every other mint is blood a wound spilled (`content/lib/bloodshed.luau`
+-- answers every wounding receipt). Blood mints per blast are ballistics
+-- — direct wounds plus pellet strikes — seed-pinned exactly like
+-- `blast_shards` below: { 4, 12, 11, 11 }.
+local blood_per_blast = { 4, 12, 11, 11 }
+local function ash_mints(): { any }
+    local ash = {}
+    for _, row in ipairs(t.ledger_rows("minted")) do
+        if row.substance == "ash" then
+            table.insert(ash, row)
+        else
+            assert(row.substance == "blood", "a wound mints blood and nothing else mints")
+            assert(
+                ui_controls.number(row.moles) > 0,
+                "a spilled wound names a positive amount"
+            )
+        end
+    end
+    return ash
+end
+local function blood_mints(): number
+    local blood = 0
+    for _, row in ipairs(t.ledger_rows("minted")) do
+        if row.substance == "blood" then
+            blood += 1
+        end
+    end
+    return blood
+end
 local function blast_dirt(n: number): ()
     local discharged = t.ledger_rows("volley_discharged")[n]
     local settled = t.ledger_rows("volley_settled")[n]
-    local minted = t.ledger_rows("minted")[n]
+    local ash = ash_mints()
+    assert(#ash == n, ("blast %d mints the %dth ash, got %d"):format(n, n, #ash))
+    local want_blood = 0
+    for blast = 1, n do
+        want_blood += blood_per_blast[blast]
+    end
+    local blood = blood_mints()
+    assert(blood == want_blood, ("blast %d leaves %d blood mints, got %d"):format(n, want_blood, blood))
+    local minted = ash[n]
     assert(discharged.radius == 10, ("blast %d is thrown to ten tiles"):format(n))
     assert(discharged.fragments == 15, ("blast %d throws fifteen"):format(n))
     assert(discharged.damage == 14, ("blast %d flies at tg's force"):format(n))
@@ -200,7 +238,13 @@ assert(burn(v1) == 0, "four tiles off, the spawn stack feels nothing")
 -- rows between the same two).
 local gone = t.ledger_rows("item_destroyed")
 local minted = t.ledger_rows("minted")
-assert(#gone == 1 and #minted == 1, "one detonation, one mint")
+-- One detonation mints one ash; the holder's direct wound and the
+-- three pellets that struck them (15 thrown, 12 settled) mint four
+-- blood. The ash lands first: the deposit runs inside the detonate,
+-- every wound's receipt after it.
+assert(#gone == 1, "one detonation")
+assert(minted[1].substance == "ash", "the ash lands first")
+assert(#minted == 5 and blood_mints() == 4, "one wounding receipt a mint")
 assert(gone[1].seq < minted[1].seq, "gone before the ash")
 local first_discharge = t.ledger_rows("volley_discharged")[1]
 assert(minted[1].seq < first_discharge.seq, "ash before the volley")

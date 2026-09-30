@@ -77,13 +77,27 @@ assert(
     ("a quarter mole of ash rests on the deck, got %g"):format(ash_total())
 )
 local minted = t.ledger_rows("minted")
-assert(#minted == 1, ("one mint on the record, got %d"):format(#minted))
-assert(minted[1].substance == "ash", "naming ash")
+-- The ash lands first; behind it, one blood mint per pellet that
+-- struck the armer down the row (`content/lib/bloodshed.luau` answers
+-- every wounding receipt, and the armer stood clear of the direct
+-- blast). Fifteen pellets, thirteen settled: two struck, two bled.
+local blood = 0
+for _, row in ipairs(minted) do
+    if row.substance == "blood" then
+        blood += 1
+        assert(ui_controls.number(row.moles) > 0, "a spilled wound names a positive amount")
+    else
+        assert(row.substance == "ash", "a wound mints blood and nothing else mints")
+    end
+end
+assert(#minted == 3, ("ash and two wounds on the record, got %d"):format(#minted))
+assert(minted[1].substance == "ash", "naming ash first")
 assert(
     math.abs(ui_controls.number(minted[1].moles) - 0.25) < 1e-9,
     "naming the whole quarter mole"
 )
 assert(minted[1].actor.kind == "script", "attributed to the file that asked")
+assert(blood == 2, ("two pellets struck, got %d blood mints"):format(blood))
 local liquids = assert(t.room_liquid(1, 1), "the blast tile breathes")
 assert((liquids.ash or 0) == 0, "ash rests solid, not liquid")
 
