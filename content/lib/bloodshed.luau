@@ -20,11 +20,11 @@
 -- the most brute, ties broken toward the alphabetically first zone so
 -- the choice is stable whatever order the rows arrive in. Direction
 -- is correlated, not carried: `lib/blast.luau` notes each epicenter
--- here, and a wound landing within a tick of one aims its mark
--- along the away sign, falling back to un-aimed north when no blast
--- is recent or the victim stands on the epicenter. The mark stays
--- on the victim's tile either way: a decal answers to the actor's
--- strict reach, and the tile past them is one further from it.
+-- at detonation and the grenade re-notes it off the volley settle,
+-- and a wound landing within a tick of one aims its mark along the
+-- away sign. Past the window — pellets fly for ticks — a wound leaves
+-- an aimed mark's side alone, and only a bare tile gets the un-aimed
+-- north. The mark stays on the victim's tile either way.
 --
 -- The knobs are module locals (the `blast.luau` precedent), not
 -- `content/tuning.luau`: that file is the engine's native-knob schema
@@ -40,7 +40,8 @@ local EPICENTER_KEEP = 8
 local epicenters: { { tick: number, x: number, y: number } } = {}
 
 -- Note where a blast went off. `blast.apply` and `blast.cast` both
--- call this on the same tick and tile; the second call is a no-op.
+-- call this on the same tick and tile, and the grenade calls it again
+-- off each volley settle; repeats on a noted tick and tile are no-ops.
 function bloodshed.note_blast(at: TileAddress): ()
     local tick = sim.tick()
     local last = epicenters[#epicenters]
@@ -134,12 +135,12 @@ end
 -- The whole wound: bleed, thump, pool, mark. `brute` is the applied
 -- brute pool off the receipt, already gated positive by the caller.
 -- `audible` is whether a live actor stands behind the receipt, and
--- `animate` whether the victim is still alive on it. The thump, the
--- pool and the mark are reach-scoped commands and ERROR with no actor
--- to scope to (`sim.sound.play`, `sim.matter.deposit`), so an
--- actorless wound — a spec precondition, a system blow — bleeds and
--- leaves no trace. The bleed itself needs a living body: the dead
--- don't bleed, which is what keeps a morgue cadaver's wounds shut.
+-- `animate` whether the victim is still alive on it. The thump and
+-- the pool ERROR with no live actor to scope to (`sim.sound.play`,
+-- `sim.matter.deposit`), so an actorless wound returns before them;
+-- the mark, which would admit without one, goes with them, and the
+-- wound leaves no trace. The bleed itself needs a living body: the
+-- dead don't bleed, which keeps a morgue cadaver's wounds shut.
 function bloodshed.shed(target: Handle, brute: number, audible: boolean, animate: boolean): ()
     local zone = wound_zone(target)
     if animate and zone ~= nil then
@@ -157,7 +158,19 @@ function bloodshed.shed(target: Handle, brute: number, audible: boolean, animate
         moles = brute * SPLATTER_UNITS_PER_BRUTE * U,
         temp_k = SPILL_TEMP_K,
     })
-    sim.place_decal(at.x, at.y, "blood", "blood", spray_facing(at))
+    local facing = spray_facing(at)
+    if facing == nil then
+        -- Uncorrelated: an aimed mark keeps its side. The engine
+        -- defaults an un-aimed placement to north, so repainting here
+        -- would turn a blast's spray into a brawl's — but a tile with
+        -- no blood mark yet still gets its un-aimed one.
+        for _, decal in ipairs(sim.decals_at(at.x, at.y)) do
+            if decal.decal == "blood" then
+                return
+            end
+        end
+    end
+    sim.place_decal(at.x, at.y, "blood", "blood", facing)
 end
 
 -- The receipt subscriber. `applied` is the whole-body pool map the

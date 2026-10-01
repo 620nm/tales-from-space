@@ -1,5 +1,6 @@
 local physical_profiles = require("@lib/physical_profiles")
 local blast = require("@lib/blast")
+local bloodshed = require("@lib/bloodshed")
 local residue_kinds = require("@lib/residue_kinds")
 
 -- The frag grenade: tg's `/obj/item/grenade/frag`
@@ -104,12 +105,15 @@ if sim ~= nil then
     -- settles -- strikes keep no landing, so struck tiles hear
     -- nothing -- and each signal anchors on its own tile, so this
     -- deposit lands in reach however far the pellet flew. Shards at
-    -- landings only; the blast area wears fallout, never these.
+    -- landings only; the blast area wears fallout, never these. The
+    -- `from` each signal carries re-notes the epicenter, so wounds
+    -- landing beside the settle still spray away from the blast.
     sim.event("lunatic/tfs:volley_settled", {
         family = "notification",
-        payload = { at = "TileAddress", fragments = "u32" },
+        payload = { at = "TileAddress", from = "TileAddress", fragments = "u32" },
     })
     sim.handle("lunatic/tfs:volley_settled", { kind = "react" }, function(ev)
+        bloodshed.note_blast(ev.from)
         sim.volley_residue_deposit(ev.at.x, ev.at.y, ev.fragments)
     end)
 

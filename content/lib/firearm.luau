@@ -17,7 +17,7 @@
 local firearm = {}
 
 -- Magazine id to the round ids it feeds. tg's C-20r takes the 24-round
--- .45 stick and nothing else (automatic.dm:44, smg.dm:77-86); the 9mm
+-- .45 stick and nothing else (automatic.dm:43, smg.dm:77-86); the 9mm
 -- round below has no magazine yet and fits none.
 local COMPATIBLE: { [string]: { [string]: boolean } } = {
     smg_mag = { round_c45 = true },
