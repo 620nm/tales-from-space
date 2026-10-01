@@ -102,7 +102,7 @@ function firearm.fire(subject: Handle, actor: Handle, primary: Handle?): ()
         reach = RANGE,
         radius = 0,
         cooldown_group = COOLDOWN_GROUP,
-        cooldown_ticks = sim.ticks(SHOT_SECONDS),
+        cooldown_seconds = SHOT_SECONDS,
         ammo_cost = 1,
         targets = {
             {
