@@ -200,7 +200,13 @@ t.run_ticks(clock.deadline_ticks(2.0) - 3)
 assert(#t.items_at(4, 2) == 0, "the source remains held before the 2 s deadline")
 t.run_ticks(1)
 assert(t.items_at(4, 2)[1] == "paper", "the source sheet ejects onto sender ground at the deadline")
-assert(t.items_at(12, 2)[1] == "paper", "one fresh recipient sheet arrives at the deadline")
+local recipient_paper_count = 0
+for _, item in ipairs(t.items_at(12, 2)) do
+    if item == "paper" then
+        recipient_paper_count += 1
+    end
+end
+assert(recipient_paper_count == 1, "one fresh recipient sheet arrives at the deadline")
 
 -- Read the received sheet through the ordinary paper window. The native
 -- monochrome transform changes the copied fragment colour while preserving

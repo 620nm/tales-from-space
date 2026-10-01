@@ -139,8 +139,7 @@ end
 local function duration(s: unknown): boolean
     return type(s) == "number" and s == s and s > 0 and s <= 60
 end
--- The one guest-to-tick conversion: `sim.ticks` ceilings at the round's
--- rate, so a deadline never fires early.
+-- Controller timers use `sim.ticks` ceiling rounding at the round's rate.
 local function deadline_ticks(seconds: number): number
     return sim.ticks(seconds)
 end
@@ -558,7 +557,7 @@ function controller.device(ev: LinkMessageDonePayload): ()
                 request_id = command.id,
                 target_kpa = command.target,
                 comparison = command.comparison,
-                timeout_ticks = deadline_ticks(command.seconds),
+                timeout_seconds = command.seconds,
             })
         end
     end
