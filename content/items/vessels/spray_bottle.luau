@@ -12,6 +12,7 @@ local content = {
     modes = 2,
     mode = SPRAY,
     acts_on_items = true,
+    gestures = { "middle" },
     -- Ordinary loose items use the pack's 1 kg physical scale.
     motion_response = physical_profiles.loose_item1kg,
     ranged_use = {

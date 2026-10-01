@@ -377,10 +377,9 @@ set(p, MODE, 2)
 assert(shows(p, MODE) == "Copy", "copy mode")
 local _ = t.messages(p)
 t.click_network(p, 2, 1, assert(t.network_instance(2, 1, "pipe", "l2")))
--- A second, because a copy turns the dials without anyone pressing a
--- button on the panel: the window catches up on its own refresh
--- cadence (tg's SStgui `UI_STATUS_EVERY`), which is what makes a live
--- panel live.
+-- The copy turns the dials without a panel button press. Wait beyond
+-- this pack's default 0.9 s `ui_status_seconds` period so the live
+-- window catches up (the engine's docs/CONTENT-SCHEMA.md).
 t.run_seconds(1.5)
 -- The tile carries layers 2, 3 and 4; the lowest one laid answers, and
 -- that is the red one from earlier.

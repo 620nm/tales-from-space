@@ -87,6 +87,7 @@ cannot run says so by name, both in place and in the closing
 | Lane | What it proves |
 | --- | --- |
 | `luau` | Every trusted source passes strict checking. |
+| `middle-pin` | Only the fire extinguisher, spray bottle and C-20r SMG declare the dedicated ranged-tool `middle` gesture. |
 | `lint-units`, `tree-shape`, `terms` | One spelling per unit here; every directory within the ceilings of this file's tree-debt table; the canonical vocabulary in the `pack:` rows of the engine's `docs/architecture/vocabulary.md`. |
 | `build` | The engine binaries the later lanes run. |
 | `bake` | `assets/*.ron`, `assets/fonts/` and the pinned tg revision bake, into `target/web` — never the engine checkout's own served root. |

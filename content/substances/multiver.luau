@@ -3,9 +3,9 @@
 -- and the only one whose legs are both already products of something
 -- else -- ash out of naphtha, salt out of sodium and liquid chlorine.
 --
--- WHERE THE NUMBERS COME FROM. tg's Life tick is two seconds and so is
--- this engine's metabolism (`METABOLISM_EVERY = 40`,
--- docs/BENCH.md 5), so a tg per-tick figure ports straight across
+-- WHERE THE NUMBERS COME FROM. tg's Life pass is two seconds, matching
+-- the engine's calibrated `metabolism_seconds = 2` period (the engine's
+-- docs/CONTENT-SCHEMA.md), so a tg per-pass figure ports straight across
 -- once its two scaling factors are resolved:
 --
 --   metabolization_ratio = REM x metabolized_volume        (mob_life.dm:106)
@@ -14,14 +14,14 @@
 --
 -- A `/datum/reagent/medicine/c2` metabolizes at `0.5 x
 -- REAGENTS_METABOLISM` (cat2_medicine_reagents.dm:4), so its ratio is
--- 0.5 and `X x ratio x seconds_per_tick` is just X per tick.
+-- 0.5 and `X x ratio x seconds_per_tick` is just X per metabolism pass.
 --
 -- tg's line is
 --   adjust_tox_loss(-0.5 x min(medibonus, 6) x ratio x spt)
 --   adjust_organ_loss(LUNGS, 0.5 x ratio x spt)
 -- (cat2_medicine_reagents.dm:378-390). `medibonus` counts the unique
 -- medicines in the bloodstream and multiver always counts itself, so
--- the floor is 1: half a point of toxin off per tick, and half a point
+-- the floor is 1: half a point of toxin off per pass, and half a point
 -- onto the lungs for it. The stacking bonus is not ported -- it reads
 -- tg's whole reagent list per tick and this engine's handler is handed
 -- one substance -- so what ships is tg's floor, which is also tg's
@@ -42,7 +42,7 @@ local content = {
     phase = { unmodeled = "liquid" },
     density = { liquid = 1.2 },
     -- tg's c2 rate, 0.5 x REAGENTS_METABOLISM, through this engine's
-    -- own 0.005 mol a tick: 0.0025.
+    -- own 0.005 mol per metabolism pass: 0.0025.
     metabolism_rate = 0.0025,
     -- tg gives it no colour of its own, so it wears the reagent
     -- default (reagents.dm:32, COLOR_BLACK) -- which is also what its
@@ -57,9 +57,8 @@ local content = {
 if sim ~= nil then
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    -- `mob.life(ctx, self, user, moles)`: the metabolism anchor hands
-    -- the same mob twice, as the thing the handler is on and as the body
-    -- it is happening to, and the moles metabolized this tick last.
+    -- `mob.life`'s `metabolize` route supplies the body in `entity`
+    -- and the moles consumed this pass in `amount`.
     script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
         local mob, _user, _moles = ev.entity, ev.entity, ev.amount
         sim.healing.apply({ target = mob, amounts = { tox = 0.5 } })

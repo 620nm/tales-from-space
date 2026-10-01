@@ -108,7 +108,7 @@ mixture, so a burst does not promise to end a fire.
 Five medicines ship, over three intermediates (phenol, acetone,
 diethylamine) and tg's base element shelf:
 
-| medicine | legs | `metabolism_rate` | per tick, at standard purity | its cost |
+| medicine | legs | `metabolism_rate` | per 2 s metabolism pass, at standard purity | its cost |
 |---|---|---|---|---|
 | salglu | water + salt + sugar | 0.0025 | 0.25 brute + 0.25 burn, on a 1-in-3 roll | — |
 | multiver | ash + salt, at 400 K | 0.0025 | 0.5 tox | 0.5 onto the lungs |

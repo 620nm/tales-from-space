@@ -305,6 +305,28 @@ lane_luau() {
   run luau node "$ENGINE/tools/luau.mjs" check "$PACK"
 }
 
+middle_pin() {
+  # `middle` is the client's dedicated ranged-tool flag. Pin the exact
+  # declaring set; any mention counts, including comments, so another
+  # item opts in only when this list changes deliberately.
+  want='content/items/tools/fire_extinguisher.luau
+content/items/vessels/spray_bottle.luau
+content/items/weapons/smg.luau'
+  middle_mentions=$(grep -rln "[\"']middle[\"']" content/items/) || {
+    middle_scan_rc=$?
+    [ "$middle_scan_rc" -eq 1 ] || return "$middle_scan_rc"
+  }
+  got=$(printf '%s\n' "$middle_mentions" | LC_ALL=C sort) || return $?
+  [ "$got" = "$want" ] || {
+    echo "middle-pin: want exactly the items mentioning \"middle\":" >&2
+    echo "--- want" >&2
+    printf '%s\n' "$want" >&2
+    echo "--- got" >&2
+    printf '%s\n' "${got:-(none)}" >&2
+    return 1
+  }
+}
+
 # One spelling per unit across this pack's content/ and tests/. The
 # script prints its no-pack branch and exits 0, which under a quiet gate
 # would land beneath a green banner -- here that branch is a FAILURE,
@@ -557,6 +579,7 @@ push_motion_check() {
 gate_start=$(now_ms)
 
 lane_luau
+run middle-pin middle_pin
 lane_lints
 
 run build build_check || BUILD="build failed"

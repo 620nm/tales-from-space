@@ -55,8 +55,7 @@ atmosphere reads from its floors alone.
 The palette's Matter Blends section folds temperature variants under their
 base: `refrigerated_air` — the same 21/79 mixture held at 259.15 K — is
 offered under the breathable default's foldout rather than as a lone swatch,
-so a walk-in is one gesture from the room it chills (roster `variant_of`,
-protocol 107).
+so a walk-in is one gesture from the room it chills (roster `variant_of`).
 
 An entry is an explicit override: `painted: [(x, y, id)]` replaces inheritance
 for that tile, and the eraser (unpainted swatch, right button, Delete) removes

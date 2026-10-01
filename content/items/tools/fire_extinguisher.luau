@@ -17,6 +17,7 @@ local content = {
     name = "fire extinguisher",
     sprite = "fire_extinguisher",
     acts_on_items = true,
+    gestures = { "middle" },
     modes = 2,
     mode = SAFE,
     states = { "safe", "ready" },

@@ -24,6 +24,7 @@ local content = {
     drop_sound = "smg_drop",
     category = "weapons",
     uses = 24,
+    gestures = { "middle" },
     ranged_use = {
         range = 7,
         effect = "muzzle_bullet",

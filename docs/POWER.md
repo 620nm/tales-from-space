@@ -5,8 +5,8 @@ draws on, what the panels, banks and fittings store, the ladder a panel
 runs as its cell drains, the alarm it raises, and what a fitting looks
 like on its own cell.
 
-The MECHANISM — cable layers and ports, the 0.5 Hz balance, outlets and
-cords, stores, gates and load classes — is the engine's, and is not
+The MECHANISM — cable layers and ports, the cadenced balance (default 2 s),
+outlets and cords, stores, gates and load classes — is the engine's, and is not
 restated here: read the engine checkout's `docs/POWER.md` and its
 children (`docs/power/stores.md`, `docs/power/load-classes.md`,
 `docs/power/topology.md`, `docs/power/cords-and-doors.md`). An older

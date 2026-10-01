@@ -5,15 +5,6 @@ pointers, then a `Done:` paragraph that is the acceptance criterion. Finished
 work is deleted, not archived. Entries that wait on the engine say "once the
 engine offers X"; engine contracts are the engine's `docs/…`.
 
-## Hover highlight treatment
-
-`ui/overlay/main.tsx` draws the hover card and the pixel-perfect highlight
-because the engine highlights by default.
-
-Done: once `interactions.hover` exists, `content/capabilities.luau` declares
-the treatment `"lift"`, and the pixel-perfect highlight and the hover card in
-`ui/overlay/main.tsx` look and behave as they do now.
-
 ## Vital organs: heart failure and brain removal
 
 `content/operations/repair_heart.luau`, `content/items/anatomy/organ_heart.luau`,
