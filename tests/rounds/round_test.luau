@@ -102,7 +102,7 @@ assert(count(ending, "The shift ends") == 0, "no warning rides along with the en
 local requests = t.ledger_rows("RoundEndRequested")
 assert(#requests == 1, "the shift is ended exactly once")
 assert(requests[1].applied == true, "and that request is the one that ended it")
-assert(requests[1].grace_ticks == 600, "30 s of grace, in ticks")
+assert(requests[1].grace_seconds == 30, "30 seconds of requested grace")
 
 -- The handler ran an hour and a grace without throwing. This is the
 -- assertion that keeps the ones above honest: a handler that raises is
