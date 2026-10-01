@@ -101,6 +101,14 @@ local corpse = found[1]
 local corpse_name = corpse.name
 assert(corpse.player == false, "nobody is at the wheel of it")
 assert(corpse.label == "Dead", "and the plan calls it dead")
+-- The dead don't bleed: hurt past dead at mint, yet carrying no
+-- bleeding stacks (`content/lib/bloodshed.luau` gates stacks on the
+-- receipt's `animate`).
+local cadaver_stacks = 0
+for _, part in pairs(assert(found[1].parts)) do
+    cadaver_stacks += ui_controls.number(part.bleeding or 0)
+end
+assert(cadaver_stacks == 0, "a stock cadaver carries no bleeding stacks")
 
 -- `t.bodies_at` is the only door onto a body nobody is at the wheel of,
 -- so every later reading of the cadaver comes back through it.

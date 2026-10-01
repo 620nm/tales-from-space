@@ -86,6 +86,10 @@ for _, row in ipairs(minted) do
     if row.substance == "blood" then
         blood += 1
         assert(ui_controls.number(row.moles) > 0, "a spilled wound names a positive amount")
+        assert(
+            row.actor.kind == "script",
+            ("blood mints attribute the file that asked, got %s"):format(tostring(row.actor.kind))
+        )
     else
         assert(row.substance == "ash", "a wound mints blood and nothing else mints")
     end

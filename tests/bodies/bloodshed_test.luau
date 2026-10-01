@@ -145,10 +145,10 @@ assert(marks == 1, "one tile, one mark, repainted")
 -- The killing wound opens onto a saturated chest: the cap hides its
 -- 10 and time only closes, so the count never rises past the opening.
 -- (The animate gate itself — no stacks once dead — is pinned from the
--- other side by tests/bodies/surgery_cadaver_test.luau: a stock
--- cadaver, hurt past dead at mint, carries none. A swung tool cannot
--- reach a corpse at all: clicks on one route to `interaction.use`,
--- never combat.)
+-- other side by tests/bodies/surgery_cadaver_test.luau's rolled-out
+-- cadaver. A swung tool cannot reach a corpse at all: clicks on one
+-- route to `interaction.use`, never combat.)
 assert(stacks() <= opened, "the heart beats on the receipt")
 t.run_seconds(3)
 assert(not assert(t.body(victim)).animate, "and the cascade ends dead")
+assert(#t.script_errors() == 0, "the wound chain runs clean")

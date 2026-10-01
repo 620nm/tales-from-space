@@ -131,6 +131,12 @@ local function ash_mints(): { any }
                 ui_controls.number(row.moles) > 0,
                 "a spilled wound names a positive amount"
             )
+            assert(
+                row.actor.kind == "script",
+                ("blood mints attribute the file that asked, got %s"):format(
+                    tostring(row.actor.kind)
+                )
+            )
         end
     end
     return ash

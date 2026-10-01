@@ -104,9 +104,23 @@ t.click(shooter, 4, 1, t.body_target(shooter, victim))
 t.click(shooter, 4, 1, t.body_target(shooter, victim))
 t.run_ticks(6)
 assert(brute() == 30, ("one round lands 30 brute, got %d"):format(brute()))
-assert(heard()["smg_shot"], "the shot itself")
+local first = heard()
+assert(first["smg_shot"], "the shot itself")
+assert(first["punch"], "and the flesh under it")
 assert(#consumed() == 1, "one charge spent")
 assert(charges(consumed()[1]) == 23, "24 down to 23")
+-- The wound answers downrange with the round: 30 brute spills 3 units
+-- on the victim's tile, and the mark sits over it in the wound paint.
+local spilled = t.matter_totals().substances["blood"] or 0
+assert(math.abs(spilled - 0.075) < 1e-6, ("3 units downrange, got %.6f"):format(spilled))
+local mark = nil
+for _, decal in ipairs(t.decals_at(4, 1)) do
+    if decal.decal == "blood" then
+        mark = decal
+    end
+end
+assert(mark ~= nil, "a blood mark on the victim's tile")
+assert(mark.paint == "blood", "in the wound paint, not a crew colour")
 
 -- TWO: past the cadence, the next round lands (60, 22 left).
 t.run_seconds(0.4)
