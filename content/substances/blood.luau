@@ -49,8 +49,8 @@ local content = {
     -- poison, a fuel or an oxidizer; the hazard of a pool of it is
     -- what it says about the shift, which is not a placard's business.
     hazard = { health = 0, fire = 0, instability = 0 },
-    -- A bench reagent like the catalysts, filed under Other: nothing
-    -- scrubs it, nothing breathes it, and no dispenser pours it.
+    -- A bench substance like the catalysts, filed under Other:
+    -- nothing scrubs it, nothing breathes it, and no dispenser pours it.
     group = "other",
     -- No `metabolism_rate` line would take the loader's 0.005; the
     -- shelf writes its numbers (tg-bridge.md D2).
