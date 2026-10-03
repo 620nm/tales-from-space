@@ -133,7 +133,7 @@ local BENCH = [==[(
         // vent to hold a corridor ABOVE one atmosphere and a vent only
         // hands over what its run holds (atmos_machines/vent.rs).
         (3, 1, "pump", "running", { "dir": "west", "target_kpa": 900.0 }),
-        (4, 1, "connector_port", { "dir": "west" }),
+        (4, 1, "connector_port", { "pipe": "west" }),
         (4, 1, "canister", { "blend": "canister_air" }),
         (7, 1, "apc"),
     ],
