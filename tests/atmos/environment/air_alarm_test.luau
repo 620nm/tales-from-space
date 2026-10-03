@@ -169,7 +169,7 @@ t.world(
         (7, 2, "player_spawn"),
         (2, 1, "vent"),
         (3, 1, "pump", "running", { "dir": "west", "target_kpa": 900.0 }),
-        (4, 1, "connector_port", { "dir": "west" }),
+        (4, 1, "connector_port", { "pipe": "west" }),
         (4, 1, "canister", { "blend": "canister_air" }),
         (2, 2, "air_scrubber"),
         // The card is spelled out rather than left to the socket's
