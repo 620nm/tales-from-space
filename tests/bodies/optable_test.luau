@@ -15,10 +15,9 @@
 -- stepped through its whole delay -- and the one in the middle is
 -- walked out of, which is what the delay is for.
 --
--- The table is AIMED, which is the other half: tg's buckle takes the
--- mob's dir from the thing it is seated on (`M.setDir(dir)`,
--- code/game/objects/buckling.dm:119-121), so a rank of tables shows
--- its patients the same way up whichever way the surgeon walked in.
+-- This table declares no facing, so it leaves the patient's own heading
+-- unchanged. Aimed body-surface receivers are covered by the engine's
+-- drag specs (the engine's docs/netcode/drag.md).
 
 local clock = require("@helpers/clock")
 
@@ -26,7 +25,7 @@ local ARENA = [==[(
     name: "theatre",
     legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [ "######", "#....#", "#....#", "######" ],
-    structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn"), (2, 2, "optable", { "dir": "east" })],
+    structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn"), (2, 2, "optable")],
     items: [ (1, 1, "scalpel") ],
 )]==]
 
@@ -98,6 +97,7 @@ t.run_ticks(8)
 t.move(patient, "west")
 t.run_ticks(8)
 assert(t.pos(patient) == 2, "back beside the surgeon")
+local walked_in = t.seen(surgeon, patient).facing
 t.messages(surgeon)
 t.drag(surgeon, 2, 1, t.body_target(surgeon, patient), 2, 2, table_id)
 t.run_ticks(LAY_TICKS)
@@ -106,11 +106,11 @@ assert(px == 2 and py == 2, "the patient is on the table: " .. px .. "," .. py)
 assert(assert(t.body(patient)).posture == "lying", "lying on it")
 assert(said(surgeon, "operating table"), "and the surgeon is told so")
 
--- ...facing the way the table does, not the way they walked in. The
+-- ...keeping the facing they walked in with. The
 -- assertion is on what the WIRE carried, which is what a viewer draws.
 assert(
-    t.seen(surgeon, patient).facing == "east",
-    "the patient takes the table's own facing: " .. t.seen(surgeon, patient).facing
+    t.seen(surgeon, patient).facing == walked_in,
+    "an unaimed table leaves the patient's own facing"
 )
 
 -- ---- and that is what surgery wanted --------------------------------
