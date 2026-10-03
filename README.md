@@ -311,10 +311,15 @@ something any field they set can say.
 
 ## Specs
 
+Run these commands from the engine checkout with the absolute `LUNATIC_PACK`
+set as in §Running. First produce the pack's `target/web` with
+`LUNATIC_ENGINE=$PWD sh "$LUNATIC_PACK/tools/check.sh" bake` (§The gate).
+
 ```sh
-cargo run -q -p lunatic-server -- test "$LUNATIC_PACK"             # every tests/**/*_test.luau
-cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" vendor      # only files whose NAME contains "vendor"
-cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" --json out.json    # CI result document
+export LUNATIC_CUSTODY_INVARIANT=1                              # match the specs gate
+cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" --web "$LUNATIC_PACK/target/web" # every tests/**/*_test.luau
+cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" vendor --web "$LUNATIC_PACK/target/web" # name contains "vendor"
+cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" --json out.json --web "$LUNATIC_PACK/target/web" # CI result document
 cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" --load-only # content lint, no Sim
 ```
 

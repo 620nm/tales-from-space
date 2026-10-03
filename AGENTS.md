@@ -79,8 +79,8 @@ mechanism, this pack the numbers it chose. Run the engine with
 Run engine commands from the engine checkout and set `LUNATIC_PACK` to this
 pack's absolute path. A worktree is not necessarily a sibling of the engine;
 resolve the engine checkout explicitly instead of deriving it with `..` there.
-Iterate with `cargo run -q -p lunatic-server -- test "$LUNATIC_PACK" <name>`
-(name substring), `--load-only`, and the relevant named gate lanes.
+Iterate with the focused spec commands in `README.md` §Specs (name substring),
+`--load-only`, and the relevant named gate lanes.
 
 `sh tools/check.sh` is THE GATE for this pack and runs from HERE: it finds the
 engine through `LUNATIC_ENGINE` and checks this pack end to end (strict Luau,
