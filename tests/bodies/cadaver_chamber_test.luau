@@ -151,8 +151,8 @@ assert(#t.ledger_rows("drawer_opened") == 2, "both opens are attributed")
 assert(#t.ledger_rows("drawer_closed") == 2, "both closes are attributed")
 assert(t.ledger_has("DrawerClosed", "cadaver chamber"), "the row names the thing")
 
--- A drawer with nowhere to put its tray refuses, says so, and is still
--- an obstacle afterwards.
+-- A drawer whose mouth is walled over after boot refuses to open, says
+-- so, and is still an obstacle afterwards.
 --
 -- Wired for the same reason the bench above is: this one is about the
 -- refusal, not about power, and an unfed chamber here would be a true
@@ -171,7 +171,7 @@ t.world(
     },
     rows: [
         "#####",
-        "#..##",
+        "#...#",
         "#Gao#",
         "#####",
     ],
@@ -186,6 +186,7 @@ t.world(
 )]==],
     7
 )
+assert(t.set_composition(3, 1, "wall"), "the tile the tray would land on is built over after boot")
 
 local crew = t.join()
 t.tick()
