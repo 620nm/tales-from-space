@@ -1,5 +1,6 @@
 local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
+local consume_followups = require("@lib/consume_followups")
 local item_actions = require("@lib/item_actions")
 local pipe_paints = require("@lib/pipe_paints")
 
@@ -305,6 +306,10 @@ local function lay_run(
     end)
 end
 
+-- A loose fitting the dispenser is breaking down: who aimed it, what it
+-- was called, and the clicked tile. The fitting is gone once it lands.
+type Breakdown = { user: Handle, thing: string, at: TileAddress }
+
 local content = {
     interaction_labels = {
         self = { label = "lunatic/tfs:ui.affordance.view_interface" },
@@ -433,6 +438,24 @@ content.actions = {
 if sim ~= nil then
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    -- A breakdown smashes and says so once the fitting is spent
+    -- (lib/consume_followups.luau). The completion reaches the fitting,
+    -- never the dispenser, so it is heard station-wide and matched by the
+    -- note the click left.
+    local breakdowns = consume_followups.new() :: consume_followups.ConsumeFollowups<Breakdown>
+    sim.handle("item.consume.done", { kind = "react" }, function(ev: ItemConsumeDonePayload)
+        local broken = consume_followups.settle(breakdowns, ev.item)
+        if broken == nil or ev.outcome ~= "completed" then
+            return
+        end
+        sim.sound.play({ asset = "lunatic/tfs:sound/smash", at = broken.at })
+        sim.message.send({
+            recipient = broken.user,
+            message = sim.msg("lunatic/tfs:items.rpd.broke_down", {
+                thing = broken.thing,
+            }),
+        })
+    end)
     local function open_interface(ev)
         local self, user = ev.subject, ev.actor
         ui.open({ viewer = user, owner = self })
@@ -478,14 +501,12 @@ if sim ~= nil then
                 })
                 return true
             end
+            consume_followups.expect(
+                breakdowns,
+                target.entity,
+                { user = user, thing = target.entity.name, at = ev.at }
+            )
             target.entity:consume()
-            sim.sound.play({ asset = "lunatic/tfs:sound/smash", at = ev.at })
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:items.rpd.broke_down", {
-                    thing = target.entity.name,
-                }),
-            })
             return true
         end
 

@@ -1,5 +1,6 @@
 local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
+local consume_followups = require("@lib/consume_followups")
 
 -- The pill: one dose, once.
 -- tg: `/obj/item/reagent_containers/applicator/pill`
@@ -21,6 +22,10 @@ local action_rules = require("@lib/action_rules")
 -- item being used up (the pipe dispenser swallows fittings with it,
 -- fixtures/pipe_dispenser.luau), and it lands on the record as
 -- `ItemConsumed` rather than as the LOSS `entity.despawn` would write.
+
+-- A pill on its way down: who swallowed it and the clicked tile.
+type PillSwallow = { user: Handle, at: TileAddress }
+
 local content = {
     id = "pill",
     visual_layer = "item",
@@ -57,6 +62,26 @@ content.actions = {
 if sim ~= nil then
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    -- Swallowed is said once the pill is spent (lib/consume_followups.luau).
+    -- The drink goes first because a spent pill has nothing left to drink
+    -- from: a consume an exchange holds leaves the pill emptied, not
+    -- swallowed.
+    local swallows = consume_followups.new() :: consume_followups.ConsumeFollowups<PillSwallow>
+    script_definition:handle(
+        "item.consume.done",
+        { kind = "react" },
+        function(ev: ItemConsumeDonePayload)
+            local swallow = consume_followups.settle(swallows, ev.item)
+            if swallow == nil or ev.outcome ~= "completed" then
+                return
+            end
+            sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = swallow.at })
+            sim.message.send({
+                recipient = swallow.user,
+                message = sim.msg("lunatic/tfs:items.pill.you_swallow_the_pill", {}),
+            })
+        end
+    )
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
         local clicked, target = ev.claim, ev.claim
@@ -74,12 +99,8 @@ if sim ~= nil then
             return true
         end
         sim.matter.drink({ from = self, who = user })
+        consume_followups.expect(swallows, self, { user = user, at = ev.at })
         self:consume()
-        sim.sound.play({ asset = "lunatic/tfs:sound/drink", at = ev.at })
-        sim.message.send({
-            recipient = user,
-            message = sim.msg("lunatic/tfs:items.pill.you_swallow_the_pill", {}),
-        })
         return true
     end)
 end

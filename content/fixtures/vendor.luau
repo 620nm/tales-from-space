@@ -13,6 +13,12 @@ local CHILLED_K = 279.15
 -- with a dose in it is not.
 local EMPTY_MOL = 0.01
 
+local consume_followups = require("@lib/consume_followups")
+
+-- An empty on its way into the crate: the machine owed a cold one, who
+-- handed it over, what it was called, and the clicked tile.
+type VendorReturn = { vendor: Handle, user: Handle, item: string, at: TileAddress }
+
 local content = {
     id = "vendor",
     name_label = "lunatic/tfs:entity.vendor.name",
@@ -41,6 +47,33 @@ if sim ~= nil then
             return true
         end
     )
+    -- The cold one comes out only for an empty that went in: a consume an
+    -- exchange holds spends nothing, and a machine that paid out anyway
+    -- would mint bottles. The completion reaches the bottle, never the
+    -- machine, so it is heard station-wide and matched by the note the
+    -- swing left (lib/consume_followups.luau).
+    local returns = consume_followups.new() :: consume_followups.ConsumeFollowups<VendorReturn>
+    sim.handle("item.consume.done", { kind = "react" }, function(ev: ItemConsumeDonePayload)
+        local returned = consume_followups.settle(returns, ev.item)
+        if returned == nil or ev.outcome ~= "completed" or not returned.vendor.alive then
+            return
+        end
+        sim.entity.spawn({
+            definition = "bottle",
+            at = returned.vendor.tile,
+            initial = {
+                contents = { { substance = "water", mol = SERVE_MOL } },
+                temperature_k = CHILLED_K,
+            },
+        })
+        sim.sound.play({ asset = "lunatic/tfs:sound/vend", at = returned.at })
+        sim.message.send({
+            recipient = returned.user,
+            message = sim.msg("lunatic/tfs:fixtures.vendor.traded", {
+                item = returned.item,
+            }),
+        })
+    end)
     -- THE EMPTIES. Hand the machine a bottle and it gives you a cold one
     -- back. A drinks machine with nowhere to put the glass is furniture
     -- with a hole in it, and tg's own vendors stock bottled water
@@ -88,23 +121,12 @@ if sim ~= nil then
             })
             return true
         end
-        local returned = item.name
+        consume_followups.expect(
+            returns,
+            item,
+            { vendor = self, user = user, item = item.name, at = ev.at }
+        )
         item:consume()
-        sim.entity.spawn({
-            definition = "bottle",
-            at = self.tile,
-            initial = {
-                contents = { { substance = "water", mol = SERVE_MOL } },
-                temperature_k = CHILLED_K,
-            },
-        })
-        sim.sound.play({ asset = "lunatic/tfs:sound/vend", at = ev.at })
-        sim.message.send({
-            recipient = user,
-            message = sim.msg("lunatic/tfs:fixtures.vendor.traded", {
-                item = returned,
-            }),
-        })
         return true
     end)
     script_definition:handle("move.bump", { kind = "replace", route = "bump" }, function(ev)

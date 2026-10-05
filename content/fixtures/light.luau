@@ -1,3 +1,4 @@
+local consume_followups = require("@lib/consume_followups")
 local netmsg = require("@lib/netmsg")
 
 -- The ceiling light. It knows three things about itself, and they are
@@ -28,6 +29,9 @@ local TUBE_COLOR = "#F3FFFA"
 local ON_STORE = { color = "#FF3232", range_mul = 0.25, power_mul = 0.75, power_min = 0.5 }
 
 type LightFlags = { [string]: { [string]: boolean? }? }
+-- A tube on its way into a fitting: the fitting, the hand that fed it,
+-- and whether it came out of a replacer.
+type LightRefit = { fitting: Handle, user: Handle, replacer: boolean }
 -- Where the fitting last heard it is drawing from (`flow.source.done`:
 -- "grid", "store" or "none") and its cell's level at that edge.
 type LightFeed = { source: string, level: number }
@@ -192,6 +196,38 @@ if sim ~= nil then
         relight(ev.subject, nil, nil, nil, { source = ev.source, level = ev.level })
     end)
 
+    -- A REFIT LANDS. The tube or the replacer's charge is spent first and
+    -- the fitting relit only once it was: a consume an exchange holds
+    -- spends nothing, and a fitting must not come back burning a tube
+    -- nobody gave it. The completion reaches the tube, never the
+    -- fitting, so it is heard station-wide and matched by the note the
+    -- swing left (lib/consume_followups.luau).
+    local refits = consume_followups.new() :: consume_followups.ConsumeFollowups<LightRefit>
+    sim.handle("item.consume.done", { kind = "react" }, function(ev: ItemConsumeDonePayload)
+        local refit = consume_followups.settle(refits, ev.item)
+        if refit == nil or ev.outcome ~= "completed" or not refit.fitting.alive then
+            return
+        end
+        local fitting = refit.fitting
+        -- The tube is the new base, and a fitting refitted under a
+        -- standing flag comes back burning that flag rather than
+        -- fluorescent white for a pass.
+        sim.set_light(fitting, { status = "ok", color = TUBE_COLOR })
+        relight(fitting, TUBE_COLOR)
+        if refit.replacer then
+            sim.sound.play({ asset = "lunatic/tfs:sound/click", at = fitting.tile })
+            sim.message.send({
+                recipient = refit.user,
+                message = sim.msg("lunatic/tfs:fixtures.light.you_replace_the_light_tube", {}),
+            })
+        else
+            sim.message.send({
+                recipient = refit.user,
+                message = sim.msg("lunatic/tfs:fixtures.light.you_fit_the_new_tube", {}),
+            })
+        end
+    end)
+
     script_definition:handle(
         "interaction.use",
         { kind = "replace", route = "interact" },
@@ -258,21 +294,17 @@ if sim ~= nil then
                 })
                 return true
             end
-            target:consume()
             -- The replacer carries tubes, so the fitting comes back
             -- burning what a tube burns — a warm bulb fitting serviced
             -- out of a janitor's device turns fluorescent, exactly as
-            -- it would if you did it in a real corridor.
-            sim.set_light(self, { status = "ok", color = TUBE_COLOR })
-            -- The new tube is the new base, and a fitting refitted
-            -- under a standing flag comes back burning that flag
-            -- rather than fluorescent white for a pass.
-            relight(self, TUBE_COLOR)
-            sim.sound.play({ asset = "lunatic/tfs:sound/click", at = self.tile })
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:fixtures.light.you_replace_the_light_tube", {}),
-            })
+            -- it would if you did it in a real corridor. The relight
+            -- waits for the charge to be spent (above).
+            consume_followups.expect(
+                refits,
+                target,
+                { fitting = self, user = user, replacer = true }
+            )
+            target:consume()
             return true
         end
 
@@ -286,14 +318,13 @@ if sim ~= nil then
             end
             -- Spent, not destroyed: a tube that went into a fitting is
             -- work and reads `ItemConsumed`, where `sim.entity.despawn`
-            -- would file it as loss.
+            -- would file it as loss. The relight waits for the spend.
+            consume_followups.expect(
+                refits,
+                target,
+                { fitting = self, user = user, replacer = false }
+            )
             target:consume()
-            sim.set_light(self, { status = "ok", color = TUBE_COLOR })
-            relight(self, TUBE_COLOR)
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:fixtures.light.you_fit_the_new_tube", {}),
-            })
             return true
         end
 

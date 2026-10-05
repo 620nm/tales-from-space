@@ -62,6 +62,11 @@ assert(#changed == 1, ("one resin column write landed, got %d"):format(#changed)
 assert(changed[1].column == "atmos_resin", "the row names the pack's column")
 assert(changed[1].from == 0 and changed[1].to == 1, "fresh resin replaced zero with one")
 assert(changed[1].actor.kind == "script", "the item file owns the write")
+assert(#t.ledger_rows("ItemConsumed") == 1, "the coat cost one charge")
+assert(
+    table.concat(t.messages(p), "\n"):find("You coat the deck in fire-smothering resin.", 1, true),
+    "and the sprayer is told, once the charge is spent"
+)
 
 -- The next native matter pass sees the column, fires neither plasma
 -- branch, and crosses the ledger-only extinguish edge.

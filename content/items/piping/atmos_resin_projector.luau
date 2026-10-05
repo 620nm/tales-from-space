@@ -1,5 +1,6 @@
 local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
+local consume_followups = require("@lib/consume_followups")
 
 -- The hand-held half of tg's atmospherics emergency resin kit. tg's
 -- backpack nozzle lays resin foam on an adjacent turf, with five charges
@@ -12,6 +13,11 @@ local action_rules = require("@lib/action_rules")
 -- stop, so the engine only owns the named scalar, its decay, and the
 -- reaction arithmetic. The `ExtinguishedAt` consequence stays a native
 -- ledger edge and is not a handler.
+
+-- A shot on its way to the deck: the room cell it coats, who aimed it,
+-- and the clicked tile.
+type ResinShot = { cell: MatterOwner, user: Handle, at: TileAddress }
+
 local content = {
     id = "atmos_resin_projector",
     visual_layer = "item",
@@ -33,6 +39,29 @@ content.actions = {
 if sim ~= nil then
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    -- The deck is coated only by a charge that was spent: a consume an
+    -- exchange holds spends nothing and must seal nothing
+    -- (lib/consume_followups.luau).
+    local shots = consume_followups.new() :: consume_followups.ConsumeFollowups<ResinShot>
+    script_definition:handle(
+        "item.consume.done",
+        { kind = "react" },
+        function(ev: ItemConsumeDonePayload)
+            local shot = consume_followups.settle(shots, ev.item)
+            if shot == nil or ev.outcome ~= "completed" then
+                return
+            end
+            sim.matter.set_column({ owner = shot.cell, column = "atmos_resin", value = 1.0 })
+            sim.sound.play({ asset = "lunatic/tfs:sound/spray", at = shot.at })
+            sim.message.send({
+                recipient = shot.user,
+                message = sim.msg(
+                    "lunatic/tfs:items.atmos_resin_projector.you_coat_the_deck_in",
+                    {}
+                ),
+            })
+        end
+    )
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
         local clicked, target = ev.claim, ev.claim
@@ -73,13 +102,8 @@ if sim ~= nil then
             return true
         end
 
-        sim.matter.set_column({ owner = cell, column = "atmos_resin", value = 1.0 })
+        consume_followups.expect(shots, self, { cell = cell, user = user, at = ev.at })
         self:consume()
-        sim.sound.play({ asset = "lunatic/tfs:sound/spray", at = ev.at })
-        sim.message.send({
-            recipient = user,
-            message = sim.msg("lunatic/tfs:items.atmos_resin_projector.you_coat_the_deck_in", {}),
-        })
         return true
     end)
 end

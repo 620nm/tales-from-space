@@ -16,6 +16,13 @@
 -- asks the machine's own shelf. So the day the heat exchanger joins the
 -- roster it is recyclable too, with no edit here — and a softdrinks
 -- machine, which does not run this script, still cannot swallow a pump.
+local consume_followups = require("@lib/consume_followups")
+
+-- A fitting on its way back: who handed it over, what it was called, and
+-- where the machine stands. The fitting itself is gone by the time the
+-- consume lands.
+type PipeReturn = { user: Handle, item: string, at: TileAddress }
+
 local content = {
     id = "pipe_dispenser",
     name_label = "lunatic/tfs:entity.pipe_dispenser.name",
@@ -48,6 +55,24 @@ if sim ~= nil then
             return true
         end
     )
+    -- The machine thanks nobody for a fitting it did not get: the click
+    -- and the line wait for the consume to land (lib/consume_followups.luau).
+    -- The completion reaches the fitting, never the machine, so it is
+    -- heard station-wide and matched by the note the swing left.
+    local returns = consume_followups.new() :: consume_followups.ConsumeFollowups<PipeReturn>
+    sim.handle("item.consume.done", { kind = "react" }, function(ev: ItemConsumeDonePayload)
+        local returned = consume_followups.settle(returns, ev.item)
+        if returned == nil or ev.outcome ~= "completed" then
+            return
+        end
+        sim.sound.play({ asset = "lunatic/tfs:sound/vend", at = returned.at })
+        sim.message.send({
+            recipient = returned.user,
+            message = sim.msg("lunatic/tfs:fixtures.pipe_dispenser.put_back", {
+                item = returned.item,
+            }),
+        })
+    end)
     script_definition:handle("attack.swing", { kind = "replace", route = "attack" }, function(ev)
         local self, user = ev.implement, ev.actor
         local target, victim, item = ev.target, ev.target, ev.target
@@ -67,15 +92,8 @@ if sim ~= nil then
             })
             return true
         end
-        local x, y = self.tile.x, self.tile.y
+        consume_followups.expect(returns, item, { user = user, item = item.name, at = ev.at })
         item:consume()
-        sim.sound.play({ asset = "lunatic/tfs:sound/vend", at = ev.at })
-        sim.message.send({
-            recipient = user,
-            message = sim.msg("lunatic/tfs:fixtures.pipe_dispenser.put_back", {
-                item = item.name,
-            }),
-        })
         return true
     end)
 end

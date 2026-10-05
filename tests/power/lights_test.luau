@@ -133,6 +133,13 @@ assert(assert(t.light_at(2, 1)).status == "ok", "the replacer fitted a new tube"
 assert(assert(t.light_at(2, 1)).emits, "and the corridor is lit again")
 assert(told_about_the_lamp(), "the viewer is told about the source again")
 assert(#t.ledger_rows("ItemConsumed") == 1, "one charge spent, on the record")
+-- The fitting relights, clicks and says so once the charge is spent
+-- (`item.consume.done`), within the same tick.
+assert(
+    table.concat(t.messages(p), "\n"):find("You replace the light tube.", 1, true),
+    "the replacer says it fitted a tube"
+)
+assert(table.concat(t.sounds(p), "\n"):find("click", 1, true), "and clicks")
 -- A tube is a tube: the warm fitting comes back fluorescent, and the
 -- viewer is told the corridor changed colour.
 assert(
@@ -194,3 +201,7 @@ assert(assert(t.light_at(2, 1)).status == "ok", "the tube goes in by hand")
 assert(assert(t.light_at(2, 1)).emits, "and the corridor is lit")
 assert(t.hands(p).held == nil, "the tube was used up putting it in")
 assert(#t.ledger_rows("ItemConsumed") == 11, "the tube is on the record too")
+assert(
+    table.concat(t.messages(p), "\n"):find("You fit the new tube.", 1, true),
+    "and the hand that fitted it is told"
+)
