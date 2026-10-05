@@ -1,6 +1,7 @@
 local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 local cards = require("@lib/cards")
+local consume_followups = require("@lib/consume_followups")
 
 -- A deck of space-grade playing cards, and the first thing in this pack
 -- that had to remember something the engine could not enumerate.
@@ -150,6 +151,18 @@ if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:picture", { replicate = "sight" })
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    -- A card fed in from the deck's side joins the order only once it is
+    -- spent (items/card.luau says why). Its consume reaches the CARD, not
+    -- the deck, so it is heard station-wide and matched by the note the
+    -- click left (lib/consume_followups.luau).
+    local returns =
+        consume_followups.new() :: consume_followups.ConsumeFollowups<cards.CardReturn>
+    sim.handle("item.consume.done", { kind = "react" }, function(ev: ItemConsumeDonePayload)
+        local returned = consume_followups.settle(returns, ev.item)
+        if returned ~= nil and ev.outcome == "completed" then
+            cards.slide_in(returned)
+        end
+    end)
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self, user = ev.subject, ev.actor
         -- Shuffling an EMPTY deck is not magic and must not look like
@@ -228,22 +241,17 @@ if sim ~= nil then
                 return true
             end
             local _, key = cards.read(card.state)
-            -- The end items/card.luau writes to, so a card put back
-            -- lands in the same place whichever way round the player
-            -- did it. Face down is implicit: the state a dealt card
-            -- wears never leaves this string, only its face does.
-            local restored = order == "" and key or (key .. "," .. order)
-            self.vars["order"] = restored
-            self.vars["picture"] = cards.picture(cards.count(restored))
-            sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = ev.at })
-            sim.message.send({
-                recipient = user,
-                message = sim.msg("lunatic/tfs:lib.cards.slid_in", {}),
-            })
-            -- `sim.entity.despawn` does the hand slots, removal and the
-            -- ledger row, so the card cannot survive as a dead handle
-            -- in somebody's off hand.
-            sim.entity.despawn({ entity = card })
+            -- The same spend and the same slide-in items/card.luau
+            -- makes, so a card put back lands in the same place whichever
+            -- way round the player did it. The engine does the hand
+            -- slots and removal, so the card cannot survive as a dead
+            -- handle in somebody's off hand.
+            consume_followups.expect(
+                returns,
+                card,
+                { deck = self, key = key :: string, user = user, at = ev.at }
+            )
+            card:consume()
             return true
         end
         if target ~= nil and target.kind ~= "machine" and target.kind ~= "component" then

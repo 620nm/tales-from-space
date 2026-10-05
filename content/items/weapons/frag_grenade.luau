@@ -81,6 +81,13 @@ if sim ~= nil then
     -- at detonate time -- the detonation anchors where the grenade
     -- sits, so all nine tiles are in reach -- and the shards land
     -- later, a landing tile at a time off the settle signals below.
+    --
+    -- The despawn may be refused (an in-flight exchange holds the
+    -- grenade, `reason = "exchange_reserved"`) and the blast goes off
+    -- regardless: what survives is an armed, spent shell that cannot be
+    -- armed again, so nothing is duplicated. It stays a despawn rather
+    -- than a `:consume()` because a consume needs the armer's reach, and
+    -- a thrown grenade is out of it.
     local function detonate(self: Handle, user: Handle): ()
         local at = live_tile(self, user)
         if at == nil then

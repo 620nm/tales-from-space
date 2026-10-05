@@ -325,7 +325,7 @@ end
 -- took cards forever. Deal from one deck, feed the card to another, and
 -- the second grows past fifty-four -- and since the order is a script
 -- var with a length cap, an unbounded deck eventually meets a refused
--- write with the card already consumed by `sim.consume`. Cards would
+-- write with the card already spent by its `:consume()`. Cards would
 -- quietly stop existing.
 --
 -- tg refuses for the tidier reason and in the same place: `insert`
@@ -365,12 +365,28 @@ t.tick()
 
 -- Both the deck and that first card are underfoot now: a drop lands on
 -- the dropper's own tile, so putting the deck down moved it off (3, 1).
+-- This return goes in from the DECK's side (items/card_deck.luau): the
+-- deck in the working hand, used on the card in the other.
 t.click(p, 2, 1, t.target_at(p, 2, 1, "card"))
 t.tick()
 assert(t.hands(p).held == "card", "the card put down a moment ago is in hand")
+t.swap_hands(p)
 t.click(p, 2, 1, t.target_at(p, 2, 1, "card_deck"))
 t.tick()
-assert(t.hands(p).held == nil, "the one free slot took it")
+assert(t.hands(p).held == "card_deck", "the deck in the working hand, the card in the other")
+local spent = #t.ledger_rows("ItemConsumed")
+local _ = t.messages(p)
+t.use_on_other(p)
+t.tick()
+local hands = t.hands(p)
+assert(hands[1] ~= "card" and hands[2] ~= "card", "the one free slot took it")
+assert(#t.ledger_rows("ItemConsumed") == spent + 1, "a card slid back is spent, not lost")
+assert(
+    table.concat(t.messages(p), "\n"):find("You slide the card into the deck.", 1, true),
+    "and the deck says it took it"
+)
+t.drop(p)
+t.tick()
 
 t.click(p, 3, 2, t.target_at(p, 3, 2, "card"))
 t.tick()

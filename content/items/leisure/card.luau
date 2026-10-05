@@ -1,6 +1,7 @@
 local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 local cards = require("@lib/cards")
+local consume_followups = require("@lib/consume_followups")
 
 -- One playing card, which is fifty-four cards and a back.
 --
@@ -132,6 +133,23 @@ if sim ~= nil then
         end
         return true
     end)
+    -- The face goes into the deck only once the card is spent: a consume
+    -- an exchange holds spends nothing, and a deck that took the face
+    -- anyway would deal a second copy of a card still in somebody's hand.
+    -- A card's consume reaches this card scope whichever file issued it,
+    -- but each file settles only its own notes (lib/consume_followups.luau).
+    local returns =
+        consume_followups.new() :: consume_followups.ConsumeFollowups<cards.CardReturn>
+    script_definition:handle(
+        "item.consume.done",
+        { kind = "react" },
+        function(ev: ItemConsumeDonePayload)
+            local returned = consume_followups.settle(returns, ev.item)
+            if returned ~= nil and ev.outcome == "completed" then
+                cards.slide_in(returned)
+            end
+        end
+    )
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
         local clicked, target = ev.claim, ev.claim
@@ -167,7 +185,7 @@ if sim ~= nil then
         -- deal from one deck, feed the card to another, and the second
         -- grows past a full deck. Which matters more than tidiness: the
         -- order is a script var with a length cap, so an unbounded deck
-        -- eventually meets a refused write while `sim.consume` below has
+        -- eventually meets a refused write while `:consume()` below has
         -- already eaten the card. Cards would quietly stop existing.
         if order == nil or cards.count(order) >= #cards.FACES then
             sim.message.send({
@@ -177,25 +195,17 @@ if sim ~= nil then
             return true
         end
         local _, key = cards.read(self.state)
-        -- On the BOTTOM, which is tg's own `insert` -- it appends, and
-        -- a returned card is the last one you will see again
-        -- (cards.dm:74-111). Face down is tg's too: the deck forces it
-        -- on the way in (deck.dm:183-190), and it is the reason a card
-        -- somebody peeked at is not readable through the side of the
-        -- deck.
-        local restored = order == "" and key or (key .. "," .. order)
-        deck.vars["order"] = restored
-        deck.vars["picture"] = cards.picture(cards.count(restored))
-        sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = ev.at })
-        sim.message.send({
-            recipient = user,
-            message = sim.msg("lunatic/tfs:lib.cards.slid_in", {}),
-        })
-        -- The card itself is gone: it is in the deck now, and the deck
-        -- is a string. `sim.entity.despawn` does the hand slots and removal
-        -- and the ledger row, so this handler can never leave a hand
-        -- holding a dead entity.
-        sim.entity.despawn({ entity = self })
+        -- The card itself is spent: it is in the deck now, and the deck
+        -- is a string. A card slid back is used, not lost, so it reads
+        -- `ItemConsumed`; the engine does the hand slots and removal, so
+        -- this handler can never leave a hand holding a dead entity. The
+        -- face joins the deck once the spend lands (`cards.slide_in`).
+        consume_followups.expect(
+            returns,
+            self,
+            { deck = deck, key = key :: string, user = user, at = ev.at }
+        )
+        self:consume()
         return true
     end)
 end

@@ -101,4 +101,36 @@ function cards.picture(n: number): string
     return "card_deck_empty"
 end
 
+-- A card on its way back into a deck: the deck, the card's face key,
+-- who fed it in and the clicked tile.
+export type CardReturn = { deck: Handle, key: string, user: Handle, at: TileAddress }
+
+-- Put a spent card's face back into its deck. On the BOTTOM, which is
+-- tg's own `insert` -- it appends, and a returned card is the last one
+-- you will see again (cards.dm:74-111). Face down is tg's too: the deck
+-- forces it on the way in (deck.dm:183-190), and it is the reason a card
+-- somebody peeked at is not readable through the side of the deck; the
+-- state a dealt card wears never leaves the order string, only its face
+-- does. Called from `item.consume.done` once the card is spent, so a
+-- refused consume adds no face; the caller refused a full deck before it
+-- consumed anything.
+function cards.slide_in(returned: CardReturn): ()
+    local deck = returned.deck
+    if not deck.alive then
+        return
+    end
+    local order = deck.vars["order"]
+    if order == nil then
+        return
+    end
+    local restored = order == "" and returned.key or (returned.key .. "," .. order)
+    deck.vars["order"] = restored
+    deck.vars["picture"] = cards.picture(cards.count(restored))
+    sim.sound.play({ asset = "lunatic/tfs:sound/card_flip", at = returned.at })
+    sim.message.send({
+        recipient = returned.user,
+        message = sim.msg("lunatic/tfs:lib.cards.slid_in", {}),
+    })
+end
+
 return cards
