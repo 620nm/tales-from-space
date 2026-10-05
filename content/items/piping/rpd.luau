@@ -493,7 +493,7 @@ if sim ~= nil then
             -- was aimed at and nothing else (RPD.dm:324-340) — an
             -- anchored machine is unwrenched, never dissolved, and the
             -- engine agrees by construction: a structure is not an item
-            -- and `sim.consume` has nothing to spend of one.
+            -- and `Handle:consume` has nothing to spend of one.
             if not can_break_down then
                 sim.message.send({
                     recipient = user,
