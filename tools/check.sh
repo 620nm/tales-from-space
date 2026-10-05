@@ -18,8 +18,18 @@
 # so on one box they run one after the other, never side by side.
 #
 # QUIET. One line per lane; a failing lane's whole log is printed at the
-# end, and nothing else is. Logs land in target/gate/log/<lane>.log.
-# `VERBOSE=1 sh tools/check.sh` streams everything live instead.
+# end, and nothing else is. `VERBOSE=1 sh tools/check.sh` streams
+# everything live instead.
+#
+# THE LOG FOLDER. Every run keeps its own folder under GATE_LOG_ROOT
+# (default ~/.cache/lunatic-gate/logs), written by the engine's
+# tools/gate/run-log.sh exactly as the engine gate writes its own: run.log
+# names the head, its tree, the working tree the run saw and whether it
+# was dirty, then every status line and the verdict; one <lane>.log per
+# lane opens with the same head and tree. Nothing wipes it: it outlives
+# `rm -rf target`, a removed worktree and the next run (the engine's
+# docs/gates.md). Where the folder cannot be made the run says so and
+# logs to target/gate/log, replaced by the next run.
 # `sh tools/check.sh <substring>...` runs only the lanes whose names match.
 #
 # A SKIP MUST NEVER READ AS A PASS. A lane that cannot run says so by
@@ -67,7 +77,7 @@ if [ ! -d "$ENGINE/web/node_modules" ]; then
 fi
 for tool in tools/luau.mjs tools/lint-units.sh tools/lint-tree.sh tools/lint-terms.sh \
   tools/ui-lab.mjs tools/staff-ui-status.mjs tools/world-pointer-live.mjs \
-  tools/ui-lab/push-motion-live.mjs; do
+  tools/ui-lab/push-motion-live.mjs tools/gate/run-log.sh; do
   [ -f "$ENGINE/$tool" ] && continue
   echo "$ENGINE/$tool is missing: that engine checkout cannot run this gate" >&2
   exit 1
@@ -80,7 +90,6 @@ set +e   # every lane reports its own status; see run() below.
 
 # Overridable so a second run can keep its own logs and bookkeeping.
 GATE=${GATE:-$PACK/target/gate}
-LOGS=$GATE/log
 LOCK=$GATE.lock
 VERBOSE=${VERBOSE:-0}
 ONLY=$*
@@ -160,9 +169,10 @@ release_lock() {
     rm -rf "$LOCK"
   fi
 }
+. "$ENGINE/tools/gate/run-log.sh"
 trap release_lock EXIT
-trap 'release_lock; exit 130' INT
-trap 'release_lock; exit 143' TERM
+trap 'run_log_interrupted SIGINT; release_lock; exit 130' INT
+trap 'run_log_interrupted SIGTERM; release_lock; exit 143' TERM
 
 # See ONE PER MACHINE above. An engine older than the lock has none to
 # take; the run says so and goes ahead, since the lock guards the box's
@@ -170,13 +180,18 @@ trap 'release_lock; exit 143' TERM
 if [ -f "$ENGINE/tools/gate/machine-lock.sh" ]; then
   . "$ENGINE/tools/gate/machine-lock.sh"
   trap 'machine_lock_release; release_lock' EXIT
-  trap 'machine_lock_release; release_lock; exit 130' INT
-  trap 'machine_lock_release; release_lock; exit 143' TERM
+  trap 'run_log_interrupted SIGINT; machine_lock_release; release_lock; exit 130' INT
+  trap 'run_log_interrupted SIGTERM; machine_lock_release; release_lock; exit 143' TERM
   machine_lock_acquire "pack gate in $PACK (engine $ENGINE): ${ONLY:-all lanes}"
   gate_full_width
 else
   echo "note  $ENGINE has no tools/gate/machine-lock.sh: no machine gate lock taken"
 fi
+
+# See THE LOG FOLDER above. Taken once the machine lock is held, so a
+# queued run records the tree it actually checks, not the one it queued
+# on. It sets LOGS and RUN_LOG.
+run_log_open "${ONLY:-all lanes}"
 
 # The verdict counts THIS run's failures out of THIS run's files, so
 # nothing reaching into a shared $GATE can turn a red run green by
@@ -189,7 +204,7 @@ SKIPPED=$RUN_DIR/skipped
 # these and nothing else: a selection is not a verdict, and a run whose
 # every selected lane was blocked or skipped verified nothing at all.
 RAN=$RUN_DIR/ran
-rm -rf "$LOGS" "$RUN_DIR"
+rm -rf "$RUN_DIR"
 # An earlier run's roster document describes an earlier tree. Nothing
 # may read one, so it goes before any lane can be tempted by it.
 rm -f "$ROSTER"
@@ -217,6 +232,12 @@ now_ms() {
 }
 took() { awk -v ms="$1" 'BEGIN { printf "%.1fs", ms / 1000 }'; }
 
+# status_line FORMAT ARGS... -- one lane line, shown and recorded.
+status_line() {
+  printf "$@"
+  printf "$@" >> "$RUN_LOG"
+}
+
 want() {
   [ -z "$ONLY" ] && return 0
   for pat in $ONLY; do
@@ -236,15 +257,15 @@ run() {
     "$@"
     rc=$?
   else
-    "$@" > "$LOGS/$name.log" 2>&1
+    { run_log_stamp "$name"; "$@"; } > "$LOGS/$name.log" 2>&1
     rc=$?
   fi
   elapsed=$(took "$(( $(now_ms) - start ))")
   if [ "$rc" -eq 0 ]; then
-    printf 'ok    %-22s %8s\n' "$name" "$elapsed"
+    status_line 'ok    %-22s %8s\n' "$name" "$elapsed"
     printf '%s\n' "$name" >> "$RAN"
   else
-    printf 'FAIL  %-22s %8s\n' "$name" "$elapsed"
+    status_line 'FAIL  %-22s %8s\n' "$name" "$elapsed"
     printf '%s\n' "$name" >> "$FAILED"
   fi
   return "$rc"
@@ -255,14 +276,14 @@ run() {
 # did not execute is never counted as one that passed.
 skip() {
   want "$1" || return 0
-  printf 'skip  %-22s %8s  (%s)\n' "$1" - "$2"
+  status_line 'skip  %-22s %8s  (%s)\n' "$1" - "$2"
   printf '%s\n' "$3" >> "$SKIPPED"
 }
 
 # note NAME WHAT -- something a lane is doing that a reader would not
 # assume from a green line, such as reading art this run did not bake.
 note() {
-  printf 'note  %-22s %8s  (%s)\n' "$1" - "$2"
+  status_line 'note  %-22s %8s  (%s)\n' "$1" - "$2"
 }
 
 # blocked NAME REASON -- a prerequisite failed before this lane ran. It
@@ -270,7 +291,7 @@ note() {
 # ran is unverified, not red.
 blocked() {
   want "$1" || return 0
-  printf 'BLOCKED %-22s %8s  (%s)\n' "$1" - "$2"
+  status_line 'BLOCKED %-22s %8s  (%s)\n' "$1" - "$2"
   printf '%s\n' "$1" >> "$BLOCKED"
 }
 
@@ -707,8 +728,8 @@ for lane in world-pointer push-motion; do
   if [ ! -f "$fixture" ]; then
     # This pack SHIPS both fixtures; their absence is a deleted check,
     # not a pack that declares none.
-    printf 'FAIL  %-22s %8s\n' "$lane" -
-    echo "$fixture is missing: this pack ships it" > "$LOGS/$lane.log"
+    status_line 'FAIL  %-22s %8s\n' "$lane" -
+    { run_log_stamp "$lane"; echo "$fixture is missing: this pack ships it"; } > "$LOGS/$lane.log"
     printf '%s\n' "$lane" >> "$FAILED"
     continue
   fi
@@ -729,6 +750,18 @@ done
 
 total=$(took "$(( $(now_ms) - gate_start ))")
 
+skipped_phrases() {
+  tr '\n' ';' < "$SKIPPED" | sed 's/;$//; s/;/, /g'
+}
+
+# seal_run_log VERDICT -- what the run left unverified, then the verdict,
+# into run.log (the engine's tools/gate/run-log.sh).
+seal_run_log() {
+  [ -s "$BLOCKED" ] && run_log_note "blocked, so unverified: $(tr '\n' ' ' < "$BLOCKED" | sed 's/ $//')"
+  [ -s "$SKIPPED" ] && run_log_note "skipped, so unverified: $(skipped_phrases)"
+  run_log_close "$(printf '%s' "$1" | sed 's/ *$//')" "$total"
+}
+
 if [ -s "$FAILED" ]; then
   if [ "$VERBOSE" != 1 ]; then
     while IFS= read -r g; do
@@ -737,17 +770,19 @@ if [ -s "$FAILED" ]; then
     done < "$FAILED"
   fi
   printf '\nGATE FAILED in %s: %s\n' "$total" "$(tr '\n' ' ' < "$FAILED")" >&2
+  printf 'logs: %s\n' "$LOGS" >&2
   if [ -s "$BLOCKED" ]; then
     printf 'BLOCKED, SO UNVERIFIED: %s\n' "$(tr '\n' ' ' < "$BLOCKED")" >&2
   fi
   if [ -s "$SKIPPED" ]; then
-    printf 'SKIPPED, SO UNVERIFIED: %s\n' \
-      "$(tr '\n' ';' < "$SKIPPED" | sed 's/;$//; s/;/, /g')" >&2
+    printf 'SKIPPED, SO UNVERIFIED: %s\n' "$(skipped_phrases)" >&2
   fi
+  seal_run_log "GATE FAILED: $(tr '\n' ' ' < "$FAILED")"
   exit 1
 fi
 
 printf 'total %-22s %8s\n' '' "$total"
+printf 'logs  %s\n' "$LOGS"
 # A blocked lane is unverified whichever way the run ended, so it is
 # reported beside a green banner exactly as it is beside a red one.
 if [ -s "$BLOCKED" ]; then
@@ -759,16 +794,18 @@ fi
 if [ ! -s "$RAN" ]; then
   printf 'NOTHING RAN%s\n' "${ONLY:+: $ONLY matched no lane that could run}" >&2
   if [ -s "$SKIPPED" ]; then
-    printf 'SKIPPED, SO UNVERIFIED: %s\n' \
-      "$(tr '\n' ';' < "$SKIPPED" | sed 's/;$//; s/;/, /g')" >&2
+    printf 'SKIPPED, SO UNVERIFIED: %s\n' "$(skipped_phrases)" >&2
   fi
+  seal_run_log "NOTHING RAN"
   exit 1
 fi
 if [ -n "$ONLY" ]; then
-  echo "SELECTED PACK GATES GREEN: $(tr '\n' ' ' < "$RAN")"
+  banner="SELECTED PACK GATES GREEN: $(tr '\n' ' ' < "$RAN")"
 else
-  echo "ALL PACK GATES GREEN"
+  banner="ALL PACK GATES GREEN"
 fi
+echo "$banner"
 if [ -s "$SKIPPED" ]; then
-  echo "SKIPPED, SO UNVERIFIED: $(tr '\n' ';' < "$SKIPPED" | sed 's/;$//; s/;/, /g')"
+  echo "SKIPPED, SO UNVERIFIED: $(skipped_phrases)"
 fi
+seal_run_log "$banner"

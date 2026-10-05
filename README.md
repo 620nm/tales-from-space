@@ -79,10 +79,20 @@ VERBOSE=1 sh tools/check.sh      # stream every lane's output live
 ```
 
 Quiet is the default: a green lane prints one `ok` line and a failing one its
-whole log at the end. Logs land in `target/gate/log/<lane>.log`. A lane that
+whole log at the end. A lane that
 cannot run says so by name, both in place and in the closing
 `SKIPPED, SO UNVERIFIED` line; a lane whose prerequisite failed reads
 `BLOCKED`, which is unverified rather than green.
+
+Every run keeps its own log folder, written by the engine's
+`tools/gate/run-log.sh` exactly as the engine gate writes its own (the
+engine's `docs/gates.md`): `run.log` with the checked head, its tree, the
+working tree the run saw and whether it was dirty, every status line and
+the verdict, plus one `<lane>.log` per lane. The folder lives under
+`GATE_LOG_ROOT` (default `~/.cache/lunatic-gate/logs`), named for the
+checkout and head, and survives `rm -rf target` and the next run; the run
+prints its path. Only when that root cannot be created do logs fall back
+to `target/gate/log/`, which the next run replaces.
 
 | Lane | What it proves |
 | --- | --- |
