@@ -390,7 +390,7 @@ near(
 )
 
 -- AND THE RECORD NAMES THE MEDICINE. A heal is a mutation like every
--- other one and lands attributed in the shift ledger; what it is
+-- other one and lands attributed in the round ledger; what it is
 -- attributed TO is the file that decided it, which is the substance's
 -- own and never the body's (`actor.file`, the idiom at
 -- tests/power/lights_test.luau:121). A log that only said "the crewman

@@ -1,7 +1,7 @@
 -- The scripted vending machine from docs/LUAU-API.md's shipped-content
 -- list: sim.sleep demonstrates a plain suspension (no revalidation),
 -- sim.spawn_item a script-created entity with Script-actor provenance
--- in the shift ledger.
+-- in the round ledger.
 -- What the machine serves for a returned empty: forty-five of the
 -- bottle's fifty millilitres. Water is 18 g/mol and a millilitre a gram,
 -- so 2.5 mol is 45 mL.

@@ -211,7 +211,7 @@ local function rung(tool: string, to: string, said: string)
     assert(has(t.messages(p), said), "and says so: " .. said)
     assert(
         t.ledger_has("StructureStep", "gravity_generator", to),
-        "the shift ledger carries the rung to " .. to
+        "the round ledger carries the rung to " .. to
     )
     assert(
         t.seen(p, cell1).layers[1].sprite == "gravgen_" .. to .. "_1",

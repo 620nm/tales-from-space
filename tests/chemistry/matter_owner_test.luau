@@ -11,7 +11,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- claim underneath it: the three gestures are three WORDS above that
 -- primitive (`sim.matter.pour`, `.drink`, `.spill` —
 -- docs/LUAU-API.md 8.2), and each word carries its own overflow policy,
--- its own extra reach and its own row. So the shift ledger still gets
+-- its own extra reach and its own row. So the round ledger still gets
 -- `poured`, `drank` and `spilled`, and it gets them because the file
 -- said which gesture it was making rather than because the engine
 -- guessed from the pair of owners.
