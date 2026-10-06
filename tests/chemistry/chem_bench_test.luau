@@ -170,14 +170,18 @@ eject()
 t.drop(p)
 t.run_seconds(600)
 local cooled = assert(t.vessel(jar))
-near(cooled.temp_k, 303.0, 5.0, "the deck took the heat back: " .. cooled.temp_k)
+-- The room is whatever environment this round rolled: the property is
+-- that the bottle ends at the room's own temperature, not at a number.
+local room_k = assert(t.room_temperature(2, 1))
+near(cooled.temp_k, room_k, 5.0, "the deck took the heat back: " .. cooled.temp_k)
 assert(
     (cooled.contents.chlorine.liquid or 0) > 0.8 * CHLORINE,
     "and most of it is liquid now: " .. tostring(cooled.contents.chlorine.liquid)
 )
--- The gauge and the temperature are ONE statement: 892 kPa is
--- chlorine's own vapour pressure at 303 K, off the Clausius-Clapeyron
--- line anchored at its 239.1 K boiling point (docs/MATTER.md 5).
+-- The gauge and the temperature are ONE statement: the gauge is
+-- chlorine's own vapour pressure at the bottle's temperature, off the
+-- Clausius-Clapeyron line anchored at its 239.1 K boiling point
+-- (docs/MATTER.md 5).
 near(
     cooled.pressure_kpa,
     101.325 * math.exp((-20410.0 / 8.314) * (1.0 / cooled.temp_k - 1.0 / 239.1)),
@@ -248,7 +252,10 @@ assert(
     "the run ended because the liquid did, not because the chlorine did"
 )
 assert((done.contents.chlorine.gas or 0) > 0.0, "there is chlorine in the bottle still")
-assert(done.temp_k > 300.0, "which is standing over a bottle the exotherm warmed: " .. done.temp_k)
+assert(
+    done.temp_k > room_k + 1.0,
+    "which is standing over a bottle the exotherm warmed past the room: " .. done.temp_k
+)
 -- The gauge and the temperature are ONE statement again: a saturated
 -- headspace reads its own vapour pressure and nothing else.
 near(
