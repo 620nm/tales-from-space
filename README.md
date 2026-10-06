@@ -57,9 +57,11 @@ re-bake before serving this pack again, or name a root of your own with
 
 Follow the engine's `docs/UI-PRIVACY.md` local setup to stage the snapshot and
 start the authenticated game server and browser gateway. Open the gateway on
-port 8081. The raw server has no pack map default: its map is positional, for
-example `cargo run -p lunatic-server -- "$LUNATIC_MAP" --mode free_build`.
-The development launcher accepts the equivalent `--map "$LUNATIC_MAP"`.
+port 8081. The raw server has no pack map default: its map is positional and
+needs `--playtest` until the pack owns round start, for example
+`cargo run -p lunatic-server -- "$LUNATIC_MAP" --mode free_build --playtest`.
+The development launcher accepts the equivalent `--map "$LUNATIC_MAP"` and
+plays it under `--playtest` by default.
 
 ### The gate
 
