@@ -216,7 +216,7 @@ assert(panel and panel.contact_locked, "the laptop meets the lock screen first")
 assert(panel.stores == nil and panel.program_slots == nil, "with no file or program slot behind it")
 assert(
     panel.link and #ui_controls.text(ui_controls.record(panel.link).address) == 17,
-    "with the address a shift log will name"
+    "with the address a round log will name"
 )
 local lock = rows(panel, "link_lock")
 assert(#lock == 1 and not lock[1].on, "a lock row, shut, because a fresh boot finds them all shut")

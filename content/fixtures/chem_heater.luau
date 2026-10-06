@@ -45,7 +45,7 @@ end
 if sim ~= nil then
     -- Which way the last refresh went, in one word. The handler itself is
     -- a transform and may not write; this is the fact a panel, an
-    -- examine line or an admin reading the shift record wants, and the
+    -- examine line or an admin reading the round record wants, and the
     -- `.done` half is the half allowed to keep it.
     sim.define("script_var", "lunatic/tfs:element", { replicate = "server" })
     local script_definition =

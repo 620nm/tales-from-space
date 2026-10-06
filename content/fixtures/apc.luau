@@ -57,7 +57,7 @@ local RUNGS: { [string]: number } = { equipment = 30, lighting = 15, environment
 -- The power alarm goes up with the first shed and clears only above 75
 -- (:15, :672-673).
 local ALARM_CLEAR_ABOVE = 75
--- On the panel, in the shift record: `sight` so what a crewman at the
+-- On the panel, in the round record: `sight` so what a crewman at the
 -- box could be shown is what a spec can read (t.structure_at).
 local ALARM = "lunatic/tfs:power_alarm"
 

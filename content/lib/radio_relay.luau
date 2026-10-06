@@ -14,7 +14,7 @@
 -- it out. lib/radio.luau owns the numbers.
 --
 -- NOTHING HERE WRITES `reason`, deliberately. A stage that states one
--- earns a shift-record row; range and keys are arithmetic every tower
+-- earns a round-record row; range and keys are arithmetic every tower
 -- does on every line, and writing those down would bury the rows that
 -- mean something. A mod that wants its own drop on the record says so.
 local radio = require("@lib/radio")

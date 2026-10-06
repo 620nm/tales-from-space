@@ -398,7 +398,7 @@ use the explicit `t.connect`, `t.prepare`, `t.ready` and
 | Hazard | `t.hazard({<key> = moles}) -> {health, fire, instability, specials}` — the placard a blend earns, the three 0..4 scales and the special words its substances declare (`hazard` in a substance file, the engine's `docs/matter/hazard.md`). Rows fold by substance, so two phases of one are a single contributor. The spec-side spelling of `sim.hazard_summary` |
 | Ledger | `t.ledger_rows([event])`, `t.ledger_has(...needles)` |
 
-`t.ledger_rows` hands back rows in the shift JSONL's own shape — `tick`,
+`t.ledger_rows` hands back rows in the round JSONL's own shape — `tick`,
 `event` (snake_case), the event's own fields alongside it, `actor`
 (`{kind = "player" | "system" | "script", ...}`), and `pos` where the
 sim knew it. The optional argument filters by event name in either

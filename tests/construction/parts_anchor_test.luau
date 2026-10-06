@@ -304,7 +304,7 @@ assert(
 -- drift a machine upward one swap at a time.
 --
 -- What proves the handler ran is the provenance row: a script that emits
--- anything is on the shift record under its own file, so a row naming
+-- anything is on the round record under its own file, so a row naming
 -- `fixtures/chem_heater.luau` at this tick, triggered by the crewman
 -- who clicked, IS the chamber's handler having spoken.
 -- ---------------------------------------------------------------

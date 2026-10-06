@@ -98,7 +98,7 @@ assert(spill_at[1] == 1 and spill_at[2] == 2, "on the tile it was tipped onto")
 -- Charging a bottle off a canister is vessel to vessel exactly as a
 -- pour is, and it is NOT a pour: it moves the gas phase and it lands a
 -- `filled` row, because "who took this out of the loop" is a question
--- worth being able to ask of a shift log.
+-- worth being able to ask of a round log.
 local can = t.target_at(medic, 3, 2)
 assert(can ~= nil, "a canister stands on the deck")
 assert(t.charge_vessel(3, 2, "o2", 2000.0), "the canister takes a charge")

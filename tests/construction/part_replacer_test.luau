@@ -11,7 +11,7 @@
 -- The whole of "is this an upgrade for that" is two numbers compared
 -- (items/part_replacer.luau), so nothing below names a socket word or
 -- a machine id from the tool's side. What the spec asserts is the four
--- things a crewman could see: the panel, the bag, the shift record,
+-- things a crewman could see: the panel, the bag, the round record,
 -- and the beaker.
 
 -- A document's words are labels: `{id=…}` for one the engine names,

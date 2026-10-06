@@ -141,7 +141,7 @@ end
 if sim ~= nil then
     -- The stack, on the fitting itself. `server` rather than `sight`:
     -- nothing draws it, the colour it comes to is already on the wire
-    -- as light, and the shift record is where somebody asking why
+    -- as light, and the round record is where somebody asking why
     -- Medical was red goes looking.
     sim.define("script_var", "lunatic/tfs:light_flags", { replicate = "server" })
     local script_definition =

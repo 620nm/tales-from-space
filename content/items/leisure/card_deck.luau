@@ -22,7 +22,7 @@ local consume_followups = require("@lib/consume_followups")
 --
 -- The order is generated on the FIRST deal: an unopened deck is in
 -- no particular order until somebody opens it. `math.random` draws
--- from the shift-seeded RNG, so two
+-- from the round-seeded RNG, so two
 -- servers replaying the same shift deal the same cards.
 --
 -- THE TWO VERBS ARE NOT TG'S BINDINGS, and the divergence is on

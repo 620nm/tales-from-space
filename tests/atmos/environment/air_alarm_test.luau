@@ -318,7 +318,7 @@ assert(
 --
 -- One explicit control panel per machine, carrying the machine name AND
 -- its address, because two vents in one room are told apart by that pair
--- and a shift log names only the address.
+-- and a round log names only the address.
 -- ---------------------------------------------------------------
 for _, mac in ipairs(candidates) do
     ui_controls.toggle(p, "link_join", mac)

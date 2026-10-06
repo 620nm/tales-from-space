@@ -102,7 +102,7 @@ The same handler keeps `lunatic/tfs:power_alarm` on the panel, replicated
 to `sight`: raised when the network is tripped or the cell is under
 30%, cleared only when the breaker is back and the cell is over 75%
 (`apc_main.dm:15`, `:672-673`). Every raise and clear is a `VarSet` row
-in the shift record, and a spec reads it through `t.structure_at`'s
+in the round record, and a spec reads it through `t.structure_at`'s
 `vars`. The panel's window does not show it yet.
 
 ## Running on reserve

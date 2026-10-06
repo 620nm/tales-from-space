@@ -315,7 +315,7 @@ assert(
 )
 
 -- ---------------------------------------------------------------
--- 3. WHAT THE SHIFT RECORD KEEPS. One row per CARRYING TREE, naming
+-- 3. WHAT THE ROUND RECORD KEEPS. One row per CARRYING TREE, naming
 --    the words it settled on and how many of its mouths spoke them,
 --    and nothing per listener. No interception row anywhere: every
 --    refusal in this pack is range or keys, which happens on every

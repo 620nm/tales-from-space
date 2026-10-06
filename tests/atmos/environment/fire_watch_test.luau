@@ -50,7 +50,7 @@ assert(#tallies("fires_lit") == 0, "nothing has burned yet")
 t.run_seconds(1)
 assert(#t.ledger_rows("IgnitionAt") == 1, "the room caught fire once")
 local lit = tallies("fires_lit")
-assert(#lit == 1, ("the shift record counted one fire, got %d"):format(#lit))
+assert(#lit == 1, ("the round record counted one fire, got %d"):format(#lit))
 assert(lit[1].value == "1", "the first fire is the first: " .. tostring(lit[1].value))
 assert(lit[1].actor.kind == "script", "the content file owns the count")
 
