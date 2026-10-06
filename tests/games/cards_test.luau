@@ -17,7 +17,7 @@ local composition = require("@helpers/composition")
 -- actually told to draw, so it is the only assertion that can tell a
 -- card that is face down from a card that is merely called face down.
 --
--- Seed 0 pins the shuffle, so the sequence below is a fact rather than
+-- Seed 2 pins the shuffle, so the sequence below is a fact rather than
 -- a range; the assertions are still relations (no repeats, fifty-four
 -- of them, the face on the floor is the face that was named) so that a
 -- change to how many numbers the engine draws before these moves the
@@ -39,7 +39,7 @@ t.world(
     structures: [(1, 1, "player_spawn")],
     items: [(2, 1, "card_deck"), (3, 1, "card_deck")],
 )]==],
-    0
+    2
 )
 
 local p = t.join()
