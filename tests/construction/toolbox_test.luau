@@ -17,14 +17,14 @@ t.world(
         "#...#",
         "#####",
     ],
-    structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn")],
+    structures: [(1, 1, "player_spawn", { "jobs": "engineer" }), (2, 1, "player_spawn", { "jobs": "assistant" })],
     items: [(1, 1, "toolbox")],
 )]==],
     7
 )
 
-local attacker = t.join()
-local victim = t.join()
+local attacker = t.join("engineer")
+local victim = t.join("assistant")
 t.tick()
 
 -- The ledger's join rows are how a spec learns a body's wire id: the

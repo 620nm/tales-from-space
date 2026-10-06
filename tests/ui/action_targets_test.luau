@@ -11,7 +11,7 @@ t.world(
     items: [(1, 4, "wrench"), (2, 4, "wirecutters"), (3, 4, "toolbox"),
         (4, 4, "laptop"), (5, 4, "floppy_disk"), (6, 4, "beaker.water"), (1, 2, "beaker"),
         (3, 1, "pipe"), (3, 3, "pipe"), (2, 3, "metal")],
-    structures: [(2, 2, "player_spawn"), (3, 2, "player_spawn"), (2, 1, "airlock_button")],
+    structures: [(2, 2, "player_spawn", { "jobs": "medic" }), (3, 2, "player_spawn", { "jobs": "assistant" }), (2, 1, "airlock_button")],
     networks: [
         (x: 3, y: 2, network: "pipe", channel: "l1", kind: "standard", facing: 15),
         (x: 3, y: 2, network: "pipe", channel: "l2", kind: "standard", facing: 15),
@@ -27,7 +27,7 @@ t.world(
 )]==],
     0
 )
-local actor, patient = t.join(), t.join()
+local actor, patient = t.join("medic"), t.join("assistant")
 t.run_ticks(3)
 
 -- Each tool is exposed from the aisle beside the rack.

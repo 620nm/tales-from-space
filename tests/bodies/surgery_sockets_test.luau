@@ -11,7 +11,7 @@ local ARENA = [==[(
     name: "ward",
     legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [ "#####", "#...#", "#####" ],
-    structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn"), (2, 1, "optable")],
+    structures: [(1, 1, "player_spawn", { "jobs": "medic" }), (2, 1, "player_spawn", { "jobs": "assistant" }), (2, 1, "optable")],
     items: [ (1, 1, "scalpel"), (1, 1, "shard"), (1, 1, "retractor"), (1, 1, "hemostat"), (1, 1, "welder") ],
 )]==]
 
@@ -24,8 +24,8 @@ end
 -- but the brain is not.
 -- =====================================================================
 t.world(ARENA, 0)
-local surgeon = t.join()
-local patient = t.join()
+local surgeon = t.join("medic")
+local patient = t.join("assistant")
 t.run_ticks(3)
 t.rest(patient, true)
 t.run_ticks(2)
@@ -103,8 +103,8 @@ t.ui_close(surgeon)
 -- Self-surgery: a patient cauterises their OWN incision.
 -- =====================================================================
 t.world(ARENA, 0)
-local doc = t.join()
-local pat = t.join()
+local doc = t.join("medic")
+local pat = t.join("assistant")
 t.run_ticks(3)
 t.rest(pat, true)
 t.unequip(pat, "uniform") -- into a hand; drop it so the hand is free

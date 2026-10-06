@@ -25,13 +25,13 @@ local ARENA = [==[(
         "#...#",
         "#####",
     ],
-    structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn")],
+    structures: [(1, 1, "player_spawn", { "jobs": "medic" }), (2, 1, "player_spawn", { "jobs": "assistant" })],
     items: [(1, 1, "shard"), (1, 1, "wirecutters"), (1, 1, "welder")],
 )]==]
 
 t.world(ARENA, 0)
-local surgeon = t.join()
-local patient = t.join()
+local surgeon = t.join("medic")
+local patient = t.join("assistant")
 t.tick()
 
 -- The patient is down (a shaft does that); the surgeon kneels beside

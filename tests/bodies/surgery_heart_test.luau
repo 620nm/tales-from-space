@@ -12,7 +12,7 @@ local ARENA = [==[(
     name: "theatre",
     legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     rows: [ "#########", "#.......#", "#########" ],
-    structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn"), (2, 1, "optable")],
+    structures: [(1, 1, "player_spawn", { "jobs": "medic" }), (2, 1, "player_spawn", { "jobs": "assistant" }), (2, 1, "optable")],
     items: [
         (1, 1, "scalpel"), (1, 1, "retractor"), (1, 1, "hemostat"),
         (1, 1, "circular_saw"), (1, 1, "cautery"), (1, 1, "organ_heart"),
@@ -20,8 +20,8 @@ local ARENA = [==[(
 )]==]
 
 t.world(ARENA, 0)
-local surgeon = t.join()
-local patient = t.join()
+local surgeon = t.join("medic")
+local patient = t.join("assistant")
 t.run_ticks(3)
 t.rest(patient, true)
 t.unequip(patient, "uniform") -- bare the chest (Strip is B3)

@@ -32,7 +32,7 @@ t.world(
         "#######",
     ],
     items: [(3, 1, "headset")],
-    structures: [(1, 1, "player_spawn"), (3, 1, "player_spawn"), (2, 1, "cadaver_chamber", { "dir": "east" }), (2, 2, "apc")],
+    structures: [(1, 1, "player_spawn", { "jobs": "medic" }), (3, 1, "player_spawn", { "jobs": "assistant" }), (2, 1, "cadaver_chamber", { "dir": "east" }), (2, 2, "apc")],
     networks: [
         (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
         (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
@@ -55,8 +55,8 @@ end
 -- The first spawn is beside the drawer; the second is the tile it
 -- opens onto, which is the only way a body gets onto a tray: stand
 -- there and let the slab arrive under you.
-local attendant = t.join()
-local patient = t.join()
+local attendant = t.join("medic")
+local patient = t.join("assistant")
 t.tick()
 local ax, ay = t.pos(attendant)
 assert(ax == 1 and ay == 1, "the attendant stands beside the drawer")
@@ -231,7 +231,7 @@ t.world(
         "#Gao..#",
         "#######",
     ],
-    structures: [(3, 2, "player_spawn"), (4, 1, "player_spawn"), (2, 1, "cadaver_chamber", { "dir": "east" }), (2, 3, "apc")],
+    structures: [(3, 2, "player_spawn", { "jobs": "medic" }), (4, 1, "player_spawn", { "jobs": "assistant" }), (2, 1, "cadaver_chamber", { "dir": "east" }), (2, 3, "apc")],
     networks: [
         (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
         (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
@@ -244,8 +244,8 @@ t.world(
 
 local LAY_TICKS = clock.deadline_ticks(2.0) + 2
 
-local orderly = t.join()
-local corpse = t.join()
+local orderly = t.join("medic")
+local corpse = t.join("assistant")
 t.tick()
 assert(t.pos(orderly) == 3, "the orderly stands in the aisle")
 local cx, cy = t.pos(corpse)

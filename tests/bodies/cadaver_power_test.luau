@@ -40,13 +40,13 @@ t.world(
         "#######",
     ],
     items: [],
-    structures: [(1, 1, "player_spawn"), (3, 1, "player_spawn"), (2, 1, "cadaver_chamber", { "dir": "east" })],
+    structures: [(1, 1, "player_spawn", { "jobs": "medic" }), (3, 1, "player_spawn", { "jobs": "assistant" }), (2, 1, "cadaver_chamber", { "dir": "east" })],
 )]==],
     7
 )
 
-local dark_attendant = t.join()
-local dark_patient = t.join()
+local dark_attendant = t.join("medic")
+local dark_patient = t.join("assistant")
 t.tick()
 
 local dark = t.target_at(dark_attendant, 2, 1, "cadaver_chamber")
@@ -92,7 +92,7 @@ t.world(
         "#######",
     ],
     items: [],
-    structures: [(1, 1, "player_spawn"), (3, 1, "player_spawn"), (2, 1, "cadaver_chamber", { "dir": "east" }), (2, 2, "apc")],
+    structures: [(1, 1, "player_spawn", { "jobs": "medic" }), (3, 1, "player_spawn", { "jobs": "assistant" }), (2, 1, "cadaver_chamber", { "dir": "east" }), (2, 2, "apc")],
     networks: [
         (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
         (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
@@ -103,8 +103,8 @@ t.world(
     7
 )
 
-local attendant = t.join()
-local patient = t.join()
+local attendant = t.join("medic")
+local patient = t.join("assistant")
 t.tick()
 
 local chamber = t.target_at(attendant, 2, 1, "cadaver_chamber")
