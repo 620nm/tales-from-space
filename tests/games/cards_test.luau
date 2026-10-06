@@ -227,8 +227,8 @@ assert(facedown.sprite == "card_back", "back to the back")
 -- tg's recycle: clicking a deck while holding a card returns the card
 -- to the bottom (deck.dm:192-202). Here that is the CARD's `interaction.use`
 -- with `acts_on_items`, so a click naming the deck is the card's
--- business rather than a pickup. The deck is underfoot, where it was
--- dropped.
+-- business rather than a pickup. The deck lies on the tile it was
+-- dropped on; the player steps beside it to point at it.
 from_beside(p, function()
     t.click(p, 1, 1, t.target_at(p, 1, 1, "card"))
     t.tick()
