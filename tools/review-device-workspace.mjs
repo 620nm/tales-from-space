@@ -43,7 +43,7 @@ try {
   ({ browserSession, delay } = await import(pathToFileURL(join(engine, "tools/workspace-ui-browser.mjs")).href));
   launcher = spawn(process.execPath, [
     "tools/dev.mjs", "--no-build", "--bind", "127.0.0.1:0", "--mode", "free_build",
-    "--no-playtest", "--map", scene, "--audit-dir", join(scratch, "audit"),
+    "--map", scene, "--audit-dir", join(scratch, "audit"),
   ], { cwd: engine, env: { ...process.env, LUNATIC_PACK: pack }, stdio: ["ignore", "pipe", "pipe"] });
   launcher.stdout.on("data", record);
   launcher.stderr.on("data", record);
