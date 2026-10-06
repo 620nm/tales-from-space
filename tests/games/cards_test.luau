@@ -1,5 +1,24 @@
 local composition = require("@helpers/composition")
 
+-- A thing dropped at the player's feet lands at a scattered offset (a
+-- world-RNG roll), and can lie wholly under the player's own sprite,
+-- where no pixel of it can be pointed at. What a spec may assert is the
+-- property, not that roll: step beside the tile, act on it from there,
+-- and step back.
+local function from_beside(p: number, act: () -> any): any
+    local x = t.pos(p)
+    local there, back = "east", "west"
+    if x >= 3 then
+        there, back = "west", "east"
+    end
+    t.move(p, there)
+    t.run_ticks(5)
+    local result = act()
+    t.move(p, back)
+    t.run_ticks(5)
+    return result
+end
+
 -- A deck of cards: the first thing in this pack that remembers
 -- something across invocations.
 --
@@ -17,7 +36,7 @@ local composition = require("@helpers/composition")
 -- actually told to draw, so it is the only assertion that can tell a
 -- card that is face down from a card that is merely called face down.
 --
--- Seed 2 pins the shuffle, so the sequence below is a fact rather than
+-- Seed 0 pins the shuffle, so the sequence below is a fact rather than
 -- a range; the assertions are still relations (no repeats, fifty-four
 -- of them, the face on the floor is the face that was named) so that a
 -- change to how many numbers the engine draws before these moves the
@@ -39,7 +58,7 @@ t.world(
     structures: [(1, 1, "player_spawn")],
     items: [(2, 1, "card_deck"), (3, 1, "card_deck")],
 )]==],
-    2
+    0
 )
 
 local p = t.join()
@@ -169,13 +188,17 @@ assert(
     "it is now face up, and it is the same card it always was: " .. tostring(faceup.state)
 )
 assert(faceup.sprite == "card_" .. secret, "wearing that face's cell: " .. tostring(faceup.sprite))
-local shown = table.concat(t.layers(p, t.target_at(p, 1, 1, "card")), " ")
+local shown = from_beside(p, function()
+    return table.concat(t.layers(p, t.target_at(p, 1, 1, "card")), " ")
+end)
 assert(shown:find("card_" .. secret, 1, true), "and NOW the room can see it: " .. shown)
 
 -- ...and back over again, which is what needed `sim.state`: a thing
 -- that toggles has to ask what it is currently showing.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "card"))
-t.tick()
+from_beside(p, function()
+    t.click(p, 1, 1, t.target_at(p, 1, 1, "card"))
+    t.tick()
+end)
 t.use_self(p)
 t.tick()
 assert(
@@ -194,11 +217,13 @@ assert(facedown.sprite == "card_back", "back to the back")
 -- with `acts_on_items`, so a click naming the deck is the card's
 -- business rather than a pickup. The deck is underfoot, where it was
 -- dropped.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "card"))
-t.tick()
-assert(t.hands(p).held == "card", "the card is in hand again")
-t.click(p, 1, 1, t.target_at(p, 1, 1, "card_deck"))
-t.tick()
+from_beside(p, function()
+    t.click(p, 1, 1, t.target_at(p, 1, 1, "card"))
+    t.tick()
+    assert(t.hands(p).held == "card", "the card is in hand again")
+    t.click(p, 1, 1, t.target_at(p, 1, 1, "card_deck"))
+    t.tick()
+end)
 assert(t.hands(p).held == nil, "the card left the hand")
 assert(
     t.item_at(1, 1, "card") == nil and t.item_at(1, 2, "card") == nil,
@@ -217,8 +242,10 @@ assert(DECLARED[back.var_state], "and it is one of the pictures the prototype de
 -- remembered what it had already given out -- and the memory is a
 -- string in `ScriptVars`, because a shuffle is not a number the
 -- prototype could have enumerated.
-t.click(p, 1, 1, t.target_at(p, 1, 1, "card_deck"))
-t.tick()
+from_beside(p, function()
+    t.click(p, 1, 1, t.target_at(p, 1, 1, "card_deck"))
+    t.tick()
+end)
 assert(t.hands(p).held == "card_deck", "the deck is in hand again")
 
 -- tg's own thresholds, counted from the other end: 54 minus the deal
@@ -255,8 +282,10 @@ for deal = 1, 54 do
             mid.sprite == "card_deck_full",
             "while the base the server sent never moved: " .. tostring(mid.sprite)
         )
-        t.click(p, 1, 1, t.target_at(p, 1, 1, "card_deck"))
-        t.tick()
+        from_beside(p, function()
+            t.click(p, 1, 1, t.target_at(p, 1, 1, "card_deck"))
+            t.tick()
+        end)
         assert(t.hands(p).held == "card_deck", "the deck is back in hand")
     end
 end
