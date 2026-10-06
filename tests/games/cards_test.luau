@@ -5,15 +5,27 @@ local composition = require("@helpers/composition")
 -- where no pixel of it can be pointed at. What a spec may assert is the
 -- property, not that roll: step beside the tile, act on it from there,
 -- and step back.
-local function from_beside(p: number, act: () -> any): any
+local function beside(p: number): "east" | "west"
     local x = t.pos(p)
-    local there, back = "east", "west"
+    local there: "east" | "west", back: "east" | "west" = "east", "west"
     if x >= 3 then
         there, back = "west", "east"
     end
     t.move(p, there)
     t.run_ticks(5)
-    local result = act()
+    return back
+end
+
+local function from_beside(p: number, act: () -> ())
+    local back = beside(p)
+    act()
+    t.move(p, back)
+    t.run_ticks(5)
+end
+
+local function read_beside(p: number, read: () -> string): string
+    local back = beside(p)
+    local result = read()
     t.move(p, back)
     t.run_ticks(5)
     return result
@@ -188,7 +200,7 @@ assert(
     "it is now face up, and it is the same card it always was: " .. tostring(faceup.state)
 )
 assert(faceup.sprite == "card_" .. secret, "wearing that face's cell: " .. tostring(faceup.sprite))
-local shown = from_beside(p, function()
+local shown = read_beside(p, function()
     return table.concat(t.layers(p, t.target_at(p, 1, 1, "card")), " ")
 end)
 assert(shown:find("card_" .. secret, 1, true), "and NOW the room can see it: " .. shown)
