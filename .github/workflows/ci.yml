@@ -91,6 +91,7 @@ jobs:
       - run: rustup target add wasm32-unknown-unknown
       # MUST match the engine workspace's pinned `wasm-bindgen`; a looser
       # pin resolves an ancient js-sys and wgpu explodes.
+      - run: sudo apt-get update && sudo apt-get install -y binaryen
       - run: cargo install wasm-bindgen-cli --version 0.2.128 --locked
       - run: sh tools/build-web.sh
       # A skip must never read as a pass, and this job supplies every
