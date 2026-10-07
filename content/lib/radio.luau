@@ -64,7 +64,7 @@ radio.CLEAR_FRACTION = 0.75
 
 -- What one tower on a tree of `n` powered towers reaches.
 function radio.radius_for(n: number): number
-    return radio.TRANSCEIVER_RADIUS * radio.NETWORK_MULT ^ (n - 1)
+    return radio.TRANSCEIVER_RADIUS * math.pow(radio.NETWORK_MULT, n - 1)
 end
 
 -- The circle that reaches (x, y) best and the fraction of its radius

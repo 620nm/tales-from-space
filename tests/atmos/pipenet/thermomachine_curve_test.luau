@@ -200,7 +200,7 @@ for n = 1, 6 do
 
     near(
         now_k,
-        TARGET + (start_k - TARGET) * r ^ n,
+        TARGET + (start_k - TARGET) * math.pow(r, n),
         1e-6,
         "pass " .. n .. " lands where r^" .. n .. " says"
     )
@@ -285,7 +285,7 @@ for _ = 1, 3 do
     pass()
 end
 local heavy_gap = assert(network_matter.temperature(MOUTH_X, MOUTH_Y)) - TARGET
-local light_gap = (T20C - TARGET) * r ^ 3
+local light_gap = (T20C - TARGET) * math.pow(r, 3)
 assert(
     heavy_gap > light_gap * 2.5,
     "three passes in, the heavy line is still miles off what the light one had closed: "
@@ -296,7 +296,7 @@ assert(
 )
 near(
     assert(network_matter.temperature(MOUTH_X, MOUTH_Y)),
-    TARGET + (T20C - TARGET) * (n2o_c / (n2o_c + C_BATH)) ^ 3,
+    TARGET + (T20C - TARGET) * math.pow(n2o_c / (n2o_c + C_BATH), 3),
     1e-6,
     "and it is exactly where ITS own r puts it -- same formula, heavier gas"
 )

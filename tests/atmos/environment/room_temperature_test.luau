@@ -543,7 +543,7 @@ near(cell_a, 5.0, 1e-12, "five square metres of grey body faces the sky")
 
 t.run_seconds(600)
 
-local closed = (1.0 / T20C ^ 3 + 3.0 * SIGMA * cell_a * 600.0 / cell_c) ^ (-1.0 / 3.0)
+local closed = math.pow(1.0 / math.pow(T20C, 3) + 3.0 * SIGMA * cell_a * 600.0 / cell_c, -1.0 / 3.0)
 assert(T20C - closed >= 4.0, "ten minutes in dead space is worth real kelvin: " .. closed)
 -- A deck's hull account settles on its FLOOR VISIT, every 16 atmos ticks
 -- (8 s), so a reading taken between two visits lags by up to a stride of
