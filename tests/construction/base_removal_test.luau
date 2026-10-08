@@ -1,4 +1,5 @@
 local composition = require("@helpers/composition")
+local wire_tile = require("@helpers/wire_tile")
 
 -- Removing a station base reveals its retained substrate. A cover must
 -- come up first, and a supported power run prevents unsafe removal.
@@ -70,7 +71,7 @@ for _, cover in ipairs({ "floor_tiles", "grid_cover" }) do
     t.use_self(player)
     t.run_ticks(2)
     for _, hint in ipairs(t.action_hints(player, {
-        Component = { tile = { x = 2, y = 1 }, instance = base },
+        Component = { tile = wire_tile.at(2, 1), instance = base },
     })) do
         assert(hint.id ~= "construction.plating.0" or not hint.available,
             "naming the protected base cannot expose its removal action")

@@ -1,4 +1,5 @@
 local network_channels = require("@helpers/network_channels")
+local wire_tile = require("@helpers/wire_tile")
 
 local ui_controls = require("@helpers/ui_controls")
 
@@ -136,7 +137,7 @@ assert(
     entity_action(t.body_target(actor, patient), "pour") == nil,
     "a body's bloodstream is not a pouring target"
 )
-local at_feet = t.action_hints(actor, { Turf = { x = 2, y = 2 } })
+local at_feet = t.action_hints(actor, { Turf = wire_tile.at(2, 2) })
 assert(
     #at_feet > 0 and at_feet[1].id == "drink",
     "the shared vessel's own-tile gesture is drinking"
