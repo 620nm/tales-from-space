@@ -1,4 +1,6 @@
 -- Channel names sorted for exact topology assertions and diagnostics.
+local wire_tile = require("@helpers/wire_tile")
+
 local network_channels = {}
 
 -- Composition network and channel IDs are the wire's typed identity fields.
@@ -24,7 +26,7 @@ function network_channels.target(
 ): SpecActionTarget
     local target = {
         Network = {
-            tile = { x = x, y = y },
+            tile = wire_tile.at(x, y),
             network = assert(NETWORK_IDS[network]),
             channel = assert(CHANNEL_IDS[network][channel]),
             instance = instance,

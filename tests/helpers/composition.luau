@@ -1,4 +1,6 @@
 -- Exact component membership and retained substrate assertions for specs.
+local wire_tile = require("@helpers/wire_tile")
+
 local composition = {}
 
 function composition.matches(x: number, y: number, components: {string}): boolean
@@ -37,8 +39,8 @@ end
 
 function composition.deck_target(x: number, y: number): SpecActionTarget
     local instance = composition.deck_instance(x, y)
-    if instance then return { Component = { tile = { x = x, y = y }, instance = instance } } end
-    return { Turf = { x = x, y = y } }
+    if instance then return { Component = { tile = wire_tile.at(x, y), instance = instance } } end
+    return { Turf = wire_tile.at(x, y) }
 end
 
 function composition.click_deck(player: number, x: number, y: number)
