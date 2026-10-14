@@ -16,8 +16,12 @@ local function world(center: string, brace: string, terrestrial: boolean, microg
                     'l': (composition: (substrate: Some("space"), components: [(component: "lattice")])),
                     'w': (composition: (substrate: Some("space"), components: [(component: "wall")])),
                 },
-                rows: ["sssssssss", "sssssssss", "sssssssss", "ss%s%ssssss", "sssssssss", "sssssssss", "sssssssss"],
-                structures: [(3, 3, "player_spawn")],
+                levels: [
+                    (
+                        rows: ["sssssssss", "sssssssss", "sssssssss", "ss%s%ssssss", "sssssssss", "sssssssss", "sssssssss"],
+                        structures: [(3, 3, "player_spawn")],
+                    ),
+                ],
             )]==],
             tags,
             kind,

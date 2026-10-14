@@ -36,13 +36,18 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "####",
-        "#..#",
-        "#..#",
-        "####",
+    levels: [
+        (
+            rows: [
+                "####",
+                "#..#",
+                "#..#",
+                "####",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            painted: [(1, 1, "burning_mix"), (2, 1, "burning_mix"), (1, 2, "burning_mix"), (2, 2, "burning_mix")],
+        ),
     ],
-    structures: [(1, 1, "player_spawn")],
     blends: {
         // fire_watch_test.luau's own mixture: fuelled, oxidised, and
         // already over the ignition window, so the chamber catches on
@@ -53,7 +58,6 @@ t.world(
             amount: per_tile,
         ),
     },
-    painted: [(1, 1, "burning_mix"), (2, 1, "burning_mix"), (1, 2, "burning_mix"), (2, 2, "burning_mix")],
 )]==],
     0,
     "free_build"

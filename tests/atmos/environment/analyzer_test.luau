@@ -55,17 +55,27 @@ t.world(
         'c': (composition: (components: [(component: "station_base")])),
         'g': (composition: (substrate: Some("ground"))),
     },
-    rows: [
-        "#######",
-        "#cg.###",
-        "#og..g#",
-        "#######",
-    ],
-    items: [(1, 2, "analyzer"), (2, 2, "pipe")],
-    networks: [
-        (x: 2, y: 1, network: "pipe", channel: "l1", kind: "standard", facing: 15),
-        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#cg.###",
+                "#og..g#",
+                "#######",
+            ],
+            items: [(1, 2, "analyzer"), (2, 2, "pipe")],
+            networks: [
+                (x: 2, y: 1, network: "pipe", channel: "l1", kind: "standard", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+            painted: [(2, 1, "naphtha_1l")],
+            structures: [
+                (1, 2, "player_spawn"),
+                (1, 1, "connector_port"),
+                (1, 1, "canister", { "blend": "canister_air", "open": true }),
+            ],
+        ),
     ],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
@@ -77,12 +87,6 @@ t.world(
         // in it and every share below would be a share of the fog.
         "naphtha_1l": (rows: [("naphtha", 6.6833006594189985), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
     },
-    painted: [(2, 1, "naphtha_1l")],
-    structures: [
-        (1, 2, "player_spawn"),
-        (1, 1, "connector_port"),
-        (1, 1, "canister", { "blend": "canister_air", "open": true }),
-    ],
 )]==],
     7
 )

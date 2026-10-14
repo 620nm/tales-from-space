@@ -14,19 +14,23 @@ local ROOM = [==[(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#...#",
-        "#####",
-    ],
-    structures: [(2, 2, "player_spawn")],
-    items: [
-        (1, 1, "rod"),
-        (3, 1, "glass"),
-        (1, 3, "screwdriver"),
-        (3, 3, "crowbar"),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [(2, 2, "player_spawn")],
+            items: [
+                (1, 1, "rod"),
+                (3, 1, "glass"),
+                (1, 3, "screwdriver"),
+                (3, 3, "crowbar"),
+            ],
+        ),
     ],
 )]==]
 
@@ -116,22 +120,26 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#...#",
-        "#####",
-    ],
-    structures: [(2, 2, "player_spawn")],
-    items: [
-        (1, 1, "rod"),
-        (3, 1, "rglass"),
-        (1, 2, "welder"),
-        (3, 2, "screwdriver"),
-        (1, 3, "crowbar"),
-        (2, 3, "wirecutters"),
-        (3, 3, "wrench"),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [(2, 2, "player_spawn")],
+            items: [
+                (1, 1, "rod"),
+                (3, 1, "rglass"),
+                (1, 2, "welder"),
+                (3, 2, "screwdriver"),
+                (1, 3, "crowbar"),
+                (2, 3, "wirecutters"),
+                (3, 3, "wrench"),
+            ],
+        ),
     ],
 )]==],
     7

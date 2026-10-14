@@ -16,13 +16,17 @@ local WARD = [==[(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "######",
-        "#....#",
-        "######",
+    levels: [
+        (
+            rows: [
+                "######",
+                "#....#",
+                "######",
+            ],
+            structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn")],
+            items: [(3, 1, "toolbox")],
+        ),
     ],
-    structures: [(1, 1, "player_spawn"), (2, 1, "player_spawn")],
-    items: [(3, 1, "toolbox")],
 )]==]
 
 -- ---------------------------------------------------------------

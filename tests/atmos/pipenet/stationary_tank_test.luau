@@ -26,21 +26,25 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "########",
-        "#......#",
-        "#......#",
-        "#......#",
-        "########",
-    ],
-    structures: [
-        (2, 2, "player_spawn"),
-        (3, 2, "stationary_tank", "anchored", ("o2", 23000.0)),
-    ],
-    networks: [
-        (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 5, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 6, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "########",
+                "#......#",
+                "#......#",
+                "#......#",
+                "########",
+            ],
+            structures: [
+                (2, 2, "player_spawn"),
+                (3, 2, "stationary_tank", "anchored", ("o2", 23000.0)),
+            ],
+            networks: [
+                (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 5, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 6, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7

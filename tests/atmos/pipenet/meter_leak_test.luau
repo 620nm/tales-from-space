@@ -74,34 +74,38 @@ t.world(
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "########",
-        "#......#",
-        "#..oo..#",
-        "#......#",
-        "########",
-    ],
-    items: [(3, 2, "wrench"), (3, 1, "pipe_meter")],
-    networks: [
-        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 2, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 4, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 5, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "########",
+                "#......#",
+                "#..oo..#",
+                "#......#",
+                "########",
+            ],
+            items: [(3, 2, "wrench"), (3, 1, "pipe_meter")],
+            networks: [
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 2, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 4, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 5, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+            structures: [
+                (4, 2, "player_spawn"),
+                (1, 1, "connector_port"),
+                (1, 1, "canister", { "blend": "canister_air", "open": true }),
+                (1, 3, "connector_port"),
+                (1, 3, "canister", { "blend": "canister_air", "open": true }),
+            ],
+        ),
     ],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
-    structures: [
-        (4, 2, "player_spawn"),
-        (1, 1, "connector_port"),
-        (1, 1, "canister", { "blend": "canister_air", "open": true }),
-        (1, 3, "connector_port"),
-        (1, 3, "canister", { "blend": "canister_air", "open": true }),
-    ],
 )]==],
     7
 )
@@ -173,19 +177,23 @@ t.world(
     [==[(
     name: "sealed main",
     legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [
-        "######",
-        "#....#",
-        "#....#",
-        "######",
-    ],
-    structures: [(2, 2, "player_spawn")],
-    items: [(2, 2, "rpd")],
-    networks: [
-        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "######",
+                "#....#",
+                "#....#",
+                "######",
+            ],
+            structures: [(2, 2, "player_spawn")],
+            items: [(2, 2, "rpd")],
+            networks: [
+                (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7

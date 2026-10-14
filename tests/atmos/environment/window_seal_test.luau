@@ -74,34 +74,38 @@ t.world(
     [==[(
     name: "windows first",
     legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [
-        "#########",
-        "#.......#",
-        "#.......#",
-        "#.......#",
-        "#########",
-    ],
-    structures: [
-        (6, 3, "player_spawn"),
-        (4, 1, "grille", "reinforced"),
-        (4, 2, "grille", "reinforced"),
-        (4, 3, "grille", "reinforced"),
-        (3, 2, "meter"),
-    ],
-    networks: [
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#########",
+                "#.......#",
+                "#.......#",
+                "#.......#",
+                "#########",
+            ],
+            structures: [
+                (6, 3, "player_spawn"),
+                (4, 1, "grille", "reinforced"),
+                (4, 2, "grille", "reinforced"),
+                (4, 3, "grille", "reinforced"),
+                (3, 2, "meter"),
+            ],
+            networks: [
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+            painted: [
+                (1, 1, "hot_chlorine"), (2, 1, "hot_chlorine"), (3, 1, "hot_chlorine"),
+                (1, 2, "hot_chlorine"), (2, 2, "hot_chlorine"), (3, 2, "hot_chlorine"),
+                (1, 3, "hot_chlorine"), (2, 3, "hot_chlorine"), (3, 3, "hot_chlorine"),
+            ],
+        ),
     ],
     blends: {
         "hot_chlorine": (rows: [("chlorine", 250.0)], temperature_k: 1000.0, amount: per_tile),
         "standard_air": (rows: [("o2", 8.73), ("n2", 32.84)], temperature_k: 293.15, amount: per_tile),
     },
-    painted: [
-        (1, 1, "hot_chlorine"), (2, 1, "hot_chlorine"), (3, 1, "hot_chlorine"),
-        (1, 2, "hot_chlorine"), (2, 2, "hot_chlorine"), (3, 2, "hot_chlorine"),
-        (1, 3, "hot_chlorine"), (2, 3, "hot_chlorine"), (3, 3, "hot_chlorine"),
-    ],
 )]==],
     nil,
     "free_build"
@@ -116,34 +120,38 @@ t.world(
     [==[(
     name: "neighbour first",
     legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [
-        "#########",
-        "#.......#",
-        "#.......#",
-        "#.......#",
-        "#########",
-    ],
-    structures: [
-        (6, 3, "player_spawn"),
-        (3, 2, "meter"),
-        (4, 1, "grille", "reinforced"),
-        (4, 2, "grille", "reinforced"),
-        (4, 3, "grille", "reinforced"),
-    ],
-    networks: [
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#########",
+                "#.......#",
+                "#.......#",
+                "#.......#",
+                "#########",
+            ],
+            structures: [
+                (6, 3, "player_spawn"),
+                (3, 2, "meter"),
+                (4, 1, "grille", "reinforced"),
+                (4, 2, "grille", "reinforced"),
+                (4, 3, "grille", "reinforced"),
+            ],
+            networks: [
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+            painted: [
+                (1, 1, "hot_chlorine"), (2, 1, "hot_chlorine"), (3, 1, "hot_chlorine"),
+                (1, 2, "hot_chlorine"), (2, 2, "hot_chlorine"), (3, 2, "hot_chlorine"),
+                (1, 3, "hot_chlorine"), (2, 3, "hot_chlorine"), (3, 3, "hot_chlorine"),
+            ],
+        ),
     ],
     blends: {
         "hot_chlorine": (rows: [("chlorine", 250.0)], temperature_k: 1000.0, amount: per_tile),
         "standard_air": (rows: [("o2", 8.73), ("n2", 32.84)], temperature_k: 293.15, amount: per_tile),
     },
-    painted: [
-        (1, 1, "hot_chlorine"), (2, 1, "hot_chlorine"), (3, 1, "hot_chlorine"),
-        (1, 2, "hot_chlorine"), (2, 2, "hot_chlorine"), (3, 2, "hot_chlorine"),
-        (1, 3, "hot_chlorine"), (2, 3, "hot_chlorine"), (3, 3, "hot_chlorine"),
-    ],
 )]==],
     nil,
     "free_build"

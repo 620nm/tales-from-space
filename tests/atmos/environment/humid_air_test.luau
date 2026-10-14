@@ -29,13 +29,17 @@ t.world(
         // painted with a puddle in the air is not what this means.
         "humid_air": (rows: [("o2", 8.730437114532117), ("n2", 32.84307295466844), ("water:gas", 0.5)], temperature_k: 293.15, amount: per_tile),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#####",
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#####",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            painted: [(1, 1, "humid_air"), (2, 1, "humid_air"), (3, 1, "humid_air")],
+        ),
     ],
-    structures: [(1, 1, "player_spawn")],
-    painted: [(1, 1, "humid_air"), (2, 1, "humid_air"), (3, 1, "humid_air")],
 )]==],
     0
 )

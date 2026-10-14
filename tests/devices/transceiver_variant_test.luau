@@ -43,27 +43,31 @@ t.world(
         'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
-    rows: [
-        "############",
-        "#..........#",
-        "#Gao....o..#",
-        "############",
-    ],
-    structures: [(5, 1, "player_spawn"), (2, 2, "apc")],
-    machines: [
-        (6, 1, "transceiver.medical"),
-        (9, 1, "transceiver.medical", { "encryption_1": "encryption_key.engineering" }),
-    ],
-    networks: [
-        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: [
+                "############",
+                "#..........#",
+                "#Gao....o..#",
+                "############",
+            ],
+            structures: [(5, 1, "player_spawn"), (2, 2, "apc")],
+            machines: [
+                (6, 1, "transceiver.medical"),
+                (9, 1, "transceiver.medical", { "encryption_1": "encryption_key.engineering" }),
+            ],
+            networks: [
+                (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+        ),
     ],
 )]==],
     0

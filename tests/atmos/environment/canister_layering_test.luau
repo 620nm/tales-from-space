@@ -14,21 +14,25 @@ local MAP = [==[
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#####",
-    ],
-    items: [(2, 2, "floor_tile")],
-    networks: [
-        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-    ],
-    structures: [
-        (2, 2, "player_spawn"),
-        (3, 1, "connector_port"),
-        (3, 1, "canister"),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            items: [(2, 2, "floor_tile")],
+            networks: [
+                (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+            structures: [
+                (2, 2, "player_spawn"),
+                (3, 1, "connector_port"),
+                (3, 1, "canister"),
+            ],
+        ),
     ],
 )
 ]==]
@@ -72,23 +76,27 @@ local ORDER_MAP = [==[
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#####",
-    ],
-    items: [(2, 1, "floor_tile"), (3, 1, "floor_tile")],
-    structures: [
-        (2, 2, "player_spawn"),
-        (1, 1, "vent"),
-        (1, 1, "canister"),
-        (2, 1, "utility_outlet_port"),
-        (3, 1, "canister"),
-        (1, 2, "utility_outlet_port"),
-        (1, 2, "canister"),
-        (3, 2, "canister"),
-        (3, 2, "vent"),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            items: [(2, 1, "floor_tile"), (3, 1, "floor_tile")],
+            structures: [
+                (2, 2, "player_spawn"),
+                (1, 1, "vent"),
+                (1, 1, "canister"),
+                (2, 1, "utility_outlet_port"),
+                (3, 1, "canister"),
+                (1, 2, "utility_outlet_port"),
+                (1, 2, "canister"),
+                (3, 2, "canister"),
+                (3, 2, "vent"),
+            ],
+        ),
     ],
 )
 ]==]

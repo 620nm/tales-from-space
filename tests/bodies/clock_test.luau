@@ -6,8 +6,12 @@ local clock = require("@helpers/clock")
 local ARENA = [==[(
     name: "bench",
     legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [ "###", "#.#", "###" ],
-    structures: [(1, 1, "player_spawn")],
+    levels: [
+        (
+            rows: [ "###", "#.#", "###" ],
+            structures: [(1, 1, "player_spawn")],
+        ),
+    ],
 )]==]
 
 t.world(ARENA, 0)

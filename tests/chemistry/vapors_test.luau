@@ -43,46 +43,50 @@ t.world(
         'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
     },
-    rows: [
-        "#######",
-        "#....##",
-        "#oa.g##",
-        "#######",
-    ],
-    items: [(1, 2, "bottle"), (4, 2, "oxygen_tank")],
-    machines: [(1, 1, "chem_dispenser")],
-    // The waste main runs out under the east wall, so what the scrubber
-    // takes has somewhere to go that is not the room. Layer 2, where a
-    // scrubber lives.
-    networks: [
-        (x: 5, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 6, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-    ],
-    // tg's scrubber, spelled out: pointed at a roster with the dial
-    // wide open and no floor under it. A placement that SAYS nothing
-    // is a return grille instead (scrubber_floor_test.luau).
-    structures: [
-        (1, 2, "player_spawn", { "jobs": "engineer" }),
-        (4, 2, "player_spawn", { "weight": 0, "jobs": "assistant" }),
-        (4, 1, "player_spawn", { "jobs": "assistant" }),
-        (4, 1, "air_scrubber", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 }),
-        (2, 2, "apc"),
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#....##",
+                "#oa.g##",
+                "#######",
+            ],
+            items: [(1, 2, "bottle"), (4, 2, "oxygen_tank")],
+            machines: [(1, 1, "chem_dispenser")],
+            // The waste main runs out under the east wall, so what the scrubber
+            // takes has somewhere to go that is not the room. Layer 2, where a
+            // scrubber lives.
+            networks: [
+                (x: 5, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 6, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+            ],
+            // tg's scrubber, spelled out: pointed at a roster with the dial
+            // wide open and no floor under it. A placement that SAYS nothing
+            // is a return grille instead (scrubber_floor_test.luau).
+            structures: [
+                (1, 2, "player_spawn", { "jobs": "engineer" }),
+                (4, 2, "player_spawn", { "weight": 0, "jobs": "assistant" }),
+                (4, 1, "player_spawn", { "jobs": "assistant" }),
+                (4, 1, "air_scrubber", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 }),
+                (2, 2, "apc"),
+            ],
+        ),
     ],
 
 )]==],

@@ -7,15 +7,19 @@ local ui_controls = require("@helpers/ui_controls")
 local ARENA = [==[(
     name: "laptop desk",
     legend: { '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: ["#######", "#.....#", "#.....#", "#.....#", "#######"],
-    structures: [
-        (2, 2, "player_spawn", { "jobs": "assistant" }),
-        (3, 2, "player_spawn", { "jobs": "engineer" }),
-    ],
-    items: [
-        (2, 2, "laptop"), (1, 3, "floppy_disk"),
-        (1, 1, "id_assistant"), (1, 2, "id_captain"),
-        (3, 3, "screwdriver"),
+    levels: [
+        (
+            rows: ["#######", "#.....#", "#.....#", "#.....#", "#######"],
+            structures: [
+                (2, 2, "player_spawn", { "jobs": "assistant" }),
+                (3, 2, "player_spawn", { "jobs": "engineer" }),
+            ],
+            items: [
+                (2, 2, "laptop"), (1, 3, "floppy_disk"),
+                (1, 1, "id_assistant"), (1, 2, "id_captain"),
+                (3, 3, "screwdriver"),
+            ],
+        ),
     ],
 )]==]
 

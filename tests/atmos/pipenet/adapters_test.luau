@@ -97,25 +97,29 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "########",
-        "#......#",
-        "#......#",
-        "########",
+    levels: [
+        (
+            rows: [
+                "########",
+                "#......#",
+                "#......#",
+                "########",
+            ],
+            items: [(6, 2, "wrench")],
+            networks: [
+                (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 4, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 5, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 6, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+                (x: 2, y: 2, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+                (x: 4, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+                (x: 4, y: 2, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+            ],
+            structures: [(6, 2, "player_spawn"), (3, 1, "layer_adapter")],
+        ),
     ],
-    items: [(6, 2, "wrench")],
-    networks: [
-        (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 4, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 5, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 6, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 2, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
-        (x: 2, y: 2, network: "pipe", channel: "l4", kind: "standard", facing: 15),
-        (x: 4, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
-        (x: 4, y: 2, network: "pipe", channel: "l4", kind: "standard", facing: 15),
-    ],
-    structures: [(6, 2, "player_spawn"), (3, 1, "layer_adapter")],
 )]==],
     7
 )
@@ -223,23 +227,27 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "########",
-        "#......#",
-        "#......#",
-        "########",
-    ],
-    items: [(6, 2, "wrench"), (6, 2, "pipe_painter")],
-    // Two lengths of red, three of blue, meeting at the adapter.
-    networks: [
-        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("red")),
-        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("red")),
-        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("blue")),
-        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("blue")),
-        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("blue")),
-    ],
+    levels: [
+        (
+            rows: [
+                "########",
+                "#......#",
+                "#......#",
+                "########",
+            ],
+            items: [(6, 2, "wrench"), (6, 2, "pipe_painter")],
+            // Two lengths of red, three of blue, meeting at the adapter.
+            networks: [
+                (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("red")),
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("red")),
+                (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("blue")),
+                (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("blue")),
+                (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15, paint: Some("blue")),
+            ],
 
-    structures: [(6, 2, "player_spawn"), (3, 1, "color_adapter")],
+            structures: [(6, 2, "player_spawn"), (3, 1, "color_adapter")],
+        ),
+    ],
 )]==],
     7
 )

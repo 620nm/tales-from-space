@@ -76,12 +76,16 @@ t.world(
     [==[(
     name: "one vessel, one run",
     legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: ["#######", "#.....#", "#######"],
-    structures: [(1, 1, "player_spawn"), (2, 1, "stationary_tank", "anchored", ("o2", 9000.0))],
-    networks: [
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: ["#######", "#.....#", "#######"],
+            structures: [(1, 1, "player_spawn"), (2, 1, "stationary_tank", "anchored", ("o2", 9000.0))],
+            networks: [
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7
@@ -206,15 +210,19 @@ t.world(
     [==[(
     name: "two vessels, one run",
     legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: ["#######", "#.....#", "#######"],
-    structures: [
-        (1, 1, "player_spawn"),
-        (2, 1, "stationary_tank", "anchored", ("o2", 10000.0)),
-        (5, 1, "stationary_tank", "anchored", ("n2", 20000.0)),
-    ],
-    networks: [
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: ["#######", "#.....#", "#######"],
+            structures: [
+                (1, 1, "player_spawn"),
+                (2, 1, "stationary_tank", "anchored", ("o2", 10000.0)),
+                (5, 1, "stationary_tank", "anchored", ("n2", 20000.0)),
+            ],
+            networks: [
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7
@@ -270,19 +278,23 @@ t.world(
     [==[(
     name: "an empty vessel on a charged main",
     legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: ["##############", "#............#", "##############"],
-    structures: [(1, 1, "player_spawn"), (12, 1, "stationary_tank", "anchored")],
-    networks: [
-        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 7, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 8, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 9, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 10, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 11, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: ["##############", "#............#", "##############"],
+            structures: [(1, 1, "player_spawn"), (12, 1, "stationary_tank", "anchored")],
+            networks: [
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 7, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 8, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 9, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 10, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 11, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7
@@ -335,9 +347,13 @@ t.world(
     [==[(
     name: "the torch",
     legend: { '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: ["#####", "#...#", "#...#", "#...#", "#####"],
-    items: [(2, 2, "welder")],
-    structures: [(2, 2, "player_spawn"), (3, 2, "stationary_tank", "anchored", ("n2", 3000.0))],
+    levels: [
+        (
+            rows: ["#####", "#...#", "#...#", "#...#", "#####"],
+            items: [(2, 2, "welder")],
+            structures: [(2, 2, "player_spawn"), (3, 2, "stationary_tank", "anchored", ("n2", 3000.0))],
+        ),
+    ],
 )]==],
     7
 )

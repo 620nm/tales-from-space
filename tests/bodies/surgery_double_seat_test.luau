@@ -14,17 +14,21 @@ local ui_controls = require("@helpers/ui_controls")
 local ARENA = [==[(
     name: "double theatre",
     legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [ "#####", "#...#", "#####" ],
-    structures: [
-        (1, 1, "player_spawn", { "jobs": "assistant" }),
-        (2, 1, "player_spawn", { "jobs": "medic" }),
-        (3, 1, "player_spawn", { "jobs": "security" }),
-        (2, 1, "optable"),
-    ],
-    items: [
-        (1, 1, "scalpel"), (1, 1, "retractor"), (1, 1, "shard"),
-        (1, 1, "hemostat"),
-        (1, 1, "organ_eyes"), (3, 1, "organ_eyes"),
+    levels: [
+        (
+            rows: [ "#####", "#...#", "#####" ],
+            structures: [
+                (1, 1, "player_spawn", { "jobs": "assistant" }),
+                (2, 1, "player_spawn", { "jobs": "medic" }),
+                (3, 1, "player_spawn", { "jobs": "security" }),
+                (2, 1, "optable"),
+            ],
+            items: [
+                (1, 1, "scalpel"), (1, 1, "retractor"), (1, 1, "shard"),
+                (1, 1, "hemostat"),
+                (1, 1, "organ_eyes"), (3, 1, "organ_eyes"),
+            ],
+        ),
     ],
 )]==]
 -- The two organ_eyes above are donor eyes, one within reach of each

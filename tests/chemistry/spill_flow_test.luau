@@ -33,17 +33,21 @@ local CORRIDOR = [==[(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '+': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Door)),
     },
-    rows: [
-        "#######",
-        "#...+.#",
-        "#######",
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#...+.#",
+                "#######",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            items: [(2, 1, "crowbar")],
+            painted: [(1, 1, "spill_60l")],
+        ),
     ],
-    structures: [(1, 1, "player_spawn")],
-    items: [(2, 1, "crowbar")],
     blends: {
         "spill_60l": (rows: [("water", 3330.6), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
     },
-    painted: [(1, 1, "spill_60l")],
 )]==]
 
 t.world(CORRIDOR, 0)
@@ -177,17 +181,21 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#######",
-        "#.....#",
-        "#######",
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#.....#",
+                "#######",
+            ],
+            structures: [(3, 1, "player_spawn")],
+            items: [(3, 1, "beaker.water")],
+            painted: [(1, 1, "film_3l")],
+        ),
     ],
-    structures: [(3, 1, "player_spawn")],
-    items: [(3, 1, "beaker.water")],
     blends: {
         "film_3l": (rows: [("water", 166.53), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
     },
-    painted: [(1, 1, "film_3l")],
 )]==],
     0
 )

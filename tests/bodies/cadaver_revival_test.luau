@@ -31,28 +31,32 @@ local ARENA = [==[(
         'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
-    rows: [
-        "#######",
-        "#.....#",
-        "#.....#",
-        "#Gao..#",
-        "#######",
-    ],
-    items: [
-        (4, 1, "scalpel"), (4, 1, "retractor"), (4, 1, "hemostat"),
-        (4, 1, "circular_saw"), (4, 1, "cautery"), (4, 1, "organ_heart"),
-    ],
-    structures: [
-        (1, 1, "player_spawn"),
-        (3, 2, "optable"),
-        (5, 2, "cadaver_chamber.cadaver", { "dir": "north" }),
-        (2, 3, "apc"),
-    ],
-    networks: [
-        (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#.....#",
+                "#.....#",
+                "#Gao..#",
+                "#######",
+            ],
+            items: [
+                (4, 1, "scalpel"), (4, 1, "retractor"), (4, 1, "hemostat"),
+                (4, 1, "circular_saw"), (4, 1, "cautery"), (4, 1, "organ_heart"),
+            ],
+            structures: [
+                (1, 1, "player_spawn"),
+                (3, 2, "optable"),
+                (5, 2, "cadaver_chamber.cadaver", { "dir": "north" }),
+                (2, 3, "apc"),
+            ],
+            networks: [
+                (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+        ),
     ],
 )]==]
 

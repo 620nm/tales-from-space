@@ -5,10 +5,14 @@ t.world(
     [==[(
     name: "action controls",
     legend: { '#': (composition: (components: [(component: "station_base"), (component: "wall")])), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])) },
-    rows: ["#######", "#.....#", "#######"],
-    structures: [(1, 1, "player_spawn", { "jobs": "engineer" }), (5, 1, "player_spawn", { "jobs": "assistant" })],
-    items: [(1, 1, "welder"), (1, 1, "rpd"),
-        (1, 1, "breath_mask"), (1, 1, "oxygen_tank")],
+    levels: [
+        (
+            rows: ["#######", "#.....#", "#######"],
+            structures: [(1, 1, "player_spawn", { "jobs": "engineer" }), (5, 1, "player_spawn", { "jobs": "assistant" })],
+            items: [(1, 1, "welder"), (1, 1, "rpd"),
+                (1, 1, "breath_mask"), (1, 1, "oxygen_tank")],
+        ),
+    ],
 )]==],
     7
 )

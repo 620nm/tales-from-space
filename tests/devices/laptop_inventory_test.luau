@@ -4,11 +4,15 @@ local ui_controls = require("@helpers/ui_controls")
 local ARENA = [==[(
     name: "inventory laptop",
     legend: { '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: ["#####", "#...#", "#...#", "#...#", "#####"],
-    structures: [(2, 2, "player_spawn")],
-    items: [(1, 2, "laptop"), (1, 3, "floppy_disk"),
-        (1, 3, "floppy_disk"), (1, 1, "id_assistant"),
-        (3, 1, "id_captain"), (2, 3, "backpack"), (3, 2, "backpack")],
+    levels: [
+        (
+            rows: ["#####", "#...#", "#...#", "#...#", "#####"],
+            structures: [(2, 2, "player_spawn")],
+            items: [(1, 2, "laptop"), (1, 3, "floppy_disk"),
+                (1, 3, "floppy_disk"), (1, 1, "id_assistant"),
+                (3, 1, "id_captain"), (2, 3, "backpack"), (3, 2, "backpack")],
+        ),
+    ],
 )]==]
 
 t.world(ARENA, 0)

@@ -98,20 +98,24 @@ t.world(
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
         'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
-    rows: [
-        "#######",
-        "#...oa#",
-        "#######",
-    ],
-    structures: [(1, 1, "player_spawn"), (5, 1, "apc")],
-    items: [(1, 1, "bottle"), (1, 1, "beaker")],
-    machines: [(2, 1, "chem_dispenser")],
-    networks: [
-        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#...oa#",
+                "#######",
+            ],
+            structures: [(1, 1, "player_spawn"), (5, 1, "apc")],
+            items: [(1, 1, "bottle"), (1, 1, "beaker")],
+            machines: [(2, 1, "chem_dispenser")],
+            networks: [
+                (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+        ),
     ],
 )]==],
     0

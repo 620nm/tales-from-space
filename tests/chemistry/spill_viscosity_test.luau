@@ -28,16 +28,20 @@ local CORRIDOR = [==[(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "########",
-        "#......#",
-        "########",
+    levels: [
+        (
+            rows: [
+                "########",
+                "#......#",
+                "########",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            painted: [(1, 1, "pour")],
+        ),
     ],
-    structures: [(1, 1, "player_spawn")],
     blends: {
         "pour": (rows: [("%s", %s), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
     },
-    painted: [(1, 1, "pour")],
 )]==]
 
 local TILES = 6

@@ -30,23 +30,27 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#...#",
-        "#####",
-    ],
-    structures: [(2, 2, "player_spawn")],
-    items: [
-        (1, 1, "cable_coil"),
-        (3, 3, "cable_coil"),
-        (1, 3, "wirecutters"),
-    ],
-    // One mapped stub in the corner, on the blue line and touching
-    // nothing this spec lays: the length a fresh coil is asked to join.
-    networks: [
-        (x: 3, y: 3, network: "power", channel: "l3", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [(2, 2, "player_spawn")],
+            items: [
+                (1, 1, "cable_coil"),
+                (3, 3, "cable_coil"),
+                (1, 3, "wirecutters"),
+            ],
+            // One mapped stub in the corner, on the blue line and touching
+            // nothing this spec lays: the length a fresh coil is asked to join.
+            networks: [
+                (x: 3, y: 3, network: "power", channel: "l3", kind: "cable", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7

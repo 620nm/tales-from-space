@@ -9,11 +9,15 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: ["########", "#......#", "#......#", "########"],
-    structures: [(1, 1, "player_spawn")],
-    items: [
-        (1, 2, "welder"), (2, 1, "welder"), (3, 1, "welder"), (5, 1, "welder"),
-        (2, 2, "syringe"), (1, 2, "lab_flask"),
+    levels: [
+        (
+            rows: ["########", "#......#", "#......#", "########"],
+            structures: [(1, 1, "player_spawn")],
+            items: [
+                (1, 2, "welder"), (2, 1, "welder"), (3, 1, "welder"), (5, 1, "welder"),
+                (2, 2, "syringe"), (1, 2, "lab_flask"),
+            ],
+        ),
     ],
 )]==],
     7

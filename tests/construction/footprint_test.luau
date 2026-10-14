@@ -34,24 +34,28 @@ local ROOM = [==[(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "###########",
-        "#.........#",
-        "#.........#",
-        "#.........#",
-        "#.........#",
-        "#.........#",
-        "#.........#",
-        "#.........#",
-        "#.........#",
-        "#.........#",
-        "###########",
+    levels: [
+        (
+            rows: [
+                "###########",
+                "#.........#",
+                "#.........#",
+                "#.........#",
+                "#.........#",
+                "#.........#",
+                "#.........#",
+                "#.........#",
+                "#.........#",
+                "#.........#",
+                "###########",
+            ],
+            items: [
+                (7, 4, "screwdriver"), (7, 4, "welder"),
+                (7, 4, "plasteel"), (7, 4, "wrench"),
+            ],
+            structures: [(5, 8, "player_spawn"), (5, 6, "gravity_generator", "fix0")],
+        ),
     ],
-    items: [
-        (7, 4, "screwdriver"), (7, 4, "welder"),
-        (7, 4, "plasteel"), (7, 4, "wrench"),
-    ],
-    structures: [(5, 8, "player_spawn"), (5, 6, "gravity_generator", "fix0")],
 )]==]
 
 t.world(ROOM, 7)

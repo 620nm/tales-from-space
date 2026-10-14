@@ -5,14 +5,18 @@ local MAP = [==[(
     name: "Authored surroundings", tags: ["terrestrial"],
     environment: (atmosphere: Exact(true), %s),
     legend: { 'e': (composition: (substrate: Some("ground")), outdoors: true), '#': (composition: (components: [(component: "station_base"), (component: "wall")])), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])) },
-    rows: ["eeeee", "e###e", "e#.#e", "e###e", "eeeee"],
-    structures: [(2, 2, "player_spawn")],
+    levels: [
+        (
+            rows: ["eeeee", "e###e", "e#.#e", "e###e", "eeeee"],
+            structures: [(2, 2, "player_spawn")],
+            painted: [(2, 2, "room_air")],
+        ),
+    ],
     blends: { "%s": (
         rows: [("co2", 35.0)], temperature_k: 310.0, amount: per_tile,
     ), "room_air": (
         rows: [("n2", 20.0)], temperature_k: 280.0, amount: per_tile,
     ) },
-    painted: [(2, 2, "room_air")],
 )]==]
 
 t.world(string.format(MAP, 'atmosphere_blend: Some("map_air")', "map_air"), 7, "free_build")

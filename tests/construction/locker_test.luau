@@ -9,13 +9,17 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "####",
-        "#..#",
-        "####",
+    levels: [
+        (
+            rows: [
+                "####",
+                "#..#",
+                "####",
+            ],
+            items: [(1, 1, "headset")],
+            structures: [(1, 1, "player_spawn"), (2, 1, "locker.tools")],
+        ),
     ],
-    items: [(1, 1, "headset")],
-    structures: [(1, 1, "player_spawn"), (2, 1, "locker.tools")],
 )]==],
     7
 )

@@ -17,12 +17,16 @@ local ui_controls = require("@helpers/ui_controls")
 local ARENA = [==[(
     name: "ward",
     legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [ "#####", "#...#", "#####" ],
-    structures: [
-        (1, 1, "player_spawn", { "jobs": "engineer" }),
-        (2, 1, "player_spawn", { "jobs": "assistant" }),
+    levels: [
+        (
+            rows: [ "#####", "#...#", "#####" ],
+            structures: [
+                (1, 1, "player_spawn", { "jobs": "engineer" }),
+                (2, 1, "player_spawn", { "jobs": "assistant" }),
+            ],
+            items: [ (1, 1, "scalpel") ],
+        ),
     ],
-    items: [ (1, 1, "scalpel") ],
 )]==]
 
 t.world(ARENA, 0)

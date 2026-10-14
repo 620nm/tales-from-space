@@ -45,19 +45,23 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "######",
-        "#....#",
-        "#....#",
-        "######",
-    ],
-    structures: [(1, 2, "player_spawn")],
-    items: [(1, 2, "wrench"), (3, 2, "wrench"), (2, 1, "pipe_meter"), (4, 1, "pipe_meter")],
-    networks: [
-        (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 3, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
-        (x: 4, y: 1, network: "pipe", channel: "l1", kind: "standard", facing: 15),
-        (x: 4, y: 1, network: "pipe", channel: "l5", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "######",
+                "#....#",
+                "#....#",
+                "######",
+            ],
+            structures: [(1, 2, "player_spawn")],
+            items: [(1, 2, "wrench"), (3, 2, "wrench"), (2, 1, "pipe_meter"), (4, 1, "pipe_meter")],
+            networks: [
+                (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 3, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+                (x: 4, y: 1, network: "pipe", channel: "l1", kind: "standard", facing: 15),
+                (x: 4, y: 1, network: "pipe", channel: "l5", kind: "standard", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7

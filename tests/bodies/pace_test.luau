@@ -20,12 +20,16 @@ local CORRIDOR = string.format(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "%s",
-        "#%s#",
-        "%s",
+    levels: [
+        (
+            rows: [
+                "%s",
+                "#%s#",
+                "%s",
+            ],
+            structures: [(1, 1, "player_spawn")],
+        ),
     ],
-    structures: [(1, 1, "player_spawn")],
 )]==],
     string.rep("#", WIDTH + 2),
     string.rep(".", WIDTH),

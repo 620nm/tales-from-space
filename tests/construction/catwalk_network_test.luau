@@ -12,10 +12,14 @@ t.world([==[(
         'l': (composition: (substrate: Some("space"), components: [(component: "lattice")])),
         'c': (composition: (substrate: Some("space"), components: [(component: "catwalk")]), outdoors: true),
     },
-    rows: ["#####", "#slc#", "#...#", "#####"],
+    levels: [
+        (
+            rows: ["#####", "#slc#", "#...#", "#####"],
+            structures: [(2, 2, "player_spawn")],
+            items: [(1, 2, "cable_coil")],
+        ),
+    ],
     environment: (gravity_m_s2: Exact(9.80665)),
-    structures: [(2, 2, "player_spawn")],
-    items: [(1, 2, "cable_coil")],
 )]==], 7)
 local player = t.join()
 t.tick()
@@ -48,16 +52,20 @@ local BRIDGE = [==[(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'c': (composition: (substrate: Some("space"), components: [(component: "catwalk")]), outdoors: true),
     },
-    rows: ["#####", "#.c.#", "#...#", "#####"],
-    environment: (gravity_m_s2: Exact(9.80665)),
-    structures: [(2, 2, "player_spawn")],
-    items: [(1, 2, "%s")],
-    networks: [
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: ["#####", "#.c.#", "#...#", "#####"],
+            structures: [(2, 2, "player_spawn")],
+            items: [(1, 2, "%s")],
+            networks: [
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+        ),
     ],
+    environment: (gravity_m_s2: Exact(9.80665)),
 )]==]
 
 for _, item in ipairs({ "wirecutters", "floor_tile" }) do

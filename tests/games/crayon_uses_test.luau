@@ -6,9 +6,13 @@ t.world(
     [==[(
     name: "crayon uses",
     legend: { '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: ["#####", "#...#", "#...#", "#####"],
-    structures: [(2, 1, "player_spawn")],
-    items: [(2, 1, "paper"), (3, 1, "crayon_red")],
+    levels: [
+        (
+            rows: ["#####", "#...#", "#...#", "#####"],
+            structures: [(2, 1, "player_spawn")],
+            items: [(2, 1, "paper"), (3, 1, "crayon_red")],
+        ),
+    ],
 )]==],
     0
 )

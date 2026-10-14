@@ -11,15 +11,19 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "############",
-        "#..........#",
-        "#..........#",
-        "#..........#",
-        "############",
+    levels: [
+        (
+            rows: [
+                "############",
+                "#..........#",
+                "#..........#",
+                "#..........#",
+                "############",
+            ],
+            structures: [(2, 1, "player_spawn")],
+            items: [(2, 2, "welder")],
+        ),
     ],
-    structures: [(2, 1, "player_spawn")],
-    items: [(2, 2, "welder")],
 )]==],
     7
 )
@@ -55,13 +59,17 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#####",
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#####",
+            ],
+            structures: [(2, 1, "player_spawn")],
+            items: [(3, 1, "welder")],
+        ),
     ],
-    structures: [(2, 1, "player_spawn")],
-    items: [(3, 1, "welder")],
 )]==],
     7
 )

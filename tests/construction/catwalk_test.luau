@@ -23,12 +23,16 @@ t.world(
         'c': (composition: (substrate: Some("space"), components: [(component: "catwalk")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
-    rows: [
-        "lcc~~",
-        ".....",
-    ],
-    structures: [
-        (1, 1, "player_spawn"),
+    levels: [
+        (
+            rows: [
+                "lcc~~",
+                ".....",
+            ],
+            structures: [
+                (1, 1, "player_spawn"),
+            ],
+        ),
     ],
 )]==],
     7
@@ -61,14 +65,18 @@ t.world(
         'c': (composition: (substrate: Some("space"), components: [(component: "catwalk")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
-    rows: [
-        "....",
-        "..~.",
-        ".~..",
-        "....",
+    levels: [
+        (
+            rows: [
+                "....",
+                "..~.",
+                ".~..",
+                "....",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            items: [(1, 1, "rod"), (1, 1, "wirecutters")],
+        ),
     ],
-    structures: [(1, 1, "player_spawn")],
-    items: [(1, 1, "rod"), (1, 1, "wirecutters")],
 )]==],
     7
 )
@@ -153,15 +161,19 @@ t.world(
         'c': (composition: (substrate: Some("space"), components: [(component: "catwalk")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
-    rows: [
-        ".....",
-        "..l..",
-        "...c.",
-        ".....",
-        ".....",
+    levels: [
+        (
+            rows: [
+                ".....",
+                "..l..",
+                "...c.",
+                ".....",
+                ".....",
+            ],
+            items: [(2, 2, "crowbar")],
+            structures: [(2, 2, "player_spawn")],
+        ),
     ],
-    items: [(2, 2, "crowbar")],
-    structures: [(2, 2, "player_spawn")],
 )]==],
     7
 )

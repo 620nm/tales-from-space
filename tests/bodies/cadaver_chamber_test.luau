@@ -25,19 +25,23 @@ t.world(
         'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
-    rows: [
-        "#######",
-        "#.....#",
-        "#Gao..#",
-        "#######",
-    ],
-    items: [(3, 1, "headset")],
-    structures: [(1, 1, "player_spawn", { "jobs": "medic" }), (3, 1, "player_spawn", { "jobs": "assistant" }), (2, 1, "cadaver_chamber", { "dir": "east" }), (2, 2, "apc")],
-    networks: [
-        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#.....#",
+                "#Gao..#",
+                "#######",
+            ],
+            items: [(3, 1, "headset")],
+            structures: [(1, 1, "player_spawn", { "jobs": "medic" }), (3, 1, "player_spawn", { "jobs": "assistant" }), (2, 1, "cadaver_chamber", { "dir": "east" }), (2, 2, "apc")],
+            networks: [
+                (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7
@@ -169,19 +173,23 @@ t.world(
         'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#Gao#",
-        "#####",
-    ],
-    items: [],
-    structures: [(1, 1, "player_spawn"), (2, 1, "cadaver_chamber", { "dir": "east" }), (2, 2, "apc")],
-    networks: [
-        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#Gao#",
+                "#####",
+            ],
+            items: [],
+            structures: [(1, 1, "player_spawn"), (2, 1, "cadaver_chamber", { "dir": "east" }), (2, 2, "apc")],
+            networks: [
+                (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7
@@ -224,19 +232,23 @@ t.world(
         'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
-    rows: [
-        "#######",
-        "#.....#",
-        "#.....#",
-        "#Gao..#",
-        "#######",
-    ],
-    structures: [(3, 2, "player_spawn", { "jobs": "medic" }), (4, 1, "player_spawn", { "jobs": "assistant" }), (2, 1, "cadaver_chamber", { "dir": "east" }), (2, 3, "apc")],
-    networks: [
-        (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#.....#",
+                "#.....#",
+                "#Gao..#",
+                "#######",
+            ],
+            structures: [(3, 2, "player_spawn", { "jobs": "medic" }), (4, 1, "player_spawn", { "jobs": "assistant" }), (2, 1, "cadaver_chamber", { "dir": "east" }), (2, 3, "apc")],
+            networks: [
+                (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7

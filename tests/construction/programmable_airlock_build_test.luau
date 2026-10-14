@@ -6,13 +6,17 @@ t.world(
     [==[(
     name: "controller fittings bench",
     legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: ["#######", "#.....#", "#.....#", "#######"],
-    structures: [(2, 1, "player_spawn")],
-    items: [(1, 1, "airlock_button_fitting"), (1, 2, "screwdriver"),
-        (2, 2, "wrench"), (3, 1, "bidirectional_vent_fitting")],
-    networks: [
-        (x: 3, y: 0, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 3, y: 2, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: ["#######", "#.....#", "#.....#", "#######"],
+            structures: [(2, 1, "player_spawn")],
+            items: [(1, 1, "airlock_button_fitting"), (1, 2, "screwdriver"),
+                (2, 2, "wrench"), (3, 1, "bidirectional_vent_fitting")],
+            networks: [
+                (x: 3, y: 0, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 3, y: 2, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+            ],
+        ),
     ],
 )]==],
     0

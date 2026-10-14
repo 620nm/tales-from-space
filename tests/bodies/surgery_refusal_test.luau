@@ -7,12 +7,16 @@
 local ARENA = [==[(
     name: "ward",
     legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [ "#####", "#...#", "#####" ],
-    structures: [
-        (1, 1, "player_spawn", { "jobs": "assistant" }),
-        (2, 1, "player_spawn", { "jobs": "medic" }),
+    levels: [
+        (
+            rows: [ "#####", "#...#", "#####" ],
+            structures: [
+                (1, 1, "player_spawn", { "jobs": "assistant" }),
+                (2, 1, "player_spawn", { "jobs": "medic" }),
+            ],
+            items: [ (1, 1, "scalpel"), (1, 1, "retractor") ],
+        ),
     ],
-    items: [ (1, 1, "scalpel"), (1, 1, "retractor") ],
 )]==]
 
 t.world(ARENA, 0)

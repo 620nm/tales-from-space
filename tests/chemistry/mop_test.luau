@@ -24,10 +24,20 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#####",
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#####",
+            ],
+            painted: [(2, 1, "water_3l")],
+            structures: [(1, 1, "player_spawn")],
+            items: [
+                (1, 1, "mop"),
+                (1, 1, "beaker_bluespace"),
+            ],
+        ),
     ],
     // Three litres standing on one tile: 55.51 mol of water is a litre
     // of it, and the two air rows ride along because a painted tile
@@ -36,12 +46,6 @@ t.world(
     blends: {
         "water_3l": (rows: [("water", 166.53), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
     },
-    painted: [(2, 1, "water_3l")],
-    structures: [(1, 1, "player_spawn")],
-    items: [
-        (1, 1, "mop"),
-        (1, 1, "beaker_bluespace"),
-    ],
 )]==],
     0
 )

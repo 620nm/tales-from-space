@@ -68,33 +68,37 @@ local CROSSING = [==[(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "########",
-        "#......#",
-        "#......#",
-        "########",
+    levels: [
+        (
+            rows: [
+                "########",
+                "#......#",
+                "#......#",
+                "########",
+            ],
+            // Every tile of the line carries all three mains. The valve's OWN
+            // layer is the one length that is missing under it -- a run does
+            // not pass through a machine, and a map that draws one there is
+            // refused at boot ("conflicting atmospherics", sim/mod.rs), so
+            // this mask is the only legal way to draw a crossing.
+            networks: [
+                (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 1, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+                %s,
+                (x: 4, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 4, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+                (x: 5, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 5, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+            ],
+            structures: [(3, 2, "player_spawn"), (3, 1, "manual_valve", { "channel": "%s" })],
+        ),
     ],
-    // Every tile of the line carries all three mains. The valve's OWN
-    // layer is the one length that is missing under it -- a run does
-    // not pass through a machine, and a map that draws one there is
-    // refused at boot ("conflicting atmospherics", sim/mod.rs), so
-    // this mask is the only legal way to draw a crossing.
-    networks: [
-        (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 1, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
-        (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 2, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
-        %s,
-        (x: 4, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 4, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
-        (x: 5, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 5, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
-    ],
-    structures: [(3, 2, "player_spawn"), (3, 1, "manual_valve", { "channel": "%s" })],
 )]==]
 
 -- One placed valve, proved against the two layers it is not on.
@@ -221,32 +225,36 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "##########",
-        "#........#",
-        "#........#",
-        "#........#",
-        "##########",
+    levels: [
+        (
+            rows: [
+                "##########",
+                "#........#",
+                "#........#",
+                "#........#",
+                "##########",
+            ],
+            // Row 2 carries no pipe at all, so the two mains are never
+            // adjacent: one walkway between them, and no plumbing across it.
+            networks: [
+                (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 7, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 8, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 1, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 2, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 5, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 6, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 7, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 8, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+            structures: [(4, 2, "player_spawn"), (4, 1, "manual_valve"), (4, 3, "digital_valve")],
+        ),
     ],
-    // Row 2 carries no pipe at all, so the two mains are never
-    // adjacent: one walkway between them, and no plumbing across it.
-    networks: [
-        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 7, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 8, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 1, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 2, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 5, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 6, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 7, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 8, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-    ],
-    structures: [(4, 2, "player_spawn"), (4, 1, "manual_valve"), (4, 3, "digital_valve")],
 )]==],
     7
 )

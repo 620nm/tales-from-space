@@ -41,17 +41,21 @@ t.world(
     [==[(
     name: "meter layers by hand",
     legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#####",
-    ],
-    structures: [(2, 2, "player_spawn")],
-    items: [(2, 1, "wrench"), (2, 1, "pipe_meter")],
-    networks: [
-        (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 2, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [(2, 2, "player_spawn")],
+            items: [(2, 1, "wrench"), (2, 1, "pipe_meter")],
+            networks: [
+                (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7
@@ -127,18 +131,22 @@ t.world(
     [==[(
     name: "meter layers by RPD",
     legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [
-        "######",
-        "#....#",
-        "#....#",
-        "######",
-    ],
-    structures: [(2, 2, "player_spawn")],
-    items: [(2, 2, "rpd"), (2, 2, "wrench")],
-    networks: [
-        (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 3, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 3, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "######",
+                "#....#",
+                "#....#",
+                "######",
+            ],
+            structures: [(2, 2, "player_spawn")],
+            items: [(2, 2, "rpd"), (2, 2, "wrench")],
+            networks: [
+                (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 3, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 3, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7

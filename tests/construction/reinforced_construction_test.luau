@@ -30,14 +30,18 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#####",
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [(2, 1, "player_spawn")],
+            items: [(2, 1, "rod"), (2, 1, "crowbar"), (2, 1, "wrench")],
+        ),
     ],
-    structures: [(2, 1, "player_spawn")],
-    items: [(2, 1, "rod"), (2, 1, "crowbar"), (2, 1, "wrench")],
 )]==],
     7
 )
@@ -96,18 +100,22 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#...#",
-        "#####",
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            items: [
+                (2, 2, "plasteel"), (2, 2, "screwdriver"), (2, 2, "wirecutters"),
+                (2, 2, "crowbar"), (2, 2, "welder"), (2, 2, "wrench"),
+            ],
+            structures: [(2, 2, "player_spawn"), (1, 2, "girder")],
+        ),
     ],
-    items: [
-        (2, 2, "plasteel"), (2, 2, "screwdriver"), (2, 2, "wirecutters"),
-        (2, 2, "crowbar"), (2, 2, "welder"), (2, 2, "wrench"),
-    ],
-    structures: [(2, 2, "player_spawn"), (1, 2, "girder")],
 )]==],
     7
 )
@@ -220,14 +228,18 @@ t.world(
         'R': (composition: (components: [(component: "station_base"), (component: "reinforced_wall")])),
         'r': (composition: (components: [(component: "station_base"), (component: "reinforcement")])),
     },
-    rows: [
-        "#####",
-        "##.##",
-        "#Rr.#",
-        "##.##",
-        "#####",
+    levels: [
+        (
+            rows: [
+                "#####",
+                "##.##",
+                "#Rr.#",
+                "##.##",
+                "#####",
+            ],
+            structures: [(3, 2, "player_spawn")],
+        ),
     ],
-    structures: [(3, 2, "player_spawn")],
 )]==],
     7
 )

@@ -10,12 +10,16 @@ local ui_controls = require("@helpers/ui_controls")
 local BRAWL = [==[(
     name: "brawl",
     legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [ "#####", "#...#", "#####" ],
-    structures: [
-        (1, 1, "player_spawn", { "jobs": "assistant" }),
-        (2, 1, "player_spawn", { "jobs": "medic" }),
+    levels: [
+        (
+            rows: [ "#####", "#...#", "#####" ],
+            structures: [
+                (1, 1, "player_spawn", { "jobs": "assistant" }),
+                (2, 1, "player_spawn", { "jobs": "medic" }),
+            ],
+            items: [ (1, 1, "toolbox") ],
+        ),
     ],
-    items: [ (1, 1, "toolbox") ],
 )]==]
 
 local function near(got: number, want: number, what: string)

@@ -61,14 +61,18 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#####",
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            items: [(2, 1, "card_deck"), (3, 1, "card_deck")],
+        ),
     ],
-    structures: [(1, 1, "player_spawn")],
-    items: [(2, 1, "card_deck"), (3, 1, "card_deck")],
 )]==],
     0
 )

@@ -29,16 +29,20 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "########",
-        "#......#",
-        "#......#",
-        "########",
-    ],
-    structures: [
-        (6, 2, "player_spawn"),
-        (1, 1, "table"), (2, 1, "table"), (3, 1, "reinforced_table"),
-        (4, 1, "wood_table"), (5, 1, "wood_table"),
+    levels: [
+        (
+            rows: [
+                "########",
+                "#......#",
+                "#......#",
+                "########",
+            ],
+            structures: [
+                (6, 2, "player_spawn"),
+                (1, 1, "table"), (2, 1, "table"), (3, 1, "reinforced_table"),
+                (4, 1, "wood_table"), (5, 1, "wood_table"),
+            ],
+        ),
     ],
 )]==],
     7
@@ -103,20 +107,24 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#...#",
-        "#####",
-    ],
-    structures: [(1, 1, "player_spawn")],
-    items: [
-        (2, 1, "rod"),
-        (1, 2, "metal"),
-        (1, 1, "wrench"),
-        (1, 1, "screwdriver"),
-        (1, 1, "light_bulb"),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            items: [
+                (2, 1, "rod"),
+                (1, 2, "metal"),
+                (1, 1, "wrench"),
+                (1, 1, "screwdriver"),
+                (1, 1, "light_bulb"),
+            ],
+        ),
     ],
 )]==],
     7

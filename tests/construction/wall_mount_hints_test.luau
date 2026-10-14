@@ -16,18 +16,22 @@ t.world(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
 
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "##..#",
-        "#####",
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "##..#",
+                "#####",
+            ],
+            structures: [
+                (2, 1, "player_spawn"),
+                (2, 2, "airlock_button", { "mount": "southwest" }),
+            ],
+            items: [(2, 1, "spray_bottle")],
+        ),
     ],
-    structures: [
-        (2, 1, "player_spawn"),
-        (2, 2, "airlock_button", { "mount": "southwest" }),
-    ],
-    items: [(2, 1, "spray_bottle")],
 )]==],
     0
 )
@@ -116,18 +120,22 @@ t.world(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
 
     },
-    rows: [
-        "########",
-        "#......#",
-        "#......#",
-        "##....##",
-        "########",
+    levels: [
+        (
+            rows: [
+                "########",
+                "#......#",
+                "#......#",
+                "##....##",
+                "########",
+            ],
+            structures: [
+                (2, 1, "player_spawn"),
+                (2, 2, "airlock_button", { "mount": "southwest" }),
+            ],
+            items: [(2, 1, "spray_bottle")],
+        ),
     ],
-    structures: [
-        (2, 1, "player_spawn"),
-        (2, 2, "airlock_button", { "mount": "southwest" }),
-    ],
-    items: [(2, 1, "spray_bottle")],
 )]==],
     0
 )

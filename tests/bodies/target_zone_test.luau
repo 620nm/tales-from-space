@@ -14,13 +14,17 @@ local ui_controls = require("@helpers/ui_controls")
 local ARENA = [==[(
     name: "ward",
     legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [ "#####", "#...#", "#####" ],
-    structures: [
-        (1, 1, "player_spawn", { "jobs": "assistant" }),
-        (2, 1, "player_spawn", { "jobs": "medic" }),
-        (2, 1, "optable"),
+    levels: [
+        (
+            rows: [ "#####", "#...#", "#####" ],
+            structures: [
+                (1, 1, "player_spawn", { "jobs": "assistant" }),
+                (2, 1, "player_spawn", { "jobs": "medic" }),
+                (2, 1, "optable"),
+            ],
+            items: [ (1, 1, "scalpel"), (1, 1, "retractor") ],
+        ),
     ],
-    items: [ (1, 1, "scalpel"), (1, 1, "retractor") ],
 )]==]
 
 local function has(states, name)
@@ -158,12 +162,16 @@ assert(not has(parts.chest.states, "skin_cut"), "and the chest above it was not"
 local BRAWL = [==[(
     name: "brawl",
     legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [ "#####", "#...#", "#####" ],
-    structures: [
-        (1, 1, "player_spawn", { "jobs": "assistant" }),
-        (2, 1, "player_spawn", { "jobs": "medic" }),
+    levels: [
+        (
+            rows: [ "#####", "#...#", "#####" ],
+            structures: [
+                (1, 1, "player_spawn", { "jobs": "assistant" }),
+                (2, 1, "player_spawn", { "jobs": "medic" }),
+            ],
+            items: [ (1, 1, "toolbox") ],
+        ),
     ],
-    items: [ (1, 1, "toolbox") ],
 )]==]
 
 t.world(BRAWL, 7)

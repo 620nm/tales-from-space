@@ -13,15 +13,19 @@ local CORRIDOR = [==[(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "##################",
-        "#................#",
-        "##################",
-    ],
-    structures: [
-        (8, 1, "player_spawn"),
-        (1, 1, "locker"),
-        (16, 1, "locker"),
+    levels: [
+        (
+            rows: [
+                "##################",
+                "#................#",
+                "##################",
+            ],
+            structures: [
+                (8, 1, "player_spawn"),
+                (1, 1, "locker"),
+                (16, 1, "locker"),
+            ],
+        ),
     ],
 )]==]
 

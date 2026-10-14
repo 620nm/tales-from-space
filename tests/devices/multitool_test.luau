@@ -37,19 +37,23 @@ t.world(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
-    rows: [
-        "#####",
-        "#G..#",
-        "#...#",
-        "#####",
-    ],
-    structures: [(2, 1, "player_spawn")],
-    items: [(2, 1, "multitool")],
-    networks: [
-        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#G..#",
+                "#...#",
+                "#####",
+            ],
+            structures: [(2, 1, "player_spawn")],
+            items: [(2, 1, "multitool")],
+            networks: [
+                (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7

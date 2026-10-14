@@ -116,71 +116,75 @@ t.world(
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
         'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
     },
-    // One socket in the middle of the room, because three of the five
-    // devices here hang on a CORD rather than on the cable under them
-    // and a mount out of cord range is a mount with no address
-    // (docs/POWER.md).
-    rows: [
-        "################",
-        "#..............#",
-        "#.......o......#",
-        "#............ag#",
-        "################",
+    levels: [
+        (
+            // One socket in the middle of the room, because three of the five
+            // devices here hang on a CORD rather than on the cable under them
+            // and a mount out of cord range is a mount with no address
+            // (docs/POWER.md).
+            rows: [
+                "################",
+                "#..............#",
+                "#.......o......#",
+                "#............ag#",
+                "################",
+            ],
+            items: [(7, 2, "id_engineering"), (9, 2, "laptop")],
+            // The waste main runs out under the west wall, so the scrubber has
+            // somewhere to put what it takes (tests/room_devices_test.luau).
+            networks: [
+                (x: 0, y: 2, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 1, y: 2, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 13, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 14, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 9, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 10, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 11, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 12, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 9, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 10, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 11, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 12, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 12, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 13, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+            structures: [
+                (7, 2, "player_spawn"),
+                (2, 1, "vent"),
+                (3, 1, "pump", "running", { "dir": "west", "target_kpa": 900.0 }),
+                (4, 1, "connector_port", { "pipe": "west" }),
+                (4, 1, "canister", { "blend": "canister_air" }),
+                (2, 2, "air_scrubber"),
+                // The card is spelled out rather than left to the socket's
+                // default, because this box is nothing at all without one and a
+                // bench should say so (docs/map-properties/placements.md,
+                // "Sockets").
+                (6, 1, "air_alarm", { "access": "engineering", "network_1": "network_card", "mount": "north" }),
+                (9, 1, "access_point", { "mount": "north" }),
+                (13, 3, "apc"),
+            ],
+            machines: [(11, 1, "transceiver")],
+        ),
     ],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
-    items: [(7, 2, "id_engineering"), (9, 2, "laptop")],
-    // The waste main runs out under the west wall, so the scrubber has
-    // somewhere to put what it takes (tests/room_devices_test.luau).
-    networks: [
-        (x: 0, y: 2, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 1, y: 2, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 13, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 14, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 8, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 9, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 10, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 11, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 12, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 9, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 10, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 11, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 12, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 12, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 13, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
-    ],
-    structures: [
-        (7, 2, "player_spawn"),
-        (2, 1, "vent"),
-        (3, 1, "pump", "running", { "dir": "west", "target_kpa": 900.0 }),
-        (4, 1, "connector_port", { "pipe": "west" }),
-        (4, 1, "canister", { "blend": "canister_air" }),
-        (2, 2, "air_scrubber"),
-        // The card is spelled out rather than left to the socket's
-        // default, because this box is nothing at all without one and a
-        // bench should say so (docs/map-properties/placements.md,
-        // "Sockets").
-        (6, 1, "air_alarm", { "access": "engineering", "network_1": "network_card", "mount": "north" }),
-        (9, 1, "access_point", { "mount": "north" }),
-        (13, 3, "apc"),
-    ],
-    machines: [(11, 1, "transceiver")],
 
 )]==],
     7

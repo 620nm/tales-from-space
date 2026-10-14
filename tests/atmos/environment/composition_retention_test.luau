@@ -15,17 +15,21 @@ local STATION = [==[(
         'e': (composition: (substrate: Some("space"), components: [(component: "station_base")]), outdoors: true),
         'n': (composition: (components: [(component: "station_base")])),
     },
-    rows: [
-        "#########",
-        "#.gben..#",
-        "#.......#",
-        "#########",
-    ],
-    structures: [(1, 1, "player_spawn")],
-    items: [(1, 1, "floor_tile"), (1, 2, "crowbar"), (2, 2, "welder")],
-    networks: [
-        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#########",
+                "#.gben..#",
+                "#.......#",
+                "#########",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            items: [(1, 1, "floor_tile"), (1, 2, "crowbar"), (2, 2, "welder")],
+            networks: [
+                (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+            ],
+        ),
     ],
 )]==]
 

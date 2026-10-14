@@ -27,24 +27,28 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "########",
-        "#......#",
-        "#......#",
-        "#......#",
-        "########",
-    ],
-    items: [(2, 1, "metal"), (2, 3, "wrench"), (2, 1, "welder")],
-    // A charged tank at the far end of one length of pipe. It is here
-    // so the tank BUILT below has something to fill from: a vessel's
-    // mouths are pipe ports and nothing else, exactly as tg's are, so
-    // there is no way to put gas in one out of the room around it.
-    structures: [
-        (2, 2, "player_spawn"),
-        (5, 2, "stationary_tank", "anchored", ("plasma", 2000.0)),
-    ],
-    networks: [
-        (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "########",
+                "#......#",
+                "#......#",
+                "#......#",
+                "########",
+            ],
+            items: [(2, 1, "metal"), (2, 3, "wrench"), (2, 1, "welder")],
+            // A charged tank at the far end of one length of pipe. It is here
+            // so the tank BUILT below has something to fill from: a vessel's
+            // mouths are pipe ports and nothing else, exactly as tg's are, so
+            // there is no way to put gas in one out of the room around it.
+            structures: [
+                (2, 2, "player_spawn"),
+                (5, 2, "stationary_tank", "anchored", ("plasma", 2000.0)),
+            ],
+            networks: [
+                (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7

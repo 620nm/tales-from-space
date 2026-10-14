@@ -55,16 +55,25 @@ t.world(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'c': (composition: (components: [(component: "station_base")])),
     },
-    rows: [
-        "######",
-        "#c...#",
-        "#oo..#",
-        "######",
-    ],
-    items: [(1, 2, "wrench"), (2, 1, "pipe_meter"), (3, 2, "pipe_meter")],
-    networks: [
-        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "######",
+                "#c...#",
+                "#oo..#",
+                "######",
+            ],
+            items: [(1, 2, "wrench"), (2, 1, "pipe_meter"), (3, 2, "pipe_meter")],
+            networks: [
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+            structures: [
+                (1, 2, "player_spawn"),
+                (1, 1, "connector_port"),
+                (1, 1, "canister", { "blend": "canister_air", "open": true }),
+            ],
+        ),
     ],
     blends: {
         // Standard air, deliberately: a recipe is moles PER TILE and the
@@ -74,11 +83,6 @@ t.world(
         // one-atmosphere stop.
         "canister_air": (rows: [("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: per_tile),
     },
-    structures: [
-        (1, 2, "player_spawn"),
-        (1, 1, "connector_port"),
-        (1, 1, "canister", { "blend": "canister_air", "open": true }),
-    ],
 )]==],
     7
 )
@@ -273,17 +277,21 @@ t.world(
     [==[(
     name: "extended main",
     legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [
-        "######",
-        "#....#",
-        "######",
+    levels: [
+        (
+            rows: [
+                "######",
+                "#....#",
+                "######",
+            ],
+            items: [(3, 1, "pipe")],
+            networks: [
+                (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+            structures: [(3, 1, "player_spawn"), (1, 1, "meter")],
+        ),
     ],
-    items: [(3, 1, "pipe")],
-    networks: [
-        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-    ],
-    structures: [(3, 1, "player_spawn"), (1, 1, "meter")],
 )]==],
     7
 )
@@ -376,17 +384,21 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#####",
-    ],
-    networks: [(x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15)],
-    structures: [
-        (3, 1, "player_spawn"),
-        (1, 1, "connector_port"),
-        (1, 1, "canister"),
-        (2, 1, "meter"),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#####",
+            ],
+            networks: [(x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15)],
+            structures: [
+                (3, 1, "player_spawn"),
+                (1, 1, "connector_port"),
+                (1, 1, "canister"),
+                (2, 1, "meter"),
+            ],
+        ),
     ],
 )]==],
     7

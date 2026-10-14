@@ -14,13 +14,17 @@ local WARD = [==[(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#######",
-        "#.....#",
-        "#######",
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#.....#",
+                "#######",
+            ],
+            structures: [(1, 1, "player_spawn"), (3, 1, "player_spawn"), (5, 1, "player_spawn")],
+            items: [(2, 1, "health_hud")],
+        ),
     ],
-    structures: [(1, 1, "player_spawn"), (3, 1, "player_spawn"), (5, 1, "player_spawn")],
-    items: [(2, 1, "health_hud")],
 )]==]
 
 t.world(WARD, 0)

@@ -33,8 +33,12 @@ t.world(
     [==[(
     name: "ground construction", tags: ["terrestrial"],
     legend: { '#': (composition: (components: [(component: "station_base"), (component: "wall")])), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), 'g': (composition: (substrate: Some("ground")), outdoors: true) },
-    rows: ["###", "#.g", "###"], structures: [(1, 1, "player_spawn")],
-    items: [(1, 1, "floor_tile")],
+    levels: [
+        (
+            rows: ["###", "#.g", "###"], structures: [(1, 1, "player_spawn")],
+            items: [(1, 1, "floor_tile")],
+        ),
+    ],
 )]==],
     7
 )

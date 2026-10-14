@@ -132,19 +132,23 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "############",
-        "#..........#",
-        "#..........#",
-        "############",
-    ],
-    structures: [
-        (2, 2, "player_spawn"),
-        (2, 1, "stationary_tank", "anchored", ("o2", 23000.0)),
-        (4, 1, "stationary_tank", "anchored", ("o2", 4000.0)),
-        (6, 1, "stationary_tank", "anchored", ("n2", 34500.0)),
-        (8, 1, "stationary_tank", "anchored", ("n2", 9200.0)),
-        (10, 1, "stationary_tank", "anchored", ("co2", 60000.0)),
+    levels: [
+        (
+            rows: [
+                "############",
+                "#..........#",
+                "#..........#",
+                "############",
+            ],
+            structures: [
+                (2, 2, "player_spawn"),
+                (2, 1, "stationary_tank", "anchored", ("o2", 23000.0)),
+                (4, 1, "stationary_tank", "anchored", ("o2", 4000.0)),
+                (6, 1, "stationary_tank", "anchored", ("n2", 34500.0)),
+                (8, 1, "stationary_tank", "anchored", ("n2", 9200.0)),
+                (10, 1, "stationary_tank", "anchored", ("co2", 60000.0)),
+            ],
+        ),
     ],
 )]==],
     7
@@ -313,19 +317,23 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#...#",
-        "#####",
-    ],
-    structures: [
-        (2, 2, "player_spawn"),
-        (1, 1, "stationary_tank"),
-        (3, 1, "stationary_tank", "anchored"),
-        (1, 3, "stationary_tank", ("n2", 5000.0)),
-        (3, 3, "stationary_tank", "anchored", ("o2", 23000.0)),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [
+                (2, 2, "player_spawn"),
+                (1, 1, "stationary_tank"),
+                (3, 1, "stationary_tank", "anchored"),
+                (1, 3, "stationary_tank", ("n2", 5000.0)),
+                (3, 3, "stationary_tank", "anchored", ("o2", 23000.0)),
+            ],
+        ),
     ],
 )]==],
     7

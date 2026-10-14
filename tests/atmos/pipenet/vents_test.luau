@@ -118,36 +118,40 @@ local SUPPLY_MAP = [==[(
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
         'a': (composition: (components: [(component: "station_base")])),
     },
-    rows: [
-        "#########",
-        "#...c.ga#",
-        "#########",
-    ],
-    // The pump regulates the vent's feed at one atmosphere off the
-    // bottle's forty -- tg's own station shape, because a fastened
-    // bottle IS its line and a vent on a forty-atmosphere main would
-    // out-blow the very breach this file is about.
-    networks: [
-        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#########",
+                "#...c.ga#",
+                "#########",
+            ],
+            // The pump regulates the vent's feed at one atmosphere off the
+            // bottle's forty -- tg's own station shape, because a fastened
+            // bottle IS its line and a vent on a forty-atmosphere main would
+            // out-blow the very breach this file is about.
+            networks: [
+                (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+            structures: [
+                (5, 1, "player_spawn"),
+                (2, 1, "vent"),
+                (3, 1, "pump", "running", { "dir": "west" }),
+                (4, 1, "connector_port", { "pipe": "west" }),
+                (4, 1, "canister", { "blend": "canister_air" }),
+                (7, 1, "apc"),
+            ],
+        ),
     ],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
-    structures: [
-        (5, 1, "player_spawn"),
-        (2, 1, "vent"),
-        (3, 1, "pump", "running", { "dir": "west" }),
-        (4, 1, "connector_port", { "pipe": "west" }),
-        (4, 1, "canister", { "blend": "canister_air" }),
-        (7, 1, "apc"),
-    ],
     // Backbone (L2) under the generator and the APC; room circuit (L1) from the
     // APC's own tile west along the corridor to the vent.
 
@@ -283,25 +287,29 @@ local RELIEF_MAP = [==[(
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
         'a': (composition: (components: [(component: "station_base")])),
     },
-    rows: [
-        "#########",
-        "#....ga.#",
-        "#########",
+    levels: [
+        (
+            rows: [
+                "#########",
+                "#....ga.#",
+                "#########",
+            ],
+            networks: [
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+            structures: [(4, 1, "player_spawn"), (1, 1, "vent"), (6, 1, "apc")],
+        ),
     ],
-    networks: [
-        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-    ],
-    structures: [(4, 1, "player_spawn"), (1, 1, "vent"), (6, 1, "apc")],
 
 )]==]
 
@@ -393,23 +401,27 @@ local PASSIVE_MAP = [==[(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'c': (composition: (components: [(component: "station_base")])),
     },
-    rows: [
-        "#########",
-        "#....c..#",
-        "#########",
-    ],
-    networks: [
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#########",
+                "#....c..#",
+                "#########",
+            ],
+            networks: [
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+            structures: [
+                (4, 1, "player_spawn"),
+                (2, 1, "passive_vent"), (5, 1, "connector_port"),
+                (5, 1, "canister", { "blend": "canister_air", "open": true }),
+            ],
+        ),
     ],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
-    structures: [
-        (4, 1, "player_spawn"),
-        (2, 1, "passive_vent"), (5, 1, "connector_port"),
-        (5, 1, "canister", { "blend": "canister_air", "open": true }),
-    ],
 )]==]
 
 t.world(PASSIVE_MAP, 7, "free_build")

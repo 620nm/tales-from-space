@@ -102,48 +102,52 @@ local DEAD_SUPPLY = [==[(
         'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
-    rows: [
-        "########",
-        "#......#",
-        "#....ag#",
-        "########",
+    levels: [
+        (
+            rows: [
+                "########",
+                "#......#",
+                "#....ag#",
+                "########",
+            ],
+            // The waste main runs out under the west wall, so the room's air
+            // has somewhere to go that is not the room. Layer 2, where a
+            // scrubber lives.
+            networks: [
+                (x: 0, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+            ],
+            // Placed and SILENT, which is the whole point: a placement that
+            // says nothing is a return grille, and this file is what that
+            // means. It is put down running, the way a commissioned station's
+            // machines are.
+            structures: [(3, 1, "player_spawn"), (2, 1, "air_scrubber", "scrubbing"), (5, 2, "apc")],
+        ),
     ],
-    // The waste main runs out under the west wall, so the room's air
-    // has somewhere to go that is not the room. Layer 2, where a
-    // scrubber lives.
-    networks: [
-        (x: 0, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-    ],
-    // Placed and SILENT, which is the whole point: a placement that
-    // says nothing is a return grille, and this file is what that
-    // means. It is put down running, the way a commissioned station's
-    // machines are.
-    structures: [(3, 1, "player_spawn"), (2, 1, "air_scrubber", "scrubbing"), (5, 2, "apc")],
 
 )]==]
 
@@ -250,55 +254,59 @@ local LIVE_SUPPLY = [==[(
         'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
-    rows: [
-        "########",
-        "#......#",
-        "#....ag#",
-        "########",
-    ],
-    // Two runs sharing one corridor and never meeting, which is what
-    // the layer convention is for: the waste main on L2 under the
-    // grille, the supply on L4 between the bottle and the vent.
-    networks: [
-        (x: 0, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 4, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
-        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: [
+                "########",
+                "#......#",
+                "#....ag#",
+                "########",
+            ],
+            // Two runs sharing one corridor and never meeting, which is what
+            // the layer convention is for: the waste main on L2 under the
+            // grille, the supply on L4 between the bottle and the vent.
+            networks: [
+                (x: 0, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 4, y: 1, network: "pipe", channel: "l4", kind: "standard", facing: 15),
+                (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+            ],
+            structures: [
+                (5, 2, "player_spawn"),
+                (2, 1, "air_scrubber", "scrubbing"),
+                (5, 1, "vent"),
+                (3, 1, "connector_port"),
+                (3, 1, "canister", { "blend": "canister_air", "open": true }),
+                (5, 2, "apc"),
+            ],
+        ),
     ],
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
-    structures: [
-        (5, 2, "player_spawn"),
-        (2, 1, "air_scrubber", "scrubbing"),
-        (5, 1, "vent"),
-        (3, 1, "connector_port"),
-        (3, 1, "canister", { "blend": "canister_air", "open": true }),
-        (5, 2, "apc"),
-    ],
 
 )]==]
 
@@ -417,47 +425,51 @@ local NAMED = [==[(
         'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
-    rows: [
-        "########",
-        "#......#",
-        "#....ag#",
-        "########",
-    ],
-    networks: [
-        (x: 0, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-    ],
-    // Sieving, dial wide open so the section is short, and the floor
-    // the machine ships with.
-    structures: [
-        (5, 2, "player_spawn"),
-        (2, 1, "air_scrubber", "scrubbing",
-            { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 100.0 }),
-            (5, 2, "apc"),
+    levels: [
+        (
+            rows: [
+                "########",
+                "#......#",
+                "#....ag#",
+                "########",
+            ],
+            networks: [
+                (x: 0, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+            ],
+            // Sieving, dial wide open so the section is short, and the floor
+            // the machine ships with.
+            structures: [
+                (5, 2, "player_spawn"),
+                (2, 1, "air_scrubber", "scrubbing",
+                    { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 100.0 }),
+                    (5, 2, "apc"),
+            ],
+        ),
     ],
 
 )]==]

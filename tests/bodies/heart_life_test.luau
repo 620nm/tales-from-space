@@ -27,13 +27,17 @@ local clock = require("@helpers/clock")
 local ARENA = [==[(
     name: "theatre",
     legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [ "######", "#....#", "#....#", "######" ],
-    items: [ (1, 1, "hemostat"), (1, 1, "defib") ],
-    structures: [
-        (1, 1, "player_spawn", { "jobs": "medic" }),
-        (2, 1, "player_spawn", { "jobs": "assistant" }),
-        (3, 1, "player_spawn", { "jobs": "engineer" }),
-        (2, 2, "cadaver_chamber", { "dir": "north" }),
+    levels: [
+        (
+            rows: [ "######", "#....#", "#....#", "######" ],
+            items: [ (1, 1, "hemostat"), (1, 1, "defib") ],
+            structures: [
+                (1, 1, "player_spawn", { "jobs": "medic" }),
+                (2, 1, "player_spawn", { "jobs": "assistant" }),
+                (3, 1, "player_spawn", { "jobs": "engineer" }),
+                (2, 2, "cadaver_chamber", { "dir": "north" }),
+            ],
+        ),
     ],
 )]==]
 

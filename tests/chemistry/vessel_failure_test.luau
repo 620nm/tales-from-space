@@ -32,16 +32,20 @@ t.world(
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
-    structures: [
-        (2, 1, "player_spawn"),
-        (2, 2, "canister", { "blend": "canister_air", "open": true }),
-    ],
-    rows: [
-        "#####",
-        "#...#",
-        "#.c.#",
-        "#...#",
-        "#####",
+    levels: [
+        (
+            structures: [
+                (2, 1, "player_spawn"),
+                (2, 2, "canister", { "blend": "canister_air", "open": true }),
+            ],
+            rows: [
+                "#####",
+                "#...#",
+                "#.c.#",
+                "#...#",
+                "#####",
+            ],
+        ),
     ],
 )]==],
     7
@@ -182,13 +186,17 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#####",
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [(1, 1, "player_spawn"), (2, 2, "stationary_tank")],
+        ),
     ],
-    structures: [(1, 1, "player_spawn"), (2, 2, "stationary_tank")],
 )]==],
     7
 )

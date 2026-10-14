@@ -41,9 +41,13 @@ local ok, why = pcall(function()
     legend: {
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
-    rows: ["."],
-    structures: [(0, 0, "player_spawn")],
-    painted: [(0, 0, "no_such_blend")],
+    levels: [
+        (
+            rows: ["."],
+            structures: [(0, 0, "player_spawn")],
+            painted: [(0, 0, "no_such_blend")],
+        ),
+    ],
 )]==],
         0
     )

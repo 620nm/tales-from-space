@@ -26,23 +26,27 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "########",
-        "#......#",
-        "#......#",
-        "########",
-    ],
-    items: [
-        (1, 1, "beaker.libital"),
-        (2, 1, "beaker"),
-        (3, 1, "bottle"),
-        (4, 1, "syringe"),
-        (4, 1, "beaker.libital"),
-    ],
-    structures: [
-        (1, 1, "player_spawn", { "jobs": "medic" }),
-        (5, 1, "player_spawn", { "jobs": "assistant" }),
-        (3, 2, "canister"),
+    levels: [
+        (
+            rows: [
+                "########",
+                "#......#",
+                "#......#",
+                "########",
+            ],
+            items: [
+                (1, 1, "beaker.libital"),
+                (2, 1, "beaker"),
+                (3, 1, "bottle"),
+                (4, 1, "syringe"),
+                (4, 1, "beaker.libital"),
+            ],
+            structures: [
+                (1, 1, "player_spawn", { "jobs": "medic" }),
+                (5, 1, "player_spawn", { "jobs": "assistant" }),
+                (3, 2, "canister"),
+            ],
+        ),
     ],
 )]==],
     0

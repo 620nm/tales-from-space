@@ -26,14 +26,18 @@ t.world(
         '_': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "########",
-        "#......#",
-        "#______#",
-        "########",
+    levels: [
+        (
+            rows: [
+                "########",
+                "#......#",
+                "#______#",
+                "########",
+            ],
+            structures: [(1, 2, "player_spawn")],
+            items: [(1, 2, "crowbar"), (4, 2, "d6"), (5, 2, "d20")],
+        ),
     ],
-    structures: [(1, 2, "player_spawn")],
-    items: [(1, 2, "crowbar"), (4, 2, "d6"), (5, 2, "d20")],
 )]==],
     0
 )

@@ -71,24 +71,28 @@ t.world(
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
         'a': (composition: (components: [(component: "station_base")])),
     },
-    rows: [
-        "############",
-        "#..........#",
-        "#ga........#",
-        "############",
+    levels: [
+        (
+            rows: [
+                "############",
+                "#..........#",
+                "#ga........#",
+                "############",
+            ],
+            networks: [
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+            structures: [(5, 2, "player_spawn"), (5, 1, "thermomachine"), (2, 2, "apc")],
+        ),
     ],
-    networks: [
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-    ],
-    structures: [(5, 2, "player_spawn"), (5, 1, "thermomachine"), (2, 2, "apc")],
 
 )]==],
     7

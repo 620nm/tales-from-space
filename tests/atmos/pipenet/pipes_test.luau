@@ -32,17 +32,21 @@ t.world(
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#.o.#",
-        "#...#",
-        "#####",
-    ],
-    structures: [(2, 2, "player_spawn")],
-    items: [
-        (1, 1, "pipe"),
-        (3, 3, "wrench"),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#.o.#",
+                "#...#",
+                "#####",
+            ],
+            structures: [(2, 2, "player_spawn")],
+            items: [
+                (1, 1, "pipe"),
+                (3, 3, "wrench"),
+            ],
+        ),
     ],
 )]==],
     7
@@ -100,20 +104,24 @@ t.world(
     [==[(
     name: "fasten exact loose pipe",
     legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#####",
-    ],
-    structures: [(2, 2, "player_spawn")],
-    items: [(2, 2, "wrench"), (2, 1, "screwdriver")],
-    networks: [
-        (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 4),
-        (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 12),
-        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 3),
-        (x: 3, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 8),
-        (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 1),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [(2, 2, "player_spawn")],
+            items: [(2, 2, "wrench"), (2, 1, "screwdriver")],
+            networks: [
+                (x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 4),
+                (x: 2, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 12),
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 3),
+                (x: 3, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 8),
+                (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 1),
+            ],
+        ),
     ],
 
 )]==],
@@ -151,14 +159,18 @@ t.world(
     [==[(
     name: "one winning pipe wrench",
     legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#####",
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [(2, 2, "player_spawn"), (2, 2, "player_spawn")],
+            items: [(1, 2, "wrench"), (3, 2, "wrench"), (2, 1, "pipe")],
+        ),
     ],
-    structures: [(2, 2, "player_spawn"), (2, 2, "player_spawn")],
-    items: [(1, 2, "wrench"), (3, 2, "wrench"), (2, 1, "pipe")],
 )]==],
     11
 )
@@ -231,24 +243,28 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "##############",
-        "#..........#.#",
-        "#..........#.#",
-        "#..........#.#",
-        "##############",
+    levels: [
+        (
+            rows: [
+                "##############",
+                "#..........#.#",
+                "#..........#.#",
+                "#..........#.#",
+                "##############",
+            ],
+            items: [(12, 2, "welder"), (12, 3, "pipe")],
+            networks: [
+                (x: 6, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 6, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 7, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 8, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 9, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 10, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 11, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+            structures: [(12, 2, "player_spawn"), (5, 2, "passive_vent"), (12, 2, "passive_vent")],
+        ),
     ],
-    items: [(12, 2, "welder"), (12, 3, "pipe")],
-    networks: [
-        (x: 6, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 6, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 7, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 8, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 9, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 10, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 11, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-    ],
-    structures: [(12, 2, "player_spawn"), (5, 2, "passive_vent"), (12, 2, "passive_vent")],
 )]==],
     7
 )
@@ -345,18 +361,22 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#####",
-    ],
-    structures: [(2, 2, "player_spawn")],
-    items: [(2, 2, "pipe"), (1, 2, "wrench")],
-    networks: [
-        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [(2, 2, "player_spawn")],
+            items: [(2, 2, "pipe"), (1, 2, "wrench")],
+            networks: [
+                (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7
@@ -425,23 +445,27 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#######",
-        "#.....#",
-        "#.....#",
-        "#.....#",
-        "#######",
-    ],
-    networks: [
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 3),
-        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 11),
-        (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 3),
-        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 3),
-        (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 3),
-        (x: 4, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 3),
-    ],
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#.....#",
+                "#.....#",
+                "#.....#",
+                "#######",
+            ],
+            networks: [
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 3),
+                (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 11),
+                (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 3),
+                (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 3),
+                (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 3),
+                (x: 4, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 3),
+            ],
 
-    structures: [(1, 1, "player_spawn"), (2, 2, "passive_vent")],
+            structures: [(1, 1, "player_spawn"), (2, 2, "passive_vent")],
+        ),
+    ],
 )]==],
     7
 )
@@ -479,22 +503,26 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#######",
-        "#.....#",
-        "#.....#",
-        "#.....#",
-        "#######",
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#.....#",
+                "#.....#",
+                "#.....#",
+                "#######",
+            ],
+            networks: [
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 4, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+            structures: [(1, 1, "player_spawn"), (2, 2, "passive_vent")],
+        ),
     ],
-    networks: [
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 4, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-    ],
-    structures: [(1, 1, "player_spawn"), (2, 2, "passive_vent")],
 )]==],
     7
 )
@@ -521,18 +549,22 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#####",
-    ],
-    items: [(2, 2, "pipe")],
-    structures: [
-        (2, 2, "player_spawn"),
-        (1, 1, "vent"),
-        (2, 1, "manual_valve"),
-        (3, 1, "manual_valve", { "channel": "l2" }),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            items: [(2, 2, "pipe")],
+            structures: [
+                (2, 2, "player_spawn"),
+                (1, 1, "vent"),
+                (2, 1, "manual_valve"),
+                (3, 1, "manual_valve", { "channel": "l2" }),
+            ],
+        ),
     ],
 )]==],
     7

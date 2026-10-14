@@ -41,24 +41,28 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#########",
-        "#.......#",
-        "#.......#",
-        "#########",
-    ],
-    structures: [
-        (2, 2, "player_spawn"),
-        (7, 1, "thermomachine.fullupgrade", "off"),
-    ],
-    items: [
-        (2, 2, "metal"),
-        (2, 2, "cable_coil"),
-        (2, 2, "machine_board.chem_heater"),
-        (2, 2, "glass"),
-        (2, 2, "micro_laser.tier3"),
-        (2, 2, "screwdriver"),
-        (2, 2, "crowbar"),
+    levels: [
+        (
+            rows: [
+                "#########",
+                "#.......#",
+                "#.......#",
+                "#########",
+            ],
+            structures: [
+                (2, 2, "player_spawn"),
+                (7, 1, "thermomachine.fullupgrade", "off"),
+            ],
+            items: [
+                (2, 2, "metal"),
+                (2, 2, "cable_coil"),
+                (2, 2, "machine_board.chem_heater"),
+                (2, 2, "glass"),
+                (2, 2, "micro_laser.tier3"),
+                (2, 2, "screwdriver"),
+                (2, 2, "crowbar"),
+            ],
+        ),
     ],
 )]==],
     0

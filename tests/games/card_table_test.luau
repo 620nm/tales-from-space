@@ -35,16 +35,20 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#####",
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            items: [(1, 1, "card_deck")],
+            // Two tables, joined, so a card can be laid on one of them without
+            // being read back off a pile on the other.
+            structures: [(1, 1, "player_spawn"), (2, 1, "table"), (2, 2, "table")],
+        ),
     ],
-    items: [(1, 1, "card_deck")],
-    // Two tables, joined, so a card can be laid on one of them without
-    // being read back off a pile on the other.
-    structures: [(1, 1, "player_spawn"), (2, 1, "table"), (2, 2, "table")],
 )]==],
     0
 )

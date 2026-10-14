@@ -16,12 +16,16 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#########",
-        "#.......#",
-        "#########",
+    levels: [
+        (
+            rows: [
+                "#########",
+                "#.......#",
+                "#########",
+            ],
+            structures: [(6, 1, "player_spawn")],
+        ),
     ],
-    structures: [(6, 1, "player_spawn")],
 )]==],
     7
 )

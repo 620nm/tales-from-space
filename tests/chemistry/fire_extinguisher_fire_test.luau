@@ -17,10 +17,21 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#########",
-        "#...#...#",
-        "#########",
+    levels: [
+        (
+            rows: [
+                "#########",
+                "#...#...#",
+                "#########",
+            ],
+            structures: [
+                (3, 1, "player_spawn"),
+                (2, 1, "canister"),
+                (6, 1, "canister"),
+            ],
+            items: [(3, 1, "fire_extinguisher")],
+            painted: [(2, 1, "burning_mix"), (6, 1, "burning_mix")],
+        ),
     ],
     blends: {
         "burning_mix": (
@@ -29,13 +40,6 @@ t.world(
             amount: per_tile,
         ),
     },
-    structures: [
-        (3, 1, "player_spawn"),
-        (2, 1, "canister"),
-        (6, 1, "canister"),
-    ],
-    items: [(3, 1, "fire_extinguisher")],
-    painted: [(2, 1, "burning_mix"), (6, 1, "burning_mix")],
 )]==],
     0,
     "free_build"

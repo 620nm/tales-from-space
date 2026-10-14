@@ -9,23 +9,27 @@ t.world(
     [==[(
     name: "rotation",
     legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#...#",
-        "#####",
-    ],
-    structures: [(1, 2, "player_spawn")],
-    items: [
-        (1, 2, "wrench"),
-        (2, 2, "connector_port_fitting"),
-    ],
-    // North is the engine's old automatic choice. West is also valid,
-    // so a player-selected west can be distinguished from that fallback.
-    networks: [
-        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 1, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [(1, 2, "player_spawn")],
+            items: [
+                (1, 2, "wrench"),
+                (2, 2, "connector_port_fitting"),
+            ],
+            // North is the engine's old automatic choice. West is also valid,
+            // so a player-selected west can be distinguished from that fallback.
+            networks: [
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 1, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7
@@ -86,24 +90,28 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#######",
-        "#.....#",
-        "#.....#",
-        "#.....#",
-        "#######",
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#.....#",
+                "#.....#",
+                "#.....#",
+                "#######",
+            ],
+            items: [(4, 3, "wrench"), (3, 2, "manual_valve_fitting")],
+            // Both axes are completely plumbed. Automatic alignment therefore
+            // chooses north first; an explicit east is the only reason this
+            // valve may join the west/east pair instead.
+            networks: [
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+            structures: [(4, 3, "player_spawn"), (1, 2, "passive_vent")],
+        ),
     ],
-    items: [(4, 3, "wrench"), (3, 2, "manual_valve_fitting")],
-    // Both axes are completely plumbed. Automatic alignment therefore
-    // chooses north first; an explicit east is the only reason this
-    // valve may join the west/east pair instead.
-    networks: [
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 4, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-    ],
-    structures: [(4, 3, "player_spawn"), (1, 2, "passive_vent")],
 )]==],
     7
 )

@@ -35,8 +35,12 @@ local ui_controls = require("@helpers/ui_controls")
 local ARENA = [==[(
     name: "closet",
     legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [ "###", "#.#", "###" ],
-    structures: [(1, 1, "player_spawn")],
+    levels: [
+        (
+            rows: [ "###", "#.#", "###" ],
+            structures: [(1, 1, "player_spawn")],
+        ),
+    ],
 )]==]
 
 local BREATH_SECS = 8 -- one breath cycle
@@ -139,8 +143,12 @@ assert(inside(crew, "co2") > 0.0, "the last breath is still in there, unexhaled 
 local VOID = [==[(
     name: "the void",
     legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [ "###", "#. ", "###" ],
-    structures: [(1, 1, "player_spawn")],
+    levels: [
+        (
+            rows: [ "###", "#. ", "###" ],
+            structures: [(1, 1, "player_spawn")],
+        ),
+    ],
 )]==]
 t.world(VOID, 0)
 local spacer = t.join()
@@ -164,15 +172,19 @@ assert(ui_controls.number(t.health(spacer).oxy) > 0, "and the crewman is suffoca
 local THEATRE = [==[(
     name: "theatre",
     legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: [ "#####", "#...#", "#####" ],
-    structures: [
-        (1, 1, "player_spawn", { "jobs": "assistant" }),
-        (2, 1, "player_spawn", { "jobs": "medic" }),
-        (2, 1, "optable"),
-    ],
-    items: [
-        (1, 1, "scalpel"), (1, 1, "retractor"), (1, 1, "hemostat"),
-        (1, 1, "circular_saw"), (1, 1, "cautery"),
+    levels: [
+        (
+            rows: [ "#####", "#...#", "#####" ],
+            structures: [
+                (1, 1, "player_spawn", { "jobs": "assistant" }),
+                (2, 1, "player_spawn", { "jobs": "medic" }),
+                (2, 1, "optable"),
+            ],
+            items: [
+                (1, 1, "scalpel"), (1, 1, "retractor"), (1, 1, "hemostat"),
+                (1, 1, "circular_saw"), (1, 1, "cautery"),
+            ],
+        ),
     ],
 )]==]
 

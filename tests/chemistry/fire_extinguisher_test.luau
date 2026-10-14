@@ -30,21 +30,25 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#########",
-        "#.......#",
-        "#########",
+    levels: [
+        (
+            rows: [
+                "#########",
+                "#.......#",
+                "#########",
+            ],
+            items: [(2, 1, "fire_extinguisher")],
+            structures: [
+                (2, 1, "player_spawn"),
+                (3, 1, "canister", { "blend": "pure_co2_supply" }),
+                (1, 1, "canister", { "blend": "mixed_supply" }),
+            ],
+        ),
     ],
     blends: {
         "pure_co2_supply": (rows: [("co2", 5000.0)], temperature_k: 300.0, amount: per_tile),
         "mixed_supply": (rows: [("co2", 5000.0), ("o2", 500.0)], temperature_k: 300.0, amount: per_tile),
     },
-    items: [(2, 1, "fire_extinguisher")],
-    structures: [
-        (2, 1, "player_spawn"),
-        (3, 1, "canister", { "blend": "pure_co2_supply" }),
-        (1, 1, "canister", { "blend": "mixed_supply" }),
-    ],
 )]==],
     0,
     "free_build"

@@ -10,11 +10,15 @@ local BENCH = [==[(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'b': (composition: (%s components: [(component: "station_base")%s])),
     },
-    rows: ["#####", "#.b.#", "#...#", "#####"],
+    levels: [
+        (
+            rows: ["#####", "#.b.#", "#...#", "#####"],
+            structures: [(2, 2, "player_spawn")],
+            items: [(1, 2, "welder"), (3, 2, "crowbar"), (1, 1, "wirecutters")],
+            networks: [%s],
+        ),
+    ],
     environment: (gravity_m_s2: Exact(9.80665)),
-    structures: [(2, 2, "player_spawn")],
-    items: [(1, 2, "welder"), (3, 2, "crowbar"), (1, 1, "wirecutters")],
-    networks: [%s],
 )]==]
 
 local function bench(substrate: string?, cover: string?, powered: boolean): number

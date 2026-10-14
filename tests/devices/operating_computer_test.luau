@@ -20,29 +20,33 @@ local ARENA = [==[(
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
         'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
-    rows: [
-        "#######",
-        "#o...a#",
-        "#.....#",
-        "#.....#",
-        "#.....#",
-        "#######",
-    ],
-    structures: [
-        (2, 2, "player_spawn", { "jobs": "assistant" }),
-        (3, 2, "player_spawn", { "jobs": "medic" }),
-        (2, 3, "player_spawn", { "jobs": "engineer" }),
-        (4, 2, "player_spawn", { "jobs": "captain" }),
-        (5, 1, "apc"),
-    ],
-    items: [(2, 2, "scalpel")],
-    machines: [(3, 3, "operating_computer")],
-    networks: [
-        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#o...a#",
+                "#.....#",
+                "#.....#",
+                "#.....#",
+                "#######",
+            ],
+            structures: [
+                (2, 2, "player_spawn", { "jobs": "assistant" }),
+                (3, 2, "player_spawn", { "jobs": "medic" }),
+                (2, 3, "player_spawn", { "jobs": "engineer" }),
+                (4, 2, "player_spawn", { "jobs": "captain" }),
+                (5, 1, "apc"),
+            ],
+            items: [(2, 2, "scalpel")],
+            machines: [(3, 3, "operating_computer")],
+            networks: [
+                (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+        ),
     ],
 )]==]
 

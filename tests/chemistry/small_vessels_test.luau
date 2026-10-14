@@ -17,18 +17,22 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#######",
-        "#.....#",
-        "#.....#",
-        "#######",
-    ],
-    structures: [(1, 1, "player_spawn")],
-    items: [
-        (2, 1, "beaker.libital"),
-        (3, 1, "dropper"),
-        (4, 1, "bottle"),
-        (5, 1, "test_tube"),
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#.....#",
+                "#.....#",
+                "#######",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            items: [
+                (2, 1, "beaker.libital"),
+                (3, 1, "dropper"),
+                (4, 1, "bottle"),
+                (5, 1, "test_tube"),
+            ],
+        ),
     ],
 )]==],
     0

@@ -48,13 +48,21 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#######",
-        "#..#..#",
-        "#..#..#",
-        "#######",
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#..#..#",
+                "#..#..#",
+                "#######",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            painted: [
+                (1, 1, "hot_hex"), (2, 1, "hot_hex"), (1, 2, "hot_hex"), (2, 2, "hot_hex"),
+                (4, 1, "cold_hex"), (5, 1, "cold_hex"), (4, 2, "cold_hex"), (5, 2, "cold_hex"),
+            ],
+        ),
     ],
-    structures: [(1, 1, "player_spawn")],
     blends: {
         // Hot UF6 gas, thin enough to STAY gas: at 350 K the fill is
         // far under the sublimation line, and once the deck has drunk
@@ -77,10 +85,6 @@ t.world(
             amount: per_tile,
         ),
     },
-    painted: [
-        (1, 1, "hot_hex"), (2, 1, "hot_hex"), (1, 2, "hot_hex"), (2, 2, "hot_hex"),
-        (4, 1, "cold_hex"), (5, 1, "cold_hex"), (4, 2, "cold_hex"), (5, 2, "cold_hex"),
-    ],
 )]==],
     0,
     "free_build"

@@ -13,27 +13,31 @@ local MAP = [==[
         'A': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
     },
-    rows: ["#####","#..o#","#GA.#","#...#","#####"],
+    levels: [
+        (
+            rows: ["#####","#..o#","#GA.#","#...#","#####"],
+            painted: [],
+            structures: [
+                (1, 1, "player_spawn", { "jobs": "assistant" }),
+                (1, 3, "player_spawn", { "jobs": "engineer" }),
+                (2, 1, "access_point", { "network_1": "network_card", "file.airlock_controller": true, "program.controller": "airlock_controller", "mount": "north" }),
+                (2, 3, "air_alarm", { "access": "engineering", "network_1": "network_card", "mount": "south" }),
+                (1, 1, "air_sensor", { "mount": "north" }),
+                (2, 2, "apc"),
+            ],
+            links: [(2, 1, 1, 1)],
+            networks: [
+                (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+            items: [(1, 1, "laptop")],
+        ),
+    ],
     blends: {},
-    painted: [],
-    structures: [
-        (1, 1, "player_spawn", { "jobs": "assistant" }),
-        (1, 3, "player_spawn", { "jobs": "engineer" }),
-        (2, 1, "access_point", { "network_1": "network_card", "file.airlock_controller": true, "program.controller": "airlock_controller", "mount": "north" }),
-        (2, 3, "air_alarm", { "access": "engineering", "network_1": "network_card", "mount": "south" }),
-        (1, 1, "air_sensor", { "mount": "north" }),
-        (2, 2, "apc"),
-    ],
-    links: [(2, 1, 1, 1)],
-    networks: [
-        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
-    ],
-    items: [(1, 1, "laptop")],
 )
 ]==]
 local laptop = require("@helpers/laptop")

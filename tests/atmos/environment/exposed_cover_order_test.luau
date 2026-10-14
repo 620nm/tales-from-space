@@ -14,25 +14,29 @@ local MAP = [==[(
         'p': (composition: (components: [(component: "station_base"), (component: "floor_tiles", controls: {"pipe": "open"})])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
-    rows: [
-        "#########",
-        "#fmrgop.#",
-        "#########",
-    ],
-    structures: [(1, 1, "player_spawn")],
-    networks: [
-        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#########",
+                "#fmrgop.#",
+                "#########",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            networks: [
+                (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 6, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+        ),
     ],
 )]==]
 

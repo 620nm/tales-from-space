@@ -18,13 +18,17 @@ local CANTEEN = [==[(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#####",
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#####",
+            ],
+            structures: [(2, 1, "player_spawn")],
+            items: [(1, 1, "cola")],
+        ),
     ],
-    structures: [(2, 1, "player_spawn")],
-    items: [(1, 1, "cola")],
 )]==]
 
 t.world(CANTEEN, 7)

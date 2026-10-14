@@ -45,47 +45,51 @@ t.world(
         'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
-    rows: [
-        "########",
-        "#a....g#",
-        "#......#",
-        "########",
-    ],
-    // The whole of the plumbing: two lengths, and nothing anywhere near
-    // the socket at (4, 2).
-    networks: [
-        (x: 1, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-    ],
-    structures: [
-        (3, 1, "player_spawn"),
-        (3, 2, "volume_pump"),
-        (4, 2, "connector_port", { "pipe": "west" }),
-        (1, 1, "apc"),
+    levels: [
+        (
+            rows: [
+                "########",
+                "#a....g#",
+                "#......#",
+                "########",
+            ],
+            // The whole of the plumbing: two lengths, and nothing anywhere near
+            // the socket at (4, 2).
+            networks: [
+                (x: 1, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+            ],
+            structures: [
+                (3, 1, "player_spawn"),
+                (3, 2, "volume_pump"),
+                (4, 2, "connector_port", { "pipe": "west" }),
+                (1, 1, "apc"),
+            ],
+        ),
     ],
 
 )]==],
@@ -146,21 +150,25 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#...#",
-        "#####",
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [(2, 3, "player_spawn")],
+            // East and west of (2, 2) and nothing north or south of it: the fit
+            // has exactly one axis to offer, and it is not the one chosen.
+            networks: [
+                (x: 1, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+            items: [(2, 3, "wrench"), (2, 2, "volume_pump_fitting")],
+        ),
     ],
-    structures: [(2, 3, "player_spawn")],
-    // East and west of (2, 2) and nothing north or south of it: the fit
-    // has exactly one axis to offer, and it is not the one chosen.
-    networks: [
-        (x: 1, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-    ],
-    items: [(2, 3, "wrench"), (2, 2, "volume_pump_fitting")],
 )]==],
     7
 )

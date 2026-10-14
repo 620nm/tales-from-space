@@ -48,14 +48,18 @@ t.world(
             ("n2", 653.5771517979019),
         ], temperature_k: 293.15, amount: total),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#####",
-    ],
-    structures: [
-        (1, 1, "player_spawn"),
-        (2, 1, "canister", { "blend": "wet_air" }),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#####",
+            ],
+            structures: [
+                (1, 1, "player_spawn"),
+                (2, 1, "canister", { "blend": "wet_air" }),
+            ],
+        ),
     ],
 )]==],
     0

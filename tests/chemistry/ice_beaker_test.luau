@@ -36,26 +36,30 @@ t.world(
         // suffix said out loud, as content/blends/ice_block.luau says it.
         "ice_block": (rows: [("water:solid", 2.0)], temperature_k: 263.15, amount: total),
     },
-    rows: [
-        "#######",
-        "#o..a.#",
-        "#######",
-    ],
-    structures: [(1, 1, "player_spawn"), (4, 1, "apc")],
-    items: [
-        (3, 1, "beaker", { "blend": "ice_block" }),
-    ],
-    // A dispenser at the end of the bench, powered off the room's own
-    // circuit: the dock is the only window in the pack that opens over
-    // a beaker, and the last section of this spec reads the lump
-    // through it.
-    machines: [(5, 1, "chem_dispenser")],
-    networks: [
-        (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#o..a.#",
+                "#######",
+            ],
+            structures: [(1, 1, "player_spawn"), (4, 1, "apc")],
+            items: [
+                (3, 1, "beaker", { "blend": "ice_block" }),
+            ],
+            // A dispenser at the end of the bench, powered off the room's own
+            // circuit: the dock is the only window in the pack that opens over
+            // a beaker, and the last section of this spec reads the lump
+            // through it.
+            machines: [(5, 1, "chem_dispenser")],
+            networks: [
+                (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+        ),
     ],
 )]==],
     0

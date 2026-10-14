@@ -14,9 +14,13 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: ["######", "#....#", "#....#", "#....#", "######"],
-    structures: [(1, 1, "player_spawn")],
-    items: [(1, 1, "frag_grenade"), (1, 1, "toolbox")],
+    levels: [
+        (
+            rows: ["######", "#....#", "#....#", "#....#", "######"],
+            structures: [(1, 1, "player_spawn")],
+            items: [(1, 1, "frag_grenade"), (1, 1, "toolbox")],
+        ),
+    ],
 )]==],
     0
 )

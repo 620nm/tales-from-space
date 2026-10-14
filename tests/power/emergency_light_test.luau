@@ -52,28 +52,32 @@ t.world(
         'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
         'l': (composition: (components: [(component: "station_base")]), fixture: Some(Light)),
     },
-    rows: [
-        "#########",
-        "#G.....o#",
-        "#....l..#",
-        "#########",
+    levels: [
+        (
+            rows: [
+                "#########",
+                "#G.....o#",
+                "#....l..#",
+                "#########",
+            ],
+            structures: [
+                (3, 2, "player_spawn"),
+                (4, 1, "apc", { "l1_reserve": true }),
+            ],
+            items: [(3, 2, "wirecutters"), (3, 2, "cable_coil")],
+            networks: [
+                (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
+                (x: 6, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
+                (x: 7, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
+            ],
+            labels: [(4, 1, "Engineering")],
+        ),
     ],
-    structures: [
-        (3, 2, "player_spawn"),
-        (4, 1, "apc", { "l1_reserve": true }),
-    ],
-    items: [(3, 2, "wirecutters"), (3, 2, "cable_coil")],
-    networks: [
-        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
-        (x: 6, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
-        (x: 7, y: 1, network: "power", channel: "l3", kind: "cable", facing: 15),
-    ],
-    labels: [(4, 1, "Engineering")],
 )]==],
     0
 )

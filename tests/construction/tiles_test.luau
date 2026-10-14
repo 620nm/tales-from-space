@@ -29,14 +29,18 @@ t.world(
         'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'l': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Light)),
     },
-    rows: [
-        "#######",
-        "#.a..l#",
-        "#.....#",
-        "#######",
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#.a..l#",
+                "#.....#",
+                "#######",
+            ],
+            items: [(1, 2, "crowbar")],
+            structures: [(1, 2, "player_spawn"), (4, 1, "vent"), (2, 1, "apc")],
+        ),
     ],
-    items: [(1, 2, "crowbar")],
-    structures: [(1, 2, "player_spawn"), (4, 1, "vent"), (2, 1, "apc")],
 )]==],
     7
 )
@@ -106,17 +110,21 @@ t.world(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '+': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Door)),
     },
-    rows: [
-        "#####",
-        "#..+#",
-        "#####",
-    ],
-    structures: [(1, 1, "player_spawn")],
-    items: [(1, 1, "crowbar")],
-    // One length of backbone with no generator behind it, which is a
-    // station with the lights off: the airlock's motors never wake.
-    networks: [
-        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#..+#",
+                "#####",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            items: [(1, 1, "crowbar")],
+            // One length of backbone with no generator behind it, which is a
+            // station with the lights off: the airlock's motors never wake.
+            networks: [
+                (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7
@@ -157,15 +165,19 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "############",
-        "#..........#",
-        "#..........#",
-        "#..........#",
-        "############",
+    levels: [
+        (
+            rows: [
+                "############",
+                "#..........#",
+                "#..........#",
+                "#..........#",
+                "############",
+            ],
+            structures: [(2, 1, "player_spawn")],
+            items: [(2, 1, "floor_tile")],
+        ),
     ],
-    structures: [(2, 1, "player_spawn")],
-    items: [(2, 1, "floor_tile")],
 )]==],
     7
 )

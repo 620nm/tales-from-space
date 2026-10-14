@@ -12,13 +12,18 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "###",
-        "#.#",
-        "###",
+    levels: [
+        (
+            rows: [
+                "###",
+                "#.#",
+                "###",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            items: [(1, 1, "atmos_resin_projector")],
+            painted: [(1, 1, "burning_mix")],
+        ),
     ],
-    structures: [(1, 1, "player_spawn")],
-    items: [(1, 1, "atmos_resin_projector")],
     blends: {
         "burning_mix": (
             rows: [("plasma", 10.0), ("o2", 14.0)],
@@ -26,7 +31,6 @@ t.world(
             amount: per_tile,
         ),
     },
-    painted: [(1, 1, "burning_mix")],
 )]==],
     0
 )

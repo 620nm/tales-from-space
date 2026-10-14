@@ -44,35 +44,39 @@ t.world(
         'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
-    rows: [
-        "###################################",
-        "#.................................#",
-        "#Gao..............................#",
-        "###################################",
-    ],
-    structures: [
-        (1, 1, "player_spawn", { "jobs": "assistant" }),
-        (24, 1, "player_spawn", { "jobs": "medic" }),
-        (31, 1, "player_spawn", { "jobs": "captain" }),
-        (32, 1, "player_spawn", { "jobs": "engineer" }),
-        (33, 1, "player_spawn", { "jobs": "security" }),
-        (2, 2, "apc"),
-    ],
-    items: [
-        (1, 1, "encryption_key.medical"),
-        (24, 1, "encryption_key.medical"),
-        (31, 1, "encryption_key.medical"),
-        (32, 1, "encryption_key.medical"),
-        (33, 1, "encryption_key.medical"),
-    ],
-    machines: [
-        (2, 1, "transceiver", { "encryption_1": "encryption_key.medical" }),
-    ],
-    networks: [
-        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: [
+                "###################################",
+                "#.................................#",
+                "#Gao..............................#",
+                "###################################",
+            ],
+            structures: [
+                (1, 1, "player_spawn", { "jobs": "assistant" }),
+                (24, 1, "player_spawn", { "jobs": "medic" }),
+                (31, 1, "player_spawn", { "jobs": "captain" }),
+                (32, 1, "player_spawn", { "jobs": "engineer" }),
+                (33, 1, "player_spawn", { "jobs": "security" }),
+                (2, 2, "apc"),
+            ],
+            items: [
+                (1, 1, "encryption_key.medical"),
+                (24, 1, "encryption_key.medical"),
+                (31, 1, "encryption_key.medical"),
+                (32, 1, "encryption_key.medical"),
+                (33, 1, "encryption_key.medical"),
+            ],
+            machines: [
+                (2, 1, "transceiver", { "encryption_1": "encryption_key.medical" }),
+            ],
+            networks: [
+                (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+        ),
     ],
 )]==],
     0,
@@ -182,35 +186,39 @@ t.world(
         'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
-    rows: [
-        "##############",
-        "#............#",
-        "#Gao.........#",
-        "##############",
-    ],
-    structures: [
-        (1, 1, "player_spawn", { "jobs": "assistant" }),
-        (8, 1, "player_spawn", { "jobs": "medic" }),
-        (9, 1, "player_spawn", { "jobs": "captain" }),
-        (11, 1, "player_spawn", { "jobs": "engineer" }),
-        (12, 1, "player_spawn", { "jobs": "security" }),
-        (2, 2, "apc"),
-    ],
-    items: [
-        (1, 1, "encryption_key.medical"),
-        (8, 1, "encryption_key.medical"),
-        (9, 1, "encryption_key.medical"),
-        (11, 1, "encryption_key.medical"),
-        (12, 1, "encryption_key.medical"),
-    ],
-    machines: [
-        (2, 1, "transceiver", { "encryption_1": "encryption_key.engineering" }),
-    ],
-    networks: [
-        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: [
+                "##############",
+                "#............#",
+                "#Gao.........#",
+                "##############",
+            ],
+            structures: [
+                (1, 1, "player_spawn", { "jobs": "assistant" }),
+                (8, 1, "player_spawn", { "jobs": "medic" }),
+                (9, 1, "player_spawn", { "jobs": "captain" }),
+                (11, 1, "player_spawn", { "jobs": "engineer" }),
+                (12, 1, "player_spawn", { "jobs": "security" }),
+                (2, 2, "apc"),
+            ],
+            items: [
+                (1, 1, "encryption_key.medical"),
+                (8, 1, "encryption_key.medical"),
+                (9, 1, "encryption_key.medical"),
+                (11, 1, "encryption_key.medical"),
+                (12, 1, "encryption_key.medical"),
+            ],
+            machines: [
+                (2, 1, "transceiver", { "encryption_1": "encryption_key.engineering" }),
+            ],
+            networks: [
+                (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+        ),
     ],
 )]==],
     0,
@@ -266,21 +274,25 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "##############",
-        "#............#",
-        "#............#",
-        "##############",
-    ],
-    structures: [
-        (1, 1, "player_spawn", { "jobs": "assistant" }),
-        (11, 1, "player_spawn", { "jobs": "medic" }),
-        (12, 1, "player_spawn", { "jobs": "captain" }),
-    ],
-    items: [
-        (1, 1, "headset"),
-        (11, 1, "headset"),
-        (12, 1, "headset"),
+    levels: [
+        (
+            rows: [
+                "##############",
+                "#............#",
+                "#............#",
+                "##############",
+            ],
+            structures: [
+                (1, 1, "player_spawn", { "jobs": "assistant" }),
+                (11, 1, "player_spawn", { "jobs": "medic" }),
+                (12, 1, "player_spawn", { "jobs": "captain" }),
+            ],
+            items: [
+                (1, 1, "headset"),
+                (11, 1, "headset"),
+                (12, 1, "headset"),
+            ],
+        ),
     ],
 )]==],
     0,

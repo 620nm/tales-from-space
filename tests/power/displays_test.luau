@@ -15,15 +15,19 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "######",
-        "#....#",
-        "######",
-    ],
-    structures: [
-        (4, 1, "player_spawn"),
-        (2, 1, "digital_clock", { "mount": "north" }),
-        (3, 1, "status_display", { "mount": "north" }),
+    levels: [
+        (
+            rows: [
+                "######",
+                "#....#",
+                "######",
+            ],
+            structures: [
+                (4, 1, "player_spawn"),
+                (2, 1, "digital_clock", { "mount": "north" }),
+                (3, 1, "status_display", { "mount": "north" }),
+            ],
+        ),
     ],
 )]==],
     0

@@ -88,18 +88,22 @@ t.world(
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#########",
-        "#.......#",
-        "#ooooooo#",
-        "#########",
-    ],
-    structures: [(1, 2, "player_spawn")],
-    items: [
-        (1, 1, "wrench"),
-        (1, 2, "rpd"),
-        (2, 1, "manual_valve_fitting"),
-        (2, 1, "manual_valve_fitting"),
+    levels: [
+        (
+            rows: [
+                "#########",
+                "#.......#",
+                "#ooooooo#",
+                "#########",
+            ],
+            structures: [(1, 2, "player_spawn")],
+            items: [
+                (1, 1, "wrench"),
+                (1, 2, "rpd"),
+                (2, 1, "manual_valve_fitting"),
+                (2, 1, "manual_valve_fitting"),
+            ],
+        ),
     ],
 )]==],
     7
@@ -453,26 +457,30 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#...#",
-        "#####",
-    ],
-    items: [(1, 2, "rpd"), (1, 1, "wrench")],
-    networks: [
-        (x: 1, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 1, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-    ],
-    structures: [
-        (2, 2, "player_spawn"),
-        (1, 1, "manual_valve"),
-        (2, 1, "connector_port"),
-        (3, 1, "manual_valve", { "channel": "l2" }),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            items: [(1, 2, "rpd"), (1, 1, "wrench")],
+            networks: [
+                (x: 1, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 1, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 3, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+            structures: [
+                (2, 2, "player_spawn"),
+                (1, 1, "manual_valve"),
+                (2, 1, "connector_port"),
+                (3, 1, "manual_valve", { "channel": "l2" }),
+            ],
+        ),
     ],
 )]==],
     7
@@ -546,23 +554,27 @@ t.world(
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#########",
-        "#.......#",
-        "#.......#",
-        "#.......#",
-        "#########",
-    ],
-    structures: [(2, 2, "player_spawn")],
-    items: [(2, 2, "rpd")],
-    // The positive connector reaches west from (2,1). The southern
-    // three entries are the layer each refusal below dials up to.
-    networks: [
-        (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 2, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 1, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        (x: 4, y: 3, network: "pipe", channel: "l2", kind: "standard", facing: 15),
-        (x: 6, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#########",
+                "#.......#",
+                "#.......#",
+                "#.......#",
+                "#########",
+            ],
+            structures: [(2, 2, "player_spawn")],
+            items: [(2, 2, "rpd")],
+            // The positive connector reaches west from (2,1). The southern
+            // three entries are the layer each refusal below dials up to.
+            networks: [
+                (x: 1, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 2, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 1, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                (x: 4, y: 3, network: "pipe", channel: "l2", kind: "standard", facing: 15),
+                (x: 6, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7

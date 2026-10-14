@@ -8,12 +8,16 @@ local BENCH = [==[(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'g': (composition: (components: [(component: "station_base")%s])),
     },
-    rows: ["#####", "#.g.#", "#...#", "#####"],
-    structures: [(2, 2, "player_spawn")],
-    items: [(1, 2, "wirecutters"), (3, 2, "wrench")],
-    networks: [
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: ["#####", "#.g.#", "#...#", "#####"],
+            structures: [(2, 2, "player_spawn")],
+            items: [(1, 2, "wirecutters"), (3, 2, "wrench")],
+            networks: [
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+        ),
     ],
 )]==]
 

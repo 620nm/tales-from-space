@@ -13,14 +13,18 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#####",
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#####",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            // All within reach of the spawn: `t.target_at` picks by prototype.
+            items: [(2, 1, "laptop"), (2, 1, "floppy_disk"), (2, 1, "crowbar")],
+        ),
     ],
-    structures: [(1, 1, "player_spawn")],
-    // All within reach of the spawn: `t.target_at` picks by prototype.
-    items: [(2, 1, "laptop"), (2, 1, "floppy_disk"), (2, 1, "crowbar")],
 )]==],
     0
 )

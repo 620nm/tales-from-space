@@ -14,25 +14,29 @@ t.world(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'c': (composition: (components: [(component: "station_base")])),
     },
-    rows: [
-        "######",
-        "#...c#",
-        "######",
-    ],
-    items: [(3, 1, "wrench")],
-    networks: [
-        (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+    levels: [
+        (
+            rows: [
+                "######",
+                "#...c#",
+                "######",
+            ],
+            items: [(3, 1, "wrench")],
+            networks: [
+                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+            ],
+            structures: [
+                (3, 1, "player_spawn"),
+                (4, 1, "connector_port"),
+                (4, 1, "canister", { "blend": "canister_air", "open": true }),
+            ],
+        ),
     ],
     // Without the socket the bottle is furniture; with it, the bottle
     // starts fastened, which is the state that refuses a grab.
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
-    structures: [
-        (3, 1, "player_spawn"),
-        (4, 1, "connector_port"),
-        (4, 1, "canister", { "blend": "canister_air", "open": true }),
-    ],
 )]==],
     7
 )

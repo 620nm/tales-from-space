@@ -50,28 +50,32 @@ local BENCH = [==[(
         'l': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Light)),
         'E': (composition: (components: [(component: "station_base")]), fixture: Some(Door)),
     },
-    rows: [
-        "###########",
-        "#%s......#.#",
-        "#...o.l.E.#",
-        "#.......#.#",
-        "###########",
+    levels: [
+        (
+            rows: [
+                "###########",
+                "#%s......#.#",
+                "#...o.l.E.#",
+                "#.......#.#",
+                "###########",
+            ],
+            structures: [(5, 2, "player_spawn"), (2, 1, "apc", { "l1_reserve": true })],
+            machines: [(5, 1, "transceiver")],
+            networks: [
+                (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+            labels: [(2, 1, "Engineering")],
+        ),
     ],
-    structures: [(5, 2, "player_spawn"), (2, 1, "apc", { "l1_reserve": true })],
-    machines: [(5, 1, "transceiver")],
-    networks: [
-        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 5, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 6, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 7, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 8, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-    ],
-    labels: [(2, 1, "Engineering")],
 )]==]
 
 local function gates(): { [string]: boolean }

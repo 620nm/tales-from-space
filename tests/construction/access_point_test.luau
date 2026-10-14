@@ -76,27 +76,31 @@ t.world(
         'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
-    rows: [
-        "#######",
-        "#.....#",
-        "#Gao..#",
-        "#######",
-    ],
-    structures: [(4, 1, "player_spawn"), (2, 2, "apc")],
-    items: [
-        (4, 1, "metal"),
-        (4, 1, "cable_coil"),
-        (4, 1, "machine_board.access_point"),
-        (4, 1, "network_card"),
-        (4, 1, "screwdriver"),
-        (4, 1, "crowbar"),
-        (5, 1, "laptop"),
-    ],
-    networks: [
-        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#.....#",
+                "#Gao..#",
+                "#######",
+            ],
+            structures: [(4, 1, "player_spawn"), (2, 2, "apc")],
+            items: [
+                (4, 1, "metal"),
+                (4, 1, "cable_coil"),
+                (4, 1, "machine_board.access_point"),
+                (4, 1, "network_card"),
+                (4, 1, "screwdriver"),
+                (4, 1, "crowbar"),
+                (5, 1, "laptop"),
+            ],
+            networks: [
+                (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7
@@ -339,19 +343,23 @@ t.world(
         'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
     },
-    rows: [
-        "#######",
-        "#.....#",
-        "#Gao..#",
-        "#######",
-    ],
-    items: [(5, 1, "id_engineering"), (5, 1, "laptop")],
-    structures: [(5, 1, "player_spawn"), (4, 1, "access_point", { "access": "engineering", "mount": "north" }), (2, 2, "apc")],
-    networks: [
-        (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: [
+                "#######",
+                "#.....#",
+                "#Gao..#",
+                "#######",
+            ],
+            items: [(5, 1, "id_engineering"), (5, 1, "laptop")],
+            structures: [(5, 1, "player_spawn"), (4, 1, "access_point", { "access": "engineering", "mount": "north" }), (2, 2, "apc")],
+            networks: [
+                (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+        ),
     ],
 )]==],
     7

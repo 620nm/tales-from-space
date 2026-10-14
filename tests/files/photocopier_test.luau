@@ -17,19 +17,23 @@ t.world(
     [==[(
     name: "copy room",
     legend: { '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])), 'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)), 'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), 'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)) },
-    rows: ["#######", "#Gao..#", "#.....#", "#.....#", "#######"],
-    structures: [(4, 2, "player_spawn"), (0, 0, "apc"), (1, 0, "apc"), (2, 0, "apc"), (3, 0, "apc"), (4, 0, "apc"), (5, 0, "apc"), (6, 0, "apc"), (0, 1, "apc"), (1, 1, "apc"), (2, 1, "apc"), (4, 1, "apc"), (5, 1, "apc"), (6, 1, "apc"), (0, 2, "apc"), (1, 2, "apc"), (2, 2, "apc"), (3, 2, "apc"), (4, 2, "apc"), (5, 2, "apc"), (6, 2, "apc"), (0, 3, "apc"), (1, 3, "apc"), (2, 3, "apc"), (3, 3, "apc"), (4, 3, "apc"), (5, 3, "apc"), (6, 3, "apc"), (0, 4, "apc"), (1, 4, "apc"), (2, 4, "apc"), (3, 4, "apc"), (4, 4, "apc"), (5, 4, "apc"), (6, 4, "apc")],
-    machines: [(4, 1, "photocopier")],
-    items: [
-        (4, 2, "paper"), (3, 2, "four_color_pen"),
-        (4, 3, "paper_bin"), (3, 3, "toner_cartridge"),
-    ],
-    networks: [
-        (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+    levels: [
+        (
+            rows: ["#######", "#Gao..#", "#.....#", "#.....#", "#######"],
+            structures: [(4, 2, "player_spawn"), (0, 0, "apc"), (1, 0, "apc"), (2, 0, "apc"), (3, 0, "apc"), (4, 0, "apc"), (5, 0, "apc"), (6, 0, "apc"), (0, 1, "apc"), (1, 1, "apc"), (2, 1, "apc"), (4, 1, "apc"), (5, 1, "apc"), (6, 1, "apc"), (0, 2, "apc"), (1, 2, "apc"), (2, 2, "apc"), (3, 2, "apc"), (4, 2, "apc"), (5, 2, "apc"), (6, 2, "apc"), (0, 3, "apc"), (1, 3, "apc"), (2, 3, "apc"), (3, 3, "apc"), (4, 3, "apc"), (5, 3, "apc"), (6, 3, "apc"), (0, 4, "apc"), (1, 4, "apc"), (2, 4, "apc"), (3, 4, "apc"), (4, 4, "apc"), (5, 4, "apc"), (6, 4, "apc")],
+            machines: [(4, 1, "photocopier")],
+            items: [
+                (4, 2, "paper"), (3, 2, "four_color_pen"),
+                (4, 3, "paper_bin"), (3, 3, "toner_cartridge"),
+            ],
+            networks: [
+                (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+        ),
     ],
 )]==],
     0

@@ -7,15 +7,19 @@ t.world([==[(
         's': (composition: (substrate: Some("space"))),
         'f': (composition: (substrate: Some("space"), components: [(component: "station_base")])),
     },
-    rows: [
-        "sssssssssssssss", "sssssssssssssss", "sssssssssssssss",
-        "sssssssssssssss", "sssssssssssssss", "sssssssssssssss",
-        "sssssssssssssss", "sssssssfsssssss", "sssssssssssssss",
-        "sssssssssssssss", "sssssssssssssss", "sssssssssssssss",
-        "sssssssssssssss", "sssssssssssssss", "sssssssssssssss",
+    levels: [
+        (
+            rows: [
+                "sssssssssssssss", "sssssssssssssss", "sssssssssssssss",
+                "sssssssssssssss", "sssssssssssssss", "sssssssssssssss",
+                "sssssssssssssss", "sssssssfsssssss", "sssssssssssssss",
+                "sssssssssssssss", "sssssssssssssss", "sssssssssssssss",
+                "sssssssssssssss", "sssssssssssssss", "sssssssssssssss",
+            ],
+            items: [(7, 7, "fire_extinguisher")],
+            structures: [(7, 7, "player_spawn"), (11, 7, "canister"), (6, 3, "canister")],
+        ),
     ],
-    items: [(7, 7, "fire_extinguisher")],
-    structures: [(7, 7, "player_spawn"), (11, 7, "canister"), (6, 3, "canister")],
 )]==], 0, "free_build")
 
 local p = t.join()

@@ -2,7 +2,7 @@
 -- kills a task without cleanup (fuel, watchdog, quarantine) and no spec seam
 -- can do that, so this pins the rule that frees such a machine: a var a
 -- grace past its deadline is stale and the queue treats the machine as idle.
-t.world([==[(name: "empty", legend: {'.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]))}, rows: ["..."])]==], 0)
+t.world([==[(name: "empty", legend: {'.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]))}, levels: [(rows: ["..."],)],)]==], 0)
 
 local printing = t.content_module("printing")
 local live = printing.live :: (unknown, number) -> boolean

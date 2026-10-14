@@ -10,16 +10,20 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#####",
-    ],
-    structures: [(2, 1, "player_spawn")],
-    items: [
-        (2, 1, "paper"), (3, 1, "four_color_pen"),
-        (2, 2, "crayon_box"), (3, 2, "paper_bin"),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [(2, 1, "player_spawn")],
+            items: [
+                (2, 1, "paper"), (3, 1, "four_color_pen"),
+                (2, 2, "crayon_box"), (3, 2, "paper_bin"),
+            ],
+        ),
     ],
 )]==],
     0

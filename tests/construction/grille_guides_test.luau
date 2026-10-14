@@ -18,21 +18,25 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#####",
-        "#...#",
-        "#...#",
-        "#####",
-    ],
-    structures: [
-        (2, 2, "player_spawn"),
-        (3, 2, "grille", "reinforced"),
-        (1, 2, "grille", "bolted"),
-    ],
-    items: [
-        (2, 2, "welder"), (2, 2, "screwdriver"), (2, 2, "crowbar"),
-        (2, 2, "wirecutters"), (2, 2, "wrench"), (2, 2, "rglass"),
-        (2, 1, "glass"),
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#...#",
+                "#...#",
+                "#####",
+            ],
+            structures: [
+                (2, 2, "player_spawn"),
+                (3, 2, "grille", "reinforced"),
+                (1, 2, "grille", "bolted"),
+            ],
+            items: [
+                (2, 2, "welder"), (2, 2, "screwdriver"), (2, 2, "crowbar"),
+                (2, 2, "wirecutters"), (2, 2, "wrench"), (2, 2, "rglass"),
+                (2, 1, "glass"),
+            ],
+        ),
     ],
 )]==],
     7

@@ -116,39 +116,43 @@ local BENCH = [==[(
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
         'a': (composition: (components: [(component: "station_base")])),
     },
-    rows: [
-        "#########",
-        "#.....ga#",
-        "#########",
+    levels: [
+        (
+            rows: [
+                "#########",
+                "#.....ga#",
+                "#########",
+            ],
+            structures: [
+                (3, 1, "player_spawn"),
+                (2, 1, "vent"),
+                // Charged well past a room's worth, because this bench asks the
+                // vent to hold a corridor ABOVE one atmosphere and a vent only
+                // hands over what its run holds (atmos_machines/vent.rs).
+                (3, 1, "pump", "running", { "dir": "west", "target_kpa": 900.0 }),
+                (4, 1, "connector_port", { "pipe": "west" }),
+                (4, 1, "canister", { "blend": "canister_air" }),
+                (7, 1, "apc"),
+            ],
+            // Backbone (L2) under the generator and the APC; room circuit (L1)
+            // from the APC's tile west along the corridor to the vent.
+            networks: [
+                (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
+                (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+                (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
+            ],
+        ),
     ],
     // A crewman stands ON the pump, which is where an engineer working
     // this end of the run stands: nothing in the plumbing is dense.
     blends: {
         "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
     },
-    structures: [
-        (3, 1, "player_spawn"),
-        (2, 1, "vent"),
-        // Charged well past a room's worth, because this bench asks the
-        // vent to hold a corridor ABOVE one atmosphere and a vent only
-        // hands over what its run holds (atmos_machines/vent.rs).
-        (3, 1, "pump", "running", { "dir": "west", "target_kpa": 900.0 }),
-        (4, 1, "connector_port", { "pipe": "west" }),
-        (4, 1, "canister", { "blend": "canister_air" }),
-        (7, 1, "apc"),
-    ],
-    // Backbone (L2) under the generator and the APC; room circuit (L1)
-    // from the APC's tile west along the corridor to the vent.
-    networks: [
-        (x: 6, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 6, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 7, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 7, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-        (x: 5, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-        (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-    ],
 )]==]
 
 t.world(BENCH, 7)

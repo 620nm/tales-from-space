@@ -21,22 +21,26 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "###########",
-        "#.........#",
-        "#........##",
-        "#.......#.#",
-        "#.........#",
-        "#.........#",
-        "#.........#",
-        "###########",
-    ],
-    structures: [(1, 1, "player_spawn")],
-    items: [
-        (1, 1, "frag_grenade"),
-        (4, 2, "frag_grenade"),
-        (3, 3, "frag_grenade"),
-        (8, 2, "frag_grenade"),
+    levels: [
+        (
+            rows: [
+                "###########",
+                "#.........#",
+                "#........##",
+                "#.......#.#",
+                "#.........#",
+                "#.........#",
+                "#.........#",
+                "###########",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            items: [
+                (1, 1, "frag_grenade"),
+                (4, 2, "frag_grenade"),
+                (3, 3, "frag_grenade"),
+                (8, 2, "frag_grenade"),
+            ],
+        ),
     ],
 )]==],
     0

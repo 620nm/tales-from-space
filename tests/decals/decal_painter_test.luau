@@ -89,15 +89,19 @@ t.world(
         'l': (composition: (substrate: Some("ground"), components: [(component: "lattice")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "########",
-        "#__ooo_#",
-        "#__ooo_#",
-        "#__oool#",
-        "########",
+    levels: [
+        (
+            rows: [
+                "########",
+                "#__ooo_#",
+                "#__ooo_#",
+                "#__oool#",
+                "########",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            items: [(1, 1, "decal_painter"), (2, 1, "decal_eraser"), (3, 2, "crowbar")],
+        ),
     ],
-    structures: [(1, 1, "player_spawn")],
-    items: [(1, 1, "decal_painter"), (2, 1, "decal_eraser"), (3, 2, "crowbar")],
 )]==],
     7
 )

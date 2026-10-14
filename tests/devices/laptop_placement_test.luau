@@ -9,13 +9,17 @@ t.world(
     [==[(
     name: "laptop desk",
     legend: { '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-    rows: ["#####", "#...#", "#...#", "#####"],
-    structures: [(2, 1, "player_spawn")],
-    items: [
-        (1, 1, "laptop", { "open": true, "powered": true, "media": "floppy_disk.atmos_stock" }),
-        (3, 1, "laptop"),
-        (1, 2, "laptop", { "powered": true }),
-        (3, 2, "laptop", { "open": true }),
+    levels: [
+        (
+            rows: ["#####", "#...#", "#...#", "#####"],
+            structures: [(2, 1, "player_spawn")],
+            items: [
+                (1, 1, "laptop", { "open": true, "powered": true, "media": "floppy_disk.atmos_stock" }),
+                (3, 1, "laptop"),
+                (1, 2, "laptop", { "powered": true }),
+                (3, 2, "laptop", { "open": true }),
+            ],
+        ),
     ],
 )]==],
     0

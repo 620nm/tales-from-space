@@ -25,21 +25,25 @@ local function build(rotations: number, want_sprite: string, drained: { number }
         [==[(
         name: "pump sign",
         legend: { '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
-        rows: [
-            "#####",
-            "#...#",
-            "#...#",
-            "#...#",
-            "#####",
+        levels: [
+            (
+                rows: [
+                    "#####",
+                    "#...#",
+                    "#...#",
+                    "#...#",
+                    "#####",
+                ],
+                structures: [(1, 1, "player_spawn")],
+                networks: [
+                    (x: 1, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                    (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                    (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                    (x: 2, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
+                ],
+                items: [(1, 1, "wrench"), (2, 2, "volume_pump_fitting")],
+            ),
         ],
-        structures: [(1, 1, "player_spawn")],
-        networks: [
-            (x: 1, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-            (x: 3, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-            (x: 2, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-            (x: 2, y: 3, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-        ],
-        items: [(1, 1, "wrench"), (2, 2, "volume_pump_fitting")],
     )]==],
         7
     )

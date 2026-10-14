@@ -21,18 +21,22 @@ t.world(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
-    rows: [
-        "######",
-        "#oooo#",
-        "######",
-    ],
-    structures: [(1, 1, "player_spawn")],
-    items: [(1, 1, "decal_painter")],
-    decals: [
-        (x: 1, y: 1, decal: "trim", paint: Some("blue")),
-        (x: 2, y: 1, decal: "trim", color: Some("#AABBCC")),
-        (x: 3, y: 1, decal: "hazard_line"),
-        (x: 4, y: 1, decal: "mark_arrow", facing: Some(4)),
+    levels: [
+        (
+            rows: [
+                "######",
+                "#oooo#",
+                "######",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            items: [(1, 1, "decal_painter")],
+            decals: [
+                (x: 1, y: 1, decal: "trim", paint: Some("blue")),
+                (x: 2, y: 1, decal: "trim", color: Some("#AABBCC")),
+                (x: 3, y: 1, decal: "hazard_line"),
+                (x: 4, y: 1, decal: "mark_arrow", facing: Some(4)),
+            ],
+        ),
     ],
 )]==],
     7

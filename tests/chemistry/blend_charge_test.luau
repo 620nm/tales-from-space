@@ -24,16 +24,20 @@ t.world(
     blends: {
         "rinse": (rows: [("water", 0.20)], temperature_k: 293.15, amount: total),
     },
-    rows: [
-        "######",
-        "#....#",
-        "######",
-    ],
-    structures: [(1, 1, "player_spawn")],
-    items: [
-        (2, 1, "beaker", { "blend": "rinse" }),
-        (3, 1, "beaker.libital", { "blend": "rinse" }),
-        (4, 1, "beaker.libital"),
+    levels: [
+        (
+            rows: [
+                "######",
+                "#....#",
+                "######",
+            ],
+            structures: [(1, 1, "player_spawn")],
+            items: [
+                (2, 1, "beaker", { "blend": "rinse" }),
+                (3, 1, "beaker.libital", { "blend": "rinse" }),
+                (4, 1, "beaker.libital"),
+            ],
+        ),
     ],
 )]==],
     0
