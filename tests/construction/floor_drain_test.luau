@@ -50,13 +50,16 @@ t.world([==[(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
+]==] .. SPILL .. [==[
+    levels: [(
     rows: [
         "###",
         "#.#",
         "###",
     ],
-    structures: [(1, 1, "player_spawn"), (1, 1, "floor_drain")],]==] .. SPILL .. [==[
+    structures: [(1, 1, "player_spawn"), (1, 1, "floor_drain")],
     painted: [(1, 1, "spill_10l")],
+    )],
 )]==], 0)
 
 t.join()
@@ -141,13 +144,16 @@ t.world([==[(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
+]==] .. SPILL .. [==[
+    levels: [(
     rows: [
         "#####",
         "#...#",
         "#####",
     ],
-    structures: [(1, 1, "player_spawn"), (2, 1, "floor_drain")],]==] .. SPILL .. [==[
+    structures: [(1, 1, "player_spawn"), (2, 1, "floor_drain")],
     painted: [(3, 1, "spill_10l")],
+    )],
 )]==], 0)
 
 t.join()

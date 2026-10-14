@@ -73,6 +73,7 @@ t.world([==[(
         'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
+    levels: [(
     networks: [
         (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
         (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
@@ -100,7 +101,9 @@ t.world([==[(
         (x: 6, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
 ]==] .. PIPE_NETWORKS .. [==[
     ],
-]==] .. ROWS .. ")", 7)
+]==] .. ROWS .. [==[
+    )],
+)]==], 7)
 
 local p = t.join()
 t.tick()
@@ -242,10 +245,13 @@ t.world([==[(
         'a': (composition: (components: [(component: "station_base")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
+    levels: [(
     networks: [
 ]==] .. PIPE_NETWORKS .. [==[
     ],
-]==] .. ROWS .. ")", 7)
+]==] .. ROWS .. [==[
+    )],
+)]==], 7)
 
 local d = t.join()
 t.tick()

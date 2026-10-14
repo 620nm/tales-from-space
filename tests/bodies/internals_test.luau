@@ -33,18 +33,25 @@ t.world(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
-    rows: [
-        "#########",
-        "#.#.#.#.#",
-        "#########",
+    blends: {
+        "n2_1kpa": (rows: [("n2:gas", 0.4102986436634647)], temperature_k: 293.15, amount: per_tile),
+    },
+    levels: [
+        (
+            rows: [
+                "#########",
+                "#.#.#.#.#",
+                "#########",
+            ],
+            structures: [
+                (1, 1, "player_spawn", { "jobs": "engineer" }),
+                (3, 1, "player_spawn", { "jobs": "assistant" }),
+                (5, 1, "player_spawn", { "jobs": "medic" }),
+            ],
+            items: [(1, 1, "eva_suit"), (1, 1, "oxygen_tank")],
+            painted: [(1, 1, "n2_1kpa"), (3, 1, "n2_1kpa"), (5, 1, "n2_1kpa")],
+        ),
     ],
-    structures: [
-        (1, 1, "player_spawn", { "jobs": "engineer" }),
-        (3, 1, "player_spawn", { "jobs": "assistant" }),
-        (5, 1, "player_spawn", { "jobs": "medic" }),
-    ],
-    items: [(1, 1, "eva_suit"), (1, 1, "oxygen_tank")],
-    room_gas: [(1, 1, "n2", 1.0), (3, 1, "n2", 1.0), (5, 1, "n2", 1.0)],
 )]==],
     7
 )
