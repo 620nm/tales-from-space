@@ -53,12 +53,14 @@ export function worldOverlays(view: GameplayView): UiNode[] {
         `speech/${speech.id}/${speech.sequence}`,
         some(
           speech.channel
-            ? text(`speech/${speech.id}/chan`, S.channel(speech.channel), [
-                "rune-chan",
-              ])
+            ? text(
+                `speech/${speech.id}/${speech.sequence}/chan`,
+                S.channel(speech.channel),
+                ["rune-chan"],
+              )
             : null,
           // theme-lint: allow the speaker's own hue
-          text(`speech/${speech.id}/text`, speech.text, ["rune-said"], {
+          text(`speech/${speech.id}/${speech.sequence}/text`, speech.text, ["rune-said"], {
             ...(paint ? { color: paint } : {}),
           }),
         ),
