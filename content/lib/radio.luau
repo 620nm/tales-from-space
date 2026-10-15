@@ -99,7 +99,7 @@ end
 -- A deterministic 32-bit scramble. NO RNG anywhere in the radio: the
 -- same words at the same fraction garble the same way every time, on
 -- every server, which is what lets a spec assert the exact string a
--- listener at the rim reads (tests/radio_coverage_test.luau).
+-- listener at the rim reads (tests/devices/radio_coverage_test.luau).
 --
 -- Multiply-add-shift stays: the radio specs pin these exact strings, and
 -- every intermediate stays under 2^38, exact in doubles.
