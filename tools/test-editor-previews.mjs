@@ -4,9 +4,9 @@ import { servedRoster } from "./served-roster.mjs";
 
 // The declaration is content/editor.luau; the engine serves it decoded.
 const served = servedRoster();
-if (served.missing) console.log(`SKIP editor previews: ${served.missing}`);
+const skip = served.missing ?? false;
 const manifest = served.roster?.editor;
-assert(served.missing || manifest, "the served roster carries content/editor.luau's editor declaration");
+assert(skip || manifest, "the served roster carries content/editor.luau's editor declaration");
 const defaults = {
   airlock: { paint: "public", glass: false },
   "airlock.engineering": { paint: "engineering", glass: false },
@@ -21,6 +21,8 @@ const art = {
 function preview(schema, values) {
   return schema.previews.find((rule) => Object.entries(rule.when ?? {}).every(([key, value]) => values[key] === value))?.layers;
 }
+// With no roster one skipped test records why, instead of zero tests.
+if (skip) test("editor previews", { skip }, () => {});
 for (const [mode, declaration] of Object.entries(manifest?.modes ?? {})) {
   test(`${mode} previews every airlock livery, glazing, position and bolt setting`, () => {
     for (const [id, props] of Object.entries(defaults)) {
