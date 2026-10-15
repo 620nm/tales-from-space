@@ -101,8 +101,8 @@ end
 -- every server, which is what lets a spec assert the exact string a
 -- listener at the rim reads (tests/radio_coverage_test.luau).
 --
--- Multiply-add-shift only: the content VM ships no bit32 library, and
--- every intermediate here stays under 2^38, exact in Luau doubles.
+-- Multiply-add-shift stays: the radio specs pin these exact strings, and
+-- every intermediate stays under 2^38, exact in doubles.
 -- The floor-divisions are the right-shifts of an ordinary avalanche;
 -- the quality bar is "spread a seed over 4096 buckets", nothing more.
 local function mix32(n: number): number
