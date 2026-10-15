@@ -21,7 +21,7 @@ This standalone repository is loaded by the lunatic engine through
 | `tests/`         | Luau specs (`tests/**/*_test.luau`) run by the engine's spec runner, with focused RON fixtures in `tests/maps/` or embedded inline where needed. |
 | `locale/`        | One flat catalog per language, `<tag>.json`, holding every word this pack writes: its interface, its key bindings, a rendering for every settings-module label id, its own message keys, and its wording for the engine keys it overrides (`docs/WORDS.md`). |
 | `docs/`          | This pack's own contracts — what it ships and the numbers it chose: `ATMOS.md` (airs, atmos components and their focused specs), `BIOLOGY.md` (body and surgery tuning), `CHEMISTRY.md` (the shelf), `GAMEMODES.md` (the two modes and preparation policy), `POWER.md` (load classes, the panel ladder and emergency cells), `UI.md` (gameplay surfaces), plus controls, terminology and `scripting/` for guest controllers and reference files. A bare `docs/…` citation names a file HERE; an engine contract is always written "the engine's `docs/…`". |
-| `tools/`         | `sh tools/check.sh` is this pack's gate (§Running). `node tools/test.mjs <engine>` is its `pack-node` lane and runs every node check: `theme-lint.mjs` (colours only in `ui/theme/tokens.ts`, inline style is placement only), `keyed-messages.mjs --check`, and the `test-*.mjs` tests (`ui/` surfaces, the editor manifest, the roster, the bake, and `map-fixture-coverage.mjs`). To preview a surface, run the engine's lab from the engine checkout, `node tools/ui-lab.mjs serve --watch` or `shot <fixture>` (the engine's `docs/pack-ui/lab.md`). |
+| `tools/`         | `sh tools/check.sh` is this pack's gate (§Running). `node tools/test.mjs <engine>` is its `pack-node` lane and runs every node check: `theme-lint.mjs` (colours only in `ui/theme/tokens.ts`, inline style is placement only), `keyed-messages.mjs --check`, and the `test-*.mjs` tests (`ui/` surfaces, the editor declaration, the roster, the bake, and `map-fixture-coverage.mjs`). To preview a surface, run the engine's lab from the engine checkout, `node tools/ui-lab.mjs serve --watch` or `shot <fixture>` (the engine's `docs/pack-ui/lab.md`). |
 
 How many files and subdirectories a directory holds, and how deep a tree
 goes, is `AGENTS.md` §Code Organization.
@@ -222,9 +222,9 @@ engine's `web/node_modules` at a config whose `paths` map `@lunatic/ui` to
 "@lunatic/pack-ui"` and `lib: ["ES2022", "DOM"]` — the same settings
 `web/tsconfig.sdk.json` checks the engine's own fixture package with.
 
-Editor declarations in `editor/manifest.json` configure the native document
+Editor declarations in `content/editor.luau` configure the native document
 engine; [station previews](docs/EDITOR.md) owns the shipped appearance rules,
-and the engine's `docs/mapping/manifest.md` owns the schema. Neither UI guests nor
+and the engine's `docs/mapping/editor-declarations.md` owns the schema. Neither UI guests nor
 server gameplay scripts access
 editor drafts. The trusted client connects through an independently operated
 gateway; running a game server alone does not host its executable bootstrap.

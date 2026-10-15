@@ -184,6 +184,6 @@ repository's gitignored `target/`, never the engine's served root.
   evidence. `docs/UI.md` owns pack composition and authoring rules; the
   engine's `docs/pack-ui/authoring.md` owns the SDK. Native providers expose
   disclosed readouts and validated actions. Layout findings fail validation.
-- `editor/manifest.json` declares pack/mode palettes, property schemas, previews
+- `content/editor.luau` declares pack/mode palettes, property schemas, previews
   and bounded compositions of native edit operations. The trusted editor owns
   documents and undo; UI guests never receive editor drafts.

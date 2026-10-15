@@ -1,7 +1,7 @@
 # Station editor declarations
 
-`editor/manifest.json` configures both station modes using the engine's
-`docs/mapping/manifest.md` declarative schema. Prototype `previews` are ordered
+`content/editor.luau` configures both station modes using the engine's
+`docs/mapping/editor-declarations.md` declarative schema. Prototype `previews` are ordered
 rules: the first matching `when` selects a bottom-to-top `layers` stack.
 Conditions read placement properties over the roster's defaults, including
 variant defaults. Editing a placement overrides those defaults directly.

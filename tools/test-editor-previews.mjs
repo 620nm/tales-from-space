@@ -1,8 +1,12 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
 import { test } from "node:test";
+import { servedRoster } from "./served-roster.mjs";
 
-const manifest = JSON.parse(await readFile(new URL("../editor/manifest.json", import.meta.url), "utf8"));
+// The declaration is content/editor.luau; the engine serves it decoded.
+const served = servedRoster();
+if (served.missing) console.log(`SKIP editor previews: ${served.missing}`);
+const manifest = served.roster?.editor;
+assert(served.missing || manifest, "the served roster carries content/editor.luau's editor declaration");
 const defaults = {
   airlock: { paint: "public", glass: false },
   "airlock.engineering": { paint: "engineering", glass: false },
@@ -17,7 +21,7 @@ const art = {
 function preview(schema, values) {
   return schema.previews.find((rule) => Object.entries(rule.when ?? {}).every(([key, value]) => values[key] === value))?.layers;
 }
-for (const [mode, declaration] of Object.entries(manifest.modes)) {
+for (const [mode, declaration] of Object.entries(manifest?.modes ?? {})) {
   test(`${mode} previews every airlock livery, glazing, position and bolt setting`, () => {
     for (const [id, props] of Object.entries(defaults)) {
       const schema = declaration.prototypes.find((p) => p.kind === "structure" && p.id === id);
