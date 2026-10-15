@@ -1,3 +1,4 @@
+local map_boot = require("@lib/map_boot")
 local map_markers = require("@lib/map_markers")
 local shift = require("@lib/shift")
 
@@ -60,6 +61,8 @@ if sim ~= nil then
     local behavior = sim.define("behavior", "lunatic/tfs:free_build_shift", {
         prototype = content.id,
     })
+
+    map_boot.install(behavior)
 
     local function spawn_player(ev)
         return map_markers.player_spawn(ev, "builder")

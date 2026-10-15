@@ -57,11 +57,14 @@ re-bake before serving this pack again, or name a root of your own with
 
 Follow the engine's `docs/UI-PRIVACY.md` local setup to stage the snapshot and
 start the authenticated game server and browser gateway. Open the gateway on
-port 8081. The raw server has no pack map default: its map is positional and
-needs `--playtest` until the pack owns round start, for example
-`cargo run -p lunatic-server -- "$LUNATIC_MAP" --mode free_build --playtest`.
-The development launcher accepts the equivalent `--map "$LUNATIC_MAP"` and
-plays it under `--playtest` by default.
+port 8081. The raw server has no pack map default: its map is positional, and
+the pack owns round start (`content/lib/map_boot.luau`). Its modes answer
+`round.bootstrap` by instantiating the named map and beginning the round on it,
+for example `cargo run -p lunatic-server -- "$LUNATIC_MAP" --mode free_build`;
+a server started with no map begins no round, because the pack ships none.
+`--playtest` instead has the host install and begin the map itself. The
+development launcher accepts `--map "$LUNATIC_MAP"` and plays it under
+`--playtest` by default; `--no-playtest` runs the pack's own start.
 
 ### The gate
 
@@ -382,7 +385,7 @@ use the explicit `t.connect`, `t.prepare`, `t.ready` and
 | Group | Functions |
 | ----- | --------- |
 | Item gestures | `t.use_item(p, observed_target, gesture)` (any of the eighteen declarable pointer ids — `"secondary"`, `"middle"`, `"alt_primary"`, `"shift_ctrl_primary"` and the rest of the grid, spelled and ranked in the engine's `docs/luau-api/click.md`; the observed world picture must declare that gesture; carried items use `t.use_item_site`) |
-| World | `t.world(ron [, seed [, mode]])`, `t.world_file(name [, seed [, mode]])` (mode = a `content/gamemodes/` id; omitted = the pack default), `t.join([job]) -> player` (in a preparation mode this submits one chosen job and readies the first cohort before bounded setup pulses; a mode that seats bodies on connection still takes no job), `t.respawn(p [, job])` (take the mode's offer to leave this body: where the mode lobbies the session lands back at the board on a fresh Mind and `job` picks the next role, and where bodies are connection-scoped there is no board, so naming a job is an error) |
+| World | `t.world(ron [, seed [, mode]])`, `t.world_file(name [, seed [, mode]])` (mode = a `content/gamemodes/` id; omitted = the pack default), `t.bootstrap_world({ seed?, mode?, host_map?, max_seconds? })` (boots as a server without `--playtest` does: the pack's `round.bootstrap` instantiates `host_map` and begins the round, or the call raises), `t.join([job]) -> player` (in a preparation mode this submits one chosen job and readies the first cohort before bounded setup pulses; a mode that seats bodies on connection still takes no job), `t.respawn(p [, job])` (take the mode's offer to leave this body: where the mode lobbies the session lands back at the board on a fresh Mind and `job` picks the next role, and where bodies are connection-scoped there is no board, so naming a job is an error) |
 | Round preparation | `t.connect`, `t.prepare`, `t.ready`, `t.preparation_steps` and round-status inspection (explicit session/cohort controls; bodyless sessions are legal) |
 | Seeds | `t.fault(x, y, tick)` (hull failure), `t.outage([tick])` (breaker trip) |
 | Clock | `t.now()`, `t.tick()`, `t.run_ticks(n)`, `t.run_seconds(s)` |

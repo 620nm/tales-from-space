@@ -49,8 +49,8 @@ and admission rules are in its
 `docs/rounds/preparation.md` and `docs/rounds/allocation.md`.
 
 `free_build` omits `preparation`, so it retains its immediate connection spawn.
-Preparation does not consume the shift hour: the pack's `clock.second` policy
-starts when admission transitions the round to `playing`.
+Preparation does not consume the shift hour: `clock.second` policy starts at
+`playing`.
 
 The reference checkout's `code/controllers/subsystem/ticker.dm:44` declares
 120 seconds; its ready tally and countdown are at `ticker.dm:134`, and jobless
@@ -58,20 +58,28 @@ overflow consent is at `code/controllers/subsystem/job.dm:557`. TfS adds
 first-ready countdown activation, an empty-ready hold, and browser-local drafts.
 
 ```sh
-cargo run -p lunatic-server                          # Space Station
-cargo run -p lunatic-server -- --mode free_build
+cargo run -p lunatic-server -- "$LUNATIC_MAP"                       # Space Station
+cargo run -p lunatic-server -- "$LUNATIC_MAP" --mode free_build
 ```
+
+## Round start
+
+Without `--playtest` the engine installs no map. `lib/map_boot.luau`, bound by
+each mode, answers `round.bootstrap` by instantiating the server's map
+(`host_map`) and, once `maps.instantiate.done` is `completed`, calling
+`sim.round.begin`. The pack ships no root `maps/`, so a map-less server records
+`lunatic/tfs:map_boot_failed` (stage `no_host_map`) and begins no round; a
+refused install records it with the reason. `mod.toml` selects
+`lifecycle.round_bootstrap` and `maps.lifecycle` and requests `map_lifecycle`,
+which `modlist.toml` approves (the engine's `docs/rounds/lifecycle.md`).
 
 ## Free Build's gear
 
 Nobody picks a job in `free_build`, so `rules.outfit = "engineer"` issues the
 Station Engineer's standard kit — jumpsuit, ID, stocked toolbelt, metal and
 tiles — to every body that spawns. It is the gear, not the job: no slot is
-taken and the crew manifest is unchanged. Somebody who spawns to build should
-already be holding the tools.
-
-Both modes name `rules.body = "human"`. Without a plan on the mode or on the
-job there would be nothing to seat.
+taken and the crew manifest is unchanged. Both modes name `rules.body =
+"human"`; without a plan on the mode or the job there is nothing to seat.
 
 ## The shift
 
@@ -87,11 +95,10 @@ announcer = "Charter Command",
 channel = "Common",
 ```
 
-The hour is this pack's opinion and it is the same opinion under every mode,
-which is why it lives in one library rather than once per mode file. Free Build
-ends on the same hour deliberately: a sandbox whose map never refreshes is a
-sandbox nobody can reset, and a mode whose rules were an exception would be a
-second answer to when a round ends.
+The hour is this pack's opinion under every mode, so it lives in one library.
+Free Build ends on the same hour deliberately: a sandbox whose map never
+refreshes is a sandbox nobody can reset, and an exception would be a second
+answer to when a round ends.
 
 **Each `warnings` entry is seconds of shift REMAINING**, so `600` announces ten
 minutes out. `shift.on_second` counts `clock.second`, announces at each mark,
@@ -105,13 +112,6 @@ is a `--load-only` failure rather than a shift that quietly never ends. It
 refuses a non-whole `shift_minutes` outside 1..1440, a `grace_seconds` outside
 0..120, a sparse or repeating `warnings` list, a mark that is not a whole minute
 of remaining time inside the shift, and an empty `announcer` or `channel`.
-The 120 is the engine's `MAX_ROUND_END_GRACE_SECS` exactly, refused here rather
-than clamped there, so a mode asking for more is never silently shortened.
-
-Nothing in `shift.luau` may raise: a handler that throws is disabled for the
-rest of the shift, and one runtime error before the last second would be a round
-that never ends. It reads no round-scoped state, which stops being legal the
-moment `round.end` returns.
 
 ### Who hears it
 

@@ -9,6 +9,11 @@ return {
         ["lunatic/tfs:print_job_failed"] = {
             fields = { machine = "entity", stage = "text", error = "text" },
         },
+        -- A round that did not start: no host map named, or the install of
+        -- the named one was refused (lib/map_boot.luau).
+        ["lunatic/tfs:map_boot_failed"] = {
+            fields = { stage = "text", source = "text?", reason = "text?" },
+        },
     },
     streams = {
         audit = { scope = "round", select = { groups = { "all" } } },

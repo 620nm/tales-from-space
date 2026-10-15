@@ -35,6 +35,8 @@ native_edges = [
     "lifecycle.clock",
     "lifecycle.round_end",
     "lifecycle.round_allocate",
+    "lifecycle.round_bootstrap",
+    "maps.lifecycle",
     "parts.refresh",
     "component.command",
     "speech.radio",
@@ -76,6 +78,9 @@ notify_audience = true
 # The transceiver hosts guest scripts: its `carry` program slot compiles
 # and runs player-authored .disl files (content/lib/program_slot.luau).
 disl_host = true
+# Round start: content/lib/map_boot.luau instantiates the host map and begins
+# the round (the engine's docs/rounds/lifecycle.md); the host approves it too.
+map_lifecycle = true
 
 # This pack spells no sentence: every player-visible line it sends names
 # a catalog key, prototype `failure` lines included, and the engine
