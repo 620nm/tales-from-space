@@ -18,3 +18,19 @@ assert(
     worn.uniform == "uniform_eng",
     "the round began on the host map, got " .. tostring(worn.uniform)
 )
+
+-- Two instances on two planes at a nonzero origin: the join instance on
+-- plane 1 at (100, 40) binds `lunatic/tfs:cold_outpost` while a twin
+-- stands on plane 0.
+t.world_file("cold_outpost.ron", 7, "free_build", {
+    key = "lunatic/tfs:cold_outpost",
+    plane = 1,
+    origin = { x = 100, y = 40 },
+    twin_plane = true,
+})
+local twin_installs = t.ledger_rows("map_instance_installing")
+assert(#twin_installs == 2, "two instances install on two planes, got " .. #twin_installs)
+local p = t.join()
+t.tick()
+local bx, by = t.pos(p)
+assert(bx >= 100 and by >= 40, "the builder stands at the nonzero origin on plane 1: (" .. bx .. ", " .. by .. ")")

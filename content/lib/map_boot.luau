@@ -32,7 +32,10 @@ function map_boot.install(behavior: Definition): ()
             record_failure("no_host_map", nil, nil)
             return
         end
-        pending = sim.maps.instantiate({ source = stem })
+        pending = sim.maps.instantiate({
+            source = stem,
+            logical = "lunatic/tfs:" .. stem,
+        })
     end)
 
     local function on_instantiated(ev: MapsInstantiateDonePayload)
@@ -45,7 +48,7 @@ function map_boot.install(behavior: Definition): ()
             record_failure(ev.outcome, ev.source, ev.reason)
             return
         end
-        sim.round.begin({ map = ev.source })
+        sim.round.begin({ map = ev.logical or ev.source })
     end
     behavior:handle("maps.instantiate.done", { kind = "react" }, on_instantiated)
 end
