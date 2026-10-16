@@ -10,4 +10,5 @@ permissions = [
     "global_handlers",
     "notify_audience",
     "map_lifecycle",
+    "entity_transfer",
 ]

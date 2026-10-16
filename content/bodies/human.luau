@@ -704,8 +704,10 @@ local STOP = { dead = true, undone = true }
 local HOLD = { crit = true }
 
 if sim ~= nil then
+    local map_boot = require("@lib/map_boot")
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
+    script_definition:handle("move.cross.done", { kind = "react" }, map_boot.on_cross_done)
     script_definition:handle(
         "body.threshold.done",
         { kind = "react", route = "threshold" },

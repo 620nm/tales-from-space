@@ -13,6 +13,66 @@ local map_boot = {}
 
 -- Ledger kind declared in content/ledger.luau.
 local FAILED = "lunatic/tfs:map_boot_failed"
+local PREFIX = "lunatic/tfs:"
+
+type SeamRoute = {
+    target_map: string,
+    landing_tag: string,
+}
+
+local SEAM_ROUTES: { [string]: SeamRoute } = {
+    seam_east = {
+        target_map = "seam_east",
+        landing_tag = "seam_landing_west",
+    },
+    seam_west = {
+        target_map = "seam_west",
+        landing_tag = "seam_landing_east",
+    },
+}
+
+local function find_seam_landing(map_selector: string, wanted_tag: string): TileAddress?
+    local ok_ext, extent = pcall(sim.map_extent, map_selector)
+    if not ok_ext then
+        return nil
+    end
+    for z = 0, extent.depth - 1 do
+        for y = 0, extent.height - 1 do
+            for x = 0, extent.width - 1 do
+                local at = sim.map_tile(map_selector, x, y, z)
+                if at ~= nil then
+                    for _, tag in ipairs(sim.area_tags(at)) do
+                        if tag == wanted_tag then
+                            return at
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return nil
+end
+
+function map_boot.on_cross_done(ev: MoveCrossDonePayload): ()
+    if ev.outcome ~= "completed" then
+        return
+    end
+    local tags = sim.area_tags(ev.to)
+    if #tags == 0 then
+        return
+    end
+    for _, tag in ipairs(tags) do
+        local route = SEAM_ROUTES[tag]
+        if route ~= nil then
+            local landing = find_seam_landing(PREFIX .. route.target_map, route.landing_tag)
+                or find_seam_landing(route.target_map, route.landing_tag)
+            if landing ~= nil then
+                sim.entity.transfer({ entity = ev.mover, to = landing })
+            end
+            return
+        end
+    end
+end
 
 local function record_failure(stage: string, source: string?, reason: string?)
     sim.ledger.record({
