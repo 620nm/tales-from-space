@@ -54,10 +54,12 @@ function luauCode(source) {
   return source.replace(/--\[(=*)\[[\s\S]*?\]\1\]/g, "").replace(/--[^\n]*/g, "");
 }
 
-// The maps a spec source boots by literal name. Comments are dropped
+// The maps a spec source boots by literal name: a `t.world_file("x.ron")`
+// call or a `host_map = "x.ron"` bootstrap field. Comments are dropped
 // first, so a commented-out call or a mention in prose loads nothing.
 export function worldFileNames(source) {
-  return new Set([...luauCode(source).matchAll(/\bworld_file\(\s*(["'])([^"'\n]+)\1/g)].map((m) => m[2]));
+  const booted = /\b(?:world_file\(\s*|host_map\s*=\s*)(["'])([^"'\n]+)\1/g;
+  return new Set([...luauCode(source).matchAll(booted)].map((m) => m[2]));
 }
 
 // The `tests/maps/` files whose own lines pin standard gravity.
