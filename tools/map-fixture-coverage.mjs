@@ -13,6 +13,7 @@ import { join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const mapFixtures = [
+  { map: "Box.ron", specs: ["rounds/map_boot_upper_test.luau"] },
   {
     map: "cold_outpost.ron",
     specs: ["atmos/environment/terrestrial_environment_test.luau", "atmos/environment/tile_air_test.luau"],
