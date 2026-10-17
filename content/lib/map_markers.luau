@@ -72,6 +72,13 @@ local function weight(marker: Handle): number
     return value
 end
 
+-- Only markers on the round's join instance answer. A marker on a seam map
+-- or a spec twin never does, and no join yet means no answer at all.
+local function on_join(marker: Handle, join: MapInstance?): boolean
+    local at = marker.tile
+    return join ~= nil and at ~= nil and at.instance == join
+end
+
 -- Select one marker with one draw after summing eligible weights. Entity
 -- enumeration is stable, so equal seeds and maps produce equal locations.
 local function choose(
@@ -81,9 +88,10 @@ local function choose(
 ): TileAddress?
     local candidates: { { marker: Handle, weight: number } } = {}
     local total = 0
+    local join = sim.join_instance()
     for _, marker in ipairs(sim.query.all(definition)) do
         local marker_weight = weight(marker)
-        if marker_weight > 0 and eligible(marker) then
+        if marker_weight > 0 and on_join(marker, join) and eligible(marker) then
             total += marker_weight
             table.insert(candidates, { marker = marker, weight = marker_weight })
         end
