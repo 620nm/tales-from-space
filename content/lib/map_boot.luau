@@ -31,7 +31,40 @@ local SEAM_ROUTES: { [string]: SeamRoute } = {
     },
 }
 
+local function landing_has_tag(at: TileAddress, wanted_tag: string): boolean
+    for _, tag in ipairs(sim.area_tags(at)) do
+        if tag == wanted_tag then
+            return true
+        end
+    end
+    return false
+end
+
+type LandingCoordinate = { x: number, y: number, z: number }
+
+-- The first landing per (map selector, tag), kept as coordinates. A remembered
+-- tile is re-minted on use and kept only while it still carries the tag, so a
+-- map that changed underneath falls back to a fresh scan.
+local landing_memo: { [string]: { [string]: LandingCoordinate } } = {}
+
+local function remembered_landing(map_selector: string, wanted_tag: string): TileAddress?
+    local per_tag = landing_memo[map_selector]
+    local coordinate = per_tag and per_tag[wanted_tag]
+    if coordinate == nil then
+        return nil
+    end
+    local ok, at = pcall(sim.map_tile, map_selector, coordinate.x, coordinate.y, coordinate.z)
+    if ok and at ~= nil and landing_has_tag(at, wanted_tag) then
+        return at
+    end
+    return nil
+end
+
 local function find_seam_landing(map_selector: string, wanted_tag: string): TileAddress?
+    local known = remembered_landing(map_selector, wanted_tag)
+    if known ~= nil then
+        return known
+    end
     local ok_ext, extent = pcall(sim.map_extent, map_selector)
     if not ok_ext then
         return nil
@@ -40,12 +73,14 @@ local function find_seam_landing(map_selector: string, wanted_tag: string): Tile
         for y = 0, extent.height - 1 do
             for x = 0, extent.width - 1 do
                 local at = sim.map_tile(map_selector, x, y, z)
-                if at ~= nil then
-                    for _, tag in ipairs(sim.area_tags(at)) do
-                        if tag == wanted_tag then
-                            return at
-                        end
+                if at ~= nil and landing_has_tag(at, wanted_tag) then
+                    local per_tag = landing_memo[map_selector]
+                    if per_tag == nil then
+                        per_tag = {}
+                        landing_memo[map_selector] = per_tag
                     end
+                    per_tag[wanted_tag] = { x = x, y = y, z = z }
+                    return at
                 end
             end
         end
@@ -81,6 +116,17 @@ local function record_failure(stage: string, source: string?, reason: string?)
     })
 end
 
+-- The logical id of a host map stem: its tail is lowercased to the engine's
+-- resource-tail rule (lowercase, digits, `_`, `.`, `/`, `-`). Nil when the
+-- stem cannot be made valid, so the bootstrap refuses with a row.
+local function logical_for_stem(stem: string): string?
+    local tail = string.lower(stem)
+    if string.match(tail, "^[a-z0-9_][a-z0-9_./-]*$") == nil then
+        return nil
+    end
+    return PREFIX .. tail
+end
+
 -- Binds both handlers on `behavior`. The engine settles one install at a
 -- time, so one pending request is the whole book.
 function map_boot.install(behavior: Definition): ()
@@ -92,9 +138,14 @@ function map_boot.install(behavior: Definition): ()
             record_failure("no_host_map", nil, nil)
             return
         end
+        local logical = logical_for_stem(stem)
+        if logical == nil then
+            record_failure("invalid_logical", stem, "the stem has no valid resource tail")
+            return
+        end
         pending = sim.maps.instantiate({
             source = stem,
-            logical = "lunatic/tfs:" .. stem,
+            logical = logical,
         })
     end)
 
