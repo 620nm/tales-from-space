@@ -399,10 +399,12 @@ local content = {
             "bone_sawed",
             "cavity_open",
         },
-        -- Per second. UNCLAMPED_VESSELS_BLEEDING / CLAMPED_VESSELS_BLEEDING,
-        -- code/__DEFINES/surgery.dm (bodyparts.dm:217-219); precedence is
-        -- the highest value the part holds (_bodyparts.dm:1634-1638).
-        bleeds = { vessels_unclamped = 1.5, vessels_clamped = 0.2, organs_cut = 0.2 },
+        -- Moles per second: tg's units per second x 0.025 (a blood unit is
+        -- 0.025 mol, docs/chemistry/tg-bridge.md). UNCLAMPED_VESSELS_BLEEDING
+        -- 1.5 and CLAMPED_VESSELS_BLEEDING 0.2, code/__DEFINES/surgery.dm
+        -- (bodyparts.dm:217-219); precedence is the highest value the part
+        -- holds (_bodyparts.dm:1634-1638).
+        bleeds = { vessels_unclamped = 0.0375, vessels_clamped = 0.005, organs_cut = 0.005 },
         clears_on_close = {
             "skin_cut",
             "skin_open",
@@ -705,9 +707,17 @@ local HOLD = { crit = true }
 
 if sim ~= nil then
     local map_boot = require("@lib/map_boot")
+    local blood_harmony = require("@lib/blood_harmony")
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("move.cross.done", { kind = "react" }, map_boot.on_cross_done)
+    -- The body's own blood: topped up, drained to normal and paid for in
+    -- oxygen once a metabolism pass, only while the body is animate.
+    script_definition:handle(
+        "mob.life",
+        { kind = "react", route = "lifecycle" },
+        blood_harmony.on_life
+    )
     script_definition:handle(
         "body.threshold.done",
         { kind = "react", route = "threshold" },

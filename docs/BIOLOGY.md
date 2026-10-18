@@ -59,11 +59,11 @@ bodyparts.dm:8-11, 23-26; _bodyparts.dm:1639-1644). Every part item carries
 `LIMB_NO_DISABLE` (__DEFINES/bodyparts.dm:71) — `pool_mod` 1 on brute and
 burn, and `robotic = false`.
 
-**Blood** lives on `human_chest`, because tg carries the carbon bloodstream
-with the torso (_bodyparts.dm:947-969): `normal = 560`, `dead_below = 112`,
-`regen_per_s = 0.25`, `oxy_per_missing = 0.01` (mobs.dm:20-28;
-blood.dm:256-262), and a `bloodstream` holder of the same body of blood —
-`volume_m3 = 0.0056` (560 cL read as centilitres) at 310.15 K.
+**Blood** lives on `human_chest` (the torso carries tg's bloodstream,
+_bodyparts.dm:947-969) as moles of `blood` in its 6 L bloodstream at 310.15 K:
+`normal = 13.75`, `dead_below = 2.8`, `stack_bleed_per_s = 0.0125`, each tg
+figure x 0.025 (mobs.dm:20-25; _bodyparts.dm:1626-1627). Regrowth and the
+low-blood oxygen cost (mobs.dm:28; blood.dm:253-262): `lib/blood_harmony.luau`.
 
 **Sockets and organs.**
 

@@ -13,10 +13,12 @@
 -- 64 000; this is not a measurement of anything.
 --
 -- It rests liquid and never transitions on its own: tg gives blood no
--- phase curve, so `unmodeled` is the port, not a placeholder. It
--- metabolizes fast so it disappears fast (other_reagents.dm:5): tg's
--- 12.5 x REAGENTS_METABOLISM (mobs.dm:505) through this engine's own
--- 0.005 mol a tick is 0.0625.
+-- phase curve, so `unmodeled` is the port, not a placeholder.
+--
+-- It is never metabolized: the body's blood is the held matter of its own
+-- bloodstream (content/items/anatomy/human_chest.luau), and the engine
+-- only bleeds it. What brings it back to normal, and what takes an excess
+-- away, is `lib/blood_harmony.luau` at the body cadence.
 --
 -- tg: /datum/reagent/blood, `color = "#C80000"`
 -- (code/modules/reagents/chemistry/reagents/other_reagents.dm:4). The
@@ -52,9 +54,9 @@ local content = {
     -- A bench substance like the catalysts, filed under Other:
     -- nothing scrubs it, nothing breathes it, and no dispenser pours it.
     group = "other",
-    -- No `metabolism_rate` line would take the loader's 0.005; the
-    -- shelf writes its numbers (tg-bridge.md D2).
-    metabolism_rate = 0.0625,
+    -- No `metabolism_rate` line would take the loader's 0.005; zero is
+    -- the explicit "never", and the body's own blood is why.
+    metabolism_rate = 0,
 }
 
 return content

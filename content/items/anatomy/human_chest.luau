@@ -32,21 +32,29 @@ return {
         -- carbon bloodstream is carried with the torso organs and losing
         -- bodyparts routes through their owner
         -- (code/modules/surgery/bodyparts/_bodyparts.dm:947-969).
+        --
+        -- Blood is MOLES of the `blood` substance held in this part's own
+        -- bloodstream, so a dose, a rider and a bleed all act on the same
+        -- mixture. A tg blood unit is a centilitre and 0.025 mol
+        -- (docs/chemistry/tg-bridge.md): every figure below is the cited
+        -- tg number x 0.025. Native code only bleeds it; filling it back
+        -- up and what running low costs are `lib/blood_harmony.luau`.
         blood = {
-            normal = 560, -- BLOOD_VOLUME_NORMAL, code/__DEFINES/mobs.dm:20
-            dead_below = 112, -- BLOOD_VOLUME_SURVIVE, code/__DEFINES/mobs.dm:25
-            regen_per_s = 0.25, -- BLOOD_REGEN_FACTOR, code/__DEFINES/mobs.dm:28
-            oxy_per_missing = 0.01, -- code/modules/mob/living/blood.dm:256-262
+            substance = "blood",
+            -- BLOOD_VOLUME_NORMAL 560 u (code/__DEFINES/mobs.dm:20): 5.5 L.
+            normal = 13.75,
+            -- BLOOD_VOLUME_SURVIVE 112 u (code/__DEFINES/mobs.dm:25).
+            dead_below = 2.8,
+            -- generic_bleedstacks 0.5 u/s a stack
+            -- (code/modules/surgery/bodyparts/_bodyparts.dm:1626-1627).
+            stack_bleed_per_s = 0.0125,
         },
         bloodstream = {
-            -- The dissolved-matter holder is the same body of blood the
-            -- `blood` block counts, so it holds the same amount rather
-            -- than a round number beside it: BLOOD_VOLUME_NORMAL 560,
-            -- read as centilitres, is 5.6 L = 0.0056 m³
-            -- (#define BLOOD_VOLUME_NORMAL 560,
-            -- code/__DEFINES/mobs.dm:20). The 0.005 it replaces was an
-            -- uncited five litres.
-            volume_m3 = 0.0056,
+            -- The shell holds a little more than normal blood, so a dose
+            -- fits beside it: 6 L = 0.006 m3 against 5.5 L of blood
+            -- (BLOOD_VOLUME_NORMAL 560 u read as centilitres,
+            -- code/__DEFINES/mobs.dm:20).
+            volume_m3 = 0.006,
             -- BODYTEMP_NORMAL (code/__DEFINES/atmospherics/
             -- atmos_mob_interaction.dm:53).
             temperature_k = 310.15,
