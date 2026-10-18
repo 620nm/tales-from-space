@@ -140,5 +140,7 @@ return {
     -- get_random_valid_zone uses 80% for aimed/default melee, +10 while
     -- lying, and 65% for thrown hits (code/_onclick/item_attack.dm:321-326;
     -- code/modules/mob/living/living_defense.dm:263-264).
-    aim = { aimed = 80, lying_bonus = 10, thrown = 65 },
+    -- A missing aimed limb falls to the chest: get_bodypart(random_zone) || get_bodypart()
+    -- (code/modules/mob/living/carbon/damage_procs.dm:23).
+    aim = { aimed = 80, lying_bonus = 10, thrown = 65, absent = "default_zone" },
 }
