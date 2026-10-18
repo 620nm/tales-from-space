@@ -389,7 +389,7 @@ local content = {
     -- Interned per plan and stored per part as a bitset; the operations
     -- that move between them are B2's.
     surgery = {
-        states = {
+        surgical_states = {
             "skin_cut",
             "skin_open",
             "vessels_unclamped",

@@ -119,13 +119,13 @@ t.run_ticks(2)
 t.click(doc, 1, 1, t.target_at(doc, 1, 1, "scalpel"))
 t.run_ticks(2)
 for _ = 1, 30 do
-    if has(assert(t.parts(pat)).chest.states, "skin_cut") then
+    if has(assert(t.parts(pat)).chest.surgical_states, "skin_cut") then
         break
     end
     t.click(doc, 2, 1, t.body_target(doc, pat))
     t.run_seconds(4.25)
 end
-assert(has(assert(t.parts(pat)).chest.states, "skin_cut"), "the doctor opened the chest")
+assert(has(assert(t.parts(pat)).chest.surgical_states, "skin_cut"), "the doctor opened the chest")
 
 -- Now the patient takes the welder off the next tile (in reach), lights
 -- it, and closes their OWN wound (close_incision_self is self_only -- no
@@ -138,14 +138,14 @@ t.run_ticks(2)
 
 local ppx, ppy = t.pos(pat)
 for _ = 1, 40 do
-    local s = assert(t.parts(pat)).chest.states
+    local s = assert(t.parts(pat)).chest.surgical_states
     if not has(s, "skin_cut") and not has(s, "skin_open") then
         break
     end
     t.click(pat, ppx, ppy, t.body_target(pat, pat)) -- click YOURSELF
     t.run_ticks(clock.deadline_ticks(4.8) + 3)
 end
-local s = assert(t.parts(pat)).chest.states
+local s = assert(t.parts(pat)).chest.surgical_states
 assert(not has(s, "skin_cut") and not has(s, "skin_open"), "the patient sealed their own wound")
 -- The self-cauterise costs 5 burn.
 assert(ui_controls.number(assert(t.parts(pat)).chest.burn) > 0, "and it burned to do it (5 burn)")
