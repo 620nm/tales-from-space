@@ -17,8 +17,9 @@ local ui_controls = require("@helpers/ui_controls")
 --      already full, is drawn back out to the normal, and a dose
 --      riding in the same bloodstream is left alone.
 --   3. A conscious body that bled pays oxygen only up to the share of
---      blood it is missing. The unconscious-at-50% branch of that rule
---      needs half a body of blood gone, which no spec lever reaches.
+--      blood it is missing. Past half a body of blood gone, one that has
+--      blacked out keeps paying beyond that share: `t.set_blood_moles`
+--      takes the blood down at once to reach it.
 --   4. A stopped body hears no `mob.life`: nothing restores it.
 local NORMAL = 13.75 -- 560 u x 0.025 mol/u, content/items/anatomy/human_chest.luau
 local REGEN_PER_S = 0.25 * 0.025 -- BLOOD_REGEN_FACTOR, mobs.dm:28
@@ -224,4 +225,63 @@ assert(
     ("but only up to the missing share: oxy %g, peak missing %g%%"):format(oxy, peak_missing)
 )
 assert(assert(t.body(victim)).conscious, "a body this healthy stays awake")
+assert(#t.script_errors() == 0, "the harmony handler runs clean")
+
+-- ---------------------------------------------------------------
+-- THE UNCONSCIOUS BRANCH (blood.dm:259). With half the blood or more
+-- gone (OXYLOSS_PASSOUT_THRESHOLD), a body that has blacked out keeps
+-- paying air beyond the share it is missing, where a conscious one
+-- stops at it. The spec lever sets the blood outright; a wound is not
+-- what this part is about.
+-- ---------------------------------------------------------------
+t.world(
+    [==[(
+    name: "faint",
+    legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
+    levels: [
+        (
+            rows: [ "####", "#..#", "####" ],
+            structures: [ (1, 1, "player_spawn", { "jobs": "assistant" }) ],
+        ),
+    ],
+)]==],
+    0
+)
+local sleeper = t.join("assistant")
+t.run_ticks(3)
+near(blood_of(sleeper), NORMAL, 1e-9, "the sleeper starts on the plan normal")
+local MISSING = 70
+-- One pass pays at most 0.4 oxygen per missing mole x 2 s = 7.7 here, so a
+-- conscious body that stops paying at the missing share ends below 78.
+local PAST_ANY_OVERSHOOT = MISSING + 10
+t.set_blood_moles(sleeper, NORMAL * (1 - MISSING / 100))
+near(blood_of(sleeper), NORMAL * 0.3, 1e-9, "the lever sets the blood outright")
+local woke_at_start = assert(t.body(sleeper)).conscious
+local fainted_oxy = nil
+local faint_trace = {}
+for _ = 1, 120 do
+    t.run_seconds(1)
+    local row = assert(t.body(sleeper))
+    local air = ui_controls.number(t.health(sleeper).oxy)
+    faint_trace[#faint_trace + 1] = string.format("%s:%.1f", row.conscious and "c" or "u", air)
+    if not row.animate then
+        break
+    end
+    if not row.conscious and fainted_oxy == nil then
+        fainted_oxy = air
+    end
+    if fainted_oxy ~= nil and air > PAST_ANY_OVERSHOOT then
+        break
+    end
+end
+assert(woke_at_start, "the sleeper was awake when the blood went")
+assert(fainted_oxy ~= nil, "it blacks out: " .. table.concat(faint_trace, " "))
+local final = ui_controls.number(t.health(sleeper).oxy)
+assert(
+    final > PAST_ANY_OVERSHOOT,
+    ("unconscious past half its blood gone it pays beyond the missing share: oxy %g (%s)"):format(
+        final,
+        table.concat(faint_trace, " ")
+    )
+)
 assert(#t.script_errors() == 0, "the harmony handler runs clean")
