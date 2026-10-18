@@ -1,3 +1,4 @@
+local blood_books = require("@helpers/blood_books")
 local composition = require("@helpers/composition")
 local ui_controls = require("@helpers/ui_controls")
 
@@ -80,7 +81,7 @@ assert(
     math.abs(ash_total() - 0.25) < 1e-9,
     ("a quarter mole of ash rests on the deck, got %g"):format(ash_total())
 )
-local minted = t.ledger_rows("minted")
+local minted = blood_books.minted()
 -- The ash lands first; behind it, one blood mint per pellet that
 -- struck the armer down the row (`content/lib/bloodshed.luau` answers
 -- every wounding receipt, and the armer stood clear of the direct

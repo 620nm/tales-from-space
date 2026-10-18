@@ -1,3 +1,4 @@
+local blood_books = require("@helpers/blood_books")
 local ui_controls = require("@helpers/ui_controls")
 
 -- The wound chain: a blow that lands brute on a body with blood in it
@@ -74,7 +75,7 @@ assert(heard["smash"], "the swing's own crack")
 assert(heard["punch"], "and the flesh under it")
 
 -- A tenth of a unit a brute: 10 brute spills 1 unit, 0.025 mol.
-local blood = t.matter_totals().substances["blood"] or 0
+local blood = blood_books.spilled({ attacker, victim })
 near(blood, 0.025, "spilled blood on the books")
 
 -- The splatter mark sits on the victim's tile in the wound paint.
@@ -89,12 +90,12 @@ end
 assert(mark ~= nil, "a blood mark on the deck")
 assert(mark.paint == "blood", "in the wound paint, not a crew colour")
 
--- The bleeder bleeds: 0.5 units/s while stacks remain, so two passes
--- cost a unit net of regeneration and the volume is under full.
+-- The bleeder bleeds: 0.0125 mol/s (tg's 0.5 u/s) while stacks remain,
+-- and the harmony handler regrows less than that, so the volume is under full.
 t.run_seconds(5)
 local body = assert(t.body(victim))
-assert(body.blood ~= nil and body.blood < 560, "five seconds of bleeding shows")
-near(num(body.bleed_rate or 0), 0.5, "at the flat stack rate")
+assert(body.blood ~= nil and body.blood < 13.75, "five seconds of bleeding shows")
+near(num(body.bleed_rate or 0), 0.0125, "at the flat stack rate")
 
 -- ---------------------------------------------------------------
 -- THE KILLING BLOW: splatter without a new bleeder.
@@ -112,7 +113,7 @@ end
 
 t.set_health(victim, { brute = 195 })
 t.run_ticks(4)
-near(t.matter_totals().substances["blood"] or 0, 0.025, "an actorless wound mints nothing")
+near(blood_books.spilled({ attacker, victim }), 0.025, "an actorless wound mints nothing")
 assert(#t.sounds(attacker) == 0, "and thumps nothing")
 -- Stacks decay a pass at a time, so only the direction is pinned:
 -- the living precondition opens far more than time closes. The chest
@@ -136,7 +137,7 @@ for _, sound in ipairs(t.sounds(attacker)) do
     last[sound] = true
 end
 assert(last["smash"] and last["punch"], "a killing blow still lands loud")
-near(t.matter_totals().substances["blood"] or 0, 0.05, "and still spills")
+near(blood_books.spilled({ attacker, victim }), 0.05, "and still spills")
 local marks = 0
 for x = 1, 3 do
     for _, decal in ipairs(t.decals_at(x, 1)) do

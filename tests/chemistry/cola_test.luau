@@ -42,14 +42,20 @@ t.set_health(p, { oxy = 30 })
 t.click(p, 1, 1, t.target_at(p, 1, 1, "cola")) -- pick up the can
 t.tick()
 assert(t.hands(p).held == "cola", "the can is held")
-assert(t.blood_moles(p) == 0, "nothing in the blood yet")
+-- The bloodstream already holds the body's own blood (13.75 mol); the
+-- swig is what is added on top of it, and the can adds nothing else.
+local blood_before = t.blood_moles(p)
+assert(
+    math.abs(blood_before - 13.75) < 1e-9 and (t.blood(p).sugar or 0) == 0,
+    "only the body's own blood in the stream yet"
+)
 
 -- The books, read one tick before the mouthful and one tick after it.
 local books = t.matter_totals()
 
 composition.click_deck(p, 2, 1) -- drink from the held can
 t.tick()
-local swig = t.blood_moles(p)
+local swig = t.blood_moles(p) - blood_before
 assert(math.abs(swig - 0.05) < 1e-9, ("one 0.05 mol gulp, got %g"):format(swig))
 
 -- A SWIG IS HEARD. The gesture plays `sound/drink` off the can's own
@@ -83,7 +89,7 @@ local before = ui_controls.number(t.health(p).oxy)
 t.run_seconds(20)
 local after = ui_controls.number(t.health(p).oxy)
 assert(after < before, ("sugar healed oxy: %g -> %g"):format(before, after))
-assert(t.blood_moles(p) < swig, "metabolism removed moles from the blood")
+assert(t.blood_moles(p) - blood_before < swig, "metabolism removed moles from the blood")
 
 -- THE HANDLER IS HANDED A NUMBER.
 --

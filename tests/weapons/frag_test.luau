@@ -1,3 +1,4 @@
+local blood_books = require("@helpers/blood_books")
 local ui_controls = require("@helpers/ui_controls")
 
 -- The frag grenade: primed in the hand, five seconds, and then the blast
@@ -126,7 +127,7 @@ end
 local blood_per_blast = { 4, 12, 11, 11 }
 local function ash_mints(): { any }
     local ash = {}
-    for _, row in ipairs(t.ledger_rows("minted")) do
+    for _, row in ipairs(blood_books.minted()) do
         if row.substance == "ash" then
             table.insert(ash, row)
         else
@@ -147,7 +148,7 @@ local function ash_mints(): { any }
 end
 local function blood_mints(): number
     local blood = 0
-    for _, row in ipairs(t.ledger_rows("minted")) do
+    for _, row in ipairs(blood_books.minted()) do
         if row.substance == "blood" then
             blood += 1
         end
@@ -247,7 +248,7 @@ assert(burn(v1) == 0, "four tiles off, the spawn stack feels nothing")
 -- with the grounded dirt beside it (`blast_dirt` pins the dirt's own
 -- rows between the same two).
 local gone = t.ledger_rows("item_destroyed")
-local minted = t.ledger_rows("minted")
+local minted = blood_books.minted()
 -- One detonation mints one ash; the holder's direct wound and the
 -- three pellets that struck them (15 thrown, 12 settled) mint four
 -- blood. The ash lands first: the deposit runs inside the detonate,

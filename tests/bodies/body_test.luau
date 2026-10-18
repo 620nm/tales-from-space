@@ -43,8 +43,8 @@ assert(body.controllable and body.animate and body.conscious, "and steerable, ru
 assert(body.posture == "standing", "and on their feet")
 assert(math.abs(body.health - 100) < 0.01, "MAX_LIVING_HEALTH, mobs.dm:236: " .. body.health)
 assert(
-    math.abs(assert(body.blood) - 560) < 0.01,
-    "BLOOD_VOLUME_NORMAL, mobs.dm:20: " .. tostring(body.blood)
+    math.abs(assert(body.blood) - 13.75) < 1e-9,
+    "BLOOD_VOLUME_NORMAL 560 u x 0.025 mol/u, mobs.dm:20: " .. tostring(body.blood)
 )
 
 local parts = assert(t.parts(p))

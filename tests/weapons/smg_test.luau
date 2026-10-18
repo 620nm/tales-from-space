@@ -1,3 +1,4 @@
+local blood_books = require("@helpers/blood_books")
 local ui_controls = require("@helpers/ui_controls")
 
 -- The C-20r downrange: one pull spends one round for 30 brute at the
@@ -115,7 +116,7 @@ assert(#consumed() == 1, "one charge spent")
 assert(charges(consumed()[1]) == 23, "24 down to 23")
 -- The wound answers downrange with the round: 30 brute spills 3 units
 -- on the victim's tile, and the mark sits over it in the wound paint.
-local spilled = t.matter_totals().substances["blood"] or 0
+local spilled = blood_books.spilled({ shooter, victim })
 assert(math.abs(spilled - 0.075) < 1e-6, ("3 units downrange, got %.6f"):format(spilled))
 local mark = nil
 for _, decal in ipairs(t.decals_at(4, 1)) do

@@ -1,3 +1,4 @@
+local blood_books = require("@helpers/blood_books")
 local ui_controls = require("@helpers/ui_controls")
 
 -- A blast wound aims its mark AWAY: the victim east of the epicenter
@@ -80,7 +81,7 @@ assert(
 
 -- The spray still mints its blood.
 assert(
-    (t.matter_totals().substances["blood"] or 0) > 0,
+    blood_books.spilled({ armer, victim, diag, far }) > 0,
     "the blast wounds still bleed"
 )
 
