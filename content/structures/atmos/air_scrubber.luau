@@ -145,6 +145,11 @@ return {
         -- four cardinals) and 9 (the whole 3x3 ring, tg's widenet),
         -- each serviced tile billed at the idle draw.
         service = 1,
+        -- The share of the serviced tile's standard gas load the machine
+        -- must take per second to hold the room live: 9.62e-5 of a 1 m3
+        -- tile's standard moles is the old built-in 0.002 mol per pass
+        -- at the 0.5 s atmosphere cadence.
+        live_take_per_s = 9.62e-5,
     },
     build = {
         sound = "smash",
