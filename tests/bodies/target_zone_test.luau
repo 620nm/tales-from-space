@@ -61,8 +61,8 @@ t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(clock.deadline_ticks(1.6) + 3)
 
 local parts = assert(t.parts(patient))
-assert(has(parts.head.states, "skin_cut"), "the head was cut: that is where the aim was")
-assert(not has(parts.chest.states, "skin_cut"), "and nowhere else was")
+assert(has(parts.head.surgical_states, "skin_cut"), "the head was cut: that is where the aim was")
+assert(not has(parts.chest.surgical_states, "skin_cut"), "and nowhere else was")
 
 -- =====================================================================
 -- Switching the aim switches the site: the same tool, the same click,
@@ -73,8 +73,8 @@ t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(clock.deadline_ticks(1.6) + 3)
 
 parts = assert(t.parts(patient))
-assert(has(parts.l_arm.states, "skin_cut"), "the arm was cut once the aim moved there")
-assert(not has(parts.r_arm.states, "skin_cut"), "the other arm is a different zone")
+assert(has(parts.l_arm.surgical_states, "skin_cut"), "the arm was cut once the aim moved there")
+assert(not has(parts.r_arm.surgical_states, "skin_cut"), "the other arm is a different zone")
 
 -- =====================================================================
 -- ...and a refused zone leaves the aim where it was, so the NEXT click
@@ -91,10 +91,10 @@ t.run_ticks(clock.deadline_ticks(2.4) + 3)
 
 parts = assert(t.parts(patient))
 assert(
-    has(parts.l_arm.states, "skin_open"),
+    has(parts.l_arm.surgical_states, "skin_open"),
     "the aim stayed on the arm: a refused claim moves nothing, not even to the default"
 )
-assert(not has(parts.chest.states, "skin_cut"), "the default zone was never fallen back to")
+assert(not has(parts.chest.surgical_states, "skin_cut"), "the default zone was never fallen back to")
 
 -- =====================================================================
 -- THE NUMBERED KEYS. A browser never sends a key: it reads the doll
@@ -147,8 +147,8 @@ t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(clock.deadline_ticks(1.6) + 3)
 
 parts = assert(t.parts(patient))
-assert(has(parts.pelvis.states, "skin_cut"), "the pelvis was cut: that is where the aim was")
-assert(not has(parts.chest.states, "skin_cut"), "and the chest above it was not")
+assert(has(parts.pelvis.surgical_states, "skin_cut"), "the pelvis was cut: that is where the aim was")
+assert(not has(parts.chest.surgical_states, "skin_cut"), "and the chest above it was not")
 
 -- =====================================================================
 -- COMBAT. A swung toolbox aims where the doll points

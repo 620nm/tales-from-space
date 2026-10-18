@@ -50,7 +50,7 @@ assert(t.worn(patient).uniform == nil, "the chest is bared")
 
 local PX, PY = 2, 1
 
--- A part's `states` is a SET keyed by name (`states.skin_open == true`),
+-- A part's `surgical_states` is a SET keyed by name (`surgical_states.skin_open == true`),
 -- so membership is a lookup, never a loop.
 local function has(states, name)
     return states[name] == true
@@ -73,7 +73,7 @@ local function operate(done: ({ [string]: boolean }) -> boolean, step_secs: numb
     local step_ticks = clock.deadline_ticks(step_secs) + 2
     local attempts, ticks = 0, 0
     for _ = 1, 40 do
-        if done(assert(t.parts(patient)).chest.states) then
+        if done(assert(t.parts(patient)).chest.surgical_states) then
             break
         end
         t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
@@ -81,7 +81,7 @@ local function operate(done: ({ [string]: boolean }) -> boolean, step_secs: numb
         attempts = attempts + 1
         ticks = ticks + step_ticks
     end
-    assert(done(assert(t.parts(patient)).chest.states), "the step completed within 40 tries")
+    assert(done(assert(t.parts(patient)).chest.surgical_states), "the step completed within 40 tries")
     return attempts, ticks
 end
 
@@ -97,7 +97,7 @@ end, 4.0)
 total_ticks = total_ticks + t1
 failures.incise = a1 - 1
 assert(
-    has(assert(t.parts(patient)).chest.states, "vessels_unclamped"),
+    has(assert(t.parts(patient)).chest.surgical_states, "vessels_unclamped"),
     "the incision opened the vessels"
 )
 -- The open chest bleeds 1.5/s, x0.75 while lying = 1.125.

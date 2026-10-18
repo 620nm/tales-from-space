@@ -114,19 +114,19 @@ end
 
 -- The open-up sequence, each step nothing can fail on the table.
 step("scalpel", 1.6, function()
-    return has(assert(t.parts(patient)).chest.states, "skin_cut")
+    return has(assert(t.parts(patient)).chest.surgical_states, "skin_cut")
 end, "incised")
 step("retractor", 2.4, function()
-    return has(assert(t.parts(patient)).chest.states, "skin_open")
+    return has(assert(t.parts(patient)).chest.surgical_states, "skin_open")
 end, "retracted")
 step("hemostat", 2.4, function()
-    return has(assert(t.parts(patient)).chest.states, "vessels_clamped")
+    return has(assert(t.parts(patient)).chest.surgical_states, "vessels_clamped")
 end, "clamped")
 step("circular_saw", 5.4, function()
-    return has(assert(t.parts(patient)).chest.states, "bone_sawed")
+    return has(assert(t.parts(patient)).chest.surgical_states, "bone_sawed")
 end, "sawed")
 step("scalpel", 2.4, function()
-    return has(assert(t.parts(patient)).chest.states, "organs_cut")
+    return has(assert(t.parts(patient)).chest.surgical_states, "organs_cut")
 end, "organs cut")
 
 -- The heart is whole and beating, so the socket is reachable and the
@@ -194,7 +194,7 @@ assert(
 -- Close up. The bone states and the incision clear, and 40 of the saw's
 -- 50 brute is mended on the way out.
 step("cautery", 2.4, function()
-    local s = assert(t.parts(patient)).chest.states
+    local s = assert(t.parts(patient)).chest.surgical_states
     return not has(s, "skin_open") and not has(s, "skin_cut")
 end, "closed")
 assert(assert(t.body(patient)).bleed_rate == 0, "and no longer bleeding")

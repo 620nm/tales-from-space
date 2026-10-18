@@ -71,17 +71,17 @@ local function step(tool: string, secs: number, done: () -> boolean, why: string
 end
 
 step("scalpel", 1.6, function()
-    return has(assert(t.parts(patient)).head.states, "skin_cut")
+    return has(assert(t.parts(patient)).head.surgical_states, "skin_cut")
 end, "head incised")
 step("retractor", 2.4, function()
-    return has(assert(t.parts(patient)).head.states, "skin_open")
+    return has(assert(t.parts(patient)).head.surgical_states, "skin_open")
 end, "head retracted")
 -- A shard, not the scalpel: a scalpel is edged AND force 10, so it also
 -- matches saw_bone and would open the choice window here (tg's own
 -- ambiguity); a shard (force 5) cannot saw, so it cleanly incises. Its
 -- 2.25 multiplier makes the real delay 2.4 x 2.25 = 5.4 s.
 step("shard", 5.4, function()
-    return has(assert(t.parts(patient)).head.states, "organs_cut")
+    return has(assert(t.parts(patient)).head.surgical_states, "organs_cut")
 end, "head organs cut")
 
 -- No saw: the brain is locked, the eyes and ears are not. A hemostat here

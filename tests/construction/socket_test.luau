@@ -160,7 +160,7 @@ local function step(tool: string, secs: number, state: string)
     hold(tool)
     t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
     t.run_ticks(clock.deadline_ticks(secs) + 3)
-    assert(assert(t.parts(patient)).chest.states[state] == true, "the chest is " .. state)
+    assert(assert(t.parts(patient)).chest.surgical_states[state] == true, "the chest is " .. state)
 end
 
 step("scalpel", 1.6, "skin_cut")

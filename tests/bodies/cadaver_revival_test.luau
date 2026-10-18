@@ -157,7 +157,7 @@ local function step(tool, ticks, done, why)
     assert(done(), why)
 end
 local function states()
-    return assert(corpse().parts).chest.states
+    return assert(corpse().parts).chest.surgical_states
 end
 
 assert(t.set_zone(surgeon, "chest"), "aiming at the chest")

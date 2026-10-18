@@ -198,6 +198,6 @@ t.run_ticks(2)
 assert(not said(surgeon, "nothing to do"), "a bare, laid-out cadaver has work in it")
 assert(#t.ledger_rows("DoAfterStarted") > parked, "the incision parked")
 t.run_ticks(clock.deadline_ticks(5.0))
-assert(assert(on_table().parts).chest.states.skin_cut == true, "and the chest is open")
+assert(assert(on_table().parts).chest.surgical_states.skin_cut == true, "and the chest is open")
 
 print("cadaver surgery: pulled, laid out, stripped and opened")

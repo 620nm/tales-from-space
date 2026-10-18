@@ -90,13 +90,13 @@ end
 -- is edged AND force 10, so it would also offer saw_bone and open the
 -- choice window (see surgery_sockets_test).
 step("scalpel", 1.6, function()
-    return has(assert(t.parts(patient)).head.states, "skin_cut")
+    return has(assert(t.parts(patient)).head.surgical_states, "skin_cut")
 end, "incised")
 step("retractor", 2.4, function()
-    return has(assert(t.parts(patient)).head.states, "skin_open")
+    return has(assert(t.parts(patient)).head.surgical_states, "skin_open")
 end, "retracted")
 step("shard", 5.4, function()
-    return has(assert(t.parts(patient)).head.states, "organs_cut")
+    return has(assert(t.parts(patient)).head.surgical_states, "organs_cut")
 end, "organs cut")
 
 -- A whole body: every organ seated, nothing stranded.

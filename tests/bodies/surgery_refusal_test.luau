@@ -65,7 +65,7 @@ t.click(surgeon, PX, PY, t.body_target(surgeon, patient))
 t.run_ticks(2)
 assert(said(surgeon, "nothing to retract"), "no incision yet: nothing_to_do")
 -- And nothing was cut: the retractor never touched the patient.
-assert(assert(t.parts(patient)).chest.states.skin_cut ~= true, "a refusal is not a swing")
+assert(assert(t.parts(patient)).chest.surgical_states.skin_cut ~= true, "a refusal is not a swing")
 
 -- ---- the two-party guard: the patient stands up -----------------------
 -- Now everything is right (bare, lying, a scalpel), so this parks. Part
@@ -84,7 +84,7 @@ assert(said(surgeon, "already operating"), "and the surgeon is told they are bus
 t.rest(patient, false) -- they sit up
 t.run_ticks(3)
 assert(#t.ledger_rows("DoAfterInterrupted") > 0, "the patient stood: interrupted")
-assert(assert(t.parts(patient)).chest.states.skin_cut ~= true, "no cut landed")
+assert(assert(t.parts(patient)).chest.surgical_states.skin_cut ~= true, "no cut landed")
 
 -- ---- the two-party guard: the surgeon drops the tool ------------------
 t.rest(patient, true)
@@ -95,6 +95,6 @@ t.run_seconds(1.0)
 t.drop(surgeon) -- the scalpel leaves the hand
 t.run_ticks(3)
 assert(#t.ledger_rows("DoAfterInterrupted") > before, "the tool left the hand: interrupted")
-assert(assert(t.parts(patient)).chest.states.skin_cut ~= true, "and still no cut")
+assert(assert(t.parts(patient)).chest.surgical_states.skin_cut ~= true, "and still no cut")
 
 print("refusal: not_lying, obstructed, nothing_to_do; guard interrupts on both parties")
