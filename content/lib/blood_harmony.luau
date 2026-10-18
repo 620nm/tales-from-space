@@ -12,9 +12,11 @@
 --
 -- 1. Harmony. Below the plan's normal blood the body makes more, at tg's
 --    regeneration rate scaled by how well its heart works; above normal
---    (a transfusion, a dose of blood) the excess is drawn back out. Only
---    the `blood` substance is touched: a dose riding in the same
---    bloodstream is never taken.
+--    (a transfusion, a dose of blood) the excess is drawn back out in one
+--    pass, by choice: the pack settles a transfusion at the next body
+--    cadence rather than metabolizing it down over time. Only the `blood`
+--    substance is touched: a dose riding in the same bloodstream is never
+--    taken.
 -- 2. The missing-blood oxygen cost, tg's own rule.
 --
 -- Every tg unit here is a centilitre and 0.025 mol

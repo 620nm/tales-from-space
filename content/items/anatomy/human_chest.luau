@@ -48,6 +48,9 @@ return {
             -- generic_bleedstacks 0.5 u/s a stack
             -- (code/modules/surgery/bodyparts/_bodyparts.dm:1626-1627).
             stack_bleed_per_s = 0.0125,
+            -- BLEED_LYING_FACTOR 0.75: a lying body keeps three quarters of
+            -- each part's bleed (code/modules/surgery/bodyparts/_bodyparts.dm:1663).
+            lying_bleed_factor = 0.75,
         },
         bloodstream = {
             -- The shell holds a little more than normal blood, so a dose
