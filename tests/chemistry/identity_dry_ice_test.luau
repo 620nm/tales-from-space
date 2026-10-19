@@ -354,7 +354,25 @@ assert(
     "and it is already cooling the tile: " .. deck_k .. " -> " .. assert(t.room_temperature(1, 3))
 )
 
-t.run_seconds(30)
+-- THE GAP is read while the ice is still sublimating. The control tile
+-- two squares away is the other end of it: the sky is inert and nothing
+-- else in the room is running, so a tile a degree colder than its
+-- neighbour is the ice and nothing more. It is read early because the
+-- room does not keep the gap: once the patch of air has gone quiet it
+-- averages to one temperature (lunatic docs/matter-world/groups.md,
+-- "breakdown", five quiet cycles), which is tg's own behaviour and
+-- happens a few seconds in.
+t.run_seconds(3)
+local gap_far = assert(t.room_temperature(4, 3))
+assert(
+    assert(t.room_temperature(1, 3)) < gap_far - 0.25,
+    "three seconds in, the tile the ice is on is the cold one: "
+        .. assert(t.room_temperature(1, 3))
+        .. " vs "
+        .. gap_far
+)
+
+t.run_seconds(27)
 -- Weighed over the room. The ice's whole mass is gas half a minute
 -- later, and by then it has spread off the tile it sublimated on --
 -- which is why the tile itself is no longer the place to read it.
@@ -364,27 +382,18 @@ near(
     1e-3,
     "half a minute later it is all gas: " .. (room_co2() - carbon_0) .. " mol"
 )
--- The far side barely moved: a fifth of a kelvin, against the whole
--- room's worth of deck it is standing on. It moves at all because the
--- cold gas the ice made now SPREADS -- the share carries it as soon as
--- the raw imbalance across a link is worth chasing (lunatic
--- docs/MATTER-WORLD.md §3 step 4) -- and cold air arriving is the only
--- thing that could have cooled it, since the sky is inert and nothing
--- else in the room is running. The claim was never that the far tile is
--- untouched; it is that the GAP between the two tiles is the ice, which
--- is the assertion below.
-local control = assert(t.room_temperature(4, 3))
-near(control, 293.15, 0.5, "the far side of the room hardly moved")
--- A quarter of a kelvin, and the margin is narrow BECAUSE the crew are
--- switched off above: nothing else in this room stirs the air, so the
--- gap half a minute on is the ice's alone and no larger.
+-- And the cold it took has gone into the whole room, which has settled
+-- flat: every tile sits a fraction of a kelvin under the 293.15 K the
+-- sky holds. The sky is inert and the crew are switched off, so that
+-- drop is the ice's alone -- more than a quarter of a kelvin (the
+-- sublimation took its 25.2 kJ per mole out of the air) and less than
+-- half of one (one jar's share of a whole room's heat capacity).
+local settled = assert(t.room_temperature(4, 3))
 assert(
-    assert(t.room_temperature(1, 3)) < control - 0.25,
-    "and the tile the ice was on is still the cold one: "
-        .. assert(t.room_temperature(1, 3))
-        .. " vs "
-        .. control
+    settled < 293.15 - 0.25,
+    "the room as a whole is colder for the ice: 293.15 -> " .. settled
 )
+near(settled, 293.15, 0.5, "and only by what one jar of ice can take")
 
 -- ---------------------------------------------------------------
 -- SIX: THE BOOKS.
