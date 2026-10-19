@@ -283,6 +283,7 @@ assert(rows == 1, "one row for ten breaths of it: " .. rows)
 -- ---------------------------------------------------------------
 local before_room = room("chlorine")
 local before_pipe = pipe("chlorine")
+local before_dust = t.nullified().chlorine or 0.0
 local before_o2 = room("o2")
 local before_n2 = room("n2")
 
@@ -317,14 +318,21 @@ assert(
     moved > 0.25 * before_room,
     "a quarter of the cloud is out of the air the crew is in: " .. moved .. " mol"
 )
--- A thousandth of slack rather than a billionth, because the main is
--- not the only sink in the closet: there is a crewman standing in the
--- cloud without a mask on, and every breath he takes keeps nine tenths
--- of what was in it.
+-- Two sinks besides the main. Once the scrubber has starved the cloud
+-- the room settles, and what is left standing below the nullify floor
+-- (1e-5 of a tile's standard load) is swept into the `nullified`
+-- register instead of lingering as a trace (lunatic
+-- docs/matter-world/groups.md, the settling sweep) -- booked, not lost.
+-- And there is a crewman standing in the cloud without a mask on, and
+-- every breath he takes keeps nine tenths of what was in it. A
+-- thousandth of slack rather than a billionth covers that breath.
+local dust = (t.nullified().chlorine or 0.0) - before_dust
 assert(
-    math.abs((pipe("chlorine") - before_pipe) - moved) < 5e-3,
-    "and all but a breath of it is in the waste main, not lost: "
+    math.abs((pipe("chlorine") - before_pipe) + dust - moved) < 5e-3,
+    "and all but a breath of it is in the waste main or the dust register, not lost: "
         .. (pipe("chlorine") - before_pipe)
+        .. " + "
+        .. dust
         .. " vs "
         .. moved
 )
