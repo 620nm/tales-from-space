@@ -64,6 +64,8 @@ content = "content"
 # engine's `docs/sim/view-radius.md` owns what derives from it.
 [view]
 radius = 7
+ghost = { half_width = 7, half_height = 7 }
+staff = { half_width = 15, half_height = 8 }
 
 [ui]
 entry = "ui/main.tsx"
