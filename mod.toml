@@ -66,6 +66,7 @@ content = "content"
 radius = 7
 ghost = { half_width = 7, half_height = 7 }
 staff = { half_width = 15, half_height = 8 }
+observer = { sprite = "ghost" }
 
 [ui]
 entry = "ui/main.tsx"
