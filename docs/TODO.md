@@ -55,9 +55,11 @@ reachable in the engine. It mirrors `assets/tg-revision`.
 
 ## Blood identity rider (design settled 2026-10-19, Draft)
 
-Blood carries no identity: the pack declares no rider kinds, so a
-transfusion cannot be typed, reacted to, or traced. The shape, built so
-DNA and contagion slide in without a rewrite:
+Blood carries no identity beyond its type: the pack declares one
+rider kind (`blood_identity`: typed, reacted-to transfusions, legs 1-4
+in `tests/bodies/blood_identity_test.luau`), so illness cannot yet ride
+blood and a donor cannot yet be named. The shape, built so DNA and
+contagion slide in without a rewrite:
 
 - Kind `blood_identity`, carriers `{ "blood" }`, field `type` (ref into a
   `blood_types` roster: tg's eight human types with `compatible_types`
@@ -79,11 +81,6 @@ DNA and contagion slide in without a rewrite:
   only settles the type and tg's figure lands at the transfer
   completion, which knows the dose.
 
-Done: the three-vessel spec (syringe and beakers, one world) passes its
-first four legs — compatible O- into A+ settles silently after one meet;
-incompatible A+ into O- is refused with tg's toxin at half volume; a
-split draw keeps the rider on both halves; blood drawn back out of
-blood+water clears `blood_identity` as carrier-gone — and legs five
-(contagion survival, per-vessel cure, transfusion transmission) and six
-(per-vessel `dna` naming the donor) join the same world when their kinds
-land.
+Done: legs five (contagion survival, per-vessel cure, transfusion
+transmission) and six (per-vessel `dna` naming the donor) join the
+three-vessel spec's world when their kinds land.

@@ -1,6 +1,7 @@
 local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 local vessel = require("@lib/vessel")
+local blood_identity = require("@lib/blood_identity")
 
 -- The syringe: fifteen millilitres of glass with a needle on it, and
 -- the only thing on the station that reaches INTO somebody.
@@ -170,8 +171,16 @@ if sim ~= nil then
         end
         if into_body then
             -- Through the needle, which is this syringe: `by` is what
-            -- the engine checks for a declared sharpness.
+            -- the engine checks for a declared sharpness. The note is
+            -- filed after the command is issued, so a call that raises
+            -- files nothing: the completion settles exactly one note
+            -- per injection it answers.
             sim.matter.inject({ from = self, into = other, by = self, amount = STROKE })
+            blood_identity.note_transfusion(
+                other,
+                blood_identity.type_of(self),
+                blood_identity.type_of(other)
+            )
         else
             sim.matter.pour({ from = self, to = other, amount = STROKE })
         end
@@ -337,6 +346,14 @@ if sim ~= nil then
             return true
         end)
         return true
+    end)
+
+    -- The needle's answer: every injection this barrel issued lands
+    -- here with what moved, and an incompatible transfusion answers
+    -- with tg's toxin at half that volume. No route: a command
+    -- completion re-enters on `issued` and carries no other.
+    script_definition:handle("matter.inject.done", { kind = "react" }, function(ev)
+        blood_identity.settle_injection(ev.moved)
     end)
 end
 

@@ -21,6 +21,8 @@
 --
 -- Every tg unit here is a centilitre and 0.025 mol
 -- (docs/chemistry/tg-bridge.md), so each tg figure is carried x 0.025.
+local blood_identity = require("@lib/blood_identity")
+
 local blood_harmony = {}
 
 -- 1 tg-u := 0.025 mol.
@@ -111,6 +113,10 @@ function blood_harmony.on_life(ev: MobLifePayload): ()
     if blood == nil or normal == nil or normal <= 0 then
         return
     end
+    -- First the type, then the arithmetic: the one writer stamps the
+    -- body's blood on its first pass here, and the restore below only
+    -- ever moves blood that is already typed.
+    blood_identity.stamp(body)
     local after = restore(body, blood, normal, ev.elapsed_seconds)
     pay_for_missing_blood(body, state, after, normal, ev.elapsed_seconds)
 end

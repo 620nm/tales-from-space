@@ -68,6 +68,10 @@ and refuses a blood block without them. Regrowth and the low-blood oxygen cost
 (mobs.dm:28; blood.dm:253-262): `lib/blood_harmony.luau`. Blood above normal
 is drawn back to normal in one pass by choice: tg trims a surplus over time,
 and this pack settles a transfusion at the next body cadence instead.
+Blood is typed: `blood_identity` stamps one of tg's eight types at the
+first body cadence (blood_types.dm:175-240; mobs.dm:10-22), a meet settles
+receiver-wins, and an incompatible transfusion answers with toxin at half
+volume (blood.dm:406-410): `lib/blood_identity.luau`.
 
 **Sockets and organs.**
 

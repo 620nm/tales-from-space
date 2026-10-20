@@ -59,4 +59,12 @@ local content = {
     metabolism_rate = 0,
 }
 
+if sim ~= nil then
+    -- Blood is the carrier, so the rider kind it carries is claimed
+    -- here: `riders/` never runs as a script, and the kind's one meet
+    -- dispatcher has to be defined from a file that does.
+    local blood_identity = require("@lib/blood_identity")
+    blood_identity.attach()
+end
+
 return content
