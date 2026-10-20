@@ -34,7 +34,8 @@ across MASKINTERNALS and STOPSPRESSUREDAMAGE (__DEFINES/obj_flags.dm:80,84).
 ## `content/bodies/human.luau` — the plan
 
 `playable = true`, `max_health = 100` (mobs.dm:236), `hands = 2`
-(living_defines.dm:120), `default_zone = "chest"`, `knockdown = true`,
+(living_defines.dm:120), `default_zone = "chest"`, a `knockdown` posture hold
+(floors, at most 60 s a call),
 `pool_coeff` 1 on all four (basic.dm:51), `doll_sprite = "target_doll"`.
 
 **Thresholds.** `crit` at `health <= 0`, `dead` at `health <= -1`

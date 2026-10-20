@@ -115,7 +115,9 @@ local content = {
     -- `doll_sprite` highlights above are the overlay states tg draws
     -- over it (screen_objects.dm:817-821).
     doll_sprite = "target_doll",
-    knockdown = true,
+    -- The one timed posture hold: `body:hold_posture("knockdown", s)`
+    -- floors the body, one call clamped to a minute.
+    postures = { knockdown = { floors = true, max_seconds = 60 } },
     pool_coeff = { brute = 1, burn = 1, oxy = 1, tox = 1 }, -- pool_coeff, basic.dm:51
 
     -- Hit weights are tg's own walk over the parts a body actually
