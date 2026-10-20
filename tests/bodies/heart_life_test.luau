@@ -7,7 +7,7 @@
 -- `animate = false` (content/bodies/human.luau).
 --
 -- The latch is the other half: crossing the plan's `dead` line calls
--- `sim.fail_organ` on the heart. That is what makes death stick. Before
+-- `sim.fail_component` on the heart. That is what makes death stick. Before
 -- it, death was a line the numbers sat on one side of, and a hemostat
 -- to a corpse's bruises walked it back over and stood it up.
 --

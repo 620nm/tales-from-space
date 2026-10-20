@@ -752,7 +752,7 @@ if sim ~= nil then
             -- `undone`, and `undone` is in STOP above. The parts may then be
             -- healed to full and this body stays exactly as dead as it was.
             --
-            -- `sim.fail_organ` and not `sim.damage_organ`: the amount a
+            -- `sim.fail_component` and not `sim.wear_component`: the amount a
             -- handler may claim in one event is capped, and "the heart has
             -- stopped" is not an amount (docs/LUAU-API.md §8.1). A body
             -- with no heart in it is already dead of the missing organ, so
@@ -764,7 +764,7 @@ if sim ~= nil then
             -- a failed organ is already at its maximum, so a second pass
             -- moves nothing and fires no further edge.
             if ev.edge == "dead" and dead then
-                sim.fail_organ(body, { tag = "heart" })
+                sim.fail_component(body, { tag = "heart" })
             end
             sim.set_body_facts(body, {
                 animate = not stop,

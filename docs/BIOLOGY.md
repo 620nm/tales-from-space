@@ -192,7 +192,7 @@ clock — a coin flip, and this file would have to say so.
 
 The engine latches nothing. `organ_heart` is `vital`, so the `viability`
 port reads 0 the moment it is missing or failing; `human.luau`'s threshold
-handler calls `sim.fail_organ` on the heart when its own `dead` line is
+handler calls `sim.fail_component` on the heart when its own `dead` line is
 crossed. Healing the parts clears the health line and leaves the heart
 stopped; the body returns only when a replacement is seated, a `repair`
 lands, or `content/items/surgery/defib.luau` heals it. The engine's account of why

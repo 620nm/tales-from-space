@@ -118,7 +118,7 @@ diethylamine) and tg's base element shelf:
 
 Multiver and aiuri are `/datum/substance/medicine/c2`, tg's medicine that
 costs you something whatever the dose (`cat2_medicine_substances.dm:1`), and
-both halves ship: the organ damage is `sim.damage_organ` on the socket tg
+both halves ship: the organ damage is `sim.wear_component` on the socket tg
 names. Epinephrine reads the `crit` threshold declared in
 `content/bodies/human.luau` — a pack word, never an engine one.
 

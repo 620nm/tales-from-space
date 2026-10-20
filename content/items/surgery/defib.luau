@@ -150,7 +150,7 @@ if sim ~= nil then
             -- plan's handler says the word.
             for _, part in pairs(assert(sim.parts(patient))) do
                 if part.organs and part.organs.heart then
-                    sim.heal_organ(patient, "heart", assert(sim.organ(part.organs.heart)).max)
+                    sim.mend_component(patient, "heart", assert(sim.organ(part.organs.heart)).max)
                 end
             end
             sim.sound.play({ asset = "lunatic/tfs:sound/defib_success", at = user.tile })

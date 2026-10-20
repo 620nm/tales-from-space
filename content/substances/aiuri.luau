@@ -50,7 +50,7 @@ if sim ~= nil then
     script_definition:handle("mob.life", { kind = "react", route = "metabolize" }, function(ev)
         local mob, _user, moles, _moles = ev.entity, ev.entity, ev.amount, ev.amount
         sim.healing.apply({ target = mob, amounts = { burn = 2.0 } })
-        sim.damage_organ(mob, "eyes", 0.25)
+        sim.wear_component(mob, "eyes", 0.25)
         if math.random(1, 10) == 1 then
             sim.message.send({
                 recipient = mob,
