@@ -39,15 +39,15 @@ assert(bx >= 100 and by >= 40, "the builder stands at the nonzero origin on plan
 -- named level (level 1 on the east instance, back to level 0 on the west).
 local map_west = [==[(
     name: "seam west",
-    tagged_areas: [
-        (bounds: (min: (x: 2, y: 1), max: (x: 2, y: 1)), tags: ["seam_landing_east"]),
-        (bounds: (min: (x: 3, y: 1), max: (x: 3, y: 1)), tags: ["seam_east"]),
-    ],
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
     levels: [(
+        tagged_areas: [
+            (bounds: (min: (x: 2, y: 1), max: (x: 2, y: 1)), tags: ["seam_landing_east"]),
+            (bounds: (min: (x: 3, y: 1), max: (x: 3, y: 1)), tags: ["seam_east"]),
+        ],
         rows: [
             "#####",
             "#...#",
@@ -58,10 +58,6 @@ local map_west = [==[(
 )]==]
 local map_east = [==[(
     name: "seam east",
-    tagged_areas: [
-        (bounds: (min: (x: 1, y: 1), max: (x: 1, y: 1)), tags: ["seam_landing_west"], levels: [1]),
-        (bounds: (min: (x: 2, y: 1), max: (x: 2, y: 1)), tags: ["seam_west"], levels: [1]),
-    ],
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
@@ -75,6 +71,10 @@ local map_east = [==[(
             ],
         ),
         (
+            tagged_areas: [
+                (bounds: (min: (x: 1, y: 1), max: (x: 1, y: 1)), tags: ["seam_landing_west"]),
+                (bounds: (min: (x: 2, y: 1), max: (x: 2, y: 1)), tags: ["seam_west"]),
+            ],
             rows: [
                 "#####",
                 "#...#",
