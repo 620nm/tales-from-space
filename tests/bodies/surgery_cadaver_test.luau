@@ -110,7 +110,7 @@ assert(corpse.label == "Dead", "and the plan calls it dead")
 -- receipt's `animate`).
 local cadaver_stacks = 0
 for _, part in pairs(assert(found[1].parts)) do
-    cadaver_stacks += ui_controls.number(part.bleeding or 0)
+    cadaver_stacks += ui_controls.number(part.leak_stacks.blood or 0)
 end
 assert(cadaver_stacks == 0, "a stock cadaver carries no bleeding stacks")
 

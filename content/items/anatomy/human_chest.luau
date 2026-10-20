@@ -37,7 +37,7 @@ return {
         -- bloodstream, so a dose, a rider and a bleed all act on the same
         -- mixture. A tg blood unit is a centilitre and 0.025 mol
         -- (docs/chemistry/tg-bridge.md): every figure below is the cited
-        -- tg number x 0.025. Native code only bleeds it; filling it back
+        -- tg number x 0.025. Native code only leaks it (the plan's `reservoirs`); filling it back
         -- up and what running low costs are `lib/blood_harmony.luau`.
         blood = {
             substance = "blood",
@@ -45,12 +45,6 @@ return {
             normal = 13.75,
             -- BLOOD_VOLUME_SURVIVE 112 u (code/__DEFINES/mobs.dm:25).
             dead_below = 2.8,
-            -- generic_bleedstacks 0.5 u/s a stack
-            -- (code/modules/surgery/bodyparts/_bodyparts.dm:1626-1627).
-            stack_bleed_per_s = 0.0125,
-            -- BLEED_LYING_FACTOR 0.75: a lying body keeps three quarters of
-            -- each part's bleed (code/modules/surgery/bodyparts/_bodyparts.dm:1663).
-            lying_bleed_factor = 0.75,
         },
         bloodstream = {
             -- The shell holds a little more than normal blood, so a dose

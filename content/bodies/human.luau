@@ -419,6 +419,21 @@ local content = {
         },
     },
 
+    -- What can leak out of the chest's bloodstream (docs/BIOLOGY.md).
+    -- Wounds, open vessels and shrapnel drain the blood.
+    reservoirs = {
+        blood = {
+            substance = "blood",
+            -- generic_bleedstacks 0.5 u/s a stack x 0.025
+            -- (code/modules/surgery/bodyparts/_bodyparts.dm:1626-1627).
+            stack_drain_per_s = 0.0125,
+            -- BLEED_LYING_FACTOR 0.75: a lying body keeps three quarters of
+            -- each part's bleed (code/modules/surgery/bodyparts/_bodyparts.dm:1663).
+            lying_factor = 0.75,
+        },
+    },
+    wound_reservoir = "blood",
+
     -- What a bystander is told about a body, in whole sentences
     -- (docs/LOCALIZATION.md §5). Read from the public layer only.
     examine = {

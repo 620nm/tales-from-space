@@ -145,7 +145,7 @@ function bloodshed.shed(target: Handle, brute: number, audible: boolean, animate
     local zone = wound_zone(target)
     if animate and zone ~= nil then
         local stacks = math.max(1, math.floor(brute / BRUTE_PER_STACK + 0.5))
-        sim.bleed(target, zone, stacks)
+        sim.leak(target, zone, "blood", stacks)
     end
     if not audible then
         return

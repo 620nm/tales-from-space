@@ -62,10 +62,11 @@ burn, and `robotic = false`.
 
 **Blood** lives on `human_chest` (the torso carries tg's bloodstream,
 _bodyparts.dm:947-969) as moles of `blood` in its 6 L bloodstream at 310.15 K:
-`normal = 13.75`, `dead_below = 2.8`, `stack_bleed_per_s = 0.0125`, each tg
-figure x 0.025 (mobs.dm:20-25; _bodyparts.dm:1626-1627), and
-`lying_bleed_factor = 0.75` (_bodyparts.dm:1663); the engine needs both knobs
-and refuses a blood block without them. Regrowth and the low-blood oxygen cost
+`normal = 13.75`, `dead_below = 2.8`, each tg figure x 0.025 (mobs.dm:20-25).
+The `human` plan declares one reservoir, `blood`, as its `wound_reservoir`:
+`stack_drain_per_s = 0.0125` (0.5 u/s x 0.025, _bodyparts.dm:1626-1627) and
+`lying_factor = 0.75` (_bodyparts.dm:1663); the engine needs both knobs and
+refuses a reservoir without them. Regrowth and the low-blood oxygen cost
 (mobs.dm:28; blood.dm:253-262): `lib/blood_harmony.luau`. Blood above normal
 is drawn back to normal in one pass by choice: tg trims a surplus over time,
 and this pack settles a transfusion at the next body cadence instead.

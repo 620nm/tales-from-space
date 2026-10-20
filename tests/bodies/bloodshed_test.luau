@@ -51,7 +51,7 @@ local worst_zone, worst_brute = "", -1
 for zone, row in pairs(parts) do
     local brute = num(row.brute or 0)
     brute_sum += brute
-    local bleeding = num(row.bleeding or 0)
+    local bleeding = num(row.leak_stacks.blood or 0)
     bleed_sum += bleeding
     if bleeding > 0 then
         bleeding_parts += 1
@@ -63,7 +63,7 @@ end
 near(brute_sum, 10, "one swing lands 10 brute")
 assert(bleeding_parts == 1, "and opens exactly one bleeder")
 near(bleed_sum, 10, "one stack a brute")
-near(num(parts[worst_zone].bleeding or 0), 10, "on the worst-hurt part")
+near(num(parts[worst_zone].leak_stacks.blood or 0), 10, "on the worst-hurt part")
 
 -- The room heard the weapon AND the flesh: the toolbox's own smash
 -- under the wound's punch.
@@ -95,7 +95,7 @@ assert(mark.paint == "blood", "in the wound paint, not a crew colour")
 t.run_seconds(5)
 local body = assert(t.body(victim))
 assert(body.blood ~= nil and body.blood < 13.75, "five seconds of bleeding shows")
-near(num(body.bleed_rate or 0), 0.0125, "at the flat stack rate")
+near(num(body.leak_rates.blood or 0), 0.0125, "at the flat stack rate")
 
 -- ---------------------------------------------------------------
 -- THE KILLING BLOW: splatter without a new bleeder.
@@ -106,7 +106,7 @@ near(num(body.bleed_rate or 0), 0.0125, "at the flat stack rate")
 local function stacks(): number
     local total = 0
     for _, row in pairs(assert(t.parts(victim))) do
-        total += num(row.bleeding or 0)
+        total += num(row.leak_stacks.blood or 0)
     end
     return total
 end
@@ -121,7 +121,7 @@ assert(#t.sounds(attacker) == 0, "and thumps nothing")
 -- closed one meanwhile).
 local opened = stacks()
 assert(opened > bleed_sum, "but the living precondition still bleeds")
-local chest = num(assert(t.parts(victim)).chest.bleeding or 0)
+local chest = num(assert(t.parts(victim)).chest.leak_stacks.blood or 0)
 assert(chest >= 39, "a part holds no more than 40")
 
 -- One more swing kills — 205 past the -100 dead line

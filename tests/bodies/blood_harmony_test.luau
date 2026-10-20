@@ -203,7 +203,7 @@ for _, zone in ipairs({ "head", "chest", "l_arm", "r_arm", "l_leg", "r_leg" }) d
     t.click(attacker, 2, 1, t.body_target(attacker, victim))
     t.run_seconds(1.5)
 end
-assert((assert(t.body(victim)).bleed_rate or 0) > 0, "the swings opened bleeders")
+assert((assert(t.body(victim)).leak_rates.blood or 0) > 0, "the swings opened bleeders")
 local oxy_at_start = ui_controls.number(t.health(victim).oxy)
 local peak_missing = 0
 local trace = {}

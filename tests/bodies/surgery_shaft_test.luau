@@ -102,9 +102,9 @@ assert(
 )
 -- The open chest bleeds 1.5 u/s = 0.0375 mol/s, x0.75 while lying = 0.028125.
 assert(
-    math.abs(assert(assert(t.body(patient)).bleed_rate) - 0.028125) < 1e-6,
+    math.abs(assert(assert(t.body(patient)).leak_rates.blood) - 0.028125) < 1e-6,
     "unclamped vessels bleed 0.0375 mol/s x0.75 lying: "
-        .. assert(assert(t.body(patient)).bleed_rate)
+        .. assert(assert(t.body(patient)).leak_rates.blood)
 )
 
 -- 2. Retract with the wirecutters: 6 s per attempt, 77 % failure.
@@ -115,7 +115,7 @@ end, 6.0)
 total_ticks = total_ticks + t2
 failures.retract = a2 - 1
 assert(
-    math.abs(assert(assert(t.body(patient)).bleed_rate) - 0.028125) < 1e-6,
+    math.abs(assert(assert(t.body(patient)).leak_rates.blood) - 0.028125) < 1e-6,
     "still bleeding 0.028125 mol/s with the skin open"
 )
 
@@ -127,9 +127,9 @@ end, 6.0)
 total_ticks = total_ticks + t3
 failures.clamp = a3 - 1
 assert(
-    math.abs(assert(assert(t.body(patient)).bleed_rate) - 0.00375) < 1e-6,
+    math.abs(assert(assert(t.body(patient)).leak_rates.blood) - 0.00375) < 1e-6,
     "clamped vessels bleed 0.005 mol/s x0.75 lying: "
-        .. assert(assert(t.body(patient)).bleed_rate)
+        .. assert(assert(t.body(patient)).leak_rates.blood)
 )
 
 -- 4. Close with the lit welder: 6 s per attempt, 12 % failure. Clears
@@ -142,7 +142,7 @@ local a4, t4 = operate(function(s)
 end, 6.0)
 total_ticks = total_ticks + t4
 failures.close = a4 - 1
-assert(assert(assert(t.body(patient)).bleed_rate) == 0, "the wound is closed and no longer bleeds")
+assert(assert(assert(t.body(patient)).leak_rates.blood) == 0, "the wound is closed and no longer bleeds")
 
 -- Failure cost only time: the four generic movers do no damage, so the
 -- chest is unhurt however many attempts it took.

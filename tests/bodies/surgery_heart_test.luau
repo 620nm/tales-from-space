@@ -197,6 +197,6 @@ step("cautery", 2.4, function()
     local s = assert(t.parts(patient)).chest.surgical_states
     return not has(s, "skin_open") and not has(s, "skin_cut")
 end, "closed")
-assert(assert(t.body(patient)).bleed_rate == 0, "and no longer bleeding")
+assert(assert(t.body(patient)).leak_rates.blood == 0, "and no longer bleeding")
 
 print("heart: swapped on the table with 0 failures; dead between hearts, alive after")
