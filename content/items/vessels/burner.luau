@@ -34,16 +34,15 @@ local content = {
         flavor = "A small tank of spirit with a wick standing out of it. "
             .. "Enough flame to warm one vessel, and no more.",
     },
-    -- Unlit first: the engine reads position 0 as cold and 1 as alight
-    -- (the same off-first order an atmos device's positions keep), so a
-    -- burner that runs dry unattended repaints itself without anything
-    -- native learning what either picture is called.
+    -- `flame` names which state is cold and which alight, so a burner
+    -- that runs dry unattended repaints itself without anything native
+    -- learning what either picture is called.
     states = { "cold", "lit" },
     state_sprites = {
         cold = "burner",
         lit = "burner_lit",
     },
-    flame = true,
+    flame = { unlit = "cold", lit = "lit" },
     -- tg's `max_volume = 50` (items.dm:164-172): the reservoir, and
     -- the whole of what it holds. What it ships with is the 15 units
     -- of spirit below, through the documented dose bridge of

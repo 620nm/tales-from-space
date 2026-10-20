@@ -45,7 +45,7 @@ local content = {
     volume_ml = 550,
     -- The lit state is the heat signal used by surgery and construction;
     -- tg gives it a separate animated picture on every visible surface.
-    flame = true,
+    flame = { unlit = "unlit", lit = "lit" },
     states = { "unlit", "lit" },
     -- tg weldingtool.dm:77-92 switches hands to welder1 and overlays
     -- welder-on over the base welder while the tool is lit.
