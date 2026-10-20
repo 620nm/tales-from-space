@@ -52,3 +52,38 @@ queue, newest nearest the speaker, with a UI acceptance capture.
 Done: `assets/lunatic-revision` holds an engine sha, `.github/workflows/ci.yml`
 checks that sha out, and a lint in `tools/` fails when the pinned sha is not
 reachable in the engine. It mirrors `assets/tg-revision`.
+
+## Blood identity rider (design settled 2026-10-19, Draft)
+
+Blood carries no identity: the pack declares no rider kinds, so a
+transfusion cannot be typed, reacted to, or traced. The shape, built so
+DNA and contagion slide in without a rewrite:
+
+- Kind `blood_identity`, carriers `{ "blood" }`, field `type` (ref into a
+  `blood_types` roster: tg's eight human types with `compatible_types`
+  beside them in the lib, `blood_types.dm:175-240`; assignment by tg's
+  weights `__HELPERS/mobs.dm:10-22`). Later field `dna` (number, minted
+  with `sim.random_keyed` on the Mind's stable identity). Meet:
+  receiver wins, settled explicitly; an incompatible type reacts per tg
+  (`blood.dm:406-410`, `carbon/life.dm:495-499`).
+- Kind `contagion`, carriers `{ "blood", "water" }`, field `illnesses`
+  (refs into an `illnesses` roster). Meet: union. Declared when the
+  first illness entry exists; written here so the first kind's choices
+  already fit it.
+- One writer (`blood_identity.stamp(body)` in one lib function, run on
+  the body's first `blood_harmony.on_life` pass), one meet dispatcher
+  registered per kind, specs assert rider fields by name, carriers never
+  widened for convenience.
+- Before the reaction leg: confirm whether the meet payload carries
+  arrived moles (engine `docs/luau-api/anchors.md`); if not, the meet
+  only settles the type and tg's figure lands at the transfer
+  completion, which knows the dose.
+
+Done: the three-vessel spec (syringe and beakers, one world) passes its
+first four legs — compatible O- into A+ settles silently after one meet;
+incompatible A+ into O- is refused with tg's toxin at half volume; a
+split draw keeps the rider on both halves; blood drawn back out of
+blood+water clears `blood_identity` as carrier-gone — and legs five
+(contagion survival, per-vessel cure, transfusion transmission) and six
+(per-vessel `dna` naming the donor) join the same world when their kinds
+land.
