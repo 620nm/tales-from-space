@@ -76,14 +76,15 @@ export type TransfusionNote = {
     receiver: number?,
 }
 
--- Injections in flight, oldest first. A `matter.inject.done` carries
--- only moles -- no ends -- so the stroke files its note beside the
--- command and the completion settles the oldest one. Completions fire
--- in issue order, and every stroke pushes exactly one note, so the
--- oldest note is always this completion's. An empty book settles to
--- nothing, the way `lib/consume_followups.luau` settles an unknown
--- item to nil.
-local pending: { TransfusionNote } = {}
+-- Injections in flight, one queue per issuing prototype, oldest first.
+-- A `matter.inject.done` carries only moles -- no ends -- so the stroke
+-- files its note beside the command and that prototype's completion
+-- settles its oldest one. The queue assumes issue-order completion and
+-- one note per stroke; keying it by issuer keeps a second injecting
+-- prototype from settling the first one's notes (docs/TODO.md, "Blood
+-- identity rider"). An empty queue settles to nothing, the way
+-- `lib/consume_followups.luau` settles an unknown item to nil.
+local pending: { [string]: { TransfusionNote } } = {}
 
 -- True when `donor` blood is safe in a `receiver` body, both 0-based
 -- roster indices (blood_types.dm:13, blood.dm:406).
@@ -194,18 +195,32 @@ function blood_identity.on_meet(ev: MatterRiderMeetPayload): ()
     sim.set_rider(ev.holder, blood_identity.KIND, { type = keep })
 end
 
--- File the note for an injection about to be issued: the body it is
+-- File `issuer`'s note for an injection it just issued: the body it is
 -- pointed at and both ends' settled types, nil when an end is untyped.
-function blood_identity.note_transfusion(target: Handle, donor: number?, receiver: number?): ()
-    table.insert(pending, { target = target, donor = donor, receiver = receiver })
+function blood_identity.note_transfusion(
+    issuer: string,
+    target: Handle,
+    donor: number?,
+    receiver: number?
+): ()
+    local queue = pending[issuer]
+    if queue == nil then
+        queue = {}
+        pending[issuer] = queue
+    end
+    table.insert(queue, { target = target, donor = donor, receiver = receiver })
 end
 
--- Answer one `matter.inject.done`: the oldest note's transfusion moved
--- `moved` moles, and an incompatible one answers with tg's toxin at
--- half the volume (blood.dm:406-410). Riderless blood on either end
--- is untyped and cannot react; a refused injection moved nothing.
-function blood_identity.settle_injection(moved: number): ()
-    local note = table.remove(pending, 1)
+-- Answer one of `issuer`'s `matter.inject.done`: its oldest note's
+-- transfusion moved `moved` moles, and an incompatible one answers with
+-- tg's toxin at half the volume (blood.dm:406-410). Riderless blood on
+-- either end is untyped and cannot react; a refused injection moved nothing.
+function blood_identity.settle_injection(issuer: string, moved: number): ()
+    local queue = pending[issuer]
+    if queue == nil then
+        return
+    end
+    local note = table.remove(queue, 1)
     if note == nil then
         return
     end

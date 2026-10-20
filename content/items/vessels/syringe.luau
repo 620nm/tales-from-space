@@ -177,6 +177,7 @@ if sim ~= nil then
             -- per injection it answers.
             sim.matter.inject({ from = self, into = other, by = self, amount = STROKE })
             blood_identity.note_transfusion(
+                content.id,
                 other,
                 blood_identity.type_of(self),
                 blood_identity.type_of(other)
@@ -353,7 +354,7 @@ if sim ~= nil then
     -- with tg's toxin at half that volume. No route: a command
     -- completion re-enters on `issued` and carries no other.
     script_definition:handle("matter.inject.done", { kind = "react" }, function(ev)
-        blood_identity.settle_injection(ev.moved)
+        blood_identity.settle_injection(content.id, ev.moved)
     end)
 end
 
