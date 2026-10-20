@@ -53,34 +53,60 @@ Done: `assets/lunatic-revision` holds an engine sha, `.github/workflows/ci.yml`
 checks that sha out, and a lint in `tools/` fails when the pinned sha is not
 reachable in the engine. It mirrors `assets/tg-revision`.
 
-## Blood identity rider (design settled 2026-10-19, Draft)
+## Blood identity rider
 
-Blood carries no identity beyond its type: the pack declares one
-rider kind (`blood_identity`: typed, reacted-to transfusions, legs 1-4
-in `tests/bodies/blood_identity_test.luau`), so illness cannot yet ride
-blood and a donor cannot yet be named. The shape, built so DNA and
-contagion slide in without a rewrite:
+Blood carries only its type: `content/riders/blood_identity.luau` and
+`content/lib/blood_identity.luau` (legs 1-4 in
+`tests/bodies/blood_identity_test.luau`), so illness cannot ride blood, a
+donor cannot be named, and nothing shows a player a type. The engine owns
+rider transport and meetings and reads no disease or donor word: a rider
+follows its carrier through draw, pour, split and injection, only vessels
+and bloodstreams keep it, and cells, tanks and canisters shed it. Rosters,
+medical behaviour, progression, immunity, forensics and presentation are
+pack Luau. tg anchors: `blood.dm:400-410` (infection before compatibility),
+`carbon/life.dm:479-499`, `elements/blood_reagent.dm:172-235` (merge),
+`datums/dna/dna.dm:249-257`, `scanners/health_analyzer.dm:402-409`,
+`diseases/flu.dm:1-13`, `diseases/cold.dm:1-12`.
 
-- Kind `blood_identity`, carriers `{ "blood" }`, field `type` (ref into a
-  `blood_types` roster: tg's eight human types with `compatible_types`
-  beside them in the lib, `blood_types.dm:175-240`; assignment by tg's
-  weights `__HELPERS/mobs.dm:10-22`). Later field `dna` (number, minted
-  with `sim.random_keyed` on the Mind's stable identity). Meet:
-  receiver wins, settled explicitly; an incompatible type reacts per tg
-  (`blood.dm:406-410`, `carbon/life.dm:495-499`).
-- Kind `contagion`, carriers `{ "blood", "water" }`, field `illnesses`
-  (refs into an `illnesses` roster). Meet: union. Declared when the
-  first illness entry exists; written here so the first kind's choices
-  already fit it.
-- One writer (`blood_identity.stamp(body)` in one lib function, run on
-  the body's first `blood_harmony.on_life` pass), one meet dispatcher
-  registered per kind, specs assert rider fields by name, carriers never
-  widened for convenience.
-- Before the reaction leg: confirm whether the meet payload carries
-  arrived moles (engine `docs/luau-api/anchors.md`); if not, the meet
-  only settles the type and tg's figure lands at the transfer
-  completion, which knows the dose.
+First, so compatibility is a player decision and not an invisible trap: a
+health analyzer and the crew record show a body's type, the analyzer with
+its can-receive list (`health_analyzer.dm:402-409`), and one typed blood
+pack shows its type and carries the no-donor `dna` value below.
 
-Done: legs five (contagion survival, per-vessel cure, transfusion
-transmission) and six (per-vessel `dna` naming the donor) join the
-three-vessel spec's world when their kinds land.
+Then the deferred legs, shaped as follows:
+
+- Contagion is fluid transport only. Kind `contagion`, carriers
+  `{ "blood", "water" }` (cups, bottles, bloodstreams, a drink's arrival;
+  puddles, deck cells and tanks keep nothing), field `illnesses`: the
+  roster-named illnesses the fluid carries, never a host disease. Host
+  stage, incubation, cure state and immunity are body vars driven by
+  `mob.life`; a cure clears the bloodstream rider AND resets the stage var,
+  because the persistent blood carrier never drops it. Airborne and contact
+  spread are pack cadence handlers over `sim.query.range` and
+  `sim.query.los`, never a widened carrier. Meet: union.
+- The first `illnesses` roster is static presets (tg flu, cold). Runtime
+  strains are out of it; if ever needed, a fixed-size slot roster with a
+  per-round strain table behind the slots.
+- Field `dna` on `blood_identity` is vessel identity: it names the donor of
+  blood in a vessel or bloodstream, with a declared no-donor value for
+  synthetic packs. Deck forensics is not this field: a pack table keyed by
+  the blood decal instance, written at the wound by `content/lib/bloodshed.luau`,
+  which knows the victim.
+- The toxin answer uses one note queue per issuing prototype
+  (`blood_identity.note_transfusion`). It still assumes issue-order
+  completion and one note per stroke; an admitted command with no completion
+  leaves a stale note. Once the engine puts the parcel's carrier moles on
+  `matter.rider.arrived` and `matter.rider.meet` (journal rows and anchor
+  payloads), one meet handler replaces the queue.
+
+Known gaps: crew sharing a name share a type; an unminded body keys its draw
+on its prototype name; first-cadence stamping leaves a window where a fresh
+body's blood draws untyped (stamping at spawn completion would close it).
+
+Done: the analyzer, crew record and typed pack land first. Then leg five
+(contagion carriage, the body-var cure that clears the rider and resets the
+stage, transmission by transfusion, plus a leg pinning that contagion still
+lands on an incompatible transfusion) and leg six (vessel `dna` naming the
+donor, the pack's no-donor value, and decal-keyed deck records) join the
+three-vessel spec's world, each asserting fluid carriage, host progression
+and deck forensics separately.
