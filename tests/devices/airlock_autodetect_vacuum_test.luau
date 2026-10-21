@@ -89,7 +89,7 @@ local function sealed_while(opening, partner, step, watched, admits)
         if d.open or d.moving then
             local p = assert(t.door_at(partner, 3))
             assert(
-                not p.open and not p.moving and p.bolted,
+                not p.open and not p.moving and p.seals.bolted,
                 "door " .. partner .. " is bolted shut before " .. opening .. " moves"
             )
             if not checked then
@@ -124,7 +124,7 @@ airlock_cycle.until_door(
     end)
 )
 assert(
-    assert(t.door_at(5, 3)).bolted and not assert(t.door_at(5, 3)).open,
+    assert(t.door_at(5, 3)).seals.bolted and not assert(t.door_at(5, 3)).open,
     "the space leaf stays bolted shut"
 )
 assert((airlock_cycle.pressure() or 0) >= 100, "the chamber filled before home opened")

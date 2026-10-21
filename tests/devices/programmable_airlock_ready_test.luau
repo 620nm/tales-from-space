@@ -26,11 +26,11 @@ local operator = t.join("assistant")
 local visitor = t.join("engineer")
 t.run_seconds(1.0)
 assert(
-    assert(t.door_at(5, 3)).bolted and not assert(t.door_at(5, 3)).open,
+    assert(t.door_at(5, 3)).seals.bolted and not assert(t.door_at(5, 3)).open,
     "interior starts closed and bolted"
 )
 assert(
-    assert(t.door_at(8, 3)).open and not assert(t.door_at(8, 3)).bolted,
+    assert(t.door_at(8, 3)).open and not assert(t.door_at(8, 3)).seals.bolted,
     "exterior starts open and unbolted"
 )
 
@@ -135,7 +135,7 @@ local function sealed_while(
         if d.open or d.moving then
             local p = assert(t.door_at(partner, 3))
             assert(
-                not p.open and not p.moving and p.bolted,
+                not p.open and not p.moving and p.seals.bolted,
                 "door " .. partner .. " is bolted shut before " .. opening .. " moves"
             )
             if not checked then
@@ -176,7 +176,7 @@ airlock_cycle.until_door(
 )
 linger("entered")
 assert(
-    assert(t.door_at(8, 3)).bolted and not assert(t.door_at(8, 3)).open,
+    assert(t.door_at(8, 3)).seals.bolted and not assert(t.door_at(8, 3)).open,
     "the exterior stays bolted shut"
 )
 assert(
@@ -222,7 +222,7 @@ airlock_cycle.until_door(
 )
 linger("exited")
 assert(
-    assert(t.door_at(5, 3)).bolted and not assert(t.door_at(5, 3)).open,
+    assert(t.door_at(5, 3)).seals.bolted and not assert(t.door_at(5, 3)).open,
     "the interior stays bolted shut"
 )
 assert(assert(airlock_cycle.pressure()) < 10, "the chamber reads below 10 kPa before space opens")

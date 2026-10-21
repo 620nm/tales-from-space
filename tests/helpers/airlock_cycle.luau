@@ -72,7 +72,7 @@ function cycle.until_door(
             )
         end
         local d = assert(t.door_at(x, y), "the watched door exists")
-        if d.open == open and d.bolted and not d.moving and settled(since) then
+        if d.open == open and d.seals.bolted and not d.moving and settled(since) then
             return heard
         end
         t.run_ticks(step)

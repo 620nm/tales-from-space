@@ -51,7 +51,7 @@ if sim ~= nil then
         if target ~= nil and target.kind == "door" then
             door = sim.door.at(x, y)
         end
-        if door == nil or door.open or door.powered or door.bolted then
+        if door == nil or door.open or door.powered or door.seals.bolted then
             return { replaced = false }
         end
         -- The sustained heave: tg's `operating_sound`, played while
@@ -64,7 +64,7 @@ if sim ~= nil then
         sim.spawn_task(user, function()
             if sim.do_after(user, sim.ticks(2.5), {}) == "ok" then
                 local d = sim.door.at(x, y)
-                if d ~= nil and not d.open and not d.powered and not d.bolted then
+                if d ~= nil and not d.open and not d.powered and not d.seals.bolted then
                     sim.door.open({
                         subject = d.subject,
                         request_id = "lunatic/tfs:crowbar",

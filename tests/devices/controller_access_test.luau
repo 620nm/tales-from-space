@@ -98,7 +98,7 @@ end
 -- move, so nothing but the claim can be what stops a hand.
 assert(assert(t.structure_at(6, 1)).id == "airlock.engineering", "the variant that says `access`")
 local door = assert(t.door_at(6, 1))
-assert(door.powered and not door.open and not door.bolted, "powered, shut, unbolted")
+assert(door.powered and not door.open and not door.seals.bolted, "powered, shut, unbolted")
 
 -- ---- by hand: refused ----------------------------------------------------
 t.click(crew, 6, 1, assert(t.target_at(crew, 6, 1)))

@@ -37,6 +37,15 @@ return {
     name = "airlock",
     sprite = "door",
     fixture = "Door",
+    -- tg's two door latches (docs/construction/doors.md §Seals): bolts
+    -- hold the leaf where it is and need power and a still leaf to
+    -- throw (airlock.dm:1333,1410); the emergency override answers
+    -- every access check open and leaves a cycle partner alone
+    -- (door.dm:50,328, airlock.dm:1351), switchable dead or moving.
+    seals = {
+        { id = "bolted", holds_motion = true, needs_power = true, needs_stillness = true },
+        { id = "emergency", waives_claims = true, waives_cycle_link = true },
+    },
     script = "airlock",
     link = { network_interface = true, role = "endpoint", class = "atmos" },
     category = "power",
@@ -47,13 +56,13 @@ return {
         {
             id = "public",
             closed = "door",
-            bolt_lights = "door_bolt_lights",
+            lamps = { bolted = "door_bolt_lights" },
             open = "door_open",
             opening = "door_opening",
             closing = "door_closing",
             glass = {
                 closed = "door_glass",
-                bolt_lights = "door_bolt_lights",
+                lamps = { bolted = "door_bolt_lights" },
                 open = "door_glass_open",
                 opening = "door_glass_opening",
                 closing = "door_glass_closing",
@@ -66,13 +75,13 @@ return {
         {
             id = "engineering",
             closed = "door_eng",
-            bolt_lights = "door_bolt_lights",
+            lamps = { bolted = "door_bolt_lights" },
             open = "door_eng_open",
             opening = "door_eng_opening",
             closing = "door_eng_closing",
             glass = {
                 closed = "door_eng_glass",
-                bolt_lights = "door_bolt_lights",
+                lamps = { bolted = "door_bolt_lights" },
                 open = "door_eng_glass_open",
                 opening = "door_eng_glass_opening",
                 closing = "door_eng_glass_closing",
@@ -89,13 +98,13 @@ return {
         {
             id = "interior",
             closed = "door_int",
-            bolt_lights = "door_int_bolt_lights",
+            lamps = { bolted = "door_int_bolt_lights" },
             open = "door_int_open",
             opening = "door_int_opening",
             closing = "door_int_closing",
             glass = {
                 closed = "door_int_glass",
-                bolt_lights = "door_int_bolt_lights",
+                lamps = { bolted = "door_int_bolt_lights" },
                 open = "door_int_glass_open",
                 opening = "door_int_glass_opening",
                 closing = "door_int_glass_closing",

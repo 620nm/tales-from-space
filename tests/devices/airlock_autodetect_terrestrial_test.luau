@@ -94,11 +94,11 @@ t.run_ticks(2)
 airlock_cycle.until_door(5, true, operator, since, function()
     local p = assert(t.door_at(8, 3))
     if assert(t.door_at(5, 3)).open or assert(t.door_at(5, 3)).moving then
-        assert(not p.open and not p.moving and p.bolted, "the east leaf stays bolted while west moves")
+        assert(not p.open and not p.moving and p.seals.bolted, "the east leaf stays bolted while west moves")
     end
 end)
 assert(airlock_cycle.watches() == watched, "interlock sends no pressure watch")
 assert(
-    assert(t.door_at(8, 3)).bolted and not assert(t.door_at(8, 3)).open,
+    assert(t.door_at(8, 3)).seals.bolted and not assert(t.door_at(8, 3)).open,
     "the east leaf ends bolted shut"
 )

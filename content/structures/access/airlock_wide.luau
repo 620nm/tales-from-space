@@ -48,6 +48,15 @@ return {
     name = "wide airlock",
     sprite = "door_wide_w",
     fixture = "Door",
+    -- tg's two door latches (docs/construction/doors.md §Seals): bolts
+    -- hold the leaf where it is and need power and a still leaf to
+    -- throw (airlock.dm:1333,1410); the emergency override answers
+    -- every access check open and leaves a cycle partner alone
+    -- (door.dm:50,328, airlock.dm:1351), switchable dead or moving.
+    seals = {
+        { id = "bolted", holds_motion = true, needs_power = true, needs_stillness = true },
+        { id = "emergency", waives_claims = true, waives_cycle_link = true },
+    },
     script = "airlock",
     link = { network_interface = true, role = "endpoint", class = "atmos" },
     category = "power",
@@ -64,9 +73,11 @@ return {
         {
             id = "interior",
             glass = {
-                bolt_lights = {
-                    south = { "door_wide_bolt_lights_w", "door_wide_bolt_lights_e" },
-                    east = { "door_wide_bolt_lights_s", "door_wide_bolt_lights_n" },
+                lamps = {
+                    bolted = {
+                        south = { "door_wide_bolt_lights_w", "door_wide_bolt_lights_e" },
+                        east = { "door_wide_bolt_lights_s", "door_wide_bolt_lights_n" },
+                    },
                 },
                 closed = {
                     south = { "door_wide_w", "door_wide_e" },
