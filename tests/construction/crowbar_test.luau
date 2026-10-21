@@ -66,12 +66,18 @@ t.run_seconds(3.25)
 assert(assert(t.door_at(3, 1)).open, "an unpowered door has no motors to autoclose with")
 
 assert(#t.ledger_rows("PowerOutage") == 1, "the outage is on the record")
-local pried = t.ledger_rows("DoorPried")
+local pried: { SpecLedgerRow } = {}
+for _, row in ipairs(t.ledger_rows("DoorOperation")) do
+    if row.forced then
+        table.insert(pried, row)
+    end
+end
 assert(
     #pried == 1
+        and pried[1].success
         and ui_controls.array(pried[1].at)[1] == 3
         and ui_controls.array(pried[1].at)[2] == 1,
-    "the pry names the door it opened"
+    "the forced open names the door it opened"
 )
 local msgs = table.concat(t.messages(p), "\n")
 assert(msgs:find("gives way", 1, true), "the door gave way: " .. msgs)

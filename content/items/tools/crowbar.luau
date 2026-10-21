@@ -2,9 +2,10 @@ local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 
 -- The classic, both jobs: pry a floor tile off its plating (instant,
--- tile refunded — the subfloor shows), and pry open a dead airlock
--- ("pass" hands powered doors back to the native access-checked
--- toggle).
+-- tile refunded — the subfloor shows), and force open a dead, unbolted
+-- airlock ("pass" hands powered or bolted doors back to the native
+-- access-checked toggle). A forced open waives power and bolts, so the
+-- bolt check is this tool's: tg's try_to_crowbar refuses bolts itself.
 local content = {
     id = "crowbar",
     visual_layer = "item",
@@ -50,7 +51,7 @@ if sim ~= nil then
         if target ~= nil and target.kind == "door" then
             door = sim.door.at(x, y)
         end
-        if door == nil or door.open or door.powered then
+        if door == nil or door.open or door.powered or door.bolted then
             return { replaced = false }
         end
         -- The sustained heave: tg's `operating_sound`, played while
@@ -63,8 +64,12 @@ if sim ~= nil then
         sim.spawn_task(user, function()
             if sim.do_after(user, sim.ticks(2.5), {}) == "ok" then
                 local d = sim.door.at(x, y)
-                if d ~= nil and not d.open and not d.powered then
-                    sim.pry_door(x, y)
+                if d ~= nil and not d.open and not d.powered and not d.bolted then
+                    sim.door.open({
+                        subject = d.subject,
+                        request_id = "lunatic/tfs:crowbar",
+                        force = true,
+                    })
                     sim.message.send({
                         recipient = user,
                         message = sim.msg("lunatic/tfs:items.crowbar.the_door_gives_way", {}),
