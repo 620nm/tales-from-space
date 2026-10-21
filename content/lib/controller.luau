@@ -88,7 +88,17 @@ local function members(host: Handle)
     for _, obj in ipairs(sim.query.link_members(host)) do
         local state = sim.link_state(obj)
         if state and not state.suspended and reach[state.mac] then
-            local door = sim.door.state(obj)
+            local leaf = sim.door.state(obj)
+            -- Programs keep device rows as plain data: the leaf's state
+            -- without its handle, which only this controller orders by.
+            local door = leaf
+                and {
+                    open = leaf.open,
+                    powered = leaf.powered,
+                    moving = leaf.moving,
+                    bolted = leaf.bolted,
+                    emergency = leaf.emergency,
+                }
             local vent = sim.atmos.read(obj)
             local air = sim.sense.read(obj)
             local kind = door and "door"
