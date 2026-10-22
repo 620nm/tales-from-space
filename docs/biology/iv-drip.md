@@ -1,6 +1,6 @@
 # IV drip
 
-The stand transfers matter between its native chemical dock and a connected body. The shared
+The stand transfers matter between its native substance dock and a connected body. The shared
 connection lifecycle and flow loop live in `content/lib/medical/iv_line.luau` and
 `content/lib/medical/iv_flow.luau`. Blood typing and transfusion response are documented in
 [Blood types](blood-types.md).

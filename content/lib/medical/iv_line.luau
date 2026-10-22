@@ -75,7 +75,7 @@ local generations: { [string]: number } = {}
 local lifecycles: { [string]: Lifecycle } = {}
 local endpoint_drips: { [string]: { [string]: boolean } } = {}
 local pending_actor_attempts: PendingActorIndex = {}
-local hooks_attached = false
+local handlers_attached = false
 local rip_draw_sequence = 0
 
 local function opaque_key(handle: Handle): string
@@ -754,7 +754,7 @@ function iv_line.on_second(_ev: unknown): ()
 end
 
 function iv_line.attach(): ()
-    if hooks_attached then
+    if handlers_attached then
         return
     end
     sim.define("script_var", "lunatic/tfs:iv_mode", { replicate = "server" })
@@ -765,7 +765,7 @@ function iv_line.attach(): ()
     end
     sim.handle("entity.location.changed", { kind = "react" }, iv_line.on_location_changed)
     sim.handle("clock.second", { kind = "react" }, iv_line.on_second)
-    hooks_attached = true
+    handlers_attached = true
 end
 
 return iv_line

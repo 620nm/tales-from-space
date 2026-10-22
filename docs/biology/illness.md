@@ -183,7 +183,7 @@ base `/datum/disease/cold` course above, not tg's advanced cold variant.
 
 ## Analyzer report
 
-The scanner invokes the read-only report hook after its own accepted-target,
+The scanner invokes the read-only report handler after its own accepted-target,
 reach and disclosure checks. Body reports use the host snapshot; vessel reports
 use only the selected vessel's contagion indices and catalog. A vessel report
 says `Carried in fluid`; it does not invent a host stage. The body key
