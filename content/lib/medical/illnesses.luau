@@ -12,9 +12,6 @@ export type NaturalRecovery = {
     peaked_recovery_multiplier: number,
     slowdown_recovery_bonus: number,
     slowdown_recovery_bonus_cycles: number,
-    malnutrition_recovery_penalty: number,
-    good_sleeping_recovery_bonus: number,
-    sleeping_recovery_multiplier: number,
     final_cure_chance_multiplier: number,
     symptom_offset_cycles: number,
     symptom_frequency_modifier: number,
@@ -66,8 +63,9 @@ local CATALOG: { IllnessDefinition } = {
             stage_three_lying_per_second = 12.5,
             stage_three_other_per_second = 0.005,
         },
-        -- code/__DEFINES/diseases.dm:60-112; copied as data for the
-        -- supported host course to select its implemented recovery levers.
+        -- Base course inputs from tg: code/__DEFINES/diseases.dm:60-112.
+        -- Add recovery levers here when TfS models them (tg:
+        -- code/datums/diseases/_disease.dm:186-211).
         natural_recovery = {
             nonthreat_cycles = 180,
             recovery_constant = 0,
@@ -75,9 +73,6 @@ local CATALOG: { IllnessDefinition } = {
             peaked_recovery_multiplier = 1.2,
             slowdown_recovery_bonus = 2,
             slowdown_recovery_bonus_cycles = 120,
-            malnutrition_recovery_penalty = 3,
-            good_sleeping_recovery_bonus = 0.6,
-            sleeping_recovery_multiplier = 6,
             final_cure_chance_multiplier = 6,
             symptom_offset_cycles = 200,
             symptom_frequency_modifier = 1,
