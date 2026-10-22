@@ -2,6 +2,7 @@ local illnesses = require("@lib/medical/illnesses")
 local host_illness = require("@lib/medical/host_illness")
 
 local BREATH_INTERVAL_SECONDS = 8
+local AIRBORNE_ELAPSED_SECONDS_VAR = "lunatic/tfs:biology.airborne_elapsed_seconds"
 local SPREAD_RANGE = 2
 local RANGE_QUERY_RADIUS = 3
 
@@ -54,11 +55,17 @@ local airborne = {}
 -- The 8 s cadence follows code/modules/mob/living/carbon/life.dm:46-57.
 -- Range plus native LOS approximates shared air; it does not model atmos or FOV.
 function airborne.on_life(ev: MobLifePayload): ()
-    if sim.tick() % sim.ticks(BREATH_INTERVAL_SECONDS) ~= 0 then
+    local source = ev.entity
+    local previous_elapsed = source.vars[AIRBORNE_ELAPSED_SECONDS_VAR]
+    local elapsed_seconds = if type(previous_elapsed) == "number" then previous_elapsed else 0
+    local accumulated_seconds = elapsed_seconds + ev.elapsed_seconds
+    local breaths_due = math.floor(accumulated_seconds / BREATH_INTERVAL_SECONDS)
+    source.vars[AIRBORNE_ELAPSED_SECONDS_VAR] =
+        accumulated_seconds - breaths_due * BREATH_INTERVAL_SECONDS
+    if breaths_due == 0 then
         return
     end
 
-    local source = ev.entity
     if not source.alive then
         return
     end
@@ -76,26 +83,28 @@ function airborne.on_life(ev: MobLifePayload): ()
         return
     end
 
-    for _, infection in ipairs(host_illness.snapshot(source)) do
-        local definition = illnesses.get(infection.index)
-        if definition ~= nil then
-            local breath_probability = 1 - math.pow(1 - (definition.infectivity * 4) / 100, 2)
-            local source_purpose = "medical.airborne.source." .. definition.id
-            if sim.random_for(source_purpose, source) < breath_probability then
-                local exposure_probability = math.min(50 * definition.spreading_modifier - 1, 50) / 100
-                local target_purpose = "medical.airborne.target." .. definition.id
-                local exposure_indices = { infection.index }
+    for _ = 1, breaths_due do
+        for _, infection in ipairs(host_illness.snapshot(source)) do
+            local definition = illnesses.get(infection.index)
+            if definition ~= nil then
+                local breath_probability = 1 - math.pow(1 - (definition.infectivity * 4) / 100, 2)
+                local source_purpose = "medical.airborne.source." .. definition.id
+                if sim.random_for(source_purpose, source) < breath_probability then
+                    local exposure_probability = math.min(50 * definition.spreading_modifier - 1, 50) / 100
+                    local target_purpose = "medical.airborne.target." .. definition.id
+                    local exposure_indices = { infection.index }
 
-                for _, candidate in ipairs(sim.query.range(source_tile, RANGE_QUERY_RADIUS, {})) do
-                    if candidate ~= source and candidate.alive then
-                        local target_facts = sim.body(candidate)
-                        if target_facts ~= nil and target_facts.animate == true and can_breathe(candidate) then
-                            local target_tile = candidate.tile
-                            if within_spread_range(source_tile, target_tile)
-                                and sim.query.los(source, candidate)
-                                and sim.random_for(target_purpose, candidate) < exposure_probability
-                            then
-                                host_illness.expose(candidate, exposure_indices, "airborne")
+                    for _, candidate in ipairs(sim.query.range(source_tile, RANGE_QUERY_RADIUS, {})) do
+                        if candidate ~= source and candidate.alive then
+                            local target_facts = sim.body(candidate)
+                            if target_facts ~= nil and target_facts.animate == true and can_breathe(candidate) then
+                                local target_tile = candidate.tile
+                                if within_spread_range(source_tile, target_tile)
+                                    and sim.query.los(source, candidate)
+                                    and sim.random_for(target_purpose, candidate) < exposure_probability
+                                then
+                                    host_illness.expose(candidate, exposure_indices, "airborne")
+                                end
                             end
                         end
                     end

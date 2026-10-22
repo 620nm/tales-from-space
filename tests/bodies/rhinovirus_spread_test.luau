@@ -158,34 +158,19 @@ unmask(range_three, "range-three target")
 unmask(behind_wall, "wall target")
 
 local breath_ticks = clock.deadline_ticks(BREATH_SECONDS)
-local ticks_until_breath = breath_ticks - t.now() % breath_ticks
-if ticks_until_breath > 1 then
-    t.run_ticks(ticks_until_breath - 1)
-end
 
--- This boundary tests the source mask only; it says nothing about the
--- unmasked cadence below.
-assert(not has_rhinovirus(diagonal), "no transfer occurs before the next breath")
-assert(not has_rhinovirus(range_three), "the range-three subject stays clear before the breath")
-assert(not has_rhinovirus(masked), "the masked internals user stays clear before the breath")
-assert(not has_rhinovirus(behind_wall), "the wall subject stays clear before the breath")
-t.run_ticks(1)
+-- A masked carrier stays blocked through a full body-local breath interval.
+t.run_ticks(breath_ticks)
 assert(not has_rhinovirus(diagonal), "a masked source cannot infect an unmasked diagonal subject")
 assert(not has_rhinovirus(range_three), "a masked source cannot infect a range-three subject")
 assert(not has_rhinovirus(masked), "a masked source cannot infect a masked internals user")
 assert(not has_rhinovirus(behind_wall), "a masked source cannot infect a subject behind the wall")
 
 unmask(source, "source")
-
-ticks_until_breath = breath_ticks - t.now() % breath_ticks
-if ticks_until_breath > 1 then
-    t.run_ticks(ticks_until_breath - 1)
+if t.now() % breath_ticks == 0 then
+    t.tick()
 end
-assert(not has_rhinovirus(diagonal), "the unmasked source has not spread before its next breath")
-assert(not has_rhinovirus(range_three), "the range-three subject is clear before that breath")
-assert(not has_rhinovirus(masked), "the masked internals user is clear before that breath")
-assert(not has_rhinovirus(behind_wall), "the wall subject is clear before that breath")
-t.run_ticks(1)
+assert(t.now() % breath_ticks ~= 0, "the source becomes unmasked off the global breath phase")
 
 local diagonal_seen = false
 local range_three_seen = false

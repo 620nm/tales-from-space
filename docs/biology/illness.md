@@ -97,12 +97,12 @@ explicit source checks (`code/datums/diseases/_disease.dm:300-309`,
 `code/datums/diseases/_MobProcs.dm:136-153`,
 `content/lib/medical/airborne.luau:61-77`).
 
-The human life callback advances `host_illness` before `airborne`. The airborne
-handler acts only when the global tick reaches an eight-second boundary, not
-eight seconds after each infection. This fixed interval is the healthy tg
-breath cadence of four two-second life passes
-(`content/bodies/human.luau:744-751`,
-`content/lib/medical/airborne.luau:4,56-59`,
+The human life callback advances `host_illness` before `airborne`. Each body
+adds `ev.elapsed_seconds` to its private airborne timer and receives a breath
+attempt whenever that timer reaches eight seconds, independent of global tick
+phase. The interval matches tg's healthy breath cadence of four two-second life
+passes (`content/bodies/human.luau:744-751`,
+`content/lib/medical/airborne.luau:4,57-67`,
 `code/modules/mob/living/carbon/life.dm:46-57`).
 
 At each eligible boundary, each active rhinovirus infection uses

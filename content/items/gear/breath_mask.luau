@@ -14,7 +14,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- Silent on purpose: /obj/item/clothing sets no pickup_sound or
 -- drop_sound and neither does _masks.dm, so a mask is picked up
 -- without a noise in tg too (the rule the headset already keeps).
-return {
+local content = {
     id = "breath_mask",
     visual_layer = "item",
     motion_response = physical_profiles.loose_item1kg,
@@ -26,3 +26,12 @@ return {
     worn_sprite = "worn_breath_mask",
     breath_mask = true,
 }
+
+if sim ~= nil then
+    sim.define("script_var", "lunatic/tfs:biology.airborne_elapsed_seconds", {
+        replicate = "server",
+        private = true,
+    })
+end
+
+return content
