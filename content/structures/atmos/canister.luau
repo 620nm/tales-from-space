@@ -79,7 +79,7 @@ return {
     -- here nothing either. Closets and flatpacks are what that field is
     -- for, and neither exists yet.
     -- A broken one is walkable and loose: `canister_break` sets `density =
-    -- FALSE` (canister.dm:487), and a split shell nobody bolted down
+    -- FALSE` (canister.dm:488), and a split shell nobody bolted down
     -- is a thing the wind is welcome to take.
     passable = { "broken" },
     loose = { "displaced", "broken" },
@@ -129,7 +129,7 @@ return {
         on_break = "dump",
         broken_state = "broken",
         -- tg's own noise for it (`playsound(src.loc,
-        -- 'sound/effects/spray.ogg', 10, TRUE, -3)`, canister.dm:488).
+        -- 'sound/effects/spray.ogg', 10, TRUE, -3)`, canister.dm:489).
         sound = "spray",
         message = "lunatic/tfs:structures.canister.split",
     },
