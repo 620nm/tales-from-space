@@ -50,6 +50,16 @@ t.click(medic, 4, 1, assert(t.target_at(medic, 4, 1, "id_assistant")))
 t.run_ticks(2)
 assert(t.hands(medic).held == "id_assistant", "the medic presents an assistant card")
 
+-- A locked closet does not open to an empty hand.
+t.drop(assistant)
+t.run_ticks(2)
+t.click(assistant, 3, 1)
+t.run_ticks(2)
+assert(closet_state() == "closed", "an empty hand cannot open a locked medical crate")
+t.click(assistant, 2, 1, assert(t.target_at(assistant, 2, 1, "id_assistant")))
+t.run_ticks(2)
+assert(t.hands(assistant).held == "id_assistant", "the assistant retrieves their card")
+
 -- An assistant card cannot unlock the medical crate. The medic's worn medical
 -- card authorizes the held presented card, and that action leaves it closed.
 t.click(assistant, 3, 1, assert(t.target_at(assistant, 3, 1, "crate.secure")))

@@ -43,6 +43,7 @@ return {
                 -- Tg creates this sequence in PopulateContents on first dump
                 -- (`code/game/objects/structures/crates_lockers/crates.dm:280-297`,
                 -- `code/game/objects/structures/crates_lockers/closets.dm:507-515`).
+                -- Tg also stocks blood/lizard and blood/ethereal; TfS declares neither (`code/game/objects/structures/crates_lockers/crates.dm:293-294`).
                 stock = {
                     { item = "blood_pack", count = 2 },
                     { item = "blood_pack.a_minus" },

@@ -306,3 +306,68 @@ assert(#rows == 4, "freezer and locker each yield exactly two items")
 assert_metal_at(rows, 3, 2, parity_actor_id, 2)
 assert_metal_at(rows, 2, 3, parity_actor_id, 2)
 assert_removed_at(2, 3, parity_actor_id, 1)
+
+-- A fixture-only player action races the end of the first cut and removes its
+-- target. A later cut still completes instead of inheriting a stale ticket.
+t.world(
+    [==[ (
+        name: "external closet removal releases later cuts",
+        legend: {
+            ' ': (composition: (substrate: Some("space"))),
+            '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+            '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        },
+        levels: [(
+            rows: ["#############", "#...........#", "#...........#", "#############"],
+            structures: [
+                (2, 2, "player_spawn", { "jobs": "engineer" }),
+                (4, 2, "player_spawn", { "jobs": "assistant" }),
+                (10, 2, "player_spawn", { "jobs": "medic" }),
+                (3, 2, "crate.medical"),
+                (9, 2, "crate.medical"),
+            ],
+            items: [
+                (2, 2, "welder"),
+                (4, 2, "lunatic/tfs:closet_cut_test_remover"),
+                (10, 2, "welder"),
+            ],
+        )],
+    ) ]==],
+    7
+)
+
+first = t.join("engineer")
+second = t.join("assistant")
+local third = t.join("medic")
+t.run_ticks(2)
+local external_remover_id, later_cutter_id = joined_player_id(2), joined_player_id(3)
+begin_salvage_observation()
+t.click(first, 3, 2, assert(t.target_at(first, 3, 2, "crate.medical")))
+t.click(third, 9, 2, assert(t.target_at(third, 9, 2, "crate.medical")))
+t.run_ticks(2)
+take_and_light(first, 2, 2)
+take_and_light(third, 10, 2)
+t.click(
+    second,
+    4,
+    2,
+    assert(t.target_at(second, 4, 2, "lunatic/tfs:closet_cut_test_remover"))
+)
+t.run_ticks(2)
+assert(t.hands(second).held == "lunatic/tfs:closet_cut_test_remover", "the fixture remover is held")
+
+t.click(first, 3, 2, assert(t.target_at(first, 3, 2, "crate.medical")))
+t.run_ticks(2)
+t.run_seconds(3.9)
+t.click(second, 3, 2, assert(t.target_at(second, 3, 2, "crate.medical")))
+t.run_seconds(0.1)
+assert(t.structure_at(3, 2) == nil, "the second player's action removes the first cut target")
+assert_removed_at(3, 2, external_remover_id, 1)
+t.run_seconds(4.0)
+
+t.click(third, 9, 2, assert(t.target_at(third, 9, 2, "crate.medical")))
+t.run_ticks(2)
+t.run_seconds(4.0)
+assert(t.structure_at(9, 2) == nil, "the second closet is cut successfully")
+assert_metal_at(metal_rows(), 9, 2, later_cutter_id, 2)
+assert_removed_at(9, 2, later_cutter_id, 1)

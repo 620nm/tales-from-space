@@ -5,6 +5,7 @@ local closet = {}
 export type Options = {
 	secure_variants: { [string]: boolean }?,
 	default_access: string?,
+	fixture_removal_tool: string?,
 }
 
 type WelderOperation = {
@@ -313,6 +314,7 @@ end
 function closet.attach(proto_id: string, opts: Options)
 	local secure_variants = opts.secure_variants or {}
 	local default_access = opts.default_access or "command"
+	local fixture_removal_tool = opts.fixture_removal_tool
 	install_interruption_handlers()
 
 	local behavior = sim.define("behavior", "lunatic/tfs:" .. proto_id, { prototype = proto_id })
@@ -336,6 +338,30 @@ function closet.attach(proto_id: string, opts: Options)
 		local secure = secure_variants[prototype] == true
 		local locked = is_locked(target, secure)
 		local welded = is_welded(target)
+		if implement ~= nil
+			and fixture_removal_tool ~= nil
+			and implement.prototype == fixture_removal_tool
+			and target.state == "open"
+		then
+			sim.spawn_task(actor, function()
+				local outcome = sim.do_after(actor, sim.ticks(0.1), {})
+				if outcome ~= "ok"
+					or actor.alive ~= true
+					or target.alive ~= true
+					or implement.alive ~= true
+				then
+					return
+				end
+				if not actor_ready(actor)
+					or not adjacent(actor, target)
+					or not held_in_hand(actor, implement)
+				then
+					return
+				end
+				sim.entity.despawn({ entity = target })
+			end)
+			return true
+		end
 
 		if implement ~= nil and implement_prototype == WELDER_PROTOTYPE then
 			if target.state == "open" or target.state == "closed" then

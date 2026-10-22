@@ -38,6 +38,11 @@ local function in_prototype_family(prototype: string, root_proto: string): boole
         or string.sub(prototype, 1, #root_proto + 1) == root_proto .. "."
 end
 
+local function clear_committed_ticket(): ()
+    ticket = nil
+    sim.script_var.set({ scope = "mod", key = TICKET_KEY, value = TICKET_IDLE })
+end
+
 local function on_despawn_done(ev: EntityDespawnDonePayload): ()
     if processing_receipt then
         return
@@ -64,25 +69,15 @@ local function on_despawn_done(ev: EntityDespawnDonePayload): ()
         return
     end
 
-    if ev.outcome == "failed" then
-        if not active_ticket.target.alive then
-            return
-        end
-        ticket = nil
-        sim.script_var.set({ scope = "mod", key = TICKET_KEY, value = TICKET_IDLE })
-        return
-    end
-
-    if ev.outcome ~= "completed"
-        or ev.reason ~= nil
-        or active_ticket.target.alive
-    then
+    local salvage_authorized = ev.outcome == "completed"
+        and ev.reason == nil
+        and not active_ticket.target.alive
+    clear_committed_ticket()
+    if not salvage_authorized then
         return
     end
 
     processing_receipt = true
-    ticket = nil
-    sim.script_var.set({ scope = "mod", key = TICKET_KEY, value = TICKET_IDLE })
     local units = active_ticket.units
     if units == nil then
         for _ = 1, active_ticket.count do
@@ -155,7 +150,14 @@ local function attach(
 
         local committed_ticket = sim.var("mod", TICKET_KEY)
         if committed_ticket ~= nil and committed_ticket ~= TICKET_IDLE then
-            return false
+            local active_ticket = ticket
+            if active_ticket == nil
+                or active_ticket.token ~= committed_ticket
+                or active_ticket.target.alive
+            then
+                return false
+            end
+            clear_committed_ticket()
         end
 
         -- This also drops scratch left by an occurrence whose effects rolled back.
