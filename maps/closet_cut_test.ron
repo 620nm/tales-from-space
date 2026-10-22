@@ -1,0 +1,9 @@
+(
+    name: "closet cut ticket destination",
+    legend: {
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+    },
+    levels: [(
+        rows: ["."],
+    )],
+)

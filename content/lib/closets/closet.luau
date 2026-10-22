@@ -17,10 +17,17 @@ type WelderOperation = {
 	task: Task?,
 }
 
+type FixtureExternalRemoval = {
+	at: TileAddress,
+	prototype: string,
+}
+
 local WELDED_VAR = "closet_welded"
 local LOCKED_VAR = "closet_locked"
 local ACCESS_VAR = "closet_access"
 local WELDER_PROTOTYPE = "welder"
+local FIXTURE_MAP_SOURCE = "closet_cut_test"
+local FIXTURE_MAP_LOGICAL = "lunatic/tfs:closet_cut_test"
 local ID_PROTOTYPES: { [string]: boolean } = {
 	id_assistant = true,
 	id_medical = true,
@@ -219,7 +226,11 @@ local function begin_welder_operation(
 	start_state: string,
 	welded_snapshot: boolean,
 	name_snapshot: string,
-	request_deconstruction: (Handle, (() -> ())?) -> boolean
+	request_deconstruction: (
+		Handle,
+		(() -> ())?,
+		((Handle, TileAddress) -> ())?
+	) -> boolean
 )
 	prune_unusable_operations()
 	if not actor_ready(actor)
@@ -323,6 +334,82 @@ function closet.attach(proto_id: string, opts: Options)
 		count = 2,
 		units = 1,
 	})
+	local fixture_map_request: RequestId? = nil
+	local fixture_map_ready = false
+	local fixture_external_removal: FixtureExternalRemoval? = nil
+	if fixture_removal_tool ~= nil then
+		behavior:handle("maps.instantiate.done", { kind = "react" }, function(ev: MapsInstantiateDonePayload)
+			if fixture_map_request == nil or ev.request ~= fixture_map_request then
+				return
+			end
+			fixture_map_request = nil
+			fixture_map_ready = ev.outcome == "completed"
+		end)
+		behavior:handle("entity.despawn.done", { kind = "react" }, function(ev: EntityDespawnDonePayload)
+			local pending = fixture_external_removal
+			if pending == nil
+				or ev.outcome ~= "completed"
+				or ev.reason ~= nil
+				or ev.identity ~= pending.prototype
+				or ev.at ~= pending.at
+			then
+				return
+			end
+			fixture_external_removal = nil
+			fixture_map_ready = false
+			sim.maps.release({ map = FIXTURE_MAP_LOGICAL })
+		end)
+	end
+
+	local function remove_fixture_target_elsewhere(
+		actor: Handle,
+		target: Handle,
+		original_at: TileAddress
+	): ()
+		if fixture_map_request == nil and not fixture_map_ready then
+			fixture_map_request = sim.maps.instantiate({
+				source = FIXTURE_MAP_SOURCE,
+				logical = FIXTURE_MAP_LOGICAL,
+				placement = { plane = 1, origin = { x = 100, y = 40 } },
+			})
+		end
+
+		for poll = 1, 20 do
+			if fixture_map_ready then
+				break
+			end
+			if fixture_map_request == nil then
+				return
+			end
+			local outcome = sim.do_after(actor, sim.ticks(0.1), {})
+			if outcome ~= "ok" or actor.alive ~= true or target.alive ~= true then
+				return
+			end
+		end
+		if not fixture_map_ready or actor.alive ~= true or target.alive ~= true then
+			return
+		end
+
+		local destination = sim.map_tile(FIXTURE_MAP_LOGICAL, 0, 0, 0)
+		if destination == nil or destination == original_at then
+			return
+		end
+		sim.entity.transfer({ entity = target, to = destination })
+		local outcome = sim.do_after(actor, sim.ticks(0.1), {})
+		if outcome ~= "ok" or actor.alive ~= true or target.alive ~= true then
+			return
+		end
+		local transferred_at = target.tile
+		if transferred_at == nil or transferred_at == original_at or transferred_at ~= destination then
+			return
+		end
+		local prototype = target.prototype
+		if prototype == nil then
+			return
+		end
+		fixture_external_removal = { at = destination, prototype = prototype }
+		sim.entity.despawn({ entity = target })
+	end
 
 	behavior:handle("interaction.use", { kind = "replace", route = "interact" }, function(ev)
 		prune_unusable_operations()
@@ -343,15 +430,22 @@ function closet.attach(proto_id: string, opts: Options)
 			and implement.prototype == fixture_removal_tool
 			and target.state == "open"
 		then
-			if actor_ready(actor)
-				and adjacent(actor, target)
-				and held_in_hand(actor, implement)
-			then
-				-- This fixture-only tool queues an external removal before the
-				-- real cut request, so one action exercises the failed-receipt path.
-				sim.entity.despawn({ entity = target })
-				request_deconstruction(target, nil)
-			end
+			sim.spawn_task(actor, function()
+				local outcome = sim.do_after(actor, sim.ticks(0.1), {})
+				if outcome ~= "ok"
+					or actor.alive ~= true
+					or target.alive ~= true
+					or implement.alive ~= true
+				then
+					return
+				end
+				if not actor_ready(actor) or not adjacent(actor, target) or not held_in_hand(actor, implement) then
+					return
+				end
+				request_deconstruction(target, nil, function(target_to_remove, original_at)
+					remove_fixture_target_elsewhere(actor, target_to_remove, original_at)
+				end)
+			end)
 			return true
 		end
 

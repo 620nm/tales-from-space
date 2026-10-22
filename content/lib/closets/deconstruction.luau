@@ -8,8 +8,12 @@ export type DeconstructionSpec = {
     units: number?,
 }
 
--- Optional callbacks run only after a successful receipt and queued salvage spawns.
-export type Request = (target: Handle, on_completed: (() -> ())?) -> boolean
+-- on_completed follows authorized salvage; before_despawn is a fixture seam.
+export type Request = (
+    target: Handle,
+    on_completed: (() -> ())?,
+    before_despawn: ((Handle, TileAddress) -> ())?
+) -> boolean
 
 type Ticket = {
     token: string,
@@ -142,7 +146,8 @@ local function attach(
 
     local function request(
         target: Handle,
-        on_completed: (() -> ())?
+        on_completed: (() -> ())?,
+        before_despawn: ((Handle, TileAddress) -> ())?
     ): boolean
         if processing_receipt then
             return false
@@ -190,6 +195,9 @@ local function attach(
         }
 
         sim.script_var.set({ scope = "mod", key = TICKET_KEY, value = token })
+        if before_despawn ~= nil then
+            before_despawn(target, at)
+        end
         sim.entity.despawn({ entity = target })
         return true
     end

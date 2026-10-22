@@ -64,12 +64,25 @@ local function assert_metal_at(
     assert(count == expected, "exact output count at " .. x .. "," .. y .. ": " .. count)
 end
 
-local function assert_removed_at(x: number, y: number, actor_id: number, expected: number)
+local function assert_removed_at(
+    x: number,
+    y: number,
+    actor_id: number,
+    expected: number,
+    expected_plane: number?
+)
     local count = 0
     for _, row in ipairs(ledger_rows("structure_step")) do
         local row_x, row_y = tile_xy(row)
         if ui_controls.text(row.to) == "gone" and row_x == x and row_y == y then
             count += 1
+            if expected_plane ~= nil then
+                local position = ui_controls.array(assert(row.pos, "the gone row records its plane"))
+                assert(
+                    ui_controls.number(position[4]) == expected_plane,
+                    "the gone row is on destination plane " .. expected_plane
+                )
+            end
             local actor = ui_controls.record(row.actor)
             assert(ui_controls.text(actor.kind) == "script", "the closet handler owns the removal")
             assert(
@@ -83,6 +96,31 @@ local function assert_removed_at(x: number, y: number, actor_id: number, expecte
         end
     end
     assert(count == expected, "exact removal count at " .. x .. "," .. y .. ": " .. count)
+end
+
+local function latest_map_instance(): number
+    local rows = ledger_rows("map_instance_installing")
+    return ui_controls.number(assert(rows[#rows], "the current world has a map instance").instance)
+end
+
+local function assert_fixture_destination_installed(
+    install_baseline: number,
+    original_instance: number
+): number
+    local rows = ledger_rows("map_instance_installing")
+    for index = install_baseline + 1, #rows do
+        local row = assert(rows[index])
+        local binding = ui_controls.record(row.binding)
+        if ui_controls.text(binding.kind) == "durable"
+            and ui_controls.text(binding.logical_map_id) == "lunatic/tfs:closet_cut_test"
+        then
+            local instance = ui_controls.number(row.instance)
+            assert(instance ~= original_instance, "the destination is a distinct map instance")
+            assert(ui_controls.number(row.plane) == 1, "the fixture destination is on plane one")
+            return instance
+        end
+    end
+    error("the closet fixture installs its durable destination map")
 end
 
 local function take_and_light(player: number, x: number, y: number)
@@ -307,8 +345,9 @@ assert_metal_at(rows, 3, 2, parity_actor_id, 2)
 assert_metal_at(rows, 2, 3, parity_actor_id, 2)
 assert_removed_at(2, 3, parity_actor_id, 1)
 
--- A fixture-only player action races the end of the first cut and removes its
--- target. A later cut still completes instead of inheriting a stale ticket.
+-- The fixture-only player action starts a real deconstruction request for A.
+-- Before its despawn, the fixture moves A into a distinct map instance and
+-- removes it there, so neither native receipt matches the ticket's old tile.
 t.world(
     [==[ (
         name: "external closet removal releases later cuts",
@@ -341,11 +380,14 @@ second = t.join("assistant")
 local third = t.join("medic")
 t.run_ticks(2)
 local external_remover_id, later_cutter_id = joined_player_id(2), joined_player_id(3)
+local install_baseline = #ledger_rows("map_instance_installing")
+local original_instance = latest_map_instance()
 begin_salvage_observation()
 t.click(first, 3, 2, assert(t.target_at(first, 3, 2, "crate.medical")))
+t.run_ticks(2)
+assert(assert(t.structure_at(3, 2)).state == "open", "the first target is open")
 t.click(third, 9, 2, assert(t.target_at(third, 9, 2, "crate.medical")))
 t.run_ticks(2)
-take_and_light(first, 2, 2)
 take_and_light(third, 10, 2)
 t.click(
     second,
@@ -356,14 +398,15 @@ t.click(
 t.run_ticks(2)
 assert(t.hands(second).held == "lunatic/tfs:closet_cut_test_remover", "the fixture remover is held")
 
-t.click(first, 3, 2, assert(t.target_at(first, 3, 2, "crate.medical")))
-t.run_ticks(2)
-t.run_seconds(3.5)
 t.click(second, 3, 2, assert(t.target_at(second, 3, 2, "crate.medical")))
-t.run_ticks(2)
-assert(t.structure_at(3, 2) == nil, "the second player's action removes the first cut target")
-assert_removed_at(3, 2, external_remover_id, 1)
-t.run_seconds(1.0)
+-- The destination install, transfer, external despawn, helper despawn, and
+-- release settle through the same ordered simulation effects.
+t.run_seconds(3.0)
+assert_fixture_destination_installed(install_baseline, original_instance)
+assert(t.structure_at(3, 2) == nil, "the requested target leaves its original tile")
+assert_removed_at(3, 2, external_remover_id, 0)
+assert_removed_at(100, 40, external_remover_id, 1, 1)
+assert(#metal_rows() == 0, "a receipt at the new tile cannot salvage the old ticket")
 
 t.click(third, 9, 2, assert(t.target_at(third, 9, 2, "crate.medical")))
 t.run_ticks(2)
