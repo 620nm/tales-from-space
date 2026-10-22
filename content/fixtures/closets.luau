@@ -7,7 +7,7 @@ if sim ~= nil then
     sim.define("item", fixture_removal_tool, {
         name = "closet cut test remover",
         sprite = "welder",
-        visual_layer = "fixture:item",
+        visual_layer = "item",
     })
     closet.attach("crate", {
         secure_variants = { ["crate.secure"] = true },

@@ -358,12 +358,12 @@ assert(t.hands(second).held == "lunatic/tfs:closet_cut_test_remover", "the fixtu
 
 t.click(first, 3, 2, assert(t.target_at(first, 3, 2, "crate.medical")))
 t.run_ticks(2)
-t.run_seconds(3.9)
+t.run_seconds(3.5)
 t.click(second, 3, 2, assert(t.target_at(second, 3, 2, "crate.medical")))
-t.run_seconds(0.1)
+t.run_ticks(2)
 assert(t.structure_at(3, 2) == nil, "the second player's action removes the first cut target")
 assert_removed_at(3, 2, external_remover_id, 1)
-t.run_seconds(4.0)
+t.run_seconds(1.0)
 
 t.click(third, 9, 2, assert(t.target_at(third, 9, 2, "crate.medical")))
 t.run_ticks(2)

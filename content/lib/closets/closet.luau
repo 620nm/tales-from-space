@@ -343,23 +343,15 @@ function closet.attach(proto_id: string, opts: Options)
 			and implement.prototype == fixture_removal_tool
 			and target.state == "open"
 		then
-			sim.spawn_task(actor, function()
-				local outcome = sim.do_after(actor, sim.ticks(0.1), {})
-				if outcome ~= "ok"
-					or actor.alive ~= true
-					or target.alive ~= true
-					or implement.alive ~= true
-				then
-					return
-				end
-				if not actor_ready(actor)
-					or not adjacent(actor, target)
-					or not held_in_hand(actor, implement)
-				then
-					return
-				end
+			if actor_ready(actor)
+				and adjacent(actor, target)
+				and held_in_hand(actor, implement)
+			then
+				-- This fixture-only tool queues an external removal before the
+				-- real cut request, so one action exercises the failed-receipt path.
 				sim.entity.despawn({ entity = target })
-			end)
+				request_deconstruction(target, nil)
+			end
 			return true
 		end
 
