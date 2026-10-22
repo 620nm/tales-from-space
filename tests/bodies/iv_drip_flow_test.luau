@@ -2,7 +2,7 @@ local iv_drip = require("@helpers/iv_drip")
 
 local SEED = 3
 local O_MINUS, A_PLUS = 0, 3
-local NORMAL = 13.75
+local NORMAL = 14
 
 local function near(got: number, want: number, what: string, slack: number?)
     local tolerance = slack or 1e-9
@@ -124,6 +124,22 @@ local CLINIC = [==[(
             ],
         ),
     ],
+)]==]
+
+local CAPACITY_CLINIC = [==[(
+    name: "IV capacity",
+    legend: {
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+    },
+    levels: [(
+        rows: ["#######", "#.....#", "#.....#", "#.....#", "#.....#", "#######"],
+        structures: [
+            (3, 3, "player_spawn", { "jobs": "assistant" }),
+            (2, 3, "iv_drip"),
+        ],
+        items: [(4, 4, "blood_pack.o_minus")],
+    )],
 )]==]
 
 -- Two bodies run against separate stands at different rates. Both receive a
@@ -250,8 +266,8 @@ assert(rider_type(tiny) == nil, "true empty clears the blood identity rider")
 assert(overlay(tiny) == nil, "true empty removes the pack picture")
 assert(#t.script_errors() == 0, "small direct IV strokes run without script errors")
 
--- Filling a sealed pack cuts flow off. The stand remembers rate zero after
--- Eject, and the same patient can then be drawn only as far as forty percent.
+-- A full pack cuts flow off. After Eject, the same stand can keep drawing
+-- from a patient below forty percent until the replacement bag fills too.
 t.world(CLINIC, SEED)
 local engineer_patient = t.join("medic")
 t.run_seconds(3)
@@ -274,56 +290,64 @@ assert(t.hands(engineer_patient).held == "blood_pack", "the full sealed bag ejec
 t.drop(engineer_patient)
 t.run_ticks(2)
 
-local floor_bag = iv_drip.mount(engineer_patient, "blood_pack", 4, 4, 2, 3)
+local low_blood_bag = iv_drip.mount(engineer_patient, "blood_pack", 4, 4, 2, 3)
 iv_drip.open(engineer_patient, 2, 3)
 iv_drip.attach(engineer_patient, 2, 3, engineer_patient)
 t.run_seconds(2)
 t.run_ticks(2)
-near(blood_in(floor_bag), 0, "the full-bag cutoff leaves the replacement bag dry")
+near(blood_in(low_blood_bag), 0, "the full-bag cutoff leaves the replacement bag dry")
 
-local floor = NORMAL * 0.40
-local blood_before_floor = t.blood_moles(engineer_patient)
-local floor_regrowth_before = minted_at("blood", 3, 3)
-local floor_bag_before = blood_in(floor_bag)
+t.set_blood_moles(engineer_patient, NORMAL * 0.39)
+local low_blood_start = t.blood_moles(engineer_patient)
+assert(low_blood_start < NORMAL * 0.40, "the unattended draw starts below forty percent")
+local regrowth_before_draw = minted_at("blood", 3, 3)
+local bag_before_draw = blood_in(low_blood_bag)
+local moved_before_draw = #t.ledger_rows("matter_moved")
 iv_drip.rate(engineer_patient, 5)
-t.run_seconds(30)
+t.run_seconds(42)
 t.run_ticks(2)
-local blood_at_floor = t.blood_moles(engineer_patient)
-local floor_regrowth = minted_at("blood", 3, 3) - floor_regrowth_before
-local floor_bag_gain = blood_in(floor_bag) - floor_bag_before
-assert(blood_at_floor >= floor - 1e-6, "repeated real strokes never cross forty percent")
-assert(blood_at_floor <= floor + 0.05, "enough strokes bring the donor to the protected floor")
-assert(floor_bag_gain > 3, "the replacement bag receives the available blood surplus")
+local low_blood_after_draw = t.blood_moles(engineer_patient)
+local blood_regrowth = minted_at("blood", 3, 3) - regrowth_before_draw
+local bag_gain = blood_in(low_blood_bag) - bag_before_draw
+near(bag_gain, 5, "the unattended drip fills the replacement bag below forty percent")
+assert(low_blood_after_draw < NORMAL * 0.40, "the draw continues below forty percent")
 near(
-    floor_bag_gain,
-    blood_before_floor + floor_regrowth - blood_at_floor,
-    "the floor bag records donor loss after measured blood regeneration",
+    bag_gain,
+    low_blood_start + blood_regrowth - low_blood_after_draw,
+    "the full bag records donor loss after measured blood regeneration",
     1e-8
 )
+local full_reading = assert(t.vessel(low_blood_bag), "the filled draw bag has a vessel reading")
+assert(full_reading.headspace_l <= 0.001, "the draw bag is full at the one-millilitre cutoff")
+local matter_rows_when_full = #t.ledger_rows("matter_moved")
+assert(matter_rows_when_full > moved_before_draw, "the low-blood drip made real transfers")
+t.run_seconds(4)
+t.run_ticks(2)
 assert(
-    floor_bag_gain <= blood_before_floor - floor + floor_regrowth + 1e-8,
-    "flow cannot take more than the surplus plus measured regeneration"
+    #t.ledger_rows("matter_moved") == matter_rows_when_full,
+    "the unattended line stops transferring only after the bag fills"
 )
+assert(#t.script_errors() == 0, "full cutoff and below-safe strokes run without script errors")
 
-local blood_before_regrowth = blood_at_floor
-local regrowth_before_followup = minted_at("blood", 3, 3)
-local bag_before_followup = blood_in(floor_bag)
-t.run_seconds(8)
-t.run_ticks(2)
-local blood_after_regrowth = t.blood_moles(engineer_patient)
-local regenerated_surplus = minted_at("blood", 3, 3) - regrowth_before_followup
-local regrowth_drawn = blood_in(floor_bag) - bag_before_followup
-assert(blood_after_regrowth >= floor - 1e-6, "later strokes continue to respect the forty-percent floor")
-assert(blood_after_regrowth <= floor + 0.05, "ongoing flow stays close to the protected floor")
-assert(regrowth_drawn > 0, "the active line draws blood that the patient regenerates")
-assert(
-    regrowth_drawn <= blood_before_regrowth - floor + regenerated_surplus + 1e-8,
-    "ongoing flow is limited to the starting surplus plus measured regeneration"
-)
-near(
-    regrowth_drawn,
-    blood_before_regrowth + regenerated_surplus - blood_after_regrowth,
-    "follow-up draw matches regenerated blood",
-    1e-8
-)
-assert(#t.script_errors() == 0, "full cutoff and floor strokes run without script errors")
+-- A full 200-unit pack has ten units of headroom after one 10-unit infusion.
+t.world(CAPACITY_CLINIC, SEED)
+local donor = t.join("assistant")
+t.run_seconds(3)
+local headroom_bag = iv_drip.mount(donor, "blood_pack.o_minus", 4, 4, 2, 3)
+iv_drip.open(donor, 2, 3)
+iv_drip.rate(donor, 5)
+iv_drip.attach(donor, 2, 3, donor)
+t.run_seconds(2)
+local after_infusion = blood_in(headroom_bag)
+near(5 - after_infusion, 0.25, "one full-rate infusion creates ten units of headroom")
+local headroom = assert(t.vessel(headroom_bag), "the partially used pack has a vessel reading")
+near(headroom.headspace_l, 0.1, "ten blood units occupy one tenth of a litre", 1e-6)
+
+iv_drip.action(donor, "toggle_mode")
+local before_limited_draw = blood_in(headroom_bag)
+t.run_seconds(2)
+local limited_draw = blood_in(headroom_bag) - before_limited_draw
+assert(limited_draw > 0, "the draw fills the available bag headroom")
+assert(limited_draw <= 0.25 + 1e-9, "ten units of headroom cap the next draw at ten units")
+near(blood_in(headroom_bag), 5, "the bag accepts no more than its ten-unit headroom")
+assert(#t.script_errors() == 0, "the ten-unit headroom draw runs without script errors")

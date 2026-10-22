@@ -14,7 +14,7 @@ export type FlowConnection = {
     set_rate: (number) -> (),
 }
 
-type FlowContext = { full_notified: boolean, low_blood_notified: boolean }
+type FlowContext = { full_notified: boolean }
 type CompletionNote = { connection: FlowConnection, context: FlowContext, mode: Mode }
 
 local flow = {}
@@ -30,16 +30,15 @@ local STROKE_SECONDS = 2.0
 -- Match the vessel gesture's 1 mL full cutoff (content/lib/vessel.luau:58-60).
 local FULL_HEADSPACE_L = 0.001
 
--- Tg's BAD threshold is 40% of normal after a 60% loss
--- (code/__DEFINES/mobs.dm:20-24; code/modules/mob/living/blood.dm:373-391).
-local DRAW_FLOOR_FRACTION = 0.40
+-- Blood occupies 0.4 L/mol at 400 g/mol and 1 g/mL
+-- (content/substances/blood.luau:6-11,31-34).
+local BLOOD_MOLES_PER_LITER = 2.5
 
 -- Tg's SAFE fraction is 476/560, and its drip beeps with prob(5) below it
 -- (code/__DEFINES/mobs.dm:16-25; code/game/machinery/iv_drip.dm:262-265).
 local SAFE_BLOOD_FRACTION = 476 / 560
 local BEEP_CHANCE = 5 / 100
 local FULL_MESSAGE = "lunatic/tfs:iv_drip.full"
-local LOW_BLOOD_MESSAGE = "lunatic/tfs:iv_drip.low_blood"
 local BEEPS_MESSAGE = "lunatic/tfs:iv_drip.beeps"
 
 -- Tg uses sound/machines/beep/twobeep_high.ogg
@@ -144,7 +143,8 @@ local function stroke(
     context: FlowContext,
     body: { [any]: any },
     mode: Mode,
-    rate: number
+    rate: number,
+    headspace_l: number
 ): ()
     local amount = rate * STROKE_SECONDS * MOL_PER_UNIT
     local donor: number? = nil
@@ -186,15 +186,7 @@ local function stroke(
             end
         end
 
-        local floor = normal * DRAW_FLOOR_FRACTION
-        if blood <= floor then
-            if not context.low_blood_notified and connection.current() then
-                context.low_blood_notified = true
-                notify_patient(connection, LOW_BLOOD_MESSAGE)
-            end
-            return
-        end
-        amount = math.min(amount, blood - floor)
+        amount = math.min(amount, headspace_l * BLOOD_MOLES_PER_LITER)
         from = connection.patient
         to = connection.vessel
     end
@@ -234,12 +226,12 @@ local function run(connection: FlowConnection, context: FlowContext): ()
         if rate ~= rate or rate <= 0 then
             continue
         end
-        stroke(connection, context, body, mode, rate)
+        stroke(connection, context, body, mode, rate, headspace)
     end
 end
 
 function flow.start(connection: FlowConnection): Task
-    local context: FlowContext = { full_notified = false, low_blood_notified = false }
+    local context: FlowContext = { full_notified = false }
     return sim.spawn_task(connection.vessel, function()
         local ok = pcall(run, connection, context)
         if not ok and connection.current() then

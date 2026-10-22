@@ -32,14 +32,15 @@ actor moves, becomes medically dead, or disconnects, provided both endpoints rem
 Injection transfers liquid and solid phases. The IV does not cap injection at `blood_normal`;
 when the body's `blood_harmony` life handler runs, it removes blood above normal on that body
 pass, independently of the drip task (`content/lib/blood_harmony.luau:53-78,105-120`). Drawing
-transfers liquid only, so liquid medicine moves with the drawn mixture. A positive-rate draw at
-or below 40% of the body's `blood_normal` sends one low-blood notice for that flow task and does
-not draw. The beep check uses the 85% safe fraction and a 5% chance per positive-rate draw
-stroke (`code/__DEFINES/mobs.dm:20-24`; `code/game/machinery/iv_drip.dm:262-265`). A full draw
-vessel, with at most 1 mL of headspace, sets the rate to zero and sends a full notice. Raise the
-rate to resume. The default human normal is 13.75 mol (550 units); the draw floor uses each
-body's `blood_normal` value. See [Blood types](blood-types.md) for blood identity and dose
-effects.
+transfers liquid only, so liquid medicine moves with the drawn mixture. Each draw takes the
+smaller of the rate over its two-second stroke and the vessel's remaining capacity. Blood's
+400 g/mol mass and 1 g/mL density mean each litre of headspace holds 2.5 mol
+(`content/substances/blood.luau:6-11,31-34`). Drawing continues below 40% of `blood_normal`;
+the beep check uses the safe fraction and a 5% chance per positive-rate draw stroke
+(`code/__DEFINES/mobs.dm:20-24`; `code/game/machinery/iv_drip.dm:252-267`). A full draw vessel,
+with at most 1 mL of headspace, sets the rate to zero and sends a full notice. Raise the rate to
+resume. The default human normal is 14 mol (560 units; `code/__DEFINES/mobs.dm:20`). See
+[Blood types](blood-types.md) for blood identity and dose effects.
 
 Ordinary matter completions run synchronously. Their records contain moved amount but no
 endpoints. `iv_flow` therefore keeps one issue-order FIFO for the `iv_drip` issuer across
