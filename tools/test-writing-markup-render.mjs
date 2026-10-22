@@ -228,6 +228,27 @@ assert.equal(malformedNodes.length, 1);
 assert.equal(malformedNodes[0].text, malformed, "an invalid fragment falls back whole and inert");
 assert.ok(malformedNodes[0].class.includes("paper-line"));
 
+const escapedImage = "&lt;img src=x onerror=alert(1)&gt;";
+const rawImage = "<img src=x onerror=alert(1)>";
+const escapedImageSource = source.replace(">✓</td>", `>${escapedImage}</td>`);
+assert.notEqual(escapedImageSource, source, "the reference has a table cell for the hostile text");
+const escapedImageNodes = writing.writingPreview("hostile-escaped", [{ text: escapedImageSource }]);
+const escapedImageCell = find(escapedImageNodes, (node) =>
+  node.class?.includes("writing-markup-cell") && cellText(node) === escapedImage);
+assert.ok(escapedImageCell, "escaped HTML stays in a rendered table cell as text");
+assert.equal(escapedImageCell.children?.length, 1, "the hostile cell contains only its text node");
+assert.equal(escapedImageCell.children?.[0]?.text, escapedImage);
+assert.equal(escapedImageCell.children?.[0]?.children, undefined, "escaped HTML creates no nested element");
+
+const rawImageSource = source.replace(">✓</td>", `>${escapedImage} ${rawImage}</td>`);
+assert.notEqual(rawImageSource, source, "the reference has a table cell for raw HTML fallback");
+const rawImageNodes = writing.writingPreview("hostile-raw", [{ text: rawImageSource }]);
+assert.equal(find(rawImageNodes, (node) => node.class?.includes("writing-markup-table")), undefined,
+  "raw HTML makes the unsupported fragment use the inert text path");
+assert.equal(rawImageNodes.length, 1);
+assert.equal(rawImageNodes[0].text, rawImageSource, "raw HTML in a cell is preserved as literal fallback text");
+assert.equal(rawImageNodes[0].children, undefined, "raw HTML fallback creates no element");
+
 const twoTables = writing.writingPreview("two-tables", [sourceFragment, sourceFragment]);
 assert.equal((() => { let count = 0; walk(twoTables, (node) => { if (node.class?.includes("writing-markup-table")) count++; }); return count; })(), 1,
   "a second recognized fragment that cannot fit stays whole on the inert text fallback");

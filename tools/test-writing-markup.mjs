@@ -8,15 +8,36 @@ const engine = path.resolve(process.argv[2] || process.env.LUNATIC_ENGINE || pat
 const sourcePath = path.join(pack, "reference/text/blood-type-compatibility.md");
 const source = await readFile(sourcePath, "utf8");
 const { build } = await import(pathToFileURL(path.join(engine, "web/node_modules/esbuild/lib/main.js")));
-const bundle = await build({
-  entryPoints: [path.join(pack, "ui/writing-markup.ts")],
-  bundle: true, platform: "node", format: "esm", write: false,
-});
-const { parseWritingMarkup } = await import(
-  `data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString("base64")}`
-);
+const MAX_INPUT_BYTES = 8192;
+const MAX_TOKENS = 1024;
+const markupPath = path.join(pack, "ui/writing-markup.ts");
+const markupSource = await readFile(markupPath, "utf8");
+async function loadMarkupWithTokenLimit(tokenLimit) {
+  const limitSetting = "const MAX_TOKENS = 1024;";
+  assert.ok(markupSource.includes(limitSetting), "the test transform finds the tokenizer limit");
+  const configuredSource = tokenLimit === MAX_TOKENS
+    ? markupSource
+    : markupSource.replace(limitSetting, `const MAX_TOKENS = ${tokenLimit};`);
+  if (tokenLimit !== MAX_TOKENS) {
+    assert.notEqual(configuredSource, markupSource, "the test transform raises the tokenizer limit");
+  }
+  const bundle = await build({
+    stdin: {
+      contents: `${configuredSource}\nexport { tokenize };`,
+      loader: "ts",
+      resolveDir: path.dirname(markupPath),
+      sourcefile: path.basename(markupPath),
+    },
+    bundle: true, platform: "node", format: "esm", write: false,
+  });
+  return import(`data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString("base64")}`);
+}
+const [markup, liftedMarkup] = await Promise.all([
+  loadMarkupWithTokenLimit(MAX_TOKENS),
+  loadMarkupWithTokenLimit(MAX_TOKENS * 2),
+]);
+const { parseWritingMarkup } = markup;
 
-assert.equal(Buffer.byteLength(source, "utf8"), 3487);
 const parsed = parseWritingMarkup(source);
 assert.ok(parsed);
 assert.equal(parsed.heading, "Blood Type Compatibility");
@@ -63,8 +84,17 @@ assert.ok(source.includes(lastHeaderCell));
 
 const nineParagraphs = source.slice(0, source.indexOf("\n\tBlood types"))
   + "\n\n" + Array.from({ length: 9 }, (_, index) => `Note ${index + 1}.`).join("\n");
-const overTokenBudget = source.replace("<br/>", "<br/>".repeat(900));
-assert.ok(Buffer.byteLength(overTokenBudget, "utf8") <= 8192);
+const extraDataRow = `<tr>${"<td></td>".repeat(11)}</tr>`;
+const overTokenBudget = source.replace("</tbody>", `${extraDataRow.repeat(22)}</tbody>`);
+assert.notEqual(overTokenBudget, source, "extra well-formed rows expand the table");
+assert.ok(Buffer.byteLength(overTokenBudget, "utf8") <= MAX_INPUT_BYTES,
+  "the over-token fixture stays below the input byte limit");
+assert.equal(markup.tokenize(overTokenBudget), undefined,
+  "the default tokenizer cap rejects the well-formed expanded table");
+const liftedTokens = liftedMarkup.tokenize(overTokenBudget);
+assert.ok(Array.isArray(liftedTokens), "raising the cap allows tokenization to finish");
+assert.ok(liftedTokens.length > MAX_TOKENS,
+  "the expanded table exceeds MAX_TOKENS before document grammar limits run");
 
 for (const malformed of [
   "# Ordinary Markdown\nNo HTML table here.",
@@ -87,7 +117,6 @@ for (const malformed of [
   source.replace('style="text-align:center;"', `style="${"x".repeat(129)}"`),
   nineParagraphs,
   source.replace("</tbody>", `${firstRow}</tbody>`),
-  overTokenBudget,
   source + "\ud800",
   "x".repeat(8193),
 ]) {
