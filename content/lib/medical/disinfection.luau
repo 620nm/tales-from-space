@@ -583,6 +583,8 @@ local function observe(
         reset_clocks(entry)
         return cured
     end
+    local page_revisit_seconds = (page_count + DISPATCH_PAGE_LIMIT - 1) // DISPATCH_PAGE_LIMIT
+    local maximum_sample_gap_ticks = page_revisit_seconds * one_second_ticks + 1
 
     for _, index in ipairs(indices) do
         local config = rule_for(index)
@@ -596,7 +598,7 @@ local function observe(
             local clock = entry.clocks[index]
             if clock == nil
                 or tick < clock.last_tick
-                or tick - clock.last_tick > one_second_ticks
+                or tick - clock.last_tick > maximum_sample_gap_ticks
             then
                 clock = { since_tick = tick, last_tick = tick }
                 entry.clocks[index] = clock
@@ -775,7 +777,18 @@ function disinfection.on_second(ev: ClockSecondPayload): ()
         local next_id = if page.next_id ~= 0 then page.next_id else first_page_id
         dispatch_page_id = next_id
         page_id = next_id
-        pcall(sim.emit, CHUNK_EVENT, { page = page.id })
+        local emitted, failure = pcall(sim.emit, CHUNK_EVENT, { page = page.id })
+        if not emitted then
+            local detail = string.sub(tostring(failure), 1, 512)
+            print(
+                "disinfection sim.emit failed for event "
+                    .. CHUNK_EVENT
+                    .. " on page "
+                    .. tostring(page.id)
+                    .. ": "
+                    .. detail
+            )
+        end
     end
 end
 

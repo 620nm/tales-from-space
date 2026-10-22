@@ -6,6 +6,23 @@ local STOCK_X, CULTURE_X = 5, 6
 local MACHINE_X, MACHINE_Y = 2, 2
 local ILLNESS = 0
 
+local MAP_SEEDED_CULTURE_COUNT = 33
+local TEST_CULTURE_HOLDER_COUNT = 1025
+local REGISTRY_PAGE_CAPACITY = 32
+local SECOND_DISPATCH_PAGE_LIMIT = 16
+local CULTURE_PAGE_COUNT =
+    (TEST_CULTURE_HOLDER_COUNT + REGISTRY_PAGE_CAPACITY - 1) // REGISTRY_PAGE_CAPACITY
+local HOLDER_REVISIT_SECONDS =
+    (CULTURE_PAGE_COUNT + SECOND_DISPATCH_PAGE_LIMIT - 1) // SECOND_DISPATCH_PAGE_LIMIT
+local HOLDER_REVISIT_SLACK_TICKS = clock.deadline_ticks(HOLDER_REVISIT_SECONDS) + 1
+
+-- 1025 carriers fill 33 pages; the 16-page dispatch cap gives each holder a
+-- three-second revisit cycle, so a one-second reset would lose every contact.
+local additional_cultures: { string } = {}
+for _ = 1, TEST_CULTURE_HOLDER_COUNT - MAP_SEEDED_CULTURE_COUNT do
+    table.insert(additional_cultures, '(45, 3, "bottle.rhinovirus_culture")')
+end
+
 t.world(
     [==[(
     name: "sampled disinfection",
@@ -69,6 +86,7 @@ t.world(
                 (43, 3, "bottle.rhinovirus_culture"),
                 (44, 3, "bottle.rhinovirus_culture"),
                 (45, 3, "bottle.rhinovirus_culture"),
+]==] .. table.concat(additional_cultures, ",\n                ") .. [==[
             ],
             machines: [(2, 2, "chem_dispenser")],
             networks: [
@@ -89,6 +107,11 @@ t.world(
     ],
 )]==],
     0
+)
+
+assert(
+    t.count_items("bottle.rhinovirus_culture") == TEST_CULTURE_HOLDER_COUNT,
+    "33 registry pages of culture holders force a three-second dispatch revisit"
 )
 
 local p = t.join()
@@ -276,7 +299,7 @@ local function assert_clears_on_floor(
     go(x, y - 1)
     wait_until(earliest_contact + clock.deadline_ticks(10) - 1)
     assert(actions.has_illness(target, ILLNESS), "one tick before ten seconds remains infected")
-    wait_until(latest_contact + clock.deadline_ticks(10) + clock.deadline_ticks(1))
+    wait_until(latest_contact + clock.deadline_ticks(10) + HOLDER_REVISIT_SLACK_TICKS)
     assert(not actions.has_illness(target, ILLNESS), "a sampled ten-second contact clears")
 end
 
@@ -290,7 +313,7 @@ local function assert_clears_held(
     go(x, y)
     wait_until(earliest_contact + clock.deadline_ticks(10) - 1)
     assert(actions.has_illness(target, ILLNESS), "one tick before ten seconds remains infected")
-    wait_until(latest_contact + clock.deadline_ticks(10) + clock.deadline_ticks(1))
+    wait_until(latest_contact + clock.deadline_ticks(10) + HOLDER_REVISIT_SLACK_TICKS)
     assert(not actions.has_illness(target, ILLNESS), "a sampled ten-second contact clears")
 end
 
@@ -359,7 +382,7 @@ assert(actions.has_illness(reset_target, ILLNESS), "the first qualifying sample 
 dispense_held("bottle", "water", 0.25)
 local diluted = assert(t.vessel(reset_target))
 assert(potency(diluted, "ethanol", 0.70) < 1, "the real water press takes the sample below dose")
-t.run_ticks(clock.deadline_ticks(2))
+t.run_ticks(HOLDER_REVISIT_SLACK_TICKS)
 assert(actions.has_illness(reset_target, ILLNESS), "a sampled under-dose resets rather than clears")
 local restored_earliest = t.now()
 dispense_held("bottle", "ethanol", 0.225)
@@ -470,7 +493,7 @@ local additive_latest = t.now()
 local additive_clear_count = contagion_events("rider_cleared")
 wait_until(additive_earliest + clock.deadline_ticks(10) - 1)
 assert(actions.has_illness(additive_target, ILLNESS), "the additive sample is still infected before ten seconds")
-wait_until(additive_latest + clock.deadline_ticks(10) + clock.deadline_ticks(1))
+wait_until(additive_latest + clock.deadline_ticks(10) + HOLDER_REVISIT_SLACK_TICKS)
 assert(not actions.has_illness(additive_target, ILLNESS), "the additive positive clears after sampling")
 assert_cleared_since(additive_clear_count)
 assert(t.now() >= additive_latest + clock.deadline_ticks(10), "the late phase sample is at least ten seconds after the first qualifying native read")
