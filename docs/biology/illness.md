@@ -130,21 +130,23 @@ do not. This shared-air approximation reads neither atmospheric connectivity
 nor FOV (`content/lib/medical/airborne.luau:98-102,158-168`; the engine's
 `docs/luau-api/queries.md:101-111`).
 
-Both source emission protections are hard blocks. Internals state is copied from
-the native `inventory.present.supply` fact onto the tank item; emission reads
-only current hand and worn inventory entries, so a dropped or stowed tank does
-not leave protection on its former carrier (`content/lib/item_actions.luau:5-18`,
-`content/lib/medical/airborne.luau:35-53,134-137`).
+Both source emission protections are hard blocks. Internals reads the current
+native breath-supply fact on the directly carried tank inventory row; it does
+not mirror the UI's supply presentation onto a script variable, so a dropped or
+stowed tank cannot protect its former carrier
+(`content/lib/medical/airborne.luau:body_source_is_blocked,uses_internals`; the engine's
+`docs/luau-api/queries.md`).
 
 At the target, the pack reads the `lunatic/tfs:biology.bio_protection` script
-var from worn items, sums declared BIO points, and caps the total at 100. The
-current pack initializes the var on its breath mask; future head and mask data
-can declare the same var. The catch gate tests active internals first at 75%,
+var only from worn head and mask slots, sums those declared BIO points, and caps
+the total at 100. The current pack initializes the var on its breath mask;
+future head-slot gear can declare the same var (`content/items/gear/breath_mask.luau:entity.initialize.done`). Other worn slots and carried
+items do not contribute. The catch gate tests active internals first at 75%,
 then BIO points, matching tg's carbon override followed by the parent check
-(`content/lib/medical/airborne.luau:71-84,169-180`,
+(`content/lib/medical/airborne.luau:bio_protection_from_inventory,protection_allows_catch,airborne.on_life`,
 `code/datums/diseases/_MobProcs.dm:163-186`). The breath mask's pack data is
 50 BIO, matching tg's `/obj/item/clothing/mask/breath` value
-(`content/items/gear/breath_mask.luau:3-7,49-52`,
+(`content/items/gear/breath_mask.luau:BIO_PROTECTION`,
 `code/modules/clothing/masks/breath.dm:19-20`), so it blocks about half of
 otherwise eligible catches. The current pack defines no medical-mask item;
 tg's medical mask is 90 BIO (`code/modules/clothing/masks/breath.dm:49-50`),
@@ -158,8 +160,8 @@ Host exposure remains authoritative for recipient human-body, required-organ
 and resistance checks; the airborne route skips only the fluid-specific
 heart-and-blood gate described above. The
 helper delegates accepted candidates to `host_illness.expose` and does not
-write illness state itself (`content/lib/medical/airborne.luau:182`,
-`content/lib/medical/host_illness.luau:74-89,129-194`).
+write illness state itself (`content/lib/medical/airborne.luau:airborne.on_life`,
+`content/lib/medical/host_illness.luau:expose`).
 
 ## Culture bottle
 

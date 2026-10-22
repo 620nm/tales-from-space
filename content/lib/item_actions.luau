@@ -2,8 +2,6 @@
 type ActorSubject = { actor: Handle, subject: Handle }
 export type Spec = { id: string, label: string, sprite: string, state: string? }
 
-local ACTIVE_INTERNALS_VAR = "lunatic/tfs:biology.active_internals"
-
 local function attach(definition: Definition, spec: Spec, use: (InteractionActPayload) -> boolean)
     definition:handle("inventory.present", { kind = "react" }, function(ev: InventoryPresentPayload)
         local active: boolean? = nil
@@ -12,9 +10,6 @@ local function attach(definition: Definition, spec: Spec, use: (InteractionActPa
         end
         if spec.state == "supply" then
             active = ev.supply
-            if active ~= nil then
-                ev.subject.vars[ACTIVE_INTERNALS_VAR] = active
-            end
         end
         local state = "ready"
         if active ~= nil then

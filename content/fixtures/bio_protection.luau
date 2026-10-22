@@ -1,20 +1,17 @@
-local physical_profiles = require("@lib/physical_profiles")
 local airborne = require("@lib/medical/airborne")
 
+local ITEM_ID = "lunatic/tfs:bio_protection_probe"
 local BIO_PROTECTION_VAR = "lunatic/tfs:biology.bio_protection"
 
-local content = {
-    id = "bio_protection_probe",
-    visual_layer = "item",
-    motion_response = physical_profiles.loose_item1kg,
-    name_label = "lunatic/tfs:entity.breath_mask.name",
-    name = "bio protection probe",
-    sprite = "breath_mask",
-}
+local content = { id = "bio_protection_probe" }
 
 if sim ~= nil then
-    local behavior = sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
-    behavior:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
+    local item = sim.define("item", ITEM_ID, {
+        visual_layer = "item",
+        name = "bio protection probe",
+        sprite = "breath_mask",
+    })
+    item:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local actor = ev.actor
         assert(airborne.bio_protection(actor) == 50, "worn breath mask supplies BIO 50")
         assert(actor.vars[BIO_PROTECTION_VAR] == nil, "protection stays on its worn item")
@@ -22,6 +19,29 @@ if sim ~= nil then
         assert(airborne.source_is_blocked(true, false), "a mask blocks source emission")
         assert(airborne.source_is_blocked(false, true), "internals block source emission")
         assert(not airborne.source_is_blocked(false, false), "an unmasked source without internals emits")
+
+        local synthetic_inventory = {
+            {
+                item = { vars = { [BIO_PROTECTION_VAR] = 40 } },
+                location = { kind = "worn", equipment_slot = "head" },
+            },
+            {
+                item = { vars = { [BIO_PROTECTION_VAR] = 50 } },
+                location = { kind = "worn", equipment_slot = "mask" },
+            },
+            {
+                item = { vars = { [BIO_PROTECTION_VAR] = 95 } },
+                location = { kind = "worn", equipment_slot = "suit" },
+            },
+            {
+                item = { vars = { [BIO_PROTECTION_VAR] = 100 } },
+                location = { kind = "hand" },
+            },
+        }
+        assert(
+            airborne.bio_protection_from_inventory(synthetic_inventory :: any) == 90,
+            "BIO sums worn head and mask only"
+        )
 
         local nearby_internals_user = false
         for _, candidate in ipairs(sim.query.range(actor.tile, 3, {})) do

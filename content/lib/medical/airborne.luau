@@ -4,16 +4,25 @@ local host_illness = require("@lib/medical/host_illness")
 local BREATH_INTERVAL_SECONDS = 8
 local AIRBORNE_ELAPSED_SECONDS_VAR = "lunatic/tfs:biology.airborne_elapsed_seconds"
 local BIO_PROTECTION_VAR = "lunatic/tfs:biology.bio_protection"
-local ACTIVE_INTERNALS_VAR = "lunatic/tfs:biology.active_internals"
 local SPREAD_RANGE = 2
 local RANGE_QUERY_RADIUS = 3
+
+type AirborneInventoryRow = {
+    item: Handle,
+    location: { kind: string, equipment_slot: string? },
+    breath_supply: boolean?,
+}
+
+local function inventory_rows(body: Handle): { AirborneInventoryRow }
+    return sim.inventory(body) :: any
+end
 
 local function read_tile(body: Handle): TileAddress
     return body.tile
 end
 
 local function wears_breath_mask(body: Handle): boolean
-    for _, inventory_item in ipairs(sim.inventory(body)) do
+    for _, inventory_item in ipairs(inventory_rows(body)) do
         local item = inventory_item.item
         if inventory_item.location.kind == "worn"
             and (item.prototype == "breath_mask" or item.base == "breath_mask")
@@ -33,10 +42,10 @@ local function can_breathe(body: Handle): boolean
 end
 
 local function uses_internals(body: Handle): boolean
-    for _, inventory_item in ipairs(sim.inventory(body)) do
+    for _, inventory_item in ipairs(inventory_rows(body)) do
         local location_kind = inventory_item.location.kind
         if (location_kind == "hand" or location_kind == "worn")
-            and inventory_item.item.vars[ACTIVE_INTERNALS_VAR] == true
+            and inventory_item.breath_supply == true
         then
             return true
         end
@@ -52,10 +61,13 @@ local function body_source_is_blocked(body: Handle): boolean
     return source_is_blocked(wears_breath_mask(body), uses_internals(body))
 end
 
-local function bio_protection(body: Handle): number
+local function bio_protection_from_inventory(inventory: { AirborneInventoryRow }): number
     local protection = 0
-    for _, inventory_item in ipairs(sim.inventory(body)) do
-        if inventory_item.location.kind == "worn" then
+    for _, inventory_item in ipairs(inventory) do
+        local location = inventory_item.location
+        if location.kind == "worn"
+            and (location.equipment_slot == "head" or location.equipment_slot == "mask")
+        then
             local item_protection = inventory_item.item.vars[BIO_PROTECTION_VAR]
             if type(item_protection) == "number" then
                 protection += item_protection
@@ -63,6 +75,10 @@ local function bio_protection(body: Handle): number
         end
     end
     return math.max(0, math.min(protection, 100))
+end
+
+local function bio_protection(body: Handle): number
+    return bio_protection_from_inventory(inventory_rows(body))
 end
 
 type ProtectionStage = "internals" | "bio"
@@ -103,6 +119,7 @@ end
 
 local airborne = {}
 airborne.bio_protection = bio_protection
+airborne.bio_protection_from_inventory = bio_protection_from_inventory
 airborne.protection_allows_catch = protection_allows_catch
 airborne.source_is_blocked = source_is_blocked
 airborne.body_source_is_blocked = body_source_is_blocked
