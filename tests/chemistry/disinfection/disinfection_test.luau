@@ -14,7 +14,6 @@ local CULTURE_PAGE_COUNT =
     (TEST_CULTURE_HOLDER_COUNT + REGISTRY_PAGE_CAPACITY - 1) // REGISTRY_PAGE_CAPACITY
 local HOLDER_REVISIT_SECONDS =
     (CULTURE_PAGE_COUNT + SECOND_DISPATCH_PAGE_LIMIT - 1) // SECOND_DISPATCH_PAGE_LIMIT
-local HOLDER_REVISIT_SLACK_TICKS = clock.deadline_ticks(HOLDER_REVISIT_SECONDS) + 1
 
 -- 1025 carriers fill 33 pages; the 16-page dispatch cap gives each holder a
 -- three-second revisit cycle, so a one-second reset would lose every contact.
@@ -108,6 +107,8 @@ t.world(
 )]==],
     0
 )
+
+local HOLDER_REVISIT_SLACK_TICKS = clock.deadline_ticks(HOLDER_REVISIT_SECONDS) + 1
 
 assert(
     t.count_items("bottle.rhinovirus_culture") == TEST_CULTURE_HOLDER_COUNT,
