@@ -9,6 +9,7 @@ permissions = [
     "prototype_handlers",
     "global_handlers",
     "notify_audience",
+    "notify_private",
     "map_lifecycle",
     "entity_transfer",
 ]

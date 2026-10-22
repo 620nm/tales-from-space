@@ -466,7 +466,7 @@ if sim ~= nil then
             update(ev.subject, ev.actor)
             return true
         end
-        if held == nil or held.prototype ~= "paper" then
+        if held == nil or (held.base or held.prototype) ~= "paper" then
             return { replaced = false }
         end
         printing.recover(ev.subject, BUSY, "media")

@@ -1,0 +1,10 @@
+(
+    sheets: [
+        ("bloodpack", "obj/medical/bloodpack.dmi"),
+    ],
+    sprites: [
+        ("bloodpack", Dmi("@bloodpack", "bloodpack", 0)),
+        ("random_bloodpack", Dmi("@bloodpack", "random_bloodpack", 0)),
+        ("generic_bloodpack", Dmi("@bloodpack", "generic_bloodpack", 0)),
+    ],
+)

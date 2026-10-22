@@ -161,7 +161,7 @@ function writing.attach(definition: Definition)
         { kind = "replace", route = "use" },
         function(ev: InteractionUsePayload)
             local target = ev.claim and ev.claim.entity
-            if target == nil or target.prototype ~= writing.paper then
+            if target == nil or (target.base or target.prototype) ~= writing.paper then
                 return { replaced = false }
             end
             return writing.open(ev.actor, target, "", ev.implement)

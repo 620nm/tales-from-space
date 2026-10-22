@@ -57,6 +57,7 @@ t.tick()
 
 local NANOMED = {
     { item = "syringe", label = "Syringe", category = "Medical", stock = 12 },
+    { item = "health_analyzer", label = "Health Analyzer", category = "Medical", stock = 4 },
     { item = "scalpel", label = "Scalpel", category = "Surgery", stock = 2 },
     { item = "hemostat", label = "Hemostat", category = "Surgery", stock = 2 },
     { item = "retractor", label = "Retractor", category = "Surgery", stock = 2 },
@@ -112,6 +113,7 @@ end
 -- but completeness does not rely on transitive contents hidden inside it.
 local MEDICAL_TOOLS: { [string]: boolean } = {
     syringe = true,
+    health_analyzer = true,
     scalpel = true,
     hemostat = true,
     retractor = true,

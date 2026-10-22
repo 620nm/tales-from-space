@@ -14,13 +14,17 @@ optional = []
 native_edges = [
     "movement.bump",
     "movement.cross",
+    "motion.entity_location",
     "interaction.use",
+    "interaction.drag",
     "interaction.act",
     "item_slot.command",
     "item.command",
     "inventory.presentation",
     "lifecycle.entity_initialize",
+    "lifecycle.entity_despawn",
     "lifecycle.round_spawn",
+    "lifecycle.body_spawn",
     "attack.swing",
     "entity.pull",
     "throw.land",
@@ -81,6 +85,7 @@ replace_handlers = true
 prototype_handlers = true
 global_handlers = true
 notify_audience = true
+notify_private = true
 # The transceiver hosts guest scripts: its `carry` program slot compiles
 # and runs player-authored .disl files (content/lib/program_slot.luau).
 disl_host = true

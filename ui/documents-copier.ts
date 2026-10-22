@@ -11,6 +11,11 @@ const originalOf = (state: CopierState): WritingFragment[] =>
 
 export function copierBody(id: string, doc: DocumentIdentity, state: CopierState, active: boolean): UiNode[] {
   const original = originalOf(state);
+  const originalPreview = original.length
+    ? writingPreview(`${id}/original`, original)
+    : [text(`${id}/original/empty`, S.tfs("ui.copier.empty"), ["hint"])];
+  const hasMarkupFlow = originalPreview.some((node) =>
+    node.class?.includes("writing-markup-flow"));
   const count = Math.max(1, Math.min(10, Math.floor(state.count ?? 1)));
   const mode = state.mode === "color" ? "color" : "bw";
   const busy = state.busy === true;
@@ -44,8 +49,11 @@ export function copierBody(id: string, doc: DocumentIdentity, state: CopierState
         disabled: !active || busy,
       }),
     ], { cls: ["copier-controls"] }),
-    Stack(`${id}/original`, original.length ? writingPreview(`${id}/original`, original) : [text(`${id}/original/empty`, S.tfs("ui.copier.empty"), ["hint"])], {
-      cls: ["copier-paper"], style: { width: "100%", maxHeight: 330 },
+    Stack(`${id}/original`, originalPreview, {
+      cls: ["copier-paper"], style: {
+        width: "100%",
+        ...(!hasMarkupFlow ? { maxHeight: 330 } : {}),
+      },
     }),
     ...(busy ? [
       text(`${id}/busy`, S.tfs("ui.copier.busy"), ["notice"]),

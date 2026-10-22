@@ -1,18 +1,12 @@
 # Bodies, damage and surgery — the pack's tuning
 
-What Tales from Space declares over the engine's body mechanism: the
-part-tree indices, the human plan, the organ roster, the surgical set, and
-every constant that is this pack's choice rather than a tg port.
-
-The MECHANISM is the engine's and lives in the sibling checkout:
+TfS declares part-tree indices, the human plan, organ roster, surgical set, and
+pack-chosen constants over the engine's body mechanism. The engine contracts are
 `../lunatic/docs/BIOLOGY.md` (plan, pools, capacities, thresholds),
-`../lunatic/docs/SURGERY.md` (states, operations, implements),
-`../lunatic/docs/LOOKS.md` (the layer stack). Nothing here restates a rule
-those files own; this file says which numbers and words fill them.
-
-Numbers carrying a tg cite are ported verbatim (`../lunatic/docs/PORTING.md`).
-Numbers marked **not ported** are this pack's own invention — tg has no
-capacity model, so RimWorld's shape carries our constants.
+`../lunatic/docs/SURGERY.md` (states, operations, implements), and
+`../lunatic/docs/LOOKS.md` (layer stack). This file supplies only their words and
+numbers. Tg-cited numbers are ported verbatim (`../lunatic/docs/PORTING.md`);
+**not ported** values are pack choices: tg has no capacity model, so their formula follows RimWorld's shape.
 
 ## `content/part_tree.luau` — the pack-wide indices
 
@@ -60,21 +54,6 @@ bodyparts.dm:8-11, 23-26; _bodyparts.dm:1639-1644). Every part item carries
 `LIMB_NO_DISABLE` (__DEFINES/bodyparts.dm:71) — `pool_mod` 1 on brute and
 burn, and `robotic = false`.
 
-**Blood** lives on `human_chest` (the torso carries tg's bloodstream,
-_bodyparts.dm:947-969) as moles of `blood` in its 6 L bloodstream at 310.15 K:
-`normal = 13.75`, `dead_below = 2.8`, each tg figure x 0.025 (mobs.dm:20-25).
-The `human` plan declares one reservoir, `blood`, as its `wound_reservoir`:
-`stack_drain_per_s = 0.0125` (0.5 u/s x 0.025, _bodyparts.dm:1626-1627) and
-`lying_factor = 0.75` (_bodyparts.dm:1663); the engine needs both knobs and
-refuses a reservoir without them. Regrowth and the low-blood oxygen cost
-(mobs.dm:28; blood.dm:253-262): `lib/blood_harmony.luau`. Blood above normal
-is drawn back to normal in one pass by choice: tg trims a surplus over time,
-and this pack settles a transfusion at the next body cadence instead.
-Blood is typed: `blood_identity` stamps one of tg's eight types at the
-first body cadence (blood_types.dm:175-240; mobs.dm:10-22), a meet settles
-receiver-wins, and an incompatible transfusion answers with toxin at half
-volume (blood.dm:406-410): `lib/blood_identity.luau`.
-
 **Sockets and organs.**
 
 | Socket | Zone | Tags | `requires` |
@@ -86,6 +65,16 @@ volume (blood.dm:406-410): `lib/blood_identity.luau`.
 
 Chest organs and the brain behind a saw is tg's `organ_check`
 (operation_organ_manip.dm:279-284).
+
+## Blood types
+
+See [blood-types.md](biology/blood-types.md) for the roster, selection weights,
+compatibility, and human blood-reservoir tuning.
+
+## Illness
+
+See [illness.md](biology/illness.md) for the contagion roster, carrier and
+host-course contract, and analyzer report.
 
 ## Not ported — the capacity constants
 

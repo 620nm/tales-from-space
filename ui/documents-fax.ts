@@ -73,6 +73,15 @@ function directory(id: string, doc: DocumentIdentity, state: FaxState, active: b
 
 export function faxBody(id: string, doc: DocumentIdentity, state: FaxState, active: boolean): UiNode[] {
   const loaded = loadedOf(state);
+  const loadedPreview = loaded.length
+    ? writingPreview(`${id}/loaded`, loaded)
+    : [text(`${id}/loaded/empty`, S.tfs("ui.fax.empty"), ["hint"])];
+  const hasMarkupFlow = loadedPreview.some((node) =>
+    node.class?.includes("writing-markup-flow"));
+  const loadedPaper = Stack(`${id}/loaded`, loadedPreview, {
+    cls: ["fax-paper"],
+    style: hasMarkupFlow ? { width: "100%" } : { width: "44%", maxHeight: 300 },
+  });
   const target = state.target ?? "";
   const confirmAction = "confirm";
   const cancelAction = "cancel";
@@ -90,15 +99,24 @@ export function faxBody(id: string, doc: DocumentIdentity, state: FaxState, acti
       press(`${id}/confirm/send`, S.tfs("ui.fax.confirm_send"), scriptAction(doc, sendAction, sliceUtf8(target, 64)), { variant: "primary", disabled: !active }),
     ],
   }, { dismissEvent: `${id}/confirm/cancel`, dismissLabel: S.tfs("ui.fax.cancel") }) : null;
+  const directorySide = Stack(`${id}/directory-side`, [
+    directory(`${id}/directory`, doc, state, active),
+    send,
+  ], {
+    dir: "column",
+    cls: ["fax-directory-side"],
+    style: { width: hasMarkupFlow ? "100%" : "51%" },
+  });
+  const content = hasMarkupFlow
+    ? Stack(`${id}/content`, [loadedPaper, directorySide], {
+      dir: "column",
+      cls: ["fax-body"],
+    })
+    : row(`${id}/content`, [loadedPaper, directorySide], { cls: ["fax-body"] });
   return [
     status(`${id}/identity`, state),
     controls(`${id}/controls`, doc, state, active),
-    row(`${id}/content`, [
-      Stack(`${id}/loaded`, loaded.length ? writingPreview(`${id}/loaded`, loaded) : [text(`${id}/loaded/empty`, S.tfs("ui.fax.empty"), ["hint"])], {
-        cls: ["fax-paper"], style: { width: "44%", maxHeight: 300 },
-      }),
-      Stack(`${id}/directory-side`, [directory(`${id}/directory`, doc, state, active), send], { dir: "column", cls: ["fax-directory-side"], style: { width: "51%" } }),
-    ], { cls: ["fax-body"] }),
+    content,
     ...(state.busy ? [text(`${id}/busy`, S.tfs("ui.fax.busy"), ["notice"])] : []),
     ...(state.progress !== undefined ? [{ id: `${id}/progress`, type: "progress" as const, value: String(Math.max(0, Math.min(1, state.progress))) }] : []),
     ...(overlay ? [overlay] : []),

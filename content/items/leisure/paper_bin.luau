@@ -43,7 +43,7 @@ if sim ~= nil then
     end)
     behavior:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local item = ev.claim and ev.claim.entity
-        if item == nil or item.prototype ~= "paper" then
+        if item == nil or (item.base or item.prototype) ~= "paper" then
             return { replaced = false }
         end
         sim.resources.reclaim({

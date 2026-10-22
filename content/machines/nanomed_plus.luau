@@ -36,6 +36,8 @@ return {
     categories = { "Medical", "Surgery", "Chemistry", "Parts" },
     vends = {
         { item = "syringe", name = "Syringe", category = "Medical", amount = 12 },
+        -- tg stocks four health analyzers (`code/modules/vending/medical.dm:12`).
+        { item = "health_analyzer", name = "Health Analyzer", category = "Medical", amount = 4 },
 
         { item = "scalpel", name = "Scalpel", category = "Surgery", amount = 2 },
         { item = "hemostat", name = "Hemostat", category = "Surgery", amount = 2 },

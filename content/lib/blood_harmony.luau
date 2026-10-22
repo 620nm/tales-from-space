@@ -113,9 +113,8 @@ function blood_harmony.on_life(ev: MobLifePayload): ()
     if blood == nil or normal == nil or normal <= 0 then
         return
     end
-    -- First the type, then the arithmetic: the one writer stamps the
-    -- body's blood on its first pass here, and the restore below only
-    -- ever moves blood that is already typed.
+    -- Retry typing before each blood pass; spawn normally stamped the body,
+    -- and this catches a body that gained blood only on a later pass.
     blood_identity.stamp(body)
     local after = restore(body, blood, normal, ev.elapsed_seconds)
     pay_for_missing_blood(body, state, after, normal, ev.elapsed_seconds)

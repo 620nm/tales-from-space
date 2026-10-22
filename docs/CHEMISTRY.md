@@ -12,6 +12,9 @@ the bell mapping, `docs/chemistry/substances.md` the substance field table,
 and clamps. Files: `content/substances/`, `content/reactions/`,
 `content/machines/chem_dispenser.luau`, `content/lib/vessel.luau`.
 
+The pack's sampled liquid-disinfection rule, thresholds and overrides are in
+[chemistry/disinfection.md](chemistry/disinfection.md).
+
 ---
 
 ## The conventions this pack applies (D2)
@@ -184,3 +187,4 @@ The gas-share recipes stand on the sealed-vessel charge
 | `tests/chemistry/chem_trunk_test.luau` | the medicine ladder end to end |
 | `tests/chemistry/chem_reactions_test.luau` | the recipe ladder |
 | `tests/chemistry/chem_dispenser_test.luau` | the shelf and the dial |
+| `tests/chemistry/disinfection/disinfection_test.luau` | the player-facing disinfection path |

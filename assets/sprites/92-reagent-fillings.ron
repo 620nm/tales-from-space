@@ -140,5 +140,18 @@
         ("syringe_fill_15", Dmi("@fillings", "syringe15", 0)),
         // The pill takes the dropper's deal: one picture, no ladder.
         ("pill_fill", Dmi("@fillings", "pill", 0)),
+        // tg's 10..100 percentage stops are declared in
+        // reagent_containers/blood_pack.dm:7; reagent_containers.dm:286-306
+        // selects the matching fill state for the overlay.
+        ("bloodpack10", Dmi("@fillings", "bloodpack10", 0)),
+        ("bloodpack20", Dmi("@fillings", "bloodpack20", 0)),
+        ("bloodpack30", Dmi("@fillings", "bloodpack30", 0)),
+        ("bloodpack40", Dmi("@fillings", "bloodpack40", 0)),
+        ("bloodpack50", Dmi("@fillings", "bloodpack50", 0)),
+        ("bloodpack60", Dmi("@fillings", "bloodpack60", 0)),
+        ("bloodpack70", Dmi("@fillings", "bloodpack70", 0)),
+        ("bloodpack80", Dmi("@fillings", "bloodpack80", 0)),
+        ("bloodpack90", Dmi("@fillings", "bloodpack90", 0)),
+        ("bloodpack100", Dmi("@fillings", "bloodpack100", 0)),
     ],
 )

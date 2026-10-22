@@ -1,4 +1,5 @@
 local physical_profiles = require("@lib/physical_profiles")
+local contagion = require("@lib/medical/contagion")
 local vessel = require("@lib/vessel")
 
 -- The bottle: fifty units with a neck on it. Same size as the beaker
@@ -80,6 +81,21 @@ local content = {
                     .. "violet haze over them that was not there a moment ago.",
             },
         },
+        rhinovirus_culture = {
+            name_label = "lunatic/tfs:entity.bottle.rhinovirus_culture.name",
+            name = "Rhinovirus culture bottle",
+            -- tg's culture name/description and advanced-cold seed are at
+            -- code/modules/reagents/reagent_containers/cups/bottle.dm:303-306;
+            -- this variant follows the base cold course instead
+            -- (code/datums/diseases/cold.dm:1-56; docs/biology/illness.md).
+            -- 4.5 tg units are 0.1125 mol. At 400 g/mol and 1 g/mL,
+            -- this occupies 45 mL, leaving 5 mL headspace in the 50 mL
+            -- shell (content/substances/blood.luau:31-34).
+            contents = { blood = 0.1125 },
+            examine = {
+                flavor = "A small bottle. Contains XY-rhinovirus culture in synthblood medium.",
+            },
+        },
     },
 }
 
@@ -96,7 +112,13 @@ local vessel_spec: vessel.Spec = {
 content.actions = vessel.actions(vessel_spec)
 
 if sim ~= nil then
-    vessel.attach(vessel_spec)
+    local definition = vessel.attach(vessel_spec)
+    definition:handle("entity.initialize.done", { kind = "react" }, function(ev)
+        if ev.entity.prototype ~= "bottle.rhinovirus_culture" then
+            return
+        end
+        contagion.seed_vessel(ev.entity, { "rhinovirus" })
+    end)
 end
 
 return content

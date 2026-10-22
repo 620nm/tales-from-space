@@ -1,0 +1,14 @@
+// The machine's base state is `iv_drip` (code/game/machinery/iv_drip.dm:16-18).
+// Mode states follow attachment and transfer rate (code/game/machinery/iv_drip.dm:140-145).
+(
+    sheets: [
+        ("iv_drip", "obj/medical/iv_drip.dmi"),
+    ],
+    sprites: [
+        ("iv_drip", Dmi("@iv_drip", "iv_drip", 0)),
+        ("iv_drip_injecting", DmiAnim("@iv_drip", "iv_drip_injecting", 0)),
+        ("iv_drip_donating", DmiAnim("@iv_drip", "iv_drip_donating", 0)),
+        ("iv_drip_injectidle", DmiAnim("@iv_drip", "iv_drip_injectidle", 0)),
+        ("iv_drip_donateidle", DmiAnim("@iv_drip", "iv_drip_donateidle", 0)),
+    ],
+)

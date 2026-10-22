@@ -15,12 +15,10 @@ return {
         { slot = "id", item = "id_medical" },
         { slot = "mask", item = "breath_mask" },
         { slot = "belt", item = "surgical_kit" },
-        -- The syringe rides at the END for the same reason the bottle
-        -- does: a pack row is a row a player clicks, and issuing
-        -- everybody a new first item would move every other one out
-        -- from under them. tg's medical kit carries one too
-        -- (`/obj/item/storage/backpack/duffelbag/med`, and the syringe
-        -- is what makes the libital beaker a DOSE rather than a drink).
+        -- Append the analyzer without moving the existing syringe row:
+        -- tg puts a surgical medkit in the doctor's left hand
+        -- (`code/modules/jobs/job_types/medical_doctor.dm:54`), and that kit
+        -- contains a health analyzer (`code/game/objects/items/storage/medkit.dm:80-94`).
         {
             slot = "back",
             item = "backpack",
@@ -29,6 +27,7 @@ return {
                 "emergency_tank.oxygen",
                 "headset",
                 "syringe",
+                "health_analyzer",
             },
         },
     },

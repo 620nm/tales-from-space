@@ -12,6 +12,9 @@ const fragmentsOf = (state: PaperState) =>
 /** The physical sheet: committed marks stay separate from the draft. */
 export function paperBody(id: string, doc: DocumentIdentity, state: PaperState, active: boolean): UiNode[] {
   const committed = fragmentsOf(state);
+  const committedPreview = writingPreview(`${id}/paper/committed`, committed);
+  const hasMarkupFlow = committedPreview.some((node) =>
+    node.class?.includes("writing-markup-flow"));
   const sourceDraft = typeof state.draft === "string" ? state.draft
     : "";
   const draft = sliceUtf8(sourceDraft, TEXT_LIMIT);
@@ -24,8 +27,11 @@ export function paperBody(id: string, doc: DocumentIdentity, state: PaperState, 
       text(`${body}/identity/title`, state.name ?? doc.title, ["paper-title"]),
       text(`${body}/identity/count`, S.tfs("ui.writing.fragments", { count: committed.length }), ["hint"]),
     ], { cls: ["paper-identity"] }),
-    Stack(`${body}/committed`, writingPreview(`${body}/committed`, committed), { dir: "row",
-      cls: ["paper-sheet"], style: { maxHeight: 220, width: "100%" },
+    Stack(`${body}/committed`, committedPreview, { dir: "row",
+      cls: ["paper-sheet"], style: {
+        ...(!hasMarkupFlow ? { maxHeight: 220 } : {}),
+        width: "100%",
+      },
     }),
     Stack(`${body}/draft-area`, [
       text(`${body}/draft-label`, S.tfs("ui.writing.draft"), ["paper-label"]),

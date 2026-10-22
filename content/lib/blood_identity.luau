@@ -101,6 +101,19 @@ function blood_identity.compatible(receiver: number, donor: number): boolean
     return false
 end
 
+-- Return a caller-owned array in tg's order; never expose COMPATIBLE.
+function blood_identity.donors_for(receiver: number): { number }
+    local compatible = COMPATIBLE[receiver + 1]
+    local donors: { number } = table.create(compatible and #compatible or 0, 0)
+    if compatible == nil then
+        return donors
+    end
+    for index, donor in ipairs(compatible) do
+        donors[index] = donor
+    end
+    return donors
+end
+
 -- A unit draw through tg's weights, answered as a 0-based roster index.
 function blood_identity.pick(u: number): number
     local x = u * TOTAL_WEIGHT
@@ -145,9 +158,8 @@ function blood_identity.type_of(owner: Handle): number?
     return nil
 end
 
--- THE ONE WRITER. Run on the body's first `blood_harmony.on_life`
--- pass, and every pass after until it lands: a body with no blood has
--- nothing to carry the write, so the pass it regrows into tries again.
+-- THE ONE WRITER. Primary call is body.spawn.done after native setup
+-- has finalized the Mind and final name; mob.life retries if blood regrows.
 function blood_identity.stamp(body: Handle): ()
     if blood_identity.type_of(body) ~= nil then
         return
@@ -159,6 +171,11 @@ function blood_identity.stamp(body: Handle): ()
     end
     local drawn = sim.random_keyed("blood_identity.stamp", draw_key(body))
     sim.set_rider(body, blood_identity.KIND, { type = blood_identity.pick(drawn) })
+end
+
+-- Caller supplies a blood-bearing vessel and a 0-based index from 0 to 7.
+function blood_identity.stamp_vessel(vessel: Handle, index: number): ()
+    sim.set_rider(vessel, blood_identity.KIND, { type = index })
 end
 
 -- THE ONE MEET DISPATCHER. Receiver wins, settled explicitly: the

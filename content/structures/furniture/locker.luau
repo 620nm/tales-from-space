@@ -19,6 +19,7 @@
 -- prototype id rather than a structure plus an out-of-band loot table.
 return {
     id = "locker",
+    script = "locker",
     -- Large and loose, so it draws over items (large_object in content/compositions.luau).
     visual_layer = "large_object",
     name_label = "lunatic/tfs:entity.locker.name",

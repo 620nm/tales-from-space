@@ -425,10 +425,10 @@ local content = {
         blood = {
             substance = "blood",
             -- generic_bleedstacks 0.5 u/s a stack x 0.025
-            -- (code/modules/surgery/bodyparts/_bodyparts.dm:1626-1627).
+            -- (code/modules/surgery/bodyparts/_bodyparts.dm:1629-1630).
             stack_drain_per_s = 0.0125,
             -- BLEED_LYING_FACTOR 0.75: a lying body keeps three quarters of
-            -- each part's bleed (code/modules/surgery/bodyparts/_bodyparts.dm:1663).
+            -- each part's bleed (code/modules/surgery/bodyparts/_bodyparts.dm:1667-1668).
             lying_factor = 0.75,
         },
     },
@@ -724,16 +724,31 @@ local HOLD = { crit = true }
 
 if sim ~= nil then
     local map_boot = require("@lib/map_boot")
+    local blood_identity = require("@lib/blood_identity")
     local blood_harmony = require("@lib/blood_harmony")
+    local host_illness = require("@lib/medical/host_illness")
+    local airborne = require("@lib/medical/airborne")
+    host_illness.attach()
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("move.cross.done", { kind = "react" }, map_boot.on_cross_done)
+    script_definition:handle(
+        "body.spawn.done",
+        { kind = "react", route = "lifecycle" },
+        function(ev: { body: Handle }): ()
+            blood_identity.stamp(ev.body)
+        end
+    )
     -- The body's own blood: topped up, drained to normal and paid for in
     -- oxygen once a metabolism pass, only while the body is animate.
     script_definition:handle(
         "mob.life",
         { kind = "react", route = "lifecycle" },
-        blood_harmony.on_life
+        function(ev: MobLifePayload): ()
+            blood_harmony.on_life(ev)
+            host_illness.on_life(ev)
+            airborne.on_life(ev)
+        end
     )
     script_definition:handle(
         "body.threshold.done",

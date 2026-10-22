@@ -1,0 +1,37 @@
+// Pinned tgstation 7cb126ac8864a0d0952c48d25375a5bebaef512b; citations below
+// use `code/game/objects/structures/crates_lockers/` as their base path.
+(
+    sheets: [
+        ("crates", "obj/storage/crates.dmi"),
+    ],
+    sprites: [
+        // crates.dm:83-111 swaps the full body picture; no locker door overlay.
+        // DmiWindow y=16 selects the lower 32px of each 32x48 cell,
+        // omitting the upper 16px (the engine's docs/assets/importers.md:53-57).
+        // crates.dm:5-6, 83-84.
+        ("crate", DmiWindow([("@crates", "crate")], 0, 0, 16)),
+        ("crate_open", DmiWindow([("@crates", "crateopen")], 0, 0, 16)),
+
+        // crates.dm:232-236.
+        ("crate_medical", DmiWindow([("@crates", "medicalcrate")], 0, 0, 16)),
+        ("crate_medical_open", DmiWindow([("@crates", "medicalcrateopen")], 0, 0, 16)),
+        // crates.dm:379-382.
+        ("crate_engineering", DmiWindow([("@crates", "engi_crate")], 0, 0, 16)),
+        ("crate_engineering_open", DmiWindow([("@crates", "engi_crateopen")], 0, 0, 16)),
+        // crates.dm:411-415.
+        ("crate_science", DmiWindow([("@crates", "scicrate")], 0, 0, 16)),
+        ("crate_science_open", DmiWindow([("@crates", "scicrateopen")], 0, 0, 16)),
+        // crates.dm:352-356.
+        ("crate_hydroponics", DmiWindow([("@crates", "hydrocrate")], 0, 0, 16)),
+        ("crate_hydroponics_open", DmiWindow([("@crates", "hydrocrateopen")], 0, 0, 16)),
+        // crates.dm:226-230.
+        ("crate_internals", DmiWindow([("@crates", "o2crate")], 0, 0, 16)),
+        ("crate_internals_open", DmiWindow([("@crates", "o2crateopen")], 0, 0, 16)),
+        // crates/secure.dm:1-5.
+        ("crate_secure", DmiWindow([("@crates", "securecrate")], 0, 0, 16)),
+        ("crate_secure_open", DmiWindow([("@crates", "securecrateopen")], 0, 0, 16)),
+        // crates.dm:254-260.
+        ("freezer", DmiWindow([("@crates", "freezer")], 0, 0, 16)),
+        ("freezer_open", DmiWindow([("@crates", "freezeropen")], 0, 0, 16)),
+    ],
+)

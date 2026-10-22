@@ -45,10 +45,16 @@
     // tg code/game/machinery/doors/airlock.dm:131-132.
     ("airlock_bolts_up", "machines/airlock/boltsup.ogg"),
     ("airlock_bolts_down", "machines/airlock/boltsdown.ogg"),
+    // tg code/game/objects/structures/crates_lockers/crates.dm:13-18.
+    ("crate_open", "machines/crate/crate_open.ogg"),
+    ("crate_close", "machines/crate/crate_close.ogg"),
     // The closet substrate's own two clips
     // (code/game/objects/structures/crates_lockers/closets.dm:58-59).
     ("locker_open", "machines/closet/closet_open.ogg"),
     ("locker_close", "machines/closet/closet_close.ogg"),
+    // tg closet lock and unlock clips (`closets.dm:60-61`).
+    ("closet_lock", "machines/closet/closet_lock.ogg"),
+    ("closet_unlock", "machines/closet/closet_unlock.ogg"),
     // A morgue drawer opening and closing. tg layers TWO clips for
     // each — `items/deconstruct.ogg` at volume 50 and `effects/roll.ogg`
     // at 5 (morgue.dm:140-141, 155-156) — and this roster is one file
@@ -68,6 +74,10 @@
     ("wirecutter", "items/tools/wirecutter_cut.ogg"),
     ("ratchet", "items/tools/ratchet.ogg"),
     ("drink", "items/drink.ogg"),
+    // First authored human clips for the base-cold emotes
+    // (code/modules/mob/living/emote.dm:379-420).
+    ("sneeze", "mobs/humanoids/human/sneeze/male_sneeze1.ogg"),
+    ("cough", "mobs/humanoids/human/cough/male_cough1.ogg"),
     ("hiss", "machines/hiss.ogg"),
     // Gas arriving where it should not be: tg plays this for a tank
     // springing a leak (tanks.dm:386) and for a canister splitting
@@ -183,6 +193,8 @@
     ("defib_zap", "machines/defib/defib_zap.ogg"),
     ("defib_success", "machines/defib/defib_success.ogg"),
     ("defib_failed", "machines/defib/defib_failed.ogg"),
+    // tg code/game/objects/items/devices/scanners/health_analyzer.dm:99.
+    ("health_analyzer_scan", "items/healthanalyzer.ogg"),
     // The grenade arming click: /obj/item/grenade declares it as
     // `grenade_arm_sound` (code/game/objects/items/grenades/_grenade.dm:29)
     // and plays it when the pin comes out (:163).
@@ -206,4 +218,6 @@
     ("smg_rack", "items/weapons/gun/smg/smgrack.ogg"),
     ("smg_pickup", "items/handling/gun/ballistics/smg/smg_pickup1.ogg"),
     ("smg_drop", "items/handling/gun/ballistics/smg/smg_drop1.ogg"),
+    // tg code/game/machinery/iv_drip.dm:262-265.
+    ("twobeep_high", "machines/beep/twobeep_high.ogg"),
 ]

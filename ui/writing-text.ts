@@ -1,7 +1,8 @@
-import type { UiNode, UiInlineRun } from "@lunatic/ui";
+import { Stack, Table, type UiNode, type UiInlineRun } from "@lunatic/ui";
 import type { WritingFragment } from "./document-model";
 import { text } from "./view";
 import * as S from "./strings";
+import { parseWritingMarkup } from "./writing-markup";
 
 /** Native append and UI text limits, measured as UTF-8 bytes. */
 export const TEXT_LIMIT = 4096;
@@ -9,6 +10,10 @@ export const BODY_LIMIT = 8192;
 export const FRAGMENT_LIMIT = 64;
 const NODE_LIMIT = 4096;
 const RUN_LIMIT = 64;
+const WRITING_PREVIEW_LIMIT = 384;
+// The paper/fax/copier shell and an optional truncation notice sit outside
+// the renderer's node list; reserve both before admitting a table projection.
+const MARKUP_CHILD_LIMIT = WRITING_PREVIEW_LIMIT - 2;
 
 export function utf8Length(value: string): number {
   let bytes = 0;
@@ -176,13 +181,111 @@ function flowingNodes(id: string, fragments: WritingFragment[], committed: boole
   return flowingText(id, fragments, ["paper-line", ...(committed ? ["paper-committed"] : [])]).nodes;
 }
 
+function nodeCount(nodes: UiNode[]): number {
+  return nodes.reduce((total, node) => total + 1 + nodeCount(node.children ?? []), 0);
+}
+
+function tableProjection(id: string, source: ReturnType<typeof parseWritingMarkup>): UiNode[] | undefined {
+  if (!source) return undefined;
+  const tableId = `${id}/table`;
+  const rows = source.rows.map((row, rowIndex) => row.map((value, columnIndex) =>
+    text(`${tableId}/${rowIndex}/${columnIndex}/text`, value, ["writing-markup-cell-text"]),
+  ));
+  const table = Table(
+    tableId,
+    source.columns.map((_, index) => index === 0
+      ? { min: 56, max: "2fr" }
+      : { min: 32, max: "1fr" }),
+    rows,
+    { header: source.columns },
+  );
+  const columnCount = source.columns.length;
+  const children = table.children?.map((cell, index) => ({
+    ...cell,
+    class: [
+      ...(cell.class ?? []),
+      "writing-markup-cell",
+      ...(index < columnCount
+        ? ["writing-markup-header-cell"]
+        : (index - columnCount) % columnCount === 0 ? ["writing-markup-row-label"] : []),
+    ],
+  }));
+  const normalizedTable: UiNode = {
+    ...table,
+    class: [...(table.class ?? []), "writing-markup-table"],
+    ...(children ? { children } : {}),
+  };
+  return [
+    text(`${id}/heading`, source.heading, ["writing-markup-heading"]),
+    text(`${id}/caption`, source.caption, ["writing-markup-caption"]),
+    normalizedTable,
+    ...source.paragraphs.map((paragraph, index) =>
+      text(`${id}/paragraph/${index}`, paragraph, ["writing-markup-paragraph"]),
+    ),
+  ];
+}
+
+/** Render recognized fragments in one bounded content flow, or signal the text path. */
+export function writingMarkupNodes(
+  id: string,
+  fragments: WritingFragment[],
+  classes: string[],
+  maxNodes = MARKUP_CHILD_LIMIT,
+): UiNode[] | undefined {
+  const boundedNodes = Math.max(1, Math.floor(maxNodes));
+  const fragmentsWithFallback = fragments.map((fragment, index) => {
+    const source = fragmentText(fragment);
+    const projection = tableProjection(`${id}/markup/${index}`, parseWritingMarkup(source));
+    const fallback = flowingText(`${id}/fragment/${index}`, [fragment], classes, boundedNodes);
+    return { projection, fallback: fallback.nodes, fallbackTruncated: fallback.truncated };
+  });
+  if (!fragmentsWithFallback.some((fragment) => fragment.projection)) return undefined;
+
+  // Start by reserving every fragment's complete inert rendering. Replacing
+  // one with a table spends only its exact recursive node delta; later notes,
+  // unsupported fragments and the caller's truncation slot remain budgeted.
+  if (fragmentsWithFallback.some((fragment) => fragment.fallbackTruncated)) return undefined;
+  let used = fragmentsWithFallback.reduce((total, fragment) => total + nodeCount(fragment.fallback), 0);
+  if (used + 1 > boundedNodes) return undefined;
+
+  let projectedCount = 0;
+  for (const fragment of fragmentsWithFallback) {
+    if (!fragment.projection) continue;
+    const fallbackNodes = nodeCount(fragment.fallback);
+    const projectionNodes = nodeCount(fragment.projection);
+    const next = used - fallbackNodes + projectionNodes + (projectedCount === 0 ? 1 : 0);
+    if (next > boundedNodes) continue;
+    used = next;
+    projectedCount++;
+    fragment.fallback = fragment.projection;
+  }
+  if (!projectedCount) return undefined;
+
+  const children = fragmentsWithFallback.flatMap((fragment) => fragment.fallback);
+  const flow = Stack(`${id}/markup`, children, {
+    dir: "column",
+    cls: ["writing-markup-flow"],
+  });
+  return [flow];
+}
+
 export function writingPreview(id: string, fragments: WritingFragment[], cls: string[] = []): UiNode[] {
   const bounded = fragmentList(fragments);
   if (!bounded.length) return [text(`${id}/empty`, S.tfs("ui.writing.empty"), ["hint", ...cls])];
   const total = fragments.reduce((sum, fragment) => sum + utf8Length(fragmentText(fragment)), 0);
+  const truncated = bounded.length < fragments.length || total > BODY_LIMIT;
+  const markup = writingMarkupNodes(
+    id,
+    bounded,
+    ["paper-line", "paper-committed"],
+    MARKUP_CHILD_LIMIT,
+  );
+  if (markup) return [
+    ...markup,
+    ...(truncated ? [text(`${id}/truncated`, S.tfs("ui.writing.truncated"), ["hint"])] : []),
+  ];
   return [
     ...flowingNodes(id, bounded, true),
-    ...(bounded.length < fragments.length || total > BODY_LIMIT
-      ? [text(`${id}/truncated`, S.tfs("ui.writing.truncated"), ["hint"])] : []),
+    ...(truncated ? [text(`${id}/truncated`, S.tfs("ui.writing.truncated"), ["hint"])] : []),
   ];
 }

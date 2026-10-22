@@ -1,0 +1,15 @@
+// tg code/game/objects/items/devices/scanners/health_analyzer.dm:8-13.
+(
+    sheets: [
+        ("scanner", "obj/devices/scanner.dmi"),
+        ("medical_l", "mob/inhands/equipment/medical_lefthand.dmi"),
+        ("medical_r", "mob/inhands/equipment/medical_righthand.dmi"),
+    ],
+    sprites: [
+        ("health_analyzer", Dmi("@scanner", "health", 0)),
+    ],
+    groups: [
+        (sheet: "medical_l", sprites: [Directions("held_health_analyzer_l", "healthanalyzer")]),
+        (sheet: "medical_r", sprites: [Directions("held_health_analyzer_r", "healthanalyzer")]),
+    ],
+)

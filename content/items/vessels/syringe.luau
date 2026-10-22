@@ -97,15 +97,22 @@ local content = {
 -- 1 u = 0.025 mol (docs/CHEMISTRY.md 4).
 local STROKE = 5 * U
 
+local syringe_target: action_rules.Selector = {
+    any = {
+        action_rules.fact("target.has_matter", true),
+        action_rules.kind("player"),
+    },
+}
+
 content.actions = {
     action_rules.primary(
         "draw",
-        action_rules.fact("target.has_matter", true),
+        syringe_target,
         action_rules.fact("held.mode", 0)
     ),
     action_rules.primary(
         "inject",
-        action_rules.fact("target.has_matter", true),
+        syringe_target,
         action_rules.fact("held.mode", 1)
     ),
     action_rules.attack("draw_body", action_rules.fact("held.mode", 0), "draw"),
@@ -217,6 +224,27 @@ if sim ~= nil then
         local _x, _y, _choice, _target = x, y, choice, target
         if clicked == nil or clicked.entity == nil then
             return { replaced = false } -- bare deck is not a syringe's business
+        end
+        if sim.body(clicked.entity) ~= nil then
+            if tostring(clicked.entity) ~= tostring(user) then
+                return { replaced = false } -- other patients use the delayed attack route
+            end
+            local mode = assert(sim.mode(self)).index
+            if not stroke(self, user, clicked.entity, mode, true) then
+                return true
+            end
+            if mode == DRAW then
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.syringe.you_draw_a_sample_from", {}),
+                })
+            else
+                sim.message.send({
+                    recipient = user,
+                    message = sim.msg("lunatic/tfs:items.syringe.you_inject_yourself", {}),
+                })
+            end
+            return true
         end
         if sim.matter_read(clicked.entity) == nil then
             return { replaced = false } -- not something that holds anything

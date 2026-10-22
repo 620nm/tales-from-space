@@ -3,6 +3,7 @@
 -- Keeping the mapping in content means Rust validates ownership without
 -- learning any Tales from Space vocabulary.
 local bloodshed = require("@lib/bloodshed")
+local disinfection = require("@lib/medical/disinfection")
 
 local sounds = {
     "computer_start",
@@ -26,6 +27,8 @@ local sounds = {
     "click",
     "crowbar",
     "crowbar_pry",
+    "closet_lock",
+    "closet_unlock",
     -- The defibrillator's three outcomes (content/items/defib.luau).
     "defib_failed",
     "defib_success",
@@ -49,10 +52,15 @@ local sounds = {
     -- rides the ranged claim's native delivery, not this registry.
     "smg_rack",
     "smash",
+    -- First authored human clips for the base-cold emotes
+    -- (code/modules/mob/living/emote.dm:379-420).
+    "sneeze",
+    "cough",
     "spray",
     "switch_click",
     "welder_activate",
     "welder_deactivate",
+    "weld",
     "vend",
     "wirecutter",
 }
@@ -60,6 +68,19 @@ local sounds = {
 for _, asset in sounds do
     sim.define("sound", "lunatic/tfs:sound/" .. asset, { asset = asset })
 end
+
+sim.define("message", "lunatic/tfs:lib.illness.sneeze", { placeholders = { "name" } })
+sim.define("message", "lunatic/tfs:lib.illness.cough", { placeholders = { "name" } })
+sim.define("message", "lunatic/tfs:lib.illness.sore_throat", { placeholders = {} })
+sim.define("message", "lunatic/tfs:lib.illness.mucus", { placeholders = {} })
+sim.define("message", "lunatic/tfs:lib.illness.feels_better", { placeholders = {} })
+sim.define("message", "lunatic/tfs:lib.analyzer_pathogens.rhinovirus_body", {
+    placeholders = { "name", "stage", "max_stages" },
+})
+sim.define("message", "lunatic/tfs:lib.analyzer_pathogens.rhinovirus_vessel", {
+    placeholders = { "name" },
+})
+sim.define("message", "lunatic/tfs:lib.analyzer_pathogens.none", { placeholders = {} })
 
 -- The shift's fire record.
 --
@@ -75,6 +96,9 @@ sim.define("script_var", "lunatic/tfs:marker_weight", { replicate = "server" })
 sim.define("script_var", "lunatic/tfs:marker_jobs", { replicate = "server" })
 sim.define("script_var", "lunatic/tfs:marker_roles", { replicate = "server" })
 sim.define("script_var", "lunatic/tfs:spawn_role", { replicate = "server" })
+sim.define("script_var", "lunatic/tfs:closet_welded", { replicate = "server" })
+sim.define("script_var", "lunatic/tfs:closet_locked", { replicate = "server" })
+sim.define("script_var", "lunatic/tfs:closet_access", { replicate = "server" })
 
 local function tally(key)
     return function(_ev)
@@ -96,6 +120,12 @@ sim.handle("matter.extinguished.done", { kind = "react" }, tally("fires_out"))
 -- the same reason the fire tallies above live here rather than on a
 -- thing that burns.
 sim.handle("damage.resolved.done", { kind = "react" }, bloodshed.on_wound)
+sim.event("lunatic/tfs:disinfection.chunk", {
+    family = "notification",
+    payload = { page = "number" },
+})
+sim.handle("lunatic/tfs:disinfection.chunk", { kind = "react" }, disinfection.on_chunk)
+sim.handle("clock.second", { kind = "react" }, disinfection.on_second)
 
 -- The shift clock's own words. `content/lib/shift.luau` is the policy
 -- and every `gamemodes/` file declares the numbers; what lives here is

@@ -21,6 +21,16 @@ local content = {
         append_only = true,
         seed = { { name = "paper1", ext = "md", body = "" } },
     },
+    -- Verbatim body from tg code/modules/paperwork/paper_premade.dm:285-443.
+    variants = {
+        blood_types = {
+            name = "blood type compatibility reference",
+            name_label = "lunatic/tfs:entity.paper.blood_types.name",
+            files = {
+                seed = { { reference = "blood_type_compatibility" } },
+            },
+        },
+    },
 }
 
 if sim ~= nil then
@@ -30,7 +40,7 @@ if sim ~= nil then
     -- failed append leaves the browser's draft intact and reports refusal.
     sim.handle("documents.append.done", { kind = "react" }, function(ev)
         local paper = ev.target
-        if paper == nil or paper.prototype ~= content.id or ev.actor == nil then
+        if paper == nil or (paper.base or paper.prototype) ~= content.id or ev.actor == nil then
             return
         end
         if ev.outcome == "completed" then

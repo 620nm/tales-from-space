@@ -17,4 +17,10 @@
         ext: "disl",
         path: "scripts/fax.luau",
     ),
+    (
+        id: "blood_type_compatibility",
+        name: "blood-types",
+        ext: "md",
+        path: "text/blood-type-compatibility.md",
+    ),
 ]

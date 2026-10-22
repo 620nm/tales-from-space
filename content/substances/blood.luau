@@ -64,7 +64,12 @@ if sim ~= nil then
     -- here: `riders/` never runs as a script, and the kind's one meet
     -- dispatcher has to be defined from a file that does.
     local blood_identity = require("@lib/blood_identity")
+    local contagion = require("@lib/medical/contagion")
+    local host_illness = require("@lib/medical/host_illness")
     blood_identity.attach()
+    contagion.attach(function(body: Handle, indices: { number }): ()
+        host_illness.expose(body, indices, "fluid")
+    end)
 end
 
 return content

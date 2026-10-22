@@ -1,7 +1,7 @@
 import type { StyleProps, UiNode } from "@lunatic/ui";
 import { tfs } from "./strings";
 import { panel, text } from "./view";
-import { flowingText, markdownRuns, sliceUtf8, utf8Length } from "./writing-text";
+import { flowingText, markdownRuns, sliceUtf8, utf8Length, writingMarkupNodes } from "./writing-text";
 import type { FileFragment } from "./document-model";
 
 const BODY_LIMIT = 65536;
@@ -70,11 +70,21 @@ function committedReader(id: string, fragments: FileFragment[], limit: number): 
       break;
     }
   }
-  // The wrapper is one block in the reader column; its children remain
-  // inline so a node-size boundary cannot introduce a visual line break.
-  const flow = flowingText(id, bounded, ["reader-inline"], Math.max(1, limit - 2));
-  const nodes = flow.nodes.length ? [panel(`${id}/flow`, flow.nodes, { cls: ["reader-flow"] })] : [];
-  if (omitted || flow.truncated)
+  // Keep the established inline flow for ordinary Markdown. A recognized
+  // native fragment uses the same bounded projection as paper previews.
+  const markup = writingMarkupNodes(id, bounded, ["reader-inline"], Math.max(1, limit - 2));
+  let nodes: UiNode[];
+  let flowTruncated = false;
+  if (markup) {
+    nodes = [panel(`${id}/flow`, markup, { cls: ["reader-flow"] })];
+  } else {
+    // The wrapper is one block in the reader column; its children remain
+    // inline so a node-size boundary cannot introduce a visual line break.
+    const flow = flowingText(id, bounded, ["reader-inline"], Math.max(1, limit - 2));
+    nodes = flow.nodes.length ? [panel(`${id}/flow`, flow.nodes, { cls: ["reader-flow"] })] : [];
+    flowTruncated = flow.truncated;
+  }
+  if (omitted || flowTruncated)
     nodes.push(text(`${id}/truncated`, tfs("ui.files.reader.truncated", { lines: 1 })));
   return nodes;
 }
