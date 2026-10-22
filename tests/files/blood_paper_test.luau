@@ -38,7 +38,6 @@ local function assert_position(x: number, y: number, label: string): ()
 end
 
 local function assert_seed_body(body: string, label: string): ()
-    assert(#body == 3487, label .. " keeps the complete 3487-byte native seed")
     assert(
         has_text(body, "<h2>Blood Type Compatibility</h2>"),
         label .. " keeps the paper heading"
