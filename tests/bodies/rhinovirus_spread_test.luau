@@ -35,7 +35,7 @@ local MAP = [==[(
                 (6, 4, "player_spawn", { "jobs": "security" }),
             ],
             items: [
-                (4, 4, "bio_protection_probe"),
+                (4, 4, "lunatic/tfs:bio_protection_probe"),
                 (4, 4, "syringe"),
                 (4, 4, "bottle.rhinovirus_culture"),
             ],

@@ -5,10 +5,10 @@ function helper.assert_checks(actor: number, x: number, y: number): ()
         t.drop(actor)
         t.tick()
     end
-    local probe = assert(t.target_at(actor, x, y, "bio_protection_probe"), "the protection probe is there")
+    local probe = assert(t.target_at(actor, x, y, "lunatic/tfs:bio_protection_probe"), "the protection probe is there")
     t.click(actor, x, y, probe)
     t.run_ticks(2)
-    assert(t.hands(actor).held == "bio_protection_probe", "the actor holds the protection probe")
+    assert(t.hands(actor).held == "lunatic/tfs:bio_protection_probe", "the actor holds the protection probe")
     t.use_self(actor)
     t.run_ticks(2)
 
