@@ -2,9 +2,22 @@
 
 **Human reservoir.** Blood lives on `human_chest` (the torso carries tg's
 bloodstream, `_bodyparts.dm:947-969`) as moles of `blood` in its 6 L bloodstream at 310.15 K.
-The pack's runtime `normal = 13.75` mol is its 550-u setting (550 x U; U = 0.025 mol/u via the engine's `docs/chemistry/tg-bridge.md`),
-not a conversion of tg's `BLOOD_VOLUME_NORMAL = 560` (`code/__DEFINES/mobs.dm:20`), which is 14 mol.
-The pack sets `dead_below = 2.8` mol from tg's `BLOOD_VOLUME_SURVIVE = 112` x 0.025 mol (`mobs.dm:20-25`). The `human` plan declares one reservoir, `blood`, as its
+The pack's runtime `normal = 14` mol converts tg's `BLOOD_VOLUME_NORMAL = 560` u
+at 0.025 mol/u (`code/__DEFINES/mobs.dm:20`; the engine's
+`docs/chemistry/tg-bridge.md`). Every blood-volume band uses the same conversion
+(`code/__DEFINES/mobs.dm:20-25`):
+
+| tg define | Units | Moles |
+|---|---:|---:|
+| `BLOOD_VOLUME_NORMAL` | 560 | 14 |
+| `BLOOD_VOLUME_SAFE` | 476 | 11.9 |
+| `BLOOD_VOLUME_OKAY` | 392 | 9.8 |
+| `BLOOD_VOLUME_RISKY` | 308 | 7.7 |
+| `BLOOD_VOLUME_BAD` | 224 | 5.6 |
+| `BLOOD_VOLUME_SURVIVE` | 112 | 2.8 |
+
+The pack's `dead_below` uses the `BLOOD_VOLUME_SURVIVE` band. The `human`
+plan declares one reservoir, `blood`, as its
 `wound_reservoir`: `stack_drain_per_s = 0.0125` (0.5 u/s x 0.025,
 `_bodyparts.dm:1629-1630`) and `lying_factor = 0.75` (`_bodyparts.dm:1667-1668`);
 the engine needs both knobs and refuses a reservoir without them. Regrowth and

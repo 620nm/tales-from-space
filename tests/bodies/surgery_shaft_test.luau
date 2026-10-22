@@ -152,10 +152,11 @@ assert(
 )
 
 -- The patient bled through the ordeal but is nowhere near death — about
--- forty units (one mole), on tg's 560 u = 13.75 mol (docs/SURGERY.md §6.3
+-- forty units (one mole), on tg's 560 u = 14 mol (code/__DEFINES/mobs.dm:20;
+-- docs/SURGERY.md §6.3
 -- "never near BAD").
 local left = assert(assert(t.body(patient)).blood)
-assert(left < 13.75 and left > 11.5, "bled but survivable (started 13.75): " .. left)
+assert(left < 14.0 and left > 11.5, "bled but survivable (started 14): " .. left)
 assert(assert(t.body(patient)).animate, "and still alive")
 
 -- The whole ordeal is the sum of the attempts the seed took; report it.

@@ -28,7 +28,7 @@ local ui_controls = require("@helpers/ui_controls")
 local SEED = 3
 -- Roster indices (content/rosters/blood_types.luau, tg's weights order).
 local O_MINUS, A_PLUS = 0, 3
-local NORMAL = 13.75 -- pack chest 550 u x 0.025 mol/u; tg 560 u = 14 mol (code/__DEFINES/mobs.dm:20).
+local NORMAL = 14.0 -- 560 u x 0.025 mol/u = 14 mol (code/__DEFINES/mobs.dm:20).
 
 t.world(
     [==[(

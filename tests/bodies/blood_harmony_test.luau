@@ -21,7 +21,7 @@ local ui_controls = require("@helpers/ui_controls")
 --      blacked out keeps paying beyond that share: `t.set_blood_moles`
 --      takes the blood down at once to reach it.
 --   4. A stopped body hears no `mob.life`: nothing restores it.
-local NORMAL = 13.75 -- 560 u x 0.025 mol/u, content/items/anatomy/human_chest.luau
+local NORMAL = 14.0 -- 560 u x 0.025 mol/u (code/__DEFINES/mobs.dm:20)
 local REGEN_PER_S = 0.25 * 0.025 -- BLOOD_REGEN_FACTOR, mobs.dm:28
 
 t.world(

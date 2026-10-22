@@ -95,7 +95,8 @@ RimWorld's; the numbers are not reconstructed from anywhere.
 
 **Ported into the formulas**: the `oxy` step at 50
 (`OXYLOSS_PASSOUT_THRESHOLD`, mobs.dm:14), the `blood` step at 0.4
-(`BLOOD_VOLUME_BAD` 224/560), the `health` step at -0.3
+(`BLOOD_VOLUME_BAD` 224/560, code/__DEFINES/mobs.dm:20-25; converted blood bands are in
+[blood-types.md](biology/blood-types.md)), the `health` step at -0.3
 (`HEALTH_THRESHOLD_FULLCRIT` / `MAX_LIVING_HEALTH`, combat.dm:89), cardiac
 arrest's `when_zero` oxy 4/s + brute 1/s held unconscious
 (human/life.dm:292-295), liverlessness' tox 0.6/s (carbon/life.dm:746).

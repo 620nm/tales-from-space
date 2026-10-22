@@ -41,14 +41,14 @@ return {
         -- up and what running low costs are `lib/blood_harmony.luau`.
         blood = {
             substance = "blood",
-            -- BLOOD_VOLUME_NORMAL 560 u (code/__DEFINES/mobs.dm:20): 5.5 L.
-            normal = 13.75,
+            -- BLOOD_VOLUME_NORMAL 560 u (code/__DEFINES/mobs.dm:20): 5.6 L.
+            normal = 14.0,
             -- BLOOD_VOLUME_SURVIVE 112 u (code/__DEFINES/mobs.dm:25).
             dead_below = 2.8,
         },
         bloodstream = {
             -- The shell holds a little more than normal blood, so a dose
-            -- fits beside it: 6 L = 0.006 m3 against 5.5 L of blood
+            -- fits beside it: 6 L = 0.006 m3 against 5.6 L of blood
             -- (BLOOD_VOLUME_NORMAL 560 u read as centilitres,
             -- code/__DEFINES/mobs.dm:20).
             volume_m3 = 0.006,

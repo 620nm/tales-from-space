@@ -439,10 +439,13 @@ drop_at(DROP_X, DROP_Y)
 
 -- These real 0.125 mol ethanol strokes are positive liquid in an infected
 -- body, but not a concentration-based body-exclusion proof. human_chest.luau
--- 44-54 sets normal blood to 5.5 L inside a 6 L shell: at most 500 ml can
--- be added, so even a full shell gives 500 / 6000 = 0.08333 below 70%.
-local max_added_ml = 6000 - 5500
-assert(max_added_ml / (5500 + max_added_ml) < ETHANOL_THRESHOLD, "normal blood leaves no geometry for 70% body ethanol")
+-- 44-54 sets normal blood to 5.6 L inside a 6 L shell, leaving 400 ml:
+-- even a full shell gives 400 / 6000 = 0.06667, below 70%.
+local max_added_ml = 6000 - 5600
+assert(
+    max_added_ml / (5600 + max_added_ml) < ETHANOL_THRESHOLD,
+    "normal blood leaves no geometry for 70% body ethanol"
+)
 fill_at(10, 2, "bottle", "ethanol", 0.5)
 local ethanol_target = target_at(10, 2, "bottle")
 local ethanol_source_vessel = vessel_at(ethanol_target)

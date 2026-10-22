@@ -219,11 +219,12 @@ t.click(attendant, 3, 1, corpse_target)
 t.tick()
 
 local blood_report = assert(BLOOD_REPORTS[pre_open_type + 1], "the pre-open type maps to a blood report")
+-- 560 cl reports the full 14 mol reservoir (code/__DEFINES/mobs.dm:20 at 0.025 mol/u).
 local expected_report = {
     "Analyzing results for " .. corpse.name .. ":",
     "Overall status: Deceased.",
     "Damage: 200 brute, 0 burn, 0 toxin, and 0 suffocation.",
-    "Blood level: 100%, 550 cl " .. blood_report.name .. ".",
+    "Blood level: 100%, 560 cl " .. blood_report.name .. ".",
     "Can receive from types " .. blood_report.donors .. ".",
 }
 local all_messages = t.messages(attendant)

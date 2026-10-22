@@ -4,7 +4,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- Three seed-3 crew exercise the handheld analyzer through the same body,
 -- vessel, inventory, and locker claims a player can make.
 local SEED = 3
-local NORMAL_BLOOD = 13.75 -- 550 cl: content/items/anatomy/human_chest.luau:45
+local NORMAL_BLOOD = 14.0 -- 560 u x 0.025 mol/u: code/__DEFINES/mobs.dm:20
 -- Frozen no-args reporter contract: lunatic/tfs:lib.analyzer_pathogens.none.
 local PATHOGENS_NONE = "No pathogens detected."
 local ARENA = [==[(
@@ -225,7 +225,7 @@ assert_private_report(donor_before, donor_bystander_before, patient_bystander_be
     "Analyzing results for " .. donor_name .. ":",
     "Overall status: 100% healthy.",
     zero_damage,
-    "Blood level: 100%, 550 cl O-.",
+    "Blood level: 100%, 560 cl O-.",
     "Can receive from types O-.",
 })
 
@@ -237,7 +237,7 @@ assert_private_report(patient_before, donor_patient_scan_before, receiver_scan_b
     "Analyzing results for " .. patient_name .. ":",
     "Overall status: 100% healthy.",
     zero_damage,
-    "Blood level: 100%, 550 cl A+.",
+    "Blood level: 100%, 560 cl A+.",
     "Can receive from types A-, A+, O-, O+.",
 })
 
@@ -250,7 +250,7 @@ assert_private_report(self_before, donor_self_before, patient_self_before, "self
     "Analyzing results for " .. self_name .. ":",
     "Overall status: 100% healthy.",
     zero_damage,
-    "Blood level: 100%, 550 cl A+.",
+    "Blood level: 100%, 560 cl A+.",
     "Can receive from types A-, A+, O-, O+.",
 })
 

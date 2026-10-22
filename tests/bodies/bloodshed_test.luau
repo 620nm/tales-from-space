@@ -92,9 +92,10 @@ assert(mark.paint == "blood", "in the wound paint, not a crew colour")
 
 -- The bleeder bleeds: 0.0125 mol/s (tg's 0.5 u/s) while stacks remain,
 -- and the harmony handler regrows less than that, so the volume is under full.
+-- Normal is tg's 560 u x 0.025 mol/u = 14 mol (code/__DEFINES/mobs.dm:20).
 t.run_seconds(5)
 local body = assert(t.body(victim))
-assert(body.blood ~= nil and body.blood < 13.75, "five seconds of bleeding shows")
+assert(body.blood ~= nil and body.blood < 14.0, "five seconds of bleeding shows")
 near(num(body.leak_rates.blood or 0), 0.0125, "at the flat stack rate")
 
 -- ---------------------------------------------------------------

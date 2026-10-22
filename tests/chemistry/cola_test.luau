@@ -42,11 +42,11 @@ t.set_health(p, { oxy = 30 })
 t.click(p, 1, 1, t.target_at(p, 1, 1, "cola")) -- pick up the can
 t.tick()
 assert(t.hands(p).held == "cola", "the can is held")
--- The bloodstream already holds the body's own blood (13.75 mol); the
--- swig is what is added on top of it, and the can adds nothing else.
+-- The bloodstream already holds the body's own 14 mol (560 u x 0.025 mol/u;
+-- code/__DEFINES/mobs.dm:20). The swig adds on top of it; the can adds nothing else.
 local blood_before = t.blood_moles(p)
 assert(
-    math.abs(blood_before - 13.75) < 1e-9 and (t.blood(p).sugar or 0) == 0,
+    math.abs(blood_before - 14.0) < 1e-9 and (t.blood(p).sugar or 0) == 0,
     "only the body's own blood in the stream yet"
 )
 

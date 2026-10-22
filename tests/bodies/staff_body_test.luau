@@ -42,7 +42,8 @@ assert(
     "a fully restored human runs again"
 )
 assert(math.abs(restored.health - 100) < 0.01, "all body pools are clear")
-assert(math.abs(assert(restored.blood) - 13.75) < 1e-9, "blood returns to the plan normal")
+-- 560 u x 0.025 mol/u, tg BLOOD_VOLUME_NORMAL (code/__DEFINES/mobs.dm:20).
+assert(math.abs(assert(restored.blood) - 14.0) < 1e-9, "blood returns to the plan normal")
 assert(t.organ_damage(patient, "heart") == 0, "the failed heart is repaired")
 for _, zone in ipairs({ "head", "chest", "pelvis", "l_arm", "r_arm", "l_leg", "r_leg" }) do
     local part = assert(t.parts(patient))[zone]
