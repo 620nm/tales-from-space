@@ -94,15 +94,15 @@ This pack follows intended airborne spread instead of tg's inverted source
 guard: `airborne_spread` returns when `can_spread_airborne_diseases()` is true,
 although a positive predicate result denotes an eligible source. The pack uses
 explicit source checks (`code/datums/diseases/_disease.dm:300-309`,
-`code/datums/diseases/_MobProcs.dm:136-153`,
-`content/lib/medical/airborne.luau:61-77`).
+`code/datums/diseases/_MobProcs.dm:136-159`,
+`content/lib/medical/airborne.luau:127-145`).
 
 The human life callback advances `host_illness` before `airborne`. Each body
 adds `ev.elapsed_seconds` to its private airborne timer and receives a breath
 attempt whenever that timer reaches eight seconds, independent of global tick
 phase. The interval matches tg's healthy breath cadence of four two-second life
 passes (`content/bodies/human.luau:744-751`,
-`content/lib/medical/airborne.luau:4,57-67`,
+`content/lib/medical/airborne.luau:4,115-125`,
 `code/modules/mob/living/carbon/life.dm:46-57`).
 
 At each eligible boundary, each active rhinovirus infection uses
@@ -117,26 +117,48 @@ illness-specific purposes keyed to their respective bodies
 `code/datums/diseases/_disease.dm:419-423`,
 `code/__DEFINES/maths.dm:244-247`,
 `code/datums/diseases/_MobProcs.dm:102-109`,
-`content/lib/medical/airborne.luau:79-98`).
+`content/lib/medical/airborne.luau:147-182`).
 
 A source must be alive, have an animating body with working lungs and positive
-breathing capacity, lack a current `breath_mask` in its mask slot, and have a
+breathing capacity, lack a worn `breath_mask`, lack active internals, and have a
 tile. Candidates come from an unfiltered radius-three query on the same plane
 and level. The helper uses the native body fact's `animate` flag, excludes the
 source, then limits recipients to absolute-coordinate Chebyshev distance two,
 including diagonals. It also requires native line of sight: an intermediate
 projectile-blocking or dense tile, or a shut door, blocks the path; endpoints
 do not. This shared-air approximation reads neither atmospheric connectivity
-nor FOV (`content/lib/medical/airborne.luau:6,44-48,89-98`; the engine's
+nor FOV (`content/lib/medical/airborne.luau:98-102,158-168`; the engine's
 `docs/luau-api/queries.md:101-111`).
 
-The current worn `breath_mask` blocks either endpoint deterministically. The
-current active-internals setup uses that same mask; airborne does not read an
-internals flag or a general BIO armor value. Host exposure remains authoritative
-for recipient human-body, required-organ and resistance checks; the airborne
-route skips only the fluid-specific heart-and-blood gate described above. The
+Both source emission protections are hard blocks. Internals state is copied from
+the native `inventory.present.supply` fact onto the tank item; emission reads
+only current hand and worn inventory entries, so a dropped or stowed tank does
+not leave protection on its former carrier (`content/lib/item_actions.luau:5-18`,
+`content/lib/medical/airborne.luau:35-53,134-137`).
+
+At the target, the pack reads the `lunatic/tfs:biology.bio_protection` script
+var from worn items, sums declared BIO points, and caps the total at 100. The
+current pack initializes the var on its breath mask; future head and mask data
+can declare the same var. The catch gate tests active internals first at 75%,
+then BIO points, matching tg's carbon override followed by the parent check
+(`content/lib/medical/airborne.luau:71-84,169-180`,
+`code/datums/diseases/_MobProcs.dm:163-186`). The breath mask's pack data is
+50 BIO, matching tg's `/obj/item/clothing/mask/breath` value
+(`content/items/gear/breath_mask.luau:3-7,49-52`,
+`code/modules/clothing/masks/breath.dm:19-20`), so it blocks about half of
+otherwise eligible catches. The current pack defines no medical-mask item;
+tg's medical mask is 90 BIO (`code/modules/clothing/masks/breath.dm:49-50`),
+which future pack data can declare on the same var. Active internals leaves
+about one quarter of otherwise eligible catches. With neither protection, the
+protection gates always pass. Deterministic roll-stub assertions exercise the
+production gate through `content/fixtures/bio_protection.luau`, driven by
+`tests/helpers/airborne_protection.luau` from
+`tests/bodies/rhinovirus_spread_test.luau`.
+Host exposure remains authoritative for recipient human-body, required-organ
+and resistance checks; the airborne route skips only the fluid-specific
+heart-and-blood gate described above. The
 helper delegates accepted candidates to `host_illness.expose` and does not
-write illness state itself (`content/lib/medical/airborne.luau:12-42,98`,
+write illness state itself (`content/lib/medical/airborne.luau:182`,
 `content/lib/medical/host_illness.luau:74-89,129-194`).
 
 ## Culture bottle

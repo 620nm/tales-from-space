@@ -1,5 +1,6 @@
 local clock = require("@helpers/clock")
 local illness_actions = require("@helpers/illness_actions")
+local airborne_protection = require("@helpers/airborne_protection")
 
 local SEED = 0
 local RHINOVIRUS = 0
@@ -34,6 +35,7 @@ local MAP = [==[(
                 (6, 4, "player_spawn", { "jobs": "security" }),
             ],
             items: [
+                (4, 4, "bio_protection_probe"),
                 (4, 4, "syringe"),
                 (4, 4, "bottle.rhinovirus_culture"),
             ],
@@ -132,6 +134,7 @@ t.use_self(masked)
 t.run_ticks(2)
 local supply = t.vitals(masked)
 assert(supply ~= nil and supply.tank ~= nil, "internals are open behind the mask")
+airborne_protection.assert_checks(source, 4, 4)
 
 -- Seed the source through the syringe and the contaminated culture bottle.
 illness_actions.take(source, 4, 4, "syringe")
@@ -174,7 +177,6 @@ assert(t.now() % breath_ticks ~= 0, "the source becomes unmasked off the global 
 
 local diagonal_seen = false
 local range_three_seen = false
-local masked_seen = false
 local behind_wall_seen = false
 
 -- Sample each second so a later cure cannot erase evidence of acquisition.
@@ -182,7 +184,6 @@ for _ = 1, OBSERVATION_SECONDS do
     t.run_seconds(1)
     diagonal_seen = diagonal_seen or has_rhinovirus(diagonal)
     range_three_seen = range_three_seen or has_rhinovirus(range_three)
-    masked_seen = masked_seen or has_rhinovirus(masked)
     behind_wall_seen = behind_wall_seen or has_rhinovirus(behind_wall)
 end
 
@@ -191,7 +192,6 @@ assert(
     "the unmasked source eventually infects the diagonal-two subject under seed 0"
 )
 assert(not range_three_seen, "a subject three tiles away remains clear")
-assert(not masked_seen, "a mask blocks an exposed target even with internals open")
 assert(not behind_wall_seen, "a full wall column separates the other room")
 
 -- The same coordinates on another declared level remain outside the

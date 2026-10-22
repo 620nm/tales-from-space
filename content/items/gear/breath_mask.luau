@@ -1,4 +1,10 @@
 local physical_profiles = require("@lib/physical_profiles")
+
+local AIRBORNE_ELAPSED_SECONDS_VAR = "lunatic/tfs:biology.airborne_elapsed_seconds"
+local BIO_PROTECTION_VAR = "lunatic/tfs:biology.bio_protection"
+local ACTIVE_INTERNALS_VAR = "lunatic/tfs:biology.active_internals"
+-- tg's breath-mask BIO is 50 (code/modules/clothing/masks/breath.dm:19-20).
+local BIO_PROTECTION = 50
 -- The apparatus: a close-fitting mask with a coupling on it, and the
 -- one thing that makes a bottle of oxygen worth carrying. It does
 -- nothing on its own -- it is the half of internals that has no gas in
@@ -28,10 +34,23 @@ local content = {
 }
 
 if sim ~= nil then
-    sim.define("script_var", "lunatic/tfs:biology.airborne_elapsed_seconds", {
+    sim.define("script_var", AIRBORNE_ELAPSED_SECONDS_VAR, {
         replicate = "server",
         private = true,
     })
+    sim.define("script_var", BIO_PROTECTION_VAR, {
+        replicate = "server",
+        private = true,
+    })
+    sim.define("script_var", ACTIVE_INTERNALS_VAR, {
+        replicate = "server",
+        private = true,
+    })
+    sim.handle("entity.initialize.done", { kind = "react" }, function(ev: EntityInitializeDonePayload)
+        if ev.outcome == "completed" and ev.entity.prototype == content.id then
+            ev.entity.vars[BIO_PROTECTION_VAR] = BIO_PROTECTION
+        end
+    end)
 end
 
 return content

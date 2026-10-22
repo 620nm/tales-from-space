@@ -733,6 +733,7 @@
   "lunatic/tfs:bodies.human.you_have_died": "You have died.",
   "lunatic/tfs:bodies.human.you_black_out": "You black out...",
   "lunatic/tfs:bodies.human.you_come_to": "You come to.",
+  "lunatic/tfs:fixtures.bio_protection.checks_passed": "Airborne protection gates pass their deterministic checks.",
   "lunatic/tfs:fixtures.chem_packager.there_is_nothing_in_the": "There is nothing in the hopper.",
   "lunatic/tfs:fixtures.chem_packager.the_packager_is_dark_and": "The packager is dark and silent.",
   "lunatic/tfs:fixtures.chem_packager.there_is_nothing_in_it": "There is nothing in it to package.",
