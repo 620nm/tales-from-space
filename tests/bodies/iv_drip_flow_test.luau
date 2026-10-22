@@ -1,4 +1,5 @@
 local iv_drip = require("@helpers/iv_drip")
+local clock = require("@helpers/clock")
 
 local SEED = 3
 local O_MINUS, A_PLUS = 0, 3
@@ -26,6 +27,17 @@ local function moved_from_at(source: string, x: number, y: number): number
     for _, row in ipairs(t.ledger_rows("matter_moved")) do
         local moles: any = row.moles
         if row.from == source and at_position(row, x, y) and type(moles) == "number" then
+            total += moles
+        end
+    end
+    return total
+end
+
+local function moved_to(destination: string): number
+    local total = 0
+    for _, row in ipairs(t.ledger_rows("matter_moved")) do
+        local moles: any = row.moles
+        if row.to == destination and type(moles) == "number" then
             total += moles
         end
     end
@@ -138,7 +150,7 @@ local CAPACITY_CLINIC = [==[(
             (3, 3, "player_spawn", { "jobs": "assistant" }),
             (2, 3, "iv_drip"),
         ],
-        items: [(4, 4, "blood_pack.o_minus")],
+        items: [(4, 4, "blood_pack"), (4, 2, "blood_pack.o_minus")],
     )],
 )]==]
 
@@ -333,19 +345,41 @@ assert(#t.script_errors() == 0, "full cutoff and below-safe strokes run without 
 t.world(CAPACITY_CLINIC, SEED)
 local donor = t.join("assistant")
 t.run_seconds(3)
-local headroom_bag = iv_drip.mount(donor, "blood_pack.o_minus", 4, 4, 2, 3)
+local _ = predrain(donor, 4, 2)
+local headroom_bag = iv_drip.mount(donor, "blood_pack.o_minus", 4, 2, 2, 3)
 iv_drip.open(donor, 2, 3)
 iv_drip.rate(donor, 5)
+iv_drip.action(donor, "toggle_mode")
+local full_bag = assert(t.vessel(headroom_bag), "the O- pack starts with a vessel reading")
+assert(full_bag.headspace_l <= 0.001, "the O- pack starts at the full cutoff")
+local infusion_before = blood_in(headroom_bag)
+local transfer_before = moved_from_at("blood pack - O-", 3, 3)
 iv_drip.attach(donor, 2, 3, donor)
-t.run_seconds(2)
+for _ = 1, clock.deadline_ticks(2) + 2 do
+    if moved_from_at("blood pack - O-", 3, 3) > transfer_before then
+        break
+    end
+    t.tick()
+end
+local transfer_after = moved_from_at("blood pack - O-", 3, 3)
+assert(transfer_after > transfer_before, "one full-rate infusion records a real transfer")
 local after_infusion = blood_in(headroom_bag)
-near(5 - after_infusion, 0.25, "one full-rate infusion creates ten units of headroom")
+local stroke_moles = 5 * 2 * 0.025
+near(infusion_before - after_infusion, stroke_moles, "one full-rate infusion removes ten units")
+near((infusion_before - after_infusion) / 0.025, 10, "the infusion creates ten units of headroom")
 local headroom = assert(t.vessel(headroom_bag), "the partially used pack has a vessel reading")
 near(headroom.headspace_l, 0.1, "ten blood units occupy one tenth of a litre", 1e-6)
 
-iv_drip.action(donor, "toggle_mode")
 local before_limited_draw = blood_in(headroom_bag)
-t.run_seconds(2)
+local draw_before = moved_to("blood pack - O-")
+iv_drip.action(donor, "toggle_mode")
+for _ = 1, clock.deadline_ticks(2) + 2 do
+    if moved_to("blood pack - O-") > draw_before then
+        break
+    end
+    t.tick()
+end
+assert(moved_to("blood pack - O-") > draw_before, "the headroom-limited draw records a real transfer")
 local limited_draw = blood_in(headroom_bag) - before_limited_draw
 assert(limited_draw > 0, "the draw fills the available bag headroom")
 assert(limited_draw <= 0.25 + 1e-9, "ten units of headroom cap the next draw at ten units")

@@ -108,11 +108,15 @@ function iv_drip.drag_to_patient(
 end
 
 function iv_drip.attach(actor: number, stand_x: number, stand_y: number, patient: number): ()
+    local stand = assert(t.structure_at(stand_x, stand_y), "attach finds the IV stand")
+    local before_writes = t.ledger_rows("var_set")
+    local last_write = if #before_writes > 0 then before_writes[#before_writes].seq else 0
     local started = assert(
         iv_drip.drag_to_patient(actor, stand_x, stand_y, patient),
         "attach starts the guarded IV connection"
     )
-    local completed = false
+    local completed: SpecLedgerRow? = nil
+    local connected = false
     local interrupted = false
     for _ = 1, clock.deadline_ticks(1) + 2 do
         for _, row in ipairs(t.ledger_rows("do_after_interrupted")) do
@@ -126,21 +130,33 @@ function iv_drip.attach(actor: number, stand_x: number, stand_y: number, patient
         end
         for _, row in ipairs(t.ledger_rows("script_provenance")) do
             if row.cause == started then
-                completed = true
+                completed = row
                 break
             end
         end
-        if completed then
+        for _, row in ipairs(t.ledger_rows("var_set")) do
+            if
+                row.seq > last_write
+                and row.entity == stand.entity
+                and row.key == "lunatic/tfs:iv_connected"
+                and row.value == "true"
+                and completed ~= nil
+                and row.cause == completed.seq
+            then
+                connected = true
+                break
+            end
+        end
+        if completed ~= nil and connected then
             break
         end
         t.tick()
     end
     assert(not interrupted, "attach do_after completes without interruption")
-    assert(completed, "attach observes the completed do_after outcome")
-    local state = assert(t.structure_at(stand_x, stand_y), "attach keeps the IV stand on its tile")
+    assert(completed ~= nil, "attach observes the completed do_after outcome")
     assert(
-        state.state == "iv_drip_injecting" or state.state == "iv_drip_donating",
-        "attach connects the IV line to the named patient"
+        connected,
+        "attach records its completed do_after connection on the IV stand"
     )
 end
 
