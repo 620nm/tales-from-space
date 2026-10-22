@@ -78,9 +78,10 @@ return {
     -- bottle down the hall costs a tg crewman nothing and costs one
     -- here nothing either. Closets and flatpacks are what that field is
     -- for, and neither exists yet.
-    -- A broken one is loose too: `canister_break` sets `density =
+    -- A broken one is walkable and loose: `canister_break` sets `density =
     -- FALSE` (canister.dm:487), and a split shell nobody bolted down
     -- is a thing the wind is welcome to take.
+    passable = { "broken" },
     loose = { "displaced", "broken" },
     -- tg's `can-connector`, which a canister wears for exactly as long
     -- as `connected_port` is set: you can tell across the room whether
