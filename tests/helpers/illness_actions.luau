@@ -23,6 +23,14 @@ local function latest_sequence(event: string): number
     return latest
 end
 
+local function latest_ledger_sequence(): number
+    local latest = 0
+    for _, row in ipairs(t.ledger_rows()) do
+        latest = math.max(latest, row.seq)
+    end
+    return latest
+end
+
 local function effect_after_do_after(
     started: number,
     effect_seq_before: number,
@@ -74,20 +82,48 @@ function actions.take(actor: number, x: number, y: number, id: string): SpecObse
 end
 
 function actions.flip_syringe(actor: number): ()
-    local modes_before = #t.ledger_rows("mode_set")
-    t.messages(actor)
+    local sequence_before = latest_ledger_sequence()
     t.use_self(actor)
     t.run_ticks(2)
-    local modes = t.ledger_rows("mode_set")
-    assert(#modes == modes_before + 1, "flip_syringe records one syringe mode change")
-    local reported_mode = false
-    for _, message in ipairs(t.messages(actor)) do
-        if string.find(message, "set the syringe to", 1, true) ~= nil then
-            reported_mode = true
-            break
+    local rows = t.ledger_rows()
+    local use_self_plays: { [number]: boolean } = {}
+    local provenance_rows: { [number]: boolean } = {}
+    local actor_body = t.body_id(actor)
+    for _, row in ipairs(rows) do
+        if row.seq > sequence_before
+            and row.event == "played"
+            and row.actor.kind == "player"
+            and row.actor.id == actor_body
+            and row.claim == "use_self"
+        then
+            use_self_plays[row.seq] = true
         end
     end
-    assert(reported_mode, "flip_syringe reports the selected syringe mode")
+    for _, row in ipairs(rows) do
+        if row.seq > sequence_before
+            and row.event == "script_provenance"
+            and row.cause ~= nil
+            and use_self_plays[row.cause]
+        then
+            provenance_rows[row.seq] = true
+        end
+    end
+    local mode_change: SpecLedgerRow? = nil
+    for _, row in ipairs(rows) do
+        if row.seq > sequence_before
+            and row.event == "mode_set"
+            and row.cause ~= nil
+            and provenance_rows[row.cause]
+        then
+            assert(mode_change == nil, "flip_syringe records one ModeSet outcome")
+            mode_change = row
+        end
+    end
+    assert(mode_change ~= nil, "flip_syringe records its use_self ModeSet outcome")
+    assert(
+        type(mode_change.mode) == "number" and (mode_change.mode == 0 or mode_change.mode == 1),
+        "flip_syringe records the selected syringe mode"
+    )
 end
 
 function actions.draw_from_vessel(actor: number, x: number, y: number, vessel: SpecObservedTarget): ()

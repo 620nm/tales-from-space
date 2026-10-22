@@ -25,14 +25,32 @@ function iv_drip.mount(
     stand_y: number
 ): SpecObservedTarget
     local item = assert(t.target_at(player, item_x, item_y, item_id), "the named vessel is visible")
-    local slotted_before = #t.ledger_rows("item_slotted")
+    local vessel_name = assert(
+        t.examine(player, item_x, item_y, item),
+        "mount can examine the named vessel"
+    ).title
+    local docked_before = #t.ledger_rows("docked")
+    local stand = stand_target(player, stand_x, stand_y)
     t.click(player, item_x, item_y, item)
     t.run_ticks(2)
-    t.click(player, stand_x, stand_y, stand_target(player, stand_x, stand_y))
+    t.click(player, stand_x, stand_y, stand)
     t.run_ticks(2)
-    local slotted = t.ledger_rows("item_slotted")
-    assert(#slotted == slotted_before + 1, "mount docks one vessel in the IV stand")
+    local docked = t.ledger_rows("docked")
+    assert(#docked == docked_before + 1, "mount records one native dock outcome")
+    local receipt = assert(docked[#docked], "mount records its dock receipt")
+    local actor_body = t.body_id(player)
+    assert(
+        receipt.actor.kind == "player"
+            and receipt.actor.id == actor_body
+            and receipt.item == vessel_name
+            and receipt.machine == "IV drip",
+        "mount receipt names this vessel and the IV drip stand"
+    )
     assert(t.hands(player).held == nil, "mount leaves the vessel in the stand")
+    assert(
+        t.target_at(player, item_x, item_y, item_id) == nil,
+        "mount removes the named vessel from its floor tile"
+    )
     assert(t.vessel(item) ~= nil, "mount keeps the docked vessel observable")
     return item
 end
