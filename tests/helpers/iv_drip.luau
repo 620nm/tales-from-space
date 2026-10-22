@@ -1,6 +1,7 @@
 -- Player-facing operations on the IV stand. Keep callers on the same
 -- observed targets and rendered controls that a crew member can use.
 local ui_controls = require("@helpers/ui_controls")
+local clock = require("@helpers/clock")
 
 local iv_drip = {}
 
@@ -24,10 +25,15 @@ function iv_drip.mount(
     stand_y: number
 ): SpecObservedTarget
     local item = assert(t.target_at(player, item_x, item_y, item_id), "the named vessel is visible")
+    local slotted_before = #t.ledger_rows("item_slotted")
     t.click(player, item_x, item_y, item)
     t.run_ticks(2)
     t.click(player, stand_x, stand_y, stand_target(player, stand_x, stand_y))
     t.run_ticks(2)
+    local slotted = t.ledger_rows("item_slotted")
+    assert(#slotted == slotted_before + 1, "mount docks one vessel in the IV stand")
+    assert(t.hands(player).held == nil, "mount leaves the vessel in the stand")
+    assert(t.vessel(item) ~= nil, "mount keeps the docked vessel observable")
     return item
 end
 
@@ -51,18 +57,73 @@ function iv_drip.drag_to_patient(
     stand_x: number,
     stand_y: number,
     patient: number
-): ()
+): number?
     local patient_x, patient_y = t.pos(patient)
     local stand = stand_target(actor, stand_x, stand_y)
     local body = t.body_target(actor, patient)
+    local started_before = #t.ledger_rows("do_after_started")
+    t.messages(actor)
     t.drag(actor, stand_x, stand_y, stand, patient_x, patient_y, body)
     t.run_ticks(2)
+    local started = t.ledger_rows("do_after_started")
+    local actor_body = t.body_id(actor)
+    local start: SpecLedgerRow? = nil
+    for index = started_before + 1, #started do
+        local row = started[index]
+        if row.actor.kind == "script" and row.actor.triggered_by == actor_body then
+            start = row
+            break
+        end
+    end
+    if start ~= nil then
+        return start.seq
+    end
+    local refused = false
+    for _, message in ipairs(t.messages(actor)) do
+        if string.find(message, "Drag the stand with a docked vessel", 1, true) ~= nil then
+            refused = true
+            break
+        end
+    end
+    assert(refused, "drag_to_patient reports refusal when the endpoint cannot attach")
+    return nil
 end
 
 function iv_drip.attach(actor: number, stand_x: number, stand_y: number, patient: number): ()
-    iv_drip.drag_to_patient(actor, stand_x, stand_y, patient)
-    t.run_seconds(1)
-    t.run_ticks(2)
+    local started = assert(
+        iv_drip.drag_to_patient(actor, stand_x, stand_y, patient),
+        "attach starts the guarded IV connection"
+    )
+    local completed = false
+    local interrupted = false
+    for _ = 1, clock.deadline_ticks(1) + 2 do
+        for _, row in ipairs(t.ledger_rows("do_after_interrupted")) do
+            if row.started == started then
+                interrupted = true
+                break
+            end
+        end
+        if interrupted then
+            break
+        end
+        for _, row in ipairs(t.ledger_rows("script_provenance")) do
+            if row.cause == started then
+                completed = true
+                break
+            end
+        end
+        if completed then
+            break
+        end
+        t.tick()
+    end
+    assert(not interrupted, "attach do_after completes without interruption")
+    assert(completed, "attach observes the completed do_after outcome")
+    local state = assert(t.structure_at(stand_x, stand_y), "attach keeps the IV stand on its tile")
+    assert(
+        state.state == "iv_drip_injecting" or state.state == "iv_drip_donating",
+        "attach connects the IV line to the named patient"
+    )
 end
 
 return iv_drip
