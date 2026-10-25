@@ -22,7 +22,7 @@ return {
     molar_mass = 6.0,
     cv = 10.0,
     phase = "gas_only",
-    visible = { moles = 0.25, factor = 20 },
+    visible = { mol_per_m3 = 0.25, factor = 20 },
     dangerous = true,
     -- Where this sits in a tool that offers every substance there is
     -- (docs/MAP-PROPERTIES.md, the recipe panel). Under the air a station is

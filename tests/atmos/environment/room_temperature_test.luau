@@ -1,5 +1,6 @@
 local network_matter = require("@helpers/network_matter")
 local composition = require("@helpers/composition")
+local atmos_cell = require("@helpers/atmos_cell")
 -- How hot the air in a ROOM is, and what happens to that when somebody
 -- lets a hot pipe into it.
 --
@@ -58,7 +59,8 @@ t.set_breathing(false)
 
 local T20C = 293.15
 local R_GAS = 8.314
-local TILE_L = 1000.0
+-- One tile's volume in litres: a 3 m3 cell (tests/helpers/atmos_cell.luau).
+local TILE_L = 1000.0 * atmos_cell.CELL_VOLUME_M3
 -- Stefan-Boltzmann, W/(m^2 K^4). Not a tg number: tg has no radiation.
 local SIGMA = 5.670374419e-8
 
@@ -229,8 +231,10 @@ t.foul_room(2, 2, "co2", 10.0)
 t.run_seconds(20)
 local fouled = analyzed(p, 2, 2)
 near(room_moles(SEALED), held_0 + 10.0, 1e-6, "ten moles of carbon dioxide went in")
+-- Ten moles into 6 cells of 3 m3 is a third of the rise the same ten moles
+-- gave 6 cells of 1 m3 (3.0 kPa there, 1.0 kPa here; measured 1.35 kPa).
 assert(
-    assert(t.room_pressure(2, 2)) > kpa_0 + 3.0,
+    assert(t.room_pressure(2, 2)) > kpa_0 + 3.0 / atmos_cell.CELL_VOLUME_M3,
     "the room is over-pressured for it: " .. kpa_0 .. " -> " .. assert(t.room_pressure(2, 2))
 )
 assert(
@@ -349,9 +353,12 @@ near(
 local c_air_0 = n_room_0 * cv
 local c_deck = deck_capacity(ROOM)
 local deck_e0 = deck_energy(ROOM)
+-- The air per tile holds CELL_VOLUME_M3 times the heat capacity of 1 m3 of
+-- air, so the deck's lead falls by that factor: the floor is
+-- 100 / CELL_VOLUME_M3 (measured 58x; 174x at 1 m3).
 assert(
-    c_deck > c_air_0 * 100.0,
-    "the deck outweighs the air it holds up by two orders of magnitude: "
+    c_deck > c_air_0 * 100.0 / atmos_cell.CELL_VOLUME_M3,
+    "the deck outweighs the air it holds up by the same lead, cell-scaled: "
         .. c_deck
         .. " vs "
         .. c_air_0
@@ -449,9 +456,11 @@ near(
 )
 -- Where it went. The air's share is what it took to WARM the air --
 -- not the joules the injected moles walked in with, which were never
--- the room's to gain.
+-- the room's to gain. The 50x floor is divided by CELL_VOLUME_M3 because
+-- the air it is compared against holds three times as much per tile; the
+-- deck's own capacity is unchanged, so the lead falls by that factor.
 assert(
-    deck_1 - deck_e0 > n_room_1 * cv * (blended - T20C) * 50.0,
+    deck_1 - deck_e0 > n_room_1 * cv * (blended - T20C) * 50.0 / atmos_cell.CELL_VOLUME_M3,
     "the deck took nearly all of it: " .. (deck_1 - deck_e0) .. " J into the steel"
 )
 
@@ -459,7 +468,12 @@ assert(
 -- used to assert and the reason the deck is worth having: a room is not
 -- a bottle of gas, it is a bottle of gas bolted to a tonne of hull.
 local air_only = (pipe_e0 + n_room_0 * cv * T20C) / (n_room_1 * cv)
-assert(air_only > T20C + 50.0, "gas alone would have been scalding: " .. air_only)
+-- The same injected energy is spread over three times the air per tile,
+-- so the gas-alone rise is the 50 K floor divided by CELL_VOLUME_M3.
+assert(
+    air_only > T20C + 50.0 / atmos_cell.CELL_VOLUME_M3,
+    "gas alone would have been scalding: " .. air_only
+)
 assert(blended < T20C + 5.0, "and the room is barely warm instead: " .. T20C .. " -> " .. blended)
 assert(blended > T20C, "warmer, though -- the joules did arrive: " .. blended)
 assert(

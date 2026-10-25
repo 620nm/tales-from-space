@@ -1,5 +1,6 @@
 local clock = require("@helpers/clock")
 local composition = require("@helpers/composition")
+local atmos_cell = require("@helpers/atmos_cell")
 
 -- Free gas, moving by itself. No pipe anywhere on any map below, no
 -- machine, no vent, nobody switching anything on: just rooms, the walls
@@ -181,9 +182,10 @@ local air_0 = sum_over(EVERY, total)
 near(assert(t.room_pressure(2, 2)), 101.325, 0.01, "the west room opens at one atmosphere")
 near(assert(t.room_pressure(6, 3)), 101.325, 0.01, "and so does the east one")
 
-t.foul_room(2, 2, "co2", 16.0)
+-- Sixteen moles a metre-cube, painted as cell_moles(16.0): the same kPa on a 3 m3 cell.
+t.foul_room(2, 2, "co2", atmos_cell.cell_moles(16.0))
 t.tick()
-near(held(2, 2, "co2"), 16.0, 1e-9, "all of it is standing on one tile")
+near(held(2, 2, "co2"), atmos_cell.cell_moles(16.0), 1e-9, "all of it is standing on one tile")
 assert(sum_over(EAST, held, "co2") == 0.0, "and none of it is next door yet")
 near(assert(t.room_pressure(6, 3)), 101.325, 0.01, "which the far room's gauge agrees about")
 
@@ -194,24 +196,26 @@ near(assert(t.room_pressure(6, 3)), 101.325, 0.01, "which the far room's gauge a
 -- docs/matter-world/bulk-flow.md). The carbon dioxide itself then
 -- spreads only by step 4's share toward equal partial pressure, which is
 -- diffusion and slow: at a minute the fouled tile still holds about 1.35
--- moles and the far corner about 0.74. Once those moves fall under the
+-- moles per m3 (4.05 moles on its 3 m3 cell) and the far corner about 0.74
+-- per m3. Once those moves fall under the
 -- quantum the rooms go quiet and their group breaks down flat (lunatic
 -- docs/matter-world/groups.md), exact by about 66 s and exact after.
 t.run_seconds(90)
 
+-- Sixteen cell_moles(16) spread over sixteen 3 m3 cells: cell_moles(1.0) each.
 for _, tile in ipairs(EVERY) do
     near(
         held(tile[1], tile[2], "co2"),
-        1.0,
+        atmos_cell.cell_moles(1.0),
         1e-6,
-        "one mole on every tile, including " .. tile[1] .. "," .. tile[2]
+        "one mole's worth on every tile, including " .. tile[1] .. "," .. tile[2]
     )
 end
-near(sum_over(WEST, held, "co2"), 6.0, 1e-6, "six moles' worth in the west room")
-near(sum_over(EAST, held, "co2"), 9.0, 1e-6, "nine in the east one")
-near(sum_over(GAP, held, "co2"), 1.0, 1e-6, "and one standing in the doorway")
-near(sum_over(EVERY, held, "co2"), 16.0, 1e-6, "the sixteen that went in, no more")
-near(sum_over(EVERY, total), air_0 + 16.0, 1e-6, "and the map's whole book with it")
+near(sum_over(WEST, held, "co2"), atmos_cell.cell_moles(6.0), 1e-6, "six moles' worth in the west room")
+near(sum_over(EAST, held, "co2"), atmos_cell.cell_moles(9.0), 1e-6, "nine in the east one")
+near(sum_over(GAP, held, "co2"), atmos_cell.cell_moles(1.0), 1e-6, "and one standing in the doorway")
+near(sum_over(EVERY, held, "co2"), atmos_cell.cell_moles(16.0), 1e-6, "the sixteen that went in, no more")
+near(sum_over(EVERY, total), air_0 + atmos_cell.cell_moles(16.0), 1e-6, "and the map's whole book with it")
 
 -- And the gauges agree, last rather than first: the pressure is a
 -- CONSEQUENCE of the moles being where they are.
@@ -295,13 +299,16 @@ for n, tile in ipairs(SEALED) do
     assert(opening[n].o2 > 0.0 and opening[n].n2 > 0.0, "the sealed room opens breathable")
 end
 
-t.foul_room(1, 1, "co2", 12.0)
+-- Twelve moles per m3 painted on one 3 m3 cell (cell_moles(12.0)); the four
+-- FOULED tiles then share it, so each holds cell_moles(3.0), the same kPa
+-- the 1 m3 cells held.
+t.foul_room(1, 1, "co2", atmos_cell.cell_moles(12.0))
 t.run_seconds(120)
 
 -- The fouled side did everything a fouled side does.
-near(sum_over(FOULED, held, "co2"), 12.0, 1e-6, "the fouled room kept all twelve moles")
+near(sum_over(FOULED, held, "co2"), atmos_cell.cell_moles(12.0), 1e-6, "the fouled room kept all of it")
 for _, tile in ipairs(FOULED) do
-    near(held(tile[1], tile[2], "co2"), 3.0, 1e-6, "spread evenly across its own four tiles")
+    near(held(tile[1], tile[2], "co2"), atmos_cell.cell_moles(3.0), 1e-6, "spread evenly across its own four tiles")
 end
 assert(
     assert(t.room_pressure(1, 1)) > 106.0,
@@ -382,12 +389,12 @@ local FAR = { { 4, 1 }, { 5, 1 } }
 assert(not assert(t.door_at(3, 1)).open, "the airlock starts shut")
 
 local far_kpa_0 = assert(t.room_pressure(4, 1))
-t.foul_room(1, 1, "co2", 10.0)
+t.foul_room(1, 1, "co2", atmos_cell.cell_moles(10.0))
 t.run_seconds(60)
 
 -- Shut, it is the wall: exact on the far side, and exact under the leaf.
-near(sum_over(NEAR, held, "co2"), 10.0, 1e-6, "all ten moles stayed this side")
-near(held(1, 1, "co2"), 5.0, 1e-6, "spread over the two tiles that could reach")
+near(sum_over(NEAR, held, "co2"), atmos_cell.cell_moles(10.0), 1e-6, "all of it stayed this side")
+near(held(1, 1, "co2"), atmos_cell.cell_moles(5.0), 1e-6, "spread over the two tiles that could reach")
 assert(sum_over(LEAF, held, "co2") == 0.0, "the tile under the leaf is its own pocket")
 assert(sum_over(FAR, held, "co2") == 0.0, "and the far room heard NOTHING")
 assert(t.room_pressure(4, 1) == far_kpa_0, "its gauge did not move at all")
@@ -404,19 +411,24 @@ assert(assert(t.door_at(3, 1)).open, "and an unpowered leaf stays where it was l
 
 t.run_seconds(35)
 
--- Five tiles, ten moles: two on each, wherever it is standing.
+-- Five tiles, ten cell_moles(10): cell_moles(2.0) on each, wherever it is standing.
 for _, room in ipairs({ NEAR, LEAF, FAR }) do
     for _, tile in ipairs(room) do
         near(
             held(tile[1], tile[2], "co2"),
-            2.0,
+            atmos_cell.cell_moles(2.0),
             1e-6,
-            "two moles on " .. tile[1] .. "," .. tile[2] .. " once the door is open"
+            "two moles' worth on " .. tile[1] .. "," .. tile[2] .. " once the door is open"
         )
     end
 end
 local crossed = sum_over(NEAR, held, "co2") + sum_over(LEAF, held, "co2")
-near(crossed + sum_over(FAR, held, "co2"), 10.0, 1e-6, "still the ten that went in")
+near(
+    crossed + sum_over(FAR, held, "co2"),
+    atmos_cell.cell_moles(10.0),
+    1e-6,
+    "still the ten that went in"
+)
 near(
     assert(t.room_pressure(1, 1)),
     assert(t.room_pressure(5, 1)),

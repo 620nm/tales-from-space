@@ -195,7 +195,7 @@ t.world(
         ),
     ],
     blends: {
-        "sweltering": (rows: [("o2", 7.756), ("n2", 29.175)], temperature_k: 330.0, amount: per_tile),
+        "sweltering": (rows: [("o2", 7.756), ("n2", 29.175)], temperature_k: 330.0, amount: per_m3),
     },
 )]==],
     0

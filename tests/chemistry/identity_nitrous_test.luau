@@ -264,11 +264,11 @@ t.world(
     blends: {
         // The tank-row fixture's recipe, to the digit: a tank of it at
         // 23 MPa, spread over a canister's two cubic metres.
-        "n2o_23000kpa": (rows: [("n2o", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
+        "n2o_23000kpa": (rows: [("n2o", 9436.868804259688)], temperature_k: 293.15, amount: per_m3),
         // ...and the chamber a mapper fills on purpose
         // (substances/n2o.luau). One atmosphere of it and nothing
         // else: 101.325 kPa over a cubic metre at T20C is 41.57 mol.
-        "sleeping_chamber": (rows: [("n2o", 41.57)], temperature_k: 293.15, amount: per_tile),
+        "sleeping_chamber": (rows: [("n2o", 41.57)], temperature_k: 293.15, amount: per_m3),
     },
 
 )]==],

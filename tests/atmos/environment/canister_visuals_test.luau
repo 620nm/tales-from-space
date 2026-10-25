@@ -94,8 +94,8 @@ t.world(
         ),
     ],
     blends: {
-        "pumped_down": (temperature_k: 293.15, amount: per_tile),
-        "hot_chlorine": (rows: [("chlorine", 50.0)], temperature_k: 1000.0, amount: per_tile),
+        "pumped_down": (temperature_k: 293.15, amount: per_m3),
+        "hot_chlorine": (rows: [("chlorine", 50.0)], temperature_k: 1000.0, amount: per_m3),
     },
 )]==],
     7,

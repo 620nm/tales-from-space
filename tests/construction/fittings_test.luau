@@ -1,4 +1,5 @@
 local network_matter = require("@helpers/network_matter")
+local atmos_cell = require("@helpers/atmos_cell")
 -- How every atmospherics device in the game is placed and taken away.
 --
 -- tg has ONE pattern for this and no exceptions: you never put a machine
@@ -179,7 +180,7 @@ t.world(
         ),
     ],
     blends: {
-        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_m3),
     },
 
 )]==],
@@ -262,10 +263,11 @@ assert(lying_at(2, 1, "connector_port_fitting"), "what came up is a fitting lyin
 t.run_seconds(15)
 assert(assert(network_matter.pressure(5, 1)) < 5.0, "the run the port left is spent")
 
--- The books, taken with everything static. The room is 8x3 tiles of
--- 1 m³, the run is nine lengths of 70 L plus the vent's 200 L mouth,
--- and the bottle is tg's 2000 L. The connector itself is zero-volume.
-local ROOM_M3 = 24.0
+-- The books, taken with everything static. The room is 8x3 cells of
+-- 3 m³ (CELL_VOLUME_M3), the run is nine lengths of 70 L plus the vent's
+-- 200 L mouth, and the bottle is tg's 2000 L. The connector itself is
+-- zero-volume.
+local ROOM_M3 = 24 * atmos_cell.CELL_VOLUME_M3
 local RUN_M3 = 9 * 0.070 + 0.200
 local CAN_M3 = 2.0
 

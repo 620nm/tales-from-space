@@ -1,4 +1,5 @@
 local network_matter = require("@helpers/network_matter")
+local atmos_cell = require("@helpers/atmos_cell")
 -- "The chlorine seems to immediately bleed through the reinforced
 -- glass."
 --
@@ -25,7 +26,9 @@ local network_matter = require("@helpers/network_matter")
 local CHAMBER =
     { { 1, 1 }, { 2, 1 }, { 3, 1 }, { 1, 2 }, { 2, 2 }, { 3, 2 }, { 1, 3 }, { 2, 3 }, { 3, 3 } }
 local OUTSIDE = { { 4, 1 }, { 4, 2 }, { 4, 3 }, { 5, 2 }, { 6, 2 } }
-local SEEDED = 9 * 250.0
+-- The hot chlorine is painted at 250 mol/m3, so each chamber cell holds
+-- cell_moles(250.0) on its 3 m3 (750 mol).
+local SEEDED = 9 * atmos_cell.cell_moles(250.0)
 
 local function chlorine_at(x: number, y: number)
     local g = t.room_gas(x, y)
@@ -103,8 +106,8 @@ t.world(
         ),
     ],
     blends: {
-        "hot_chlorine": (rows: [("chlorine", 250.0)], temperature_k: 1000.0, amount: per_tile),
-        "standard_air": (rows: [("o2", 8.73), ("n2", 32.84)], temperature_k: 293.15, amount: per_tile),
+        "hot_chlorine": (rows: [("chlorine", 250.0)], temperature_k: 1000.0, amount: per_m3),
+        "standard_air": (rows: [("o2", 8.73), ("n2", 32.84)], temperature_k: 293.15, amount: per_m3),
     },
 )]==],
     nil,
@@ -149,8 +152,8 @@ t.world(
         ),
     ],
     blends: {
-        "hot_chlorine": (rows: [("chlorine", 250.0)], temperature_k: 1000.0, amount: per_tile),
-        "standard_air": (rows: [("o2", 8.73), ("n2", 32.84)], temperature_k: 293.15, amount: per_tile),
+        "hot_chlorine": (rows: [("chlorine", 250.0)], temperature_k: 1000.0, amount: per_m3),
+        "standard_air": (rows: [("o2", 8.73), ("n2", 32.84)], temperature_k: 293.15, amount: per_m3),
     },
 )]==],
     nil,

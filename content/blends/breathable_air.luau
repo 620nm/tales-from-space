@@ -14,8 +14,9 @@
 -- copy when it offers the defaults.
 --
 -- The numbers are not typed out; they are the arithmetic spelled again.
--- One tile is 1 m3 and pV/RT at one atmosphere and 293.15 K is what a
--- room full of breathable air holds.
+-- `amount = "per_m3"` makes this a density: moles per cubic metre, which
+-- is p/RT at one atmosphere and 293.15 K. A cell gets that times its own
+-- volume, so a 3 m3 room holds three times what a 1 m3 one does.
 --
 -- tg's own default open turf is the same mixture:
 -- OPENTURF_DEFAULT_ATMOS = "o2=22;n2=82;TEMP=293.15"
@@ -23,9 +24,8 @@
 -- 21.15/78.85 over its 2.5 m3 cell.
 local R = 8.314
 local ONE_ATMOSPHERE_PA = 101325.0
-local TILE_VOLUME_M3 = 1.0
 local T = 293.15
-local n = ONE_ATMOSPHERE_PA * TILE_VOLUME_M3 / (R * T)
+local n = ONE_ATMOSPHERE_PA / (R * T)
 
 return {
     id = "breathable_air",
@@ -36,5 +36,5 @@ return {
         { "n2", n * 0.79 },
     },
     temperature_k = T,
-    amount = "per_tile",
+    amount = "per_m3",
 }

@@ -46,8 +46,8 @@ t.world(
         ),
     ],
     blends: {
-        "pure_co2_supply": (rows: [("co2", 5000.0)], temperature_k: 300.0, amount: per_tile),
-        "mixed_supply": (rows: [("co2", 5000.0), ("o2", 500.0)], temperature_k: 300.0, amount: per_tile),
+        "pure_co2_supply": (rows: [("co2", 5000.0)], temperature_k: 300.0, amount: per_m3),
+        "mixed_supply": (rows: [("co2", 5000.0), ("o2", 500.0)], temperature_k: 300.0, amount: per_m3),
     },
 )]==],
     0,

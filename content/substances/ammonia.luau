@@ -59,9 +59,9 @@ local content = {
     inhale = 0.5,
     metabolism_rate = 0.01,
     -- Faintly yellow-green and thin: tg's MOLES_GAS_VISIBLE threshold
-    -- and FACTOR_GAS_VISIBLE_MAX, so a room has to hold a quarter of a
-    -- mole of it before there is anything to see at all.
-    visible = { moles = 0.25, factor = 20, tint = "#DFE8C0", visual_layer = "gas_haze" },
+    -- and FACTOR_GAS_VISIBLE_MAX, read per cubic metre, so a cell has to
+    -- hold a quarter of a mole per m3 to be visible.
+    visible = { mol_per_m3 = 0.25, factor = 20, tint = "#DFE8C0", visual_layer = "gas_haze" },
     -- What it looks like through glass (tg: other_reagents.dm:1630).
     color = "#404030",
     -- Where this sits in a tool that offers every substance there is

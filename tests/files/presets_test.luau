@@ -78,8 +78,8 @@ t.world(
     blends: {
         // Fifty atmospheres of one gas apiece, which is what a tg gas
         // storage chamber holds.
-        "n2_5000kpa": (rows: [("n2:gas", 2051.493218317323)], temperature_k: 293.15, amount: per_tile),
-        "o2_5000kpa": (rows: [("o2:gas", 2051.493218317323)], temperature_k: 293.15, amount: per_tile),
+        "n2_5000kpa": (rows: [("n2:gas", 2051.493218317323)], temperature_k: 293.15, amount: per_m3),
+        "o2_5000kpa": (rows: [("o2:gas", 2051.493218317323)], temperature_k: 293.15, amount: per_m3),
     },
     levels: [
         (
@@ -259,7 +259,7 @@ t.world(
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
     },
     blends: {
-        "co2_100kpa": (rows: [("co2:gas", 41.029864366346466)], temperature_k: 293.15, amount: per_tile),
+        "co2_100kpa": (rows: [("co2:gas", 41.029864366346466)], temperature_k: 293.15, amount: per_m3),
     },
     levels: [
         (

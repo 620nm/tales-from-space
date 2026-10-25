@@ -1,4 +1,5 @@
 local ui_controls = require("@helpers/ui_controls")
+local atmos_cell = require("@helpers/atmos_cell")
 
 -- The canister's control window: the first machine to wear the
 -- generic settings panel, driven the way a player drives it.
@@ -26,7 +27,7 @@ t.world(
         'c': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
     blends: {
-        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_m3),
     },
     levels: [
         (
@@ -164,9 +165,25 @@ assert(
     assert(t.canister_pressure(2, 2)) < held - 50.0,
     "reopened, the bottle empties into the room: " .. assert(t.canister_pressure(2, 2))
 )
+-- The valve moves litres per second, so the same mole flow raises a room's
+-- pressure at 1/CELL_VOLUME_M3 of the 1 m3 rate: 50 kPa on 1 m3 cells is
+-- 50 / CELL_VOLUME_M3 kPa on the 3 m3 cells of content/capabilities.luau.
+-- The room gained what the bottle gave up. Both are ideal gas at one
+-- temperature, so a pressure drop carries across volumes: the bottle's
+-- drop (kPa, its 2 m3) becomes the room's rise scaled by 2 / (9 cells x
+-- CELL_VOLUME_M3). Half of that is the floor, because the run holds some.
+local CANISTER_M3 = 2.0
+local ROOM_M3 = 9 * atmos_cell.CELL_VOLUME_M3
+local room_now = assert(t.room_pressure(1, 1))
+local bottle_drop = held - assert(t.canister_pressure(2, 2))
 assert(
-    assert(t.room_pressure(1, 1)) > room_held + 50.0,
-    "which is where the gas went: " .. assert(t.room_pressure(1, 1))
+    room_now - room_held > 0.5 * bottle_drop * CANISTER_M3 / ROOM_M3,
+    "which is where the gas went: "
+        .. room_now
+        .. " from "
+        .. room_held
+        .. ", bottle dropped "
+        .. bottle_drop
 )
 
 -- ---------------------------------------------------------------

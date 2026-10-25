@@ -31,8 +31,9 @@
 -- 40 x 25 = 1000 W into its own 40 x 130 = 5200 J/K, which is
 -- 1000 / 5200 = 0.19 K/s while the gas holds the heat alone. In a
 -- walled room the deck under it drinks most of that (a walled tile's
--- deck is ~1.5e5 J/K against the ~4e3 of the air over it), so a sealed
--- room holding a canister per tile climbs ~0.005 K/s = 0.3 K/min, with
+-- deck is ~1.5e5 J/K against the ~4e3 of the air over it, a 1 m3
+-- cell's air; a 3 m3 cell carries three times that), so a sealed
+-- room holding a canister per cell climbs ~0.005 K/s = 0.3 K/min, with
 -- the air standing a few kelvin over the deck within the first minutes
 -- -- warm on a gauge fast, dangerous on the scale of a shift, never a
 -- bomb.
@@ -52,7 +53,7 @@ return {
     phase = { triple = { t = 337.2, kpa = 151.7 }, l_fus = 19.2e3, l_vap = 29.5e3 },
     decay_heat = 25.0,
     density = { solid = 5.09 },
-    visible = { moles = 0.25, factor = 20, tint = "#E9F2E4", visual_layer = "gas_haze" },
+    visible = { mol_per_m3 = 0.25, factor = 20, tint = "#E9F2E4", visual_layer = "gas_haze" },
     -- Where this sits in a tool that offers every substance there is
     -- (docs/MAP-PROPERTIES.md, the recipe panel). With the other poisons,
     -- between nitrous oxide (60) and tritium (40).

@@ -1,4 +1,5 @@
 local network_matter = require("@helpers/network_matter")
+local atmos_cell = require("@helpers/atmos_cell")
 local network_channels = require("@helpers/network_channels")
 
 local ui_controls = require("@helpers/ui_controls")
@@ -383,8 +384,10 @@ local settled_he = assert(network_matter.temperature(1, 1, DISTRO))
 local settled_plain = assert(network_matter.temperature(1, 1, L2))
 assert(settled_he < hot_he - 20.0, "the exchange run gave heat up: " .. settled_he)
 near(settled_plain, hot_plain, 1.0, "the ordinary run gave up none of its own")
+-- The same joules go into a cell whose air holds CELL_VOLUME_M3 times the
+-- 1 m3 cell's heat, so the room's rise is a third of the 1 m3 rise: 0.5 K / 3.
 assert(
-    assert(t.room_temperature(2, 1)) > room_0 + 0.5,
+    assert(t.room_temperature(2, 1)) > room_0 + 0.5 / atmos_cell.CELL_VOLUME_M3,
     "and the room felt it: " .. room_0 .. " -> " .. assert(t.room_temperature(2, 1))
 )
 

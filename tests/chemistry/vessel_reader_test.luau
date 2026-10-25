@@ -19,7 +19,7 @@ t.world(
         'c': (composition: (components: [(component: "station_base")])),
     },
     blends: {
-        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_m3),
     },
     levels: [
         (

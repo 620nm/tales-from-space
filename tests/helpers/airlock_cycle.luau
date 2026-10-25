@@ -1,9 +1,12 @@
 -- One airlock cycle as a spec watches it: a press the guest accepted, then a
 -- leaf at rest and bolted with the guest idle and the controller unfaulted.
 local clock = require("@helpers/clock")
+local atmos_cell = require("@helpers/atmos_cell")
 local cycle = {}
 local FAULT = "The controller has stopped the airlock cycle."
-local TIMEOUT_SECS = 32
+-- The pump moves litres per second, so a chamber of 3 m3 cells takes three
+-- times as long to pump down as a chamber of 1 m3 cells.
+local TIMEOUT_SECS = 32 * atmos_cell.CELL_VOLUME_M3
 
 -- A press mark: how many guest runs the ledger holds just before a press.
 function cycle.mark(): number
@@ -45,7 +48,7 @@ end
 
 -- Step `step` ticks (4) at a time until the door at (x, y or 3) rests `open`
 -- and bolted once the press marked `since` settled; `each` runs before
--- every step. The poll step is ticks; the give-up is 32 seconds under
+-- every step. The poll step is ticks; the give-up is TIMEOUT_SECS under
 -- the booted round's rate. Fails as soon as `observer` hears the
 -- controller stop the cycle; returns all `observer` heard.
 function cycle.until_door(

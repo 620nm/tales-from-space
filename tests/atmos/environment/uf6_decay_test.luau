@@ -37,8 +37,12 @@ end
 local DECAY_W_PER_MOL = 25.0
 local CV_GAS = 130.0
 local CV_SOLID = 166.0
-local GAS_FILL = 3.0 -- mol/tile: 7.3 kPa at deck temperature, under the 11.5 kPa vapour pressure
-local SOLID_FILL = 30.0
+-- Fills are densities (mol per m3, the blends' `per_m3`); a 3 m3 cell holds
+-- three times them. 3 mol/m3 is 7.3 kPa at deck temperature, under the
+-- 11.5 kPa vapour pressure.
+local atmos_cell = require("@helpers/atmos_cell")
+local GAS_FILL_PER_M3 = 3.0
+local SOLID_FILL_PER_M3 = 30.0
 
 t.world(
     [==[(
@@ -72,7 +76,7 @@ t.world(
         "hot_hex": (
             rows: [("uf6", 3.0)],
             temperature_k: 350.0,
-            amount: per_tile,
+            amount: per_m3,
         ),
         // The same substance at the deck's own temperature: under the
         // triple point, so it rests as a SOLID and only its vapour
@@ -82,7 +86,7 @@ t.world(
         "cold_hex": (
             rows: [("uf6", 30.0)],
             temperature_k: 293.15,
-            amount: per_tile,
+            amount: per_m3,
         ),
     },
 )]==],
@@ -134,8 +138,8 @@ local MEASURE_S = 600
 -- ---------------------------------------------------------------
 -- ZERO: THE PAINT LANDED.
 -- ---------------------------------------------------------------
-local fill_a = GAS_FILL * 4.0
-local fill_b = SOLID_FILL * 4.0
+local fill_a = atmos_cell.cell_moles(GAS_FILL_PER_M3) * 4.0
+local fill_b = atmos_cell.cell_moles(SOLID_FILL_PER_M3) * 4.0
 near(
     gas_moles(ROOM_A),
     fill_a,

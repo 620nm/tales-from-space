@@ -84,7 +84,7 @@ t.world(
     // The vent, and the socket under the canister. Without the socket
     // the bottle is furniture.
     blends: {
-        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_m3),
     },
 
 )]==],
@@ -303,7 +303,7 @@ t.world(
         ),
     ],
     blends: {
-        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_m3),
     },
 
 )]==],
@@ -455,7 +455,7 @@ t.world(
     // outside. (4, 1) is deliberately NOT a socket: it is charged main
     // with nowhere to plug in.
     blends: {
-        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_m3),
     },
 
 )]==],
@@ -702,7 +702,7 @@ t.world(
     // (a structure since the constructible-vents cutover) hanging
     // over open space at the end of the line.
     blends: {
-        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_m3),
     },
 
 )]==],

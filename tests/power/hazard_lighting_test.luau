@@ -82,7 +82,7 @@ t.world(
         ),
     ],
     blends: {
-        "thin_nitrogen": (rows: [("n2", 41.6)], temperature_k: 293.15, amount: per_tile),
+        "thin_nitrogen": (rows: [("n2", 41.6)], temperature_k: 293.15, amount: per_m3),
     },
 )]==],
     0
@@ -295,7 +295,7 @@ t.world(
         ),
     ],
     blends: {
-        "thin_nitrogen": (rows: [("n2", 41.6)], temperature_k: 293.15, amount: per_tile),
+        "thin_nitrogen": (rows: [("n2", 41.6)], temperature_k: 293.15, amount: per_m3),
     },
 )]==],
     0

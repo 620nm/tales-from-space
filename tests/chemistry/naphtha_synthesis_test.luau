@@ -96,8 +96,8 @@ t.world(
         ),
     ],
     blends: {
-        "syngas_supply": (rows: [("co2", 600.0), ("hydrogen", 1800.0)], temperature_k: 300.0, amount: per_tile),
-        "carbon_dioxide_supply": (rows: [("co2", 600.0)], temperature_k: 300.0, amount: per_tile),
+        "syngas_supply": (rows: [("co2", 600.0), ("hydrogen", 1800.0)], temperature_k: 300.0, amount: per_m3),
+        "carbon_dioxide_supply": (rows: [("co2", 600.0)], temperature_k: 300.0, amount: per_m3),
     },
 )]==],
     0,

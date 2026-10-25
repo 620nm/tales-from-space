@@ -31,7 +31,7 @@ t.world(
         "burning_mix": (
             rows: [("plasma", 10.0), ("o2", 14.0)],
             temperature_k: 700.0,
-            amount: per_tile,
+            amount: per_m3,
         ),
     },
 )]==],

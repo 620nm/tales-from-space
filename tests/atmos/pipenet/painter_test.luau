@@ -1,4 +1,5 @@
 local composition = require("@helpers/composition")
+local atmos_cell = require("@helpers/atmos_cell")
 
 local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
@@ -118,7 +119,7 @@ t.world(
     ],
 
     blends: {
-        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_m3),
     },
 
 )]==],
@@ -133,7 +134,10 @@ t.run_ticks(2)
 assert(t.hands(p).held == "pipe_painter", "painter in hand")
 
 -- Let the bottle, the line and the hole outside find their standoff.
-t.run_seconds(10)
+-- The vent tops its 3 m3 tile back to its line each pass, so the bottle
+-- spends 3x the moles per second it did on 1 m3 cells (rule 3): every
+-- wait the bottle must survive is divided by CELL_VOLUME_M3.
+t.run_seconds(10 / atmos_cell.CELL_VOLUME_M3)
 
 -- ---- one colour, one net ----
 --
@@ -146,7 +150,7 @@ assert(math.abs(west - east) < 0.01, "one painted run is one pipenet: " .. west 
 
 -- And the bottle is paying for the vent at the far end of it.
 local opening = assert(t.canister_pressure(1, 1))
-t.run_seconds(10)
+t.run_seconds(10 / atmos_cell.CELL_VOLUME_M3) -- the same 3x drain as the standoff
 local spent = opening - assert(t.canister_pressure(1, 1))
 assert(spent > 100.0, "the canister feeds the line: " .. spent .. " kPa spent")
 
@@ -245,7 +249,7 @@ assert(said(p, "Pipe painter set to blue."), "the roster wraps, thirteen long")
 t.click(p, 5, 1)
 t.run_ticks(2)
 assert(said(p, "You paint the pipe blue."), "the stripe comes out")
-t.run_seconds(10)
+t.run_seconds(10 / atmos_cell.CELL_VOLUME_M3) -- the bottle drains into the vent side at 3x
 
 local rejoined_west = assert(network_matter.pressure(2, 1))
 local rejoined_east = assert(network_matter.pressure(7, 1))
@@ -255,7 +259,7 @@ assert(
 )
 
 local resumed = assert(t.canister_pressure(1, 1))
-t.run_seconds(10)
+t.run_seconds(10 / atmos_cell.CELL_VOLUME_M3) -- the same 3x drain as above
 local paying = resumed - assert(t.canister_pressure(1, 1))
 assert(paying > 100.0, "and the bottle is paying for the hole again: " .. paying)
 

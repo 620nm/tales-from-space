@@ -34,7 +34,7 @@ t.world(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     blends: {
-        "n2_1kpa": (rows: [("n2:gas", 0.4102986436634647)], temperature_k: 293.15, amount: per_tile),
+        "n2_1kpa": (rows: [("n2:gas", 0.4102986436634647)], temperature_k: 293.15, amount: per_m3),
     },
     levels: [
         (

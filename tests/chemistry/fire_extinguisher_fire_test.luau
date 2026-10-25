@@ -33,11 +33,14 @@ t.world(
             painted: [(2, 1, "burning_mix"), (6, 1, "burning_mix")],
         ),
     ],
+    // Painted as a density, so each burning cell holds 1.0 + 1.4 mol on its
+    // 3 m3 (1.0 / CELL_VOLUME_M3 and 1.4 / CELL_VOLUME_M3 mol/m3): the fuel
+    // load the extinguisher's charge is sized for.
     blends: {
         "burning_mix": (
-            rows: [("plasma", 1.0), ("o2", 1.4)],
+            rows: [("plasma", 0.3333333333333333), ("o2", 0.4666666666666667)],
             temperature_k: 1200.0,
-            amount: per_tile,
+            amount: per_m3,
         ),
     },
 )]==],

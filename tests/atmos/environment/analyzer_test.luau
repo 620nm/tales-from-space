@@ -1,5 +1,6 @@
 local network_matter = require("@helpers/network_matter")
 local network_channels = require("@helpers/network_channels")
+local atmos_cell = require("@helpers/atmos_cell")
 
 -- The analyzer, and the three things worth pointing it at.
 --
@@ -78,14 +79,16 @@ t.world(
         ),
     ],
     blends: {
-        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_m3),
         // A litre of naphtha on the deck between the two runs, with the
         // room's own air riding along so the tile is wet rather than
         // airless: 112.22 g/mol over 0.75 g/mL is 149.63 mL a mole, so
         // 6.6833 mol is the litre. Naphtha rather than water because this
         // room is sealed and shared -- a volatile would fog every tile
-        // in it and every share below would be a share of the fog.
-        "naphtha_1l": (rows: [("naphtha", 6.6833006594189985), ("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: total),
+        // in it and every share below would be a share of the fog. The air
+        // is the standard 1 m3 density times the 3 m3 cell: 3 x 8.730437114532117
+        // o2 and 3 x 32.84307295466844 n2 (CELL_VOLUME_M3 = 3).
+        "naphtha_1l": (rows: [("naphtha", 6.6833006594189985), ("o2", 26.191311343596351), ("n2", 98.52921886400532)], temperature_k: 293.15, amount: total),
     },
 )]==],
     7
@@ -115,8 +118,11 @@ assert(
     has(air, "Pressure: " .. r2(assert(t.room_pressure(2, 2))) .. " kPa"),
     "the pressure it prints is the pressure the room is at"
 )
--- One room cell is one cubic metre of station.
-assert(has(air, "Volume: 1000 L"), "a tile of room is a thousand litres")
+-- One room cell is 3 m3 of station (`simulation.tile`, content/capabilities.luau).
+assert(
+    has(air, "Volume: " .. tostring(atmos_cell.CELL_VOLUME_M3 * 1000) .. " L"),
+    "a tile of room is three thousand litres"
+)
 assert(
     has(air, "Temperature: 20 °C (293.15 K)"),
     "room temperature, in both scales, tg's T0C apart"

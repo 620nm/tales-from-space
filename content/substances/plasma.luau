@@ -11,8 +11,9 @@
 -- hot.
 --
 -- `visible` is tg's MOLES_GAS_VISIBLE = 0.25 and
--- FACTOR_GAS_VISIBLE_MAX = 20: a quarter mole in a tile is the first
--- thing you can see, and twenty times that is full opacity. The
+-- FACTOR_GAS_VISIBLE_MAX = 20, read per cubic metre: a quarter mole per
+-- m3 is the first thing you can see, and twenty times that is full
+-- opacity. The
 -- THRESHOLD is physics and the TINT is a decision about how to draw it,
 -- which is why both are here and neither is in engine code — the purple
 -- is the one the client has always drawn plasma in (0.75/0.35/0.95 in
@@ -23,7 +24,7 @@ return {
     molar_mass = 120.0,
     cv = 200.0,
     phase = "gas_only",
-    visible = { moles = 0.25, factor = 20, tint = "#BF59F2", visual_layer = "gas_haze" },
+    visible = { mol_per_m3 = 0.25, factor = 20, tint = "#BF59F2", visual_layer = "gas_haze" },
     -- Poison to breathe: past the engine's line every breath costs TOX
     -- in proportion to how thick it is, with no clock (tg's
     -- `safe_plasma_max`).

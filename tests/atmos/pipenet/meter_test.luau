@@ -81,7 +81,7 @@ t.world(
         // atmosphere -- and the bottle and the run are one body of gas
         // while fastened, so the needle stop this spec pins is the
         // one-atmosphere stop.
-        "canister_air": (rows: [("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: per_tile),
+        "canister_air": (rows: [("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: per_m3),
     },
 )]==],
     7

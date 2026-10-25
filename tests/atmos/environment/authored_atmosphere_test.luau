@@ -1,4 +1,5 @@
 local composition = require("@helpers/composition")
+local atmos_cell = require("@helpers/atmos_cell")
 
 -- Map air fixes the outdoor mix; an omitted mix leaves the cold profile free.
 local MAP = [==[(
@@ -13,9 +14,9 @@ local MAP = [==[(
         ),
     ],
     blends: { "%s": (
-        rows: [("co2", 35.0)], temperature_k: 310.0, amount: per_tile,
+        rows: [("co2", 35.0)], temperature_k: 310.0, amount: per_m3,
     ), "room_air": (
-        rows: [("n2", 20.0)], temperature_k: 280.0, amount: per_tile,
+        rows: [("n2", 20.0)], temperature_k: 280.0, amount: per_m3,
     ) },
 )]==]
 
@@ -27,15 +28,17 @@ assert(assert(assert(fixed.profile).atmosphere).air_half_life_s == 60)
 assert(assert(assert(fixed.profile).atmosphere).heat_half_life_s == 120)
 assert(composition.bare(0, 0, "ground"), "absent turf inherits the selected terrain")
 assert(math.abs(assert(t.room_temperature(0, 0)) - 310.0) < 0.01)
+-- The blends are densities (mol per m3); a cell holds its density times the
+-- 3 m3 of `simulation.tile`, so the outdoor cell holds 35 mol/m3 * 3 m3.
 local outside = assert(t.room_gas(0, 0))
-assert(math.abs((outside.co2 or 0) - 35) < 1e-6)
+assert(math.abs((outside.co2 or 0) - atmos_cell.cell_moles(35)) < 1e-6)
 assert(
     (outside.o2 or 0) == 0,
     "the profile cannot replace authored carbon dioxide with breathable air"
 )
 assert(math.abs(assert(t.room_temperature(2, 2)) - 280.0) < 0.01)
 assert(
-    math.abs((assert(t.room_gas(2, 2)).n2 or 0) - 20) < 1e-6,
+    math.abs((assert(t.room_gas(2, 2)).n2 or 0) - atmos_cell.cell_moles(20)) < 1e-6,
     "painted room air stays independent"
 )
 t.foul_room(0, 0, "n2", 10.0)

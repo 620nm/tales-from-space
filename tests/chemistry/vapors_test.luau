@@ -1,6 +1,7 @@
 local clock = require("@helpers/clock")
 local network_matter = require("@helpers/network_matter")
 local composition = require("@helpers/composition")
+local atmos_cell = require("@helpers/atmos_cell")
 
 -- Caustic vapours, end to end: press a button, tip the bottle out, and
 -- the room fills with something that gets into people.
@@ -164,8 +165,9 @@ assert(supply ~= nil and supply.tank ~= nil, "and the valve is open")
 -- a mole loose in an eight-tile closet is a quarter of a kilopascal,
 -- which is three oxy a breath against the five a good breath heals
 -- back: not gentle, INVISIBLE (substances/chlorine.luau). Three
--- bottlefuls is nearly a whole kilopascal and the arithmetic tips. A
--- spec that tipped one bottle would be asserting a coin flip.
+-- bottlefuls is nearly a whole kilopascal in an 8 m3 closet, and the
+-- arithmetic tips. A spec that tipped one bottle would be asserting a coin
+-- flip. (The closet here is 24 m3; the partial-pressure floors below scale.)
 -- ---------------------------------------------------------------
 local PRESS = 1.25
 
@@ -202,12 +204,20 @@ local one = room("chlorine")
 assert(one > 0.5, "one bottleful boiled off into the room: " .. one .. " mol")
 
 -- PV = nRT, and both halves are read off the sim rather than pinned:
--- the closet is eight cubic metres, so the partial pressure the moles
+-- the closet is eight 3 m3 cells (24 m3), so the partial pressure the moles
 -- imply is the partial pressure a gauge would read.
 local function partial()
-    return room("chlorine") * 8.314 * assert(t.room_temperature(2, 1)) / (#ROOM * 1000.0)
+    return room("chlorine")
+        * 8.314
+        * assert(t.room_temperature(2, 1))
+        / (#ROOM * atmos_cell.CELL_VOLUME_M3 * 1000.0)
 end
-assert(partial() > 0.2, "which is a real partial pressure: " .. partial() .. " kPa")
+-- One bottleful in 24 m3 is a third of its partial pressure in an 8 m3
+-- closet, so the 0.2 kPa floor is 0.2 / CELL_VOLUME_M3 here.
+assert(
+    partial() > 0.2 / atmos_cell.CELL_VOLUME_M3,
+    "which is a real partial pressure: " .. partial() .. " kPa"
+)
 
 bottleful()
 local two = room("chlorine")
@@ -215,7 +225,13 @@ assert(two > one, "and the second bottleful put more there: " .. two .. " mol")
 bottleful()
 local three = room("chlorine")
 assert(three > two, "and the third more again: " .. three .. " mol")
-assert(partial() > 0.75, "which is a closet nobody should be standing in: " .. partial() .. " kPa")
+-- Three bottlefuls in 24 m3 is a third of their partial pressure in an
+-- 8 m3 closet (a press is capped at PRESS, so the dose stays at three),
+-- so the 0.75 kPa floor is 0.75 / CELL_VOLUME_M3 here.
+assert(
+    partial() > 0.75 / atmos_cell.CELL_VOLUME_M3,
+    "which is a closet nobody should be standing in: " .. partial() .. " kPa"
+)
 
 -- ---------------------------------------------------------------
 -- THREE: TEN BREATHS.

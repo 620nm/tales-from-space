@@ -93,10 +93,10 @@ local AIRLOCK = [==[
         ),
     ],
     blends: {
-        "vacuum": (temperature_k: 293.15, amount: per_tile),
-        "breathable_air": (rows: [("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: per_tile),
+        "vacuum": (temperature_k: 293.15, amount: per_m3),
+        "breathable_air": (rows: [("o2", 8.730437114532117), ("n2", 32.84307295466844)], temperature_k: 293.15, amount: per_m3),
         "supply": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)],
-            temperature_k: 293.15, amount: per_tile),
+            temperature_k: 293.15, amount: per_m3),
     },
 )
 ]==]

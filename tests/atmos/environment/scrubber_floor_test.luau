@@ -1,5 +1,6 @@
 local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
+local atmos_cell = require("@helpers/atmos_cell")
 
 -- The scrubber's FLOOR: the one thing about this machine that is not
 -- tg's, and the reason a station on a radiating hull stays habitable.
@@ -40,7 +41,7 @@ local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
 
--- The room is six tiles by two, one cubic metre each.
+-- The room is six tiles by two, one 3 m3 cell each (36 m3).
 local ROOM = {}
 for x = 1, 6 do
     for y = 1, 2 do
@@ -68,7 +69,7 @@ end
 -- Reading one tile would be reading the machine's own mouth, which
 -- sloshes for a long time after anything happens to a room.
 local function room_kpa(which)
-    return room_moles(which) * R * T20C / (#ROOM * 1000.0)
+    return room_moles(which) * R * T20C / (#ROOM * atmos_cell.CELL_VOLUME_M3 * 1000.0)
 end
 
 local function pipe_moles(x, y, layer)
@@ -198,17 +199,24 @@ end
 assert(shape ~= nil and shape.on == false, "sieving its named gas, whole air only over the floor")
 
 -- Overfill the room, so there is something to come down FROM and the
--- floor is a place it stops rather than a place it started.
+-- floor is a place it stops rather than a place it started. 10 mol/m3 of
+-- nitrogen, 30 mol a cell: the same 24 kPa overfill the 1 m3 cells took.
 for _, tile in ipairs(ROOM) do
-    assert(t.foul_room(tile[1], tile[2], "n2", 10.0), "gas goes into every tile")
+    assert(
+        t.foul_room(tile[1], tile[2], "n2", atmos_cell.cell_moles(10.0)),
+        "gas goes into every tile"
+    )
 end
 t.tick()
 local fouled = room_kpa()
 assert(fouled > 120.0, "the room is well over its floor: " .. fouled .. " kPa")
 
--- Twelve minutes: five litres a second is a gentle grille, and twelve
--- cubic metres of overfill come down at that pace rather than in one.
-t.run_seconds(720)
+-- Thirty-six minutes. The grille moves 5 litres a second whatever the room
+-- holds, so a room of 3 m3 cells drains at 1/3 the pace of the same room
+-- at 1 m3 cells: 720 s there is 3 x 720 s = 2160 s here, and holding is
+-- 3 x 240 s.
+local DRAIN_SCALE = atmos_cell.CELL_VOLUME_M3
+t.run_seconds(720 * DRAIN_SCALE)
 local settled = room_kpa()
 near(settled, PLACED_FLOOR, 2.0, "the room came down to the floor and stopped")
 assert(
@@ -218,7 +226,7 @@ assert(
 
 -- ...and stays there. A machine that stopped for a tick and then
 -- carried on would look identical to one that stopped, for a tick.
-t.run_seconds(240)
+t.run_seconds(240 * DRAIN_SCALE)
 local held = room_kpa()
 near(held, settled, 1.0, "four more minutes and it has not moved")
 assert(held > 90.0, "a cold room, never an empty one: " .. held .. " kPa")
@@ -305,7 +313,7 @@ local LIVE_SUPPLY = [==[(
         ),
     ],
     blends: {
-        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_m3),
     },
 
 )]==]
@@ -361,8 +369,27 @@ assert(
 -- safe line, so a passer-by is warned about a fact, never about a
 -- setting.
 -- ---------------------------------------------------------------
-local PURGE = string.gsub(
+-- Whole air over no floor drains into the waste main, so the main must hold
+-- the room's air. Its capacity is the scrubber's 200 L port plus 70 L a
+-- length: the two lengths here and the six added along y 2 (x 1..6, joined
+-- to the main at (1,1)) make 0.34 + 6 x 0.07 = 0.76 m3, above the 0.58 m3
+-- the 36 m3 room needs at 50 atm (the scrubber stops at
+-- ATMOS_PUMP_MAX_PRESSURE, scrubber.rs:23-25).
+local MAIN_EXTENSION = ""
+for x = 1, 6 do
+    MAIN_EXTENSION = MAIN_EXTENSION .. string.format(
+        '(x: %d, y: 2, network: "pipe", channel: "l2", kind: "standard", facing: 15),\n                ',
+        x
+    )
+end
+local PURGE_MAIN = string.gsub(
     DEAD_SUPPLY,
+    '%(x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15%),',
+    '(x: 1, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),\n                '
+        .. MAIN_EXTENSION
+)
+local PURGE = string.gsub(
+    PURGE_MAIN,
     '%(2, 1, "air_scrubber", "scrubbing"%)',
     '(2, 1, "air_scrubber", "siphoning", { "rate_lps": 200.0 })'
 )
@@ -380,7 +407,8 @@ assert(
 -- Let it work. The picture flips when the air crosses the safe line,
 -- while nobody touches a control.
 local warned = false
-for _ = 1, 120 do
+-- The same 1/3 drain pace as above: 120 polls of 5 s become 3 x 120.
+for _ = 1, 120 * DRAIN_SCALE do
     t.run_seconds(5)
     local judged = assert(t.structure_at(2, 1))
     if judged.state == "siphoning" then
@@ -394,7 +422,7 @@ for _ = 1, 120 do
 end
 assert(warned, "a room being emptied earns the warning on the deck")
 
-t.run_seconds(600)
+t.run_seconds(600 * DRAIN_SCALE)
 local purged = room_kpa()
 assert(
     purged < 20.0,
@@ -479,14 +507,20 @@ t.set_environment({ sink_k = 293.15, insolation = 0 })
 t.tick()
 
 local air_0 = room_moles("o2") + room_moles("n2")
+-- 10 mol/m3 of carbon dioxide, the same 24 kPa of it the 1 m3 cells held.
 for _, tile in ipairs(ROOM) do
-    assert(t.foul_room(tile[1], tile[2], "co2", 10.0), "the crew have been breathing")
+    assert(
+        t.foul_room(tile[1], tile[2], "co2", atmos_cell.cell_moles(10.0)),
+        "the crew have been breathing"
+    )
 end
 t.tick()
 local co2_0 = room_kpa("co2")
 assert(co2_0 > 20.0, "well over the floor to start with: " .. co2_0 .. " kPa of it")
 
-t.run_seconds(240)
+-- Four minutes on 1 m3 cells; the grille's litres per second clear a 3 m3
+-- cell at a third of the pace, so the same 240 s is 240 x CELL_VOLUME_M3.
+t.run_seconds(240 * DRAIN_SCALE)
 local co2_1 = room_kpa("co2")
 assert(
     co2_1 < co2_0 * 0.05,
@@ -496,13 +530,16 @@ assert(
 -- bench with no vent nothing puts back what it took -- so the room
 -- ends UNDER the floor, by about the carbon dioxide that was still in
 -- it when whole air stopped. The room evens out under the grille, so
--- whole air stops within twenty seconds with some 13 kPa of carbon
--- dioxide left, and the room ends near 87.8 kPa. With a supply vent
--- behind it, that gap is what the vent fills.
+-- whole air stops within 20 x CELL_VOLUME_M3 seconds with some carbon
+-- dioxide left, and the room ends under the floor by that much. With a
+-- supply vent behind it, that gap is what the vent fills.
 local came_down = room_kpa()
 assert(came_down <= PLACED_FLOOR + 2.0, "the room came down to the floor: " .. came_down)
+-- The room cannot end below the floor less every kPa of carbon dioxide it
+-- started with: whole air stops at the floor and only carbon dioxide leaves
+-- after that, so the bound is the floor less the carbon dioxide at the start.
 assert(
-    came_down > 85.0,
+    came_down > PLACED_FLOOR - co2_0,
     "in a room still holding an atmosphere, because the floor is a"
         .. " floor: "
         .. came_down
@@ -514,6 +551,6 @@ assert(
         .. " the waste main with it"
 )
 
-t.run_seconds(240)
+t.run_seconds(240 * DRAIN_SCALE)
 assert(room_kpa("co2") <= co2_1, "four more minutes and it has only come down")
 near(room_kpa(), came_down, 1.0, "and the room has not moved")

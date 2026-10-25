@@ -1,4 +1,5 @@
 local network_matter = require("@helpers/network_matter")
+local atmos_cell = require("@helpers/atmos_cell")
 -- The vents: the two machines that reach out of the plumbing and into
 -- a ROOM, and between them the entire reason a distribution main is
 -- worth laying.
@@ -150,7 +151,7 @@ local SUPPLY_MAP = [==[(
         ),
     ],
     blends: {
-        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_m3),
     },
     // Backbone (L2) under the generator and the APC; room circuit (L1) from the
     // APC's own tile west along the corridor to the vent.
@@ -330,16 +331,21 @@ t.run_seconds(10)
 near(room_moles(ROOM), idle_room, 0.001, "a room at one atmosphere is not touched")
 near(pipe_moles(2, 1), idle_net, 0.001, "and neither is the run behind the vent")
 
--- Foul it well past the siphon line. Thirty moles a tile is what a
--- runaway would put in a corridor; `t.foul_room` is the same
--- precondition setter environment specs use for a crew's exhaust.
+-- Foul it well past the siphon line. Thirty moles a cubic metre (90 on
+-- each 3 m3 cell) is what a runaway would put in a corridor; `t.foul_room`
+-- is the same precondition setter environment specs use for a crew's exhaust.
 for x = 1, 7 do
-    assert(t.foul_room(x, 1, "n2", 30.0), "gas goes into every tile of the room")
+    assert(t.foul_room(x, 1, "n2", atmos_cell.cell_moles(30.0)), "gas goes into every tile of the room")
 end
 t.tick()
 
 local fouled_room = room_moles(ROOM)
-near(fouled_room, idle_room + 210.0, 0.001, "two hundred and ten moles went in")
+near(
+    fouled_room,
+    idle_room + 7 * atmos_cell.cell_moles(30.0),
+    0.001,
+    "seven cells' worth of the foul went in"
+)
 assert(
     assert(t.room_pressure(1, 1)) > SIPHONS_OVER,
     "which puts the vent's own tile over its siphon line: "
@@ -420,7 +426,7 @@ local PASSIVE_MAP = [==[(
         ),
     ],
     blends: {
-        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_m3),
     },
 )]==]
 
@@ -513,18 +519,23 @@ local base_bay = room_moles(BAY)
 local base_net = pipe_moles(3, 1)
 local base_can = assert(t.canister_pressure(5, 1))
 local base_held = base_bay + base_net + moles(base_can, CAN_M3)
+-- The same foul as the vent's, cell_moles(30.0) per tile. The pipe's volume
+-- is not a cell's, so the 5 mol margins on the run are not scaled by
+-- CELL_VOLUME_M3.
+local MOLE_MARGIN = 5.0
+local BAY_FOUL = 7 * atmos_cell.cell_moles(30.0)
 for x = 1, 7 do
-    assert(t.foul_room(x, 1, "n2", 30.0), "gas goes into every tile of the bay")
+    assert(t.foul_room(x, 1, "n2", atmos_cell.cell_moles(30.0)), "gas goes into every tile of the bay")
 end
 t.tick()
 t.run_seconds(120)
 
 assert(
-    pipe_moles(3, 1) > base_net + 5.0,
+    pipe_moles(3, 1) > base_net + MOLE_MARGIN,
     "a fouled room pushes back INTO the line: " .. base_net .. " -> " .. pipe_moles(3, 1) .. " mol"
 )
 assert(
-    room_moles(BAY) < base_bay + 210.0 - 5.0,
+    room_moles(BAY) < base_bay + BAY_FOUL - MOLE_MARGIN,
     "and the bay is lighter than what was put in it: " .. room_moles(BAY) .. " mol"
 )
 assert(
@@ -537,7 +548,7 @@ assert(
 )
 near(
     room_moles(BAY) + pipe_moles(3, 1) + moles(assert(t.canister_pressure(5, 1)), CAN_M3),
-    base_held + 210.0,
+    base_held + BAY_FOUL,
     0.001,
     "and the books balance to the mole across all three holders"
 )

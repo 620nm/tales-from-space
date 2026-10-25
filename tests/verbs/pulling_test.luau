@@ -35,7 +35,7 @@ t.world(
     // Without the socket the bottle is furniture; with it, the bottle
     // starts fastened, which is the state that refuses a grab.
     blends: {
-        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_m3),
     },
 )]==],
     7

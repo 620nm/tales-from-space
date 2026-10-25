@@ -20,5 +20,5 @@ return {
     id = "vacuum",
     name = "Vacuum",
     temperature_k = 2.7,
-    amount = "per_tile",
+    amount = "per_m3",
 }

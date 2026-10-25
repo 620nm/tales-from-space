@@ -1,4 +1,5 @@
 local clock = require("@helpers/clock")
+local atmos_cell = require("@helpers/atmos_cell")
 
 -- A flooded alcove fixture: two deep tiles held behind powered doors.
 --
@@ -62,15 +63,16 @@ assert(
 )
 
 -- ---------------------------------------------------------------
--- And the water is REAL, not a decal: fifty litres out of a cubic
--- metre is five percent of the tile the air had, so the air over
--- the deep end reads higher than the air over a dry one. A picture
--- would not do that.
+-- And the water is REAL, not a decal: fifty litres out of a 3 m3 cell
+-- is 1.7% of the volume the air has (5% at 1 m3), so the air over the deep
+-- end reads about 1.7 kPa higher than over a dry one -- a third of the
+-- 1 m3 rise, so the floor is 1.0 / CELL_VOLUME_M3 kPa. A picture would not
+-- do that.
 -- ---------------------------------------------------------------
 local deep_kpa = assert(t.room_pressure(DEEP[1], DEEP[2]))
 local dry_kpa = assert(t.room_pressure(DRY[1], DRY[2]))
 assert(
-    deep_kpa > dry_kpa + 1.0,
+    deep_kpa > dry_kpa + 1.0 / atmos_cell.CELL_VOLUME_M3,
     ("the slug displaces the air over it: %.2f vs %.2f"):format(deep_kpa, dry_kpa)
 )
 

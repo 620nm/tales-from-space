@@ -20,6 +20,10 @@ Sources: `content/blends/canister_air.luau`,
 
 ## The airs
 
+Every cell is 3 m³ (`simulation.tile`, `content/capabilities.luau`: 1 m × 1 m
+floor under a 3 m level). Blends are densities: `amount = "per_m3"` is moles
+per cubic metre of the holder, and a cell gets that times its volume.
+
 Three blends are what tiles breathe. `breathable_air` is 21/79 at 20 C and
 one atmosphere — tg's `OPENTURF_DEFAULT_ATMOS`
 (`code/__DEFINES/atmospherics/atmos_mapping_helpers.dm:7`), and
@@ -39,7 +43,7 @@ map's fixed `environment.atmosphere_blend` or the selected profile's
 ambient, and recovery tends back toward that recipe afterward (the
 engine's `docs/mapping/environment.md` and
 `docs/matter-world/environment.md`). Painted air stays an explicit
-per-tile choice, and a tile naming a blend the map never declared
+per-cell choice, and a tile naming a blend the map never declared
 refuses the world at parse — content fails closed before a single tick
 (the engine's `docs/map-properties/blends.md`).
 
@@ -67,10 +71,10 @@ the rest of a machine's state.
 `content/blends/canister_air.luau` declares the pack's premixed canister
 charge once, rather than creating a gas-specific canister roster. Tg's
 90-atmosphere maximum and `filled = 0.5` give a 45-atmosphere 21/79 mixture
-at 293.15 K. At one 1 m³ tile, `n = P·V/(R·T)` gives 1870.8 mol, split into
-392.87 mol `o2` and 1477.94 mol `n2`. The blend is authored as a density with
-`amount = "per_tile"`, so the 2 m³ vessel holds 3741.6 mol and reads the same
-4559.6 kPa.
+at 293.15 K. `n = P/(R·T)` gives 1870.8 mol per cubic metre, split into
+392.87 mol `o2` and 1477.94 mol `n2` per m³. The blend is authored as a density
+with `amount = "per_m3"`, so the 2 m³ vessel holds 3741.6 mol and reads the
+same 4559.6 kPa.
 
 Other blends such as `co2_23000kpa` and `n2_5000kpa` are independent authored
 recipes. Their pressure and phase behavior belongs to the substance and matter

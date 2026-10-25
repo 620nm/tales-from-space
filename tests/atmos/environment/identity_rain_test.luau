@@ -24,6 +24,8 @@
 -- station's matter in one reading (sim/holder_kinds.rs) -- so "the gas
 -- went and the substance stayed" is two readings of one fact.
 
+local atmos_cell = require("@helpers/atmos_cell")
+
 local function near(a: number, b: number, slack: number, what: string)
     assert(math.abs(a - b) < slack, what .. ": " .. a .. " vs " .. b)
 end
@@ -52,10 +54,13 @@ t.world(
         // fire_watch_test.luau's own mixture: fuelled, oxidised, and
         // already over the ignition window, so the chamber catches on
         // its own within a pass or two. Nothing in this file lights it.
+        // Painted as a density: 10 and 14 mol per cell on a 3 m3 cell
+        // (10 / CELL_VOLUME_M3 and 14 / CELL_VOLUME_M3 mol/m3), so each
+        // cell carries the same fuel and oxidiser as fire_watch's 1 m3 one.
         "burning_mix": (
-            rows: [("plasma", 10.0), ("o2", 14.0)],
+            rows: [("plasma", 3.3333333333333335), ("o2", 4.666666666666667)],
             temperature_k: 700.0,
-            amount: per_tile,
+            amount: per_m3,
         ),
     },
 )]==],
@@ -113,8 +118,9 @@ assert(room("water") > 1.0, "the hot chamber is still holding it: " .. room("wat
 --
 -- The fire is out of fuel and the hull is radiating into an empty sky.
 -- Water's vapour line at 290 K puts its dew point at under two
--- kilopascals, and there are moles of it in four cubic metres, so the
--- chamber is far past saturation before it is anywhere near cold.
+-- kilopascals, and there are moles of it in twelve cubic metres (four
+-- 3 m3 cells), so the chamber stays far past saturation until it is
+-- anywhere near cold.
 -- ---------------------------------------------------------------
 local booked = t.matter_totals()
 local made = booked.substances.water
@@ -140,7 +146,7 @@ assert(
 local R = 8.314462618
 local warm = warmth()
 local dew_kpa = 101.325 * math.exp((-40660.0 / R) * (1.0 / warm - 1.0 / 373.15))
-local dew_mol = dew_kpa * 1000.0 * 4.0 / (R * warm)
+local dew_mol = dew_kpa * 1000.0 * (#ROOM * atmos_cell.CELL_VOLUME_M3) / (R * warm)
 assert(
     math.abs(left_in_the_air - dew_mol) < 0.25 * dew_mol,
     "the air is holding its dew point and no more: "

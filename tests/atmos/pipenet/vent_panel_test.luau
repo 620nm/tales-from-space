@@ -151,7 +151,7 @@ local BENCH = [==[(
     // A crewman stands ON the pump, which is where an engineer working
     // this end of the run stands: nothing in the plumbing is dense.
     blends: {
-        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_tile),
+        "canister_air": (rows: [("o2", 392.86967015394526), ("n2", 1477.93828296008)], temperature_k: 293.15, amount: per_m3),
     },
 )]==]
 

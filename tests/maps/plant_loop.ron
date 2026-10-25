@@ -138,10 +138,10 @@
         ),
     ],
     blends: {
-        "n2_23000kpa": (rows: [("n2", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
-        "o2_23000kpa": (rows: [("o2", 9436.868804259688)], temperature_k: 293.15, amount: per_tile),
+        "n2_23000kpa": (rows: [("n2", 9436.868804259688)], temperature_k: 293.15, amount: per_m3),
+        "o2_23000kpa": (rows: [("o2", 9436.868804259688)], temperature_k: 293.15, amount: per_m3),
         // Standard air at half an atmosphere: the ward opens thin, so only a
         // working supply leg brings it to its setpoint.
-        "air_50kpa": (rows: [("o2", 4.365218557066058), ("n2", 16.42153647733422)], temperature_k: 293.15, amount: per_tile),
+        "air_50kpa": (rows: [("o2", 4.365218557066058), ("n2", 16.42153647733422)], temperature_k: 293.15, amount: per_m3),
     },
 )

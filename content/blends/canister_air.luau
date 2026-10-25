@@ -6,10 +6,11 @@
 -- canister.dm), 21/79 at room temperature -- so 45 atmospheres, which
 -- in a 2 m3 bottle is 3741.6 moles (docs/ATMOS.md 11).
 --
--- Authored as moles PER TILE (`amount = "per_tile"`), because this blend
--- is a DENSITY and the engine scales it by whatever it is poured into:
--- one tile of this reads 4559.6 kPa, and the 2 m3 bottle holding it
--- reads the same -- pressure is a density, not an amount.
+-- Authored as moles PER CUBIC METRE (`amount = "per_m3"`), because this
+-- blend is a DENSITY and the engine scales it by whatever it is poured
+-- into: each cubic metre holds 1870.8 mol, so the 2 m3 bottle holds
+-- 3741.6 mol and reads the same 4559.6 kPa as one cubic metre of it --
+-- pressure is a density, not an amount.
 --
 -- It is a blend rather than a canister subtype for the reason the whole
 -- Matter Blend table exists: tg has /canister/oxygen beside
@@ -18,10 +19,9 @@
 -- a map says what somebody filled it with.
 local R = 8.314
 local ONE_ATMOSPHERE_PA = 101325.0
-local TILE_VOLUME_M3 = 1.0
 local T = 293.15
 local FILL_ATM = 45.0
-local n = ONE_ATMOSPHERE_PA * FILL_ATM * TILE_VOLUME_M3 / (R * T)
+local n = ONE_ATMOSPHERE_PA * FILL_ATM / (R * T)
 
 return {
     id = "canister_air",
@@ -31,5 +31,5 @@ return {
         { "n2", n * 0.79 },
     },
     temperature_k = T,
-    amount = "per_tile",
+    amount = "per_m3",
 }

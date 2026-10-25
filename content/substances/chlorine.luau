@@ -57,14 +57,14 @@ local content = {
     inhale = 0.9,
     metabolism_rate = 0.02,
     -- The yellow-green everybody recognizes, and it shows SOONER than
-    -- tg's gases do: 0.15 mol against tg's MOLES_GAS_VISIBLE of 0.25,
+    -- tg's gases do: 0.15 mol/m3 against tg's MOLES_GAS_VISIBLE of 0.25,
     -- because a chlorine leak the crew cannot see until it is at a
-    -- quarter mole is a leak they find by breathing it. Full opacity at
-    -- twenty times the threshold, which is tg's ramp. Well clear of the
-    -- floor the engine refuses under — the quantity a room that has
-    -- gone quiet may have swept off it (lunatic docs/MATTER-WORLD.md §3
-    -- step 8).
-    visible = { moles = 0.15, factor = 20, tint = "#C4D64A", visual_layer = "gas_haze" },
+    -- quarter mole per m3 is a leak they find by breathing it. Full
+    -- opacity at twenty times the threshold, which is tg's ramp. Well
+    -- clear of the floor the engine refuses under — the quantity a room
+    -- that has gone quiet may have swept off it (lunatic
+    -- docs/MATTER-WORLD.md §3 step 8).
+    visible = { mol_per_m3 = 0.15, factor = 20, tint = "#C4D64A", visual_layer = "gas_haze" },
     -- Through glass, the colour tg's reagent wears
     -- (tg: other_reagents.dm:1090).
     color = "#FFFB89",

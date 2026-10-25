@@ -1,4 +1,5 @@
 local network_channels = require("@helpers/network_channels")
+local atmos_cell = require("@helpers/atmos_cell")
 
 local ui_controls = require("@helpers/ui_controls")
 
@@ -202,8 +203,11 @@ assert(
 -- own number (content/tuning.luau, engine default 85) and the specs run
 -- against the engine's, so this is the machine crossing a line rather
 -- than anybody moving one.
+-- The grille draws a fixed litres per second out of a 3 m3 cell, so the
+-- air at it falls to the line at a third of the pace it did on 1 m3 cells:
+-- the 240 s guard is 240 x CELL_VOLUME_M3.
 local guard = 0
-while assert(t.structure_at(2, 1)).state ~= "siphoning" and guard < 240 do
+while assert(t.structure_at(2, 1)).state ~= "siphoning" and guard < 240 * atmos_cell.CELL_VOLUME_M3 do
     t.run_seconds(1)
     guard = guard + 1
 end

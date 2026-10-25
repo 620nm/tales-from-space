@@ -145,10 +145,10 @@ return {
         -- four cardinals) and 9 (the whole 3x3 ring, tg's widenet),
         -- each serviced tile billed at the idle draw.
         service = 1,
-        -- The share of the serviced tile's standard gas load the machine
-        -- must take per second to hold the room live: 9.62e-5 of a 1 m3
-        -- tile's standard moles is the old built-in 0.002 mol per pass
-        -- at the 0.5 s atmosphere cadence.
+        -- The share of the serviced cell's standard moles taken per
+        -- second: 9.62e-5. That is 0.002 mol per 0.5 s pass on a 1 m3
+        -- cell and 0.006 mol per pass on this pack's 3 m3 cell
+        -- (`simulation.tile`, content/capabilities.luau).
         live_take_per_s = 9.62e-5,
     },
     build = {

@@ -65,9 +65,9 @@ t.world(
         ),
     ],
     blends: {
-        "haber": (rows: [("n2", 40.0), ("hydrogen", 120.0)], temperature_k: 700.0, amount: per_tile),
-        "cold_haber": (rows: [("n2", 40.0), ("hydrogen", 120.0)], temperature_k: 293.15, amount: per_tile),
-        "thin_haber": (rows: [("n2", 40.0), ("hydrogen", 20.0)], temperature_k: 700.0, amount: per_tile),
+        "haber": (rows: [("n2", 40.0), ("hydrogen", 120.0)], temperature_k: 700.0, amount: per_m3),
+        "cold_haber": (rows: [("n2", 40.0), ("hydrogen", 120.0)], temperature_k: 293.15, amount: per_m3),
+        "thin_haber": (rows: [("n2", 40.0), ("hydrogen", 20.0)], temperature_k: 700.0, amount: per_m3),
     },
 )]==],
     7,

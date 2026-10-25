@@ -63,7 +63,7 @@ t.world(
         ),
     ],
     blends: {
-        "oxygen_supply": (rows: [("o2", 2400.0)], temperature_k: 300.0, amount: per_tile),
+        "oxygen_supply": (rows: [("o2", 2400.0)], temperature_k: 300.0, amount: per_m3),
     },
 )]==],
     0,

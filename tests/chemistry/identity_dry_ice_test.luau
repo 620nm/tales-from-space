@@ -1,4 +1,5 @@
 local ui_controls = require("@helpers/ui_controls")
+local atmos_cell = require("@helpers/atmos_cell")
 
 -- IDENTITY: one carbon dioxide, in all three phases, out of one
 -- canister.
@@ -271,8 +272,10 @@ t.click(p, 1, 2)
 t.run_ticks(4)
 near(liquid(jar), 0.0, 1e-12, "the liquid all went")
 near(tile_co2(1, 2), flashed, 1e-9, "and it is standing on the tile as GAS: " .. tile_co2(1, 2))
+-- The latent heat is a fixed dose into the tile's air, which holds
+-- CELL_VOLUME_M3 times the 1 m3 cell's heat, so the drop is a third: 0.5 K / 3.
 assert(
-    assert(t.room_temperature(1, 2)) < floor_k - 0.5,
+    assert(t.room_temperature(1, 2)) < floor_k - 0.5 / atmos_cell.CELL_VOLUME_M3,
     "which cost the deck it landed on: " .. floor_k .. " -> " .. assert(t.room_temperature(1, 2))
 )
 -- The bottle's gauge falls, and the reason is geometry rather than
@@ -349,8 +352,9 @@ assert(
         .. ice
         .. " mol"
 )
+-- The same sublimation heat into the tile's 3 m3 air: 0.5 K / CELL_VOLUME_M3.
 assert(
-    assert(t.room_temperature(1, 3)) < deck_k - 0.5,
+    assert(t.room_temperature(1, 3)) < deck_k - 0.5 / atmos_cell.CELL_VOLUME_M3,
     "and it is already cooling the tile: " .. deck_k .. " -> " .. assert(t.room_temperature(1, 3))
 )
 
