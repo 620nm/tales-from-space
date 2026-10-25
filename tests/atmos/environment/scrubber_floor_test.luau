@@ -531,8 +531,10 @@ assert(
 -- ends UNDER the floor, by about the carbon dioxide that was still in
 -- it when whole air stopped. The room evens out under the grille, so
 -- whole air stops within 20 x CELL_VOLUME_M3 seconds with some carbon
--- dioxide left, and the room ends under the floor by that much. With a
--- supply vent behind it, that gap is what the vent fills.
+-- dioxide left, and the room ends under the floor by that much: 84.7 kPa
+-- on 3 m3 cells (some 15 kPa of carbon dioxide left at the stop), 87.9 on
+-- 1 m3 cells (some 12). With a supply vent behind it, that gap is what
+-- the vent fills.
 local came_down = room_kpa()
 assert(came_down <= PLACED_FLOOR + 2.0, "the room came down to the floor: " .. came_down)
 -- The room cannot end below the floor less every kPa of carbon dioxide it
@@ -545,6 +547,9 @@ assert(
         .. came_down
         .. " kPa"
 )
+-- And whole air stopped promptly: a stop that lagged by a few kPa of
+-- carbon dioxide would leave the room under 83.
+assert(came_down > 83.0, "whole air stopped at the floor, not after it: " .. came_down .. " kPa")
 assert(
     room_moles("o2") + room_moles("n2") < air_0,
     "and the breathable air the fouling pushed over the floor went down"
