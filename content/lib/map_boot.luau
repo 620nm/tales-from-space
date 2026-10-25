@@ -69,7 +69,7 @@ local function find_seam_landing(map_selector: string, wanted_tag: string): Tile
     if not ok_ext then
         return nil
     end
-    for z = 0, extent.depth - 1 do
+    for z = extent.lowest, extent.lowest + extent.depth - 1 do
         for y = 0, extent.height - 1 do
             for x = 0, extent.width - 1 do
                 local at = sim.map_tile(map_selector, x, y, z)
