@@ -132,16 +132,25 @@ t.tick()
 -- Open the hull. The room empties, and the vent fights the hole and
 -- loses -- which is correct, and which is what makes breaches cost
 -- something other than time.
+--
+-- What the breach costs is per second, and a tall cell pays more of it:
+-- the hole is a CELL_VOLUME_M3 m2 face and the vent tops its
+-- CELL_VOLUME_M3 m3 tile back to its line every pass (lunatic
+-- sim/atmos_machines/vent.rs, `metered`), so the canister drains that
+-- many times as fast as over 1 m3 cells (331 against 110 kPa/s,
+-- measured) into the same 25 kPa standoff. The hole stays open for a
+-- CELL_VOLUME_M3-th of the time, which is the same gas.
 t.fault(2, 1, t.now() + 4)
-t.run_seconds(10)
+t.run_seconds(10 / atmos_cell.CELL_VOLUME_M3)
 assert(t.is_breached(2, 1), "the fault opened the room")
 local emptied = assert(t.room_pressure(2, 2))
 -- It does not reach hard vacuum: the vent is feeding it the whole
 -- time, off a line the bottle equalised to forty atmospheres, and what
 -- the line sends into the room goes straight out the hole. The
 -- standoff sits well below breathable and well above vacuum -- about
--- 17 kPa on this tile, across the room from the vent, from the third
--- second on -- and it is exactly the cost of leaving a breach open.
+-- 25 kPa on this tile, beside the vent, from the first second on
+-- (measured on 3 m3 cells) -- and it is exactly the cost of leaving a
+-- breach open.
 assert(assert(emptied) < 80.0, "the room emptied: " .. emptied)
 assert(assert(emptied) > 10.0, "into a standoff, not a vacuum: " .. emptied)
 
