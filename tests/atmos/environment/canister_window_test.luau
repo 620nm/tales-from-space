@@ -121,9 +121,11 @@ assert(
         .. ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value)
 )
 
--- Three seconds, not until the room reaches 400: a 2 m3 bottle settles
--- a room of nine 3 m3 cells at the setpoint in about 30 s, near 523 kPa,
--- and would leave "max" below almost nothing to pour.
+-- Three seconds, not until the room reaches 400: a 2 m3 bottle brings a
+-- room of nine 3 m3 cells to the setpoint in about 30 s and is left near
+-- 523 kPa, which would leave "max" below almost nothing to pour. Measured
+-- after the 3 s: the room at 228.6 kPa (on 1 m3 cells too) and the bottle
+-- at 2569.4.
 t.run_seconds(3)
 local room_up = assert(t.room_pressure(1, 1))
 local can_down = assert(t.canister_pressure(2, 2))
