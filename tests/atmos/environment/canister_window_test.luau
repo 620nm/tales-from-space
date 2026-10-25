@@ -121,7 +121,10 @@ assert(
         .. ui_controls.number(ui_controls.rows(ui_controls.state(p).setpoints)[1].value)
 )
 
-t.run_seconds(60)
+-- Three seconds, not until the room reaches 400: a 2 m3 bottle settles
+-- a room of nine 3 m3 cells at the setpoint in about 30 s, near 523 kPa,
+-- and would leave "max" below almost nothing to pour.
+t.run_seconds(3)
 local room_up = assert(t.room_pressure(1, 1))
 local can_down = assert(t.canister_pressure(2, 2))
 assert(room_up > 200.0, "the room came up with the regulator: " .. room_up)
@@ -141,6 +144,9 @@ assert(
     "the panel reports the valve shut"
 )
 
+-- The room evens out what three seconds poured onto the bottle's tile
+-- before anything is held against the valve.
+t.run_seconds(10)
 local held = assert(t.canister_pressure(2, 2))
 local room_held = assert(t.room_pressure(1, 1))
 -- ...and, while it is shut, wind the regulator all the way to its
@@ -158,28 +164,33 @@ assert(
     "and the room is untouched: " .. assert(t.room_pressure(1, 1))
 )
 
--- Open it, and now both move at once.
+-- Open it at "max", and now both move at once: a big transfer, most of
+-- the bottle into the room. Measured on the pack's 3 m3 cells: held
+-- 2569.4 kPa against a 248.7 kPa room, and after 20 s 417.2 against
+-- 407.8 -- a 2152.2 kPa drop for a 159.1 kPa rise. On 1 m3 cells the 3 s
+-- fill leaves 3896.2 kPa in the bottle, and "max" blows the loose bottle
+-- off its tile within a second (room 909.7 kPa at 20 s), so this step
+-- holds on 3 m3 cells only.
 ui_controls.toggle(p, "valve")
 t.run_seconds(20)
+local can_end = assert(t.canister_pressure(2, 2))
+local room_end = assert(t.room_pressure(1, 1))
 assert(
-    assert(t.canister_pressure(2, 2)) < held - 50.0,
-    "reopened, the bottle empties into the room: " .. assert(t.canister_pressure(2, 2))
+    can_end < 0.5 * held,
+    "reopened, the bottle empties into the room: " .. held .. " -> " .. can_end
 )
--- The valve moves litres per second, so the same mole flow raises a room's
--- pressure at 1/CELL_VOLUME_M3 of the 1 m3 rate: 50 kPa on 1 m3 cells is
--- 50 / CELL_VOLUME_M3 kPa on the 3 m3 cells of content/capabilities.luau.
+assert(room_end > room_held + 100.0, "and the room takes it: " .. room_held .. " -> " .. room_end)
 -- The room gained what the bottle gave up. Both are ideal gas at one
--- temperature, so a pressure drop carries across volumes: the bottle's
--- drop (kPa, its 2 m3) becomes the room's rise scaled by 2 / (9 cells x
--- CELL_VOLUME_M3). Half of that is the floor, because the run holds some.
+-- temperature, so the bottle's drop over its 2 m3 is the room's rise over
+-- 9 cells x CELL_VOLUME_M3. The run holds a little, so 80% is the floor
+-- (measured 99.8%).
 local CANISTER_M3 = 2.0
 local ROOM_M3 = 9 * atmos_cell.CELL_VOLUME_M3
-local room_now = assert(t.room_pressure(1, 1))
-local bottle_drop = held - assert(t.canister_pressure(2, 2))
+local bottle_drop = held - can_end
 assert(
-    room_now - room_held > 0.5 * bottle_drop * CANISTER_M3 / ROOM_M3,
+    room_end - room_held > 0.8 * bottle_drop * CANISTER_M3 / ROOM_M3,
     "which is where the gas went: "
-        .. room_now
+        .. room_end
         .. " from "
         .. room_held
         .. ", bottle dropped "
