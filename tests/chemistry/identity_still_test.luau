@@ -1,3 +1,4 @@
+local atmos_cell = require("@helpers/atmos_cell")
 local ui_controls = require("@helpers/ui_controls")
 
 -- IDENTITY: a still, built out of a hotplate and a closet.
@@ -332,16 +333,18 @@ near(
     1e-9,
     "every mole of spirit is still in the room somewhere"
 )
--- 1e-8 rather than the ethanol line's 1e-9, and the reason is arithmetic
--- rather than a leak: `t.matter_totals` counts the settling sweep's
--- register, and the sweep never takes vapour standing over its own
--- liquid anyway. What moves in the last digits is the TRAJECTORY --
--- the SET of links that carry flux changed, so evaporation and
--- re-condensation land on a slightly different float. Eight parts in
--- a billion of 0.4 mol.
-near(closed.substances.water, booked.substances.water, 1e-8, "and every mole of water")
--- Same 1e-8, and here it is four parts in a TRILLION of the station's
--- 875 mol: the book closes, and what does not repeat to the last bit is
--- which float a differently-ordered run of the same conserved arithmetic
--- lands on.
-near(closed.moles, booked.moles, 1e-8, "and the station's whole matter book closes")
+-- Water's slack is wider than the ethanol line's 1e-9, and what it covers
+-- is a known deletion rather than a leak this spec would want to find: a
+-- mixture drops any entry under MOLAR_EPSILON, 1e-9 mol, without booking
+-- it (lunatic-matter/src/mixture.rs, `Mixture::adjust_ledger`). Water
+-- condensing and re-evaporating across the closet's cells prunes
+-- 2.96e-8 mol over this window on 3 m3 cells and 6.8e-9 on 1 m3 cells,
+-- measured as the whole of the book's drift. So the slack is 1e-7 (that
+-- prune with a x3 margin) on taller cells and today's 1e-8 on 1 m3 ones.
+-- Board card P17.88 books the prunes, and that puts both back to 1e-8.
+local PRUNED_WATER_SLACK = if atmos_cell.CELL_VOLUME_M3 == 1.0 then 1e-8 else 1e-7
+near(closed.substances.water, booked.substances.water, PRUNED_WATER_SLACK, "and every mole of water")
+-- The same slack and the same pruned water: the whole book drifts by
+-- exactly what the water line does, so nothing else in the station
+-- moved.
+near(closed.moles, booked.moles, PRUNED_WATER_SLACK, "and the station's whole matter book closes")
