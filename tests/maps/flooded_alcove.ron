@@ -55,8 +55,10 @@
     ],
     // A side puddle at the east bend is isolated from the deep pair by
     // the shut sill and joins the corridor's spill only after it opens.
-    // Each tile's air is standard air over its 3 m3 cell: 3 x (8.73 o2,
-    // 32.84 n2) mol, because these blends are totals.
+    // CELL-SIZED: a blend has one amount, and the water must be a total
+    // (litres), so each row's o2 and n2 are one 3 m3 cell's standard air,
+    // 3 x (8.73 o2, 32.84 n2) mol. A change to simulation.tile changes
+    // these two numbers; the water rows stay.
     blends: {
         "water_1l": (rows: [("water", 55.51), ("o2", 26.191311343596351), ("n2", 98.52921886400532)], temperature_k: 293.15, amount: total),
         "water_4_5l": (rows: [("water", 249.79500000000002), ("o2", 26.191311343596351), ("n2", 98.52921886400532)], temperature_k: 293.15, amount: total),

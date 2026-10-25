@@ -86,8 +86,9 @@ t.world(
         // 6.6833 mol is the litre. Naphtha rather than water because this
         // room is sealed and shared -- a volatile would fog every tile
         // in it and every share below would be a share of the fog. The air
-        // is the standard 1 m3 density times the 3 m3 cell: 3 x 8.730437114532117
-        // o2 and 3 x 32.84307295466844 n2 (CELL_VOLUME_M3 = 3).
+        // is CELL-SIZED, because the litre makes this blend a total: the
+        // standard 8.730437114532117 o2 and 32.84307295466844 n2 per m3
+        // times one cell (atmos_cell.cell_moles, 3 m3 on this pack).
         "naphtha_1l": (rows: [("naphtha", 6.6833006594189985), ("o2", %.17g), ("n2", %.17g)], temperature_k: 293.15, amount: total),
     },
 )]==], atmos_cell.cell_moles(8.730437114532117), atmos_cell.cell_moles(32.84307295466844)),
