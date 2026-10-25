@@ -8,9 +8,14 @@ local function gas(x: number, y: number, key: string): number
     return room[key] or 0.0
 end
 
--- The bench paints the fire at 0.925 of its 1 m3 density: the centre of the
--- window where one 2 kg charge still suppresses it on a 3 m3 cell (0.90 to
--- 0.95 pass; 0.875 lets the control self-extinguish; 0.975 leaves the target).
+-- The bench paints the fire at 0.925 of its authored density (plasma 1.0,
+-- o2 1.4 mol/m3). One burst carries a fixed 2 kg of CO2
+-- (content/items/tools/fire_extinguisher.luau), and a 3 m3 cell dilutes it
+-- into three times the gas, so the window where the burst puts the target
+-- out while the control burns on moves from the authored 1.0 on 1 m3 cells
+-- to 0.90-0.95 on 3 m3 cells (measured: 0.875 lets the control burn out by
+-- itself, 0.975 leaves the target alight). The charge stays physical; the
+-- extinguisher's effect per tile is D1's (board P17.87).
 local FIRE_DENSITY = 0.925
 
 t.world(
