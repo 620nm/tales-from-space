@@ -126,24 +126,21 @@ assert(made > 1.0, "the books know how much water the fire made: " .. made .. " 
 
 -- The hull radiates over the floor area, which a tile does not change,
 -- against 3 times the heat per cell, so the chamber cools at 1/3 the pace
--- of a 1 m3 cell: 1800 s x CELL_VOLUME_M3 = 5400 s (measured: 310 K is
--- crossed just after 4200 s, and 298.8 K is read at 5400 s).
+-- of a 1 m3 cell: 1800 s x CELL_VOLUME_M3 = 5400 s (measured on 3 m3
+-- cells: 310 K is crossed just after 4200 s, and at 5400 s the air reads
+-- 298.8 K and holds 16% of the steam).
 t.run_seconds(1800 * atmos_cell.CELL_VOLUME_M3)
 assert(warmth() < 310.0, "the chamber cooled: " .. warmth() .. " K")
 
--- The rain takes what the chamber's warmth at the wait above cannot hold.
--- At about 298.8 K that dew load is 46% of the steam (the dew band below),
--- so the rain removes the rest: a fall to a quarter would be a claim about
--- the cooling pace, not about dew. The dew band is the sharp claim.
 local left_in_the_air = room("water")
 assert(
-    left_in_the_air < steam,
-    "and the water came out of the air: " .. steam .. " -> " .. left_in_the_air .. " mol"
+    left_in_the_air < 0.25 * steam,
+    "and most of the water came out of the air: " .. steam .. " -> " .. left_in_the_air .. " mol"
 )
 
 -- ...and what is LEFT in it is exactly what a chamber that warm is
--- entitled to hold: the dew-point load, `P_vap(T)*V/(R*T)` over four
--- cubic metres, off water's own line (substances/water.luau: boil
+-- entitled to hold: the dew-point load, `P_vap(T)*V/(R*T)` over the
+-- chamber's four cells, off water's own line (substances/water.luau: boil
 -- 373.15 K, l_vap 40 660 J/mol). That is the whole claim in one
 -- number -- it did not rain until it was saturated and it did not
 -- stop until it was, which is what a dew point IS. A quarter of
