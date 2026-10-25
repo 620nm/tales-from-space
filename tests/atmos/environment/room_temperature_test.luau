@@ -353,10 +353,12 @@ near(
 local c_air_0 = n_room_0 * cv
 local c_deck = deck_capacity(ROOM)
 local deck_e0 = deck_energy(ROOM)
--- The deck outweighs the air it holds up by 100x (measured 58x with 3 m3
--- per tile).
+-- The deck is per floor tile and the air per cubic metre, so a tile
+-- CELL_VOLUME_M3 tall holds that many times the air over the same deck: the
+-- 100x lead a 1 m3 cell has (174x measured) is 100 / CELL_VOLUME_M3 here
+-- (58x measured).
 assert(
-    c_deck > c_air_0 * 100.0,
+    c_deck > c_air_0 * 100.0 / atmos_cell.CELL_VOLUME_M3,
     "the deck outweighs the air it holds up: "
         .. c_deck
         .. " vs "
@@ -455,10 +457,11 @@ near(
 )
 -- Where it went. The air's share is what it took to WARM the air --
 -- not the joules the injected moles walked in with, which were never
--- the room's to gain. The 50x floor is verbatim: the air it is compared
--- against is the room's own moles.
+-- the room's to gain. Both warm by the same few kelvin, so the deck's
+-- share over the air's is the capacity lead above, and the 50x floor
+-- falls by CELL_VOLUME_M3 with it.
 assert(
-    deck_1 - deck_e0 > n_room_1 * cv * (blended - T20C) * 50.0,
+    deck_1 - deck_e0 > n_room_1 * cv * (blended - T20C) * 50.0 / atmos_cell.CELL_VOLUME_M3,
     "the deck took nearly all of it: " .. (deck_1 - deck_e0) .. " J into the steel"
 )
 

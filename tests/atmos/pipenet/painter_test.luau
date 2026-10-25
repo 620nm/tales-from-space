@@ -1,4 +1,5 @@
 local composition = require("@helpers/composition")
+local atmos_cell = require("@helpers/atmos_cell")
 
 local network_matter = require("@helpers/network_matter")
 local ui_controls = require("@helpers/ui_controls")
@@ -133,7 +134,15 @@ t.run_ticks(2)
 assert(t.hands(p).held == "pipe_painter", "painter in hand")
 
 -- Let the bottle, the line and the hole outside find their standoff.
-t.run_seconds(10)
+--
+-- The vent at the far end tops the open-space tile beside it back to its
+-- line every pass (lunatic sim/atmos_machines/vent.rs, `metered`), and that
+-- tile holds CELL_VOLUME_M3 cubic metres, so the bottle drains that many
+-- times as fast as over a 1 m3 cell (231 against 77 kPa/s, measured). Every
+-- wait the bottle has to outlast is divided by it; the waits that fill or
+-- watch a severed half are not.
+local DRAIN_S = 10 / atmos_cell.CELL_VOLUME_M3
+t.run_seconds(DRAIN_S)
 
 -- ---- one colour, one net ----
 --
@@ -146,7 +155,7 @@ assert(math.abs(west - east) < 0.01, "one painted run is one pipenet: " .. west 
 
 -- And the bottle is paying for the vent at the far end of it.
 local opening = assert(t.canister_pressure(1, 1))
-t.run_seconds(10)
+t.run_seconds(DRAIN_S)
 local spent = opening - assert(t.canister_pressure(1, 1))
 assert(spent > 100.0, "the canister feeds the line: " .. spent .. " kPa spent")
 
@@ -245,7 +254,7 @@ assert(said(p, "Pipe painter set to blue."), "the roster wraps, thirteen long")
 t.click(p, 5, 1)
 t.run_ticks(2)
 assert(said(p, "You paint the pipe blue."), "the stripe comes out")
-t.run_seconds(10)
+t.run_seconds(DRAIN_S)
 
 local rejoined_west = assert(network_matter.pressure(2, 1))
 local rejoined_east = assert(network_matter.pressure(7, 1))
@@ -255,7 +264,7 @@ assert(
 )
 
 local resumed = assert(t.canister_pressure(1, 1))
-t.run_seconds(10)
+t.run_seconds(DRAIN_S)
 local paying = resumed - assert(t.canister_pressure(1, 1))
 assert(paying > 100.0, "and the bottle is paying for the hole again: " .. paying)
 

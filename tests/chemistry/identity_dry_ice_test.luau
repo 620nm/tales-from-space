@@ -386,18 +386,31 @@ near(
     1e-3,
     "half a minute later it is all gas: " .. (room_co2() - carbon_0) .. " mol"
 )
--- And the cold it took has gone into the whole room, which has settled
--- flat: every tile sits a fraction of a kelvin under the 293.15 K the
--- sky holds. The sky is inert and the crew are switched off, so that
--- drop is the ice's alone -- more than a quarter of a kelvin (the
--- sublimation took its 25.2 kJ per mole out of the air) and less than
--- half of one (one jar's share of a whole room's heat capacity).
-local settled = assert(t.room_temperature(4, 3))
+-- And the cold it took has gone into the room: its mean sits under the
+-- 293.15 K the sky holds. The sky is inert and the crew are switched
+-- off, so that drop is the ice's alone -- on 1 m3 cells more than a
+-- quarter of a kelvin (the sublimation took its 25.2 kJ per mole out of
+-- the air) and less than half of one (one jar's share of a whole room's
+-- heat capacity), and a CELL_VOLUME_M3-th of each here, the same joules
+-- in that many times the air.
+--
+-- The MEAN, because the room is not flat on tall cells. The patch that
+-- averages is the one the jar's gas front excites, and a cell joins it
+-- only by moving MINIMUM_AIR_RATIO_TO_MOVE of its own standard (tg
+-- atmos_core.dm:100), so on 3 m3 cells the front reaches seven of the
+-- fifteen tiles and the step it leaves, 0.28 K, is under the 0.5 K a
+-- temperature share needs before it runs (atmos_core.dm:110).
+local room_k = 0.0
+for x = 1, 5 do
+    for y = 1, 3 do
+        room_k = room_k + assert(t.room_temperature(x, y)) / 15
+    end
+end
 assert(
-    settled < 293.15 - 0.25,
-    "the room as a whole is colder for the ice: 293.15 -> " .. settled
+    room_k < 293.15 - 0.25 / atmos_cell.CELL_VOLUME_M3,
+    "the room as a whole is colder for the ice: 293.15 -> " .. room_k
 )
-near(settled, 293.15, 0.5, "and only by what one jar of ice can take")
+near(room_k, 293.15, 0.5 / atmos_cell.CELL_VOLUME_M3, "and only by what one jar of ice can take")
 
 -- ---------------------------------------------------------------
 -- SIX: THE BOOKS.
