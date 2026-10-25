@@ -8,8 +8,13 @@ local function gas(x: number, y: number, key: string): number
     return room[key] or 0.0
 end
 
+-- The bench paints the fire at 0.925 of its 1 m3 density: the centre of the
+-- window where one 2 kg charge still suppresses it on a 3 m3 cell (0.90 to
+-- 0.95 pass; 0.875 lets the control self-extinguish; 0.975 leaves the target).
+local FIRE_DENSITY = 0.925
+
 t.world(
-    [==[ (
+    string.format([==[ (
     name: "extinguisher fire bench",
     tags: ["terrestrial"],
     environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),
@@ -33,17 +38,14 @@ t.world(
             painted: [(2, 1, "burning_mix"), (6, 1, "burning_mix")],
         ),
     ],
-    // Painted as a density, so each burning cell holds 1.0 + 1.4 mol on its
-    // 3 m3 (1.0 / CELL_VOLUME_M3 and 1.4 / CELL_VOLUME_M3 mol/m3): the fuel
-    // load the extinguisher's charge is sized for.
     blends: {
         "burning_mix": (
-            rows: [("plasma", 0.3333333333333333), ("o2", 0.4666666666666667)],
+            rows: [("plasma", %.6f), ("o2", %.6f)],
             temperature_k: 1200.0,
             amount: per_m3,
         ),
     },
-)]==],
+)]==], FIRE_DENSITY, 1.4 * FIRE_DENSITY),
     0,
     "free_build"
 )

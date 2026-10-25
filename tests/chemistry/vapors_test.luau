@@ -48,16 +48,16 @@ t.world(
         (
             rows: [
                 "#######",
-                "#....##",
-                "#oa.g##",
+                "#goa###",
                 "#######",
             ],
-            items: [(1, 2, "bottle"), (4, 2, "oxygen_tank")],
+            items: [(2, 1, "bottle"), (2, 1, "oxygen_tank")],
             machines: [(1, 1, "chem_dispenser")],
             // The waste main runs out under the east wall, so what the scrubber
             // takes has somewhere to go that is not the room. Layer 2, where a
             // scrubber lives.
             networks: [
+                (x: 4, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
                 (x: 5, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
                 (x: 6, y: 1, network: "pipe", channel: "l2", kind: "standard", facing: 15),
                 (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
@@ -66,26 +66,16 @@ t.world(
                 (x: 2, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
                 (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
                 (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-                (x: 4, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-                (x: 4, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-                (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-                (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-                (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-                (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-                (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-                (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-                (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
-                (x: 4, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
             ],
             // tg's scrubber, spelled out: pointed at a roster with the dial
             // wide open and no floor under it. A placement that SAYS nothing
             // is a return grille instead (scrubber_floor_test.luau).
             structures: [
-                (1, 2, "player_spawn", { "jobs": "engineer" }),
-                (4, 2, "player_spawn", { "weight": 0, "jobs": "assistant" }),
-                (4, 1, "player_spawn", { "jobs": "assistant" }),
-                (4, 1, "air_scrubber", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 }),
-                (2, 2, "apc"),
+                (2, 1, "player_spawn", { "jobs": "engineer" }),
+                (1, 1, "player_spawn", { "weight": 0, "jobs": "assistant" }),
+                (3, 1, "player_spawn", { "jobs": "assistant" }),
+                (3, 1, "air_scrubber", { "whole_air": false, "rate_lps": 200.0, "floor_kpa": 0.0 }),
+                (2, 1, "apc"),
             ],
         ),
     ],
@@ -103,8 +93,8 @@ t.run_ticks(2)
 local BREATH = clock.deadline_ticks(8)
 
 local dispenser = t.target_at(chemist, 1, 1)
-local scrubber = t.target_at(diver, 4, 1, "air_scrubber")
-local jar = t.target_at(chemist, 1, 2, "bottle")
+local scrubber = t.target_at(diver, 3, 1, "air_scrubber")
+local jar = t.target_at(chemist, 2, 1, "bottle")
 
 -- What the whole closet holds of a gas. A tipped-out puddle boils on
 -- the tile it landed on and the air moves between tiles the moment it
@@ -114,11 +104,6 @@ local ROOM = {
     { 1, 1 },
     { 2, 1 },
     { 3, 1 },
-    { 4, 1 },
-    { 1, 2 },
-    { 2, 2 },
-    { 3, 2 },
-    { 4, 2 },
 }
 local function room(key: string)
     local n = 0
@@ -141,7 +126,7 @@ end
 -- breathing gear in a bag issues it too late. The tank is the act.
 -- ---------------------------------------------------------------
 assert(t.worn(diver).mask == "breath_mask", "the shift starts with apparatus on")
-t.click(diver, 4, 2, t.target_at(diver, 4, 2, "oxygen_tank"))
+t.click(diver, 2, 1, t.target_at(diver, 2, 1, "oxygen_tank"))
 t.run_ticks(2)
 assert(t.hands(diver).held == "oxygen_tank", "the tank is in hand")
 t.use_self(diver)
@@ -162,17 +147,17 @@ assert(supply ~= nil and supply.tank ~= nil, "and the valve is open")
 -- is 1.25 mol and about four fifths of it comes back out of the bottle
 -- as liquid -- the saturated vapour over the top stays behind, because
 -- a tip takes the CONDENSED phases and nothing else. Three quarters of
--- a mole loose in an eight-tile closet is a quarter of a kilopascal,
+-- a mole loose in a three-tile closet is a fifth of a kilopascal,
 -- which is three oxy a breath against the five a good breath heals
 -- back: not gentle, INVISIBLE (substances/chlorine.luau). Three
--- bottlefuls is nearly a whole kilopascal in an 8 m3 closet, and the
+-- bottlefuls is over half a kilopascal in this 9 m3 closet, and the
 -- arithmetic tips. A spec that tipped one bottle would be asserting a coin
--- flip. (The closet here is 24 m3; the partial-pressure floors below scale.)
+-- flip. (The closet here is three 3 m3 cells, 9 m3.)
 -- ---------------------------------------------------------------
 local PRESS = 1.25
 
 local function bottleful()
-    t.click(chemist, 1, 2, assert(t.target_at(chemist, 1, 2, jar)))
+    t.click(chemist, 2, 1, assert(t.target_at(chemist, 2, 1, jar)))
     t.run_ticks(2)
     assert(t.hands(chemist).held == "bottle", "the bottle is in hand")
 
@@ -193,7 +178,7 @@ local function bottleful()
 
     -- ...and the gesture that costs a shift: a click on the deck tips a
     -- vessel's whole condensed content onto it (items/bottle.luau).
-    composition.click_deck(chemist, 2, 1)
+    composition.click_deck(chemist, 1, 1)
     t.run_seconds(20)
     t.drop(chemist)
     t.tick()
@@ -204,7 +189,7 @@ local one = room("chlorine")
 assert(one > 0.5, "one bottleful boiled off into the room: " .. one .. " mol")
 
 -- PV = nRT, and both halves are read off the sim rather than pinned:
--- the closet is eight 3 m3 cells (24 m3), so the partial pressure the moles
+-- the closet is three 3 m3 cells (9 m3), so the partial pressure the moles
 -- imply is the partial pressure a gauge would read.
 local function partial()
     return room("chlorine")
@@ -212,10 +197,10 @@ local function partial()
         * assert(t.room_temperature(2, 1))
         / (#ROOM * atmos_cell.CELL_VOLUME_M3 * 1000.0)
 end
--- One bottleful in 24 m3 is a third of its partial pressure in an 8 m3
--- closet, so the 0.2 kPa floor is 0.2 / CELL_VOLUME_M3 here.
+-- One bottleful is a real partial pressure in the closet (three 3 m3 cells,
+-- 9 m3): the 0.2 kPa floor is a breath's worth of harm, not a volume.
 assert(
-    partial() > 0.2 / atmos_cell.CELL_VOLUME_M3,
+    partial() > 0.2,
     "which is a real partial pressure: " .. partial() .. " kPa"
 )
 
@@ -225,11 +210,11 @@ assert(two > one, "and the second bottleful put more there: " .. two .. " mol")
 bottleful()
 local three = room("chlorine")
 assert(three > two, "and the third more again: " .. three .. " mol")
--- Three bottlefuls in 24 m3 is a third of their partial pressure in an
--- 8 m3 closet (a press is capped at PRESS, so the dose stays at three),
--- so the 0.75 kPa floor is 0.75 / CELL_VOLUME_M3 here.
+-- Three bottlefuls (a press is capped at PRESS, so the dose stays at three)
+-- in the same 9 m3 closet: the 0.75 kPa floor is the harm of a closet
+-- nobody should be standing in.
 assert(
-    partial() > 0.75 / atmos_cell.CELL_VOLUME_M3,
+    partial() > 0.75,
     "which is a closet nobody should be standing in: " .. partial() .. " kPa"
 )
 
@@ -306,7 +291,7 @@ local before_n2 = room("n2")
 -- THE DIVER WORKS IT, and that is not staging. The chemist is standing
 -- in the cloud with ten breaths of it in them; the crewman who opened a
 -- tank is the crewman who can still cross the room and press a switch.
-t.click(diver, 4, 1, assert(t.target_at(diver, 4, 1, scrubber)))
+t.click(diver, 3, 1, assert(t.target_at(diver, 3, 1, scrubber)))
 t.tick()
 local roster: { [string]: boolean } = {}
 for _, sw in ipairs(ui_controls.rows(ui_controls.state(diver).toggles)) do
@@ -358,6 +343,6 @@ assert(
 assert(math.abs(room("o2") - before_o2) < 0.05 * before_o2, "the oxygen stayed")
 assert(math.abs(room("n2") - before_n2) < 0.05 * before_n2, "and so did the nitrogen")
 assert(
-    assert(t.room_pressure(2, 2)) > 80.0,
-    "the closet still has its atmosphere: " .. assert(t.room_pressure(2, 2)) .. " kPa"
+    assert(t.room_pressure(2, 1)) > 80.0,
+    "the closet still has its atmosphere: " .. assert(t.room_pressure(2, 1)) .. " kPa"
 )

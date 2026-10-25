@@ -1,4 +1,5 @@
 local network_channels = require("@helpers/network_channels")
+local atmos_cell = require("@helpers/atmos_cell")
 
 -- A room that tells its own lights what the air in it is doing.
 --
@@ -338,12 +339,14 @@ t.run_seconds(2)
 -- Gently, and spread out: a single dump of four hundred moles onto
 -- one tile is a pressure spike, and a spike is a wind that slides
 -- loose tools down the room (content/tuning.luau, `wind_slide_pa`).
+-- Each dose is a density times the cell (`atmos_cell.cell_moles`), so the
+-- rooms reach the oxygen share a 1 m3 cell's 80 and 75 mol gave them.
 for _, at in ipairs({ { 3, 1 }, { 5, 1 }, { 7, 1 }, { 9, 1 }, { 11, 1 } }) do
-    assert(t.foul_room(at[1], at[2], "o2", 80.0), "oxygen into the west room")
+    assert(t.foul_room(at[1], at[2], "o2", atmos_cell.cell_moles(80.0)), "oxygen into the west room")
     t.run_seconds(2)
 end
 for _, at in ipairs({ { 14, 1 }, { 16, 1 }, { 18, 1 } }) do
-    assert(t.foul_room(at[1], at[2], "o2", 75.0), "and into the east one")
+    assert(t.foul_room(at[1], at[2], "o2", atmos_cell.cell_moles(75.0)), "and into the east one")
     t.run_seconds(2)
 end
 t.run_seconds(6)

@@ -1,4 +1,5 @@
 local network_matter = require("@helpers/network_matter")
+local atmos_cell = require("@helpers/atmos_cell")
 -- Where the station's air comes from.
 --
 -- The chain is canister -> distribution run -> vent -> room, and it is
@@ -48,30 +49,19 @@ t.world(
         (
             rows: [
                 "#####",
-                "#...#",
-                "#.ac#",
-                "#..g#",
+                "#####",
+                "#g.c#",
                 "#####",
             ],
             items: [(2, 2, "welder")],
             networks: [
                 (x: 2, y: 2, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-                (x: 1, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-                (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
-                (x: 3, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
-                (x: 3, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
                 (x: 1, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
                 (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
                 (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
                 (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
                 (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
                 (x: 3, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
-                (x: 1, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
-                (x: 1, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
-                (x: 2, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
-                (x: 2, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
-                (x: 3, y: 3, network: "power", channel: "l1", kind: "cable", facing: 15),
-                (x: 3, y: 3, network: "power", channel: "l2", kind: "cable", facing: 15),
             ],
             structures: [
                 (2, 2, "player_spawn"),
@@ -94,9 +84,10 @@ t.world(
 local p = t.join()
 t.tick()
 
--- The room is nine tiles of 1 m³; one raw length joins the vent's
--- 200 L mouth to the connector's zero-volume socket.
-local ROOM_M3 = 9.0
+-- The room is three tiles of CELL_VOLUME_M3 each (content/capabilities.luau);
+-- one raw length joins the vent's 200 L mouth to the connector's
+-- zero-volume socket.
+local ROOM_M3 = 3 * atmos_cell.CELL_VOLUME_M3
 local CAN_M3 = 2.0
 
 -- A full canister reads about 45 atm. That is the whole supply.
@@ -144,7 +135,7 @@ t.tick()
 t.fault(2, 1, t.now() + 4)
 t.run_seconds(10)
 assert(t.is_breached(2, 1), "the fault opened the room")
-local emptied = assert(t.room_pressure(2, 3))
+local emptied = assert(t.room_pressure(2, 2))
 -- It does not reach hard vacuum: the vent is feeding it the whole
 -- time, off a line the bottle equalised to forty atmospheres, and what
 -- the line sends into the room goes straight out the hole. The
@@ -160,10 +151,10 @@ t.click(p, 2, 1)
 t.run_seconds(4.5)
 assert(not t.is_breached(2, 1), "welded shut")
 
-local room_before = assert(t.room_pressure(2, 3))
+local room_before = assert(t.room_pressure(2, 2))
 local can_before = assert(t.canister_pressure(3, 2))
 t.run_seconds(60)
-local room_after = assert(t.room_pressure(2, 3))
+local room_after = assert(t.room_pressure(2, 2))
 local can_after = assert(t.canister_pressure(3, 2))
 
 assert(assert(room_after) > 90.0, "the vent brought the room back up: " .. room_after)

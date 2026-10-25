@@ -46,7 +46,7 @@ end
 -- buried under it yet.
 -- ---------------------------------------------------------------
 t.world(
-    [==[(
+    string.format([==[(
     name: "analyzer",
     legend: {
         ' ': (composition: (substrate: Some("space"))),
@@ -88,9 +88,9 @@ t.world(
         // in it and every share below would be a share of the fog. The air
         // is the standard 1 m3 density times the 3 m3 cell: 3 x 8.730437114532117
         // o2 and 3 x 32.84307295466844 n2 (CELL_VOLUME_M3 = 3).
-        "naphtha_1l": (rows: [("naphtha", 6.6833006594189985), ("o2", 26.191311343596351), ("n2", 98.52921886400532)], temperature_k: 293.15, amount: total),
+        "naphtha_1l": (rows: [("naphtha", 6.6833006594189985), ("o2", %.17g), ("n2", %.17g)], temperature_k: 293.15, amount: total),
     },
-)]==],
+)]==], atmos_cell.cell_moles(8.730437114532117), atmos_cell.cell_moles(32.84307295466844)),
     7
 )
 
