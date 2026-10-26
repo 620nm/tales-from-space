@@ -67,7 +67,7 @@ local ROWS = [==[
 t.world([==[(
     name: "cold room",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'a': (composition: (components: [(component: "station_base")])),
@@ -239,7 +239,7 @@ near(assert(network_matter.temperature(1, 1)), frozen, 0.5, "and the gas is left
 t.world([==[(
     name: "dark cold room",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'a': (composition: (components: [(component: "station_base")])),

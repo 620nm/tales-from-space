@@ -28,7 +28,7 @@ t.world(
     [==[(
     name: "transfusion",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
@@ -177,7 +177,7 @@ near(blood_of(donor), stopped_at, 1e-9, "and nothing restores it")
 t.world(
     [==[(
     name: "brawl",
-    legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
+    legend: { ' ': (composition: (substrate: Named("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     levels: [
         (
             rows: [ "#####", "#...#", "#####" ],
@@ -237,7 +237,7 @@ assert(#t.script_errors() == 0, "the harmony handler runs clean")
 t.world(
     [==[(
     name: "faint",
-    legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
+    legend: { ' ': (composition: (substrate: Named("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     levels: [
         (
             rows: [ "####", "#..#", "####" ],

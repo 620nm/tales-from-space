@@ -1,7 +1,6 @@
--- A crewman who steps off a floor onto an open-space tile (`open_space`,
--- content/compositions.luau, tg's /turf/open/openspace) falls to the level
--- below: one `level_changed` row via "fall" over one level, then one
--- `physical_motion_landed` row no sooner than the drop allows.
+-- A crewman who steps off a floor onto an upper-level Open substrate falls
+-- to the level below: one `level_changed` row via "fall" over one level, then
+-- one `physical_motion_landed` row no sooner than the drop allows.
 --
 -- The drop is one tile height, `simulation.tile.height_m` = 3 m
 -- (content/capabilities.luau), under standard gravity 9.80665 m/s2 (the
@@ -24,7 +23,7 @@ t.world(
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
-        'o': (composition: (components: [(component: "open_space")])),
+        'o': (composition: (substrate: Open)),
     },
     levels: [
         (

@@ -83,10 +83,10 @@ t.world(
     [==[(
     name: "decals",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '_': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
-        'l': (composition: (substrate: Some("ground"), components: [(component: "lattice")])),
+        'l': (composition: (substrate: Named("ground"), components: [(component: "lattice")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
     levels: [

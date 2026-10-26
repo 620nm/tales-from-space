@@ -230,11 +230,6 @@ return {
         { id = "reinforced_wall", occludes_substrate = true, label = "reinforced wall", layer = "cover", sprite = "reinforced_wall", cover = barrier_controls(),
             physical = { ambient = 0, support = true, receives_gravity = true, substrate_seal = true, movement_blocking = true,
                 gas_blocking = true, opaque = true, thermal = thermal(312500, 0, 0.03) } },
-        -- A hole a body falls through, no picture (withheld, like the engine's
-        -- demo/hatch). tg's /turf/open/openspace, tgstation/code/game/turfs/open/openspace.dm:1-2.
-        -- No `vertical_opening`: air between levels is a later wave.
-        { id = "open_space", label = "open space", layer = "support",
-            physical = { receives_gravity = true, vertical_passage = { kind = "open" } } },
     },
     networks = {
         { id = "power", label = "power cable", layer = "power", channels = power_channels, channel_preferences = { "l2", "l1", "l3" },

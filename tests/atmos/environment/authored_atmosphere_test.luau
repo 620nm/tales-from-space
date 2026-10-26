@@ -5,7 +5,7 @@ local atmos_cell = require("@helpers/atmos_cell")
 local MAP = [==[(
     name: "Authored surroundings", tags: ["terrestrial"],
     environment: (atmosphere: Exact(true), %s),
-    legend: { 'e': (composition: (substrate: Some("ground")), outdoors: true), '#': (composition: (components: [(component: "station_base"), (component: "wall")])), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])) },
+    legend: { 'e': (composition: (substrate: Named("ground")), outdoors: true), '#': (composition: (components: [(component: "station_base"), (component: "wall")])), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])) },
     levels: [
         (
             rows: ["eeeee", "e###e", "e#.#e", "e###e", "eeeee"],

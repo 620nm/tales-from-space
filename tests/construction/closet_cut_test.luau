@@ -137,7 +137,7 @@ t.world(
     [==[ (
         name: "parallel medical crate cuts",
         legend: {
-            ' ': (composition: (substrate: Some("space"))),
+            ' ': (composition: (substrate: Named("space"))),
             '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
             '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         },
@@ -188,7 +188,7 @@ t.world(
     [==[ (
         name: "same crate cut race",
         legend: {
-            ' ': (composition: (substrate: Some("space"))),
+            ' ': (composition: (substrate: Named("space"))),
             '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
             '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         },
@@ -247,7 +247,7 @@ t.world(
     [==[ (
         name: "cut preserves tile item",
         legend: {
-            ' ': (composition: (substrate: Some("space"))),
+            ' ': (composition: (substrate: Named("space"))),
             '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
             '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         },
@@ -298,7 +298,7 @@ t.world(
     [==[ (
         name: "freezer and locker cuts",
         legend: {
-            ' ': (composition: (substrate: Some("space"))),
+            ' ': (composition: (substrate: Named("space"))),
             '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
             '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         },
@@ -352,7 +352,7 @@ t.world(
     [==[ (
         name: "external closet removal releases later cuts",
         legend: {
-            ' ': (composition: (substrate: Some("space"))),
+            ' ': (composition: (substrate: Named("space"))),
             '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
             '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         },

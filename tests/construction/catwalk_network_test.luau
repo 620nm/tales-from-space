@@ -8,9 +8,9 @@ t.world([==[(
     legend: {
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        's': (composition: (substrate: Some("space"))),
-        'l': (composition: (substrate: Some("space"), components: [(component: "lattice")])),
-        'c': (composition: (substrate: Some("space"), components: [(component: "catwalk")]), outdoors: true),
+        's': (composition: (substrate: Named("space"))),
+        'l': (composition: (substrate: Named("space"), components: [(component: "lattice")])),
+        'c': (composition: (substrate: Named("space"), components: [(component: "catwalk")]), outdoors: true),
     },
     levels: [
         (
@@ -50,7 +50,7 @@ local BRIDGE = [==[(
     legend: {
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        'c': (composition: (substrate: Some("space"), components: [(component: "catwalk")]), outdoors: true),
+        'c': (composition: (substrate: Named("space"), components: [(component: "catwalk")]), outdoors: true),
     },
     levels: [
         (

@@ -12,7 +12,7 @@ local STATION = [==[(
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: []), outdoors: true),
         'b': (composition: (components: [(component: "station_base")]), outdoors: true),
-        'e': (composition: (substrate: Some("space"), components: [(component: "station_base")]), outdoors: true),
+        'e': (composition: (substrate: Named("space"), components: [(component: "station_base")]), outdoors: true),
         'n': (composition: (components: [(component: "station_base")])),
     },
     levels: [

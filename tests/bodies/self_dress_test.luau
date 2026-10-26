@@ -15,7 +15,7 @@
 
 local ARENA = [==[(
     name: "locker room",
-    legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
+    legend: { ' ': (composition: (substrate: Named("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     levels: [
         (
             rows: [ "#####", "#...#", "#####" ],

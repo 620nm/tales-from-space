@@ -7,8 +7,8 @@
         ' ': (composition: (), outdoors: true),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
-        'g': (composition: (substrate: Some("ground")), outdoors: true),
-        'v': (composition: (substrate: Some("space"))),
+        'g': (composition: (substrate: Named("ground")), outdoors: true),
+        'v': (composition: (substrate: Named("space"))),
     },
     levels: [
         (

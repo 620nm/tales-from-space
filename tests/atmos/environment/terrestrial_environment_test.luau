@@ -32,7 +32,7 @@ assert(assert(t.room_temperature(4, 3)) < 293.15, "outside air cools the opened 
 t.world(
     [==[(
     name: "ground construction", tags: ["terrestrial"],
-    legend: { '#': (composition: (components: [(component: "station_base"), (component: "wall")])), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), 'g': (composition: (substrate: Some("ground")), outdoors: true) },
+    legend: { '#': (composition: (components: [(component: "station_base"), (component: "wall")])), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), 'g': (composition: (substrate: Named("ground")), outdoors: true) },
     levels: [
         (
             rows: ["###", "#.g", "###"], structures: [(1, 1, "player_spawn")],
