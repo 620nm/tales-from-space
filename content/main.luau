@@ -81,6 +81,35 @@ sim.define("message", "lunatic/tfs:lib.analyzer_pathogens.rhinovirus_vessel", {
     placeholders = { "name" },
 })
 sim.define("message", "lunatic/tfs:lib.analyzer_pathogens.none", { placeholders = {} })
+sim.define("message", "lunatic/tfs:lib.body_drag.hide_start", { placeholders = {} })
+sim.define("message", "lunatic/tfs:lib.body_drag.stuff_start", { placeholders = {} })
+sim.define("message", "lunatic/tfs:lib.closets.close_knockdown", { placeholders = {} })
+sim.define("message", "lunatic/tfs:lib.climbing.start", { placeholders = {} })
+sim.define("message", "lunatic/tfs:lib.climbing.completed", { placeholders = {} })
+sim.define("message", "lunatic/tfs:lib.climbing.failed", { placeholders = {} })
+
+local climb_refusals = {
+    "body_unavailable",
+    "body_not_standing",
+    "body_not_controllable",
+    "body_observer",
+    "body_in_motion",
+    "support_unavailable",
+    "different_plane",
+    "out_of_reach",
+    "not_disclosed",
+    "inaccessible",
+    "not_climbable",
+    "not_dense",
+    "same_tile",
+    "reserved",
+    "blocked",
+    "cross_vetoed",
+    "offset_out_of_range",
+}
+for _, reason in ipairs(climb_refusals) do
+    sim.define("message", "lunatic/tfs:lib.climbing.refused." .. reason, { placeholders = {} })
+end
 
 -- The shift's fire record.
 --

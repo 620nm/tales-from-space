@@ -23,6 +23,8 @@ local content = {
     -- client-side, so there is no second whole-body picture to swap to.
     sprite = "human",
     playable = true,
+    -- Human-sized bodies use tg's MOB_SIZE_HUMAN (`code/__DEFINES/mobs.dm:62-66`).
+    containment_size = 2,
     -- TfS's adult body mass for impulse exchange. The engine never infers
     -- mass from a body roster or from worn items.
     motion_response = {
@@ -728,10 +730,14 @@ if sim ~= nil then
     local blood_harmony = require("@lib/blood_harmony")
     local host_illness = require("@lib/medical/host_illness")
     local airborne = require("@lib/medical/airborne")
+    local body_drag = require("@lib/body_drag")
+    local climbing = require("@lib/climbing")
     host_illness.attach()
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("move.cross.done", { kind = "react" }, map_boot.on_cross_done)
+    script_definition:handle("interaction.drag", { kind = "replace", route = "drag" }, body_drag.on_drag)
+    script_definition:handle("climb.done", { kind = "react" }, climbing.on_done)
     script_definition:handle(
         "body.spawn.done",
         { kind = "react", route = "lifecycle" },

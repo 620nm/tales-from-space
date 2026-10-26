@@ -14,9 +14,11 @@ optional = []
 native_edges = [
     "movement.bump",
     "movement.cross",
+    "movement.climb",
     "motion.entity_location",
     "interaction.use",
     "interaction.drag",
+    "interaction.container",
     "interaction.act",
     "item_slot.command",
     "item.command",

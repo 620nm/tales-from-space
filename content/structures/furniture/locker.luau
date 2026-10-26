@@ -41,6 +41,10 @@ return {
     drag_slowdown = 1.5,
     container = {
         capacity = 30,
+        body_capacity = 3,
+        max_body_size = 2,
+        occupant_speech = true,
+        occupant_hearing = true,
         closed = "closed",
         open = "open",
         open_sound = "locker_open",

@@ -1,4 +1,5 @@
 local deconstruction = require("@lib/closets/deconstruction")
+local climbing = require("@lib/climbing")
 
 local closet = {}
 
@@ -105,6 +106,35 @@ end
 local function has_contents(target: Handle): boolean
 	local contents = target.contents
 	return contents ~= nil and #contents > 0
+end
+
+local function knock_off_riders(actor: Handle, support: Handle): ()
+	local actor_tile = actor.tile
+	local support_tile = support.tile
+	if actor_tile == nil or support_tile == nil then
+		return
+	end
+	for _, candidate in ipairs(sim.query.range(support_tile, 0, {})) do
+		if candidate ~= actor
+			and sim.body(candidate) ~= nil
+			and sim.is_supported_by(candidate, support)
+		then
+			local candidate_tile = candidate.tile
+			if candidate_tile ~= nil then
+				local direction_x = candidate_tile.x - actor_tile.x
+				local direction_y = candidate_tile.y - actor_tile.y
+				if direction_x ~= 0 or direction_y ~= 0 then
+					sim.force.directed({
+						target = candidate,
+						direction_x = direction_x,
+						direction_y = direction_y,
+						strength = 70,
+					})
+					candidate:hold_posture("knockdown", 4.0)
+				end
+			end
+		end
+	end
 end
 
 local function adjacent(actor: Handle, target: Handle): boolean
@@ -425,6 +455,10 @@ function closet.attach(proto_id: string, opts: Options)
 		local secure = secure_variants[prototype] == true
 		local locked = is_locked(target, secure)
 		local welded = is_welded(target)
+		if ev.gesture == "alt_primary" and climbing.supports_prototype(prototype) then
+			climbing.begin(actor, target)
+			return true
+		end
 		if implement ~= nil
 			and fixture_removal_tool ~= nil
 			and implement.prototype == fixture_removal_tool
@@ -491,6 +525,9 @@ function closet.attach(proto_id: string, opts: Options)
 			return true
 		end
 
+		if ev.gesture == "primary" and implement == nil and climbing.supports_prototype(prototype) then
+			knock_off_riders(actor, target)
+		end
 		if target.state == "closed" and welded then
 			send_message(actor, "lunatic/tfs:lib.closets.welded", target_name)
 			return true
@@ -500,6 +537,16 @@ function closet.attach(proto_id: string, opts: Options)
 			return true
 		end
 		return { replaced = false }
+	end)
+	behavior:handle("climb.done", { kind = "react" }, climbing.on_done)
+	behavior:handle("container.close.done", { kind = "react" }, function(ev: ContainerCloseDonePayload)
+		for _, body in ipairs(ev.bodies) do
+			body:hold_posture("knockdown", 4.0)
+			sim.message.send({
+				recipient = body,
+				message = sim.msg("lunatic/tfs:lib.closets.close_knockdown", {}),
+			})
+		end
 	end)
 end
 

@@ -2,10 +2,10 @@
 -- `code/game/objects/structures/crates_lockers/crates.dm:1-5,226-236,352-356,379-382,411-415`;
 -- secure art: `code/game/objects/structures/crates_lockers/crates/secure.dm:1-5`.
 -- Crates stay dense when open and have no lid animation
--- (`code/game/objects/structures/crates_lockers/crates.dm:11,18`). Climbing,
--- elevation and manifests stay omitted (`code/game/objects/structures/crates_lockers/crates.dm:22-29,41-45`);
--- people storage and paint jobs stay omitted
--- (`code/game/objects/structures/crates_lockers/closets.dm:36-56,122-140`).
+-- (`code/game/objects/structures/crates_lockers/crates.dm:11,18`). Their climb
+-- elevation is 14 pixels (`crates.dm:22-27,41-45`); manifests and paint jobs
+-- stay omitted (`crates.dm:28-29,48-54`). Bodies use the base closet's capacity
+-- (`code/game/objects/structures/crates_lockers/closets.dm:54-56,575-592`).
 return {
     id = "crate",
     script = "crate",
@@ -35,12 +35,22 @@ return {
     opaque = false,
     states = { "closed", "open" },
     state_sprites = { open = "crate_open" },
+    climbable = { elevation = 14 },
+    gestures = { "alt_primary" },
+    interaction_labels = {
+        alt_primary = { label = "lunatic/tfs:action.climb" },
+    },
     loose = true,
     -- Tg's crate drag slowdown is zero (`code/game/objects/structures/crates_lockers/crates.dm:17`).
     drag_slowdown = 0,
     container = {
-        -- Tg's closet item capacity is 30 (`code/game/objects/structures/crates_lockers/closets.dm:56`).
+        -- Tg's closet item and body capacities are independent
+        -- (`code/game/objects/structures/crates_lockers/closets.dm:54-56,575-592`).
         capacity = 30,
+        body_capacity = 3,
+        max_body_size = 2,
+        occupant_speech = true,
+        occupant_hearing = true,
         closed = "closed",
         open = "open",
         -- Tg's crate sounds (`code/game/objects/structures/crates_lockers/crates.dm:13-14`).
