@@ -1,4 +1,3 @@
-local atmos_cell = require("@helpers/atmos_cell")
 local ui_controls = require("@helpers/ui_controls")
 
 -- IDENTITY: a still, built out of a hotplate and a closet.
@@ -333,18 +332,10 @@ near(
     1e-9,
     "every mole of spirit is still in the room somewhere"
 )
--- Water's slack is wider than the ethanol line's 1e-9, and what it covers
--- is a known deletion rather than a leak this spec would want to find: a
--- mixture drops any entry under MOLAR_EPSILON, 1e-9 mol, without booking
--- it (lunatic-matter/src/mixture.rs, `Mixture::adjust_ledger`). Water
--- condensing and re-evaporating across the closet's cells prunes
--- 2.96e-8 mol over this window on 3 m3 cells and 6.8e-9 on 1 m3 cells,
--- measured as the whole of the book's drift. So the slack is 1e-7 (that
--- prune with a x3 margin) on taller cells and today's 1e-8 on 1 m3 ones.
--- Board card P17.88 books the prunes, and that puts both back to 1e-8.
-local PRUNED_WATER_SLACK = if atmos_cell.CELL_VOLUME_M3 == 1.0 then 1e-8 else 1e-7
-near(closed.substances.water, booked.substances.water, PRUNED_WATER_SLACK, "and every mole of water")
--- The same slack and the same pruned water: the whole book drifts by
--- exactly what the water line does, so nothing else in the station
--- moved.
-near(closed.moles, booked.moles, PRUNED_WATER_SLACK, "and the station's whole matter book closes")
+-- Water's slack is wider than the ethanol line's 1e-9 only to cover
+-- floating-point accumulation. Epsilon-pruned terms remain booked in the
+-- engine's nullified register (its docs/MATTER.md), so no unbooked deletion
+-- is hidden here. The whole book uses the same slack: only water drifts.
+local WATER_SLACK = 1e-8
+near(closed.substances.water, booked.substances.water, WATER_SLACK, "and every mole of water")
+near(closed.moles, booked.moles, WATER_SLACK, "and the station's whole matter book closes")
