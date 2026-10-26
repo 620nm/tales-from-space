@@ -17,7 +17,7 @@ t.world(
             rows: ["#########", "#.......#", "#.......#", "#.......#", "#.......#", "#.......#", "#########"],
             structures: [
                 (3, 2, "player_spawn", { "jobs": "engineer" }),
-                (4, 2, "crate.secure", { "access": "command" }),
+                (4, 2, "crate.secure", { "access": "station.command" }),
                 (4, 3, "crate"),
                 (6, 4, "crate"),
                 (3, 5, "locker"),

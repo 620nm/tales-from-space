@@ -10,7 +10,7 @@
 -- into THAT doorway, and a map says them per placement:
 --
 --   (10, 3, "airlock", { "paint": "engineering", "glass": true,
---                        "access": "engineering" })
+--                        "access": "station.engineering" })
 --
 -- Four appearances per livery, not two: the two rests and the two
 -- swings between them (tg's AIRLOCK_FRAME_OPENING/CLOSING appended by
@@ -39,12 +39,12 @@ return {
     fixture = "Door",
     -- tg's two door latches (docs/construction/doors.md §Seals): bolts
     -- hold the leaf where it is and need power and a still leaf to
-    -- throw (airlock.dm:1333,1410); the emergency override answers
-    -- every access check open and leaves a cycle partner alone
+    -- throw (airlock.dm:1333,1410); the emergency latch waives every
+    -- access check's default answer and leaves a cycle partner alone
     -- (door.dm:50,328, airlock.dm:1351), switchable dead or moving.
-    seals = {
-        { id = "bolted", holds_motion = true, needs_power = true, needs_stillness = true },
-        { id = "emergency", waives_claims = true, waives_cycle_link = true },
+    latches = {
+        { id = "bolted", holds = true, needs_power = true, needs_stillness = true },
+        { id = "emergency", waives_access = true, waives_cycle_link = true },
     },
     script = "airlock",
     link = { network_interface = true, role = "endpoint", class = "atmos" },
@@ -125,12 +125,12 @@ return {
         engineering = {
             name_label = "lunatic/tfs:entity.airlock.engineering.name",
             name = "engineering airlock",
-            props = { paint = "engineering", access = "engineering" },
+            props = { paint = "engineering", access = "station.engineering" },
         },
         engineering_glass = {
             name_label = "lunatic/tfs:entity.airlock.engineering_glass.name",
             name = "engineering airlock",
-            props = { paint = "engineering", access = "engineering", glass = true },
+            props = { paint = "engineering", access = "station.engineering", glass = true },
         },
         -- The windowed interior door, which is the one a hallway wants:
         -- the interior livery with the panes glazed, so a corridor can

@@ -64,7 +64,7 @@
                 (4, 1, "connector_port"),
                 (4, 1, "canister", { "blend": "canister_air" }),
                 (2, 2, "air_scrubber"),
-                (6, 1, "air_alarm", { "access": "engineering", "network_1": "network_card", "mount": "north" }),
+                (6, 1, "air_alarm", { "access": "station.engineering", "network_1": "network_card", "mount": "north" }),
                 (9, 1, "access_point", { "mount": "north" }),
             ],
             machines: [

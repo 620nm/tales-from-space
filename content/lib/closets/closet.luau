@@ -324,7 +324,7 @@ end
 
 function closet.attach(proto_id: string, opts: Options)
 	local secure_variants = opts.secure_variants or {}
-	local default_access = opts.default_access or "command"
+	local default_access = opts.default_access or "station.command"
 	local fixture_removal_tool = opts.fixture_removal_tool
 	install_interruption_handlers()
 

@@ -50,12 +50,12 @@ return {
     fixture = "Door",
     -- tg's two door latches (docs/construction/doors.md §Seals): bolts
     -- hold the leaf where it is and need power and a still leaf to
-    -- throw (airlock.dm:1333,1410); the emergency override answers
-    -- every access check open and leaves a cycle partner alone
+    -- throw (airlock.dm:1333,1410); the emergency latch waives every
+    -- access check's default answer and leaves a cycle partner alone
     -- (door.dm:50,328, airlock.dm:1351), switchable dead or moving.
-    seals = {
-        { id = "bolted", holds_motion = true, needs_power = true, needs_stillness = true },
-        { id = "emergency", waives_claims = true, waives_cycle_link = true },
+    latches = {
+        { id = "bolted", holds = true, needs_power = true, needs_stillness = true },
+        { id = "emergency", waives_access = true, waives_cycle_link = true },
     },
     script = "airlock",
     link = { network_interface = true, role = "endpoint", class = "atmos" },
