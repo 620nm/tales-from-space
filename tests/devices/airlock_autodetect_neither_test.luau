@@ -86,8 +86,8 @@ t.click(operator, 7, 4, assert(t.target_at(operator, 7, 4, "airlock_button")))
 t.run_seconds(3.0)
 local d5 = assert(t.door_at(5, 3))
 local d8 = assert(t.door_at(8, 3))
-assert(not d5.open and not d5.seals.bolted, "the west leaf seals open-handed")
-assert(not d8.open and not d8.seals.bolted, "the east leaf seals open-handed")
+assert(not d5.open and not d5.latches.bolted, "the west leaf seals open-handed")
+assert(not d8.open and not d8.latches.bolted, "the east leaf seals open-handed")
 assert((airlock_cycle.pressure() or 0) < 10, "the fan never pumps a seal")
 local heard = table.concat(t.messages(operator), " | ")
 assert(heard:find("sealed", 1, true) ~= nil, "the alarm names the seal: " .. heard)
@@ -103,7 +103,7 @@ t.run_seconds(3.0)
 local d5c = assert(t.door_at(5, 3))
 local d8c = assert(t.door_at(8, 3))
 assert(
-    not d5c.open and not d5c.seals.bolted and not d8c.open and not d8c.seals.bolted,
+    not d5c.open and not d5c.latches.bolted and not d8c.open and not d8c.latches.bolted,
     "nowhere seals again after a reset"
 )
 local heard2 = table.concat(t.messages(operator), " | ")

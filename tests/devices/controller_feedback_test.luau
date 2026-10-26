@@ -160,7 +160,7 @@ assert(
     rows_like("device_outbox") > outbox_before,
     "a joined button does queue its press, so the outbox check has teeth"
 )
-assert(after.open == before.open and after.seals.bolted == before.seals.bolted, "the door is left alone")
+assert(after.open == before.open and after.latches.bolted == before.latches.bolted, "the door is left alone")
 
 -- A burst batched into one packet hears the empty slot once per packet, not per press.
 local _ = t.messages(p)

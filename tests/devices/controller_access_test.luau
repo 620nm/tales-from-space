@@ -7,7 +7,7 @@ local ui_files = require("@helpers/ui_files")
 -- access tag (docs/scripting/controllers.md, "Who a door answers to").
 --
 -- `content/fixtures/airlock.luau` allows every actor-less
--- `door.permission` request, and a program's command carries no actor.
+-- `access.permission` request, and a program's command carries no actor.
 -- So: one leaf, one empty-handed crewman, two paths. By hand the
 -- engineering tag refuses them; through the host the same leaf opens
 -- for the same hand. The gate on the second path is reaching the box
@@ -98,7 +98,7 @@ end
 -- move, so nothing but the claim can be what stops a hand.
 assert(assert(t.structure_at(6, 1)).id == "airlock.engineering", "the variant that says `access`")
 local door = assert(t.door_at(6, 1))
-assert(door.powered and not door.open and not door.seals.bolted, "powered, shut, unbolted")
+assert(door.powered and not door.open and not door.latches.bolted, "powered, shut, unbolted")
 
 -- ---- by hand: refused ----------------------------------------------------
 t.click(crew, 6, 1, assert(t.target_at(crew, 6, 1)))
