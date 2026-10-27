@@ -9,6 +9,12 @@ return {
         ["lunatic/tfs:print_job_failed"] = {
             fields = { machine = "entity", stage = "text", error = "text" },
         },
+        -- A device that still awaited its cap of door and latch completions
+        -- when another order was issued: they are forgotten, so their
+        -- completions are ignored (lib/device_queue.luau).
+        ["lunatic/tfs:device_orders_dropped"] = {
+            fields = { device = "entity", dropped = "int" },
+        },
         -- A round that did not start: no host map named, or the install of
         -- the named one was refused (lib/map_boot.luau).
         ["lunatic/tfs:map_boot_failed"] = {

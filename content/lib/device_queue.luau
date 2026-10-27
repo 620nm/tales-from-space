@@ -16,6 +16,12 @@ function device_queue.expect(device: Handle, family: string, request_id: string)
         count += 1
     end
     if count >= MAX_EXPECTED then
+        pcall(function()
+            sim.ledger.record({
+                kind = "lunatic/tfs:device_orders_dropped",
+                fields = { device = device, dropped = count },
+            })
+        end)
         orders = {}
     end
     orders[family .. "/" .. request_id] = true

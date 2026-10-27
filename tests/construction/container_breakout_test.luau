@@ -93,18 +93,17 @@ local function pick_up_here(player: number, id: string): ()
     assert(t.hands(player).held == id, "the engineer holds the " .. id)
 end
 
-local function empty_click_holder(player: number): ()
+local function empty_click_holder(player: number, id: string): ()
     t.drop(player)
     t.run_ticks(2)
-    t.click(player, HOLDER_X, HOLDER_Y)
-    t.run_ticks(2)
+    click_holder(player, id)
 end
 
 -- The engineer opens the holder, the occupant gets onto its tile and hides in
 -- it, and the holder shuts. A locker is passable open; a crate stays dense, so
 -- its occupant climbs on first.
 local function seal_occupant_in(occupant: number, engineer: number, id: string, climbs: boolean): ()
-    empty_click_holder(engineer)
+    empty_click_holder(engineer, id)
     assert(state_of(HOLDER_X, HOLDER_Y) == "open", "the holder opens for loading")
     if climbs then
         t.use_item(occupant, assert(t.target_at(occupant, HOLDER_X, HOLDER_Y, id)), "alt_primary")
@@ -246,10 +245,9 @@ do
     assert(heard_count(engineer, ONLOOKER_LINE) == 1, "and never again")
 
     -- The weld is gone: the locker closes and opens like any other.
-    empty_click_holder(engineer)
+    empty_click_holder(engineer, "locker")
     assert(state_of(HOLDER_X, HOLDER_Y) == "closed", "the unwelded locker closes")
-    t.click(engineer, HOLDER_X, HOLDER_Y)
-    t.run_ticks(2)
+    click_holder(engineer, "locker")
     assert(state_of(HOLDER_X, HOLDER_Y) == "open", "and opens again")
 end
 
@@ -292,10 +290,7 @@ do
     pick_up_here(engineer, "id_captain")
     click_holder(engineer, "crate.secure")
     assert(heard_count(engineer, "You lock") == 1, "the command ID locks the occupied crate")
-    t.drop(engineer)
-    t.run_ticks(2)
-    t.click(engineer, HOLDER_X, HOLDER_Y)
-    t.run_ticks(2)
+    empty_click_holder(engineer, "crate.secure")
     assert(state_of(HOLDER_X, HOLDER_Y) == "closed", "the locked crate stays shut")
 
     local started = push_and_start(occupant)
@@ -313,11 +308,11 @@ do
     assert(heard_count(engineer, ONLOOKER_LINE) == 1, "the onlooker hears the cue exactly once")
 
     -- The broken lock takes no ID toggle, and the crate is no longer locked.
-    empty_click_holder(engineer)
+    empty_click_holder(engineer, "crate.secure")
     assert(state_of(HOLDER_X, HOLDER_Y) == "closed", "the broken crate closes")
     pick_up_here(engineer, "id_captain")
     click_holder(engineer, "crate.secure")
     assert(heard_count(engineer, "lock of the") >= 1, "the ID toggle names the broken lock")
-    empty_click_holder(engineer)
+    empty_click_holder(engineer, "crate.secure")
     assert(state_of(HOLDER_X, HOLDER_Y) == "open", "the refused toggle left the crate unlocked")
 end
