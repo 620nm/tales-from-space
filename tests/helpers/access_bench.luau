@@ -27,7 +27,8 @@ local ROWS = "        rows: [\n"
     .. "        ],\n"
 
 local function cable(x: number, y: number, channel: string): string
-    return "(x: " .. x .. ", y: " .. y .. ", network: \"power\", channel: \"" .. channel .. "\", kind: \"cable\", facing: 15),"
+    return "(x: " .. x .. ", y: " .. y .. ", network: \"power\", channel: \""
+        .. channel .. "\", kind: \"cable\", facing: 15),"
 end
 
 local cables = {
@@ -40,7 +41,9 @@ local cables = {
 for x = 2, FLOOR_END do
     table.insert(cables, cable(x, 1, "l1"))
 end
-local NETWORKS = "        networks: [\n            " .. table.concat(cables, "\n            ") .. "\n        ],\n"
+local NETWORKS = "        networks: [\n            "
+    .. table.concat(cables, "\n            ")
+    .. "\n        ],\n"
 
 -- The whole map text. `structures` and `items` are RON tuples, comma separated.
 function access_bench.source(name: string, structures: string, items: string): string

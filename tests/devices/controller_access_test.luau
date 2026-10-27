@@ -4,21 +4,21 @@ local laptop = require("@helpers/laptop")
 local ui_files = require("@helpers/ui_files")
 
 -- The door a controller drives answers to the guest, not to its own
--- access tag (docs/scripting/controllers.md, "Who a door answers to").
+-- access requirement (docs/scripting/controllers.md, "Who a door answers to").
 --
 -- `content/fixtures/airlock.luau` allows every actor-less
 -- `access.permission` request, and a program's command carries no actor.
 -- So: one leaf, one empty-handed crewman, two paths. By hand the
--- engineering tag refuses them; through the host the same leaf opens
+-- engineering requirement refuses them; through the host the same leaf opens
 -- for the same hand. The gate on the second path is reaching the box
 -- and loading a program -- the panel's lock and the host's own `access`
 -- word -- and this host, placed with none, has no key to ask for.
 --
 -- The order matters and is the regression this pins: the hand's
 -- refusal runs the same transform the command does. A transform that
--- answers a hand with nothing faults, and a faulted station is disabled
--- for the round -- which would take the grant with it and leave every
--- controller unable to work a keyed door.
+-- answers a hand with nothing faults; the fault falls back to the plain
+-- default and rows a ScriptError each time (docs/access/authorize.md,
+-- "Faults fall back"), and the script_error check below fails on it.
 --
 -- The guest is the shortest one that answers the question: a press
 -- opens every joined door. The shipped cycle program
@@ -94,8 +94,8 @@ local function rows(doc: ui_controls.Record, field: string): { ui_controls.Recor
     return out
 end
 
--- The leaf carries engineering's claim and is powered, shut and free to
--- move, so nothing but the claim can be what stops a hand.
+-- The leaf carries the engineering access requirement and is powered, shut
+-- and free to move, so nothing but that requirement can stop a hand.
 assert(assert(t.structure_at(6, 1)).id == "airlock.engineering", "the variant that says `access`")
 local door = assert(t.door_at(6, 1))
 assert(door.powered and not door.open and not door.latches.bolted, "powered, shut, unbolted")
@@ -167,11 +167,11 @@ t.click(crew, 6, 2, assert(t.target_at(crew, 6, 2, "airlock_button")))
 t.run_ticks(clock.deadline_ticks(0.6) + 8) -- the guest run plus the 0.6 s leaf swing
 assert(
     assert(t.door_at(6, 1)).open,
-    "the program opened the tagged door for the hand it just refused"
+    "the program opened the engineering leaf for the hand it just refused"
 )
 assert(#t.ledger_rows("door_denied") == 1, "and refused nothing on the way")
 
--- The presser carried no claim and the guest was told so: the leaf opened
+-- The presser carried no access card and the guest was told so: the leaf opened
 -- despite `engineering = false`, not because of it. Transcript payload keys
 -- and strings are bounded hashes; the program slot row carries the stable
 -- provenance, while this checks no event body escaped into the transcript.

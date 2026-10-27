@@ -236,7 +236,7 @@ t.run_seconds(2.0)
 -- 3. UNLOCK, AND SEE WHAT THERE IS TO JOIN.
 --
 -- The router was screwed together rather than placed, so no placement
--- names a claim for it: a lock with no key, which still has to be
+-- names an access requirement for it: a lock with no key, which still has to be
 -- worked by somebody standing at it (docs/DEVICES.md §8).
 -- ---------------------------------------------------------------
 local _ = t.messages(p)
@@ -368,7 +368,7 @@ assert(
 )
 
 -- ---------------------------------------------------------------
--- 6. THE ACCESS POINT'S OWN VIEW, which needs the claim its placement
+-- 6. THE ACCESS POINT'S OWN VIEW, which needs the access card its placement
 --    names -- this one was built into the station rather than screwed
 --    together by hand, so it has a key and the key is engineering's.
 -- ---------------------------------------------------------------
@@ -378,14 +378,14 @@ laptop.take(p, 5, 1)
 assert(assert(laptop.connect(p, 4, 1, "access_point")).contact_locked, "the lock screen again")
 laptop.unlock(p)
 t.tick()
-assert(laptop.ui(p).contact_locked, "a laptop without the claim does not open a keyed lock")
+assert(laptop.ui(p).contact_locked, "a laptop without the access card does not open a keyed lock")
 local denials = t.ledger_rows("link_denied")
 assert(#denials == 1 and denials[1].why == "access", "the refusal names the rule it broke")
 -- The presser is told in a modal over the window, which OK puts away.
 ui_controls.press(p, "/refusal/ok", nil, t.ui_document(p, "programming"))
 laptop.close(p)
 
--- The claim goes in the other hand; the laptop stays the active one.
+-- The access card goes in the other hand; the laptop stays the active one.
 t.swap_hands(p)
 t.run_ticks(2)
 take("id_engineering")
@@ -398,7 +398,7 @@ t.tick()
 panel = laptop.ui(p)
 assert(
     not panel.contact_locked and rows(panel, "link_lock")[1].on,
-    "the claim does, straight into the workspace"
+    "the access card does, straight into the workspace"
 )
 assert(link(panel, "state") == "link.state.online", "and it is on the air under the router now")
 laptop.close(p)

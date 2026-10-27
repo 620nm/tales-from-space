@@ -89,7 +89,7 @@ for _, row in ipairs(ui_controls.rows(panel.toggles or {})) do
         table.insert(locks, row)
     end
 end
-assert(#locks >= 1 and locks[1].on, "engineering's claim opens it")
+assert(#locks >= 1 and locks[1].on, "the engineering access opens it")
 for _, row in ipairs(ui_controls.rows(panel.toggles or {})) do
     if row.field == "link_join" then
         assert(

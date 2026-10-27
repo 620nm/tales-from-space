@@ -1,4 +1,7 @@
--- A bolt holds a leaf shut whatever the card says, and the bolt needs power.
+-- A bolt holds a leaf shut whatever the card says. Cases: a passing captain
+-- cannot open a bolted leaf; a crowbar's pre-check skips a bolted dark leaf;
+-- an unbolted dark leaf pries open (the control); the emergency latch admits an
+-- assistant with no permission, and an identical leaf without it refuses them.
 local access_bench = require("@helpers/access_bench")
 local clock = require("@helpers/clock")
 
@@ -15,7 +18,10 @@ assert(
 t.world(
     access_bench.source(
         "bolted leaf",
-        access_bench.spawn("captain", 3) .. ", (5, 1, \"airlock\", { " .. ENGINEERING .. ", \"bolted\": true })",
+        access_bench.spawn("captain", 3)
+            .. ", (5, 1, \"airlock\", { "
+            .. ENGINEERING
+            .. ", \"bolted\": true })",
         ""
     ),
     0
@@ -29,11 +35,14 @@ access_bench.bump(bolted_captain, LEAF)
 assert(not assert(t.door_at(LEAF, 1)).open, "a bolt holds a passing captain's leaf shut")
 assert(assert(t.door_at(LEAF, 1)).latches.bolted, "and the bolt is still set")
 
--- ---- unpowered: a crowbar pry on a bolted leaf with no power stays shut.
+-- ---- pre-check: a crowbar pry on a bolted, dark leaf stays shut.
 t.world(
     access_bench.source(
         "pried bolt",
-        access_bench.spawn("captain", 3) .. ", (5, 1, \"airlock\", { " .. ENGINEERING .. ", \"bolted\": true })",
+        access_bench.spawn("captain", 3)
+            .. ", (5, 1, \"airlock\", { "
+            .. ENGINEERING
+            .. ", \"bolted\": true })",
         "(3, 1, \"crowbar\")"
     ),
     0
@@ -70,7 +79,11 @@ assert(forced_door_operations() == 0, "the pre-check skipped the pry: no forced 
 
 -- ---- positive control: the same crowbar on an unbolted, dark leaf does pry it
 -- open, and that forced open is on the record under the same key.
-access_bench.world("pried open", access_bench.spawn("captain", 3) .. ", (5, 1, \"airlock\")", "(3, 1, \"crowbar\")")
+access_bench.world(
+    "pried open",
+    access_bench.spawn("captain", 3) .. ", (5, 1, \"airlock\")",
+    "(3, 1, \"crowbar\")"
+)
 local opener = t.join("captain")
 t.run_seconds(1.0)
 t.click(opener, 3, 1, assert(t.target_at(opener, 3, 1, "crowbar")))
@@ -81,6 +94,33 @@ t.outage()
 t.run_ticks(2)
 assert(not assert(t.door_at(LEAF, 1)).powered, "the breaker tripped for the control")
 t.click(opener, 5, 1, assert(t.target_at(opener, 5, 1)))
-t.run_ticks(clock.deadline_ticks(2.5) + clock.deadline_ticks(0.6) + 10) -- the 2.5 s pry, then the 0.6 s swing
+-- The 2.5 s pry, then the 0.6 s swing.
+t.run_ticks(clock.deadline_ticks(2.5) + clock.deadline_ticks(0.6) + 10)
 assert(assert(t.door_at(LEAF, 1)).open, "the crowbar pries an unbolted, dark leaf open")
 assert(forced_door_operations() == 1, "and the forced open is on the ledger under door_operation")
+
+-- ---- emergency: the emergency latch waives the access check and nothing else.
+-- Two engineering leaves on one corridor: the first is placed on the emergency
+-- latch, the second is not. An assistant with no permission passes the first
+-- and is refused at the second.
+access_bench.world(
+    "emergency latch",
+    access_bench.spawn("assistant", 3)
+        .. ", "
+        .. access_bench.leaf(5, "airlock.engineering", '{ "emergency": true }')
+        .. ", "
+        .. access_bench.leaf(9, "airlock.engineering"),
+    ""
+)
+local escaper = t.join("assistant")
+t.run_seconds(1.0)
+assert(assert(t.door_at(5, 1)).latches.emergency, "the first leaf is placed on the emergency latch")
+assert(not assert(t.door_at(9, 1)).latches.emergency, "the second leaf is not")
+access_bench.bump(escaper, 5)
+assert(
+    assert(t.door_at(5, 1)).open,
+    "the emergency latch admits an assistant who holds no permission"
+)
+access_bench.pass_through(escaper, 5)
+access_bench.bump(escaper, 9)
+assert(not assert(t.door_at(9, 1)).open, "the same leaf without the latch refuses that assistant")

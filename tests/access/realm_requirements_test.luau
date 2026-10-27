@@ -30,7 +30,10 @@ t.run_seconds(1.0)
 assert(t.worn(captain).id == "id_captain", "the captain wears the captain ID")
 for _, door_x in ipairs({ 5, 7, 9, 11, 13 }) do
     access_bench.bump(captain, door_x)
-    assert(assert(t.door_at(door_x, 1)).open, "the worn captain card opens the leaf at column " .. door_x)
+    assert(
+        assert(t.door_at(door_x, 1)).open,
+        "the worn captain card opens the leaf at column " .. door_x
+    )
     access_bench.pass_through(captain, door_x)
 end
 
@@ -51,7 +54,10 @@ access_bench.bump(engineer, 5)
 assert(assert(t.door_at(5, 1)).open, "one engineering permission passes any-of station.captain")
 access_bench.pass_through(engineer, 5)
 access_bench.bump(engineer, 7)
-assert(not assert(t.door_at(7, 1)).open, "an engineer's one permission is short of every-permission station.captain")
+assert(
+    not assert(t.door_at(7, 1)).open,
+    "an engineer's one permission is short of every-permission station.captain"
+)
 
 -- ---- any-of from both sides of one leaf: an assistant holds no permission and
 -- is refused; a medic holds one and passes.
@@ -68,14 +74,19 @@ local assistant = t.join("assistant")
 local medic = t.join("medic")
 t.run_seconds(1.0)
 access_bench.bump(assistant, 5)
-assert(not assert(t.door_at(5, 1)).open, "an assistant holds no permission; any-of captain refuses it")
+assert(
+    not assert(t.door_at(5, 1)).open,
+    "an assistant holds no permission; any-of captain refuses it"
+)
 access_bench.bump(medic, 5)
 assert(assert(t.door_at(5, 1)).open, "a medic's one permission passes any-of captain")
 
 -- ---- an undeclared word is refused at load, and the refusal names it.
 local UNDECLARED = access_bench.source(
     "undeclared word",
-    access_bench.spawn("captain", 3) .. ", " .. access_bench.leaf(5, "airlock", word("station.nope")),
+    access_bench.spawn("captain", 3)
+        .. ", "
+        .. access_bench.leaf(5, "airlock", word("station.nope")),
     ""
 )
 local undeclared_ok, undeclared_error = pcall(function()

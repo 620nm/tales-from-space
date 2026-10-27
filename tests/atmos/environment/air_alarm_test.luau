@@ -281,13 +281,13 @@ t.tick()
 walk_to(7)
 t.click(p, 7, 2, t.target_at(p, 7, 2, "id_engineering"))
 t.run_ticks(2)
-assert(t.hands(p).held == "id_engineering", "the claim is in hand")
+assert(t.hands(p).held == "id_engineering", "the engineering ID is in hand")
 
 panel = open(6, 1, "air_alarm")
 ui_controls.toggle(p, "link_lock")
 t.tick()
 panel = ui_controls.state(p)
-assert(rows(panel, "link_lock")[1].on, "engineering's claim opens it")
+assert(rows(panel, "link_lock")[1].on, "the engineering access opens it")
 
 local candidates: { string } = {}
 for _, row in ipairs(rows(panel, "link_join")) do

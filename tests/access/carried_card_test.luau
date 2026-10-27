@@ -14,7 +14,11 @@ end
 -- assistant's own card does not.
 access_bench.world(
     "carried card worn",
-    access_bench.spawn("assistant", 3) .. ", " .. access_bench.spawn("engineer", 7) .. ", " .. ENGINEERING_LEAF,
+    access_bench.spawn("assistant", 3)
+        .. ", "
+        .. access_bench.spawn("engineer", 7)
+        .. ", "
+        .. ENGINEERING_LEAF,
     ""
 )
 local assistant = t.join("assistant")
@@ -25,7 +29,10 @@ assert(t.worn(assistant).id == "id_assistant", "the assistant wears the assistan
 
 local refused = denials()
 access_bench.bump(assistant, LEAF)
-assert(not assert(t.door_at(LEAF, 1)).open, "an assistant's worn card does not open the engineering leaf")
+assert(
+    not assert(t.door_at(LEAF, 1)).open,
+    "an assistant's worn card does not open the engineering leaf"
+)
 assert(denials() > refused, "and the refusal is on the record")
 
 access_bench.bump(engineer, LEAF)
@@ -33,7 +40,11 @@ assert(assert(t.door_at(LEAF, 1)).open, "the worn engineering card opens the lea
 
 -- ---- held: an engineering card picked up from the floor admits; dropped
 -- on the same tile, the very next bump is refused.
-access_bench.world("carried card held", access_bench.spawn("assistant", 3) .. ", " .. ENGINEERING_LEAF, "(3, 1, \"id_engineering\")")
+access_bench.world(
+    "carried card held",
+    access_bench.spawn("assistant", 3) .. ", " .. ENGINEERING_LEAF,
+    "(3, 1, \"id_engineering\")"
+)
 local carrier = t.join("assistant")
 t.run_seconds(1.0)
 t.click(carrier, 3, 1, assert(t.target_at(carrier, 3, 1, "id_engineering")))
@@ -53,17 +64,35 @@ assert(not assert(t.door_at(LEAF, 1)).open, "the very next bump after the drop i
 assert(denials() > before_drop_bump, "and that refusal is on the record")
 
 -- ---- stored: the same card inside the backpack the body wears is no key.
-access_bench.world("carried card stored", access_bench.spawn("assistant", 3) .. ", " .. ENGINEERING_LEAF, "(3, 1, \"id_engineering\")")
+access_bench.world(
+    "carried card stored",
+    access_bench.spawn("assistant", 3)
+        .. ", "
+        .. access_bench.spawn("medic", 7)
+        .. ", "
+        .. ENGINEERING_LEAF,
+    "(3, 1, \"id_engineering\")"
+)
 local packed = t.join("assistant")
+local medic = t.join("medic")
 t.run_seconds(1.0)
 assert(t.worn(packed).back == "backpack", "the assistant wears a backpack")
 t.click(packed, 3, 1, assert(t.target_at(packed, 3, 1, "id_engineering")))
 t.run_ticks(2)
 t.interact_item(packed, { Equipment = { slot = "back" } })
 t.run_ticks(2)
-assert(table.find(t.stored(packed, "back"), "id_engineering") ~= nil, "the card is inside the backpack")
+assert(
+    table.find(t.stored(packed, "back"), "id_engineering") ~= nil,
+    "the card is inside the backpack"
+)
 
 local stored_refusals = denials()
 access_bench.bump(packed, LEAF)
 assert(not assert(t.door_at(LEAF, 1)).open, "a card in the worn backpack opens nothing")
 assert(denials() > stored_refusals, "and that refusal is on the record")
+
+-- ---- a medic's worn card holds medical, not engineering: refused here too.
+local medic_refusals = denials()
+access_bench.bump(medic, LEAF)
+assert(not assert(t.door_at(LEAF, 1)).open, "a medic is refused at the engineering leaf")
+assert(denials() > medic_refusals, "and that refusal is on the record")
