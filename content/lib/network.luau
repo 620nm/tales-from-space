@@ -43,7 +43,7 @@ function network.line(node: Handle, noun: string, member: string): Message?
         return nil
     end
     -- WHAT OPENS IT IS NOT SOMETHING THIS CAN KNOW. A lock's key is the
-    -- placement's own `access` word, so one box wants a claim and the
+    -- placement's own `access` word, so one box wants a requirement and the
     -- one beside it -- screwed together by hand, keyed by nothing --
     -- opens for whoever is standing at it (docs/DEVICES.md §8). The
     -- surface answers `locked` either way and offers no way to tell,
