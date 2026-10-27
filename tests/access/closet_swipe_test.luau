@@ -1,6 +1,7 @@
--- Secure closets read the actor's whole set, the worn card included. An
--- assistant's own card swiped at the medical crate changes nothing; a captain
--- wearing a card that holds every realm unlocks it with an assistant's card.
+-- Secure closets read the actor's whole set of station permissions, the worn
+-- card included. An assistant's own card swiped at the medical crate changes
+-- nothing; a captain wearing a card that holds every station permission
+-- unlocks it with an assistant's card.
 local access_bench = require("@helpers/access_bench")
 
 local CRATE = 5
@@ -44,7 +45,7 @@ t.run_ticks(2)
 assert(crate_state() == "closed", "the refused swipe left the crate locked")
 
 -- ---- the captain swipes an assistant's card: the worn captain card holds
--- the medical realm, so the swipe unlocks; an empty hand then opens it.
+-- the medical permission, so the swipe unlocks; an empty hand then opens it.
 t.click(captain, 4, 1, assert(t.target_at(captain, 4, 1, "id_assistant")))
 t.run_ticks(2)
 assert(t.hands(captain).held == "id_assistant", "the captain holds an assistant card")

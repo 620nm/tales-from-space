@@ -49,5 +49,16 @@ t.outage()
 t.run_ticks(2)
 assert(not assert(t.door_at(LEAF, 1)).powered, "the breaker tripped")
 t.click(pryer, 5, 1, assert(t.target_at(pryer, 5, 1)))
-t.run_ticks(clock.deadline_ticks(2.5) + 10) -- the crowbar's pry
+t.run_ticks(clock.deadline_ticks(2.5) + 10) -- the crowbar's pry, had it started
 assert(not assert(t.door_at(LEAF, 1)).open, "a crowbar does not pry a bolted, unpowered leaf")
+assert(assert(t.door_at(LEAF, 1)).latches.bolted, "the bolt still holds after the attempt")
+
+-- The crowbar's pre-check refuses a bolted leaf before any pry starts: no
+-- forced door operation is on the record.
+local forced_opens = 0
+for _, row in ipairs(t.ledger_rows("DoorOperation")) do
+    if row.forced then
+        forced_opens += 1
+    end
+end
+assert(forced_opens == 0, "the pre-check skipped the pry: no forced door operation, got " .. forced_opens)
