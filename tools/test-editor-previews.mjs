@@ -23,6 +23,18 @@ function preview(schema, values) {
 }
 // With no roster one skipped test records why, instead of zero tests.
 if (skip) test("editor previews", { skip }, () => {});
+// Band fills for a new level (the engine's docs/mapping/editor-declarations.md):
+// rock below ground, blank ground, blank open air (a blank tile above ground is sky).
+test("editor.levels fills a new level by band for both environment kinds", { skip }, () => {
+  assert.equal(manifest.revision, "5", "the served declaration revision");
+  assert.deepEqual(Object.keys(manifest.levels).sort(), ["space", "terrestrial"]);
+  for (const [kind, bands] of Object.entries(manifest.levels)) {
+    assert.deepEqual(Object.keys(bands).sort(), ["open_air", "subterrain", "terrain"], `${kind} bands`);
+    assert.deepEqual(bands.subterrain, { components: [{ component: "rock", controls: {} }] }, `${kind} subterrain`);
+    assert.deepEqual(bands.terrain, {}, `${kind} terrain inherits`);
+    assert.deepEqual(bands.open_air, {}, `${kind} open_air inherits to sky`);
+  }
+});
 for (const [mode, declaration] of Object.entries(manifest?.modes ?? {})) {
   test(`${mode} previews every airlock livery, glazing, position and bolt setting`, () => {
     for (const [id, props] of Object.entries(defaults)) {
