@@ -32,6 +32,26 @@ type WelderOperation = {
 	task: Task?,
 }
 
+-- One body's forced way out of one sealed holder (`closets.dm:1085-1118`).
+type BreakoutOperation = {
+	body: Handle,
+	holder: Handle,
+	-- Past this tick a task that never reported back no longer absorbs pushes.
+	expires_tick: number,
+	-- Set while the pack's own latch orders are in flight.
+	bursting: boolean,
+	task: Task?,
+}
+
+-- A latch order of the bust-open, matched by its subject, latch and request id.
+type BreakoutOrder = {
+	holder: Handle,
+	latch: string,
+	on: boolean,
+	answered: boolean,
+	success: boolean,
+}
+
 type FixtureExternalRemoval = {
 	at: TileAddress,
 	prototype: string,
@@ -40,6 +60,16 @@ type FixtureExternalRemoval = {
 local WELDED_LATCH = "welded"
 local LOCKED_LATCH = "locked"
 local BROKEN_LATCH = "broken"
+-- The latches whose bits keep a closet shut (`closets.dm:1092,1141-1146`).
+local HOLDING_LATCHES = { LOCKED_LATCH, WELDED_LATCH }
+-- Tg's `breakout_time = 1200` deciseconds (`closets.dm:47`).
+local BREAKOUT_SECONDS = 120
+-- The longest single `do_after` (docs/luau-api/runtime.md); longer waits chain.
+local MAX_WAIT_SECONDS = 60.0
+-- A task that outlives its wait by this much is presumed dead.
+local BREAKOUT_SLACK_SECONDS = 5.0
+local CLOSED_STATE = "closed"
+local OPEN_STATE = "open"
 -- Pack judgment, not tg's shake numbers (`closets.dm:97,99,1129`).
 local BREAKOUT_SHAKE_STRENGTH = 4
 local BREAKOUT_SHAKE_SECONDS = 0.5
@@ -60,6 +90,8 @@ local FUEL_MINIMUM_MOL = 0.025
 local active_welder_operations: { WelderOperation } = {}
 local interruption_handlers_installed = false
 local pending_latch_orders: { [string]: PendingLatchOrder } = {}
+local breakout_orders: { [string]: BreakoutOrder } = {}
+local active_breakouts: { BreakoutOperation } = {}
 local latch_order_count = 0
 
 local function send_message(actor: Handle, key: string, subject: string?)
@@ -100,6 +132,14 @@ end
 local function on_latch_done(ev: LatchSetDonePayload): ()
 	-- A completion reaches every definition's handler; only this closet's own
 	-- order (subject, latch and id) is ours to answer.
+	local breakout_order = breakout_orders[ev.request_id]
+	if breakout_order ~= nil then
+		if ev.subject == breakout_order.holder and ev.latch == breakout_order.latch then
+			breakout_order.answered = true
+			breakout_order.success = ev.success
+		end
+		return
+	end
 	local pending = pending_latch_orders[ev.request_id]
 	if pending == nil or ev.subject ~= pending.target or ev.latch ~= pending.latch then
 		return
@@ -117,9 +157,17 @@ end
 
 -- A latch order carries no actor; the toggle paths below check the actor's
 -- access themselves, so only an actor-less switch is admitted here.
+-- A bust-open is the closet's own act: its occupant's latch writes pass too.
 local function on_access_permission(ev: AccessPermissionPayload)
-	if ev.operation == "set_latch" and ev.actor == nil then
-		return { allowed = true }
+	if ev.operation == "set_latch" then
+		if ev.actor == nil then
+			return { allowed = true }
+		end
+		for _, operation in ipairs(active_breakouts) do
+			if operation.bursting and operation.holder == ev.subject and operation.body == ev.actor then
+				return { allowed = true }
+			end
+		end
 	end
 	return { allowed = ev.allowed }
 end
@@ -395,6 +443,223 @@ local function begin_welder_operation(
 	end
 end
 
+local function is_direct_occupant(holder: Handle, body: Handle): boolean
+	local contents = holder.contents
+	if contents == nil then
+		return false
+	end
+	for _, held in ipairs(contents) do
+		if held == body then
+			return true
+		end
+	end
+	return false
+end
+
+-- A closet is secured while any holding latch is on (`closets.dm:1092`).
+local function is_secured(holder: Handle): boolean
+	local latches = sim.latch.of(holder)
+	if latches == nil then
+		return false
+	end
+	for _, latch in ipairs(HOLDING_LATCHES) do
+		if latches[latch] == true then
+			return true
+		end
+	end
+	return false
+end
+
+local function remove_breakout(operation: BreakoutOperation)
+	for index = #active_breakouts, 1, -1 do
+		if active_breakouts[index] == operation then
+			table.remove(active_breakouts, index)
+			return
+		end
+	end
+end
+
+-- The running breakout of `body`, if any; a stale one is dropped on the way.
+local function find_breakout(body: Handle): BreakoutOperation?
+	local now = sim.tick()
+	for index = #active_breakouts, 1, -1 do
+		local operation = active_breakouts[index]
+		if operation.expires_tick < now or operation.body.alive ~= true or operation.holder.alive ~= true then
+			table.remove(active_breakouts, index)
+			local task = operation.task
+			if task ~= nil then
+				pcall(function()
+					task:cancel()
+				end)
+			end
+		elseif operation.body == body then
+			return operation
+		end
+	end
+	return nil
+end
+
+-- A breakout that ends without opening leaves this row where no engine row
+-- would (an interrupted wait already rows `do_after_interrupted`).
+local function record_breakout_lapse(operation: BreakoutOperation, reason: string): ()
+	if operation.body.alive ~= true or operation.holder.alive ~= true then
+		return
+	end
+	sim.ledger.record({
+		kind = "lunatic/tfs:closet_breakout_lapsed",
+		fields = { container = operation.holder, body = operation.body, reason = reason },
+	})
+end
+
+local function still_inside(operation: BreakoutOperation): boolean
+	return operation.body.alive == true
+		and operation.holder.alive == true
+		and actor_ready(operation.body)
+		and operation.holder.state == CLOSED_STATE
+		and is_direct_occupant(operation.holder, operation.body)
+end
+
+-- Waits out `total_ticks` inside the holder in `do_after` segments of at
+-- most the 60 s ceiling; any interruption ends the breakout.
+local function wait_inside(operation: BreakoutOperation, total_ticks: number): boolean
+	local segment_cap = sim.ticks(MAX_WAIT_SECONDS)
+	local remaining = total_ticks
+	while remaining > 0 do
+		local segment = math.min(remaining, segment_cap)
+		if sim.do_after(operation.body, segment, { inside = operation.holder }) ~= "ok" then
+			return false
+		end
+		remaining -= segment
+	end
+	return true
+end
+
+local function order_breakout_latch(operation: BreakoutOperation, latch: string, on: boolean): string
+	latch_order_count += 1
+	local request_id = "closet_breakout_" .. latch_order_count
+	breakout_orders[request_id] = {
+		holder = operation.holder,
+		latch = latch,
+		on = on,
+		answered = false,
+		success = false,
+	}
+	sim.latch.set({ subject = operation.holder, latch = latch, on = on, request_id = request_id })
+	return request_id
+end
+
+-- tg tells the occupant only the self message (`closets.dm:1113-1114`), and
+-- `sim.message.broadcast` has no exclusion: send per onlooker.
+local function announce_breakout(operation: BreakoutOperation, at: TileAddress): ()
+	local body = operation.body
+	local holder = operation.holder
+	sim.visual.shake({ at = at, strength = BREAKOUT_SHAKE_STRENGTH, duration = BREAKOUT_SHAKE_SECONDS })
+	send_message(body, "lunatic/tfs:lib.closets.break_out_self")
+	local subject = subject_name(holder, holder.prototype or "closet")
+	local name = body.name
+	local broke_out = if name ~= nil and name ~= ""
+		then sim.msg("lunatic/tfs:lib.closets.broke_out", { name = name, subject = subject })
+		else sim.msg("lunatic/tfs:lib.closets.broke_out_unnamed", { subject = subject })
+	for _, onlooker in ipairs(sim.query.range(at, BREAKOUT_ONLOOKER_RADIUS, {})) do
+		if onlooker ~= body and sim.body(onlooker) ~= nil and sim.query.los(onlooker, at) then
+			sim.message.send({ recipient = onlooker, message = broke_out })
+		end
+	end
+end
+
+-- Bust-open (`closets.dm:1141-1146`): every holding latch off, the lock
+-- broken where declared, then the occupant opens the door. The latch writes
+-- are orders, so the open waits for their completions.
+local function bust_open(operation: BreakoutOperation): ()
+	local holder = operation.holder
+	local latches = sim.latch.of(holder) or {}
+	local request_ids: { string } = {}
+	local cleared: { string } = {}
+	operation.bursting = true
+	for _, latch in ipairs(HOLDING_LATCHES) do
+		if latches[latch] == true then
+			table.insert(request_ids, order_breakout_latch(operation, latch, false))
+			table.insert(cleared, latch)
+		end
+	end
+	local broken: string? = nil
+	if latches[BROKEN_LATCH] == false then
+		table.insert(request_ids, order_breakout_latch(operation, BROKEN_LATCH, true))
+		broken = BROKEN_LATCH
+	end
+	-- The orders apply when this segment commits; their completions are in
+	-- by the next tick.
+	sim.sleep(1)
+	operation.bursting = false
+	local confirmed = true
+	for _, request_id in ipairs(request_ids) do
+		local order = breakout_orders[request_id]
+		breakout_orders[request_id] = nil
+		if order == nil or not order.answered or not order.success then
+			confirmed = false
+		end
+	end
+	if not confirmed then
+		record_breakout_lapse(operation, "latch_unconfirmed")
+		return
+	end
+	if not still_inside(operation) then
+		record_breakout_lapse(operation, "not_inside")
+		return
+	end
+	sim.ledger.record({
+		kind = "lunatic/tfs:closet_broken_out",
+		fields = {
+			container = holder,
+			body = operation.body,
+			cleared = table.concat(cleared, ","),
+			broken = broken,
+		},
+	})
+	sim.container.open({ container = holder })
+	sim.sleep(1)
+	local at = holder.tile
+	if holder.alive ~= true or holder.state ~= OPEN_STATE or at == nil then
+		record_breakout_lapse(operation, "open_refused")
+		return
+	end
+	announce_breakout(operation, at)
+end
+
+local function run_breakout(operation: BreakoutOperation, total_ticks: number): ()
+	if not wait_inside(operation, total_ticks) then
+		return
+	end
+	-- Recheck after the wait (`closets.dm:1103`): the next push opens a
+	-- closet that no longer holds.
+	if not still_inside(operation) then
+		record_breakout_lapse(operation, "not_inside")
+		return
+	end
+	if not is_secured(operation.holder) then
+		record_breakout_lapse(operation, "not_secured")
+		return
+	end
+	bust_open(operation)
+end
+
+local function begin_breakout(body: Handle, holder: Handle): ()
+	local total_ticks = sim.ticks(BREAKOUT_SECONDS)
+	local operation: BreakoutOperation = {
+		body = body,
+		holder = holder,
+		expires_tick = sim.tick() + total_ticks + sim.ticks(BREAKOUT_SLACK_SECONDS),
+		bursting = false,
+		task = nil,
+	}
+	table.insert(active_breakouts, operation)
+	operation.task = sim.spawn_task(holder, function()
+		run_breakout(operation, total_ticks)
+		remove_breakout(operation)
+	end)
+	send_message(body, "lunatic/tfs:lib.closets.start_breakout")
+end
+
 function closet.attach(proto_id: string, opts: Options)
 	local secure_variants = opts.secure_variants or {}
 	local fixture_removal_tool = opts.fixture_removal_tool
@@ -599,33 +864,20 @@ function closet.attach(proto_id: string, opts: Options)
 	behavior:handle("climb.done", { kind = "react" }, climbing.on_done)
 	behavior:handle("latch.set.done", { kind = "react" }, on_latch_done)
 	behavior:handle("access.permission", { kind = "transform" }, on_access_permission)
-	-- The break-out cues are the pack's (`closets.dm:1113`); tg shakes during
-	-- the wait (`closets.dm:1107,1124-1136`), this pack at the bust-open. The
-	-- native open already plays the container's open sound.
-	behavior:handle("container.breakout.done", { kind = "react" }, function(ev: ContainerBreakoutDonePayload)
-		local holder: Handle = ev.self
-		local at = holder.tile
-		if at == nil then
-			return
+	-- The escape is the closet's (`closets.dm:1085-1118`); the engine only
+	-- raises the push. An unsecured closet opens at once; a secured one gives
+	-- way after its breakout wait, one task per body.
+	behavior:handle("container.resist", { kind = "replace", route = "interact" }, function(ev: ContainerResistPayload)
+		local holder: Handle = ev.subject
+		local body: Handle = ev.actor
+		if not is_secured(holder) then
+			sim.container.open({ container = holder })
+			return { replaced = true }
 		end
-		local prototype = holder.prototype
-		sim.visual.shake({ at = at, strength = BREAKOUT_SHAKE_STRENGTH, duration = BREAKOUT_SHAKE_SECONDS })
-		local name = ev.body.name
-		local broke_out = if name ~= nil and name ~= ""
-			then sim.msg("lunatic/tfs:lib.closets.broke_out", {
-				name = name,
-				subject = subject_name(holder, prototype or proto_id),
-			})
-			else sim.msg("lunatic/tfs:lib.closets.broke_out_unnamed", {
-				subject = subject_name(holder, prototype or proto_id),
-			})
-		-- tg tells the occupant only the self message (`closets.dm:1113-1114`),
-		-- and `sim.message.broadcast` has no exclusion: send per onlooker.
-		for _, onlooker in ipairs(sim.query.range(at, BREAKOUT_ONLOOKER_RADIUS, {})) do
-			if onlooker ~= ev.body and sim.body(onlooker) ~= nil and sim.query.los(onlooker, at) then
-				sim.message.send({ recipient = onlooker, message = broke_out })
-			end
+		if find_breakout(body) == nil then
+			begin_breakout(body, holder)
 		end
+		return { replaced = true }
 	end)
 	behavior:handle("container.close.done", { kind = "react" }, function(ev: ContainerCloseDonePayload)
 		for _, body in ipairs(ev.bodies) do

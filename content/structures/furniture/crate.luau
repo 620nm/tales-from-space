@@ -48,12 +48,10 @@ return {
         open_sound = "crate_open",
         close_sound = "crate_close",
         stock = {},
-        -- Tg's `breakout_time = 1200` deciseconds (`closets.dm:47`); a break-out
-        -- clears every holding latch and breaks the lock (`closets.dm:1141-1146`).
-        breakout = { seconds = 120, broken = "broken" },
     },
     -- Tg's `locked`/`welded` closet bits hold the door shut; `broken` marks a
-    -- busted lock that refuses a relock (`closets.dm:1141-1146,1169-1170`).
+    -- busted lock that refuses a relock (`closets.dm:1141-1146,1169-1170`); the
+    -- closet lib owns the escape (`lib/closets/closet.luau`).
     latches = {
         { id = "locked", holds = true },
         { id = "welded", holds = true },

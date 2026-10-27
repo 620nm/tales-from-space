@@ -184,6 +184,12 @@ t.run_seconds(0.25)
 assert(assert(t.structure_at(4, 4)).state == "open", "an unsecured resist opens the holder at once")
 assert(#t.ledger_rows("container_opened") == opened_baseline + 1, "the resist open is ledgered")
 assert(#t.ledger_rows("container_resist_refused") == resist_baseline, "an unsecured resist is not refused")
+local resist_opening = t.ledger_rows("container_opened")
+local resist_opener = resist_opening[#resist_opening].actor
+assert(
+    resist_opener.kind == "script" and (resist_opener :: { [string]: unknown }).triggered_by == t.body_id(first),
+    "the closet lib's handler opens as the pushing occupant"
+)
 assert_open_dump(4, 4, { first })
 message_count(first, CLOSE_MESSAGE)
 message_count(second, CLOSE_MESSAGE)

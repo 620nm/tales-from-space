@@ -15,6 +15,18 @@ return {
         ["lunatic/tfs:device_orders_dropped"] = {
             fields = { device = "entity", dropped = "int" },
         },
+        -- A shut-in occupant who forced a sealed closet: the latches cleared
+        -- (comma-joined ids) and the lock it broke, if the closet declares one
+        -- (lib/closets/closet.luau).
+        ["lunatic/tfs:closet_broken_out"] = {
+            fields = { container = "entity", body = "body", cleared = "text", broken = "text?" },
+        },
+        -- A breakout wait that ended without opening and left no engine row:
+        -- `not_inside`, `not_secured`, `latch_unconfirmed` or `open_refused`
+        -- (lib/closets/closet.luau).
+        ["lunatic/tfs:closet_breakout_lapsed"] = {
+            fields = { container = "entity", body = "body", reason = "text" },
+        },
         -- A round that did not start: no host map named, or the install of
         -- the named one was refused (lib/map_boot.luau).
         ["lunatic/tfs:map_boot_failed"] = {

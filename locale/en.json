@@ -1451,6 +1451,8 @@
   "lunatic/tfs:lib.closets.locked": "The {subject} is locked.",
   "lunatic/tfs:lib.closets.broken": "The lock of the {subject} is broken.",
   "lunatic/tfs:lib.closets.broke_out": "{name} successfully broke out of the {subject}!",
+  "lunatic/tfs:lib.closets.start_breakout": "You start forcing your way out.",
+  "lunatic/tfs:lib.closets.break_out_self": "You break your way out.",
   "lunatic/tfs:lib.closets.broke_out_unnamed": "Someone successfully broke out of the {subject}!",
   "lunatic/tfs:lib.closets.access_denied": "Access denied.",
   "lunatic/tfs:lib.closets.needs_lit": "The welder must be lit.",
