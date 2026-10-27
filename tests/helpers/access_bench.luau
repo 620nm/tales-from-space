@@ -90,6 +90,8 @@ function access_bench.bump(p: number, door_x: number)
     end
     t.move(p, dir)
     t.run_ticks(clock.deadline_ticks(0.6) + 3) -- the 0.6 s leaf swing
+    -- TfS admits a stale body, so an admission proves nothing unless the derive held.
+    assert(#t.ledger_rows("held_set_stale") == 0, "no body's access went stale")
 end
 
 -- After a successful `bump` from the west, walks `p` through the open leaf at
