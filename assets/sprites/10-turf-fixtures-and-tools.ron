@@ -61,6 +61,8 @@
         ("space", Dmi("@space", "space", 0)),
         // tg code/game/turfs/open/snow.dm:4-7.
         ("ground", Dmi("turf/snow.dmi", "snow", 0)),
+        // tg's map-editor picture for /turf/closed/mineral (minerals.dm:8, MAP_SWITCH second arm); it does not smooth.
+        ("rock", Dmi("turf/mining.dmi", "rock", 0)),
         ("floor", Dmi("@floors", "floor", 0)),
         ("plating", Dmi("@floors", "plating", 0)),
         ("wall", Dmi("@walls", "wall-0", 0)),

@@ -48,6 +48,20 @@ otherwise the substrate does. Substrate vacuum boundaries are independent of
 support, horizontal gas blocking, and outdoor forcing. Station base seals the
 boundary; an exposed space substrate remains a boundary below a catwalk.
 
+## Levels
+
+Rock (tg `/turf/closed/mineral`) blocks movement, gas and sight, supports and
+seals, and hides what is under it. It sits over the inherited substrate, so
+removing it shows ground on a planet and space in orbit. It wears tg's static
+`mining.dmi` `rock` picture and does not smooth. Mining it is not implemented.
+
+Open sky above ground and what seals it are the engine's contract (the
+engine's `docs/content-schema/compositions.md` "Tile values and replacement"
+and `docs/mapping/environment.md` "Exposure"). Station base and rock seal the
+substrate, so either one roofs open sky.
+
+The level specs live in `tests/levels/`.
+
 ## Gravity and handholds
 
 Station base and walls receive the station gravity field. Uncovered space,

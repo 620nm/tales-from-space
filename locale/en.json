@@ -271,6 +271,7 @@
   "lunatic/tfs:entity.reinforced_wall.name": "reinforced wall",
   "lunatic/tfs:entity.retractor.name": "retractor",
   "lunatic/tfs:entity.rglass.name": "reinforced glass sheets",
+  "lunatic/tfs:entity.rock.name": "rock",
   "lunatic/tfs:entity.rod.name": "metal rods",
   "lunatic/tfs:entity.rpd.name": "rapid pipe dispenser",
   "lunatic/tfs:entity.scalpel.name": "scalpel",

@@ -168,7 +168,7 @@ end
 local supported = { substrate_support = true, any_component = { "station_base", "catwalk" } }
 
 local construction_components = { "station_base", "floor_tiles", "grid_cover", "reinforcement",
-    "lattice", "catwalk", "wall", "reinforced_wall" }
+    "lattice", "catwalk", "wall", "reinforced_wall", "rock" }
 
 return {
     layers = {
@@ -230,6 +230,14 @@ return {
         { id = "reinforced_wall", occludes_substrate = true, label = "reinforced wall", layer = "cover", sprite = "reinforced_wall", cover = barrier_controls(),
             physical = { ambient = 0, support = true, receives_gravity = true, substrate_seal = true, movement_blocking = true,
                 gas_blocking = true, opaque = true, thermal = thermal(312500, 0, 0.03) } },
+        -- tg /turf/closed/mineral: opaque, dense (minerals.dm:6-51, :15-16), airtight as a closed turf
+        -- (_closed.dm:8 `blocks_air`). No `thermal`: it sets no heat_capacity, so INFINITY
+        -- (LINDA_turf_tile.dm:5), unrepresentable; the tile keeps its substrate's.
+        -- `receives_gravity` matches the walls and is unobservable: rock braces a body in it, which
+        -- never falls (the engine's crates/lunatic-server/src/sim/movement/level_change.rs:resolve_fall_step).
+        { id = "rock", occludes_substrate = true, label = "rock", layer = "cover", sprite = "rock", cover = barrier_controls(),
+            physical = { ambient = 0, support = true, receives_gravity = true, substrate_seal = true, movement_blocking = true,
+                gas_blocking = true, opaque = true } },
     },
     networks = {
         { id = "power", label = "power cable", layer = "power", channels = power_channels, channel_preferences = { "l2", "l1", "l3" },
@@ -267,6 +275,7 @@ return {
         { id = "catwalk", label = "Catwalk", replace_components = construction_components, components = { { component = "catwalk" } } },
         { id = "wall", label = "Wall", replace_components = construction_components, components = { { component = "station_base" }, { component = "wall" } } },
         { id = "reinforced_wall", label = "Reinforced Wall", replace_components = construction_components, components = { { component = "station_base" }, { component = "reinforced_wall" } } },
+        { id = "rock", label = "Rock", replace_components = construction_components, components = { { component = "rock" } } },
     },
     transitions = {
         { id = "remove_catwalk", remove_components = { "catwalk" }, remove_unsupported_networks = { "power" } },
