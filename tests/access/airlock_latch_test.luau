@@ -54,11 +54,33 @@ assert(not assert(t.door_at(LEAF, 1)).open, "a crowbar does not pry a bolted, un
 assert(assert(t.door_at(LEAF, 1)).latches.bolted, "the bolt still holds after the attempt")
 
 -- The crowbar's pre-check refuses a bolted leaf before any pry starts: no
--- forced door operation is on the record.
-local forced_opens = 0
-for _, row in ipairs(t.ledger_rows("DoorOperation")) do
-    if row.forced then
-        forced_opens += 1
+-- forced door operation is on the record. The ledger key is the engine's
+-- snake_case event name for `sim.door.*` orders (`door_operation`); the
+-- positive control below shows the same query finds a forced open.
+local function forced_door_operations(): number
+    local forced = 0
+    for _, row in ipairs(t.ledger_rows("door_operation")) do
+        if row.forced == true then
+            forced += 1
+        end
     end
+    return forced
 end
-assert(forced_opens == 0, "the pre-check skipped the pry: no forced door operation, got " .. forced_opens)
+assert(forced_door_operations() == 0, "the pre-check skipped the pry: no forced door operation")
+
+-- ---- positive control: the same crowbar on an unbolted, dark leaf does pry it
+-- open, and that forced open is on the record under the same key.
+access_bench.world("pried open", access_bench.spawn("captain", 3) .. ", (5, 1, \"airlock\")", "(3, 1, \"crowbar\")")
+local opener = t.join("captain")
+t.run_seconds(1.0)
+t.click(opener, 3, 1, assert(t.target_at(opener, 3, 1, "crowbar")))
+t.run_ticks(2)
+t.move(opener, "east")
+t.run_ticks(5)
+t.outage()
+t.run_ticks(2)
+assert(not assert(t.door_at(LEAF, 1)).powered, "the breaker tripped for the control")
+t.click(opener, 5, 1, assert(t.target_at(opener, 5, 1)))
+t.run_ticks(clock.deadline_ticks(2.5) + clock.deadline_ticks(0.6) + 10) -- the 2.5 s pry, then the 0.6 s swing
+assert(assert(t.door_at(LEAF, 1)).open, "the crowbar pries an unbolted, dark leaf open")
+assert(forced_door_operations() == 1, "and the forced open is on the ledger under door_operation")
