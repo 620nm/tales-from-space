@@ -154,6 +154,12 @@ end
 assert(unlocked, "the ID unlocks the crate through a latch switch")
 local heard = t.sounds(keeper)
 assert(table.find(heard, "closet_unlock") ~= nil, "the crate answers its own switch")
-assert(table.find(heard, "airlock_bolts_down") == nil, "the airlock hears no bolt in it")
-assert(table.find(heard, "airlock_bolts_up") == nil, "and no unbolt either")
+-- A controller that took the crate's completion would queue it for a guest:
+-- the queue is the crate's `device_outbox` var, written on the crate alone.
+for _, row in ipairs(t.ledger_rows("var_set")) do
+    assert(
+        not tostring(row.key):find("device_outbox", 1, true),
+        "the airlock's controller queued nothing for the crate's completion"
+    )
+end
 assert(#t.script_errors() == 0, "no airlock handler faults on the closet's completion")
