@@ -37,7 +37,7 @@ return {
     name = "airlock",
     sprite = "door",
     fixture = "Door",
-    -- tg's two door latches (docs/construction/doors.md §Seals): bolts
+    -- tg's two door latches (the engine's docs/construction/doors.md §Latches): bolts
     -- hold the leaf where it is and need power and a still leaf to
     -- throw (airlock.dm:1333,1410); the emergency latch waives every
     -- access check's default answer and leaves a cycle partner alone

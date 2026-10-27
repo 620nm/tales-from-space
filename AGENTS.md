@@ -107,7 +107,8 @@ repository's gitignored `target/`, never the engine's served root.
   and `docs/**/*.md` at most 200 lines. Partition by feature and responsibility;
   shared typed modules belong in `content/lib/`, declarations in roster files.
 - Name a roster file for its declared id (`items/<id>.luau`); the only allowance
-  is numeric ordering prefix `NN_` (`access/10_engineering.luau`).
+  is numeric ordering prefix `NN_` (`access/station.luau`: one realm per file,
+  named for its id).
 - Keep player-facing specs in `tests/**/*_test.luau`, shared spec helpers under
   `tests/helpers/`, and focused map fixtures under `tests/maps/`. Luau modules
   return explicit export tables; Rust crate/module/test conventions do not apply.
