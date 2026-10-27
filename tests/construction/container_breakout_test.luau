@@ -17,12 +17,6 @@ local LAPSED = "lunatic/tfs:closet_breakout_lapsed"
 -- The latch orders of the bust-open complete on the tick the wait ends; the
 -- occupant opens the door one tick later (lib/closets/closet.luau:bust_open).
 local LATCH_ORDER_TICKS = 1
--- ENGINE_INSIDE_ANCHOR_FIX: an `inside` do_after anchors its start and
--- interruption rows on the holder's tile. Until the engine carries that,
--- each wait segment raises a script error and writes no row; the gated
--- assertions below turn on with the constant and the errors are no longer
--- claimed.
-local ENGINE_INSIDE_ANCHOR_FIX = false
 -- The shake and lines wait one tick for the open to be read back.
 local CUE_TICKS = 1
 
@@ -55,9 +49,6 @@ end
 
 -- Loads a bench with one holder; returns the occupant and the engineer.
 local function open_bench(name: string, holder: string): (number, number)
-    if not ENGINE_INSIDE_ANCHOR_FIX then
-        t.script_errors()
-    end
     t.world(bench_source(name, "(" .. HOLDER_X .. ", " .. HOLDER_Y .. ', "' .. holder .. '"),', ""), 0)
     BREAKOUT_TICKS = clock.deadline_ticks(120.0)
     heard_log = {}
@@ -271,11 +262,9 @@ do
         "the bust-open is the occupant's own open"
     )
     assert(#t.ledger_rows(LAPSED) == 0, "nothing lapsed")
-    if ENGINE_INSIDE_ANCHOR_FIX then
-        assert(#t.ledger_rows("DoAfterStarted") == waits + 2, "the 120 s wait parks two 60 s segments")
-        assert(#t.ledger_rows("DoAfterInterrupted") == 0, "nothing interrupted the wait")
-        assert(#t.script_errors() == 0, "the breakout raises no script error")
-    end
+    assert(#t.ledger_rows("DoAfterStarted") == waits + 2, "the 120 s wait parks two 60 s segments")
+    assert(#t.ledger_rows("DoAfterInterrupted") == 0, "nothing interrupted the wait")
+    assert(#t.script_errors() == 0, "the breakout raises no script error")
 
     -- The cues follow the confirmed open by one more tick.
     assert(heard_count(occupant, OWN_LINE) == 0, "no cue before the open is confirmed")
@@ -336,14 +325,10 @@ do
     empty_click_holder(engineer, "locker")
     assert(state_of(HOLDER_X, HOLDER_Y) == "open", "the engineer opens the unwelded locker")
     local interruptions = #t.ledger_rows("DoAfterInterrupted")
-    if ENGINE_INSIDE_ANCHOR_FIX then
-        assert(interruptions >= 1, "the open interrupts the wait on the record")
-    end
+    assert(interruptions >= 1, "the open interrupts the wait on the record")
     run_until(started + BREAKOUT_TICKS + 3)
     assert(#t.ledger_rows("DoAfterInterrupted") == interruptions, "and nothing more is interrupted")
-    if ENGINE_INSIDE_ANCHOR_FIX then
-        assert(#t.script_errors() == 0, "the interrupted wait raises no script error")
-    end
+    assert(#t.script_errors() == 0, "the interrupted wait raises no script error")
     assert(#t.ledger_rows(BROKEN_OUT) == 0, "no break-out is recorded")
     assert(heard_count(engineer, ONLOOKER_LINE) == 0, "the onlooker hears nothing")
 end
@@ -388,7 +373,4 @@ do
     assert(heard_count(engineer, "lock of the") >= 1, "the ID toggle names the broken lock")
     empty_click_holder(engineer, "crate.secure")
     assert(state_of(HOLDER_X, HOLDER_Y) == "open", "the refused toggle left the crate unlocked")
-end
-if not ENGINE_INSIDE_ANCHOR_FIX then
-    t.script_errors()
 end
