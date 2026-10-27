@@ -123,11 +123,11 @@ in its program slots.
 A closed laptop says its lid needs opening and an open, unpowered one says to
 turn it on; neither connects. A target whose lock is shut opens on a lock
 screen. Unlock checks the access the user's body carries: what either hand
-holds, the item in its id slot, and the card in the card slot of either
-carrier (the access its derive handler maintains, `content/lib/access/actor_access.luau`).
-A refusal is recorded and shows that user an Access denied dialog until OK, and
-success opens the same workspace. Shutting the lock
-from the workspace returns it to the lock screen.
+holds, the item in its id slot, and the card in the card slot of any of those
+items (the access its derive handler maintains,
+`content/lib/access/actor_access.luau`). A refusal is recorded and shows that
+user an Access denied dialog until OK, and success opens the same workspace.
+Shutting the lock from the workspace returns it to the lock screen.
 
 An access point has no panel of its own and no disk slot. A bare hand or any
 other tool hovering it reads Connect with a laptop, and clicking it says a

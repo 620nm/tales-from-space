@@ -31,7 +31,7 @@ correlation fields.
 
 ## Who a door answers to
 
-A door a controller drives answers to the guest, not to its own access tag.
+A door a controller drives answers to the guest, not to its own access requirement.
 `content/fixtures/airlock.luau` grants every actor-less `access.permission`
 request and hands a request that has an actor the engine's own answer back
 untouched, so a program opens an `airlock.engineering` leaf the presser

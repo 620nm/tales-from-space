@@ -1,6 +1,6 @@
 -- The station access a body carries (tg GetID): what its hands hold, the
--- item worn in its `id` slot, and the card in the `card` slot of either
--- carrier. A card inside a backpack or any other storage counts for nothing.
+-- item worn in its `id` slot, and a card in the `card` slot of any of those
+-- items. A card inside a backpack or other storage counts for nothing.
 -- Return-only: `access.derive` writes the body's derived layer, nothing else.
 local actor_access = {}
 

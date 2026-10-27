@@ -106,9 +106,9 @@ repository's gitignored `target/`, never the engine's served root.
 - Target files below 300 lines; split before exceeding 1000. Keep this guide
   and `docs/**/*.md` at most 200 lines. Partition by feature and responsibility;
   shared typed modules belong in `content/lib/`, declarations in roster files.
-- Name a roster file for its declared id (`items/<id>.luau`); the only allowance
-  is numeric ordering prefix `NN_` (`access/station.luau`: one realm per file,
-  named for its id).
+- Name a roster file for its declared id (`items/<id>.luau`;
+  `access/<realm>.luau`, one realm per file); the only allowance is a numeric
+  ordering prefix `NN_`.
 - Keep player-facing specs in `tests/**/*_test.luau`, shared spec helpers under
   `tests/helpers/`, and focused map fixtures under `tests/maps/`. Luau modules
   return explicit export tables; Rust crate/module/test conventions do not apply.
