@@ -25,6 +25,10 @@
         ("table", "obj/smooth_structures/table.dmi"),
         ("reinforced_table", "obj/smooth_structures/reinforced_table.dmi"),
         ("wood_table", "obj/smooth_structures/wood_table.dmi"),
+        ("glass_floor", "turf/floors/glass.dmi"),
+        ("reinforced_glass_floor", "turf/floors/reinf_glass.dmi"),
+        ("plasma_glass_floor", "turf/floors/plasma_glass.dmi"),
+        ("reinforced_plasma_glass_floor", "turf/floors/reinf_plasma_glass.dmi"),
     ],
     groups: [
         // Canonical sheets and base states: lattice.dm:1-16,116-125.
@@ -62,6 +66,33 @@
             sheet: "wood_table",
             sprites: [
                 Junctions("wood_table", "wood_table"),
+            ],
+        ),
+        // The four glass floors: one sheet and base state each
+        // (glass.dm:4-6,71-73,89-91,105-107); they smooth as one group
+        // (glass.dm:10-11), which is the structures' word, not this file's.
+        (
+            sheet: "glass_floor",
+            sprites: [
+                Junctions("glass_floor", "glass"),
+            ],
+        ),
+        (
+            sheet: "reinforced_glass_floor",
+            sprites: [
+                Junctions("reinforced_glass_floor", "reinf_glass"),
+            ],
+        ),
+        (
+            sheet: "plasma_glass_floor",
+            sprites: [
+                Junctions("plasma_glass_floor", "plasma_glass"),
+            ],
+        ),
+        (
+            sheet: "reinforced_plasma_glass_floor",
+            sprites: [
+                Junctions("reinforced_plasma_glass_floor", "reinf_plasma_glass"),
             ],
         ),
     ],

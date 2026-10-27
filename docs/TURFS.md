@@ -60,6 +60,15 @@ engine's `docs/content-schema/compositions.md` "Tile values and replacement"
 and `docs/mapping/environment.md` "Exposure"). Station base and rock seal the
 substrate, so either one roofs open sky.
 
+The four glass floors (tg `glass.dm`) are floor windows over an open substrate.
+They hold a body and the air, show the level below, and show runs beneath
+without tool access. All four smooth as one group. Their presets open the
+substrate, so they cannot go on the lowest level. A power cable needs
+supporting ground, station base or catwalk, so none runs on glass, and the
+glass preset is refused over a cable run (tg refuses cable where the underfloor
+is only visible, `cable.dm:692`); pipes have no such need. Construction and the
+starlight glow are not implemented.
+
 The level specs live in `tests/levels/`.
 
 ## Gravity and handholds
