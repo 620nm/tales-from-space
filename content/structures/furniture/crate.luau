@@ -9,20 +9,6 @@
 return {
     id = "crate",
     script = "crate",
-    placement = {
-        access = {
-            var = "lunatic/tfs:closet_access",
-            kind = "choice",
-            default = "station.command",
-            options = {
-                "station.engineering",
-                "station.medical",
-                "station.security",
-                "station.command",
-            },
-            label = "lunatic/tfs:editor.closet_access",
-        },
-    },
     visual_layer = "large_object",
     name_label = "lunatic/tfs:entity.crate.name",
     name = "crate",
@@ -62,6 +48,16 @@ return {
         open_sound = "crate_open",
         close_sound = "crate_close",
         stock = {},
+        -- Tg's `breakout_time = 1200` deciseconds (`closets.dm:47`); a break-out
+        -- clears every holding latch and breaks the lock (`closets.dm:1141-1146`).
+        breakout = { seconds = 120, broken = "broken" },
+    },
+    -- Tg's `locked`/`welded` closet bits hold the door shut; `broken` marks a
+    -- busted lock that refuses a relock (`closets.dm:1141-1146,1169-1170`).
+    latches = {
+        { id = "locked", holds = true },
+        { id = "welded", holds = true },
+        { id = "broken" },
     },
     -- Examine flavor is content text under the current keying limitation
     -- (`docs/WORDS.md:71-73`).
@@ -105,9 +101,11 @@ return {
             state_sprites = { open = "crate_internals_open" },
             examine = { flavor = "An internals crate." },
         },
-        -- Closet locks are bound by `content/fixtures/closets.luau`; secure
+        -- Closet ID swipes are bound by `content/fixtures/closets.luau`; secure
         -- state follows tg's `/crate/secure` (`crates/secure.dm:6-10`).
         secure = {
+            access = "station.command",
+            props = { locked = true },
             name_label = "lunatic/tfs:entity.crate.secure.name",
             name = "secure crate",
             sprite = "crate_secure",

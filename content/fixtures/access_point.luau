@@ -23,6 +23,7 @@ if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:controller_request", { replicate = "server" })
     sim.define("script_var", "lunatic/tfs:device_outbox", { replicate = "server" })
     sim.define("script_var", "lunatic/tfs:device_sending", { replicate = "server" })
+    sim.define("script_var", "lunatic/tfs:device_orders", { replicate = "server" })
     sim.define("script_var", "lunatic/tfs:controller_status", { replicate = "server" })
     sim.define("script_var", "lunatic/tfs:controller_timer", { replicate = "server" })
     local script_definition =

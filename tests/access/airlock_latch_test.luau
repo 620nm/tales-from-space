@@ -126,3 +126,34 @@ local unlatched_refusals = #t.ledger_rows("door_denied")
 access_bench.bump(escaper, 9)
 assert(not assert(t.door_at(9, 1)).open, "the same leaf without the latch refuses that assistant")
 assert(#t.ledger_rows("door_denied") > unlatched_refusals, "and that refusal is on the record")
+
+-- ---- a completion belongs to the controller that issued it: a closet's latch
+-- switch beside an airlock leaves the airlock's handlers faultless and silent.
+access_bench.world(
+    "closet beside airlock",
+    access_bench.spawn("captain", 3)
+        .. ", "
+        .. access_bench.leaf(4, "crate.secure")
+        .. ", "
+        .. access_bench.leaf(8, "airlock.engineering"),
+    "(3, 1, \"id_captain\")"
+)
+local keeper = t.join("captain")
+t.run_seconds(1.0)
+local _ = t.sounds(keeper)
+t.click(keeper, 3, 1, assert(t.target_at(keeper, 3, 1, "id_captain")))
+t.run_ticks(2)
+t.click(keeper, 4, 1, assert(t.target_at(keeper, 4, 1, "crate.secure")))
+t.run_ticks(2)
+local unlocked = false
+for _, row in ipairs(t.ledger_rows("latch_set")) do
+    if row.latch == "locked" and row.on == false then
+        unlocked = true
+    end
+end
+assert(unlocked, "the ID unlocks the crate through a latch switch")
+local heard = t.sounds(keeper)
+assert(table.find(heard, "closet_unlock") ~= nil, "the crate answers its own switch")
+assert(table.find(heard, "airlock_bolts_down") == nil, "the airlock hears no bolt in it")
+assert(table.find(heard, "airlock_bolts_up") == nil, "and no unbolt either")
+assert(#t.script_errors() == 0, "no airlock handler faults on the closet's completion")

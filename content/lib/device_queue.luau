@@ -4,6 +4,33 @@ local device_queue = {}
 function device_queue.clear(device: Handle): ()
     device.vars["device_outbox"] = nil
 end
+-- A completion reaches every listener, so a device acts on one only when it
+-- issued that order itself (docs/construction/scripted-doors.md): `expect`
+-- records an order (by completion family) after its command is issued,
+-- `settle` consumes it once.
+local MAX_EXPECTED = 128
+function device_queue.expect(device: Handle, family: string, request_id: string): ()
+    local orders = (device.vars["device_orders"] :: { [string]: boolean }?) or {}
+    local count = 0
+    for _ in orders do
+        count += 1
+    end
+    if count >= MAX_EXPECTED then
+        orders = {}
+    end
+    orders[family .. "/" .. request_id] = true
+    device.vars["device_orders"] = orders
+end
+function device_queue.settle(device: Handle, family: string, request_id: string): boolean
+    local orders = device.vars["device_orders"] :: { [string]: boolean }?
+    local key = family .. "/" .. request_id
+    if orders == nil or orders[key] ~= true then
+        return false
+    end
+    orders[key] = nil
+    device.vars["device_orders"] = orders
+    return true
+end
 function device_queue.send(device: Handle, payload: Packet): boolean
     local queue = (device.vars["device_outbox"] :: { Packet }?) or {}
     if #queue >= 4 then

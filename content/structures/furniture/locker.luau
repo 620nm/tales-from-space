@@ -50,7 +50,12 @@ return {
         open_sound = "locker_open",
         close_sound = "locker_close",
         stock = {},
+        -- Tg's `breakout_time = 1200` deciseconds (`closets.dm:47`).
+        breakout = { seconds = 120 },
     },
+    -- A welded closet stays shut until unwelded or broken out of
+    -- (`closets.dm:1085-1118,1141-1146`).
+    latches = { { id = "welded", holds = true } },
     variants = {
         tools = {
             name_label = "lunatic/tfs:entity.locker.tools.name",

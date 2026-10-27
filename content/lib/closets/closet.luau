@@ -5,8 +5,15 @@ local closet = {}
 
 export type Options = {
 	secure_variants: { [string]: boolean }?,
-	default_access: string?,
 	fixture_removal_tool: string?,
+}
+
+-- What a latch order says once its `latch.set.done` lands successfully.
+type LatchFeedback = {
+	actor: Handle,
+	name: string,
+	sound: string,
+	message: string,
 }
 
 type WelderOperation = {
@@ -23,9 +30,12 @@ type FixtureExternalRemoval = {
 	prototype: string,
 }
 
-local WELDED_VAR = "closet_welded"
-local LOCKED_VAR = "closet_locked"
-local ACCESS_VAR = "closet_access"
+local WELDED_LATCH = "welded"
+local LOCKED_LATCH = "locked"
+local BROKEN_LATCH = "broken"
+local BREAKOUT_SHAKE_STRENGTH = 4
+local BREAKOUT_SHAKE_SECONDS = 0.5
+local BREAKOUT_ONLOOKER_RADIUS = 7
 local WELDER_PROTOTYPE = "welder"
 local FIXTURE_MAP_SOURCE = "closet_cut_test"
 local FIXTURE_MAP_LOGICAL = "lunatic/tfs:closet_cut_test"
@@ -41,6 +51,8 @@ local ID_PROTOTYPES: { [string]: boolean } = {
 local FUEL_MINIMUM_MOL = 0.025
 local active_welder_operations: { WelderOperation } = {}
 local interruption_handlers_installed = false
+local pending_latch_orders: { [string]: LatchFeedback } = {}
+local latch_order_count = 0
 
 local function send_message(actor: Handle, key: string, subject: string?)
 	local arguments: { [string]: string | number | boolean | UnsafeMarkup } = {}
@@ -64,20 +76,41 @@ local function play_sound_at(at: TileAddress?, sound: string)
 	end
 end
 
-local function play_sound(target: Handle, sound: string)
-	play_sound_at(target.tile, sound)
+local function latch_on(target: Handle, latch: string): boolean
+	local latches = sim.latch.of(target)
+	return latches ~= nil and latches[latch] == true
 end
 
-local function is_welded(target: Handle): boolean
-	return target.vars[WELDED_VAR] == true
+-- Orders one latch switch; the actor hears of it when the order lands.
+local function order_latch(target: Handle, latch: string, on: boolean, feedback: LatchFeedback): ()
+	latch_order_count += 1
+	local request_id = "closet_latch_" .. latch_order_count
+	sim.latch.set({ subject = target, latch = latch, on = on, request_id = request_id })
+	pending_latch_orders[request_id] = feedback
 end
 
-local function is_locked(target: Handle, secure: boolean): boolean
-	local locked = target.vars[LOCKED_VAR]
-	if locked == nil then
-		return secure
+local function on_latch_done(ev: LatchSetDonePayload): ()
+	local feedback = pending_latch_orders[ev.request_id]
+	if feedback == nil then
+		return
 	end
-	return locked == true
+	pending_latch_orders[ev.request_id] = nil
+	if not ev.success then
+		return
+	end
+	play_sound_at(ev.at, feedback.sound)
+	if feedback.actor.alive == true then
+		send_message(feedback.actor, feedback.message, feedback.name)
+	end
+end
+
+-- A latch order carries no actor; the toggle paths below check the actor's
+-- access themselves, so only an actor-less switch is admitted here.
+local function on_access_permission(ev: AccessPermissionPayload)
+	if ev.operation == "set_latch" and ev.actor == nil then
+		return { allowed = true }
+	end
+	return { allowed = ev.allowed }
 end
 
 local function fuel_moles(tool: Handle): number
@@ -302,7 +335,7 @@ local function begin_welder_operation(
 			end
 			if target.prototype ~= prototype_snapshot
 				or target.state ~= start_state
-				or is_welded(target) ~= welded_snapshot
+				or latch_on(target, WELDED_LATCH) ~= welded_snapshot
 			then
 				return
 			end
@@ -333,13 +366,12 @@ local function begin_welder_operation(
 			end
 
 			local welded = not welded_snapshot
-			target.vars[WELDED_VAR] = welded
-			play_sound(target, "weld")
-			send_message(
-				actor,
-				if welded then "lunatic/tfs:lib.closets.welded_shut" else "lunatic/tfs:lib.closets.unwelded",
-				name_snapshot
-			)
+			order_latch(target, WELDED_LATCH, welded, {
+				actor = actor,
+				name = name_snapshot,
+				sound = "weld",
+				message = if welded then "lunatic/tfs:lib.closets.welded_shut" else "lunatic/tfs:lib.closets.unwelded",
+			})
 		end)
 	end)
 	if not spawned or task == nil then
@@ -354,7 +386,6 @@ end
 
 function closet.attach(proto_id: string, opts: Options)
 	local secure_variants = opts.secure_variants or {}
-	local default_access = opts.default_access or "station.command"
 	local fixture_removal_tool = opts.fixture_removal_tool
 	install_interruption_handlers()
 
@@ -453,8 +484,8 @@ function closet.attach(proto_id: string, opts: Options)
 		local target_name = subject_name(target, prototype)
 		local implement_prototype = if implement ~= nil then implement.prototype else nil
 		local secure = secure_variants[prototype] == true
-		local locked = is_locked(target, secure)
-		local welded = is_welded(target)
+		local locked = latch_on(target, LOCKED_LATCH)
+		local welded = latch_on(target, WELDED_LATCH)
 		if ev.gesture == "alt_primary" and climbing.supports_prototype(prototype) then
 			climbing.begin(actor, target)
 			return true
@@ -477,7 +508,7 @@ function closet.attach(proto_id: string, opts: Options)
 					return
 				end
 				if target.state == "closed" then
-					if is_welded(target) or is_locked(target, secure) then
+					if latch_on(target, WELDED_LATCH) or latch_on(target, LOCKED_LATCH) then
 						return
 					end
 					request_deconstruction(target)
@@ -512,22 +543,31 @@ function closet.attach(proto_id: string, opts: Options)
 			and implement_prototype ~= nil
 			and ID_PROTOTYPES[implement_prototype] == true
 		then
+			-- A broken lock takes no further ID toggle (`closets.dm:1169-1170`).
+			if latch_on(target, BROKEN_LATCH) then
+				send_message(actor, "lunatic/tfs:lib.closets.broken", target_name)
+				return true
+			end
 			if locked then
-				local access = target.vars[ACCESS_VAR]
-				if type(access) ~= "string" then
-					access = default_access
-				end
-				if not sim.access.check({ actor = actor, requires = access }).allowed then
+				local requirements = sim.access.requirement_of(target)
+				local requires = if requirements ~= nil then requirements.container else nil
+				if not sim.access.check({ actor = actor, requires = requires or "" }).allowed then
 					send_message(actor, "lunatic/tfs:lib.closets.access_denied")
 					return true
 				end
-				target.vars[LOCKED_VAR] = false
-				play_sound(target, "closet_unlock")
-				send_message(actor, "lunatic/tfs:lib.closets.unlocked", target_name)
+				order_latch(target, LOCKED_LATCH, false, {
+					actor = actor,
+					name = target_name,
+					sound = "closet_unlock",
+					message = "lunatic/tfs:lib.closets.unlocked",
+				})
 			else
-				target.vars[LOCKED_VAR] = true
-				play_sound(target, "closet_lock")
-				send_message(actor, "lunatic/tfs:lib.closets.locked_set", target_name)
+				order_latch(target, LOCKED_LATCH, true, {
+					actor = actor,
+					name = target_name,
+					sound = "closet_lock",
+					message = "lunatic/tfs:lib.closets.locked_set",
+				})
 			end
 			return true
 		end
@@ -546,6 +586,27 @@ function closet.attach(proto_id: string, opts: Options)
 		return { replaced = false }
 	end)
 	behavior:handle("climb.done", { kind = "react" }, climbing.on_done)
+	behavior:handle("latch.set.done", { kind = "react" }, on_latch_done)
+	behavior:handle("access.permission", { kind = "transform" }, on_access_permission)
+	-- The break-out cues are the pack's (`closets.dm:1103,1113`): the native
+	-- open already plays the container's open sound.
+	behavior:handle("container.breakout.done", { kind = "react" }, function(ev: ContainerBreakoutDonePayload)
+		local holder: Handle = ev.self
+		local at = holder.tile
+		if at == nil then
+			return
+		end
+		local prototype = holder.prototype
+		sim.visual.shake({ at = at, strength = BREAKOUT_SHAKE_STRENGTH, duration = BREAKOUT_SHAKE_SECONDS })
+		sim.message.broadcast({
+			at = at,
+			radius = BREAKOUT_ONLOOKER_RADIUS,
+			message = sim.msg("lunatic/tfs:lib.closets.broke_out", {
+				name = ev.body.name or "Someone",
+				subject = subject_name(holder, prototype or proto_id),
+			}),
+		})
+	end)
 	behavior:handle("container.close.done", { kind = "react" }, function(ev: ContainerCloseDonePayload)
 		for _, body in ipairs(ev.bodies) do
 			body:hold_posture("knockdown", 4.0)

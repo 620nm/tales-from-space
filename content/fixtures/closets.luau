@@ -11,7 +11,6 @@ if sim ~= nil then
     })
     closet.attach("crate", {
         secure_variants = { ["crate.secure"] = true },
-        default_access = "station.command",
         fixture_removal_tool = fixture_removal_tool,
     })
     closet.attach("freezer", {})
