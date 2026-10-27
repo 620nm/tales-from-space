@@ -494,4 +494,23 @@ assert_offset(kn, 0, "the adjacent non-rider stays unelevated")
 assert(assert(t.body(kn)).posture == "standing", "the non-rider gets no knockdown")
 assert_forced_exits(1, joined_player_id(1), "one launched rider and one blocked rider")
 assert(#t.script_errors() == 0, "actual knock-off has no script errors")
+
+ka, kr1, kr2, kn = start_knock_world()
+primary(kr1, 4, 4, "crate")
+assert(assert(t.structure_at(4, 4)).state == "open", "the open-start case begins with an open crate")
+primary(ka, 4, 4, "crate")
+assert(
+    assert(t.structure_at(4, 4)).state == "closed",
+    "native closing follows empty-hand knock-off on an open crate"
+)
+t.run_seconds(3.0)
+assert_position(kr2, 5, 4, "open-start knock-off launches the second rider instead of capturing them")
+assert_offset(kr2, 0, "the open-start launched rider loses support elevation")
+assert(assert(t.body(kr2)).posture == "lying", "the open-start launched rider is knocked down")
+assert_position(kr1, 4, 4, "open-start knock-off leaves the blocked rider outside at the crate")
+assert_offset(kr1, 14, "the open-start blocked rider remains supported, not contained")
+assert(assert(t.body(kr1)).posture == "lying", "the open-start blocked rider is knocked down")
+assert_position(kn, 2, 4, "open-start knock-off leaves the non-rider alone")
+assert_forced_exits(1, joined_player_id(1), "open-start launched and blocked riders")
+assert(#t.script_errors() == 0, "open-start knock-off has no script errors")
 print("crate climbing: timing, support, riders, knock-off and blocked displacement")
