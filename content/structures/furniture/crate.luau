@@ -14,7 +14,12 @@ return {
             var = "lunatic/tfs:closet_access",
             kind = "choice",
             default = "station.command",
-            options = { "station.engineering", "station.medical", "station.security", "station.command" },
+            options = {
+                "station.engineering",
+                "station.medical",
+                "station.security",
+                "station.command",
+            },
             label = "lunatic/tfs:editor.closet_access",
         },
     },
