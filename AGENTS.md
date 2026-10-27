@@ -20,11 +20,9 @@ aliases, shims or backports to preserve an old surface.
   interfaces and asset art separately. Finish with an independent antagonistic
   review and resolve its findings. Shared-library ownership and atomic caller
   migrations follow `docs/LIB-CONTRACT.md`.
-- Use isolated worktrees; preserve parallel agents' edits. The default location
-  is `.worktrees/`; on this host use
-  `/home/josh/.cache/codex-tmp/worktrees/<repo>-<branch>`. Keep git metadata
-  writable. Other scratch belongs under `/home/josh/.cache/codex-tmp/`, never
-  RAM-backed `/tmp`; build outputs keep their documented `target/` locations.
+- Use isolated worktrees under `.worktrees/<branch>`; preserve parallel
+  agents' edits. Keep git metadata writable. Bulk scratch goes on disk, never
+  `/tmp`; build outputs keep their documented `target/` locations.
   Merge into clean `master`, then remove only your worktree, branch and scratch.
   If `master` is dirty, retain your work and report the blocked integration.
 - Commit validated work incrementally with `type(scope): subject` (Conventional
