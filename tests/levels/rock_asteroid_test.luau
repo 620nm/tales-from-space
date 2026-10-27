@@ -6,7 +6,8 @@
 -- because a body cannot join on bare space.
 local composition = require("@helpers/composition")
 
-local ROCK_SPRITE = "rock"
+-- Rock wears `rock-<junction>`; the arithmetic is in rock_basement_test.luau (the
+-- station-base tile at (1,2) is no rock, so it counts like the open room there).
 local SPACE_SPRITE = "space"
 local BASEMENT = -1
 
@@ -65,9 +66,15 @@ assert(x == 1 and y == 2, "rock blocks a step west, got (" .. x .. ", " .. y .. 
 
 -- 3. Rock is seen, hides what is under it, and hides what is behind it.
 local near = composition.seen_sprites(p, 1, 1, BASEMENT)
-assert(#near.components == 1 and near.components[1] == ROCK_SPRITE, "the adjacent rock shows its rock row")
+assert(#near.components == 1 and near.components[1] == "rock-157", "the adjacent rock shows its rock row, got " .. tostring(near.components[1]))
 assert(#near.substrates == 0, "rock hides the substrate under it, got " .. tostring(near.substrates[1]))
 assert(#t.seen_composition(p, 1, 0, BASEMENT) == 0, "the rock behind the near rock is not disclosed")
+local edge = composition.seen_sprites(p, 0, 2, BASEMENT)
+assert(edge.components[1] == "rock-3", "rock at the map edge joins only N and S, got " .. tostring(edge.components[1]))
+
+-- 3b. A rock's picture follows its neighbours; digging changes them (step 5).
+local east = composition.seen_sprites(p, 2, 1, BASEMENT)
+assert(east.components[1] == "rock-157", "the rock east of the future dig joins W, N, E and both upper corners")
 
 -- 5. Digging reveals space.
 assert(t.set_composition(1, 1, "bare", BASEMENT), "the bare preset removes the rock")
@@ -75,6 +82,8 @@ t.run_ticks(2)
 local dug = composition.seen_sprites(p, 1, 1, BASEMENT)
 assert(dug.substrates[1] == SPACE_SPRITE, "the dug tile shows space, got " .. tostring(dug.substrates[1]))
 assert(#dug.components == 0, "the dug tile has no rock row")
+east = composition.seen_sprites(p, 2, 1, BASEMENT)
+assert(east.components[1] == "rock-21", "the rock east of the dug tile loses its W and NW bits, got " .. tostring(east.components[1]))
 
 -- 6. Rock roofs what is under it: on a level above ground a rock over the
 -- inherited sky leaves no opening to the room below, which keeps its air where

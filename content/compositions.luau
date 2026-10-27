@@ -248,7 +248,7 @@ return {
         -- (LINDA_turf_tile.dm:5), unrepresentable; the tile keeps its substrate's.
         -- `receives_gravity` matches the walls and is unobservable: rock braces a body in it, which
         -- never falls (the engine's crates/lunatic-server/src/sim/movement/level_change.rs:resolve_fall_step).
-        { id = "rock", occludes_substrate = true, label = "rock", layer = "cover", sprite = "rock", cover = barrier_controls(),
+        { id = "rock", occludes_substrate = true, label = "rock", layer = "cover", sprite = "rock-0", cover = barrier_controls(),
             physical = { ambient = 0, support = true, receives_gravity = true, substrate_seal = true, movement_blocking = true,
                 gas_blocking = true, opaque = true } },
         glass_floor("glass_floor", "glass floor"),

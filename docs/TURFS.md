@@ -52,8 +52,11 @@ boundary; an exposed space substrate remains a boundary below a catwalk.
 
 Rock (tg `/turf/closed/mineral`) blocks movement, gas and sight, supports and
 seals, and hides what is under it. It sits over the inherited substrate, so
-removing it shows ground on a planet and space in orbit. It wears tg's static
-`mining.dmi` `rock` picture and does not smooth. Mining it is not implemented.
+removing it shows ground on a planet and space in orbit. It wears tg's
+`smoothrocks` bitmask art (`minerals.dm:6-21`) and smooths with neighbouring
+rock; each `rock-<junction>` frame is the 40x40 cell's centre 32x32 window, so
+tg's 4 px overhang is lost, and the map edge is not a neighbour (no
+`SMOOTH_BORDER`). Mining it is not implemented.
 
 Open sky above ground and what seals it are the engine's contract (the
 engine's `docs/content-schema/compositions.md` "Tile values and replacement"
