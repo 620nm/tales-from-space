@@ -40,7 +40,7 @@ t.world(
     [==[(
     name: "subfloor",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
@@ -217,7 +217,7 @@ t.world(
     [==[(
     name: "cover subfloor",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
@@ -277,7 +277,7 @@ t.world(
     [==[(
     name: "tile under canister",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         'c': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
@@ -343,7 +343,7 @@ t.world(
     [==[(
     name: "authored decks",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles", controls: {"power": "open", "pipe": "open"})])),
         'c': (composition: (components: [(component: "station_base"), (component: "floor_tiles", controls: {"power": "closed", "pipe": "closed"})])),

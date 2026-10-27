@@ -27,7 +27,7 @@ t.world(
     [==[(
     name: "plumbing",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
@@ -239,7 +239,7 @@ t.world(
     [==[(
     name: "transfer",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
@@ -357,7 +357,7 @@ t.world(
     [==[(
     name: "crossing",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
@@ -441,7 +441,7 @@ t.world(
     [==[(
     name: "parallel mains",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
@@ -499,7 +499,7 @@ t.world(
     [==[(
     name: "parallel mains, unaimed",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
@@ -545,7 +545,7 @@ t.world(
     [==[(
     name: "hand-laid component occupancy",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },

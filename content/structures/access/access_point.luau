@@ -20,9 +20,9 @@
 -- the air without forgetting a single join.
 --
 -- WHAT ITS LOCK IS KEYED TO IS NOT WRITTEN HERE, and cannot be. A lock
--- names no claim in a file: it takes the placement's own `access` word,
--- the same row an airlock's placement carries, so one entry stands up a
--- rack of nodes keyed to different departments
+-- names no access requirement in a file: it takes the placement's own
+-- `access` word, the same row an airlock's placement carries, so one entry
+-- stands up a rack of nodes keyed to different departments
 -- (docs/CONTENT-SCHEMA.md §1.10c). One built by hand out of a wall
 -- frame has no placement and therefore no key -- which is still a lock,
 -- because it has to be worked by somebody standing at it, and the

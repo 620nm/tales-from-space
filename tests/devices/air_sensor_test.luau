@@ -21,7 +21,7 @@ local MAP = [==[
                 (1, 1, "player_spawn", { "jobs": "assistant" }),
                 (1, 3, "player_spawn", { "jobs": "engineer" }),
                 (2, 1, "access_point", { "network_1": "network_card", "file.airlock_controller": true, "program.controller": "airlock_controller", "mount": "north" }),
-                (2, 3, "air_alarm", { "access": "engineering", "network_1": "network_card", "mount": "south" }),
+                (2, 3, "air_alarm", { "access": "station.engineering", "network_1": "network_card", "mount": "south" }),
                 (1, 1, "air_sensor", { "mount": "north" }),
                 (2, 2, "apc"),
             ],
@@ -89,7 +89,7 @@ for _, row in ipairs(ui_controls.rows(panel.toggles or {})) do
         table.insert(locks, row)
     end
 end
-assert(#locks >= 1 and locks[1].on, "engineering's claim opens it")
+assert(#locks >= 1 and locks[1].on, "the engineering access opens it")
 for _, row in ipairs(ui_controls.rows(panel.toggles or {})) do
     if row.field == "link_join" then
         assert(

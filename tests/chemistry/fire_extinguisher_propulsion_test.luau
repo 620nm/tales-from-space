@@ -4,8 +4,8 @@ t.world([==[(
     tags: ["space"],
     environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
     legend: {
-        's': (composition: (substrate: Some("space"))),
-        'f': (composition: (substrate: Some("space"), components: [(component: "station_base")])),
+        's': (composition: (substrate: Named("space"))),
+        'f': (composition: (substrate: Named("space"), components: [(component: "station_base")])),
     },
     levels: [
         (

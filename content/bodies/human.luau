@@ -730,6 +730,7 @@ if sim ~= nil then
     local blood_harmony = require("@lib/blood_harmony")
     local host_illness = require("@lib/medical/host_illness")
     local airborne = require("@lib/medical/airborne")
+    local actor_access = require("@lib/access/actor_access")
     local body_drag = require("@lib/body_drag")
     local climbing = require("@lib/climbing")
     host_illness.attach()
@@ -738,6 +739,8 @@ if sim ~= nil then
     script_definition:handle("move.cross.done", { kind = "react" }, map_boot.on_cross_done)
     script_definition:handle("interaction.drag", { kind = "replace", route = "drag" }, body_drag.on_drag)
     script_definition:handle("climb.done", { kind = "react" }, climbing.on_done)
+    -- The body's carried access; a body plan added later binds the same handler.
+    script_definition:handle("access.derive", { kind = "transform" }, actor_access.derive)
     script_definition:handle(
         "body.spawn.done",
         { kind = "react", route = "lifecycle" },

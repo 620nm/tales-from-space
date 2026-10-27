@@ -46,7 +46,7 @@ end
 t.world([==[(
     name: "a grating in a pocket",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
@@ -140,7 +140,7 @@ assert(
 t.world([==[(
     name: "a grating in a corridor",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },

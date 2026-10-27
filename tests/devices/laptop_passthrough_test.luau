@@ -57,7 +57,7 @@ t.click(p, 4, 1, assert(t.target_at(p, 4, 1, "laptop")))
 t.run_ticks(2)
 assert(t.hands(p).held == "laptop", "the closed laptop is in hand")
 local door = assert(t.door_at(5, 1))
-assert(door.powered and not door.open and not door.seals.bolted, "a powered, shut, public door")
+assert(door.powered and not door.open and not door.latches.bolted, "a powered, shut, public door")
 
 local _ = t.messages(p)
 t.click(p, 5, 1, t.target_at(p, 5, 1))

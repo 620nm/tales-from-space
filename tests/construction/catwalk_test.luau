@@ -18,9 +18,9 @@ t.world(
     [==[(
     name: "EVA bridge pictures",
     legend: {
-        '~': (composition: (substrate: Some("space"))),
-        'l': (composition: (substrate: Some("space"), components: [(component: "lattice")])),
-        'c': (composition: (substrate: Some("space"), components: [(component: "catwalk")])),
+        '~': (composition: (substrate: Named("space"))),
+        'l': (composition: (substrate: Named("space"), components: [(component: "lattice")])),
+        'c': (composition: (substrate: Named("space"), components: [(component: "catwalk")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
     levels: [
@@ -60,9 +60,9 @@ t.world(
     [==[(
     name: "EVA bridge work",
     legend: {
-        '~': (composition: (substrate: Some("space"))),
-        'l': (composition: (substrate: Some("space"), components: [(component: "lattice")])),
-        'c': (composition: (substrate: Some("space"), components: [(component: "catwalk")])),
+        '~': (composition: (substrate: Named("space"))),
+        'l': (composition: (substrate: Named("space"), components: [(component: "lattice")])),
+        'c': (composition: (substrate: Named("space"), components: [(component: "catwalk")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
     levels: [
@@ -156,9 +156,9 @@ t.world(
     [==[(
     name: "EVA bridge plating",
     legend: {
-        '~': (composition: (substrate: Some("space"))),
-        'l': (composition: (substrate: Some("space"), components: [(component: "lattice")])),
-        'c': (composition: (substrate: Some("space"), components: [(component: "catwalk")])),
+        '~': (composition: (substrate: Named("space"))),
+        'l': (composition: (substrate: Named("space"), components: [(component: "lattice")])),
+        'c': (composition: (substrate: Named("space"), components: [(component: "catwalk")])),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
     },
     levels: [

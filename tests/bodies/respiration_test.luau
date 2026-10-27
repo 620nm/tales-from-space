@@ -34,7 +34,7 @@ local ui_controls = require("@helpers/ui_controls")
 
 local ARENA = [==[(
     name: "closet",
-    legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
+    legend: { ' ': (composition: (substrate: Named("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     levels: [
         (
             rows: [ "###", "#.#", "###" ],
@@ -142,7 +142,7 @@ assert(inside(crew, "co2") > 0.0, "the last breath is still in there, unexhaled 
 -- =====================================================================
 local VOID = [==[(
     name: "the void",
-    legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
+    legend: { ' ': (composition: (substrate: Named("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     levels: [
         (
             rows: [ "###", "#. ", "###" ],
@@ -171,7 +171,7 @@ assert(ui_controls.number(t.health(spacer).oxy) > 0, "and the crewman is suffoca
 -- =====================================================================
 local THEATRE = [==[(
     name: "theatre",
-    legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
+    legend: { ' ': (composition: (substrate: Named("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     levels: [
         (
             rows: [ "#####", "#...#", "#####" ],

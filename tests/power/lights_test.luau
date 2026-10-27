@@ -16,7 +16,7 @@ t.world(
     [==[(
     name: "corridor",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'l': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Light), light: Some("#FFD6AA")),

@@ -6,7 +6,13 @@ local COLD = 0
 local O_MINUS = 0
 local A_PLUS = 3
 local WAIT_LIMIT_SECONDS = 240
+local SYMPTOM_WAIT_SECONDS = 900
+local SYMPTOM_CHUNK_SECONDS = 10
 
+-- Pinned to SEED 3's draw stream: an engine change that moves keyed draws
+-- (the engine's docs/scripting/determinism-and-testing.md §6.2) can flip it.
+-- About a quarter of streams (simulated) miss the symptom window because the
+-- donor is cured first; a cure grants resistance, so no retry is possible.
 -- This is a player-action proof. The water route is deliberately a water
 -- and culture-blood mixture; it does not claim to make a blood-free specimen.
 -- Keep the jobs' default breath masks; the distant drinker is remote from the ward.
@@ -14,7 +20,7 @@ t.world(
     [==[(
     name: "rhinovirus ward",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
@@ -233,8 +239,8 @@ t.messages(medic)
 local saw_stage_two = false
 local saw_sneeze = false
 local saw_cough = false
-for _ = 1, WAIT_LIMIT_SECONDS do
-    t.run_seconds(1)
+for _ = 1, SYMPTOM_WAIT_SECONDS / SYMPTOM_CHUNK_SECONDS do
+    t.run_seconds(SYMPTOM_CHUNK_SECONDS)
     body_scan(medic, donor)
     local messages = t.messages(medic)
     if says(messages, "Stage: 2/3.") then

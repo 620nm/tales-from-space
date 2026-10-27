@@ -11,10 +11,10 @@ local function world(center: string, brace: string, terrestrial: boolean, microg
                 tags: %s,
                 environment: (kind: Exact(%s), gravity_m_s2: Exact(%s)),
                 legend: {
-                    's': (composition: (substrate: Some("space"))),
-                    'f': (composition: (substrate: Some("space"), components: [(component: "station_base")])),
-                    'l': (composition: (substrate: Some("space"), components: [(component: "lattice")])),
-                    'w': (composition: (substrate: Some("space"), components: [(component: "wall")])),
+                    's': (composition: (substrate: Named("space"))),
+                    'f': (composition: (substrate: Named("space"), components: [(component: "station_base")])),
+                    'l': (composition: (substrate: Named("space"), components: [(component: "lattice")])),
+                    'w': (composition: (substrate: Named("space"), components: [(component: "wall")])),
                 },
                 levels: [
                     (

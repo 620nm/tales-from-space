@@ -6,7 +6,7 @@ local AIRLOCK = [==[
     name: "Fault Bench",
     environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
-        ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        ' ': (composition: (substrate: Named("space"))), '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
         'A': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
@@ -152,7 +152,7 @@ t.run_ticks(2)
 airlock_cycle.until_door(5, true, operator, since, function()
     local p = assert(t.door_at(8, 3))
     if assert(t.door_at(5, 3)).open or assert(t.door_at(5, 3)).moving then
-        assert(not p.open and not p.moving and p.seals.bolted, "the east leaf stays bolted")
+        assert(not p.open and not p.moving and p.latches.bolted, "the east leaf stays bolted")
     end
 end)
 assert(#t.ledger_rows("link_accepted") >= 6, "the rejoin left its own row")

@@ -204,9 +204,9 @@ t.world(
     [==[(
     name: "the sleeping chamber",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
-        'r': (composition: (substrate: Some("ground"))),
+        'r': (composition: (substrate: Named("ground"))),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),

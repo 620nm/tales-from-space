@@ -13,7 +13,7 @@ local ui_controls = require("@helpers/ui_controls")
 
 local ARENA = [==[(
     name: "ward",
-    legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
+    legend: { ' ': (composition: (substrate: Named("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     levels: [
         (
             rows: [ "#####", "#...#", "#####" ],
@@ -161,7 +161,7 @@ assert(not has(parts.chest.surgical_states, "skin_cut"), "and the chest above it
 -- =====================================================================
 local BRAWL = [==[(
     name: "brawl",
-    legend: { ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
+    legend: { ' ': (composition: (substrate: Named("space"))), '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])) },
     levels: [
         (
             rows: [ "#####", "#...#", "#####" ],

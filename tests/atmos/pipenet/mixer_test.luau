@@ -59,7 +59,7 @@ local OUT_X, OUT_Y = 11, 1
 local THREE_WAY = [==[(
     name: "mixer",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'a': (composition: (components: [(component: "station_base")])),
@@ -415,7 +415,7 @@ t.world(
     [==[(
     name: "flipped mixer",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'a': (composition: (components: [(component: "station_base")])),

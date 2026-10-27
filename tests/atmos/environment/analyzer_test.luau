@@ -49,12 +49,12 @@ t.world(
     string.format([==[(
     name: "analyzer",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'c': (composition: (components: [(component: "station_base")])),
-        'g': (composition: (substrate: Some("ground"))),
+        'g': (composition: (substrate: Named("ground"))),
     },
     levels: [
         (

@@ -10,7 +10,7 @@ local OBSERVATION_SECONDS = 120
 local MAP = [==[(
     name: "airborne ward",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },
@@ -199,7 +199,7 @@ assert(not behind_wall_seen, "a full wall column separates the other room")
 local LEVEL_MAP = [==[(
     name: "stacked ward",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
     },

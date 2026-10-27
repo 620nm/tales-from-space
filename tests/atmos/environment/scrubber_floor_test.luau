@@ -97,7 +97,7 @@ end
 local DEAD_SUPPLY = [==[(
     name: "return grille, no supply",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'a': (composition: (components: [(component: "station_base")])),
@@ -256,7 +256,7 @@ assert(
 local LIVE_SUPPLY = [==[(
     name: "return grille, live supply",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'a': (composition: (components: [(component: "station_base")])),
@@ -447,7 +447,7 @@ assert(
 local NAMED = [==[(
     name: "named roster, floor over zero",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'a': (composition: (components: [(component: "station_base")])),

@@ -10,7 +10,7 @@ local AIRLOCK = [==[
     name: "Southface Airlock",
     environment: (gravity_m_s2: Exact(9.80665)),
     legend: {
-        ' ': (composition: (substrate: Some("space"))), '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        ' ': (composition: (substrate: Named("space"))), '.': (composition: (components: [(component: "station_base")])), '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
         'A': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base")]), fixture: Some(Outlet)),
@@ -140,7 +140,7 @@ local function sealed_while(
         if d.open or d.moving then
             local p = assert(t.door_at(partner[1], partner[2]))
             assert(
-                not p.open and not p.moving and p.seals.bolted,
+                not p.open and not p.moving and p.latches.bolted,
                 "door " .. partner[1] .. "," .. partner[2] .. " is bolted shut before "
                     .. opening[1] .. "," .. opening[2] .. " moves"
             )
@@ -178,7 +178,7 @@ airlock_cycle.until_door(
     3
 )
 assert(
-    assert(t.door_at(5, 7)).seals.bolted and not assert(t.door_at(5, 7)).open,
+    assert(t.door_at(5, 7)).latches.bolted and not assert(t.door_at(5, 7)).open,
     "the space leaf stays bolted shut"
 )
 assert((airlock_cycle.pressure() or 0) >= 100, "the chamber filled before home opened")

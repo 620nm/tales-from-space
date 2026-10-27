@@ -15,11 +15,11 @@ t.run_ticks(20)
 local host = assert(t.target_at(operator, 4, 3, "access_point"))
 local lap = assert(t.target_at(operator, 3, 3, "laptop"))
 assert(
-    assert(t.door_at(5, 3)).seals.bolted and not assert(t.door_at(5, 3)).open,
+    assert(t.door_at(5, 3)).latches.bolted and not assert(t.door_at(5, 3)).open,
     "interior starts closed and bolted"
 )
 assert(
-    assert(t.door_at(8, 3)).open and not assert(t.door_at(8, 3)).seals.bolted,
+    assert(t.door_at(8, 3)).open and not assert(t.door_at(8, 3)).latches.bolted,
     "exterior starts open and unbolted"
 )
 assert(assert(t.room_pressure(6, 3)) < 1, "the chamber starts evacuated")
@@ -245,7 +245,7 @@ end
 assert(t.pos(visitor) == 7, "the visitor stands in the chamber")
 until_door(5, true, press_inside())
 assert(
-    assert(t.door_at(8, 3)).seals.bolted and not assert(t.door_at(8, 3)).open,
+    assert(t.door_at(8, 3)).latches.bolted and not assert(t.door_at(8, 3)).open,
     "the exterior is secured before the interior opens"
 )
 local function pressure_result(): number
@@ -264,7 +264,7 @@ t.click(visitor, 7, 4, t.target_at(visitor, 7, 4, "airlock_button"))
 t.run_ticks(2)
 until_door(8, true, since)
 assert(
-    assert(t.door_at(5, 3)).seals.bolted and not assert(t.door_at(5, 3)).open,
+    assert(t.door_at(5, 3)).latches.bolted and not assert(t.door_at(5, 3)).open,
     "the interior is secured before space opens"
 )
 assert(pressure_result() < 10, "the distinct effluent main evacuates below 10 kPa before opening")

@@ -22,7 +22,7 @@ local BENCH = [==[(
 )]==]
 
 local function bench(substrate: string?, cover: string?, powered: boolean): number
-    local substrate_ron = if substrate then 'substrate: Some("' .. substrate .. '"),' else ""
+    local substrate_ron = if substrate then 'substrate: Named("' .. substrate .. '"),' else ""
     local cover_ron = if cover then ', (component: "' .. cover .. '")' else ""
     local power_ron = if powered then
         '(x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15)' else ""

@@ -121,7 +121,7 @@ end
 local BENCH = [==[(
     name: "%s bench",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),

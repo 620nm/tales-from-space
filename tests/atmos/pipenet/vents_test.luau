@@ -112,7 +112,7 @@ end
 local SUPPLY_MAP = [==[(
     name: "supply vent",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'c': (composition: (components: [(component: "station_base")])),
@@ -282,7 +282,7 @@ near(
 local RELIEF_MAP = [==[(
     name: "relief vent",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'g': (composition: (components: [(component: "station_base")]), fixture: Some(Generator)),
@@ -402,7 +402,7 @@ near(room_moles(ROOM) + pipe_moles(2, 1), books, 0.001, "with every mole of it s
 local PASSIVE_MAP = [==[(
     name: "passive vent",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'c': (composition: (components: [(component: "station_base")])),

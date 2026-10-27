@@ -167,7 +167,7 @@ t.world(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'u': (composition: (substrate: Some("ground"))),
+        'u': (composition: (substrate: Named("ground"))),
     },
     levels: [
         (
@@ -277,7 +277,7 @@ t.world(
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'g': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
-        'u': (composition: (substrate: Some("ground"))),
+        'u': (composition: (substrate: Named("ground"))),
     },
     levels: [
         (

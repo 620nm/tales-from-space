@@ -16,7 +16,7 @@ local ui_controls = require("@helpers/ui_controls")
 -- is the placement's own `access` word (docs/DEVICES.md §8). So a box a
 -- player screwed together has no key -- still a lock, still worked only
 -- by somebody standing at it -- while one the station was built with
--- wants the claim its placement names. Both halves are below, in that
+-- wants the access requirement its placement names. Both halves are below, in that
 -- order, because the first is what an engineer meets first.
 --
 -- THE BENCH IS WIRED, and has to be: an access point is a corded
@@ -69,7 +69,7 @@ t.world(
     [==[(
     name: "mount bench",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
@@ -186,7 +186,7 @@ assert(t.ledger_has("StructureStep", "wall_frame", "finished"), "and the assembl
 -- A bare hand gets no window here: the interface answers only a held,
 -- running laptop, and the box says so on hover and aloud. A fresh boot
 -- finds every lock shut and this one was never placed by a map, so
--- nothing names a claim for it -- the laptop's first screen is the
+-- nothing names an access requirement for it -- the laptop's first screen is the
 -- lock, which says what this box is and not one word behind it.
 -- ---------------------------------------------------------------
 put_down()
@@ -329,14 +329,14 @@ assert(t.count_items("cable_coil") == coil_before + 1, "with the wiring as its o
 
 -- ---------------------------------------------------------------
 -- 4. A LOCK WITH A KEY. The same entry, placed by a map that names a
---    claim for it -- which is where a lock's key comes from and the
+--    access requirement for it -- which is where a lock's key comes from and the
 --    only place it can (docs/DEVICES.md §8).
 -- ---------------------------------------------------------------
 t.world(
     [==[(
     name: "keyed bench",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
@@ -352,7 +352,7 @@ t.world(
                 "#######",
             ],
             items: [(5, 1, "id_engineering"), (5, 1, "laptop")],
-            structures: [(5, 1, "player_spawn"), (4, 1, "access_point", { "access": "engineering", "mount": "north" }), (2, 2, "apc")],
+            structures: [(5, 1, "player_spawn"), (4, 1, "access_point", { "access": "station.engineering", "mount": "north" }), (2, 2, "apc")],
             networks: [
                 (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
                 (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
@@ -373,14 +373,14 @@ panel = laptop.connect(eng, 4, 1, "access_point")
 assert(panel and panel.contact_locked, "the mapped box greets the laptop with the same lock screen")
 assert(not rows(panel, "link_lock")[1].on, "shut, as every lock is at boot")
 
--- No claim in either hand, and it stays shut. Opening it is checked
+-- No access card in either hand, and it stays shut. Opening it is checked
 -- against whoever is standing there, on the tick the lock moves.
 laptop.unlock(eng)
 t.tick()
 panel = laptop.ui(eng)
 assert(
     panel.contact_locked and not rows(panel, "link_lock")[1].on,
-    "and it does not open without the claim"
+    "and it does not open without an access card"
 )
 local denials = t.ledger_rows("link_denied")
 assert(#denials == 1 and denials[1].why == "access", "the refusal names the rule it broke")
@@ -399,7 +399,7 @@ assert(
 ui_controls.press(eng, "/refusal/ok", nil, scope)
 assert(ui_controls.find(eng, "/refusal/ok", scope) == nil, "OK puts it away")
 
--- The claim itself, in the other hand -- worn or held, the check is the
+-- The access card itself, in the other hand -- worn or held, the check is the
 -- same one an airlock makes, and the laptop stays the active hand.
 t.click(eng, 5, 1, t.target_at(eng, 5, 1, "id_engineering"))
 t.run_ticks(2)
@@ -409,7 +409,7 @@ t.tick()
 panel = laptop.ui(eng)
 assert(
     not panel.contact_locked and rows(panel, "link_lock")[1].on,
-    "the claim opens it, straight into the workspace"
+    "the access card opens it, straight into the workspace"
 )
 assert(panel.refusal == nil, "and the press that landed retires the refusal")
 laptop.close(eng)

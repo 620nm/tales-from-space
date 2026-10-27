@@ -55,7 +55,7 @@ t.world(
     [==[(
     name: "painter",
     legend: {
-        ' ': (composition: (substrate: Some("space"))),
+        ' ': (composition: (substrate: Named("space"))),
         '.': (composition: (components: [(component: "station_base")])),
         'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         'F': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
