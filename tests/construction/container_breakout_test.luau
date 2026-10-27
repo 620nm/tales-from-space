@@ -3,193 +3,37 @@
 -- unsecured closet opens at once; a welded or locked one gives way after its
 -- 120 seconds, clearing every holding latch (`closets.dm:1141-1146`), then
 -- opens. Rows are read by their snake_case words; the pack's own are
--- `lunatic/tfs:closet_broken_out` and `closet_breakout_lapsed`.
+-- `lunatic/tfs:closet_broken_out` and `closet_breakout_lapsed`. Interrupted
+-- and shared-holder cases: container_breakout_edge_test.
 local clock = require("@helpers/clock")
+local bench = require("@helpers/container_bench")
 
-local OCCUPANT_X = 4
-local HOLDER_X = 5
-local HOLDER_Y = 2
-local ENGINEER_Y = 3
-local ONLOOKER_LINE = "successfully broke out of the"
-local OWN_LINE = "You break your way out."
-local BROKEN_OUT = "lunatic/tfs:closet_broken_out"
-local LAPSED = "lunatic/tfs:closet_breakout_lapsed"
--- The latch orders of the bust-open complete on the tick the wait ends; the
--- occupant opens the door one tick later (lib/closets/closet.luau:bust_open).
-local LATCH_ORDER_TICKS = 1
--- The shake and lines wait one tick for the open to be read back.
-local CUE_TICKS = 1
-
-local BREAKOUT_TICKS: number
-
-local heard_log: { [number]: { string } } = {}
-
-local function bench_source(name: string, structures: string, items: string): string
-    return [==[ (
-        name: "]==] .. name .. [==[",
-        legend: {
-            ' ': (composition: (substrate: Named("space"))),
-            '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
-            '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
-        },
-        levels: [(
-            rows: ["#########", "#.......#", "#.......#", "#.......#", "#########"],
-            structures: [
-                (]==] .. OCCUPANT_X .. [==[, ]==] .. HOLDER_Y .. [==[, "player_spawn", { "jobs": "assistant" }),
-                (]==] .. HOLDER_X .. [==[, ]==] .. ENGINEER_Y .. [==[, "player_spawn", { "jobs": "engineer" }),
-                ]==] .. structures .. [==[
-            ],
-            items: [
-                (]==] .. HOLDER_X .. [==[, ]==] .. ENGINEER_Y .. [==[, "welder"),
-                (]==] .. HOLDER_X .. [==[, ]==] .. ENGINEER_Y .. [==[, "id_captain"),
-            ],
-        )],
-    ) ]==]
-end
-
--- Loads a bench with one holder; returns the occupant and the engineer.
-local function open_bench(name: string, holder: string): (number, number)
-    t.world(bench_source(name, "(" .. HOLDER_X .. ", " .. HOLDER_Y .. ', "' .. holder .. '"),', ""), 0)
-    BREAKOUT_TICKS = clock.deadline_ticks(120.0)
-    heard_log = {}
-    local occupant = t.join("assistant")
-    local engineer = t.join("engineer")
-    t.run_ticks(3)
-    return occupant, engineer
-end
-
-local function heard_count(player: number, needle: string): number
-    local log = heard_log[player]
-    if log == nil then
-        log = {}
-        heard_log[player] = log
-    end
-    for _, message in ipairs(t.messages(player)) do
-        table.insert(log, message)
-    end
-    local count = 0
-    for _, message in ipairs(log) do
-        if string.find(message, needle, 1, true) ~= nil then
-            count += 1
-        end
-    end
-    return count
-end
-
-local function state_of(x: number, y: number): string
-    local structure = assert(t.structure_at(x, y), "the holder remains present")
-    return assert(structure.state, "the holder exposes its native state")
-end
-
-local function tile_has_body(x: number, y: number, player: number): boolean
-    local wanted = t.body_id(player)
-    for _, body in ipairs(t.bodies_at(x, y)) do
-        if body.id == wanted then
-            return true
-        end
-    end
-    return false
-end
-
-local function click_holder(player: number, id: string): ()
-    t.click(player, HOLDER_X, HOLDER_Y, assert(t.target_at(player, HOLDER_X, HOLDER_Y, id)))
-    t.run_ticks(2)
-end
-
-local function pick_up_here(player: number, id: string): ()
-    t.click(player, HOLDER_X, ENGINEER_Y, assert(t.target_at(player, HOLDER_X, ENGINEER_Y, id)))
-    t.run_ticks(2)
-    assert(t.hands(player).held == id, "the engineer holds the " .. id)
-end
-
-local function empty_click_holder(player: number, id: string): ()
-    t.drop(player)
-    t.run_ticks(2)
-    click_holder(player, id)
-end
-
--- The engineer opens the holder, the occupant gets onto its tile and hides in
--- it, and the holder shuts. A locker is passable open; a crate stays dense, so
--- its occupant climbs on first.
-local function seal_occupant_in(occupant: number, engineer: number, id: string, climbs: boolean): ()
-    empty_click_holder(engineer, id)
-    assert(state_of(HOLDER_X, HOLDER_Y) == "open", "the holder opens for loading")
-    if climbs then
-        t.use_item(occupant, assert(t.target_at(occupant, HOLDER_X, HOLDER_Y, id)), "alt_primary")
-        t.run_ticks(clock.deadline_ticks(1.0) + 3)
-    else
-        t.move(occupant, "east")
-        t.run_seconds(0.25)
-    end
-    local x, y = t.pos(occupant)
-    assert(x == HOLDER_X and y == HOLDER_Y, "the occupant stands on the holder tile")
-    t.drag(
-        occupant,
-        HOLDER_X,
-        HOLDER_Y,
-        t.body_target(occupant, occupant),
-        HOLDER_X,
-        HOLDER_Y,
-        assert(t.target_at(occupant, HOLDER_X, HOLDER_Y, id))
-    )
-    t.run_ticks(clock.deadline_ticks(4.0) + 2)
-    assert(state_of(HOLDER_X, HOLDER_Y) == "closed", "the holder shuts with the occupant inside")
-    assert(not tile_has_body(HOLDER_X, HOLDER_Y, occupant), "the occupant is inside, not on the tile")
-end
-
--- A lit welder toggles the weld; the engineer keeps holding it.
-local function toggle_weld(engineer: number, id: string): ()
-    click_holder(engineer, id)
-    t.run_seconds(4.1)
-end
-
-local function light_welder(engineer: number): ()
-    pick_up_here(engineer, "welder")
-    t.use_self(engineer)
-    t.run_ticks(2)
-end
-
--- Pushes the occupant against the shell and returns the tick the wait began.
-local function push_and_start(occupant: number): number
-    t.move(occupant, "north")
-    t.run_ticks(2)
-    assert(heard_count(occupant, "start forcing your way out") >= 1, "the occupant hears the push begin")
-    return t.now()
-end
-
-local function run_until(tick: number): ()
-    local remaining = tick - t.now()
-    assert(remaining >= 0, "the spec has not run past tick " .. tick)
-    if remaining > 0 then
-        t.run_ticks(remaining)
-    end
-end
-
--- The seq of the last `latch_set` row that switched `latch` to `on`, or nil.
-local function last_latch_seq(latch: string, on: boolean): number?
-    local found: number? = nil
-    for _, row in ipairs(t.ledger_rows("latch_set")) do
-        if row.latch == latch and row.on == on then
-            found = row.seq
-        end
-    end
-    return found
-end
-
-local function last_open_seq(): number
-    local opened = t.ledger_rows("container_opened")
-    return opened[#opened].seq
-end
-
--- A pack row's declared field (`sim.ledger.record` fields).
-local function field(row: SpecLedgerRow, name: string): unknown
-    return (row.fields :: { [string]: unknown })[name]
-end
-
--- The body a script-attributed row was triggered by.
-local function triggered_by(row: SpecLedgerRow): unknown
-    return (row.actor :: { [string]: unknown }).triggered_by
-end
+local HOLDER_X = bench.HOLDER_X
+local HOLDER_Y = bench.HOLDER_Y
+local ONLOOKER_LINE = bench.ONLOOKER_LINE
+local OWN_LINE = bench.OWN_LINE
+local FAILED_LINE = bench.FAILED_LINE
+local SHAKE_LINE = bench.SHAKE_LINE
+local BROKEN_OUT = bench.BROKEN_OUT
+local LAPSED = bench.LAPSED
+local LATCH_ORDER_TICKS = bench.LATCH_ORDER_TICKS
+local CUE_TICKS = bench.CUE_TICKS
+local open_bench = bench.open
+local heard_count = bench.heard_count
+local state_of = bench.state_of
+local tile_has_body = bench.tile_has_body
+local click_holder = bench.click_holder
+local pick_up_here = bench.pick_up_here
+local empty_click_holder = bench.empty_click_holder
+local seal_occupant_in = bench.seal_occupant_in
+local toggle_weld = bench.toggle_weld
+local light_welder = bench.light_welder
+local push_and_start = bench.push_and_start
+local run_until = bench.run_until
+local last_latch_seq = bench.last_latch_seq
+local last_open_seq = bench.last_open_seq
+local field = bench.field
+local triggered_by = bench.triggered_by
 
 -- ---- an unsecured closet opens on the first push, with no wait and no step.
 do
@@ -197,6 +41,7 @@ do
     seal_occupant_in(occupant, engineer, "locker", false)
     local opened = #t.ledger_rows("container_opened")
     local refused = #t.ledger_rows("container_resist_refused")
+    local waits = #t.ledger_rows("DoAfterStarted")
     t.move(occupant, "north")
     t.run_ticks(2)
     assert(state_of(HOLDER_X, HOLDER_Y) == "open", "an unsecured push opens the locker at once")
@@ -210,6 +55,8 @@ do
     assert(heard_count(occupant, "start forcing your way out") == 0, "no breakout begins")
     assert(#t.ledger_rows(BROKEN_OUT) == 0, "nothing was broken")
     assert(#t.ledger_rows(LAPSED) == 0, "nothing lapsed")
+    assert(#t.ledger_rows("DoAfterStarted") == waits, "no wait is parked")
+    assert(heard_count(engineer, SHAKE_LINE) == 0, "the onlooker hears no shake")
     assert(tile_has_body(HOLDER_X, HOLDER_Y, occupant), "the push is not a tile step")
 end
 
@@ -225,16 +72,18 @@ do
     local refused = #t.ledger_rows("container_resist_refused")
     local waits = #t.ledger_rows("DoAfterStarted")
     local started = push_and_start(occupant)
+    assert(heard_count(engineer, SHAKE_LINE) == 1, "the onlooker sees the closet begin to shake")
     for _, offset in ipairs({ 10.0, 59.0, 61.0, 100.0 }) do
         run_until(started + clock.deadline_ticks(offset))
         t.move(occupant, "north")
         t.run_ticks(1)
     end
     assert(heard_count(occupant, "start forcing your way out") == 1, "pushes do not begin a second breakout")
+    assert(heard_count(engineer, SHAKE_LINE) == 1, "nor a second start cue")
     assert(#t.ledger_rows("container_resist_refused") == refused, "duplicate pushes are absorbed silently")
     assert(#t.ledger_rows(BROKEN_OUT) == 0, "nothing broke early")
 
-    run_until(started + BREAKOUT_TICKS - 1)
+    run_until(started + bench.breakout_ticks() - 1)
     assert(state_of(HOLDER_X, HOLDER_Y) == "closed", "the locker is shut one tick before 120 s")
     assert(last_latch_seq("welded", false) == nil, "the weld is still on one tick before 120 s")
     t.run_ticks(1)
@@ -245,7 +94,7 @@ do
     assert(tile_has_body(HOLDER_X, HOLDER_Y, occupant), "the occupant is dumped on the tile")
     assert(
         t.ledger_rows("container_opened")[#t.ledger_rows("container_opened")].tick
-            == started + BREAKOUT_TICKS + LATCH_ORDER_TICKS,
+            == started + bench.breakout_ticks() + LATCH_ORDER_TICKS,
         "the open lands exactly one tick after the wait"
     )
 
@@ -272,6 +121,7 @@ do
     assert(heard_count(occupant, OWN_LINE) == 1, "the occupant hears the break-out line")
     assert(heard_count(engineer, ONLOOKER_LINE) == 1, "the onlooker hears the cue exactly once")
     assert(heard_count(occupant, ONLOOKER_LINE) == 0, "the occupant hears only their own line")
+    assert(heard_count(occupant, FAILED_LINE) == 0, "a break-out is no failure")
     t.run_ticks(5)
     assert(heard_count(engineer, ONLOOKER_LINE) == 1, "and never again")
 
@@ -295,15 +145,16 @@ do
     assert(heard_count(engineer, "You unweld the") == 1, "the engineer unwelds the locker")
 
     local refused = #t.ledger_rows("container_resist_refused")
-    run_until(started + BREAKOUT_TICKS + 2)
+    run_until(started + bench.breakout_ticks() + 2)
     assert(state_of(HOLDER_X, HOLDER_Y) == "closed", "nothing opens at the boundary")
     assert(#t.ledger_rows(BROKEN_OUT) == 0, "no break-out is recorded")
     local lapses = t.ledger_rows(LAPSED)
     assert(#lapses == 1, "the lapsed wait is on the record")
     assert(field(lapses[1], "reason") == "not_secured", "because nothing holds the locker shut")
-    assert(lapses[1].tick == started + BREAKOUT_TICKS, "at the end of the wait")
+    assert(lapses[1].tick == started + bench.breakout_ticks(), "at the end of the wait")
     assert(#t.ledger_rows("container_resist_refused") == refused, "the pack, not the engine, owns the lapse")
     assert(heard_count(engineer, ONLOOKER_LINE) == 0, "the onlooker hears nothing")
+    assert(heard_count(occupant, FAILED_LINE) == 1, "the occupant hears the push fail")
 
     local opened = #t.ledger_rows("container_opened")
     t.move(occupant, "north")
@@ -322,12 +173,14 @@ do
     local started = push_and_start(occupant)
     run_until(started + clock.deadline_ticks(10.0))
     toggle_weld(engineer, "locker")
+    local baseline = #t.ledger_rows("DoAfterInterrupted")
     empty_click_holder(engineer, "locker")
     assert(state_of(HOLDER_X, HOLDER_Y) == "open", "the engineer opens the unwelded locker")
-    local interruptions = #t.ledger_rows("DoAfterInterrupted")
-    assert(interruptions >= 1, "the open interrupts the wait on the record")
-    run_until(started + BREAKOUT_TICKS + 3)
-    assert(#t.ledger_rows("DoAfterInterrupted") == interruptions, "and nothing more is interrupted")
+    assert(#t.ledger_rows("DoAfterInterrupted") == baseline + 1, "the open interrupts the wait on the record")
+    run_until(started + bench.breakout_ticks() + 3)
+    assert(#t.ledger_rows("DoAfterInterrupted") == baseline + 1, "and nothing more is interrupted")
+    assert(#t.ledger_rows(LAPSED) == 0, "an interrupted wait lapses nothing")
+    assert(heard_count(occupant, FAILED_LINE) == 0, "the dumped occupant hears no failure")
     assert(#t.script_errors() == 0, "the interrupted wait raises no script error")
     assert(#t.ledger_rows(BROKEN_OUT) == 0, "no break-out is recorded")
     assert(heard_count(engineer, ONLOOKER_LINE) == 0, "the onlooker hears nothing")
@@ -347,7 +200,7 @@ do
     assert(state_of(HOLDER_X, HOLDER_Y) == "closed", "the locked crate stays shut")
 
     local started = push_and_start(occupant)
-    run_until(started + BREAKOUT_TICKS - 1)
+    run_until(started + bench.breakout_ticks() - 1)
     assert(state_of(HOLDER_X, HOLDER_Y) == "closed", "the crate is shut one tick before 120 s")
     t.run_ticks(LATCH_ORDER_TICKS + 1)
     assert(state_of(HOLDER_X, HOLDER_Y) == "open", "the crate is open one latch-order tick after 120 s")
@@ -362,6 +215,7 @@ do
     assert(last_open_seq() > broke[1].seq, "the open follows the record")
     assert(#t.ledger_rows(LAPSED) == 0, "nothing lapsed")
     t.run_ticks(CUE_TICKS)
+    assert(heard_count(occupant, OWN_LINE) == 1, "the occupant hears the break-out line")
     assert(heard_count(engineer, ONLOOKER_LINE) == 1, "the onlooker hears the cue exactly once")
     assert(heard_count(occupant, ONLOOKER_LINE) == 0, "the occupant hears only their own line")
 

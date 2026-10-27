@@ -21,9 +21,9 @@ return {
         ["lunatic/tfs:closet_broken_out"] = {
             fields = { container = "entity", body = "body", cleared = "text", broken = "text?" },
         },
-        -- A breakout wait that ended without opening and left no engine row:
-        -- `not_inside`, `not_secured`, `latch_unconfirmed` or `open_refused`
-        -- (lib/closets/closet.luau).
+        -- A breakout that ended without opening, after its wait or at its
+        -- start: `not_inside`, `incapacitated`, `not_secured`,
+        -- `latch_unconfirmed` or `open_refused` (lib/closets/closet.luau).
         ["lunatic/tfs:closet_breakout_lapsed"] = {
             fields = { container = "entity", body = "body", reason = "text" },
         },
