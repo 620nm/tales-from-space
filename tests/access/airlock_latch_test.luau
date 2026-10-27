@@ -99,7 +99,7 @@ t.run_ticks(clock.deadline_ticks(2.5) + clock.deadline_ticks(0.6) + 10)
 assert(assert(t.door_at(LEAF, 1)).open, "the crowbar pries an unbolted, dark leaf open")
 assert(forced_door_operations() == 1, "and the forced open is on the ledger under door_operation")
 
--- ---- emergency: the emergency latch waives the access check and nothing else.
+-- ---- emergency: the emergency latch waives the access check.
 -- Two engineering leaves on one corridor: the first is placed on the emergency
 -- latch, the second is not. An assistant with no permission passes the first
 -- and is refused at the second.
@@ -122,5 +122,7 @@ assert(
     "the emergency latch admits an assistant who holds no permission"
 )
 access_bench.pass_through(escaper, 5)
+local unlatched_refusals = #t.ledger_rows("door_denied")
 access_bench.bump(escaper, 9)
 assert(not assert(t.door_at(9, 1)).open, "the same leaf without the latch refuses that assistant")
+assert(#t.ledger_rows("door_denied") > unlatched_refusals, "and that refusal is on the record")

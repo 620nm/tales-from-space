@@ -11,8 +11,8 @@ local SYMPTOM_CHUNK_SECONDS = 10
 
 -- Pinned to SEED 3's draw stream: an engine change that moves keyed draws
 -- (the engine's docs/scripting/determinism-and-testing.md §6.2) can flip it.
--- About 23% of streams miss the symptom window because the donor is cured
--- first; a cure grants resistance, so no retry is possible.
+-- About a quarter of streams (simulated) miss the symptom window because the
+-- donor is cured first; a cure grants resistance, so no retry is possible.
 -- This is a player-action proof. The water route is deliberately a water
 -- and culture-blood mixture; it does not claim to make a blood-free specimen.
 -- Keep the jobs' default breath masks; the distant drinker is remote from the ward.

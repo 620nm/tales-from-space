@@ -92,6 +92,7 @@ assert(not assert(t.door_at(LEAF, 1)).open, "a card in the worn backpack opens n
 assert(denials() > stored_refusals, "and that refusal is on the record")
 
 -- ---- a medic's worn card holds medical, not engineering: refused here too.
+assert(t.worn(medic).id == "id_medical", "the medic wears the medical ID")
 local medic_refusals = denials()
 access_bench.bump(medic, LEAF)
 assert(not assert(t.door_at(LEAF, 1)).open, "a medic is refused at the engineering leaf")
