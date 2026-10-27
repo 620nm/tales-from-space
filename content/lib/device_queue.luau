@@ -6,34 +6,54 @@ function device_queue.clear(device: Handle): ()
 end
 -- A completion reaches every listener, so a device acts on one only when it
 -- issued that order itself (docs/construction/scripted-doors.md): `expect`
--- records an order (by completion family) after its command is issued,
--- `settle` consumes it once.
-local MAX_EXPECTED = 128
-function device_queue.expect(device: Handle, family: string, request_id: string): ()
-    local orders = (device.vars["device_orders"] :: { [string]: boolean }?) or {}
+-- records an order after its command is issued, `settle` consumes one. An
+-- order is its family, its operation (a door verb or latch name) and its
+-- request id; identical orders count, so each completion settles once.
+-- The book is one entity var, so its encoded size (each key's bytes plus 8
+-- per count) stays under the 4096-byte value ceiling with margin
+-- (the engine's docs/luau-api/script-vars.md §Bounds, `MAX_VALUE_LEN`).
+local MAX_ORDER_BOOK_BYTES = 3072
+local ORDER_COUNT_BYTES = 8
+local function order_key(family: string, operation: string, request_id: string): string
+    return family .. "/" .. operation .. "/" .. request_id
+end
+function device_queue.expect(
+    device: Handle,
+    family: string,
+    operation: string,
+    request_id: string
+): ()
+    local orders: { [string]: number } = (device.vars["device_orders"] :: { [string]: number }?) or {}
+    local key = order_key(family, operation, request_id)
+    local bytes = #key + ORDER_COUNT_BYTES
     local count = 0
-    for _ in orders do
+    for held, _ in orders do
+        bytes += #held + ORDER_COUNT_BYTES
         count += 1
     end
-    if count >= MAX_EXPECTED then
-        pcall(function()
-            sim.ledger.record({
-                kind = "lunatic/tfs:device_orders_dropped",
-                fields = { device = device, dropped = count },
-            })
-        end)
+    if bytes > MAX_ORDER_BOOK_BYTES then
+        sim.ledger.record({
+            kind = "lunatic/tfs:device_orders_dropped",
+            fields = { device = device, dropped = count },
+        })
         orders = {}
     end
-    orders[family .. "/" .. request_id] = true
+    orders[key] = (orders[key] or 0) + 1
     device.vars["device_orders"] = orders
 end
-function device_queue.settle(device: Handle, family: string, request_id: string): boolean
-    local orders = device.vars["device_orders"] :: { [string]: boolean }?
-    local key = family .. "/" .. request_id
-    if orders == nil or orders[key] ~= true then
+function device_queue.settle(
+    device: Handle,
+    family: string,
+    operation: string,
+    request_id: string
+): boolean
+    local orders = device.vars["device_orders"] :: { [string]: number }?
+    local key = order_key(family, operation, request_id)
+    local held = if orders == nil then nil else orders[key]
+    if orders == nil or held == nil then
         return false
     end
-    orders[key] = nil
+    orders[key] = if held > 1 then held - 1 else nil
     device.vars["device_orders"] = orders
     return true
 end

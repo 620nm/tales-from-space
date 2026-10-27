@@ -192,7 +192,11 @@ do
     assert(state_of(HOLDER_X, HOLDER_Y) == "open", "an unsecured push opens the locker at once")
     assert(#t.ledger_rows("container_opened") == opened + 1, "the open is on the record")
     local opening = t.ledger_rows("container_opened")
-    assert(opening[#opening].actor.kind == "player", "the occupant opened it")
+    local opener = opening[#opening].actor
+    assert(
+        opener.kind == "player" and opener.id == t.body_id(occupant),
+        "the occupant's own body opened it, not the engineer"
+    )
     assert(#t.ledger_rows("container_resist_refused") == refused, "no refusal is recorded")
     assert(#t.ledger_rows("DoAfterStarted") == waits, "no wait is parked")
     assert(#t.ledger_rows("container_broken_out") == 0, "nothing was broken")
@@ -241,6 +245,7 @@ do
 
     assert(heard_count(occupant, OWN_LINE) == 1, "the occupant hears the break-out line")
     assert(heard_count(engineer, ONLOOKER_LINE) == 1, "the onlooker hears the cue exactly once")
+    assert(heard_count(occupant, ONLOOKER_LINE) == 0, "the occupant hears only their own line")
     t.run_ticks(5)
     assert(heard_count(engineer, ONLOOKER_LINE) == 1, "and never again")
 
@@ -306,6 +311,7 @@ do
     assert(latch_rows_since(broke[1].seq, "locked", false) == 1, "the lock clearing is a latch row")
     assert(latch_rows_since(broke[1].seq, "broken", true) == 1, "the break is a latch row")
     assert(heard_count(engineer, ONLOOKER_LINE) == 1, "the onlooker hears the cue exactly once")
+    assert(heard_count(occupant, ONLOOKER_LINE) == 0, "the occupant hears only their own line")
 
     -- The broken lock takes no ID toggle, and the crate is no longer locked.
     empty_click_holder(engineer, "crate.secure")

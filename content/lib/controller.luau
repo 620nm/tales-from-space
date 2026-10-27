@@ -543,10 +543,10 @@ function controller.device(ev: LinkMessageDonePayload): ()
         local obj = handles[command.mac]
         if command.op == "open" then
             sim.door.open({ subject = obj, request_id = command.id })
-            device_queue.expect(obj, "door", command.id)
+            device_queue.expect(obj, "door", command.op, command.id)
         elseif command.op == "close" then
             sim.door.close({ subject = obj, request_id = command.id })
-            device_queue.expect(obj, "door", command.id)
+            device_queue.expect(obj, "door", command.op, command.id)
         elseif command.op == "bolt" then
             sim.latch.set({
                 subject = obj,
@@ -554,7 +554,7 @@ function controller.device(ev: LinkMessageDonePayload): ()
                 latch = "bolted",
                 on = command.bolted,
             })
-            device_queue.expect(obj, "latch", command.id)
+            device_queue.expect(obj, "latch", "bolted", command.id)
         elseif command.op == "emergency" then
             sim.latch.set({
                 subject = obj,
@@ -562,7 +562,7 @@ function controller.device(ev: LinkMessageDonePayload): ()
                 latch = "emergency",
                 on = command.emergency,
             })
-            device_queue.expect(obj, "latch", command.id)
+            device_queue.expect(obj, "latch", "emergency", command.id)
         elseif command.op == "vent" then
             local args: AtmosConfigureCommand = { entity = obj, on = command.on }
             if command.on then
@@ -758,7 +758,7 @@ function controller.service_send_done(ev: LinkServiceSendDonePayload): ()
 end
 
 function controller.door(ev: DoorOperationDonePayload): ()
-    if not device_queue.settle(ev.subject, "door", ev.request_id) then
+    if not device_queue.settle(ev.subject, "door", ev.operation, ev.request_id) then
         return
     end
     device_queue.completion(
@@ -770,7 +770,7 @@ end
 -- Latch switches complete here. Programs hear one by its verb (`set_bolted`,
 -- `set_emergency`), the device protocol reference/scripts/airlock.luau reads.
 function controller.latch(ev: LatchSetDonePayload): ()
-    if not device_queue.settle(ev.subject, "latch", ev.request_id) then
+    if not device_queue.settle(ev.subject, "latch", ev.latch, ev.request_id) then
         return
     end
     if ev.success and ev.latch == "bolted" then

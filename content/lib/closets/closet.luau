@@ -16,6 +16,13 @@ type LatchFeedback = {
 	message: string,
 }
 
+-- An outstanding order, matched by its subject, latch and request id.
+type PendingLatchOrder = {
+	target: Handle,
+	latch: string,
+	feedback: LatchFeedback,
+}
+
 type WelderOperation = {
 	actor: Handle,
 	target: Handle,
@@ -33,6 +40,7 @@ type FixtureExternalRemoval = {
 local WELDED_LATCH = "welded"
 local LOCKED_LATCH = "locked"
 local BROKEN_LATCH = "broken"
+-- Pack judgment, not tg's shake numbers (`closets.dm:97,99,1129`).
 local BREAKOUT_SHAKE_STRENGTH = 4
 local BREAKOUT_SHAKE_SECONDS = 0.5
 local BREAKOUT_ONLOOKER_RADIUS = 7
@@ -51,7 +59,7 @@ local ID_PROTOTYPES: { [string]: boolean } = {
 local FUEL_MINIMUM_MOL = 0.025
 local active_welder_operations: { WelderOperation } = {}
 local interruption_handlers_installed = false
-local pending_latch_orders: { [string]: LatchFeedback } = {}
+local pending_latch_orders: { [string]: PendingLatchOrder } = {}
 local latch_order_count = 0
 
 local function send_message(actor: Handle, key: string, subject: string?)
@@ -86,14 +94,17 @@ local function order_latch(target: Handle, latch: string, on: boolean, feedback:
 	latch_order_count += 1
 	local request_id = "closet_latch_" .. latch_order_count
 	sim.latch.set({ subject = target, latch = latch, on = on, request_id = request_id })
-	pending_latch_orders[request_id] = feedback
+	pending_latch_orders[request_id] = { target = target, latch = latch, feedback = feedback }
 end
 
 local function on_latch_done(ev: LatchSetDonePayload): ()
-	local feedback = pending_latch_orders[ev.request_id]
-	if feedback == nil then
+	-- A completion reaches every definition's handler; only this closet's own
+	-- order (subject, latch and id) is ours to answer.
+	local pending = pending_latch_orders[ev.request_id]
+	if pending == nil or ev.subject ~= pending.target or ev.latch ~= pending.latch then
 		return
 	end
+	local feedback = pending.feedback
 	pending_latch_orders[ev.request_id] = nil
 	if not ev.success then
 		return
@@ -588,8 +599,9 @@ function closet.attach(proto_id: string, opts: Options)
 	behavior:handle("climb.done", { kind = "react" }, climbing.on_done)
 	behavior:handle("latch.set.done", { kind = "react" }, on_latch_done)
 	behavior:handle("access.permission", { kind = "transform" }, on_access_permission)
-	-- The break-out cues are the pack's (`closets.dm:1103,1113`): the native
-	-- open already plays the container's open sound.
+	-- The break-out cues are the pack's (`closets.dm:1113`); tg shakes during
+	-- the wait (`closets.dm:1107,1124-1136`), this pack at the bust-open. The
+	-- native open already plays the container's open sound.
 	behavior:handle("container.breakout.done", { kind = "react" }, function(ev: ContainerBreakoutDonePayload)
 		local holder: Handle = ev.self
 		local at = holder.tile
@@ -598,14 +610,22 @@ function closet.attach(proto_id: string, opts: Options)
 		end
 		local prototype = holder.prototype
 		sim.visual.shake({ at = at, strength = BREAKOUT_SHAKE_STRENGTH, duration = BREAKOUT_SHAKE_SECONDS })
-		sim.message.broadcast({
-			at = at,
-			radius = BREAKOUT_ONLOOKER_RADIUS,
-			message = sim.msg("lunatic/tfs:lib.closets.broke_out", {
-				name = ev.body.name or "Someone",
+		local name = ev.body.name
+		local broke_out = if name ~= nil and name ~= ""
+			then sim.msg("lunatic/tfs:lib.closets.broke_out", {
+				name = name,
 				subject = subject_name(holder, prototype or proto_id),
-			}),
-		})
+			})
+			else sim.msg("lunatic/tfs:lib.closets.broke_out_unnamed", {
+				subject = subject_name(holder, prototype or proto_id),
+			})
+		-- tg tells the occupant only the self message (`closets.dm:1113-1114`),
+		-- and `sim.message.broadcast` has no exclusion: send per onlooker.
+		for _, onlooker in ipairs(sim.query.range(at, BREAKOUT_ONLOOKER_RADIUS, {})) do
+			if onlooker ~= ev.body and sim.body(onlooker) ~= nil and sim.query.los(onlooker, at) then
+				sim.message.send({ recipient = onlooker, message = broke_out })
+			end
+		end
 	end)
 	behavior:handle("container.close.done", { kind = "react" }, function(ev: ContainerCloseDonePayload)
 		for _, body in ipairs(ev.bodies) do
