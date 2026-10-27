@@ -17,8 +17,9 @@ local ui_files = require("@helpers/ui_files")
 -- The order matters and is the regression this pins: the hand's
 -- refusal runs the same transform the command does. A transform that
 -- answers a hand with nothing faults; the fault falls back to the plain
--- default and rows a ScriptError each time (docs/access/authorize.md,
--- "Faults fall back"), and the script_error check below fails on it.
+-- default and rows a ScriptError each time (the engine's
+-- docs/access/authorize.md, "Faults fall back"), and the script_error check
+-- below fails on it.
 --
 -- The guest is the shortest one that answers the question: a press
 -- opens every joined door. The shipped cycle program
@@ -144,7 +145,7 @@ local _store = ui_controls.rows(ui().stores)[1].binding
 ui_files.create(crew, "host", "disl", "opener")
 t.run_ticks(2)
 local uid = string.format("%d", ui_controls.number(ui_controls.record(ui().open).uid))
-t.run_seconds(0.5) -- the pacing window on text acts (docs/TGUI.md)
+t.run_seconds(0.5) -- the pacing window on text acts (the engine's docs/TGUI.md)
 ui_files.save(crew, PROGRAM)
 t.run_ticks(2)
 assert(
