@@ -2,7 +2,7 @@ local closet = require("@lib/closets/closet")
 
 local content = { id = "closets" }
 if sim ~= nil then
-    -- Focused specs place this helper to exercise an external removal race.
+    -- Focused specs place this helper for external removal and occupied-dump races.
     local fixture_removal_tool = "lunatic/tfs:closet_cut_test_remover"
     sim.define("item", fixture_removal_tool, {
         name = "closet cut test remover",

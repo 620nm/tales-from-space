@@ -1,4 +1,5 @@
 local ui_controls = require("@helpers/ui_controls")
+local clock = require("@helpers/clock")
 
 local MAP = [==[ (
     name: "blood freezer stock",
@@ -291,3 +292,225 @@ assert(
 for index, kind in ipairs(first_random_types) do
     assert(repeated_random_types[index] == kind, "the repeated seeded round reproduces random bag types")
 end
+
+local POWERED_MAP = [==[ (
+    name: "powered occupied blood freezer",
+    legend: {
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        'G': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Generator)),
+        'a': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        'o': (composition: (components: [(component: "station_base"), (component: "floor_tiles")]), fixture: Some(Outlet)),
+    },
+    levels: [(
+        rows: [
+            "##############",
+            "#............#",
+            "#Ga.o........#",
+            "#............#",
+            "#............#",
+            "#............#",
+            "#............#",
+            "#............#",
+            "#............#",
+            "#............#",
+            "#............#",
+            "#............#",
+            "#............#",
+            "#............#",
+            "#............#",
+            "#............#",
+            "#...oGa......#",
+            "#............#",
+            "##############",
+        ],
+        structures: [
+            (3, 4, "player_spawn", { "jobs": "assistant" }),
+            (4, 5, "player_spawn", { "jobs": "medic" }),
+            (4, 4, "freezer.blood"),
+            (2, 2, "apc"),
+            (6, 16, "apc"),
+        ],
+        networks: [
+            (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+            (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+            (x: 2, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
+            (x: 3, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+            (x: 4, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),
+            (x: 5, y: 16, network: "power", channel: "l1", kind: "cable", facing: 15),
+            (x: 5, y: 16, network: "power", channel: "l2", kind: "cable", facing: 15),
+            (x: 6, y: 16, network: "power", channel: "l1", kind: "cable", facing: 15),
+            (x: 6, y: 16, network: "power", channel: "l2", kind: "cable", facing: 15),
+            (x: 4, y: 16, network: "power", channel: "l1", kind: "cable", facing: 15),
+        ],
+    )],
+)]==]
+
+local function body_on_tile(x: number, y: number, player: number): boolean
+    local wanted = t.body_id(player)
+    for _, body in ipairs(t.bodies_at(x, y)) do
+        if body.id == wanted then
+            return true
+        end
+    end
+    return false
+end
+
+local function blood_moles(reading: SpecMatterVessel): number
+    local blood = reading.contents.blood
+    if blood == nil then
+        return 0
+    end
+    return (blood.liquid or 0) + (blood.gas or 0) + (blood.solid or 0)
+end
+
+local function assert_blood_reading(x: number, y: number, expected_temperature: number): ()
+    local reading = assert(t.vessel_at(x, y, "blood_pack.o_plus"))
+    assert(math.abs(blood_moles(reading) - 5.0) < 1e-12, "the O+ blood volume is unchanged")
+    assert(
+        reading.temp_k + 1e-9 >= expected_temperature,
+        "preservation does not cool the O+ blood below its prior temperature at "
+            .. x
+            .. ","
+            .. y
+            .. "; prior="
+            .. expected_temperature
+            .. "; actual="
+            .. reading.temp_k
+    )
+end
+
+t.world(POWERED_MAP, 0)
+local power_actor = t.join("assistant")
+local power_patient = t.join("medic")
+t.run_seconds(1.0)
+assert(t.vessel_at(4, 4) == nil, "the closed blood freezer has no internal gas cell")
+local live_outlet = assert(t.outlet_at(4, 2))
+assert(live_outlet.powered, "the first socket is powered")
+local second_outlet = assert(t.outlet_at(4, 16))
+assert(second_outlet.powered, "the second socket is independently powered")
+
+local occupied_freezer = assert(t.target_at(power_actor, 4, 4, "freezer"))
+local patient_freezer = assert(t.target_at(power_patient, 4, 4, "freezer"))
+t.drag(
+    power_patient,
+    4,
+    5,
+    t.body_target(power_patient, power_patient),
+    4,
+    4,
+    patient_freezer
+)
+t.tick()
+t.run_ticks(clock.deadline_ticks(2.0) + 1)
+assert(t.seen(power_patient, power_patient).offset.y == 14, "the patient climbs onto the closed freezer")
+
+occupied_freezer = open_blood_freezer(power_actor)
+assert_item_counts(t.items_at(4, 4), INITIAL_STOCK, "occupied opening preserves exact blood stock")
+local initial_blood_reading = assert(t.vessel_at(4, 4, "blood_pack.o_plus"))
+assert(math.abs(blood_moles(initial_blood_reading) - 5.0) < 1e-12, "the initial O+ blood is full")
+local initial_blood_temperature = initial_blood_reading.temp_k
+t.click(power_actor, 4, 4, assert(t.target_at(power_actor, 4, 4, "sprite:freezer_open")))
+t.tick()
+assert(assert(t.structure_at(4, 4)).state == "closed", "primary close admits the mounted patient")
+assert(#t.items_at(4, 4) == 0, "occupied close conceals the unchanged stock")
+assert(not body_on_tile(4, 4, power_patient), "the patient is in closed custody")
+assert(t.vessel_at(4, 4) == nil, "occupied closed custody still has no internal gas cell")
+
+t.set_health(power_patient, { brute = 400 })
+t.tick()
+assert(not assert(t.body(power_patient)).animate, "the occupied brain has a measurable decay clock")
+local powered_brain = assert(t.organ_damage(power_patient, "brain"))
+t.run_seconds(60)
+assert(t.organ_damage(power_patient, "brain") == powered_brain, "closed powered custody stops organ decay")
+assert(t.vessel_at(4, 4) == nil, "powered preservation creates no gas vessel")
+
+t.click(power_actor, 4, 4, occupied_freezer)
+t.tick()
+assert(assert(t.structure_at(4, 4)).state == "open", "external open dumps the occupied freezer")
+assert(body_on_tile(4, 4, power_patient), "the patient returns to the freezer tile")
+assert_item_counts(t.items_at(4, 4), INITIAL_STOCK, "occupied reopening returns exact stock")
+assert_blood_reading(4, 4, initial_blood_temperature)
+t.run_seconds(60)
+local open_brain = assert(t.organ_damage(power_patient, "brain"))
+assert(open_brain > powered_brain, "an open powered freezer does not preserve organs")
+assert_item_counts(t.items_at(4, 4), INITIAL_STOCK, "open decay leaves exact stock untouched")
+assert_blood_reading(4, 4, initial_blood_temperature)
+
+t.world(POWERED_MAP, 0)
+power_actor = t.join("assistant")
+local power_successor = t.join("medic")
+t.run_seconds(1.0)
+occupied_freezer = assert(t.target_at(power_actor, 4, 4, "freezer"))
+local successor_freezer = assert(t.target_at(power_successor, 4, 4, "freezer"))
+t.drag(
+    power_successor,
+    4,
+    5,
+    t.body_target(power_successor, power_successor),
+    4,
+    4,
+    successor_freezer
+)
+t.tick()
+t.run_ticks(clock.deadline_ticks(2.0) + 1)
+assert(t.seen(power_successor, power_successor).offset.y == 14, "the second patient climbs onto the closed freezer")
+t.click(power_actor, 4, 4, occupied_freezer)
+t.tick()
+assert(assert(t.structure_at(4, 4)).state == "open", "the second run opens for live admission")
+assert_item_counts(t.items_at(4, 4), INITIAL_STOCK, "the second run exposes exact stock")
+t.click(power_actor, 4, 4, occupied_freezer)
+t.tick()
+assert(assert(t.structure_at(4, 4)).state == "closed", "the live freezer closes on the second patient")
+t.set_health(power_successor, { brute = 400 })
+t.tick()
+local successor_brain = assert(t.organ_damage(power_successor, "brain"))
+t.run_seconds(60)
+assert(t.organ_damage(power_successor, "brain") == successor_brain, "closing powered custody holds the second patient")
+
+move_and_settle(power_actor, "south")
+move_and_settle(power_actor, "east")
+t.pull(power_actor, 4, 4, occupied_freezer)
+t.tick()
+local function pull_south(): ()
+    t.move(power_actor, "south")
+    t.run_ticks(6)
+end
+for _ = 1, 5 do
+    pull_south()
+end
+assert(
+    t.same_target(assert(t.target_at(power_actor, 4, 9, "freezer")), occupied_freezer),
+    "the occupied corded freezer moves beyond both six-tile cords"
+)
+assert(assert(t.structure_at(4, 9)).state == "closed", "the out-of-range freezer remains closed")
+assert(t.vessel_at(4, 9) == nil, "the out-of-range occupied freezer still has no gas cell")
+t.run_seconds(2.0)
+local unpowered_brain = assert(t.organ_damage(power_successor, "brain"))
+t.run_seconds(60)
+assert(
+    assert(t.organ_damage(power_successor, "brain")) > unpowered_brain,
+    "losing every socket resumes organ decay"
+)
+
+for _ = 1, 6 do
+    pull_south()
+end
+t.stop_pull(power_actor)
+t.tick()
+assert(
+    t.same_target(assert(t.target_at(power_actor, 4, 15, "freezer")), occupied_freezer),
+    "the occupied freezer reaches the second live socket"
+)
+assert(assert(t.structure_at(4, 15)).state == "closed", "the reconnected freezer remains closed")
+assert(t.vessel_at(4, 15) == nil, "the reconnected occupied freezer still has no gas cell")
+t.run_seconds(2.0)
+local restored_brain = assert(t.organ_damage(power_successor, "brain"))
+t.run_seconds(60)
+assert(t.organ_damage(power_successor, "brain") == restored_brain, "second-socket selection stops decay again")
+t.click(power_actor, 4, 15, occupied_freezer)
+t.tick()
+assert_item_counts(t.items_at(4, 15), INITIAL_STOCK, "final occupied opening preserves exact stock")
+assert_blood_reading(4, 15, initial_blood_temperature)
+assert(#t.script_errors() == 0, "occupied power preservation has no script errors")
+print("blood freezer: occupied power, preservation, stock, temperature and cord reselection")

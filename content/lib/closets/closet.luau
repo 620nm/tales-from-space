@@ -462,7 +462,7 @@ function closet.attach(proto_id: string, opts: Options)
 		if implement ~= nil
 			and fixture_removal_tool ~= nil
 			and implement.prototype == fixture_removal_tool
-			and target.state == "open"
+			and (target.state == "open" or target.state == "closed")
 		then
 			sim.spawn_task(actor, function()
 				local outcome = sim.do_after(actor, sim.ticks(0.1), {})
@@ -476,9 +476,16 @@ function closet.attach(proto_id: string, opts: Options)
 				if not actor_ready(actor) or not adjacent(actor, target) or not held_in_hand(actor, implement) then
 					return
 				end
-				request_deconstruction(target, nil, function(target_to_remove, original_at)
-					remove_fixture_target_elsewhere(actor, target_to_remove, original_at)
-				end)
+				if target.state == "closed" then
+					if is_welded(target) or is_locked(target, secure) then
+						return
+					end
+					request_deconstruction(target)
+				else
+					request_deconstruction(target, nil, function(target_to_remove, original_at)
+						remove_fixture_target_elsewhere(actor, target_to_remove, original_at)
+					end)
+				end
 			end)
 			return true
 		end
