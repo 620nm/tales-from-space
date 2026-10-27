@@ -96,8 +96,8 @@ local function members(host: Handle)
                     open = leaf.open,
                     powered = leaf.powered,
                     moving = leaf.moving,
-                    bolted = leaf.seals.bolted == true,
-                    emergency = leaf.seals.emergency == true,
+                    bolted = leaf.latches.bolted == true,
+                    emergency = leaf.latches.emergency == true,
                 }
             local vent = sim.atmos.read(obj)
             local air = sim.sense.read(obj)
@@ -546,17 +546,17 @@ function controller.device(ev: LinkMessageDonePayload): ()
         elseif command.op == "close" then
             sim.door.close({ subject = obj, request_id = command.id })
         elseif command.op == "bolt" then
-            sim.door.set_seal({
+            sim.latch.set({
                 subject = obj,
                 request_id = command.id,
-                seal = "bolted",
+                latch = "bolted",
                 on = command.bolted,
             })
         elseif command.op == "emergency" then
-            sim.door.set_seal({
+            sim.latch.set({
                 subject = obj,
                 request_id = command.id,
-                seal = "emergency",
+                latch = "emergency",
                 on = command.emergency,
             })
         elseif command.op == "vent" then
@@ -754,22 +754,25 @@ function controller.service_send_done(ev: LinkServiceSendDonePayload): ()
 end
 
 function controller.door(ev: DoorOperationDonePayload): ()
-    if ev.success and ev.operation == "set_seal" and ev.seal == "bolted" then
+    device_queue.completion(
+        ev.subject,
+        { kind = "door", id = ev.request_id, operation = ev.operation, success = ev.success }
+    )
+end
+
+-- Latch switches complete here. Programs hear one by its verb (`set_bolted`,
+-- `set_emergency`), the device protocol reference/scripts/airlock.luau reads.
+function controller.latch(ev: LatchSetDonePayload): ()
+    if ev.success and ev.latch == "bolted" then
         sim.sound.play({
             at = ev.subject.tile,
             asset = ev.on and "lunatic/tfs:sound/airlock_bolts_down"
                 or "lunatic/tfs:sound/airlock_bolts_up",
         })
     end
-    -- Programs hear a seal switch by the seal's own verb (`set_bolted`,
-    -- `set_emergency`), the device protocol reference/scripts/airlock.luau reads.
-    local operation = ev.operation
-    if operation == "set_seal" and ev.seal ~= nil then
-        operation = "set_" .. ev.seal
-    end
     device_queue.completion(
         ev.subject,
-        { kind = "door", id = ev.request_id, operation = operation, success = ev.success }
+        { kind = "door", id = ev.request_id, operation = "set_" .. ev.latch, success = ev.success }
     )
 end
 function controller.pressure(ev: AtmosPressureTargetDonePayload): ()
@@ -795,7 +798,10 @@ function controller.button(ev: InteractionUsePayload): ()
     local queued = device_queue.button(ev.subject, {
         kind = "button",
         sequence = sequence,
-        engineering = sim.has_access(ev.actor, "engineering"),
+        engineering = sim.access.check({
+            actor = ev.actor,
+            requires = "station.engineering",
+        }).allowed,
     })
     if not queued then
         sim.message.send({

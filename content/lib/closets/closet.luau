@@ -476,7 +476,7 @@ function closet.attach(proto_id: string, opts: Options)
 				if type(access) ~= "string" then
 					access = default_access
 				end
-				if not sim.has_access(actor, access) then
+				if not sim.access.check({ actor = actor, requires = access }).allowed then
 					send_message(actor, "lunatic/tfs:lib.closets.access_denied")
 					return true
 				end
