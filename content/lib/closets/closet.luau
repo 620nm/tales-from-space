@@ -94,7 +94,7 @@ local function actor_ready(actor: Handle): boolean
 end
 
 local function held_in_hand(actor: Handle, item: Handle): boolean
-	for _, row in ipairs(sim.inventory(actor)) do
+	for _, row in ipairs(sim.inventory(actor, { nested = false })) do
 		if row.item == item and row.location.kind == "hand" then
 			return true
 		end
