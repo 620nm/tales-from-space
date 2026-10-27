@@ -13,5 +13,5 @@ return {
     drop_sound = "id_card_drop",
     -- What a card reader calls this while a hand holds it.
     hint_tags = { "card" },
-    grants = "engineering",
+    grants = "station.engineering",
 }

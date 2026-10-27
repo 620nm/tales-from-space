@@ -352,7 +352,7 @@ t.world(
                 "#######",
             ],
             items: [(5, 1, "id_engineering"), (5, 1, "laptop")],
-            structures: [(5, 1, "player_spawn"), (4, 1, "access_point", { "access": "engineering", "mount": "north" }), (2, 2, "apc")],
+            structures: [(5, 1, "player_spawn"), (4, 1, "access_point", { "access": "station.engineering", "mount": "north" }), (2, 2, "apc")],
             networks: [
                 (x: 1, y: 2, network: "power", channel: "l2", kind: "cable", facing: 15),
                 (x: 2, y: 2, network: "power", channel: "l1", kind: "cable", facing: 15),

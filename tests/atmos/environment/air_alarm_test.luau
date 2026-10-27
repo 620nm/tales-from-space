@@ -175,7 +175,7 @@ t.world(
                 // default, because this box is nothing at all without one and a
                 // bench should say so (docs/map-properties/placements.md,
                 // "Sockets").
-                (6, 1, "air_alarm", { "access": "engineering", "network_1": "network_card", "mount": "north" }),
+                (6, 1, "air_alarm", { "access": "station.engineering", "network_1": "network_card", "mount": "north" }),
                 (9, 1, "access_point", { "mount": "north" }),
                 (13, 3, "apc"),
             ],

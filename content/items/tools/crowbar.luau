@@ -2,10 +2,11 @@ local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
 
 -- The classic, both jobs: pry a floor tile off its plating (instant,
--- tile refunded — the subfloor shows), and force open a dead, unbolted
--- airlock ("pass" hands powered or bolted doors back to the native
--- access-checked toggle). A forced open waives power and bolts, so the
--- bolt check is this tool's: tg's try_to_crowbar refuses bolts itself.
+-- tile refunded — the subfloor shows), and force open a dead airlock
+-- ("pass" hands powered or bolted doors back to the native access-checked
+-- toggle). A forced open asks no access question, and the engine refuses it
+-- while a holding latch is on; the bolt pre-check below is this tool's, as
+-- tg's try_to_crowbar refuses bolts itself.
 local content = {
     id = "crowbar",
     visual_layer = "item",
@@ -40,8 +41,8 @@ if sim ~= nil then
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
-        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
-        local clicked, target = ev.claim, ev.claim
+        local _self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
+        local _clicked, target = ev.claim, ev.claim
         local _x, _y, _choice = x, y, choice
         -- The server appends the validated clicked atom after the
         -- legacy choice slot. nil is turf; a door record means this
@@ -51,7 +52,7 @@ if sim ~= nil then
         if target ~= nil and target.kind == "door" then
             door = sim.door.at(x, y)
         end
-        if door == nil or door.open or door.powered or door.seals.bolted then
+        if door == nil or door.open or door.powered or door.latches.bolted then
             return { replaced = false }
         end
         -- The sustained heave: tg's `operating_sound`, played while
@@ -64,7 +65,7 @@ if sim ~= nil then
         sim.spawn_task(user, function()
             if sim.do_after(user, sim.ticks(2.5), {}) == "ok" then
                 local d = sim.door.at(x, y)
-                if d ~= nil and not d.open and not d.powered and not d.seals.bolted then
+                if d ~= nil and not d.open and not d.powered and not d.latches.bolted then
                     sim.door.open({
                         subject = d.subject,
                         request_id = "lunatic/tfs:crowbar",

@@ -324,7 +324,7 @@ end
 
 function closet.attach(proto_id: string, opts: Options)
 	local secure_variants = opts.secure_variants or {}
-	local default_access = opts.default_access or "command"
+	local default_access = opts.default_access or "station.command"
 	local fixture_removal_tool = opts.fixture_removal_tool
 	install_interruption_handlers()
 
@@ -476,7 +476,7 @@ function closet.attach(proto_id: string, opts: Options)
 				if type(access) ~= "string" then
 					access = default_access
 				end
-				if not sim.has_access(actor, access) then
+				if not sim.access.check({ actor = actor, requires = access }).allowed then
 					send_message(actor, "lunatic/tfs:lib.closets.access_denied")
 					return true
 				end

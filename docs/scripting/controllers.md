@@ -31,14 +31,19 @@ correlation fields.
 
 ## Who a door answers to
 
-A door a controller drives answers to the guest, not to its own access tag.
-`content/fixtures/airlock.luau` grants every actor-less `door.permission`
+A door a controller drives answers to the guest, not to its own access requirement.
+`content/fixtures/airlock.luau` grants every actor-less `access.permission`
 request and hands a request that has an actor the engine's own answer back
 untouched, so a program opens an `airlock.engineering` leaf the presser
-could not open by hand, and the hand stays refused. The gate is reaching the host and loading a program: the
-panel's lock and the host's own access decide who may install policy, and
-the installed policy decides the rest. `door.permission` carries no
-requesting host, so the grant cannot be narrowed to the joined parent.
+could not open by hand, and the hand stays refused. The gate is reaching the
+host and loading a program: the panel's lock and the host's own access decide
+who may install policy, and the installed policy decides the rest.
+`access.permission` carries no requesting host, so the grant cannot be
+narrowed to the joined parent.
+
+`sim.access.check` is a plain read of the default answer and never runs a
+subject's `access.permission` override. A pack that wants the full answer
+calls its own policy function.
 
 ## Outputs
 

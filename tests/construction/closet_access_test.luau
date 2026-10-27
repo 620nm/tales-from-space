@@ -18,7 +18,7 @@ t.world(
             structures: [
                 (2, 1, "player_spawn", { "jobs": "assistant" }),
                 (4, 1, "player_spawn", { "jobs": "medic" }),
-                (3, 1, "crate.secure", { "access": "medical" }),
+                (3, 1, "crate.secure", { "access": "station.medical" }),
             ],
             items: [
                 (2, 1, "backpack"),

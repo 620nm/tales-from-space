@@ -728,10 +728,13 @@ if sim ~= nil then
     local blood_harmony = require("@lib/blood_harmony")
     local host_illness = require("@lib/medical/host_illness")
     local airborne = require("@lib/medical/airborne")
+    local actor_access = require("@lib/access/actor_access")
     host_illness.attach()
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("move.cross.done", { kind = "react" }, map_boot.on_cross_done)
+    -- The body's carried access; a body plan added later binds the same handler.
+    script_definition:handle("access.derive", { kind = "transform" }, actor_access.derive)
     script_definition:handle(
         "body.spawn.done",
         { kind = "react", route = "lifecycle" },
