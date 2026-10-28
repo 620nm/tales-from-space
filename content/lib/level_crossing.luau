@@ -15,19 +15,15 @@ local HEARD: { [string]: boolean } = { sound = true, speech = true }
 -- (code/modules/mob/mob.dm:287).
 function level_crossing.sense(ev: LevelSensePayload): { crosses: string, through: string? }
     if HEARD[ev.sense] then
-        ev.crosses = "both"
-        ev.through = "window"
         return { crosses = "both", through = "window" }
     end
-    ev.crosses = "down"
     return { crosses = "down" }
 end
 
 -- A hand never reaches another level: tg's `/turf/Adjacent` refuses a turf on
 -- another z (code/_onclick/adjacent.dm:34). Bound so the refusal is the pack's
 -- own decision, not the engine's default.
-function level_crossing.reach(ev: LevelReachPayload): { allowed: boolean }
-    ev.allowed = false
+function level_crossing.reach(_ev: LevelReachPayload): { allowed: boolean }
     return { allowed = false }
 end
 

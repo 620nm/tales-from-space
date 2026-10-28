@@ -1,7 +1,8 @@
 -- What crosses a level is the pack's answer (`content/lib/level_crossing.luau`,
--- bound by both modes): sound passes an open hole or a glass floor both ways,
--- and a visible message reaches only viewers above. The hand's refusal is not
--- specced here: `t.target_at` names only the viewer's own level. Sound comes
+-- bound by both modes): sound and speech pass an open hole or a glass floor
+-- both ways, and a visible message reaches only viewers above. The hand's
+-- refusal is not specced here: `t.target_at` names only the viewer's own
+-- level. Sound comes
 -- from picking up a wrench (the wrench's own `wrench_pickup`,
 -- tests/verbs/handling_test.luau), a visible message from the IV stand's
 -- needle (`iv_drip.attach_start`, a room broadcast).
@@ -110,7 +111,14 @@ end
 pick_up(above_glass, 8, 1)
 assert(heard(below_glass, PICKUP), "the body under the glass hears the pickup above it")
 
--- 4. A visible message below a hole is seen above; one above a glass floor is
+-- 4. Speech under the hole is heard above, beside the hole: the passage is read
+-- at the speaker's column (2,1), not the listener's floor (1,1).
+local _ = t.messages(above_hole)
+t.say(below_hole, "up through the hole")
+t.run_ticks(2)
+assert(said(above_hole, "up through the hole"), "the body beside the hole hears the voice below it")
+
+-- 5. A visible message below a hole is seen above; one above a glass floor is
 -- not seen below. The stand's starter and patient stand on its level, the
 -- watcher on the other, and the stand sits under the hole or on the glass.
 local TEXT_HEADER = [==[(
