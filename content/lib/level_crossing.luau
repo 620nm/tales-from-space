@@ -10,7 +10,7 @@ local HEARD: { [string]: boolean } = { sound = true, speech = true }
 -- hearers above and below a transparent turf (`istransparentturf`,
 -- code/game/sound/sound.dm:49-67). Speech crossing is Josh's ruling R7, beyond
 -- tg: `get_hearers_in_view` stays on one z (code/modules/mob/living/living_say.dm:418).
--- Text, throws and machine feedback reach only viewers above the
+-- Text and machine feedback reach only viewers above the
 -- event: R7's choice, since tg's `visible_message` is one z
 -- (code/modules/mob/mob.dm:287).
 function level_crossing.sense(ev: LevelSensePayload): { crosses: string, through: string? }

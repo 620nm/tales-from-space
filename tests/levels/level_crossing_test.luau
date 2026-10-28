@@ -195,4 +195,5 @@ assert(below_seen, "the watcher above sees the message from below")
 -- The stand sits on the glass, the watcher in the basement beneath it.
 local above_seen, above_told = needle_seen(TEXT_HEADER .. WATCH_LEVEL .. GLASS_ABOVE_STAND .. TEXT_FOOTER)
 assert(above_told, "the starter is told the needle begins")
+-- Pins the engine's R1 (no upward deep set), not the handler: no candidate forms.
 assert(not above_seen, "the watcher below does not see the message from above")
