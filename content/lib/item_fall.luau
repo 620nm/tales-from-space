@@ -6,19 +6,24 @@
 -- over an Open tile falls. The engine asks once per item (`item.fall`) and
 -- this is the answer; `content/main.luau` binds it unscoped.
 --
--- A later gliding item answers a nonzero `glide_x` / `glide_y` from
--- `glide_for`; nothing glides yet, so the glide fields stay at their zero.
+-- An item that carries on while it drops answers a nonzero `glide_x` /
+-- `glide_y` from `glide_for`; a thing that stays aloft answers before it.
+local paper_plane = require("@lib/paper_plane")
+
 local item_fall = {}
 
 export type ItemFallAnswer = { fall: boolean, glide_x: number?, glide_y: number? }
 
 -- Where a falling item carries sideways, in tiles. The per-prototype hook:
 -- branch on `ev.item.prototype` here.
-local function glide_for(_ev: ItemFallPayload): { x: number, y: number }
-    return { x = 0, y = 0 }
+local function glide_for(ev: ItemFallPayload): { x: number, y: number }
+    return paper_plane.glide(ev)
 end
 
 function item_fall.answer(ev: ItemFallPayload): ItemFallAnswer
+    if paper_plane.rides_thermal(ev) then
+        return { fall = false }
+    end
     local glide = glide_for(ev)
     if glide.x ~= 0 or glide.y ~= 0 then
         return { fall = true, glide_x = glide.x, glide_y = glide.y }

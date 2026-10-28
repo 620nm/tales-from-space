@@ -23,6 +23,10 @@ return {
         -- tgstation/code/__DEFINES/atmospherics/atmos_core.dm:152). A fall
         -- drops `height_m` per level.
         tile = { width_m = 1, depth_m = 1, height_m = 3 },
+        -- The farthest sideways carry an item may answer when it falls, in
+        -- tiles. A folded paper plane asks 2 per level it drops
+        -- (`content/lib/paper_plane.luau`), so 8 covers a four-level fall.
+        fall = { glide_max = 8 },
     },
     -- Seeing down is tg's multi-z look (the engine's
     -- docs/architecture/map-instancing/levels.md "Seeing down"): three levels
