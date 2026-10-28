@@ -118,6 +118,21 @@ t.run_seconds(1)
 x, y = t.pos(p)
 assert(x == 1 and y == 1, "the body steps into the dug tile, got (" .. x .. ", " .. y .. ")")
 
+-- 5b. The rock floor preset paints the planet's natural rock floor over the dug
+-- ground; it holds the body like ground does.
+assert(t.set_composition(1, 1, "rock_floor", BASEMENT), "the rock floor preset replaces the ground")
+t.run_ticks(2)
+local floor = composition.seen_sprites(p, 1, 1, BASEMENT)
+assert(floor.substrates[1] == "rock_floor", "the painted tile shows rock floor, got " .. tostring(floor.substrates[1]))
+t.move(p, "south")
+t.run_seconds(1)
+x, y = t.pos(p)
+assert(x == 1 and y == 2, "the body leaves the rock floor, got (" .. x .. ", " .. y .. ")")
+t.move(p, "north")
+t.run_seconds(1)
+x, y = t.pos(p)
+assert(x == 1 and y == 1, "the body walks back onto the rock floor, got (" .. x .. ", " .. y .. ")")
+
 -- 6. Rock blocks gas: ground-level pockets (1, 1) and (3, 1) are one rock
 -- apart. A tracer put in the west pocket stays there, both pockets to the
 -- mole (room_air_test.luau's 1e-6 exact-sum slack). One open cell between
