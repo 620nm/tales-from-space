@@ -117,6 +117,11 @@ for _, row in ipairs(t.ledger_rows("script_error")) do
     refused = refused or row.file == "item-fall"
 end
 assert(#t.ledger_rows("script_error") > refusals and refused, "the refused glide is on the record")
+local taken = t.script_errors()
+assert(
+    #taken == 1 and taken[1].file == "item-fall" and taken[1].why == "glide-blocked",
+    "the one script error is the refused glide"
+)
 
 -- Air under a hole: a corridor with one hole, hot air painted beneath it.
 local HOT_WORLD = [==[(
