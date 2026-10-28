@@ -24,4 +24,12 @@ return {
         -- drops `height_m` per level.
         tile = { width_m = 1, depth_m = 1, height_m = 3 },
     },
+    -- Seeing down is tg's multi-z look (the engine's
+    -- docs/architecture/map-instancing/levels.md "Seeing down"): three levels
+    -- below (MAX_EXPECTED_Z_DEPTH, tgstation/code/__DEFINES/layers.dm:393, counts
+    -- plane offsets below the top, tgstation/code/controllers/subsystem/mapping.dm:795-819),
+    -- each 0.9 darker (tgstation/code/_onclick/hud/rendering/render_plate.dm:47) and
+    -- 0.965 smaller (tgstation/code/_onclick/hud/rendering/plane_master_group.dm:181),
+    -- straight down.
+    levels = { view = { depth = 3, tint = 0.9, scale = 0.965, offset = { x = 0, y = 0 } } },
 }

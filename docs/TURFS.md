@@ -72,6 +72,12 @@ glass preset is refused over a cable run (tg refuses cable where the underfloor
 is only visible, `cable.dm:692`); pipes have no such need. Construction and the
 starlight glow are not implemented.
 
+Seeing down has tg's multi-z look (`levels.view` in `content/capabilities.luau`;
+the engine's `docs/architecture/map-instancing/levels.md` "Seeing down"): three
+levels below the eye, each 0.9 darker and 0.965 smaller about it, straight down.
+Because a lower level draws smaller, an opening also shows a sliver of the tile
+beyond it.
+
 The level specs live in `tests/levels/`.
 
 ## Gravity and handholds

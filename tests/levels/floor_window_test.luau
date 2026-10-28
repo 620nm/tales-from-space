@@ -3,7 +3,8 @@
 -- let a body see down; only the hole lets air out and drops a body. The glass
 -- floors hold both, join as one smoothing group (tg glass.dm:9-11), and show
 -- the pipe beneath them without tool access (glass.dm:8). In orbit they hold a
--- body with the station's gravity, as plating does (step 7).
+-- body with the station's gravity, as plating does (step 7). A stack of them
+-- shows exactly the pack's `levels.view.depth` levels down (step 8).
 local composition = require("@helpers/composition")
 
 local BASEMENT = -1
@@ -80,8 +81,12 @@ local wx, wy = t.pos(window_body)
 assert(wx == 5 and wy == 1, "the window room's body spawns at (5, 1), got (" .. wx .. ", " .. wy .. ")")
 
 -- 1. Sight down: through the hole and each window, not through solid floor.
+-- Each body checks the floor it stands on: the level below draws 0.965 smaller
+-- about the eye (content/capabilities.luau), so a hole also shows a sliver of
+-- the tile beyond it, never the one under the eye.
 assert(#t.seen_composition(hole_body, 2, 1, BASEMENT) > 0, "the basement shows through the hole")
-assert(#t.seen_composition(hole_body, 3, 1, BASEMENT) == 0, "but not under R1's solid floor")
+assert(#t.seen_composition(hole_body, 1, 1, BASEMENT) == 0, "but not under R1's solid floor")
+assert(#t.seen_composition(hole_body, 3, 1, BASEMENT) > 0, "the smaller level below shows a sliver past the hole")
 assert(#t.seen_composition(window_body, 6, 1, BASEMENT) > 0, "the basement shows through the glass floor")
 assert(#t.seen_composition(window_body, 7, 1, BASEMENT) > 0, "and through the reinforced glass floor")
 assert(#t.seen_composition(window_body, 5, 1, BASEMENT) == 0, "but not under R2's solid floor")
@@ -202,3 +207,46 @@ t.move(orbiter, "east")
 t.run_seconds(2)
 ox, oy = t.pos(orbiter)
 assert(ox == 2 and oy == 2, "the station field holds a body on glass in orbit, got (" .. ox .. ", " .. oy .. ")")
+
+-- 8. See-down depth: a glass shaft through four levels shows three of them,
+-- the pack's `levels.view.depth` (content/capabilities.luau). Glass, not a
+-- hole, because an open tile has nothing to see.
+local DEPTH = 3
+local GLASS_SHAFT_LEVEL = [[        (
+            rows: ["#####", "#.g.#", "#####"],
+            structures: [],
+        ),
+]]
+t.world(
+    [==[(
+    name: "glass shaft",
+    tags: ["terrestrial"],
+    levels_below_ground: 4,
+    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),
+    legend: {
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        'g': (composition: (substrate: Open, components: [(component: "glass_floor")])),
+    },
+    levels: [
+        (
+            rows: ["#####", "#...#", "#####"],
+            structures: [],
+        ),
+]==]
+        .. string.rep(GLASS_SHAFT_LEVEL, 3)
+        .. [==[        (
+            rows: ["#####", "#.g.#", "#####"],
+            structures: [(1, 1, "player_spawn")],
+        ),
+    ],
+)]==],
+    0,
+    "free_build"
+)
+local looker = t.join()
+t.run_ticks(4)
+for depth = 1, DEPTH do
+    assert(#t.seen_composition(looker, 2, 1, -depth) > 0, "the shaft shows level " .. -depth)
+end
+assert(#t.seen_composition(looker, 2, 1, -(DEPTH + 1)) == 0, "the shaft hides level " .. -(DEPTH + 1) .. ", past the view depth")
