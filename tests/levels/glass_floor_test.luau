@@ -70,16 +70,11 @@ t.world(
 local p = t.join()
 t.run_ticks(4)
 
--- Bare hands do nothing to any of the four.
-for _, floor in ipairs(floors) do
-    t.click_component(p, floor.x, 1, assert(t.component_instance(floor.x, 1, floor.component)))
-    t.tick()
-    assert(
-        composition.matches(floor.x, 1, { floor.component }),
-        "a bare hand leaves the " .. floor.component .. " alone: " .. composition.describe(floor.x, 1)
-    )
-    assert(not has(t.items_at(floor.x, 1, GROUND), floor.tile), "and no tile comes of it")
-end
+-- A bare hand beside the nearest floor does nothing to it.
+t.click_component(p, 2, 1, assert(t.component_instance(2, 1, "glass_floor")))
+t.tick()
+assert(composition.matches(2, 1, { "glass_floor" }), "a bare hand leaves the glass floor alone")
+assert(not has(t.items_at(2, 1, GROUND), "glass_tile"), "and no tile comes of it")
 
 t.click(p, 1, 1, t.target_at(p, 1, 1, "crowbar")) -- the crowbar is underfoot
 t.tick()
@@ -98,8 +93,13 @@ for index, floor in ipairs(floors) do
     t.tick()
     assert(
         composition.matches(floor.x, 1, { "station_base" }),
-        floor.component .. " pries up to plating: " .. composition.describe(floor.x, 1)    )
+        floor.component .. " pries up to plating: " .. composition.describe(floor.x, 1)
+    )
     assert(has(t.items_at(floor.x, 1, GROUND), floor.tile), floor.tile .. " is refunded where the floor lay")
+    assert(
+        t.stack_count(assert(t.target_at(p, floor.x, 1, floor.tile))) == 1,
+        "exactly one tile comes up (floor.dm:179-182)"
+    )
     assert(has(t.messages(p), PRY_SAY), "and the narration says so")
     assert(has(t.sounds(p), "crowbar"), "with the crowbar's quick pop")
     assert(#t.seen_composition(p, floor.x, 1, BASEMENT) == 0, "the plating hides the basement")

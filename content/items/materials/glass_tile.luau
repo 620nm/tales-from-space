@@ -3,7 +3,7 @@ local physical_profiles = require("@lib/physical_profiles")
 -- (code/game/objects/items/stacks/tiles/tile_types.dm:1772-1780), art
 -- tiles.dmi `tile_glass`, held art `tile-glass`. Stack size and scatter
 -- follow floor_tile.luau. Laying one back down is not ported: tg lays it
--- on plating (plating.dm:73,84) and crafts it from sheets (glass.dm:15).
+-- on plating (plating.dm:73,84) and crafts it from sheets (sheets/glass.dm:15).
 return {
     id = "glass_tile",
     visual_layer = "item",

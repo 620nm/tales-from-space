@@ -182,7 +182,7 @@ local construction_components = { "station_base", "floor_tiles", "grid_cover", "
     "glass_floor", "reinforced_glass_floor", "plasma_glass_floor", "reinforced_plasma_glass_floor" }
 
 -- tg /turf/open/floor/glass: in what is ported, the four variants differ in name
--- and art only (glass.dm:2-114; glow and floor-tile fields are not ported). Floor
+-- and art only (glass.dm:2-114; the glow is not ported). Floor
 -- windows over an open substrate: they hold a body and the air (support, seal),
 -- show the level below, and show runs without tool access (UNDERFLOOR_VISIBLE,
 -- glass.dm:8). Thermal is floor.dm:17-18 with the
