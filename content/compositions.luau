@@ -230,6 +230,11 @@ return {
         { id = "space", label = "space", layer = "substrate", sprite = "space", substrate = { vacuum_boundary = true }, physical = { ambient = 0.06 } },
         { id = "ground", label = "ground", layer = "substrate", sprite = "ground", substrate = { vacuum_boundary = false },
             physical = { ambient = 0, support = true, thermal = thermal(20000, 0.02, 0.5) } },
+        -- tg /turf/open/misc/asteroid (asteroid.dm:5-14): a natural floor under mined rock. It holds a body
+        -- and receives the station field; like `ground` it is no vacuum boundary. Thermal: tg
+        -- /turf/open/misc heat_capacity and thermal_conductivity (misc.dm:20-21), the pack's emissivity.
+        { id = "rock_floor", label = "rock floor", layer = "substrate", sprite = "rock_floor", substrate = { vacuum_boundary = false },
+            physical = { ambient = 0, support = true, receives_gravity = true, thermal = thermal(20000, 0.02, 0.5) } },
         { id = "station_base", occludes_substrate = true, label = "plating", layer = "support", sprite = "plating",
             physical = { ambient = 0.10, support = true, receives_gravity = true, substrate_seal = true, thermal = thermal(62500, 0.025, 0.5) } },
         { id = "floor_tiles", label = "floor", layer = "cover", sprite = "floor", cover = controls(false, "open_floor", "exposed_cover"),
@@ -284,10 +289,10 @@ return {
         free = { map = true, play = false },
     },
     presets = {
-        -- `bare` and `rock` write the level's natural fill (`inherit`: the
-        -- profile substrate at or below ground, open sky above), as the
-        -- editor's band fills do (content/editor.luau), so painting either
-        -- over an `open` hole at or below ground closes it. `open` cuts a
+        -- `bare` and `rock` write the `inherit` substrate (the profile substrate
+        -- at or below ground, open sky above), so painting either over an `open`
+        -- hole at or below ground closes it. The editor's space subterrain fill
+        -- differs: rock over `rock_floor` (content/editor.luau). `open` cuts a
         -- hole on any level but the lowest, which refuses it.
         { id = "bare", label = "Bare Substrate", substrate = "inherit", replace_components = construction_components, components = {} },
         { id = "open", label = "Open (hole)", substrate = "open", replace_components = construction_components, components = {} },
@@ -304,6 +309,7 @@ return {
         { id = "wall", label = "Wall", replace_components = construction_components, components = { { component = "station_base" }, { component = "wall" } } },
         { id = "reinforced_wall", label = "Reinforced Wall", replace_components = construction_components, components = { { component = "station_base" }, { component = "reinforced_wall" } } },
         { id = "rock", label = "Rock", substrate = "inherit", replace_components = construction_components, components = { { component = "rock" } } },
+        { id = "rock_floor", label = "Rock Floor", substrate = "rock_floor", replace_components = construction_components, components = {} },
         { id = "glass_floor", label = "Glass Floor", substrate = "open", replace_components = construction_components,
             components = { { component = "glass_floor" } } },
         { id = "reinforced_glass_floor", label = "Reinforced Glass Floor", substrate = "open", replace_components = construction_components,

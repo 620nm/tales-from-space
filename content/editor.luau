@@ -112,13 +112,16 @@ end
 return {
     version = 1,
     pack = "lunatic/tfs",
-    revision = "5",
+    revision = "6",
     -- New-level fills by band (the engine's docs/mapping/editor-declarations.md):
     -- rock below ground; ground and space inherit at ground; a blank tile
-    -- above ground resolves to open sky, so `open_air` stays empty.
+    -- above ground resolves to open sky, so `open_air` stays empty. Mined
+    -- rock shows what tg's mineral turf leaves (minerals.dm:29): asteroid
+    -- floor in orbit, while the terrestrial profile's own cold ground stays
+    -- (the icemoon mineral leaves snow, minerals.dm:677).
     levels = {
         terrestrial = { subterrain = { components = { { component = "rock" } } }, terrain = {}, open_air = {} },
-        space = { subterrain = { components = { { component = "rock" } } }, terrain = {}, open_air = {} },
+        space = { subterrain = { substrate = "rock_floor", components = { { component = "rock" } } }, terrain = {}, open_air = {} },
     },
     default_mode = "space_station",
     modes = {
