@@ -61,7 +61,10 @@ tg's 4 px overhang is lost, and the map edge is not a neighbour (no
 Open sky above ground and what seals it are the engine's contract (the
 engine's `docs/content-schema/compositions.md` "Tile values and replacement"
 and `docs/mapping/environment.md` "Exposure"). Station base and rock seal the
-substrate, so either one roofs open sky.
+substrate, so either one roofs open sky. The `open` preset cuts a hole on any
+level, ground-level terrain included, but not on the lowest. `bare` and `rock`
+write the level's natural fill (substrate `inherit`), so painting either over a
+hole closes it.
 
 The four glass floors (tg `glass.dm`) are floor windows over an open substrate.
 They hold a body and the air, show the level below, and show runs beneath

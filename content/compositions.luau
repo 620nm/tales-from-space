@@ -279,7 +279,12 @@ return {
         free = { map = true, play = false },
     },
     presets = {
-        { id = "bare", label = "Bare Substrate", replace_components = construction_components, components = {} },
+        -- `bare` and `rock` write the level's natural fill (`inherit`: the
+        -- profile substrate at or below ground, open sky above), as the
+        -- editor's band fills do (content/editor.luau), so painting either
+        -- over an `open` hole closes it. `open` cuts a hole on any level.
+        { id = "bare", label = "Bare Substrate", substrate = "inherit", replace_components = construction_components, components = {} },
+        { id = "open", label = "Open (hole)", substrate = "open", replace_components = construction_components, components = {} },
         { id = "plating", label = "Station Base", replace_components = construction_components, components = { { component = "station_base" } } },
         { id = "floor", label = "Tiled Floor", replace_components = construction_components, components = { { component = "station_base" }, { component = "floor_tiles" } } },
         { id = "floor_exposed", label = "Tiled Floor, Exposed", variant_of = "floor", replace_components = construction_components, components = { { component = "station_base" },
@@ -292,7 +297,7 @@ return {
         { id = "catwalk", label = "Catwalk", replace_components = construction_components, components = { { component = "catwalk" } } },
         { id = "wall", label = "Wall", replace_components = construction_components, components = { { component = "station_base" }, { component = "wall" } } },
         { id = "reinforced_wall", label = "Reinforced Wall", replace_components = construction_components, components = { { component = "station_base" }, { component = "reinforced_wall" } } },
-        { id = "rock", label = "Rock", replace_components = construction_components, components = { { component = "rock" } } },
+        { id = "rock", label = "Rock", substrate = "inherit", replace_components = construction_components, components = { { component = "rock" } } },
         { id = "glass_floor", label = "Glass Floor", substrate = "open", replace_components = construction_components,
             components = { { component = "glass_floor" } } },
         { id = "reinforced_glass_floor", label = "Reinforced Glass Floor", substrate = "open", replace_components = construction_components,
