@@ -1,12 +1,12 @@
 -- What crosses a level is the pack's answer (`content/lib/level_crossing.luau`,
 -- bound by both modes): sound passes an open hole or a glass floor both ways,
--- a visible message reaches only viewers above, and a hand never reaches
--- another level. Sound comes from picking up a wrench (the wrench's own
--- `wrench_pickup`, tests/verbs/handling_test.luau), a visible message from the
--- IV stand's needle (`iv_drip.attach_start`, a room broadcast).
+-- and a visible message reaches only viewers above. The hand's refusal is not
+-- specced here: `t.target_at` names only the viewer's own level. Sound comes
+-- from picking up a wrench (the wrench's own `wrench_pickup`,
+-- tests/verbs/handling_test.luau), a visible message from the IV stand's
+-- needle (`iv_drip.attach_start`, a room broadcast).
 local iv_drip = require("@helpers/iv_drip")
 
-local BASEMENT = -1
 local PICKUP = "wrench_pickup"
 local NEEDLE = "The IV drip needle begins attaching."
 
@@ -24,7 +24,8 @@ local function said(player: number, line: string): boolean
 end
 
 local function pick_up(player: number, x: number, y: number)
-    t.click(player, x, y, assert(t.target_at(player, x, y, "wrench"), "the wrench is disclosed"))
+    local wrench = assert(t.target_at(player, x, y, "wrench"), "the wrench is disclosed")
+    t.click(player, x, y, wrench)
     t.run_ticks(2)
     assert(t.hands(player).held == "wrench", "the wrench is in hand")
 end
@@ -58,7 +59,7 @@ t.world(
                 (2, 1, "player_spawn", { "jobs": "medic" }),
                 (7, 1, "player_spawn", { "jobs": "engineer" }),
             ],
-            items: [(3, 1, "wrench"), (2, 1, "wrench"), (8, 1, "wrench")],
+            items: [(3, 1, "wrench"), (8, 1, "wrench")],
         ),
         (
             rows: [
@@ -109,20 +110,7 @@ end
 pick_up(above_glass, 8, 1)
 assert(heard(below_glass, PICKUP), "the body under the glass hears the pickup above it")
 
--- 4. A hand does not reach through the hole: the wrench under (2,1) stays put,
--- the hand stays empty and the refusal is on the ledger.
-local reach = t.target_at(above_hole, 2, 1, "wrench")
-assert(reach ~= nil, "the wrench below the hole is disclosed to the body above it")
-local refusals_before = #t.ledger_rows("claim_refused")
-t.click(above_hole, 2, 1, reach)
-t.run_ticks(2)
-assert(t.hands(above_hole).held ~= "wrench", "the wrench is out of reach")
-assert(table.find(t.items_at(2, 1, BASEMENT), "wrench") ~= nil, "it stays on the basement floor")
-local refusals = t.ledger_rows("claim_refused")
-assert(#refusals == refusals_before + 1, "one refusal is ledgered")
-assert(refusals[#refusals].why == "off_level_reach", "the refusal names the level")
-
--- 5. A visible message below a hole is seen above; one above a glass floor is
+-- 4. A visible message below a hole is seen above; one above a glass floor is
 -- not seen below. The stand's starter and patient stand on its level, the
 -- watcher on the other, and the stand sits under the hole or on the glass.
 local TEXT_HEADER = [==[(
@@ -143,32 +131,32 @@ local TEXT_HEADER = [==[(
 local TEXT_FOOTER = [==[    ],
 )]==]
 local STAND_LEVEL = [==[        (
-            rows: ["RRRRR", "RcccR", "RRRRR"],
+            rows: ["RRRRR", "RcccR", "RcccR", "RRRRR"],
             structures: [
                 (1, 1, "player_spawn", { "jobs": "medic" }),
-                (3, 1, "player_spawn", { "jobs": "assistant" }),
+                (1, 2, "player_spawn", { "jobs": "assistant" }),
                 (2, 1, "iv_drip"),
             ],
             items: [(2, 1, "beaker")],
         ),
 ]==]
 local WATCH_LEVEL = [==[        (
-            rows: ["RRRRR", "RcccR", "RRRRR"],
+            rows: ["RRRRR", "RcccR", "RcccR", "RRRRR"],
             structures: [(1, 1, "player_spawn", { "jobs": "engineer" })],
             items: [],
         ),
 ]==]
 local HOLE_ABOVE_WATCHER = [==[        (
-            rows: ["#####", "#.o.#", "#####"],
+            rows: ["#####", "#.o.#", "#...#", "#####"],
             structures: [(1, 1, "player_spawn", { "jobs": "engineer" })],
             items: [],
         ),
 ]==]
 local GLASS_ABOVE_STAND = [==[        (
-            rows: ["#####", "#.g.#", "#####"],
+            rows: ["#####", "#.g.#", "#...#", "#####"],
             structures: [
                 (1, 1, "player_spawn", { "jobs": "medic" }),
-                (3, 1, "player_spawn", { "jobs": "assistant" }),
+                (1, 2, "player_spawn", { "jobs": "assistant" }),
                 (2, 1, "iv_drip"),
             ],
             items: [(2, 1, "beaker")],

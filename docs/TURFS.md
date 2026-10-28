@@ -85,7 +85,7 @@ Because a lower level draws smaller, an opening also shows a sliver of the tile
 beyond it.
 
 Across levels, sound and speech pass an open hole or a glass floor both ways;
-text, balloons, throws and machine feedback reach only viewers above, and a
+text, throws and machine feedback reach only viewers above, and a
 hand never reaches another level (`content/lib/level_crossing.luau`, bound by
 both modes).
 
