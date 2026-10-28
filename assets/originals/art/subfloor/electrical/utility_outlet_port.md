@@ -2,12 +2,13 @@
 
 `utility_outlet_port.aseprite` is the editable 32×32 RGBA source, drawn
 through the Aseprite MCP. The fitting is a flush circular floor outlet
-with a hinged metal lid and a recessed socket. The subdued metal uses
-top-left lighting, a limited palette, and no antialiasing or glow.
+with a hinged metal lid and a recessed socket, drawn straight from above.
+The circular silhouette has no perspective compression, visible side wall,
+or cast shadow. The subdued metal uses a limited palette and no glow.
 
-The floor rim occupies a centered 16×11 footprint at `(8, 14)`. The
-closed cover stays within that rim; the open lid extends to `y = 7`,
-joined to the rim by its hinge. Both variants retain the same floor
+The floor rim occupies a centered 16×16 footprint at `(8, 8)`. The
+closed cover stays within that rim; the open lid is an 8×2 edge at
+`(12, 6)`, touching its hinge at the north rim. Both variants retain the same floor
 anchor and transparent surroundings. No sprite offset is required.
 
 ## Cover and channel layers
@@ -18,14 +19,16 @@ anchor and transparent surroundings. No sprite offset is required.
 | `housing` / 2, tag `open` | Raised lid and recessed socket |
 | `housing` / 3–5 | Closed cover for status previews |
 
-Three two-pixel lamps remain separate on `wire_1`, `wire_2`, and
-`wire_3`, left to right at `(11, 23)`, `(15, 23)`, and `(19, 23)`.
-Each layer's frames select its channel status independently of the cover:
+Three individual 2×2 lamps remain separate on `wire_1`, `wire_2`, and
+`wire_3`, left to right at `(11, 20)`, `(15, 20)`, and `(19, 20)`.
+Each wire cel contains exactly one lamp. All three use the same status
+colors; a channel has no fixed identity color. Each layer's frames select
+its channel status independently of the other lamps and the cover:
 
 | Frame / tag | Lamp |
 | --- | --- |
 | 1 / `disconnected` | Unlit gray `#363c3e` |
-| 2 / `inactive` | Dull blue `#4b617c`, red `#79504f`, yellow `#7b7047` |
+| 2 / `inactive` | Dull blue `#4b617c` |
 | 3 / `starved` | Red `#c46d66` |
 | 4 / `emergency` | Yellow `#c2a45e` |
 | 5 / `nominal` | Green `#77a67a` |
