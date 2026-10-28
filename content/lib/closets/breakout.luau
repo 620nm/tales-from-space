@@ -15,6 +15,8 @@ type BreakoutOperation = {
 	-- Past this tick a task that never reported back no longer absorbs pushes.
 	expires_tick: number,
 	task: Task?,
+	-- The bust-open's outstanding latch orders, forgotten when it is dropped.
+	request_ids: { string },
 }
 
 -- The longest single `do_after` (docs/luau-api/runtime.md); longer waits chain.
@@ -44,7 +46,16 @@ local function is_direct_occupant(holder: Handle, body: Handle): boolean
 	return false
 end
 
+-- Drops the latch orders a bust-open left outstanding.
+local function forget_orders(operation: BreakoutOperation)
+	for _, request_id in ipairs(operation.request_ids) do
+		latch_orders.take_breakout(request_id)
+	end
+	table.clear(operation.request_ids)
+end
+
 local function remove_breakout(operation: BreakoutOperation)
+	forget_orders(operation)
 	for index = #active_breakouts, 1, -1 do
 		if active_breakouts[index] == operation then
 			table.remove(active_breakouts, index)
@@ -65,6 +76,7 @@ local function find_breakout(body: Handle, holder: Handle): BreakoutOperation?
 			or (operation.body == body and operation.holder ~= holder)
 		then
 			table.remove(active_breakouts, index)
+			forget_orders(operation)
 			local task = operation.task
 			if task ~= nil then
 				pcall(function()
@@ -83,14 +95,16 @@ local function holder_label(holder: Handle): string
 end
 
 -- A breakout that ends without opening leaves this row where no engine row
--- would (an interrupted wait already rows `do_after_interrupted`).
-local function record_breakout_lapse(operation: BreakoutOperation, reason: string): ()
+-- would (an interrupted wait already rows `do_after_interrupted`). `cleared`
+-- names the latches a bust-open had already ordered off.
+local function record_breakout_lapse(operation: BreakoutOperation, reason: string, cleared: { string }?): ()
 	if operation.body.alive ~= true or operation.holder.alive ~= true then
 		return
 	end
+	local ordered = if cleared ~= nil and #cleared > 0 then table.concat(cleared, ",") else nil
 	sim.ledger.record({
 		kind = "lunatic/tfs:closet_breakout_lapsed",
-		fields = { container = operation.holder, body = operation.body, reason = reason },
+		fields = { container = operation.holder, body = operation.body, reason = reason, cleared = ordered },
 	})
 end
 
@@ -103,8 +117,8 @@ local function tell_breakout_failed(operation: BreakoutOperation): ()
 	end
 end
 
-local function lapse_breakout(operation: BreakoutOperation, reason: string): ()
-	record_breakout_lapse(operation, reason)
+local function lapse_breakout(operation: BreakoutOperation, reason: string, cleared: { string }?): ()
+	record_breakout_lapse(operation, reason, cleared)
 	tell_breakout_failed(operation)
 end
 
@@ -201,8 +215,14 @@ end
 -- are orders, so the open waits for their completions.
 local function bust_open(operation: BreakoutOperation): ()
 	local holder = operation.holder
+	-- Nothing is ordered for a body that already fell unfit (`closets.dm:1110-1115`).
+	local unfit_now = unfit_reason(operation)
+	if unfit_now ~= nil then
+		lapse_breakout(operation, unfit_now)
+		return
+	end
 	local latches = sim.latch.of(holder) or {}
-	local request_ids: { string } = {}
+	local request_ids = operation.request_ids
 	local cleared: { string } = {}
 	for _, latch in ipairs(data.holding_latches) do
 		if latches[latch] == true then
@@ -232,12 +252,12 @@ local function bust_open(operation: BreakoutOperation): ()
 		end
 	end
 	if not confirmed then
-		lapse_breakout(operation, "latch_unconfirmed")
+		lapse_breakout(operation, "latch_unconfirmed", cleared)
 		return
 	end
 	local unfit = unfit_reason(operation)
 	if unfit ~= nil then
-		lapse_breakout(operation, unfit)
+		lapse_breakout(operation, unfit, cleared)
 		return
 	end
 	sim.ledger.record({
@@ -299,6 +319,7 @@ local function begin_breakout(body: Handle, holder: Handle): ()
 		holder = holder,
 		expires_tick = sim.tick() + total_ticks + sim.ticks(BREAKOUT_SLACK_SECONDS),
 		task = nil,
+		request_ids = {},
 	}
 	operation.task = sim.spawn_task(body, function()
 		local completed, failure = pcall(run_breakout, operation, total_ticks)

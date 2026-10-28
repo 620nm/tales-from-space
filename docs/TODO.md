@@ -92,3 +92,12 @@ Done: the crew record shows each player's type. Donor identity is named in
 vessel `dna`, synthetic packs use a declared no-donor value, and deck records
 are keyed by the blood decal instance, with separate assertions for donor
 identity and deck forensics.
+
+## Freezer organ preservation
+
+`content/structures/furniture/freezer.luau` no longer preserves organs; tg
+holds organs frozen in a freezer (`code/modules/surgery/organs/_organ.dm:159-171`).
+
+Done: the organ-decay timer that follows the P16 container work reads the
+holder's cold state, so organs in a freezer do not decay, with a spec in
+`tests/construction/blood_freezer_test.luau`.

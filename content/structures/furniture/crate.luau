@@ -37,13 +37,17 @@ return {
     -- Tg's crate drag slowdown is zero (`code/game/objects/structures/crates_lockers/crates.dm:17`).
     drag_slowdown = 0,
     container = {
-        -- Tg's closet item and body capacities are independent
-        -- (`code/game/objects/structures/crates_lockers/closets.dm:54-56,575-592`).
+        -- Tg's `storage_capacity` counts mobs too and `mob_storage_capacity`
+        -- caps them (`code/game/objects/structures/crates_lockers/closets.dm:54-56,563,587-591`).
+        -- Pack divergence: the engine counts items and bodies apart; the close
+        -- gather applies tg's total (`lib/closets/closing.luau`).
         capacity = closet_data.item_capacity,
         body_capacity = closet_data.body_capacity,
         max_body_size = closet_data.max_body_size,
         occupant_speech = true,
         occupant_hearing = true,
+        -- Tg shows an occupant the closet's insides (`closet_see_inside.dm:8-10,22-60`;
+        -- made at `closets.dm:101,155`).
         occupant_sight = true,
         closed = "closed",
         open = "open",

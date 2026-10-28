@@ -1,6 +1,5 @@
 local clock = require("@helpers/clock")
 
-local CLOSE_MESSAGE = "The closing container knocks you down."
 local ENTRY_TICKS: number
 
 local function move_and_settle(player: number, direction: "north" | "south" | "east" | "west"): ()
@@ -16,16 +15,6 @@ local function tile_has_body(x: number, y: number, player: number): boolean
         end
     end
     return false
-end
-
-local function message_count(player: number, wanted: string): number
-    local count = 0
-    for _, message in ipairs(t.messages(player)) do
-        if message == wanted then
-            count += 1
-        end
-    end
-    return count
 end
 
 local function target(player: number, x: number, y: number, id: string): SpecObservedTarget
@@ -60,7 +49,10 @@ local function drag_body(
 end
 
 local close_assertions = 0
-local function assert_closed_with_message(x: number, y: number, occupants: { number }): ()
+-- `stuffed` lists the occupants another player stuffed in: only they are
+-- knocked down (`closets.dm:1014`); a body that walks in, hides or is gathered
+-- by the close is not.
+local function assert_closed(x: number, y: number, occupants: { number }, stuffed: { number }): ()
     close_assertions += 1
     local structure = assert(t.structure_at(x, y))
     assert(
@@ -80,8 +72,9 @@ local function assert_closed_with_message(x: number, y: number, occupants: { num
     )
     for _, occupant in ipairs(occupants) do
         assert(not tile_has_body(x, y, occupant), "an admitted body leaves the physical tile")
-        assert(message_count(occupant, CLOSE_MESSAGE) == 1, "each admitted body gets one close message")
-        assert(assert(t.body(occupant)).posture == "lying", "each admitted body is knocked down once")
+    end
+    for _, occupant in ipairs(stuffed) do
+        assert(assert(t.body(occupant)).posture == "lying", "a body stuffed in by another is knocked down")
     end
 end
 
@@ -89,7 +82,6 @@ local function assert_open_dump(x: number, y: number, occupants: { number }): ()
     assert(assert(t.structure_at(x, y)).state == "open", "the container opens")
     for _, occupant in ipairs(occupants) do
         assert(tile_has_body(x, y, occupant), "opening restores the occupant to the holder tile")
-        assert(message_count(occupant, CLOSE_MESSAGE) == 0, "opening has no second close notification")
     end
 end
 
@@ -138,10 +130,10 @@ assert(assert(t.structure_at(4, 4)).state == "open", "the locker opens for co-ti
 move_and_settle(first, "north")
 move_and_settle(second, "west")
 assert(tile_has_body(4, 4, first) and tile_has_body(4, 4, second), "two bodies walk onto the open locker")
-message_count(first, CLOSE_MESSAGE)
-message_count(second, CLOSE_MESSAGE)
 click(actor, 4, 4, "locker")
-assert_closed_with_message(4, 4, { first, second })
+assert_closed(4, 4, { first, second }, {})
+assert(assert(t.body(first)).posture == "standing", "a body gathered by the close is not knocked down")
+assert(assert(t.body(second)).posture == "standing", "a second gathered body is not knocked down")
 
 local second_for_first = t.body_target(first, second)
 assert(t.examine(first, 4, 4, second_for_first) ~= nil, "a co-occupant can examine a direct co-occupant")
@@ -149,29 +141,32 @@ local outsider_disclosure = pcall(function()
     return t.body_target(actor, second)
 end)
 assert(not outsider_disclosure, "an outsider gets no hidden body disclosure")
+-- `occupant_sight`: tg shows an occupant the closet's surroundings
+-- (`closet_see_inside.dm:8-10,22-60`).
+local occupant_sees_out = pcall(function()
+    return t.body_target(first, actor)
+end)
+assert(occupant_sees_out, "an occupant sees out of the closed container")
 
 click(actor, 4, 4, "locker")
 assert_open_dump(4, 4, { first, second })
 t.run_seconds(4.1)
 move_and_settle(second, "east")
 
-message_count(first, CLOSE_MESSAGE)
 drag_body(first, first, 4, 4, 4, 4, "locker")
 t.run_ticks(ENTRY_TICKS - 1)
 assert(assert(t.structure_at(4, 4)).state == "open", "self-hide does not finish one tick early")
-assert(message_count(first, CLOSE_MESSAGE) == 0, "enter has no early posture message")
 t.run_ticks(1)
-assert_closed_with_message(4, 4, { first })
+assert_closed(4, 4, { first }, {})
+assert(assert(t.body(first)).posture == "standing", "a body that hides itself is not knocked down")
 
 click(actor, 4, 4, "locker")
 assert_open_dump(4, 4, { first })
-message_count(first, CLOSE_MESSAGE)
 drag_body(actor, first, 4, 4, 4, 4, "locker")
 t.run_ticks(ENTRY_TICKS - 1)
 assert(assert(t.structure_at(4, 4)).state == "open", "other-stuffing does not finish one tick early")
-assert(message_count(first, CLOSE_MESSAGE) == 0, "other entry has no early posture message")
 t.run_ticks(1)
-assert_closed_with_message(4, 4, { first })
+assert_closed(4, 4, { first }, { first })
 
 t.click(first, 4, 4, target(first, 4, 4, "locker"))
 t.tick()
@@ -191,8 +186,6 @@ assert(
     "the closet lib's handler opens as the pushing occupant"
 )
 assert_open_dump(4, 4, { first })
-message_count(first, CLOSE_MESSAGE)
-message_count(second, CLOSE_MESSAGE)
 move_and_settle(actor, "south")
 move_and_settle(actor, "east")
 move_and_settle(actor, "north")
@@ -204,52 +197,40 @@ move_and_settle(second, "west")
 assert(tile_has_body(4, 4, first) and tile_has_body(4, 4, second), "the next timed subject steps onto the open holder")
 drag_body(actor, second, 4, 4, 4, 4, "locker")
 t.run_ticks(ENTRY_TICKS + 1)
-assert_closed_with_message(4, 4, { first, second })
+assert_closed(4, 4, { first, second }, { second })
 
 click(actor, 4, 4, "locker")
 assert_open_dump(4, 4, { first, second })
 t.run_seconds(4.1)
 move_and_settle(third, "west")
 move_and_settle(third, "west")
-message_count(first, CLOSE_MESSAGE)
-message_count(second, CLOSE_MESSAGE)
-message_count(third, CLOSE_MESSAGE)
 drag_body(actor, third, 4, 4, 4, 4, "locker")
 t.run_ticks(ENTRY_TICKS + 1)
-assert_closed_with_message(4, 4, { first, second, third })
+assert_closed(4, 4, { first, second, third }, { third })
 
 click(actor, 4, 4, "locker")
 assert_open_dump(4, 4, { first, second, third })
 move_and_settle(fourth, "east")
 move_and_settle(fourth, "south")
 assert(tile_has_body(4, 4, fourth), "the fourth candidate is co-tile and otherwise eligible")
-message_count(first, CLOSE_MESSAGE)
-message_count(second, CLOSE_MESSAGE)
-message_count(third, CLOSE_MESSAGE)
-message_count(fourth, CLOSE_MESSAGE)
 drag_body(fourth, fourth, 4, 4, 4, 4, "locker")
 t.run_ticks(ENTRY_TICKS + 1)
 assert(assert(t.structure_at(4, 4)).state == "open", "a timed fourth body is refused without a partial close")
 assert(tile_has_body(4, 4, first) and tile_has_body(4, 4, second) and tile_has_body(4, 4, third), "the original three remain outside atomically")
 assert(tile_has_body(4, 4, fourth), "the fourth body remains outside with the original three")
-assert(message_count(fourth, CLOSE_MESSAGE) == 0, "the refused fourth gets no close message")
 assert(assert(t.body(fourth)).posture == "standing", "the refused fourth gets no posture")
 
 move_and_settle(fourth, "north")
-message_count(first, CLOSE_MESSAGE)
-message_count(second, CLOSE_MESSAGE)
-message_count(third, CLOSE_MESSAGE)
 click(actor, 4, 4, "locker")
-assert_closed_with_message(4, 4, { first, second, third })
+assert_closed(4, 4, { first, second, third }, {})
 assert(tile_has_body(4, 3, fourth), "primary close leaves the unselected fourth outside")
-assert(message_count(fourth, CLOSE_MESSAGE) == 0, "the unselected fourth gets no close message")
 assert(assert(t.body(fourth)).posture == "standing", "the unselected fourth gets no posture")
 
 click(actor, 4, 4, "locker")
 assert_open_dump(4, 4, { first, second, third })
 assert(#t.script_errors() == 0, "the real-player occupancy flow has no script errors")
 local ITEM_MAP = [==[ (
-    name: "independent body and item capacity",
+    name: "body and item capacity",
     legend: {
         '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
@@ -298,30 +279,31 @@ move_and_settle(item_first, "north")
 move_and_settle(item_second, "west")
 move_and_settle(item_third, "west")
 move_and_settle(item_third, "west")
-message_count(item_first, CLOSE_MESSAGE)
-message_count(item_second, CLOSE_MESSAGE)
-message_count(item_third, CLOSE_MESSAGE)
 click(item_actor, 4, 4, "locker")
-assert_closed_with_message(4, 4, { item_first, item_second, item_third })
-assert(#t.items_at(4, 4) == 1, "thirty items fit independently of all three bodies")
+assert(assert(t.structure_at(4, 4)).state == "closed", "the full tile still closes")
+-- Tg's `storage_capacity` counts mobs too, and the gather stops when full
+-- (`closets.dm:56,525-529,563`): the stored things total exactly thirty.
+local stored = 31 - #t.items_at(4, 4)
+for _, player in ipairs({ item_first, item_second, item_third }) do
+    if not tile_has_body(4, 4, player) then
+        stored += 1
+    end
+end
+assert(stored == 30, "bodies count toward the thirty things a close takes in")
 assert(#t.ledger_rows("container_insert_refused") == 0, "the closing handler asks for no more than fits")
 click(item_actor, 4, 4, "locker")
 assert_open_dump(4, 4, { item_first, item_second, item_third })
-assert(#t.items_at(4, 4) == 31, "opening returns thirty stored items and the one overflow")
+assert(#t.items_at(4, 4) == 31, "opening returns every stored item and the overflow")
 
 t.run_seconds(4.1)
 move_and_settle(item_first, "south")
 move_and_settle(item_second, "east")
 move_and_settle(item_third, "east")
 move_and_settle(item_third, "east")
-message_count(item_first, CLOSE_MESSAGE)
-message_count(item_second, CLOSE_MESSAGE)
-message_count(item_third, CLOSE_MESSAGE)
 click(item_actor, 4, 4, "locker")
 assert(assert(t.structure_at(4, 4)).state == "closed", "an item-only close succeeds")
 assert(#t.items_at(4, 4) == 1, "item-only close still stores exactly thirty items")
 for _, player in ipairs({ item_first, item_second, item_third }) do
-    assert(message_count(player, CLOSE_MESSAGE) == 0, "item-only close has no body notification")
     assert(assert(t.body(player)).posture == "standing", "item-only close applies no posture")
 end
 click(item_actor, 4, 4, "locker")
@@ -334,12 +316,10 @@ move_and_settle(item_actor, "east")
 move_and_settle(item_actor, "east")
 click(item_actor, 7, 6, "locker")
 assert(#t.items_at(7, 6) == 0, "the empty locker exposes no items")
-message_count(item_actor, CLOSE_MESSAGE)
 click(item_actor, 7, 6, "locker")
 assert(assert(t.structure_at(7, 6)).state == "closed", "an empty close succeeds")
-assert(message_count(item_actor, CLOSE_MESSAGE) == 0, "empty close emits no posture message")
 assert(assert(t.body(item_actor)).posture == "standing", "empty close applies no posture")
-assert(#t.script_errors() == 0, "independent capacity and empty closes have no script errors")
+assert(#t.script_errors() == 0, "shared capacity and empty closes have no script errors")
 
 local GUARD_MAP = [==[ (
     name: "container entry guards",
@@ -411,13 +391,11 @@ end
 
 local function assert_unadmitted(player: number, x: number, y: number, label: string): ()
     assert(tile_has_body(x, y, player), label .. ": the subject remains outside")
-    assert(message_count(player, CLOSE_MESSAGE) == 0, label .. ": no close message")
     assert(assert(t.body(player)).posture == "standing", label .. ": no close posture")
 end
 
 local ga, gs, gh = start_guard_world()
 move_and_settle(gs, "north")
-message_count(gs, CLOSE_MESSAGE)
 drag_body(ga, gs, 4, 4, 4, 4, "locker")
 local actor_interruptions = #t.ledger_rows("DoAfterInterrupted")
 move_and_settle(ga, "west")
@@ -428,7 +406,6 @@ assert(#t.ledger_rows("DoAfterInterrupted") > actor_interruptions, "actor moveme
 
 ga, gs, gh = start_guard_world()
 move_and_settle(gs, "north")
-message_count(gs, CLOSE_MESSAGE)
 drag_body(ga, gs, 4, 4, 4, 4, "locker")
 local subject_interruptions = #t.ledger_rows("DoAfterInterrupted")
 move_and_settle(gs, "south")
@@ -439,7 +416,6 @@ assert(#t.ledger_rows("DoAfterInterrupted") > subject_interruptions, "subject mo
 
 ga, gs, gh = start_guard_world()
 move_and_settle(gs, "north")
-message_count(gs, CLOSE_MESSAGE)
 drag_body(ga, gs, 4, 4, 4, 4, "locker")
 local holder_interruptions = #t.ledger_rows("DoAfterInterrupted")
 t.pull(gh, 4, 4, target(gh, 4, 4, "locker"))
@@ -455,7 +431,6 @@ assert_unadmitted(gs, 4, 4, "holder movement")
 assert(#t.ledger_rows("DoAfterInterrupted") > holder_interruptions, "holder movement interrupts the target pin")
 
 ga, gs, gh = start_guard_world()
-message_count(gs, CLOSE_MESSAGE)
 drag_body(ga, gs, 4, 5, 4, 4, "locker")
 click(gh, 4, 4, "locker")
 assert(assert(t.structure_at(4, 4)).state == "closed", "another player closes an empty holder during entry")
@@ -466,14 +441,13 @@ assert(#t.ledger_rows("container_closed") == 1, "the later drag adds no second c
 
 ga, gs, gh = start_guard_world()
 move_and_settle(gs, "north")
-message_count(gs, CLOSE_MESSAGE)
 local duplicate_body = t.body_target(ga, gs)
 local duplicate_holder = target(ga, 4, 4, "locker")
 t.drag(ga, 4, 4, duplicate_body, 4, 4, duplicate_holder)
 t.drag(ga, 4, 4, duplicate_body, 4, 4, duplicate_holder)
 t.tick()
 wait_for_entry()
-assert_closed_with_message(4, 4, { gs })
+assert_closed(4, 4, { gs }, { gs })
 assert(#t.ledger_rows("container_closed") == 1, "duplicate input produces one close")
 assert(#t.script_errors() == 0, "duplicate input has no script errors")
 
@@ -483,7 +457,6 @@ gs = t.join("medic")
 gh = t.join("engineer")
 t.run_ticks(3)
 click(ga, 4, 4, "crate")
-message_count(gs, CLOSE_MESSAGE)
 drag_body(ga, gs, 4, 5, 4, 4, "crate")
 click(gh, 5, 4, "lunatic/tfs:closet_cut_test_remover")
 t.run_ticks(2)
@@ -495,7 +468,6 @@ assert_unadmitted(gs, 4, 5, "holder destruction")
 
 ga, gs, gh = start_guard_world()
 move_and_settle(gs, "north")
-message_count(gs, CLOSE_MESSAGE)
 drag_body(ga, gs, 4, 4, 4, 4, "locker")
 local incapacity_interruptions = #t.ledger_rows("DoAfterInterrupted")
 t.set_health(ga, { brute = 100 })
@@ -515,15 +487,13 @@ t.tick()
 t.run_ticks(clock.deadline_ticks(2.0) + 1)
 assert(t.seen(gs, gs).offset.y == 14, "the occupant climbs onto the closed crate")
 click(ga, 4, 4, "crate")
-click(ga, 4, 4, "crate")
-assert(assert(t.structure_at(4, 4)).state == "closed", "native close does not recapture the launch")
+assert(assert(t.structure_at(4, 4)).state == "open", "the crate opens under its rider")
 t.run_seconds(3.0)
 assert(tile_has_body(4, 4, gs), "the occupied landing keeps the rider blocked outside")
 assert(t.seen(gs, gs).offset.y == 14, "blocked flight is not knock-off or containment")
-click(ga, 4, 4, "crate")
 drag_body(ga, gs, 4, 4, 4, 4, "crate")
 wait_for_entry()
-assert_closed_with_message(4, 4, { gs })
+assert_closed(4, 4, { gs }, { gs })
 local dump_baseline = #t.ledger_rows("container_dumped")
 click(gh, 5, 4, "lunatic/tfs:closet_cut_test_remover")
 t.run_ticks(2)

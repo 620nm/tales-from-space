@@ -1,16 +1,7 @@
 local climbing = require("@lib/climbing")
+local closet_data = require("@lib/closets/data")
 
 local body_drag = {}
-
-local BODY_CAPABLE_BASES: { [string]: boolean } = {
-    crate = true,
-    freezer = true,
-    locker = true,
-}
-
-local function base_prototype(prototype: string): string
-    return string.match(prototype, "^([^.]+)") or prototype
-end
 
 local function adjacent(left: Handle, right: Handle): boolean
     local left_tile = left.tile
@@ -85,9 +76,8 @@ function body_drag.on_drag(ev: InteractionDragPayload): { replaced: boolean }
     if type(prototype) ~= "string" or sim.body(ev.subject) == nil then
         return { replaced = false }
     end
-    local base = base_prototype(prototype)
 
-    if receiver.state == "open" and BODY_CAPABLE_BASES[base] == true then
+    if receiver.state == "open" and closet_data.family_of(prototype) ~= nil then
         return { replaced = begin_entry(ev) }
     end
     if receiver.state == "closed"

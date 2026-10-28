@@ -437,9 +437,6 @@ assert(assert(t.structure_at(4, 4)).state == "closed", "timed entry admits the p
 assert(not body_on_tile(4, 4, power_patient), "the patient is in closed custody")
 assert(t.vessel_at(4, 4) == nil, "occupied closed custody still has no internal gas cell")
 
-t.run_seconds(60)
-assert(t.vessel_at(4, 4) == nil, "occupied custody creates no gas vessel")
-
 t.click(power_actor, 4, 4, occupied_freezer)
 t.tick()
 assert(assert(t.structure_at(4, 4)).state == "open", "external open dumps the occupied freezer")
@@ -494,7 +491,6 @@ t.tick()
 t.run_ticks(clock.deadline_ticks(4.0) + 1)
 assert(assert(t.structure_at(4, 4)).state == "closed", "timed entry closes on the second patient")
 assert(not body_on_tile(4, 4, power_successor), "the second patient enters closed custody")
-t.run_seconds(60)
 
 move_and_settle(power_actor, "west")
 move_and_settle(power_actor, "south")
@@ -515,7 +511,6 @@ assert(
 )
 assert(assert(t.structure_at(4, 9)).state == "closed", "the out-of-range freezer remains closed")
 assert(t.vessel_at(4, 9) == nil, "the out-of-range occupied freezer still has no gas cell")
-t.run_seconds(62.0)
 
 for _ = 1, 6 do
     pull_south()

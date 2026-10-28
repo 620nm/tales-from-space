@@ -51,7 +51,7 @@ local function knock_off_riders(actor: Handle, support: Handle): ()
 						direction_y = direction_y,
 						strength = 70,
 					})
-					candidate:hold_posture("knockdown", 4.0)
+					candidate:hold_posture("knockdown", data.knocked_off_seconds)
 				end
 			end
 		end
@@ -270,7 +270,7 @@ function closet.attach(proto_id: string, opts: Options)
 	behavior:handle("container.resist", { kind = "replace", route = "interact" }, breakout.on_resist)
 	behavior:handle("container.closing", { kind = "veto", route = "interact" }, closing.veto)
 	behavior:handle("container.closing", { kind = "replace", route = "interact" }, closing.gather)
-	behavior:handle("container.close.done", { kind = "react" }, closing.on_closed)
+	behavior:handle("container.enter.done", { kind = "react" }, closing.on_entered)
 end
 
 return closet

@@ -47,6 +47,8 @@ return {
         max_body_size = closet_data.max_body_size,
         occupant_speech = true,
         occupant_hearing = true,
+        -- Tg shows an occupant the closet's insides (`closet_see_inside.dm:8-10,22-60`;
+        -- `code/game/objects/structures/crates_lockers/closets.dm:101,155`).
         occupant_sight = true,
         closed = "closed",
         open = "open",

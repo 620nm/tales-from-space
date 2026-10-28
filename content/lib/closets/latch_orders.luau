@@ -90,26 +90,29 @@ function latch_orders.on_done(ev: LatchSetDonePayload): ()
 	end
 end
 
--- Whether this lib has an outstanding order for exactly this switch.
-local function has_order_for(subject: Handle, latch: string?, on: boolean?): boolean
-	for _, order in pairs(breakout_orders) do
-		if not order.answered and order.holder == subject and order.latch == latch and order.on == on then
-			return true
-		end
+-- Whether `request_id` is an outstanding order of this lib for exactly this switch.
+local function has_order_for(request_id: string, subject: Handle, latch: string?, on: boolean?): boolean
+	local breakout_order = breakout_orders[request_id]
+	if breakout_order ~= nil then
+		return not breakout_order.answered
+			and breakout_order.holder == subject
+			and breakout_order.latch == latch
+			and breakout_order.on == on
 	end
-	for _, order in pairs(pending_latch_orders) do
-		if order.target == subject and order.latch == latch and order.on == on then
-			return true
-		end
-	end
-	return false
+	local pending = pending_latch_orders[request_id]
+	return pending ~= nil and pending.target == subject and pending.latch == latch and pending.on == on
 end
 
 -- A latch order carries no actor; the toggle paths check the actor's access
--- themselves, so only an actor-less switch this lib ordered is admitted. That
--- admit is also what lets the bust-open write its latches.
+-- themselves, so only a switch carrying the id of an order this lib issued is
+-- admitted. That admit is also what lets the bust-open write its latches.
 function latch_orders.on_permission(ev: AccessPermissionPayload)
-	if ev.operation == "set_latch" and ev.actor == nil and has_order_for(ev.subject, ev.latch, ev.on) then
+	local request_id = ev.request_id
+	if ev.operation == "set_latch"
+		and ev.actor == nil
+		and request_id ~= nil
+		and has_order_for(request_id, ev.subject, ev.latch, ev.on)
+	then
 		return { allowed = true }
 	end
 	return { allowed = ev.allowed }

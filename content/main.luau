@@ -83,7 +83,6 @@ sim.define("message", "lunatic/tfs:lib.analyzer_pathogens.rhinovirus_vessel", {
 sim.define("message", "lunatic/tfs:lib.analyzer_pathogens.none", { placeholders = {} })
 sim.define("message", "lunatic/tfs:lib.body_drag.hide_start", { placeholders = {} })
 sim.define("message", "lunatic/tfs:lib.body_drag.stuff_start", { placeholders = {} })
-sim.define("message", "lunatic/tfs:lib.closets.close_knockdown", { placeholders = {} })
 sim.define("message", "lunatic/tfs:lib.climbing.start", { placeholders = {} })
 sim.define("message", "lunatic/tfs:lib.climbing.completed", { placeholders = {} })
 sim.define("message", "lunatic/tfs:lib.climbing.failed", { placeholders = {} })
