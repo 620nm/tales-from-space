@@ -1,6 +1,7 @@
 -- Paper folds into a plane (content/lib/paper_plane.luau): a folded sheet
 -- thrown over an open hole glides twice the levels it drops, a flat sheet
--- drops straight, a glide into a wall falls straight with a refusal row,
+-- drops straight, a glide into a wall falls straight with an
+-- `item_glide_refused` row (no script error),
 -- and over a hot cell the plane stays aloft, is shoved on, and burns up
 -- when the air is hot enough.
 -- A plane over heat surfs a hole once, then falls (or burns) in bounded time.
@@ -143,8 +144,9 @@ landed = t.items_at(3, 1, LOWER)
 assert(#landed == 1 and landed[1] == "paper", "the flat sheet lies right under the hole")
 assert(#t.items_at(5, 1, LOWER) == 1, "the plane is where it landed")
 
--- 4. A glide the lower level's wall at (4, 4) blocks falls straight, on the record.
-local refusals = #t.ledger_rows("script_error")
+-- 4. A glide the lower level's wall at (4, 4) blocks falls straight, on the
+-- record: a world-state refusal row, not a script error.
+local refusals = #t.ledger_rows("item_glide_refused")
 fold(p, 1, 2)
 pick_up(p, 1, 2)
 t.throw(p, 3, 3)
@@ -153,16 +155,8 @@ assert(level_rows() == falls + 2, "the blocked plane fell")
 landed = t.items_at(3, 3, LOWER)
 assert(#landed == 1 and landed[1] == "paper", "it drops straight under the hole")
 assert(#t.items_at(5, 5, LOWER) == 0, "it did not reach the far side of the wall")
-local refused = false
-for _, row in ipairs(t.ledger_rows("script_error")) do
-    refused = refused or row.file == "item-fall"
-end
-assert(#t.ledger_rows("script_error") > refusals and refused, "the refused glide is on the record")
-local taken = t.script_errors()
-assert(
-    #taken == 1 and taken[1].file == "item-fall" and taken[1].why == "glide-blocked",
-    "the one script error is the refused glide"
-)
+assert(#t.ledger_rows("item_glide_refused") == refusals + 1, "the refused glide is on the record")
+assert(#t.script_errors() == 0, "a refused glide is not a script error")
 
 -- Air under a hole: a corridor with one hole, hot air painted beneath it.
 local HOT_WORLD = [==[(
