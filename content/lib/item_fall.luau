@@ -14,7 +14,7 @@ local item_fall = {}
 
 export type ItemFallAnswer = { fall: boolean, glide_x: number?, glide_y: number? }
 
--- Where a falling item carries sideways, in tiles. The per-prototype hook:
+-- Where a falling item carries sideways, in tiles. Per-prototype glides
 -- branch on `ev.item.prototype` here.
 local function glide_for(ev: ItemFallPayload): { x: number, y: number }
     return paper_plane.glide(ev)
