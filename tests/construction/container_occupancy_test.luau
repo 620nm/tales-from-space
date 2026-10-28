@@ -304,6 +304,7 @@ message_count(item_third, CLOSE_MESSAGE)
 click(item_actor, 4, 4, "locker")
 assert_closed_with_message(4, 4, { item_first, item_second, item_third })
 assert(#t.items_at(4, 4) == 1, "thirty items fit independently of all three bodies")
+assert(#t.ledger_rows("container_insert_refused") == 0, "the closing handler asks for no more than fits")
 click(item_actor, 4, 4, "locker")
 assert_open_dump(4, 4, { item_first, item_second, item_third })
 assert(#t.items_at(4, 4) == 31, "opening returns thirty stored items and the one overflow")
@@ -535,4 +536,46 @@ local dump_rows = t.ledger_rows("container_dumped")
 assert(#dump_rows == dump_baseline + 1, "occupied destruction writes one container dump")
 assert(dump_rows[#dump_rows].bodies == 1, "the destruction dump names exactly one body")
 assert(#t.script_errors() == 0, "occupied destruction recovery has no script errors")
+
+-- The closing handler asks for everything on the tile; a refused insert stays
+-- out with one row and the close still commits with the rest.
+t.world(
+    [==[ (
+        name: "refused close insert",
+        legend: {
+            '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+            '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+        },
+        levels: [(
+            rows: [
+                "######",
+                "#....#",
+                "#....#",
+                "#....#",
+                "######",
+            ],
+            structures: [
+                (2, 2, "player_spawn", { "jobs": "engineer" }),
+                (3, 2, "locker"),
+                (3, 2, "iv_drip"),
+            ],
+            items: [(3, 2, "wrench")],
+        )],
+    ) ]==],
+    0
+)
+local loader = t.join("engineer")
+t.run_ticks(3)
+local opened_rows = #t.ledger_rows("container_opened")
+local closed_rows = #t.ledger_rows("container_closed")
+click(loader, 3, 2, "locker")
+assert(#t.ledger_rows("container_opened") == opened_rows + 1, "the locker opens for loading")
+click(loader, 3, 2, "locker")
+assert(#t.ledger_rows("container_closed") == closed_rows + 1, "a refused insert does not stop the close")
+assert(#t.items_at(3, 2) == 0, "the admitted item is stored")
+assert(t.target_at(loader, 3, 2, "iv_drip") ~= nil, "the refused stand stays on the tile")
+local refusals = t.ledger_rows("container_insert_refused")
+assert(#refusals == 1, "the refused stand has one row")
+assert(refusals[1].reason == "not_admissible", "the stand is no item or body")
+assert(#t.script_errors() == 0, "a refused insert raises no script error")
 print("container occupancy: capacity, drag, disclosure, recovery, resist and entry guards")

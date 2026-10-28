@@ -1,7 +1,7 @@
 -- Tg's freezer inherits the crate mechanics but has its own name, description
 -- and art (`code/game/objects/structures/crates_lockers/crates.dm:1-18,254-260`).
--- Powered preservation stops natural organ decay without modeling an internal
--- cold gas cell (`code/modules/surgery/organs/_organ.dm:159-171`).
+local closet_data = require("@lib/closets/data")
+
 return {
     id = "freezer",
     script = "freezer",
@@ -31,12 +31,12 @@ return {
     loose = true,
     drag_slowdown = 0,
     container = {
-        capacity = 30,
-        body_capacity = 3,
-        max_body_size = 2,
+        capacity = closet_data.item_capacity,
+        body_capacity = closet_data.body_capacity,
+        max_body_size = closet_data.max_body_size,
         occupant_speech = true,
         occupant_hearing = true,
-        preserves = 0.0,
+        occupant_sight = true,
         closed = "closed",
         open = "open",
         open_sound = "crate_open",

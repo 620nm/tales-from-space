@@ -6,6 +6,8 @@
 -- elevation is 14 pixels (`crates.dm:22-27,41-45`); manifests and paint jobs
 -- stay omitted (`crates.dm:28-29,48-54`). Bodies use the base closet's capacity
 -- (`code/game/objects/structures/crates_lockers/closets.dm:54-56,575-592`).
+local closet_data = require("@lib/closets/data")
+
 return {
     id = "crate",
     script = "crate",
@@ -37,11 +39,12 @@ return {
     container = {
         -- Tg's closet item and body capacities are independent
         -- (`code/game/objects/structures/crates_lockers/closets.dm:54-56,575-592`).
-        capacity = 30,
-        body_capacity = 3,
-        max_body_size = 2,
+        capacity = closet_data.item_capacity,
+        body_capacity = closet_data.body_capacity,
+        max_body_size = closet_data.max_body_size,
         occupant_speech = true,
         occupant_hearing = true,
+        occupant_sight = true,
         closed = "closed",
         open = "open",
         -- Tg's crate sounds (`code/game/objects/structures/crates_lockers/crates.dm:13-14`).
@@ -51,7 +54,7 @@ return {
     },
     -- Tg's `locked`/`welded` closet bits hold the door shut; `broken` marks a
     -- busted lock that refuses a relock (`closets.dm:1141-1146,1169-1170`); the
-    -- closet lib owns the escape (`lib/closets/closet.luau`).
+    -- closet lib owns the escape (`lib/closets/breakout.luau`).
     latches = {
         { id = "locked", holds = true },
         { id = "welded", holds = true },

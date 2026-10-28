@@ -1,6 +1,6 @@
 -- A small room with one closet-family holder, an assistant to shut in, an
 -- engineer with a welder and a captain's ID, and a medic for a second
--- occupant. Shared by the container breakout specs (lib/closets/closet.luau).
+-- occupant. Shared by the container breakout specs (lib/closets/breakout.luau).
 local clock = require("@helpers/clock")
 
 local bench = {}
@@ -17,7 +17,7 @@ bench.SHAKE_LINE = "begins to shake violently"
 bench.BROKEN_OUT = "lunatic/tfs:closet_broken_out"
 bench.LAPSED = "lunatic/tfs:closet_breakout_lapsed"
 -- The latch orders of the bust-open complete on the tick the wait ends; the
--- occupant opens the door one tick later (lib/closets/closet.luau:bust_open).
+-- occupant opens the door one tick later (lib/closets/breakout.luau:bust_open).
 bench.LATCH_ORDER_TICKS = 1
 -- The shake and lines wait one tick for the open to be read back.
 bench.CUE_TICKS = 1

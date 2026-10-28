@@ -5,9 +5,9 @@
 -- tg's base closet is dense, carries a drag slowdown of 1.5, holds 30
 -- things, and names its open/close clips in the same declaration
 -- (`code/game/objects/structures/crates_lockers/closets.dm:7-16,
--- 43-59`). Its `open()` dumps the inside onto the turf; `close()` gathers
--- that turf back up (`closets.dm:538-556,612-625`). Those custody and
--- state mutations are native here; `passable` below carries the open-density
+-- 43-59`). Its `open()` dumps the inside onto the turf, natively here;
+-- `close()` gathers that turf back up through `lib/closets/closing.luau`
+-- (`closets.dm:538-556,612-625`). `passable` below carries the open-density
 -- rule (`closets.dm:53,548`).
 --
 -- The tool loadout copies tg's independent rolls, omitting only item
@@ -17,6 +17,8 @@
 -- utility_closets.dm:93-129`). A variant replaces `container.stock`
 -- while inheriting capacity and behavior, so a mapper places one real
 -- prototype id rather than a structure plus an out-of-band loot table.
+local closet_data = require("@lib/closets/data")
+
 return {
     id = "locker",
     script = "locker",
@@ -40,11 +42,12 @@ return {
     loose = true,
     drag_slowdown = 1.5,
     container = {
-        capacity = 30,
-        body_capacity = 3,
-        max_body_size = 2,
+        capacity = closet_data.item_capacity,
+        body_capacity = closet_data.body_capacity,
+        max_body_size = closet_data.max_body_size,
         occupant_speech = true,
         occupant_hearing = true,
+        occupant_sight = true,
         closed = "closed",
         open = "open",
         open_sound = "locker_open",
