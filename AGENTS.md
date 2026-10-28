@@ -2,15 +2,15 @@
 
 The engine API you may call is `../lunatic/idl/generated/lunatic-v1.d.luau` (content) and `../lunatic/idl/generated/lunatic-spec.d.luau` (spec); read the generated signatures first.
 
-This repository is the standalone game content pack for Tales from Space.
+Tales from Space is one game on the lunatic GAME ENGINE, and this repository
+is where its logic lives: as much as possible goes here as data and Luau.
 Read `README.md` before editing: it owns the repository layout, authoring
 references, run commands, and spec-runner surface. Keep this file focused on
 agent decisions rather than duplicating those details.
 Read `docs/LUAU-DIALECT.md` before writing Luau.
 
-Pre-alpha: broad, coordinated breaking changes are welcome. Migrate callers
-and remove obsolete APIs/endpoints in the same change; do not add compatibility
-aliases, shims or backports to preserve an old surface.
+Pre-alpha: break APIs freely; migrate callers and remove the old surface in
+the same change, with no compatibility aliases, shims or backports.
 
 ## Working together
 
@@ -19,12 +19,11 @@ aliases, shims or backports to preserve an old surface.
   explicit file/function references and request terse, dense findings. Specify
   interfaces and asset art separately. Finish with an independent antagonistic
   review and resolve its findings. Shared-library ownership and atomic caller
-  migrations follow `docs/LIB-CONTRACT.md`.
-- Use isolated worktrees; preserve parallel agents' edits. The default location
-  is `.worktrees/`; on this host use
-  `/home/josh/.cache/codex-tmp/worktrees/<repo>-<branch>`. Keep git metadata
-  writable. Other scratch belongs under `/home/josh/.cache/codex-tmp/`, never
-  RAM-backed `/tmp`; build outputs keep their documented `target/` locations.
+  migrations follow `docs/LIB-CONTRACT.md`. Coding agents run no builds,
+  specs or gates; the lead builds and runs specs once per wave.
+- Use isolated worktrees under `.worktrees/<branch>`; preserve parallel
+  agents' edits. Keep git metadata writable. Bulk scratch goes on disk, never
+  `/tmp`; build outputs keep their documented `target/` locations.
   Merge into clean `master`, then remove only your worktree, branch and scratch.
   If `master` is dirty, retain your work and report the blocked integration.
 - Commit validated work incrementally with `type(scope): subject` (Conventional
@@ -79,18 +78,19 @@ mechanism, this pack the numbers it chose. Run the engine with
 Run engine commands from the engine checkout and set `LUNATIC_PACK` to this
 pack's absolute path. A worktree is not necessarily a sibling of the engine;
 resolve the engine checkout explicitly instead of deriving it with `..` there.
-Iterate with the focused spec commands in `README.md` §Specs (name substring),
-`--load-only`, and the relevant named gate lanes.
+A commit runs only the checks covering its change: focused specs by name
+(`README.md` §Specs), `--load-only`, strict Luau on the touched files and the
+named gate lanes. Docs-only changes run `git diff --check`.
 
 `sh tools/check.sh` is THE GATE for this pack and runs from HERE: it finds the
 engine through `LUNATIC_ENGINE` and checks this pack end to end (strict Luau,
 the shared lints, the bake, content, maps, sprite names, the roster and the
 editor palette, `ui/`, the node checks, the specs and the two live browser
-fixtures). `README.md` §The gate lists every lane and what it proves. Validate
-each commit with the checks covering its change; run the full gate once before
-completion for runtime/content changes. Documentation-only changes need the
-relevant documentation checks. Broaden or repeat checks when changes or failures
-justify it. The engine's own
+fixtures). `README.md` §The gate lists every lane and what it proves. It runs
+once per landing batch, whatever lands on `master` together (one branch or
+several): whoever merges runtime or content changes runs it once on the merged
+tip, reruns failing lanes by name until fixed, then the full gate once more.
+The engine's own
 `tools/check.sh` is the other subject and asserts nothing about this pack, so
 a green engine gate is not evidence here; the boundary between the two, and
 what each proves, is the engine's `docs/gates.md`. The gate writes only this
@@ -121,6 +121,12 @@ repository's gitignored `target/`, never the engine's served root.
   is the as-built list of record and `idl/v1.json` declares their names.
   An idea that seems to need per-tick native execution becomes a native
   system with data-driven knobs — never a faster handler.
+- When content needs the engine, ask for ONE generic primitive (a guard,
+  query, command, permission or notification), never the feature: it
+  serves another kind of game too, has a generic name with no TfS or tg
+  noun, and takes its numbers, words, sprites and sounds from pack data
+  (the engine's `docs/architecture/engine-scope.md`). Never design an engine
+  feature around a TfS mechanic or port a tg proc into the engine; port it here.
 - Game fiction never says "lunatic"; engine words stay out of content.
 - Reuse existing domain records, primitives and helpers before adding new ones.
   Wrap reusable concepts in typed records instead of loose primitives and keep
@@ -156,6 +162,8 @@ repository's gitignored `target/`, never the engine's served root.
   published native edge, so `mod.toml` must keep `speech.relay` in
   `native_edges` or every registration fails at load
   (the engine's `docs/luau-api/radio-relay.md`).
+- Few specs: one per player-visible behaviour; extend an existing spec before
+  adding a file; engine mechanism is the engine's fixture tests, not a spec.
 - Specs (`tests/*_test.luau`) assert what a PLAYER could cause, through
   `t` — the same SimCommand seam the Rust harness uses. No raw entity
   handles, no component access, no direct spawn, and none should ever be

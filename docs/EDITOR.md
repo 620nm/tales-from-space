@@ -31,6 +31,15 @@ overrides across the shipped paints and variants.
 not manifest prototypes: the palette offers them as turf, the roster supplies
 their art, and no `prototypes` entry admits them to placement checks.
 
+## Levels
+
+`levels` fills a new level by band, identically for `terrestrial` and `space`:
+`subterrain` is a `rock` component, `terrain` is blank and inherits, and
+`open_air` is blank, which above ground is open sky (explicit `open` would not
+be sky-exposed). The fills are drawn and supplied; every tile they place stays
+paintable. The engine's `docs/mapping/editor-declarations.md` owns the schema,
+`tools/test-editor-previews.mjs` pins the served bands.
+
 ## Air in the editor
 
 A turf brush auto-paints air as well as substrate: painting an indoor holds-air

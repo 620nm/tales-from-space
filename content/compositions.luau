@@ -168,7 +168,20 @@ end
 local supported = { substrate_support = true, any_component = { "station_base", "catwalk" } }
 
 local construction_components = { "station_base", "floor_tiles", "grid_cover", "reinforcement",
-    "lattice", "catwalk", "wall", "reinforced_wall" }
+    "lattice", "catwalk", "wall", "reinforced_wall", "rock",
+    "glass_floor", "reinforced_glass_floor", "plasma_glass_floor", "reinforced_plasma_glass_floor" }
+
+-- tg /turf/open/floor/glass: in what is ported, the four variants differ in name
+-- and art only (glass.dm:2-114; glow and floor-tile fields are not ported). Floor
+-- windows over an open substrate: they hold a body and the air (support, seal),
+-- show the level below, and show runs without tool access (UNDERFLOOR_VISIBLE,
+-- glass.dm:8). Thermal is floor.dm:17-18 with the
+-- pack's floor emissivity; ambient is the plating's, which a glass floor replaces.
+local function glass_floor(id: string, label: string)
+    return { id = id, label = label, layer = "cover", sprite = id .. "-0", cover = controls(true),
+        physical = { ambient = 0.10, support = true, receives_gravity = true, substrate_seal = true,
+            thermal = thermal(20000, 0.02, 0.5) } }
+end
 
 return {
     layers = {
@@ -230,6 +243,18 @@ return {
         { id = "reinforced_wall", occludes_substrate = true, label = "reinforced wall", layer = "cover", sprite = "reinforced_wall", cover = barrier_controls(),
             physical = { ambient = 0, support = true, receives_gravity = true, substrate_seal = true, movement_blocking = true,
                 gas_blocking = true, opaque = true, thermal = thermal(312500, 0, 0.03) } },
+        -- tg /turf/closed/mineral: opaque, dense (minerals.dm:6-51, :15-16), airtight as a closed turf
+        -- (_closed.dm:8 `blocks_air`). No `thermal`: it sets no heat_capacity, so INFINITY
+        -- (LINDA_turf_tile.dm:5), unrepresentable; the tile keeps its substrate's.
+        -- `receives_gravity` matches the walls and is unobservable: rock braces a body in it, which
+        -- never falls (the engine's crates/lunatic-server/src/sim/movement/level_change.rs:resolve_fall_step).
+        { id = "rock", occludes_substrate = true, label = "rock", layer = "cover", sprite = "rock-0", cover = barrier_controls(),
+            physical = { ambient = 0, support = true, receives_gravity = true, substrate_seal = true, movement_blocking = true,
+                gas_blocking = true, opaque = true } },
+        glass_floor("glass_floor", "glass floor"),
+        glass_floor("reinforced_glass_floor", "reinforced glass floor"),
+        glass_floor("plasma_glass_floor", "plasma glass floor"),
+        glass_floor("reinforced_plasma_glass_floor", "reinforced plasma glass floor"),
     },
     networks = {
         { id = "power", label = "power cable", layer = "power", channels = power_channels, channel_preferences = { "l2", "l1", "l3" },
@@ -267,6 +292,15 @@ return {
         { id = "catwalk", label = "Catwalk", replace_components = construction_components, components = { { component = "catwalk" } } },
         { id = "wall", label = "Wall", replace_components = construction_components, components = { { component = "station_base" }, { component = "wall" } } },
         { id = "reinforced_wall", label = "Reinforced Wall", replace_components = construction_components, components = { { component = "station_base" }, { component = "reinforced_wall" } } },
+        { id = "rock", label = "Rock", replace_components = construction_components, components = { { component = "rock" } } },
+        { id = "glass_floor", label = "Glass Floor", substrate = "open", replace_components = construction_components,
+            components = { { component = "glass_floor" } } },
+        { id = "reinforced_glass_floor", label = "Reinforced Glass Floor", substrate = "open", replace_components = construction_components,
+            components = { { component = "reinforced_glass_floor" } } },
+        { id = "plasma_glass_floor", label = "Plasma Glass Floor", substrate = "open", replace_components = construction_components,
+            components = { { component = "plasma_glass_floor" } } },
+        { id = "reinforced_plasma_glass_floor", label = "Reinforced Plasma Glass Floor", substrate = "open", replace_components = construction_components,
+            components = { { component = "reinforced_plasma_glass_floor" } } },
     },
     transitions = {
         { id = "remove_catwalk", remove_components = { "catwalk" }, remove_unsupported_networks = { "power" } },

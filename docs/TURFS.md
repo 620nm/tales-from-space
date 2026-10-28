@@ -48,6 +48,32 @@ otherwise the substrate does. Substrate vacuum boundaries are independent of
 support, horizontal gas blocking, and outdoor forcing. Station base seals the
 boundary; an exposed space substrate remains a boundary below a catwalk.
 
+## Levels
+
+Rock (tg `/turf/closed/mineral`) blocks movement, gas and sight, supports and
+seals, and hides what is under it. It sits over the inherited substrate, so
+removing it shows ground on a planet and space in orbit. It wears tg's
+`smoothrocks` bitmask art (`minerals.dm:6-21`) and smooths with neighbouring
+rock; each `rock-<junction>` frame is the 40x40 cell's centre 32x32 window, so
+tg's 4 px overhang is lost, and the map edge is not a neighbour (no
+`SMOOTH_BORDER`). Mining it is not implemented.
+
+Open sky above ground and what seals it are the engine's contract (the
+engine's `docs/content-schema/compositions.md` "Tile values and replacement"
+and `docs/mapping/environment.md` "Exposure"). Station base and rock seal the
+substrate, so either one roofs open sky.
+
+The four glass floors (tg `glass.dm`) are floor windows over an open substrate.
+They hold a body and the air, show the level below, and show runs beneath
+without tool access. All four smooth as one group. Their presets open the
+substrate, so they cannot go on the lowest level. A power cable needs
+supporting ground, station base or catwalk, so none runs on glass, and the
+glass preset is refused over a cable run (tg refuses cable where the underfloor
+is only visible, `cable.dm:692`); pipes have no such need. Construction and the
+starlight glow are not implemented.
+
+The level specs live in `tests/levels/`.
+
 ## Gravity and handholds
 
 Station base and walls receive the station gravity field. Uncovered space,

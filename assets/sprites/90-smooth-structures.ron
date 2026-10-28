@@ -25,6 +25,66 @@
         ("table", "obj/smooth_structures/table.dmi"),
         ("reinforced_table", "obj/smooth_structures/reinforced_table.dmi"),
         ("wood_table", "obj/smooth_structures/wood_table.dmi"),
+        ("glass_floor", "turf/floors/glass.dmi"),
+        ("reinforced_glass_floor", "turf/floors/reinf_glass.dmi"),
+        ("plasma_glass_floor", "turf/floors/plasma_glass.dmi"),
+        ("reinforced_plasma_glass_floor", "turf/floors/reinf_plasma_glass.dmi"),
+        ("smoothrocks", "turf/smoothrocks.dmi"),
+    ],
+    // `rock-<n>` is the 47 reachable junctions of tg's `smoothrocks`
+    // family (minerals.dm:6-21; icon_state `smoothrocks-<n>`). Its cells
+    // are 40x40 (tg draws them at -4,-4 over the neighbours), which
+    // `Junctions` refuses (dmi.rs `require_tile_cell`), so each frame is
+    // the cell's centre 32x32 window at (4, 4). The 4px overhang tg
+    // draws over neighbouring tiles is lost.
+    sprites: [
+        ("rock-0", DmiWindow([("@smoothrocks", "smoothrocks-0")], 0, 4, 4)),
+        ("rock-1", DmiWindow([("@smoothrocks", "smoothrocks-1")], 0, 4, 4)),
+        ("rock-2", DmiWindow([("@smoothrocks", "smoothrocks-2")], 0, 4, 4)),
+        ("rock-3", DmiWindow([("@smoothrocks", "smoothrocks-3")], 0, 4, 4)),
+        ("rock-4", DmiWindow([("@smoothrocks", "smoothrocks-4")], 0, 4, 4)),
+        ("rock-5", DmiWindow([("@smoothrocks", "smoothrocks-5")], 0, 4, 4)),
+        ("rock-6", DmiWindow([("@smoothrocks", "smoothrocks-6")], 0, 4, 4)),
+        ("rock-7", DmiWindow([("@smoothrocks", "smoothrocks-7")], 0, 4, 4)),
+        ("rock-8", DmiWindow([("@smoothrocks", "smoothrocks-8")], 0, 4, 4)),
+        ("rock-9", DmiWindow([("@smoothrocks", "smoothrocks-9")], 0, 4, 4)),
+        ("rock-10", DmiWindow([("@smoothrocks", "smoothrocks-10")], 0, 4, 4)),
+        ("rock-11", DmiWindow([("@smoothrocks", "smoothrocks-11")], 0, 4, 4)),
+        ("rock-12", DmiWindow([("@smoothrocks", "smoothrocks-12")], 0, 4, 4)),
+        ("rock-13", DmiWindow([("@smoothrocks", "smoothrocks-13")], 0, 4, 4)),
+        ("rock-14", DmiWindow([("@smoothrocks", "smoothrocks-14")], 0, 4, 4)),
+        ("rock-15", DmiWindow([("@smoothrocks", "smoothrocks-15")], 0, 4, 4)),
+        ("rock-21", DmiWindow([("@smoothrocks", "smoothrocks-21")], 0, 4, 4)),
+        ("rock-23", DmiWindow([("@smoothrocks", "smoothrocks-23")], 0, 4, 4)),
+        ("rock-29", DmiWindow([("@smoothrocks", "smoothrocks-29")], 0, 4, 4)),
+        ("rock-31", DmiWindow([("@smoothrocks", "smoothrocks-31")], 0, 4, 4)),
+        ("rock-38", DmiWindow([("@smoothrocks", "smoothrocks-38")], 0, 4, 4)),
+        ("rock-39", DmiWindow([("@smoothrocks", "smoothrocks-39")], 0, 4, 4)),
+        ("rock-46", DmiWindow([("@smoothrocks", "smoothrocks-46")], 0, 4, 4)),
+        ("rock-47", DmiWindow([("@smoothrocks", "smoothrocks-47")], 0, 4, 4)),
+        ("rock-55", DmiWindow([("@smoothrocks", "smoothrocks-55")], 0, 4, 4)),
+        ("rock-63", DmiWindow([("@smoothrocks", "smoothrocks-63")], 0, 4, 4)),
+        ("rock-74", DmiWindow([("@smoothrocks", "smoothrocks-74")], 0, 4, 4)),
+        ("rock-75", DmiWindow([("@smoothrocks", "smoothrocks-75")], 0, 4, 4)),
+        ("rock-78", DmiWindow([("@smoothrocks", "smoothrocks-78")], 0, 4, 4)),
+        ("rock-79", DmiWindow([("@smoothrocks", "smoothrocks-79")], 0, 4, 4)),
+        ("rock-95", DmiWindow([("@smoothrocks", "smoothrocks-95")], 0, 4, 4)),
+        ("rock-110", DmiWindow([("@smoothrocks", "smoothrocks-110")], 0, 4, 4)),
+        ("rock-111", DmiWindow([("@smoothrocks", "smoothrocks-111")], 0, 4, 4)),
+        ("rock-127", DmiWindow([("@smoothrocks", "smoothrocks-127")], 0, 4, 4)),
+        ("rock-137", DmiWindow([("@smoothrocks", "smoothrocks-137")], 0, 4, 4)),
+        ("rock-139", DmiWindow([("@smoothrocks", "smoothrocks-139")], 0, 4, 4)),
+        ("rock-141", DmiWindow([("@smoothrocks", "smoothrocks-141")], 0, 4, 4)),
+        ("rock-143", DmiWindow([("@smoothrocks", "smoothrocks-143")], 0, 4, 4)),
+        ("rock-157", DmiWindow([("@smoothrocks", "smoothrocks-157")], 0, 4, 4)),
+        ("rock-159", DmiWindow([("@smoothrocks", "smoothrocks-159")], 0, 4, 4)),
+        ("rock-175", DmiWindow([("@smoothrocks", "smoothrocks-175")], 0, 4, 4)),
+        ("rock-191", DmiWindow([("@smoothrocks", "smoothrocks-191")], 0, 4, 4)),
+        ("rock-203", DmiWindow([("@smoothrocks", "smoothrocks-203")], 0, 4, 4)),
+        ("rock-207", DmiWindow([("@smoothrocks", "smoothrocks-207")], 0, 4, 4)),
+        ("rock-223", DmiWindow([("@smoothrocks", "smoothrocks-223")], 0, 4, 4)),
+        ("rock-239", DmiWindow([("@smoothrocks", "smoothrocks-239")], 0, 4, 4)),
+        ("rock-255", DmiWindow([("@smoothrocks", "smoothrocks-255")], 0, 4, 4)),
     ],
     groups: [
         // Canonical sheets and base states: lattice.dm:1-16,116-125.
@@ -62,6 +122,33 @@
             sheet: "wood_table",
             sprites: [
                 Junctions("wood_table", "wood_table"),
+            ],
+        ),
+        // The four glass floors: one sheet and base state each
+        // (glass.dm:4-6,71-73,89-91,105-107); they smooth as one group
+        // (glass.dm:10-11), which is the structures' word, not this file's.
+        (
+            sheet: "glass_floor",
+            sprites: [
+                Junctions("glass_floor", "glass"),
+            ],
+        ),
+        (
+            sheet: "reinforced_glass_floor",
+            sprites: [
+                Junctions("reinforced_glass_floor", "reinf_glass"),
+            ],
+        ),
+        (
+            sheet: "plasma_glass_floor",
+            sprites: [
+                Junctions("plasma_glass_floor", "plasma_glass"),
+            ],
+        ),
+        (
+            sheet: "reinforced_plasma_glass_floor",
+            sprites: [
+                Junctions("reinforced_plasma_glass_floor", "reinf_plasma_glass"),
             ],
         ),
     ],

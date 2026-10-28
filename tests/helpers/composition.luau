@@ -20,6 +20,21 @@ function composition.bare(x: number, y: number, substrate: string): boolean
     return tile ~= nil and #tile.components == 0 and tile.resolved_substrate == substrate
 end
 
+export type SeenSprites = { substrates: {string}, components: {string} }
+
+-- Sprites of the substrate and component rows `player` is shown on a tile (level nil: the body's own).
+function composition.seen_sprites(player: number, x: number, y: number, level: number?): SeenSprites
+    local seen: SeenSprites = { substrates = {}, components = {} }
+    for _, row in ipairs(t.seen_composition(player, x, y, level)) do
+        if row.kind == "substrate" then
+            table.insert(seen.substrates, row.sprite)
+        elseif row.kind == "component" then
+            table.insert(seen.components, row.sprite)
+        end
+    end
+    return seen
+end
+
 function composition.describe(x: number, y: number): string
     local tile = t.composition(x, y)
     if tile == nil then return "outside map" end
