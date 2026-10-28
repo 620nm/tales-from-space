@@ -91,7 +91,7 @@ function body_drag.on_drag(ev: InteractionDragPayload): { replaced: boolean }
         return { replaced = begin_entry(ev) }
     end
     if receiver.state == "closed"
-        and climbing.supports_prototype(prototype)
+        and climbing.supports(receiver)
         and ev.actor == ev.subject
     then
         return { replaced = climbing.begin(ev.actor, receiver) }

@@ -40,7 +40,7 @@ function closing.veto(ev: ContainerClosingPayload)
 			end
 		end
 	end
-	return nil
+	return { cancelled = false }
 end
 
 -- Tg's `insertion_allowed` for a mob, over what a script can read: not a
@@ -54,6 +54,7 @@ end
 
 -- Tg's `take_contents`: the tile's things in turf order until full. Items and
 -- bodies fill independently; the entrant is the engine's, admitted first.
+-- Structures and machines stay out, as tg skips anchored things.
 function closing.gather(ev: ContainerClosingPayload)
 	local container: Handle = ev.subject
 	local entrant: Handle? = ev.entrant
@@ -76,7 +77,7 @@ function closing.gather(ev: ContainerClosingPayload)
 					sim.container.insert({ container = container, entity = candidate })
 					bodies += 1
 				end
-			elseif items < data.item_capacity then
+			elseif candidate.kind == "item" and items < data.item_capacity then
 				sim.container.insert({ container = container, entity = candidate })
 				items += 1
 			end

@@ -206,7 +206,7 @@ function closet.attach(proto_id: string, opts: Options)
 					actor,
 					target,
 					implement,
-					target.state,
+					target.state :: string,
 					welded,
 					target_name,
 					request_deconstruction

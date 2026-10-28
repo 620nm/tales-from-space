@@ -17,13 +17,13 @@ return {
         },
         -- A shut-in occupant who forced a sealed closet: the latches cleared
         -- (comma-joined ids) and the lock it broke, if the closet declares one
-        -- (lib/closets/closet.luau).
+        -- (lib/closets/breakout.luau).
         ["lunatic/tfs:closet_broken_out"] = {
             fields = { container = "entity", body = "body", cleared = "text", broken = "text?" },
         },
         -- A breakout that ended without opening, after its wait or at its
         -- start: `not_inside`, `incapacitated`, `not_secured`,
-        -- `latch_unconfirmed` or `open_refused` (lib/closets/closet.luau).
+        -- `latch_unconfirmed` or `open_refused` (lib/closets/breakout.luau).
         ["lunatic/tfs:closet_breakout_lapsed"] = {
             fields = { container = "entity", body = "body", reason = "text" },
         },
