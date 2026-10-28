@@ -160,7 +160,7 @@ function closet.attach(proto_id: string, opts: Options)
 		local secure = secure_variants[prototype] == true
 		local locked = actor_context.latch_on(target, data.locked_latch)
 		local welded = actor_context.latch_on(target, data.welded_latch)
-		if ev.gesture == "alt_primary" and climbing.supports_prototype(prototype) then
+		if ev.gesture == "alt_primary" and climbing.supports(target) then
 			climbing.begin(actor, target)
 			return true
 		end
@@ -251,7 +251,7 @@ function closet.attach(proto_id: string, opts: Options)
 			return true
 		end
 
-		if ev.gesture == "primary" and implement == nil and climbing.supports_prototype(prototype) then
+		if ev.gesture == "primary" and implement == nil and climbing.supports(target) then
 			knock_off_riders(actor, target)
 		end
 		if target.state == data.closed_state and welded then
