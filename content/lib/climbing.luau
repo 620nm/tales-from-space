@@ -50,9 +50,11 @@ function climbing.begin(actor: Handle, support: Handle): boolean
     if actor.alive ~= true or support.alive ~= true then
         return false
     end
-    local refused = refusal_reason(actor)
-    if refused ~= nil then
-        send(actor, "lunatic/tfs:lib.climbing.refused." .. refused)
+    -- Only a bodiless actor is refused up front; posture and control are
+    -- judged when the wait ends, as tg's `do_climb` re-checks
+    -- (`code/datums/elements/climbable.dm:61-103`).
+    if sim.body(actor) == nil then
+        send(actor, "lunatic/tfs:lib.climbing.refused.body_observer")
         return true
     end
     for _, attempt in ipairs(active_attempts) do

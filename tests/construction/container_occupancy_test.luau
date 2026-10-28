@@ -537,8 +537,8 @@ assert(#dump_rows == dump_baseline + 1, "occupied destruction writes one contain
 assert(dump_rows[#dump_rows].bodies == 1, "the destruction dump names exactly one body")
 assert(#t.script_errors() == 0, "occupied destruction recovery has no script errors")
 
--- The closing handler asks for everything on the tile; a refused insert stays
--- out with one row and the close still commits with the rest.
+-- The closing handler takes only items and bodies (`Handle.kind`): a stand on
+-- the tile is never asked for, so the close commits with no refusal row.
 t.world(
     [==[ (
         name: "refused close insert",
@@ -571,11 +571,9 @@ local closed_rows = #t.ledger_rows("container_closed")
 click(loader, 3, 2, "locker")
 assert(#t.ledger_rows("container_opened") == opened_rows + 1, "the locker opens for loading")
 click(loader, 3, 2, "locker")
-assert(#t.ledger_rows("container_closed") == closed_rows + 1, "a refused insert does not stop the close")
+assert(#t.ledger_rows("container_closed") == closed_rows + 1, "the close commits beside the stand")
 assert(#t.items_at(3, 2) == 0, "the admitted item is stored")
-assert(t.target_at(loader, 3, 2, "iv_drip") ~= nil, "the refused stand stays on the tile")
-local refusals = t.ledger_rows("container_insert_refused")
-assert(#refusals == 1, "the refused stand has one row")
-assert(refusals[1].reason == "not_admissible", "the stand is no item or body")
-assert(#t.script_errors() == 0, "a refused insert raises no script error")
+assert(t.target_at(loader, 3, 2, "iv_drip") ~= nil, "the stand stays on the tile")
+assert(#t.ledger_rows("container_insert_refused") == 0, "the stand is never asked for")
+assert(#t.script_errors() == 0, "closing beside a stand raises no script error")
 print("container occupancy: capacity, drag, disclosure, recovery, resist and entry guards")

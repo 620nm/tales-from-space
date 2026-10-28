@@ -200,14 +200,14 @@ t.rest(lying_actor, true)
 t.tick()
 start_closed_drag(lying_actor, 2, 3, 3, 3)
 t.run_ticks(CLOSED_TICKS + 1)
-assert_position(lying_actor, 2, 3, "a lying actor never starts the climb")
-assert_offset(lying_actor, 0, "the begin-time veto has no elevation")
-assert(#support_rows("mount") == 0, "the begin-time veto writes no mount")
+assert_position(lying_actor, 2, 3, "a lying actor never climbs")
+assert_offset(lying_actor, 0, "the post-wait veto has no elevation")
+assert(#support_rows("mount") == 0, "the post-wait veto writes no mount")
 assert(
     has_message(t.messages(lying_actor), "You must be standing to climb."),
-    "the pack veto at begin presents body_not_standing"
+    "the pack veto after the wait presents body_not_standing"
 )
-assert(#t.script_errors() == 0, "begin-time veto has no script errors")
+assert(#t.script_errors() == 0, "post-wait veto has no script errors")
 
 t.world(MAP, 0)
 local moving_actor = t.join("assistant")
