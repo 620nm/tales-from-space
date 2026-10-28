@@ -1,3 +1,4 @@
+local level_crossing = require("@lib/level_crossing")
 local map_boot = require("@lib/map_boot")
 local map_markers = require("@lib/map_markers")
 local shift = require("@lib/shift")
@@ -63,6 +64,7 @@ if sim ~= nil then
     })
 
     map_boot.install(behavior)
+    level_crossing.install(behavior)
 
     local function spawn_player(ev)
         return map_markers.player_spawn(ev, "builder")

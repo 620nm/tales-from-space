@@ -50,6 +50,7 @@ native_edges = [
     "component.command",
     "speech.radio",
     "speech.relay",
+    "perception.levels",
     "link.message",
     "atmos.hazard",
     "atmos.pressure_target",
