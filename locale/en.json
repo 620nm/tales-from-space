@@ -2,6 +2,7 @@
   "lunatic/tfs:editor.laptop.open": "Lid open",
   "lunatic/tfs:editor.laptop.powered": "Powered on",
   "lunatic/tfs:ui.affordance.press": "Press button",
+  "lunatic/tfs:action.utility_outlet_port.toggle_cover": "Open or close outlet cover",
   "lunatic/tfs:entity.disk_box.name": "box of disks",
   "lunatic/tfs:ui.files.source": "Source",
   "lunatic/tfs:ui.files.edit": "Edit",
