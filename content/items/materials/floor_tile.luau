@@ -11,7 +11,9 @@ return {
     name = "floor tiles",
     sprite = "floor_tile",
     inhand_sprite = { "held_floor_tile_l", "held_floor_tile_r" },
-    stack = 30,
+    -- tg /obj/item/stack/tile max_amount (tile_types.dm:19); every floor
+    -- tile item takes it.
+    stack = 60,
     -- Tiles arrive crooked. tg jitters every tile stack by +/-3 in its
     -- own `Initialize` (code/game/objects/items/stacks/tiles/
     -- tile_types.dm:35-36) rather than at any of the events that

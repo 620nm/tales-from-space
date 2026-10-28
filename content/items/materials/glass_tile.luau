@@ -12,6 +12,6 @@ return {
     name = "glass floor tiles",
     sprite = "glass_tile",
     inhand_sprite = { "held_glass_tile_l", "held_glass_tile_r" },
-    stack = 30,
+    stack = 60, -- tile_types.dm:19, as floor_tile
     scatter = 3,
 }
