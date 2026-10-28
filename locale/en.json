@@ -1491,6 +1491,7 @@
   "lunatic/tfs:lib.climbing.refused.blocked": "Your climb is blocked.",
   "lunatic/tfs:lib.climbing.refused.cross_vetoed": "Something prevents you from climbing there.",
   "lunatic/tfs:lib.climbing.refused.offset_out_of_range": "You cannot climb that high.",
+  "lunatic/tfs:lib.climbing.refused.not_applied": "The climb changed nothing.",
   "lunatic/tfs:entity.freezer.blood.name": "blood freezer",
   "lunatic/tfs:iv_drip.attach_start": "The IV drip needle begins attaching.",
   "lunatic/tfs:iv_drip.attach_done": "The IV drip needle is attached.",

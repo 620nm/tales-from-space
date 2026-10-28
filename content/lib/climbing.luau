@@ -6,15 +6,7 @@ type ClimbAttempt = {
     request: RequestId?,
 }
 
-local CLIMBABLE_BASES: { [string]: boolean } = {
-    crate = true,
-    freezer = true,
-}
 local active_attempts: { ClimbAttempt } = {}
-
-local function base_prototype(prototype: string): string
-    return string.match(prototype, "^([^.]+)") or prototype
-end
 
 local function remove_attempt(attempt: ClimbAttempt): ()
     for index = #active_attempts, 1, -1 do
@@ -25,12 +17,23 @@ local function remove_attempt(attempt: ClimbAttempt): ()
     end
 end
 
-local function actor_ready(actor: Handle): boolean
+-- The pack's rule for who may climb: a live, standing, controllable body.
+-- Returns the refusal reason, or nil when the actor may climb.
+local function refusal_reason(actor: Handle): string?
     if actor.alive ~= true then
-        return false
+        return "body_unavailable"
     end
     local body = sim.body(actor)
-    return body ~= nil and body.controllable == true
+    if body == nil then
+        return "body_observer"
+    end
+    if body.posture == "lying" then
+        return "body_not_standing"
+    end
+    if body.controllable ~= true then
+        return "body_not_controllable"
+    end
+    return nil
 end
 
 local function send(actor: Handle, key: string): ()
@@ -39,13 +42,18 @@ local function send(actor: Handle, key: string): ()
     end
 end
 
-function climbing.supports_prototype(prototype: string?): boolean
-    return prototype ~= nil and CLIMBABLE_BASES[base_prototype(prototype)] == true
+function climbing.supports(structure: Handle): boolean
+    return structure.climbable ~= nil
 end
 
 function climbing.begin(actor: Handle, support: Handle): boolean
-    if not actor_ready(actor) or support.alive ~= true then
+    if actor.alive ~= true or support.alive ~= true then
         return false
+    end
+    local refused = refusal_reason(actor)
+    if refused ~= nil then
+        send(actor, "lunatic/tfs:lib.climbing.refused." .. refused)
+        return true
     end
     for _, attempt in ipairs(active_attempts) do
         if attempt.actor == actor then
@@ -68,6 +76,13 @@ function climbing.begin(actor: Handle, support: Handle): boolean
             })
             if outcome ~= "ok" then
                 remove_attempt(attempt)
+                return
+            end
+
+            local refused = refusal_reason(actor)
+            if refused ~= nil then
+                remove_attempt(attempt)
+                send(actor, "lunatic/tfs:lib.climbing.refused." .. refused)
                 return
             end
 

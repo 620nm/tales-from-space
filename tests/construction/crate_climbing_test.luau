@@ -177,7 +177,7 @@ assert_offset(resting_actor, 0, "resting refusal has no elevation")
 assert(#support_rows("mount") == 0, "resting refusal writes no mount")
 assert(
     has_message(t.messages(resting_actor), "You must be standing to climb."),
-    "the current request presents its typed body_not_standing refusal"
+    "the pack veto before sim.climb presents body_not_standing"
 )
 t.rest(resting_actor, false)
 t.tick()
@@ -192,6 +192,22 @@ assert_offset(resting_actor, 14, "retry mounts normally")
 assert(#support_rows("mount") == 1, "duplicate retry input produces one mount")
 assert(has_message(t.messages(resting_actor), COMPLETED_MESSAGE), "the new request has its own completed receipt")
 assert(#t.script_errors() == 0, "resting refusal and retry have no script errors")
+
+t.world(MAP, 0)
+local lying_actor = t.join("assistant")
+t.run_ticks(3)
+t.rest(lying_actor, true)
+t.tick()
+start_closed_drag(lying_actor, 2, 3, 3, 3)
+t.run_ticks(CLOSED_TICKS + 1)
+assert_position(lying_actor, 2, 3, "a lying actor never starts the climb")
+assert_offset(lying_actor, 0, "the begin-time veto has no elevation")
+assert(#support_rows("mount") == 0, "the begin-time veto writes no mount")
+assert(
+    has_message(t.messages(lying_actor), "You must be standing to climb."),
+    "the pack veto at begin presents body_not_standing"
+)
+assert(#t.script_errors() == 0, "begin-time veto has no script errors")
 
 t.world(MAP, 0)
 local moving_actor = t.join("assistant")

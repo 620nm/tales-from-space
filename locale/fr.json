@@ -161,5 +161,6 @@
   "lunatic/tfs:lib.climbing.refused.reserved": "La structure est occupée.",
   "lunatic/tfs:lib.climbing.refused.blocked": "Votre escalade est bloquée.",
   "lunatic/tfs:lib.climbing.refused.cross_vetoed": "Quelque chose vous empêche de monter là.",
-  "lunatic/tfs:lib.climbing.refused.offset_out_of_range": "Vous ne pouvez pas monter aussi haut."
+  "lunatic/tfs:lib.climbing.refused.offset_out_of_range": "Vous ne pouvez pas monter aussi haut.",
+  "lunatic/tfs:lib.climbing.refused.not_applied": "L'escalade n'a rien changé."
 }

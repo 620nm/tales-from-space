@@ -70,5 +70,6 @@
   "lunatic/tfs:lib.climbing.refused.reserved": "Структура је заузета.",
   "lunatic/tfs:lib.climbing.refused.blocked": "Пењање је блокирано.",
   "lunatic/tfs:lib.climbing.refused.cross_vetoed": "Нешто спречава пењање тамо.",
-  "lunatic/tfs:lib.climbing.refused.offset_out_of_range": "Та висина је превелика за пењање."
+  "lunatic/tfs:lib.climbing.refused.offset_out_of_range": "Та висина је превелика за пењање.",
+  "lunatic/tfs:lib.climbing.refused.not_applied": "Пењање ништа није променило."
 }

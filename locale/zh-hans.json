@@ -70,5 +70,6 @@
   "lunatic/tfs:lib.climbing.refused.reserved": "该结构正被占用。",
   "lunatic/tfs:lib.climbing.refused.blocked": "你的攀爬被阻挡。",
   "lunatic/tfs:lib.climbing.refused.cross_vetoed": "有东西阻止你爬到那里。",
-  "lunatic/tfs:lib.climbing.refused.offset_out_of_range": "你不能爬那么高。"
+  "lunatic/tfs:lib.climbing.refused.offset_out_of_range": "你不能爬那么高。",
+  "lunatic/tfs:lib.climbing.refused.not_applied": "攀爬没有产生任何变化。"
 }
