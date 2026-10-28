@@ -84,7 +84,7 @@ local function tile_has_body(x: number, y: number, player: number): boolean
 end
 
 -- A standing rider on the open crate keeps another body from hiding in it:
--- the hider is exempt as the entrant, the rider is not.
+-- the hider is exempt as the pending entrant, the rider is not.
 t.world(RIDER_MAP, 0)
 local actor = t.join("assistant")
 local hider = t.join("medic")

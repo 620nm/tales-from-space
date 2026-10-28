@@ -57,9 +57,18 @@ local function begin_entry(ev: InteractionDragPayload): boolean
             if outcome ~= "ok" or not entry_context_ready(actor, body, receiver) then
                 return
             end
+            if not closing.expect(receiver, body) then
+                return
+            end
+            -- A body stuffed in by another is paralyzed before it is moved
+            -- (`closets.dm:1012-1014`); one that hides itself is not.
+            if actor ~= body then
+                body:hold_posture("knockdown", closet_data.stuff_knockdown_seconds)
+            end
             -- The close's veto refuses silently; say why here, where a send is legal.
-            closing.tell_refusal(actor, receiver, body, false)
-            sim.container.enter({ body = body, container = receiver })
+            closing.tell_refusal(actor, receiver, false)
+            -- The gather admits the expected body, standing beside or on the tile.
+            sim.container.close({ container = receiver })
         end)
     end)
     if not spawned then

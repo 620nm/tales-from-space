@@ -22,8 +22,8 @@ local closet_data = require("@lib/closets/data")
 return {
     id = "locker",
     script = "locker",
-    -- Large and loose, so it draws over items (large_object in content/compositions.luau).
-    visual_layer = "large_object",
+    -- Closets draw under items (low_object in content/compositions.luau).
+    visual_layer = "low_object",
     name_label = "lunatic/tfs:entity.locker.name",
     name = "locker",
     sprite = "locker",

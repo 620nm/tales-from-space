@@ -208,6 +208,11 @@ return {
         { id = "residue", parent = "world" },
         { id = "matter_ground", parent = "world" },
         { id = "fixture", parent = "world" },
+        -- Closets, crates and freezers draw under items: tg seats an open
+        -- closet at BELOW_OBJ_LAYER (`closets.dm:249`, `layers.dm:239`).
+        -- A prototype has one static layer, and tg's closed `OBJ_LAYER`
+        -- equals `item`'s, so "under" is the honest choice for both states.
+        { id = "low_object", parent = "world" },
         { id = "item", parent = "world" },
         -- Large loose things -- vessels, lockers, unbolted frames --
         -- draw over items. tg's own seat for a canister is above items

@@ -31,6 +31,10 @@ data.stuff_knockdown_seconds = 4.0
 -- (`code/datums/elements/climbable.dm:57`).
 data.knocked_off_seconds = 4.0
 
+-- How long a close's pending entrant (`closing.expect`) stays valid; the
+-- close runs within the tick it is ordered, so this only retires strays.
+data.entrant_seconds = 1.0
+
 -- Tg's `breakout_time = 1200` deciseconds (`closets.dm:47`).
 data.breakout_seconds = 120
 -- How long an order's completion may take before the order counts as lost.

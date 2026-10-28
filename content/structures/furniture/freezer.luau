@@ -5,7 +5,7 @@ local closet_data = require("@lib/closets/data")
 return {
     id = "freezer",
     script = "freezer",
-    visual_layer = "large_object",
+    visual_layer = "low_object",
     energy_network = "power",
     corded = true,
     name_label = "lunatic/tfs:entity.freezer.name",

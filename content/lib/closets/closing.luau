@@ -8,6 +8,48 @@ local data = require("@lib/closets/data")
 
 local closing = {}
 
+-- The body a close in flight is meant to take in, per container. It may stand
+-- beside the container (tg moves it onto the turf first, `closets.dm:1016-1018`);
+-- an entry older than `data.entrant_seconds` is stale and ignored.
+type PendingEntrant = { container: Handle, body: Handle, tick: number }
+local pending_entrants: { PendingEntrant } = {}
+
+local function pending_index(container: Handle): number?
+	local oldest = sim.tick() - sim.ticks(data.entrant_seconds)
+	for index = #pending_entrants, 1, -1 do
+		local pending = pending_entrants[index]
+		if pending.tick < oldest then
+			table.remove(pending_entrants, index)
+		elseif pending.container == container then
+			return index
+		end
+	end
+	return nil
+end
+
+local function pending_entrant(container: Handle): Handle?
+	local index = pending_index(container)
+	return if index ~= nil then pending_entrants[index].body else nil
+end
+
+local function forget_entrant(container: Handle): ()
+	local index = pending_index(container)
+	if index ~= nil then
+		table.remove(pending_entrants, index)
+	end
+end
+
+-- Records `body` as the entrant of the close `container` is about to run.
+-- False when this very body is already pending there: a repeated drag.
+function closing.expect(container: Handle, body: Handle): boolean
+	if pending_entrant(container) == body then
+		return false
+	end
+	forget_entrant(container)
+	table.insert(pending_entrants, { container = container, body = body, tick = sim.tick() })
+	return true
+end
+
 -- Tg's `horizontal && density` (`closets.dm:501,583`): a standing body is
 -- dense, a lying one is not. A rider on an open crate stands on its tile and
 -- counts (`crates.dm:118-121`, `climbable.dm:110-129`).
@@ -18,13 +60,13 @@ end
 
 -- Tg's `can_close` (`closets.dm:493-505`): another closet in the way, or a
 -- standing mob a horizontal closet cannot take. Returns the message key and
--- the name it says, or nil. The entering body is exempt as pack judgment: tg
--- stuffs a body only after paralyzing it (`closets.dm:1014`) and has no
--- standing self-hide (`closets.dm:990-991`), but the pack's hide drag
--- (`lib/body_drag.luau`) enters standing. `riders_leave` skips the bodies
--- riding `container`, for a click that knocks them off first
--- (`climbable.dm:48-59`).
-function closing.refusal(container: Handle, entrant: Handle?, riders_leave: boolean): (string?, string?)
+-- the name it says, or nil. The pending entrant (`closing.expect`) is exempt
+-- as pack judgment: tg has no standing self-hide (`closets.dm:990-991`), but
+-- the pack's hide drag (`lib/body_drag.luau`) enters standing. `riders_leave`
+-- skips the bodies riding `container`, for a click that knocks them off
+-- first (`climbable.dm:48-59`).
+function closing.refusal(container: Handle, riders_leave: boolean): (string?, string?)
+	local entrant = pending_entrant(container)
 	for _, candidate in ipairs(sim.query.range(container.tile, 0, {})) do
 		if candidate ~= container then
 			if data.family_of(candidate.prototype) ~= nil then
@@ -48,8 +90,8 @@ end
 -- Tells `actor` why a close would be refused, as tg does
 -- (`closets.dm:497-498,502-503`); true when it would be. A veto cannot
 -- send, so the writable segment that starts the close asks this first.
-function closing.tell_refusal(actor: Handle, container: Handle, entrant: Handle?, riders_leave: boolean): boolean
-	local key, name = closing.refusal(container, entrant, riders_leave)
+function closing.tell_refusal(actor: Handle, container: Handle, riders_leave: boolean): boolean
+	local key, name = closing.refusal(container, riders_leave)
 	if key == nil then
 		return false
 	end
@@ -58,7 +100,10 @@ function closing.tell_refusal(actor: Handle, container: Handle, entrant: Handle?
 end
 
 function closing.veto(ev: ContainerClosingPayload)
-	local key = closing.refusal(ev.subject, ev.entrant, false)
+	local key = closing.refusal(ev.subject, false)
+	if key ~= nil then
+		forget_entrant(ev.subject)
+	end
 	return { cancelled = key ~= nil }
 end
 
@@ -77,10 +122,15 @@ end
 -- and the first candidate met at that total ends the gather
 -- (`closets.dm:56,525-529,563`); a mob over the mob count is skipped alone
 -- (`closets.dm:587-591`). Structures and machines stay out, as tg skips
--- anchored things. The entrant is the engine's, admitted first.
+-- anchored things. The pending entrant is admitted first, wherever it stands
+-- beside the container, and the entry is spent.
 function closing.gather(ev: ContainerClosingPayload)
 	local container: Handle = ev.subject
-	local entrant: Handle? = ev.entrant
+	local entrant = pending_entrant(container)
+	forget_entrant(container)
+	if entrant ~= nil then
+		sim.container.insert({ container = container, entity = entrant })
+	end
 	local total = if entrant ~= nil then 1 else 0
 	local bodies = total
 	for _, held in ipairs(container.contents or {}) do
@@ -112,13 +162,9 @@ function closing.gather(ev: ContainerClosingPayload)
 	return { replaced = true }
 end
 
--- A body stuffed in by another is knocked down (`closets.dm:1014`); one who
--- climbs in or is gathered by the close is not.
-function closing.on_entered(ev: ContainerEnterDonePayload)
-	if ev.outcome ~= "completed" or ev.actor == ev.body then
-		return
-	end
-	ev.body:hold_posture("knockdown", data.stuff_knockdown_seconds)
+-- A committed close spends any entry its gather did not.
+function closing.on_closed(ev: ContainerCloseDonePayload)
+	forget_entrant(ev.self)
 end
 
 return closing

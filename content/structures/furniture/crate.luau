@@ -11,7 +11,7 @@ local closet_data = require("@lib/closets/data")
 return {
     id = "crate",
     script = "crate",
-    visual_layer = "large_object",
+    visual_layer = "low_object",
     name_label = "lunatic/tfs:entity.crate.name",
     name = "crate",
     sprite = "crate",

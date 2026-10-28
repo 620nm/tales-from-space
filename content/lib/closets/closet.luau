@@ -255,7 +255,7 @@ function closet.attach(proto_id: string, opts: Options)
 			knock_off_riders(actor, target)
 		end
 		if target.state == data.open_state and implement == nil then
-			closing.tell_refusal(actor, target, nil, true)
+			closing.tell_refusal(actor, target, true)
 		end
 		if target.state == data.closed_state and welded then
 			actor_context.send_message(actor, "lunatic/tfs:lib.closets.welded", target_name)
@@ -273,7 +273,7 @@ function closet.attach(proto_id: string, opts: Options)
 	behavior:handle("container.resist", { kind = "replace", route = "interact" }, breakout.on_resist)
 	behavior:handle("container.closing", { kind = "veto", route = "interact" }, closing.veto)
 	behavior:handle("container.closing", { kind = "replace", route = "interact" }, closing.gather)
-	behavior:handle("container.enter.done", { kind = "react" }, closing.on_entered)
+	behavior:handle("container.close.done", { kind = "react" }, closing.on_closed)
 end
 
 return closet
