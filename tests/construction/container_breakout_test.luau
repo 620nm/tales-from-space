@@ -1,5 +1,5 @@
 -- A shut-in occupant pushes out of a closet (`closets.dm:1085-1118`): the
--- closet lib answers `container.resist` (lib/closets/closet.luau). An
+-- closet lib answers `container.resist` (lib/closets/breakout.luau). An
 -- unsecured closet opens at once; a welded or locked one gives way after its
 -- 120 seconds, clearing every holding latch (`closets.dm:1141-1146`), then
 -- opens. Rows are read by their snake_case words; the pack's own are
@@ -218,6 +218,18 @@ do
     assert(heard_count(occupant, OWN_LINE) == 1, "the occupant hears the break-out line")
     assert(heard_count(engineer, ONLOOKER_LINE) == 1, "the onlooker hears the cue exactly once")
     assert(heard_count(occupant, ONLOOKER_LINE) == 0, "the occupant hears only their own line")
+
+    -- A standing body on a crate's tile vetoes the close (`closets.dm:501`);
+    -- stepping off lets it shut.
+    local close_refusals = #t.ledger_rows("container_close_refused")
+    empty_click_holder(engineer, "crate.secure")
+    assert(state_of(HOLDER_X, HOLDER_Y) == "open", "a standing body on the tile keeps the crate open")
+    local vetoes = t.ledger_rows("container_close_refused")
+    assert(#vetoes == close_refusals + 1, "the veto is on the record")
+    assert(vetoes[#vetoes].reason == "vetoed", "the close refusal names the veto")
+    t.move(occupant, "west")
+    t.run_seconds(0.25)
+    assert(not tile_has_body(HOLDER_X, HOLDER_Y, occupant), "the occupant steps off the crate's tile")
 
     -- The broken lock takes no ID toggle, and the crate is no longer locked.
     empty_click_holder(engineer, "crate.secure")

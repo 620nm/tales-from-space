@@ -1,5 +1,5 @@
 -- Breakouts that end or share a holder in the awkward ways
--- (lib/closets/closet.luau; the plain cases: container_breakout_test): a
+-- (lib/closets/breakout.luau; the plain cases: container_breakout_test): a
 -- re-push after an interrupted escape, a lock and a weld together, a holder
 -- destroyed or an occupant dropped mid-wait, two occupants and a freezer.
 -- Not reachable from a player's seat: the `latch_unconfirmed`, `open_refused`
