@@ -41,7 +41,7 @@ end
 
 -- Opens the container, then `actor` drags `subject` onto it; both stand beside it.
 local function drag_into(prototype: string, actor: number, subject: number, subject_x: number, subject_y: number): ()
-    t.click(actor, 3, 2, assert(t.target_at(actor, 3, 2, prototype), "the container is observed"))
+    t.click(actor, 3, 2, (assert(t.target_at(actor, 3, 2, prototype), "the container is observed")))
     t.tick()
     assert(assert(t.structure_at(3, 2)).state == "open", prototype .. " opens")
     t.drag(
@@ -51,7 +51,7 @@ local function drag_into(prototype: string, actor: number, subject: number, subj
         t.body_target(actor, subject),
         3,
         2,
-        assert(t.target_at(actor, 3, 2, prototype), "the open container is observed")
+        (assert(t.target_at(actor, 3, 2, prototype), "the open container is observed"))
     )
     t.tick()
     t.run_ticks(clock.deadline_ticks(4.0) + 3)
