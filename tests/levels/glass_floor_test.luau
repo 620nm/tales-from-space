@@ -41,13 +41,12 @@ t.world(
         'p': (composition: (substrate: Open, components: [(component: "plasma_glass_floor")])),
         'q': (composition: (substrate: Open, components: [(component: "reinforced_plasma_glass_floor")])),
         'R': (composition: (components: [(component: "rock")])),
-        'c': (composition: ()),
     },
     levels: [
         (
             rows: [
                 "RRRRRRRR",
-                "RccccccR",
+                "RRRRRRRR",
                 "RRRRRRRR",
             ],
             structures: [],
