@@ -177,10 +177,15 @@ local construction_components = { "station_base", "floor_tiles", "grid_cover", "
 -- show the level below, and show runs without tool access (UNDERFLOOR_VISIBLE,
 -- glass.dm:8). Thermal is floor.dm:17-18 with the
 -- pack's floor emissivity; ambient is the plating's, which a glass floor replaces.
-local function glass_floor(id: string, label: string)
+-- Light passes a floor window as sight does (undeclared `light_transmission`); only
+-- plasma glass tints it, to its material colour #ff80f4 (alloys.dm:98). tg does not tint
+-- light there: the tint is an owner ruling.
+local PLASMA_GLASS_LIGHT = { r = 1.0, g = 0.502, b = 0.957 }
+
+local function glass_floor(id: string, label: string, light_transmission: { r: number, g: number, b: number }?)
     return { id = id, label = label, layer = "cover", sprite = id .. "-0", cover = controls(true),
         physical = { ambient = 0.10, support = true, receives_gravity = true, substrate_seal = true,
-            thermal = thermal(20000, 0.02, 0.5) } }
+            light_transmission = light_transmission, thermal = thermal(20000, 0.02, 0.5) } }
 end
 
 return {
@@ -263,8 +268,8 @@ return {
                 gas_blocking = true, opaque = true } },
         glass_floor("glass_floor", "glass floor"),
         glass_floor("reinforced_glass_floor", "reinforced glass floor"),
-        glass_floor("plasma_glass_floor", "plasma glass floor"),
-        glass_floor("reinforced_plasma_glass_floor", "reinforced plasma glass floor"),
+        glass_floor("plasma_glass_floor", "plasma glass floor", PLASMA_GLASS_LIGHT),
+        glass_floor("reinforced_plasma_glass_floor", "reinforced plasma glass floor", PLASMA_GLASS_LIGHT),
     },
     networks = {
         { id = "power", label = "power cable", layer = "power", channels = power_channels, channel_preferences = { "l2", "l1", "l3" },
