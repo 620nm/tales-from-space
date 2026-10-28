@@ -231,7 +231,8 @@ return {
         { id = "ground", label = "ground", layer = "substrate", sprite = "ground", substrate = { vacuum_boundary = false },
             physical = { ambient = 0, support = true, thermal = thermal(20000, 0.02, 0.5) } },
         -- tg /turf/open/misc/asteroid (asteroid.dm:5-14): a natural floor under mined rock. It holds a body
-        -- and receives the station field; like `ground` it is no vacuum boundary.
+        -- and receives the station field; like `ground` it is no vacuum boundary. Thermal: tg
+        -- /turf/open/misc heat_capacity and thermal_conductivity (misc.dm:20-21), the pack's emissivity.
         { id = "rock_floor", label = "rock floor", layer = "substrate", sprite = "rock_floor", substrate = { vacuum_boundary = false },
             physical = { ambient = 0, support = true, receives_gravity = true, thermal = thermal(20000, 0.02, 0.5) } },
         { id = "station_base", occludes_substrate = true, label = "plating", layer = "support", sprite = "plating",
@@ -288,10 +289,10 @@ return {
         free = { map = true, play = false },
     },
     presets = {
-        -- `bare` and `rock` write the level's natural fill (`inherit`: the
-        -- profile substrate at or below ground, open sky above), as the
-        -- editor's band fills do (content/editor.luau), so painting either
-        -- over an `open` hole at or below ground closes it. `open` cuts a
+        -- `bare` and `rock` write the `inherit` substrate (the profile substrate
+        -- at or below ground, open sky above), so painting either over an `open`
+        -- hole at or below ground closes it. The editor's space subterrain fill
+        -- differs: rock over `rock_floor` (content/editor.luau). `open` cuts a
         -- hole on any level but the lowest, which refuses it.
         { id = "bare", label = "Bare Substrate", substrate = "inherit", replace_components = construction_components, components = {} },
         { id = "open", label = "Open (hole)", substrate = "open", replace_components = construction_components, components = {} },

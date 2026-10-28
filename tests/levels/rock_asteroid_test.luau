@@ -77,8 +77,8 @@ assert(edge.components[1] == "rock-3", "rock at the map edge joins only N and S,
 local east = composition.seen_sprites(p, 2, 1, BASEMENT)
 assert(east.components[1] == "rock-157", "the rock east of the future dig joins W, N, E and both upper corners")
 
--- 5. Digging reveals rock floor, which holds the body; the bare preset
--- writes the inherited substrate, so it reveals space instead.
+-- 5. The rock floor preset digs to rock floor, which holds the body; the bare
+-- preset writes the inherited substrate, so it reveals space instead.
 assert(t.set_composition(1, 1, "rock_floor", BASEMENT), "the rock floor preset removes the rock")
 t.run_ticks(2)
 local dug = composition.seen_sprites(p, 1, 1, BASEMENT)
@@ -193,3 +193,41 @@ t.move(walker, "east")
 t.tick()
 x, y = t.pos(walker)
 assert(x == 4 and y == 3, "the body steps along rock floor in orbit, got (" .. x .. ", " .. y .. ")")
+
+-- 8. Rock floor is no vacuum boundary: a tracer in a sealed rock-floor pocket in
+-- orbit stays, where an unsealed vacuum substrate would vent it (the 1e-6
+-- exact-sum slack of rock_basement_test.luau, step 6). The body waits in the
+-- next pocket, so its lungs do not touch the tracer.
+t.world(
+    [==[(
+    name: "rock floor room",
+    tags: ["space"],
+    environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
+    legend: {
+        '#': (composition: (components: [(component: "rock")])),
+        '.': (composition: (substrate: Named("rock_floor"))),
+    },
+    levels: [
+        (
+            rows: [
+                "#####",
+                "#.#.#",
+                "#####",
+            ],
+            structures: [(3, 1, "player_spawn")],
+        ),
+    ],
+)]==],
+    0,
+    "free_build"
+)
+t.join()
+t.run_ticks(2)
+local TRACER_MOLES = 12.0
+assert(t.foul_room(1, 1, "co2", TRACER_MOLES), "the tracer reaches the rock-floor room")
+t.run_seconds(8)
+local held = t.room_gas(1, 1)
+assert(
+    held ~= nil and math.abs((held["co2"] or 0.0) - TRACER_MOLES) < 1e-6,
+    "a rock-floor room in orbit keeps its air: " .. TRACER_MOLES .. " -> " .. tostring(held and held["co2"])
+)

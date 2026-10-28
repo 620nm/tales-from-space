@@ -13,7 +13,8 @@ cover independently controls power and pipe disclosure and tool access. A
 closed grid permits seeing and examining the runs beneath it, but prevents
 tooling or installing them. Removing either cover leaves the base and opens
 access. Reinforcement has the same physical properties in its closed and open
-cover states. Bare space, ground, and station base have no cover controls.
+cover states. Bare space, ground, rock floor, and station base have no cover
+controls.
 
 The tiled and reinforced floor presets each ship an `, Exposed` variant that
 is the same preset with the power and pipe controls opened; the palette folds
@@ -51,8 +52,8 @@ boundary; an exposed space substrate remains a boundary below a catwalk.
 ## Levels
 
 Rock (tg `/turf/closed/mineral`) blocks movement, gas and sight, supports and
-seals, and hides what is under it. It sits over the map's substrate, inherited
-by default, so removing it shows ground on a planet and space in orbit. It wears tg's
+seals, and hides what is under it. It sits over the map's substrate (inherited
+by default: ground on a planet, space in orbit), which removing it shows. It wears tg's
 `smoothrocks` bitmask art (`minerals.dm:6-21`) and smooths with neighbouring
 rock; each `rock-<junction>` frame is the 40x40 cell's centre 32x32 window, so
 tg's 4 px overhang is lost, and the map edge is not a neighbour (no
@@ -73,9 +74,9 @@ engine's `docs/content-schema/compositions.md` "Tile values and replacement"
 and `docs/mapping/environment.md` "Exposure"). Station base and rock seal the
 substrate, so either one roofs open sky. The `open` preset cuts a hole on any
 level, ground-level terrain included, but not on the lowest. `bare` and `rock`
-write the level's natural fill (substrate `inherit`), so painting either over a
-hole at or below ground closes it; above ground the natural fill is open sky,
-so a hole there stays open.
+write the `inherit` substrate, so painting either over a hole at or below ground
+closes it; above ground it is open sky, so a hole there stays open. The editor's
+space subterrain fill differs from `rock`: rock over rock floor, as above.
 
 The four glass floors (tg `glass.dm`) are floor windows over an open substrate.
 They hold a body and the air, show the level below, and show runs beneath
