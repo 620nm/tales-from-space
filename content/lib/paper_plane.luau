@@ -26,6 +26,9 @@ paper_plane.ONFIRE_STATE = "onfire"
 -- Script vars holding the heading a plane surfed off with (0, 0 = none).
 paper_plane.HEADING_X_VAR = "plane_heading_x"
 paper_plane.HEADING_Y_VAR = "plane_heading_y"
+-- Script var listing the holes ("x:y:z", plane-absolute) this plane has
+-- surfed since it last rested from a throw, drop or support loss.
+paper_plane.SURFED_VAR = "plane_surfed"
 
 -- Tiles a falling plane glides per level it would drop.
 local GLIDE_PER_LEVEL = 2
@@ -106,7 +109,10 @@ function paper_plane.glide(ev: ItemFallPayload): TileStep
     return { x = step.x * reach, y = step.y * reach }
 end
 
--- The air in the cell under the hole against the air at the plane.
+-- The air in the cell under the hole against the air at the plane. Air at
+-- ignition heat counts whatever the air at the plane, so a plane over an
+-- already-hot hole still catches fire: tg's plane burns whenever it is set
+-- alight (paperplane.dm:38, `burn_on_item_ignition`), with no difference test.
 function paper_plane.updraft(at: TileAddress): Updraft?
     local lower = sim.map_tile(at, at.x, at.y, at.z - 1)
     if lower == nil then
@@ -114,15 +120,55 @@ function paper_plane.updraft(at: TileAddress): Updraft?
     end
     local below = sim.matter_read(lower.matter)
     local here = sim.matter_read(at.matter)
-    if below == nil or here == nil or below.temp_k - here.temp_k <= THERMAL_RISE_K then
+    if below == nil or here == nil then
+        return nil
+    end
+    local rises = below.temp_k - here.temp_k > THERMAL_RISE_K
+    if not rises and below.temp_k < IGNITION_K then
         return nil
     end
     return { below_k = below.temp_k, here_k = here.temp_k }
 end
 
--- A folded plane over rising warm air stays aloft instead of falling.
+local function hole_key(at: TileAddress): string
+    return at.absolute_x .. ":" .. at.absolute_y .. ":" .. at.z
+end
+
+local function has_surfed(item: Handle, at: TileAddress): boolean
+    local surfed = item.vars[paper_plane.SURFED_VAR]
+    if type(surfed) ~= "table" then
+        return false
+    end
+    local key = hole_key(at)
+    for _, held in ipairs(surfed) do
+        if held == key then
+            return true
+        end
+    end
+    return false
+end
+
+-- A throw, drop or support loss starts a fresh surf; a slide extends it.
+local function mark_surfed(item: Handle, at: TileAddress, cause: ItemFallCause): ()
+    local held = item.vars[paper_plane.SURFED_VAR]
+    local surfed = {}
+    if cause == "slide" and type(held) == "table" then
+        for _, key in ipairs(held) do
+            table.insert(surfed, key)
+        end
+    end
+    table.insert(surfed, hole_key(at))
+    item.vars[paper_plane.SURFED_VAR] = surfed
+end
+
+-- A folded plane over rising warm air stays aloft instead of falling, but a
+-- slide that settles it on a hole it already surfed (a wall or a bounce
+-- brought it back) ends the surf: it falls, so heat cannot loop it.
 function paper_plane.rides_thermal(ev: ItemFallPayload): boolean
-    return paper_plane.is_folded(ev.item) and paper_plane.updraft(ev.at) ~= nil
+    if not paper_plane.is_folded(ev.item) or paper_plane.updraft(ev.at) == nil then
+        return false
+    end
+    return not (ev.cause == "slide" and has_surfed(ev.item, ev.at))
 end
 
 local function say(at: TileAddress, key: string): ()
@@ -141,6 +187,14 @@ local function set_heading(item: Handle, x: number, y: number): ()
     end
 end
 
+-- Forget the heading and the holes surfed: a plane picked up starts over.
+function paper_plane.forget(item: Handle): ()
+    set_heading(item, 0, 0)
+    if item.vars[paper_plane.SURFED_VAR] ~= nil then
+        item.vars[paper_plane.SURFED_VAR] = nil
+    end
+end
+
 -- Alight: the flame picture, then ash on the tile it burns out over.
 local function ignite(item: Handle, at: TileAddress): ()
     set_heading(item, 0, 0)
@@ -148,10 +202,11 @@ local function ignite(item: Handle, at: TileAddress): ()
     say(at, "lunatic/tfs:lib.paper_plane.ignites")
     sim.spawn_task(item, function()
         sim.sleep(sim.ticks(BURN_SECONDS))
-        if not item.alive then
+        local rest = if item.alive then item.tile else nil
+        -- Picked up or stowed meanwhile: there is no tile to burn out over.
+        if rest == nil then
             return
         end
-        local rest = item.tile
         sim.matter.deposit({
             owner = rest.matter,
             substance = "ash",
@@ -166,25 +221,27 @@ end
 -- `item.fall.done` on the paper definition: a plane that stayed on an
 -- updraft is shoved on along its heading (and keeps it for the next ask),
 -- or burns when the air below is hot enough. Every other outcome forgets
--- the heading.
+-- the heading. The shove and its broadcast happen once per hole surfed.
 function paper_plane.on_fall_done(ev: ItemFallDonePayload): ()
     local item = ev.item
     local lift = if not ev.fell and paper_plane.is_folded(item)
         then paper_plane.updraft(ev.at)
         else nil
     if lift == nil then
-        set_heading(item, 0, 0)
+        paper_plane.forget(item)
         return
     end
     if lift.below_k >= IGNITION_K then
         ignite(item, ev.at)
         return
     end
+    -- A refused fall also stays: it is not a surf, so no second shove.
     local step = heading(ev)
-    if step == nil then
+    if step == nil or (ev.cause == "slide" and has_surfed(item, ev.at)) then
         return
     end
     set_heading(item, step.x, step.y)
+    mark_surfed(item, ev.at, ev.cause)
     say(ev.at, "lunatic/tfs:lib.paper_plane.rides")
     sim.force.directed({
         target = item,
