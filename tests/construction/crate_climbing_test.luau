@@ -197,8 +197,8 @@ assert(#support_rows("mount") == 1, "duplicate lying input produces one mount")
 assert(has_message(t.messages(lying_actor), COMPLETED_MESSAGE), "the lying climber is told it completed")
 assert(#t.script_errors() == 0, "lying climb has no script errors")
 
--- tg's wait breaks on incapacitation (`timed_actions.dm:77-78`): a climber
--- who dies mid-wait is refused with body_not_controllable.
+-- tg's wait breaks on incapacitation (`timed_actions.dm:77-78`) without a
+-- message: a climber who dies mid-wait never mounts.
 t.world(MAP, 0)
 local dying_actor = t.join("assistant")
 t.run_ticks(3)
@@ -210,10 +210,6 @@ assert(not assert(t.body(dying_actor)).controllable, "the dead climber is uncont
 assert_position(dying_actor, 2, 3, "an uncontrollable climber never mounts")
 assert_offset(dying_actor, 0, "the uncontrollable refusal has no elevation")
 assert(#support_rows("mount") == 0, "the uncontrollable refusal writes no mount")
-assert(
-    has_message(t.messages(dying_actor), "You cannot control your body well enough to climb."),
-    "the pack veto before sim.climb presents body_not_controllable"
-)
 assert(#t.script_errors() == 0, "uncontrollable refusal has no script errors")
 
 t.world(MAP, 0)

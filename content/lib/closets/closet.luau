@@ -254,6 +254,9 @@ function closet.attach(proto_id: string, opts: Options)
 		if ev.gesture == "primary" and implement == nil and climbing.supports(target) then
 			knock_off_riders(actor, target)
 		end
+		if target.state == data.open_state and implement == nil then
+			closing.tell_refusal(actor, target, nil, true)
+		end
 		if target.state == data.closed_state and welded then
 			actor_context.send_message(actor, "lunatic/tfs:lib.closets.welded", target_name)
 			return true

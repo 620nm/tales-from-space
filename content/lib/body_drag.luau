@@ -1,5 +1,6 @@
 local climbing = require("@lib/climbing")
 local closet_data = require("@lib/closets/data")
+local closing = require("@lib/closets/closing")
 
 local body_drag = {}
 
@@ -56,6 +57,8 @@ local function begin_entry(ev: InteractionDragPayload): boolean
             if outcome ~= "ok" or not entry_context_ready(actor, body, receiver) then
                 return
             end
+            -- The close's veto refuses silently; say why here, where a send is legal.
+            closing.tell_refusal(actor, receiver, body, false)
             sim.container.enter({ body = body, container = receiver })
         end)
     end)

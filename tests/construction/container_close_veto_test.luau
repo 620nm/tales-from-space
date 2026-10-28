@@ -56,7 +56,7 @@ local CLOSET_MAP = [==[ (
 )]==]
 
 local function target(player: number, x: number, y: number, id: string): SpecObservedTarget
-    return assert(t.target_at(player, x, y, id), "the observed target exists")
+    return (assert(t.target_at(player, x, y, id), "the observed target exists"))
 end
 
 local function click(player: number, x: number, y: number, id: string): ()
@@ -83,26 +83,33 @@ local function tile_has_body(x: number, y: number, player: number): boolean
     return false
 end
 
--- A standing rider on the open crate keeps a stuffed body from closing it in.
+-- A standing rider on the open crate keeps another body from hiding in it:
+-- the hider is exempt as the entrant, the rider is not.
 t.world(RIDER_MAP, 0)
 local actor = t.join("assistant")
-local rider = t.join("medic")
-local subject = t.join("engineer")
+local hider = t.join("medic")
+local rider = t.join("engineer")
 t.run_ticks(3)
 click(actor, 4, 4, "crate")
 assert(assert(t.structure_at(4, 4)).state == "open", "the crate opens")
-t.use_item(rider, target(rider, 4, 4, "crate"), "alt_primary")
-t.tick()
-t.run_ticks(clock.deadline_ticks(1.0) + 1)
-assert(t.seen(rider, rider).offset.y == 14, "the rider climbs onto the open crate")
+local function climb(climber: number): ()
+    t.use_item(climber, target(climber, 4, 4, "crate"), "alt_primary")
+    t.tick()
+    t.run_ticks(clock.deadline_ticks(1.0) + 1)
+    assert(t.seen(climber, climber).offset.y == 14, "the body climbs onto the open crate")
+end
+climb(hider)
 local closes = #t.ledger_rows("container_closed")
-t.drag(actor, 5, 4, t.body_target(actor, subject), 4, 4, target(actor, 4, 4, "crate"))
+-- The rider climbs on during the hider's wait: two stacked bodies leave no
+-- crate pixel to aim at.
+t.drag(hider, 4, 4, t.body_target(hider, hider), 4, 4, target(hider, 4, 4, "crate"))
 t.tick()
+climb(rider)
 t.run_ticks(clock.deadline_ticks(4.0) + 2)
 assert(assert(t.structure_at(4, 4)).state == "open", "a standing rider vetoes the close")
 assert(#t.ledger_rows("container_closed") == closes, "the vetoed close writes no close")
-assert(tile_has_body(5, 4, subject), "the stuffed body stays outside")
-assert(heard(subject, TOO_LARGE_LINE) or heard(actor, TOO_LARGE_LINE), "the veto says what is in the way")
+assert(tile_has_body(4, 4, hider), "the hider stays on the crate")
+assert(heard(hider, TOO_LARGE_LINE), "the veto tells the hider what is in the way")
 assert(#t.script_errors() == 0, "the rider veto has no script errors")
 
 -- A crate pulled onto an open locker's tile is another closet in the way.

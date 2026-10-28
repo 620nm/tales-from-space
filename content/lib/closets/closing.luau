@@ -16,36 +16,50 @@ local function standing_in_horizontal(container: Handle, readout: { [any]: any }
 	return family ~= nil and family.horizontal and readout.posture ~= "lying"
 end
 
--- Tells the closer why the close is refused, as tg does
--- (`closets.dm:497-498,502-503`), and answers the veto.
-local function refuse_close(ev: ContainerClosingPayload, key: string, subject: Handle)
-	local name = actor_context.subject_name(subject, subject.prototype or "closet")
-	actor_context.send_message(ev.actor, key, name)
-	return { cancelled = true }
-end
-
 -- Tg's `can_close` (`closets.dm:493-505`): another closet in the way, or a
--- standing mob a horizontal closet cannot take. The entering body is exempt
--- as pack judgment: tg stuffs a body only after paralyzing it
--- (`closets.dm:1014`) and has no standing self-hide (`closets.dm:990-991`),
--- but the pack's hide drag (`lib/body_drag.luau`) enters standing.
-function closing.veto(ev: ContainerClosingPayload)
-	local container: Handle = ev.subject
+-- standing mob a horizontal closet cannot take. Returns the message key and
+-- the name it says, or nil. The entering body is exempt as pack judgment: tg
+-- stuffs a body only after paralyzing it (`closets.dm:1014`) and has no
+-- standing self-hide (`closets.dm:990-991`), but the pack's hide drag
+-- (`lib/body_drag.luau`) enters standing. `riders_leave` skips the bodies
+-- riding `container`, for a click that knocks them off first
+-- (`climbable.dm:48-59`).
+function closing.refusal(container: Handle, entrant: Handle?, riders_leave: boolean): (string?, string?)
 	for _, candidate in ipairs(sim.query.range(container.tile, 0, {})) do
 		if candidate ~= container then
 			if data.family_of(candidate.prototype) ~= nil then
-				return refuse_close(ev, "lunatic/tfs:lib.closets.close_blocked_closet", candidate)
+				return "lunatic/tfs:lib.closets.close_blocked_closet",
+					actor_context.subject_name(candidate, candidate.prototype or "closet")
 			end
 			local readout = sim.body(candidate)
 			if readout ~= nil
-				and candidate ~= ev.entrant
+				and candidate ~= entrant
+				and not (riders_leave and sim.is_supported_by(candidate, container))
 				and standing_in_horizontal(container, readout)
 			then
-				return refuse_close(ev, "lunatic/tfs:lib.closets.close_blocked_large", container)
+				return "lunatic/tfs:lib.closets.close_blocked_large",
+					actor_context.subject_name(container, container.prototype or "closet")
 			end
 		end
 	end
-	return { cancelled = false }
+	return nil, nil
+end
+
+-- Tells `actor` why a close would be refused, as tg does
+-- (`closets.dm:497-498,502-503`); true when it would be. A veto cannot
+-- send, so the writable segment that starts the close asks this first.
+function closing.tell_refusal(actor: Handle, container: Handle, entrant: Handle?, riders_leave: boolean): boolean
+	local key, name = closing.refusal(container, entrant, riders_leave)
+	if key == nil then
+		return false
+	end
+	actor_context.send_message(actor, key, name)
+	return true
+end
+
+function closing.veto(ev: ContainerClosingPayload)
+	local key = closing.refusal(ev.subject, ev.entrant, false)
+	return { cancelled = key ~= nil }
 end
 
 -- Tg's `insertion_allowed` for a mob (`closets.dm:575-592`), over what a

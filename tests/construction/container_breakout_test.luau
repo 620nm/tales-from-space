@@ -219,14 +219,8 @@ do
     assert(heard_count(engineer, ONLOOKER_LINE) == 1, "the onlooker hears the cue exactly once")
     assert(heard_count(occupant, ONLOOKER_LINE) == 0, "the occupant hears only their own line")
 
-    -- A standing body on a crate's tile vetoes the close (`closets.dm:501`);
-    -- stepping off lets it shut.
-    local close_refusals = #t.ledger_rows("container_close_refused")
-    empty_click_holder(engineer, "crate.secure")
-    assert(state_of(HOLDER_X, HOLDER_Y) == "open", "a standing body on the tile keeps the crate open")
-    local vetoes = t.ledger_rows("container_close_refused")
-    assert(#vetoes == close_refusals + 1, "the veto is on the record")
-    assert(vetoes[#vetoes].reason == "vetoed", "the close refusal names the veto")
+    -- The occupant steps off before the crate is shut again; the standing-body
+    -- veto is container_close_veto_test's.
     t.move(occupant, "west")
     t.run_seconds(0.25)
     assert(not tile_has_body(HOLDER_X, HOLDER_Y, occupant), "the occupant steps off the crate's tile")
