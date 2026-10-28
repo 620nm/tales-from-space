@@ -72,8 +72,10 @@ without tool access. All four smooth as one group. Their presets open the
 substrate, so they cannot go on the lowest level. A power cable needs
 supporting ground, station base or catwalk, so none runs on glass, and the
 glass preset is refused over a cable run (tg refuses cable where the underfloor
-is only visible, `cable.dm:692`); pipes have no such need. Construction and the
-starlight glow are not implemented.
+is only visible, `cable.dm:692`); pipes have no such need. A crowbar pries a glass
+floor up at once for its one glass tile and leaves plating, as tg does
+(`floor.dm:144-174`, `glass.dm:16,74,92,108`). Laying a glass tile, crafting one
+from sheets and the starlight glow are not implemented.
 
 Seeing down has tg's multi-z look (`levels.view` in `content/capabilities.luau`;
 the engine's `docs/architecture/map-instancing/levels.md` "Seeing down"): three

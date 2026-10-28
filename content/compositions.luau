@@ -22,6 +22,16 @@ local function controls(visible: boolean, open_occupant_sprite: string?, open_oc
     return result
 end
 
+-- A floor window covers runs but no support: nothing lies under it to
+-- protect, and the plating a crowbar leaves in its place is a support
+-- the glass must let install (the engine reads installation policy off
+-- the tile as it stands, glass included).
+local function window_controls()
+    local result = controls(true)
+    table.remove(result, 1)
+    return result
+end
+
 local function barrier_controls()
     local result = controls(false)
     for _, control in ipairs(result) do
@@ -178,7 +188,7 @@ local construction_components = { "station_base", "floor_tiles", "grid_cover", "
 -- glass.dm:8). Thermal is floor.dm:17-18 with the
 -- pack's floor emissivity; ambient is the plating's, which a glass floor replaces.
 local function glass_floor(id: string, label: string)
-    return { id = id, label = label, layer = "cover", sprite = id .. "-0", cover = controls(true),
+    return { id = id, label = label, layer = "cover", sprite = id .. "-0", cover = window_controls(),
         physical = { ambient = 0.10, support = true, receives_gravity = true, substrate_seal = true,
             thermal = thermal(20000, 0.02, 0.5) } }
 end
