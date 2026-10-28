@@ -88,11 +88,10 @@ sim.define("message", "lunatic/tfs:lib.climbing.start", { placeholders = {} })
 sim.define("message", "lunatic/tfs:lib.climbing.completed", { placeholders = {} })
 sim.define("message", "lunatic/tfs:lib.climbing.failed", { placeholders = {} })
 
+-- Reasons the engine reports on `climb.done`, then the pack's own veto reasons
+-- (`lib/climbing.luau`).
 local climb_refusals = {
     "body_unavailable",
-    "body_not_standing",
-    "body_not_controllable",
-    "body_observer",
     "body_in_motion",
     "support_unavailable",
     "different_plane",
@@ -106,6 +105,10 @@ local climb_refusals = {
     "blocked",
     "cross_vetoed",
     "offset_out_of_range",
+    "not_applied",
+    "body_not_standing",
+    "body_not_controllable",
+    "body_observer",
 }
 for _, reason in ipairs(climb_refusals) do
     sim.define("message", "lunatic/tfs:lib.climbing.refused." .. reason, { placeholders = {} })
