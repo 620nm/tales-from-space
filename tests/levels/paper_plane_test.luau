@@ -3,8 +3,9 @@
 -- drops straight, a glide into a wall falls straight with a refusal row,
 -- and over a hot cell the plane stays aloft, is shoved on, and burns up
 -- when the air is hot enough.
-local UPPER = 1
-local LOWER = 0
+-- Play is on ground level 0 (where `t.item_at` looks); the hole drops to -1.
+local UPPER = 0
+local LOWER = -1
 
 local function level_rows(): number
     return #t.ledger_rows("level_changed")
@@ -25,6 +26,7 @@ t.world(
     [==[(
     name: "paper plane glide",
     tags: ["terrestrial"],
+    levels_below_ground: 1,
     environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
@@ -120,6 +122,7 @@ assert(#t.ledger_rows("script_error") > refusals and refused, "the refused glide
 local HOT_WORLD = [==[(
     name: "paper plane updraft",
     tags: ["terrestrial"],
+    levels_below_ground: 1,
     environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665), atmosphere: Exact(true)),
     legend: {
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
