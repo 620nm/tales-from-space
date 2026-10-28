@@ -100,4 +100,4 @@ holds organs frozen in a freezer (`code/modules/surgery/organs/_organ.dm:159-171
 
 Done: the organ-decay timer that follows the P16 container work reads the
 holder's cold state, so organs in a freezer do not decay, with a spec in
-`tests/construction/blood_freezer_test.luau`.
+`tests/closets/blood_freezer_test.luau`.
