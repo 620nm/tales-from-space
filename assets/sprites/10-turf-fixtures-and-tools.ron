@@ -61,6 +61,8 @@
         ("space", Dmi("@space", "space", 0)),
         // tg code/game/turfs/open/snow.dm:4-7.
         ("ground", Dmi("turf/snow.dmi", "snow", 0)),
+        // tg code/game/turfs/open/asteroid.dm:5-14; its random floor variance (:24-26) is not drawn.
+        ("rock_floor", Dmi("@floors", "asteroid", 0)),
         ("floor", Dmi("@floors", "floor", 0)),
         ("plating", Dmi("@floors", "plating", 0)),
         ("wall", Dmi("@walls", "wall-0", 0)),

@@ -1,14 +1,16 @@
 -- A rock basement in orbit (the asteroid look): the same map as
--- rock_basement_test.luau, but digging the rock reveals space. The map pins
--- standard gravity, which a space environment applies to receiving surfaces
--- (the engine's docs/mapping/environment.md), so the spawn tile's station base
--- holds the body and rock still blocks it. Only that tile carries station base,
--- because a body cannot join on bare space.
+-- rock_basement_test.luau, but the rock lies on rock floor, as the editor's
+-- space subterrain fill writes it (content/editor.luau), so digging the rock
+-- reveals rock floor, tg's asteroid sand (minerals.dm:29). The map pins standard
+-- gravity, which a space environment applies to receiving surfaces (the
+-- engine's docs/mapping/environment.md), and rock floor receives it, so the
+-- carved room holds the body without any station base.
 local composition = require("@helpers/composition")
 
 -- Rock wears `rock-<junction>`; the arithmetic is in rock_basement_test.luau (the
--- station-base tile at (1,2) is no rock, so it counts like the open room there).
+-- carved room is no rock, so it counts like the open room there).
 local SPACE_SPRITE = "space"
+local ROCK_FLOOR_SPRITE = "rock_floor"
 local BASEMENT = -1
 
 t.world(
@@ -18,16 +20,15 @@ t.world(
     levels_below_ground: 1,
     environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
     legend: {
-        '#': (composition: (components: [(component: "rock")])),
-        '.': (composition: ()),
-        '_': (composition: (components: [(component: "station_base")])),
+        '#': (composition: (substrate: Named("rock_floor"), components: [(component: "rock")])),
+        '.': (composition: (substrate: Named("rock_floor"))),
     },
     levels: [
         (
             rows: [
                 "#######",
                 "#######",
-                "#_...##",
+                "#....##",
                 "#######",
                 "#######",
             ],
@@ -56,7 +57,7 @@ t.run_ticks(4)
 local x, y = t.pos(p)
 assert(x == 1 and y == 2, "the body spawns in the carved room, got (" .. x .. ", " .. y .. ")")
 local room = composition.seen_sprites(p, 2, 2, BASEMENT)
-assert(room.substrates[1] == SPACE_SPRITE, "the room beside the body is space in orbit, got " .. tostring(room.substrates[1]))
+assert(room.substrates[1] == ROCK_FLOOR_SPRITE, "the room beside the body is rock floor, got " .. tostring(room.substrates[1]))
 
 -- 2. Rock blocks movement.
 t.move(p, "west")
@@ -76,14 +77,23 @@ assert(edge.components[1] == "rock-3", "rock at the map edge joins only N and S,
 local east = composition.seen_sprites(p, 2, 1, BASEMENT)
 assert(east.components[1] == "rock-157", "the rock east of the future dig joins W, N, E and both upper corners")
 
--- 5. Digging reveals space.
-assert(t.set_composition(1, 1, "bare", BASEMENT), "the bare preset removes the rock")
+-- 5. Digging reveals rock floor, which holds the body; the bare preset
+-- writes the inherited substrate, so it reveals space instead.
+assert(t.set_composition(1, 1, "rock_floor", BASEMENT), "the rock floor preset removes the rock")
 t.run_ticks(2)
 local dug = composition.seen_sprites(p, 1, 1, BASEMENT)
-assert(dug.substrates[1] == SPACE_SPRITE, "the dug tile shows space, got " .. tostring(dug.substrates[1]))
+assert(dug.substrates[1] == ROCK_FLOOR_SPRITE, "the dug tile shows rock floor, got " .. tostring(dug.substrates[1]))
 assert(#dug.components == 0, "the dug tile has no rock row")
 east = composition.seen_sprites(p, 2, 1, BASEMENT)
 assert(east.components[1] == "rock-21", "the rock east of the dug tile loses its W and NW bits, got " .. tostring(east.components[1]))
+t.move(p, "north")
+t.run_seconds(1)
+x, y = t.pos(p)
+assert(x == 1 and y == 1, "the body steps onto the dug rock floor, got (" .. x .. ", " .. y .. ")")
+assert(t.set_composition(1, 3, "bare", BASEMENT), "the bare preset removes the rock")
+t.run_ticks(2)
+local bare = composition.seen_sprites(p, 1, 3, BASEMENT)
+assert(bare.substrates[1] == SPACE_SPRITE, "the bare tile shows space, got " .. tostring(bare.substrates[1]))
 
 -- 6. Rock roofs what is under it: on a level above ground a rock over the
 -- inherited sky leaves no opening to the room below, which keeps its air where
@@ -146,3 +156,40 @@ end
 assert(t.set_composition(2, 1, "bare", ROOF), "the bare preset digs the roof tile")
 t.run_ticks(2)
 assert(#t.ledger_rows("item_support_lost") == 1, "the dug roof tile no longer holds the crowbar up")
+
+-- 7. Rock floor receives the station field in orbit. A patch of it in open
+-- space, out of reach of any wall or lattice for a handhold, lets the body step
+-- (gravity_movement_test.luau: bare space refuses the same step).
+t.world(
+    [==[(
+    name: "rock floor patch",
+    tags: ["space"],
+    environment: (kind: Exact(space), gravity_m_s2: Exact(9.80665)),
+    legend: {
+        's': (composition: (substrate: Named("space"))),
+        'r': (composition: (substrate: Named("rock_floor"))),
+    },
+    levels: [
+        (
+            rows: [
+                "sssssss",
+                "sssssss",
+                "ssrrrss",
+                "ssrrrss",
+                "ssrrrss",
+                "sssssss",
+                "sssssss",
+            ],
+            structures: [(3, 3, "player_spawn")],
+        ),
+    ],
+)]==],
+    0,
+    "free_build"
+)
+local walker = t.join()
+t.run_ticks(2)
+t.move(walker, "east")
+t.tick()
+x, y = t.pos(walker)
+assert(x == 4 and y == 3, "the body steps along rock floor in orbit, got (" .. x .. ", " .. y .. ")")

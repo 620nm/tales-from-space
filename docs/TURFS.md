@@ -51,12 +51,22 @@ boundary; an exposed space substrate remains a boundary below a catwalk.
 ## Levels
 
 Rock (tg `/turf/closed/mineral`) blocks movement, gas and sight, supports and
-seals, and hides what is under it. It sits over the inherited substrate, so
-removing it shows ground on a planet and space in orbit. It wears tg's
+seals, and hides what is under it. It sits over the map's substrate, inherited
+by default, so removing it shows ground on a planet and space in orbit. It wears tg's
 `smoothrocks` bitmask art (`minerals.dm:6-21`) and smooths with neighbouring
 rock; each `rock-<junction>` frame is the 40x40 cell's centre 32x32 window, so
 tg's 4 px overhang is lost, and the map edge is not a neighbour (no
 `SMOOTH_BORDER`). Mining it is not implemented.
+
+Rock floor (tg `/turf/open/misc/asteroid`, `asteroid.dm:5-14`) is a natural
+substrate beside ground: it supports, receives the station field and is no
+vacuum boundary, so a carved room in orbit holds a body with no station base.
+Its picture is the asteroid sand state; tg's random floor variance is not drawn.
+The `rock_floor` preset paints it and replaces the installed components. The
+editor's space subterrain fill lays rock over rock floor (`content/editor.luau`),
+because tg's mineral turf leaves asteroid floor by default (`minerals.dm:29`);
+the terrestrial fill keeps the profile's cold ground, as the icemoon mineral
+leaves snow (`minerals.dm:677`). Laying plating on rock floor is not ported.
 
 Open sky above ground and what seals it are the engine's contract (the
 engine's `docs/content-schema/compositions.md` "Tile values and replacement"

@@ -33,10 +33,11 @@ their art, and no `prototypes` entry admits them to placement checks.
 
 ## Levels
 
-`levels` fills a new level by band, identically for `terrestrial` and `space`:
-`subterrain` is a `rock` component, `terrain` is blank and inherits, and
-`open_air` is blank, which above ground is open sky (explicit `open` would not
-be sky-exposed). The fills are drawn and supplied; every tile they place stays
+`levels` fills a new level by band for `terrestrial` and `space`: `subterrain`
+is a `rock` component (over `rock_floor` in `space`, so a mined tile shows
+asteroid floor; `terrestrial` keeps the profile's ground, `docs/TURFS.md`),
+`terrain` is blank and inherits, and `open_air` is blank, which above ground is
+open sky (explicit `open` would not be sky-exposed). The fills are drawn and supplied; every tile they place stays
 paintable. The engine's `docs/mapping/editor-declarations.md` owns the schema,
 `tools/test-editor-previews.mjs` pins the served bands.
 
