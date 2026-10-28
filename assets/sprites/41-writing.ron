@@ -14,6 +14,10 @@
     sprites: [
         // paper.dm:13-18; paperbin.dm:3-8.
         ("paper", Dmi("@bureaucracy", "paper", 0)),
+        // paperplane.dm:4-6 and :53. The flames are tg's overlay state; the
+        // burning picture composes it over the plane, as the game draws it.
+        ("paperplane", Dmi("@bureaucracy", "paperplane", 0)),
+        ("paperplane_onfire", DmiLayers([("@bureaucracy", "paperplane"), ("@bureaucracy", "paperplane_onfire")], 0)),
         ("paper_bin", Dmi("@bureaucracy", "paper_bin0", 0)),
         // pen.dm:125-130; photocopier.dm:879-884.
         ("four_color_pen", Dmi("@bureaucracy", "pen_4color", 0)),
