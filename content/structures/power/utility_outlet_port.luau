@@ -28,6 +28,42 @@ return {
             held = { fact = "held.present", value = "false" },
         },
     },
+    hover_connections = {
+        relation = "energy_consumers",
+        state = "open",
+        styles = {
+            active = {
+                color = "#76C8AE",
+                width = 0.055,
+                head_length = 0.23,
+                head_sweep = math.pi / 4,
+                source_clearance = 0.20,
+                target_clearance = 0.25,
+                dash_length = 0,
+                gap_length = 0,
+            },
+            inactive = {
+                color = "#CFAB63",
+                width = 0.055,
+                head_length = 0.23,
+                head_sweep = math.pi / 4,
+                source_clearance = 0.20,
+                target_clearance = 0.25,
+                dash_length = 0,
+                gap_length = 0,
+            },
+            candidate = {
+                color = "#9CA5B880",
+                width = 0.035,
+                head_length = 0.17,
+                head_sweep = math.pi / 4,
+                source_clearance = 0.20,
+                target_clearance = 0.25,
+                dash_length = 0.14,
+                gap_length = 0.12,
+            },
+        },
+    },
     appearance = {
         channels = {
             l1 = {
@@ -57,6 +93,9 @@ return {
     examine = {
         flavor = "A flush circular metal fitting in the deck, with a hinged "
             .. "cover over one recessed socket. Three lamps report the "
-            .. "independent state of each power layer beneath the floor.",
+            .. "independent state of each power layer beneath the floor. "
+            .. "With the cover open, green arrows show powered connections, "
+            .. "amber arrows show unpowered connections, and faint dashed "
+            .. "arrows show reachable alternatives.",
     },
 }
