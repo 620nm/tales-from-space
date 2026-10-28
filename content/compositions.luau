@@ -214,7 +214,7 @@ return {
         -- equals `item`'s, so "under" is the honest choice for both states.
         { id = "low_object", parent = "world" },
         { id = "item", parent = "world" },
-        -- Large loose things -- vessels, lockers, unbolted frames --
+        -- Large loose things -- vessels, unbolted frames --
         -- draw over items. tg's own seat for a canister is above items
         -- (ABOVE_OBJ_LAYER over OBJ_LAYER over BELOW_OBJ_LAYER,
         -- layers.dm:239-244, portable_atmospherics.dm:10); the uniform

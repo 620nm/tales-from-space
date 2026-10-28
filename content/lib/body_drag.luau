@@ -57,7 +57,7 @@ local function begin_entry(ev: InteractionDragPayload): boolean
             if outcome ~= "ok" or not entry_context_ready(actor, body, receiver) then
                 return
             end
-            if not closing.expect(receiver, body) then
+            if not closing.expect(receiver, actor, body) then
                 return
             end
             -- A body stuffed in by another is paralyzed before it is moved

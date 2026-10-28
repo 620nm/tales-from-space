@@ -8,10 +8,11 @@ local data = require("@lib/closets/data")
 
 local closing = {}
 
--- The body a close in flight is meant to take in, per container. It may stand
+-- The body a close in flight is meant to take in, per container, and who
+-- closes it: only that actor's close honours the entry. The body may stand
 -- beside the container (tg moves it onto the turf first, `closets.dm:1016-1018`);
 -- an entry older than `data.entrant_seconds` is stale and ignored.
-type PendingEntrant = { container: Handle, body: Handle, tick: number }
+type PendingEntrant = { container: Handle, actor: Handle, body: Handle, tick: number }
 local pending_entrants: { PendingEntrant } = {}
 
 local function pending_index(container: Handle): number?
@@ -27,9 +28,12 @@ local function pending_index(container: Handle): number?
 	return nil
 end
 
-local function pending_entrant(container: Handle): Handle?
+local function pending_entrant(container: Handle, actor: Handle): Handle?
 	local index = pending_index(container)
-	return if index ~= nil then pending_entrants[index].body else nil
+	if index == nil or pending_entrants[index].actor ~= actor then
+		return nil
+	end
+	return pending_entrants[index].body
 end
 
 local function forget_entrant(container: Handle): ()
@@ -39,14 +43,14 @@ local function forget_entrant(container: Handle): ()
 	end
 end
 
--- Records `body` as the entrant of the close `container` is about to run.
--- False when this very body is already pending there: a repeated drag.
-function closing.expect(container: Handle, body: Handle): boolean
-	if pending_entrant(container) == body then
+-- Records `body` as the entrant of the close `actor` is about to run on
+-- `container`. False when this very body is already pending there: a repeated drag.
+function closing.expect(container: Handle, actor: Handle, body: Handle): boolean
+	if pending_entrant(container, actor) == body then
 		return false
 	end
 	forget_entrant(container)
-	table.insert(pending_entrants, { container = container, body = body, tick = sim.tick() })
+	table.insert(pending_entrants, { container = container, actor = actor, body = body, tick = sim.tick() })
 	return true
 end
 
@@ -60,13 +64,13 @@ end
 
 -- Tg's `can_close` (`closets.dm:493-505`): another closet in the way, or a
 -- standing mob a horizontal closet cannot take. Returns the message key and
--- the name it says, or nil. The pending entrant (`closing.expect`) is exempt
+-- the name it says, or nil. `actor`'s pending entrant (`closing.expect`) is exempt
 -- as pack judgment: tg has no standing self-hide (`closets.dm:990-991`), but
 -- the pack's hide drag (`lib/body_drag.luau`) enters standing. `riders_leave`
 -- skips the bodies riding `container`, for a click that knocks them off
 -- first (`climbable.dm:48-59`).
-function closing.refusal(container: Handle, riders_leave: boolean): (string?, string?)
-	local entrant = pending_entrant(container)
+function closing.refusal(container: Handle, actor: Handle, riders_leave: boolean): (string?, string?)
+	local entrant = pending_entrant(container, actor)
 	for _, candidate in ipairs(sim.query.range(container.tile, 0, {})) do
 		if candidate ~= container then
 			if data.family_of(candidate.prototype) ~= nil then
@@ -91,7 +95,7 @@ end
 -- (`closets.dm:497-498,502-503`); true when it would be. A veto cannot
 -- send, so the writable segment that starts the close asks this first.
 function closing.tell_refusal(actor: Handle, container: Handle, riders_leave: boolean): boolean
-	local key, name = closing.refusal(container, riders_leave)
+	local key, name = closing.refusal(container, actor, riders_leave)
 	if key == nil then
 		return false
 	end
@@ -100,7 +104,7 @@ function closing.tell_refusal(actor: Handle, container: Handle, riders_leave: bo
 end
 
 function closing.veto(ev: ContainerClosingPayload)
-	local key = closing.refusal(ev.subject, false)
+	local key = closing.refusal(ev.subject, ev.actor, false)
 	if key ~= nil then
 		forget_entrant(ev.subject)
 	end
@@ -126,7 +130,7 @@ end
 -- beside the container, and the entry is spent.
 function closing.gather(ev: ContainerClosingPayload)
 	local container: Handle = ev.subject
-	local entrant = pending_entrant(container)
+	local entrant = pending_entrant(container, ev.actor)
 	forget_entrant(container)
 	if entrant ~= nil then
 		sim.container.insert({ container = container, entity = entrant })

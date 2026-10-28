@@ -82,4 +82,28 @@ for _, prototype in ipairs({ "crate", "locker" }) do
     assert(assert(t.body(victim)).posture == "lying", prototype .. ": the stuffed body is knocked down")
     assert(#t.script_errors() == 0, prototype .. ": adjacent stuffing has no script errors")
 end
+
+-- An open closet draws under the items on its tile (`closets.dm:249`, tg's
+-- BELOW_OBJ_LAYER): untargeted examine names the top of the stack.
+t.world([==[ (
+    name: "open closet under items",
+    legend: {
+        '.': (composition: (components: [(component: "station_base"), (component: "floor_tiles")])),
+        '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
+    },
+    levels: [(
+        rows: ["#####", "#...#", "#...#", "#####"],
+        items: [(3, 2, "floor_tile")],
+        structures: [(2, 2, "player_spawn", { "jobs": "assistant" }), (3, 2, "crate")],
+    )],
+) ]==], 0)
+local looker = t.join("assistant")
+t.run_ticks(3)
+t.click(looker, 3, 2, (assert(t.target_at(looker, 3, 2, "crate"), "the crate is observed")))
+t.tick()
+assert(assert(t.structure_at(3, 2)).state == "open", "the crate opens")
+assert(#t.items_at(3, 2) == 1, "the item lies on the open crate's tile")
+local seen = t.examine(looker, 3, 2)
+assert(seen ~= nil and seen.title ~= "crate", "the item draws over the open crate: " .. tostring(seen and seen.title))
+
 print("container adjacent entry: self-hide and stuffing from the next tile")
