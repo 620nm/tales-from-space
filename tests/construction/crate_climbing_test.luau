@@ -164,6 +164,8 @@ assert(#support_rows("mount") == 1, "open Alt+primary writes one mount transitio
 assert(has_message(t.messages(open_actor), COMPLETED_MESSAGE), "the matching open request presents completed success")
 assert(#t.script_errors() == 0, "open structure gesture has no script errors")
 assert(open_helper ~= nil, "both real players remain joined for the gesture path")
+-- tg never checks lying before or during a climb (`climbable.dm:140` tests
+-- only MOBILITY_MOVE), so resting does not stop the mount.
 t.world(MAP, 0)
 local resting_actor = t.join("assistant")
 t.run_ticks(3)
@@ -172,42 +174,47 @@ t.run_ticks(5)
 t.rest(resting_actor, true)
 t.tick()
 t.run_ticks(CLOSED_TICKS + 1)
-assert_position(resting_actor, 2, 3, "resting during the wait refuses the mount")
-assert_offset(resting_actor, 0, "resting refusal has no elevation")
-assert(#support_rows("mount") == 0, "resting refusal writes no mount")
-assert(
-    has_message(t.messages(resting_actor), "You must be standing to climb."),
-    "the pack veto before sim.climb presents body_not_standing"
-)
-t.rest(resting_actor, false)
-t.tick()
-local retry_body = t.body_target(resting_actor, resting_actor)
-local retry_support = target(resting_actor, 3, 3, "crate")
-t.drag(resting_actor, 2, 3, retry_body, 3, 3, retry_support)
-t.drag(resting_actor, 2, 3, retry_body, 3, 3, retry_support)
-t.tick()
-t.run_ticks(CLOSED_TICKS + 1)
-assert_position(resting_actor, 3, 3, "standing retry succeeds after the typed refusal")
-assert_offset(resting_actor, 14, "retry mounts normally")
-assert(#support_rows("mount") == 1, "duplicate retry input produces one mount")
-assert(has_message(t.messages(resting_actor), COMPLETED_MESSAGE), "the new request has its own completed receipt")
-assert(#t.script_errors() == 0, "resting refusal and retry have no script errors")
+assert_position(resting_actor, 3, 3, "resting during the wait does not refuse the mount")
+assert_offset(resting_actor, 14, "the resting climber is elevated")
+assert(#support_rows("mount") == 1, "resting during the wait writes one mount")
+assert(has_message(t.messages(resting_actor), COMPLETED_MESSAGE), "the resting climber is told it completed")
+assert(#t.script_errors() == 0, "resting during the wait has no script errors")
 
 t.world(MAP, 0)
 local lying_actor = t.join("assistant")
 t.run_ticks(3)
 t.rest(lying_actor, true)
 t.tick()
-start_closed_drag(lying_actor, 2, 3, 3, 3)
+local lying_body = t.body_target(lying_actor, lying_actor)
+local lying_support = target(lying_actor, 3, 3, "crate")
+t.drag(lying_actor, 2, 3, lying_body, 3, 3, lying_support)
+t.drag(lying_actor, 2, 3, lying_body, 3, 3, lying_support)
+t.tick()
 t.run_ticks(CLOSED_TICKS + 1)
-assert_position(lying_actor, 2, 3, "a lying actor never climbs")
-assert_offset(lying_actor, 0, "the post-wait veto has no elevation")
-assert(#support_rows("mount") == 0, "the post-wait veto writes no mount")
+assert_position(lying_actor, 3, 3, "a lying actor climbs as in tg")
+assert_offset(lying_actor, 14, "the lying climber is elevated")
+assert(#support_rows("mount") == 1, "duplicate lying input produces one mount")
+assert(has_message(t.messages(lying_actor), COMPLETED_MESSAGE), "the lying climber is told it completed")
+assert(#t.script_errors() == 0, "lying climb has no script errors")
+
+-- tg's wait breaks on incapacitation (`timed_actions.dm:77-78`): a climber
+-- who dies mid-wait is refused with body_not_controllable.
+t.world(MAP, 0)
+local dying_actor = t.join("assistant")
+t.run_ticks(3)
+start_closed_drag(dying_actor, 2, 3, 3, 3)
+t.run_ticks(5)
+t.set_health(dying_actor, { brute = 400 })
+t.run_ticks(CLOSED_TICKS + 1)
+assert(not assert(t.body(dying_actor)).controllable, "the dead climber is uncontrollable")
+assert_position(dying_actor, 2, 3, "an uncontrollable climber never mounts")
+assert_offset(dying_actor, 0, "the uncontrollable refusal has no elevation")
+assert(#support_rows("mount") == 0, "the uncontrollable refusal writes no mount")
 assert(
-    has_message(t.messages(lying_actor), "You must be standing to climb."),
-    "the pack veto after the wait presents body_not_standing"
+    has_message(t.messages(dying_actor), "You cannot control your body well enough to climb."),
+    "the pack veto before sim.climb presents body_not_controllable"
 )
-assert(#t.script_errors() == 0, "post-wait veto has no script errors")
+assert(#t.script_errors() == 0, "uncontrollable refusal has no script errors")
 
 t.world(MAP, 0)
 local moving_actor = t.join("assistant")

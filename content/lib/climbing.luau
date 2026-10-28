@@ -8,6 +8,9 @@ type ClimbAttempt = {
 
 local active_attempts: { ClimbAttempt } = {}
 
+local CRATE_CLIMB_SECONDS = 2.0
+local OPEN_CLIMB_FRACTION = 0.5
+
 local function remove_attempt(attempt: ClimbAttempt): ()
     for index = #active_attempts, 1, -1 do
         if active_attempts[index] == attempt then
@@ -17,8 +20,9 @@ local function remove_attempt(attempt: ClimbAttempt): ()
     end
 end
 
--- The pack's rule for who may climb: a live, standing, controllable body.
--- Returns the refusal reason, or nil when the actor may climb.
+-- Who may climb: a live, controllable body. tg refuses an immobile climber
+-- before the wait (`code/datums/elements/climbable.dm:140`) and never checks
+-- lying. Returns the refusal reason, or nil when the actor may climb.
 local function refusal_reason(actor: Handle): string?
     if actor.alive ~= true then
         return "body_unavailable"
@@ -26,9 +30,6 @@ local function refusal_reason(actor: Handle): string?
     local body = sim.body(actor)
     if body == nil then
         return "body_observer"
-    end
-    if body.posture == "lying" then
-        return "body_not_standing"
     end
     if body.controllable ~= true then
         return "body_not_controllable"
@@ -50,11 +51,9 @@ function climbing.begin(actor: Handle, support: Handle): boolean
     if actor.alive ~= true or support.alive ~= true then
         return false
     end
-    -- Only a bodiless actor is refused up front; posture and control are
-    -- judged when the wait ends, as tg's `do_climb` re-checks
-    -- (`code/datums/elements/climbable.dm:61-103`).
-    if sim.body(actor) == nil then
-        send(actor, "lunatic/tfs:lib.climbing.refused.body_observer")
+    local refused_at_start = refusal_reason(actor)
+    if refused_at_start ~= nil then
+        send(actor, "lunatic/tfs:lib.climbing.refused." .. refused_at_start)
         return true
     end
     for _, attempt in ipairs(active_attempts) do
@@ -63,10 +62,13 @@ function climbing.begin(actor: Handle, support: Handle): boolean
         end
     end
 
-    -- Crates take two seconds closed and one second once open. Sample once;
-    -- later open/close changes do not retime an attempt
-    -- (`code/game/objects/structures/crates_lockers/crates.dm:22-27,118-138`).
-    local duration_seconds = if support.state == "open" then 1.0 else 2.0
+    -- Crate numbers, applied to every climbable structure (crate, freezer):
+    -- 2 s closed, half that open
+    -- (`code/game/objects/structures/crates_lockers/crates.dm:27,121,133`).
+    -- Sampled once; later open/close changes do not retime an attempt.
+    local duration_seconds = if support.state == "open"
+        then CRATE_CLIMB_SECONDS * OPEN_CLIMB_FRACTION
+        else CRATE_CLIMB_SECONDS
     local duration_ticks = sim.ticks(duration_seconds)
     local attempt: ClimbAttempt = { actor = actor, support = support, request = nil }
     local task: Task? = nil
@@ -81,6 +83,8 @@ function climbing.begin(actor: Handle, support: Handle): boolean
                 return
             end
 
+            -- tg's wait breaks on incapacitation (`timed_actions.dm:77-78`); the
+            -- engine guard has no such flag, so control is judged again here.
             local refused = refusal_reason(actor)
             if refused ~= nil then
                 remove_attempt(attempt)

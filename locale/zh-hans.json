@@ -55,7 +55,6 @@
   "lunatic/tfs:lib.climbing.completed": "你爬上了结构。",
   "lunatic/tfs:lib.climbing.failed": "攀爬失败。",
   "lunatic/tfs:lib.climbing.refused.body_unavailable": "你的身体已不可用。",
-  "lunatic/tfs:lib.climbing.refused.body_not_standing": "你必须站立才能攀爬。",
   "lunatic/tfs:lib.climbing.refused.body_not_controllable": "你目前无法控制身体进行攀爬。",
   "lunatic/tfs:lib.climbing.refused.body_observer": "观察者不能攀爬。",
   "lunatic/tfs:lib.climbing.refused.body_in_motion": "你必须先停止移动才能攀爬。",
@@ -71,5 +70,5 @@
   "lunatic/tfs:lib.climbing.refused.blocked": "你的攀爬被阻挡。",
   "lunatic/tfs:lib.climbing.refused.cross_vetoed": "有东西阻止你爬到那里。",
   "lunatic/tfs:lib.climbing.refused.offset_out_of_range": "你不能爬那么高。",
-  "lunatic/tfs:lib.climbing.refused.not_applied": "攀爬没有产生任何变化。"
+  "lunatic/tfs:lib.climbing.refused.not_applied": "你没能爬上去。"
 }
