@@ -56,7 +56,6 @@
   "lunatic/tfs:lib.climbing.completed": "Završavaš penjanje na strukturu.",
   "lunatic/tfs:lib.climbing.failed": "Penjanje ne uspeva.",
   "lunatic/tfs:lib.climbing.refused.body_unavailable": "Tvoje telo više nije dostupno.",
-  "lunatic/tfs:lib.climbing.refused.body_not_standing": "Penjanje zahteva uspravan stav.",
   "lunatic/tfs:lib.climbing.refused.body_not_controllable": "Trenutno ne možeš da kontrolišeš telo dovoljno za penjanje.",
   "lunatic/tfs:lib.climbing.refused.body_observer": "Posmatrači ne mogu da se penju.",
   "lunatic/tfs:lib.climbing.refused.body_in_motion": "Moraš da prestaneš da se krećeš pre penjanja.",
@@ -72,5 +71,5 @@
   "lunatic/tfs:lib.climbing.refused.blocked": "Penjanje je blokirano.",
   "lunatic/tfs:lib.climbing.refused.cross_vetoed": "Nešto sprečava penjanje tamo.",
   "lunatic/tfs:lib.climbing.refused.offset_out_of_range": "Ta visina je prevelika za penjanje.",
-  "lunatic/tfs:lib.climbing.refused.not_applied": "Penjanje ništa nije promenilo."
+  "lunatic/tfs:lib.climbing.refused.not_applied": "Ne uspevaš da se popneš na to."
 }

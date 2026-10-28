@@ -147,7 +147,6 @@
   "lunatic/tfs:lib.climbing.completed": "Vous montez sur la structure.",
   "lunatic/tfs:lib.climbing.failed": "L'escalade échoue.",
   "lunatic/tfs:lib.climbing.refused.body_unavailable": "Votre corps n'est plus disponible.",
-  "lunatic/tfs:lib.climbing.refused.body_not_standing": "Vous devez être debout pour escalader.",
   "lunatic/tfs:lib.climbing.refused.body_not_controllable": "Vous ne contrôlez pas assez votre corps pour escalader.",
   "lunatic/tfs:lib.climbing.refused.body_observer": "Un observateur ne peut pas escalader.",
   "lunatic/tfs:lib.climbing.refused.body_in_motion": "Vous devez cesser de bouger avant d'escalader.",
@@ -163,5 +162,5 @@
   "lunatic/tfs:lib.climbing.refused.blocked": "Votre escalade est bloquée.",
   "lunatic/tfs:lib.climbing.refused.cross_vetoed": "Quelque chose vous empêche de monter là.",
   "lunatic/tfs:lib.climbing.refused.offset_out_of_range": "Vous ne pouvez pas monter aussi haut.",
-  "lunatic/tfs:lib.climbing.refused.not_applied": "L'escalade n'a rien changé."
+  "lunatic/tfs:lib.climbing.refused.not_applied": "Vous n'arrivez pas à monter dessus."
 }

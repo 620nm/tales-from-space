@@ -105,7 +105,6 @@ local climb_refusals = {
     "cross_vetoed",
     "offset_out_of_range",
     "not_applied",
-    "body_not_standing",
     "body_not_controllable",
     "body_observer",
 }
