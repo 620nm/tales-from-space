@@ -292,7 +292,8 @@ return {
         -- `bare` and `rock` write the level's natural fill (`inherit`: the
         -- profile substrate at or below ground, open sky above), as the
         -- editor's band fills do (content/editor.luau), so painting either
-        -- over an `open` hole closes it. `open` cuts a hole on any level.
+        -- over an `open` hole at or below ground closes it. `open` cuts a
+        -- hole on any level but the lowest, which refuses it.
         { id = "bare", label = "Bare Substrate", substrate = "inherit", replace_components = construction_components, components = {} },
         { id = "open", label = "Open (hole)", substrate = "open", replace_components = construction_components, components = {} },
         { id = "plating", label = "Station Base", replace_components = construction_components, components = { { component = "station_base" } } },

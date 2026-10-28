@@ -143,7 +143,9 @@ assert(
 
 -- 7. A hole cut in the ground closes under the natural fill. The `open` preset
 -- opens ground-level terrain; rock and bare (the `inherit` substrate word) close
--- it, so the lowest level is not left holding an Open tile.
+-- it. The lowest level refuses an Open tile, so the editor's stuck-validation
+-- case (a hole painted over with rock) is checked here on level 0.
+assert(not t.set_composition(1, 1, "open", BASEMENT), "the lowest level refuses the open preset")
 assert(t.set_composition(1, 1, "open", 0), "the open preset cuts a hole in ground-level terrain")
 assert(t.composition(1, 1).substrate == "open", "the cut tile's substrate is open")
 assert(t.set_composition(1, 1, "rock", 0), "rock fills the hole")

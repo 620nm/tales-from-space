@@ -64,7 +64,8 @@ and `docs/mapping/environment.md` "Exposure"). Station base and rock seal the
 substrate, so either one roofs open sky. The `open` preset cuts a hole on any
 level, ground-level terrain included, but not on the lowest. `bare` and `rock`
 write the level's natural fill (substrate `inherit`), so painting either over a
-hole closes it.
+hole at or below ground closes it; above ground the natural fill is open sky,
+so a hole there stays open.
 
 The four glass floors (tg `glass.dm`) are floor windows over an open substrate.
 They hold a body and the air, show the level below, and show runs beneath
