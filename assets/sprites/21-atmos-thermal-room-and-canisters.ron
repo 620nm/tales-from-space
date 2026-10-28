@@ -293,6 +293,10 @@
         ("canister_g3", Dmi("@canisters", "can-3", 0)),
         ("metal", Dmi("@stack_objects", "sheet-metal_3", 0)),
         ("floor_tile", Dmi("@tiles", "tile", 0)),
+        ("glass_tile", Dmi("@tiles", "tile_glass", 0)),
+        ("reinforced_glass_tile", Dmi("@tiles", "tile_rglass", 0)),
+        ("plasma_glass_tile", Dmi("@tiles", "tile_pglass", 0)),
+        ("reinforced_plasma_glass_tile", Dmi("@tiles", "tile_rpglass", 0)),
         ("tv", Dmi("@computer", "detective_tv", 0)),
         // The drain grate. tg has no floor drain -- its water spills are
         // decals on a timer -- so the picture is borrowed from the one

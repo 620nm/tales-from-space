@@ -144,7 +144,7 @@ end
 -- C by rank and the later-listed vent wins E by row, and after the
 -- large-object layer lands the vessel's rank wins both regardless.
 assert(top(1, 1) == "canister", "A: the vessel over the first-listed vent: " .. top(1, 1))
-assert(top(2, 1) == "floor tiles (30)", "B: the item over the outlet: " .. top(2, 1))
+assert(top(2, 1) == "floor tiles (60)", "B: the item over the outlet: " .. top(2, 1))
 assert(top(3, 1) == "canister", "C: the vessel over the item: " .. top(3, 1))
 assert(top(1, 2) == "canister", "D: the vessel over the outlet: " .. top(1, 2))
 assert(top(3, 2) == "canister", "E: the vessel over the later-listed vent: " .. top(3, 2))

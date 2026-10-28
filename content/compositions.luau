@@ -172,7 +172,7 @@ local construction_components = { "station_base", "floor_tiles", "grid_cover", "
     "glass_floor", "reinforced_glass_floor", "plasma_glass_floor", "reinforced_plasma_glass_floor" }
 
 -- tg /turf/open/floor/glass: in what is ported, the four variants differ in name
--- and art only (glass.dm:2-114; glow and floor-tile fields are not ported). Floor
+-- and art only (glass.dm:2-114; the glow is not ported). Floor
 -- windows over an open substrate: they hold a body and the air (support, seal),
 -- show the level below, and show runs without tool access (UNDERFLOOR_VISIBLE,
 -- glass.dm:8). Thermal is floor.dm:17-18 with the
@@ -284,7 +284,13 @@ return {
         free = { map = true, play = false },
     },
     presets = {
-        { id = "bare", label = "Bare Substrate", replace_components = construction_components, components = {} },
+        -- `bare` and `rock` write the level's natural fill (`inherit`: the
+        -- profile substrate at or below ground, open sky above), as the
+        -- editor's band fills do (content/editor.luau), so painting either
+        -- over an `open` hole at or below ground closes it. `open` cuts a
+        -- hole on any level but the lowest, which refuses it.
+        { id = "bare", label = "Bare Substrate", substrate = "inherit", replace_components = construction_components, components = {} },
+        { id = "open", label = "Open (hole)", substrate = "open", replace_components = construction_components, components = {} },
         { id = "plating", label = "Station Base", replace_components = construction_components, components = { { component = "station_base" } } },
         { id = "floor", label = "Tiled Floor", replace_components = construction_components, components = { { component = "station_base" }, { component = "floor_tiles" } } },
         { id = "floor_exposed", label = "Tiled Floor, Exposed", variant_of = "floor", replace_components = construction_components, components = { { component = "station_base" },
@@ -297,7 +303,7 @@ return {
         { id = "catwalk", label = "Catwalk", replace_components = construction_components, components = { { component = "catwalk" } } },
         { id = "wall", label = "Wall", replace_components = construction_components, components = { { component = "station_base" }, { component = "wall" } } },
         { id = "reinforced_wall", label = "Reinforced Wall", replace_components = construction_components, components = { { component = "station_base" }, { component = "reinforced_wall" } } },
-        { id = "rock", label = "Rock", replace_components = construction_components, components = { { component = "rock" } } },
+        { id = "rock", label = "Rock", substrate = "inherit", replace_components = construction_components, components = { { component = "rock" } } },
         { id = "glass_floor", label = "Glass Floor", substrate = "open", replace_components = construction_components,
             components = { { component = "glass_floor" } } },
         { id = "reinforced_glass_floor", label = "Reinforced Glass Floor", substrate = "open", replace_components = construction_components,

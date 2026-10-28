@@ -140,3 +140,16 @@ assert(
     math.abs(tracer_at(3, 1) - east_start) < 1e-6,
     "no tracer crosses the rock into the east pocket: " .. east_start .. " -> " .. tracer_at(3, 1)
 )
+
+-- 7. A hole cut in the ground closes under the natural fill. The `open` preset
+-- opens ground-level terrain; rock and bare (the `inherit` substrate word) close
+-- it. The lowest level refuses an Open tile, so the editor's stuck-validation
+-- case (a hole painted over with rock) is checked here on level 0.
+assert(not t.set_composition(1, 1, "open", BASEMENT), "the lowest level refuses the open preset")
+assert(t.set_composition(1, 1, "open", 0), "the open preset cuts a hole in ground-level terrain")
+assert(t.composition(1, 1).substrate == "open", "the cut tile's substrate is open")
+assert(t.set_composition(1, 1, "rock", 0), "rock fills the hole")
+assert(t.composition(1, 1).substrate == nil, "rock over a hole clears the opening")
+assert(t.set_composition(1, 1, "open", 0), "the hole is cut again")
+assert(t.set_composition(1, 1, "bare", 0), "bare fills the hole")
+assert(t.composition(1, 1).substrate == nil, "bare over a hole clears the opening")
