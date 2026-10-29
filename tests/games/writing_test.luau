@@ -160,10 +160,10 @@ assert(t.hands(p).held == "crayon_red", "the box contains a red crayon stick")
 -- through its self action places a real paper item in the player's hand.
 assert(assert(t.item_at(3, 2, "paper_bin")).sprite == "paper_bin", "default bin looks stocked")
 assert(assert(t.item_at(1, 2, "paper_bin.empty")).sprite == "paper_bin_empty", "empty variant looks empty")
+t.swap_hands(p)
 t.drop(p)
 t.tick()
 t.swap_hands(p)
-t.drop(p)
 t.tick()
 local bin = assert(t.target_at(p, 3, 2, "paper_bin"))
 local draw_hint = false
@@ -172,10 +172,22 @@ for _, hint in ipairs(t.action_hints(p, bin)) do
     if hint.gesture == "primary" and hint.label.key == "lunatic/tfs:action.paper_bin.draw" then draw_hint = true end
     if hint.gesture == "alt_primary" and hint.label.key == "lunatic/tfs:action.pick_up" then pickup_hint = true end
 end
-assert(draw_hint and pickup_hint, "the bin advertises drawing and alternative pickup")
+assert(draw_hint and pickup_hint, "holding a writer still offers drawing and alternative pickup")
 t.click(p, 3, 2, bin)
 t.tick()
-assert(t.hands(p).held == "paper", "a normal floor click takes a sheet")
+assert(t.hands(p).held == "crayon_red", "drawing keeps the writer in hand")
+t.swap_hands(p)
+t.tick()
+assert(t.hands(p).held == "paper", "a floor click draws a sheet into the free hand")
+assert(t.item_at(3, 2, "paper_bin") ~= nil, "drawing with a writer leaves the bin on the floor")
+t.drop(p)
+t.tick()
+t.swap_hands(p)
+t.drop(p)
+t.tick()
+t.click(p, 3, 2, bin)
+t.tick()
+assert(t.hands(p).held == "paper", "an empty-hand floor click takes a sheet")
 assert(t.item_at(3, 2, "paper_bin") ~= nil, "drawing leaves the bin on the floor")
 t.drop(p)
 t.tick()
@@ -187,7 +199,7 @@ local function bin_picture(id: string, state: string, sprite: string)
     assert(item.state == state and item.sprite == sprite, "bin picture follows committed stock")
     pick(id, 2, 1)
 end
-for index = 2, 30 do
+for index = 3, 30 do
     t.use_self(p)
     t.tick()
     t.swap_hands(p)
