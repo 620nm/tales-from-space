@@ -26,6 +26,7 @@ native_edges = [
     "lifecycle.entity_initialize",
     "lifecycle.entity_despawn",
     "lifecycle.round_spawn",
+    "lifecycle.level_crossing",
     "lifecycle.body_spawn",
     "attack.swing",
     "entity.pull",
