@@ -35,5 +35,10 @@ return {
     -- each 0.9 darker (tgstation/code/_onclick/hud/rendering/render_plate.dm:47) and
     -- 0.965 smaller (tgstation/code/_onclick/hud/rendering/plane_master_group.dm:181),
     -- straight down.
-    levels = { view = { depth = 3, tint = 0.9, scale = 0.965, offset = { x = 0, y = 0 } } },
+    -- Light crosses levels one tile of distance per level: tg's falloff takes the z
+    -- offset unscaled beside x and y (tgstation/code/modules/lighting/lighting_source.dm:277).
+    levels = {
+        view = { depth = 3, tint = 0.9, scale = 0.965, offset = { x = 0, y = 0 } },
+        light = { level_distance = 1 },
+    },
 }
