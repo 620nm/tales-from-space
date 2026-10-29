@@ -177,8 +177,29 @@ export function flowingText(id: string, fragments: WritingFragment[], classes: s
   return { nodes: out, truncated };
 }
 
-function flowingNodes(id: string, fragments: WritingFragment[], committed: boolean): UiNode[] {
-  return flowingText(id, fragments, ["paper-line", ...(committed ? ["paper-committed"] : [])]).nodes;
+/** Keep source Markdown and frozen ink together for the trusted renderer. */
+function markdownText(id: string, fragments: WritingFragment[], classes: string[], nodeLimit = NODE_LIMIT): FlowingText {
+  const nodes: UiNode[] = [];
+  for (const fragment of fragments) {
+    const source = fragmentText(fragment);
+    for (let offset = 0; offset < source.length; ) {
+      if (nodes.length >= Math.max(1, nodeLimit)) return { nodes, truncated: true };
+      const chunk = sliceUtf8(source.slice(offset), TEXT_LIMIT);
+      if (!chunk) break;
+      const style = fragment.style;
+      nodes.push({
+        ...text(`${id}/part/${nodes.length}`, chunk, classes), markdown: true,
+        // theme-lint: allow -- immutable native writer style is pack-authored content.
+        ...(style ? { style: {
+          ...(style.font_family ? { fontFamily: style.font_family } : {}),
+          ...(style.color ? { color: style.color } : {}),
+          ...(style.weight ? { fontWeight: style.weight } : {}),
+        } } : {}),
+      });
+      offset += chunk.length;
+    }
+  }
+  return { nodes, truncated: false };
 }
 
 function nodeCount(nodes: UiNode[]): number {
@@ -236,7 +257,7 @@ export function writingMarkupNodes(
   const fragmentsWithFallback = fragments.map((fragment, index) => {
     const source = fragmentText(fragment);
     const projection = tableProjection(`${id}/markup/${index}`, parseWritingMarkup(source));
-    const fallback = flowingText(`${id}/fragment/${index}`, [fragment], classes, boundedNodes);
+    const fallback = markdownText(`${id}/fragment/${index}`, [fragment], classes, boundedNodes);
     return { projection, fallback: fallback.nodes, fallbackTruncated: fallback.truncated };
   });
   if (!fragmentsWithFallback.some((fragment) => fragment.projection)) return undefined;
@@ -285,7 +306,7 @@ export function writingPreview(id: string, fragments: WritingFragment[], cls: st
     ...(truncated ? [text(`${id}/truncated`, S.tfs("ui.writing.truncated"), ["hint"])] : []),
   ];
   return [
-    ...flowingNodes(id, bounded, true),
+    ...markdownText(id, bounded, ["paper-line", "paper-committed"]).nodes,
     ...(truncated ? [text(`${id}/truncated`, S.tfs("ui.writing.truncated"), ["hint"])] : []),
   ];
 }

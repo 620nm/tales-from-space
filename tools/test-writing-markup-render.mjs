@@ -261,13 +261,19 @@ assert.ok(nodeCount(twoTables) <= 384);
 assert.equal(writing.writingMarkupNodes("too-small", [sourceFragment], ["reader-inline"], 100), undefined,
   "the renderer signals whole-fragment fallback when a complete Table cannot fit");
 
+const blankPaper = paper.paperBody("blank", paperDocument, { committed: [], draft: "", revision: 1 }, true);
+const blankDraft = find(blankPaper, node => node.type === "textarea");
+assert.equal(blankDraft.placeholder, "The sheet is blank.");
+assert.equal(blankDraft.markdown, true);
+assert.equal(blankDraft.value, "");
+assert.equal(find(blankPaper, node => node.text === blankDraft.placeholder), undefined,
+  "blank-sheet guidance is a disappearing placeholder, never sheet content");
+
 const plainPaper = writing.writingPreview("plain", [{ text: "**typed** and *plain*" }]);
 assert.equal(plainPaper.length, 1);
 assert.equal(plainPaper[0].id, "plain/part/0");
-assert.equal(plainPaper[0].text, "typed and plain");
-assert.deepEqual(plainPaper[0].runs.map((run) => [run.text, run.fontWeight, run.fontStyle]), [
-  ["typed", 700, undefined], [" and ", undefined, undefined], ["plain", undefined, "italic"],
-]);
+assert.equal(plainPaper[0].text, "**typed** and *plain*");
+assert.equal(plainPaper[0].markdown, true, "committed ink uses the same trusted Markdown renderer as drafts");
 const plainReader = reader.fileReader("plain-file", "md", "", 384, [
   { text: "**type**", style: { color: "#bb2222", font_family: "patrick-hand", weight: 400 } },
 ]);

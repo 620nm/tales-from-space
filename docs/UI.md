@@ -54,7 +54,9 @@ modal ownership, readers and buffering use the engine's
 Paper is one flowing sheet: writing continues after the existing ink with the
 held tool's font and colour. The Write press leaves those marks permanently;
 unsubmitted text stays local through ordinary view refreshes. Earlier ink is
-selectable but remains outside the editing host.
+selectable but remains outside the editing host. Blank-sheet text is a placeholder.
+Drafts render Markdown while typing, deleting and undoing, using the same inert
+formatting as committed ink.
 
 Devices declaring reachable control panels open on Controls. Details is the
 first workspace tab, to the left of Controls. The device bar keeps the native
