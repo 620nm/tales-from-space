@@ -39,6 +39,25 @@ not shipped. `air_sensor` declares no network and draws nothing.
 A prototype under `structures/` spells its own class word, because
 `lib/` is not published into the structure registry's sandbox.
 
+## Floor outlet covers and connections
+
+Utility outlet ports are small flush circular fittings with a hinged cover.
+They start closed; an empty-hand primary click within reach opens or closes
+the cover. Tools keep their normal use priority. Cover state changes only
+the housing sprite and never electrical delivery or the three independent
+cable-layer lamps.
+
+Hovering an open port draws arrows to visible consumers: solid green for a
+powered connection, solid amber for an unpowered connection, and thinner,
+faint dashed grey for reachable alternatives with lower preference. Closed
+covers and a pointer outside the port draw no arrows. The prototype owns
+all three styles and its `open` eligibility state.
+
+The engine's `docs/looks/connections.md` owns selection and disclosure:
+current serving selection wins, otherwise a physically cabled outlet may
+remain selected without power. These are derived preferences, not manually
+stored plugs. Hidden consumers never appear in the overlay.
+
 ## What each prototype stores
 
 | prototype | declares | tg |

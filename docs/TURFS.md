@@ -95,6 +95,11 @@ levels below the eye, each 0.9 darker and 0.965 smaller about it, straight down.
 Because a lower level draws smaller, an opening also shows a sliver of the tile
 beyond it.
 
+Across levels, sound and speech pass an open hole or a glass floor both ways;
+text, throws and machine feedback reach only viewers above, and a
+hand never reaches another level (`content/lib/level_crossing.luau`, bound by
+both modes).
+
 The level specs live in `tests/levels/`.
 
 ## Gravity and handholds
