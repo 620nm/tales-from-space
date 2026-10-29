@@ -28,6 +28,7 @@ export interface PaperState {
   name?: string;
   committed?: WritingFragment[];
   draft?: string;
+  writer_style?: WritingFragment["style"];
 }
 export interface FaxDirectoryEntry {
   id?: string;

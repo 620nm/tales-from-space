@@ -1,5 +1,5 @@
 {
-  "note": "Committed handwriting remains visible beside an editable Markdown draft.",
+  "note": "Writing continues directly after the ink on one sheet, with a single Write press.",
   "view": {
     "version": 5,
     "revision": 1,
@@ -21,7 +21,8 @@
             { "text": "Meet at the airlock. ", "style": { "font_family": "patrick-hand", "color": "#202c2d", "weight": 400 } },
             { "text": "Bring the red key.", "style": { "font_family": "patrick-hand", "color": "#bb2222", "weight": 700 } }
           ],
-            "draft": "**Supply list**\n- oxygen\n- water"
+            "draft": " Remember the oxygen.",
+            "writer_style": { "font_family": "patrick-hand", "color": "#000000", "weight": 400 }
           },
           "actions": [{ "id": "write", "input": 4096 }]
         }
@@ -29,5 +30,9 @@
     },
     "log": []
   },
-  "viewport": { "width": 1024, "height": 768, "dpr": 1 }
+  "viewport": { "width": 1024, "height": 768, "dpr": 1 },
+  "steps": [
+    { "type": "fill", "id": "doc/1/1/paper/draft", "value": " Remember the oxygen.", "expect": { "value": " Remember the oxygen.", "actionCount": 0 } },
+    { "type": "click", "id": "doc/1/1/paper/commit", "expect": { "actionCount": 1 } }
+  ]
 }

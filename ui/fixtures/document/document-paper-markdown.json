@@ -1,0 +1,64 @@
+{
+  "note": "Blank-sheet placeholder disappears when private Markdown writing begins.",
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": true,
+    "state": {},
+    "documents": {
+      "1": {
+        "id": 1,
+        "generation": 1,
+        "title": "Paper",
+        "state": {
+          "document": "script",
+          "status": 2,
+          "data": {
+            "kind": "paper",
+            "name": "Blank sheet",
+            "revision": 1,
+            "committed": [],
+            "draft": "",
+            "writer_style": {
+              "font_family": "patrick-hand",
+              "color": "#000000",
+              "weight": 400
+            }
+          },
+          "actions": [
+            {
+              "id": "write",
+              "input": 4096
+            }
+          ]
+        }
+      }
+    },
+    "log": []
+  },
+  "viewport": {
+    "width": 1024,
+    "height": 768,
+    "dpr": 1
+  },
+  "steps": [
+    {
+      "type": "fill",
+      "id": "doc/1/1/paper/draft",
+      "value": "**Bring oxygen**",
+      "expect": {
+        "value": "**Bring oxygen**",
+        "actionCount": 0
+      }
+    },
+    {
+      "type": "key",
+      "id": "doc/1/1/paper/draft",
+      "key": "End",
+      "expect": {
+        "value": "**Bring oxygen**",
+        "actionCount": 0
+      }
+    }
+  ]
+}

@@ -7,6 +7,7 @@ import { test } from "node:test";
 
 const engine = process.argv[2] ?? process.env.LUNATIC_ENGINE;
 if (!engine) throw new Error("Pass the engine checkout path.");
+const uiVersion = JSON.parse(await readFile(resolve(engine, "idl/ui-v1.json"), "utf8")).version;
 const { build } = await import(pathToFileURL(resolve(engine, "web/node_modules/esbuild/lib/main.js")));
 const output = await build({
   stdin: {
@@ -162,7 +163,7 @@ test("historical item spawns keep their root target, timestamp and cursors", () 
 
 test("historical timestamps format deterministically without Date", async () => {
   const quickJs = await GuestRuntime.create({
-    version: 6,
+    version: uiVersion,
     id: "staff-history-test",
     slot: "staff",
     audience: "staff",

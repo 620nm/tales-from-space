@@ -22,6 +22,7 @@ t.world(
             items: [
                 (2, 1, "paper"), (3, 1, "four_color_pen"),
                 (2, 2, "crayon_box"), (3, 2, "paper_bin"),
+                (1, 2, "paper_bin.empty"),
             ],
         ),
     ],
@@ -34,10 +35,14 @@ t.tick()
 
 local function pick(id: string, x: number, y: number)
     local target = assert(
-        t.target_at(p, x, y),
+        t.target_at(p, x, y, id),
         id .. " is visible; tile=" .. table.concat(t.items_at(x, y), ",")
     )
-    t.click(p, x, y, target)
+    if string.sub(id, 1, 9) == "paper_bin" then
+        t.use_item(p, target, "alt_primary")
+    else
+        t.click(p, x, y, target)
+    end
     t.tick()
     assert(t.hands(p).held == id, id .. " is in the active hand; got " .. tostring(t.hands(p).held))
 end
@@ -55,7 +60,7 @@ local function paper_data()
             { text = fragment.text, style = ui_controls.record(fragment.style) }
         )
     end
-    return { kind = data.kind, draft = data.draft, committed = committed }, script
+    return { kind = data.kind, draft = data.draft, committed = committed, writer_style = ui_controls.record(data.writer_style or {}) }, script
 end
 
 local function paper_prefix()
@@ -90,6 +95,8 @@ assert(t.hands(p).held == "four_color_pen", "the pen is held beside the sheet")
 t.use_on_other(p)
 t.tick()
 prefix = paper_prefix()
+data = paper_data()
+assert(data.writer_style.font_family == "patrick-hand" and data.writer_style.color == "#000000", "the unwritten pen text uses the selected ink")
 local first_text = string.rep("a", 4096)
 local writer_window = ui_controls.record(t.ui(p, "writing"))
 assert(
@@ -108,6 +115,7 @@ assert(
 )
 local first_style = data.committed[1].style
 assert(first_style.font_family == "patrick-hand", "pen font is frozen on the fragment")
+assert(data.writer_style.color == first_style.color, "writing retains its style after commit")
 
 t.use_self(p)
 t.tick()
@@ -115,6 +123,8 @@ t.use_on_other(p)
 t.tick()
 prefix = paper_prefix()
 local second_text = string.rep("b", 4096)
+data = paper_data()
+assert(data.writer_style.color == "#FF0000", "cycling the pen updates the unwritten ink")
 t.ui_edit(p, prefix .. "/draft", second_text)
 t.ui_press(p, prefix .. "/commit")
 t.tick()
@@ -148,13 +158,36 @@ assert(t.hands(p).held == "crayon_red", "the box contains a red crayon stick")
 
 -- A paper bin is stocked with thirty counted blank-sheet units. Materializing
 -- through its self action places a real paper item in the player's hand.
+assert(assert(t.item_at(3, 2, "paper_bin")).sprite == "paper_bin", "default bin looks stocked")
+assert(assert(t.item_at(1, 2, "paper_bin.empty")).sprite == "paper_bin_empty", "empty variant looks empty")
 t.drop(p)
 t.tick()
 t.swap_hands(p)
 t.drop(p)
 t.tick()
+local bin = assert(t.target_at(p, 3, 2, "paper_bin"))
+local draw_hint = false
+local pickup_hint = false
+for _, hint in ipairs(t.action_hints(p, bin)) do
+    if hint.gesture == "primary" and hint.label.key == "lunatic/tfs:action.paper_bin.draw" then draw_hint = true end
+    if hint.gesture == "alt_primary" and hint.label.key == "lunatic/tfs:action.pick_up" then pickup_hint = true end
+end
+assert(draw_hint and pickup_hint, "the bin advertises drawing and alternative pickup")
+t.click(p, 3, 2, bin)
+t.tick()
+assert(t.hands(p).held == "paper", "a normal floor click takes a sheet")
+assert(t.item_at(3, 2, "paper_bin") ~= nil, "drawing leaves the bin on the floor")
+t.drop(p)
+t.tick()
 pick("paper_bin", 3, 2)
-for index = 1, 30 do
+local function bin_picture(id: string, state: string, sprite: string)
+    t.drop(p)
+    t.tick()
+    local item = assert(t.item_at(2, 1, id), "the bin is visible on the floor")
+    assert(item.state == state and item.sprite == sprite, "bin picture follows committed stock")
+    pick(id, 2, 1)
+end
+for index = 2, 30 do
     t.use_self(p)
     t.tick()
     t.swap_hands(p)
@@ -173,6 +206,7 @@ local function papers_on_floor()
     return count
 end
 assert(papers_on_floor() == 30, "the bin materialized exactly thirty papers")
+bin_picture("paper_bin", "empty", "paper_bin_empty")
 t.use_self(p)
 t.tick()
 assert(papers_on_floor() == 30, "the bin has no thirty-first sheet")
@@ -190,7 +224,35 @@ t.swap_hands(p)
 t.use_on_other(p)
 t.tick()
 assert(papers_on_floor() == 29, "returning a blank sheet restores bin stock")
+bin_picture("paper_bin", "full", "paper_bin")
 t.use_self(p)
 t.tick()
 t.swap_hands(p)
 assert(t.hands(p).held == "paper", "restored bin stock draws again")
+
+-- The editor's empty variant starts with no stock and shares draw/return behavior.
+t.drop(p)
+t.tick()
+t.swap_hands(p)
+t.drop(p)
+t.tick()
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "paper_bin.empty")))
+t.tick()
+assert(t.hands(p).held == nil, "an empty bin does not fall through to pickup")
+assert(t.item_at(1, 2, "paper_bin.empty") ~= nil, "the empty bin stays on the floor")
+pick("paper_bin.empty", 1, 2)
+t.use_self(p)
+t.tick()
+assert(papers_on_floor() == 30, "empty variant cannot create a sheet")
+assert(t.hands(p)[1] ~= "paper" and t.hands(p)[2] ~= "paper", "empty variant leaves the other hand empty")
+t.swap_hands(p)
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "paper")))
+t.tick()
+t.swap_hands(p)
+t.use_on_other(p)
+t.tick()
+assert(papers_on_floor() == 29, "empty variant accepts a blank sheet")
+bin_picture("paper_bin.empty", "full", "paper_bin")
+t.use_self(p)
+t.tick()
+bin_picture("paper_bin.empty", "empty", "paper_bin_empty")

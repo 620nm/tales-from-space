@@ -1,9 +1,15 @@
 -- Shared bounded-paper presentation. The file store remains authoritative;
 -- this helper only projects its committed fragments and submits an append.
 -- The native writer resolves the exact held tool, style, Mind and charges.
+export type WriterStyle = { font_family: string, color: string, weight: number }
 export type Fragment = {
     text: string,
-    style: { font_family: string, color: string, weight: number },
+    style: WriterStyle,
+}
+export type WriterSpec = {
+    font_family: string,
+    weight: number,
+    colors: { { name: string, color: string } },
 }
 export type PaperView = {
     kind: string,
@@ -11,9 +17,27 @@ export type PaperView = {
     revision: number,
     committed: { Fragment },
     draft: string,
+    writer_style: WriterStyle?,
 }
 
 local writing = {}
+local writers: { [string]: WriterSpec } = {}
+
+local function writer_style(implement: Handle?): WriterStyle?
+    if implement == nil then
+        return nil
+    end
+    local spec = writers[implement.base or implement.prototype or ""]
+    if spec == nil then
+        return nil
+    end
+    for _, color in ipairs(spec.colors) do
+        if #spec.colors == 1 or color.name == implement.state then
+            return { font_family = spec.font_family, color = color.color, weight = spec.weight }
+        end
+    end
+    return nil
+end
 
 writing.paper = "paper"
 writing.file_uid = 0
@@ -80,6 +104,7 @@ function writing.open(actor: Handle, paper: Handle, draft: unknown, implement: H
     if view == nil then
         return false
     end
+    view.writer_style = writer_style(implement)
     if implement ~= nil and implement.uses == 0 then
         sim.message.send({
             recipient = actor,
@@ -110,6 +135,8 @@ function writing.update(actor: Handle, paper: Handle, draft: unknown): boolean
     if view == nil then
         return false
     end
+    local last = view.committed[#view.committed]
+    view.writer_style = if last then last.style else nil
     ui.update({
         viewer = actor,
         owner = paper,
@@ -155,7 +182,8 @@ end
 
 -- Every held writing item opens the same paper document. Keep this route in
 -- the shared library so crayons and the pen cannot drift apart.
-function writing.attach(definition: Definition)
+function writing.attach(definition: Definition, content: { id: string, writer: WriterSpec })
+    writers[content.id] = content.writer
     definition:handle(
         "interaction.use",
         { kind = "replace", route = "use" },

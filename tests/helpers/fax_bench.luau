@@ -100,16 +100,16 @@ function fax_bench.assert_no_script_errors(label: string): ()
     )
 end
 
--- Name the fax at (x, y) through its panel and advertise it.
+-- Rename an automatically advertised fax through its panel.
 function fax_bench.advertise(player: number, x: number, y: number, name: string): ()
     local fax = assert(t.target_at(player, x, y, "fax"), "fax is present")
     t.click(player, x, y, fax)
     t.run_ticks(2)
     assert(t.ui(player, "fax"), "fax panel opened")
+    assert(fax_bench.data(player, "fax").advertised == true, "fax advertises before interaction")
     t.ui_edit(player, fax_bench.control(player, "fax", "/controls/name"), name)
     t.ui_press(player, fax_bench.control(player, "fax", "/controls/name/set"))
     t.run_ticks(2)
-    t.ui_press(player, fax_bench.control(player, "fax", "/controls/advertise"))
     t.run_ticks(3)
     local state = fax_bench.data(player, "fax")
     assert(state.advertised == true, "advertisement commits enabled state")
@@ -139,7 +139,7 @@ function fax_bench.load_sheet(
 end
 
 -- Pick the directory row named `name` on the open panel. The directory lists
--- every advertising fax on the tree, the viewer's own included.
+-- other advertising faxes on the tree.
 function fax_bench.select(player: number, name: string): ()
     local rows = ui_controls.rows(fax_bench.data(player, "fax").directory)
     for index, row in ipairs(rows) do

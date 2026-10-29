@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// The seven art assertions this pack's bake owns. They were facts about
+// The art assertions this pack's bake owns. They were facts about
 // THIS pack's art living in the engine's client suite, and left it in
 // lunatic's 5c8b41971; each test below names the Rust test it restates.
 // The subject is the bake at $LUNATIC_PACK_WEB -- a served document root
@@ -207,6 +207,18 @@ function cell(name, frame = 0) {
   }
   return out;
 }
+
+test("stocked_paper_bin_contains_visible_paper", { skip }, () => {
+  const full = cell("paper_bin"), empty = cell("paper_bin_empty");
+  assert.notDeepEqual(full, empty, "full and empty bins have distinct baked pixels");
+  const lightPixels = (pixels) => {
+    let count = 0;
+    for (let i = 0; i < pixels.length; i += 4)
+      if (pixels[i + 3] > 0 && Math.min(pixels[i], pixels[i + 1], pixels[i + 2]) > 200) count++;
+    return count;
+  };
+  assert(lightPixels(full) > lightPixels(empty), "the stocked bin adds light paper above the basket");
+});
 
 // Greyscale means greyscale: the baked cable cell must carry NO colour of
 // its own, or the runtime multiply lands on top of a tint that is already

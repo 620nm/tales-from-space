@@ -55,7 +55,7 @@ if sim ~= nil then
         return true
     end)
 
-    writing.attach(behavior)
+    writing.attach(behavior, content)
 end
 
 return content

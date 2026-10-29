@@ -28,10 +28,10 @@ local function advertise(player: number, x: number, y: number, name: string): Sp
     t.click(player, x, y, fax)
     t.run_ticks(2)
     assert(t.ui(player, "fax"), "fax panel opened")
+    assert(data(player, "fax").advertised == true, "fax advertises before player setup")
     t.ui_edit(player, control(player, "fax", "/controls/name"), name)
     t.ui_press(player, control(player, "fax", "/controls/name/set"))
     t.run_ticks(2)
-    t.ui_press(player, control(player, "fax", "/controls/advertise"))
     t.run_ticks(3)
     local state = data(player, "fax")
     assert(state.name == name, "advertisement commits its requested name")
@@ -89,7 +89,7 @@ t.world(
                 (15, 1, 16, 1), (16, 1, 18, 2),
             ],
             items: [(3, 2, "paper"), (2, 2, "four_color_pen"),
-                (12, 2, "paper_bin"), (13, 3, "toner_cartridge")],
+                (12, 2, "paper_bin.empty"), (14, 2, "paper"), (13, 3, "toner_cartridge")],
             networks: [
                 (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
                 (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
@@ -156,7 +156,7 @@ t.run_ticks(2)
 t.swap_hands(sender)
 t.run_ticks(1)
 
--- Both names are enabled independently. The isolated root is excluded from
+-- Rename the automatically enabled endpoints. The isolated root is excluded from
 -- the sender's directory even though its endpoint is advertised.
 advertise(receiver, 12, 2, "Medical Fax")
 advertise(isolated, 18, 2, "Isolated Fax")
@@ -189,6 +189,24 @@ assert(
 )
 
 -- Selection and send require the viewer-specific confirmation step.
+t.ui_press(sender, control(sender, "fax", "/directory/entry/0/target"))
+t.run_ticks(1)
+assert(data(sender, "fax").confirming == true, "recipient selection opens confirmation")
+t.ui_press(receiver, control(receiver, "fax", "/controls/advertise"))
+t.run_ticks(4)
+assert(#ui_controls.rows(data(sender, "fax").directory) == 0, "hidden peer leaves the directory")
+assert(data(sender, "fax").target == nil, "disappearing peer clears selection")
+assert(data(sender, "fax").confirming ~= true, "disappearing peer cancels confirmation")
+
+-- Renaming another endpoint emits a directory event without undoing Hide.
+advertise(isolated, 18, 2, "Still Isolated")
+t.ui_close(isolated, "fax")
+t.run_ticks(4)
+assert(data(receiver, "fax").advertised == false, "Hide survives directory changes")
+assert(#ui_controls.rows(data(sender, "fax").directory) == 0, "hidden peer remains absent")
+t.ui_press(receiver, control(receiver, "fax", "/controls/advertise"))
+t.run_ticks(4)
+assert(#ui_controls.rows(data(sender, "fax").directory) == 1, "enabled peer is rediscovered")
 t.ui_press(sender, control(sender, "fax", "/directory/entry/0/target"))
 t.run_ticks(1)
 t.ui_press(sender, control(sender, "fax", "/confirm/send"))
@@ -251,15 +269,33 @@ assert(receiver_data.busy ~= true, "the recipient reservation clears at the 2 s 
 -- Refill each stock through the player-facing containers. The machine starts
 -- one unit short, while each container retains the unused remainder.
 t.ui_close(receiver, "fax")
-local paper_bin = assert(t.target_at(receiver, 12, 2, "paper_bin"), "paper bin is available")
+local paper_bin = assert(t.target_at(receiver, 12, 2, "paper_bin.empty"), "empty paper bin is available")
 t.click(receiver, 12, 2, paper_bin)
 t.run_ticks(1)
-assert(t.hands(receiver).held == "paper_bin", "paper bin is held")
-t.click(receiver, 12, 2, receiver_fax)
-t.run_ticks(2)
-assert(t.hands(receiver).held == "paper_bin", "refilling retains the source container")
+assert(t.hands(receiver).held == "paper_bin.empty", "paper bin variant is held")
+t.swap_hands(receiver)
+t.run_ticks(1)
+t.click(receiver, 14, 2, assert(t.target_at(receiver, 14, 2, "paper")))
+t.run_ticks(1)
+assert(t.hands(receiver).held == "paper", "blank refill sheet is held")
+t.ui_close(receiver, "writing")
+t.swap_hands(receiver)
+t.run_ticks(1)
+assert(t.hands(receiver).held == "paper_bin.empty", "bin is active for return")
+t.use_on_other(receiver)
+t.run_ticks(1)
+assert(t.hands(receiver)[1] ~= "paper" and t.hands(receiver)[2] ~= "paper", "bin accepts the blank sheet")
 t.drop(receiver)
 t.run_ticks(1)
+assert(assert(t.item_at(13, 2, "paper_bin.empty")).sprite == "paper_bin", "returned sheet fills the bin picture")
+t.click(receiver, 13, 2, assert(t.target_at(receiver, 13, 2, "paper_bin.empty")))
+t.run_ticks(1)
+t.click(receiver, 12, 2, receiver_fax)
+t.run_ticks(2)
+assert(t.hands(receiver).held == "paper_bin.empty", "refilling retains the source container")
+t.drop(receiver)
+t.run_ticks(1)
+assert(assert(t.item_at(13, 2, "paper_bin.empty")).sprite == "paper_bin_empty", "transfer empties the bin picture")
 t.ui_close(receiver, "fax")
 t.click(receiver, 12, 2, receiver_fax)
 t.run_ticks(2)
@@ -281,3 +317,26 @@ t.click(receiver, 12, 2, receiver_fax)
 t.run_ticks(2)
 receiver_data = data(receiver, "fax")
 assert(receiver_data.toner == 30, "toner cartridge restores the missing unit")
+
+-- A real breaker outage refreshes open panels and clears stale recipients.
+t.ui_press(receiver, control(receiver, "fax", "/directory/entry/0/target"))
+t.run_ticks(1)
+assert(data(receiver, "fax").confirming == true, "reverse recipient opens confirmation")
+t.ui_close(sender, "fax")
+local apc = assert(t.target_at(sender, 2, 1, "apc"), "the network's power panel is reachable")
+t.click(sender, 2, 1, apc)
+t.run_ticks(2)
+ui_controls.toggle(sender, "master")
+t.run_seconds(3)
+assert(assert(t.store_at(2, 1)).master == false, "the breaker opens")
+receiver_data = data(receiver, "fax")
+assert(receiver_data.powered == false, "the outage reaches the recipient")
+assert(#ui_controls.rows(receiver_data.directory) == 0, "offline directory is empty")
+assert(receiver_data.target == nil and receiver_data.confirming ~= true, "outage clears confirmation")
+ui_controls.toggle(sender, "master")
+t.run_seconds(3)
+assert(assert(t.store_at(2, 1)).master == true, "the breaker closes")
+receiver_data = data(receiver, "fax")
+assert(receiver_data.powered == true, "the breaker restores power")
+assert(#ui_controls.rows(receiver_data.directory) == 1, "peer returns without advertisement gestures")
+assert_no_script_errors("automatic discovery and power restoration")

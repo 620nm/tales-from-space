@@ -1,3 +1,4 @@
+local action_rules = require("@lib/action_rules")
 -- A flush floor socket with a scripted cover and three independent
 -- cable-layer lamps. The cover never changes electrical delivery.
 -- Layer states and feed selection follow the engine's
@@ -19,15 +20,7 @@ return {
     },
     fixture = "Outlet",
     script = "utility_outlet_port",
-    actions = {
-        {
-            id = "toggle_cover",
-            gesture = "primary",
-            route = "receiver",
-            label = "lunatic/tfs:action.utility_outlet_port.toggle_cover",
-            held = { fact = "held.present", value = "false" },
-        },
-    },
+    actions = action_rules.open_close(),
     hover_connections = {
         relation = "energy_consumers",
         state = "open",

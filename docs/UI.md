@@ -51,6 +51,13 @@ The computer and file workflow lives in [LAPTOP.md](LAPTOP.md). File workspace
 modal ownership, readers and buffering use the engine's
 `docs/pack-ui/components.md` and `docs/pack-ui/authoring.md` contracts.
 
+Paper is one flowing sheet: writing continues after the existing ink with the
+held tool's font and colour. The Write press leaves those marks permanently;
+unsubmitted text stays local through ordinary view refreshes. Earlier ink is
+selectable but remains outside the editing host. Blank-sheet text is a placeholder.
+Drafts render Markdown while typing, deleting and undoing, using the same inert
+formatting as committed ink.
+
 Devices declaring reachable control panels open on Controls. Details is the
 first workspace tab, to the left of Controls. The device bar keeps the native
 Lock/Unlock action and its lock-state icon visible across workspace pages.
@@ -130,12 +137,13 @@ Fixtures under `ui/fixtures/` use disclosed provider data, bounded real-browser
 input and result assertions. No fixture writes private guest state. Minimum
 usable viewport is 1024×768; regular and wide checks use 1366×768 and 1600×1000.
 
-From the engine checkout with `LUNATIC_PACK` set to this pack:
+From the engine checkout with `LUNATIC_PACK` set to this pack, built engine
+tools and the pack's atlas baked under `target/web`:
 
 ```sh
-cargo run -q -p xtask -- build-ui
-node tools/ui-lab.mjs shot <fixture> --lint
-node tools/ui-lab.mjs shot all --check --lint
+target/debug/xtask build-ui --pack "$LUNATIC_PACK" --web "$LUNATIC_PACK/target/web"
+node tools/ui-lab.mjs shot <fixture> --pack "$LUNATIC_PACK" --web "$LUNATIC_PACK/target/web" --lint
+node tools/ui-lab.mjs shot all --pack "$LUNATIC_PACK" --web "$LUNATIC_PACK/target/web" --check --lint
 ```
 
 Read the resulting image, geometry and tree under `ui/fixtures/out/`.
@@ -143,10 +151,13 @@ Intended art changes update reviewed baselines with `shot <fixture> --update`.
 Pack-art shots require a baked delivered atlas; synthetic engine assets verify
 mechanism only. A rendering-environment mismatch skips pixel comparison while
 mount, lint and interactions still run. Missing required baselines fail.
+UI edits rebuild only the package. `serve --watch` with the same `--pack` and
+`--web` flags rebuilds and reloads it while authoring. Sprite composites use
+the baked atlas; rebaking artwork does not require recompiling the engine.
 The engine's `docs/pack-ui/lab.md` owns fixture syntax and screenshot environment.
 
 From this checkout, `node tools/test.mjs <engine>` checks theme rules,
-localization and behavior. The engine gate runs the integrated pack checks.
+localization and behavior. The pack gate runs these checks against its named engine.
 
 `LUNATIC_PACK=$PWD node tools/review-device-workspace.mjs <engine> --out <dir>`
 starts an isolated free-build bench using the built engine and pack. Trusted

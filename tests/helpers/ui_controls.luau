@@ -1,6 +1,14 @@
 -- Select rendered pack controls; the shared host reducer invokes their callbacks.
 local controls = {}
 
+function controls.primary_label(player: number, target: SpecObservedTarget, key: string)
+    local labels = {}
+    for _, hint in ipairs(t.action_hints(player, target)) do
+        if hint.gesture == "primary" then table.insert(labels, hint.label.key) end
+    end
+    assert(#labels == 1 and labels[1] == key, "one state-specific primary action: " .. key .. "; got " .. table.concat(labels, ", "))
+end
+
 export type Record = { [string]: unknown }
 export type Node = { [string]: unknown, id: string }
 export type Scope = { document: number, generation: number }

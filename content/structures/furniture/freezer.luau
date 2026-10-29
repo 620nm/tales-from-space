@@ -1,9 +1,11 @@
+local action_rules = require("@lib/action_rules")
 -- Tg's freezer inherits the crate mechanics but has its own name, description
 -- and art (`code/game/objects/structures/crates_lockers/crates.dm:1-18,254-260`).
 local closet_data = require("@lib/closets/data")
 
 return {
     id = "freezer",
+    actions = action_rules.open_close(),
     script = "freezer",
     visual_layer = "low_object",
     energy_network = "power",

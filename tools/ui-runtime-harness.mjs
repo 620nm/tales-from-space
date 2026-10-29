@@ -13,6 +13,7 @@ export const engineRoot = resolve(
   process.argv[2] ?? process.env.LUNATIC_ENGINE ?? join(packRoot, "..", "lunatic"),
 );
 export const sdkEntry = join(engineRoot, "web/sdk/index.ts");
+export const uiVersion = JSON.parse(await readFile(join(engineRoot, "idl/ui-v1.json"), "utf8")).version;
 
 const { build } = await import(
   pathToFileURL(join(engineRoot, "web/node_modules/esbuild/lib/main.js")).href
@@ -38,7 +39,7 @@ export async function compilePackModule(entry) {
 
 /** The guest package the runtime accepts, around one compiled module. */
 export const guestPackage = (source) => ({
-  version: 6,
+  version: uiVersion,
   id: "test",
   slot: "hud",
   entry: "main.js",

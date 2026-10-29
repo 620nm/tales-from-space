@@ -19,7 +19,11 @@ uses and writes in `kalam-bold`. A crayon append is paper-only and spends one
 use only after native append admission succeeds. A refused target or full
 paper spends nothing.
 
-The paper bin has 30 blank-sheet units. Drawing materializes one `paper`
+The paper bin starts full with 30 blank-sheet units; `paper_bin.empty` starts
+with none and the same capacity. Both appear in the editor palette. A bin's
+picture shows paper while stock remains and the bare basket when empty.
+Initialization, completed interactions, and transfers refresh that picture
+from the actual resource count. Drawing materializes one `paper`
 entity and debits one unit. Refilling a machine transfers only the missing
 amount, leaves the source container in place, and applies the transfer as one
 atomic native operation. A toner cartridge follows the same rule with 30
@@ -72,11 +76,14 @@ is refused before the scan starts, with the message "The sheet is too long to
 fax." for the operator; no paper can reach it, so the refusal guards a future
 larger sheet.
 
-Fax endpoints advertise no service by default. A player enables a trimmed,
-control-free name of at most 64 bytes. Duplicate display names remain plain in
-the native directory; the pack UI adds each endpoint's MAC suffix when it
-renders an ambiguous name. Discovery includes only online endpoints in the
-same connected device tree, with 32 rows per page. The service bridge uses
+Fax endpoints advertise automatically under their prototype name. A player
+can rename or hide an endpoint; hiding persists through network changes.
+Names are trimmed, control-free, and at most 64 bytes. The panel displays
+addresses beside names to distinguish recipients across pages. Discovery
+includes only other online endpoints in the same connected device tree,
+with 32 native rows per page. Initialization and directory-change events
+restore advertisements after network changes without polling. A selected
+recipient that disappears also loses its pending confirmation. The service bridge uses
 the five messages `fax.print`, `fax.send`, `fax.printed`, `fax.sent`, and
 `fax.failed`, with Markdown chunks no larger than 4096 bytes and no more
 than 8192 bytes total. The delivery and reply handlers use the native

@@ -31,7 +31,7 @@ content.actions = {
 
 if sim ~= nil then
     local behavior = sim.define("behavior", "lunatic/tfs:crayon_green", { prototype = content.id })
-    writing.attach(behavior)
+    writing.attach(behavior, content)
 end
 
 return content

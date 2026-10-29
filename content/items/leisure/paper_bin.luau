@@ -9,12 +9,32 @@ local content = {
     name_label = "lunatic/tfs:entity.paper_bin.name",
     name = "paper bin",
     sprite = "paper_bin",
+    states = { "full", "empty" },
+    state = "full",
+    state_sprites = { full = "paper_bin", empty = "paper_bin_empty" },
     acts_on_items = true,
+    gestures = { "alt_primary" },
+    pickup_gesture = "alt_primary",
+    interaction_labels = { alt_primary = { label = "lunatic/tfs:action.pick_up" } },
     hint_tags = { "paper_source" },
     resources = { paper = { capacity = 30, initial = 30 } },
+    variants = {
+        empty = {
+            name = "empty paper bin",
+            name_label = "lunatic/tfs:entity.paper_bin.empty.name",
+            sprite = "paper_bin_empty",
+            state = "empty",
+            resources = { paper = { capacity = 30, initial = 0 } },
+        },
+    },
 }
 
 content.actions = {
+    {
+        id = "draw_ground", gesture = "primary", route = "receiver",
+        label = "lunatic/tfs:action.paper_bin.draw",
+        held = { fact = "held.present", value = "false" },
+    },
     {
         id = "draw",
         gesture = "self",
@@ -31,8 +51,33 @@ content.actions = {
 }
 
 if sim ~= nil then
+    local function refresh(bin: Handle?)
+        if bin == nil or not bin.alive or (bin.base or bin.prototype) ~= content.id then
+            return
+        end
+        local state = "empty"
+        for _, row in ipairs(sim.resources.read(bin)) do
+            if row.id == "paper" and row.current > 0 then
+                state = "full"
+            end
+        end
+        if bin.state ~= state then
+            sim.appearance.set_state({ entity = bin, state = state })
+        end
+    end
     local behavior = sim.define("behavior", "lunatic/tfs:paper_bin", { prototype = content.id })
-    behavior:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
+    behavior:handle("entity.initialize.done", { kind = "react" }, function(ev)
+        refresh(ev.entity)
+    end)
+    -- The interaction companion follows its committed resource commands.
+    behavior:handle("interaction.use.done", { kind = "react" }, function(ev)
+        refresh(ev.subject)
+    end)
+    sim.handle("resources.transfer.done", { kind = "react" }, function(ev)
+        refresh(ev.from)
+        refresh(ev.to)
+    end)
+    local function draw(ev)
         sim.resources.materialize({
             source = ev.subject,
             resource = "paper",
@@ -40,7 +85,9 @@ if sim ~= nil then
             require_blank = true,
         })
         return true
-    end)
+    end
+    behavior:handle("interaction.use", { kind = "replace", route = "self" }, draw)
+    behavior:handle("interaction.use", { kind = "replace", route = "interact" }, draw)
     behavior:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local item = ev.claim and ev.claim.entity
         if item == nil or (item.base or item.prototype) ~= "paper" then
