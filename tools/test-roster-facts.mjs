@@ -280,6 +280,14 @@ fact("the roster is this pack's, with content to place", () => {
   }
 });
 
+fact("the editor rosters full and empty paper bins", () => {
+  const full = roster.items.find((item) => item.id === "paper_bin");
+  const empty = roster.items.find((item) => item.id === "paper_bin.empty");
+  assert.equal(full?.sprite, "paper_bin");
+  assert.equal(empty?.sprite, "paper_bin_empty");
+  assert.equal(empty?.base, full.id);
+});
+
 // `editor: null` is a clean exit: the engine returns Ok when
 // content/editor.luau is merely absent, so presence is the fact.
 fact("the pack ships the editor declaration that declares its palettes", () => {

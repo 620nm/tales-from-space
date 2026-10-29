@@ -1095,6 +1095,7 @@
   "lunatic/tfs:entity.paper.name": "Paper",
   "lunatic/tfs:entity.paper.blood_types.name": "Blood type compatibility reference",
   "lunatic/tfs:entity.paper_bin.name": "Paper bin",
+  "lunatic/tfs:entity.paper_bin.empty.name": "Empty paper bin",
   "lunatic/tfs:entity.toner_cartridge.name": "Toner cartridge",
   "lunatic/tfs:entity.four_color_pen.name": "Four-color pen",
   "lunatic/tfs:entity.crayon_box.name": "Box of crayons",

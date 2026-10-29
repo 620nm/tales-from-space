@@ -18,7 +18,17 @@
         // burning picture composes it over the plane, as the game draws it.
         ("paperplane", Dmi("@bureaucracy", "paperplane", 0)),
         ("paperplane_onfire", DmiLayers([("@bureaucracy", "paperplane"), ("@bureaucracy", "paperplane_onfire")], 0)),
-        ("paper_bin", Dmi("@bureaucracy", "paper_bin0", 0)),
+        // paperbin.dm:1-2,181-208: papers 8,16,24,30, then the front rim.
+        // pixel_z raises a layer; atlas dy points down. The top rounds to 2 px.
+        ("paper_bin", DmiCellsAt([
+            (dmi: "@bureaucracy", state: "paper_bin0", dir: 0, dx: 0, dy: 0),
+            (dmi: "@bureaucracy", state: "paper", dir: 0, dx: 0, dy: 1),
+            (dmi: "@bureaucracy", state: "paper", dir: 0, dx: 0, dy: 0),
+            (dmi: "@bureaucracy", state: "paper", dir: 0, dx: 0, dy: -1),
+            (dmi: "@bureaucracy", state: "paper", dir: 0, dx: 0, dy: -2),
+            (dmi: "@bureaucracy", state: "paper_bin_overlay", dir: 0, dx: 0, dy: 0),
+        ])),
+        ("paper_bin_empty", Dmi("@bureaucracy", "paper_bin0", 0)),
         // pen.dm:125-130; photocopier.dm:879-884.
         ("four_color_pen", Dmi("@bureaucracy", "pen_4color", 0)),
         ("toner_cartridge", Dmi("@bureaucracy", "tonercartridge", 0)),

@@ -89,7 +89,7 @@ t.world(
                 (15, 1, 16, 1), (16, 1, 18, 2),
             ],
             items: [(3, 2, "paper"), (2, 2, "four_color_pen"),
-                (12, 2, "paper_bin"), (13, 3, "toner_cartridge")],
+                (12, 2, "paper_bin.empty"), (14, 2, "paper"), (13, 3, "toner_cartridge")],
             networks: [
                 (x: 1, y: 1, network: "power", channel: "l2", kind: "cable", facing: 15),
                 (x: 2, y: 1, network: "power", channel: "l1", kind: "cable", facing: 15),
@@ -269,15 +269,33 @@ assert(receiver_data.busy ~= true, "the recipient reservation clears at the 2 s 
 -- Refill each stock through the player-facing containers. The machine starts
 -- one unit short, while each container retains the unused remainder.
 t.ui_close(receiver, "fax")
-local paper_bin = assert(t.target_at(receiver, 12, 2, "paper_bin"), "paper bin is available")
+local paper_bin = assert(t.target_at(receiver, 12, 2, "paper_bin.empty"), "empty paper bin is available")
 t.click(receiver, 12, 2, paper_bin)
 t.run_ticks(1)
-assert(t.hands(receiver).held == "paper_bin", "paper bin is held")
-t.click(receiver, 12, 2, receiver_fax)
-t.run_ticks(2)
-assert(t.hands(receiver).held == "paper_bin", "refilling retains the source container")
+assert(t.hands(receiver).held == "paper_bin.empty", "paper bin variant is held")
+t.swap_hands(receiver)
+t.run_ticks(1)
+t.click(receiver, 14, 2, assert(t.target_at(receiver, 14, 2, "paper")))
+t.run_ticks(1)
+assert(t.hands(receiver).held == "paper", "blank refill sheet is held")
+t.ui_close(receiver, "writing")
+t.swap_hands(receiver)
+t.run_ticks(1)
+assert(t.hands(receiver).held == "paper_bin.empty", "bin is active for return")
+t.use_on_other(receiver)
+t.run_ticks(1)
+assert(t.hands(receiver)[1] ~= "paper" and t.hands(receiver)[2] ~= "paper", "bin accepts the blank sheet")
 t.drop(receiver)
 t.run_ticks(1)
+assert(assert(t.item_at(13, 2, "paper_bin.empty")).sprite == "paper_bin", "returned sheet fills the bin picture")
+t.click(receiver, 13, 2, assert(t.target_at(receiver, 13, 2, "paper_bin.empty")))
+t.run_ticks(1)
+t.click(receiver, 12, 2, receiver_fax)
+t.run_ticks(2)
+assert(t.hands(receiver).held == "paper_bin.empty", "refilling retains the source container")
+t.drop(receiver)
+t.run_ticks(1)
+assert(assert(t.item_at(13, 2, "paper_bin.empty")).sprite == "paper_bin_empty", "transfer empties the bin picture")
 t.ui_close(receiver, "fax")
 t.click(receiver, 12, 2, receiver_fax)
 t.run_ticks(2)

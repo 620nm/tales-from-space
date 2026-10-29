@@ -511,7 +511,7 @@ if sim ~= nil then
             update(ev.subject, ev.actor)
             return true
         end
-        if held ~= nil and held.prototype == "paper_bin" then
+        if held ~= nil and (held.base or held.prototype) == "paper_bin" then
             sim.resources.transfer({ from = held, to = ev.subject, resource = printing.paper })
             update(ev.subject, ev.actor)
             return true

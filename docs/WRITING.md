@@ -19,7 +19,11 @@ uses and writes in `kalam-bold`. A crayon append is paper-only and spends one
 use only after native append admission succeeds. A refused target or full
 paper spends nothing.
 
-The paper bin has 30 blank-sheet units. Drawing materializes one `paper`
+The paper bin starts full with 30 blank-sheet units; `paper_bin.empty` starts
+with none and the same capacity. Both appear in the editor palette. A bin's
+picture shows paper while stock remains and the bare basket when empty.
+Initialization, completed interactions, and transfers refresh that picture
+from the actual resource count. Drawing materializes one `paper`
 entity and debits one unit. Refilling a machine transfers only the missing
 amount, leaves the source container in place, and applies the transfer as one
 atomic native operation. A toner cartridge follows the same rule with 30

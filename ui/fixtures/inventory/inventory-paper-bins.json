@@ -1,0 +1,22 @@
+{
+  "note": "The full paper-bin composite and its empty variant, side by side in the actual inventory UI.",
+  "viewport": { "width": 1366, "height": 768, "dpr": 1 },
+  "view": {
+    "version": 5,
+    "revision": 1,
+    "body": true,
+    "state": {
+      "inventory": {
+        "active": 0,
+        "hands": [
+          { "name": "Paper bin", "sprite": "paper_bin" },
+          { "name": "Empty paper bin", "sprite": "paper_bin_empty" }
+        ],
+        "held": [null, null],
+        "equipment": []
+      }
+    },
+    "documents": {},
+    "log": []
+  }
+}

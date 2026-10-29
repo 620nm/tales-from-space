@@ -22,6 +22,7 @@ t.world(
             items: [
                 (2, 1, "paper"), (3, 1, "four_color_pen"),
                 (2, 2, "crayon_box"), (3, 2, "paper_bin"),
+                (1, 2, "paper_bin.empty"),
             ],
         ),
     ],
@@ -34,7 +35,7 @@ t.tick()
 
 local function pick(id: string, x: number, y: number)
     local target = assert(
-        t.target_at(p, x, y),
+        t.target_at(p, x, y, id),
         id .. " is visible; tile=" .. table.concat(t.items_at(x, y), ",")
     )
     t.click(p, x, y, target)
@@ -153,12 +154,21 @@ assert(t.hands(p).held == "crayon_red", "the box contains a red crayon stick")
 
 -- A paper bin is stocked with thirty counted blank-sheet units. Materializing
 -- through its self action places a real paper item in the player's hand.
+assert(assert(t.item_at(3, 2, "paper_bin")).sprite == "paper_bin", "default bin looks stocked")
+assert(assert(t.item_at(1, 2, "paper_bin.empty")).sprite == "paper_bin_empty", "empty variant looks empty")
 t.drop(p)
 t.tick()
 t.swap_hands(p)
 t.drop(p)
 t.tick()
 pick("paper_bin", 3, 2)
+local function bin_picture(id: string, state: string, sprite: string)
+    t.drop(p)
+    t.tick()
+    local item = assert(t.item_at(2, 1, id), "the bin is visible on the floor")
+    assert(item.state == state and item.sprite == sprite, "bin picture follows committed stock")
+    pick(id, 2, 1)
+end
 for index = 1, 30 do
     t.use_self(p)
     t.tick()
@@ -178,6 +188,7 @@ local function papers_on_floor()
     return count
 end
 assert(papers_on_floor() == 30, "the bin materialized exactly thirty papers")
+bin_picture("paper_bin", "empty", "paper_bin_empty")
 t.use_self(p)
 t.tick()
 assert(papers_on_floor() == 30, "the bin has no thirty-first sheet")
@@ -195,7 +206,31 @@ t.swap_hands(p)
 t.use_on_other(p)
 t.tick()
 assert(papers_on_floor() == 29, "returning a blank sheet restores bin stock")
+bin_picture("paper_bin", "full", "paper_bin")
 t.use_self(p)
 t.tick()
 t.swap_hands(p)
 assert(t.hands(p).held == "paper", "restored bin stock draws again")
+
+-- The editor's empty variant starts with no stock and shares draw/return behavior.
+t.drop(p)
+t.tick()
+t.swap_hands(p)
+t.drop(p)
+t.tick()
+pick("paper_bin.empty", 1, 2)
+t.use_self(p)
+t.tick()
+assert(papers_on_floor() == 30, "empty variant cannot create a sheet")
+assert(t.hands(p)[1] ~= "paper" and t.hands(p)[2] ~= "paper", "empty variant leaves the other hand empty")
+t.swap_hands(p)
+t.click(p, 2, 1, assert(t.target_at(p, 2, 1, "paper")))
+t.tick()
+t.swap_hands(p)
+t.use_on_other(p)
+t.tick()
+assert(papers_on_floor() == 29, "empty variant accepts a blank sheet")
+bin_picture("paper_bin.empty", "full", "paper_bin")
+t.use_self(p)
+t.tick()
+bin_picture("paper_bin.empty", "empty", "paper_bin_empty")
