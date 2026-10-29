@@ -51,6 +51,11 @@ The computer and file workflow lives in [LAPTOP.md](LAPTOP.md). File workspace
 modal ownership, readers and buffering use the engine's
 `docs/pack-ui/components.md` and `docs/pack-ui/authoring.md` contracts.
 
+Paper is one flowing sheet: writing continues after the existing ink with the
+held tool's font and colour. The Write press leaves those marks permanently;
+unsubmitted text stays local through ordinary view refreshes. Earlier ink is
+selectable but remains outside the editing host.
+
 Devices declaring reachable control panels open on Controls. Details is the
 first workspace tab, to the left of Controls. The device bar keeps the native
 Lock/Unlock action and its lock-state icon visible across workspace pages.

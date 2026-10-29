@@ -55,7 +55,7 @@ local function paper_data()
             { text = fragment.text, style = ui_controls.record(fragment.style) }
         )
     end
-    return { kind = data.kind, draft = data.draft, committed = committed }, script
+    return { kind = data.kind, draft = data.draft, committed = committed, writer_style = ui_controls.record(data.writer_style or {}) }, script
 end
 
 local function paper_prefix()
@@ -90,6 +90,8 @@ assert(t.hands(p).held == "four_color_pen", "the pen is held beside the sheet")
 t.use_on_other(p)
 t.tick()
 prefix = paper_prefix()
+data = paper_data()
+assert(data.writer_style.font_family == "patrick-hand" and data.writer_style.color == "#000000", "the unwritten pen text uses the selected ink")
 local first_text = string.rep("a", 4096)
 local writer_window = ui_controls.record(t.ui(p, "writing"))
 assert(
@@ -108,6 +110,7 @@ assert(
 )
 local first_style = data.committed[1].style
 assert(first_style.font_family == "patrick-hand", "pen font is frozen on the fragment")
+assert(data.writer_style.color == first_style.color, "writing retains its style after commit")
 
 t.use_self(p)
 t.tick()
@@ -115,6 +118,8 @@ t.use_on_other(p)
 t.tick()
 prefix = paper_prefix()
 local second_text = string.rep("b", 4096)
+data = paper_data()
+assert(data.writer_style.color == "#FF0000", "cycling the pen updates the unwritten ink")
 t.ui_edit(p, prefix .. "/draft", second_text)
 t.ui_press(p, prefix .. "/commit")
 t.tick()

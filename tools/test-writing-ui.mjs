@@ -22,6 +22,12 @@ const committedRuns = paper.find((node) => node.id === "doc/1/1/paper/committed/
 assert.equal(committedRuns[1].color, "#bb2222");
 assert.equal(committedRuns.map((run) => run.text).join(""), "Meet at the airlock. Bring the red key.");
 assert.equal(paper.find((node) => node.id === "doc/1/1/paper/draft").type, "textarea");
+const sheet = paper.find((node) => node.id === "doc/1/1/paper/committed");
+const field = sheet.children.at(-1);
+assert.equal(field.flow, true);
+assert.equal(field.submitOnly, true);
+assert.equal(field.id, "doc/1/1/paper/draft");
+assert(!paper.some(node => node.id.endsWith("/draft-area") || node.id.endsWith("/draft-label")));
 const paperView = await fixture("document/document-paper");
 tree(paperView);
 const paperAction = ui.onEvent({ id: "doc/1/1/paper/draft", type: "change", value: "draft" }, paperView).action;

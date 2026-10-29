@@ -125,6 +125,7 @@ export function press(
 export interface FieldOpts extends Box {
   label?: string;
   multiline?: boolean;
+  flow?: boolean;
   submitOnly?: boolean;
   clearOnSubmit?: boolean;
   blurOnSubmit?: boolean;
@@ -147,9 +148,10 @@ export function entry(
     value,
     event: id,
     ...(opts.label ? { label: opts.label } : {}),
-    class: [opts.multiline ? "area" : "entry", ...(opts.cls ?? [])],
+    class: [...(opts.flow ? [] : [opts.multiline ? "area" : "entry"]), ...(opts.cls ?? [])],
     ...(opts.style ? { style: opts.style as Record<string, StyleValue> } : {}),
     ...(opts.submitOnly ? { submitOnly: true } : {}),
+    ...(opts.flow ? { flow: true } : {}),
     ...(opts.clearOnSubmit ? { clearOnSubmit: true } : {}),
     ...(opts.blurOnSubmit ? { blurOnSubmit: true } : {}),
     ...(opts.debounceMs === undefined ? {} : { debounceMs: opts.debounceMs }),

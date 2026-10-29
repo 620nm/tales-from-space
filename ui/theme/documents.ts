@@ -75,7 +75,7 @@ export const documentRules: UiStyleRule[] = [
   // Physical documents keep their own paper and handwriting surfaces.
   rule("paper-identity", { alignItems: "center", justifyContent: "space-between", gap: 8 }),
   rule("paper-title", { fontFamily: "patrick-hand", fontSize: 22, color: ink }),
-  rule("paper-sheet", { display: "block", backgroundColor: paper, color: paperInk, padding: 14, minHeight: 100, whiteSpace: "pre-wrap" }),
+  rule("paper-sheet", { display: "block", backgroundColor: paper, color: paperInk, padding: 14, minHeight: 280, whiteSpace: "pre-wrap", fontFamily: "patrick-hand", fontSize: 22, lineHeight: 1.25 }),
   rule("paper-line", { display: "inline", fontFamily: "patrick-hand", fontSize: 22, lineHeight: 1.25, color: paperInk, whiteSpace: "pre-wrap" }),
   rule("paper-committed", { fontWeight: 400 }),
   // Source-driven matrices flow within their owning document body.
@@ -93,8 +93,6 @@ export const documentRules: UiStyleRule[] = [
   rule("writing-markup-header-cell", { color: paperInk }, { within: "fax-paper" }),
   rule("writing-markup-header-cell", { color: paperInk }, { within: "copier-paper" }),
   rule("paper-label", { flexShrink: 0, whiteSpace: "nowrap", fontFamily: "mono", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, color: dim }),
-  rule("paper-draft-area", { gap: 6, paddingTop: 10 }),
-  rule("paper-draft", { width: "100%", minHeight: 90, fontFamily: "patrick-hand", fontSize: 19, color: paperInk, backgroundColor: paper }),
   rule("fax-identity", { width: "100%", alignItems: "center", gap: 12, flexWrap: "wrap" }),
   rule("fax-controls", { width: "100%", alignItems: "center", gap: 6, flexWrap: "wrap", paddingBottom: 8, borderBottom: edge(titleLine) }),
   rule("fax-name-entry", { minWidth: 100, flexGrow: 1 }),
