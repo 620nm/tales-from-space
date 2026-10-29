@@ -12,7 +12,7 @@ return {
     actions = { {
         id = "close", gesture = "primary", route = "receiver",
         label = "lunatic/tfs:action.close",
-        held = { fact = "held.present", value = "false" },
+        visible = { fact = "held.present", value = "false" },
     } },
     visual_layer = "fixture",
     name_label = "lunatic/tfs:entity.cadaver_drawer.name",

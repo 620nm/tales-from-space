@@ -12,6 +12,7 @@ export type Action = {
     label: string,
     target: Selector,
     held: Selector?,
+    visible: Selector?,
     uses_held: boolean?,
 }
 
@@ -83,19 +84,20 @@ function rules.attack(id: string, held: Selector?, label: string?): Action
     return action
 end
 
+-- Show Open/Close with empty hands; still admit the held-tool handlers.
 function rules.open_close(): { Action }
     return {
         {
             id = "open", gesture = "primary", route = "receiver",
             label = "lunatic/tfs:action.open",
             target = rules.fact("target.state", "closed"),
-            held = rules.fact("held.present", false),
+            visible = rules.fact("held.present", false),
         },
         {
             id = "close", gesture = "primary", route = "receiver",
             label = "lunatic/tfs:action.close",
             target = rules.fact("target.state", "open"),
-            held = rules.fact("held.present", false),
+            visible = rules.fact("held.present", false),
         },
     }
 end

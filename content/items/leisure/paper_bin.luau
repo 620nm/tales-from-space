@@ -33,7 +33,6 @@ content.actions = {
     {
         id = "draw_ground", gesture = "primary", route = "receiver",
         label = "lunatic/tfs:action.paper_bin.draw",
-        held = { fact = "held.present", value = "false" },
     },
     {
         id = "draw",
