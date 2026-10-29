@@ -7,6 +7,31 @@ local composition = require("@helpers/composition")
 -- A click on its pixels opens the vessel; a click on transparent ground
 -- reaches the deck between the vessel and its underfloor socket.
 
+-- Fastened or loose, a vessel draws over the anchored port it stands on,
+-- and the port is still drawn beneath it even where the vessel covers
+-- every one of its pixels, so this reads the draw list, not the picker.
+local function drawn_beneath(
+    viewer: number,
+    x: number,
+    y: number,
+    lower: string,
+    upper: string
+): boolean
+    local low: number?, high: number? = nil, nil
+    for index, name in t.drawn_at(viewer, x, y) do
+        if name == lower and low == nil then
+            low = index
+        elseif name == upper then
+            high = index
+        end
+    end
+    return low ~= nil and high ~= nil and low < high
+end
+
+local function drawn(viewer: number, x: number, y: number): string
+    return table.concat(t.drawn_at(viewer, x, y), " < ")
+end
+
 local MAP = [==[
 (
     name: "canister layering",
@@ -62,6 +87,10 @@ local standing = t.structure_at(3, 1)
 assert(
     standing and standing.id == "canister" and standing.state == "anchored",
     "the vessel remains fastened above the new floor"
+)
+assert(
+    drawn_beneath(p, 3, 1, "connector port", "canister"),
+    "the fastened vessel draws over its port: " .. drawn(p, 3, 1)
 )
 assert(network_channels.at(3, 1, "pipe") == "", "tiling invented no raw pipe under the socket")
 assert(network_matter.pressure(2, 1) ~= nil, "the neighbouring run remains connected")
@@ -119,9 +148,11 @@ assert(
     t.target_at(q, 3, 1, "canister") ~= nil and #t.items_at(3, 1) == 1,
     "tile C holds the vessel and the tiles"
 )
+-- The flush outlet sits wholly under the vessel's pixels, so tile D
+-- proves its stack from the draw list.
 assert(
-    t.target_at(q, 1, 2, "utility_outlet_port") ~= nil and t.target_at(q, 1, 2, "canister") ~= nil,
-    "tile D holds the outlet and the vessel"
+    drawn_beneath(q, 1, 2, "utility outlet port", "canister"),
+    "tile D draws the outlet beneath the loose vessel: " .. drawn(q, 1, 2)
 )
 assert(
     t.target_at(q, 3, 2, "canister") ~= nil and t.target_at(q, 3, 2, "vent") ~= nil,
@@ -138,11 +169,9 @@ end
 
 -- The order, pair by pair: the vessel over the vent whichever of the two
 -- the map lists first, the item over the anchored outlet, the vessel
--- over the item. A, B and D already hold -- the pick favours the later
--- map row of a same-rank pair, and the item rank already sits above the
--- fixture rank -- while C and E are the tripwires: today the item wins
--- C by rank and the later-listed vent wins E by row, and after the
--- large-object layer lands the vessel's rank wins both regardless.
+-- over the item and over the outlet. Draw rank decides (fixture < item <
+-- large object), never map row: C and E are the tripwires, which the
+-- item and the later-listed vent would win if the vessel lost its rank.
 assert(top(1, 1) == "canister", "A: the vessel over the first-listed vent: " .. top(1, 1))
 assert(top(2, 1) == "floor tiles (60)", "B: the item over the outlet: " .. top(2, 1))
 assert(top(3, 1) == "canister", "C: the vessel over the item: " .. top(3, 1))
