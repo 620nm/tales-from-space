@@ -301,7 +301,8 @@ return {
             channel_paints = channel_paints,
             kinds = { { id = "standard", paintable = true, allowed_channels = pipe_channels, connects_to_kinds = { "standard", "adapter" }, connectivity = 15, shapes = {}, shapes_by_channel = shapes("pipe", pipe_channels, false) },
                 -- tg's multi-deck pipe adapter (pipes/multiz.dm:2-60, `paintable = FALSE`):
-                -- joins the adapter stacked directly above or below it; laterally it is pipe.
+                -- joins the adapter stacked directly above or below it. Laterally it
+                -- joins every side like pipe, where tg's mouths only its `dir` (multiz.dm:8-9).
                 { id = "adapter", paintable = false, allowed_channels = pipe_channels, connects_to_kinds = { "adapter", "standard" }, cross_level_adapter = true,
                     connectivity = 15, shapes = {}, shapes_by_channel = uniform_shapes(function(channel: string) return "pipe_adapter_" .. channel end, pipe_channels) },
                 { id = "he_pipe", paintable = false, allowed_channels = { "l2", "l3", "l4" }, connects_to_kinds = { "he_pipe" },

@@ -8,7 +8,9 @@
 --      upstairs, cutting one hub leaves the upstairs backbone dead (the
 --      panel's cell keeps the lamp lit a while), and laying it again from a
 --      coil set to "hub" brings it back;
---   2. an adapter pair shares gas between two levels;
+--   2. an adapter pair shares gas between two levels, and plain pipe under
+--      a glass floor over plain pipe below shares none (glass holds no
+--      cable, so pipe stands in for the "runs under glass" case);
 --   3. plain cable stacked over plain cable joins nothing.
 --
 -- The lamp is on the ground and the generator below it because bare
@@ -112,56 +114,70 @@ assert(backbone_live(), "and the pair carries the power again")
 -- 3. The control: plain cable stacked over plain cable is two circuits.
 power_world("cable")
 t.join()
+t.run_seconds(3)
 assert(not backbone_live(), "plain cable over plain cable joins nothing")
 
--- 2. The adapter pair.
+-- 2. The adapter pair, then plain pipe under glass over plain pipe.
 t.set_breathing(false)
-t.world(
-    [==[(
-    name: "stacked pipes",
-    tags: ["terrestrial"],
-    levels_below_ground: 1,
-    environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),
-    legend: {
+
+-- Pipe at x = 3..5 on both levels; the piece at (5, 1) is `joint` on both,
+-- and the ground tile there is `floor`'s glyph.
+local function pipe_world(joint: string, floor: string)
+    local function runs(): string
+        return run_piece("pipe", 3, 1, "l3", "standard")
+            .. run_piece("pipe", 4, 1, "l3", "standard")
+            .. run_piece("pipe", 5, 1, "l3", joint)
+    end
+    t.world(
+        '(name: "stacked pipes", tags: ["terrestrial"], levels_below_ground: 1,'
+            .. " environment: (kind: Exact(terrestrial), gravity_m_s2: Exact(9.80665)),"
+            .. " legend: {\n"
+            .. [==[
         '#': (composition: (components: [(component: "station_base"), (component: "wall")])),
         '.': (composition: (components: [(component: "station_base")])),
-    },
-    levels: [
-        (
-            rows: ["#######", "#.....#", "#######"],
-            structures: [],
-            networks: [
-                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-                (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-                (x: 5, y: 1, network: "pipe", channel: "l3", kind: "adapter", facing: 15),
-            ],
-        ),
-        (
-            rows: ["#######", "#.....#", "#######"],
-            structures: [(1, 1, "player_spawn"), (2, 1, "stationary_tank", "anchored", ("o2", 9000.0))],
-            networks: [
-                (x: 3, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-                (x: 4, y: 1, network: "pipe", channel: "l3", kind: "standard", facing: 15),
-                (x: 5, y: 1, network: "pipe", channel: "l3", kind: "adapter", facing: 15),
-            ],
-        ),
-    ],
-)]==],
-    7
-)
-t.join()
-t.run_seconds(5)
+        'g': (composition: (substrate: Open, components: [(component: "glass_floor")])),
+]==]
+            .. "\n    }, levels: ["
+            .. '(rows: ["#######", "#.....#", "#######"], structures: [], networks: ['
+            .. runs()
+            .. "]),"
+            .. '(rows: ["#######", "#....'
+            .. floor
+            .. '#", "#######"],'
+            .. ' structures: [(1, 1, "player_spawn"), (2, 1, "stationary_tank", "anchored", ("o2", 9000.0))],'
+            .. " networks: ["
+            .. runs()
+            .. "])])",
+        7
+    )
+    t.join()
+    t.run_seconds(5)
+end
 
 local function pressure(x: number, level: number): number
     local id = assert(t.network_instance(x, 1, "pipe", "l3", level))
     return assert(t.network_pressure(x, 1, id, level))
 end
+
+pipe_world("adapter", ".")
 local upstairs_kpa = pressure(3, GROUND)
 local downstairs_kpa = pressure(3, BASEMENT)
 assert(upstairs_kpa > 1000, "the tank charges its own run, got " .. upstairs_kpa)
 assert(
     math.abs(upstairs_kpa - downstairs_kpa) < upstairs_kpa * 0.05,
     "the adapter pair shares the gas with the level below: "
+        .. upstairs_kpa
+        .. " vs "
+        .. downstairs_kpa
+)
+
+pipe_world("standard", "g")
+upstairs_kpa = pressure(3, GROUND)
+downstairs_kpa = pressure(3, BASEMENT)
+assert(upstairs_kpa > 1000, "the tank charges the run under the glass, got " .. upstairs_kpa)
+assert(
+    downstairs_kpa < upstairs_kpa * 0.5,
+    "plain pipe under glass shares no gas with the pipe below: "
         .. upstairs_kpa
         .. " vs "
         .. downstairs_kpa
