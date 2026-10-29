@@ -67,7 +67,7 @@ assert(
 )
 assert(plasma[3] / plasma[1] > 0.9, "blue is nearly as strong as red, got " .. plasma[3] / plasma[1])
 
--- (d) A solid floor passes nothing, though the basement tile under it is lit.
+-- (d) A solid floor passes nothing up; the viewer cannot see the tile under it.
 assert(t.received_light(viewer, 1, 2, GROUND) == nil, "a closed floor passes no light")
 
 -- (b) The lamp is on the ground, over a hole; the viewer stands in the basement beneath it.
