@@ -87,10 +87,59 @@ local p = t.join()
 t.tick()
 t.run_seconds(3) -- the electrical pass is 0.5 Hz; let one land
 
+-- The flush cover has its own state and sprite; opening it leaves all
+-- three independently composed power lamps and the live connection alone.
+local outlet_target = assert(t.target_at(p, 7, 1, "utility_outlet_port"))
+local closed_port = assert(t.structure_at(7, 1))
+local powered_port = assert(t.outlet_at(7, 1))
+assert(closed_port.state == "closed", "outlet cover defaults closed")
+assert(closed_port.sprite == "utility_outlet_port", "closed cover uses its base sprite")
+for _, channel in ipairs({ "l1", "l2", "l3" }) do
+    assert(powered_port.channels[channel] == "nominal", "each independent layer is nominal: " .. channel)
+end
+assert(powered_port.powered and powered_port.feed == "l2", "cover state does not alter the outlet feed")
+
+t.click(p, 7, 1, outlet_target)
+t.tick()
+local open_port = assert(t.structure_at(7, 1))
+local open_power = assert(t.outlet_at(7, 1))
+assert(open_port.state == "open", "empty-hand click opens the cover")
+assert(open_port.sprite == "utility_outlet_port_open", "open cover uses its own sprite")
+assert(open_power.powered == powered_port.powered and open_power.feed == powered_port.feed, "opening preserves power")
+for _, channel in ipairs({ "l1", "l2", "l3" }) do
+    assert(open_power.channels[channel] == powered_port.channels[channel], "opening preserves " .. channel)
+end
+
+t.click(p, 7, 1, assert(t.target_at(p, 7, 1, "utility_outlet_port")))
+t.tick()
+local closed_again = assert(t.structure_at(7, 1))
+local closed_power = assert(t.outlet_at(7, 1))
+assert(closed_again.state == "closed", "second empty-hand click closes the cover")
+assert(closed_again.sprite == "utility_outlet_port", "closed cover restores its base sprite")
+assert(closed_power.powered == powered_port.powered and closed_power.feed == powered_port.feed, "closing preserves power")
+for _, channel in ipairs({ "l1", "l2", "l3" }) do
+    assert(closed_power.channels[channel] == powered_port.channels[channel], "closing preserves " .. channel)
+end
+
+-- The second port is visible across the open floor but outside one-tile
+-- reach; the server refuses the request and leaves its cover closed.
+local distant_port = assert(t.target_at(p, 2, 2, "utility_outlet_port"))
+t.click(p, 2, 2, distant_port)
+t.tick()
+assert(assert(t.structure_at(2, 2)).state == "closed", "out-of-reach click leaves the cover closed")
+
+-- A held tool remains the use implement instead of toggling the cover.
+t.click(p, 6, 2, assert(t.target_at(p, 6, 2, "wirecutters")))
+t.tick()
+assert(t.hands(p).held == "wirecutters", "wirecutters are in hand")
+t.click(p, 7, 1, assert(t.target_at(p, 7, 1, "utility_outlet_port")))
+t.tick()
+assert(assert(t.structure_at(7, 1)).state == "closed", "held-tool click does not toggle the cover")
+
 -- ---------------------------------------------------------------
 -- 1. A PORT ON NOTHING. Three dark lamps, no layer bound, and no
---    panel behind it -- which is the honest report for a bollard
---    somebody bolted down and never wired.
+--    panel behind it -- the honest report for a floor fitting installed
+--    before anyone ran cable to it.
 -- ---------------------------------------------------------------
 local bare = assert(t.outlet_at(2, 2))
 assert(bare ~= nil, "the port on bare plating answers")
@@ -141,7 +190,8 @@ assert(spur.feeder ~= nil, "with a panel behind it")
 --    backbone rather than feeding it, so the far half of a cut
 --    backbone has no supply on it at all.
 -- ---------------------------------------------------------------
-t.click(p, 6, 2, t.target_at(p, 6, 2, "wirecutters"))
+-- The cover regression above picked up these wirecutters and confirmed
+-- that a held tool keeps its normal use precedence.
 t.run_ticks(2)
 assert(t.hands(p).held == "wirecutters", "cutters in hand")
 

@@ -6,6 +6,11 @@
 -- over an Open tile falls. The engine asks once per item (`item.fall`) and
 -- this is the answer; `content/main.luau` binds it unscoped.
 --
+-- Divergence: tg also refuses an anchored mover (`can_z_move` without
+-- ZMOVE_ALLOW_ANCHORED, tgstation/code/game/atoms_movable.dm:467). The
+-- payload exposes no anchored fact, so an item the engine holds fast (a
+-- non-`Movable` one) still falls here.
+--
 -- An item that carries on while it drops answers a nonzero `glide_x` /
 -- `glide_y` from `glide_for`; a thing that stays aloft answers before it.
 local paper_plane = require("@lib/paper_plane")
@@ -39,6 +44,9 @@ local LANDING_MESSAGE_RADIUS = 7
 -- (tgstation/code/game/atoms_movable.dm:354-358, `onZImpact`, called per
 -- faller at tgstation/code/game/turfs/turf.dm:383). Bodies are not spoken for
 -- here: the same anchor fires for them and this line is the item's.
+-- Omitted from tg: "[mover] falls through [prev_turf]!" from the turf above
+-- (turf.dm:376); and the landing text is fixed ("the floor") where tg names
+-- the impacted turf (atoms_movable.dm:358).
 function item_fall.on_land(ev: MotionLandDonePayload): ()
     if ev.outcome ~= "completed" or ev.actor.kind ~= "item" then
         return

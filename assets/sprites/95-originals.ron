@@ -50,25 +50,12 @@
         ("steam_generator_on", Png("art/bench/steam_generator_on.png")),
         ("steam_generator_on_loaded", Png("art/bench/steam_generator_on_loaded.png")),
 
-        // The utility outlet port: a housing and three lamps, one per
-        // cable layer under the deck. The FRAMES are the alternatives
-        // rather than an animation, so every row is one layer's cel on
-        // one frame and each lamp is picked independently -- which is
-        // the whole point, since a port on a live L2 and a dead L1 has
-        // to show both at once
-        // (assets/originals/art/subfloor/electrical/utility_outlet_port.md,
-        // ../lunatic/docs/content-schema/fixture-states.md).
-        //
-        // Frames 1..5 are the engine's five words in its own order:
-        // disconnected, inactive, starved, emergency, nominal. Frame 6
-        // is the artist's mixed example and is deliberately not baked
-        // -- nothing selects it, because the mixing is done by stacking
-        // three of these.
-        //
-        // NO OFFSETS. It stands on the floor rather than hanging on a
-        // wall, so it takes none of the 25px bracket overhang the APC
-        // and the wall frame carry (`assets/sprites.ron`).
+        // Floor outlet: housing frames 1/2 are closed/open; no offsets.
+        // Each wire layer's frames 1..5 are independently selected:
+        // disconnected, inactive, starved, emergency, nominal.
+        // Contract: originals/art/subfloor/electrical/utility_outlet_port.md.
         ("utility_outlet_port", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "housing", 1)),
+        ("utility_outlet_port_open", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "housing", 2)),
         ("uop_wire_1_disconnected", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_1", 1)),
         ("uop_wire_1_inactive", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_1", 2)),
         ("uop_wire_1_starved", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_1", 3)),

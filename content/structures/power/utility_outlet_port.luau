@@ -1,51 +1,69 @@
--- The utility outlet port: the branch circuit's public face, what a
--- corded appliance plugs into, and the one place on the deck where you
--- can read what the cables under it are doing.
---
--- ELECTRICAL, not atmospheric. It has nothing to do with air -- the fan
--- that blows a room full of it is `vent.luau`, an ordinary machine in
--- the plumbing.
---
--- IT STANDS ON THE FLOOR rather than hanging on a wall, which is the
--- one thing about it that is a decision. A socket at knee height is a
--- picture of a house; a squat bollard bolted to the deck beside the
--- cable run is a picture of a ship, and it can sit in the middle of a
--- room where a wall socket cannot. Nothing about the cord rule changes
--- with it: an appliance still reaches the NEAREST port within
--- `cord_range` (content/tuning.luau), and never through a wall or a
--- shut door.
---
--- THREE LAMPS, one per cable layer beneath it. The engine picks each
--- one independently from what that layer's segment is actually doing
--- (../lunatic/docs/content-schema/fixture-states.md), so a port on a
--- live backbone and a dead room circuit shows both facts at once:
---
---   dark    -- no cable of that layer under the port at all
---   dim     -- cable, but nothing on its run that could supply it
---   red     -- something could supply it and the run is not carrying
---   yellow  -- carrying, but only off a panel's reserve
---   green   -- carrying
---
--- WHICH ONE IT DRAWS FROM is not one of the lamps: it is the first
--- live layer in the station's own order, L2 before L1 before L3
--- (../lunatic/docs/power/topology.md). Green on more than one lamp
--- therefore means a choice was made, not that two things are being
--- drawn from -- read the order to know which.
---
--- No transitions. Nothing on this station builds one, and there is no
--- board, no vendor row and no dispenser entry that names it: ports are
--- part of the deck, laid with the cable.
+-- A flush floor socket with a scripted cover and three independent
+-- cable-layer lamps. The cover never changes electrical delivery.
+-- Layer states and feed selection follow the engine's
+-- docs/content-schema/fixture-states.md and docs/power/topology.md.
 return {
     id = "utility_outlet_port",
     visual_layer = "fixture",
     energy_network = "power",
     name_label = "lunatic/tfs:entity.utility_outlet_port.name",
     name = "utility outlet port",
-    -- The housing on its own. The three lamps are overlays the engine
-    -- lays over it, one per layer, and a port with no cable under it at
-    -- all still draws the box.
+    -- The closed cover is the default. The engine keeps each cable-layer
+    -- lamp independent from the selected cover state.
     sprite = "utility_outlet_port",
+    states = { "closed", "open" },
+    state = "closed",
+    state_sprites = {
+        closed = "utility_outlet_port",
+        open = "utility_outlet_port_open",
+    },
     fixture = "Outlet",
+    script = "utility_outlet_port",
+    actions = {
+        {
+            id = "toggle_cover",
+            gesture = "primary",
+            route = "receiver",
+            label = "lunatic/tfs:action.utility_outlet_port.toggle_cover",
+            held = { fact = "held.present", value = "false" },
+        },
+    },
+    hover_connections = {
+        relation = "energy_consumers",
+        state = "open",
+        styles = {
+            active = {
+                color = "#76C8AE",
+                width = 0.055,
+                head_length = 0.23,
+                head_sweep = math.pi / 4,
+                source_clearance = 0.20,
+                target_clearance = 0.25,
+                dash_length = 0,
+                gap_length = 0,
+            },
+            inactive = {
+                color = "#CFAB63",
+                width = 0.055,
+                head_length = 0.23,
+                head_sweep = math.pi / 4,
+                source_clearance = 0.20,
+                target_clearance = 0.25,
+                dash_length = 0,
+                gap_length = 0,
+            },
+            candidate = {
+                color = "#9CA5B880",
+                width = 0.035,
+                head_length = 0.17,
+                head_sweep = math.pi / 4,
+                source_clearance = 0.20,
+                target_clearance = 0.25,
+                dash_length = 0.14,
+                gap_length = 0.12,
+            },
+        },
+    },
     appearance = {
         channels = {
             l1 = {
@@ -73,9 +91,11 @@ return {
     },
     category = "power",
     examine = {
-        flavor = "A squat grey box bolted to the deck, two round sockets "
-            .. "on its face and three small lamps along the bottom. One "
-            .. "lamp per cable layer under the floor; a green one is a "
-            .. "layer this port could draw from.",
+        flavor = "A flush circular metal fitting in the deck, with a hinged "
+            .. "cover over one recessed socket. Three lamps report the "
+            .. "independent state of each power layer beneath the floor. "
+            .. "With the cover open, green arrows show powered connections, "
+            .. "amber arrows show unpowered connections, and faint dashed "
+            .. "arrows show reachable alternatives.",
     },
 }

@@ -69,6 +69,7 @@ if sim ~= nil then
     local behavior = sim.define("behavior", "lunatic/tfs:paper", { prototype = content.id })
     sim.define("script_var", "lunatic/tfs:" .. paper_plane.HEADING_X_VAR, { replicate = "server" })
     sim.define("script_var", "lunatic/tfs:" .. paper_plane.HEADING_Y_VAR, { replicate = "server" })
+    sim.define("script_var", "lunatic/tfs:" .. paper_plane.SURFED_VAR, { replicate = "server" })
 
     -- The append is an effect, so refresh only after native admission. A
     -- failed append leaves the browser's draft intact and reports refusal.
@@ -91,6 +92,10 @@ if sim ~= nil then
     -- directly held. The native writer context closes stale actions when the
     -- active tool or the paper changes.
     behavior:handle("inventory.present", { kind = "react" }, function(ev)
+        if ev.initial then
+            -- Acquired: the surf it was on is over.
+            paper_plane.forget(ev.subject)
+        end
         if ev.initial or ev.implement ~= nil then
             -- Inventory presentation carries the native held-writer proof.
             -- Reopen when a writer arrives beside an already-held sheet so
