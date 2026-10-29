@@ -75,7 +75,7 @@ t.world(
                 "#########",
             ],
             structures: [(1, 1, "player_spawn")],
-            items: [(1, 1, "paper"), (1, 1, "four_color_pen"), (2, 1, "paper"), (1, 2, "paper")],
+            items: [(1, 1, "paper"), (2, 2, "four_color_pen"), (2, 1, "paper"), (1, 2, "paper")],
         ),
     ],
 )]==],
@@ -89,7 +89,8 @@ t.run_ticks(4)
 -- 1. Write on the sheet, fold it, then unfold by using the plane in hand:
 -- the same sheet either way, with its writing.
 pick_up(p, 1, 1)
-t.click(p, 1, 1, assert(t.target_at(p, 1, 1, "four_color_pen"), "a pen lies at the tile"))
+local pen = assert(t.target_at(p, 2, 2, "four_color_pen"), "a pen lies beside the player")
+t.click(p, 2, 2, pen)
 t.run_ticks(2)
 if t.hands(p).held ~= "four_color_pen" then
     t.swap_hands(p)
@@ -194,7 +195,8 @@ local HOT_WORLD = [==[(
     ) },
 )]==]
 
--- A hole against a wall: the surf's shove has nowhere to go.
+-- A hole against a wall, the whole corridor below it hot so the lift outlasts
+-- one shove: the surf's shove has nowhere to go.
 local WALL_WORLD = [==[(
     name: "paper plane wall",
     tags: ["terrestrial"],
@@ -213,7 +215,7 @@ local WALL_WORLD = [==[(
                 "#####",
             ],
             structures: [],
-            painted: [(3, 1, "hot_air")],
+            painted: [(1, 1, "hot_air"), (2, 1, "hot_air"), (3, 1, "hot_air")],
         ),
         (
             rows: [
@@ -280,16 +282,14 @@ assert(#t.items_at(3, 1, UPPER) == 0, "it burned away")
 assert(t.count_items("paper") == 0, "no sheet is left anywhere")
 assert((t.matter_totals().substances["ash"] or 0) > 0, "it left ash")
 
--- 7. A hole against a wall: the shove is spent against it and the plane
--- settles back on the hole it already surfed. It surfs that hole once (one
--- broadcast, one shove), then falls onto the heat instead of looping.
-local walled = throw_plane_over_heat(WALL_WORLD, 480)
+-- 7. A hole against a wall, over a whole corridor of air short of ignition:
+-- the shove is spent against the wall and the plane settles back on the hole
+-- it surfed while the heat still lifts. It surfs that hole once (one stay,
+-- one broadcast, one shove), then falls instead of looping on the heat.
+local walled = throw_plane_over_heat(WALL_WORLD, 590)
 t.run_seconds(4)
 assert(count_said(walled, "rides the rising warm air") == 1, "the hole was surfed once")
-assert(level_rows() <= 1, "the plane fell at most once")
+assert(#t.ledger_rows("item_fall_stayed") == 1, "it stayed aloft once")
+assert(level_rows() == 1, "then it fell")
 assert(#t.items_at(3, 1, UPPER) == 0, "the plane does not hover over the hole")
-local resting = 0
-for x = 1, 3 do
-    resting += #t.items_at(x, 1, UPPER) + #t.items_at(x, 1, LOWER)
-end
-assert(resting == 1, "the plane rests once, off the hole or below it, got " .. resting)
+assert(#t.items_at(3, 1, LOWER) == 1, "it lies under the hole")

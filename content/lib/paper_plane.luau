@@ -151,10 +151,12 @@ end
 -- A throw, drop or support loss starts a fresh surf; a slide extends it.
 local function mark_surfed(item: Handle, at: TileAddress, cause: ItemFallCause): ()
     local held = item.vars[paper_plane.SURFED_VAR]
-    local surfed = {}
+    local surfed: { string } = {}
     if cause == "slide" and type(held) == "table" then
         for _, key in ipairs(held) do
-            table.insert(surfed, key)
+            if type(key) == "string" then
+                table.insert(surfed, key)
+            end
         end
     end
     table.insert(surfed, hole_key(at))
