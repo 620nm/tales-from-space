@@ -1,0 +1,70 @@
+GIMP Palette
+Name: Tales from Space - Station
+Columns: 8
+# Base palette for regular station objects. Rules: docs/ART.md.
+# Sections cite their tgstation icons/ source; TfS marks this pack's own.
+# 1 - Structure steel: obj/tram/tram_structure.dmi; step 1 from
+#     obj/smooth_structures/platform/frame_faces/window_frame_iron.dmi
+ 38  38  44	structure 1 (outline) #26262c
+ 53  56  65	structure 2 #353841
+ 71  72  81	structure 3 #474851
+ 86  90  99	structure 4 #565a63
+119 123 131	structure 5 #777b83
+162 169 177	structure 6 #a2a9b1
+198 205 211	structure 7 #c6cdd3
+225 231 234	structure 8 (highlight) #e1e7ea
+# 2 - Machine steel, navy-tinted: obj/machines/lathes.dmi
+ 21  24  36	machine 1 (outline) #151824
+ 33  35  48	machine 2 #212330
+ 55  58  75	machine 3 #373a4b
+ 71  74  91	machine 4 #474a5b
+ 96  99 117	machine 5 #606375
+148 151 171	machine 6 #9497ab
+197 199 212	machine 7 #c5c7d4
+213 215 224	machine 8 (highlight) #d5d7e0
+# 3 - Neutral steel: turf/walls/wall.dmi and reinforced_wall.dmi,
+#     turf/floors.dmi and the station airlocks
+ 29  29  29	neutral 1 (outline) #1d1d1d
+ 43  43  43	neutral 2 #2b2b2b
+ 68  68  68	neutral 3 (wall face) #444444
+ 98  98  98	neutral 4 #626262
+146 146 146	neutral 5 #929292
+170 170 170	neutral 6 #aaaaaa
+196 196 196	neutral 7 #c4c4c4
+217 217 217	neutral 8 (highlight) #d9d9d9
+# 4 - Panel glass: obj/machines/lathes.dmi; black: platform frames
+#     (section 1's source); near white: obj/clothing/under/medical.dmi;
+#     white, paper and ink: TfS
+ 74 104 123	glass 1 #4a687b
+116 152 173	glass 2 #7498ad
+164 186 198	glass 3 #a4bac6
+ 10  10  13	black #0a0a0d
+238 238 238	near white #eeeeee
+255 255 255	white (glint) #ffffff
+241 234 212	paper #f1ead4
+ 32  44  45	paper ink #202c2d
+# 5 - Wood: the wood airlock ramp and turf/floors.dmi
+ 58  35  20	wood 1 (outline) #3a2314
+112  83  59	wood 2 #70533b
+128  95  68	wood 3 #805f44
+160 124  89	wood 4 (light) #a07c59
+# 6 - Safety paint: hazard stripes from turf/decals.dmi warningline;
+#     fire red from obj/wallmounts.dmi extinguisher cabinets
+ 27  27  27	stripe dark 1 #1b1b1b
+ 38  38  38	stripe dark 2 #262626
+181 185  43	caution paint 1 #b5b92b
+210 213  61	caution paint 2 #d2d53d
+ 79   1  28	fire red 1 (outline) #4f011c
+140   5  34	fire red 2 #8c0522
+173  41  49	fire red 3 #ad2931
+198  19  38	fire red 4 (light) #c61326
+# 7 - Signals, emissive: obj/doors/airlocks/station/overlays.dmi,
+#     obj/machines/computer.dmi, nuke_terminal.dmi and
+#     shuttle_manipulator.dmi
+ 80 255  49	signal open / bolt green #50ff31
+255 214  14	signal caution #ffd60e
+255 255  51	signal lamp #ffff33
+255  68  27	signal denied / fault #ff441b
+  0 204 255	screen cyan #00ccff
+140 214 253	screen cyan (light) #8cd6fd
+128 255 255	screen glow #80ffff

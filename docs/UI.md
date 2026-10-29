@@ -2,8 +2,9 @@
 
 The station uses a cooler instrument-panel palette and the shipped sans,
 mono and pixel faces. Flat borders, recognizable equipment artwork, clear
-headings and operational status supply identity. Art references live in
-[art-reference](art-reference/README.md); they are evidence for composition.
+headings and operational status supply identity. Sprite art direction and
+palettes are [ART.md](ART.md); art references live in
+[art-reference](art-reference/README.md) and are evidence for composition.
 Production images stay under `assets/` and ship through the asset manifests.
 
 | Skin | Composition |

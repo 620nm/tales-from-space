@@ -1,17 +1,16 @@
 # Art reference
 
-The file family uses native 32×32 RGBA PNGs from
-`assets/originals/art/computer/files/`. Production manifests assign the verified
-sprite keys `file_disl`, `file_md`, `file_atmo`, and `file_pem`. PNGs carry their
-lettering; the browser keeps its ordinary UI typography and receives no font.
+Reference material behind [ART.md](../ART.md), which owns the art direction
+and the palette rules. Nothing here ships.
 
 ## Reference organization
 
+- `palettes/*.gpl` are the project's GIMP palettes for Aseprite and GIMP
+  ([ART.md](../ART.md) §Palettes); `palettes/file-icons/` holds the sprite
+  importer's palette strips. Reference palettes do not participate in runtime
+  asset delivery.
 - `fonts/BoldsPixels.ttf` is a byte-for-byte copy of the supplied Downloads font;
   the Downloads original stays untouched.
-- `palettes/chatgpt.gpl` and `palettes/claude.gpl` are the project's fixed GIMP
-  palettes; `palettes/file-icons/` holds the sprite importer's palette strips.
-  Reference palettes do not participate in runtime asset delivery.
 - `examples/` holds the supplied font chart, rasterized glyphs, and inspected
   TG stamp/sign examples. These are reference images, not runtime sprites.
 - `file-icons/prompts.json` preserves artwork prompts;
@@ -26,6 +25,11 @@ Runtime wallpapers, sounds, sprite PNGs, pixel matrices, generated artwork input
 production preparation scripts and Aseprite documents stay under `assets/`.
 
 ## File sprite recipe
+
+The file family uses native 32×32 RGBA PNGs from
+`assets/originals/art/computer/files/`. Production manifests assign the verified
+sprite keys `file_disl`, `file_md`, `file_atmo`, and `file_pem`. PNGs carry their
+lettering; the browser keeps its ordinary UI typography and receives no font.
 
 Use a transparent 32×32 canvas with a 26×32 page centered at x=3, y=0.
 Keep its stepped fold, square corners, dark outline and pale paper rim.
@@ -54,7 +58,6 @@ the magenta key, samples with nearest-neighbor filtering, and centers the page.
 `lettering.mjs` replaces only the DiSL/Markdown letter fields with the supplied
 font and checks that pixels outside those fields are unchanged. The importer
 then exports the exact palette and 32 indexed pixel rows beside each PNG.
-Review each icon at 1× on light and dark backgrounds before accepting changes.
 
 The prepared PNGs are authoritative bake inputs; reproduction requires no image
 service. Bake with `cargo run -p xtask -- bake-atlas` from the engine checkout,

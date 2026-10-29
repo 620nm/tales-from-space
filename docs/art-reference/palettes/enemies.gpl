@@ -1,0 +1,24 @@
+GIMP Palette
+Name: Tales from Space - Enemies
+Columns: 8
+# Antagonist character paint. Rules: docs/ART.md; "reserved" marks what
+# it reserves for antagonist character designs. Sections cite their
+# tgstation source; TfS marks this pack's own.
+# 1 - Void black, violet-tinted (TfS), after cult constructs #101010,
+#     xenomorphs #100a18 and the elite MOD #181719
+  6   5   8	void 1 (reserved, outline) #060508
+ 17  14  22	void 2 (reserved) #110e16
+ 34  30  41	void 3 #221e29
+ 54  49  62	void 4 #36313e
+ 76  70  86	void 5 #4c4656
+# 2 - Blood crimson: steps 1-3 from obj/clothing/modsuit/mod_clothing.dmi
+#     syndicate-*, steps 4-5 and hot crimson TfS; syndicate red is
+#     COLOR_SYNDIE_RED and cult red COLOR_CULT_RED
+ 63   1  13	crimson 1 #3f010d
+ 91   0  16	crimson 2 #5b0010
+130  10  22	crimson 3 #820a16
+163   8  44	crimson 4 #a3082c
+224  16  64	crimson 5 (reserved) #e01040
+241   3   3	syndicate red (reserved) #f10303
+255  51  85	hot crimson (reserved, glow) #ff3355
+150   0   0	cult red #960000
