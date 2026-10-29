@@ -39,6 +39,16 @@ not shipped. `air_sensor` declares no network and draws nothing.
 A prototype under `structures/` spells its own class word, because
 `lib/` is not published into the structure registry's sandbox.
 
+## Between levels
+
+Cable never joins across levels on its own, whatever lies between (glass,
+a hole). The `power` kind `hub` (tg's multi-z cable hub, `power/multiz.dm:1-12`)
+joins only a hub on the same channel directly above or below it; the pipe kind
+`adapter` (tg's "Multi-Deck Adapter", `pipes/multiz.dm:2-60`) does the same for
+gas. One channel per hub, unlike tg's all-layer hub. The coil's dial lays a hub
+after its three lines; the dispenser and RPD dispense the adapter
+(`tests/levels/vertical_links_test.luau`).
+
 ## Floor outlet covers and connections
 
 Utility outlet ports are small flush circular fittings with a hinged cover.

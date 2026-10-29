@@ -56,6 +56,16 @@ type Recipe = {
 
 local RECIPES: { Recipe } = {
     { label = "Pipe", item = "pipe", icon = "pipe", group = "Pipes", network_kind = "standard" },
+    -- tg's "Multi-Deck Adapter" (pipe_recipes.dm:7): laid in the run like
+    -- pipe, one per piping layer, and unpainted (multiz.dm:17).
+    {
+        label = "Multi-Deck Adapter",
+        item = "pipe_adapter",
+        icon = "pipe_adapter_loose",
+        group = "Pipes",
+        network_kind = "adapter",
+        paints = false,
+    },
     {
         label = "Manual Valve",
         item = "manual_valve_fitting",
@@ -403,6 +413,9 @@ local content = {
     -- in-hand key or tg-style pickup double-click opens its window.
 }
 
+-- Every recipe's item, eight to a group (a condition holds at most 32
+-- nodes, eight per list). Only an item has a prototype fact, so the
+-- prototypes alone name a loose fitting.
 local breakdown_groups: { action_rules.Selector } = {}
 for first = 1, #RECIPES, 8 do
     local group: { action_rules.Selector } = {}
@@ -412,12 +425,7 @@ for first = 1, #RECIPES, 8 do
     table.insert(breakdown_groups, { any = group })
 end
 content.actions = {
-    action_rules.primary("disassemble", {
-        all = {
-            action_rules.kind("item"),
-            { any = breakdown_groups },
-        },
-    }, {
+    action_rules.primary("disassemble", { any = breakdown_groups }, {
         any = {
             action_rules.fact("held.dial", "mode=Build"),
             action_rules.fact("held.dial", "mode=Destroy"),

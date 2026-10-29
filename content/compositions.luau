@@ -46,6 +46,20 @@ local function shapes(prefix: string, channels: {string}, cable: boolean)
     return result
 end
 
+-- One picture for every shape of a kind, per channel: an adapter is a
+-- fixture, not a run that bends with its neighbours.
+local function uniform_shapes(sprite_of: (string) -> string, channels: {string})
+    local result: {[string]: {[number]: string}} = {}
+    for _, channel in ipairs(channels) do
+        local channel_shapes: {[number]: string} = {}
+        for mask = 0, 15 do
+            channel_shapes[mask] = sprite_of(channel)
+        end
+        result[channel] = channel_shapes
+    end
+    return result
+end
+
 local function port_shapes(channels: {string})
     local result: {[string]: {[string]: {[number]: string}}} = {}
     for _, channel in ipairs(channels) do
@@ -276,11 +290,20 @@ return {
             solver = "energy", placement = supported, continuing = supported,
             -- What a panel switches whole (lib/load_classes.luau).
             load_classes = load_classes.power, default_load_class = load_classes.power_default,
-            kinds = { { id = "cable", paintable = true, allowed_channels = power_channels, connects_to_kinds = { "cable" }, connectivity = 15, shapes = {}, shapes_by_channel = shapes("cable", power_channels, true) } } },
+            kinds = { { id = "cable", paintable = true, allowed_channels = power_channels, connects_to_kinds = { "cable", "hub" }, connectivity = 15, shapes = {}, shapes_by_channel = shapes("cable", power_channels, true) },
+                -- tg's multi-z cable hub (power/multiz.dm:1-12): the one run member
+                -- that joins the hub stacked directly above or below it. Laterally
+                -- it is cable; one channel per hub, a divergence from tg's all-layer hub.
+                { id = "hub", paintable = false, allowed_channels = power_channels, connects_to_kinds = { "hub", "cable" }, cross_level_adapter = true,
+                    connectivity = 15, shapes = {}, shapes_by_channel = uniform_shapes(function(_channel: string) return "cable_hub" end, power_channels) } } },
         { id = "pipe", label = "pipe", layer = "pipe", channels = pipe_channels, channel_preferences = { "l3", "l2", "l4", "l1", "l5" },
             solver = "matter", paints = paints, port_shapes = port_shapes(pipe_channels),
             channel_paints = channel_paints,
-            kinds = { { id = "standard", paintable = true, allowed_channels = pipe_channels, connects_to_kinds = { "standard" }, connectivity = 15, shapes = {}, shapes_by_channel = shapes("pipe", pipe_channels, false) },
+            kinds = { { id = "standard", paintable = true, allowed_channels = pipe_channels, connects_to_kinds = { "standard", "adapter" }, connectivity = 15, shapes = {}, shapes_by_channel = shapes("pipe", pipe_channels, false) },
+                -- tg's multi-deck pipe adapter (pipes/multiz.dm:2-60, `paintable = FALSE`):
+                -- joins the adapter stacked directly above or below it; laterally it is pipe.
+                { id = "adapter", paintable = false, allowed_channels = pipe_channels, connects_to_kinds = { "adapter", "standard" }, cross_level_adapter = true,
+                    connectivity = 15, shapes = {}, shapes_by_channel = uniform_shapes(function(channel: string) return "pipe_adapter_" .. channel end, pipe_channels) },
                 { id = "he_pipe", paintable = false, allowed_channels = { "l2", "l3", "l4" }, connects_to_kinds = { "he_pipe" },
                     color = "#404040", connectivity = 15, shapes = {},
                     conducts = { coefficient = pipe_thermal.he_coefficient, min_delta_k = pipe_thermal.he_deadband_k },

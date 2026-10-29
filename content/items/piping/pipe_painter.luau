@@ -21,8 +21,9 @@ local COLORS = pipe_paints.colors
 -- The kinds of length that carry a colour of their own and so take no
 -- stripe, the way the colour adapter takes none: tg fixes
 -- heat-exchanging pipe at `#404040` in `Initialize`
--- (heat_exchange/he_pipes.dm:15).
-local FIXED_COLOUR = { he_pipe = true }
+-- (heat_exchange/he_pipes.dm:15). The multi-deck adapter is unpainted
+-- too (`paintable = FALSE`, pipes/multiz.dm:17).
+local FIXED_COLOUR = { he_pipe = true, adapter = true }
 
 local content = {
     id = "pipe_painter",

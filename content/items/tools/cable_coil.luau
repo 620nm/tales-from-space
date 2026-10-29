@@ -26,11 +26,24 @@ local action_rules = require("@lib/action_rules")
 -- mechanism -- tg's own names for them are "Red/Yellow/Blue Power
 -- Line" (__DEFINES/power.dm:5,8,11), and its coil recolours itself to
 -- match whichever layer you picked (cable.dm:596,602,608).
+--
+-- THE HUBS. tg's coil also lays a multi-z cable hub (cable.dm:585,
+-- 620-628; power/multiz.dm:1-12), the one fitting that joins the hub
+-- stacked directly above or below it. One channel per hub -- a divergence
+-- from tg's all-layer hub -- so each line has its own, and a hub costs one
+-- length like any other piece. tg picks it from the radial menu; here the
+-- same dial carries it after the three lines.
 local LINES = {
-    { channel = "l1", name = "the red power line" },
-    { channel = "l2", name = "the yellow power line" },
-    { channel = "l3", name = "the blue power line" },
+    { channel = "l1", kind = "cable", name = "the red power line" },
+    { channel = "l2", kind = "cable", name = "the yellow power line" },
+    { channel = "l3", kind = "cable", name = "the blue power line" },
+    { channel = "l1", kind = "hub", name = "the red multi-level cable hub" },
+    { channel = "l2", kind = "hub", name = "the yellow multi-level cable hub" },
+    { channel = "l3", kind = "hub", name = "the blue multi-level cable hub" },
 }
+-- Dial index to the next one: yellow, blue, red, then the hubs in the
+-- same order, then round again.
+local NEXT_SETTING: { [number]: number } = { [1] = 2, [2] = 0, [0] = 4, [4] = 5, [5] = 3, [3] = 1 }
 
 local content = {
     id = "cable_coil",
@@ -41,10 +54,10 @@ local content = {
     sprite = "coil",
     inhand_sprite = { "held_coil_l", "held_coil_r" },
     stack = 30,
-    -- Three settings, minted on the second: tg's coil defaults to
+    -- Six settings, minted on the second: tg's coil defaults to
     -- CABLE_LAYER_2 (cable.dm:513), which is the line the shipped
     -- station runs its backbone on.
-    modes = 3,
+    modes = 6,
     mode = 1,
     -- tg's "Use it in hand to change the layer you are placing on"
     -- (cable.dm:529). tg pops a radial menu there (cable.dm:589); we
@@ -55,12 +68,16 @@ local content = {
 content.actions = { action_rules.primary("lay_cable", action_rules.exposed_deck("power")) }
 
 if sim ~= nil then
+    -- The tile-address spelling of `sim.place_network`, named so the
+    -- checker need not pick between its two overloads.
+    local place_at: (TileAddress, string, string, string, number, string?, Handle?, number?) -> nil =
+        sim.place_network
     local script_definition =
         sim.define("behavior", "lunatic/tfs:" .. content.id, { prototype = content.id })
     script_definition:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
         local self, user = ev.subject, ev.actor
         local dial = assert(sim.mode(self))
-        local next_index = (dial.index + 1) % dial.count
+        local next_index = assert(NEXT_SETTING[dial.index])
         sim.set_mode(self, next_index)
         sim.message.send({
             recipient = user,
@@ -71,10 +88,10 @@ if sim ~= nil then
         return true
     end)
     script_definition:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
-        local self, user, x, y, choice = ev.subject, ev.actor, ev.at.x, ev.at.y, ev.choice
-        local _x, _y, _choice = x, y, choice
+        local self, user, at, choice = ev.subject, ev.actor, ev.at, ev.choice
+        local _choice = choice
         local line = LINES[assert(sim.mode(self)).index + 1]
-        if not sim.network_installable(x, y, "power", line.channel, "cable") then
+        if not sim.network_installable(at, "power", line.channel, line.kind) then
             return { replaced = false }
         end
         sim.message.send({
@@ -94,7 +111,7 @@ if sim ~= nil then
             -- again too -- a do_after is a whole second, and nothing stops
             -- you turning it mid-job.
             line = LINES[assert(sim.mode(self)).index + 1]
-            if not sim.network_installable(x, y, "power", line.channel, "cable") then
+            if not sim.network_installable(at, "power", line.channel, line.kind) then
                 sim.message.send({
                     recipient = user,
                     message = sim.msg("lunatic/tfs:items.cable_coil.taken", {
@@ -103,7 +120,7 @@ if sim ~= nil then
                 })
                 return true
             end
-            sim.place_network(x, y, "power", line.channel, "cable", 15, nil, self, 1)
+            place_at(at, "power", line.channel, line.kind, 15, nil, self, 1)
             sim.message.send({
                 recipient = user,
                 message = sim.msg("lunatic/tfs:items.cable_coil.laid", {

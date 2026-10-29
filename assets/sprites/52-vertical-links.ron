@@ -1,0 +1,28 @@
+// The two fixtures that join a network across levels: the multi-level
+// cable hub and the multi-deck pipe adapter. One family of
+// `tfs/assets/sprites.ron`'s roster; baked in file-name order.
+//
+// tg draws the hub from `structures.dmi` "cablerelay-on"
+// (power/multiz.dm:1-12) and the adapter from `multiz.dmi`
+// "adapter-<piping layer>" (pipes/multiz.dm:2-60). Both are one picture per
+// kind: a fixture does not bend with its neighbours, so every connection
+// shape of the kind names the same sprite (`content/compositions.luau`).
+(
+    sheets: [
+        ("pipe_structures", "obj/pipes_n_cables/structures.dmi"),
+        ("pipe_multiz", "obj/pipes_n_cables/multiz.dmi"),
+        ("pipe_item", "obj/pipes_n_cables/pipe_item.dmi"),
+    ],
+    sprites: [
+        // The loose fitting, by the machine's own `pipe_state` ("multiz",
+        // pipes/multiz.dm:17; construction.dm:17,216).
+        ("pipe_adapter_loose", Dmi("@pipe_item", "multiz", 0)),
+        ("cable_hub", Dmi("@pipe_structures", "cablerelay-on", 0)),
+        // Frame 0 is BYOND's south, the dir the machine is built facing.
+        ("pipe_adapter_l1", Dmi("@pipe_multiz", "adapter-1", 0)),
+        ("pipe_adapter_l2", Dmi("@pipe_multiz", "adapter-2", 0)),
+        ("pipe_adapter_l3", Dmi("@pipe_multiz", "adapter-3", 0)),
+        ("pipe_adapter_l4", Dmi("@pipe_multiz", "adapter-4", 0)),
+        ("pipe_adapter_l5", Dmi("@pipe_multiz", "adapter-5", 0)),
+    ],
+)

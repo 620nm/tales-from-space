@@ -10,11 +10,10 @@
 -- THE SHELVES are tg's own recipe categories, in tg's own words
 -- (`GLOB.atmos_pipe_recipes`, code/_globalvars/lists/pipe_recipes.dm).
 -- All four of tg's categories are here. What else tg lists and this
--- pack does not have yet: the bridge and multi-deck adapters under
--- Pipes. Every one of them is one line here on the day it becomes a
--- thing — which is exactly what the analyzer cost the tool vendor,
--- and exactly what the scrubber, the injector and the two vents cost
--- this shelf.
+-- pack does not have yet: the bridge pipe under Pipes. It is one line
+-- here on the day it becomes a thing — which is exactly what the
+-- analyzer cost the tool vendor, and exactly what the scrubber, the
+-- injector and the two vents cost this shelf.
 --
 -- WHAT TG HAS THAT THIS SHELF CANNOT SAY: tg's window carries a piping
 -- layer, a paint colour and a per-recipe direction, because tg's
@@ -61,6 +60,9 @@ return {
             category = "Pipes",
             amount = 999,
         },
+        -- tg's "Multi-Deck Adapter" (pipe_recipes.dm:7), the piece that
+        -- joins the run on the level above or below.
+        { item = "pipe_adapter", name = "Multi-Deck Adapter", category = "Pipes", amount = 999 },
 
         { item = "manual_valve_fitting", name = "Manual Valve", category = "Binary", amount = 999 },
         {

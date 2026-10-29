@@ -1,6 +1,7 @@
 local physical_profiles = require("@lib/physical_profiles")
 local action_rules = require("@lib/action_rules")
-local RETURN_ITEMS: { [string]: string } = { standard = "pipe", he_pipe = "he_pipe" }
+local RETURN_ITEMS: { [string]: string } =
+    { standard = "pipe", he_pipe = "he_pipe", adapter = "pipe_adapter" }
 
 -- Anchors and unanchors. A girder bolts to the deck under it (4 s,
 -- tg's rate) and comes loose the same way -- and a loose girder is one
