@@ -101,9 +101,10 @@ assert(bare.substrates[1] == SPACE_SPRITE, "the bare tile shows space, got " .. 
 -- `gas_blocking` (no air cell to open) and `substrate_seal` closes the roof on
 -- its own; dropping both vents the room. Same space environment, 8 s span and
 -- 0.05 kPa read tolerance as that spec. Rock's `support` holds up what lies on
--- it: a crowbar on a roof tile turned to rock writes no `item_support_lost` row,
--- and the same tile dug bare writes one (the engine's
--- crates/lunatic-server/src/sim/movement/level_change.rs:resolve_support_loss).
+-- it: a crowbar on a roof tile turned to rock stays put. Dug bare, the tile is
+-- an opening to open space, which pulls nothing: the crowbar floats over it
+-- and is never asked to fall (tg zFall needs gravity, code/game/turfs/turf.dm:
+-- 352 `can_z_move`; the engine's docs/sim/level-movement.md §Support loss).
 t.world(
     [==[(
     name: "rock roof",
@@ -141,7 +142,7 @@ t.world(
 local ROOF = 1
 assert(t.set_composition(2, 1, "rock", ROOF), "the rock preset replaces the station base under the crowbar")
 t.run_ticks(2)
-assert(#t.ledger_rows("item_support_lost") == 0, "rock holds up the crowbar lying on it")
+assert(#t.ledger_rows("level_changed") == 0, "rock holds up the crowbar lying on it")
 assert(#t.items_at(2, 1, ROOF) == 1, "the crowbar stays on the rock roof")
 local roofed_start = assert(t.room_pressure(2, 1))
 assert(math.abs(roofed_start - 101.325) < 0.05, "the roofed room starts at one atmosphere, got " .. roofed_start)
@@ -154,8 +155,10 @@ for rx = 1, 3 do
     )
 end
 assert(t.set_composition(2, 1, "bare", ROOF), "the bare preset digs the roof tile")
-t.run_ticks(2)
-assert(#t.ledger_rows("item_support_lost") == 1, "the dug roof tile no longer holds the crowbar up")
+t.run_ticks(4)
+assert(#t.ledger_rows("level_changed") == 0, "a weightless opening drops nothing")
+assert(#t.ledger_rows("item_fall_stayed") == 0, "nor asks: open space pulls nothing")
+assert(#t.items_at(2, 1, ROOF) == 1, "the crowbar floats over the dug roof tile")
 
 -- 7. Rock floor receives the station field in orbit. A patch of it in open
 -- space, out of reach of any wall or lattice for a handhold, lets the body step

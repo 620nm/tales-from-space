@@ -4,6 +4,7 @@
 -- learning any Tales from Space vocabulary.
 local bloodshed = require("@lib/bloodshed")
 local disinfection = require("@lib/medical/disinfection")
+local item_fall = require("@lib/item_fall")
 
 local sounds = {
     "computer_start",
@@ -147,6 +148,15 @@ sim.handle("matter.extinguished.done", { kind = "react" }, tally("fires_out"))
 -- the same reason the fire tallies above live here rather than on a
 -- thing that burns.
 sim.handle("damage.resolved.done", { kind = "react" }, bloodshed.on_wound)
+
+-- Every item over an open hole falls, as in tg (`content/lib/item_fall.luau`
+-- cites it). Unscoped on purpose: the engine counts transformers across
+-- the whole pack and the current mode, and two answers would leave the
+-- item standing, so no gamemode file binds `item.fall` as well. The
+-- landing line is the item's own; a body's landing is not spoken for.
+sim.handle("item.fall", { kind = "transform", route = "lifecycle" }, item_fall.answer)
+sim.handle("motion.land.done", { kind = "react", route = "land" }, item_fall.on_land)
+sim.define("message", "lunatic/tfs:lib.item_fall.landed", { placeholders = { "item" } })
 sim.event("lunatic/tfs:disinfection.chunk", {
     family = "notification",
     payload = { page = "number" },
