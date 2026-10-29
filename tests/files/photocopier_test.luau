@@ -174,7 +174,7 @@ t.run_ticks(1)
 
 -- Both refill containers use the same generic resource transfer seam.
 local paper_bin = assert(t.target_at(p, 4, 3, "paper_bin"), "a paper bin is available")
-t.click(p, 4, 3, paper_bin)
+t.use_item(p, paper_bin, "alt_primary")
 t.run_ticks(1)
 assert(t.hands(p).held == "paper_bin", "the paper bin is held")
 copier = assert(t.target_at(p, 4, 1, "photocopier"), "the copier remains reachable")

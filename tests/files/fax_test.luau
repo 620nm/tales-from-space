@@ -270,7 +270,7 @@ assert(receiver_data.busy ~= true, "the recipient reservation clears at the 2 s 
 -- one unit short, while each container retains the unused remainder.
 t.ui_close(receiver, "fax")
 local paper_bin = assert(t.target_at(receiver, 12, 2, "paper_bin.empty"), "empty paper bin is available")
-t.click(receiver, 12, 2, paper_bin)
+t.use_item(receiver, paper_bin, "alt_primary")
 t.run_ticks(1)
 assert(t.hands(receiver).held == "paper_bin.empty", "paper bin variant is held")
 t.swap_hands(receiver)
@@ -288,7 +288,7 @@ assert(t.hands(receiver)[1] ~= "paper" and t.hands(receiver)[2] ~= "paper", "bin
 t.drop(receiver)
 t.run_ticks(1)
 assert(assert(t.item_at(13, 2, "paper_bin.empty")).sprite == "paper_bin", "returned sheet fills the bin picture")
-t.click(receiver, 13, 2, assert(t.target_at(receiver, 13, 2, "paper_bin.empty")))
+t.use_item(receiver, assert(t.target_at(receiver, 13, 2, "paper_bin.empty")), "alt_primary")
 t.run_ticks(1)
 t.click(receiver, 12, 2, receiver_fax)
 t.run_ticks(2)
