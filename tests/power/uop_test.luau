@@ -90,6 +90,7 @@ t.run_seconds(3) -- the electrical pass is 0.5 Hz; let one land
 -- The flush cover has its own state and sprite; opening it leaves all
 -- three independently composed power lamps and the live connection alone.
 local outlet_target = assert(t.target_at(p, 7, 1, "utility_outlet_port"))
+ui_controls.primary_label(p, outlet_target, "lunatic/tfs:action.open")
 local closed_port = assert(t.structure_at(7, 1))
 local powered_port = assert(t.outlet_at(7, 1))
 assert(closed_port.state == "closed", "outlet cover defaults closed")
@@ -101,6 +102,7 @@ assert(powered_port.powered and powered_port.feed == "l2", "cover state does not
 
 t.click(p, 7, 1, outlet_target)
 t.tick()
+ui_controls.primary_label(p, outlet_target, "lunatic/tfs:action.close")
 local open_port = assert(t.structure_at(7, 1))
 local open_power = assert(t.outlet_at(7, 1))
 assert(open_port.state == "open", "empty-hand click opens the cover")
