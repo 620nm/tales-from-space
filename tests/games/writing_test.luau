@@ -38,7 +38,11 @@ local function pick(id: string, x: number, y: number)
         t.target_at(p, x, y, id),
         id .. " is visible; tile=" .. table.concat(t.items_at(x, y), ",")
     )
-    t.click(p, x, y, target)
+    if string.sub(id, 1, 9) == "paper_bin" then
+        t.use_item(p, target, "alt_primary")
+    else
+        t.click(p, x, y, target)
+    end
     t.tick()
     assert(t.hands(p).held == id, id .. " is in the active hand; got " .. tostring(t.hands(p).held))
 end
@@ -161,6 +165,20 @@ t.tick()
 t.swap_hands(p)
 t.drop(p)
 t.tick()
+local bin = assert(t.target_at(p, 3, 2, "paper_bin"))
+local draw_hint = false
+local pickup_hint = false
+for _, hint in ipairs(t.action_hints(p, bin)) do
+    if hint.gesture == "primary" and hint.label.key == "lunatic/tfs:action.paper_bin.draw" then draw_hint = true end
+    if hint.gesture == "alt_primary" and hint.label.key == "lunatic/tfs:action.pick_up" then pickup_hint = true end
+end
+assert(draw_hint and pickup_hint, "the bin advertises drawing and alternative pickup")
+t.click(p, 3, 2, bin)
+t.tick()
+assert(t.hands(p).held == "paper", "a normal floor click takes a sheet")
+assert(t.item_at(3, 2, "paper_bin") ~= nil, "drawing leaves the bin on the floor")
+t.drop(p)
+t.tick()
 pick("paper_bin", 3, 2)
 local function bin_picture(id: string, state: string, sprite: string)
     t.drop(p)
@@ -169,7 +187,7 @@ local function bin_picture(id: string, state: string, sprite: string)
     assert(item.state == state and item.sprite == sprite, "bin picture follows committed stock")
     pick(id, 2, 1)
 end
-for index = 1, 30 do
+for index = 2, 30 do
     t.use_self(p)
     t.tick()
     t.swap_hands(p)
@@ -218,6 +236,10 @@ t.tick()
 t.swap_hands(p)
 t.drop(p)
 t.tick()
+t.click(p, 1, 2, assert(t.target_at(p, 1, 2, "paper_bin.empty")))
+t.tick()
+assert(t.hands(p).held == nil, "an empty bin does not fall through to pickup")
+assert(t.item_at(1, 2, "paper_bin.empty") ~= nil, "the empty bin stays on the floor")
 pick("paper_bin.empty", 1, 2)
 t.use_self(p)
 t.tick()

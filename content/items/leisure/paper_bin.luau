@@ -13,6 +13,9 @@ local content = {
     state = "full",
     state_sprites = { full = "paper_bin", empty = "paper_bin_empty" },
     acts_on_items = true,
+    gestures = { "alt_primary" },
+    pickup_gesture = "alt_primary",
+    interaction_labels = { alt_primary = { label = "lunatic/tfs:action.pick_up" } },
     hint_tags = { "paper_source" },
     resources = { paper = { capacity = 30, initial = 30 } },
     variants = {
@@ -27,6 +30,11 @@ local content = {
 }
 
 content.actions = {
+    {
+        id = "draw_ground", gesture = "primary", route = "receiver",
+        label = "lunatic/tfs:action.paper_bin.draw",
+        held = { fact = "held.present", value = "false" },
+    },
     {
         id = "draw",
         gesture = "self",
@@ -69,7 +77,7 @@ if sim ~= nil then
         refresh(ev.from)
         refresh(ev.to)
     end)
-    behavior:handle("interaction.use", { kind = "replace", route = "self" }, function(ev)
+    local function draw(ev)
         sim.resources.materialize({
             source = ev.subject,
             resource = "paper",
@@ -77,7 +85,9 @@ if sim ~= nil then
             require_blank = true,
         })
         return true
-    end)
+    end
+    behavior:handle("interaction.use", { kind = "replace", route = "self" }, draw)
+    behavior:handle("interaction.use", { kind = "replace", route = "interact" }, draw)
     behavior:handle("interaction.use", { kind = "replace", route = "use" }, function(ev)
         local item = ev.claim and ev.claim.entity
         if item == nil or (item.base or item.prototype) ~= "paper" then

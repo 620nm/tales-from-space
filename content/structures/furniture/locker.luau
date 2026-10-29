@@ -1,3 +1,4 @@
+local action_rules = require("@lib/action_rules")
 -- A closet-sized item container, and the tool-room variant the station
 -- places. The engine knows only the generic `container` mechanism; all
 -- names, pictures, sounds, and possible interiors live here.
@@ -21,6 +22,7 @@ local closet_data = require("@lib/closets/data")
 
 return {
     id = "locker",
+    actions = action_rules.open_close(),
     script = "locker",
     -- Closets draw under items (low_object in content/compositions.luau).
     visual_layer = "low_object",

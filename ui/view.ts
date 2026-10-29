@@ -126,6 +126,8 @@ export interface FieldOpts extends Box {
   label?: string;
   multiline?: boolean;
   flow?: boolean;
+  markdown?: boolean;
+  placeholder?: string;
   submitOnly?: boolean;
   clearOnSubmit?: boolean;
   blurOnSubmit?: boolean;
@@ -152,6 +154,8 @@ export function entry(
     ...(opts.style ? { style: opts.style as Record<string, StyleValue> } : {}),
     ...(opts.submitOnly ? { submitOnly: true } : {}),
     ...(opts.flow ? { flow: true } : {}),
+    ...(opts.markdown ? { markdown: true } : {}),
+    ...(opts.placeholder === undefined ? {} : { placeholder: opts.placeholder }),
     ...(opts.clearOnSubmit ? { clearOnSubmit: true } : {}),
     ...(opts.blurOnSubmit ? { blurOnSubmit: true } : {}),
     ...(opts.debounceMs === undefined ? {} : { debounceMs: opts.debounceMs }),

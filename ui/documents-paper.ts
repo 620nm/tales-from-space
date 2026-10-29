@@ -12,7 +12,7 @@ const fragmentsOf = (state: PaperState) =>
 /** Writing continues on the sheet after its existing marks. */
 export function paperBody(id: string, doc: DocumentIdentity, state: PaperState, active: boolean): UiNode[] {
   const committed = fragmentsOf(state);
-  const committedPreview = writingPreview(`${id}/paper/committed`, committed);
+  const committedPreview = committed.length ? writingPreview(`${id}/paper/committed`, committed) : [];
   const sourceDraft = typeof state.draft === "string" ? state.draft
     : "";
   const draft = sliceUtf8(sourceDraft, TEXT_LIMIT);
@@ -25,7 +25,8 @@ export function paperBody(id: string, doc: DocumentIdentity, state: PaperState, 
     Stack(`${body}/committed`, [
       ...committedPreview,
       entry(draftId, draft, (value) => scriptAction(doc, writeAction, sliceUtf8(value, TEXT_LIMIT)),
-        { multiline: true, flow: true, submitOnly: true, revision: state.revision, disabled: !active,
+        { multiline: true, flow: true, markdown: true, submitOnly: true,
+          ...(committed.length ? {} : { placeholder: S.tfs("ui.writing.empty") }), revision: state.revision, disabled: !active,
           // theme-lint: allow -- native writer style is pack-authored content.
           cls: ["paper-line"], label: S.tfs("ui.writing.draft"), style: {
             ...(style?.font_family ? { fontFamily: style.font_family } : {}),

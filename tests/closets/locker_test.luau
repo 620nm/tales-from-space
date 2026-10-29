@@ -1,3 +1,4 @@
+local ui_controls = require("@helpers/ui_controls")
 -- A tool locker as a player meets it: collision while shut, a seeded
 -- tg loadout appearing on open, ordinary items accepted while open,
 -- concealment restored on close, and both transactions on the record.
@@ -37,6 +38,7 @@ local p = t.join()
 t.tick()
 local locker = t.target_at(p, 2, 1, "locker.tools")
 assert(locker ~= nil, "the variant is one targetable structure")
+ui_controls.primary_label(p, locker, "lunatic/tfs:action.open")
 local shut = assert(t.structure_at(2, 1))
 assert(
     shut.state == "closed" and shut.sprite == "locker_tools",
@@ -54,6 +56,7 @@ assert(x == 1 and y == 1, "the shut locker blocks movement")
 local _ = t.sounds(p)
 t.click(p, 2, 1, locker)
 t.tick()
+ui_controls.primary_label(p, locker, "lunatic/tfs:action.close")
 local open = assert(t.structure_at(2, 1))
 assert(
     open.state == "open" and open.sprite == "locker_tools_open",
