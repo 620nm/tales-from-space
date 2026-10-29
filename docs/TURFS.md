@@ -81,7 +81,9 @@ space subterrain fill differs from `rock`: rock over rock floor, as above.
 The four glass floors (tg `glass.dm`) are floor windows over an open substrate.
 They hold a body and the air, show the level below, and show runs beneath
 without tool access. All four smooth as one group. Their presets open the
-substrate, so they cannot go on the lowest level. A power cable needs
+substrate, so they cannot go on the lowest level of a closed environment; the four
+space environments declare `beyond = { below = "empty", above = "empty" }`, where
+an Open tile on the lowest level is legal and vents. A power cable needs
 supporting ground, station base or catwalk, so none runs on glass, and the
 glass preset is refused over a cable run (tg refuses cable where the underfloor
 is only visible, `cable.dm:692`); pipes have no such need. A crowbar pries a glass
