@@ -72,11 +72,14 @@ is refused before the scan starts, with the message "The sheet is too long to
 fax." for the operator; no paper can reach it, so the refusal guards a future
 larger sheet.
 
-Fax endpoints advertise no service by default. A player enables a trimmed,
-control-free name of at most 64 bytes. Duplicate display names remain plain in
-the native directory; the pack UI adds each endpoint's MAC suffix when it
-renders an ambiguous name. Discovery includes only online endpoints in the
-same connected device tree, with 32 rows per page. The service bridge uses
+Fax endpoints advertise automatically under their prototype name. A player
+can rename or hide an endpoint; hiding persists through network changes.
+Names are trimmed, control-free, and at most 64 bytes. The panel displays
+addresses beside names to distinguish recipients across pages. Discovery
+includes only other online endpoints in the same connected device tree,
+with 32 native rows per page. Initialization and directory-change events
+restore advertisements after network changes without polling. A selected
+recipient that disappears also loses its pending confirmation. The service bridge uses
 the five messages `fax.print`, `fax.send`, `fax.printed`, `fax.sent`, and
 `fax.failed`, with Markdown chunks no larger than 4096 bytes and no more
 than 8192 bytes total. The delivery and reply handlers use the native

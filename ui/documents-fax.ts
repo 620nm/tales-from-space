@@ -51,23 +51,26 @@ function directory(id: string, doc: DocumentIdentity, state: FaxState, active: b
   const pageAction = "page";
   const page = Math.max(0, Math.min(31, Math.floor(state.directory_page ?? 0)));
   const hasNext = state.directory_more === true;
-  const pages = hasNext ? page + 2 : page + 1;
   const visible = entries.slice(0, PAGE_SIZE);
   const rows = visible.map((entry, index) => {
     const target = entry.id ?? entry.address ?? entry.name ?? "";
     const selected = target && target === state.target;
     return row(`${id}/entry/${page * PAGE_SIZE + index}`, [
       text(`${id}/entry/${page * PAGE_SIZE + index}/name`, entry.name ?? entry.address ?? "", ["fax-directory-name"]),
+      text(`${id}/entry/${page * PAGE_SIZE + index}/address`, entry.address ?? target, ["hint"]),
       press(`${id}/entry/${page * PAGE_SIZE + index}/target`, selected ? S.tfs("ui.fax.selected") : S.tfs("ui.fax.target"),
         scriptAction(doc, "confirm", sliceUtf8(target, 64)), { variant: selected ? "selected" : "ghost", disabled: !active || !target, cls: ["fax-directory-target"] }),
     ], { cls: ["fax-directory-row"] });
   });
   const nav = row(`${id}/nav`, [
     press(`${id}/previous`, S.tfs("ui.fax.previous"), scriptAction(doc, pageAction, String(page - 1)), { disabled: !active || page === 0, cls: ["fax-directory-previous"] }),
-    text(`${id}/page`, S.tfs("ui.fax.page", { page: page + 1, pages }), ["hint", "fax-directory-page"]),
+    text(`${id}/page`, S.tfs("ui.fax.page", { page: page + 1 }), ["hint", "fax-directory-page"]),
     press(`${id}/next`, S.tfs("ui.fax.next"), scriptAction(doc, pageAction, String(page + 1)), { disabled: !active || !hasNext || page >= 31, cls: ["fax-directory-next"] }),
   ], { cls: ["fax-directory-nav"] });
-  return Stack(id, [text(`${id}/title`, S.tfs("ui.fax.directory"), ["paper-label"]), ...rows, nav,
+  const empty = !state.powered ? "ui.fax.directory_offline"
+    : !state.network ? "ui.fax.directory_unjoined" : "ui.fax.directory_empty";
+  return Stack(id, [text(`${id}/title`, S.tfs("ui.fax.directory"), ["paper-label"]), ...rows,
+    ...(rows.length ? [] : [text(`${id}/empty`, S.tfs(empty), ["hint"])]), nav,
   ], { dir: "column", cls: ["fax-directory"] });
 }
 

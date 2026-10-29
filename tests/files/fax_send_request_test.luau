@@ -129,7 +129,7 @@ laptop.close(crew)
 t.drop(crew)
 t.run_ticks(2)
 
--- Name and advertise both faxes through their player UI, then load Alpha's
+-- Rename both automatically advertised faxes, then load Alpha's
 -- sheet: only Alpha holds one, so the guest's request names the sender.
 local function advertise(x: number, y: number, name: string)
     local fax = assert(t.target_at(crew, x, y, "fax"))
@@ -138,7 +138,6 @@ local function advertise(x: number, y: number, name: string)
     t.ui_edit(crew, node(crew, "/controls/name").id, name)
     t.ui_press(crew, node(crew, "/controls/name/set").id)
     t.run_ticks(2)
-    t.ui_press(crew, node(crew, "/controls/advertise").id)
     t.run_ticks(4)
     t.ui_close(crew, "fax")
 end

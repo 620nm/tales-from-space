@@ -77,10 +77,6 @@ t.world(
 local crew = t.join()
 t.run_seconds(0.5)
 
-local function node(player: number, suffix: string): ui_controls.Node
-    return ui_controls.node(player, suffix)
-end
-
 -- Install the source through the laptop's actual contact and file panes.
 laptop.ready(crew, 3, 1)
 local connected = laptop.connect(crew, 3, 2, "access_point")
@@ -125,28 +121,7 @@ laptop.close(crew)
 t.drop(crew)
 t.run_ticks(2)
 
--- Advertise the reachable fax through its player UI before pressing.
-t.move(crew, "west")
-t.run_ticks(2)
-t.move(crew, "west")
-t.run_ticks(2)
-t.move(crew, "south")
-t.run_ticks(2)
-local remote_fax = assert(t.target_at(crew, 1, 2, "fax"))
-t.click(crew, 1, 2, remote_fax)
-t.run_ticks(2)
-t.ui_edit(crew, node(crew, "/controls/name").id, "Controller Fax")
-t.ui_press(crew, node(crew, "/controls/name/set").id)
-t.run_ticks(2)
-t.ui_press(crew, node(crew, "/controls/advertise").id)
-t.run_ticks(4)
-t.ui_close(crew, "fax")
-t.move(crew, "north")
-t.run_ticks(2)
-t.move(crew, "east")
-t.run_ticks(2)
-t.move(crew, "east")
-t.run_ticks(2)
+-- The untouched fax advertises both services before any player opens it.
 
 -- One player press starts the addressed fax.print job.
 t.click(crew, 3, 1, assert(t.target_at(crew, 3, 1, "airlock_button")))

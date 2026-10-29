@@ -23,6 +23,7 @@ type DirectoryRow = { id: string, address: string, name: string, online: boolean
 local viewer_state: { [string]: ViewerState } = {}
 local viewers: { [string]: { [string]: Handle } } = {}
 local viewer_machines: { [string]: Handle } = {}
+local machines: { [string]: Handle } = {}
 -- One job owns each endpoint. This map retains only the private reply/actor
 -- context needed when the job settles; the queue retains nothing of the
 -- source, and the slot lock holds the sheet itself.
@@ -61,6 +62,20 @@ if sim ~= nil then
     sim.define("script_var", "lunatic/tfs:fax_name", { replicate = "server" })
     sim.define("script_var", "lunatic/tfs:fax_advertised", { replicate = "server" })
     sim.define("script_var", "lunatic/tfs:fax_busy", { replicate = "server" })
+    local function advertise(machine: Handle)
+        if machine.vars.fax_advertised == nil then
+            machine.vars.fax_advertised = true
+        end
+        if machine.vars.fax_name == nil then
+            machine.vars.fax_name = machine.name
+        end
+        if machine.vars.fax_advertised == false or sim.link_state(machine) == nil then
+            return
+        end
+        for _, id in ipairs({ service.print, service.send }) do
+            sim.link.advertise({ subject = machine, service = id, name = machine.vars.fax_name })
+        end
+    end
     local function resource(machine: Handle, id: string)
         for _, row in ipairs(sim.resources.read(machine)) do
             if row.id == id then
@@ -101,8 +116,12 @@ if sim ~= nil then
     local function directory(machine: Handle, page_index: number)
         local rows: { DirectoryRow } = {}
         local names: { [string]: number } = {}
+        local state = sim.link_state(machine)
         local page = sim.query.link_directory(machine, service.send, (page_index or 0) * 32)
         for _, row in ipairs(page.rows or {}) do
+            if state ~= nil and row.mac == state.mac then
+                continue
+            end
             local name = row.name or row.mac
             names[name] = (names[name] or 0) + 1
             table.insert(rows, { id = row.mac, address = row.mac, name = name, online = true })
@@ -113,6 +132,26 @@ if sim ~= nil then
             end
         end
         return rows, page.next ~= nil
+    end
+    local function reachable(machine: Handle, target: string): boolean
+        local state = sim.link_state(machine)
+        if state == nil or state.mac == target then
+            return false
+        end
+        local cursor = 0
+        repeat
+            local page = sim.query.link_directory(machine, service.send, cursor)
+            for _, row in ipairs(page.rows) do
+                if row.mac == target then
+                    return true
+                end
+            end
+            if page.next == nil then
+                return false
+            end
+            cursor = page.next
+        until cursor >= 32 * 32
+        return false
     end
     -- Target and confirmation are session-local UI state. They are keyed by
     -- the viewer supplied by the native UI envelope, never by a remote fax
@@ -138,9 +177,17 @@ if sim ~= nil then
         local selected: ViewerState = if viewer then state_for(machine, viewer) else { page = 0 }
         local state = sim.link_state(machine)
         local directory_rows, directory_more = directory(machine, selected.page or 0)
+        if #directory_rows == 0 and selected.page > 0 then
+            selected.page = 0
+            directory_rows, directory_more = directory(machine, 0)
+        end
+        if selected.target ~= nil and not reachable(machine, selected.target) then
+            selected.target = nil
+            selected.confirming = false
+        end
         return {
             kind = "fax",
-            name = machine.vars.fax_name or "",
+            name = machine.vars.fax_name or machine.name,
             powered = sim.is_powered(machine),
             address = state and state.mac,
             network = state and state.parent,
@@ -358,6 +405,11 @@ if sim ~= nil then
 
     local behavior = sim.define("behavior", "lunatic/tfs:fax", { prototype = content.id })
 
+    behavior:handle("entity.initialize.done", { kind = "react" }, function(ev)
+        machines[tostring(ev.entity)] = ev.entity
+        advertise(ev.entity)
+    end)
+
     -- Directory changes are a topology-wide hint. Reproject only remembered
     -- open viewers; the table contains no retained document data or handles
     -- supplied by a guest.
@@ -374,18 +426,16 @@ if sim ~= nil then
         end
     end
     sim.handle("link.directory.changed", { kind = "react" }, function()
+        for key, machine in pairs(machines) do
+            if not machine.alive then
+                machines[key] = nil
+                viewers[key] = nil
+                viewer_machines[key] = nil
+            else
+                advertise(machine)
+            end
+        end
         refresh_all_faxes()
-    end)
-    sim.handle("link.service.advertise.done", { kind = "react" }, function(ev)
-        if ev.self == nil or ev.self.prototype ~= content.id then
-            return
-        end
-        if ev.outcome ~= "completed" or ev.service == nil then
-            ev.self.vars.fax_advertised = false
-        else
-            ev.self.vars.fax_advertised = true
-        end
-        refresh(ev.self)
     end)
 
     -- Each page's completion is the authoritative receive result. It
@@ -484,45 +534,15 @@ if sim ~= nil then
             local name = type(ev.value) == "string" and ev.value:match("^%s*(.-)%s*$")
             if name and #name > 0 and #name <= 64 and not name:find("%c") then
                 machine.vars.fax_name = name
-                if machine.vars.fax_advertised then
-                    local ok = pcall(function()
-                        sim.link.advertise({
-                            subject = machine,
-                            service = service.print,
-                            name = name,
-                        })
-                        sim.link.advertise({
-                            subject = machine,
-                            service = service.send,
-                            name = name,
-                        })
-                    end)
-                    if not ok then
-                        machine.vars.fax_advertised = false
-                    end
-                end
+                advertise(machine)
             end
             update(machine, ev.actor)
             return true
         end
         if ev.action == "advertise" then
             if ev.value == "on" then
-                local name = machine.vars.fax_name
-                if type(name) == "string" and #name > 0 then
-                    local ok = pcall(function()
-                        sim.link.advertise({
-                            subject = machine,
-                            service = service.print,
-                            name = name,
-                        })
-                        sim.link.advertise({
-                            subject = machine,
-                            service = service.send,
-                            name = name,
-                        })
-                    end)
-                    machine.vars.fax_advertised = ok
-                end
+                machine.vars.fax_advertised = true
+                advertise(machine)
             elseif ev.value == "off" then
                 sim.link.advertise({ subject = machine, service = nil })
                 machine.vars.fax_advertised = false
