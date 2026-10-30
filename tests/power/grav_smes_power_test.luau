@@ -2,9 +2,9 @@ local bench = require("@helpers/grav_bench")
 local ui_controls = require("@helpers/ui_controls")
 
 -- The finished gravity battery runs: a start button that wants standby
--- and charge, 0.8 s of spin-up, weight on the connected deck within
--- thirty tiles while the store pays the field's draw, and none on deck
--- the field cannot reach. A battery that runs dry spins itself down; the
+-- and charge, 0.8 s of spin-up, weight on deck that starts within thirty
+-- tiles and on all deck joined to it, however far it runs, while the store
+-- pays the field's draw, and none on deck the field cannot reach. A battery that runs dry spins itself down; the
 -- stop button does the same on purpose; and a supply cable under an
 -- emitter's cell charges the store.
 --
@@ -12,8 +12,8 @@ local ui_controls = require("@helpers/ui_controls")
 -- body on bare deck with nothing to brace on cannot step at all, so a
 -- probe standing in the open tries a step and reports whether it moved.
 -- The battery stands on the main deck at (7, 5), cells (6..8, 4..6); a
--- causeway runs east from it along y = 5; a three-by-three island of deck
--- floats apart from both.
+-- causeway runs east from it along y = 5, past thirty tiles; a
+-- three-by-three island of deck floats apart from both, beyond thirty.
 local WIDTH = 44
 local HEIGHT = 11
 local CENTRE_X = 7
@@ -23,8 +23,8 @@ local STANDBY = "^standby"
 -- Probe spots: open deck with no wall or machine in reach.
 local NEAR = { x = 12, y = 2 } -- main deck, ~5 tiles away
 local MID = { x = 30, y = 5 } -- causeway, 23 tiles away: inside the field
-local FAR = { x = 40, y = 5 } -- same causeway, 33 tiles away: beyond it
-local ISLAND = { x = 21, y = 9 } -- deck 14 tiles away that nothing joins to the battery
+local FAR = { x = 40, y = 5 } -- same causeway, 33 tiles away: joined, so inside
+local ISLAND = { x = 41, y = 9 } -- deck 34 tiles away that nothing joins to the battery
 local OPERATOR = { x = 9, y = 5 }
 
 local function deck_at(x: number, y: number): boolean
@@ -34,7 +34,7 @@ local function deck_at(x: number, y: number): boolean
     if y == 5 and x >= 14 and x <= 42 then
         return true
     end
-    return x >= 20 and x <= 22 and y >= 8 and y <= 10
+    return x >= 40 and x <= 42 and y >= 8 and y <= 10
 end
 
 local function rows(supplied: boolean): string
@@ -52,6 +52,20 @@ local function rows(supplied: boolean): string
         table.insert(lines, `"{table.concat(line)}"`)
     end
     return table.concat(lines, ",\n")
+end
+
+-- Every deck tile starts airless: air venting off open deck into space
+-- would blow a weightless body off its spot before any step is tried.
+local function airless(): string
+    local lines = {}
+    for y = 0, HEIGHT - 1 do
+        for x = 0, WIDTH - 1 do
+            if deck_at(x, y) then
+                table.insert(lines, `({x}, {y}, "airless")`)
+            end
+        end
+    end
+    return table.concat(lines, ", ")
 end
 
 local function cables(): string
@@ -110,8 +124,10 @@ local function build(supplied: boolean): Bench
             networks: [
 %s
             ],
+            painted: [%s],
         ),
     ],
+    blends: { "airless": (rows: [], temperature_k: 2.7, amount: per_m3) },
 )]==],
             rows(supplied),
             OPERATOR.x,
@@ -126,7 +142,8 @@ local function build(supplied: boolean): Bench
             ISLAND.y,
             CENTRE_X,
             CENTRE_Y,
-            if supplied then cables() else ""
+            if supplied then cables() else "",
+            airless()
         ),
         7
     )
@@ -170,12 +187,12 @@ local function assert_weights(b: Bench, want: Weights, why: string)
     local got = weights(b)
     assert(got.near == want.near, why .. ": the near deck weighs " .. tostring(got.near))
     assert(got.mid == want.mid, why .. ": the causeway weighs " .. tostring(got.mid))
-    assert(got.far == want.far, why .. ": beyond thirty tiles weighs " .. tostring(got.far))
+    assert(got.far == want.far, why .. ": the causeway past thirty tiles weighs " .. tostring(got.far))
     assert(got.island == want.island, why .. ": the island weighs " .. tostring(got.island))
 end
 
 local NONE: Weights = { near = false, mid = false, far = false, island = false }
-local FIELD: Weights = { near = true, mid = true, far = false, island = false }
+local FIELD: Weights = { near = true, mid = true, far = true, island = false }
 
 local function state(): string
     return tostring(assert(t.structure_at(CENTRE_X, CENTRE_Y)).state)
