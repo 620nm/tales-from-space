@@ -1,4 +1,4 @@
--- The gravity battery's test room: eight loose parts around a centre tile
+-- The gravity battery's test room: eight parts around a centre tile
 -- (5, 4) in an 11x9 room, a player, and the hand-juggling the assembly
 -- specs share.
 local bench = {}
@@ -7,6 +7,7 @@ export type Override = {
     state: string?,
     dir: string?,
     absent: boolean?,
+    packed: boolean?,
 }
 
 type Position = {
@@ -23,10 +24,10 @@ local POSITIONS: { Position } = {
     { key = "e", id = "grav_emitter", x = 6, y = 4, dir = "west" },
     { key = "s", id = "grav_emitter", x = 5, y = 5, dir = "north" },
     { key = "w", id = "grav_emitter", x = 4, y = 4, dir = "east" },
-    { key = "nw", id = "grav_supermagnet", x = 4, y = 3, dir = "north" },
-    { key = "ne", id = "grav_supermagnet", x = 6, y = 3, dir = "east" },
-    { key = "se", id = "grav_supermagnet", x = 6, y = 5, dir = "south" },
-    { key = "sw", id = "grav_supermagnet", x = 4, y = 5, dir = "west" },
+    { key = "nw", id = "grav_supermagnet_ring", x = 4, y = 3, dir = "north" },
+    { key = "ne", id = "grav_supermagnet_ring", x = 6, y = 3, dir = "east" },
+    { key = "se", id = "grav_supermagnet_ring", x = 6, y = 5, dir = "south" },
+    { key = "sw", id = "grav_supermagnet_ring", x = 4, y = 5, dir = "west" },
 }
 
 bench.CENTRE_X = 5
@@ -47,13 +48,15 @@ function bench.position(key: string): Position
 end
 
 -- Map rows for the eight parts, anchored and facing inward, with the
--- overrides of the named positions applied.
+-- overrides of the named positions applied. A `packed` ring stands on its cart.
 function bench.part_rows(overrides: { [string]: Override }?): string
     local rows = {}
     for _, spot in ipairs(POSITIONS) do
         local named = if overrides ~= nil then overrides[spot.key] else nil
         local change: Override = named or {}
-        if change.absent ~= true then
+        if change.packed == true then
+            table.insert(rows, string.format('(%d, %d, "grav_supermagnet")', spot.x, spot.y))
+        elseif change.absent ~= true then
             table.insert(
                 rows,
                 string.format(

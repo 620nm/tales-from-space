@@ -1,6 +1,7 @@
--- The gravity battery's assembly rules: where the eight loose parts must
--- stand and face, the torch weld that fuses them into one 3x3 machine, and
--- the glass panel that only fits the south cell.
+-- The gravity battery's assembly rules: where the eight parts must stand
+-- and face, the wrench that sets a packed ring between two emitters, the
+-- torch weld that fuses the parts into one 3x3 machine, and the glass panel
+-- that only fits the south cell.
 --
 -- Layout, centre C, north up:  ring emitter ring / emitter C emitter /
 -- ring emitter ring. An emitter's facing is the way its nozzle points, so
@@ -12,10 +13,12 @@ local grav_smes_run = require("@lib/grav_smes_run")
 local grav_smes = {}
 
 local WELDER = "welder"
+local WRENCH = "wrench"
 local GLASS = "glass"
 local BODY = "grav_smes"
 local EMITTER = "grav_emitter"
-local RING = "grav_supermagnet"
+local PACKED_RING = "grav_supermagnet"
+local RING = "grav_supermagnet_ring"
 local ANCHORED = "anchored"
 local WELDED = "welded"
 local CASED = "cased"
@@ -28,6 +31,7 @@ local FUEL = "naphtha"
 local WELD_FUEL_MOLES = 0.9
 local WELD_SECONDS = 6.0
 local GLAZE_SECONDS = 3.0
+local RING_SECONDS = 1.0
 local STANDBY = "standby"
 
 -- Footprint cell of the south emitter, as `interaction.use` reports it
@@ -70,6 +74,13 @@ function grav_smes.message_keys(): { string }
         MESSAGE .. "glass_start",
         MESSAGE .. "glass_stopped",
         MESSAGE .. "glass_done",
+        MESSAGE .. "ring_too_few",
+        MESSAGE .. "ring_too_many",
+        MESSAGE .. "ring_opposite",
+        MESSAGE .. "ring_blocked",
+        MESSAGE .. "ring_start",
+        MESSAGE .. "ring_stopped",
+        MESSAGE .. "ring_done",
     }
     for _, part in ipairs(PARTS) do
         table.insert(keys, MESSAGE .. "missing." .. part.position)
@@ -129,6 +140,10 @@ local function inspect(part: Handle): Inspection
     for _, spec in ipairs(PARTS) do
         local at = tile_beside(centre, spec.dx, spec.dy)
         local found = if at ~= nil then part_at(at, spec.prototype) else nil
+        if found == nil and at ~= nil and spec.prototype == RING and part_at(at, PACKED_RING) ~= nil then
+            result.refusal = MESSAGE .. "loose." .. spec.position
+            return result
+        end
         if found == nil then
             result.refusal = MESSAGE .. "missing." .. spec.position
             return result
@@ -144,6 +159,107 @@ local function inspect(part: Handle): Inspection
         table.insert(result.parts, found)
     end
     return result
+end
+
+type RingFit = {
+    facing: string?,
+    refusal: string?,
+}
+
+local function bolted_emitter_beside(tile: TileAddress, dx: number, dy: number): boolean
+    local at = tile_beside(tile, dx, dy)
+    local emitter = if at ~= nil then part_at(at, EMITTER) else nil
+    return emitter ~= nil and emitter.state == ANCHORED
+end
+
+-- Which corner arc a ring takes on `tile`: exactly two bolted emitters must
+-- meet at it, and the arc bends round the side they stand on.
+local function ring_fit(tile: TileAddress): RingFit
+    local north = bolted_emitter_beside(tile, 0, -1)
+    local east = bolted_emitter_beside(tile, 1, 0)
+    local south = bolted_emitter_beside(tile, 0, 1)
+    local west = bolted_emitter_beside(tile, -1, 0)
+    local count = 0
+    for _, beside in ipairs({ north, east, south, west }) do
+        if beside then
+            count += 1
+        end
+    end
+    if count < 2 then
+        return { refusal = MESSAGE .. "ring_too_few" }
+    end
+    if count > 2 then
+        return { refusal = MESSAGE .. "ring_too_many" }
+    end
+    if (north and south) or (east and west) then
+        return { refusal = MESSAGE .. "ring_opposite" }
+    end
+    if south then
+        return { facing = if east then "north" else "east" }
+    end
+    return { facing = if west then "south" else "west" }
+end
+
+local function ring_replacement(cart: Handle, fit: RingFit): StructureReplaceCommand
+    return {
+        remove = { cart },
+        spawn = { definition = RING, at = assert(cart.tile), state = ANCHORED, facing = fit.facing },
+    }
+end
+
+-- The packed ring's fit where it stands, as a command, or the refusal said aloud.
+local function set_ring_command(cart: Handle, actor: Handle): StructureReplaceCommand?
+    local tile = cart.tile
+    if tile == nil then
+        send(actor, MESSAGE .. "ring_blocked")
+        return nil
+    end
+    local fit = ring_fit(tile)
+    if fit.refusal ~= nil then
+        send(actor, fit.refusal)
+        return nil
+    end
+    local command = ring_replacement(cart, fit)
+    if not sim.structure.can_replace(command).ok then
+        send(actor, MESSAGE .. "ring_blocked")
+        return nil
+    end
+    return command
+end
+
+-- A wrench on a packed ring: it unfolds into the corner arc between the two
+-- emitters beside it, and refuses without them.
+function grav_smes.set_ring(ev: InteractionUsePayload): boolean | { replaced: boolean }
+    local cart, actor, wrench = ev.subject, ev.actor, ev.implement
+    if wrench == nil or not wrench.alive or wrench.prototype ~= WRENCH then
+        return { replaced = false }
+    end
+    if set_ring_command(cart, actor) == nil then
+        return true
+    end
+    send(actor, MESSAGE .. "ring_start")
+    sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = assert(cart.tile) })
+    sim.spawn_task(actor, function()
+        if sim.do_after(actor, sim.ticks(RING_SECONDS), {}) ~= "ok" then
+            if actor.alive then
+                send(actor, MESSAGE .. "ring_stopped")
+            end
+            return
+        end
+        if not actor.alive or not cart.alive or not wrench.alive then
+            return
+        end
+        -- A second look: the cart and the emitters are as free to move as
+        -- the actor is.
+        local command = set_ring_command(cart, actor)
+        if command == nil then
+            return
+        end
+        sim.structure.replace(command)
+        sim.sound.play({ asset = "lunatic/tfs:sound/ratchet", at = assert(cart.tile) })
+        send(actor, MESSAGE .. "ring_done")
+    end)
+    return true
 end
 
 local function fuel_moles(torch: Handle): number
@@ -170,7 +286,7 @@ local function replacement(centre: TileAddress): StructureReplaceSpawn
     return { definition = BODY, at = centre, state = WELDED }
 end
 
--- A lit welder on any anchored emitter or ring: fuses the eight parts
+-- A lit welder on any anchored emitter or set ring: fuses the eight parts
 -- standing around the implied centre into the machine.
 function grav_smes.weld(ev: InteractionUsePayload): boolean | { replaced: boolean }
     local part, actor, torch = ev.subject, ev.actor, ev.implement

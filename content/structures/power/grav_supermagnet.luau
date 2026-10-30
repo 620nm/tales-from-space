@@ -1,24 +1,22 @@
--- One of the four supermagnet rings of the gravity battery, before it is
--- welded in.
+-- A supermagnet ring packed on its cart, before it is set in the gravity
+-- battery.
 --
--- Loose it is a cart that shows no facing; bolted down it draws the corner
--- arc its facing names (north is the north-west arc, then clockwise) and
--- turns with Alt+click. No recipe makes one: a map places it.
-local loose = "grav_supermagnet_loose"
-
+-- A wrench sets it between two bolted emitters, where it unfolds into
+-- `grav_supermagnet_ring` (lib/grav_smes.luau). No recipe makes one: a map
+-- places it.
 return {
     id = "grav_supermagnet",
     -- Large and loose, so it draws over items (large_object in content/compositions.luau).
     visual_layer = "large_object",
     name_label = "lunatic/tfs:entity.grav_supermagnet.name",
-    name = "supermagnet ring",
-    sprite = loose,
+    name = "packed supermagnet ring",
+    sprite = "grav_supermagnet_loose",
     dense = true,
     opaque = false,
     category = "power",
     script = "grav_supermagnet",
     examine = {
-        flavor = "A ring of superconducting coil that must sit in a corner of the gravity battery.",
+        flavor = "A ring of superconducting coil, packed on a cart. It has to be set in the corner between two emitters.",
     },
     motion_response = {
         mass = 160.0,
@@ -27,39 +25,28 @@ return {
         half_extent = 0.45,
         public_contacts = true,
     },
-    states = { "displaced", "anchored" },
-    -- Loose leads; the bolted-down preset is in its palette flyout.
-    palette_states = { "displaced", "anchored" },
+    states = { "displaced" },
+    loose = { "displaced" },
+    -- The cart looks the same from every side, so it takes no turn.
     facings = { "north", "east", "south", "west" },
     facing_sprites = {
-        displaced = { north = loose, south = loose, east = loose, west = loose },
-        anchored = {
-            north = "grav_supermagnet_north",
-            south = "grav_supermagnet_south",
-            east = "grav_supermagnet_east",
-            west = "grav_supermagnet_west",
+        displaced = {
+            north = "grav_supermagnet_loose",
+            east = "grav_supermagnet_loose",
+            south = "grav_supermagnet_loose",
+            west = "grav_supermagnet_loose",
         },
     },
-    loose = { "displaced" },
-    rotates = { "anchored" },
-    transitions = {
+    rotates = {},
+    actions = {
         {
-            sound = "ratchet",
-            at = "displaced",
-            tool = "wrench",
-            secs = 1.0,
-            to = "anchored",
-            start = "lunatic/tfs:entity.grav_supermagnet.anchor.start",
-            done = "lunatic/tfs:entity.grav_supermagnet.anchor.done",
-        },
-        {
-            sound = "ratchet",
-            at = "anchored",
-            tool = "wrench",
-            secs = 1.0,
-            to = "displaced",
-            start = "lunatic/tfs:entity.grav_supermagnet.unanchor.start",
-            done = "lunatic/tfs:entity.grav_supermagnet.unanchor.done",
+            id = "set_ring",
+            gesture = "primary",
+            route = "receiver",
+            label = "lunatic/tfs:ui.affordance.anchor",
+            held = { fact = "held.proto", value = "wrench" },
+            suggest = true,
+            suggest_implement = { item = "wrench" },
         },
     },
 }

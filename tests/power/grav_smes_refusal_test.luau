@@ -3,15 +3,15 @@ local bench = require("@helpers/grav_bench")
 -- The weld says what is wrong, in words naming the position, and takes
 -- nothing apart while it refuses. One room, mended defect by defect from
 -- the centre tile (the only tile that reaches every part): an unlit torch,
--- an emitter facing away, an unbolted emitter, an unbolted ring, a ring
--- turned to the wrong corner, and finally a ring that is simply not there.
+-- an emitter facing away, an unbolted emitter, a ring still packed, a ring
+-- set the wrong way round, and finally a ring that is simply not there.
 
 bench.world(
     '(5, 4, "player_spawn"), '
         .. bench.part_rows({
             e = { dir = "east" },
             w = { state = "displaced" },
-            ne = { state = "displaced" },
+            ne = { packed = true },
             se = { dir = "north" },
             sw = { absent = true },
         }),
@@ -61,16 +61,17 @@ bench.hold(p, "welder", NEAR)
 weld_says("The west emitter must be bolted down.")
 wrench(4, 4, "grav_emitter")
 
--- Unanchored ring.
+-- A ring still on its cart.
 bench.hold(p, "welder", NEAR)
 weld_says("The north-east supermagnet must be bolted down.")
 wrench(6, 3, "grav_supermagnet")
 
--- A ring turned to the wrong corner: north (north-west) where the
--- south-east arc belongs.
+-- A ring set the wrong way round: packing it up and setting it again finds
+-- its corner.
 bench.hold(p, "welder", NEAR)
-weld_says("The south-east supermagnet must be turned to fit its corner.")
-turn(6, 5, "grav_supermagnet", 2)
+weld_says("The south-east supermagnet sits the wrong way round; pack it up and set it again.")
+wrench(6, 5, "grav_supermagnet_ring")
+wrench(6, 5, "grav_supermagnet")
 
 -- Everything standing is right now; the last ring is just not there.
 bench.hold(p, "welder", NEAR)

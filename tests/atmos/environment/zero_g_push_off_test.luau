@@ -31,7 +31,7 @@ end
 
 for _, case in ipairs({
     { placed = '"grav_emitter"', name = "graviton emitter" },
-    { placed = '"grav_supermagnet"', name = "supermagnet ring" },
+    { placed = '"grav_supermagnet"', name = "packed supermagnet ring" },
     { placed = '"canister", "displaced"', name = "canister" },
 }) do
     local player = world(case.placed)

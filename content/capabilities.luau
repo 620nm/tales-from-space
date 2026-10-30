@@ -41,11 +41,18 @@ return {
         view = { depth = 3, tint = 0.9, scale = 0.965, offset = { x = 0, y = 0 } },
         light = { level_distance = 1 },
     },
-    -- A living mob on a tile without gravity bobs 2 px up and 2 px down, 1 s
-    -- each way (`DO_FLOATING_ANIM`, tgstation/code/__HELPERS/visual_effects.dm:8-10),
-    -- set by TRAIT_MOVE_FLOATING (tgstation/code/modules/mob/living/living.dm:1283);
-    -- only bodies bob, so `player` alone.
+    -- A loose thing on a tile without gravity bobs 2 px up and 2 px down, 1 s
+    -- each way (`DO_FLOATING_ANIM`, tgstation/code/__HELPERS/visual_effects.dm:8-10).
+    -- tg sets it on living mobs (TRAIT_MOVE_FLOATING,
+    -- tgstation/code/modules/mob/living/living.dm:1283); here every loose body,
+    -- item and structure floats, and an anchored one stays put.
     weightless = {
-        bob = { per_kind = { player = { rise_px = 2, rise_seconds = 1 } } },
+        bob = {
+            per_kind = {
+                player = { rise_px = 2, rise_seconds = 1 },
+                item = { rise_px = 2, rise_seconds = 1 },
+                machine = { rise_px = 2, rise_seconds = 1 },
+            },
+        },
     },
 }

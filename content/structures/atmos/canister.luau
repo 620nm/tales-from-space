@@ -138,6 +138,7 @@ return {
             sound = "smash",
             at = "anchored",
             tool = "wrench",
+            hint = { id = "unanchor", label = "lunatic/tfs:ui.affordance.unanchor" },
             to = "displaced",
             done = "You unfasten the canister from the port.",
         },
@@ -145,6 +146,7 @@ return {
             sound = "smash",
             at = "displaced",
             tool = "wrench",
+            hint = { id = "anchor", label = "lunatic/tfs:ui.affordance.anchor" },
             -- The socket, and nothing else.
             over = "fitting",
             to = "anchored",
