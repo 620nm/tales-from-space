@@ -28,7 +28,8 @@ return {
         public_contacts = true,
     },
     states = { "displaced", "anchored" },
-    palette_states = { "anchored", "displaced" },
+    -- Loose leads; the bolted-down preset is in its palette flyout.
+    palette_states = { "displaced", "anchored" },
     facings = { "north", "east", "south", "west" },
     facing_sprites = {
         displaced = { north = loose, south = loose, east = loose, west = loose },
