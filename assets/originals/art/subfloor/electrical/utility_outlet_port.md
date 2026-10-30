@@ -1,54 +1,53 @@
 # Utility Outlet Port artwork
 
 `utility_outlet_port.aseprite` is the editable 32×32 RGBA source, drawn
-through the Aseprite MCP. The fitting is a flush circular floor outlet
-with a hinged metal lid and a recessed socket, drawn straight from above.
-The circular silhouette has no perspective compression, visible side wall,
-or cast shadow. The subdued metal uses a limited palette and no glow.
+through the Aseprite MCP. The fitting is a flush rounded-square floor plate
+with a round removable cap over a recessed socket, drawn straight from
+above with no perspective, side wall or cast shadow.
 
-The floor rim occupies a centered 16×16 footprint at `(8, 8)`. The
-closed cover stays within that rim; the open lid is an 8×2 edge at
-`(12, 6)`, touching its hinge at the north rim. Both variants retain the same floor
-anchor and transparent surroundings. No sprite offset is required.
+The plate is a 16×16 footprint at `(8, 8)`. Opening it removes only the
+12×12 cap at `(10, 10)`, so the silhouette never changes. Both pictures
+keep the same floor anchor and transparent surroundings; no sprite offset
+is required.
 
-## Cover and channel layers
+## Layers and frames
 
-| Layer / frame | Picture |
-| --- | --- |
-| `housing` / 1, tag `closed` | Closed metal cover |
-| `housing` / 2, tag `open` | Raised lid and recessed socket |
-| `housing` / 3–5 | Closed cover for status previews |
+Layers, bottom to top: `housing`, `led_l1`, `led_l2`, `led_l3`, `cover`.
+Every layer stays visible, because the bake refuses a hidden one. Frames are
+alternatives for atlas baking, not an animation, and each tag covers one
+frame:
 
-Three individual 2×2 lamps remain separate on `wire_1`, `wire_2`, and
-`wire_3`, left to right at `(11, 20)`, `(15, 20)`, and `(19, 20)`.
-Each wire cel contains exactly one lamp. All three use the same status
-colors; a channel has no fixed identity color. Each layer's frames select
-its channel status independently of the other lamps and the cover:
+| Frame / tag | `housing` | `led_l*` | `cover` |
+| --- | --- | --- | --- |
+| 1 / `disconnected` | Open socket | Blank | empty |
+| 2 / `connected` | Open socket | Dull cable color | empty |
+| 3 / `active` | Open socket | Bright cable color | empty |
+| 4 / `closed` | Open socket | empty | Closed cap, whole plate |
 
-| Frame / tag | Lamp |
-| --- | --- |
-| 1 / `disconnected` | Unlit gray `#363c3e` |
-| 2 / `inactive` | Dull blue `#4b617c` |
-| 3 / `starved` | Red `#c46d66` |
-| 4 / `emergency` | Yellow `#c2a45e` |
-| 5 / `nominal` | Green `#77a67a` |
+## LEDs
 
-Frames are alternatives for atlas baking, not an animation. Cover tags
-and channel tags share frame numbers; a preview's lamp colors do not
-couple the cover state to power. Each tag covers exactly one frame.
+One 2×1 LED per cable layer on row 13, each on its own layer and in its
+cable's color. Together the layers give the nine LED pictures:
 
-`assets/sprites/95-originals.ron` registers seventeen `AseLayer` recipes:
-`utility_outlet_port` reads `housing` frame 1, and
-`utility_outlet_port_open` reads `housing` frame 2. The fifteen
-`uop_wire_{1,2,3}_{disconnected,inactive,starved,emergency,nominal}`
-recipes read the wire layers' frames 1–5. Runtime composition selects
-each channel lamp independently and stacks it over the selected cover.
+| Layer | Cable | Pixels | `disconnected` | `connected` | `active` |
+| --- | --- | --- | --- | --- | --- |
+| `led_l1` | Red | `(12, 13)` `(13, 13)` | `#2b2b2b` | `#c61326` | `#ff441b` |
+| `led_l2` | Yellow | `(15, 13)` `(16, 13)` | `#2b2b2b` | `#d9c21a` | `#ffff33` |
+| `led_l3` | Blue | `(18, 13)` `(19, 13)` | `#2b2b2b` | `#2667d1` | `#65b4ff` |
 
-Style references are the pack's Air Vent and Air Scrubber states
-`vent_off` and `scrub_off` in tgstation's
-`icons/obj/machines/atmospherics/unary_devices.dmi`, referenced by
-`assets/sprites/21-atmos-thermal-room-and-canisters.ron`.
+The prototype folds the engine's five channel states into these three
+pictures: `disconnected` is itself, `inactive` and `starved` are `connected`,
+and `emergency` and `nominal` are `active`. `channels_in_states = { "open" }`
+draws the LEDs only while the cap is off, so the closed plate shows none of
+them.
 
-The prototype is `content/structures/power/utility_outlet_port.luau`.
-The engine's `docs/content-schema/fixture-states.md` defines channel
-status selection.
+## Atlas
+
+`assets/sprites/95-originals.ron` bakes one layer per sprite:
+`utility_outlet_port` reads `cover` frame 4, `utility_outlet_port_open` reads
+`housing` frame 1, and the nine `uop_led_{l1,l2,l3}_{disconnected,connected,active}`
+sprites read each `led_l*` layer's frames 1–3. Runtime composition selects
+each channel's LED independently and stacks it over the open housing.
+
+The prototype is `content/structures/power/utility_outlet_port.luau`. The
+engine's `docs/content-schema/fixture-states.md` defines channel selection.
