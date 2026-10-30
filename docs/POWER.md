@@ -52,11 +52,11 @@ after its three lines; the dispenser and RPD dispense the adapter
 
 ## Floor outlet covers and connections
 
-Utility outlet ports are small flush circular fittings with a hinged cover.
-They start closed; an empty-hand primary click within reach opens or closes
-the cover. Tools keep their normal use priority. Cover state changes only
-the housing sprite and never electrical delivery or the three independent
-cable-layer lamps.
+Utility outlet ports are small flush floor plates with a round removable
+cap. They start closed; an empty-hand primary click within reach opens or
+closes the cap. Tools keep their normal use priority. The closed cap hides
+the three independent cable-layer lamps and opening it shows them; it never
+changes electrical delivery or what a lamp reports.
 
 Hovering an open port draws arrows to visible consumers: solid green for a
 powered connection, solid amber for an unpowered connection, and thinner,

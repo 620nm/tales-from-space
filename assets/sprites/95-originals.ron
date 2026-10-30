@@ -49,33 +49,26 @@
         ("steam_generator_loaded", Png("art/bench/steam_generator_off_loaded.png")),
         ("steam_generator_on", Png("art/bench/steam_generator_on.png")),
         ("steam_generator_on_loaded", Png("art/bench/steam_generator_on_loaded.png")),
-
-        // Floor outlet: housing frames 1/2 are closed/open; no offsets.
-        // Each wire layer's frames 1..5 are independently selected:
-        // disconnected, inactive, starved, emergency, nominal.
-        // Contract: originals/art/subfloor/electrical/utility_outlet_port.md.
-        ("utility_outlet_port", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "housing", 1)),
-        ("utility_outlet_port_open", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "housing", 2)),
-        ("uop_wire_1_disconnected", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_1", 1)),
-        ("uop_wire_1_inactive", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_1", 2)),
-        ("uop_wire_1_starved", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_1", 3)),
-        ("uop_wire_1_emergency", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_1", 4)),
-        ("uop_wire_1_nominal", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_1", 5)),
-        ("uop_wire_2_disconnected", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_2", 1)),
-        ("uop_wire_2_inactive", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_2", 2)),
-        ("uop_wire_2_starved", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_2", 3)),
-        ("uop_wire_2_emergency", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_2", 4)),
-        ("uop_wire_2_nominal", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_2", 5)),
-        ("uop_wire_3_disconnected", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_3", 1)),
-        ("uop_wire_3_inactive", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_3", 2)),
-        ("uop_wire_3_starved", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_3", 3)),
-        ("uop_wire_3_emergency", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_3", 4)),
-        ("uop_wire_3_nominal", AseLayer("art/subfloor/electrical/utility_outlet_port.aseprite", "wire_3", 5)),
     ],
     sheets: [
         ("hazard_placard", "art/signs/nfpa-704.ase"),
+        ("utility_outlet_port", "art/subfloor/electrical/utility_outlet_port.aseprite"),
     ],
     groups: [
+        // Floor outlet: the cover, the open housing and one lamp per
+        // cable layer, stacked at runtime; no offsets. Each `led_l*`
+        // layer's frames 1..3 are disconnected, connected, active.
+        // Contract: originals/art/subfloor/electrical/utility_outlet_port.md.
+        (
+            sheet: "utility_outlet_port",
+            sprites: [
+                Layer("utility_outlet_port", "cover", 4),
+                Layer("utility_outlet_port_open", "housing", 1),
+                LayerFrames("led_l1", ["uop_led_l1_disconnected", "uop_led_l1_connected", "uop_led_l1_active"]),
+                LayerFrames("led_l2", ["uop_led_l2_disconnected", "uop_led_l2_connected", "uop_led_l2_active"]),
+                LayerFrames("led_l3", ["uop_led_l3_disconnected", "uop_led_l3_connected", "uop_led_l3_active"]),
+            ],
+        ),
         // The hazard placard, drawn as one document whose LAYERS are the
         // stack a consumer builds at runtime: the diamond, a digit in
         // each of three quadrants, and one optional symbol in the

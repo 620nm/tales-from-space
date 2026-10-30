@@ -18,10 +18,14 @@
 --
 -- WHICH LAYER IT DRAWS FROM is a separate fact and not one of the
 -- lamps: it is the first live layer in the station's order, L2 before
--- L1 before L3 (docs/power/topology.md). Three green lamps mean a
+-- L1 before L3 (docs/power/topology.md). Three bright lamps mean a
 -- choice was made, not that three things are being drawn from -- so
 -- this bench parts one line at a time and watches the choice walk down
 -- the list without anybody rewiring anything.
+--
+-- The art folds those five words into three pictures, and only an open
+-- cap shows them (assets/originals/art/subfloor/electrical/
+-- utility_outlet_port.md).
 --
 -- `emergency` is the one word not asserted here: it needs a panel
 -- running down its own cell with the layer flagged worth the reserve,
@@ -87,8 +91,12 @@ local p = t.join()
 t.tick()
 t.run_seconds(3) -- the electrical pass is 0.5 Hz; let one land
 
--- The flush cover has its own state and sprite; opening it leaves all
--- three independently composed power lamps and the live connection alone.
+-- The flush cover has its own state and sprite and hides the lamps;
+-- opening it shows each lamp's reading and leaves the live connection
+-- alone. Bright is the layer carrying; nothing changes but the picture.
+local function lamp_drawn(sprite: string, x: number?, y: number?): boolean
+    return t.target_at(p, x or 7, y or 1, "sprite:" .. sprite) ~= nil
+end
 local outlet_target = assert(t.target_at(p, 7, 1, "utility_outlet_port"))
 ui_controls.primary_label(p, outlet_target, "lunatic/tfs:action.open")
 local closed_port = assert(t.structure_at(7, 1))
@@ -99,6 +107,9 @@ for _, channel in ipairs({ "l1", "l2", "l3" }) do
     assert(powered_port.channels[channel] == "nominal", "each independent layer is nominal: " .. channel)
 end
 assert(powered_port.powered and powered_port.feed == "l2", "cover state does not alter the outlet feed")
+for _, channel in ipairs({ "l1", "l2", "l3" }) do
+    assert(not lamp_drawn("uop_led_" .. channel .. "_active"), "a closed cover hides the " .. channel .. " lamp")
+end
 
 t.click(p, 7, 1, outlet_target)
 t.tick()
@@ -110,6 +121,7 @@ assert(open_port.sprite == "utility_outlet_port_open", "open cover uses its own 
 assert(open_power.powered == powered_port.powered and open_power.feed == powered_port.feed, "opening preserves power")
 for _, channel in ipairs({ "l1", "l2", "l3" }) do
     assert(open_power.channels[channel] == powered_port.channels[channel], "opening preserves " .. channel)
+    assert(lamp_drawn("uop_led_" .. channel .. "_active"), "an open cover shows the bright " .. channel .. " lamp")
 end
 
 t.click(p, 7, 1, assert(t.target_at(p, 7, 1, "utility_outlet_port")))
@@ -117,6 +129,7 @@ t.tick()
 local closed_again = assert(t.structure_at(7, 1))
 local closed_power = assert(t.outlet_at(7, 1))
 assert(closed_again.state == "closed", "second empty-hand click closes the cover")
+assert(not lamp_drawn("uop_led_l2_active"), "closing the cover hides the lamps again")
 assert(closed_again.sprite == "utility_outlet_port", "closed cover restores its base sprite")
 assert(closed_power.powered == powered_port.powered and closed_power.feed == powered_port.feed, "closing preserves power")
 for _, channel in ipairs({ "l1", "l2", "l3" }) do
@@ -165,7 +178,7 @@ assert(stub.channels["l1"] == "disconnected" and stub.channels["l2"] == "disconn
 assert(stub.feed == nil, "an unsupplied layer is not something to bind to")
 
 -- ---------------------------------------------------------------
--- 3. A PORT ON ALL THREE. Every lamp green, and the bound layer is
+-- 3. A PORT ON ALL THREE. Every lamp bright, and the bound layer is
 --    the backbone -- first in the preference list, and nothing about
 --    the other two says otherwise.
 -- ---------------------------------------------------------------
@@ -220,8 +233,9 @@ assert(all.feed == "l3", "so the port ends up on blue: " .. tostring(all.feed))
 --    circuits it opens stop carrying -- but the panel is still a
 --    declared source sitting on them, so the lamps say the run is
 --    starved rather than that there is nothing to feed it. That is
---    the difference between "find a cable" and "find the panel", and
---    it is the whole reason a port wears five words instead of two.
+--    the difference between "find a cable" and "find the panel", which
+--    a reader of the port's words gets and its lamp does not: both
+--    draw as `connected`.
 -- ---------------------------------------------------------------
 t.drop(p) -- an empty hand, or the click is a tool going into the panel
 t.run_ticks(2)
@@ -240,6 +254,12 @@ local starved = assert(t.outlet_at(5, 2))
 assert(starved.channels["l1"] == "starved", "the run is fed by a panel that stopped: " .. starved.channels["l1"])
 assert(not starved.powered, "so the port is dead")
 assert(starved.feed == nil, "with nothing live to bind to")
+
+-- Starved is still a connected cable; a layer with none stays blank.
+t.click(p, 5, 2, assert(t.target_at(p, 5, 2, "utility_outlet_port")))
+t.tick()
+assert(lamp_drawn("uop_led_l1_connected", 5, 2), "a starved layer draws dull")
+assert(lamp_drawn("uop_led_l2_disconnected", 5, 2), "a layer with no cable draws blank")
 
 all = assert(t.outlet_at(7, 1))
 assert(all.channels["l3"] == "starved", "the spare main is starved for the same reason: " .. all.channels["l3"])
@@ -261,6 +281,18 @@ assert(assert(t.outlet_at(7, 1)).feed == "l3", "and the port is back on blue")
 assert(assert(t.outlet_at(7, 1)).feeder ~= nil, "the port on the spare main has a panel behind it")
 assert(assert(t.outlet_at(8, 2)).feeder == nil, "the dead-end port has none")
 assert(assert(t.outlet_at(2, 2)).feeder == nil, "and neither has the one on bare plating")
+
+-- The parted lines read `inactive`, which is a dull lamp; the spare main
+-- is carrying, which is a bright one.
+t.move(p, "east")
+t.run_ticks(5)
+t.move(p, "east")
+t.run_ticks(5)
+t.click(p, 7, 1, assert(t.target_at(p, 7, 1, "utility_outlet_port")))
+t.tick()
+assert(assert(t.outlet_at(7, 1)).channels["l2"] == "inactive", "the backbone is still parted")
+assert(lamp_drawn("uop_led_l2_connected"), "an inactive layer draws dull")
+assert(lamp_drawn("uop_led_l3_active"), "a carrying layer draws bright")
 
 -- `starved` and `emergency` are the two words a bench like this cannot
 -- reach: both need a panel down to its own cell, which is the whole

@@ -99,7 +99,7 @@ t.run_seconds(3) -- the electrical pass is 0.5 Hz; let one land
 t.run_seconds(2) -- and the device pass, which is what sews the fittings
 
 -- ---------------------------------------------------------------
--- 1. THE MAINS ARE UP. Both lamps green on the port that stands on
+-- 1. THE MAINS ARE UP. Both lamps bright on the port that stands on
 --    both lines, both fittings burning at what their own prototype
 --    says a tube throws.
 -- ---------------------------------------------------------------
