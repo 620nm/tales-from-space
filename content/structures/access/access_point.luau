@@ -48,8 +48,8 @@ return {
     -- Reads guest source only; an empty `accepts` stands up no disk slot.
     drive = { reads = { "disl" }, accepts = {} },
     program_slots = { "controller" },
-    -- The hint a bare hand or any other tool reads on hover; the refusal
-    -- it answers speaks in fixtures/access_point.luau. A held laptop fails
+    -- The hint a bare hand or any other tool reads on hover, and what such
+    -- a click hears. A held laptop fails
     -- `permission`, which is silent and admits nothing, so the laptop's own
     -- `connect` row is the one that answers it (items/laptop.luau).
     actions = {
@@ -61,6 +61,7 @@ return {
             visible = { ["not"] = { fact = "held.proto", value = "laptop" } },
             permission = { ["not"] = { fact = "held.proto", value = "laptop" } },
             held = { fact = "held.proto", value = "laptop" },
+            needs = "lunatic/tfs:entity.access_point.needs_laptop",
             suggest = true,
             -- Pictured as the laptop that connects: open and powered.
             suggest_implement = { item = "laptop", state = "on" },

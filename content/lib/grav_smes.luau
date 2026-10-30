@@ -261,12 +261,6 @@ end
 
 -- Another tool on a packed ring, when nothing else took the click: says
 -- what the cart wants. An empty hand stays quiet.
-function grav_smes.set_ring_refused(ev: InteractionUseRefusedPayload)
-    local refusal = ev.action_refusal
-    if refusal.action == "set_ring" and refusal.fact == "held.proto" and not refusal.resolved then
-        send(ev.actor, MESSAGE .. "ring_needs_wrench")
-    end
-end
 
 -- The row every anchored emitter and set ring shares. Both reasons are
 -- `hint_only`: `weld` says exactly what is wrong when it is clicked.

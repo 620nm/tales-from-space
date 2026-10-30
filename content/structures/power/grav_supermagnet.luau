@@ -49,6 +49,7 @@ return {
             label = "lunatic/tfs:ui.affordance.anchor",
             held = { fact = "held.proto", value = "wrench" },
             uses_held = true,
+            needs = "lunatic/tfs:lib.grav_smes.ring_needs_wrench",
             suggest_implement = { item = "wrench" },
             refuse = {
                 {

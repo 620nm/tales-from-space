@@ -14,6 +14,7 @@ return {
             route = "receiver",
             label = "lunatic/tfs:ui.affordance.press",
             held = { fact = "held.present", value = "false" },
+            needs = "lunatic/tfs:entity.airlock_button.hand_full",
         },
     },
     link = { network_interface = true, role = "endpoint", class = "control_button" },

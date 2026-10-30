@@ -50,21 +50,6 @@ if sim ~= nil then
         controller.run(ev.entity, { kind = "boot", origin = ev.origin })
     end)
 
-    script_definition:handle(
-        "interaction.use.refused",
-        { kind = "react", route = "interact" },
-        function(ev)
-            local r = ev.action_refusal
-            if r.action ~= "needs_laptop" or r.resolved then
-                return
-            end
-            sim.message.send({
-                recipient = ev.actor,
-                message = sim.msg("lunatic/tfs:entity.access_point.needs_laptop", {}),
-            })
-        end
-    )
-
     -- The two stages a hub stands on, the router's exactly
     -- (fixtures/network_router.luau): the key check for a tree this box
     -- happens to top, and the hop that changes nothing. A box under a
